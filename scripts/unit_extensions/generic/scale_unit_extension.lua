@@ -2,7 +2,7 @@
 
 ScaleUnitExtension = class(ScaleUnitExtension)
 
-function ScaleUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ScaleUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = Managers.time:time("game")
 
 	arg_1_0.start_size = arg_1_3.start_size
@@ -14,14 +14,14 @@ function ScaleUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.timer = 0
 end
 
-function ScaleUnitExtension.setup(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ScaleUnitExtension.setup = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.start_size = arg_2_1 or arg_2_0.start_size
 	arg_2_0.full_scale = arg_2_2 - arg_2_0.start_size
 	arg_2_0.duration = arg_2_3
 	arg_2_0.timer = 0
 end
 
-function ScaleUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ScaleUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0.timer
 
 	if var_3_0 < arg_3_0.duration then
@@ -35,10 +35,10 @@ function ScaleUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	end
 end
 
-function ScaleUnitExtension.scaling_complete(arg_4_0)
+ScaleUnitExtension.scaling_complete = function (arg_4_0)
 	return arg_4_0.timer >= arg_4_0.duration
 end
 
-function ScaleUnitExtension.despawn(arg_5_0)
+ScaleUnitExtension.despawn = function (arg_5_0)
 	return
 end

@@ -12,10 +12,10 @@ ActionTemplates.wield = {
 		action_priority = 2,
 		uninterruptible = true,
 		total_time = 0,
-		condition_func = function(arg_1_0, arg_1_1)
+		condition_func = function (arg_1_0, arg_1_1)
 			return ScriptUnit.extension(arg_1_0, "inventory_system"):can_wield()
 		end,
-		chain_condition_func = function(arg_2_0, arg_2_1)
+		chain_condition_func = function (arg_2_0, arg_2_1)
 			return ScriptUnit.extension(arg_2_0, "inventory_system"):can_wield()
 		end,
 		allowed_chain_actions = {}
@@ -31,10 +31,10 @@ ActionTemplates.wield_and_use = {
 		kind = "instant_wield",
 		uninterruptible = true,
 		total_time = 0,
-		condition_func = function(arg_3_0, arg_3_1)
+		condition_func = function (arg_3_0, arg_3_1)
 			return ScriptUnit.extension(arg_3_0, "inventory_system"):can_wield()
 		end,
-		chain_condition_func = function(arg_4_0, arg_4_1)
+		chain_condition_func = function (arg_4_0, arg_4_1)
 			return ScriptUnit.extension(arg_4_0, "inventory_system"):can_wield()
 		end,
 		action_on_wield = {
@@ -49,7 +49,7 @@ ActionTemplates.reload = {
 		weapon_action_hand = "either",
 		kind = "reload",
 		total_time = 0,
-		condition_func = function(arg_5_0, arg_5_1)
+		condition_func = function (arg_5_0, arg_5_1)
 			local var_5_0 = ScriptUnit.extension(arg_5_0, "inventory_system")
 			local var_5_1 = ScriptUnit.extension(arg_5_0, "status_system")
 			local var_5_2
@@ -75,7 +75,7 @@ ActionTemplates.reload = {
 
 			return var_5_4 and not var_5_5
 		end,
-		chain_condition_func = function(arg_6_0, arg_6_1)
+		chain_condition_func = function (arg_6_0, arg_6_1)
 			local var_6_0 = ScriptUnit.extension(arg_6_0, "inventory_system")
 			local var_6_1 = ScriptUnit.extension(arg_6_0, "status_system")
 			local var_6_2
@@ -107,10 +107,10 @@ ActionTemplates.reload = {
 		weapon_action_hand = "either",
 		kind = "reload",
 		total_time = 0,
-		condition_func = function(arg_7_0, arg_7_1)
+		condition_func = function (arg_7_0, arg_7_1)
 			return false
 		end,
-		chain_condition_func = function(arg_8_0, arg_8_1)
+		chain_condition_func = function (arg_8_0, arg_8_1)
 			local var_8_0 = ScriptUnit.extension(arg_8_0, "inventory_system")
 			local var_8_1 = ScriptUnit.extension(arg_8_0, "status_system")
 			local var_8_2
@@ -145,7 +145,7 @@ ActionTemplates.action_inspect = {
 		weapon_action_hand = "either",
 		kind = "dummy",
 		total_time = 1,
-		condition_func = function(arg_9_0, arg_9_1, arg_9_2)
+		condition_func = function (arg_9_0, arg_9_1, arg_9_2)
 			if arg_9_2 and arg_9_2:is_reloading() then
 				return false
 			end
@@ -185,7 +185,7 @@ ActionTemplates.action_inspect = {
 		weapon_action_hand = "either",
 		hold_input = "action_inspect_hold",
 		anim_event = "inspect_start",
-		anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+		anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 			return arg_10_1 ~= "new_interupting_action"
 		end,
 		total_time = math.huge,
@@ -214,11 +214,11 @@ ActionTemplates.give_item_on_defend = {
 	hold_input = "action_two_hold",
 	anim_event = "parry_pose",
 	total_time = 0,
-	anim_end_event_condition_func = function(arg_11_0, arg_11_1)
+	anim_end_event_condition_func = function (arg_11_0, arg_11_1)
 		return arg_11_1 ~= "new_interupting_action" and arg_11_1 ~= "action_complete"
 	end,
 	allowed_chain_actions = {},
-	condition_func = function(arg_12_0)
+	condition_func = function (arg_12_0)
 		if not Managers.player:owner(arg_12_0).bot_player and not Application.user_setting("give_on_defend") then
 			return false
 		end
@@ -244,11 +244,11 @@ ActionTemplates.instant_give_item = {
 		hold_input = "interact",
 		anim_event = "parry_pose",
 		total_time = 0,
-		anim_end_event_condition_func = function(arg_13_0, arg_13_1)
+		anim_end_event_condition_func = function (arg_13_0, arg_13_1)
 			return arg_13_1 ~= "new_interupting_action" and arg_13_1 ~= "action_complete"
 		end,
 		allowed_chain_actions = {},
-		condition_func = function(arg_14_0)
+		condition_func = function (arg_14_0)
 			local var_14_0 = ScriptUnit.extension(arg_14_0, "interactor_system")
 
 			return var_14_0 and var_14_0:can_interact(nil, "give_item")
@@ -270,7 +270,7 @@ ActionTemplates.action_career_bw_1 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_15_0, arg_15_1)
+		condition_func = function (arg_15_0, arg_15_1)
 			if ScriptUnit.extension(arg_15_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end
@@ -293,7 +293,7 @@ ActionTemplates.action_career_dr_3 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_16_0, arg_16_1)
+		condition_func = function (arg_16_0, arg_16_1)
 			if ScriptUnit.extension(arg_16_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end
@@ -316,7 +316,7 @@ ActionTemplates.action_career_wh_2 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_17_0, arg_17_1)
+		condition_func = function (arg_17_0, arg_17_1)
 			if ScriptUnit.extension(arg_17_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end
@@ -339,7 +339,7 @@ ActionTemplates.action_career_we_3 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_18_0, arg_18_1)
+		condition_func = function (arg_18_0, arg_18_1)
 			if not ScriptUnit.extension(arg_18_0, "inventory_system"):get_slot_data("slot_career_skill_weapon") then
 				return false
 			end
@@ -374,7 +374,7 @@ ActionTemplates.action_career_we_3_piercing = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_19_0, arg_19_1)
+		condition_func = function (arg_19_0, arg_19_1)
 			if not ScriptUnit.extension(arg_19_0, "inventory_system"):get_slot_data("slot_career_skill_weapon") then
 				return false
 			end

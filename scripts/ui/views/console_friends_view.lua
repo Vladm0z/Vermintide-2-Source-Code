@@ -11,7 +11,7 @@ local var_0_7 = 12
 
 ConsoleFriendsView = class(ConsoleFriendsView)
 
-function ConsoleFriendsView.init(arg_1_0, arg_1_1)
+ConsoleFriendsView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ingame_ui_context = arg_1_1
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
@@ -46,7 +46,7 @@ function ConsoleFriendsView.init(arg_1_0, arg_1_1)
 	arg_1_0._friend_list_widgets = {}
 end
 
-function ConsoleFriendsView.on_enter(arg_2_0)
+ConsoleFriendsView.on_enter = function (arg_2_0)
 	arg_2_0._input_manager:block_device_except_service("console_friends_view", "keyboard", 1)
 	arg_2_0._input_manager:block_device_except_service("console_friends_view", "mouse", 1)
 	arg_2_0._input_manager:block_device_except_service("console_friends_view", "gamepad", 1)
@@ -78,7 +78,7 @@ function ConsoleFriendsView.on_enter(arg_2_0)
 	arg_2_0._refresh_friends_timer = nil
 end
 
-function ConsoleFriendsView._join_game(arg_3_0)
+ConsoleFriendsView._join_game = function (arg_3_0)
 	if arg_3_0.network_server and not arg_3_0.network_server:are_all_peers_ingame(nil, true) then
 		arg_3_0._popup_id = Managers.popup:queue_popup(Localize("popup_join_blocked_by_joining_player"), Localize("popup_invite_not_installed_header"), "ok", Localize("menu_ok"))
 	else
@@ -112,7 +112,7 @@ function ConsoleFriendsView._join_game(arg_3_0)
 	end
 end
 
-function ConsoleFriendsView._refresh_friends(arg_4_0)
+ConsoleFriendsView._refresh_friends = function (arg_4_0)
 	arg_4_0._is_refreshing = true
 
 	if IS_XB1 then
@@ -126,7 +126,7 @@ end
 
 local var_0_8 = {}
 
-function ConsoleFriendsView.cb_friends_collected(arg_5_0, arg_5_1)
+ConsoleFriendsView.cb_friends_collected = function (arg_5_0, arg_5_1)
 	arg_5_1 = arg_5_1 or var_0_8
 
 	local var_5_0 = arg_5_0._friend_list_widgets
@@ -183,7 +183,7 @@ function ConsoleFriendsView.cb_friends_collected(arg_5_0, arg_5_1)
 	arg_5_0._is_refreshing = false
 end
 
-function ConsoleFriendsView.on_exit(arg_7_0)
+ConsoleFriendsView.on_exit = function (arg_7_0)
 	arg_7_0._input_manager:device_unblock_all_services("keyboard", 1)
 	arg_7_0._input_manager:device_unblock_all_services("mouse", 1)
 	arg_7_0._input_manager:device_unblock_all_services("gamepad", 1)
@@ -204,7 +204,7 @@ function ConsoleFriendsView.on_exit(arg_7_0)
 	arg_7_0._active = nil
 end
 
-function ConsoleFriendsView.exit(arg_8_0)
+ConsoleFriendsView.exit = function (arg_8_0)
 	local var_8_0 = "ingame_menu"
 
 	arg_8_0._ingame_ui:transition_with_fade(var_8_0)
@@ -213,7 +213,7 @@ function ConsoleFriendsView.exit(arg_8_0)
 	arg_8_0._exiting = true
 end
 
-function ConsoleFriendsView.transitioning(arg_9_0)
+ConsoleFriendsView.transitioning = function (arg_9_0)
 	if arg_9_0._exiting then
 		return true
 	else
@@ -221,7 +221,7 @@ function ConsoleFriendsView.transitioning(arg_9_0)
 	end
 end
 
-function ConsoleFriendsView._setup_input(arg_10_0, arg_10_1)
+ConsoleFriendsView._setup_input = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.input_manager
 
 	var_10_0:create_input_service("console_friends_view", "IngameMenuKeymaps", "IngameMenuFilters")
@@ -232,7 +232,7 @@ function ConsoleFriendsView._setup_input(arg_10_0, arg_10_1)
 	arg_10_0._input_manager = var_10_0
 end
 
-function ConsoleFriendsView._create_ui_elements(arg_11_0)
+ConsoleFriendsView._create_ui_elements = function (arg_11_0)
 	UIRenderer.clear_scenegraph_queue(arg_11_0._ui_top_renderer)
 
 	arg_11_0._wanted_pos = var_0_1.friends_base.position[2]
@@ -266,7 +266,7 @@ function ConsoleFriendsView._create_ui_elements(arg_11_0)
 	var_0_5 = false
 end
 
-function ConsoleFriendsView._sorted_players(arg_12_0)
+ConsoleFriendsView._sorted_players = function (arg_12_0)
 	local var_12_0 = Managers.player:human_players()
 	local var_12_1 = {}
 
@@ -281,7 +281,7 @@ function ConsoleFriendsView._sorted_players(arg_12_0)
 	local var_12_3 = FindProfileIndex("spectator")
 
 	if var_12_3 then
-		table.array_remove_if(var_12_1, function(arg_14_0)
+		table.array_remove_if(var_12_1, function (arg_14_0)
 			return arg_14_0:profile_index() == var_12_3
 		end)
 	end
@@ -291,7 +291,7 @@ function ConsoleFriendsView._sorted_players(arg_12_0)
 	return var_12_1
 end
 
-function ConsoleFriendsView._setup_party_entries(arg_15_0)
+ConsoleFriendsView._setup_party_entries = function (arg_15_0)
 	arg_15_0._party_entries = {}
 
 	local var_15_0 = arg_15_0:_sorted_players()
@@ -323,7 +323,7 @@ function ConsoleFriendsView._setup_party_entries(arg_15_0)
 	end
 end
 
-function ConsoleFriendsView.update(arg_16_0, arg_16_1, arg_16_2)
+ConsoleFriendsView.update = function (arg_16_0, arg_16_1, arg_16_2)
 	if var_0_5 then
 		arg_16_0:_create_ui_elements()
 	end
@@ -340,7 +340,7 @@ function ConsoleFriendsView.update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function ConsoleFriendsView._update_input_descriptions(arg_17_0, arg_17_1, arg_17_2)
+ConsoleFriendsView._update_input_descriptions = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._friend_list_widgets[arg_17_0._current_friend_index]
 	local var_17_1 = false
 	local var_17_2 = false
@@ -406,7 +406,7 @@ function ConsoleFriendsView._update_input_descriptions(arg_17_0, arg_17_1, arg_1
 	end
 end
 
-function ConsoleFriendsView._handle_refresh(arg_18_0, arg_18_1, arg_18_2)
+ConsoleFriendsView._handle_refresh = function (arg_18_0, arg_18_1, arg_18_2)
 	if IS_PS4 then
 		arg_18_0._refresh_friends_timer = arg_18_0._refresh_friends_timer or arg_18_2 + var_0_7
 
@@ -418,7 +418,7 @@ function ConsoleFriendsView._handle_refresh(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function ConsoleFriendsView._animate_default_buttons(arg_19_0, arg_19_1, arg_19_2)
+ConsoleFriendsView._animate_default_buttons = function (arg_19_0, arg_19_1, arg_19_2)
 	if not Managers.input:is_device_active("gamepad") then
 		local var_19_0 = arg_19_0._widgets_by_name.open_profile_button
 		local var_19_1 = arg_19_0._widgets_by_name.invite_button
@@ -428,7 +428,7 @@ function ConsoleFriendsView._animate_default_buttons(arg_19_0, arg_19_1, arg_19_
 	end
 end
 
-function ConsoleFriendsView._handle_input(arg_20_0, arg_20_1, arg_20_2)
+ConsoleFriendsView._handle_input = function (arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0._exiting then
 		return
 	end
@@ -555,7 +555,7 @@ function ConsoleFriendsView._handle_input(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function ConsoleFriendsView._update_animations(arg_21_0, arg_21_1, arg_21_2)
+ConsoleFriendsView._update_animations = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._ui_animations
 
 	for iter_21_0, iter_21_1 in pairs(var_21_0) do
@@ -567,7 +567,7 @@ function ConsoleFriendsView._update_animations(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function ConsoleFriendsView._draw(arg_22_0, arg_22_1, arg_22_2)
+ConsoleFriendsView._draw = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._ui_scenegraph
 	local var_22_1 = arg_22_0._ui_top_renderer
 	local var_22_2 = arg_22_0:input_service()
@@ -604,7 +604,7 @@ function ConsoleFriendsView._draw(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function ConsoleFriendsView._handle_popup(arg_23_0)
+ConsoleFriendsView._handle_popup = function (arg_23_0)
 	local var_23_0, var_23_1 = Managers.popup:query_result(arg_23_0._popup_id)
 
 	if var_23_0 then
@@ -616,15 +616,15 @@ function ConsoleFriendsView._handle_popup(arg_23_0)
 	end
 end
 
-function ConsoleFriendsView.destroy(arg_24_0)
+ConsoleFriendsView.destroy = function (arg_24_0)
 	return
 end
 
-function ConsoleFriendsView.input_service(arg_25_0)
+ConsoleFriendsView.input_service = function (arg_25_0)
 	return arg_25_0._input_manager:get_service("console_friends_view")
 end
 
-function ConsoleFriendsView._open_profile(arg_26_0, arg_26_1)
+ConsoleFriendsView._open_profile = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_1.content.friend.id
 
 	if IS_XB1 then
@@ -634,7 +634,7 @@ function ConsoleFriendsView._open_profile(arg_26_0, arg_26_1)
 	end
 end
 
-function ConsoleFriendsView._send_invite(arg_27_0, arg_27_1, arg_27_2)
+ConsoleFriendsView._send_invite = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_1.content.friend.id
 	local var_27_1 = arg_27_0._invite_cooldown[var_27_0]
 
@@ -653,7 +653,7 @@ function ConsoleFriendsView._send_invite(arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0._ui_animations["move_invite_" .. var_27_0] = UIAnimation.init(UIAnimation.function_by_time, arg_27_1.style.invite_texture.offset, 1, 40, 70, 1, math.easeInCubic)
 end
 
-function ConsoleFriendsView.cleanup_popups(arg_28_0)
+ConsoleFriendsView.cleanup_popups = function (arg_28_0)
 	if arg_28_0._popup_id then
 		Managers.popup:cancel_popup(arg_28_0._popup_id)
 

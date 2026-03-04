@@ -8,7 +8,7 @@ else
 	DLCUtils.check_dupes = false
 end
 
-function DLCUtils.map(arg_1_0, arg_1_1)
+DLCUtils.map = function (arg_1_0, arg_1_1)
 	for iter_1_0, iter_1_1 in pairs(DLCSettings) do
 		if iter_1_1[arg_1_0] then
 			arg_1_1(iter_1_1[arg_1_0])
@@ -16,7 +16,7 @@ function DLCUtils.map(arg_1_0, arg_1_1)
 	end
 end
 
-function DLCUtils.map_list(arg_2_0, arg_2_1)
+DLCUtils.map_list = function (arg_2_0, arg_2_1)
 	for iter_2_0, iter_2_1 in pairs(DLCSettings) do
 		local var_2_0 = iter_2_1[arg_2_0]
 
@@ -28,23 +28,23 @@ function DLCUtils.map_list(arg_2_0, arg_2_1)
 	end
 end
 
-function DLCUtils.require(arg_3_0, arg_3_1)
+DLCUtils.require = function (arg_3_0, arg_3_1)
 	return DLCUtils.map(arg_3_0, arg_3_1 and local_require or require)
 end
 
-function DLCUtils.require_list(arg_4_0, arg_4_1)
+DLCUtils.require_list = function (arg_4_0, arg_4_1)
 	return DLCUtils.map_list(arg_4_0, arg_4_1 and local_require or require)
 end
 
-function DLCUtils.dofile(arg_5_0)
+DLCUtils.dofile = function (arg_5_0)
 	return DLCUtils.map(arg_5_0, dofile)
 end
 
-function DLCUtils.dofile_list(arg_6_0)
+DLCUtils.dofile_list = function (arg_6_0)
 	return DLCUtils.map_list(arg_6_0, dofile)
 end
 
-function DLCUtils.append(arg_7_0, arg_7_1, arg_7_2)
+DLCUtils.append = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = #arg_7_1
 
 	for iter_7_0, iter_7_1 in pairs(DLCSettings) do
@@ -59,7 +59,7 @@ function DLCUtils.append(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DLCUtils.merge(arg_8_0, arg_8_1, arg_8_2)
+DLCUtils.merge = function (arg_8_0, arg_8_1, arg_8_2)
 	for iter_8_0, iter_8_1 in pairs(DLCSettings) do
 		local var_8_0 = iter_8_1[arg_8_0]
 

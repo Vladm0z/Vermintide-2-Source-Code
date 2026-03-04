@@ -17,7 +17,7 @@ local var_0_10 = {
 
 VersusTabUI = class(VersusTabUI)
 
-function VersusTabUI.init(arg_1_0, arg_1_1, arg_1_2)
+VersusTabUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_2.ui_top_renderer
@@ -78,7 +78,7 @@ function VersusTabUI.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function VersusTabUI._create_ui_elements(arg_2_0)
+VersusTabUI._create_ui_elements = function (arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_top_renderer)
 
@@ -117,13 +117,13 @@ function VersusTabUI._create_ui_elements(arg_2_0)
 	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_1)
 end
 
-function VersusTabUI.destroy(arg_3_0)
+VersusTabUI.destroy = function (arg_3_0)
 	arg_3_0._ui_animator = nil
 
 	arg_3_0:_unregister_events()
 end
 
-function VersusTabUI.update(arg_4_0, arg_4_1, arg_4_2)
+VersusTabUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_8 then
 		arg_4_0:_create_ui_elements()
 	end
@@ -166,7 +166,7 @@ function VersusTabUI.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function VersusTabUI._update_animations(arg_5_0, arg_5_1, arg_5_2)
+VersusTabUI._update_animations = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._animations
 	local var_5_1 = arg_5_0._ui_animator
 
@@ -181,7 +181,7 @@ function VersusTabUI._update_animations(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function VersusTabUI._draw(arg_6_0, arg_6_1, arg_6_2)
+VersusTabUI._draw = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._ui_top_renderer
 	local var_6_1 = arg_6_0._ui_scenegraph
 	local var_6_2 = arg_6_0._input_manager
@@ -269,21 +269,21 @@ function VersusTabUI._draw(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function VersusTabUI._set_team_name(arg_7_0, arg_7_1, arg_7_2)
+VersusTabUI._set_team_name = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0, var_7_1 = arg_7_0:_get_teams_ui_settings(arg_7_1, arg_7_2)
 
 	arg_7_0._widgets_by_name.team_1_name.content.text = Localize(var_7_0.display_name)
 	arg_7_0._widgets_by_name.team_2_name.content.text = Localize(var_7_1.display_name)
 end
 
-function VersusTabUI._set_team_textures(arg_8_0, arg_8_1, arg_8_2)
+VersusTabUI._set_team_textures = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0, var_8_1 = arg_8_0:_get_teams_ui_settings(arg_8_1, arg_8_2)
 
 	arg_8_0._widgets_by_name.team_1_icon.content.texture_id = var_8_0.local_flag_texture
 	arg_8_0._widgets_by_name.team_2_icon.content.texture_id = var_8_1.opponent_flag_texture
 end
 
-function VersusTabUI._set_side_text(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+VersusTabUI._set_side_text = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = DLCSettings.carousel
 	local var_9_1 = arg_9_1:get_party(arg_9_2)
 
@@ -306,7 +306,7 @@ function VersusTabUI._set_side_text(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function VersusTabUI._update_score(arg_10_0, arg_10_1, arg_10_2)
+VersusTabUI._update_score = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._win_conditions:get_total_score(arg_10_1)
 	local var_10_1 = arg_10_0._win_conditions:get_total_score(arg_10_2)
 	local var_10_2 = Managers.party:get_party(arg_10_1)
@@ -318,7 +318,7 @@ function VersusTabUI._update_score(arg_10_0, arg_10_1, arg_10_2)
 	var_10_4.team_2_score = var_10_1
 end
 
-function VersusTabUI._get_teams_ui_settings(arg_11_0, arg_11_1, arg_11_2)
+VersusTabUI._get_teams_ui_settings = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_11_1]
 	local var_11_1 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_11_2]
 	local var_11_2 = DLCSettings.carousel
@@ -328,27 +328,27 @@ function VersusTabUI._get_teams_ui_settings(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_3, var_11_4
 end
 
-function VersusTabUI._set_level_name(arg_12_0, arg_12_1)
+VersusTabUI._set_level_name = function (arg_12_0, arg_12_1)
 	arg_12_0._widgets_by_name.level_name.content.text = arg_12_1
 end
 
-function VersusTabUI._set_sub_title(arg_13_0, arg_13_1)
+VersusTabUI._set_sub_title = function (arg_13_0, arg_13_1)
 	arg_13_0._widgets_by_name.sub_title.content.text = arg_13_1
 end
 
-function VersusTabUI.input_service(arg_14_0)
+VersusTabUI.input_service = function (arg_14_0)
 	return arg_14_0._input_manager:get_service("player_list_input")
 end
 
-function VersusTabUI.is_focused(arg_15_0)
+VersusTabUI.is_focused = function (arg_15_0)
 	return arg_15_0._active and arg_15_0.cursor_active
 end
 
-function VersusTabUI.is_active(arg_16_0)
+VersusTabUI.is_active = function (arg_16_0)
 	return arg_16_0._active
 end
 
-function VersusTabUI.set_active(arg_17_0, arg_17_1)
+VersusTabUI.set_active = function (arg_17_0, arg_17_1)
 	local var_17_0 = Managers.chat.chat_gui
 
 	if arg_17_1 then
@@ -373,7 +373,7 @@ function VersusTabUI.set_active(arg_17_0, arg_17_1)
 	arg_17_0:_deactivate_cursor()
 end
 
-function VersusTabUI._deactivate_cursor(arg_18_0)
+VersusTabUI._deactivate_cursor = function (arg_18_0)
 	if arg_18_0.cursor_active then
 		ShowCursorStack.hide("VersusSlotStatusUI")
 
@@ -388,7 +388,7 @@ function VersusTabUI._deactivate_cursor(arg_18_0)
 	end
 end
 
-function VersusTabUI._activate_cursor(arg_19_0)
+VersusTabUI._activate_cursor = function (arg_19_0)
 	if not arg_19_0.cursor_active then
 		ShowCursorStack.show("VersusSlotStatusUI")
 
@@ -403,7 +403,7 @@ function VersusTabUI._activate_cursor(arg_19_0)
 	end
 end
 
-function VersusTabUI._handle_input(arg_20_0, arg_20_1)
+VersusTabUI._handle_input = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._input_manager
 	local var_20_1 = Managers.transition:in_fade_active()
 	local var_20_2 = var_20_0:get_service("player_list_input")
@@ -433,7 +433,7 @@ function VersusTabUI._handle_input(arg_20_0, arg_20_1)
 	end
 end
 
-function VersusTabUI._create_player_slots(arg_21_0)
+VersusTabUI._create_player_slots = function (arg_21_0)
 	local var_21_0 = arg_21_0._ui_scenegraph
 	local var_21_1 = 1
 	local var_21_2 = {}
@@ -470,7 +470,7 @@ function VersusTabUI._create_player_slots(arg_21_0)
 	arg_21_0._custom_game_slots = var_21_2
 end
 
-function VersusTabUI._setup_custom_settings(arg_22_0)
+VersusTabUI._setup_custom_settings = function (arg_22_0)
 	local var_22_0 = Managers.mechanism:game_mechanism():get_custom_game_settings_handler()
 	local var_22_1, var_22_2 = var_22_0 and var_22_0:get_settings_template(), var_22_0:get_settings()
 	local var_22_3 = DLCSettings.carousel.custom_game_ui_settings
@@ -511,7 +511,7 @@ function VersusTabUI._setup_custom_settings(arg_22_0)
 	arg_22_0._settings = var_22_2
 end
 
-function VersusTabUI._update_custom_lobby_slots(arg_23_0)
+VersusTabUI._update_custom_lobby_slots = function (arg_23_0)
 	local var_23_0 = Managers.party
 	local var_23_1 = Managers.player
 	local var_23_2 = arg_23_0._pre_game_logic
@@ -536,7 +536,7 @@ function VersusTabUI._update_custom_lobby_slots(arg_23_0)
 	arg_23_0:_handle_players_panel_button_input()
 end
 
-function VersusTabUI._update_party_slots_data(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+VersusTabUI._update_party_slots_data = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
 	local var_24_0 = arg_24_4:get_party(arg_24_1)
 	local var_24_1 = Managers.state.network:game()
 	local var_24_2 = Managers.mechanism:network_handler():get_match_handler()
@@ -697,7 +697,7 @@ function VersusTabUI._update_party_slots_data(arg_24_0, arg_24_1, arg_24_2, arg_
 	end
 end
 
-function VersusTabUI._set_player_custom_panel_loadout_icon(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+VersusTabUI._set_player_custom_panel_loadout_icon = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_1.content
 	local var_25_1 = arg_25_1.style
 
@@ -714,7 +714,7 @@ function VersusTabUI._set_player_custom_panel_loadout_icon(arg_25_0, arg_25_1, a
 	end
 end
 
-function VersusTabUI._button_pressed(arg_26_0, arg_26_1)
+VersusTabUI._button_pressed = function (arg_26_0, arg_26_1)
 	if arg_26_1.on_release then
 		arg_26_1.on_release = false
 
@@ -724,7 +724,7 @@ function VersusTabUI._button_pressed(arg_26_0, arg_26_1)
 	return false
 end
 
-function VersusTabUI._get_hero_portrait(arg_27_0, arg_27_1, arg_27_2)
+VersusTabUI._get_hero_portrait = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = "eor_empty_player"
 
 	if arg_27_1 == nil or arg_27_2 == nil then
@@ -734,7 +734,7 @@ function VersusTabUI._get_hero_portrait(arg_27_0, arg_27_1, arg_27_2)
 	return SPProfiles[arg_27_1].careers[arg_27_2].portrait_image or var_27_0
 end
 
-function VersusTabUI._create_portrait_frame(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+VersusTabUI._create_portrait_frame = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_5 or 1
 	local var_28_1 = false
 	local var_28_2 = UIWidgets.create_portrait_frame(arg_28_1, arg_28_2, arg_28_3, var_28_0, var_28_1, arg_28_4)
@@ -747,7 +747,7 @@ function VersusTabUI._create_portrait_frame(arg_28_0, arg_28_1, arg_28_2, arg_28
 	return var_28_3
 end
 
-function VersusTabUI._apply_color_values(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+VersusTabUI._apply_color_values = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	if arg_29_3 then
 		arg_29_1[1] = arg_29_2[1]
 	end
@@ -757,7 +757,7 @@ function VersusTabUI._apply_color_values(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	arg_29_1[4] = arg_29_2[4]
 end
 
-function VersusTabUI._show_profile_by_peer_id(arg_30_0, arg_30_1)
+VersusTabUI._show_profile_by_peer_id = function (arg_30_0, arg_30_1)
 	if IS_WINDOWS and rawget(_G, "Steam") then
 		local var_30_0 = Steam.id_hex_to_dec(arg_30_1)
 		local var_30_1 = "http://steamcommunity.com/profiles/" .. var_30_0
@@ -774,7 +774,7 @@ function VersusTabUI._show_profile_by_peer_id(arg_30_0, arg_30_1)
 	end
 end
 
-function VersusTabUI._muted_peer_id(arg_31_0, arg_31_1)
+VersusTabUI._muted_peer_id = function (arg_31_0, arg_31_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			return Managers.voice_chat:is_peer_muted(arg_31_1)
@@ -786,7 +786,7 @@ function VersusTabUI._muted_peer_id(arg_31_0, arg_31_1)
 	end
 end
 
-function VersusTabUI._ignore_voice_message_from_peer_id(arg_32_0, arg_32_1)
+VersusTabUI._ignore_voice_message_from_peer_id = function (arg_32_0, arg_32_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:mute_peer(arg_32_1)
@@ -796,7 +796,7 @@ function VersusTabUI._ignore_voice_message_from_peer_id(arg_32_0, arg_32_1)
 	end
 end
 
-function VersusTabUI._remove_ignore_voice_message_from_peer_id(arg_33_0, arg_33_1)
+VersusTabUI._remove_ignore_voice_message_from_peer_id = function (arg_33_0, arg_33_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:unmute_peer(arg_33_1)
@@ -806,7 +806,7 @@ function VersusTabUI._remove_ignore_voice_message_from_peer_id(arg_33_0, arg_33_
 	end
 end
 
-function VersusTabUI._ignoring_chat_peer_id(arg_34_0, arg_34_1)
+VersusTabUI._ignoring_chat_peer_id = function (arg_34_0, arg_34_1)
 	if IS_WINDOWS then
 		return Managers.chat.chat_gui:ignoring_peer_id(arg_34_1)
 	elseif IS_XB1 then
@@ -814,7 +814,7 @@ function VersusTabUI._ignoring_chat_peer_id(arg_34_0, arg_34_1)
 	end
 end
 
-function VersusTabUI._ignore_chat_message_from_peer_id(arg_35_0, arg_35_1)
+VersusTabUI._ignore_chat_message_from_peer_id = function (arg_35_0, arg_35_1)
 	if IS_WINDOWS then
 		Managers.chat.chat_gui:ignore_peer_id(arg_35_1)
 	elseif IS_XB1 then
@@ -822,11 +822,11 @@ function VersusTabUI._ignore_chat_message_from_peer_id(arg_35_0, arg_35_1)
 	end
 end
 
-function VersusTabUI._can_host_solo_kick(arg_36_0)
+VersusTabUI._can_host_solo_kick = function (arg_36_0)
 	return arg_36_0._is_server and Managers.player:num_human_players() == 2
 end
 
-function VersusTabUI._can_kick_player(arg_37_0, arg_37_1)
+VersusTabUI._can_kick_player = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0:_is_in_local_player_party(arg_37_1)
 
 	if arg_37_1 and var_37_0 then
@@ -842,7 +842,7 @@ function VersusTabUI._can_kick_player(arg_37_0, arg_37_1)
 	return false
 end
 
-function VersusTabUI._kick_player_attempt(arg_38_0, arg_38_1)
+VersusTabUI._kick_player_attempt = function (arg_38_0, arg_38_1)
 	if arg_38_0:_can_kick_player(arg_38_1) then
 		local var_38_0 = {
 			kick_peer_id = arg_38_1
@@ -853,7 +853,7 @@ function VersusTabUI._kick_player_attempt(arg_38_0, arg_38_1)
 	end
 end
 
-function VersusTabUI._update_players_panel_button_widgets(arg_39_0)
+VersusTabUI._update_players_panel_button_widgets = function (arg_39_0)
 	local var_39_0 = Managers.state.voting:vote_kick_enabled()
 	local var_39_1 = arg_39_0._custom_game_slots
 
@@ -909,7 +909,7 @@ function VersusTabUI._update_players_panel_button_widgets(arg_39_0)
 	end
 end
 
-function VersusTabUI._handle_players_panel_button_input(arg_40_0)
+VersusTabUI._handle_players_panel_button_input = function (arg_40_0)
 	local var_40_0 = arg_40_0._custom_game_slots
 
 	if var_40_0 then
@@ -997,7 +997,7 @@ function VersusTabUI._handle_players_panel_button_input(arg_40_0)
 	end
 end
 
-function VersusTabUI._update_player_item_slots(arg_41_0, arg_41_1, arg_41_2)
+VersusTabUI._update_player_item_slots = function (arg_41_0, arg_41_1, arg_41_2)
 	for iter_41_0 = 1, #var_0_10 do
 		local var_41_0 = var_0_10[iter_41_0]
 		local var_41_1 = arg_41_1[var_41_0].data.name
@@ -1012,7 +1012,7 @@ local var_0_11 = {
 	alpha_multiplier = 0
 }
 
-function VersusTabUI._update_item_slots_tooltip(arg_42_0, arg_42_1, arg_42_2)
+VersusTabUI._update_item_slots_tooltip = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._ui_scenegraph
 	local var_42_1 = arg_42_0._ui_top_renderer
 	local var_42_2 = arg_42_0._item_tooltip
@@ -1043,7 +1043,7 @@ function VersusTabUI._update_item_slots_tooltip(arg_42_0, arg_42_1, arg_42_2)
 	end
 end
 
-function VersusTabUI._update_player_talents(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+VersusTabUI._update_player_talents = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = arg_43_3.content
 	local var_43_1 = ScriptUnit.has_extension(arg_43_1, "talent_system")
 
@@ -1067,7 +1067,7 @@ function VersusTabUI._update_player_talents(arg_43_0, arg_43_1, arg_43_2, arg_43
 	end
 end
 
-function VersusTabUI._update_player_talents_tooltip(arg_44_0, arg_44_1)
+VersusTabUI._update_player_talents_tooltip = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_1.content
 
 	for iter_44_0 = 1, 6 do
@@ -1093,7 +1093,7 @@ function VersusTabUI._update_player_talents_tooltip(arg_44_0, arg_44_1)
 	end
 end
 
-function VersusTabUI._update_player_health(arg_45_0, arg_45_1, arg_45_2)
+VersusTabUI._update_player_health = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = Managers.state.network:game()
 	local var_45_1 = Managers.state.unit_storage:go_id(arg_45_1)
 	local var_45_2 = ScriptUnit.extension(arg_45_1, "health_system")
@@ -1141,7 +1141,7 @@ function VersusTabUI._update_player_health(arg_45_0, arg_45_1, arg_45_2)
 	return var_45_11, var_45_12, var_45_14, var_45_7
 end
 
-function VersusTabUI._is_in_local_player_party(arg_46_0, arg_46_1)
+VersusTabUI._is_in_local_player_party = function (arg_46_0, arg_46_1)
 	local var_46_0 = Managers.party:get_local_player_party()
 
 	if var_46_0 then
@@ -1157,11 +1157,11 @@ function VersusTabUI._is_in_local_player_party(arg_46_0, arg_46_1)
 	return false
 end
 
-function VersusTabUI._get_opponent_party_id(arg_47_0)
+VersusTabUI._get_opponent_party_id = function (arg_47_0)
 	return arg_47_0._party_id == 1 and 2 or 1
 end
 
-function VersusTabUI._remove_ignore_chat_message_from_peer_id(arg_48_0, arg_48_1)
+VersusTabUI._remove_ignore_chat_message_from_peer_id = function (arg_48_0, arg_48_1)
 	if IS_WINDOWS then
 		Managers.chat.chat_gui:remove_ignore_peer_id(arg_48_1)
 	elseif IS_XB1 then
@@ -1169,7 +1169,7 @@ function VersusTabUI._remove_ignore_chat_message_from_peer_id(arg_48_0, arg_48_1
 	end
 end
 
-function VersusTabUI.add_respawn_counter_event(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+VersusTabUI.add_respawn_counter_event = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 	local var_49_0 = arg_49_1.peer_id
 	local var_49_1 = arg_49_0:_get_player_slot_by_peer_id(var_49_0)
 
@@ -1181,7 +1181,7 @@ function VersusTabUI.add_respawn_counter_event(arg_49_0, arg_49_1, arg_49_2, arg
 	end
 end
 
-function VersusTabUI._update_player_respawn_counter(arg_50_0, arg_50_1)
+VersusTabUI._update_player_respawn_counter = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_1.portrait_widget
 
 	if not var_50_0 then
@@ -1204,7 +1204,7 @@ function VersusTabUI._update_player_respawn_counter(arg_50_0, arg_50_1)
 	var_50_0.style.portrait.saturated = var_50_1.content.respawning
 end
 
-function VersusTabUI._update_player_status_portrait(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
+VersusTabUI._update_player_status_portrait = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
 	local var_51_0 = arg_51_1.portrait_widget
 
 	if not var_51_0 then
@@ -1235,7 +1235,7 @@ function VersusTabUI._update_player_status_portrait(arg_51_0, arg_51_1, arg_51_2
 	end
 end
 
-function VersusTabUI._get_player_slot_by_peer_id(arg_52_0, arg_52_1)
+VersusTabUI._get_player_slot_by_peer_id = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0._custom_game_slots
 
 	if var_52_0 then
@@ -1253,7 +1253,7 @@ function VersusTabUI._get_player_slot_by_peer_id(arg_52_0, arg_52_1)
 	end
 end
 
-function VersusTabUI._get_ping_texture_by_ping_value(arg_53_0, arg_53_1)
+VersusTabUI._get_ping_texture_by_ping_value = function (arg_53_0, arg_53_1)
 	if arg_53_1 <= 125 then
 		return "ping_icon_01", "low_ping_color"
 	elseif arg_53_1 > 125 and arg_53_1 <= 175 then
@@ -1263,7 +1263,7 @@ function VersusTabUI._get_ping_texture_by_ping_value(arg_53_0, arg_53_1)
 	end
 end
 
-function VersusTabUI._update_objectives(arg_54_0, arg_54_1, arg_54_2)
+VersusTabUI._update_objectives = function (arg_54_0, arg_54_1, arg_54_2)
 	if not arg_54_0._objective_system:is_active() then
 		return
 	end
@@ -1299,14 +1299,14 @@ function VersusTabUI._update_objectives(arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0:_update_objective_progress()
 end
 
-function VersusTabUI._update_current_objective(arg_55_0)
+VersusTabUI._update_current_objective = function (arg_55_0)
 	local var_55_0 = arg_55_0._widgets_by_name.score
 	local var_55_1 = arg_55_0._objective_system:current_objective_icon()
 
 	var_55_0.content.objective_icon = var_55_1
 end
 
-function VersusTabUI._update_objective_progress(arg_56_0)
+VersusTabUI._update_objective_progress = function (arg_56_0)
 	local var_56_0 = arg_56_0._objective_system:current_objective_progress() or 0
 	local var_56_1 = 0
 	local var_56_2 = 360 - var_56_1 * 2
@@ -1320,7 +1320,7 @@ function VersusTabUI._update_objective_progress(arg_56_0)
 	end
 end
 
-function VersusTabUI._update_round_start_timer(arg_57_0, arg_57_1, arg_57_2)
+VersusTabUI._update_round_start_timer = function (arg_57_0, arg_57_1, arg_57_2)
 	if arg_57_0._round_has_started then
 		return
 	end
@@ -1330,16 +1330,16 @@ function VersusTabUI._update_round_start_timer(arg_57_0, arg_57_1, arg_57_2)
 	end
 end
 
-function VersusTabUI._set_pre_round_timer(arg_58_0, arg_58_1)
+VersusTabUI._set_pre_round_timer = function (arg_58_0, arg_58_1)
 	arg_58_0._widgets_by_name.score.content.pre_round_timer = arg_58_1
 	arg_58_0._countdown_timer = arg_58_1
 end
 
-function VersusTabUI._set_round_starting_text(arg_59_0)
+VersusTabUI._set_round_starting_text = function (arg_59_0)
 	arg_59_0._widgets_by_name.round_starting_text.content.text = "Round Starting..."
 end
 
-function VersusTabUI._set_objective_text(arg_60_0, arg_60_1)
+VersusTabUI._set_objective_text = function (arg_60_0, arg_60_1)
 	local var_60_0 = arg_60_0._widgets_by_name.objective_text
 	local var_60_1 = var_60_0.content
 	local var_60_2 = var_60_0.style
@@ -1347,7 +1347,7 @@ function VersusTabUI._set_objective_text(arg_60_0, arg_60_1)
 	var_60_1.area_text_content = arg_60_1
 end
 
-function VersusTabUI._register_events(arg_61_0)
+VersusTabUI._register_events = function (arg_61_0)
 	local var_61_0 = Managers.state.event
 
 	if var_61_0 then
@@ -1357,7 +1357,7 @@ function VersusTabUI._register_events(arg_61_0)
 	end
 end
 
-function VersusTabUI._unregister_events(arg_62_0)
+VersusTabUI._unregister_events = function (arg_62_0)
 	local var_62_0 = Managers.state.event
 
 	if var_62_0 then
@@ -1367,27 +1367,27 @@ function VersusTabUI._unregister_events(arg_62_0)
 	end
 end
 
-function VersusTabUI.update_start_round_counter(arg_63_0, arg_63_1)
+VersusTabUI.update_start_round_counter = function (arg_63_0, arg_63_1)
 	arg_63_0:_set_pre_round_timer(arg_63_1)
 end
 
-function VersusTabUI._on_round_started(arg_64_0)
+VersusTabUI._on_round_started = function (arg_64_0)
 	arg_64_0._round_has_started = true
 
 	local var_64_0 = arg_64_0._widgets_by_name.score.content
 
 	if arg_64_0._custom_round_timer_active then
-		-- block empty
+		-- Nothing
 	end
 
 	var_64_0.pre_round_timer_done = true
 end
 
-function VersusTabUI.round_started(arg_65_0)
+VersusTabUI.round_started = function (arg_65_0)
 	arg_65_0:_on_round_started()
 end
 
-function VersusTabUI._set_active_scoring_side_color(arg_66_0, arg_66_1)
+VersusTabUI._set_active_scoring_side_color = function (arg_66_0, arg_66_1)
 	local var_66_0 = arg_66_1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local var_66_1 = arg_66_0._widgets_by_name.score
 
@@ -1396,7 +1396,7 @@ function VersusTabUI._set_active_scoring_side_color(arg_66_0, arg_66_1)
 	var_66_1.style.objective_icon.color = var_66_0
 end
 
-function VersusTabUI._is_dark_pact(arg_67_0)
+VersusTabUI._is_dark_pact = function (arg_67_0)
 	local var_67_0 = arg_67_0._party_id
 	local var_67_1 = Managers.party:get_party(var_67_0)
 	local var_67_2 = Managers.state.side.side_by_party[var_67_1]
@@ -1404,13 +1404,13 @@ function VersusTabUI._is_dark_pact(arg_67_0)
 	return var_67_2 and var_67_2:name() == "dark_pact"
 end
 
-function VersusTabUI._get_current_set(arg_68_0)
+VersusTabUI._get_current_set = function (arg_68_0)
 	local var_68_0 = arg_68_0._win_conditions:get_current_round()
 
 	return math.round(var_68_0 / 2)
 end
 
-function VersusTabUI._setup_custom_settings_scrollbar(arg_69_0, arg_69_1, arg_69_2)
+VersusTabUI._setup_custom_settings_scrollbar = function (arg_69_0, arg_69_1, arg_69_2)
 	local var_69_0 = arg_69_1 * arg_69_2 - var_0_0.scenegraph_definition.settings_container.size[2]
 
 	if var_69_0 > 0 then

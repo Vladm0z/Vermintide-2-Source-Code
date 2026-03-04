@@ -2,7 +2,7 @@
 
 EnemyCharacterStateWalking = class(EnemyCharacterStateWalking, EnemyCharacterState)
 
-function EnemyCharacterStateWalking.init(arg_1_0, arg_1_1, arg_1_2)
+EnemyCharacterStateWalking.init = function (arg_1_0, arg_1_1, arg_1_2)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, arg_1_2 or "walking")
 
 	local var_1_0 = arg_1_1
@@ -12,7 +12,7 @@ function EnemyCharacterStateWalking.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function EnemyCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateWalking.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0._unit
 	local var_2_1 = arg_2_0._input_extension
 	local var_2_2 = arg_2_0._first_person_extension
@@ -56,7 +56,7 @@ function EnemyCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	arg_2_0.is_bot = var_2_8
 end
 
-function EnemyCharacterStateWalking.common_state_changes(arg_3_0)
+EnemyCharacterStateWalking.common_state_changes = function (arg_3_0)
 	arg_3_0:handle_disabled_ghost_mode()
 
 	local var_3_0 = arg_3_0._csm
@@ -155,7 +155,7 @@ function EnemyCharacterStateWalking.common_state_changes(arg_3_0)
 	return false
 end
 
-function EnemyCharacterStateWalking.common_movement(arg_4_0, arg_4_1, arg_4_2)
+EnemyCharacterStateWalking.common_movement = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0.current_movement_speed_scale
 	local var_4_2 = arg_4_0._first_person_extension
@@ -263,7 +263,7 @@ function EnemyCharacterStateWalking.common_movement(arg_4_0, arg_4_1, arg_4_2)
 	return false
 end
 
-function EnemyCharacterStateWalking.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+EnemyCharacterStateWalking.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_0:common_state_changes() then
 		return
 	end

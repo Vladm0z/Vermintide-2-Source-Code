@@ -4,17 +4,17 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTHomingFlightAction = class(BTHomingFlightAction, BTNode)
 
-function BTHomingFlightAction.init(arg_1_0, ...)
+BTHomingFlightAction.init = function (arg_1_0, ...)
 	BTHomingFlightAction.super.init(arg_1_0, ...)
 end
 
 BTHomingFlightAction.name = "BTHomingFlightAction"
 
-function BTHomingFlightAction.enter(arg_2_0)
+BTHomingFlightAction.enter = function (arg_2_0)
 	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-function BTHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTHomingFlightAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.homing_target_unit
 
 	if var_3_0 then
@@ -24,7 +24,7 @@ function BTHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4,
 	end
 end
 
-function BTHomingFlightAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTHomingFlightAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_2.homing_target_unit
 	local var_4_1 = arg_4_2.target_unit
 

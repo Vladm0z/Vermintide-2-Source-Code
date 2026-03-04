@@ -234,7 +234,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "prefix_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_2_0)
+						content_check_function = function (arg_2_0)
 							return arg_2_0.prefix_text ~= ""
 						end
 					},
@@ -243,7 +243,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "prefix_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_3_0)
+						content_check_function = function (arg_3_0)
 							return arg_3_0.prefix_text ~= ""
 						end
 					},
@@ -252,7 +252,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "suffix_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_4_0)
+						content_check_function = function (arg_4_0)
 							return arg_4_0.suffix_text ~= ""
 						end
 					},
@@ -261,7 +261,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "suffix_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_5_0)
+						content_check_function = function (arg_5_0)
 							return arg_5_0.suffix_text ~= ""
 						end
 					},
@@ -270,7 +270,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "button_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_6_0)
+						content_check_function = function (arg_6_0)
 							return arg_6_0.button_text ~= ""
 						end
 					},
@@ -279,7 +279,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "text",
 						text_id = "button_text",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_7_0)
+						content_check_function = function (arg_7_0)
 							return arg_7_0.button_text ~= ""
 						end
 					},
@@ -287,7 +287,7 @@ local function var_0_4(arg_1_0, arg_1_1)
 						pass_type = "multi_texture",
 						style_id = "icon",
 						texture_id = "icon",
-						content_check_function = function(arg_8_0)
+						content_check_function = function (arg_8_0)
 							local var_8_0 = arg_8_0.icon
 
 							return var_8_0 and #var_8_0 > 0
@@ -447,7 +447,7 @@ local var_0_5 = {
 					texture_id = "completed_texture",
 					style_id = "completed_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.completed
 					end
 				},
@@ -455,7 +455,7 @@ local var_0_5 = {
 					texture_id = "completed_texture",
 					style_id = "completed_texture_shadow",
 					pass_type = "texture",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.completed
 					end
 				},
@@ -483,7 +483,7 @@ local var_0_5 = {
 					style_id = "unassigned",
 					pass_type = "text",
 					text_id = "unassigned_id",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.unassigned
 					end
 				},
@@ -491,7 +491,7 @@ local var_0_5 = {
 					style_id = "unassigned_shadow",
 					pass_type = "text",
 					text_id = "unassigned_id",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.unassigned
 					end
 				},
@@ -499,7 +499,7 @@ local var_0_5 = {
 					texture_id = "background",
 					style_id = "unassigned_background",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.unassigned
 					end
 				}

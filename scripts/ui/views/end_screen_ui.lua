@@ -13,7 +13,7 @@ local var_0_4 = false
 
 EndScreenUI = class(EndScreenUI)
 
-function EndScreenUI.init(arg_1_0, arg_1_1)
+EndScreenUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.world_manager = arg_1_1.world_manager
 	arg_1_0.render_settings = {
@@ -38,13 +38,13 @@ function EndScreenUI.init(arg_1_0, arg_1_1)
 	arg_1_0:create_ui_elements()
 end
 
-function EndScreenUI.destroy(arg_2_0)
+EndScreenUI.destroy = function (arg_2_0)
 	arg_2_0.ui_animator = nil
 
 	GarbageLeakDetector.register_object(arg_2_0, "EndScreenUI")
 end
 
-function EndScreenUI.create_ui_elements(arg_3_0)
+EndScreenUI.create_ui_elements = function (arg_3_0)
 	var_0_4 = false
 	arg_3_0.draw_flags = {
 		draw_text = false,
@@ -59,11 +59,11 @@ function EndScreenUI.create_ui_elements(arg_3_0)
 	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_2)
 end
 
-function EndScreenUI.input_service(arg_4_0)
+EndScreenUI.input_service = function (arg_4_0)
 	return arg_4_0.input_manager:get_service("end_screen_ui")
 end
 
-function EndScreenUI.on_enter(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+EndScreenUI.on_enter = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = var_0_3[arg_5_1]
 
 	fassert(var_5_0, "Unknown screen name: %s", arg_5_1)
@@ -91,7 +91,7 @@ function EndScreenUI.on_enter(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function EndScreenUI._create_screen(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+EndScreenUI._create_screen = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0.is_active = true
 
 	arg_6_0:_fade_in_background()
@@ -104,7 +104,7 @@ function EndScreenUI._create_screen(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0._screen:on_fade_in()
 end
 
-function EndScreenUI.on_exit(arg_7_0)
+EndScreenUI.on_exit = function (arg_7_0)
 	local var_7_0 = arg_7_0.draw_flags
 
 	arg_7_0.is_active = false
@@ -120,21 +120,21 @@ function EndScreenUI.on_exit(arg_7_0)
 	Managers.music:unduck_sounds()
 end
 
-function EndScreenUI.on_complete(arg_8_0)
+EndScreenUI.on_complete = function (arg_8_0)
 	arg_8_0.is_complete = true
 end
 
-function EndScreenUI.fade_in_complete(arg_9_0)
+EndScreenUI.fade_in_complete = function (arg_9_0)
 	return arg_9_0._fade_in_completed
 end
 
-function EndScreenUI._fade_in_background(arg_10_0)
+EndScreenUI._fade_in_background = function (arg_10_0)
 	arg_10_0.background_in_anim_id = arg_10_0.ui_animator:start_animation("fade_in_background", {
 		arg_10_0.background_rect_widget
 	}, var_0_1, arg_10_0.draw_flags)
 end
 
-function EndScreenUI.update(arg_11_0, arg_11_1, arg_11_2)
+EndScreenUI.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if var_0_4 then
 		arg_11_0:create_ui_elements()
 	end
@@ -177,7 +177,7 @@ function EndScreenUI.update(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:draw(arg_11_1)
 end
 
-function EndScreenUI.draw(arg_12_0, arg_12_1)
+EndScreenUI.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.input_manager:get_service("end_screen_ui")
@@ -194,6 +194,6 @@ function EndScreenUI.draw(arg_12_0, arg_12_1)
 	arg_12_0._screen:draw(arg_12_1)
 end
 
-function EndScreenUI.play_sound(arg_13_0, arg_13_1)
+EndScreenUI.play_sound = function (arg_13_0, arg_13_1)
 	WwiseWorld.trigger_event(arg_13_0.wwise_world, arg_13_1)
 end

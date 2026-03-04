@@ -2,7 +2,7 @@
 
 AiBreedSnippets = AiBreedSnippets or {}
 
-function AiBreedSnippets.on_beastmen_bestigor_spawn(arg_1_0, arg_1_1)
+AiBreedSnippets.on_beastmen_bestigor_spawn = function (arg_1_0, arg_1_1)
 	arg_1_1.charge_astar_timer = Managers.time:time("game")
 	arg_1_1.num_charges_targeting_target = 0
 	arg_1_1.target_is_charged = false
@@ -30,7 +30,7 @@ function AiBreedSnippets.on_beastmen_bestigor_spawn(arg_1_0, arg_1_1)
 	GwNavTraverseLogic.set_navtag_layer_cost_table(var_1_4, var_1_2)
 end
 
-function AiBreedSnippets.on_beastmen_bestigor_update(arg_2_0, arg_2_1, arg_2_2)
+AiBreedSnippets.on_beastmen_bestigor_update = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0
 	local var_2_1 = arg_2_1.navigation_extension:nav_cost_map_cost_table("charge")
 	local var_2_2 = arg_2_1.navigation_extension:get_reusable_traverse_logic("charge", var_2_1)
@@ -79,7 +79,7 @@ function AiBreedSnippets.on_beastmen_bestigor_update(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function AiBreedSnippets.on_beastmen_standard_bearer_spawn(arg_3_0, arg_3_1)
+AiBreedSnippets.on_beastmen_standard_bearer_spawn = function (arg_3_0, arg_3_1)
 	arg_3_1.switching_weapons = 1
 	arg_3_1.buff_extension = ScriptUnit.extension(arg_3_0, "buff_system")
 
@@ -180,13 +180,13 @@ function AiBreedSnippets.on_beastmen_standard_bearer_spawn(arg_3_0, arg_3_1)
 	GwNavTraverseLogic.set_navtag_layer_cost_table(var_3_28, var_3_26)
 end
 
-function AiBreedSnippets.on_beastmen_standard_bearer_husk_spawn(arg_4_0)
+AiBreedSnippets.on_beastmen_standard_bearer_husk_spawn = function (arg_4_0)
 	local var_4_0 = Managers.world:world("level_world")
 
 	WwiseUtils.trigger_unit_event(var_4_0, "Play_enemy_beastmen_standar_chanting_loop", arg_4_0, 0)
 end
 
-function AiBreedSnippets.on_beastmen_standard_bearer_update(arg_5_0, arg_5_1, arg_5_2)
+AiBreedSnippets.on_beastmen_standard_bearer_update = function (arg_5_0, arg_5_1, arg_5_2)
 	if HEALTH_ALIVE[arg_5_1.standard_unit] then
 		local var_5_0 = Unit.local_position(arg_5_0, 0)
 		local var_5_1 = Unit.local_position(arg_5_1.standard_unit, 0)
@@ -244,19 +244,19 @@ function AiBreedSnippets.on_beastmen_standard_bearer_update(arg_5_0, arg_5_1, ar
 	end
 end
 
-function AiBreedSnippets.on_beastmen_standard_bearer_death(arg_6_0, arg_6_1)
+AiBreedSnippets.on_beastmen_standard_bearer_death = function (arg_6_0, arg_6_1)
 	if arg_6_1.triggered_standard_chanting_sound then
 		Managers.state.entity:system("audio_system"):play_audio_unit_event("Stop_enemy_beastmen_standar_chanting_loop", arg_6_0)
 	end
 end
 
-function AiBreedSnippets.on_beastmen_ungor_archer_spawn(arg_7_0, arg_7_1)
+AiBreedSnippets.on_beastmen_ungor_archer_spawn = function (arg_7_0, arg_7_1)
 	arg_7_1.archer_broadphase_results = {}
 	arg_7_1.physics_world = World.get_data(arg_7_1.world, "physics_world")
 	arg_7_1.pause_line_of_sight_t = Managers.time:time("game") + Math.random_range(4, 8)
 end
 
-function AiBreedSnippets.on_beastmen_ungor_archer_death(arg_8_0, arg_8_1)
+AiBreedSnippets.on_beastmen_ungor_archer_death = function (arg_8_0, arg_8_1)
 	if arg_8_1.is_volley_leader then
 		local var_8_0 = arg_8_1.nearby_archers
 		local var_8_1 = #var_8_0

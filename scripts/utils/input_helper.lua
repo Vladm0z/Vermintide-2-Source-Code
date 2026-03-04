@@ -2,7 +2,7 @@
 
 InputUtils = InputUtils or {}
 
-function InputUtils.keymaps_key_approved(arg_1_0)
+InputUtils.keymaps_key_approved = function (arg_1_0)
 	local var_1_0 = PLATFORM
 
 	if IS_WINDOWS then
@@ -14,10 +14,10 @@ function InputUtils.keymaps_key_approved(arg_1_0)
 	end
 end
 
-function InputUtils.get_platform_keymaps(arg_2_0, arg_2_1)
+InputUtils.get_platform_keymaps = function (arg_2_0, arg_2_1)
 	return arg_2_0[arg_2_1 or PLATFORM]
 end
 
-function InputUtils.get_platform_filters(arg_3_0, arg_3_1)
+InputUtils.get_platform_filters = function (arg_3_0, arg_3_1)
 	return arg_3_0[arg_3_1 or PLATFORM]
 end

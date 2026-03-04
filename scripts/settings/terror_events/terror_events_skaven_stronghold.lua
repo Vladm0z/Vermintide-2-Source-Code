@@ -46,7 +46,7 @@ local var_0_1 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_0("skaven_slave") < 6
 			end
 		},
@@ -78,13 +78,13 @@ local var_0_1 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_0("skaven_storm_vermin_warlord") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_0("skaven_storm_vermin_warlord") < 1
 			end
 		},

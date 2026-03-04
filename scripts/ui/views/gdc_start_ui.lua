@@ -108,7 +108,7 @@ local var_0_1 = {
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_1_0)
+					content_check_function = function (arg_1_0)
 						return arg_1_0.text ~= ""
 					end
 				},
@@ -116,7 +116,7 @@ local var_0_1 = {
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.text
 					end
 				},
@@ -124,7 +124,7 @@ local var_0_1 = {
 					style_id = "prefix_text",
 					pass_type = "text",
 					text_id = "prefix_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.text
 					end
 				}
@@ -227,7 +227,7 @@ local var_0_1 = {
 
 GDCStartUI = class(GDCStartUI)
 
-function GDCStartUI.init(arg_4_0, arg_4_1)
+GDCStartUI.init = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_renderer = arg_4_1.ui_renderer
 	arg_4_0.ingame_ui = arg_4_1.ingame_ui
 	arg_4_0.camera_manager = arg_4_1.camera_manager
@@ -243,7 +243,7 @@ function GDCStartUI.init(arg_4_0, arg_4_1)
 	arg_4_0:create_ui_elements()
 end
 
-function GDCStartUI.create_ui_elements(arg_5_0)
+GDCStartUI.create_ui_elements = function (arg_5_0)
 	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_5_0.logo_widget = UIWidget.init(var_0_1.logo)
 	arg_5_0.input_widget = UIWidget.init(var_0_1.input)
@@ -257,7 +257,7 @@ function GDCStartUI.create_ui_elements(arg_5_0)
 	arg_5_0.ui_animations.button_texture_pulse = UIAnimation.init(UIAnimation.pulse_animation, var_5_0.icon_styles.color, 1, 100, 255, 2)
 end
 
-function GDCStartUI.update(arg_6_0, arg_6_1)
+GDCStartUI.update = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.peer_id
 	local var_6_1 = arg_6_0.player_manager:player_from_peer_id(var_6_0).player_unit
 
@@ -284,7 +284,7 @@ function GDCStartUI.update(arg_6_0, arg_6_1)
 	arg_6_0:draw(arg_6_1)
 end
 
-function GDCStartUI.draw(arg_7_0, arg_7_1)
+GDCStartUI.draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager:get_service("cutscene")
@@ -299,22 +299,22 @@ function GDCStartUI.draw(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_0)
 end
 
-function GDCStartUI.destroy(arg_8_0)
+GDCStartUI.destroy = function (arg_8_0)
 	arg_8_0.network_event_delegate:unregister(arg_8_0)
 	rawset(_G, "GDCStartUI_pointer", nil)
 	GarbageLeakDetector.register_object(arg_8_0, "GDCStartUI")
 end
 
-function GDCStartUI.start_gdc_intro(arg_9_0)
+GDCStartUI.start_gdc_intro = function (arg_9_0)
 	arg_9_0.draw_intro = true
 end
 
-function GDCStartUI.end_gdc_intro(arg_10_0)
+GDCStartUI.end_gdc_intro = function (arg_10_0)
 	arg_10_0.draw_intro = nil
 	arg_10_0.intro_complete = true
 end
 
-function GDCStartUI.rpc_on_skip_gdc_intro(arg_11_0, arg_11_1)
+GDCStartUI.rpc_on_skip_gdc_intro = function (arg_11_0, arg_11_1)
 	if Managers.player.is_server then
 		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_on_skip_gdc_intro", arg_11_0.peer_id)
 	end
@@ -335,7 +335,7 @@ function GDCStartUI.rpc_on_skip_gdc_intro(arg_11_0, arg_11_1)
 	end
 end
 
-function GDCStartUI.check_start_input(arg_12_0, arg_12_1)
+GDCStartUI.check_start_input = function (arg_12_0, arg_12_1)
 	if arg_12_0.input_pressed or not arg_12_0.input_widget then
 		return
 	end
@@ -373,7 +373,7 @@ function GDCStartUI.check_start_input(arg_12_0, arg_12_1)
 	end
 end
 
-function GDCStartUI.set_input_text(arg_13_0, arg_13_1)
+GDCStartUI.set_input_text = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.ui_renderer
 	local var_13_1 = arg_13_0.ui_scenegraph
 	local var_13_2 = arg_13_0.input_widget
@@ -459,7 +459,7 @@ function GDCStartUI.set_input_text(arg_13_0, arg_13_1)
 	var_13_1.input.position[1] = -((var_13_26 + var_13_15) * 0.5) + var_13_28
 end
 
-function GDCStartUI.get_text_width(arg_14_0, arg_14_1, arg_14_2)
+GDCStartUI.get_text_width = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0, var_14_1 = UIFontByResolution(arg_14_1)
 	local var_14_2, var_14_3, var_14_4 = UIRenderer.text_size(arg_14_0.ui_renderer, arg_14_2, var_14_0[1], var_14_1)
 

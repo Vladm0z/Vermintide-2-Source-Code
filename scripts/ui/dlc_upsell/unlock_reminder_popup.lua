@@ -4,7 +4,7 @@ require("scripts/ui/dlc_upsell/common_popup")
 
 UnlockReminderPopup = class(UnlockReminderPopup, CommonPopup)
 
-function UnlockReminderPopup.create_ui_elements(arg_1_0)
+UnlockReminderPopup.create_ui_elements = function (arg_1_0)
 	UnlockReminderPopup.super.create_ui_elements(arg_1_0)
 
 	local var_1_0 = arg_1_0._common_settings
@@ -20,7 +20,7 @@ function UnlockReminderPopup.create_ui_elements(arg_1_0)
 	end
 end
 
-function UnlockReminderPopup.update(arg_2_0, arg_2_1)
+UnlockReminderPopup.update = function (arg_2_0, arg_2_1)
 	UnlockReminderPopup.super.update(arg_2_0, arg_2_1)
 
 	if arg_2_0:should_show() and not arg_2_0._has_widget_been_closed then
@@ -28,7 +28,7 @@ function UnlockReminderPopup.update(arg_2_0, arg_2_1)
 	end
 end
 
-function UnlockReminderPopup._handle_input(arg_3_0, arg_3_1)
+UnlockReminderPopup._handle_input = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0:_get_input_service()
 	local var_3_1 = arg_3_0._widgets_by_name
 
@@ -44,23 +44,23 @@ function UnlockReminderPopup._handle_input(arg_3_0, arg_3_1)
 	end
 end
 
-function UnlockReminderPopup.show(arg_4_0)
+UnlockReminderPopup.show = function (arg_4_0)
 	UnlockReminderPopup.super.show(arg_4_0)
 	arg_4_0:_start_transition_animation("on_enter")
 end
 
-function UnlockReminderPopup.hide(arg_5_0)
+UnlockReminderPopup.hide = function (arg_5_0)
 	arg_5_0._exit_anim_id = arg_5_0:_start_transition_animation("on_exit")
 end
 
-function UnlockReminderPopup._start_transition_animation(arg_6_0, arg_6_1)
+UnlockReminderPopup._start_transition_animation = function (arg_6_0, arg_6_1)
 	return arg_6_0._ui_animator:start_animation(arg_6_1, nil, arg_6_0._common_settings.definitions.scenegraph_definition, {
 		wwise_world = arg_6_0._wwise_world,
 		render_settings = arg_6_0._render_settings
 	})
 end
 
-function UnlockReminderPopup._update_animations(arg_7_0, arg_7_1)
+UnlockReminderPopup._update_animations = function (arg_7_0, arg_7_1)
 	UnlockReminderPopup.super._update_animations(arg_7_0, arg_7_1)
 
 	if arg_7_0._exit_anim_id and arg_7_0._ui_animator:is_animation_completed(arg_7_0._exit_anim_id) then
@@ -72,6 +72,6 @@ function UnlockReminderPopup._update_animations(arg_7_0, arg_7_1)
 	UIWidgetUtils.animate_default_button(var_7_0.ok_button, arg_7_1)
 end
 
-function UnlockReminderPopup.should_show(arg_8_0)
+UnlockReminderPopup.should_show = function (arg_8_0)
 	return arg_8_0._ui_context.is_in_inn and Managers.popup:has_popup() == false and arg_8_0._ui_context.ingame_ui.current_view == nil and arg_8_0._ui_context.ingame_ui.has_left_menu and not arg_8_0._is_visible
 end

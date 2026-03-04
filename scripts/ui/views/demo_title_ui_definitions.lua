@@ -666,7 +666,7 @@ local function var_0_12(arg_1_0, arg_1_1)
 					style_id = "video_style",
 					pass_type = "video",
 					content_id = "video_content",
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						if not arg_2_0.parent.video_player then
 							return false
 						end
@@ -731,7 +731,7 @@ local function var_0_13(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						arg_4_1.text_color[1] = 160 + math.sin(Managers.time:time("ui") * 5) * 95
 
 						return true

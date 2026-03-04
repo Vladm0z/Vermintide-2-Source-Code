@@ -51,7 +51,7 @@ local function var_0_4(arg_1_0)
 	end
 end
 
-function StateLoading.on_enter(arg_2_0, arg_2_1)
+StateLoading.on_enter = function (arg_2_0, arg_2_1)
 	print("[Gamestate] Enter state StateLoading")
 
 	local var_2_0 = arg_2_0.parent.loading_context
@@ -164,21 +164,21 @@ function StateLoading.on_enter(arg_2_0, arg_2_1)
 	Managers.music:unduck_sounds(var_2_5)
 end
 
-function StateLoading._setup_state_managers(arg_3_0)
+StateLoading._setup_state_managers = function (arg_3_0)
 	Managers.state.event = EventManager:new(Managers.persistent_event)
 end
 
-function StateLoading.set_loadout_resync_state(arg_4_0, arg_4_1)
+StateLoading.set_loadout_resync_state = function (arg_4_0, arg_4_1)
 	fassert(table.contains(StateLoading.LoadoutResyncStates, arg_4_1), "[StateLoading] State %s not found in LoadoutResyncStates", tostring(arg_4_1))
 
 	arg_4_0._loadout_resync_state = arg_4_1
 end
 
-function StateLoading.loadout_resync_state(arg_5_0)
+StateLoading.loadout_resync_state = function (arg_5_0)
 	return arg_5_0._loadout_resync_state
 end
 
-function StateLoading._setup_input(arg_6_0)
+StateLoading._setup_input = function (arg_6_0)
 	local var_6_0 = InputManager:new()
 
 	Managers.input = var_6_0
@@ -201,7 +201,7 @@ function StateLoading._setup_input(arg_6_0)
 	var_6_0:map_device_to_service("deus_run_stats_view", "gamepad")
 end
 
-function StateLoading._parse_loading_context(arg_7_0)
+StateLoading._parse_loading_context = function (arg_7_0)
 	local var_7_0 = arg_7_0.parent.loading_context
 
 	if var_7_0 then
@@ -216,21 +216,21 @@ function StateLoading._parse_loading_context(arg_7_0)
 	end
 end
 
-function StateLoading._setup_garbage_collection(arg_8_0)
+StateLoading._setup_garbage_collection = function (arg_8_0)
 	local var_8_0 = true
 
 	GarbageLeakDetector.run_leak_detection(var_8_0)
 	GarbageLeakDetector.register_object(arg_8_0, "StateLoadingRunning")
 end
 
-function StateLoading._setup_world(arg_9_0)
+StateLoading._setup_world = function (arg_9_0)
 	arg_9_0._world_name = "loading_world"
 	arg_9_0._viewport_name = "loading_viewport"
 	arg_9_0._world = Managers.world:create_world(arg_9_0._world_name, GameSettingsDevelopment.default_environment, nil, nil, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 	arg_9_0._viewport = ScriptWorld.create_viewport(arg_9_0._world, arg_9_0._viewport_name, "overlay", 1)
 end
 
-function StateLoading._setup_init_network_view(arg_10_0)
+StateLoading._setup_init_network_view = function (arg_10_0)
 	if Development.parameter("goto_endoflevel") and false then
 		require("scripts/game_state/state_loading")
 
@@ -247,7 +247,7 @@ function StateLoading._setup_init_network_view(arg_10_0)
 	end
 end
 
-function StateLoading._setup_end_of_level_ui(arg_11_0)
+StateLoading._setup_end_of_level_ui = function (arg_11_0)
 	if arg_11_0._level_end_view_context then
 		arg_11_0._level_end_view_context.lobby = Managers.lobby:query_lobby("matchmaking_session_lobby")
 		arg_11_0._level_end_view_wrappers = {}
@@ -260,7 +260,7 @@ function StateLoading._setup_end_of_level_ui(arg_11_0)
 	end
 end
 
-function StateLoading._setup_first_time_ui(arg_12_0)
+StateLoading._setup_first_time_ui = function (arg_12_0)
 	local var_12_0 = arg_12_0.parent.loading_context
 
 	if (var_12_0.first_time or var_12_0.gamma_correct or var_12_0.play_trailer) and not GameSettingsDevelopment.disable_intro_trailer and not script_data.skip_intro_trailer then
@@ -322,15 +322,15 @@ function StateLoading._setup_first_time_ui(arg_12_0)
 	var_12_0.first_time = nil
 end
 
-function StateLoading._unmute_all_world_sounds(arg_13_0)
+StateLoading._unmute_all_world_sounds = function (arg_13_0)
 	Managers.music:trigger_event("unmute_all_world_sounds")
 end
 
-function StateLoading._get_game_difficulty(arg_14_0)
+StateLoading._get_game_difficulty = function (arg_14_0)
 	return Managers.level_transition_handler:get_current_difficulty()
 end
 
-function StateLoading._create_loading_view(arg_15_0, arg_15_1, arg_15_2)
+StateLoading._create_loading_view = function (arg_15_0, arg_15_1, arg_15_2)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -352,7 +352,7 @@ function StateLoading._create_loading_view(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0.parent.loading_context.return_to_pc_menu = nil
 end
 
-function StateLoading._trigger_loading_view(arg_16_0, arg_16_1, arg_16_2)
+StateLoading._trigger_loading_view = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_1 = arg_16_1 or Managers.mechanism:default_level_key()
 
 	if not arg_16_0._loading_music_triggered then
@@ -400,7 +400,7 @@ function StateLoading._trigger_loading_view(arg_16_0, arg_16_1, arg_16_2)
 	Managers.transition:force_fade_in()
 end
 
-function StateLoading.setup_loading_view(arg_17_0, arg_17_1)
+StateLoading.setup_loading_view = function (arg_17_0, arg_17_1)
 	arg_17_1 = arg_17_1 or Managers.mechanism:default_level_key()
 	arg_17_0._level_key = arg_17_1
 
@@ -474,11 +474,11 @@ function StateLoading.setup_loading_view(arg_17_0, arg_17_1)
 	arg_17_0._loading_view_setup_is_done = true
 end
 
-function StateLoading.loading_view_setup_done(arg_18_0)
+StateLoading.loading_view_setup_done = function (arg_18_0)
 	return arg_18_0._loading_view_setup_is_done
 end
 
-function StateLoading.setup_menu_assets(arg_19_0)
+StateLoading.setup_menu_assets = function (arg_19_0)
 	local var_19_0 = "menu_assets"
 	local var_19_1 = "resource_packages/menu_assets"
 	local var_19_2 = Managers.package
@@ -499,11 +499,11 @@ function StateLoading.setup_menu_assets(arg_19_0)
 	arg_19_0._menu_setup_done = true
 end
 
-function StateLoading.menu_assets_setup_done(arg_20_0)
+StateLoading.menu_assets_setup_done = function (arg_20_0)
 	return arg_20_0._menu_setup_done
 end
 
-function StateLoading.cb_loading_screen_loaded(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+StateLoading.cb_loading_screen_loaded = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	if arg_21_0._first_time_view or arg_21_0._level_end_view_wrappers then
 		local var_21_0 = arg_21_0:_get_game_difficulty()
 
@@ -515,7 +515,7 @@ function StateLoading.cb_loading_screen_loaded(arg_21_0, arg_21_1, arg_21_2, arg
 	end
 end
 
-function StateLoading.cb_loading_screen_change_fade(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+StateLoading.cb_loading_screen_change_fade = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0:_get_game_difficulty()
 
 	arg_22_0._loading_view:texture_resource_loaded(arg_22_1, arg_22_2, var_22_0, arg_22_0._loading_material_path, arg_22_0._loading_material_name, arg_22_0._weave_data)
@@ -526,7 +526,7 @@ function StateLoading.cb_loading_screen_change_fade(arg_22_0, arg_22_1, arg_22_2
 	end
 end
 
-function StateLoading._trigger_sound_events(arg_23_0, arg_23_1)
+StateLoading._trigger_sound_events = function (arg_23_0, arg_23_1)
 	local var_23_0 = LevelSettings[arg_23_1].loading_screen_wwise_events
 	local var_23_1
 
@@ -572,7 +572,7 @@ function StateLoading._trigger_sound_events(arg_23_0, arg_23_1)
 	end
 end
 
-function StateLoading._trigger_weave_sound_events(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+StateLoading._trigger_weave_sound_events = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0
 	local var_24_1 = LevelSettings[arg_24_2]
 	local var_24_2 = arg_24_1.wind
@@ -619,7 +619,7 @@ function StateLoading._trigger_weave_sound_events(arg_24_0, arg_24_1, arg_24_2, 
 	return var_24_0
 end
 
-function StateLoading._setup_state_machine(arg_25_0)
+StateLoading._setup_state_machine = function (arg_25_0)
 	local var_25_0 = {
 		world = arg_25_0._world,
 		viewport = arg_25_0._viewport,
@@ -638,7 +638,7 @@ function StateLoading._setup_state_machine(arg_25_0)
 	end
 end
 
-function StateLoading._handle_do_reload(arg_26_0)
+StateLoading._handle_do_reload = function (arg_26_0)
 	if arg_26_0.wwise_playing_id then
 		Managers.music:stop_event_id(arg_26_0.wwise_playing_id)
 
@@ -658,11 +658,11 @@ function StateLoading._handle_do_reload(arg_26_0)
 	end
 end
 
-function StateLoading.set_invitation_error(arg_27_0)
+StateLoading.set_invitation_error = function (arg_27_0)
 	arg_27_0._has_invitation_error = true
 end
 
-function StateLoading.update(arg_28_0, arg_28_1, arg_28_2)
+StateLoading.update = function (arg_28_0, arg_28_1, arg_28_2)
 	if script_data.subtitle_debug then
 		arg_28_0:_handle_do_reload()
 	end
@@ -793,7 +793,7 @@ function StateLoading.update(arg_28_0, arg_28_1, arg_28_2)
 	return arg_28_0:_try_next_state(arg_28_1)
 end
 
-function StateLoading._update_network(arg_29_0, arg_29_1, arg_29_2)
+StateLoading._update_network = function (arg_29_0, arg_29_1, arg_29_2)
 	if arg_29_0._network_server then
 		arg_29_0._network_server:update(arg_29_1, arg_29_2)
 
@@ -811,7 +811,7 @@ function StateLoading._update_network(arg_29_0, arg_29_1, arg_29_2)
 			arg_29_0._in_post_game_popup_id = Managers.popup:queue_popup(Localize("popup_is_in_post_game"), Localize("matchmaking_status_waiting_for_host"), "return_to_inn", Localize("return_to_inn"))
 			arg_29_0._in_post_game_popup_shown = true
 
-			Managers.popup:activate_timer(arg_29_0._in_post_game_popup_id, 200, "timeout", "center", false, function(arg_30_0)
+			Managers.popup:activate_timer(arg_29_0._in_post_game_popup_id, 200, "timeout", "center", false, function (arg_30_0)
 				return string.format(Localize("timer_max_time") .. ": %.2d:%.2d", arg_30_0 / 60 % 60, arg_30_0 % 60)
 			end, 28)
 		elseif not arg_29_0._network_client:is_in_post_game() and arg_29_0._in_post_game_popup_id then
@@ -845,13 +845,13 @@ function StateLoading._update_network(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function StateLoading._get_lost_connection_text_id(arg_31_0)
+StateLoading._get_lost_connection_text_id = function (arg_31_0)
 	local var_31_0
 
 	return (IS_WINDOWS or IS_LINUX) and (rawget(_G, "Steam") and "failure_start_no_steam" or "broken_connection") or IS_XB1 and (not Network.xboxlive_client_exists() and "failure_start_xbox_live_client" or "failure_start_xbox_lobby_create") or IS_PS4 and "failure_psn_client_error" or "failure_start"
 end
 
-function StateLoading._update_lobbies(arg_32_0, arg_32_1, arg_32_2)
+StateLoading._update_lobbies = function (arg_32_0, arg_32_1, arg_32_2)
 	if not arg_32_0:_update_loading_global_packages() then
 		return
 	end
@@ -940,7 +940,7 @@ function StateLoading._update_lobbies(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function StateLoading._verify_joined_lobby(arg_33_0, arg_33_1, arg_33_2)
+StateLoading._verify_joined_lobby = function (arg_33_0, arg_33_1, arg_33_2)
 	if IS_XB1 and not arg_33_0:_update_xbox_lobby_data(arg_33_1, arg_33_2) then
 		return
 	end
@@ -1063,7 +1063,7 @@ end
 
 local var_0_5 = 4
 
-function StateLoading._update_xbox_lobby_data(arg_34_0, arg_34_1, arg_34_2)
+StateLoading._update_xbox_lobby_data = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._xbox_lobby_data_state
 
 	if var_34_0 == "SET_COOLDOWN" then
@@ -1086,11 +1086,11 @@ function StateLoading._update_xbox_lobby_data(arg_34_0, arg_34_1, arg_34_2)
 	return var_34_0 == "DONE"
 end
 
-function StateLoading.lobby_verified(arg_35_0)
+StateLoading.lobby_verified = function (arg_35_0)
 	return arg_35_0._lobby_verified
 end
 
-function StateLoading._destroy_lobby_client(arg_36_0)
+StateLoading._destroy_lobby_client = function (arg_36_0)
 	Managers.lobby:destroy_lobby("matchmaking_session_lobby")
 	Managers.account:set_current_lobby(nil)
 
@@ -1109,7 +1109,7 @@ function StateLoading._destroy_lobby_client(arg_36_0)
 	arg_36_0._wanted_state = StateTitleScreen
 end
 
-function StateLoading._destroy_lobby_host(arg_37_0)
+StateLoading._destroy_lobby_host = function (arg_37_0)
 	Managers.lobby:destroy_lobby("matchmaking_session_lobby")
 	Managers.account:set_current_lobby(nil)
 
@@ -1126,7 +1126,7 @@ function StateLoading._destroy_lobby_host(arg_37_0)
 	arg_37_0._wanted_state = StateTitleScreen
 end
 
-function StateLoading._update_lobby_join(arg_38_0, arg_38_1, arg_38_2)
+StateLoading._update_lobby_join = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = Development.parameter("unique_server_name")
 	local var_38_1 = false
 	local var_38_2 = arg_38_0._lobby_finder
@@ -1190,7 +1190,7 @@ function StateLoading._update_lobby_join(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function StateLoading._update_server_lobby_join(arg_39_0, arg_39_1, arg_39_2)
+StateLoading._update_server_lobby_join = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = Managers.lobby:get_lobby("matchmaking_join_lobby")
 
 	var_39_0:update(arg_39_1)
@@ -1229,7 +1229,7 @@ function StateLoading._update_server_lobby_join(arg_39_0, arg_39_1, arg_39_2)
 	end
 end
 
-function StateLoading._update_loading_screen(arg_40_0, arg_40_1, arg_40_2)
+StateLoading._update_loading_screen = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0
 
 	if arg_40_0._network_server then
@@ -1265,7 +1265,7 @@ function StateLoading._update_loading_screen(arg_40_0, arg_40_1, arg_40_2)
 	end
 end
 
-function StateLoading._try_next_state(arg_41_0, arg_41_1)
+StateLoading._try_next_state = function (arg_41_0, arg_41_1)
 	if arg_41_0._popup_id then
 		arg_41_0:_handle_popup()
 	end
@@ -1479,7 +1479,7 @@ function StateLoading._try_next_state(arg_41_0, arg_41_1)
 	return arg_41_0._new_state
 end
 
-function StateLoading._handle_afk_timer(arg_42_0, arg_42_1)
+StateLoading._handle_afk_timer = function (arg_42_0, arg_42_1)
 	if Managers.account:leaving_game() then
 		return
 	end
@@ -1513,13 +1513,13 @@ function StateLoading._handle_afk_timer(arg_42_0, arg_42_1)
 	end
 end
 
-function StateLoading._level_end_view_done(arg_43_0)
+StateLoading._level_end_view_done = function (arg_43_0)
 	local var_43_0 = arg_43_0._level_end_view_wrappers[1]
 
 	return var_43_0 and var_43_0:done()
 end
 
-function StateLoading._handle_popup(arg_44_0)
+StateLoading._handle_popup = function (arg_44_0)
 	local var_44_0 = Managers.popup:query_result(arg_44_0._popup_id)
 
 	if var_44_0 == "continue" then
@@ -1546,7 +1546,7 @@ function StateLoading._handle_popup(arg_44_0)
 	end
 end
 
-function StateLoading._handle_join_popup(arg_45_0)
+StateLoading._handle_join_popup = function (arg_45_0)
 	local var_45_0 = Managers.popup:query_result(arg_45_0._join_popup_id)
 
 	if var_45_0 == "cancel" or var_45_0 == "timeout" then
@@ -1566,7 +1566,7 @@ function StateLoading._handle_join_popup(arg_45_0)
 	end
 end
 
-function StateLoading._handle_in_post_game_popup(arg_46_0)
+StateLoading._handle_in_post_game_popup = function (arg_46_0)
 	local var_46_0 = Managers.popup:query_result(arg_46_0._in_post_game_popup_id)
 
 	if var_46_0 then
@@ -1586,7 +1586,7 @@ function StateLoading._handle_in_post_game_popup(arg_46_0)
 	end
 end
 
-function StateLoading._backend_broken(arg_47_0)
+StateLoading._backend_broken = function (arg_47_0)
 	print("[StateLoading] Backend_broken, returning to StateTitleScreen")
 
 	arg_47_0._wanted_state = StateTitleScreen
@@ -1602,7 +1602,7 @@ function StateLoading._backend_broken(arg_47_0)
 	end
 end
 
-function StateLoading.on_exit(arg_48_0, arg_48_1)
+StateLoading.on_exit = function (arg_48_0, arg_48_1)
 	Framerate.set_playing()
 
 	if arg_48_0._registered_rpcs then
@@ -1785,11 +1785,11 @@ function StateLoading.on_exit(arg_48_0, arg_48_1)
 	end
 end
 
-function StateLoading._update_loading_global_packages(arg_49_0)
+StateLoading._update_loading_global_packages = function (arg_49_0)
 	return (GlobalResources.update_loading())
 end
 
-function StateLoading._packages_loaded(arg_50_0)
+StateLoading._packages_loaded = function (arg_50_0)
 	local var_50_0 = Managers.level_transition_handler
 
 	if var_50_0:all_packages_loaded() and Managers.backend:profiles_loaded() then
@@ -1850,7 +1850,7 @@ function StateLoading._packages_loaded(arg_50_0)
 	return false
 end
 
-function StateLoading.load_current_level(arg_51_0)
+StateLoading.load_current_level = function (arg_51_0)
 	print("[StateLoading] load_current_level")
 
 	local var_51_0 = arg_51_0._already_loaded_once
@@ -1892,7 +1892,7 @@ function StateLoading.load_current_level(arg_51_0)
 	arg_51_0:set_loadout_resync_state(StateLoading.LoadoutResyncStates.CHECK_RESYNC)
 end
 
-function StateLoading._update_loadout_resync(arg_52_0)
+StateLoading._update_loadout_resync = function (arg_52_0)
 	local var_52_0 = arg_52_0:loadout_resync_state()
 	local var_52_1 = StateLoading.LoadoutResyncStates
 
@@ -1901,7 +1901,7 @@ function StateLoading._update_loadout_resync(arg_52_0)
 	end
 
 	if var_52_0 == var_52_1.WAIT_FOR_LEVEL_LOAD then
-		-- block empty
+		-- Nothing
 	end
 
 	if var_52_0 == var_52_1.CHECK_RESYNC and arg_52_0:has_joined() and Managers.mechanism:can_resync_loadout() and Managers.backend:is_mirror_ready() and not Managers.backend:is_pending_request() then
@@ -1969,7 +1969,7 @@ function StateLoading._update_loadout_resync(arg_52_0)
 	return var_52_0
 end
 
-function StateLoading._destroy_network_handler(arg_53_0, arg_53_1, arg_53_2)
+StateLoading._destroy_network_handler = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0._network_server or arg_53_0._network_client
 
 	if arg_53_2 then
@@ -2003,7 +2003,7 @@ function StateLoading._destroy_network_handler(arg_53_0, arg_53_1, arg_53_2)
 	end
 end
 
-function StateLoading._destroy_network(arg_54_0, arg_54_1)
+StateLoading._destroy_network = function (arg_54_0, arg_54_1)
 	PartyManager.reset()
 
 	if Managers.matchmaking then
@@ -2062,7 +2062,7 @@ function StateLoading._destroy_network(arg_54_0, arg_54_1)
 	end
 end
 
-function StateLoading._tear_down_level_end_view_wrappers(arg_55_0)
+StateLoading._tear_down_level_end_view_wrappers = function (arg_55_0)
 	local var_55_0 = arg_55_0._level_end_view_wrappers
 
 	if var_55_0 then
@@ -2074,15 +2074,15 @@ function StateLoading._tear_down_level_end_view_wrappers(arg_55_0)
 	arg_55_0._level_end_view_wrappers = nil
 end
 
-function StateLoading.set_matchmaking(arg_56_0, arg_56_1)
+StateLoading.set_matchmaking = function (arg_56_0, arg_56_1)
 	arg_56_0._joined_matchmaking_lobby = arg_56_1
 end
 
-function StateLoading.has_registered_rpcs(arg_57_0)
+StateLoading.has_registered_rpcs = function (arg_57_0)
 	return arg_57_0._registered_rpcs
 end
 
-function StateLoading.register_rpcs(arg_58_0)
+StateLoading.register_rpcs = function (arg_58_0)
 	local var_58_0 = NetworkEventDelegate:new()
 
 	arg_58_0._network_event_delegate = var_58_0
@@ -2116,7 +2116,7 @@ function StateLoading.register_rpcs(arg_58_0)
 	print("registering RPCs")
 end
 
-function StateLoading._unregister_rpcs(arg_59_0)
+StateLoading._unregister_rpcs = function (arg_59_0)
 	Managers.level_transition_handler:unregister_rpcs()
 	Managers.mechanism:unregister_rpcs()
 	Managers.party:unregister_rpcs()
@@ -2143,11 +2143,11 @@ function StateLoading._unregister_rpcs(arg_59_0)
 	arg_59_0._registered_rpcs = false
 end
 
-function StateLoading.waiting_for_cleanup(arg_60_0)
+StateLoading.waiting_for_cleanup = function (arg_60_0)
 	return arg_60_0._waiting_for_cleanup
 end
 
-function StateLoading.setup_join_lobby(arg_61_0, arg_61_1, arg_61_2)
+StateLoading.setup_join_lobby = function (arg_61_0, arg_61_1, arg_61_2)
 	if IS_XB1 and (not Managers.account:all_sessions_cleaned_up() or arg_61_1) then
 		arg_61_0._waiting_for_cleanup = true
 		arg_61_0._cleanup_done_func = callback(arg_61_0, "setup_join_lobby")
@@ -2192,7 +2192,7 @@ function StateLoading.setup_join_lobby(arg_61_0, arg_61_1, arg_61_2)
 	end
 end
 
-function StateLoading.setup_lobby_finder(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+StateLoading.setup_lobby_finder = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 	if Managers.package:is_loading("resource_packages/inventory", "global") then
 		Managers.package:load("resource_packages/inventory", "global")
 	end
@@ -2241,7 +2241,7 @@ function StateLoading.setup_lobby_finder(arg_62_0, arg_62_1, arg_62_2, arg_62_3,
 	return arg_62_0._lobby_finder
 end
 
-function StateLoading.setup_lobby_host(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
+StateLoading.setup_lobby_host = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
 	if IS_XB1 and not Managers.account:all_sessions_cleaned_up() then
 		arg_63_0._waiting_for_cleanup = true
 		arg_63_0._cleanup_done_func = callback(arg_63_0, "setup_lobby_host", arg_63_1, arg_63_2, arg_63_3, arg_63_4)
@@ -2295,7 +2295,7 @@ function StateLoading.setup_lobby_host(arg_63_0, arg_63_1, arg_63_2, arg_63_3, a
 	arg_63_0._waiting_for_joined_callback = arg_63_1
 end
 
-function StateLoading.host_joined(arg_64_0)
+StateLoading.host_joined = function (arg_64_0)
 	arg_64_0:_create_network_server()
 
 	if arg_64_0._waiting_for_joined_callback then
@@ -2305,7 +2305,7 @@ function StateLoading.host_joined(arg_64_0)
 	end
 end
 
-function StateLoading._create_network_server(arg_65_0)
+StateLoading._create_network_server = function (arg_65_0)
 	local var_65_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 	local var_65_1 = arg_65_0.parent.loading_context
 	local var_65_2 = arg_65_0.parent.loading_context.wanted_profile_index
@@ -2324,7 +2324,7 @@ function StateLoading._create_network_server(arg_65_0)
 	var_65_1.network_transmit = arg_65_0._network_transmit
 end
 
-function StateLoading.setup_chat_manager(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4)
+StateLoading.setup_chat_manager = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4)
 	local var_66_0 = {
 		is_server = arg_66_4,
 		host_peer_id = arg_66_2,
@@ -2349,18 +2349,18 @@ function StateLoading.setup_chat_manager(arg_66_0, arg_66_1, arg_66_2, arg_66_3,
 	Managers.chat:register_channel(1, var_66_1)
 end
 
-function StateLoading.setup_deed_manager(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5)
+StateLoading.setup_deed_manager = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5)
 	Managers.deed:network_context_created(arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5)
 end
 
-function StateLoading.setup_enemy_package_loader(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
+StateLoading.setup_enemy_package_loader = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
 	Managers.level_transition_handler.enemy_package_loader:network_context_created(arg_69_1, arg_69_2, arg_69_3, arg_69_4)
 	Managers.level_transition_handler.pickup_package_loader:network_context_created(arg_69_1, arg_69_2, arg_69_3, arg_69_4)
 	Managers.level_transition_handler.general_synced_package_loader:network_context_created(arg_69_1, arg_69_2, arg_69_3, arg_69_4)
 	Managers.level_transition_handler.transient_package_loader:network_context_created(arg_69_1, arg_69_2, arg_69_3)
 end
 
-function StateLoading.setup_global_managers(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5)
+StateLoading.setup_global_managers = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5)
 	Managers.mechanism:network_context_created(arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5)
 	Managers.party:network_context_created(arg_70_1, arg_70_2, arg_70_3)
 
@@ -2369,7 +2369,7 @@ function StateLoading.setup_global_managers(arg_70_0, arg_70_1, arg_70_2, arg_70
 	end
 end
 
-function StateLoading.setup_network_transmit(arg_71_0, arg_71_1)
+StateLoading.setup_network_transmit = function (arg_71_0, arg_71_1)
 	local var_71_0 = arg_71_0._network_server and arg_71_0._network_server.server_peer_id or arg_71_0._network_client and arg_71_0._network_client.server_peer_id
 
 	arg_71_0._network_transmit = arg_71_0.parent.loading_context.network_transmit or NetworkTransmit:new(true, var_71_0)
@@ -2380,7 +2380,7 @@ function StateLoading.setup_network_transmit(arg_71_0, arg_71_1)
 	arg_71_0.parent.loading_context.network_transmit = arg_71_0._network_transmit
 end
 
-function StateLoading.create_popup(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, ...)
+StateLoading.create_popup = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, ...)
 	if Managers.account:leaving_game() then
 		return
 	end
@@ -2406,7 +2406,7 @@ function StateLoading.create_popup(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_7
 	arg_72_0._popup_id = Managers.popup:queue_popup(var_72_4, Localize(var_72_0), var_72_1, Localize(var_72_2))
 end
 
-function StateLoading.create_join_popup(arg_73_0, arg_73_1)
+StateLoading.create_join_popup = function (arg_73_0, arg_73_1)
 	if Managers.account:leaving_game() then
 		return
 	end
@@ -2426,7 +2426,7 @@ function StateLoading.create_join_popup(arg_73_0, arg_73_1)
 	Managers.popup:activate_timer(arg_73_0._join_popup_id, var_73_2, var_73_3, var_73_4, var_73_5)
 end
 
-function StateLoading.clear_network_loading_context(arg_74_0)
+StateLoading.clear_network_loading_context = function (arg_74_0)
 	local var_74_0 = arg_74_0.parent.loading_context
 
 	arg_74_0:_destroy_network_handler(false, var_74_0)
@@ -2441,7 +2441,7 @@ function StateLoading.clear_network_loading_context(arg_74_0)
 	var_74_0.setup_voip = nil
 end
 
-function StateLoading.setup_network_client(arg_75_0, arg_75_1, arg_75_2)
+StateLoading.setup_network_client = function (arg_75_0, arg_75_1, arg_75_2)
 	if not arg_75_2 then
 		arg_75_2 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 	elseif arg_75_2.lobby ~= nil then
@@ -2490,11 +2490,11 @@ function StateLoading.setup_network_client(arg_75_0, arg_75_1, arg_75_2)
 	return true
 end
 
-function StateLoading.get_current_level_keys(arg_76_0)
+StateLoading.get_current_level_keys = function (arg_76_0)
 	return Managers.level_transition_handler:get_current_level_keys()
 end
 
-function StateLoading.set_lobby_host_data(arg_77_0, arg_77_1)
+StateLoading.set_lobby_host_data = function (arg_77_0, arg_77_1)
 	local var_77_0 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 
 	if var_77_0 and var_77_0.is_host then
@@ -2567,7 +2567,7 @@ function StateLoading.set_lobby_host_data(arg_77_0, arg_77_1)
 	end
 end
 
-function StateLoading.start_matchmaking(arg_78_0)
+StateLoading.start_matchmaking = function (arg_78_0)
 	local var_78_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 
 	assert(var_78_0.is_host)
@@ -2579,11 +2579,11 @@ function StateLoading.start_matchmaking(arg_78_0)
 	var_78_0:set_lobby_data(var_78_1)
 end
 
-function StateLoading.get_lobby(arg_79_0)
+StateLoading.get_lobby = function (arg_79_0)
 	return (Managers.lobby:query_lobby("matchmaking_session_lobby"))
 end
 
-function StateLoading.has_joined(arg_80_0)
+StateLoading.has_joined = function (arg_80_0)
 	local var_80_0 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 
 	return var_80_0 and var_80_0:is_joined()

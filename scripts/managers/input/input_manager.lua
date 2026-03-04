@@ -20,7 +20,7 @@ end
 
 InputManager = class(InputManager)
 
-function InputManager.init(arg_2_0)
+InputManager.init = function (arg_2_0)
 	arg_2_0.platform = PLATFORM
 	arg_2_0.input_services = {}
 	arg_2_0.input_devices = {}
@@ -37,12 +37,12 @@ function InputManager.init(arg_2_0)
 	end
 end
 
-function InputManager.destroy(arg_3_0)
+InputManager.destroy = function (arg_3_0)
 	arg_3_0.input_services = nil
 	arg_3_0.input_devices = nil
 end
 
-function InputManager.initialize_device(arg_4_0, arg_4_1, arg_4_2)
+InputManager.initialize_device = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_2 and arg_4_1 == "gamepad" then
 		return
 	end
@@ -93,7 +93,7 @@ function InputManager.initialize_device(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function InputManager.remove_all_devices(arg_5_0, arg_5_1)
+InputManager.remove_all_devices = function (arg_5_0, arg_5_1)
 	local var_5_0 = InputAux.input_device_mapping[arg_5_1]
 
 	if not var_5_0 then
@@ -115,7 +115,7 @@ function InputManager.remove_all_devices(arg_5_0, arg_5_1)
 	end
 end
 
-function InputManager.set_exclusive_gamepad(arg_6_0, arg_6_1)
+InputManager.set_exclusive_gamepad = function (arg_6_0, arg_6_1)
 	local var_6_0 = "gamepad"
 
 	arg_6_0:remove_all_devices(var_6_0)
@@ -133,7 +133,7 @@ function InputManager.set_exclusive_gamepad(arg_6_0, arg_6_1)
 	end
 end
 
-function InputManager.set_all_gamepads_available(arg_7_0)
+InputManager.set_all_gamepads_available = function (arg_7_0)
 	local var_7_0 = "gamepad"
 
 	arg_7_0:remove_all_devices(var_7_0)
@@ -170,7 +170,7 @@ function InputManager.set_all_gamepads_available(arg_7_0)
 	end
 end
 
-function InputManager.block_device_except_service(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+InputManager.block_device_except_service = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if var_0_2 and (arg_8_2 == "gamepad" or arg_8_2 == "ps_pad") then
 		return
 	end
@@ -241,7 +241,7 @@ function InputManager.block_device_except_service(arg_8_0, arg_8_1, arg_8_2, arg
 	end
 end
 
-function InputManager.device_unblock_all_services(arg_9_0, arg_9_1, arg_9_2)
+InputManager.device_unblock_all_services = function (arg_9_0, arg_9_1, arg_9_2)
 	if var_0_2 and (arg_9_1 == "gamepad" or arg_9_1 == "ps_pad") then
 		return
 	end
@@ -287,7 +287,7 @@ function InputManager.device_unblock_all_services(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function InputManager.device_block_service(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+InputManager.device_block_service = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if var_0_2 and (arg_10_1 == "gamepad" or arg_10_1 == "ps_pad") then
 		return
 	end
@@ -330,7 +330,7 @@ function InputManager.device_block_service(arg_10_0, arg_10_1, arg_10_2, arg_10_
 	end
 end
 
-function InputManager.device_unblock_service(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+InputManager.device_unblock_service = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	if var_0_2 and (arg_11_1 == "gamepad" or arg_11_1 == "ps_pad") then
 		return
 	end
@@ -367,7 +367,7 @@ function InputManager.device_unblock_service(arg_11_0, arg_11_1, arg_11_2, arg_1
 	end
 end
 
-function InputManager.get_unblocked_services(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+InputManager.get_unblocked_services = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = 0
 
 	for iter_12_0, iter_12_1 in pairs(arg_12_0.input_services) do
@@ -380,7 +380,7 @@ function InputManager.get_unblocked_services(arg_12_0, arg_12_1, arg_12_2, arg_1
 	return var_12_0
 end
 
-function InputManager.get_blocked_services(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+InputManager.get_blocked_services = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = 0
 
 	for iter_13_0, iter_13_1 in pairs(arg_13_0.input_services) do
@@ -393,7 +393,7 @@ function InputManager.get_blocked_services(arg_13_0, arg_13_1, arg_13_2, arg_13_
 	return var_13_0
 end
 
-function InputManager.device_block_services(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+InputManager.device_block_services = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	arg_14_2 = arg_14_2 or 1
 
 	for iter_14_0 = 1, arg_14_4 do
@@ -403,7 +403,7 @@ function InputManager.device_block_services(arg_14_0, arg_14_1, arg_14_2, arg_14
 	end
 end
 
-function InputManager.device_unblock_services(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+InputManager.device_unblock_services = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	arg_15_2 = arg_15_2 or 1
 
 	for iter_15_0 = 1, arg_15_4 do
@@ -413,7 +413,7 @@ function InputManager.device_unblock_services(arg_15_0, arg_15_1, arg_15_2, arg_
 	end
 end
 
-function InputManager.capture_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+InputManager.capture_input = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	if not arg_16_1 then
 		return
 	end
@@ -464,7 +464,7 @@ function InputManager.capture_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_
 	end
 end
 
-function InputManager.release_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+InputManager.release_input = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	if not arg_17_1 then
 		return
 	end
@@ -517,7 +517,7 @@ function InputManager.release_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_
 	end
 end
 
-function InputManager._find_service_input_group(arg_18_0, arg_18_1)
+InputManager._find_service_input_group = function (arg_18_0, arg_18_1)
 	local var_18_0 = InputServiceToGroupMap[arg_18_1]
 
 	if not var_18_0 then
@@ -527,14 +527,14 @@ function InputManager._find_service_input_group(arg_18_0, arg_18_1)
 	return InputStackSettings[var_18_0].group_name
 end
 
-function InputManager._refresh_active_input_group(arg_19_0)
+InputManager._refresh_active_input_group = function (arg_19_0)
 	local var_19_0 = arg_19_0._device_input_groups
 	local var_19_1 = arg_19_0:_find_active_input_group_id(var_19_0)
 
 	arg_19_0:_capture_input_group(var_19_1)
 end
 
-function InputManager._capture_input_group(arg_20_0, arg_20_1)
+InputManager._capture_input_group = function (arg_20_0, arg_20_1)
 	arg_20_0._active_input_group_id = arg_20_1
 
 	local var_20_0 = arg_20_0.input_services
@@ -553,7 +553,7 @@ function InputManager._capture_input_group(arg_20_0, arg_20_1)
 	end
 end
 
-function InputManager._update_service_input_group(arg_21_0, arg_21_1, arg_21_2)
+InputManager._update_service_input_group = function (arg_21_0, arg_21_1, arg_21_2)
 	if not arg_21_1 then
 		return
 	end
@@ -569,7 +569,7 @@ function InputManager._update_service_input_group(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function InputManager._find_active_input_group_id(arg_22_0, arg_22_1)
+InputManager._find_active_input_group_id = function (arg_22_0, arg_22_1)
 	for iter_22_0 = 1, #InputStackSettings do
 		if arg_22_1[InputStackSettings[iter_22_0].group_name] then
 			return iter_22_0
@@ -579,7 +579,7 @@ function InputManager._find_active_input_group_id(arg_22_0, arg_22_1)
 	return nil
 end
 
-function InputManager.create_input_service(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+InputManager.create_input_service = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = rawget(_G, arg_23_2)
 
 	fassert(var_23_0, "[InputManager] - No keymaps found for %s", arg_23_2)
@@ -605,11 +605,11 @@ function InputManager.create_input_service(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	arg_23_0:_update_service_input_group(var_23_2, arg_23_0._active_input_group_id)
 end
 
-function InputManager.get_input_service(arg_24_0, arg_24_1)
+InputManager.get_input_service = function (arg_24_0, arg_24_1)
 	return arg_24_0.input_services[arg_24_1]
 end
 
-function InputManager.get_active_input_service_by_device(arg_25_0, arg_25_1)
+InputManager.get_active_input_service_by_device = function (arg_25_0, arg_25_1)
 	for iter_25_0, iter_25_1 in pairs(arg_25_0.input_services) do
 		if not iter_25_1:is_blocked() then
 			local var_25_0 = iter_25_1.mapped_devices
@@ -625,7 +625,7 @@ function InputManager.get_active_input_service_by_device(arg_25_0, arg_25_1)
 	end
 end
 
-function InputManager.map_device_to_service(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+InputManager.map_device_to_service = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if var_0_2 and (arg_26_2 == "gamepad" or arg_26_2 == "ps_pad") then
 		return
 	end
@@ -665,7 +665,7 @@ function InputManager.map_device_to_service(arg_26_0, arg_26_1, arg_26_2, arg_26
 	end
 end
 
-function InputManager.update(arg_27_0, arg_27_1, arg_27_2)
+InputManager.update = function (arg_27_0, arg_27_1, arg_27_2)
 	InputAux.default_values_for_types.Vector3 = Vector3.zero()
 	arg_27_0._hovering = arg_27_0._frame_hovering
 	arg_27_0._frame_hovering = false
@@ -679,7 +679,7 @@ local var_0_4 = {
 	right = true
 }
 
-function InputManager.update_devices(arg_28_0, arg_28_1, arg_28_2)
+InputManager.update_devices = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.input_devices
 
 	arg_28_0.any_device_input_pressed = nil
@@ -773,7 +773,7 @@ function InputManager.update_devices(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function InputManager.get_service(arg_29_0, arg_29_1)
+InputManager.get_service = function (arg_29_0, arg_29_1)
 	if arg_29_0.input_services then
 		return arg_29_0.input_services[arg_29_1]
 	else
@@ -782,12 +782,12 @@ function InputManager.get_service(arg_29_0, arg_29_1)
 end
 
 local var_0_5 = {
-	active = function()
+	active = function ()
 		return false
 	end
 }
 
-function InputManager.get_device(arg_31_0, arg_31_1, arg_31_2)
+InputManager.get_device = function (arg_31_0, arg_31_1, arg_31_2)
 	if var_0_2 and arg_31_1 == "gamepad" then
 		return var_0_5
 	end
@@ -801,27 +801,27 @@ function InputManager.get_device(arg_31_0, arg_31_1, arg_31_2)
 	return var_31_0[arg_31_2]
 end
 
-function InputManager.any_input_pressed(arg_32_0)
+InputManager.any_input_pressed = function (arg_32_0)
 	return arg_32_0.any_device_input_pressed
 end
 
-function InputManager.any_input_released(arg_33_0)
+InputManager.any_input_released = function (arg_33_0)
 	return arg_33_0.any_device_input_released
 end
 
-function InputManager.any_input_axis_moved(arg_34_0)
+InputManager.any_input_axis_moved = function (arg_34_0)
 	return arg_34_0.any_device_input_axis_moved
 end
 
-function InputManager.get_most_recent_device(arg_35_0)
+InputManager.get_most_recent_device = function (arg_35_0)
 	return var_0_0
 end
 
-function InputManager.get_most_recent_device_type(arg_36_0)
+InputManager.get_most_recent_device_type = function (arg_36_0)
 	return var_0_1
 end
 
-function InputManager.is_device_active(arg_37_0, arg_37_1)
+InputManager.is_device_active = function (arg_37_0, arg_37_1)
 	if arg_37_1 == "gamepad" and var_0_2 then
 		return false
 	end
@@ -829,7 +829,7 @@ function InputManager.is_device_active(arg_37_0, arg_37_1)
 	return var_0_1 == arg_37_1
 end
 
-function InputManager.add_filters_data(arg_38_0, arg_38_1, arg_38_2)
+InputManager.add_filters_data = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0.stored_filters_data
 
 	fassert(not var_38_0[arg_38_2], "[InputManager] - filters already stored with name: %s", arg_38_2)
@@ -845,7 +845,7 @@ function InputManager.add_filters_data(arg_38_0, arg_38_1, arg_38_2)
 	var_0_3("[InputManager] - Add filters data for name: %s", arg_38_2)
 end
 
-function InputManager.update_filters_data(arg_39_0, arg_39_1, arg_39_2)
+InputManager.update_filters_data = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0.stored_filters_data
 	local var_39_1 = var_39_0[arg_39_2]
 
@@ -861,7 +861,7 @@ function InputManager.update_filters_data(arg_39_0, arg_39_1, arg_39_2)
 	var_0_3("[InputManager] - Updated filters data for name: %s", arg_39_2)
 end
 
-function InputManager.setup_filters(arg_40_0, arg_40_1)
+InputManager.setup_filters = function (arg_40_0, arg_40_1)
 	local var_40_0 = {}
 
 	if arg_40_1 then
@@ -880,7 +880,7 @@ function InputManager.setup_filters(arg_40_0, arg_40_1)
 	return var_40_0
 end
 
-function InputManager.filters_data(arg_41_0, arg_41_1)
+InputManager.filters_data = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0.stored_filters_data[arg_41_1]
 
 	fassert(var_41_0, "[InputManager] - No filters found by name %s", arg_41_1)
@@ -888,7 +888,7 @@ function InputManager.filters_data(arg_41_0, arg_41_1)
 	return var_41_0
 end
 
-function InputManager.apply_saved_keymaps(arg_42_0, arg_42_1)
+InputManager.apply_saved_keymaps = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0.stored_keymaps_data
 
 	if IS_WINDOWS or IS_XB1 or IS_LINUX then
@@ -923,9 +923,9 @@ function InputManager.apply_saved_keymaps(arg_42_0, arg_42_1)
 	end
 end
 
-function InputManager.set_hovering(arg_43_0, arg_43_1)
+InputManager.set_hovering = function (arg_43_0, arg_43_1)
 	if arg_43_1 and not arg_43_0._hovering then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_43_0._hovering = arg_43_0._hovering or arg_43_1
@@ -934,17 +934,17 @@ end
 
 local var_0_6 = {}
 
-function InputManager.set_gamepad_cursor_pos(arg_44_0, arg_44_1, arg_44_2)
+InputManager.set_gamepad_cursor_pos = function (arg_44_0, arg_44_1, arg_44_2)
 	var_0_6[1] = arg_44_1
 	var_0_6[2] = arg_44_2
 end
 
-function InputManager.center_gamepad_cursor_pos(arg_45_0)
+InputManager.center_gamepad_cursor_pos = function (arg_45_0)
 	var_0_6[1] = 960
 	var_0_6[2] = 540
 end
 
-function InputManager.get_gamepad_cursor_pos(arg_46_0)
+InputManager.get_gamepad_cursor_pos = function (arg_46_0)
 	local var_46_0 = var_0_6[1]
 	local var_46_1 = var_0_6[2]
 
@@ -953,35 +953,35 @@ function InputManager.get_gamepad_cursor_pos(arg_46_0)
 	return var_46_0, var_46_1
 end
 
-function InputManager.disable_gamepad_cursor(arg_47_0)
+InputManager.disable_gamepad_cursor = function (arg_47_0)
 	arg_47_0._gamepad_cursor_active = false
 end
 
-function InputManager.enable_gamepad_cursor(arg_48_0)
+InputManager.enable_gamepad_cursor = function (arg_48_0)
 	arg_48_0._gamepad_cursor_active = true
 end
 
-function InputManager.gamepad_cursor_active(arg_49_0)
+InputManager.gamepad_cursor_active = function (arg_49_0)
 	return arg_49_0._gamepad_cursor_active
 end
 
-function InputManager.is_hovering(arg_50_0)
+InputManager.is_hovering = function (arg_50_0)
 	return arg_50_0._hovering
 end
 
-function InputManager.is_frame_hovering(arg_51_0)
+InputManager.is_frame_hovering = function (arg_51_0)
 	return arg_51_0._frame_hovering
 end
 
-function InputManager.set_showing_tooltip(arg_52_0, arg_52_1)
+InputManager.set_showing_tooltip = function (arg_52_0, arg_52_1)
 	arg_52_0._showing_tooltip = arg_52_1
 end
 
-function InputManager.is_showing_tooltip(arg_53_0)
+InputManager.is_showing_tooltip = function (arg_53_0)
 	return arg_53_0._showing_tooltip
 end
 
-function InputManager.add_keymaps_data(arg_54_0, arg_54_1, arg_54_2)
+InputManager.add_keymaps_data = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_0.stored_keymaps_data
 	local var_54_1 = PlayerData.controls
 
@@ -1007,7 +1007,7 @@ function InputManager.add_keymaps_data(arg_54_0, arg_54_1, arg_54_2)
 	var_0_3("[InputManager] - Add keymaps data for name: %s", arg_54_2)
 end
 
-function InputManager.update_keymaps_data(arg_55_0, arg_55_1, arg_55_2)
+InputManager.update_keymaps_data = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = arg_55_0.stored_keymaps_data[arg_55_2]
 
 	fassert(var_55_0, "[InputManager] - no keymaps stored with name: %s", arg_55_2)
@@ -1023,7 +1023,7 @@ function InputManager.update_keymaps_data(arg_55_0, arg_55_1, arg_55_2)
 	var_0_3("[InputManager] - Updated keymaps data for name: %s", arg_55_2)
 end
 
-function InputManager.keymaps_data(arg_56_0, arg_56_1)
+InputManager.keymaps_data = function (arg_56_0, arg_56_1)
 	local var_56_0 = arg_56_0.stored_keymaps_data[arg_56_1]
 
 	fassert(var_56_0, "[InputManager] - No keymaps found by name %s", arg_56_1)
@@ -1031,7 +1031,7 @@ function InputManager.keymaps_data(arg_56_0, arg_56_1)
 	return var_56_0
 end
 
-function InputManager.setup_keymaps(arg_57_0, arg_57_1)
+InputManager.setup_keymaps = function (arg_57_0, arg_57_1)
 	local var_57_0 = InputAux.input_map_types
 	local var_57_1 = InputAux.input_device_mapping
 	local var_57_2 = {}
@@ -1090,7 +1090,7 @@ function InputManager.setup_keymaps(arg_57_0, arg_57_1)
 	return var_57_3, var_57_2
 end
 
-function InputManager.clear_keybinding(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+InputManager.clear_keybinding = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = arg_58_0:keymaps_data(arg_58_1)
 
 	assert(var_58_0, "No keymaps data found under table_name: %s", arg_58_1)
@@ -1110,7 +1110,7 @@ function InputManager.clear_keybinding(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	var_58_3[2] = UNASSIGNED_KEY
 end
 
-function InputManager.change_keybinding(arg_59_0, arg_59_1, arg_59_2, arg_59_3, ...)
+InputManager.change_keybinding = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, ...)
 	local var_59_0 = arg_59_0:keymaps_data(arg_59_1)
 
 	assert(var_59_0, "No keymaps data found under table_name: %s", arg_59_1)
@@ -1152,7 +1152,7 @@ function InputManager.change_keybinding(arg_59_0, arg_59_1, arg_59_2, arg_59_3, 
 	var_59_3.n = var_59_5
 end
 
-function InputManager.add_keybinding(arg_60_0, arg_60_1, arg_60_2, arg_60_3, ...)
+InputManager.add_keybinding = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, ...)
 	assert(type(new_button_index) == "number", "New button index must be a number.")
 
 	local var_60_0 = arg_60_0:keymaps_data(arg_60_1)

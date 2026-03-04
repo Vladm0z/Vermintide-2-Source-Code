@@ -4,7 +4,7 @@ local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/setti
 
 WarpfireThrowerStateFiring = class(WarpfireThrowerStateFiring, EnemyCharacterState)
 
-function WarpfireThrowerStateFiring.init(arg_1_0, arg_1_1)
+WarpfireThrowerStateFiring.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "warpfire_firing")
 
 	arg_1_0.current_movement_speed_scale = 0
@@ -13,7 +13,7 @@ end
 
 local var_0_1 = POSITION_LOOKUP
 
-function WarpfireThrowerStateFiring.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+WarpfireThrowerStateFiring.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	arg_2_0._unit_id = Managers.state.network.unit_storage:go_id(arg_2_1)
@@ -70,7 +70,7 @@ function WarpfireThrowerStateFiring.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	Managers.state.entity:system("weapon_system"):change_single_weapon_state(arg_2_1, "windup_start", var_2_2.peer_id)
 end
 
-function WarpfireThrowerStateFiring.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+WarpfireThrowerStateFiring.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0._csm
 	local var_3_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_3_1)
 	local var_3_2 = arg_3_0._input_extension
@@ -133,7 +133,7 @@ function WarpfireThrowerStateFiring.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	CharacterStateHelper.look(arg_3_0._input_extension, arg_3_0._player.viewport_name, arg_3_0._first_person_extension, arg_3_0._status_extension, arg_3_0._inventory_extension)
 end
 
-function WarpfireThrowerStateFiring._set_priming_progress(arg_4_0, arg_4_1)
+WarpfireThrowerStateFiring._set_priming_progress = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._career_extension
 	local var_4_1 = "fire"
 	local var_4_2 = var_4_0:ability_id(var_4_1)
@@ -141,7 +141,7 @@ function WarpfireThrowerStateFiring._set_priming_progress(arg_4_0, arg_4_1)
 	var_4_0:get_activated_ability_data(var_4_2).priming_progress = arg_4_1
 end
 
-function WarpfireThrowerStateFiring._update_priming(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+WarpfireThrowerStateFiring._update_priming = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = not arg_5_0._done_priming
 
 	if arg_5_2 > arg_5_0._prime_time then
@@ -159,7 +159,7 @@ function WarpfireThrowerStateFiring._update_priming(arg_5_0, arg_5_1, arg_5_2, a
 	end
 end
 
-function WarpfireThrowerStateFiring._start_firing(arg_6_0, arg_6_1)
+WarpfireThrowerStateFiring._start_firing = function (arg_6_0, arg_6_1)
 	arg_6_0:_set_priming_progress(0)
 
 	local var_6_0 = arg_6_0._unit
@@ -179,7 +179,7 @@ function WarpfireThrowerStateFiring._start_firing(arg_6_0, arg_6_1)
 	Managers.state.entity:system("weapon_system"):change_single_weapon_state(var_6_0, "shoot_start", var_6_3.peer_id)
 end
 
-function WarpfireThrowerStateFiring._stop_priming(arg_7_0)
+WarpfireThrowerStateFiring._stop_priming = function (arg_7_0)
 	local var_7_0 = arg_7_0._unit
 	local var_7_1 = arg_7_0._first_person_extension
 
@@ -187,7 +187,7 @@ function WarpfireThrowerStateFiring._stop_priming(arg_7_0)
 	CharacterStateHelper.play_animation_event(var_7_0, "no_anim_upperbody")
 end
 
-function WarpfireThrowerStateFiring._close_range_attack(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+WarpfireThrowerStateFiring._close_range_attack = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(arg_8_1, arg_8_0.first_person_unit, arg_8_0._physics_world)
 
 	if not var_8_0 then
@@ -249,7 +249,7 @@ local function var_0_2(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg
 	return false, arg_9_3
 end
 
-function WarpfireThrowerStateFiring._update_warpfire_attack(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+WarpfireThrowerStateFiring._update_warpfire_attack = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_0._current_flame_time = arg_10_0._current_flame_time + arg_10_3
 
 	local var_10_0 = arg_10_0.blackboard
@@ -264,7 +264,7 @@ end
 
 local var_0_3 = false
 
-function WarpfireThrowerStateFiring.hit_ground_at(arg_11_0)
+WarpfireThrowerStateFiring.hit_ground_at = function (arg_11_0)
 	local var_11_0 = var_0_1[arg_11_0._unit]
 	local var_11_1 = var_0_1[arg_11_0.first_person_unit]
 	local var_11_2 = Unit.world_rotation(arg_11_0.first_person_unit, 0)
@@ -295,7 +295,7 @@ function WarpfireThrowerStateFiring.hit_ground_at(arg_11_0)
 	return var_11_15, var_11_0
 end
 
-function WarpfireThrowerStateFiring._move_warpfire_blob(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+WarpfireThrowerStateFiring._move_warpfire_blob = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_2.blob_unit
 	local var_12_1 = var_0_1[var_12_0]
 
@@ -323,7 +323,7 @@ function WarpfireThrowerStateFiring._move_warpfire_blob(arg_12_0, arg_12_1, arg_
 	end
 end
 
-function WarpfireThrowerStateFiring._create_warpfire_blob(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+WarpfireThrowerStateFiring._create_warpfire_blob = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_3.warpfire_data
 	local var_13_1 = arg_13_3.weapon_unit
 	local var_13_2, var_13_3 = arg_13_0:hit_ground_at()
@@ -356,7 +356,7 @@ function WarpfireThrowerStateFiring._create_warpfire_blob(arg_13_0, arg_13_1, ar
 	return true
 end
 
-function WarpfireThrowerStateFiring.on_exit(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+WarpfireThrowerStateFiring.on_exit = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	if not Managers.state.network:in_game_session() then
 		return
 	end
@@ -397,7 +397,7 @@ function WarpfireThrowerStateFiring.on_exit(arg_14_0, arg_14_1, arg_14_2, arg_14
 	arg_14_0:_set_priming_progress(0)
 end
 
-function WarpfireThrowerStateFiring._update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+WarpfireThrowerStateFiring._update_movement = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_0._input_extension
 	local var_15_1 = arg_15_0._buff_extension
 	local var_15_2 = arg_15_0._first_person_extension

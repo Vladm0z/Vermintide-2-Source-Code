@@ -162,7 +162,7 @@ end
 
 local var_0_9 = true
 
-function ImguiDeusMapBaseGen.init(arg_7_0)
+ImguiDeusMapBaseGen.init = function (arg_7_0)
 	arg_7_0._seed = tonumber(script_data.debug_draw_base_map_seed) or 0
 	arg_7_0._journey_index = 1
 	arg_7_0._draw_realtime = false
@@ -178,7 +178,7 @@ local var_0_10 = {
 	BASE_GEN = 1
 }
 
-function ImguiDeusMapBaseGen.update(arg_8_0, arg_8_1, arg_8_2)
+ImguiDeusMapBaseGen.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if var_0_9 then
 		arg_8_0:_init_configs()
 
@@ -278,11 +278,11 @@ function ImguiDeusMapBaseGen.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._next_step = false
 end
 
-function ImguiDeusMapBaseGen.is_persistent(arg_9_0)
+ImguiDeusMapBaseGen.is_persistent = function (arg_9_0)
 	return false
 end
 
-function ImguiDeusMapBaseGen._init_configs(arg_10_0)
+ImguiDeusMapBaseGen._init_configs = function (arg_10_0)
 	arg_10_0._original_layout_configs = DEUS_MAP_LAYOUT_SETTINGS
 	arg_10_0._layout_configs = table.clone(DEUS_MAP_LAYOUT_SETTINGS)
 	arg_10_0._original_base_configs = DEUS_BASE_MAP_GEN_SETTINGS
@@ -293,7 +293,7 @@ function ImguiDeusMapBaseGen._init_configs(arg_10_0)
 	arg_10_0._configs_changed = false
 end
 
-function ImguiDeusMapBaseGen._reset_configs_for_journey(arg_11_0)
+ImguiDeusMapBaseGen._reset_configs_for_journey = function (arg_11_0)
 	local var_11_0 = var_0_0[arg_11_0._journey_index]
 
 	arg_11_0._original_layout_config = DEUS_MAP_LAYOUT_SETTINGS[var_11_0] or DEUS_MAP_LAYOUT_SETTINGS.default
@@ -302,7 +302,7 @@ function ImguiDeusMapBaseGen._reset_configs_for_journey(arg_11_0)
 	arg_11_0._base_config = arg_11_0._base_configs[var_11_0] or arg_11_0._base_configs.default
 end
 
-function ImguiDeusMapBaseGen.draw(arg_12_0, arg_12_1)
+ImguiDeusMapBaseGen.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = Imgui.begin_window("DeusMapBaseGen", "always_auto_resize")
 
 	if arg_12_0._saved_graphs then

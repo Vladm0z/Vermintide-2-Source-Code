@@ -6,7 +6,7 @@ BTCrazyJumpAction = class(BTCrazyJumpAction, BTNode)
 
 local var_0_0 = POSITION_LOOKUP
 
-function BTCrazyJumpAction.init(arg_1_0, ...)
+BTCrazyJumpAction.init = function (arg_1_0, ...)
 	BTCrazyJumpAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BTCrazyJumpAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTCrazyJumpAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	aiprint("ENTER CRAZY JUMP ACTION")
 
 	local var_3_0 = arg_3_0._tree_node.action_data
@@ -65,7 +65,7 @@ function BTCrazyJumpAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	var_3_5:set_check_falling(false)
 end
 
-function BTCrazyJumpAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCrazyJumpAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.skulk_pos = nil
 	arg_4_2.comitted_to_target = false
 
@@ -104,7 +104,7 @@ end
 
 local var_0_2 = 2.7
 
-function BTCrazyJumpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTCrazyJumpAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.locomotion_extension
 	local var_5_1 = arg_5_2.jump_data
 	local var_5_2 = var_5_1.target_unit
@@ -365,7 +365,7 @@ function BTCrazyJumpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTCrazyJumpAction.create_bot_threat(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTCrazyJumpAction.create_bot_threat = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = ScriptUnit.has_extension(arg_6_2.target_unit, "first_person_system")
 
 	if var_6_0 then
@@ -389,7 +389,7 @@ end
 
 local var_0_3 = true
 
-function BTCrazyJumpAction.check_colliding_players(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTCrazyJumpAction.check_colliding_players = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if var_0_3 then
 		local var_7_0 = 1
 		local var_7_1, var_7_2 = PhysicsWorld.immediate_overlap(arg_7_0.physics_world, "shape", "sphere", "position", arg_7_3, "size", var_7_0, "types", "both", "collision_filter", "filter_player_and_husk_trigger")
@@ -427,7 +427,7 @@ function BTCrazyJumpAction.check_colliding_players(arg_7_0, arg_7_1, arg_7_2, ar
 	end
 end
 
-function BTCrazyJumpAction.setup_jump(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTCrazyJumpAction.setup_jump = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_3.jump_target_pos:unbox()
 	local var_8_1 = arg_8_3.jump_velocity_boxed:unbox()
 
@@ -453,7 +453,7 @@ function BTCrazyJumpAction.setup_jump(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_3.updating_jump_rot = true
 end
 
-function BTCrazyJumpAction.update_anim_variable_done(arg_9_0, arg_9_1, arg_9_2)
+BTCrazyJumpAction.update_anim_variable_done = function (arg_9_0, arg_9_1, arg_9_2)
 	Managers.state.entity:system("animation_system"):set_update_anim_variable_done(arg_9_1)
 
 	arg_9_2.updating_jump_rot = false
@@ -465,7 +465,7 @@ local var_0_6 = 3
 local var_0_7 = 4
 local var_0_8 = {}
 
-function BTCrazyJumpAction.ray_cast(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTCrazyJumpAction.ray_cast = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_1 - arg_10_0
 	local var_10_1 = Vector3.normalize(var_10_0)
 	local var_10_2 = Vector3.length(var_10_0)
@@ -496,7 +496,7 @@ function BTCrazyJumpAction.ray_cast(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	return nil
 end
 
-function BTCrazyJumpAction.debug(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTCrazyJumpAction.debug = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if arg_11_3.state == "in_air" or arg_11_3.state == "snapping" then
 		local var_11_0 = arg_11_3.overlap_context
 		local var_11_1 = Unit.world_position(arg_11_1, var_11_0.spine_node)

@@ -74,7 +74,7 @@ local var_0_11 = 5
 
 LoadingView = class(LoadingView)
 
-function LoadingView.init(arg_1_0, arg_1_1)
+LoadingView.init = function (arg_1_0, arg_1_1)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -104,7 +104,7 @@ function LoadingView.init(arg_1_0, arg_1_1)
 	arg_1_0.active = true
 end
 
-function LoadingView._create_hdr_gui(arg_2_0)
+LoadingView._create_hdr_gui = function (arg_2_0)
 	local var_2_0 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
@@ -123,7 +123,7 @@ function LoadingView._create_hdr_gui(arg_2_0)
 	arg_2_0._ui_hdr_renderer = UIRenderer.create(var_2_5, "material", "materials/ui/ui_1080p_loading", "immediate")
 end
 
-function LoadingView.texture_resource_loaded(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+LoadingView.texture_resource_loaded = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if arg_3_0.return_to_pc_menu then
 		return
 	end
@@ -200,23 +200,23 @@ function LoadingView.texture_resource_loaded(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function LoadingView.deactivate(arg_4_0)
+LoadingView.deactivate = function (arg_4_0)
 	arg_4_0.active = false
 end
 
-function LoadingView.activate(arg_5_0)
+LoadingView.activate = function (arg_5_0)
 	arg_5_0.active = true
 end
 
-function LoadingView.showing_press_to_continue(arg_6_0)
+LoadingView.showing_press_to_continue = function (arg_6_0)
 	return arg_6_0._show_press_to_continue
 end
 
-function LoadingView.show_press_to_continue(arg_7_0, arg_7_1)
+LoadingView.show_press_to_continue = function (arg_7_0, arg_7_1)
 	arg_7_0._show_press_to_continue = arg_7_1
 end
 
-function LoadingView.create_ui_elements(arg_8_0)
+LoadingView.create_ui_elements = function (arg_8_0)
 	arg_8_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_8_0.bg_widget = UIWidget.init(var_0_0.background_image)
 	arg_8_0.tip_title_widget = UIWidget.init(var_0_0.tip_title_widget)
@@ -306,23 +306,23 @@ function LoadingView.create_ui_elements(arg_8_0)
 	UIRenderer.clear_scenegraph_queue(arg_8_0.ui_renderer)
 end
 
-function LoadingView.subtitle_gui(arg_9_0)
+LoadingView.subtitle_gui = function (arg_9_0)
 	return arg_9_0.subtitle_timed_gui
 end
 
-function LoadingView.trigger_subtitles(arg_10_0, arg_10_1, arg_10_2)
+LoadingView.trigger_subtitles = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_1 and not arg_10_0.subtitle_timed_gui and Application.user_setting("use_subtitles") then
 		arg_10_0.subtitle_timed_gui = SubtitleTimedGui:new(arg_10_1, var_0_11)
 	end
 end
 
-function LoadingView.trigger_weave_subtitles(arg_11_0, arg_11_1, arg_11_2)
+LoadingView.trigger_weave_subtitles = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_1 and not arg_11_0.subtitle_timed_gui and Application.user_setting("use_subtitles") then
 		arg_11_0.subtitle_timed_gui = SubtitleTimedGui:new(arg_11_1, var_0_11)
 	end
 end
 
-function LoadingView.reset_tip_text(arg_12_0)
+LoadingView.reset_tip_text = function (arg_12_0)
 	arg_12_0.tip_text_prefix_widget.content.text = ""
 	arg_12_0.tip_text_suffix_widget.content.text = ""
 	arg_12_0.gamepad_input_icon.content.texture_id = nil
@@ -357,7 +357,7 @@ function LoadingView.reset_tip_text(arg_12_0)
 	arg_12_0.ui_scenegraph.second_row_second_gamepad_input_icon.size = var_0_0.ICON_SIZE
 end
 
-function LoadingView.fit_title(arg_13_0)
+LoadingView.fit_title = function (arg_13_0)
 	local var_13_0 = arg_13_0.tip_title_widget.style.text
 	local var_13_1 = Localize("loading_screen_tip_title")
 	local var_13_2, var_13_3, var_13_4 = Script.temp_count()
@@ -379,7 +379,7 @@ end
 
 local var_0_12 = {}
 
-function LoadingView._find_second_input_texture(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+LoadingView._find_second_input_texture = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	table.clear(var_0_12)
 
 	local var_14_0 = var_0_12
@@ -399,7 +399,7 @@ local var_0_14 = {
 	0
 }
 
-function LoadingView.setup_tip_text(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+LoadingView.setup_tip_text = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	arg_15_0:fit_title()
 	arg_15_0:reset_tip_text()
 
@@ -602,7 +602,7 @@ function LoadingView.setup_tip_text(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	end
 end
 
-function LoadingView.setup_act_text(arg_16_0, arg_16_1)
+LoadingView.setup_act_text = function (arg_16_0, arg_16_1)
 	if arg_16_1 then
 		local var_16_0 = LevelSettings[arg_16_1].act
 
@@ -616,7 +616,7 @@ function LoadingView.setup_act_text(arg_16_0, arg_16_1)
 	end
 end
 
-function LoadingView.setup_level_text(arg_17_0, arg_17_1)
+LoadingView.setup_level_text = function (arg_17_0, arg_17_1)
 	if arg_17_1 then
 		local var_17_0 = LevelSettings[arg_17_1].display_name
 
@@ -629,7 +629,7 @@ function LoadingView.setup_level_text(arg_17_0, arg_17_1)
 	end
 end
 
-function LoadingView.setup_difficulty_text(arg_18_0, arg_18_1)
+LoadingView.setup_difficulty_text = function (arg_18_0, arg_18_1)
 	if arg_18_1 then
 		local var_18_0 = DifficultySettings[arg_18_1].display_name
 		local var_18_1 = Localize(var_18_0)
@@ -639,7 +639,7 @@ function LoadingView.setup_difficulty_text(arg_18_0, arg_18_1)
 	end
 end
 
-function LoadingView.setup_news_ticker(arg_19_0, arg_19_1)
+LoadingView.setup_news_ticker = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.news_ticker_text_widget
 	local var_19_1 = var_19_0.content
 	local var_19_2 = var_19_0.style
@@ -657,7 +657,7 @@ end
 
 local var_0_15 = false
 
-function LoadingView.update(arg_20_0, arg_20_1)
+LoadingView.update = function (arg_20_0, arg_20_1)
 	if var_0_15 then
 		print("reload")
 		arg_20_0:create_ui_elements()
@@ -697,7 +697,7 @@ function LoadingView.update(arg_20_0, arg_20_1)
 	arg_20_0:draw(arg_20_1)
 end
 
-function LoadingView.draw(arg_21_0, arg_21_1)
+LoadingView.draw = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.ui_renderer
 	local var_21_1 = arg_21_0._ui_hdr_renderer
 	local var_21_2 = arg_21_0.ui_scenegraph
@@ -731,7 +731,7 @@ function LoadingView.draw(arg_21_0, arg_21_1)
 	end
 end
 
-function LoadingView.destroy(arg_22_0)
+LoadingView.destroy = function (arg_22_0)
 	VisualAssertLog.cleanup()
 	UIRenderer.destroy(arg_22_0.ui_renderer, arg_22_0.world)
 
@@ -743,6 +743,6 @@ function LoadingView.destroy(arg_22_0)
 	Managers.transition:show_loading_icon()
 end
 
-function LoadingView.is_done(arg_23_0)
+LoadingView.is_done = function (arg_23_0)
 	return true
 end

@@ -187,7 +187,7 @@ local var_0_18 = {
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_1_0, arg_1_1)
+					content_check_function = function (arg_1_0, arg_1_1)
 						return arg_1_1.color[1] > 0
 					end
 				},
@@ -195,7 +195,7 @@ local var_0_18 = {
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.text
 					end
 				},
@@ -203,7 +203,7 @@ local var_0_18 = {
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.text
 					end
 				}
@@ -628,7 +628,7 @@ local function var_0_21(arg_5_0)
 						style_id = "background_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "background_texture",
-						dynamic_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+						dynamic_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 							local var_6_0 = arg_6_0.fraction
 							local var_6_1 = arg_6_1.uv_start_pixels + arg_6_1.uv_scale_pixels * var_6_0
 							local var_6_2 = arg_6_1.uvs
@@ -645,7 +645,7 @@ local function var_0_21(arg_5_0)
 						style_id = "icon_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "icon_texture",
-						dynamic_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+						dynamic_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 							local var_7_0 = arg_7_0.fraction
 							local var_7_1 = arg_7_1.color
 							local var_7_2 = arg_7_1.uv_start_pixels
@@ -666,7 +666,7 @@ local function var_0_21(arg_5_0)
 						pass_type = "text",
 						text_id = "description_text",
 						retained_mode = false,
-						content_check_function = function(arg_8_0, arg_8_1)
+						content_check_function = function (arg_8_0, arg_8_1)
 							if arg_8_0.icon_texture then
 								arg_8_1.offset[1] = 78
 							else
@@ -681,7 +681,7 @@ local function var_0_21(arg_5_0)
 						style_id = "top_frame_texture",
 						texture_id = "top_frame_texture",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_9_0)
+						content_check_function = function (arg_9_0)
 							return arg_9_0.top_frame_texture
 						end
 					},
@@ -690,7 +690,7 @@ local function var_0_21(arg_5_0)
 						style_id = "bottom_frame_texture",
 						texture_id = "bottom_frame_texture",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_10_0)
+						content_check_function = function (arg_10_0)
 							return arg_10_0.bottom_frame_texture
 						end
 					},
@@ -699,7 +699,7 @@ local function var_0_21(arg_5_0)
 						style_id = "frame_glow_top_texture",
 						texture_id = "frame_glow_top_texture",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_11_0)
+						content_check_function = function (arg_11_0)
 							return arg_11_0.frame_glow_top_texture
 						end
 					},
@@ -708,7 +708,7 @@ local function var_0_21(arg_5_0)
 						style_id = "frame_glow_bottom_texture",
 						texture_id = "frame_glow_bottom_texture",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_12_0)
+						content_check_function = function (arg_12_0)
 							return arg_12_0.frame_glow_bottom_texture
 						end
 					}
@@ -976,7 +976,7 @@ local function var_0_22(arg_13_0)
 						texture_id = "arrow",
 						style_id = "arrow",
 						pass_type = "rotated_texture",
-						content_check_function = function(arg_14_0, arg_14_1)
+						content_check_function = function (arg_14_0, arg_14_1)
 							return arg_14_1.color[1] > 0
 						end
 					},
@@ -984,7 +984,7 @@ local function var_0_22(arg_13_0)
 						style_id = "text",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function(arg_15_0)
+						content_check_function = function (arg_15_0)
 							return arg_15_0.text
 						end
 					},
@@ -992,7 +992,7 @@ local function var_0_22(arg_13_0)
 						style_id = "text_shadow",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function(arg_16_0)
+						content_check_function = function (arg_16_0)
 							return arg_16_0.text
 						end
 					}

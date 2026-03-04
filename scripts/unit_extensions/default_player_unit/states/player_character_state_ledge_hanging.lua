@@ -2,7 +2,7 @@
 
 PlayerCharacterStateLedgeHanging = class(PlayerCharacterStateLedgeHanging, PlayerCharacterState)
 
-function PlayerCharacterStateLedgeHanging.init(arg_1_0, arg_1_1)
+PlayerCharacterStateLedgeHanging.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "ledge_hanging")
 
 	local var_1_0 = arg_1_1
@@ -11,14 +11,14 @@ function PlayerCharacterStateLedgeHanging.init(arg_1_0, arg_1_1)
 	arg_1_0.lerp_start_position = Vector3Box()
 end
 
-function PlayerCharacterStateLedgeHanging.on_enter_animation(arg_2_0)
+PlayerCharacterStateLedgeHanging.on_enter_animation = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 
 	CharacterStateHelper.play_animation_event_first_person(arg_2_0.first_person_extension, "idle")
 	CharacterStateHelper.play_animation_event(var_2_0, "hanging")
 end
 
-function PlayerCharacterStateLedgeHanging.change_to_third_person_camera(arg_3_0)
+PlayerCharacterStateLedgeHanging.change_to_third_person_camera = function (arg_3_0)
 	CharacterStateHelper.change_camera_state(arg_3_0.player, "follow_third_person_ledge")
 	arg_3_0.first_person_extension:set_first_person_mode(false)
 
@@ -27,7 +27,7 @@ function PlayerCharacterStateLedgeHanging.change_to_third_person_camera(arg_3_0)
 	CharacterStateHelper.show_inventory_3p(arg_3_0.unit, false, var_3_0, arg_3_0.is_server, arg_3_0.inventory_extension)
 end
 
-function PlayerCharacterStateLedgeHanging.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+PlayerCharacterStateLedgeHanging.on_enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	local var_4_0 = arg_4_0.unit
 
 	arg_4_0.ledge_unit = arg_4_7.ledge_unit
@@ -47,7 +47,7 @@ function PlayerCharacterStateLedgeHanging.on_enter(arg_4_0, arg_4_1, arg_4_2, ar
 	CharacterStateHelper.set_is_on_ledge(arg_4_0.ledge_unit, var_4_0, true, arg_4_0.is_server, arg_4_0.status_extension)
 end
 
-function PlayerCharacterStateLedgeHanging.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+PlayerCharacterStateLedgeHanging.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	arg_5_0.rotate_timer_yaw = nil
 	arg_5_0.position_lerp_timer = nil
 	arg_5_0.start_rotation = nil
@@ -74,7 +74,7 @@ function PlayerCharacterStateLedgeHanging.on_exit(arg_5_0, arg_5_1, arg_5_2, arg
 	end
 end
 
-function PlayerCharacterStateLedgeHanging.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PlayerCharacterStateLedgeHanging.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.csm
 	local var_6_1 = arg_6_0.unit
 	local var_6_2 = arg_6_0.locomotion_extension
@@ -128,7 +128,7 @@ function PlayerCharacterStateLedgeHanging.update(arg_6_0, arg_6_1, arg_6_2, arg_
 	arg_6_0.locomotion_extension:set_forced_velocity(Vector3:zero())
 end
 
-function PlayerCharacterStateLedgeHanging.calculate_start_position(arg_7_0)
+PlayerCharacterStateLedgeHanging.calculate_start_position = function (arg_7_0)
 	local var_7_0 = arg_7_0.unit
 	local var_7_1 = arg_7_0.ledge_unit
 	local var_7_2 = PlayerUnitMovementSettings.get_movement_settings_table(var_7_0)
@@ -163,7 +163,7 @@ function PlayerCharacterStateLedgeHanging.calculate_start_position(arg_7_0)
 	ScriptUnit.extension(var_7_0, "whereabouts_system"):set_new_hang_ledge_position(var_7_22)
 end
 
-function PlayerCharacterStateLedgeHanging.calculate_and_start_rotation_to_ledge(arg_8_0)
+PlayerCharacterStateLedgeHanging.calculate_and_start_rotation_to_ledge = function (arg_8_0)
 	local var_8_0 = arg_8_0.unit
 	local var_8_1 = arg_8_0.ledge_unit
 	local var_8_2 = PlayerUnitMovementSettings.get_movement_settings_table(var_8_0)
@@ -178,7 +178,7 @@ function PlayerCharacterStateLedgeHanging.calculate_and_start_rotation_to_ledge(
 	Unit.set_local_rotation(var_8_0, 0, var_8_6)
 end
 
-function PlayerCharacterStateLedgeHanging.calculate_offset_rotation(arg_9_0)
+PlayerCharacterStateLedgeHanging.calculate_offset_rotation = function (arg_9_0)
 	local var_9_0 = arg_9_0.unit
 	local var_9_1 = arg_9_0.ledge_unit
 	local var_9_2 = Unit.local_rotation(var_9_0, 0)
@@ -216,7 +216,7 @@ function PlayerCharacterStateLedgeHanging.calculate_offset_rotation(arg_9_0)
 
 			var_9_2 = Quaternion.look(var_9_19)
 		elseif script_data.debug_hang_ledges then
-			-- block empty
+			-- Nothing
 		end
 	end
 

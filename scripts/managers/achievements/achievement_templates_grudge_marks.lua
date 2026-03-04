@@ -51,7 +51,7 @@ var_0_0.grudge_marks_on_kill_util = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Managers.backend:get_interface("loot")
 
 		for iter_2_0 = 1, #var_0_21 do
@@ -64,7 +64,7 @@ var_0_0.grudge_marks_on_kill_util = {
 
 		return true
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = arg_3_4[var_0_13]
 
 		if not var_3_0 or not var_3_0.boss then
@@ -125,7 +125,7 @@ for iter_0_0, iter_0_1 in pairs(CareerSettings) do
 					name = var_0_24 .. "_name",
 					icon = "achievement_trophy_" .. var_0_25,
 					required_dlc = var_0_23,
-					completed = function(arg_4_0, arg_4_1, arg_4_2)
+					completed = function (arg_4_0, arg_4_1, arg_4_2)
 						return arg_4_0:get_persistent_stat(arg_4_1, "grudge_marks_kills_per_career_per_expedition", iter_0_0, var_0_24) >= 1
 					end
 				}
@@ -140,7 +140,7 @@ for iter_0_0, iter_0_1 in pairs(CareerSettings) do
 					name = var_0_26,
 					icon = "achievement_trophy_" .. var_0_27,
 					required_dlc = var_0_23,
-					completed = function(arg_5_0, arg_5_1, arg_5_2)
+					completed = function (arg_5_0, arg_5_1, arg_5_2)
 						return arg_5_0:get_persistent_stat(arg_5_1, "grudge_marks_kills_per_career_per_monster", iter_0_0, var_0_26) >= 1
 					end
 				}
@@ -154,7 +154,7 @@ for iter_0_0, iter_0_1 in pairs(CareerSettings) do
 				desc = "achv_" .. var_0_28 .. "_desc",
 				icon = "achievement_trophy_" .. var_0_28,
 				required_dlc = var_0_23,
-				progress = function(arg_6_0, arg_6_1, arg_6_2)
+				progress = function (arg_6_0, arg_6_1, arg_6_2)
 					local var_6_0 = arg_6_0:get_persistent_stat(arg_6_1, "grudge_mark_kills", iter_0_0)
 
 					return {
@@ -162,7 +162,7 @@ for iter_0_0, iter_0_1 in pairs(CareerSettings) do
 						5
 					}
 				end,
-				completed = function(arg_7_0, arg_7_1, arg_7_2)
+				completed = function (arg_7_0, arg_7_1, arg_7_2)
 					return arg_7_0:get_persistent_stat(arg_7_1, "grudge_mark_kills", iter_0_0) >= 5
 				end
 			}

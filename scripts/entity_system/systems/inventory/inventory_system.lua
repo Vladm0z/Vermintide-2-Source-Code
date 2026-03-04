@@ -26,7 +26,7 @@ local var_0_1 = {
 	"SimpleInventoryExtension"
 }
 
-function InventorySystem.init(arg_1_0, arg_1_1, arg_1_2)
+InventorySystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	InventorySystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -97,7 +97,7 @@ local function var_0_5()
 	var_5_0:update_mission(var_5_1, false, nil, true)
 end
 
-function InventorySystem.update(arg_6_0, arg_6_1, arg_6_2)
+InventorySystem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	InventorySystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 
 	if arg_6_0.is_server then
@@ -117,7 +117,7 @@ function InventorySystem.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function InventorySystem.update_mission_inventory_item(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+InventorySystem.update_mission_inventory_item = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = 0
 
 	for iter_7_0 = 1, #arg_7_1 do
@@ -145,18 +145,18 @@ function InventorySystem.update_mission_inventory_item(arg_7_0, arg_7_1, arg_7_2
 	return var_7_0
 end
 
-function InventorySystem.destroy(arg_8_0)
+InventorySystem.destroy = function (arg_8_0)
 	arg_8_0.network_event_delegate:unregister(arg_8_0)
 end
 
-function InventorySystem.register_event_objective(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+InventorySystem.register_event_objective = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0.num_event_objectives = 0
 	arg_9_0._event_objective = arg_9_1
 	arg_9_0._add_event_objective = arg_9_2
 	arg_9_0._remove_event_objective = arg_9_3
 end
 
-function InventorySystem.rpc_show_inventory(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+InventorySystem.rpc_show_inventory = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_2)
 
 	if not var_10_0 or not ALIVE[var_10_0] then
@@ -172,7 +172,7 @@ function InventorySystem.rpc_show_inventory(arg_10_0, arg_10_1, arg_10_2, arg_10
 	end
 end
 
-function InventorySystem.rpc_play_simple_particle_with_vector_variable(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+InventorySystem.rpc_play_simple_particle_with_vector_variable = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if arg_11_0.is_server then
 		arg_11_0.network_transmit:send_rpc_clients("rpc_play_simple_particle_with_vector_variable", arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	end
@@ -186,7 +186,7 @@ function InventorySystem.rpc_play_simple_particle_with_vector_variable(arg_11_0,
 	World.set_particles_variable(var_11_0, var_11_3, var_11_4, arg_11_5)
 end
 
-function InventorySystem.rpc_destroy_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+InventorySystem.rpc_destroy_slot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if arg_12_0.is_server then
 		local var_12_0 = CHANNEL_TO_PEER_ID[arg_12_1]
 
@@ -199,7 +199,7 @@ function InventorySystem.rpc_destroy_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	ScriptUnit.extension(var_12_1, "inventory_system"):destroy_slot(var_12_2)
 end
 
-function InventorySystem.rpc_give_equipment(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+InventorySystem.rpc_give_equipment = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_3)
 	local var_13_1 = false
 
@@ -274,7 +274,7 @@ function InventorySystem.rpc_give_equipment(arg_13_0, arg_13_1, arg_13_2, arg_13
 	end
 end
 
-function InventorySystem.rpc_add_equipment(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+InventorySystem.rpc_add_equipment = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	if arg_14_0.is_server then
 		local var_14_0 = CHANNEL_TO_PEER_ID[arg_14_1]
 
@@ -302,7 +302,7 @@ function InventorySystem.rpc_add_equipment(arg_14_0, arg_14_1, arg_14_2, arg_14_
 	end
 end
 
-function InventorySystem.rpc_add_inventory_slot_item(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+InventorySystem.rpc_add_inventory_slot_item = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = arg_15_0.unit_storage:unit(arg_15_2)
 
 	if var_15_0 == nil or not ALIVE[var_15_0] then
@@ -332,7 +332,7 @@ function InventorySystem.rpc_add_inventory_slot_item(arg_15_0, arg_15_1, arg_15_
 	end
 end
 
-function InventorySystem.rpc_add_equipment_buffs(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+InventorySystem.rpc_add_equipment_buffs = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
 	fassert(arg_16_0.is_server, "attempting to add buffs as a client VIA rpc_add_equipment_buffs")
 
 	local var_16_0 = arg_16_0.unit_storage:unit(arg_16_2)
@@ -344,7 +344,7 @@ function InventorySystem.rpc_add_equipment_buffs(arg_16_0, arg_16_1, arg_16_2, a
 	var_16_3:set_buffs_to_slot(var_16_4, var_16_1, var_16_2)
 end
 
-function InventorySystem.rpc_add_no_wield_required_equipment_buffs(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+InventorySystem.rpc_add_no_wield_required_equipment_buffs = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
 	fassert(arg_17_0.is_server, "attempting to add buffs as a client VIA rpc_add_no_wield_required_equipment_buffs")
 
 	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_2)
@@ -356,7 +356,7 @@ function InventorySystem.rpc_add_no_wield_required_equipment_buffs(arg_17_0, arg
 	var_17_3:set_buffs_to_slot(var_17_4, var_17_1, var_17_2)
 end
 
-function InventorySystem.rpc_add_equipment_limited_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+InventorySystem.rpc_add_equipment_limited_item = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 	if arg_18_0.is_server then
 		local var_18_0 = CHANNEL_TO_PEER_ID[arg_18_1]
 
@@ -371,7 +371,7 @@ function InventorySystem.rpc_add_equipment_limited_item(arg_18_0, arg_18_1, arg_
 	ScriptUnit.extension(var_18_1, "inventory_system"):add_equipment_limited_item(var_18_2, var_18_3, var_18_4, arg_18_6)
 end
 
-function InventorySystem.rpc_wield_equipment(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+InventorySystem.rpc_wield_equipment = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if arg_19_0.is_server then
 		local var_19_0 = CHANNEL_TO_PEER_ID[arg_19_1]
 
@@ -384,7 +384,7 @@ function InventorySystem.rpc_wield_equipment(arg_19_0, arg_19_1, arg_19_2, arg_1
 	ScriptUnit.extension(var_19_1, "inventory_system"):wield(var_19_2)
 end
 
-function InventorySystem.rpc_start_weapon_fx(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+InventorySystem.rpc_start_weapon_fx = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if arg_20_0.is_server then
 		local var_20_0 = CHANNEL_TO_PEER_ID[arg_20_1]
 
@@ -406,7 +406,7 @@ function InventorySystem.rpc_start_weapon_fx(arg_20_0, arg_20_1, arg_20_2, arg_2
 	end
 end
 
-function InventorySystem.rpc_stop_weapon_fx(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+InventorySystem.rpc_stop_weapon_fx = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	if arg_21_0.is_server then
 		local var_21_0 = CHANNEL_TO_PEER_ID[arg_21_1]
 
@@ -428,7 +428,7 @@ function InventorySystem.rpc_stop_weapon_fx(arg_21_0, arg_21_1, arg_21_2, arg_21
 	end
 end
 
-function InventorySystem.rpc_update_additional_slot(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+InventorySystem.rpc_update_additional_slot = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	if arg_22_0.is_server then
 		local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
 
@@ -450,7 +450,7 @@ function InventorySystem.rpc_update_additional_slot(arg_22_0, arg_22_1, arg_22_2
 	var_22_4:update_additional_items(var_22_5, var_22_1)
 end
 
-function InventorySystem.weapon_anim_event(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+InventorySystem.weapon_anim_event = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = ScriptUnit.extension(arg_23_1, "inventory_system")
 	local var_23_1, var_23_2 = var_23_0:get_all_weapon_unit()
 
@@ -476,7 +476,7 @@ function InventorySystem.weapon_anim_event(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	end
 end
 
-function InventorySystem.rpc_weapon_anim_event(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+InventorySystem.rpc_weapon_anim_event = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 	local var_24_1 = ScriptUnit.has_extension(var_24_0, "inventory_system")
 

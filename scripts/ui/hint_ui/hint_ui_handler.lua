@@ -19,7 +19,7 @@ local function var_0_1(arg_2_0)
 	Managers.save:auto_save(SaveFileName, SaveData, var_0_0)
 end
 
-function HintUIHandler.init(arg_3_0, arg_3_1)
+HintUIHandler.init = function (arg_3_0, arg_3_1)
 	arg_3_0._context = arg_3_1
 	arg_3_0._hints = {}
 	arg_3_0._n_hints = 0
@@ -31,7 +31,7 @@ function HintUIHandler.init(arg_3_0, arg_3_1)
 	Managers.state.event:register(arg_3_0, "ui_show_hint", "ui_show_hint")
 end
 
-function HintUIHandler.destroy(arg_4_0)
+HintUIHandler.destroy = function (arg_4_0)
 	Managers.state.event:unregister("ui_show_popup", arg_4_0)
 
 	for iter_4_0 = 1, arg_4_0._n_hints do
@@ -45,7 +45,7 @@ function HintUIHandler.destroy(arg_4_0)
 	end
 end
 
-function HintUIHandler.update(arg_5_0, arg_5_1, arg_5_2)
+HintUIHandler.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_condition_hints(arg_5_1, arg_5_2)
 
 	local var_5_0 = arg_5_0._hints[arg_5_0._n_hints]
@@ -72,7 +72,7 @@ function HintUIHandler.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function HintUIHandler.queue_hint(arg_6_0, arg_6_1)
+HintUIHandler.queue_hint = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._n_hints
 	local var_6_1 = arg_6_0._hints
 	local var_6_2 = var_6_0 + 1
@@ -98,7 +98,7 @@ function HintUIHandler.queue_hint(arg_6_0, arg_6_1)
 	return var_6_3
 end
 
-function HintUIHandler.ui_show_hint(arg_7_0, arg_7_1)
+HintUIHandler.ui_show_hint = function (arg_7_0, arg_7_1)
 	local var_7_0 = HintTemplates[arg_7_1]
 
 	if not var_7_0 then
@@ -116,7 +116,7 @@ function HintUIHandler.ui_show_hint(arg_7_0, arg_7_1)
 	arg_7_0:new_hint(arg_7_1, var_7_0)
 end
 
-function HintUIHandler.new_hint(arg_8_0, arg_8_1, arg_8_2)
+HintUIHandler.new_hint = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2.data
 	local var_8_1 = rawget(_G, var_8_0.class_name):new(arg_8_0._context, arg_8_1, arg_8_2)
 
@@ -125,7 +125,7 @@ function HintUIHandler.new_hint(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:queue_hint(var_8_1)
 end
 
-function HintUIHandler._handle_condition_hints(arg_9_0, arg_9_1, arg_9_2)
+HintUIHandler._handle_condition_hints = function (arg_9_0, arg_9_1, arg_9_2)
 	for iter_9_0 = 1, #arg_9_0._unseen_hints do
 		local var_9_0 = arg_9_0._unseen_hints[iter_9_0]
 
@@ -140,11 +140,11 @@ function HintUIHandler._handle_condition_hints(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function HintUIHandler.is_hint_active(arg_10_0)
+HintUIHandler.is_hint_active = function (arg_10_0)
 	return arg_10_0._hints[arg_10_0._n_hints] and true or false
 end
 
-function HintUIHandler.parse_unseen_hints(arg_11_0)
+HintUIHandler.parse_unseen_hints = function (arg_11_0)
 	table.clear(arg_11_0._unseen_hints)
 
 	for iter_11_0, iter_11_1 in pairs(HintTemplates) do
@@ -154,7 +154,7 @@ function HintUIHandler.parse_unseen_hints(arg_11_0)
 	end
 end
 
-function HintUIHandler.get_unseen_hint_index(arg_12_0, arg_12_1)
+HintUIHandler.get_unseen_hint_index = function (arg_12_0, arg_12_1)
 	for iter_12_0 = 1, #arg_12_0._unseen_hints do
 		if arg_12_1 == arg_12_0._unseen_hints[iter_12_0] then
 			return iter_12_0

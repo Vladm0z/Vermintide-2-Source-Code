@@ -10,7 +10,7 @@ local var_0_6 = true
 
 PlayerUnitSmartTargetingExtension = class(PlayerUnitSmartTargetingExtension)
 
-function PlayerUnitSmartTargetingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitSmartTargetingExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.conflict_manager = Managers.state.conflict
@@ -29,7 +29,7 @@ function PlayerUnitSmartTargetingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1
 	arg_1_0.score_modifiers_2 = {}
 end
 
-function PlayerUnitSmartTargetingExtension.extensions_ready(arg_2_0)
+PlayerUnitSmartTargetingExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 
 	arg_2_0.first_person_extension = ScriptUnit.extension(var_2_0, "first_person_system")
@@ -42,7 +42,7 @@ local var_0_7 = {}
 local var_0_8 = {}
 local var_0_9 = {}
 
-function PlayerUnitSmartTargetingExtension.update_opt2(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PlayerUnitSmartTargetingExtension.update_opt2 = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if var_0_3 then
 		return
 	end
@@ -198,7 +198,7 @@ function PlayerUnitSmartTargetingExtension.update_opt2(arg_3_0, arg_3_1, arg_3_2
 	var_3_55.targets_within_range = var_3_37
 end
 
-function PlayerUnitSmartTargetingExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerUnitSmartTargetingExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if var_0_6 then
 		arg_4_0:update_opt2(arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 
@@ -424,14 +424,14 @@ function PlayerUnitSmartTargetingExtension.update(arg_4_0, arg_4_1, arg_4_2, arg
 	var_4_83.targets_within_range = var_4_40
 end
 
-function PlayerUnitSmartTargetingExtension._get_player_camera(arg_5_0)
+PlayerUnitSmartTargetingExtension._get_player_camera = function (arg_5_0)
 	local var_5_0 = arg_5_0.player.viewport_name
 	local var_5_1 = ScriptWorld.viewport(arg_5_0.world, var_5_0)
 
 	return (ScriptViewport.camera(var_5_1))
 end
 
-function PlayerUnitSmartTargetingExtension.get_target_visibility_and_aim_position(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+PlayerUnitSmartTargetingExtension.get_target_visibility_and_aim_position = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_3.target_node or "j_spine1"
 	local var_6_1 = Unit.node(arg_6_1, var_6_0)
 	local var_6_2 = Unit.world_position(arg_6_1, var_6_1)
@@ -453,6 +453,6 @@ function PlayerUnitSmartTargetingExtension.get_target_visibility_and_aim_positio
 	return var_6_10, var_6_11
 end
 
-function PlayerUnitSmartTargetingExtension.get_targeting_data(arg_7_0)
+PlayerUnitSmartTargetingExtension.get_targeting_data = function (arg_7_0)
 	return arg_7_0.targeting_data
 end

@@ -6,7 +6,7 @@ local var_0_1 = {}
 var_0_0.area_damage_templates = {
 	globadier_area_dot_damage_vs = {
 		server = {
-			update = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10, arg_1_11, arg_1_12)
+			update = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10, arg_1_11, arg_1_12)
 				if arg_1_4 < arg_1_5 then
 					Managers.state.unit_spawner:mark_for_deletion(arg_1_1)
 
@@ -52,7 +52,7 @@ var_0_0.area_damage_templates = {
 
 				return true, var_1_1
 			end,
-			do_damage = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			do_damage = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				local var_2_0 = arg_2_0.unit
 				local var_2_1 = arg_2_0.damage
 				local var_2_2 = arg_2_0.damage_source
@@ -80,7 +80,7 @@ var_0_0.area_damage_templates = {
 			end
 		},
 		client = {
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 				if Development.parameter("screen_space_player_camera_reactions") == false then
 					return
 				end
@@ -126,7 +126,7 @@ var_0_0.area_damage_templates = {
 					end
 				end
 			end,
-			spawn_effect = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			spawn_effect = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				local var_4_0 = Unit.local_position(arg_4_1, 0)
 				local var_4_1 = World.create_particles(arg_4_0, arg_4_2, var_4_0)
 
@@ -140,14 +140,14 @@ var_0_0.area_damage_templates = {
 
 				return var_4_1
 			end,
-			destroy = function()
+			destroy = function ()
 				return
 			end
 		}
 	},
 	sorcerer_area_dot_damage_vs = {
 		server = {
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
 				if arg_6_4 < arg_6_5 then
 					Managers.state.unit_spawner:mark_for_deletion(arg_6_1)
 
@@ -185,7 +185,7 @@ var_0_0.area_damage_templates = {
 
 				return true, var_6_1
 			end,
-			do_damage = function(arg_7_0, arg_7_1, arg_7_2)
+			do_damage = function (arg_7_0, arg_7_1, arg_7_2)
 				local var_7_0 = arg_7_0.unit
 				local var_7_1 = arg_7_0.damage
 				local var_7_2 = arg_7_0.damage_source
@@ -195,7 +195,7 @@ var_0_0.area_damage_templates = {
 			end
 		},
 		client = {
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 				if Development.parameter("screen_space_player_camera_reactions") == false then
 					return
 				end
@@ -241,7 +241,7 @@ var_0_0.area_damage_templates = {
 					end
 				end
 			end,
-			spawn_effect = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			spawn_effect = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				local var_9_0 = Unit.local_position(arg_9_1, 0)
 				local var_9_1 = World.create_particles(arg_9_0, arg_9_2, var_9_0)
 
@@ -255,14 +255,14 @@ var_0_0.area_damage_templates = {
 
 				return var_9_1
 			end,
-			destroy = function()
+			destroy = function ()
 				return
 			end
 		}
 	},
 	explosion_template_aoe_vs = {
 		server = {
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11)
 				if arg_11_4 < arg_11_5 then
 					Managers.state.unit_spawner:mark_for_deletion(arg_11_1)
 
@@ -351,7 +351,7 @@ var_0_0.area_damage_templates = {
 					return true, var_11_13
 				end
 			end,
-			do_damage = function(arg_12_0, arg_12_1, arg_12_2)
+			do_damage = function (arg_12_0, arg_12_1, arg_12_2)
 				local var_12_0 = arg_12_0.unit
 				local var_12_1 = arg_12_1
 				local var_12_2 = arg_12_0.hit_zone_name
@@ -372,10 +372,10 @@ var_0_0.area_damage_templates = {
 			end
 		},
 		client = {
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 				return
 			end,
-			spawn_effect = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			spawn_effect = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = arg_14_4 or Unit.world_position(arg_14_1, 0)
 				local var_14_1 = World.create_particles(arg_14_0, arg_14_2, var_14_0)
 
@@ -393,7 +393,7 @@ var_0_0.area_damage_templates = {
 	},
 	area_poison_ai_random_death_vs = {
 		server = {
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				if arg_15_4 > 0 and arg_15_4 < arg_15_3 then
 					return false
 				end
@@ -417,7 +417,7 @@ var_0_0.area_damage_templates = {
 
 				return true, var_15_1
 			end,
-			do_damage = function(arg_16_0, arg_16_1, arg_16_2)
+			do_damage = function (arg_16_0, arg_16_1, arg_16_2)
 				local var_16_0 = Managers.state.network
 				local var_16_1 = arg_16_0.unit
 				local var_16_2 = MAX_POWER_LEVEL
@@ -442,7 +442,7 @@ var_0_0.area_damage_templates = {
 	},
 	mutator_life_poison_vs = {
 		server = {
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 				if arg_17_4 < arg_17_5 then
 					Managers.state.unit_spawner:mark_for_deletion(arg_17_1)
 
@@ -480,7 +480,7 @@ var_0_0.area_damage_templates = {
 
 				return true, var_17_1
 			end,
-			do_damage = function(arg_18_0, arg_18_1)
+			do_damage = function (arg_18_0, arg_18_1)
 				local var_18_0 = arg_18_0.unit
 				local var_18_1 = arg_18_0.damage
 				local var_18_2 = arg_18_0.damage_source
@@ -489,7 +489,7 @@ var_0_0.area_damage_templates = {
 			end
 		},
 		client = {
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
 				if Development.parameter("screen_space_player_camera_reactions") == false then
 					return
 				end
@@ -543,7 +543,7 @@ var_0_0.area_damage_templates = {
 					end
 				end
 			end,
-			spawn_effect = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			spawn_effect = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				local var_20_0 = Unit.local_position(arg_20_1, 0)
 				local var_20_1 = World.create_particles(arg_20_0, arg_20_2, var_20_0)
 
@@ -557,7 +557,7 @@ var_0_0.area_damage_templates = {
 
 				return var_20_1
 			end,
-			destroy = function()
+			destroy = function ()
 				return
 			end
 		}

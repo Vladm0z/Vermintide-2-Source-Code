@@ -27,7 +27,7 @@ var_0_0.PlayerUnitLocomotionExtension = {}
 
 local var_0_10 = var_0_0.PlayerUnitLocomotionExtension
 
-function var_0_10.init(arg_3_0, arg_3_1)
+var_0_10.init = function (arg_3_0, arg_3_1)
 	arg_3_0.nav_world = arg_3_1
 	arg_3_0.all_update_units = {}
 	arg_3_0.all_disabled_units = {}
@@ -48,7 +48,7 @@ function var_0_10.init(arg_3_0, arg_3_1)
 	end
 end
 
-function var_0_10.update(arg_4_0, arg_4_1, arg_4_2)
+var_0_10.update = function (arg_4_0, arg_4_1, arg_4_2)
 	var_0_10.update_movement(arg_4_0, arg_4_1, arg_4_2)
 	var_0_10.update_rotation(arg_4_0, arg_4_1, arg_4_2)
 	var_0_10.update_network(arg_4_0, arg_4_2)
@@ -56,7 +56,7 @@ function var_0_10.update(arg_4_0, arg_4_1, arg_4_2)
 	var_0_10.update_disabled_units(arg_4_0, arg_4_2)
 end
 
-function var_0_10.update_average_velocity(arg_5_0, arg_5_1, arg_5_2)
+var_0_10.update_average_velocity = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.all_update_units
 	local var_5_1 = 0.125
 	local var_5_2, var_5_3 = next(var_5_0, arg_5_0.last_average_velocity_unit)
@@ -115,7 +115,7 @@ end
 
 local var_0_11 = 0.2
 
-function var_0_10.update_movement(arg_6_0, arg_6_1, arg_6_2)
+var_0_10.update_movement = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.world:world("level_world")
 	local var_6_1 = World.get_data(var_6_0, "physics_world")
 
@@ -183,7 +183,7 @@ function var_0_10.update_movement(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function var_0_10.update_network(arg_7_0, arg_7_1)
+var_0_10.update_network = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.state.network:game()
 
 	if not var_7_0 or var_0_1 then
@@ -230,14 +230,14 @@ function var_0_10.update_network(arg_7_0, arg_7_1)
 	end
 end
 
-function var_0_10.update_statistics(arg_8_0, arg_8_1, arg_8_2)
+var_0_10.update_statistics = function (arg_8_0, arg_8_1, arg_8_2)
 	for iter_8_0, iter_8_1 in pairs(arg_8_0.all_update_units) do
 		GraphHelper.record_statistics("move_velocity", iter_8_1.velocity_current:unbox())
 		GraphHelper.record_statistics("move_speed", Vector3.length(iter_8_1.velocity_current:unbox()))
 	end
 end
 
-function var_0_10.update_rotation(arg_9_0, arg_9_1, arg_9_2)
+var_0_10.update_rotation = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Managers.player.is_server
 	local var_9_1 = Unit.set_local_rotation
 	local var_9_2 = Quaternion.lerp
@@ -308,7 +308,7 @@ function var_0_10.update_rotation(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function var_0_10.update_disabled_units(arg_10_0, arg_10_1)
+var_0_10.update_disabled_units = function (arg_10_0, arg_10_1)
 	for iter_10_0, iter_10_1 in pairs(arg_10_0.all_disabled_units) do
 		iter_10_1.run_func(iter_10_0, arg_10_1, iter_10_1)
 
@@ -325,7 +325,7 @@ function var_0_10.update_disabled_units(arg_10_0, arg_10_1)
 	end
 end
 
-function var_0_10.update_debug_anims(arg_11_0)
+var_0_10.update_debug_anims = function (arg_11_0)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0.all_update_units) do
 		local var_11_0 = iter_11_1.first_person_extension:get_first_person_unit()
 

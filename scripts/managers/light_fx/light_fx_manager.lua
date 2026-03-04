@@ -3,7 +3,7 @@
 if script_data.debug_lightfx then
 	LightFX = LightFX or {}
 
-	function LightFX.set_color_in_cube(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	LightFX.set_color_in_cube = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		LightFX.color = {
 			arg_1_0,
 			arg_1_1,
@@ -20,7 +20,7 @@ require("scripts/settings/light_fx_settings")
 
 LightFXManager = class(LightFXManager)
 
-function LightFXManager.init(arg_2_0)
+LightFXManager.init = function (arg_2_0)
 	if not rawget(_G, "LightFX") then
 		return
 	end
@@ -30,7 +30,7 @@ function LightFXManager.init(arg_2_0)
 	arg_2_0:set_lightfx_color_scheme("loading")
 end
 
-function LightFXManager.set_lightfx_color_scheme(arg_3_0, arg_3_1)
+LightFXManager.set_lightfx_color_scheme = function (arg_3_0, arg_3_1)
 	fassert(type(arg_3_1) == "string", "wrong indata in set_lightfx_color_scheme")
 
 	if not rawget(_G, "LightFX") then
@@ -52,7 +52,7 @@ function LightFXManager.set_lightfx_color_scheme(arg_3_0, arg_3_1)
 	arg_3_0:set_lightfx_color(var_3_0[1], var_3_0[2], var_3_0[3], var_3_0[4], var_3_0[5])
 end
 
-function LightFXManager.set_lightfx_color(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+LightFXManager.set_lightfx_color = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._color_value
 
 	if var_4_0[1] == arg_4_1 and var_4_0[2] == arg_4_2 and var_4_0[3] == arg_4_3 and var_4_0[4] == arg_4_4 and var_4_0[5] == arg_4_5 then
@@ -68,7 +68,7 @@ function LightFXManager.set_lightfx_color(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	LightFX.set_color_in_cube(arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 end
 
-function LightFXManager._get_value_from_color_scheme(arg_5_0, arg_5_1)
+LightFXManager._get_value_from_color_scheme = function (arg_5_0, arg_5_1)
 	local var_5_0 = LightFXSettings[arg_5_1]
 	local var_5_1 = var_5_0.value
 	local var_5_2 = var_5_0.update_func
@@ -80,7 +80,7 @@ function LightFXManager._get_value_from_color_scheme(arg_5_0, arg_5_1)
 	return var_5_1
 end
 
-function LightFXManager.update(arg_6_0, arg_6_1)
+LightFXManager.update = function (arg_6_0, arg_6_1)
 	if not GameSettingsDevelopment.use_alien_fx then
 		return
 	end
@@ -142,7 +142,7 @@ function LightFXManager.update(arg_6_0, arg_6_1)
 	end
 end
 
-function LightFXManager.udpate_debug(arg_7_0, arg_7_1)
+LightFXManager.udpate_debug = function (arg_7_0, arg_7_1)
 	if not rawget(_G, "DebugScreen") then
 		return
 	end

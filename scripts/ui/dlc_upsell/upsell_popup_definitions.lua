@@ -193,7 +193,7 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.button_hotspot.disable_button
 					end
 				},
@@ -212,7 +212,7 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -220,7 +220,7 @@ function create_frameless_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -517,13 +517,13 @@ local var_0_11 = {
 		{
 			name = "fade_in",
 			duration = 0.2,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				arg_6_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_6_3)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		}

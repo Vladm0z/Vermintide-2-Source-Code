@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/winds_intro_life.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_jade_weave_conversation_one_01",

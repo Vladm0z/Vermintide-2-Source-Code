@@ -4,7 +4,7 @@ require("scripts/managers/mod/mod_shim")
 
 ModManager = class(ModManager)
 
-function ModManager.init(arg_1_0, arg_1_1)
+ModManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._mods = {}
 	arg_1_0._num_mods = nil
 	arg_1_0._state = "not_loaded"
@@ -49,11 +49,11 @@ function ModManager.init(arg_1_0, arg_1_1)
 	end
 end
 
-function ModManager.developer_mode_enabled(arg_2_0)
+ModManager.developer_mode_enabled = function (arg_2_0)
 	return arg_2_0._settings.developer_mode
 end
 
-function ModManager._draw_state_to_gui(arg_3_0, arg_3_1, arg_3_2)
+ModManager._draw_state_to_gui = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._state
 	local var_3_1 = arg_3_0._ui_time + arg_3_2
 
@@ -74,13 +74,13 @@ function ModManager._draw_state_to_gui(arg_3_0, arg_3_1, arg_3_2)
 	Gui.text(arg_3_1, var_3_2 .. string.rep(".", 2 * var_3_1 % 4), "materials/fonts/arial", 16, nil, Vector3(5, 10, 1))
 end
 
-function ModManager.remove_gui(arg_4_0)
+ModManager.remove_gui = function (arg_4_0)
 	assert(arg_4_0._gui, "Trying to remove gui without setting gui first.")
 
 	arg_4_0._gui = nil
 end
 
-function ModManager._has_enabled_mods(arg_5_0, arg_5_1)
+ModManager._has_enabled_mods = function (arg_5_0, arg_5_1)
 	local var_5_0 = Application.user_setting("mods")
 
 	if not var_5_0 then
@@ -101,11 +101,11 @@ local var_0_1 = var_0_0.button_index("r")
 local var_0_2 = var_0_0.button_index("left shift")
 local var_0_3 = var_0_0.button_index("left ctrl")
 
-function ModManager._check_reload(arg_6_0)
+ModManager._check_reload = function (arg_6_0)
 	return var_0_0.pressed(var_0_1) and var_0_0.button(var_0_2) + var_0_0.button(var_0_3) == 2
 end
 
-function ModManager.update(arg_7_0, arg_7_1)
+ModManager.update = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._chat_print_buffer
 	local var_7_1 = #var_7_0
 
@@ -195,19 +195,19 @@ function ModManager.update(arg_7_0, arg_7_1)
 	end
 end
 
-function ModManager.currently_loading_mod(arg_8_0)
+ModManager.currently_loading_mod = function (arg_8_0)
 	return arg_8_0._mods[arg_8_0._mod_load_index]
 end
 
-function ModManager.all_mods_loaded(arg_9_0)
+ModManager.all_mods_loaded = function (arg_9_0)
 	return arg_9_0._state == "done"
 end
 
-function ModManager.destroy(arg_10_0)
+ModManager.destroy = function (arg_10_0)
 	arg_10_0:unload_all_mods()
 end
 
-function ModManager._run_callback(arg_11_0, arg_11_1, arg_11_2, ...)
+ModManager._run_callback = function (arg_11_0, arg_11_1, arg_11_2, ...)
 	local var_11_0 = arg_11_1.object
 	local var_11_1 = var_11_0[arg_11_2]
 
@@ -227,7 +227,7 @@ function ModManager._run_callback(arg_11_0, arg_11_1, arg_11_2, ...)
 	end
 end
 
-function ModManager._fetch_mod_metadata(arg_12_0)
+ModManager._fetch_mod_metadata = function (arg_12_0)
 	local var_12_0 = "http://cdn.fatsharkgames.se/mod_metadata.txt"
 	local var_12_1 = {
 		["User-Agent"] = "Warhammer: Vermintide 2"
@@ -238,7 +238,7 @@ function ModManager._fetch_mod_metadata(arg_12_0)
 	arg_12_0._state = "fetching_metadata"
 end
 
-function ModManager._cb_mod_metadata(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+ModManager._cb_mod_metadata = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	printf("[ModManager] Metadata request completed. success=%s code=%s", arg_13_1, arg_13_2)
 
 	local var_13_0 = {}
@@ -267,7 +267,7 @@ function ModManager._cb_mod_metadata(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg
 	arg_13_0._mod_metadata = var_13_0
 end
 
-function ModManager._start_scan(arg_14_0)
+ModManager._start_scan = function (arg_14_0)
 	arg_14_0:print("info", "Starting mod scan")
 
 	arg_14_0._state = "scanning"
@@ -275,7 +275,7 @@ function ModManager._start_scan(arg_14_0)
 	Mod.start_scan(not script_data["eac-untrusted"])
 end
 
-function ModManager._build_mod_table(arg_15_0, arg_15_1)
+ModManager._build_mod_table = function (arg_15_0, arg_15_1)
 	fassert(table.is_empty(arg_15_0._mods), "Trying to add mods to non-empty mod table")
 
 	local var_15_0 = Application.user_setting("mods") or {}
@@ -346,7 +346,7 @@ function ModManager._build_mod_table(arg_15_0, arg_15_1)
 	arg_15_0:print("info", "Found %i mods", #arg_15_0._mods)
 end
 
-function ModManager._load_mod(arg_16_0, arg_16_1)
+ModManager._load_mod = function (arg_16_0, arg_16_1)
 	arg_16_0._ui_time = 0
 
 	local var_16_0 = arg_16_0._mods
@@ -408,7 +408,7 @@ function ModManager._load_mod(arg_16_0, arg_16_1)
 	return "loading"
 end
 
-function ModManager._load_package(arg_17_0, arg_17_1, arg_17_2)
+ModManager._load_package = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_1.package_index = arg_17_2
 
 	local var_17_0 = arg_17_1.data.packages[arg_17_2]
@@ -428,7 +428,7 @@ function ModManager._load_package(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_1.loaded_packages[#arg_17_1.loaded_packages + 1] = var_17_1
 end
 
-function ModManager.unload_all_mods(arg_18_0)
+ModManager.unload_all_mods = function (arg_18_0)
 	if arg_18_0._state ~= "done" then
 		arg_18_0:print("error", "Mods can't be unloaded, mod state is not \"done\". current: %q", arg_18_0._state)
 
@@ -451,7 +451,7 @@ function ModManager.unload_all_mods(arg_18_0)
 	arg_18_0._state = "unloaded"
 end
 
-function ModManager.unload_mod(arg_19_0, arg_19_1)
+ModManager.unload_mod = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._mods[arg_19_1]
 
 	if var_19_0 then
@@ -468,7 +468,7 @@ function ModManager.unload_mod(arg_19_0, arg_19_1)
 	end
 end
 
-function ModManager._reload_mods(arg_20_0)
+ModManager._reload_mods = function (arg_20_0)
 	arg_20_0:print("info", "reloading mods")
 
 	for iter_20_0 = 1, arg_20_0._num_mods do
@@ -489,7 +489,7 @@ function ModManager._reload_mods(arg_20_0)
 	arg_20_0._reload_requested = false
 end
 
-function ModManager.on_game_state_changed(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+ModManager.on_game_state_changed = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	if arg_21_0._state == "done" then
 		for iter_21_0 = 1, arg_21_0._num_mods do
 			local var_21_0 = arg_21_0._mods[iter_21_0]
@@ -503,7 +503,7 @@ function ModManager.on_game_state_changed(arg_21_0, arg_21_1, arg_21_2, arg_21_3
 	end
 end
 
-function ModManager._topologically_sorted(arg_22_0, arg_22_1)
+ModManager._topologically_sorted = function (arg_22_0, arg_22_1)
 	local var_22_0 = {}
 	local var_22_1 = {}
 
@@ -516,7 +516,7 @@ function ModManager._topologically_sorted(arg_22_0, arg_22_1)
 	return var_22_1
 end
 
-function ModManager._visit(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+ModManager._visit = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	arg_23_0:print("debug", "Visiting mod %q with id %d", arg_23_4.name, arg_23_4.id)
 
 	if arg_23_2[arg_23_4] then
@@ -560,7 +560,7 @@ local var_0_4 = {
 	error = 1
 }
 
-function ModManager.print(arg_24_0, arg_24_1, arg_24_2, ...)
+ModManager.print = function (arg_24_0, arg_24_1, arg_24_2, ...)
 	local var_24_0 = string.format("[ModManager][" .. arg_24_1 .. "] " .. arg_24_2, ...)
 	local var_24_1 = var_0_4[arg_24_1] or 99
 
@@ -573,7 +573,7 @@ function ModManager.print(arg_24_0, arg_24_1, arg_24_2, ...)
 	end
 end
 
-function ModManager.network_bind(arg_25_0, arg_25_1, arg_25_2)
+ModManager.network_bind = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._network_callbacks
 
 	fassert(not var_25_0[arg_25_1], "Port %d already in use", arg_25_1)
@@ -581,7 +581,7 @@ function ModManager.network_bind(arg_25_0, arg_25_1, arg_25_2)
 	var_25_0[arg_25_1] = arg_25_2
 end
 
-function ModManager.network_unbind(arg_26_0, arg_26_1)
+ModManager.network_unbind = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._network_callbacks
 
 	fassert(var_26_0[arg_26_1], "Port %d not in use", arg_26_1)
@@ -589,11 +589,11 @@ function ModManager.network_unbind(arg_26_0, arg_26_1)
 	var_26_0[arg_26_1] = nil
 end
 
-function ModManager.network_is_occupied(arg_27_0, arg_27_1)
+ModManager.network_is_occupied = function (arg_27_0, arg_27_1)
 	return arg_27_0._network_callbacks[arg_27_1] ~= nil
 end
 
-function ModManager.network_send(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+ModManager.network_send = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	if arg_28_1 == arg_28_0._my_peer_id then
 		Managers.state.network.network_transmit:queue_local_rpc("rpc_mod_user_data", arg_28_2, arg_28_3)
 	end
@@ -605,7 +605,7 @@ function ModManager.network_send(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	end
 end
 
-function ModManager.rpc_mod_user_data(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+ModManager.rpc_mod_user_data = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	if arg_29_3 == arg_29_0._my_peer_id then
 		local var_29_0 = arg_29_0._network_callbacks[arg_29_4]
 
@@ -621,19 +621,19 @@ function ModManager.rpc_mod_user_data(arg_29_0, arg_29_1, arg_29_2, arg_29_3, ar
 	end
 end
 
-function ModManager.register_network_event_delegate(arg_30_0, arg_30_1)
+ModManager.register_network_event_delegate = function (arg_30_0, arg_30_1)
 	arg_30_1:register(arg_30_0, "rpc_mod_user_data")
 
 	arg_30_0._network_event_delegate = arg_30_1
 end
 
-function ModManager.unregister_network_event_delegate(arg_31_0)
+ModManager.unregister_network_event_delegate = function (arg_31_0)
 	arg_31_0._network_event_delegate:unregister(arg_31_0)
 
 	arg_31_0._network_event_delegate = nil
 end
 
-function ModManager.network_context_created(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+ModManager.network_context_created = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	arg_32_0._host_peer_id = arg_32_1
 	arg_32_0._my_peer_id = arg_32_2
 	arg_32_0._is_server = arg_32_3

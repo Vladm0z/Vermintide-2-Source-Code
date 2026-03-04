@@ -4,7 +4,7 @@ local var_0_0 = 0
 
 UIUnitPreviewer = class(UIUnitPreviewer)
 
-function UIUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+UIUnitPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0._background_world = arg_1_4
 	arg_1_0._background_viewport = arg_1_5
 	arg_1_0._unique_id = arg_1_6
@@ -19,15 +19,15 @@ function UIUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	arg_1_0:_load_package(arg_1_2)
 end
 
-function UIUnitPreviewer.register_spawn_callback(arg_2_0, arg_2_1)
+UIUnitPreviewer.register_spawn_callback = function (arg_2_0, arg_2_1)
 	arg_2_0._spawn_callback = arg_2_1
 end
 
-function UIUnitPreviewer.activate_auto_spin(arg_3_0)
+UIUnitPreviewer.activate_auto_spin = function (arg_3_0)
 	arg_3_0._auto_spin_random_seed = math.random(5, 30000)
 end
 
-function UIUnitPreviewer.destroy(arg_4_0)
+UIUnitPreviewer.destroy = function (arg_4_0)
 	arg_4_0:_destroy_unit()
 	arg_4_0:_unload_package()
 	table.clear(arg_4_0._loaded_packages)
@@ -37,7 +37,7 @@ function UIUnitPreviewer.destroy(arg_4_0)
 	arg_4_0._background_world = nil
 end
 
-function UIUnitPreviewer._destroy_unit(arg_5_0)
+UIUnitPreviewer._destroy_unit = function (arg_5_0)
 	local var_5_0 = arg_5_0._background_world
 	local var_5_1 = arg_5_0._spawned_unit
 
@@ -48,7 +48,7 @@ function UIUnitPreviewer._destroy_unit(arg_5_0)
 	end
 end
 
-function UIUnitPreviewer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+UIUnitPreviewer.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0._unit_spawned then
 		if arg_6_3 then
 			local var_6_0 = Managers.input
@@ -89,21 +89,21 @@ function UIUnitPreviewer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function UIUnitPreviewer.set_zoom_fraction(arg_7_0, arg_7_1)
+UIUnitPreviewer.set_zoom_fraction = function (arg_7_0, arg_7_1)
 	arg_7_0._zoom_fraction = math.clamp(arg_7_1, 0, 1)
 	arg_7_0._zoom_dirty = true
 end
 
-function UIUnitPreviewer.set_zoom_fraction_unclamped(arg_8_0, arg_8_1)
+UIUnitPreviewer.set_zoom_fraction_unclamped = function (arg_8_0, arg_8_1)
 	arg_8_0._zoom_fraction = arg_8_1
 	arg_8_0._zoom_dirty = true
 end
 
-function UIUnitPreviewer.zoom_fraction(arg_9_0)
+UIUnitPreviewer.zoom_fraction = function (arg_9_0)
 	return arg_9_0._zoom_fraction or 0
 end
 
-function UIUnitPreviewer._auto_spin_values(arg_10_0, arg_10_1, arg_10_2)
+UIUnitPreviewer._auto_spin_values = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._auto_spin_random_seed
 
 	if not var_10_0 then
@@ -121,7 +121,7 @@ end
 
 local var_0_1 = {}
 
-function UIUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
+UIUnitPreviewer._handle_mouse_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_1:get("cursor")
 
 	if not var_11_0 then
@@ -151,7 +151,7 @@ function UIUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function UIUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_12_2)
+UIUnitPreviewer._handle_controller_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1:get("gamepad_right_axis")
 
 	if var_12_0 and Vector3.length(var_12_0) > 0.01 then
@@ -159,7 +159,7 @@ function UIUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function UIUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
+UIUnitPreviewer.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._spawn_callback and arg_13_0._unit_spawned then
 		arg_13_0._spawn_callback()
 
@@ -167,31 +167,31 @@ function UIUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function UIUnitPreviewer._trigger_unit_flow_event(arg_14_0, arg_14_1, arg_14_2)
+UIUnitPreviewer._trigger_unit_flow_event = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_1 and Unit.alive(arg_14_1) then
 		Unit.flow_event(arg_14_1, arg_14_2)
 	end
 end
 
-function UIUnitPreviewer._get_world(arg_15_0)
+UIUnitPreviewer._get_world = function (arg_15_0)
 	return arg_15_0._background_world, arg_15_0._background_viewport
 end
 
-function UIUnitPreviewer._get_camera_position(arg_16_0)
+UIUnitPreviewer._get_camera_position = function (arg_16_0)
 	local var_16_0 = arg_16_0._background_viewport
 	local var_16_1 = ScriptViewport.camera(var_16_0)
 
 	return ScriptCamera.position(var_16_1)
 end
 
-function UIUnitPreviewer._get_camera_rotation(arg_17_0)
+UIUnitPreviewer._get_camera_rotation = function (arg_17_0)
 	local var_17_0 = arg_17_0._background_viewport
 	local var_17_1 = ScriptViewport.camera(var_17_0)
 
 	return ScriptCamera.rotation(var_17_1)
 end
 
-function UIUnitPreviewer._packages_loaded(arg_18_0)
+UIUnitPreviewer._packages_loaded = function (arg_18_0)
 	local var_18_0 = arg_18_0.units_to_spawn
 	local var_18_1 = arg_18_0._loaded_packages
 
@@ -206,7 +206,7 @@ function UIUnitPreviewer._packages_loaded(arg_18_0)
 	return true
 end
 
-function UIUnitPreviewer._load_package(arg_19_0, arg_19_1)
+UIUnitPreviewer._load_package = function (arg_19_0, arg_19_1)
 	local var_19_0 = Managers.package
 	local var_19_1 = callback(arg_19_0, "_on_load_complete", arg_19_1)
 	local var_19_2 = "UIUnitPreviewer"
@@ -218,7 +218,7 @@ function UIUnitPreviewer._load_package(arg_19_0, arg_19_1)
 	var_19_0:load(arg_19_1, var_19_2, var_19_1, true)
 end
 
-function UIUnitPreviewer._on_load_complete(arg_20_0, arg_20_1)
+UIUnitPreviewer._on_load_complete = function (arg_20_0, arg_20_1)
 	arg_20_0._package_loaded = true
 
 	if arg_20_0._unit_to_spawn and arg_20_0._background_viewport then
@@ -228,7 +228,7 @@ function UIUnitPreviewer._on_load_complete(arg_20_0, arg_20_1)
 	end
 end
 
-function UIUnitPreviewer._unload_package(arg_21_0)
+UIUnitPreviewer._unload_package = function (arg_21_0)
 	local var_21_0 = arg_21_0._package_name
 	local var_21_1 = "UIUnitPreviewer"
 
@@ -239,7 +239,7 @@ function UIUnitPreviewer._unload_package(arg_21_0)
 	Managers.package:unload(var_21_0, var_21_1)
 end
 
-function UIUnitPreviewer._spawn_unit(arg_22_0, arg_22_1, arg_22_2)
+UIUnitPreviewer._spawn_unit = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0:_get_camera_rotation()
 	local var_22_1 = Quaternion.forward(var_22_0)
 	local var_22_2 = Quaternion.look(var_22_1, Vector3.up())

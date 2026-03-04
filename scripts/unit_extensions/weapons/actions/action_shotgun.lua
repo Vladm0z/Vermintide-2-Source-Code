@@ -6,7 +6,7 @@ local var_0_0 = Unit.set_flow_variable
 local var_0_1 = Unit.flow_event
 local var_0_2 = 3
 
-function ActionShotgun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionShotgun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionShotgun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -20,7 +20,7 @@ function ActionShotgun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 	arg_1_0._fire_rotation = QuaternionBox()
 end
 
-function ActionShotgun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionShotgun.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionShotgun.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -63,7 +63,7 @@ function ActionShotgun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_
 	end
 end
 
-function ActionShotgun._use_ammo(arg_3_0)
+ActionShotgun._use_ammo = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.ammo_extension
 	local var_3_2 = var_3_0.ammo_usage
@@ -81,7 +81,7 @@ function ActionShotgun._use_ammo(arg_3_0)
 	arg_3_0._num_shots_total = var_3_3
 end
 
-function ActionShotgun._add_overcharge(arg_4_0)
+ActionShotgun._add_overcharge = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action.overcharge_type
 
 	if var_4_0 then
@@ -97,7 +97,7 @@ function ActionShotgun._add_overcharge(arg_4_0)
 	end
 end
 
-function ActionShotgun._start_shooting(arg_5_0)
+ActionShotgun._start_shooting = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = arg_5_0.current_action
 	local var_5_2 = ScriptUnit.extension(var_5_0, "first_person_system")
@@ -134,7 +134,7 @@ function ActionShotgun._start_shooting(arg_5_0)
 	arg_5_0.state = "shooting"
 end
 
-function ActionShotgun._shooting(arg_6_0, arg_6_1, arg_6_2)
+ActionShotgun._shooting = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._num_shots_total
 	local var_6_1 = var_6_0 - arg_6_0._shots_fired
 
@@ -161,7 +161,7 @@ function ActionShotgun._shooting(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function ActionShotgun._shoot(arg_7_0, arg_7_1, arg_7_2)
+ActionShotgun._shoot = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.current_action
 	local var_7_1 = arg_7_0._fire_position:unbox()
 	local var_7_2 = arg_7_0._fire_rotation:unbox()
@@ -206,7 +206,7 @@ function ActionShotgun._shoot(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._check_buffs = var_7_5
 end
 
-function ActionShotgun.client_owner_post_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ActionShotgun.client_owner_post_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0.owner_unit
 
 	if arg_8_0.state == "waiting_to_shoot" and arg_8_2 >= arg_8_0.time_to_shoot then
@@ -244,7 +244,7 @@ function ActionShotgun.client_owner_post_update(arg_8_0, arg_8_1, arg_8_2, arg_8
 	end
 end
 
-function ActionShotgun.reload(arg_9_0, arg_9_1)
+ActionShotgun.reload = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.ammo_extension
 
 	if not var_9_0 then
@@ -261,7 +261,7 @@ function ActionShotgun.reload(arg_9_0, arg_9_1)
 	end
 end
 
-function ActionShotgun.finish(arg_10_0, arg_10_1)
+ActionShotgun.finish = function (arg_10_0, arg_10_1)
 	if arg_10_0.state == "start_shooting" then
 		arg_10_0:_start_shooting()
 	end
@@ -287,7 +287,7 @@ function ActionShotgun.finish(arg_10_0, arg_10_1)
 	end
 end
 
-function ActionShotgun._get_spread_rotation(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ActionShotgun._get_spread_rotation = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0.spread_extension
 
 	if var_11_0 then

@@ -2,7 +2,7 @@
 
 PlayerCharacterStateLeaveLedgeHangingPullUp = class(PlayerCharacterStateLeaveLedgeHangingPullUp, PlayerCharacterState)
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.init(arg_1_0, arg_1_1)
+PlayerCharacterStateLeaveLedgeHangingPullUp.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "leave_ledge_hanging_pull_up")
 
 	local var_1_0 = arg_1_1
@@ -11,13 +11,13 @@ function PlayerCharacterStateLeaveLedgeHangingPullUp.init(arg_1_0, arg_1_1)
 	arg_1_0.end_position = Vector3Box()
 end
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter_animation_event(arg_2_0)
+PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter_animation_event = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 
 	CharacterStateHelper.play_animation_event(var_2_0, "hanging_exit")
 end
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_0.input_extension
 	local var_3_2 = arg_3_0.first_person_extension
@@ -32,7 +32,7 @@ function PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter(arg_3_0, arg_3_1, 
 	arg_3_0.finish_time = arg_3_5 + PlayerUnitMovementSettings.get_movement_settings_table(var_3_0).ledge_hanging.leaving_animation_time
 end
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0.status_extension
 
 	arg_4_0.start_rotation_box = nil
@@ -59,7 +59,7 @@ function PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit(arg_4_0, arg_4_1, a
 	CharacterStateHelper.show_inventory_3p(arg_4_1, true, var_4_1, arg_4_0.is_server, arg_4_0.inventory_extension)
 end
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateLeaveLedgeHangingPullUp.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.input_extension
@@ -115,7 +115,7 @@ function PlayerCharacterStateLeaveLedgeHangingPullUp.update(arg_5_0, arg_5_1, ar
 	CharacterStateHelper.look(var_5_2, arg_5_0.player.viewport_name, arg_5_0.first_person_extension, var_5_3, arg_5_0.inventory_extension)
 end
 
-function PlayerCharacterStateLeaveLedgeHangingPullUp.calculate_end_position(arg_6_0)
+PlayerCharacterStateLeaveLedgeHangingPullUp.calculate_end_position = function (arg_6_0)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = arg_6_0.ledge_unit
 	local var_6_2 = PlayerUnitMovementSettings.get_movement_settings_table(var_6_0)

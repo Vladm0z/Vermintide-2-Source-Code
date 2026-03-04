@@ -11,7 +11,7 @@ var_0_0.config = {
 	animation = "interaction_start"
 }
 
-function var_0_0.server.start(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+var_0_0.server.start = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	local var_1_0 = ScriptUnit.has_extension(arg_1_2, "deus_belakor_locus_system")
 
 	if var_1_0 then
@@ -34,7 +34,7 @@ function var_0_0.server.start(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	end
 end
 
-function var_0_0.server.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+var_0_0.server.stop = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	if arg_2_6 == InteractionResult.SUCCESS then
 		local var_2_0 = ScriptUnit.has_extension(arg_2_2, "deus_belakor_locus_system")
 
@@ -44,7 +44,7 @@ function var_0_0.server.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_
 	end
 end
 
-function var_0_0.client.start(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+var_0_0.client.start = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = ScriptUnit.has_extension(arg_3_2, "deus_belakor_locus_system")
 
 	if var_3_0 then
@@ -91,7 +91,7 @@ function var_0_0.client.start(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3
 	end
 end
 
-function var_0_0.client.get_progress(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.client.get_progress = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.duration or 0
 
 	if var_4_0 == 0 then
@@ -101,7 +101,7 @@ function var_0_0.client.get_progress(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_0.start_time == nil and 0 or math.min(1, (arg_4_2 - arg_4_0.start_time) / var_4_0)
 end
 
-function var_0_0.client.stop(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+var_0_0.client.stop = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	Unit.animation_event(arg_5_1, "interaction_end")
 
 	if arg_5_6 == InteractionResult.SUCCESS and not arg_5_3.is_husk then
@@ -120,13 +120,13 @@ function var_0_0.client.stop(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_
 	end
 end
 
-function var_0_0.client.hud_description(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+var_0_0.client.hud_description = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = ScriptUnit.has_extension(arg_6_0, "deus_belakor_locus_system")
 
 	return Unit.get_data(arg_6_0, "interaction_data", "hud_description"), arg_6_3 or var_6_0:get_interaction_action()
 end
 
-function var_0_0.client.can_interact(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+var_0_0.client.can_interact = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if Managers.mechanism:current_mechanism_name() ~= "deus" or Managers.mechanism:game_mechanism():get_state() ~= "ingame_deus" then
 		return false
 	end
@@ -143,7 +143,7 @@ end
 InteractionDefinitions.deus_belakor_locus_pre_crystal = var_0_0
 InteractionDefinitions.deus_belakor_locus_with_crystal = table.clone(var_0_0)
 
-function InteractionDefinitions.deus_belakor_locus_with_crystal.server.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+InteractionDefinitions.deus_belakor_locus_with_crystal.server.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	local var_8_0 = ScriptUnit.has_extension(arg_8_2, "deus_belakor_locus_system")
 
 	if not var_8_0 or not var_8_0:can_interact_validate(arg_8_1) then

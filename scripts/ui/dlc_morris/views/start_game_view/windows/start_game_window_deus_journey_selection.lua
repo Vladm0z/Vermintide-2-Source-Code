@@ -17,7 +17,7 @@ end
 StartGameWindowDeusJourneySelection = class(StartGameWindowDeusJourneySelection)
 StartGameWindowDeusJourneySelection.NAME = "StartGameWindowDeusJourneySelection"
 
-function StartGameWindowDeusJourneySelection.on_enter(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowDeusJourneySelection.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowDeusJourneySelection")
 
 	local var_2_0 = arg_2_1.ingame_ui_context
@@ -46,7 +46,7 @@ function StartGameWindowDeusJourneySelection.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowDeusJourneySelection._start_transition_animation(arg_3_0, arg_3_1)
+StartGameWindowDeusJourneySelection._start_transition_animation = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		render_settings = arg_3_0.render_settings
 	}
@@ -56,7 +56,7 @@ function StartGameWindowDeusJourneySelection._start_transition_animation(arg_3_0
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-function StartGameWindowDeusJourneySelection.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowDeusJourneySelection.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = UISceneGraph.init_scenegraph(var_0_3)
 
 	arg_4_0.ui_scenegraph = var_4_0
@@ -100,7 +100,7 @@ function StartGameWindowDeusJourneySelection.create_ui_elements(arg_4_0, arg_4_1
 	end
 end
 
-function StartGameWindowDeusJourneySelection._get_unlocked_journeys(arg_5_0)
+StartGameWindowDeusJourneySelection._get_unlocked_journeys = function (arg_5_0)
 	local var_5_0 = {}
 
 	for iter_5_0, iter_5_1 in ipairs(LevelUnlockUtils.unlocked_journeys(arg_5_0.statistics_db, arg_5_0._stats_id)) do
@@ -110,7 +110,7 @@ function StartGameWindowDeusJourneySelection._get_unlocked_journeys(arg_5_0)
 	return var_5_0
 end
 
-function StartGameWindowDeusJourneySelection._setup_journey_widgets(arg_6_0)
+StartGameWindowDeusJourneySelection._setup_journey_widgets = function (arg_6_0)
 	local var_6_0 = arg_6_0._node_widgets
 	local var_6_1 = arg_6_0.statistics_db
 	local var_6_2 = arg_6_0._stats_id
@@ -157,7 +157,7 @@ function StartGameWindowDeusJourneySelection._setup_journey_widgets(arg_6_0)
 	arg_6_0._active_node_widgets = var_6_4
 end
 
-function StartGameWindowDeusJourneySelection._get_first_journey_name(arg_7_0)
+StartGameWindowDeusJourneySelection._get_first_journey_name = function (arg_7_0)
 	local var_7_0 = arg_7_0._active_node_widgets
 
 	if var_7_0 then
@@ -165,7 +165,7 @@ function StartGameWindowDeusJourneySelection._get_first_journey_name(arg_7_0)
 	end
 end
 
-function StartGameWindowDeusJourneySelection._is_journey_presented(arg_8_0, arg_8_1)
+StartGameWindowDeusJourneySelection._is_journey_presented = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._active_node_widgets
 
 	if var_8_0 then
@@ -179,7 +179,7 @@ function StartGameWindowDeusJourneySelection._is_journey_presented(arg_8_0, arg_
 	return false
 end
 
-function StartGameWindowDeusJourneySelection._select_journey(arg_9_0, arg_9_1)
+StartGameWindowDeusJourneySelection._select_journey = function (arg_9_0, arg_9_1)
 	local var_9_0 = DeusJourneySettings[arg_9_1].required_journeys or {}
 	local var_9_1 = arg_9_0._active_node_widgets
 	local var_9_2 = arg_9_0._unlocked_journeys[arg_9_1]
@@ -201,7 +201,7 @@ function StartGameWindowDeusJourneySelection._select_journey(arg_9_0, arg_9_1)
 	arg_9_0:_update_modifier_god_info(arg_9_1)
 end
 
-function StartGameWindowDeusJourneySelection._set_presentation_info(arg_10_0, arg_10_1)
+StartGameWindowDeusJourneySelection._set_presentation_info = function (arg_10_0, arg_10_1)
 	local var_10_0 = ""
 	local var_10_1 = ""
 	local var_10_2
@@ -246,7 +246,7 @@ function StartGameWindowDeusJourneySelection._set_presentation_info(arg_10_0, ar
 	var_10_4.locked_text.content.text = ""
 end
 
-function StartGameWindowDeusJourneySelection._setup_grid_navigation(arg_11_0)
+StartGameWindowDeusJourneySelection._setup_grid_navigation = function (arg_11_0)
 	local var_11_0 = {}
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._active_node_widgets) do
@@ -259,7 +259,7 @@ function StartGameWindowDeusJourneySelection._setup_grid_navigation(arg_11_0)
 	arg_11_0._current_column = arg_11_0:_find_journey_location_in_grid(arg_11_0._selected_journey_name)
 end
 
-function StartGameWindowDeusJourneySelection._find_journey_location_in_grid(arg_12_0, arg_12_1)
+StartGameWindowDeusJourneySelection._find_journey_location_in_grid = function (arg_12_0, arg_12_1)
 	if not arg_12_1 then
 		return 1
 	end
@@ -282,7 +282,7 @@ function StartGameWindowDeusJourneySelection._find_journey_location_in_grid(arg_
 	return var_12_1
 end
 
-function StartGameWindowDeusJourneySelection.on_exit(arg_13_0, arg_13_1)
+StartGameWindowDeusJourneySelection.on_exit = function (arg_13_0, arg_13_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowDeusJourneySelection")
 
 	arg_13_0.ui_animator = nil
@@ -290,7 +290,7 @@ function StartGameWindowDeusJourneySelection.on_exit(arg_13_0, arg_13_1)
 	arg_13_0.parent:set_input_description(nil)
 end
 
-function StartGameWindowDeusJourneySelection.update(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowDeusJourneySelection.update = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Managers.time:time("main")
 
 	arg_14_0:_update_modifiers(var_14_0)
@@ -299,11 +299,11 @@ function StartGameWindowDeusJourneySelection.update(arg_14_0, arg_14_1, arg_14_2
 	arg_14_0:draw(arg_14_1)
 end
 
-function StartGameWindowDeusJourneySelection.post_update(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowDeusJourneySelection.post_update = function (arg_15_0, arg_15_1, arg_15_2)
 	return
 end
 
-function StartGameWindowDeusJourneySelection._update_modifiers(arg_16_0, arg_16_1)
+StartGameWindowDeusJourneySelection._update_modifiers = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._journey_cycle
 
 	if not var_16_0 or var_0_7(var_16_0, arg_16_1) then
@@ -313,13 +313,13 @@ function StartGameWindowDeusJourneySelection._update_modifiers(arg_16_0, arg_16_
 	arg_16_0:_update_modifier_timer(arg_16_1)
 end
 
-function StartGameWindowDeusJourneySelection._refresh_journey_cycle(arg_17_0)
+StartGameWindowDeusJourneySelection._refresh_journey_cycle = function (arg_17_0)
 	arg_17_0._journey_cycle = Managers.backend:get_interface("deus"):get_journey_cycle()
 
 	arg_17_0:_on_new_journey_cycle()
 end
 
-function StartGameWindowDeusJourneySelection._update_modifier_timer(arg_18_0, arg_18_1)
+StartGameWindowDeusJourneySelection._update_modifier_timer = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._journey_cycle
 	local var_18_1 = var_18_0.remaining_time - (arg_18_1 - var_18_0.time_of_update)
 
@@ -345,7 +345,7 @@ function StartGameWindowDeusJourneySelection._update_modifier_timer(arg_18_0, ar
 	end
 end
 
-function StartGameWindowDeusJourneySelection._update_modifier_god_info(arg_19_0, arg_19_1)
+StartGameWindowDeusJourneySelection._update_modifier_god_info = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._journey_cycle
 	local var_19_1 = arg_19_0._widgets_by_name.modifier_info_god
 	local var_19_2 = var_19_1.content
@@ -363,7 +363,7 @@ function StartGameWindowDeusJourneySelection._update_modifier_god_info(arg_19_0,
 	var_19_6.title.text_color = var_19_5
 end
 
-function StartGameWindowDeusJourneySelection._update_journey_god_icons(arg_20_0)
+StartGameWindowDeusJourneySelection._update_journey_god_icons = function (arg_20_0)
 	local var_20_0 = arg_20_0._journey_cycle
 
 	for iter_20_0, iter_20_1 in ipairs(arg_20_0._active_node_widgets) do
@@ -374,7 +374,7 @@ function StartGameWindowDeusJourneySelection._update_journey_god_icons(arg_20_0)
 	end
 end
 
-function StartGameWindowDeusJourneySelection._on_new_journey_cycle(arg_21_0)
+StartGameWindowDeusJourneySelection._on_new_journey_cycle = function (arg_21_0)
 	local var_21_0 = arg_21_0._selected_journey_name
 
 	if var_21_0 then
@@ -384,7 +384,7 @@ function StartGameWindowDeusJourneySelection._on_new_journey_cycle(arg_21_0)
 	arg_21_0:_update_journey_god_icons()
 end
 
-function StartGameWindowDeusJourneySelection._update_animations(arg_22_0, arg_22_1)
+StartGameWindowDeusJourneySelection._update_animations = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_animator
 
 	var_22_0:update(arg_22_1)
@@ -408,7 +408,7 @@ function StartGameWindowDeusJourneySelection._update_animations(arg_22_0, arg_22
 	end
 end
 
-function StartGameWindowDeusJourneySelection._is_button_pressed(arg_23_0, arg_23_1)
+StartGameWindowDeusJourneySelection._is_button_pressed = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.content.button_hotspot
 
 	if var_23_0.on_release then
@@ -418,13 +418,13 @@ function StartGameWindowDeusJourneySelection._is_button_pressed(arg_23_0, arg_23
 	end
 end
 
-function StartGameWindowDeusJourneySelection._is_button_hovered(arg_24_0, arg_24_1)
+StartGameWindowDeusJourneySelection._is_button_hovered = function (arg_24_0, arg_24_1)
 	if arg_24_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function StartGameWindowDeusJourneySelection._update_selected_journey(arg_25_0)
+StartGameWindowDeusJourneySelection._update_selected_journey = function (arg_25_0)
 	local var_25_0 = arg_25_0.parent:get_selected_level_id()
 
 	if var_25_0 ~= arg_25_0._selected_journey_name or not var_25_0 then
@@ -438,7 +438,7 @@ function StartGameWindowDeusJourneySelection._update_selected_journey(arg_25_0)
 	end
 end
 
-function StartGameWindowDeusJourneySelection._update_selection_from_grid(arg_26_0)
+StartGameWindowDeusJourneySelection._update_selection_from_grid = function (arg_26_0)
 	local var_26_0 = arg_26_0._current_column
 	local var_26_1 = arg_26_0._navigation_grid[var_26_0]
 
@@ -447,7 +447,7 @@ function StartGameWindowDeusJourneySelection._update_selection_from_grid(arg_26_
 	arg_26_0:_play_sound("play_gui_lobby_button_02_mission_act_click")
 end
 
-function StartGameWindowDeusJourneySelection._update_grid_column(arg_27_0, arg_27_1)
+StartGameWindowDeusJourneySelection._update_grid_column = function (arg_27_0, arg_27_1)
 	local var_27_0 = #arg_27_0._navigation_grid
 
 	arg_27_0._current_column = math.clamp(arg_27_1, 1, var_27_0)
@@ -455,7 +455,7 @@ function StartGameWindowDeusJourneySelection._update_grid_column(arg_27_0, arg_2
 	arg_27_0:_update_selection_from_grid()
 end
 
-function StartGameWindowDeusJourneySelection._update_grid_navigation(arg_28_0, arg_28_1)
+StartGameWindowDeusJourneySelection._update_grid_navigation = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0:_find_column(arg_28_1)
 
 	if var_28_0 ~= arg_28_0._current_column then
@@ -463,7 +463,7 @@ function StartGameWindowDeusJourneySelection._update_grid_navigation(arg_28_0, a
 	end
 end
 
-function StartGameWindowDeusJourneySelection._find_column(arg_29_0, arg_29_1)
+StartGameWindowDeusJourneySelection._find_column = function (arg_29_0, arg_29_1)
 	if arg_29_1 == 0 then
 		return arg_29_0._current_column
 	end
@@ -493,7 +493,7 @@ function StartGameWindowDeusJourneySelection._find_column(arg_29_0, arg_29_1)
 	return var_29_0
 end
 
-function StartGameWindowDeusJourneySelection._handle_input(arg_30_0, arg_30_1, arg_30_2)
+StartGameWindowDeusJourneySelection._handle_input = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0.parent
 	local var_30_1 = var_30_0:window_input_service()
 	local var_30_2 = Managers.input:is_device_active("gamepad")
@@ -537,7 +537,7 @@ function StartGameWindowDeusJourneySelection._handle_input(arg_30_0, arg_30_1, a
 	end
 end
 
-function StartGameWindowDeusJourneySelection.draw(arg_31_0, arg_31_1)
+StartGameWindowDeusJourneySelection.draw = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._ui_top_renderer
 	local var_31_1 = arg_31_0.ui_scenegraph
 	local var_31_2 = arg_31_0.parent:window_input_service()
@@ -565,11 +565,11 @@ function StartGameWindowDeusJourneySelection.draw(arg_31_0, arg_31_1)
 	UIRenderer.end_pass(var_31_0)
 end
 
-function StartGameWindowDeusJourneySelection._play_sound(arg_32_0, arg_32_1)
+StartGameWindowDeusJourneySelection._play_sound = function (arg_32_0, arg_32_1)
 	arg_32_0.parent:play_sound(arg_32_1)
 end
 
-function StartGameWindowDeusJourneySelection._animate_node_widget(arg_33_0, arg_33_1, arg_33_2)
+StartGameWindowDeusJourneySelection._animate_node_widget = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_1.content
 	local var_33_1 = var_33_0.button_hotspot
 	local var_33_2 = var_33_1.is_selected

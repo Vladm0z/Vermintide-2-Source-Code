@@ -3,7 +3,7 @@
 MatchmakingStateJoinGame = class(MatchmakingStateJoinGame)
 MatchmakingStateJoinGame.NAME = "MatchmakingStateJoinGame"
 
-function MatchmakingStateJoinGame.init(arg_1_0, arg_1_1)
+MatchmakingStateJoinGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
@@ -18,11 +18,11 @@ function MatchmakingStateJoinGame.init(arg_1_0, arg_1_1)
 	arg_1_0._wwise_world = arg_1_1.wwise_world
 end
 
-function MatchmakingStateJoinGame.destroy(arg_2_0)
+MatchmakingStateJoinGame.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateJoinGame.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateJoinGame.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0.state_context = arg_3_1
 	arg_3_0.search_config = arg_3_1.search_config
 	arg_3_0.lobby_client = arg_3_1.lobby_client
@@ -62,7 +62,7 @@ function MatchmakingStateJoinGame.on_enter(arg_3_0, arg_3_1)
 	arg_3_0._update_lobby_data_timer = 0
 end
 
-function MatchmakingStateJoinGame.on_exit(arg_4_0)
+MatchmakingStateJoinGame.on_exit = function (arg_4_0)
 	local var_4_0 = Managers.ui
 
 	if var_4_0:get_active_popup("profile_picker") then
@@ -70,7 +70,7 @@ function MatchmakingStateJoinGame.on_exit(arg_4_0)
 	end
 end
 
-function MatchmakingStateJoinGame.update(arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStateJoinGame.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.ui:get_active_popup("profile_picker")
 
 	if var_5_0 then
@@ -175,7 +175,7 @@ function MatchmakingStateJoinGame.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end
 
-function MatchmakingStateJoinGame._update_lobby_data(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateJoinGame._update_lobby_data = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._update_lobby_data_timer = arg_6_0._update_lobby_data_timer - arg_6_1
 
 	if arg_6_0._update_lobby_data_timer < 0 then
@@ -203,7 +203,7 @@ function MatchmakingStateJoinGame._update_lobby_data(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MatchmakingStateJoinGame._handle_popup_result(arg_7_0, arg_7_1, arg_7_2)
+MatchmakingStateJoinGame._handle_popup_result = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0
 	local var_7_1 = false
 
@@ -249,7 +249,7 @@ function MatchmakingStateJoinGame._handle_popup_result(arg_7_0, arg_7_1, arg_7_2
 	return var_7_1
 end
 
-function MatchmakingStateJoinGame.get_transition(arg_8_0)
+MatchmakingStateJoinGame.get_transition = function (arg_8_0)
 	if arg_8_0._join_lobby_data and arg_8_0._next_transition_state then
 		local var_8_0 = arg_8_0._join_lobby_data.join_method or arg_8_0.search_config and arg_8_0.search_config.join_method
 		local var_8_1 = {
@@ -261,7 +261,7 @@ function MatchmakingStateJoinGame.get_transition(arg_8_0)
 	end
 end
 
-function MatchmakingStateJoinGame._spawn_join_popup(arg_9_0, arg_9_1, arg_9_2)
+MatchmakingStateJoinGame._spawn_join_popup = function (arg_9_0, arg_9_1, arg_9_2)
 	if Managers.popup:has_popup() then
 		arg_9_0:_update_popup_timeout(arg_9_1, arg_9_2)
 
@@ -290,7 +290,7 @@ function MatchmakingStateJoinGame._spawn_join_popup(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._popup_auto_cancel_time = nil
 end
 
-function MatchmakingStateJoinGame._update_popup_timeout(arg_10_0, arg_10_1, arg_10_2)
+MatchmakingStateJoinGame._update_popup_timeout = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._popup_auto_cancel_time = arg_10_0._popup_auto_cancel_time or arg_10_2 + MatchmakingSettings.JOIN_LOBBY_TIME_UNTIL_AUTO_CANCEL
 
 	if arg_10_2 > arg_10_0._popup_auto_cancel_time then
@@ -301,7 +301,7 @@ function MatchmakingStateJoinGame._update_popup_timeout(arg_10_0, arg_10_1, arg_
 	end
 end
 
-function MatchmakingStateJoinGame._request_profile_from_host(arg_11_0, arg_11_1, arg_11_2)
+MatchmakingStateJoinGame._request_profile_from_host = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.lobby_client
 	local var_11_1 = var_11_0:lobby_host()
 
@@ -320,7 +320,7 @@ function MatchmakingStateJoinGame._request_profile_from_host(arg_11_0, arg_11_1,
 	arg_11_0._matchmaking_manager.debug.level = var_11_0:lobby_data("selected_mission_id")
 end
 
-function MatchmakingStateJoinGame.rpc_matchmaking_request_profile_reply(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MatchmakingStateJoinGame.rpc_matchmaking_request_profile_reply = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = NetworkLookup.request_profile_replies[arg_12_3]
 	local var_12_1 = arg_12_0._selected_hero_name
 	local var_12_2 = FindProfileIndex(var_12_1)
@@ -357,7 +357,7 @@ function MatchmakingStateJoinGame.rpc_matchmaking_request_profile_reply(arg_12_0
 	end
 end
 
-function MatchmakingStateJoinGame._current_hero(arg_13_0)
+MatchmakingStateJoinGame._current_hero = function (arg_13_0)
 	local var_13_0 = Network.peer_id()
 	local var_13_1 = Managers.player:player_from_peer_id(var_13_0)
 	local var_13_2 = var_13_1:profile_index()
@@ -367,7 +367,7 @@ function MatchmakingStateJoinGame._current_hero(arg_13_0)
 	return var_13_2, var_13_4, var_13_3
 end
 
-function MatchmakingStateJoinGame._level_started(arg_14_0)
+MatchmakingStateJoinGame._level_started = function (arg_14_0)
 	local var_14_0 = arg_14_0.lobby_client
 	local var_14_1 = var_14_0:lobby_data("selected_mission_id")
 	local var_14_2 = var_14_0:lobby_data("mission_id")
@@ -375,17 +375,17 @@ function MatchmakingStateJoinGame._level_started(arg_14_0)
 	return var_14_1 == var_14_2, var_14_2
 end
 
-function MatchmakingStateJoinGame.loading_context(arg_15_0)
+MatchmakingStateJoinGame.loading_context = function (arg_15_0)
 	return arg_15_0._matchmaking_loading_context
 end
 
-function MatchmakingStateJoinGame.rpc_matchmaking_join_game(arg_16_0, arg_16_1)
+MatchmakingStateJoinGame.rpc_matchmaking_join_game = function (arg_16_0, arg_16_1)
 	mm_printf_force("Transition from join due to rpc_matchmaking_join_game")
 	arg_16_0:_set_state_to_start_lobby()
 	Managers.mechanism:network_handler():get_match_handler():send_rpc_down("rpc_matchmaking_join_game")
 end
 
-function MatchmakingStateJoinGame._sync_backend_id(arg_17_0)
+MatchmakingStateJoinGame._sync_backend_id = function (arg_17_0)
 	local var_17_0 = arg_17_0.lobby_client:lobby_host()
 	local var_17_1 = Managers.backend:player_id()
 
@@ -394,11 +394,11 @@ function MatchmakingStateJoinGame._sync_backend_id(arg_17_0)
 	end
 end
 
-function MatchmakingStateJoinGame.active_lobby(arg_18_0)
+MatchmakingStateJoinGame.active_lobby = function (arg_18_0)
 	return arg_18_0.lobby_client
 end
 
-function MatchmakingStateJoinGame._set_state_to_start_lobby(arg_19_0)
+MatchmakingStateJoinGame._set_state_to_start_lobby = function (arg_19_0)
 	arg_19_0._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
 
 	arg_19_0._matchmaking_manager.debug.text = "starting_game"

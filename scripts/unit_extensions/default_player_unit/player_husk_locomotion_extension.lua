@@ -6,7 +6,7 @@ PlayerHuskLocomotionExtension = class(PlayerHuskLocomotionExtension)
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.game = arg_1_3.game
@@ -48,36 +48,36 @@ function PlayerHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.third_person_idle_fullbody_animation_control = ThirdPersonIdleFullbodyAnimationControl:new(arg_1_2)
 end
 
-function PlayerHuskLocomotionExtension.destroy(arg_2_0)
+PlayerHuskLocomotionExtension.destroy = function (arg_2_0)
 	if arg_2_0.is_server then
 		GwNavCostMap.destroy_tag_cost_table(arg_2_0._nav_cost_map_cost_table)
 		GwNavTraverseLogic.destroy(arg_2_0._nav_traverse_logic)
 	end
 end
 
-function PlayerHuskLocomotionExtension.current_velocity(arg_3_0)
+PlayerHuskLocomotionExtension.current_velocity = function (arg_3_0)
 	return GameSession.game_object_field(arg_3_0.game, arg_3_0.id, "velocity")
 end
 
-function PlayerHuskLocomotionExtension.average_velocity(arg_4_0)
+PlayerHuskLocomotionExtension.average_velocity = function (arg_4_0)
 	return GameSession.game_object_field(arg_4_0.game, arg_4_0.id, "average_velocity")
 end
 
-function PlayerHuskLocomotionExtension.small_sample_size_average_velocity(arg_5_0)
+PlayerHuskLocomotionExtension.small_sample_size_average_velocity = function (arg_5_0)
 	return GameSession.game_object_field(arg_5_0.game, arg_5_0.id, "small_sample_size_average_velocity")
 end
 
-function PlayerHuskLocomotionExtension.get_script_driven_gravity_scale(arg_6_0)
+PlayerHuskLocomotionExtension.get_script_driven_gravity_scale = function (arg_6_0)
 	return 1
 end
 
-function PlayerHuskLocomotionExtension.extensions_ready(arg_7_0, arg_7_1, arg_7_2)
+PlayerHuskLocomotionExtension.extensions_ready = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0.status_extension = ScriptUnit.extension(arg_7_0.unit, "status_system")
 
 	arg_7_0.third_person_idle_fullbody_animation_control:extensions_ready(arg_7_1, arg_7_2)
 end
 
-function PlayerHuskLocomotionExtension.add_external_velocity(arg_8_0, arg_8_1, arg_8_2)
+PlayerHuskLocomotionExtension.add_external_velocity = function (arg_8_0, arg_8_1, arg_8_2)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -91,7 +91,7 @@ function PlayerHuskLocomotionExtension.add_external_velocity(arg_8_0, arg_8_1, a
 	end
 end
 
-function PlayerHuskLocomotionExtension.set_forced_velocity(arg_9_0, arg_9_1)
+PlayerHuskLocomotionExtension.set_forced_velocity = function (arg_9_0, arg_9_1)
 	if not arg_9_0.disabled then
 		if arg_9_0.is_server or DEDICATED_SERVER then
 			Managers.state.network.network_transmit:send_rpc("rpc_set_forced_velocity", arg_9_0.player:network_id(), arg_9_0.id, arg_9_1)
@@ -101,7 +101,7 @@ function PlayerHuskLocomotionExtension.set_forced_velocity(arg_9_0, arg_9_1)
 	end
 end
 
-function PlayerHuskLocomotionExtension.set_disabled(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PlayerHuskLocomotionExtension.set_disabled = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_0._disabled = arg_10_1
 	arg_10_0._run_func = arg_10_2
 	arg_10_0.master_unit = arg_10_3
@@ -123,7 +123,7 @@ function PlayerHuskLocomotionExtension.set_disabled(arg_10_0, arg_10_1, arg_10_2
 	end
 end
 
-function PlayerHuskLocomotionExtension.post_update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+PlayerHuskLocomotionExtension.post_update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if arg_11_0._disabled then
 		return
 	end
@@ -141,7 +141,7 @@ function PlayerHuskLocomotionExtension.post_update(arg_11_0, arg_11_1, arg_11_2,
 	end
 end
 
-function PlayerHuskLocomotionExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+PlayerHuskLocomotionExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if arg_12_0._disabled then
 		arg_12_0._run_func(arg_12_1, arg_12_3, arg_12_0)
 
@@ -157,13 +157,13 @@ function PlayerHuskLocomotionExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_
 	arg_12_0.third_person_idle_fullbody_animation_control:update(arg_12_5)
 end
 
-function PlayerHuskLocomotionExtension.last_position_on_navmesh(arg_13_0)
+PlayerHuskLocomotionExtension.last_position_on_navmesh = function (arg_13_0)
 	assert(arg_13_0.is_server, "last position on nav mesh is only saved on server")
 
 	return arg_13_0._latest_position_on_navmesh:unbox()
 end
 
-function PlayerHuskLocomotionExtension._update_last_position_on_navmesh(arg_14_0)
+PlayerHuskLocomotionExtension._update_last_position_on_navmesh = function (arg_14_0)
 	if arg_14_0.is_server then
 		local var_14_0 = GameSession.game_object_field(arg_14_0.game, arg_14_0.id, "position")
 		local var_14_1, var_14_2 = GwNavQueries.triangle_from_position(arg_14_0._nav_world, var_14_0, 0.1, 0.3, arg_14_0._nav_traverse_logic)
@@ -179,7 +179,7 @@ local var_0_2 = 0.1
 local var_0_3 = 0.01
 local var_0_4 = 1
 
-function PlayerHuskLocomotionExtension.update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+PlayerHuskLocomotionExtension.update_movement = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = Unit.local_position(arg_15_2, 0)
 	local var_15_1
 	local var_15_2 = GameSession.game_object_field(arg_15_0.game, arg_15_0.id, "linked_movement")
@@ -220,7 +220,7 @@ function PlayerHuskLocomotionExtension.update_movement(arg_15_0, arg_15_1, arg_1
 	arg_15_0:_update_speed_variable(arg_15_1)
 end
 
-function PlayerHuskLocomotionExtension.get_moving_platform(arg_16_0)
+PlayerHuskLocomotionExtension.get_moving_platform = function (arg_16_0)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -237,7 +237,7 @@ function PlayerHuskLocomotionExtension.get_moving_platform(arg_16_0)
 	return nil, nil, nil
 end
 
-function PlayerHuskLocomotionExtension.update_ladder_animation_position(arg_17_0, arg_17_1)
+PlayerHuskLocomotionExtension.update_ladder_animation_position = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.unit
 	local var_17_1 = Unit.world_position(arg_17_1, 0)
 	local var_17_2 = CharacterStateHelper.time_in_ladder_move_animation(var_17_0, Vector3.z(var_17_1))
@@ -246,7 +246,7 @@ function PlayerHuskLocomotionExtension.update_ladder_animation_position(arg_17_0
 	Unit.animation_set_variable(var_17_0, var_17_3, var_17_2)
 end
 
-function PlayerHuskLocomotionExtension._extrapolation_movement(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9)
+PlayerHuskLocomotionExtension._extrapolation_movement = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9)
 	local var_18_0 = Unit.get_data(arg_18_1, "last_lerp_position") or arg_18_3
 	local var_18_1 = Unit.get_data(arg_18_1, "last_lerp_position_offset") or Vector3(0, 0, 0)
 	local var_18_2 = Unit.get_data(arg_18_1, "accumulated_movement") or Vector3(0, 0, 0)
@@ -329,7 +329,7 @@ local var_0_9 = 1.5
 local var_0_10 = 99.9999
 local var_0_11 = 0.3
 
-function PlayerHuskLocomotionExtension._update_speed_variable(arg_19_0, arg_19_1)
+PlayerHuskLocomotionExtension._update_speed_variable = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.velocity_current:unbox()
 	local var_19_1 = Vector3(var_19_0.x, var_19_0.y, 0)
 	local var_19_2 = Vector3.length(var_19_1)
@@ -369,7 +369,7 @@ function PlayerHuskLocomotionExtension._update_speed_variable(arg_19_0, arg_19_1
 	Unit.animation_set_variable(var_19_8, arg_19_0.movement_scale_animation_id, var_19_10)
 end
 
-function PlayerHuskLocomotionExtension._calculate_move_speed_var_from_mps(arg_20_0, arg_20_1)
+PlayerHuskLocomotionExtension._calculate_move_speed_var_from_mps = function (arg_20_0, arg_20_1)
 	local var_20_0
 	local var_20_1 = 1
 
@@ -388,11 +388,11 @@ function PlayerHuskLocomotionExtension._calculate_move_speed_var_from_mps(arg_20
 	return var_20_0, var_20_1
 end
 
-function PlayerHuskLocomotionExtension.rpc_animation_set_variable(arg_21_0, arg_21_1, arg_21_2)
+PlayerHuskLocomotionExtension.rpc_animation_set_variable = function (arg_21_0, arg_21_1, arg_21_2)
 	Unit.animation_set_variable(arg_21_0.unit, arg_21_1, arg_21_2)
 end
 
-function PlayerHuskLocomotionExtension.hot_join_sync(arg_22_0, arg_22_1)
+PlayerHuskLocomotionExtension.hot_join_sync = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.unit
 
 	if Managers.state.unit_spawner:is_marked_for_deletion(var_22_0) then
@@ -405,13 +405,13 @@ function PlayerHuskLocomotionExtension.hot_join_sync(arg_22_0, arg_22_1)
 	RPC.rpc_sync_anim_state_3(var_22_2, var_22_1, Unit.animation_get_state(var_22_0))
 end
 
-function PlayerHuskLocomotionExtension.current_rotation(arg_23_0)
+PlayerHuskLocomotionExtension.current_rotation = function (arg_23_0)
 	return arg_23_0._current_rotation:unbox()
 end
 
 local var_0_12 = 1
 
-function PlayerHuskLocomotionExtension.move_to_non_intersecting_position(arg_24_0)
+PlayerHuskLocomotionExtension.move_to_non_intersecting_position = function (arg_24_0)
 	local var_24_0 = arg_24_0.unit
 	local var_24_1 = Unit.mover(var_24_0)
 	local var_24_2, var_24_3, var_24_4, var_24_5 = Mover.separate(var_24_1, var_0_12)
@@ -422,7 +422,7 @@ function PlayerHuskLocomotionExtension.move_to_non_intersecting_position(arg_24_
 	end
 end
 
-function PlayerHuskLocomotionExtension.teleport_to(arg_25_0, arg_25_1, arg_25_2)
+PlayerHuskLocomotionExtension.teleport_to = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0.unit
 	local var_25_1 = Unit.mover(var_25_0)
 

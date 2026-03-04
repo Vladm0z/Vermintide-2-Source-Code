@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTStaggerAction = class(BTStaggerAction, BTNode)
 
-function BTStaggerAction.init(arg_1_0, ...)
+BTStaggerAction.init = function (arg_1_0, ...)
 	BTStaggerAction.super.init(arg_1_0, ...)
 end
 
@@ -14,7 +14,7 @@ BTStaggerAction.name = "BTStaggerAction"
 
 local var_0_1 = 0.35
 
-function BTStaggerAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTStaggerAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.locomotion_extension
 
 	arg_2_2.navigation_extension:set_enabled(false)
@@ -112,7 +112,7 @@ function BTStaggerAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	var_2_20:ai_unit_staggered(arg_2_1)
 end
 
-function BTStaggerAction._select_animation(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTStaggerAction._select_animation = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = Vector3.normalize(arg_3_3)
 	local var_3_1 = Quaternion.forward(Unit.local_rotation(arg_3_1, 0))
 	local var_3_2 = Vector3.dot(var_3_1, var_3_0)
@@ -177,7 +177,7 @@ function BTStaggerAction._select_animation(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	return var_3_19, var_3_21
 end
 
-function BTStaggerAction.clean_blackboard(arg_4_0, arg_4_1)
+BTStaggerAction.clean_blackboard = function (arg_4_0, arg_4_1)
 	arg_4_1.action = nil
 	arg_4_1.heavy_stagger_immune_time = nil
 	arg_4_1.pushing_unit = nil
@@ -195,7 +195,7 @@ function BTStaggerAction.clean_blackboard(arg_4_0, arg_4_1)
 	arg_4_1.stagger_activated = nil
 end
 
-function BTStaggerAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTStaggerAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if not arg_5_5 then
 		LocomotionUtils.set_animation_driven_movement(arg_5_1, false, false)
 	end
@@ -242,7 +242,7 @@ function BTStaggerAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_5_1, true)
 end
 
-function BTStaggerAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTStaggerAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_2.stagger ~= arg_6_2.staggering_id then
 		arg_6_0:enter(arg_6_1, arg_6_2, arg_6_3)
 	end
@@ -291,7 +291,7 @@ function BTStaggerAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 end
 
-function BTStaggerAction.anim_cb_push_cancel(arg_7_0, arg_7_1, arg_7_2)
+BTStaggerAction.anim_cb_push_cancel = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2.stagger_type and arg_7_2.stagger_type == 9 then
 		Managers.state.network:anim_event(arg_7_1, "stagger_finished")
 

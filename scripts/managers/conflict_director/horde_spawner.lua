@@ -27,7 +27,7 @@ local var_0_3 = {}
 local var_0_4 = {}
 local var_0_5 = {}
 
-function HordeSpawner.init(arg_1_0, arg_1_1, arg_1_2)
+HordeSpawner.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.cover_broadphase = arg_1_2
 	arg_1_0.hordes = {}
 	arg_1_0.lookup_horde = {}
@@ -58,7 +58,7 @@ local function var_0_7(arg_3_0, arg_3_1)
 	end
 end
 
-function HordeSpawner.horde(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+HordeSpawner.horde = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	print("horde requested: ", arg_4_1)
 
 	if arg_4_1 == "vector" then
@@ -70,7 +70,7 @@ function HordeSpawner.horde(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5
 	end
 end
 
-function HordeSpawner.execute_fallback(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+HordeSpawner.execute_fallback = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_3 then
 		if script_data.debug_player_intensity then
 			arg_5_0.conflict_director.pacing:annotate_graph("Failed horde fb", "red")
@@ -90,7 +90,7 @@ function HordeSpawner.execute_fallback(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5
 	end
 end
 
-function HordeSpawner._add_horde(arg_6_0, arg_6_1)
+HordeSpawner._add_horde = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.hordes
 
 	var_6_0[#var_6_0 + 1] = arg_6_1
@@ -100,7 +100,7 @@ function HordeSpawner._add_horde(arg_6_0, arg_6_1)
 	end
 end
 
-function HordeSpawner.execute_event_horde(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12)
+HordeSpawner.execute_event_horde = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12)
 	local var_7_0 = arg_7_0:_execute_event_horde(arg_7_1, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12)
 
 	if type(arg_7_2) == "string" then
@@ -116,7 +116,7 @@ function HordeSpawner.execute_event_horde(arg_7_0, arg_7_1, arg_7_2, arg_7_3, ar
 	return var_7_0
 end
 
-function HordeSpawner._execute_event_horde(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
+HordeSpawner._execute_event_horde = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
 	local var_8_0
 
 	fassert(arg_8_2, "Missing side id in event horde")
@@ -153,7 +153,7 @@ function HordeSpawner._execute_event_horde(arg_8_0, arg_8_1, arg_8_2, arg_8_3, a
 	}
 end
 
-function HordeSpawner.max_composition_size(arg_9_0, arg_9_1)
+HordeSpawner.max_composition_size = function (arg_9_0, arg_9_1)
 	local var_9_0 = 0
 	local var_9_1 = CurrentHordeSettings.compositions[arg_9_1]
 
@@ -176,7 +176,7 @@ function HordeSpawner.max_composition_size(arg_9_0, arg_9_1)
 	return var_9_0
 end
 
-function HordeSpawner.running_horde(arg_10_0)
+HordeSpawner.running_horde = function (arg_10_0)
 	return arg_10_0._running_horde_type, arg_10_0._running_horde_sound_settings
 end
 
@@ -193,7 +193,7 @@ local var_0_8 = {
 local var_0_9 = {}
 local var_0_10 = {}
 
-function HordeSpawner.compose_horde_spawn_list(arg_12_0, arg_12_1)
+HordeSpawner.compose_horde_spawn_list = function (arg_12_0, arg_12_1)
 	local var_12_0 = 1
 
 	table.clear_array(var_0_9, #var_0_9)
@@ -227,7 +227,7 @@ function HordeSpawner.compose_horde_spawn_list(arg_12_0, arg_12_1)
 	return var_12_7 + var_12_8, var_12_7, var_12_8
 end
 
-function HordeSpawner.compose_blob_horde_spawn_list(arg_13_0, arg_13_1)
+HordeSpawner.compose_blob_horde_spawn_list = function (arg_13_0, arg_13_1)
 	local var_13_0 = CurrentHordeSettings.compositions_pacing[arg_13_1]
 	local var_13_1 = var_13_0[LoadedDice.roll_easy(var_13_0.loaded_probs)]
 	local var_13_2 = 1
@@ -272,7 +272,7 @@ end
 
 local var_0_12 = false
 
-function HordeSpawner.pop_random_any_breed(arg_15_0)
+HordeSpawner.pop_random_any_breed = function (arg_15_0)
 	var_0_12 = not var_0_12
 
 	local var_15_0
@@ -286,11 +286,11 @@ function HordeSpawner.pop_random_any_breed(arg_15_0)
 	return var_15_0
 end
 
-function HordeSpawner.pop_random_horde_breed_only(arg_16_0)
+HordeSpawner.pop_random_horde_breed_only = function (arg_16_0)
 	return (var_0_11(var_0_9))
 end
 
-function HordeSpawner.execute_ambush_horde(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+HordeSpawner.execute_ambush_horde = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	print("setting up ambush-horde")
 
 	local var_17_0 = CurrentHordeSettings.ambush
@@ -562,7 +562,7 @@ function HordeSpawner.execute_ambush_horde(arg_17_0, arg_17_1, arg_17_2, arg_17_
 	print("ambush horde has started")
 end
 
-function HordeSpawner.replace_hidden_spawners(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+HordeSpawner.replace_hidden_spawners = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if arg_18_2.dont_move then
 		return
 	end
@@ -632,7 +632,7 @@ function HordeSpawner.replace_hidden_spawners(arg_18_0, arg_18_1, arg_18_2, arg_
 	return true
 end
 
-function HordeSpawner.find_vector_horde_spawners(arg_19_0, arg_19_1, arg_19_2)
+HordeSpawner.find_vector_horde_spawners = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = CurrentHordeSettings.vector
 	local var_19_1 = var_19_0.min_horde_spawner_dist
 	local var_19_2 = var_19_0.max_horde_spawner_dist
@@ -658,7 +658,7 @@ function HordeSpawner.find_vector_horde_spawners(arg_19_0, arg_19_1, arg_19_2)
 	return "success", var_19_6, var_0_3
 end
 
-function HordeSpawner.find_good_vector_horde_pos(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+HordeSpawner.find_good_vector_horde_pos = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0
 	local var_20_1
 	local var_20_2
@@ -685,7 +685,7 @@ function HordeSpawner.find_good_vector_horde_pos(arg_20_0, arg_20_1, arg_20_2, a
 	return var_20_0, var_20_1, var_20_2, var_20_3
 end
 
-function HordeSpawner.execute_vector_horde(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+HordeSpawner.execute_vector_horde = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = CurrentHordeSettings.vector
 	local var_21_1 = var_21_0.max_spawners
 	local var_21_2 = arg_21_1 and arg_21_1.start_delay or var_21_0.start_delay
@@ -943,7 +943,7 @@ function HordeSpawner.execute_vector_horde(arg_21_0, arg_21_1, arg_21_2, arg_21_
 	print("vector horde has started")
 end
 
-function HordeSpawner.execute_custom_horde(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+HordeSpawner.execute_custom_horde = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = CurrentHordeSettings.vector_blob
 	local var_22_1 = math.random()
 	local var_22_2 = arg_22_2 or var_22_1 <= var_22_0.main_path_chance_spawning_ahead
@@ -1013,7 +1013,7 @@ function HordeSpawner.execute_custom_horde(arg_22_0, arg_22_1, arg_22_2, arg_22_
 	print("custom blob horde has started")
 end
 
-function HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = Managers.state.conflict
 	local var_23_1 = var_23_0.main_path_info
 	local var_23_2 = arg_23_1 and var_23_1.ahead_unit or var_23_1.behind_unit
@@ -1065,7 +1065,7 @@ function HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath(arg_23_0, arg_
 	end
 end
 
-function HordeSpawner.execute_vector_blob_horde(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+HordeSpawner.execute_vector_blob_horde = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = CurrentHordeSettings.vector_blob
 	local var_24_1 = math.random() <= var_24_0.main_path_chance_spawning_ahead
 
@@ -1207,7 +1207,7 @@ function HordeSpawner.execute_vector_blob_horde(arg_24_0, arg_24_1, arg_24_2, ar
 	print("vector blob horde has started")
 end
 
-function HordeSpawner.spawn_unit(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+HordeSpawner.spawn_unit = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	local var_25_0 = arg_25_1.cover_point_unit
 	local var_25_1 = Unit.local_position(var_25_0, 0)
 	local var_25_2 = arg_25_3 - var_25_1
@@ -1225,14 +1225,14 @@ function HordeSpawner.spawn_unit(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_
 	arg_25_0.conflict_director:add_horde(1)
 end
 
-function HordeSpawner.play_sound(arg_26_0, arg_26_1, arg_26_2)
+HordeSpawner.play_sound = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = Managers.world:wwise_world(arg_26_0.world)
 	local var_26_1, var_26_2 = WwiseWorld.trigger_event(var_26_0, arg_26_1, arg_26_2)
 
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event_at_pos", NetworkLookup.sound_events[arg_26_1], arg_26_2)
 end
 
-function HordeSpawner.create_event_horde_no_horde_spawners(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+HordeSpawner.create_event_horde_no_horde_spawners = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = Managers.state.conflict
 	local var_27_1 = var_27_0.main_path_info.behind_unit
 
@@ -1284,7 +1284,7 @@ function HordeSpawner.create_event_horde_no_horde_spawners(arg_27_0, arg_27_1, a
 	return false
 end
 
-function HordeSpawner.update_event_horde_no_horde_spawners(arg_28_0, arg_28_1, arg_28_2)
+HordeSpawner.update_event_horde_no_horde_spawners = function (arg_28_0, arg_28_1, arg_28_2)
 	if not arg_28_1.started then
 		if arg_28_2 > arg_28_1.start_time then
 			local var_28_0, var_28_1 = arg_28_0:create_event_horde_no_horde_spawners(arg_28_1, arg_28_1.variant, arg_28_2, arg_28_1.side_id)
@@ -1307,7 +1307,7 @@ function HordeSpawner.update_event_horde_no_horde_spawners(arg_28_0, arg_28_1, a
 	return false
 end
 
-function HordeSpawner.update_event_horde(arg_29_0, arg_29_1, arg_29_2)
+HordeSpawner.update_event_horde = function (arg_29_0, arg_29_1, arg_29_2)
 	if not arg_29_1.started then
 		if arg_29_2 > arg_29_1.start_time then
 			local var_29_0, var_29_1 = arg_29_0.spawner_system:spawn_horde_from_terror_event_ids(arg_29_1.terror_event_ids, arg_29_1.variant, arg_29_1.limit_spawners, arg_29_1.group_template, arg_29_1.strictly, arg_29_1.side_id, arg_29_1.use_closest_spawners, arg_29_1.source_unit, arg_29_1.optional_data)
@@ -1332,7 +1332,7 @@ function HordeSpawner.update_event_horde(arg_29_0, arg_29_1, arg_29_2)
 	return false
 end
 
-function HordeSpawner.spawner_in_view_of_players(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+HordeSpawner.spawner_in_view_of_players = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	arg_30_3 = arg_30_3 or Unit.local_position(arg_30_1.cover_point_unit, 0) + Vector3(0, 0, 1)
 
 	local var_30_0 = Managers.state.side:get_side(arg_30_2).ENEMY_PLAYER_AND_BOT_POSITIONS
@@ -1358,7 +1358,7 @@ function HordeSpawner.spawner_in_view_of_players(arg_30_0, arg_30_1, arg_30_2, a
 	end
 end
 
-function HordeSpawner.update_horde(arg_31_0, arg_31_1, arg_31_2)
+HordeSpawner.update_horde = function (arg_31_0, arg_31_1, arg_31_2)
 	if not arg_31_1.started then
 		if arg_31_2 > arg_31_1.start_time then
 			local var_31_0 = arg_31_1.horde_spawns
@@ -1476,7 +1476,7 @@ function HordeSpawner.update_horde(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function HordeSpawner.update(arg_32_0, arg_32_1, arg_32_2)
+HordeSpawner.update = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0.hordes
 	local var_32_1 = #var_32_0
 
@@ -1533,7 +1533,7 @@ function HordeSpawner.update(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function HordeSpawner.set_horde_has_spawned(arg_33_0, arg_33_1)
+HordeSpawner.set_horde_has_spawned = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0.hordes
 
 	for iter_33_0 = 1, #var_33_0 do
@@ -1546,7 +1546,7 @@ function HordeSpawner.set_horde_has_spawned(arg_33_0, arg_33_1)
 	end
 end
 
-function HordeSpawner.set_horde_is_done(arg_34_0, arg_34_1)
+HordeSpawner.set_horde_is_done = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0.hordes
 
 	for iter_34_0 = 1, #var_34_0 do
@@ -1559,7 +1559,7 @@ function HordeSpawner.set_horde_is_done(arg_34_0, arg_34_1)
 	end
 end
 
-function HordeSpawner.debug_hordes(arg_35_0, arg_35_1)
+HordeSpawner.debug_hordes = function (arg_35_0, arg_35_1)
 	local var_35_0 = "Hordes - now: " .. arg_35_0.conflict_director:horde_size() .. " (" .. tostring(arg_35_0._running_horde_type or "none") .. ") "
 	local var_35_1 = arg_35_0.hordes
 
@@ -1576,7 +1576,7 @@ end
 
 local var_0_13 = {}
 
-function HordeSpawner.hidden_cover_points(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+HordeSpawner.hidden_cover_points = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
 	local var_36_0 = Vector3.distance_squared
 	local var_36_1 = Vector3.normalize
 	local var_36_2 = Vector3.dot
@@ -1622,7 +1622,7 @@ function HordeSpawner.hidden_cover_points(arg_36_0, arg_36_1, arg_36_2, arg_36_3
 	end
 end
 
-function HordeSpawner.calc_sectors(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+HordeSpawner.calc_sectors = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0 = Unit.local_position
 	local var_37_1 = Vector3.normalize
 	local var_37_2 = math.atan2
@@ -1639,7 +1639,7 @@ function HordeSpawner.calc_sectors(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	end
 end
 
-function HordeSpawner.render_sectors(arg_38_0, arg_38_1)
+HordeSpawner.render_sectors = function (arg_38_0, arg_38_1)
 	local var_38_0 = Unit.local_position
 	local var_38_1 = {
 		Color(255, 255, 0, 0),
@@ -1667,7 +1667,7 @@ function HordeSpawner.render_sectors(arg_38_0, arg_38_1)
 	end
 end
 
-function HordeSpawner.reset_sectors(arg_39_0, arg_39_1)
+HordeSpawner.reset_sectors = function (arg_39_0, arg_39_1)
 	for iter_39_0 = 1, var_0_2 do
 		local var_39_0 = arg_39_1[iter_39_0]
 
@@ -1712,7 +1712,7 @@ function test_sectors()
 	end
 end
 
-function HordeSpawner.filter_dist(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+HordeSpawner.filter_dist = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	local var_41_0 = Vector3.distance_squared
 	local var_41_1 = #arg_41_2
 	local var_41_2 = 1
@@ -1730,7 +1730,7 @@ function HordeSpawner.filter_dist(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41
 	end
 end
 
-function HordeSpawner.filter_angle(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+HordeSpawner.filter_angle = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	arg_42_3 = arg_42_3 or -0.9
 
 	local var_42_0 = Vector3.normalize
@@ -1753,7 +1753,7 @@ function HordeSpawner.filter_angle(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	end
 end
 
-function HordeSpawner.get_point_on_main_path(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+HordeSpawner.get_point_on_main_path = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = arg_43_0.conflict_director.level_analysis:get_main_paths()
 	local var_43_1, var_43_2 = MainPathUtils.closest_pos_at_main_path(var_43_0, arg_43_1)
 	local var_43_3 = MainPathUtils.point_on_mainpath(var_43_0, var_43_2 + arg_43_2)

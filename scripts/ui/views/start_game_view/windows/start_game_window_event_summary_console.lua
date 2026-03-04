@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowEventSummaryConsole = class(StartGameWindowEventSummaryConsole)
 StartGameWindowEventSummaryConsole.NAME = "StartGameWindowEventSummaryConsole"
 
-function StartGameWindowEventSummaryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowEventSummaryConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowEventSummaryConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -33,7 +33,7 @@ function StartGameWindowEventSummaryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StartGameWindowEventSummaryConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowEventSummaryConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0.render_settings
 	}
@@ -43,7 +43,7 @@ function StartGameWindowEventSummaryConsole._start_transition_animation(arg_2_0,
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowEventSummaryConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowEventSummaryConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -74,7 +74,7 @@ function StartGameWindowEventSummaryConsole.create_ui_elements(arg_3_0, arg_3_1,
 	arg_3_0:_setup_content_from_backend()
 end
 
-function StartGameWindowEventSummaryConsole._setup_content_from_backend(arg_4_0)
+StartGameWindowEventSummaryConsole._setup_content_from_backend = function (arg_4_0)
 	local var_4_0 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
 	local var_4_1 = arg_4_0._widgets_by_name.event_summary
 	local var_4_2 = var_4_0.level_key
@@ -86,22 +86,22 @@ function StartGameWindowEventSummaryConsole._setup_content_from_backend(arg_4_0)
 	}
 end
 
-function StartGameWindowEventSummaryConsole.on_exit(arg_5_0, arg_5_1)
+StartGameWindowEventSummaryConsole.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowEventSummaryConsole")
 
 	arg_5_0.ui_animator = nil
 end
 
-function StartGameWindowEventSummaryConsole.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowEventSummaryConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:draw(arg_6_1)
 end
 
-function StartGameWindowEventSummaryConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowEventSummaryConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowEventSummaryConsole._update_animations(arg_8_0, arg_8_1)
+StartGameWindowEventSummaryConsole._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.ui_animator
 
 	var_8_0:update(arg_8_1)
@@ -117,7 +117,7 @@ function StartGameWindowEventSummaryConsole._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowEventSummaryConsole.draw(arg_9_0, arg_9_1)
+StartGameWindowEventSummaryConsole.draw = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._ui_top_renderer
 	local var_9_1 = arg_9_0.ui_scenegraph
 	local var_9_2 = arg_9_0.parent:window_input_service()

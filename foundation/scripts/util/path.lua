@@ -2,14 +2,14 @@
 
 Path = {}
 
-function Path.normalize_path(arg_1_0)
+Path.normalize_path = function (arg_1_0)
 	arg_1_0 = arg_1_0:gsub("\\", "/")
 	arg_1_0 = arg_1_0:gsub("//", "/")
 
 	return arg_1_0
 end
 
-function Path.path_from_string(arg_2_0)
+Path.path_from_string = function (arg_2_0)
 	arg_2_0 = Path.normalize_path(arg_2_0)
 
 	local var_2_0 = {
@@ -36,7 +36,7 @@ function Path.path_from_string(arg_2_0)
 	return var_2_0
 end
 
-function Path.path_from_parts(...)
+Path.path_from_parts = function (...)
 	local var_3_0 = select("#", ...)
 	local var_3_1 = {
 		size = var_3_0
@@ -49,7 +49,7 @@ function Path.path_from_parts(...)
 	return var_3_1
 end
 
-function Path.copy(arg_4_0)
+Path.copy = function (arg_4_0)
 	local var_4_0 = {
 		size = arg_4_0.size
 	}
@@ -61,18 +61,18 @@ function Path.copy(arg_4_0)
 	return var_4_0
 end
 
-function Path.change_dir_up(arg_5_0)
+Path.change_dir_up = function (arg_5_0)
 	assert(arg_5_0.size > 0)
 
 	arg_5_0.size = arg_5_0.size - 1
 end
 
-function Path.add_path_part(arg_6_0, arg_6_1)
+Path.add_path_part = function (arg_6_0, arg_6_1)
 	arg_6_0.size = arg_6_0.size + 1
 	arg_6_0[arg_6_0.size] = arg_6_1
 end
 
-function Path.join(arg_7_0, arg_7_1, arg_7_2)
+Path.join = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_2 = arg_7_2 or {}
 	arg_7_2.size = 0
 
@@ -89,7 +89,7 @@ function Path.join(arg_7_0, arg_7_1, arg_7_2)
 	return arg_7_2
 end
 
-function Path.tostring(arg_8_0, arg_8_1)
+Path.tostring = function (arg_8_0, arg_8_1)
 	arg_8_1 = arg_8_1 or "/"
 
 	local var_8_0 = ""

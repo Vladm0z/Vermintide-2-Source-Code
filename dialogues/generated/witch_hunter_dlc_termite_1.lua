@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/witch_hunter_dlc_termite_1.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwh_temple_lake_crossing_destroy_bell_complete_a",

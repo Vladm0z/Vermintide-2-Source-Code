@@ -1,7 +1,7 @@
 -- chunkname: @scripts/entity_system/systems/play_go_tutorial/play_go_pause_templates.lua
 
 DefaultAnimationFunctions = {
-	on_enter = function(arg_1_0, arg_1_1, arg_1_2)
+	on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0.activated = true
 		arg_1_0.unit = arg_1_1
 
@@ -47,7 +47,7 @@ DefaultAnimationFunctions = {
 			end
 		end
 	end,
-	update_input = function(arg_2_0, arg_2_1)
+	update_input = function (arg_2_0, arg_2_1)
 		if not arg_2_0.activated then
 			return false
 		end
@@ -154,7 +154,7 @@ DefaultAnimationFunctions = {
 
 		return false
 	end,
-	update_variable = function(arg_3_0, arg_3_1)
+	update_variable = function (arg_3_0, arg_3_1)
 		if not arg_3_0.activated then
 			return false
 		end
@@ -182,7 +182,7 @@ DefaultAnimationFunctions = {
 
 		return false
 	end,
-	on_exit = function(arg_4_0)
+	on_exit = function (arg_4_0)
 		Managers.time:set_global_time_scale(1)
 
 		local var_4_0 = arg_4_0.stop_sound_event or "Stop_tutorial_indicator"
@@ -218,7 +218,7 @@ DefaultAnimationFunctions = {
 
 		Level.trigger_event(var_4_6, "lua_" .. arg_4_0.name .. "_done")
 	end,
-	default_prerequisites = function(arg_5_0)
+	default_prerequisites = function (arg_5_0)
 		local var_5_0 = Managers.player:local_player().player_unit
 		local var_5_1 = ScriptUnit.extension(var_5_0, "status_system")
 
@@ -262,7 +262,7 @@ PauseEvents = {
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function()
+			check_prerequisites = function ()
 				return true
 			end
 		}
@@ -291,7 +291,7 @@ PauseEvents = {
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function()
+			check_prerequisites = function ()
 				return true
 			end
 		},
@@ -334,7 +334,7 @@ PauseEvents = {
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function()
+			check_prerequisites = function ()
 				return true
 			end
 		},
@@ -360,7 +360,7 @@ PauseEvents = {
 			on_enter = DefaultAnimationFunctions.on_enter,
 			update = DefaultAnimationFunctions.update_input,
 			on_exit = DefaultAnimationFunctions.on_exit,
-			check_prerequisites = function()
+			check_prerequisites = function ()
 				return true
 			end
 		}

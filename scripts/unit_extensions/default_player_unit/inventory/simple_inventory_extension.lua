@@ -13,7 +13,7 @@ local var_0_0 = {
 	"slot_healthkit"
 }
 
-function SimpleInventoryExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+SimpleInventoryExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._profile = arg_1_3.profile
@@ -69,25 +69,25 @@ function SimpleInventoryExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._backend_items = Managers.backend:get_interface("items")
 end
 
-function SimpleInventoryExtension.get_weapon_unit(arg_2_0)
+SimpleInventoryExtension.get_weapon_unit = function (arg_2_0)
 	local var_2_0 = arg_2_0._equipment
 
 	return var_2_0.left_hand_wielded_unit or var_2_0.right_hand_wielded_unit
 end
 
-function SimpleInventoryExtension.get_weapon_unit_3p(arg_3_0)
+SimpleInventoryExtension.get_weapon_unit_3p = function (arg_3_0)
 	local var_3_0 = arg_3_0._equipment
 
 	return var_3_0.left_hand_wielded_unit_3p or var_3_0.right_hand_wielded_unit_3p
 end
 
-function SimpleInventoryExtension.get_all_weapon_unit(arg_4_0)
+SimpleInventoryExtension.get_all_weapon_unit = function (arg_4_0)
 	local var_4_0 = arg_4_0._equipment
 
 	return var_4_0.left_hand_wielded_unit, var_4_0.right_hand_wielded_unit
 end
 
-function SimpleInventoryExtension.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+SimpleInventoryExtension.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = ScriptUnit.extension(arg_5_2, "first_person_system")
 
 	arg_5_0.first_person_extension = var_5_0
@@ -204,7 +204,7 @@ function SimpleInventoryExtension.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._equipment.wielded_slot = var_5_4.default_wielded_slot
 end
 
-function SimpleInventoryExtension._update_career_skill_weapon_slot(arg_6_0)
+SimpleInventoryExtension._update_career_skill_weapon_slot = function (arg_6_0)
 	if not arg_6_0._first_person_unit then
 		arg_6_0._first_person_unit = ScriptUnit.extension(unit, "first_person_system"):get_first_person_unit()
 	end
@@ -234,11 +234,11 @@ function SimpleInventoryExtension._update_career_skill_weapon_slot(arg_6_0)
 	end
 end
 
-function SimpleInventoryExtension.update_career_skill_weapon_slot_safe(arg_7_0)
+SimpleInventoryExtension.update_career_skill_weapon_slot_safe = function (arg_7_0)
 	arg_7_0._queue_update_career_skill_weapon_slot = true
 end
 
-function SimpleInventoryExtension.game_object_initialized(arg_8_0, arg_8_1, arg_8_2)
+SimpleInventoryExtension.game_object_initialized = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.state.network
 	local var_8_1 = arg_8_0.is_server
 	local var_8_2 = arg_8_0._equipment
@@ -281,7 +281,7 @@ function SimpleInventoryExtension.game_object_initialized(arg_8_0, arg_8_1, arg_
 	end
 end
 
-function SimpleInventoryExtension._send_rpc_add_equipment_buffs(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+SimpleInventoryExtension._send_rpc_add_equipment_buffs = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local function var_9_0(arg_10_0, arg_10_1)
 		local var_10_0 = {}
 		local var_10_1 = table.merge(var_10_0, arg_10_1.server)
@@ -315,7 +315,7 @@ function SimpleInventoryExtension._send_rpc_add_equipment_buffs(arg_9_0, arg_9_1
 	var_9_0("rpc_add_no_wield_required_equipment_buffs", var_9_4)
 end
 
-function SimpleInventoryExtension._override_career_skill_item_template(arg_11_0, arg_11_1)
+SimpleInventoryExtension._override_career_skill_item_template = function (arg_11_0, arg_11_1)
 	local var_11_0
 	local var_11_1
 	local var_11_2 = arg_11_1.slot_to_use
@@ -357,7 +357,7 @@ function SimpleInventoryExtension._override_career_skill_item_template(arg_11_0,
 	return var_11_0, var_11_1
 end
 
-function SimpleInventoryExtension.add_equipment_by_category(arg_12_0, arg_12_1)
+SimpleInventoryExtension.add_equipment_by_category = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.career_extension:career_name()
 	local var_12_1 = InventorySettings[arg_12_1]
 	local var_12_2 = #var_12_1
@@ -428,7 +428,7 @@ function SimpleInventoryExtension.add_equipment_by_category(arg_12_0, arg_12_1)
 	end
 end
 
-function SimpleInventoryExtension.destroy(arg_13_0)
+SimpleInventoryExtension.destroy = function (arg_13_0)
 	local var_13_0 = Managers.state.entity:system("pickup_system")
 	local var_13_1 = Managers.state.entity:system("projectile_system")
 	local var_13_2 = arg_13_0.player:network_id()
@@ -453,7 +453,7 @@ function SimpleInventoryExtension.destroy(arg_13_0)
 	arg_13_0:_stop_all_weapon_fx()
 end
 
-function SimpleInventoryExtension._unlink_unit(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+SimpleInventoryExtension._unlink_unit = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	World.unlink_unit(arg_14_0._world, arg_14_1)
 
 	local var_14_0 = arg_14_3.wielded or arg_14_3
@@ -479,15 +479,15 @@ function SimpleInventoryExtension._unlink_unit(arg_14_0, arg_14_1, arg_14_2, arg
 	Actor.add_velocity(var_14_4, Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 end
 
-function SimpleInventoryExtension.drop_equipped_weapons(arg_15_0, arg_15_1, arg_15_2)
+SimpleInventoryExtension.drop_equipped_weapons = function (arg_15_0, arg_15_1, arg_15_2)
 	return
 end
 
-function SimpleInventoryExtension.equipment(arg_16_0)
+SimpleInventoryExtension.equipment = function (arg_16_0)
 	return arg_16_0._equipment
 end
 
-function SimpleInventoryExtension.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+SimpleInventoryExtension.update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	if arg_17_0._queue_update_career_skill_weapon_slot then
 		arg_17_0:_update_career_skill_weapon_slot()
 
@@ -515,7 +515,7 @@ function SimpleInventoryExtension.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3,
 	GameSession.set_game_object_field(var_17_3, var_17_4, "ammo_percentage", var_17_5)
 end
 
-function SimpleInventoryExtension.recently_acquired(arg_18_0, arg_18_1)
+SimpleInventoryExtension.recently_acquired = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.recently_acquired_list[arg_18_1]
 
 	arg_18_0.recently_acquired_list[arg_18_1] = nil
@@ -523,7 +523,7 @@ function SimpleInventoryExtension.recently_acquired(arg_18_0, arg_18_1)
 	return var_18_0
 end
 
-function SimpleInventoryExtension._update_resync_loadout(arg_19_0)
+SimpleInventoryExtension._update_resync_loadout = function (arg_19_0)
 	local var_19_0, var_19_1 = next(arg_19_0._items_to_spawn)
 
 	if not var_19_1 then
@@ -549,7 +549,7 @@ function SimpleInventoryExtension._update_resync_loadout(arg_19_0)
 	end
 end
 
-function SimpleInventoryExtension.can_wield(arg_20_0)
+SimpleInventoryExtension.can_wield = function (arg_20_0)
 	local var_20_0 = arg_20_0._equipment
 	local var_20_1 = arg_20_0._equipment.wielded_slot
 	local var_20_2 = var_20_0.slots[var_20_1].item_data
@@ -563,7 +563,7 @@ function SimpleInventoryExtension.can_wield(arg_20_0)
 	return var_20_4
 end
 
-function SimpleInventoryExtension.wield_previous_slot(arg_21_0)
+SimpleInventoryExtension.wield_previous_slot = function (arg_21_0)
 	local var_21_0 = arg_21_0._previously_wielded_slot
 
 	if not arg_21_0:wield(var_21_0) then
@@ -573,7 +573,7 @@ function SimpleInventoryExtension.wield_previous_slot(arg_21_0)
 	return true
 end
 
-function SimpleInventoryExtension.wield_previous_non_level_slot(arg_22_0)
+SimpleInventoryExtension.wield_previous_non_level_slot = function (arg_22_0)
 	local var_22_0 = arg_22_0._previously_wielded_non_level_slot
 
 	if not arg_22_0:wield(var_22_0) then
@@ -583,7 +583,7 @@ function SimpleInventoryExtension.wield_previous_non_level_slot(arg_22_0)
 	return true
 end
 
-function SimpleInventoryExtension.wield_previous_weapon(arg_23_0)
+SimpleInventoryExtension.wield_previous_weapon = function (arg_23_0)
 	local var_23_0 = arg_23_0._previously_wielded_weapon_slot
 
 	if not arg_23_0:wield(var_23_0) then
@@ -593,13 +593,13 @@ function SimpleInventoryExtension.wield_previous_weapon(arg_23_0)
 	return true
 end
 
-function SimpleInventoryExtension.rewield_wielded_slot(arg_24_0)
+SimpleInventoryExtension.rewield_wielded_slot = function (arg_24_0)
 	local var_24_0 = arg_24_0._equipment.wielded_slot
 
 	return arg_24_0:wield(var_24_0)
 end
 
-function SimpleInventoryExtension.wield(arg_25_0, arg_25_1)
+SimpleInventoryExtension.wield = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._equipment
 	local var_25_1 = var_25_0.slots[arg_25_1]
 
@@ -727,7 +727,7 @@ function SimpleInventoryExtension.wield(arg_25_0, arg_25_1)
 	return true
 end
 
-function SimpleInventoryExtension._despawn_attached_units(arg_26_0)
+SimpleInventoryExtension._despawn_attached_units = function (arg_26_0)
 	local var_26_0 = arg_26_0._attached_units
 
 	for iter_26_0, iter_26_1 in pairs(var_26_0) do
@@ -737,7 +737,7 @@ function SimpleInventoryExtension._despawn_attached_units(arg_26_0)
 	end
 end
 
-function SimpleInventoryExtension._spawn_attached_units(arg_27_0, arg_27_1)
+SimpleInventoryExtension._spawn_attached_units = function (arg_27_0, arg_27_1)
 	if arg_27_1 == nil then
 		return
 	end
@@ -753,7 +753,7 @@ end
 
 local var_0_1 = {}
 
-function SimpleInventoryExtension.apply_buffs(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+SimpleInventoryExtension.apply_buffs = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_0.buff_extension
 	local var_28_1 = arg_28_0.current_item_buffs[arg_28_2]
 
@@ -800,7 +800,7 @@ function SimpleInventoryExtension.apply_buffs(arg_28_0, arg_28_1, arg_28_2, arg_
 	end
 end
 
-function SimpleInventoryExtension.has_inventory_item(arg_29_0, arg_29_1, arg_29_2)
+SimpleInventoryExtension.has_inventory_item = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0:get_slot_data(arg_29_1)
 
 	if var_29_0 and arg_29_2 == var_29_0.item_data.name then
@@ -820,7 +820,7 @@ function SimpleInventoryExtension.has_inventory_item(arg_29_0, arg_29_1, arg_29_
 	return false
 end
 
-function SimpleInventoryExtension.add_equipment(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
+SimpleInventoryExtension.add_equipment = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
 	local var_30_0
 
 	if type(arg_30_2) == "string" then
@@ -854,7 +854,7 @@ function SimpleInventoryExtension.add_equipment(arg_30_0, arg_30_1, arg_30_2, ar
 	arg_30_0:apply_buffs(var_30_12, "equip", var_30_11, arg_30_1)
 end
 
-function SimpleInventoryExtension.show_first_person_inventory_lights(arg_31_0, arg_31_1)
+SimpleInventoryExtension.show_first_person_inventory_lights = function (arg_31_0, arg_31_1)
 	arg_31_0._show_first_person_lights = arg_31_1
 
 	local var_31_0 = arg_31_0._equipment.right_hand_wielded_unit
@@ -878,7 +878,7 @@ function SimpleInventoryExtension.show_first_person_inventory_lights(arg_31_0, a
 	end
 end
 
-function SimpleInventoryExtension.show_first_person_inventory(arg_32_0, arg_32_1)
+SimpleInventoryExtension.show_first_person_inventory = function (arg_32_0, arg_32_1)
 	arg_32_0._show_first_person = arg_32_1
 
 	local var_32_0 = arg_32_0._equipment.right_hand_wielded_unit
@@ -941,7 +941,7 @@ function SimpleInventoryExtension.show_first_person_inventory(arg_32_0, arg_32_1
 	end
 end
 
-function SimpleInventoryExtension.show_first_person_ammo(arg_33_0, arg_33_1)
+SimpleInventoryExtension.show_first_person_ammo = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._equipment
 	local var_33_1 = var_33_0.right_hand_wielded_unit
 	local var_33_2 = var_33_0.left_hand_wielded_unit
@@ -975,7 +975,7 @@ function SimpleInventoryExtension.show_first_person_ammo(arg_33_0, arg_33_1)
 	end
 end
 
-function SimpleInventoryExtension.show_third_person_inventory(arg_34_0, arg_34_1)
+SimpleInventoryExtension.show_third_person_inventory = function (arg_34_0, arg_34_1)
 	arg_34_0._show_third_person = arg_34_1
 
 	local var_34_0 = arg_34_0._equipment.right_hand_wielded_unit_3p
@@ -1065,15 +1065,15 @@ function SimpleInventoryExtension.show_third_person_inventory(arg_34_0, arg_34_1
 	end
 end
 
-function SimpleInventoryExtension.is_showing_third_person_inventory(arg_35_0)
+SimpleInventoryExtension.is_showing_third_person_inventory = function (arg_35_0)
 	return arg_35_0._show_third_person
 end
 
-function SimpleInventoryExtension.hot_join_sync(arg_36_0, arg_36_1)
+SimpleInventoryExtension.hot_join_sync = function (arg_36_0, arg_36_1)
 	GearUtils.hot_join_sync(arg_36_1, arg_36_0._unit, arg_36_0._equipment, arg_36_0._additional_items)
 end
 
-function SimpleInventoryExtension.destroy_item_by_name(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+SimpleInventoryExtension.destroy_item_by_name = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	local var_37_0 = arg_37_0:get_slot_data(arg_37_1)
 
 	if var_37_0 and var_37_0.item_data.name == arg_37_2 then
@@ -1095,7 +1095,7 @@ function SimpleInventoryExtension.destroy_item_by_name(arg_37_0, arg_37_1, arg_3
 	end
 end
 
-function SimpleInventoryExtension.destroy_slot(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+SimpleInventoryExtension.destroy_slot = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	local var_38_0 = arg_38_0._equipment
 	local var_38_1 = var_38_0.slots[arg_38_1]
 
@@ -1153,7 +1153,7 @@ function SimpleInventoryExtension.destroy_slot(arg_38_0, arg_38_1, arg_38_2, arg
 	end
 end
 
-function SimpleInventoryExtension.current_ammo_status(arg_39_0, arg_39_1)
+SimpleInventoryExtension.current_ammo_status = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._equipment.slots[arg_39_1]
 
 	if not var_39_0 then
@@ -1174,7 +1174,7 @@ function SimpleInventoryExtension.current_ammo_status(arg_39_0, arg_39_1)
 	end
 end
 
-function SimpleInventoryExtension.ammo_percentage(arg_40_0)
+SimpleInventoryExtension.ammo_percentage = function (arg_40_0)
 	local var_40_0, var_40_1 = arg_40_0:current_ammo_status("slot_ranged")
 	local var_40_2 = 1
 
@@ -1185,13 +1185,13 @@ function SimpleInventoryExtension.ammo_percentage(arg_40_0)
 	return var_40_2
 end
 
-function SimpleInventoryExtension.ammo_status(arg_41_0)
+SimpleInventoryExtension.ammo_status = function (arg_41_0)
 	local var_41_0, var_41_1 = arg_41_0:current_ammo_status("slot_ranged")
 
 	return var_41_0, var_41_1
 end
 
-function SimpleInventoryExtension.current_ammo_kind(arg_42_0, arg_42_1)
+SimpleInventoryExtension.current_ammo_kind = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._equipment.slots[arg_42_1]
 
 	if not var_42_0 then
@@ -1209,7 +1209,7 @@ function SimpleInventoryExtension.current_ammo_kind(arg_42_0, arg_42_1)
 	end
 end
 
-function SimpleInventoryExtension.add_ammo_from_pickup(arg_43_0, arg_43_1)
+SimpleInventoryExtension.add_ammo_from_pickup = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._equipment.slots
 	local var_43_1 = arg_43_1.refill_percentage
 	local var_43_2 = arg_43_1.refill_amount
@@ -1225,7 +1225,7 @@ function SimpleInventoryExtension.add_ammo_from_pickup(arg_43_0, arg_43_1)
 	end
 end
 
-function SimpleInventoryExtension._add_ammo_to_slot(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+SimpleInventoryExtension._add_ammo_to_slot = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 	local var_44_0 = arg_44_2.left_unit_1p
 	local var_44_1 = arg_44_2.right_unit_1p
 	local var_44_2
@@ -1263,7 +1263,7 @@ function SimpleInventoryExtension._add_ammo_to_slot(arg_44_0, arg_44_1, arg_44_2
 	end
 end
 
-function SimpleInventoryExtension.get_item_template(arg_45_0, arg_45_1)
+SimpleInventoryExtension.get_item_template = function (arg_45_0, arg_45_1)
 	if arg_45_1 then
 		local var_45_0 = arg_45_1.item_data
 
@@ -1273,41 +1273,41 @@ function SimpleInventoryExtension.get_item_template(arg_45_0, arg_45_1)
 	return nil
 end
 
-function SimpleInventoryExtension.get_wielded_slot_item_template(arg_46_0)
+SimpleInventoryExtension.get_wielded_slot_item_template = function (arg_46_0)
 	local var_46_0 = arg_46_0:get_wielded_slot_name()
 	local var_46_1 = arg_46_0:get_slot_data(var_46_0)
 
 	return arg_46_0:get_item_template(var_46_1)
 end
 
-function SimpleInventoryExtension.get_wielded_slot_name(arg_47_0)
+SimpleInventoryExtension.get_wielded_slot_name = function (arg_47_0)
 	return arg_47_0._equipment.wielded_slot
 end
 
-function SimpleInventoryExtension.get_slot_data(arg_48_0, arg_48_1)
+SimpleInventoryExtension.get_slot_data = function (arg_48_0, arg_48_1)
 	return arg_48_0._equipment.slots[arg_48_1]
 end
 
-function SimpleInventoryExtension.get_wielded_slot_data(arg_49_0)
+SimpleInventoryExtension.get_wielded_slot_data = function (arg_49_0)
 	local var_49_0 = arg_49_0:get_wielded_slot_name()
 
 	return (arg_49_0:get_slot_data(var_49_0))
 end
 
-function SimpleInventoryExtension.get_item_name(arg_50_0, arg_50_1)
+SimpleInventoryExtension.get_item_name = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0:get_slot_data(arg_50_1)
 	local var_50_1 = var_50_0 and var_50_0.item_data
 
 	return var_50_1 and var_50_1.name
 end
 
-function SimpleInventoryExtension.get_item_data(arg_51_0, arg_51_1)
+SimpleInventoryExtension.get_item_data = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0:get_slot_data(arg_51_1)
 
 	return var_51_0 and var_51_0.item_data
 end
 
-function SimpleInventoryExtension.create_equipment_in_slot(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+SimpleInventoryExtension.create_equipment_in_slot = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	local var_52_0 = BackendUtils.get_item_from_masterlist(arg_52_2)
 
 	if not var_52_0 then
@@ -1365,7 +1365,7 @@ function SimpleInventoryExtension.create_equipment_in_slot(arg_52_0, arg_52_1, a
 	end
 end
 
-function SimpleInventoryExtension._queue_item_spawn(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+SimpleInventoryExtension._queue_item_spawn = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 	if not arg_53_1 or not arg_53_2 then
 		return
 	end
@@ -1379,7 +1379,7 @@ function SimpleInventoryExtension._queue_item_spawn(arg_53_0, arg_53_1, arg_53_2
 	arg_53_0.resync_loadout_needed = true
 end
 
-function SimpleInventoryExtension._spawn_resynced_loadout(arg_54_0, arg_54_1, arg_54_2)
+SimpleInventoryExtension._spawn_resynced_loadout = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_1.item_data
 	local var_54_1 = arg_54_1.slot_id
 	local var_54_2 = arg_54_1.ammo_percent
@@ -1416,7 +1416,7 @@ local var_0_2 = {
 	slot_melee = true
 }
 
-function SimpleInventoryExtension.has_unique_ammo_type_weapon_equipped(arg_55_0)
+SimpleInventoryExtension.has_unique_ammo_type_weapon_equipped = function (arg_55_0)
 	local var_55_0 = arg_55_0._equipment.slots
 
 	for iter_55_0, iter_55_1 in pairs(var_55_0) do
@@ -1436,7 +1436,7 @@ function SimpleInventoryExtension.has_unique_ammo_type_weapon_equipped(arg_55_0)
 	return false
 end
 
-function SimpleInventoryExtension.has_ammo_consuming_weapon_equipped(arg_56_0, arg_56_1)
+SimpleInventoryExtension.has_ammo_consuming_weapon_equipped = function (arg_56_0, arg_56_1)
 	local var_56_0 = arg_56_0._equipment.slots
 	local var_56_1 = false
 
@@ -1473,7 +1473,7 @@ function SimpleInventoryExtension.has_ammo_consuming_weapon_equipped(arg_56_0, a
 	return false
 end
 
-function SimpleInventoryExtension.has_infinite_ammo(arg_57_0)
+SimpleInventoryExtension.has_infinite_ammo = function (arg_57_0)
 	local var_57_0 = arg_57_0._equipment.slots
 	local var_57_1 = false
 
@@ -1498,7 +1498,7 @@ function SimpleInventoryExtension.has_infinite_ammo(arg_57_0)
 	return false
 end
 
-function SimpleInventoryExtension.reset_ammo(arg_58_0, arg_58_1)
+SimpleInventoryExtension.reset_ammo = function (arg_58_0, arg_58_1)
 	local var_58_0 = arg_58_0._equipment.slots[arg_58_1]
 	local var_58_1 = var_58_0.right_unit_1p
 	local var_58_2 = ScriptUnit.has_extension(var_58_1, "ammo_system") and ScriptUnit.extension(var_58_1, "ammo_system")
@@ -1515,7 +1515,7 @@ function SimpleInventoryExtension.reset_ammo(arg_58_0, arg_58_1)
 	end
 end
 
-function SimpleInventoryExtension.has_full_ammo(arg_59_0)
+SimpleInventoryExtension.has_full_ammo = function (arg_59_0)
 	local var_59_0 = arg_59_0._equipment.slots
 	local var_59_1 = true
 
@@ -1538,7 +1538,7 @@ function SimpleInventoryExtension.has_full_ammo(arg_59_0)
 	return var_59_1
 end
 
-function SimpleInventoryExtension.is_ammo_blocked(arg_60_0)
+SimpleInventoryExtension.is_ammo_blocked = function (arg_60_0)
 	local var_60_0 = arg_60_0._equipment.slots
 	local var_60_1 = false
 
@@ -1561,7 +1561,7 @@ function SimpleInventoryExtension.is_ammo_blocked(arg_60_0)
 	return var_60_1
 end
 
-function SimpleInventoryExtension.apply_buffs_to_ammo(arg_61_0)
+SimpleInventoryExtension.apply_buffs_to_ammo = function (arg_61_0)
 	local var_61_0 = arg_61_0._equipment.slots
 
 	for iter_61_0, iter_61_1 in pairs(var_61_0) do
@@ -1583,7 +1583,7 @@ function SimpleInventoryExtension.apply_buffs_to_ammo(arg_61_0)
 	end
 end
 
-function SimpleInventoryExtension.refresh_buffs_on_ammo(arg_62_0)
+SimpleInventoryExtension.refresh_buffs_on_ammo = function (arg_62_0)
 	local var_62_0 = arg_62_0._equipment.slots
 
 	for iter_62_0, iter_62_1 in pairs(var_62_0) do
@@ -1605,7 +1605,7 @@ function SimpleInventoryExtension.refresh_buffs_on_ammo(arg_62_0)
 	end
 end
 
-function SimpleInventoryExtension.drop_level_event_item(arg_63_0, arg_63_1)
+SimpleInventoryExtension.drop_level_event_item = function (arg_63_0, arg_63_1)
 	local var_63_0 = arg_63_0:get_item_template(arg_63_1)
 
 	if var_63_0.no_drop then
@@ -1654,7 +1654,7 @@ local function var_0_4(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 	end
 end
 
-function SimpleInventoryExtension.check_and_drop_pickups(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+SimpleInventoryExtension.check_and_drop_pickups = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 	local var_66_0 = arg_66_0._unit
 	local var_66_1 = arg_66_0._equipment.slots
 	local var_66_2 = InventorySettings.slots_by_name
@@ -1710,11 +1710,11 @@ function SimpleInventoryExtension.check_and_drop_pickups(arg_66_0, arg_66_1, arg
 	end
 end
 
-function SimpleInventoryExtension.set_loaded_projectile_override(arg_67_0, arg_67_1)
+SimpleInventoryExtension.set_loaded_projectile_override = function (arg_67_0, arg_67_1)
 	arg_67_0._loaded_projectile_settings_override = arg_67_1
 end
 
-function SimpleInventoryExtension._update_loaded_projectile_settings(arg_68_0)
+SimpleInventoryExtension._update_loaded_projectile_settings = function (arg_68_0)
 	local var_68_0
 	local var_68_1 = arg_68_0:get_wielded_slot_item_template()
 	local var_68_2 = arg_68_0._loaded_projectile_settings_override
@@ -1730,11 +1730,11 @@ function SimpleInventoryExtension._update_loaded_projectile_settings(arg_68_0)
 	arg_68_0._loaded_projectile_settings = var_68_0
 end
 
-function SimpleInventoryExtension.get_loaded_projectile_settings(arg_69_0)
+SimpleInventoryExtension.get_loaded_projectile_settings = function (arg_69_0)
 	return arg_69_0._loaded_projectile_settings
 end
 
-function SimpleInventoryExtension._update_selected_consumable_slot(arg_70_0)
+SimpleInventoryExtension._update_selected_consumable_slot = function (arg_70_0)
 	local var_70_0 = arg_70_0._equipment.slots
 
 	if not var_70_0[arg_70_0._selected_consumable_slot] then
@@ -1766,7 +1766,7 @@ function SimpleInventoryExtension._update_selected_consumable_slot(arg_70_0)
 	end
 end
 
-function SimpleInventoryExtension.get_selected_consumable_slot_template(arg_71_0)
+SimpleInventoryExtension.get_selected_consumable_slot_template = function (arg_71_0)
 	local var_71_0 = arg_71_0._selected_consumable_slot
 	local var_71_1 = arg_71_0._equipment.slots[var_71_0]
 	local var_71_2
@@ -1780,11 +1780,11 @@ function SimpleInventoryExtension.get_selected_consumable_slot_template(arg_71_0
 	return var_71_2
 end
 
-function SimpleInventoryExtension.get_selected_consumable_slot_name(arg_72_0)
+SimpleInventoryExtension.get_selected_consumable_slot_name = function (arg_72_0)
 	return arg_72_0._selected_consumable_slot
 end
 
-function SimpleInventoryExtension.resyncing_loadout(arg_73_0)
+SimpleInventoryExtension.resyncing_loadout = function (arg_73_0)
 	local var_73_0 = Managers.state.network.profile_synchronizer
 	local var_73_1 = arg_73_0.player:network_id()
 	local var_73_2 = arg_73_0.player:local_player_id()
@@ -1792,7 +1792,7 @@ function SimpleInventoryExtension.resyncing_loadout(arg_73_0)
 	return not var_73_0:all_ingame_synced_for_peer(var_73_1, var_73_2)
 end
 
-function SimpleInventoryExtension.get_item_slot_extension(arg_74_0, arg_74_1, arg_74_2)
+SimpleInventoryExtension.get_item_slot_extension = function (arg_74_0, arg_74_1, arg_74_2)
 	local var_74_0 = arg_74_0:get_slot_data(arg_74_1)
 	local var_74_1 = var_74_0.right_unit_1p
 	local var_74_2 = var_74_0.left_unit_1p
@@ -1805,7 +1805,7 @@ function SimpleInventoryExtension.get_item_slot_extension(arg_74_0, arg_74_1, ar
 	return var_74_3
 end
 
-function SimpleInventoryExtension.get_num_grimoires(arg_75_0)
+SimpleInventoryExtension.get_num_grimoires = function (arg_75_0)
 	local var_75_0 = ScriptUnit.extension(arg_75_0._unit, "buff_system")
 	local var_75_1 = var_75_0:num_buff_perk("skaven_grimoire")
 	local var_75_2 = var_75_0:num_buff_perk("twitch_grimoire")
@@ -1819,7 +1819,7 @@ local var_0_5 = {
 	both = {}
 }
 
-function SimpleInventoryExtension._get_property_and_trait_buffs(arg_76_0, arg_76_1)
+SimpleInventoryExtension._get_property_and_trait_buffs = function (arg_76_0, arg_76_1)
 	local var_76_0 = arg_76_0._backend_items
 
 	table.clear(var_0_5.client)
@@ -1829,7 +1829,7 @@ function SimpleInventoryExtension._get_property_and_trait_buffs(arg_76_0, arg_76
 	return GearUtils.get_property_and_trait_buffs(var_76_0, arg_76_1, var_0_5)
 end
 
-function SimpleInventoryExtension._get_no_wield_required_property_and_trait_buffs(arg_77_0, arg_77_1)
+SimpleInventoryExtension._get_no_wield_required_property_and_trait_buffs = function (arg_77_0, arg_77_1)
 	local var_77_0 = arg_77_0._backend_items
 
 	table.clear(var_0_5.client)
@@ -1845,7 +1845,7 @@ local function var_0_6(arg_78_0, arg_78_1, arg_78_2)
 	return arg_78_1 and arg_78_1[arg_78_2] or arg_78_0
 end
 
-function SimpleInventoryExtension._wield_slot(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5)
+SimpleInventoryExtension._wield_slot = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5)
 	Unit.flow_event(arg_79_3, "lua_unwield")
 	arg_79_0.first_person_extension:animation_event("unwield")
 
@@ -2073,7 +2073,7 @@ function SimpleInventoryExtension._wield_slot(arg_79_0, arg_79_1, arg_79_2, arg_
 	return true
 end
 
-function SimpleInventoryExtension.get_equipped_item_names(arg_80_0)
+SimpleInventoryExtension.get_equipped_item_names = function (arg_80_0)
 	local var_80_0 = {}
 
 	for iter_80_0, iter_80_1 in pairs(arg_80_0._equipment.slots) do
@@ -2083,7 +2083,7 @@ function SimpleInventoryExtension.get_equipped_item_names(arg_80_0)
 	return var_80_0
 end
 
-function SimpleInventoryExtension.testify_wield_weapon(arg_81_0, arg_81_1)
+SimpleInventoryExtension.testify_wield_weapon = function (arg_81_0, arg_81_1)
 	local var_81_0 = arg_81_1.backend_id
 	local var_81_1 = ScriptUnit.extension(arg_81_0._unit, "career_system"):career_name()
 	local var_81_2 = "slot_" .. arg_81_1.data.slot_type
@@ -2092,7 +2092,7 @@ function SimpleInventoryExtension.testify_wield_weapon(arg_81_0, arg_81_1)
 	arg_81_0:create_equipment_in_slot(var_81_2, var_81_0)
 end
 
-function SimpleInventoryExtension.start_weapon_fx(arg_82_0, arg_82_1, arg_82_2)
+SimpleInventoryExtension.start_weapon_fx = function (arg_82_0, arg_82_1, arg_82_2)
 	local var_82_0 = arg_82_0._equipment
 	local var_82_1 = var_82_0.wielded_slot
 	local var_82_2 = var_82_0.slots[var_82_1]
@@ -2122,7 +2122,7 @@ function SimpleInventoryExtension.start_weapon_fx(arg_82_0, arg_82_1, arg_82_2)
 	end
 end
 
-function SimpleInventoryExtension.stop_weapon_fx(arg_83_0, arg_83_1, arg_83_2)
+SimpleInventoryExtension.stop_weapon_fx = function (arg_83_0, arg_83_1, arg_83_2)
 	local var_83_0 = arg_83_0._weapon_fx[arg_83_1]
 
 	if var_83_0 then
@@ -2155,7 +2155,7 @@ function SimpleInventoryExtension.stop_weapon_fx(arg_83_0, arg_83_1, arg_83_2)
 	end
 end
 
-function SimpleInventoryExtension._stop_all_weapon_fx(arg_84_0)
+SimpleInventoryExtension._stop_all_weapon_fx = function (arg_84_0)
 	local var_84_0 = arg_84_0._world
 	local var_84_1 = arg_84_0._weapon_fx
 
@@ -2166,33 +2166,33 @@ function SimpleInventoryExtension._stop_all_weapon_fx(arg_84_0)
 	end
 end
 
-function SimpleInventoryExtension.has_additional_item_slots(arg_85_0, arg_85_1)
+SimpleInventoryExtension.has_additional_item_slots = function (arg_85_0, arg_85_1)
 	return arg_85_0._additional_items[arg_85_1] ~= nil
 end
 
-function SimpleInventoryExtension.can_store_additional_item(arg_86_0, arg_86_1)
+SimpleInventoryExtension.can_store_additional_item = function (arg_86_0, arg_86_1)
 	local var_86_0 = arg_86_0._additional_items[arg_86_1]
 
 	return var_86_0 and #var_86_0.items < var_86_0.max_slots
 end
 
-function SimpleInventoryExtension.has_additional_items(arg_87_0, arg_87_1)
+SimpleInventoryExtension.has_additional_items = function (arg_87_0, arg_87_1)
 	local var_87_0 = arg_87_0._additional_items[arg_87_1]
 
 	return var_87_0 and #var_87_0.items > 0
 end
 
-function SimpleInventoryExtension.get_additional_items(arg_88_0, arg_88_1)
+SimpleInventoryExtension.get_additional_items = function (arg_88_0, arg_88_1)
 	local var_88_0 = arg_88_0._additional_items[arg_88_1]
 
 	return var_88_0 and var_88_0.items
 end
 
-function SimpleInventoryExtension.get_additional_items_table(arg_89_0)
+SimpleInventoryExtension.get_additional_items_table = function (arg_89_0)
 	return arg_89_0._additional_items
 end
 
-function SimpleInventoryExtension.get_total_item_count(arg_90_0, arg_90_1)
+SimpleInventoryExtension.get_total_item_count = function (arg_90_0, arg_90_1)
 	local var_90_0 = 0
 
 	if arg_90_0:get_item_data(arg_90_1) then
@@ -2208,7 +2208,7 @@ function SimpleInventoryExtension.get_total_item_count(arg_90_0, arg_90_1)
 	return var_90_0
 end
 
-function SimpleInventoryExtension.store_additional_item(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+SimpleInventoryExtension.store_additional_item = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 	if arg_91_2 and arg_91_0:can_store_additional_item(arg_91_1) then
 		local var_91_0 = arg_91_0:get_additional_items(arg_91_1)
 
@@ -2224,7 +2224,7 @@ function SimpleInventoryExtension.store_additional_item(arg_91_0, arg_91_1, arg_
 	return false
 end
 
-function SimpleInventoryExtension.remove_additional_item(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+SimpleInventoryExtension.remove_additional_item = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 	local var_92_0 = arg_92_0:get_additional_items(arg_92_1)
 	local var_92_1 = arg_92_0:get_additional_item_swap_id(var_92_0, SwapFromStorageType.Same, arg_92_2)
 
@@ -2235,7 +2235,7 @@ function SimpleInventoryExtension.remove_additional_item(arg_92_0, arg_92_1, arg
 	end
 end
 
-function SimpleInventoryExtension.has_droppable_item(arg_93_0, arg_93_1, arg_93_2)
+SimpleInventoryExtension.has_droppable_item = function (arg_93_0, arg_93_1, arg_93_2)
 	local var_93_0 = false
 	local var_93_1 = false
 	local var_93_2 = arg_93_0:get_item_data(arg_93_1)
@@ -2265,7 +2265,7 @@ function SimpleInventoryExtension.has_droppable_item(arg_93_0, arg_93_1, arg_93_
 	return var_93_0, var_93_1, nil
 end
 
-function SimpleInventoryExtension.get_additional_item_swap_id(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
+SimpleInventoryExtension.get_additional_item_swap_id = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3)
 	local var_94_0
 
 	if arg_94_1 then
@@ -2325,7 +2325,7 @@ function SimpleInventoryExtension.get_additional_item_swap_id(arg_94_0, arg_94_1
 	return var_94_0
 end
 
-function SimpleInventoryExtension.can_swap_from_storage(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+SimpleInventoryExtension.can_swap_from_storage = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 	if arg_95_0:has_additional_items(arg_95_1) then
 		arg_95_2 = arg_95_2 or SwapFromStorageType.First
 		arg_95_3 = arg_95_3 or arg_95_0:get_item_data(arg_95_1)
@@ -2339,7 +2339,7 @@ function SimpleInventoryExtension.can_swap_from_storage(arg_95_0, arg_95_1, arg_
 	return false
 end
 
-function SimpleInventoryExtension.swap_equipment_from_storage(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+SimpleInventoryExtension.swap_equipment_from_storage = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 	local var_96_0, var_96_1, var_96_2 = arg_96_0:can_swap_from_storage(arg_96_1, arg_96_2, arg_96_3)
 
 	if var_96_0 then
@@ -2371,7 +2371,7 @@ end
 
 local var_0_7 = {}
 
-function SimpleInventoryExtension._resync_stored_items(arg_97_0, arg_97_1)
+SimpleInventoryExtension._resync_stored_items = function (arg_97_0, arg_97_1)
 	local var_97_0 = arg_97_0:get_additional_items(arg_97_1)
 
 	if var_97_0 then

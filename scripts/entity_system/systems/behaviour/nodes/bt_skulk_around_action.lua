@@ -8,7 +8,7 @@ BTSkulkAroundAction.name = "BTSkulkAroundAction"
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = script_data
 
-function BTSkulkAroundAction.init(arg_1_0, ...)
+BTSkulkAroundAction.init = function (arg_1_0, ...)
 	BTSkulkAroundAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BTSkulkAroundAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTSkulkAroundAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if not arg_3_2.skulk_data then
 		arg_3_2.skulk_data = {}
 	end
@@ -53,7 +53,7 @@ function BTSkulkAroundAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTSkulkAroundAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTSkulkAroundAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 
 	arg_4_2.navigation_extension:set_max_speed(var_4_0)
@@ -63,7 +63,7 @@ function BTSkulkAroundAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 	end
 end
 
-function BTSkulkAroundAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTSkulkAroundAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.skulk_data
 
 	if arg_5_2.navigation_extension:is_following_path() then
@@ -116,7 +116,7 @@ function BTSkulkAroundAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTSkulkAroundAction.get_new_skulk_goal(arg_6_0, arg_6_1, arg_6_2)
+BTSkulkAroundAction.get_new_skulk_goal = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.conflict
 	local var_6_1 = var_6_0.level_analysis:get_main_paths()
 	local var_6_2, var_6_3, var_6_4 = MainPathUtils.closest_pos_at_main_path(var_6_1, POSITION_LOOKUP[arg_6_1])

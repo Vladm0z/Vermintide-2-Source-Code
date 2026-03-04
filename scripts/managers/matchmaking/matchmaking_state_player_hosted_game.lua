@@ -5,7 +5,7 @@ local var_0_0 = require("scripts/managers/game_mode/mechanisms/reservation_handl
 MatchmakingStatePlayerHostedGame = class(MatchmakingStatePlayerHostedGame)
 MatchmakingStatePlayerHostedGame.NAME = "MatchmakingStatePlayerHostedGame"
 
-function MatchmakingStatePlayerHostedGame.init(arg_1_0, arg_1_1)
+MatchmakingStatePlayerHostedGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._difficulty_manager = arg_1_1.difficulty
@@ -14,11 +14,11 @@ function MatchmakingStatePlayerHostedGame.init(arg_1_0, arg_1_1)
 	arg_1_0._wwise_world = arg_1_1.wwise_world
 end
 
-function MatchmakingStatePlayerHostedGame.destroy(arg_2_0)
+MatchmakingStatePlayerHostedGame.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStatePlayerHostedGame.on_enter(arg_3_0, arg_3_1)
+MatchmakingStatePlayerHostedGame.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0._state_context = arg_3_1
 	arg_3_0._search_config = arg_3_1.search_config
 	arg_3_0._search_config.is_player_hosted = true
@@ -28,15 +28,15 @@ function MatchmakingStatePlayerHostedGame.on_enter(arg_3_0, arg_3_1)
 	arg_3_0._matchmaking_manager:set_lobby_data_match_started(false)
 end
 
-function MatchmakingStatePlayerHostedGame.on_exit(arg_4_0)
+MatchmakingStatePlayerHostedGame.on_exit = function (arg_4_0)
 	return
 end
 
-function MatchmakingStatePlayerHostedGame.update(arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStatePlayerHostedGame.update = function (arg_5_0, arg_5_1, arg_5_2)
 	return arg_5_0._new_state, arg_5_0._state_context
 end
 
-function MatchmakingStatePlayerHostedGame.force_start_game(arg_6_0)
+MatchmakingStatePlayerHostedGame.force_start_game = function (arg_6_0)
 	local var_6_0 = Managers.mechanism:game_mechanism()
 
 	if var_6_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.pending_custom_game):all_teams_have_members() or Development.parameter("allow_versus_force_start_single_player") then
@@ -67,7 +67,7 @@ function MatchmakingStatePlayerHostedGame.force_start_game(arg_6_0)
 	end
 end
 
-function MatchmakingStatePlayerHostedGame._start_hosting_game(arg_7_0)
+MatchmakingStatePlayerHostedGame._start_hosting_game = function (arg_7_0)
 	local var_7_0 = arg_7_0._state_context
 	local var_7_1 = arg_7_0._search_config
 	local var_7_2 = var_7_1.mission_id

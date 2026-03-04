@@ -2,11 +2,11 @@
 
 LocomotionTemplates.AILocomotionExtensionC = {}
 
-function LocomotionTemplates.AILocomotionExtensionC.init(arg_1_0, arg_1_1)
+LocomotionTemplates.AILocomotionExtensionC.init = function (arg_1_0, arg_1_1)
 	return
 end
 
-function LocomotionTemplates.AILocomotionExtensionC.update(arg_2_0, arg_2_1, arg_2_2)
+LocomotionTemplates.AILocomotionExtensionC.update = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = EngineOptimizedExtensions.ai_locomotion_update(arg_2_1, arg_2_2)
 
 	if var_2_0 then

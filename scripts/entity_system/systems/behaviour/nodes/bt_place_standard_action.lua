@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPlaceStandardAction = class(BTPlaceStandardAction, BTNode)
 
-function BTPlaceStandardAction.init(arg_1_0, ...)
+BTPlaceStandardAction.init = function (arg_1_0, ...)
 	BTPlaceStandardAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTPlaceStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTPlaceStandardAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 	arg_3_2.active_node = BTPlaceStandardAction
 
@@ -31,7 +31,7 @@ function BTPlaceStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.attack_aborted = nil
 end
 
-function BTPlaceStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPlaceStandardAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 	local var_4_1 = arg_4_2.navigation_extension
 
@@ -58,7 +58,7 @@ function BTPlaceStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	arg_4_2.anim_cb_place_standard = nil
 end
 
-function BTPlaceStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPlaceStandardAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.anim_cb_placed_standard or arg_5_2.attack_aborted then
 		return "done"
 	end
@@ -72,7 +72,7 @@ function BTPlaceStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTPlaceStandardAction.anim_cb_place_standard(arg_6_0, arg_6_1, arg_6_2)
+BTPlaceStandardAction.anim_cb_place_standard = function (arg_6_0, arg_6_1, arg_6_2)
 	if Managers.state.network:game() then
 		local var_6_0 = POSITION_LOOKUP[arg_6_1]
 		local var_6_1 = var_6_0 + Quaternion.forward(Unit.local_rotation(arg_6_1, 0))
@@ -162,6 +162,6 @@ function BTPlaceStandardAction.anim_cb_place_standard(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BTPlaceStandardAction.anim_cb_placed_standard(arg_7_0, arg_7_1, arg_7_2)
+BTPlaceStandardAction.anim_cb_placed_standard = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_2.anim_cb_placed_standard = true
 end

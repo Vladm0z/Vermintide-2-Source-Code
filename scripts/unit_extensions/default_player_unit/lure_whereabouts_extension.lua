@@ -4,7 +4,7 @@ require("scripts/unit_extensions/generic/generic_state_machine")
 
 LureWhereaboutsExtension = class(LureWhereaboutsExtension)
 
-function LureWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LureWhereaboutsExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 
 	local var_1_0 = Managers.state.entity:system("ai_system"):nav_world()
@@ -32,10 +32,10 @@ function LureWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function LureWhereaboutsExtension.destroy(arg_2_0)
+LureWhereaboutsExtension.destroy = function (arg_2_0)
 	return
 end
 
-function LureWhereaboutsExtension.closest_positions_when_outside_navmesh(arg_3_0)
+LureWhereaboutsExtension.closest_positions_when_outside_navmesh = function (arg_3_0)
 	return arg_3_0._closest_positions, arg_3_0._on_navmesh
 end

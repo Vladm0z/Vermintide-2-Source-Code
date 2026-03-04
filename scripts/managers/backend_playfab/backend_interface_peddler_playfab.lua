@@ -12,7 +12,7 @@ local var_0_1 = {
 	[1059] = true
 }
 
-function BackendInterfacePeddlerPlayFab.init(arg_1_0, arg_1_1)
+BackendInterfacePeddlerPlayFab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._peddler_stock = {}
 	arg_1_0._chips = {}
@@ -34,45 +34,45 @@ function BackendInterfacePeddlerPlayFab.init(arg_1_0, arg_1_1)
 	arg_1_0:refresh_login_rewards()
 end
 
-function BackendInterfacePeddlerPlayFab.ready(arg_2_0)
+BackendInterfacePeddlerPlayFab.ready = function (arg_2_0)
 	return arg_2_0._login_rewards and arg_2_0._stock_ready and arg_2_0._steam_stock_ready and arg_2_0._chips_ready and arg_2_0._app_prices_ready
 end
 
-function BackendInterfacePeddlerPlayFab.destroy(arg_3_0)
+BackendInterfacePeddlerPlayFab.destroy = function (arg_3_0)
 	arg_3_0._peddler_stock = nil
 	arg_3_0._chips = nil
 	arg_3_0._app_prices = nil
 end
 
-function BackendInterfacePeddlerPlayFab.get_peddler_stock(arg_4_0)
+BackendInterfacePeddlerPlayFab.get_peddler_stock = function (arg_4_0)
 	return arg_4_0._peddler_stock
 end
 
 local var_0_2 = {}
 
-function BackendInterfacePeddlerPlayFab.get_filtered_items(arg_5_0, arg_5_1, arg_5_2)
+BackendInterfacePeddlerPlayFab.get_filtered_items = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._peddler_stock
 
 	return (Managers.backend:get_interface("common"):filter_items(var_5_0, arg_5_1, arg_5_2 or var_0_2))
 end
 
-function BackendInterfacePeddlerPlayFab.get_chips(arg_6_0, arg_6_1)
+BackendInterfacePeddlerPlayFab.get_chips = function (arg_6_0, arg_6_1)
 	return arg_6_0._chips[arg_6_1]
 end
 
-function BackendInterfacePeddlerPlayFab.get_app_price(arg_7_0, arg_7_1)
+BackendInterfacePeddlerPlayFab.get_app_price = function (arg_7_0, arg_7_1)
 	return arg_7_0._app_prices[arg_7_1]
 end
 
-function BackendInterfacePeddlerPlayFab.get_steam_item_price(arg_8_0, arg_8_1)
+BackendInterfacePeddlerPlayFab.get_steam_item_price = function (arg_8_0, arg_8_1)
 	return arg_8_0._steam_item_prices[arg_8_1], arg_8_0._steam_item_currency
 end
 
-function BackendInterfacePeddlerPlayFab.is_purchaseable(arg_9_0, arg_9_1)
+BackendInterfacePeddlerPlayFab.is_purchaseable = function (arg_9_0, arg_9_1)
 	return arg_9_0._steam_item_prices[arg_9_1] ~= nil
 end
 
-function BackendInterfacePeddlerPlayFab.get_unseen_currency_rewards(arg_10_0)
+BackendInterfacePeddlerPlayFab.get_unseen_currency_rewards = function (arg_10_0)
 	local var_10_0 = arg_10_0._backend_mirror:get_user_data("unseen_rewards")
 
 	if not var_10_0 then
@@ -106,7 +106,7 @@ function BackendInterfacePeddlerPlayFab.get_unseen_currency_rewards(arg_10_0)
 	return var_10_3
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_stock(arg_11_0, arg_11_1)
+BackendInterfacePeddlerPlayFab.refresh_stock = function (arg_11_0, arg_11_1)
 	arg_11_0._peddler_stock = {}
 
 	local var_11_0 = {
@@ -143,7 +143,7 @@ local function var_0_3(arg_12_0)
 	return true, var_12_0
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_stock_cb(arg_13_0, arg_13_1, arg_13_2)
+BackendInterfacePeddlerPlayFab._refresh_stock_cb = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_2.Store
 	local var_13_1 = arg_13_0._peddler_stock
 	local var_13_2 = arg_13_0._backend_mirror:get_all_inventory_items()
@@ -231,11 +231,11 @@ function BackendInterfacePeddlerPlayFab._refresh_stock_cb(arg_13_0, arg_13_1, ar
 	end
 end
 
-function BackendInterfacePeddlerPlayFab.set_chips(arg_14_0, arg_14_1, arg_14_2)
+BackendInterfacePeddlerPlayFab.set_chips = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._chips[arg_14_1] = arg_14_2
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_chips(arg_15_0, arg_15_1)
+BackendInterfacePeddlerPlayFab.refresh_chips = function (arg_15_0, arg_15_1)
 	local var_15_0 = {
 		FunctionName = "getUserChips",
 		FunctionParameter = {}
@@ -244,7 +244,7 @@ function BackendInterfacePeddlerPlayFab.refresh_chips(arg_15_0, arg_15_1)
 	arg_15_0._backend_mirror:request_queue():enqueue(var_15_0, callback(arg_15_0, "_refresh_chips_cb", arg_15_1), false)
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_chips_cb(arg_16_0, arg_16_1, arg_16_2)
+BackendInterfacePeddlerPlayFab._refresh_chips_cb = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_2.FunctionResult.chips
 
 	for iter_16_0, iter_16_1 in pairs(var_16_0) do
@@ -258,7 +258,7 @@ function BackendInterfacePeddlerPlayFab._refresh_chips_cb(arg_16_0, arg_16_1, ar
 	end
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_layout_override(arg_17_0, arg_17_1, arg_17_2)
+BackendInterfacePeddlerPlayFab.refresh_layout_override = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._backend_mirror
 
 	if arg_17_1 then
@@ -300,27 +300,27 @@ function BackendInterfacePeddlerPlayFab.refresh_layout_override(arg_17_0, arg_17
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_layout_override_cb(arg_18_0, arg_18_1, arg_18_2)
+BackendInterfacePeddlerPlayFab._refresh_layout_override_cb = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_2.Data and arg_18_2.Data.store_layout_override
 
 	arg_18_0._backend_mirror:set_title_data("store_layout_override", var_18_0)
 	arg_18_0:refresh_layout_override(true, arg_18_1)
 end
 
-function BackendInterfacePeddlerPlayFab.store_display_items(arg_19_0)
+BackendInterfacePeddlerPlayFab.store_display_items = function (arg_19_0)
 	local var_19_0 = arg_19_0._backend_mirror:get_title_data().store_display_items
 
 	return var_19_0 and cjson.decode(var_19_0)
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_platform_item_prices(arg_20_0, arg_20_1)
+BackendInterfacePeddlerPlayFab.refresh_platform_item_prices = function (arg_20_0, arg_20_1)
 	if HAS_STEAM then
 		print("[BackendInterfacePeddlerPlayFab] refresh steam item prices")
 		Managers.steam:request_item_prices(callback(arg_20_0, "_refresh_steam_item_prices_cb", arg_20_1))
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._read_bundle_from_steam(arg_21_0, arg_21_1)
+BackendInterfacePeddlerPlayFab._read_bundle_from_steam = function (arg_21_0, arg_21_1)
 	local var_21_0 = SteamInventory.get_item_definition_property(arg_21_1, "bundle")
 
 	if var_21_0 then
@@ -336,7 +336,7 @@ function BackendInterfacePeddlerPlayFab._read_bundle_from_steam(arg_21_0, arg_21
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	print("_refresh_steam_item_prices_cb")
 
 	local var_22_0 = arg_22_0._backend_mirror:get_all_inventory_items()
@@ -422,7 +422,7 @@ function BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb(arg_22_0, 
 	end
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_app_prices(arg_23_0, arg_23_1)
+BackendInterfacePeddlerPlayFab.refresh_app_prices = function (arg_23_0, arg_23_1)
 	local var_23_0 = PLATFORM
 
 	if IS_WINDOWS or IS_LINUX then
@@ -434,7 +434,7 @@ function BackendInterfacePeddlerPlayFab.refresh_app_prices(arg_23_0, arg_23_1)
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_steam(arg_24_0, arg_24_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_steam = function (arg_24_0, arg_24_1)
 	local var_24_0 = {
 		FunctionName = "getSteamAppPriceInfo",
 		FunctionParameter = {}
@@ -443,7 +443,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_steam(arg_24_0, arg_
 	arg_24_0._backend_mirror:request_queue():enqueue(var_24_0, callback(arg_24_0, "_refresh_app_prices_steam_cb", arg_24_1), false)
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb(arg_25_0, arg_25_1, arg_25_2)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_2.FunctionResult
 	local var_25_1 = true
 
@@ -476,7 +476,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb(arg_25_0, a
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_psn(arg_26_0, arg_26_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_psn = function (arg_26_0, arg_26_1)
 	table.clear(arg_26_0._psn_requests)
 
 	local var_26_0 = {}
@@ -529,7 +529,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_psn(arg_26_0, arg_26
 	Managers.account:get_product_details(var_26_7.product_labels_string, 0, callback(arg_26_0, "_refresh_app_prices_psn_cb", arg_26_1, var_26_7.product_label_lookup))
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	print("")
 	print("############ WEBAPI JSON COMMERCE RESULT ############")
 	print(arg_27_3)
@@ -582,7 +582,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb(arg_27_0, arg
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive(arg_28_0, arg_28_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive = function (arg_28_0, arg_28_1)
 	local var_28_0 = {}
 	local var_28_1 = {}
 
@@ -617,7 +617,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive(arg_28_0, a
 	Managers.account:get_product_details(var_28_1, callback(arg_28_0, "_refresh_app_prices_xboxlive_cb", arg_28_1, var_28_0))
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive_cb(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive_cb = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	if arg_29_3.error then
 		Application.warning(arg_29_3.error)
 	end
@@ -639,7 +639,7 @@ function BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive_cb(arg_29_0
 	arg_29_0._app_prices_ready = true
 end
 
-function BackendInterfacePeddlerPlayFab.exchange_chips(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+BackendInterfacePeddlerPlayFab.exchange_chips = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = {
 		StoreId = var_0_0,
 		ItemId = arg_30_1,
@@ -652,7 +652,7 @@ function BackendInterfacePeddlerPlayFab.exchange_chips(arg_30_0, arg_30_1, arg_3
 	arg_30_0._backend_mirror:request_queue():enqueue_api_request("PurchaseItem", var_30_0, var_30_1, var_30_2)
 end
 
-function BackendInterfacePeddlerPlayFab._exchange_chips_success_cb(arg_31_0, arg_31_1, arg_31_2)
+BackendInterfacePeddlerPlayFab._exchange_chips_success_cb = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_2.Items
 	local var_31_1 = arg_31_0._chips
 	local var_31_2 = arg_31_0._backend_mirror
@@ -685,7 +685,7 @@ function BackendInterfacePeddlerPlayFab._exchange_chips_success_cb(arg_31_0, arg
 	arg_31_1(true, var_31_0)
 end
 
-function BackendInterfacePeddlerPlayFab._exchange_chips_error_cb(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+BackendInterfacePeddlerPlayFab._exchange_chips_error_cb = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = arg_32_2.errorCode
 
 	if var_0_1[var_32_0] then
@@ -697,7 +697,7 @@ function BackendInterfacePeddlerPlayFab._exchange_chips_error_cb(arg_32_0, arg_3
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._store_purchase_made_cb(arg_33_0, arg_33_1, arg_33_2)
+BackendInterfacePeddlerPlayFab._store_purchase_made_cb = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_2.FunctionResult
 	local var_33_1 = var_33_0.updated_statistics
 
@@ -740,24 +740,24 @@ function BackendInterfacePeddlerPlayFab._store_purchase_made_cb(arg_33_0, arg_33
 	end
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_on_error(arg_34_0, arg_34_1)
+BackendInterfacePeddlerPlayFab._refresh_on_error = function (arg_34_0, arg_34_1)
 	arg_34_0:refresh_stock(callback(arg_34_0, "_refresh_stock_on_error_cb", arg_34_1))
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_stock_on_error_cb(arg_35_0, arg_35_1)
+BackendInterfacePeddlerPlayFab._refresh_stock_on_error_cb = function (arg_35_0, arg_35_1)
 	arg_35_0:refresh_chips(callback(arg_35_0, "_refresh_chips_on_error_cb", arg_35_1))
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_chips_on_error_cb(arg_36_0, arg_36_1)
+BackendInterfacePeddlerPlayFab._refresh_chips_on_error_cb = function (arg_36_0, arg_36_1)
 	arg_36_0:refresh_layout_override(false, callback(arg_36_0, "_refresh_layout_override_on_error_cb", arg_36_1))
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_layout_override_on_error_cb(arg_37_0, arg_37_1)
+BackendInterfacePeddlerPlayFab._refresh_layout_override_on_error_cb = function (arg_37_0, arg_37_1)
 	Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_NON_FATAL_STORE_ERROR, nil)
 	arg_37_1(false)
 end
 
-function BackendInterfacePeddlerPlayFab.refresh_login_rewards(arg_38_0, arg_38_1)
+BackendInterfacePeddlerPlayFab.refresh_login_rewards = function (arg_38_0, arg_38_1)
 	local var_38_0 = {
 		FunctionName = "getStoreRewards"
 	}
@@ -766,7 +766,7 @@ function BackendInterfacePeddlerPlayFab.refresh_login_rewards(arg_38_0, arg_38_1
 	arg_38_0._backend_mirror:request_queue():enqueue(var_38_0, var_38_1, false)
 end
 
-function BackendInterfacePeddlerPlayFab._refresh_login_rewards_cb(arg_39_0, arg_39_1, arg_39_2)
+BackendInterfacePeddlerPlayFab._refresh_login_rewards_cb = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_2.FunctionResult
 
 	arg_39_0._login_rewards = var_39_0
@@ -776,15 +776,15 @@ function BackendInterfacePeddlerPlayFab._refresh_login_rewards_cb(arg_39_0, arg_
 	end
 end
 
-function BackendInterfacePeddlerPlayFab.get_login_rewards(arg_40_0)
+BackendInterfacePeddlerPlayFab.get_login_rewards = function (arg_40_0)
 	return arg_40_0._login_rewards
 end
 
-function BackendInterfacePeddlerPlayFab.done_claiming_login_rewards(arg_41_0)
+BackendInterfacePeddlerPlayFab.done_claiming_login_rewards = function (arg_41_0)
 	return arg_41_0._is_done_claiming
 end
 
-function BackendInterfacePeddlerPlayFab.claim_login_rewards(arg_42_0, arg_42_1, arg_42_2)
+BackendInterfacePeddlerPlayFab.claim_login_rewards = function (arg_42_0, arg_42_1, arg_42_2)
 	if not arg_42_0._is_done_claiming then
 		return
 	end
@@ -802,7 +802,7 @@ function BackendInterfacePeddlerPlayFab.claim_login_rewards(arg_42_0, arg_42_1, 
 	arg_42_0._is_done_claiming = false
 end
 
-function BackendInterfacePeddlerPlayFab._claim_store_rewards_cb(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+BackendInterfacePeddlerPlayFab._claim_store_rewards_cb = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	arg_43_0:_refresh_login_rewards_cb(nil, arg_43_3)
 
 	local var_43_0 = arg_43_3.FunctionResult.items

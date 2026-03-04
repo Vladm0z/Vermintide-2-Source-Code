@@ -2,13 +2,13 @@
 
 GutterRunnerStatePouncing = class(GutterRunnerStatePouncing, EnemyCharacterState)
 
-function GutterRunnerStatePouncing.init(arg_1_0, arg_1_1)
+GutterRunnerStatePouncing.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "pouncing")
 end
 
 local var_0_0 = POSITION_LOOKUP
 
-function GutterRunnerStatePouncing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+GutterRunnerStatePouncing.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	local var_2_0 = arg_2_0._player
@@ -61,7 +61,7 @@ function GutterRunnerStatePouncing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, 
 	arg_2_0._ghost_mode_extension:set_external_no_spawn_reason("pouncing", true)
 end
 
-function GutterRunnerStatePouncing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+GutterRunnerStatePouncing.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0._first_person_extension
 	local var_3_1 = arg_3_0._locomotion_extension
 	local var_3_2 = arg_3_0._status_extension
@@ -110,7 +110,7 @@ function GutterRunnerStatePouncing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	var_3_2:set_gutter_runner_leaping(false)
 end
 
-function GutterRunnerStatePouncing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+GutterRunnerStatePouncing.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_2 = arg_4_0._input_extension
@@ -189,7 +189,7 @@ function GutterRunnerStatePouncing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	CharacterStateHelper.look(var_4_2, arg_4_0._player.viewport_name, var_4_4, var_4_3, var_4_6, var_4_12)
 end
 
-function GutterRunnerStatePouncing._update_movement(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+GutterRunnerStatePouncing._update_movement = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._locomotion_extension
 	local var_5_1 = arg_5_0._previous_speed
 
@@ -236,7 +236,7 @@ function GutterRunnerStatePouncing._update_movement(arg_5_0, arg_5_1, arg_5_2, a
 	arg_5_0:_move_during_pounce(var_5_14, arg_5_1, arg_5_2)
 end
 
-function GutterRunnerStatePouncing._move_during_pounce(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+GutterRunnerStatePouncing._move_during_pounce = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._input_extension
 	local var_6_1 = CharacterStateHelper.get_movement_input(var_6_0)
 
@@ -278,7 +278,7 @@ function GutterRunnerStatePouncing._move_during_pounce(arg_6_0, arg_6_1, arg_6_2
 	end
 end
 
-function GutterRunnerStatePouncing._finish(arg_7_0, arg_7_1, arg_7_2)
+GutterRunnerStatePouncing._finish = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._world
 	local var_7_1 = arg_7_0._locomotion_extension
 	local var_7_2 = arg_7_0._first_person_extension
@@ -301,7 +301,7 @@ function GutterRunnerStatePouncing._finish(arg_7_0, arg_7_1, arg_7_2)
 	PlayerUnitMovementSettings.get_movement_settings_table(arg_7_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
 end
 
-function GutterRunnerStatePouncing._start_pounce(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+GutterRunnerStatePouncing._start_pounce = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._world
 	local var_8_1 = arg_8_0._first_person_extension
 	local var_8_2 = arg_8_0._locomotion_extension

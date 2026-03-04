@@ -7,7 +7,7 @@ require("scripts/managers/game_mode/adventure_profile_rules")
 script_data.disable_gamemode_end = script_data.disable_gamemode_end or Development.parameter("disable_gamemode_end")
 GameModeAdventure = class(GameModeAdventure, GameModeBase)
 
-function GameModeAdventure.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeAdventure.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeAdventure.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._lost_condition_timer = nil
@@ -47,42 +47,42 @@ function GameModeAdventure.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	arg_1_0._local_player_spawned = false
 end
 
-function GameModeAdventure.destroy(arg_2_0)
+GameModeAdventure.destroy = function (arg_2_0)
 	return
 end
 
-function GameModeAdventure.cleanup_game_mode_units(arg_3_0)
+GameModeAdventure.cleanup_game_mode_units = function (arg_3_0)
 	local var_3_0 = false
 
 	arg_3_0:_clear_bots(var_3_0)
 end
 
-function GameModeAdventure.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+GameModeAdventure.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	GameModeAdventure.super.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._adventure_spawning:register_rpcs(arg_4_1, arg_4_2)
 end
 
-function GameModeAdventure.unregister_rpcs(arg_5_0)
+GameModeAdventure.unregister_rpcs = function (arg_5_0)
 	arg_5_0._adventure_spawning:unregister_rpcs()
 	GameModeAdventure.super.unregister_rpcs(arg_5_0)
 end
 
-function GameModeAdventure.event_local_player_spawned(arg_6_0, arg_6_1)
+GameModeAdventure.event_local_player_spawned = function (arg_6_0, arg_6_1)
 	arg_6_0._local_player_spawned = true
 	arg_6_0._is_initial_spawn = arg_6_1
 end
 
-function GameModeAdventure.update(arg_7_0, arg_7_1, arg_7_2)
+GameModeAdventure.update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._adventure_spawning:update(arg_7_1, arg_7_2)
 end
 
-function GameModeAdventure.server_update(arg_8_0, arg_8_1, arg_8_2)
+GameModeAdventure.server_update = function (arg_8_0, arg_8_1, arg_8_2)
 	GameModeAdventure.super.server_update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_handle_bots(arg_8_1, arg_8_2)
 	arg_8_0._adventure_spawning:server_update(arg_8_1, arg_8_2)
 end
 
-function GameModeAdventure.evaluate_end_conditions(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+GameModeAdventure.evaluate_end_conditions = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if script_data.disable_gamemode_end then
 		return false
 	end
@@ -130,7 +130,7 @@ function GameModeAdventure.evaluate_end_conditions(arg_9_0, arg_9_1, arg_9_2, ar
 	end
 end
 
-function GameModeAdventure.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+GameModeAdventure.player_entered_game_session = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	GameModeAdventure.super.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 
 	if LAUNCH_MODE ~= "attract_benchmark" then
@@ -150,12 +150,12 @@ function GameModeAdventure.player_entered_game_session(arg_10_0, arg_10_1, arg_1
 	end
 end
 
-function GameModeAdventure.player_left_game_session(arg_11_0, arg_11_1, arg_11_2)
+GameModeAdventure.player_left_game_session = function (arg_11_0, arg_11_1, arg_11_2)
 	GameModeAdventure.super.player_left_game_session(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._adventure_spawning:remove_delayed_client(arg_11_1, arg_11_2)
 end
 
-function GameModeAdventure.remove_bot(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+GameModeAdventure.remove_bot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	if #arg_12_0._bot_players > 0 then
 		local var_12_0 = arg_12_0._profile_synchronizer:profile_by_peer(arg_12_2, arg_12_3)
 		local var_12_1, var_12_2 = arg_12_0:_remove_bot_by_profile(var_12_0, arg_12_4)
@@ -171,7 +171,7 @@ function GameModeAdventure.remove_bot(arg_12_0, arg_12_1, arg_12_2, arg_12_3, ar
 	end
 end
 
-function GameModeAdventure.get_end_screen_config(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+GameModeAdventure.get_end_screen_config = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0
 	local var_13_1 = {}
 
@@ -195,13 +195,13 @@ function GameModeAdventure.get_end_screen_config(arg_13_0, arg_13_1, arg_13_2, a
 	return var_13_0, var_13_1
 end
 
-function GameModeAdventure.ended(arg_14_0, arg_14_1)
+GameModeAdventure.ended = function (arg_14_0, arg_14_1)
 	if not arg_14_0._network_server:are_all_peers_ingame() then
 		arg_14_0._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeAdventure.local_player_ready_to_start(arg_15_0, arg_15_1)
+GameModeAdventure.local_player_ready_to_start = function (arg_15_0, arg_15_1)
 	if not arg_15_0._local_player_spawned then
 		return false
 	end
@@ -209,7 +209,7 @@ function GameModeAdventure.local_player_ready_to_start(arg_15_0, arg_15_1)
 	return true
 end
 
-function GameModeAdventure.local_player_game_starts(arg_16_0, arg_16_1, arg_16_2)
+GameModeAdventure.local_player_game_starts = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_0._is_initial_spawn then
 		LevelHelper:flow_event(arg_16_0._world, "local_player_spawned")
 
@@ -221,60 +221,60 @@ function GameModeAdventure.local_player_game_starts(arg_16_0, arg_16_1, arg_16_2
 	end
 end
 
-function GameModeAdventure.disable_player_spawning(arg_17_0)
+GameModeAdventure.disable_player_spawning = function (arg_17_0)
 	arg_17_0._adventure_spawning:set_spawning_disabled(true)
 end
 
-function GameModeAdventure.enable_player_spawning(arg_18_0, arg_18_1, arg_18_2)
+GameModeAdventure.enable_player_spawning = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._adventure_spawning:set_spawning_disabled(false)
 	arg_18_0._adventure_spawning:force_update_spawn_positions(arg_18_1, arg_18_2)
 end
 
-function GameModeAdventure.teleport_despawned_players(arg_19_0, arg_19_1)
+GameModeAdventure.teleport_despawned_players = function (arg_19_0, arg_19_1)
 	arg_19_0._adventure_spawning:teleport_despawned_players(arg_19_1)
 end
 
-function GameModeAdventure.flow_callback_add_spawn_point(arg_20_0, arg_20_1)
+GameModeAdventure.flow_callback_add_spawn_point = function (arg_20_0, arg_20_1)
 	arg_20_0._adventure_spawning:add_spawn_point(arg_20_1)
 end
 
-function GameModeAdventure.set_override_respawn_group(arg_21_0, arg_21_1, arg_21_2)
+GameModeAdventure.set_override_respawn_group = function (arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0._adventure_spawning:set_override_respawn_group(arg_21_1, arg_21_2)
 end
 
-function GameModeAdventure.set_respawn_group_enabled(arg_22_0, arg_22_1, arg_22_2)
+GameModeAdventure.set_respawn_group_enabled = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0._adventure_spawning:set_respawn_group_enabled(arg_22_1, arg_22_2)
 end
 
-function GameModeAdventure.set_respawn_gate_enabled(arg_23_0, arg_23_1, arg_23_2)
+GameModeAdventure.set_respawn_gate_enabled = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._adventure_spawning:set_respawn_gate_enabled(arg_23_1, arg_23_2)
 end
 
-function GameModeAdventure.respawn_unit_spawned(arg_24_0, arg_24_1)
+GameModeAdventure.respawn_unit_spawned = function (arg_24_0, arg_24_1)
 	arg_24_0._adventure_spawning:respawn_unit_spawned(arg_24_1)
 end
 
-function GameModeAdventure.respawn_gate_unit_spawned(arg_25_0, arg_25_1)
+GameModeAdventure.respawn_gate_unit_spawned = function (arg_25_0, arg_25_1)
 	arg_25_0._adventure_spawning:respawn_gate_unit_spawned(arg_25_1)
 end
 
-function GameModeAdventure.get_respawn_handler(arg_26_0)
+GameModeAdventure.get_respawn_handler = function (arg_26_0)
 	return arg_26_0._adventure_spawning:get_respawn_handler()
 end
 
-function GameModeAdventure.set_respawning_enabled(arg_27_0, arg_27_1)
+GameModeAdventure.set_respawning_enabled = function (arg_27_0, arg_27_1)
 	arg_27_0._adventure_spawning:set_respawning_enabled(arg_27_1)
 end
 
-function GameModeAdventure.remove_respawn_units_due_to_crossroads(arg_28_0, arg_28_1, arg_28_2)
+GameModeAdventure.remove_respawn_units_due_to_crossroads = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0._adventure_spawning:remove_respawn_units_due_to_crossroads(arg_28_1, arg_28_2)
 end
 
-function GameModeAdventure.recalc_respawner_dist_due_to_crossroads(arg_29_0)
+GameModeAdventure.recalc_respawner_dist_due_to_crossroads = function (arg_29_0)
 	arg_29_0._adventure_spawning:recalc_respawner_dist_due_to_crossroads()
 end
 
-function GameModeAdventure.force_respawn(arg_30_0, arg_30_1, arg_30_2)
+GameModeAdventure.force_respawn = function (arg_30_0, arg_30_1, arg_30_2)
 	if Managers.party:get_player_status(arg_30_1, arg_30_2).party_id == 0 then
 		local var_30_0 = 1
 
@@ -284,11 +284,11 @@ function GameModeAdventure.force_respawn(arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0._adventure_spawning:force_respawn(arg_30_1, arg_30_2)
 end
 
-function GameModeAdventure.force_respawn_dead_players(arg_31_0)
+GameModeAdventure.force_respawn_dead_players = function (arg_31_0)
 	arg_31_0._adventure_spawning:force_respawn_dead_players()
 end
 
-function GameModeAdventure._get_first_available_bot_profile(arg_32_0)
+GameModeAdventure._get_first_available_bot_profile = function (arg_32_0)
 	local var_32_0 = arg_32_0._available_profiles
 	local var_32_1 = arg_32_0._profile_synchronizer
 	local var_32_2 = {}
@@ -304,7 +304,7 @@ function GameModeAdventure._get_first_available_bot_profile(arg_32_0)
 
 	local var_32_5 = arg_32_0._bot_profile_id_to_priority_id
 
-	table.sort(var_32_2, function(arg_33_0, arg_33_1)
+	table.sort(var_32_2, function (arg_33_0, arg_33_1)
 		return (var_32_5[arg_33_0] or math.huge) < (var_32_5[arg_33_1] or math.huge)
 	end)
 
@@ -332,7 +332,7 @@ function GameModeAdventure._get_first_available_bot_profile(arg_32_0)
 	return var_32_6, var_32_11
 end
 
-function GameModeAdventure._setup_bot_spawn_priority_lookup(arg_34_0)
+GameModeAdventure._setup_bot_spawn_priority_lookup = function (arg_34_0)
 	local var_34_0 = PlayerData.bot_spawn_priority
 	local var_34_1 = #var_34_0
 
@@ -355,7 +355,7 @@ function GameModeAdventure._setup_bot_spawn_priority_lookup(arg_34_0)
 	end
 end
 
-function GameModeAdventure._handle_bots(arg_35_0, arg_35_1, arg_35_2)
+GameModeAdventure._handle_bots = function (arg_35_0, arg_35_1, arg_35_2)
 	if not (Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown) then
 		return
 	end
@@ -399,7 +399,7 @@ function GameModeAdventure._handle_bots(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function GameModeAdventure._add_bot(arg_36_0)
+GameModeAdventure._add_bot = function (arg_36_0)
 	local var_36_0 = arg_36_0._bot_players
 	local var_36_1 = 1
 	local var_36_2 = Managers.party:get_party(var_36_1)
@@ -414,7 +414,7 @@ function GameModeAdventure._add_bot(arg_36_0)
 	var_36_0[#var_36_0 + 1] = var_36_5
 end
 
-function GameModeAdventure._remove_bot(arg_37_0, arg_37_1, arg_37_2)
+GameModeAdventure._remove_bot = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._bot_players
 	local var_37_1 = table.index_of(arg_37_0._bot_players, arg_37_1)
 
@@ -430,7 +430,7 @@ function GameModeAdventure._remove_bot(arg_37_0, arg_37_1, arg_37_2)
 	var_37_0[var_37_2] = nil
 end
 
-function GameModeAdventure._remove_bot_by_profile(arg_38_0, arg_38_1, arg_38_2)
+GameModeAdventure._remove_bot_by_profile = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0._bot_players
 	local var_38_1
 	local var_38_2 = #var_38_0
@@ -458,7 +458,7 @@ function GameModeAdventure._remove_bot_by_profile(arg_38_0, arg_38_1, arg_38_2)
 	return var_38_4, var_38_3
 end
 
-function GameModeAdventure._clear_bots(arg_39_0, arg_39_1)
+GameModeAdventure._clear_bots = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._bot_players
 
 	for iter_39_0 = #var_39_0, 1, -1 do
@@ -466,15 +466,15 @@ function GameModeAdventure._clear_bots(arg_39_0, arg_39_1)
 	end
 end
 
-function GameModeAdventure.get_active_respawn_units(arg_40_0)
+GameModeAdventure.get_active_respawn_units = function (arg_40_0)
 	return arg_40_0._adventure_spawning:get_active_respawn_units()
 end
 
-function GameModeAdventure.get_available_and_active_respawn_units(arg_41_0)
+GameModeAdventure.get_available_and_active_respawn_units = function (arg_41_0)
 	return arg_41_0._adventure_spawning:get_available_and_active_respawn_units()
 end
 
-function GameModeAdventure.get_player_wounds(arg_42_0, arg_42_1)
+GameModeAdventure.get_player_wounds = function (arg_42_0, arg_42_1)
 	if Managers.state.game_mode:has_activated_mutator("instant_death") then
 		return 1
 	end

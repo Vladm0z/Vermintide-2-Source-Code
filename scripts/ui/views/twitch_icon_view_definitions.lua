@@ -53,7 +53,7 @@ local var_0_1 = {
 				pass_type = "texture",
 				style_id = "twitch_connected",
 				texture_id = "twitch_connected",
-				content_check_function = function(arg_1_0, arg_1_1)
+				content_check_function = function (arg_1_0, arg_1_1)
 					return (Managers.twitch:is_connected())
 				end
 			},
@@ -61,7 +61,7 @@ local var_0_1 = {
 				pass_type = "texture",
 				style_id = "twitch_disconnected",
 				texture_id = "twitch_disconnected",
-				content_check_function = function(arg_2_0, arg_2_1)
+				content_check_function = function (arg_2_0, arg_2_1)
 					return not Managers.twitch:is_connected()
 				end
 			}

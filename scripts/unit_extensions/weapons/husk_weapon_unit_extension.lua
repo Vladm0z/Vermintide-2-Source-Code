@@ -2,7 +2,7 @@
 
 HuskWeaponUnitExtension = class(HuskWeaponUnitExtension)
 
-function HuskWeaponUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HuskWeaponUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.owner_unit = arg_1_3.owner_unit
@@ -23,7 +23,7 @@ function HuskWeaponUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function HuskWeaponUnitExtension.destroy(arg_2_0)
+HuskWeaponUnitExtension.destroy = function (arg_2_0)
 	if arg_2_0._synced_weapon_states then
 		for iter_2_0, iter_2_1 in pairs(arg_2_0._synced_weapon_states) do
 			if iter_2_1.leave then
@@ -33,7 +33,7 @@ function HuskWeaponUnitExtension.destroy(arg_2_0)
 	end
 end
 
-function HuskWeaponUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+HuskWeaponUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_0._synced_weapon_state then
 		local var_3_0 = arg_3_0._synced_weapon_states[arg_3_0._synced_weapon_state]
 
@@ -43,11 +43,11 @@ function HuskWeaponUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	end
 end
 
-function HuskWeaponUnitExtension._is_local_player(arg_4_0)
+HuskWeaponUnitExtension._is_local_player = function (arg_4_0)
 	return false
 end
 
-function HuskWeaponUnitExtension.change_synced_state(arg_5_0, arg_5_1, arg_5_2)
+HuskWeaponUnitExtension.change_synced_state = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._synced_weapon_state then
 		local var_5_0 = arg_5_0._synced_weapon_states[arg_5_0._synced_weapon_state]
 
@@ -71,6 +71,6 @@ function HuskWeaponUnitExtension.change_synced_state(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function HuskWeaponUnitExtension.current_synced_state(arg_6_0)
+HuskWeaponUnitExtension.current_synced_state = function (arg_6_0)
 	return arg_6_0._synced_weapon_state
 end

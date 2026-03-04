@@ -4,7 +4,7 @@ require("scripts/utils/benchmark/benchmark_settings")
 
 BenchmarkHandler = class(BenchmarkHandler)
 
-function BenchmarkHandler.init(arg_1_0, arg_1_1, arg_1_2)
+BenchmarkHandler.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._cycle_time = BenchmarkSettings.initial_cycle_time
 	arg_1_0._cycle_views = BenchmarkSettings.cycle_views
 	arg_1_0._cycle_view_time = BenchmarkSettings.cycle_view_time
@@ -29,7 +29,7 @@ function BenchmarkHandler.init(arg_1_0, arg_1_1, arg_1_2)
 	script_data.game_seed = BenchmarkSettings.game_seed
 
 	if BenchmarkSettings.bot_power_level_override then
-		function BackendUtils.get_total_power_level(arg_2_0, arg_2_1)
+		BackendUtils.get_total_power_level = function (arg_2_0, arg_2_1)
 			return MAX_POWER_LEVEL
 		end
 	end
@@ -38,14 +38,14 @@ function BenchmarkHandler.init(arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = GenericHealthExtension.add_damage
 		local var_1_1 = BenchmarkSettings.bot_damage_multiplier
 
-		function GenericHealthExtension.add_damage(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
+		GenericHealthExtension.add_damage = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
 			arg_3_2 = arg_3_2 * var_1_1
 
 			var_1_0(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
 		end
 	end
 
-	function PlayerBotUnitFirstPerson.animation_event(arg_4_0, arg_4_1)
+	PlayerBotUnitFirstPerson.animation_event = function (arg_4_0, arg_4_1)
 		Unit.animation_event(arg_4_0.first_person_unit, arg_4_1)
 	end
 
@@ -69,7 +69,7 @@ function BenchmarkHandler.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function BenchmarkHandler.story_spawn_and_animate_troll(arg_5_0, arg_5_1, arg_5_2)
+BenchmarkHandler.story_spawn_and_animate_troll = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.state.conflict.level_analysis.generic_ai_node_units[arg_5_1.ai_node_id]
 	local var_5_1 = Unit.local_position(var_5_0[1], 0)
 	local var_5_2 = Unit.local_rotation(var_5_0[1], 0)
@@ -84,13 +84,13 @@ function BenchmarkHandler.story_spawn_and_animate_troll(arg_5_0, arg_5_1, arg_5_
 	Unit.animation_event(var_5_4, "benchmark_attack")
 end
 
-function BenchmarkHandler.story_destroy_close_units(arg_6_0, arg_6_1, arg_6_2)
+BenchmarkHandler.story_destroy_close_units = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_1.radius_squared or 900
 
 	Managers.state.conflict:destroy_close_units(nil, nil, var_6_0)
 end
 
-function BenchmarkHandler.story_teleport_party(arg_7_0, arg_7_1, arg_7_2)
+BenchmarkHandler.story_teleport_party = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = ConflictUtils.get_teleporter_portals()
 	local var_7_1 = arg_7_1.portal_id
 	local var_7_2 = var_7_0[var_7_1][1]:unbox()
@@ -116,7 +116,7 @@ function BenchmarkHandler.story_teleport_party(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:run_func_on_bots(var_7_8)
 end
 
-function BenchmarkHandler.recycler_spawn_at(arg_9_0, arg_9_1, arg_9_2)
+BenchmarkHandler.recycler_spawn_at = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.position
 	local var_9_1 = Vector3Box(var_9_0[1], var_9_0[2], var_9_0[3])
 	local var_9_2 = arg_9_2 + arg_9_1.duration
@@ -124,11 +124,11 @@ function BenchmarkHandler.recycler_spawn_at(arg_9_0, arg_9_1, arg_9_2)
 	Managers.state.conflict:set_recycler_extra_pos(var_9_1, var_9_2)
 end
 
-function BenchmarkHandler.story_troll_sound(arg_10_0, arg_10_1, arg_10_2)
+BenchmarkHandler.story_troll_sound = function (arg_10_0, arg_10_1, arg_10_2)
 	WwiseUtils.trigger_position_event(arg_10_0._world, "Play_military_benchmark_troll", Vector3(0, 0, 0))
 end
 
-function BenchmarkHandler.story_end_benchmark(arg_11_0, arg_11_1, arg_11_2)
+BenchmarkHandler.story_end_benchmark = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._ingame_ui.leave_game = true
 	arg_11_0._disabled = true
 
@@ -139,7 +139,7 @@ function BenchmarkHandler.story_end_benchmark(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function BenchmarkHandler._setup_initial_values(arg_12_0, arg_12_1)
+BenchmarkHandler._setup_initial_values = function (arg_12_0, arg_12_1)
 	arg_12_0._paths = Managers.state.conflict.level_analysis:get_main_paths()
 
 	Managers.input:block_device_except_service("benchmark", "keyboard", 1)
@@ -162,7 +162,7 @@ function BenchmarkHandler._setup_initial_values(arg_12_0, arg_12_1)
 	arg_12_0._initialized = true
 end
 
-function BenchmarkHandler.run_func_on_bots(arg_13_0, arg_13_1, ...)
+BenchmarkHandler.run_func_on_bots = function (arg_13_0, arg_13_1, ...)
 	local var_13_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 	local var_13_1 = Managers.player
 
@@ -178,14 +178,14 @@ function BenchmarkHandler.run_func_on_bots(arg_13_0, arg_13_1, ...)
 	end
 end
 
-function BenchmarkHandler.gather_performance_data(arg_14_0, arg_14_1, arg_14_2)
+BenchmarkHandler.gather_performance_data = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._performance_data[#arg_14_0._performance_data + 1] = {
 		arg_14_1,
 		arg_14_2
 	}
 end
 
-function BenchmarkHandler.write_data(arg_15_0)
+BenchmarkHandler.write_data = function (arg_15_0)
 	local var_15_0 = os.date("*t")
 	local var_15_1 = string.format("%d%d%d_%d%d%d", var_15_0.year, var_15_0.month, var_15_0.day, var_15_0.hour, var_15_0.min, var_15_0.sec)
 	local var_15_2 = string.format("benchmark_data_%s.txt", var_15_1)
@@ -211,7 +211,7 @@ function BenchmarkHandler.write_data(arg_15_0)
 	arg_15_0._performance_data = {}
 end
 
-function BenchmarkHandler.update(arg_16_0, arg_16_1, arg_16_2)
+BenchmarkHandler.update = function (arg_16_0, arg_16_1, arg_16_2)
 	if BenchmarkSettings.attract_benchmark then
 		arg_16_0:gather_performance_data(arg_16_1, arg_16_2)
 	end
@@ -249,7 +249,7 @@ local function var_0_0()
 	return Managers.player:local_player().player_unit
 end
 
-function BenchmarkHandler._handle_early_out(arg_18_0, arg_18_1)
+BenchmarkHandler._handle_early_out = function (arg_18_0, arg_18_1)
 	if arg_18_0._initialized then
 		return
 	end
@@ -276,7 +276,7 @@ function BenchmarkHandler._handle_early_out(arg_18_0, arg_18_1)
 	end
 end
 
-function BenchmarkHandler._disable_third_person(arg_19_0, arg_19_1)
+BenchmarkHandler._disable_third_person = function (arg_19_0, arg_19_1)
 	if arg_19_0._third_person_disabled and not arg_19_1 then
 		return
 	end
@@ -288,7 +288,7 @@ function BenchmarkHandler._disable_third_person(arg_19_0, arg_19_1)
 	arg_19_0._third_person_disabled = true
 end
 
-function BenchmarkHandler._camera_follow_bot(arg_20_0)
+BenchmarkHandler._camera_follow_bot = function (arg_20_0)
 	local var_20_0 = Managers.state.entity:system("camera_system")
 	local var_20_1 = Managers.player:local_player()
 	local var_20_2 = arg_20_0._current_bot
@@ -297,7 +297,7 @@ function BenchmarkHandler._camera_follow_bot(arg_20_0)
 	var_20_0:set_follow_unit(var_20_1, var_20_2, var_20_3)
 end
 
-function BenchmarkHandler._set_overview_camera(arg_21_0, arg_21_1)
+BenchmarkHandler._set_overview_camera = function (arg_21_0, arg_21_1)
 	Managers.state.entity:system("ai_bot_group_system"):first_person_debug(nil)
 
 	script_data.attract_mode_spectate = true
@@ -312,14 +312,14 @@ function BenchmarkHandler._set_overview_camera(arg_21_0, arg_21_1)
 	arg_21_0._overview = true
 end
 
-function BenchmarkHandler._disable_overview_camera(arg_22_0)
+BenchmarkHandler._disable_overview_camera = function (arg_22_0)
 	CharacterStateHelper.change_camera_state(Managers.player:local_player(), "idle")
 	arg_22_0:_disable_third_person(true)
 
 	script_data.attract_mode_spectate = false
 end
 
-function BenchmarkHandler._update_overview(arg_23_0, arg_23_1, arg_23_2)
+BenchmarkHandler._update_overview = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_2 > arg_23_0._overview_timer then
 		arg_23_0:_disable_overview_camera()
 
@@ -333,7 +333,7 @@ function BenchmarkHandler._update_overview(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function BenchmarkHandler._update_selected_bot(arg_24_0, arg_24_1, arg_24_2)
+BenchmarkHandler._update_selected_bot = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._bot_selection_timer = arg_24_0._bot_selection_timer - arg_24_1
 
 	if arg_24_0._bot_selection_timer > 0 then
@@ -371,7 +371,7 @@ function BenchmarkHandler._update_selected_bot(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._current_bot_view = var_24_0 or arg_24_0._current_bot_view or 3
 end
 
-function BenchmarkHandler._update_bot_view(arg_25_0, arg_25_1, arg_25_2)
+BenchmarkHandler._update_bot_view = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0._overview then
 		return
 	end
@@ -403,7 +403,7 @@ end
 
 local var_0_1 = {}
 
-function BenchmarkHandler._update_main_path(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+BenchmarkHandler._update_main_path = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	arg_26_0._time_since_last_teleport = arg_26_0._time_since_last_teleport + arg_26_1
 
 	if arg_26_0._time_since_last_teleport > BenchmarkSettings.destroy_close_enemies_timer then
@@ -535,14 +535,14 @@ function BenchmarkHandler._update_main_path(arg_26_0, arg_26_1, arg_26_2, arg_26
 	end
 end
 
-function BenchmarkHandler.destroy(arg_29_0)
+BenchmarkHandler.destroy = function (arg_29_0)
 	Managers.input:device_unblock_all_services("keyboard")
 	Managers.input:device_unblock_all_services("mouse")
 	Managers.input:device_unblock_all_services("gamepad")
 	Development.set_parameter("disable_loading_icon", false)
 end
 
-function BenchmarkHandler._get_teleporter_portals(arg_30_0)
+BenchmarkHandler._get_teleporter_portals = function (arg_30_0)
 	local var_30_0 = Managers.state.game_mode:level_key()
 	local var_30_1 = LevelSettings[var_30_0].level_name
 	local var_30_2 = {}
@@ -560,7 +560,7 @@ function BenchmarkHandler._get_teleporter_portals(arg_30_0)
 	return var_30_2
 end
 
-function BenchmarkHandler._update_info(arg_31_0)
+BenchmarkHandler._update_info = function (arg_31_0)
 	Debug.text("Press 'TAB' to cycle through views")
 
 	if arg_31_0._bot_name then
@@ -570,7 +570,7 @@ function BenchmarkHandler._update_info(arg_31_0)
 	end
 end
 
-function BenchmarkHandler._handle_views(arg_32_0, arg_32_1, arg_32_2)
+BenchmarkHandler._handle_views = function (arg_32_0, arg_32_1, arg_32_2)
 	if not arg_32_0._cycle_views then
 		return
 	end
@@ -583,7 +583,7 @@ function BenchmarkHandler._handle_views(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function BenchmarkHandler._update_input(arg_33_0, arg_33_1, arg_33_2)
+BenchmarkHandler._update_input = function (arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0:_update_info()
 	Managers.input:block_device_except_service("benchmark", "keyboard", 1)
 	Managers.input:block_device_except_service("benchmark", "mouse", 1)
@@ -622,7 +622,7 @@ function BenchmarkHandler._update_input(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function BenchmarkHandler._handle_teleport(arg_34_0, arg_34_1, arg_34_2)
+BenchmarkHandler._handle_teleport = function (arg_34_0, arg_34_1, arg_34_2)
 	if arg_34_0._teleporting then
 		return
 	end
@@ -644,7 +644,7 @@ function BenchmarkHandler._handle_teleport(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function BenchmarkHandler.cb_fade_in_done(arg_35_0, arg_35_1)
+BenchmarkHandler.cb_fade_in_done = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_1.boxed_pos:unbox()
 	local var_35_1 = Managers.player:local_player().player_unit
 	local var_35_2 = ScriptUnit.extension(var_35_1, "locomotion_system")
@@ -655,6 +655,6 @@ function BenchmarkHandler.cb_fade_in_done(arg_35_0, arg_35_1)
 	Managers.transition:fade_out(0.5, callback(arg_35_0, "cb_fade_out_done"))
 end
 
-function BenchmarkHandler.cb_fade_out_done(arg_36_0)
+BenchmarkHandler.cb_fade_out_done = function (arg_36_0)
 	arg_36_0._teleporting = nil
 end

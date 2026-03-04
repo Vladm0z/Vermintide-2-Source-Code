@@ -23,7 +23,7 @@ local var_0_3 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.85,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -63,7 +63,7 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -115,7 +115,7 @@ local var_0_3 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -146,7 +146,7 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					arg_4_1:clear_input_buffer()
 
 					return arg_4_1:reset_release_input()
@@ -191,7 +191,7 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -232,7 +232,7 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
 					if arg_6_2 and (arg_6_2:total_remaining_ammo() <= 0 or arg_6_2:is_reloading()) then
 						return false
 					end
@@ -253,7 +253,7 @@ local var_0_3 = {
 				one_ammo_catch_time = 1.1,
 				anim_event = "reload",
 				minimum_hold_time = 0.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -264,7 +264,7 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_8_0, arg_8_1)
+				enter_function = function (arg_8_0, arg_8_1)
 					arg_8_1:reset_release_input()
 					arg_8_1:clear_input_buffer()
 				end,
@@ -282,7 +282,7 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_9_0, arg_9_1, arg_9_2)
+				condition_func = function (arg_9_0, arg_9_1, arg_9_2)
 					if arg_9_2 and arg_9_2:total_remaining_ammo() < arg_9_2:max_ammo() then
 						return true
 					end
@@ -299,7 +299,7 @@ local var_0_3 = {
 				hold_input = "weapon_reload_hold",
 				anim_event = "reload_last",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -310,7 +310,7 @@ local var_0_3 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
 					arg_11_1:reset_release_input()
 					arg_11_1:clear_input_buffer()
 				end,
@@ -328,7 +328,7 @@ local var_0_3 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				chain_condition_func = function(arg_12_0, arg_12_1, arg_12_2)
+				chain_condition_func = function (arg_12_0, arg_12_1, arg_12_2)
 					if arg_12_2 and arg_12_2:total_remaining_ammo() < arg_12_2:max_ammo() then
 						return true
 					end

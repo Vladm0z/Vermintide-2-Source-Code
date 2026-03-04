@@ -8,7 +8,7 @@ local var_0_0 = {
 	"slot_grenade"
 }
 
-function SpawningHelper.netpack_consumables(arg_1_0)
+SpawningHelper.netpack_consumables = function (arg_1_0)
 	local var_1_0 = {}
 
 	for iter_1_0 = 1, #var_0_0 do
@@ -25,7 +25,7 @@ function SpawningHelper.netpack_consumables(arg_1_0)
 	return var_1_0
 end
 
-function SpawningHelper.netpack_additional_items(arg_2_0)
+SpawningHelper.netpack_additional_items = function (arg_2_0)
 	local var_2_0 = {}
 
 	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
@@ -48,7 +48,7 @@ function SpawningHelper.netpack_additional_items(arg_2_0)
 	return var_2_0
 end
 
-function SpawningHelper.unnetpack_additional_items(arg_3_0)
+SpawningHelper.unnetpack_additional_items = function (arg_3_0)
 	local var_3_0 = {}
 
 	for iter_3_0 = 1, #arg_3_0, 2 do
@@ -71,7 +71,7 @@ function SpawningHelper.unnetpack_additional_items(arg_3_0)
 	return var_3_0
 end
 
-function SpawningHelper.fill_consumable_table(arg_4_0, arg_4_1)
+SpawningHelper.fill_consumable_table = function (arg_4_0, arg_4_1)
 	for iter_4_0 = 1, #var_0_0 do
 		local var_4_0 = var_0_0[iter_4_0]
 		local var_4_1 = arg_4_1:get_slot_data(var_4_0)
@@ -86,7 +86,7 @@ function SpawningHelper.fill_consumable_table(arg_4_0, arg_4_1)
 	end
 end
 
-function SpawningHelper.default_spawn_items(arg_5_0, arg_5_1, arg_5_2)
+SpawningHelper.default_spawn_items = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_2.disable_difficulty_spawning_items then
 		for iter_5_0 = 1, #var_0_0 do
 			local var_5_0 = var_0_0[iter_5_0]
@@ -96,11 +96,11 @@ function SpawningHelper.default_spawn_items(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function SpawningHelper.get_consumable_slot_order()
+SpawningHelper.get_consumable_slot_order = function ()
 	return var_0_0
 end
 
-function SpawningHelper.fill_ammo_percentage(arg_7_0, arg_7_1, arg_7_2)
+SpawningHelper.fill_ammo_percentage = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1:equipment().slots
 	local var_7_1 = Managers.player:owner(arg_7_2).remote
 

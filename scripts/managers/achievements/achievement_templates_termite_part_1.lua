@@ -52,10 +52,10 @@ var_0_4.termite1_skaven_markings_challenge = {
 	events = {
 		"termite1_skaven_markings_challenge"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "termite1_skaven_markings_challenge") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		arg_2_0:increment_stat(arg_2_1, "termite1_skaven_markings_challenge")
 	end
 }
@@ -67,10 +67,10 @@ var_0_4.termite1_bell_challenge = {
 	events = {
 		"termite1_bell_challenge"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "termite1_bell_challenge") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		arg_4_0:increment_stat(arg_4_1, "termite1_bell_challenge")
 	end
 }
@@ -82,10 +82,10 @@ var_0_4.termite1_towers_challenge = {
 	events = {
 		"termite1_towers_challenge"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "termite1_towers_challenge") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		arg_6_0:increment_stat(arg_6_1, "termite1_towers_challenge")
 	end
 }
@@ -97,16 +97,16 @@ var_0_4.termite1_waystone_timer_challenge_easy = {
 	name = "achv_termite1_waystone_timer_easy_name",
 	display_completion_ui = true,
 	icon = "achv_termite1_waystone_timer_easy_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite1_waystone_timer_easy_desc"), var_0_15)
 	end,
 	events = {
 		"termite1_waystone_timer_challenge_easy"
 	},
-	completed = function(arg_8_0, arg_8_1, arg_8_2)
+	completed = function (arg_8_0, arg_8_1, arg_8_2)
 		return arg_8_0:get_persistent_stat(arg_8_1, "termite1_waystone_timer_challenge_easy") >= 1
 	end,
-	on_event = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		arg_9_0:increment_stat(arg_9_1, "termite1_waystone_timer_challenge_easy")
 	end
 }
@@ -114,16 +114,16 @@ var_0_4.termite1_waystone_timer_challenge_hard = {
 	name = "achv_termite1_waystone_timer_hard_name",
 	display_completion_ui = true,
 	icon = "achv_termite1_waystone_timer_hard_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite1_waystone_timer_hard_desc"), var_0_16)
 	end,
 	events = {
 		"termite1_waystone_timer_challenge_hard"
 	},
-	completed = function(arg_11_0, arg_11_1, arg_11_2)
+	completed = function (arg_11_0, arg_11_1, arg_11_2)
 		return arg_11_0:get_persistent_stat(arg_11_1, "termite1_waystone_timer_challenge_hard") >= 1
 	end,
-	on_event = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		arg_12_0:increment_stat(arg_12_1, "termite1_waystone_timer_challenge_hard")
 	end
 }

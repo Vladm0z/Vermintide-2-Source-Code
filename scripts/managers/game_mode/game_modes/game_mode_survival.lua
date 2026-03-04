@@ -8,13 +8,13 @@ GameModeSurvival = class(GameModeSurvival, GameModeBase)
 local var_0_0 = false
 local var_0_1 = false
 
-function GameModeSurvival.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeSurvival.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeSurvival.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._lost_condition_timer = nil
 end
 
-function GameModeSurvival.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+GameModeSurvival.evaluate_end_conditions = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	if script_data.disable_gamemode_end then
 		return false
 	end
@@ -77,7 +77,7 @@ function GameModeSurvival.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg
 	end
 end
 
-function GameModeSurvival.ended(arg_3_0, arg_3_1)
+GameModeSurvival.ended = function (arg_3_0, arg_3_1)
 	if not arg_3_0._network_server:are_all_peers_ingame() then
 		arg_3_0._network_server:disconnect_joining_peers()
 	end

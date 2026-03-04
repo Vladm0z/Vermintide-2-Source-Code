@@ -2,7 +2,7 @@
 
 CareerAbilityDarkPactHorde = class(CareerAbilityDarkPactHorde, CareerAbilityDarkPactBase)
 
-function CareerAbilityDarkPactHorde._ability_available(arg_1_0)
+CareerAbilityDarkPactHorde._ability_available = function (arg_1_0)
 	local var_1_0 = arg_1_0._status_extension
 	local var_1_1 = arg_1_0._ghost_mode_extension:is_in_ghost_mode()
 

@@ -21,7 +21,7 @@ local var_0_4 = Development.parameter("disable_voip")
 if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 	require("scripts/ui/views/voice_chat_ui")
 
-	function Voip.init(arg_3_0, arg_3_1, arg_3_2)
+	Voip.init = function (arg_3_0, arg_3_1, arg_3_2)
 		arg_3_0._own_peer_id = Network.peer_id()
 
 		arg_3_0:_ensure_voip_set_up()
@@ -50,7 +50,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		Managers.persistent_event:register(arg_3_0, "on_player_joined_party", "peer_joined_party")
 	end
 
-	function Voip.set_input_manager(arg_4_0, arg_4_1)
+	Voip.set_input_manager = function (arg_4_0, arg_4_1)
 		arg_4_0._input_manager = arg_4_1
 
 		if arg_4_0._voice_chat_ui then
@@ -58,7 +58,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip._create_gui(arg_5_0, arg_5_1)
+	Voip._create_gui = function (arg_5_0, arg_5_1)
 		local var_5_0 = Managers.world:world("top_ingame_view")
 
 		arg_5_0._ui_top_renderer = UIRenderer.create(var_5_0, "material", "materials/ui/ui_1080p_voice_chat", "material", "materials/fonts/gw_fonts")
@@ -76,7 +76,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 
 	local var_0_5 = {}
 
-	function Voip.members_in_own_room(arg_6_0)
+	Voip.members_in_own_room = function (arg_6_0)
 		table.clear(var_0_5)
 
 		if not arg_6_0._own_voip_room_id then
@@ -88,7 +88,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		return var_0_5
 	end
 
-	function Voip.register_rpcs(arg_7_0, arg_7_1, arg_7_2)
+	Voip.register_rpcs = function (arg_7_0, arg_7_1, arg_7_2)
 		arg_7_0._network_transmit = arg_7_2
 		arg_7_0._network_event_delegate = arg_7_1
 
@@ -96,14 +96,14 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_7_1:register_with_return(arg_7_0, "room_member_added")
 	end
 
-	function Voip.unregister_rpcs(arg_8_0)
+	Voip.unregister_rpcs = function (arg_8_0)
 		arg_8_0._network_event_delegate:unregister(arg_8_0)
 
 		arg_8_0._network_event_delegate = nil
 		arg_8_0._network_transmit = nil
 	end
 
-	function Voip.room_member_removed(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	Voip.room_member_removed = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if not arg_9_3 then
 			var_0_1("[Voip] Got engine callback to remove peer in room %s but peer was nil", arg_9_2)
 
@@ -121,7 +121,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.room_member_added(arg_10_0, arg_10_1, arg_10_2)
+	Voip.room_member_added = function (arg_10_0, arg_10_1, arg_10_2)
 		var_0_0("[Voip] Peer %s joined room %s (my room id %q)", arg_10_2, arg_10_1, arg_10_0._own_voip_room_id)
 
 		arg_10_0._added_members[arg_10_2] = true
@@ -133,7 +133,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		return var_10_0
 	end
 
-	function Voip.rpc_voip_room_request(arg_11_0, arg_11_1, arg_11_2)
+	Voip.rpc_voip_room_request = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = CHANNEL_TO_PEER_ID[arg_11_1]
 
 		assert(arg_11_0._is_server, "[Voip] Got request from %s to %s but is not server", var_11_0, arg_11_2 and "enter" or "leave")
@@ -158,7 +158,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.rpc_voip_room_to_join(arg_12_0, arg_12_1, arg_12_2)
+	Voip.rpc_voip_room_to_join = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = CHANNEL_TO_PEER_ID[arg_12_1]
 
 		if arg_12_0:_is_in_room() then
@@ -182,7 +182,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_12_0:_update_push_to_talk(true)
 	end
 
-	function Voip.destroy(arg_13_0)
+	Voip.destroy = function (arg_13_0)
 		var_0_0("[Voip] Destroying VOIP.")
 		arg_13_0:_tear_down()
 
@@ -197,7 +197,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		Managers.persistent_event:unregister("on_player_joined_party", arg_13_0)
 	end
 
-	function Voip._destroy_voice_chat_ui(arg_14_0)
+	Voip._destroy_voice_chat_ui = function (arg_14_0)
 		arg_14_0._voice_chat_ui:destroy()
 
 		arg_14_0._voice_chat_ui = nil
@@ -209,7 +209,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_14_0._ui_top_renderer = nil
 	end
 
-	function Voip.update(arg_15_0, arg_15_1, arg_15_2)
+	Voip.update = function (arg_15_0, arg_15_1, arg_15_2)
 		arg_15_0:_debug_voip(arg_15_2)
 
 		if not arg_15_0._voip_set_up then
@@ -276,7 +276,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip._debug_voip(arg_16_0, arg_16_1)
+	Voip._debug_voip = function (arg_16_0, arg_16_1)
 		if script_data.debug_voip and not DEDICATED_SERVER then
 			if arg_16_0._own_voip_client then
 				Debug.text("VoIP")
@@ -320,7 +320,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip._update_push_to_talk(arg_17_0, arg_17_1)
+	Voip._update_push_to_talk = function (arg_17_0, arg_17_1)
 		local var_17_0 = Managers.input:get_service("chat_input")
 		local var_17_1 = arg_17_0._push_to_talk and not not var_17_0 and not not var_17_0:get("voip_push_to_talk")
 
@@ -340,7 +340,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.mute_member(arg_18_0, arg_18_1)
+	Voip.mute_member = function (arg_18_0, arg_18_1)
 		if arg_18_0._own_voip_client == nil then
 			return
 		end
@@ -356,7 +356,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.unmute_member(arg_19_0, arg_19_1)
+	Voip.unmute_member = function (arg_19_0, arg_19_1)
 		if arg_19_0._own_voip_client == nil then
 			return
 		end
@@ -374,11 +374,11 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_19_0:_update_push_to_talk(true)
 	end
 
-	function Voip.peer_muted(arg_20_0, arg_20_1)
+	Voip.peer_muted = function (arg_20_0, arg_20_1)
 		return arg_20_0._muted_peers[arg_20_1]
 	end
 
-	function Voip._ensure_left_voip_room(arg_21_0, arg_21_1)
+	Voip._ensure_left_voip_room = function (arg_21_0, arg_21_1)
 		if not arg_21_0:_is_in_room() then
 			return
 		end
@@ -404,7 +404,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip._join_voip_room(arg_22_0)
+	Voip._join_voip_room = function (arg_22_0)
 		if arg_22_0:_is_in_room() then
 			return
 		end
@@ -417,12 +417,12 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.set_volume(arg_23_0, arg_23_1)
+	Voip.set_volume = function (arg_23_0, arg_23_1)
 		assert(arg_23_1 >= 0 and arg_23_1 <= 100)
 		WwiseWorld.set_global_parameter(arg_23_0._wwise_world, "voip_bus_volume", arg_23_1)
 	end
 
-	function Voip.set_enabled(arg_24_0, arg_24_1)
+	Voip.set_enabled = function (arg_24_0, arg_24_1)
 		if not arg_24_0._own_peer_id then
 			return
 		end
@@ -436,7 +436,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.set_push_to_talk(arg_25_0, arg_25_1)
+	Voip.set_push_to_talk = function (arg_25_0, arg_25_1)
 		arg_25_0._push_to_talk = arg_25_1
 
 		if arg_25_0._own_voip_client then
@@ -446,7 +446,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.is_talking(arg_26_0, arg_26_1)
+	Voip.is_talking = function (arg_26_0, arg_26_1)
 		if not arg_26_0._own_voip_client then
 			return false
 		end
@@ -458,19 +458,19 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.is_push_to_talk_active(arg_27_0)
+	Voip.is_push_to_talk_active = function (arg_27_0)
 		return arg_27_0._push_to_talk and arg_27_0._push_to_talk_active
 	end
 
-	function Voip.push_to_talk_enabled(arg_28_0)
+	Voip.push_to_talk_enabled = function (arg_28_0)
 		return arg_28_0._push_to_talk
 	end
 
-	function Voip.audio_level(arg_29_0, arg_29_1)
+	Voip.audio_level = function (arg_29_0, arg_29_1)
 		return (SteamVoipClient.audio_level(arg_29_0._own_voip_client, arg_29_1))
 	end
 
-	function Voip._tear_down(arg_30_0)
+	Voip._tear_down = function (arg_30_0)
 		if not arg_30_0._voip_set_up then
 			return
 		end
@@ -493,7 +493,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		SteamVoip.shutdown()
 	end
 
-	function Voip._ensure_voip_set_up(arg_31_0)
+	Voip._ensure_voip_set_up = function (arg_31_0)
 		if arg_31_0._voip_set_up then
 			return
 		end
@@ -506,7 +506,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_31_0._voip_room_by_peer = {}
 	end
 
-	function Voip._ensure_voip_room_set_up(arg_32_0, arg_32_1)
+	Voip._ensure_voip_room_set_up = function (arg_32_0, arg_32_1)
 		if not arg_32_0._is_server or arg_32_0._voip_rooms[arg_32_1] then
 			return
 		end
@@ -516,13 +516,13 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		arg_32_0._voip_rooms[arg_32_1] = var_32_0
 	end
 
-	function Voip._is_in_room(arg_33_0)
+	Voip._is_in_room = function (arg_33_0)
 		return arg_33_0._own_voip_room_id
 	end
 
 	local var_0_6 = {}
 
-	function Voip._remove_peer_from_room(arg_34_0, arg_34_1)
+	Voip._remove_peer_from_room = function (arg_34_0, arg_34_1)
 		local var_34_0 = arg_34_0._voip_room_by_peer[arg_34_1]
 
 		if var_34_0 then
@@ -547,12 +547,12 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 			end
 
 			if table.is_empty(arg_34_0._voip_rooms) then
-				-- block empty
+				-- Nothing
 			end
 		end
 	end
 
-	function Voip._add_peer_to_room(arg_35_0, arg_35_1, arg_35_2)
+	Voip._add_peer_to_room = function (arg_35_0, arg_35_1, arg_35_2)
 		assert(arg_35_0._is_server, "[Voip] '_add_peer_to_room' is a server only function")
 
 		local var_35_0 = arg_35_0._voip_rooms[arg_35_2]
@@ -574,7 +574,7 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip.peer_joined_party(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5)
+	Voip.peer_joined_party = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5)
 		if arg_36_3 == 0 or arg_36_5 then
 			return
 		end
@@ -596,97 +596,97 @@ if var_0_3 and not var_0_4 or DEDICATED_SERVER then
 		end
 	end
 
-	function Voip._is_peer_in_party_room(arg_37_0, arg_37_1, arg_37_2)
+	Voip._is_peer_in_party_room = function (arg_37_0, arg_37_1, arg_37_2)
 		local var_37_0 = arg_37_0._voip_room_by_peer[arg_37_1]
 
 		return var_37_0 ~= nil and var_37_0 == arg_37_0._voip_rooms[arg_37_2]
 	end
 
-	function Voip.peer_disconnected(arg_38_0, arg_38_1)
+	Voip.peer_disconnected = function (arg_38_0, arg_38_1)
 		if arg_38_0._is_server then
 			arg_38_0:_remove_peer_from_room(arg_38_1)
 		end
 	end
 else
-	function Voip.init(arg_39_0)
+	Voip.init = function (arg_39_0)
 		return
 	end
 
-	function Voip.set_input_manager(arg_40_0, arg_40_1)
+	Voip.set_input_manager = function (arg_40_0, arg_40_1)
 		return
 	end
 
-	function Voip.destroy(arg_41_0)
+	Voip.destroy = function (arg_41_0)
 		return
 	end
 
-	function Voip.register_rpcs(arg_42_0)
+	Voip.register_rpcs = function (arg_42_0)
 		return
 	end
 
-	function Voip.unregister_rpcs(arg_43_0)
+	Voip.unregister_rpcs = function (arg_43_0)
 		return
 	end
 
-	function Voip.mute_member(arg_44_0)
+	Voip.mute_member = function (arg_44_0)
 		return
 	end
 
-	function Voip.unmute_member(arg_45_0)
+	Voip.unmute_member = function (arg_45_0)
 		return
 	end
 
-	function Voip.update(arg_46_0)
+	Voip.update = function (arg_46_0)
 		return
 	end
 
-	function Voip.peer_muted(arg_47_0)
+	Voip.peer_muted = function (arg_47_0)
 		return
 	end
 
-	function Voip.set_volume(arg_48_0)
+	Voip.set_volume = function (arg_48_0)
 		return
 	end
 
-	function Voip.set_enabled(arg_49_0)
+	Voip.set_enabled = function (arg_49_0)
 		return
 	end
 
-	function Voip.set_push_to_talk(arg_50_0)
+	Voip.set_push_to_talk = function (arg_50_0)
 		return
 	end
 
-	function Voip.is_talking(arg_51_0)
+	Voip.is_talking = function (arg_51_0)
 		return
 	end
 
-	function Voip.audio_level(arg_52_0)
+	Voip.audio_level = function (arg_52_0)
 		return -96
 	end
 
-	function Voip.push_to_talk_enabled(arg_53_0)
+	Voip.push_to_talk_enabled = function (arg_53_0)
 		return
 	end
 
-	function Voip.is_push_to_talk_active(arg_54_0)
+	Voip.is_push_to_talk_active = function (arg_54_0)
 		return
 	end
 
-	function Voip.peer_joined_party(arg_55_0)
+	Voip.peer_joined_party = function (arg_55_0)
 		return
 	end
 
 	local var_0_7 = {}
 
-	function Voip.members_in_own_room(arg_56_0)
+	Voip.members_in_own_room = function (arg_56_0)
 		return var_0_7
 	end
 
-	function Voip._tear_down(arg_57_0)
+	Voip._tear_down = function (arg_57_0)
 		return
 	end
 
-	function Voip.peer_disconnected(arg_58_0)
+	Voip.peer_disconnected = function (arg_58_0)
 		return
 	end
 end

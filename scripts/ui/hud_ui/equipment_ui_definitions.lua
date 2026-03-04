@@ -274,7 +274,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					style_id = "secondary_texture_icon",
 					texture_id = "secondary_texture_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						return arg_2_0.secondary_texture_icon
 					end
 				},
@@ -283,7 +283,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					style_id = "secondary_texture_icon_glow",
 					texture_id = "secondary_texture_icon_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return arg_3_0.secondary_texture_icon
 					end
 				},
@@ -292,7 +292,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					style_id = "secondary_texture_bg",
 					texture_id = "secondary_texture_bg",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return arg_4_0.secondary_texture_icon
 					end
 				},
@@ -313,7 +313,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					style_id = "texture_selected",
 					texture_id = "texture_selected",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return arg_5_0.selected
 					end
 				},
@@ -340,7 +340,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "text",
 					text_id = "use_count_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return arg_6_0.has_additional_slots
 					end
 				},
@@ -349,7 +349,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "text",
 					text_id = "use_count_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return arg_7_0.has_additional_slots
 					end
 				},
@@ -358,7 +358,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "text",
 					text_id = "can_swap_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return arg_8_0.can_swap
 					end
 				},
@@ -367,7 +367,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "text",
 					text_id = "can_swap_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return arg_9_0.can_swap
 					end
 				}
@@ -848,7 +848,7 @@ local var_0_16 = {
 				pass_type = "text",
 				text_id = "input_text",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return arg_11_0.can_reload
 				end
 			},
@@ -857,7 +857,7 @@ local var_0_16 = {
 				pass_type = "text",
 				text_id = "input_text",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return arg_12_0.can_reload
 				end
 			},
@@ -866,7 +866,7 @@ local var_0_16 = {
 				style_id = "reload_icon",
 				texture_id = "reload_icon",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_13_0)
+				content_check_function = function (arg_13_0)
 					return arg_13_0.can_reload or arg_13_0.is_exhausted
 				end
 			}
@@ -1065,15 +1065,15 @@ animations_definitions = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_2.content.visible = true
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = 255 * math.easeOutCubic(arg_15_3)
 
 				arg_15_2.style.text.text_color[1] = var_15_0
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		},
@@ -1081,15 +1081,15 @@ animations_definitions = {
 			name = "fade_out",
 			start_progress = 2.3,
 			end_progress = 2.6,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = 255 * (1 - math.easeOutCubic(arg_18_3))
 
 				arg_18_2.style.text.text_color[1] = var_18_0
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_2.content.visible = false
 			end
 		}

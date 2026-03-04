@@ -2,7 +2,7 @@
 
 WeaveEssenceHandler = class(WeaveEssenceHandler)
 
-function WeaveEssenceHandler.init(arg_1_0, arg_1_1)
+WeaveEssenceHandler.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._spawn_essence_units = true
 	arg_1_0._essence_unit_names = {
@@ -22,17 +22,17 @@ function WeaveEssenceHandler.init(arg_1_0, arg_1_1)
 	arg_1_0._essence_life_time = 3
 end
 
-function WeaveEssenceHandler.on_objectives_activated(arg_2_0, arg_2_1)
+WeaveEssenceHandler.on_objectives_activated = function (arg_2_0, arg_2_1)
 	if not table.is_empty(arg_2_1) then
 		Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_hud_wind_objective_start")
 	end
 end
 
-function WeaveEssenceHandler.update(arg_3_0, arg_3_1, arg_3_2)
+WeaveEssenceHandler.update = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_collect_dropped_essence(arg_3_1)
 end
 
-function WeaveEssenceHandler.destroy_all_essence(arg_4_0)
+WeaveEssenceHandler.destroy_all_essence = function (arg_4_0)
 	local var_4_0 = arg_4_0._essence_unit_data
 
 	for iter_4_0 = 1, #var_4_0 do
@@ -46,7 +46,7 @@ function WeaveEssenceHandler.destroy_all_essence(arg_4_0)
 	end
 end
 
-function WeaveEssenceHandler.on_ai_killed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+WeaveEssenceHandler.on_ai_killed = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not arg_5_3 or not arg_5_3.despawned then
 		local var_5_0 = POSITION_LOOKUP[arg_5_1]
 
@@ -54,7 +54,7 @@ function WeaveEssenceHandler.on_ai_killed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, ar
 	end
 end
 
-function WeaveEssenceHandler.spawn_essence_unit(arg_6_0, arg_6_1, arg_6_2)
+WeaveEssenceHandler.spawn_essence_unit = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._essence_unit_data
 	local var_6_1
 
@@ -83,7 +83,7 @@ function WeaveEssenceHandler.spawn_essence_unit(arg_6_0, arg_6_1, arg_6_2)
 	var_6_4.sound_event = arg_6_0._essence_sound_events[arg_6_2 or 1]
 end
 
-function WeaveEssenceHandler._collect_dropped_essence(arg_7_0, arg_7_1)
+WeaveEssenceHandler._collect_dropped_essence = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.player:local_player()
 
 	if not var_7_0 or not var_7_0.player_unit then

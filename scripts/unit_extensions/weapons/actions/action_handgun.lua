@@ -2,14 +2,14 @@
 
 ActionHandgun = class(ActionHandgun, ActionBase)
 
-function ActionHandgun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionHandgun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionHandgun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.trail_end_position_variable = World.find_particles_variable(arg_1_1, "fx/wpnfx_pistol_bullet_trail", "size")
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_0.owner_unit, "career_system")
 end
 
-function ActionHandgun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionHandgun.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionHandgun.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.weapon_unit
@@ -64,7 +64,7 @@ function ActionHandgun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_
 	arg_2_0._is_critical_strike = var_2_2
 end
 
-function ActionHandgun.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionHandgun.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.weapon_unit
 	local var_3_1 = arg_3_0.owner_unit
 	local var_3_2 = arg_3_0.current_action
@@ -209,7 +209,7 @@ function ActionHandgun.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3
 	end
 end
 
-function ActionHandgun.finish(arg_4_0, arg_4_1)
+ActionHandgun.finish = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.ammo_extension
 	local var_4_1 = arg_4_0.current_action
 	local var_4_2 = arg_4_0.owner_unit

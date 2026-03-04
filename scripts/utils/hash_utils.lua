@@ -2,7 +2,7 @@
 
 HashUtils = HashUtils or {}
 
-function HashUtils.fnv32_hash(arg_1_0)
+HashUtils.fnv32_hash = function (arg_1_0)
 	local var_1_0 = 1
 	local var_1_1 = string.len(arg_1_0)
 

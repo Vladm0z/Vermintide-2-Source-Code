@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerApproachAction = class(BTRatlingGunnerApproachAction, BTNode)
 
-function BTRatlingGunnerApproachAction.init(arg_1_0, ...)
+BTRatlingGunnerApproachAction.init = function (arg_1_0, ...)
 	BTRatlingGunnerApproachAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerApproachAction.name = "BTRatlingGunnerApproachAction"
 
-function BTRatlingGunnerApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTRatlingGunnerApproachAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.attack_pattern_data = arg_2_2.attack_pattern_data or {}
@@ -39,7 +39,7 @@ function BTRatlingGunnerApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTRatlingGunnerApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatlingGunnerApproachAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 ~= "done" then
 		arg_3_2.move_pos = nil
 	end
@@ -49,7 +49,7 @@ function BTRatlingGunnerApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-function BTRatlingGunnerApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTRatlingGunnerApproachAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_0:is_within_check_distance(arg_4_1, arg_4_2) then
 		return "done"
 	end
@@ -86,20 +86,20 @@ function BTRatlingGunnerApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTRatlingGunnerApproachAction.is_within_check_distance(arg_5_0, arg_5_1, arg_5_2)
+BTRatlingGunnerApproachAction.is_within_check_distance = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = arg_5_2.previous_attacker
 
 	return arg_5_2.target_dist < var_5_0.check_distance or var_5_1
 end
 
-function BTRatlingGunnerApproachAction.move_to(arg_6_0, arg_6_1, arg_6_2)
+BTRatlingGunnerApproachAction.move_to = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.navigation_extension:move_to(arg_6_1)
 
 	arg_6_2.move_pos = Vector3Box(arg_6_1)
 end
 
-function BTRatlingGunnerApproachAction.calculate_move_position(arg_7_0, arg_7_1, arg_7_2)
+BTRatlingGunnerApproachAction.calculate_move_position = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = var_7_0.check_distance - 2
 	local var_7_2 = var_7_0.check_distance

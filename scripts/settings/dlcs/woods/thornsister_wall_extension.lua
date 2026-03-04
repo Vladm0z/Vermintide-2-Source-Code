@@ -4,7 +4,7 @@ ThornSisterWallExtension = class(ThornSisterWallExtension)
 
 local var_0_0 = 1
 
-function ThornSisterWallExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ThornSisterWallExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._is_server = Managers.state.network.is_server
 	arg_1_0._unit = arg_1_2
 	arg_1_0._life_time = arg_1_3.life_time
@@ -41,11 +41,11 @@ function ThornSisterWallExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function ThornSisterWallExtension.game_object_initialized(arg_2_0)
+ThornSisterWallExtension.game_object_initialized = function (arg_2_0)
 	Managers.state.event:trigger("sister_wall_spawned", arg_2_0._unit)
 end
 
-function ThornSisterWallExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ThornSisterWallExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_0._initialized then
 		local var_3_0 = arg_3_0._life_time
 
@@ -69,7 +69,7 @@ function ThornSisterWallExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	end
 end
 
-function ThornSisterWallExtension.trigger_area_damage(arg_4_0)
+ThornSisterWallExtension.trigger_area_damage = function (arg_4_0)
 	arg_4_0._area_damage_extension:enable_area_damage(true)
 
 	if arg_4_0._is_server then
@@ -82,7 +82,7 @@ end
 
 local var_0_1 = {}
 
-function ThornSisterWallExtension._despawn_single(arg_5_0, arg_5_1, arg_5_2)
+ThornSisterWallExtension._despawn_single = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._despawning then
 		return
 	end
@@ -110,7 +110,7 @@ function ThornSisterWallExtension._despawn_single(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._despawn_t = math.min(arg_5_0._despawn_t or math.huge, Managers.time:time("game") + var_0_0)
 end
 
-function ThornSisterWallExtension._trigger_despawn_sound(arg_6_0, arg_6_1)
+ThornSisterWallExtension._trigger_despawn_sound = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._owner_unit
 	local var_6_1 = POSITION_LOOKUP[arg_6_0._unit]
 
@@ -135,7 +135,7 @@ function ThornSisterWallExtension._trigger_despawn_sound(arg_6_0, arg_6_1)
 	Managers.state.entity:system("audio_system"):play_audio_position_event(arg_6_0._despawn_sound_event, var_6_1)
 end
 
-function ThornSisterWallExtension.despawn(arg_7_0, arg_7_1)
+ThornSisterWallExtension.despawn = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._owner_unit
 	local var_7_1 = false
 	local var_7_2 = not arg_7_1
@@ -161,7 +161,7 @@ function ThornSisterWallExtension.despawn(arg_7_0, arg_7_1)
 	end
 end
 
-function ThornSisterWallExtension.die(arg_8_0)
+ThornSisterWallExtension.die = function (arg_8_0)
 	if not arg_8_0._despawning then
 		arg_8_0:despawn()
 
@@ -169,11 +169,11 @@ function ThornSisterWallExtension.die(arg_8_0)
 	end
 end
 
-function ThornSisterWallExtension.owner(arg_9_0)
+ThornSisterWallExtension.owner = function (arg_9_0)
 	return arg_9_0._owner_unit
 end
 
-function ThornSisterWallExtension._update_local_player_pactsworn_collision(arg_10_0)
+ThornSisterWallExtension._update_local_player_pactsworn_collision = function (arg_10_0)
 	if not (Managers.mechanism:current_mechanism_name() == "versus") then
 		return
 	end
@@ -223,7 +223,7 @@ function ThornSisterWallExtension._update_local_player_pactsworn_collision(arg_1
 	end
 end
 
-function ThornSisterWallExtension._check_player_boss_trample(arg_11_0)
+ThornSisterWallExtension._check_player_boss_trample = function (arg_11_0)
 	local var_11_0 = arg_11_0._player_boss_trample_radius
 
 	if not var_11_0 or arg_11_0._despawning then
@@ -258,7 +258,7 @@ function ThornSisterWallExtension._check_player_boss_trample(arg_11_0)
 	end
 end
 
-function ThornSisterWallExtension.move_prop(arg_12_0, arg_12_1)
+ThornSisterWallExtension.move_prop = function (arg_12_0, arg_12_1)
 	local var_12_0 = Matrix4x4.translation(arg_12_1)
 	local var_12_1 = Matrix4x4.rotation(arg_12_1)
 

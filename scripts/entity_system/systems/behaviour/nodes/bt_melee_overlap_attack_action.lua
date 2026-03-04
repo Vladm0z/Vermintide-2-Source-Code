@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTMeleeOverlapAttackAction = class(BTMeleeOverlapAttackAction, BTNode)
 
-function BTMeleeOverlapAttackAction.init(arg_1_0, ...)
+BTMeleeOverlapAttackAction.init = function (arg_1_0, ...)
 	BTMeleeOverlapAttackAction.super.init(arg_1_0, ...)
 end
 
@@ -32,7 +32,7 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
 	return arg_2_1 + var_2_2 / var_2_3 * var_2_1, false
 end
 
-function BTMeleeOverlapAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTMeleeOverlapAttackAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -95,7 +95,7 @@ local function var_0_5(arg_6_0, arg_6_1)
 	end
 end
 
-function BTMeleeOverlapAttackAction._init_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+BTMeleeOverlapAttackAction._init_attack = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	if arg_7_3.last_combo_attack then
 		arg_7_3.last_combo_attack = nil
 
@@ -317,7 +317,7 @@ function BTMeleeOverlapAttackAction._init_attack(arg_7_0, arg_7_1, arg_7_2, arg_
 	return true
 end
 
-function BTMeleeOverlapAttackAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTMeleeOverlapAttackAction.leave = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_2.locomotion_extension
 
 	if not arg_8_5 then
@@ -381,7 +381,7 @@ function BTMeleeOverlapAttackAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ar
 	end
 end
 
-function BTMeleeOverlapAttackAction._attack_finished(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTMeleeOverlapAttackAction._attack_finished = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.action
 
 	if var_9_0.is_combo_attack and ALIVE[arg_9_2.locked_target_unit] then
@@ -391,7 +391,7 @@ function BTMeleeOverlapAttackAction._attack_finished(arg_9_0, arg_9_1, arg_9_2, 
 	return true
 end
 
-function BTMeleeOverlapAttackAction._calculate_cylinder_collision(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTMeleeOverlapAttackAction._calculate_cylinder_collision = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.radius or arg_10_1.radius
 	local var_10_1 = arg_10_2.height or arg_10_1.height
 	local var_10_2 = arg_10_2.offset_up or arg_10_1.offset_up
@@ -408,7 +408,7 @@ function BTMeleeOverlapAttackAction._calculate_cylinder_collision(arg_10_0, arg_
 	return var_10_10, var_10_11, var_10_6
 end
 
-function BTMeleeOverlapAttackAction._calculate_oobb_collision(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTMeleeOverlapAttackAction._calculate_oobb_collision = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_2.range or arg_11_1.range
 	local var_11_1 = arg_11_2.height or arg_11_1.height
 	local var_11_2 = arg_11_2.width or arg_11_1.width
@@ -424,7 +424,7 @@ function BTMeleeOverlapAttackAction._calculate_oobb_collision(arg_11_0, arg_11_1
 	return arg_11_3 + var_11_9 + var_11_10, arg_11_4, var_11_8
 end
 
-function BTMeleeOverlapAttackAction._create_bot_aoe_threat(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BTMeleeOverlapAttackAction._create_bot_aoe_threat = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = POSITION_LOOKUP[arg_12_1]
 	local var_12_1 = Managers.state.entity:system("ai_bot_group_system")
 
@@ -439,7 +439,7 @@ function BTMeleeOverlapAttackAction._create_bot_aoe_threat(arg_12_0, arg_12_1, a
 	end
 end
 
-function BTMeleeOverlapAttackAction._check_wall_collision(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+BTMeleeOverlapAttackAction._check_wall_collision = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = 1
 	local var_13_1 = 1
 	local var_13_2 = arg_13_2.nav_world
@@ -475,7 +475,7 @@ function BTMeleeOverlapAttackAction._check_wall_collision(arg_13_0, arg_13_1, ar
 	return not GwNavQueries.raycango(var_13_2, var_13_13, var_13_14)
 end
 
-function BTMeleeOverlapAttackAction.run(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+BTMeleeOverlapAttackAction.run = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if not ALIVE[arg_14_2.locked_target_unit] or arg_14_2.attack_aborted then
 		if arg_14_2.attack_locked_in_t and arg_14_3 <= arg_14_2.attack_locked_in_t then
 			return "running"
@@ -601,7 +601,7 @@ function BTMeleeOverlapAttackAction.run(arg_14_0, arg_14_1, arg_14_2, arg_14_3, 
 	end
 end
 
-function BTMeleeOverlapAttackAction.push_player(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTMeleeOverlapAttackAction.push_player = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = POSITION_LOOKUP[arg_15_1]
 	local var_15_1 = POSITION_LOOKUP[arg_15_2] - var_15_0
 	local var_15_2 = arg_15_3 * Vector3.normalize(var_15_1)
@@ -617,7 +617,7 @@ function BTMeleeOverlapAttackAction.push_player(arg_15_0, arg_15_1, arg_15_2, ar
 	end
 end
 
-function BTMeleeOverlapAttackAction.hit_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+BTMeleeOverlapAttackAction.hit_player = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = ScriptUnit.has_extension(arg_16_3, "status_system")
 	local var_16_1 = arg_16_4.attack_directions and arg_16_4.attack_directions[arg_16_2.attack_anim]
 	local var_16_2 = false
@@ -651,7 +651,7 @@ function BTMeleeOverlapAttackAction.hit_player(arg_16_0, arg_16_1, arg_16_2, arg
 	end
 end
 
-function BTMeleeOverlapAttackAction.hit_ai(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+BTMeleeOverlapAttackAction.hit_ai = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 	local var_17_0 = arg_17_4.push_ai
 	local var_17_1 = arg_17_4.immune_breeds
 	local var_17_2 = arg_17_4.damage_target_only
@@ -692,11 +692,11 @@ function BTMeleeOverlapAttackAction.hit_ai(arg_17_0, arg_17_1, arg_17_2, arg_17_
 	end
 end
 
-function BTMeleeOverlapAttackAction.anim_cb_frenzy_damage(arg_18_0, arg_18_1, arg_18_2)
+BTMeleeOverlapAttackAction.anim_cb_frenzy_damage = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:anim_cb_damage(arg_18_1, arg_18_2)
 end
 
-function BTMeleeOverlapAttackAction.anim_cb_damage(arg_19_0, arg_19_1, arg_19_2)
+BTMeleeOverlapAttackAction.anim_cb_damage = function (arg_19_0, arg_19_1, arg_19_2)
 	if not arg_19_2.attacking_target then
 		return
 	end
@@ -738,7 +738,7 @@ function BTMeleeOverlapAttackAction.anim_cb_damage(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_2.past_damage_in_attack = not var_19_1.triggers_anim_cb_damage_multiple_times and (not var_19_0.is_combo_attack or arg_19_2.last_combo_attack)
 end
 
-function BTMeleeOverlapAttackAction.push_close_units(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BTMeleeOverlapAttackAction.push_close_units = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = Unit.local_rotation(arg_20_1, 0)
 	local var_20_1 = Quaternion.forward(var_20_0)
 	local var_20_2 = POSITION_LOOKUP[arg_20_1] + var_20_1 * arg_20_4.push_forward_offset
@@ -792,7 +792,7 @@ function BTMeleeOverlapAttackAction.push_close_units(arg_20_0, arg_20_1, arg_20_
 	end
 end
 
-function BTMeleeOverlapAttackAction.weapon_sweep_overlap(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+BTMeleeOverlapAttackAction.weapon_sweep_overlap = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 	if arg_21_2.is_illusion then
 		return
 	end
@@ -853,7 +853,7 @@ local var_0_6 = {
 	name = "BTMeleeOverlapAttackAction"
 }
 
-function BTMeleeOverlapAttackAction.overlap_checks(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11)
+BTMeleeOverlapAttackAction.overlap_checks = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11)
 	if arg_22_2.is_illusion then
 		return 0
 	end
@@ -931,17 +931,17 @@ function BTMeleeOverlapAttackAction.overlap_checks(arg_22_0, arg_22_1, arg_22_2,
 	return var_22_10
 end
 
-function BTMeleeOverlapAttackAction.anim_cb_attack_overlap_done(arg_23_0, arg_23_1, arg_23_2)
+BTMeleeOverlapAttackAction.anim_cb_attack_overlap_done = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_2.continous_overlap_data.perform_overlap = nil
 end
 
-function BTMeleeOverlapAttackAction.anim_cb_attack_grabbed_smash(arg_24_0, arg_24_1, arg_24_2)
+BTMeleeOverlapAttackAction.anim_cb_attack_grabbed_smash = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_2.action
 
 	AiUtils.damage_target(arg_24_2.victim_grabbed, arg_24_1, var_24_0, var_24_0.damage)
 end
 
-function BTMeleeOverlapAttackAction._backstab_sound(arg_25_0, arg_25_1, arg_25_2)
+BTMeleeOverlapAttackAction._backstab_sound = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_2.breed
 	local var_25_1 = arg_25_2.locked_target_unit
 

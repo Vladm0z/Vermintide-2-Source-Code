@@ -27,7 +27,7 @@ end
 
 local var_0_5 = class(Storm)
 
-function var_0_5.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+var_0_5.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._logging_prefix = arg_3_4
 
 	var_0_4("-%s- init", arg_3_4)
@@ -40,7 +40,7 @@ function var_0_5.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._cooldown_end_t = Math.random_range(arg_3_2, arg_3_3)
 end
 
-function var_0_5.destroy(arg_4_0)
+var_0_5.destroy = function (arg_4_0)
 	var_0_4("-%s- destroy", arg_4_0._logging_prefix)
 
 	if arg_4_0._active_storm_data then
@@ -48,7 +48,7 @@ function var_0_5.destroy(arg_4_0)
 	end
 end
 
-function var_0_5.update(arg_5_0, arg_5_1, arg_5_2)
+var_0_5.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._state == var_0_0.COOLDOWN then
 		if arg_5_2 > arg_5_0._cooldown_end_t then
 			arg_5_0._state = var_0_0.READY
@@ -56,7 +56,7 @@ function var_0_5.update(arg_5_0, arg_5_1, arg_5_2)
 			var_0_4("-%s- new state %s", arg_5_0._logging_prefix, arg_5_0._state)
 		end
 	elseif arg_5_0._state == var_0_0.READY then
-		-- block empty
+		-- Nothing
 	elseif arg_5_0._state == var_0_0.ACTIVE then
 		local var_5_0 = arg_5_0._active_storm_data.unit
 
@@ -79,7 +79,7 @@ function var_0_5.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function var_0_5.spawn(arg_6_0, arg_6_1)
+var_0_5.spawn = function (arg_6_0, arg_6_1)
 	fassert(arg_6_0._state == var_0_0.READY, "prepare_spawn can only be called when the state of the storm is READY")
 	var_0_4("-%s- spawn", arg_6_0._logging_prefix)
 
@@ -105,11 +105,11 @@ function var_0_5.spawn(arg_6_0, arg_6_1)
 	var_0_4("-%s- new state %s", arg_6_0._logging_prefix, arg_6_0._state)
 end
 
-function var_0_5.get_state(arg_7_0)
+var_0_5.get_state = function (arg_7_0)
 	return arg_7_0._state
 end
 
-function var_0_5.get_position(arg_8_0)
+var_0_5.get_position = function (arg_8_0)
 	local var_8_0 = arg_8_0._active_storm_data
 
 	if not var_8_0 then
@@ -119,13 +119,13 @@ function var_0_5.get_position(arg_8_0)
 	return var_8_0.starting_position:unbox()
 end
 
-function var_0_5.get_unit(arg_9_0)
+var_0_5.get_unit = function (arg_9_0)
 	local var_9_0 = arg_9_0._active_storm_data
 
 	return var_9_0 and var_9_0.unit
 end
 
-function var_0_5._clear_active_storm(arg_10_0)
+var_0_5._clear_active_storm = function (arg_10_0)
 	local var_10_0 = arg_10_0._active_storm_data.unit
 
 	if var_10_0 and Unit.alive(var_10_0) then
@@ -150,7 +150,7 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_shadow_daggers"
 	},
-	server_start_function = function(arg_11_0, arg_11_1)
+	server_start_function = function (arg_11_0, arg_11_1)
 		local var_11_0 = {}
 
 		for iter_11_0 = 1, var_0_6 do
@@ -160,10 +160,10 @@ return {
 		arg_11_1.storms = var_11_0
 		arg_11_1.next_bleed_time = 0
 	end,
-	server_players_left_safe_zone = function(arg_12_0, arg_12_1)
+	server_players_left_safe_zone = function (arg_12_0, arg_12_1)
 		arg_12_1.started = true
 	end,
-	server_pre_update_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	server_pre_update_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
@@ -223,7 +223,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	server_player_hit_function = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		return
 	end
 }

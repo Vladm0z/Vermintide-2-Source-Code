@@ -9,7 +9,7 @@ local var_0_3 = var_0_0.animation_definitions
 
 DeusSwapWeaponInteractionUI.TYPE = "swap_melee"
 
-function DeusSwapWeaponInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
+DeusSwapWeaponInteractionUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ingame_ui_context = arg_1_2
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
@@ -31,17 +31,17 @@ function DeusSwapWeaponInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "chest_unlock_failed", "chest_unlock_failed")
 end
 
-function DeusSwapWeaponInteractionUI.destroy(arg_2_0)
+DeusSwapWeaponInteractionUI.destroy = function (arg_2_0)
 	Managers.state.event:unregister("chest_unlock_failed", arg_2_0)
 end
 
-function DeusSwapWeaponInteractionUI.chest_unlock_failed(arg_3_0, arg_3_1)
+DeusSwapWeaponInteractionUI.chest_unlock_failed = function (arg_3_0, arg_3_1)
 	if arg_3_1 == DeusSwapWeaponInteractionUI.TYPE then
 		arg_3_0:_start_animation("chest_unlock_failed")
 	end
 end
 
-function DeusSwapWeaponInteractionUI._create_ui_elements(arg_4_0)
+DeusSwapWeaponInteractionUI._create_ui_elements = function (arg_4_0)
 	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
@@ -59,7 +59,7 @@ function DeusSwapWeaponInteractionUI._create_ui_elements(arg_4_0)
 	arg_4_0._current_interactable_unit = nil
 end
 
-function DeusSwapWeaponInteractionUI._evaluate_interactable(arg_5_0, arg_5_1)
+DeusSwapWeaponInteractionUI._evaluate_interactable = function (arg_5_0, arg_5_1)
 	local var_5_0 = Managers.mechanism:game_mechanism()
 	local var_5_1 = var_5_0.get_deus_run_controller and var_5_0:get_deus_run_controller()
 
@@ -94,7 +94,7 @@ function DeusSwapWeaponInteractionUI._evaluate_interactable(arg_5_0, arg_5_1)
 	end
 end
 
-function DeusSwapWeaponInteractionUI._start_animation(arg_6_0, arg_6_1)
+DeusSwapWeaponInteractionUI._start_animation = function (arg_6_0, arg_6_1)
 	arg_6_0._render_settings = arg_6_0._render_settings or {
 		alpha_multiplier = 0
 	}
@@ -106,7 +106,7 @@ function DeusSwapWeaponInteractionUI._start_animation(arg_6_0, arg_6_1)
 	arg_6_0._animations[arg_6_1] = arg_6_0._ui_animator:start_animation(arg_6_1, arg_6_0._widgets, arg_6_0._ui_scenegraph, var_6_0, nil, 0)
 end
 
-function DeusSwapWeaponInteractionUI._populate_widget(arg_7_0, arg_7_1, arg_7_2)
+DeusSwapWeaponInteractionUI._populate_widget = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 	if not var_7_0 then
@@ -170,7 +170,7 @@ function DeusSwapWeaponInteractionUI._populate_widget(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._calculate_offset = true
 end
 
-function DeusSwapWeaponInteractionUI.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+DeusSwapWeaponInteractionUI.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0:_evaluate_interactable(arg_8_1)
 	arg_8_0:_update_animations(arg_8_2, arg_8_3)
 	arg_8_0:_draw(arg_8_2, arg_8_3)
@@ -179,7 +179,7 @@ function DeusSwapWeaponInteractionUI.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	return arg_8_0._offset
 end
 
-function DeusSwapWeaponInteractionUI._update_offset(arg_9_0, arg_9_1, arg_9_2)
+DeusSwapWeaponInteractionUI._update_offset = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0._calculate_offset then
 		return
 	end
@@ -202,7 +202,7 @@ function DeusSwapWeaponInteractionUI._update_offset(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._calculate_offset = false
 end
 
-function DeusSwapWeaponInteractionUI._update_animations(arg_10_0, arg_10_1, arg_10_2)
+DeusSwapWeaponInteractionUI._update_animations = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._ui_animator
 
 	var_10_0:update(arg_10_1)
@@ -216,7 +216,7 @@ function DeusSwapWeaponInteractionUI._update_animations(arg_10_0, arg_10_1, arg_
 	end
 end
 
-function DeusSwapWeaponInteractionUI._draw(arg_11_0, arg_11_1, arg_11_2)
+DeusSwapWeaponInteractionUI._draw = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._ui_renderer
 	local var_11_1 = arg_11_0._ui_scenegraph
 	local var_11_2 = Managers.input:get_service("Player")

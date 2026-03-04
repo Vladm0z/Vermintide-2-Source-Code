@@ -4,7 +4,7 @@ local var_0_0 = 7
 local var_0_1 = {
 	tower = {
 		mission_name = "arena_belakor_overload_statue",
-		setup = function(arg_1_0, arg_1_1)
+		setup = function (arg_1_0, arg_1_1)
 			if arg_1_1.is_server then
 				arg_1_1.active_locus = {}
 
@@ -18,13 +18,13 @@ local var_0_1 = {
 				end
 			end
 		end,
-		on_server_enter = function(arg_2_0, arg_2_1)
+		on_server_enter = function (arg_2_0, arg_2_1)
 			return
 		end,
-		on_server_exit = function(arg_3_0, arg_3_1)
+		on_server_exit = function (arg_3_0, arg_3_1)
 			return
 		end,
-		on_client_enter = function(arg_4_0, arg_4_1)
+		on_client_enter = function (arg_4_0, arg_4_1)
 			Managers.state.entity:system("mission_system"):start_mission(arg_4_0.base_state.mission_name)
 
 			local var_4_0 = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
@@ -54,10 +54,10 @@ local var_0_1 = {
 				end
 			end
 		end,
-		on_client_exit = function(arg_5_0, arg_5_1)
+		on_client_exit = function (arg_5_0, arg_5_1)
 			Managers.state.entity:system("mission_system"):end_mission(arg_5_0.base_state.mission_name)
 		end,
-		server_update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		server_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = 0
 
 			for iter_6_0, iter_6_1 in ipairs(arg_6_1.active_locus) do
@@ -68,7 +68,7 @@ local var_0_1 = {
 				arg_6_1.shared_state:set_server(arg_6_1.shared_state:get_key("socketed_count"), var_6_0)
 			end
 		end,
-		client_update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		client_update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 			local var_7_0 = Level.flow_variable(arg_7_1.level, "socketed_count")
 			local var_7_1 = arg_7_1.shared_state:get_server(arg_7_1.shared_state:get_key("socketed_count"))
 
@@ -89,34 +89,34 @@ var_0_2 = {
 		mission_name = "arena_belakor_go_tower",
 		exit_volume_id = "trigger_approach_tower_done",
 		id = 1,
-		on_server_enter = function(arg_8_0, arg_8_1)
+		on_server_enter = function (arg_8_0, arg_8_1)
 			local var_8_0 = Managers.state.entity:system("volume_system")
 			local var_8_1 = arg_8_0.exit_volume_id
 
 			var_8_0:register_volume(var_8_1, "trigger_volume", {
 				sub_type = "players_inside",
-				on_triggered = function()
+				on_triggered = function ()
 					arg_8_1.shared_state:set_server(arg_8_1.shared_state:get_key("state"), var_0_2.tower_phase_1.id)
 				end
 			})
 		end,
-		on_server_exit = function(arg_10_0, arg_10_1)
+		on_server_exit = function (arg_10_0, arg_10_1)
 			local var_10_0 = Managers.state.entity:system("volume_system")
 			local var_10_1 = arg_10_0.exit_volume_id
 
 			var_10_0:unregister_volume(var_10_1)
 		end,
-		on_client_enter = function(arg_11_0, arg_11_1)
+		on_client_enter = function (arg_11_0, arg_11_1)
 			Managers.state.entity:system("mission_system"):start_mission(arg_11_0.mission_name)
 		end,
-		on_client_exit = function(arg_12_0, arg_12_1)
+		on_client_exit = function (arg_12_0, arg_12_1)
 			Managers.state.entity:system("mission_system"):end_mission(arg_12_0.mission_name)
 		end
 	},
 	tower_phase_1 = {
 		id = 2,
 		base_state = var_0_1.tower,
-		server_update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		server_update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			local var_13_0 = 0
 
 			for iter_13_0, iter_13_1 in ipairs(arg_13_1.active_locus) do
@@ -131,7 +131,7 @@ var_0_2 = {
 	tower_phase_2 = {
 		id = 3,
 		base_state = var_0_1.tower,
-		server_update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+		server_update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 			local var_14_0 = 0
 
 			for iter_14_0, iter_14_1 in ipairs(arg_14_1.active_locus) do
@@ -147,13 +147,13 @@ var_0_2 = {
 		mission_name = "arena_belakor_escape",
 		exit_volume_id = "trigger_escape_done",
 		id = 4,
-		setup = function(arg_15_0, arg_15_1)
+		setup = function (arg_15_0, arg_15_1)
 			return
 		end,
-		on_server_enter = function(arg_16_0, arg_16_1)
+		on_server_enter = function (arg_16_0, arg_16_1)
 			return
 		end,
-		on_client_enter = function(arg_17_0, arg_17_1)
+		on_client_enter = function (arg_17_0, arg_17_1)
 			return
 		end
 	}
@@ -187,7 +187,7 @@ SharedState.validate_spec(var_0_5)
 
 return {
 	hide_from_player_ui = true,
-	client_start_function = function(arg_18_0, arg_18_1)
+	client_start_function = function (arg_18_0, arg_18_1)
 		local var_18_0 = arg_18_0.is_server
 		local var_18_1
 		local var_18_2
@@ -238,14 +238,14 @@ return {
 
 		arg_18_1.decal_poses = var_18_6
 	end,
-	register_rpcs = function(arg_19_0, arg_19_1, arg_19_2)
+	register_rpcs = function (arg_19_0, arg_19_1, arg_19_2)
 		arg_19_1.shared_state:register_rpcs(arg_19_2)
 		arg_19_1.shared_state:full_sync()
 	end,
-	unregister_rpcs = function(arg_20_0, arg_20_1)
+	unregister_rpcs = function (arg_20_0, arg_20_1)
 		arg_20_1.shared_state:unregister_rpcs()
 	end,
-	client_update_function = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	client_update_function = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 		if Managers.party:get_party_from_player_id(Network.peer_id(), 1).name == "undecided" then
 			return
 		end

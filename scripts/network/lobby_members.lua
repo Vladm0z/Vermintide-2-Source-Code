@@ -2,7 +2,7 @@
 
 LobbyMembers = class(LobbyMembers)
 
-function LobbyMembers.init(arg_1_0, arg_1_1)
+LobbyMembers.init = function (arg_1_0, arg_1_1)
 	arg_1_0.lobby = arg_1_1
 	arg_1_0.members_joined = {}
 	arg_1_0.members_left = {}
@@ -30,11 +30,11 @@ function LobbyMembers.init(arg_1_0, arg_1_1)
 	end
 end
 
-function LobbyMembers.clear(arg_2_0)
+LobbyMembers.clear = function (arg_2_0)
 	return
 end
 
-function LobbyMembers.update(arg_3_0)
+LobbyMembers.update = function (arg_3_0)
 	local var_3_0 = arg_3_0.members_joined
 	local var_3_1 = arg_3_0.members_left
 
@@ -102,28 +102,28 @@ function LobbyMembers.update(arg_3_0)
 	end
 end
 
-function LobbyMembers.get_members_left(arg_4_0)
+LobbyMembers.get_members_left = function (arg_4_0)
 	return arg_4_0.members_left
 end
 
-function LobbyMembers.get_members_joined(arg_5_0)
+LobbyMembers.get_members_joined = function (arg_5_0)
 	return arg_5_0.members_joined
 end
 
-function LobbyMembers.get_members(arg_6_0)
+LobbyMembers.get_members = function (arg_6_0)
 	return arg_6_0._member_buffer
 end
 
-function LobbyMembers.get_member_count(arg_7_0)
+LobbyMembers.get_member_count = function (arg_7_0)
 	return arg_7_0.member_count
 end
 
-function LobbyMembers.members_map(arg_8_0)
+LobbyMembers.members_map = function (arg_8_0)
 	return arg_8_0.members
 end
 
 if IS_XB1 then
-	function LobbyMembers.check_members_changed(arg_9_0)
+	LobbyMembers.check_members_changed = function (arg_9_0)
 		local var_9_0 = arg_9_0._members_changed
 
 		arg_9_0._members_changed = nil

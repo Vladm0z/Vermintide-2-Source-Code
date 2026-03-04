@@ -10,7 +10,7 @@ local var_0_6 = "DemoEndUI"
 
 DemoEndUI = class(DemoEndUI)
 
-function DemoEndUI.init(arg_1_0, arg_1_1)
+DemoEndUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0.platform = PLATFORM
 	arg_1_0.render_settings = {
@@ -29,7 +29,7 @@ function DemoEndUI.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function DemoEndUI._create_ui_elements(arg_2_0)
+DemoEndUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0._demo_video = UIWidget.init(UIWidgets.create_splash_video(var_0_4, var_0_6))
 	arg_2_0._widgets = {}
@@ -45,11 +45,11 @@ function DemoEndUI._create_ui_elements(arg_2_0)
 	end
 end
 
-function DemoEndUI.update(arg_3_0, arg_3_1, arg_3_2)
+DemoEndUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_draw(arg_3_1, arg_3_2)
 end
 
-function DemoEndUI._draw(arg_4_0, arg_4_1, arg_4_2)
+DemoEndUI._draw = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._ui_renderer
 	local var_4_1 = arg_4_0._ui_scenegraph
 	local var_4_2 = arg_4_0.input_manager:get_service("demo")
@@ -91,10 +91,10 @@ function DemoEndUI._draw(arg_4_0, arg_4_1, arg_4_2)
 	UIRenderer.end_pass(var_4_0)
 end
 
-function DemoEndUI.completed(arg_5_0)
+DemoEndUI.completed = function (arg_5_0)
 	return arg_5_0._demo_video.content.video_content.video_completed
 end
 
-function DemoEndUI.destroy(arg_6_0)
+DemoEndUI.destroy = function (arg_6_0)
 	UIRenderer.destroy(arg_6_0._ui_renderer, arg_6_0._world)
 end

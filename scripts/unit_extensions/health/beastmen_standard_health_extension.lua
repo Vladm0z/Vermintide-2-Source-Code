@@ -2,23 +2,23 @@
 
 BeastmenStandardHealthExtension = class(BeastmenStandardHealthExtension, GenericHealthExtension)
 
-function BeastmenStandardHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BeastmenStandardHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	BeastmenStandardHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._unit = arg_1_2
 end
 
-function BeastmenStandardHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BeastmenStandardHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return
 end
 
-function BeastmenStandardHealthExtension.destroy(arg_3_0)
+BeastmenStandardHealthExtension.destroy = function (arg_3_0)
 	BeastmenStandardHealthExtension.super.destroy(arg_3_0)
 
 	arg_3_0.blackboard = nil
 end
 
-function BeastmenStandardHealthExtension.apply_client_predicted_damage(arg_4_0, arg_4_1)
+BeastmenStandardHealthExtension.apply_client_predicted_damage = function (arg_4_0, arg_4_1)
 	return
 end
 
@@ -35,7 +35,7 @@ local var_0_0 = {
 	shadow_torch = true
 }
 
-function BeastmenStandardHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+BeastmenStandardHealthExtension.add_damage = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 	if arg_5_7 == "suicide" then
 		BeastmenStandardHealthExtension.super.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 	else

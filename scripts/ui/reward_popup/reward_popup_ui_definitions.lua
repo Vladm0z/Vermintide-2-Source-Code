@@ -631,7 +631,7 @@ local function var_0_11(arg_3_0)
 			texture_id = "illusion",
 			pass_type = "texture",
 			style_id = var_3_5,
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0[var_3_8] and arg_5_0[var_3_5]
 			end
 		}
@@ -650,7 +650,7 @@ local function var_0_11(arg_3_0)
 			pass_type = "item_tooltip",
 			item_id = var_3_8,
 			style_id = var_3_7,
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				if not arg_6_0[var_3_8] then
 					return false
 				end
@@ -741,7 +741,7 @@ local function var_0_11(arg_3_0)
 		pass_type = "texture_frame",
 		style_id = "cursor",
 		texture_id = "cursor",
-		content_check_function = function(arg_7_0)
+		content_check_function = function (arg_7_0)
 			return arg_7_0.selected_i
 		end
 	}
@@ -1044,7 +1044,7 @@ local function var_0_14(arg_10_0)
 					style_id = "set_progression",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.is_part_of_set
 					end
 				}
@@ -1329,7 +1329,7 @@ local function var_0_15(arg_12_0)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.icon
 					end
 				},
@@ -1337,14 +1337,14 @@ local function var_0_15(arg_12_0)
 					texture_id = "icon_bg",
 					style_id = "icon_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.icon
 					end
 				},
 				{
 					style_id = "rectangular_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.icon
 					end
 				}
@@ -1596,7 +1596,7 @@ local var_0_19 = {
 			name = "fade_in_title_text",
 			duration = 0.2,
 			init = NOP,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				if not arg_17_4.played_text_reveal_sound_1 then
 					arg_17_4.played_text_reveal_sound_1 = true
 
@@ -1638,7 +1638,7 @@ local var_0_19 = {
 					end
 				end
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}
@@ -1647,17 +1647,17 @@ local var_0_19 = {
 		{
 			name = "fade_out_title_text",
 			duration = 0.2,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = 1 - math.easeOutCubic(arg_20_3)
 
 				for iter_20_0, iter_20_1 in pairs(arg_20_2) do
 					iter_20_1.alpha_multiplier = var_20_0
 				end
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end
 		}
@@ -1667,7 +1667,7 @@ local var_0_19 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				local var_22_0 = arg_22_2.deus_background_top
 				local var_22_1 = arg_22_2.deus_background_bottom
 				local var_22_2 = arg_22_2.background_top
@@ -1692,10 +1692,10 @@ local var_0_19 = {
 				arg_22_0[var_22_7].local_position[2] = var_22_8[2]
 				arg_22_2.claim_button.alpha_multiplier = 0
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				return
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				return
 			end
 		},
@@ -1703,13 +1703,13 @@ local var_0_19 = {
 			name = "fade_in_blur",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				arg_26_4.blur_progress = math.easeOutCubic(arg_26_3)
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end
 		},
@@ -1717,14 +1717,14 @@ local var_0_19 = {
 			name = "background_fade_in",
 			start_progress = 0.3,
 			end_progress = 0.5,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				if not arg_28_3.played_start_sound then
 					arg_28_3.played_start_sound = true
 
 					WwiseWorld.trigger_event(arg_28_3.wwise_world, "hud_difficulty_increased_start")
 				end
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				local var_29_0 = math.easeInCubic(arg_29_3)
 				local var_29_1 = arg_29_2.background_top
 				local var_29_2 = arg_29_2.background_bottom
@@ -1733,7 +1733,7 @@ local var_0_19 = {
 				var_29_1.style.texture_id.color[1] = var_29_3
 				var_29_2.style.texture_id.color[1] = var_29_3
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end
 		},
@@ -1741,10 +1741,10 @@ local var_0_19 = {
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				local var_32_0 = math.easeOutCubic(arg_32_3)
 				local var_32_1 = arg_32_2.background_top.scenegraph_id
 				local var_32_2 = arg_32_1[var_32_1].size
@@ -1760,7 +1760,7 @@ local var_0_19 = {
 				var_32_6[2] = var_32_5[2] * var_32_7
 				arg_32_2.claim_button.content.alpha_multiplier = arg_32_3
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end
 		},
@@ -1768,10 +1768,10 @@ local var_0_19 = {
 			name = "background_expand",
 			start_progress = 0.4,
 			end_progress = 0.5,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 				local var_35_0 = math.easeOutCubic(arg_35_3)
 				local var_35_1 = arg_35_2.background_top.scenegraph_id
 				local var_35_2 = arg_35_1[var_35_1].position
@@ -1808,7 +1808,7 @@ local var_0_19 = {
 				arg_35_0.background_bottom_glow.size[2] = var_35_16
 				arg_35_0.background_bottom_glow.local_position[2] = var_35_16
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end
 		}
@@ -1818,10 +1818,10 @@ local var_0_19 = {
 			name = "background_collapse",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 				local var_38_0 = math.easeInCubic(arg_38_3)
 				local var_38_1 = 1 - math.easeInCubic(arg_38_3)
 				local var_38_2 = arg_38_2.background_top.scenegraph_id
@@ -1859,7 +1859,7 @@ local var_0_19 = {
 				arg_38_0.background_bottom_glow.size[2] = var_38_17
 				arg_38_0.background_bottom_glow.local_position[2] = var_38_17
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				if not arg_39_3.played_end_sound then
 					arg_39_3.played_end_sound = true
 
@@ -1871,10 +1871,10 @@ local var_0_19 = {
 			name = "fade_out_background",
 			start_progress = 0.15,
 			end_progress = 0.4,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 				local var_41_0 = arg_41_2.background_top
 				local var_41_1 = arg_41_2.background_center
 				local var_41_2 = arg_41_2.background_bottom
@@ -1884,7 +1884,7 @@ local var_0_19 = {
 				var_41_2.style.texture_id.color[1] = var_41_3
 				var_41_1.style.texture_id.color[1] = var_41_3
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end
 		},
@@ -1892,13 +1892,13 @@ local var_0_19 = {
 			name = "fade_out_blur",
 			start_progress = 0.4,
 			end_progress = 0.5,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				arg_44_4.blur_progress = math.easeOutCubic(1 - arg_44_3)
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end
 		}
@@ -1908,7 +1908,7 @@ local var_0_19 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			init = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				local var_46_0 = arg_46_2.background_top
 				local var_46_1 = arg_46_2.background_bottom
 				local var_46_2 = arg_46_2.deus_background_top
@@ -1933,10 +1933,10 @@ local var_0_19 = {
 				arg_46_0[var_46_7].local_position[2] = var_46_8[2]
 				arg_46_3.skip_blur = true
 			end,
-			update = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+			update = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 				return
 			end,
-			on_complete = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			on_complete = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				return
 			end
 		},
@@ -1944,14 +1944,14 @@ local var_0_19 = {
 			name = "background_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			init = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 				if not arg_49_3.played_start_sound then
 					arg_49_3.played_start_sound = true
 
 					WwiseWorld.trigger_event(arg_49_3.wwise_world, "hud_difficulty_increased_start")
 				end
 			end,
-			update = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			update = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 				local var_50_0 = math.easeInCubic(arg_50_3)
 				local var_50_1 = arg_50_2.deus_background_top
 				local var_50_2 = arg_50_2.deus_background_bottom
@@ -1960,7 +1960,7 @@ local var_0_19 = {
 				var_50_1.style.texture_id.color[1] = var_50_3
 				var_50_2.style.texture_id.color[1] = var_50_3
 			end,
-			on_complete = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			on_complete = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 				return
 			end
 		},
@@ -1968,10 +1968,10 @@ local var_0_19 = {
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+			init = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 				return
 			end,
-			update = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			update = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 				local var_53_0 = math.easeOutCubic(arg_53_3)
 				local var_53_1 = arg_53_2.deus_background_top.scenegraph_id
 				local var_53_2 = arg_53_1[var_53_1].size
@@ -1984,7 +1984,7 @@ local var_0_19 = {
 				var_53_3[2] = var_53_2[2] * var_53_7
 				var_53_6[2] = var_53_5[2] * var_53_7
 			end,
-			on_complete = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			on_complete = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 				return
 			end
 		},
@@ -1992,10 +1992,10 @@ local var_0_19 = {
 			name = "background_expand",
 			start_progress = 0.3,
 			end_progress = 0.4,
-			init = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+			init = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 				return
 			end,
-			update = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+			update = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 				local var_56_0 = math.easeOutCubic(arg_56_3)
 				local var_56_1 = arg_56_2.deus_background_top.scenegraph_id
 				local var_56_2 = arg_56_1[var_56_1].position
@@ -2032,7 +2032,7 @@ local var_0_19 = {
 				arg_56_0.deus_background_bottom_glow.size[2] = var_56_16
 				arg_56_0.deus_background_bottom_glow.local_position[2] = var_56_16
 			end,
-			on_complete = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			on_complete = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 				return
 			end
 		}
@@ -2042,10 +2042,10 @@ local var_0_19 = {
 			name = "background_collapse",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+			init = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 				return
 			end,
-			update = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+			update = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 				local var_59_0 = math.easeInCubic(arg_59_3)
 				local var_59_1 = 1 - math.easeInCubic(arg_59_3)
 				local var_59_2 = arg_59_2.deus_background_top.scenegraph_id
@@ -2083,7 +2083,7 @@ local var_0_19 = {
 				arg_59_0.deus_background_bottom_glow.size[2] = var_59_17
 				arg_59_0.deus_background_bottom_glow.local_position[2] = var_59_17
 			end,
-			on_complete = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			on_complete = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 				if not arg_60_3.played_end_sound then
 					arg_60_3.played_end_sound = true
 
@@ -2095,10 +2095,10 @@ local var_0_19 = {
 			name = "fade_out_background",
 			start_progress = 0.15,
 			end_progress = 0.4,
-			init = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+			init = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 				return
 			end,
-			update = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+			update = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 				local var_62_0 = arg_62_2.deus_background_top
 				local var_62_1 = arg_62_2.deus_background_bottom
 				local var_62_2 = arg_62_2.background_center
@@ -2108,7 +2108,7 @@ local var_0_19 = {
 				var_62_1.style.texture_id.color[1] = var_62_3
 				var_62_2.style.texture_id.color[1] = var_62_3
 			end,
-			on_complete = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			on_complete = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 				return
 			end
 		}

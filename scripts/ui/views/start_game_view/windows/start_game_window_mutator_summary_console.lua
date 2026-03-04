@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowMutatorSummaryConsole = class(StartGameWindowMutatorSummaryConsole)
 StartGameWindowMutatorSummaryConsole.NAME = "StartGameWindowMutatorSummaryConsole"
 
-function StartGameWindowMutatorSummaryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowMutatorSummaryConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorSummaryConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -35,7 +35,7 @@ function StartGameWindowMutatorSummaryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2
 	arg_1_0.previous_selected_backend_id = arg_1_0.parent:get_selected_heroic_deed_backend_id()
 end
 
-function StartGameWindowMutatorSummaryConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowMutatorSummaryConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0.render_settings
 	}
@@ -45,7 +45,7 @@ function StartGameWindowMutatorSummaryConsole._start_transition_animation(arg_2_
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowMutatorSummaryConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowMutatorSummaryConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -76,7 +76,7 @@ function StartGameWindowMutatorSummaryConsole.create_ui_elements(arg_3_0, arg_3_
 	var_3_1.game_option_placeholder.content.visible = true
 end
 
-function StartGameWindowMutatorSummaryConsole.on_exit(arg_4_0, arg_4_1)
+StartGameWindowMutatorSummaryConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorSummaryConsole")
 
 	arg_4_0.ui_animator = nil
@@ -86,17 +86,17 @@ function StartGameWindowMutatorSummaryConsole.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowMutatorSummaryConsole.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowMutatorSummaryConsole.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_animations(arg_5_1)
 	arg_5_0:_update_selected_item_backend_id()
 	arg_5_0:draw(arg_5_1)
 end
 
-function StartGameWindowMutatorSummaryConsole.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowMutatorSummaryConsole.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function StartGameWindowMutatorSummaryConsole._update_animations(arg_7_0, arg_7_1)
+StartGameWindowMutatorSummaryConsole._update_animations = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.ui_animator
 
 	var_7_0:update(arg_7_1)
@@ -112,7 +112,7 @@ function StartGameWindowMutatorSummaryConsole._update_animations(arg_7_0, arg_7_
 	end
 end
 
-function StartGameWindowMutatorSummaryConsole._update_selected_item_backend_id(arg_8_0)
+StartGameWindowMutatorSummaryConsole._update_selected_item_backend_id = function (arg_8_0)
 	local var_8_0 = arg_8_0.parent:get_selected_heroic_deed_backend_id()
 
 	if var_8_0 ~= arg_8_0._selected_backend_id then
@@ -122,7 +122,7 @@ function StartGameWindowMutatorSummaryConsole._update_selected_item_backend_id(a
 	end
 end
 
-function StartGameWindowMutatorSummaryConsole._present_item_by_backend_id(arg_9_0, arg_9_1)
+StartGameWindowMutatorSummaryConsole._present_item_by_backend_id = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._presenting_item
 
 	arg_9_0._presenting_item = false
@@ -147,7 +147,7 @@ function StartGameWindowMutatorSummaryConsole._present_item_by_backend_id(arg_9_
 	end
 end
 
-function StartGameWindowMutatorSummaryConsole.draw(arg_10_0, arg_10_1)
+StartGameWindowMutatorSummaryConsole.draw = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._ui_top_renderer
 	local var_10_1 = arg_10_0.ui_scenegraph
 	local var_10_2 = arg_10_0.parent:window_input_service()

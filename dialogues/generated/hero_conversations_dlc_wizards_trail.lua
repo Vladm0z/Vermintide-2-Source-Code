@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_wizards_trail.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "nik_wizard_trail_conversation_five_a_01",

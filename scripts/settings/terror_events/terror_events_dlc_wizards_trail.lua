@@ -120,7 +120,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("skaven_poison_wind_globadier", "skaven_ratling_gunner", "skaven_warpfire_thrower") < 2
 			end
 		},
@@ -207,7 +207,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_2() < 8
 			end
 		},
@@ -241,7 +241,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_2() < 8
 			end
 		},
@@ -294,7 +294,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_2() < 8
 			end
 		},
@@ -347,7 +347,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_2() < 8
 			end
 		},
@@ -436,7 +436,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_2() < 8
 			end
 		},
@@ -479,7 +479,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_2() < 6
 			end
 		},
@@ -556,7 +556,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_2() < 4
 			end
 		},
@@ -573,7 +573,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_2() < 4
 			end
 		},
@@ -590,7 +590,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_10_0)
+			condition = function (arg_10_0)
 				return var_0_2() < 4
 			end
 		},
@@ -651,7 +651,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_11_0)
+			condition = function (arg_11_0)
 				return var_0_2() < 8
 			end
 		},
@@ -700,7 +700,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_12_0)
+			condition = function (arg_12_0)
 				return var_0_2() < 8
 			end
 		},
@@ -726,7 +726,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_13_0)
+			condition = function (arg_13_0)
 				return var_0_2() < 6
 			end
 		},
@@ -766,7 +766,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_14_0)
+			condition = function (arg_14_0)
 				return var_0_2() < 6
 			end
 		},
@@ -806,7 +806,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_15_0)
+			condition = function (arg_15_0)
 				return var_0_2() < 6
 			end
 		},
@@ -846,7 +846,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_16_0)
+			condition = function (arg_16_0)
 				return var_0_2() < 6
 			end
 		},
@@ -907,7 +907,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_17_0)
+			condition = function (arg_17_0)
 				return var_0_2() < 8
 			end
 		},
@@ -943,7 +943,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_18_0)
+			condition = function (arg_18_0)
 				return var_0_2() < 8
 			end
 		},
@@ -975,7 +975,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_19_0)
+			condition = function (arg_19_0)
 				return var_0_2() < 8
 			end
 		},
@@ -1007,7 +1007,7 @@ local var_0_4 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_20_0)
+			condition = function (arg_20_0)
 				return var_0_2() < 8
 			end
 		},

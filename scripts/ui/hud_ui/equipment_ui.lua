@@ -44,7 +44,7 @@ local function var_0_11()
 	return var_2_1 and var_2_1:name() == "dark_pact"
 end
 
-function EquipmentUI.init(arg_3_0, arg_3_1, arg_3_2)
+EquipmentUI.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._parent = arg_3_1
 	arg_3_0.ui_renderer = arg_3_2.ui_renderer
 	arg_3_0.ingame_ui = arg_3_2.ingame_ui
@@ -72,7 +72,7 @@ function EquipmentUI.init(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_create_ui_elements()
 end
 
-function EquipmentUI._create_ui_elements(arg_4_0)
+EquipmentUI._create_ui_elements = function (arg_4_0)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_4_0 = {}
@@ -141,7 +141,7 @@ function EquipmentUI._create_ui_elements(arg_4_0)
 	arg_4_0._num_added_items = 0
 end
 
-function EquipmentUI.event_input_changed(arg_5_0)
+EquipmentUI.event_input_changed = function (arg_5_0)
 	local var_5_0 = InventorySettings.slots
 	local var_5_1 = #var_5_0
 
@@ -161,7 +161,7 @@ function EquipmentUI.event_input_changed(arg_5_0)
 	arg_5_0:set_dirty()
 end
 
-function EquipmentUI.on_spectator_target_changed(arg_6_0, arg_6_1)
+EquipmentUI.on_spectator_target_changed = function (arg_6_0, arg_6_1)
 	arg_6_0._spectated_player_unit = arg_6_1
 	arg_6_0._spectated_player = Managers.player:owner(arg_6_1)
 	arg_6_0._is_spectator = true
@@ -173,7 +173,7 @@ function EquipmentUI.on_spectator_target_changed(arg_6_0, arg_6_1)
 	end
 end
 
-function EquipmentUI.event_swap_equipment_from_storage(arg_7_0, arg_7_1, arg_7_2)
+EquipmentUI.event_swap_equipment_from_storage = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1 ~= "slot_grenade" then
 		return
 	end
@@ -210,7 +210,7 @@ function EquipmentUI.event_swap_equipment_from_storage(arg_7_0, arg_7_1, arg_7_2
 	end
 end
 
-function EquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
+EquipmentUI._set_slot_input = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = var_0_7[arg_8_2]
 	local var_8_1, var_8_2, var_8_3 = arg_8_0:_get_input_texture_data(var_8_0)
 
@@ -227,7 +227,7 @@ function EquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_1.content.input_action = var_8_0
 end
 
-function EquipmentUI._get_input_texture_data(arg_9_0, arg_9_1)
+EquipmentUI._get_input_texture_data = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.input_manager
 	local var_9_1 = var_9_0:get_service("Player")
 	local var_9_2 = var_9_0:is_device_active("gamepad")
@@ -267,7 +267,7 @@ function EquipmentUI._get_input_texture_data(arg_9_0, arg_9_1)
 	return nil, ""
 end
 
-function EquipmentUI._update_widgets(arg_10_0)
+EquipmentUI._update_widgets = function (arg_10_0)
 	local var_10_0 = arg_10_0._slot_widgets
 
 	for iter_10_0, iter_10_1 in ipairs(var_10_0) do
@@ -277,7 +277,7 @@ function EquipmentUI._update_widgets(arg_10_0)
 	arg_10_0:set_dirty()
 end
 
-function EquipmentUI._get_wield_scroll_input(arg_11_0)
+EquipmentUI._get_wield_scroll_input = function (arg_11_0)
 	local var_11_0 = arg_11_0.player_manager
 	local var_11_1 = arg_11_0._is_spectator and arg_11_0._spectated_player or arg_11_0.player
 	local var_11_2 = var_11_1.player_unit
@@ -291,7 +291,7 @@ function EquipmentUI._get_wield_scroll_input(arg_11_0)
 	return ScriptUnit.has_extension(var_11_2, "input_system"):get_last_scroll_value()
 end
 
-function EquipmentUI._set_wielded_item(arg_12_0, arg_12_1)
+EquipmentUI._set_wielded_item = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._added_items
 
 	for iter_12_0, iter_12_1 in ipairs(var_12_0) do
@@ -321,7 +321,7 @@ end
 local var_0_12 = {}
 local var_0_13 = {}
 
-function EquipmentUI._sync_player_equipment(arg_13_0)
+EquipmentUI._sync_player_equipment = function (arg_13_0)
 	local var_13_0 = arg_13_0._is_spectator and arg_13_0._spectated_player or arg_13_0.player
 	local var_13_1 = var_13_0.player_unit
 
@@ -358,7 +358,7 @@ function EquipmentUI._sync_player_equipment(arg_13_0)
 		local var_13_15 = var_13_8[iter_13_0].name
 
 		if not var_0_8[var_13_15] or var_13_15 == "slot_career_skill_weapon" and not var_13_13 then
-			-- block empty
+			-- Nothing
 		else
 			local var_13_16 = var_13_6[var_13_15]
 			local var_13_17 = var_13_16 and var_13_16.item_data
@@ -597,7 +597,7 @@ function EquipmentUI._sync_player_equipment(arg_13_0)
 	end
 end
 
-function EquipmentUI._update_ammo_count(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+EquipmentUI._update_ammo_count = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = BackendUtils.get_item_template(arg_14_1)
 	local var_14_1 = arg_14_0._ammo_widgets_by_name
 	local var_14_2 = false
@@ -668,7 +668,7 @@ function EquipmentUI._update_ammo_count(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function EquipmentUI._animate_ammo_counter(arg_15_0, arg_15_1)
+EquipmentUI._animate_ammo_counter = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._ammo_counter_fade_delay
 
 	if var_15_0 then
@@ -703,7 +703,7 @@ function EquipmentUI._animate_ammo_counter(arg_15_0, arg_15_1)
 	return true
 end
 
-function EquipmentUI._set_ammo_counter_alpha(arg_16_0, arg_16_1)
+EquipmentUI._set_ammo_counter_alpha = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._ammo_widgets_by_name
 	local var_16_1 = var_16_0.ammo_text_clip
 
@@ -725,7 +725,7 @@ function EquipmentUI._set_ammo_counter_alpha(arg_16_0, arg_16_1)
 	arg_16_0:set_dirty()
 end
 
-function EquipmentUI._set_ammo_counter_color(arg_17_0, arg_17_1)
+EquipmentUI._set_ammo_counter_color = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ammo_widgets_by_name.ammo_text_clip
 	local var_17_1 = var_17_0.style.text.text_color
 
@@ -755,7 +755,7 @@ function EquipmentUI._set_ammo_counter_color(arg_17_0, arg_17_1)
 	arg_17_0:set_dirty()
 end
 
-function EquipmentUI._set_ammo_text_focus(arg_18_0, arg_18_1)
+EquipmentUI._set_ammo_text_focus = function (arg_18_0, arg_18_1)
 	if arg_18_0._draw_overheat then
 		if arg_18_0._overcharge_fraction ~= nil then
 			local var_18_0 = 1
@@ -845,7 +845,7 @@ function EquipmentUI._set_ammo_text_focus(arg_18_0, arg_18_1)
 	end
 end
 
-function EquipmentUI._get_ammunition_count(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+EquipmentUI._get_ammunition_count = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0
 
 	if not arg_19_3.ammo_data then
@@ -869,7 +869,7 @@ function EquipmentUI._get_ammunition_count(arg_19_0, arg_19_1, arg_19_2, arg_19_
 	return var_19_2, var_19_3, var_19_4
 end
 
-function EquipmentUI._get_overcharge_amount(arg_20_0, arg_20_1)
+EquipmentUI._get_overcharge_amount = function (arg_20_0, arg_20_1)
 	local var_20_0 = ScriptUnit.extension(arg_20_1, "overcharge_system")
 	local var_20_1 = var_20_0:overcharge_fraction()
 	local var_20_2 = var_20_0:threshold_fraction()
@@ -878,7 +878,7 @@ function EquipmentUI._get_overcharge_amount(arg_20_0, arg_20_1)
 	return true, var_20_1, var_20_2, var_20_3
 end
 
-function EquipmentUI._add_animation(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+EquipmentUI._add_animation = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_0._animations
 	local var_21_1 = UISettings.inventory_hud.equip_animation_duration
 	local var_21_2 = var_21_0[arg_21_1]
@@ -898,7 +898,7 @@ function EquipmentUI._add_animation(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_
 	end
 end
 
-function EquipmentUI._update_animations(arg_22_0, arg_22_1, arg_22_2)
+EquipmentUI._update_animations = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._time_fade_storage_slots
 
 	if var_22_0 then
@@ -939,7 +939,7 @@ function EquipmentUI._update_animations(arg_22_0, arg_22_1, arg_22_2)
 	return var_22_6
 end
 
-function EquipmentUI._animate_slot_wield(arg_23_0, arg_23_1, arg_23_2)
+EquipmentUI._animate_slot_wield = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_1.widget
 	local var_23_1 = arg_23_1.total_time
 	local var_23_2 = arg_23_1.time + arg_23_2
@@ -953,7 +953,7 @@ function EquipmentUI._animate_slot_wield(arg_23_0, arg_23_1, arg_23_2)
 	return var_23_3 < 1 and arg_23_1 or nil
 end
 
-function EquipmentUI._animate_slot_unwield(arg_24_0, arg_24_1, arg_24_2)
+EquipmentUI._animate_slot_unwield = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_1.widget
 	local var_24_1 = arg_24_1.total_time
 	local var_24_2 = arg_24_1.time + arg_24_2
@@ -967,7 +967,7 @@ function EquipmentUI._animate_slot_unwield(arg_24_0, arg_24_1, arg_24_2)
 	return var_24_3 < 1 and arg_24_1 or nil
 end
 
-function EquipmentUI._animate_slot_equip(arg_25_0, arg_25_1, arg_25_2)
+EquipmentUI._animate_slot_equip = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.style
 	local var_25_1 = arg_25_1.total_time
 	local var_25_2 = arg_25_1.time + arg_25_2
@@ -981,7 +981,7 @@ function EquipmentUI._animate_slot_equip(arg_25_0, arg_25_1, arg_25_2)
 	return var_25_3 < 1 and arg_25_1 or nil
 end
 
-function EquipmentUI._add_item(arg_26_0, arg_26_1, arg_26_2)
+EquipmentUI._add_item = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._num_added_items or 0
 	local var_26_1 = arg_26_2 ~= nil
 
@@ -1054,7 +1054,7 @@ function EquipmentUI._add_item(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function EquipmentUI._remove_item(arg_27_0, arg_27_1)
+EquipmentUI._remove_item = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._num_added_items or 0
 
 	if var_27_0 <= 0 then
@@ -1094,7 +1094,7 @@ function EquipmentUI._remove_item(arg_27_0, arg_27_1)
 	end
 end
 
-function EquipmentUI.set_position(arg_28_0, arg_28_1, arg_28_2)
+EquipmentUI.set_position = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.ui_scenegraph.pivot.local_position
 
 	var_28_0[1] = arg_28_1
@@ -1111,7 +1111,7 @@ function EquipmentUI.set_position(arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0:set_dirty()
 end
 
-function EquipmentUI.destroy(arg_29_0)
+EquipmentUI.destroy = function (arg_29_0)
 	local var_29_0 = Managers.state.event
 
 	var_29_0:unregister("input_changed", arg_29_0)
@@ -1124,13 +1124,13 @@ function EquipmentUI.destroy(arg_29_0)
 	print("[EquipmentUI] - Destroy")
 end
 
-function EquipmentUI.set_visible(arg_30_0, arg_30_1)
+EquipmentUI.set_visible = function (arg_30_0, arg_30_1)
 	arg_30_0._is_visible = arg_30_1
 
 	arg_30_0:_set_elements_visible(arg_30_1)
 end
 
-function EquipmentUI._set_elements_visible(arg_31_0, arg_31_1)
+EquipmentUI._set_elements_visible = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0.ui_renderer
 
 	for iter_31_0, iter_31_1 in ipairs(arg_31_0._widgets) do
@@ -1165,7 +1165,7 @@ local var_0_15 = {
 	drag_scenegraph_id = "ammo_background"
 }
 
-function EquipmentUI.update(arg_32_0, arg_32_1, arg_32_2)
+EquipmentUI.update = function (arg_32_0, arg_32_1, arg_32_2)
 	if not arg_32_0._is_visible then
 		return
 	end
@@ -1206,13 +1206,13 @@ function EquipmentUI.update(arg_32_0, arg_32_1, arg_32_2)
 	arg_32_0._ui_animator:update(arg_32_1)
 end
 
-function EquipmentUI._handle_resolution_modified(arg_33_0)
+EquipmentUI._handle_resolution_modified = function (arg_33_0)
 	if RESOLUTION_LOOKUP.modified then
 		arg_33_0:_on_resolution_modified()
 	end
 end
 
-function EquipmentUI._on_resolution_modified(arg_34_0)
+EquipmentUI._on_resolution_modified = function (arg_34_0)
 	for iter_34_0, iter_34_1 in ipairs(arg_34_0._widgets) do
 		arg_34_0:_set_widget_dirty(iter_34_1)
 	end
@@ -1228,7 +1228,7 @@ function EquipmentUI._on_resolution_modified(arg_34_0)
 	arg_34_0:set_dirty()
 end
 
-function EquipmentUI._handle_gamepad(arg_35_0)
+EquipmentUI._handle_gamepad = function (arg_35_0)
 	if (Managers.input:is_device_active("gamepad") or not IS_WINDOWS or UISettings.use_gamepad_hud_layout == "always") and UISettings.use_gamepad_hud_layout ~= "never" then
 		if arg_35_0._retained_elements_visible then
 			arg_35_0:_set_elements_visible(false)
@@ -1245,7 +1245,7 @@ function EquipmentUI._handle_gamepad(arg_35_0)
 	end
 end
 
-function EquipmentUI.draw(arg_36_0, arg_36_1)
+EquipmentUI.draw = function (arg_36_0, arg_36_1)
 	if not arg_36_0._is_visible then
 		return
 	end
@@ -1294,7 +1294,7 @@ function EquipmentUI.draw(arg_36_0, arg_36_1)
 	arg_36_0._ammo_dirty = false
 end
 
-function EquipmentUI._set_color(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+EquipmentUI._set_color = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	if not arg_37_3 then
 		arg_37_1[1] = arg_37_2[1]
 	end
@@ -1304,7 +1304,7 @@ function EquipmentUI._set_color(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	arg_37_1[4] = arg_37_2[4]
 end
 
-function EquipmentUI.set_dirty(arg_38_0)
+EquipmentUI.set_dirty = function (arg_38_0)
 	arg_38_0._dirty = true
 
 	if arg_38_0.cleanui then
@@ -1312,7 +1312,7 @@ function EquipmentUI.set_dirty(arg_38_0)
 	end
 end
 
-function EquipmentUI._set_widget_dirty(arg_39_0, arg_39_1)
+EquipmentUI._set_widget_dirty = function (arg_39_0, arg_39_1)
 	arg_39_1.element.dirty = true
 	arg_39_0._dirty = true
 
@@ -1321,15 +1321,15 @@ function EquipmentUI._set_widget_dirty(arg_39_0, arg_39_1)
 	end
 end
 
-function EquipmentUI.on_gamepad_activated(arg_40_0)
+EquipmentUI.on_gamepad_activated = function (arg_40_0)
 	arg_40_0:_update_widgets()
 end
 
-function EquipmentUI.on_gamepad_deactivated(arg_41_0)
+EquipmentUI.on_gamepad_deactivated = function (arg_41_0)
 	arg_41_0:_update_widgets()
 end
 
-function EquipmentUI._set_overheat_fraction(arg_42_0, arg_42_1)
+EquipmentUI._set_overheat_fraction = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._widgets_by_name.overcharge
 
 	var_42_0.content.texture_id.uvs[2][1] = arg_42_1
@@ -1344,7 +1344,7 @@ function EquipmentUI._set_overheat_fraction(arg_42_0, arg_42_1)
 	arg_42_0:set_dirty()
 end
 
-function EquipmentUI._show_overheat_meter(arg_43_0, arg_43_1)
+EquipmentUI._show_overheat_meter = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._widgets_by_name
 	local var_43_1 = arg_43_0._ammo_widgets_by_name
 
@@ -1357,13 +1357,13 @@ function EquipmentUI._show_overheat_meter(arg_43_0, arg_43_1)
 	arg_43_0:set_dirty()
 end
 
-function EquipmentUI._set_widget_visibility(arg_44_0, arg_44_1, arg_44_2)
+EquipmentUI._set_widget_visibility = function (arg_44_0, arg_44_1, arg_44_2)
 	arg_44_1.content.visible = arg_44_2
 
 	arg_44_0:_set_widget_dirty(arg_44_1)
 end
 
-function EquipmentUI.set_alpha(arg_45_0, arg_45_1)
+EquipmentUI.set_alpha = function (arg_45_0, arg_45_1)
 	arg_45_0.render_settings.alpha_multiplier = arg_45_1
 
 	for iter_45_0, iter_45_1 in pairs(arg_45_0._widgets) do
@@ -1385,7 +1385,7 @@ function EquipmentUI.set_alpha(arg_45_0, arg_45_1)
 	arg_45_0:set_dirty()
 end
 
-function EquipmentUI.set_ammo_alpha(arg_46_0, arg_46_1)
+EquipmentUI.set_ammo_alpha = function (arg_46_0, arg_46_1)
 	arg_46_0.ammo_alpha_multiplier = arg_46_1
 
 	for iter_46_0, iter_46_1 in pairs(arg_46_0._ammo_widgets) do
@@ -1395,7 +1395,7 @@ function EquipmentUI.set_ammo_alpha(arg_46_0, arg_46_1)
 	arg_46_0:set_dirty()
 end
 
-function EquipmentUI.set_panel_alpha(arg_47_0, arg_47_1)
+EquipmentUI.set_panel_alpha = function (arg_47_0, arg_47_1)
 	arg_47_0.panel_alpha_multiplier = arg_47_1
 
 	for iter_47_0, iter_47_1 in pairs(arg_47_0._widgets) do
@@ -1413,7 +1413,7 @@ function EquipmentUI.set_panel_alpha(arg_47_0, arg_47_1)
 	arg_47_0:set_dirty()
 end
 
-function EquipmentUI._apply_crosshair_position(arg_48_0, arg_48_1, arg_48_2)
+EquipmentUI._apply_crosshair_position = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = "screen_bottom_pivot"
 	local var_48_1 = arg_48_0.ui_scenegraph[var_48_0].local_position
 	local var_48_2 = false
@@ -1439,7 +1439,7 @@ function EquipmentUI._apply_crosshair_position(arg_48_0, arg_48_1, arg_48_2)
 	return var_48_2
 end
 
-function EquipmentUI._show_hold_to_reload(arg_49_0, arg_49_1)
+EquipmentUI._show_hold_to_reload = function (arg_49_0, arg_49_1)
 	local var_49_0 = (arg_49_0._is_spectator and arg_49_0._spectated_player or arg_49_0.player).player_unit
 
 	if not var_49_0 then
@@ -1494,7 +1494,7 @@ function EquipmentUI._show_hold_to_reload(arg_49_0, arg_49_1)
 	arg_49_0:_set_widget_dirty(var_49_12)
 end
 
-function EquipmentUI._update_reload_ui_state(arg_50_0, arg_50_1, arg_50_2)
+EquipmentUI._update_reload_ui_state = function (arg_50_0, arg_50_1, arg_50_2)
 	if not arg_50_0._ammo_widgets_by_name.reload_tip_text then
 		return
 	end

@@ -6,7 +6,7 @@ require("scripts/managers/backend/backend_utils")
 PlayerUnitAttachmentExtension = class(PlayerUnitAttachmentExtension)
 script_data.attachment_debug = script_data.attachment_debug or Development.parameter("attachment_debug")
 
-function PlayerUnitAttachmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitAttachmentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._profile = arg_1_3.profile
@@ -20,7 +20,7 @@ function PlayerUnitAttachmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._synced_slot_buffs = {}
 end
 
-function PlayerUnitAttachmentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerUnitAttachmentExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
 	arg_2_0.career_extension = ScriptUnit.extension(arg_2_2, "career_system")
 	arg_2_0._cosmetic_extension = ScriptUnit.extension(arg_2_2, "cosmetic_system")
@@ -51,7 +51,7 @@ function PlayerUnitAttachmentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_
 	arg_2_0:show_attachments(false)
 end
 
-function PlayerUnitAttachmentExtension.game_object_initialized(arg_3_0, arg_3_1, arg_3_2)
+PlayerUnitAttachmentExtension.game_object_initialized = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._attachments.slots
 	local var_3_1 = Managers.state.network
 	local var_3_2 = arg_3_0._is_server
@@ -80,7 +80,7 @@ function PlayerUnitAttachmentExtension.game_object_initialized(arg_3_0, arg_3_1,
 	end
 end
 
-function PlayerUnitAttachmentExtension.destroy(arg_4_0)
+PlayerUnitAttachmentExtension.destroy = function (arg_4_0)
 	local var_4_0 = arg_4_0._attachments.slots
 
 	for iter_4_0, iter_4_1 in pairs(var_4_0) do
@@ -88,15 +88,15 @@ function PlayerUnitAttachmentExtension.destroy(arg_4_0)
 	end
 end
 
-function PlayerUnitAttachmentExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerUnitAttachmentExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_0:update_resync_loadout()
 end
 
-function PlayerUnitAttachmentExtension.hot_join_sync(arg_6_0, arg_6_1)
+PlayerUnitAttachmentExtension.hot_join_sync = function (arg_6_0, arg_6_1)
 	AttachmentUtils.hot_join_sync(arg_6_1, arg_6_0._unit, arg_6_0._attachments.slots, arg_6_0._synced_slot_buffs)
 end
 
-function PlayerUnitAttachmentExtension.create_attachment(arg_7_0, arg_7_1, arg_7_2)
+PlayerUnitAttachmentExtension.create_attachment = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._attachments
 	local var_7_1 = arg_7_0._unit
 	local var_7_2 = BackendUtils.get_item_template(arg_7_2)
@@ -150,7 +150,7 @@ function PlayerUnitAttachmentExtension.create_attachment(arg_7_0, arg_7_1, arg_7
 	LoadoutUtils.sync_loadout_slot(arg_7_0._player, arg_7_1, var_7_14)
 end
 
-function PlayerUnitAttachmentExtension.remove_attachment(arg_8_0, arg_8_1)
+PlayerUnitAttachmentExtension.remove_attachment = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._attachments.slots[arg_8_1]
 
 	if var_8_0 == nil then
@@ -175,15 +175,15 @@ function PlayerUnitAttachmentExtension.remove_attachment(arg_8_0, arg_8_1)
 	end
 end
 
-function PlayerUnitAttachmentExtension.attachments(arg_9_0)
+PlayerUnitAttachmentExtension.attachments = function (arg_9_0)
 	return arg_9_0._attachments
 end
 
-function PlayerUnitAttachmentExtension.get_slot_data(arg_10_0, arg_10_1)
+PlayerUnitAttachmentExtension.get_slot_data = function (arg_10_0, arg_10_1)
 	return arg_10_0._attachments.slots[arg_10_1]
 end
 
-function PlayerUnitAttachmentExtension._show_attachment(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayerUnitAttachmentExtension._show_attachment = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_3
 
 	if arg_11_0._cosmetic_extension:always_hide_attachment_slot(arg_11_1) then
@@ -211,7 +211,7 @@ function PlayerUnitAttachmentExtension._show_attachment(arg_11_0, arg_11_1, arg_
 	end
 end
 
-function PlayerUnitAttachmentExtension.show_attachments(arg_12_0, arg_12_1)
+PlayerUnitAttachmentExtension.show_attachments = function (arg_12_0, arg_12_1)
 	if arg_12_0._show_attachments ~= arg_12_1 then
 		local var_12_0 = arg_12_0._attachments.slots
 
@@ -229,7 +229,7 @@ function PlayerUnitAttachmentExtension.show_attachments(arg_12_0, arg_12_1)
 	end
 end
 
-function PlayerUnitAttachmentExtension.create_attachment_in_slot(arg_13_0, arg_13_1, arg_13_2)
+PlayerUnitAttachmentExtension.create_attachment_in_slot = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = BackendUtils.get_item_from_masterlist(arg_13_2)
 
 	if not var_13_0 then
@@ -255,7 +255,7 @@ function PlayerUnitAttachmentExtension.create_attachment_in_slot(arg_13_0, arg_1
 	arg_13_0.resync_loadout_needed = true
 end
 
-function PlayerUnitAttachmentExtension.update_resync_loadout(arg_14_0)
+PlayerUnitAttachmentExtension.update_resync_loadout = function (arg_14_0)
 	local var_14_0 = arg_14_0._item_to_spawn
 
 	if not var_14_0 then
@@ -282,7 +282,7 @@ function PlayerUnitAttachmentExtension.update_resync_loadout(arg_14_0)
 	end
 end
 
-function PlayerUnitAttachmentExtension.spawn_resynced_loadout(arg_15_0, arg_15_1)
+PlayerUnitAttachmentExtension.spawn_resynced_loadout = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.slot_id
 	local var_15_1 = arg_15_1.item_data
 	local var_15_2 = Managers.state.network
@@ -311,7 +311,7 @@ function PlayerUnitAttachmentExtension.spawn_resynced_loadout(arg_15_0, arg_15_1
 	arg_15_0:create_attachment(var_15_0, var_15_1)
 end
 
-function PlayerUnitAttachmentExtension._send_rpc_add_attachment_buffs(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+PlayerUnitAttachmentExtension._send_rpc_add_attachment_buffs = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = BuffUtils.buffs_to_rpc_params(arg_16_3)
 	local var_16_1, var_16_2, var_16_3, var_16_4 = unpack(var_16_0)
 
@@ -336,7 +336,7 @@ local var_0_0 = {
 	both = {}
 }
 
-function PlayerUnitAttachmentExtension._get_property_and_trait_buffs(arg_17_0, arg_17_1)
+PlayerUnitAttachmentExtension._get_property_and_trait_buffs = function (arg_17_0, arg_17_1)
 	local var_17_0 = Managers.backend:get_interface("items")
 
 	table.clear(var_0_0.client)
@@ -348,7 +348,7 @@ end
 
 local var_0_1 = {}
 
-function PlayerUnitAttachmentExtension._apply_buffs(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+PlayerUnitAttachmentExtension._apply_buffs = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_0.buff_extension
 	local var_18_1 = arg_18_0.current_item_buffs[arg_18_3] or {}
 	local var_18_2 = 1
@@ -374,7 +374,7 @@ function PlayerUnitAttachmentExtension._apply_buffs(arg_18_0, arg_18_1, arg_18_2
 	arg_18_0.current_item_buffs[arg_18_3] = var_18_1
 end
 
-function PlayerUnitAttachmentExtension._remove_buffs(arg_19_0, arg_19_1)
+PlayerUnitAttachmentExtension._remove_buffs = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.buff_extension
 	local var_19_1 = arg_19_0.current_item_buffs[arg_19_1]
 

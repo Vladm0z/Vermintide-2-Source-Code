@@ -6,7 +6,7 @@ local var_0_0 = 30
 local var_0_1 = 3
 local var_0_2 = Unit.alive
 
-function BigBoyDestructibleExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BigBoyDestructibleExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.is_server = Managers.player.is_server
@@ -26,17 +26,17 @@ function BigBoyDestructibleExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.num_attackers = 0
 end
 
-function BigBoyDestructibleExtension.extensions_ready(arg_2_0)
+BigBoyDestructibleExtension.extensions_ready = function (arg_2_0)
 	arg_2_0.health_extension = ScriptUnit.extension(arg_2_0.unit, "health_system")
 end
 
-function BigBoyDestructibleExtension.animation_played(arg_3_0, arg_3_1, arg_3_2)
+BigBoyDestructibleExtension.animation_played = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_1 / var_0_0 / arg_3_2
 
 	arg_3_0.animation_stop_time = Managers.time:time("game") + var_3_0
 end
 
-function BigBoyDestructibleExtension.update_nav_obstacles(arg_4_0)
+BigBoyDestructibleExtension.update_nav_obstacles = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_state
 	local var_4_1 = arg_4_0.state_to_nav_obstacle_map
 
@@ -60,7 +60,7 @@ function BigBoyDestructibleExtension.update_nav_obstacles(arg_4_0)
 	arg_4_0.frames_since_obstacle_update = 0
 end
 
-function BigBoyDestructibleExtension._get_animation_flow_event(arg_5_0, arg_5_1, arg_5_2)
+BigBoyDestructibleExtension._get_animation_flow_event = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.animation_flow_events[arg_5_1][arg_5_2]
 
 	fassert(var_5_0, "Door animation event from %s to %s unavailable", arg_5_1, arg_5_2)
@@ -68,7 +68,7 @@ function BigBoyDestructibleExtension._get_animation_flow_event(arg_5_0, arg_5_1,
 	return var_5_0
 end
 
-function BigBoyDestructibleExtension.update_nav_graphs(arg_6_0)
+BigBoyDestructibleExtension.update_nav_graphs = function (arg_6_0)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = Managers.state.entity:system("nav_graph_system")
 
@@ -79,7 +79,7 @@ function BigBoyDestructibleExtension.update_nav_graphs(arg_6_0)
 	end
 end
 
-function BigBoyDestructibleExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BigBoyDestructibleExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.frames_since_obstacle_update
 
 	if var_7_0 then
@@ -114,7 +114,7 @@ function BigBoyDestructibleExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, 
 	end
 end
 
-function BigBoyDestructibleExtension.register_breed_failed_leaving_smart_object(arg_8_0, arg_8_1)
+BigBoyDestructibleExtension.register_breed_failed_leaving_smart_object = function (arg_8_0, arg_8_1)
 	if arg_8_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
@@ -122,7 +122,7 @@ function BigBoyDestructibleExtension.register_breed_failed_leaving_smart_object(
 	arg_8_0.breeds_failed_leaving_smart_object[arg_8_1] = true
 end
 
-function BigBoyDestructibleExtension.handle_breeds_failed_leaving_smart_object(arg_9_0)
+BigBoyDestructibleExtension.handle_breeds_failed_leaving_smart_object = function (arg_9_0)
 	if arg_9_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
@@ -140,7 +140,7 @@ function BigBoyDestructibleExtension.handle_breeds_failed_leaving_smart_object(a
 	arg_9_0.breeds_failed_leaving_smart_object = {}
 end
 
-function BigBoyDestructibleExtension.destroy(arg_10_0)
+BigBoyDestructibleExtension.destroy = function (arg_10_0)
 	arg_10_0:destroy_box_obstacles()
 
 	arg_10_0.unit = nil
@@ -149,7 +149,7 @@ function BigBoyDestructibleExtension.destroy(arg_10_0)
 	arg_10_0.breeds_failed_leaving_smart_object = nil
 end
 
-function BigBoyDestructibleExtension.destroy_box_obstacles(arg_11_0)
+BigBoyDestructibleExtension.destroy_box_obstacles = function (arg_11_0)
 	if arg_11_0.state_to_nav_obstacle_map then
 		for iter_11_0, iter_11_1 in pairs(arg_11_0.state_to_nav_obstacle_map) do
 			GwNavBoxObstacle.destroy(iter_11_1)
@@ -161,10 +161,10 @@ function BigBoyDestructibleExtension.destroy_box_obstacles(arg_11_0)
 	arg_11_0.frames_since_obstacle_update = 0
 end
 
-function BigBoyDestructibleExtension.is_open(arg_12_0)
+BigBoyDestructibleExtension.is_open = function (arg_12_0)
 	return arg_12_0.dead
 end
 
-function BigBoyDestructibleExtension.is_opening(arg_13_0)
+BigBoyDestructibleExtension.is_opening = function (arg_13_0)
 	return false
 end

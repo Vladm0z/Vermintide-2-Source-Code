@@ -2,7 +2,7 @@
 
 WeaponUtils = WeaponUtils or {}
 
-function WeaponUtils.add_bot_meta_data_chain_actions(arg_1_0, arg_1_1)
+WeaponUtils.add_bot_meta_data_chain_actions = function (arg_1_0, arg_1_1)
 	for iter_1_0, iter_1_1 in pairs(arg_1_1) do
 		for iter_1_2, iter_1_3 in pairs(iter_1_1) do
 			local var_1_0 = iter_1_3.wanted_action_name
@@ -14,7 +14,7 @@ function WeaponUtils.add_bot_meta_data_chain_actions(arg_1_0, arg_1_1)
 	end
 end
 
-function WeaponUtils.find_allowed_chain_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WeaponUtils.find_allowed_chain_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0
 	local var_2_1 = #arg_2_0
 
@@ -33,11 +33,11 @@ function WeaponUtils.find_allowed_chain_action(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	return var_2_0
 end
 
-function WeaponUtils.get_item_state_machine(arg_3_0, arg_3_1)
+WeaponUtils.get_item_state_machine = function (arg_3_0, arg_3_1)
 	return arg_3_0.state_machine_career and arg_3_0.state_machine_career[arg_3_1] or arg_3_0.state_machine
 end
 
-function WeaponUtils.get_weapon_packages(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+WeaponUtils.get_weapon_packages = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = {}
 	local var_4_1 = arg_4_1.left_hand_unit
 
@@ -134,7 +134,7 @@ function WeaponUtils.get_weapon_packages(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return var_4_0
 end
 
-function WeaponUtils.get_used_actions(arg_5_0)
+WeaponUtils.get_used_actions = function (arg_5_0)
 	local var_5_0 = {}
 	local var_5_1 = {}
 	local var_5_2 = {}
@@ -197,12 +197,12 @@ function WeaponUtils.get_used_actions(arg_5_0)
 	return var_5_1, var_5_0
 end
 
-function WeaponUtils.is_valid_weapon_override(arg_6_0, arg_6_1)
+WeaponUtils.is_valid_weapon_override = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0 and (arg_6_0.item_template_name or arg_6_0.item_template.name)
 
 	return not arg_6_1.valid_templates_to_replace or arg_6_1.valid_templates_to_replace[var_6_0]
 end
 
-function WeaponUtils.get_weapon_template(arg_7_0)
+WeaponUtils.get_weapon_template = function (arg_7_0)
 	return MechanismOverrides.get(rawget(Weapons, arg_7_0))
 end

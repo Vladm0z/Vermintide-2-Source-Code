@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPickupStandardAction = class(BTPickupStandardAction, BTNode)
 
-function BTPickupStandardAction.init(arg_1_0, ...)
+BTPickupStandardAction.init = function (arg_1_0, ...)
 	BTPickupStandardAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTPickupStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTPickupStandardAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 	arg_3_2.active_node = BTPickupStandardAction
 
@@ -42,7 +42,7 @@ function BTPickupStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.move_state = "moving"
 end
 
-function BTPickupStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPickupStandardAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 	local var_4_1 = arg_4_2.navigation_extension
 
@@ -61,7 +61,7 @@ function BTPickupStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	arg_4_2.move_state = "idle"
 end
 
-function BTPickupStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPickupStandardAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.anim_cb_picked_up_standard then
 		return "done"
 	end
@@ -86,7 +86,7 @@ function BTPickupStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTPickupStandardAction.anim_cb_pick_up_standard(arg_6_0, arg_6_1, arg_6_2)
+BTPickupStandardAction.anim_cb_pick_up_standard = function (arg_6_0, arg_6_1, arg_6_2)
 	AiUtils.kill_unit(arg_6_2.standard_unit, arg_6_2.standard_unit, nil, nil, nil, "suicide")
 
 	arg_6_2.standard_unit = nil

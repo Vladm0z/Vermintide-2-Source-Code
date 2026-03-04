@@ -32,10 +32,10 @@ return {
 		"beastmen_bestigor",
 		"beastmen_standard_bearer"
 	},
-	server_players_left_safe_zone = function(arg_1_0, arg_1_1)
+	server_players_left_safe_zone = function (arg_1_0, arg_1_1)
 		arg_1_1.has_left_safe_zone = true
 	end,
-	server_ai_killed_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	server_ai_killed_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = Unit.get_data(arg_2_2, "breed")
 		local var_2_1 = Unit.get_data(arg_2_3, "breed")
 
@@ -55,11 +55,11 @@ return {
 			end
 		end
 	end,
-	server_start_function = function(arg_3_0, arg_3_1)
+	server_start_function = function (arg_3_0, arg_3_1)
 		arg_3_1.wind_strength = Managers.weave:get_wind_strength()
 		arg_3_1.buff_system = Managers.state.entity:system("buff_system")
 	end,
-	client_start_function = function(arg_4_0, arg_4_1)
+	client_start_function = function (arg_4_0, arg_4_1)
 		arg_4_1.buff_challenge_counter = 0
 		arg_4_1.buff_challenge_result = 0
 		arg_4_1.player = Managers.player:local_player()
@@ -73,19 +73,19 @@ return {
 			arg_4_1.buff_challenge_result = var_4_0:get_persistent_stat(var_4_1, "season_1", "scorpion_weaves_metal_season_1")
 		end
 	end,
-	player_has_metal_buff = function(arg_5_0, arg_5_1)
+	player_has_metal_buff = function (arg_5_0, arg_5_1)
 		if not arg_5_0.unit_buff_extension then
 			arg_5_0.unit_buff_extension = ScriptUnit.has_extension(arg_5_1, "buff_system")
 		end
 
 		return arg_5_0.unit_buff_extension and arg_5_0.unit_buff_extension:has_buff_type("mutator_metal_blade_dance")
 	end,
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not arg_6_1.has_left_safe_zone then
 			return
 		end
 	end,
-	client_update_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	client_update_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		if arg_7_1.buff_challenge_result < 1 then
 			if not arg_7_1.player_unit then
 				arg_7_1.player_unit = arg_7_1.player.player_unit

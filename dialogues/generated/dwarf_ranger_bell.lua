@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_bell.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_bell_intro_a",

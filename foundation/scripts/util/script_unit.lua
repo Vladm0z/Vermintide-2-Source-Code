@@ -52,29 +52,29 @@ local function var_0_6(arg_6_0, arg_6_1)
 	return var_6_0 and var_6_0[arg_6_1] and var_6_0[arg_6_1].input
 end
 
-function ScriptUnit.extension_input(arg_7_0, arg_7_1)
+ScriptUnit.extension_input = function (arg_7_0, arg_7_1)
 	return var_0_5(arg_7_0, arg_7_1).input
 end
 
-function ScriptUnit.extension(arg_8_0, arg_8_1)
+ScriptUnit.extension = function (arg_8_0, arg_8_1)
 	local var_8_0 = var_0_0[arg_8_0]
 
 	return var_8_0 and var_8_0[arg_8_1]
 end
 
-function ScriptUnit.extensions(arg_9_0)
+ScriptUnit.extensions = function (arg_9_0)
 	return var_0_0[arg_9_0]
 end
 
 ScriptUnit.has_extension = var_0_5
 
-function ScriptUnit.has_extension_input(arg_10_0, arg_10_1)
+ScriptUnit.has_extension_input = function (arg_10_0, arg_10_1)
 	local var_10_0 = var_0_0[arg_10_0]
 
 	return var_10_0 and var_10_0[arg_10_1] and var_10_0[arg_10_1].input
 end
 
-function ScriptUnit.check_all_units_deleted()
+ScriptUnit.check_all_units_deleted = function ()
 	if next(var_0_0) then
 		print("------------ UNITS THAT HAVENT BEEN DELETED --------------")
 
@@ -88,11 +88,11 @@ function ScriptUnit.check_all_units_deleted()
 	end
 end
 
-function ScriptUnit.set_extension(arg_12_0, arg_12_1, arg_12_2)
+ScriptUnit.set_extension = function (arg_12_0, arg_12_1, arg_12_2)
 	var_0_4(arg_12_0, arg_12_1, arg_12_2)
 end
 
-function ScriptUnit.add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+ScriptUnit.add_extension = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = rawget(_G, arg_13_2)
 
 	fassert(var_13_0, "No class found for extension with name %q", arg_13_2)
@@ -106,7 +106,7 @@ function ScriptUnit.add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13
 	return var_13_2
 end
 
-function ScriptUnit.destroy_extension(arg_14_0, arg_14_1)
+ScriptUnit.destroy_extension = function (arg_14_0, arg_14_1)
 	local var_14_0 = ScriptUnit.extension(arg_14_0, arg_14_1)
 
 	if var_14_0.destroy then
@@ -114,7 +114,7 @@ function ScriptUnit.destroy_extension(arg_14_0, arg_14_1)
 	end
 end
 
-function ScriptUnit.optimize(arg_15_0)
+ScriptUnit.optimize = function (arg_15_0)
 	if Unit.alive(arg_15_0) then
 		if Unit.get_data(arg_15_0, "disable_shadows") then
 			local var_15_0 = Unit.num_meshes(arg_15_0)
@@ -142,13 +142,13 @@ function ScriptUnit.optimize(arg_15_0)
 	end
 end
 
-function ScriptUnit.remove_extension(arg_16_0, arg_16_1)
+ScriptUnit.remove_extension = function (arg_16_0, arg_16_1)
 	var_0_3(arg_16_0, arg_16_1)
 end
 
 ScriptUnit.remove_unit = var_0_2
 
-function ScriptUnit.extension_definitions(arg_17_0)
+ScriptUnit.extension_definitions = function (arg_17_0)
 	local var_17_0 = {}
 	local var_17_1 = 0
 
@@ -159,12 +159,12 @@ function ScriptUnit.extension_definitions(arg_17_0)
 	return var_17_0, var_17_1
 end
 
-function ScriptUnit.move_extensions(arg_18_0, arg_18_1)
+ScriptUnit.move_extensions = function (arg_18_0, arg_18_1)
 	var_0_0[arg_18_1] = var_0_0[arg_18_0]
 	var_0_0[arg_18_0] = nil
 end
 
-function ScriptUnit.save_scene_graph(arg_19_0)
+ScriptUnit.save_scene_graph = function (arg_19_0)
 	local var_19_0 = {}
 
 	for iter_19_0 = 0, Unit.num_scene_graph_items(arg_19_0) - 1 do
@@ -180,7 +180,7 @@ function ScriptUnit.save_scene_graph(arg_19_0)
 	return var_19_0
 end
 
-function ScriptUnit.restore_scene_graph(arg_20_0, arg_20_1)
+ScriptUnit.restore_scene_graph = function (arg_20_0, arg_20_1)
 	for iter_20_0, iter_20_1 in ipairs(arg_20_1) do
 		if iter_20_1.parent then
 			Unit.scene_graph_link(arg_20_0, iter_20_0, iter_20_1.parent)
@@ -189,7 +189,7 @@ function ScriptUnit.restore_scene_graph(arg_20_0, arg_20_1)
 	end
 end
 
-function ScriptUnit.set_material_variable(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+ScriptUnit.set_material_variable = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	if type(arg_21_2) == "number" then
 		Unit.set_scalar_for_materials(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	elseif type(arg_21_2) == "table" then

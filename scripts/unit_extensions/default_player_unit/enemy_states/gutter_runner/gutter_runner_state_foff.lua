@@ -2,13 +2,13 @@
 
 GutterRunnerStateFoff = class(GutterRunnerStateFoff, EnemyCharacterStateWalking)
 
-function GutterRunnerStateFoff.init(arg_1_0, arg_1_1, arg_1_2)
+GutterRunnerStateFoff.init = function (arg_1_0, arg_1_1, arg_1_2)
 	GutterRunnerStateFoff.super.init(arg_1_0, arg_1_1, "gutter_runner_foff")
 
 	arg_1_0._network_manager = Managers.state.network
 end
 
-function GutterRunnerStateFoff.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+GutterRunnerStateFoff.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0:set_breed_action("ninja_vanish")
 	arg_2_0._locomotion_extension:set_forced_velocity(Vector3:zero())
 	arg_2_0._locomotion_extension:set_wanted_velocity(Vector3.zero())
@@ -20,7 +20,7 @@ function GutterRunnerStateFoff.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_
 	arg_2_0:on_enter_animation()
 end
 
-function GutterRunnerStateFoff.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+GutterRunnerStateFoff.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0:set_breed_action("n/a")
 	arg_3_0:on_exit_animation()
 
@@ -33,17 +33,17 @@ function GutterRunnerStateFoff.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function GutterRunnerStateFoff.on_enter_animation(arg_4_0)
+GutterRunnerStateFoff.on_enter_animation = function (arg_4_0)
 	CharacterStateHelper.play_animation_event(arg_4_0._unit, "foff_self")
 	CharacterStateHelper.play_animation_event_first_person(arg_4_0._first_person_extension, "foff_self")
 end
 
-function GutterRunnerStateFoff.on_exit_animation(arg_5_0)
+GutterRunnerStateFoff.on_exit_animation = function (arg_5_0)
 	CharacterStateHelper.play_animation_event(arg_5_0._unit, "idle")
 	CharacterStateHelper.play_animation_event_first_person(arg_5_0._first_person_extension, "idle")
 end
 
-function GutterRunnerStateFoff.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+GutterRunnerStateFoff.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0:common_state_changes() then
 		return
 	end
@@ -55,7 +55,7 @@ function GutterRunnerStateFoff.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_
 	end
 end
 
-function GutterRunnerStateFoff.foff(arg_7_0)
+GutterRunnerStateFoff.foff = function (arg_7_0)
 	local var_7_0 = arg_7_0._unit
 	local var_7_1 = arg_7_0._csm
 	local var_7_2 = Managers.player:owner(var_7_0).local_player

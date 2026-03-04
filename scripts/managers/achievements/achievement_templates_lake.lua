@@ -60,7 +60,7 @@ var_0_10.lake_kill_register = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = 0
 
 		for iter_1_0 = 1, #var_0_18 do
@@ -69,7 +69,7 @@ var_0_10.lake_kill_register = {
 
 		return var_1_0 >= 5
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = arg_2_4[3]
 		local var_2_1 = var_2_0 and var_2_0[DamageDataIndex.ATTACKER]
 

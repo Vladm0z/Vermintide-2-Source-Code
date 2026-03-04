@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatShoutAction = class(BTCombatShoutAction, BTNode)
 
-function BTCombatShoutAction.init(arg_1_0, ...)
+BTCombatShoutAction.init = function (arg_1_0, ...)
 	BTCombatShoutAction.super.init(arg_1_0, ...)
 end
 
 BTCombatShoutAction.name = "BTCombatShoutAction"
 
-function BTCombatShoutAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCombatShoutAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -31,13 +31,13 @@ function BTCombatShoutAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.spawn_to_running = nil
 end
 
-function BTCombatShoutAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCombatShoutAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	arg_3_2.active_node = nil
 end
 
-function BTCombatShoutAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCombatShoutAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.locomotion_extension
 	local var_4_1 = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, arg_4_2.target_unit)
 
@@ -52,7 +52,7 @@ function BTCombatShoutAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	end
 end
 
-function BTCombatShoutAction.anim_cb_shout_vo(arg_5_0, arg_5_1, arg_5_2)
+BTCombatShoutAction.anim_cb_shout_vo = function (arg_5_0, arg_5_1, arg_5_2)
 	if Managers.state.network:game() then
 		local var_5_0 = ScriptUnit.extension_input(arg_5_1, "dialogue_system")
 		local var_5_1 = FrameTable.alloc_table()

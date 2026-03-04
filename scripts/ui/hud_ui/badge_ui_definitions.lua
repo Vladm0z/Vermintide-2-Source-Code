@@ -245,7 +245,7 @@ local var_0_10 = {
 			name = "fade_in_scale_down",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 
 				WwiseWorld.trigger_event(arg_1_3.wwise_world, "play_gui_mission_summary_chest_upgrade")
@@ -267,7 +267,7 @@ local var_0_10 = {
 					0
 				}
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
@@ -280,7 +280,7 @@ local var_0_10 = {
 					var_2_2 * var_2_0
 				}
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				arg_3_3.start_size = {
 					arg_3_3.ui_scenegraph.badge_placement.size[1],
 					arg_3_3.ui_scenegraph.badge_placement.size[2]
@@ -291,13 +291,13 @@ local var_0_10 = {
 			name = "scale_down",
 			start_progress = 0.5,
 			end_progress = 0.6,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.ui_scenegraph.text_background_placement.size = {
 					0,
 					0
 				}
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = arg_5_4.start_size[1]
 				local var_5_1 = arg_5_4.start_size[2]
 				local var_5_2 = arg_5_1.badge_placement.size[1]
@@ -329,10 +329,10 @@ local var_0_10 = {
 			name = "fade_out_name",
 			start_progress = 3.6,
 			end_progress = 3.7,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = 255 * (1 - arg_7_3)
 
 				arg_7_2.style.text_name.text_color = {
@@ -348,10 +348,10 @@ local var_0_10 = {
 			name = "fade_in_description",
 			start_progress = 3.7,
 			end_progress = 3.8,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				local var_9_0 = 255 * arg_9_3
 
 				arg_9_2.style.text_desc.text_color = {
@@ -367,10 +367,10 @@ local var_0_10 = {
 			name = "fade_out_everything",
 			start_progress = 4.8,
 			end_progress = 5.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				arg_10_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				arg_11_4.render_settings.alpha_multiplier = 1 - arg_11_3
 			end,
 			on_complete = NOP

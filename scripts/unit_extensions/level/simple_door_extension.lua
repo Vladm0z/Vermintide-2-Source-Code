@@ -5,7 +5,7 @@ SimpleDoorExtension = class(SimpleDoorExtension)
 local var_0_0 = 30
 local var_0_1 = Unit.alive
 
-function SimpleDoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+SimpleDoorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.unit = arg_1_2
@@ -20,14 +20,14 @@ function SimpleDoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.animation_stop_time = 0
 end
 
-function SimpleDoorExtension.destroy(arg_2_0)
+SimpleDoorExtension.destroy = function (arg_2_0)
 	arg_2_0:destroy_box_obstacle()
 
 	arg_2_0.unit = nil
 	arg_2_0.world = nil
 end
 
-function SimpleDoorExtension.destroy_box_obstacle(arg_3_0)
+SimpleDoorExtension.destroy_box_obstacle = function (arg_3_0)
 	local var_3_0 = arg_3_0.obstacle
 
 	if var_3_0 then
@@ -35,27 +35,27 @@ function SimpleDoorExtension.destroy_box_obstacle(arg_3_0)
 	end
 end
 
-function SimpleDoorExtension.extensions_ready(arg_4_0)
+SimpleDoorExtension.extensions_ready = function (arg_4_0)
 	return
 end
 
-function SimpleDoorExtension.interacted_with(arg_5_0, arg_5_1)
+SimpleDoorExtension.interacted_with = function (arg_5_0, arg_5_1)
 	return
 end
 
-function SimpleDoorExtension.is_opening(arg_6_0)
+SimpleDoorExtension.is_opening = function (arg_6_0)
 	return arg_6_0.current_state ~= "closed" and arg_6_0.animation_stop_time
 end
 
-function SimpleDoorExtension.is_open(arg_7_0)
+SimpleDoorExtension.is_open = function (arg_7_0)
 	return arg_7_0.current_state ~= "closed"
 end
 
-function SimpleDoorExtension.get_current_state(arg_8_0)
+SimpleDoorExtension.get_current_state = function (arg_8_0)
 	return arg_8_0.current_state
 end
 
-function SimpleDoorExtension.set_door_state_and_duration(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+SimpleDoorExtension.set_door_state_and_duration = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if arg_9_0.current_state == arg_9_1 then
 		return
 	end
@@ -74,11 +74,11 @@ function SimpleDoorExtension.set_door_state_and_duration(arg_9_0, arg_9_1, arg_9
 	arg_9_0.animation_stop_time = Managers.time:time("game") + var_9_2
 end
 
-function SimpleDoorExtension.hot_join_sync(arg_10_0, arg_10_1)
+SimpleDoorExtension.hot_join_sync = function (arg_10_0, arg_10_1)
 	return
 end
 
-function SimpleDoorExtension.update_nav_obstacle(arg_11_0)
+SimpleDoorExtension.update_nav_obstacle = function (arg_11_0)
 	local var_11_0 = arg_11_0.current_state
 	local var_11_1 = arg_11_0.obstacle
 
@@ -101,7 +101,7 @@ function SimpleDoorExtension.update_nav_obstacle(arg_11_0)
 	GwNavBoxObstacle.set_does_trigger_tagvolume(var_11_1, var_11_6)
 end
 
-function SimpleDoorExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+SimpleDoorExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_0.animation_stop_time
 
 	if var_12_0 and var_12_0 <= arg_12_5 then

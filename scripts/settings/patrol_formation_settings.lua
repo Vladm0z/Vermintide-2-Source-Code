@@ -3812,7 +3812,7 @@ PatrolFormationSettings.prologue_marauder = {
 DLCUtils.merge("patrol_formation_settings", PatrolFormationSettings)
 DLCUtils.merge("patrol_formations", PatrolFormationSettings)
 
-function PatrolFormationSettings.random_roaming_formation(arg_1_0)
+PatrolFormationSettings.random_roaming_formation = function (arg_1_0)
 	local var_1_0 = arg_1_0.members
 	local var_1_1 = #var_1_0
 	local var_1_2

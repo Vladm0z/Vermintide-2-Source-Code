@@ -16,7 +16,7 @@ local var_0_1 = {
 	"rpc_send_painting"
 }
 
-function KeepDecorationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+KeepDecorationSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	KeepDecorationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._network_event_delegate = arg_1_1.network_event_delegate
@@ -36,7 +36,7 @@ function KeepDecorationSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._num_players = 0
 end
 
-function KeepDecorationSystem.destroy(arg_2_0)
+KeepDecorationSystem.destroy = function (arg_2_0)
 	arg_2_0._extensions = nil
 	arg_2_0._unit_extensions = nil
 	arg_2_0._painting_extensions = nil
@@ -44,7 +44,7 @@ function KeepDecorationSystem.destroy(arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-function KeepDecorationSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+KeepDecorationSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
 	local var_3_0 = Unit.get_data(arg_3_2, "decoration_settings_key")
 	local var_3_1 = arg_3_0._used_settings_keys
 	local var_3_2 = arg_3_0._used_backend_keys
@@ -78,7 +78,7 @@ function KeepDecorationSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_
 	return var_3_5
 end
 
-function KeepDecorationSystem.update(arg_4_0, arg_4_1, arg_4_2)
+KeepDecorationSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._extensions
 	local var_4_1 = #var_4_0
 
@@ -116,7 +116,7 @@ function KeepDecorationSystem.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._update_index = var_4_2
 end
 
-function KeepDecorationSystem.on_painting_set(arg_5_0, arg_5_1, arg_5_2)
+KeepDecorationSystem.on_painting_set = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._painting_extensions
 	local var_5_1 = Paintings[arg_5_1].frame
 
@@ -133,7 +133,7 @@ function KeepDecorationSystem.on_painting_set(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function KeepDecorationSystem.on_decoration_set(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+KeepDecorationSystem.on_decoration_set = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._extensions
 
 	for iter_6_0 = 1, #var_6_0 do
@@ -148,7 +148,7 @@ function KeepDecorationSystem.on_decoration_set(arg_6_0, arg_6_1, arg_6_2, arg_6
 	end
 end
 
-function KeepDecorationSystem.is_decoration_in_use(arg_7_0, arg_7_1)
+KeepDecorationSystem.is_decoration_in_use = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._extensions
 
 	for iter_7_0 = 1, #var_7_0 do
@@ -160,11 +160,11 @@ function KeepDecorationSystem.is_decoration_in_use(arg_7_0, arg_7_1)
 	return false
 end
 
-function KeepDecorationSystem._add_client_painting(arg_8_0, arg_8_1, arg_8_2)
+KeepDecorationSystem._add_client_painting = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._client_paintings[arg_8_1] = arg_8_2
 end
 
-function KeepDecorationSystem._sync_client_paintings(arg_9_0)
+KeepDecorationSystem._sync_client_paintings = function (arg_9_0)
 	local var_9_0 = arg_9_0._client_paintings
 	local var_9_1 = Managers.player:human_players()
 	local var_9_2 = Network.peer_id()
@@ -188,7 +188,7 @@ function KeepDecorationSystem._sync_client_paintings(arg_9_0)
 	arg_9_0._client_paintings = var_9_0
 end
 
-function KeepDecorationSystem._refresh_client_paintings(arg_10_0)
+KeepDecorationSystem._refresh_client_paintings = function (arg_10_0)
 	local var_10_0 = arg_10_0._client_paintings
 	local var_10_1 = {}
 	local var_10_2 = 1
@@ -205,20 +205,20 @@ function KeepDecorationSystem._refresh_client_paintings(arg_10_0)
 	end
 end
 
-function KeepDecorationSystem.rpc_send_painting(arg_11_0, arg_11_1, arg_11_2)
+KeepDecorationSystem.rpc_send_painting = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = CHANNEL_TO_PEER_ID[arg_11_1]
 
 	arg_11_0:_add_client_painting(var_11_0, arg_11_2)
 	arg_11_0:_refresh_client_paintings()
 end
 
-function KeepDecorationSystem.rpc_request_painting(arg_12_0, arg_12_1)
+KeepDecorationSystem.rpc_request_painting = function (arg_12_0, arg_12_1)
 	local var_12_0 = Managers.backend:get_interface("keep_decorations"):get_decoration("keep_hall_painting_wood_base_5") or "hor_none"
 
 	arg_12_0.network_transmit:send_rpc_server("rpc_send_painting", var_12_0)
 end
 
-function KeepDecorationSystem.hot_join_sync(arg_13_0, arg_13_1)
+KeepDecorationSystem.hot_join_sync = function (arg_13_0, arg_13_1)
 	local var_13_0 = Managers.state.game_mode:level_key()
 
 	if LevelSettings[var_13_0].use_keep_decorations then

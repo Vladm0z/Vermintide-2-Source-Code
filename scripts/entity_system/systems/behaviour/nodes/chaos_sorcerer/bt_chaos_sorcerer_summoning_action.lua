@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChaosSorcererSummoningAction = class(BTChaosSorcererSummoningAction, BTNode)
 
-function BTChaosSorcererSummoningAction.init(arg_1_0, ...)
+BTChaosSorcererSummoningAction.init = function (arg_1_0, ...)
 	BTChaosSorcererSummoningAction.super.init(arg_1_0, ...)
 end
 
 BTChaosSorcererSummoningAction.name = "BTChaosSorcererSummoningAction"
 
-function BTChaosSorcererSummoningAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTChaosSorcererSummoningAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -53,7 +53,7 @@ function BTChaosSorcererSummoningAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	end
 end
 
-function BTChaosSorcererSummoningAction.trigger_summon_sound(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTChaosSorcererSummoningAction.trigger_summon_sound = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_2.breed
 	local var_3_1 = Managers.state.network
 	local var_3_2 = var_3_0.summon_sound_event
@@ -78,7 +78,7 @@ function BTChaosSorcererSummoningAction.trigger_summon_sound(arg_3_0, arg_3_1, a
 	end
 end
 
-function BTChaosSorcererSummoningAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTChaosSorcererSummoningAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_2.action
 
 	if not var_4_0.is_spawner then
@@ -102,7 +102,7 @@ function BTChaosSorcererSummoningAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	QuickDrawerStay:reset()
 end
 
-function BTChaosSorcererSummoningAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTChaosSorcererSummoningAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = arg_5_2.summon_target_unit
 
@@ -149,7 +149,7 @@ function BTChaosSorcererSummoningAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, 
 	return "running"
 end
 
-function BTChaosSorcererSummoningAction.spawn_exalted_spell(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+BTChaosSorcererSummoningAction.spawn_exalted_spell = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_2.current_spell
 
 	var_6_0.spawn_function(arg_6_0, arg_6_2, arg_6_3, arg_6_4, arg_6_5, var_6_0)
@@ -157,7 +157,7 @@ end
 
 local var_0_0 = 0.25
 
-function BTChaosSorcererSummoningAction._start_vortex_summoning(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTChaosSorcererSummoningAction._start_vortex_summoning = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.world
 	local var_7_1 = arg_7_2.action
 	local var_7_2 = arg_7_2.vortex_data
@@ -213,7 +213,7 @@ function BTChaosSorcererSummoningAction._start_vortex_summoning(arg_7_0, arg_7_1
 	end
 end
 
-function BTChaosSorcererSummoningAction._clean_up_vortex_summoning(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTChaosSorcererSummoningAction._clean_up_vortex_summoning = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_2.vortex_data
 	local var_8_1 = Managers.state.unit_spawner
 	local var_8_2 = var_8_0.inner_decal_unit
@@ -239,7 +239,7 @@ function BTChaosSorcererSummoningAction._clean_up_vortex_summoning(arg_8_0, arg_
 	end
 end
 
-function BTChaosSorcererSummoningAction._update_vortex_summoning(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTChaosSorcererSummoningAction._update_vortex_summoning = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.vortex_data
 	local var_9_1 = var_9_0.vortex_spawn_pos:unbox()
 	local var_9_2 = LocomotionUtils.look_at_position_flat(arg_9_1, var_9_1)
@@ -268,7 +268,7 @@ function BTChaosSorcererSummoningAction._update_vortex_summoning(arg_9_0, arg_9_
 	end
 end
 
-function BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+BTChaosSorcererSummoningAction._launch_vortex_dummy_missile = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	local var_10_0 = arg_10_2.missile_launch_angle
 	local var_10_1 = arg_10_2.missile_speed
 	local var_10_2 = arg_10_2.missile_life_time + arg_10_3.extra_time
@@ -307,7 +307,7 @@ function BTChaosSorcererSummoningAction._launch_vortex_dummy_missile(arg_10_0, a
 	return var_10_9, var_10_10
 end
 
-function BTChaosSorcererSummoningAction._spawn_boss_vortex(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+BTChaosSorcererSummoningAction._spawn_boss_vortex = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_2.action
 	local var_11_1 = var_11_0.vortex_template_name
 	local var_11_2 = VortexTemplates[var_11_1]
@@ -345,7 +345,7 @@ function BTChaosSorcererSummoningAction._spawn_boss_vortex(arg_11_0, arg_11_1, a
 	arg_11_0:_spawn_vortex(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, var_11_3)
 end
 
-function BTChaosSorcererSummoningAction._spawn_vortex(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+BTChaosSorcererSummoningAction._spawn_vortex = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	arg_12_6 = arg_12_6 or arg_12_2.vortex_data
 
 	local var_12_0 = arg_12_2.action
@@ -360,7 +360,7 @@ function BTChaosSorcererSummoningAction._spawn_vortex(arg_12_0, arg_12_1, arg_12
 	local var_12_9 = arg_12_6.inner_decal_unit
 	local var_12_10 = arg_12_6.outer_decal_unit
 	local var_12_11 = {
-		prepare_func = function(arg_13_0, arg_13_1)
+		prepare_func = function (arg_13_0, arg_13_1)
 			arg_13_1.ai_supplementary_system = {
 				vortex_template_name = var_12_2 or "standard",
 				inner_decal_unit = var_12_8 and var_12_9,
@@ -368,7 +368,7 @@ function BTChaosSorcererSummoningAction._spawn_vortex(arg_12_0, arg_12_1, arg_12
 				owner_unit = arg_12_1
 			}
 		end,
-		spawned_func = function(arg_14_0, arg_14_1, arg_14_2)
+		spawned_func = function (arg_14_0, arg_14_1, arg_14_2)
 			local var_14_0 = arg_14_2.spawn_queue_index
 
 			var_12_6[var_14_0] = nil
@@ -395,7 +395,7 @@ function BTChaosSorcererSummoningAction._spawn_vortex(arg_12_0, arg_12_1, arg_12
 	return true
 end
 
-function BTChaosSorcererSummoningAction.spawn_portal(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+BTChaosSorcererSummoningAction.spawn_portal = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
 	arg_15_6 = arg_15_6 or arg_15_2.portal_data
 
 	local var_15_0 = arg_15_6.portal_spawn_pos:unbox()
@@ -416,12 +416,12 @@ function BTChaosSorcererSummoningAction.spawn_portal(arg_15_0, arg_15_1, arg_15_
 
 	local var_15_7 = arg_15_2.action.tentacle_template_name or "portal"
 	local var_15_8 = {
-		prepare_func = function(arg_16_0, arg_16_1)
+		prepare_func = function (arg_16_0, arg_16_1)
 			arg_16_1.ai_supplementary_system = {
 				tentacle_template_name = var_15_7
 			}
 		end,
-		spawned_func = function(arg_17_0, arg_17_1, arg_17_2)
+		spawned_func = function (arg_17_0, arg_17_1, arg_17_2)
 			arg_17_2.sorcerer_blackboard.portal_unit = arg_17_0
 		end,
 		sorcerer_blackboard = arg_15_2
@@ -440,7 +440,7 @@ function BTChaosSorcererSummoningAction.spawn_portal(arg_15_0, arg_15_1, arg_15_
 	return true
 end
 
-function BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = Breeds.chaos_tentacle
 	local var_18_1 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_wall
 	local var_18_2 = var_18_1[math.random(1, #var_18_1)]
@@ -451,7 +451,7 @@ function BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena(ar
 	local var_18_7 = "portal"
 	local var_18_8 = var_18_3 - var_18_5 * var_18_6
 	local var_18_9 = {
-		spawned_func = function(arg_19_0, arg_19_1, arg_19_2)
+		spawned_func = function (arg_19_0, arg_19_1, arg_19_2)
 			arg_18_2.tentacle_portal_units[arg_19_0] = true
 			BLACKBOARDS[arg_19_0].boss_master_unit = arg_18_1
 			arg_18_2.num_portals_alive = arg_18_2.num_portals_alive + 1
@@ -462,11 +462,11 @@ function BTChaosSorcererSummoningAction.boss_sorcerer_spawn_tentacle_in_arena(ar
 	Managers.state.conflict:spawn_queued_unit(var_18_0, Vector3Box(var_18_8), QuaternionBox(var_18_4), var_18_7, nil, nil, var_18_9)
 end
 
-function BTChaosSorcererSummoningAction.init_boss_sorcerer_tentacle(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+BTChaosSorcererSummoningAction.init_boss_sorcerer_tentacle = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_2.summon_plague_wave_timer = arg_20_3 + 0.5
 end
 
-function BTChaosSorcererSummoningAction.init_summon_plague_wave(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTChaosSorcererSummoningAction.init_summon_plague_wave = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	arg_21_2.summon_plague_wave_timer = arg_21_3 + 0.1
 
 	if not arg_21_2.breed.boss then
@@ -476,12 +476,12 @@ function BTChaosSorcererSummoningAction.init_summon_plague_wave(arg_21_0, arg_21
 	end
 end
 
-function BTChaosSorcererSummoningAction.init_summon_vermintide(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+BTChaosSorcererSummoningAction.init_summon_vermintide = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	arg_22_2.summon_plague_wave_timer = arg_22_3 + 0.1
 	arg_22_2.damage_wave_template_name = "vermintide"
 end
 
-function BTChaosSorcererSummoningAction.update_summon_plague_wave(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+BTChaosSorcererSummoningAction.update_summon_plague_wave = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	if arg_23_3 > arg_23_2.summon_plague_wave_timer then
 		if not arg_23_2.summoning_unit then
 			local var_23_0 = DamageWaveTemplates.templates[arg_23_2.damage_wave_template_name or "plague_wave"].fx_unit
@@ -523,7 +523,7 @@ function BTChaosSorcererSummoningAction.update_summon_plague_wave(arg_23_0, arg_
 	end
 end
 
-function BTChaosSorcererSummoningAction.spawn_plague_wave(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+BTChaosSorcererSummoningAction.spawn_plague_wave = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_2.plague_wave_data
 	local var_24_1 = var_24_0.target_starting_pos:unbox()
 	local var_24_2 = POSITION_LOOKUP[arg_24_1]
@@ -612,7 +612,7 @@ function BTChaosSorcererSummoningAction.spawn_plague_wave(arg_24_0, arg_24_1, ar
 	return true
 end
 
-function BTChaosSorcererSummoningAction.spawn_plague_wave_from_spawner(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+BTChaosSorcererSummoningAction.spawn_plague_wave_from_spawner = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = POSITION_LOOKUP[arg_25_1]
 	local var_25_1 = arg_25_2.nav_world
 	local var_25_2 = arg_25_2.target_unit
@@ -640,7 +640,7 @@ function BTChaosSorcererSummoningAction.spawn_plague_wave_from_spawner(arg_25_0,
 	return true
 end
 
-function BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	local var_26_0 = arg_26_2.nav_world
 	local var_26_1 = arg_26_2.action
 	local var_26_2
@@ -710,7 +710,7 @@ function BTChaosSorcererSummoningAction.spawn_plague_waves_in_patterns(arg_26_0,
 	return true
 end
 
-function BTChaosSorcererSummoningAction.init_summon_plague_wave_sequence(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+BTChaosSorcererSummoningAction.init_summon_plague_wave_sequence = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	arg_27_2.summon_plague_wave_timer = arg_27_3 + 0.5
 	arg_27_2.next_wave_time = 0
 	arg_27_2.wave_counter = 0
@@ -722,7 +722,7 @@ function BTChaosSorcererSummoningAction.init_summon_plague_wave_sequence(arg_27_
 	end
 end
 
-function BTChaosSorcererSummoningAction.update_sequenced_plague_wave_spawning(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+BTChaosSorcererSummoningAction.update_sequenced_plague_wave_spawning = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_2.action
 	local var_28_1
 
@@ -739,7 +739,7 @@ function BTChaosSorcererSummoningAction.update_sequenced_plague_wave_spawning(ar
 	end
 end
 
-function BTChaosSorcererSummoningAction.clean_up_plague_wave(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+BTChaosSorcererSummoningAction.clean_up_plague_wave = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_2.target_unit
 
 	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_29_1, var_29_0, "plague_wave")
@@ -747,11 +747,11 @@ end
 
 local var_0_1 = false
 
-function BTChaosSorcererSummoningAction.init_boss_rings(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+BTChaosSorcererSummoningAction.init_boss_rings = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	arg_30_2.summoning_finished = true
 end
 
-function BTChaosSorcererSummoningAction.spawn_boss_rings(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+BTChaosSorcererSummoningAction.spawn_boss_rings = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_2.action
 	local var_31_1 = ScriptUnit.extension(arg_31_1, "dialogue_system")
 	local var_31_2 = Managers.world:wwise_world(arg_31_2.world)
@@ -769,7 +769,7 @@ function BTChaosSorcererSummoningAction.spawn_boss_rings(arg_31_0, arg_31_1, arg
 	return true
 end
 
-function BTChaosSorcererSummoningAction.update_boss_rings(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+BTChaosSorcererSummoningAction.update_boss_rings = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	local var_32_0 = arg_32_2.world
 	local var_32_1 = arg_32_2.action
 	local var_32_2 = var_32_1.ring_sequence
@@ -930,7 +930,7 @@ function BTChaosSorcererSummoningAction.update_boss_rings(arg_32_0, arg_32_1, ar
 	end
 end
 
-function BTChaosSorcererSummoningAction.clean_up_boss_rings(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+BTChaosSorcererSummoningAction.clean_up_boss_rings = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	for iter_33_0, iter_33_1 in ipairs(arg_33_2.action.ring_sequence) do
 		iter_33_1.delay_time = nil
 		iter_33_1.premonition_time = nil

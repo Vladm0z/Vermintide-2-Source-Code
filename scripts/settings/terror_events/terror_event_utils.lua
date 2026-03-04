@@ -4,27 +4,27 @@ require("scripts/settings/grudge_mark_settings")
 
 TerrorEventUtils = {}
 
-function TerrorEventUtils.count_event_breed(arg_1_0)
+TerrorEventUtils.count_event_breed = function (arg_1_0)
 	return Managers.state.conflict:count_units_by_breed_during_event(arg_1_0)
 end
 
-function TerrorEventUtils.num_spawned_enemies()
+TerrorEventUtils.num_spawned_enemies = function ()
 	return #Managers.state.conflict:spawned_enemies()
 end
 
-function TerrorEventUtils.count_breed(arg_3_0)
+TerrorEventUtils.count_breed = function (arg_3_0)
 	return Managers.state.conflict:count_units_by_breed(arg_3_0)
 end
 
-function TerrorEventUtils.num_alive_standards()
+TerrorEventUtils.num_alive_standards = function ()
 	return #Managers.state.conflict:alive_standards()
 end
 
-function TerrorEventUtils.spawned_during_event()
+TerrorEventUtils.spawned_during_event = function ()
 	return Managers.state.conflict:enemies_spawned_during_event()
 end
 
-function TerrorEventUtils.num_spawned_enemies_during_event()
+TerrorEventUtils.num_spawned_enemies_during_event = function ()
 	return (Managers.state.conflict:enemies_spawned_during_event())
 end
 
@@ -38,11 +38,11 @@ TerrorEventUtils.CATACLYSM3 = 8
 
 local var_0_0
 
-function TerrorEventUtils.set_seed(arg_7_0)
+TerrorEventUtils.set_seed = function (arg_7_0)
 	var_0_0 = arg_7_0
 end
 
-function TerrorEventUtils.random(...)
+TerrorEventUtils.random = function (...)
 	local var_8_0, var_8_1 = Math.next_random(var_0_0 or 0, ...)
 
 	var_0_0 = var_8_0
@@ -50,7 +50,7 @@ function TerrorEventUtils.random(...)
 	return var_8_1
 end
 
-function TerrorEventUtils.get_grudge_marked_name(arg_9_0, arg_9_1, arg_9_2)
+TerrorEventUtils.get_grudge_marked_name = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Breeds[arg_9_0].race
 	local var_9_1 = GrudgeMarkedNames[BreedEnhancements] or GrudgeMarkedNames[arg_9_0] or GrudgeMarkedNames[var_9_0]
 
@@ -69,7 +69,7 @@ function TerrorEventUtils.get_grudge_marked_name(arg_9_0, arg_9_1, arg_9_2)
 	return (Localize(var_9_1[var_9_2]))
 end
 
-function TerrorEventUtils.apply_breed_enhancements(arg_10_0, arg_10_1, arg_10_2)
+TerrorEventUtils.apply_breed_enhancements = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.state.entity:system("ai_system")
 	local var_10_1 = arg_10_2.name_index or TerrorEventUtils.random(16384)
 
@@ -96,7 +96,7 @@ function TerrorEventUtils.apply_breed_enhancements(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function TerrorEventUtils.generate_enhanced_breed(arg_11_0, arg_11_1, arg_11_2)
+TerrorEventUtils.generate_enhanced_breed = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_2 = arg_11_2 or BossGrudgeMarks
 
 	local var_11_0 = {}
@@ -146,7 +146,7 @@ function TerrorEventUtils.generate_enhanced_breed(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_1
 end
 
-function TerrorEventUtils.generate_enhanced_breed_from_set(arg_12_0)
+TerrorEventUtils.generate_enhanced_breed_from_set = function (arg_12_0)
 	local var_12_0 = {}
 	local var_12_1 = BreedEnhancements
 
@@ -167,7 +167,7 @@ function TerrorEventUtils.generate_enhanced_breed_from_set(arg_12_0)
 	return nil
 end
 
-function TerrorEventUtils.add_enhancements_to_spawn_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+TerrorEventUtils.add_enhancements_to_spawn_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if arg_13_1 > 0 then
 		arg_13_0 = arg_13_0 or {}
 		arg_13_0.enhancements = TerrorEventUtils.generate_enhanced_breed(arg_13_1, arg_13_2, arg_13_3 or BossGrudgeMarks)
@@ -176,7 +176,7 @@ function TerrorEventUtils.add_enhancements_to_spawn_data(arg_13_0, arg_13_1, arg
 	return arg_13_0
 end
 
-function TerrorEventUtils.add_enhancements_for_difficulty(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+TerrorEventUtils.add_enhancements_for_difficulty = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	arg_14_0 = arg_14_0 or {}
 
 	local var_14_0 = DifficultyTweak.converters.closest_tweak_match(arg_14_1, arg_14_4, BREED_ENHANCEMENTS_PER_DIFFICULTY) or 0

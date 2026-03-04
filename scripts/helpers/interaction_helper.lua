@@ -45,7 +45,7 @@ InteractionHelper.interactions = {
 	active_event = {}
 }
 
-DLCUtils.map_list("interactions", function(arg_1_0)
+DLCUtils.map_list("interactions", function (arg_1_0)
 	InteractionHelper.interactions[arg_1_0] = {}
 end)
 
@@ -53,7 +53,7 @@ for iter_0_0, iter_0_1 in pairs(InteractionHelper.interactions) do
 	iter_0_1.request_rpc = iter_0_1.request_rpc or "rpc_generic_interaction_request"
 end
 
-function InteractionHelper.printf(...)
+InteractionHelper.printf = function (...)
 	if script_data.debug_interactions then
 		printf(...)
 	end
@@ -61,7 +61,7 @@ end
 
 local var_0_0 = "IS_LOCAL_HOST"
 
-function InteractionHelper.request(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+InteractionHelper.request = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if LEVEL_EDITOR_TEST then
 		return
 	end
@@ -100,7 +100,7 @@ function InteractionHelper.request(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	end
 end
 
-function InteractionHelper.abort_authoritative(arg_4_0, arg_4_1)
+InteractionHelper.abort_authoritative = function (arg_4_0, arg_4_1)
 	local var_4_0 = ScriptUnit.has_extension(arg_4_1, "interactor_system")
 
 	if var_4_0 and (not var_4_0:is_interacting() or var_4_0:is_stopping()) then
@@ -116,7 +116,7 @@ function InteractionHelper.abort_authoritative(arg_4_0, arg_4_1)
 	end
 end
 
-function InteractionHelper.abort(arg_5_0, arg_5_1, arg_5_2)
+InteractionHelper.abort = function (arg_5_0, arg_5_1, arg_5_2)
 	InteractionHelper.printf("InteractionHelper:abort(%s)", arg_5_1)
 
 	if ScriptUnit.extension(arg_5_1, "interactor_system"):is_interacting_with_local_only_interact() then
@@ -142,7 +142,7 @@ function InteractionHelper.abort(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function InteractionHelper.approve_request(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+InteractionHelper.approve_request = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	InteractionHelper.printf("InteractionHelper:approve_request(%s, %s, %s)", arg_6_1, tostring(arg_6_2), tostring(arg_6_3))
 
 	if LEVEL_EDITOR_TEST then
@@ -158,7 +158,7 @@ function InteractionHelper.approve_request(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_interaction_approved", var_6_0, var_6_1, var_6_2, var_6_3)
 end
 
-function InteractionHelper.deny_request(arg_7_0, arg_7_1, arg_7_2)
+InteractionHelper.deny_request = function (arg_7_0, arg_7_1, arg_7_2)
 	InteractionHelper.printf("InteractionHelper:deny_request(%s, %s)", tostring(arg_7_1), tostring(arg_7_2))
 
 	if Network.peer_id() == arg_7_1 then
@@ -172,18 +172,18 @@ function InteractionHelper.deny_request(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function InteractionHelper.request_approved(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+InteractionHelper.request_approved = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	InteractionHelper.printf("InteractionHelper:request_approved(%s, %s, %s)", arg_8_1, tostring(arg_8_2), tostring(arg_8_3))
 	ScriptUnit.extension(arg_8_2, "interactor_system"):interaction_approved(arg_8_1, arg_8_3)
 	ScriptUnit.extension(arg_8_3, "interactable_system"):set_is_being_interacted_with(arg_8_2)
 end
 
-function InteractionHelper.request_denied(arg_9_0, arg_9_1)
+InteractionHelper.request_denied = function (arg_9_0, arg_9_1)
 	InteractionHelper.printf("InteractionHelper:request_denied(%s)", tostring(arg_9_1))
 	ScriptUnit.extension(arg_9_1, "interactor_system"):interaction_denied()
 end
 
-function InteractionHelper.complete_interaction(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+InteractionHelper.complete_interaction = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	InteractionHelper.printf("InteractionHelper:complete_interaction(%s, %s, %s)", tostring(arg_10_1), tostring(arg_10_2), InteractionResult[arg_10_3])
 	InteractionHelper:interaction_completed(arg_10_1, arg_10_2, arg_10_3)
 
@@ -196,7 +196,7 @@ function InteractionHelper.complete_interaction(arg_10_0, arg_10_1, arg_10_2, ar
 	end
 end
 
-function InteractionHelper.interaction_completed(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+InteractionHelper.interaction_completed = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	InteractionHelper.printf("InteractionHelper:interaction_completed(%s, %s, %s)", tostring(arg_11_1), tostring(arg_11_2), InteractionResult[arg_11_3])
 
 	local var_11_0 = ScriptUnit.has_extension(arg_11_1, "interactor_system")
@@ -210,7 +210,7 @@ function InteractionHelper.interaction_completed(arg_11_0, arg_11_1, arg_11_2, a
 	end
 end
 
-function InteractionHelper.choose_player_interaction(arg_12_0, arg_12_1)
+InteractionHelper.choose_player_interaction = function (arg_12_0, arg_12_1)
 	if InteractionDefinitions.release_from_hook.client.can_interact(arg_12_0, arg_12_1) then
 		return "release_from_hook"
 	elseif InteractionDefinitions.revive.client.can_interact(arg_12_0, arg_12_1) then
@@ -228,7 +228,7 @@ function InteractionHelper.choose_player_interaction(arg_12_0, arg_12_1)
 	end
 end
 
-function InteractionHelper.player_modify_interaction_type(arg_13_0, arg_13_1, arg_13_2)
+InteractionHelper.player_modify_interaction_type = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_2 == "player_generic" then
 		local var_13_0 = InteractionHelper.choose_player_interaction(arg_13_0, arg_13_1)
 
@@ -240,7 +240,7 @@ function InteractionHelper.player_modify_interaction_type(arg_13_0, arg_13_1, ar
 	return arg_13_2
 end
 
-function InteractionHelper.interaction_action_names(arg_14_0, arg_14_1)
+InteractionHelper.interaction_action_names = function (arg_14_0, arg_14_1)
 	local var_14_0 = ScriptUnit.has_extension(arg_14_1, "interactable_system")
 
 	if var_14_0 then

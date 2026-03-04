@@ -2,7 +2,7 @@
 
 MockInputService = class(MockInputService)
 
-function MockInputService.init(arg_1_0)
+MockInputService.init = function (arg_1_0)
 	arg_1_0._cursor_position = {
 		-100000,
 		-100000,
@@ -15,7 +15,7 @@ local var_0_0 = {
 	left_press = true
 }
 
-function MockInputService.get(arg_2_0, arg_2_1)
+MockInputService.get = function (arg_2_0, arg_2_1)
 	if arg_2_1 == "debug_pixeldistance" then
 		return false
 	elseif arg_2_1 == "cursor" then
@@ -27,16 +27,16 @@ function MockInputService.get(arg_2_0, arg_2_1)
 	error(string.format("Wrong parameter %q", tostring(arg_2_1)))
 end
 
-function MockInputService.is_blocked(arg_3_0)
+MockInputService.is_blocked = function (arg_3_0)
 	return true
 end
 
 MockInputManager = class(MockInputManager)
 
-function MockInputManager.init(arg_4_0)
+MockInputManager.init = function (arg_4_0)
 	arg_4_0._mock_input_service = MockInputService:new()
 end
 
-function MockInputManager.get_service(arg_5_0)
+MockInputManager.get_service = function (arg_5_0)
 	return arg_5_0._mock_input_service
 end

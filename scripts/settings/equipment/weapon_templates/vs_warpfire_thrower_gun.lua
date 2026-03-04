@@ -36,7 +36,7 @@ local var_0_10 = {
 				minimum_hold_time = 0.1,
 				aim_assist_max_ramp_multiplier = 0.8,
 				anim_event = "attack_shoot_start",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				hold_input = var_0_2,
@@ -64,15 +64,15 @@ local var_0_10 = {
 						action = var_0_4
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					arg_3_1:clear_input_buffer()
 					arg_3_1:reset_release_input()
 					arg_3_3:change_synced_state("priming")
 				end,
-				finish_function = function(arg_4_0, arg_4_1, arg_4_2)
+				finish_function = function (arg_4_0, arg_4_1, arg_4_2)
 					arg_4_2:change_synced_state(nil)
 				end,
-				condition_func = function(arg_5_0, arg_5_1)
+				condition_func = function (arg_5_0, arg_5_1)
 					if not var_0_9(arg_5_0, arg_5_1) then
 						return false
 					end
@@ -121,7 +121,7 @@ local var_0_10 = {
 				shoot_warpfire_close_attack_range = 7,
 				buff_name_close = "vs_warpfire_thrower_short_distance_damage",
 				particle_effect_impact = "fx/wpnfx_flamethrower_hit_01",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
 				end,
 				hold_input = var_0_2,
@@ -141,12 +141,12 @@ local var_0_10 = {
 						action = var_0_4
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+				enter_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 					arg_7_1:clear_input_buffer()
 					arg_7_1:reset_release_input()
 					arg_7_3:change_synced_state("shooting")
 				end,
-				finish_function = function(arg_8_0, arg_8_1, arg_8_2)
+				finish_function = function (arg_8_0, arg_8_1, arg_8_2)
 					if arg_8_1 ~= "new_interupting_action" then
 						if arg_8_1 == "dead" then
 							arg_8_2:change_synced_state(nil)
@@ -177,7 +177,7 @@ local var_0_10 = {
 				charge_sound_switch = "projectile_charge_sound",
 				charge_time = 3,
 				anim_event = "wind_up_start",
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
 					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
 				end,
 				hold_input = var_0_5,
@@ -189,21 +189,21 @@ local var_0_10 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+				enter_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 					arg_10_1:reset_release_input()
 					arg_10_1:clear_input_buffer()
 					arg_10_3:change_synced_state("cooling_down")
 				end,
-				finish_function = function(arg_11_0, arg_11_1, arg_11_2)
+				finish_function = function (arg_11_0, arg_11_1, arg_11_2)
 					if arg_11_1 ~= "new_interupting_action" then
 						arg_11_2:change_synced_state(nil)
 					end
 				end,
 				allowed_chain_actions = {},
-				condition_func = function(arg_12_0, arg_12_1)
+				condition_func = function (arg_12_0, arg_12_1)
 					return ScriptUnit.extension(arg_12_0, "overcharge_system"):get_overcharge_value() > 0
 				end,
-				chain_condition_func = function(arg_13_0, arg_13_1)
+				chain_condition_func = function (arg_13_0, arg_13_1)
 					return ScriptUnit.extension(arg_13_0, "overcharge_system"):get_overcharge_value() > 0
 				end
 			}
@@ -252,7 +252,7 @@ end
 
 var_0_10.synced_states = {
 	priming = {
-		enter = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+		enter = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 			local var_15_0 = 0
 
 			if arg_15_4 then
@@ -261,14 +261,14 @@ var_0_10.synced_states = {
 				Managers.state.vce:trigger_vce_unit(arg_15_1, arg_15_5, "husk_vce_warpfire_shoot_start_sequence", arg_15_2, var_15_0)
 			end
 		end,
-		leave = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+		leave = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
 			if arg_16_6 ~= "shooting" and arg_16_1 and arg_16_4 then
-				-- block empty
+				-- Nothing
 			end
 		end
 	},
 	shooting = {
-		enter = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+		enter = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 			local var_17_0 = var_0_10.actions.dark_pact_action_one.fire
 			local var_17_1 = var_17_0.fx_node
 			local var_17_2 = Unit.node(arg_17_2, var_17_1)
@@ -308,10 +308,10 @@ var_0_10.synced_states = {
 				arg_17_3.first_person_extension = ScriptUnit.extension(arg_17_1, "first_person_system")
 			end
 		end,
-		update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+		update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 			var_0_11(arg_18_1, arg_18_2, arg_18_3, arg_18_5)
 		end,
-		leave = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
+		leave = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
 			if arg_19_4 and arg_19_3.rumble_effect_id then
 				Managers.state.controller_features:stop_effect(arg_19_3.rumble_effect_id)
 
@@ -343,7 +343,7 @@ var_0_10.synced_states = {
 		end
 	},
 	cooling_down = {
-		enter = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+		enter = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 			if arg_20_4 and arg_20_3.rumble_effect_id then
 				Managers.state.controller_features:stop_effect(arg_20_3.rumble_effect_id)
 
@@ -371,7 +371,7 @@ var_0_10.synced_states = {
 				arg_20_3.overcharge_extension, arg_20_3.prev_overcharge = ScriptUnit.extension(arg_20_1, "overcharge_system"), math.huge
 			end
 		end,
-		update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+		update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 			local var_21_0 = arg_21_3.overcharge_extension:get_overcharge_value()
 
 			if var_21_0 <= 0 and arg_21_3.prev_overcharge ~= 0 and arg_21_4 then
@@ -380,7 +380,7 @@ var_0_10.synced_states = {
 				arg_21_3.prev_overcharge = var_21_0
 			end
 		end,
-		leave = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+		leave = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 			if Unit.alive(arg_22_1) then
 				if arg_22_4 then
 					CharacterStateHelper.play_animation_event_first_person(arg_22_3.first_person_extension, "cooldown_ready")

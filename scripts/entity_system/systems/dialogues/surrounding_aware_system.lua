@@ -14,7 +14,7 @@ local var_0_2 = {
 
 SurroundingAwareSystem = class(SurroundingAwareSystem, ExtensionSystemBase)
 
-function SurroundingAwareSystem.init(arg_1_0, arg_1_1, arg_1_2)
+SurroundingAwareSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -44,7 +44,7 @@ function SurroundingAwareSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	GarbageLeakDetector.register_object(arg_1_0, "surrounding_aware_system")
 end
 
-function SurroundingAwareSystem.populate_global_observers(arg_2_0)
+SurroundingAwareSystem.populate_global_observers = function (arg_2_0)
 	if arg_2_0.is_server then
 		local var_2_0 = FrameTable.alloc_table()
 		local var_2_1 = Managers.level_transition_handler:get_current_level_keys()
@@ -72,7 +72,7 @@ function SurroundingAwareSystem.populate_global_observers(arg_2_0)
 	end
 end
 
-function SurroundingAwareSystem.request_global_listener(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+SurroundingAwareSystem.request_global_listener = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = Managers.state.side:get_side_from_name(arg_3_3)
 
 	for iter_3_0, iter_3_1 in pairs(arg_3_0.global_observers) do
@@ -102,7 +102,7 @@ function SurroundingAwareSystem.request_global_listener(arg_3_0, arg_3_1, arg_3_
 	return Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "dialogue_node", var_3_3)
 end
 
-function SurroundingAwareSystem.query_global_listener(arg_4_0, arg_4_1)
+SurroundingAwareSystem.query_global_listener = function (arg_4_0, arg_4_1)
 	for iter_4_0, iter_4_1 in pairs(arg_4_0.global_observers) do
 		if iter_4_1.dialogue_profile == arg_4_1 then
 			return iter_4_0
@@ -112,7 +112,7 @@ function SurroundingAwareSystem.query_global_listener(arg_4_0, arg_4_1)
 	return nil
 end
 
-function SurroundingAwareSystem.destroy(arg_5_0)
+SurroundingAwareSystem.destroy = function (arg_5_0)
 	for iter_5_0, iter_5_1 in pairs(arg_5_0.unit_extension_data) do
 		Broadphase.remove(arg_5_0.broadphase, iter_5_1.broadphase_id)
 	end
@@ -121,7 +121,7 @@ function SurroundingAwareSystem.destroy(arg_5_0)
 	table.clear(arg_5_0)
 end
 
-function SurroundingAwareSystem.add_event(arg_6_0, arg_6_1, arg_6_2, ...)
+SurroundingAwareSystem.add_event = function (arg_6_0, arg_6_1, arg_6_2, ...)
 	arg_6_2 = arg_6_2 or DialogueSettings.default_hear_distance
 
 	local var_6_0 = ScriptUnit.extension_input(arg_6_0, "surrounding_aware_system").event_array
@@ -138,7 +138,7 @@ function SurroundingAwareSystem.add_event(arg_6_0, arg_6_1, arg_6_2, ...)
 	pdArray.set_size(var_6_0, var_6_4)
 end
 
-function SurroundingAwareSystem.add_system_event(arg_7_0, arg_7_1, arg_7_2, arg_7_3, ...)
+SurroundingAwareSystem.add_system_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, ...)
 	arg_7_3 = arg_7_3 or DialogueSettings.default_hear_distance
 
 	local var_7_0 = arg_7_0.event_array
@@ -157,7 +157,7 @@ end
 
 local var_0_3 = {}
 
-function SurroundingAwareSystem.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+SurroundingAwareSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = {
 		input = MakeTableStrict({
 			event_array = arg_8_0.event_array
@@ -195,19 +195,19 @@ function SurroundingAwareSystem.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_
 	return var_8_0
 end
 
-function SurroundingAwareSystem.get_global_observer_unit(arg_9_0, arg_9_1)
+SurroundingAwareSystem.get_global_observer_unit = function (arg_9_0, arg_9_1)
 	return arg_9_0._global_observer_by_profile[arg_9_1]
 end
 
-function SurroundingAwareSystem.get_global_observers(arg_10_0)
+SurroundingAwareSystem.get_global_observers = function (arg_10_0)
 	return arg_10_0.global_observers
 end
 
-function SurroundingAwareSystem.extensions_ready(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+SurroundingAwareSystem.extensions_ready = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = ScriptUnit.extension(arg_11_2, "surrounding_aware_system")
 
 	if arg_11_3 == "SurroundingObserverExtension" or arg_11_3 == "SurroundingObserverHuskExtension" then
-		-- block empty
+		-- Nothing
 	elseif arg_11_3 == "GlobalObserverExtension" then
 		local var_11_1 = ScriptUnit.has_extension(arg_11_2, "dialogue_system")
 
@@ -223,7 +223,7 @@ function SurroundingAwareSystem.extensions_ready(arg_11_0, arg_11_1, arg_11_2, a
 	end
 end
 
-function SurroundingAwareSystem.on_remove_extension(arg_12_0, arg_12_1, arg_12_2)
+SurroundingAwareSystem.on_remove_extension = function (arg_12_0, arg_12_1, arg_12_2)
 	Broadphase.remove(arg_12_0.broadphase, arg_12_0.unit_extension_data[arg_12_1].broadphase_id)
 
 	local var_12_0 = arg_12_0.unit_extension_data[arg_12_1]
@@ -257,7 +257,7 @@ function SurroundingAwareSystem.on_remove_extension(arg_12_0, arg_12_1, arg_12_2
 	ScriptUnit.remove_extension(arg_12_1, "surrounding_aware_system")
 end
 
-function SurroundingAwareSystem.update(arg_13_0, arg_13_1, arg_13_2)
+SurroundingAwareSystem.update = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:update_seen_recently(arg_13_1, arg_13_2)
 	arg_13_0:update_lookat(arg_13_1, arg_13_2)
 	arg_13_0:update_events(arg_13_1, arg_13_2)
@@ -312,7 +312,7 @@ local var_0_7 = -1
 local var_0_8 = 1.5
 local var_0_9 = {}
 
-function SurroundingAwareSystem.update_lookat(arg_16_0, arg_16_1, arg_16_2)
+SurroundingAwareSystem.update_lookat = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.observers
 
 	if var_16_0[arg_16_0.current_observer_unit] == nil then
@@ -445,7 +445,7 @@ function SurroundingAwareSystem.update_lookat(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function SurroundingAwareSystem.update_debug(arg_17_0, arg_17_1, arg_17_2)
+SurroundingAwareSystem.update_debug = function (arg_17_0, arg_17_1, arg_17_2)
 	if not script_data.dialogue_debug_lookat then
 		return
 	end
@@ -563,7 +563,7 @@ local var_0_10 = {
 	heard_speak = "heard_speak_self"
 }
 
-function SurroundingAwareSystem.update_events(arg_18_0, arg_18_1, arg_18_2)
+SurroundingAwareSystem.update_events = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.unit_input_data
 	local var_18_1 = arg_18_0.broadphase
 	local var_18_2 = arg_18_0.event_array
@@ -660,7 +660,7 @@ function SurroundingAwareSystem.update_events(arg_18_0, arg_18_1, arg_18_2)
 	pdArray.set_empty(var_18_2)
 end
 
-function SurroundingAwareSystem.update_seen_recently(arg_19_0, arg_19_1, arg_19_2)
+SurroundingAwareSystem.update_seen_recently = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.seen_recently
 	local var_19_1 = arg_19_2 - DialogueSettings.seen_recently_threshold
 
@@ -671,6 +671,6 @@ function SurroundingAwareSystem.update_seen_recently(arg_19_0, arg_19_1, arg_19_
 	end
 end
 
-function SurroundingAwareSystem.hot_join_sync(arg_20_0, arg_20_1)
+SurroundingAwareSystem.hot_join_sync = function (arg_20_0, arg_20_1)
 	return
 end

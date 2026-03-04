@@ -8,7 +8,7 @@ local var_0_0 = 2
 MatchmakingStateReserveLobby = class(MatchmakingStateReserveLobby)
 MatchmakingStateReserveLobby.NAME = "MatchmakingStateReserveLobby"
 
-function MatchmakingStateReserveLobby.init(arg_1_0, arg_1_1)
+MatchmakingStateReserveLobby.init = function (arg_1_0, arg_1_1)
 	arg_1_0._network_options = arg_1_1.network_options
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._reserver = nil
@@ -22,17 +22,17 @@ function MatchmakingStateReserveLobby.init(arg_1_0, arg_1_1)
 	Managers.state.event:register(arg_1_0, "friend_party_peer_left", "on_friend_party_peer_left")
 end
 
-function MatchmakingStateReserveLobby.terminate(arg_2_0)
+MatchmakingStateReserveLobby.terminate = function (arg_2_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-function MatchmakingStateReserveLobby.destroy(arg_3_0)
+MatchmakingStateReserveLobby.destroy = function (arg_3_0)
 	arg_3_0:_cleanup()
 end
 
-function MatchmakingStateReserveLobby.on_enter(arg_4_0, arg_4_1)
+MatchmakingStateReserveLobby.on_enter = function (arg_4_0, arg_4_1)
 	arg_4_0._state_context = arg_4_1
 	arg_4_0._wait_for_join_message = arg_4_1.search_config.wait_for_join_message
 
@@ -66,11 +66,11 @@ function MatchmakingStateReserveLobby.on_enter(arg_4_0, arg_4_1)
 	end
 end
 
-function MatchmakingStateReserveLobby.on_exit(arg_5_0)
+MatchmakingStateReserveLobby.on_exit = function (arg_5_0)
 	arg_5_0:_cleanup()
 end
 
-function MatchmakingStateReserveLobby.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateReserveLobby.update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._state
 	local var_6_1 = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
@@ -174,7 +174,7 @@ function MatchmakingStateReserveLobby.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MatchmakingStateReserveLobby._reset(arg_7_0)
+MatchmakingStateReserveLobby._reset = function (arg_7_0)
 	local var_7_0 = Managers.mechanism:game_mechanism()
 
 	if var_7_0.reset_dedicated_slots_count and var_7_0.reset_party_info then
@@ -189,11 +189,11 @@ function MatchmakingStateReserveLobby._reset(arg_7_0)
 	arg_7_0._join_lobby_data = nil
 end
 
-function MatchmakingStateReserveLobby.rpc_join_reserved_game_server(arg_8_0, arg_8_1)
+MatchmakingStateReserveLobby.rpc_join_reserved_game_server = function (arg_8_0, arg_8_1)
 	arg_8_0._received_join_message = true
 end
 
-function MatchmakingStateReserveLobby._cleanup(arg_9_0)
+MatchmakingStateReserveLobby._cleanup = function (arg_9_0)
 	if arg_9_0._reserver ~= nil then
 		arg_9_0._reserver:destroy()
 
@@ -214,7 +214,7 @@ function MatchmakingStateReserveLobby._cleanup(arg_9_0)
 	end
 end
 
-function MatchmakingStateReserveLobby._start_search(arg_10_0, arg_10_1, arg_10_2)
+MatchmakingStateReserveLobby._start_search = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.mechanism:get_custom_lobby_sort()
 	local var_10_1 = Managers.matchmaking:broken_server_map()
 	local var_10_2 = not Managers.state.game_mode:setting("allow_hotjoining_ongoing_game")
@@ -244,7 +244,7 @@ function MatchmakingStateReserveLobby._start_search(arg_10_0, arg_10_1, arg_10_2
 	arg_10_0._state = "reserving"
 end
 
-function MatchmakingStateReserveLobby._claim_reservation(arg_11_0, arg_11_1)
+MatchmakingStateReserveLobby._claim_reservation = function (arg_11_0, arg_11_1)
 	local var_11_0 = Managers.lobby:free_lobby("matchmaking_join_lobby")
 
 	arg_11_1.reserved_lobby = var_11_0
@@ -256,13 +256,13 @@ function MatchmakingStateReserveLobby._claim_reservation(arg_11_0, arg_11_1)
 	arg_11_0._cleanup_server_lobby = false
 end
 
-function MatchmakingStateReserveLobby.on_friend_party_peer_left(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MatchmakingStateReserveLobby.on_friend_party_peer_left = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if arg_12_2 then
 		Managers.matchmaking:cancel_matchmaking()
 	end
 end
 
-function MatchmakingStateReserveLobby.rpc_flexmatch_game_session_id_request(arg_13_0, arg_13_1)
+MatchmakingStateReserveLobby.rpc_flexmatch_game_session_id_request = function (arg_13_0, arg_13_1)
 	if arg_13_0._flexmatch_response_sent then
 		return
 	end

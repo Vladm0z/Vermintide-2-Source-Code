@@ -2,7 +2,7 @@
 
 PackmasterStateHoisting = class(PackmasterStateHoisting, EnemyCharacterState)
 
-function PackmasterStateHoisting.init(arg_1_0, arg_1_1)
+PackmasterStateHoisting.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_hoisting")
 
 	local var_1_0 = arg_1_1
@@ -11,7 +11,7 @@ function PackmasterStateHoisting.init(arg_1_0, arg_1_1)
 	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function PackmasterStateHoisting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateHoisting.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0._hosting_end_time = arg_2_5 + BreedActions.skaven_pack_master.hoist.hoist_anim_length
 	arg_2_0._drag_target_unit = arg_2_7
 	arg_2_0._unit = arg_2_1
@@ -26,12 +26,12 @@ function PackmasterStateHoisting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 	arg_2_0:set_breed_action("hoist")
 end
 
-function PackmasterStateHoisting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PackmasterStateHoisting.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0._drag_target_unit
 	local var_3_1 = arg_3_0._first_person_extension
 
 	if Unit.alive(var_3_0) then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_3_0._drag_target_unit = nil
@@ -64,7 +64,7 @@ function PackmasterStateHoisting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	var_3_3:ability_by_id(var_3_4):unfreeze()
 end
 
-function PackmasterStateHoisting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PackmasterStateHoisting.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0._inventory_extension
 	local var_4_2 = ScriptUnit.extension(arg_4_1, "input_system")
@@ -131,7 +131,7 @@ function PackmasterStateHoisting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	CharacterStateHelper.look(var_4_2, arg_4_0._player.viewport_name, arg_4_0._first_person_extension, var_4_3, var_4_1)
 end
 
-function PackmasterStateHoisting.release_dragged_target(arg_5_0)
+PackmasterStateHoisting.release_dragged_target = function (arg_5_0)
 	local var_5_0 = arg_5_0._status_extension
 	local var_5_1 = arg_5_0._first_person_extension
 	local var_5_2 = arg_5_0._drag_target_unit

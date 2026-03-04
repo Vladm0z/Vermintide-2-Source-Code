@@ -160,7 +160,7 @@ local var_0_3 = {
 	run_on_husk_spawn = AiBreedSnippets.on_storm_vermin_champion_husk_spawn,
 	run_on_despawn = AiBreedSnippets.on_storm_vermin_champion_despawn,
 	hot_join_sync = AiBreedSnippets.on_storm_vermin_hot_join_sync,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if not arg_1_4.unit then
 			return arg_1_0, arg_1_1, arg_1_2
 		end
@@ -405,7 +405,7 @@ local var_0_3 = {
 		"kill_skaven_storm_vermin_warlord_difficulty_rank",
 		"kill_skaven_storm_vermin_warlord_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -618,7 +618,7 @@ local var_0_5 = {
 			false,
 			false
 		},
-		hit_ai_func = function(arg_3_0, arg_3_1, arg_3_2)
+		hit_ai_func = function (arg_3_0, arg_3_1, arg_3_2)
 			local var_3_0 = {
 				"storm_vermin_warlord_kills_enemies",
 				"storm_vermin_warlord_kills_enemies_cata"
@@ -672,7 +672,7 @@ local var_0_5 = {
 			},
 			{
 				attack_anim = "attack_spin",
-				ready_function = function(arg_4_0, arg_4_1, arg_4_2)
+				ready_function = function (arg_4_0, arg_4_1, arg_4_2)
 					local var_4_0 = arg_4_2 - arg_4_1.attack_sequence_start_time
 
 					return var_4_0 > 1.5 and arg_4_1.surrounding_players > 0 or var_4_0 > 2.5
@@ -709,7 +709,7 @@ local var_0_5 = {
 			true,
 			true
 		},
-		hit_ai_func = function(arg_5_0, arg_5_1, arg_5_2)
+		hit_ai_func = function (arg_5_0, arg_5_1, arg_5_2)
 			local var_5_0 = {
 				"storm_vermin_warlord_kills_enemies",
 				"storm_vermin_warlord_kills_enemies_cata"
@@ -982,7 +982,7 @@ local var_0_5 = {
 		stagger_animation_scale = 3.5,
 		ignore_block_on_leave = true,
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		custom_enter_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			assert(ScriptUnit.has_extension(arg_6_0, "ai_shield_system"), "skaven_storm_vermin_warlord dont have ai_shield_user_extension")
 
 			local var_6_0 = arg_6_1.stagger

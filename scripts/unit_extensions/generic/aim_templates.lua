@@ -69,7 +69,7 @@ end
 
 AimTemplates.player = {
 	owner = {
-		init = function(arg_2_0, arg_2_1)
+		init = function (arg_2_0, arg_2_1)
 			arg_2_1.packmaster_claw_aim_constraint = Unit.animation_find_constraint_target(arg_2_0, "packmaster_claw_target")
 			arg_2_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_2_0, "aim_constraint_target")
 			arg_2_1.look_direction_anim_var = Unit.animation_find_variable(arg_2_0, "aim_direction")
@@ -92,7 +92,7 @@ AimTemplates.player = {
 				end
 			end
 		end,
-		update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0
 			local var_3_1 = Quaternion.forward(Unit.local_rotation(arg_3_0, 0))
 			local var_3_2 = arg_3_3.status_extension
@@ -142,12 +142,12 @@ AimTemplates.player = {
 				GameSession.set_game_object_field(var_3_14, var_3_15, "aim_position", var_3_17)
 			end
 		end,
-		leave = function(arg_4_0, arg_4_1)
+		leave = function (arg_4_0, arg_4_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_5_0, arg_5_1)
+		init = function (arg_5_0, arg_5_1)
 			arg_5_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_5_0, "aim_constraint_target")
 			arg_5_1.look_direction_anim_var = Unit.animation_find_variable(arg_5_0, "aim_direction")
 			arg_5_1.aim_direction_pitch_var = Unit.animation_find_variable(arg_5_0, "aim_direction_pitch")
@@ -170,7 +170,7 @@ AimTemplates.player = {
 				end
 			end
 		end,
-		update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Managers.state.network:game()
 			local var_6_1 = Managers.state.unit_storage:go_id(arg_6_0)
 
@@ -229,14 +229,14 @@ AimTemplates.player = {
 				Unit.animation_set_constraint_target(arg_6_0, arg_6_3.packmaster_claw_aim_constraint, var_6_28)
 			end
 		end,
-		leave = function(arg_7_0, arg_7_1)
+		leave = function (arg_7_0, arg_7_1)
 			return
 		end
 	}
 }
 AimTemplates.enemy_character = {
 	owner = {
-		init = function(arg_8_0, arg_8_1)
+		init = function (arg_8_0, arg_8_1)
 			arg_8_1.breed = Unit.get_data(arg_8_0, "breed")
 			arg_8_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_8_0, "aim_constraint_target")
 			arg_8_1.look_direction_anim_var = Unit.animation_find_variable(arg_8_0, "aim_direction")
@@ -244,7 +244,7 @@ AimTemplates.enemy_character = {
 			arg_8_1.locomotion_extension = ScriptUnit.extension(arg_8_0, "locomotion_system")
 			arg_8_1.status_extension = ScriptUnit.extension(arg_8_0, "status_system")
 		end,
-		update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 			local var_9_0
 			local var_9_1 = Quaternion.forward(Unit.local_rotation(arg_9_0, 0))
 			local var_9_2 = arg_9_3.status_extension
@@ -283,12 +283,12 @@ AimTemplates.enemy_character = {
 				GameSession.set_game_object_field(var_9_9, var_9_10, "aim_position", var_9_12)
 			end
 		end,
-		leave = function(arg_10_0, arg_10_1)
+		leave = function (arg_10_0, arg_10_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_11_0, arg_11_1)
+		init = function (arg_11_0, arg_11_1)
 			local var_11_0 = Unit.get_data(arg_11_0, "breed")
 
 			arg_11_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_11_0, "aim_constraint_target")
@@ -300,7 +300,7 @@ AimTemplates.enemy_character = {
 			arg_11_1.status_extension = ScriptUnit.extension(arg_11_0, "status_system")
 			arg_11_1.husk_locomotion_extension = ScriptUnit.extension(arg_11_0, "locomotion_system")
 		end,
-		update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 			local var_12_0 = Managers.state.network:game()
 			local var_12_1 = Managers.state.unit_storage:go_id(arg_12_0)
 
@@ -361,31 +361,31 @@ AimTemplates.enemy_character = {
 
 			Unit.animation_set_variable(arg_12_0, arg_12_3.look_direction_anim_var, math.clamp(var_12_24, -var_0_1, var_0_1))
 		end,
-		leave = function(arg_13_0, arg_13_1)
+		leave = function (arg_13_0, arg_13_1)
 			return
 		end
 	}
 }
 AimTemplates.packmaster_claw = {
 	owner = {
-		init = function(arg_14_0, arg_14_1)
+		init = function (arg_14_0, arg_14_1)
 			arg_14_1.aim_constraint_anim_var = Unit.animation_find_constraint_target(arg_14_0, "aim_constraint_target")
 		end,
-		update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 			return
 		end,
-		leave = function(arg_16_0, arg_16_1)
+		leave = function (arg_16_0, arg_16_1)
 			return
 		end
 	}
 }
 AimTemplates.ratling_gunner = {
 	owner = {
-		init = function(arg_17_0, arg_17_1)
+		init = function (arg_17_0, arg_17_1)
 			arg_17_1.blackboard = var_0_0[arg_17_0]
 			arg_17_1.constraint_target = Unit.animation_find_constraint_target(arg_17_0, "aim_target")
 		end,
-		update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+		update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 			local var_18_0 = POSITION_LOOKUP[arg_18_0]
 			local var_18_1
 			local var_18_2 = arg_18_3.blackboard.attack_pattern_data
@@ -407,15 +407,15 @@ AimTemplates.ratling_gunner = {
 				GameSession.set_game_object_field(var_18_4, var_18_5, "aim_target", var_18_1)
 			end
 		end,
-		leave = function(arg_19_0, arg_19_1)
+		leave = function (arg_19_0, arg_19_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_20_0, arg_20_1)
+		init = function (arg_20_0, arg_20_1)
 			arg_20_1.constraint_target = Unit.animation_find_constraint_target(arg_20_0, "aim_target")
 		end,
-		update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 			local var_21_0 = Managers.state.network:game()
 			local var_21_1 = Managers.state.unit_storage:go_id(arg_21_0)
 
@@ -430,18 +430,18 @@ AimTemplates.ratling_gunner = {
 				Unit.animation_set_constraint_target(arg_21_0, arg_21_3.constraint_target, var_21_4)
 			end
 		end,
-		leave = function(arg_22_0, arg_22_1)
+		leave = function (arg_22_0, arg_22_1)
 			return
 		end
 	}
 }
 AimTemplates.pack_master = {
 	owner = {
-		init = function(arg_23_0, arg_23_1)
+		init = function (arg_23_0, arg_23_1)
 			arg_23_1.blackboard = var_0_0[arg_23_0]
 			arg_23_1.constraint_target = Unit.animation_find_constraint_target(arg_23_0, "aim_constraint_target")
 		end,
-		update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+		update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 			local var_24_0 = arg_24_3.blackboard.target_unit
 
 			if ALIVE[var_24_0] then
@@ -458,15 +458,15 @@ AimTemplates.pack_master = {
 				end
 			end
 		end,
-		leave = function(arg_25_0, arg_25_1)
+		leave = function (arg_25_0, arg_25_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_26_0, arg_26_1)
+		init = function (arg_26_0, arg_26_1)
 			arg_26_1.constraint_target = Unit.animation_find_constraint_target(arg_26_0, "aim_constraint_target")
 		end,
-		update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+		update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 			local var_27_0 = Managers.state.network:game()
 			local var_27_1 = Managers.state.unit_storage:go_id(arg_27_0)
 
@@ -485,18 +485,18 @@ AimTemplates.pack_master = {
 
 			Unit.animation_set_constraint_target(arg_27_0, arg_27_3.constraint_target, var_27_4)
 		end,
-		leave = function(arg_28_0, arg_28_1)
+		leave = function (arg_28_0, arg_28_1)
 			return
 		end
 	}
 }
 AimTemplates.warpfire_thrower = {
 	owner = {
-		init = function(arg_29_0, arg_29_1)
+		init = function (arg_29_0, arg_29_1)
 			arg_29_1.blackboard = var_0_0[arg_29_0]
 			arg_29_1.constraint_target = Unit.animation_find_constraint_target(arg_29_0, "aim_target")
 		end,
-		update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+		update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 			local var_30_0 = POSITION_LOOKUP[arg_30_0]
 			local var_30_1
 			local var_30_2 = arg_30_3.blackboard.attack_pattern_data
@@ -518,15 +518,15 @@ AimTemplates.warpfire_thrower = {
 				GameSession.set_game_object_field(var_30_4, var_30_5, "aim_target", var_30_1)
 			end
 		end,
-		leave = function(arg_31_0, arg_31_1)
+		leave = function (arg_31_0, arg_31_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_32_0, arg_32_1)
+		init = function (arg_32_0, arg_32_1)
 			arg_32_1.constraint_target = Unit.animation_find_constraint_target(arg_32_0, "aim_target")
 		end,
-		update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+		update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 			local var_33_0 = Managers.state.network:game()
 			local var_33_1 = Managers.state.unit_storage:go_id(arg_33_0)
 
@@ -541,19 +541,19 @@ AimTemplates.warpfire_thrower = {
 				Unit.animation_set_constraint_target(arg_33_0, arg_33_3.constraint_target, var_33_4)
 			end
 		end,
-		leave = function(arg_34_0, arg_34_1)
+		leave = function (arg_34_0, arg_34_1)
 			return
 		end
 	}
 }
 AimTemplates.chaos_warrior = {
 	owner = {
-		init = function(arg_35_0, arg_35_1)
+		init = function (arg_35_0, arg_35_1)
 			arg_35_1.blackboard = var_0_0[arg_35_0]
 			arg_35_1.constraint_target = Unit.animation_find_constraint_target(arg_35_0, "aim_target")
 			arg_35_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+		update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 			if not Unit.has_animation_state_machine(arg_36_0) then
 				return
 			end
@@ -595,16 +595,16 @@ AimTemplates.chaos_warrior = {
 				arg_36_3.previous_aim_target_unit = var_36_1
 			end
 		end,
-		leave = function(arg_37_0, arg_37_1)
+		leave = function (arg_37_0, arg_37_1)
 			return
 		end
 	},
 	husk = {
-		init = function(arg_38_0, arg_38_1)
+		init = function (arg_38_0, arg_38_1)
 			arg_38_1.constraint_target = Unit.animation_find_constraint_target(arg_38_0, "aim_target")
 			arg_38_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+		update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 			if not Unit.has_animation_state_machine(arg_39_0) then
 				return
 			end
@@ -655,20 +655,20 @@ AimTemplates.chaos_warrior = {
 				AiUtils.set_default_anim_constraint(arg_39_0, var_39_2)
 			end
 		end,
-		leave = function(arg_40_0, arg_40_1)
+		leave = function (arg_40_0, arg_40_1)
 			return
 		end
 	}
 }
 AimTemplates.chaos_marauder = {
 	owner = {
-		init = function(arg_41_0, arg_41_1)
+		init = function (arg_41_0, arg_41_1)
 			arg_41_1.blackboard = var_0_0[arg_41_0]
 			arg_41_1.ai_extension = ScriptUnit.extension(arg_41_0, "ai_system")
 			arg_41_1.head_constraint_target = Unit.animation_find_constraint_target(arg_41_0, "head_aim_target")
 			arg_41_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+		update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 			local var_42_0 = arg_42_3.blackboard
 			local var_42_1 = arg_42_3.ai_extension:current_action_name()
 			local var_42_2 = Managers.state.network:game()
@@ -716,7 +716,7 @@ AimTemplates.chaos_marauder = {
 				Unit.animation_event(arg_42_0, "look_at_off")
 			end
 		end,
-		leave = function(arg_43_0, arg_43_1)
+		leave = function (arg_43_0, arg_43_1)
 			if arg_43_1.is_using_head_constraint then
 				arg_43_1.is_using_head_constraint = false
 
@@ -725,11 +725,11 @@ AimTemplates.chaos_marauder = {
 		end
 	},
 	husk = {
-		init = function(arg_44_0, arg_44_1)
+		init = function (arg_44_0, arg_44_1)
 			arg_44_1.head_constraint_target = Unit.animation_find_constraint_target(arg_44_0, "head_aim_target")
 			arg_44_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+		update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 			local var_45_0 = Managers.state.network:game()
 			local var_45_1 = Managers.state.unit_storage
 			local var_45_2 = var_45_1:go_id(arg_45_0)
@@ -764,7 +764,7 @@ AimTemplates.chaos_marauder = {
 				end
 			end
 		end,
-		leave = function(arg_46_0, arg_46_1)
+		leave = function (arg_46_0, arg_46_1)
 			if arg_46_1.is_using_head_constraint then
 				arg_46_1.is_using_head_constraint = false
 
@@ -775,13 +775,13 @@ AimTemplates.chaos_marauder = {
 }
 AimTemplates.stormfiend = {
 	owner = {
-		init = function(arg_47_0, arg_47_1)
+		init = function (arg_47_0, arg_47_1)
 			arg_47_1.blackboard = var_0_0[arg_47_0]
 			arg_47_1.ai_extension = ScriptUnit.extension(arg_47_0, "ai_system")
 			arg_47_1.head_constraint_target = Unit.animation_find_constraint_target(arg_47_0, "head_aim_target")
 			arg_47_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+		update = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 			local var_48_0 = arg_48_3.blackboard
 			local var_48_1 = arg_48_3.ai_extension:current_action_name()
 			local var_48_2 = Managers.state.network:game()
@@ -852,7 +852,7 @@ AimTemplates.stormfiend = {
 				Unit.animation_event(arg_48_0, "look_at_off")
 			end
 		end,
-		leave = function(arg_49_0, arg_49_1)
+		leave = function (arg_49_0, arg_49_1)
 			if arg_49_1.is_using_head_constraint then
 				arg_49_1.is_using_head_constraint = false
 
@@ -861,12 +861,12 @@ AimTemplates.stormfiend = {
 		end
 	},
 	husk = {
-		init = function(arg_50_0, arg_50_1)
+		init = function (arg_50_0, arg_50_1)
 			arg_50_1.shoot_constraint_targets = BreedActions.skaven_stormfiend.shoot.aim_constraint_target
 			arg_50_1.head_constraint_target = Unit.animation_find_constraint_target(arg_50_0, "head_aim_target")
 			arg_50_1.previous_look_target = Vector3Box()
 		end,
-		update = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+		update = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 			local var_51_0 = Managers.state.network:game()
 			local var_51_1 = Managers.state.unit_storage
 			local var_51_2 = var_51_1:go_id(arg_51_0)
@@ -927,7 +927,7 @@ AimTemplates.stormfiend = {
 				end
 			end
 		end,
-		leave = function(arg_52_0, arg_52_1)
+		leave = function (arg_52_0, arg_52_1)
 			if arg_52_1.is_using_head_constraint then
 				arg_52_1.is_using_head_constraint = false
 
@@ -938,14 +938,14 @@ AimTemplates.stormfiend = {
 }
 AimTemplates.innkeeper = {
 	owner = {
-		init = function(arg_53_0, arg_53_1)
+		init = function (arg_53_0, arg_53_1)
 			arg_53_1.constraint_target = Unit.animation_find_constraint_target(arg_53_0, "lookat")
 			arg_53_1.current_target = nil
 			arg_53_1.interpolation_origin_position = Vector3Box()
 			arg_53_1.last_position = Vector3Box()
 			arg_53_1.interpolation_time = -math.huge
 		end,
-		update = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+		update = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 			local var_54_0 = Unit.local_position(arg_54_0, 0)
 			local var_54_1
 			local var_54_2 = 9
@@ -1007,21 +1007,21 @@ AimTemplates.innkeeper = {
 
 			arg_54_3.current_target = var_54_1
 		end,
-		leave = function(arg_55_0, arg_55_1)
+		leave = function (arg_55_0, arg_55_1)
 			return
 		end
 	}
 }
 AimTemplates.closest_player = {
 	owner = {
-		init = function(arg_56_0, arg_56_1)
+		init = function (arg_56_0, arg_56_1)
 			arg_56_1.constraint_target = Unit.animation_find_constraint_target(arg_56_0, "aim_constraint_target")
 			arg_56_1.current_target = nil
 			arg_56_1.interpolation_origin_position = Vector3Box()
 			arg_56_1.last_position = Vector3Box()
 			arg_56_1.interpolation_time = -math.huge
 		end,
-		update = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+		update = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 			local var_57_0 = Managers.player:local_player().player_unit
 
 			if var_57_0 then
@@ -1031,21 +1031,21 @@ AimTemplates.closest_player = {
 				Unit.animation_set_constraint_target(arg_57_0, arg_57_3.constraint_target, var_57_2)
 			end
 		end,
-		leave = function(arg_58_0, arg_58_1)
+		leave = function (arg_58_0, arg_58_1)
 			return
 		end
 	}
 }
 AimTemplates.closest_player_flat = {
 	owner = {
-		init = function(arg_59_0, arg_59_1)
+		init = function (arg_59_0, arg_59_1)
 			arg_59_1.constraint_target = Unit.animation_find_constraint_target(arg_59_0, "aim_constraint_target")
 			arg_59_1.current_target = nil
 			arg_59_1.interpolation_origin_position = Vector3Box()
 			arg_59_1.last_position = Vector3Box()
 			arg_59_1.interpolation_time = -math.huge
 		end,
-		update = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+		update = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 			local var_60_0 = Managers.player:local_player().player_unit
 
 			if var_60_0 then
@@ -1057,7 +1057,7 @@ AimTemplates.closest_player_flat = {
 				Unit.animation_set_constraint_target(arg_60_0, arg_60_3.constraint_target, var_60_1)
 			end
 		end,
-		leave = function(arg_61_0, arg_61_1)
+		leave = function (arg_61_0, arg_61_1)
 			return
 		end
 	}

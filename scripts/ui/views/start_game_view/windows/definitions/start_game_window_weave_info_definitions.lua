@@ -653,7 +653,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 			content_id = var_2_4,
 			style_id = var_2_6,
 			additional_option_id = var_2_6,
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.is_hover
 			end
 		}
@@ -677,7 +677,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		text_id = var_2_7,
 		style_id = var_2_7,
-		content_check_function = function(arg_4_0)
+		content_check_function = function (arg_4_0)
 			return not arg_4_0.disable_button
 		end
 	}
@@ -709,7 +709,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		text_id = var_2_7,
 		style_id = var_2_9,
-		content_check_function = function(arg_5_0)
+		content_check_function = function (arg_5_0)
 			return arg_5_0.disable_button
 		end
 	}
@@ -790,7 +790,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		texture_id = var_2_14,
 		style_id = var_2_14,
-		content_check_function = function(arg_6_0)
+		content_check_function = function (arg_6_0)
 			return not arg_6_0.is_disabled
 		end
 	}
@@ -825,7 +825,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		texture_id = var_2_14,
 		style_id = var_2_16,
-		content_check_function = function(arg_7_0)
+		content_check_function = function (arg_7_0)
 			return not arg_7_0.is_disabled
 		end
 	}
@@ -856,7 +856,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		texture_id = var_2_17,
 		style_id = var_2_17,
-		content_check_function = function(arg_8_0)
+		content_check_function = function (arg_8_0)
 			return arg_8_0.is_selected and not arg_8_0.disable_button
 		end
 	}
@@ -885,7 +885,7 @@ local function var_0_23(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		content_id = var_2_4,
 		texture_id = var_2_17,
 		style_id = var_2_20,
-		content_check_function = function(arg_9_0)
+		content_check_function = function (arg_9_0)
 			return arg_9_0.is_selected and arg_9_0.disable_button
 		end
 	}
@@ -915,7 +915,7 @@ local function var_0_24(arg_10_0, arg_10_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return not arg_11_0.occupied
 					end
 				},
@@ -923,7 +923,7 @@ local function var_0_24(arg_10_0, arg_10_1)
 					texture_id = "player_icon",
 					style_id = "player_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.occupied
 					end
 				},
@@ -931,10 +931,10 @@ local function var_0_24(arg_10_0, arg_10_1)
 					style_id = "search_icon",
 					pass_type = "rotated_texture",
 					texture_id = "search_icon",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return not arg_13_0.occupied and arg_13_0.searching
 					end,
-					content_change_function = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+					content_change_function = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 						local var_14_0 = ((arg_14_1.progress or 0) + arg_14_3) % 1
 
 						arg_14_1.angle = math.pow(2, math.smoothstep(var_14_0, 0, 1)) * (math.pi * 2)
@@ -945,7 +945,7 @@ local function var_0_24(arg_10_0, arg_10_1)
 					texture_id = "empty_icon",
 					style_id = "empty_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return not arg_15_0.occupied and not arg_15_0.searching
 					end
 				}
@@ -1084,7 +1084,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.button_hotspot.disable_button
 					end
 				},
@@ -1103,7 +1103,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return not arg_18_0.button_hotspot.disable_button
 					end
 				},
@@ -1111,7 +1111,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.button_hotspot.disable_button
 					end
 				},
@@ -1135,7 +1135,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "find_party_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						local var_20_0 = arg_20_0.parent.button_hotspot
 
 						return arg_20_0.is_hover and not var_20_0.disable_button and not Managers.matchmaking:is_game_matchmaking()
@@ -1146,7 +1146,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "find_party_disabled_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						local var_21_0 = arg_21_0.parent.button_hotspot
 
 						return arg_21_0.is_hover and var_21_0.disable_button
@@ -1486,7 +1486,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						local var_23_0 = arg_23_0.button_hotspot.is_clicked
 
 						return not var_23_0 or var_23_0 == 0
@@ -1495,7 +1495,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.button_hotspot.disable_button
 					end
 				},
@@ -1503,7 +1503,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right",
 					pass_type = "texture",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return not arg_25_0.button_hotspot.disable_button
 					end
 				},
@@ -1511,7 +1511,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left",
 					pass_type = "texture",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return not arg_26_0.button_hotspot.disable_button
 					end
 				},
@@ -1519,7 +1519,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.button_hotspot.disable_button
 					end
 				},
@@ -1527,7 +1527,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_28_0)
+					content_check_function = function (arg_28_0)
 						return arg_28_0.button_hotspot.disable_button
 					end
 				},
@@ -1535,7 +1535,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return not arg_29_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -1544,7 +1544,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return not arg_30_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -1552,7 +1552,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_31_0)
+					content_check_function = function (arg_31_0)
 						return not arg_31_0.button_hotspot.disable_button
 					end
 				},
@@ -1560,7 +1560,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.button_hotspot.disable_button
 					end
 				},
@@ -1583,7 +1583,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						return not arg_33_0.button_hotspot.disable_button
 					end
 				},
@@ -1591,7 +1591,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_34_0)
+					content_check_function = function (arg_34_0)
 						local var_34_0 = arg_34_0.button_hotspot
 
 						return not var_34_0.disable_button and (var_34_0.is_selected or var_34_0.is_hover)
@@ -1602,7 +1602,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "cancel_matchmaking_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function(arg_35_0)
+					content_check_function = function (arg_35_0)
 						local var_35_0 = arg_35_0.parent.button_hotspot
 
 						return arg_35_0.is_hover and var_35_0.disable_button
@@ -1975,7 +1975,7 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		pass_type = "text",
 		text_id = var_36_3,
 		style_id = var_36_3,
-		content_change_function = function(arg_37_0, arg_37_1)
+		content_change_function = function (arg_37_0, arg_37_1)
 			if arg_37_0.locked then
 				arg_37_1.text_color = arg_37_1.disabled_color
 			else
@@ -2062,7 +2062,7 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		pass_type = "texture",
 		texture_id = var_36_9,
 		style_id = var_36_9,
-		content_change_function = function(arg_38_0, arg_38_1)
+		content_change_function = function (arg_38_0, arg_38_1)
 			if arg_38_0.locked then
 				arg_38_1.saturated = true
 			else
@@ -2097,7 +2097,7 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		pass_type = "texture",
 		texture_id = var_36_10,
 		style_id = var_36_10,
-		content_check_function = function(arg_39_0)
+		content_check_function = function (arg_39_0)
 			return not arg_39_0.locked
 		end
 	}
@@ -2179,15 +2179,15 @@ local var_0_31 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				arg_40_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 				local var_41_0 = math.easeInCubic(arg_41_3)
 
 				arg_41_4.render_settings.alpha_multiplier = var_41_0
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end
 		}
@@ -2197,15 +2197,15 @@ local var_0_31 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				arg_43_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				local var_44_0 = math.easeOutCubic(arg_44_3)
 
 				arg_44_4.render_settings.alpha_multiplier = 1 - var_44_0
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end
 		}

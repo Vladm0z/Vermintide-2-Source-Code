@@ -12,7 +12,7 @@ StateTitleScreenMain.NAME = "StateTitleScreenMain"
 
 local var_0_0 = script_data.honduras_demo and DemoSettings.attract_timer or nil
 
-function StateTitleScreenMain.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenMain.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenMain")
 
 	arg_1_0._params = arg_1_1
@@ -69,8 +69,8 @@ function StateTitleScreenMain.on_enter(arg_1_0, arg_1_1)
 
 	arg_1_0._network_event_meta_table = {}
 
-	function arg_1_0._network_event_meta_table.__index(arg_2_0, arg_2_1)
-		return function()
+	arg_1_0._network_event_meta_table.__index = function (arg_2_0, arg_2_1)
+		return function ()
 			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", arg_2_1)
 		end
 	end
@@ -94,17 +94,17 @@ function StateTitleScreenMain.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function StateTitleScreenMain._queue_popup(arg_4_0, ...)
+StateTitleScreenMain._queue_popup = function (arg_4_0, ...)
 	arg_4_0._error_popups[#arg_4_0._error_popups + 1] = Managers.popup:queue_popup(...)
 end
 
-function StateTitleScreenMain._setup_account_manager(arg_5_0)
+StateTitleScreenMain._setup_account_manager = function (arg_5_0)
 	Managers.account = Managers.account or AccountManager:new()
 
 	Crashify.print_property("region", Managers.account:region())
 end
 
-function StateTitleScreenMain.update(arg_6_0, arg_6_1, arg_6_2)
+StateTitleScreenMain.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_network(arg_6_1, arg_6_2)
 
 	if Managers.voice_chat then
@@ -152,13 +152,13 @@ function StateTitleScreenMain.update(arg_6_0, arg_6_1, arg_6_2)
 	return arg_6_0:_next_state()
 end
 
-function StateTitleScreenMain._update_network(arg_7_0, arg_7_1, arg_7_2)
+StateTitleScreenMain._update_network = function (arg_7_0, arg_7_1, arg_7_2)
 	if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() then
 		Network.update(arg_7_1, setmetatable({}, arg_7_0._network_event_meta_table))
 	end
 end
 
-function StateTitleScreenMain._update_attract_mode(arg_8_0, arg_8_1, arg_8_2)
+StateTitleScreenMain._update_attract_mode = function (arg_8_0, arg_8_1, arg_8_2)
 	if IS_WINDOWS then
 		return
 	end
@@ -176,7 +176,7 @@ function StateTitleScreenMain._update_attract_mode(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function StateTitleScreenMain._enter_attract_mode(arg_9_0)
+StateTitleScreenMain._enter_attract_mode = function (arg_9_0)
 	Managers.music:stop_all_sounds()
 	arg_9_0._title_start_ui:enter_attract_mode()
 	arg_9_0.parent:enter_attract_mode(true)
@@ -184,7 +184,7 @@ function StateTitleScreenMain._enter_attract_mode(arg_9_0)
 	arg_9_0._attract_mode_active = true
 end
 
-function StateTitleScreenMain._exit_attract_mode(arg_10_0)
+StateTitleScreenMain._exit_attract_mode = function (arg_10_0)
 	Managers.music:stop_all_sounds()
 	Managers.music:trigger_event("Play_menu_screen_music")
 
@@ -198,7 +198,7 @@ function StateTitleScreenMain._exit_attract_mode(arg_10_0)
 	arg_10_0.parent:enter_attract_mode(false)
 end
 
-function StateTitleScreenMain._handle_continue_input(arg_11_0, arg_11_1, arg_11_2)
+StateTitleScreenMain._handle_continue_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.input_manager:get_service("main_menu")
 	local var_11_1 = true
 
@@ -237,7 +237,7 @@ function StateTitleScreenMain._handle_continue_input(arg_11_0, arg_11_1, arg_11_
 	end
 end
 
-function StateTitleScreenMain._user_exists(arg_12_0, arg_12_1)
+StateTitleScreenMain._user_exists = function (arg_12_0, arg_12_1)
 	local var_12_0 = {
 		XboxLive.users()
 	}
@@ -251,7 +251,7 @@ function StateTitleScreenMain._user_exists(arg_12_0, arg_12_1)
 	return false
 end
 
-function StateTitleScreenMain._update_input(arg_13_0, arg_13_1, arg_13_2)
+StateTitleScreenMain._update_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = PLATFORM
 	local var_13_1 = Managers.input:get_most_recent_device()
 
@@ -364,12 +364,12 @@ function StateTitleScreenMain._update_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function StateTitleScreenMain._next_state(arg_14_0)
+StateTitleScreenMain._next_state = function (arg_14_0)
 	if arg_14_0._state then
 		return arg_14_0._state
 	end
 end
 
-function StateTitleScreenMain.on_exit(arg_15_0)
+StateTitleScreenMain.on_exit = function (arg_15_0)
 	return
 end

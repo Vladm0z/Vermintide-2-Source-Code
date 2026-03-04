@@ -2,7 +2,7 @@
 
 AttachmentUtils = {}
 
-function AttachmentUtils.create_attachment(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+AttachmentUtils.create_attachment = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	assert(arg_1_2.slots[arg_1_3] == nil, "Slot is not empty, remove attachment before creating a new one.")
 
 	local var_1_0 = BackendUtils.get_item_template(arg_1_4)
@@ -42,7 +42,7 @@ function AttachmentUtils.create_attachment(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	}
 end
 
-function AttachmentUtils.create_weapon_visual_attachment(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+AttachmentUtils.create_weapon_visual_attachment = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.state.unit_spawner:spawn_local_unit(arg_2_2)
 
 	AttachmentUtils.link(arg_2_0, arg_2_1, var_2_0, arg_2_3)
@@ -50,7 +50,7 @@ function AttachmentUtils.create_weapon_visual_attachment(arg_2_0, arg_2_1, arg_2
 	return var_2_0
 end
 
-function AttachmentUtils.destroy_attachment(arg_3_0, arg_3_1, arg_3_2)
+AttachmentUtils.destroy_attachment = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_2.unit
 	local var_3_1 = Managers.state.unit_spawner
 
@@ -60,7 +60,7 @@ function AttachmentUtils.destroy_attachment(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function AttachmentUtils.link(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+AttachmentUtils.link = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	for iter_4_0, iter_4_1 in ipairs(arg_4_3) do
 		local var_4_0 = iter_4_1.source
 		local var_4_1 = iter_4_1.target
@@ -71,11 +71,11 @@ function AttachmentUtils.link(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function AttachmentUtils.unlink(arg_5_0, arg_5_1)
+AttachmentUtils.unlink = function (arg_5_0, arg_5_1)
 	World.unlink_unit(arg_5_0, arg_5_1)
 end
 
-function AttachmentUtils.hot_join_sync(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+AttachmentUtils.hot_join_sync = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if Managers.state.unit_spawner:is_marked_for_deletion(arg_6_1) then
 		return
 	end
@@ -106,7 +106,7 @@ function AttachmentUtils.hot_join_sync(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function AttachmentUtils.get_syncable_buff_params(arg_7_0)
+AttachmentUtils.get_syncable_buff_params = function (arg_7_0)
 	local var_7_0
 	local var_7_1
 	local var_7_2

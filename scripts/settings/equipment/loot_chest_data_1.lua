@@ -62,7 +62,7 @@ local var_0_0 = {
 	0
 }
 
-function LootChestData.calculate_power_level(arg_1_0, arg_1_1)
+LootChestData.calculate_power_level = function (arg_1_0, arg_1_1)
 	var_0_0[1], var_0_0[2] = arg_1_1.low, arg_1_1.hi
 
 	local var_1_0 = arg_1_0

@@ -4,7 +4,7 @@ require("scripts/unit_extensions/world_markers/world_marker_extension")
 
 PlayerEquipmentWorldMarkerExtension = class(PlayerEquipmentWorldMarkerExtension, WorldMarkerExtension)
 
-function PlayerEquipmentWorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerEquipmentWorldMarkerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	PlayerEquipmentWorldMarkerExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._marker_type = "versus_hero_status"
@@ -18,7 +18,7 @@ function PlayerEquipmentWorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg
 	arg_1_0._initialized = false
 end
 
-function PlayerEquipmentWorldMarkerExtension._extensions_ready(arg_2_0)
+PlayerEquipmentWorldMarkerExtension._extensions_ready = function (arg_2_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -42,7 +42,7 @@ function PlayerEquipmentWorldMarkerExtension._extensions_ready(arg_2_0)
 	arg_2_0._initialized = true
 end
 
-function PlayerEquipmentWorldMarkerExtension._add_marker(arg_3_0, arg_3_1)
+PlayerEquipmentWorldMarkerExtension._add_marker = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._unit
 	local var_3_1 = arg_3_0._add_event_name
 	local var_3_2 = arg_3_0._event_manager
@@ -51,7 +51,7 @@ function PlayerEquipmentWorldMarkerExtension._add_marker(arg_3_0, arg_3_1)
 	var_3_2:trigger(var_3_1, var_3_3, var_3_0, arg_3_1)
 end
 
-function PlayerEquipmentWorldMarkerExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerEquipmentWorldMarkerExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0._initialized then
 		return
 	end

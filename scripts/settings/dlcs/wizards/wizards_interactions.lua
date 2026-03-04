@@ -15,14 +15,14 @@ var_0_0.config = {
 }
 InteractionDefinitions.trail_light_urn = var_0_0
 
-function var_0_0.server.start(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+var_0_0.server.start = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	local var_1_0 = Unit.get_data(arg_1_2, "interaction_data", "interaction_length")
 
 	arg_1_3.done_time = arg_1_5 + var_1_0
 	arg_1_3.duration = var_1_0
 end
 
-function var_0_0.client.start(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+var_0_0.client.start = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ScriptUnit.extension(arg_2_2, "trail_urn_alignment_system"):on_client_start_interaction(arg_2_1, arg_2_5)
 
 	arg_2_3.start_time = arg_2_5
@@ -52,7 +52,7 @@ function var_0_0.client.start(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2
 	Unit.set_data(arg_2_2, "interaction_data", "being_used", true)
 end
 
-function var_0_0.server.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+var_0_0.server.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if ScriptUnit.extension(arg_3_1, "status_system"):is_knocked_down() or not HEALTH_ALIVE[arg_3_1] then
 		return InteractionResult.FAILURE
 	end
@@ -70,11 +70,11 @@ function var_0_0.server.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_
 	return InteractionResult.ONGOING
 end
 
-function var_0_0.client.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+var_0_0.client.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	ScriptUnit.extension(arg_4_2, "trail_urn_alignment_system"):on_client_move_to_node(arg_4_1, arg_4_2, arg_4_3.is_husk, arg_4_6)
 end
 
-function var_0_0.server.stop(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+var_0_0.server.stop = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	if arg_5_6 == InteractionResult.SUCCESS then
 		local var_5_0 = ScriptUnit.extension(arg_5_2, "interactable_system")
 
@@ -95,7 +95,7 @@ local function var_0_1(arg_6_0)
 	var_6_0:wield_previous_weapon()
 end
 
-function var_0_0.client.stop(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+var_0_0.client.stop = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	Unit.animation_event(arg_7_1, "interaction_end")
 
 	if arg_7_6 == InteractionResult.SUCCESS then
@@ -119,7 +119,7 @@ function var_0_0.client.stop(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_
 	Unit.set_data(arg_7_2, "interaction_data", "being_used", false)
 end
 
-function var_0_0.server.can_interact(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+var_0_0.server.can_interact = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = Unit.get_data(arg_8_1, "interaction_data", "used")
 	local var_8_1 = Unit.get_data(arg_8_1, "interaction_data", "being_used")
 
@@ -147,7 +147,7 @@ function var_0_0.server.can_interact(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	return not var_8_0 and not var_8_1
 end
 
-function var_0_0.client.can_interact(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+var_0_0.client.can_interact = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if not ScriptUnit.extension(arg_9_1, "trail_urn_alignment_system"):can_interact() then
 		return false
 	end

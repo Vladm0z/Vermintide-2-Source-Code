@@ -2,13 +2,13 @@
 
 ChaosTrollStateWalking = class(ChaosTrollStateWalking, EnemyCharacterStateWalking)
 
-function ChaosTrollStateWalking.init(arg_1_0, arg_1_1)
+ChaosTrollStateWalking.init = function (arg_1_0, arg_1_1)
 	ChaosTrollStateWalking.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._vomit_ability_id = arg_1_0._career_extension:ability_id("vomit")
 end
 
-function ChaosTrollStateWalking.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ChaosTrollStateWalking.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0:common_state_changes() then
 		return
 	end

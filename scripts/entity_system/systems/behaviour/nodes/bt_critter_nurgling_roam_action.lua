@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingRoamAction = class(BTCritterNurglingRoamAction, BTNode)
 
-function BTCritterNurglingRoamAction.init(arg_1_0, ...)
+BTCritterNurglingRoamAction.init = function (arg_1_0, ...)
 	BTCritterNurglingRoamAction.super.init(arg_1_0, ...)
 end
 
 BTCritterNurglingRoamAction.name = "BTCritterNurglingRoamAction"
 
-function BTCritterNurglingRoamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCritterNurglingRoamAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.walk_speed)
 
 	arg_2_2.action = arg_2_0._tree_node.action_data
@@ -18,7 +18,7 @@ function BTCritterNurglingRoamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:start_idle_animation(arg_2_1, arg_2_2)
 end
 
-function BTCritterNurglingRoamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterNurglingRoamAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_max_speed(arg_3_2.breed.run_speed)
 	arg_3_0:start_idle_animation(arg_3_1, arg_3_2)
 
@@ -28,7 +28,7 @@ function BTCritterNurglingRoamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	arg_3_2.action = nil
 end
 
-function BTCritterNurglingRoamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTCritterNurglingRoamAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = arg_4_2.navigation_extension
 
@@ -63,7 +63,7 @@ function BTCritterNurglingRoamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return "running"
 end
 
-function BTCritterNurglingRoamAction.find_move_pos(arg_5_0, arg_5_1, arg_5_2)
+BTCritterNurglingRoamAction.find_move_pos = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.state.entity:system("ai_system"):nav_world()
 	local var_5_1 = arg_5_2.find_move_pos
 	local var_5_2 = arg_5_1.altar_pos:unbox()
@@ -71,19 +71,19 @@ function BTCritterNurglingRoamAction.find_move_pos(arg_5_0, arg_5_1, arg_5_2)
 	return ConflictUtils.get_spawn_pos_on_circle(var_5_0, var_5_2, var_5_1.radius, var_5_1.spread, var_5_1.tries)
 end
 
-function BTCritterNurglingRoamAction.start_move_animation(arg_6_0, arg_6_1, arg_6_2)
+BTCritterNurglingRoamAction.start_move_animation = function (arg_6_0, arg_6_1, arg_6_2)
 	Managers.state.network:anim_event(arg_6_1, "walk")
 
 	arg_6_2.move_state = "moving"
 end
 
-function BTCritterNurglingRoamAction.start_idle_animation(arg_7_0, arg_7_1, arg_7_2)
+BTCritterNurglingRoamAction.start_idle_animation = function (arg_7_0, arg_7_1, arg_7_2)
 	Managers.state.network:anim_event(arg_7_1, "idle")
 
 	arg_7_2.move_state = "idle"
 end
 
-function BTCritterNurglingRoamAction.try_exit_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTCritterNurglingRoamAction.try_exit_state = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if arg_8_0:has_overlap(arg_8_1, arg_8_2, arg_8_3) then
 		arg_8_2.move_pos = nil
 
@@ -95,7 +95,7 @@ end
 
 local var_0_0 = {}
 
-function BTCritterNurglingRoamAction.has_overlap(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+BTCritterNurglingRoamAction.has_overlap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if not arg_9_2.move_pos then
 		return true
 	end

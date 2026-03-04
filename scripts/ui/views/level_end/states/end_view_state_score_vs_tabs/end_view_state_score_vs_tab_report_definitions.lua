@@ -320,7 +320,7 @@ local function var_0_5(arg_1_0)
 		style_id = "pattern_1",
 		texture_id = "versus_circle_pattern",
 		pass_type = "rotated_texture",
-		content_change_function = function(arg_2_0, arg_2_1)
+		content_change_function = function (arg_2_0, arg_2_1)
 			local var_2_0 = Application.time_since_launch()
 
 			arg_2_1.angle = math.degrees_to_radians(var_2_0 * 12 % 360)
@@ -330,7 +330,7 @@ local function var_0_5(arg_1_0)
 		style_id = "pattern_2",
 		texture_id = "versus_circle_pattern",
 		pass_type = "rotated_texture",
-		content_change_function = function(arg_3_0, arg_3_1)
+		content_change_function = function (arg_3_0, arg_3_1)
 			local var_3_0 = Application.time_since_launch()
 
 			arg_3_1.angle = math.degrees_to_radians(var_3_0 * 4 % 360)
@@ -340,10 +340,10 @@ local function var_0_5(arg_1_0)
 		style_id = "static_progress_marker",
 		texture_id = "static_marker",
 		pass_type = "rotated_texture",
-		content_check_function = function(arg_4_0, arg_4_1)
+		content_check_function = function (arg_4_0, arg_4_1)
 			return arg_4_0.starting_progress >= var_0_1[1] and arg_4_0.starting_progress < var_0_1[2]
 		end,
-		content_change_function = function(arg_5_0, arg_5_1)
+		content_change_function = function (arg_5_0, arg_5_1)
 			arg_5_1.angle = arg_5_0.starting_progress * 2 * math.pi
 		end
 	}
@@ -351,7 +351,7 @@ local function var_0_5(arg_1_0)
 		style_id = "mask",
 		texture_id = "versus_circle_mask",
 		pass_type = "gradient_mask_texture",
-		content_change_function = function(arg_6_0, arg_6_1)
+		content_change_function = function (arg_6_0, arg_6_1)
 			arg_6_1.gradient_threshold = arg_6_0.final_progress
 		end
 	}
@@ -359,7 +359,7 @@ local function var_0_5(arg_1_0)
 		style_id = "versus_static_circle",
 		texture_id = "versus_static_circle",
 		pass_type = "gradient_mask_texture",
-		content_change_function = function(arg_7_0, arg_7_1)
+		content_change_function = function (arg_7_0, arg_7_1)
 			arg_7_1.gradient_threshold = arg_7_0.starting_progress
 		end
 	}
@@ -367,7 +367,7 @@ local function var_0_5(arg_1_0)
 		style_id = "versus_progress_circle",
 		texture_id = "versus_progress_circle",
 		pass_type = "gradient_mask_texture",
-		content_change_function = function(arg_8_0, arg_8_1)
+		content_change_function = function (arg_8_0, arg_8_1)
 			arg_8_1.gradient_threshold = arg_8_0.final_progress
 		end
 	}
@@ -375,7 +375,7 @@ local function var_0_5(arg_1_0)
 		style_id = "progress_marker",
 		texture_id = "rect_smooth",
 		pass_type = "rotated_texture",
-		content_change_function = function(arg_9_0, arg_9_1)
+		content_change_function = function (arg_9_0, arg_9_1)
 			arg_9_1.angle = arg_9_0.final_progress * 2 * math.pi
 		end
 	}
@@ -1005,7 +1005,7 @@ local function var_0_19(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		style_id = "completed",
 		pass_type = "text",
 		text_id = "completed",
-		content_check_function = function(arg_12_0, arg_12_1)
+		content_check_function = function (arg_12_0, arg_12_1)
 			return arg_12_0.is_completed
 		end
 	}
@@ -1226,7 +1226,7 @@ local function var_0_20(arg_13_0, arg_13_1, arg_13_2)
 					item_id = "item",
 					style_id = "item_tooltip",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_14_0, arg_14_1)
+					content_check_function = function (arg_14_0, arg_14_1)
 						return arg_14_0.hotspot.is_hover
 					end
 				},
@@ -1512,12 +1512,12 @@ local var_0_28 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				arg_15_3.render_settings.alpha_multiplier = 0
 
 				arg_15_3.play_sound("Play_vs_hud_progression_personal_report_start")
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				local var_16_0 = math.easeOutCubic(arg_16_3)
 
 				arg_16_4.render_settings.alpha_multiplier = var_16_0
@@ -1541,7 +1541,7 @@ local var_0_28 = {
 				var_16_2.style.insignia_main.color[1] = var_16_0 * 255
 				arg_16_0.versus_progress_anchor.position[1] = math.lerp(arg_16_1.versus_progress_anchor.position[1] - 100, arg_16_1.versus_progress_anchor.position[1], var_16_0)
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end
 		}
@@ -1551,12 +1551,12 @@ local var_0_28 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				arg_18_3.render_settings.alpha_multiplier = 0
 				arg_18_3.render_settings.hero_progress_alpha_multiplier = 0
 				arg_18_3.render_settings.challenge_alpha_multiplier = 0
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				local var_19_0 = math.easeOutCubic(arg_19_3)
 
 				arg_19_4.render_settings.alpha_multiplier = var_19_0
@@ -1582,7 +1582,7 @@ local var_0_28 = {
 				var_19_2.style.insignia_main.color[1] = var_19_0 * 255
 				arg_19_0.versus_progress_anchor.position[1] = math.lerp(arg_19_1.versus_progress_anchor.position[1] - 100, arg_19_1.versus_progress_anchor.position[1], var_19_0)
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end
 		}
@@ -1592,7 +1592,7 @@ local var_0_28 = {
 			name = "animate_header_in",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				local var_21_0 = arg_21_2[arg_21_3.data.entry_name]
 
 				var_21_0.style.header.text_color[1] = 0
@@ -1600,14 +1600,14 @@ local var_0_28 = {
 
 				arg_21_3.play_sound("Play_vs_hud_progression_xp_summary_table")
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeOutCubic(arg_22_3)
 				local var_22_1 = arg_22_2[arg_22_4.data.entry_name]
 
 				var_22_1.style.header.text_color[1] = math.lerp(0, 255, var_22_0 * var_22_0)
 				var_22_1.style.header.offset[1] = math.lerp(-50, 5, var_22_0)
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				local var_23_0 = arg_23_2[arg_23_3.data.entry_name]
 
 				var_23_0.style.header.text_color[1] = 255
@@ -1618,17 +1618,17 @@ local var_0_28 = {
 			name = "animate_entry_experience",
 			start_progress = 0.4,
 			end_progress = 0.8,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				return
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = math.easeOutCubic(arg_25_3)
 				local var_25_1 = arg_25_2[arg_25_4.data.entry_name]
 
 				var_25_1.content.experience = tostring(math.round(math.lerp(0, var_25_1.content.xp, var_25_0)))
 				var_25_1.style.experience.text_color[1] = 255
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				local var_26_0 = arg_26_2[arg_26_3.data.entry_name]
 
 				var_26_0.content.experience = tostring(var_26_0.content.xp)
@@ -1638,13 +1638,13 @@ local var_0_28 = {
 			name = "animate_progression_summary",
 			start_progress = 0.8,
 			end_progress = 1.2,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				local var_27_0 = arg_27_2[arg_27_3.data.entry_name].content.xp
 				local var_27_1 = arg_27_2.summary_value_text
 
 				var_27_1.content.value = (var_27_1.content.value or 0) + var_27_0
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.ease_pulse(arg_28_3)
 				local var_28_1 = 28
 				local var_28_2 = var_28_1 * 1.255
@@ -1654,7 +1654,7 @@ local var_0_28 = {
 				var_28_4.content.text = string.format(var_0_24, var_28_4.content.value)
 				var_28_4.style.text.font_size = var_28_3
 			end,
-			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_2.summary_value_text.style.text.font_size = 28
 			end
 		}
@@ -1664,18 +1664,18 @@ local var_0_28 = {
 			name = "animate_level_up_widget",
 			start_progress = 0,
 			end_progress = 3,
-			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				arg_30_3.play_sound("Play_vs_hud_progression_level_counter_loop")
 				arg_30_3.set_global_wwise_parameter("summary_meter_progress", arg_30_3.data.sound_parameter_values[1])
 			end,
-			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 				local var_31_0 = math.easeInCubic(arg_31_3)
 
 				arg_31_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_31_4.data.starting_progress + (arg_31_4.data.final_progress - arg_31_4.data.starting_progress) * var_31_0)
 
 				arg_31_4.set_global_wwise_parameter("summary_meter_progress", math.lerp(arg_31_4.data.sound_parameter_values[1], arg_31_4.data.sound_parameter_values[2], var_31_0))
 			end,
-			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				arg_32_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_32_3.data.final_progress)
 
 				arg_32_3.play_sound("Stop_vs_hud_progression_level_counter_loop")
@@ -1695,7 +1695,7 @@ local var_0_28 = {
 			name = "close_top",
 			start_progress = 3,
 			end_progress = 3.4,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				local var_33_0 = arg_33_2.level_up
 
 				var_33_0.style.left_lock.angle = math.degrees_to_radians(90)
@@ -1703,7 +1703,7 @@ local var_0_28 = {
 				var_33_0.style.bottom_left_lock.offset[2] = -180
 				var_33_0.style.bottom_right_lock.offset[2] = -180
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = math.easeInCubic(arg_34_3)
 				local var_34_1 = arg_34_2.level_up
 
@@ -1714,7 +1714,7 @@ local var_0_28 = {
 				var_34_1.style.left_lock.angle = math.degrees_to_radians(var_34_2)
 				var_34_1.style.right_lock.angle = math.degrees_to_radians(-var_34_2)
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		},
@@ -1722,17 +1722,17 @@ local var_0_28 = {
 			name = "close_bottom",
 			start_progress = 3.2,
 			end_progress = 3.6,
-			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end,
-			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 				local var_37_0 = math.easeInCubic(arg_37_3)
 				local var_37_1 = arg_37_2.level_up
 
 				var_37_1.style.bottom_left_lock.offset[2] = math.lerp(-180, 14, var_37_0)
 				var_37_1.style.bottom_right_lock.offset[2] = math.lerp(-180, 14, var_37_0)
 			end,
-			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end
 		},
@@ -1740,10 +1740,10 @@ local var_0_28 = {
 			name = "level_up",
 			start_progress = 3.6,
 			end_progress = 4.1,
-			init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				return
 			end,
-			update = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 				local var_40_0 = math.easeOutCubic(arg_40_3)
 				local var_40_1 = arg_40_2.level_up
 
@@ -1751,7 +1751,7 @@ local var_0_28 = {
 				var_40_1.style.lava.color[1] = var_40_0 * 255
 				var_40_1.style.lava_mask.color[1] = 255
 			end,
-			on_complete = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				local var_41_0 = arg_41_2.level_up
 
 				var_41_0.content.level_text = arg_41_3.data.level
@@ -1770,17 +1770,17 @@ local var_0_28 = {
 			name = "fade_out",
 			start_progress = 4.6,
 			end_progress = 5.1,
-			init = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end,
-			update = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 				local var_43_0 = math.easeOutCubic(arg_43_3)
 				local var_43_1 = arg_43_2.level_up
 
 				var_43_1.content.level_text = arg_43_4.data.level
 				var_43_1.style.lava.color[1] = 255 - var_43_0 * 255
 			end,
-			on_complete = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				local var_44_0 = arg_44_2.level_up
 
 				var_44_0.content.level_text = arg_44_3.data.level
@@ -1799,10 +1799,10 @@ local var_0_28 = {
 			name = "open",
 			start_progress = 5.1,
 			end_progress = 5.6,
-			init = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			init = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end,
-			update = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+			update = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 				local var_46_0 = math.easeOutCubic(arg_46_3)
 				local var_46_1 = arg_46_2.level_up
 
@@ -1814,7 +1814,7 @@ local var_0_28 = {
 				var_46_1.style.left_lock.angle = math.degrees_to_radians(var_46_2)
 				var_46_1.style.right_lock.angle = math.degrees_to_radians(-var_46_2)
 			end,
-			on_complete = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			on_complete = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 				arg_47_2.level_up.style.lock_mask.color[1] = 0
 			end
 		}
@@ -1824,18 +1824,18 @@ local var_0_28 = {
 			name = "animate_level_up_widget",
 			start_progress = 0,
 			end_progress = 3,
-			init = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			init = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				arg_48_3.play_sound("Play_vs_hud_progression_level_counter_loop")
 				arg_48_3.set_global_wwise_parameter("summary_meter_progress", arg_48_3.data.sound_parameter_values[1])
 			end,
-			update = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+			update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 				local var_49_0 = math.easeCubic(arg_49_3)
 
 				arg_49_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_49_4.data.starting_progress + (arg_49_4.data.final_progress - arg_49_4.data.starting_progress) * var_49_0)
 
 				arg_49_4.set_global_wwise_parameter("summary_meter_progress", math.lerp(arg_49_4.data.sound_parameter_values[1], arg_49_4.data.sound_parameter_values[2], var_49_0))
 			end,
-			on_complete = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+			on_complete = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 				arg_50_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_50_3.data.final_progress)
 
 				arg_50_3.play_sound("Stop_vs_hud_progression_level_counter_loop")
@@ -1847,20 +1847,20 @@ local var_0_28 = {
 			name = "animate_level_up_widget",
 			start_progress = 0,
 			end_progress = 3,
-			init = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			init = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 				arg_51_2.level_up.content.starting_progress = 0
 
 				arg_51_3.play_sound("Play_vs_hud_progression_level_counter_loop")
 				arg_51_3.set_global_wwise_parameter("summary_meter_progress", arg_51_3.data.sound_parameter_values[1])
 			end,
-			update = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 				local var_52_0 = math.easeOutCubic(arg_52_3)
 
 				arg_52_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_52_4.data.starting_progress + (arg_52_4.data.final_progress - arg_52_4.data.starting_progress) * var_52_0)
 
 				arg_52_4.set_global_wwise_parameter("summary_meter_progress", math.lerp(arg_52_4.data.sound_parameter_values[1], arg_52_4.data.sound_parameter_values[2], var_52_0))
 			end,
-			on_complete = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			on_complete = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 				arg_53_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_53_3.data.final_progress)
 
 				arg_53_3.play_sound("Stop_vs_hud_progression_level_counter_loop")
@@ -1872,16 +1872,16 @@ local var_0_28 = {
 			name = "animate_level_up_widget",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			init = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 				local var_54_0 = arg_54_2.level_up
 
 				var_54_0.content.starting_progress = 1
 				var_54_0.content.final_progress = 1
 			end,
-			update = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+			update = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 				return
 			end,
-			on_complete = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			on_complete = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 				return
 			end
 		}
@@ -1891,7 +1891,7 @@ local var_0_28 = {
 			name = "animate_level_up_widget",
 			start_progress = 0,
 			end_progress = 1.5,
-			init = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			init = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 				local var_57_0 = arg_57_2.level_up
 
 				var_57_0.content.starting_progress = 0
@@ -1900,14 +1900,14 @@ local var_0_28 = {
 				arg_57_3.play_sound("Play_vs_hud_progression_level_counter_loop")
 				arg_57_3.set_global_wwise_parameter("summary_meter_progress", arg_57_3.data.sound_parameter_values[1])
 			end,
-			update = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
+			update = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
 				local var_58_0 = arg_58_3
 
 				arg_58_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], var_58_0)
 
 				arg_58_4.set_global_wwise_parameter("summary_meter_progress", math.lerp(arg_58_4.data.sound_parameter_values[1], arg_58_4.data.sound_parameter_values[2], var_58_0))
 			end,
-			on_complete = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+			on_complete = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 				arg_59_2.level_up.content.final_progress = math.lerp(var_0_1[1], var_0_1[2], arg_59_3.data.final_progress)
 
 				arg_59_3.play_sound("Stop_vs_hud_progression_level_counter_loop")
@@ -1927,7 +1927,7 @@ local var_0_28 = {
 			name = "close_top",
 			start_progress = 1.5,
 			end_progress = 1.9,
-			init = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			init = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 				local var_60_0 = arg_60_2.level_up
 
 				var_60_0.style.left_lock.angle = math.degrees_to_radians(90)
@@ -1935,7 +1935,7 @@ local var_0_28 = {
 				var_60_0.style.bottom_left_lock.offset[2] = -180
 				var_60_0.style.bottom_right_lock.offset[2] = -180
 			end,
-			update = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
+			update = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
 				local var_61_0 = math.easeInCubic(arg_61_3)
 				local var_61_1 = arg_61_2.level_up
 
@@ -1946,7 +1946,7 @@ local var_0_28 = {
 				var_61_1.style.left_lock.angle = math.degrees_to_radians(var_61_2)
 				var_61_1.style.right_lock.angle = math.degrees_to_radians(-var_61_2)
 			end,
-			on_complete = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+			on_complete = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 				return
 			end
 		},
@@ -1954,17 +1954,17 @@ local var_0_28 = {
 			name = "close_bottom",
 			start_progress = 1.7,
 			end_progress = 2.1,
-			init = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			init = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 				return
 			end,
-			update = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
+			update = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
 				local var_64_0 = math.easeInCubic(arg_64_3)
 				local var_64_1 = arg_64_2.level_up
 
 				var_64_1.style.bottom_left_lock.offset[2] = math.lerp(-180, 14, var_64_0)
 				var_64_1.style.bottom_right_lock.offset[2] = math.lerp(-180, 14, var_64_0)
 			end,
-			on_complete = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+			on_complete = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 				return
 			end
 		},
@@ -1972,10 +1972,10 @@ local var_0_28 = {
 			name = "level_up",
 			start_progress = 2.1,
 			end_progress = 2.5,
-			init = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+			init = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 				return
 			end,
-			update = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4)
+			update = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4)
 				local var_67_0 = math.easeInCubic(arg_67_3)
 				local var_67_1 = arg_67_2.level_up
 
@@ -1983,7 +1983,7 @@ local var_0_28 = {
 				var_67_1.style.lava.color[1] = var_67_0 * 255
 				var_67_1.style.lava_mask.color[1] = 255
 			end,
-			on_complete = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+			on_complete = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 				local var_68_0 = arg_68_2.level_up
 
 				var_68_0.content.level_text = arg_68_3.data.level
@@ -2002,17 +2002,17 @@ local var_0_28 = {
 			name = "fade_out",
 			start_progress = 3,
 			end_progress = 3.5,
-			init = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+			init = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 				return
 			end,
-			update = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+			update = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
 				local var_70_0 = math.easeOutCubic(arg_70_3)
 				local var_70_1 = arg_70_2.level_up
 
 				var_70_1.content.level_text = arg_70_4.data.level
 				var_70_1.style.lava.color[1] = 255 - var_70_0 * 255
 			end,
-			on_complete = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+			on_complete = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 				local var_71_0 = arg_71_2.level_up
 
 				var_71_0.content.level_text = arg_71_3.data.level
@@ -2031,10 +2031,10 @@ local var_0_28 = {
 			name = "open",
 			start_progress = 3.5,
 			end_progress = 4,
-			init = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+			init = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 				return
 			end,
-			update = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
+			update = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				local var_73_0 = math.easeOutCubic(arg_73_3)
 				local var_73_1 = arg_73_2.level_up
 
@@ -2046,7 +2046,7 @@ local var_0_28 = {
 				var_73_1.style.left_lock.angle = math.degrees_to_radians(var_73_2)
 				var_73_1.style.right_lock.angle = math.degrees_to_radians(-var_73_2)
 			end,
-			on_complete = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+			on_complete = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 				arg_74_2.level_up.style.lock_mask.color[1] = 0
 			end
 		}
@@ -2056,15 +2056,15 @@ local var_0_28 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+			init = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 				arg_75_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
+			update = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
 				local var_76_0 = math.easeOutCubic(arg_76_3)
 
 				arg_76_4.render_settings.alpha_multiplier = 1 - var_76_0
 			end,
-			on_complete = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+			on_complete = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 				return
 			end
 		}
@@ -2074,10 +2074,10 @@ local var_0_28 = {
 			name = "spark",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+			init = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 				return
 			end,
-			update = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4)
+			update = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4)
 				local var_79_0 = arg_79_2.sparkle_effect
 				local var_79_1 = var_79_0.style
 				local var_79_2 = var_79_0.content
@@ -2088,7 +2088,7 @@ local var_0_28 = {
 				var_79_5.angle = math.degrees_to_radians(var_79_4)
 				var_79_5.color[1] = 255 * math.ease_pulse(arg_79_3)
 			end,
-			on_complete = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+			on_complete = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 				return
 			end
 		}
@@ -2098,7 +2098,7 @@ local var_0_28 = {
 			name = "animate_item",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+			init = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 				local var_81_0 = arg_81_3.data
 				local var_81_1 = var_81_0.widget
 
@@ -2118,7 +2118,7 @@ local var_0_28 = {
 
 				arg_81_3.play_sound(arg_81_3.data.sound)
 			end,
-			update = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4)
+			update = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4)
 				local var_82_0 = arg_82_4.data.widget
 				local var_82_1 = var_82_0.style
 				local var_82_2 = var_82_0.content
@@ -2140,7 +2140,7 @@ local var_0_28 = {
 				var_82_1.frame.color[1] = math.lerp(0, 255, var_82_4)
 				var_82_1.rarity_texture.color[1] = math.lerp(0, 255, var_82_4)
 			end,
-			on_complete = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3)
+			on_complete = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3)
 				local var_83_0 = arg_83_3.data
 				local var_83_1 = var_83_0.widget
 				local var_83_2 = var_83_1.style
@@ -2170,13 +2170,13 @@ local var_0_28 = {
 			name = "pause",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+			init = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 				return
 			end,
-			update = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+			update = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 				return
 			end,
-			on_complete = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3)
+			on_complete = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3)
 				return
 			end
 		}
@@ -2186,16 +2186,16 @@ local var_0_28 = {
 			name = "animate_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+			init = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 				arg_87_3.render_settings.hero_progress_alpha_multiplier = 0
 			end,
-			update = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
+			update = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
 				local var_88_0 = math.easeOutCubic(arg_88_3)
 
 				arg_88_4.render_settings.hero_progress_alpha_multiplier = var_88_0
 				arg_88_0.hero_progress_anchor.position[1] = math.lerp(arg_88_1.hero_progress_anchor.position[1] + 100, arg_88_1.hero_progress_anchor.position[1], var_88_0)
 			end,
-			on_complete = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3)
+			on_complete = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3)
 				return
 			end
 		},
@@ -2203,16 +2203,16 @@ local var_0_28 = {
 			name = "animate_experience_gained",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+			init = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 				return
 			end,
-			update = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
+			update = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
 				local var_91_0 = math.easeOutCubic(arg_91_3)
 
 				arg_91_0.experience_gained.position[1] = math.lerp(arg_91_1.experience_gained.position[1] - 50, arg_91_1.experience_gained.position[1], var_91_0)
 				arg_91_2.experience_gained_text.style.text.text_color[1] = 255 * var_91_0
 			end,
-			on_complete = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+			on_complete = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 				return
 			end
 		}
@@ -2222,17 +2222,17 @@ local var_0_28 = {
 			name = "animate_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+			init = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
 				arg_93_3.render_settings.hero_progress_alpha_multiplier = 0
 				arg_93_2.experience_gained_text.style.text.text_color[1] = 255
 			end,
-			update = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+			update = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 				local var_94_0 = math.easeOutCubic(arg_94_3)
 
 				arg_94_4.render_settings.hero_progress_alpha_multiplier = var_94_0
 				arg_94_0.hero_progress_anchor.position[1] = math.lerp(arg_94_1.hero_progress_anchor.position[1] + 100, arg_94_1.hero_progress_anchor.position[1], var_94_0)
 			end,
-			on_complete = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+			on_complete = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 				return
 			end
 		}
@@ -2242,16 +2242,16 @@ local var_0_28 = {
 			name = "animate_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+			init = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 				arg_96_3.render_settings.challenge_alpha_multiplier = 0
 			end,
-			update = function(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
+			update = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
 				local var_97_0 = math.easeOutCubic(arg_97_3)
 
 				arg_97_4.render_settings.challenge_alpha_multiplier = var_97_0
 				arg_97_0.challenge_progress_anchor.position[1] = math.lerp(arg_97_1.challenge_progress_anchor.position[1] + 100, arg_97_1.challenge_progress_anchor.position[1], var_97_0)
 			end,
-			on_complete = function(arg_98_0, arg_98_1, arg_98_2, arg_98_3)
+			on_complete = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3)
 				return
 			end
 		}
@@ -2261,19 +2261,19 @@ local var_0_28 = {
 			name = "challenge_entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3)
+			init = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3)
 				local var_99_0 = arg_99_2[arg_99_3.data.entry_name]
 
 				var_99_0.base_offset = var_99_0.offset[1]
 			end,
-			update = function(arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
+			update = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
 				local var_100_0 = math.easeOutCubic(arg_100_3)
 				local var_100_1 = arg_100_2[arg_100_4.data.entry_name]
 
 				var_100_1.offset[1] = math.lerp(var_100_1.base_offset + 50, var_100_1.base_offset, var_100_0)
 				var_100_1.content.alpha_multiplier = var_100_0
 			end,
-			on_complete = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
+			on_complete = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3)
 				return
 			end
 		}
@@ -2283,13 +2283,13 @@ local var_0_28 = {
 			name = "challenge_entry",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
+			init = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 				return
 			end,
-			update = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
+			update = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
 				return
 			end,
-			on_complete = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+			on_complete = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 				return
 			end
 		}

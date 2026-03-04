@@ -2,7 +2,7 @@
 
 AiBreedSnippets = AiBreedSnippets or {}
 
-function AiBreedSnippets.on_beastmen_minotaur_spawn(arg_1_0, arg_1_1)
+AiBreedSnippets.on_beastmen_minotaur_spawn = function (arg_1_0, arg_1_1)
 	arg_1_1.charge_astar_timer = Managers.time:time("game")
 	arg_1_1.num_charges_targeting_target = 0
 	arg_1_1.target_is_charged = false
@@ -74,7 +74,7 @@ function AiBreedSnippets.on_beastmen_minotaur_spawn(arg_1_0, arg_1_1)
 	var_1_6:add_unit_to_bosses(arg_1_0)
 end
 
-function AiBreedSnippets.on_beastmen_minotaur_update(arg_2_0, arg_2_1, arg_2_2)
+AiBreedSnippets.on_beastmen_minotaur_update = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_1.navigation_extension:nav_cost_map_cost_table("charge")
 	local var_2_1 = arg_2_1.navigation_extension:get_reusable_traverse_logic("charge", var_2_0)
 
@@ -113,7 +113,7 @@ function AiBreedSnippets.on_beastmen_minotaur_update(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function AiBreedSnippets.on_beastmen_minotaur_death(arg_3_0, arg_3_1, arg_3_2)
+AiBreedSnippets.on_beastmen_minotaur_death = function (arg_3_0, arg_3_1, arg_3_2)
 	print("minotaur died!")
 
 	if not arg_3_1.rewarded_boss_loot then

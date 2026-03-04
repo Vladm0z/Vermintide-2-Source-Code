@@ -8,7 +8,7 @@ local function var_0_0(arg_1_0, ...)
 	printf("[PeerSM] " .. arg_1_0, ...)
 end
 
-function PeerStateMachine.create(arg_2_0, arg_2_1, arg_2_2)
+PeerStateMachine.create = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = {
 		server = arg_2_0,
 		peer_id = arg_2_1,
@@ -21,7 +21,7 @@ function PeerStateMachine.create(arg_2_0, arg_2_1, arg_2_2)
 		function_memoize = var_2_1
 	}
 
-	function var_2_0.change_state(arg_3_0, arg_3_1)
+	var_2_0.change_state = function (arg_3_0, arg_3_1)
 		var_0_0("%s :: on_exit %s", arg_2_1, tostring(var_2_2.current_state))
 		var_2_2.current_state.on_exit(var_2_0, arg_3_1)
 
@@ -37,10 +37,10 @@ function PeerStateMachine.create(arg_2_0, arg_2_1, arg_2_2)
 	var_2_2.current_state.on_enter(var_2_0)
 
 	local var_2_3 = {
-		__newindex = function(arg_4_0, arg_4_1, arg_4_2)
+		__newindex = function (arg_4_0, arg_4_1, arg_4_2)
 			assert(false)
 		end,
-		__index = function(arg_5_0, arg_5_1)
+		__index = function (arg_5_0, arg_5_1)
 			local var_5_0 = PeerStateMachine[arg_5_1]
 
 			if not var_5_0 then
@@ -71,11 +71,11 @@ function PeerStateMachine.create(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_2
 end
 
-function PeerStateMachine.has_function(arg_7_0, arg_7_1)
+PeerStateMachine.has_function = function (arg_7_0, arg_7_1)
 	return not not arg_7_0.current_state[arg_7_1]
 end
 
-function PeerStateMachine.update(arg_8_0, arg_8_1)
+PeerStateMachine.update = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.state_data
 
 	if script_data.debug_peers then

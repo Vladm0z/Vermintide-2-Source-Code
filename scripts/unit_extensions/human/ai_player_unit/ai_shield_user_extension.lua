@@ -2,18 +2,18 @@
 
 AIShieldUserExtension = class(AIShieldUserExtension)
 
-function AIShieldUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AIShieldUserExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.is_blocking = arg_1_3.is_blocking or true
 	arg_1_0.is_dodging = arg_1_3.is_dodging or false
 	arg_1_0.shield_broken = false
 end
 
-function AIShieldUserExtension.destroy(arg_2_0)
+AIShieldUserExtension.destroy = function (arg_2_0)
 	return
 end
 
-function AIShieldUserExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+AIShieldUserExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	assert(Managers.state.network.is_server)
 
 	local var_3_0 = ScriptUnit.extension(arg_3_2, "ai_system"):blackboard()
@@ -25,7 +25,7 @@ function AIShieldUserExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	var_3_0.shield_user = true
 end
 
-function AIShieldUserExtension.set_is_blocking(arg_4_0, arg_4_1)
+AIShieldUserExtension.set_is_blocking = function (arg_4_0, arg_4_1)
 	if arg_4_0.shield_broken then
 		return
 	end
@@ -41,7 +41,7 @@ function AIShieldUserExtension.set_is_blocking(arg_4_0, arg_4_1)
 	arg_4_0.is_blocking = arg_4_1
 end
 
-function AIShieldUserExtension.set_is_dodging(arg_5_0, arg_5_1)
+AIShieldUserExtension.set_is_dodging = function (arg_5_0, arg_5_1)
 	if arg_5_0.shield_broken then
 		return
 	end
@@ -57,7 +57,7 @@ function AIShieldUserExtension.set_is_dodging(arg_5_0, arg_5_1)
 	arg_5_0.is_dodging = arg_5_1
 end
 
-function AIShieldUserExtension.break_shield(arg_6_0)
+AIShieldUserExtension.break_shield = function (arg_6_0)
 	arg_6_0:set_is_blocking(false)
 
 	arg_6_0.shield_broken = true
@@ -90,7 +90,7 @@ function AIShieldUserExtension.break_shield(arg_6_0)
 	return var_6_8
 end
 
-function AIShieldUserExtension.can_block_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+AIShieldUserExtension.can_block_attack = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	assert(arg_7_1)
 
 	local var_7_0 = arg_7_0._unit

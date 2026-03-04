@@ -2,7 +2,7 @@
 
 TimedExplosionExtension = class(TimedExplosionExtension)
 
-function TimedExplosionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TimedExplosionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._on_explode_callbacks = {}
 	arg_1_0._area_damage_system = arg_1_1.entity_manager:system("area_damage_system")
@@ -50,7 +50,7 @@ function TimedExplosionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._deletion_timer = var_1_0.explosion.deletion_timer or 1
 end
 
-function TimedExplosionExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+TimedExplosionExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0._state
 
 	if arg_2_0._buildup_effect then
@@ -109,13 +109,13 @@ function TimedExplosionExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_
 			arg_2_0._state = "waiting_for_deletion"
 		end
 	elseif var_2_0 == "waiting_for_deletion" then
-		-- block empty
+		-- Nothing
 	else
 		ferror("Unknown state (%s)", var_2_0)
 	end
 end
 
-function TimedExplosionExtension._explode(arg_3_0)
+TimedExplosionExtension._explode = function (arg_3_0)
 	local var_3_0 = ExplosionUtils.get_template(arg_3_0.explosion_template_name)
 	local var_3_1 = arg_3_0._unit
 	local var_3_2 = Unit.world_position(var_3_1, 0)
@@ -131,7 +131,7 @@ function TimedExplosionExtension._explode(arg_3_0)
 	arg_3_0:_invoke_on_explode_callbacks()
 end
 
-function TimedExplosionExtension._invoke_on_explode_callbacks(arg_4_0)
+TimedExplosionExtension._invoke_on_explode_callbacks = function (arg_4_0)
 	local var_4_0 = POSITION_LOOKUP[arg_4_0._unit]
 
 	for iter_4_0, iter_4_1 in ipairs(arg_4_0._on_explode_callbacks) do
@@ -141,7 +141,7 @@ function TimedExplosionExtension._invoke_on_explode_callbacks(arg_4_0)
 	arg_4_0._on_explode_callbacks = nil
 end
 
-function TimedExplosionExtension.add_on_explode_callback(arg_5_0, arg_5_1)
+TimedExplosionExtension.add_on_explode_callback = function (arg_5_0, arg_5_1)
 	if arg_5_1 ~= nil then
 		table.insert(arg_5_0._on_explode_callbacks, arg_5_1)
 	end

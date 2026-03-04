@@ -4,7 +4,7 @@ require("scripts/settings/dlcs/morris/morris_changelog")
 
 DeusDebugChangelogView = class(DeusDebugChangelogView)
 
-function DeusDebugChangelogView.init(arg_1_0, arg_1_1)
+DeusDebugChangelogView.init = function (arg_1_0, arg_1_1)
 	local var_1_0 = "deus_debug_changelog_view"
 	local var_1_1 = arg_1_1.input_manager
 
@@ -18,11 +18,11 @@ function DeusDebugChangelogView.init(arg_1_0, arg_1_1)
 	var_1_1:map_device_to_service(var_1_0, "gamepad")
 end
 
-function DeusDebugChangelogView.destroy(arg_2_0)
+DeusDebugChangelogView.destroy = function (arg_2_0)
 	return
 end
 
-function DeusDebugChangelogView.on_enter(arg_3_0, arg_3_1)
+DeusDebugChangelogView.on_enter = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._input_manager
 	local var_3_1 = arg_3_0._input_service_name
 
@@ -38,11 +38,11 @@ function DeusDebugChangelogView.on_enter(arg_3_0, arg_3_1)
 	arg_3_0._changelog = MorrisChangelog
 end
 
-function DeusDebugChangelogView.post_update_on_enter(arg_4_0)
+DeusDebugChangelogView.post_update_on_enter = function (arg_4_0)
 	return
 end
 
-function DeusDebugChangelogView.on_exit(arg_5_0)
+DeusDebugChangelogView.on_exit = function (arg_5_0)
 	local var_5_0 = arg_5_0._input_manager
 
 	var_5_0:device_unblock_all_services("keyboard")
@@ -55,11 +55,11 @@ function DeusDebugChangelogView.on_exit(arg_5_0)
 	Imgui.close_imgui()
 end
 
-function DeusDebugChangelogView.post_update_on_exit(arg_6_0)
+DeusDebugChangelogView.post_update_on_exit = function (arg_6_0)
 	return
 end
 
-function DeusDebugChangelogView.update(arg_7_0, arg_7_1, arg_7_2)
+DeusDebugChangelogView.update = function (arg_7_0, arg_7_1, arg_7_2)
 	Imgui.begin_window("Morris Changelog", "always_auto_resize", "no_resize", "no_title_bar", "no_move")
 
 	local var_7_0 = arg_7_0._changelog
@@ -85,7 +85,7 @@ function DeusDebugChangelogView.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:handle_input(arg_7_1)
 end
 
-function DeusDebugChangelogView.handle_input(arg_8_0, arg_8_1)
+DeusDebugChangelogView.handle_input = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._input_manager:get_service(arg_8_0._input_service_name)
 
 	if var_8_0:get("toggle_menu", true) or var_8_0:get("back", true) then
@@ -93,14 +93,14 @@ function DeusDebugChangelogView.handle_input(arg_8_0, arg_8_1)
 	end
 end
 
-function DeusDebugChangelogView.disable_toggle_menu(arg_9_0)
+DeusDebugChangelogView.disable_toggle_menu = function (arg_9_0)
 	return true
 end
 
-function DeusDebugChangelogView.input_service(arg_10_0)
+DeusDebugChangelogView.input_service = function (arg_10_0)
 	return arg_10_0._input_manager:get_service(arg_10_0._input_service_name)
 end
 
-function DeusDebugChangelogView._close(arg_11_0)
+DeusDebugChangelogView._close = function (arg_11_0)
 	arg_11_0.ingame_ui:handle_transition("exit_menu")
 end

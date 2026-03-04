@@ -15,7 +15,7 @@ local var_0_6 = 30
 EndViewStateScoreVS = class(EndViewStateScoreVS)
 EndViewStateScoreVS.NAME = "EndViewStateScoreVS"
 
-function EndViewStateScoreVS.on_enter(arg_1_0, arg_1_1)
+EndViewStateScoreVS.on_enter = function (arg_1_0, arg_1_1)
 	print("[PlayState] Enter Substate EndViewStateScoreVS")
 
 	arg_1_0._params = arg_1_1
@@ -56,20 +56,20 @@ function EndViewStateScoreVS.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._parent:hide_team()
 	arg_1_0:_play_animation("transition_enter")
 
-	function arg_1_0._animation_callbacks.transition_enter()
+	arg_1_0._animation_callbacks.transition_enter = function ()
 		arg_1_0:_set_initial_tab()
 	end
 
 	arg_1_0._parent:set_input_description(nil)
 end
 
-function EndViewStateScoreVS.exit(arg_3_0, arg_3_1)
+EndViewStateScoreVS.exit = function (arg_3_0, arg_3_1)
 	arg_3_0._exit_started = true
 
 	arg_3_0:_play_animation("transition_exit")
 end
 
-function EndViewStateScoreVS._play_animation(arg_4_0, arg_4_1)
+EndViewStateScoreVS._play_animation = function (arg_4_0, arg_4_1)
 	local var_4_0 = {
 		render_settings = arg_4_0._render_settings
 	}
@@ -78,15 +78,15 @@ function EndViewStateScoreVS._play_animation(arg_4_0, arg_4_1)
 	arg_4_0._animations[arg_4_1] = var_4_1
 end
 
-function EndViewStateScoreVS.play_sound(arg_5_0, arg_5_1)
+EndViewStateScoreVS.play_sound = function (arg_5_0, arg_5_1)
 	arg_5_0._parent:play_sound(arg_5_1)
 end
 
-function EndViewStateScoreVS.exit_done(arg_6_0)
+EndViewStateScoreVS.exit_done = function (arg_6_0)
 	return arg_6_0._exit_started and table.is_empty(arg_6_0._animations)
 end
 
-function EndViewStateScoreVS.create_ui_elements(arg_7_0, arg_7_1)
+EndViewStateScoreVS.create_ui_elements = function (arg_7_0, arg_7_1)
 	UIRenderer.clear_scenegraph_queue(arg_7_0._ui_renderer)
 
 	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
@@ -148,7 +148,7 @@ function EndViewStateScoreVS.create_ui_elements(arg_7_0, arg_7_1)
 	UIUtils.enable_button(var_7_25, false)
 end
 
-function EndViewStateScoreVS._align_tabs(arg_8_0)
+EndViewStateScoreVS._align_tabs = function (arg_8_0)
 	local var_8_0 = 0
 
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._title_button_widgets) do
@@ -175,7 +175,7 @@ function EndViewStateScoreVS._align_tabs(arg_8_0)
 	arg_8_0._widgets_by_name.next_tab.offset[1] = var_8_9[1] + var_8_8 * 0.5 + var_0_6 * 2
 end
 
-function EndViewStateScoreVS._setup_level_widget(arg_9_0)
+EndViewStateScoreVS._setup_level_widget = function (arg_9_0)
 	local var_9_0 = arg_9_0._widgets_by_name.level.content
 	local var_9_1 = arg_9_0._context.level_key
 	local var_9_2 = LevelSettings[var_9_1]
@@ -189,7 +189,7 @@ function EndViewStateScoreVS._setup_level_widget(arg_9_0)
 	arg_9_0._widgets_by_name.level_text.content.text = Localize(var_9_2.display_name)
 end
 
-function EndViewStateScoreVS._set_text_button_size(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateScoreVS._set_text_button_size = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.style
 
 	var_10_0.selected_texture.texture_size[1] = arg_10_2
@@ -207,21 +207,21 @@ function EndViewStateScoreVS._set_text_button_size(arg_10_0, arg_10_1, arg_10_2)
 	var_10_0.text_disabled.offset[1] = var_10_0.text_disabled.default_offset[1] + var_10_1
 end
 
-function EndViewStateScoreVS._wanted_state(arg_11_0)
+EndViewStateScoreVS._wanted_state = function (arg_11_0)
 	return (arg_11_0.parent:wanted_menu_state())
 end
 
-function EndViewStateScoreVS.set_input_manager(arg_12_0, arg_12_1)
+EndViewStateScoreVS.set_input_manager = function (arg_12_0, arg_12_1)
 	arg_12_0.input_manager = arg_12_1
 end
 
-function EndViewStateScoreVS.on_exit(arg_13_0, arg_13_1)
+EndViewStateScoreVS.on_exit = function (arg_13_0, arg_13_1)
 	print("[PlayState] Exit Substate EndViewStateScoreVS")
 
 	arg_13_0.ui_animator = nil
 end
 
-function EndViewStateScoreVS._update_transition_timer(arg_14_0, arg_14_1)
+EndViewStateScoreVS._update_transition_timer = function (arg_14_0, arg_14_1)
 	if not arg_14_0._transition_timer then
 		return
 	end
@@ -233,7 +233,7 @@ function EndViewStateScoreVS._update_transition_timer(arg_14_0, arg_14_1)
 	end
 end
 
-function EndViewStateScoreVS.update(arg_15_0, arg_15_1, arg_15_2)
+EndViewStateScoreVS.update = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_update_animations(arg_15_1, arg_15_2)
 	arg_15_0:_handle_input(arg_15_1, arg_15_2)
 	arg_15_0:_draw(arg_15_1, arg_15_2)
@@ -243,7 +243,7 @@ function EndViewStateScoreVS.update(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function EndViewStateScoreVS._update_animations(arg_16_0, arg_16_1, arg_16_2)
+EndViewStateScoreVS._update_animations = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._animations
 	local var_16_1 = arg_16_0._ui_animator
 
@@ -286,11 +286,11 @@ function EndViewStateScoreVS._update_animations(arg_16_0, arg_16_1, arg_16_2)
 	UIWidgetUtils.animate_default_button(var_16_4, arg_16_1)
 end
 
-function EndViewStateScoreVS._set_initial_tab(arg_17_0)
+EndViewStateScoreVS._set_initial_tab = function (arg_17_0)
 	arg_17_0:_change_tab(arg_17_0._selected_layout_name, 1, "")
 end
 
-function EndViewStateScoreVS._handle_input(arg_18_0, arg_18_1, arg_18_2)
+EndViewStateScoreVS._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._input_manager:get_service("end_of_level")
 	local var_18_1 = arg_18_0._title_button_widgets
 
@@ -347,7 +347,7 @@ function EndViewStateScoreVS._handle_input(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function EndViewStateScoreVS._change_tab(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+EndViewStateScoreVS._change_tab = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if arg_19_2 < 0 or arg_19_2 > #arg_19_0._title_button_widgets then
 		return
 	end
@@ -374,7 +374,7 @@ function EndViewStateScoreVS._change_tab(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0:play_sound("Play_vs_hud_progression_scoreboard_appear")
 end
 
-function EndViewStateScoreVS._update_tab_selection(arg_20_0, arg_20_1)
+EndViewStateScoreVS._update_tab_selection = function (arg_20_0, arg_20_1)
 	arg_20_0._selected_tab_index = arg_20_1
 
 	for iter_20_0, iter_20_1 in ipairs(arg_20_0._title_button_widgets) do
@@ -394,7 +394,7 @@ function EndViewStateScoreVS._update_tab_selection(arg_20_0, arg_20_1)
 	arg_20_0._ui_animations.tab_selection_size = UIAnimation.init(UIAnimation.function_by_time, var_20_7.texture_size, 1, var_20_7.texture_size[1], var_20_5 + var_20_4, 0.25, math.easeOutCubic)
 end
 
-function EndViewStateScoreVS._set_selected_option(arg_21_0, arg_21_1)
+EndViewStateScoreVS._set_selected_option = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._title_button_widgets
 
 	for iter_21_0 = 1, #var_21_0 do
@@ -405,11 +405,11 @@ function EndViewStateScoreVS._set_selected_option(arg_21_0, arg_21_1)
 	end
 end
 
-function EndViewStateScoreVS.post_update(arg_22_0, arg_22_1, arg_22_2)
+EndViewStateScoreVS.post_update = function (arg_22_0, arg_22_1, arg_22_2)
 	return
 end
 
-function EndViewStateScoreVS._draw(arg_23_0, arg_23_1, arg_23_2)
+EndViewStateScoreVS._draw = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._ui_renderer
 	local var_23_1 = arg_23_0._ui_scenegraph
 	local var_23_2 = arg_23_0._render_settings
@@ -426,11 +426,11 @@ function EndViewStateScoreVS._draw(arg_23_0, arg_23_1, arg_23_2)
 	UIRenderer.end_pass(var_23_0)
 end
 
-function EndViewStateScoreVS.done(arg_24_0)
+EndViewStateScoreVS.done = function (arg_24_0)
 	return arg_24_0._done
 end
 
-function EndViewStateScoreVS._get_tab_settings_by_layout_name(arg_25_0, arg_25_1)
+EndViewStateScoreVS._get_tab_settings_by_layout_name = function (arg_25_0, arg_25_1)
 	for iter_25_0, iter_25_1 in ipairs(arg_25_0._layout_settings) do
 		if iter_25_1.name == arg_25_1 then
 			return iter_25_1
@@ -438,7 +438,7 @@ function EndViewStateScoreVS._get_tab_settings_by_layout_name(arg_25_0, arg_25_1
 	end
 end
 
-function EndViewStateScoreVS.activate_back_to_keep_button(arg_26_0)
+EndViewStateScoreVS.activate_back_to_keep_button = function (arg_26_0)
 	local var_26_0 = arg_26_0._widgets_by_name.back_to_keep_button
 
 	UIUtils.enable_button(var_26_0, true)

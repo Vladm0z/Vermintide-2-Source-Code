@@ -31,7 +31,7 @@ local var_0_16 = 0.5
 local var_0_17 = 30
 local var_0_18 = 120
 
-function CrosshairUI.init(arg_1_0, arg_1_1, arg_1_2)
+CrosshairUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -53,7 +53,7 @@ function CrosshairUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:update_enabled_crosshair_styles()
 end
 
-function CrosshairUI.create_ui_elements(arg_2_0)
+CrosshairUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0.crosshair_projectile = UIWidget.init(var_0_0.widget_definitions.crosshair_projectile)
 	arg_2_0.crosshair_shotgun = UIWidget.init(var_0_0.widget_definitions.crosshair_shotgun)
@@ -94,7 +94,7 @@ function CrosshairUI.create_ui_elements(arg_2_0)
 	arg_2_0._last_kill_confirm_t = 0
 end
 
-function CrosshairUI.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+CrosshairUI.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_3.player_unit
 
 	if not var_3_0 then
@@ -115,7 +115,7 @@ end
 
 local var_0_19 = {}
 
-function CrosshairUI.update_enabled_crosshair_styles(arg_4_0)
+CrosshairUI.update_enabled_crosshair_styles = function (arg_4_0)
 	local var_4_0 = Application.user_setting("enabled_crosshairs")
 
 	if arg_4_0._enabled_style ~= var_4_0 then
@@ -144,7 +144,7 @@ function CrosshairUI.update_enabled_crosshair_styles(arg_4_0)
 	end
 end
 
-function CrosshairUI.update_crosshair_style(arg_5_0, arg_5_1)
+CrosshairUI.update_crosshair_style = function (arg_5_0, arg_5_1)
 	local var_5_0 = Managers.state.game_mode
 
 	if var_5_0 and var_5_0:has_activated_mutator("realism") then
@@ -191,14 +191,14 @@ function CrosshairUI.update_crosshair_style(arg_5_0, arg_5_1)
 	arg_5_0.crosshair_style = var_5_3
 end
 
-function CrosshairUI._apply_crosshair_position(arg_6_0, arg_6_1, arg_6_2)
+CrosshairUI._apply_crosshair_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.ui_scenegraph.pivot.local_position
 
 	var_6_0[1] = arg_6_1
 	var_6_0[2] = arg_6_2
 end
 
-function CrosshairUI.update_hit_markers(arg_7_0, arg_7_1)
+CrosshairUI.update_hit_markers = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.hit_markers
 	local var_7_1 = arg_7_0.hit_markers_n
 	local var_7_2 = arg_7_0.hit_marker_animations
@@ -224,7 +224,7 @@ function CrosshairUI.update_hit_markers(arg_7_0, arg_7_1)
 	end
 end
 
-function CrosshairUI.set_hit_marker_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+CrosshairUI.set_hit_marker_animation = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	for iter_8_0 = 1, arg_8_2 do
 		local var_8_0 = arg_8_1[iter_8_0]
 		local var_8_1 = arg_8_0:configure_hit_marker_color_and_size(var_8_0, arg_8_4)
@@ -240,7 +240,7 @@ end
 
 local var_0_20 = 0.1
 
-function CrosshairUI.configure_hit_marker_color_and_size(arg_9_0, arg_9_1, arg_9_2)
+CrosshairUI.configure_hit_marker_color_and_size = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.damage_amount
 	local var_9_1 = arg_9_2.damage_type
 	local var_9_2 = arg_9_2.hit_zone
@@ -304,7 +304,7 @@ function CrosshairUI.configure_hit_marker_color_and_size(arg_9_0, arg_9_1, arg_9
 	return var_9_12
 end
 
-function CrosshairUI.update_hit_marker_animation(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+CrosshairUI.update_hit_marker_animation = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	for iter_10_0 = 1, arg_10_2 do
 		local var_10_0 = arg_10_3[iter_10_0]
 
@@ -326,7 +326,7 @@ function CrosshairUI.update_hit_marker_animation(arg_10_0, arg_10_1, arg_10_2, a
 	end
 end
 
-function CrosshairUI.update_spread(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+CrosshairUI.update_spread = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_3.wielded
 	local var_11_1 = BackendUtils.get_item_template(var_11_0)
 	local var_11_2 = 0
@@ -350,7 +350,7 @@ function CrosshairUI.update_spread(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_0:draw(arg_11_1, arg_11_2, var_11_7, var_11_8)
 end
 
-function CrosshairUI.draw(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+CrosshairUI.draw = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.input_manager:get_service("ingame_menu")
@@ -381,7 +381,7 @@ function CrosshairUI.draw(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	UIRenderer.end_pass(var_12_0)
 end
 
-function CrosshairUI.draw_default_style_crosshair(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+CrosshairUI.draw_default_style_crosshair = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	UIRenderer.draw_widget(arg_13_1, arg_13_0.crosshair_dot)
 
 	local var_13_0 = 4
@@ -398,7 +398,7 @@ function CrosshairUI.draw_default_style_crosshair(arg_13_0, arg_13_1, arg_13_2, 
 	end
 end
 
-function CrosshairUI.draw_arrows_style_crosshair(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+CrosshairUI.draw_arrows_style_crosshair = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	UIRenderer.draw_widget(arg_14_1, arg_14_0.crosshair_dot)
 
 	local var_14_0 = 4
@@ -415,7 +415,7 @@ function CrosshairUI.draw_arrows_style_crosshair(arg_14_0, arg_14_1, arg_14_2, a
 	end
 end
 
-function CrosshairUI.draw_shotgun_style_crosshair(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+CrosshairUI.draw_shotgun_style_crosshair = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	UIRenderer.draw_widget(arg_15_1, arg_15_0.crosshair_dot)
 
 	local var_15_0 = 4
@@ -432,7 +432,7 @@ function CrosshairUI.draw_shotgun_style_crosshair(arg_15_0, arg_15_1, arg_15_2, 
 	end
 end
 
-function CrosshairUI.draw_projectile_style_crosshair(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+CrosshairUI.draw_projectile_style_crosshair = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	UIRenderer.draw_widget(arg_16_1, arg_16_0.crosshair_dot)
 	UIRenderer.draw_widget(arg_16_1, arg_16_0.crosshair_projectile)
 
@@ -450,19 +450,19 @@ function CrosshairUI.draw_projectile_style_crosshair(arg_16_0, arg_16_1, arg_16_
 	end
 end
 
-function CrosshairUI.draw_dot_style_crosshair(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+CrosshairUI.draw_dot_style_crosshair = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	UIRenderer.draw_widget(arg_17_1, arg_17_0.crosshair_dot)
 end
 
-function CrosshairUI.draw_circle_style_crosshair(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CrosshairUI.draw_circle_style_crosshair = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	UIRenderer.draw_widget(arg_18_1, arg_18_0.crosshair_circle)
 end
 
-function CrosshairUI.draw_wh_priest_style_crosshair(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+CrosshairUI.draw_wh_priest_style_crosshair = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	UIRenderer.draw_widget(arg_19_1, arg_19_0.wh_priest)
 end
 
-function CrosshairUI._set_widget_point_offset(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8)
+CrosshairUI._set_widget_point_offset = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8)
 	local var_20_0, var_20_1, var_20_2 = arg_20_0:_get_point_offset(arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_3 = arg_20_1.style
 	local var_20_4 = var_20_3.offset
@@ -475,7 +475,7 @@ function CrosshairUI._set_widget_point_offset(arg_20_0, arg_20_1, arg_20_2, arg_
 	var_20_3.angle = -var_20_2
 end
 
-function CrosshairUI._get_point_offset(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+CrosshairUI._get_point_offset = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	local var_21_0 = var_0_3
 	local var_21_1 = 0
 	local var_21_2 = 0
@@ -487,7 +487,7 @@ function CrosshairUI._get_point_offset(arg_21_0, arg_21_1, arg_21_2, arg_21_3, a
 	return var_21_1 + var_21_4 * math.cos(var_21_5), var_21_6, var_21_5
 end
 
-function CrosshairUI._set_crosshair_target_info(arg_22_0, arg_22_1, arg_22_2)
+CrosshairUI._set_crosshair_target_info = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0.wh_priest.content
 
 	var_22_0.state = arg_22_2
@@ -496,7 +496,7 @@ function CrosshairUI._set_crosshair_target_info(arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0._small_career_portrait = arg_22_1 and arg_22_1 or arg_22_0._small_career_portrait
 end
 
-function CrosshairUI._update_self_to_ally_transition(arg_23_0)
+CrosshairUI._update_self_to_ally_transition = function (arg_23_0)
 	local var_23_0 = arg_23_0.wh_priest.content
 
 	if var_23_0.state ~= arg_23_0.state then
@@ -508,16 +508,16 @@ function CrosshairUI._update_self_to_ally_transition(arg_23_0)
 	arg_23_0.state = var_23_0.state
 end
 
-function CrosshairUI._update_animations(arg_24_0, arg_24_1)
+CrosshairUI._update_animations = function (arg_24_0, arg_24_1)
 	arg_24_0._ui_animator:update(arg_24_1)
 end
 
-function CrosshairUI.destroy(arg_25_0)
+CrosshairUI.destroy = function (arg_25_0)
 	Managers.state.event:unregister("on_set_ability_target_name", arg_25_0)
 	Managers.state.event:unregister("on_game_options_changed", arg_25_0)
 end
 
-function CrosshairUI.update_game_options(arg_26_0)
+CrosshairUI.update_game_options = function (arg_26_0)
 	local var_26_0 = Application.user_setting("crosshair_kill_confirm")
 	local var_26_1 = var_26_0 ~= CrosshairKillConfirmSettingsGroups.off
 
@@ -536,7 +536,7 @@ function CrosshairUI.update_game_options(arg_26_0)
 	end
 end
 
-function CrosshairUI._register_kill_confirm(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+CrosshairUI._register_kill_confirm = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	if not arg_27_0._kill_confirm_enabled_groups or arg_27_0._kill_confirm_enabled_groups == var_0_9.off then
 		return
 	end
@@ -580,7 +580,7 @@ function CrosshairUI._register_kill_confirm(arg_27_0, arg_27_1, arg_27_2, arg_27
 	end
 end
 
-function CrosshairUI._draw_kill_confirm(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+CrosshairUI._draw_kill_confirm = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	if not arg_28_0._current_kill_confirm_widget then
 		return
 	end

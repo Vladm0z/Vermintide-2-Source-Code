@@ -2,14 +2,14 @@
 
 GutterRunnerStateStanding = class(GutterRunnerStateStanding, EnemyCharacterStateStanding)
 
-function GutterRunnerStateStanding.init(arg_1_0, arg_1_1)
+GutterRunnerStateStanding.init = function (arg_1_0, arg_1_1)
 	GutterRunnerStateStanding.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._pounce_ability_id = arg_1_0._career_extension:ability_id("pounce")
 	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
 end
 
-function GutterRunnerStateStanding.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+GutterRunnerStateStanding.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0:common_state_changes() then
 		return
 	end

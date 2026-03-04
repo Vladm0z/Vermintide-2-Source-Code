@@ -26,7 +26,7 @@ return {
 	icon = "mutator_icon_whiterun",
 	client_start_function = var_0_0,
 	client_stop_function = var_0_0,
-	check_dependencies = function()
+	check_dependencies = function ()
 		if not BackendUtils.get_total_power_level then
 			return false
 		end

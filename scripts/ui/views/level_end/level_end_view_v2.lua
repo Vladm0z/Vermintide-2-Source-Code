@@ -84,7 +84,7 @@ local var_0_14 = {
 
 LevelEndView = class(LevelEndView, LevelEndViewBase)
 
-function LevelEndView.init(arg_1_0, arg_1_1)
+LevelEndView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._weave_render_settings = {
 		snap_pixel_positions = true
 	}
@@ -105,7 +105,7 @@ function LevelEndView.init(arg_1_0, arg_1_1)
 	Managers.transition:force_fade_in()
 end
 
-function LevelEndView.start(arg_2_0)
+LevelEndView.start = function (arg_2_0)
 	LevelEndView.super.start(arg_2_0)
 	arg_2_0:play_sound("play_gui_chestroom_start")
 
@@ -114,7 +114,7 @@ function LevelEndView.start(arg_2_0)
 	arg_2_0._stop_music_event = arg_2_0.game_won and "Stop_won_music" or "Stop_lost_music"
 end
 
-function LevelEndView.setup_pages(arg_3_0, arg_3_1, arg_3_2)
+LevelEndView.setup_pages = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 
 	if arg_3_0._is_untrusted then
@@ -128,13 +128,13 @@ function LevelEndView.setup_pages(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0
 end
 
-function LevelEndView._setup_pages_untrusted(arg_4_0)
+LevelEndView._setup_pages_untrusted = function (arg_4_0)
 	return {
 		EndViewStateScore = 1
 	}
 end
 
-function LevelEndView._setup_pages_victory(arg_5_0, arg_5_1)
+LevelEndView._setup_pages_victory = function (arg_5_0, arg_5_1)
 	local var_5_0 = {}
 	local var_5_1 = arg_5_1.end_of_level_rewards.chest
 
@@ -150,7 +150,7 @@ function LevelEndView._setup_pages_victory(arg_5_0, arg_5_1)
 	return var_5_0
 end
 
-function LevelEndView.show_team(arg_6_0)
+LevelEndView.show_team = function (arg_6_0)
 	if arg_6_0._team_previewer then
 		arg_6_0:_destroy_team_previewer()
 	end
@@ -162,17 +162,17 @@ function LevelEndView.show_team(arg_6_0)
 	end
 end
 
-function LevelEndView.hide_team(arg_7_0)
+LevelEndView.hide_team = function (arg_7_0)
 	if arg_7_0._team_previewer then
 		arg_7_0:_destroy_team_previewer()
 	end
 end
 
-function LevelEndView.loading_complete(arg_8_0)
+LevelEndView.loading_complete = function (arg_8_0)
 	return arg_8_0._team_previewer and arg_8_0._team_previewer:loading_done()
 end
 
-function LevelEndView._setup_pages_defeat(arg_9_0)
+LevelEndView._setup_pages_defeat = function (arg_9_0)
 	local var_9_0 = {}
 
 	var_9_0.EndViewStateSummary = table.size(var_9_0) + 1
@@ -181,7 +181,7 @@ function LevelEndView._setup_pages_defeat(arg_9_0)
 	return var_9_0
 end
 
-function LevelEndView.create_ui_elements(arg_10_0)
+LevelEndView.create_ui_elements = function (arg_10_0)
 	arg_10_0.ui_animations = {}
 	arg_10_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_10_0._static_widgets = {}
@@ -223,7 +223,7 @@ function LevelEndView.create_ui_elements(arg_10_0)
 	arg_10_0._ready_button_widget.scenegraph_id = "ready_button_alone"
 end
 
-function LevelEndView._setup_team_heroes(arg_11_0, arg_11_1)
+LevelEndView._setup_team_heroes = function (arg_11_0, arg_11_1)
 	local var_11_0 = {}
 
 	for iter_11_0 in pairs(arg_11_1) do
@@ -251,7 +251,7 @@ function LevelEndView._setup_team_heroes(arg_11_0, arg_11_1)
 	end
 end
 
-function LevelEndView._get_hero_from_score(arg_12_0, arg_12_1)
+LevelEndView._get_hero_from_score = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.profile_index
 	local var_12_1 = arg_12_1.career_index
 	local var_12_2 = SPProfiles[var_12_0].careers[var_12_1]
@@ -297,7 +297,7 @@ end
 
 local var_0_15 = {}
 
-function LevelEndView._verify_weapon_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LevelEndView._verify_weapon_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_1.profile_index
 	local var_13_1 = arg_13_1.career_index
 	local var_13_2 = SPProfiles[var_13_0].careers[var_13_1]
@@ -372,7 +372,7 @@ function LevelEndView._verify_weapon_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3
 	return var_13_9, var_13_5, var_13_6
 end
 
-function LevelEndView._destroy_team_previewer(arg_14_0)
+LevelEndView._destroy_team_previewer = function (arg_14_0)
 	if arg_14_0._team_previewer then
 		arg_14_0._team_previewer:on_exit()
 
@@ -380,7 +380,7 @@ function LevelEndView._destroy_team_previewer(arg_14_0)
 	end
 end
 
-function LevelEndView._update_team_previewer(arg_15_0, arg_15_1, arg_15_2)
+LevelEndView._update_team_previewer = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._team_previewer
 
 	if var_15_0 then
@@ -389,7 +389,7 @@ function LevelEndView._update_team_previewer(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function LevelEndView._setup_team_previewer(arg_16_0)
+LevelEndView._setup_team_previewer = function (arg_16_0)
 	if arg_16_0._team_previewer then
 		arg_16_0:_destroy_team_previewer()
 	end
@@ -405,7 +405,7 @@ function LevelEndView._setup_team_previewer(arg_16_0)
 	arg_16_0._team_previewer:setup_team(var_16_2, var_16_4)
 end
 
-function LevelEndView._handle_global_shader_flags(arg_17_0)
+LevelEndView._handle_global_shader_flags = function (arg_17_0)
 	local var_17_0 = false
 
 	for iter_17_0, iter_17_1 in pairs(arg_17_0._team_heroes) do
@@ -422,7 +422,7 @@ function LevelEndView._handle_global_shader_flags(arg_17_0)
 	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", var_17_0)
 end
 
-function LevelEndView.draw_weave_widgets(arg_18_0, arg_18_1, arg_18_2)
+LevelEndView.draw_weave_widgets = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.context.game_mode_key == "weave"
 	local var_18_1 = arg_18_0.context.is_quickplay
 
@@ -445,7 +445,7 @@ function LevelEndView.draw_weave_widgets(arg_18_0, arg_18_1, arg_18_2)
 	UIRenderer.end_pass(var_18_2)
 end
 
-function LevelEndView.draw(arg_19_0, arg_19_1, arg_19_2)
+LevelEndView.draw = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.ui_renderer
 	local var_19_1 = arg_19_0.ui_top_renderer
 	local var_19_2 = arg_19_0.ui_scenegraph
@@ -484,7 +484,7 @@ function LevelEndView.draw(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function LevelEndView.update(arg_20_0, arg_20_1, arg_20_2)
+LevelEndView.update = function (arg_20_0, arg_20_1, arg_20_2)
 	LevelEndView.super.update(arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0:_update_team_previewer(arg_20_1, arg_20_2)
 	arg_20_0:_update_fade(arg_20_1, arg_20_2)
@@ -513,7 +513,7 @@ function LevelEndView.update(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function LevelEndView._update_fade(arg_21_0, arg_21_1, arg_21_2)
+LevelEndView._update_fade = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0._fade_out_triggered then
 		return
 	end
@@ -529,7 +529,7 @@ function LevelEndView._update_fade(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function LevelEndView._update_input(arg_22_0, arg_22_1, arg_22_2)
+LevelEndView._update_input = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = false
 
 	if arg_22_0:_is_button_hover_enter(arg_22_0._retry_button_widget) or arg_22_0:_is_button_hover_enter(arg_22_0._ready_button_widget) then
@@ -553,7 +553,7 @@ function LevelEndView._update_input(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function LevelEndView._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2)
+LevelEndView._update_gamepad_input = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0:input_service()
 
 	if not arg_23_0._ready_button_widget.content.button_hotspot.disable_button and (var_23_0:get("refresh") or Managers.invite:has_invitation()) then
@@ -567,17 +567,17 @@ function LevelEndView._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function LevelEndView.input_enabled(arg_24_0)
+LevelEndView.input_enabled = function (arg_24_0)
 	return not arg_24_0._ready_button_widget.content.button_hotspot.disable_button
 end
 
-function LevelEndView.set_input_description(arg_25_0, arg_25_1)
+LevelEndView.set_input_description = function (arg_25_0, arg_25_1)
 	local var_25_0 = var_0_0.generic_input_actions[arg_25_1]
 
 	arg_25_0._menu_input_description:set_input_description(var_25_0)
 end
 
-function LevelEndView._update_animations(arg_26_0, arg_26_1, arg_26_2)
+LevelEndView._update_animations = function (arg_26_0, arg_26_1, arg_26_2)
 	arg_26_0.ui_animator:update(arg_26_1)
 
 	for iter_26_0, iter_26_1 in pairs(arg_26_0.ui_animations) do
@@ -592,7 +592,7 @@ function LevelEndView._update_animations(arg_26_0, arg_26_1, arg_26_2)
 	UIWidgetUtils.animate_default_button(arg_26_0._ready_button_widget, arg_26_1)
 end
 
-function LevelEndView.destroy(arg_27_0, arg_27_1)
+LevelEndView.destroy = function (arg_27_0, arg_27_1)
 	arg_27_0:_destroy_team_previewer()
 	LevelEndView.super.destroy(arg_27_0, arg_27_1)
 	Managers.state.event:unregister("set_flow_object_set_enabled", arg_27_0)
@@ -600,11 +600,11 @@ function LevelEndView.destroy(arg_27_0, arg_27_1)
 	arg_27_0._ui_scenegraph = nil
 end
 
-function LevelEndView.active_input_service(arg_28_0)
+LevelEndView.active_input_service = function (arg_28_0)
 	return arg_28_0.input_blocked and FAKE_INPUT_SERVICE or arg_28_0:input_service()
 end
 
-function LevelEndView._start_animation(arg_29_0, arg_29_1)
+LevelEndView._start_animation = function (arg_29_0, arg_29_1)
 	local var_29_0 = {
 		wwise_world = arg_29_0.wwise_world,
 		render_settings = arg_29_0.render_settings
@@ -614,7 +614,7 @@ function LevelEndView._start_animation(arg_29_0, arg_29_1)
 	return arg_29_0.ui_animator:start_animation(arg_29_1, var_29_1, var_0_2, var_29_0)
 end
 
-function LevelEndView._retry_level(arg_30_0)
+LevelEndView._retry_level = function (arg_30_0)
 	arg_30_0:signal_done(true)
 
 	if not arg_30_0.is_server then
@@ -622,7 +622,7 @@ function LevelEndView._retry_level(arg_30_0)
 	end
 end
 
-function LevelEndView.signal_done(arg_31_0, arg_31_1)
+LevelEndView.signal_done = function (arg_31_0, arg_31_1)
 	LevelEndView.super.signal_done(arg_31_0, arg_31_1)
 
 	if arg_31_0._signaled_done then
@@ -633,7 +633,7 @@ function LevelEndView.signal_done(arg_31_0, arg_31_1)
 	arg_31_0._retry_button_widget.content.button_hotspot.disable_button = true
 end
 
-function LevelEndView.peer_signaled_done(arg_32_0, arg_32_1, arg_32_2)
+LevelEndView.peer_signaled_done = function (arg_32_0, arg_32_1, arg_32_2)
 	LevelEndView.super.peer_signaled_done(arg_32_0, arg_32_1, arg_32_2)
 
 	local var_32_0
@@ -647,11 +647,11 @@ function LevelEndView.peer_signaled_done(arg_32_0, arg_32_1, arg_32_2)
 	var_32_0.votes = var_32_0.votes + 1
 end
 
-function LevelEndView._set_end_timer(arg_33_0, arg_33_1)
+LevelEndView._set_end_timer = function (arg_33_0, arg_33_1)
 	arg_33_0._dynamic_widgets.timer_text.content.text = Localize("timer_prefix_time_left") .. ": " .. UIUtils.format_time(math.ceil(arg_33_1))
 end
 
-function LevelEndView.update_force_shutdown(arg_34_0, arg_34_1)
+LevelEndView.update_force_shutdown = function (arg_34_0, arg_34_1)
 	arg_34_0._force_shutdown_timer = math.max(0, arg_34_0._force_shutdown_timer - arg_34_1)
 
 	arg_34_0:_set_end_timer(arg_34_0._force_shutdown_timer)
@@ -697,7 +697,7 @@ end
 
 local var_0_16 = "levels/end_screen_victory/parading_screen"
 
-function LevelEndView.setup_camera(arg_35_0)
+LevelEndView.setup_camera = function (arg_35_0)
 	local var_35_0 = arg_35_0.game_won and "pose_camera" or "end_screen_camera"
 	local var_35_1
 	local var_35_2
@@ -730,11 +730,11 @@ function LevelEndView.setup_camera(arg_35_0)
 	arg_35_0:position_camera()
 end
 
-function LevelEndView.get_camera_pose(arg_36_0)
+LevelEndView.get_camera_pose = function (arg_36_0)
 	return arg_36_0._camera_pose:unbox()
 end
 
-function LevelEndView.start_story_camera(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+LevelEndView.start_story_camera = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	arg_37_0._storyteller = World.storyteller(arg_37_0._world)
 
 	arg_37_0:stop_playing_story(arg_37_0._story_id)
@@ -753,7 +753,7 @@ function LevelEndView.start_story_camera(arg_37_0, arg_37_1, arg_37_2, arg_37_3,
 	return var_37_0
 end
 
-function LevelEndView.stop_playing_story(arg_38_0, arg_38_1)
+LevelEndView.stop_playing_story = function (arg_38_0, arg_38_1)
 	if not arg_38_1 or not arg_38_0._storyteller or not Storyteller.is_playing(arg_38_0._storyteller, arg_38_1) then
 		return
 	end
@@ -763,7 +763,7 @@ function LevelEndView.stop_playing_story(arg_38_0, arg_38_1)
 	arg_38_0._story_id = nil
 end
 
-function LevelEndView.is_playing_story(arg_39_0, arg_39_1)
+LevelEndView.is_playing_story = function (arg_39_0, arg_39_1)
 	if not arg_39_0._storyteller or not arg_39_1 then
 		return false
 	end
@@ -771,7 +771,7 @@ function LevelEndView.is_playing_story(arg_39_0, arg_39_1)
 	return (Storyteller.is_playing(arg_39_0._storyteller, arg_39_1))
 end
 
-function LevelEndView._update_story(arg_40_0, arg_40_1, arg_40_2)
+LevelEndView._update_story = function (arg_40_0, arg_40_1, arg_40_2)
 	if not arg_40_0._storyteller or not arg_40_0._story_id then
 		return
 	end
@@ -796,11 +796,11 @@ function LevelEndView._update_story(arg_40_0, arg_40_1, arg_40_2)
 	end
 end
 
-function LevelEndView.set_story_time(arg_41_0, arg_41_1)
+LevelEndView.set_story_time = function (arg_41_0, arg_41_1)
 	arg_41_0._story_timer = arg_41_1
 end
 
-function LevelEndView._gather_hero_locations(arg_42_0)
+LevelEndView._gather_hero_locations = function (arg_42_0)
 	local var_42_0 = {}
 	local var_42_1 = LevelResource.unit_indices(var_0_16, "units/hub_elements/versus_podium_character_spawn")
 
@@ -830,7 +830,7 @@ function LevelEndView._gather_hero_locations(arg_42_0)
 	return var_42_0
 end
 
-function LevelEndView.create_world(arg_43_0, arg_43_1)
+LevelEndView.create_world = function (arg_43_0, arg_43_1)
 	local var_43_0 = "end_screen"
 	local var_43_1 = "environment/ui_end_screen"
 	local var_43_2 = 2
@@ -841,7 +841,7 @@ function LevelEndView.create_world(arg_43_0, arg_43_1)
 	return var_43_4, var_43_5
 end
 
-function LevelEndView.spawn_level(arg_44_0, arg_44_1, arg_44_2)
+LevelEndView.spawn_level = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = {}
 	local var_44_1
 	local var_44_2
@@ -861,7 +861,7 @@ function LevelEndView.spawn_level(arg_44_0, arg_44_1, arg_44_2)
 	return var_44_6
 end
 
-function LevelEndView.get_world_link_unit(arg_45_0)
+LevelEndView.get_world_link_unit = function (arg_45_0)
 	local var_45_0 = arg_45_0:get_viewport_world()
 	local var_45_1 = ScriptWorld.level(var_45_0, var_0_16)
 
@@ -878,7 +878,7 @@ function LevelEndView.get_world_link_unit(arg_45_0)
 	end
 end
 
-function LevelEndView._push_mouse_cursor(arg_46_0)
+LevelEndView._push_mouse_cursor = function (arg_46_0)
 	if not arg_46_0._cursor_visible then
 		ShowCursorStack.show("LevelEndViewBase")
 
@@ -888,7 +888,7 @@ function LevelEndView._push_mouse_cursor(arg_46_0)
 	end
 end
 
-function LevelEndViewBase._pop_mouse_cursor(arg_47_0)
+LevelEndViewBase._pop_mouse_cursor = function (arg_47_0)
 	if arg_47_0._cursor_visible then
 		ShowCursorStack.hide("LevelEndViewBase")
 
@@ -896,6 +896,6 @@ function LevelEndViewBase._pop_mouse_cursor(arg_47_0)
 	end
 end
 
-function LevelEndView.input_enabled(arg_48_0)
+LevelEndView.input_enabled = function (arg_48_0)
 	return not arg_48_0._ready_button_widget.content.button_hotspot.disable_button
 end

@@ -95,7 +95,7 @@ local var_0_1 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -134,7 +134,7 @@ local var_0_1 = {
 				dedicated_target_range = 3.5,
 				anim_event = "attack_push",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
@@ -169,7 +169,7 @@ local var_0_1 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 				end
 			}
@@ -179,7 +179,7 @@ local var_0_1 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_4_0, arg_4_1)
+				condition_func = function (arg_4_0, arg_4_1)
 					local var_4_0 = ScriptUnit.extension(arg_4_0, "inventory_system")
 					local var_4_1 = ScriptUnit.extension(arg_4_0, "status_system")
 					local var_4_2
@@ -198,7 +198,7 @@ local var_0_1 = {
 
 					return var_4_2 and var_4_2:can_reload()
 				end,
-				chain_condition_func = function(arg_5_0, arg_5_1)
+				chain_condition_func = function (arg_5_0, arg_5_1)
 					local var_5_0 = ScriptUnit.extension(arg_5_0, "inventory_system")
 					local var_5_1 = ScriptUnit.extension(arg_5_0, "status_system")
 					local var_5_2
@@ -223,7 +223,7 @@ local var_0_1 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_6_0, arg_6_1)
+				condition_func = function (arg_6_0, arg_6_1)
 					local var_6_0 = ScriptUnit.extension(arg_6_0, "inventory_system")
 					local var_6_1 = ScriptUnit.extension(arg_6_0, "status_system")
 					local var_6_2
@@ -242,7 +242,7 @@ local var_0_1 = {
 
 					return var_6_2 and var_6_2:ammo_count() == 0 and var_6_2:can_reload()
 				end,
-				chain_condition_func = function(arg_7_0, arg_7_1)
+				chain_condition_func = function (arg_7_0, arg_7_1)
 					local var_7_0 = ScriptUnit.extension(arg_7_0, "inventory_system")
 					local var_7_1 = ScriptUnit.extension(arg_7_0, "status_system")
 					local var_7_2

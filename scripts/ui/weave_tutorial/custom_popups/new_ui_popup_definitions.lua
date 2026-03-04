@@ -425,7 +425,7 @@ local function var_0_15()
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = arg_3_0.button_hotspot.is_hover and 1 or -1
 						local var_3_1 = Managers.time:mean_dt()
 						local var_3_2 = arg_3_1.progress
@@ -538,7 +538,7 @@ local var_0_19 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 0
 
 				local var_4_0 = arg_4_3.page_data
@@ -547,12 +547,12 @@ local var_0_19 = {
 					arg_4_2[iter_4_1].content.visible = false
 				end
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -562,7 +562,7 @@ local var_0_19 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 0
 
 				local var_7_0 = arg_7_3.page_data
@@ -575,12 +575,12 @@ local var_0_19 = {
 				arg_7_2.prev_button.content.visible = false
 				arg_7_2.ok_button.content.visible = false
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 
 				arg_8_4.render_settings.alpha_multiplier = var_8_0
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_2.title_text.content.visible = true
 			end
 		},
@@ -588,17 +588,17 @@ local var_0_19 = {
 			name = "header",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 				local var_11_1 = arg_11_2.title_text
 
 				var_11_1.style.text.text_color[1] = var_11_0 * 255
 				var_11_1.style.text_shadow.text_color[1] = var_11_0 * 255
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				arg_12_2.info_text.content.visible = true
 				arg_12_2.paragraph_divider.content.visible = true
 			end
@@ -607,10 +607,10 @@ local var_0_19 = {
 			name = "info",
 			start_progress = 0.8,
 			end_progress = 2.8,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeOutCubic(arg_14_3)
 				local var_14_1 = arg_14_2.info_text
 
@@ -618,7 +618,7 @@ local var_0_19 = {
 				var_14_1.style.text_shadow.text_color[1] = var_14_0 * 255
 				arg_14_2.paragraph_divider.style.texture_id.color[1] = var_14_0 * 255
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		},
@@ -626,10 +626,10 @@ local var_0_19 = {
 			name = "perks",
 			start_progress = 3.5,
 			end_progress = 4,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeOutCubic(arg_17_3)
 				local var_17_1 = arg_17_2.perk_text
 
@@ -637,7 +637,7 @@ local var_0_19 = {
 				var_17_1.style.text.text_color[1] = var_17_0 * 255
 				var_17_1.style.text_shadow.text_color[1] = var_17_0 * 255
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				arg_18_2.perk_list.content.visible = true
 			end
 		},
@@ -645,17 +645,17 @@ local var_0_19 = {
 			name = "perk_list",
 			start_progress = 4,
 			end_progress = 5,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = math.easeOutCubic(arg_20_3)
 				local var_20_1 = arg_20_2.perk_list
 
 				var_20_1.style.text.text_color[1] = var_20_0 * 255
 				var_20_1.style.text_shadow.text_color[1] = var_20_0 * 255
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				arg_21_2.next_button.content.visible = true
 			end
 		}
@@ -665,7 +665,7 @@ local var_0_19 = {
 			name = "header",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				local var_22_0 = arg_22_3.page_data
 
 				for iter_22_0, iter_22_1 in ipairs(var_22_0.widgets) do
@@ -677,14 +677,14 @@ local var_0_19 = {
 				arg_22_3.video_widget.content.visible = false
 				arg_22_2.use_legacy_title_text.content.visible = true
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				local var_23_0 = math.easeOutCubic(arg_23_3)
 				local var_23_1 = arg_23_2.use_legacy_title_text
 
 				var_23_1.style.text.text_color[1] = var_23_0 * 255
 				var_23_1.style.text_shadow.text_color[1] = var_23_0 * 255
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				arg_24_2.use_legacy_text.content.visible = true
 			end
 		},
@@ -692,17 +692,17 @@ local var_0_19 = {
 			name = "info",
 			start_progress = 0.5,
 			end_progress = 1.8,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				local var_26_0 = math.easeOutCubic(arg_26_3)
 				local var_26_1 = arg_26_2.use_legacy_text
 
 				var_26_1.style.text.text_color[1] = var_26_0 * 255
 				var_26_1.style.text_shadow.text_color[1] = var_26_0 * 255
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				arg_27_2.use_legacy_option.content.visible = true
 				arg_27_2.video_frame.content.visible = true
 				arg_27_2.video_hover.content.visible = true
@@ -713,10 +713,10 @@ local var_0_19 = {
 			name = "video",
 			start_progress = 1.8,
 			end_progress = 3.5,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				local var_29_0 = math.easeOutCubic(arg_29_3)
 
 				arg_29_2.video_frame.style.frame.color[1] = var_29_0 * 255
@@ -727,7 +727,7 @@ local var_0_19 = {
 				var_29_1.style.text_shadow.text_color[1] = var_29_0 * 255
 				arg_29_4.video_widget.style.video_style.color[1] = var_29_0 * 255
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				arg_30_2.prev_button.content.visible = true
 				arg_30_2.ok_button.content.visible = true
 			end

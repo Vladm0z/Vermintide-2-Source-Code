@@ -74,7 +74,7 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.buff_function_templates = {
-	geheimnisnacht_2021_apply_eye_glow = function(arg_1_0, arg_1_1, arg_1_2)
+	geheimnisnacht_2021_apply_eye_glow = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "buff_system")
 
 		if not ALIVE[arg_1_0] then
@@ -87,7 +87,7 @@ var_0_0.buff_function_templates = {
 
 		Unit.set_material(arg_1_0, "mtr_eyes", "units/beings/enemies/mtr_eyes_geheimnisnacht")
 	end,
-	geheimnisnacht_2021_remove_eye_glow = function(arg_2_0, arg_2_1, arg_2_2)
+	geheimnisnacht_2021_remove_eye_glow = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = ScriptUnit.has_extension(arg_2_0, "buff_system")
 
 		if not ALIVE[arg_2_0] or not var_2_0.reset_material_cache then

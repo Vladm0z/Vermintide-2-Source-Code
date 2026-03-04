@@ -93,7 +93,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_2("skaven_clan_rat") < 4 and var_0_2("skaven_slave") < 4
 			end
 		},
@@ -122,7 +122,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_2("chaos_marauder") < 3 and var_0_2("chaos_fanatic") < 3
 			end
 		},
@@ -142,7 +142,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_2("skaven_clan_rat") < 4 and var_0_2("skaven_slave") < 3
 			end
 		},
@@ -162,7 +162,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -196,7 +196,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_2("chaos_marauder") < 4
 			end
 		},
@@ -216,7 +216,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -236,7 +236,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_2("chaos_marauder") < 4 and var_0_2("chaos_fanatic") < 3
 			end
 		},
@@ -272,7 +272,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_2("skaven_clan_rat") < 4 and var_0_2("skaven_slave") < 4
 			end
 		},
@@ -292,7 +292,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 3
 			end
 		},
@@ -325,7 +325,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_10_0)
+			condition = function (arg_10_0)
 				return var_0_2("chaos_marauder") < 3 and var_0_2("chaos_fanatic") < 3
 			end
 		},
@@ -345,7 +345,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_11_0)
+			condition = function (arg_11_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 3
 			end
 		},
@@ -361,7 +361,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_12_0)
+			condition = function (arg_12_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		}
@@ -412,7 +412,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_13_0)
+			condition = function (arg_13_0)
 				return var_0_2("chaos_marauder") < 3
 			end
 		},
@@ -442,7 +442,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_14_0)
+			condition = function (arg_14_0)
 				return var_0_2("skaven_clan_rat") < 4 and var_0_2("skaven_slave") < 4
 			end
 		},
@@ -462,7 +462,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_15_0)
+			condition = function (arg_15_0)
 				return var_0_2("chaos_marauder") < 2
 			end
 		},
@@ -482,7 +482,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_16_0)
+			condition = function (arg_16_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -516,7 +516,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_17_0)
+			condition = function (arg_17_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -536,7 +536,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_18_0)
+			condition = function (arg_18_0)
 				return var_0_2("skaven_clan_rat") < 3 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -556,7 +556,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_19_0)
+			condition = function (arg_19_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -589,7 +589,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function(arg_20_0)
+			condition = function (arg_20_0)
 				return var_0_2("chaos_marauder") < 2 and var_0_2("chaos_fanatic") < 2
 			end
 		},
@@ -614,7 +614,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_21_0)
+			condition = function (arg_21_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -647,7 +647,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_22_0)
+			condition = function (arg_22_0)
 				return var_0_2("chaos_marauder") < 2
 			end
 		},
@@ -663,7 +663,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function(arg_23_0)
+			condition = function (arg_23_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		}
@@ -685,7 +685,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_24_0)
+			condition = function (arg_24_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -701,7 +701,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_25_0)
+			condition = function (arg_25_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		},
@@ -717,7 +717,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_26_0)
+			condition = function (arg_26_0)
 				return var_0_2("skaven_clan_rat") < 2 and var_0_2("skaven_slave") < 2
 			end
 		}
@@ -783,7 +783,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_27_0)
+			condition = function (arg_27_0)
 				return var_0_1("skaven_clan_rat") < 10 and var_0_1("skaven_storm_vermin_commander") < 4
 			end
 		},
@@ -825,7 +825,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_28_0)
+			condition = function (arg_28_0)
 				return var_0_1("skaven_clan_rat") < 10 and var_0_1("skaven_storm_vermin_commander") < 4
 			end
 		},
@@ -855,7 +855,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_29_0)
+			condition = function (arg_29_0)
 				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_marauder_with_shield") < 5
 			end
 		},
@@ -908,7 +908,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_30_0)
+			condition = function (arg_30_0)
 				return var_0_1("skaven_clan_rat") < 10 and var_0_1("skaven_storm_vermin_commander") < 4
 			end
 		},
@@ -965,7 +965,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_31_0)
+			condition = function (arg_31_0)
 				return var_0_1("skaven_clan_rat") < 7 and var_0_1("skaven_storm_vermin_commander") < 4
 			end
 		},
@@ -1005,7 +1005,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_32_0)
+			condition = function (arg_32_0)
 				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_fanatic") < 6
 			end
 		},
@@ -1027,7 +1027,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_33_0)
+			condition = function (arg_33_0)
 				return var_0_1("chaos_warrior") < 2 and var_0_1("chaos_raider") < 3
 			end
 		},
@@ -1072,7 +1072,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_34_0)
+			condition = function (arg_34_0)
 				return var_0_1("skaven_clan_rat") < 10 and var_0_1("skaven_storm_vermin_commander") < 4 and var_0_1("skaven_plague_monk") < 2
 			end
 		},
@@ -1098,7 +1098,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function(arg_35_0)
+			condition = function (arg_35_0)
 				return var_0_1("skaven_slave") < 10
 			end
 		},

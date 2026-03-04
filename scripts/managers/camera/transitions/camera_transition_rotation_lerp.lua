@@ -4,7 +4,7 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionRotationLerp = class(CameraTransitionRotationLerp, CameraTransitionBase)
 
-function CameraTransitionRotationLerp.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+CameraTransitionRotationLerp.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
 	arg_1_0._freeze_node_1 = arg_1_5.freeze_start_node
@@ -16,7 +16,7 @@ function CameraTransitionRotationLerp.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	end
 end
 
-function CameraTransitionRotationLerp.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CameraTransitionRotationLerp.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
 	local var_2_0 = arg_2_0._freeze_node_1 and arg_2_0._node_1_rot_table:unbox() or arg_2_2

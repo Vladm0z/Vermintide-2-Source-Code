@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTUtilityNode = class(BTUtilityNode, BTNode)
 
-function BTUtilityNode.init(arg_1_0, ...)
+BTUtilityNode.init = function (arg_1_0, ...)
 	BTUtilityNode.super.init(arg_1_0, ...)
 
 	arg_1_0._children = {}
@@ -13,18 +13,18 @@ end
 
 BTUtilityNode.name = "BTUtilityNode"
 
-function BTUtilityNode.ready(arg_2_0, arg_2_1)
+BTUtilityNode.ready = function (arg_2_0, arg_2_1)
 	for iter_2_0, iter_2_1 in pairs(arg_2_0._children) do
 		arg_2_0._action_list = arg_2_0._action_list or {}
 		arg_2_0._action_list[#arg_2_0._action_list + 1] = iter_2_1._tree_node.action_data
 	end
 end
 
-function BTUtilityNode.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTUtilityNode.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return
 end
 
-function BTUtilityNode.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTUtilityNode.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.running_attack_action = nil
 
 	arg_4_0:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, arg_4_4)
@@ -84,7 +84,7 @@ local function var_0_1(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return var_6_0
 end
 
-function BTUtilityNode.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTUtilityNode.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_0._tree_node.action_data
 	local var_7_1 = arg_7_2[arg_7_0.fail_cooldown_name]
 
@@ -172,6 +172,6 @@ function BTUtilityNode.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return var_7_3
 end
 
-function BTUtilityNode.add_child(arg_8_0, arg_8_1)
+BTUtilityNode.add_child = function (arg_8_0, arg_8_1)
 	arg_8_0._children[arg_8_1._identifier] = arg_8_1
 end

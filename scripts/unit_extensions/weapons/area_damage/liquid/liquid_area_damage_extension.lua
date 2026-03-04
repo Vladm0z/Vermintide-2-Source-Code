@@ -11,7 +11,7 @@ local function var_0_0(...)
 	end
 end
 
-function LiquidAreaDamageExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+LiquidAreaDamageExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_1.entity_manager
 	local var_2_1 = var_2_0:system("ai_system")
 	local var_2_2 = arg_2_1.world
@@ -138,7 +138,7 @@ function LiquidAreaDamageExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function LiquidAreaDamageExtension.ready(arg_3_0)
+LiquidAreaDamageExtension.ready = function (arg_3_0)
 	local var_3_0 = arg_3_0._unit
 
 	arg_3_0._unit_id = Managers.state.unit_storage:go_id(var_3_0)
@@ -169,7 +169,7 @@ end
 
 local var_0_1 = 1 / (math.sqrt(3) * 0.5)
 
-function LiquidAreaDamageExtension._set_active(arg_4_0, arg_4_1)
+LiquidAreaDamageExtension._set_active = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._flow
 	local var_4_1 = var_4_0[arg_4_1]
 	local var_4_2 = var_4_1.position:unbox()
@@ -226,7 +226,7 @@ function LiquidAreaDamageExtension._set_active(arg_4_0, arg_4_1)
 	end
 end
 
-function LiquidAreaDamageExtension.stop_fx(arg_5_0)
+LiquidAreaDamageExtension.stop_fx = function (arg_5_0)
 	if script_data.debug_liquid_system then
 		arg_5_0._fx_stopped = true
 	else
@@ -238,7 +238,7 @@ function LiquidAreaDamageExtension.stop_fx(arg_5_0)
 	end
 end
 
-function LiquidAreaDamageExtension._create_liquid(arg_6_0, arg_6_1, arg_6_2)
+LiquidAreaDamageExtension._create_liquid = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._grid
 	local var_6_1, var_6_2, var_6_3 = var_6_0:ijk(arg_6_1)
 	local var_6_4 = var_6_0:find_position(var_6_1, var_6_2, var_6_3)
@@ -306,7 +306,7 @@ function LiquidAreaDamageExtension._create_liquid(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._inactive_flow[arg_6_1] = var_6_28
 end
 
-function LiquidAreaDamageExtension._find_point(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+LiquidAreaDamageExtension._find_point = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0._nav_world
 	local var_7_1, var_7_2 = GwNavQueries.triangle_from_position(var_7_0, arg_7_1, arg_7_2 or 2, arg_7_3 or 2)
 
@@ -323,7 +323,7 @@ function LiquidAreaDamageExtension._find_point(arg_7_0, arg_7_1, arg_7_2, arg_7_
 	end
 end
 
-function LiquidAreaDamageExtension.destroy(arg_8_0)
+LiquidAreaDamageExtension.destroy = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 	local var_8_1 = arg_8_0._sfx_name_stop
 
@@ -425,7 +425,7 @@ local var_0_4 = {
 	}
 }
 
-function LiquidAreaDamageExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+LiquidAreaDamageExtension.update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = 1 - arg_9_0._num_liquid / arg_9_0._max_liquid
 	local var_9_1 = math.lerp(arg_9_0._end_pressure, arg_9_0._starting_pressure, var_9_0)
 	local var_9_2 = arg_9_0._active_flow
@@ -572,7 +572,7 @@ function LiquidAreaDamageExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, ar
 	end
 end
 
-function LiquidAreaDamageExtension._add_buff_helper_function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+LiquidAreaDamageExtension._add_buff_helper_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0
 
 	if arg_10_4 then
@@ -596,7 +596,7 @@ end
 
 local var_0_5 = 10
 
-function LiquidAreaDamageExtension._update_collision_detection(arg_11_0, arg_11_1, arg_11_2)
+LiquidAreaDamageExtension._update_collision_detection = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = var_0_5
 	local var_11_1 = arg_11_0._grid
 	local var_11_2 = arg_11_0._unit
@@ -709,7 +709,7 @@ function LiquidAreaDamageExtension._update_collision_detection(arg_11_0, arg_11_
 	end
 end
 
-function LiquidAreaDamageExtension._is_unit_colliding(arg_12_0, arg_12_1, arg_12_2)
+LiquidAreaDamageExtension._is_unit_colliding = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = POSITION_LOOKUP[arg_12_2]
 
 	if var_12_0 then
@@ -738,7 +738,7 @@ end
 
 local var_0_6 = {}
 
-function LiquidAreaDamageExtension._pulse_damage(arg_13_0)
+LiquidAreaDamageExtension._pulse_damage = function (arg_13_0)
 	local var_13_0 = 0
 	local var_13_1 = arg_13_0._damage_direction:unbox()
 	local var_13_2 = arg_13_0._damage_type
@@ -790,7 +790,7 @@ function LiquidAreaDamageExtension._pulse_damage(arg_13_0)
 	end
 end
 
-function LiquidAreaDamageExtension.is_position_inside(arg_14_0, arg_14_1, arg_14_2)
+LiquidAreaDamageExtension.is_position_inside = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._grid
 	local var_14_1, var_14_2, var_14_3 = var_14_0:find_index(arg_14_1)
 
@@ -814,11 +814,11 @@ function LiquidAreaDamageExtension.is_position_inside(arg_14_0, arg_14_1, arg_14
 	end
 end
 
-function LiquidAreaDamageExtension.get_rim_nodes(arg_15_0)
+LiquidAreaDamageExtension.get_rim_nodes = function (arg_15_0)
 	return arg_15_0._inactive_flow, false
 end
 
-function LiquidAreaDamageExtension.hot_join_sync(arg_16_0, arg_16_1)
+LiquidAreaDamageExtension.hot_join_sync = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._flow
 	local var_16_1 = arg_16_0._unit_id
 	local var_16_2 = arg_16_0._network_transmit
@@ -831,6 +831,6 @@ function LiquidAreaDamageExtension.hot_join_sync(arg_16_0, arg_16_1)
 	end
 end
 
-function LiquidAreaDamageExtension.get_source_attacker_unit(arg_17_0)
+LiquidAreaDamageExtension.get_source_attacker_unit = function (arg_17_0)
 	return arg_17_0._source_attacker_unit
 end

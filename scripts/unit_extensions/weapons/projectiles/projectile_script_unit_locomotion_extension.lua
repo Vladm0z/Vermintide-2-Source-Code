@@ -4,7 +4,7 @@ require("scripts/helpers/network_utils")
 
 ProjectileScriptUnitLocomotionExtension = class(ProjectileScriptUnitLocomotionExtension)
 
-function ProjectileScriptUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileScriptUnitLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.spawn_time = Managers.time:time("game") - (arg_1_3.fast_forward_time or 0)
@@ -72,11 +72,11 @@ function ProjectileScriptUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2,
 	arg_1_0.start_paused_for_time = arg_1_3.start_paused_for_time
 end
 
-function ProjectileScriptUnitLocomotionExtension.destroy(arg_2_0)
+ProjectileScriptUnitLocomotionExtension.destroy = function (arg_2_0)
 	return
 end
 
-function ProjectileScriptUnitLocomotionExtension.bounce(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+ProjectileScriptUnitLocomotionExtension.bounce = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = Vector3.normalize(Vector3.reflect(arg_3_2, arg_3_3))
 	local var_3_1 = arg_3_1 - arg_3_2 * 0.25 + arg_3_3 * 0.1
 	local var_3_2 = Quaternion.look(var_3_0)
@@ -93,7 +93,7 @@ function ProjectileScriptUnitLocomotionExtension.bounce(arg_3_0, arg_3_1, arg_3_
 	arg_3_0:_unit_set_position_rotation(arg_3_0.unit, var_3_1, var_3_2)
 end
 
-function ProjectileScriptUnitLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ProjectileScriptUnitLocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0.time_lived = arg_4_5 - arg_4_0.spawn_time
 
 	if arg_4_0.start_paused_for_time then
@@ -152,7 +152,7 @@ end
 
 local var_0_0 = 9
 
-function ProjectileScriptUnitLocomotionExtension._get_new_position_multiple_targetpoints(arg_5_0, arg_5_1, arg_5_2)
+ProjectileScriptUnitLocomotionExtension._get_new_position_multiple_targetpoints = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.speed
 	local var_5_1 = arg_5_0.radians
 	local var_5_2 = arg_5_0.gravity
@@ -192,7 +192,7 @@ function ProjectileScriptUnitLocomotionExtension._get_new_position_multiple_targ
 	return var_5_9
 end
 
-function ProjectileScriptUnitLocomotionExtension._get_new_position(arg_6_0, arg_6_1, arg_6_2)
+ProjectileScriptUnitLocomotionExtension._get_new_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.speed
 	local var_6_1 = arg_6_0.trajectory_template_name
 
@@ -214,7 +214,7 @@ function ProjectileScriptUnitLocomotionExtension._get_new_position(arg_6_0, arg_
 	return (var_6_5.update(var_6_0, var_6_2, var_6_3, var_6_7, var_6_6, arg_6_1, arg_6_2, var_6_9))
 end
 
-function ProjectileScriptUnitLocomotionExtension._get_new_rotation(arg_7_0, arg_7_1, arg_7_2)
+ProjectileScriptUnitLocomotionExtension._get_new_rotation = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Vector3.normalize(arg_7_1)
 	local var_7_1 = Quaternion.look(var_7_0)
 
@@ -238,7 +238,7 @@ function ProjectileScriptUnitLocomotionExtension._get_new_rotation(arg_7_0, arg_
 	return var_7_1
 end
 
-function ProjectileScriptUnitLocomotionExtension.rotate_projectile_away_from_target(arg_8_0, arg_8_1, arg_8_2)
+ProjectileScriptUnitLocomotionExtension.rotate_projectile_away_from_target = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.has_reached_all_targets = true
 	arg_8_0._has_multiple_targets = false
 
@@ -249,35 +249,35 @@ function ProjectileScriptUnitLocomotionExtension.rotate_projectile_away_from_tar
 	arg_8_0.target_vector_boxed = Vector3Box(var_8_3)
 end
 
-function ProjectileScriptUnitLocomotionExtension._unit_set_position_rotation(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ProjectileScriptUnitLocomotionExtension._unit_set_position_rotation = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	Unit.set_local_rotation(arg_9_1, 0, arg_9_3)
 	Unit.set_local_position(arg_9_1, 0, arg_9_2)
 end
 
-function ProjectileScriptUnitLocomotionExtension.moved_this_frame(arg_10_0)
+ProjectileScriptUnitLocomotionExtension.moved_this_frame = function (arg_10_0)
 	return arg_10_0.moved
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_velocity(arg_11_0)
+ProjectileScriptUnitLocomotionExtension.current_velocity = function (arg_11_0)
 	return arg_11_0.velocity:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_position(arg_12_0)
+ProjectileScriptUnitLocomotionExtension.current_position = function (arg_12_0)
 	return arg_12_0._position:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.current_rotation(arg_13_0)
+ProjectileScriptUnitLocomotionExtension.current_rotation = function (arg_13_0)
 	return arg_13_0._rotation:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.last_position(arg_14_0)
+ProjectileScriptUnitLocomotionExtension.last_position = function (arg_14_0)
 	return arg_14_0._last_position:unbox()
 end
 
-function ProjectileScriptUnitLocomotionExtension.stop(arg_15_0)
+ProjectileScriptUnitLocomotionExtension.stop = function (arg_15_0)
 	arg_15_0.stopped = true
 end
 
-function ProjectileScriptUnitLocomotionExtension.has_stopped(arg_16_0)
+ProjectileScriptUnitLocomotionExtension.has_stopped = function (arg_16_0)
 	return arg_16_0.stopped
 end

@@ -70,7 +70,7 @@ local var_0_1 = {
 		spawn_function = "spawn_pickup_at_unit"
 	}
 }
-local var_0_2 = (function()
+local var_0_2 = (function ()
 	local var_1_0 = {}
 	local var_1_1 = 0
 
@@ -105,14 +105,14 @@ local function var_0_3(arg_2_0, arg_2_1)
 end
 
 local var_0_4 = {
-	spawn_pickup_at_unit = function(arg_3_0, arg_3_1)
+	spawn_pickup_at_unit = function (arg_3_0, arg_3_1)
 		local var_3_0 = POSITION_LOOKUP[arg_3_0] + Vector3.up() * 0.1
 		local var_3_1 = true
 		local var_3_2 = arg_3_1.pickup_name
 
 		Managers.state.entity:system("pickup_system"):buff_spawn_pickup(var_3_2, var_3_0, var_3_1)
 	end,
-	spawn_ignited_barrel_at_unit = function(arg_4_0, arg_4_1)
+	spawn_ignited_barrel_at_unit = function (arg_4_0, arg_4_1)
 		local var_4_0 = POSITION_LOOKUP[arg_4_0] + Vector3.up() * 0.1
 		local var_4_1 = Quaternion.identity()
 		local var_4_2 = AiAnimUtils.position_network_scale(var_4_0, true)
@@ -159,10 +159,10 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_abundance.display_name,
 	description = DeusBlessingSettings.blessing_of_abundance.description,
 	icon = DeusBlessingSettings.blessing_of_abundance.icon,
-	server_start_function = function(arg_5_0, arg_5_1, arg_5_2)
+	server_start_function = function (arg_5_0, arg_5_1, arg_5_2)
 		arg_5_1.seed = Managers.mechanism:get_level_seed("mutator")
 	end,
-	server_ai_killed_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = Unit.get_data(arg_6_2, "breed")
 
 		if not var_6_0.special and not var_6_0.elite and not var_6_0.boss then
@@ -181,7 +181,7 @@ return {
 
 			local var_6_4 = table.clone(var_0_2)
 
-			table.array_remove_if(var_6_4, function(arg_7_0)
+			table.array_remove_if(var_6_4, function (arg_7_0)
 				return arg_7_0.pickup_name == arg_6_1.last_dropped_pickup
 			end)
 

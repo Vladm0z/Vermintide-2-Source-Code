@@ -108,7 +108,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "hovered_frame",
 					texture_id = "hovered_frame",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.hotspot.is_hover or arg_2_0.selected
 					end
 				}
@@ -483,7 +483,7 @@ local var_0_15 = {
 			name = "fade_in_glow",
 			duration = 0.6,
 			init = NOP,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = arg_3_3
 
 				arg_3_2.chrome.style.bottom_glow.color[1] = 150 * var_3_0
@@ -496,7 +496,7 @@ local var_0_15 = {
 			name = "fade_slide_in_bg",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				local var_4_0 = math.easeOutCubic(arg_4_3)
 				local var_4_1 = arg_4_2.chrome
 				local var_4_2 = 0 * var_4_0
@@ -514,10 +514,10 @@ local var_0_15 = {
 			name = "fade_in_text",
 			delay = 0.3,
 			duration = 0.4,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_2.chrome.style.category_text.text_color[1] = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = math.easeOutCubic(arg_6_3)
 				local var_6_1 = arg_6_2.chrome
 				local var_6_2 = 255 * var_6_0
@@ -530,10 +530,10 @@ local var_0_15 = {
 			name = "fade_in_pick_text",
 			delay = 0.4,
 			duration = 0.5,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_2.chrome.style.pick_text.text_color[1] = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 				local var_8_1 = arg_8_2.chrome
 				local var_8_2 = 255 * var_8_0
@@ -546,14 +546,14 @@ local var_0_15 = {
 			name = "slide_in_frames",
 			delay = 0,
 			duration = 0.5,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				local var_9_0 = arg_9_3._selector_widgets
 
 				for iter_9_0 = 1, #var_9_0 do
 					var_9_0[iter_9_0].offset[2] = -1000
 				end
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				local var_10_0 = 1 - math.easeOutCubic(arg_10_3)
 				local var_10_1 = arg_10_4._selector_widgets
 
@@ -561,7 +561,7 @@ local var_0_15 = {
 					var_10_1[iter_10_0].offset[2] = (400 + 100 * iter_10_0) * var_10_0
 				end
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3:_capture_input()
 			end
 		},
@@ -569,13 +569,13 @@ local var_0_15 = {
 			name = "fade_in_info_text",
 			delay = 0.5,
 			duration = 0.2,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				arg_12_2.info_text.style.text.text_color[1] = 0
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				arg_13_2.info_text.style.text.text_color[1] = 255 * math.easeOutCubic(arg_13_3)
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end
 		},
@@ -583,13 +583,13 @@ local var_0_15 = {
 			name = "fade_in_info_text_shadow",
 			delay = 0.5,
 			duration = 0.2,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				arg_15_2.info_text_shadow.style.text.text_color[1] = 0
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				arg_16_2.info_text_shadow.style.text.text_color[1] = 255 * math.easeOutCubic(arg_16_3)
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end
 		}
@@ -598,10 +598,10 @@ local var_0_15 = {
 		{
 			name = "fade_out_glow",
 			duration = 0.2,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				arg_18_3:_release_input()
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				local var_19_0 = 1 - arg_19_3
 
 				arg_19_2.chrome.style.bottom_glow.color[1] = 150 * var_19_0
@@ -614,7 +614,7 @@ local var_0_15 = {
 			name = "fade_slide_out",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = 1 - math.easeOutCubic(arg_20_3)
 				local var_20_1 = arg_20_2.chrome
 				local var_20_2 = 0 * var_20_0
@@ -629,14 +629,14 @@ local var_0_15 = {
 		{
 			name = "slide_out_frames",
 			duration = 0.5,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				local var_21_0 = arg_21_3._selector_widgets
 
 				for iter_21_0 = 1, #var_21_0 do
 					var_21_0[iter_21_0].offset[2] = 0
 				end
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeOutCubic(arg_22_3)
 				local var_22_1 = arg_22_4._selector_widgets
 
@@ -650,7 +650,7 @@ local var_0_15 = {
 			name = "fade_out_info_text",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				arg_23_2.info_text.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_23_3))
 			end,
 			on_complete = NOP
@@ -659,7 +659,7 @@ local var_0_15 = {
 			name = "fade_out_info_text_shadow",
 			duration = 0.5,
 			init = NOP,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				arg_24_2.info_text_shadow.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
 			end,
 			on_complete = NOP

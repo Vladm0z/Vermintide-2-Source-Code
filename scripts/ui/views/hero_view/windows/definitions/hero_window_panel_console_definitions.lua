@@ -530,15 +530,15 @@ local var_0_14 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -548,15 +548,15 @@ local var_0_14 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -566,15 +566,15 @@ local var_0_14 = {
 			name = "bot_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 
 				arg_8_2.bot_customization_button.content.progress = var_8_0
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -584,15 +584,15 @@ local var_0_14 = {
 			name = "bot_fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 
 				arg_11_2.bot_customization_button.content.progress = 1 - var_11_0
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		}

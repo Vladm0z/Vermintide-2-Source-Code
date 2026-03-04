@@ -55,7 +55,7 @@ end
 StartGameWindowMutatorGrid = class(StartGameWindowMutatorGrid)
 StartGameWindowMutatorGrid.NAME = "StartGameWindowMutatorGrid"
 
-function StartGameWindowMutatorGrid.on_enter(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowMutatorGrid.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMutatorGrid")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -88,7 +88,7 @@ function StartGameWindowMutatorGrid.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._item_grid = var_2_4
 end
 
-function StartGameWindowMutatorGrid.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowMutatorGrid.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_3_0.ui_scenegraph = var_3_0
@@ -117,14 +117,14 @@ function StartGameWindowMutatorGrid.create_ui_elements(arg_3_0, arg_3_1, arg_3_2
 	end
 end
 
-function StartGameWindowMutatorGrid.on_exit(arg_4_0, arg_4_1)
+StartGameWindowMutatorGrid.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMutatorGrid")
 	arg_4_0._item_grid:destroy()
 
 	arg_4_0._item_grid = nil
 end
 
-function StartGameWindowMutatorGrid.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowMutatorGrid.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._item_grid:update(arg_5_1, arg_5_2)
 	arg_5_0:_update_page_info()
 	arg_5_0:_update_selected_item_backend_id()
@@ -132,11 +132,11 @@ function StartGameWindowMutatorGrid.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-function StartGameWindowMutatorGrid.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowMutatorGrid.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function StartGameWindowMutatorGrid._is_button_pressed(arg_7_0, arg_7_1)
+StartGameWindowMutatorGrid._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -146,13 +146,13 @@ function StartGameWindowMutatorGrid._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowMutatorGrid._is_button_hovered(arg_8_0, arg_8_1)
+StartGameWindowMutatorGrid._is_button_hovered = function (arg_8_0, arg_8_1)
 	if arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function StartGameWindowMutatorGrid._handle_input(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowMutatorGrid._handle_input = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._widgets_by_name
 	local var_9_1 = arg_9_0._item_grid
 	local var_9_2 = true
@@ -190,11 +190,11 @@ function StartGameWindowMutatorGrid._handle_input(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function StartGameWindowMutatorGrid._play_sound(arg_10_0, arg_10_1)
+StartGameWindowMutatorGrid._play_sound = function (arg_10_0, arg_10_1)
 	arg_10_0.parent:play_sound(arg_10_1)
 end
 
-function StartGameWindowMutatorGrid._update_selected_item_backend_id(arg_11_0)
+StartGameWindowMutatorGrid._update_selected_item_backend_id = function (arg_11_0)
 	local var_11_0 = arg_11_0.parent:get_selected_heroic_deed_backend_id()
 
 	if var_11_0 ~= arg_11_0._selected_backend_id then
@@ -210,7 +210,7 @@ function StartGameWindowMutatorGrid._update_selected_item_backend_id(arg_11_0)
 	end
 end
 
-function StartGameWindowMutatorGrid.draw(arg_12_0, arg_12_1)
+StartGameWindowMutatorGrid.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.parent:window_input_service()
@@ -228,7 +228,7 @@ function StartGameWindowMutatorGrid.draw(arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_0)
 end
 
-function StartGameWindowMutatorGrid._update_page_info(arg_13_0)
+StartGameWindowMutatorGrid._update_page_info = function (arg_13_0)
 	local var_13_0, var_13_1 = arg_13_0._item_grid:get_page_info()
 
 	if var_13_0 ~= arg_13_0._current_page or var_13_1 ~= arg_13_0._total_pages then

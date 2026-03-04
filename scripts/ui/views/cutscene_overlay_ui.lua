@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/cutscene_overlay_ui_definitions"
 
 CutsceneOverlayUI = class(CutsceneOverlayUI)
 
-function CutsceneOverlayUI.init(arg_1_0, arg_1_1, arg_1_2)
+CutsceneOverlayUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 
@@ -29,7 +29,7 @@ function CutsceneOverlayUI.init(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-function CutsceneOverlayUI.force_unregister_event_listener(arg_2_0)
+CutsceneOverlayUI.force_unregister_event_listener = function (arg_2_0)
 	local var_2_0 = Managers.state.event
 
 	if var_2_0 and arg_2_0._registered_event then
@@ -39,7 +39,7 @@ function CutsceneOverlayUI.force_unregister_event_listener(arg_2_0)
 	arg_2_0._registered_event = nil
 end
 
-function CutsceneOverlayUI._create_ui_elements(arg_3_0)
+CutsceneOverlayUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_3_0 = {}
@@ -57,7 +57,7 @@ function CutsceneOverlayUI._create_ui_elements(arg_3_0)
 	arg_3_0._widgets_by_template = var_3_1
 end
 
-function CutsceneOverlayUI.destroy(arg_4_0)
+CutsceneOverlayUI.destroy = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 and arg_4_0._registered_event then
@@ -65,11 +65,11 @@ function CutsceneOverlayUI.destroy(arg_4_0)
 	end
 end
 
-function CutsceneOverlayUI.event_start_function(arg_5_0, arg_5_1)
+CutsceneOverlayUI.event_start_function = function (arg_5_0, arg_5_1)
 	arg_5_0:start(arg_5_1)
 end
 
-function CutsceneOverlayUI.start(arg_6_0, arg_6_1)
+CutsceneOverlayUI.start = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.templates
 
 	arg_6_0._templates = table.clone(var_6_0)
@@ -79,7 +79,7 @@ function CutsceneOverlayUI.start(arg_6_0, arg_6_1)
 	arg_6_0:_create_ui_elements()
 end
 
-function CutsceneOverlayUI._present_template_entry(arg_7_0, arg_7_1, arg_7_2)
+CutsceneOverlayUI._present_template_entry = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.text
 	local var_7_1 = arg_7_2.image
 	local var_7_2 = 255
@@ -179,16 +179,16 @@ function CutsceneOverlayUI._present_template_entry(arg_7_0, arg_7_1, arg_7_2)
 	}
 end
 
-function CutsceneOverlayUI._convert_string_timestamp_to_float(arg_8_0, arg_8_1)
+CutsceneOverlayUI._convert_string_timestamp_to_float = function (arg_8_0, arg_8_1)
 	local var_8_0, var_8_1, var_8_2 = string.match(arg_8_1, "(%d+)%:(%d+)%:(%d+)")
 	local var_8_3 = var_8_0 * 60 + var_8_1 + var_8_2 * 0.01
 end
 
-function CutsceneOverlayUI._has_list_entries(arg_9_0, arg_9_1)
+CutsceneOverlayUI._has_list_entries = function (arg_9_0, arg_9_1)
 	return #arg_9_0._templates[arg_9_1] > 0
 end
 
-function CutsceneOverlayUI._get_entry_by_time(arg_10_0, arg_10_1, arg_10_2)
+CutsceneOverlayUI._get_entry_by_time = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._templates[arg_10_1]
 	local var_10_1 = var_10_0[1]
 
@@ -209,7 +209,7 @@ function CutsceneOverlayUI._get_entry_by_time(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function CutsceneOverlayUI.update(arg_11_0, arg_11_1)
+CutsceneOverlayUI.update = function (arg_11_0, arg_11_1)
 	if not arg_11_0._start_time or arg_11_0._complete then
 		return
 	end
@@ -272,7 +272,7 @@ function CutsceneOverlayUI.update(arg_11_0, arg_11_1)
 	arg_11_0._complete = var_11_1
 end
 
-function CutsceneOverlayUI._fade(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CutsceneOverlayUI._fade = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_3 * arg_12_2
 	local var_12_1 = arg_12_1.style
 
@@ -287,7 +287,7 @@ function CutsceneOverlayUI._fade(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function CutsceneOverlayUI._draw(arg_13_0, arg_13_1, arg_13_2)
+CutsceneOverlayUI._draw = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._ui_renderer
 	local var_13_1 = arg_13_0._ui_scenegraph
 	local var_13_2 = FAKE_INPUT_SERVICE

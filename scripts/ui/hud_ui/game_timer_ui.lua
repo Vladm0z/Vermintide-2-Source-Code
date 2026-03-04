@@ -2,7 +2,7 @@
 
 GameTimerUI = class(GameTimerUI)
 
-function GameTimerUI.init(arg_1_0, arg_1_1, arg_1_2)
+GameTimerUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._gui = arg_1_2.ui_renderer.gui
 	arg_1_0._visible = true
 	arg_1_0._enabled = Application.make_hash(Application.user_setting("enable_ingame_timer")) == "473df4ed7fa71691" and not Development.parameter("disable_ingame_timer")
@@ -10,19 +10,19 @@ function GameTimerUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "start_game_time", "event_start_game_time")
 end
 
-function GameTimerUI.destroy(arg_2_0)
+GameTimerUI.destroy = function (arg_2_0)
 	Managers.state.event:unregister("start_game_time", arg_2_0)
 end
 
-function GameTimerUI.event_start_game_time(arg_3_0, arg_3_1)
+GameTimerUI.event_start_game_time = function (arg_3_0, arg_3_1)
 	arg_3_0._start_time = arg_3_1
 end
 
-function GameTimerUI.set_visible(arg_4_0, arg_4_1)
+GameTimerUI.set_visible = function (arg_4_0, arg_4_1)
 	arg_4_0._visible = arg_4_1
 end
 
-function GameTimerUI.update(arg_5_0)
+GameTimerUI.update = function (arg_5_0)
 	if not arg_5_0._enabled or not arg_5_0._visible then
 		return
 	end

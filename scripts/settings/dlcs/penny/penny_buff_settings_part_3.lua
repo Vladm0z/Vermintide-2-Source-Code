@@ -31,7 +31,7 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.buff_function_templates = {
-	enemy_penny_curse_pulse = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	enemy_penny_curse_pulse = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = arg_1_2.t
 
 		if Managers.state.network.is_server and HEALTH_ALIVE[arg_1_0] and (arg_1_1.next_tick == nil or arg_1_1.next_tick and var_1_0 > arg_1_1.next_tick) then

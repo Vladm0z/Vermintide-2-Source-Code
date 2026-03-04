@@ -4,7 +4,7 @@ require("scripts/unit_extensions/default_player_unit/energy/energy_data")
 
 PlayerUnitEnergyExtension = class(PlayerUnitEnergyExtension)
 
-function PlayerUnitEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitEnergyExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.network_manager = Managers.state.network
@@ -21,15 +21,15 @@ function PlayerUnitEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._previous_can_drain = arg_1_0:is_drainable()
 end
 
-function PlayerUnitEnergyExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerUnitEnergyExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function PlayerUnitEnergyExtension.destroy(arg_3_0)
+PlayerUnitEnergyExtension.destroy = function (arg_3_0)
 	return
 end
 
-function PlayerUnitEnergyExtension._update_game_object(arg_4_0)
+PlayerUnitEnergyExtension._update_game_object = function (arg_4_0)
 	local var_4_0 = arg_4_0.network_manager
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = var_4_0:game()
@@ -47,7 +47,7 @@ function PlayerUnitEnergyExtension._update_game_object(arg_4_0)
 	end
 end
 
-function PlayerUnitEnergyExtension._update_events(arg_5_0)
+PlayerUnitEnergyExtension._update_events = function (arg_5_0)
 	local var_5_0 = arg_5_0._previous_can_drain
 	local var_5_1 = arg_5_0:is_drainable()
 
@@ -62,7 +62,7 @@ function PlayerUnitEnergyExtension._update_events(arg_5_0)
 	arg_5_0._previous_can_drain = var_5_1
 end
 
-function PlayerUnitEnergyExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PlayerUnitEnergyExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = ALIVE[arg_6_1] and ScriptUnit.has_extension(arg_6_1, "buff_system")
 
 	if var_6_0 and var_6_0:has_buff_type("twitch_no_overcharge_no_ammo_reloads") then
@@ -82,7 +82,7 @@ function PlayerUnitEnergyExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, ar
 	arg_6_0:_update_events()
 end
 
-function PlayerUnitEnergyExtension.drain(arg_7_0, arg_7_1)
+PlayerUnitEnergyExtension.drain = function (arg_7_0, arg_7_1)
 	assert(arg_7_1 >= 0, "Use add_energy()")
 
 	local var_7_0 = ScriptUnit.has_extension(arg_7_0.unit, "buff_system")
@@ -102,7 +102,7 @@ function PlayerUnitEnergyExtension.drain(arg_7_0, arg_7_1)
 	arg_7_0._recharge_delay_timer = Managers.time:time("game") + arg_7_0._recharge_delay
 end
 
-function PlayerUnitEnergyExtension.add_energy(arg_8_0, arg_8_1)
+PlayerUnitEnergyExtension.add_energy = function (arg_8_0, arg_8_1)
 	assert(arg_8_1 >= 0, "Use drain()")
 
 	local var_8_0 = arg_8_0._energy + arg_8_1
@@ -111,11 +111,11 @@ function PlayerUnitEnergyExtension.add_energy(arg_8_0, arg_8_1)
 	arg_8_0._energy = math.clamp(var_8_0, 0, var_8_1)
 end
 
-function PlayerUnitEnergyExtension.get_max(arg_9_0)
+PlayerUnitEnergyExtension.get_max = function (arg_9_0)
 	return arg_9_0._max_energy
 end
 
-function PlayerUnitEnergyExtension.is_drainable(arg_10_0)
+PlayerUnitEnergyExtension.is_drainable = function (arg_10_0)
 	local var_10_0 = arg_10_0:is_depleted()
 	local var_10_1 = arg_10_0:_is_on_depletion_cooldown()
 
@@ -126,31 +126,31 @@ function PlayerUnitEnergyExtension.is_drainable(arg_10_0)
 	return true
 end
 
-function PlayerUnitEnergyExtension.is_depleted(arg_11_0)
+PlayerUnitEnergyExtension.is_depleted = function (arg_11_0)
 	return arg_11_0._energy <= 0
 end
 
-function PlayerUnitEnergyExtension.get_fraction(arg_12_0)
+PlayerUnitEnergyExtension.get_fraction = function (arg_12_0)
 	return math.clamp(arg_12_0._energy / arg_12_0._max_energy, 0, 1)
 end
 
-function PlayerUnitEnergyExtension._start_depletion(arg_13_0, arg_13_1, arg_13_2)
+PlayerUnitEnergyExtension._start_depletion = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._depletion_cooldown_timer = arg_13_0._depletion_cooldown + arg_13_2
 end
 
-function PlayerUnitEnergyExtension._process_recharge(arg_14_0, arg_14_1, arg_14_2)
+PlayerUnitEnergyExtension._process_recharge = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._energy = math.clamp(arg_14_0._energy + arg_14_0._recharge_rate * arg_14_1, 0, arg_14_0._max_energy)
 end
 
-function PlayerUnitEnergyExtension._is_on_depletion_cooldown(arg_15_0)
+PlayerUnitEnergyExtension._is_on_depletion_cooldown = function (arg_15_0)
 	return arg_15_0._depletion_cooldown_timer > Managers.time:time("game")
 end
 
-function PlayerUnitEnergyExtension._is_recharging(arg_16_0)
+PlayerUnitEnergyExtension._is_recharging = function (arg_16_0)
 	return arg_16_0._recharge_delay_timer <= Managers.time:time("game")
 end
 
-function PlayerUnitEnergyExtension._broadcast_equipment_flow_event(arg_17_0, arg_17_1)
+PlayerUnitEnergyExtension._broadcast_equipment_flow_event = function (arg_17_0, arg_17_1)
 	local var_17_0 = ScriptUnit.has_extension(arg_17_0.unit, "inventory_system")
 	local var_17_1 = var_17_0 and var_17_0:equipment()
 

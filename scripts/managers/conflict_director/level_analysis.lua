@@ -4,7 +4,7 @@ require("scripts/managers/conflict_director/main_path_spawning_generator")
 
 LevelAnalysis = class(LevelAnalysis)
 
-function LevelAnalysis.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+LevelAnalysis.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.nav_world = arg_1_1
 	arg_1_0.using_editor = arg_1_2
 	arg_1_0.cover_points_broadphase = Broadphase(40, 512)
@@ -40,7 +40,7 @@ function LevelAnalysis.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	end
 end
 
-function LevelAnalysis._setup_level_data(arg_2_0, arg_2_1, arg_2_2)
+LevelAnalysis._setup_level_data = function (arg_2_0, arg_2_1, arg_2_2)
 	if LevelResource.nested_level_count(arg_2_1) > 0 then
 		arg_2_1 = LevelResource.nested_level_resource_name(arg_2_1, 0)
 	end
@@ -62,7 +62,7 @@ function LevelAnalysis._setup_level_data(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function LevelAnalysis.set_random_seed(arg_3_0, arg_3_1, arg_3_2)
+LevelAnalysis.set_random_seed = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 
 	if arg_3_1 then
@@ -77,13 +77,13 @@ function LevelAnalysis.set_random_seed(arg_3_0, arg_3_1, arg_3_2)
 	print("[LevelAnalysis] set_random_seed( " .. arg_3_0.starting_seed .. ")")
 end
 
-function LevelAnalysis.create_checkpoint_data(arg_4_0)
+LevelAnalysis.create_checkpoint_data = function (arg_4_0)
 	return {
 		seed = arg_4_0.starting_seed
 	}
 end
 
-function LevelAnalysis._random(arg_5_0, ...)
+LevelAnalysis._random = function (arg_5_0, ...)
 	local var_5_0, var_5_1 = Math.next_random(arg_5_0.seed, ...)
 
 	arg_5_0.seed = var_5_0
@@ -91,7 +91,7 @@ function LevelAnalysis._random(arg_5_0, ...)
 	return var_5_1
 end
 
-function LevelAnalysis._random_float_interval(arg_6_0, arg_6_1, arg_6_2)
+LevelAnalysis._random_float_interval = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0, var_6_1 = Math.next_random(arg_6_0.seed)
 	local var_6_2 = arg_6_1 + (arg_6_2 - arg_6_1) * var_6_1
 
@@ -100,7 +100,7 @@ function LevelAnalysis._random_float_interval(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_2
 end
 
-function LevelAnalysis.destroy(arg_7_0)
+LevelAnalysis.destroy = function (arg_7_0)
 	arg_7_0:reset()
 
 	if arg_7_0.traverse_logic ~= nil then
@@ -122,25 +122,25 @@ function LevelAnalysis.destroy(arg_7_0)
 	EngineOptimized.unregister_main_path()
 end
 
-function LevelAnalysis.reset(arg_8_0)
+LevelAnalysis.reset = function (arg_8_0)
 	if arg_8_0._last_loaded_zone_package then
 		package.loaded[arg_8_0._last_loaded_zone_package] = nil
 	end
 end
 
-function LevelAnalysis.set_enemy_recycler(arg_9_0, arg_9_1)
+LevelAnalysis.set_enemy_recycler = function (arg_9_0, arg_9_1)
 	arg_9_0.enemy_recycler = arg_9_1
 end
 
-function LevelAnalysis.get_start_and_finish(arg_10_0)
+LevelAnalysis.get_start_and_finish = function (arg_10_0)
 	return arg_10_0.start, arg_10_0.finish
 end
 
-function LevelAnalysis.get_path_markers(arg_11_0)
+LevelAnalysis.get_path_markers = function (arg_11_0)
 	return arg_11_0.path_markers
 end
 
-function LevelAnalysis._add_path_marker_data(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10)
+LevelAnalysis._add_path_marker_data = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10)
 	local var_12_0
 	local var_12_1 = #arg_12_10 + 1
 
@@ -183,7 +183,7 @@ function LevelAnalysis._add_path_marker_data(arg_12_0, arg_12_1, arg_12_2, arg_1
 	return var_12_0 == "good"
 end
 
-function LevelAnalysis._initialize_path_markers_from_editor(arg_13_0, arg_13_1, arg_13_2)
+LevelAnalysis._initialize_path_markers_from_editor = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Unit.alive
 	local var_13_1 = Unit.is_a
 	local var_13_2 = Unit.get_data
@@ -217,7 +217,7 @@ function LevelAnalysis._initialize_path_markers_from_editor(arg_13_0, arg_13_1, 
 	return var_13_7
 end
 
-function LevelAnalysis._initialize_path_markers_from_ingame(arg_14_0, arg_14_1, arg_14_2)
+LevelAnalysis._initialize_path_markers_from_ingame = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = LevelResource.unit_position
 	local var_14_1 = LevelResource.unit_data
 	local var_14_2 = DynamicData.get
@@ -246,7 +246,7 @@ function LevelAnalysis._initialize_path_markers_from_ingame(arg_14_0, arg_14_1, 
 	return var_14_5
 end
 
-function LevelAnalysis.generate_main_path(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+LevelAnalysis.generate_main_path = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if not arg_15_2 then
 		arg_15_2 = {}
 
@@ -277,7 +277,7 @@ function LevelAnalysis.generate_main_path(arg_15_0, arg_15_1, arg_15_2, arg_15_3
 		return "Missing path markers in level. Need at least 2."
 	end
 
-	table.sort(arg_15_2, function(arg_16_0, arg_16_1)
+	table.sort(arg_15_2, function (arg_16_0, arg_16_1)
 		return arg_16_0.order < arg_16_1.order
 	end)
 	print("[LevelAnalysis] Path-markers:")
@@ -351,7 +351,7 @@ function LevelAnalysis.generate_main_path(arg_15_0, arg_15_1, arg_15_2, arg_15_3
 	return "success", arg_15_2
 end
 
-function LevelAnalysis.start_main_path_generation(arg_17_0, arg_17_1)
+LevelAnalysis.start_main_path_generation = function (arg_17_0, arg_17_1)
 	print("[LevelAnalysis] start_main_path_generation")
 
 	arg_17_0.stitching_path = true
@@ -420,7 +420,7 @@ function LevelAnalysis.start_main_path_generation(arg_17_0, arg_17_1)
 	printf("[LevelAnalysis] main path generation - found %d main paths, total of %d sub-paths.", arg_17_1, #arg_17_0.astar_list)
 end
 
-function LevelAnalysis.initialize_cost_table(arg_18_0, arg_18_1, arg_18_2)
+LevelAnalysis.initialize_cost_table = function (arg_18_0, arg_18_1, arg_18_2)
 	for iter_18_0, iter_18_1 in ipairs(LAYER_ID_MAPPING) do
 		local var_18_0 = arg_18_2[iter_18_1]
 
@@ -435,13 +435,13 @@ function LevelAnalysis.initialize_cost_table(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function LevelAnalysis.boxify_pos_array(arg_19_0)
+LevelAnalysis.boxify_pos_array = function (arg_19_0)
 	for iter_19_0 = 1, #arg_19_0 do
 		arg_19_0[iter_19_0] = Vector3Box(arg_19_0[iter_19_0])
 	end
 end
 
-function LevelAnalysis.boxify_table_pos_array(arg_20_0)
+LevelAnalysis.boxify_table_pos_array = function (arg_20_0)
 	local var_20_0 = {}
 
 	for iter_20_0 = 1, #arg_20_0 do
@@ -453,7 +453,7 @@ function LevelAnalysis.boxify_table_pos_array(arg_20_0)
 	return var_20_0
 end
 
-function LevelAnalysis.update_main_path_generation(arg_21_0)
+LevelAnalysis.update_main_path_generation = function (arg_21_0)
 	local var_21_0 = GwNavAStar.processing_finished
 	local var_21_1 = GwNavAStar.path_found
 	local var_21_2 = GwNavAStar.node_count
@@ -585,7 +585,7 @@ function LevelAnalysis.update_main_path_generation(arg_21_0)
 	end
 end
 
-function LevelAnalysis.calc_dists_to_start(arg_22_0)
+LevelAnalysis.calc_dists_to_start = function (arg_22_0)
 	local var_22_0 = arg_22_0.main_paths
 	local var_22_1 = 0
 
@@ -599,7 +599,7 @@ function LevelAnalysis.calc_dists_to_start(arg_22_0)
 	return var_22_1
 end
 
-function LevelAnalysis.boss_gizmo_spawned(arg_23_0, arg_23_1)
+LevelAnalysis.boss_gizmo_spawned = function (arg_23_0, arg_23_1)
 	local var_23_0 = Unit.get_data(arg_23_1, "travel_dist")
 	local var_23_1 = tonumber(Unit.get_data(arg_23_1, "map_section"))
 
@@ -644,7 +644,7 @@ function LevelAnalysis.boss_gizmo_spawned(arg_23_0, arg_23_1)
 	end
 end
 
-function LevelAnalysis.generic_ai_node_spawned(arg_24_0, arg_24_1)
+LevelAnalysis.generic_ai_node_spawned = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0.generic_ai_node_units
 	local var_24_1 = Unit.get_data(arg_24_1, "id")
 	local var_24_2 = var_24_0[var_24_1]
@@ -657,8 +657,8 @@ function LevelAnalysis.generic_ai_node_spawned(arg_24_0, arg_24_1)
 	var_24_2[#var_24_2 + 1] = arg_24_1
 end
 
-function LevelAnalysis.group_spawners(arg_25_0, arg_25_1, arg_25_2)
-	table.sort(arg_25_1, function(arg_26_0, arg_26_1)
+LevelAnalysis.group_spawners = function (arg_25_0, arg_25_1, arg_25_2)
+	table.sort(arg_25_1, function (arg_26_0, arg_26_1)
 		return arg_26_0[3] < arg_26_1[3]
 	end)
 
@@ -676,7 +676,7 @@ function LevelAnalysis.group_spawners(arg_25_0, arg_25_1, arg_25_2)
 			if var_25_0 < var_25_5 then
 				arg_25_2[var_25_5] = iter_25_0
 			elseif var_25_5 < var_25_0 then
-				-- block empty
+				-- Nothing
 			end
 		end
 
@@ -726,7 +726,7 @@ function LevelAnalysis.group_spawners(arg_25_0, arg_25_1, arg_25_2)
 	return var_25_7, var_25_1
 end
 
-function LevelAnalysis.boxify_waypoint_table(arg_27_0, arg_27_1)
+LevelAnalysis.boxify_waypoint_table = function (arg_27_0, arg_27_1)
 	local var_27_0 = {}
 
 	for iter_27_0 = 1, #arg_27_1 do
@@ -738,7 +738,7 @@ function LevelAnalysis.boxify_waypoint_table(arg_27_0, arg_27_1)
 	return var_27_0
 end
 
-function LevelAnalysis.print_boss_waypoints(arg_28_0)
+LevelAnalysis.print_boss_waypoints = function (arg_28_0)
 	local var_28_0 = arg_28_0.boss_waypoints
 
 	for iter_28_0 = 1, #var_28_0 do
@@ -754,7 +754,7 @@ function LevelAnalysis.print_boss_waypoints(arg_28_0)
 	end
 end
 
-function LevelAnalysis.get_boss_spline_travel_distance(arg_29_0, arg_29_1)
+LevelAnalysis.get_boss_spline_travel_distance = function (arg_29_0, arg_29_1)
 	local var_29_0
 
 	if arg_29_1.main_path_connector then
@@ -780,7 +780,7 @@ function LevelAnalysis.get_boss_spline_travel_distance(arg_29_0, arg_29_1)
 	return var_29_0
 end
 
-function LevelAnalysis.get_possible_events(arg_30_0)
+LevelAnalysis.get_possible_events = function (arg_30_0)
 	local var_30_0 = {}
 	local var_30_1 = arg_30_0.boss_waypoints
 
@@ -809,14 +809,14 @@ function LevelAnalysis.get_possible_events(arg_30_0)
 		}
 	end
 
-	table.sort(var_30_0, function(arg_31_0, arg_31_1)
+	table.sort(var_30_0, function (arg_31_0, arg_31_1)
 		return arg_31_0.travel_dist < arg_31_1.travel_dist
 	end)
 
 	return var_30_0
 end
 
-function LevelAnalysis.pick_boss_spline(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+LevelAnalysis.pick_boss_spline = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = arg_32_0.boss_waypoints
 
 	if not var_32_0 then
@@ -866,7 +866,7 @@ function LevelAnalysis.pick_boss_spline(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	return true, var_32_5, var_32_7[1], var_32_8, var_32_9
 end
 
-function LevelAnalysis.spawn_all_boss_spline_patrols(arg_33_0, arg_33_1)
+LevelAnalysis.spawn_all_boss_spline_patrols = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0.boss_waypoints
 
 	if not var_33_0 then
@@ -908,7 +908,7 @@ function LevelAnalysis.spawn_all_boss_spline_patrols(arg_33_0, arg_33_1)
 	end
 end
 
-function LevelAnalysis.inject_all_bosses_into_main_path(arg_34_0)
+LevelAnalysis.inject_all_bosses_into_main_path = function (arg_34_0)
 	if not arg_34_0.boss_waypoints then
 		return false
 	end
@@ -946,7 +946,7 @@ function LevelAnalysis.inject_all_bosses_into_main_path(arg_34_0)
 	arg_34_0.enemy_recycler.current_main_path_event_activation_dist = var_34_13
 end
 
-function LevelAnalysis.inject_playable_boss_into_main_path(arg_35_0)
+LevelAnalysis.inject_playable_boss_into_main_path = function (arg_35_0)
 	if not arg_35_0.boss_waypoints then
 		return false
 	end
@@ -984,7 +984,7 @@ function LevelAnalysis.inject_playable_boss_into_main_path(arg_35_0)
 	arg_35_0.enemy_recycler.current_main_path_event_activation_dist = var_35_13
 end
 
-function LevelAnalysis._give_events(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
+LevelAnalysis._give_events = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
 	local var_36_0 = 0
 	local var_36_1 = 10
 	local var_36_2
@@ -1173,7 +1173,7 @@ function LevelAnalysis._give_events(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_
 	end
 end
 
-function LevelAnalysis._override_generated_event_list(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+LevelAnalysis._override_generated_event_list = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0 = arg_37_0.override_spawners
 
 	if arg_37_0.num_override_spawners <= 0 then
@@ -1201,7 +1201,7 @@ function LevelAnalysis._override_generated_event_list(arg_37_0, arg_37_1, arg_37
 	arg_37_1[var_37_3] = "encampment"
 end
 
-function LevelAnalysis._generate_event_name_list(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+LevelAnalysis._generate_event_name_list = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	print("[LevelAnalysis] Terror events added:")
 
 	local var_38_0 = {}
@@ -1256,7 +1256,7 @@ function LevelAnalysis._generate_event_name_list(arg_38_0, arg_38_1, arg_38_2, a
 	return var_38_0
 end
 
-function LevelAnalysis._hand_placed_terror_creation(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+LevelAnalysis._hand_placed_terror_creation = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0
 	local var_39_1
 	local var_39_2 = arg_39_0.terror_spawners
@@ -1305,7 +1305,7 @@ function LevelAnalysis._hand_placed_terror_creation(arg_39_0, arg_39_1, arg_39_2
 	arg_39_0:_give_events(arg_39_1, arg_39_0.terror_spawners, var_39_8, arg_39_2, var_39_1, arg_39_3)
 end
 
-function LevelAnalysis._automatic_terror_creation(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6)
+LevelAnalysis._automatic_terror_creation = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6)
 	arg_40_3[#arg_40_3 + 1] = {
 		Vector3Box(0, 0, 0),
 		"safe-dist",
@@ -1407,7 +1407,7 @@ function LevelAnalysis._automatic_terror_creation(arg_40_0, arg_40_1, arg_40_2, 
 	end
 end
 
-function LevelAnalysis.debug_spawn_boss_from_closest_spawner_to_player(arg_41_0, arg_41_1)
+LevelAnalysis.debug_spawn_boss_from_closest_spawner_to_player = function (arg_41_0, arg_41_1)
 	local var_41_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS[1]
 	local var_41_1 = math.huge
 	local var_41_2
@@ -1451,7 +1451,7 @@ function LevelAnalysis.debug_spawn_boss_from_closest_spawner_to_player(arg_41_0,
 	end
 end
 
-function LevelAnalysis.generate_boss_paths(arg_42_0)
+LevelAnalysis.generate_boss_paths = function (arg_42_0)
 	arg_42_0.boss_event_list = {}
 	arg_42_0.total_main_path_dist = arg_42_0:calc_dists_to_start()
 
@@ -1465,7 +1465,7 @@ function LevelAnalysis.generate_boss_paths(arg_42_0)
 	if var_42_1 == "hand_placed" then
 		arg_42_0:_hand_placed_terror_creation(arg_42_0.main_paths, arg_42_0.boss_event_list, "boss_events")
 	elseif var_42_1 == "bypassed" then
-		-- block empty
+		-- Nothing
 	else
 		local var_42_2 = var_42_0.boss_events
 		local var_42_3 = var_42_2 and var_42_2.recurring_distance or 300
@@ -1484,11 +1484,11 @@ function LevelAnalysis.generate_boss_paths(arg_42_0)
 	end
 end
 
-function LevelAnalysis.get_main_paths(arg_43_0)
+LevelAnalysis.get_main_paths = function (arg_43_0)
 	return arg_43_0.main_paths
 end
 
-function LevelAnalysis.get_crossroads(arg_44_0)
+LevelAnalysis.get_crossroads = function (arg_44_0)
 	return arg_44_0.crossroads
 end
 
@@ -1503,7 +1503,7 @@ local function var_0_0(arg_45_0, arg_45_1)
 	end
 end
 
-function LevelAnalysis._make_waypoint_lookup(arg_46_0)
+LevelAnalysis._make_waypoint_lookup = function (arg_46_0)
 	arg_46_0.waypoint_lookup_table = {}
 
 	if arg_46_0.event_waypoints then
@@ -1521,7 +1521,7 @@ function LevelAnalysis._make_waypoint_lookup(arg_46_0)
 	end
 end
 
-function LevelAnalysis._remove_short_routes(arg_47_0, arg_47_1, arg_47_2)
+LevelAnalysis._remove_short_routes = function (arg_47_0, arg_47_1, arg_47_2)
 	if not arg_47_1 then
 		return
 	end
@@ -1556,7 +1556,7 @@ function LevelAnalysis._remove_short_routes(arg_47_0, arg_47_1, arg_47_2)
 	end
 end
 
-function LevelAnalysis.store_patrol_waypoints(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+LevelAnalysis.store_patrol_waypoints = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	if arg_48_1 then
 		for iter_48_0 = 1, #arg_48_1 do
 			arg_48_0:_remove_short_routes(arg_48_1[iter_48_0], "boss")
@@ -1586,7 +1586,7 @@ function LevelAnalysis.store_patrol_waypoints(arg_48_0, arg_48_1, arg_48_2, arg_
 	var_48_0:add_ready_splines(arg_48_0.patrol_waypoints, "roaming")
 end
 
-function LevelAnalysis.draw_patrol_route(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+LevelAnalysis.draw_patrol_route = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = Vector3(0, 0, 1)
 	local var_49_1 = arg_49_1.waypoints
 	local var_49_2 = var_49_1[1]
@@ -1607,7 +1607,7 @@ function LevelAnalysis.draw_patrol_route(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	end
 end
 
-function LevelAnalysis.draw_patrol_routes(arg_50_0)
+LevelAnalysis.draw_patrol_routes = function (arg_50_0)
 	local var_50_0 = QuickDrawerStay
 	local var_50_1 = {
 		Color(0, 255, 40),
@@ -1656,7 +1656,7 @@ function LevelAnalysis.draw_patrol_routes(arg_50_0)
 	end
 end
 
-function LevelAnalysis.draw_patrol_start_position(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+LevelAnalysis.draw_patrol_start_position = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
 	local var_51_0 = Vector3(0, 0, 1)
 	local var_51_1 = arg_51_1.waypoints[1]
 	local var_51_2 = Vector3(var_51_1[1], var_51_1[2], var_51_1[3]) + var_51_0
@@ -1726,7 +1726,7 @@ function LevelAnalysis.draw_patrol_start_position(arg_51_0, arg_51_1, arg_51_2, 
 	end
 end
 
-function LevelAnalysis.draw_patrol_start_positions(arg_52_0)
+LevelAnalysis.draw_patrol_start_positions = function (arg_52_0)
 	local var_52_0 = QuickDrawerStay
 	local var_52_1 = Colors.get("purple")
 	local var_52_2 = arg_52_0.boss_waypoints
@@ -1746,7 +1746,7 @@ function LevelAnalysis.draw_patrol_start_positions(arg_52_0)
 	end
 end
 
-function LevelAnalysis.debug_get_closest_boss_patrol_spawn(arg_53_0, arg_53_1)
+LevelAnalysis.debug_get_closest_boss_patrol_spawn = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0.boss_waypoints
 	local var_53_1
 	local var_53_2 = math.huge
@@ -1775,7 +1775,7 @@ function LevelAnalysis.debug_get_closest_boss_patrol_spawn(arg_53_0, arg_53_1)
 	return var_53_1, var_53_9
 end
 
-function LevelAnalysis.get_waypoint_spline(arg_54_0, arg_54_1)
+LevelAnalysis.get_waypoint_spline = function (arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0.waypoint_lookup_table and arg_54_0.waypoint_lookup_table[arg_54_1]
 
 	if var_54_0 then
@@ -1791,7 +1791,7 @@ function LevelAnalysis.get_waypoint_spline(arg_54_0, arg_54_1)
 	end
 end
 
-function LevelAnalysis.get_closest_waypoint_spline(arg_55_0, arg_55_1)
+LevelAnalysis.get_closest_waypoint_spline = function (arg_55_0, arg_55_1)
 	if not arg_55_0.waypoint_lookup_table then
 		return
 	end
@@ -1837,7 +1837,7 @@ local var_0_4 = Script.set_temp_count
 local var_0_5 = Geometry.closest_point_on_line
 local var_0_6 = Vector3.distance_squared
 
-function LevelAnalysis.get_closest_pos_to_waypoint_list(arg_56_0, arg_56_1, arg_56_2)
+LevelAnalysis.get_closest_pos_to_waypoint_list = function (arg_56_0, arg_56_1, arg_56_2)
 	local var_56_0 = Vector3(0, 0, 0)
 	local var_56_1 = math.huge
 	local var_56_2 = Vector3(unpack(arg_56_1[1]))
@@ -1862,7 +1862,7 @@ function LevelAnalysis.get_closest_pos_to_waypoint_list(arg_56_0, arg_56_1, arg_
 	return var_56_0
 end
 
-function LevelAnalysis.get_closest_roaming_spline(arg_57_0, arg_57_1, arg_57_2)
+LevelAnalysis.get_closest_roaming_spline = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0
 	local var_57_1
 	local var_57_2
@@ -1897,7 +1897,7 @@ function LevelAnalysis.get_closest_roaming_spline(arg_57_0, arg_57_1, arg_57_2)
 	return var_57_0, var_57_1, var_57_2
 end
 
-function LevelAnalysis.store_main_paths(arg_58_0, arg_58_1)
+LevelAnalysis.store_main_paths = function (arg_58_0, arg_58_1)
 	arg_58_0.main_paths = arg_58_1
 
 	local var_58_0, var_58_1, var_58_2, var_58_3, var_58_4 = MainPathUtils.collapse_main_paths(arg_58_1)
@@ -1912,7 +1912,7 @@ function LevelAnalysis.store_main_paths(arg_58_0, arg_58_1)
 	}
 end
 
-function LevelAnalysis.remove_crossroads_extra_path_branches(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6)
+LevelAnalysis.remove_crossroads_extra_path_branches = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6)
 	arg_59_1 = arg_59_1 or arg_59_0.main_paths
 	arg_59_2 = arg_59_2 or arg_59_0.crossroads
 
@@ -1931,7 +1931,7 @@ function LevelAnalysis.remove_crossroads_extra_path_branches(arg_59_0, arg_59_1,
 	end
 end
 
-function LevelAnalysis.remove_terror_spawners_due_to_crossroads(arg_60_0, arg_60_1)
+LevelAnalysis.remove_terror_spawners_due_to_crossroads = function (arg_60_0, arg_60_1)
 	local var_60_0 = {}
 	local var_60_1 = arg_60_0.terror_spawners
 	local var_60_2 = #arg_60_1
@@ -2002,7 +2002,7 @@ function LevelAnalysis.remove_terror_spawners_due_to_crossroads(arg_60_0, arg_60
 	end
 end
 
-function LevelAnalysis.brute_force_calc_zone_distances(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+LevelAnalysis.brute_force_calc_zone_distances = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	for iter_61_0 = 1, arg_61_2 do
 		local var_61_0 = arg_61_1[iter_61_0]
 		local var_61_1 = var_61_0.sub
@@ -2017,19 +2017,19 @@ function LevelAnalysis.brute_force_calc_zone_distances(arg_61_0, arg_61_1, arg_6
 	end
 end
 
-function LevelAnalysis.store_path_markers(arg_62_0, arg_62_1)
+LevelAnalysis.store_path_markers = function (arg_62_0, arg_62_1)
 	arg_62_0.path_markers = arg_62_1
 	arg_62_0.start = arg_62_1[1].pos
 	arg_62_0.finish = arg_62_1[#arg_62_1].pos
 end
 
-function LevelAnalysis.main_path(arg_63_0, arg_63_1)
+LevelAnalysis.main_path = function (arg_63_0, arg_63_1)
 	local var_63_0 = arg_63_0.main_paths[arg_63_1]
 
 	return var_63_0.nodes, var_63_0.path_length
 end
 
-function LevelAnalysis.get_path_point(arg_64_0, arg_64_1, arg_64_2)
+LevelAnalysis.get_path_point = function (arg_64_0, arg_64_1, arg_64_2)
 	local var_64_0 = 0
 	local var_64_1 = arg_64_2 * arg_64_1
 	local var_64_2 = Vector3.length
@@ -2049,13 +2049,13 @@ function LevelAnalysis.get_path_point(arg_64_0, arg_64_1, arg_64_2)
 	return arg_64_0[#arg_64_0]:unbox(), #arg_64_0
 end
 
-function LevelAnalysis.reset_debug(arg_65_0)
+LevelAnalysis.reset_debug = function (arg_65_0)
 	Managers.state.debug_text:clear_world_text("boss_spawning")
 
 	arg_65_0.used_roaming_waypoints = {}
 end
 
-function LevelAnalysis.debug(arg_66_0, arg_66_1)
+LevelAnalysis.debug = function (arg_66_0, arg_66_1)
 	local var_66_0 = Managers.state.debug_text
 
 	var_66_0:clear_world_text("boss")
@@ -2151,13 +2151,13 @@ function LevelAnalysis.debug(arg_66_0, arg_66_1)
 	end
 end
 
-function LevelAnalysis.update(arg_67_0, arg_67_1)
+LevelAnalysis.update = function (arg_67_0, arg_67_1)
 	if arg_67_0.stitching_path then
 		arg_67_0:update_main_path_generation()
 	end
 end
 
-function LevelAnalysis.get_main_and_sub_zone_index_from_pos(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
+LevelAnalysis.get_main_and_sub_zone_index_from_pos = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
 	local var_68_0 = GwNavTraversal.get_seed_triangle(arg_68_0, arg_68_3)
 
 	if var_68_0 then
@@ -2182,7 +2182,7 @@ function LevelAnalysis.get_main_and_sub_zone_index_from_pos(arg_68_0, arg_68_1, 
 	end
 end
 
-function LevelAnalysis.get_zone_from_unique_id(arg_69_0, arg_69_1, arg_69_2)
+LevelAnalysis.get_zone_from_unique_id = function (arg_69_0, arg_69_1, arg_69_2)
 	for iter_69_0 = 1, #arg_69_1 do
 		local var_69_0 = arg_69_1[iter_69_0]
 
@@ -2192,7 +2192,7 @@ function LevelAnalysis.get_zone_from_unique_id(arg_69_0, arg_69_1, arg_69_2)
 	end
 end
 
-function LevelAnalysis.get_zone_segment_from_travel_dist(arg_70_0, arg_70_1, arg_70_2)
+LevelAnalysis.get_zone_segment_from_travel_dist = function (arg_70_0, arg_70_1, arg_70_2)
 	local var_70_0 = arg_70_2
 
 	for iter_70_0 = 1, var_70_0 do
@@ -2207,7 +2207,7 @@ function LevelAnalysis.get_zone_segment_from_travel_dist(arg_70_0, arg_70_1, arg
 	return var_70_0, arg_70_1[var_70_0]
 end
 
-function LevelAnalysis.setup_unreachable_processing(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+LevelAnalysis.setup_unreachable_processing = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 	return {
 		investigated_points = 0,
 		num_points_started = 0,
@@ -2231,19 +2231,19 @@ function LevelAnalysis.setup_unreachable_processing(arg_71_0, arg_71_1, arg_71_2
 	}
 end
 
-function LevelAnalysis.process_unreachable(arg_72_0)
+LevelAnalysis.process_unreachable = function (arg_72_0)
 	local var_72_0 = arg_72_0.point_list
 	local var_72_1 = arg_72_0.delete_failed_points
-	local var_72_2 = arg_72_0.path_found_func or function()
+	local var_72_2 = arg_72_0.path_found_func or function ()
 		return
 	end
-	local var_72_3 = arg_72_0.path_not_found_func or function()
+	local var_72_3 = arg_72_0.path_not_found_func or function ()
 		return
 	end
-	local var_72_4 = arg_72_0.get_pos_func or function(arg_75_0, arg_75_1)
+	local var_72_4 = arg_72_0.get_pos_func or function (arg_75_0, arg_75_1)
 		return arg_75_0[arg_75_1]:unbox()
 	end
-	local var_72_5 = arg_72_0.get_pos_func2 or function()
+	local var_72_5 = arg_72_0.get_pos_func2 or function ()
 		return
 	end
 	local var_72_6 = arg_72_0.max_running_astars
@@ -2406,7 +2406,7 @@ function LevelAnalysis.process_unreachable(arg_72_0)
 	end
 end
 
-function LevelAnalysis.setup_main_path_breaks_check(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+LevelAnalysis.setup_main_path_breaks_check = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 	local var_77_0 = {
 		max_running_astars = 50,
 		nav_world = arg_77_0,
@@ -2514,7 +2514,7 @@ function LevelAnalysis.setup_main_path_breaks_check(arg_77_0, arg_77_1, arg_77_2
 	return var_77_0
 end
 
-function LevelAnalysis.process_main_path_breaks_check(arg_78_0)
+LevelAnalysis.process_main_path_breaks_check = function (arg_78_0)
 	local var_78_0 = arg_78_0.nav_world
 	local var_78_1 = arg_78_0.traverse_logic
 	local var_78_2 = arg_78_0.running_astar_list
@@ -2697,7 +2697,7 @@ function LevelAnalysis.process_main_path_breaks_check(arg_78_0)
 	end
 end
 
-function LevelAnalysis.check_splines_integrity(arg_79_0)
+LevelAnalysis.check_splines_integrity = function (arg_79_0)
 	print("----> Checking splines integrity START:")
 
 	local var_79_0 = Managers.state.entity:system("ai_group_system")
@@ -2741,7 +2741,7 @@ function LevelAnalysis.check_splines_integrity(arg_79_0)
 	print("----> Checking splines integrity ENDS.")
 end
 
-function LevelAnalysis._add_boss_to_generated_list(arg_80_0, arg_80_1, arg_80_2)
+LevelAnalysis._add_boss_to_generated_list = function (arg_80_0, arg_80_1, arg_80_2)
 	local var_80_0 = false
 	local var_80_1 = {}
 	local var_80_2 = {}

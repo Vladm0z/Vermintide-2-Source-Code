@@ -11,7 +11,7 @@ local var_0_2 = {
 
 DeusSpawning = class(DeusSpawning)
 
-function DeusSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+DeusSpawning.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._profile_synchronizer = arg_1_1
 	arg_1_0._side = arg_1_2
 	arg_1_0._is_server = arg_1_3
@@ -27,7 +27,7 @@ function DeusSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._deus_run_controller = arg_1_5
 end
 
-function DeusSpawning.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+DeusSpawning.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1:register(arg_2_0, unpack(var_0_2))
 
 	arg_2_0._network_event_delegate = arg_2_1
@@ -35,14 +35,14 @@ function DeusSpawning.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._respawn_handler:register_rpcs(arg_2_1, arg_2_2)
 end
 
-function DeusSpawning.unregister_rpcs(arg_3_0)
+DeusSpawning.unregister_rpcs = function (arg_3_0)
 	arg_3_0._respawn_handler:unregister_rpcs()
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 end
 
-function DeusSpawning._restore_player_game_mode_data(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+DeusSpawning._restore_player_game_mode_data = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0._deus_run_controller:restore_game_mode_data(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
 	var_4_0.temporary_health_percentage = 0
@@ -92,7 +92,7 @@ function DeusSpawning._restore_player_game_mode_data(arg_4_0, arg_4_1, arg_4_2, 
 	return var_4_0
 end
 
-function DeusSpawning._check_observer_camera(arg_5_0, arg_5_1, arg_5_2)
+DeusSpawning._check_observer_camera = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._deus_run_controller:get_own_peer_id()
 
 	if arg_5_0._deus_run_controller:get_player_health_state(arg_5_1, arg_5_2) == "dead" and arg_5_1 ~= var_5_0 then
@@ -102,11 +102,11 @@ function DeusSpawning._check_observer_camera(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function DeusSpawning._unassign_data_from_slot(arg_6_0, arg_6_1, arg_6_2)
+DeusSpawning._unassign_data_from_slot = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.game_mode_data = {}
 end
 
-function DeusSpawning.player_entered_game_session(arg_7_0, arg_7_1, arg_7_2)
+DeusSpawning.player_entered_game_session = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.party:get_player_status(arg_7_1, arg_7_2)
 
 	if var_7_0.career_index then
@@ -114,21 +114,21 @@ function DeusSpawning.player_entered_game_session(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DeusSpawning.player_joined_party(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+DeusSpawning.player_joined_party = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	return
 end
 
-function DeusSpawning.player_left_party(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+DeusSpawning.player_left_party = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	return
 end
 
-function DeusSpawning.update(arg_10_0, arg_10_1, arg_10_2)
+DeusSpawning.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if Managers.state.network:game() then
 		arg_10_0._respawn_handler:update(arg_10_2, arg_10_1)
 	end
 end
 
-function DeusSpawning.server_update(arg_11_0, arg_11_1, arg_11_2)
+DeusSpawning.server_update = function (arg_11_0, arg_11_1, arg_11_2)
 	if Managers.state.network:game() then
 		local var_11_0 = arg_11_0._side.party.occupied_slots
 
@@ -147,7 +147,7 @@ function DeusSpawning.server_update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function DeusSpawning.profile_changed(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+DeusSpawning.profile_changed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = Managers.party:get_player_status(arg_12_1, arg_12_2)
 
 	var_12_0.game_mode_data = arg_12_0:_restore_player_game_mode_data(arg_12_1, arg_12_2, var_12_0.profile_index, var_12_0.career_index)
@@ -155,7 +155,7 @@ end
 
 local var_0_3 = {}
 
-function DeusSpawning._update_player_status(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+DeusSpawning._update_player_status = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = Managers.player
 	local var_13_1 = ScriptUnit.extension
 
@@ -265,7 +265,7 @@ function DeusSpawning._update_player_status(arg_13_0, arg_13_1, arg_13_2, arg_13
 	end
 end
 
-function DeusSpawning._apply_initial_buffs(arg_14_0, arg_14_1)
+DeusSpawning._apply_initial_buffs = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.player_unit
 	local var_14_1 = arg_14_1:network_id()
 	local var_14_2 = arg_14_1:local_player_id()
@@ -295,7 +295,7 @@ function DeusSpawning._apply_initial_buffs(arg_14_0, arg_14_1)
 	end
 end
 
-function DeusSpawning._update_spawning(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+DeusSpawning._update_spawning = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	if arg_15_0._spawning then
 		local var_15_0 = arg_15_0._deus_run_controller:get_own_peer_id()
 		local var_15_1 = false
@@ -353,14 +353,14 @@ function DeusSpawning._update_spawning(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	end
 end
 
-function DeusSpawning.add_delayed_client(arg_16_0, arg_16_1, arg_16_2)
+DeusSpawning.add_delayed_client = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._delayed_clients[#arg_16_0._delayed_clients + 1] = {
 		peer_id = arg_16_1,
 		local_player_id = arg_16_2
 	}
 end
 
-function DeusSpawning.remove_delayed_client(arg_17_0, arg_17_1, arg_17_2)
+DeusSpawning.remove_delayed_client = function (arg_17_0, arg_17_1, arg_17_2)
 	for iter_17_0 = #arg_17_0._delayed_clients, 1, -1 do
 		local var_17_0 = arg_17_0._delayed_clients[iter_17_0]
 
@@ -372,7 +372,7 @@ function DeusSpawning.remove_delayed_client(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function DeusSpawning._update_joining_clients(arg_18_0, arg_18_1, arg_18_2)
+DeusSpawning._update_joining_clients = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0._spawning and arg_18_0._profile_synchronizer:all_synced() then
 		local var_18_0 = arg_18_0._network_server
 
@@ -389,7 +389,7 @@ function DeusSpawning._update_joining_clients(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function DeusSpawning._add_client_to_party(arg_19_0, arg_19_1, arg_19_2)
+DeusSpawning._add_client_to_party = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = 1
 
 	if Managers.party:get_player_status(arg_19_1, arg_19_2).party_id ~= var_19_0 then
@@ -400,7 +400,7 @@ function DeusSpawning._add_client_to_party(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function DeusSpawning._spawn_player(arg_20_0, arg_20_1)
+DeusSpawning._spawn_player = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.game_mode_data
 	local var_20_1, var_20_2 = arg_20_0:_find_spawn_point(arg_20_1)
 	local var_20_3 = var_20_0.spawn_state == "is_initial_spawn"
@@ -430,7 +430,7 @@ function DeusSpawning._spawn_player(arg_20_0, arg_20_1)
 	var_20_0.spawn_state = var_20_3 and "initial_spawning" or "spawning"
 end
 
-function DeusSpawning._spawn_bot(arg_21_0, arg_21_1)
+DeusSpawning._spawn_bot = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.game_mode_data
 	local var_21_1 = arg_21_1.peer_id
 	local var_21_2 = arg_21_1.local_player_id
@@ -451,7 +451,7 @@ function DeusSpawning._spawn_bot(arg_21_0, arg_21_1)
 	var_21_0.spawn_state = "spawned"
 end
 
-function DeusSpawning._find_spawn_point(arg_22_0, arg_22_1)
+DeusSpawning._find_spawn_point = function (arg_22_0, arg_22_1)
 	local var_22_0
 	local var_22_1
 	local var_22_2 = Managers.state.room
@@ -470,7 +470,7 @@ function DeusSpawning._find_spawn_point(arg_22_0, arg_22_1)
 	return var_22_0, var_22_1
 end
 
-function DeusSpawning.force_update_spawn_positions(arg_23_0, arg_23_1, arg_23_2)
+DeusSpawning.force_update_spawn_positions = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._side.party.occupied_slots
 
 	for iter_23_0 = 1, #var_23_0 do
@@ -483,17 +483,17 @@ function DeusSpawning.force_update_spawn_positions(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function DeusSpawning.set_respawning_enabled(arg_24_0, arg_24_1)
+DeusSpawning.set_respawning_enabled = function (arg_24_0, arg_24_1)
 	fassert(arg_24_0._respawns_enabled ~= arg_24_1, "Respawns already enabled=%s", tostring(arg_24_1))
 
 	arg_24_0._respawns_enabled = arg_24_1
 end
 
-function DeusSpawning.set_spawning_disabled(arg_25_0, arg_25_1)
+DeusSpawning.set_spawning_disabled = function (arg_25_0, arg_25_1)
 	arg_25_0._spawning = not arg_25_1
 end
 
-function DeusSpawning.add_spawn_point(arg_26_0, arg_26_1)
+DeusSpawning.add_spawn_point = function (arg_26_0, arg_26_1)
 	local var_26_0 = Unit.local_position(arg_26_1, 0)
 	local var_26_1 = Unit.local_rotation(arg_26_1, 0)
 	local var_26_2 = {
@@ -507,7 +507,7 @@ function DeusSpawning.add_spawn_point(arg_26_0, arg_26_1)
 	arg_26_0._spawn_points[var_26_3][#arg_26_0._spawn_points[var_26_3] + 1] = var_26_2
 end
 
-function DeusSpawning.get_spawn_point(arg_27_0)
+DeusSpawning.get_spawn_point = function (arg_27_0)
 	local var_27_0 = "default"
 	local var_27_1 = Managers.mechanism:get_prior_state()
 	local var_27_2 = arg_27_0._spawn_points[var_27_1] or arg_27_0._spawn_points[var_27_0]
@@ -523,27 +523,27 @@ function DeusSpawning.get_spawn_point(arg_27_0)
 	return var_27_3.pos, var_27_3.rot
 end
 
-function DeusSpawning.respawn_unit_spawned(arg_28_0, arg_28_1)
+DeusSpawning.respawn_unit_spawned = function (arg_28_0, arg_28_1)
 	arg_28_0._respawn_handler:respawn_unit_spawned(arg_28_1)
 end
 
-function DeusSpawning.respawn_gate_unit_spawned(arg_29_0, arg_29_1)
+DeusSpawning.respawn_gate_unit_spawned = function (arg_29_0, arg_29_1)
 	arg_29_0._respawn_handler:respawn_gate_unit_spawned(arg_29_1)
 end
 
-function DeusSpawning.remove_respawn_units_due_to_crossroads(arg_30_0, arg_30_1, arg_30_2)
+DeusSpawning.remove_respawn_units_due_to_crossroads = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0._respawn_handler:remove_respawn_units_due_to_crossroads(arg_30_1, arg_30_2)
 end
 
-function DeusSpawning.recalc_respawner_dist_due_to_crossroads(arg_31_0)
+DeusSpawning.recalc_respawner_dist_due_to_crossroads = function (arg_31_0)
 	arg_31_0._respawn_handler:recalc_respawner_dist_due_to_crossroads()
 end
 
-function DeusSpawning.disable_status_updates(arg_32_0)
+DeusSpawning.disable_status_updates = function (arg_32_0)
 	arg_32_0._status_updates_active = false
 end
 
-function DeusSpawning.teleport_despawned_players(arg_33_0, arg_33_1)
+DeusSpawning.teleport_despawned_players = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._side.party.occupied_slots
 	local var_33_1 = Managers.player
 
@@ -559,41 +559,41 @@ function DeusSpawning.teleport_despawned_players(arg_33_0, arg_33_1)
 	end
 end
 
-function DeusSpawning.force_respawn(arg_34_0, arg_34_1, arg_34_2)
+DeusSpawning.force_respawn = function (arg_34_0, arg_34_1, arg_34_2)
 	Managers.party:get_player_status(arg_34_1, arg_34_2).game_mode_data.spawn_state = "force_respawn"
 end
 
-function DeusSpawning.force_respawn_dead_players(arg_35_0)
+DeusSpawning.force_respawn_dead_players = function (arg_35_0)
 	local var_35_0 = arg_35_0._side.party
 
 	arg_35_0._respawn_handler:force_respawn_dead_players(var_35_0)
 end
 
-function DeusSpawning.set_override_respawn_group(arg_36_0, arg_36_1, arg_36_2)
+DeusSpawning.set_override_respawn_group = function (arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0._respawn_handler:set_override_respawn_group(arg_36_1, arg_36_2)
 end
 
-function DeusSpawning.set_respawn_group_enabled(arg_37_0, arg_37_1, arg_37_2)
+DeusSpawning.set_respawn_group_enabled = function (arg_37_0, arg_37_1, arg_37_2)
 	arg_37_0._respawn_handler:set_respawn_group_enabled(arg_37_1, arg_37_2)
 end
 
-function DeusSpawning.set_respawn_gate_enabled(arg_38_0, arg_38_1, arg_38_2)
+DeusSpawning.set_respawn_gate_enabled = function (arg_38_0, arg_38_1, arg_38_2)
 	arg_38_0._respawn_handler:set_respawn_gate_enabled(arg_38_1, arg_38_2)
 end
 
-function DeusSpawning.get_active_respawn_units(arg_39_0)
+DeusSpawning.get_active_respawn_units = function (arg_39_0)
 	return arg_39_0._respawn_handler:get_active_respawn_units()
 end
 
-function DeusSpawning.get_available_and_active_respawn_units(arg_40_0)
+DeusSpawning.get_available_and_active_respawn_units = function (arg_40_0)
 	return arg_40_0._respawn_handler:get_available_and_active_respawn_units()
 end
 
-function DeusSpawning.get_respawn_handler(arg_41_0)
+DeusSpawning.get_respawn_handler = function (arg_41_0)
 	return arg_41_0._respawn_handler
 end
 
-function DeusSpawning.rpc_to_server_spawn_failed(arg_42_0, arg_42_1, arg_42_2)
+DeusSpawning.rpc_to_server_spawn_failed = function (arg_42_0, arg_42_1, arg_42_2)
 	print("[DeusSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_42_0 = CHANNEL_TO_PEER_ID[arg_42_1]

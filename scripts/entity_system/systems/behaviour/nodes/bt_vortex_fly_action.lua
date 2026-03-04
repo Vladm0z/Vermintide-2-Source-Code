@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVortexFlyAction = class(BTVortexFlyAction, BTNode)
 
-function BTVortexFlyAction.init(arg_1_0, ...)
+BTVortexFlyAction.init = function (arg_1_0, ...)
 	BTVortexFlyAction.super.init(arg_1_0, ...)
 end
 
 BTVortexFlyAction.name = "BTVortexFlyAction"
 
-function BTVortexFlyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTVortexFlyAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.next_smart_object_data
 	local var_2_1 = var_2_0.entrance_pos:unbox()
 	local var_2_2 = var_2_0.exit_pos:unbox()
@@ -28,7 +28,7 @@ function BTVortexFlyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.fly_state = "moving_to_within_smartobject_range"
 end
 
-function BTVortexFlyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTVortexFlyAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.fly_entrance_pos = nil
 	arg_3_2.fly_middle_pos = nil
 	arg_3_2.fly_exit_pos = nil
@@ -49,7 +49,7 @@ function BTVortexFlyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ar
 	end
 end
 
-function BTVortexFlyAction._move_to_destination(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTVortexFlyAction._move_to_destination = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_2 - arg_4_1
 	local var_4_1 = Vector3.length(var_4_0)
 
@@ -72,7 +72,7 @@ function BTVortexFlyAction._move_to_destination(arg_4_0, arg_4_1, arg_4_2, arg_4
 	end
 end
 
-function BTVortexFlyAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTVortexFlyAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.locomotion_extension
 	local var_5_1 = arg_5_2.breed.run_speed
 	local var_5_2 = POSITION_LOOKUP[arg_5_1]

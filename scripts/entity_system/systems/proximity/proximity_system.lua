@@ -21,7 +21,7 @@ local var_0_11 = {
 	"AIProximityExtension"
 }
 
-function ProximitySystem.init(arg_1_0, arg_1_1, arg_1_2)
+ProximitySystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_1.entity_manager:register_system(arg_1_0, arg_1_2, var_0_11)
 
 	arg_1_0.world = arg_1_1.world
@@ -62,17 +62,17 @@ function ProximitySystem.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-function ProximitySystem.destroy(arg_2_0)
+ProximitySystem.destroy = function (arg_2_0)
 	arg_2_0.unit_extension_data = nil
 end
 
-function ProximitySystem.on_spectator_target_changed(arg_3_0, arg_3_1)
+ProximitySystem.on_spectator_target_changed = function (arg_3_0, arg_3_1)
 	arg_3_0._spectated_player_unit = arg_3_1
 	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
 	arg_3_0._is_spectator = true
 end
 
-function ProximitySystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ProximitySystem.on_add_extension = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_4.side
 	local var_4_1 = {
 		last_num_friends_nearby = 0,
@@ -185,7 +185,7 @@ function ProximitySystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	return var_4_1
 end
 
-function ProximitySystem.extensions_ready(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+ProximitySystem.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_3 == "PlayerProximityExtension" then
 		local var_5_0 = arg_5_0.player_unit_extensions_map[arg_5_2]
 
@@ -197,14 +197,14 @@ function ProximitySystem.extensions_ready(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function ProximitySystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+ProximitySystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.frozen_unit_extension_data[arg_6_1] = nil
 
 	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
 	ScriptUnit.remove_extension(arg_6_1, arg_6_0.NAME)
 end
 
-function ProximitySystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
+ProximitySystem.on_freeze_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.unit_extension_data[arg_7_1]
 
 	fassert(var_7_0, "Unit was already frozen.")
@@ -214,7 +214,7 @@ function ProximitySystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_cleanup_extension(arg_7_1, arg_7_2)
 end
 
-function ProximitySystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
+ProximitySystem._cleanup_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.unit_extension_data[arg_8_1]
 
 	if var_8_0 == nil then
@@ -245,7 +245,7 @@ function ProximitySystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.special_unit_extension_map[arg_8_1] = nil
 end
 
-function ProximitySystem.freeze(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ProximitySystem.freeze = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.frozen_unit_extension_data
 
 	if var_9_0[arg_9_1] then
@@ -261,7 +261,7 @@ function ProximitySystem.freeze(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	var_9_0[arg_9_1] = var_9_1
 end
 
-function ProximitySystem.unfreeze(arg_10_0, arg_10_1, arg_10_2)
+ProximitySystem.unfreeze = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.frozen_unit_extension_data[arg_10_1]
 
 	fassert(var_10_0, "Unit to unfreeze didn't have frozen extension")
@@ -318,7 +318,7 @@ end
 
 local var_0_14 = {}
 
-function ProximitySystem.update(arg_13_0, arg_13_1, arg_13_2)
+ProximitySystem.update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.player_unit_extensions_map
 	local var_13_1 = arg_13_0.unit_forwards
 	local var_13_2 = var_0_12
@@ -346,7 +346,7 @@ function ProximitySystem.update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function ProximitySystem._valid_dialogue_unit(arg_14_0, arg_14_1, arg_14_2)
+ProximitySystem._valid_dialogue_unit = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = ScriptUnit.has_extension(arg_14_1, "ghost_mode_system")
 
 	if var_14_0 and var_14_0:is_in_ghost_mode() then
@@ -364,7 +364,7 @@ function ProximitySystem._valid_dialogue_unit(arg_14_0, arg_14_1, arg_14_2)
 	return true
 end
 
-function ProximitySystem.physics_async_update(arg_15_0, arg_15_1, arg_15_2)
+ProximitySystem.physics_async_update = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = var_0_14
 	local var_15_1 = arg_15_1.dt
 	local var_15_2 = Broadphase.move
@@ -595,7 +595,7 @@ local function var_0_22(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function ProximitySystem._update_nearby_boss(arg_21_0)
+ProximitySystem._update_nearby_boss = function (arg_21_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -635,7 +635,7 @@ function ProximitySystem._update_nearby_boss(arg_21_0)
 	end
 end
 
-function ProximitySystem._update_nearby_enemies(arg_22_0)
+ProximitySystem._update_nearby_enemies = function (arg_22_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -771,7 +771,7 @@ function ProximitySystem._update_nearby_enemies(arg_22_0)
 	arg_22_0._new_nearby = var_22_0
 end
 
-function ProximitySystem._nearby_enemies_debug(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+ProximitySystem._nearby_enemies_debug = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if script_data.debug_proximity_fx then
 		for iter_23_0, iter_23_1 in ipairs(arg_23_1) do
 			local var_23_0 = arg_23_2[iter_23_1]
@@ -800,7 +800,7 @@ function ProximitySystem._nearby_enemies_debug(arg_23_0, arg_23_1, arg_23_2, arg
 	end
 end
 
-function ProximitySystem._clear_old_enabled_fx(arg_24_0, arg_24_1)
+ProximitySystem._clear_old_enabled_fx = function (arg_24_0, arg_24_1)
 	for iter_24_0, iter_24_1 in pairs(arg_24_1) do
 		if var_0_17(iter_24_0) then
 			var_0_16(iter_24_0, "disable_proximity_fx")
@@ -810,7 +810,7 @@ function ProximitySystem._clear_old_enabled_fx(arg_24_0, arg_24_1)
 	table.clear(arg_24_1)
 end
 
-function ProximitySystem.post_update(arg_25_0, arg_25_1, arg_25_2)
+ProximitySystem.post_update = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0.enemy_check_raycasts
 	local var_25_1 = arg_25_0.unit_forwards
 	local var_25_2 = arg_25_0.physics_world
@@ -847,6 +847,6 @@ function ProximitySystem.post_update(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function ProximitySystem.hot_join_sync(arg_26_0, arg_26_1)
+ProximitySystem.hot_join_sync = function (arg_26_0, arg_26_1)
 	return
 end

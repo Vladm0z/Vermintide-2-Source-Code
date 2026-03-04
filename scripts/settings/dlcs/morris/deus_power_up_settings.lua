@@ -457,7 +457,7 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				duration = MorrisBuffTweakData.boon_skulls_01_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_3_0, arg_3_1)
+				multiplier = function (arg_3_0, arg_3_1)
 					local var_3_0 = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_per_stack
 
 					if arg_3_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -481,7 +481,7 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				duration = MorrisBuffTweakData.boon_skulls_01_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_4_0, arg_4_1)
+				multiplier = function (arg_4_0, arg_4_1)
 					local var_4_0 = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_on_proc
 
 					if arg_4_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -509,7 +509,7 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				duration = MorrisBuffTweakData.boon_skulls_02_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_5_0, arg_5_1)
+				multiplier = function (arg_5_0, arg_5_1)
 					local var_5_0 = MorrisBuffTweakData.boon_skulls_02_data.power_per_stack
 
 					if arg_5_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -550,7 +550,7 @@ DeusPowerUpBuffTemplates = {
 				update_frequency = 1,
 				duration = MorrisBuffTweakData.boon_skulls_04_data.proc_duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_6_0, arg_6_1)
+				multiplier = function (arg_6_0, arg_6_1)
 					local var_6_0 = MorrisBuffTweakData.boon_skulls_04_data.proc_cooldown_regen
 
 					if arg_6_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -588,7 +588,7 @@ DeusPowerUpBuffTemplates = {
 				reset_on_max_stacks = true,
 				duration = MorrisBuffTweakData.boon_skulls_05_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_7_0, arg_7_1)
+				multiplier = function (arg_7_0, arg_7_1)
 					local var_7_0 = MorrisBuffTweakData.boon_skulls_05_data.power_per_stack
 
 					if arg_7_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -613,7 +613,7 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				duration = MorrisBuffTweakData.boon_skulls_05_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function(arg_8_0, arg_8_1)
+				multiplier = function (arg_8_0, arg_8_1)
 					local var_8_0 = MorrisBuffTweakData.boon_skulls_05_data.power_on_proc
 
 					if arg_8_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
@@ -634,7 +634,7 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				icon = "boon_skulls_03",
 				duration = MorrisBuffTweakData.boon_skulls_03_data.cooldown,
-				duration_modifier_func = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				duration_modifier_func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 					if arg_9_3:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
 						arg_9_2 = arg_9_2 / (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
 					end
@@ -3262,7 +3262,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "boon_skulls_06",
 					stat_buff = "power_level",
-					multiplier = function(arg_10_0, arg_10_1)
+					multiplier = function (arg_10_0, arg_10_1)
 						local var_10_0 = arg_10_1:num_buff_stacks("skulls_2023_buff")
 						local var_10_1 = MorrisBuffTweakData.boon_skulls_06_data.power_per_stack * var_10_0
 
@@ -7075,10 +7075,10 @@ assert(var_0_9, var_0_10)
 
 DeusPowerUps = DeusPowerUps or {}
 DeusPowerUpsArray = DeusPowerUpsArray or {}
-DeusPowerUpsArrayByRarity = table.select_map(table.set(DeusPowerUpRarities), function(arg_11_0, arg_11_1)
+DeusPowerUpsArrayByRarity = table.select_map(table.set(DeusPowerUpRarities), function (arg_11_0, arg_11_1)
 	return {}
 end)
-DeusPowerUpSetLookup = table.select_map(table.set(DeusPowerUpRarities), function(arg_12_0, arg_12_1)
+DeusPowerUpSetLookup = table.select_map(table.set(DeusPowerUpRarities), function (arg_12_0, arg_12_1)
 	return {}
 end)
 DeusPowerUpsLookup = {}

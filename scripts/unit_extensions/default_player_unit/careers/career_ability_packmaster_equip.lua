@@ -2,7 +2,7 @@
 
 CareerAbilityPackmasterEquip = class(CareerAbilityPackmasterEquip, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterEquip.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityPackmasterEquip.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
 	arg_1_0._ability_default_startup_delay_time = arg_1_0._ability_data.startup_delay_time
@@ -10,7 +10,7 @@ function CareerAbilityPackmasterEquip.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0:freeze()
 end
 
-function CareerAbilityPackmasterEquip.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+CareerAbilityPackmasterEquip.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0._freezed then
 		return
 	end
@@ -34,7 +34,7 @@ function CareerAbilityPackmasterEquip.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	end
 end
 
-function CareerAbilityPackmasterEquip.was_triggered(arg_3_0)
+CareerAbilityPackmasterEquip.was_triggered = function (arg_3_0)
 	if arg_3_0:_ability_available() and arg_3_0._equip_ready then
 		arg_3_0:_start()
 
@@ -44,15 +44,15 @@ function CareerAbilityPackmasterEquip.was_triggered(arg_3_0)
 	return false
 end
 
-function CareerAbilityPackmasterEquip.startup_delay_fraction(arg_4_0)
+CareerAbilityPackmasterEquip.startup_delay_fraction = function (arg_4_0)
 	return arg_4_0._startup_delay_fraction
 end
 
-function CareerAbilityPackmasterEquip.startup_delay_time(arg_5_0)
+CareerAbilityPackmasterEquip.startup_delay_time = function (arg_5_0)
 	return arg_5_0._equip_startup_delay_time
 end
 
-function CareerAbilityPackmasterEquip._start(arg_6_0)
+CareerAbilityPackmasterEquip._start = function (arg_6_0)
 	arg_6_0.super._start(arg_6_0)
 	arg_6_0:freeze()
 
@@ -61,10 +61,10 @@ function CareerAbilityPackmasterEquip._start(arg_6_0)
 	arg_6_0._equip_startup_delay_time = nil
 end
 
-function CareerAbilityPackmasterEquip.unfreeze(arg_7_0)
+CareerAbilityPackmasterEquip.unfreeze = function (arg_7_0)
 	arg_7_0._freezed = false
 end
 
-function CareerAbilityPackmasterEquip.freeze(arg_8_0)
+CareerAbilityPackmasterEquip.freeze = function (arg_8_0)
 	arg_8_0._freezed = true
 end

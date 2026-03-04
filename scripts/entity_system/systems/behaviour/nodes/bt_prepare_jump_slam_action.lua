@@ -6,13 +6,13 @@ local var_0_0 = POSITION_LOOKUP
 
 BTPrepareJumpSlamAction = class(BTPrepareJumpSlamAction, BTNode)
 
-function BTPrepareJumpSlamAction.init(arg_1_0, ...)
+BTPrepareJumpSlamAction.init = function (arg_1_0, ...)
 	BTPrepareJumpSlamAction.super.init(arg_1_0, ...)
 end
 
 BTPrepareJumpSlamAction.name = "BTPrepareJumpSlamAction"
 
-function BTPrepareJumpSlamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPrepareJumpSlamAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.jump_slam_data = {
 		state = "start",
 		num_jump_tries = 1,
@@ -20,7 +20,7 @@ function BTPrepareJumpSlamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-function BTPrepareJumpSlamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPrepareJumpSlamAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 == "aborted" then
 		arg_3_2.jump_slam_data = nil
 		arg_3_2.anim_cb_attack_jump_start_finished = nil
@@ -29,7 +29,7 @@ function BTPrepareJumpSlamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function BTPrepareJumpSlamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPrepareJumpSlamAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.jump_slam_data
 
 	if var_4_0.state == "take_off" then
@@ -74,7 +74,7 @@ function BTPrepareJumpSlamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	return "running"
 end
 
-function BTPrepareJumpSlamAction.start_jump_animation(arg_5_0, arg_5_1)
+BTPrepareJumpSlamAction.start_jump_animation = function (arg_5_0, arg_5_1)
 	arg_5_0.move_state = "attacking"
 
 	arg_5_0.navigation_extension:set_enabled(false)
@@ -83,7 +83,7 @@ function BTPrepareJumpSlamAction.start_jump_animation(arg_5_0, arg_5_1)
 	LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, false)
 end
 
-function BTPrepareJumpSlamAction.try_position(arg_6_0, arg_6_1, arg_6_2)
+BTPrepareJumpSlamAction.try_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0
 	local var_6_1 = 0
 
@@ -103,7 +103,7 @@ function BTPrepareJumpSlamAction.try_position(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_0
 end
 
-function BTPrepareJumpSlamAction.prepare_jump_new(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTPrepareJumpSlamAction.prepare_jump_new = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = var_0_0[arg_7_1]
 	local var_7_1
 	local var_7_2 = var_0_0[arg_7_0.target_unit]
@@ -124,7 +124,7 @@ function BTPrepareJumpSlamAction.prepare_jump_new(arg_7_0, arg_7_1, arg_7_2, arg
 	return var_7_7, var_7_8
 end
 
-function BTPrepareJumpSlamAction.test_trajectory_new(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTPrepareJumpSlamAction.test_trajectory_new = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = World.physics_world(arg_8_0.world)
 	local var_8_1 = -arg_8_0.breed.jump_slam_gravity
 	local var_8_2

@@ -10,7 +10,7 @@ local var_0_3 = 0
 SoundSectorEventTemplates.distant_horde = {
 	sound_event_stop = "stop_distant_horde",
 	sound_event_start = "distant_horde",
-	evaluate = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	evaluate = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		local var_1_0 = arg_1_0[arg_1_1]
 
 		if not var_1_0 then
@@ -74,7 +74,7 @@ local var_0_7 = 0
 SoundSectorEventTemplates.distant_horde_chaos = {
 	sound_event_stop = "stop_distant_horde_marauder",
 	sound_event_start = "distant_horde_marauder",
-	evaluate = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	evaluate = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = arg_2_0[arg_2_1]
 
 		if not var_2_0 then
@@ -138,7 +138,7 @@ local var_0_11 = 0
 SoundSectorEventTemplates.distant_horde_beastmen = {
 	sound_event_stop = "stop_distant_horde_beastmen",
 	sound_event_start = "distant_horde_beastmen",
-	evaluate = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	evaluate = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = arg_3_0[arg_3_1]
 
 		if not var_3_0 then

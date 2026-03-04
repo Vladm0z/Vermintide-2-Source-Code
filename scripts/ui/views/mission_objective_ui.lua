@@ -6,7 +6,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 
 MissionObjectiveUI = class(MissionObjectiveUI)
 
-function MissionObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
+MissionObjectiveUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -44,7 +44,7 @@ end
 
 local var_0_3 = true
 
-function MissionObjectiveUI.create_ui_elements(arg_2_0)
+MissionObjectiveUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0._mission_widget = UIWidget.init(var_0_0.widget_definitions.mission_widget)
 	arg_2_0.current_mission_objective = nil
@@ -55,7 +55,7 @@ function MissionObjectiveUI.create_ui_elements(arg_2_0)
 	var_0_3 = false
 end
 
-function MissionObjectiveUI.destroy(arg_3_0)
+MissionObjectiveUI.destroy = function (arg_3_0)
 	local var_3_0 = Managers.state.event
 
 	if var_3_0 then
@@ -68,7 +68,7 @@ function MissionObjectiveUI.destroy(arg_3_0)
 	arg_3_0.ui_animator = nil
 end
 
-function MissionObjectiveUI.block_mission_ui(arg_4_0, arg_4_1)
+MissionObjectiveUI.block_mission_ui = function (arg_4_0, arg_4_1)
 	arg_4_0._ui_blocked = arg_4_1
 end
 
@@ -79,7 +79,7 @@ local var_0_4 = {
 	drag_scenegraph_id = "background"
 }
 
-function MissionObjectiveUI.update(arg_5_0, arg_5_1)
+MissionObjectiveUI.update = function (arg_5_0, arg_5_1)
 	if var_0_3 then
 		arg_5_0:create_ui_elements()
 	end
@@ -98,7 +98,7 @@ function MissionObjectiveUI.update(arg_5_0, arg_5_1)
 	end
 end
 
-function MissionObjectiveUI.add_mission_objective(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+MissionObjectiveUI.add_mission_objective = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0.saved_mission_objectives
 
 	for iter_6_0, iter_6_1 in pairs(var_6_0) do
@@ -114,7 +114,7 @@ function MissionObjectiveUI.add_mission_objective(arg_6_0, arg_6_1, arg_6_2, arg
 	}
 end
 
-function MissionObjectiveUI._clear_animations(arg_7_0)
+MissionObjectiveUI._clear_animations = function (arg_7_0)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._animations) do
 		arg_7_0.ui_animator:stop_animation(iter_7_1)
 	end
@@ -122,7 +122,7 @@ function MissionObjectiveUI._clear_animations(arg_7_0)
 	table.clear(arg_7_0._animations)
 end
 
-function MissionObjectiveUI.complete_mission(arg_8_0, arg_8_1, arg_8_2)
+MissionObjectiveUI.complete_mission = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_2 then
 		arg_8_0:_clear_animations()
 		arg_8_0:_remove_mission_objective(arg_8_1)
@@ -133,7 +133,7 @@ function MissionObjectiveUI.complete_mission(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function MissionObjectiveUI._remove_mission_objective(arg_9_0, arg_9_1)
+MissionObjectiveUI._remove_mission_objective = function (arg_9_0, arg_9_1)
 	local var_9_0
 
 	for iter_9_0, iter_9_1 in ipairs(arg_9_0.saved_mission_objectives) do
@@ -156,7 +156,7 @@ function MissionObjectiveUI._remove_mission_objective(arg_9_0, arg_9_1)
 	end
 end
 
-function MissionObjectiveUI.update_mission(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+MissionObjectiveUI.update_mission = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0
 
 	for iter_10_0, iter_10_1 in ipairs(arg_10_0.saved_mission_objectives) do
@@ -180,7 +180,7 @@ function MissionObjectiveUI.update_mission(arg_10_0, arg_10_1, arg_10_2, arg_10_
 	end
 end
 
-function MissionObjectiveUI.next_mission_objective(arg_11_0, arg_11_1)
+MissionObjectiveUI.next_mission_objective = function (arg_11_0, arg_11_1)
 	if not arg_11_0.current_mission_objective and #arg_11_0.saved_mission_objectives > 0 and not arg_11_0._animations.mission_animation then
 		local var_11_0 = arg_11_0.saved_mission_objectives[1]
 
@@ -193,7 +193,7 @@ function MissionObjectiveUI.next_mission_objective(arg_11_0, arg_11_1)
 	end
 end
 
-function MissionObjectiveUI.update_animations(arg_12_0, arg_12_1)
+MissionObjectiveUI.update_animations = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._animations
 	local var_12_1 = arg_12_0.ui_animator
 
@@ -208,7 +208,7 @@ function MissionObjectiveUI.update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function MissionObjectiveUI._set_mission_text(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+MissionObjectiveUI._set_mission_text = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0._mission_widget.content
 	local var_13_1 = arg_13_0._mission_widget.style
 
@@ -244,7 +244,7 @@ function MissionObjectiveUI._set_mission_text(arg_13_0, arg_13_1, arg_13_2, arg_
 	end
 end
 
-function MissionObjectiveUI._get_text_size(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+MissionObjectiveUI._get_text_size = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	arg_14_5.font_size = arg_14_5.default_font_size
 
 	local var_14_0 = math.huge
@@ -271,7 +271,7 @@ function MissionObjectiveUI._get_text_size(arg_14_0, arg_14_1, arg_14_2, arg_14_
 	return var_14_0
 end
 
-function MissionObjectiveUI.draw(arg_15_0, arg_15_1)
+MissionObjectiveUI.draw = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.ui_renderer
 	local var_15_1 = arg_15_0.ui_scenegraph
 	local var_15_2 = arg_15_0.input_manager:get_service("ingame_menu")
@@ -282,7 +282,7 @@ function MissionObjectiveUI.draw(arg_15_0, arg_15_1)
 	UIRenderer.end_pass(var_15_0)
 end
 
-function MissionObjectiveUI._start_animation(arg_16_0, arg_16_1, arg_16_2)
+MissionObjectiveUI._start_animation = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = {
 		wwise_world = arg_16_0.wwise_world,
 		render_settings = arg_16_0.render_settings,

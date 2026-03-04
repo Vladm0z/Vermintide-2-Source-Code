@@ -389,7 +389,7 @@ end
 
 local var_0_7 = false
 
-function GameSettingsDevelopment.set_ignored_rpc_logs()
+GameSettingsDevelopment.set_ignored_rpc_logs = function ()
 	local var_1_0 = GameSettingsDevelopment.ignored_rpc_logs
 
 	for iter_1_0 = 1, #var_1_0 do

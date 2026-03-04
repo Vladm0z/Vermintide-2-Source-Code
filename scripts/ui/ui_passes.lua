@@ -24,14 +24,14 @@ UIPasses.nop = {
 	update = NOP
 }
 UIPasses.rect = {
-	init = function(arg_1_0)
+	init = function (arg_1_0)
 		if arg_1_0.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function(arg_2_0, arg_2_1, arg_2_2)
+	destroy = function (arg_2_0, arg_2_1, arg_2_2)
 		assert(arg_2_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_2_1.retained_id then
@@ -40,7 +40,7 @@ UIPasses.rect = {
 			arg_2_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
+	draw = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
 		local var_3_0 = Colors.color_definitions.white
 
 		if arg_3_4 then
@@ -67,7 +67,7 @@ UIPasses.rect = {
 	end
 }
 UIPasses.texture = {
-	init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		if arg_4_0.clone and arg_4_3 then
 			local var_4_0 = arg_4_3.gui
 
@@ -103,7 +103,7 @@ UIPasses.texture = {
 			}
 		end
 	end,
-	destroy = function(arg_5_0, arg_5_1, arg_5_2)
+	destroy = function (arg_5_0, arg_5_1, arg_5_2)
 		assert(arg_5_2.retained_mode, "Attempted to destroy an immediate mode pass")
 
 		if arg_5_1.retained_id then
@@ -112,7 +112,7 @@ UIPasses.texture = {
 			arg_5_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9)
+	draw = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9)
 		local var_6_0 = arg_6_5[arg_6_3.texture_id or "texture_id"]
 		local var_6_1
 		local var_6_2
@@ -147,7 +147,7 @@ UIPasses.texture = {
 	end
 }
 UIPasses.texture_uv = {
-	init = function(arg_7_0)
+	init = function (arg_7_0)
 		if arg_7_0.retained_mode then
 			return {
 				dirty = true
@@ -156,7 +156,7 @@ UIPasses.texture_uv = {
 
 		return arg_7_0.content_id
 	end,
-	destroy = function(arg_8_0, arg_8_1, arg_8_2)
+	destroy = function (arg_8_0, arg_8_1, arg_8_2)
 		assert(arg_8_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_8_1.retained_id then
@@ -165,7 +165,7 @@ UIPasses.texture_uv = {
 			arg_8_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
+	draw = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
 		local var_9_0 = arg_9_5.uvs
 		local var_9_1 = arg_9_5[arg_9_3.texture_id or "texture_id"]
 		local var_9_2
@@ -219,7 +219,7 @@ local var_0_9 = {
 }
 
 UIPasses.texture_uv_dynamic_color_uvs_size_offset = {
-	init = function(arg_10_0)
+	init = function (arg_10_0)
 		if arg_10_0.retained_mode then
 			return {
 				dirty = true
@@ -228,7 +228,7 @@ UIPasses.texture_uv_dynamic_color_uvs_size_offset = {
 
 		return nil
 	end,
-	destroy = function(arg_11_0, arg_11_1, arg_11_2)
+	destroy = function (arg_11_0, arg_11_1, arg_11_2)
 		assert(arg_11_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_11_1.retained_id then
@@ -237,7 +237,7 @@ UIPasses.texture_uv_dynamic_color_uvs_size_offset = {
 			arg_11_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9)
+	draw = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9)
 		arg_12_5 = arg_12_3.content_id and arg_12_5[arg_12_3.content_id] or arg_12_5
 		arg_12_4 = arg_12_3.style_id and arg_12_4[arg_12_3.style_id] or arg_12_4
 
@@ -270,7 +270,7 @@ local var_0_10 = {
 }
 
 UIPasses.list_pass = {
-	init = function(arg_13_0)
+	init = function (arg_13_0)
 		local var_13_0 = arg_13_0.passes
 		local var_13_1 = #var_13_0
 		local var_13_2 = {}
@@ -284,7 +284,7 @@ UIPasses.list_pass = {
 			sub_pass_datas = var_13_2
 		}
 	end,
-	draw = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
+	draw = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
 		local var_14_0 = arg_14_1.num_list_elements
 
 		if not var_14_0 then
@@ -439,7 +439,7 @@ UIPasses.list_pass = {
 	end
 }
 UIPasses.gradient_mask_texture = {
-	init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 		if arg_15_0.clone and arg_15_3 then
 			local var_15_0 = arg_15_3.gui
 
@@ -466,7 +466,7 @@ UIPasses.gradient_mask_texture = {
 			}
 		end
 	end,
-	destroy = function(arg_16_0, arg_16_1, arg_16_2)
+	destroy = function (arg_16_0, arg_16_1, arg_16_2)
 		assert(arg_16_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_16_1.retained_id then
@@ -475,7 +475,7 @@ UIPasses.gradient_mask_texture = {
 			arg_16_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+	draw = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
 		local var_17_0
 		local var_17_1 = false
 		local var_17_2 = 1
@@ -518,7 +518,7 @@ UIPasses.gradient_mask_texture = {
 	end
 }
 UIPasses.texture_frame = {
-	init = function(arg_18_0, arg_18_1, arg_18_2)
+	init = function (arg_18_0, arg_18_1, arg_18_2)
 		if arg_18_0.retained_mode then
 			return {
 				dirty = true
@@ -527,7 +527,7 @@ UIPasses.texture_frame = {
 
 		return nil
 	end,
-	destroy = function(arg_19_0, arg_19_1, arg_19_2)
+	destroy = function (arg_19_0, arg_19_1, arg_19_2)
 		assert(arg_19_2.retained_mode, "why u destroy immediate pass?")
 
 		local var_19_0 = arg_19_1.retained_ids
@@ -540,7 +540,7 @@ UIPasses.texture_frame = {
 			arg_19_1.retained_ids = nil
 		end
 	end,
-	draw = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+	draw = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 		local var_20_0
 		local var_20_1
 		local var_20_2
@@ -611,14 +611,14 @@ UIPasses.texture_frame = {
 	end
 }
 UIPasses.shader_tiled_texture = {
-	init = function(arg_21_0)
+	init = function (arg_21_0)
 		if arg_21_0.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function(arg_22_0, arg_22_1, arg_22_2)
+	destroy = function (arg_22_0, arg_22_1, arg_22_2)
 		assert(arg_22_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_22_1.retained_id then
@@ -627,7 +627,7 @@ UIPasses.shader_tiled_texture = {
 			arg_22_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+	draw = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 		local var_23_0
 		local var_23_1
 		local var_23_2
@@ -690,10 +690,10 @@ UIPasses.shader_tiled_texture = {
 	end
 }
 UIPasses.tiled_texture = {
-	init = function(arg_24_0)
+	init = function (arg_24_0)
 		return nil
 	end,
-	draw = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
+	draw = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
 		local var_25_0
 		local var_25_1
 		local var_25_2
@@ -732,7 +732,7 @@ UIPasses.tiled_texture = {
 	end
 }
 UIPasses.multi_texture = {
-	init = function(arg_26_0, arg_26_1, arg_26_2)
+	init = function (arg_26_0, arg_26_1, arg_26_2)
 		if arg_26_0.retained_mode then
 			return {
 				dirty = true
@@ -741,7 +741,7 @@ UIPasses.multi_texture = {
 
 		return nil
 	end,
-	destroy = function(arg_27_0, arg_27_1, arg_27_2)
+	destroy = function (arg_27_0, arg_27_1, arg_27_2)
 		assert(arg_27_2.retained_mode, "why u destroy immediate pass?")
 
 		local var_27_0 = arg_27_1.retained_ids
@@ -754,7 +754,7 @@ UIPasses.multi_texture = {
 			arg_27_1.retained_ids = nil
 		end
 	end,
-	draw = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9)
+	draw = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9)
 		local var_28_0 = arg_28_4.texture_size
 		local var_28_1 = arg_28_4.texture_sizes
 		local var_28_2 = arg_28_4.texture_offsets
@@ -773,7 +773,7 @@ UIPasses.multi_texture = {
 	end
 }
 UIPasses.centered_texture_amount = {
-	init = function(arg_29_0)
+	init = function (arg_29_0)
 		if arg_29_0.retained_mode then
 			return {
 				dirty = true
@@ -782,7 +782,7 @@ UIPasses.centered_texture_amount = {
 
 		return nil
 	end,
-	destroy = function(arg_30_0, arg_30_1, arg_30_2)
+	destroy = function (arg_30_0, arg_30_1, arg_30_2)
 		assert(arg_30_2.retained_mode, "why u destroy immediate pass?")
 
 		local var_30_0 = arg_30_1.retained_ids
@@ -795,7 +795,7 @@ UIPasses.centered_texture_amount = {
 			arg_30_1.retained_ids = nil
 		end
 	end,
-	draw = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9)
+	draw = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9)
 		local var_31_0 = arg_31_4.texture_size
 
 		assert(var_31_0, "Missing texture_size")
@@ -820,14 +820,14 @@ UIPasses.centered_texture_amount = {
 	end
 }
 UIPasses.rotated_texture = {
-	init = function(arg_32_0)
+	init = function (arg_32_0)
 		if arg_32_0.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function(arg_33_0, arg_33_1, arg_33_2)
+	destroy = function (arg_33_0, arg_33_1, arg_33_2)
 		assert(arg_33_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_33_1.retained_id then
@@ -836,7 +836,7 @@ UIPasses.rotated_texture = {
 			arg_33_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
+	draw = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
 		local var_34_0 = arg_34_5[arg_34_3.texture_id or "texture_id"]
 		local var_34_1
 		local var_34_2
@@ -882,10 +882,10 @@ UIPasses.rotated_texture = {
 	end
 }
 UIPasses.rounded_background = {
-	init = function(arg_35_0)
+	init = function (arg_35_0)
 		return nil
 	end,
-	draw = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9)
+	draw = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9)
 		local var_36_0
 		local var_36_1
 
@@ -916,14 +916,14 @@ UIPasses.rounded_background = {
 	end
 }
 UIPasses.triangle = {
-	init = function(arg_37_0)
+	init = function (arg_37_0)
 		if arg_37_0.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function(arg_38_0, arg_38_1, arg_38_2)
+	destroy = function (arg_38_0, arg_38_1, arg_38_2)
 		assert(arg_38_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_38_1.retained_id then
@@ -932,7 +932,7 @@ UIPasses.triangle = {
 			arg_38_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
+	draw = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
 		if arg_39_4 then
 			local var_39_0 = arg_39_4.texture_size
 
@@ -968,7 +968,7 @@ UIPasses.triangle = {
 local var_0_11 = "Vector3"
 
 UIPasses.scrollbar_hotspot = {
-	init = function(arg_40_0)
+	init = function (arg_40_0)
 		return {
 			content_id = arg_40_0.content_id,
 			scrollbar_size = {
@@ -1000,7 +1000,7 @@ UIPasses.scrollbar_hotspot = {
 			}
 		}
 	end,
-	draw = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
+	draw = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
 		local var_41_0
 		local var_41_1 = "cursor"
 		local var_41_2 = ShowCursorStack.stack_depth
@@ -1174,7 +1174,7 @@ UIPasses.scrollbar_hotspot = {
 	end
 }
 UIPasses.scrollbar = {
-	init = function(arg_42_0)
+	init = function (arg_42_0)
 		return {
 			content_id = arg_42_0.content_id,
 			scrollbar_size = {
@@ -1188,7 +1188,7 @@ UIPasses.scrollbar = {
 			}
 		}
 	end,
-	draw = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
+	draw = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
 		var_0_0.draw_rect(arg_43_0, arg_43_6, arg_43_7, arg_43_4.background_color)
 
 		local var_43_0 = arg_43_5.percentage
@@ -1212,10 +1212,10 @@ UIPasses.scrollbar = {
 	end
 }
 UIPasses.rect_rotated = {
-	init = function(arg_44_0)
+	init = function (arg_44_0)
 		return nil
 	end,
-	draw = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
+	draw = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
 		local var_45_0 = 0
 		local var_45_1
 		local var_45_2
@@ -1248,26 +1248,26 @@ UIPasses.rect_rotated = {
 	end
 }
 UIPasses.video = {
-	init = function(arg_46_0)
+	init = function (arg_46_0)
 		return nil
 	end,
-	draw = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8, arg_47_9)
+	draw = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8, arg_47_9)
 		arg_47_5.video_completed = var_0_0.draw_video(arg_47_0, arg_47_5.material_name, arg_47_6, arg_47_7, arg_47_4.color, arg_47_5.video_player_reference, arg_47_5.video_player)
 	end
 }
 UIPasses.splash_video = {
-	init = function(arg_48_0)
+	init = function (arg_48_0)
 		return nil
 	end,
-	draw = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8, arg_49_9)
+	draw = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8, arg_49_9)
 		arg_49_5.video_completed = var_0_0.draw_splash_video(arg_49_0, arg_49_5.material_name, arg_49_6, arg_49_7, arg_49_4.color, arg_49_5.video_player_reference, arg_49_5.video_player)
 	end
 }
 UIPasses.border = {
-	init = function(arg_50_0)
+	init = function (arg_50_0)
 		return nil
 	end,
-	draw = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
+	draw = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
 		local var_51_0 = arg_51_6
 		local var_51_1 = arg_51_4.thickness or 1
 
@@ -1318,7 +1318,7 @@ local var_0_21 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
 local var_0_22 = "{#color(%d,%d,%d)}"
 
 UIPasses.text_area_chat = {
-	init = function(arg_53_0)
+	init = function (arg_53_0)
 		assert(arg_53_0.text_id)
 
 		return {
@@ -1326,7 +1326,7 @@ UIPasses.text_area_chat = {
 			text_id = arg_53_0.text_id
 		}
 	end,
-	draw = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+	draw = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
 		if #arg_54_5.message_tables == 0 then
 			return
 		end
@@ -1926,7 +1926,7 @@ local function var_0_30(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 end
 
 UIPasses.text = {
-	init = function(arg_58_0)
+	init = function (arg_58_0)
 		assert(arg_58_0.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
@@ -1934,7 +1934,7 @@ UIPasses.text = {
 			dirty = arg_58_0.retained_mode and true or nil
 		}
 	end,
-	destroy = function(arg_59_0, arg_59_1, arg_59_2)
+	destroy = function (arg_59_0, arg_59_1, arg_59_2)
 		assert(arg_59_2.retained_mode, "why u destroy immediate pass?")
 
 		local var_59_0 = arg_59_1.retained_ids
@@ -1947,7 +1947,7 @@ UIPasses.text = {
 			arg_59_1.retained_ids = nil
 		end
 	end,
-	draw = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9)
+	draw = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9)
 		local var_60_0
 
 		if arg_60_3.retained_mode then
@@ -2212,7 +2212,7 @@ UIPasses.text = {
 
 		arg_60_4.font_size = var_60_5
 	end,
-	get_preferred_size = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5, arg_61_6, arg_61_7, arg_61_8)
+	get_preferred_size = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5, arg_61_6, arg_61_7, arg_61_8)
 		local var_61_0 = arg_61_5[arg_61_1.text_id]
 		local var_61_1, var_61_2 = UIFontByResolution(arg_61_4)
 		local var_61_3 = arg_61_4.font_type
@@ -2269,7 +2269,7 @@ local function var_0_31(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62
 end
 
 UIPasses.lorebook_multiple_texts = {
-	init = function(arg_63_0)
+	init = function (arg_63_0)
 		assert(arg_63_0.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
@@ -2277,7 +2277,7 @@ UIPasses.lorebook_multiple_texts = {
 			dirty = arg_63_0.retained_mode and true or nil
 		}
 	end,
-	destroy = function(arg_64_0, arg_64_1, arg_64_2)
+	destroy = function (arg_64_0, arg_64_1, arg_64_2)
 		assert(arg_64_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_64_1.retained_id then
@@ -2286,7 +2286,7 @@ UIPasses.lorebook_multiple_texts = {
 			arg_64_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9)
+	draw = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9)
 		local var_65_0
 
 		if arg_65_3.retained_mode then
@@ -2327,14 +2327,14 @@ UIPasses.lorebook_multiple_texts = {
 	end
 }
 UIPasses.lorebook_paragraph_divider = {
-	init = function(arg_66_0)
+	init = function (arg_66_0)
 		if arg_66_0.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function(arg_67_0, arg_67_1, arg_67_2)
+	destroy = function (arg_67_0, arg_67_1, arg_67_2)
 		assert(arg_67_2.retained_mode, "why u destroy immediate pass?")
 
 		if arg_67_1.retained_id then
@@ -2343,7 +2343,7 @@ UIPasses.lorebook_paragraph_divider = {
 			arg_67_1.retained_id = nil
 		end
 	end,
-	draw = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5, arg_68_6, arg_68_7, arg_68_8, arg_68_9)
+	draw = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5, arg_68_6, arg_68_7, arg_68_8, arg_68_9)
 		local var_68_0 = arg_68_5.positions
 		local var_68_1 = #var_68_0
 		local var_68_2 = arg_68_3.texture_id or "texture_id"
@@ -2372,14 +2372,14 @@ UIPasses.lorebook_paragraph_divider = {
 	end
 }
 UIPasses.multiple_texts = {
-	init = function(arg_69_0)
+	init = function (arg_69_0)
 		assert(arg_69_0.texts_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
 			texts_id = arg_69_0.texts_id
 		}
 	end,
-	draw = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9)
+	draw = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9)
 		local var_70_0, var_70_1 = UIFontByResolution(arg_70_4)
 		local var_70_2 = var_70_0[1]
 		local var_70_3 = var_70_1
@@ -2445,7 +2445,7 @@ UIPasses.multiple_texts = {
 	end
 }
 UIPasses.viewport = {
-	init = function(arg_71_0, arg_71_1, arg_71_2)
+	init = function (arg_71_0, arg_71_1, arg_71_2)
 		local var_71_0 = arg_71_2[arg_71_0.style_id]
 		local var_71_1 = var_71_0.world_flags or {
 			Application.DISABLE_SOUND,
@@ -2504,7 +2504,7 @@ UIPasses.viewport = {
 			camera = var_71_18
 		}
 	end,
-	destroy = function(arg_72_0, arg_72_1, arg_72_2)
+	destroy = function (arg_72_0, arg_72_1, arg_72_2)
 		if arg_72_1.ui_renderer then
 			var_0_0.destroy(arg_72_1.ui_renderer, arg_72_1.world)
 
@@ -2514,7 +2514,7 @@ UIPasses.viewport = {
 		ScriptWorld.destroy_viewport(arg_72_1.world, arg_72_1.viewport_name)
 		Managers.world:destroy_world(arg_72_1.world)
 	end,
-	draw = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8, arg_73_9)
+	draw = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8, arg_73_9)
 		local var_73_0 = arg_73_4.viewport_size
 
 		if var_73_0 then
@@ -2581,7 +2581,7 @@ UIPasses.viewport = {
 		arg_73_1.size_scale_x = var_73_5.x
 		arg_73_1.size_scale_y = var_73_5.y
 	end,
-	raycast_at_screen_position = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+	raycast_at_screen_position = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 		if arg_74_0.viewport_rect_pos_x == nil then
 			return nil
 		end
@@ -2633,10 +2633,10 @@ local var_0_33 = UISettings.start_drag_threshold
 
 UIPasses.is_dragging_item = false
 UIPasses.drag = {
-	init = function(arg_75_0, arg_75_1, arg_75_2)
+	init = function (arg_75_0, arg_75_1, arg_75_2)
 		return nil
 	end,
-	draw = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4, arg_76_5, arg_76_6, arg_76_7, arg_76_8, arg_76_9)
+	draw = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4, arg_76_5, arg_76_6, arg_76_7, arg_76_8, arg_76_9)
 		if arg_76_5.ui_top_renderer then
 			arg_76_0 = arg_76_5.ui_top_renderer
 		end
@@ -2724,10 +2724,10 @@ local var_0_34 = {
 }
 
 UIPasses.gamepad_cursor = {
-	init = function(arg_77_0, arg_77_1, arg_77_2)
+	init = function (arg_77_0, arg_77_1, arg_77_2)
 		return nil
 	end,
-	draw = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5, arg_78_6, arg_78_7, arg_78_8, arg_78_9)
+	draw = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5, arg_78_6, arg_78_7, arg_78_8, arg_78_9)
 		if not Managers.input:gamepad_cursor_active() then
 			return
 		end
@@ -2785,10 +2785,10 @@ UIPasses.gamepad_cursor = {
 	end
 }
 UIPasses.hover = {
-	init = function(arg_79_0)
+	init = function (arg_79_0)
 		return nil
 	end,
-	draw = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7, arg_80_8, arg_80_9)
+	draw = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7, arg_80_8, arg_80_9)
 		local var_80_0 = arg_80_5.is_hover
 		local var_80_1
 		local var_80_2 = arg_80_8 and arg_80_8:has("cursor") and arg_80_8:get("cursor") or var_0_9
@@ -2849,10 +2849,10 @@ UIPasses.hover = {
 	end
 }
 UIPasses.click = {
-	init = function(arg_81_0)
+	init = function (arg_81_0)
 		return nil
 	end,
-	draw = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6, arg_82_7, arg_82_8, arg_82_9)
+	draw = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6, arg_82_7, arg_82_8, arg_82_9)
 		if arg_82_5.is_hover and arg_82_8:get("left_release") then
 			arg_82_5.is_clicked = 0
 		else
@@ -2861,7 +2861,7 @@ UIPasses.click = {
 	end
 }
 UIPasses.generic_tooltip = {
-	init = function(arg_83_0, arg_83_1, arg_83_2)
+	init = function (arg_83_0, arg_83_1, arg_83_2)
 		local var_83_0 = {}
 
 		var_83_0.passes, var_83_0.end_pass = {
@@ -2881,7 +2881,7 @@ UIPasses.generic_tooltip = {
 
 		return var_83_0
 	end,
-	draw = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5, arg_84_6, arg_84_7, arg_84_8, arg_84_9)
+	draw = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5, arg_84_6, arg_84_7, arg_84_8, arg_84_9)
 		local var_84_0 = arg_84_1.size
 
 		var_84_0[2] = 0
@@ -2935,7 +2935,7 @@ UIPasses.generic_tooltip = {
 	end
 }
 UIPasses.additional_option_tooltip = {
-	init = function(arg_85_0, arg_85_1, arg_85_2)
+	init = function (arg_85_0, arg_85_1, arg_85_2)
 		local var_85_0 = {}
 		local var_85_1 = arg_85_0.content_passes or {
 			"additional_option_info"
@@ -2966,13 +2966,13 @@ UIPasses.additional_option_tooltip = {
 
 		return var_85_0
 	end,
-	update = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4, arg_86_5, arg_86_6, arg_86_7, arg_86_8)
+	update = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4, arg_86_5, arg_86_6, arg_86_7, arg_86_8)
 		if not arg_86_8 then
 			arg_86_1.alpha_progress = 0
 			arg_86_1.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, arg_87_7, arg_87_8, arg_87_9)
+	draw = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, arg_87_7, arg_87_8, arg_87_9)
 		local var_87_0 = arg_87_5[arg_87_3.additional_option_id]
 
 		if not var_87_0 then
@@ -3088,7 +3088,7 @@ UIPasses.additional_option_tooltip = {
 	end
 }
 UIPasses.level_tooltip = {
-	init = function(arg_88_0, arg_88_1, arg_88_2)
+	init = function (arg_88_0, arg_88_1, arg_88_2)
 		local var_88_0 = {}
 
 		var_88_0.passes, var_88_0.end_pass = {
@@ -3108,13 +3108,13 @@ UIPasses.level_tooltip = {
 
 		return var_88_0
 	end,
-	update = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6, arg_89_7, arg_89_8)
+	update = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6, arg_89_7, arg_89_8)
 		if not arg_89_8 then
 			arg_89_1.alpha_progress = 0
 			arg_89_1.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, arg_90_7, arg_90_8, arg_90_9)
+	draw = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, arg_90_7, arg_90_8, arg_90_9)
 		local var_90_0 = arg_90_5[arg_90_3.level_id]
 
 		if not var_90_0 then
@@ -3205,7 +3205,7 @@ UIPasses.level_tooltip = {
 	end
 }
 UIPasses.hero_power_tooltip = {
-	init = function(arg_91_0, arg_91_1, arg_91_2)
+	init = function (arg_91_0, arg_91_1, arg_91_2)
 		local var_91_0 = {}
 
 		var_91_0.passes, var_91_0.end_pass = {
@@ -3238,14 +3238,14 @@ UIPasses.hero_power_tooltip = {
 
 		return var_91_0
 	end,
-	update = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, arg_92_7, arg_92_8)
+	update = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, arg_92_7, arg_92_8)
 		if not arg_92_8 then
 			arg_92_1.player = nil
 			arg_92_1.alpha_progress = 0
 			arg_92_1.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7, arg_93_8, arg_93_9)
+	draw = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7, arg_93_8, arg_93_9)
 		if not arg_93_1.player then
 			arg_93_1.player = Managers.player:local_player()
 		end
@@ -3337,7 +3337,7 @@ UIPasses.hero_power_tooltip = {
 	end
 }
 UIPasses.option_tooltip = {
-	init = function(arg_94_0, arg_94_1, arg_94_2)
+	init = function (arg_94_0, arg_94_1, arg_94_2)
 		local var_94_0 = {}
 
 		var_94_0.passes, var_94_0.end_pass = {
@@ -3357,13 +3357,13 @@ UIPasses.option_tooltip = {
 
 		return var_94_0
 	end,
-	update = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7, arg_95_8)
+	update = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7, arg_95_8)
 		if not arg_95_8 then
 			arg_95_1.alpha_progress = 0
 			arg_95_1.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, arg_96_7, arg_96_8, arg_96_9)
+	draw = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, arg_96_7, arg_96_8, arg_96_9)
 		if Managers.input:is_device_active("gamepad") then
 			Managers.input:set_showing_tooltip(true)
 		end
@@ -3449,7 +3449,7 @@ UIPasses.option_tooltip = {
 	end
 }
 UIPasses.item_tooltip = {
-	init = function(arg_97_0, arg_97_1, arg_97_2)
+	init = function (arg_97_0, arg_97_1, arg_97_2)
 		local var_97_0 = {}
 		local var_97_1 = arg_97_0.content_passes or {
 			"equipped_item_title",
@@ -3536,7 +3536,7 @@ UIPasses.item_tooltip = {
 
 		return var_97_0
 	end,
-	update = function(arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5, arg_98_6, arg_98_7, arg_98_8)
+	update = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5, arg_98_6, arg_98_7, arg_98_8)
 		if not arg_98_8 then
 			arg_98_1.player = nil
 
@@ -3556,7 +3556,7 @@ UIPasses.item_tooltip = {
 			end
 		end
 	end,
-	draw = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, arg_99_7, arg_99_8, arg_99_9)
+	draw = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, arg_99_7, arg_99_8, arg_99_9)
 		if not arg_99_1.player then
 			arg_99_1.player = Managers.player:local_player()
 		end
@@ -3793,7 +3793,7 @@ UIPasses.item_tooltip = {
 	end
 }
 UIPasses.talent_tooltip = {
-	init = function(arg_100_0, arg_100_1, arg_100_2)
+	init = function (arg_100_0, arg_100_1, arg_100_2)
 		local var_100_0 = {}
 
 		var_100_0.passes, var_100_0.end_pass = {
@@ -3813,13 +3813,13 @@ UIPasses.talent_tooltip = {
 
 		return var_100_0
 	end,
-	update = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8)
+	update = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8)
 		if not arg_101_8 then
 			arg_101_1.alpha_progress = 0
 			arg_101_1.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, arg_102_7, arg_102_8, arg_102_9)
+	draw = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, arg_102_7, arg_102_8, arg_102_9)
 		local var_102_0 = arg_102_5[arg_102_3.talent_id]
 
 		if not var_102_0 then
@@ -3931,14 +3931,14 @@ local var_0_37 = {
 }
 
 UIPasses.tooltip_text = {
-	init = function(arg_103_0)
+	init = function (arg_103_0)
 		assert(arg_103_0.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
 			text_id = arg_103_0.text_id
 		}
 	end,
-	draw = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4, arg_104_5, arg_104_6, arg_104_7, arg_104_8, arg_104_9)
+	draw = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4, arg_104_5, arg_104_6, arg_104_7, arg_104_8, arg_104_9)
 		arg_104_4.font_size = 18
 
 		local var_104_0
@@ -4058,14 +4058,14 @@ local var_0_38 = {
 }
 
 UIPasses.rect_text = {
-	init = function(arg_105_0)
+	init = function (arg_105_0)
 		assert(arg_105_0.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
 			text_id = arg_105_0.text_id
 		}
 	end,
-	draw = function(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6, arg_106_7, arg_106_8, arg_106_9)
+	draw = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6, arg_106_7, arg_106_8, arg_106_9)
 		local var_106_0
 		local var_106_1
 		local var_106_2
@@ -4187,10 +4187,10 @@ UIPasses.rect_text = {
 local var_0_39 = UISettings.double_click_threshold
 
 UIPasses.hotspot = {
-	init = function(arg_107_0, arg_107_1)
+	init = function (arg_107_0, arg_107_1)
 		return
 	end,
-	draw = function(arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4, arg_108_5, arg_108_6, arg_108_7, arg_108_8, arg_108_9)
+	draw = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4, arg_108_5, arg_108_6, arg_108_7, arg_108_8, arg_108_9)
 		if arg_108_4 then
 			local var_108_0 = arg_108_4.area_size
 
@@ -4384,10 +4384,10 @@ UIPasses.hotspot = {
 	end
 }
 UIPasses.controller_hotspot = {
-	init = function(arg_109_0)
+	init = function (arg_109_0)
 		return
 	end,
-	draw = function(arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4, arg_110_5, arg_110_6, arg_110_7, arg_110_8, arg_110_9)
+	draw = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4, arg_110_5, arg_110_6, arg_110_7, arg_110_8, arg_110_9)
 		local var_110_0 = arg_110_5.is_hover
 		local var_110_1
 		local var_110_2 = arg_110_8:get_controller_cursor_position() or var_0_9
@@ -4453,10 +4453,10 @@ UIPasses.controller_hotspot = {
 	end
 }
 UIPasses.game_pad_connected = {
-	init = function(arg_111_0)
+	init = function (arg_111_0)
 		return
 	end,
-	draw = function(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6, arg_112_7, arg_112_8, arg_112_9)
+	draw = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6, arg_112_7, arg_112_8, arg_112_9)
 		arg_112_5.gamepad_connected = Managers.input:get_device("gamepad").active()
 	end
 }
@@ -4472,44 +4472,44 @@ local function var_0_40(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, a
 end
 
 UIPasses.gamepad_button_click_confirm = {
-	init = function(arg_114_0)
+	init = function (arg_114_0)
 		return
 	end,
-	draw = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9)
+	draw = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9)
 		var_0_40(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9, "confirm")
 	end
 }
 UIPasses.gamepad_button_click_back = {
-	init = function(arg_116_0)
+	init = function (arg_116_0)
 		return
 	end,
-	draw = function(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6, arg_117_7, arg_117_8, arg_117_9)
+	draw = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6, arg_117_7, arg_117_8, arg_117_9)
 		var_0_40(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6, arg_117_7, arg_117_8, arg_117_9, "back")
 	end
 }
 UIPasses.gamepad_button_click_refresh = {
-	init = function(arg_118_0)
+	init = function (arg_118_0)
 		return
 	end,
-	draw = function(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6, arg_119_7, arg_119_8, arg_119_9)
+	draw = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6, arg_119_7, arg_119_8, arg_119_9)
 		var_0_40(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6, arg_119_7, arg_119_8, arg_119_9, "refresh")
 	end
 }
 UIPasses.on_click = {
-	init = function(arg_120_0)
+	init = function (arg_120_0)
 		return
 	end,
-	draw = function(arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5, arg_121_6, arg_121_7, arg_121_8, arg_121_9)
+	draw = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5, arg_121_6, arg_121_7, arg_121_8, arg_121_9)
 		if arg_121_5[arg_121_3.click_check_content_id].on_pressed then
 			arg_121_3.click_function(arg_121_2, arg_121_4, arg_121_5, arg_121_8)
 		end
 	end
 }
 UIPasses.on_left_and_right_click = {
-	init = function(arg_122_0)
+	init = function (arg_122_0)
 		return
 	end,
-	draw = function(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9)
+	draw = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9)
 		local var_123_0 = arg_123_5[arg_123_3.click_check_content_id]
 
 		if var_123_0.on_pressed or var_123_0.on_right_click then
@@ -4518,20 +4518,20 @@ UIPasses.on_left_and_right_click = {
 	end
 }
 UIPasses.on_double_click = {
-	init = function(arg_124_0)
+	init = function (arg_124_0)
 		return
 	end,
-	draw = function(arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5, arg_125_6, arg_125_7, arg_125_8, arg_125_9)
+	draw = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5, arg_125_6, arg_125_7, arg_125_8, arg_125_9)
 		if arg_125_5[arg_125_3.click_check_content_id].on_double_click then
 			arg_125_3.click_function(arg_125_2, arg_125_4, arg_125_5, arg_125_8)
 		end
 	end
 }
 UIPasses.debug_cursor = {
-	init = function(arg_126_0)
+	init = function (arg_126_0)
 		return nil
 	end,
-	draw = function(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7, arg_127_8, arg_127_9)
+	draw = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7, arg_127_8, arg_127_9)
 		local var_127_0 = arg_127_5.is_hover and Colors.green or Colors.red
 
 		if (arg_127_5.is_clicked or 10) < 0.5 then
@@ -4542,18 +4542,18 @@ UIPasses.debug_cursor = {
 	end
 }
 UIPasses.local_offset = {
-	init = function(arg_128_0)
+	init = function (arg_128_0)
 		return nil
 	end,
-	draw = function(arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8, arg_129_9)
+	draw = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8, arg_129_9)
 		arg_129_3.offset_function(arg_129_2, arg_129_4, arg_129_5, arg_129_0)
 	end
 }
 UIPasses.scroll = {
-	init = function(arg_130_0)
+	init = function (arg_130_0)
 		return nil
 	end,
-	draw = function(arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4, arg_131_5, arg_131_6, arg_131_7, arg_131_8, arg_131_9)
+	draw = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4, arg_131_5, arg_131_6, arg_131_7, arg_131_8, arg_131_9)
 		local var_131_0 = arg_131_8:get("cursor") or var_0_9
 		local var_131_1
 
@@ -4573,10 +4573,10 @@ UIPasses.scroll = {
 	end
 }
 UIPasses.held = {
-	init = function(arg_132_0)
+	init = function (arg_132_0)
 		return nil
 	end,
-	draw = function(arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4, arg_133_5, arg_133_6, arg_133_7, arg_133_8, arg_133_9)
+	draw = function (arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4, arg_133_5, arg_133_6, arg_133_7, arg_133_8, arg_133_9)
 		local var_133_0 = arg_133_3.content_check_hover and arg_133_5[arg_133_3.content_check_hover] or arg_133_5
 
 		if not var_133_0.is_held and var_133_0.is_hover and arg_133_8:get("left_press") then
@@ -4599,7 +4599,7 @@ UIPasses.held = {
 	end
 }
 UIPasses.item_presentation = {
-	init = function(arg_134_0, arg_134_1, arg_134_2)
+	init = function (arg_134_0, arg_134_1, arg_134_2)
 		local var_134_0 = {}
 		local var_134_1 = arg_134_0.content_passes or {
 			"item_titles",
@@ -4639,7 +4639,7 @@ UIPasses.item_presentation = {
 
 		return var_134_0
 	end,
-	draw = function(arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9)
+	draw = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9)
 		local var_135_0 = arg_135_5[arg_135_3.item_id]
 
 		if not var_135_0 then
@@ -4727,13 +4727,13 @@ UIPasses.item_presentation = {
 	end
 }
 UIPasses.keystrokes = {
-	init = function(arg_136_0)
+	init = function (arg_136_0)
 		return {
 			input_text_id = arg_136_0.input_text_id,
 			keystrokes = {}
 		}
 	end,
-	draw = function(arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4, arg_137_5, arg_137_6, arg_137_7, arg_137_8, arg_137_9)
+	draw = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4, arg_137_5, arg_137_6, arg_137_7, arg_137_8, arg_137_9)
 		if arg_137_5.active then
 			local var_137_0 = arg_137_5[arg_137_1.input_text_id]
 			local var_137_1 = arg_137_5.caret_index
@@ -4772,7 +4772,7 @@ local function var_0_42(arg_139_0)
 end
 
 UIPasses.auto_layout = {
-	init = function(arg_140_0, arg_140_1, arg_140_2)
+	init = function (arg_140_0, arg_140_1, arg_140_2)
 		local var_140_0 = {}
 		local var_140_1 = arg_140_0.sub_passes
 		local var_140_2 = arg_140_0.background_passes
@@ -4884,7 +4884,7 @@ UIPasses.auto_layout = {
 
 		return var_140_0
 	end,
-	update = function(arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4, arg_142_5, arg_142_6, arg_142_7, arg_142_8)
+	update = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4, arg_142_5, arg_142_6, arg_142_7, arg_142_8)
 		local var_142_0 = 0
 		local var_142_1 = 0
 		local var_142_2 = 0
@@ -4968,7 +4968,7 @@ UIPasses.auto_layout = {
 			end
 		end
 	end,
-	draw = function(arg_143_0, arg_143_1, arg_143_2, arg_143_3, arg_143_4, arg_143_5, arg_143_6, arg_143_7, arg_143_8, arg_143_9)
+	draw = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3, arg_143_4, arg_143_5, arg_143_6, arg_143_7, arg_143_8, arg_143_9)
 		local var_143_0 = arg_143_1.layout_max_x - arg_143_1.layout_min_x
 		local var_143_1 = arg_143_1.layout_max_y - arg_143_1.layout_min_y
 		local var_143_2
@@ -5112,7 +5112,7 @@ UIPasses.auto_layout = {
 			end
 		end
 	end,
-	get_preferred_size = function(arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4, arg_144_5, arg_144_6, arg_144_7, arg_144_8)
+	get_preferred_size = function (arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4, arg_144_5, arg_144_6, arg_144_7, arg_144_8)
 		local var_144_0 = arg_144_1.layout_max_x - arg_144_1.layout_min_x
 		local var_144_1 = arg_144_1.layout_max_y - arg_144_1.layout_min_y
 

@@ -2,7 +2,7 @@
 
 PlayerHuskAttachmentExtension = class(PlayerHuskAttachmentExtension)
 
-function PlayerHuskAttachmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskAttachmentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 
@@ -16,7 +16,7 @@ function PlayerHuskAttachmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.current_item_buffs = {}
 end
 
-function PlayerHuskAttachmentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerHuskAttachmentExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
 	arg_2_0._cosmetic_extension = ScriptUnit.extension(arg_2_2, "cosmetic_system")
 	arg_2_0._tp_unit_mesh = arg_2_0._cosmetic_extension:get_third_person_mesh_unit()
@@ -24,7 +24,7 @@ function PlayerHuskAttachmentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_
 	Unit.flow_event(arg_2_0._tp_unit_mesh, "lua_attachment_unhidden")
 end
 
-function PlayerHuskAttachmentExtension.destroy(arg_3_0)
+PlayerHuskAttachmentExtension.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0._attachments.slots
 
 	for iter_3_0, iter_3_1 in pairs(var_3_0) do
@@ -32,15 +32,15 @@ function PlayerHuskAttachmentExtension.destroy(arg_3_0)
 	end
 end
 
-function PlayerHuskAttachmentExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerHuskAttachmentExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	return
 end
 
-function PlayerHuskAttachmentExtension.hot_join_sync(arg_5_0, arg_5_1)
+PlayerHuskAttachmentExtension.hot_join_sync = function (arg_5_0, arg_5_1)
 	AttachmentUtils.hot_join_sync(arg_5_1, arg_5_0._unit, arg_5_0._attachments.slots, arg_5_0._synced_slot_buffs)
 end
 
-function PlayerHuskAttachmentExtension.create_attachment(arg_6_0, arg_6_1, arg_6_2)
+PlayerHuskAttachmentExtension.create_attachment = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0._profile then
 		return
 	end
@@ -86,7 +86,7 @@ function PlayerHuskAttachmentExtension.create_attachment(arg_6_0, arg_6_1, arg_6
 	end
 end
 
-function PlayerHuskAttachmentExtension.remove_attachment(arg_7_0, arg_7_1)
+PlayerHuskAttachmentExtension.remove_attachment = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._attachments.slots[arg_7_1]
 
 	AttachmentUtils.destroy_attachment(arg_7_0._world, arg_7_0._unit, var_7_0)
@@ -98,15 +98,15 @@ function PlayerHuskAttachmentExtension.remove_attachment(arg_7_0, arg_7_1)
 	arg_7_0._attachments.slots[arg_7_1] = nil
 end
 
-function PlayerHuskAttachmentExtension.attachments(arg_8_0)
+PlayerHuskAttachmentExtension.attachments = function (arg_8_0)
 	return arg_8_0._attachments
 end
 
-function PlayerHuskAttachmentExtension.get_slot_data(arg_9_0, arg_9_1)
+PlayerHuskAttachmentExtension.get_slot_data = function (arg_9_0, arg_9_1)
 	return arg_9_0._attachments.slots[arg_9_1]
 end
 
-function PlayerHuskAttachmentExtension.show_attachments(arg_10_0, arg_10_1)
+PlayerHuskAttachmentExtension.show_attachments = function (arg_10_0, arg_10_1)
 	if arg_10_0._show_attachments ~= arg_10_1 then
 		local var_10_0 = arg_10_0._attachments.slots
 
@@ -124,7 +124,7 @@ function PlayerHuskAttachmentExtension.show_attachments(arg_10_0, arg_10_1)
 	end
 end
 
-function PlayerHuskAttachmentExtension._show_attachment(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayerHuskAttachmentExtension._show_attachment = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_3
 
 	if arg_11_0._cosmetic_extension:always_hide_attachment_slot(arg_11_1) then
@@ -147,7 +147,7 @@ end
 
 local var_0_0 = {}
 
-function PlayerHuskAttachmentExtension._apply_buffs(arg_12_0, arg_12_1, arg_12_2)
+PlayerHuskAttachmentExtension._apply_buffs = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = ScriptUnit.extension(arg_12_0._unit, "buff_system")
 	local var_12_1 = arg_12_0.current_item_buffs[arg_12_2] or {}
 	local var_12_2 = 1
@@ -166,7 +166,7 @@ function PlayerHuskAttachmentExtension._apply_buffs(arg_12_0, arg_12_1, arg_12_2
 	arg_12_0.current_item_buffs[arg_12_2] = var_12_1
 end
 
-function PlayerHuskAttachmentExtension._remove_buffs(arg_13_0, arg_13_1)
+PlayerHuskAttachmentExtension._remove_buffs = function (arg_13_0, arg_13_1)
 	local var_13_0 = ScriptUnit.extension(arg_13_0._unit, "buff_system")
 	local var_13_1 = arg_13_0.current_item_buffs[arg_13_1]
 
@@ -179,7 +179,7 @@ function PlayerHuskAttachmentExtension._remove_buffs(arg_13_0, arg_13_1)
 	table.clear(var_13_1)
 end
 
-function PlayerHuskAttachmentExtension.set_buffs_to_slot(arg_14_0, arg_14_1, arg_14_2)
+PlayerHuskAttachmentExtension.set_buffs_to_slot = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._synced_slot_buffs[arg_14_1] or {}
 
 	table.clear(var_14_0)

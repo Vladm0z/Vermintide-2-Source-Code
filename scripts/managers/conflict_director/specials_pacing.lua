@@ -2,7 +2,7 @@
 
 SpecialsPacing = class(SpecialsPacing)
 
-function SpecialsPacing.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+SpecialsPacing.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._level = LevelHelper:current_level(arg_1_1)
 	arg_1_0._nav_tag_volume_handler = arg_1_3
 	arg_1_0.nav_world = arg_1_2
@@ -17,7 +17,7 @@ function SpecialsPacing.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0:remove_unwanted_breeds()
 end
 
-function SpecialsPacing.remove_unwanted_breeds(arg_2_0)
+SpecialsPacing.remove_unwanted_breeds = function (arg_2_0)
 	print("SpecialsPacing:remove_unwanted_breeds:")
 
 	for iter_2_0, iter_2_1 in pairs(SpecialsSettings) do
@@ -49,7 +49,7 @@ function SpecialsPacing.remove_unwanted_breeds(arg_2_0)
 	end
 end
 
-function SpecialsPacing.start(arg_3_0)
+SpecialsPacing.start = function (arg_3_0)
 	if arg_3_0.method_name then
 		arg_3_0.method_data = CurrentSpecialsSettings.methods[arg_3_0.method_name]
 
@@ -71,7 +71,7 @@ local var_0_0 = {
 }
 
 SpecialsPacing.setup_functions = {
-	specials_by_slots = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	specials_by_slots = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = CurrentSpecialsSettings
 
 		if #var_4_0.breeds == 0 then
@@ -118,7 +118,7 @@ SpecialsPacing.setup_functions = {
 	end
 }
 SpecialsPacing.select_breed_functions = {
-	get_least_used_breeds = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	get_least_used_breeds = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		local var_5_0 = FrameTable.alloc_table()
 
 		if #arg_5_0 == 0 then
@@ -150,7 +150,7 @@ SpecialsPacing.select_breed_functions = {
 
 		return var_5_2
 	end,
-	get_random_breed = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	get_random_breed = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if arg_6_3.override_breed_name then
 			return arg_6_3.override_breed_name
 		end
@@ -181,7 +181,7 @@ SpecialsPacing.select_breed_functions = {
 
 		return var_6_5
 	end,
-	get_same_breed = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	get_same_breed = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		if arg_7_3.override_breed_name then
 			return arg_7_3.override_breed_name
 		end
@@ -203,7 +203,7 @@ SpecialsPacing.select_breed_functions = {
 
 		return arg_7_3.batch_breed
 	end,
-	get_chance_of_boss_breed = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	get_chance_of_boss_breed = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		local var_8_0 = arg_8_1.breeds
 		local var_8_1 = Math.random() <= 0.25
 		local var_8_2
@@ -238,7 +238,7 @@ SpecialsPacing.select_breed_functions = {
 	end
 }
 
-function SpecialsPacing._set_next_coordinated_attack(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+SpecialsPacing._set_next_coordinated_attack = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_0._state_data
 	local var_9_1
 	local var_9_2
@@ -281,7 +281,7 @@ function SpecialsPacing._set_next_coordinated_attack(arg_9_0, arg_9_1, arg_9_2, 
 	var_9_0.coordinated_timer = var_9_5 + 1
 end
 
-function SpecialsPacing.specials_by_slots(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+SpecialsPacing.specials_by_slots = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = #arg_10_4
 	local var_10_1 = 0
 	local var_10_2 = false
@@ -392,7 +392,7 @@ function SpecialsPacing.specials_by_slots(arg_10_0, arg_10_1, arg_10_2, arg_10_3
 	arg_10_0._specials_timer = arg_10_1 + 1
 end
 
-function SpecialsPacing.specials_by_time_window(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+SpecialsPacing.specials_by_time_window = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 	if arg_11_1 > arg_11_0._specials_timer then
 		local var_11_0 = #arg_11_6
 		local var_11_1 = 1
@@ -470,11 +470,11 @@ function SpecialsPacing.specials_by_time_window(arg_11_0, arg_11_1, arg_11_2, ar
 	end
 end
 
-function SpecialsPacing.enable(arg_12_0, arg_12_1)
+SpecialsPacing.enable = function (arg_12_0, arg_12_1)
 	arg_12_0._disabled = not arg_12_1
 end
 
-function SpecialsPacing.is_disabled(arg_13_0)
+SpecialsPacing.is_disabled = function (arg_13_0)
 	return arg_13_0._disabled
 end
 
@@ -490,7 +490,7 @@ local function var_0_1(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function SpecialsPacing.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+SpecialsPacing.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = CurrentSpecialsSettings
 
 	if var_15_0.disabled then
@@ -553,7 +553,7 @@ function SpecialsPacing.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	end
 end
 
-function SpecialsPacing.spawn_versus_darkpact_bot(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+SpecialsPacing.spawn_versus_darkpact_bot = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = Breeds[arg_16_1]
 	local var_16_1 = arg_16_0:get_special_spawn_pos(var_16_0.spawning_rule)
 
@@ -569,13 +569,13 @@ function SpecialsPacing.spawn_versus_darkpact_bot(arg_16_0, arg_16_1, arg_16_2, 
 	end
 end
 
-function SpecialsPacing._play_stinger(arg_17_0, arg_17_1, arg_17_2)
+SpecialsPacing._play_stinger = function (arg_17_0, arg_17_1, arg_17_2)
 	Managers.state.entity:system("audio_system"):play_2d_audio_event(arg_17_1)
 
 	arg_17_2.has_played_special_stinger = true
 end
 
-function SpecialsPacing.delay_spawning(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+SpecialsPacing.delay_spawning = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_0._specials_slots
 	local var_18_1 = CurrentSpecialsSettings
 
@@ -628,7 +628,7 @@ function SpecialsPacing.delay_spawning(arg_18_0, arg_18_1, arg_18_2, arg_18_3, a
 	end
 end
 
-function SpecialsPacing.debug_spawn(arg_19_0)
+SpecialsPacing.debug_spawn = function (arg_19_0)
 	local var_19_0 = CurrentSpecialsSettings.breeds
 	local var_19_1 = var_19_0[math.random(#var_19_0)]
 	local var_19_2 = Breeds[var_19_1]
@@ -646,7 +646,7 @@ function SpecialsPacing.debug_spawn(arg_19_0)
 	end
 end
 
-function SpecialsPacing.get_special_spawn_pos(arg_20_0, arg_20_1)
+SpecialsPacing.get_special_spawn_pos = function (arg_20_0, arg_20_1)
 	local var_20_0 = Managers.state.conflict
 	local var_20_1 = var_20_0.main_path_info
 	local var_20_2 = var_20_0.main_path_player_info
@@ -793,7 +793,7 @@ local function var_0_4(arg_23_0, arg_23_1, arg_23_2)
 	print("rush intervention - spawning ", arg_23_1.name)
 end
 
-function SpecialsPacing.request_rushing_intervention(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+SpecialsPacing.request_rushing_intervention = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	if script_data.ai_specials_spawning_disabled or Managers.state.game_mode:setting("ai_specials_spawning_disabled") then
 		return false, "specials spawning disabled"
 	end
@@ -873,7 +873,7 @@ local function var_0_5(arg_25_0, arg_25_1, arg_25_2)
 	print("Speed run intervention - spawning ", arg_25_1.name)
 end
 
-function SpecialsPacing.request_speed_running_intervention(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+SpecialsPacing.request_speed_running_intervention = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if script_data.ai_specials_spawning_disabled or Managers.state.game_mode:setting("ai_specials_spawning_disabled") then
 		return false, "specials spawning disabled"
 	end
@@ -927,7 +927,7 @@ function SpecialsPacing.request_speed_running_intervention(arg_26_0, arg_26_1, a
 	return false, "no slots available"
 end
 
-function SpecialsPacing.get_relative_main_path_pos(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+SpecialsPacing.get_relative_main_path_pos = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0, var_27_1 = MainPathUtils.point_on_mainpath(arg_27_1, arg_27_2.travel_dist + arg_27_3)
 	local var_27_2
 	local var_27_3
@@ -942,7 +942,7 @@ function SpecialsPacing.get_relative_main_path_pos(arg_27_0, arg_27_1, arg_27_2,
 	return var_27_2, var_27_3
 end
 
-function SpecialsPacing.debug(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+SpecialsPacing.debug = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	if script_data.debug_ai_pacing then
 		local var_28_0 = ""
 

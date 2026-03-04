@@ -2,7 +2,7 @@
 
 PlayerCharacterStatePouncedDown = class(PlayerCharacterStatePouncedDown, PlayerCharacterState)
 
-function PlayerCharacterStatePouncedDown.init(arg_1_0, arg_1_1)
+PlayerCharacterStatePouncedDown.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "pounced_down")
 
 	local var_1_0 = arg_1_1
@@ -10,7 +10,7 @@ end
 
 local var_0_0 = 1.2
 
-function PlayerCharacterStatePouncedDown.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStatePouncedDown.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "pounced")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "pounced")
 
@@ -30,7 +30,7 @@ function PlayerCharacterStatePouncedDown.on_enter(arg_2_0, arg_2_1, arg_2_2, arg
 	arg_2_0.inventory_extension:check_and_drop_pickups("pounced_down")
 end
 
-function PlayerCharacterStatePouncedDown.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStatePouncedDown.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.first_person_extension
 
 	arg_3_0.liberated = nil
@@ -71,7 +71,7 @@ function PlayerCharacterStatePouncedDown.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_
 	end
 end
 
-function PlayerCharacterStatePouncedDown.set_free(arg_4_0, arg_4_1, arg_4_2)
+PlayerCharacterStatePouncedDown.set_free = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.liberated = true
 	arg_4_0.liberation_time = arg_4_1 + var_0_0
 
@@ -92,7 +92,7 @@ function PlayerCharacterStatePouncedDown.set_free(arg_4_0, arg_4_1, arg_4_2)
 	var_4_0:set_blocking(true)
 end
 
-function PlayerCharacterStatePouncedDown.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStatePouncedDown.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.player.input_source

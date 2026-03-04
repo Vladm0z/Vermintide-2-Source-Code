@@ -16,7 +16,7 @@ local var_0_3 = {
 }
 local var_0_4 = {}
 
-function DamageWaveExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DamageWaveExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = Managers.state.entity
 	local var_1_2 = var_1_1:system("ai_system")
@@ -126,7 +126,7 @@ function DamageWaveExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function DamageWaveExtension.set_update_func(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+DamageWaveExtension.set_update_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._update_func = arg_2_1
 
 	if arg_2_2 then
@@ -134,7 +134,7 @@ function DamageWaveExtension.set_update_func(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function DamageWaveExtension._calculate_oobb_collision(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+DamageWaveExtension._calculate_oobb_collision = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_1 * 0.5
 	local var_3_1 = arg_3_2 * 0.5
 	local var_3_2 = arg_3_3 * 0.5
@@ -145,7 +145,7 @@ function DamageWaveExtension._calculate_oobb_collision(arg_3_0, arg_3_1, arg_3_2
 	return arg_3_6 + var_3_4 + var_3_5, arg_3_7, var_3_3
 end
 
-function DamageWaveExtension.launch_wave(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DamageWaveExtension.launch_wave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0.unit
 
 	if not Unit.alive(var_4_0) then
@@ -239,7 +239,7 @@ function DamageWaveExtension.launch_wave(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0.is_launched = true
 end
 
-function DamageWaveExtension.destroy(arg_5_0)
+DamageWaveExtension.destroy = function (arg_5_0)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = arg_5_0.player_units_inside
 	local var_5_2 = arg_5_0.buff_system
@@ -302,7 +302,7 @@ function DamageWaveExtension.destroy(arg_5_0)
 	table.clear(var_0_4)
 end
 
-function DamageWaveExtension.abort(arg_6_0)
+DamageWaveExtension.abort = function (arg_6_0)
 	if not var_0_1(arg_6_0.unit) then
 		return
 	end
@@ -326,7 +326,7 @@ function DamageWaveExtension.abort(arg_6_0)
 	end
 end
 
-function DamageWaveExtension.move_wave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+DamageWaveExtension.move_wave = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.acceleration
 	local var_7_1 = arg_7_0.wave_speed
 
@@ -391,7 +391,7 @@ function DamageWaveExtension.move_wave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7
 	return var_7_7, var_7_6, var_7_14 or arg_7_0.template.ignore_obstacles
 end
 
-function DamageWaveExtension.on_hit_by_wave(arg_8_0, arg_8_1, arg_8_2)
+DamageWaveExtension.on_hit_by_wave = function (arg_8_0, arg_8_1, arg_8_2)
 	if var_0_4[arg_8_0] then
 		return
 	end
@@ -439,7 +439,7 @@ end
 
 local var_0_5 = 0.5
 
-function DamageWaveExtension.wave_arrived(arg_9_0, arg_9_1, arg_9_2)
+DamageWaveExtension.wave_arrived = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0.state = "lingering"
 	arg_9_0.linger_time = arg_9_1 + arg_9_0.time_of_life
 
@@ -504,7 +504,7 @@ function DamageWaveExtension.wave_arrived(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function DamageWaveExtension.wavefront_impact(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+DamageWaveExtension.wavefront_impact = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
 	if not arg_10_4 then
 		return
 	end
@@ -579,7 +579,7 @@ function DamageWaveExtension.wavefront_impact(arg_10_0, arg_10_1, arg_10_2, arg_
 	end
 end
 
-function DamageWaveExtension.check_overlap(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+DamageWaveExtension.check_overlap = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
 	local var_11_0 = arg_11_0.player_units_inside
 	local var_11_1 = var_0_2[arg_11_2]
 	local var_11_2 = Geometry.closest_point_on_line(var_11_1, arg_11_4, arg_11_5)
@@ -633,7 +633,7 @@ function DamageWaveExtension.check_overlap(arg_11_0, arg_11_1, arg_11_2, arg_11_
 	end
 end
 
-function DamageWaveExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+DamageWaveExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if not HEALTH_ALIVE[arg_12_0.source_unit] and not arg_12_0.is_launched then
 		arg_12_0:abort()
 	end
@@ -694,7 +694,7 @@ function DamageWaveExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_
 	arg_12_0:update_blob_overlaps()
 end
 
-function DamageWaveExtension.insert_blob(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+DamageWaveExtension.insert_blob = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0
 
 	if arg_13_0.use_nav_cost_map_volumes then
@@ -747,7 +747,7 @@ function DamageWaveExtension.insert_blob(arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 	end
 end
 
-function DamageWaveExtension.insert_fx(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+DamageWaveExtension.insert_fx = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0
 	local var_14_1
 	local var_14_2
@@ -795,7 +795,7 @@ function DamageWaveExtension.insert_fx(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function DamageWaveExtension.update_blob_overlaps(arg_15_0)
+DamageWaveExtension.update_blob_overlaps = function (arg_15_0)
 	local var_15_0 = arg_15_0.blobs
 	local var_15_1 = #var_15_0
 
@@ -934,11 +934,11 @@ function DamageWaveExtension.update_blob_overlaps(arg_15_0)
 	arg_15_0.ai_blob_index = var_15_15
 end
 
-function DamageWaveExtension.get_rim_nodes(arg_16_0)
+DamageWaveExtension.get_rim_nodes = function (arg_16_0)
 	return arg_16_0.rim_nodes, true
 end
 
-function DamageWaveExtension.is_position_inside(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+DamageWaveExtension.is_position_inside = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0.blobs
 	local var_17_1 = #var_17_0
 
@@ -963,7 +963,7 @@ function DamageWaveExtension.is_position_inside(arg_17_0, arg_17_1, arg_17_2, ar
 	return var_17_8 <= var_17_9 * var_17_9
 end
 
-function DamageWaveExtension.is_position_inside_blob(arg_18_0, arg_18_1, arg_18_2)
+DamageWaveExtension.is_position_inside_blob = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = Vector3(arg_18_2[1], arg_18_2[2], arg_18_2[3])
 	local var_18_1 = Vector3.distance_squared(arg_18_1, var_18_0)
 	local var_18_2 = arg_18_2[4]
@@ -971,7 +971,7 @@ function DamageWaveExtension.is_position_inside_blob(arg_18_0, arg_18_1, arg_18_
 	return var_18_1 < var_18_2 * var_18_2
 end
 
-function DamageWaveExtension.hot_join_sync(arg_19_0, arg_19_1)
+DamageWaveExtension.hot_join_sync = function (arg_19_0, arg_19_1)
 	if arg_19_0.is_launched then
 		local var_19_0 = arg_19_0.network_transmit
 		local var_19_1 = arg_19_0.unit_id
@@ -1000,7 +1000,7 @@ local var_0_6 = 20
 local var_0_7 = var_0_6 / 2
 local var_0_8 = 1
 
-function DamageWaveExtension.debug_render_wave(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+DamageWaveExtension.debug_render_wave = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = 0
 
 	for iter_20_0 = -var_0_7, var_0_7 - 1 do
@@ -1013,7 +1013,7 @@ function DamageWaveExtension.debug_render_wave(arg_20_0, arg_20_1, arg_20_2, arg
 	end
 end
 
-function DamageWaveExtension.debug_render_blobs(arg_21_0)
+DamageWaveExtension.debug_render_blobs = function (arg_21_0)
 	local var_21_0 = arg_21_0.blobs
 
 	for iter_21_0 = 1, #var_21_0 do
@@ -1054,7 +1054,7 @@ function DamageWaveExtension.debug_render_blobs(arg_21_0)
 	end
 end
 
-function DamageWaveExtension._update_running_spawn_datas(arg_22_0, arg_22_1)
+DamageWaveExtension._update_running_spawn_datas = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._running_spawn_configs
 	local var_22_1 = arg_22_0._running_spawn_datas
 	local var_22_2 = arg_22_0.unit

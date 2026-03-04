@@ -55,7 +55,7 @@ local function var_0_7(arg_1_0)
 end
 
 local var_0_8 = {
-	default = function(arg_2_0)
+	default = function (arg_2_0)
 		var_0_7(arg_2_0)
 
 		local var_2_0 = {
@@ -75,7 +75,7 @@ local var_0_8 = {
 
 		Managers.state.voting:request_vote(var_2_1, var_2_0, Network.peer_id())
 	end,
-	versus_custom = function(arg_3_0)
+	versus_custom = function (arg_3_0)
 		var_0_7(arg_3_0)
 
 		local var_3_0 = {
@@ -98,7 +98,7 @@ local var_0_8 = {
 	end
 }
 
-function VersusMechanism.init(arg_4_0, arg_4_1)
+VersusMechanism.init = function (arg_4_0, arg_4_1)
 	arg_4_0._hero_profiles = table.clone(PROFILES_BY_AFFILIATION.heroes)
 
 	fassert(PROFILES_BY_AFFILIATION.dark_pact, "You are missing dark-pact player profiles. See vs_profiles.lua")
@@ -117,7 +117,7 @@ function VersusMechanism.init(arg_4_0, arg_4_1)
 	end
 end
 
-function VersusMechanism.register_rpcs(arg_5_0, arg_5_1)
+VersusMechanism.register_rpcs = function (arg_5_0, arg_5_1)
 	arg_5_0:unregister_rpcs()
 
 	arg_5_0._network_event_delegate = arg_5_1
@@ -133,7 +133,7 @@ function VersusMechanism.register_rpcs(arg_5_0, arg_5_1)
 	end
 end
 
-function VersusMechanism.unregister_rpcs(arg_6_0)
+VersusMechanism.unregister_rpcs = function (arg_6_0)
 	if arg_6_0._network_event_delegate then
 		if not DEDICATED_SERVER then
 			arg_6_0._custom_game_settings_handler:unregister_rpcs(arg_6_0._network_event_delegate)
@@ -149,7 +149,7 @@ function VersusMechanism.unregister_rpcs(arg_6_0)
 	end
 end
 
-function VersusMechanism._reset(arg_7_0, arg_7_1, arg_7_2)
+VersusMechanism._reset = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._settings = arg_7_1
 	arg_7_0._level_override_key = nil
 	arg_7_0._total_rounds_started = 0
@@ -208,19 +208,19 @@ function VersusMechanism._reset(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._peer_backend_id = {}
 end
 
-function VersusMechanism.setup_mechanism_parties(arg_8_0, arg_8_1)
+VersusMechanism.setup_mechanism_parties = function (arg_8_0, arg_8_1)
 	arg_8_0:_create_party_info()
 end
 
-function VersusMechanism.make_profiles_reservable(arg_9_0)
+VersusMechanism.make_profiles_reservable = function (arg_9_0)
 	arg_9_0._profiles_reservable = true
 end
 
-function VersusMechanism.profiles_reservable(arg_10_0)
+VersusMechanism.profiles_reservable = function (arg_10_0)
 	return arg_10_0._profiles_reservable
 end
 
-function VersusMechanism.network_handler_set(arg_11_0, arg_11_1)
+VersusMechanism.network_handler_set = function (arg_11_0, arg_11_1)
 	arg_11_0._network_handler = arg_11_1
 
 	if not arg_11_1 then
@@ -253,7 +253,7 @@ function VersusMechanism.network_handler_set(arg_11_0, arg_11_1)
 	end
 end
 
-function VersusMechanism.network_context_created(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+VersusMechanism.network_context_created = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if arg_12_0._shared_state then
 		local var_12_0 = LevelSettings[Managers.level_transition_handler:get_current_level_key()]
 
@@ -281,11 +281,11 @@ function VersusMechanism.network_context_created(arg_12_0, arg_12_1, arg_12_2, a
 	end
 end
 
-function VersusMechanism.network_context_destroyed(arg_13_0)
+VersusMechanism.network_context_destroyed = function (arg_13_0)
 	arg_13_0:_reset(arg_13_0._settings)
 end
 
-function VersusMechanism.destroy(arg_14_0)
+VersusMechanism.destroy = function (arg_14_0)
 	local var_14_0 = arg_14_0._dark_pact_packages
 
 	if var_14_0 then
@@ -312,7 +312,7 @@ function VersusMechanism.destroy(arg_14_0)
 	arg_14_0:_unload_sound_bank()
 end
 
-function VersusMechanism._create_party_info(arg_15_0)
+VersusMechanism._create_party_info = function (arg_15_0)
 	arg_15_0._num_reserved_slots = 0
 	arg_15_0._num_total_slots = 0
 	arg_15_0._member_info_by_party = {}
@@ -337,7 +337,7 @@ function VersusMechanism._create_party_info(arg_15_0)
 	end
 end
 
-function VersusMechanism.reset_party_info(arg_16_0)
+VersusMechanism.reset_party_info = function (arg_16_0)
 	local var_16_0 = arg_16_0._member_info_by_party
 
 	for iter_16_0 = 1, #var_16_0 do
@@ -348,7 +348,7 @@ function VersusMechanism.reset_party_info(arg_16_0)
 	end
 end
 
-function VersusMechanism.max_instance_members(arg_17_0, arg_17_1)
+VersusMechanism.max_instance_members = function (arg_17_0, arg_17_1)
 	if not arg_17_1 then
 		return DEDICATED_SERVER and Managers.mechanism:max_party_members() or Managers.party:max_party_members({
 			heroes = MechanismSettings.versus.party_data.heroes
@@ -366,7 +366,7 @@ function VersusMechanism.max_instance_members(arg_17_0, arg_17_1)
 	end
 end
 
-function VersusMechanism.set_is_hosting_versus_custom_game(arg_18_0, arg_18_1)
+VersusMechanism.set_is_hosting_versus_custom_game = function (arg_18_0, arg_18_1)
 	assert(arg_18_1 ~= arg_18_0._is_hosting_custom_game, "[VersusMechanism] Already hosting a versus custom game")
 
 	arg_18_0._is_hosting_custom_game = arg_18_1
@@ -406,17 +406,17 @@ function VersusMechanism.set_is_hosting_versus_custom_game(arg_18_0, arg_18_1)
 	end
 end
 
-function VersusMechanism.can_join_custom_lobby(arg_19_0)
+VersusMechanism.can_join_custom_lobby = function (arg_19_0)
 	local var_19_0 = Managers.state.game_mode
 
 	return (var_19_0 and var_19_0:game_mode_key()) == "inn_vs"
 end
 
-function VersusMechanism.is_hosting_versus_custom_game(arg_20_0)
+VersusMechanism.is_hosting_versus_custom_game = function (arg_20_0)
 	return arg_20_0._is_hosting_custom_game
 end
 
-function VersusMechanism.sync_mechanism_data(arg_21_0, arg_21_1, arg_21_2)
+VersusMechanism.sync_mechanism_data = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = PEER_ID_TO_CHANNEL[arg_21_1]
 
 	if arg_21_0._local_match then
@@ -442,7 +442,7 @@ function VersusMechanism.sync_mechanism_data(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function VersusMechanism._load_sound_bank(arg_22_0)
+VersusMechanism._load_sound_bank = function (arg_22_0)
 	if not arg_22_0._sound_bank_loaded then
 		local var_22_0 = "resource_packages/dlcs/ingame_sounds_carousel"
 
@@ -453,7 +453,7 @@ function VersusMechanism._load_sound_bank(arg_22_0)
 	end
 end
 
-function VersusMechanism._unload_sound_bank(arg_23_0)
+VersusMechanism._unload_sound_bank = function (arg_23_0)
 	if arg_23_0._sound_bank_loaded then
 		local var_23_0 = "resource_packages/dlcs/ingame_sounds_carousel"
 
@@ -464,7 +464,7 @@ function VersusMechanism._unload_sound_bank(arg_23_0)
 	end
 end
 
-function VersusMechanism._load_dark_pact_profiles(arg_24_0)
+VersusMechanism._load_dark_pact_profiles = function (arg_24_0)
 	local var_24_0 = {}
 
 	local function var_24_1(arg_25_0, arg_25_1)
@@ -473,7 +473,7 @@ function VersusMechanism._load_dark_pact_profiles(arg_24_0)
 		end
 	end
 
-	local var_24_2 = table.keys(table.filter(Cosmetics, function(arg_26_0)
+	local var_24_2 = table.keys(table.filter(Cosmetics, function (arg_26_0)
 		return arg_26_0.dark_pact
 	end))
 
@@ -525,7 +525,7 @@ function VersusMechanism._load_dark_pact_profiles(arg_24_0)
 	arg_24_0._dark_pact_packages = var_24_0
 end
 
-function VersusMechanism.is_packages_loaded(arg_27_0)
+VersusMechanism.is_packages_loaded = function (arg_27_0)
 	local var_27_0 = arg_27_0._dark_pact_packages
 
 	if var_27_0 == nil then
@@ -543,7 +543,7 @@ function VersusMechanism.is_packages_loaded(arg_27_0)
 	return true
 end
 
-function VersusMechanism.load_packages(arg_28_0)
+VersusMechanism.load_packages = function (arg_28_0)
 	arg_28_0:_load_sound_bank()
 
 	if arg_28_0._dark_pact_packages then
@@ -553,7 +553,7 @@ function VersusMechanism.load_packages(arg_28_0)
 	arg_28_0:_load_dark_pact_profiles()
 end
 
-function VersusMechanism.server_decide_side_order(arg_29_0)
+VersusMechanism.server_decide_side_order = function (arg_29_0)
 	if not arg_29_0._settings.disadvantaged_team_starts then
 		return
 	end
@@ -590,11 +590,11 @@ function VersusMechanism.server_decide_side_order(arg_29_0)
 	arg_29_0:set_side_order_state(var_29_1)
 end
 
-function VersusMechanism.set_side_order_state(arg_30_0, arg_30_1)
+VersusMechanism.set_side_order_state = function (arg_30_0, arg_30_1)
 	arg_30_0._network_handler:set_side_order_state(arg_30_1)
 end
 
-function VersusMechanism._build_side_compositions(arg_31_0, arg_31_1)
+VersusMechanism._build_side_compositions = function (arg_31_0, arg_31_1)
 	local var_31_0, var_31_1 = arg_31_0:_update_sides(arg_31_1)
 	local var_31_2 = 3
 	local var_31_3 = Managers.party
@@ -654,7 +654,7 @@ function VersusMechanism._build_side_compositions(arg_31_0, arg_31_1)
 	}
 end
 
-function VersusMechanism._update_sides(arg_32_0, arg_32_1)
+VersusMechanism._update_sides = function (arg_32_0, arg_32_1)
 	local var_32_0
 	local var_32_1
 
@@ -692,7 +692,7 @@ function VersusMechanism._update_sides(arg_32_0, arg_32_1)
 	return var_32_0, var_32_1
 end
 
-function VersusMechanism._set_party_side_data(arg_33_0, arg_33_1, arg_33_2)
+VersusMechanism._set_party_side_data = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = Managers.party
 	local var_33_1 = var_33_0:parties_by_name()
 	local var_33_2 = var_33_0:get_party(arg_33_1)
@@ -701,7 +701,7 @@ function VersusMechanism._set_party_side_data(arg_33_0, arg_33_1, arg_33_2)
 	var_33_1[arg_33_2] = var_33_2
 end
 
-function VersusMechanism.progress_state(arg_34_0)
+VersusMechanism.progress_state = function (arg_34_0)
 	local var_34_0 = arg_34_0._state
 
 	if arg_34_0:match_ended_early() then
@@ -733,7 +733,7 @@ function VersusMechanism.progress_state(arg_34_0)
 	return arg_34_0._state
 end
 
-function VersusMechanism.debug_load_level(arg_35_0, arg_35_1, arg_35_2)
+VersusMechanism.debug_load_level = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = LevelSettings[arg_35_1]
 	local var_35_1 = Managers.level_transition_handler
 
@@ -742,7 +742,7 @@ function VersusMechanism.debug_load_level(arg_35_0, arg_35_1, arg_35_2)
 	Managers.mechanism:progress_state()
 end
 
-function VersusMechanism.set_current_state(arg_36_0, arg_36_1)
+VersusMechanism.set_current_state = function (arg_36_0, arg_36_1)
 	if DEDICATED_SERVER then
 		cprintf("[Mechanism] State Changed from '%s' to '%s'", arg_36_0._state or "None", arg_36_1)
 	end
@@ -750,11 +750,11 @@ function VersusMechanism.set_current_state(arg_36_0, arg_36_1)
 	arg_36_0._state = arg_36_1
 end
 
-function VersusMechanism.generate_level_seed(arg_37_0)
+VersusMechanism.generate_level_seed = function (arg_37_0)
 	return Managers.mechanism:get_level_seed()
 end
 
-function VersusMechanism.get_end_of_level_rewards_arguments(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
+VersusMechanism.get_end_of_level_rewards_arguments = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
 	local var_38_0 = arg_38_3:get_stat(arg_38_4, "kills_total")
 
 	return {
@@ -762,21 +762,21 @@ function VersusMechanism.get_end_of_level_rewards_arguments(arg_38_0, arg_38_1, 
 	}
 end
 
-function VersusMechanism.get_hub_level_key(arg_39_0)
+VersusMechanism.get_hub_level_key = function (arg_39_0)
 	return var_0_5
 end
 
-function VersusMechanism.get_prior_state(arg_40_0)
+VersusMechanism.get_prior_state = function (arg_40_0)
 	return nil
 end
 
-function VersusMechanism.is_final_round(arg_41_0)
+VersusMechanism.is_final_round = function (arg_41_0)
 	local var_41_0 = arg_41_0._win_conditions:is_final_round()
 
 	return Development.parameter("versus_quick_match_end") or var_41_0 or arg_41_0._shared_state and arg_41_0._shared_state:get_party_won_early() or arg_41_0:match_ended_early()
 end
 
-function VersusMechanism.get_level_end_view(arg_42_0)
+VersusMechanism.get_level_end_view = function (arg_42_0)
 	return "LevelEndViewVersus"
 end
 
@@ -789,7 +789,7 @@ local var_0_9 = {
 	draw = true
 }
 
-function VersusMechanism.is_venture_over(arg_43_0)
+VersusMechanism.is_venture_over = function (arg_43_0)
 	local var_43_0 = arg_43_0._game_round_ended_reason
 	local var_43_1 = var_0_9[var_43_0]
 	local var_43_2 = arg_43_0._state == "round_2" or var_43_0 == "party_one_won_early" or var_43_0 == "party_two_won_early"
@@ -805,7 +805,7 @@ local var_0_10 = {
 	draw = true
 }
 
-function VersusMechanism.game_round_ended(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+VersusMechanism.game_round_ended = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 	arg_44_0._game_round_ended_reason = arg_44_3
 	arg_44_0._game_round_ended_reason_data = arg_44_4
 
@@ -883,7 +883,7 @@ function VersusMechanism.game_round_ended(arg_44_0, arg_44_1, arg_44_2, arg_44_3
 	end
 end
 
-function VersusMechanism._get_next_game_mode_key(arg_45_0)
+VersusMechanism._get_next_game_mode_key = function (arg_45_0)
 	local var_45_0
 	local var_45_1 = arg_45_0._state
 
@@ -904,7 +904,7 @@ function VersusMechanism._get_next_game_mode_key(arg_45_0)
 	return var_45_0
 end
 
-function VersusMechanism.start_next_round(arg_46_0)
+VersusMechanism.start_next_round = function (arg_46_0)
 	arg_46_0._game_round_ended_reason = nil
 	arg_46_0._game_round_ended_reason_data = nil
 	arg_46_0._join_signaling_timer = 0
@@ -928,7 +928,7 @@ function VersusMechanism.start_next_round(arg_46_0)
 	return var_46_1, var_46_4
 end
 
-function VersusMechanism.request_vote(arg_47_0, arg_47_1)
+VersusMechanism.request_vote = function (arg_47_0, arg_47_1)
 	local var_47_0 = var_0_8[arg_47_1.request_type] or var_0_8.default
 
 	if var_47_0 then
@@ -936,7 +936,7 @@ function VersusMechanism.request_vote(arg_47_0, arg_47_1)
 	end
 end
 
-function VersusMechanism.preferred_slot_id(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+VersusMechanism.preferred_slot_id = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	if arg_48_1 == 0 then
 		return nil
 	end
@@ -969,7 +969,7 @@ function VersusMechanism.preferred_slot_id(arg_48_0, arg_48_1, arg_48_2, arg_48_
 	return nil
 end
 
-function VersusMechanism._get_fallback_hero_profile(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+VersusMechanism._get_fallback_hero_profile = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 	local var_49_0 = arg_49_0:_find_available_hero_profiles(arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 	local var_49_1 = var_49_0[math.random(1, #var_49_0)]
 	local var_49_2 = PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile(var_49_1)
@@ -979,7 +979,7 @@ end
 
 local var_0_11 = {}
 
-function VersusMechanism._find_available_hero_profiles(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+VersusMechanism._find_available_hero_profiles = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 	local var_50_0 = PROFILES_BY_AFFILIATION.heroes
 
 	table.clear(var_0_11)
@@ -995,7 +995,7 @@ function VersusMechanism._find_available_hero_profiles(arg_50_0, arg_50_1, arg_5
 	return var_0_11
 end
 
-function VersusMechanism.update_wanted_hero_character(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+VersusMechanism.update_wanted_hero_character = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = Managers.party:get_player_status(arg_51_1, arg_51_2)
 	local var_51_1, var_51_2 = Managers.mechanism:get_persistent_profile_index_reservation(arg_51_1)
 	local var_51_3, var_51_4, var_51_5 = arg_51_0:parse_hero_profile_availability(var_51_1, arg_51_3, arg_51_1, arg_51_2)
@@ -1053,7 +1053,7 @@ function VersusMechanism.update_wanted_hero_character(arg_51_0, arg_51_1, arg_51
 	return var_51_3, var_51_2, var_51_6
 end
 
-function VersusMechanism.parse_hero_profile_availability(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+VersusMechanism.parse_hero_profile_availability = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 	if not arg_52_1 or arg_52_1 == 0 then
 		return nil, "invalid_profile"
 	end
@@ -1069,15 +1069,15 @@ function VersusMechanism.parse_hero_profile_availability(arg_52_0, arg_52_1, arg
 	return arg_52_1
 end
 
-function VersusMechanism.uses_random_directors(arg_53_0)
+VersusMechanism.uses_random_directors = function (arg_53_0)
 	return true
 end
 
-function VersusMechanism.get_state(arg_54_0)
+VersusMechanism.get_state = function (arg_54_0)
 	return arg_54_0._state
 end
 
-function VersusMechanism.set_local_match(arg_55_0, arg_55_1)
+VersusMechanism.set_local_match = function (arg_55_0, arg_55_1)
 	arg_55_0._local_match = arg_55_1
 
 	local var_55_0 = Managers.mechanism
@@ -1089,7 +1089,7 @@ function VersusMechanism.set_local_match(arg_55_0, arg_55_1)
 	var_55_0:reset_party_data(false)
 end
 
-function VersusMechanism.set_private_lobby(arg_56_0, arg_56_1)
+VersusMechanism.set_private_lobby = function (arg_56_0, arg_56_1)
 	arg_56_0._private_lobby = arg_56_1
 
 	local var_56_0 = Managers.mechanism
@@ -1099,7 +1099,7 @@ function VersusMechanism.set_private_lobby(arg_56_0, arg_56_1)
 	end
 end
 
-function VersusMechanism.set_dedicated_or_player_hosted_search(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+VersusMechanism.set_dedicated_or_player_hosted_search = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	arg_57_0._using_dedicated_servers = arg_57_1
 	arg_57_0._using_dedicated_aws_servers = arg_57_2
 	arg_57_0._using_player_hosted = arg_57_3
@@ -1111,19 +1111,19 @@ function VersusMechanism.set_dedicated_or_player_hosted_search(arg_57_0, arg_57_
 	end
 end
 
-function VersusMechanism.is_local_match(arg_58_0)
+VersusMechanism.is_local_match = function (arg_58_0)
 	return arg_58_0._local_match
 end
 
-function VersusMechanism.is_private_lobby(arg_59_0)
+VersusMechanism.is_private_lobby = function (arg_59_0)
 	return arg_59_0._private_lobby
 end
 
-function VersusMechanism.using_dedicated_servers(arg_60_0)
+VersusMechanism.using_dedicated_servers = function (arg_60_0)
 	return arg_60_0._using_dedicated_servers, arg_60_0._using_dedicated_aws_servers
 end
 
-function VersusMechanism.using_player_hosted(arg_61_0)
+VersusMechanism.using_player_hosted = function (arg_61_0)
 	return arg_61_0._using_player_hosted
 end
 
@@ -1133,7 +1133,7 @@ local function var_0_12(arg_62_0)
 	return (Managers.player:player_from_peer_id(var_62_0))
 end
 
-function VersusMechanism.get_chat_channel(arg_63_0, arg_63_1, arg_63_2)
+VersusMechanism.get_chat_channel = function (arg_63_0, arg_63_1, arg_63_2)
 	if not arg_63_0._message_targets_initiated then
 		return
 	end
@@ -1164,7 +1164,7 @@ end
 
 local var_0_13 = {}
 
-function VersusMechanism._get_chat_members(arg_64_0, arg_64_1)
+VersusMechanism._get_chat_members = function (arg_64_0, arg_64_1)
 	table.clear(var_0_13)
 
 	local var_64_0 = arg_64_0._network_handler:get_match_handler()
@@ -1189,7 +1189,7 @@ function VersusMechanism._get_chat_members(arg_64_0, arg_64_1)
 	return var_0_13
 end
 
-function VersusMechanism.register_chats(arg_65_0)
+VersusMechanism.register_chats = function (arg_65_0)
 	if arg_65_0._message_targets_initiated or not Managers.chat then
 		return
 	end
@@ -1204,7 +1204,7 @@ function VersusMechanism.register_chats(arg_65_0)
 	arg_65_0._message_targets_initiated = true
 end
 
-function VersusMechanism.unregister_chats(arg_66_0)
+VersusMechanism.unregister_chats = function (arg_66_0)
 	if not arg_66_0._message_targets_initiated or not Managers.chat then
 		return
 	end
@@ -1219,7 +1219,7 @@ function VersusMechanism.unregister_chats(arg_66_0)
 	arg_66_0._message_targets_initiated = false
 end
 
-function VersusMechanism.try_reserve_game_server_slots(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+VersusMechanism.try_reserve_game_server_slots = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
 	local var_67_0 = arg_67_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):try_reserve_slots(arg_67_1, arg_67_2, arg_67_3)
@@ -1247,7 +1247,7 @@ function VersusMechanism.try_reserve_game_server_slots(arg_67_0, arg_67_1, arg_6
 	return var_67_0
 end
 
-function VersusMechanism.move_slot_reservation_handler(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+VersusMechanism.move_slot_reservation_handler = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	local var_68_0 = arg_68_0._slot_reservation_handlers[arg_68_1]
 
 	if var_68_0[arg_68_3] then
@@ -1269,7 +1269,7 @@ function VersusMechanism.move_slot_reservation_handler(arg_68_0, arg_68_1, arg_6
 	arg_68_0._network_handler:get_match_handler():send_rpc_down("rpc_move_slot_reservation_handler", arg_68_1, var_68_1, var_68_2)
 end
 
-function VersusMechanism.create_slot_reservation_handler(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+VersusMechanism.create_slot_reservation_handler = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 	local var_69_0 = arg_69_0._slot_reservation_handlers[arg_69_1] or {}
 
 	arg_69_0._slot_reservation_handlers[arg_69_1] = var_69_0
@@ -1289,7 +1289,7 @@ function VersusMechanism.create_slot_reservation_handler(arg_69_0, arg_69_1, arg
 	return arg_69_0._slot_reservation_handlers[arg_69_1][arg_69_2]
 end
 
-function VersusMechanism._update_lobby_max_members(arg_70_0)
+VersusMechanism._update_lobby_max_members = function (arg_70_0)
 	LobbySetup.update_network_options_max_members()
 
 	local var_70_0 = arg_70_0._lobby
@@ -1303,17 +1303,17 @@ function VersusMechanism._update_lobby_max_members(arg_70_0)
 	end
 end
 
-function VersusMechanism.get_slot_reservation_handler(arg_71_0, arg_71_1, arg_71_2)
+VersusMechanism.get_slot_reservation_handler = function (arg_71_0, arg_71_1, arg_71_2)
 	local var_71_0 = arg_71_0._slot_reservation_handlers[arg_71_1]
 
 	return var_71_0 and var_71_0[arg_71_2]
 end
 
-function VersusMechanism.get_all_reservation_handlers_by_owner(arg_72_0, arg_72_1)
+VersusMechanism.get_all_reservation_handlers_by_owner = function (arg_72_0, arg_72_1)
 	return arg_72_0._slot_reservation_handlers[arg_72_1]
 end
 
-function VersusMechanism.destroy_slot_reservation_handler(arg_73_0, arg_73_1, arg_73_2)
+VersusMechanism.destroy_slot_reservation_handler = function (arg_73_0, arg_73_1, arg_73_2)
 	local var_73_0 = arg_73_0._slot_reservation_handlers[arg_73_1]
 
 	for iter_73_0, iter_73_1 in pairs(var_73_0) do
@@ -1329,14 +1329,14 @@ function VersusMechanism.destroy_slot_reservation_handler(arg_73_0, arg_73_1, ar
 	end
 end
 
-function VersusMechanism.num_dedicated_reserved_slots_changed(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+VersusMechanism.num_dedicated_reserved_slots_changed = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 	print("num_dedicated_reserved_slots_changed", arg_74_1, arg_74_2)
 
 	arg_74_0._num_reserved_slots = arg_74_1
 	arg_74_0._num_total_slots = arg_74_2
 end
 
-function VersusMechanism.reset_dedicated_slots_count(arg_75_0)
+VersusMechanism.reset_dedicated_slots_count = function (arg_75_0)
 	arg_75_0._num_reserved_slots = 0
 	arg_75_0._num_total_slots = 0
 
@@ -1354,11 +1354,11 @@ function VersusMechanism.reset_dedicated_slots_count(arg_75_0)
 	arg_75_0._server_id = nil
 end
 
-function VersusMechanism.get_dedicated_slot_info(arg_76_0)
+VersusMechanism.get_dedicated_slot_info = function (arg_76_0)
 	return arg_76_0._num_reserved_slots, arg_76_0._num_total_slots, arg_76_0._member_info_by_party, arg_76_0._server_id
 end
 
-function VersusMechanism.rpc_sync_vs_custom_game_slot_data(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5, arg_77_6, arg_77_7)
+VersusMechanism.rpc_sync_vs_custom_game_slot_data = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5, arg_77_6, arg_77_7)
 	local var_77_0 = NetworkLookup.reservation_handler_types[arg_77_3]
 	local var_77_1 = arg_77_0:get_slot_reservation_handler(arg_77_2, var_77_0) or arg_77_0:create_slot_reservation_handler(arg_77_2, var_77_0)
 
@@ -1366,14 +1366,14 @@ function VersusMechanism.rpc_sync_vs_custom_game_slot_data(arg_77_0, arg_77_1, a
 	var_77_1:update_slots(arg_77_4, arg_77_5, arg_77_6, arg_77_7)
 end
 
-function VersusMechanism.rpc_move_slot_reservation_handler(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
+VersusMechanism.rpc_move_slot_reservation_handler = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
 	local var_78_0 = NetworkLookup.reservation_handler_types[arg_78_3]
 	local var_78_1 = NetworkLookup.reservation_handler_types[arg_78_4]
 
 	arg_78_0:move_slot_reservation_handler(arg_78_2, var_78_0, var_78_1)
 end
 
-function VersusMechanism.rpc_request_slot_reservation_sync(arg_79_0, arg_79_1)
+VersusMechanism.rpc_request_slot_reservation_sync = function (arg_79_0, arg_79_1)
 	local var_79_0 = CHANNEL_TO_PEER_ID[arg_79_1]
 
 	for iter_79_0, iter_79_1 in pairs(arg_79_0._slot_reservation_handlers) do
@@ -1385,7 +1385,7 @@ function VersusMechanism.rpc_request_slot_reservation_sync(arg_79_0, arg_79_1)
 	end
 end
 
-function VersusMechanism.dedicated_party_slot_status_changed(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+VersusMechanism.dedicated_party_slot_status_changed = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
 	arg_80_0._server_id = arg_80_1
 
 	local var_80_0 = arg_80_0._member_info_by_party[arg_80_2]
@@ -1418,14 +1418,14 @@ function VersusMechanism.dedicated_party_slot_status_changed(arg_80_0, arg_80_1,
 	end
 end
 
-function VersusMechanism.game_server_slot_reservation_expired(arg_81_0, arg_81_1)
+VersusMechanism.game_server_slot_reservation_expired = function (arg_81_0, arg_81_1)
 	local var_81_0 = true
 	local var_81_1 = false
 
 	arg_81_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):unreserve_slot(arg_81_1, var_81_1, var_81_0)
 end
 
-function VersusMechanism.force_start_dedicated_server(arg_82_0)
+VersusMechanism.force_start_dedicated_server = function (arg_82_0)
 	if DEDICATED_SERVER then
 		print("dedicated: got force start from a lobby host")
 
@@ -1443,7 +1443,7 @@ function VersusMechanism.force_start_dedicated_server(arg_82_0)
 	end
 end
 
-function VersusMechanism.switch_level_dedicated_server(arg_83_0, arg_83_1, arg_83_2)
+VersusMechanism.switch_level_dedicated_server = function (arg_83_0, arg_83_1, arg_83_2)
 	local var_83_0 = 0
 
 	if arg_83_1 then
@@ -1467,7 +1467,7 @@ function VersusMechanism.switch_level_dedicated_server(arg_83_0, arg_83_1, arg_8
 	end
 end
 
-function VersusMechanism.handle_ingame_enter(arg_84_0, arg_84_1)
+VersusMechanism.handle_ingame_enter = function (arg_84_0, arg_84_1)
 	local var_84_0 = LevelSettings[Managers.level_transition_handler:get_current_level_key()]
 
 	if not arg_84_0._shared_state and not var_84_0.hub_level and Managers.mechanism:is_server() then
@@ -1475,11 +1475,11 @@ function VersusMechanism.handle_ingame_enter(arg_84_0, arg_84_1)
 	end
 end
 
-function VersusMechanism.get_level_override_key(arg_85_0)
+VersusMechanism.get_level_override_key = function (arg_85_0)
 	return arg_85_0._level_override_key
 end
 
-function VersusMechanism.should_game_server_start_game(arg_86_0)
+VersusMechanism.should_game_server_start_game = function (arg_86_0)
 	if arg_86_0._force_start_dedicated_server then
 		return true
 	end
@@ -1489,19 +1489,19 @@ function VersusMechanism.should_game_server_start_game(arg_86_0)
 	return arg_86_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):is_fully_reserved()
 end
 
-function VersusMechanism.game_server_reservers(arg_87_0)
+VersusMechanism.game_server_reservers = function (arg_87_0)
 	assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
 	return arg_87_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):reservers()
 end
 
-function VersusMechanism.is_all_reserved_peers_joined(arg_88_0, arg_88_1)
+VersusMechanism.is_all_reserved_peers_joined = function (arg_88_0, arg_88_1)
 	assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
 
 	return arg_88_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):is_all_reserved_peers_joined(arg_88_1)
 end
 
-function VersusMechanism.handle_party_assignment_for_joining_peer(arg_89_0, arg_89_1, arg_89_2)
+VersusMechanism.handle_party_assignment_for_joining_peer = function (arg_89_0, arg_89_1, arg_89_2)
 	local var_89_0 = Managers.state.game_mode
 	local var_89_1 = var_89_0 and var_89_0:game_mode()
 
@@ -1536,30 +1536,30 @@ function VersusMechanism.handle_party_assignment_for_joining_peer(arg_89_0, arg_
 	return var_89_6
 end
 
-function VersusMechanism.should_run_tutorial(arg_90_0)
+VersusMechanism.should_run_tutorial = function (arg_90_0)
 	return false, nil
 end
 
-function VersusMechanism.win_conditions(arg_91_0)
+VersusMechanism.win_conditions = function (arg_91_0)
 	return arg_91_0._win_conditions
 end
 
-function VersusMechanism.entered_mechanism_due_to_switch(arg_92_0)
+VersusMechanism.entered_mechanism_due_to_switch = function (arg_92_0)
 	Managers.chat:set_chat_enabled(true)
 end
 
-function VersusMechanism.left_mechanism_due_to_switch(arg_93_0)
+VersusMechanism.left_mechanism_due_to_switch = function (arg_93_0)
 	Managers.chat:set_chat_enabled(false)
 end
 
-function VersusMechanism.should_play_level_introduction(arg_94_0)
+VersusMechanism.should_play_level_introduction = function (arg_94_0)
 	local var_94_0 = GameModeSettings.versus.show_level_introduction[arg_94_0._state]
 
 	return var_94_0 ~= nil and var_94_0
 end
 
-function VersusMechanism.get_custom_lobby_sort(arg_95_0)
-	return function(arg_96_0, arg_96_1)
+VersusMechanism.get_custom_lobby_sort = function (arg_95_0)
+	return function (arg_96_0, arg_96_1)
 		local var_96_0 = arg_96_0.server_info
 		local var_96_1 = arg_96_1.server_info
 		local var_96_2 = var_96_0.num_players
@@ -1583,7 +1583,7 @@ function VersusMechanism.get_custom_lobby_sort(arg_95_0)
 	end
 end
 
-function VersusMechanism.signal_reservers_to_join(arg_97_0, arg_97_1, arg_97_2)
+VersusMechanism.signal_reservers_to_join = function (arg_97_0, arg_97_1, arg_97_2)
 	local var_97_0 = false
 
 	assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler")
@@ -1621,63 +1621,63 @@ function VersusMechanism.signal_reservers_to_join(arg_97_0, arg_97_1, arg_97_2)
 	return var_97_0
 end
 
-function VersusMechanism.get_current_set(arg_98_0)
+VersusMechanism.get_current_set = function (arg_98_0)
 	return arg_98_0._win_conditions:get_current_set()
 end
 
-function VersusMechanism.get_current_spawn_group(arg_99_0)
+VersusMechanism.get_current_spawn_group = function (arg_99_0)
 	return arg_99_0:get_current_set()
 end
 
-function VersusMechanism.get_map_start_section(arg_100_0)
+VersusMechanism.get_map_start_section = function (arg_100_0)
 	return arg_100_0:get_current_set()
 end
 
-function VersusMechanism.is_last_set(arg_101_0)
+VersusMechanism.is_last_set = function (arg_101_0)
 	return arg_101_0:get_current_set() == arg_101_0._num_sets
 end
 
-function VersusMechanism.match_ended_early(arg_102_0)
+VersusMechanism.match_ended_early = function (arg_102_0)
 	local var_102_0 = arg_102_0._game_round_ended_reason
 
 	return var_102_0 == "party_one_won_early" or var_102_0 == "party_two_won_early", var_102_0
 end
 
-function VersusMechanism.get_game_round_ended_reason(arg_103_0)
+VersusMechanism.get_game_round_ended_reason = function (arg_103_0)
 	return arg_103_0._game_round_ended_reason, arg_103_0._game_round_ended_reason_data
 end
 
-function VersusMechanism.get_objective_settings(arg_104_0)
+VersusMechanism.get_objective_settings = function (arg_104_0)
 	local var_104_0 = Managers.level_transition_handler:get_current_level_key()
 
 	return VersusObjectiveSettings[var_104_0] or {}
 end
 
-function VersusMechanism.should_start_next_set(arg_105_0)
+VersusMechanism.should_start_next_set = function (arg_105_0)
 	return not arg_105_0:is_last_set() or arg_105_0._win_conditions:get_current_round() % 2 == 1
 end
 
-function VersusMechanism.num_sets(arg_106_0)
+VersusMechanism.num_sets = function (arg_106_0)
 	return arg_106_0._num_sets
 end
 
-function VersusMechanism.increment_total_rounds_started(arg_107_0)
+VersusMechanism.increment_total_rounds_started = function (arg_107_0)
 	arg_107_0._total_rounds_started = arg_107_0._total_rounds_started + 1
 end
 
-function VersusMechanism.total_rounds_started(arg_108_0)
+VersusMechanism.total_rounds_started = function (arg_108_0)
 	return arg_108_0._total_rounds_started
 end
 
-function VersusMechanism.match_id(arg_109_0)
+VersusMechanism.match_id = function (arg_109_0)
 	return arg_109_0._shared_state:get_match_id()
 end
 
-function VersusMechanism.get_players_session_score(arg_110_0, arg_110_1, arg_110_2, arg_110_3)
+VersusMechanism.get_players_session_score = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3)
 	return ScoreboardHelper.get_versus_stats(arg_110_1, arg_110_3)
 end
 
-function VersusMechanism.sync_players_session_score(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
+VersusMechanism.sync_players_session_score = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
 	for iter_111_0, iter_111_1 in pairs(arg_111_1) do
 		arg_111_2[#arg_111_2 + 1] = iter_111_1.peer_id
 		arg_111_3[#arg_111_3 + 1] = iter_111_1.local_player_id
@@ -1695,7 +1695,7 @@ function VersusMechanism.sync_players_session_score(arg_111_0, arg_111_1, arg_11
 	end
 end
 
-function VersusMechanism.extract_players_session_score(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6)
+VersusMechanism.extract_players_session_score = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6)
 	for iter_112_0, iter_112_1 in pairs(arg_112_5) do
 		local var_112_0 = iter_112_1.peer_id
 		local var_112_1 = iter_112_1.local_player_id
@@ -1721,11 +1721,11 @@ function VersusMechanism.extract_players_session_score(arg_112_0, arg_112_1, arg
 	end
 end
 
-function VersusMechanism.get_starting_level()
+VersusMechanism.get_starting_level = function ()
 	return var_0_5
 end
 
-function VersusMechanism.create_versus_migration_info(arg_114_0, arg_114_1, arg_114_2)
+VersusMechanism.create_versus_migration_info = function (arg_114_0, arg_114_1, arg_114_2)
 	local var_114_0 = Managers.level_transition_handler
 	local var_114_1 = {
 		friend_party = Managers.party:client_get_friend_party()
@@ -1758,29 +1758,29 @@ function VersusMechanism.create_versus_migration_info(arg_114_0, arg_114_1, arg_
 	return var_114_1
 end
 
-function VersusMechanism.get_server_id(arg_115_0)
+VersusMechanism.get_server_id = function (arg_115_0)
 	return arg_115_0._server_id
 end
 
-function VersusMechanism.set_peer_backend_id(arg_116_0, arg_116_1, arg_116_2)
+VersusMechanism.set_peer_backend_id = function (arg_116_0, arg_116_1, arg_116_2)
 	arg_116_0._peer_backend_id[arg_116_1] = arg_116_2
 end
 
-function VersusMechanism.get_peer_backend_id(arg_117_0, arg_117_1)
+VersusMechanism.get_peer_backend_id = function (arg_117_0, arg_117_1)
 	return arg_117_0._peer_backend_id[arg_117_1]
 end
 
-function VersusMechanism.load_end_screen_resources(arg_118_0)
+VersusMechanism.load_end_screen_resources = function (arg_118_0)
 	Managers.package:load("resource_packages/levels/dlcs/carousel/versus_dependencies", "end_screen_resource")
 end
 
-function VersusMechanism.unload_end_screen_resources(arg_119_0)
+VersusMechanism.unload_end_screen_resources = function (arg_119_0)
 	if Managers.package:is_loading("resource_packages/levels/dlcs/carousel/versus_dependencies", "end_screen_resource") or Managers.package:has_loaded("resource_packages/levels/dlcs/carousel/versus_dependencies", "end_screen_resource") then
 		Managers.package:unload("resource_packages/levels/dlcs/carousel/versus_dependencies", "end_screen_resource")
 	end
 end
 
-function VersusMechanism._setup_match(arg_120_0)
+VersusMechanism._setup_match = function (arg_120_0)
 	if arg_120_0._shared_state then
 		arg_120_0._shared_state:destroy()
 	end
@@ -1831,11 +1831,11 @@ function VersusMechanism._setup_match(arg_120_0)
 	end
 end
 
-function VersusMechanism.rpc_versus_setup_match(arg_121_0)
+VersusMechanism.rpc_versus_setup_match = function (arg_121_0)
 	arg_121_0:_setup_match()
 end
 
-function VersusMechanism.is_peer_fully_synced(arg_122_0, arg_122_1)
+VersusMechanism.is_peer_fully_synced = function (arg_122_0, arg_122_1)
 	if arg_122_0._shared_state then
 		return arg_122_0._shared_state:is_peer_fully_synced(arg_122_1)
 	end
@@ -1843,11 +1843,11 @@ function VersusMechanism.is_peer_fully_synced(arg_122_0, arg_122_1)
 	return true
 end
 
-function VersusMechanism.set_hero_cosmetics(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9, arg_123_10)
+VersusMechanism.set_hero_cosmetics = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9, arg_123_10)
 	arg_123_0._shared_state:set_hero_cosmetics(arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9, arg_123_10)
 end
 
-function VersusMechanism.get_hero_cosmetics(arg_124_0, arg_124_1, arg_124_2)
+VersusMechanism.get_hero_cosmetics = function (arg_124_0, arg_124_1, arg_124_2)
 	local var_124_0 = arg_124_0._shared_state:get_hero_cosmetics(arg_124_1, arg_124_2)
 	local var_124_1 = var_124_0.weapon
 	local var_124_2 = var_124_0.weapon_pose
@@ -1860,7 +1860,7 @@ function VersusMechanism.get_hero_cosmetics(arg_124_0, arg_124_1, arg_124_2)
 	return var_124_1, var_124_2, var_124_3, var_124_4, var_124_5, var_124_6, var_124_7
 end
 
-function VersusMechanism.player_joined_party(arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5)
+VersusMechanism.player_joined_party = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5)
 	if Managers.mechanism:is_server() then
 		local var_125_0 = arg_125_0:get_slot_reservation_handler(Network.peer_id(), var_0_0.session)
 
@@ -1870,7 +1870,7 @@ function VersusMechanism.player_joined_party(arg_125_0, arg_125_1, arg_125_2, ar
 	end
 end
 
-function VersusMechanism.try_reserve_profile_for_peer_by_mechanism(arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5)
+VersusMechanism.try_reserve_profile_for_peer_by_mechanism = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5)
 	if SPProfiles[arg_126_3].affiliation ~= "heroes" then
 		return true
 	end
@@ -1900,13 +1900,13 @@ function VersusMechanism.try_reserve_profile_for_peer_by_mechanism(arg_126_0, ar
 	return arg_126_1:try_reserve_profile_for_peer(var_126_0, arg_126_2, arg_126_3, arg_126_4)
 end
 
-function VersusMechanism.reserved_party_id_by_peer(arg_127_0, arg_127_1)
+VersusMechanism.reserved_party_id_by_peer = function (arg_127_0, arg_127_1)
 	local var_127_0 = arg_127_0._network_handler.server_peer_id
 
 	return arg_127_0:get_slot_reservation_handler(var_127_0, var_0_0.session):party_id_by_peer(arg_127_1)
 end
 
-function VersusMechanism.remote_client_disconnected(arg_128_0, arg_128_1)
+VersusMechanism.remote_client_disconnected = function (arg_128_0, arg_128_1)
 	for iter_128_0, iter_128_1 in pairs(arg_128_0._slot_reservation_handlers) do
 		for iter_128_2, iter_128_3 in pairs(iter_128_1) do
 			if iter_128_3.remote_client_disconnected then
@@ -1916,7 +1916,7 @@ function VersusMechanism.remote_client_disconnected(arg_128_0, arg_128_1)
 	end
 end
 
-function VersusMechanism.store_challenge_progression_status(arg_129_0, arg_129_1, arg_129_2)
+VersusMechanism.store_challenge_progression_status = function (arg_129_0, arg_129_1, arg_129_2)
 	arg_129_2 = arg_129_2 or "area_selection_carousel_name"
 
 	local var_129_0 = arg_129_2 or "default"
@@ -1928,7 +1928,7 @@ end
 
 local var_0_14 = {}
 
-function VersusMechanism.get_stored_challenge_progression_status(arg_130_0, arg_130_1)
+VersusMechanism.get_stored_challenge_progression_status = function (arg_130_0, arg_130_1)
 	if arg_130_1 then
 		return arg_130_0._challenge_progression[arg_130_1]
 	end
@@ -1942,11 +1942,11 @@ function VersusMechanism.get_stored_challenge_progression_status(arg_130_0, arg_
 	return var_0_14
 end
 
-function VersusMechanism.clear_stored_challenge_progression_status(arg_131_0)
+VersusMechanism.clear_stored_challenge_progression_status = function (arg_131_0)
 	table.clear(arg_131_0._challenge_progression)
 end
 
-function VersusMechanism.cache_horde_ability_charge_data(arg_132_0, arg_132_1)
+VersusMechanism.cache_horde_ability_charge_data = function (arg_132_0, arg_132_1)
 	if not arg_132_0._horde_ability_charges then
 		arg_132_0._horde_ability_charges = {}
 	end
@@ -1958,13 +1958,13 @@ function VersusMechanism.cache_horde_ability_charge_data(arg_132_0, arg_132_1)
 	end
 end
 
-function VersusMechanism._clear_horde_ability_data(arg_133_0, arg_133_1)
+VersusMechanism._clear_horde_ability_data = function (arg_133_0, arg_133_1)
 	if arg_133_0._horde_ability_charges then
 		table.clear(arg_133_0._horde_ability_charges)
 	end
 end
 
-function VersusMechanism.get_cached_horde_ability_charges(arg_134_0, arg_134_1)
+VersusMechanism.get_cached_horde_ability_charges = function (arg_134_0, arg_134_1)
 	if arg_134_0._horde_ability_charges and arg_134_0._horde_ability_charges[arg_134_1] then
 		local var_134_0 = arg_134_0._horde_ability_charges[arg_134_1]
 
@@ -1974,7 +1974,7 @@ function VersusMechanism.get_cached_horde_ability_charges(arg_134_0, arg_134_1)
 	end
 end
 
-function VersusMechanism.override_loading_screen_music(arg_135_0)
+VersusMechanism.override_loading_screen_music = function (arg_135_0)
 	local var_135_0
 	local var_135_1 = var_0_6.music_overrides
 
@@ -1987,17 +1987,17 @@ function VersusMechanism.override_loading_screen_music(arg_135_0)
 	return var_135_0
 end
 
-function VersusMechanism.on_enter_custom_game_lobby(arg_136_0)
+VersusMechanism.on_enter_custom_game_lobby = function (arg_136_0)
 	arg_136_0._custom_game_settings_handler:request_full_sync()
 end
 
-function VersusMechanism.set_custom_game_settings_handler_enabled(arg_137_0, arg_137_1)
+VersusMechanism.set_custom_game_settings_handler_enabled = function (arg_137_0, arg_137_1)
 	if arg_137_0._custom_game_settings_handler then
 		arg_137_0._custom_game_settings_handler:set_enabled(arg_137_1)
 	end
 end
 
-function VersusMechanism.get_custom_game_setting(arg_138_0, arg_138_1)
+VersusMechanism.get_custom_game_setting = function (arg_138_0, arg_138_1)
 	local var_138_0 = false
 	local var_138_1
 
@@ -2008,11 +2008,11 @@ function VersusMechanism.get_custom_game_setting(arg_138_0, arg_138_1)
 	return var_138_1, var_138_0
 end
 
-function VersusMechanism.get_custom_game_settings_handler(arg_139_0)
+VersusMechanism.get_custom_game_settings_handler = function (arg_139_0)
 	return arg_139_0._custom_game_settings_handler
 end
 
-function VersusMechanism.custom_settings_enabled(arg_140_0)
+VersusMechanism.custom_settings_enabled = function (arg_140_0)
 	if arg_140_0._custom_game_settings_handler then
 		return arg_140_0._custom_game_settings_handler:is_enabled()
 	end

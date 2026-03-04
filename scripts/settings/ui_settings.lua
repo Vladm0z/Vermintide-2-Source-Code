@@ -863,7 +863,7 @@ UISettings.ability_ui_data = {
 
 DLCUtils.merge("ability_ui_data", UISettings.gamepad_ability_ui_data)
 setmetatable(UISettings.item_rarity_textures, {
-	__index = function(arg_1_0, arg_1_1)
+	__index = function (arg_1_0, arg_1_1)
 		return "icons_placeholder"
 	end
 })
@@ -1233,11 +1233,11 @@ UISettings.console_tooltip_pass_definitions = {
 	"console_item_background"
 }
 
-function UISettings.hero_fullscreen_menu_on_enter()
+UISettings.hero_fullscreen_menu_on_enter = function ()
 	print("hero_fullscreen_menu_on_enter")
 end
 
-function UISettings.hero_fullscreen_menu_on_exit()
+UISettings.hero_fullscreen_menu_on_exit = function ()
 	print("hero_fullscreen_menu_on_exit")
 end
 
@@ -2301,7 +2301,7 @@ function ButtonTextureByName(arg_4_0, arg_4_1)
 	return var_4_2
 end
 
-function UISettings.get_gamepad_input_texture_data(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+UISettings.get_gamepad_input_texture_data = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = PLATFORM
 
 	if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not arg_5_2 then
@@ -2368,7 +2368,7 @@ function UISettings.get_gamepad_input_texture_data(arg_5_0, arg_5_1, arg_5_2, ar
 	return var_5_1, var_5_2, var_5_3, var_5_7
 end
 
-function UISettings.set_console_settings()
+UISettings.set_console_settings = function ()
 	UISettings.subtitles_font_size = Application.user_setting("subtitles_font_size") or 20
 	UISettings.subtitles_background_alpha = 2.55 * (Application.user_setting("subtitles_background_opacity") or 20)
 

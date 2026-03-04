@@ -4,7 +4,7 @@ require("scripts/settings/mood_settings")
 
 MoodHandler = class(MoodHandler)
 
-function MoodHandler.init(arg_1_0, arg_1_1)
+MoodHandler.init = function (arg_1_0, arg_1_1)
 	arg_1_0.world = arg_1_1
 	arg_1_0.playing_particles = {}
 	arg_1_0.current_mood = "default"
@@ -27,7 +27,7 @@ function MoodHandler.init(arg_1_0, arg_1_1)
 	end
 end
 
-function MoodHandler.destroy(arg_2_0)
+MoodHandler.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0.world
 	local var_2_1 = arg_2_0.playing_particles
 
@@ -45,7 +45,7 @@ function MoodHandler.destroy(arg_2_0)
 	arg_2_0.mood_weights = nil
 end
 
-function MoodHandler.parse_environment_settings(arg_3_0, arg_3_1)
+MoodHandler.parse_environment_settings = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1.settings
 	local var_3_1 = {}
 	local var_3_2 = {}
@@ -92,7 +92,7 @@ function MoodHandler.parse_environment_settings(arg_3_0, arg_3_1)
 	return var_3_1, var_3_2
 end
 
-function MoodHandler._set_active_mood(arg_4_0, arg_4_1)
+MoodHandler._set_active_mood = function (arg_4_0, arg_4_1)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
@@ -111,7 +111,7 @@ function MoodHandler._set_active_mood(arg_4_0, arg_4_1)
 	arg_4_0.current_mood = arg_4_1
 end
 
-function MoodHandler.add_mood_blend(arg_5_0, arg_5_1, arg_5_2)
+MoodHandler.add_mood_blend = function (arg_5_0, arg_5_1, arg_5_2)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
@@ -136,7 +136,7 @@ function MoodHandler.add_mood_blend(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function MoodHandler.handle_particles(arg_6_0, arg_6_1, arg_6_2)
+MoodHandler.handle_particles = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.playing_particles
 	local var_6_1 = arg_6_0.world
 
@@ -177,13 +177,13 @@ function MoodHandler.handle_particles(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MoodHandler.update(arg_7_0, arg_7_1)
+MoodHandler.update = function (arg_7_0, arg_7_1)
 	arg_7_0:_update_mood_timers()
 	arg_7_0:update_mood_blends(arg_7_1)
 	arg_7_0:update_environment_variables()
 end
 
-function MoodHandler.update_mood_blends(arg_8_0, arg_8_1)
+MoodHandler.update_mood_blends = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.mood_weights
 
 	table.clear(var_8_0)
@@ -193,7 +193,7 @@ function MoodHandler.update_mood_blends(arg_8_0, arg_8_1)
 	arg_8_0:set_mood_weights(arg_8_1, arg_8_0.mood_blends, var_8_0, 1)
 end
 
-function MoodHandler.set_mood_weights(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+MoodHandler.set_mood_weights = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if arg_9_2 then
 		arg_9_2.value = arg_9_2.value + arg_9_2.speed * arg_9_1
 
@@ -211,7 +211,7 @@ function MoodHandler.set_mood_weights(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_
 	end
 end
 
-function MoodHandler.update_environment_variables(arg_10_0)
+MoodHandler.update_environment_variables = function (arg_10_0)
 	local var_10_0 = arg_10_0.environment_variables_to_set
 
 	table.clear(var_10_0)
@@ -274,7 +274,7 @@ function MoodHandler.update_environment_variables(arg_10_0)
 	arg_10_0.environment_weight_remainder = math.max(var_10_4, 0)
 end
 
-function MoodHandler.apply_environment_variables(arg_11_0, arg_11_1)
+MoodHandler.apply_environment_variables = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.environment_variables_type_map
 	local var_11_1 = arg_11_0.environment_weight_remainder
 
@@ -325,7 +325,7 @@ function MoodHandler.apply_environment_variables(arg_11_0, arg_11_1)
 	end
 end
 
-function MoodHandler.set_mood(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MoodHandler.set_mood = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0:has_mood(arg_12_1)
 
 	if not arg_12_3 and not var_12_0 then
@@ -341,7 +341,7 @@ function MoodHandler.set_mood(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0:_update_mood_priority()
 end
 
-function MoodHandler._set_mood_internal(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+MoodHandler._set_mood_internal = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_0._local_moods[arg_13_1][arg_13_2] = arg_13_3 or nil
 
 	if arg_13_1 ~= "default" then
@@ -359,7 +359,7 @@ function MoodHandler._set_mood_internal(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function MoodHandler.clear_mood(arg_14_0, arg_14_1)
+MoodHandler.clear_mood = function (arg_14_0, arg_14_1)
 	if not arg_14_0:has_mood(arg_14_1) then
 		return
 	end
@@ -369,11 +369,11 @@ function MoodHandler.clear_mood(arg_14_0, arg_14_1)
 	arg_14_0:_update_mood_priority()
 end
 
-function MoodHandler.has_mood(arg_15_0, arg_15_1)
+MoodHandler.has_mood = function (arg_15_0, arg_15_1)
 	return not table.is_empty(arg_15_0._local_moods[arg_15_1])
 end
 
-function MoodHandler._update_mood_timers(arg_16_0)
+MoodHandler._update_mood_timers = function (arg_16_0)
 	local var_16_0 = false
 	local var_16_1 = Managers.time:time("game")
 
@@ -392,7 +392,7 @@ function MoodHandler._update_mood_timers(arg_16_0)
 	end
 end
 
-function MoodHandler._update_mood_priority(arg_17_0)
+MoodHandler._update_mood_priority = function (arg_17_0)
 	local var_17_0 = MoodPriority
 	local var_17_1
 

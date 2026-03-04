@@ -6,7 +6,7 @@ script_data.debug_player_intensity = script_data.debug_player_intensity or Devel
 
 local var_0_0 = CurrentPacing or nil
 
-function Pacing.init(arg_1_0, arg_1_1)
+Pacing.init = function (arg_1_0, arg_1_1)
 	arg_1_0.world = arg_1_1
 	arg_1_0.pacing_state = "pacing_build_up"
 	arg_1_0._threat_population = 1
@@ -18,51 +18,51 @@ function Pacing.init(arg_1_0, arg_1_1)
 	var_0_0 = _G.CurrentPacing
 end
 
-function Pacing.disable(arg_2_0)
+Pacing.disable = function (arg_2_0)
 	arg_2_0._threat_population = 1
 	arg_2_0._specials_population = 0
 	arg_2_0._horde_population = 0
 	arg_2_0.pacing_state = "pacing_frozen"
 end
 
-function Pacing.enable(arg_3_0)
+Pacing.enable = function (arg_3_0)
 	arg_3_0._threat_population = 1
 	arg_3_0._specials_population = 1
 	arg_3_0._horde_population = 1
 	arg_3_0.pacing_state = "pacing_build_up"
 end
 
-function Pacing.disable_roamers(arg_4_0)
+Pacing.disable_roamers = function (arg_4_0)
 	arg_4_0._threat_population = 0
 end
 
-function Pacing.enable_hordes(arg_5_0, arg_5_1)
+Pacing.enable_hordes = function (arg_5_0, arg_5_1)
 	arg_5_0._horde_population = arg_5_1 and 1 or 0
 end
 
-function Pacing.pacing_frozen(arg_6_0, arg_6_1)
+Pacing.pacing_frozen = function (arg_6_0, arg_6_1)
 	return
 end
 
-function Pacing.pacing_build_up(arg_7_0, arg_7_1)
+Pacing.pacing_build_up = function (arg_7_0, arg_7_1)
 	if arg_7_0.total_intensity > var_0_0.peak_intensity_threshold then
 		arg_7_0:advance_pacing(arg_7_1)
 	end
 end
 
-function Pacing.pacing_sustain_peak(arg_8_0, arg_8_1)
+Pacing.pacing_sustain_peak = function (arg_8_0, arg_8_1)
 	if arg_8_1 > arg_8_0._end_pacing_time then
 		arg_8_0:advance_pacing(arg_8_1)
 	end
 end
 
-function Pacing.pacing_peak_fade(arg_9_0, arg_9_1)
+Pacing.pacing_peak_fade = function (arg_9_0, arg_9_1)
 	if arg_9_0.total_intensity < var_0_0.peak_fade_threshold then
 		arg_9_0:advance_pacing(arg_9_1)
 	end
 end
 
-function Pacing.pacing_relax(arg_10_0, arg_10_1)
+Pacing.pacing_relax = function (arg_10_0, arg_10_1)
 	if var_0_0.leave_relax_if_zero_intensity and arg_10_0.total_intensity <= 0 then
 		arg_10_0:advance_pacing(arg_10_1)
 
@@ -74,31 +74,31 @@ function Pacing.pacing_relax(arg_10_0, arg_10_1)
 	end
 end
 
-function Pacing.get_pacing_data(arg_11_0)
+Pacing.get_pacing_data = function (arg_11_0)
 	return arg_11_0.pacing_state, arg_11_0._state_start_time, arg_11_0._threat_population, arg_11_0._specials_population, arg_11_0._horde_population, arg_11_0._end_pacing_time
 end
 
-function Pacing.ignore_pacing_intensity_decay_delay(arg_12_0)
+Pacing.ignore_pacing_intensity_decay_delay = function (arg_12_0)
 	return arg_12_0.pacing_state == "pacing_relax"
 end
 
-function Pacing.get_state(arg_13_0)
+Pacing.get_state = function (arg_13_0)
 	return arg_13_0.pacing_state
 end
 
-function Pacing.threat_population(arg_14_0)
+Pacing.threat_population = function (arg_14_0)
 	return arg_14_0._threat_population
 end
 
-function Pacing.horde_population(arg_15_0)
+Pacing.horde_population = function (arg_15_0)
 	return arg_15_0._horde_population
 end
 
-function Pacing.specials_population(arg_16_0)
+Pacing.specials_population = function (arg_16_0)
 	return arg_16_0._specials_population
 end
 
-function Pacing.enemy_killed(arg_17_0, arg_17_1, arg_17_2)
+Pacing.enemy_killed = function (arg_17_0, arg_17_1, arg_17_2)
 	for iter_17_0 = 1, #arg_17_2 do
 		local var_17_0 = arg_17_2[iter_17_0]
 		local var_17_1 = Unit.local_position(arg_17_1, 0)
@@ -116,7 +116,7 @@ function Pacing.enemy_killed(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function Pacing.advance_pacing(arg_18_0, arg_18_1, arg_18_2)
+Pacing.advance_pacing = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.pacing_state
 	local var_18_1
 
@@ -170,7 +170,7 @@ function Pacing.advance_pacing(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._state_start_time = arg_18_1
 end
 
-function Pacing.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+Pacing.update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = #arg_19_3
 
 	if var_19_0 == 0 then
@@ -192,13 +192,13 @@ function Pacing.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0.total_intensity = var_19_1 / var_19_0
 end
 
-function Pacing.toggle_graph(arg_20_0)
+Pacing.toggle_graph = function (arg_20_0)
 	if arg_20_0.graph then
 		arg_20_0.graph:set_active(not arg_20_0.graph.active)
 	end
 end
 
-function Pacing.show_debug(arg_21_0, arg_21_1)
+Pacing.show_debug = function (arg_21_0, arg_21_1)
 	if not arg_21_0.graph then
 		return false
 	end
@@ -212,7 +212,7 @@ function Pacing.show_debug(arg_21_0, arg_21_1)
 	return true
 end
 
-function Pacing.debug_add_intensity(arg_22_0, arg_22_1, arg_22_2)
+Pacing.debug_add_intensity = function (arg_22_0, arg_22_1, arg_22_2)
 	for iter_22_0 = 1, #arg_22_1 do
 		local var_22_0 = arg_22_1[iter_22_0]
 
@@ -228,7 +228,7 @@ local var_0_2 = {
 	"player4"
 }
 
-function Pacing.intensity_graphs(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+Pacing.intensity_graphs = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if script_data.debug_player_intensity then
 		local var_23_0 = arg_23_0.graph
 
@@ -270,7 +270,7 @@ end
 
 local var_0_3 = 70
 
-function Pacing.annotate_graph(arg_24_0, arg_24_1, arg_24_2)
+Pacing.annotate_graph = function (arg_24_0, arg_24_1, arg_24_2)
 	if not arg_24_0.graph then
 		return
 	end
@@ -292,10 +292,10 @@ function Pacing.annotate_graph(arg_24_0, arg_24_1, arg_24_2)
 	})
 end
 
-function Pacing.get_pacing_intensity(arg_25_0)
+Pacing.get_pacing_intensity = function (arg_25_0)
 	return arg_25_0.total_intensity, arg_25_0.player_intensity
 end
 
-function Pacing.get_roaming_density(arg_26_0)
+Pacing.get_roaming_density = function (arg_26_0)
 	return 0.5
 end

@@ -2,7 +2,7 @@
 
 ExplosiveBarrelHealthExtension = class(ExplosiveBarrelHealthExtension, GenericHealthExtension)
 
-function ExplosiveBarrelHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ExplosiveBarrelHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ExplosiveBarrelHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0.in_hand = arg_1_3.in_hand
@@ -29,7 +29,7 @@ function ExplosiveBarrelHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function ExplosiveBarrelHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ExplosiveBarrelHealthExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0.owner_unit_health_extension
 
 	if var_2_0 then
@@ -77,11 +77,11 @@ function ExplosiveBarrelHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	end
 end
 
-function ExplosiveBarrelHealthExtension.apply_client_predicted_damage(arg_3_0, arg_3_1)
+ExplosiveBarrelHealthExtension.apply_client_predicted_damage = function (arg_3_0, arg_3_1)
 	return
 end
 
-function ExplosiveBarrelHealthExtension.add_damage(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11, arg_4_12, arg_4_13, arg_4_14, arg_4_15, arg_4_16, arg_4_17)
+ExplosiveBarrelHealthExtension.add_damage = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11, arg_4_12, arg_4_13, arg_4_14, arg_4_15, arg_4_16, arg_4_17)
 	if arg_4_4 and (arg_4_4 == "blade_storm" or arg_4_4 == "life_tap") then
 		return
 	end
@@ -135,7 +135,7 @@ function ExplosiveBarrelHealthExtension.add_damage(arg_4_0, arg_4_1, arg_4_2, ar
 	end
 end
 
-function ExplosiveBarrelHealthExtension.health_data(arg_5_0)
+ExplosiveBarrelHealthExtension.health_data = function (arg_5_0)
 	local var_5_0 = arg_5_0.last_damage_data
 
 	return {

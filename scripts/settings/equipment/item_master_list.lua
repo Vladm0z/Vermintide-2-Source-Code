@@ -130,7 +130,7 @@ end
 
 ItemMasterListMeta = ItemMasterListMeta or {}
 
-function ItemMasterListMeta.__index(arg_3_0, arg_3_1)
+ItemMasterListMeta.__index = function (arg_3_0, arg_3_1)
 	Crashify.print_exception("[ItemMasterList]", "ItemMaster List has no item %s", arg_3_1)
 end
 

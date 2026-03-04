@@ -2,7 +2,7 @@
 
 HandbookLogic = class(HandbookLogic)
 
-function HandbookLogic.init(arg_1_0, arg_1_1, arg_1_2)
+HandbookLogic.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._context = table.merge({
 		layout = arg_1_0
 	}, arg_1_1)
@@ -13,12 +13,12 @@ function HandbookLogic.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._reusable_material = false
 end
 
-function HandbookLogic.destroy(arg_2_0)
+HandbookLogic.destroy = function (arg_2_0)
 	arg_2_0:_destroy_video_players()
 	arg_2_0:_unload_packages()
 end
 
-function HandbookLogic.create_video_player(arg_3_0, arg_3_1)
+HandbookLogic.create_video_player = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._reference_name .. "@" .. arg_3_1
 	local var_3_1 = arg_3_0._video_references
 	local var_3_2 = arg_3_0._context
@@ -32,7 +32,7 @@ function HandbookLogic.create_video_player(arg_3_0, arg_3_1)
 	return var_3_0
 end
 
-function HandbookLogic._destroy_video_players(arg_4_0)
+HandbookLogic._destroy_video_players = function (arg_4_0)
 	if table.is_empty(arg_4_0._video_references) then
 		return
 	end
@@ -47,7 +47,7 @@ function HandbookLogic._destroy_video_players(arg_4_0)
 	table.clear(arg_4_0._video_references)
 end
 
-function HandbookLogic.load_texture_package(arg_5_0, arg_5_1, arg_5_2)
+HandbookLogic.load_texture_package = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._reusable_material
 
 	if not var_5_0 then
@@ -74,7 +74,7 @@ function HandbookLogic.load_texture_package(arg_5_0, arg_5_1, arg_5_2)
 	return "material_handbook_diffuse"
 end
 
-function HandbookLogic._unload_packages(arg_7_0)
+HandbookLogic._unload_packages = function (arg_7_0)
 	if arg_7_0._reusable_material then
 		Material.set_texture(arg_7_0._reusable_material, "diffuse_map", UISettings.transparent_placeholder_texture)
 
@@ -90,7 +90,7 @@ function HandbookLogic._unload_packages(arg_7_0)
 	table.clear(arg_7_0._loaded_packages)
 end
 
-function HandbookLogic._create_entry(arg_8_0, arg_8_1)
+HandbookLogic._create_entry = function (arg_8_0, arg_8_1)
 	if arg_8_1.condition == false then
 		return
 	end
@@ -118,7 +118,7 @@ function HandbookLogic._create_entry(arg_8_0, arg_8_1)
 	return var_8_3
 end
 
-function HandbookLogic.create_entry_widgets(arg_9_0, arg_9_1)
+HandbookLogic.create_entry_widgets = function (arg_9_0, arg_9_1)
 	local var_9_0 = {}
 
 	arg_9_0:_destroy_video_players()

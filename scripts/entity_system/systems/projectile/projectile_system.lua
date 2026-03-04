@@ -44,7 +44,7 @@ local var_0_2 = {
 local var_0_3 = 10
 local var_0_4 = math.pi * 2
 
-function ProjectileSystem.init(arg_1_0, arg_1_1, arg_1_2)
+ProjectileSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ProjectileSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -59,7 +59,7 @@ function ProjectileSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.owner_units_count = 0
 	arg_1_0._current_id = 1
 
-	function arg_1_0.projectile_owner_destroy_callback(arg_2_0)
+	arg_1_0.projectile_owner_destroy_callback = function (arg_2_0)
 		for iter_2_0, iter_2_1 in pairs(arg_1_0.player_projectile_units) do
 			if iter_2_0 == arg_2_0 then
 				for iter_2_2, iter_2_3 in pairs(iter_2_1) do
@@ -100,7 +100,7 @@ function ProjectileSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-function ProjectileSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+ProjectileSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 	if arg_3_0.is_server then
 		Managers.level_transition_handler.transient_package_loader:add_projectile(arg_3_2)
 	end
@@ -108,7 +108,7 @@ function ProjectileSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, .
 	return ExtensionSystemBase.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 end
 
-function ProjectileSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+ProjectileSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	ExtensionSystemBase.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 
 	if arg_4_0.is_server then
@@ -119,7 +119,7 @@ end
 local var_0_5 = {}
 local var_0_6 = {}
 
-function ProjectileSystem.update(arg_5_0, arg_5_1, arg_5_2)
+ProjectileSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
 	ProjectileSystem.super.update(arg_5_0, arg_5_1, arg_5_2)
 
 	local var_5_0 = arg_5_0.player_projectile_units
@@ -152,11 +152,11 @@ function ProjectileSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_drones(arg_5_1.dt, arg_5_2)
 end
 
-function ProjectileSystem.destroy(arg_6_0)
+ProjectileSystem.destroy = function (arg_6_0)
 	arg_6_0.network_event_delegate:unregister(arg_6_0)
 end
 
-function ProjectileSystem._get_projectile_units_names(arg_7_0, arg_7_1, arg_7_2)
+ProjectileSystem._get_projectile_units_names = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1.projectile_units_template
 
 	if arg_7_1.use_weapon_skin then
@@ -173,7 +173,7 @@ function ProjectileSystem._get_projectile_units_names(arg_7_0, arg_7_1, arg_7_2)
 	return var_0_0[var_7_0]
 end
 
-function ProjectileSystem.spawn_player_projectile(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15, arg_8_16)
+ProjectileSystem.spawn_player_projectile = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15, arg_8_16)
 	local var_8_0 = WeaponUtils.get_weapon_template(arg_8_9).actions[arg_8_10][arg_8_11]
 	local var_8_1 = var_8_0.projectile_info
 	local var_8_2 = var_8_1.gravity_settings
@@ -248,7 +248,7 @@ function ProjectileSystem.spawn_player_projectile(arg_8_0, arg_8_1, arg_8_2, arg
 	Managers.state.achievement:trigger_event("on_player_projectile_spawned", var_8_14, arg_8_1, arg_8_9)
 end
 
-function ProjectileSystem.spawn_globadier_globe(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15)
+ProjectileSystem.spawn_globadier_globe = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15)
 	if arg_9_0.is_server then
 		local var_9_0 = arg_9_13 and "bot_poison_wind" or nil
 		local var_9_1 = Managers.mechanism:current_mechanism_name() == "versus"
@@ -369,7 +369,7 @@ function ProjectileSystem.spawn_globadier_globe(arg_9_0, arg_9_1, arg_9_2, arg_9
 	end
 end
 
-function ProjectileSystem.rpc_spawn_globadier_globe(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11, arg_10_12, arg_10_13, arg_10_14, arg_10_15)
+ProjectileSystem.rpc_spawn_globadier_globe = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11, arg_10_12, arg_10_13, arg_10_14, arg_10_15)
 	fassert(arg_10_0.is_server, "Have to be server")
 
 	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_9)
@@ -378,7 +378,7 @@ function ProjectileSystem.rpc_spawn_globadier_globe(arg_10_0, arg_10_1, arg_10_2
 	arg_10_0:spawn_globadier_globe(arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, var_10_0, var_10_1, arg_10_11, arg_10_12, arg_10_13, arg_10_14, arg_10_15)
 end
 
-function ProjectileSystem.rpc_spawn_globadier_globe_fixed_impact(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18, arg_11_19, arg_11_20, arg_11_21)
+ProjectileSystem.rpc_spawn_globadier_globe_fixed_impact = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18, arg_11_19, arg_11_20, arg_11_21)
 	fassert(arg_11_0.is_server, "Have to be server")
 
 	local var_11_0 = Managers.state.network:game_object_or_level_unit(arg_11_16, true)
@@ -403,19 +403,19 @@ function ProjectileSystem.rpc_spawn_globadier_globe_fixed_impact(arg_11_0, arg_1
 	arg_11_0:spawn_globadier_globe(arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, var_11_1, var_11_2, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, var_11_3)
 end
 
-function ProjectileSystem.rpc_projectile_stopped(arg_12_0, arg_12_1, arg_12_2)
+ProjectileSystem.rpc_projectile_stopped = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.unit_storage:unit(arg_12_2)
 
 	ScriptUnit.extension(var_12_0, "projectile_locomotion_system"):stop()
 end
 
-function ProjectileSystem.rpc_drop_projectile(arg_13_0, arg_13_1, arg_13_2)
+ProjectileSystem.rpc_drop_projectile = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_2)
 
 	ScriptUnit.extension(var_13_0, "projectile_locomotion_system"):drop()
 end
 
-function ProjectileSystem.rpc_projectile_event(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ProjectileSystem.rpc_projectile_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0.unit_storage:unit(arg_14_2)
 	local var_14_1 = ScriptUnit.extension(var_14_0, "projectile_system")
 	local var_14_2 = NetworkLookup.projectile_external_event[arg_14_3]
@@ -429,7 +429,7 @@ function ProjectileSystem.rpc_projectile_event(arg_14_0, arg_14_1, arg_14_2, arg
 	end
 end
 
-function ProjectileSystem.rpc_spawn_pickup_projectile(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13)
+ProjectileSystem.rpc_spawn_pickup_projectile = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -473,7 +473,7 @@ function ProjectileSystem.rpc_spawn_pickup_projectile(arg_15_0, arg_15_1, arg_15
 	end
 end
 
-function ProjectileSystem.rpc_spawn_pickup_projectile_limited(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13)
+ProjectileSystem.rpc_spawn_pickup_projectile_limited = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -515,7 +515,7 @@ function ProjectileSystem.rpc_spawn_pickup_projectile_limited(arg_16_0, arg_16_1
 	end
 end
 
-function ProjectileSystem.rpc_spawn_explosive_pickup_projectile(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13, arg_17_14, arg_17_15, arg_17_16)
+ProjectileSystem.rpc_spawn_explosive_pickup_projectile = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13, arg_17_14, arg_17_15, arg_17_16)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -570,7 +570,7 @@ function ProjectileSystem.rpc_spawn_explosive_pickup_projectile(arg_17_0, arg_17
 	end
 end
 
-function ProjectileSystem.rpc_spawn_explosive_pickup_projectile_limited(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11, arg_18_12, arg_18_13, arg_18_14, arg_18_15, arg_18_16, arg_18_17, arg_18_18)
+ProjectileSystem.rpc_spawn_explosive_pickup_projectile_limited = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11, arg_18_12, arg_18_13, arg_18_14, arg_18_15, arg_18_16, arg_18_17, arg_18_18)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -631,7 +631,7 @@ function ProjectileSystem.rpc_spawn_explosive_pickup_projectile_limited(arg_18_0
 	end
 end
 
-function ProjectileSystem.spawn_true_flight_projectile(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15)
+ProjectileSystem.spawn_true_flight_projectile = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15)
 	local var_19_0 = WeaponUtils.get_weapon_template(arg_19_10).actions[arg_19_11][arg_19_12].projectile_info
 	local var_19_1 = var_19_0.gravity_settings
 	local var_19_2 = var_19_0.trajectory_template_name
@@ -676,7 +676,7 @@ function ProjectileSystem.spawn_true_flight_projectile(arg_19_0, arg_19_1, arg_1
 	arg_19_0:_add_player_projectile_reference(arg_19_1, var_19_8, var_19_0)
 end
 
-function ProjectileSystem.spawn_ai_true_flight_projectile(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9, arg_20_10, arg_20_11, arg_20_12, arg_20_13)
+ProjectileSystem.spawn_ai_true_flight_projectile = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9, arg_20_10, arg_20_11, arg_20_12, arg_20_13)
 	local var_20_0 = arg_20_9.gravity_settings
 	local var_20_1 = arg_20_9.trajectory_template_name
 	local var_20_2 = TrueFlightTemplates[arg_20_3]
@@ -721,7 +721,7 @@ function ProjectileSystem.spawn_ai_true_flight_projectile(arg_20_0, arg_20_1, ar
 	arg_20_0:_add_player_projectile_reference(arg_20_1, var_20_12, arg_20_9)
 end
 
-function ProjectileSystem._add_player_projectile_reference(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+ProjectileSystem._add_player_projectile_reference = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = Managers.time:time("game")
 
 	if not arg_21_0.player_projectile_units[arg_21_1] then
@@ -742,7 +742,7 @@ function ProjectileSystem._add_player_projectile_reference(arg_21_0, arg_21_1, a
 	end
 end
 
-function ProjectileSystem._remove_player_projectile_reference(arg_22_0, arg_22_1, arg_22_2)
+ProjectileSystem._remove_player_projectile_reference = function (arg_22_0, arg_22_1, arg_22_2)
 	for iter_22_0, iter_22_1 in pairs(arg_22_0.player_projectile_units) do
 		iter_22_1[arg_22_1] = nil
 	end
@@ -758,7 +758,7 @@ function ProjectileSystem._remove_player_projectile_reference(arg_22_0, arg_22_1
 	end
 end
 
-function ProjectileSystem.get_indexed_projectile_count(arg_23_0, arg_23_1)
+ProjectileSystem.get_indexed_projectile_count = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0.indexed_player_projectile_units[arg_23_1]
 
 	if not var_23_0 then
@@ -768,7 +768,7 @@ function ProjectileSystem.get_indexed_projectile_count(arg_23_0, arg_23_1)
 	return #var_23_0
 end
 
-function ProjectileSystem.get_and_delete_indexed_projectile(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+ProjectileSystem.get_and_delete_indexed_projectile = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_0.indexed_player_projectile_units[arg_24_1]
 
 	if not var_24_0 then
@@ -794,7 +794,7 @@ function ProjectileSystem.get_and_delete_indexed_projectile(arg_24_0, arg_24_1, 
 	return var_24_2
 end
 
-function ProjectileSystem.delete_indexed_projectiles(arg_25_0, arg_25_1)
+ProjectileSystem.delete_indexed_projectiles = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0.indexed_player_projectile_units[arg_25_1]
 
 	if not var_25_0 then
@@ -821,7 +821,7 @@ function ProjectileSystem.delete_indexed_projectiles(arg_25_0, arg_25_1)
 	arg_25_0.indexed_player_projectile_units[arg_25_1] = nil
 end
 
-function ProjectileSystem.rpc_generic_impact_projectile_impact(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
+ProjectileSystem.rpc_generic_impact_projectile_impact = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
 	if arg_26_0.is_server then
 		local var_26_0 = CHANNEL_TO_PEER_ID[arg_26_1]
 
@@ -875,7 +875,7 @@ function ProjectileSystem.rpc_generic_impact_projectile_impact(arg_26_0, arg_26_
 	end
 end
 
-function ProjectileSystem.rpc_generic_impact_projectile_force_impact(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+ProjectileSystem.rpc_generic_impact_projectile_force_impact = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	if arg_27_0.is_server then
 		local var_27_0 = CHANNEL_TO_PEER_ID[arg_27_1]
 
@@ -887,7 +887,7 @@ function ProjectileSystem.rpc_generic_impact_projectile_force_impact(arg_27_0, a
 	ScriptUnit.extension(var_27_1, "projectile_system"):force_impact(var_27_1, arg_27_3)
 end
 
-function ProjectileSystem.rpc_player_projectile_impact_level(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
+ProjectileSystem.rpc_player_projectile_impact_level = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
 	if arg_28_0.is_server then
 		local var_28_0 = CHANNEL_TO_PEER_ID[arg_28_1]
 
@@ -905,7 +905,7 @@ function ProjectileSystem.rpc_player_projectile_impact_level(arg_28_0, arg_28_1,
 	end
 end
 
-function ProjectileSystem.rpc_player_projectile_impact_dynamic(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7)
+ProjectileSystem.rpc_player_projectile_impact_dynamic = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7)
 	if arg_29_0.is_server then
 		local var_29_0 = CHANNEL_TO_PEER_ID[arg_29_1]
 
@@ -923,7 +923,7 @@ function ProjectileSystem.rpc_player_projectile_impact_dynamic(arg_29_0, arg_29_
 	end
 end
 
-function ProjectileSystem.create_light_weight_projectile(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9, arg_30_10, arg_30_11, arg_30_12, arg_30_13, arg_30_14, arg_30_15, arg_30_16, arg_30_17)
+ProjectileSystem.create_light_weight_projectile = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9, arg_30_10, arg_30_11, arg_30_12, arg_30_13, arg_30_14, arg_30_15, arg_30_16, arg_30_17)
 	local var_30_0 = arg_30_0.world
 	local var_30_1 = arg_30_0.is_server
 	local var_30_2 = Quaternion.look(arg_30_4, Vector3.up())
@@ -1063,7 +1063,7 @@ function ProjectileSystem.create_light_weight_projectile(arg_30_0, arg_30_1, arg
 	var_30_4.current_index = var_30_8
 end
 
-function ProjectileSystem.hot_join_sync(arg_31_0, arg_31_1)
+ProjectileSystem.hot_join_sync = function (arg_31_0, arg_31_1)
 	ProjectileSystem.super.hot_join_sync(arg_31_0, arg_31_1)
 
 	local var_31_0 = Managers.state.network
@@ -1091,7 +1091,7 @@ function ProjectileSystem.hot_join_sync(arg_31_0, arg_31_1)
 	end
 end
 
-function ProjectileSystem.rpc_clients_continuous_shoot_start(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
+ProjectileSystem.rpc_clients_continuous_shoot_start = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
 	local var_32_0 = Managers.state.network:game_object_or_level_unit(arg_32_2, arg_32_3)
 	local var_32_1 = NetworkLookup.breeds[arg_32_4]
 	local var_32_2 = Breeds[var_32_1]
@@ -1130,7 +1130,7 @@ function ProjectileSystem.rpc_clients_continuous_shoot_start(arg_32_0, arg_32_1,
 	}
 end
 
-function ProjectileSystem._update_shooting(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+ProjectileSystem._update_shooting = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	for iter_33_0, iter_33_1 in pairs(arg_33_3) do
 		local var_33_0 = iter_33_1.owner_unit
 		local var_33_1 = arg_33_2 - iter_33_1.shoot_start
@@ -1147,7 +1147,7 @@ function ProjectileSystem._update_shooting(arg_33_0, arg_33_1, arg_33_2, arg_33_
 	end
 end
 
-function ProjectileSystem._fire_from_position_direction(arg_34_0, arg_34_1, arg_34_2)
+ProjectileSystem._fire_from_position_direction = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = Unit.node(arg_34_1, "p_fx")
 	local var_34_1 = Unit.world_position(arg_34_1, var_34_0)
 	local var_34_2 = Managers.state.network:game()
@@ -1163,7 +1163,7 @@ function ProjectileSystem._fire_from_position_direction(arg_34_0, arg_34_1, arg_
 	return var_34_1 - Vector3.normalize(var_34_4) * 0.25, var_34_4
 end
 
-function ProjectileSystem._shoot(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+ProjectileSystem._shoot = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	local var_35_0, var_35_1 = arg_35_0:_fire_from_position_direction(arg_35_2.ratling_gun_unit, arg_35_2.owner_unit_id)
 	local var_35_2 = arg_35_2.light_weight_projectile_template
 	local var_35_3 = Vector3.normalize(var_35_1)
@@ -1191,7 +1191,7 @@ function ProjectileSystem._shoot(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_
 	arg_35_0:create_light_weight_projectile(arg_35_2.breed.name, arg_35_2.owner_unit, var_35_0, var_35_9, var_35_2.projectile_speed, nil, nil, var_35_2.projectile_max_range, var_35_10, var_35_13, var_35_2.light_weight_projectile_effect, arg_35_1, nil, var_35_15, var_35_16, arg_35_2.projectile_list)
 end
 
-function ProjectileSystem.rpc_clients_continuous_shoot_stop(arg_36_0, arg_36_1, arg_36_2)
+ProjectileSystem.rpc_clients_continuous_shoot_stop = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._light_weight.husk_shoot_list
 	local var_36_1 = var_36_0[arg_36_2]
 
@@ -1206,7 +1206,7 @@ function ProjectileSystem.rpc_clients_continuous_shoot_stop(arg_36_0, arg_36_1, 
 	var_36_0[arg_36_2] = nil
 end
 
-function ProjectileSystem.rpc_client_spawn_light_weight_projectile(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, arg_37_9, arg_37_10, arg_37_11, arg_37_12)
+ProjectileSystem.rpc_client_spawn_light_weight_projectile = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, arg_37_9, arg_37_10, arg_37_11, arg_37_12)
 	local var_37_0 = NetworkLookup.light_weight_projectile_effects[arg_37_9]
 	local var_37_1 = arg_37_0.network_manager:game_object_or_level_unit(arg_37_3, arg_37_10)
 	local var_37_2 = NetworkLookup.damage_sources[arg_37_2]
@@ -1215,7 +1215,7 @@ function ProjectileSystem.rpc_client_spawn_light_weight_projectile(arg_37_0, arg
 	arg_37_0:create_light_weight_projectile(var_37_2, var_37_1, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, nil, nil, nil, var_37_0, arg_37_11, var_37_3, nil, nil, nil, arg_37_12)
 end
 
-function ProjectileSystem.rpc_client_despawn_light_weight_projectile(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+ProjectileSystem.rpc_client_despawn_light_weight_projectile = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	local var_38_0 = arg_38_0._light_weight.husk_list[arg_38_2]
 
 	if var_38_0 then
@@ -1231,7 +1231,7 @@ function ProjectileSystem.rpc_client_despawn_light_weight_projectile(arg_38_0, a
 	end
 end
 
-function ProjectileSystem.rpc_client_create_aoe(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
+ProjectileSystem.rpc_client_create_aoe = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 	local var_39_0 = arg_39_0.world
 	local var_39_1 = arg_39_0.unit_storage:unit(arg_39_2)
 	local var_39_2 = NetworkLookup.damage_sources[arg_39_4]
@@ -1241,7 +1241,7 @@ function ProjectileSystem.rpc_client_create_aoe(arg_39_0, arg_39_1, arg_39_2, ar
 	DamageUtils.create_aoe(var_39_0, var_39_1, arg_39_3, var_39_2, var_39_4, arg_39_6)
 end
 
-function ProjectileSystem.spawn_drones(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6)
+ProjectileSystem.spawn_drones = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6)
 	local var_40_0 = ScriptUnit.has_extension(arg_40_1, "buff_system")
 
 	if var_40_0 then
@@ -1261,7 +1261,7 @@ end
 
 local var_0_7 = {}
 
-function ProjectileSystem.rpc_request_spawn_drones(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7)
+ProjectileSystem.rpc_request_spawn_drones = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7)
 	local var_41_0 = arg_41_0.unit_storage:unit(arg_41_2)
 
 	if not Unit.alive(var_41_0) then
@@ -1324,7 +1324,7 @@ local var_0_21 = math.pi * 2
 local var_0_22 = var_0_17
 local var_0_23 = var_0_16
 
-function ProjectileSystem.rpc_spawn_drones(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+ProjectileSystem.rpc_spawn_drones = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	local var_42_0 = arg_42_0.unit_storage:unit(arg_42_2)
 
 	if not Unit.alive(var_42_0) then
@@ -1519,7 +1519,7 @@ local function var_0_26(arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-function ProjectileSystem._update_drones(arg_46_0, arg_46_1, arg_46_2)
+ProjectileSystem._update_drones = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = arg_46_0._drones
 
 	if not var_46_0 then
@@ -1586,7 +1586,7 @@ function ProjectileSystem._update_drones(arg_46_0, arg_46_1, arg_46_2)
 	end
 end
 
-function ProjectileSystem._remove_light_weight_projectile(arg_47_0, arg_47_1, arg_47_2)
+ProjectileSystem._remove_light_weight_projectile = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0.world
 	local var_47_1 = arg_47_1 and arg_47_1.projectiles
 	local var_47_2 = var_47_1 and var_47_1[arg_47_2]
@@ -1644,7 +1644,7 @@ function ProjectileSystem._remove_light_weight_projectile(arg_47_0, arg_47_1, ar
 	end
 end
 
-function ProjectileSystem.physics_cb_light_weight_projectile_hit(arg_48_0, arg_48_1, arg_48_2)
+ProjectileSystem.physics_cb_light_weight_projectile_hit = function (arg_48_0, arg_48_1, arg_48_2)
 	if not arg_48_2 then
 		return
 	end
@@ -1687,7 +1687,7 @@ function ProjectileSystem.physics_cb_light_weight_projectile_hit(arg_48_0, arg_4
 	end
 end
 
-function ProjectileSystem._redirect_shield_linking(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+ProjectileSystem._redirect_shield_linking = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 	local var_49_0 = AiUtils.unit_breed(arg_49_1)
 
 	if not (HEALTH_ALIVE[arg_49_1] and var_49_0 and not var_49_0.no_effects_on_shield_block and not var_49_0.is_player) then
@@ -1707,7 +1707,7 @@ function ProjectileSystem._redirect_shield_linking(arg_49_0, arg_49_1, arg_49_2,
 	return arg_49_1, arg_49_2, arg_49_3
 end
 
-function ProjectileSystem._link_projectile(arg_50_0, arg_50_1, arg_50_2)
+ProjectileSystem._link_projectile = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_1.hit_unit
 	local var_50_1 = arg_50_1.hit_actor
 	local var_50_2 = arg_50_1.hit_position
@@ -1780,7 +1780,7 @@ function ProjectileSystem._link_projectile(arg_50_0, arg_50_1, arg_50_2)
 	Managers.state.network.network_transmit:send_rpc_all("rpc_spawn_and_link_units", var_50_21, var_50_18, var_50_19, var_50_22, var_50_20, var_50_23)
 end
 
-function ProjectileSystem._update_light_weight_projectiles(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+ProjectileSystem._update_light_weight_projectiles = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	arg_51_0:_server_update_light_weight_projectiles(arg_51_1, arg_51_2, arg_51_0._light_weight.own_data)
 
 	for iter_51_0, iter_51_1 in pairs(arg_51_0._light_weight.husk_list) do
@@ -1792,7 +1792,7 @@ function ProjectileSystem._update_light_weight_projectiles(arg_51_0, arg_51_1, a
 	end
 end
 
-function ProjectileSystem._print_debug(arg_52_0)
+ProjectileSystem._print_debug = function (arg_52_0)
 	if Development.parameter("debug_light_weight_projectiles") then
 		Debug.text("Own projectiles: " .. tostring(table.size(arg_52_0._light_weight.own_data.projectiles)))
 		Debug.text("Husk list: " .. tostring(table.size(arg_52_0._light_weight.husk_list)))
@@ -1817,7 +1817,7 @@ end
 
 local var_0_27 = {}
 
-function ProjectileSystem._server_update_light_weight_projectiles(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+ProjectileSystem._server_update_light_weight_projectiles = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	local var_53_0 = arg_53_3.projectiles
 	local var_53_1 = arg_53_3.current_index
 	local var_53_2 = arg_53_0.world
@@ -1846,7 +1846,7 @@ function ProjectileSystem._server_update_light_weight_projectiles(arg_53_0, arg_
 	table.clear(var_53_3)
 end
 
-function ProjectileSystem._client_update_light_weight_projectiles(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+ProjectileSystem._client_update_light_weight_projectiles = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 	local var_54_0 = arg_54_3.projectiles
 	local var_54_1 = arg_54_3.current_index
 	local var_54_2 = arg_54_0.world
@@ -1858,7 +1858,7 @@ function ProjectileSystem._client_update_light_weight_projectiles(arg_54_0, arg_
 	end
 end
 
-function ProjectileSystem._move_light_weight_projectile(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+ProjectileSystem._move_light_weight_projectile = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = arg_55_3.position:unbox()
 	local var_55_1 = arg_55_3.direction:unbox()
 	local var_55_2 = arg_55_3.rotation:unbox()

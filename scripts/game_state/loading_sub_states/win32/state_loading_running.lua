@@ -5,7 +5,7 @@ require("scripts/ui/views/loading_view")
 StateLoadingRunning = class(StateLoadingRunning)
 StateLoadingRunning.NAME = "StateLoadingRunning"
 
-function StateLoadingRunning.on_enter(arg_1_0, arg_1_1)
+StateLoadingRunning.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateLoadingRunning")
 	arg_1_0:_init_network()
 
@@ -31,7 +31,7 @@ function StateLoadingRunning.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function StateLoadingRunning._init_network(arg_2_0)
+StateLoadingRunning._init_network = function (arg_2_0)
 	local var_2_0 = arg_2_0.parent.parent.loading_context
 
 	if not arg_2_0.parent:has_registered_rpcs() then
@@ -91,7 +91,7 @@ function StateLoadingRunning._init_network(arg_2_0)
 	end
 end
 
-function StateLoadingRunning.update(arg_3_0, arg_3_1)
+StateLoadingRunning.update = function (arg_3_0, arg_3_1)
 	if IS_XB1 and arg_3_0.parent:waiting_for_cleanup() then
 		return
 	end
@@ -123,6 +123,6 @@ function StateLoadingRunning.update(arg_3_0, arg_3_1)
 	end
 end
 
-function StateLoadingRunning.on_exit(arg_4_0, arg_4_1)
+StateLoadingRunning.on_exit = function (arg_4_0, arg_4_1)
 	return
 end

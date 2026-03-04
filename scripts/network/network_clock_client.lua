@@ -47,7 +47,7 @@ local var_0_3 = {
 	"rpc_network_current_server_time_response"
 }
 
-function NetworkClockClient.init(arg_4_0)
+NetworkClockClient.init = function (arg_4_0)
 	arg_4_0._clock = 0
 	arg_4_0._delta_mean = nil
 	arg_4_0._delta_history = {}
@@ -56,23 +56,23 @@ function NetworkClockClient.init(arg_4_0)
 	arg_4_0._state = "syncing"
 end
 
-function NetworkClockClient.register_rpcs(arg_5_0, arg_5_1)
+NetworkClockClient.register_rpcs = function (arg_5_0, arg_5_1)
 	arg_5_1:register(arg_5_0, unpack(var_0_3))
 
 	arg_5_0._network_event_delegate = arg_5_1
 end
 
-function NetworkClockClient.unregister_rpcs(arg_6_0)
+NetworkClockClient.unregister_rpcs = function (arg_6_0)
 	arg_6_0._network_event_delegate:unregister(arg_6_0)
 
 	arg_6_0._network_event_delegate = nil
 end
 
-function NetworkClockClient.synchronized(arg_7_0)
+NetworkClockClient.synchronized = function (arg_7_0)
 	return arg_7_0._state == "synced" and true or false
 end
 
-function NetworkClockClient.time(arg_8_0)
+NetworkClockClient.time = function (arg_8_0)
 	return arg_8_0._clock
 end
 
@@ -80,7 +80,7 @@ local var_0_4 = 3
 local var_0_5 = 6
 local var_0_6 = 2
 
-function NetworkClockClient.update(arg_9_0, arg_9_1)
+NetworkClockClient.update = function (arg_9_0, arg_9_1)
 	if arg_9_0._state == "syncing" then
 		arg_9_0:_update_clock(arg_9_1)
 
@@ -127,7 +127,7 @@ function NetworkClockClient.update(arg_9_0, arg_9_1)
 	end
 end
 
-function NetworkClockClient._update_clock(arg_10_0, arg_10_1)
+NetworkClockClient._update_clock = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._clock + arg_10_1
 
 	if var_10_0 < 0 then
@@ -143,7 +143,7 @@ local function var_0_7(arg_11_0, arg_11_1)
 	return arg_11_0 < arg_11_1
 end
 
-function NetworkClockClient._update_delta_history(arg_12_0, arg_12_1)
+NetworkClockClient._update_delta_history = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._delta_history
 
 	var_12_0[#var_12_0 + 1] = arg_12_1
@@ -153,7 +153,7 @@ function NetworkClockClient._update_delta_history(arg_12_0, arg_12_1)
 	arg_12_0._delta_history = var_12_0
 end
 
-function NetworkClockClient._calculate_mean_dt(arg_13_0)
+NetworkClockClient._calculate_mean_dt = function (arg_13_0)
 	local var_13_0 = arg_13_0._delta_history
 	local var_13_1 = var_0_0(var_13_0)
 	local var_13_2 = var_0_2(var_13_0, var_13_1)
@@ -176,11 +176,11 @@ function NetworkClockClient._calculate_mean_dt(arg_13_0)
 	arg_13_0._delta_history = var_13_0
 end
 
-function NetworkClockClient.destroy(arg_14_0)
+NetworkClockClient.destroy = function (arg_14_0)
 	return
 end
 
-function NetworkClockClient._debug_stuff(arg_15_0, arg_15_1)
+NetworkClockClient._debug_stuff = function (arg_15_0, arg_15_1)
 	local var_15_0 = Managers.state.debug_text
 
 	if var_15_0 then
@@ -198,7 +198,7 @@ function NetworkClockClient._debug_stuff(arg_15_0, arg_15_1)
 	end
 end
 
-function NetworkClockClient.rpc_network_time_sync_response(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+NetworkClockClient.rpc_network_time_sync_response = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0._clock
 	local var_16_1 = (var_16_0 - arg_16_2) / 2
 	local var_16_2 = arg_16_3 - var_16_0 + var_16_1
@@ -218,7 +218,7 @@ function NetworkClockClient.rpc_network_time_sync_response(arg_16_0, arg_16_1, a
 	end
 end
 
-function NetworkClockClient.rpc_network_current_server_time_response(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+NetworkClockClient.rpc_network_current_server_time_response = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0._clock
 	local var_17_1 = (var_17_0 - arg_17_2) / 2
 	local var_17_2 = arg_17_3 - var_17_0 + var_17_1

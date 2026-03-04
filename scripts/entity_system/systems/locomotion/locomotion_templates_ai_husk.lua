@@ -22,7 +22,7 @@ end
 
 var_0_0.AiHuskLocomotionExtension = {}
 
-function var_0_0.AiHuskLocomotionExtension.init(arg_3_0, arg_3_1)
+var_0_0.AiHuskLocomotionExtension.init = function (arg_3_0, arg_3_1)
 	arg_3_0.nav_world = arg_3_1
 	arg_3_0.destroy_units = {}
 	arg_3_0.all_update_units = {}
@@ -33,7 +33,7 @@ end
 
 local var_0_8 = false
 
-function var_0_0.AiHuskLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.AiHuskLocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = Managers.state.network:game()
 
 	if var_4_0 == nil then
@@ -53,7 +53,7 @@ function var_0_0.AiHuskLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function var_0_0.AiHuskLocomotionExtension.update_alive(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.AiHuskLocomotionExtension.update_alive = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.all_update_units
 	local var_5_1 = arg_5_0.pure_network_update_units
 	local var_5_2 = arg_5_0.other_update_units
@@ -67,7 +67,7 @@ function var_0_0.AiHuskLocomotionExtension.update_alive(arg_5_0, arg_5_1, arg_5_
 	end
 end
 
-function var_0_0.AiHuskLocomotionExtension.update_pure_network_update_units(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.AiHuskLocomotionExtension.update_pure_network_update_units = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = GameSession.game_object_field
 	local var_6_1 = Vector3.length_squared
 	local var_6_2 = Vector3.length
@@ -160,7 +160,7 @@ end
 
 local var_0_9 = 0.5
 
-function var_0_0.AiHuskLocomotionExtension.update_other_update_units_navmesh_check(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.AiHuskLocomotionExtension.update_other_update_units_navmesh_check = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.nav_world
 	local var_7_1
 	local var_7_2
@@ -202,7 +202,7 @@ function var_0_0.AiHuskLocomotionExtension.update_other_update_units_navmesh_che
 	end
 end
 
-function var_0_0.AiHuskLocomotionExtension.update_other_update_units(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.AiHuskLocomotionExtension.update_other_update_units = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = GameSession.game_object_field
 	local var_8_1 = Vector3.length_squared
 	local var_8_2 = Vector3.length

@@ -2,7 +2,7 @@
 
 BeastmenStandardExtension = class(BeastmenStandardExtension)
 
-function BeastmenStandardExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BeastmenStandardExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.world = var_1_0
@@ -93,7 +93,7 @@ function BeastmenStandardExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function BeastmenStandardExtension.destroy(arg_2_0)
+BeastmenStandardExtension.destroy = function (arg_2_0)
 	Managers.state.side:remove_unit_from_side(arg_2_0.unit)
 
 	if not arg_2_0.dead then
@@ -101,7 +101,7 @@ function BeastmenStandardExtension.destroy(arg_2_0)
 	end
 end
 
-function BeastmenStandardExtension.on_death(arg_3_0, arg_3_1)
+BeastmenStandardExtension.on_death = function (arg_3_0, arg_3_1)
 	if arg_3_0.is_server then
 		local var_3_0 = Managers.state.entity:system("buff_system")
 
@@ -176,7 +176,7 @@ function BeastmenStandardExtension.on_death(arg_3_0, arg_3_1)
 	arg_3_0.standard_template = nil
 end
 
-function BeastmenStandardExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BeastmenStandardExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if arg_4_0.dead then
 		return
 	end
@@ -243,7 +243,7 @@ function BeastmenStandardExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	end
 end
 
-function BeastmenStandardExtension._update_self_destruction(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BeastmenStandardExtension._update_self_destruction = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0.player_astar_data
 	local var_5_1 = arg_5_0.nav_world
 	local var_5_2 = arg_5_0.side.ENEMY_PLAYER_UNITS

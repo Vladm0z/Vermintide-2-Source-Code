@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTInterestPointApproachAction = class(BTInterestPointApproachAction, BTNode)
 BTInterestPointApproachAction.name = "BTInterestPointApproachAction"
 
-function BTInterestPointApproachAction.init(arg_1_0, ...)
+BTInterestPointApproachAction.init = function (arg_1_0, ...)
 	BTInterestPointApproachAction.super.init(arg_1_0, ...)
 end
 
-function BTInterestPointApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInterestPointApproachAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.system_api.ai_interest_point_system.get_claim(arg_2_2.ip_request_id).point
 	local var_2_1 = Vector3Aux.unbox(var_2_0.position)
 	local var_2_2 = arg_2_2.breed
@@ -37,7 +37,7 @@ function BTInterestPointApproachAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.move_state = "moving"
 end
 
-function BTInterestPointApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTInterestPointApproachAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.ip_state = nil
 	arg_3_2.ip_target_position = nil
 	arg_3_2.ip_target_rotation = nil
@@ -60,7 +60,7 @@ function BTInterestPointApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 			arg_3_2.ip_request_id = nil
 		end
 	elseif arg_3_4 == "aborted" then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_3_3 = arg_3_2.group_blackboard
@@ -68,7 +68,7 @@ function BTInterestPointApproachAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	var_3_3.rats_currently_moving_to_ip = var_3_3.rats_currently_moving_to_ip - 1
 end
 
-function BTInterestPointApproachAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTInterestPointApproachAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if script_data.ai_interest_point_debug then
 		Debug.text("BTInterestPointApproachAction state = %s", arg_4_2.ip_state)
 		QuickDrawer:circle(arg_4_2.ip_root_pos:unbox(), 20, Vector3.up())

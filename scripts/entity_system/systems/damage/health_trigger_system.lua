@@ -8,19 +8,19 @@ local var_0_0 = {
 	"HealthTriggerExtension"
 }
 
-function HealthTriggerSystem.init(arg_1_0, arg_1_1, arg_1_2)
+HealthTriggerSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	HealthTriggerSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0.unit_extensions = {}
 end
 
-function HealthTriggerSystem.destroy(arg_2_0)
+HealthTriggerSystem.destroy = function (arg_2_0)
 	assert(not next(arg_2_0.unit_extensions), "Found at least one unit that hasn't been unregistered for health trigger system.")
 
 	arg_2_0.unit_extensions = nil
 end
 
-function HealthTriggerSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+HealthTriggerSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 	local var_3_0 = {}
 
 	ScriptUnit.set_extension(arg_3_2, "health_trigger_system", var_3_0)
@@ -32,14 +32,14 @@ function HealthTriggerSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	return var_3_0
 end
 
-function HealthTriggerSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+HealthTriggerSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	assert(ScriptUnit.has_extension(arg_4_1, "health_trigger_system"), "Trying to remove non-existing extension %q from unit %s", arg_4_2, arg_4_1)
 	ScriptUnit.remove_extension(arg_4_1, "health_trigger_system")
 
 	arg_4_0.unit_extensions[arg_4_1] = nil
 end
 
-function HealthTriggerSystem.extensions_ready(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+HealthTriggerSystem.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	assert(arg_5_0.is_server, "[HealthTriggerSystem] Clients should not hold health trigger extensions")
 
 	local var_5_0 = arg_5_0.unit_extensions[arg_5_2]
@@ -57,7 +57,7 @@ end
 local var_0_1 = HealthTriggerSettings.levels
 local var_0_2 = HealthTriggerSettings.rapid_health_loss
 
-function HealthTriggerSystem.update(arg_6_0, arg_6_1, arg_6_2)
+HealthTriggerSystem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	for iter_6_0, iter_6_1 in pairs(arg_6_0.unit_extensions) do
 		local var_6_0 = iter_6_1.last_health_percent
 		local var_6_1 = iter_6_1.health_extension:current_health_percent()

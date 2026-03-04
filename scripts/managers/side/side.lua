@@ -3,7 +3,7 @@
 SideRelations, SideRelationLookup = table.enum_lookup("ally", "enemy", "neutral")
 Side = class(Side)
 
-function Side.init(arg_1_0, arg_1_1, arg_1_2)
+Side.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._name = arg_1_1.name
 	arg_1_0._units = {}
 	arg_1_0.units_lookup = {}
@@ -61,7 +61,7 @@ function Side.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.AI_TARGET_UNITS = {}
 end
 
-function Side.set_relation(arg_2_0, arg_2_1, arg_2_2)
+Side.set_relation = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0
 	local var_2_1
 	local var_2_2
@@ -91,19 +91,19 @@ function Side.set_relation(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function Side.name(arg_3_0)
+Side.name = function (arg_3_0)
 	return arg_3_0._name
 end
 
-function Side.get_enemy_sides(arg_4_0)
+Side.get_enemy_sides = function (arg_4_0)
 	return arg_4_0._enemy_sides
 end
 
-function Side.get_allied_sides(arg_5_0)
+Side.get_allied_sides = function (arg_5_0)
 	return arg_5_0._allied_sides
 end
 
-function Side.add_unit(arg_6_0, arg_6_1)
+Side.add_unit = function (arg_6_0, arg_6_1)
 	fassert(arg_6_0.units_lookup[arg_6_1] == nil, "Unit is already added to side.")
 
 	local var_6_0 = arg_6_0._num_units + 1
@@ -113,7 +113,7 @@ function Side.add_unit(arg_6_0, arg_6_1)
 	arg_6_0._num_units = var_6_0
 end
 
-function Side.remove_unit(arg_7_0, arg_7_1)
+Side.remove_unit = function (arg_7_0, arg_7_1)
 	fassert(arg_7_0.units_lookup[arg_7_1] ~= nil, "Unit has not been added or is already removed from side.")
 
 	local var_7_0 = arg_7_0._units
@@ -129,11 +129,11 @@ function Side.remove_unit(arg_7_0, arg_7_1)
 	arg_7_0._num_units = var_7_1 - 1
 end
 
-function Side.broadphase_categories_by_relation(arg_8_0, arg_8_1)
+Side.broadphase_categories_by_relation = function (arg_8_0, arg_8_1)
 	return arg_8_0._broadphase_categories_by_relation[arg_8_1]
 end
 
-function Side.add_enemy_unit(arg_9_0, arg_9_1)
+Side.add_enemy_unit = function (arg_9_0, arg_9_1)
 	fassert(arg_9_0.enemy_units_lookup[arg_9_1] == nil, "Enemy unit is already added to side.")
 
 	local var_9_0 = arg_9_0._num_enemy_units + 1
@@ -143,7 +143,7 @@ function Side.add_enemy_unit(arg_9_0, arg_9_1)
 	arg_9_0._num_enemy_units = var_9_0
 end
 
-function Side.remove_enemy_unit(arg_10_0, arg_10_1)
+Side.remove_enemy_unit = function (arg_10_0, arg_10_1)
 	fassert(arg_10_0.enemy_units_lookup[arg_10_1] ~= nil, "Enemy unit has not been added or is already removed from side.")
 
 	local var_10_0 = arg_10_0._enemy_units
@@ -159,7 +159,7 @@ function Side.remove_enemy_unit(arg_10_0, arg_10_1)
 	arg_10_0._num_enemy_units = var_10_1 - 1
 end
 
-function Side.add_allied_unit(arg_11_0, arg_11_1)
+Side.add_allied_unit = function (arg_11_0, arg_11_1)
 	fassert(arg_11_0.allied_units_lookup[arg_11_1] == nil, "Ally unit is already added to side.")
 
 	local var_11_0 = arg_11_0._num_allied_units + 1
@@ -169,7 +169,7 @@ function Side.add_allied_unit(arg_11_0, arg_11_1)
 	arg_11_0._num_allied_units = var_11_0
 end
 
-function Side.remove_allied_unit(arg_12_0, arg_12_1)
+Side.remove_allied_unit = function (arg_12_0, arg_12_1)
 	fassert(arg_12_0.allied_units_lookup[arg_12_1] ~= nil, "Ally unit has not been added or is already removed from side.")
 
 	local var_12_0 = arg_12_0._allied_units
@@ -185,7 +185,7 @@ function Side.remove_allied_unit(arg_12_0, arg_12_1)
 	arg_12_0._num_allied_units = var_12_1 - 1
 end
 
-function Side.add_player_unit(arg_13_0, arg_13_1)
+Side.add_player_unit = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._player_units
 
 	fassert(table.find(var_13_0, arg_13_1) == nil, "player_unit has already been added to side.")
@@ -193,7 +193,7 @@ function Side.add_player_unit(arg_13_0, arg_13_1)
 	var_13_0[#var_13_0 + 1] = arg_13_1
 end
 
-function Side.remove_player_unit(arg_14_0, arg_14_1)
+Side.remove_player_unit = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._player_units
 	local var_14_1 = table.find(var_14_0, arg_14_1)
 
@@ -201,7 +201,7 @@ function Side.remove_player_unit(arg_14_0, arg_14_1)
 	table.swap_delete(var_14_0, var_14_1)
 end
 
-function Side.add_enemy_player_unit(arg_15_0, arg_15_1)
+Side.add_enemy_player_unit = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._enemy_player_units
 
 	fassert(table.find(var_15_0, arg_15_1) == nil, "player_unit has already been added as an enemy.")
@@ -209,7 +209,7 @@ function Side.add_enemy_player_unit(arg_15_0, arg_15_1)
 	var_15_0[#var_15_0 + 1] = arg_15_1
 end
 
-function Side.remove_enemy_player_unit(arg_16_0, arg_16_1)
+Side.remove_enemy_player_unit = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._enemy_player_units
 	local var_16_1 = table.find(var_16_0, arg_16_1)
 
@@ -217,14 +217,14 @@ function Side.remove_enemy_player_unit(arg_16_0, arg_16_1)
 	table.swap_delete(var_16_0, var_16_1)
 end
 
-function Side.player_units(arg_17_0)
+Side.player_units = function (arg_17_0)
 	return arg_17_0._player_units
 end
 
-function Side.enemy_player_units(arg_18_0)
+Side.enemy_player_units = function (arg_18_0)
 	return arg_18_0._enemy_player_units
 end
 
-function Side.enemy_units(arg_19_0)
+Side.enemy_units = function (arg_19_0)
 	return arg_19_0._enemy_units
 end

@@ -56,7 +56,7 @@ var_0_0.ai_breed_snippets_file_names = {
 	"scripts/settings/dlcs/morris/morris_ai_breed_snippets"
 }
 var_0_0.bt_enter_hooks = {
-	on_skulking_sorcerer_grab = function(arg_1_0, arg_1_1, arg_1_2)
+	on_skulking_sorcerer_grab = function (arg_1_0, arg_1_1, arg_1_2)
 		ScriptUnit.extension(arg_1_0, "health_system").is_invincible = false
 
 		local var_1_0 = arg_1_1.target_unit

@@ -2,7 +2,7 @@
 
 CareerAbilityDRIronbreaker = class(CareerAbilityDRIronbreaker)
 
-function CareerAbilityDRIronbreaker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityDRIronbreaker.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -19,7 +19,7 @@ function CareerAbilityDRIronbreaker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._priming_fx_name = "fx/chr_ironbreaker_aoe_decal"
 end
 
-function CareerAbilityDRIronbreaker.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+CareerAbilityDRIronbreaker.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
@@ -31,11 +31,11 @@ function CareerAbilityDRIronbreaker.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function CareerAbilityDRIronbreaker.destroy(arg_3_0)
+CareerAbilityDRIronbreaker.destroy = function (arg_3_0)
 	return
 end
 
-function CareerAbilityDRIronbreaker.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityDRIronbreaker.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0:_ability_available() then
 		return
 	end
@@ -71,20 +71,20 @@ function CareerAbilityDRIronbreaker.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-function CareerAbilityDRIronbreaker.stop(arg_5_0, arg_5_1)
+CareerAbilityDRIronbreaker.stop = function (arg_5_0, arg_5_1)
 	if arg_5_1 ~= "pushed" and arg_5_1 ~= "stunned" and arg_5_0._is_priming then
 		arg_5_0:_stop_priming()
 	end
 end
 
-function CareerAbilityDRIronbreaker._ability_available(arg_6_0)
+CareerAbilityDRIronbreaker._ability_available = function (arg_6_0)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = arg_6_0._status_extension
 
 	return var_6_0:can_use_activated_ability() and not var_6_1:is_disabled()
 end
 
-function CareerAbilityDRIronbreaker._start_priming(arg_7_0)
+CareerAbilityDRIronbreaker._start_priming = function (arg_7_0)
 	if arg_7_0._local_player then
 		local var_7_0 = arg_7_0._world
 		local var_7_1 = arg_7_0._priming_fx_name
@@ -95,7 +95,7 @@ function CareerAbilityDRIronbreaker._start_priming(arg_7_0)
 	arg_7_0._is_priming = true
 end
 
-function CareerAbilityDRIronbreaker._update_priming(arg_8_0, arg_8_1)
+CareerAbilityDRIronbreaker._update_priming = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._priming_fx_id
 
 	if var_8_0 then
@@ -107,7 +107,7 @@ function CareerAbilityDRIronbreaker._update_priming(arg_8_0, arg_8_1)
 	end
 end
 
-function CareerAbilityDRIronbreaker._stop_priming(arg_9_0)
+CareerAbilityDRIronbreaker._stop_priming = function (arg_9_0)
 	local var_9_0 = arg_9_0._priming_fx_id
 
 	if var_9_0 then
@@ -121,7 +121,7 @@ function CareerAbilityDRIronbreaker._stop_priming(arg_9_0)
 	arg_9_0._is_priming = false
 end
 
-function CareerAbilityDRIronbreaker._run_ability(arg_10_0)
+CareerAbilityDRIronbreaker._run_ability = function (arg_10_0)
 	arg_10_0:_stop_priming()
 
 	local var_10_0 = arg_10_0._owner_unit
@@ -232,7 +232,7 @@ function CareerAbilityDRIronbreaker._run_ability(arg_10_0)
 	var_10_7:start_activated_ability_cooldown()
 end
 
-function CareerAbilityDRIronbreaker._play_vo(arg_11_0)
+CareerAbilityDRIronbreaker._play_vo = function (arg_11_0)
 	local var_11_0 = arg_11_0._owner_unit
 	local var_11_1 = ScriptUnit.extension_input(var_11_0, "dialogue_system")
 	local var_11_2 = FrameTable.alloc_table()
@@ -240,7 +240,7 @@ function CareerAbilityDRIronbreaker._play_vo(arg_11_0)
 	var_11_1:trigger_networked_dialogue_event("activate_ability", var_11_2)
 end
 
-function CareerAbilityDRIronbreaker._play_vfx(arg_12_0)
+CareerAbilityDRIronbreaker._play_vfx = function (arg_12_0)
 	local var_12_0 = arg_12_0._owner_unit
 	local var_12_1 = arg_12_0._network_manager
 	local var_12_2 = var_12_1.network_transmit

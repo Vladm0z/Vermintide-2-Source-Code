@@ -134,7 +134,7 @@ function flow_callback_spawn_ai_and_move_to_unit(arg_12_0)
 	local var_12_9 = Breeds[var_12_0]
 	local var_12_10 = {
 		move_to_position = var_12_8,
-		spawned_func = function(arg_13_0, arg_13_1, arg_13_2)
+		spawned_func = function (arg_13_0, arg_13_1, arg_13_2)
 			local var_13_0 = BLACKBOARDS[arg_13_0]
 
 			var_13_0.goal_destination = arg_13_2.move_to_position
@@ -189,7 +189,7 @@ function flow_callback_spawn_ai_with_animation_and_move_to_unit(arg_14_0)
 		spawn_anim = var_14_11,
 		spawn_rot = var_14_13,
 		spawn_exit_time = var_14_15,
-		spawned_func = function(arg_15_0, arg_15_1, arg_15_2)
+		spawned_func = function (arg_15_0, arg_15_1, arg_15_2)
 			local var_15_0 = BLACKBOARDS[arg_15_0]
 
 			var_15_0.goal_destination = arg_15_2.move_to_position
@@ -257,7 +257,7 @@ function flow_callback_ai_follow_path(arg_18_0)
 		local var_18_4 = Managers.state.conflict
 
 		for iter_18_0, iter_18_1 in pairs(var_18_3:spawned_units()) do
-			-- block empty
+			-- Nothing
 		end
 	end
 end
@@ -273,7 +273,7 @@ function flow_callback_ai_patrol_path(arg_19_0)
 		local var_19_3 = Managers.state.conflict
 
 		for iter_19_0, iter_19_1 in pairs(var_19_2:spawned_units()) do
-			-- block empty
+			-- Nothing
 		end
 	end
 end

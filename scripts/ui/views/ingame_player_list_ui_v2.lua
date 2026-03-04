@@ -34,7 +34,7 @@ local var_0_6 = {
 
 IngamePlayerListUI = class(IngamePlayerListUI)
 
-function IngamePlayerListUI.init(arg_1_0, arg_1_1, arg_1_2)
+IngamePlayerListUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_2.ui_top_renderer
@@ -85,7 +85,7 @@ function IngamePlayerListUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "weave_objective_synced", "event_weave_objective_synced")
 end
 
-function IngamePlayerListUI._create_ui_elements(arg_2_0)
+IngamePlayerListUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._num_players = 0
 	arg_2_0._num_rewards = 0
 	arg_2_0._mission_count = 0
@@ -188,7 +188,7 @@ local var_0_7 = 1
 local var_0_8 = 6
 local var_0_9 = var_0_7 * var_0_8
 
-function IngamePlayerListUI._setup_mutator_data(arg_3_0)
+IngamePlayerListUI._setup_mutator_data = function (arg_3_0)
 	local var_3_0 = LevelHelper:current_level_settings()
 	local var_3_1
 
@@ -257,7 +257,7 @@ function IngamePlayerListUI._setup_mutator_data(arg_3_0)
 	end
 end
 
-function IngamePlayerListUI._get_deus_current_node(arg_4_0)
+IngamePlayerListUI._get_deus_current_node = function (arg_4_0)
 	if Managers.state.game_mode:game_mode_key() ~= "deus" then
 		return
 	end
@@ -271,7 +271,7 @@ function IngamePlayerListUI._get_deus_current_node(arg_4_0)
 	return (var_4_0 and var_4_0:get_deus_run_controller()):get_current_node()
 end
 
-function IngamePlayerListUI._setup_chaos_wastes_info(arg_5_0)
+IngamePlayerListUI._setup_chaos_wastes_info = function (arg_5_0)
 	local var_5_0 = arg_5_0:_get_deus_current_node()
 
 	if not var_5_0 then
@@ -361,7 +361,7 @@ function IngamePlayerListUI._setup_chaos_wastes_info(arg_5_0)
 	end
 end
 
-function IngamePlayerListUI._setup_deed_reward_data(arg_6_0, arg_6_1)
+IngamePlayerListUI._setup_deed_reward_data = function (arg_6_0, arg_6_1)
 	table.clear(arg_6_0._reward_widgets)
 
 	arg_6_0._num_rewards = 0
@@ -395,7 +395,7 @@ function IngamePlayerListUI._setup_deed_reward_data(arg_6_0, arg_6_1)
 	arg_6_0._num_rewards = var_6_8
 end
 
-function IngamePlayerListUI._setup_mission_data(arg_7_0, arg_7_1)
+IngamePlayerListUI._setup_mission_data = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.loot_objectives
 
 	if not var_7_0 then
@@ -473,7 +473,7 @@ function IngamePlayerListUI._setup_mission_data(arg_7_0, arg_7_1)
 	arg_7_0._mission_count = var_7_11
 end
 
-function IngamePlayerListUI._sync_missions(arg_8_0)
+IngamePlayerListUI._sync_missions = function (arg_8_0)
 	local var_8_0 = arg_8_0._mission_settings_data
 
 	if not var_8_0 then
@@ -504,19 +504,19 @@ function IngamePlayerListUI._sync_missions(arg_8_0)
 	end
 end
 
-function IngamePlayerListUI._get_item_amount_by_mission_name(arg_9_0, arg_9_1)
+IngamePlayerListUI._get_item_amount_by_mission_name = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._mission_system:get_level_end_mission_data(arg_9_1)
 
 	return var_9_0 and var_9_0.current_amount
 end
 
-function IngamePlayerListUI._create_player_portrait(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+IngamePlayerListUI._create_player_portrait = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = UIWidgets.create_portrait_frame("player_portrait", arg_10_1, arg_10_3, 1, nil, arg_10_2)
 
 	arg_10_0._player_portrait_widget = UIWidget.init(var_10_0, arg_10_0._ui_top_renderer)
 end
 
-function IngamePlayerListUI._create_player_insignia(arg_11_0, arg_11_1)
+IngamePlayerListUI._create_player_insignia = function (arg_11_0, arg_11_1)
 	if arg_11_1.is_bot_player then
 		return
 	end
@@ -528,7 +528,7 @@ function IngamePlayerListUI._create_player_insignia(arg_11_0, arg_11_1)
 	arg_11_0._player_insignia_widget = UIWidget.init(var_11_2)
 end
 
-function IngamePlayerListUI._setup_weave_display_info(arg_12_0)
+IngamePlayerListUI._setup_weave_display_info = function (arg_12_0)
 	if Managers.state.game_mode:game_mode_key() == "weave" then
 		local var_12_0 = Managers.state.network:lobby()
 		local var_12_1 = var_12_0 and var_12_0:lobby_data("weave_quick_game")
@@ -560,7 +560,7 @@ function IngamePlayerListUI._setup_weave_display_info(arg_12_0)
 	end
 end
 
-function IngamePlayerListUI._setup_weave_objectives(arg_13_0, arg_13_1)
+IngamePlayerListUI._setup_weave_objectives = function (arg_13_0, arg_13_1)
 	arg_13_0._weave_objective_widgets = {}
 	arg_13_0._weave_objective_widgets_by_name = {}
 
@@ -597,7 +597,7 @@ function IngamePlayerListUI._setup_weave_objectives(arg_13_0, arg_13_1)
 	end
 end
 
-function IngamePlayerListUI._assign_objective(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+IngamePlayerListUI._assign_objective = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_1.scenegraph_id
 	local var_14_1 = arg_14_1.content
 	local var_14_2 = arg_14_1.style
@@ -628,7 +628,7 @@ function IngamePlayerListUI._assign_objective(arg_14_0, arg_14_1, arg_14_2, arg_
 	return math.max(var_14_12, 50) + arg_14_5
 end
 
-function IngamePlayerListUI.destroy(arg_15_0)
+IngamePlayerListUI.destroy = function (arg_15_0)
 	if arg_15_0._cursor_active then
 		ShowCursorStack.hide("IngamePlayerListUI")
 
@@ -645,23 +645,23 @@ function IngamePlayerListUI.destroy(arg_15_0)
 	print("[IngamePlayerListUI] - Destroy")
 end
 
-function IngamePlayerListUI._set_level_name(arg_16_0, arg_16_1)
+IngamePlayerListUI._set_level_name = function (arg_16_0, arg_16_1)
 	arg_16_0:_set_widget_text("game_level", arg_16_1)
 end
 
-function IngamePlayerListUI._set_difficulty_name(arg_17_0, arg_17_1)
+IngamePlayerListUI._set_difficulty_name = function (arg_17_0, arg_17_1)
 	arg_17_0:_set_widget_text("game_difficulty", arg_17_1)
 end
 
-function IngamePlayerListUI._set_widget_text(arg_18_0, arg_18_1, arg_18_2)
+IngamePlayerListUI._set_widget_text = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._widgets_by_name[arg_18_1].content.text = arg_18_2
 end
 
-function IngamePlayerListUI._set_simple_widget_texture(arg_19_0, arg_19_1, arg_19_2)
+IngamePlayerListUI._set_simple_widget_texture = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._widgets_by_name[arg_19_1].content.texture_id = arg_19_2
 end
 
-function IngamePlayerListUI._add_player(arg_20_0, arg_20_1)
+IngamePlayerListUI._add_player = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.local_player
 	local var_20_1 = arg_20_1.bot_player or not arg_20_1:is_player_controlled()
 	local var_20_2 = arg_20_1:ui_id()
@@ -721,7 +721,7 @@ function IngamePlayerListUI._add_player(arg_20_0, arg_20_1)
 	arg_20_0._players = var_20_10
 end
 
-function IngamePlayerListUI._update_widgets(arg_23_0)
+IngamePlayerListUI._update_widgets = function (arg_23_0)
 	local var_23_0 = arg_23_0._players
 	local var_23_1 = arg_23_0._num_players
 	local var_23_2 = Managers.state.voting:vote_kick_enabled()
@@ -785,7 +785,7 @@ local var_0_10 = {
 	slot_melee = "slot_ranged"
 }
 
-function IngamePlayerListUI._update_player_information(arg_24_0, arg_24_1, arg_24_2)
+IngamePlayerListUI._update_player_information = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = SPProfiles
 	local var_24_1 = arg_24_0._profile_synchronizer
 	local var_24_2 = arg_24_0._players
@@ -909,7 +909,7 @@ function IngamePlayerListUI._update_player_information(arg_24_0, arg_24_1, arg_2
 	arg_24_0:_update_dynamic_widget_information(arg_24_1, arg_24_2)
 end
 
-function IngamePlayerListUI._create_portrait_frame_widget(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+IngamePlayerListUI._create_portrait_frame_widget = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = UIWidgets.create_portrait_frame("player_list_portrait", arg_25_1, arg_25_3, 1, nil, arg_25_2)
 	local var_25_1 = UIWidget.init(var_25_0, arg_25_0._ui_top_renderer)
 
@@ -918,7 +918,7 @@ function IngamePlayerListUI._create_portrait_frame_widget(arg_25_0, arg_25_1, ar
 	return var_25_1
 end
 
-function IngamePlayerListUI._create_insignia_widget(arg_26_0, arg_26_1)
+IngamePlayerListUI._create_insignia_widget = function (arg_26_0, arg_26_1)
 	if arg_26_1.is_bot_player then
 		return
 	end
@@ -930,7 +930,7 @@ function IngamePlayerListUI._create_insignia_widget(arg_26_0, arg_26_1)
 	return (UIWidget.init(var_26_2))
 end
 
-function IngamePlayerListUI._get_ping_texture_by_ping_value(arg_27_0, arg_27_1)
+IngamePlayerListUI._get_ping_texture_by_ping_value = function (arg_27_0, arg_27_1)
 	if arg_27_1 <= 125 then
 		return "ping_icon_01", "low_ping_color"
 	elseif arg_27_1 > 125 and arg_27_1 <= 175 then
@@ -940,7 +940,7 @@ function IngamePlayerListUI._get_ping_texture_by_ping_value(arg_27_0, arg_27_1)
 	end
 end
 
-function IngamePlayerListUI._ignoring_chat_peer_id(arg_28_0, arg_28_1)
+IngamePlayerListUI._ignoring_chat_peer_id = function (arg_28_0, arg_28_1)
 	if IS_WINDOWS then
 		return Managers.chat.chat_gui:ignoring_peer_id(arg_28_1)
 	elseif IS_XB1 then
@@ -948,7 +948,7 @@ function IngamePlayerListUI._ignoring_chat_peer_id(arg_28_0, arg_28_1)
 	end
 end
 
-function IngamePlayerListUI._ignore_chat_message_from_peer_id(arg_29_0, arg_29_1)
+IngamePlayerListUI._ignore_chat_message_from_peer_id = function (arg_29_0, arg_29_1)
 	if IS_WINDOWS then
 		Managers.chat.chat_gui:ignore_peer_id(arg_29_1)
 	elseif IS_XB1 then
@@ -956,7 +956,7 @@ function IngamePlayerListUI._ignore_chat_message_from_peer_id(arg_29_0, arg_29_1
 	end
 end
 
-function IngamePlayerListUI._remove_ignore_chat_message_from_peer_id(arg_30_0, arg_30_1)
+IngamePlayerListUI._remove_ignore_chat_message_from_peer_id = function (arg_30_0, arg_30_1)
 	if IS_WINDOWS then
 		Managers.chat.chat_gui:remove_ignore_peer_id(arg_30_1)
 	elseif IS_XB1 then
@@ -964,7 +964,7 @@ function IngamePlayerListUI._remove_ignore_chat_message_from_peer_id(arg_30_0, a
 	end
 end
 
-function IngamePlayerListUI._muted_peer_id(arg_31_0, arg_31_1)
+IngamePlayerListUI._muted_peer_id = function (arg_31_0, arg_31_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			return Managers.voice_chat:is_peer_muted(arg_31_1)
@@ -976,7 +976,7 @@ function IngamePlayerListUI._muted_peer_id(arg_31_0, arg_31_1)
 	end
 end
 
-function IngamePlayerListUI._ignore_voice_message_from_peer_id(arg_32_0, arg_32_1)
+IngamePlayerListUI._ignore_voice_message_from_peer_id = function (arg_32_0, arg_32_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:mute_peer(arg_32_1)
@@ -986,7 +986,7 @@ function IngamePlayerListUI._ignore_voice_message_from_peer_id(arg_32_0, arg_32_
 	end
 end
 
-function IngamePlayerListUI._remove_ignore_voice_message_from_peer_id(arg_33_0, arg_33_1)
+IngamePlayerListUI._remove_ignore_voice_message_from_peer_id = function (arg_33_0, arg_33_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:unmute_peer(arg_33_1)
@@ -996,11 +996,11 @@ function IngamePlayerListUI._remove_ignore_voice_message_from_peer_id(arg_33_0, 
 	end
 end
 
-function IngamePlayerListUI.post_update(arg_34_0, arg_34_1)
+IngamePlayerListUI.post_update = function (arg_34_0, arg_34_1)
 	return
 end
 
-function IngamePlayerListUI.update(arg_35_0, arg_35_1, arg_35_2)
+IngamePlayerListUI.update = function (arg_35_0, arg_35_1, arg_35_2)
 	if RESOLUTION_LOOKUP.modified then
 		arg_35_0:_on_resolution_changed()
 	end
@@ -1062,7 +1062,7 @@ function IngamePlayerListUI.update(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function IngamePlayerListUI._on_resolution_changed(arg_36_0)
+IngamePlayerListUI._on_resolution_changed = function (arg_36_0)
 	local var_36_0 = arg_36_0._static_widgets_by_name.banner_right_edge
 	local var_36_1 = arg_36_0._static_widgets_by_name.banner_left_edge
 	local var_36_2 = RESOLUTION_LOOKUP.inv_scale
@@ -1071,7 +1071,7 @@ function IngamePlayerListUI._on_resolution_changed(arg_36_0)
 	var_36_1.style.edge.texture_size[2] = var_36_2 * RESOLUTION_LOOKUP.res_h
 end
 
-function IngamePlayerListUI._set_privacy_enabled(arg_37_0, arg_37_1, arg_37_2)
+IngamePlayerListUI._set_privacy_enabled = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = "map_screen_private_button"
 	local var_37_1 = arg_37_0._private_checkbox_widget
 
@@ -1083,29 +1083,29 @@ function IngamePlayerListUI._set_privacy_enabled(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function IngamePlayerListUI.on_save_ended_callback(arg_38_0)
+IngamePlayerListUI.on_save_ended_callback = function (arg_38_0)
 	print("[IngamePlayerWiew] - settings saved")
 end
 
-function IngamePlayerListUI.is_active(arg_39_0)
+IngamePlayerListUI.is_active = function (arg_39_0)
 	return arg_39_0._active
 end
 
-function IngamePlayerListUI.is_focused(arg_40_0)
+IngamePlayerListUI.is_focused = function (arg_40_0)
 	return arg_40_0._active and arg_40_0._cursor_active
 end
 
-function IngamePlayerListUI.input_service(arg_41_0)
+IngamePlayerListUI.input_service = function (arg_41_0)
 	return arg_41_0._input_manager:get_service("player_list_input")
 end
 
-function IngamePlayerListUI.set_visible(arg_42_0, arg_42_1)
+IngamePlayerListUI.set_visible = function (arg_42_0, arg_42_1)
 	if arg_42_0._active and not arg_42_1 then
 		arg_42_0:_set_active(false)
 	end
 end
 
-function IngamePlayerListUI._set_active(arg_43_0, arg_43_1)
+IngamePlayerListUI._set_active = function (arg_43_0, arg_43_1)
 	local var_43_0 = Managers.chat.chat_gui
 
 	if arg_43_1 then
@@ -1183,7 +1183,7 @@ function IngamePlayerListUI._set_active(arg_43_0, arg_43_1)
 	Managers.state.event:trigger("ingame_player_list_enabled", arg_43_1, true)
 end
 
-function IngamePlayerListUI._update_fade_in_duration(arg_44_0, arg_44_1)
+IngamePlayerListUI._update_fade_in_duration = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._fade_in_duration
 
 	if not var_44_0 then
@@ -1211,7 +1211,7 @@ end
 local var_0_11 = {}
 local var_0_12 = {}
 
-function IngamePlayerListUI._update_player_list(arg_45_0, arg_45_1, arg_45_2)
+IngamePlayerListUI._update_player_list = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = Managers.state.network:game()
 
 	table.clear(var_0_11)
@@ -1361,7 +1361,7 @@ end
 
 local var_0_13 = {}
 
-function IngamePlayerListUI._update_dynamic_widget_information(arg_46_0, arg_46_1, arg_46_2)
+IngamePlayerListUI._update_dynamic_widget_information = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = Managers.state.network:game()
 
 	arg_46_0._item_tooltip.content.item = nil
@@ -1504,7 +1504,7 @@ local var_0_14 = {
 	alpha_multiplier = 0
 }
 
-function IngamePlayerListUI._update_item_tooltip_widget(arg_47_0, arg_47_1, arg_47_2)
+IngamePlayerListUI._update_item_tooltip_widget = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._ui_scenegraph
 	local var_47_1 = arg_47_0._ui_renderer
 	local var_47_2 = arg_47_0._item_tooltip
@@ -1522,7 +1522,7 @@ function IngamePlayerListUI._update_item_tooltip_widget(arg_47_0, arg_47_1, arg_
 	var_47_0.item_tooltip.local_position[2] = math.min(arg_47_2[2] + var_47_4, var_47_5)
 end
 
-function IngamePlayerListUI._update_difficulty(arg_48_0)
+IngamePlayerListUI._update_difficulty = function (arg_48_0)
 	local var_48_0 = Managers.state.difficulty:get_difficulty_settings().display_name
 
 	if var_48_0 ~= arg_48_0._current_difficulty_name then
@@ -1532,7 +1532,7 @@ function IngamePlayerListUI._update_difficulty(arg_48_0)
 	end
 end
 
-function IngamePlayerListUI._update_private_checkbox(arg_49_0)
+IngamePlayerListUI._update_private_checkbox = function (arg_49_0)
 	local var_49_0 = Managers.state.difficulty:get_difficulty()
 	local var_49_1 = Managers.player:human_players()
 	local var_49_2 = DifficultyManager.players_below_required_power_level(var_49_0, var_49_1)
@@ -1567,7 +1567,7 @@ function IngamePlayerListUI._update_private_checkbox(arg_49_0)
 	end
 end
 
-function IngamePlayerListUI._draw(arg_50_0, arg_50_1)
+IngamePlayerListUI._draw = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._ui_renderer
 	local var_50_1 = arg_50_0._ui_top_renderer
 	local var_50_2 = arg_50_0._ui_scenegraph
@@ -1682,11 +1682,11 @@ function IngamePlayerListUI._draw(arg_50_0, arg_50_1)
 	UIRenderer.end_pass(var_50_1)
 end
 
-function IngamePlayerListUI._can_host_solo_kick(arg_51_0)
+IngamePlayerListUI._can_host_solo_kick = function (arg_51_0)
 	return arg_51_0._is_server and Managers.player:num_human_players() == 2
 end
 
-function IngamePlayerListUI.kick_player(arg_52_0, arg_52_1, arg_52_2)
+IngamePlayerListUI.kick_player = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_1.peer_id
 
 	if arg_52_0:_can_host_solo_kick() then
@@ -1704,7 +1704,7 @@ function IngamePlayerListUI.kick_player(arg_52_0, arg_52_1, arg_52_2)
 	end
 end
 
-function IngamePlayerListUI.kick_player_available(arg_53_0, arg_53_1)
+IngamePlayerListUI.kick_player_available = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_1.peer_id
 
 	if not var_53_0 or var_53_0 == Network.peer_id() then
@@ -1720,7 +1720,7 @@ function IngamePlayerListUI.kick_player_available(arg_53_0, arg_53_1)
 	return true
 end
 
-function IngamePlayerListUI._show_profile_by_peer_id(arg_54_0, arg_54_1)
+IngamePlayerListUI._show_profile_by_peer_id = function (arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0._platform
 
 	if IS_WINDOWS and rawget(_G, "Steam") then
@@ -1739,11 +1739,11 @@ function IngamePlayerListUI._show_profile_by_peer_id(arg_54_0, arg_54_1)
 	end
 end
 
-function IngamePlayerListUI.event_weave_objective_synced(arg_55_0)
+IngamePlayerListUI.event_weave_objective_synced = function (arg_55_0)
 	arg_55_0:_setup_weave_display_info()
 end
 
-function IngamePlayerListUI._is_in_deus_map_view(arg_56_0)
+IngamePlayerListUI._is_in_deus_map_view = function (arg_56_0)
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		return false
 	end

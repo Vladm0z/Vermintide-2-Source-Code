@@ -11,7 +11,7 @@ local var_0_5 = Unit.set_local_position
 local var_0_6 = Unit.set_local_rotation
 local var_0_7 = 0.3
 
-function PlayerProjectileUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerProjectileUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_3.item_name
 	local var_1_1 = arg_1_3.owner_unit
 
@@ -122,12 +122,12 @@ function PlayerProjectileUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:initialize_projectile(var_1_15, var_1_16)
 end
 
-function PlayerProjectileUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerProjectileUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 	arg_2_0._impact_extension = ScriptUnit.extension(arg_2_2, "projectile_impact_system")
 end
 
-function PlayerProjectileUnitExtension.initialize_projectile(arg_3_0, arg_3_1, arg_3_2)
+PlayerProjectileUnitExtension.initialize_projectile = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._projectile_unit
 
 	if arg_3_2 then
@@ -190,20 +190,20 @@ function PlayerProjectileUnitExtension.initialize_projectile(arg_3_0, arg_3_1, a
 	Unit.flow_event(var_3_0, "lua_trail")
 end
 
-function PlayerProjectileUnitExtension._handle_critical_strike(arg_4_0, arg_4_1, arg_4_2)
+PlayerProjectileUnitExtension._handle_critical_strike = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._is_critical_strike then
 		Unit.flow_event(arg_4_1, "vfx_critical_strike")
 	end
 end
 
-function PlayerProjectileUnitExtension.mark_for_deletion(arg_5_0)
+PlayerProjectileUnitExtension.mark_for_deletion = function (arg_5_0)
 	if not arg_5_0._marked_for_deletion then
 		arg_5_0._marked_for_deletion = true
 		arg_5_0._deletion_time = Managers.time:time("game") + var_0_7
 	end
 end
 
-function PlayerProjectileUnitExtension.stop(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+PlayerProjectileUnitExtension.stop = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0._stop_impacts then
 		return
 	end
@@ -240,7 +240,7 @@ function PlayerProjectileUnitExtension.stop(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0._stop_impacts = true
 end
 
-function PlayerProjectileUnitExtension._stop_by_life_time(arg_7_0)
+PlayerProjectileUnitExtension._stop_by_life_time = function (arg_7_0)
 	arg_7_0:mark_for_deletion()
 	Unit.flow_event(arg_7_0._projectile_unit, "lua_projectile_end")
 	arg_7_0.locomotion_extension:stop()
@@ -249,7 +249,7 @@ function PlayerProjectileUnitExtension._stop_by_life_time(arg_7_0)
 	arg_7_0._active = false
 end
 
-function PlayerProjectileUnitExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+PlayerProjectileUnitExtension.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	if arg_8_0._marked_for_deletion then
 		if arg_8_5 >= arg_8_0._deletion_time and not arg_8_0.delete_done then
 			arg_8_0.delete_done = true
@@ -311,7 +311,7 @@ function PlayerProjectileUnitExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3
 	end
 end
 
-function PlayerProjectileUnitExtension.handle_timed_events(arg_9_0, arg_9_1)
+PlayerProjectileUnitExtension.handle_timed_events = function (arg_9_0, arg_9_1)
 	if arg_9_1 >= arg_9_0._life_time then
 		local var_9_0 = arg_9_0._projectile_unit
 		local var_9_1 = arg_9_0._timed_data
@@ -353,13 +353,13 @@ function PlayerProjectileUnitExtension.handle_timed_events(arg_9_0, arg_9_1)
 	end
 end
 
-function PlayerProjectileUnitExtension.destroy(arg_10_0)
+PlayerProjectileUnitExtension.destroy = function (arg_10_0)
 	if arg_10_0._projectile_unit and arg_10_0._active then
 		arg_10_0:stop()
 	end
 end
 
-function PlayerProjectileUnitExtension.validate_position(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayerProjectileUnitExtension.validate_position = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	for iter_11_0 = 1, 3 do
 		local var_11_0 = arg_11_1[iter_11_0]
 
@@ -373,7 +373,7 @@ function PlayerProjectileUnitExtension.validate_position(arg_11_0, arg_11_1, arg
 	return true
 end
 
-function PlayerProjectileUnitExtension._alert_enemy(arg_12_0, arg_12_1, arg_12_2)
+PlayerProjectileUnitExtension._alert_enemy = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._is_server
 	local var_12_1 = Managers.state.network
 
@@ -389,7 +389,7 @@ end
 
 local var_0_8 = {}
 
-function PlayerProjectileUnitExtension.handle_impacts(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+PlayerProjectileUnitExtension.handle_impacts = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	table.clear(var_0_8)
 
 	local var_13_0 = arg_13_0._projectile_unit
@@ -535,7 +535,7 @@ function PlayerProjectileUnitExtension.handle_impacts(arg_13_0, arg_13_1, arg_13
 	end
 end
 
-function PlayerProjectileUnitExtension._activate_life_time(arg_14_0, arg_14_1)
+PlayerProjectileUnitExtension._activate_life_time = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._timed_data
 	local var_14_1 = var_14_0.life_time_activate_sound_start_event
 
@@ -546,7 +546,7 @@ function PlayerProjectileUnitExtension._activate_life_time(arg_14_0, arg_14_1)
 	arg_14_0._life_time = arg_14_1 + var_14_0.life_time
 end
 
-function PlayerProjectileUnitExtension.hit_enemy(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
+PlayerProjectileUnitExtension.hit_enemy = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
 	local var_15_0 = false
 	local var_15_1 = arg_15_1.damage_profile or "default"
 	local var_15_2 = DamageProfileTemplates[var_15_1]
@@ -669,7 +669,7 @@ function PlayerProjectileUnitExtension.hit_enemy(arg_15_0, arg_15_1, arg_15_2, a
 	end
 end
 
-function PlayerProjectileUnitExtension.hit_enemy_damage(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+PlayerProjectileUnitExtension.hit_enemy_damage = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 	local var_16_0 = Managers.state.network
 	local var_16_1 = arg_16_0._owner_player
 	local var_16_2 = arg_16_0._owner_unit
@@ -823,7 +823,7 @@ function PlayerProjectileUnitExtension.hit_enemy_damage(arg_16_0, arg_16_1, arg_
 	return var_16_19, var_16_9
 end
 
-function PlayerProjectileUnitExtension.hit_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+PlayerProjectileUnitExtension.hit_player = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
 	local var_17_0 = Managers.state.difficulty:get_difficulty_settings()
 	local var_17_1 = false
 	local var_17_2 = false
@@ -873,7 +873,7 @@ function PlayerProjectileUnitExtension.hit_player(arg_17_0, arg_17_1, arg_17_2, 
 	end
 end
 
-function PlayerProjectileUnitExtension.hit_player_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+PlayerProjectileUnitExtension.hit_player_damage = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
 	local var_18_0 = arg_18_0._owner_unit
 	local var_18_1 = Managers.state.network
 	local var_18_2 = var_18_1:unit_game_object_id(var_18_0)
@@ -923,7 +923,7 @@ function PlayerProjectileUnitExtension.hit_player_damage(arg_18_0, arg_18_1, arg
 	return false
 end
 
-function PlayerProjectileUnitExtension.hit_level_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+PlayerProjectileUnitExtension.hit_level_unit = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
 	local var_19_0 = ScriptUnit.has_extension(arg_19_2, "health_system")
 	local var_19_1 = arg_19_1.damage_profile_prop or arg_19_1.damage_profile or "default"
 	local var_19_2 = DamageProfileTemplates[var_19_1]
@@ -1003,7 +1003,7 @@ function PlayerProjectileUnitExtension.hit_level_unit(arg_19_0, arg_19_1, arg_19
 	end
 end
 
-function PlayerProjectileUnitExtension.hit_damagable_prop(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+PlayerProjectileUnitExtension.hit_damagable_prop = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 	arg_20_0._amount_of_mass_hit = arg_20_0._amount_of_mass_hit + 1
 
 	local var_20_0 = math.ceil(arg_20_0._amount_of_mass_hit)
@@ -1016,7 +1016,7 @@ function PlayerProjectileUnitExtension.hit_damagable_prop(arg_20_0, arg_20_1, ar
 	DamageUtils.damage_level_unit(arg_20_2, var_20_1, var_20_2, var_20_3, arg_20_9, var_20_4, arg_20_1, var_20_0, arg_20_4, var_20_5)
 end
 
-function PlayerProjectileUnitExtension.hit_non_level_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+PlayerProjectileUnitExtension.hit_non_level_unit = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 	local var_21_0 = arg_21_1.damage_profile_prop or arg_21_1.damage_profile or "default"
 	local var_21_1 = DamageProfileTemplates[var_21_0]
 	local var_21_2 = false
@@ -1066,7 +1066,7 @@ function PlayerProjectileUnitExtension.hit_non_level_unit(arg_21_0, arg_21_1, ar
 	end
 end
 
-function PlayerProjectileUnitExtension.hit_non_level_damagable_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+PlayerProjectileUnitExtension.hit_non_level_damagable_unit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
 	local var_22_0 = Managers.state.network
 	local var_22_1 = "full"
 	local var_22_2 = arg_22_0._owner_unit
@@ -1096,7 +1096,7 @@ function PlayerProjectileUnitExtension.hit_non_level_damagable_unit(arg_22_0, ar
 	end
 end
 
-function PlayerProjectileUnitExtension._get_projectile_units_names(arg_23_0, arg_23_1)
+PlayerProjectileUnitExtension._get_projectile_units_names = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.projectile_units_template
 
 	if arg_23_1.use_weapon_skin then
@@ -1113,7 +1113,7 @@ function PlayerProjectileUnitExtension._get_projectile_units_names(arg_23_0, arg
 	return ProjectileUnits[var_23_0]
 end
 
-function PlayerProjectileUnitExtension._get_weapon_unit(arg_24_0)
+PlayerProjectileUnitExtension._get_weapon_unit = function (arg_24_0)
 	local var_24_0 = ScriptUnit.has_extension(arg_24_0._owner_unit, "inventory_system")
 
 	if var_24_0 then
@@ -1126,7 +1126,7 @@ function PlayerProjectileUnitExtension._get_weapon_unit(arg_24_0)
 	end
 end
 
-function PlayerProjectileUnitExtension._handle_linking(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9, arg_25_10)
+PlayerProjectileUnitExtension._handle_linking = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9, arg_25_10)
 	if not arg_25_1.link and not arg_25_1.link_pickup then
 		return
 	end
@@ -1214,7 +1214,7 @@ function PlayerProjectileUnitExtension._handle_linking(arg_25_0, arg_25_1, arg_2
 	end
 end
 
-function PlayerProjectileUnitExtension._redirect_shield_linking(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+PlayerProjectileUnitExtension._redirect_shield_linking = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = AiUtils.unit_breed(arg_26_1)
 
 	if not (HEALTH_ALIVE[arg_26_1] and var_26_0 and not var_26_0.no_effects_on_shield_block and not var_26_0.is_player) then
@@ -1234,7 +1234,7 @@ function PlayerProjectileUnitExtension._redirect_shield_linking(arg_26_0, arg_26
 	return arg_26_1, arg_26_2, arg_26_3
 end
 
-function PlayerProjectileUnitExtension._link_projectile(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9)
+PlayerProjectileUnitExtension._link_projectile = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9)
 	local var_27_0 = Managers.state.unit_spawner
 	local var_27_1 = arg_27_0._projectile_linker_system
 	local var_27_2 = Math.random() * 2.14 - 0.5
@@ -1283,7 +1283,7 @@ function PlayerProjectileUnitExtension._link_projectile(arg_27_0, arg_27_1, arg_
 	end
 end
 
-function PlayerProjectileUnitExtension._spawn_linked_pickup_projectile(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9, arg_28_10)
+PlayerProjectileUnitExtension._spawn_linked_pickup_projectile = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9, arg_28_10)
 	local var_28_0 = Vector3.normalize(arg_28_5)
 	local var_28_1 = var_28_0 * arg_28_9
 	local var_28_2 = arg_28_4 + var_28_1
@@ -1316,7 +1316,7 @@ function PlayerProjectileUnitExtension._spawn_linked_pickup_projectile(arg_28_0,
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_linked_pickup", var_28_13, var_28_2, var_28_12, var_28_15, arg_28_7, var_28_3, arg_28_8, var_28_4, var_28_16)
 end
 
-function PlayerProjectileUnitExtension._spawn_pickup_projectile(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+PlayerProjectileUnitExtension._spawn_pickup_projectile = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	local var_29_0 = 1
 	local var_29_1 = arg_29_0:_get_weapon_unit()
 
@@ -1352,7 +1352,7 @@ function PlayerProjectileUnitExtension._spawn_pickup_projectile(arg_29_0, arg_29
 	Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_projectile", var_29_13, var_29_14, var_29_20, var_29_21, var_29_22, var_29_23, var_29_7, var_29_9, var_29_0, false, false, var_29_24)
 end
 
-function PlayerProjectileUnitExtension.do_aoe(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+PlayerProjectileUnitExtension.do_aoe = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = arg_30_0._world
 	local var_30_1 = arg_30_0._projectile_unit
 	local var_30_2 = arg_30_0._owner_unit
@@ -1399,7 +1399,7 @@ function PlayerProjectileUnitExtension.do_aoe(arg_30_0, arg_30_1, arg_30_2, arg_
 	end
 end
 
-function PlayerProjectileUnitExtension.spawn_liquid_area(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+PlayerProjectileUnitExtension.spawn_liquid_area = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	local var_31_0 = arg_31_2
 	local var_31_1 = arg_31_3
 	local var_31_2 = math.floor(arg_31_0.scale * 30)
@@ -1418,11 +1418,11 @@ function PlayerProjectileUnitExtension.spawn_liquid_area(arg_31_0, arg_31_1, arg
 	ScriptUnit.extension(var_31_5, "area_damage_system"):ready()
 end
 
-function PlayerProjectileUnitExtension.are_impacts_stopped(arg_32_0)
+PlayerProjectileUnitExtension.are_impacts_stopped = function (arg_32_0)
 	return arg_32_0._stop_impacts
 end
 
-function PlayerProjectileUnitExtension.trigger_external_event(arg_33_0, arg_33_1, arg_33_2)
+PlayerProjectileUnitExtension.trigger_external_event = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0.projectile_info.external_events
 	local var_33_1 = var_33_0 and var_33_0[arg_33_1]
 
@@ -1444,7 +1444,7 @@ function PlayerProjectileUnitExtension.trigger_external_event(arg_33_0, arg_33_1
 	end
 end
 
-function PlayerProjectileUnitExtension.queue_delayed_external_event(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+PlayerProjectileUnitExtension.queue_delayed_external_event = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	if not arg_34_0._delayed_external_events then
 		arg_34_0._delayed_external_events = {}
 	end
@@ -1458,7 +1458,7 @@ function PlayerProjectileUnitExtension.queue_delayed_external_event(arg_34_0, ar
 	}
 end
 
-function PlayerProjectileUnitExtension._update_delayed_external_event(arg_35_0, arg_35_1)
+PlayerProjectileUnitExtension._update_delayed_external_event = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._delayed_external_events
 	local var_35_1 = #var_35_0
 

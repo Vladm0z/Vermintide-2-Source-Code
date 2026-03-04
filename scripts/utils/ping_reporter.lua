@@ -44,7 +44,7 @@ local function var_0_5(arg_5_0)
 	return var_0_3(var_5_1)
 end
 
-function PingReporter.init(arg_6_0)
+PingReporter.init = function (arg_6_0)
 	arg_6_0._measures = {}
 	arg_6_0._measure_taken = 0
 
@@ -53,7 +53,7 @@ function PingReporter.init(arg_6_0)
 	end
 end
 
-function PingReporter.update(arg_7_0, arg_7_1, arg_7_2)
+PingReporter.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2 - arg_7_0._measure_taken > var_0_0 then
 		arg_7_0:_take_measure()
 
@@ -61,7 +61,7 @@ function PingReporter.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function PingReporter._take_measure(arg_8_0)
+PingReporter._take_measure = function (arg_8_0)
 	local var_8_0 = var_0_1()
 
 	if not var_8_0 then
@@ -86,7 +86,7 @@ function PingReporter._take_measure(arg_8_0)
 	end
 end
 
-function PingReporter.report(arg_9_0)
+PingReporter.report = function (arg_9_0)
 	if #arg_9_0._measures == 0 then
 		return
 	end

@@ -10,7 +10,7 @@ local var_0_2 = 0.5
 local var_0_3 = 1 - var_0_2
 local var_0_4 = 1
 
-function SoundEnvironmentSystem.init(arg_1_0, arg_1_1, arg_1_2)
+SoundEnvironmentSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	SoundEnvironmentSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	arg_1_0._highest_prio_system = EngineOptimized.highest_prio_environment_init()
@@ -41,7 +41,7 @@ function SoundEnvironmentSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._check_timer = 0
 end
 
-function SoundEnvironmentSystem.destroy(arg_2_0)
+SoundEnvironmentSystem.destroy = function (arg_2_0)
 	EngineOptimized.highest_prio_environment_destroy(arg_2_0._highest_prio_system)
 end
 
@@ -57,7 +57,7 @@ local var_0_5 = {
 	}
 }
 
-function SoundEnvironmentSystem.register_sound_environment(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+SoundEnvironmentSystem.register_sound_environment = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	fassert(arg_3_0._environments[arg_3_1] == nil, "Already registered sound environment with name %q", arg_3_1)
 
 	local var_3_0 = arg_3_0._environments[arg_3_1] or table.clone(var_0_5)
@@ -94,7 +94,7 @@ function SoundEnvironmentSystem.register_sound_environment(arg_3_0, arg_3_1, arg
 		var_3_2 = var_3_2 + 1
 	end
 
-	table.sort(var_3_1, function(arg_4_0, arg_4_1)
+	table.sort(var_3_1, function (arg_4_0, arg_4_1)
 		return arg_4_0.p > arg_4_1.p
 	end)
 
@@ -108,14 +108,14 @@ function SoundEnvironmentSystem.register_sound_environment(arg_3_0, arg_3_1, arg
 	EngineOptimized.highest_prio_environment_reorder(arg_3_0._highest_prio_system, unpack(var_3_4))
 end
 
-function SoundEnvironmentSystem._highest_prio_environment_at_position(arg_5_0, arg_5_1)
+SoundEnvironmentSystem._highest_prio_environment_at_position = function (arg_5_0, arg_5_1)
 	local var_5_0
 	local var_5_1 = LevelHelper:current_level(arg_5_0.world)
 
 	return (EngineOptimized.highest_prio_environment_at_position(arg_5_0._highest_prio_system, var_5_1, arg_5_1))
 end
 
-function SoundEnvironmentSystem.set_source_environment(arg_6_0, arg_6_1, arg_6_2)
+SoundEnvironmentSystem.set_source_environment = function (arg_6_0, arg_6_1, arg_6_2)
 	if not GameSettingsDevelopment.fade_environments then
 		return
 	end
@@ -155,7 +155,7 @@ function SoundEnvironmentSystem.set_source_environment(arg_6_0, arg_6_1, arg_6_2
 	return var_6_3
 end
 
-function SoundEnvironmentSystem.register_source_environment_update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+SoundEnvironmentSystem.register_source_environment_update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0._updated_sources[#arg_7_0._updated_sources + 1] = {
 		unit = arg_7_2,
 		source = arg_7_1,
@@ -164,7 +164,7 @@ function SoundEnvironmentSystem.register_source_environment_update(arg_7_0, arg_
 	arg_7_0._num_sources = arg_7_0._num_sources + 1
 end
 
-function SoundEnvironmentSystem.unregister_source_environment_update(arg_8_0, arg_8_1)
+SoundEnvironmentSystem.unregister_source_environment_update = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._num_sources
 
 	for iter_8_0 = 1, var_8_0 do
@@ -187,7 +187,7 @@ end
 local var_0_6 = 3
 local var_0_7 = {}
 
-function SoundEnvironmentSystem._update_source_environments(arg_9_0)
+SoundEnvironmentSystem._update_source_environments = function (arg_9_0)
 	local var_9_0 = arg_9_0._num_sources
 	local var_9_1 = math.min(var_9_0, var_0_6)
 	local var_9_2 = math.min(arg_9_0._current_source_index, var_9_0)
@@ -221,11 +221,11 @@ function SoundEnvironmentSystem._update_source_environments(arg_9_0)
 	end
 end
 
-function SoundEnvironmentSystem.local_player_created(arg_10_0, arg_10_1)
+SoundEnvironmentSystem.local_player_created = function (arg_10_0, arg_10_1)
 	arg_10_0.player = arg_10_1
 end
 
-function SoundEnvironmentSystem.update(arg_11_0, arg_11_1, arg_11_2)
+SoundEnvironmentSystem.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 > arg_11_0._check_timer then
 		arg_11_0._check_timer = arg_11_2 + 1
 
@@ -253,7 +253,7 @@ function SoundEnvironmentSystem.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function SoundEnvironmentSystem._update_fade(arg_12_0, arg_12_1)
+SoundEnvironmentSystem._update_fade = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.wwise_world
 	local var_12_1 = arg_12_0._environments
 	local var_12_2 = arg_12_0._fade_environments
@@ -279,7 +279,7 @@ function SoundEnvironmentSystem._update_fade(arg_12_0, arg_12_1)
 	end
 end
 
-function SoundEnvironmentSystem._add_fade_environment(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+SoundEnvironmentSystem._add_fade_environment = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_0._environments[arg_13_2].fade_info
 
 	var_13_0.fade_start = arg_13_1
@@ -291,7 +291,7 @@ end
 
 local var_0_8 = 3
 
-function SoundEnvironmentSystem._clamp_num_fade_environments(arg_14_0)
+SoundEnvironmentSystem._clamp_num_fade_environments = function (arg_14_0)
 	local var_14_0 = 0
 	local var_14_1
 	local var_14_2 = math.huge
@@ -320,7 +320,7 @@ function SoundEnvironmentSystem._clamp_num_fade_environments(arg_14_0)
 	end
 end
 
-function SoundEnvironmentSystem.enter_environment(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+SoundEnvironmentSystem.enter_environment = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0._environments[arg_15_2]
 
 	if GameSettingsDevelopment.fade_environments then
@@ -367,7 +367,7 @@ function SoundEnvironmentSystem.enter_environment(arg_15_0, arg_15_1, arg_15_2, 
 	arg_15_0._current_environment = arg_15_2
 end
 
-function SoundEnvironmentSystem._set_environment(arg_16_0, arg_16_1)
+SoundEnvironmentSystem._set_environment = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.wwise_world
 	local var_16_1 = arg_16_0._environments[arg_16_1]
 

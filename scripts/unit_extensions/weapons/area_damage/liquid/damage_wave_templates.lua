@@ -285,7 +285,7 @@ DamageWaveTemplates.templates.sienna_adept_ability_trail = {
 	apply_impact_buff_to_player = false,
 	fx_name_init = "fx/brw_adept_skill_02",
 	immune_breeds = {},
-	add_buff_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	add_buff_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		if Unit.alive(arg_1_1) then
 			local var_1_0 = Managers.state.entity:system("buff_system")
 			local var_1_1 = FrameTable.alloc_table()
@@ -296,7 +296,7 @@ DamageWaveTemplates.templates.sienna_adept_ability_trail = {
 			var_1_0:add_buff_synced(arg_1_1, arg_1_2, BuffSyncType.All, var_1_1)
 		end
 	end,
-	leave_area_func = function(arg_2_0)
+	leave_area_func = function (arg_2_0)
 		if Unit.alive(arg_2_0) then
 			local var_2_0 = ScriptUnit.extension(arg_2_0, "buff_system"):get_stacking_buff("sienna_adept_ability_trail")
 			local var_2_1 = var_2_0 and var_2_0[1]
@@ -389,7 +389,7 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 			0
 		}
 	},
-	update_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	update_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = arg_3_0._update_data
 
 		if not var_3_0 then
@@ -432,7 +432,7 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 			var_3_0.next_spawn_t = arg_3_3 + math.lerp(var_3_6, var_3_7, math.random())
 		end
 	end,
-	on_arrive_func = function(arg_4_0, arg_4_1, arg_4_2)
+	on_arrive_func = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = arg_4_0.optional_data
 
 		if var_4_0 then
@@ -511,7 +511,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			on_spawn = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = Vector3(5, 6, 5)
 
 				Unit.set_local_scale(arg_6_3, 0, var_6_0)
@@ -550,7 +550,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			on_spawn = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = Vector3(1, 1, 1)
 
 				Unit.set_local_scale(arg_7_3, 0, var_7_0)
@@ -588,7 +588,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			on_spawn = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = Vector3(1, 1, 1)
 
 				Unit.set_local_scale(arg_8_3, 0, var_8_0)
@@ -652,7 +652,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 			1.5
 		}
 	},
-	update_func = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	update_func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		if not arg_9_0.wave_direction then
 			return
 		end
@@ -769,7 +769,7 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 			end
 		end
 	end,
-	on_arrive_func = function(arg_10_0, arg_10_1, arg_10_2)
+	on_arrive_func = function (arg_10_0, arg_10_1, arg_10_2)
 		return
 	end
 }
@@ -783,7 +783,7 @@ var_0_2.apply_buff_to_owner = true
 var_0_2.buff_template_name = "sienna_necromancer_empowered_overcharge"
 var_0_2.buff_template_type = "sienna_necromancer_empowered_overcharge"
 
-function var_0_2.add_buff_func(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+var_0_2.add_buff_func = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if not ALIVE[arg_11_1] or not Managers.state.network.is_server then
 		return
 	end
@@ -805,7 +805,7 @@ function var_0_2.add_buff_func(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	end
 end
 
-function var_0_2.leave_area_func(arg_12_0)
+var_0_2.leave_area_func = function (arg_12_0)
 	if ALIVE[arg_12_0] then
 		local var_12_0 = ScriptUnit.extension(arg_12_0, "buff_system")
 		local var_12_1 = var_12_0:get_stacking_buff("sienna_necromancer_empowered_overcharge")

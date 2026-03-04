@@ -12,7 +12,7 @@ local var_0_0 = Unit.alive
 
 AISimpleExtension = class(AISimpleExtension)
 
-function AISimpleExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AISimpleExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._nav_world = arg_1_3.nav_world
@@ -105,13 +105,13 @@ function AISimpleExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.attributes = nil
 end
 
-function AISimpleExtension.unit_removed_from_game(arg_2_0)
+AISimpleExtension.unit_removed_from_game = function (arg_2_0)
 	Managers.state.side:remove_unit_from_side(arg_2_0._unit)
 
 	arg_2_0._side_id = nil
 end
 
-function AISimpleExtension.destroy(arg_3_0)
+AISimpleExtension.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0._blackboard
 
 	AiUtils.special_dead_cleanup(arg_3_0._unit, arg_3_0._blackboard)
@@ -149,13 +149,13 @@ STATIC_BLACKBOARD_KEYS = STATIC_BLACKBOARD_KEYS or {
 	nav_world = true
 }
 
-function AISimpleExtension.freeze(arg_4_0)
+AISimpleExtension.freeze = function (arg_4_0)
 	arg_4_0._brain:exit_last_action()
 
 	arg_4_0._side_id = nil
 end
 
-function AISimpleExtension.unfreeze(arg_5_0, arg_5_1, arg_5_2)
+AISimpleExtension.unfreeze = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._blackboard
 
 	for iter_5_0, iter_5_1 in pairs(var_5_0) do
@@ -221,7 +221,7 @@ function AISimpleExtension.unfreeze(arg_5_0, arg_5_1, arg_5_2)
 	Managers.state.game_mode:ai_spawned(arg_5_1)
 end
 
-function AISimpleExtension.extensions_ready(arg_6_0, arg_6_1, arg_6_2)
+AISimpleExtension.extensions_ready = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._blackboard
 	local var_6_1 = arg_6_0._side_id
 	local var_6_2 = Managers.state.side:add_unit_to_side(arg_6_2, var_6_1)
@@ -257,7 +257,7 @@ function AISimpleExtension.extensions_ready(arg_6_0, arg_6_1, arg_6_2)
 	Unit.flow_event(arg_6_2, "climate_type_set")
 end
 
-function AISimpleExtension.get_overlap_context(arg_7_0)
+AISimpleExtension.get_overlap_context = function (arg_7_0)
 	if arg_7_0._overlap_context then
 		arg_7_0._overlap_context.num_hits = 0
 	else
@@ -274,7 +274,7 @@ function AISimpleExtension.get_overlap_context(arg_7_0)
 	return arg_7_0._overlap_context
 end
 
-function AISimpleExtension.set_properties(arg_8_0, arg_8_1)
+AISimpleExtension.set_properties = function (arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
 		local var_8_0, var_8_1 = iter_8_1:match("(%S+) (%S+)")
 		local var_8_2 = type(arg_8_0._breed.properties[var_8_0])
@@ -307,7 +307,7 @@ function AISimpleExtension.set_properties(arg_8_0, arg_8_1)
 	end
 end
 
-function AISimpleExtension._parse_properties(arg_9_0)
+AISimpleExtension._parse_properties = function (arg_9_0)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0._breed.properties) do
 		if type(iter_9_1) == "table" then
 			for iter_9_2, iter_9_3 in pairs(iter_9_1) do
@@ -317,7 +317,7 @@ function AISimpleExtension._parse_properties(arg_9_0)
 	end
 end
 
-function AISimpleExtension.init_perception(arg_10_0, arg_10_1, arg_10_2)
+AISimpleExtension.init_perception = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_1.perception then
 		arg_10_0._perception_func_name = arg_10_2 and arg_10_1.horde_perception or arg_10_1.perception
 	else
@@ -331,7 +331,7 @@ function AISimpleExtension.init_perception(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function AISimpleExtension.set_perception(arg_11_0, arg_11_1, arg_11_2)
+AISimpleExtension.set_perception = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_1 then
 		arg_11_0._perception_func_name = arg_11_1
 	else
@@ -345,40 +345,40 @@ function AISimpleExtension.set_perception(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function AISimpleExtension._init_brain(arg_12_0, arg_12_1, arg_12_2)
+AISimpleExtension._init_brain = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._brain = AIBrain:new(arg_12_0._world, arg_12_0._unit, arg_12_0._blackboard, arg_12_0._breed, arg_12_1)
 end
 
-function AISimpleExtension._set_size_variation(arg_13_0, arg_13_1, arg_13_2)
+AISimpleExtension._set_size_variation = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._size_variation = arg_13_1 or 1
 	arg_13_0._size_variation_normalized = arg_13_2 or 1
 end
 
-function AISimpleExtension.locomotion(arg_14_0)
+AISimpleExtension.locomotion = function (arg_14_0)
 	return arg_14_0._locomotion
 end
 
-function AISimpleExtension.navigation(arg_15_0)
+AISimpleExtension.navigation = function (arg_15_0)
 	return arg_15_0._navigation
 end
 
-function AISimpleExtension.brain(arg_16_0)
+AISimpleExtension.brain = function (arg_16_0)
 	return arg_16_0._brain
 end
 
-function AISimpleExtension.breed(arg_17_0)
+AISimpleExtension.breed = function (arg_17_0)
 	return arg_17_0._breed
 end
 
-function AISimpleExtension.blackboard(arg_18_0)
+AISimpleExtension.blackboard = function (arg_18_0)
 	return arg_18_0._blackboard
 end
 
-function AISimpleExtension.size_variation(arg_19_0)
+AISimpleExtension.size_variation = function (arg_19_0)
 	return arg_19_0._size_variation, arg_19_0._size_variation_normalized
 end
 
-function AISimpleExtension.force_enemy_detection(arg_20_0, arg_20_1)
+AISimpleExtension.force_enemy_detection = function (arg_20_0, arg_20_1)
 	local var_20_0 = Managers.state.side.side_by_unit[arg_20_0._unit].ENEMY_PLAYER_AND_BOT_UNITS
 	local var_20_1 = #var_20_0
 
@@ -393,13 +393,13 @@ function AISimpleExtension.force_enemy_detection(arg_20_0, arg_20_1)
 	end
 end
 
-function AISimpleExtension.current_action_name(arg_21_0)
+AISimpleExtension.current_action_name = function (arg_21_0)
 	local var_21_0 = arg_21_0._blackboard
 
 	return var_21_0.action and var_21_0.action.name or "n/a"
 end
 
-function AISimpleExtension.die(arg_22_0, arg_22_1, arg_22_2)
+AISimpleExtension.die = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._blackboard
 	local var_22_1 = arg_22_0._unit
 
@@ -412,7 +412,7 @@ function AISimpleExtension.die(arg_22_0, arg_22_1, arg_22_2)
 	Managers.state.conflict:register_unit_killed(var_22_1, var_22_0, arg_22_1, arg_22_2)
 end
 
-function AISimpleExtension.attacked(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+AISimpleExtension.attacked = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0._unit
 	local var_23_1 = arg_23_0._blackboard
 	local var_23_2 = var_23_1.side
@@ -435,7 +435,7 @@ function AISimpleExtension.attacked(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	end
 end
 
-function AISimpleExtension.enemy_aggro(arg_24_0, arg_24_1, arg_24_2)
+AISimpleExtension.enemy_aggro = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._blackboard
 
 	if var_24_0.confirmed_player_sighting or var_24_0.only_trust_your_own_eyes then
@@ -468,7 +468,7 @@ function AISimpleExtension.enemy_aggro(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function AISimpleExtension.enemy_alert(arg_25_0, arg_25_1, arg_25_2)
+AISimpleExtension.enemy_alert = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._blackboard
 	local var_25_1 = arg_25_0._breed.run_on_alerted
 
@@ -493,7 +493,7 @@ end
 
 local var_0_1 = 10
 
-function AISimpleExtension.increase_stagger_count(arg_26_0)
+AISimpleExtension.increase_stagger_count = function (arg_26_0)
 	local var_26_0 = arg_26_0._blackboard
 	local var_26_1 = arg_26_0._breed
 	local var_26_2 = var_26_0.stagger_count
@@ -504,14 +504,14 @@ function AISimpleExtension.increase_stagger_count(arg_26_0)
 	var_26_0.stagger_count_reset_at = var_26_4 + var_26_3
 end
 
-function AISimpleExtension.reset_stagger_count(arg_27_0)
+AISimpleExtension.reset_stagger_count = function (arg_27_0)
 	local var_27_0 = arg_27_0._blackboard
 
 	var_27_0.stagger_count_reset_at = 0
 	var_27_0.stagger_count = 0
 end
 
-function AISimpleExtension.update_stagger_count(arg_28_0)
+AISimpleExtension.update_stagger_count = function (arg_28_0)
 	local var_28_0 = arg_28_0._blackboard
 
 	if var_28_0.stagger_count_reset_at < Managers.time:time("main") and var_28_0.stagger_count > 0 then

@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVomitAction = class(BTVomitAction, BTNode)
 
-function BTVomitAction.init(arg_1_0, ...)
+BTVomitAction.init = function (arg_1_0, ...)
 	BTVomitAction.super.init(arg_1_0, ...)
 end
 
@@ -16,7 +16,7 @@ local function var_0_0(...)
 	end
 end
 
-function BTVomitAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTVomitAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 	local var_3_1 = arg_3_2.world
 
@@ -44,7 +44,7 @@ function BTVomitAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	AiUtils.add_attack_intensity(var_3_2, var_3_0, arg_3_2)
 end
 
-function BTVomitAction._position_on_navmesh(arg_4_0, arg_4_1, arg_4_2)
+BTVomitAction._position_on_navmesh = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_2.nav_world
 	local var_4_1, var_4_2 = GwNavQueries.triangle_from_position(var_4_0, arg_4_1, 1, 1)
 
@@ -58,7 +58,7 @@ function BTVomitAction._position_on_navmesh(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_1
 end
 
-function BTVomitAction._get_vomit_position(arg_5_0, arg_5_1, arg_5_2)
+BTVomitAction._get_vomit_position = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Unit.node(arg_5_1, "j_head")
 	local var_5_1 = Unit.world_position(arg_5_1, var_5_0)
 	local var_5_2 = POSITION_LOOKUP[arg_5_2.target_unit]
@@ -89,7 +89,7 @@ function BTVomitAction._get_vomit_position(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_15, var_5_8, var_5_9
 end
 
-function BTVomitAction.init_attack(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTVomitAction.init_attack = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0, var_6_1, var_6_2 = arg_6_0:_get_vomit_position(arg_6_1, arg_6_2)
 
 	if not var_6_0 then
@@ -138,7 +138,7 @@ function BTVomitAction.init_attack(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return true
 end
 
-function BTVomitAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTVomitAction.leave = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_2.action = nil
 	arg_7_2.active_node = nil
 	arg_7_2.attack_rotation = nil
@@ -158,7 +158,7 @@ function BTVomitAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_
 	arg_7_2.anim_locked = nil
 end
 
-function BTVomitAction._calculate_oobb_collision(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTVomitAction._calculate_oobb_collision = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_1.width
 	local var_8_1 = arg_8_1.range
 	local var_8_2 = arg_8_1.height
@@ -174,7 +174,7 @@ function BTVomitAction._calculate_oobb_collision(arg_8_0, arg_8_1, arg_8_2, arg_
 	return arg_8_2 + var_8_9 + var_8_10, arg_8_3, var_8_8
 end
 
-function BTVomitAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTVomitAction.run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if arg_9_2.attack_aborted then
 		return "failed"
 	end
@@ -247,7 +247,7 @@ function BTVomitAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	return "done"
 end
 
-function BTVomitAction.player_vomit_hit_check(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTVomitAction.player_vomit_hit_check = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = Unit.node(arg_10_0, "j_head")
 	local var_10_1 = Unit.world_position(arg_10_0, var_10_0)
 	local var_10_2 = arg_10_1 + (2 * Vector3.normalize(arg_10_1 - POSITION_LOOKUP[arg_10_0]) + Vector3(0, 0, 1)) - var_10_1
@@ -274,7 +274,7 @@ function BTVomitAction.player_vomit_hit_check(arg_10_0, arg_10_1, arg_10_2, arg_
 	end
 end
 
-function BTVomitAction.create_aoe(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTVomitAction.create_aoe = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.puke_position:unbox()
 	local var_11_1 = arg_11_0:_position_on_navmesh(var_11_0, arg_11_2)
 
@@ -294,7 +294,7 @@ function BTVomitAction.create_aoe(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-function BTVomitAction.anim_cb_vomit(arg_12_0, arg_12_1, arg_12_2)
+BTVomitAction.anim_cb_vomit = function (arg_12_0, arg_12_1, arg_12_2)
 	if Managers.state.network:game() then
 		arg_12_2.is_puking = true
 

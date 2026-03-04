@@ -73,38 +73,38 @@ local function var_0_6(arg_5_0, arg_5_1, ...)
 	end
 end
 
-function Managers.destroy(arg_6_0)
+Managers.destroy = function (arg_6_0)
 	for iter_6_0 = #var_0_2, 1, -1 do
 		var_0_3(var_0_2[iter_6_0])
 	end
 end
 
-function Managers.state.destroy(arg_7_0)
+Managers.state.destroy = function (arg_7_0)
 	var_0_3("state")
 end
 
-function Managers.venture.destroy(arg_8_0)
+Managers.venture.destroy = function (arg_8_0)
 	var_0_3("venture")
 end
 
-function Managers.on_round_start(arg_9_0, ...)
+Managers.on_round_start = function (arg_9_0, ...)
 	var_0_6("on_round_start", false, ...)
 end
 
-function Managers.on_round_end(arg_10_0, ...)
+Managers.on_round_end = function (arg_10_0, ...)
 	var_0_6("on_round_end", true, ...)
 end
 
-function Managers.on_venture_start(arg_11_0, ...)
+Managers.on_venture_start = function (arg_11_0, ...)
 	var_0_6("on_venture_start", false, ...)
 end
 
-function Managers.on_venture_end(arg_12_0, ...)
+Managers.on_venture_end = function (arg_12_0, ...)
 	var_0_6("on_venture_end", true, ...)
 end
 
 local var_0_7 = {
-	__newindex = function(arg_13_0, arg_13_1, arg_13_2)
+	__newindex = function (arg_13_0, arg_13_1, arg_13_2)
 		rawset(ManagersCreationOrder.global, #ManagersCreationOrder.global + 1, arg_13_1)
 		rawset(arg_13_0, arg_13_1, arg_13_2)
 
@@ -113,7 +113,7 @@ local var_0_7 = {
 			local var_13_1 = getmetatable(arg_13_2)
 
 			if var_13_1 then
-				function arg_13_2.update(...)
+				arg_13_2.update = function (...)
 					local var_14_0, var_14_1, var_14_2 = var_13_1.update(...)
 
 					return var_14_0, var_14_1, var_14_2
@@ -121,7 +121,7 @@ local var_0_7 = {
 			end
 		end
 	end,
-	__tostring = function(arg_15_0)
+	__tostring = function (arg_15_0)
 		local var_15_0 = "\n"
 
 		for iter_15_0, iter_15_1 in pairs(arg_15_0) do
@@ -134,7 +134,7 @@ local var_0_7 = {
 	end
 }
 local var_0_8 = {
-	__newindex = function(arg_16_0, arg_16_1, arg_16_2)
+	__newindex = function (arg_16_0, arg_16_1, arg_16_2)
 		rawset(ManagersCreationOrder.venture, #ManagersCreationOrder.venture + 1, arg_16_1)
 		rawset(arg_16_0, arg_16_1, arg_16_2)
 
@@ -142,14 +142,14 @@ local var_0_8 = {
 			local var_16_0 = arg_16_1 .. "_update"
 			local var_16_1 = getmetatable(arg_16_2)
 
-			function arg_16_2.update(...)
+			arg_16_2.update = function (...)
 				local var_17_0, var_17_1, var_17_2 = var_16_1.update(...)
 
 				return var_17_0, var_17_1, var_17_2
 			end
 		end
 	end,
-	__tostring = function(arg_18_0)
+	__tostring = function (arg_18_0)
 		local var_18_0 = "\n"
 
 		for iter_18_0, iter_18_1 in pairs(arg_18_0) do
@@ -162,7 +162,7 @@ local var_0_8 = {
 	end
 }
 local var_0_9 = {
-	__newindex = function(arg_19_0, arg_19_1, arg_19_2)
+	__newindex = function (arg_19_0, arg_19_1, arg_19_2)
 		rawset(ManagersCreationOrder.state, #ManagersCreationOrder.state + 1, arg_19_1)
 		rawset(arg_19_0, arg_19_1, arg_19_2)
 
@@ -170,14 +170,14 @@ local var_0_9 = {
 			local var_19_0 = arg_19_1 .. "_update"
 			local var_19_1 = getmetatable(arg_19_2)
 
-			function arg_19_2.update(...)
+			arg_19_2.update = function (...)
 				local var_20_0, var_20_1, var_20_2 = var_19_1.update(...)
 
 				return var_20_0, var_20_1, var_20_2
 			end
 		end
 	end,
-	__tostring = function(arg_21_0)
+	__tostring = function (arg_21_0)
 		local var_21_0 = "\n"
 
 		for iter_21_0, iter_21_1 in pairs(arg_21_0) do

@@ -33,7 +33,7 @@ local var_0_8 = {}
 
 MatchmakingUI = class(MatchmakingUI)
 
-function MatchmakingUI.init(arg_3_0, arg_3_1, arg_3_2)
+MatchmakingUI.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._parent = arg_3_1
 	arg_3_0.network_event_delegate = arg_3_2.network_event_delegate
 	arg_3_0.profile_synchronizer = arg_3_2.profile_synchronizer
@@ -65,7 +65,7 @@ function MatchmakingUI.init(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function MatchmakingUI.create_ui_elements(arg_4_0)
+MatchmakingUI.create_ui_elements = function (arg_4_0)
 	table.clear(arg_4_0._cached_matchmaking_info)
 
 	arg_4_0.ui_animations = {}
@@ -110,7 +110,7 @@ function MatchmakingUI.create_ui_elements(arg_4_0)
 	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
 end
 
-function MatchmakingUI._get_widget(arg_5_0, arg_5_1)
+MatchmakingUI._get_widget = function (arg_5_0, arg_5_1)
 	if arg_5_0._active_mechanism == "deus" then
 		return arg_5_0._widgets_deus_by_name[arg_5_1]
 	elseif arg_5_0._active_mechanism == "versus" then
@@ -120,7 +120,7 @@ function MatchmakingUI._get_widget(arg_5_0, arg_5_1)
 	end
 end
 
-function MatchmakingUI._get_detail_widget(arg_6_0, arg_6_1)
+MatchmakingUI._get_detail_widget = function (arg_6_0, arg_6_1)
 	if arg_6_0._active_mechanism == "deus" then
 		return arg_6_0._detail_widgets_deus_by_name[arg_6_1]
 	elseif arg_6_0._active_mechanism == "versus" then
@@ -130,7 +130,7 @@ function MatchmakingUI._get_detail_widget(arg_6_0, arg_6_1)
 	end
 end
 
-function MatchmakingUI._get_widgets(arg_7_0)
+MatchmakingUI._get_widgets = function (arg_7_0)
 	if arg_7_0._active_mechanism == "deus" then
 		return arg_7_0._widgets_deus, arg_7_0._detail_widgets_deus
 	elseif arg_7_0._active_mechanism == "versus" then
@@ -140,11 +140,11 @@ function MatchmakingUI._get_widgets(arg_7_0)
 	end
 end
 
-function MatchmakingUI.is_in_inn(arg_8_0)
+MatchmakingUI.is_in_inn = function (arg_8_0)
 	return arg_8_0._is_in_inn
 end
 
-function MatchmakingUI.update(arg_9_0, arg_9_1, arg_9_2)
+MatchmakingUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if RESOLUTION_LOOKUP.modified then
 		arg_9_0:_update_button_prompts()
 	end
@@ -246,7 +246,7 @@ function MatchmakingUI.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function MatchmakingUI._handle_gamepad_activity(arg_10_0)
+MatchmakingUI._handle_gamepad_activity = function (arg_10_0)
 	local var_10_0 = arg_10_0.input_manager:is_device_active("gamepad")
 	local var_10_1 = Managers.input:get_most_recent_device()
 	local var_10_2 = arg_10_0.gamepad_active_last_frame == nil or var_10_0 and var_10_1 ~= arg_10_0._most_recent_device
@@ -266,7 +266,7 @@ function MatchmakingUI._handle_gamepad_activity(arg_10_0)
 	arg_10_0._most_recent_device = var_10_1
 end
 
-function MatchmakingUI._draw(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+MatchmakingUI._draw = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0._detailed_info_visibility_progress
 
 	if var_11_0 then
@@ -305,7 +305,7 @@ function MatchmakingUI._draw(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	UIRenderer.end_pass(arg_11_1)
 end
 
-function MatchmakingUI._update_background(arg_12_0, arg_12_1, arg_12_2)
+MatchmakingUI._update_background = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0
 
 	if arg_12_1 then
@@ -324,7 +324,7 @@ function MatchmakingUI._update_background(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function MatchmakingUI._update_matchmaking_info(arg_13_0, arg_13_1)
+MatchmakingUI._update_matchmaking_info = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.matchmaking_manager
 	local var_13_1 = var_13_0:search_info()
 	local var_13_2 = arg_13_0._cached_matchmaking_info
@@ -458,7 +458,7 @@ function MatchmakingUI._update_matchmaking_info(arg_13_0, arg_13_1)
 	end
 end
 
-function MatchmakingUI._update_status(arg_14_0, arg_14_1)
+MatchmakingUI._update_status = function (arg_14_0, arg_14_1)
 	local var_14_0 = ((arg_14_0._rotation_progresss or 0) + arg_14_1 * 0.2) % 1
 
 	arg_14_0._rotation_progresss = var_14_0
@@ -485,7 +485,7 @@ function MatchmakingUI._update_status(arg_14_0, arg_14_1)
 	end
 end
 
-function MatchmakingUI._update_mission_vote_status(arg_15_0)
+MatchmakingUI._update_mission_vote_status = function (arg_15_0)
 	local var_15_0 = arg_15_0.voting_manager
 	local var_15_1 = var_15_0:vote_in_progress()
 	local var_15_2 = var_15_0:active_vote_data()
@@ -570,7 +570,7 @@ function MatchmakingUI._update_mission_vote_status(arg_15_0)
 	arg_15_0:_set_status_text(var_15_32)
 end
 
-function MatchmakingUI._update_mission_vote_player_status(arg_16_0)
+MatchmakingUI._update_mission_vote_player_status = function (arg_16_0)
 	local var_16_0 = arg_16_0.voting_manager:get_current_voters()
 
 	for iter_16_0, iter_16_1 in pairs(var_16_0) do
@@ -586,7 +586,7 @@ function MatchmakingUI._update_mission_vote_player_status(arg_16_0)
 	end
 end
 
-function MatchmakingUI._update_mission_timer(arg_17_0)
+MatchmakingUI._update_mission_timer = function (arg_17_0)
 	local var_17_0 = arg_17_0.voting_manager
 	local var_17_1 = var_17_0:active_vote_template().duration
 	local var_17_2 = var_17_0:vote_time_left()
@@ -595,7 +595,7 @@ function MatchmakingUI._update_mission_timer(arg_17_0)
 	arg_17_0:_set_vote_time_progress(var_17_3)
 end
 
-function MatchmakingUI._update_show_timer(arg_18_0, arg_18_1)
+MatchmakingUI._update_show_timer = function (arg_18_0, arg_18_1)
 	local var_18_0
 	local var_18_1 = arg_18_1 and 255 or 0
 	local var_18_2 = arg_18_0:_get_detail_widget("timer_bg")
@@ -607,7 +607,7 @@ function MatchmakingUI._update_show_timer(arg_18_0, arg_18_1)
 	var_18_4.style.texture_id.color[1] = var_18_1
 end
 
-function MatchmakingUI.update_debug(arg_19_0)
+MatchmakingUI.update_debug = function (arg_19_0)
 	if not Managers.matchmaking:active_lobby() then
 		return
 	end
@@ -617,11 +617,11 @@ function MatchmakingUI.update_debug(arg_19_0)
 	arg_19_0.debug_box_widget.content.debug_text = var_19_0
 end
 
-function MatchmakingUI.destroy(arg_20_0)
+MatchmakingUI.destroy = function (arg_20_0)
 	return
 end
 
-function MatchmakingUI.get_input_texture_data(arg_21_0, arg_21_1)
+MatchmakingUI.get_input_texture_data = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.input_manager
 	local var_21_1 = var_21_0:get_service("ingame_menu")
 	local var_21_2 = var_21_0:is_device_active("gamepad")
@@ -658,7 +658,7 @@ function MatchmakingUI.get_input_texture_data(arg_21_0, arg_21_1)
 	return nil, ""
 end
 
-function MatchmakingUI._update_button_prompts(arg_22_0)
+MatchmakingUI._update_button_prompts = function (arg_22_0)
 	local var_22_0 = Managers.input:is_device_active("gamepad")
 	local var_22_1 = arg_22_0.ui_scenegraph
 
@@ -721,7 +721,7 @@ function MatchmakingUI._update_button_prompts(arg_22_0)
 	end
 end
 
-function MatchmakingUI._update_portraits(arg_23_0, arg_23_1)
+MatchmakingUI._update_portraits = function (arg_23_0, arg_23_1)
 	if arg_23_0._active_mechanism == "versus" then
 		return
 	end
@@ -781,7 +781,7 @@ function MatchmakingUI._update_portraits(arg_23_0, arg_23_1)
 	end
 end
 
-function MatchmakingUI._get_portrait_index(arg_24_0, arg_24_1)
+MatchmakingUI._get_portrait_index = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0.portrait_index_table
 
 	for iter_24_0 = 1, arg_24_0._max_number_of_players do
@@ -791,7 +791,7 @@ function MatchmakingUI._get_portrait_index(arg_24_0, arg_24_1)
 	end
 end
 
-function MatchmakingUI._get_first_free_portrait_index(arg_25_0)
+MatchmakingUI._get_first_free_portrait_index = function (arg_25_0)
 	local var_25_0 = arg_25_0.portrait_index_table
 
 	for iter_25_0 = 1, arg_25_0._max_number_of_players do
@@ -801,24 +801,24 @@ function MatchmakingUI._get_first_free_portrait_index(arg_25_0)
 	end
 end
 
-function MatchmakingUI.large_window_set_title(arg_26_0, arg_26_1)
+MatchmakingUI.large_window_set_title = function (arg_26_0, arg_26_1)
 	arg_26_0:_get_detail_widget("title_text").content.text = Localize(arg_26_1)
 end
 
-function MatchmakingUI.large_window_set_status_message(arg_27_0, arg_27_1)
+MatchmakingUI.large_window_set_status_message = function (arg_27_0, arg_27_1)
 	fassert(arg_27_1 ~= " ", "tried to pass empty status message to matchmaking ui")
 
 	arg_27_0:_get_widget("status_text").content.text = Localize(arg_27_1)
 end
 
-function MatchmakingUI.large_window_set_difficulty(arg_28_0, arg_28_1)
+MatchmakingUI.large_window_set_difficulty = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_1 and DifficultySettings[arg_28_1]
 	local var_28_1 = var_28_0 and var_28_0.display_name or "dlc1_2_difficulty_unavailable"
 
 	arg_28_0:_get_detail_widget("difficulty_text").content.text = Localize(var_28_1)
 end
 
-function MatchmakingUI.large_window_set_player_portrait(arg_29_0, arg_29_1, arg_29_2)
+MatchmakingUI.large_window_set_player_portrait = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0:_get_detail_widget("party_slot_" .. arg_29_1)
 	local var_29_1 = arg_29_0:_get_widget("player_status_" .. arg_29_1)
 	local var_29_2 = var_29_0.content
@@ -845,7 +845,7 @@ function MatchmakingUI.large_window_set_player_portrait(arg_29_0, arg_29_1, arg_
 	var_29_2.portrait = var_29_3
 end
 
-function MatchmakingUI._get_party_slot_index_by_peer_id(arg_30_0, arg_30_1)
+MatchmakingUI._get_party_slot_index_by_peer_id = function (arg_30_0, arg_30_1)
 	for iter_30_0 = 1, arg_30_0._max_number_of_players do
 		local var_30_0 = "party_slot_" .. iter_30_0
 
@@ -855,7 +855,7 @@ function MatchmakingUI._get_party_slot_index_by_peer_id(arg_30_0, arg_30_1)
 	end
 end
 
-function MatchmakingUI._sync_players_ready_state(arg_31_0, arg_31_1)
+MatchmakingUI._sync_players_ready_state = function (arg_31_0, arg_31_1)
 	if arg_31_0._active_mechanism == "versus" then
 		return
 	end
@@ -877,7 +877,7 @@ function MatchmakingUI._sync_players_ready_state(arg_31_0, arg_31_1)
 	end
 end
 
-function MatchmakingUI._set_player_ready_state(arg_32_0, arg_32_1, arg_32_2)
+MatchmakingUI._set_player_ready_state = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0:_get_detail_widget("party_slot_" .. arg_32_1)
 	local var_32_1 = arg_32_0:_get_widget("player_status_" .. arg_32_1)
 
@@ -886,7 +886,7 @@ function MatchmakingUI._set_player_ready_state(arg_32_0, arg_32_1, arg_32_2)
 	var_32_1.content.texture_id = arg_32_2 and "matchmaking_light_01" or "matchmaking_light_02"
 end
 
-function MatchmakingUI.large_window_set_player_connecting(arg_33_0, arg_33_1, arg_33_2)
+MatchmakingUI.large_window_set_player_connecting = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0:_get_detail_widget("party_slot_" .. arg_33_1)
 	local var_33_1 = arg_33_0:_get_widget("player_status_" .. arg_33_1)
 
@@ -894,11 +894,11 @@ function MatchmakingUI.large_window_set_player_connecting(arg_33_0, arg_33_1, ar
 	var_33_1.content.is_connecting = arg_33_2
 end
 
-function MatchmakingUI._set_player_is_voting(arg_34_0, arg_34_1, arg_34_2)
+MatchmakingUI._set_player_is_voting = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0:_get_detail_widget("party_slot_" .. arg_34_1).content.is_voting = arg_34_2
 end
 
-function MatchmakingUI._set_player_voted_yes(arg_35_0, arg_35_1, arg_35_2)
+MatchmakingUI._set_player_voted_yes = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0:_get_detail_widget("party_slot_" .. arg_35_1)
 
 	if not var_35_0 then
@@ -908,25 +908,25 @@ function MatchmakingUI._set_player_voted_yes(arg_35_0, arg_35_1, arg_35_2)
 	var_35_0.content.voted_yes = arg_35_2
 end
 
-function MatchmakingUI._set_detail_difficulty_text(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+MatchmakingUI._set_detail_difficulty_text = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = arg_36_0:_get_detail_widget("difficulty_text")
 
 	var_36_0.content.text = arg_36_3 and arg_36_1 or Localize(arg_36_1)
 	var_36_0.style.text.text_color = arg_36_2 or var_36_0.style.text.default_color or var_0_7.default
 end
 
-function MatchmakingUI._set_detail_level_text(arg_37_0, arg_37_1, arg_37_2)
+MatchmakingUI._set_detail_level_text = function (arg_37_0, arg_37_1, arg_37_2)
 	arg_37_0:_get_detail_widget("title_text").content.text = arg_37_2 and Localize(arg_37_1) or arg_37_1
 end
 
-function MatchmakingUI._set_status_text(arg_38_0, arg_38_1)
+MatchmakingUI._set_status_text = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0:_get_widget("status_text")
 
 	arg_38_1 = var_0_8[arg_38_1] or arg_38_1
 	var_38_0.content.text = Localize(arg_38_1)
 end
 
-function MatchmakingUI._set_vote_time_progress(arg_39_0, arg_39_1)
+MatchmakingUI._set_vote_time_progress = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0:_get_detail_widget("timer_fg")
 	local var_39_1 = var_39_0.content.texture_id.uvs
 	local var_39_2 = var_39_0.scenegraph_id
@@ -936,7 +936,7 @@ function MatchmakingUI._set_vote_time_progress(arg_39_0, arg_39_1)
 	var_39_1[2][1] = arg_39_1
 end
 
-function MatchmakingUI._set_in_view_ui_visibility(arg_40_0, arg_40_1)
+MatchmakingUI._set_in_view_ui_visibility = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._widgets_by_name.window
 	local var_40_1 = arg_40_0._widgets_by_name.status_text
 	local var_40_2 = arg_40_0._widgets_deus_by_name.window
@@ -961,7 +961,7 @@ function MatchmakingUI._set_in_view_ui_visibility(arg_40_0, arg_40_1)
 	var_40_5.content.visible = arg_40_1
 end
 
-function MatchmakingUI.on_matchmaking_num_players_in_matchmaking(arg_41_0, arg_41_1, arg_41_2)
+MatchmakingUI.on_matchmaking_num_players_in_matchmaking = function (arg_41_0, arg_41_1, arg_41_2)
 	if not (arg_41_0.matchmaking_manager:is_game_matchmaking() and arg_41_0._is_in_inn) then
 		return
 	end

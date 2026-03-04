@@ -3,7 +3,7 @@
 MatchmakingStateReserveSlotsPlayerHosted = class(MatchmakingStateReserveSlotsPlayerHosted)
 MatchmakingStateReserveSlotsPlayerHosted.NAME = "MatchmakingStateReserveSlotsPlayerHosted"
 
-function MatchmakingStateReserveSlotsPlayerHosted.init(arg_1_0, arg_1_1)
+MatchmakingStateReserveSlotsPlayerHosted.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_options = arg_1_1.network_options
 	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
@@ -12,7 +12,7 @@ function MatchmakingStateReserveSlotsPlayerHosted.init(arg_1_0, arg_1_1)
 	arg_1_0._state = "waiting_to_join_lobby"
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.destroy(arg_2_0)
+MatchmakingStateReserveSlotsPlayerHosted.destroy = function (arg_2_0)
 	if arg_2_0._password_request ~= nil then
 		arg_2_0._password_request:destroy()
 
@@ -20,7 +20,7 @@ function MatchmakingStateReserveSlotsPlayerHosted.destroy(arg_2_0)
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateReserveSlotsPlayerHosted.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0._state_context = arg_3_1
 	arg_3_0._search_config = arg_3_1.search_config
 	arg_3_0._reservation_reply = nil
@@ -41,23 +41,23 @@ function MatchmakingStateReserveSlotsPlayerHosted.on_enter(arg_3_0, arg_3_1)
 	arg_3_0._matchmaking_manager:send_system_chat_message("matchmaking_status_starting_handshake")
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.on_exit(arg_4_0)
+MatchmakingStateReserveSlotsPlayerHosted.on_exit = function (arg_4_0)
 	return
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.terminate(arg_5_0)
+MatchmakingStateReserveSlotsPlayerHosted.terminate = function (arg_5_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateReserveSlotsPlayerHosted.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_states(arg_6_1, arg_6_2)
 
 	return arg_6_0._new_state, arg_6_0._state_context
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._update_states(arg_7_0, arg_7_1, arg_7_2)
+MatchmakingStateReserveSlotsPlayerHosted._update_states = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
 	if not var_7_0 then
@@ -154,11 +154,11 @@ function MatchmakingStateReserveSlotsPlayerHosted._update_states(arg_7_0, arg_7_
 			end
 		end
 	elseif var_7_3 == "waiting_for_confirmation" then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._join_game_success(arg_8_0, arg_8_1)
+MatchmakingStateReserveSlotsPlayerHosted._join_game_success = function (arg_8_0, arg_8_1)
 	local var_8_0 = true
 
 	if arg_8_0._is_server then
@@ -174,7 +174,7 @@ function MatchmakingStateReserveSlotsPlayerHosted._join_game_success(arg_8_0, ar
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._join_game_failed(arg_9_0, arg_9_1)
+MatchmakingStateReserveSlotsPlayerHosted._join_game_failed = function (arg_9_0, arg_9_1)
 	print("[MatchmakingStateReserveSlotsPlayerHosted] FAILED: " .. arg_9_1)
 
 	local var_9_0 = false
@@ -192,7 +192,7 @@ function MatchmakingStateReserveSlotsPlayerHosted._join_game_failed(arg_9_0, arg
 	arg_9_0:_cancel_join()
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._reservation_success(arg_10_0, arg_10_1)
+MatchmakingStateReserveSlotsPlayerHosted._reservation_success = function (arg_10_0, arg_10_1)
 	if arg_10_0._is_server then
 		arg_10_0._network_transmit:send_rpc_clients("rpc_matchmaking_reservation_success", arg_10_1)
 	end
@@ -205,7 +205,7 @@ function MatchmakingStateReserveSlotsPlayerHosted._reservation_success(arg_10_0,
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._cancel_join(arg_11_0)
+MatchmakingStateReserveSlotsPlayerHosted._cancel_join = function (arg_11_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
@@ -228,7 +228,7 @@ function MatchmakingStateReserveSlotsPlayerHosted._cancel_join(arg_11_0)
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted._all_players_joined(arg_12_0)
+MatchmakingStateReserveSlotsPlayerHosted._all_players_joined = function (arg_12_0)
 	local var_12_0 = arg_12_0._lobby:members():get_members()
 	local var_12_1 = true
 
@@ -243,7 +243,7 @@ function MatchmakingStateReserveSlotsPlayerHosted._all_players_joined(arg_12_0)
 	return var_12_1
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_client_joined_player_hosted(arg_13_0, arg_13_1, arg_13_2)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_client_joined_player_hosted = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0._is_server then
 		fassert(false, "[MatchmakingStateReserveSlotsPlayerHosted] Server Only function")
 	end
@@ -257,12 +257,12 @@ function MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_client_joined_
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_request_reserve_slots_reply(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_request_reserve_slots_reply = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0._reservation_reply = NetworkLookup.game_ping_reply[arg_14_2]
 	arg_14_0._reservation_reply_variable = arg_14_3
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_reservation_success(arg_15_0, arg_15_1, arg_15_2)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_reservation_success = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_0._is_server then
 		fassert(false, "[MatchmakingStateReserveSlotsPlayerHosted] The lobby host should never receive this")
 	end
@@ -274,6 +274,6 @@ function MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_reservation_su
 	end
 end
 
-function MatchmakingStateReserveSlotsPlayerHosted.rpc_notify_connected(arg_16_0, arg_16_1)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_notify_connected = function (arg_16_0, arg_16_1)
 	arg_16_0._connected_to_server = true
 end

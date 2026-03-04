@@ -5,7 +5,7 @@ require("scripts/unit_extensions/limited_item_track/limited_item_track_spawner_t
 WeaveLimitedItemSpawnerExtension = class(WeaveLimitedItemSpawnerExtension, BaseObjectiveExtension)
 WeaveLimitedItemSpawnerExtension.NAME = "WeaveLimitedItemSpawnerExtension"
 
-function WeaveLimitedItemSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveLimitedItemSpawnerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveLimitedItemSpawnerExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._items_spawned = false
@@ -20,15 +20,15 @@ function WeaveLimitedItemSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	end
 end
 
-function WeaveLimitedItemSpawnerExtension.extensions_ready(arg_2_0)
+WeaveLimitedItemSpawnerExtension.extensions_ready = function (arg_2_0)
 	return
 end
 
-function WeaveLimitedItemSpawnerExtension.initial_sync_data(arg_3_0, arg_3_1)
+WeaveLimitedItemSpawnerExtension.initial_sync_data = function (arg_3_0, arg_3_1)
 	arg_3_1.value = arg_3_0._value
 end
 
-function WeaveLimitedItemSpawnerExtension._set_objective_data(arg_4_0, arg_4_1)
+WeaveLimitedItemSpawnerExtension._set_objective_data = function (arg_4_0, arg_4_1)
 	arg_4_0._on_first_pickup_func = arg_4_1.on_first_pickup_func
 	arg_4_0._on_pickup_func = arg_4_1.on_pickup_func
 	arg_4_0._on_throw_func = arg_4_1.on_throw_func
@@ -43,7 +43,7 @@ function WeaveLimitedItemSpawnerExtension._set_objective_data(arg_4_0, arg_4_1)
 	Unit.set_data(arg_4_0._unit, "pickup_name", var_4_0)
 end
 
-function WeaveLimitedItemSpawnerExtension._activate(arg_5_0)
+WeaveLimitedItemSpawnerExtension._activate = function (arg_5_0)
 	local var_5_0 = Managers.state.entity:system("mission_system")
 	local var_5_1 = var_5_0:get_missions()
 
@@ -59,11 +59,11 @@ function WeaveLimitedItemSpawnerExtension._activate(arg_5_0)
 	Managers.state.entity:system("limited_item_track_system"):weave_activate_spawner(arg_5_0._unit, arg_5_0._objective_name)
 end
 
-function WeaveLimitedItemSpawnerExtension.destroy(arg_6_0)
+WeaveLimitedItemSpawnerExtension.destroy = function (arg_6_0)
 	return
 end
 
-function WeaveLimitedItemSpawnerExtension._deactivate(arg_7_0)
+WeaveLimitedItemSpawnerExtension._deactivate = function (arg_7_0)
 	Managers.state.entity:system("limited_item_track_system"):deactivate_group(arg_7_0._objective_name)
 
 	if arg_7_0._is_server then
@@ -77,11 +77,11 @@ function WeaveLimitedItemSpawnerExtension._deactivate(arg_7_0)
 	end
 end
 
-function WeaveLimitedItemSpawnerExtension.get_percentage_done(arg_8_0)
+WeaveLimitedItemSpawnerExtension.get_percentage_done = function (arg_8_0)
 	return arg_8_0._value / 1
 end
 
-function WeaveLimitedItemSpawnerExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveLimitedItemSpawnerExtension._server_update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._limited_item_track_extension
 
 	if var_9_0.num_socketed_items == var_9_0.pool then
@@ -135,6 +135,6 @@ function WeaveLimitedItemSpawnerExtension._server_update(arg_9_0, arg_9_1, arg_9
 	arg_9_0:server_set_value(arg_9_0._value)
 end
 
-function WeaveLimitedItemSpawnerExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+WeaveLimitedItemSpawnerExtension._client_update = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._value = arg_10_0:client_get_value()
 end

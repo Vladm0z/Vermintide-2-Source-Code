@@ -2,7 +2,7 @@
 
 IrcUtils = {}
 
-function IrcUtils.convert_steam_user_id_to_base_64(arg_1_0)
+IrcUtils.convert_steam_user_id_to_base_64 = function (arg_1_0)
 	local var_1_0 = {
 		"0",
 		"1",

@@ -12,7 +12,7 @@ end
 
 LobbyHost = class(LobbyHost)
 
-function LobbyHost.init(arg_2_0, arg_2_1, arg_2_2)
+LobbyHost.init = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[LobbyHost] Creating")
 
 	local var_2_0 = arg_2_1.config_file_name
@@ -32,7 +32,7 @@ function LobbyHost.init(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.is_host = true
 end
 
-function LobbyHost.kick_all_except(arg_3_0, arg_3_1)
+LobbyHost.kick_all_except = function (arg_3_0, arg_3_1)
 	if arg_3_0.lobby ~= nil and arg_3_0.lobby.kick then
 		arg_3_1 = arg_3_1 or {}
 
@@ -46,7 +46,7 @@ function LobbyHost.kick_all_except(arg_3_0, arg_3_1)
 	end
 end
 
-function LobbyHost.destroy(arg_4_0)
+LobbyHost.destroy = function (arg_4_0)
 	print("[LobbyHost] Destroying")
 	arg_4_0:kick_all_except()
 
@@ -56,7 +56,7 @@ function LobbyHost.destroy(arg_4_0)
 	GarbageLeakDetector.register_object(arg_4_0, "Lobby Host")
 end
 
-function LobbyHost.update(arg_5_0, arg_5_1)
+LobbyHost.update = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.lobby
 	local var_5_1 = var_5_0:state()
 	local var_5_2 = arg_5_0.state or 0
@@ -103,11 +103,11 @@ function LobbyHost.update(arg_5_0, arg_5_1)
 	end
 end
 
-function LobbyHost.ping_by_peer(arg_6_0, arg_6_1)
+LobbyHost.ping_by_peer = function (arg_6_0, arg_6_1)
 	return LobbyInternal.ping(arg_6_1)
 end
 
-function LobbyHost._update_debug(arg_7_0)
+LobbyHost._update_debug = function (arg_7_0)
 	local var_7_0 = arg_7_0.peer_id
 	local var_7_1 = arg_7_0.lobby:members()
 	local var_7_2 = #var_7_1
@@ -135,7 +135,7 @@ function LobbyHost._update_debug(arg_7_0)
 	end
 end
 
-function LobbyHost.set_lobby_data(arg_8_0, arg_8_1)
+LobbyHost.set_lobby_data = function (arg_8_0, arg_8_1)
 	fassert(arg_8_1.Host == nil, "Tell Staffan about this!!")
 	var_0_1("Set lobby begin:")
 
@@ -157,43 +157,43 @@ function LobbyHost.set_lobby_data(arg_8_0, arg_8_1)
 	var_0_1("Set lobby end.")
 end
 
-function LobbyHost.set_network_initialized(arg_9_0, arg_9_1)
+LobbyHost.set_network_initialized = function (arg_9_0, arg_9_1)
 	arg_9_0._network_initialized = arg_9_1
 end
 
-function LobbyHost.network_initialized(arg_10_0)
+LobbyHost.network_initialized = function (arg_10_0)
 	return arg_10_0._network_initialized
 end
 
-function LobbyHost.get_stored_lobby_data(arg_11_0)
+LobbyHost.get_stored_lobby_data = function (arg_11_0)
 	return arg_11_0.lobby_data_table
 end
 
-function LobbyHost.attempting_reconnect(arg_12_0)
+LobbyHost.attempting_reconnect = function (arg_12_0)
 	return false
 end
 
-function LobbyHost.members(arg_13_0)
+LobbyHost.members = function (arg_13_0)
 	return arg_13_0.lobby_members
 end
 
-function LobbyHost.lobby_data(arg_14_0, arg_14_1)
+LobbyHost.lobby_data = function (arg_14_0, arg_14_1)
 	return arg_14_0.lobby:data(arg_14_1)
 end
 
-function LobbyHost.invite_target(arg_15_0)
+LobbyHost.invite_target = function (arg_15_0)
 	return arg_15_0.lobby
 end
 
-function LobbyHost.is_dedicated_server(arg_16_0)
+LobbyHost.is_dedicated_server = function (arg_16_0)
 	return false
 end
 
-function LobbyHost.lobby_host(arg_17_0)
+LobbyHost.lobby_host = function (arg_17_0)
 	return arg_17_0.lobby:lobby_host()
 end
 
-function LobbyHost.user_name(arg_18_0, arg_18_1)
+LobbyHost.user_name = function (arg_18_0, arg_18_1)
 	if HAS_STEAM then
 		return string.gsub(Steam.user_name(), "%c", "")
 	elseif IS_PS4 then
@@ -203,29 +203,29 @@ function LobbyHost.user_name(arg_18_0, arg_18_1)
 	end
 end
 
-function LobbyHost.id(arg_19_0)
+LobbyHost.id = function (arg_19_0)
 	return LobbyInternal.lobby_id and LobbyInternal.lobby_id(arg_19_0.lobby) or "no_id"
 end
 
-function LobbyHost.is_joined(arg_20_0)
+LobbyHost.is_joined = function (arg_20_0)
 	return arg_20_0.state == LobbyState.JOINED
 end
 
-function LobbyHost.get_network_hash(arg_21_0)
+LobbyHost.get_network_hash = function (arg_21_0)
 	return arg_21_0.network_hash
 end
 
-function LobbyHost.get_max_members(arg_22_0)
+LobbyHost.get_max_members = function (arg_22_0)
 	return arg_22_0.max_members
 end
 
-function LobbyHost.set_max_members(arg_23_0, arg_23_1)
+LobbyHost.set_max_members = function (arg_23_0, arg_23_1)
 	arg_23_0.max_members = arg_23_1
 
 	LobbyInternal.set_max_members(arg_23_0.lobby, arg_23_1)
 end
 
-function LobbyHost.set_lobby(arg_24_0, arg_24_1)
+LobbyHost.set_lobby = function (arg_24_0, arg_24_1)
 	print("leaving old lobby")
 	arg_24_0:_free_lobby()
 
@@ -238,7 +238,7 @@ function LobbyHost.set_lobby(arg_24_0, arg_24_1)
 	arg_24_0.lobby_members = LobbyMembers:new(arg_24_1)
 end
 
-function LobbyHost.steal_lobby(arg_25_0)
+LobbyHost.steal_lobby = function (arg_25_0)
 	local var_25_0 = arg_25_0.lobby
 
 	arg_25_0.lobby = nil
@@ -246,11 +246,11 @@ function LobbyHost.steal_lobby(arg_25_0)
 	return var_25_0
 end
 
-function LobbyHost.failed(arg_26_0)
+LobbyHost.failed = function (arg_26_0)
 	return arg_26_0.state == LobbyState.FAILED
 end
 
-function LobbyHost._free_lobby(arg_27_0)
+LobbyHost._free_lobby = function (arg_27_0)
 	if arg_27_0.lobby ~= nil then
 		LobbyInternal.leave_lobby(arg_27_0.lobby)
 
@@ -258,10 +258,10 @@ function LobbyHost._free_lobby(arg_27_0)
 	end
 end
 
-function LobbyHost.lost_connection_to_lobby(arg_28_0)
+LobbyHost.lost_connection_to_lobby = function (arg_28_0)
 	return LobbyInternal.is_orphaned(arg_28_0.lobby)
 end
 
-function LobbyHost.close_channel(arg_29_0, arg_29_1)
+LobbyHost.close_channel = function (arg_29_0, arg_29_1)
 	LobbyInternal.close_channel(arg_29_0.lobby, arg_29_1)
 end

@@ -268,7 +268,7 @@ for iter_0_6 = 3, 256 do
 	end
 end
 
-function var_0_5.Adler32(arg_1_0, arg_1_1)
+var_0_5.Adler32 = function (arg_1_0, arg_1_1)
 	if var_0_15(arg_1_1) ~= "string" then
 		var_0_7(("Usage: LibDeflate:Adler32(str):" .. " 'str' - string expected got '%s'."):format(var_0_15(arg_1_1)), 2)
 	end
@@ -299,7 +299,7 @@ local function var_0_50(arg_2_0, arg_2_1)
 	return arg_2_0 % 4294967296 == arg_2_1 % 4294967296
 end
 
-function var_0_5.CreateDictionary(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+var_0_5.CreateDictionary = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if var_0_15(arg_3_1) ~= "string" then
 		var_0_7(("Usage: LibDeflate:CreateDictionary(str, strlen, adler32):" .. " 'str' - string expected got '%s'."):format(var_0_15(arg_3_1)), 2)
 	end
@@ -1683,7 +1683,7 @@ local function var_0_76(arg_27_0, arg_27_1, arg_27_2)
 	return var_27_25, var_27_26
 end
 
-function var_0_5.CompressDeflate(arg_28_0, arg_28_1, arg_28_2)
+var_0_5.CompressDeflate = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0, var_28_1 = var_0_53(arg_28_1, false, nil, true, arg_28_2)
 
 	if not var_28_0 then
@@ -1693,7 +1693,7 @@ function var_0_5.CompressDeflate(arg_28_0, arg_28_1, arg_28_2)
 	return var_0_75(arg_28_1, nil, arg_28_2)
 end
 
-function var_0_5.CompressDeflateWithDict(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+var_0_5.CompressDeflateWithDict = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0, var_29_1 = var_0_53(arg_29_1, true, arg_29_2, true, arg_29_3)
 
 	if not var_29_0 then
@@ -1703,7 +1703,7 @@ function var_0_5.CompressDeflateWithDict(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	return var_0_75(arg_29_1, arg_29_2, arg_29_3)
 end
 
-function var_0_5.CompressZlib(arg_30_0, arg_30_1, arg_30_2)
+var_0_5.CompressZlib = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0, var_30_1 = var_0_53(arg_30_1, false, nil, true, arg_30_2)
 
 	if not var_30_0 then
@@ -1713,7 +1713,7 @@ function var_0_5.CompressZlib(arg_30_0, arg_30_1, arg_30_2)
 	return var_0_76(arg_30_1, nil, arg_30_2)
 end
 
-function var_0_5.CompressZlibWithDict(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+var_0_5.CompressZlibWithDict = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0, var_31_1 = var_0_53(arg_31_1, true, arg_31_2, true, arg_31_3)
 
 	if not var_31_0 then
@@ -2210,7 +2210,7 @@ local function var_0_85(arg_45_0, arg_45_1)
 	return var_45_1, var_45_4
 end
 
-function var_0_5.DecompressDeflate(arg_46_0, arg_46_1)
+var_0_5.DecompressDeflate = function (arg_46_0, arg_46_1)
 	local var_46_0, var_46_1 = var_0_53(arg_46_1)
 
 	if not var_46_0 then

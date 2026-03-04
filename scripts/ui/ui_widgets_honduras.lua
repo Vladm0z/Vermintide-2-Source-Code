@@ -5,7 +5,7 @@ require("scripts/settings/ui_player_portrait_frame_settings")
 
 UIWidgets = UIWidgets or {}
 
-function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
+UIWidgets.create_talent_slot = function (arg_1_0, arg_1_1)
 	local var_1_0 = {
 		50,
 		-10
@@ -20,21 +20,21 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					style_id = "icon",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.parent.icon
 					end
 				},
 				{
 					style_id = "available_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.unavailable and arg_3_0.num_ranks and arg_3_0.num_ranks > arg_3_0.rank
 					end
 				},
 				{
 					style_id = "filled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return not arg_4_0.unavailable and arg_4_0.num_ranks and arg_4_0.num_ranks == arg_4_0.rank
 					end
 				},
@@ -47,14 +47,14 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					texture_id = "counter_frame",
 					style_id = "counter_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.unavailable
 					end
 				},
 				{
 					style_id = "counter_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return not arg_6_0.unavailable
 					end
 				},
@@ -62,7 +62,7 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					style_id = "counter_text",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return not arg_7_0.unavailable and arg_7_0.num_ranks and arg_7_0.num_ranks > arg_7_0.rank
 					end
 				},
@@ -70,14 +70,14 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					style_id = "counter_text_complete",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return not arg_8_0.unavailable and arg_8_0.num_ranks and arg_8_0.num_ranks == arg_8_0.rank
 					end
 				},
 				{
 					style_id = "rect_rotated",
 					pass_type = "rect_rotated",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.has_connection
 					end
 				},
@@ -85,7 +85,7 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					texture_id = "connection_arrow",
 					style_id = "connection_arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.has_connection
 					end
 				},
@@ -98,7 +98,7 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 					talent_id = "tooltip",
 					style_id = "tooltip",
 					pass_type = "talent_tooltip",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.talent_id and arg_11_0.hotspot.is_hover
 					end
 				}
@@ -324,7 +324,7 @@ function UIWidgets.create_talent_slot(arg_1_0, arg_1_1)
 	}
 end
 
-function UIWidgets.create_simple_item_tooltip(arg_12_0, arg_12_1)
+UIWidgets.create_simple_item_tooltip = function (arg_12_0, arg_12_1)
 	return {
 		element = {
 			passes = {
@@ -333,7 +333,7 @@ function UIWidgets.create_simple_item_tooltip(arg_12_0, arg_12_1)
 					style_id = "item",
 					pass_type = "item_tooltip",
 					content_passes = arg_12_1,
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.item
 					end
 				}
@@ -369,7 +369,7 @@ function UIWidgets.create_simple_item_tooltip(arg_12_0, arg_12_1)
 	}
 end
 
-function UIWidgets.create_simple_item_presentation(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+UIWidgets.create_simple_item_presentation = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	return {
 		element = {
 			passes = {
@@ -379,7 +379,7 @@ function UIWidgets.create_simple_item_presentation(arg_14_0, arg_14_1, arg_14_2,
 					pass_type = "item_presentation",
 					content_passes = arg_14_1,
 					disable_unsupported = arg_14_4,
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.item
 					end
 				}
@@ -418,7 +418,7 @@ function UIWidgets.create_simple_item_presentation(arg_14_0, arg_14_1, arg_14_2,
 	}
 end
 
-function UIWidgets.create_reward_slot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+UIWidgets.create_reward_slot = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	return {
 		element = {
 			passes = {
@@ -437,7 +437,7 @@ function UIWidgets.create_reward_slot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 					style_id = "tooltip",
 					pass_type = "item_tooltip",
 					text_id = "tooltip",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.hotspot.is_hover and arg_17_0.hotspot.tooltip
 					end
 				}
@@ -502,7 +502,7 @@ function UIWidgets.create_reward_slot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 	}
 end
 
-function UIWidgets.create_talent_tree_background(arg_18_0, arg_18_1, arg_18_2)
+UIWidgets.create_talent_tree_background = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = Colors.get_color_table_with_alpha("black", 220)
 	local var_18_1 = Colors.get_color_table_with_alpha("gray", 50)
 	local var_18_2 = {
@@ -647,7 +647,7 @@ function UIWidgets.create_talent_tree_background(arg_18_0, arg_18_1, arg_18_2)
 	return var_18_2
 end
 
-function UIWidgets.create_hero_frame(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+UIWidgets.create_hero_frame = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_3 = arg_19_3 or "menu_frame_bg_01"
 
 	local var_19_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_19_3)
@@ -723,7 +723,7 @@ function UIWidgets.create_hero_frame(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	}
 end
 
-function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+UIWidgets.create_recipe_grid = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = {
 		255,
 		255,
@@ -803,7 +803,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				content_id = var_20_21,
 				texture_id = var_20_22,
 				style_id = var_20_22,
-				content_check_function = function(arg_21_0)
+				content_check_function = function (arg_21_0)
 					return arg_21_0[var_20_22]
 				end
 			}
@@ -829,7 +829,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				content_id = var_20_21,
 				texture_id = var_20_23,
 				style_id = var_20_23,
-				content_check_function = function(arg_22_0)
+				content_check_function = function (arg_22_0)
 					return arg_22_0[var_20_22]
 				end
 			}
@@ -856,7 +856,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				content_id = var_20_21,
 				texture_id = var_20_24,
 				style_id = var_20_24,
-				content_check_function = function(arg_23_0)
+				content_check_function = function (arg_23_0)
 					return arg_23_0[var_20_22]
 				end
 			}
@@ -885,7 +885,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				pass_type = "texture",
 				texture_id = var_20_25,
 				style_id = var_20_25,
-				content_check_function = function(arg_24_0)
+				content_check_function = function (arg_24_0)
 					return arg_24_0[var_20_21][var_20_22] and arg_24_0[var_20_20]
 				end
 			}
@@ -912,7 +912,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				text_id = var_20_26,
 				style_id = var_20_26,
 				item_id = "item" .. var_20_16,
-				content_check_function = function(arg_25_0)
+				content_check_function = function (arg_25_0)
 					return arg_25_0[var_20_21].is_hover and arg_25_0[var_20_20]
 				end
 			}
@@ -941,7 +941,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				content_id = var_20_21,
 				texture_id = var_20_27,
 				style_id = var_20_27,
-				content_check_function = function(arg_26_0)
+				content_check_function = function (arg_26_0)
 					return not arg_26_0[var_20_22] and not arg_26_0.hide_slot
 				end
 			}
@@ -968,7 +968,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 				text_id = var_20_28,
 				style_id = var_20_28,
 				content_id = var_20_21,
-				content_check_function = function(arg_27_0)
+				content_check_function = function (arg_27_0)
 					return not arg_27_0.hide_slot
 				end
 			}
@@ -1025,7 +1025,7 @@ function UIWidgets.create_recipe_grid(arg_20_0, arg_20_1, arg_20_2, arg_20_3, ar
 	return var_20_6
 end
 
-function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
+UIWidgets.create_grid = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
 	local var_28_0 = {
 		255,
 		255,
@@ -1069,7 +1069,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			style_id = "page_text",
 			pass_type = "text",
 			text_id = "page_text",
-			content_check_function = function(arg_29_0)
+			content_check_function = function (arg_29_0)
 				local var_29_0 = arg_29_0.page_hotspot_left
 				local var_29_1 = arg_29_0.page_hotspot_right
 
@@ -1091,7 +1091,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			style_id = "page_arrow_left",
 			texture_id = "texture_id",
 			content_id = "stepper_arrow_normal",
-			content_check_function = function(arg_30_0)
+			content_check_function = function (arg_30_0)
 				local var_30_0 = arg_30_0.parent.page_hotspot_left
 
 				return not var_30_0.disable_button and not var_30_0.is_hover
@@ -1101,7 +1101,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			style_id = "page_arrow_right",
 			pass_type = "texture_uv",
 			content_id = "stepper_arrow_normal",
-			content_check_function = function(arg_31_0)
+			content_check_function = function (arg_31_0)
 				local var_31_0 = arg_31_0.parent.page_hotspot_right
 
 				return not var_31_0.disable_button and not var_31_0.is_hover
@@ -1112,7 +1112,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			style_id = "page_arrow_left",
 			texture_id = "texture_id",
 			content_id = "stepper_arrow_hover",
-			content_check_function = function(arg_32_0)
+			content_check_function = function (arg_32_0)
 				local var_32_0 = arg_32_0.parent.page_hotspot_left
 
 				return not var_32_0.disable_button and var_32_0.is_hover
@@ -1122,7 +1122,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 			style_id = "page_arrow_right",
 			pass_type = "texture_uv",
 			content_id = "stepper_arrow_hover",
-			content_check_function = function(arg_33_0)
+			content_check_function = function (arg_33_0)
 				local var_33_0 = arg_33_0.parent.page_hotspot_right
 
 				return not var_33_0.disable_button and var_33_0.is_hover
@@ -1242,7 +1242,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_22,
 				style_id = var_28_22,
-				content_check_function = function(arg_34_0)
+				content_check_function = function (arg_34_0)
 					return arg_34_0[var_28_22]
 				end
 			}
@@ -1267,7 +1267,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_23,
 				style_id = var_28_23,
-				content_check_function = function(arg_35_0)
+				content_check_function = function (arg_35_0)
 					local var_35_0 = arg_35_0[var_28_20]
 
 					if var_35_0 and var_35_0.skin then
@@ -1300,7 +1300,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_24,
 				style_id = var_28_24,
-				content_check_function = function(arg_36_0)
+				content_check_function = function (arg_36_0)
 					local var_36_0 = arg_36_0[var_28_20]
 					local var_36_1 = var_36_0 and var_36_0.backend_id
 
@@ -1334,7 +1334,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_25,
 				style_id = var_28_25,
-				content_check_function = function(arg_37_0)
+				content_check_function = function (arg_37_0)
 					local var_37_0 = arg_37_0[var_28_20]
 					local var_37_1 = var_37_0 and var_37_0.skin
 
@@ -1366,7 +1366,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_26,
 				style_id = var_28_26,
-				content_check_function = function(arg_38_0)
+				content_check_function = function (arg_38_0)
 					local var_38_0 = arg_38_0[var_28_20]
 
 					if var_38_0 then
@@ -1420,7 +1420,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_27,
 				style_id = var_28_27,
-				content_check_function = function(arg_39_0)
+				content_check_function = function (arg_39_0)
 					local var_39_0 = arg_39_0[var_28_20]
 
 					return var_39_0 and var_39_0.marked_for_deletion
@@ -1447,7 +1447,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_28,
 				style_id = var_28_28,
-				content_check_function = function(arg_40_0)
+				content_check_function = function (arg_40_0)
 					return arg_40_0[var_28_22]
 				end
 			}
@@ -1473,7 +1473,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture",
 				texture_id = var_28_29,
 				style_id = var_28_29,
-				content_check_function = function(arg_41_0)
+				content_check_function = function (arg_41_0)
 					return arg_41_0[var_28_21][var_28_22] and arg_41_0[var_28_20]
 				end
 			}
@@ -1500,7 +1500,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				text_id = var_28_30,
 				style_id = var_28_30,
 				item_id = "item" .. var_28_16,
-				content_check_function = function(arg_42_0)
+				content_check_function = function (arg_42_0)
 					return arg_42_0[var_28_21].is_hover and arg_42_0[var_28_20] and not arg_42_0.disable_mouse_tooltips
 				end
 			}
@@ -1529,7 +1529,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_31,
 				style_id = var_28_31,
-				content_check_function = function(arg_43_0)
+				content_check_function = function (arg_43_0)
 					return not arg_43_0[var_28_22] and not arg_43_0.hide_slot
 				end
 			}
@@ -1556,7 +1556,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_32,
 				style_id = var_28_32,
-				content_check_function = function(arg_44_0)
+				content_check_function = function (arg_44_0)
 					return arg_44_0.highlight or arg_44_0.is_hover or arg_44_0.is_selected
 				end
 			}
@@ -1586,7 +1586,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_33,
 				style_id = var_28_33,
-				content_check_function = function(arg_45_0)
+				content_check_function = function (arg_45_0)
 					return arg_45_0.equipped
 				end
 			}
@@ -1616,7 +1616,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				text_id = var_28_34,
 				style_id = var_28_34,
 				content_id = var_28_21,
-				content_check_function = function(arg_46_0)
+				content_check_function = function (arg_46_0)
 					return arg_46_0[var_28_22]
 				end
 			}
@@ -1643,7 +1643,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				text_id = var_28_34,
 				style_id = var_28_35,
 				content_id = var_28_21,
-				content_check_function = function(arg_47_0)
+				content_check_function = function (arg_47_0)
 					return arg_47_0[var_28_22]
 				end
 			}
@@ -1667,7 +1667,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "rect",
 				content_id = var_28_21,
 				style_id = var_28_36,
-				content_check_function = function(arg_48_0)
+				content_check_function = function (arg_48_0)
 					return arg_48_0[var_28_22] and (arg_48_0.reserved or arg_48_0.unwieldable)
 				end
 			}
@@ -1693,7 +1693,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				texture_id = var_28_37,
 				content_id = var_28_21,
 				style_id = var_28_37,
-				content_check_function = function(arg_49_0)
+				content_check_function = function (arg_49_0)
 					return arg_49_0[var_28_22] and arg_49_0.unwieldable
 				end
 			}
@@ -1723,7 +1723,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				texture_id = var_28_38,
 				content_id = var_28_21,
 				style_id = var_28_38,
-				content_check_function = function(arg_50_0)
+				content_check_function = function (arg_50_0)
 					return arg_50_0.reserved and arg_50_0[var_28_38]
 				end
 			}
@@ -1750,7 +1750,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				content_id = var_28_21,
 				texture_id = var_28_22,
 				style_id = var_28_22,
-				content_check_function = function(arg_51_0)
+				content_check_function = function (arg_51_0)
 					return arg_51_0[var_28_22]
 				end
 			}
@@ -1763,12 +1763,12 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 				pass_type = "texture_frame",
 				texture_id = var_28_41,
 				style_id = var_28_41,
-				content_check_function = function(arg_52_0)
+				content_check_function = function (arg_52_0)
 					local var_52_0 = arg_52_0["item" .. var_28_16]
 
 					return arg_52_0[var_28_41] and var_52_0 and ItemHelper.is_new_backend_id(var_52_0.backend_id)
 				end,
-				content_change_function = function(arg_53_0, arg_53_1)
+				content_change_function = function (arg_53_0, arg_53_1)
 					local var_53_0 = arg_53_0["item" .. var_28_16]
 					local var_53_1 = var_53_0 and var_53_0.backend_id
 
@@ -1820,7 +1820,7 @@ function UIWidgets.create_grid(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 	return var_28_6
 end
 
-function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
+UIWidgets.create_simple_inventory_item = function (arg_54_0, arg_54_1)
 	local var_54_0 = {
 		element = {}
 	}
@@ -1853,7 +1853,7 @@ function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
 		pass_type = "texture",
 		texture_id = var_54_5,
 		style_id = var_54_5,
-		content_check_function = function(arg_55_0)
+		content_check_function = function (arg_55_0)
 			return arg_55_0[var_54_5]
 		end
 	}
@@ -1878,7 +1878,7 @@ function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
 		pass_type = "texture",
 		texture_id = var_54_6,
 		style_id = var_54_6,
-		content_check_function = function(arg_56_0)
+		content_check_function = function (arg_56_0)
 			return arg_56_0[var_54_5]
 		end
 	}
@@ -1904,7 +1904,7 @@ function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
 		pass_type = "texture",
 		texture_id = var_54_7,
 		style_id = var_54_7,
-		content_check_function = function(arg_57_0)
+		content_check_function = function (arg_57_0)
 			return arg_57_0[var_54_5]
 		end
 	}
@@ -1931,7 +1931,7 @@ function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
 		pass_type = "item_tooltip",
 		text_id = var_54_8,
 		style_id = var_54_8,
-		content_check_function = function(arg_58_0)
+		content_check_function = function (arg_58_0)
 			return arg_58_0[var_54_4].is_hover and arg_58_0[var_54_5]
 		end
 	}
@@ -1968,7 +1968,7 @@ function UIWidgets.create_simple_inventory_item(arg_54_0, arg_54_1)
 	return var_54_0
 end
 
-function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+UIWidgets.create_loadout_grid = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 	local var_59_0 = {
 		255,
 		255,
@@ -2052,7 +2052,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				content_id = var_59_23,
 				texture_id = var_59_24,
 				style_id = var_59_24,
-				content_check_function = function(arg_60_0)
+				content_check_function = function (arg_60_0)
 					return arg_60_0[var_59_24]
 				end
 			}
@@ -2078,7 +2078,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				content_id = var_59_23,
 				texture_id = var_59_25,
 				style_id = var_59_25,
-				content_check_function = function(arg_61_0)
+				content_check_function = function (arg_61_0)
 					return arg_61_0[var_59_24]
 				end
 			}
@@ -2104,7 +2104,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				pass_type = "texture",
 				texture_id = var_59_26,
 				style_id = var_59_26,
-				content_check_function = function(arg_62_0)
+				content_check_function = function (arg_62_0)
 					return arg_62_0[var_59_23][var_59_24]
 				end
 			}
@@ -2131,7 +2131,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				text_id = var_59_27,
 				style_id = var_59_27,
 				item_id = "item" .. var_59_19,
-				content_check_function = function(arg_63_0)
+				content_check_function = function (arg_63_0)
 					return arg_63_0[var_59_23].is_hover and arg_63_0[var_59_23][var_59_24]
 				end
 			}
@@ -2160,7 +2160,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				content_id = var_59_23,
 				texture_id = var_59_28,
 				style_id = var_59_28,
-				content_check_function = function(arg_64_0)
+				content_check_function = function (arg_64_0)
 					return not arg_64_0[var_59_24]
 				end
 			}
@@ -2186,7 +2186,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				pass_type = "texture",
 				texture_id = var_59_29,
 				style_id = var_59_29,
-				content_check_function = function(arg_65_0)
+				content_check_function = function (arg_65_0)
 					return not arg_65_0[var_59_23][var_59_24]
 				end
 			}
@@ -2216,7 +2216,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				content_id = var_59_23,
 				texture_id = var_59_30,
 				style_id = var_59_30,
-				content_check_function = function(arg_66_0)
+				content_check_function = function (arg_66_0)
 					return arg_66_0.highlight or arg_66_0.is_hover
 				end
 			}
@@ -2246,7 +2246,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 				content_id = var_59_23,
 				texture_id = var_59_31,
 				style_id = var_59_31,
-				content_check_function = function(arg_67_0)
+				content_check_function = function (arg_67_0)
 					return arg_67_0.is_selected
 				end
 			}
@@ -2284,7 +2284,7 @@ function UIWidgets.create_loadout_grid(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 	return var_59_11
 end
 
-function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5)
+UIWidgets.create_loadout_grid_console = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5)
 	local var_68_0 = {
 		255,
 		255,
@@ -2378,7 +2378,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 					pass_type = "hotspot",
 					content_id = var_68_25,
 					style_id = var_68_25,
-					content_check_function = function(arg_69_0)
+					content_check_function = function (arg_69_0)
 						local var_69_0 = Managers.mechanism:current_mechanism_name()
 						local var_69_1 = InventorySettings.customize_default_slot_types_allowed[var_69_0] or InventorySettings.customize_default_slot_types_allowed.default
 						local var_69_2 = "item" .. var_68_19
@@ -2431,7 +2431,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 					pass_type = "texture",
 					texture_id = "customize_id",
 					style_id = var_68_25,
-					content_check_function = function(arg_70_0)
+					content_check_function = function (arg_70_0)
 						if arg_70_0["item" .. var_68_19 .. "_disabled"] then
 							return false
 						end
@@ -2447,7 +2447,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 					pass_type = "texture",
 					texture_id = "customize_hover_id",
 					style_id = var_68_27,
-					content_check_function = function(arg_71_0)
+					content_check_function = function (arg_71_0)
 						if arg_71_0["item" .. var_68_19 .. "_disabled"] then
 							return false
 						end
@@ -2501,7 +2501,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				content_id = var_68_23,
 				texture_id = var_68_29,
 				style_id = var_68_29,
-				content_check_function = function(arg_72_0)
+				content_check_function = function (arg_72_0)
 					return arg_72_0[var_68_29]
 				end
 			}
@@ -2527,7 +2527,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				content_id = var_68_23,
 				texture_id = var_68_30,
 				style_id = var_68_30,
-				content_check_function = function(arg_73_0)
+				content_check_function = function (arg_73_0)
 					return arg_73_0[var_68_29]
 				end
 			}
@@ -2553,7 +2553,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "texture",
 				texture_id = var_68_31,
 				style_id = var_68_31,
-				content_check_function = function(arg_74_0)
+				content_check_function = function (arg_74_0)
 					return arg_74_0[var_68_23][var_68_29]
 				end
 			}
@@ -2581,7 +2581,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				text_id = var_68_33,
 				style_id = var_68_33,
 				item_id = var_68_32,
-				content_check_function = function(arg_75_0)
+				content_check_function = function (arg_75_0)
 					return arg_75_0[var_68_28].is_hover and arg_75_0[var_68_23][var_68_29]
 				end
 			}
@@ -2680,7 +2680,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "texture",
 				texture_id = var_68_36,
 				style_id = var_68_36,
-				content_check_function = function(arg_76_0)
+				content_check_function = function (arg_76_0)
 					local var_76_0 = arg_76_0[var_68_23]
 
 					return var_76_0.highlight or var_76_0.is_hover
@@ -2709,12 +2709,12 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "text",
 				text_id = var_68_37,
 				style_id = var_68_37,
-				content_check_function = function(arg_77_0)
+				content_check_function = function (arg_77_0)
 					local var_77_0 = arg_77_0[var_68_23]
 
 					return arg_77_0[var_68_32] and not var_77_0.highlight and not var_77_0.is_hover
 				end,
-				content_change_function = function(arg_78_0, arg_78_1)
+				content_change_function = function (arg_78_0, arg_78_1)
 					local var_78_0 = arg_78_0[var_68_32].data.item_type
 
 					arg_78_0[var_68_37] = var_78_0
@@ -2743,12 +2743,12 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "text",
 				text_id = var_68_37,
 				style_id = var_68_38,
-				content_check_function = function(arg_79_0)
+				content_check_function = function (arg_79_0)
 					local var_79_0 = arg_79_0[var_68_23]
 
 					return arg_79_0[var_68_32] and (var_79_0.highlight or var_79_0.is_hover)
 				end,
-				content_change_function = function(arg_80_0, arg_80_1)
+				content_change_function = function (arg_80_0, arg_80_1)
 					local var_80_0 = arg_80_0[var_68_32].data.item_type
 
 					arg_80_0[var_68_37] = var_80_0
@@ -2776,7 +2776,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "text",
 				text_id = var_68_37,
 				style_id = var_68_39,
-				content_check_function = function(arg_81_0)
+				content_check_function = function (arg_81_0)
 					return arg_81_0[var_68_32]
 				end
 			}
@@ -2802,10 +2802,10 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "text",
 				text_id = var_68_40,
 				style_id = var_68_40,
-				content_check_function = function(arg_82_0)
+				content_check_function = function (arg_82_0)
 					return arg_82_0[var_68_32]
 				end,
-				content_change_function = function(arg_83_0, arg_83_1)
+				content_change_function = function (arg_83_0, arg_83_1)
 					local var_83_0 = arg_83_0[var_68_32]
 					local var_83_1, var_83_2 = UIUtils.get_ui_information_from_item(var_83_0)
 
@@ -2834,7 +2834,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "text",
 				text_id = var_68_40,
 				style_id = var_68_41,
-				content_check_function = function(arg_84_0)
+				content_check_function = function (arg_84_0)
 					return arg_84_0[var_68_32]
 				end
 			}
@@ -2859,7 +2859,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				pass_type = "texture",
 				texture_id = var_68_42,
 				style_id = var_68_42,
-				content_check_function = function(arg_85_0)
+				content_check_function = function (arg_85_0)
 					return not arg_85_0[var_68_23][var_68_29]
 				end
 			}
@@ -2889,7 +2889,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				content_id = var_68_23,
 				texture_id = var_68_43,
 				style_id = var_68_43,
-				content_check_function = function(arg_86_0)
+				content_check_function = function (arg_86_0)
 					return arg_86_0.highlight or arg_86_0.is_hover
 				end
 			}
@@ -2919,7 +2919,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 				content_id = var_68_23,
 				texture_id = var_68_44,
 				style_id = var_68_44,
-				content_check_function = function(arg_87_0)
+				content_check_function = function (arg_87_0)
 					return arg_87_0.is_selected
 				end
 			}
@@ -2957,7 +2957,7 @@ function UIWidgets.create_loadout_grid_console(arg_68_0, arg_68_1, arg_68_2, arg
 	return var_68_11
 end
 
-function UIWidgets.create_inventory_statistics(arg_88_0, arg_88_1, arg_88_2)
+UIWidgets.create_inventory_statistics = function (arg_88_0, arg_88_1, arg_88_2)
 	local var_88_0 = Colors.get_color_table_with_alpha("black", 220)
 	local var_88_1 = Colors.get_color_table_with_alpha("gray", 50)
 
@@ -3148,7 +3148,7 @@ function UIWidgets.create_inventory_statistics(arg_88_0, arg_88_1, arg_88_2)
 	return var_88_4
 end
 
-function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
+UIWidgets.create_weapon_statistics = function (arg_89_0, arg_89_1)
 	local var_89_0 = Colors.get_color_table_with_alpha("font_default", 255)
 	local var_89_1 = Colors.get_color_table_with_alpha("font_title", 255)
 	local var_89_2 = {
@@ -3287,7 +3287,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "text",
 			style_id = var_89_9,
 			text_id = var_89_9,
-			content_check_function = function(arg_90_0)
+			content_check_function = function (arg_90_0)
 				return arg_90_0[var_89_9]
 			end
 		}
@@ -3315,7 +3315,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_10,
 			texture_id = var_89_10,
-			content_check_function = function(arg_91_0)
+			content_check_function = function (arg_91_0)
 				return arg_91_0[var_89_9]
 			end
 		}
@@ -3351,7 +3351,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_11,
 			texture_id = var_89_11,
-			content_check_function = function(arg_92_0)
+			content_check_function = function (arg_92_0)
 				return arg_92_0[var_89_9]
 			end
 		}
@@ -3382,7 +3382,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_12,
 			texture_id = var_89_12,
-			content_check_function = function(arg_93_0)
+			content_check_function = function (arg_93_0)
 				return arg_93_0[var_89_9]
 			end
 		}
@@ -3414,7 +3414,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_14,
 			texture_id = var_89_14,
-			content_check_function = function(arg_94_0)
+			content_check_function = function (arg_94_0)
 				return arg_94_0[var_89_9]
 			end
 		}
@@ -3450,7 +3450,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_15,
 			texture_id = var_89_15,
-			content_check_function = function(arg_95_0)
+			content_check_function = function (arg_95_0)
 				return arg_95_0[var_89_9]
 			end
 		}
@@ -3481,7 +3481,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 			pass_type = "multi_texture",
 			style_id = var_89_16,
 			texture_id = var_89_16,
-			content_check_function = function(arg_96_0)
+			content_check_function = function (arg_96_0)
 				return arg_96_0[var_89_9]
 			end
 		}
@@ -3520,7 +3520,7 @@ function UIWidgets.create_weapon_statistics(arg_89_0, arg_89_1)
 	return var_89_2
 end
 
-function UIWidgets.create_background_with_frame(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5)
+UIWidgets.create_background_with_frame = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5)
 	arg_97_2 = arg_97_2 or "menu_frame_bg_01"
 
 	local var_97_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_97_2)
@@ -3618,7 +3618,7 @@ function UIWidgets.create_background_with_frame(arg_97_0, arg_97_1, arg_97_2, ar
 	return var_97_4
 end
 
-function UIWidgets.create_rect_with_frame(arg_98_0, arg_98_1, arg_98_2, arg_98_3)
+UIWidgets.create_rect_with_frame = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3)
 	local var_98_0 = arg_98_3 and UIFrameSettings[arg_98_3] or UIFrameSettings.menu_frame_02
 	local var_98_1 = {
 		element = {}
@@ -3681,7 +3681,7 @@ function UIWidgets.create_rect_with_frame(arg_98_0, arg_98_1, arg_98_2, arg_98_3
 	return var_98_1
 end
 
-function UIWidgets.create_rect_with_inner_rect_frame(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
+UIWidgets.create_rect_with_inner_rect_frame = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
 	local var_99_0 = 1
 	local var_99_1 = 1
 	local var_99_2 = {
@@ -3781,7 +3781,7 @@ function UIWidgets.create_rect_with_inner_rect_frame(arg_99_0, arg_99_1, arg_99_
 	}
 end
 
-function UIWidgets.create_background(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
+UIWidgets.create_background = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 	arg_100_2 = arg_100_2 or "menu_frame_bg_01"
 
 	local var_100_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_100_2)
@@ -3839,7 +3839,7 @@ function UIWidgets.create_background(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 	return var_100_1
 end
 
-function UIWidgets.create_frame(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8, arg_101_9)
+UIWidgets.create_frame = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8, arg_101_9)
 	local var_101_0 = arg_101_2 and UIFrameSettings[arg_101_2] or UIFrameSettings.menu_frame_02
 	local var_101_1 = {
 		element = {}
@@ -3890,7 +3890,7 @@ function UIWidgets.create_frame(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_
 	return var_101_1
 end
 
-function UIWidgets.create_rect_with_outer_frame(arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6)
+UIWidgets.create_rect_with_outer_frame = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6)
 	arg_102_4 = arg_102_4 or {
 		255,
 		255,
@@ -3956,7 +3956,7 @@ function UIWidgets.create_rect_with_outer_frame(arg_102_0, arg_102_1, arg_102_2,
 	return var_102_3
 end
 
-function UIWidgets.create_craft_recipe_window(arg_103_0, arg_103_1, arg_103_2, arg_103_3)
+UIWidgets.create_craft_recipe_window = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3)
 	local var_103_0 = Colors.get_color_table_with_alpha("white", 255)
 	local var_103_1 = arg_103_3 or "menu_frame_bg_01"
 	local var_103_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_103_1)
@@ -4114,7 +4114,7 @@ function UIWidgets.create_craft_recipe_window(arg_103_0, arg_103_1, arg_103_2, a
 			pass_type = "texture",
 			texture_id = var_103_16,
 			style_id = var_103_16,
-			content_check_function = function(arg_104_0)
+			content_check_function = function (arg_104_0)
 				return arg_104_0[var_103_15]
 			end
 		}
@@ -4131,7 +4131,7 @@ function UIWidgets.create_craft_recipe_window(arg_103_0, arg_103_1, arg_103_2, a
 			pass_type = "text",
 			text_id = var_103_17,
 			style_id = var_103_17,
-			content_check_function = function(arg_105_0)
+			content_check_function = function (arg_105_0)
 				return arg_105_0[var_103_15]
 			end
 		}
@@ -4169,7 +4169,7 @@ function UIWidgets.create_craft_recipe_window(arg_103_0, arg_103_1, arg_103_2, a
 	return var_103_4
 end
 
-function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
+UIWidgets.create_hero_view_button = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
 	arg_106_3 = arg_106_3 or "button_frame_bg_01"
 
 	local var_106_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_106_3)
@@ -4182,7 +4182,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function(arg_107_0)
+					content_check_function = function (arg_107_0)
 						return not arg_107_0.disabled
 					end
 				},
@@ -4200,7 +4200,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 					pass_type = "texture_frame",
 					style_id = "glas_frame",
 					texture_id = "glas_frame",
-					content_check_function = function(arg_108_0)
+					content_check_function = function (arg_108_0)
 						return not arg_108_0.button_hotspot.disabled and arg_108_0.button_hotspot.is_clicked > 0
 					end
 				},
@@ -4208,7 +4208,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 					pass_type = "texture_frame",
 					style_id = "glas_frame_pressed",
 					texture_id = "glas_frame",
-					content_check_function = function(arg_109_0)
+					content_check_function = function (arg_109_0)
 						return arg_109_0.button_hotspot.disabled or arg_109_0.button_hotspot.is_clicked == 0
 					end
 				},
@@ -4216,7 +4216,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_110_0)
+					content_check_function = function (arg_110_0)
 						return not arg_110_0.button_hotspot.disabled
 					end
 				},
@@ -4224,7 +4224,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_111_0)
+					content_check_function = function (arg_111_0)
 						return arg_111_0.button_hotspot.disabled
 					end
 				},
@@ -4493,7 +4493,7 @@ function UIWidgets.create_hero_view_button(arg_106_0, arg_106_1, arg_106_2, arg_
 	}
 end
 
-function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6)
+UIWidgets.create_reward_slot_grid = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6)
 	local var_112_0 = {
 		255,
 		255,
@@ -4558,7 +4558,7 @@ function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_
 				content_id = var_112_21,
 				texture_id = var_112_22,
 				style_id = var_112_22,
-				content_check_function = function(arg_113_0)
+				content_check_function = function (arg_113_0)
 					return arg_113_0[var_112_22]
 				end
 			}
@@ -4629,7 +4629,7 @@ function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_
 				pass_type = "rounded_background",
 				content_id = var_112_21,
 				style_id = var_112_26,
-				content_check_function = function(arg_114_0)
+				content_check_function = function (arg_114_0)
 					return arg_114_0.is_hover
 				end
 			}
@@ -4650,7 +4650,7 @@ function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_
 				pass_type = "rounded_background",
 				content_id = var_112_21,
 				style_id = var_112_27,
-				content_check_function = function(arg_115_0)
+				content_check_function = function (arg_115_0)
 					return arg_115_0.is_selected
 				end
 			}
@@ -4672,7 +4672,7 @@ function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_
 				pass_type = "generic_tooltip",
 				style_id = var_112_28,
 				content_id = var_112_21,
-				content_check_function = function(arg_116_0)
+				content_check_function = function (arg_116_0)
 					return arg_116_0.is_hover and arg_116_0[var_112_28]
 				end
 			}
@@ -4708,7 +4708,7 @@ function UIWidgets.create_reward_slot_grid(arg_112_0, arg_112_1, arg_112_2, arg_
 	return var_112_12
 end
 
-function UIWidgets.create_reward_card(arg_117_0, arg_117_1)
+UIWidgets.create_reward_card = function (arg_117_0, arg_117_1)
 	local var_117_0 = {
 		255,
 		255,
@@ -4766,7 +4766,7 @@ function UIWidgets.create_reward_card(arg_117_0, arg_117_1)
 		content_id = var_117_10,
 		texture_id = var_117_11,
 		style_id = var_117_11,
-		content_check_function = function(arg_118_0)
+		content_check_function = function (arg_118_0)
 			return not arg_118_0.disable_button and arg_118_0[var_117_11]
 		end
 	}
@@ -4792,7 +4792,7 @@ function UIWidgets.create_reward_card(arg_117_0, arg_117_1)
 		pass_type = "centered_texture_amount",
 		texture_id = var_117_12,
 		style_id = var_117_12,
-		content_check_function = function(arg_119_0)
+		content_check_function = function (arg_119_0)
 			return arg_119_0[var_117_10][var_117_11]
 		end
 	}
@@ -4892,7 +4892,7 @@ function UIWidgets.create_reward_card(arg_117_0, arg_117_1)
 	return var_117_6
 end
 
-function UIWidgets.create_score_topic(arg_120_0, arg_120_1)
+UIWidgets.create_score_topic = function (arg_120_0, arg_120_1)
 	local var_120_0 = "menu_frame_bg_04"
 	local var_120_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_120_0)
 	local var_120_2 = "menu_frame_bg_02"
@@ -4930,7 +4930,7 @@ function UIWidgets.create_score_topic(arg_120_0, arg_120_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_121_0)
+					content_check_function = function (arg_121_0)
 						return arg_121_0.icon
 					end
 				},
@@ -5078,7 +5078,7 @@ function UIWidgets.create_score_topic(arg_120_0, arg_120_1)
 	}
 end
 
-function UIWidgets.create_experience_entry(arg_122_0, arg_122_1)
+UIWidgets.create_experience_entry = function (arg_122_0, arg_122_1)
 	return {
 		element = {
 			passes = {
@@ -5134,7 +5134,7 @@ function UIWidgets.create_experience_entry(arg_122_0, arg_122_1)
 	}
 end
 
-function UIWidgets.create_background_masked_text(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8)
+UIWidgets.create_background_masked_text = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8)
 	arg_123_3 = arg_123_3 or "reward_pop_up_item_bg"
 
 	local var_123_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_123_3)
@@ -5212,7 +5212,7 @@ function UIWidgets.create_background_masked_text(arg_123_0, arg_123_1, arg_123_2
 	}
 end
 
-function UIWidgets.create_summary_entry(arg_124_0, arg_124_1, arg_124_2)
+UIWidgets.create_summary_entry = function (arg_124_0, arg_124_1, arg_124_2)
 	return {
 		element = {
 			passes = {
@@ -5309,7 +5309,7 @@ function UIWidgets.create_summary_entry(arg_124_0, arg_124_1, arg_124_2)
 	}
 end
 
-function UIWidgets.create_chest_score_entry(arg_125_0, arg_125_1, arg_125_2)
+UIWidgets.create_chest_score_entry = function (arg_125_0, arg_125_1, arg_125_2)
 	return {
 		element = {
 			passes = {
@@ -5559,7 +5559,7 @@ function UIWidgets.create_chest_score_entry(arg_125_0, arg_125_1, arg_125_2)
 	}
 end
 
-function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
+UIWidgets.create_score_list = function (arg_126_0, arg_126_1, arg_126_2)
 	local var_126_0 = "menu_frame_bg_01"
 	local var_126_1 = "scoreboard_bg"
 	local var_126_2 = "scoreboard_bg_top"
@@ -5649,7 +5649,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "tiled_texture",
 			content_id = var_126_26,
 			style_id = var_126_26,
-			content_check_function = function(arg_127_0)
+			content_check_function = function (arg_127_0)
 				return arg_127_0.has_background
 			end
 		}
@@ -5680,7 +5680,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "tiled_texture",
 			content_id = var_126_27,
 			style_id = var_126_27,
-			content_check_function = function(arg_128_0)
+			content_check_function = function (arg_128_0)
 				return arg_128_0.has_horizontal_divider
 			end
 		}
@@ -5711,7 +5711,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			text_id = "text",
 			content_id = var_126_28,
 			style_id = var_126_28,
-			content_check_function = function(arg_129_0)
+			content_check_function = function (arg_129_0)
 				return arg_129_0.text ~= nil
 			end
 		}
@@ -5737,7 +5737,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			text_id = "text",
 			content_id = var_126_29,
 			style_id = var_126_29,
-			content_check_function = function(arg_130_0)
+			content_check_function = function (arg_130_0)
 				return arg_130_0.text ~= nil
 			end
 		}
@@ -5763,7 +5763,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			text_id = "text",
 			content_id = var_126_30,
 			style_id = var_126_30,
-			content_check_function = function(arg_131_0)
+			content_check_function = function (arg_131_0)
 				return arg_131_0.text ~= nil
 			end
 		}
@@ -5789,7 +5789,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			text_id = "text",
 			content_id = var_126_31,
 			style_id = var_126_31,
-			content_check_function = function(arg_132_0)
+			content_check_function = function (arg_132_0)
 				return arg_132_0.text ~= nil
 			end
 		}
@@ -5815,7 +5815,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			text_id = "text",
 			content_id = var_126_32,
 			style_id = var_126_32,
-			content_check_function = function(arg_133_0)
+			content_check_function = function (arg_133_0)
 				return arg_133_0.text ~= nil
 			end
 		}
@@ -5841,7 +5841,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_33,
 			style_id = var_126_33,
-			content_check_function = function(arg_134_0)
+			content_check_function = function (arg_134_0)
 				return arg_134_0.parent["title_text" .. var_126_23].text ~= nil and arg_134_0.parent["score_player_1" .. var_126_23].text ~= nil and arg_134_0.has_highscore
 			end
 		}
@@ -5874,7 +5874,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_34,
 			style_id = var_126_34,
-			content_check_function = function(arg_135_0)
+			content_check_function = function (arg_135_0)
 				return arg_135_0.parent["title_text" .. var_126_23].text ~= nil and arg_135_0.parent["score_player_1" .. var_126_23].text ~= nil and arg_135_0.has_highscore
 			end
 		}
@@ -5907,7 +5907,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_35,
 			style_id = var_126_35,
-			content_check_function = function(arg_136_0)
+			content_check_function = function (arg_136_0)
 				return arg_136_0.parent["title_text" .. var_126_23].text ~= nil and arg_136_0.parent["score_player_1" .. var_126_23].text ~= nil and arg_136_0.has_highscore
 			end
 		}
@@ -5940,7 +5940,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_36,
 			style_id = var_126_36,
-			content_check_function = function(arg_137_0)
+			content_check_function = function (arg_137_0)
 				return arg_137_0.parent["title_text" .. var_126_23].text ~= nil and arg_137_0.parent["score_player_1" .. var_126_23].text ~= nil and arg_137_0.has_highscore
 			end
 		}
@@ -5973,7 +5973,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_25,
 			style_id = var_126_37,
-			content_check_function = function(arg_138_0)
+			content_check_function = function (arg_138_0)
 				return arg_138_0.parent["title_text" .. var_126_23].text ~= nil and arg_138_0.parent["score_player_1" .. var_126_23].text ~= nil
 			end
 		}
@@ -6002,7 +6002,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_25,
 			style_id = var_126_38,
-			content_check_function = function(arg_139_0)
+			content_check_function = function (arg_139_0)
 				return arg_139_0.parent["title_text" .. var_126_23].text ~= nil and arg_139_0.parent["score_player_1" .. var_126_23].text ~= nil
 			end
 		}
@@ -6031,7 +6031,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_25,
 			style_id = var_126_39,
-			content_check_function = function(arg_140_0)
+			content_check_function = function (arg_140_0)
 				return arg_140_0.parent["title_text" .. var_126_23].text ~= nil and arg_140_0.parent["score_player_1" .. var_126_23].text ~= nil
 			end
 		}
@@ -6060,7 +6060,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_25,
 			style_id = var_126_40,
-			content_check_function = function(arg_141_0)
+			content_check_function = function (arg_141_0)
 				return arg_141_0.parent["title_text" .. var_126_23].text ~= nil and arg_141_0.parent["score_player_1" .. var_126_23].text ~= nil
 			end
 		}
@@ -6089,7 +6089,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 			pass_type = "texture",
 			content_id = var_126_25,
 			style_id = var_126_41,
-			content_check_function = function(arg_142_0)
+			content_check_function = function (arg_142_0)
 				return arg_142_0.parent["title_text" .. var_126_23].text ~= nil and arg_142_0.parent["score_player_1" .. var_126_23].text ~= nil
 			end
 		}
@@ -6127,7 +6127,7 @@ function UIWidgets.create_score_list(arg_126_0, arg_126_1, arg_126_2)
 	}
 end
 
-function UIWidgets.create_level_up_widget(arg_143_0, arg_143_1)
+UIWidgets.create_level_up_widget = function (arg_143_0, arg_143_1)
 	return {
 		element = {
 			passes = {
@@ -6201,7 +6201,7 @@ function UIWidgets.create_level_up_widget(arg_143_0, arg_143_1)
 	}
 end
 
-function UIWidgets.create_experience_bar(arg_144_0, arg_144_1, arg_144_2)
+UIWidgets.create_experience_bar = function (arg_144_0, arg_144_1, arg_144_2)
 	local var_144_0 = UIFrameSettings.menu_frame_06
 
 	return {
@@ -6211,7 +6211,7 @@ function UIWidgets.create_experience_bar(arg_144_0, arg_144_1, arg_144_2)
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_145_0)
+					content_check_function = function (arg_145_0)
 						return arg_145_0.draw_frame
 					end
 				},
@@ -6393,7 +6393,7 @@ function UIWidgets.create_experience_bar(arg_144_0, arg_144_1, arg_144_2)
 	}
 end
 
-function UIWidgets.create_statistics_bar(arg_146_0, arg_146_1, arg_146_2, arg_146_3)
+UIWidgets.create_statistics_bar = function (arg_146_0, arg_146_1, arg_146_2, arg_146_3)
 	local var_146_0 = UIFrameSettings.menu_frame_06
 	local var_146_1 = UIFrameSettings.frame_outer_glow_02
 	local var_146_2 = var_146_1.texture_sizes.horizontal[2]
@@ -6411,7 +6411,7 @@ function UIWidgets.create_statistics_bar(arg_146_0, arg_146_1, arg_146_2, arg_14
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_147_0)
+					content_check_function = function (arg_147_0)
 						return arg_147_0.hotspot.is_hover
 					end
 				},
@@ -6419,7 +6419,7 @@ function UIWidgets.create_statistics_bar(arg_146_0, arg_146_1, arg_146_2, arg_14
 					texture_id = "star",
 					style_id = "star",
 					pass_type = "texture",
-					content_check_function = function(arg_148_0)
+					content_check_function = function (arg_148_0)
 						return arg_148_0.has_star
 					end
 				},
@@ -6427,7 +6427,7 @@ function UIWidgets.create_statistics_bar(arg_146_0, arg_146_1, arg_146_2, arg_14
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_149_0)
+					content_check_function = function (arg_149_0)
 						return arg_149_0.draw_frame
 					end
 				},
@@ -6465,7 +6465,7 @@ function UIWidgets.create_statistics_bar(arg_146_0, arg_146_1, arg_146_2, arg_14
 					style_id = "experience_bar_edge",
 					texture_id = "experience_bar_edge",
 					pass_type = "texture",
-					content_change_function = function(arg_150_0, arg_150_1)
+					content_change_function = function (arg_150_0, arg_150_1)
 						local var_150_0 = arg_150_1.parent.experience_bar
 						local var_150_1 = var_150_0.offset[1]
 
@@ -6742,7 +6742,7 @@ local function var_0_3(arg_154_0)
 	return arg_154_0.is_hover
 end
 
-function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
+UIWidgets.create_quest_bar = function (arg_155_0, arg_155_1)
 	local var_155_0 = "chain_end"
 	local var_155_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_155_0).size
 	local var_155_2 = 20
@@ -6773,7 +6773,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 					pass_type = "texture",
 					style_id = "locked_icon_cooldown",
 					texture_id = "icon_cooldown",
-					content_check_function = function(arg_156_0)
+					content_check_function = function (arg_156_0)
 						return arg_156_0.has_locked and arg_156_0.cooldown_lock
 					end
 				},
@@ -6781,7 +6781,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 					pass_type = "texture",
 					style_id = "locked_icon_locked",
 					texture_id = "icon_locked",
-					content_check_function = function(arg_157_0)
+					content_check_function = function (arg_157_0)
 						return arg_157_0.has_locked and not arg_157_0.cooldown_lock
 					end
 				},
@@ -6807,7 +6807,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 					style_id = "locked_tooltip",
 					pass_type = "hover",
 					content_id = "locked_tooltip",
-					content_check_function = function(arg_158_0)
+					content_check_function = function (arg_158_0)
 						return arg_158_0.parent.has_locked
 					end
 				},
@@ -6858,7 +6858,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 					style_id = "available_tooltip",
 					pass_type = "hover",
 					content_id = "available_tooltip",
-					content_check_function = function(arg_159_0)
+					content_check_function = function (arg_159_0)
 						return arg_159_0.parent.has_available
 					end
 				},
@@ -6909,7 +6909,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 					style_id = "completed_tooltip",
 					pass_type = "hover",
 					content_id = "completed_tooltip",
-					content_check_function = function(arg_160_0)
+					content_check_function = function (arg_160_0)
 						return arg_160_0.parent.has_completed
 					end
 				},
@@ -7503,7 +7503,7 @@ function UIWidgets.create_quest_bar(arg_155_0, arg_155_1)
 	}
 end
 
-function UIWidgets.create_summary_experience_bar(arg_161_0, arg_161_1, arg_161_2, arg_161_3)
+UIWidgets.create_summary_experience_bar = function (arg_161_0, arg_161_1, arg_161_2, arg_161_3)
 	return {
 		element = {
 			passes = {
@@ -7595,7 +7595,7 @@ function UIWidgets.create_summary_experience_bar(arg_161_0, arg_161_1, arg_161_2
 	}
 end
 
-function UIWidgets.create_career_summary_window(arg_162_0, arg_162_1)
+UIWidgets.create_career_summary_window = function (arg_162_0, arg_162_1)
 	local var_162_0 = "menu_frame_bg_01"
 	local var_162_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_162_0)
 	local var_162_2 = UIFrameSettings.menu_frame_06
@@ -7850,7 +7850,7 @@ function UIWidgets.create_career_summary_window(arg_162_0, arg_162_1)
 	}
 end
 
-function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4, arg_163_5, arg_163_6, arg_163_7, arg_163_8, arg_163_9, arg_163_10, arg_163_11, arg_163_12, arg_163_13, arg_163_14)
+UIWidgets.create_default_button = function (arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4, arg_163_5, arg_163_6, arg_163_7, arg_163_8, arg_163_9, arg_163_10, arg_163_11, arg_163_12, arg_163_13, arg_163_14)
 	arg_163_3 = arg_163_3 or "button_bg_01"
 
 	local var_163_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_163_3)
@@ -7882,7 +7882,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_164_0)
+					content_check_function = function (arg_164_0)
 						return arg_164_0.draw_frame
 					end
 				},
@@ -7908,7 +7908,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_165_0)
+					content_check_function = function (arg_165_0)
 						return arg_165_0.button_hotspot.disable_button
 					end
 				},
@@ -7916,7 +7916,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_166_0)
+					content_check_function = function (arg_166_0)
 						return not arg_166_0.skip_side_detail
 					end
 				},
@@ -7925,7 +7925,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_167_0)
+					content_check_function = function (arg_167_0)
 						return not arg_167_0.skip_side_detail
 					end
 				},
@@ -7933,7 +7933,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_168_0)
+					content_check_function = function (arg_168_0)
 						return not arg_168_0.button_hotspot.disable_button
 					end
 				},
@@ -7941,7 +7941,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_169_0)
+					content_check_function = function (arg_169_0)
 						return arg_169_0.button_hotspot.disable_button
 					end
 				},
@@ -8244,7 +8244,7 @@ function UIWidgets.create_default_button(arg_163_0, arg_163_1, arg_163_2, arg_16
 	}
 end
 
-function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, arg_170_3, arg_170_4, arg_170_5, arg_170_6, arg_170_7, arg_170_8, arg_170_9)
+UIWidgets.create_default_image_button = function (arg_170_0, arg_170_1, arg_170_2, arg_170_3, arg_170_4, arg_170_5, arg_170_6, arg_170_7, arg_170_8, arg_170_9)
 	arg_170_3 = arg_170_3 or "button_bg_01"
 
 	local var_170_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_170_3)
@@ -8302,7 +8302,7 @@ function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, 
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_171_0)
+					content_check_function = function (arg_171_0)
 						return arg_171_0.button_hotspot.disable_button
 					end
 				},
@@ -8321,7 +8321,7 @@ function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, 
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_172_0)
+					content_check_function = function (arg_172_0)
 						return not arg_172_0.button_hotspot.disable_button
 					end
 				},
@@ -8329,7 +8329,7 @@ function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, 
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_173_0)
+					content_check_function = function (arg_173_0)
 						return arg_173_0.button_hotspot.disable_button
 					end
 				},
@@ -8357,7 +8357,7 @@ function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, 
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_174_0)
+					content_check_function = function (arg_174_0)
 						return arg_174_0.new
 					end
 				}
@@ -8655,7 +8655,7 @@ function UIWidgets.create_default_image_button(arg_170_0, arg_170_1, arg_170_2, 
 	}
 end
 
-function UIWidgets.create_default_icon_tabs(arg_175_0, arg_175_1, arg_175_2)
+UIWidgets.create_default_icon_tabs = function (arg_175_0, arg_175_1, arg_175_2)
 	local var_175_0 = "button_bg_01"
 	local var_175_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_175_0)
 	local var_175_2 = {
@@ -8924,7 +8924,7 @@ function UIWidgets.create_default_icon_tabs(arg_175_0, arg_175_1, arg_175_2)
 	return var_175_2
 end
 
-function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_2, arg_176_3, arg_176_4, arg_176_5, arg_176_6)
+UIWidgets.create_default_checkbox_button = function (arg_176_0, arg_176_1, arg_176_2, arg_176_3, arg_176_4, arg_176_5, arg_176_6)
 	local var_176_0 = "button_bg_01"
 	local var_176_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_176_0)
 	local var_176_2 = {
@@ -9125,7 +9125,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 			content_id = var_176_7,
 			style_id = var_176_15,
 			additional_option_id = var_176_15,
-			content_check_function = function(arg_177_0)
+			content_check_function = function (arg_177_0)
 				return arg_177_0.is_hover
 			end
 		}
@@ -9149,7 +9149,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		text_id = var_176_16,
 		style_id = var_176_16,
-		content_check_function = function(arg_178_0)
+		content_check_function = function (arg_178_0)
 			return not arg_178_0.disable_button
 		end
 	}
@@ -9179,7 +9179,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		text_id = var_176_16,
 		style_id = var_176_17,
-		content_check_function = function(arg_179_0)
+		content_check_function = function (arg_179_0)
 			return arg_179_0.disable_button
 		end
 	}
@@ -9262,7 +9262,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		texture_id = var_176_22,
 		style_id = var_176_22,
-		content_check_function = function(arg_180_0)
+		content_check_function = function (arg_180_0)
 			return not arg_180_0.is_disabled
 		end
 	}
@@ -9298,7 +9298,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		texture_id = var_176_22,
 		style_id = var_176_24,
-		content_check_function = function(arg_181_0)
+		content_check_function = function (arg_181_0)
 			return not arg_181_0.is_disabled
 		end
 	}
@@ -9329,7 +9329,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		texture_id = var_176_25,
 		style_id = var_176_25,
-		content_check_function = function(arg_182_0)
+		content_check_function = function (arg_182_0)
 			return arg_182_0.is_selected and not arg_182_0.disable_button
 		end
 	}
@@ -9358,7 +9358,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 		content_id = var_176_7,
 		texture_id = var_176_25,
 		style_id = var_176_28,
-		content_check_function = function(arg_183_0)
+		content_check_function = function (arg_183_0)
 			return arg_183_0.is_selected and arg_183_0.disable_button
 		end
 	}
@@ -9380,7 +9380,7 @@ function UIWidgets.create_default_checkbox_button(arg_176_0, arg_176_1, arg_176_
 	return var_176_2
 end
 
-function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, arg_184_2, arg_184_3, arg_184_4, arg_184_5, arg_184_6)
+UIWidgets.create_default_checkbox_button_console = function (arg_184_0, arg_184_1, arg_184_2, arg_184_3, arg_184_4, arg_184_5, arg_184_6)
 	local var_184_0 = "button_bg_01"
 	local var_184_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_184_0)
 	local var_184_2 = {
@@ -9480,7 +9480,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		text_id = var_184_13,
 		style_id = var_184_13,
-		content_check_function = function(arg_185_0)
+		content_check_function = function (arg_185_0)
 			return not arg_185_0.disable_button
 		end
 	}
@@ -9510,7 +9510,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		text_id = var_184_13,
 		style_id = var_184_14,
-		content_check_function = function(arg_186_0)
+		content_check_function = function (arg_186_0)
 			return arg_186_0.disable_button
 		end
 	}
@@ -9589,7 +9589,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		texture_id = var_184_18,
 		style_id = var_184_18,
-		content_check_function = function(arg_187_0)
+		content_check_function = function (arg_187_0)
 			return not arg_187_0.is_disabled
 		end
 	}
@@ -9625,7 +9625,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		texture_id = var_184_18,
 		style_id = var_184_20,
-		content_check_function = function(arg_188_0)
+		content_check_function = function (arg_188_0)
 			return not arg_188_0.is_disabled
 		end
 	}
@@ -9656,7 +9656,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		texture_id = var_184_21,
 		style_id = var_184_21,
-		content_check_function = function(arg_189_0)
+		content_check_function = function (arg_189_0)
 			return arg_189_0.is_selected and not arg_189_0.disable_button
 		end
 	}
@@ -9685,7 +9685,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 		content_id = var_184_7,
 		texture_id = var_184_21,
 		style_id = var_184_24,
-		content_check_function = function(arg_190_0)
+		content_check_function = function (arg_190_0)
 			return arg_190_0.is_selected and arg_190_0.disable_button
 		end
 	}
@@ -9707,7 +9707,7 @@ function UIWidgets.create_default_checkbox_button_console(arg_184_0, arg_184_1, 
 	return var_184_2
 end
 
-function UIWidgets.create_default_text_tabs(arg_191_0, arg_191_1, arg_191_2)
+UIWidgets.create_default_text_tabs = function (arg_191_0, arg_191_1, arg_191_2)
 	local var_191_0 = "button_bg_01"
 	local var_191_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_191_0)
 	local var_191_2 = {
@@ -9929,7 +9929,7 @@ function UIWidgets.create_default_text_tabs(arg_191_0, arg_191_1, arg_191_2)
 			content_id = var_191_16,
 			text_id = var_191_24,
 			style_id = var_191_24,
-			content_check_function = function(arg_192_0)
+			content_check_function = function (arg_192_0)
 				return not arg_192_0.disable_button
 			end
 		}
@@ -9959,7 +9959,7 @@ function UIWidgets.create_default_text_tabs(arg_191_0, arg_191_1, arg_191_2)
 			content_id = var_191_16,
 			text_id = var_191_24,
 			style_id = var_191_25,
-			content_check_function = function(arg_193_0)
+			content_check_function = function (arg_193_0)
 				return arg_193_0.disable_button
 			end
 		}
@@ -10019,7 +10019,7 @@ function UIWidgets.create_default_text_tabs(arg_191_0, arg_191_1, arg_191_2)
 	return var_191_2
 end
 
-function UIWidgets.create_simple_window_button(arg_194_0, arg_194_1, arg_194_2, arg_194_3, arg_194_4)
+UIWidgets.create_simple_window_button = function (arg_194_0, arg_194_1, arg_194_2, arg_194_3, arg_194_4)
 	arg_194_4 = arg_194_4 or "button_bg_01"
 
 	local var_194_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_194_4)
@@ -10054,7 +10054,7 @@ function UIWidgets.create_simple_window_button(arg_194_0, arg_194_1, arg_194_2, 
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_195_0)
+					content_check_function = function (arg_195_0)
 						return arg_195_0.button_hotspot.disable_button
 					end
 				},
@@ -10062,7 +10062,7 @@ function UIWidgets.create_simple_window_button(arg_194_0, arg_194_1, arg_194_2, 
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_196_0)
+					content_check_function = function (arg_196_0)
 						return not arg_196_0.button_hotspot.disable_button
 					end
 				},
@@ -10070,7 +10070,7 @@ function UIWidgets.create_simple_window_button(arg_194_0, arg_194_1, arg_194_2, 
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_197_0)
+					content_check_function = function (arg_197_0)
 						return arg_197_0.button_hotspot.disable_button
 					end
 				},
@@ -10275,7 +10275,7 @@ function UIWidgets.create_simple_window_button(arg_194_0, arg_194_1, arg_194_2, 
 	}
 end
 
-function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2, arg_198_3, arg_198_4, arg_198_5)
+UIWidgets.create_window_category_button = function (arg_198_0, arg_198_1, arg_198_2, arg_198_3, arg_198_4, arg_198_5)
 	arg_198_3 = arg_198_3 or "options_button_icon_quickplay"
 
 	local var_198_0 = arg_198_3 .. "_glow"
@@ -10310,14 +10310,14 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					style_id = "background_icon",
 					pass_type = "texture",
 					texture_id = "background_icon",
-					content_check_function = function(arg_199_0)
+					content_check_function = function (arg_199_0)
 						return arg_199_0.background_icon
 					end,
-					content_change_function = function(arg_200_0, arg_200_1)
+					content_change_function = function (arg_200_0, arg_200_1)
 						local var_200_0 = arg_200_0.button_hotspot
 
 						if not var_200_0.disable_button and not var_200_0.is_selected then
-							-- block empty
+							-- Nothing
 						end
 					end
 				},
@@ -10330,7 +10330,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_201_0)
+					content_check_function = function (arg_201_0)
 						return arg_201_0.new
 					end
 				},
@@ -10338,7 +10338,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_202_0)
+					content_check_function = function (arg_202_0)
 						return not arg_202_0.button_hotspot.disable_button
 					end
 				},
@@ -10346,7 +10346,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					texture_id = "icon",
 					style_id = "icon_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_203_0)
+					content_check_function = function (arg_203_0)
 						return arg_203_0.button_hotspot.disable_button
 					end
 				},
@@ -10399,7 +10399,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_204_0)
+					content_check_function = function (arg_204_0)
 						return not arg_204_0.button_hotspot.disable_button
 					end
 				},
@@ -10407,7 +10407,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_205_0)
+					content_check_function = function (arg_205_0)
 						return arg_205_0.button_hotspot.disable_button
 					end
 				},
@@ -10423,7 +10423,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_206_0)
+					content_check_function = function (arg_206_0)
 						return arg_206_0.button_hotspot.disable_button
 					end
 				}
@@ -10836,7 +10836,7 @@ function UIWidgets.create_window_category_button(arg_198_0, arg_198_1, arg_198_2
 	}
 end
 
-function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, arg_207_2, arg_207_3, arg_207_4, arg_207_5)
+UIWidgets.create_window_category_button_mirrored = function (arg_207_0, arg_207_1, arg_207_2, arg_207_3, arg_207_4, arg_207_5)
 	arg_207_3 = arg_207_3 or "options_button_icon_quickplay"
 
 	local var_207_0 = arg_207_3 .. "_glow"
@@ -10871,14 +10871,14 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "background_icon",
 					pass_type = "texture_uv",
 					content_id = "background_icon",
-					content_check_function = function(arg_208_0)
+					content_check_function = function (arg_208_0)
 						return arg_208_0.texture_id
 					end,
-					content_change_function = function(arg_209_0, arg_209_1)
+					content_change_function = function (arg_209_0, arg_209_1)
 						local var_209_0 = arg_209_0.parent.button_hotspot
 
 						if not var_209_0.disable_button and not var_209_0.is_selected then
-							-- block empty
+							-- Nothing
 						end
 					end
 				},
@@ -10891,7 +10891,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "new_texture",
 					pass_type = "texture_uv",
 					content_id = "new_texture",
-					content_check_function = function(arg_210_0)
+					content_check_function = function (arg_210_0)
 						return arg_210_0.parent.new
 					end
 				},
@@ -10899,7 +10899,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "icon",
 					pass_type = "texture_uv",
 					content_id = "icon",
-					content_check_function = function(arg_211_0)
+					content_check_function = function (arg_211_0)
 						return not arg_211_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -10907,7 +10907,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "icon_disabled",
 					pass_type = "texture_uv",
 					content_id = "icon",
-					content_check_function = function(arg_212_0)
+					content_check_function = function (arg_212_0)
 						return arg_212_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -10960,7 +10960,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_213_0)
+					content_check_function = function (arg_213_0)
 						return not arg_213_0.button_hotspot.disable_button
 					end
 				},
@@ -10968,7 +10968,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_214_0)
+					content_check_function = function (arg_214_0)
 						return arg_214_0.button_hotspot.disable_button
 					end
 				},
@@ -10984,7 +10984,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_215_0)
+					content_check_function = function (arg_215_0)
 						return arg_215_0.button_hotspot.disable_button
 					end
 				}
@@ -11457,7 +11457,7 @@ function UIWidgets.create_window_category_button_mirrored(arg_207_0, arg_207_1, 
 	}
 end
 
-function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3, arg_216_4)
+UIWidgets.create_play_button = function (arg_216_0, arg_216_1, arg_216_2, arg_216_3, arg_216_4)
 	local var_216_0
 	local var_216_1 = "green"
 
@@ -11495,7 +11495,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_217_0)
+					content_check_function = function (arg_217_0)
 						local var_217_0 = arg_217_0.button_hotspot.is_clicked
 
 						return not var_217_0 or var_217_0 == 0
@@ -11504,7 +11504,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_218_0)
+					content_check_function = function (arg_218_0)
 						return arg_218_0.button_hotspot.disable_button
 					end
 				},
@@ -11512,7 +11512,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right",
 					pass_type = "texture",
-					content_check_function = function(arg_219_0)
+					content_check_function = function (arg_219_0)
 						return not arg_219_0.button_hotspot.disable_button
 					end
 				},
@@ -11520,7 +11520,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left",
 					pass_type = "texture",
-					content_check_function = function(arg_220_0)
+					content_check_function = function (arg_220_0)
 						return not arg_220_0.button_hotspot.disable_button
 					end
 				},
@@ -11528,7 +11528,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_221_0)
+					content_check_function = function (arg_221_0)
 						return arg_221_0.button_hotspot.disable_button
 					end
 				},
@@ -11536,7 +11536,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_222_0)
+					content_check_function = function (arg_222_0)
 						return arg_222_0.button_hotspot.disable_button
 					end
 				},
@@ -11544,7 +11544,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_223_0)
+					content_check_function = function (arg_223_0)
 						return not arg_223_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -11553,7 +11553,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_224_0)
+					content_check_function = function (arg_224_0)
 						return not arg_224_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -11561,7 +11561,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_225_0)
+					content_check_function = function (arg_225_0)
 						return not arg_225_0.button_hotspot.disable_button
 					end
 				},
@@ -11569,7 +11569,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_226_0)
+					content_check_function = function (arg_226_0)
 						return arg_226_0.button_hotspot.disable_button
 					end
 				},
@@ -11592,7 +11592,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function(arg_227_0)
+					content_check_function = function (arg_227_0)
 						return not arg_227_0.button_hotspot.disable_button
 					end
 				},
@@ -11600,7 +11600,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_228_0)
+					content_check_function = function (arg_228_0)
 						local var_228_0 = arg_228_0.button_hotspot
 
 						return not var_228_0.disable_button and (var_228_0.is_selected or var_228_0.is_hover)
@@ -11949,7 +11949,7 @@ function UIWidgets.create_play_button(arg_216_0, arg_216_1, arg_216_2, arg_216_3
 	}
 end
 
-function UIWidgets.create_icon_button(arg_229_0, arg_229_1, arg_229_2, arg_229_3, arg_229_4)
+UIWidgets.create_icon_button = function (arg_229_0, arg_229_1, arg_229_2, arg_229_3, arg_229_4)
 	arg_229_3 = arg_229_3 or "menu_frame_bg_06"
 
 	local var_229_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_229_3)
@@ -11994,7 +11994,7 @@ function UIWidgets.create_icon_button(arg_229_0, arg_229_1, arg_229_2, arg_229_3
 					texture_id = "texture_hover",
 					style_id = "texture_hover",
 					pass_type = "texture",
-					content_check_function = function(arg_230_0)
+					content_check_function = function (arg_230_0)
 						local var_230_0 = arg_230_0.button_hotspot
 
 						return not var_230_0.disable_button and (var_230_0.is_selected or var_230_0.is_hover)
@@ -12176,7 +12176,7 @@ function UIWidgets.create_icon_button(arg_229_0, arg_229_1, arg_229_2, arg_229_3
 	}
 end
 
-function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, arg_231_4)
+UIWidgets.create_stepper = function (arg_231_0, arg_231_1, arg_231_2, arg_231_3, arg_231_4)
 	arg_231_3 = arg_231_3 or "menu_frame_bg_06"
 
 	local var_231_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_231_3)
@@ -12208,7 +12208,7 @@ function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, ar
 					style_id = "setting_text",
 					pass_type = "text",
 					text_id = "setting_text",
-					content_check_function = function(arg_232_0)
+					content_check_function = function (arg_232_0)
 						local var_232_0 = arg_232_0.button_hotspot_left
 						local var_232_1 = arg_232_0.button_hotspot_right
 
@@ -12219,7 +12219,7 @@ function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, ar
 					style_id = "setting_text_disabled",
 					pass_type = "text",
 					text_id = "setting_text",
-					content_check_function = function(arg_233_0)
+					content_check_function = function (arg_233_0)
 						local var_233_0 = arg_233_0.button_hotspot_left
 						local var_233_1 = arg_233_0.button_hotspot_right
 
@@ -12245,7 +12245,7 @@ function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, ar
 					texture_id = "glow",
 					style_id = "left_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_234_0)
+					content_check_function = function (arg_234_0)
 						local var_234_0 = arg_234_0.button_hotspot_left
 
 						return not var_234_0.disable_button and (var_234_0.is_selected or var_234_0.is_hover)
@@ -12290,7 +12290,7 @@ function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, ar
 					texture_id = "glow",
 					style_id = "right_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_235_0)
+					content_check_function = function (arg_235_0)
 						local var_235_0 = arg_235_0.button_hotspot_right
 
 						return not var_235_0.disable_button and (var_235_0.is_selected or var_235_0.is_hover)
@@ -12682,7 +12682,7 @@ function UIWidgets.create_stepper(arg_231_0, arg_231_1, arg_231_2, arg_231_3, ar
 	}
 end
 
-function UIWidgets.create_title_and_tooltip(arg_236_0, arg_236_1, arg_236_2, arg_236_3, arg_236_4, arg_236_5)
+UIWidgets.create_title_and_tooltip = function (arg_236_0, arg_236_1, arg_236_2, arg_236_3, arg_236_4, arg_236_5)
 	local var_236_0
 
 	if arg_236_4 then
@@ -12697,7 +12697,7 @@ function UIWidgets.create_title_and_tooltip(arg_236_0, arg_236_1, arg_236_2, arg
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_237_0)
+					content_check_function = function (arg_237_0)
 						return not arg_237_0.disabled
 					end
 				},
@@ -12705,14 +12705,14 @@ function UIWidgets.create_title_and_tooltip(arg_236_0, arg_236_1, arg_236_2, arg
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_238_0)
+					content_check_function = function (arg_238_0)
 						return arg_238_0.disabled
 					end
 				},
 				{
 					pass_type = "hotspot",
 					content_id = "tooltip_hotspot",
-					content_check_function = function(arg_239_0)
+					content_check_function = function (arg_239_0)
 						return not arg_239_0.disabled
 					end
 				},
@@ -12720,7 +12720,7 @@ function UIWidgets.create_title_and_tooltip(arg_236_0, arg_236_1, arg_236_2, arg
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_240_0)
+					content_check_function = function (arg_240_0)
 						return not arg_240_0.disabled and arg_240_0.tooltip_hotspot.is_hover
 					end
 				}
@@ -12770,7 +12770,7 @@ function UIWidgets.create_title_and_tooltip(arg_236_0, arg_236_1, arg_236_2, arg
 	}
 end
 
-function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241_3, arg_241_4, arg_241_5, arg_241_6, arg_241_7)
+UIWidgets.create_icon_selector = function (arg_241_0, arg_241_1, arg_241_2, arg_241_3, arg_241_4, arg_241_5, arg_241_6, arg_241_7)
 	local var_241_0 = {
 		255,
 		255,
@@ -12829,7 +12829,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 			content_id = var_241_15,
 			texture_id = var_241_18,
 			style_id = var_241_18,
-			content_check_function = function(arg_242_0)
+			content_check_function = function (arg_242_0)
 				return not arg_242_0.disable_button
 			end
 		}
@@ -12852,7 +12852,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 			content_id = var_241_15,
 			texture_id = var_241_20,
 			style_id = var_241_20,
-			content_check_function = function(arg_243_0)
+			content_check_function = function (arg_243_0)
 				return arg_243_0.disable_button
 			end
 		}
@@ -12881,7 +12881,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 			content_id = var_241_15,
 			texture_id = var_241_21,
 			style_id = var_241_21,
-			content_check_function = function(arg_244_0)
+			content_check_function = function (arg_244_0)
 				return arg_244_0[var_241_21] and arg_244_0.is_selected
 			end
 		}
@@ -12907,7 +12907,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 			content_id = var_241_15,
 			texture_id = var_241_22,
 			style_id = var_241_22,
-			content_check_function = function(arg_245_0)
+			content_check_function = function (arg_245_0)
 				return arg_245_0.disable_button and not arg_245_0.locked and not arg_245_0.parent.disable_cross
 			end
 		}
@@ -12930,7 +12930,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 			content_id = var_241_15,
 			texture_id = var_241_23,
 			style_id = var_241_23,
-			content_check_function = function(arg_246_0)
+			content_check_function = function (arg_246_0)
 				return arg_246_0.locked
 			end
 		}
@@ -12994,7 +12994,7 @@ function UIWidgets.create_icon_selector(arg_241_0, arg_241_1, arg_241_2, arg_241
 	return var_241_3
 end
 
-function UIWidgets.create_title_widget(arg_247_0, arg_247_1, arg_247_2, arg_247_3, arg_247_4, arg_247_5, arg_247_6)
+UIWidgets.create_title_widget = function (arg_247_0, arg_247_1, arg_247_2, arg_247_3, arg_247_4, arg_247_5, arg_247_6)
 	local var_247_0 = {
 		element = {}
 	}
@@ -13195,7 +13195,7 @@ function UIWidgets.create_title_widget(arg_247_0, arg_247_1, arg_247_2, arg_247_
 	return var_247_0
 end
 
-function UIWidgets.create_large_window_title(arg_248_0, arg_248_1, arg_248_2, arg_248_3)
+UIWidgets.create_large_window_title = function (arg_248_0, arg_248_1, arg_248_2, arg_248_3)
 	local var_248_0 = "menu_frame_bg_01"
 	local var_248_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_248_0)
 	local var_248_2 = UIFrameSettings.button_frame_01
@@ -13230,7 +13230,7 @@ function UIWidgets.create_large_window_title(arg_248_0, arg_248_1, arg_248_2, ar
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_249_0)
+					content_check_function = function (arg_249_0)
 						return not arg_249_0.button_hotspot.disable_button
 					end
 				},
@@ -13238,7 +13238,7 @@ function UIWidgets.create_large_window_title(arg_248_0, arg_248_1, arg_248_2, ar
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_250_0)
+					content_check_function = function (arg_250_0)
 						return arg_250_0.button_hotspot.disable_button
 					end
 				},
@@ -13415,7 +13415,7 @@ end
 
 GAMEPAD_CURSOR_SIZE = 64
 
-function UIWidgets.create_console_cursor(arg_251_0)
+UIWidgets.create_console_cursor = function (arg_251_0)
 	local var_251_0 = {
 		element = {}
 	}
@@ -13424,7 +13424,7 @@ function UIWidgets.create_console_cursor(arg_251_0)
 			pass_type = "gamepad_cursor",
 			style_id = "cursor",
 			texture_id = "cursor",
-			content_check_function = function(arg_252_0, arg_252_1)
+			content_check_function = function (arg_252_0, arg_252_1)
 				return not Managers.popup:has_popup()
 			end
 		}
@@ -13465,7 +13465,7 @@ function UIWidgets.create_console_cursor(arg_251_0)
 	return var_251_0
 end
 
-function UIWidgets.create_difficulty_selector(arg_253_0, arg_253_1, arg_253_2, arg_253_3, arg_253_4)
+UIWidgets.create_difficulty_selector = function (arg_253_0, arg_253_1, arg_253_2, arg_253_3, arg_253_4)
 	local var_253_0 = {
 		255,
 		255,
@@ -13663,7 +13663,7 @@ function UIWidgets.create_difficulty_selector(arg_253_0, arg_253_1, arg_253_2, a
 	return var_253_2
 end
 
-function UIWidgets.create_base_portrait_frame(arg_254_0, arg_254_1, arg_254_2, arg_254_3, arg_254_4, arg_254_5)
+UIWidgets.create_base_portrait_frame = function (arg_254_0, arg_254_1, arg_254_2, arg_254_3, arg_254_4, arg_254_5)
 	arg_254_2 = arg_254_2 or 1
 
 	local var_254_0 = arg_254_1 or "default"
@@ -13743,7 +13743,7 @@ function UIWidgets.create_base_portrait_frame(arg_254_0, arg_254_1, arg_254_2, a
 	return var_254_4
 end
 
-function UIWidgets.create_portrait_frame(arg_255_0, arg_255_1, arg_255_2, arg_255_3, arg_255_4, arg_255_5)
+UIWidgets.create_portrait_frame = function (arg_255_0, arg_255_1, arg_255_2, arg_255_3, arg_255_4, arg_255_5)
 	arg_255_3 = arg_255_3 or 1
 
 	local var_255_0 = arg_255_1 or "default"
@@ -13902,7 +13902,7 @@ function UIWidgets.create_portrait_frame(arg_255_0, arg_255_1, arg_255_2, arg_25
 	return var_255_4
 end
 
-function UIWidgets.create_portrait_frame_button(arg_256_0, arg_256_1, arg_256_2, arg_256_3, arg_256_4)
+UIWidgets.create_portrait_frame_button = function (arg_256_0, arg_256_1, arg_256_2, arg_256_3, arg_256_4)
 	arg_256_2 = arg_256_2 or 1
 
 	local var_256_0 = UIPlayerPortraitFrameSettings[arg_256_1]
@@ -14010,7 +14010,7 @@ function UIWidgets.create_portrait_frame_button(arg_256_0, arg_256_1, arg_256_2,
 		texture_id = var_256_17,
 		style_id = var_256_17,
 		retained_mode = arg_256_3,
-		content_check_function = function(arg_257_0)
+		content_check_function = function (arg_257_0)
 			return arg_257_0.button_hotspot.is_hover
 		end
 	}
@@ -14037,7 +14037,7 @@ function UIWidgets.create_portrait_frame_button(arg_256_0, arg_256_1, arg_256_2,
 	return var_256_3
 end
 
-function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3)
+UIWidgets.create_score_entry = function (arg_258_0, arg_258_1, arg_258_2, arg_258_3)
 	local var_258_0 = {
 		255,
 		255,
@@ -14253,7 +14253,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 		content_id = var_258_14,
 		texture_id = var_258_22,
 		style_id = var_258_22,
-		content_check_function = function(arg_259_0)
+		content_check_function = function (arg_259_0)
 			return not arg_259_0.is_selected
 		end
 	}
@@ -14291,7 +14291,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 			pass_type = "tiled_texture",
 			content_id = var_258_26,
 			style_id = var_258_26,
-			content_check_function = function(arg_260_0)
+			content_check_function = function (arg_260_0)
 				local var_260_0 = arg_260_0.parent.hover_index
 
 				if var_260_0 and var_260_0 == iter_258_0 then
@@ -14325,7 +14325,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 				pass_type = "tiled_texture",
 				content_id = var_258_27,
 				style_id = var_258_27,
-				content_check_function = function(arg_261_0)
+				content_check_function = function (arg_261_0)
 					local var_261_0 = arg_261_0.parent.hover_index
 
 					return var_261_0 and var_261_0 == iter_258_0
@@ -14402,7 +14402,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 				content_id = var_258_26,
 				text_id = var_258_28,
 				style_id = var_258_30,
-				content_check_function = function(arg_262_0)
+				content_check_function = function (arg_262_0)
 					local var_262_0 = arg_262_0.parent.hover_index
 
 					return var_262_0 and var_262_0 == iter_258_0
@@ -14430,7 +14430,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 			pass_type = "texture",
 			texture_id = var_258_31,
 			style_id = var_258_31,
-			content_check_function = function(arg_263_0)
+			content_check_function = function (arg_263_0)
 				return arg_263_0[var_258_26].has_highscore
 			end
 		}
@@ -14467,7 +14467,7 @@ function UIWidgets.create_score_entry(arg_258_0, arg_258_1, arg_258_2, arg_258_3
 	return var_258_4
 end
 
-function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_3)
+UIWidgets.create_score_topics = function (arg_264_0, arg_264_1, arg_264_2, arg_264_3)
 	local var_264_0 = {
 		255,
 		255,
@@ -14639,7 +14639,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 		content_id = var_264_16,
 		texture_id = var_264_23,
 		style_id = var_264_23,
-		content_check_function = function(arg_265_0)
+		content_check_function = function (arg_265_0)
 			return not arg_265_0.is_selected
 		end
 	}
@@ -14677,7 +14677,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 			pass_type = "tiled_texture",
 			content_id = var_264_25,
 			style_id = var_264_25,
-			content_check_function = function(arg_266_0)
+			content_check_function = function (arg_266_0)
 				local var_266_0 = arg_266_0.parent.hover_index
 
 				if var_266_0 and var_266_0 == iter_264_0 then
@@ -14728,7 +14728,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 				pass_type = "tiled_texture",
 				content_id = var_264_29,
 				style_id = var_264_29,
-				content_check_function = function(arg_267_0)
+				content_check_function = function (arg_267_0)
 					local var_267_0 = arg_267_0.parent.hover_index
 
 					return var_267_0 and var_267_0 == iter_264_0
@@ -14818,7 +14818,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 				content_id = var_264_25,
 				text_id = var_264_30,
 				style_id = var_264_32,
-				content_check_function = function(arg_268_0)
+				content_check_function = function (arg_268_0)
 					local var_268_0 = arg_268_0.parent.hover_index
 
 					return var_268_0 and var_268_0 == iter_264_0
@@ -14847,7 +14847,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 			pass_type = "texture",
 			texture_id = var_264_33,
 			style_id = var_264_33,
-			content_check_function = function(arg_269_0)
+			content_check_function = function (arg_269_0)
 				return arg_269_0[var_264_25].has_highscore
 			end
 		}
@@ -14884,7 +14884,7 @@ function UIWidgets.create_score_topics(arg_264_0, arg_264_1, arg_264_2, arg_264_
 	return var_264_4
 end
 
-function UIWidgets.create_page_dot_selector(arg_270_0, arg_270_1)
+UIWidgets.create_page_dot_selector = function (arg_270_0, arg_270_1)
 	local var_270_0 = {
 		255,
 		255,
@@ -14941,7 +14941,7 @@ function UIWidgets.create_page_dot_selector(arg_270_0, arg_270_1)
 			pass_type = "texture",
 			texture_id = var_270_17,
 			style_id = var_270_17,
-			content_check_function = function(arg_271_0)
+			content_check_function = function (arg_271_0)
 				return arg_271_0[var_270_15].is_selected or arg_271_0[var_270_15].is_hover
 			end
 		}
@@ -14999,7 +14999,7 @@ function UIWidgets.create_page_dot_selector(arg_270_0, arg_270_1)
 	return var_270_1
 end
 
-function UIWidgets.create_text_input_rect(arg_272_0, arg_272_1, arg_272_2, arg_272_3)
+UIWidgets.create_text_input_rect = function (arg_272_0, arg_272_1, arg_272_2, arg_272_3)
 	local var_272_0 = {
 		{
 			pass_type = "rect",
@@ -15089,7 +15089,7 @@ function UIWidgets.create_text_input_rect(arg_272_0, arg_272_1, arg_272_2, arg_2
 	}
 end
 
-function UIWidgets.create_craft_material_widget(arg_273_0)
+UIWidgets.create_craft_material_widget = function (arg_273_0)
 	return {
 		element = {
 			passes = {
@@ -15111,7 +15111,7 @@ function UIWidgets.create_craft_material_widget(arg_273_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_274_0)
+					content_check_function = function (arg_274_0)
 						return not arg_274_0.warning
 					end
 				},
@@ -15119,7 +15119,7 @@ function UIWidgets.create_craft_material_widget(arg_273_0)
 					style_id = "text_warning",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_275_0)
+					content_check_function = function (arg_275_0)
 						return arg_275_0.warning
 					end
 				},
@@ -15131,21 +15131,21 @@ function UIWidgets.create_craft_material_widget(arg_273_0)
 				{
 					style_id = "text_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_276_0)
+					content_check_function = function (arg_276_0)
 						return arg_276_0.draw_background
 					end
 				},
 				{
 					style_id = "text_bg_2",
 					pass_type = "rect",
-					content_check_function = function(arg_277_0)
+					content_check_function = function (arg_277_0)
 						return arg_277_0.draw_background
 					end
 				},
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_278_0)
+					content_check_function = function (arg_278_0)
 						return arg_278_0.button_hotspot.is_hover and arg_278_0.item
 					end
 				}
@@ -15291,7 +15291,7 @@ function UIWidgets.create_craft_material_widget(arg_273_0)
 	}
 end
 
-function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
+UIWidgets.create_console_craft_button = function (arg_279_0, arg_279_1)
 	return {
 		element = {
 			passes = {
@@ -15304,7 +15304,7 @@ function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_280_0)
+					content_check_function = function (arg_280_0)
 						return not arg_280_0.button_hotspot.is_hover
 					end
 				},
@@ -15312,7 +15312,7 @@ function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
 					pass_type = "texture",
 					style_id = "icon_hover",
 					texture_id = "icon",
-					content_check_function = function(arg_281_0)
+					content_check_function = function (arg_281_0)
 						return arg_281_0.button_hotspot.is_hover
 					end
 				},
@@ -15320,7 +15320,7 @@ function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
 					pass_type = "texture",
 					style_id = "icon_glow",
 					texture_id = "icon_glow",
-					content_check_function = function(arg_282_0)
+					content_check_function = function (arg_282_0)
 						return not arg_282_0.button_hotspot.disable_button
 					end
 				},
@@ -15333,10 +15333,10 @@ function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
 					style_id = "background_glow",
 					texture_id = "background_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_283_0)
+					content_check_function = function (arg_283_0)
 						return not arg_283_0.button_hotspot.disable_button
 					end,
-					content_change_function = function(arg_284_0, arg_284_1)
+					content_change_function = function (arg_284_0, arg_284_1)
 						local var_284_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 						arg_284_1.color[1] = 55 + var_284_0 * 200
@@ -15465,7 +15465,7 @@ function UIWidgets.create_console_craft_button(arg_279_0, arg_279_1)
 	}
 end
 
-function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1, arg_285_2, arg_285_3, arg_285_4, arg_285_5, arg_285_6)
+UIWidgets.create_start_game_console_setting_button = function (arg_285_0, arg_285_1, arg_285_2, arg_285_3, arg_285_4, arg_285_5, arg_285_6)
 	arg_285_3 = arg_285_3 or "level_icon_01"
 
 	local var_285_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_285_3)
@@ -15552,7 +15552,7 @@ function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1
 		pass_type = "text",
 		text_id = var_285_9,
 		style_id = var_285_9,
-		content_change_function = function(arg_286_0, arg_286_1)
+		content_change_function = function (arg_286_0, arg_286_1)
 			if arg_286_0.is_selected then
 				arg_286_1.text_color = arg_286_1.selected_color
 			else
@@ -15683,10 +15683,10 @@ function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1
 		pass_type = "texture",
 		style_id = var_285_23,
 		texture_id = var_285_23,
-		content_check_function = function(arg_287_0, arg_287_1)
+		content_check_function = function (arg_287_0, arg_287_1)
 			return arg_287_0[var_285_23]
 		end,
-		content_change_function = function(arg_288_0, arg_288_1)
+		content_change_function = function (arg_288_0, arg_288_1)
 			if arg_288_0.button_hotspot.disable_button then
 				arg_288_1.saturated = true
 			else
@@ -15730,10 +15730,10 @@ function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1
 		pass_type = "texture",
 		style_id = var_285_25,
 		texture_id = var_285_25,
-		content_check_function = function(arg_289_0, arg_289_1)
+		content_check_function = function (arg_289_0, arg_289_1)
 			return arg_289_0[var_285_23]
 		end,
-		content_change_function = function(arg_290_0, arg_290_1)
+		content_change_function = function (arg_290_0, arg_290_1)
 			if arg_290_0.button_hotspot.disable_button then
 				arg_290_1.saturated = true
 			else
@@ -15764,7 +15764,7 @@ function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1
 		pass_type = "texture",
 		style_id = var_285_26,
 		texture_id = var_285_26,
-		content_check_function = function(arg_291_0)
+		content_check_function = function (arg_291_0)
 			return arg_291_0.is_selected
 		end
 	}
@@ -15800,7 +15800,7 @@ function UIWidgets.create_start_game_console_setting_button(arg_285_0, arg_285_1
 	}
 end
 
-function UIWidgets.create_start_game_console_play_button(arg_292_0)
+UIWidgets.create_start_game_console_play_button = function (arg_292_0)
 	local var_292_0 = {}
 	local var_292_1 = {}
 	local var_292_2 = {}
@@ -15811,7 +15811,7 @@ function UIWidgets.create_start_game_console_play_button(arg_292_0)
 		pass_type = "text",
 		text_id = var_292_3,
 		style_id = var_292_3,
-		content_change_function = function(arg_293_0, arg_293_1)
+		content_change_function = function (arg_293_0, arg_293_1)
 			if arg_293_0.locked then
 				arg_293_1.text_color = arg_293_1.disabled_color
 			else
@@ -15898,7 +15898,7 @@ function UIWidgets.create_start_game_console_play_button(arg_292_0)
 		pass_type = "texture",
 		texture_id = var_292_9,
 		style_id = var_292_9,
-		content_change_function = function(arg_294_0, arg_294_1)
+		content_change_function = function (arg_294_0, arg_294_1)
 			if arg_294_0.locked then
 				arg_294_1.saturated = true
 			else
@@ -15933,7 +15933,7 @@ function UIWidgets.create_start_game_console_play_button(arg_292_0)
 		pass_type = "texture",
 		texture_id = var_292_10,
 		style_id = var_292_10,
-		content_check_function = function(arg_295_0)
+		content_check_function = function (arg_295_0)
 			return not arg_295_0.locked
 		end
 	}
@@ -15968,7 +15968,7 @@ function UIWidgets.create_start_game_console_play_button(arg_292_0)
 	}
 end
 
-function UIWidgets.create_arrow_button(arg_296_0, arg_296_1)
+UIWidgets.create_arrow_button = function (arg_296_0, arg_296_1)
 	return {
 		element = {
 			passes = {
@@ -15981,7 +15981,7 @@ function UIWidgets.create_arrow_button(arg_296_0, arg_296_1)
 					pass_type = "rotated_texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_297_0)
+					content_check_function = function (arg_297_0)
 						return not arg_297_0.is_gamepad_active and not arg_297_0.hotspot.disable_button
 					end
 				},
@@ -15989,7 +15989,7 @@ function UIWidgets.create_arrow_button(arg_296_0, arg_296_1)
 					pass_type = "rotated_texture",
 					style_id = "texture_disabled_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_298_0)
+					content_check_function = function (arg_298_0)
 						return not arg_298_0.is_gamepad_active and arg_298_0.hotspot.disable_button
 					end
 				},
@@ -15997,7 +15997,7 @@ function UIWidgets.create_arrow_button(arg_296_0, arg_296_1)
 					pass_type = "rotated_texture",
 					style_id = "texture_hover_id",
 					texture_id = "texture_hover_id",
-					content_check_function = function(arg_299_0)
+					content_check_function = function (arg_299_0)
 						return not arg_299_0.is_gamepad_active
 					end
 				}
@@ -16102,7 +16102,7 @@ function UIWidgets.create_arrow_button(arg_296_0, arg_296_1)
 	}
 end
 
-function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
+UIWidgets.create_icon_and_name_button = function (arg_300_0, arg_300_1, arg_300_2)
 	return {
 		element = {
 			passes = {
@@ -16115,7 +16115,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_301_0)
+					content_check_function = function (arg_301_0)
 						return not arg_301_0.button_hotspot.disable_button
 					end
 				},
@@ -16123,7 +16123,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_disabled_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_302_0)
+					content_check_function = function (arg_302_0)
 						return arg_302_0.button_hotspot.disable_button
 					end
 				},
@@ -16131,7 +16131,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "texture_hover_id",
-					content_check_function = function(arg_303_0)
+					content_check_function = function (arg_303_0)
 						return not arg_303_0.button_hotspot.disable_button
 					end
 				},
@@ -16139,7 +16139,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_icon_id",
 					texture_id = "texture_icon_id",
-					content_check_function = function(arg_304_0)
+					content_check_function = function (arg_304_0)
 						return not arg_304_0.button_hotspot.disable_button
 					end
 				},
@@ -16147,7 +16147,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_icon_hover_id",
 					texture_id = "texture_icon_id",
-					content_check_function = function(arg_305_0)
+					content_check_function = function (arg_305_0)
 						return not arg_305_0.button_hotspot.disable_button
 					end
 				},
@@ -16155,7 +16155,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					pass_type = "texture",
 					style_id = "texture_icon_disabled_id",
 					texture_id = "texture_icon_id",
-					content_check_function = function(arg_306_0)
+					content_check_function = function (arg_306_0)
 						return arg_306_0.button_hotspot.disable_button
 					end
 				},
@@ -16173,7 +16173,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_307_0)
+					content_check_function = function (arg_307_0)
 						return not arg_307_0.button_hotspot.disable_button
 					end
 				},
@@ -16181,7 +16181,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_308_0)
+					content_check_function = function (arg_308_0)
 						return not arg_308_0.button_hotspot.disable_button
 					end
 				},
@@ -16189,7 +16189,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_309_0)
+					content_check_function = function (arg_309_0)
 						return arg_309_0.button_hotspot.disable_button
 					end
 				},
@@ -16468,7 +16468,7 @@ function UIWidgets.create_icon_and_name_button(arg_300_0, arg_300_1, arg_300_2)
 	}
 end
 
-function UIWidgets.create_layout_button(arg_310_0, arg_310_1, arg_310_2, arg_310_3)
+UIWidgets.create_layout_button = function (arg_310_0, arg_310_1, arg_310_2, arg_310_3)
 	local var_310_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_310_1).size
 
 	return {
@@ -16594,7 +16594,7 @@ function UIWidgets.create_layout_button(arg_310_0, arg_310_1, arg_310_2, arg_310
 	}
 end
 
-function UIWidgets.create_weave_equipment_button(arg_311_0)
+UIWidgets.create_weave_equipment_button = function (arg_311_0)
 	return {
 		element = {
 			passes = {
@@ -16621,7 +16621,7 @@ function UIWidgets.create_weave_equipment_button(arg_311_0)
 					pass_type = "texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					content_check_function = function(arg_312_0)
+					content_check_function = function (arg_312_0)
 						return arg_312_0.highlighted
 					end
 				}
@@ -16743,7 +16743,7 @@ function UIWidgets.create_weave_equipment_button(arg_311_0)
 	}
 end
 
-function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2, arg_313_3, arg_313_4, arg_313_5)
+UIWidgets.create_athanor_upgrade_button = function (arg_313_0, arg_313_1, arg_313_2, arg_313_3, arg_313_4, arg_313_5)
 	local var_313_0 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_313_2).size
 	local var_313_1 = "athanor_icon_loading"
 	local var_313_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_313_1).size
@@ -16763,7 +16763,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					content_passes = {
 						"weave_progression_slot_titles"
 					},
-					content_check_function = function(arg_314_0)
+					content_check_function = function (arg_314_0)
 						return arg_314_0.tooltip and arg_314_0.button_hotspot.is_hover
 					end
 				},
@@ -16771,7 +16771,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "price_icon",
 					texture_id = "price_icon",
-					content_check_function = function(arg_315_0)
+					content_check_function = function (arg_315_0)
 						return not arg_315_0.button_hotspot.disable_button
 					end
 				},
@@ -16779,7 +16779,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "price_icon_disabled",
 					texture_id = "price_icon",
-					content_check_function = function(arg_316_0)
+					content_check_function = function (arg_316_0)
 						return arg_316_0.button_hotspot.disable_button
 					end
 				},
@@ -16792,7 +16792,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_317_0)
+					content_check_function = function (arg_317_0)
 						local var_317_0 = arg_317_0.button_hotspot
 
 						return arg_317_0.icon and not var_317_0.disable_button and not arg_317_0.upgrading
@@ -16802,7 +16802,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "icon_disabled",
 					texture_id = "icon",
-					content_check_function = function(arg_318_0)
+					content_check_function = function (arg_318_0)
 						return arg_318_0.button_hotspot.disable_button and arg_318_0.icon and not arg_318_0.upgrading
 					end
 				},
@@ -16815,7 +16815,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					content_check_function = function(arg_319_0)
+					content_check_function = function (arg_319_0)
 						return arg_319_0.highlighted
 					end
 				},
@@ -16828,7 +16828,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					pass_type = "texture",
 					style_id = "disabled_rect",
 					texture_id = "overlay",
-					content_check_function = function(arg_320_0)
+					content_check_function = function (arg_320_0)
 						return arg_320_0.button_hotspot.disable_button
 					end
 				},
@@ -16836,7 +16836,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_321_0)
+					content_check_function = function (arg_321_0)
 						return not arg_321_0.button_hotspot.disable_button
 					end
 				},
@@ -16844,7 +16844,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_322_0)
+					content_check_function = function (arg_322_0)
 						return arg_322_0.button_hotspot.disable_button
 					end
 				},
@@ -16857,10 +16857,10 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_323_0)
+					content_check_function = function (arg_323_0)
 						return arg_323_0.upgrading
 					end,
-					content_change_function = function(arg_324_0, arg_324_1, arg_324_2, arg_324_3)
+					content_change_function = function (arg_324_0, arg_324_1, arg_324_2, arg_324_3)
 						local var_324_0 = ((arg_324_1.progress or 0) + arg_324_3) % 1
 
 						arg_324_1.angle = math.pow(2, math.smoothstep(var_324_0, 0, 1)) * (math.pi * 2)
@@ -17166,7 +17166,7 @@ function UIWidgets.create_athanor_upgrade_button(arg_313_0, arg_313_1, arg_313_2
 	}
 end
 
-function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, arg_325_3, arg_325_4, arg_325_5)
+UIWidgets.create_weave_panel_button = function (arg_325_0, arg_325_1, arg_325_2, arg_325_3, arg_325_4, arg_325_5)
 	local var_325_0 = {
 		-19,
 		-25,
@@ -17205,7 +17205,7 @@ function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, ar
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_326_0)
+					content_check_function = function (arg_326_0)
 						return not arg_326_0.button_hotspot.disable_button and (arg_326_0.button_hotspot.is_hover or arg_326_0.button_hotspot.is_selected)
 					end
 				},
@@ -17213,7 +17213,7 @@ function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, ar
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_327_0)
+					content_check_function = function (arg_327_0)
 						return not arg_327_0.button_hotspot.disable_button and not arg_327_0.button_hotspot.is_hover and not arg_327_0.button_hotspot.is_selected
 					end
 				},
@@ -17221,7 +17221,7 @@ function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, ar
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_328_0)
+					content_check_function = function (arg_328_0)
 						return arg_328_0.button_hotspot.disable_button
 					end
 				},
@@ -17229,7 +17229,7 @@ function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, ar
 					texture_id = "new_marker",
 					style_id = "new_marker",
 					pass_type = "texture",
-					content_check_function = function(arg_329_0)
+					content_check_function = function (arg_329_0)
 						return arg_329_0.new
 					end
 				}
@@ -17351,7 +17351,7 @@ function UIWidgets.create_weave_panel_button(arg_325_0, arg_325_1, arg_325_2, ar
 	}
 end
 
-function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
+UIWidgets.create_game_option_mission_preview = function (arg_330_0, arg_330_1)
 	local var_330_0 = {
 		{
 			pass_type = "texture",
@@ -17367,7 +17367,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			pass_type = "texture",
 			style_id = "boss_texture",
 			texture_id = "boss_texture",
-			content_check_function = function(arg_331_0)
+			content_check_function = function (arg_331_0)
 				return arg_331_0.boss_level
 			end
 		},
@@ -17375,7 +17375,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			pass_type = "texture",
 			style_id = "difficulty_texture",
 			texture_id = "difficulty_texture",
-			content_check_function = function(arg_332_0)
+			content_check_function = function (arg_332_0)
 				return arg_332_0.difficulty_texture
 			end
 		},
@@ -17408,7 +17408,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			style_id = "requirement_title",
 			pass_type = "text",
 			text_id = "requirement_title",
-			content_check_function = function(arg_333_0)
+			content_check_function = function (arg_333_0)
 				return arg_333_0.requirement_text
 			end
 		},
@@ -17416,7 +17416,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			style_id = "requirement_title_shadow",
 			pass_type = "text",
 			text_id = "requirement_title",
-			content_check_function = function(arg_334_0)
+			content_check_function = function (arg_334_0)
 				return arg_334_0.requirement_text
 			end
 		},
@@ -17424,7 +17424,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			style_id = "requirement_text",
 			pass_type = "text",
 			text_id = "requirement_text",
-			content_check_function = function(arg_335_0)
+			content_check_function = function (arg_335_0)
 				return arg_335_0.requirement_text
 			end
 		},
@@ -17432,7 +17432,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 			style_id = "requirement_text_shadow",
 			pass_type = "text",
 			text_id = "requirement_text",
-			content_check_function = function(arg_336_0)
+			content_check_function = function (arg_336_0)
 				return arg_336_0.requirement_text
 			end
 		}
@@ -17715,7 +17715,7 @@ function UIWidgets.create_game_option_mission_preview(arg_330_0, arg_330_1)
 	}
 end
 
-function UIWidgets.create_game_option_window(arg_337_0, arg_337_1, arg_337_2)
+UIWidgets.create_game_option_window = function (arg_337_0, arg_337_1, arg_337_2)
 	local var_337_0 = UIFrameSettings.frame_outer_glow_01
 	local var_337_1 = var_337_0.texture_sizes.horizontal[2]
 	local var_337_2 = {
@@ -18138,7 +18138,7 @@ function UIWidgets.create_game_option_window(arg_337_0, arg_337_1, arg_337_2)
 	}
 end
 
-function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
+UIWidgets.create_item_option_overview = function (arg_338_0, arg_338_1)
 	local var_338_0 = 10
 	local var_338_1 = {
 		arg_338_1[1] - 20,
@@ -18225,7 +18225,7 @@ function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
 			pass_type = "texture",
 			style_id = "illusion_texture",
 			texture_id = "illusion_texture",
-			content_check_function = function(arg_339_0)
+			content_check_function = function (arg_339_0)
 				local var_339_0 = arg_339_0.item
 
 				if not var_339_0 then
@@ -18620,7 +18620,7 @@ function UIWidgets.create_item_option_overview(arg_338_0, arg_338_1)
 	}
 end
 
-function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
+UIWidgets.create_item_option_properties = function (arg_340_0, arg_340_1)
 	local var_340_0 = 10
 	local var_340_1 = {
 		arg_340_1[1] - 20,
@@ -18934,7 +18934,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "texture",
 			texture_id = var_340_24,
 			style_id = var_340_24,
-			content_check_function = function(arg_341_0)
+			content_check_function = function (arg_341_0)
 				return not arg_341_0[var_340_23].disable_button
 			end
 		}
@@ -18952,7 +18952,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "texture",
 			texture_id = var_340_24,
 			style_id = var_340_25,
-			content_check_function = function(arg_342_0)
+			content_check_function = function (arg_342_0)
 				return arg_342_0[var_340_23].disable_button
 			end
 		}
@@ -18974,7 +18974,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "text",
 			text_id = var_340_26,
 			style_id = var_340_26,
-			content_check_function = function(arg_343_0)
+			content_check_function = function (arg_343_0)
 				return not arg_343_0[var_340_23].disable_button
 			end
 		}
@@ -19011,7 +19011,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "text",
 			text_id = var_340_26,
 			style_id = var_340_27,
-			content_check_function = function(arg_344_0)
+			content_check_function = function (arg_344_0)
 				return not arg_344_0[var_340_23].disable_button
 			end
 		}
@@ -19037,7 +19037,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "text",
 			text_id = var_340_28,
 			style_id = var_340_28,
-			content_check_function = function(arg_345_0)
+			content_check_function = function (arg_345_0)
 				return arg_345_0[var_340_23].disable_button
 			end
 		}
@@ -19069,7 +19069,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 			pass_type = "text",
 			text_id = var_340_28,
 			style_id = var_340_29,
-			content_check_function = function(arg_346_0)
+			content_check_function = function (arg_346_0)
 				return arg_346_0[var_340_23].disable_button
 			end
 		}
@@ -19109,7 +19109,7 @@ function UIWidgets.create_item_option_properties(arg_340_0, arg_340_1)
 	}
 end
 
-function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
+UIWidgets.create_item_option_trait = function (arg_347_0, arg_347_1)
 	local var_347_0 = 10
 	local var_347_1 = {
 		40,
@@ -19184,7 +19184,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			pass_type = "texture",
 			style_id = "icon_texture",
 			texture_id = "icon_texture",
-			content_check_function = function(arg_348_0)
+			content_check_function = function (arg_348_0)
 				return arg_348_0.icon_texture
 			end
 		},
@@ -19192,7 +19192,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "input_text",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_349_0)
+			content_check_function = function (arg_349_0)
 				return not arg_349_0.locked
 			end
 		},
@@ -19200,7 +19200,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "input_text_shadow",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_350_0)
+			content_check_function = function (arg_350_0)
 				return not arg_350_0.locked
 			end
 		},
@@ -19208,7 +19208,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "input_text_locked",
 			pass_type = "text",
 			text_id = "input_text_locked",
-			content_check_function = function(arg_351_0)
+			content_check_function = function (arg_351_0)
 				return arg_351_0.locked
 			end
 		},
@@ -19216,7 +19216,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "input_text_locked_shadow",
 			pass_type = "text",
 			text_id = "input_text_locked",
-			content_check_function = function(arg_352_0)
+			content_check_function = function (arg_352_0)
 				return arg_352_0.locked
 			end
 		},
@@ -19224,7 +19224,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "sub_title",
 			pass_type = "text",
 			text_id = "sub_title",
-			content_check_function = function(arg_353_0)
+			content_check_function = function (arg_353_0)
 				return not arg_353_0.locked
 			end
 		},
@@ -19232,7 +19232,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 			style_id = "sub_title_shadow",
 			pass_type = "text",
 			text_id = "sub_title",
-			content_check_function = function(arg_354_0)
+			content_check_function = function (arg_354_0)
 				return not arg_354_0.locked
 			end
 		}
@@ -19578,7 +19578,7 @@ function UIWidgets.create_item_option_trait(arg_347_0, arg_347_1)
 	}
 end
 
-function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
+UIWidgets.create_item_option_upgrade = function (arg_355_0, arg_355_1)
 	local var_355_0 = 10
 	local var_355_1 = {
 		13,
@@ -19653,7 +19653,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			pass_type = "texture",
 			style_id = "icon_texture",
 			texture_id = "icon_texture",
-			content_check_function = function(arg_356_0)
+			content_check_function = function (arg_356_0)
 				return not arg_356_0.locked
 			end
 		},
@@ -19661,7 +19661,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "input_text",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_357_0)
+			content_check_function = function (arg_357_0)
 				return not arg_357_0.locked
 			end
 		},
@@ -19669,7 +19669,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "input_text_shadow",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_358_0)
+			content_check_function = function (arg_358_0)
 				return not arg_358_0.locked
 			end
 		},
@@ -19677,7 +19677,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "input_text_locked",
 			pass_type = "text",
 			text_id = "input_text_locked",
-			content_check_function = function(arg_359_0)
+			content_check_function = function (arg_359_0)
 				return arg_359_0.locked
 			end
 		},
@@ -19685,7 +19685,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "input_text_locked_shadow",
 			pass_type = "text",
 			text_id = "input_text_locked",
-			content_check_function = function(arg_360_0)
+			content_check_function = function (arg_360_0)
 				return arg_360_0.locked
 			end
 		},
@@ -19693,7 +19693,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "sub_title",
 			pass_type = "text",
 			text_id = "sub_title",
-			content_check_function = function(arg_361_0)
+			content_check_function = function (arg_361_0)
 				return not arg_361_0.locked
 			end
 		},
@@ -19701,7 +19701,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 			style_id = "sub_title_shadow",
 			pass_type = "text",
 			text_id = "sub_title",
-			content_check_function = function(arg_362_0)
+			content_check_function = function (arg_362_0)
 				return not arg_362_0.locked
 			end
 		}
@@ -20043,7 +20043,7 @@ function UIWidgets.create_item_option_upgrade(arg_355_0, arg_355_1)
 	}
 end
 
-function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_3, arg_363_4, arg_363_5)
+UIWidgets.create_item_feature = function (arg_363_0, arg_363_1, arg_363_2, arg_363_3, arg_363_4, arg_363_5)
 	local var_363_0 = arg_363_4 and UIAtlasHelper.get_atlas_settings_by_texture_name(arg_363_4)
 	local var_363_1 = var_363_0 and var_363_0.size
 	local var_363_2 = {
@@ -20051,7 +20051,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 			pass_type = "texture",
 			style_id = "value_texture",
 			texture_id = "value_texture",
-			content_check_function = function(arg_364_0)
+			content_check_function = function (arg_364_0)
 				return arg_364_0.value_texture
 			end
 		},
@@ -20059,7 +20059,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_365_0)
+			content_check_function = function (arg_365_0)
 				return arg_365_0.title_text
 			end
 		},
@@ -20067,7 +20067,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 			style_id = "title_text_shadow",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_366_0)
+			content_check_function = function (arg_366_0)
 				return arg_366_0.title_text
 			end
 		},
@@ -20075,7 +20075,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 			style_id = "value_text",
 			pass_type = "text",
 			text_id = "value_text",
-			content_check_function = function(arg_367_0)
+			content_check_function = function (arg_367_0)
 				return arg_367_0.value_text
 			end
 		},
@@ -20083,7 +20083,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 			style_id = "value_text_shadow",
 			pass_type = "text",
 			text_id = "value_text",
-			content_check_function = function(arg_368_0)
+			content_check_function = function (arg_368_0)
 				return arg_368_0.value_text
 			end
 		}
@@ -20208,7 +20208,7 @@ function UIWidgets.create_item_feature(arg_363_0, arg_363_1, arg_363_2, arg_363_
 	}
 end
 
-function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2, arg_369_3, arg_369_4)
+UIWidgets.create_weapon_diagram_widget = function (arg_369_0, arg_369_1, arg_369_2, arg_369_3, arg_369_4)
 	local var_369_0 = {
 		0,
 		13,
@@ -20253,7 +20253,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "node_icon_info_1",
 			pass_type = "text",
 			text_id = "icon_info_1",
-			content_check_function = function(arg_370_0)
+			content_check_function = function (arg_370_0)
 				return arg_370_0.icon_hotspot_1.is_hover or arg_370_0.show_info
 			end
 		},
@@ -20261,7 +20261,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "node_icon_info_2",
 			pass_type = "text",
 			text_id = "icon_info_2",
-			content_check_function = function(arg_371_0)
+			content_check_function = function (arg_371_0)
 				return arg_371_0.icon_hotspot_2.is_hover or arg_371_0.show_info
 			end
 		},
@@ -20269,7 +20269,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "node_icon_info_3",
 			pass_type = "text",
 			text_id = "icon_info_3",
-			content_check_function = function(arg_372_0)
+			content_check_function = function (arg_372_0)
 				return arg_372_0.icon_hotspot_3.is_hover or arg_372_0.show_info
 			end
 		},
@@ -20277,7 +20277,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "node_icon_info_4",
 			pass_type = "text",
 			text_id = "icon_info_4",
-			content_check_function = function(arg_373_0)
+			content_check_function = function (arg_373_0)
 				return arg_373_0.icon_hotspot_4.is_hover or arg_373_0.show_info
 			end
 		},
@@ -20285,7 +20285,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "node_icon_info_5",
 			pass_type = "text",
 			text_id = "icon_info_5",
-			content_check_function = function(arg_374_0)
+			content_check_function = function (arg_374_0)
 				return arg_374_0.icon_hotspot_5.is_hover or arg_374_0.show_info
 			end
 		},
@@ -20318,7 +20318,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			pass_type = "texture",
 			style_id = "tutorial_node_1",
 			texture_id = "node_dot_1",
-			content_check_function = function(arg_375_0)
+			content_check_function = function (arg_375_0)
 				return arg_375_0.available_actions[1]
 			end
 		},
@@ -20326,7 +20326,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "tutorial_text_1",
 			pass_type = "text",
 			text_id = "tutorial_text_1",
-			content_check_function = function(arg_376_0)
+			content_check_function = function (arg_376_0)
 				return arg_376_0.available_actions[1]
 			end
 		},
@@ -20334,7 +20334,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "tutorial_text_1_shadow",
 			pass_type = "text",
 			text_id = "tutorial_text_1",
-			content_check_function = function(arg_377_0)
+			content_check_function = function (arg_377_0)
 				return arg_377_0.available_actions[1]
 			end
 		},
@@ -20342,7 +20342,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			pass_type = "texture",
 			style_id = "tutorial_node_2",
 			texture_id = "node_dot_2",
-			content_check_function = function(arg_378_0)
+			content_check_function = function (arg_378_0)
 				return arg_378_0.available_actions[2]
 			end
 		},
@@ -20350,7 +20350,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "tutorial_text_2",
 			pass_type = "text",
 			text_id = "tutorial_text_2",
-			content_check_function = function(arg_379_0)
+			content_check_function = function (arg_379_0)
 				return arg_379_0.available_actions[2]
 			end
 		},
@@ -20358,7 +20358,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 			style_id = "tutorial_text_2_shadow",
 			pass_type = "text",
 			text_id = "tutorial_text_2",
-			content_check_function = function(arg_380_0)
+			content_check_function = function (arg_380_0)
 				return arg_380_0.available_actions[2]
 			end
 		}
@@ -20834,7 +20834,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 				pass_type = "texture",
 				texture_id = "node_dot_" .. iter_369_0,
 				style_id = var_369_16,
-				content_check_function = function(arg_381_0)
+				content_check_function = function (arg_381_0)
 					return arg_381_0.available_actions[iter_369_0]
 				end
 			}
@@ -20856,7 +20856,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 					var_369_0[2] + var_369_15,
 					var_369_10 + 3
 				},
-				content_check_function = function(arg_382_0)
+				content_check_function = function (arg_382_0)
 					return arg_382_0.available_actions[iter_369_0]
 				end
 			}
@@ -20867,7 +20867,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 				pass_type = "rotated_texture",
 				texture_id = "node_line",
 				style_id = var_369_17,
-				content_check_function = function(arg_383_0)
+				content_check_function = function (arg_383_0)
 					return arg_383_0.available_actions[iter_369_0]
 				end
 			}
@@ -20925,7 +20925,7 @@ function UIWidgets.create_weapon_diagram_widget(arg_369_0, arg_369_1, arg_369_2,
 	}
 end
 
-function UIWidgets.create_level_widget(arg_384_0)
+UIWidgets.create_level_widget = function (arg_384_0)
 	return {
 		scenegraph_id = arg_384_0,
 		offset = {
@@ -21044,7 +21044,7 @@ function UIWidgets.create_level_widget(arg_384_0)
 	}
 end
 
-function UIWidgets.create_bot_cusomization_button(arg_385_0)
+UIWidgets.create_bot_cusomization_button = function (arg_385_0)
 	local var_385_0 = 350
 	local var_385_1 = arg_385_0.gui
 	local var_385_2 = 50
@@ -21074,7 +21074,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_change_function = function(arg_386_0, arg_386_1)
+					content_change_function = function (arg_386_0, arg_386_1)
 						local var_386_0 = arg_386_0.parent
 
 						arg_386_1.area_size[1] = 250 + var_386_0.progress * var_385_0
@@ -21084,7 +21084,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "left_texture_id",
 					texture_id = "left_texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_387_0, arg_387_1)
+					content_change_function = function (arg_387_0, arg_387_1)
 						arg_387_1.offset[1] = arg_387_0.progress * -var_385_0
 					end
 				},
@@ -21097,7 +21097,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "middle_texture_id",
 					texture_id = "middle_texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_388_0, arg_388_1)
+					content_change_function = function (arg_388_0, arg_388_1)
 						arg_388_1.texture_size[1] = 100 + arg_388_0.progress * var_385_0
 					end
 				},
@@ -21105,10 +21105,10 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "left_texture_id",
 					texture_id = "mask_id",
 					pass_type = "texture",
-					content_change_function = function(arg_389_0, arg_389_1)
+					content_change_function = function (arg_389_0, arg_389_1)
 						arg_389_1.offset[1] = arg_389_0.progress * -var_385_0
 					end,
-					content_change_function = function(arg_390_0, arg_390_1)
+					content_change_function = function (arg_390_0, arg_390_1)
 						arg_390_1.offset[1] = arg_390_0.progress * -var_385_0
 					end
 				},
@@ -21121,7 +21121,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "middle_mask",
 					texture_id = "middle_mask_id",
 					pass_type = "texture",
-					content_change_function = function(arg_391_0, arg_391_1)
+					content_change_function = function (arg_391_0, arg_391_1)
 						arg_391_1.texture_size[1] = 100 + arg_391_0.progress * var_385_0
 					end
 				},
@@ -21134,7 +21134,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "icon",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_392_0, arg_392_1)
+					content_change_function = function (arg_392_0, arg_392_1)
 						local var_392_0 = arg_392_0.button_hotspot.hover_progress
 
 						arg_392_1.color = Colors.lerp_color_tables(arg_392_1.unselected_color, arg_392_1.selected_color, var_392_0)
@@ -21144,7 +21144,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "icon_unselected",
 					texture_id = "icon_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_393_0, arg_393_1)
+					content_change_function = function (arg_393_0, arg_393_1)
 						local var_393_0 = arg_393_0.button_hotspot
 
 						arg_393_1.color[1] = 128 * (1 - var_393_0.hover_progress)
@@ -21154,7 +21154,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "icon_selected",
 					texture_id = "icon_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_394_0, arg_394_1)
+					content_change_function = function (arg_394_0, arg_394_1)
 						local var_394_0 = arg_394_0.button_hotspot
 
 						arg_394_1.color[1] = 255 * var_394_0.hover_progress
@@ -21164,7 +21164,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "left_side_unselected",
 					texture_id = "left_side_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_395_0, arg_395_1)
+					content_change_function = function (arg_395_0, arg_395_1)
 						local var_395_0 = arg_395_0.button_hotspot
 
 						arg_395_1.color[1] = 128 * (1 - var_395_0.hover_progress)
@@ -21175,7 +21175,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "left_side_selected",
 					texture_id = "left_side_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_396_0, arg_396_1)
+					content_change_function = function (arg_396_0, arg_396_1)
 						local var_396_0 = arg_396_0.button_hotspot
 
 						arg_396_1.color[1] = 255 * var_396_0.hover_progress
@@ -21186,7 +21186,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "right_side_unselected",
 					pass_type = "texture_uv",
 					content_id = "right_side_selected_id",
-					content_change_function = function(arg_397_0, arg_397_1)
+					content_change_function = function (arg_397_0, arg_397_1)
 						local var_397_0 = arg_397_0.parent.button_hotspot
 
 						arg_397_1.color[1] = 128 * (1 - var_397_0.hover_progress)
@@ -21196,7 +21196,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "right_side_selected",
 					pass_type = "texture_uv",
 					content_id = "right_side_selected_id",
-					content_change_function = function(arg_398_0, arg_398_1)
+					content_change_function = function (arg_398_0, arg_398_1)
 						local var_398_0 = arg_398_0.parent.button_hotspot
 
 						arg_398_1.color[1] = 255 * var_398_0.hover_progress
@@ -21206,7 +21206,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "middle_unselected",
 					texture_id = "middle_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_399_0, arg_399_1)
+					content_change_function = function (arg_399_0, arg_399_1)
 						local var_399_0 = arg_399_0.button_hotspot
 
 						arg_399_1.color[1] = 128 * (1 - var_399_0.hover_progress)
@@ -21217,7 +21217,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 					style_id = "middle_selected",
 					texture_id = "middle_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_400_0, arg_400_1)
+					content_change_function = function (arg_400_0, arg_400_1)
 						local var_400_0 = arg_400_0.button_hotspot
 
 						arg_400_1.color[1] = 255 * var_400_0.hover_progress
@@ -21702,7 +21702,7 @@ function UIWidgets.create_bot_cusomization_button(arg_385_0)
 	}
 end
 
-function UIWidgets.create_system_button(arg_401_0)
+UIWidgets.create_system_button = function (arg_401_0)
 	return {
 		element = {
 			passes = {
@@ -21782,7 +21782,7 @@ function UIWidgets.create_system_button(arg_401_0)
 	}
 end
 
-function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
+UIWidgets.create_hero_icon_widget = function (arg_402_0, arg_402_1)
 	local var_402_0 = {
 		80,
 		80
@@ -21799,7 +21799,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					pass_type = "texture",
 					style_id = "bg",
 					texture_id = "bg",
-					content_check_function = function(arg_403_0, arg_403_1)
+					content_check_function = function (arg_403_0, arg_403_1)
 						return arg_403_0.use_empty_icon
 					end
 				},
@@ -21807,10 +21807,10 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "hourglass_icon",
 					texture_id = "hourglass_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_404_0, arg_404_1)
+					content_check_function = function (arg_404_0, arg_404_1)
 						return arg_404_0.use_empty_icon
 					end,
-					content_change_function = function(arg_405_0, arg_405_1)
+					content_change_function = function (arg_405_0, arg_405_1)
 						local var_405_0 = arg_405_0.is_hover and 255 or 184
 
 						arg_405_1.color[1] = math.ceil(arg_405_1.color[1] + 0.1 * (var_405_0 - arg_405_1.color[1]))
@@ -21820,7 +21820,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					pass_type = "texture",
 					style_id = "bot_order_texture",
 					texture_id = "bot_order_texture_id",
-					content_check_function = function(arg_406_0, arg_406_1)
+					content_check_function = function (arg_406_0, arg_406_1)
 						return arg_406_0.bot_selection_active
 					end
 				},
@@ -21828,7 +21828,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					pass_type = "texture",
 					style_id = "bot_order_bg",
 					texture_id = "bot_order_bg_id",
-					content_check_function = function(arg_407_0, arg_407_1)
+					content_check_function = function (arg_407_0, arg_407_1)
 						return arg_407_0.bot_selection_active
 					end
 				},
@@ -21836,7 +21836,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "bot_order_hotspot",
 					pass_type = "hotspot",
 					content_id = "bot_order_hotspot",
-					content_check_function = function(arg_408_0, arg_408_1)
+					content_check_function = function (arg_408_0, arg_408_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -21844,12 +21844,12 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "bot_order_button",
 					texture_id = "bot_order_button",
 					pass_type = "texture",
-					content_check_function = function(arg_409_0, arg_409_1)
+					content_check_function = function (arg_409_0, arg_409_1)
 						local var_409_0 = arg_409_0.bot_change_order_hotspot
 
 						return not Managers.input:is_device_active("gamepad") and not var_409_0.is_hover and not arg_409_0.bot_change_order_active and arg_409_0.bot_selection_active
 					end,
-					content_change_function = function(arg_410_0, arg_410_1)
+					content_change_function = function (arg_410_0, arg_410_1)
 						arg_410_1.color[1] = 128
 					end
 				},
@@ -21857,12 +21857,12 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "bot_order_button",
 					texture_id = "bot_order_highlight_button",
 					pass_type = "texture",
-					content_check_function = function(arg_411_0, arg_411_1)
+					content_check_function = function (arg_411_0, arg_411_1)
 						local var_411_0 = arg_411_0.bot_change_order_hotspot
 
 						return not Managers.input:is_device_active("gamepad") and var_411_0.is_hover and not arg_411_0.bot_change_order_active and arg_411_0.bot_selection_active
 					end,
-					content_change_function = function(arg_412_0, arg_412_1)
+					content_change_function = function (arg_412_0, arg_412_1)
 						arg_412_1.color[1] = 255
 					end
 				},
@@ -21870,7 +21870,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "bot_change_order_hotspot",
 					pass_type = "hotspot",
 					content_id = "bot_change_order_hotspot",
-					content_check_function = function(arg_413_0, arg_413_1)
+					content_check_function = function (arg_413_0, arg_413_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -21878,10 +21878,10 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					style_id = "bot_change_order_button",
 					texture_id = "bot_change_order_button",
 					pass_type = "texture",
-					content_check_function = function(arg_414_0, arg_414_1)
+					content_check_function = function (arg_414_0, arg_414_1)
 						return not Managers.input:is_device_active("gamepad") and arg_414_0.bot_change_order_active and arg_414_0.bot_selection_active and not arg_414_0.bot_change_order_hotspot.is_hover
 					end,
-					content_change_function = function(arg_415_0, arg_415_1)
+					content_change_function = function (arg_415_0, arg_415_1)
 						local var_415_0 = arg_415_0.bot_change_order_hotspot
 
 						arg_415_1.color[1] = var_415_0.is_hover and 255 or 128
@@ -21891,7 +21891,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_416_0)
+					content_check_function = function (arg_416_0)
 						return not arg_416_0.selected and not arg_416_0.bot_selection_active
 					end
 				},
@@ -21899,7 +21899,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					texture_id = "icon_selected",
 					style_id = "icon_selected",
 					pass_type = "texture",
-					content_check_function = function(arg_417_0)
+					content_check_function = function (arg_417_0)
 						return arg_417_0.selected and not arg_417_0.bot_selection_active
 					end
 				},
@@ -21907,7 +21907,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 					texture_id = "holder",
 					style_id = "holder",
 					pass_type = "texture",
-					content_check_function = function(arg_418_0)
+					content_check_function = function (arg_418_0)
 						return not arg_418_0.bot_selection_active
 					end
 				}
@@ -22117,7 +22117,7 @@ function UIWidgets.create_hero_icon_widget(arg_402_0, arg_402_1)
 	}
 end
 
-function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
+UIWidgets.create_hero_widget = function (arg_419_0, arg_419_1)
 	local var_419_0 = UIFrameSettings.menu_frame_12
 	local var_419_1 = UIFrameSettings.frame_corner_detail_01_gold
 	local var_419_2 = UIFrameSettings.frame_outer_glow_01
@@ -22145,7 +22145,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_420_0)
+					content_check_function = function (arg_420_0)
 						return arg_420_0.locked
 					end
 				},
@@ -22153,7 +22153,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_421_0)
+					content_check_function = function (arg_421_0)
 						return arg_421_0.taken and not arg_421_0.locked
 					end
 				},
@@ -22161,7 +22161,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					texture_id = "bot_frame",
 					style_id = "bot_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_422_0)
+					content_check_function = function (arg_422_0)
 						return arg_422_0.bot_selected
 					end
 				},
@@ -22169,7 +22169,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					texture_id = "bot_texture",
 					style_id = "bot_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_423_0)
+					content_check_function = function (arg_423_0)
 						return arg_423_0.bot_selected
 					end
 				},
@@ -22182,14 +22182,14 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					pass_type = "texture_frame",
 					style_id = "frame_premium",
 					texture_id = "frame_premium",
-					content_check_function = function(arg_424_0)
+					content_check_function = function (arg_424_0)
 						return arg_424_0.is_premium
 					end
 				},
 				{
 					style_id = "overlay",
 					pass_type = "rect",
-					content_check_function = function(arg_425_0)
+					content_check_function = function (arg_425_0)
 						local var_425_0 = arg_425_0.button_hotspot
 
 						return not var_425_0.is_hover and not var_425_0.is_selected and not arg_425_0.locked
@@ -22198,7 +22198,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function(arg_426_0)
+					content_check_function = function (arg_426_0)
 						local var_426_0 = arg_426_0.button_hotspot
 
 						return arg_426_0.locked
@@ -22208,7 +22208,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_427_0)
+					content_check_function = function (arg_427_0)
 						local var_427_0 = Managers.input:is_device_active("mouse")
 
 						return arg_427_0.button_hotspot.is_selected and (not arg_427_0.bot_selection_active or not var_427_0)
@@ -22442,7 +22442,7 @@ function UIWidgets.create_hero_widget(arg_419_0, arg_419_1)
 	}
 end
 
-function UIWidgets.create_career_perk_text(arg_428_0)
+UIWidgets.create_career_perk_text = function (arg_428_0)
 	return {
 		element = {
 			passes = {
@@ -22565,7 +22565,7 @@ function UIWidgets.create_career_perk_text(arg_428_0)
 	}
 end
 
-function UIWidgets.create_bot_cusomization_button(arg_429_0)
+UIWidgets.create_bot_cusomization_button = function (arg_429_0)
 	local var_429_0 = 350
 	local var_429_1 = arg_429_0.gui
 	local var_429_2 = 50
@@ -22595,7 +22595,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_change_function = function(arg_430_0, arg_430_1)
+					content_change_function = function (arg_430_0, arg_430_1)
 						local var_430_0 = arg_430_0.parent
 
 						arg_430_1.area_size[1] = 250 + var_430_0.progress * var_429_0
@@ -22605,7 +22605,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "left_texture_id",
 					texture_id = "left_texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_431_0, arg_431_1)
+					content_change_function = function (arg_431_0, arg_431_1)
 						arg_431_1.offset[1] = arg_431_0.progress * -var_429_0
 					end
 				},
@@ -22618,7 +22618,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "middle_texture_id",
 					texture_id = "middle_texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_432_0, arg_432_1)
+					content_change_function = function (arg_432_0, arg_432_1)
 						arg_432_1.texture_size[1] = 100 + arg_432_0.progress * var_429_0
 					end
 				},
@@ -22626,10 +22626,10 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "left_texture_id",
 					texture_id = "mask_id",
 					pass_type = "texture",
-					content_change_function = function(arg_433_0, arg_433_1)
+					content_change_function = function (arg_433_0, arg_433_1)
 						arg_433_1.offset[1] = arg_433_0.progress * -var_429_0
 					end,
-					content_change_function = function(arg_434_0, arg_434_1)
+					content_change_function = function (arg_434_0, arg_434_1)
 						arg_434_1.offset[1] = arg_434_0.progress * -var_429_0
 					end
 				},
@@ -22642,7 +22642,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "middle_mask",
 					texture_id = "middle_mask_id",
 					pass_type = "texture",
-					content_change_function = function(arg_435_0, arg_435_1)
+					content_change_function = function (arg_435_0, arg_435_1)
 						arg_435_1.texture_size[1] = 100 + arg_435_0.progress * var_429_0
 					end
 				},
@@ -22655,7 +22655,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "icon",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_436_0, arg_436_1)
+					content_change_function = function (arg_436_0, arg_436_1)
 						local var_436_0 = arg_436_0.button_hotspot.hover_progress
 
 						arg_436_1.color = Colors.lerp_color_tables(arg_436_1.unselected_color, arg_436_1.selected_color, var_436_0)
@@ -22665,7 +22665,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "icon_unselected",
 					texture_id = "icon_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_437_0, arg_437_1)
+					content_change_function = function (arg_437_0, arg_437_1)
 						local var_437_0 = arg_437_0.button_hotspot
 
 						arg_437_1.color[1] = 128 * (1 - var_437_0.hover_progress)
@@ -22675,7 +22675,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "icon_selected",
 					texture_id = "icon_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_438_0, arg_438_1)
+					content_change_function = function (arg_438_0, arg_438_1)
 						local var_438_0 = arg_438_0.button_hotspot
 
 						arg_438_1.color[1] = 255 * var_438_0.hover_progress
@@ -22685,7 +22685,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "left_side_unselected",
 					texture_id = "left_side_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_439_0, arg_439_1)
+					content_change_function = function (arg_439_0, arg_439_1)
 						local var_439_0 = arg_439_0.button_hotspot
 
 						arg_439_1.color[1] = 128 * (1 - var_439_0.hover_progress)
@@ -22696,7 +22696,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "left_side_selected",
 					texture_id = "left_side_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_440_0, arg_440_1)
+					content_change_function = function (arg_440_0, arg_440_1)
 						local var_440_0 = arg_440_0.button_hotspot
 
 						arg_440_1.color[1] = 255 * var_440_0.hover_progress
@@ -22707,7 +22707,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "right_side_unselected",
 					pass_type = "texture_uv",
 					content_id = "right_side_selected_id",
-					content_change_function = function(arg_441_0, arg_441_1)
+					content_change_function = function (arg_441_0, arg_441_1)
 						local var_441_0 = arg_441_0.parent.button_hotspot
 
 						arg_441_1.color[1] = 128 * (1 - var_441_0.hover_progress)
@@ -22717,7 +22717,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "right_side_selected",
 					pass_type = "texture_uv",
 					content_id = "right_side_selected_id",
-					content_change_function = function(arg_442_0, arg_442_1)
+					content_change_function = function (arg_442_0, arg_442_1)
 						local var_442_0 = arg_442_0.parent.button_hotspot
 
 						arg_442_1.color[1] = 255 * var_442_0.hover_progress
@@ -22727,7 +22727,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "middle_unselected",
 					texture_id = "middle_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_443_0, arg_443_1)
+					content_change_function = function (arg_443_0, arg_443_1)
 						local var_443_0 = arg_443_0.button_hotspot
 
 						arg_443_1.color[1] = 128 * (1 - var_443_0.hover_progress)
@@ -22738,7 +22738,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 					style_id = "middle_selected",
 					texture_id = "middle_selected_id",
 					pass_type = "texture",
-					content_change_function = function(arg_444_0, arg_444_1)
+					content_change_function = function (arg_444_0, arg_444_1)
 						local var_444_0 = arg_444_0.button_hotspot
 
 						arg_444_1.color[1] = 255 * var_444_0.hover_progress
@@ -23223,7 +23223,7 @@ function UIWidgets.create_bot_cusomization_button(arg_429_0)
 	}
 end
 
-function UIWidgets.create_system_button(arg_445_0)
+UIWidgets.create_system_button = function (arg_445_0)
 	return {
 		element = {
 			passes = {
@@ -23303,7 +23303,7 @@ function UIWidgets.create_system_button(arg_445_0)
 	}
 end
 
-function UIWidgets.create_rounded_rect_with_text(arg_446_0, arg_446_1, arg_446_2, arg_446_3, arg_446_4, arg_446_5)
+UIWidgets.create_rounded_rect_with_text = function (arg_446_0, arg_446_1, arg_446_2, arg_446_3, arg_446_4, arg_446_5)
 	arg_446_2 = arg_446_2 or {
 		word_wrap = false,
 		font_size = 22,
@@ -23358,7 +23358,7 @@ function UIWidgets.create_rounded_rect_with_text(arg_446_0, arg_446_1, arg_446_2
 		style_id = "text_shadow",
 		pass_type = "text",
 		text_id = "text",
-		content_check_function = function(arg_447_0, arg_447_1)
+		content_check_function = function (arg_447_0, arg_447_1)
 			return arg_447_1.use_shadow
 		end
 	}
@@ -23402,7 +23402,7 @@ function UIWidgets.create_rounded_rect_with_text(arg_446_0, arg_446_1, arg_446_2
 	return var_446_7
 end
 
-function UIWidgets.create_simple_triangle(arg_448_0, arg_448_1, arg_448_2, arg_448_3, arg_448_4)
+UIWidgets.create_simple_triangle = function (arg_448_0, arg_448_1, arg_448_2, arg_448_3, arg_448_4)
 	local var_448_0 = {}
 	local var_448_1 = {
 		passes = {}
@@ -23436,7 +23436,7 @@ function UIWidgets.create_simple_triangle(arg_448_0, arg_448_1, arg_448_2, arg_4
 	return var_448_0
 end
 
-function UIWidgets.create_overcharge_bar_widget(arg_449_0, arg_449_1, arg_449_2, arg_449_3, arg_449_4, arg_449_5, arg_449_6)
+UIWidgets.create_overcharge_bar_widget = function (arg_449_0, arg_449_1, arg_449_2, arg_449_3, arg_449_4, arg_449_5, arg_449_6)
 	local var_449_0 = arg_449_5 or {
 		250,
 		16
@@ -23652,7 +23652,7 @@ function UIWidgets.create_overcharge_bar_widget(arg_449_0, arg_449_1, arg_449_2,
 	}
 end
 
-function UIWidgets.create_tag(arg_450_0, arg_450_1, arg_450_2)
+UIWidgets.create_tag = function (arg_450_0, arg_450_1, arg_450_2)
 	local var_450_0 = {
 		word_wrap = false,
 		font_size = 22,
@@ -23696,7 +23696,7 @@ function UIWidgets.create_tag(arg_450_0, arg_450_1, arg_450_2)
 	var_450_10[#var_450_10 + 1] = {
 		style_id = "background",
 		pass_type = "rect",
-		content_check_function = function(arg_451_0, arg_451_1)
+		content_check_function = function (arg_451_0, arg_451_1)
 			return true
 		end
 	}
@@ -23724,7 +23724,7 @@ function UIWidgets.create_tag(arg_450_0, arg_450_1, arg_450_2)
 		style_id = "text_shadow",
 		pass_type = "text",
 		text_id = "text",
-		content_check_function = function(arg_452_0, arg_452_1)
+		content_check_function = function (arg_452_0, arg_452_1)
 			return arg_452_1.use_shadow
 		end
 	}
@@ -23815,7 +23815,7 @@ function UIWidgets.create_tag(arg_450_0, arg_450_1, arg_450_2)
 	return var_450_8
 end
 
-function UIWidgets.create_loading_spinner(arg_453_0)
+UIWidgets.create_loading_spinner = function (arg_453_0)
 	return {
 		scenegraph_id = arg_453_0,
 		element = {
@@ -23824,7 +23824,7 @@ function UIWidgets.create_loading_spinner(arg_453_0)
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_454_0, arg_454_1, arg_454_2, arg_454_3)
+					content_change_function = function (arg_454_0, arg_454_1, arg_454_2, arg_454_3)
 						local var_454_0 = (arg_454_0.loading_progress + arg_454_3) % 1
 
 						arg_454_1.angle = 2^math.smoothstep(var_454_0, 0, 1) * math.tau

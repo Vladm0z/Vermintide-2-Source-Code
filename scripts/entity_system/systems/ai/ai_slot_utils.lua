@@ -8,7 +8,7 @@ local var_0_4 = 1.5
 local var_0_5 = 1.5
 local var_0_6 = 7.5
 
-function var_0_0.clamp_position_on_navmesh(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+var_0_0.clamp_position_on_navmesh = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_3 = arg_1_3 or var_0_5
 	arg_1_2 = arg_1_2 or var_0_4
 
@@ -25,7 +25,7 @@ function var_0_0.clamp_position_on_navmesh(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return nil
 end
 
-function var_0_0.get_target_pos_on_navmesh(arg_2_0, arg_2_1)
+var_0_0.get_target_pos_on_navmesh = function (arg_2_0, arg_2_1)
 	local var_2_0 = var_0_0.clamp_position_on_navmesh(arg_2_0, arg_2_1)
 
 	if var_2_0 then

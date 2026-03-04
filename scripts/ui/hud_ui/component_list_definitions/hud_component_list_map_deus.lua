@@ -16,7 +16,7 @@ local var_0_2 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_1_0, arg_1_1)
+		validation_function = function (arg_1_0, arg_1_1)
 			return not script_data.disable_news_ticker
 		end
 	},
@@ -29,7 +29,7 @@ local var_0_2 = {
 			"alive",
 			"dead"
 		},
-		validation_function = function(arg_2_0, arg_2_1)
+		validation_function = function (arg_2_0, arg_2_1)
 			return true
 		end
 	},
@@ -54,7 +54,7 @@ local var_0_2 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_3_0, arg_3_1)
+		validation_function = function (arg_3_0, arg_3_1)
 			if arg_3_1 then
 				return true
 			elseif not (Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated())) then

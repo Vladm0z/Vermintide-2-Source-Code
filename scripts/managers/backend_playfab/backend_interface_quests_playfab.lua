@@ -4,7 +4,7 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceQuestsPlayfab = class(BackendInterfaceQuestsPlayfab)
 
-function BackendInterfaceQuestsPlayfab.init(arg_1_0, arg_1_1)
+BackendInterfaceQuestsPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._quests = {}
 	arg_1_0._last_id = 0
@@ -17,7 +17,7 @@ function BackendInterfaceQuestsPlayfab.init(arg_1_0, arg_1_1)
 	arg_1_0:_refresh()
 end
 
-function BackendInterfaceQuestsPlayfab._refresh(arg_2_0)
+BackendInterfaceQuestsPlayfab._refresh = function (arg_2_0)
 	local var_2_0 = arg_2_0._talents
 	local var_2_1 = arg_2_0._backend_mirror:get_quest_data()
 
@@ -57,21 +57,21 @@ function BackendInterfaceQuestsPlayfab._refresh(arg_2_0)
 	arg_2_0._dirty = false
 end
 
-function BackendInterfaceQuestsPlayfab.ready(arg_3_0)
+BackendInterfaceQuestsPlayfab.ready = function (arg_3_0)
 	return true
 end
 
-function BackendInterfaceQuestsPlayfab._new_id(arg_4_0)
+BackendInterfaceQuestsPlayfab._new_id = function (arg_4_0)
 	arg_4_0._last_id = arg_4_0._last_id + 1
 
 	return arg_4_0._last_id
 end
 
-function BackendInterfaceQuestsPlayfab.make_dirty(arg_5_0)
+BackendInterfaceQuestsPlayfab.make_dirty = function (arg_5_0)
 	arg_5_0._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.update_quests(arg_6_0, arg_6_1)
+BackendInterfaceQuestsPlayfab.update_quests = function (arg_6_0, arg_6_1)
 	if arg_6_0._quests_updating then
 		return
 	end
@@ -111,11 +111,11 @@ function BackendInterfaceQuestsPlayfab.update_quests(arg_6_0, arg_6_1)
 	end
 end
 
-function BackendInterfaceQuestsPlayfab.update(arg_7_0, arg_7_1)
+BackendInterfaceQuestsPlayfab.update = function (arg_7_0, arg_7_1)
 	arg_7_0._quest_timer = arg_7_0._quest_timer + arg_7_1
 end
 
-function BackendInterfaceQuestsPlayfab.get_quests_cb(arg_8_0, arg_8_1)
+BackendInterfaceQuestsPlayfab.get_quests_cb = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._backend_mirror
 	local var_8_1 = arg_8_1.FunctionResult
 	local var_8_2 = var_8_1.current_daily_quests
@@ -143,11 +143,11 @@ function BackendInterfaceQuestsPlayfab.get_quests_cb(arg_8_0, arg_8_1)
 	end
 end
 
-function BackendInterfaceQuestsPlayfab.delete(arg_9_0)
+BackendInterfaceQuestsPlayfab.delete = function (arg_9_0)
 	return
 end
 
-function BackendInterfaceQuestsPlayfab.get_quests(arg_10_0)
+BackendInterfaceQuestsPlayfab.get_quests = function (arg_10_0)
 	if arg_10_0._dirty then
 		arg_10_0:_refresh()
 	end
@@ -155,7 +155,7 @@ function BackendInterfaceQuestsPlayfab.get_quests(arg_10_0)
 	return arg_10_0._quests
 end
 
-function BackendInterfaceQuestsPlayfab.get_daily_quest_update_time(arg_11_0)
+BackendInterfaceQuestsPlayfab.get_daily_quest_update_time = function (arg_11_0)
 	if arg_11_0._dirty then
 		arg_11_0:_refresh()
 	end
@@ -163,7 +163,7 @@ function BackendInterfaceQuestsPlayfab.get_daily_quest_update_time(arg_11_0)
 	return arg_11_0._daily_quest_update_time - arg_11_0._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.get_weekly_quest_update_time(arg_12_0)
+BackendInterfaceQuestsPlayfab.get_weekly_quest_update_time = function (arg_12_0)
 	if arg_12_0._dirty then
 		arg_12_0:_refresh()
 	end
@@ -175,7 +175,7 @@ function BackendInterfaceQuestsPlayfab.get_weekly_quest_update_time(arg_12_0)
 	return arg_12_0._weekly_quest_update_time - arg_12_0._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.get_time_left_on_event_quest(arg_13_0, arg_13_1)
+BackendInterfaceQuestsPlayfab.get_time_left_on_event_quest = function (arg_13_0, arg_13_1)
 	if arg_13_0._dirty then
 		arg_13_0:_refresh()
 	end
@@ -187,7 +187,7 @@ function BackendInterfaceQuestsPlayfab.get_time_left_on_event_quest(arg_13_0, ar
 	return arg_13_0._event_quest_update_times[arg_13_1] - arg_13_0._quest_timer
 end
 
-function BackendInterfaceQuestsPlayfab.can_refresh_daily_quest(arg_14_0)
+BackendInterfaceQuestsPlayfab.can_refresh_daily_quest = function (arg_14_0)
 	if arg_14_0._dirty then
 		arg_14_0:_refresh()
 	end
@@ -195,7 +195,7 @@ function BackendInterfaceQuestsPlayfab.can_refresh_daily_quest(arg_14_0)
 	return arg_14_0._refresh_available
 end
 
-function BackendInterfaceQuestsPlayfab.refresh_daily_quest(arg_15_0, arg_15_1)
+BackendInterfaceQuestsPlayfab.refresh_daily_quest = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0:_new_id()
 	local var_15_1 = {
 		FunctionName = "refreshQuest",
@@ -210,7 +210,7 @@ function BackendInterfaceQuestsPlayfab.refresh_daily_quest(arg_15_0, arg_15_1)
 	return var_15_0
 end
 
-function BackendInterfaceQuestsPlayfab.refresh_quest_cb(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+BackendInterfaceQuestsPlayfab.refresh_quest_cb = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0._backend_mirror
 	local var_16_1 = arg_16_3.FunctionResult
 
@@ -234,7 +234,7 @@ function BackendInterfaceQuestsPlayfab.refresh_quest_cb(arg_16_0, arg_16_1, arg_
 	arg_16_0._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.is_quest_refreshed(arg_17_0, arg_17_1)
+BackendInterfaceQuestsPlayfab.is_quest_refreshed = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._refresh_requests[arg_17_1]
 
 	if var_17_0 then
@@ -244,7 +244,7 @@ function BackendInterfaceQuestsPlayfab.is_quest_refreshed(arg_17_0, arg_17_1)
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.can_claim_quest_rewards(arg_18_0, arg_18_1)
+BackendInterfaceQuestsPlayfab.can_claim_quest_rewards = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0:get_quests()
 	local var_18_1 = arg_18_0._quests.daily
 	local var_18_2 = arg_18_0._quests.weekly
@@ -257,7 +257,7 @@ function BackendInterfaceQuestsPlayfab.can_claim_quest_rewards(arg_18_0, arg_18_
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.can_claim_multiple_quest_rewards(arg_19_0, arg_19_1)
+BackendInterfaceQuestsPlayfab.can_claim_multiple_quest_rewards = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._quests.daily
 	local var_19_1 = arg_19_0._quests.weekly
 	local var_19_2 = arg_19_0._quests.event
@@ -278,7 +278,7 @@ function BackendInterfaceQuestsPlayfab.can_claim_multiple_quest_rewards(arg_19_0
 	return false, nil
 end
 
-function BackendInterfaceQuestsPlayfab.claim_quest_rewards(arg_20_0, arg_20_1)
+BackendInterfaceQuestsPlayfab.claim_quest_rewards = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0:_new_id()
 	local var_20_1 = {
 		quest_key = arg_20_1,
@@ -295,7 +295,7 @@ function BackendInterfaceQuestsPlayfab.claim_quest_rewards(arg_20_0, arg_20_1)
 	return var_20_0
 end
 
-function BackendInterfaceQuestsPlayfab.quest_rewards_request_cb(arg_21_0, arg_21_1, arg_21_2)
+BackendInterfaceQuestsPlayfab.quest_rewards_request_cb = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_2.FunctionResult
 
 	if not var_21_0 then
@@ -493,7 +493,7 @@ function BackendInterfaceQuestsPlayfab.quest_rewards_request_cb(arg_21_0, arg_21
 	arg_21_0._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards(arg_22_0, arg_22_1)
+BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards = function (arg_22_0, arg_22_1)
 	local var_22_0 = {}
 	local var_22_1 = arg_22_0:_new_id()
 
@@ -520,7 +520,7 @@ function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards(arg_22_0, ar
 	return var_22_1
 end
 
-function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_3.FunctionResult
 
 	if not var_23_0 then
@@ -730,7 +730,7 @@ function BackendInterfaceQuestsPlayfab.claim_multiple_quest_rewards_request_cb(a
 	arg_23_0._dirty = true
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_key(arg_24_0, arg_24_1)
+BackendInterfaceQuestsPlayfab.get_quest_key = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0:get_quests()
 	local var_24_1 = var_24_0.daily
 	local var_24_2 = var_24_0.weekly
@@ -757,7 +757,7 @@ function BackendInterfaceQuestsPlayfab.get_quest_key(arg_24_0, arg_24_1)
 	return nil
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_by_key(arg_25_0, arg_25_1)
+BackendInterfaceQuestsPlayfab.get_quest_by_key = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0:get_quests()
 	local var_25_1 = var_25_0.daily
 	local var_25_2 = var_25_0.weekly
@@ -784,7 +784,7 @@ function BackendInterfaceQuestsPlayfab.get_quest_by_key(arg_25_0, arg_25_1)
 	return nil
 end
 
-function BackendInterfaceQuestsPlayfab.quest_rewards_generated(arg_26_0, arg_26_1)
+BackendInterfaceQuestsPlayfab.quest_rewards_generated = function (arg_26_0, arg_26_1)
 	if arg_26_0._quest_reward_requests[arg_26_1] then
 		return true
 	end
@@ -792,10 +792,10 @@ function BackendInterfaceQuestsPlayfab.quest_rewards_generated(arg_26_0, arg_26_
 	return false
 end
 
-function BackendInterfaceQuestsPlayfab.get_quest_rewards(arg_27_0, arg_27_1)
+BackendInterfaceQuestsPlayfab.get_quest_rewards = function (arg_27_0, arg_27_1)
 	return arg_27_0._quest_reward_requests[arg_27_1]
 end
 
-function BackendInterfaceQuestsPlayfab.get_claimed_event_quests(arg_28_0)
+BackendInterfaceQuestsPlayfab.get_claimed_event_quests = function (arg_28_0)
 	return arg_28_0._backend_mirror:get_claimed_event_quests()
 end

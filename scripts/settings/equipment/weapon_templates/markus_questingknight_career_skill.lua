@@ -19,13 +19,13 @@ local var_0_3 = {
 				conditional_actions = {
 					{
 						sub_action = "default_2",
-						condition = function(arg_1_0, arg_1_1)
+						condition = function (arg_1_0, arg_1_1)
 							return arg_1_0 and arg_1_0:has_talent("markus_questing_knight_ability_tank_attack")
 						end
 					},
 					{
 						sub_action = "default_3",
-						condition = function(arg_2_0, arg_2_1)
+						condition = function (arg_2_0, arg_2_1)
 							return arg_2_0 and arg_2_0:has_talent("markus_questing_knight_ability_double_activation")
 						end
 					}
@@ -39,7 +39,7 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_base_charge",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -81,7 +81,7 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_tank_charge",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -123,7 +123,7 @@ local var_0_3 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "questing_knight_ability_double_activation_charge",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -184,7 +184,7 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_base_attack",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -212,7 +212,7 @@ local var_0_3 = {
 					}
 				},
 				allowed_chain_actions = {},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
 					return arg_7_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -311,7 +311,7 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_double_activation_attack_01",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -376,7 +376,7 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					return arg_9_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -474,7 +474,7 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_double_activation_attack_02",
 				hit_stop_anim = "attack_hit",
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -510,7 +510,7 @@ local var_0_3 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
 					return arg_11_1:reset_release_input()
 				end,
 				baked_sweep = {
@@ -610,7 +610,7 @@ local var_0_3 = {
 				anim_event = "questing_knight_ability_tank_attack",
 				hit_stop_anim = "attack_hit",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
 					return arg_12_1 ~= "new_interupting_action"
 				end,
 				vfx_settings = {
@@ -638,7 +638,7 @@ local var_0_3 = {
 					}
 				},
 				allowed_chain_actions = {},
-				enter_function = function(arg_13_0, arg_13_1)
+				enter_function = function (arg_13_0, arg_13_1)
 					return arg_13_1:reset_release_input()
 				end,
 				hit_mass_count = TANK_HIT_MASS_COUNT,
@@ -723,7 +723,7 @@ local var_0_3 = {
 				anim_end_event = "ability_finished",
 				anim_event = "questing_knight_ability_cancel_01",
 				total_time = 0.47,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
 					return arg_14_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

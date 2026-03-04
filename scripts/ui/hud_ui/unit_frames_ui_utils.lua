@@ -5,7 +5,7 @@ UnitFramesUiUtils = UnitFramesUiUtils or {}
 local var_0_0 = 24
 local var_0_1 = 16
 
-function UnitFramesUiUtils.create_damage_widget(arg_1_0, arg_1_1)
+UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 	local var_1_0 = {}
 	local var_1_1 = arg_1_0 == "team"
 	local var_1_2 = var_1_1 and {

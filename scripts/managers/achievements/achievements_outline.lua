@@ -400,7 +400,7 @@ for iter_0_6, iter_0_7 in ipairs(var_0_7.categories) do
 	local var_0_16 = iter_0_7.categories
 
 	if var_0_16 then
-		table.sort(var_0_16, function(arg_1_0, arg_1_1)
+		table.sort(var_0_16, function (arg_1_0, arg_1_1)
 			return arg_1_0.sorting < arg_1_1.sorting
 		end)
 	end

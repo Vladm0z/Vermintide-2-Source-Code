@@ -6,14 +6,14 @@ local var_0_1 = {
 	chaos_corruptor_sorcerer = "chaos_warrior"
 }
 local var_0_2 = {
-	chaos_warrior = function(arg_1_0, arg_1_1)
+	chaos_warrior = function (arg_1_0, arg_1_1)
 		if arg_1_1.spawn_category == "specials_pacing" or arg_1_1.spawn_category == "spawn_one" or arg_1_1.spawn_category == "raw_spawner" then
 			return true
 		end
 	end
 }
 local var_0_3 = {
-	chaos_warrior = function(arg_2_0, arg_2_1)
+	chaos_warrior = function (arg_2_0, arg_2_1)
 		if not ALIVE[arg_2_0] then
 			return true
 		end
@@ -36,11 +36,11 @@ local var_0_3 = {
 
 return {
 	hide_from_player_ui = true,
-	server_start_function = function(arg_3_0, arg_3_1)
+	server_start_function = function (arg_3_0, arg_3_1)
 		arg_3_1.check_at = 0
 		arg_3_1.processed_units = {}
 	end,
-	update_conflict_settings = function(arg_4_0, arg_4_1)
+	update_conflict_settings = function (arg_4_0, arg_4_1)
 		local function var_4_0(arg_5_0)
 			local var_5_0 = {}
 
@@ -63,7 +63,7 @@ return {
 			CurrentSpecialsSettings.speed_running_intervention.breeds = var_4_0(CurrentSpecialsSettings.speed_running_intervention.breeds)
 		end
 	end,
-	post_process_terror_event = function(arg_6_0, arg_6_1, arg_6_2)
+	post_process_terror_event = function (arg_6_0, arg_6_1, arg_6_2)
 		for iter_6_0, iter_6_1 in ipairs(arg_6_2) do
 			if iter_6_1.breed_name then
 				local var_6_0
@@ -99,7 +99,7 @@ return {
 			end
 		end
 	end,
-	server_ai_spawned_function = function(arg_7_0, arg_7_1, arg_7_2)
+	server_ai_spawned_function = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = BLACKBOARDS[arg_7_2]
 		local var_7_1 = var_7_0 and var_7_0.breed.name
 
@@ -107,7 +107,7 @@ return {
 			arg_7_1.processed_units[#arg_7_1.processed_units + 1] = arg_7_2
 		end
 	end,
-	server_update_function = function(arg_8_0, arg_8_1)
+	server_update_function = function (arg_8_0, arg_8_1)
 		local var_8_0 = Managers.time:time("game")
 
 		if var_8_0 > arg_8_1.check_at then
@@ -124,7 +124,7 @@ return {
 			arg_8_1.check_at = var_8_0 + var_0_0
 		end
 	end,
-	get_terror_event_tags = function(arg_9_0, arg_9_1, arg_9_2)
+	get_terror_event_tags = function (arg_9_0, arg_9_1, arg_9_2)
 		arg_9_2[#arg_9_2 + 1] = DeusTerrorEventTags.NO_SORCERERS
 	end
 }

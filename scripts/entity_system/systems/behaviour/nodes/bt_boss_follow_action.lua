@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBossFollowAction = class(BTBossFollowAction, BTNode)
 
-function BTBossFollowAction.init(arg_1_0, ...)
+BTBossFollowAction.init = function (arg_1_0, ...)
 	BTBossFollowAction.super.init(arg_1_0, ...)
 end
 
 BTBossFollowAction.name = "BTBossFollowAction"
 
-function BTBossFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBossFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -34,7 +34,7 @@ function BTBossFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.boss_follow_next_line_of_sight_check_t = arg_2_3
 end
 
-function BTBossFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBossFollowAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
@@ -57,7 +57,7 @@ function BTBossFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, a
 	arg_3_2.boss_follow_next_line_of_sight_check_t = nil
 end
 
-function BTBossFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBossFollowAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.locomotion_extension
 
 	arg_4_0:follow(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
@@ -67,7 +67,7 @@ function BTBossFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running", "evaluate"
 end
 
-function BTBossFollowAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTBossFollowAction._go_idle = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	arg_5_2.move_state = "idle"
 
 	if arg_5_3:is_following_path() then
@@ -87,13 +87,13 @@ function BTBossFollowAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	end
 end
 
-function BTBossFollowAction._go_moving(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTBossFollowAction._go_moving = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.move_state = "moving"
 
 	Managers.state.network:anim_event(arg_6_1, arg_6_3.move_anim)
 end
 
-function BTBossFollowAction.follow(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTBossFollowAction.follow = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_4.navigation_extension
 
 	if var_7_0:number_failed_move_attempts() > 1 then
@@ -173,7 +173,7 @@ end
 
 local var_0_0 = {}
 
-function BTBossFollowAction.check_fling_skaven(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTBossFollowAction.check_fling_skaven = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = Quaternion.forward(Unit.local_rotation(arg_8_1, 0))
 	local var_8_1 = POSITION_LOOKUP[arg_8_1] + var_8_0 * 2.6
 	local var_8_2 = Managers.state.entity:system("ai_system")
@@ -197,14 +197,14 @@ function BTBossFollowAction.check_fling_skaven(arg_8_0, arg_8_1, arg_8_2, arg_8_
 	end
 end
 
-function BTBossFollowAction._follow_target_rat_ogre(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTBossFollowAction._follow_target_rat_ogre = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	return LocomotionUtils.follow_target_ogre(arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 end
 
 local var_0_1 = 25
 local var_0_2 = 0.25
 
-function BTBossFollowAction._follow_target_stormfiend(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTBossFollowAction._follow_target_stormfiend = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.nav_world
 	local var_10_1 = arg_10_2.action.follow_target_function_data
 	local var_10_2 = var_10_1.check_distance
@@ -288,11 +288,11 @@ function BTBossFollowAction._follow_target_stormfiend(arg_10_0, arg_10_1, arg_10
 	return var_10_6
 end
 
-function BTBossFollowAction._follow_target_chaos_spawn(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTBossFollowAction._follow_target_chaos_spawn = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	return LocomotionUtils.follow_target_ogre(arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 end
 
-function BTBossFollowAction._debug_big_boy_turning(arg_12_0, arg_12_1)
+BTBossFollowAction._debug_big_boy_turning = function (arg_12_0, arg_12_1)
 	if script_data.debug_ai_movement then
 		local var_12_0 = arg_12_1.is_turning and "true" or "false"
 

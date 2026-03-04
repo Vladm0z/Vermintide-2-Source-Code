@@ -2,14 +2,14 @@
 
 CareerAbilityPackmasterGrab = class(CareerAbilityPackmasterGrab, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterGrab._ability_available(arg_1_0)
+CareerAbilityPackmasterGrab._ability_available = function (arg_1_0)
 	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
 	local var_1_1 = arg_1_0._status_extension
 
 	return var_1_0 and not var_1_1:get_unarmed()
 end
 
-function CareerAbilityPackmasterGrab._start(arg_2_0)
+CareerAbilityPackmasterGrab._start = function (arg_2_0)
 	arg_2_0.super._start(arg_2_0)
 
 	local var_2_0 = arg_2_0._career_extension
@@ -18,7 +18,7 @@ function CareerAbilityPackmasterGrab._start(arg_2_0)
 	var_2_0:set_activated_ability_cooldown_paused(arg_2_0._ability_data.ability_id)
 end
 
-function CareerAbilityPackmasterGrab.ability_ready(arg_3_0)
+CareerAbilityPackmasterGrab.ability_ready = function (arg_3_0)
 	arg_3_0.super.ability_ready(arg_3_0)
 
 	local var_3_0 = arg_3_0._first_person_extension

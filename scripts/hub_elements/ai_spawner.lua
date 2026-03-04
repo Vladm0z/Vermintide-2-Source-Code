@@ -5,7 +5,7 @@ require("scripts/settings/breeds")
 AISpawner = class(AISpawner)
 AI_TEST_COUNTER = 0
 
-function AISpawner.init(arg_1_0, arg_1_1, arg_1_2)
+AISpawner.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._spawner_system = Managers.state.entity:system("spawner_system")
 	arg_1_0._config = {}
 	arg_1_0._breed_list = {}
@@ -54,7 +54,7 @@ function AISpawner.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function AISpawner.check_for_enabled(arg_2_0)
+AISpawner.check_for_enabled = function (arg_2_0)
 	local var_2_0 = 1
 	local var_2_1 = "spawner"
 
@@ -73,7 +73,7 @@ function AISpawner.check_for_enabled(arg_2_0)
 	until true
 end
 
-function AISpawner.on_activate(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AISpawner.on_activate = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	table.clear(arg_3_0._spawned_unit_handles)
 	table.clear(arg_3_0._spawned_units)
 
@@ -99,7 +99,7 @@ function AISpawner.on_activate(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	end
 end
 
-function AISpawner.on_deactivate(arg_4_0)
+AISpawner.on_deactivate = function (arg_4_0)
 	arg_4_0._max_amount = 0
 	arg_4_0._num_queued_units = 0
 
@@ -107,7 +107,7 @@ function AISpawner.on_deactivate(arg_4_0)
 	table.clear(arg_4_0._breed_list)
 end
 
-function AISpawner.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+AISpawner.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_5 > arg_5_0._next_spawn then
 		if arg_5_0._num_queued_units < arg_5_0._max_amount then
 			arg_5_0:spawn_unit()
@@ -120,19 +120,19 @@ function AISpawner.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	end
 end
 
-function AISpawner.done_spawning(arg_6_0)
+AISpawner.done_spawning = function (arg_6_0)
 	return #arg_6_0._spawned_units == arg_6_0._max_amount
 end
 
-function AISpawner.spawned_units(arg_7_0)
+AISpawner.spawned_units = function (arg_7_0)
 	return arg_7_0._spawned_units
 end
 
-function AISpawner.spawn_rate(arg_8_0)
+AISpawner.spawn_rate = function (arg_8_0)
 	return arg_8_0._config.spawn_rate
 end
 
-function AISpawner.spawn_unit(arg_9_0)
+AISpawner.spawn_unit = function (arg_9_0)
 	local var_9_0 = arg_9_0._breed_list
 	local var_9_1 = #var_9_0
 	local var_9_2 = var_9_0[var_9_1]
@@ -173,7 +173,7 @@ function AISpawner.spawn_unit(arg_9_0)
 	local var_9_20 = var_9_18.spawned_func
 
 	if var_9_20 then
-		function var_9_18.spawned_func(arg_10_0, ...)
+		var_9_18.spawned_func = function (arg_10_0, ...)
 			var_9_20(arg_10_0, ...)
 
 			if var_9_19 == arg_9_0._activate_version then
@@ -190,22 +190,22 @@ function AISpawner.spawn_unit(arg_9_0)
 	var_9_7:add_horde(1)
 end
 
-function AISpawner.spawn_rotation(arg_11_0)
+AISpawner.spawn_rotation = function (arg_11_0)
 	local var_11_0 = arg_11_0._unit
 
 	return Unit.world_rotation(var_11_0, Unit.node(var_11_0, arg_11_0._config.node))
 end
 
-function AISpawner.spawn_position(arg_12_0)
+AISpawner.spawn_position = function (arg_12_0)
 	local var_12_0 = arg_12_0._unit
 
 	return Unit.world_position(var_12_0, Unit.node(var_12_0, arg_12_0._config.node))
 end
 
-function AISpawner.get_spawner_name(arg_13_0)
+AISpawner.get_spawner_name = function (arg_13_0)
 	return arg_13_0._config.name
 end
 
-function AISpawner.destroy(arg_14_0)
+AISpawner.destroy = function (arg_14_0)
 	return
 end

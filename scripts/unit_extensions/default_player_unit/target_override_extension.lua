@@ -7,7 +7,7 @@ TargetOverrideExtension = class(TargetOverrideExtension)
 local var_0_1 = 0.75
 local var_0_2 = 5
 
-function TargetOverrideExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TargetOverrideExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._result_table = {}
 	arg_1_0._stagger_impact = {
@@ -21,11 +21,11 @@ function TargetOverrideExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._broadphase_categories = arg_1_0._side.enemy_broadphase_categories
 end
 
-function TargetOverrideExtension.destroy(arg_2_0)
+TargetOverrideExtension.destroy = function (arg_2_0)
 	return
 end
 
-function TargetOverrideExtension.taunt(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+TargetOverrideExtension.taunt = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0._unit
 	local var_3_1 = Managers.time:time("game")
 	local var_3_2 = var_3_1 + arg_3_2
@@ -58,7 +58,7 @@ function TargetOverrideExtension.taunt(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function TargetOverrideExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+TargetOverrideExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = POSITION_LOOKUP[arg_4_1] or Unit.world_position(arg_4_1, 0)
 	local var_4_1 = var_0_1
 	local var_4_2 = arg_4_0._result_table
@@ -91,7 +91,7 @@ function TargetOverrideExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	end
 end
 
-function TargetOverrideExtension.add_to_override_targets(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+TargetOverrideExtension.add_to_override_targets = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_4 + var_0_2
 	local var_5_1 = arg_5_3.override_targets[arg_5_2]
 

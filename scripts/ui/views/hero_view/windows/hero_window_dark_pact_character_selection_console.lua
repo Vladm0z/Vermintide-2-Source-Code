@@ -11,7 +11,7 @@ local var_0_6 = 5
 HeroWindowDarkPactCharacterSelectionConsole = class(HeroWindowDarkPactCharacterSelectionConsole)
 HeroWindowDarkPactCharacterSelectionConsole.NAME = "HeroWindowDarkPactCharacterSelectionConsole"
 
-function HeroWindowDarkPactCharacterSelectionConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowDarkPactCharacterSelectionConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowDarkPactCharacterSelectionConsole")
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -57,7 +57,7 @@ function HeroWindowDarkPactCharacterSelectionConsole.on_enter(arg_1_0, arg_1_1, 
 	arg_1_0._parent:set_background_mood(var_1_4)
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = SPProfiles[arg_2_1]
 	local var_2_1 = 1
 	local var_2_2 = 1
@@ -82,7 +82,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._first_pactsworn_setup(arg_
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._set_selected_portrait(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowDarkPactCharacterSelectionConsole._set_selected_portrait = function (arg_3_0, arg_3_1, arg_3_2)
 	for iter_3_0 = 1, arg_3_0._num_max_rows do
 		for iter_3_1 = 1, arg_3_0._num_hero_columns[iter_3_0] do
 			local var_3_0 = arg_3_0._selection_widget_lookup[iter_3_0][iter_3_1].content
@@ -98,7 +98,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._set_selected_portrait(arg_
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._get_selected_dark_pact_profile_and_career_indx(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowDarkPactCharacterSelectionConsole._get_selected_dark_pact_profile_and_career_indx = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_0._selection_widget_lookup then
 		return arg_4_0._dark_pact_profiles[1], 1
 	end
@@ -114,7 +114,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._get_selected_dark_pact_pro
 	return var_4_1, var_4_2
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._select_hero(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+HeroWindowDarkPactCharacterSelectionConsole._select_hero = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if not arg_5_3 then
 		arg_5_0:_play_sound("play_gui_hero_select_career_click")
 	end
@@ -144,7 +144,7 @@ end
 
 local var_0_7 = 2
 
-function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_data(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_data = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = SPProfiles[arg_6_1].careers[arg_6_2]
 	local var_6_1 = arg_6_0._widgets_by_name.pactsworn_name
 	local var_6_2 = var_6_0.display_name
@@ -183,11 +183,11 @@ function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_loadut_dat
 	var_6_12.is_dark_pact = true
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_selectable(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowDarkPactCharacterSelectionConsole._update_selectable = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._start_transition_animation(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowDarkPactCharacterSelectionConsole._start_transition_animation = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = {
 		wwise_world = arg_8_0._wwise_world,
 		render_settings = arg_8_0._render_settings
@@ -198,7 +198,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._start_transition_animation
 	arg_8_0._animations[arg_8_1] = var_8_2
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._create_ui_elements(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowDarkPactCharacterSelectionConsole._create_ui_elements = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
 	local var_9_0 = {}
@@ -228,7 +228,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._create_ui_elements(arg_9_0
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_widgets(arg_10_0)
+HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_widgets = function (arg_10_0)
 	local var_10_0 = {}
 
 	arg_10_0._pactsworn_widgets = var_10_0
@@ -290,7 +290,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._setup_dark_pact_selection_
 	arg_10_0._num_max_rows = var_10_4
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._get_dark_pact_selectable_profiles(arg_11_0)
+HeroWindowDarkPactCharacterSelectionConsole._get_dark_pact_selectable_profiles = function (arg_11_0)
 	local var_11_0 = {}
 
 	for iter_11_0, iter_11_1 in ipairs(SPProfiles) do
@@ -302,7 +302,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._get_dark_pact_selectable_p
 	return var_11_0
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.on_exit(arg_12_0, arg_12_1)
+HeroWindowDarkPactCharacterSelectionConsole.on_exit = function (arg_12_0, arg_12_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowDarkPactCharacterSelectionConsole")
 
 	arg_12_0._ui_animator = nil
@@ -321,7 +321,7 @@ function HeroWindowDarkPactCharacterSelectionConsole.on_exit(arg_12_0, arg_12_1)
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.update(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowDarkPactCharacterSelectionConsole.update = function (arg_13_0, arg_13_1, arg_13_2)
 	if DO_RELOAD then
 		DO_RELOAD = false
 
@@ -334,11 +334,11 @@ function HeroWindowDarkPactCharacterSelectionConsole.update(arg_13_0, arg_13_1, 
 	arg_13_0:_draw(arg_13_1)
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.post_update(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowDarkPactCharacterSelectionConsole.post_update = function (arg_14_0, arg_14_1, arg_14_2)
 	return
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_animations(arg_15_0, arg_15_1)
+HeroWindowDarkPactCharacterSelectionConsole._update_animations = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._ui_animations
 	local var_15_1 = arg_15_0._animations
 	local var_15_2 = arg_15_0._ui_animator
@@ -362,7 +362,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._update_animations(arg_15_0
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_input(arg_16_0, arg_16_1)
+HeroWindowDarkPactCharacterSelectionConsole._update_input = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._parent:window_input_service()
 	local var_16_1 = Managers.input:is_device_active("gamepad")
 
@@ -375,7 +375,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._update_input(arg_16_0, arg
 	arg_16_0._widgets_by_name.equipment_skin.content.slot_skin.highlight = arg_16_0._higlight_inventory_selection and var_16_1
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection(arg_17_0)
+HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection = function (arg_17_0)
 	local var_17_0 = arg_17_0._hero_widgets
 	local var_17_1 = arg_17_0._num_max_rows
 	local var_17_2 = arg_17_0._num_max_columns
@@ -412,7 +412,7 @@ function HeroWindowDarkPactCharacterSelectionConsole._handle_mouse_selection(arg
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._handle_gamepad_selection(arg_18_0, arg_18_1)
+HeroWindowDarkPactCharacterSelectionConsole._handle_gamepad_selection = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._selected_row
 	local var_18_1 = arg_18_0._selected_column
 	local var_18_2 = arg_18_0._num_max_rows
@@ -478,16 +478,16 @@ function HeroWindowDarkPactCharacterSelectionConsole._handle_gamepad_selection(a
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole.set_focus(arg_19_0, arg_19_1)
+HeroWindowDarkPactCharacterSelectionConsole.set_focus = function (arg_19_0, arg_19_1)
 	arg_19_0._focused = arg_19_1
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._exit(arg_20_0, arg_20_1)
+HeroWindowDarkPactCharacterSelectionConsole._exit = function (arg_20_0, arg_20_1)
 	arg_20_0.exit = true
 	arg_20_0.exit_level_id = arg_20_1
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._draw(arg_21_0, arg_21_1)
+HeroWindowDarkPactCharacterSelectionConsole._draw = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._ui_renderer
 	local var_21_1 = arg_21_0._ui_top_renderer
 	local var_21_2 = arg_21_0._ui_scenegraph
@@ -511,11 +511,11 @@ function HeroWindowDarkPactCharacterSelectionConsole._draw(arg_21_0, arg_21_1)
 	end
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._play_sound(arg_22_0, arg_22_1)
+HeroWindowDarkPactCharacterSelectionConsole._play_sound = function (arg_22_0, arg_22_1)
 	arg_22_0._parent:play_sound(arg_22_1)
 end
 
-function HeroWindowDarkPactCharacterSelectionConsole._update_portraits(arg_23_0, arg_23_1)
+HeroWindowDarkPactCharacterSelectionConsole._update_portraits = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._pactsworn_widgets
 	local var_23_1 = arg_23_0._selected_dark_pact_profile_index
 	local var_23_2 = arg_23_0._selected_dark_pact_career_index

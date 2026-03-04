@@ -6,13 +6,13 @@ BTMoveToPlayersAction = class(BTMoveToPlayersAction, BTNode)
 
 local var_0_0 = 0.25
 
-function BTMoveToPlayersAction.init(arg_1_0, ...)
+BTMoveToPlayersAction.init = function (arg_1_0, ...)
 	BTMoveToPlayersAction.super.init(arg_1_0, ...)
 end
 
 BTMoveToPlayersAction.name = "BTMoveToPlayersAction"
 
-function BTMoveToPlayersAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTMoveToPlayersAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
@@ -42,7 +42,7 @@ function BTMoveToPlayersAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:_init_targets(var_2_4, arg_2_3, arg_2_1, arg_2_2)
 end
 
-function BTMoveToPlayersAction._init_targets(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTMoveToPlayersAction._init_targets = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_1.index = 0
 	arg_3_1.eval_timer = arg_3_2 + var_0_0
 	arg_3_1.find_move_position_attempts = 0
@@ -52,7 +52,7 @@ function BTMoveToPlayersAction._init_targets(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	table.merge(arg_3_1.target_units, var_3_0)
 end
 
-function BTMoveToPlayersAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTMoveToPlayersAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 	arg_4_2.move_to_players = nil
 
@@ -73,7 +73,7 @@ function BTMoveToPlayersAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	var_4_0:set_max_speed(var_4_2)
 end
 
-function BTMoveToPlayersAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTMoveToPlayersAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.navigation_extension
 	local var_5_1 = arg_5_2.move_to_players
 	local var_5_2 = POSITION_LOOKUP[arg_5_2.target_unit]
@@ -93,7 +93,7 @@ function BTMoveToPlayersAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return (arg_5_0:_evalute_targets(arg_5_1, arg_5_2, var_5_1, arg_5_3))
 end
 
-function BTMoveToPlayersAction._evalute_targets(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTMoveToPlayersAction._evalute_targets = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_4 > arg_6_3.eval_timer then
 		arg_6_3.eval_timer = arg_6_4 + var_0_0
 	else
@@ -122,7 +122,7 @@ function BTMoveToPlayersAction._evalute_targets(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return arg_6_0[var_6_2.find_target_function_name](arg_6_0, arg_6_1, arg_6_2, var_6_2, var_6_1, arg_6_4) and "done" or "running"
 end
 
-function BTMoveToPlayersAction._find_target_globadier(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTMoveToPlayersAction._find_target_globadier = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_2.throw_globe_data
 
 	if var_7_0 and var_7_0.next_throw_at and arg_7_2.target_dist < 4 then
@@ -156,7 +156,7 @@ function BTMoveToPlayersAction._find_target_globadier(arg_7_0, arg_7_1, arg_7_2,
 	return false
 end
 
-function BTMoveToPlayersAction._find_target_ratling_gunner(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTMoveToPlayersAction._find_target_ratling_gunner = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0, var_8_1, var_8_2 = PerceptionUtils.pick_ratling_gun_target(arg_8_1, arg_8_2, nil)
 
 	if var_8_0 then
@@ -172,7 +172,7 @@ function BTMoveToPlayersAction._find_target_ratling_gunner(arg_8_0, arg_8_1, arg
 	end
 end
 
-function BTMoveToPlayersAction._update_move_to_players_position(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTMoveToPlayersAction._update_move_to_players_position = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_4.find_move_position_attempts
 	local var_9_1 = 0.7 + var_9_0 * 0.2
 	local var_9_2 = 2 + var_9_0 * 0.2
@@ -204,7 +204,7 @@ function BTMoveToPlayersAction._update_move_to_players_position(arg_9_0, arg_9_1
 	end
 end
 
-function BTMoveToPlayersAction._calculate_trajectory_to_target(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTMoveToPlayersAction._calculate_trajectory_to_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = Vector3.copy(POSITION_LOOKUP[arg_10_1])
 	local var_10_1 = LocomotionUtils.rotation_towards_unit_flat(arg_10_1, arg_10_3)
 	local var_10_2, var_10_3, var_10_4 = unpack(arg_10_4)
@@ -229,11 +229,11 @@ function BTMoveToPlayersAction._calculate_trajectory_to_target(arg_10_0, arg_10_
 	return var_10_13, var_10_14, var_10_15, var_10_6, var_10_12
 end
 
-function BTMoveToPlayersAction._valid_globadier_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTMoveToPlayersAction._valid_globadier_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	return arg_11_2.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_11_1] and arg_11_3 < arg_11_4.attack_distance
 end
 
-function BTMoveToPlayersAction._has_line_of_sight(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTMoveToPlayersAction._has_line_of_sight = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = POSITION_LOOKUP[arg_12_1] + Vector3.up()
 	local var_12_1 = POSITION_LOOKUP[arg_12_2] + Vector3.up() * 1.75 - var_12_0
 	local var_12_2 = Vector3.normalize(var_12_1)
@@ -243,13 +243,13 @@ function BTMoveToPlayersAction._has_line_of_sight(arg_12_0, arg_12_1, arg_12_2, 
 	return not var_12_4
 end
 
-function BTMoveToPlayersAction.start_idle_animation(arg_13_0, arg_13_1, arg_13_2)
+BTMoveToPlayersAction.start_idle_animation = function (arg_13_0, arg_13_1, arg_13_2)
 	Managers.state.network:anim_event(arg_13_1, "idle")
 
 	arg_13_2.move_state = "idle"
 end
 
-function BTMoveToPlayersAction.start_move_animation(arg_14_0, arg_14_1, arg_14_2)
+BTMoveToPlayersAction.start_move_animation = function (arg_14_0, arg_14_1, arg_14_2)
 	Managers.state.network:anim_event(arg_14_1, "move_fwd")
 
 	arg_14_2.move_state = "moving"

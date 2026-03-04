@@ -386,7 +386,7 @@ local function var_0_8(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_gamepad_active
 					end
 				},
@@ -394,7 +394,7 @@ local function var_0_8(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.is_gamepad_active
 					end
 				}
@@ -458,7 +458,7 @@ local function var_0_9(arg_4_0, arg_4_1)
 					pass_type = "texture",
 					style_id = "taken_texture",
 					texture_id = "taken_texture",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.taken
 					end
 				},
@@ -466,7 +466,7 @@ local function var_0_9(arg_4_0, arg_4_1)
 					pass_type = "texture",
 					style_id = "glow",
 					texture_id = "glow",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.is_selected
 					end
 				},
@@ -474,7 +474,7 @@ local function var_0_9(arg_4_0, arg_4_1)
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						local var_7_0 = arg_7_0.button_hotspot.is_hover
 
 						arg_7_1.color[1] = var_7_0 and 255 or 230
@@ -535,7 +535,7 @@ local function var_0_9(arg_4_0, arg_4_1)
 	}
 end
 
-local var_0_10 = (function(arg_8_0, arg_8_1)
+local var_0_10 = (function (arg_8_0, arg_8_1)
 	local var_8_0 = "menu_frame_12"
 	local var_8_1 = UIFrameSettings[var_8_0]
 	local var_8_2 = "frame_outer_glow_01"
@@ -548,7 +548,7 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.parent.exists
 					end
 				},
@@ -556,14 +556,14 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					texture_id = "portrait",
 					style_id = "portrait",
 					pass_type = "texture",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.exists
 					end
 				},
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.exists
 					end
 				},
@@ -571,7 +571,7 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.locked and arg_12_0.exists
 					end
 				},
@@ -579,7 +579,7 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.taken and not arg_13_0.locked and arg_13_0.exists
 					end
 				},
@@ -587,14 +587,14 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.exists
 					end
 				},
 				{
 					style_id = "overlay",
 					pass_type = "rect",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						local var_15_0 = arg_15_0.button_hotspot
 
 						return not var_15_0.is_hover and not var_15_0.is_selected and not arg_15_0.locked and arg_15_0.exists
@@ -603,7 +603,7 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.locked and arg_16_0.exists
 					end
 				},
@@ -611,14 +611,14 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.button_hotspot.is_selected and arg_17_0.exists
 					end
 				},
 				{
 					pass_type = "hover",
 					content_id = "hover_hotspot",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return not arg_18_0.parent.exists
 					end
 				},
@@ -626,7 +626,7 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "empty_slot",
 					texture_id = "empty_slot",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return not arg_19_0.exists
 					end
 				},
@@ -634,10 +634,10 @@ local var_0_10 = (function(arg_8_0, arg_8_1)
 					style_id = "hourglass",
 					texture_id = "hourglass",
 					pass_type = "texture",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return not arg_20_0.exists
 					end,
-					content_change_function = function(arg_21_0, arg_21_1)
+					content_change_function = function (arg_21_0, arg_21_1)
 						local var_21_0 = arg_21_0.is_hover and 255 or 184
 
 						arg_21_1.color[1] = math.ceil(arg_21_1.color[1] + 0.1 * (var_21_0 - arg_21_1.color[1]))

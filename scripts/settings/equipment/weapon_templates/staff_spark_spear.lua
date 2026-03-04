@@ -60,7 +60,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:reset_release_input()
 					arg_1_1:clear_input_buffer()
 				end,
@@ -149,7 +149,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 				end,
 				cleave_distribution = {
@@ -248,7 +248,7 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:reset_release_input()
 					arg_3_1:clear_input_buffer()
 				end,
@@ -334,7 +334,7 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					arg_4_1:reset_release_input()
 					arg_4_1:clear_input_buffer()
 				end,
@@ -421,7 +421,7 @@ local var_0_0 = {
 						input = "weapon_reload_hold"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:reset_release_input()
 					arg_5_1:clear_input_buffer()
 				end,
@@ -476,11 +476,11 @@ local var_0_0 = {
 				charge_time = 1.25,
 				hold_input = "action_two_hold",
 				max_targets = 1,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return false
 				end,
 				buff_data = {
@@ -541,11 +541,11 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_staff_cooldown",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					arg_9_1:reset_release_input()
 					arg_9_1:clear_input_buffer()
 				end,
@@ -565,10 +565,10 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_10_0, arg_10_1)
+				condition_func = function (arg_10_0, arg_10_1)
 					return ScriptUnit.extension(arg_10_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_11_0, arg_11_1)
+				chain_condition_func = function (arg_11_0, arg_11_1)
 					return ScriptUnit.extension(arg_11_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}

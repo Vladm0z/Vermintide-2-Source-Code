@@ -2,14 +2,14 @@
 
 LevelEndViewDeus = class(LevelEndViewDeus, LevelEndView)
 
-function LevelEndViewDeus.start(arg_1_0)
+LevelEndViewDeus.start = function (arg_1_0)
 	LevelEndViewDeus.super.start(arg_1_0)
 
 	arg_1_0._start_music_event = arg_1_0.game_won and "Play_won_music_morris" or "Play_lost_music_morris"
 	arg_1_0._stop_music_event = arg_1_0.game_won and "Stop_won_music_morris" or "Stop_lost_music_morris"
 end
 
-function LevelEndViewDeus._setup_pages_victory(arg_2_0, arg_2_1)
+LevelEndViewDeus._setup_pages_victory = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_1.end_of_level_rewards.chest
 	local var_2_1
 
@@ -31,7 +31,7 @@ function LevelEndViewDeus._setup_pages_victory(arg_2_0, arg_2_1)
 	return var_2_1
 end
 
-function LevelEndViewDeus._setup_pages_defeat(arg_3_0, arg_3_1)
+LevelEndViewDeus._setup_pages_defeat = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1.end_of_level_rewards.chest
 	local var_3_1
 

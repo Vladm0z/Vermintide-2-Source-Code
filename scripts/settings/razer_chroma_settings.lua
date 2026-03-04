@@ -44,7 +44,7 @@ RazerChromaSettings = {
 	hit = {
 		file_path = "razer_chromas/hit",
 		length = 0.3,
-		condition_play_func = function(arg_1_0)
+		condition_play_func = function (arg_1_0)
 			if arg_1_0.current_animation == "hit" then
 				return false
 			end
@@ -75,7 +75,7 @@ RazerChromaSettings = {
 	knocked_down = {
 		file_path = "razer_chromas/knockeddown",
 		length = 1.2,
-		condition_play_func = function(arg_2_0)
+		condition_play_func = function (arg_2_0)
 			if arg_2_0.current_animation == "knocked_down" then
 				return false
 			end
@@ -110,7 +110,7 @@ RazerChromaSettings = {
 
 			return false
 		end,
-		condition_stop_func = function(arg_3_0)
+		condition_stop_func = function (arg_3_0)
 			if not (Managers.state.network and Managers.state.network:game()) then
 				return true
 			end

@@ -7,7 +7,7 @@ BloodManager = class(BloodManager)
 local var_0_0 = 64
 local var_0_1 = 15
 
-function BloodManager.init(arg_1_0, arg_1_1)
+BloodManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._weapon_blood = {}
 	arg_1_0._blood_effect_data = {}
@@ -22,12 +22,12 @@ function BloodManager.init(arg_1_0, arg_1_1)
 	arg_1_0:_init_settings()
 end
 
-function BloodManager.destroy(arg_2_0)
+BloodManager.destroy = function (arg_2_0)
 	arg_2_0:clear_weapon_blood()
 	EngineOptimizedExtensions.blood_destroy_system(arg_2_0._blood_system)
 end
 
-function BloodManager.update(arg_3_0, arg_3_1, arg_3_2)
+BloodManager.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0._blood_active then
 		local var_3_0 = World.time(arg_3_0._world)
 
@@ -39,7 +39,7 @@ function BloodManager.update(arg_3_0, arg_3_1, arg_3_2)
 	EngineOptimizedExtensions.blood_update(arg_3_0._blood_system)
 end
 
-function BloodManager.update_blood_enabled(arg_4_0, arg_4_1)
+BloodManager.update_blood_enabled = function (arg_4_0, arg_4_1)
 	if not arg_4_1 and arg_4_0._blood_active then
 		arg_4_0:clear_weapon_blood()
 		arg_4_0:clear_blood_decals()
@@ -52,27 +52,27 @@ function BloodManager.update_blood_enabled(arg_4_0, arg_4_1)
 	BloodSettings.hit_effects.enabled = arg_4_1
 end
 
-function BloodManager.get_blood_enabled(arg_5_0)
+BloodManager.get_blood_enabled = function (arg_5_0)
 	return arg_5_0._blood_active
 end
 
-function BloodManager.update_num_blood_decals(arg_6_0, arg_6_1)
+BloodManager.update_num_blood_decals = function (arg_6_0, arg_6_1)
 	BloodSettings.blood_decals.num_decals = arg_6_1
 end
 
-function BloodManager.update_screen_blood_enabled(arg_7_0, arg_7_1)
+BloodManager.update_screen_blood_enabled = function (arg_7_0, arg_7_1)
 	BloodSettings.screen_space.enabled = arg_7_1
 end
 
-function BloodManager.update_dismemberment_enabled(arg_8_0, arg_8_1)
+BloodManager.update_dismemberment_enabled = function (arg_8_0, arg_8_1)
 	BloodSettings.dismemberment.enabled = arg_8_1
 end
 
-function BloodManager.update_ragdoll_enabled(arg_9_0, arg_9_1)
+BloodManager.update_ragdoll_enabled = function (arg_9_0, arg_9_1)
 	BloodSettings.ragdoll_push.enabled = arg_9_1
 end
 
-function BloodManager._init_settings(arg_10_0)
+BloodManager._init_settings = function (arg_10_0)
 	local var_10_0 = Application.user_setting("blood_enabled") or var_10_0 == nil
 
 	arg_10_0:update_blood_enabled(var_10_0)
@@ -94,7 +94,7 @@ function BloodManager._init_settings(arg_10_0)
 	arg_10_0:update_ragdoll_enabled(var_10_4)
 end
 
-function BloodManager._update_weapon_blood(arg_11_0, arg_11_1, arg_11_2)
+BloodManager._update_weapon_blood = function (arg_11_0, arg_11_1, arg_11_2)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._weapon_blood) do
 		for iter_11_2, iter_11_3 in pairs(iter_11_1) do
 			iter_11_1[iter_11_2] = math.clamp(iter_11_3 - BloodSettings.weapon_blood.dissolve_rate * arg_11_1, 0, BloodSettings.weapon_blood.max_value)
@@ -104,15 +104,15 @@ function BloodManager._update_weapon_blood(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function BloodManager.clear_blood_decals(arg_12_0)
+BloodManager.clear_blood_decals = function (arg_12_0)
 	Managers.state.decal:clear_all_of_type("blood_decals")
 end
 
-function BloodManager.clear_unit_decals(arg_13_0, arg_13_1)
+BloodManager.clear_unit_decals = function (arg_13_0, arg_13_1)
 	Unit.set_vector4_for_materials(arg_13_1, "hit_position", Color(0, 0, 0, 0))
 end
 
-function BloodManager._update_blood_effects(arg_14_0)
+BloodManager._update_blood_effects = function (arg_14_0)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0._blood_effect_data) do
 		if not HEALTH_ALIVE[iter_14_0] and not iter_14_1.done then
 			for iter_14_2, iter_14_3 in ipairs(iter_14_1) do
@@ -126,7 +126,7 @@ function BloodManager._update_blood_effects(arg_14_0)
 	end
 end
 
-function BloodManager._set_weapon_blood_intensity(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BloodManager._set_weapon_blood_intensity = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	if Unit.alive(arg_15_2) then
 		Unit.set_scalar_for_materials(arg_15_2, "blood_intensity", arg_15_3)
 	else
@@ -134,7 +134,7 @@ function BloodManager._set_weapon_blood_intensity(arg_15_0, arg_15_1, arg_15_2, 
 	end
 end
 
-function BloodManager.clear_weapon_blood(arg_16_0, arg_16_1, arg_16_2)
+BloodManager.clear_weapon_blood = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_1 and arg_16_0._weapon_blood[arg_16_1] then
 		local var_16_0 = arg_16_0._weapon_blood[arg_16_1]
 
@@ -162,7 +162,7 @@ function BloodManager.clear_weapon_blood(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function BloodManager._update_blood_ball_buffer(arg_17_0)
+BloodManager._update_blood_ball_buffer = function (arg_17_0)
 	local var_17_0 = arg_17_0._blood_ball_ring_buffer
 	local var_17_1 = var_17_0.size
 
@@ -188,7 +188,7 @@ function BloodManager._update_blood_ball_buffer(arg_17_0)
 	var_17_0.read_index = var_17_3
 end
 
-function BloodManager._create_blood_ball_buffer(arg_18_0)
+BloodManager._create_blood_ball_buffer = function (arg_18_0)
 	local var_18_0 = var_0_0
 
 	arg_18_0._blood_ball_ring_buffer = {
@@ -208,7 +208,7 @@ function BloodManager._create_blood_ball_buffer(arg_18_0)
 	end
 end
 
-function BloodManager._spawn_blood_ball(arg_19_0, arg_19_1)
+BloodManager._spawn_blood_ball = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.position:unbox()
 	local var_19_1 = arg_19_1.direction:unbox()
 	local var_19_2 = Quaternion.look(var_19_1, Vector3.up())
@@ -217,11 +217,11 @@ function BloodManager._spawn_blood_ball(arg_19_0, arg_19_1)
 	EngineOptimizedExtensions.blood_spawn_blood_ball(arg_19_0._blood_system, "units/decals/blood_ball", var_19_0, var_19_2, var_19_1, var_19_3)
 end
 
-function BloodManager.despawn_blood_ball(arg_20_0, arg_20_1)
+BloodManager.despawn_blood_ball = function (arg_20_0, arg_20_1)
 	EngineOptimizedExtensions.blood_despawn_blood_ball(arg_20_0._blood_system, arg_20_1)
 end
 
-function BloodManager._add_blood_ball_data_to_buffer(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BloodManager._add_blood_ball_data_to_buffer = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0._blood_ball_ring_buffer
 	local var_21_1 = var_21_0.buffer
 	local var_21_2 = var_21_0.read_index
@@ -250,7 +250,7 @@ function BloodManager._add_blood_ball_data_to_buffer(arg_21_0, arg_21_1, arg_21_
 	var_21_0.write_index = var_21_3 % var_21_5 + 1
 end
 
-function BloodManager.add_blood_ball(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+BloodManager.add_blood_ball = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	if BloodSettings.blood_decals.enabled then
 		local var_22_0 = Unit.get_data(arg_22_4, "breed")
 
@@ -270,7 +270,7 @@ function BloodManager.add_blood_ball(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg
 	end
 end
 
-function BloodManager._get_blood_effect_data(arg_23_0, arg_23_1, arg_23_2)
+BloodManager._get_blood_effect_data = function (arg_23_0, arg_23_1, arg_23_2)
 	if not arg_23_0._blood_effect_data[arg_23_1] then
 		arg_23_0._blood_effect_data[arg_23_1] = table.clone(arg_23_2)
 	end
@@ -278,7 +278,7 @@ function BloodManager._get_blood_effect_data(arg_23_0, arg_23_1, arg_23_2)
 	return arg_23_0._blood_effect_data[arg_23_1]
 end
 
-function BloodManager._spawn_effects(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+BloodManager._spawn_effects = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_2.blood_effect_name
 	local var_24_1 = arg_24_2.blood_effect_nodes
 	local var_24_2 = arg_24_0:_get_blood_effect_data(arg_24_1, var_24_1)
@@ -313,7 +313,7 @@ function BloodManager._spawn_effects(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	end
 end
 
-function BloodManager._update_blood_intensity(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+BloodManager._update_blood_intensity = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_2.blood_intensity
 	local var_25_1 = Unit.num_meshes(arg_25_1)
 	local var_25_2 = 1 - arg_25_3:current_health_percent()
@@ -331,7 +331,7 @@ function BloodManager._update_blood_intensity(arg_25_0, arg_25_1, arg_25_2, arg_
 	end
 end
 
-function BloodManager.add_weapon_blood(arg_26_0, arg_26_1, arg_26_2)
+BloodManager.add_weapon_blood = function (arg_26_0, arg_26_1, arg_26_2)
 	if BloodSettings.weapon_blood.enabled and arg_26_0:_is_player(arg_26_1) and arg_26_0:_is_melee_weapon(arg_26_1) then
 		local var_26_0 = ScriptUnit.extension(arg_26_1, "inventory_system"):equipment()
 		local var_26_1 = var_26_0.right_hand_wielded_unit
@@ -360,7 +360,7 @@ function BloodManager.add_weapon_blood(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function BloodManager.add_enemy_blood(arg_27_0, arg_27_1, arg_27_2)
+BloodManager.add_enemy_blood = function (arg_27_0, arg_27_1, arg_27_2)
 	if BloodSettings.enemy_blood.enabled and HEALTH_ALIVE[arg_27_2] then
 		local var_27_0 = Unit.local_position(arg_27_2, 0)
 		local var_27_1, var_27_2 = Unit.box(arg_27_2)
@@ -385,13 +385,13 @@ function BloodManager.add_enemy_blood(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function BloodManager.play_screen_space_blood(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+BloodManager.play_screen_space_blood = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	if BloodSettings.screen_space.enabled then
 		World.create_particles(arg_28_0._world, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	end
 end
 
-function BloodManager._is_melee_weapon(arg_29_0, arg_29_1)
+BloodManager._is_melee_weapon = function (arg_29_0, arg_29_1)
 	local var_29_0 = ScriptUnit.has_extension(arg_29_1, "inventory_system")
 
 	if not var_29_0 then
@@ -407,7 +407,7 @@ function BloodManager._is_melee_weapon(arg_29_0, arg_29_1)
 	return var_29_1.wielded.slot_type == "melee"
 end
 
-function BloodManager._is_player(arg_30_0, arg_30_1)
+BloodManager._is_player = function (arg_30_0, arg_30_1)
 	local var_30_0 = Managers.player:players()
 
 	for iter_30_0, iter_30_1 in pairs(var_30_0) do

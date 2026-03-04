@@ -2,7 +2,7 @@
 
 NavTagVolumeHandler = class(NavTagVolumeHandler)
 
-function NavTagVolumeHandler.init(arg_1_0, arg_1_1, arg_1_2)
+NavTagVolumeHandler.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.world = arg_1_1
 	arg_1_0.nav_world = arg_1_2
 	arg_1_0.mappings_available = false
@@ -48,7 +48,7 @@ function NavTagVolumeHandler.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function NavTagVolumeHandler.create_tag_volume_from_mappings(arg_2_0, arg_2_1)
+NavTagVolumeHandler.create_tag_volume_from_mappings = function (arg_2_0, arg_2_1)
 	if arg_2_0.created_tag_volumes[arg_2_1] then
 		return
 	end
@@ -86,7 +86,7 @@ function NavTagVolumeHandler.create_tag_volume_from_mappings(arg_2_0, arg_2_1)
 	Script.set_temp_count(var_2_0, var_2_1, var_2_2)
 end
 
-function NavTagVolumeHandler.create_mapping(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+NavTagVolumeHandler.create_mapping = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = "runtime_volume_" .. arg_3_0._runtime_volume_index
 
 	fassert(not arg_3_0.mappings[var_3_0], "[NavTagVolumeHandler] There is already a nav tag volume called %s registered", var_3_0)
@@ -161,13 +161,13 @@ function NavTagVolumeHandler.create_mapping(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return var_3_0
 end
 
-function NavTagVolumeHandler.get_mapping_from_lookup_id(arg_4_0, arg_4_1)
+NavTagVolumeHandler.get_mapping_from_lookup_id = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.mapping_lookup_table[arg_4_1]
 
 	return var_4_0 and arg_4_0.mappings[var_4_0]
 end
 
-function NavTagVolumeHandler.destroy_nav_tag_volume(arg_5_0, arg_5_1)
+NavTagVolumeHandler.destroy_nav_tag_volume = function (arg_5_0, arg_5_1)
 	fassert(arg_5_0.mappings[arg_5_1], "[NavTagVolumeHandler] There is not nav tag volume MAPPING with that name (%s)", arg_5_1)
 	fassert(arg_5_0.created_tag_volumes[arg_5_1], "[NavTagVolumeHandler] There is not NAV TAG VOLUME with that name (%s)", arg_5_1)
 
@@ -182,7 +182,7 @@ function NavTagVolumeHandler.destroy_nav_tag_volume(arg_5_0, arg_5_1)
 	arg_5_0.mapping_lookup_table[var_5_0] = nil
 end
 
-function NavTagVolumeHandler.set_mapping_layer_name(arg_6_0, arg_6_1, arg_6_2)
+NavTagVolumeHandler.set_mapping_layer_name = function (arg_6_0, arg_6_1, arg_6_2)
 	fassert(arg_6_0.mappings_available, "[NavTagVolumeHandler] Current level requires world_nav_tag_volumes.lua to be located in the level directory. Run SpawnGenerator in the level editor to export it!")
 
 	local var_6_0 = arg_6_0.mappings[arg_6_1]
@@ -192,7 +192,7 @@ function NavTagVolumeHandler.set_mapping_layer_name(arg_6_0, arg_6_1, arg_6_2)
 	var_6_0.layer_name = arg_6_2
 end
 
-function NavTagVolumeHandler.destroy(arg_7_0)
+NavTagVolumeHandler.destroy = function (arg_7_0)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0.created_tag_volumes) do
 		GwNavTagVolume.destroy(iter_7_1)
 	end

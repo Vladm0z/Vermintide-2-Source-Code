@@ -12,7 +12,7 @@ local var_0_8 = math.floor
 local var_0_9 = math.huge
 local var_0_10 = table.concat
 local var_0_11 = {
-	string = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	string = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = #arg_1_3
 
 		arg_1_3[var_1_0 + 1] = "\""
@@ -21,12 +21,12 @@ local var_0_11 = {
 
 		return arg_1_1
 	end,
-	number = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	number = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		arg_2_3[#arg_2_3 + 1] = ("%.17g"):format(arg_2_0)
 
 		return arg_2_1
 	end,
-	table = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	table = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if arg_3_2[arg_3_0] then
 			arg_3_3[#arg_3_3 + 1] = "@"
 			arg_3_3[#arg_3_3 + 1] = var_0_5(arg_3_2[arg_3_0])
@@ -90,7 +90,7 @@ function var_0_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return arg_4_1
 end
 
-function var_0_1.dumps(arg_5_0)
+var_0_1.dumps = function (arg_5_0)
 	local var_5_0 = 0
 	local var_5_1 = {}
 	local var_5_2 = {}
@@ -187,28 +187,28 @@ local function var_0_15(arg_7_0, arg_7_1)
 end
 
 local var_0_16 = {
-	t = function(arg_8_0, arg_8_1)
+	t = function (arg_8_0, arg_8_1)
 		return true, arg_8_1
 	end,
-	f = function(arg_9_0, arg_9_1)
+	f = function (arg_9_0, arg_9_1)
 		return false, arg_9_1
 	end,
-	n = function(arg_10_0, arg_10_1)
+	n = function (arg_10_0, arg_10_1)
 		return nil, arg_10_1
 	end,
-	Q = function(arg_11_0, arg_11_1)
+	Q = function (arg_11_0, arg_11_1)
 		return -(0 / 0), arg_11_1
 	end,
-	N = function(arg_12_0, arg_12_1)
+	N = function (arg_12_0, arg_12_1)
 		return 0 / 0, arg_12_1
 	end,
-	I = function(arg_13_0, arg_13_1)
+	I = function (arg_13_0, arg_13_1)
 		return 1 / 0, arg_13_1
 	end,
-	i = function(arg_14_0, arg_14_1)
+	i = function (arg_14_0, arg_14_1)
 		return -1 / 0, arg_14_1
 	end,
-	["\""] = function(arg_15_0, arg_15_1)
+	["\""] = function (arg_15_0, arg_15_1)
 		local var_15_0 = arg_15_1 - 1
 
 		repeat
@@ -217,10 +217,10 @@ local var_0_16 = {
 
 		return arg_15_0:sub(arg_15_1, var_15_0 - 2):gsub("\"\"", "\""), var_15_0
 	end,
-	["0"] = function(arg_16_0, arg_16_1)
+	["0"] = function (arg_16_0, arg_16_1)
 		return var_0_15(arg_16_0, arg_16_1 - 1)
 	end,
-	["{"] = function(arg_17_0, arg_17_1, arg_17_2)
+	["{"] = function (arg_17_0, arg_17_1, arg_17_2)
 		local var_17_0 = {}
 		local var_17_1
 		local var_17_2
@@ -255,7 +255,7 @@ local var_0_16 = {
 			end
 		end
 	end,
-	["@"] = function(arg_18_0, arg_18_1, arg_18_2)
+	["@"] = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = arg_18_0:match("^%d+", arg_18_1)
 		local var_18_1 = tonumber(var_18_0)
 
@@ -289,7 +289,7 @@ function var_0_2(arg_19_0, arg_19_1, arg_19_2)
 	var_0_12(arg_19_1)
 end
 
-function var_0_1.loads(arg_20_0, arg_20_1)
+var_0_1.loads = function (arg_20_0, arg_20_1)
 	if #arg_20_0 > (arg_20_1 or 10000) then
 		var_0_4("input too large")
 	end

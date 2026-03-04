@@ -343,7 +343,7 @@ local function var_0_12(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13
 	local var_13_6 = Unit.actor(var_13_4, arg_13_3.gib_push_actor)
 
 	if not var_13_6 then
-		-- block empty
+		-- Nothing
 	else
 		if Unit.has_node(var_13_4, "a_push") then
 			var_13_0 = Unit.node(var_13_4, "a_push")
@@ -773,7 +773,7 @@ function enemy_explode(arg_21_0)
 
 	for iter_21_0 = 1, #var_21_8 do
 		if UnitGibSettings[var_21_1].parts[var_21_8[iter_21_0]] == nil then
-			-- block empty
+			-- Nothing
 		else
 			local var_21_11 = UnitGibSettings[var_21_1].parts[var_21_8[iter_21_0]]
 			local var_21_12 = var_0_12(var_21_6, var_21_0, var_21_4, var_21_11, var_21_10, var_21_5)

@@ -13,12 +13,12 @@ if _G.FunctionCallProfiler == nil then
 	end
 end
 
-function FunctionCallProfiler.setup(arg_1_0)
+FunctionCallProfiler.setup = function (arg_1_0)
 	FunctionCallProfiler.world = arg_1_0
 	FunctionCallProfiler.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-function FunctionCallProfiler.destroy()
+FunctionCallProfiler.destroy = function ()
 	World.destroy_gui(FunctionCallProfiler.gui)
 
 	FunctionCallProfiler.world = nil
@@ -28,7 +28,7 @@ local var_0_1 = 16
 local var_0_2 = "arial"
 local var_0_3 = "materials/fonts/" .. var_0_2
 
-function FunctionCallProfiler.render()
+FunctionCallProfiler.render = function ()
 	if not var_0_0.profile_function_calls then
 		return
 	end
@@ -60,7 +60,7 @@ function FunctionCallProfiler.render()
 	Gui.rect(var_3_4, Vector3(var_3_7, var_3_9.y + var_0_1, 100), Vector2(250, var_3_8 - var_3_9.y), Color(240, 25, 50, 25))
 end
 
-function FunctionCallProfiler.log_function_call(arg_4_0)
+FunctionCallProfiler.log_function_call = function (arg_4_0)
 	if not var_0_0.profile_function_calls then
 		return
 	end

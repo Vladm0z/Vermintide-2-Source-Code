@@ -35,7 +35,7 @@ local var_0_17 = {
 HeroWindowGotwfOverview = class(HeroWindowGotwfOverview)
 HeroWindowGotwfOverview.NAME = "HeroWindowGotwfOverview"
 
-function HeroWindowGotwfOverview.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowGotwfOverview.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfOverview")
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -70,20 +70,20 @@ function HeroWindowGotwfOverview.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_play_sound("Play_amb_gotwf_loop")
 end
 
-function HeroWindowGotwfOverview._reset_current_item(arg_2_0)
+HeroWindowGotwfOverview._reset_current_item = function (arg_2_0)
 	arg_2_0._params.selected_item = nil
 	arg_2_0._params.selected_item_index = nil
 	arg_2_0._params.selected_item_claimed = nil
 	arg_2_0._params.selected_item_already_owned = nil
 end
 
-function HeroWindowGotwfOverview._sync_backend_gotwf(arg_3_0)
+HeroWindowGotwfOverview._sync_backend_gotwf = function (arg_3_0)
 	arg_3_0._synced = false
 
 	Managers.backend:get_interface("peddler"):refresh_login_rewards(callback(arg_3_0, "gotwf_data_cb"))
 end
 
-function HeroWindowGotwfOverview.gotwf_data_cb(arg_4_0, arg_4_1)
+HeroWindowGotwfOverview.gotwf_data_cb = function (arg_4_0, arg_4_1)
 	arg_4_0._login_rewards = arg_4_1
 
 	if arg_4_1.event_type ~= "calendar" then
@@ -95,7 +95,7 @@ function HeroWindowGotwfOverview.gotwf_data_cb(arg_4_0, arg_4_1)
 	arg_4_0._synced = true
 end
 
-function HeroWindowGotwfOverview._start_transition_animation(arg_5_0, arg_5_1)
+HeroWindowGotwfOverview._start_transition_animation = function (arg_5_0, arg_5_1)
 	local var_5_0 = {
 		parent = arg_5_0._parent,
 		render_settings = arg_5_0._render_settings,
@@ -107,7 +107,7 @@ function HeroWindowGotwfOverview._start_transition_animation(arg_5_0, arg_5_1)
 	arg_5_0._animations[arg_5_1] = var_5_2
 end
 
-function HeroWindowGotwfOverview._start_item_rotation_animation(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowGotwfOverview._start_item_rotation_animation = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = {
 		parent = arg_6_0._parent,
 		render_settings = arg_6_0._render_settings,
@@ -122,16 +122,16 @@ function HeroWindowGotwfOverview._start_item_rotation_animation(arg_6_0, arg_6_1
 
 	arg_6_0._parent:block_input()
 
-	arg_6_0._ui_animations_callbacks[var_6_1] = function()
+	arg_6_0._ui_animations_callbacks[var_6_1] = function ()
 		arg_6_0._parent:unblock_input()
 	end
 end
 
-function HeroWindowGotwfOverview._init_scenegraph(arg_8_0)
+HeroWindowGotwfOverview._init_scenegraph = function (arg_8_0)
 	arg_8_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 end
 
-function HeroWindowGotwfOverview._create_background_ui_elements(arg_9_0, arg_9_1)
+HeroWindowGotwfOverview._create_background_ui_elements = function (arg_9_0, arg_9_1)
 	local var_9_0 = {}
 	local var_9_1 = {}
 
@@ -146,7 +146,7 @@ function HeroWindowGotwfOverview._create_background_ui_elements(arg_9_0, arg_9_1
 	arg_9_0._widgets_by_name = var_9_1
 end
 
-function HeroWindowGotwfOverview._create_ui_elements(arg_10_0, arg_10_1)
+HeroWindowGotwfOverview._create_ui_elements = function (arg_10_0, arg_10_1)
 	local var_10_0 = {}
 	local var_10_1 = {}
 	local var_10_2 = {}
@@ -215,7 +215,7 @@ function HeroWindowGotwfOverview._create_ui_elements(arg_10_0, arg_10_1)
 	UIRenderer.clear_scenegraph_queue(arg_10_0._ui_renderer)
 end
 
-function HeroWindowGotwfOverview._create_reward_popup(arg_11_0)
+HeroWindowGotwfOverview._create_reward_popup = function (arg_11_0)
 	local var_11_0 = {
 		wwise_world = arg_11_0._wwise_world,
 		ui_renderer = arg_11_0._ui_renderer,
@@ -226,17 +226,17 @@ function HeroWindowGotwfOverview._create_reward_popup(arg_11_0)
 	arg_11_0._reward_popup = RewardPopupUI:new(var_11_0)
 end
 
-function HeroWindowGotwfOverview._create_ui_animator(arg_12_0)
+HeroWindowGotwfOverview._create_ui_animator = function (arg_12_0)
 	arg_12_0._ui_animator = UIAnimator:new(arg_12_0._ui_scenegraph, var_0_10)
 end
 
-function HeroWindowGotwfOverview._create_scrollbar(arg_13_0)
+HeroWindowGotwfOverview._create_scrollbar = function (arg_13_0)
 	local var_13_0 = (#arg_13_0._item_widgets - var_0_15) * var_0_11[1]
 
 	arg_13_0._scrollbar_ui = ScrollbarUI:new(arg_13_0._ui_scenegraph, "gotwf_item_anchor", "scrollbar_area", var_13_0, false, nil, true)
 end
 
-function HeroWindowGotwfOverview._select_current_reward(arg_14_0)
+HeroWindowGotwfOverview._select_current_reward = function (arg_14_0)
 	local var_14_0 = #arg_14_0._login_rewards.rewards
 	local var_14_1 = arg_14_0._item_widgets[var_14_0].content
 	local var_14_2 = var_14_1.reward_order
@@ -245,7 +245,7 @@ function HeroWindowGotwfOverview._select_current_reward(arg_14_0)
 	var_14_1["hotspot_" .. var_14_3].is_selected = true
 end
 
-function HeroWindowGotwfOverview._calculate_duration(arg_15_0)
+HeroWindowGotwfOverview._calculate_duration = function (arg_15_0)
 	local var_15_0 = arg_15_0._login_rewards
 	local var_15_1 = var_15_0.start_time
 	local var_15_2 = var_15_0.total_rewards
@@ -256,7 +256,7 @@ function HeroWindowGotwfOverview._calculate_duration(arg_15_0)
 	arg_15_0._widgets_by_name.gotwf_description.content.text = var_15_4 .. " - " .. var_15_5
 end
 
-function HeroWindowGotwfOverview._create_claim_button_widget(arg_16_0, arg_16_1)
+HeroWindowGotwfOverview._create_claim_button_widget = function (arg_16_0, arg_16_1)
 	local var_16_0 = #arg_16_0._login_rewards.rewards
 	local var_16_1 = var_0_9()
 	local var_16_2 = UIWidget.init(var_16_1)
@@ -267,7 +267,7 @@ function HeroWindowGotwfOverview._create_claim_button_widget(arg_16_0, arg_16_1)
 	return var_16_2
 end
 
-function HeroWindowGotwfOverview._create_reward_widget(arg_17_0, arg_17_1)
+HeroWindowGotwfOverview._create_reward_widget = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._login_rewards.start_time
 	local var_17_1 = arg_17_0._login_rewards.rewards
 	local var_17_2 = #var_17_1
@@ -292,7 +292,7 @@ function HeroWindowGotwfOverview._create_reward_widget(arg_17_0, arg_17_1)
 	return var_17_15
 end
 
-function HeroWindowGotwfOverview._update_claim_button_visibility(arg_18_0)
+HeroWindowGotwfOverview._update_claim_button_visibility = function (arg_18_0)
 	local var_18_0 = #arg_18_0._login_rewards.rewards
 	local var_18_1 = arg_18_0._login_rewards.claimed_rewards
 	local var_18_2 = var_18_0 - arg_18_0._login_rewards.num_allowed_old_segments_to_claim
@@ -308,7 +308,7 @@ function HeroWindowGotwfOverview._update_claim_button_visibility(arg_18_0)
 	end
 end
 
-function HeroWindowGotwfOverview._animate_list_entries(arg_19_0, arg_19_1)
+HeroWindowGotwfOverview._animate_list_entries = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._parent
 	local var_19_1 = arg_19_0._list_widgets
 	local var_19_2 = Managers.input:is_device_active("mouse")
@@ -336,7 +336,7 @@ function HeroWindowGotwfOverview._animate_list_entries(arg_19_0, arg_19_1)
 	end
 end
 
-function HeroWindowGotwfOverview._animate_item_product(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+HeroWindowGotwfOverview._animate_item_product = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	if arg_20_0._animations.item_rotation then
 		return
 	end
@@ -433,7 +433,7 @@ function HeroWindowGotwfOverview._animate_item_product(arg_20_0, arg_20_1, arg_2
 	end
 end
 
-function HeroWindowGotwfOverview._populate_painting_data(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+HeroWindowGotwfOverview._populate_painting_data = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_3.item_id
 	local var_21_1 = Paintings[var_21_0]
 
@@ -528,7 +528,7 @@ function HeroWindowGotwfOverview._populate_painting_data(arg_21_0, arg_21_1, arg
 	end
 end
 
-function HeroWindowGotwfOverview._populate_item_widget(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+HeroWindowGotwfOverview._populate_item_widget = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0:_get_reward_item_from_bundle(arg_23_3)
 
 	if var_23_0 then
@@ -550,7 +550,7 @@ function HeroWindowGotwfOverview._populate_item_widget(arg_23_0, arg_23_1, arg_2
 	end
 end
 
-function HeroWindowGotwfOverview._populate_item_data(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+HeroWindowGotwfOverview._populate_item_data = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = UISettings.item_rarity_textures
 	local var_24_1 = UISettings.item_type_store_icons
 	local var_24_2 = arg_24_3.item_id
@@ -659,13 +659,13 @@ function HeroWindowGotwfOverview._populate_item_data(arg_24_0, arg_24_1, arg_24_
 	end
 end
 
-function HeroWindowGotwfOverview._create_material_instance(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+HeroWindowGotwfOverview._create_material_instance = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	arg_26_0._cloned_materials_by_reference[arg_26_4] = arg_26_2
 
 	return Gui.clone_material_from_template(arg_26_1, arg_26_2, arg_26_3)
 end
 
-function HeroWindowGotwfOverview._set_material_diffuse(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowGotwfOverview._set_material_diffuse = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = Gui.material(arg_27_1, arg_27_2)
 
 	if var_27_0 then
@@ -673,7 +673,7 @@ function HeroWindowGotwfOverview._set_material_diffuse(arg_27_0, arg_27_1, arg_2
 	end
 end
 
-function HeroWindowGotwfOverview._load_texture_package(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+HeroWindowGotwfOverview._load_texture_package = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = true
 	local var_28_1 = false
 
@@ -682,7 +682,7 @@ function HeroWindowGotwfOverview._load_texture_package(arg_28_0, arg_28_1, arg_2
 	arg_28_0._loaded_package_names[arg_28_2] = arg_28_1
 end
 
-function HeroWindowGotwfOverview._is_unique_reference_to_material(arg_29_0, arg_29_1)
+HeroWindowGotwfOverview._is_unique_reference_to_material = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._cloned_materials_by_reference
 	local var_29_1 = var_29_0[arg_29_1]
 
@@ -697,7 +697,7 @@ function HeroWindowGotwfOverview._is_unique_reference_to_material(arg_29_0, arg_
 	return true
 end
 
-function HeroWindowGotwfOverview._unload_texture_by_reference(arg_30_0, arg_30_1)
+HeroWindowGotwfOverview._unload_texture_by_reference = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._loaded_package_names
 	local var_30_1 = arg_30_0._cloned_materials_by_reference
 	local var_30_2 = var_30_0[arg_30_1]
@@ -717,11 +717,11 @@ function HeroWindowGotwfOverview._unload_texture_by_reference(arg_30_0, arg_30_1
 	var_30_1[arg_30_1] = nil
 end
 
-function HeroWindowGotwfOverview._play_sound(arg_31_0, arg_31_1)
+HeroWindowGotwfOverview._play_sound = function (arg_31_0, arg_31_1)
 	arg_31_0._parent:play_sound(arg_31_1)
 end
 
-function HeroWindowGotwfOverview.on_exit(arg_32_0, arg_32_1)
+HeroWindowGotwfOverview.on_exit = function (arg_32_0, arg_32_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfOverview")
 
 	arg_32_0._ui_animator = nil
@@ -741,7 +741,7 @@ function HeroWindowGotwfOverview.on_exit(arg_32_0, arg_32_1)
 	arg_32_0:_play_sound("Stop_amb_gotwf_loop")
 end
 
-function HeroWindowGotwfOverview.update(arg_33_0, arg_33_1, arg_33_2)
+HeroWindowGotwfOverview.update = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_0._ready then
 		arg_33_0:_handle_reward_popup(arg_33_1, arg_33_2)
 		arg_33_0:_update_animations(arg_33_1)
@@ -754,11 +754,11 @@ function HeroWindowGotwfOverview.update(arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0:_draw_background(arg_33_1, arg_33_2)
 end
 
-function HeroWindowGotwfOverview._handle_reward_popup(arg_34_0, arg_34_1, arg_34_2)
+HeroWindowGotwfOverview._handle_reward_popup = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0._reward_popup:update(arg_34_1)
 end
 
-function HeroWindowGotwfOverview._check_ready(arg_35_0)
+HeroWindowGotwfOverview._check_ready = function (arg_35_0)
 	if arg_35_0._params.loading_package or not arg_35_0._synced then
 		return
 	end
@@ -769,7 +769,7 @@ function HeroWindowGotwfOverview._check_ready(arg_35_0)
 	arg_35_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowGotwfOverview._handle_popup(arg_36_0)
+HeroWindowGotwfOverview._handle_popup = function (arg_36_0)
 	local var_36_0 = arg_36_0._popup_id
 
 	if not var_36_0 then
@@ -781,7 +781,7 @@ function HeroWindowGotwfOverview._handle_popup(arg_36_0)
 	end
 end
 
-function HeroWindowGotwfOverview._claim_daily_reward(arg_37_0, arg_37_1)
+HeroWindowGotwfOverview._claim_daily_reward = function (arg_37_0, arg_37_1)
 	if arg_37_0._login_rewards.num_allowed_old_segments_to_claim < math.abs(arg_37_1) or arg_37_1 > 0 then
 		return
 	end
@@ -802,7 +802,7 @@ function HeroWindowGotwfOverview._claim_daily_reward(arg_37_0, arg_37_1)
 	arg_37_0:_play_sound("Play_hud_gotwf_claim")
 end
 
-function HeroWindowGotwfOverview._claim_reward_result_cb(arg_38_0, arg_38_1, arg_38_2)
+HeroWindowGotwfOverview._claim_reward_result_cb = function (arg_38_0, arg_38_1, arg_38_2)
 	if not arg_38_0._ui_animator then
 		return
 	end
@@ -843,7 +843,7 @@ function HeroWindowGotwfOverview._claim_reward_result_cb(arg_38_0, arg_38_1, arg
 	arg_38_0._ui_animations_callbacks.lock_open = callback(arg_38_0, "_start_transition_animation", "lock_close")
 	arg_38_0._ui_animations_callbacks.lock_close = callback(arg_38_0, "_start_transition_animation", "reveal")
 
-	function arg_38_0._ui_animations_callbacks.reveal()
+	arg_38_0._ui_animations_callbacks.reveal = function ()
 		arg_38_0:_update_daily_rewards(arg_38_1)
 		arg_38_0:_start_transition_animation("show_item_list")
 		arg_38_0:_trigger_replacement_rewards()
@@ -853,7 +853,7 @@ function HeroWindowGotwfOverview._claim_reward_result_cb(arg_38_0, arg_38_1, arg
 	arg_38_0:_play_sound("Play_hud_gotwf_animation_start")
 end
 
-function HeroWindowGotwfOverview._trigger_replacement_rewards(arg_40_0)
+HeroWindowGotwfOverview._trigger_replacement_rewards = function (arg_40_0)
 	if not arg_40_0._replacement_presentation_data then
 		return
 	end
@@ -865,7 +865,7 @@ end
 
 local var_0_18 = {}
 
-function HeroWindowGotwfOverview._gather_replacement_presentation_data(arg_41_0, arg_41_1)
+HeroWindowGotwfOverview._gather_replacement_presentation_data = function (arg_41_0, arg_41_1)
 	if arg_41_0._login_rewards.claimed_rewards[arg_41_1] < 2 then
 		return
 	end
@@ -909,7 +909,7 @@ function HeroWindowGotwfOverview._gather_replacement_presentation_data(arg_41_0,
 	return var_0_18
 end
 
-function HeroWindowGotwfOverview._update_daily_rewards(arg_42_0, arg_42_1)
+HeroWindowGotwfOverview._update_daily_rewards = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0:_create_reward_widget(arg_42_1)
 
 	arg_42_0._item_widgets[arg_42_1] = var_42_0
@@ -923,7 +923,7 @@ function HeroWindowGotwfOverview._update_daily_rewards(arg_42_0, arg_42_1)
 	arg_42_0._parent:unblock_input()
 end
 
-function HeroWindowGotwfOverview._update_selected_reward(arg_43_0, arg_43_1)
+HeroWindowGotwfOverview._update_selected_reward = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._login_rewards
 	local var_43_1 = var_43_0.rewards
 	local var_43_2 = var_43_0.claimed_rewards
@@ -946,7 +946,7 @@ function HeroWindowGotwfOverview._update_selected_reward(arg_43_0, arg_43_1)
 	arg_43_0._current_item_index = arg_43_0._current_item_index
 end
 
-function HeroWindowGotwfOverview.post_update(arg_44_0, arg_44_1, arg_44_2)
+HeroWindowGotwfOverview.post_update = function (arg_44_0, arg_44_1, arg_44_2)
 	if arg_44_0._ready then
 		arg_44_0:_animate_list_entries(arg_44_1, arg_44_2)
 		arg_44_0:_animate_buttons(arg_44_1, arg_44_2)
@@ -956,7 +956,7 @@ function HeroWindowGotwfOverview.post_update(arg_44_0, arg_44_1, arg_44_2)
 	end
 end
 
-function HeroWindowGotwfOverview._animate_buttons(arg_45_0, arg_45_1, arg_45_2)
+HeroWindowGotwfOverview._animate_buttons = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._claim_button_widgets
 
 	for iter_45_0, iter_45_1 in pairs(var_45_0) do
@@ -964,7 +964,7 @@ function HeroWindowGotwfOverview._animate_buttons(arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-function HeroWindowGotwfOverview._animate_button(arg_46_0, arg_46_1, arg_46_2)
+HeroWindowGotwfOverview._animate_button = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = arg_46_1.content
 	local var_46_1 = arg_46_1.style
 	local var_46_2 = var_46_0.button_hotspot
@@ -1022,7 +1022,7 @@ function HeroWindowGotwfOverview._animate_button(arg_46_0, arg_46_1, arg_46_2)
 	Colors.lerp_color_tables(var_46_18, var_46_19, var_46_11, var_46_17)
 end
 
-function HeroWindowGotwfOverview._handle_arrow_visibility(arg_47_0, arg_47_1, arg_47_2)
+HeroWindowGotwfOverview._handle_arrow_visibility = function (arg_47_0, arg_47_1, arg_47_2)
 	if arg_47_0._ui_animations.move then
 		arg_47_0._scrollbar_ui:force_update_progress()
 
@@ -1054,7 +1054,7 @@ function HeroWindowGotwfOverview._handle_arrow_visibility(arg_47_0, arg_47_1, ar
 	end
 end
 
-function HeroWindowGotwfOverview._update_animations(arg_48_0, arg_48_1)
+HeroWindowGotwfOverview._update_animations = function (arg_48_0, arg_48_1)
 	local var_48_0 = arg_48_0._ui_animations
 	local var_48_1 = arg_48_0._animations
 	local var_48_2 = arg_48_0._ui_animator
@@ -1092,7 +1092,7 @@ function HeroWindowGotwfOverview._update_animations(arg_48_0, arg_48_1)
 	end
 end
 
-function HeroWindowGotwfOverview._handle_input(arg_49_0, arg_49_1, arg_49_2)
+HeroWindowGotwfOverview._handle_input = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._parent
 	local var_49_1 = arg_49_0._widgets_by_name
 	local var_49_2 = Managers.input:is_device_active("gamepad")
@@ -1313,7 +1313,7 @@ function HeroWindowGotwfOverview._handle_input(arg_49_0, arg_49_1, arg_49_2)
 	arg_49_0._gamepad_was_active = var_49_2
 end
 
-function HeroWindowGotwfOverview._get_reward_item_from_bundle(arg_50_0, arg_50_1)
+HeroWindowGotwfOverview._get_reward_item_from_bundle = function (arg_50_0, arg_50_1)
 	if not arg_50_1 then
 		return
 	end
@@ -1348,7 +1348,7 @@ function HeroWindowGotwfOverview._get_reward_item_from_bundle(arg_50_0, arg_50_1
 	end
 end
 
-function HeroWindowGotwfOverview._handle_input_descriptions(arg_51_0, arg_51_1, arg_51_2)
+HeroWindowGotwfOverview._handle_input_descriptions = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0 = true
 	local var_51_1 = #arg_51_0._login_rewards.rewards
 	local var_51_2 = arg_51_0._current_item_index - var_51_1
@@ -1370,7 +1370,7 @@ function HeroWindowGotwfOverview._handle_input_descriptions(arg_51_0, arg_51_1, 
 	end
 end
 
-function HeroWindowGotwfOverview._draw(arg_52_0, arg_52_1, arg_52_2)
+HeroWindowGotwfOverview._draw = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_0._parent
 	local var_52_1 = arg_52_0._parent:get_layout_renderer()
 	local var_52_2 = arg_52_0._ui_renderer
@@ -1461,7 +1461,7 @@ function HeroWindowGotwfOverview._draw(arg_52_0, arg_52_1, arg_52_2)
 	arg_52_0._scrollbar_ui:update(arg_52_1, arg_52_2, var_52_3, var_52_5, var_52_6)
 end
 
-function HeroWindowGotwfOverview._draw_background(arg_53_0, arg_53_1, arg_53_2)
+HeroWindowGotwfOverview._draw_background = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0._parent
 	local var_53_1 = arg_53_0._ui_top_renderer
 	local var_53_2 = arg_53_0._ui_scenegraph

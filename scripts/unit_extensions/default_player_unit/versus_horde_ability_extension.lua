@@ -4,7 +4,7 @@ VersusHordeAbilityExtension = class(VersusHordeAbilityExtension)
 
 local var_0_0 = 2
 
-function VersusHordeAbilityExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+VersusHordeAbilityExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.is_server = Managers.player.is_server
 	arg_1_0._horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
 	arg_1_0._settings = arg_1_0._horde_ability_system:settings()
@@ -27,7 +27,7 @@ function VersusHordeAbilityExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._own_peer_id = Network.peer_id()
 end
 
-function VersusHordeAbilityExtension._activate(arg_2_0, arg_2_1)
+VersusHordeAbilityExtension._activate = function (arg_2_0, arg_2_1)
 	arg_2_0._horde_ability_system:activate_dark_pact_horde_ability()
 
 	arg_2_0._pause_sync_until = arg_2_1 + var_0_0
@@ -45,12 +45,12 @@ function VersusHordeAbilityExtension._activate(arg_2_0, arg_2_1)
 	end
 end
 
-function VersusHordeAbilityExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+VersusHordeAbilityExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._input_extension = ScriptUnit.has_extension(arg_3_2, "input_system")
 	arg_3_0._ghost_mode_extension = ScriptUnit.extension(arg_3_2, "ghost_mode_system")
 end
 
-function VersusHordeAbilityExtension.update(arg_4_0, arg_4_1)
+VersusHordeAbilityExtension.update = function (arg_4_0, arg_4_1)
 	if arg_4_0._owner_peer_id ~= arg_4_0._own_peer_id then
 		return
 	end
@@ -82,7 +82,7 @@ function VersusHordeAbilityExtension.update(arg_4_0, arg_4_1)
 	end
 end
 
-function VersusHordeAbilityExtension.destroy(arg_5_0)
+VersusHordeAbilityExtension.destroy = function (arg_5_0)
 	if arg_5_0.network_manager:game() and arg_5_0.is_server then
 		arg_5_0.network_manager:destroy_game_object(arg_5_0._ability_go_id)
 
@@ -90,7 +90,7 @@ function VersusHordeAbilityExtension.destroy(arg_5_0)
 	end
 end
 
-function VersusHordeAbilityExtension.create_ability_game_object(arg_6_0)
+VersusHordeAbilityExtension.create_ability_game_object = function (arg_6_0)
 	fassert(arg_6_0.is_server, "Trying to create ability game object on a client")
 
 	local var_6_0 = arg_6_0._unit
@@ -108,11 +108,11 @@ function VersusHordeAbilityExtension.create_ability_game_object(arg_6_0)
 	arg_6_0:set_ability_game_object_id(var_6_4)
 end
 
-function VersusHordeAbilityExtension.set_ability_game_object_id(arg_7_0, arg_7_1)
+VersusHordeAbilityExtension.set_ability_game_object_id = function (arg_7_0, arg_7_1)
 	arg_7_0._ability_go_id = arg_7_1
 end
 
-function VersusHordeAbilityExtension.get_ability_charge(arg_8_0, arg_8_1)
+VersusHordeAbilityExtension.get_ability_charge = function (arg_8_0, arg_8_1)
 	if arg_8_0.is_server then
 		return arg_8_0._ability_charge
 	end
@@ -128,7 +128,7 @@ function VersusHordeAbilityExtension.get_ability_charge(arg_8_0, arg_8_1)
 	return 0
 end
 
-function VersusHordeAbilityExtension.get_charge_modifiers(arg_9_0)
+VersusHordeAbilityExtension.get_charge_modifiers = function (arg_9_0)
 	local var_9_0 = 0
 	local var_9_1 = 0
 
@@ -145,7 +145,7 @@ function VersusHordeAbilityExtension.get_charge_modifiers(arg_9_0)
 	return var_9_0, var_9_1
 end
 
-function VersusHordeAbilityExtension.server_set_ability_charge(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+VersusHordeAbilityExtension.server_set_ability_charge = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_2 = arg_10_2 * 100
 	arg_10_3 = arg_10_3 * 100
 
@@ -162,19 +162,19 @@ function VersusHordeAbilityExtension.server_set_ability_charge(arg_10_0, arg_10_
 	end
 end
 
-function VersusHordeAbilityExtension.cooldown(arg_11_0)
+VersusHordeAbilityExtension.cooldown = function (arg_11_0)
 	return arg_11_0._cooldown
 end
 
-function VersusHordeAbilityExtension.cb_game_session_disconnect(arg_12_0)
+VersusHordeAbilityExtension.cb_game_session_disconnect = function (arg_12_0)
 	return
 end
 
-function VersusHordeAbilityExtension.unit(arg_13_0)
+VersusHordeAbilityExtension.unit = function (arg_13_0)
 	return arg_13_0._unit
 end
 
-function VersusHordeAbilityExtension.game_object_initialized(arg_14_0, arg_14_1, arg_14_2)
+VersusHordeAbilityExtension.game_object_initialized = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Managers.state.network:game()
 
 	arg_14_0._go_id = arg_14_2

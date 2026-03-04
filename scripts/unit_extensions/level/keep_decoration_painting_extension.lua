@@ -2,7 +2,7 @@
 
 KeepDecorationPaintingExtension = class(KeepDecorationPaintingExtension)
 
-function KeepDecorationPaintingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+KeepDecorationPaintingExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = LevelHelper:current_level(var_1_0)
 
@@ -32,11 +32,11 @@ function KeepDecorationPaintingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3
 	arg_1_0._backend_key = var_1_3.backend_key
 end
 
-function KeepDecorationPaintingExtension.interacted_with(arg_2_0)
+KeepDecorationPaintingExtension.interacted_with = function (arg_2_0)
 	return
 end
 
-function KeepDecorationPaintingExtension.destroy(arg_3_0)
+KeepDecorationPaintingExtension.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0._painting_unit
 
 	if Unit.alive(var_3_0) then
@@ -60,7 +60,7 @@ function KeepDecorationPaintingExtension.destroy(arg_3_0)
 	arg_3_0._go_id = nil
 end
 
-function KeepDecorationPaintingExtension.extensions_ready(arg_4_0)
+KeepDecorationPaintingExtension.extensions_ready = function (arg_4_0)
 	if not DLCSettings.gecko then
 		return
 	end
@@ -88,11 +88,11 @@ function KeepDecorationPaintingExtension.extensions_ready(arg_4_0)
 	arg_4_0:_load_painting(var_4_0, var_4_1)
 end
 
-function KeepDecorationPaintingExtension.get_settings(arg_6_0)
+KeepDecorationPaintingExtension.get_settings = function (arg_6_0)
 	return arg_6_0._paintings_lookup
 end
 
-function KeepDecorationPaintingExtension.can_interact(arg_7_0)
+KeepDecorationPaintingExtension.can_interact = function (arg_7_0)
 	if not DLCSettings.gecko then
 		return false
 	end
@@ -100,11 +100,11 @@ function KeepDecorationPaintingExtension.can_interact(arg_7_0)
 	return arg_7_0._go_id
 end
 
-function KeepDecorationPaintingExtension.decoration_selected(arg_8_0, arg_8_1)
+KeepDecorationPaintingExtension.decoration_selected = function (arg_8_0, arg_8_1)
 	arg_8_0:_load_painting(arg_8_1, nil)
 end
 
-function KeepDecorationPaintingExtension.reset_selection(arg_9_0)
+KeepDecorationPaintingExtension.reset_selection = function (arg_9_0)
 	local var_9_0 = arg_9_0._current_preview_painting
 	local var_9_1 = arg_9_0._currently_set_painting
 
@@ -115,21 +115,21 @@ function KeepDecorationPaintingExtension.reset_selection(arg_9_0)
 	arg_9_0._current_preview_painting = nil
 end
 
-function KeepDecorationPaintingExtension.unequip_decoration(arg_10_0, arg_10_1)
+KeepDecorationPaintingExtension.unequip_decoration = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1 or "hor_none"
 
 	arg_10_0:_load_painting(var_10_0)
 	arg_10_0:sync_decoration()
 end
 
-function KeepDecorationPaintingExtension.confirm_selection(arg_11_0)
+KeepDecorationPaintingExtension.confirm_selection = function (arg_11_0)
 	local var_11_0 = arg_11_0._current_preview_painting
 
 	arg_11_0.keep_decoration_system:on_painting_set(var_11_0, arg_11_0)
 	arg_11_0:sync_decoration()
 end
 
-function KeepDecorationPaintingExtension.sync_decoration(arg_12_0)
+KeepDecorationPaintingExtension.sync_decoration = function (arg_12_0)
 	local var_12_0 = arg_12_0._current_preview_painting
 
 	arg_12_0:_set_selected_painting(var_12_0)
@@ -143,11 +143,11 @@ function KeepDecorationPaintingExtension.sync_decoration(arg_12_0)
 	end
 end
 
-function KeepDecorationPaintingExtension.hot_join_sync(arg_13_0, arg_13_1)
+KeepDecorationPaintingExtension.hot_join_sync = function (arg_13_0, arg_13_1)
 	return
 end
 
-function KeepDecorationPaintingExtension.distributed_update(arg_14_0)
+KeepDecorationPaintingExtension.distributed_update = function (arg_14_0)
 	if arg_14_0._is_leader then
 		if arg_14_0._waiting_for_game_session and Managers.state.network:in_game_session() then
 			local var_14_0 = arg_14_0:get_selected_decoration()
@@ -202,7 +202,7 @@ function KeepDecorationPaintingExtension.distributed_update(arg_14_0)
 	end
 end
 
-function KeepDecorationPaintingExtension.set_client_painting(arg_15_0, arg_15_1)
+KeepDecorationPaintingExtension.set_client_painting = function (arg_15_0, arg_15_1)
 	arg_15_0:_load_painting(arg_15_1)
 	arg_15_0:_set_selected_painting(arg_15_1)
 
@@ -215,25 +215,25 @@ function KeepDecorationPaintingExtension.set_client_painting(arg_15_0, arg_15_1)
 	end
 end
 
-function KeepDecorationPaintingExtension.is_client_painting(arg_16_0)
+KeepDecorationPaintingExtension.is_client_painting = function (arg_16_0)
 	return arg_16_0._is_client_painting
 end
 
-function KeepDecorationPaintingExtension._hide_painting(arg_17_0)
+KeepDecorationPaintingExtension._hide_painting = function (arg_17_0)
 	arg_17_0._is_hidden = true
 
 	Unit.set_data(arg_17_0._unit, "painting_data", "not_interactable", true)
 	Unit.set_unit_visibility(arg_17_0._painting_unit, false)
 end
 
-function KeepDecorationPaintingExtension._show_painting(arg_18_0)
+KeepDecorationPaintingExtension._show_painting = function (arg_18_0)
 	arg_18_0._is_hidden = false
 
 	Unit.set_data(arg_18_0._unit, "painting_data", "not_interactable", false)
 	Unit.set_unit_visibility(arg_18_0._painting_unit, true)
 end
 
-function KeepDecorationPaintingExtension.get_selected_decoration(arg_19_0)
+KeepDecorationPaintingExtension.get_selected_decoration = function (arg_19_0)
 	if arg_19_0._is_leader then
 		local var_19_0 = arg_19_0._backend_key
 		local var_19_1 = Managers.backend:get_interface("keep_decorations"):get_decoration(var_19_0)
@@ -250,7 +250,7 @@ function KeepDecorationPaintingExtension.get_selected_decoration(arg_19_0)
 	end
 end
 
-function KeepDecorationPaintingExtension._set_selected_painting(arg_20_0, arg_20_1)
+KeepDecorationPaintingExtension._set_selected_painting = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._backend_key
 	local var_20_1 = Managers.backend
 	local var_20_2 = var_20_1:get_interface("keep_decorations")
@@ -261,7 +261,7 @@ function KeepDecorationPaintingExtension._set_selected_painting(arg_20_0, arg_20
 	var_20_1:commit()
 end
 
-function KeepDecorationPaintingExtension._load_painting(arg_21_0, arg_21_1, arg_21_2)
+KeepDecorationPaintingExtension._load_painting = function (arg_21_0, arg_21_1, arg_21_2)
 	arg_21_1 = arg_21_1 or "hor_none"
 
 	local var_21_0 = Paintings[arg_21_1]
@@ -296,7 +296,7 @@ function KeepDecorationPaintingExtension._load_painting(arg_21_0, arg_21_1, arg_
 	end
 end
 
-function KeepDecorationPaintingExtension._load_painting_frame(arg_22_0, arg_22_1)
+KeepDecorationPaintingExtension._load_painting_frame = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_1.orientation
 	local var_22_1 = arg_22_1.frame
 	local var_22_2
@@ -337,7 +337,7 @@ function KeepDecorationPaintingExtension._load_painting_frame(arg_22_0, arg_22_1
 	arg_22_0._painting_unit = var_22_2
 end
 
-function KeepDecorationPaintingExtension._load_painting_material(arg_23_0, arg_23_1, arg_23_2)
+KeepDecorationPaintingExtension._load_painting_material = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = "keep_painting_" .. arg_23_1
 	local var_23_1 = string.find(arg_23_1, "_none") ~= nil
 	local var_23_2
@@ -381,7 +381,7 @@ function KeepDecorationPaintingExtension._load_painting_material(arg_23_0, arg_2
 	end
 end
 
-function KeepDecorationPaintingExtension._apply_material_by_sub_path(arg_25_0, arg_25_1)
+KeepDecorationPaintingExtension._apply_material_by_sub_path = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._painting_unit
 
 	if Unit.alive(var_25_0) then
@@ -392,7 +392,7 @@ function KeepDecorationPaintingExtension._apply_material_by_sub_path(arg_25_0, a
 	end
 end
 
-function KeepDecorationPaintingExtension._unload_painting_material(arg_26_0, arg_26_1)
+KeepDecorationPaintingExtension._unload_painting_material = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._decoration_settings_key
 
 	if Managers.package:reference_count(arg_26_1, var_26_0) > 0 then
@@ -400,7 +400,7 @@ function KeepDecorationPaintingExtension._unload_painting_material(arg_26_0, arg
 	end
 end
 
-function KeepDecorationPaintingExtension._create_game_object(arg_27_0, arg_27_1)
+KeepDecorationPaintingExtension._create_game_object = function (arg_27_0, arg_27_1)
 	local var_27_0 = {
 		go_type = NetworkLookup.go_types.keep_decoration_painting,
 		level_unit_index = arg_27_0._level_unit_index,
@@ -411,11 +411,11 @@ function KeepDecorationPaintingExtension._create_game_object(arg_27_0, arg_27_1)
 	arg_27_0._go_id = Managers.state.network:create_game_object("keep_decoration_painting", var_27_0, var_27_1)
 end
 
-function KeepDecorationPaintingExtension.cb_game_session_disconnect(arg_28_0)
+KeepDecorationPaintingExtension.cb_game_session_disconnect = function (arg_28_0)
 	arg_28_0._go_id = nil
 end
 
-function KeepDecorationPaintingExtension.on_game_object_created(arg_29_0, arg_29_1)
+KeepDecorationPaintingExtension.on_game_object_created = function (arg_29_0, arg_29_1)
 	local var_29_0 = Managers.state.network:game()
 	local var_29_1 = GameSession.game_object_field(var_29_0, arg_29_1, "painting_index")
 	local var_29_2 = arg_29_0._paintings_lookup[var_29_1]
@@ -427,6 +427,6 @@ function KeepDecorationPaintingExtension.on_game_object_created(arg_29_0, arg_29
 	arg_29_0._go_id = arg_29_1
 end
 
-function KeepDecorationPaintingExtension.on_game_object_destroyed(arg_30_0)
+KeepDecorationPaintingExtension.on_game_object_destroyed = function (arg_30_0)
 	arg_30_0._go_id = nil
 end

@@ -14,7 +14,7 @@ local var_0_3 = {
 				aim_assist_max_ramp_multiplier = 0.4,
 				aim_assist_ramp_multiplier = 0.2,
 				anim_event = "attack_swing_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -72,7 +72,7 @@ local var_0_3 = {
 				aim_assist_max_ramp_multiplier = 0.4,
 				aim_assist_ramp_multiplier = 0.2,
 				anim_event = "attack_swing_charge_right",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -130,7 +130,7 @@ local var_0_3 = {
 				aim_assist_max_ramp_multiplier = 0.4,
 				aim_assist_ramp_multiplier = 0.2,
 				anim_event = "attack_swing_charge",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -199,7 +199,7 @@ local var_0_3 = {
 				anim_event = "attack_swing_heavy_right_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_2 * 1.1,
@@ -338,7 +338,7 @@ local var_0_3 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				hit_stop_anim = "attack_hit",
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_2 * 1.1,
@@ -385,7 +385,7 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
 					return arg_6_1:reset_release_input()
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -476,7 +476,7 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_down_left",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action" and arg_7_1 ~= "action_complete"
 				end,
 				range_mod = var_0_1 * 1.3,
@@ -621,7 +621,7 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_down_right",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
 				end,
 				range_mod = var_0_1 * 1.3,
@@ -767,7 +767,7 @@ local var_0_3 = {
 				dedicated_target_range = 3,
 				anim_event = "attack_swing_up",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
 					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_2 * 0.9,
@@ -914,7 +914,7 @@ local var_0_3 = {
 				anim_event = "attack_swing_left",
 				hit_stop_anim = "attack_hit_alt_effect",
 				total_time = 1.5,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_2 * 1.1,
@@ -967,7 +967,7 @@ local var_0_3 = {
 						input = "action_wield"
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
 					return arg_11_1:reset_release_input()
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -1061,7 +1061,7 @@ local var_0_3 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
 					return arg_12_1 ~= "new_interupting_action" and arg_12_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1115,7 +1115,7 @@ local var_0_3 = {
 					}
 				},
 				push_radius = var_0_0,
-				chain_condition_func = function(arg_13_0, arg_13_1)
+				chain_condition_func = function (arg_13_0, arg_13_1)
 					return not ScriptUnit.extension(arg_13_0, "status_system"):fatigued()
 				end
 			}
@@ -1128,11 +1128,11 @@ local var_0_3 = {
 				kind = "block",
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
 					return arg_14_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_15_0, arg_15_1, arg_15_2)
+				enter_function = function (arg_15_0, arg_15_1, arg_15_2)
 					return arg_15_1:reset_release_input_with_delay(arg_15_2)
 				end,
 				buff_data = {

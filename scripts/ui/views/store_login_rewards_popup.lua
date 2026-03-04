@@ -6,7 +6,7 @@ StoreLoginRewardsPopup = class(StoreLoginRewardsPopup)
 
 local var_0_1 = table.enum("refresh", "default", "claiming", "wait_for_backend", "presenting", "exiting", "exited")
 
-function StoreLoginRewardsPopup.init(arg_1_0, arg_1_1, arg_1_2)
+StoreLoginRewardsPopup.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_top_renderer
 	arg_1_0._render_settings = {
@@ -28,7 +28,7 @@ function StoreLoginRewardsPopup.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._show_gamepad_tooltips = false
 end
 
-function StoreLoginRewardsPopup.destroy(arg_2_0)
+StoreLoginRewardsPopup.destroy = function (arg_2_0)
 	if arg_2_0._reward_popup then
 		arg_2_0._reward_popup:destroy()
 
@@ -36,7 +36,7 @@ function StoreLoginRewardsPopup.destroy(arg_2_0)
 	end
 end
 
-function StoreLoginRewardsPopup._create_ui_elements(arg_3_0)
+StoreLoginRewardsPopup._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 	arg_3_0._overlay_widgets, arg_3_0._overlay_widgets_by_name = UIUtils.create_widgets(var_0_0.overlay_widgets_definitions)
@@ -57,7 +57,7 @@ function StoreLoginRewardsPopup._create_ui_elements(arg_3_0)
 	arg_3_0._animations = {}
 end
 
-function StoreLoginRewardsPopup._has_claimed_reward(arg_4_0, arg_4_1, arg_4_2)
+StoreLoginRewardsPopup._has_claimed_reward = function (arg_4_0, arg_4_1, arg_4_2)
 	for iter_4_0, iter_4_1 in ipairs(arg_4_1) do
 		if arg_4_2 == iter_4_1 then
 			return true
@@ -67,7 +67,7 @@ function StoreLoginRewardsPopup._has_claimed_reward(arg_4_0, arg_4_1, arg_4_2)
 	return false
 end
 
-function StoreLoginRewardsPopup._setup_rewards_data(arg_5_0, arg_5_1)
+StoreLoginRewardsPopup._setup_rewards_data = function (arg_5_0, arg_5_1)
 	if arg_5_1.event_type ~= "personal_time_strike" then
 		Managers.ui:handle_transition("close_active", {
 			fade_out_speed = 1,
@@ -174,7 +174,7 @@ function StoreLoginRewardsPopup._setup_rewards_data(arg_5_0, arg_5_1)
 	arg_5_0._will_loop = var_5_1 == #var_5_2
 end
 
-function StoreLoginRewardsPopup._claim_rewards(arg_6_0)
+StoreLoginRewardsPopup._claim_rewards = function (arg_6_0)
 	if arg_6_0._waiting_for_claim then
 		return
 	end
@@ -212,11 +212,11 @@ function StoreLoginRewardsPopup._claim_rewards(arg_6_0)
 	arg_6_0:_play_animation("on_claim", var_6_3)
 end
 
-function StoreLoginRewardsPopup._refresh_login_rewards_cb(arg_7_0)
+StoreLoginRewardsPopup._refresh_login_rewards_cb = function (arg_7_0)
 	arg_7_0._waiting_for_refresh = false
 end
 
-function StoreLoginRewardsPopup.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+StoreLoginRewardsPopup.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._backend_store
 	local var_8_1 = var_8_0:get_login_rewards()
 	local var_8_2 = os.time(os.date("!*t"))
@@ -298,7 +298,7 @@ function StoreLoginRewardsPopup.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0:_draw(var_8_7, arg_8_1, arg_8_2, arg_8_3)
 end
 
-function StoreLoginRewardsPopup._present_rewards(arg_9_0, arg_9_1)
+StoreLoginRewardsPopup._present_rewards = function (arg_9_0, arg_9_1)
 	local var_9_0 = #arg_9_1
 
 	if var_9_0 == 0 then
@@ -392,7 +392,7 @@ function StoreLoginRewardsPopup._present_rewards(arg_9_0, arg_9_1)
 	arg_9_0._reward_presentation_active = true
 end
 
-function StoreLoginRewardsPopup._update_timer(arg_10_0, arg_10_1, arg_10_2)
+StoreLoginRewardsPopup._update_timer = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._widgets_by_name
 	local var_10_1 = var_10_0.timer
 
@@ -438,13 +438,13 @@ function StoreLoginRewardsPopup._update_timer(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function StoreLoginRewardsPopup._play_animation(arg_11_0, arg_11_1, arg_11_2)
+StoreLoginRewardsPopup._play_animation = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._ui_animator:start_animation(arg_11_1, arg_11_2 or arg_11_0._widgets_by_name, arg_11_0._scenegraph_definition, arg_11_0._render_settings)
 
 	arg_11_0._animations[arg_11_1] = var_11_0
 end
 
-function StoreLoginRewardsPopup._update_animations(arg_12_0, arg_12_1)
+StoreLoginRewardsPopup._update_animations = function (arg_12_0, arg_12_1)
 	UIWidgetUtils.animate_default_button(arg_12_0._widgets_by_name.claim_button, arg_12_1)
 	UIWidgetUtils.animate_default_button(arg_12_0._widgets_by_name.close_button, arg_12_1)
 
@@ -460,7 +460,7 @@ function StoreLoginRewardsPopup._update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function StoreLoginRewardsPopup._handle_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+StoreLoginRewardsPopup._handle_input = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0._widgets_by_name
 	local var_13_1 = var_13_0.close_button
 	local var_13_2 = var_13_0.claim_button
@@ -479,7 +479,7 @@ function StoreLoginRewardsPopup._handle_input(arg_13_0, arg_13_1, arg_13_2, arg_
 	end
 end
 
-function StoreLoginRewardsPopup._handle_gamepad_input(arg_14_0, arg_14_1)
+StoreLoginRewardsPopup._handle_gamepad_input = function (arg_14_0, arg_14_1)
 	local var_14_0 = Managers.input:is_device_active("gamepad")
 
 	arg_14_0._gamepad_active = var_14_0
@@ -565,7 +565,7 @@ function StoreLoginRewardsPopup._handle_gamepad_input(arg_14_0, arg_14_1)
 	end
 end
 
-function StoreLoginRewardsPopup._draw(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+StoreLoginRewardsPopup._draw = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	if arg_15_1 == var_0_1.exited then
 		return
 	end
@@ -593,14 +593,14 @@ function StoreLoginRewardsPopup._draw(arg_15_0, arg_15_1, arg_15_2, arg_15_3, ar
 	end
 end
 
-function StoreLoginRewardsPopup.is_complete(arg_16_0)
+StoreLoginRewardsPopup.is_complete = function (arg_16_0)
 	return arg_16_0._state == var_0_1.exited
 end
 
-function StoreLoginRewardsPopup._play_sound(arg_17_0, arg_17_1)
+StoreLoginRewardsPopup._play_sound = function (arg_17_0, arg_17_1)
 	return arg_17_0._parent:play_sound(arg_17_1)
 end
 
-function StoreLoginRewardsPopup.has_claimed_rewards(arg_18_0)
+StoreLoginRewardsPopup.has_claimed_rewards = function (arg_18_0)
 	return arg_18_0._has_claimed_rewards
 end

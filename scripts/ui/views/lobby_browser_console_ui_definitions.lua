@@ -831,15 +831,15 @@ local var_0_10 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = IS_WINDOWS and 0.05 or 0.5,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeInCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -849,13 +849,13 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -1071,7 +1071,7 @@ local function var_0_12(arg_7_0)
 				{
 					style_id = "dimmer",
 					pass_type = "rect",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return arg_8_0.filter_active
 					end
 				},
@@ -1099,7 +1099,7 @@ local function var_0_12(arg_7_0)
 				{
 					style_id = "scroll_bar",
 					pass_type = "rect",
-					content_change_function = function(arg_9_0, arg_9_1)
+					content_change_function = function (arg_9_0, arg_9_1)
 						if not arg_9_0.inner_scroller_hotspot.is_hover and arg_9_0.scrollbar_hotspot.is_hover then
 							arg_9_1.color = arg_9_1.selected_color
 						else
@@ -1125,7 +1125,7 @@ local function var_0_12(arg_7_0)
 					pass_type = "texture",
 					style_id = "filter_mask",
 					texture_id = "mask_id",
-					content_check_function = function(arg_10_0, arg_10_1)
+					content_check_function = function (arg_10_0, arg_10_1)
 						return arg_10_0.filter_active
 					end
 				},
@@ -1173,7 +1173,7 @@ local function var_0_12(arg_7_0)
 					style_id = "timer_text",
 					pass_type = "text",
 					text_id = "timer_text_id",
-					content_change_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+					content_change_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 						arg_11_0.timer = (arg_11_0.timer or 0) + arg_11_3
 
 						local var_11_0 = math.max(arg_11_0.timer, 0)
@@ -1196,10 +1196,10 @@ local function var_0_12(arg_7_0)
 				{
 					style_id = "scroller",
 					pass_type = "rect",
-					content_check_function = function(arg_12_0, arg_12_1)
+					content_check_function = function (arg_12_0, arg_12_1)
 						return arg_12_0.show_scroller and not arg_12_0.filter_active
 					end,
-					content_change_function = function(arg_13_0, arg_13_1)
+					content_change_function = function (arg_13_0, arg_13_1)
 						local var_13_0 = var_0_8.window_height
 						local var_13_1 = var_0_8.spacing
 						local var_13_2 = arg_13_0.scrollbar_progress
@@ -1215,10 +1215,10 @@ local function var_0_12(arg_7_0)
 				{
 					style_id = "inner_scroller",
 					pass_type = "rect",
-					content_check_function = function(arg_14_0, arg_14_1)
+					content_check_function = function (arg_14_0, arg_14_1)
 						return arg_14_0.show_scroller and not arg_14_0.filter_active
 					end,
-					content_change_function = function(arg_15_0, arg_15_1)
+					content_change_function = function (arg_15_0, arg_15_1)
 						local var_15_0 = var_0_8.window_height
 						local var_15_1 = -var_0_8.spacing - arg_15_0.scrollbar_progress * (var_15_0 + arg_15_1.texture_size[2])
 
@@ -1238,10 +1238,10 @@ local function var_0_12(arg_7_0)
 					style_id = "inner_scroller_hotspot",
 					pass_type = "hotspot",
 					content_id = "inner_scroller_hotspot",
-					content_check_function = function(arg_16_0, arg_16_1)
+					content_check_function = function (arg_16_0, arg_16_1)
 						return arg_16_0.parent.show_scroller and not arg_16_0.parent.filter_active
 					end,
-					content_change_function = function(arg_17_0, arg_17_1)
+					content_change_function = function (arg_17_0, arg_17_1)
 						local var_17_0 = arg_17_1.parent.inner_scroller
 
 						arg_17_1.offset[2] = var_17_0.offset[2] - arg_17_1.area_size[2]
@@ -1721,7 +1721,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "game_type_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_19_0, arg_19_1)
+					content_check_function = function (arg_19_0, arg_19_1)
 						if arg_19_0.filter_hotspot_1.disable_button then
 							return false
 						else
@@ -1730,7 +1730,7 @@ local function var_0_13(arg_18_0)
 							return arg_19_0.filter_selection and arg_19_0.filter_index == 1 or not var_19_0
 						end
 					end,
-					content_change_function = function(arg_20_0, arg_20_1)
+					content_change_function = function (arg_20_0, arg_20_1)
 						if arg_20_0.filter_selection and arg_20_0.filter_index == 1 or arg_20_0.filter_hotspot_1.is_hover then
 							arg_20_1.color = arg_20_1.select_color
 						else
@@ -1741,7 +1741,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "game_type_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_21_0, arg_21_1)
+					content_check_function = function (arg_21_0, arg_21_1)
 						if arg_21_0.filter_hotspot_1.disable_button then
 							return false
 						else
@@ -1750,7 +1750,7 @@ local function var_0_13(arg_18_0)
 							return arg_21_0.filter_selection and arg_21_0.filter_index == 1 or not var_21_0
 						end
 					end,
-					content_change_function = function(arg_22_0, arg_22_1)
+					content_change_function = function (arg_22_0, arg_22_1)
 						if arg_22_0.filter_selection and arg_22_0.filter_index == 1 or arg_22_0.filter_hotspot_1.is_hover then
 							arg_22_1.color = arg_22_1.select_color
 						else
@@ -1761,7 +1761,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "level_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_23_0, arg_23_1)
+					content_check_function = function (arg_23_0, arg_23_1)
 						if arg_23_0.filter_hotspot_2.disable_button then
 							return false
 						else
@@ -1770,7 +1770,7 @@ local function var_0_13(arg_18_0)
 							return arg_23_0.filter_selection and arg_23_0.filter_index == 2 or not var_23_0
 						end
 					end,
-					content_change_function = function(arg_24_0, arg_24_1)
+					content_change_function = function (arg_24_0, arg_24_1)
 						if arg_24_0.filter_selection and arg_24_0.filter_index == 2 or arg_24_0.filter_hotspot_2.is_hover then
 							arg_24_1.color = arg_24_1.select_color
 						else
@@ -1781,7 +1781,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "level_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_25_0, arg_25_1)
+					content_check_function = function (arg_25_0, arg_25_1)
 						if arg_25_0.filter_hotspot_2.disable_button then
 							return false
 						else
@@ -1790,7 +1790,7 @@ local function var_0_13(arg_18_0)
 							return arg_25_0.filter_selection and arg_25_0.filter_index == 2 or not var_25_0
 						end
 					end,
-					content_change_function = function(arg_26_0, arg_26_1)
+					content_change_function = function (arg_26_0, arg_26_1)
 						if arg_26_0.filter_selection and arg_26_0.filter_index == 2 or arg_26_0.filter_hotspot_2.is_hover then
 							arg_26_1.color = arg_26_1.select_color
 						else
@@ -1801,7 +1801,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "difficulty_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_27_0, arg_27_1)
+					content_check_function = function (arg_27_0, arg_27_1)
 						if arg_27_0.filter_hotspot_3.disable_button then
 							return false
 						else
@@ -1810,7 +1810,7 @@ local function var_0_13(arg_18_0)
 							return arg_27_0.filter_selection and arg_27_0.filter_index == 3 or not var_27_0
 						end
 					end,
-					content_change_function = function(arg_28_0, arg_28_1)
+					content_change_function = function (arg_28_0, arg_28_1)
 						if arg_28_0.filter_selection and arg_28_0.filter_index == 3 or arg_28_0.filter_hotspot_3.is_hover then
 							arg_28_1.color = arg_28_1.select_color
 						else
@@ -1821,7 +1821,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "difficulty_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_29_0, arg_29_1)
+					content_check_function = function (arg_29_0, arg_29_1)
 						if arg_29_0.filter_hotspot_3.disable_button then
 							return false
 						else
@@ -1830,7 +1830,7 @@ local function var_0_13(arg_18_0)
 							return arg_29_0.filter_selection and arg_29_0.filter_index == 3 or not var_29_0
 						end
 					end,
-					content_change_function = function(arg_30_0, arg_30_1)
+					content_change_function = function (arg_30_0, arg_30_1)
 						if arg_30_0.filter_selection and arg_30_0.filter_index == 3 or arg_30_0.filter_hotspot_3.is_hover then
 							arg_30_1.color = arg_30_1.select_color
 						else
@@ -1841,7 +1841,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "lobby_filter_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_31_0, arg_31_1)
+					content_check_function = function (arg_31_0, arg_31_1)
 						if arg_31_0.filter_hotspot_4.disable_button then
 							return false
 						else
@@ -1850,7 +1850,7 @@ local function var_0_13(arg_18_0)
 							return arg_31_0.filter_selection and arg_31_0.filter_index == 4 or not var_31_0
 						end
 					end,
-					content_change_function = function(arg_32_0, arg_32_1)
+					content_change_function = function (arg_32_0, arg_32_1)
 						if arg_32_0.filter_selection and arg_32_0.filter_index == 4 or arg_32_0.filter_hotspot_4.is_hover then
 							arg_32_1.color = arg_32_1.select_color
 						else
@@ -1861,7 +1861,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "lobby_filter_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_33_0, arg_33_1)
+					content_check_function = function (arg_33_0, arg_33_1)
 						if arg_33_0.filter_hotspot_4.disable_button then
 							return false
 						else
@@ -1870,7 +1870,7 @@ local function var_0_13(arg_18_0)
 							return arg_33_0.filter_selection and arg_33_0.filter_index == 4 or not var_33_0
 						end
 					end,
-					content_change_function = function(arg_34_0, arg_34_1)
+					content_change_function = function (arg_34_0, arg_34_1)
 						if arg_34_0.filter_selection and arg_34_0.filter_index == 4 or arg_34_0.filter_hotspot_4.is_hover then
 							arg_34_1.color = arg_34_1.select_color
 						else
@@ -1881,7 +1881,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "distance_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_35_0, arg_35_1)
+					content_check_function = function (arg_35_0, arg_35_1)
 						if arg_35_0.filter_hotspot_5.disable_button then
 							return false
 						else
@@ -1890,7 +1890,7 @@ local function var_0_13(arg_18_0)
 							return arg_35_0.filter_selection and arg_35_0.filter_index == 5 or not var_35_0
 						end
 					end,
-					content_change_function = function(arg_36_0, arg_36_1)
+					content_change_function = function (arg_36_0, arg_36_1)
 						if arg_36_0.filter_selection and arg_36_0.filter_index == 5 or arg_36_0.filter_hotspot_5.is_hover then
 							arg_36_1.color = arg_36_1.select_color
 						else
@@ -1901,7 +1901,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "distance_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function(arg_37_0, arg_37_1)
+					content_check_function = function (arg_37_0, arg_37_1)
 						if arg_37_0.filter_hotspot_5.disable_button then
 							return false
 						else
@@ -1910,7 +1910,7 @@ local function var_0_13(arg_18_0)
 							return arg_37_0.filter_selection and arg_37_0.filter_index == 5 or not var_37_0
 						end
 					end,
-					content_change_function = function(arg_38_0, arg_38_1)
+					content_change_function = function (arg_38_0, arg_38_1)
 						if arg_38_0.filter_selection and arg_38_0.filter_index == 5 or arg_38_0.filter_hotspot_5.is_hover then
 							arg_38_1.color = arg_38_1.select_color
 						else
@@ -1926,7 +1926,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "background_1",
 					pass_type = "rect",
-					content_change_function = function(arg_39_0, arg_39_1)
+					content_change_function = function (arg_39_0, arg_39_1)
 						if arg_39_0.filter_selection and arg_39_0.filter_index == 1 or arg_39_0.filter_hotspot_1.is_hover then
 							arg_39_1.color = arg_39_1.selection_color
 						else
@@ -1942,7 +1942,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "background_2",
 					pass_type = "rect",
-					content_change_function = function(arg_40_0, arg_40_1)
+					content_change_function = function (arg_40_0, arg_40_1)
 						if arg_40_0.filter_selection and arg_40_0.filter_index == 2 or arg_40_0.filter_hotspot_2.is_hover then
 							arg_40_1.color = arg_40_1.selection_color
 						else
@@ -1958,7 +1958,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "background_3",
 					pass_type = "rect",
-					content_change_function = function(arg_41_0, arg_41_1)
+					content_change_function = function (arg_41_0, arg_41_1)
 						if arg_41_0.filter_selection and arg_41_0.filter_index == 3 or arg_41_0.filter_hotspot_3.is_hover then
 							arg_41_1.color = arg_41_1.selection_color
 						else
@@ -1974,7 +1974,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "background_4",
 					pass_type = "rect",
-					content_change_function = function(arg_42_0, arg_42_1)
+					content_change_function = function (arg_42_0, arg_42_1)
 						if arg_42_0.filter_selection and arg_42_0.filter_index == 4 or arg_42_0.filter_hotspot_4.is_hover then
 							arg_42_1.color = arg_42_1.selection_color
 						else
@@ -1990,7 +1990,7 @@ local function var_0_13(arg_18_0)
 				{
 					style_id = "background_5",
 					pass_type = "rect",
-					content_change_function = function(arg_43_0, arg_43_1)
+					content_change_function = function (arg_43_0, arg_43_1)
 						if arg_43_0.filter_selection and arg_43_0.filter_index == 5 or arg_43_0.filter_hotspot_5.is_hover then
 							arg_43_1.color = arg_43_1.selection_color
 						else
@@ -2027,7 +2027,7 @@ local function var_0_13(arg_18_0)
 					style_id = "game_type_name",
 					pass_type = "text",
 					text_id = "game_type_name",
-					content_change_function = function(arg_44_0, arg_44_1)
+					content_change_function = function (arg_44_0, arg_44_1)
 						if arg_44_0.filter_hotspot_1.disable_button then
 							arg_44_1.text_color = arg_44_1.disabled_color
 						elseif arg_44_0.filter_selection and arg_44_0.filter_index == 1 or arg_44_0.filter_hotspot_1.is_hover then
@@ -2041,7 +2041,7 @@ local function var_0_13(arg_18_0)
 					style_id = "mission_name",
 					pass_type = "text",
 					text_id = "mission_name",
-					content_change_function = function(arg_45_0, arg_45_1)
+					content_change_function = function (arg_45_0, arg_45_1)
 						if arg_45_0.filter_hotspot_2.disable_button then
 							arg_45_1.text_color = arg_45_1.disabled_color
 						elseif arg_45_0.filter_selection and arg_45_0.filter_index == 2 or arg_45_0.filter_hotspot_2.is_hover then
@@ -2055,7 +2055,7 @@ local function var_0_13(arg_18_0)
 					style_id = "difficulty_name",
 					pass_type = "text",
 					text_id = "difficulty_name",
-					content_change_function = function(arg_46_0, arg_46_1)
+					content_change_function = function (arg_46_0, arg_46_1)
 						if arg_46_0.filter_hotspot_3.disable_button then
 							arg_46_1.text_color = arg_46_1.disabled_color
 						elseif arg_46_0.filter_selection and arg_46_0.filter_index == 3 or arg_46_0.filter_hotspot_3.is_hover then
@@ -2069,7 +2069,7 @@ local function var_0_13(arg_18_0)
 					style_id = "show_lobbies_name",
 					pass_type = "text",
 					text_id = "show_lobbies_name",
-					content_change_function = function(arg_47_0, arg_47_1)
+					content_change_function = function (arg_47_0, arg_47_1)
 						if arg_47_0.filter_hotspot_4.disable_button then
 							arg_47_1.text_color = arg_47_1.disabled_color
 						elseif arg_47_0.filter_selection and arg_47_0.filter_index == 4 or arg_47_0.filter_hotspot_4.is_hover then
@@ -2083,7 +2083,7 @@ local function var_0_13(arg_18_0)
 					style_id = "distance_name",
 					pass_type = "text",
 					text_id = "distance_name",
-					content_change_function = function(arg_48_0, arg_48_1)
+					content_change_function = function (arg_48_0, arg_48_1)
 						if arg_48_0.filter_hotspot_5.disable_button then
 							arg_48_1.text_color = arg_48_1.disabled_color
 						elseif arg_48_0.filter_selection and arg_48_0.filter_index == 5 or arg_48_0.filter_hotspot_5.is_hover then
@@ -2842,10 +2842,10 @@ local function var_0_14(arg_49_0)
 					style_id = "scroller_hotspot",
 					pass_type = "hotspot",
 					content_id = "scroller_hotspot",
-					content_check_function = function(arg_50_0, arg_50_1)
+					content_check_function = function (arg_50_0, arg_50_1)
 						return arg_50_0.parent.show_scroller and arg_50_0.parent.active
 					end,
-					content_change_function = function(arg_51_0, arg_51_1)
+					content_change_function = function (arg_51_0, arg_51_1)
 						local var_51_0 = var_0_8.window_height - var_0_8.spacing * 2
 						local var_51_1 = -var_0_8.filter_height - var_0_8.spacing
 						local var_51_2 = var_51_1 - arg_51_0.parent.scrollbar_progress * var_51_0
@@ -2865,10 +2865,10 @@ local function var_0_14(arg_49_0)
 				{
 					style_id = "inner_scroller",
 					pass_type = "rect",
-					content_check_function = function(arg_52_0, arg_52_1)
+					content_check_function = function (arg_52_0, arg_52_1)
 						return arg_52_0.show_scroller and arg_52_0.active
 					end,
-					content_change_function = function(arg_53_0, arg_53_1)
+					content_change_function = function (arg_53_0, arg_53_1)
 						local var_53_0 = var_0_8.window_height - var_0_8.spacing * 2
 						local var_53_1 = -var_0_8.filter_height - var_0_8.spacing
 						local var_53_2 = var_53_1 - arg_53_0.scrollbar_progress * var_53_0
@@ -3000,7 +3000,7 @@ local function var_0_15(arg_54_0, arg_54_1, arg_54_2)
 					style_id = "background",
 					texture_id = "texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_55_0, arg_55_1)
+					content_change_function = function (arg_55_0, arg_55_1)
 						if arg_55_0.selected or arg_55_0.button_hotspot.is_hover then
 							arg_55_1.color = arg_55_1.selection_color
 						else
@@ -3017,7 +3017,7 @@ local function var_0_15(arg_54_0, arg_54_1, arg_54_2)
 					style_id = "game_type",
 					pass_type = "text",
 					text_id = "game_type_id",
-					content_change_function = function(arg_56_0, arg_56_1)
+					content_change_function = function (arg_56_0, arg_56_1)
 						if arg_56_0.selected or arg_56_0.button_hotspot.is_hover then
 							arg_56_1.text_color = arg_56_1.selection_color
 						else
@@ -3142,7 +3142,7 @@ local function var_0_16(arg_57_0, arg_57_1)
 					style_id = "background",
 					texture_id = "texture_id",
 					pass_type = "texture",
-					content_change_function = function(arg_58_0, arg_58_1)
+					content_change_function = function (arg_58_0, arg_58_1)
 						if arg_58_0.selected or arg_58_0.button_hotspot.is_hover then
 							arg_58_1.color = arg_58_1.selection_color
 						else
@@ -3159,10 +3159,10 @@ local function var_0_16(arg_57_0, arg_57_1)
 					style_id = "level_name",
 					pass_type = "text",
 					text_id = "level_name_id",
-					content_check_function = function(arg_59_0, arg_59_1)
+					content_check_function = function (arg_59_0, arg_59_1)
 						return arg_59_0.unlocked
 					end,
-					content_change_function = function(arg_60_0, arg_60_1)
+					content_change_function = function (arg_60_0, arg_60_1)
 						if arg_60_0.selected or arg_60_0.button_hotspot.is_hover then
 							arg_60_1.text_color = arg_60_1.selection_color
 						else
@@ -3174,7 +3174,7 @@ local function var_0_16(arg_57_0, arg_57_1)
 					style_id = "level_name_locked",
 					pass_type = "text",
 					text_id = "level_name_id",
-					content_check_function = function(arg_61_0, arg_61_1)
+					content_check_function = function (arg_61_0, arg_61_1)
 						return not arg_61_0.unlocked
 					end
 				}
@@ -3316,7 +3316,7 @@ local function var_0_17(arg_62_0, arg_62_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function(arg_63_0, arg_63_1)
+					content_change_function = function (arg_63_0, arg_63_1)
 						if arg_63_0.selected or arg_63_0.button_hotspot.is_hover then
 							arg_63_1.color = arg_63_1.selection_color
 						else
@@ -3332,10 +3332,10 @@ local function var_0_17(arg_62_0, arg_62_1)
 					style_id = "difficulty_name",
 					pass_type = "text",
 					text_id = "difficulty_name_id",
-					content_check_function = function(arg_64_0, arg_64_1)
+					content_check_function = function (arg_64_0, arg_64_1)
 						return arg_64_0.unlocked
 					end,
-					content_change_function = function(arg_65_0, arg_65_1)
+					content_change_function = function (arg_65_0, arg_65_1)
 						if arg_65_0.selected or arg_65_0.button_hotspot.is_hover then
 							arg_65_1.text_color = arg_65_1.selection_color
 						else
@@ -3347,7 +3347,7 @@ local function var_0_17(arg_62_0, arg_62_1)
 					style_id = "difficulty_name_locked",
 					pass_type = "text",
 					text_id = "difficulty_name_id",
-					content_check_function = function(arg_66_0, arg_66_1)
+					content_check_function = function (arg_66_0, arg_66_1)
 						return not arg_66_0.unlocked
 					end
 				}
@@ -3459,7 +3459,7 @@ local function var_0_18(arg_67_0, arg_67_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function(arg_68_0, arg_68_1)
+					content_change_function = function (arg_68_0, arg_68_1)
 						if arg_68_0.selected or arg_68_0.button_hotspot.is_hover then
 							arg_68_1.color = arg_68_1.selection_color
 						else
@@ -3475,7 +3475,7 @@ local function var_0_18(arg_67_0, arg_67_1)
 					style_id = "lobby_filter_name",
 					pass_type = "text",
 					text_id = "lobby_filter_name_id",
-					content_change_function = function(arg_69_0, arg_69_1)
+					content_change_function = function (arg_69_0, arg_69_1)
 						if arg_69_0.selected or arg_69_0.button_hotspot.is_hover then
 							arg_69_1.text_color = arg_69_1.selection_color
 						else
@@ -3581,7 +3581,7 @@ local function var_0_19(arg_70_0, arg_70_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function(arg_71_0, arg_71_1)
+					content_change_function = function (arg_71_0, arg_71_1)
 						if arg_71_0.selected or arg_71_0.button_hotspot.is_hover then
 							arg_71_1.color = arg_71_1.selection_color
 						else
@@ -3597,7 +3597,7 @@ local function var_0_19(arg_70_0, arg_70_1)
 					style_id = "distance_name",
 					pass_type = "text",
 					text_id = "distance_name_id",
-					content_change_function = function(arg_72_0, arg_72_1)
+					content_change_function = function (arg_72_0, arg_72_1)
 						if arg_72_0.selected or arg_72_0.button_hotspot.is_hover then
 							arg_72_1.text_color = arg_72_1.selection_color
 						else
@@ -3819,7 +3819,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background_id",
-					content_check_function = function(arg_74_0, arg_74_1)
+					content_check_function = function (arg_74_0, arg_74_1)
 						return not arg_74_0.selected and not Managers.matchmaking:is_game_matchmaking()
 					end
 				},
@@ -3827,10 +3827,10 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "lock_icon",
 					texture_id = "lock_icon_id",
 					pass_type = "texture",
-					content_check_function = function(arg_75_0, arg_75_1)
+					content_check_function = function (arg_75_0, arg_75_1)
 						return not arg_75_0.joinable
 					end,
-					content_change_function = function(arg_76_0, arg_76_1)
+					content_change_function = function (arg_76_0, arg_76_1)
 						if arg_76_0.selected or arg_76_0.lobby_hotspot.is_hover then
 							arg_76_1.color = arg_76_1.selected_color
 						else
@@ -3842,7 +3842,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "lock_icon_shadow",
 					texture_id = "lock_icon_id",
-					content_check_function = function(arg_77_0, arg_77_1)
+					content_check_function = function (arg_77_0, arg_77_1)
 						return not arg_77_0.selected and not arg_77_0.lobby_hotspot.is_hover and not arg_77_0.joinable
 					end
 				},
@@ -3850,14 +3850,14 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "custom_game_settings",
 					pass_type = "texture",
 					texture_id = "custom_game_settings",
-					content_change_function = function(arg_78_0, arg_78_1)
+					content_change_function = function (arg_78_0, arg_78_1)
 						if arg_78_0.selected or arg_78_0.lobby_hotspot.is_hover then
 							arg_78_1.color = arg_78_1.selected_color
 						else
 							arg_78_1.color = arg_78_1.base_color
 						end
 					end,
-					content_check_function = function(arg_79_0, arg_79_1)
+					content_check_function = function (arg_79_0, arg_79_1)
 						if not Managers.mechanism:current_mechanism_name() == "versus" then
 							return false
 						end
@@ -3871,7 +3871,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "custom_game_settings_shadow",
 					texture_id = "custom_game_settings",
-					content_check_function = function(arg_80_0, arg_80_1)
+					content_check_function = function (arg_80_0, arg_80_1)
 						if not Managers.mechanism:current_mechanism_name() == "versus" then
 							return false
 						end
@@ -3885,7 +3885,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "selected_background",
 					texture_id = "background_id",
-					content_check_function = function(arg_81_0, arg_81_1)
+					content_check_function = function (arg_81_0, arg_81_1)
 						return (arg_81_0.selected or arg_81_0.lobby_hotspot.is_hover) and not Managers.matchmaking:is_game_matchmaking()
 					end
 				},
@@ -3893,7 +3893,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "disabled_background",
 					texture_id = "background_id",
-					content_check_function = function(arg_82_0, arg_82_1)
+					content_check_function = function (arg_82_0, arg_82_1)
 						return Managers.matchmaking:is_game_matchmaking()
 					end
 				},
@@ -3906,7 +3906,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "selected_level_name",
 					pass_type = "text",
 					text_id = "selected_level_name",
-					content_change_function = function(arg_83_0, arg_83_1)
+					content_change_function = function (arg_83_0, arg_83_1)
 						if arg_83_0.joinable then
 							arg_83_1.text_color = arg_83_1.joinable_color
 						elseif arg_83_0.selected or arg_83_0.lobby_hotspot.is_hover then
@@ -3920,7 +3920,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "selected_level_name_shadow",
 					pass_type = "text",
 					text_id = "selected_level_name",
-					content_check_function = function(arg_84_0, arg_84_1)
+					content_check_function = function (arg_84_0, arg_84_1)
 						return not not arg_84_0.joinable or not arg_84_0.selected and not arg_84_0.lobby_hotspot.is_hover
 					end
 				},
@@ -3928,7 +3928,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "level_image",
 					texture_id = "level_image_id",
-					content_check_function = function(arg_85_0, arg_85_1)
+					content_check_function = function (arg_85_0, arg_85_1)
 						return arg_85_0.level_image_id
 					end
 				},
@@ -3936,7 +3936,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "flag",
 					texture_id = "flag_id",
-					content_check_function = function(arg_86_0)
+					content_check_function = function (arg_86_0)
 						return arg_86_0.flag_id
 					end
 				},
@@ -3944,10 +3944,10 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "no_flag",
 					pass_type = "text",
 					text_id = "no_flag_id",
-					content_check_function = function(arg_87_0)
+					content_check_function = function (arg_87_0)
 						return not arg_87_0.flag_id
 					end,
-					content_change_function = function(arg_88_0, arg_88_1)
+					content_change_function = function (arg_88_0, arg_88_1)
 						if arg_88_0.joinable then
 							arg_88_1.text_color = arg_88_1.joinable_color
 						elseif arg_88_0.selected or arg_88_0.lobby_hotspot.is_hover then
@@ -3961,7 +3961,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "no_flag_shadow",
 					pass_type = "text",
 					text_id = "no_flag_id",
-					content_check_function = function(arg_89_0, arg_89_1)
+					content_check_function = function (arg_89_0, arg_89_1)
 						return (arg_89_0.joinable or not arg_89_0.selected and not arg_89_0.lobby_hotspot.is_hover) and not arg_89_0.flag_id
 					end
 				},
@@ -3969,7 +3969,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "difficulty",
 					pass_type = "text",
 					text_id = "difficulty_id",
-					content_change_function = function(arg_90_0, arg_90_1)
+					content_change_function = function (arg_90_0, arg_90_1)
 						if arg_90_0.joinable then
 							arg_90_1.text_color = arg_90_1.joinable_color
 						elseif arg_90_0.selected or arg_90_0.lobby_hotspot.is_hover then
@@ -3983,7 +3983,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "num_players",
 					pass_type = "text",
 					text_id = "num_players_id",
-					content_change_function = function(arg_91_0, arg_91_1)
+					content_change_function = function (arg_91_0, arg_91_1)
 						if arg_91_0.joinable then
 							arg_91_1.text_color = arg_91_1.joinable_color
 						elseif arg_91_0.selected or arg_91_0.lobby_hotspot.is_hover then
@@ -3997,7 +3997,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "difficulty_shadow",
 					pass_type = "text",
 					text_id = "difficulty_id",
-					content_check_function = function(arg_92_0, arg_92_1)
+					content_check_function = function (arg_92_0, arg_92_1)
 						return not not arg_92_0.joinable or not arg_92_0.selected and not arg_92_0.lobby_hotspot.is_hover
 					end
 				},
@@ -4005,7 +4005,7 @@ local function var_0_20(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "num_players_shadow",
 					pass_type = "text",
 					text_id = "num_players_id",
-					content_check_function = function(arg_93_0, arg_93_1)
+					content_check_function = function (arg_93_0, arg_93_1)
 						return not not arg_93_0.joinable or not arg_93_0.selected and not arg_93_0.lobby_hotspot.is_hover
 					end
 				}
@@ -4587,7 +4587,7 @@ local function var_0_22(arg_95_0)
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background_id",
-					content_check_function = function(arg_96_0, arg_96_1)
+					content_check_function = function (arg_96_0, arg_96_1)
 						return not arg_96_0.selected and not arg_96_0.lobby_hotspot.is_hover or Managers.matchmaking:is_game_matchmaking()
 					end
 				},
@@ -4595,7 +4595,7 @@ local function var_0_22(arg_95_0)
 					pass_type = "texture",
 					style_id = "selected_background",
 					texture_id = "background_id",
-					content_check_function = function(arg_97_0, arg_97_1)
+					content_check_function = function (arg_97_0, arg_97_1)
 						return (arg_97_0.selected or arg_97_0.lobby_hotspot.is_hover) and not Managers.matchmaking:is_game_matchmaking()
 					end
 				}
@@ -4854,7 +4854,7 @@ local function var_0_24(arg_99_0, arg_99_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function(arg_100_0)
+					content_check_function = function (arg_100_0)
 						return arg_100_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4862,7 +4862,7 @@ local function var_0_24(arg_99_0, arg_99_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_101_0)
+					content_check_function = function (arg_101_0)
 						return arg_101_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4870,7 +4870,7 @@ local function var_0_24(arg_99_0, arg_99_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_102_0)
+					content_check_function = function (arg_102_0)
 						return arg_102_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4878,7 +4878,7 @@ local function var_0_24(arg_99_0, arg_99_1)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_103_0)
+					content_check_function = function (arg_103_0)
 						return arg_103_0.text ~= "tutorial_no_text"
 					end
 				}
@@ -5079,7 +5079,7 @@ local function var_0_26(arg_105_0, arg_105_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_106_0)
+					content_check_function = function (arg_106_0)
 						return arg_106_0.is_hover and arg_106_0.tooltip_text
 					end
 				}

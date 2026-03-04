@@ -10,7 +10,7 @@ return {
 	spirit_power_level = 200,
 	icon = "mutator_icon_death_spirits",
 	display_name = "chasing_spirits_mutator_name",
-	spawn_spirit = function(arg_1_0, arg_1_1, arg_1_2)
+	spawn_spirit = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Vector3.add(Unit.local_position(arg_1_1, 0), Vector3(0, 0, arg_1_0.offset))
 		local var_1_1 = arg_1_0.unit_spawner:spawn_network_unit(arg_1_0.spirit_unit_name, "position_synched_dummy_unit", arg_1_0.extension_init_data, var_1_0)
 		local var_1_2 = {
@@ -26,7 +26,7 @@ return {
 
 		arg_1_0.spirits[var_1_3] = var_1_2
 	end,
-	update_spirits = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update_spirits = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_1.spirits
 		local var_2_1 = 1
 		local var_2_2 = var_2_1 * var_2_1
@@ -99,7 +99,7 @@ return {
 			end
 		end
 	end,
-	server_ai_hit_by_player_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	server_ai_hit_by_player_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if not arg_3_1.can_spawn then
 			return
 		end
@@ -124,7 +124,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	server_player_hit_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = arg_4_4[2]
 		local var_4_1 = DamageUtils.is_player_unit(arg_4_2)
 
@@ -137,7 +137,7 @@ return {
 			var_4_2.network_transmit:send_rpc_server("rpc_request_heal", var_4_5, var_4_4, var_4_3)
 		end
 	end,
-	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		if not arg_5_1.can_spawn then
 			return
 		end
@@ -148,10 +148,10 @@ return {
 
 		arg_5_1.template.spawn_spirit(arg_5_1, arg_5_2, arg_5_3)
 	end,
-	server_players_left_safe_zone = function(arg_6_0, arg_6_1)
+	server_players_left_safe_zone = function (arg_6_0, arg_6_1)
 		arg_6_1.has_left_safe_zone = true
 	end,
-	server_start_function = function(arg_7_0, arg_7_1)
+	server_start_function = function (arg_7_0, arg_7_1)
 		printf("[Mutator]: mutator_start")
 
 		arg_7_1.spirit_power_level = arg_7_1.template.spirit_power_level
@@ -169,7 +169,7 @@ return {
 		arg_7_1.offset = 1
 		arg_7_1.can_spawn = true
 	end,
-	server_stop_function = function(arg_8_0, arg_8_1)
+	server_stop_function = function (arg_8_0, arg_8_1)
 		local var_8_0 = arg_8_1.spirits
 
 		for iter_8_0, iter_8_1 in pairs(var_8_0) do
@@ -187,7 +187,7 @@ return {
 			end
 		end
 	end,
-	server_update_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	server_update_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

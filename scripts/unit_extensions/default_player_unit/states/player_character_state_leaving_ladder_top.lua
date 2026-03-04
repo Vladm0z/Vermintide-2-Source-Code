@@ -2,7 +2,7 @@
 
 PlayerCharacterStateLeavingLadderTop = class(PlayerCharacterStateLeavingLadderTop, PlayerCharacterState)
 
-function PlayerCharacterStateLeavingLadderTop.init(arg_1_0, arg_1_1)
+PlayerCharacterStateLeavingLadderTop.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "leaving_ladder_top")
 
 	local var_1_0 = arg_1_1
@@ -11,13 +11,13 @@ function PlayerCharacterStateLeavingLadderTop.init(arg_1_0, arg_1_1)
 	arg_1_0.wanted_forward_bonus_velocity = Vector3Box()
 end
 
-function PlayerCharacterStateLeavingLadderTop.on_enter_animation_event(arg_2_0, arg_2_1)
+PlayerCharacterStateLeavingLadderTop.on_enter_animation_event = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.unit
 
 	CharacterStateHelper.play_animation_event_with_variable_float(var_2_0, "climb_top_exit_ladder", "climb_enter_exit_speed", arg_2_1)
 end
 
-function PlayerCharacterStateLeavingLadderTop.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateLeavingLadderTop.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_0.input_extension
 	local var_3_2 = arg_3_0.first_person_extension
@@ -39,7 +39,7 @@ function PlayerCharacterStateLeavingLadderTop.on_enter(arg_3_0, arg_3_1, arg_3_2
 	var_3_5:set_mover_filter_property("ladder", true)
 end
 
-function PlayerCharacterStateLeavingLadderTop.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateLeavingLadderTop.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = Managers.state.network:unit_game_object_id(arg_4_0.unit)
 	local var_4_1 = false
 
@@ -62,7 +62,7 @@ function PlayerCharacterStateLeavingLadderTop.on_exit(arg_4_0, arg_4_1, arg_4_2,
 	var_4_3:set_mover_filter_property("ladder", false)
 end
 
-function PlayerCharacterStateLeavingLadderTop.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateLeavingLadderTop.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.input_extension

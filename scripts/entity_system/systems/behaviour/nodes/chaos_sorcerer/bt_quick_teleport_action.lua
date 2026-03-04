@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTQuickTeleportAction = class(BTQuickTeleportAction, BTNode)
 
-function BTQuickTeleportAction.init(arg_1_0, ...)
+BTQuickTeleportAction.init = function (arg_1_0, ...)
 	BTQuickTeleportAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTQuickTeleportAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTQuickTeleportAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -48,7 +48,7 @@ function BTQuickTeleportAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTQuickTeleportAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTQuickTeleportAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.quick_teleport_exit_pos = nil
 	arg_4_2.active_node = nil
 	arg_4_2.quick_teleport = false
@@ -62,7 +62,7 @@ function BTQuickTeleportAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	end
 end
 
-function BTQuickTeleportAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTQuickTeleportAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not arg_5_2.action.teleport_start_anim then
 		arg_5_0:anim_cb_teleport_start_finished(arg_5_1, arg_5_2)
 	end
@@ -78,7 +78,7 @@ function BTQuickTeleportAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTQuickTeleportAction.play_teleport_effect(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTQuickTeleportAction.play_teleport_effect = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = var_6_0.teleport_effect
 
@@ -119,7 +119,7 @@ function BTQuickTeleportAction.play_teleport_effect(arg_6_0, arg_6_1, arg_6_2, a
 	end
 end
 
-function BTQuickTeleportAction.anim_cb_teleport_start_finished(arg_7_0, arg_7_1, arg_7_2)
+BTQuickTeleportAction.anim_cb_teleport_start_finished = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = POSITION_LOOKUP[arg_7_1]
 	local var_7_1
 	local var_7_2 = arg_7_2.action.teleport_pos_func
@@ -170,11 +170,11 @@ function BTQuickTeleportAction.anim_cb_teleport_start_finished(arg_7_0, arg_7_1,
 	arg_7_2.teleport_at_t = Managers.time:time("game")
 end
 
-function BTQuickTeleportAction.anim_cb_teleport_end_finished(arg_8_0, arg_8_1, arg_8_2)
+BTQuickTeleportAction.anim_cb_teleport_end_finished = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.quick_teleport = false
 end
 
-function BTQuickTeleportAction.anim_cb_tp_end_enter(arg_9_0, arg_9_1, arg_9_2)
+BTQuickTeleportAction.anim_cb_tp_end_enter = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action
 
 	if var_9_0.teleport_end_effect then
@@ -187,7 +187,7 @@ function BTQuickTeleportAction.anim_cb_tp_end_enter(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BTQuickTeleportAction.push_close_players(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTQuickTeleportAction.push_close_players = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.action
 	local var_10_1 = var_10_0.radius
 	local var_10_2 = var_10_0.push_speed

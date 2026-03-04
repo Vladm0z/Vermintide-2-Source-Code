@@ -14,7 +14,7 @@ VoteTemplates.deus_settings_vote = {
 	min_required_voters = 1,
 	gamepad_input_desc = "default_voting",
 	timeout_vote_option = 2,
-	requirement_failed_message_func = function(arg_1_0)
+	requirement_failed_message_func = function (arg_1_0)
 		local var_1_0 = Localize("vote_requirement_failed")
 		local var_1_1 = Managers.player
 
@@ -42,10 +42,10 @@ VoteTemplates.deus_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function(arg_2_0, arg_2_1)
+	on_start = function (arg_2_0, arg_2_1)
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function(arg_3_0, arg_3_1, arg_3_2)
+	on_complete = function (arg_3_0, arg_3_1, arg_3_2)
 		if arg_3_0 == 1 then
 			local var_3_0 = arg_3_2.mission_id
 			local var_3_1 = arg_3_2.difficulty
@@ -90,7 +90,7 @@ VoteTemplates.deus_settings_vote = {
 			end
 		end
 	end,
-	pack_sync_data = function(arg_4_0)
+	pack_sync_data = function (arg_4_0)
 		local var_4_0 = arg_4_0.mission_id or "n/a"
 		local var_4_1 = arg_4_0.act_key or "n/a"
 		local var_4_2 = arg_4_0.difficulty
@@ -149,7 +149,7 @@ VoteTemplates.deus_settings_vote = {
 
 		return var_4_11
 	end,
-	extract_sync_data = function(arg_5_0)
+	extract_sync_data = function (arg_5_0)
 		local var_5_0 = arg_5_0[1]
 		local var_5_1 = arg_5_0[2]
 		local var_5_2 = arg_5_0[3]
@@ -225,7 +225,7 @@ VoteTemplates.deus_settings_vote = {
 			mechanism = var_5_16
 		}
 	end,
-	initial_vote_func = function(arg_6_0)
+	initial_vote_func = function (arg_6_0)
 		return {
 			[arg_6_0.voter_peer_id] = 1
 		}

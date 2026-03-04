@@ -30,7 +30,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return var_1_2, var_1_3
 end
 
-function TutorialUI.init(arg_2_0, arg_2_1, arg_2_2)
+TutorialUI.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._parent = arg_2_1
 	arg_2_0.ui_renderer = arg_2_2.ui_renderer
 	arg_2_0.input_manager = arg_2_2.input_manager
@@ -84,7 +84,7 @@ function TutorialUI.init(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function TutorialUI.create_ui_elements(arg_3_0)
+TutorialUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
@@ -140,7 +140,7 @@ function TutorialUI.create_ui_elements(arg_3_0)
 	arg_3_0.info_slate_slots_taken = {}
 end
 
-function TutorialUI.destroy(arg_4_0)
+TutorialUI.destroy = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 then
@@ -154,14 +154,14 @@ function TutorialUI.destroy(arg_4_0)
 	GarbageLeakDetector.register_object(arg_4_0, "interaction_gui")
 end
 
-function TutorialUI._get_player_first_person_extension(arg_5_0)
+TutorialUI._get_player_first_person_extension = function (arg_5_0)
 	local var_5_0 = arg_5_0.peer_id
 	local var_5_1 = arg_5_0.player_manager:player_from_peer_id(var_5_0)
 
 	return ScriptUnit.has_extension(var_5_1.player_unit, "first_person_system")
 end
 
-function TutorialUI.update(arg_6_0, arg_6_1, arg_6_2)
+TutorialUI.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_2 then
 		arg_6_0:create_ui_elements()
 	end
@@ -246,7 +246,7 @@ function TutorialUI.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function TutorialUI.post_update(arg_7_0, arg_7_1, arg_7_2)
+TutorialUI.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.floating_icons_ui_scene_graph
 	local var_7_1 = arg_7_0.ui_renderer
 	local var_7_2 = arg_7_0.peer_id
@@ -330,7 +330,7 @@ local var_0_4 = {
 	var_0_0.scenegraph.root.size[2] * 0.5
 }
 
-function TutorialUI.update_mission_tooltip(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+TutorialUI.update_mission_tooltip = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0.floating_icons_ui_scene_graph
 	local var_8_1 = arg_8_0.tooltip_mission_widget
 	local var_8_2 = UISettings.tutorial.mission_tooltip
@@ -464,7 +464,7 @@ local var_0_5 = {}
 local var_0_6 = {}
 local var_0_7 = Unit.alive
 
-function TutorialUI.update_objective_tooltip(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+TutorialUI.update_objective_tooltip = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_1.name
 	local var_9_1 = arg_9_1.units
 	local var_9_2 = arg_9_1.units_n
@@ -575,7 +575,7 @@ function TutorialUI.update_objective_tooltip(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0.num_widgets_for_update = var_9_5
 end
 
-function TutorialUI.setup_objective_tooltip_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+TutorialUI.setup_objective_tooltip_widget = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_1.widget
 	local var_10_1 = arg_10_2.name
 	local var_10_2 = TutorialTemplates[var_10_1]
@@ -614,7 +614,7 @@ function TutorialUI.setup_objective_tooltip_widget(arg_10_0, arg_10_1, arg_10_2,
 	end
 end
 
-function TutorialUI._floating_icon_overlap(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+TutorialUI._floating_icon_overlap = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0._objective_tooltip_position_lookup
 	local var_11_1
 
@@ -642,7 +642,7 @@ end
 
 local var_0_8 = UISettings.tutorial.objective_tooltip
 
-function TutorialUI.update_objective_tooltip_widget(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+TutorialUI.update_objective_tooltip_widget = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = "player_1"
 	local var_12_1
 
@@ -797,7 +797,7 @@ function TutorialUI.update_objective_tooltip_widget(arg_12_0, arg_12_1, arg_12_2
 	arg_12_1.use_screen_position = var_12_38
 end
 
-function TutorialUI.get_floating_icon_position(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+TutorialUI.get_floating_icon_position = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = UISceneGraph.get_size_scaled(arg_13_0.ui_scenegraph, "root")
 	local var_13_1 = RESOLUTION_LOOKUP.scale
 	local var_13_2 = var_13_0[1] * var_13_1
@@ -846,7 +846,7 @@ function TutorialUI.get_floating_icon_position(arg_13_0, arg_13_1, arg_13_2, arg
 	return var_13_22, var_13_23, var_13_17, var_13_16
 end
 
-function TutorialUI.floating_icon_animations(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+TutorialUI.floating_icon_animations = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_1.style.texture_id
 	local var_14_1 = arg_14_1.style.text
 	local var_14_2 = arg_14_1.style.text_shadow
@@ -886,7 +886,7 @@ function TutorialUI.floating_icon_animations(arg_14_0, arg_14_1, arg_14_2, arg_1
 	end
 end
 
-function TutorialUI.get_arrow_angle_and_offset(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+TutorialUI.get_arrow_angle_and_offset = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = 1.57079633
 	local var_15_1 = 0
 	local var_15_2 = 0
@@ -914,7 +914,7 @@ function TutorialUI.get_arrow_angle_and_offset(arg_15_0, arg_15_1, arg_15_2, arg
 	return var_15_0, var_15_1, var_15_2, var_15_3
 end
 
-function TutorialUI.get_icon_size(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+TutorialUI.get_icon_size = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 	local var_16_0 = arg_16_4 * arg_16_6
 	local var_16_1 = var_16_0
 	local var_16_2 = arg_16_5.start_scale_distance
@@ -930,7 +930,7 @@ function TutorialUI.get_icon_size(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16
 	return var_16_1, var_16_5
 end
 
-function TutorialUI.icon_scale_by_distance(arg_17_0, arg_17_1, arg_17_2)
+TutorialUI.icon_scale_by_distance = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = math.min(arg_17_2, arg_17_1)
 	local var_17_1 = math.max(0, var_17_0)
 	local var_17_2 = UISettings.tutorial.mission_tooltip.minimum_icon_scale
@@ -938,7 +938,7 @@ function TutorialUI.icon_scale_by_distance(arg_17_0, arg_17_1, arg_17_2)
 	return (math.max(var_17_2, 1 - var_17_1 / arg_17_2))
 end
 
-function TutorialUI.distance_between_screen_positions(arg_18_0, arg_18_1, arg_18_2)
+TutorialUI.distance_between_screen_positions = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_1[1] - arg_18_2[1]
 	local var_18_1 = arg_18_1[2] - arg_18_2[2]
 
@@ -951,7 +951,7 @@ function TutorialUI.distance_between_screen_positions(arg_18_0, arg_18_1, arg_18
 	}
 end
 
-function TutorialUI.convert_world_to_screen_position(arg_19_0, arg_19_1, arg_19_2)
+TutorialUI.convert_world_to_screen_position = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_1 then
 		local var_19_0 = Camera.world_to_screen(arg_19_1, arg_19_2)
 
@@ -959,7 +959,7 @@ function TutorialUI.convert_world_to_screen_position(arg_19_0, arg_19_1, arg_19_
 	end
 end
 
-function TutorialUI.animate_in_mission_tooltip(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+TutorialUI.animate_in_mission_tooltip = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_4.style.texture_id
 	local var_20_1 = arg_20_4.style.text
 	local var_20_2 = 0.5
@@ -988,7 +988,7 @@ function TutorialUI.animate_in_mission_tooltip(arg_20_0, arg_20_1, arg_20_2, arg
 	return var_20_3 < 1 and arg_20_1 or nil
 end
 
-function TutorialUI.add_info_slate_entries(arg_21_0)
+TutorialUI.add_info_slate_entries = function (arg_21_0)
 	for iter_21_0 = 1, var_0_0.NUMBER_OF_INFO_SLATE_ENTRIES do
 		local var_21_0 = arg_21_0.info_slate_widgets[iter_21_0]
 		local var_21_1 = var_21_0.scenegraph_id
@@ -1021,7 +1021,7 @@ function TutorialUI.add_info_slate_entries(arg_21_0)
 	end
 end
 
-function TutorialUI.queue_info_slate_entry(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+TutorialUI.queue_info_slate_entry = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 	local var_22_0 = arg_22_0.entry_id_count + 1
 
 	arg_22_0.queued_info_slate_entries[arg_22_1][var_22_0] = {
@@ -1038,7 +1038,7 @@ function TutorialUI.queue_info_slate_entry(arg_22_0, arg_22_1, arg_22_2, arg_22_
 	return var_22_0
 end
 
-function TutorialUI.clear_tutorials(arg_23_0)
+TutorialUI.clear_tutorials = function (arg_23_0)
 	arg_23_0.queued_info_slate_entries.tutorial = {}
 
 	local var_23_0 = arg_23_0.ui_animator
@@ -1051,7 +1051,7 @@ function TutorialUI.clear_tutorials(arg_23_0)
 	end
 end
 
-function TutorialUI.complete_mission_info_slate(arg_24_0, arg_24_1, arg_24_2)
+TutorialUI.complete_mission_info_slate = function (arg_24_0, arg_24_1, arg_24_2)
 	if arg_24_1 == "side_mission" then
 		return
 	end
@@ -1069,7 +1069,7 @@ function TutorialUI.complete_mission_info_slate(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function TutorialUI.update_info_slate_entry_text(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+TutorialUI.update_info_slate_entry_text = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_0.queued_info_slate_entries[arg_25_1]
 
 	for iter_25_0, iter_25_1 in pairs(var_25_0) do
@@ -1097,7 +1097,7 @@ local var_0_9 = {
 	}
 }
 
-function TutorialUI.update_info_slate_entries(arg_26_0, arg_26_1, arg_26_2)
+TutorialUI.update_info_slate_entries = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0.ui_scenegraph
 	local var_26_1 = arg_26_0.ui_animator
 
@@ -1400,7 +1400,7 @@ function TutorialUI.update_info_slate_entries(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function TutorialUI._get_next_verified(arg_27_0, arg_27_1, arg_27_2)
+TutorialUI._get_next_verified = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = Managers.state.entity:system("tutorial_system")
 
 	while true do
@@ -1440,7 +1440,7 @@ function TutorialUI._get_next_verified(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function TutorialUI.info_slate_text_height(arg_28_0, arg_28_1, arg_28_2)
+TutorialUI.info_slate_text_height = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = table.clone(var_0_0.INFO_SLATE_ENTRY_SIZE)
 
 	var_28_0[1] = var_28_0[1] - 62
@@ -1457,11 +1457,11 @@ function TutorialUI.info_slate_text_height(arg_28_0, arg_28_1, arg_28_2)
 	return var_28_10 * RESOLUTION_LOOKUP.inv_scale * var_28_13 + var_28_12, var_28_13
 end
 
-function TutorialUI.play_sound(arg_29_0, arg_29_1)
+TutorialUI.play_sound = function (arg_29_0, arg_29_1)
 	WwiseWorld.trigger_event(arg_29_0.wwise_world, arg_29_1)
 end
 
-function TutorialUI.add_health_bar(arg_30_0, arg_30_1, arg_30_2)
+TutorialUI.add_health_bar = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = false
 
 	for iter_30_0 = 1, var_0_0.NUMBER_OF_HEALTH_BARS do
@@ -1506,7 +1506,7 @@ function TutorialUI.add_health_bar(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function TutorialUI.remove_health_bar(arg_31_0, arg_31_1)
+TutorialUI.remove_health_bar = function (arg_31_0, arg_31_1)
 	for iter_31_0 = 1, var_0_0.NUMBER_OF_HEALTH_BARS do
 		local var_31_0 = arg_31_0.health_bars[iter_31_0]
 
@@ -1518,7 +1518,7 @@ function TutorialUI.remove_health_bar(arg_31_0, arg_31_1)
 	end
 end
 
-function TutorialUI._get_health_bar_by_unit(arg_32_0, arg_32_1)
+TutorialUI._get_health_bar_by_unit = function (arg_32_0, arg_32_1)
 	for iter_32_0 = 1, var_0_0.NUMBER_OF_HEALTH_BARS do
 		local var_32_0 = arg_32_0.health_bars[iter_32_0]
 
@@ -1528,7 +1528,7 @@ function TutorialUI._get_health_bar_by_unit(arg_32_0, arg_32_1)
 	end
 end
 
-function TutorialUI.show_health_bar(arg_33_0, arg_33_1, arg_33_2)
+TutorialUI.show_health_bar = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0:_get_health_bar_by_unit(arg_33_1)
 
 	if var_33_0 then
@@ -1544,7 +1544,7 @@ function TutorialUI.show_health_bar(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function TutorialUI.update_health_bars(arg_34_0, arg_34_1, arg_34_2)
+TutorialUI.update_health_bars = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0:_get_player_first_person_extension()
 	local var_34_1 = var_34_0:current_position()
 	local var_34_2 = var_34_0:current_rotation()
@@ -1623,7 +1623,7 @@ function TutorialUI.update_health_bars(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function TutorialUI.set_visible(arg_35_0, arg_35_1)
+TutorialUI.set_visible = function (arg_35_0, arg_35_1)
 	arg_35_0._visible = arg_35_1
 
 	arg_35_0.tutorial_tooltip_ui:set_visible(arg_35_1)

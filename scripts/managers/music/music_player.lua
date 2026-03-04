@@ -10,7 +10,7 @@ end
 
 MusicPlayer = class(MusicPlayer)
 
-function MusicPlayer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+MusicPlayer.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
 	arg_2_0._wwise_world = arg_2_1
 	arg_2_0._start_event = arg_2_2
 	arg_2_0._stop_switch = arg_2_3
@@ -26,16 +26,16 @@ function MusicPlayer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, 
 	var_0_0(arg_2_0._name, "init")
 end
 
-function MusicPlayer.name(arg_3_0)
+MusicPlayer.name = function (arg_3_0)
 	return arg_3_0._name
 end
 
-function MusicPlayer.set_events(arg_4_0, arg_4_1, arg_4_2)
+MusicPlayer.set_events = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._start_event = arg_4_1
 	arg_4_0._stop_event = arg_4_2
 end
 
-function MusicPlayer._should_play(arg_5_0, arg_5_1)
+MusicPlayer._should_play = function (arg_5_0, arg_5_1)
 	if not arg_5_0._enabled then
 		return false
 	end
@@ -55,30 +55,30 @@ function MusicPlayer._should_play(arg_5_0, arg_5_1)
 	return true
 end
 
-function MusicPlayer.set_enabled(arg_6_0, arg_6_1)
+MusicPlayer.set_enabled = function (arg_6_0, arg_6_1)
 	var_0_0(arg_6_0._name, "set_enabled", arg_6_1)
 
 	arg_6_0._enabled = arg_6_1
 end
 
-function MusicPlayer.is_playing(arg_7_0)
+MusicPlayer.is_playing = function (arg_7_0)
 	return arg_7_0._playing and not table.is_empty(arg_7_0._old_music)
 end
 
-function MusicPlayer.set_group_state(arg_8_0, arg_8_1, arg_8_2)
+MusicPlayer.set_group_state = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._playing then
 		arg_8_0._playing:set_group_state(arg_8_1, arg_8_2)
 	end
 end
 
-function MusicPlayer.post_trigger(arg_9_0, arg_9_1)
+MusicPlayer.post_trigger = function (arg_9_0, arg_9_1)
 	if arg_9_0._playing then
 		var_0_0(arg_9_0._name, "post_trigger", arg_9_1)
 		arg_9_0._playing:post_trigger(arg_9_1)
 	end
 end
 
-function MusicPlayer.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+MusicPlayer.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0:_should_play(arg_10_1)
 
 	if not arg_10_0._playing and var_10_0 then
@@ -133,7 +133,7 @@ function MusicPlayer.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-function MusicPlayer.destroy(arg_11_0)
+MusicPlayer.destroy = function (arg_11_0)
 	var_0_0(arg_11_0._name, "destroy")
 
 	if arg_11_0._playing then
@@ -151,6 +151,6 @@ function MusicPlayer.destroy(arg_11_0)
 	arg_11_0._old_music = nil
 end
 
-function MusicPlayer.event_match(arg_12_0, arg_12_1, arg_12_2)
+MusicPlayer.event_match = function (arg_12_0, arg_12_1, arg_12_2)
 	return arg_12_0._start_event == arg_12_1 and arg_12_0._stop_event == arg_12_2
 end

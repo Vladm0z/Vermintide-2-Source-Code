@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hub_conversations.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nfl_debrief_bell_01",
 		name = "nfl_debrief_bell_01",

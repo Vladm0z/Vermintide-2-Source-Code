@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_game_play_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pwe_ability_activate_shade_non_drunk",
 		name = "pwe_ability_activate_shade_non_drunk",

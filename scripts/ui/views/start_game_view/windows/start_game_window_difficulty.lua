@@ -11,7 +11,7 @@ local var_0_6 = 1
 StartGameWindowDifficulty = class(StartGameWindowDifficulty)
 StartGameWindowDifficulty.NAME = "StartGameWindowDifficulty"
 
-function StartGameWindowDifficulty.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDifficulty.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowDifficulty")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -42,7 +42,7 @@ function StartGameWindowDifficulty.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_input_description("select_difficulty")
 end
 
-function StartGameWindowDifficulty.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowDifficulty.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -73,7 +73,7 @@ function StartGameWindowDifficulty.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StartGameWindowDifficulty._setup_difficulties(arg_3_0)
+StartGameWindowDifficulty._setup_difficulties = function (arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = {}
 	local var_3_2 = arg_3_0:_get_difficulty_options()
@@ -158,11 +158,11 @@ function StartGameWindowDifficulty._setup_difficulties(arg_3_0)
 	arg_3_0._difficulty_widgets = var_3_0
 end
 
-function StartGameWindowDifficulty._get_difficulty_options(arg_4_0)
+StartGameWindowDifficulty._get_difficulty_options = function (arg_4_0)
 	return Managers.state.difficulty:get_default_difficulties()
 end
 
-function StartGameWindowDifficulty.on_exit(arg_5_0, arg_5_1)
+StartGameWindowDifficulty.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowDifficulty")
 
 	arg_5_0.ui_animator = nil
@@ -172,18 +172,18 @@ function StartGameWindowDifficulty.on_exit(arg_5_0, arg_5_1)
 	arg_5_0._has_exited = true
 end
 
-function StartGameWindowDifficulty.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowDifficulty.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 	arg_6_0:_update_difficulty_lock()
 	arg_6_0:draw(arg_6_1)
 end
 
-function StartGameWindowDifficulty.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDifficulty.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowDifficulty._update_animations(arg_8_0, arg_8_1)
+StartGameWindowDifficulty._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.ui_animator
 
 	var_8_0:update(arg_8_1)
@@ -207,7 +207,7 @@ function StartGameWindowDifficulty._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowDifficulty._is_button_pressed(arg_9_0, arg_9_1)
+StartGameWindowDifficulty._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_pressed then
@@ -217,7 +217,7 @@ function StartGameWindowDifficulty._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function StartGameWindowDifficulty._is_button_released(arg_10_0, arg_10_1)
+StartGameWindowDifficulty._is_button_released = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -227,13 +227,13 @@ function StartGameWindowDifficulty._is_button_released(arg_10_0, arg_10_1)
 	end
 end
 
-function StartGameWindowDifficulty._is_button_hover_enter(arg_11_0, arg_11_1)
+StartGameWindowDifficulty._is_button_hover_enter = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	return var_11_0.on_hover_enter and not var_11_0.is_selected
 end
 
-function StartGameWindowDifficulty._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowDifficulty._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._difficulty_widgets
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -290,7 +290,7 @@ function StartGameWindowDifficulty._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function StartGameWindowDifficulty._set_selected_difficulty_option(arg_13_0, arg_13_1)
+StartGameWindowDifficulty._set_selected_difficulty_option = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._difficulty_widgets
 
 	for iter_13_0 = 1, #var_13_0 do
@@ -301,7 +301,7 @@ function StartGameWindowDifficulty._set_selected_difficulty_option(arg_13_0, arg
 	end
 end
 
-function StartGameWindowDifficulty._set_info_window(arg_14_0, arg_14_1)
+StartGameWindowDifficulty._set_info_window = function (arg_14_0, arg_14_1)
 	local var_14_0 = DifficultySettings[arg_14_1]
 	local var_14_1 = var_14_0.description
 	local var_14_2 = var_14_0.display_name
@@ -316,7 +316,7 @@ function StartGameWindowDifficulty._set_info_window(arg_14_0, arg_14_1)
 	var_14_6.difficulty_chest_info.content.text = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_14_5)
 end
 
-function StartGameWindowDifficulty._update_difficulty_lock(arg_15_0)
+StartGameWindowDifficulty._update_difficulty_lock = function (arg_15_0)
 	local var_15_0 = arg_15_0._widgets_by_name
 	local var_15_1 = var_15_0.select_button
 	local var_15_2 = var_15_0.buy_button
@@ -396,7 +396,7 @@ function StartGameWindowDifficulty._update_difficulty_lock(arg_15_0)
 	end
 end
 
-function StartGameWindowDifficulty._update_selected_difficulty_option(arg_16_0, arg_16_1)
+StartGameWindowDifficulty._update_selected_difficulty_option = function (arg_16_0, arg_16_1)
 	arg_16_1 = arg_16_1 or Managers.state.difficulty:get_difficulty()
 
 	if arg_16_1 ~= arg_16_0._selected_difficulty_key then
@@ -408,7 +408,7 @@ function StartGameWindowDifficulty._update_selected_difficulty_option(arg_16_0, 
 	end
 end
 
-function StartGameWindowDifficulty.draw(arg_17_0, arg_17_1)
+StartGameWindowDifficulty.draw = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.ui_renderer
 	local var_17_1 = arg_17_0.ui_scenegraph
 	local var_17_2 = arg_17_0.parent:window_input_service()
@@ -426,11 +426,11 @@ function StartGameWindowDifficulty.draw(arg_17_0, arg_17_1)
 	UIRenderer.end_pass(var_17_0)
 end
 
-function StartGameWindowDifficulty._play_sound(arg_18_0, arg_18_1)
+StartGameWindowDifficulty._play_sound = function (arg_18_0, arg_18_1)
 	arg_18_0.parent:play_sound(arg_18_1)
 end
 
-function StartGameWindowDifficulty._animate_difficulty_option_button(arg_19_0, arg_19_1, arg_19_2)
+StartGameWindowDifficulty._animate_difficulty_option_button = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_1.content
 	local var_19_1 = arg_19_1.style
 	local var_19_2 = var_19_0.button_hotspot
@@ -517,7 +517,7 @@ function StartGameWindowDifficulty._animate_difficulty_option_button(arg_19_0, a
 	var_19_2.selection_progress = var_19_9
 end
 
-function StartGameWindowDifficulty._show_storepage(arg_20_0, arg_20_1)
+StartGameWindowDifficulty._show_storepage = function (arg_20_0, arg_20_1)
 	local var_20_0 = PLATFORM
 
 	if IS_WINDOWS and rawget(_G, "Steam") then

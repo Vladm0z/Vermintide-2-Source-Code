@@ -9,7 +9,7 @@ local var_0_4 = var_0_0.animation_definitions
 StartGameWindowTwitchGameSettings = class(StartGameWindowTwitchGameSettings)
 StartGameWindowTwitchGameSettings.NAME = "StartGameWindowTwitchGameSettings"
 
-function StartGameWindowTwitchGameSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowTwitchGameSettings.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowTwitchGameSettings")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -40,7 +40,7 @@ function StartGameWindowTwitchGameSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_update_difficulty_option()
 end
 
-function StartGameWindowTwitchGameSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowTwitchGameSettings.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_3)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -99,7 +99,7 @@ function StartGameWindowTwitchGameSettings.create_ui_elements(arg_2_0, arg_2_1, 
 	UIWidget.animate(var_2_10, var_2_11)
 end
 
-function StartGameWindowTwitchGameSettings._set_additional_options_enabled_state(arg_3_0, arg_3_1)
+StartGameWindowTwitchGameSettings._set_additional_options_enabled_state = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._widgets_by_name
 
 	var_3_0.additional_option.content.button_hotspot.disable_button = not arg_3_1
@@ -109,13 +109,13 @@ function StartGameWindowTwitchGameSettings._set_additional_options_enabled_state
 	arg_3_0._additional_option_enabled = arg_3_1
 end
 
-function StartGameWindowTwitchGameSettings.on_exit(arg_4_0, arg_4_1)
+StartGameWindowTwitchGameSettings.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowTwitchGameSettings")
 
 	arg_4_0.ui_animator = nil
 end
 
-function StartGameWindowTwitchGameSettings.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowTwitchGameSettings.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_mission_selection()
 
 	if arg_5_0._additional_option_enabled then
@@ -128,11 +128,11 @@ function StartGameWindowTwitchGameSettings.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-function StartGameWindowTwitchGameSettings.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowTwitchGameSettings.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function StartGameWindowTwitchGameSettings._update_animations(arg_7_0, arg_7_1)
+StartGameWindowTwitchGameSettings._update_animations = function (arg_7_0, arg_7_1)
 	arg_7_0:_update_game_options_hover_effect()
 
 	local var_7_0 = arg_7_0._ui_animations
@@ -148,7 +148,7 @@ function StartGameWindowTwitchGameSettings._update_animations(arg_7_0, arg_7_1)
 	arg_7_0.ui_animator:update(arg_7_1)
 end
 
-function StartGameWindowTwitchGameSettings._is_button_released(arg_8_0, arg_8_1)
+StartGameWindowTwitchGameSettings._is_button_released = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content.button_hotspot
 
 	if var_8_0.on_release then
@@ -158,15 +158,15 @@ function StartGameWindowTwitchGameSettings._is_button_released(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowTwitchGameSettings._is_button_hover_enter(arg_9_0, arg_9_1)
+StartGameWindowTwitchGameSettings._is_button_hover_enter = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowTwitchGameSettings._is_button_hover_exit(arg_10_0, arg_10_1)
+StartGameWindowTwitchGameSettings._is_button_hover_exit = function (arg_10_0, arg_10_1)
 	return arg_10_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowTwitchGameSettings._is_other_option_button_selected(arg_11_0, arg_11_1, arg_11_2)
+StartGameWindowTwitchGameSettings._is_other_option_button_selected = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0:_is_button_released(arg_11_1) then
 		local var_11_0 = not arg_11_2
 
@@ -182,7 +182,7 @@ function StartGameWindowTwitchGameSettings._is_other_option_button_selected(arg_
 	return nil
 end
 
-function StartGameWindowTwitchGameSettings._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowTwitchGameSettings._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 	local var_12_1 = arg_12_0._widgets_by_name
 
@@ -233,11 +233,11 @@ function StartGameWindowTwitchGameSettings._handle_input(arg_12_0, arg_12_1, arg
 	end
 end
 
-function StartGameWindowTwitchGameSettings._play_sound(arg_13_0, arg_13_1)
+StartGameWindowTwitchGameSettings._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0.parent:play_sound(arg_13_1)
 end
 
-function StartGameWindowTwitchGameSettings._update_game_options_hover_effect(arg_14_0)
+StartGameWindowTwitchGameSettings._update_game_options_hover_effect = function (arg_14_0)
 	local var_14_0 = arg_14_0._widgets_by_name
 	local var_14_1 = "game_option_"
 
@@ -252,7 +252,7 @@ function StartGameWindowTwitchGameSettings._update_game_options_hover_effect(arg
 	end
 end
 
-function StartGameWindowTwitchGameSettings._on_option_button_hover_enter(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowTwitchGameSettings._on_option_button_hover_enter = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._widgets_by_name["game_option_" .. arg_15_1]
 
 	arg_15_0:_create_style_animation_enter(var_15_0, 255, "glow", arg_15_1, arg_15_2)
@@ -260,7 +260,7 @@ function StartGameWindowTwitchGameSettings._on_option_button_hover_enter(arg_15_
 	arg_15_0:_create_style_animation_exit(var_15_0, 0, "button_hover_rect", arg_15_1, arg_15_2)
 end
 
-function StartGameWindowTwitchGameSettings._on_option_button_hover_exit(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowTwitchGameSettings._on_option_button_hover_exit = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._widgets_by_name["game_option_" .. arg_16_1]
 
 	arg_16_0:_create_style_animation_exit(var_16_0, 0, "glow", arg_16_1, arg_16_2)
@@ -268,7 +268,7 @@ function StartGameWindowTwitchGameSettings._on_option_button_hover_exit(arg_16_0
 	arg_16_0:_create_style_animation_enter(var_16_0, 30, "button_hover_rect", arg_16_1, arg_16_2)
 end
 
-function StartGameWindowTwitchGameSettings._update_additional_options(arg_17_0, arg_17_1)
+StartGameWindowTwitchGameSettings._update_additional_options = function (arg_17_0, arg_17_1)
 	local var_17_0 = true
 	local var_17_1 = true
 	local var_17_2 = false
@@ -305,7 +305,7 @@ function StartGameWindowTwitchGameSettings._update_additional_options(arg_17_0, 
 	end
 end
 
-function StartGameWindowTwitchGameSettings._update_difficulty_option(arg_18_0)
+StartGameWindowTwitchGameSettings._update_difficulty_option = function (arg_18_0)
 	local var_18_0 = arg_18_0.parent:get_difficulty_option()
 	local var_18_1 = Managers.twitch and Managers.twitch:is_connected()
 
@@ -328,7 +328,7 @@ function StartGameWindowTwitchGameSettings._update_difficulty_option(arg_18_0)
 	end
 end
 
-function StartGameWindowTwitchGameSettings._set_difficulty_option(arg_19_0, arg_19_1)
+StartGameWindowTwitchGameSettings._set_difficulty_option = function (arg_19_0, arg_19_1)
 	local var_19_0 = DifficultySettings[arg_19_1]
 	local var_19_1 = var_19_0 and var_19_0.display_name
 	local var_19_2 = var_19_0 and var_19_0.display_image
@@ -340,7 +340,7 @@ function StartGameWindowTwitchGameSettings._set_difficulty_option(arg_19_0, arg_
 	var_19_4.game_option_2.content.icon_frame = var_19_3
 end
 
-function StartGameWindowTwitchGameSettings._update_mission_selection(arg_20_0)
+StartGameWindowTwitchGameSettings._update_mission_selection = function (arg_20_0)
 	local var_20_0 = arg_20_0.parent:get_selected_level_id()
 
 	if not var_20_0 or var_20_0 ~= arg_20_0._selected_level_id then
@@ -352,7 +352,7 @@ function StartGameWindowTwitchGameSettings._update_mission_selection(arg_20_0)
 	arg_20_0._widgets_by_name.game_option_2.content.button_hotspot.disable_button = var_20_0 == nil
 end
 
-function StartGameWindowTwitchGameSettings._set_selected_level(arg_21_0, arg_21_1)
+StartGameWindowTwitchGameSettings._set_selected_level = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name.game_option_1
 	local var_21_1 = "n/a"
 
@@ -379,7 +379,7 @@ function StartGameWindowTwitchGameSettings._set_selected_level(arg_21_0, arg_21_
 	var_21_0.content.option_text = var_21_1
 end
 
-function StartGameWindowTwitchGameSettings.draw(arg_22_0, arg_22_1)
+StartGameWindowTwitchGameSettings.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_scenegraph
 	local var_22_2 = arg_22_0.parent:window_input_service()
@@ -405,11 +405,11 @@ function StartGameWindowTwitchGameSettings.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_0)
 end
 
-function StartGameWindowTwitchGameSettings._play_sound(arg_23_0, arg_23_1)
+StartGameWindowTwitchGameSettings._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.parent:play_sound(arg_23_1)
 end
 
-function StartGameWindowTwitchGameSettings._create_style_animation_enter(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+StartGameWindowTwitchGameSettings._create_style_animation_enter = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_1.style[arg_24_3]
 
 	if not var_24_0 then
@@ -428,7 +428,7 @@ function StartGameWindowTwitchGameSettings._create_style_animation_enter(arg_24_
 	end
 end
 
-function StartGameWindowTwitchGameSettings._create_style_animation_exit(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+StartGameWindowTwitchGameSettings._create_style_animation_exit = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = arg_25_1.style[arg_25_3]
 
 	if not var_25_0 then
@@ -447,10 +447,10 @@ function StartGameWindowTwitchGameSettings._create_style_animation_exit(arg_25_0
 	end
 end
 
-function StartGameWindowTwitchGameSettings._animate_pulse(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+StartGameWindowTwitchGameSettings._animate_pulse = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5))
 end
 
-function StartGameWindowTwitchGameSettings._animate_element_by_time(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+StartGameWindowTwitchGameSettings._animate_element_by_time = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, math.ease_out_quad))
 end

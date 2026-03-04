@@ -6,7 +6,7 @@ YAW_SPEED = 480
 CameraTweaks = CameraTweaks or {}
 CameraTweaks.zoom = {
 	scale = 0.1,
-	interpolation_function = function(arg_1_0, arg_1_1, arg_1_2)
+	interpolation_function = function (arg_1_0, arg_1_1, arg_1_2)
 		return math.lerp(arg_1_0, arg_1_1, arg_1_2 * 7)
 	end
 }
@@ -244,7 +244,7 @@ CameraSettings.first_person = {
 								x = 0,
 								y = -5
 							},
-							scale_function = function(arg_2_0)
+							scale_function = function (arg_2_0)
 								return arg_2_0
 							end,
 							node_transitions = {
@@ -547,7 +547,7 @@ CameraSettings.player_dead = {
 								x = 0,
 								y = -2
 							},
-							scale_function = function(arg_3_0)
+							scale_function = function (arg_3_0)
 								return arg_3_0
 							end
 						},

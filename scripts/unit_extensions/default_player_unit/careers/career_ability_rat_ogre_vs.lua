@@ -18,7 +18,7 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 	return Vector3.normalize(var_1_5), var_1_2, var_1_3
 end
 
-function CareerAbilityRatOgreJump.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CareerAbilityRatOgreJump.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._owner_unit = arg_2_2
 	arg_2_0._world = arg_2_1.world
 	arg_2_0._wwise_world = Managers.world:wwise_world(arg_2_0._world)
@@ -39,7 +39,7 @@ function CareerAbilityRatOgreJump.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._buff_data = {}
 end
 
-function CareerAbilityRatOgreJump.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+CareerAbilityRatOgreJump.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._first_person_extension = ScriptUnit.has_extension(arg_3_2, "first_person_system")
 	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
 	arg_3_0._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
@@ -61,7 +61,7 @@ function CareerAbilityRatOgreJump.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function CareerAbilityRatOgreJump.was_triggered(arg_4_0)
+CareerAbilityRatOgreJump.was_triggered = function (arg_4_0)
 	local var_4_0 = arg_4_0._input_extension
 
 	if not var_4_0 then
@@ -83,7 +83,7 @@ function CareerAbilityRatOgreJump.was_triggered(arg_4_0)
 	return false
 end
 
-function CareerAbilityRatOgreJump._ability_available(arg_5_0)
+CareerAbilityRatOgreJump._ability_available = function (arg_5_0)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0._owner_unit, "ghost_mode_system"):is_in_ghost_mode()
 	local var_5_1 = arg_5_0._career_extension
 	local var_5_2 = arg_5_0._status_extension
@@ -95,14 +95,14 @@ function CareerAbilityRatOgreJump._ability_available(arg_5_0)
 	return not var_5_0 and var_5_4 and not var_5_5 and var_5_6
 end
 
-function CareerAbilityRatOgreJump.destroy(arg_6_0)
+CareerAbilityRatOgreJump.destroy = function (arg_6_0)
 	if arg_6_0._local_player then
 		arg_6_0._first_person_extension:play_hud_sound_event("Stop_vs_rat_ogre_jump_charge_vce_1p")
 		arg_6_0._first_person_extension:play_remote_unit_sound_event("Stop_vs_rat_ogre_jump_charge_vce_3p", arg_6_0._owner_unit, 0)
 	end
 end
 
-function CareerAbilityRatOgreJump._start(arg_7_0)
+CareerAbilityRatOgreJump._start = function (arg_7_0)
 	local var_7_0, var_7_1, var_7_2 = CharacterStateHelper.get_item_data_and_weapon_extensions(arg_7_0._inventory_extension)
 
 	if var_7_1 then
@@ -128,7 +128,7 @@ function CareerAbilityRatOgreJump._start(arg_7_0)
 	CharacterStateHelper.play_animation_event(arg_7_0._owner_unit, "attack_jump")
 end
 
-function CareerAbilityRatOgreJump._add_ability_buffs(arg_8_0, arg_8_1)
+CareerAbilityRatOgreJump._add_ability_buffs = function (arg_8_0, arg_8_1)
 	for iter_8_0 = 1, #arg_8_1 do
 		local var_8_0 = arg_8_1[iter_8_0]
 		local var_8_1 = var_8_0 and var_8_0.buff_template
@@ -148,7 +148,7 @@ function CareerAbilityRatOgreJump._add_ability_buffs(arg_8_0, arg_8_1)
 	end
 end
 
-function CareerAbilityRatOgreJump._remove_ability_buffs(arg_9_0)
+CareerAbilityRatOgreJump._remove_ability_buffs = function (arg_9_0)
 	if not arg_9_0._buff_data then
 		return
 	end
@@ -161,7 +161,7 @@ function CareerAbilityRatOgreJump._remove_ability_buffs(arg_9_0)
 	end
 end
 
-function CareerAbilityRatOgreJump._update_priming(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+CareerAbilityRatOgreJump._update_priming = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	if arg_10_5 > arg_10_0._priming_charged and not arg_10_0._done_priming then
 		arg_10_0._done_priming = true
 
@@ -175,7 +175,7 @@ function CareerAbilityRatOgreJump._update_priming(arg_10_0, arg_10_1, arg_10_2, 
 	end
 end
 
-function CareerAbilityRatOgreJump.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+CareerAbilityRatOgreJump.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0._input_extension
 
 	if not var_11_0 then
@@ -246,7 +246,7 @@ function CareerAbilityRatOgreJump.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3,
 	end
 end
 
-function CareerAbilityRatOgreJump.stop(arg_12_0, arg_12_1)
+CareerAbilityRatOgreJump.stop = function (arg_12_0, arg_12_1)
 	if arg_12_0._is_priming then
 		arg_12_0:_stop_priming()
 	end
@@ -268,14 +268,14 @@ function CareerAbilityRatOgreJump.stop(arg_12_0, arg_12_1)
 	end
 end
 
-function CareerAbilityRatOgreJump._start_calculate_leap_position(arg_13_0)
+CareerAbilityRatOgreJump._start_calculate_leap_position = function (arg_13_0)
 	arg_13_0._last_valid_landing_position = nil
 	arg_13_0._done_priming = false
 	arg_13_0._is_priming = true
 	arg_13_0._ability_data.is_priming = true
 end
 
-function CareerAbilityRatOgreJump._destroy_indicator_unit(arg_14_0)
+CareerAbilityRatOgreJump._destroy_indicator_unit = function (arg_14_0)
 	if Unit.alive(arg_14_0._indicator_unit) then
 		World.destroy_unit(arg_14_0._world, arg_14_0._indicator_unit)
 
@@ -283,7 +283,7 @@ function CareerAbilityRatOgreJump._destroy_indicator_unit(arg_14_0)
 	end
 end
 
-function CareerAbilityRatOgreJump._handel_hit_indicator(arg_15_0, arg_15_1)
+CareerAbilityRatOgreJump._handel_hit_indicator = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._indicator_fx_unit_name
 
 	if arg_15_1 then
@@ -301,7 +301,7 @@ function CareerAbilityRatOgreJump._handel_hit_indicator(arg_15_0, arg_15_1)
 	end
 end
 
-function CareerAbilityRatOgreJump._calculate_leap_position(arg_16_0)
+CareerAbilityRatOgreJump._calculate_leap_position = function (arg_16_0)
 	local var_16_0 = arg_16_0._world
 	local var_16_1 = World.get_data(var_16_0, "physics_world")
 	local var_16_2 = arg_16_0._first_person_extension
@@ -329,7 +329,7 @@ function CareerAbilityRatOgreJump._calculate_leap_position(arg_16_0)
 	return var_16_17, var_16_18, var_16_19
 end
 
-function CareerAbilityRatOgreJump._stop_priming(arg_17_0)
+CareerAbilityRatOgreJump._stop_priming = function (arg_17_0)
 	arg_17_0:_destroy_indicator_unit()
 	arg_17_0:_set_priming_progress(0)
 
@@ -347,7 +347,7 @@ function CareerAbilityRatOgreJump._stop_priming(arg_17_0)
 	arg_17_0.stored_valid_pos = false
 end
 
-function CareerAbilityRatOgreJump._do_common_stuff(arg_18_0)
+CareerAbilityRatOgreJump._do_common_stuff = function (arg_18_0)
 	local var_18_0 = arg_18_0._owner_unit
 	local var_18_1 = arg_18_0._is_server
 	local var_18_2 = arg_18_0._local_player
@@ -364,7 +364,7 @@ function CareerAbilityRatOgreJump._do_common_stuff(arg_18_0)
 	var_18_4:start_activated_ability_cooldown(arg_18_0._ability_id)
 end
 
-function CareerAbilityRatOgreJump._do_leap(arg_19_0)
+CareerAbilityRatOgreJump._do_leap = function (arg_19_0)
 	local var_19_0 = arg_19_0._last_valid_landing_position:unbox()
 
 	arg_19_0:_stop_priming()
@@ -413,7 +413,7 @@ function CareerAbilityRatOgreJump._do_leap(arg_19_0)
 		},
 		movement_settings = var_19_11,
 		leap_events = {
-			start = function(arg_20_0, arg_20_1)
+			start = function (arg_20_0, arg_20_1)
 				arg_20_0._start_leap_buff_id = Managers.state.entity:system("buff_system"):add_buff_synced(arg_20_1, "vs_rat_ogre_start_leap_stagger_immune", BuffSyncType.ClientAndServer, nil, Network.peer_id())
 
 				if not arg_20_0._screenspace_effect_id then
@@ -428,7 +428,7 @@ function CareerAbilityRatOgreJump._do_leap(arg_19_0)
 					ScriptWorld.set_material_variable_for_particles(var_19_1, arg_20_0._screenspace_effect_id, "distort_loop", "distortion_strength", var_20_2)
 				end
 			end,
-			finished = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			finished = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				local var_21_0 = Managers.state.entity:system("buff_system")
 
 				var_21_0:remove_buff_synced(arg_21_1, arg_21_0._start_leap_buff_id)
@@ -468,11 +468,11 @@ function CareerAbilityRatOgreJump._do_leap(arg_19_0)
 	arg_19_0._passive_ability_extension:start_leap(var_19_5, var_19_0, var_19_9)
 end
 
-function CareerAbilityRatOgreJump.stop_passive_ability(arg_22_0)
+CareerAbilityRatOgreJump.stop_passive_ability = function (arg_22_0)
 	arg_22_0._passive_ability_extension:stop_leap()
 end
 
-function CareerAbilityRatOgreJump._play_vo(arg_23_0)
+CareerAbilityRatOgreJump._play_vo = function (arg_23_0)
 	local var_23_0 = arg_23_0._owner_unit
 	local var_23_1 = ScriptUnit.extension_input(var_23_0, "dialogue_system")
 	local var_23_2 = FrameTable.alloc_table()
@@ -485,7 +485,7 @@ local var_0_6 = 3
 local var_0_7 = 0.0001
 local var_0_8 = 10
 
-function CareerAbilityRatOgreJump.get_landing_position(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+CareerAbilityRatOgreJump.get_landing_position = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = var_0_6 / var_0_5
 	local var_24_1 = arg_24_3
 	local var_24_2 = Unit.mover(arg_24_2)
@@ -556,6 +556,6 @@ function CareerAbilityRatOgreJump.get_landing_position(arg_24_0, arg_24_1, arg_2
 	return false, var_24_1
 end
 
-function CareerAbilityRatOgreJump._set_priming_progress(arg_25_0, arg_25_1)
+CareerAbilityRatOgreJump._set_priming_progress = function (arg_25_0, arg_25_1)
 	arg_25_0._career_extension:get_activated_ability_data(arg_25_0._ability_id).priming_progress = arg_25_1
 end

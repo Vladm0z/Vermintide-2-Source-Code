@@ -10,7 +10,7 @@ local var_0_5 = 1
 HeroWindowOptions = class(HeroWindowOptions)
 HeroWindowOptions.NAME = "HeroWindowOptions"
 
-function HeroWindowOptions.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowOptions.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowOptions")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -59,7 +59,7 @@ function HeroWindowOptions.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-function HeroWindowOptions.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowOptions.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_2_0 = {}
@@ -95,13 +95,13 @@ function HeroWindowOptions.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function HeroWindowOptions.on_exit(arg_3_0, arg_3_1)
+HeroWindowOptions.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowOptions")
 
 	arg_3_0.ui_animator = nil
 end
 
-function HeroWindowOptions.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowOptions.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_4 then
 		var_0_4 = false
 
@@ -116,11 +116,11 @@ function HeroWindowOptions.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HeroWindowOptions.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowOptions.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
 end
 
-function HeroWindowOptions._update_animations(arg_6_0, arg_6_1)
+HeroWindowOptions._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0:_update_game_options_hover_effect(arg_6_1)
 
 	local var_6_0 = arg_6_0._ui_animations
@@ -146,7 +146,7 @@ function HeroWindowOptions._update_animations(arg_6_0, arg_6_1)
 	end
 end
 
-function HeroWindowOptions._is_button_pressed(arg_7_0, arg_7_1)
+HeroWindowOptions._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -158,7 +158,7 @@ function HeroWindowOptions._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowOptions._is_stepper_button_pressed(arg_8_0, arg_8_1)
+HeroWindowOptions._is_stepper_button_pressed = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content
 	local var_8_1 = var_8_0.button_hotspot_left
 	local var_8_2 = var_8_0.button_hotspot_right
@@ -174,23 +174,23 @@ function HeroWindowOptions._is_stepper_button_pressed(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowOptions._is_button_hover_enter(arg_9_0, arg_9_1)
+HeroWindowOptions._is_button_hover_enter = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	return var_9_0.on_hover_enter and not var_9_0.is_selected
 end
 
-function HeroWindowOptions._is_button_hover_exit(arg_10_0, arg_10_1)
+HeroWindowOptions._is_button_hover_exit = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	return var_10_0.on_hover_exit and not var_10_0.is_selected
 end
 
-function HeroWindowOptions._is_button_selected(arg_11_0, arg_11_1)
+HeroWindowOptions._is_button_selected = function (arg_11_0, arg_11_1)
 	return arg_11_1.content.button_hotspot.is_selected
 end
 
-function HeroWindowOptions._handle_input(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowOptions._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._widgets_by_name
 	local var_12_1 = Managers.input:is_device_active("gamepad")
 	local var_12_2 = arg_12_0.parent:window_input_service()
@@ -217,7 +217,7 @@ function HeroWindowOptions._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function HeroWindowOptions._update_game_options_hover_effect(arg_13_0, arg_13_1)
+HeroWindowOptions._update_game_options_hover_effect = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._widgets_by_name
 	local var_13_1 = "game_option_"
 
@@ -238,7 +238,7 @@ function HeroWindowOptions._update_game_options_hover_effect(arg_13_0, arg_13_1)
 	end
 end
 
-function HeroWindowOptions._set_selected_option(arg_14_0, arg_14_1)
+HeroWindowOptions._set_selected_option = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._widgets_by_name
 	local var_14_1 = "game_option_"
 
@@ -247,7 +247,7 @@ function HeroWindowOptions._set_selected_option(arg_14_0, arg_14_1)
 	end
 end
 
-function HeroWindowOptions._update_selected_option(arg_15_0)
+HeroWindowOptions._update_selected_option = function (arg_15_0)
 	local var_15_0 = arg_15_0.parent:get_selected_game_mode_index()
 
 	if var_15_0 ~= arg_15_0._selected_index then
@@ -257,7 +257,7 @@ function HeroWindowOptions._update_selected_option(arg_15_0)
 	end
 end
 
-function HeroWindowOptions._update_loadout_sync(arg_16_0)
+HeroWindowOptions._update_loadout_sync = function (arg_16_0)
 	local var_16_0 = arg_16_0.parent.loadout_sync_id
 
 	if var_16_0 ~= arg_16_0._loadout_sync_id or arg_16_0:_has_hero_level_changed() then
@@ -269,7 +269,7 @@ function HeroWindowOptions._update_loadout_sync(arg_16_0)
 	end
 end
 
-function HeroWindowOptions._has_hero_level_changed(arg_17_0)
+HeroWindowOptions._has_hero_level_changed = function (arg_17_0)
 	local var_17_0 = ExperienceSettings.get_experience(arg_17_0.hero_name)
 
 	if ExperienceSettings.get_level(var_17_0) ~= arg_17_0._hero_level then
@@ -277,7 +277,7 @@ function HeroWindowOptions._has_hero_level_changed(arg_17_0)
 	end
 end
 
-function HeroWindowOptions._update_experience_presentation(arg_18_0)
+HeroWindowOptions._update_experience_presentation = function (arg_18_0)
 	local var_18_0 = arg_18_0._widgets_by_name
 	local var_18_1 = ExperienceSettings.get_experience(arg_18_0.hero_name)
 	local var_18_2, var_18_3 = ExperienceSettings.get_level(var_18_1)
@@ -304,7 +304,7 @@ function HeroWindowOptions._update_experience_presentation(arg_18_0)
 	arg_18_0._hero_level = var_18_2
 end
 
-function HeroWindowOptions._calculate_power_level(arg_19_0)
+HeroWindowOptions._calculate_power_level = function (arg_19_0)
 	local var_19_0 = arg_19_0.hero_name
 	local var_19_1 = arg_19_0.career_index
 	local var_19_2 = FindProfileIndex(var_19_0)
@@ -326,7 +326,7 @@ end
 local var_0_6 = Colors.get_color_table_with_alpha("white", 255)
 local var_0_7 = Colors.get_color_table_with_alpha("font_title", 255)
 
-function HeroWindowOptions._update_hero_power_effect(arg_20_0, arg_20_1)
+HeroWindowOptions._update_hero_power_effect = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._hero_power_effect_time
 
 	if var_20_0 then
@@ -352,7 +352,7 @@ function HeroWindowOptions._update_hero_power_effect(arg_20_0, arg_20_1)
 	end
 end
 
-function HeroWindowOptions._update_hero_portrait_frame(arg_21_0)
+HeroWindowOptions._update_hero_portrait_frame = function (arg_21_0)
 	local var_21_0 = arg_21_0.career_index
 	local var_21_1 = arg_21_0.profile_index
 	local var_21_2 = SPProfiles[var_21_1]
@@ -371,7 +371,7 @@ function HeroWindowOptions._update_hero_portrait_frame(arg_21_0)
 	arg_21_0._portrait_widget = arg_21_0:_create_portrait_frame_widget(var_21_9, var_21_4, var_21_8)
 end
 
-function HeroWindowOptions.draw(arg_22_0, arg_22_1)
+HeroWindowOptions.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_scenegraph
 	local var_22_2 = arg_22_0.parent:window_input_service()
@@ -397,11 +397,11 @@ function HeroWindowOptions.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_0)
 end
 
-function HeroWindowOptions._play_sound(arg_23_0, arg_23_1)
+HeroWindowOptions._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.parent:play_sound(arg_23_1)
 end
 
-function HeroWindowOptions._create_portrait_frame_widget(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+HeroWindowOptions._create_portrait_frame_widget = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = UIWidgets.create_portrait_frame("portrait_root", arg_24_1, arg_24_3, 1, nil, arg_24_2)
 	local var_24_1 = UIWidget.init(var_24_0, arg_24_0.ui_renderer)
 
@@ -410,7 +410,7 @@ function HeroWindowOptions._create_portrait_frame_widget(arg_24_0, arg_24_1, arg
 	return var_24_1
 end
 
-function HeroWindowOptions._get_portrait_frame(arg_25_0)
+HeroWindowOptions._get_portrait_frame = function (arg_25_0)
 	local var_25_0 = arg_25_0.profile_index
 	local var_25_1 = arg_25_0.career_index
 	local var_25_2 = arg_25_0.hero_name
@@ -423,7 +423,7 @@ function HeroWindowOptions._get_portrait_frame(arg_25_0)
 	return var_25_4
 end
 
-function HeroWindowOptions._create_style_animation_enter(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+HeroWindowOptions._create_style_animation_enter = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	local var_26_0 = arg_26_0._ui_animations
 	local var_26_1 = "game_option_" .. arg_26_3
 	local var_26_2 = arg_26_1.style[arg_26_3]
@@ -439,7 +439,7 @@ function HeroWindowOptions._create_style_animation_enter(arg_26_0, arg_26_1, arg
 	end
 end
 
-function HeroWindowOptions._create_style_animation_exit(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+HeroWindowOptions._create_style_animation_exit = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
 	local var_27_0 = arg_27_0._ui_animations
 	local var_27_1 = "game_option_" .. arg_27_3
 	local var_27_2 = arg_27_1.style[arg_27_3]
@@ -455,15 +455,15 @@ function HeroWindowOptions._create_style_animation_exit(arg_27_0, arg_27_1, arg_
 	end
 end
 
-function HeroWindowOptions._animate_element_by_time(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+HeroWindowOptions._animate_element_by_time = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, math.ease_out_quad))
 end
 
-function HeroWindowOptions._animate_element_by_catmullrom(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8)
+HeroWindowOptions._animate_element_by_catmullrom = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8))
 end
 
-function HeroWindowOptions._sync_news(arg_30_0, arg_30_1, arg_30_2)
+HeroWindowOptions._sync_news = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._sync_delay
 
 	if var_30_0 then

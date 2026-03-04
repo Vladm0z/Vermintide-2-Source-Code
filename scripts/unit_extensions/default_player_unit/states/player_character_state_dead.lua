@@ -2,11 +2,11 @@
 
 PlayerCharacterStateDead = class(PlayerCharacterStateDead, PlayerCharacterState)
 
-function PlayerCharacterStateDead.init(arg_1_0, arg_1_1)
+PlayerCharacterStateDead.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "dead")
 end
 
-function PlayerCharacterStateDead.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateDead.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.despawn_time_start = arg_2_5
 	arg_2_0.despawned = false
 	arg_2_0.switched_to_observer_camera = false
@@ -43,12 +43,12 @@ function PlayerCharacterStateDead.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	arg_2_0.override_item_drop_direction = var_2_6 and Vector3Box(var_2_6) or nil
 end
 
-function PlayerCharacterStateDead.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateDead.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.override_item_drop_position = nil
 	arg_3_0.override_item_drop_direction = nil
 end
 
-function PlayerCharacterStateDead.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateDead.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_5 - arg_4_0.despawn_time_start
 	local var_4_1 = Managers.player:unit_owner(arg_4_1)
 	local var_4_2 = var_4_1 and not var_4_1:needs_despawn()

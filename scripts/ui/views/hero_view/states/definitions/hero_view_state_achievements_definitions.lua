@@ -1522,7 +1522,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "rect_masked",
 					style_id = "disabled_rect",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.button_hotspot.disable_button
 					end
 				},
@@ -1541,7 +1541,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -1549,7 +1549,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -1572,7 +1572,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.new
 					end
 				},
@@ -1580,7 +1580,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "locked",
 					style_id = "locked",
 					pass_type = "texture",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -1588,7 +1588,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "list_style",
 					pass_type = "list_pass",
 					content_id = "list_content",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.active
 					end,
 					passes = {
@@ -1596,7 +1596,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_8_0)
+							content_check_function = function (arg_8_0)
 								local var_8_0 = arg_8_0.button_hotspot
 
 								return not var_8_0.is_hover and not var_8_0.is_selected
@@ -1606,7 +1606,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text_hover",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_9_0)
+							content_check_function = function (arg_9_0)
 								local var_9_0 = arg_9_0.button_hotspot
 
 								return var_9_0.is_hover and not var_9_0.is_selected
@@ -1616,7 +1616,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text_selected",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_10_0)
+							content_check_function = function (arg_10_0)
 								return arg_10_0.button_hotspot.is_selected
 							end
 						},
@@ -1664,7 +1664,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "hover_glow",
 							style_id = "hover_glow",
 							pass_type = "texture",
-							content_check_function = function(arg_11_0)
+							content_check_function = function (arg_11_0)
 								local var_11_0 = arg_11_0.button_hotspot
 
 								return var_11_0.is_hover or var_11_0.is_selected
@@ -1679,7 +1679,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "rect_masked",
 							style_id = "disabled_rect",
 							pass_type = "texture",
-							content_check_function = function(arg_12_0)
+							content_check_function = function (arg_12_0)
 								return arg_12_0.button_hotspot.disable_button
 							end
 						},
@@ -1702,7 +1702,7 @@ local function var_0_34(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "new_texture",
 							style_id = "new_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_13_0)
+							content_check_function = function (arg_13_0)
 								return arg_13_0.new
 							end
 						}
@@ -2232,7 +2232,7 @@ local function var_0_37(arg_16_0)
 					pass_type = "texture",
 					style_id = "edge_glow_1",
 					texture_id = "edge_glow_1",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return not arg_17_0.disabled
 					end
 				},
@@ -2240,7 +2240,7 @@ local function var_0_37(arg_16_0)
 					pass_type = "texture",
 					style_id = "edge_glow_2",
 					texture_id = "edge_glow_2",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return not arg_18_0.disabled
 					end
 				},
@@ -2248,7 +2248,7 @@ local function var_0_37(arg_16_0)
 					pass_type = "texture",
 					style_id = "top_glow_1",
 					texture_id = "top_glow_1",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return not arg_19_0.disabled
 					end
 				},
@@ -2256,7 +2256,7 @@ local function var_0_37(arg_16_0)
 					pass_type = "texture",
 					style_id = "top_glow_2",
 					texture_id = "top_glow_2",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return not arg_20_0.disabled
 					end
 				},
@@ -2441,7 +2441,7 @@ local function var_0_38(arg_21_0)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.hotspot.is_hover
 					end
 				},
@@ -2537,7 +2537,7 @@ local function var_0_39(arg_23_0)
 					style_id = "glow",
 					texture_id = "glow",
 					pass_type = "texture_frame",
-					content_change_function = function(arg_24_0, arg_24_1)
+					content_change_function = function (arg_24_0, arg_24_1)
 						if arg_24_0.input_active then
 							arg_24_1.color[1] = 255
 						elseif arg_24_0.hotspot.is_hover then
@@ -2551,7 +2551,7 @@ local function var_0_39(arg_23_0)
 					style_id = "search_placeholder",
 					pass_type = "text",
 					text_id = "search_placeholder",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.search_query == "" and not arg_25_0.input_active
 					end
 				},
@@ -2559,7 +2559,7 @@ local function var_0_39(arg_23_0)
 					style_id = "search_query",
 					pass_type = "text",
 					text_id = "search_query",
-					content_change_function = function(arg_26_0, arg_26_1)
+					content_change_function = function (arg_26_0, arg_26_1)
 						if not arg_26_0.input_active then
 							arg_26_1.caret_color[1] = 0
 						else
@@ -2571,10 +2571,10 @@ local function var_0_39(arg_23_0)
 					style_id = "search_filters_hotspot",
 					pass_type = "hotspot",
 					content_id = "search_filters_hotspot",
-					content_check_function = function()
+					content_check_function = function ()
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function(arg_28_0, arg_28_1)
+					content_change_function = function (arg_28_0, arg_28_1)
 						local var_28_0 = arg_28_0.parent.filters_active
 
 						if var_28_0 ~= arg_28_0.filters_active then
@@ -2622,10 +2622,10 @@ local function var_0_39(arg_23_0)
 					style_id = "clear_icon",
 					texture_id = "clear_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return arg_29_0.search_query ~= ""
 					end,
-					content_change_function = function(arg_30_0, arg_30_1)
+					content_change_function = function (arg_30_0, arg_30_1)
 						local var_30_0 = arg_30_0.clear_hotspot
 						local var_30_1 = var_30_0.is_hover
 
@@ -2952,7 +2952,7 @@ local function var_0_40(arg_31_0, arg_31_1)
 					pass_type = "texture",
 					style_id = "button_hover",
 					texture_id = "button_hover",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.button_hotspot.is_hover
 					end
 				},
@@ -2965,7 +2965,7 @@ local function var_0_40(arg_31_0, arg_31_1)
 					pass_type = "texture",
 					style_id = "button_clicked",
 					texture_id = "button_clicked",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						local var_33_0 = arg_33_0.button_hotspot.is_clicked
 
 						return not var_33_0 or var_33_0 == 0
@@ -3231,7 +3231,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 					scenegraph_id = "gamepad_background",
 					style_id = "gamepad_background",
 					pass_type = "rect",
-					content_check_function = function(arg_35_0, arg_35_1)
+					content_check_function = function (arg_35_0, arg_35_1)
 						return (Managers.input:is_device_active("gamepad"))
 					end
 				},
@@ -3259,7 +3259,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 					style_id = "reset_filter_hotspot",
 					pass_type = "hotspot",
 					content_id = "reset_filter_hotspot",
-					content_change_function = function(arg_36_0, arg_36_1)
+					content_change_function = function (arg_36_0, arg_36_1)
 						if arg_36_0.on_pressed then
 							local var_36_0 = arg_36_0.parent
 							local var_36_1 = var_36_0.query
@@ -3278,7 +3278,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 					texture_id = "reset_filter_bg",
 					style_id = "reset_filter_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_37_0, arg_37_1)
+					content_check_function = function (arg_37_0, arg_37_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -3286,7 +3286,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 					texture_id = "reset_filter_fg",
 					style_id = "reset_filter_fg",
 					pass_type = "texture",
-					content_check_function = function(arg_38_0, arg_38_1)
+					content_check_function = function (arg_38_0, arg_38_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -3549,7 +3549,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 			table.insert(var_34_3.element.passes, {
 				pass_type = "rect",
 				style_id = var_34_26,
-				content_change_function = function(arg_39_0, arg_39_1)
+				content_change_function = function (arg_39_0, arg_39_1)
 					local var_39_0 = arg_39_0[var_34_25]
 					local var_39_1 = var_34_21 == arg_39_0.query[var_34_16]
 					local var_39_2 = var_39_1 and var_0_42 or var_0_41
@@ -3598,7 +3598,7 @@ local function var_0_43(arg_34_0, arg_34_1, arg_34_2)
 				pass_type = "texture_frame",
 				texture_id = var_34_29 .. "_id",
 				style_id = var_34_29,
-				content_check_function = function(arg_40_0, arg_40_1)
+				content_check_function = function (arg_40_0, arg_40_1)
 					return Managers.input:is_device_active("gamepad") and arg_40_0.gamepad_button_index[1] == iter_34_1 and arg_40_0.gamepad_button_index[2] == iter_34_0
 				end
 			})
@@ -3813,7 +3813,7 @@ local var_0_45 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
+					scroll_function = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
 						local var_41_0 = arg_41_4.y * -1
 
 						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not Managers.input:is_device_active("gamepad") then
@@ -4020,15 +4020,15 @@ local var_0_53 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				arg_43_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				local var_44_0 = math.easeOutCubic(arg_44_3)
 
 				arg_44_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end
 		}
@@ -4038,15 +4038,15 @@ local var_0_53 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			init = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				arg_46_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+			update = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 				local var_47_0 = math.easeOutCubic(arg_47_3)
 
 				arg_47_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			on_complete = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				return
 			end
 		}

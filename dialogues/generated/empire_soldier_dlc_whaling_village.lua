@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_whaling_village.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pes_village_01_opening_cinematic_a",

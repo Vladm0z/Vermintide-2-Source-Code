@@ -5,7 +5,7 @@ require("scripts/settings/terror_event_blueprints")
 function create_spawn_counter()
 	local var_1_0 = {}
 	local var_1_1 = {
-		__index = function()
+		__index = function ()
 			return 0
 		end
 	}
@@ -32,7 +32,7 @@ local function var_0_0(arg_3_0, arg_3_1, arg_3_2)
 	else
 		local var_3_2 = arg_3_1.spawned_func
 
-		function arg_3_1.spawned_func(arg_6_0, arg_6_1, arg_6_2)
+		arg_3_1.spawned_func = function (arg_6_0, arg_6_1, arg_6_2)
 			var_3_2(arg_6_0, arg_6_1, arg_6_2)
 			var_3_0(arg_6_0, arg_6_1, arg_6_2)
 		end
@@ -43,7 +43,7 @@ local function var_0_0(arg_3_0, arg_3_1, arg_3_2)
 	else
 		local var_3_3 = arg_3_1.despawned_func
 
-		function arg_3_1.despawned_func(arg_7_0, arg_7_1, arg_7_2)
+		arg_3_1.despawned_func = function (arg_7_0, arg_7_1, arg_7_2)
 			var_3_3(arg_7_0, arg_7_1, arg_7_2)
 			var_3_1(arg_7_0, arg_7_1, arg_7_2)
 		end
@@ -63,37 +63,37 @@ var_0_1.finished_events = var_0_1.finished_events or {}
 var_0_1.optional_data = var_0_1.optional_data or {}
 var_0_1.incrementing_id = 1
 var_0_1.init_functions = {
-	text = function(arg_8_0, arg_8_1, arg_8_2)
+	text = function (arg_8_0, arg_8_1, arg_8_2)
 		arg_8_0.ends_at = arg_8_2 + ConflictUtils.random_interval(arg_8_1.duration)
 	end,
-	delay = function(arg_9_0, arg_9_1, arg_9_2)
+	delay = function (arg_9_0, arg_9_1, arg_9_2)
 		arg_9_0.ends_at = arg_9_2 + ConflictUtils.random_interval(arg_9_1.duration)
 	end,
-	spawn = function(arg_10_0, arg_10_1, arg_10_2)
+	spawn = function (arg_10_0, arg_10_1, arg_10_2)
 		return
 	end,
-	spawn_special = function(arg_11_0, arg_11_1, arg_11_2)
+	spawn_special = function (arg_11_0, arg_11_1, arg_11_2)
 		return
 	end,
-	spawn_weave_special = function(arg_12_0, arg_12_1, arg_12_2)
+	spawn_weave_special = function (arg_12_0, arg_12_1, arg_12_2)
 		return
 	end,
-	spawn_weave_special_event = function(arg_13_0, arg_13_1, arg_13_2)
+	spawn_weave_special_event = function (arg_13_0, arg_13_1, arg_13_2)
 		return
 	end,
-	spawn_at_raw = function(arg_14_0, arg_14_1, arg_14_2)
+	spawn_at_raw = function (arg_14_0, arg_14_1, arg_14_2)
 		return
 	end,
-	spawn_patrol = function(arg_15_0, arg_15_1, arg_15_2)
+	spawn_patrol = function (arg_15_0, arg_15_1, arg_15_2)
 		return
 	end,
-	roaming_patrol = function(arg_16_0, arg_16_1, arg_16_2)
+	roaming_patrol = function (arg_16_0, arg_16_1, arg_16_2)
 		return
 	end,
-	spawn_around_player = function(arg_17_0, arg_17_1, arg_17_2)
+	spawn_around_player = function (arg_17_0, arg_17_1, arg_17_2)
 		return
 	end,
-	spawn_around_origin_unit = function(arg_18_0, arg_18_1, arg_18_2)
+	spawn_around_origin_unit = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = arg_18_1.breed_spawn_table_per_difficulty
 
 		if not var_18_0 then
@@ -208,25 +208,25 @@ var_0_1.init_functions = {
 
 		return true
 	end,
-	vs_assign_boss_profile = function(arg_19_0, arg_19_1, arg_19_2)
+	vs_assign_boss_profile = function (arg_19_0, arg_19_1, arg_19_2)
 		Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
 
 		if script_data.debug_playable_boss then
-			-- block empty
+			-- Nothing
 		end
 	end,
-	spawn_around_origin_unit_staggered = function(arg_20_0, arg_20_1, arg_20_2)
+	spawn_around_origin_unit_staggered = function (arg_20_0, arg_20_1, arg_20_2)
 		return var_0_1.init_functions.spawn_around_origin_unit(arg_20_0, arg_20_1, arg_20_2)
 	end,
-	continue_when = function(arg_21_0, arg_21_1, arg_21_2)
+	continue_when = function (arg_21_0, arg_21_1, arg_21_2)
 		if arg_21_1.duration then
 			arg_21_0.ends_at = arg_21_2 + ConflictUtils.random_interval(arg_21_1.duration)
 		end
 	end,
-	control_hordes = function(arg_22_0, arg_22_1, arg_22_2)
+	control_hordes = function (arg_22_0, arg_22_1, arg_22_2)
 		Managers.state.conflict.pacing:enable_hordes(arg_22_1.enable)
 	end,
-	control_specials = function(arg_23_0, arg_23_1, arg_23_2)
+	control_specials = function (arg_23_0, arg_23_1, arg_23_2)
 		local var_23_0 = Managers.state.conflict.specials_pacing
 
 		if var_23_0 then
@@ -241,7 +241,7 @@ var_0_1.init_functions = {
 			end
 		end
 	end,
-	control_pacing = function(arg_24_0, arg_24_1, arg_24_2)
+	control_pacing = function (arg_24_0, arg_24_1, arg_24_2)
 		local var_24_0 = Managers.state.conflict
 
 		if arg_24_1.enable then
@@ -250,10 +250,10 @@ var_0_1.init_functions = {
 			var_24_0.pacing:disable()
 		end
 	end,
-	debug_horde = function(arg_25_0, arg_25_1, arg_25_2)
+	debug_horde = function (arg_25_0, arg_25_1, arg_25_2)
 		arg_25_0.ends_at = arg_25_2 + (arg_25_1.duration and ConflictUtils.random_interval(arg_25_1.duration) or 0)
 	end,
-	event_horde = function(arg_26_0, arg_26_1, arg_26_2)
+	event_horde = function (arg_26_0, arg_26_1, arg_26_2)
 		arg_26_0.ends_at = arg_26_2 + (arg_26_1.duration and ConflictUtils.random_interval(arg_26_1.duration) or 0)
 
 		local var_26_0 = Managers.state.conflict
@@ -278,7 +278,7 @@ var_0_1.init_functions = {
 
 		arg_26_1.horde_data = var_26_0:event_horde(arg_26_2, var_26_1, arg_26_1.side_id, arg_26_1.composition_type, arg_26_1.limit_spawners, arg_26_1.horde_silent, nil, arg_26_1.sound_settings, var_26_2)
 	end,
-	ambush_horde = function(arg_27_0, arg_27_1, arg_27_2)
+	ambush_horde = function (arg_27_0, arg_27_1, arg_27_2)
 		local var_27_0 = arg_27_1.optional_data and table.clone(arg_27_1.optional_data)
 
 		if arg_27_1.spawn_counter_category then
@@ -302,10 +302,10 @@ var_0_1.init_functions = {
 
 		arg_27_1.horde_data = var_27_1.horde_spawner:execute_ambush_horde(var_27_4, var_27_1.default_enemy_side_id, false, var_27_2, var_27_0)
 	end,
-	reset_event_horde = function(arg_28_0, arg_28_1, arg_28_2)
+	reset_event_horde = function (arg_28_0, arg_28_1, arg_28_2)
 		Managers.state.entity:system("spawner_system"):reset_spawners_with_event_id(arg_28_1.event_id)
 	end,
-	force_horde = function(arg_29_0, arg_29_1, arg_29_2)
+	force_horde = function (arg_29_0, arg_29_1, arg_29_2)
 		arg_29_0.ends_at = arg_29_2 + (arg_29_1.duration and ConflictUtils.random_interval(arg_29_1.duration) or 0)
 
 		local var_29_0 = arg_29_1.horde_type
@@ -322,7 +322,7 @@ var_0_1.init_functions = {
 
 		Managers.state.conflict.horde_spawner:horde(var_29_0, var_29_3, var_29_2)
 	end,
-	start_event = function(arg_30_0, arg_30_1, arg_30_2)
+	start_event = function (arg_30_0, arg_30_1, arg_30_2)
 		print("starting terror event: ", arg_30_1.start_event_name)
 
 		local var_30_0 = var_0_1.start_event_list
@@ -335,7 +335,7 @@ var_0_1.init_functions = {
 			id = var_30_1
 		}
 	end,
-	stop_event = function(arg_31_0, arg_31_1, arg_31_2)
+	stop_event = function (arg_31_0, arg_31_1, arg_31_2)
 		print("stopping terror event: ", arg_31_1.stop_event_name)
 
 		local var_31_0 = var_0_1.find_event(arg_31_1.stop_event_name)
@@ -344,23 +344,23 @@ var_0_1.init_functions = {
 			var_31_0.destroy = true
 		end
 	end,
-	start_mission = function(arg_32_0, arg_32_1, arg_32_2)
+	start_mission = function (arg_32_0, arg_32_1, arg_32_2)
 		local var_32_0 = arg_32_1.mission_name
 
 		Managers.state.entity:system("mission_system"):request_mission(var_32_0)
 	end,
-	end_mission = function(arg_33_0, arg_33_1, arg_33_2)
+	end_mission = function (arg_33_0, arg_33_1, arg_33_2)
 		local var_33_0 = arg_33_1.mission_name
 
 		Managers.state.entity:system("mission_system"):end_mission(var_33_0, true)
 	end,
-	set_master_event_running = function(arg_34_0, arg_34_1, arg_34_2)
+	set_master_event_running = function (arg_34_0, arg_34_1, arg_34_2)
 		Managers.state.conflict:set_master_event_running(arg_34_1.name)
 	end,
-	stop_master_event = function(arg_35_0, arg_35_1, arg_35_2)
+	stop_master_event = function (arg_35_0, arg_35_1, arg_35_2)
 		Managers.state.conflict:set_master_event_running()
 	end,
-	flow_event = function(arg_36_0, arg_36_1, arg_36_2)
+	flow_event = function (arg_36_0, arg_36_1, arg_36_2)
 		local var_36_0 = Managers.state.conflict
 		local var_36_1 = arg_36_1.flow_event_name
 
@@ -374,7 +374,7 @@ var_0_1.init_functions = {
 			var_36_2.network_transmit:send_rpc_clients("rpc_terror_event_trigger_flow", var_36_3)
 		end
 	end,
-	play_stinger = function(arg_37_0, arg_37_1, arg_37_2)
+	play_stinger = function (arg_37_0, arg_37_1, arg_37_2)
 		local var_37_0 = arg_37_1.stinger_name or "enemy_terror_event_stinger"
 		local var_37_1 = arg_37_1.use_origin_unit_position
 		local var_37_2 = arg_37_0.data.origin_unit
@@ -400,7 +400,7 @@ var_0_1.init_functions = {
 			Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event", NetworkLookup.sound_events[var_37_0])
 		end
 	end,
-	force_load_breed_package = function(arg_38_0, arg_38_1, arg_38_2)
+	force_load_breed_package = function (arg_38_0, arg_38_1, arg_38_2)
 		local var_38_0 = Managers.level_transition_handler.enemy_package_loader
 		local var_38_1 = arg_38_1.breed_name
 
@@ -412,29 +412,29 @@ var_0_1.init_functions = {
 			var_38_0:request_breed(var_38_1, var_38_2)
 		end
 	end,
-	enable_bots_in_carry_event = function(arg_39_0, arg_39_1, arg_39_2)
+	enable_bots_in_carry_event = function (arg_39_0, arg_39_1, arg_39_2)
 		local var_39_0 = Managers.state.side:get_side_from_name("heroes")
 
 		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(true, var_39_0)
 	end,
-	disable_bots_in_carry_event = function(arg_40_0, arg_40_1, arg_40_2)
+	disable_bots_in_carry_event = function (arg_40_0, arg_40_1, arg_40_2)
 		local var_40_0 = Managers.state.side:get_side_from_name("heroes")
 
 		Managers.state.entity:system("ai_bot_group_system"):set_in_carry_event(false, var_40_0)
 	end,
-	enable_kick = function(arg_41_0, arg_41_1, arg_41_2)
+	enable_kick = function (arg_41_0, arg_41_1, arg_41_2)
 		Managers.state.voting:set_vote_kick_enabled(true)
 	end,
-	disable_kick = function(arg_42_0, arg_42_1, arg_42_2)
+	disable_kick = function (arg_42_0, arg_42_1, arg_42_2)
 		Managers.state.voting:set_vote_kick_enabled(false)
 	end,
-	set_freeze_condition = function(arg_43_0, arg_43_1, arg_43_2)
+	set_freeze_condition = function (arg_43_0, arg_43_1, arg_43_2)
 		arg_43_0.max_active_enemies = arg_43_1.max_active_enemies or math.huge
 	end,
-	set_breed_event_horde_spawn_limit = function(arg_44_0, arg_44_1, arg_44_2)
+	set_breed_event_horde_spawn_limit = function (arg_44_0, arg_44_1, arg_44_2)
 		Managers.state.entity:system("spawner_system"):set_breed_event_horde_spawn_limit(arg_44_1.breed_name, arg_44_1.limit)
 	end,
-	create_boss_door_group = function(arg_45_0, arg_45_1, arg_45_2)
+	create_boss_door_group = function (arg_45_0, arg_45_1, arg_45_2)
 		local var_45_0 = arg_45_0.data
 		local var_45_1 = Managers.state.entity:system("ai_group_system")
 
@@ -444,7 +444,7 @@ var_0_1.init_functions = {
 			size = arg_45_1.group_size
 		}
 	end,
-	close_boss_doors = function(arg_46_0, arg_46_1, arg_46_2)
+	close_boss_doors = function (arg_46_0, arg_46_1, arg_46_2)
 		local var_46_0 = arg_46_0.data
 		local var_46_1 = var_46_0.map_section or arg_46_1.map_section
 		local var_46_2 = var_46_0.group_data.id
@@ -455,7 +455,7 @@ var_0_1.init_functions = {
 			Managers.state.entity:system("door_system"):close_boss_doors(var_46_1, var_46_2, var_46_3)
 		end
 	end,
-	spawn_encampment = function(arg_47_0, arg_47_1, arg_47_2)
+	spawn_encampment = function (arg_47_0, arg_47_1, arg_47_2)
 		local var_47_0
 		local var_47_1
 		local var_47_2
@@ -494,7 +494,7 @@ var_0_1.init_functions = {
 
 		FormationUtils.spawn_encampment(var_47_10, var_47_6, var_47_2, var_47_11, var_47_5)
 	end,
-	teleport_player = function(arg_48_0, arg_48_1, arg_48_2)
+	teleport_player = function (arg_48_0, arg_48_1, arg_48_2)
 		local var_48_0 = Managers.player:local_player()
 
 		if var_48_0 then
@@ -513,12 +513,12 @@ var_0_1.init_functions = {
 			end
 		end
 	end,
-	run_benchmark_func = function(arg_49_0, arg_49_1, arg_49_2)
+	run_benchmark_func = function (arg_49_0, arg_49_1, arg_49_2)
 		local var_49_0 = arg_49_1.func_name
 
 		Managers.benchmark[var_49_0](Managers.benchmark, arg_49_1, arg_49_2)
 	end,
-	set_time_challenge = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+	set_time_challenge = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 		local var_50_0 = var_0_1.optional_data
 		local var_50_1 = arg_50_1.time_challenge_name
 		local var_50_2 = arg_50_2 + QuestSettings[var_50_1]
@@ -528,7 +528,7 @@ var_0_1.init_functions = {
 			var_50_0[var_50_1] = var_50_2
 		end
 	end,
-	has_completed_time_challenge = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+	has_completed_time_challenge = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 		local var_51_0 = var_0_1.optional_data
 		local var_51_1 = arg_51_1.time_challenge_name
 		local var_51_2 = var_51_0[var_51_1]
@@ -548,7 +548,7 @@ var_0_1.init_functions = {
 			end
 		end
 	end,
-	do_volume_challenge = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+	do_volume_challenge = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 		local var_52_0 = var_0_1.optional_data
 		local var_52_1 = arg_52_1.volume_name
 
@@ -565,7 +565,7 @@ var_0_1.init_functions = {
 			terminate = var_52_4
 		}
 	end,
-	increase_weave_progress = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+	increase_weave_progress = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 		if not Managers.weave:get_active_weave() then
 			return
 		end
@@ -575,7 +575,7 @@ var_0_1.init_functions = {
 		fassert(var_53_0 ~= nil, string.format("'amount' in 'increase_weave_progress' event in terror event '%s' is not defined", arg_53_0.name))
 		Managers.weave:increase_bar_score(var_53_0)
 	end,
-	complete_weave = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+	complete_weave = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 		local var_54_0 = Managers.weave
 
 		if not var_54_0:get_active_weave() then
@@ -585,29 +585,29 @@ var_0_1.init_functions = {
 		var_54_0:final_objective_completed()
 		Managers.state.game_mode:complete_level()
 	end,
-	activate_mutator = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+	activate_mutator = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 		return
 	end,
-	set_wwise_override_state = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+	set_wwise_override_state = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 		return
 	end,
-	freeze_story_trigger = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+	freeze_story_trigger = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 		return
 	end,
-	continue_when_spawned_count = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+	continue_when_spawned_count = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 		if arg_58_1.duration then
 			arg_58_0.ends_at = arg_58_2 + ConflictUtils.random_interval(arg_58_1.duration)
 		end
 	end,
-	run_func = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+	run_func = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 		return
 	end
 }
 var_0_1.run_functions = {
-	vs_assign_boss_profile = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+	vs_assign_boss_profile = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 		return
 	end,
-	spawn = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+	spawn = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 		local var_61_0 = arg_61_0.data
 		local var_61_1 = arg_61_1.optional_data and table.clone(arg_61_1.optional_data)
 		local var_61_2 = var_61_0.gizmo_unit
@@ -644,7 +644,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_special = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+	spawn_special = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 		local var_62_0
 		local var_62_1 = arg_62_1.breed_name
 		local var_62_2 = arg_62_1.amount or 1
@@ -683,7 +683,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_weave_special = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+	spawn_weave_special = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 		local var_63_0 = arg_63_1.breed_name
 		local var_63_1 = arg_63_1.amount or 1
 		local var_63_2 = Managers.state.conflict
@@ -714,7 +714,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_weave_special_event = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+	spawn_weave_special_event = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 		local var_64_0
 		local var_64_1 = arg_64_1.breed_name
 		local var_64_2 = arg_64_1.amount or 1
@@ -769,7 +769,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_at_raw = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+	spawn_at_raw = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 		if Managers.player.is_server then
 			local var_65_0
 			local var_65_1 = arg_65_1.breed_name
@@ -824,7 +824,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_patrol = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+	spawn_patrol = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 		local var_66_0 = arg_66_0.data
 		local var_66_1 = var_66_0 and var_66_0.optional_pos and var_66_0.optional_pos:unbox()
 		local var_66_2 = Managers.state.conflict
@@ -891,7 +891,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	roaming_patrol = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+	roaming_patrol = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 		local var_67_0 = arg_67_0.data
 		local var_67_1 = var_67_0.optional_pos and var_67_0.optional_pos:unbox()
 		local var_67_2 = Managers.state.conflict
@@ -912,7 +912,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_around_player = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+	spawn_around_player = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 		local var_68_0
 		local var_68_1 = arg_68_1.breed_name
 		local var_68_2 = arg_68_1.amount or 1
@@ -991,7 +991,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	spawn_around_origin_unit = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+	spawn_around_origin_unit = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 		if arg_70_2 > arg_70_0.spawn_at then
 			local var_70_0 = Managers.state.conflict
 			local var_70_1 = arg_70_0.spawn_table
@@ -1066,7 +1066,7 @@ var_0_1.run_functions = {
 
 		return false
 	end,
-	spawn_around_origin_unit_staggered = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+	spawn_around_origin_unit_staggered = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 		if arg_71_2 >= arg_71_0.spawn_at and (not arg_71_0.next_spawn_t or arg_71_2 >= arg_71_0.next_spawn_t) then
 			local var_71_0 = Managers.state.conflict
 			local var_71_1 = arg_71_0.spawn_table
@@ -1128,41 +1128,41 @@ var_0_1.run_functions = {
 
 		return false
 	end,
-	continue_when = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+	continue_when = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 		if arg_72_1.duration and arg_72_2 > arg_72_0.ends_at then
 			return true
 		end
 
 		return arg_72_1.condition(arg_72_2)
 	end,
-	control_pacing = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+	control_pacing = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 		return true
 	end,
-	control_specials = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+	control_specials = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 		return true
 	end,
-	control_hordes = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+	control_hordes = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 		return true
 	end,
-	event_horde = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+	event_horde = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 		if arg_76_2 > arg_76_0.ends_at then
 			return true
 		end
 	end,
-	ambush_horde = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+	ambush_horde = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 		if arg_77_2 > arg_77_0.ends_at then
 			return true
 		end
 	end,
-	reset_event_horde = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+	reset_event_horde = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 		return true
 	end,
-	force_horde = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+	force_horde = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 		if arg_79_2 > arg_79_0.ends_at then
 			return true
 		end
 	end,
-	debug_horde = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+	debug_horde = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 		if arg_80_2 > arg_80_0.ends_at then
 			return true
 		end
@@ -1183,85 +1183,85 @@ var_0_1.run_functions = {
 			end
 		end
 	end,
-	delay = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+	delay = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 		if arg_81_2 > arg_81_0.ends_at then
 			return true
 		end
 	end,
-	text = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+	text = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 		if arg_82_0.ends_at - arg_82_2 >= 0 then
 			Debug.text(tostring(arg_82_1.text))
 		else
 			return true
 		end
 	end,
-	start_event = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3)
+	start_event = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3)
 		return true
 	end,
-	stop_event = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+	stop_event = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 		return true
 	end,
-	start_mission = function(arg_85_0, arg_85_1, arg_85_2)
+	start_mission = function (arg_85_0, arg_85_1, arg_85_2)
 		return true
 	end,
-	end_mission = function(arg_86_0, arg_86_1, arg_86_2)
+	end_mission = function (arg_86_0, arg_86_1, arg_86_2)
 		return true
 	end,
-	flow_event = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+	flow_event = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 		return true
 	end,
-	play_stinger = function(arg_88_0, arg_88_1, arg_88_2)
+	play_stinger = function (arg_88_0, arg_88_1, arg_88_2)
 		return true
 	end,
-	force_load_breed_package = function(arg_89_0, arg_89_1, arg_89_2)
+	force_load_breed_package = function (arg_89_0, arg_89_1, arg_89_2)
 		return true
 	end,
-	set_master_event_running = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+	set_master_event_running = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 		return true
 	end,
-	stop_master_event = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+	stop_master_event = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 		return true
 	end,
-	enable_bots_in_carry_event = function(arg_92_0, arg_92_1, arg_92_2)
+	enable_bots_in_carry_event = function (arg_92_0, arg_92_1, arg_92_2)
 		return true
 	end,
-	disable_bots_in_carry_event = function(arg_93_0, arg_93_1, arg_93_2)
+	disable_bots_in_carry_event = function (arg_93_0, arg_93_1, arg_93_2)
 		return true
 	end,
-	enable_kick = function(arg_94_0, arg_94_1, arg_94_2)
+	enable_kick = function (arg_94_0, arg_94_1, arg_94_2)
 		return true
 	end,
-	disable_kick = function(arg_95_0, arg_95_1, arg_95_2)
+	disable_kick = function (arg_95_0, arg_95_1, arg_95_2)
 		return true
 	end,
-	set_freeze_condition = function(arg_96_0, arg_96_1, arg_96_2)
+	set_freeze_condition = function (arg_96_0, arg_96_1, arg_96_2)
 		return true
 	end,
-	set_breed_event_horde_spawn_limit = function(arg_97_0, arg_97_1, arg_97_2)
+	set_breed_event_horde_spawn_limit = function (arg_97_0, arg_97_1, arg_97_2)
 		return true
 	end,
-	create_boss_door_group = function(arg_98_0, arg_98_1, arg_98_2)
+	create_boss_door_group = function (arg_98_0, arg_98_1, arg_98_2)
 		return true
 	end,
-	close_boss_doors = function(arg_99_0, arg_99_1, arg_99_2)
+	close_boss_doors = function (arg_99_0, arg_99_1, arg_99_2)
 		return true
 	end,
-	spawn_encampment = function(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
+	spawn_encampment = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 		return true
 	end,
-	teleport_player = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
+	teleport_player = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3)
 		return true
 	end,
-	run_benchmark_func = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
+	run_benchmark_func = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 		return true
 	end,
-	set_time_challenge = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3)
+	set_time_challenge = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3)
 		return true
 	end,
-	has_completed_time_challenge = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+	has_completed_time_challenge = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 		return true
 	end,
-	do_volume_challenge = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3)
+	do_volume_challenge = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3)
 		local var_105_0 = arg_105_1.volume_name
 		local var_105_1 = var_0_1.optional_data[var_105_0]
 
@@ -1309,13 +1309,13 @@ var_0_1.run_functions = {
 			return false
 		end
 	end,
-	increase_weave_progress = function(arg_106_0, arg_106_1, arg_106_2, arg_106_3)
+	increase_weave_progress = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3)
 		return true
 	end,
-	complete_weave = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+	complete_weave = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 		return true
 	end,
-	activate_mutator = function(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
+	activate_mutator = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3)
 		local var_108_0 = arg_108_1.name
 
 		if Managers.state.game_mode then
@@ -1331,14 +1331,14 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	set_wwise_override_state = function(arg_109_0, arg_109_1, arg_109_2, arg_109_3)
+	set_wwise_override_state = function (arg_109_0, arg_109_1, arg_109_2, arg_109_3)
 		local var_109_0 = arg_109_1.name
 
 		Managers.music:set_music_group_state("combat_music", "override", var_109_0)
 
 		return true
 	end,
-	freeze_story_trigger = function(arg_110_0, arg_110_1, arg_110_2, arg_110_3)
+	freeze_story_trigger = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3)
 		local var_110_0 = arg_110_1.freeze
 		local var_110_1 = Managers.state.entity:system("dialogue_system")
 
@@ -1350,7 +1350,7 @@ var_0_1.run_functions = {
 
 		return true
 	end,
-	continue_when_spawned_count = function(arg_111_0, arg_111_1, arg_111_2, arg_111_3)
+	continue_when_spawned_count = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3)
 		if arg_111_1.duration and arg_111_2 > arg_111_0.ends_at then
 			return true
 		end
@@ -1359,34 +1359,34 @@ var_0_1.run_functions = {
 
 		return not arg_111_1.condition or arg_111_1.condition(arg_111_0.data.spawn_counter)
 	end,
-	run_func = function(arg_112_0, arg_112_1, arg_112_2, arg_112_3)
+	run_func = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3)
 		arg_112_1.func()
 
 		return true
 	end
 }
 var_0_1.debug_functions = {
-	vs_assign_boss_profile = function(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
+	vs_assign_boss_profile = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 		return "vs_assign_boss_profile"
 	end,
-	control_pacing = function(arg_114_0, arg_114_1, arg_114_2, arg_114_3)
+	control_pacing = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3)
 		return arg_114_1.enable and "enable" or "disable"
 	end,
-	control_specials = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+	control_specials = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3)
 		return arg_115_1.enable and "enable" or "disable"
 	end,
-	delay = function(arg_116_0, arg_116_1, arg_116_2, arg_116_3)
+	delay = function (arg_116_0, arg_116_1, arg_116_2, arg_116_3)
 		return
 	end,
-	set_freeze_condition = function(arg_117_0, arg_117_1, arg_117_2, arg_117_3)
+	set_freeze_condition = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3)
 		return string.format(": max enemies %d", arg_117_0.max_active_enemies)
 	end,
-	debug_horde = function(arg_118_0, arg_118_1, arg_118_2, arg_118_3)
+	debug_horde = function (arg_118_0, arg_118_1, arg_118_2, arg_118_3)
 		local var_118_0 = #Managers.state.conflict:spawned_enemies()
 
 		return string.format(" alive: %d, max-amount: %d", var_118_0, arg_118_1.amount)
 	end,
-	event_horde = function(arg_119_0, arg_119_1, arg_119_2, arg_119_3)
+	event_horde = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3)
 		local var_119_0 = arg_119_1.horde_data
 
 		if var_119_0 then
@@ -1403,7 +1403,7 @@ var_0_1.debug_functions = {
 			return string.format("waiting to start...")
 		end
 	end,
-	ambush_horde = function(arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+	ambush_horde = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3)
 		local var_120_0 = arg_120_1.horde_data
 
 		if var_120_0 then
@@ -1420,16 +1420,16 @@ var_0_1.debug_functions = {
 			return string.format("waiting to start...")
 		end
 	end,
-	reset_event_horde = function(arg_121_0, arg_121_1, arg_121_2, arg_121_3)
+	reset_event_horde = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3)
 		return string.format(arg_121_1.event_id)
 	end,
-	force_horde = function(arg_122_0, arg_122_1, arg_122_2, arg_122_3)
+	force_horde = function (arg_122_0, arg_122_1, arg_122_2, arg_122_3)
 		return string.format(arg_122_1.horde_type)
 	end,
-	spawn = function(arg_123_0, arg_123_1, arg_123_2, arg_123_3)
+	spawn = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3)
 		return arg_123_1.breed_name
 	end,
-	spawn_at_raw = function(arg_124_0, arg_124_1, arg_124_2, arg_124_3)
+	spawn_at_raw = function (arg_124_0, arg_124_1, arg_124_2, arg_124_3)
 		local var_124_0
 
 		if type(arg_124_1.breed_name) == "table" then
@@ -1440,31 +1440,31 @@ var_0_1.debug_functions = {
 
 		return (arg_124_1.spawner_id or table.tostring(arg_124_1.spawner_ids)) .. " -> " .. var_124_0
 	end,
-	spawn_patrol = function(arg_125_0, arg_125_1, arg_125_2, arg_125_3)
+	spawn_patrol = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3)
 		return arg_125_1.breed_name
 	end,
-	roaming_patrol = function(arg_126_0, arg_126_1, arg_126_2, arg_126_3)
+	roaming_patrol = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3)
 		return "roaming_patrol"
 	end,
-	start_event = function(arg_127_0, arg_127_1, arg_127_2, arg_127_3)
+	start_event = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3)
 		return "event_name: " .. arg_127_1.start_event_name
 	end,
-	stop_event = function(arg_128_0, arg_128_1, arg_128_2, arg_128_3)
+	stop_event = function (arg_128_0, arg_128_1, arg_128_2, arg_128_3)
 		return "event_name: " .. arg_128_1.stop_event_name
 	end,
-	start_mission = function(arg_129_0, arg_129_1, arg_129_2)
+	start_mission = function (arg_129_0, arg_129_1, arg_129_2)
 		return "mission_name: " .. arg_129_1.mission_name
 	end,
-	end_mission = function(arg_130_0, arg_130_1, arg_130_2)
+	end_mission = function (arg_130_0, arg_130_1, arg_130_2)
 		return "mission_name: " .. arg_130_1.mission_name
 	end,
-	flow_event = function(arg_131_0, arg_131_1, arg_131_2, arg_131_3)
+	flow_event = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3)
 		return "event_name: " .. tostring(arg_131_1.flow_event_name)
 	end,
-	set_master_event_running = function(arg_132_0, arg_132_1, arg_132_2, arg_132_3)
+	set_master_event_running = function (arg_132_0, arg_132_1, arg_132_2, arg_132_3)
 		return "name: " .. arg_132_1.name
 	end,
-	play_stinger = function(arg_133_0, arg_133_1, arg_133_2)
+	play_stinger = function (arg_133_0, arg_133_1, arg_133_2)
 		local var_133_0 = arg_133_1.optional_pos
 
 		if var_133_0 then
@@ -1473,25 +1473,25 @@ var_0_1.debug_functions = {
 			return " stinger-name:" .. arg_133_1.stinger_name
 		end
 	end,
-	force_load_breed_package = function(arg_134_0, arg_134_1, arg_134_2, arg_134_3)
+	force_load_breed_package = function (arg_134_0, arg_134_1, arg_134_2, arg_134_3)
 		return "breed_name: " .. arg_134_1.breed_name
 	end,
-	stop_master_event = function(arg_135_0, arg_135_1, arg_135_2, arg_135_3)
+	stop_master_event = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3)
 		return ""
 	end,
-	spawn_encampment = function(arg_136_0, arg_136_1, arg_136_2, arg_136_3)
+	spawn_encampment = function (arg_136_0, arg_136_1, arg_136_2, arg_136_3)
 		return ""
 	end,
-	teleport_player = function(arg_137_0, arg_137_1, arg_137_2, arg_137_3)
+	teleport_player = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3)
 		return "teleport to portal_id:" .. arg_137_1.portal_id
 	end,
-	run_benchmark_func = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3)
+	run_benchmark_func = function (arg_138_0, arg_138_1, arg_138_2, arg_138_3)
 		return "func_name:" .. arg_138_1.func_name
 	end,
-	set_time_challenge = function(arg_139_0, arg_139_1, arg_139_2, arg_139_3)
+	set_time_challenge = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3)
 		return "Time challenge started "
 	end,
-	do_volume_challenge = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3)
+	do_volume_challenge = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3)
 		local var_140_0 = arg_140_1.volume_name
 		local var_140_1 = var_0_1.optional_data[var_140_0]
 		local var_140_2 = var_140_1.time_inside
@@ -1500,25 +1500,25 @@ var_0_1.debug_functions = {
 
 		return string.format("%.2f/%.2f - %.2f", var_140_2, var_140_3, var_140_4)
 	end,
-	activate_mutator = function(arg_141_0, arg_141_1, arg_141_2, arg_141_3)
+	activate_mutator = function (arg_141_0, arg_141_1, arg_141_2, arg_141_3)
 		return arg_141_1.name
 	end,
-	set_wwise_override_state = function(arg_142_0, arg_142_1, arg_142_2, arg_142_3)
+	set_wwise_override_state = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3)
 		return arg_142_1.name
 	end,
-	freeze_story_trigger = function(arg_143_0, arg_143_1, arg_143_2, arg_143_3)
+	freeze_story_trigger = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3)
 		return arg_143_1.freeze
 	end
 }
 
-function var_0_1.reset()
+var_0_1.reset = function ()
 	table.clear(var_0_1.active_events)
 	table.clear(var_0_1.start_event_list)
 	table.clear(var_0_1.finished_events)
 	table.clear(var_0_1.optional_data)
 end
 
-function var_0_1.add_to_start_event_list(arg_145_0, arg_145_1, arg_145_2, arg_145_3)
+var_0_1.add_to_start_event_list = function (arg_145_0, arg_145_1, arg_145_2, arg_145_3)
 	local var_145_0 = var_0_1.start_event_list
 	local var_145_1 = var_0_1.incrementing_id
 
@@ -1536,7 +1536,7 @@ function var_0_1.add_to_start_event_list(arg_145_0, arg_145_1, arg_145_2, arg_14
 	return var_145_1
 end
 
-function var_0_1.start_random_event(arg_146_0)
+var_0_1.start_random_event = function (arg_146_0)
 	local var_146_0 = Managers.level_transition_handler
 
 	if var_146_0:needs_level_load() then
@@ -1702,7 +1702,7 @@ local function var_0_6(arg_150_0, arg_150_1)
 	return var_150_5
 end
 
-function var_0_1.start_event(arg_151_0, arg_151_1, arg_151_2)
+var_0_1.start_event = function (arg_151_0, arg_151_1, arg_151_2)
 	if script_data.only_allowed_terror_event ~= arg_151_0 and script_data.ai_terror_events_disabled then
 		return
 	end
@@ -1754,7 +1754,7 @@ function var_0_1.start_event(arg_151_0, arg_151_1, arg_151_2)
 	Managers.telemetry_events:terror_event_started(arg_151_0)
 end
 
-function var_0_1.stop_event(arg_152_0)
+var_0_1.stop_event = function (arg_152_0)
 	print("TerrorEventMixer.stop_event:", arg_152_0)
 
 	local var_152_0 = var_0_1.active_events
@@ -1776,7 +1776,7 @@ function var_0_1.stop_event(arg_152_0)
 	end
 end
 
-function var_0_1.find_event(arg_153_0)
+var_0_1.find_event = function (arg_153_0)
 	local var_153_0 = var_0_1.active_events
 	local var_153_1 = #var_153_0
 
@@ -1789,7 +1789,7 @@ function var_0_1.find_event(arg_153_0)
 	end
 end
 
-function var_0_1.is_event_id_active_or_pending(arg_154_0)
+var_0_1.is_event_id_active_or_pending = function (arg_154_0)
 	local var_154_0 = var_0_1.active_events
 	local var_154_1 = #var_154_0
 
@@ -1811,7 +1811,7 @@ function var_0_1.is_event_id_active_or_pending(arg_154_0)
 	return false
 end
 
-function var_0_1.update(arg_155_0, arg_155_1, arg_155_2)
+var_0_1.update = function (arg_155_0, arg_155_1, arg_155_2)
 	local var_155_0 = var_0_1.active_events
 
 	var_0_1.active_event_i = 1
@@ -1847,7 +1847,7 @@ function var_0_1.update(arg_155_0, arg_155_1, arg_155_2)
 	end
 end
 
-function var_0_1.run_event(arg_156_0, arg_156_1, arg_156_2)
+var_0_1.run_event = function (arg_156_0, arg_156_1, arg_156_2)
 	local var_156_0 = arg_156_0.elements
 	local var_156_1 = arg_156_0.index
 	local var_156_2 = var_156_0[var_156_1]
@@ -1890,7 +1890,7 @@ local var_0_10, var_0_11 = Application.resolution()
 local var_0_12 = 400
 local var_0_13 = 0
 
-function var_0_1.debug(arg_157_0, arg_157_1, arg_157_2, arg_157_3)
+var_0_1.debug = function (arg_157_0, arg_157_1, arg_157_2, arg_157_3)
 	if DebugKeyHandler.key_pressed("mouse_middle_held", "pan terror event mixer", "ai debugger") then
 		local var_157_0 = Managers.free_flight.input_manager:get_service("Debug"):get("look")
 
@@ -1919,7 +1919,7 @@ function var_0_1.debug(arg_157_0, arg_157_1, arg_157_2, arg_157_3)
 	end
 end
 
-function var_0_1.debug_event(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4, arg_158_5, arg_158_6, arg_158_7)
+var_0_1.debug_event = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4, arg_158_5, arg_158_6, arg_158_7)
 	local var_158_0 = arg_158_1.elements
 	local var_158_1 = arg_158_1.index
 	local var_158_2 = var_158_0[var_158_1][1]

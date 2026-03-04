@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetRageAction = class(BTTargetRageAction, BTNode)
 
-function BTTargetRageAction.init(arg_1_0, ...)
+BTTargetRageAction.init = function (arg_1_0, ...)
 	BTTargetRageAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ end
 
 BTTargetRageAction.name = "BTTargetRageAction"
 
-function BTTargetRageAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTTargetRageAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -77,7 +77,7 @@ function BTTargetRageAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTTargetRageAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTTargetRageAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 	arg_4_2.active_node = nil
 	arg_4_2.anim_cb_move = nil
@@ -92,7 +92,7 @@ function BTTargetRageAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, a
 	end
 end
 
-function BTTargetRageAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTTargetRageAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_3 < arg_5_2.anim_locked then
 		if arg_5_2.attack_anim_driven then
 			if arg_5_2.anim_cb_rotation_start then
@@ -115,6 +115,6 @@ function BTTargetRageAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "done"
 end
 
-function BTTargetRageAction.anim_cb_move(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTTargetRageAction.anim_cb_move = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.move_state = "moving"
 end

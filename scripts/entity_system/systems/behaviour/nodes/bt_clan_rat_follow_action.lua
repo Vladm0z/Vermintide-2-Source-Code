@@ -18,7 +18,7 @@ local var_0_10 = 7
 local var_0_11 = 30
 local var_0_12 = 3
 
-function BTClanRatFollowAction.init(arg_1_0, ...)
+BTClanRatFollowAction.init = function (arg_1_0, ...)
 	BTClanRatFollowAction.super.init(arg_1_0, ...)
 
 	arg_1_0.next_time_to_trigger_running_dialogue = 0
@@ -29,7 +29,7 @@ BTClanRatFollowAction.name = "BTClanRatFollowAction"
 
 local var_0_13 = 0.0001
 
-function BTClanRatFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTClanRatFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -72,7 +72,7 @@ function BTClanRatFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTClanRatFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTClanRatFollowAction._should_walk = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_1 - arg_3_2
 	local var_3_1 = Vector3.dot(Quaternion.forward(arg_3_4), var_3_0)
 	local var_3_2 = Vector3.dot(Quaternion.right(arg_3_4), var_3_0)
@@ -80,7 +80,7 @@ function BTClanRatFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	return arg_3_3 > var_3_1 * var_3_1 + var_3_2 * var_0_2 * (var_3_2 * var_0_2)
 end
 
-function BTClanRatFollowAction._slow_approach(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTClanRatFollowAction._slow_approach = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_3.slow_approach_distance_sq
 
 	if not var_4_0 then
@@ -94,7 +94,7 @@ function BTClanRatFollowAction._slow_approach(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	return var_4_0 < var_4_2^2 + (var_4_3 * var_0_2)^2
 end
 
-function BTClanRatFollowAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTClanRatFollowAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_2.active_node = nil
 
 	if not arg_5_2.locomotion_extension._engine_extension_id then
@@ -130,7 +130,7 @@ end
 
 local var_0_14 = Unit.alive
 
-function BTClanRatFollowAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTClanRatFollowAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if not var_0_14(arg_6_2.target_unit) then
 		return "done"
 	end
@@ -188,7 +188,7 @@ function BTClanRatFollowAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return "running", var_6_0
 end
 
-function BTClanRatFollowAction._update_walking(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTClanRatFollowAction._update_walking = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_2.target_unit
 	local var_7_1 = arg_7_2.locomotion_extension
 	local var_7_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, var_7_0)
@@ -246,7 +246,7 @@ local function var_0_15(arg_8_0)
 	end
 end
 
-function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9_2)
+BTClanRatFollowAction._calculate_walk_animation = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0
 
 	if arg_9_1 == "right" then
@@ -262,7 +262,7 @@ function BTClanRatFollowAction._calculate_walk_animation(arg_9_0, arg_9_1, arg_9
 	return var_9_0
 end
 
-function BTClanRatFollowAction._calculate_walk_dir(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTClanRatFollowAction._calculate_walk_dir = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = Vector3.dot(arg_10_1, arg_10_3)
 	local var_10_1 = Vector3.dot(arg_10_2, arg_10_3)
 	local var_10_2 = math.abs(var_10_0)
@@ -273,7 +273,7 @@ function BTClanRatFollowAction._calculate_walk_dir(arg_10_0, arg_10_1, arg_10_2,
 	return arg_10_3
 end
 
-function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTClanRatFollowAction.follow = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_2.breed
 	local var_11_1 = arg_11_2.target_unit
 	local var_11_2 = arg_11_2.target_dist
@@ -374,7 +374,7 @@ function BTClanRatFollowAction.follow(arg_11_0, arg_11_1, arg_11_2, arg_11_3, ar
 	end
 end
 
-function BTClanRatFollowAction._calculate_run_speed(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTClanRatFollowAction._calculate_run_speed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_3.target_dist
 	local var_12_1 = arg_12_3.destination_dist
 	local var_12_2 = 0
@@ -393,7 +393,7 @@ function BTClanRatFollowAction._calculate_run_speed(arg_12_0, arg_12_1, arg_12_2
 	return arg_12_3.breed.run_speed + var_0_6 * var_12_2
 end
 
-function BTClanRatFollowAction.start_move_animation(arg_13_0, arg_13_1, arg_13_2)
+BTClanRatFollowAction.start_move_animation = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:set_start_move_animation_lock(arg_13_1, arg_13_2, true)
 
 	local var_13_0 = var_0_9[arg_13_2.target_unit]
@@ -414,7 +414,7 @@ function BTClanRatFollowAction.start_move_animation(arg_13_0, arg_13_1, arg_13_2
 	arg_13_2.start_anim_locked = true
 end
 
-function BTClanRatFollowAction.start_move_rotation(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+BTClanRatFollowAction.start_move_rotation = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if arg_14_2.move_animation_name == "move_start_fwd" or arg_14_2.move_animation_name == "move_start_fwd_jog" then
 		arg_14_0:set_start_move_animation_lock(arg_14_1, arg_14_2, false)
 
@@ -432,7 +432,7 @@ function BTClanRatFollowAction.start_move_rotation(arg_14_0, arg_14_1, arg_14_2,
 	end
 end
 
-function BTClanRatFollowAction.set_start_move_animation_lock(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BTClanRatFollowAction.set_start_move_animation_lock = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_2.locomotion_extension
 
 	if arg_15_3 then
@@ -447,7 +447,7 @@ end
 
 local var_0_16 = {}
 
-function BTClanRatFollowAction.do_dialogue(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTClanRatFollowAction.do_dialogue = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	if arg_16_3 > arg_16_0.next_time_to_trigger_running_dialogue and arg_16_0.triggered_units[arg_16_1] == nil then
 		local var_16_0 = math.ceil(Vector3.distance(var_0_9[arg_16_1], var_0_9[arg_16_2.target_unit]))
 

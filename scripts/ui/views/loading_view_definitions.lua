@@ -341,7 +341,7 @@ local var_0_4 = {
 				style_id = "text",
 				pass_type = "text",
 				text_id = "text",
-				content_check_function = function(arg_1_0, arg_1_1)
+				content_check_function = function (arg_1_0, arg_1_1)
 					arg_1_1.text_color[1] = 192 + math.sin(Managers.time:time("ui") * 4) * 64
 
 					return true
@@ -391,7 +391,7 @@ local var_0_5 = {
 				pass_type = "texture",
 				style_id = "fade_texture",
 				texture_id = "fade_texture",
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return arg_2_0.is_weave
 				end
 			},
@@ -399,7 +399,7 @@ local var_0_5 = {
 				style_id = "location_header",
 				pass_type = "text",
 				text_id = "location_header",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.is_weave
 				end
 			},
@@ -407,7 +407,7 @@ local var_0_5 = {
 				style_id = "location_name",
 				pass_type = "text",
 				text_id = "location_name",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.is_weave
 				end
 			},
@@ -415,7 +415,7 @@ local var_0_5 = {
 				style_id = "location_name_shadow",
 				pass_type = "text",
 				text_id = "location_name",
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.is_weave
 				end
 			},
@@ -423,7 +423,7 @@ local var_0_5 = {
 				style_id = "mutator_name",
 				pass_type = "text",
 				text_id = "mutator_name",
-				content_check_function = function(arg_6_0)
+				content_check_function = function (arg_6_0)
 					return arg_6_0.is_weave
 				end
 			},
@@ -431,7 +431,7 @@ local var_0_5 = {
 				style_id = "mutator_description",
 				pass_type = "text",
 				text_id = "mutator_description",
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return arg_7_0.is_weave
 				end
 			},
@@ -439,7 +439,7 @@ local var_0_5 = {
 				texture_id = "objective_icon",
 				style_id = "objective_icon",
 				pass_type = "texture",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return arg_8_0.is_weave and not arg_8_0.is_arena
 				end
 			},
@@ -447,7 +447,7 @@ local var_0_5 = {
 				style_id = "objective_text",
 				pass_type = "text",
 				text_id = "objective_text",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return arg_9_0.is_weave and not arg_9_0.is_arena
 				end
 			}
@@ -754,7 +754,7 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.texture_id
 					end
 				}
@@ -779,7 +779,7 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.texture_id
 					end
 				}
@@ -830,7 +830,7 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.texture_id
 					end
 				}
@@ -855,7 +855,7 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.texture_id
 					end
 				}

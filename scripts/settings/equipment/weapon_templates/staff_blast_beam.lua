@@ -30,11 +30,11 @@ local var_0_0 = {
 				anim_event = "attack_shoot_beam_start",
 				particle_effect_trail_3p = "fx/wpnfx_staff_beam_trail_3p_remap",
 				charge_sound_name = "player_combat_weapon_staff_fire_beam",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:reset_release_input()
 					arg_2_1:clear_input_buffer()
 				end,
@@ -140,7 +140,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -178,7 +178,7 @@ local var_0_0 = {
 				anim_event = "flamethrower_charge_start",
 				fx_node = "fx_01",
 				charge_sound_name = "player_combat_weapon_staff_fire_beam",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -265,7 +265,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
@@ -289,7 +289,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "player_combat_weapon_staff_cooldown",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -301,7 +301,7 @@ local var_0_0 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
 					arg_7_1:reset_release_input()
 					arg_7_1:clear_input_buffer()
 				end,
@@ -313,10 +313,10 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_8_0, arg_8_1)
+				condition_func = function (arg_8_0, arg_8_1)
 					return ScriptUnit.extension(arg_8_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end,
-				chain_condition_func = function(arg_9_0, arg_9_1)
+				chain_condition_func = function (arg_9_0, arg_9_1)
 					return ScriptUnit.extension(arg_9_0, "overcharge_system"):get_overcharge_value() ~= 0
 				end
 			}

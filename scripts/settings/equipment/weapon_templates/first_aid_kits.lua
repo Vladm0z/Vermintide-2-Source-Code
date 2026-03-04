@@ -17,7 +17,7 @@ local var_0_1 = {
 				interaction_priority = 4,
 				total_time = InteractionDefinitions.heal.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
+				condition_func = function (arg_1_0)
 					return (ScriptUnit.extension(arg_1_0, "interactor_system"):can_interact(arg_1_0, "heal"))
 				end
 			}
@@ -36,7 +36,7 @@ local var_0_1 = {
 				interaction_priority = 5,
 				total_time = InteractionDefinitions.heal.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_2_0)
+				condition_func = function (arg_2_0)
 					local var_2_0 = ScriptUnit.extension(arg_2_0, "interactor_system")
 
 					return var_2_0 and var_2_0:can_interact(nil, "heal")

@@ -618,7 +618,7 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return not ShowCursorStack.cursor_active()
 					end
 				},
@@ -626,7 +626,7 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return not ShowCursorStack.cursor_active()
 					end
 				}
@@ -683,14 +683,14 @@ local var_0_24 = {
 			name = "fade_in_reminder_text",
 			start_progress = 4,
 			end_progress = 4.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				return
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				arg_6_2.style.text.text_color[1] = arg_6_3 * 255
 				arg_6_2.style.text_shadow.text_color[1] = arg_6_3 * 255
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		},
@@ -698,14 +698,14 @@ local var_0_24 = {
 			name = "fade_out_reminder_text",
 			start_progress = 6,
 			end_progress = 6.5,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				arg_9_2.style.text.text_color[1] = (1 - arg_9_3) * 255
 				arg_9_2.style.text_shadow.text_color[1] = (1 - arg_9_3) * 255
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		}
@@ -720,7 +720,7 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.info_type == "deus_power_up"
 					end
 				},
@@ -728,7 +728,7 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.info_type == "deus_power_up"
 					end
 				},
@@ -736,7 +736,7 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.info_type == "deus_item_tooltip"
 					end
 				},
@@ -744,7 +744,7 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.info_type == "deus_item_tooltip"
 					end
 				}
@@ -842,7 +842,7 @@ local function var_0_27(arg_16_0, arg_16_1)
 					style_id = "frame",
 					pass_type = "texture_frame",
 					texture_id = "frame",
-					content_change_function = function(arg_17_0, arg_17_1)
+					content_change_function = function (arg_17_0, arg_17_1)
 						arg_17_0.frame = UIFrameSettings[arg_17_0.frame_settings_name].texture
 						arg_17_1.texture_size = UIFrameSettings[arg_17_0.frame_settings_name].texture_size
 						arg_17_1.texture_sizes = UIFrameSettings[arg_17_0.frame_settings_name].texture_sizes

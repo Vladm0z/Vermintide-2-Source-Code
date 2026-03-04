@@ -2,7 +2,7 @@
 
 NavigationGroup = class(NavigationGroup)
 
-function NavigationGroup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+NavigationGroup.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0._center_poly = arg_1_2
 	arg_1_0._area = 0
 	arg_1_0._group_center = Vector3Box(arg_1_4)
@@ -17,7 +17,7 @@ function NavigationGroup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	arg_1_0:add_polygon(arg_1_3, arg_1_4, arg_1_5, arg_1_1)
 end
 
-function NavigationGroup.make_string_of_group(arg_2_0, arg_2_1)
+NavigationGroup.make_string_of_group = function (arg_2_0, arg_2_1)
 	arg_2_1 = arg_2_1 .. "{neighbours={"
 
 	for iter_2_0, iter_2_1 in pairs(arg_2_0._group_neighbours) do
@@ -37,7 +37,7 @@ function NavigationGroup.make_string_of_group(arg_2_0, arg_2_1)
 	return arg_2_1
 end
 
-function NavigationGroup.add_polygon(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+NavigationGroup.add_polygon = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0:get_poly_hash(arg_3_1, arg_3_4)
 
 	arg_3_0._group_polygons[var_3_0] = arg_3_1
@@ -49,7 +49,7 @@ function NavigationGroup.add_polygon(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	end
 end
 
-function NavigationGroup.add_neighbour_group(arg_4_0, arg_4_1, arg_4_2)
+NavigationGroup.add_neighbour_group = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._group_neighbours[arg_4_1] = true
 
 	if arg_4_2 then
@@ -57,7 +57,7 @@ function NavigationGroup.add_neighbour_group(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function NavigationGroup.remove_neighbour_group(arg_5_0, arg_5_1)
+NavigationGroup.remove_neighbour_group = function (arg_5_0, arg_5_1)
 	arg_5_0._group_neighbours[arg_5_1] = nil
 
 	if arg_5_0._group_ledge_neighbours[arg_5_1] then
@@ -65,27 +65,27 @@ function NavigationGroup.remove_neighbour_group(arg_5_0, arg_5_1)
 	end
 end
 
-function NavigationGroup.set_main_path_index(arg_6_0, arg_6_1)
+NavigationGroup.set_main_path_index = function (arg_6_0, arg_6_1)
 	arg_6_0._main_path_index = arg_6_1
 end
 
-function NavigationGroup.set_distance_from_finish(arg_7_0, arg_7_1)
+NavigationGroup.set_distance_from_finish = function (arg_7_0, arg_7_1)
 	arg_7_0._distance_from_finish = arg_7_1
 end
 
-function NavigationGroup.get_group_neighbours(arg_8_0)
+NavigationGroup.get_group_neighbours = function (arg_8_0)
 	return arg_8_0._group_neighbours
 end
 
-function NavigationGroup.get_group_ledge_neighbours(arg_9_0)
+NavigationGroup.get_group_ledge_neighbours = function (arg_9_0)
 	return arg_9_0._group_ledge_neighbours
 end
 
-function NavigationGroup.get_main_path_index(arg_10_0)
+NavigationGroup.get_main_path_index = function (arg_10_0)
 	return arg_10_0._main_path_index
 end
 
-function NavigationGroup.calculate_group_center(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+NavigationGroup.calculate_group_center = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0._group_size
 	local var_11_1 = arg_11_0._group_center:unbox()
 	local var_11_2 = ((var_11_0 - 1) * var_11_1 + arg_11_1) / var_11_0
@@ -113,7 +113,7 @@ function NavigationGroup.calculate_group_center(arg_11_0, arg_11_1, arg_11_2, ar
 	end
 end
 
-function NavigationGroup.get_group_polygons_centers(arg_12_0, arg_12_1, arg_12_2)
+NavigationGroup.get_group_polygons_centers = function (arg_12_0, arg_12_1, arg_12_2)
 	error("not used?")
 
 	local var_12_0
@@ -129,47 +129,47 @@ function NavigationGroup.get_group_polygons_centers(arg_12_0, arg_12_1, arg_12_2
 	return arg_12_1
 end
 
-function NavigationGroup.get_poly_center_from_hash(arg_13_0, arg_13_1)
+NavigationGroup.get_poly_center_from_hash = function (arg_13_0, arg_13_1)
 	return arg_13_0._group_polygons[arg_13_1]
 end
 
-function NavigationGroup.get_group_center_poly(arg_14_0)
+NavigationGroup.get_group_center_poly = function (arg_14_0)
 	return arg_14_0._center_poly
 end
 
-function NavigationGroup.get_group_center(arg_15_0)
+NavigationGroup.get_group_center = function (arg_15_0)
 	return arg_15_0._group_center
 end
 
-function NavigationGroup.get_group_area(arg_16_0)
+NavigationGroup.get_group_area = function (arg_16_0)
 	return arg_16_0._area
 end
 
-function NavigationGroup.get_group_polygons(arg_17_0)
+NavigationGroup.get_group_polygons = function (arg_17_0)
 	return arg_17_0._group_polygons
 end
 
-function NavigationGroup.get_group_size(arg_18_0)
+NavigationGroup.get_group_size = function (arg_18_0)
 	return arg_18_0._group_size
 end
 
-function NavigationGroup.get_distance_from_finish(arg_19_0)
+NavigationGroup.get_distance_from_finish = function (arg_19_0)
 	return arg_19_0._distance_from_finish
 end
 
-function NavigationGroup.destroy(arg_20_0)
+NavigationGroup.destroy = function (arg_20_0)
 	arg_20_0._group_neighbours = {}
 	arg_20_0._group_polygons = {}
 	arg_20_0._group_size = 0
 end
 
-function NavigationGroup.calc_polygon_center(arg_21_0, arg_21_1, arg_21_2)
+NavigationGroup.calc_polygon_center = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0, var_21_1, var_21_2 = GwNavTraversal.get_triangle_vertices(arg_21_2, arg_21_1)
 
 	return (var_21_0 + var_21_1 + var_21_2) / 3
 end
 
-function NavigationGroup.get_poly_hash(arg_22_0, arg_22_1, arg_22_2)
+NavigationGroup.get_poly_hash = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0, var_22_1, var_22_2 = Script.temp_count()
 	local var_22_3 = arg_22_0:calc_polygon_center(arg_22_1, arg_22_2)
 	local var_22_4 = var_22_3.x * 0.0001 + var_22_3.y + var_22_3.z * 10000
@@ -181,7 +181,7 @@ end
 
 local var_0_0 = 1000
 
-function NavigationGroup.breadth_first_find_nearest_group_triangle(arg_23_0, arg_23_1, arg_23_2)
+NavigationGroup.breadth_first_find_nearest_group_triangle = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = FrameTable.alloc_table()
 	local var_23_1 = FrameTable.alloc_table()
 	local var_23_2 = 1
@@ -230,7 +230,7 @@ function NavigationGroup.breadth_first_find_nearest_group_triangle(arg_23_0, arg
 	end
 end
 
-function NavigationGroup.print_group(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+NavigationGroup.print_group = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = math.random(0, 255)
 	local var_24_1 = math.random(0, 255)
 	local var_24_2 = math.random(0, 255)
@@ -262,7 +262,7 @@ function NavigationGroup.print_group(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg
 	Gui.text_3d(arg_24_5, "main_path_index=" .. (arg_24_0._main_path_index or "nil"), var_24_6, var_24_5 - 0.8, var_24_7, var_24_4, var_24_9 + Vector3(0, 0.5, 0), 3, Color(255, 255, 255))
 end
 
-function NavigationGroup.draw_poly_lines(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+NavigationGroup.draw_poly_lines = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0, var_25_1, var_25_2 = Script.temp_count()
 	local var_25_3, var_25_4, var_25_5 = GwNavTraversal.get_triangle_vertices(arg_25_3, arg_25_1)
 	local var_25_6 = var_25_3 + Vector3(0, 0, 0.1)

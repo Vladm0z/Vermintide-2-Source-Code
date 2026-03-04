@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTInterestPointChooseAction = class(BTInterestPointChooseAction, BTNode)
 BTInterestPointChooseAction.name = "BTInterestPointChooseAction"
 
-function BTInterestPointChooseAction.init(arg_1_0, ...)
+BTInterestPointChooseAction.init = function (arg_1_0, ...)
 	BTInterestPointChooseAction.super.init(arg_1_0, ...)
 end
 
-function BTInterestPointChooseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInterestPointChooseAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.system_api.ai_interest_point_system
 
 	if arg_2_2.ip_request_id == nil then
@@ -26,7 +26,7 @@ function BTInterestPointChooseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTInterestPointChooseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTInterestPointChooseAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if (arg_3_4 == "failed" or arg_3_4 == "aborted") and HEALTH_ALIVE[arg_3_1] then
 		arg_3_2.system_api.ai_interest_point_system.release_claim(arg_3_2.ip_request_id, arg_3_1)
 
@@ -35,7 +35,7 @@ function BTInterestPointChooseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	end
 end
 
-function BTInterestPointChooseAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTInterestPointChooseAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.ip_request_id
 	local var_4_1 = arg_4_2.system_api.ai_interest_point_system.get_claim(var_4_0)
 

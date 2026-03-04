@@ -561,7 +561,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "bottom_left_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_3_1.offset[1] = var_2_1[1] + 1920 * var_3_0 * 0.5
@@ -571,7 +571,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "bottom_right_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						local var_4_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_4_1.offset[1] = -var_2_1[1] - 1920 * var_4_0 * 0.5
@@ -581,7 +581,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "top_right_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_5_0, arg_5_1)
+					content_change_function = function (arg_5_0, arg_5_1)
 						local var_5_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_5_1.offset[1] = -var_2_1[1] - 1920 * var_5_0 * 0.5
@@ -591,7 +591,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "top_left_triangle",
 					pass_type = "triangle",
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						local var_6_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_6_1.offset[1] = var_2_1[1] + 1920 * var_6_0 * 0.5
@@ -601,7 +601,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "left_line",
 					pass_type = "rect",
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						local var_7_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_7_1.offset[1] = 1920 * var_7_0 * 0.5
@@ -612,7 +612,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "right_line",
 					pass_type = "rect",
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						local var_8_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_8_1.offset[1] = -1920 * var_8_0 * 0.5
@@ -623,7 +623,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "top_line",
 					pass_type = "rect",
-					content_change_function = function(arg_9_0, arg_9_1)
+					content_change_function = function (arg_9_0, arg_9_1)
 						local var_9_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_9_1.offset[1] = 1920 * var_9_0 * 0.5
@@ -634,7 +634,7 @@ local function var_0_12(arg_2_0)
 				{
 					style_id = "bottom_line",
 					pass_type = "rect",
-					content_change_function = function(arg_10_0, arg_10_1)
+					content_change_function = function (arg_10_0, arg_10_1)
 						local var_10_0 = (Application.user_setting("safe_rect") or 0) * 0.01
 
 						arg_10_1.offset[1] = 1920 * var_10_0 * 0.5
@@ -1054,7 +1054,7 @@ local var_0_17 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+					scroll_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 						local var_13_0 = Managers.input:is_device_active("gamepad")
 						local var_13_1 = arg_13_2.scroll_step or 0.1
 						local var_13_2 = arg_13_2.internal_scroll_value
@@ -1170,21 +1170,21 @@ local var_0_18 = {
 	{
 		pass_type = "texture",
 		texture_id = "texture_id",
-		content_check_function = function(arg_14_0)
+		content_check_function = function (arg_14_0)
 			return not arg_14_0.hotspot.is_hover and arg_14_0.hotspot.is_clicked > 0
 		end
 	},
 	{
 		pass_type = "texture",
 		texture_id = "texture_hover_id",
-		content_check_function = function(arg_15_0)
+		content_check_function = function (arg_15_0)
 			return arg_15_0.hotspot.is_hover and arg_15_0.hotspot.is_clicked > 0
 		end
 	},
 	{
 		pass_type = "texture",
 		texture_id = "texture_click_id",
-		content_check_function = function(arg_16_0)
+		content_check_function = function (arg_16_0)
 			return arg_16_0.hotspot.is_clicked == 0 or arg_16_0.hotspot.is_selected
 		end
 	},
@@ -1192,7 +1192,7 @@ local var_0_18 = {
 		style_id = "text",
 		pass_type = "text",
 		text_id = "text_field",
-		content_check_function = function(arg_17_0, arg_17_1)
+		content_check_function = function (arg_17_0, arg_17_1)
 			if arg_17_0.hotspot.is_hover then
 				arg_17_1.text_color = arg_17_1.hover_color
 			else
@@ -1216,7 +1216,7 @@ local function var_0_19(arg_18_0, arg_18_1)
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function(arg_19_0)
+				content_check_function = function (arg_19_0)
 					return not arg_19_0.button_hotspot.is_hover
 				end
 			},
@@ -1224,7 +1224,7 @@ local function var_0_19(arg_18_0, arg_18_1)
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function(arg_20_0)
+				content_check_function = function (arg_20_0)
 					return arg_20_0.button_hotspot.is_hover
 				end
 			}
@@ -1318,13 +1318,13 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.is_highlighted
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+					offset_function = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 						if arg_23_2.hotspot.on_release then
 							arg_23_2.flag = not arg_23_2.flag
 						end
@@ -1348,13 +1348,13 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_25_0, arg_25_1)
+					content_check_function = function (arg_25_0, arg_25_1)
 						if var_0_24 then
 							arg_25_1.thickness = 1
 						end
@@ -1365,7 +1365,7 @@ local function var_0_26(arg_21_0, arg_21_1, arg_21_2)
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return var_0_24
 					end
 				}
@@ -1567,7 +1567,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return not arg_30_0.disabled
 					end
 				},
@@ -1575,7 +1575,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "disabled_slider_box",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_31_0)
+					content_check_function = function (arg_31_0)
 						return arg_31_0.disabled
 					end
 				},
@@ -1607,14 +1607,14 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						return arg_33_0.tooltip_text and arg_33_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -1622,7 +1622,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					content_check_hover = "hotspot",
 					pass_type = "held",
 					style_id = "slider_box",
-					held_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+					held_function = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 						local var_34_0
 						local var_34_1 = Managers.input:is_device_active("gamepad")
 
@@ -1649,7 +1649,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 							arg_34_2.callback(arg_34_2, arg_34_1.parent)
 						end
 					end,
-					release_function = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+					release_function = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 						arg_35_2.callback(arg_35_2, arg_35_1.parent)
 					end
 				},
@@ -1657,13 +1657,13 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "slider_box_hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_36_0)
+					content_check_function = function (arg_36_0)
 						return not arg_36_0.parent.disabled
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_37_0, arg_37_1, arg_37_2)
+					offset_function = function (arg_37_0, arg_37_1, arg_37_2)
 						local var_37_0 = arg_37_2.internal_value
 						local var_37_1 = arg_37_2.min
 						local var_37_2 = arg_37_2.max
@@ -1696,7 +1696,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "value_text",
 					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						return not arg_38_0.disabled
 					end
 				},
@@ -1704,7 +1704,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "disabled_value_text",
 					pass_type = "text",
 					text_id = "value_text",
-					content_check_function = function(arg_39_0)
+					content_check_function = function (arg_39_0)
 						return arg_39_0.disabled
 					end
 				},
@@ -1712,7 +1712,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "slider",
 					texture_id = "slider",
-					content_check_function = function(arg_40_0)
+					content_check_function = function (arg_40_0)
 						return not arg_40_0.disabled
 					end
 				},
@@ -1720,7 +1720,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "slider_hover",
 					texture_id = "slider_hover",
-					content_check_function = function(arg_41_0)
+					content_check_function = function (arg_41_0)
 						if arg_41_0.disabled then
 							return false
 						end
@@ -1730,20 +1730,20 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_42_0)
+					content_check_function = function (arg_42_0)
 						return var_0_24
 					end
 				},
 				{
 					style_id = "slider_box",
 					pass_type = "rect",
-					content_check_function = function(arg_43_0)
+					content_check_function = function (arg_43_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_44_0, arg_44_1)
+					content_check_function = function (arg_44_0, arg_44_1)
 						if var_0_24 then
 							arg_44_1.thickness = 1
 						end
@@ -1754,7 +1754,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_45_0)
+					content_check_function = function (arg_45_0)
 						return var_0_24
 					end
 				},
@@ -1762,7 +1762,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					pass_type = "texture",
 					style_id = "slider_image",
 					texture_id = "slider_image",
-					content_check_function = function(arg_46_0)
+					content_check_function = function (arg_46_0)
 						return arg_46_0.slider_image ~= ""
 					end
 				},
@@ -1770,7 +1770,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "slider_image_text",
 					pass_type = "text",
 					text_id = "slider_image_text",
-					content_check_function = function(arg_47_0)
+					content_check_function = function (arg_47_0)
 						return arg_47_0.slider_image_text ~= ""
 					end
 				},
@@ -1778,7 +1778,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "left_arrow",
 					pass_type = "hotspot",
 					content_id = "left_hotspot",
-					content_check_function = function(arg_48_0)
+					content_check_function = function (arg_48_0)
 						return not arg_48_0.parent.disabled
 					end
 				},
@@ -1786,7 +1786,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "right_arrow",
 					pass_type = "hotspot",
 					content_id = "right_hotspot",
-					content_check_function = function(arg_49_0)
+					content_check_function = function (arg_49_0)
 						return not arg_49_0.parent.disabled
 					end
 				},
@@ -1795,7 +1795,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "left_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_50_0)
+					content_check_function = function (arg_50_0)
 						return not arg_50_0.parent.disabled
 					end
 				},
@@ -1804,7 +1804,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "right_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_51_0)
+					content_check_function = function (arg_51_0)
 						return not arg_51_0.parent.disabled
 					end
 				},
@@ -1813,7 +1813,7 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "left_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_52_0)
+					content_check_function = function (arg_52_0)
 						return not arg_52_0.parent.disabled
 					end
 				},
@@ -1822,13 +1822,13 @@ local function var_0_30(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29
 					style_id = "right_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_53_0)
+					content_check_function = function (arg_53_0)
 						return not arg_53_0.parent.disabled
 					end
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+					offset_function = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 						local var_54_0 = arg_54_2.left_hotspot
 						local var_54_1 = arg_54_2.right_hotspot
 
@@ -2364,7 +2364,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_56_0, arg_56_1)
+					content_change_function = function (arg_56_0, arg_56_1)
 						if arg_56_0.disabled then
 							arg_56_1.text_color = arg_56_1.disabled_color
 						else
@@ -2385,14 +2385,14 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_57_0)
+					content_check_function = function (arg_57_0)
 						return arg_57_0.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_58_0)
+					content_check_function = function (arg_58_0)
 						if not arg_58_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -2408,7 +2408,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "disabled_tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function(arg_59_0)
+					content_check_function = function (arg_59_0)
 						if not arg_59_0.disabled or not arg_59_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -2432,7 +2432,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_60_0, arg_60_1)
+					content_check_function = function (arg_60_0, arg_60_1)
 						local var_60_0 = arg_60_0.parent
 
 						if var_60_0.disabled then
@@ -2447,7 +2447,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_61_0, arg_61_1)
+					content_check_function = function (arg_61_0, arg_61_1)
 						local var_61_0 = arg_61_0.parent
 
 						if var_61_0.disabled then
@@ -2462,7 +2462,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow_hover_flipped",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_62_0, arg_62_1)
+					content_check_function = function (arg_62_0, arg_62_1)
 						local var_62_0 = arg_62_0.parent
 
 						if var_62_0.hotspot.is_hover then
@@ -2479,7 +2479,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_63_0, arg_63_1)
+					content_check_function = function (arg_63_0, arg_63_1)
 						local var_63_0 = arg_63_0.parent
 
 						if var_63_0.hotspot.is_hover then
@@ -2495,7 +2495,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "selected_option",
 					pass_type = "text",
 					text_id = "selected_option",
-					content_check_function = function(arg_64_0, arg_64_1)
+					content_check_function = function (arg_64_0, arg_64_1)
 						if arg_64_0.disabled then
 							arg_64_1.text_color = arg_64_1.disabled_color
 						elseif arg_64_0.hotspot.is_hover or arg_64_0.active then
@@ -2532,7 +2532,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 					style_id = "list_style",
 					pass_type = "list_pass",
 					content_id = "list_content",
-					content_check_function = function(arg_65_0, arg_65_1)
+					content_check_function = function (arg_65_0, arg_65_1)
 						return arg_65_1.active
 					end,
 					passes = {
@@ -2542,7 +2542,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 						},
 						{
 							pass_type = "local_offset",
-							offset_function = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+							offset_function = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 								local var_66_0 = arg_66_2.hotspot
 								local var_66_1 = arg_66_1.text
 
@@ -2570,7 +2570,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 							pass_type = "texture",
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
-							content_check_function = function(arg_67_0)
+							content_check_function = function (arg_67_0)
 								local var_67_0 = arg_67_0.hotspot
 
 								if var_67_0.disabled then
@@ -2585,26 +2585,26 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				{
 					style_id = "selected_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_68_0, arg_68_1)
+					content_check_function = function (arg_68_0, arg_68_1)
 						return arg_68_0.active
 					end
 				},
 				{
 					style_id = "selected_bg_shade",
 					pass_type = "rect",
-					content_check_function = function(arg_69_0, arg_69_1)
+					content_check_function = function (arg_69_0, arg_69_1)
 						return arg_69_0.active
 					end
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_70_0)
+					content_check_function = function (arg_70_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_71_0, arg_71_1)
+					content_check_function = function (arg_71_0, arg_71_1)
 						if var_0_24 then
 							arg_71_1.thickness = 1
 						end
@@ -2615,7 +2615,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_72_0)
+					content_check_function = function (arg_72_0)
 						return var_0_24
 					end
 				}
@@ -2904,7 +2904,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			style_id = "thumbnail",
 			pass_type = "hotspot",
 			content_id = "thumbnail_hotspot",
-			content_check_function = function(arg_73_0)
+			content_check_function = function (arg_73_0)
 				return arg_73_0.parent.active
 			end
 		}
@@ -2912,10 +2912,10 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			style_id = "thumbnail",
 			pass_type = "held",
 			content_id = "thumbnail_hotspot",
-			content_check_function = function(arg_74_0)
+			content_check_function = function (arg_74_0)
 				return arg_74_0.parent.active
 			end,
-			held_function = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+			held_function = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 				if Managers.input:is_device_active("gamepad") then
 					return
 				end
@@ -2950,7 +2950,7 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 				var_75_14.start_index = math.floor(var_75_13 / var_75_16) + 1
 				arg_75_2.scroll_progress = var_75_13
 			end,
-			release_function = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+			release_function = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 				arg_76_2.cursor_y = nil
 				arg_76_2.parent.dragging = nil
 			end
@@ -2959,10 +2959,10 @@ local function var_0_32(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55
 			style_id = "thumbnail",
 			texture_id = "rect_masked",
 			pass_type = "texture",
-			content_check_function = function(arg_77_0, arg_77_1)
+			content_check_function = function (arg_77_0, arg_77_1)
 				return arg_77_0.active
 			end,
-			content_change_function = function(arg_78_0, arg_78_1)
+			content_change_function = function (arg_78_0, arg_78_1)
 				local var_78_0 = arg_78_1.default_offset_y
 				local var_78_1 = arg_78_1.offset
 				local var_78_2 = arg_78_1.step_size
@@ -3042,7 +3042,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 			passes = {
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+					offset_function = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 						if arg_80_2._last_selection ~= arg_80_2.current_selection or arg_80_2._last_overriden_setting ~= arg_80_2.overriden_setting then
 							arg_80_2._last_selection = arg_80_2.current_selection
 							arg_80_2._last_overriden_setting = arg_80_2.overriden_setting
@@ -3069,7 +3069,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				{
 					pass_type = "hotspot",
 					content_id = "highlight_hotspot",
-					content_check_function = function(arg_81_0)
+					content_check_function = function (arg_81_0)
 						return not arg_81_0.disabled
 					end
 				},
@@ -3077,14 +3077,14 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_82_0)
+					content_check_function = function (arg_82_0)
 						return arg_82_0.is_highlighted
 					end
 				},
 				{
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_83_0)
+					content_check_function = function (arg_83_0)
 						if not arg_83_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -3100,7 +3100,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "disabled_tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "disabled_tooltip_text",
-					content_check_function = function(arg_84_0)
+					content_check_function = function (arg_84_0)
 						if not arg_84_0.disabled or not arg_84_0.highlight_hotspot.is_hover or Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -3116,7 +3116,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				},
 				{
 					pass_type = "local_offset",
-					offset_function = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+					offset_function = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 						local var_85_0 = arg_85_2.left_hotspot
 						local var_85_1 = arg_85_2.right_hotspot
 
@@ -3183,7 +3183,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_86_0, arg_86_1)
+					content_change_function = function (arg_86_0, arg_86_1)
 						if arg_86_0.disabled then
 							arg_86_1.text_color = arg_86_1.disabled_color
 						else
@@ -3195,7 +3195,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "left_arrow_hotspot",
 					pass_type = "hotspot",
 					content_id = "left_hotspot",
-					content_check_function = function(arg_87_0)
+					content_check_function = function (arg_87_0)
 						return not arg_87_0.disabled
 					end
 				},
@@ -3203,7 +3203,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "right_arrow_hotspot",
 					pass_type = "hotspot",
 					content_id = "right_hotspot",
-					content_check_function = function(arg_88_0)
+					content_check_function = function (arg_88_0)
 						return not arg_88_0.disabled
 					end
 				},
@@ -3212,7 +3212,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "left_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_89_0)
+					content_check_function = function (arg_89_0)
 						return not arg_89_0.parent.disabled
 					end
 				},
@@ -3221,7 +3221,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "right_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_90_0)
+					content_check_function = function (arg_90_0)
 						return not arg_90_0.parent.disabled
 					end
 				},
@@ -3241,7 +3241,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 					style_id = "selection_text",
 					pass_type = "text",
 					text_id = "selection_text",
-					content_check_function = function(arg_91_0)
+					content_check_function = function (arg_91_0)
 						local var_91_0 = arg_91_0.selection_text
 
 						return var_91_0 and var_91_0 ~= ""
@@ -3249,13 +3249,13 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_92_0)
+					content_check_function = function (arg_92_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_93_0, arg_93_1)
+					content_check_function = function (arg_93_0, arg_93_1)
 						if var_0_24 then
 							arg_93_1.thickness = 1
 						end
@@ -3266,7 +3266,7 @@ local function var_0_34(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_94_0)
+					content_check_function = function (arg_94_0)
 						return var_0_24
 					end
 				}
@@ -3571,13 +3571,13 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_96_0)
+					content_check_function = function (arg_96_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_97_0, arg_97_1)
+					content_check_function = function (arg_97_0, arg_97_1)
 						if var_0_24 then
 							arg_97_1.thickness = 1
 						end
@@ -3588,7 +3588,7 @@ local function var_0_36(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_98_0)
+					content_check_function = function (arg_98_0)
 						return var_0_24
 					end
 				}
@@ -3684,7 +3684,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_100_0)
+					content_check_function = function (arg_100_0)
 						return arg_100_0.is_highlighted
 					end
 				},
@@ -3692,7 +3692,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_101_0)
+					content_check_function = function (arg_101_0)
 						return not arg_101_0.hotspot.is_hover
 					end
 				},
@@ -3700,7 +3700,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_102_0)
+					content_check_function = function (arg_102_0)
 						return arg_102_0.hotspot.is_hover
 					end
 				},
@@ -3711,13 +3711,13 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				},
 				{
 					pass_type = "rect",
-					content_check_function = function(arg_103_0)
+					content_check_function = function (arg_103_0)
 						return var_0_24
 					end
 				},
 				{
 					pass_type = "border",
-					content_check_function = function(arg_104_0, arg_104_1)
+					content_check_function = function (arg_104_0, arg_104_1)
 						if var_0_24 then
 							arg_104_1.thickness = 1
 						end
@@ -3728,7 +3728,7 @@ local function var_0_38(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99
 				{
 					style_id = "debug_middle_line",
 					pass_type = "rect",
-					content_check_function = function(arg_105_0)
+					content_check_function = function (arg_105_0)
 						return var_0_24
 					end
 				}
@@ -3864,7 +3864,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 
 	var_106_3[#var_106_3 + 1] = {
 		pass_type = "local_offset",
-		offset_function = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+		offset_function = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 			local var_107_0 = arg_107_2.current_selection
 
 			if var_107_0 ~= arg_107_2.local_selection then
@@ -3887,7 +3887,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 		pass_type = "texture",
 		style_id = "highlight_texture",
 		texture_id = "highlight_texture",
-		content_check_function = function(arg_108_0)
+		content_check_function = function (arg_108_0)
 			return arg_108_0.is_highlighted
 		end
 	}
@@ -3898,7 +3898,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 	var_106_3[#var_106_3 + 1] = {
 		pass_type = "option_tooltip",
 		text_id = "tooltip_text",
-		content_check_function = function(arg_109_0)
+		content_check_function = function (arg_109_0)
 			return arg_109_0.tooltip_text and arg_109_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
 		end
 	}
@@ -3914,13 +3914,13 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 	}
 	var_106_3[#var_106_3 + 1] = {
 		pass_type = "rect",
-		content_check_function = function(arg_110_0)
+		content_check_function = function (arg_110_0)
 			return var_0_24
 		end
 	}
 	var_106_3[#var_106_3 + 1] = {
 		pass_type = "border",
-		content_check_function = function(arg_111_0, arg_111_1)
+		content_check_function = function (arg_111_0, arg_111_1)
 			if var_0_24 then
 				arg_111_1.thickness = 1
 			end
@@ -3931,7 +3931,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 	var_106_3[#var_106_3 + 1] = {
 		style_id = "debug_middle_line",
 		pass_type = "rect",
-		content_check_function = function(arg_112_0)
+		content_check_function = function (arg_112_0)
 			return var_0_24
 		end
 	}
@@ -4051,7 +4051,7 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			pass_type = "text",
 			style_id = var_106_15,
 			text_id = var_106_15,
-			content_change_function = function(arg_113_0, arg_113_1)
+			content_change_function = function (arg_113_0, arg_113_1)
 				local var_113_0 = arg_113_0["option_" .. iter_106_1]
 
 				if not var_113_0.is_selected then
@@ -4109,10 +4109,10 @@ local function var_0_40(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, a
 			texture_id = "rect_texture",
 			pass_type = "texture",
 			style_id = var_106_22,
-			content_check_function = function(arg_114_0)
+			content_check_function = function (arg_114_0)
 				return arg_114_0[var_106_22].is_selected
 			end,
-			content_change_function = function(arg_115_0, arg_115_1)
+			content_change_function = function (arg_115_0, arg_115_1)
 				local var_115_0 = arg_115_0["option_" .. iter_106_1]
 
 				if var_115_0.is_selected then
@@ -4158,7 +4158,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "hotspot_1",
 					pass_type = "hotspot",
 					content_id = "hotspot_1",
-					content_check_function = function(arg_117_0)
+					content_check_function = function (arg_117_0)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4166,7 +4166,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "hotspot_2",
 					pass_type = "hotspot",
 					content_id = "hotspot_2",
-					content_check_function = function(arg_118_0)
+					content_check_function = function (arg_118_0)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4183,7 +4183,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				{
 					pass_type = "hotspot",
 					content_id = "highlight_hotspot",
-					content_check_function = function(arg_119_0)
+					content_check_function = function (arg_119_0)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4191,7 +4191,7 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_120_0)
+					content_check_function = function (arg_120_0)
 						return arg_120_0.is_highlighted and not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4199,10 +4199,10 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "selected_key_1",
 					pass_type = "text",
 					text_id = "selected_key_1",
-					content_check_function = function(arg_121_0)
+					content_check_function = function (arg_121_0)
 						return not arg_121_0.active_1
 					end,
-					content_change_function = function(arg_122_0, arg_122_1)
+					content_change_function = function (arg_122_0, arg_122_1)
 						if arg_122_0.active_1 or arg_122_0.hotspot_1.is_hover then
 							arg_122_1.text_color = arg_122_1.hover_color
 						elseif arg_122_0.is_unassigned_1 then
@@ -4226,10 +4226,10 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 					style_id = "selected_key_2",
 					pass_type = "text",
 					text_id = "selected_key_2",
-					content_check_function = function(arg_123_0)
+					content_check_function = function (arg_123_0)
 						return not arg_123_0.active_2
 					end,
-					content_change_function = function(arg_124_0, arg_124_1)
+					content_change_function = function (arg_124_0, arg_124_1)
 						if arg_124_0.active_2 or arg_124_0.hotspot_2.is_hover then
 							arg_124_1.text_color = arg_124_1.hover_color
 						elseif arg_124_0.is_unassigned_2 then
@@ -4252,14 +4252,14 @@ local function var_0_42(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4, a
 				{
 					style_id = "selected_rect_1",
 					pass_type = "rect",
-					content_check_function = function(arg_125_0)
+					content_check_function = function (arg_125_0)
 						return arg_125_0.active_1
 					end
 				},
 				{
 					style_id = "selected_rect_2",
 					pass_type = "rect",
-					content_check_function = function(arg_126_0)
+					content_check_function = function (arg_126_0)
 						return arg_126_0.active_2
 					end
 				},
@@ -4551,7 +4551,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_128_0, arg_128_1)
+					content_check_function = function (arg_128_0, arg_128_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4559,7 +4559,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "background_fg",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_129_0, arg_129_1)
+					content_check_function = function (arg_129_0, arg_129_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4567,7 +4567,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "bottom_edge",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_130_0, arg_130_1)
+					content_check_function = function (arg_130_0, arg_130_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4575,7 +4575,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_horizontal",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_131_0, arg_131_1)
+					content_check_function = function (arg_131_0, arg_131_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4583,7 +4583,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "arrow_buttons_edge_vertical",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_132_0, arg_132_1)
+					content_check_function = function (arg_132_0, arg_132_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4595,7 +4595,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "highlight_texture",
 					texture_id = "highlight_texture",
-					content_check_function = function(arg_133_0)
+					content_check_function = function (arg_133_0)
 						return arg_133_0.is_highlighted and Managers.input:is_device_active("gamepad") and not arg_133_0.active
 					end
 				},
@@ -4603,7 +4603,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_134_0)
+					content_check_function = function (arg_134_0)
 						return arg_134_0.tooltip_text and arg_134_0.highlight_hotspot.is_hover and not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -4611,7 +4611,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "down_arrow_background",
 					pass_type = "hotspot",
 					content_id = "down_hotspot",
-					content_check_function = function(arg_135_0)
+					content_check_function = function (arg_135_0)
 						return arg_135_0.active
 					end
 				},
@@ -4619,7 +4619,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "up_arrow_background",
 					pass_type = "hotspot",
 					content_id = "up_hotspot",
-					content_check_function = function(arg_136_0)
+					content_check_function = function (arg_136_0)
 						return arg_136_0.active
 					end
 				},
@@ -4627,7 +4627,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "down_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_137_0)
+					content_check_function = function (arg_137_0)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -4642,7 +4642,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "down_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_138_0, arg_138_1)
+					content_check_function = function (arg_138_0, arg_138_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -4659,7 +4659,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					pass_type = "texture",
 					style_id = "up_arrow_background",
 					texture_id = "rect_masked",
-					content_check_function = function(arg_139_0)
+					content_check_function = function (arg_139_0)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -4674,7 +4674,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "up_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_140_0, arg_140_1)
+					content_check_function = function (arg_140_0, arg_140_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -4692,7 +4692,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "down_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_141_0)
+					content_check_function = function (arg_141_0)
 						local var_141_0 = arg_141_0.parent.down_hotspot
 
 						return var_141_0.active and var_141_0.is_hover
@@ -4703,7 +4703,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 					style_id = "up_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_142_0)
+					content_check_function = function (arg_142_0)
 						local var_142_0 = arg_142_0.parent.up_hotspot
 
 						return var_142_0.active and var_142_0.is_hover
@@ -4722,7 +4722,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "texture",
 							texture_id = "texture",
 							pass_type = "texture",
-							content_check_function = function(arg_143_0)
+							content_check_function = function (arg_143_0)
 								return not arg_143_0.hotspot.is_hover and not arg_143_0.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
@@ -4731,7 +4731,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "highlight_texture",
 							texture_id = "highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_144_0, arg_144_1, arg_144_2)
+							content_check_function = function (arg_144_0, arg_144_1, arg_144_2)
 								return arg_144_0.hotspot.is_hover or arg_144_0.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
@@ -4740,7 +4740,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "background_highlight_texture",
 							texture_id = "background_highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_145_0, arg_145_1, arg_145_2)
+							content_check_function = function (arg_145_0, arg_145_1, arg_145_2)
 								return arg_145_0.hotspot.is_hover and not arg_145_0.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
@@ -4749,7 +4749,7 @@ local function var_0_45(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, a
 							style_id = "background_selected_texture",
 							texture_id = "background_highlight_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_146_0, arg_146_1, arg_146_2)
+							content_check_function = function (arg_146_0, arg_146_1, arg_146_2)
 								return arg_146_0.hotspot.is_selected
 							end,
 							content_change_function = arg_127_5
@@ -5045,7 +5045,7 @@ end
 
 SettingsWidgetTypeTemplate = {
 	drop_down = {
-		input_function = function(arg_147_0, arg_147_1)
+		input_function = function (arg_147_0, arg_147_1)
 			local var_147_0 = arg_147_0.content
 			local var_147_1 = arg_147_0.style
 			local var_147_2 = var_147_0.list_content
@@ -5227,7 +5227,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	checkbox = {
-		input_function = function(arg_148_0, arg_148_1)
+		input_function = function (arg_148_0, arg_148_1)
 			local var_148_0 = arg_148_0.content
 
 			if arg_148_1:get("confirm") then
@@ -5249,7 +5249,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	option = {
-		input_function = function(arg_149_0, arg_149_1)
+		input_function = function (arg_149_0, arg_149_1)
 			local var_149_0 = arg_149_0.content
 			local var_149_1 = var_149_0.num_options
 			local var_149_2 = var_149_0.current_selection
@@ -5274,7 +5274,7 @@ SettingsWidgetTypeTemplate = {
 		end
 	},
 	keybind = {
-		input_function = function(arg_150_0, arg_150_1)
+		input_function = function (arg_150_0, arg_150_1)
 			local var_150_0 = arg_150_0.content
 			local var_150_1 = arg_150_0.style
 
@@ -5323,7 +5323,7 @@ SettingsWidgetTypeTemplate = {
 				}
 			}
 		},
-		input_function = function(arg_151_0, arg_151_1)
+		input_function = function (arg_151_0, arg_151_1)
 			local var_151_0 = arg_151_0.content
 			local var_151_1 = var_151_0.list_content
 			local var_151_2 = arg_151_0.style
@@ -5445,7 +5445,7 @@ SettingsWidgetTypeTemplate = {
 		end
 	},
 	stepper = {
-		input_function = function(arg_152_0, arg_152_1)
+		input_function = function (arg_152_0, arg_152_1)
 			local var_152_0 = arg_152_0.content
 
 			if arg_152_1:get("move_left") then
@@ -5472,7 +5472,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	slider = {
-		input_function = function(arg_153_0, arg_153_1, arg_153_2)
+		input_function = function (arg_153_0, arg_153_1, arg_153_2)
 			local var_153_0 = arg_153_0.content
 			local var_153_1 = var_153_0.input_cooldown
 			local var_153_2 = var_153_0.input_cooldown_multiplier
@@ -5535,7 +5535,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	image = {
-		input_function = function()
+		input_function = function ()
 			return
 		end,
 		input_description = {
@@ -5545,7 +5545,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	title = {
-		input_function = function()
+		input_function = function ()
 			return
 		end,
 		input_description = {
@@ -5555,7 +5555,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	text_link = {
-		input_function = function(arg_156_0, arg_156_1)
+		input_function = function (arg_156_0, arg_156_1)
 			local var_156_0 = arg_156_0.content
 
 			var_156_0.controller_input_pressed = nil
@@ -5579,7 +5579,7 @@ SettingsWidgetTypeTemplate = {
 		}
 	},
 	gamepad_layout = {
-		input_function = function()
+		input_function = function ()
 			return
 		end,
 		input_description = {
@@ -5596,15 +5596,15 @@ local var_0_46 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3)
+			init = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3)
 				arg_158_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+			update = function (arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
 				local var_159_0 = math.easeOutCubic(arg_159_3)
 
 				arg_159_4.render_settings.alpha_multiplier = var_159_0
 			end,
-			on_complete = function(arg_160_0, arg_160_1, arg_160_2, arg_160_3)
+			on_complete = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3)
 				arg_160_3.render_settings.alpha_multiplier = 1
 			end
 		}

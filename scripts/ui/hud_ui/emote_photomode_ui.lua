@@ -10,7 +10,7 @@ EmotePhotomodeUI = class(EmotePhotomodeUI)
 
 local var_0_5 = false
 
-function EmotePhotomodeUI.init(arg_1_0, arg_1_1, arg_1_2)
+EmotePhotomodeUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui_context = arg_1_2
@@ -21,11 +21,11 @@ function EmotePhotomodeUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._is_enabled = false
 end
 
-function EmotePhotomodeUI.destroy(arg_2_0)
+EmotePhotomodeUI.destroy = function (arg_2_0)
 	return
 end
 
-function EmotePhotomodeUI._create_ui_elements(arg_3_0)
+EmotePhotomodeUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 	arg_3_0._render_settings = arg_3_0._render_settings or {}
 	arg_3_0._widgets = {}
@@ -55,7 +55,7 @@ function EmotePhotomodeUI._create_ui_elements(arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 end
 
-function EmotePhotomodeUI.update(arg_4_0, arg_4_1, arg_4_2)
+EmotePhotomodeUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_0._is_enabled then
 		return
 	end
@@ -63,11 +63,11 @@ function EmotePhotomodeUI.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1, arg_4_2)
 end
 
-function EmotePhotomodeUI.set_enabled(arg_5_0, arg_5_1)
+EmotePhotomodeUI.set_enabled = function (arg_5_0, arg_5_1)
 	arg_5_0._is_enabled = arg_5_1
 end
 
-function EmotePhotomodeUI._draw(arg_6_0, arg_6_1, arg_6_2)
+EmotePhotomodeUI._draw = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._ui_renderer
 	local var_6_1 = arg_6_0._ui_scenegraph
 	local var_6_2 = arg_6_0._render_settings

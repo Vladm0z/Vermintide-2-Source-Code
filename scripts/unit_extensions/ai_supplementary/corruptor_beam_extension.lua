@@ -4,7 +4,7 @@ CorruptorBeamExtension = class(CorruptorBeamExtension)
 
 local var_0_0 = POSITION_LOOKUP
 
-function CorruptorBeamExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CorruptorBeamExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
@@ -24,15 +24,15 @@ function CorruptorBeamExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.aimed_at_position = nil
 end
 
-function CorruptorBeamExtension.destroy(arg_2_0)
+CorruptorBeamExtension.destroy = function (arg_2_0)
 	arg_2_0:remove_vfx_and_sfx()
 end
 
-function CorruptorBeamExtension.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+CorruptorBeamExtension.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:remove_vfx_and_sfx(arg_3_1)
 end
 
-function CorruptorBeamExtension.remove_vfx_and_sfx(arg_4_0, arg_4_1)
+CorruptorBeamExtension.remove_vfx_and_sfx = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.world
 	local var_4_1 = arg_4_0.target_unit
 	local var_4_2
@@ -79,7 +79,7 @@ function CorruptorBeamExtension.remove_vfx_and_sfx(arg_4_0, arg_4_1)
 	arg_4_0.aimed_at_position = nil
 end
 
-function CorruptorBeamExtension.set_state(arg_5_0, arg_5_1, arg_5_2)
+CorruptorBeamExtension.set_state = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_2 then
 		print("Corruptor beam tried to set state to nil target unit")
 		arg_5_0:remove_vfx_and_sfx()
@@ -131,7 +131,7 @@ function CorruptorBeamExtension.set_state(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CorruptorBeamExtension._get_positions(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+CorruptorBeamExtension._get_positions = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if not arg_6_0.aimed_at_position then
 		arg_6_0.aimed_at_position = Vector3Box(arg_6_3 + 1 * Vector3.normalize(arg_6_3 - arg_6_2))
 	end
@@ -143,7 +143,7 @@ function CorruptorBeamExtension._get_positions(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	return var_6_0, var_6_2
 end
 
-function CorruptorBeamExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CorruptorBeamExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.state
 	local var_7_1 = arg_7_0.target_unit
 	local var_7_2 = arg_7_0.projectile_unit

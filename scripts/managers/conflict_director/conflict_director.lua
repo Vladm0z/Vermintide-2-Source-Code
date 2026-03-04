@@ -69,7 +69,7 @@ local var_0_8 = var_0_6.testify and require("scripts/managers/conflict_director/
 
 ConflictDirector = class(ConflictDirector)
 
-function ConflictDirector.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+ConflictDirector.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0._world = arg_2_1
 	arg_2_0._time = 0
 	arg_2_0._level_key = arg_2_2
@@ -224,7 +224,7 @@ function ConflictDirector.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 	Managers.state.event:register(arg_2_0, "event_delay_pacing", "event_delay_pacing")
 end
 
-function ConflictDirector._setup_sides_to_update_recycler(arg_3_0)
+ConflictDirector._setup_sides_to_update_recycler = function (arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = Managers.state.side:sides()
 	local var_3_2 = 1
@@ -241,7 +241,7 @@ function ConflictDirector._setup_sides_to_update_recycler(arg_3_0)
 	arg_3_0.sides_to_update_recycler = var_3_0
 end
 
-function ConflictDirector.rpc_terror_event_trigger_flow(arg_4_0, arg_4_1, arg_4_2)
+ConflictDirector.rpc_terror_event_trigger_flow = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = NetworkLookup.terror_flow_events[arg_4_2]
 
 	arg_4_0:level_flow_event(var_4_0)
@@ -260,7 +260,7 @@ local function var_0_9(arg_5_0, arg_5_1)
 	end
 end
 
-function ConflictDirector.alive_specials_count(arg_6_0)
+ConflictDirector.alive_specials_count = function (arg_6_0)
 	local var_6_0 = 0
 
 	for iter_6_0, iter_6_1 in ipairs(arg_6_0._alive_specials) do
@@ -272,7 +272,7 @@ function ConflictDirector.alive_specials_count(arg_6_0)
 	return var_6_0
 end
 
-function ConflictDirector.alive_specials(arg_7_0, arg_7_1)
+ConflictDirector.alive_specials = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1 or {}
 
 	for iter_7_0, iter_7_1 in ipairs(arg_7_0._alive_specials) do
@@ -284,21 +284,21 @@ function ConflictDirector.alive_specials(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function ConflictDirector.alive_bosses(arg_8_0)
+ConflictDirector.alive_bosses = function (arg_8_0)
 	return arg_8_0._alive_bosses
 end
 
-function ConflictDirector.alive_standards(arg_9_0)
+ConflictDirector.alive_standards = function (arg_9_0)
 	return arg_9_0._alive_standards
 end
 
-function ConflictDirector.reset_queued_spawn_by_breed(arg_10_0)
+ConflictDirector.reset_queued_spawn_by_breed = function (arg_10_0)
 	for iter_10_0, iter_10_1 in pairs(Breeds) do
 		arg_10_0.num_queued_spawn_by_breed[iter_10_0] = 0
 	end
 end
 
-function ConflictDirector._reset_spawned_by_breed(arg_11_0, arg_11_1)
+ConflictDirector._reset_spawned_by_breed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._conflict_data_by_side[arg_11_1 or arg_11_0.default_enemy_side_id]
 
 	for iter_11_0, iter_11_1 in pairs(Breeds) do
@@ -308,7 +308,7 @@ function ConflictDirector._reset_spawned_by_breed(arg_11_0, arg_11_1)
 	end
 end
 
-function ConflictDirector._reset_spawned_by_breed_during_event(arg_12_0, arg_12_1)
+ConflictDirector._reset_spawned_by_breed_during_event = function (arg_12_0, arg_12_1)
 	arg_12_0._master_event_id = arg_12_0._master_event_id + 1
 
 	local var_12_0 = arg_12_0._conflict_data_by_side[arg_12_1 or arg_12_0.default_enemy_side_id]
@@ -320,7 +320,7 @@ function ConflictDirector._reset_spawned_by_breed_during_event(arg_12_0, arg_12_
 	var_12_0.num_spawned_ai_event = 0
 end
 
-function ConflictDirector.destroy(arg_13_0)
+ConflictDirector.destroy = function (arg_13_0)
 	local var_13_0 = Managers.state.event
 
 	if var_13_0 then
@@ -365,30 +365,30 @@ function ConflictDirector.destroy(arg_13_0)
 	end
 end
 
-function ConflictDirector.get_player_unit_segment(arg_14_0, arg_14_1)
+ConflictDirector.get_player_unit_segment = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.main_path_player_info[arg_14_1]
 
 	return var_14_0 and var_14_0.path_index or nil
 end
 
-function ConflictDirector.get_player_unit_travel_distance(arg_15_0, arg_15_1)
+ConflictDirector.get_player_unit_travel_distance = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.main_path_player_info[arg_15_1]
 
 	return var_15_0 and var_15_0.travel_dist or nil
 end
 
-function ConflictDirector.stop_rush_check(arg_16_0, arg_16_1)
+ConflictDirector.stop_rush_check = function (arg_16_0, arg_16_1)
 	arg_16_0._next_rush_check = math.huge
 
 	table.clear(arg_16_0._rushing_checks)
 end
 
-function ConflictDirector.init_rush_check(arg_17_0, arg_17_1)
+ConflictDirector.init_rush_check = function (arg_17_0, arg_17_1)
 	arg_17_0.players_speeding_dist = 0
 	arg_17_0._next_rush_check = 0
 end
 
-function ConflictDirector.are_players_rushing(arg_18_0, arg_18_1)
+ConflictDirector.are_players_rushing = function (arg_18_0, arg_18_1)
 	if arg_18_1 > arg_18_0._next_rush_check then
 		local var_18_0 = arg_18_0.main_path_player_info
 		local var_18_1 = arg_18_0._hero_side.PLAYER_UNITS
@@ -432,14 +432,14 @@ function ConflictDirector.are_players_rushing(arg_18_0, arg_18_1)
 	end
 end
 
-function ConflictDirector.main_path_completion(arg_19_0, arg_19_1)
+ConflictDirector.main_path_completion = function (arg_19_0, arg_19_1)
 	local var_19_0 = 0
 	local var_19_1 = arg_19_0.main_path_player_info[arg_19_1]
 
 	return var_19_1 and var_19_1.move_percent or 0
 end
 
-function ConflictDirector.sort_player_info_by_travel_distance(arg_20_0, arg_20_1, arg_20_2)
+ConflictDirector.sort_player_info_by_travel_distance = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_1.player_info_by_travel_distance
 
 	table.clear(var_20_0)
@@ -452,7 +452,7 @@ function ConflictDirector.sort_player_info_by_travel_distance(arg_20_0, arg_20_1
 	end
 
 	if var_20_1 > 0 then
-		table.sort(var_20_0, function(arg_21_0, arg_21_1)
+		table.sort(var_20_0, function (arg_21_0, arg_21_1)
 			return arg_21_0.travel_dist < arg_21_1.travel_dist
 		end)
 
@@ -472,7 +472,7 @@ function ConflictDirector.sort_player_info_by_travel_distance(arg_20_0, arg_20_1
 	end
 end
 
-function ConflictDirector.main_path_player_far_away_check(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+ConflictDirector.main_path_player_far_away_check = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	local var_22_0 = math.abs(arg_22_2 - arg_22_1.travel_dist) > 100
 
 	if var_22_0 then
@@ -506,7 +506,7 @@ function ConflictDirector.main_path_player_far_away_check(arg_22_0, arg_22_1, ar
 	return var_22_0
 end
 
-function ConflictDirector.update_main_path_player_info(arg_23_0, arg_23_1, arg_23_2)
+ConflictDirector.update_main_path_player_info = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0.main_path_info
 
 	if not var_23_0.main_paths then
@@ -628,11 +628,11 @@ function ConflictDirector.update_main_path_player_info(arg_23_0, arg_23_1, arg_2
 	end
 end
 
-function ConflictDirector.get_main_path_player_data(arg_24_0, arg_24_1)
+ConflictDirector.get_main_path_player_data = function (arg_24_0, arg_24_1)
 	return arg_24_0.main_path_player_info[arg_24_1]
 end
 
-function ConflictDirector.get_cluster_and_loneliness(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+ConflictDirector.get_cluster_and_loneliness = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	if arg_25_0._cluster_and_loneliness[arg_25_1] then
 		local var_25_0 = arg_25_0._cluster_and_loneliness[arg_25_1]
 
@@ -652,7 +652,7 @@ function ConflictDirector.get_cluster_and_loneliness(arg_25_0, arg_25_1, arg_25_
 	return var_25_1, arg_25_2[var_25_2], var_25_3, var_25_4
 end
 
-function ConflictDirector.update_player_areas(arg_26_0, arg_26_1)
+ConflictDirector.update_player_areas = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._player_areas
 
 	table.clear_array(var_26_0, #var_26_0)
@@ -676,7 +676,7 @@ function ConflictDirector.update_player_areas(arg_26_0, arg_26_1)
 	end
 end
 
-function ConflictDirector.add_horde(arg_27_0, arg_27_1, arg_27_2)
+ConflictDirector.add_horde = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0._living_horde = arg_27_0._living_horde + arg_27_1
 
 	if arg_27_2 then
@@ -686,7 +686,7 @@ function ConflictDirector.add_horde(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function ConflictDirector.set_master_event_running(arg_28_0, arg_28_1)
+ConflictDirector.set_master_event_running = function (arg_28_0, arg_28_1)
 	if arg_28_0.running_master_event ~= arg_28_1 then
 		arg_28_0:_reset_spawned_by_breed_during_event()
 	end
@@ -694,31 +694,31 @@ function ConflictDirector.set_master_event_running(arg_28_0, arg_28_1)
 	arg_28_0.running_master_event = arg_28_1
 end
 
-function ConflictDirector.spawned_during_event(arg_29_0, arg_29_1)
+ConflictDirector.spawned_during_event = function (arg_29_0, arg_29_1)
 	return arg_29_0._conflict_data_by_side[arg_29_1].num_spawned_ai_event
 end
 
-function ConflictDirector.enemies_spawned_during_event(arg_30_0)
+ConflictDirector.enemies_spawned_during_event = function (arg_30_0)
 	return arg_30_0._conflict_data_by_side[arg_30_0.default_enemy_side_id].num_spawned_ai_event
 end
 
-function ConflictDirector.horde_size(arg_31_0)
+ConflictDirector.horde_size = function (arg_31_0)
 	return arg_31_0._living_horde, arg_31_0._horde_ends_at
 end
 
-function ConflictDirector.has_horde(arg_32_0)
+ConflictDirector.has_horde = function (arg_32_0)
 	if arg_32_0.horde_spawner then
 		return arg_32_0.horde_spawner:running_horde()
 	end
 end
 
-function ConflictDirector.is_horde_alive(arg_33_0)
+ConflictDirector.is_horde_alive = function (arg_33_0)
 	local var_33_0, var_33_1 = arg_33_0:has_horde()
 
 	return arg_33_0:horde_size() >= 1 or var_33_0, var_33_0, var_33_1
 end
 
-function ConflictDirector.mini_patrol(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+ConflictDirector.mini_patrol = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
 	local var_34_0 = true
 	local var_34_1 = 1
 	local var_34_2 = true
@@ -728,11 +728,11 @@ function ConflictDirector.mini_patrol(arg_34_0, arg_34_1, arg_34_2, arg_34_3, ar
 	arg_34_0.horde_spawner:execute_event_horde(arg_34_1, arg_34_2, arg_34_3, arg_34_4, var_34_1, var_34_2, arg_34_5, var_34_0, nil, nil, nil, arg_34_6)
 end
 
-function ConflictDirector.mini_patrol_killed(arg_35_0, arg_35_1)
+ConflictDirector.mini_patrol_killed = function (arg_35_0, arg_35_1)
 	print("Mini patrol killed!", arg_35_1)
 end
 
-function ConflictDirector.event_horde(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9)
+ConflictDirector.event_horde = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9)
 	if not var_0_6.ai_horde_spawning_disabled then
 		arg_36_3 = arg_36_3 or arg_36_0.default_enemy_side_id
 
@@ -740,7 +740,7 @@ function ConflictDirector.event_horde(arg_36_0, arg_36_1, arg_36_2, arg_36_3, ar
 	end
 end
 
-function ConflictDirector.check_updated_settings(arg_37_0, arg_37_1)
+ConflictDirector.check_updated_settings = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0.current_conflict_settings
 	local var_37_1 = var_0_6
 
@@ -771,7 +771,7 @@ function ConflictDirector.check_updated_settings(arg_37_0, arg_37_1)
 	return false
 end
 
-function ConflictDirector.check_update_mutators(arg_38_0, arg_38_1)
+ConflictDirector.check_update_mutators = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._current_zone_mutators
 	local var_38_1
 	local var_38_2
@@ -821,7 +821,7 @@ function ConflictDirector.check_update_mutators(arg_38_0, arg_38_1)
 	return var_38_3
 end
 
-function ConflictDirector.set_updated_settings(arg_39_0, arg_39_1)
+ConflictDirector.set_updated_settings = function (arg_39_0, arg_39_1)
 	fassert(arg_39_1 ~= "random", "Should not get a 'random' setting in ConflictDirector:set_updated_settings")
 
 	local var_39_0 = ConflictDirectors[arg_39_1]
@@ -846,7 +846,7 @@ function ConflictDirector.set_updated_settings(arg_39_0, arg_39_1)
 	print("---")
 end
 
-function ConflictDirector.refresh_conflict_director_patches(arg_40_0)
+ConflictDirector.refresh_conflict_director_patches = function (arg_40_0)
 	local var_40_0 = ConflictDirectors[arg_40_0.current_conflict_settings]
 	local var_40_1, var_40_2 = Managers.state.difficulty:get_difficulty()
 	local var_40_3 = Managers.state.difficulty.fallback_difficulty
@@ -867,7 +867,7 @@ function ConflictDirector.refresh_conflict_director_patches(arg_40_0)
 	end
 end
 
-function ConflictDirector.update_horde_pacing(arg_41_0, arg_41_1, arg_41_2)
+ConflictDirector.update_horde_pacing = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0.pacing
 
 	if var_41_0:horde_population() < 1 or var_41_0.pacing_state == "pacing_frozen" then
@@ -1001,7 +1001,7 @@ function ConflictDirector.update_horde_pacing(arg_41_0, arg_41_1, arg_41_2)
 	end
 end
 
-function ConflictDirector.horde_killed(arg_42_0, arg_42_1)
+ConflictDirector.horde_killed = function (arg_42_0, arg_42_1)
 	if not arg_42_1 then
 		return
 	end
@@ -1019,29 +1019,29 @@ function ConflictDirector.horde_killed(arg_42_0, arg_42_1)
 	end
 end
 
-function ConflictDirector.going_to_relax_state(arg_43_0)
+ConflictDirector.going_to_relax_state = function (arg_43_0)
 	arg_43_0._multiple_horde_count = nil
 end
 
-function ConflictDirector.get_horde_data(arg_44_0)
+ConflictDirector.get_horde_data = function (arg_44_0)
 	return arg_44_0._next_horde_time, arg_44_0.horde_spawner.hordes, arg_44_0._multiple_horde_count
 end
 
-function ConflictDirector.get_horde_timer(arg_45_0)
+ConflictDirector.get_horde_timer = function (arg_45_0)
 	return arg_45_0._next_horde_time, arg_45_0.delay_horde
 end
 
-function ConflictDirector.start_terror_event(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+ConflictDirector.start_terror_event = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 	local var_46_0 = arg_46_2 or 0
 
 	return TerrorEventMixer.add_to_start_event_list(arg_46_1, var_46_0, arg_46_3, arg_46_4)
 end
 
-function ConflictDirector.terror_event_finished(arg_47_0, arg_47_1)
+ConflictDirector.terror_event_finished = function (arg_47_0, arg_47_1)
 	return table.contains(TerrorEventMixer.finished_events, arg_47_1)
 end
 
-function ConflictDirector.start_terror_event_from_template(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+ConflictDirector.start_terror_event_from_template = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	fassert(arg_48_2 ~= nil, "Starting a terror event from template should not be done if 'spawner_id' is nil!")
 
 	local var_48_0 = Managers.level_transition_handler:get_current_level_keys()
@@ -1070,7 +1070,7 @@ function ConflictDirector.start_terror_event_from_template(arg_48_0, arg_48_1, a
 	arg_48_0:start_terror_event(var_48_1, arg_48_3)
 end
 
-function ConflictDirector.handle_speed_runners(arg_49_0, arg_49_1)
+ConflictDirector.handle_speed_runners = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_0:get_threat_value() > arg_49_0.delay_specials_threat_value
 	local var_49_1 = arg_49_0.speed_running_intervention_data
 	local var_49_2 = CurrentSpecialsSettings.speed_running_intervention or SpecialsSettings.default.speed_running_intervention
@@ -1203,7 +1203,7 @@ function ConflictDirector.handle_speed_runners(arg_49_0, arg_49_1)
 	end
 end
 
-function ConflictDirector.handle_alone_player(arg_50_0, arg_50_1, arg_50_2)
+ConflictDirector.handle_alone_player = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_2.ENEMY_PLAYER_AND_BOT_UNITS
 	local var_50_1 = arg_50_0.rushing_intervention_data
 	local var_50_2 = Managers.state.game_mode:setting("disable_rush_intervention")
@@ -1290,7 +1290,7 @@ function ConflictDirector.handle_alone_player(arg_50_0, arg_50_1, arg_50_2)
 	end
 end
 
-function ConflictDirector.respawn_level(arg_51_0, arg_51_1)
+ConflictDirector.respawn_level = function (arg_51_0, arg_51_1)
 	arg_51_0:destroy_all_units()
 
 	if arg_51_1 then
@@ -1320,7 +1320,7 @@ function ConflictDirector.respawn_level(arg_51_0, arg_51_1)
 	arg_51_0.spawn_zone_baker:draw_pack_density_graph()
 end
 
-function ConflictDirector.create_debug_list(arg_52_0)
+ConflictDirector.create_debug_list = function (arg_52_0)
 	arg_52_0._debug_list = {
 		"none",
 		arg_52_0.pacing,
@@ -1328,7 +1328,7 @@ function ConflictDirector.create_debug_list(arg_52_0)
 	}
 end
 
-function ConflictDirector.update_mini_patrol(arg_53_0, arg_53_1, arg_53_2)
+ConflictDirector.update_mini_patrol = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0.pacing
 	local var_53_1 = CurrentPacing.mini_patrol
 	local var_53_2 = arg_53_0._next_mini_patrol_timer
@@ -1375,11 +1375,11 @@ function ConflictDirector.update_mini_patrol(arg_53_0, arg_53_1, arg_53_2)
 	end
 end
 
-function ConflictDirector.reset_data(arg_54_0)
+ConflictDirector.reset_data = function (arg_54_0)
 	arg_54_0._cluster_and_loneliness = FrameTable.alloc_table()
 end
 
-function ConflictDirector.update(arg_55_0, arg_55_1, arg_55_2)
+ConflictDirector.update = function (arg_55_0, arg_55_1, arg_55_2)
 	arg_55_0._time = arg_55_2
 
 	if var_0_6.testify then
@@ -1624,24 +1624,24 @@ function ConflictDirector.update(arg_55_0, arg_55_1, arg_55_2)
 	end
 end
 
-function ConflictDirector.pre_update(arg_56_0)
+ConflictDirector.pre_update = function (arg_56_0)
 	if arg_56_0.breed_freezer and not var_0_6.disable_breed_freeze_opt then
 		arg_56_0.breed_freezer:commit_freezes()
 	end
 end
 
-function ConflictDirector.post_update(arg_57_0)
+ConflictDirector.post_update = function (arg_57_0)
 	if arg_57_0.breed_freezer and not var_0_6.disable_breed_freeze_opt then
 		arg_57_0.breed_freezer:commit_freezes()
 	end
 end
 
-function ConflictDirector.set_recycler_extra_pos(arg_58_0, arg_58_1, arg_58_2)
+ConflictDirector.set_recycler_extra_pos = function (arg_58_0, arg_58_1, arg_58_2)
 	arg_58_0._recycler_extra_pos = arg_58_1
 	arg_58_0._recycler_extra_end_time = arg_58_2
 end
 
-function ConflictDirector.get_free_flight_pos(arg_59_0)
+ConflictDirector.get_free_flight_pos = function (arg_59_0)
 	local var_59_0
 	local var_59_1 = Managers.free_flight.data.global
 
@@ -1656,7 +1656,7 @@ function ConflictDirector.get_free_flight_pos(arg_59_0)
 	return var_59_0
 end
 
-function ConflictDirector.spawn_queued_unit(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9)
+ConflictDirector.spawn_queued_unit = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9)
 	arg_60_7 = arg_60_7 or {}
 	arg_60_7.side_id = arg_60_7.side_id or arg_60_0.default_enemy_side_id
 
@@ -1716,15 +1716,15 @@ function ConflictDirector.spawn_queued_unit(arg_60_0, arg_60_1, arg_60_2, arg_60
 	return arg_60_0.spawn_queue_id
 end
 
-function ConflictDirector.get_spawned_unit(arg_61_0, arg_61_1)
+ConflictDirector.get_spawned_unit = function (arg_61_0, arg_61_1)
 	return arg_61_0._spawn_queue_id_lut[arg_61_1]
 end
 
-function ConflictDirector._get_spawned_unit_id(arg_62_0, arg_62_1)
+ConflictDirector._get_spawned_unit_id = function (arg_62_0, arg_62_1)
 	return arg_62_0._spawn_queue_id_lut[arg_62_1]
 end
 
-function ConflictDirector.remove_queued_unit(arg_63_0, arg_63_1)
+ConflictDirector.remove_queued_unit = function (arg_63_0, arg_63_1)
 	local var_63_0 = arg_63_0.spawn_queue
 	local var_63_1 = arg_63_0.first_spawn_index
 	local var_63_2 = arg_63_0.spawn_queue_size
@@ -1754,7 +1754,7 @@ function ConflictDirector.remove_queued_unit(arg_63_0, arg_63_1)
 	ferror("Spawn_queue id not found %s", tostring(arg_63_1))
 end
 
-function ConflictDirector.update_spawn_queue(arg_64_0, arg_64_1)
+ConflictDirector.update_spawn_queue = function (arg_64_0, arg_64_1)
 	if arg_64_0.spawn_queue_size == 0 then
 		return
 	end
@@ -1812,7 +1812,7 @@ function ConflictDirector.update_spawn_queue(arg_64_0, arg_64_1)
 	end
 end
 
-function ConflictDirector.spawn_unit_immediate(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8)
+ConflictDirector.spawn_unit_immediate = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8)
 	arg_65_0.spawn_queue_id = arg_65_0.spawn_queue_id + 1
 
 	local var_65_0, var_65_1 = arg_65_0:_spawn_unit(arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_0.spawn_queue_id)
@@ -1824,7 +1824,7 @@ local var_0_10 = {
 	faction = "enemy"
 }
 
-function ConflictDirector._spawn_unit(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9)
+ConflictDirector._spawn_unit = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9)
 	local var_66_0 = var_0_6.use_optimized_breed_units and arg_66_1.opt_base_unit or arg_66_1.base_unit
 	local var_66_1 = type(var_66_0) == "string" and var_66_0 or var_66_0[Math.random(#var_66_0)]
 	local var_66_2 = arg_66_1.unit_template
@@ -1943,7 +1943,7 @@ function ConflictDirector._spawn_unit(arg_66_0, arg_66_1, arg_66_2, arg_66_3, ar
 	return var_66_17, var_66_18
 end
 
-function ConflictDirector._post_spawn_unit(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5, arg_67_6, arg_67_7, arg_67_8, arg_67_9)
+ConflictDirector._post_spawn_unit = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5, arg_67_6, arg_67_7, arg_67_8, arg_67_9)
 	arg_67_0._spawn_queue_id_lut[arg_67_9] = arg_67_1
 	arg_67_0._spawn_queue_id_lut[arg_67_1] = arg_67_9
 	arg_67_7 = arg_67_7 or {}
@@ -2037,67 +2037,67 @@ function ConflictDirector._post_spawn_unit(arg_67_0, arg_67_1, arg_67_2, arg_67_
 	Unit.flow_event(arg_67_1, "lua_ai_unit_spawned")
 end
 
-function ConflictDirector.set_disabled(arg_68_0, arg_68_1)
+ConflictDirector.set_disabled = function (arg_68_0, arg_68_1)
 	arg_68_0.disabled = arg_68_1
 end
 
-function ConflictDirector.spawned_units_by_side(arg_69_0, arg_69_1)
+ConflictDirector.spawned_units_by_side = function (arg_69_0, arg_69_1)
 	return arg_69_0._conflict_data_by_side[arg_69_1].spawned
 end
 
-function ConflictDirector.spawned_enemies(arg_70_0)
+ConflictDirector.spawned_enemies = function (arg_70_0)
 	return arg_70_0._conflict_data_by_side[arg_70_0.default_enemy_side_id].spawned
 end
 
-function ConflictDirector.count_units_by_breed(arg_71_0, arg_71_1, arg_71_2)
+ConflictDirector.count_units_by_breed = function (arg_71_0, arg_71_1, arg_71_2)
 	arg_71_2 = arg_71_2 or arg_71_0.default_enemy_side_id
 
 	return arg_71_0._conflict_data_by_side[arg_71_2].num_spawned_by_breed[arg_71_1]
 end
 
-function ConflictDirector.spawned_units_by_breed(arg_72_0, arg_72_1, arg_72_2)
+ConflictDirector.spawned_units_by_breed = function (arg_72_0, arg_72_1, arg_72_2)
 	arg_72_2 = arg_72_2 or arg_72_0.default_enemy_side_id
 
 	return arg_72_0._conflict_data_by_side[arg_72_2].spawned_units_by_breed[arg_72_1]
 end
 
-function ConflictDirector.spawned_units_by_breed_table(arg_73_0, arg_73_1)
+ConflictDirector.spawned_units_by_breed_table = function (arg_73_0, arg_73_1)
 	arg_73_1 = arg_73_1 or arg_73_0.default_enemy_side_id
 
 	return arg_73_0._conflict_data_by_side[arg_73_1].spawned_units_by_breed
 end
 
-function ConflictDirector.count_units_by_breed_during_event(arg_74_0, arg_74_1, arg_74_2)
+ConflictDirector.count_units_by_breed_during_event = function (arg_74_0, arg_74_1, arg_74_2)
 	arg_74_2 = arg_74_2 or arg_74_0.default_enemy_side_id
 
 	return arg_74_0._conflict_data_by_side[arg_74_2].num_spawned_by_breed_during_event[arg_74_1] or 0
 end
 
-function ConflictDirector.all_spawned_units(arg_75_0)
+ConflictDirector.all_spawned_units = function (arg_75_0)
 	return arg_75_0._all_spawned_units, arg_75_0._num_spawned_ai
 end
 
-function ConflictDirector.total_num_ai_spawned(arg_76_0)
+ConflictDirector.total_num_ai_spawned = function (arg_76_0)
 	return arg_76_0._num_spawned_ai
 end
 
-function ConflictDirector.add_unit_to_bosses(arg_77_0, arg_77_1)
+ConflictDirector.add_unit_to_bosses = function (arg_77_0, arg_77_1)
 	arg_77_0._alive_bosses[#arg_77_0._alive_bosses + 1] = arg_77_1
 end
 
-function ConflictDirector.remove_unit_from_bosses(arg_78_0, arg_78_1)
+ConflictDirector.remove_unit_from_bosses = function (arg_78_0, arg_78_1)
 	var_0_9(arg_78_0._alive_bosses, arg_78_1)
 end
 
-function ConflictDirector.add_unit_to_standards(arg_79_0, arg_79_1)
+ConflictDirector.add_unit_to_standards = function (arg_79_0, arg_79_1)
 	arg_79_0._alive_standards[#arg_79_0._alive_standards + 1] = arg_79_1
 end
 
-function ConflictDirector.remove_unit_from_standards(arg_80_0, arg_80_1)
+ConflictDirector.remove_unit_from_standards = function (arg_80_0, arg_80_1)
 	var_0_9(arg_80_0._alive_standards, arg_80_1)
 end
 
-function ConflictDirector._remove_unit_from_spawned(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+ConflictDirector._remove_unit_from_spawned = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 	local var_81_0 = Managers.state.side.side_by_unit[arg_81_1]
 
 	if not var_81_0 then
@@ -2208,19 +2208,19 @@ for iter_0_0, iter_0_1 in pairs(Breeds) do
 	end
 end
 
-function ConflictDirector.get_threat_value(arg_82_0)
+ConflictDirector.get_threat_value = function (arg_82_0)
 	return arg_82_0.threat_value, arg_82_0.num_aggroed
 end
 
-function ConflictDirector.get_num_aggroed_enemies(arg_83_0)
+ConflictDirector.get_num_aggroed_enemies = function (arg_83_0)
 	return arg_83_0.num_aggroed
 end
 
-function ConflictDirector.set_threat_value(arg_84_0, arg_84_1, arg_84_2)
+ConflictDirector.set_threat_value = function (arg_84_0, arg_84_1, arg_84_2)
 	var_0_11[arg_84_1] = arg_84_2
 end
 
-function ConflictDirector.calculate_threat_value(arg_85_0)
+ConflictDirector.calculate_threat_value = function (arg_85_0)
 	local var_85_0 = 0
 	local var_85_1 = 0
 	local var_85_2 = Managers.state.performance:activated_per_breed()
@@ -2237,7 +2237,7 @@ function ConflictDirector.calculate_threat_value(arg_85_0)
 	arg_85_0.num_aggroed = var_85_1
 end
 
-function ConflictDirector.check_pacing_event_delay(arg_86_0)
+ConflictDirector.check_pacing_event_delay = function (arg_86_0)
 	if arg_86_0.event_delay then
 		arg_86_0.delay_horde = true
 		arg_86_0.delay_mini_patrol = true
@@ -2247,7 +2247,7 @@ end
 
 local var_0_12 = DamageDataIndex.SOURCE_ATTACKER_UNIT
 
-function ConflictDirector.register_unit_killed(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
+ConflictDirector.register_unit_killed = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
 	arg_87_0:_remove_unit_from_spawned(arg_87_1, arg_87_2)
 
 	local var_87_0 = arg_87_0._hero_side
@@ -2271,7 +2271,7 @@ function ConflictDirector.register_unit_killed(arg_87_0, arg_87_1, arg_87_2, arg
 	Managers.state.event:trigger("on_unit_killed", arg_87_1, arg_87_3, arg_87_4)
 end
 
-function ConflictDirector.register_unit_destroyed(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+ConflictDirector.register_unit_destroyed = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 	local var_88_0 = arg_88_2.breed
 	local var_88_1 = var_88_0.name
 	local var_88_2 = POSITION_LOOKUP[arg_88_1]
@@ -2290,7 +2290,7 @@ function ConflictDirector.register_unit_destroyed(arg_88_0, arg_88_1, arg_88_2, 
 	arg_88_2.about_to_be_destroyed = true
 end
 
-function ConflictDirector.event_delay_pacing(arg_89_0, arg_89_1)
+ConflictDirector.event_delay_pacing = function (arg_89_0, arg_89_1)
 	arg_89_0.event_delay = arg_89_1
 
 	if not arg_89_1 then
@@ -2300,7 +2300,7 @@ function ConflictDirector.event_delay_pacing(arg_89_0, arg_89_1)
 	end
 end
 
-function ConflictDirector.destroy_unit(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+ConflictDirector.destroy_unit = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	if ALIVE[arg_90_1] then
 		Managers.state.event:trigger("on_ai_unit_destroyed", arg_90_1, arg_90_2, arg_90_3)
 
@@ -2315,7 +2315,7 @@ function ConflictDirector.destroy_unit(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	end
 end
 
-function ConflictDirector.destroy_all_units(arg_91_0, arg_91_1)
+ConflictDirector.destroy_all_units = function (arg_91_0, arg_91_1)
 	print("ConflictDirector - destroy all units")
 
 	if not Managers.state.network:game() then
@@ -2349,7 +2349,7 @@ function ConflictDirector.destroy_all_units(arg_91_0, arg_91_1)
 	arg_91_0._living_horde = 0
 end
 
-function ConflictDirector.destroy_close_units(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+ConflictDirector.destroy_close_units = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -2409,7 +2409,7 @@ function ConflictDirector.destroy_close_units(arg_92_0, arg_92_1, arg_92_2, arg_
 	print("debug destroy close units", var_92_0)
 end
 
-function ConflictDirector.destroy_specials(arg_93_0)
+ConflictDirector.destroy_specials = function (arg_93_0)
 	print("debug destroy specials")
 
 	local var_93_0 = arg_93_0._alive_specials
@@ -2441,7 +2441,7 @@ function ConflictDirector.destroy_specials(arg_93_0)
 	end
 end
 
-function ConflictDirector.debug_spawn_breed(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+ConflictDirector.debug_spawn_breed = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 	local var_94_0 = Breeds[arg_94_1]
 	local var_94_1 = arg_94_4
 	local var_94_2 = var_94_1[1]
@@ -2479,7 +2479,7 @@ end
 
 local var_0_13 = true
 
-function ConflictDirector.debug_spawn_all_breeds(arg_95_0, arg_95_1, arg_95_2)
+ConflictDirector.debug_spawn_all_breeds = function (arg_95_0, arg_95_1, arg_95_2)
 	local var_95_0 = arg_95_0:aim_spawning(nil, true)
 
 	if not var_95_0 then
@@ -2563,7 +2563,7 @@ function ConflictDirector.debug_spawn_all_breeds(arg_95_0, arg_95_1, arg_95_2)
 	return true
 end
 
-function ConflictDirector.debug_spawn_breed_at_hidden_spawner(arg_96_0, arg_96_1)
+ConflictDirector.debug_spawn_breed_at_hidden_spawner = function (arg_96_0, arg_96_1)
 	local var_96_0 = Breeds[arg_96_1]
 
 	print("Debug spawning from hidden spawner: " .. arg_96_1)
@@ -2591,7 +2591,7 @@ function ConflictDirector.debug_spawn_breed_at_hidden_spawner(arg_96_0, arg_96_1
 	end
 end
 
-function ConflictDirector.rpc_debug_conflict_director_command(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5, arg_97_6)
+ConflictDirector.rpc_debug_conflict_director_command = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5, arg_97_6)
 	arg_97_0._debug_spawn_breed_position = arg_97_4
 	arg_97_0._debug_spawn_breed_enhancements = table.set(string.split_deprecated(arg_97_5, ","))
 
@@ -2619,14 +2619,14 @@ end
 
 ConflictDirector.rpc_debug_conflict_director_command = NOP
 
-function ConflictDirector.debug_spawn_group(arg_98_0, arg_98_1)
+ConflictDirector.debug_spawn_group = function (arg_98_0, arg_98_1)
 	local var_98_0 = Breeds[arg_98_1]
 
 	print("Spawning group: " .. arg_98_1)
 	arg_98_0:aim_spawning_group(var_98_0, true)
 end
 
-function ConflictDirector.debug_spawn_group_at_main_path(arg_99_0, arg_99_1, arg_99_2)
+ConflictDirector.debug_spawn_group_at_main_path = function (arg_99_0, arg_99_1, arg_99_2)
 	local var_99_0 = Breeds.skaven_storm_vermin
 	local var_99_1 = "spline_patrol"
 
@@ -2644,7 +2644,7 @@ function ConflictDirector.debug_spawn_group_at_main_path(arg_99_0, arg_99_1, arg
 	arg_99_0:spawn_group(var_99_1, var_99_4:unbox(), var_99_5)
 end
 
-function ConflictDirector.debug_spawn_horde(arg_100_0)
+ConflictDirector.debug_spawn_horde = function (arg_100_0)
 	if arg_100_0.in_safe_zone then
 		print("Can't spawn horde in safe zone")
 
@@ -2680,7 +2680,7 @@ function ConflictDirector.debug_spawn_horde(arg_100_0)
 	arg_100_0.horde_spawner:horde(var_100_0, var_100_2, var_100_1)
 end
 
-function ConflictDirector.debug_speed_running_intervention(arg_101_0, arg_101_1)
+ConflictDirector.debug_speed_running_intervention = function (arg_101_0, arg_101_1)
 	local var_101_0 = arg_101_0.speed_running_intervention_data
 
 	if var_101_0.debug_state then
@@ -2736,7 +2736,7 @@ local function var_0_15()
 	end
 end
 
-function ConflictDirector.player_aim_raycast(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+ConflictDirector.player_aim_raycast = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 	local var_104_0, var_104_1 = var_0_15()
 	local var_104_2 = Managers.player:local_player(1).player_unit
 	local var_104_3 = World.get_data(arg_104_1, "physics_world")
@@ -2767,7 +2767,7 @@ function ConflictDirector.player_aim_raycast(arg_104_0, arg_104_1, arg_104_2, ar
 	return nil
 end
 
-function ConflictDirector.debug_spawn_tentacle_blob(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+ConflictDirector.debug_spawn_tentacle_blob = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
 	print("DEBUG SPAWN TENTACLE")
 
 	local var_105_0, var_105_1, var_105_2, var_105_3 = arg_105_0:player_aim_raycast(arg_105_0._world, arg_105_2, "filter_ray_horde_spawn")
@@ -2784,7 +2784,7 @@ function ConflictDirector.debug_spawn_tentacle_blob(arg_105_0, arg_105_1, arg_10
 	local var_105_6 = Quaternion(Vector3.up(), math.degrees_to_radians(math.random(1, 360)))
 	local var_105_7 = arg_105_1.debug_spawn_optional_data or {}
 
-	function var_105_7.spawned_func(arg_106_0, arg_106_1, arg_106_2)
+	var_105_7.spawned_func = function (arg_106_0, arg_106_1, arg_106_2)
 		if arg_106_1.special then
 			arg_105_0._alive_specials[#arg_105_0._alive_specials + 1] = arg_106_0
 		end
@@ -2803,7 +2803,7 @@ function ConflictDirector.debug_spawn_tentacle_blob(arg_105_0, arg_105_1, arg_10
 	arg_105_0:spawn_queued_unit(arg_105_1, Vector3Box(var_105_4), QuaternionBox(var_105_6), var_105_5, nil, nil, var_105_7)
 end
 
-function ConflictDirector.aim_spawning_surface(arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4)
+ConflictDirector.aim_spawning_surface = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4)
 	local var_107_0, var_107_1, var_107_2, var_107_3 = arg_107_0:player_aim_raycast(arg_107_0._world, false, "filter_ray_horde_spawn")
 
 	if arg_107_1.inside_wall_spawn_distance then
@@ -2816,7 +2816,7 @@ function ConflictDirector.aim_spawning_surface(arg_107_0, arg_107_1, arg_107_2, 
 
 	var_107_6.side_id = arg_107_0.debug_spawn_side_id
 
-	function var_107_6.spawned_func(arg_108_0, arg_108_1, arg_108_2)
+	var_107_6.spawned_func = function (arg_108_0, arg_108_1, arg_108_2)
 		if arg_108_1.special then
 			arg_107_0._alive_specials[#arg_107_0._alive_specials + 1] = arg_108_0
 		end
@@ -2834,15 +2834,15 @@ function ConflictDirector.aim_spawning_surface(arg_107_0, arg_107_1, arg_107_2, 
 	arg_107_0:spawn_queued_unit(arg_107_1, Vector3Box(var_107_0), QuaternionBox(var_107_5), var_107_4, nil, nil, var_107_6)
 end
 
-function ConflictDirector.set_debug_spawn_side(arg_109_0, arg_109_1)
+ConflictDirector.set_debug_spawn_side = function (arg_109_0, arg_109_1)
 	arg_109_0.debug_spawn_side_id = arg_109_1
 end
 
-function ConflictDirector.cycle_debug_spawn_side(arg_110_0)
+ConflictDirector.cycle_debug_spawn_side = function (arg_110_0)
 	arg_110_0.debug_spawn_side_id = arg_110_0.debug_spawn_side_id % #Managers.state.side:sides() + 1
 end
 
-function ConflictDirector.aim_spawning_air(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
+ConflictDirector.aim_spawning_air = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
 	local var_111_0, var_111_1, var_111_2, var_111_3 = arg_111_0:player_aim_raycast(arg_111_0._world, false, "filter_ray_horde_spawn")
 	local var_111_4 = "debug_spawn"
 	local var_111_5 = Quaternion.identity()
@@ -2861,7 +2861,7 @@ function ConflictDirector.aim_spawning_air(arg_111_0, arg_111_1, arg_111_2, arg_
 
 	var_111_8.side_id = arg_111_0.debug_spawn_side_id
 
-	function var_111_8.spawned_func(arg_112_0, arg_112_1, arg_112_2)
+	var_111_8.spawned_func = function (arg_112_0, arg_112_1, arg_112_2)
 		if arg_112_1.special then
 			arg_111_0._alive_specials[#arg_111_0._alive_specials + 1] = arg_112_0
 		end
@@ -2879,7 +2879,7 @@ function ConflictDirector.aim_spawning_air(arg_111_0, arg_111_1, arg_111_2, arg_
 	arg_111_0:spawn_queued_unit(arg_111_1, Vector3Box(var_111_0), QuaternionBox(var_111_5), var_111_4, nil, nil, var_111_8)
 end
 
-function ConflictDirector.aim_spawning(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5)
+ConflictDirector.aim_spawning = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5)
 	local var_113_0
 	local var_113_1
 	local var_113_2
@@ -2919,7 +2919,7 @@ function ConflictDirector.aim_spawning(arg_113_0, arg_113_1, arg_113_2, arg_113_
 		var_113_10.ignore_breed_limits = true
 		var_113_10.side_id = arg_113_0.debug_spawn_side_id
 
-		function var_113_10.spawned_func(arg_114_0, arg_114_1, arg_114_2)
+		var_113_10.spawned_func = function (arg_114_0, arg_114_1, arg_114_2)
 			if arg_114_1.special then
 				arg_113_0._alive_specials[#arg_113_0._alive_specials + 1] = arg_114_0
 			end
@@ -2942,7 +2942,7 @@ function ConflictDirector.aim_spawning(arg_113_0, arg_113_1, arg_113_2, arg_113_
 	end
 end
 
-function ConflictDirector.debug_spawn_roaming_patrol(arg_115_0, arg_115_1)
+ConflictDirector.debug_spawn_roaming_patrol = function (arg_115_0, arg_115_1)
 	if not arg_115_1 then
 		return
 	end
@@ -2975,7 +2975,7 @@ function ConflictDirector.debug_spawn_roaming_patrol(arg_115_0, arg_115_1)
 	end
 end
 
-function ConflictDirector.debug_spawn_spline_patrol_closest_spawner(arg_116_0)
+ConflictDirector.debug_spawn_spline_patrol_closest_spawner = function (arg_116_0)
 	local var_116_0 = Managers.player:local_player()
 	local var_116_1 = arg_116_0:get_free_flight_pos() or POSITION_LOOKUP[var_116_0.player_unit]
 	local var_116_2, var_116_3 = Managers.state.conflict.level_analysis:debug_get_closest_boss_patrol_spawn(var_116_1)
@@ -2990,13 +2990,13 @@ function ConflictDirector.debug_spawn_spline_patrol_closest_spawner(arg_116_0)
 	TerrorEventMixer.start_event("boss_event_chaos_spline_patrol", var_116_4)
 end
 
-function ConflictDirector.aim_patrol_spawning(arg_117_0, arg_117_1)
+ConflictDirector.aim_patrol_spawning = function (arg_117_0, arg_117_1)
 	arg_117_0:aim_spawning_group(nil, true, arg_117_1)
 
 	return true
 end
 
-function ConflictDirector.inject_event_patrol(arg_118_0)
+ConflictDirector.inject_event_patrol = function (arg_118_0)
 	local var_118_0, var_118_1, var_118_2 = arg_118_0.conflict_director.level_analysis:get_closest_roaming_spline(area_position:unbox())
 
 	if not var_118_0 then
@@ -3007,7 +3007,7 @@ function ConflictDirector.inject_event_patrol(arg_118_0)
 	local var_118_4 = arg_118_0:boxify_waypoint_table(var_118_3)
 end
 
-function ConflictDirector.aim_spawning_group(arg_119_0, arg_119_1, arg_119_2, arg_119_3)
+ConflictDirector.aim_spawning_group = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3)
 	local var_119_0, var_119_1, var_119_2, var_119_3 = arg_119_0:player_aim_raycast(arg_119_0._world, false, "filter_ray_horde_spawn")
 
 	if arg_119_0._debug_spawn_breed_position then
@@ -3086,7 +3086,7 @@ end
 
 local var_0_16 = {}
 
-function ConflictDirector.spawn_group(arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+ConflictDirector.spawn_group = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3)
 	if type(arg_120_3) ~= "table" then
 		print("wrong spawn type")
 
@@ -3152,7 +3152,7 @@ function ConflictDirector.spawn_group(arg_120_0, arg_120_1, arg_120_2, arg_120_3
 	end
 end
 
-function ConflictDirector.spawn_spline_group(arg_121_0, arg_121_1, arg_121_2, arg_121_3)
+ConflictDirector.spawn_spline_group = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3)
 	local var_121_0 = arg_121_3.group_type
 	local var_121_1 = arg_121_3.spline_name
 	local var_121_2 = arg_121_3.formation
@@ -3194,7 +3194,7 @@ function ConflictDirector.spawn_spline_group(arg_121_0, arg_121_1, arg_121_2, ar
 	end
 end
 
-function ConflictDirector._check_hi_data_override(arg_122_0, arg_122_1, arg_122_2, arg_122_3)
+ConflictDirector._check_hi_data_override = function (arg_122_0, arg_122_1, arg_122_2, arg_122_3)
 	local var_122_0 = arg_122_1.name
 	local var_122_1 = arg_122_2[var_122_0]
 
@@ -3212,11 +3212,11 @@ function ConflictDirector._check_hi_data_override(arg_122_0, arg_122_1, arg_122_
 	return arg_122_1
 end
 
-function ConflictDirector.set_breed_override_lookup(arg_123_0, arg_123_1)
+ConflictDirector.set_breed_override_lookup = function (arg_123_0, arg_123_1)
 	arg_123_0._breed_override_lookup = arg_123_1
 end
 
-function ConflictDirector._spawn_spline_group(arg_124_0, arg_124_1, arg_124_2)
+ConflictDirector._spawn_spline_group = function (arg_124_0, arg_124_1, arg_124_2)
 	local var_124_0 = "patrol"
 	local var_124_1 = arg_124_1.formation
 	local var_124_2 = arg_124_1.spline_name
@@ -3292,7 +3292,7 @@ function ConflictDirector._spawn_spline_group(arg_124_0, arg_124_1, arg_124_2)
 	end
 end
 
-function ConflictDirector.spawn_one(arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5)
+ConflictDirector.spawn_one = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5)
 	if arg_125_1.special and Managers.state.game_mode:setting("ai_specials_spawning_disabled") then
 		return
 	end
@@ -3337,7 +3337,7 @@ local function var_0_17(arg_126_0, arg_126_1, arg_126_2)
 	end
 end
 
-function ConflictDirector.spawn_at_raw_spawner(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
+ConflictDirector.spawn_at_raw_spawner = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
 	local var_127_0, var_127_1 = Managers.state.entity:system("spawner_system"):get_raw_spawner_unit(arg_127_2)
 
 	if var_127_0 then
@@ -3351,7 +3351,7 @@ function ConflictDirector.spawn_at_raw_spawner(arg_127_0, arg_127_1, arg_127_2, 
 		if arg_127_3.spawned_func then
 			local var_127_4 = arg_127_3.spawned_func
 
-			function arg_127_3.spawned_func(arg_128_0, arg_128_1, arg_128_2)
+			arg_127_3.spawned_func = function (arg_128_0, arg_128_1, arg_128_2)
 				var_127_4(arg_128_0, arg_128_1, arg_128_2)
 				var_0_17(arg_128_0, arg_128_1, arg_128_2)
 			end
@@ -3365,7 +3365,7 @@ function ConflictDirector.spawn_at_raw_spawner(arg_127_0, arg_127_1, arg_127_2, 
 	end
 end
 
-function ConflictDirector.debug_spawn_at_raw(arg_129_0, arg_129_1, arg_129_2, arg_129_3)
+ConflictDirector.debug_spawn_at_raw = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3)
 	local var_129_0 = arg_129_0:player_aim_raycast(arg_129_0._world, false, "filter_ray_horde_spawn")
 
 	if arg_129_0._debug_spawn_breed_position then
@@ -3379,7 +3379,7 @@ function ConflictDirector.debug_spawn_at_raw(arg_129_0, arg_129_1, arg_129_2, ar
 	if arg_129_2.spawned_func then
 		local var_129_2 = arg_129_2.spawned_func
 
-		function arg_129_2.spawned_func(arg_130_0, arg_130_1, arg_130_2)
+		arg_129_2.spawned_func = function (arg_130_0, arg_130_1, arg_130_2)
 			var_129_2(arg_130_0, arg_130_1, arg_130_2)
 			var_0_17(arg_130_0, arg_130_1, arg_130_2)
 		end
@@ -3392,7 +3392,7 @@ function ConflictDirector.debug_spawn_at_raw(arg_129_0, arg_129_1, arg_129_2, ar
 	arg_129_0:spawn_queued_unit(arg_129_1, Vector3Box(var_129_0), QuaternionBox(var_129_1), "raw_spawner", nil, nil, arg_129_2, nil, nil)
 end
 
-function ConflictDirector.generate_spawns(arg_131_0)
+ConflictDirector.generate_spawns = function (arg_131_0)
 	local var_131_0
 	local var_131_1
 	local var_131_2
@@ -3444,7 +3444,7 @@ function ConflictDirector.generate_spawns(arg_131_0)
 	return {}
 end
 
-function ConflictDirector.register_main_path_obstacle(arg_132_0, arg_132_1, arg_132_2)
+ConflictDirector.register_main_path_obstacle = function (arg_132_0, arg_132_1, arg_132_2)
 	local var_132_0 = arg_132_0._main_path_obstacles
 
 	var_132_0[#var_132_0 + 1] = {
@@ -3453,7 +3453,7 @@ function ConflictDirector.register_main_path_obstacle(arg_132_0, arg_132_1, arg_
 	}
 end
 
-function ConflictDirector.ai_ready(arg_133_0, arg_133_1)
+ConflictDirector.ai_ready = function (arg_133_0, arg_133_1)
 	arg_133_0.enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
 
 	print("CurrentConflictSettings", arg_133_0.current_conflict_settings)
@@ -3502,7 +3502,7 @@ function ConflictDirector.ai_ready(arg_133_0, arg_133_1)
 	arg_133_0.spawn_zone_baker.zones = Managers.state.game_mode._mutator_handler:tweak_zones(arg_133_0.current_conflict_settings, var_133_3, arg_133_0.spawn_zone_baker.num_main_zones)
 
 	if arg_133_0.spawn_zone_baker:loaded_spawn_zones_available() then
-		-- block empty
+		-- Nothing
 	else
 		local var_133_6 = arg_133_0.level_analysis:generate_main_path()
 
@@ -3545,7 +3545,7 @@ function ConflictDirector.ai_ready(arg_133_0, arg_133_1)
 	end
 end
 
-function ConflictDirector.ai_nav_groups_ready(arg_134_0, arg_134_1)
+ConflictDirector.ai_nav_groups_ready = function (arg_134_0, arg_134_1)
 	arg_134_0.enemy_recycler = EnemyRecycler:new(arg_134_0._world, arg_134_0.nav_world, arg_134_0._spawn_pos_list, arg_134_0._pack_sizes, arg_134_0._pack_rotations, arg_134_0.pack_members, arg_134_0._zone_data_list, arg_134_1)
 
 	arg_134_0.level_analysis:set_enemy_recycler(arg_134_0.enemy_recycler)
@@ -3567,7 +3567,7 @@ function ConflictDirector.ai_nav_groups_ready(arg_134_0, arg_134_1)
 	arg_134_0:create_debug_list()
 end
 
-function ConflictDirector.a_star_area_pos_search(arg_135_0, arg_135_1, arg_135_2)
+ConflictDirector.a_star_area_pos_search = function (arg_135_0, arg_135_1, arg_135_2)
 	local var_135_0 = GwNavTraversal.get_seed_triangle(arg_135_0.nav_world, arg_135_1)
 	local var_135_1 = GwNavTraversal.get_seed_triangle(arg_135_0.nav_world, arg_135_2)
 
@@ -3585,15 +3585,15 @@ function ConflictDirector.a_star_area_pos_search(arg_135_0, arg_135_1, arg_135_2
 	end
 end
 
-function ConflictDirector.freeze_intensity_decay(arg_136_0, arg_136_1)
+ConflictDirector.freeze_intensity_decay = function (arg_136_0, arg_136_1)
 	arg_136_0.frozen_intensity_decay_until = arg_136_0._time + arg_136_1
 end
 
-function ConflictDirector.intensity_decay_frozen(arg_137_0, arg_137_1)
+ConflictDirector.intensity_decay_frozen = function (arg_137_0, arg_137_1)
 	return arg_137_0._time < arg_137_0.frozen_intensity_decay_until
 end
 
-function ConflictDirector.boss_event_running(arg_138_0, arg_138_1)
+ConflictDirector.boss_event_running = function (arg_138_0, arg_138_1)
 	arg_138_1 = arg_138_1 or arg_138_0.default_enemy_side_id
 
 	local var_138_0 = arg_138_0._conflict_data_by_side[arg_138_1].num_spawned_by_breed
@@ -3601,11 +3601,11 @@ function ConflictDirector.boss_event_running(arg_138_0, arg_138_1)
 	return var_138_0.skaven_rat_ogre > 0 or var_138_0.skaven_stormfiend > 0 or var_138_0.chaos_troll > 0 or var_138_0.chaos_spawn > 0 or var_138_0.beastmen_minotaur > 0 or var_138_0.chaos_troll_chief > 0
 end
 
-function ConflictDirector.angry_boss(arg_139_0)
+ConflictDirector.angry_boss = function (arg_139_0)
 	return arg_139_0._num_angry_bosses > 0
 end
 
-function ConflictDirector.add_angry_boss(arg_140_0, arg_140_1, arg_140_2)
+ConflictDirector.add_angry_boss = function (arg_140_0, arg_140_1, arg_140_2)
 	arg_140_0._num_angry_bosses = math.clamp(arg_140_0._num_angry_bosses + arg_140_1, 0, 255)
 
 	if arg_140_2 then
@@ -3613,16 +3613,16 @@ function ConflictDirector.add_angry_boss(arg_140_0, arg_140_1, arg_140_2)
 	end
 end
 
-function ConflictDirector.level_flow_event(arg_141_0, arg_141_1)
+ConflictDirector.level_flow_event = function (arg_141_0, arg_141_1)
 	LevelHelper:flow_event(arg_141_0._world, arg_141_1)
 end
 
-function ConflictDirector.jslots(arg_142_0, arg_142_1, arg_142_2)
+ConflictDirector.jslots = function (arg_142_0, arg_142_1, arg_142_2)
 	local var_142_0 = POSITION_LOOKUP[arg_142_1]
 	local var_142_1 = POSITION_LOOKUP[arg_142_1]
 end
 
-function ConflictDirector.update_server_debug(arg_143_0, arg_143_1, arg_143_2)
+ConflictDirector.update_server_debug = function (arg_143_0, arg_143_1, arg_143_2)
 	local var_143_0 = arg_143_0._hero_side
 	local var_143_1 = var_143_0 and var_143_0.PLAYER_POSITIONS
 
@@ -3733,9 +3733,9 @@ function ConflictDirector.update_server_debug(arg_143_0, arg_143_1, arg_143_2)
 		if var_143_13 == "all" then
 			arg_143_0.spawn_zone_baker:draw_zones(arg_143_0.nav_world)
 		elseif var_143_13 == "last_naive" then
-			-- block empty
+			-- Nothing
 		elseif var_143_13 == "last" then
-			-- block empty
+			-- Nothing
 		else
 			arg_143_0.spawn_zone_baker:draw_zones(arg_143_0.nav_world)
 		end
@@ -3902,7 +3902,7 @@ function ConflictDirector.update_server_debug(arg_143_0, arg_143_1, arg_143_2)
 	end
 end
 
-function ConflictDirector.client_ready(arg_144_0)
+ConflictDirector.client_ready = function (arg_144_0)
 	if LevelHelper:should_load_enemies(arg_144_0._level_key) then
 		local var_144_0 = Managers.level_transition_handler.enemy_package_loader
 
@@ -3910,29 +3910,29 @@ function ConflictDirector.client_ready(arg_144_0)
 	end
 end
 
-function ConflictDirector.update_client(arg_145_0, arg_145_1, arg_145_2)
+ConflictDirector.update_client = function (arg_145_0, arg_145_1, arg_145_2)
 	return
 end
 
-function ConflictDirector.hot_join_sync(arg_146_0, arg_146_1)
+ConflictDirector.hot_join_sync = function (arg_146_0, arg_146_1)
 	if arg_146_0.breed_freezer then
 		arg_146_0.breed_freezer:hot_join_sync(arg_146_1)
 	end
 end
 
-function ConflictDirector.set_peaks(arg_147_0, arg_147_1)
+ConflictDirector.set_peaks = function (arg_147_0, arg_147_1)
 	arg_147_0._peak_delayer:set_peaks(arg_147_1)
 end
 
-function ConflictDirector.get_peaks(arg_148_0)
+ConflictDirector.get_peaks = function (arg_148_0)
 	return arg_148_0._peak_delayer:get_peaks()
 end
 
-function ConflictDirector.is_near_or_in_a_peak(arg_149_0)
+ConflictDirector.is_near_or_in_a_peak = function (arg_149_0)
 	return arg_149_0._peak_delayer:is_near_or_in_a_peak()
 end
 
-function ConflictDirector.spawn_breed_func(arg_150_0, arg_150_1)
+ConflictDirector.spawn_breed_func = function (arg_150_0, arg_150_1)
 	local var_150_0 = arg_150_0._debug_spawn_breed_enhancements
 
 	if var_150_0 and next(var_150_0) then
@@ -3942,7 +3942,7 @@ function ConflictDirector.spawn_breed_func(arg_150_0, arg_150_1)
 	end
 end
 
-function ConflictDirector.debug_spawn_variant(arg_151_0, arg_151_1, arg_151_2, arg_151_3)
+ConflictDirector.debug_spawn_variant = function (arg_151_0, arg_151_1, arg_151_2, arg_151_3)
 	local var_151_0 = Breeds[arg_151_1]
 
 	if arg_151_2 then
@@ -3964,11 +3964,11 @@ function ConflictDirector.debug_spawn_variant(arg_151_0, arg_151_1, arg_151_2, a
 	return var_151_0
 end
 
-function ConflictDirector.world(arg_152_0)
+ConflictDirector.world = function (arg_152_0)
 	return arg_152_0._world
 end
 
-function ConflictDirector.debug_spawn_encampment(arg_153_0, arg_153_1)
+ConflictDirector.debug_spawn_encampment = function (arg_153_0, arg_153_1)
 	local var_153_0 = Managers.state.debug.debug_breed_picker.mirrored_encampment_spawning
 	local var_153_1, var_153_2, var_153_3, var_153_4, var_153_5 = arg_153_0:player_aim_raycast(arg_153_0._world, false, "filter_ray_horde_spawn")
 
@@ -3998,7 +3998,7 @@ function ConflictDirector.debug_spawn_encampment(arg_153_0, arg_153_1)
 	end
 end
 
-function ConflictDirector.spawn_encampment(arg_154_0, arg_154_1)
+ConflictDirector.spawn_encampment = function (arg_154_0, arg_154_1)
 	print("spawn_encampent")
 
 	local var_154_0, var_154_1, var_154_2, var_154_3, var_154_4 = arg_154_0:player_aim_raycast(arg_154_0._world, false, "filter_ray_horde_spawn")
@@ -4019,6 +4019,6 @@ function ConflictDirector.spawn_encampment(arg_154_0, arg_154_1)
 	FormationUtils.spawn_encampment(var_154_10, var_154_0, var_154_5, var_154_8, arg_154_0.debug_spawn_side_id)
 end
 
-function ConflictDirector.pick_enhancement(arg_155_0, arg_155_1)
+ConflictDirector.pick_enhancement = function (arg_155_0, arg_155_1)
 	print("Picked:", arg_155_1)
 end

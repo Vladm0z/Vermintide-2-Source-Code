@@ -2,14 +2,14 @@
 
 UIAnimator = class(UIAnimator)
 
-function UIAnimator.init(arg_1_0, arg_1_1, arg_1_2)
+UIAnimator.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_scenegraph = arg_1_1
 	arg_1_0._animation_definitions = arg_1_2
 	arg_1_0._active_animations = {}
 	arg_1_0._animation_id = 0
 end
 
-function UIAnimator.start_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+UIAnimator.start_animation = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	local var_2_0 = arg_2_0._ui_scenegraph
 	local var_2_1 = {}
 
@@ -55,15 +55,15 @@ function UIAnimator.start_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4,
 	return var_2_6
 end
 
-function UIAnimator.is_animation_completed(arg_3_0, arg_3_1)
+UIAnimator.is_animation_completed = function (arg_3_0, arg_3_1)
 	return arg_3_0._active_animations[arg_3_1] == nil
 end
 
-function UIAnimator.stop_animation(arg_4_0, arg_4_1)
+UIAnimator.stop_animation = function (arg_4_0, arg_4_1)
 	arg_4_0._active_animations[arg_4_1] = nil
 end
 
-function UIAnimator.update(arg_5_0, arg_5_1)
+UIAnimator.update = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._ui_scenegraph
 
 	for iter_5_0, iter_5_1 in pairs(arg_5_0._active_animations) do

@@ -12,7 +12,7 @@ DisconnectIndicatorView = class(DisconnectIndicatorView)
 DisconnectIndicatorView.FLASH_CYCLE = 0.5
 DisconnectIndicatorView.SILENCE_THRESHOLD = GameSettingsDevelopment.network_silence_warning_delay or 3
 
-function DisconnectIndicatorView.init(arg_1_0, arg_1_1)
+DisconnectIndicatorView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading", "material", "materials/fonts/gw_fonts")
 	arg_1_0._render_settings = {
@@ -23,7 +23,7 @@ function DisconnectIndicatorView.init(arg_1_0, arg_1_1)
 	arg_1_0._text_width = 0
 end
 
-function DisconnectIndicatorView.destroy(arg_2_0)
+DisconnectIndicatorView.destroy = function (arg_2_0)
 	UIRenderer.destroy(arg_2_0._ui_renderer, arg_2_0._world)
 
 	arg_2_0._ui_renderer = nil
@@ -32,7 +32,7 @@ end
 
 local var_0_2 = true
 
-function DisconnectIndicatorView.update(arg_3_0, arg_3_1)
+DisconnectIndicatorView.update = function (arg_3_0, arg_3_1)
 	if var_0_2 then
 		var_0_2 = false
 		arg_3_0._recalc_text_width = true
@@ -69,13 +69,13 @@ function DisconnectIndicatorView.update(arg_3_0, arg_3_1)
 	arg_3_0:_draw(arg_3_1)
 end
 
-function DisconnectIndicatorView._create_ui_elements(arg_4_0)
+DisconnectIndicatorView._create_ui_elements = function (arg_4_0)
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	var_0_0.icon_text.content.text = Localize("lost_contact_with_host")
 	arg_4_0._icon_text_widget = UIWidget.init(var_0_0.icon_text)
 end
 
-function DisconnectIndicatorView._is_visible(arg_5_0)
+DisconnectIndicatorView._is_visible = function (arg_5_0)
 	if DEDICATED_SERVER then
 		return false
 	end
@@ -105,14 +105,14 @@ function DisconnectIndicatorView._is_visible(arg_5_0)
 	return Network.time_since_receive(var_5_2) > DisconnectIndicatorView.SILENCE_THRESHOLD
 end
 
-function DisconnectIndicatorView._set_transparency(arg_6_0, arg_6_1)
+DisconnectIndicatorView._set_transparency = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._icon_text_widget
 
 	var_6_0.style.text.text_color[1] = 255 * arg_6_1
 	var_6_0.style.texture_id.color[1] = 255 * arg_6_1
 end
 
-function DisconnectIndicatorView._draw(arg_7_0, arg_7_1)
+DisconnectIndicatorView._draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_renderer
 	local var_7_1 = arg_7_0._ui_scenegraph
 

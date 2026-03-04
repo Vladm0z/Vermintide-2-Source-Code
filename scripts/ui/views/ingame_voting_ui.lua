@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/ingame_voting_ui_definitions")
 
 IngameVotingUI = class(IngameVotingUI)
 
-function IngameVotingUI.init(arg_1_0, arg_1_1, arg_1_2)
+IngameVotingUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_2.ui_top_renderer
@@ -24,7 +24,7 @@ end
 
 local var_0_1 = false
 
-function IngameVotingUI.create_ui_elements(arg_2_0)
+IngameVotingUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0.scenegraph_definition = var_0_0.scenegraph_definition
 
@@ -36,13 +36,13 @@ function IngameVotingUI.create_ui_elements(arg_2_0)
 	var_0_1 = false
 end
 
-function IngameVotingUI.destroy(arg_3_0)
+IngameVotingUI.destroy = function (arg_3_0)
 	arg_3_0.voting_manager:allow_vote_input(false)
 
 	arg_3_0.voting_manager = nil
 end
 
-function IngameVotingUI.get_text_width(arg_4_0, arg_4_1, arg_4_2)
+IngameVotingUI.get_text_width = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = UIFontByResolution(arg_4_2)
 	local var_4_1 = arg_4_2.font_size
 	local var_4_2, var_4_3 = UIRenderer.text_size(arg_4_0.ui_top_renderer, arg_4_1, var_4_0[1], var_4_1)
@@ -50,7 +50,7 @@ function IngameVotingUI.get_text_width(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_2
 end
 
-function IngameVotingUI.setup_option_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+IngameVotingUI.setup_option_input = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = 0
 	local var_5_1 = arg_5_2.text
 	local var_5_2 = arg_5_2.input
@@ -105,11 +105,11 @@ function IngameVotingUI.setup_option_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0.ui_scenegraph[var_5_20].local_position[1] = var_5_19 and -var_5_21 or var_5_21
 end
 
-function IngameVotingUI.align_option_inputs(arg_6_0)
+IngameVotingUI.align_option_inputs = function (arg_6_0)
 	return
 end
 
-function IngameVotingUI.start_vote(arg_7_0, arg_7_1)
+IngameVotingUI.start_vote = function (arg_7_0, arg_7_1)
 	arg_7_0:clear_input_progress()
 
 	local var_7_0 = arg_7_1.template
@@ -152,7 +152,7 @@ function IngameVotingUI.start_vote(arg_7_0, arg_7_1)
 	arg_7_0:update_can_vote(not arg_7_0.menu_active)
 end
 
-function IngameVotingUI.update_vote(arg_8_0, arg_8_1)
+IngameVotingUI.update_vote = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.result_boxes
 	local var_8_1 = arg_8_0.voters
 
@@ -201,7 +201,7 @@ function IngameVotingUI.update_vote(arg_8_0, arg_8_1)
 	arg_8_0.background.content.time_text = var_8_5
 end
 
-function IngameVotingUI.start_finish(arg_9_0, arg_9_1, arg_9_2)
+IngameVotingUI.start_finish = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:clear_input_progress()
 
 	arg_9_0.on_finish = true
@@ -233,7 +233,7 @@ function IngameVotingUI.start_finish(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0.menu_active = nil
 end
 
-function IngameVotingUI.stop_finish(arg_10_0)
+IngameVotingUI.stop_finish = function (arg_10_0)
 	arg_10_0.option_no.style.result_text.text_color[1] = 255
 	arg_10_0.option_yes.style.result_text.text_color[1] = 255
 	arg_10_0.finish_option = nil
@@ -246,7 +246,7 @@ function IngameVotingUI.stop_finish(arg_10_0)
 	end
 end
 
-function IngameVotingUI.update_finish(arg_11_0, arg_11_1, arg_11_2)
+IngameVotingUI.update_finish = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 >= arg_11_0.finish_time then
 		arg_11_0:stop_finish()
 	else
@@ -260,7 +260,7 @@ function IngameVotingUI.update_finish(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function IngameVotingUI.update(arg_12_0, arg_12_1, arg_12_2)
+IngameVotingUI.update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._parent:parent().menu_active
 
 	if var_0_1 then
@@ -357,9 +357,9 @@ function IngameVotingUI.update(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function IngameVotingUI.on_gamepad_activated(arg_13_0, arg_13_1)
+IngameVotingUI.on_gamepad_activated = function (arg_13_0, arg_13_1)
 	if not arg_13_0.has_voted then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_13_0 = PLATFORM
@@ -381,9 +381,9 @@ function IngameVotingUI.on_gamepad_activated(arg_13_0, arg_13_1)
 	end
 end
 
-function IngameVotingUI.on_gamepad_deactivated(arg_14_0, arg_14_1)
+IngameVotingUI.on_gamepad_deactivated = function (arg_14_0, arg_14_1)
 	if not arg_14_0.has_voted then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_14_0.background.content.gamepad_active = false
@@ -396,7 +396,7 @@ function IngameVotingUI.on_gamepad_deactivated(arg_14_0, arg_14_1)
 	end
 end
 
-function IngameVotingUI.draw(arg_15_0, arg_15_1, arg_15_2)
+IngameVotingUI.draw = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.ui_top_renderer
 	local var_15_1 = arg_15_0.ui_scenegraph
 	local var_15_2 = arg_15_0.input_manager:get_service("ingame_menu")
@@ -409,7 +409,7 @@ function IngameVotingUI.draw(arg_15_0, arg_15_1, arg_15_2)
 	UIRenderer.end_pass(var_15_0)
 end
 
-function IngameVotingUI.update_pulse_animations(arg_16_0, arg_16_1, arg_16_2)
+IngameVotingUI.update_pulse_animations = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_0.has_voted then
 		return
 	end
@@ -427,7 +427,7 @@ function IngameVotingUI.update_pulse_animations(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function IngameVotingUI.update_can_vote(arg_17_0, arg_17_1)
+IngameVotingUI.update_can_vote = function (arg_17_0, arg_17_1)
 	arg_17_0.background.content.can_vote = arg_17_1
 	arg_17_0.option_yes.content.can_vote = arg_17_1
 	arg_17_0.option_no.content.can_vote = arg_17_1
@@ -437,7 +437,7 @@ end
 
 local var_0_2 = math.easeCubic
 
-function IngameVotingUI.animate_option_get_vote(arg_18_0, arg_18_1)
+IngameVotingUI.animate_option_get_vote = function (arg_18_0, arg_18_1)
 	local var_18_0 = 0.1
 	local var_18_1 = 0.1
 	local var_18_2 = var_18_0 + var_18_1
@@ -468,7 +468,7 @@ function IngameVotingUI.animate_option_get_vote(arg_18_0, arg_18_1)
 	UIWidget.animate(arg_18_1, var_18_12)
 end
 
-function IngameVotingUI.update_input_progress(arg_20_0, arg_20_1)
+IngameVotingUI.update_input_progress = function (arg_20_0, arg_20_1)
 	local var_20_0 = false
 	local var_20_1 = arg_20_1.current_hold_input
 	local var_20_2
@@ -531,7 +531,7 @@ function IngameVotingUI.update_input_progress(arg_20_0, arg_20_1)
 	return var_20_0
 end
 
-function IngameVotingUI.clear_input_progress(arg_21_0)
+IngameVotingUI.clear_input_progress = function (arg_21_0)
 	if arg_21_0.option_yes then
 		local var_21_0 = arg_21_0.option_yes.style.bar
 		local var_21_1 = arg_21_0.option_yes.style.bar_bg
@@ -552,6 +552,6 @@ function IngameVotingUI.clear_input_progress(arg_21_0)
 	end
 end
 
-function IngameVotingUI.play_sound(arg_22_0, arg_22_1)
+IngameVotingUI.play_sound = function (arg_22_0, arg_22_1)
 	WwiseWorld.trigger_event(arg_22_0.wwise_world, arg_22_1)
 end

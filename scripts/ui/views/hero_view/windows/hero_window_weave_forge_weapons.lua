@@ -26,7 +26,7 @@ local var_0_19 = 1.6
 HeroWindowWeaveForgeWeapons = class(HeroWindowWeaveForgeWeapons)
 HeroWindowWeaveForgeWeapons.NAME = "HeroWindowWeaveForgeWeapons"
 
-function HeroWindowWeaveForgeWeapons.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowWeaveForgeWeapons.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgeWeapons")
 
 	arg_1_0._params = arg_1_1
@@ -73,7 +73,7 @@ function HeroWindowWeaveForgeWeapons.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:trigger("weave_forge_weapons_entered")
 end
 
-function HeroWindowWeaveForgeWeapons._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowWeaveForgeWeapons._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		parent = arg_2_0._parent,
 		render_settings = arg_2_0._render_settings
@@ -84,7 +84,7 @@ function HeroWindowWeaveForgeWeapons._start_transition_animation(arg_2_0, arg_2_
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowWeaveForgeWeapons._setup_weapon_list(arg_3_0)
+HeroWindowWeaveForgeWeapons._setup_weapon_list = function (arg_3_0)
 	local var_3_0 = Managers.backend
 	local var_3_1 = var_3_0:get_interface("items")
 	local var_3_2 = arg_3_0._selected_slot_name
@@ -134,7 +134,7 @@ function HeroWindowWeaveForgeWeapons._setup_weapon_list(arg_3_0)
 	arg_3_0:_populate_list(var_3_5)
 end
 
-function HeroWindowWeaveForgeWeapons._setup_definitions(arg_4_0)
+HeroWindowWeaveForgeWeapons._setup_definitions = function (arg_4_0)
 	if arg_4_0._parent:gamepad_style_active() then
 		var_0_0 = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_weapons_console_definitions")
 	else
@@ -158,7 +158,7 @@ function HeroWindowWeaveForgeWeapons._setup_definitions(arg_4_0)
 	var_0_15 = var_0_0.create_item_overheat_option
 end
 
-function HeroWindowWeaveForgeWeapons.create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowWeaveForgeWeapons.create_ui_elements = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_setup_definitions()
 
 	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
@@ -218,7 +218,7 @@ function HeroWindowWeaveForgeWeapons.create_ui_elements(arg_5_0, arg_5_1, arg_5_
 	UIRenderer.clear_scenegraph_queue(arg_5_0._ui_renderer)
 end
 
-function HeroWindowWeaveForgeWeapons._initialize_viewports(arg_6_0)
+HeroWindowWeaveForgeWeapons._initialize_viewports = function (arg_6_0)
 	local var_6_0 = arg_6_0._params.selected_item
 	local var_6_1 = arg_6_0._career_name
 	local var_6_2 = Managers.backend
@@ -255,7 +255,7 @@ function HeroWindowWeaveForgeWeapons._initialize_viewports(arg_6_0)
 	arg_6_0:_on_list_index_selected(var_6_14)
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_previewer(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+HeroWindowWeaveForgeWeapons._create_item_previewer = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.data
 	local var_7_1 = var_7_0.key or arg_7_2.key
 	local var_7_2 = var_7_0.slot_type
@@ -282,13 +282,13 @@ function HeroWindowWeaveForgeWeapons._create_item_previewer(arg_7_0, arg_7_1, ar
 	return var_7_13
 end
 
-function HeroWindowWeaveForgeWeapons.cb_unit_spawned_item_preview(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+HeroWindowWeaveForgeWeapons.cb_unit_spawned_item_preview = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = not arg_8_3
 
 	arg_8_1:present_item(arg_8_2, var_8_0)
 end
 
-function HeroWindowWeaveForgeWeapons._create_viewport_definition(arg_9_0, arg_9_1)
+HeroWindowWeaveForgeWeapons._create_viewport_definition = function (arg_9_0, arg_9_1)
 	local var_9_0 = "environment/ui_weave_forge_preview"
 
 	return {
@@ -323,7 +323,7 @@ function HeroWindowWeaveForgeWeapons._create_viewport_definition(arg_9_0, arg_9_
 	}
 end
 
-function HeroWindowWeaveForgeWeapons.on_exit(arg_10_0, arg_10_1)
+HeroWindowWeaveForgeWeapons.on_exit = function (arg_10_0, arg_10_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgeWeapons")
 
 	arg_10_0._ui_animator = nil
@@ -346,7 +346,7 @@ function HeroWindowWeaveForgeWeapons.on_exit(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons.update(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowWeaveForgeWeapons.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if var_0_16 then
 		var_0_16 = false
 
@@ -390,7 +390,7 @@ function HeroWindowWeaveForgeWeapons.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._update_button_visibility(arg_12_0)
+HeroWindowWeaveForgeWeapons._update_button_visibility = function (arg_12_0)
 	local var_12_0 = arg_12_0._widgets_by_name.equip_button.content
 	local var_12_1 = arg_12_0._widgets_by_name.customize_button.content
 
@@ -398,7 +398,7 @@ function HeroWindowWeaveForgeWeapons._update_button_visibility(arg_12_0)
 	var_12_1.visible = not arg_12_0._crafting_tutorial
 end
 
-function HeroWindowWeaveForgeWeapons.post_update(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowWeaveForgeWeapons.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0._viewport_data then
 		arg_13_0:_initialize_viewports()
 	end
@@ -416,7 +416,7 @@ function HeroWindowWeaveForgeWeapons.post_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._update_animations(arg_14_0, arg_14_1)
+HeroWindowWeaveForgeWeapons._update_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ui_animations
 	local var_14_1 = arg_14_0._animations
 	local var_14_2 = arg_14_0._ui_animator
@@ -465,7 +465,7 @@ function HeroWindowWeaveForgeWeapons._update_animations(arg_14_0, arg_14_1)
 	arg_14_0:_update_item_pulse_animation(arg_14_1)
 end
 
-function HeroWindowWeaveForgeWeapons._is_button_pressed(arg_15_0, arg_15_1)
+HeroWindowWeaveForgeWeapons._is_button_pressed = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content.button_hotspot
 
 	if var_15_0.on_release then
@@ -477,27 +477,27 @@ function HeroWindowWeaveForgeWeapons._is_button_pressed(arg_15_0, arg_15_1)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._is_button_hover(arg_16_0, arg_16_1)
+HeroWindowWeaveForgeWeapons._is_button_hover = function (arg_16_0, arg_16_1)
 	return arg_16_1.content.button_hotspot.is_hover
 end
 
-function HeroWindowWeaveForgeWeapons._is_button_hover_enter(arg_17_0, arg_17_1)
+HeroWindowWeaveForgeWeapons._is_button_hover_enter = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.content.button_hotspot
 
 	return var_17_0.on_hover_enter and not var_17_0.is_selected
 end
 
-function HeroWindowWeaveForgeWeapons._is_button_hover_exit(arg_18_0, arg_18_1)
+HeroWindowWeaveForgeWeapons._is_button_hover_exit = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.content.button_hotspot
 
 	return var_18_0.on_hover_exit and not var_18_0.is_selected
 end
 
-function HeroWindowWeaveForgeWeapons._is_button_selected(arg_19_0, arg_19_1)
+HeroWindowWeaveForgeWeapons._is_button_selected = function (arg_19_0, arg_19_1)
 	return arg_19_1.content.button_hotspot.is_selected
 end
 
-function HeroWindowWeaveForgeWeapons._list_index_pressed(arg_20_0, arg_20_1)
+HeroWindowWeaveForgeWeapons._list_index_pressed = function (arg_20_0, arg_20_1)
 	for iter_20_0, iter_20_1 in ipairs(arg_20_1) do
 		local var_20_0 = iter_20_1.content
 		local var_20_1 = var_20_0.hotspot or var_20_0.button_hotspot
@@ -510,11 +510,11 @@ function HeroWindowWeaveForgeWeapons._list_index_pressed(arg_20_0, arg_20_1)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._is_list_hovered(arg_21_0, arg_21_1)
+HeroWindowWeaveForgeWeapons._is_list_hovered = function (arg_21_0, arg_21_1)
 	return arg_21_1.content.hotspot.is_hover or false
 end
 
-function HeroWindowWeaveForgeWeapons._sync_backend_loadout(arg_22_0)
+HeroWindowWeaveForgeWeapons._sync_backend_loadout = function (arg_22_0)
 	local var_22_0 = Managers.backend
 	local var_22_1 = var_22_0:get_interface("items")
 	local var_22_2 = var_22_0:get_interface("weaves")
@@ -554,11 +554,11 @@ function HeroWindowWeaveForgeWeapons._sync_backend_loadout(arg_22_0)
 	arg_22_0:_update_equip_button_status(var_22_15, var_22_16)
 end
 
-function HeroWindowWeaveForgeWeapons._play_sound(arg_23_0, arg_23_1)
+HeroWindowWeaveForgeWeapons._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0._parent:play_sound(arg_23_1)
 end
 
-function HeroWindowWeaveForgeWeapons._handle_input(arg_24_0, arg_24_1, arg_24_2)
+HeroWindowWeaveForgeWeapons._handle_input = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._parent
 	local var_24_1 = arg_24_0._widgets_by_name
 	local var_24_2 = Managers.input:is_device_active("gamepad")
@@ -627,7 +627,7 @@ function HeroWindowWeaveForgeWeapons._handle_input(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._on_list_index_selected(arg_25_0, arg_25_1)
+HeroWindowWeaveForgeWeapons._on_list_index_selected = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._scrollbars.weapons.list_widgets
 	local var_25_1 = false
 
@@ -654,7 +654,7 @@ function HeroWindowWeaveForgeWeapons._on_list_index_selected(arg_25_0, arg_25_1)
 	arg_25_0:_update_equip_button_status(var_25_7, var_25_1)
 end
 
-function HeroWindowWeaveForgeWeapons._update_equip_button_status(arg_26_0, arg_26_1, arg_26_2)
+HeroWindowWeaveForgeWeapons._update_equip_button_status = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._viewport_data
 
 	if var_26_0 then
@@ -667,7 +667,7 @@ function HeroWindowWeaveForgeWeapons._update_equip_button_status(arg_26_0, arg_2
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._list_index_by_item_key(arg_27_0, arg_27_1)
+HeroWindowWeaveForgeWeapons._list_index_by_item_key = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._scrollbars.weapons.list_widgets
 
 	for iter_27_0, iter_27_1 in ipairs(var_27_0) do
@@ -679,7 +679,7 @@ function HeroWindowWeaveForgeWeapons._list_index_by_item_key(arg_27_0, arg_27_1)
 	return 1
 end
 
-function HeroWindowWeaveForgeWeapons._present_item(arg_28_0, arg_28_1, arg_28_2)
+HeroWindowWeaveForgeWeapons._present_item = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._viewport_data
 
 	if var_28_0.item_previewer then
@@ -765,7 +765,7 @@ function HeroWindowWeaveForgeWeapons._present_item(arg_28_0, arg_28_1, arg_28_2)
 	return var_28_11
 end
 
-function HeroWindowWeaveForgeWeapons._set_presentation_locked_state(arg_29_0, arg_29_1)
+HeroWindowWeaveForgeWeapons._set_presentation_locked_state = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._widgets_by_name
 	local var_29_1 = var_29_0.viewport_level_value
 	local var_29_2 = var_29_0.viewport_level_title
@@ -790,7 +790,7 @@ function HeroWindowWeaveForgeWeapons._set_presentation_locked_state(arg_29_0, ar
 	var_29_8.content.visible = arg_29_1
 end
 
-function HeroWindowWeaveForgeWeapons._set_essence_upgrade_cost(arg_30_0, arg_30_1, arg_30_2)
+HeroWindowWeaveForgeWeapons._set_essence_upgrade_cost = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._widgets_by_name.unlock_button
 	local var_30_1 = var_30_0.content
 	local var_30_2 = var_30_0.style
@@ -821,7 +821,7 @@ function HeroWindowWeaveForgeWeapons._set_essence_upgrade_cost(arg_30_0, arg_30_
 	var_30_1.title_text = var_30_3
 end
 
-function HeroWindowWeaveForgeWeapons._unlock_item(arg_31_0, arg_31_1)
+HeroWindowWeaveForgeWeapons._unlock_item = function (arg_31_0, arg_31_1)
 	arg_31_0._params.upgrading = true
 
 	arg_31_0._parent:block_input()
@@ -848,7 +848,7 @@ function HeroWindowWeaveForgeWeapons._unlock_item(arg_31_0, arg_31_1)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._unlock_item_cb(arg_32_0, arg_32_1)
+HeroWindowWeaveForgeWeapons._unlock_item_cb = function (arg_32_0, arg_32_1)
 	arg_32_0._unlock_item_response = arg_32_1
 
 	if arg_32_0._crafting_tutorial then
@@ -862,7 +862,7 @@ function HeroWindowWeaveForgeWeapons._unlock_item_cb(arg_32_0, arg_32_1)
 	arg_32_0:_setup_weapon_list()
 end
 
-function HeroWindowWeaveForgeWeapons._on_unlock_item_done(arg_33_0, arg_33_1)
+HeroWindowWeaveForgeWeapons._on_unlock_item_done = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._widgets_by_name.unlock_button
 
 	var_33_0.content.upgrading = false
@@ -895,7 +895,7 @@ function HeroWindowWeaveForgeWeapons._on_unlock_item_done(arg_33_0, arg_33_1)
 	arg_33_0:_sync_backend_loadout(arg_33_1)
 end
 
-function HeroWindowWeaveForgeWeapons._equip_item(arg_34_0, arg_34_1)
+HeroWindowWeaveForgeWeapons._equip_item = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._career_name
 
 	Managers.backend:get_interface("weaves"):set_loadout_item(arg_34_1, var_34_0, arg_34_0._selected_slot_name)
@@ -906,7 +906,7 @@ function HeroWindowWeaveForgeWeapons._equip_item(arg_34_0, arg_34_1)
 	Managers.state.event:trigger("weave_forge_item_equpped")
 end
 
-function HeroWindowWeaveForgeWeapons._update_item_pulse_animation(arg_35_0, arg_35_1)
+HeroWindowWeaveForgeWeapons._update_item_pulse_animation = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._equip_pulse_duration
 
 	if not var_35_0 then
@@ -934,7 +934,7 @@ function HeroWindowWeaveForgeWeapons._update_item_pulse_animation(arg_35_0, arg_
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._draw(arg_36_0, arg_36_1)
+HeroWindowWeaveForgeWeapons._draw = function (arg_36_0, arg_36_1)
 	arg_36_0:_update_visible_list_entries()
 
 	local var_36_0 = arg_36_0._parent
@@ -1021,7 +1021,7 @@ local function var_0_20(arg_37_0, arg_37_1)
 	return var_37_0.magic_level > var_37_1.magic_level
 end
 
-function HeroWindowWeaveForgeWeapons._populate_list(arg_38_0, arg_38_1)
+HeroWindowWeaveForgeWeapons._populate_list = function (arg_38_0, arg_38_1)
 	local var_38_0 = "weapon_list_entry"
 	local var_38_1 = var_0_5[var_38_0].size
 	local var_38_2 = {}
@@ -1076,7 +1076,7 @@ function HeroWindowWeaveForgeWeapons._populate_list(arg_38_0, arg_38_1)
 	}
 end
 
-function HeroWindowWeaveForgeWeapons._align_list_widgets(arg_39_0, arg_39_1, arg_39_2)
+HeroWindowWeaveForgeWeapons._align_list_widgets = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = 0
 	local var_39_1 = #arg_39_1
 
@@ -1100,7 +1100,7 @@ function HeroWindowWeaveForgeWeapons._align_list_widgets(arg_39_0, arg_39_1, arg
 	return var_39_0
 end
 
-function HeroWindowWeaveForgeWeapons._initialize_scrollbar(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+HeroWindowWeaveForgeWeapons._initialize_scrollbar = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	local var_40_0 = arg_40_1.scenegraph_id
 	local var_40_1 = ScrollBarLogic:new(arg_40_1)
 	local var_40_2 = var_0_5[arg_40_3].size
@@ -1116,7 +1116,7 @@ function HeroWindowWeaveForgeWeapons._initialize_scrollbar(arg_40_0, arg_40_1, a
 	return var_40_1
 end
 
-function HeroWindowWeaveForgeWeapons._update_scrollbar_positions(arg_41_0)
+HeroWindowWeaveForgeWeapons._update_scrollbar_positions = function (arg_41_0)
 	local var_41_0 = arg_41_0._scrollbars
 
 	if var_41_0 then
@@ -1136,7 +1136,7 @@ function HeroWindowWeaveForgeWeapons._update_scrollbar_positions(arg_41_0)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._update_visible_list_entries(arg_42_0)
+HeroWindowWeaveForgeWeapons._update_visible_list_entries = function (arg_42_0)
 	local var_42_0 = arg_42_0._scrollbars
 
 	if var_42_0 then
@@ -1174,7 +1174,7 @@ function HeroWindowWeaveForgeWeapons._update_visible_list_entries(arg_42_0)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._get_scrollbar_percentage_by_index(arg_43_0, arg_43_1, arg_43_2)
+HeroWindowWeaveForgeWeapons._get_scrollbar_percentage_by_index = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0._scrollbars[arg_43_1]
 	local var_43_1 = var_43_0.scrollbar_logic
 
@@ -1216,7 +1216,7 @@ function HeroWindowWeaveForgeWeapons._get_scrollbar_percentage_by_index(arg_43_0
 	return 0
 end
 
-function HeroWindowWeaveForgeWeapons._find_closest_neighbour(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+HeroWindowWeaveForgeWeapons._find_closest_neighbour = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = arg_44_0._scrollbars[arg_44_1].list_widgets
 	local var_44_1 = var_44_0[arg_44_3]
 	local var_44_2 = var_44_1.content.size
@@ -1242,13 +1242,13 @@ function HeroWindowWeaveForgeWeapons._find_closest_neighbour(arg_44_0, arg_44_1,
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._animate_weapon_lists_widgets(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+HeroWindowWeaveForgeWeapons._animate_weapon_lists_widgets = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	for iter_45_0, iter_45_1 in ipairs(arg_45_1) do
 		arg_45_0:_animate_list_widget(iter_45_1, arg_45_2, arg_45_3)
 	end
 end
 
-function HeroWindowWeaveForgeWeapons._animate_list_widget(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+HeroWindowWeaveForgeWeapons._animate_list_widget = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = arg_46_1.offset
 	local var_46_1 = arg_46_1.content
 	local var_46_2 = arg_46_1.style
@@ -1351,7 +1351,7 @@ function HeroWindowWeaveForgeWeapons._animate_list_widget(arg_46_0, arg_46_1, ar
 	var_46_3.selection_progress = var_46_14
 end
 
-function HeroWindowWeaveForgeWeapons._setup_weapon_stats(arg_47_0, arg_47_1)
+HeroWindowWeaveForgeWeapons._setup_weapon_stats = function (arg_47_0, arg_47_1)
 	local var_47_0 = arg_47_0._career_name
 	local var_47_1 = arg_47_1.data
 	local var_47_2 = arg_47_1 and arg_47_1.backend_id
@@ -1566,7 +1566,7 @@ function HeroWindowWeaveForgeWeapons._setup_weapon_stats(arg_47_0, arg_47_1)
 	}
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_keywords_option_entry(arg_48_0, arg_48_1, arg_48_2)
+HeroWindowWeaveForgeWeapons._create_item_keywords_option_entry = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = true
 	local var_48_1 = arg_48_0._ui_renderer
 	local var_48_2 = "stat_option"
@@ -1578,7 +1578,7 @@ function HeroWindowWeaveForgeWeapons._create_item_keywords_option_entry(arg_48_0
 	return var_48_4
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_overheat_option_entry(arg_49_0, arg_49_1)
+HeroWindowWeaveForgeWeapons._create_item_overheat_option_entry = function (arg_49_0, arg_49_1)
 	local var_49_0 = true
 	local var_49_1 = arg_49_0._ui_renderer
 	local var_49_2 = "stat_option"
@@ -1587,7 +1587,7 @@ function HeroWindowWeaveForgeWeapons._create_item_overheat_option_entry(arg_49_0
 	return (UIWidget.init(var_49_3))
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_ammunition_option_entry(arg_50_0, arg_50_1, arg_50_2)
+HeroWindowWeaveForgeWeapons._create_item_ammunition_option_entry = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = true
 	local var_50_1 = arg_50_0._ui_renderer
 	local var_50_2 = "stat_option"
@@ -1596,7 +1596,7 @@ function HeroWindowWeaveForgeWeapons._create_item_ammunition_option_entry(arg_50
 	return (UIWidget.init(var_50_3))
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_stamina_option_entry(arg_51_0, arg_51_1, arg_51_2)
+HeroWindowWeaveForgeWeapons._create_item_stamina_option_entry = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0 = true
 	local var_51_1 = arg_51_0._ui_renderer
 	local var_51_2 = "stat_option"
@@ -1605,7 +1605,7 @@ function HeroWindowWeaveForgeWeapons._create_item_stamina_option_entry(arg_51_0,
 	return (UIWidget.init(var_51_3))
 end
 
-function HeroWindowWeaveForgeWeapons._create_item_block_option_entry(arg_52_0, arg_52_1, arg_52_2)
+HeroWindowWeaveForgeWeapons._create_item_block_option_entry = function (arg_52_0, arg_52_1, arg_52_2)
 	print("_create_item_block_option_entry", arg_52_2)
 
 	local var_52_0 = true
@@ -1616,7 +1616,7 @@ function HeroWindowWeaveForgeWeapons._create_item_block_option_entry(arg_52_0, a
 	return (UIWidget.init(var_52_3))
 end
 
-function HeroWindowWeaveForgeWeapons._create_divider_option_entry(arg_53_0, arg_53_1, arg_53_2)
+HeroWindowWeaveForgeWeapons._create_divider_option_entry = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = true
 	local var_53_1 = arg_53_0._ui_renderer
 	local var_53_2 = "stat_option"
@@ -1628,7 +1628,7 @@ function HeroWindowWeaveForgeWeapons._create_divider_option_entry(arg_53_0, arg_
 	return var_53_4
 end
 
-function HeroWindowWeaveForgeWeapons._create_trait_option_entry(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+HeroWindowWeaveForgeWeapons._create_trait_option_entry = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
 	local var_54_0 = true
 	local var_54_1 = arg_54_0._ui_renderer
 	local var_54_2 = "stat_option"
@@ -1645,7 +1645,7 @@ function HeroWindowWeaveForgeWeapons._create_trait_option_entry(arg_54_0, arg_54
 	return var_54_4, var_54_11
 end
 
-function HeroWindowWeaveForgeWeapons._create_property_option_entry(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+HeroWindowWeaveForgeWeapons._create_property_option_entry = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = true
 	local var_55_1 = "stat_option"
 	local var_55_2 = arg_55_2

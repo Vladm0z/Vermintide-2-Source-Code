@@ -19,7 +19,7 @@ local var_0_9 = {
 	dr_slayer = true
 }
 
-function ActionInspectGeheimnisnacht2021.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionInspectGeheimnisnacht2021.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionInspectGeheimnisnacht2021.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
@@ -36,7 +36,7 @@ function ActionInspectGeheimnisnacht2021.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3
 	arg_1_0._buff_system = Managers.state.entity:system("buff_system")
 end
 
-function ActionInspectGeheimnisnacht2021.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionInspectGeheimnisnacht2021.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionInspectGeheimnisnacht2021.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0._influence_str = 0
@@ -47,7 +47,7 @@ function ActionInspectGeheimnisnacht2021.client_owner_start_action(arg_2_0, arg_
 	arg_2_0._first_person_extension:animation_set_variable("influence", arg_2_0._influence_str)
 end
 
-function ActionInspectGeheimnisnacht2021.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionInspectGeheimnisnacht2021.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0._influence_str
 
 	if not arg_3_0._is_immune then
@@ -138,18 +138,18 @@ function ActionInspectGeheimnisnacht2021.client_owner_post_update(arg_3_0, arg_3
 	end
 end
 
-function ActionInspectGeheimnisnacht2021.finish(arg_4_0, arg_4_1)
+ActionInspectGeheimnisnacht2021.finish = function (arg_4_0, arg_4_1)
 	ActionInspectGeheimnisnacht2021.super.finish(arg_4_0, arg_4_1)
 	arg_4_0:_destroy_screen_particles()
 end
 
-function ActionInspectGeheimnisnacht2021._create_screen_particles(arg_5_0)
+ActionInspectGeheimnisnacht2021._create_screen_particles = function (arg_5_0)
 	if not arg_5_0._screen_fx_id then
 		arg_5_0._screen_fx_id = arg_5_0._first_person_extension:create_screen_particles(var_0_6, Vector3(1, 0, 0))
 	end
 end
 
-function ActionInspectGeheimnisnacht2021._destroy_screen_particles(arg_6_0)
+ActionInspectGeheimnisnacht2021._destroy_screen_particles = function (arg_6_0)
 	if arg_6_0._screen_fx_id then
 		arg_6_0._first_person_extension:stop_spawning_screen_particles(arg_6_0._screen_fx_id)
 

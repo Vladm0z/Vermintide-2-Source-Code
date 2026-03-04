@@ -12,7 +12,7 @@ local var_0_1 = {
 
 AIGroupSystem.invalid_group_uid = 0
 
-function AIGroupSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AIGroupSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -56,7 +56,7 @@ function remove_duplicates(arg_3_0)
 	end
 end
 
-function AIGroupSystem.add_ready_splines(arg_4_0, arg_4_1, arg_4_2)
+AIGroupSystem.add_ready_splines = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_1 then
 		return
 	end
@@ -88,15 +88,15 @@ function AIGroupSystem.add_ready_splines(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function AIGroupSystem.destroy(arg_5_0)
+AIGroupSystem.destroy = function (arg_5_0)
 	return
 end
 
-function AIGroupSystem.ai_ready(arg_6_0, arg_6_1)
+AIGroupSystem.ai_ready = function (arg_6_0, arg_6_1)
 	arg_6_0.patrol_analysis = arg_6_1
 end
 
-function AIGroupSystem.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AIGroupSystem.on_add_extension = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = {}
 
 	if arg_7_4.id ~= nil then
@@ -110,7 +110,7 @@ function AIGroupSystem.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_
 	return var_7_0
 end
 
-function AIGroupSystem.init_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+AIGroupSystem.init_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_3.id
 	local var_8_1 = arg_8_3.template
 	local var_8_2 = arg_8_0.groups[var_8_0]
@@ -187,7 +187,7 @@ function AIGroupSystem.init_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	fassert(var_8_2.num_spawned_members <= var_8_2.size, "An AI group was initialized with size=%d but %d AIs was assigned to it.", var_8_2.size, var_8_2.num_spawned_members)
 end
 
-function AIGroupSystem.extensions_ready(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+AIGroupSystem.extensions_ready = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.unit_extension_data[arg_9_2]
 	local var_9_1 = var_0_0[var_9_0.template] and var_0_0[var_9_0.template].pre_unit_init
 
@@ -196,14 +196,14 @@ function AIGroupSystem.extensions_ready(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function AIGroupSystem.on_remove_extension(arg_10_0, arg_10_1, arg_10_2)
+AIGroupSystem.on_remove_extension = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.frozen_unit_extension_data[arg_10_1] = nil
 
 	arg_10_0:_cleanup_extension(arg_10_1, arg_10_2)
 	ScriptUnit.remove_extension(arg_10_1, arg_10_0.NAME)
 end
 
-function AIGroupSystem.on_freeze_extension(arg_11_0, arg_11_1, arg_11_2)
+AIGroupSystem.on_freeze_extension = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.unit_extension_data[arg_11_1]
 
 	fassert(var_11_0, "Unit was already frozen.")
@@ -217,7 +217,7 @@ function AIGroupSystem.on_freeze_extension(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:_cleanup_extension(arg_11_1, arg_11_2)
 end
 
-function AIGroupSystem.freeze(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+AIGroupSystem.freeze = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0.frozen_unit_extension_data
 
 	if var_12_0[arg_12_1] then
@@ -233,7 +233,7 @@ function AIGroupSystem.freeze(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	var_12_0[arg_12_1] = var_12_1
 end
 
-function AIGroupSystem.unfreeze(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+AIGroupSystem.unfreeze = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.frozen_unit_extension_data[arg_13_1]
 
 	fassert(var_13_0, "Unit to unfreeze didn't have frozen extension")
@@ -248,7 +248,7 @@ function AIGroupSystem.unfreeze(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function AIGroupSystem._cleanup_extension(arg_14_0, arg_14_1, arg_14_2)
+AIGroupSystem._cleanup_extension = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.unit_extension_data[arg_14_1]
 
 	if var_14_0 == nil then
@@ -303,7 +303,7 @@ local var_0_5 = "patrol_"
 local var_0_6 = "roaming_"
 local var_0_7 = "event_"
 
-function AIGroupSystem.set_level(arg_15_0, arg_15_1)
+AIGroupSystem.set_level = function (arg_15_0, arg_15_1)
 	arg_15_0._level = arg_15_1
 	arg_15_0._patrol_splines = {}
 	arg_15_0._roaming_splines = {}
@@ -378,7 +378,7 @@ end
 local var_0_8 = 25
 local var_0_9 = 25
 
-function AIGroupSystem.get_best_spline(arg_16_0, arg_16_1, arg_16_2)
+AIGroupSystem.get_best_spline = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0
 	local var_16_1
 	local var_16_2 = math.huge
@@ -421,19 +421,19 @@ function AIGroupSystem.get_best_spline(arg_16_0, arg_16_1, arg_16_2)
 	return var_16_0, var_16_1
 end
 
-function AIGroupSystem.spline_start_position(arg_17_0, arg_17_1)
+AIGroupSystem.spline_start_position = function (arg_17_0, arg_17_1)
 	return (arg_17_0._spline_lookup[arg_17_1].start_position:unbox())
 end
 
-function AIGroupSystem.spline_start_direction(arg_18_0, arg_18_1)
+AIGroupSystem.spline_start_direction = function (arg_18_0, arg_18_1)
 	return (arg_18_0._spline_lookup[arg_18_1].start_direction:unbox())
 end
 
-function AIGroupSystem.spline(arg_19_0, arg_19_1)
+AIGroupSystem.spline = function (arg_19_0, arg_19_1)
 	return arg_19_0._spline_lookup[arg_19_1]
 end
 
-function AIGroupSystem.level_has_splines(arg_20_0, arg_20_1)
+AIGroupSystem.level_has_splines = function (arg_20_0, arg_20_1)
 	local var_20_0
 
 	if arg_20_1 == "patrol" then
@@ -449,7 +449,7 @@ function AIGroupSystem.level_has_splines(arg_20_0, arg_20_1)
 	return table.size(var_20_0) > 0
 end
 
-function AIGroupSystem.get_available_spline_type(arg_21_0)
+AIGroupSystem.get_available_spline_type = function (arg_21_0)
 	local var_21_0
 
 	if arg_21_0._patrol_splines then
@@ -463,13 +463,13 @@ function AIGroupSystem.get_available_spline_type(arg_21_0)
 	return next(arg_21_0._patrol_splines) and "patrol" or next(arg_21_0._roaming_splines) and "roaming" or next(arg_21_0._event_splines) and "event"
 end
 
-function AIGroupSystem.hot_join_sync(arg_22_0, arg_22_1, arg_22_2)
+AIGroupSystem.hot_join_sync = function (arg_22_0, arg_22_1, arg_22_2)
 	return
 end
 
 local var_0_10 = POSITION_LOOKUP
 
-function AIGroupSystem.check_recycler_despawn(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+AIGroupSystem.check_recycler_despawn = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0.groups_to_update
 	local var_23_1, var_23_2 = next(var_23_0, arg_23_0._last_recycler_group_id)
 
@@ -554,7 +554,7 @@ local var_0_11 = {
 	name = "AIGroupTemplates_retained"
 }
 
-function AIGroupSystem.update(arg_24_0, arg_24_1, arg_24_2)
+AIGroupSystem.update = function (arg_24_0, arg_24_1, arg_24_2)
 	if not arg_24_0.is_server then
 		return
 	end
@@ -639,18 +639,18 @@ function AIGroupSystem.update(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._update_recycler = false
 end
 
-function AIGroupSystem.prepare_update_recycler(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+AIGroupSystem.prepare_update_recycler = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	arg_25_0._update_recycler = true
 	arg_25_0._player_positions = arg_25_1
 	arg_25_0._player_areas = arg_25_2
 	arg_25_0._use_player_areas = arg_25_3
 end
 
-function AIGroupSystem.get_ai_group(arg_26_0, arg_26_1)
+AIGroupSystem.get_ai_group = function (arg_26_0, arg_26_1)
 	return arg_26_0.groups[arg_26_1]
 end
 
-function AIGroupSystem.run_func_on_all_members(arg_27_0, arg_27_1, arg_27_2, ...)
+AIGroupSystem.run_func_on_all_members = function (arg_27_0, arg_27_1, arg_27_2, ...)
 	local var_27_0 = arg_27_1.members
 
 	for iter_27_0, iter_27_1 in pairs(var_27_0) do
@@ -658,13 +658,13 @@ function AIGroupSystem.run_func_on_all_members(arg_27_0, arg_27_1, arg_27_2, ...
 	end
 end
 
-function AIGroupSystem.generate_group_id(arg_28_0)
+AIGroupSystem.generate_group_id = function (arg_28_0)
 	arg_28_0.group_uid = arg_28_0.group_uid + 1
 
 	return arg_28_0.group_uid
 end
 
-function AIGroupSystem.set_allowed_layer(arg_29_0, arg_29_1, arg_29_2)
+AIGroupSystem.set_allowed_layer = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = LAYER_ID_MAPPING[arg_29_1]
 
 	for iter_29_0, iter_29_1 in pairs(arg_29_0.groups_to_update) do
@@ -678,7 +678,7 @@ function AIGroupSystem.set_allowed_layer(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function AIGroupSystem.create_spline_from_way_points(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+AIGroupSystem.create_spline_from_way_points = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = arg_30_3 == "roaming" and "roaming" or "standard"
 
 	arg_30_0.patrol_analysis:compute_spline_path(arg_30_1, arg_30_2, var_30_0)
@@ -687,11 +687,11 @@ function AIGroupSystem.create_spline_from_way_points(arg_30_0, arg_30_1, arg_30_
 	arg_30_0._computing_splines[arg_30_1] = arg_30_3
 end
 
-function AIGroupSystem.spline_ready(arg_31_0, arg_31_1)
+AIGroupSystem.spline_ready = function (arg_31_0, arg_31_1)
 	return arg_31_0._spline_lookup[arg_31_1]
 end
 
-function AIGroupSystem._spline_ready(arg_32_0, arg_32_1)
+AIGroupSystem._spline_ready = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0.patrol_analysis
 
 	if not var_32_0 then
@@ -701,7 +701,7 @@ function AIGroupSystem._spline_ready(arg_32_0, arg_32_1)
 	return (var_32_0:spline(arg_32_1))
 end
 
-function AIGroupSystem._add_spline(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+AIGroupSystem._add_spline = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	arg_33_0._spline_lookup[arg_33_1] = arg_33_2
 
 	if GameSettingsDevelopment.pre_calculate_patrol_splines then
@@ -729,7 +729,7 @@ function AIGroupSystem._add_spline(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	error("unsupported spline type for spline: " .. arg_33_1 .. ". Spline name should start with 'patrol_', 'roaming_' or 'event_' which defines the spline type")
 end
 
-function AIGroupSystem._calculate_splines(arg_34_0, arg_34_1, arg_34_2)
+AIGroupSystem._calculate_splines = function (arg_34_0, arg_34_1, arg_34_2)
 	if not arg_34_2.spline_points then
 		return
 	end
@@ -741,7 +741,7 @@ function AIGroupSystem._calculate_splines(arg_34_0, arg_34_1, arg_34_2)
 	return SplineCurve:new(var_34_2, "Hermite", "SplineMovementHermiteInterpolatedMetered", arg_34_1, 3):splines()
 end
 
-function AIGroupSystem.draw_active_spline_paths(arg_35_0)
+AIGroupSystem.draw_active_spline_paths = function (arg_35_0)
 	local var_35_0 = QuickDrawerStay
 	local var_35_1 = arg_35_0._patrol_splines
 	local var_35_2 = Color(255, 255, 0)
@@ -765,7 +765,7 @@ function AIGroupSystem.draw_active_spline_paths(arg_35_0)
 	end
 end
 
-function AIGroupSystem.draw_spline(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+AIGroupSystem.draw_spline = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = arg_36_1[1]:unbox()
 	local var_36_1 = Vector3(0, 0, 1)
 
@@ -779,7 +779,7 @@ function AIGroupSystem.draw_spline(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	end
 end
 
-function AIGroupSystem.create_formation_data(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+AIGroupSystem.create_formation_data = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = PatrolFormationSettings.default_settings.offsets.ANCHOR_OFFSET.y
 	local var_37_1 = PatrolFormationSettings.default_settings.speeds.SPLINE_SPEED
 	local var_37_2 = arg_37_0:spline_start_direction(arg_37_3)
@@ -897,7 +897,7 @@ function AIGroupSystem.create_formation_data(arg_37_0, arg_37_1, arg_37_2, arg_3
 	return var_37_3
 end
 
-function AIGroupSystem._get_position_on_spline_by_distance(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+AIGroupSystem._get_position_on_spline_by_distance = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	local var_38_0 = 0
 	local var_38_1 = arg_38_2:movement()
 
@@ -938,11 +938,11 @@ function AIGroupSystem._get_position_on_spline_by_distance(arg_38_0, arg_38_1, a
 	end
 end
 
-function AIGroupSystem.register_spline_properties(arg_39_0, arg_39_1, arg_39_2)
+AIGroupSystem.register_spline_properties = function (arg_39_0, arg_39_1, arg_39_2)
 	arg_39_0._spline_properties[arg_39_1] = arg_39_2
 end
 
-function AIGroupSystem.get_group_id(arg_40_0, arg_40_1)
+AIGroupSystem.get_group_id = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0.unit_extension_data[arg_40_1]
 
 	return var_40_0 and var_40_0.id

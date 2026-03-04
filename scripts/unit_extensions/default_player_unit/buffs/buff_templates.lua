@@ -319,21 +319,21 @@ local function var_0_8(arg_5_0)
 end
 
 ProcFunctions = {
-	heal = function(arg_6_0, arg_6_1, arg_6_2)
+	heal = function (arg_6_0, arg_6_1, arg_6_2)
 		if ALIVE[arg_6_0] and Managers.player.is_server then
 			local var_6_0 = arg_6_1.bonus
 
 			DamageUtils.heal_network(arg_6_0, arg_6_0, var_6_0, "heal_from_proc")
 		end
 	end,
-	damage_attacker = function(arg_7_0, arg_7_1, arg_7_2)
+	damage_attacker = function (arg_7_0, arg_7_1, arg_7_2)
 		if ALIVE[arg_7_0] and Managers.player.is_server then
 			local var_7_0 = arg_7_1.bonus
 
 			DamageUtils.add_damage_network(arg_7_0, arg_7_0, var_7_0, "full", "buff", nil, Vector3(1, 0, 0), "buff", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	metal_mutator_stacks_on_hit = function(arg_8_0, arg_8_1, arg_8_2)
+	metal_mutator_stacks_on_hit = function (arg_8_0, arg_8_1, arg_8_2)
 		if ALIVE[arg_8_0] and Managers.player.is_server then
 			local var_8_0 = (arg_8_1.current_stacks or 0) + 1
 
@@ -353,7 +353,7 @@ ProcFunctions = {
 			arg_8_1.current_stacks = var_8_0
 		end
 	end,
-	heal_party = function(arg_9_0, arg_9_1, arg_9_2)
+	heal_party = function (arg_9_0, arg_9_1, arg_9_2)
 		if ALIVE[arg_9_0] and Managers.player.is_server then
 			local var_9_0 = arg_9_1.bonus
 			local var_9_1 = Managers.state.side.side_by_unit[arg_9_0].PLAYER_AND_BOT_UNITS
@@ -363,7 +363,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_other_players_percent_at_range = function(arg_10_0, arg_10_1, arg_10_2)
+	heal_other_players_percent_at_range = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = arg_10_2[1]
 		local var_10_1 = POSITION_LOOKUP[var_10_0]
 		local var_10_2 = arg_10_1.range
@@ -388,7 +388,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_assisted_and_self_on_assist = function(arg_11_0, arg_11_1, arg_11_2)
+	heal_assisted_and_self_on_assist = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = arg_11_2[1]
 
 		if ALIVE[arg_11_0] and Managers.player.is_server then
@@ -401,7 +401,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	buff_defence_on_revived_target = function(arg_12_0, arg_12_1, arg_12_2)
+	buff_defence_on_revived_target = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = arg_12_2[1]
 
 		if not ALIVE[arg_12_0] or not ALIVE[var_12_0] or not Managers.player.is_server then
@@ -421,7 +421,7 @@ ProcFunctions = {
 			var_12_1:add_buff(var_12_0, var_12_2, arg_12_0, false)
 		end
 	end,
-	heal_percentage_of_enemy_hp_on_melee_kill = function(arg_13_0, arg_13_1, arg_13_2)
+	heal_percentage_of_enemy_hp_on_melee_kill = function (arg_13_0, arg_13_1, arg_13_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -446,7 +446,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_finesse_damage_on_melee = function(arg_14_0, arg_14_1, arg_14_2)
+	heal_finesse_damage_on_melee = function (arg_14_0, arg_14_1, arg_14_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -487,7 +487,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_stagger_targets_on_melee = function(arg_15_0, arg_15_1, arg_15_2)
+	heal_stagger_targets_on_melee = function (arg_15_0, arg_15_1, arg_15_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -513,7 +513,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_damage_targets_on_melee = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	heal_damage_targets_on_melee = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -542,14 +542,14 @@ ProcFunctions = {
 				local var_16_4 = 1
 
 				if var_16_3 == 1 then
-					-- block empty
+					-- Nothing
 				end
 
 				DamageUtils.heal_network(arg_16_0, arg_16_0, var_16_4, "heal_from_proc")
 			end
 		end
 	end,
-	thp_linesman_func = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	thp_linesman_func = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -593,7 +593,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	thp_ninjafencer_func = function(arg_18_0, arg_18_1, arg_18_2)
+	thp_ninjafencer_func = function (arg_18_0, arg_18_1, arg_18_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -630,7 +630,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	thp_smiter_func = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	thp_smiter_func = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -659,7 +659,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	thp_tank_stagger_func = function(arg_20_0, arg_20_1, arg_20_2)
+	thp_tank_stagger_func = function (arg_20_0, arg_20_1, arg_20_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -697,7 +697,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	thp_tank_kill_func = function(arg_21_0, arg_21_1, arg_21_2)
+	thp_tank_kill_func = function (arg_21_0, arg_21_1, arg_21_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -731,7 +731,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	heal_finesse_damage_on_ranged = function(arg_22_0, arg_22_1, arg_22_2)
+	heal_finesse_damage_on_ranged = function (arg_22_0, arg_22_1, arg_22_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -764,14 +764,14 @@ ProcFunctions = {
 			end
 		end
 	end,
-	on_hit_debuff_enemy_defence = function(arg_23_0, arg_23_1, arg_23_2)
+	on_hit_debuff_enemy_defence = function (arg_23_0, arg_23_1, arg_23_2)
 		local var_23_0 = arg_23_2[1]
 
 		if ALIVE[arg_23_0] and ALIVE[var_23_0] and Managers.player.is_server then
 			ScriptUnit.extension(var_23_0, "buff_system"):add_buff("defence_debuff_enemies")
 		end
 	end,
-	unbalance_debuff_on_stagger = function(arg_24_0, arg_24_1, arg_24_2)
+	unbalance_debuff_on_stagger = function (arg_24_0, arg_24_1, arg_24_2)
 		local var_24_0 = arg_24_2[1]
 
 		if ALIVE[arg_24_0] and Unit.alive(var_24_0) and Managers.player.is_server then
@@ -782,12 +782,12 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kills_stack_fiery_push = function(arg_25_0, arg_25_1, arg_25_2)
+	kills_stack_fiery_push = function (arg_25_0, arg_25_1, arg_25_2)
 		if ALIVE[arg_25_0] then
 			ScriptUnit.extension(arg_25_0, "buff_system"):add_buff("bw_kill_stacks")
 		end
 	end,
-	add_stacking_damage_from_melee_headshot = function(arg_26_0, arg_26_1, arg_26_2)
+	add_stacking_damage_from_melee_headshot = function (arg_26_0, arg_26_1, arg_26_2)
 		local var_26_0 = arg_26_2[3]
 		local var_26_1 = arg_26_2[2]
 
@@ -805,7 +805,7 @@ ProcFunctions = {
 			var_26_2:add_buff("stacking_melee_damage", var_0_5)
 		end
 	end,
-	heal_on_melee_headshot = function(arg_27_0, arg_27_1, arg_27_2)
+	heal_on_melee_headshot = function (arg_27_0, arg_27_1, arg_27_2)
 		local var_27_0 = arg_27_2[3]
 		local var_27_1 = arg_27_2[2]
 
@@ -815,7 +815,7 @@ ProcFunctions = {
 			DamageUtils.heal_network(arg_27_0, arg_27_0, var_27_2, "heal_from_proc")
 		end
 	end,
-	heal_on_ranged_headshot = function(arg_28_0, arg_28_1, arg_28_2)
+	heal_on_ranged_headshot = function (arg_28_0, arg_28_1, arg_28_2)
 		local var_28_0 = arg_28_2[3]
 		local var_28_1 = arg_28_2[2]
 
@@ -825,14 +825,14 @@ ProcFunctions = {
 			DamageUtils.heal_network(arg_28_0, arg_28_0, var_28_2, "heal_from_proc")
 		end
 	end,
-	heal_on_crit = function(arg_29_0, arg_29_1, arg_29_2)
+	heal_on_crit = function (arg_29_0, arg_29_1, arg_29_2)
 		if Unit.alive(arg_29_0) then
 			local var_29_0 = arg_29_1.template.bonus
 
 			DamageUtils.heal_network(arg_29_0, arg_29_0, var_29_0, "heal_from_proc")
 		end
 	end,
-	add_buff_on_ranged_critical_hit = function(arg_30_0, arg_30_1, arg_30_2)
+	add_buff_on_ranged_critical_hit = function (arg_30_0, arg_30_1, arg_30_2)
 		if Unit.alive(arg_30_0) then
 			local var_30_0 = arg_30_2[5]
 
@@ -855,7 +855,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	apply_burn_to_enemies = function(arg_31_0, arg_31_1, arg_31_2)
+	apply_burn_to_enemies = function (arg_31_0, arg_31_1, arg_31_2)
 		local var_31_0 = arg_31_2[1]
 
 		if Unit.alive(arg_31_0) and Unit.alive(var_31_0) then
@@ -868,7 +868,7 @@ ProcFunctions = {
 			var_31_1:add_buff("flaming_shield_burning_dot", var_0_5)
 		end
 	end,
-	regen_stamina_on_charged_attacks = function(arg_32_0, arg_32_1, arg_32_2)
+	regen_stamina_on_charged_attacks = function (arg_32_0, arg_32_1, arg_32_2)
 		if arg_32_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -877,7 +877,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_32_0, "buff_system"):add_buff("stamina_regen", var_0_5)
 		end
 	end,
-	add_buff_on_charged_attack_hit = function(arg_33_0, arg_33_1, arg_33_2)
+	add_buff_on_charged_attack_hit = function (arg_33_0, arg_33_1, arg_33_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -895,7 +895,7 @@ ProcFunctions = {
 			Managers.state.entity:system("buff_system"):add_buff(arg_33_0, var_33_2, arg_33_0, var_33_3)
 		end
 	end,
-	sienna_unchained_regen_stamina_on_charged_attacks = function(arg_34_0, arg_34_1, arg_34_2)
+	sienna_unchained_regen_stamina_on_charged_attacks = function (arg_34_0, arg_34_1, arg_34_2)
 		if arg_34_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -904,7 +904,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_34_0, "buff_system"):add_buff("sienna_unchained_stamina_regen", var_0_5)
 		end
 	end,
-	markus_mercenary_regen_stamina_on_charged_attacks = function(arg_35_0, arg_35_1, arg_35_2)
+	markus_mercenary_regen_stamina_on_charged_attacks = function (arg_35_0, arg_35_1, arg_35_2)
 		if arg_35_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -913,7 +913,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_35_0, "buff_system"):add_buff("markus_mercenary_stamina_regen_buff", var_0_5)
 		end
 	end,
-	markus_knight_regen_stamina_on_charged_attacks = function(arg_36_0, arg_36_1, arg_36_2)
+	markus_knight_regen_stamina_on_charged_attacks = function (arg_36_0, arg_36_1, arg_36_2)
 		if arg_36_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -922,7 +922,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_36_0, "buff_system"):add_buff("markus_knight_stamina_regen_buff", var_0_5)
 		end
 	end,
-	bardin_ironbreaker_gromril_stagger = function(arg_37_0, arg_37_1, arg_37_2)
+	bardin_ironbreaker_gromril_stagger = function (arg_37_0, arg_37_1, arg_37_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -944,7 +944,7 @@ ProcFunctions = {
 			DamageUtils.create_explosion(var_37_1, arg_37_0, var_37_2, var_37_3, var_37_0, 1, "career_ability", true, var_37_5, arg_37_0, var_37_6, false)
 		end
 	end,
-	bardin_ironbreaker_gromril_trigger_rising_anger = function(arg_38_0, arg_38_1, arg_38_2)
+	bardin_ironbreaker_gromril_trigger_rising_anger = function (arg_38_0, arg_38_1, arg_38_2)
 		if ALIVE[arg_38_0] then
 			arg_38_1.buff_ids = arg_38_1.buff_ids or {}
 
@@ -968,7 +968,7 @@ ProcFunctions = {
 			arg_38_1._next_update_t = Managers.time:time("game") + 0.5
 		end
 	end,
-	bardin_slayer_push_on_dodge = function(arg_39_0, arg_39_1, arg_39_2)
+	bardin_slayer_push_on_dodge = function (arg_39_0, arg_39_1, arg_39_2)
 		if Unit.alive(arg_39_0) and ScriptUnit.has_extension(arg_39_0, "status_system"):get_dodge_cooldown() >= 1 then
 			local var_39_0 = ScriptUnit.has_extension(arg_39_0, "first_person_system")
 			local var_39_1 = ScriptUnit.has_extension(arg_39_0, "career_system")
@@ -985,12 +985,12 @@ ProcFunctions = {
 			Managers.state.entity:system("area_damage_system"):create_explosion(arg_39_0, var_39_10, var_39_5, var_39_3, 1, "career_ability", var_39_6, false)
 		end
 	end,
-	bardin_ironbreaker_regen_stamina_on_block_broken = function(arg_40_0, arg_40_1, arg_40_2)
+	bardin_ironbreaker_regen_stamina_on_block_broken = function (arg_40_0, arg_40_1, arg_40_2)
 		if Unit.alive(arg_40_0) and arg_40_1.template.proc_chance >= math.random() then
 			ScriptUnit.has_extension(arg_40_0, "status_system"):remove_all_fatigue()
 		end
 	end,
-	bardin_ironbreaker_regen_stamina_on_charged_attacks = function(arg_41_0, arg_41_1, arg_41_2)
+	bardin_ironbreaker_regen_stamina_on_charged_attacks = function (arg_41_0, arg_41_1, arg_41_2)
 		if arg_41_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -999,7 +999,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_41_0, "buff_system"):add_buff("bardin_ironbreaker_regen_stamina_on_charged_attacks_buff", var_0_5)
 		end
 	end,
-	bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina = function(arg_42_0, arg_42_1, arg_42_2)
+	bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina = function (arg_42_0, arg_42_1, arg_42_2)
 		if not ALIVE[arg_42_0] then
 			return
 		end
@@ -1026,7 +1026,7 @@ ProcFunctions = {
 
 		ScriptUnit.has_extension(arg_42_0, "career_system"):reduce_activated_ability_cooldown_percent(var_42_3)
 	end,
-	maidenguard_add_power_buff_on_block = function(arg_43_0, arg_43_1, arg_43_2)
+	maidenguard_add_power_buff_on_block = function (arg_43_0, arg_43_1, arg_43_2)
 		local var_43_0 = arg_43_1.template
 
 		if ALIVE[arg_43_0] then
@@ -1048,7 +1048,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_buff_on_action = function(arg_44_0, arg_44_1, arg_44_2)
+	remove_buff_on_action = function (arg_44_0, arg_44_1, arg_44_2)
 		if ALIVE[arg_44_0] then
 			local var_44_0 = arg_44_2[1].kind
 
@@ -1066,7 +1066,7 @@ ProcFunctions = {
 			table.remove(var_44_1, #var_44_1)
 		end
 	end,
-	increased_melee_damage = function(arg_45_0, arg_45_1, arg_45_2)
+	increased_melee_damage = function (arg_45_0, arg_45_1, arg_45_2)
 		if ALIVE[arg_45_0] then
 			local var_45_0 = ScriptUnit.extension(arg_45_0, "buff_system")
 			local var_45_1 = arg_45_1.template
@@ -1081,7 +1081,7 @@ ProcFunctions = {
 			var_45_0:add_buff("increased_melee_damage_from_proc", var_0_5)
 		end
 	end,
-	add_gromril_delay = function(arg_46_0, arg_46_1, arg_46_2)
+	add_gromril_delay = function (arg_46_0, arg_46_1, arg_46_2)
 		if not ALIVE[arg_46_0] then
 			return
 		end
@@ -1096,14 +1096,14 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_46_0, "buff_system"):add_buff(var_46_0)
 		end
 	end,
-	reduce_ally_damage_taken_on_revived_ally = function(arg_47_0, arg_47_1, arg_47_2)
+	reduce_ally_damage_taken_on_revived_ally = function (arg_47_0, arg_47_1, arg_47_2)
 		local var_47_0 = arg_47_2[1]
 
 		if ALIVE[arg_47_0] and ALIVE[var_47_0] then
 			ScriptUnit.extension(var_47_0, "buff_system"):add_buff("bardin_ironbreaker_reduce_damage_taken_on_revive")
 		end
 	end,
-	victor_zealot_gain_invulnerability = function(arg_48_0, arg_48_1, arg_48_2)
+	victor_zealot_gain_invulnerability = function (arg_48_0, arg_48_1, arg_48_2)
 		local var_48_0 = ScriptUnit.extension(arg_48_0, "status_system")
 
 		if ALIVE[arg_48_0] and not var_48_0:is_knocked_down() then
@@ -1124,7 +1124,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_unchained_vent_overheat_on_low_health = function(arg_49_0, arg_49_1, arg_49_2)
+	sienna_unchained_vent_overheat_on_low_health = function (arg_49_0, arg_49_1, arg_49_2)
 		local var_49_0 = ScriptUnit.extension(arg_49_0, "status_system")
 
 		if ALIVE[arg_49_0] and not var_49_0:is_knocked_down() then
@@ -1147,29 +1147,29 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_increased_ranged_damage = function(arg_50_0, arg_50_1, arg_50_2)
+	add_increased_ranged_damage = function (arg_50_0, arg_50_1, arg_50_2)
 		if Unit.alive(arg_50_0) then
 			ScriptUnit.extension(arg_50_0, "buff_system"):add_buff("passive_career_wh_2_proc")
 		end
 	end,
-	ww_melee_kills_stack_ranged_damage = function(arg_51_0, arg_51_1, arg_51_2)
+	ww_melee_kills_stack_ranged_damage = function (arg_51_0, arg_51_1, arg_51_2)
 		if ALIVE[arg_51_0] then
 			ScriptUnit.extension(arg_51_0, "buff_system"):add_buff("ww_increased_ranged_damage_from_proc")
 		end
 	end,
-	wh_stack_kills_to_be_uninterruptible = function(arg_52_0, arg_52_1, arg_52_2)
+	wh_stack_kills_to_be_uninterruptible = function (arg_52_0, arg_52_1, arg_52_2)
 		if ALIVE[arg_52_0] then
 			ScriptUnit.extension(arg_52_0, "buff_system"):add_buff("wh_kill_stack_from_proc")
 		end
 	end,
-	ww_melee_attacks_apply_damage_taken = function(arg_53_0, arg_53_1, arg_53_2)
+	ww_melee_attacks_apply_damage_taken = function (arg_53_0, arg_53_1, arg_53_2)
 		local var_53_0 = arg_53_2[1]
 
 		if ALIVE[arg_53_0] and ALIVE[var_53_0] then
 			ScriptUnit.extension(var_53_0, "buff_system"):add_buff("ww_applied_damage_taken")
 		end
 	end,
-	es_legshots_cripple = function(arg_54_0, arg_54_1, arg_54_2)
+	es_legshots_cripple = function (arg_54_0, arg_54_1, arg_54_2)
 		local var_54_0 = arg_54_2[1]
 		local var_54_1 = arg_54_2[2]
 		local var_54_2 = arg_54_2[3]
@@ -1178,7 +1178,7 @@ ProcFunctions = {
 			ScriptUnit.extension(var_54_0, "buff_system"):add_buff("es_movement_speed_debuff")
 		end
 	end,
-	ranged_crits_increase_dmg_vs_armour_type = function(arg_55_0, arg_55_1, arg_55_2)
+	ranged_crits_increase_dmg_vs_armour_type = function (arg_55_0, arg_55_1, arg_55_2)
 		local var_55_0 = arg_55_2[1]
 		local var_55_1 = arg_55_2[2]
 		local var_55_2
@@ -1200,21 +1200,21 @@ ProcFunctions = {
 			end
 		end
 	end,
-	debuff_defence_on_crit = function(arg_56_0, arg_56_1, arg_56_2)
+	debuff_defence_on_crit = function (arg_56_0, arg_56_1, arg_56_2)
 		local var_56_0 = arg_56_2[1]
 
 		if ALIVE[arg_56_0] and ALIVE[var_56_0] then
 			ScriptUnit.extension(var_56_0, "buff_system"):add_buff("defence_debuff")
 		end
 	end,
-	victor_witchhunter_debuff_defence_on_crit = function(arg_57_0, arg_57_1, arg_57_2)
+	victor_witchhunter_debuff_defence_on_crit = function (arg_57_0, arg_57_1, arg_57_2)
 		local var_57_0 = arg_57_2[1]
 
 		if ALIVE[arg_57_0] and ALIVE[var_57_0] then
 			ScriptUnit.extension(var_57_0, "buff_system"):add_buff("defence_debuff_enemies")
 		end
 	end,
-	victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit = function(arg_58_0, arg_58_1, arg_58_2)
+	victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit = function (arg_58_0, arg_58_1, arg_58_2)
 		if ALIVE[arg_58_0] then
 			local var_58_0 = arg_58_2[4]
 			local var_58_1 = arg_58_2[2]
@@ -1235,7 +1235,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_witchhunter_activated_ability_increased_duration_on_enemies_hit = function(arg_59_0, arg_59_1, arg_59_2)
+	victor_witchhunter_activated_ability_increased_duration_on_enemies_hit = function (arg_59_0, arg_59_1, arg_59_2)
 		if ALIVE[arg_59_0] then
 			local var_59_0 = arg_59_2[4]
 			local var_59_1 = arg_59_2[2]
@@ -1282,7 +1282,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_unchained_activated_ability_power_on_enemies_hit = function(arg_60_0, arg_60_1, arg_60_2)
+	sienna_unchained_activated_ability_power_on_enemies_hit = function (arg_60_0, arg_60_1, arg_60_2)
 		if Managers.state.network.is_server and ALIVE[arg_60_0] then
 			local var_60_0 = arg_60_2[2]
 
@@ -1295,7 +1295,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_adept_add_damage_reduction_buff_on_ignited_enemy = function(arg_61_0, arg_61_1, arg_61_2)
+	sienna_adept_add_damage_reduction_buff_on_ignited_enemy = function (arg_61_0, arg_61_1, arg_61_2)
 		if ALIVE[arg_61_0] then
 			local var_61_0 = arg_61_1.template
 			local var_61_1 = var_61_0.require_alive_enemy
@@ -1311,7 +1311,7 @@ ProcFunctions = {
 			var_61_3:add_buff(arg_61_0, var_61_4, arg_61_0, false)
 		end
 	end,
-	sienna_adept_add_attack_speed_buff_on_enemies_hit = function(arg_62_0, arg_62_1, arg_62_2)
+	sienna_adept_add_attack_speed_buff_on_enemies_hit = function (arg_62_0, arg_62_1, arg_62_2)
 		if ALIVE[arg_62_0] then
 			local var_62_0 = arg_62_2[4]
 			local var_62_1 = arg_62_1.template
@@ -1331,7 +1331,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_scholar_refund_activated_ability_cooldown = function(arg_63_0, arg_63_1, arg_63_2)
+	sienna_scholar_refund_activated_ability_cooldown = function (arg_63_0, arg_63_1, arg_63_2)
 		if ALIVE[arg_63_0] then
 			local var_63_0 = arg_63_2[4]
 			local var_63_1 = arg_63_2[5]
@@ -1342,14 +1342,14 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_shade_debuff_defence_on_crit = function(arg_64_0, arg_64_1, arg_64_2)
+	kerillian_shade_debuff_defence_on_crit = function (arg_64_0, arg_64_1, arg_64_2)
 		local var_64_0 = arg_64_2[1]
 
 		if ALIVE[arg_64_0] and ALIVE[var_64_0] then
 			ScriptUnit.extension(var_64_0, "buff_system"):add_buff("defence_debuff_enemies")
 		end
 	end,
-	kerillian_shade_stealth_on_backstab_kill = function(arg_65_0, arg_65_1, arg_65_2)
+	kerillian_shade_stealth_on_backstab_kill = function (arg_65_0, arg_65_1, arg_65_2)
 		local var_65_0 = Managers.player:owner(arg_65_0)
 		local var_65_1 = var_65_0.player_unit
 		local var_65_2 = var_65_0.local_player
@@ -1389,7 +1389,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_shade_cooldown_regen_on_backstab_kill = function(arg_66_0, arg_66_1, arg_66_2)
+	kerillian_shade_cooldown_regen_on_backstab_kill = function (arg_66_0, arg_66_1, arg_66_2)
 		local var_66_0 = Managers.player:owner(arg_66_0)
 		local var_66_1 = var_66_0.player_unit
 		local var_66_2 = var_66_0.local_player
@@ -1405,7 +1405,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_shade_buff_on_charged_backstab = function(arg_67_0, arg_67_1, arg_67_2)
+	kerillian_shade_buff_on_charged_backstab = function (arg_67_0, arg_67_1, arg_67_2)
 		local var_67_0 = arg_67_2[1]
 
 		if ALIVE[arg_67_0] and ALIVE[var_67_0] then
@@ -1439,7 +1439,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_waywatcher_restore_ammo_on_career_skill_special_kill = function(arg_68_0, arg_68_1, arg_68_2)
+	kerillian_waywatcher_restore_ammo_on_career_skill_special_kill = function (arg_68_0, arg_68_1, arg_68_2)
 		local var_68_0 = arg_68_2[1]
 		local var_68_1 = var_68_0[DamageDataIndex.ATTACKER]
 		local var_68_2 = var_68_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
@@ -1476,7 +1476,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	restore_ammo_on_special_kill = function(arg_69_0, arg_69_1, arg_69_2)
+	restore_ammo_on_special_kill = function (arg_69_0, arg_69_1, arg_69_2)
 		local var_69_0 = arg_69_2[1][DamageDataIndex.ATTACKER]
 
 		if ALIVE[arg_69_0] and arg_69_0 == var_69_0 then
@@ -1497,7 +1497,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	buff_defence_on_heal = function(arg_70_0, arg_70_1, arg_70_2)
+	buff_defence_on_heal = function (arg_70_0, arg_70_1, arg_70_2)
 		local var_70_0 = arg_70_2[1]
 		local var_70_1 = arg_70_2[3]
 
@@ -1505,7 +1505,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_70_0, "buff_system"):add_buff("trait_necklace_damage_taken_reduction_buff")
 		end
 	end,
-	buff_defence_on_damage_taken = function(arg_71_0, arg_71_1, arg_71_2)
+	buff_defence_on_damage_taken = function (arg_71_0, arg_71_1, arg_71_2)
 		if ALIVE[arg_71_0] then
 			local var_71_0 = arg_71_2[1]
 			local var_71_1 = arg_71_2[2]
@@ -1519,7 +1519,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_enemy_damage_taken = function(arg_72_0, arg_72_1, arg_72_2)
+	add_buff_on_enemy_damage_taken = function (arg_72_0, arg_72_1, arg_72_2)
 		if Unit.alive(arg_72_0) then
 			local var_72_0 = arg_72_2[1]
 			local var_72_1 = arg_72_2[2]
@@ -1533,7 +1533,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	restore_stamina_on_enemy_damage_taken = function(arg_73_0, arg_73_1, arg_73_2)
+	restore_stamina_on_enemy_damage_taken = function (arg_73_0, arg_73_1, arg_73_2)
 		if ALIVE[arg_73_0] then
 			local var_73_0 = arg_73_2[1]
 			local var_73_1 = arg_73_2[2]
@@ -1545,7 +1545,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	bardin_ranger_scavenge_proc = function(arg_74_0, arg_74_1, arg_74_2)
+	bardin_ranger_scavenge_proc = function (arg_74_0, arg_74_1, arg_74_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1613,7 +1613,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	bardin_ranger_add_power_on_no_ammo_proc = function(arg_75_0, arg_75_1, arg_75_2)
+	bardin_ranger_add_power_on_no_ammo_proc = function (arg_75_0, arg_75_1, arg_75_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1630,7 +1630,7 @@ ProcFunctions = {
 			var_75_1:get_non_stacking_buff(var_75_2).server_buff_id = var_75_5
 		end
 	end,
-	bardin_ranger_remove_power_on_no_ammo_proc = function(arg_76_0, arg_76_1, arg_76_2)
+	bardin_ranger_remove_power_on_no_ammo_proc = function (arg_76_0, arg_76_1, arg_76_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1644,7 +1644,7 @@ ProcFunctions = {
 			var_76_0:remove_server_controlled_buff(arg_76_0, var_76_3.server_buff_id)
 		end
 	end,
-	victor_bountyhunter_add_power_on_no_ammo_proc = function(arg_77_0, arg_77_1, arg_77_2)
+	victor_bountyhunter_add_power_on_no_ammo_proc = function (arg_77_0, arg_77_1, arg_77_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1661,7 +1661,7 @@ ProcFunctions = {
 			var_77_1:get_stacking_buff(var_77_2).server_buff_id = var_77_5
 		end
 	end,
-	victor_bountyhunter_remove_power_on_no_ammo_proc = function(arg_78_0, arg_78_1, arg_78_2)
+	victor_bountyhunter_remove_power_on_no_ammo_proc = function (arg_78_0, arg_78_1, arg_78_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1675,7 +1675,7 @@ ProcFunctions = {
 			var_78_0:remove_server_controlled_buff(arg_78_0, var_78_3.server_buff_id)
 		end
 	end,
-	debuff_defence_grenade_hit = function(arg_79_0, arg_79_1, arg_79_2)
+	debuff_defence_grenade_hit = function (arg_79_0, arg_79_1, arg_79_2)
 		local var_79_0 = arg_79_2[1]
 		local var_79_1 = arg_79_2[2]
 		local var_79_2 = Unit.get_data(var_79_0, "breed")
@@ -1684,7 +1684,7 @@ ProcFunctions = {
 			ScriptUnit.extension(var_79_0, "buff_system"):add_buff("trait_trinket_grenade_damage_taken_buff")
 		end
 	end,
-	activate_buff_on_disabler = function(arg_80_0, arg_80_1, arg_80_2)
+	activate_buff_on_disabler = function (arg_80_0, arg_80_1, arg_80_2)
 		local var_80_0 = arg_80_1.template
 		local var_80_1 = ScriptUnit.extension(arg_80_0, "status_system")
 		local var_80_2 = var_80_1:is_disabled()
@@ -1702,7 +1702,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_to_all_players = function(arg_81_0, arg_81_1, arg_81_2)
+	add_buff_to_all_players = function (arg_81_0, arg_81_1, arg_81_2)
 		local var_81_0 = Managers.state.entity:system("buff_system")
 		local var_81_1 = arg_81_1.template.buff_to_add
 		local var_81_2 = Managers.state.side.side_by_unit[arg_81_0].PLAYER_AND_BOT_UNITS
@@ -1716,7 +1716,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	life_mutator_remove_regen = function(arg_82_0, arg_82_1, arg_82_2)
+	life_mutator_remove_regen = function (arg_82_0, arg_82_1, arg_82_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1732,7 +1732,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_stacks_on_hit = function(arg_83_0, arg_83_1, arg_83_2)
+	add_buff_on_stacks_on_hit = function (arg_83_0, arg_83_1, arg_83_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1758,7 +1758,7 @@ ProcFunctions = {
 			var_83_1:remove_server_controlled_buff(arg_83_0, arg_83_1.added_buff_id)
 		end
 	end,
-	add_buff_on_stacks_on_event = function(arg_84_0, arg_84_1, arg_84_2)
+	add_buff_on_stacks_on_event = function (arg_84_0, arg_84_1, arg_84_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1783,7 +1783,7 @@ ProcFunctions = {
 			var_84_1:remove_server_controlled_buff(arg_84_0, arg_84_1.added_buff_id)
 		end
 	end,
-	buff_consecutive_shots_damage = function(arg_85_0, arg_85_1, arg_85_2)
+	buff_consecutive_shots_damage = function (arg_85_0, arg_85_1, arg_85_2)
 		local var_85_0 = arg_85_2[1]
 		local var_85_1 = arg_85_2[2]
 		local var_85_2 = arg_85_2[4]
@@ -1798,14 +1798,14 @@ ProcFunctions = {
 			var_85_3:add_buff("consecutive_shot_debuff")
 		end
 	end,
-	block_increase_enemy_damage_taken = function(arg_86_0, arg_86_1, arg_86_2)
+	block_increase_enemy_damage_taken = function (arg_86_0, arg_86_1, arg_86_2)
 		local var_86_0 = arg_86_2[1]
 
 		if ALIVE[var_86_0] then
 			Managers.state.entity:system("buff_system"):add_buff_synced(var_86_0, "defence_debuff_enemies", BuffSyncType.All)
 		end
 	end,
-	add_buff = function(arg_87_0, arg_87_1, arg_87_2)
+	add_buff = function (arg_87_0, arg_87_1, arg_87_2)
 		if ALIVE[arg_87_0] then
 			local var_87_0 = arg_87_1.template.buff_to_add
 			local var_87_1 = ScriptUnit.extension(arg_87_0, "buff_system")
@@ -1824,7 +1824,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_witchhunter_ping_enemy_attack_speed = function(arg_88_0, arg_88_1, arg_88_2)
+	victor_witchhunter_ping_enemy_attack_speed = function (arg_88_0, arg_88_1, arg_88_2)
 		if not ALIVE[arg_88_0] then
 			return
 		end
@@ -1849,7 +1849,7 @@ ProcFunctions = {
 
 		Managers.state.entity:system("buff_system"):add_buff_synced(arg_88_0, var_88_1, BuffSyncType.Client, var_0_5, var_88_2.peer_id)
 	end,
-	add_buff_on_first_target_hit = function(arg_89_0, arg_89_1, arg_89_2)
+	add_buff_on_first_target_hit = function (arg_89_0, arg_89_1, arg_89_2)
 		if ALIVE[arg_89_0] then
 			if arg_89_2[4] > 1 then
 				return
@@ -1890,7 +1890,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_first_target_hit_headshot = function(arg_90_0, arg_90_1, arg_90_2)
+	add_buff_on_first_target_hit_headshot = function (arg_90_0, arg_90_1, arg_90_2)
 		if ALIVE[arg_90_0] then
 			local var_90_0 = arg_90_2[5]
 
@@ -1921,7 +1921,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_unmodified_headshot = function(arg_91_0, arg_91_1, arg_91_2)
+	add_buff_on_unmodified_headshot = function (arg_91_0, arg_91_1, arg_91_2)
 		if ALIVE[arg_91_0] then
 			local var_91_0 = arg_91_2[5]
 			local var_91_1 = arg_91_2[2]
@@ -1944,7 +1944,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_delayed_buff_on_ranged_hit = function(arg_92_0, arg_92_1, arg_92_2)
+	add_delayed_buff_on_ranged_hit = function (arg_92_0, arg_92_1, arg_92_2)
 		if ALIVE[arg_92_0] then
 			local var_92_0 = arg_92_2[5]
 			local var_92_1 = arg_92_2[2]
@@ -1963,10 +1963,10 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_local = function(arg_93_0, arg_93_1, arg_93_2)
+	add_buff_local = function (arg_93_0, arg_93_1, arg_93_2)
 		BuffFunctionTemplates.functions.add_buff_local(arg_93_0, arg_93_1, arg_93_2)
 	end,
-	add_buff_on_first_target_hit_range = function(arg_94_0, arg_94_1, arg_94_2)
+	add_buff_on_first_target_hit_range = function (arg_94_0, arg_94_1, arg_94_2)
 		if ALIVE[arg_94_0] then
 			local var_94_0 = arg_94_2[5]
 			local var_94_1 = arg_94_2[2]
@@ -1998,7 +1998,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_stack_on_melee_critical_hit = function(arg_95_0, arg_95_1, arg_95_2)
+	add_buff_stack_on_melee_critical_hit = function (arg_95_0, arg_95_1, arg_95_2)
 		if ALIVE[arg_95_0] then
 			local var_95_0 = arg_95_2[4]
 			local var_95_1 = arg_95_2[5]
@@ -2035,7 +2035,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	set_noclip = function(arg_96_0, arg_96_1, arg_96_2)
+	set_noclip = function (arg_96_0, arg_96_1, arg_96_2)
 		if ALIVE[arg_96_0] then
 			local var_96_0 = ScriptUnit.extension(arg_96_0, "status_system")
 			local var_96_1 = arg_96_1.template
@@ -2045,7 +2045,7 @@ ProcFunctions = {
 			var_96_0:set_noclip(var_96_2, var_96_3)
 		end
 	end,
-	add_buff_on_elite_or_special_kill = function(arg_97_0, arg_97_1, arg_97_2)
+	add_buff_on_elite_or_special_kill = function (arg_97_0, arg_97_1, arg_97_2)
 		if Unit.alive(arg_97_0) then
 			local var_97_0 = arg_97_2[2]
 
@@ -2068,7 +2068,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_special_kill = function(arg_98_0, arg_98_1, arg_98_2)
+	add_buff_on_special_kill = function (arg_98_0, arg_98_1, arg_98_2)
 		if Unit.alive(arg_98_0) and arg_98_2[2].special then
 			local var_98_0 = arg_98_1.template.buff_to_add
 			local var_98_1 = ScriptUnit.extension(arg_98_0, "buff_system")
@@ -2087,7 +2087,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_stack_on_special_kill = function(arg_99_0, arg_99_1, arg_99_2)
+	add_buff_stack_on_special_kill = function (arg_99_0, arg_99_1, arg_99_2)
 		if ALIVE[arg_99_0] then
 			local var_99_0 = arg_99_2[2]
 
@@ -2109,7 +2109,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_ref_buff_stack = function(arg_100_0, arg_100_1, arg_100_2)
+	remove_ref_buff_stack = function (arg_100_0, arg_100_1, arg_100_2)
 		local var_100_0 = arg_100_2[1]
 		local var_100_1 = arg_100_2[3]
 		local var_100_2 = Managers.state.side.side_by_unit[arg_100_0]
@@ -2130,7 +2130,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_headshot = function(arg_101_0, arg_101_1, arg_101_2)
+	add_buff_on_headshot = function (arg_101_0, arg_101_1, arg_101_2)
 		if Unit.alive(arg_101_0) then
 			local var_101_0 = arg_101_2[3]
 
@@ -2161,7 +2161,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_unchained_add_buff_on_vent_damage = function(arg_102_0, arg_102_1, arg_102_2)
+	sienna_unchained_add_buff_on_vent_damage = function (arg_102_0, arg_102_1, arg_102_2)
 		if ALIVE[arg_102_0] then
 			local var_102_0 = arg_102_2[3]
 
@@ -2188,7 +2188,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_on_kill_explosion = function(arg_103_0, arg_103_1, arg_103_2)
+	sienna_on_kill_explosion = function (arg_103_0, arg_103_1, arg_103_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2213,7 +2213,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	sienna_burn_push_on_charged_attacks = function(arg_104_0, arg_104_1, arg_104_2)
+	sienna_burn_push_on_charged_attacks = function (arg_104_0, arg_104_1, arg_104_2)
 		if arg_104_2[2] ~= "heavy_attack" then
 			return
 		end
@@ -2225,7 +2225,7 @@ ProcFunctions = {
 			var_104_0:add_buff(var_104_1)
 		end
 	end,
-	sienna_burn_push_on_charged_attacks_remove = function(arg_105_0, arg_105_1, arg_105_2)
+	sienna_burn_push_on_charged_attacks_remove = function (arg_105_0, arg_105_1, arg_105_2)
 		if not var_0_6(arg_105_0) then
 			return
 		end
@@ -2234,7 +2234,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_105_0, "buff_system"):remove_buff(arg_105_1.id)
 		end
 	end,
-	add_buff_on_ranged_headshot = function(arg_106_0, arg_106_1, arg_106_2)
+	add_buff_on_ranged_headshot = function (arg_106_0, arg_106_1, arg_106_2)
 		if ALIVE[arg_106_0] then
 			local var_106_0 = arg_106_2[3]
 			local var_106_1 = arg_106_2[2] == "light_attack" or arg_106_2[2] == "heavy_attack"
@@ -2258,7 +2258,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	bardin_ranger_add_reload_speed_buff = function(arg_107_0, arg_107_1, arg_107_2)
+	bardin_ranger_add_reload_speed_buff = function (arg_107_0, arg_107_1, arg_107_2)
 		if Unit.alive(arg_107_0) then
 			local var_107_0 = ScriptUnit.has_extension(arg_107_0, "buff_system")
 			local var_107_1 = arg_107_1.template
@@ -2270,7 +2270,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_non_stacking_buff = function(arg_108_0, arg_108_1, arg_108_2)
+	remove_non_stacking_buff = function (arg_108_0, arg_108_1, arg_108_2)
 		if ALIVE[arg_108_0] then
 			local var_108_0 = ScriptUnit.extension(arg_108_0, "buff_system")
 			local var_108_1 = arg_108_1.template.buff_to_remove
@@ -2281,7 +2281,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_bardin_slayer_passive_buff = function(arg_109_0, arg_109_1, arg_109_2)
+	add_bardin_slayer_passive_buff = function (arg_109_0, arg_109_1, arg_109_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2308,7 +2308,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	bardin_slayer_self_revive_on_kill = function(arg_110_0, arg_110_1, arg_110_2)
+	bardin_slayer_self_revive_on_kill = function (arg_110_0, arg_110_1, arg_110_2)
 		if ALIVE[arg_110_0] then
 			local var_110_0 = arg_110_1.template
 
@@ -2323,14 +2323,14 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_fatigue = function(arg_111_0, arg_111_1, arg_111_2)
+	remove_fatigue = function (arg_111_0, arg_111_1, arg_111_2)
 		if ALIVE[arg_111_0] then
 			local var_111_0 = arg_111_1.bonus
 
 			ScriptUnit.extension(arg_111_0, "status_system"):remove_fatigue_points(var_111_0)
 		end
 	end,
-	increase_attack_speed = function(arg_112_0, arg_112_1, arg_112_2)
+	increase_attack_speed = function (arg_112_0, arg_112_1, arg_112_2)
 		if ALIVE[arg_112_0] then
 			local var_112_0 = ScriptUnit.extension(arg_112_0, "buff_system")
 			local var_112_1 = arg_112_1.template
@@ -2345,7 +2345,7 @@ ProcFunctions = {
 			var_112_0:add_buff("increased_attack_speed", var_0_5)
 		end
 	end,
-	increase_critical_hit_chance = function(arg_113_0, arg_113_1, arg_113_2)
+	increase_critical_hit_chance = function (arg_113_0, arg_113_1, arg_113_2)
 		if ALIVE[arg_113_0] then
 			local var_113_0 = ScriptUnit.extension(arg_113_0, "buff_system")
 			local var_113_1 = arg_113_1.template
@@ -2360,7 +2360,7 @@ ProcFunctions = {
 			var_113_0:add_buff("increased_critical_hit_chance", var_0_5)
 		end
 	end,
-	remove_overcharge = function(arg_114_0, arg_114_1, arg_114_2)
+	remove_overcharge = function (arg_114_0, arg_114_1, arg_114_2)
 		if not var_0_6(arg_114_0) then
 			return
 		end
@@ -2371,7 +2371,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_114_0, "overcharge_system"):remove_charge(var_114_0)
 		end
 	end,
-	shade_activated_ability_on_hit = function(arg_115_0, arg_115_1, arg_115_2)
+	shade_activated_ability_on_hit = function (arg_115_0, arg_115_1, arg_115_2)
 		if ALIVE[arg_115_0] then
 			local var_115_0 = arg_115_2[1]
 
@@ -2406,7 +2406,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_115_0, "buff_system"):remove_buff(arg_115_1.id)
 		end
 	end,
-	kerillian_shade_cheat_death_damage_taken = function(arg_116_0, arg_116_1, arg_116_2)
+	kerillian_shade_cheat_death_damage_taken = function (arg_116_0, arg_116_1, arg_116_2)
 		if not var_0_7() then
 			return
 		end
@@ -2420,7 +2420,7 @@ ProcFunctions = {
 			var_116_1:remove_buff_synced(arg_116_0, arg_116_1.id)
 		end
 	end,
-	shade_combo_stealth_on_hit = function(arg_117_0, arg_117_1, arg_117_2)
+	shade_combo_stealth_on_hit = function (arg_117_0, arg_117_1, arg_117_2)
 		if ALIVE[arg_117_0] then
 			local var_117_0 = ScriptUnit.extension(arg_117_0, "buff_system")
 
@@ -2429,7 +2429,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	shade_combo_stealth_extend_on_kill = function(arg_118_0, arg_118_1, arg_118_2)
+	shade_combo_stealth_extend_on_kill = function (arg_118_0, arg_118_1, arg_118_2)
 		if ALIVE[arg_118_0] then
 			local var_118_0 = ScriptUnit.extension(arg_118_0, "buff_system"):get_buff_type("kerillian_shade_ult_invis")
 
@@ -2442,12 +2442,12 @@ ProcFunctions = {
 			end
 		end
 	end,
-	shade_short_stealth_on_hit = function(arg_119_0, arg_119_1, arg_119_2)
+	shade_short_stealth_on_hit = function (arg_119_0, arg_119_1, arg_119_2)
 		if ALIVE[arg_119_0] then
 			ScriptUnit.extension(arg_119_0, "buff_system"):remove_buff(arg_119_1.id)
 		end
 	end,
-	shade_backstab_ammo_gain = function(arg_120_0, arg_120_1, arg_120_2)
+	shade_backstab_ammo_gain = function (arg_120_0, arg_120_1, arg_120_2)
 		local var_120_0 = ScriptUnit.has_extension(arg_120_0, "buff_system")
 
 		if var_120_0 and not var_120_0:has_buff_type("kerillian_shade_backstabs_replenishes_ammunition_cooldown") then
@@ -2469,7 +2469,7 @@ ProcFunctions = {
 			var_120_0:add_buff("kerillian_shade_backstabs_replenishes_ammunition_cooldown")
 		end
 	end,
-	end_huntsman_stealth = function(arg_121_0, arg_121_1, arg_121_2)
+	end_huntsman_stealth = function (arg_121_0, arg_121_1, arg_121_2)
 		if ALIVE[arg_121_0] and var_0_6(arg_121_0) then
 			ScriptUnit.extension(arg_121_0, "status_system"):set_invisible(false, nil, "huntsman_ability")
 
@@ -2487,7 +2487,7 @@ ProcFunctions = {
 
 		return true
 	end,
-	end_huntsman_activated_ability = function(arg_122_0, arg_122_1, arg_122_2)
+	end_huntsman_activated_ability = function (arg_122_0, arg_122_1, arg_122_2)
 		if ALIVE[arg_122_0] then
 			local var_122_0 = ScriptUnit.extension(arg_122_0, "buff_system")
 			local var_122_1 = var_122_0:get_non_stacking_buff("markus_huntsman_activated_ability")
@@ -2497,7 +2497,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	increased_movement_speed = function(arg_123_0, arg_123_1, arg_123_2)
+	increased_movement_speed = function (arg_123_0, arg_123_1, arg_123_2)
 		if ALIVE[arg_123_0] then
 			local var_123_0 = ScriptUnit.extension(arg_123_0, "buff_system")
 			local var_123_1 = arg_123_1.template
@@ -2512,7 +2512,7 @@ ProcFunctions = {
 			var_123_0:add_buff("increased_movement_speed_from_proc", var_0_5)
 		end
 	end,
-	ammo_gain = function(arg_124_0, arg_124_1, arg_124_2)
+	ammo_gain = function (arg_124_0, arg_124_1, arg_124_2)
 		if ALIVE[arg_124_0] then
 			local var_124_0 = "slot_ranged"
 			local var_124_1 = arg_124_1.bonus
@@ -2528,7 +2528,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	ammo_fraction_gain = function(arg_125_0, arg_125_1, arg_125_2)
+	ammo_fraction_gain = function (arg_125_0, arg_125_1, arg_125_2)
 		local var_125_0 = Managers.player:owner(arg_125_0)
 
 		if var_125_0 and var_125_0.remote then
@@ -2552,7 +2552,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_buff_on_out_of_ammo = function(arg_126_0, arg_126_1, arg_126_2)
+	add_buff_on_out_of_ammo = function (arg_126_0, arg_126_1, arg_126_2)
 		if Unit.alive(arg_126_0) then
 			local var_126_0 = ScriptUnit.extension(arg_126_0, "buff_system")
 			local var_126_1 = arg_126_1.template.buffs_to_add
@@ -2575,7 +2575,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_hunter_reload_on_kill = function(arg_127_0, arg_127_1, arg_127_2)
+	victor_bounty_hunter_reload_on_kill = function (arg_127_0, arg_127_1, arg_127_2)
 		if not var_0_6(arg_127_0) then
 			return
 		end
@@ -2612,7 +2612,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_hunter_ammo_regen = function(arg_128_0, arg_128_1, arg_128_2)
+	victor_bounty_hunter_ammo_regen = function (arg_128_0, arg_128_1, arg_128_2)
 		if not var_0_6(arg_128_0) then
 			return
 		end
@@ -2637,7 +2637,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_blast_streak_activation = function(arg_129_0, arg_129_1, arg_129_2)
+	victor_bounty_blast_streak_activation = function (arg_129_0, arg_129_1, arg_129_2)
 		if not var_0_6(arg_129_0) then
 			return
 		end
@@ -2664,7 +2664,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_blast_streak_buff = function(arg_130_0, arg_130_1, arg_130_2)
+	victor_bounty_blast_streak_buff = function (arg_130_0, arg_130_1, arg_130_2)
 		if not var_0_6(arg_130_0) then
 			return
 		end
@@ -2677,7 +2677,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_130_0, "buff_system"):remove_buff(arg_130_1.id)
 		end
 	end,
-	victor_bountyhunter_blessed_combat = function(arg_131_0, arg_131_1, arg_131_2)
+	victor_bountyhunter_blessed_combat = function (arg_131_0, arg_131_1, arg_131_2)
 		if not var_0_7() then
 			return
 		end
@@ -2749,7 +2749,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	add_team_buff_on_ranged_critical_hit = function(arg_132_0, arg_132_1, arg_132_2)
+	add_team_buff_on_ranged_critical_hit = function (arg_132_0, arg_132_1, arg_132_2)
 		if Unit.alive(arg_132_0) then
 			local var_132_0 = arg_132_2[5]
 
@@ -2785,7 +2785,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_hunter_ammo_fraction_gain_out_of_ammo = function(arg_133_0, arg_133_1, arg_133_2)
+	victor_bounty_hunter_ammo_fraction_gain_out_of_ammo = function (arg_133_0, arg_133_1, arg_133_2)
 		if not var_0_6(arg_133_0) then
 			return
 		end
@@ -2812,7 +2812,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	ammo_fraction_gain_on_crit_trait = function(arg_134_0, arg_134_1, arg_134_2)
+	ammo_fraction_gain_on_crit_trait = function (arg_134_0, arg_134_1, arg_134_2)
 		local var_134_0 = Managers.player:owner(arg_134_0)
 
 		if var_134_0 and var_134_0.remote then
@@ -2845,7 +2845,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	ammo_gain_when_low = function(arg_135_0, arg_135_1, arg_135_2)
+	ammo_gain_when_low = function (arg_135_0, arg_135_1, arg_135_2)
 		local var_135_0 = Managers.player:owner(arg_135_0)
 
 		if var_135_0 and var_135_0.remote then
@@ -2870,7 +2870,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	markus_huntsman_passive_proc = function(arg_136_0, arg_136_1, arg_136_2)
+	markus_huntsman_passive_proc = function (arg_136_0, arg_136_1, arg_136_2)
 		local var_136_0 = arg_136_2[2]
 		local var_136_1 = arg_136_2[3]
 
@@ -2894,7 +2894,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	markus_huntsman_free_shot = function(arg_137_0, arg_137_1, arg_137_2)
+	markus_huntsman_free_shot = function (arg_137_0, arg_137_1, arg_137_2)
 		if not var_0_6(arg_137_0) then
 			return
 		end
@@ -2919,7 +2919,7 @@ ProcFunctions = {
 			ScriptUnit.extension(arg_137_0, "buff_system"):remove_buff(arg_137_1.id)
 		end
 	end,
-	markus_huntsman_ult_on_death = function(arg_138_0, arg_138_1, arg_138_2)
+	markus_huntsman_ult_on_death = function (arg_138_0, arg_138_1, arg_138_2)
 		if ALIVE[arg_138_0] then
 			local var_138_0 = ScriptUnit.extension(arg_138_0, "health_system")
 			local var_138_1 = arg_138_2[2]
@@ -2956,7 +2956,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	markus_huntsman_debuff_defence = function(arg_139_0, arg_139_1, arg_139_2)
+	markus_huntsman_debuff_defence = function (arg_139_0, arg_139_1, arg_139_2)
 		local var_139_0 = arg_139_2[1]
 
 		if ALIVE[arg_139_0] and ALIVE[var_139_0] then
@@ -2966,7 +2966,7 @@ ProcFunctions = {
 			var_139_1:add_buff(var_139_2)
 		end
 	end,
-	markus_huntsman_passive_on_melee_kills = function(arg_140_0, arg_140_1, arg_140_2)
+	markus_huntsman_passive_on_melee_kills = function (arg_140_0, arg_140_1, arg_140_2)
 		if not ALIVE[arg_140_0] then
 			return
 		end
@@ -3017,7 +3017,7 @@ ProcFunctions = {
 
 		var_140_2:add_buff(var_140_4)
 	end,
-	remove_buff_stack = function(arg_141_0, arg_141_1, arg_141_2)
+	remove_buff_stack = function (arg_141_0, arg_141_1, arg_141_2)
 		if Unit.alive(arg_141_0) then
 			local var_141_0 = ScriptUnit.has_extension(arg_141_0, "buff_system")
 
@@ -3062,7 +3062,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	markus_huntsman_increase_reload_speed = function(arg_142_0, arg_142_1, arg_142_2)
+	markus_huntsman_increase_reload_speed = function (arg_142_0, arg_142_1, arg_142_2)
 		local var_142_0 = arg_142_2[2]
 		local var_142_1 = arg_142_2[3]
 		local var_142_2 = ScriptUnit.extension(arg_142_0, "buff_system")
@@ -3071,7 +3071,7 @@ ProcFunctions = {
 			var_142_2:add_buff("markus_huntsman_headshots_increase_reload_speed_buff")
 		end
 	end,
-	replenish_ammo_on_headshot_ranged = function(arg_143_0, arg_143_1, arg_143_2)
+	replenish_ammo_on_headshot_ranged = function (arg_143_0, arg_143_1, arg_143_2)
 		local var_143_0 = arg_143_2[2]
 		local var_143_1 = arg_143_2[3]
 
@@ -3094,7 +3094,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	reset_tranquility = function(arg_144_0, arg_144_1, arg_144_2)
+	reset_tranquility = function (arg_144_0, arg_144_1, arg_144_2)
 		local var_144_0 = arg_144_2[1]
 		local var_144_1 = arg_144_2[2]
 		local var_144_2 = true
@@ -3121,7 +3121,7 @@ ProcFunctions = {
 			var_144_3:add_buff(var_144_5)
 		end
 	end,
-	maidenguard_remove_on_block_speed_buff = function(arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
+	maidenguard_remove_on_block_speed_buff = function (arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
 		if ALIVE[arg_145_0] then
 			local var_145_0 = arg_145_2[arg_145_4.target_number]
 			local var_145_1 = arg_145_1.template
@@ -3142,7 +3142,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	maidenguard_footwork_buff = function(arg_146_0, arg_146_1, arg_146_2)
+	maidenguard_footwork_buff = function (arg_146_0, arg_146_1, arg_146_2)
 		if ALIVE[arg_146_0] then
 			local var_146_0 = ScriptUnit.has_extension(arg_146_0, "status_system")
 			local var_146_1 = ScriptUnit.has_extension(arg_146_0, "buff_system")
@@ -3175,7 +3175,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	maidenguard_footwork_on_dodge_end = function(arg_147_0, arg_147_1, arg_147_2)
+	maidenguard_footwork_on_dodge_end = function (arg_147_0, arg_147_1, arg_147_2)
 		if ALIVE[arg_147_0] then
 			local var_147_0 = ScriptUnit.extension(arg_147_0, "buff_system")
 
@@ -3184,7 +3184,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	maidenguard_reset_unharmed_buff = function(arg_148_0, arg_148_1, arg_148_2)
+	maidenguard_reset_unharmed_buff = function (arg_148_0, arg_148_1, arg_148_2)
 		local var_148_0 = arg_148_2[1]
 		local var_148_1 = arg_148_2[2]
 		local var_148_2 = true
@@ -3212,7 +3212,7 @@ ProcFunctions = {
 			return true
 		end
 	end,
-	buff_on_stagger_enemy = function(arg_149_0, arg_149_1, arg_149_2)
+	buff_on_stagger_enemy = function (arg_149_0, arg_149_1, arg_149_2)
 		local var_149_0 = arg_149_1.template
 		local var_149_1 = ScriptUnit.extension(arg_149_0, "buff_system")
 		local var_149_2 = arg_149_2[1]
@@ -3247,14 +3247,14 @@ ProcFunctions = {
 			end
 		end
 	end,
-	buff_on_blocked_attack = function(arg_150_0, arg_150_1, arg_150_2)
+	buff_on_blocked_attack = function (arg_150_0, arg_150_1, arg_150_2)
 		local var_150_0 = arg_150_1.template
 		local var_150_1 = ScriptUnit.extension(arg_150_0, "buff_system")
 		local var_150_2 = var_150_0.buff_to_add
 
 		var_150_1:add_buff(var_150_2)
 	end,
-	gain_markus_mercenary_passive_proc = function(arg_151_0, arg_151_1, arg_151_2)
+	gain_markus_mercenary_passive_proc = function (arg_151_0, arg_151_1, arg_151_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3298,7 +3298,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	reduce_activated_ability_cooldown = function(arg_152_0, arg_152_1, arg_152_2)
+	reduce_activated_ability_cooldown = function (arg_152_0, arg_152_1, arg_152_2)
 		if ALIVE[arg_152_0] then
 			local var_152_0 = arg_152_2[2]
 			local var_152_1 = arg_152_2[4]
@@ -3311,7 +3311,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bountyhunter_reduce_activated_ability_cooldown_ignore_paused_on_kill = function(arg_153_0, arg_153_1, arg_153_2)
+	victor_bountyhunter_reduce_activated_ability_cooldown_ignore_paused_on_kill = function (arg_153_0, arg_153_1, arg_153_2)
 		if ALIVE[arg_153_0] then
 			local var_153_0 = arg_153_2[1][DamageDataIndex.DAMAGE_SOURCE_NAME]
 			local var_153_1 = ScriptUnit.extension(arg_153_0, "career_system")
@@ -3323,7 +3323,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bountyhunter_reduce_activated_ability_cooldown_on_passive_crit = function(arg_154_0, arg_154_1, arg_154_2)
+	victor_bountyhunter_reduce_activated_ability_cooldown_on_passive_crit = function (arg_154_0, arg_154_1, arg_154_2)
 		if ALIVE[arg_154_0] then
 			local var_154_0 = Managers.time:time("game")
 
@@ -3344,7 +3344,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	victor_bounty_hunter_reduce_activated_ability_cooldown_railgun = function(arg_155_0, arg_155_1, arg_155_2)
+	victor_bounty_hunter_reduce_activated_ability_cooldown_railgun = function (arg_155_0, arg_155_1, arg_155_2)
 		if ALIVE[arg_155_0] then
 			local var_155_0 = arg_155_2[3]
 			local var_155_1 = arg_155_2[4]
@@ -3364,7 +3364,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_waywatcher_reduce_activated_ability_cooldown = function(arg_156_0, arg_156_1, arg_156_2)
+	kerillian_waywatcher_reduce_activated_ability_cooldown = function (arg_156_0, arg_156_1, arg_156_2)
 		if ALIVE[arg_156_0] then
 			local var_156_0 = arg_156_2[3]
 			local var_156_1 = arg_156_2[4]
@@ -3381,7 +3381,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	kerillian_waywatcher_add_extra_shot_buff_on_melee_kill = function(arg_157_0, arg_157_1, arg_157_2)
+	kerillian_waywatcher_add_extra_shot_buff_on_melee_kill = function (arg_157_0, arg_157_1, arg_157_2)
 		if not ALIVE[arg_157_0] then
 			return
 		end
@@ -3404,10 +3404,10 @@ ProcFunctions = {
 			attacker_unit = arg_157_0
 		})
 	end,
-	kerillian_waywatcher_consume_extra_shot_buff = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
+	kerillian_waywatcher_consume_extra_shot_buff = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
 		return true
 	end,
-	reduce_activated_ability_cooldown_boss_hit = function(arg_159_0, arg_159_1, arg_159_2)
+	reduce_activated_ability_cooldown_boss_hit = function (arg_159_0, arg_159_1, arg_159_2)
 		local var_159_0 = arg_159_2[1]
 		local var_159_1 = arg_159_2[2]
 
@@ -3425,7 +3425,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	reduce_activated_ability_cooldown_with_internal_cooldown_on_crit = function(arg_160_0, arg_160_1, arg_160_2)
+	reduce_activated_ability_cooldown_with_internal_cooldown_on_crit = function (arg_160_0, arg_160_1, arg_160_2)
 		local var_160_0 = arg_160_2[2]
 		local var_160_1 = arg_160_2[5]
 		local var_160_2
@@ -3448,7 +3448,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	reduce_activated_ability_cooldown_on_damage_taken = function(arg_161_0, arg_161_1, arg_161_2)
+	reduce_activated_ability_cooldown_on_damage_taken = function (arg_161_0, arg_161_1, arg_161_2)
 		local var_161_0 = arg_161_2[1]
 		local var_161_1 = arg_161_2[2]
 
@@ -3459,7 +3459,7 @@ ProcFunctions = {
 			var_161_2:reduce_activated_ability_cooldown(var_161_3)
 		end
 	end,
-	sienna_adept_reduce_activated_ability_cooldown_on_burning_enemy_killed = function(arg_162_0, arg_162_1, arg_162_2)
+	sienna_adept_reduce_activated_ability_cooldown_on_burning_enemy_killed = function (arg_162_0, arg_162_1, arg_162_2)
 		local var_162_0 = arg_162_2[3]
 
 		if ALIVE[var_162_0] then
@@ -3481,7 +3481,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_victor_bountyhunter_passive_crit_buff = function(arg_163_0, arg_163_1, arg_163_2)
+	remove_victor_bountyhunter_passive_crit_buff = function (arg_163_0, arg_163_1, arg_163_2)
 		local var_163_0 = arg_163_2[1]
 		local var_163_1 = var_163_0 == "sweep" or var_163_0 == "push_stagger" or var_163_0 == "shield_slam"
 
@@ -3500,7 +3500,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	remove_markus_huntsman_passive_crit_buff = function(arg_164_0, arg_164_1, arg_164_2)
+	remove_markus_huntsman_passive_crit_buff = function (arg_164_0, arg_164_1, arg_164_2)
 		if ALIVE[arg_164_0] then
 			local var_164_0 = ScriptUnit.extension(arg_164_0, "buff_system")
 			local var_164_1 = var_164_0:get_non_stacking_buff("markus_huntsman_passive_crit_buff")
@@ -3510,22 +3510,22 @@ ProcFunctions = {
 			end
 		end
 	end,
-	mark_for_delayed_deletion = function(arg_165_0, arg_165_1, arg_165_2)
+	mark_for_delayed_deletion = function (arg_165_0, arg_165_1, arg_165_2)
 		if ALIVE[arg_165_0] then
 			arg_165_1.marked_for_deletion = true
 		end
 	end,
-	gain_uninterruptible = function(arg_166_0, arg_166_1, arg_166_2)
+	gain_uninterruptible = function (arg_166_0, arg_166_1, arg_166_2)
 		if ALIVE[arg_166_0] then
 			ScriptUnit.extension(arg_166_0, "buff_system"):add_buff("uninterruptible")
 		end
 	end,
-	gain_bardin_slayer_uninterruptible_on_block_broken_buff = function(arg_167_0, arg_167_1, arg_167_2)
+	gain_bardin_slayer_uninterruptible_on_block_broken_buff = function (arg_167_0, arg_167_1, arg_167_2)
 		if ALIVE[arg_167_0] then
 			ScriptUnit.extension(arg_167_0, "buff_system"):add_buff("bardin_slayer_uninterruptible_on_block_broken_buff")
 		end
 	end,
-	bardin_slayer_add_buff_on_leap_start = function(arg_168_0, arg_168_1, arg_168_2)
+	bardin_slayer_add_buff_on_leap_start = function (arg_168_0, arg_168_1, arg_168_2)
 		local var_168_0 = Managers.state.entity:system("buff_system")
 		local var_168_1 = arg_168_1.template.buff_to_add
 
@@ -3533,7 +3533,7 @@ ProcFunctions = {
 			arg_168_1.server_buff_id = var_168_0:add_buff(arg_168_0, var_168_1, arg_168_0, true)
 		end
 	end,
-	bardin_slayer_remove_buff_on_leap_finished = function(arg_169_0, arg_169_1, arg_169_2)
+	bardin_slayer_remove_buff_on_leap_finished = function (arg_169_0, arg_169_1, arg_169_2)
 		local var_169_0 = Managers.state.entity:system("buff_system")
 		local var_169_1 = ScriptUnit.has_extension(arg_169_0, "buff_system")
 		local var_169_2 = arg_169_1.template.parent_buff
@@ -3550,12 +3550,12 @@ ProcFunctions = {
 			end
 		end
 	end,
-	gain_markus_knight_uninterruptible_on_block_broken_buff = function(arg_170_0, arg_170_1, arg_170_2)
+	gain_markus_knight_uninterruptible_on_block_broken_buff = function (arg_170_0, arg_170_1, arg_170_2)
 		if ALIVE[arg_170_0] then
 			ScriptUnit.extension(arg_170_0, "buff_system"):add_buff("markus_knight_uninterruptible_on_block_broken_buff")
 		end
 	end,
-	markus_knight_guard_damage_taken = function(arg_171_0, arg_171_1, arg_171_2)
+	markus_knight_guard_damage_taken = function (arg_171_0, arg_171_1, arg_171_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3586,7 +3586,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	markus_knight_reduce_cooldown_on_stagger = function(arg_172_0, arg_172_1, arg_172_2)
+	markus_knight_reduce_cooldown_on_stagger = function (arg_172_0, arg_172_1, arg_172_2)
 		local var_172_0 = arg_172_1.template
 		local var_172_1 = arg_172_2[1]
 		local var_172_2 = Unit.get_data(var_172_1, "breed")
@@ -3635,12 +3635,12 @@ ProcFunctions = {
 			end
 		end
 	end,
-	gain_kerillian_maidenguard_uninterruptible_on_block_broken_buff = function(arg_173_0, arg_173_1, arg_173_2)
+	gain_kerillian_maidenguard_uninterruptible_on_block_broken_buff = function (arg_173_0, arg_173_1, arg_173_2)
 		if ALIVE[arg_173_0] then
 			ScriptUnit.extension(arg_173_0, "buff_system"):add_buff("kerillian_maidenguard_uninterruptible_on_block_broken_buff")
 		end
 	end,
-	victor_bountyhunter_activate_passive_on_melee_kill = function(arg_174_0, arg_174_1, arg_174_2)
+	victor_bountyhunter_activate_passive_on_melee_kill = function (arg_174_0, arg_174_1, arg_174_2)
 		if not ALIVE[arg_174_0] then
 			return
 		end
@@ -3668,7 +3668,7 @@ ProcFunctions = {
 			var_174_3.duration = 0
 		end
 	end,
-	on_kill_add_remove = function(arg_175_0, arg_175_1, arg_175_2)
+	on_kill_add_remove = function (arg_175_0, arg_175_1, arg_175_2)
 		if not ALIVE[arg_175_0] then
 			return
 		end
@@ -3747,7 +3747,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	event_hud_sfx = function(arg_176_0, arg_176_1, arg_176_2)
+	event_hud_sfx = function (arg_176_0, arg_176_1, arg_176_2)
 		local var_176_0 = ScriptUnit.extension(arg_176_0, "first_person_system")
 
 		if var_176_0 then
@@ -3756,7 +3756,7 @@ ProcFunctions = {
 			var_176_0:play_hud_sound_event(var_176_1, nil, false)
 		end
 	end,
-	ignore_death_func = function(arg_177_0, arg_177_1, arg_177_2)
+	ignore_death_func = function (arg_177_0, arg_177_1, arg_177_2)
 		if not var_0_7() then
 			return
 		end
@@ -3812,7 +3812,7 @@ ProcFunctions = {
 			end
 		end
 	end,
-	apply_dot_on_hit = function(arg_178_0, arg_178_1, arg_178_2)
+	apply_dot_on_hit = function (arg_178_0, arg_178_1, arg_178_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3834,16 +3834,16 @@ ProcFunctions = {
 
 		DamageUtils.apply_dot(var_178_0, var_178_1, var_178_3, var_178_4, arg_178_0, var_178_5, var_178_6, var_178_7, var_178_8, var_178_9, var_178_10, var_178_11)
 	end,
-	dummy_function = function(arg_179_0, arg_179_1, arg_179_2)
+	dummy_function = function (arg_179_0, arg_179_1, arg_179_2)
 		return true
 	end,
-	add_buff_synced = function(arg_180_0, arg_180_1, arg_180_2)
+	add_buff_synced = function (arg_180_0, arg_180_1, arg_180_2)
 		BuffFunctionTemplates.functions.add_buff_synced(arg_180_0, arg_180_1, arg_180_2)
 	end,
-	remove_buff_synced = function(arg_181_0, arg_181_1, arg_181_2)
+	remove_buff_synced = function (arg_181_0, arg_181_1, arg_181_2)
 		BuffFunctionTemplates.functions.remove_buff_synced(arg_181_0, arg_181_1, arg_181_2)
 	end,
-	add_kill_timer = function(arg_182_0, arg_182_1, arg_182_2)
+	add_kill_timer = function (arg_182_0, arg_182_1, arg_182_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3852,7 +3852,7 @@ ProcFunctions = {
 	end
 }
 StackingBuffFunctions = {
-	add_remove_buffs = function(arg_183_0, arg_183_1, arg_183_2, arg_183_3)
+	add_remove_buffs = function (arg_183_0, arg_183_1, arg_183_2, arg_183_3)
 		if ALIVE[arg_183_0] then
 			local var_183_0 = arg_183_1.max_stack_data
 
@@ -3936,7 +3936,7 @@ StackingBuffFunctions = {
 
 		return false
 	end,
-	reapply_buff = function(arg_184_0, arg_184_1, arg_184_2, arg_184_3)
+	reapply_buff = function (arg_184_0, arg_184_1, arg_184_2, arg_184_3)
 		if ALIVE[arg_184_0] then
 			local var_184_0 = ScriptUnit.extension(arg_184_0, "buff_system")
 			local var_184_1 = var_184_0:get_stacking_buff(arg_184_1.name)
@@ -3962,7 +3962,7 @@ StackingBuffFunctions = {
 
 		return true
 	end,
-	reapply_infinite_burn = function(arg_185_0, arg_185_1, arg_185_2, arg_185_3)
+	reapply_infinite_burn = function (arg_185_0, arg_185_1, arg_185_2, arg_185_3)
 		if ALIVE[arg_185_0] then
 			local var_185_0 = ScriptUnit.extension(arg_185_0, "buff_system")
 			local var_185_1 = var_185_0:get_stacking_buff(arg_185_1.name)
@@ -4011,21 +4011,21 @@ StackingBuffFunctions = {
 
 		return true
 	end,
-	add_buff_synced = function(arg_186_0, arg_186_1, arg_186_2, arg_186_3)
+	add_buff_synced = function (arg_186_0, arg_186_1, arg_186_2, arg_186_3)
 		local var_186_0 = FrameTable.alloc_table()
 
 		var_186_0.template = arg_186_1
 
 		BuffFunctionTemplates.functions.add_buff_synced(arg_186_0, var_186_0, arg_186_2)
 	end,
-	remove_buff_synced = function(arg_187_0, arg_187_1, arg_187_2, arg_187_3)
+	remove_buff_synced = function (arg_187_0, arg_187_1, arg_187_2, arg_187_3)
 		local var_187_0 = FrameTable.alloc_table()
 
 		var_187_0.template = arg_187_1
 
 		BuffFunctionTemplates.functions.remove_buff_synced(arg_187_0, var_187_0, arg_187_2)
 	end,
-	reduce_cooldown_percent = function(arg_188_0, arg_188_1, arg_188_2, arg_188_3)
+	reduce_cooldown_percent = function (arg_188_0, arg_188_1, arg_188_2, arg_188_3)
 		local var_188_0 = FrameTable.alloc_table()
 
 		var_188_0.template = arg_188_1
@@ -5146,7 +5146,7 @@ BuffTemplates = {
 				perks = {
 					var_0_0.burning
 				},
-				max_stacks_func = function(arg_189_0, arg_189_1)
+				max_stacks_func = function (arg_189_0, arg_189_1)
 					local var_189_0 = AiUtils.unit_breed(arg_189_0)
 
 					if var_189_0 and var_189_0.is_player and Managers.mechanism:current_mechanism_name() == "versus" then
@@ -5155,7 +5155,7 @@ BuffTemplates = {
 
 					return math.huge
 				end,
-				refresh_durations_func = function(arg_190_0, arg_190_1)
+				refresh_durations_func = function (arg_190_0, arg_190_1)
 					local var_190_0 = AiUtils.unit_breed(arg_190_0)
 
 					if var_190_0 and var_190_0.is_player and Managers.mechanism:current_mechanism_name() == "versus" then
@@ -5164,7 +5164,7 @@ BuffTemplates = {
 
 					return false
 				end,
-				duration_modifier_func = function(arg_191_0, arg_191_1, arg_191_2, arg_191_3, arg_191_4)
+				duration_modifier_func = function (arg_191_0, arg_191_1, arg_191_2, arg_191_3, arg_191_4)
 					if not (Managers.mechanism:current_mechanism_name() == "versus") then
 						return arg_191_2
 					end
@@ -8828,7 +8828,7 @@ BuffTemplates = {
 				icon = "mutator_icon_splitting_enemies",
 				duration = 30,
 				name = "twitch_mutator_buff_splitting_enemies",
-				duration_modifier_func = function(arg_192_0, arg_192_1, arg_192_2)
+				duration_modifier_func = function (arg_192_0, arg_192_1, arg_192_2)
 					return arg_192_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8840,7 +8840,7 @@ BuffTemplates = {
 				icon = "mutator_icon_leash",
 				duration = 30,
 				name = "twitch_mutator_buff_leash",
-				duration_modifier_func = function(arg_193_0, arg_193_1, arg_193_2)
+				duration_modifier_func = function (arg_193_0, arg_193_1, arg_193_2)
 					return arg_193_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8852,7 +8852,7 @@ BuffTemplates = {
 				icon = "mutator_icon_slayer_curse",
 				duration = 30,
 				name = "twitch_mutator_buff_slayers_curse",
-				duration_modifier_func = function(arg_194_0, arg_194_1, arg_194_2)
+				duration_modifier_func = function (arg_194_0, arg_194_1, arg_194_2)
 					return arg_194_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8864,7 +8864,7 @@ BuffTemplates = {
 				icon = "icon_deed_normal_01",
 				duration = 30,
 				name = "twitch_mutator_buff_shared_health_pool",
-				duration_modifier_func = function(arg_195_0, arg_195_1, arg_195_2)
+				duration_modifier_func = function (arg_195_0, arg_195_1, arg_195_2)
 					return arg_195_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8876,7 +8876,7 @@ BuffTemplates = {
 				icon = "bardin_slayer_activated_ability",
 				duration = 30,
 				name = "twitch_mutator_buff_bloodlust",
-				duration_modifier_func = function(arg_196_0, arg_196_1, arg_196_2)
+				duration_modifier_func = function (arg_196_0, arg_196_1, arg_196_2)
 					return arg_196_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8888,7 +8888,7 @@ BuffTemplates = {
 				icon = "mutator_icon_ticking_bomb",
 				duration = 30,
 				name = "twitch_mutator_buff_ticking_bomb",
-				duration_modifier_func = function(arg_197_0, arg_197_1, arg_197_2)
+				duration_modifier_func = function (arg_197_0, arg_197_1, arg_197_2)
 					return arg_197_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8900,7 +8900,7 @@ BuffTemplates = {
 				icon = "mutator_icon_heavens_lightning",
 				duration = 33,
 				name = "twitch_mutator_buff_lightning_strike",
-				duration_modifier_func = function(arg_198_0, arg_198_1, arg_198_2)
+				duration_modifier_func = function (arg_198_0, arg_198_1, arg_198_2)
 					return arg_198_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8912,7 +8912,7 @@ BuffTemplates = {
 				icon = "mutator_icon_death_spirits",
 				duration = 25,
 				name = "twitch_mutator_buff_chasing_spirits",
-				duration_modifier_func = function(arg_199_0, arg_199_1, arg_199_2)
+				duration_modifier_func = function (arg_199_0, arg_199_1, arg_199_2)
 					return arg_199_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -8924,7 +8924,7 @@ BuffTemplates = {
 				icon = "mutator_icon_fire_burn",
 				duration = 30,
 				name = "twitch_mutator_buff_flames",
-				duration_modifier_func = function(arg_200_0, arg_200_1, arg_200_2)
+				duration_modifier_func = function (arg_200_0, arg_200_1, arg_200_2)
 					return arg_200_2 * TwitchSettings.mutator_duration_multiplier
 				end
 			}
@@ -9215,7 +9215,7 @@ table.merge_recursive(BuffTemplates, WeaveTraits.buff_templates)
 DLCUtils.merge("buff_templates", BuffTemplates)
 DLCUtils.merge("proc_functions", ProcFunctions)
 DLCUtils.merge("stacking_buff_functions", StackingBuffFunctions)
-DLCUtils.map_list("add_sub_buffs_to_core_buffs", function(arg_201_0)
+DLCUtils.map_list("add_sub_buffs_to_core_buffs", function (arg_201_0)
 	local var_201_0 = BuffTemplates[arg_201_0.buff_name].buffs
 
 	var_201_0[#var_201_0 + 1] = arg_201_0.sub_buff_to_add

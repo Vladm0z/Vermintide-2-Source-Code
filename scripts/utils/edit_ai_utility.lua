@@ -93,25 +93,25 @@ end
 
 EditAiUtility = class(EditAiUtility)
 
-function EditAiUtility.init(arg_2_0, arg_2_1)
+EditAiUtility.init = function (arg_2_0, arg_2_1)
 	arg_2_0.world = arg_2_1
 	arg_2_0.world_gui = World.create_world_gui(arg_2_1, Matrix4x4.identity(), 1, 1, "immediate", "material", "materials/fonts/gw_fonts")
 	arg_2_0.screen_gui = World.create_screen_gui(arg_2_0.world, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-function EditAiUtility.activate(arg_3_0)
+EditAiUtility.activate = function (arg_3_0)
 	ShowCursorStack.show("EditAiUtility")
 end
 
-function EditAiUtility.deactivate(arg_4_0)
+EditAiUtility.deactivate = function (arg_4_0)
 	ShowCursorStack.hide("EditAiUtility")
 end
 
-function EditAiUtility.use_breed(arg_5_0, arg_5_1)
+EditAiUtility.use_breed = function (arg_5_0, arg_5_1)
 	return
 end
 
-function EditAiUtility.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EditAiUtility.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_4:get("cursor")
 
 	var_0_7.left_pressed = arg_6_4:get("mouse_left_held")
@@ -287,7 +287,7 @@ function EditAiUtility.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6
 	arg_6_0:draw_action_list(arg_6_1, arg_6_2, "Actions", var_0_27, var_0_25, var_6_28, var_0_7.selected_action, arg_6_5)
 end
 
-function EditAiUtility.insert_spline_point(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+EditAiUtility.insert_spline_point = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = (arg_7_4.x - arg_7_2.x) / arg_7_3.x
 	local var_7_1 = (arg_7_4.y - arg_7_2.y) / arg_7_3.y
 	local var_7_2
@@ -310,7 +310,7 @@ function EditAiUtility.insert_spline_point(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 	end
 end
 
-function EditAiUtility.remove_spline_point(arg_8_0, arg_8_1, arg_8_2)
+EditAiUtility.remove_spline_point = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = 1
 	local var_8_1 = #arg_8_1 - 1
 
@@ -326,7 +326,7 @@ function EditAiUtility.remove_spline_point(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_1[#arg_8_1] = nil
 end
 
-function EditAiUtility.hover_win(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+EditAiUtility.hover_win = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.x
 	local var_9_1 = arg_9_2.y
 	local var_9_2 = 1
@@ -341,7 +341,7 @@ function EditAiUtility.hover_win(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	end
 end
 
-function EditAiUtility.move_spline_point(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+EditAiUtility.move_spline_point = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	local var_10_0 = 1
 	local var_10_1 = #arg_10_2 - 1
 	local var_10_2 = (arg_10_6.x - arg_10_3.x) / arg_10_4.x
@@ -358,7 +358,7 @@ end
 
 local var_0_31 = 20
 
-function EditAiUtility.hover_spline_point(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+EditAiUtility.hover_spline_point = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0.screen_gui
 	local var_11_1, var_11_2 = Application.resolution()
 	local var_11_3 = arg_11_4.x
@@ -374,7 +374,7 @@ function EditAiUtility.hover_spline_point(arg_11_0, arg_11_1, arg_11_2, arg_11_3
 	end
 end
 
-function EditAiUtility.drag_point_distance(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+EditAiUtility.drag_point_distance = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_3.x
 	local var_12_1 = arg_12_3.y
 	local var_12_2 = 10
@@ -389,7 +389,7 @@ function EditAiUtility.drag_point_distance(arg_12_0, arg_12_1, arg_12_2, arg_12_
 	return var_12_3, var_12_4
 end
 
-function EditAiUtility.hover_drag_points(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+EditAiUtility.hover_drag_points = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.screen_gui
 	local var_13_1 = arg_13_3.x
 	local var_13_2 = arg_13_3.y
@@ -406,7 +406,7 @@ function EditAiUtility.hover_drag_points(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function EditAiUtility.draw_mouse_selection(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
+EditAiUtility.draw_mouse_selection = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
 	local var_14_0 = arg_14_0.screen_gui
 	local var_14_1, var_14_2 = Application.resolution()
 	local var_14_3 = arg_14_4.x
@@ -428,7 +428,7 @@ function EditAiUtility.draw_mouse_selection(arg_14_0, arg_14_1, arg_14_2, arg_14
 	ScriptGUI.text(var_14_0, var_14_13, var_0_3, 32, var_0_2, var_14_14, Color(255, 0, 0, 0))
 end
 
-function EditAiUtility.draw_square(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+EditAiUtility.draw_square = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	arg_15_5 = arg_15_5 or 5
 	arg_15_3 = arg_15_3 * 0.5
 
@@ -443,7 +443,7 @@ function EditAiUtility.draw_square(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_1
 	ScriptGUI.hud_line(arg_15_0, Vector2(var_15_0, var_15_3), Vector2(var_15_0, var_15_1), nil, arg_15_5, arg_15_4)
 end
 
-function EditAiUtility.hover_action(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+EditAiUtility.hover_action = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = #arg_16_3 * var_0_12
 	local var_16_1 = arg_16_4.x
 	local var_16_2 = arg_16_4.y
@@ -460,7 +460,7 @@ function EditAiUtility.hover_action(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_
 	return var_16_3
 end
 
-function EditAiUtility.draw_action_list(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+EditAiUtility.draw_action_list = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
 	local var_17_0 = arg_17_0.screen_gui
 	local var_17_1, var_17_2 = Application.resolution()
 	local var_17_3
@@ -494,7 +494,7 @@ function EditAiUtility.draw_action_list(arg_17_0, arg_17_1, arg_17_2, arg_17_3, 
 	Gui.rect(var_17_0, Vector2(arg_17_4.x, arg_17_4.y), Vector2(arg_17_4.size_x, var_17_10), arg_17_6)
 end
 
-function EditAiUtility.draw_safe_drag_lane(arg_18_0, arg_18_1, arg_18_2)
+EditAiUtility.draw_safe_drag_lane = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_1.x - 400
 	local var_18_1 = arg_18_1.x + 400
 	local var_18_2 = arg_18_1.y - arg_18_2
@@ -504,7 +504,7 @@ function EditAiUtility.draw_safe_drag_lane(arg_18_0, arg_18_1, arg_18_2)
 	ScriptGUI.hud_line(arg_18_0.screen_gui, Vector2(var_18_0, var_18_3), Vector2(var_18_1, var_18_3), 40, 3, Color(255, 240, 200, 10))
 end
 
-function EditAiUtility.draw_realtime_utility(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+EditAiUtility.draw_realtime_utility = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	local var_19_0 = arg_19_5.utility_actions[arg_19_1]
 
 	if var_19_0 then
@@ -532,11 +532,11 @@ function EditAiUtility.draw_realtime_utility(arg_19_0, arg_19_1, arg_19_2, arg_1
 	return 0
 end
 
-function EditAiUtility.draw_utility_sum(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+EditAiUtility.draw_utility_sum = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	return
 end
 
-function EditAiUtility.draw_utility_ruler(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+EditAiUtility.draw_utility_ruler = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = 12
 	local var_21_1 = 10
 	local var_21_2 = arg_21_3 + Vector3(0, 0, 3)
@@ -560,7 +560,7 @@ function EditAiUtility.draw_utility_ruler(arg_21_0, arg_21_1, arg_21_2, arg_21_3
 	end
 end
 
-function EditAiUtility.draw_utility_info(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+EditAiUtility.draw_utility_info = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 	local var_22_0 = var_0_1
 	local var_22_1 = var_0_2
 	local var_22_2 = var_0_3
@@ -589,7 +589,7 @@ function EditAiUtility.draw_utility_info(arg_22_0, arg_22_1, arg_22_2, arg_22_3,
 	ScriptGUI.text(arg_22_0, arg_22_3, var_22_2, var_22_0, var_22_1, arg_22_4 + Vector3(var_22_12, var_22_8, 10), Color(255 * arg_22_6, 255, 255, 255))
 end
 
-function EditAiUtility.draw_utility_spline(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+EditAiUtility.draw_utility_spline = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 	local var_23_0 = arg_23_2.spline
 	local var_23_1, var_23_2 = Application.resolution()
 	local var_23_3 = arg_23_6.x
@@ -610,7 +610,7 @@ function EditAiUtility.draw_utility_spline(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	Gui.rect(arg_23_0, arg_23_5, arg_23_6, arg_23_7)
 end
 
-function EditAiUtility.draw_utility_condition(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+EditAiUtility.draw_utility_condition = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = arg_24_5.utility_actions[arg_24_1]
 
 	if var_24_0 then
@@ -632,7 +632,7 @@ function EditAiUtility.draw_utility_condition(arg_24_0, arg_24_1, arg_24_2, arg_
 	Gui.rect(arg_24_0, arg_24_3, arg_24_4, arg_24_6)
 end
 
-function EditAiUtility.save_considerations(arg_25_0)
+EditAiUtility.save_considerations = function (arg_25_0)
 	if not GameSettingsDevelopment.trunk_path then
 		print("Cannot save! No run parameter \"-trunk-path <path to my bulldozer trunk>\" has been added")
 

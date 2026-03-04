@@ -13,7 +13,7 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_escort"
 	},
-	is_player_carrying_pickup = function(arg_1_0, arg_1_1)
+	is_player_carrying_pickup = function (arg_1_0, arg_1_1)
 		local var_1_0 = AllPickups[arg_1_0].slot_name
 		local var_1_1 = arg_1_1.PLAYER_AND_BOT_UNITS
 
@@ -32,7 +32,7 @@ return {
 
 		return false
 	end,
-	create_screen_space_effect = function(arg_2_0, arg_2_1)
+	create_screen_space_effect = function (arg_2_0, arg_2_1)
 		local var_2_0 = arg_2_1.local_player.player_unit
 
 		if ALIVE[var_2_0] then
@@ -42,7 +42,7 @@ return {
 			arg_2_1.screen_effect_t = Managers.time:time("game")
 		end
 	end,
-	remove_screen_space_effect = function(arg_3_0, arg_3_1)
+	remove_screen_space_effect = function (arg_3_0, arg_3_1)
 		local var_3_0 = arg_3_1.local_player.player_unit
 
 		if ALIVE[var_3_0] and arg_3_1.screen_effect_id then
@@ -61,13 +61,13 @@ return {
 		arg_3_1.screen_effect_id = nil
 		arg_3_1.screen_effect_t = nil
 	end,
-	server_start_function = function(arg_4_0, arg_4_1)
+	server_start_function = function (arg_4_0, arg_4_1)
 		arg_4_1.server = {
 			escort_unit_spawned = false
 		}
 		arg_4_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 	end,
-	server_update_function = function(arg_5_0, arg_5_1)
+	server_update_function = function (arg_5_0, arg_5_1)
 		local var_5_0 = arg_5_1.template
 		local var_5_1 = var_5_0.pickup_name
 		local var_5_2 = arg_5_1.server
@@ -124,17 +124,17 @@ return {
 			end
 		end
 	end,
-	lose_condition_function = function(arg_6_0, arg_6_1)
+	lose_condition_function = function (arg_6_0, arg_6_1)
 		local var_6_0 = arg_6_1.server
 		local var_6_1 = Managers.time:time("game")
 		local var_6_2 = 2
 
 		return var_6_0.explosion_t and var_6_1 > var_6_0.explosion_t, var_6_2
 	end,
-	end_zone_activation_condition_function = function(arg_7_0, arg_7_1)
+	end_zone_activation_condition_function = function (arg_7_0, arg_7_1)
 		return arg_7_1.server.pickup_dropped_at_t == nil
 	end,
-	client_start_function = function(arg_8_0, arg_8_1)
+	client_start_function = function (arg_8_0, arg_8_1)
 		local var_8_0 = Managers.player:local_player()
 
 		arg_8_1.client = {
@@ -143,7 +143,7 @@ return {
 		}
 		arg_8_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 	end,
-	client_update_function = function(arg_9_0, arg_9_1)
+	client_update_function = function (arg_9_0, arg_9_1)
 		local var_9_0 = arg_9_1.template
 		local var_9_1 = var_9_0.pickup_name
 		local var_9_2 = var_9_0.is_player_carrying_pickup(var_9_1, arg_9_1.hero_side)
@@ -173,7 +173,7 @@ return {
 			var_9_3.escort_unit_spawned = true
 		end
 	end,
-	client_stop_function = function(arg_10_0, arg_10_1)
+	client_stop_function = function (arg_10_0, arg_10_1)
 		local var_10_0 = arg_10_1.template
 		local var_10_1 = arg_10_1.client
 

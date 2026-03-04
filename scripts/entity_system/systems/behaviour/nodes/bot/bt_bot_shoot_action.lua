@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotShootAction = class(BTBotShootAction, BTNode)
 
-function BTBotShootAction.init(arg_1_0, ...)
+BTBotShootAction.init = function (arg_1_0, ...)
 	BTBotShootAction.super.init(arg_1_0, ...)
 end
 
@@ -85,7 +85,7 @@ local function var_0_7(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return nil
 end
 
-function BTBotShootAction.enter(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTBotShootAction.enter = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_2.input_extension
 	local var_6_1 = false
 
@@ -152,7 +152,7 @@ function BTBotShootAction.enter(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0:_update_collision_filter(var_6_2, var_6_12, arg_6_2.priority_target_enemy, arg_6_2.target_ally_unit, arg_6_2.target_ally_needs_aid, arg_6_2.target_ally_need_type)
 end
 
-function BTBotShootAction._update_collision_filter(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+BTBotShootAction._update_collision_filter = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = arg_7_2.attack_meta_data
 	local var_7_1 = BLACKBOARDS[arg_7_1]
 
@@ -181,7 +181,7 @@ function BTBotShootAction._update_collision_filter(arg_7_0, arg_7_1, arg_7_2, ar
 	arg_7_2.collision_filter_charged = var_7_3 and var_7_6 and "filter_bot_ranged_line_of_sight_no_allies_no_enemies" or var_7_6 and "filter_bot_ranged_line_of_sight_no_allies" or var_7_3 and "filter_bot_ranged_line_of_sight_no_enemies" or "filter_bot_ranged_line_of_sight"
 end
 
-function BTBotShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTBotShootAction.leave = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_2.input_extension
 
 	var_8_0:set_aiming(false)
@@ -195,7 +195,7 @@ function BTBotShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg
 	arg_8_2.shoot = nil
 end
 
-function BTBotShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTBotShootAction.run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	var_0_1 = arg_9_1
 
 	local var_9_0, var_9_1 = arg_9_0:_aim(arg_9_1, arg_9_2, arg_9_4, arg_9_3)
@@ -207,7 +207,7 @@ function BTBotShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	end
 end
 
-function BTBotShootAction._set_new_aim_target(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTBotShootAction._set_new_aim_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_4 and Unit.get_data(arg_10_4, "breed")
 
 	arg_10_3.target_unit = arg_10_4
@@ -233,7 +233,7 @@ local function var_0_8(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	end
 end
 
-function BTBotShootAction._wanted_aim_rotation(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+BTBotShootAction._wanted_aim_rotation = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = Unit.has_node(arg_12_2, arg_12_6) and Unit.node(arg_12_2, arg_12_6) or 0
 	local var_12_1 = Unit.world_position(arg_12_2, var_12_0)
 	local var_12_2 = ScriptUnit.has_extension(arg_12_2, "locomotion_system")
@@ -266,7 +266,7 @@ function BTBotShootAction._wanted_aim_rotation(arg_12_0, arg_12_1, arg_12_2, arg
 	return var_12_4, var_12_5
 end
 
-function BTBotShootAction._aim_position(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+BTBotShootAction._aim_position = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 	local var_13_0
 	local var_13_1
 	local var_13_2
@@ -303,7 +303,7 @@ function BTBotShootAction._aim_position(arg_13_0, arg_13_1, arg_13_2, arg_13_3, 
 	return var_13_17, var_13_18, var_13_3, var_13_15, var_13_4
 end
 
-function BTBotShootAction._calculate_aim_speed(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
+BTBotShootAction._calculate_aim_speed = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
 	local var_14_0 = math.pi
 	local var_14_1 = (arg_14_5 - arg_14_3 + var_14_0) % (var_14_0 * 2) - var_14_0
 	local var_14_2 = arg_14_6 - arg_14_4
@@ -336,7 +336,7 @@ function BTBotShootAction._calculate_aim_speed(arg_14_0, arg_14_1, arg_14_2, arg
 	return var_14_7, var_14_10
 end
 
-function BTBotShootAction._may_attack(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTBotShootAction._may_attack = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = BLACKBOARDS[arg_15_2]
 
 	if not var_15_0 then
@@ -365,7 +365,7 @@ function BTBotShootAction._may_attack(arg_15_0, arg_15_1, arg_15_2, arg_15_3, ar
 	return var_15_4
 end
 
-function BTBotShootAction._aim(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTBotShootAction._aim = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_2.target_unit
 	local var_16_1 = arg_16_2.shoot
 
@@ -451,7 +451,7 @@ function BTBotShootAction._aim(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	return false, var_16_17
 end
 
-function BTBotShootAction._aim_good_enough(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+BTBotShootAction._aim_good_enough = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	local var_17_0 = arg_17_3
 
 	if not var_17_0.reevaluate_aim_time then
@@ -495,7 +495,7 @@ function BTBotShootAction._aim_good_enough(arg_17_0, arg_17_1, arg_17_2, arg_17_
 	return var_17_0.aim_good_enough
 end
 
-function BTBotShootAction._should_charge(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTBotShootAction._should_charge = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_1.next_charge_shot_t
 
 	if not arg_18_1.can_charge_shot or var_18_0 and arg_18_4 < var_18_0 then
@@ -539,7 +539,7 @@ function BTBotShootAction._should_charge(arg_18_0, arg_18_1, arg_18_2, arg_18_3,
 	return false
 end
 
-function BTBotShootAction._fire_shot(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTBotShootAction._fire_shot = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	arg_19_1.fired = true
 	arg_19_1.stop_fire_t = arg_19_4 + arg_19_1.stop_fire_delay
 
@@ -552,7 +552,7 @@ function BTBotShootAction._fire_shot(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg
 	end
 end
 
-function BTBotShootAction._charge_shot(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BTBotShootAction._charge_shot = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if not arg_20_1.charging_shot then
 		arg_20_1.charge_start_time = arg_20_4
 		arg_20_1.charging_shot = true
@@ -561,7 +561,7 @@ function BTBotShootAction._charge_shot(arg_20_0, arg_20_1, arg_20_2, arg_20_3, a
 	arg_20_3[arg_20_2.charge_input or arg_20_1.charge_input](arg_20_3)
 end
 
-function BTBotShootAction._update_disengage_position(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTBotShootAction._update_disengage_position = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_1.first_person_extension:current_position()
 	local var_21_1 = arg_21_1.shoot
 	local var_21_2 = arg_21_3 or var_21_1.keep_distance
@@ -620,7 +620,7 @@ function BTBotShootAction._update_disengage_position(arg_21_0, arg_21_1, arg_21_
 	end
 end
 
-function BTBotShootAction._reevaluate_obstruction(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14)
+BTBotShootAction._reevaluate_obstruction = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14)
 	arg_22_0:_update_collision_filter(arg_22_9, arg_22_2, arg_22_11, arg_22_12, arg_22_13, arg_22_14)
 
 	local var_22_0 = Quaternion.forward(arg_22_7)
@@ -653,7 +653,7 @@ local var_0_10 = 2
 local var_0_11 = 3
 local var_0_12 = 4
 
-function BTBotShootAction._is_shot_obstructed(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+BTBotShootAction._is_shot_obstructed = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
 	local var_23_0 = Vector3.length(arg_23_6 - arg_23_2)
 
 	PhysicsWorld.prepare_actors_for_raycast(arg_23_1, arg_23_2, arg_23_3, 0.01, 0.5, var_23_0 * var_23_0)

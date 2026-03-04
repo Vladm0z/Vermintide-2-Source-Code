@@ -10,7 +10,7 @@ require("scripts/ui/views/hero_view/states/hero_view_state_keep_decorations")
 require("scripts/ui/views/hero_view/states/hero_view_state_weave_forge")
 require("scripts/ui/views/hero_view/states/hero_view_state_handbook")
 require("scripts/settings/news_feed_templates")
-DLCUtils.map_list("hero_view", function(arg_1_0)
+DLCUtils.map_list("hero_view", function (arg_1_0)
 	require(arg_1_0.filename)
 end)
 
@@ -31,7 +31,7 @@ local var_0_9 = true
 
 HeroView = class(HeroView)
 
-function HeroView.init(arg_3_0, arg_3_1)
+HeroView.init = function (arg_3_0, arg_3_1)
 	arg_3_0.world = arg_3_1.world
 	arg_3_0.player_manager = arg_3_1.player_manager
 	arg_3_0.ui_renderer = arg_3_1.ui_renderer
@@ -73,11 +73,11 @@ function HeroView.init(arg_3_0, arg_3_1)
 	var_0_7 = false
 end
 
-function HeroView.initial_profile_view(arg_4_0)
+HeroView.initial_profile_view = function (arg_4_0)
 	return arg_4_0.ingame_ui.initial_profile_view
 end
 
-function HeroView._setup_state_machine(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+HeroView._setup_state_machine = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_0._machine then
 		arg_5_0._machine:destroy()
 
@@ -94,31 +94,31 @@ function HeroView._setup_state_machine(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5
 	arg_5_1.state_params = nil
 end
 
-function HeroView.wanted_state(arg_6_0)
+HeroView.wanted_state = function (arg_6_0)
 	return arg_6_0._wanted_state
 end
 
-function HeroView.clear_wanted_state(arg_7_0)
+HeroView.clear_wanted_state = function (arg_7_0)
 	arg_7_0._wanted_state = nil
 end
 
-function HeroView.input_service(arg_8_0)
+HeroView.input_service = function (arg_8_0)
 	return arg_8_0._draw_loading and FAKE_INPUT_SERVICE or arg_8_0.input_manager:get_service("hero_view")
 end
 
-function HeroView.set_input_blocked(arg_9_0, arg_9_1)
+HeroView.set_input_blocked = function (arg_9_0, arg_9_1)
 	arg_9_0._input_blocked = arg_9_1
 end
 
-function HeroView.input_blocked(arg_10_0)
+HeroView.input_blocked = function (arg_10_0)
 	return arg_10_0._input_blocked
 end
 
-function HeroView.play_sound(arg_11_0, arg_11_1)
+HeroView.play_sound = function (arg_11_0, arg_11_1)
 	WwiseWorld.trigger_event(arg_11_0.wwise_world, arg_11_1)
 end
 
-function HeroView.create_ui_elements(arg_12_0)
+HeroView.create_ui_elements = function (arg_12_0)
 	arg_12_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_12_0._static_widgets = {}
 	arg_12_0._loading_widgets = {
@@ -131,7 +131,7 @@ function HeroView.create_ui_elements(arg_12_0)
 	arg_12_0.ui_animator = UIAnimator:new(arg_12_0.ui_scenegraph, var_0_0.animations)
 end
 
-function HeroView._setup_hdr_gui(arg_13_0)
+HeroView._setup_hdr_gui = function (arg_13_0)
 	if arg_13_0.is_in_inn then
 		local var_13_0 = {}
 		local var_13_1 = "hero_view_hdr"
@@ -162,7 +162,7 @@ function HeroView._setup_hdr_gui(arg_13_0)
 	end
 end
 
-function HeroView._setup_hdr_renderer(arg_14_0, arg_14_1, arg_14_2)
+HeroView._setup_hdr_renderer = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
@@ -177,15 +177,15 @@ function HeroView._setup_hdr_renderer(arg_14_0, arg_14_1, arg_14_2)
 	return arg_14_0.ingame_ui:create_ui_renderer(var_14_4, false, arg_14_0.is_in_inn), var_14_4, var_14_2
 end
 
-function HeroView.hdr_renderer(arg_15_0)
+HeroView.hdr_renderer = function (arg_15_0)
 	return arg_15_0._hdr_gui_data.bottom.renderer
 end
 
-function HeroView.hdr_top_renderer(arg_16_0)
+HeroView.hdr_top_renderer = function (arg_16_0)
 	return arg_16_0._hdr_gui_data.top.renderer
 end
 
-function HeroView.draw(arg_17_0, arg_17_1, arg_17_2)
+HeroView.draw = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.ui_renderer
 	local var_17_1 = arg_17_0.ui_top_renderer
 	local var_17_2 = arg_17_0.ui_scenegraph
@@ -214,11 +214,11 @@ function HeroView.draw(arg_17_0, arg_17_1, arg_17_2)
 	UIRenderer.end_pass(var_17_0)
 end
 
-function HeroView.post_update(arg_18_0, arg_18_1, arg_18_2)
+HeroView.post_update = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._machine:post_update(arg_18_1, arg_18_2)
 end
 
-function HeroView.update(arg_19_0, arg_19_1, arg_19_2)
+HeroView.update = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0.suspended or arg_19_0.waiting_for_post_update_enter then
 		return
 	end
@@ -260,7 +260,7 @@ function HeroView.update(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:draw(arg_19_1, var_19_5)
 end
 
-function HeroView.on_enter(arg_20_0, arg_20_1)
+HeroView.on_enter = function (arg_20_0, arg_20_1)
 	arg_20_0._force_ingame_menu = arg_20_1.force_ingame_menu
 
 	if not arg_20_0._force_ingame_menu then
@@ -295,7 +295,7 @@ function HeroView.on_enter(arg_20_0, arg_20_1)
 	arg_20_0:_fetch_initial_loadout_index(arg_20_1)
 end
 
-function HeroView._fetch_initial_loadout_index(arg_21_0, arg_21_1)
+HeroView._fetch_initial_loadout_index = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._state_machine_params.ingame_ui_context
 
 	arg_21_0._is_in_tutorial = var_21_0.is_in_tutorial
@@ -324,7 +324,7 @@ function HeroView._fetch_initial_loadout_index(arg_21_0, arg_21_1)
 	arg_21_0._initial_loadout_index = Managers.backend:get_interface("items"):get_selected_career_loadout(var_21_5)
 end
 
-function HeroView._handle_new_ui_disclaimer(arg_22_0)
+HeroView._handle_new_ui_disclaimer = function (arg_22_0)
 	local var_22_0 = Managers.mechanism:current_mechanism_name()
 	local var_22_1 = {
 		deus = {
@@ -362,7 +362,7 @@ function HeroView._handle_new_ui_disclaimer(arg_22_0)
 	Managers.ui:handle_new_ui_disclaimer(var_22_2, var_22_4)
 end
 
-function HeroView.set_current_hero(arg_23_0, arg_23_1)
+HeroView.set_current_hero = function (arg_23_0, arg_23_1)
 	local var_23_0 = SPProfiles[arg_23_1]
 	local var_23_1 = var_23_0.display_name
 	local var_23_2 = var_23_0.character_name
@@ -371,7 +371,7 @@ function HeroView.set_current_hero(arg_23_0, arg_23_1)
 	arg_23_0._state_machine_params.hero_name = var_23_1
 end
 
-function HeroView._get_sorted_players(arg_24_0)
+HeroView._get_sorted_players = function (arg_24_0)
 	local var_24_0 = arg_24_0.player_manager:human_players()
 	local var_24_1 = {}
 
@@ -379,18 +379,18 @@ function HeroView._get_sorted_players(arg_24_0)
 		var_24_1[#var_24_1 + 1] = iter_24_1
 	end
 
-	table.sort(var_24_1, function(arg_25_0, arg_25_1)
+	table.sort(var_24_1, function (arg_25_0, arg_25_1)
 		return arg_25_0.local_player and not arg_25_1.local_player
 	end)
 
 	return var_24_1
 end
 
-function HeroView._handle_mouse_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+HeroView._handle_mouse_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	return
 end
 
-function HeroView._is_selection_widget_pressed(arg_27_0, arg_27_1)
+HeroView._is_selection_widget_pressed = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.content
 	local var_27_1 = var_27_0.steps
 
@@ -401,7 +401,7 @@ function HeroView._is_selection_widget_pressed(arg_27_0, arg_27_1)
 	end
 end
 
-function HeroView.hotkey_allowed(arg_28_0, arg_28_1, arg_28_2)
+HeroView.hotkey_allowed = function (arg_28_0, arg_28_1, arg_28_2)
 	if arg_28_0:input_blocked() then
 		return false
 	end
@@ -432,7 +432,7 @@ function HeroView.hotkey_allowed(arg_28_0, arg_28_1, arg_28_2)
 	return false
 end
 
-function HeroView._get_screen_settings_by_state_name(arg_29_0, arg_29_1)
+HeroView._get_screen_settings_by_state_name = function (arg_29_0, arg_29_1)
 	for iter_29_0, iter_29_1 in ipairs(var_0_3) do
 		if iter_29_1.state_name == arg_29_1 then
 			return iter_29_1
@@ -440,14 +440,14 @@ function HeroView._get_screen_settings_by_state_name(arg_29_0, arg_29_1)
 	end
 end
 
-function HeroView.requested_screen_change_by_name(arg_30_0, arg_30_1, arg_30_2)
+HeroView.requested_screen_change_by_name = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0._requested_screen_change_data = {
 		screen_name = arg_30_1,
 		sub_screen_name = arg_30_2
 	}
 end
 
-function HeroView._change_screen_by_name(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+HeroView._change_screen_by_name = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0, var_31_1 = table.find_by_key(var_0_3, "name", arg_31_1)
 
 	assert(var_31_0, "[HeroView] - Could not find state by name: %s", arg_31_1)
@@ -462,13 +462,13 @@ function HeroView._change_screen_by_name(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	end
 end
 
-function HeroView._change_screen_by_index(arg_32_0, arg_32_1)
+HeroView._change_screen_by_index = function (arg_32_0, arg_32_1)
 	local var_32_0 = var_0_3[arg_32_1].name
 
 	arg_32_0:_change_screen_by_name(var_32_0)
 end
 
-function HeroView.post_update_on_enter(arg_33_0)
+HeroView.post_update_on_enter = function (arg_33_0)
 	arg_33_0.waiting_for_post_update_enter = nil
 
 	local var_33_0 = arg_33_0._on_enter_transition_params
@@ -485,7 +485,7 @@ function HeroView.post_update_on_enter(arg_33_0)
 	end
 end
 
-function HeroView.post_update_on_exit(arg_34_0, arg_34_1, arg_34_2)
+HeroView.post_update_on_exit = function (arg_34_0, arg_34_1, arg_34_2)
 	if arg_34_0._machine then
 		arg_34_0._machine:destroy()
 
@@ -499,7 +499,7 @@ function HeroView.post_update_on_exit(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function HeroView.on_exit(arg_35_0)
+HeroView.on_exit = function (arg_35_0)
 	arg_35_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_35_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_35_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -523,15 +523,15 @@ function HeroView.on_exit(arg_35_0)
 	end
 end
 
-function HeroView.set_loadout_dirty(arg_36_0)
+HeroView.set_loadout_dirty = function (arg_36_0)
 	arg_36_0._loadout_dirty = true
 end
 
-function HeroView.is_loadout_dirty(arg_37_0)
+HeroView.is_loadout_dirty = function (arg_37_0)
 	return arg_37_0._loadout_dirty
 end
 
-function HeroView._handle_view_popups(arg_38_0)
+HeroView._handle_view_popups = function (arg_38_0)
 	local var_38_0 = arg_38_0.ingame_ui.views.console_friends_view
 
 	if var_38_0 then
@@ -545,7 +545,7 @@ function HeroView._handle_view_popups(arg_38_0)
 	end
 end
 
-function HeroView.exit(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+HeroView.exit = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0 = "exit_menu"
 
 	arg_39_0.exiting = true
@@ -561,7 +561,7 @@ function HeroView.exit(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	end
 end
 
-function HeroView.transitioning(arg_40_0)
+HeroView.transitioning = function (arg_40_0)
 	if arg_40_0.exiting then
 		return true
 	else
@@ -569,11 +569,11 @@ function HeroView.transitioning(arg_40_0)
 	end
 end
 
-function HeroView._handle_exit(arg_41_0, arg_41_1)
+HeroView._handle_exit = function (arg_41_0, arg_41_1)
 	return
 end
 
-function HeroView.suspend(arg_42_0)
+HeroView.suspend = function (arg_42_0)
 	arg_42_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_42_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_42_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -581,7 +581,7 @@ function HeroView.suspend(arg_42_0)
 	arg_42_0.suspended = true
 end
 
-function HeroView.unsuspend(arg_43_0)
+HeroView.unsuspend = function (arg_43_0)
 	arg_43_0.input_manager:block_device_except_service("hero_view", "keyboard", 1)
 	arg_43_0.input_manager:block_device_except_service("hero_view", "mouse", 1)
 	arg_43_0.input_manager:block_device_except_service("hero_view", "gamepad", 1)
@@ -589,13 +589,13 @@ function HeroView.unsuspend(arg_43_0)
 	arg_43_0.suspended = nil
 end
 
-function HeroView.close_menu(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+HeroView.close_menu = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = not arg_44_1
 
 	arg_44_0:exit(var_44_0, arg_44_2, arg_44_3)
 end
 
-function HeroView.destroy(arg_45_0)
+HeroView.destroy = function (arg_45_0)
 	arg_45_0.ingame_ui_context = nil
 	arg_45_0.ui_animator = nil
 
@@ -608,7 +608,7 @@ function HeroView.destroy(arg_45_0)
 	arg_45_0:destroy_hdr_gui()
 end
 
-function HeroView.destroy_hdr_gui(arg_46_0)
+HeroView.destroy_hdr_gui = function (arg_46_0)
 	local var_46_0 = arg_46_0._hdr_gui_data
 
 	if var_46_0 then
@@ -626,7 +626,7 @@ function HeroView.destroy_hdr_gui(arg_46_0)
 	end
 end
 
-function HeroView._is_button_pressed(arg_47_0, arg_47_1)
+HeroView._is_button_pressed = function (arg_47_0, arg_47_1)
 	local var_47_0 = arg_47_1.content.button_hotspot
 
 	if var_47_0.on_release then
@@ -636,7 +636,7 @@ function HeroView._is_button_pressed(arg_47_0, arg_47_1)
 	end
 end
 
-function HeroView._set_loading_overlay_enabled(arg_48_0, arg_48_1, arg_48_2)
+HeroView._set_loading_overlay_enabled = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0._loading_widgets
 	local var_48_1 = var_48_0.text
 	local var_48_2 = var_48_0.background
@@ -648,7 +648,7 @@ function HeroView._set_loading_overlay_enabled(arg_48_0, arg_48_1, arg_48_2)
 	arg_48_0._draw_loading = arg_48_1
 end
 
-function HeroView.current_state(arg_49_0)
+HeroView.current_state = function (arg_49_0)
 	if not arg_49_0._machine then
 		return nil
 	end

@@ -16,7 +16,7 @@ local var_0_11 = 0.3
 HeroWindowCharacterSummary = class(HeroWindowCharacterSummary)
 HeroWindowCharacterSummary.NAME = "HeroWindowCharacterSummary"
 
-function HeroWindowCharacterSummary.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCharacterSummary.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCharacterSummary")
 
 	arg_1_0._params = arg_1_1
@@ -40,7 +40,7 @@ function HeroWindowCharacterSummary.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_set_career_selection_state(false)
 end
 
-function HeroWindowCharacterSummary._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowCharacterSummary._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0._render_settings
@@ -51,7 +51,7 @@ function HeroWindowCharacterSummary._start_transition_animation(arg_2_0, arg_2_1
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowCharacterSummary._create_ui_elements(arg_3_0, arg_3_1)
+HeroWindowCharacterSummary._create_ui_elements = function (arg_3_0, arg_3_1)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_3_0 = {}
@@ -93,7 +93,7 @@ function HeroWindowCharacterSummary._create_ui_elements(arg_3_0, arg_3_1)
 	var_3_1.hero_selection_warning.content.visible = false
 end
 
-function HeroWindowCharacterSummary.on_exit(arg_4_0, arg_4_1)
+HeroWindowCharacterSummary.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCharacterSummary")
 
 	arg_4_0.ui_animator = nil
@@ -101,7 +101,7 @@ function HeroWindowCharacterSummary.on_exit(arg_4_0, arg_4_1)
 	arg_4_0:_commit_talent_changes()
 end
 
-function HeroWindowCharacterSummary._input_service(arg_5_0)
+HeroWindowCharacterSummary._input_service = function (arg_5_0)
 	local var_5_0 = arg_5_0._parent
 
 	if var_5_0:is_friends_list_active() then
@@ -111,7 +111,7 @@ function HeroWindowCharacterSummary._input_service(arg_5_0)
 	return var_5_0:window_input_service()
 end
 
-function HeroWindowCharacterSummary.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowCharacterSummary.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_10 then
 		var_0_10 = false
 
@@ -133,11 +133,11 @@ function HeroWindowCharacterSummary.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_handle_input(var_6_1, arg_6_1, arg_6_2)
 end
 
-function HeroWindowCharacterSummary.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowCharacterSummary.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowCharacterSummary._handle_input(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+HeroWindowCharacterSummary._handle_input = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._widgets_by_name
 	local var_8_1 = arg_8_0._parent
 	local var_8_2 = true
@@ -234,7 +234,7 @@ function HeroWindowCharacterSummary._handle_input(arg_8_0, arg_8_1, arg_8_2, arg
 	end
 end
 
-function HeroWindowCharacterSummary._handle_gamepad_selection(arg_9_0, arg_9_1)
+HeroWindowCharacterSummary._handle_gamepad_selection = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._num_max_hero_rows
 	local var_9_1 = arg_9_0._num_max_hero_columns
 	local var_9_2 = arg_9_0._selected_hero_row
@@ -288,7 +288,7 @@ function HeroWindowCharacterSummary._handle_gamepad_selection(arg_9_0, arg_9_1)
 	return var_9_4
 end
 
-function HeroWindowCharacterSummary._set_career_selection_state(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowCharacterSummary._set_career_selection_state = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._draw_hero_selection = arg_10_1
 
 	local var_10_0 = arg_10_0._parent:current_career()
@@ -323,7 +323,7 @@ function HeroWindowCharacterSummary._set_career_selection_state(arg_10_0, arg_10
 	arg_10_0._params.changing_hero = arg_10_1
 end
 
-function HeroWindowCharacterSummary._change_carrer(arg_11_0, arg_11_1)
+HeroWindowCharacterSummary._change_carrer = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._parent
 	local var_11_1 = var_11_0:current_career()
 	local var_11_2 = arg_11_1.name
@@ -345,7 +345,7 @@ function HeroWindowCharacterSummary._change_carrer(arg_11_0, arg_11_1)
 	arg_11_0._widgets_by_name.hero_selection_warning.content.visible = not var_11_8
 end
 
-function HeroWindowCharacterSummary._set_selected_hero_by_coordinates(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowCharacterSummary._set_selected_hero_by_coordinates = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._hero_widgets
 
 	for iter_12_0, iter_12_1 in ipairs(var_12_0) do
@@ -361,7 +361,7 @@ function HeroWindowCharacterSummary._set_selected_hero_by_coordinates(arg_12_0, 
 	end
 end
 
-function HeroWindowCharacterSummary._set_selected_hero_index(arg_13_0, arg_13_1)
+HeroWindowCharacterSummary._set_selected_hero_index = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._hero_widgets
 
 	for iter_13_0, iter_13_1 in ipairs(var_13_0) do
@@ -380,7 +380,7 @@ function HeroWindowCharacterSummary._set_selected_hero_index(arg_13_0, arg_13_1)
 	arg_13_0._selected_hero_index = arg_13_1
 end
 
-function HeroWindowCharacterSummary._selected_hero_career(arg_14_0)
+HeroWindowCharacterSummary._selected_hero_career = function (arg_14_0)
 	local var_14_0 = arg_14_0._selected_hero_index
 	local var_14_1 = arg_14_0._hero_widgets
 
@@ -394,7 +394,7 @@ function HeroWindowCharacterSummary._selected_hero_career(arg_14_0)
 	end
 end
 
-function HeroWindowCharacterSummary._on_talent_pressed(arg_15_0, arg_15_1, arg_15_2)
+HeroWindowCharacterSummary._on_talent_pressed = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._selected_talents
 
 	if var_15_0[arg_15_1] == 0 then
@@ -413,7 +413,7 @@ function HeroWindowCharacterSummary._on_talent_pressed(arg_15_0, arg_15_1, arg_1
 	arg_15_0:_on_talent_slot_pressed(arg_15_1)
 end
 
-function HeroWindowCharacterSummary._set_talent_selected(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowCharacterSummary._set_talent_selected = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._talent_slot_widgets
 	local var_16_1 = arg_16_0._talent_widgets[arg_16_1]
 
@@ -437,7 +437,7 @@ function HeroWindowCharacterSummary._set_talent_selected(arg_16_0, arg_16_1, arg
 	end
 end
 
-function HeroWindowCharacterSummary._on_talent_slot_pressed(arg_17_0, arg_17_1)
+HeroWindowCharacterSummary._on_talent_slot_pressed = function (arg_17_0, arg_17_1)
 	local var_17_0
 	local var_17_1 = arg_17_0._talent_slot_widgets
 
@@ -461,7 +461,7 @@ function HeroWindowCharacterSummary._on_talent_slot_pressed(arg_17_0, arg_17_1)
 	arg_17_0:_enable_talent_row(nil)
 end
 
-function HeroWindowCharacterSummary._enable_talent_row(arg_18_0, arg_18_1)
+HeroWindowCharacterSummary._enable_talent_row = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._talent_widgets
 
 	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
@@ -471,7 +471,7 @@ function HeroWindowCharacterSummary._enable_talent_row(arg_18_0, arg_18_1)
 	end
 end
 
-function HeroWindowCharacterSummary._toggle_statistics(arg_19_0, arg_19_1)
+HeroWindowCharacterSummary._toggle_statistics = function (arg_19_0, arg_19_1)
 	arg_19_0._draw_statistics = arg_19_1
 
 	local var_19_0 = arg_19_0._widgets_by_name
@@ -480,7 +480,7 @@ function HeroWindowCharacterSummary._toggle_statistics(arg_19_0, arg_19_1)
 	var_19_0.summary_title.content.selected_option = arg_19_1 and 2 or 1
 end
 
-function HeroWindowCharacterSummary._update_hero_sync(arg_20_0)
+HeroWindowCharacterSummary._update_hero_sync = function (arg_20_0)
 	local var_20_0 = arg_20_0._parent
 	local var_20_1 = var_20_0.loadout_sync_id
 	local var_20_2 = var_20_0.hero_sync_id
@@ -512,7 +512,7 @@ function HeroWindowCharacterSummary._update_hero_sync(arg_20_0)
 	end
 end
 
-function HeroWindowCharacterSummary._commit_talent_changes(arg_21_0)
+HeroWindowCharacterSummary._commit_talent_changes = function (arg_21_0)
 	local var_21_0 = arg_21_0._talent_changes_done
 	local var_21_1 = arg_21_0._selected_talents
 
@@ -531,7 +531,7 @@ function HeroWindowCharacterSummary._commit_talent_changes(arg_21_0)
 	end
 end
 
-function HeroWindowCharacterSummary._update_animations(arg_22_0, arg_22_1)
+HeroWindowCharacterSummary._update_animations = function (arg_22_0, arg_22_1)
 	arg_22_0.ui_animator:update(arg_22_1)
 
 	local var_22_0 = arg_22_0._animations
@@ -582,7 +582,7 @@ function HeroWindowCharacterSummary._update_animations(arg_22_0, arg_22_1)
 	end
 end
 
-function HeroWindowCharacterSummary._is_button_pressed(arg_23_0, arg_23_1)
+HeroWindowCharacterSummary._is_button_pressed = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.content
 	local var_23_1 = var_23_0.button_hotspot or var_23_0.hotspot
 
@@ -593,7 +593,7 @@ function HeroWindowCharacterSummary._is_button_pressed(arg_23_0, arg_23_1)
 	end
 end
 
-function HeroWindowCharacterSummary._is_button_hovered(arg_24_0, arg_24_1)
+HeroWindowCharacterSummary._is_button_hovered = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_1.content
 
 	if (var_24_0.button_hotspot or var_24_0.hotspot).on_hover_enter then
@@ -601,17 +601,17 @@ function HeroWindowCharacterSummary._is_button_hovered(arg_24_0, arg_24_1)
 	end
 end
 
-function HeroWindowCharacterSummary._is_button_hover(arg_25_0, arg_25_1)
+HeroWindowCharacterSummary._is_button_hover = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1.content
 
 	return (var_25_0.button_hotspot or var_25_0.hotspot).is_hover
 end
 
-function HeroWindowCharacterSummary._exit(arg_26_0)
+HeroWindowCharacterSummary._exit = function (arg_26_0)
 	arg_26_0.exit = true
 end
 
-function HeroWindowCharacterSummary._draw(arg_27_0, arg_27_1)
+HeroWindowCharacterSummary._draw = function (arg_27_0, arg_27_1)
 	arg_27_0:_update_visible_list_entries()
 
 	local var_27_0 = arg_27_0._ui_renderer
@@ -691,18 +691,18 @@ function HeroWindowCharacterSummary._draw(arg_27_0, arg_27_1)
 	UIRenderer.end_pass(var_27_1)
 end
 
-function HeroWindowCharacterSummary._play_sound(arg_28_0, arg_28_1)
+HeroWindowCharacterSummary._play_sound = function (arg_28_0, arg_28_1)
 	arg_28_0._parent:play_sound(arg_28_1)
 end
 
-function HeroWindowCharacterSummary._sync_statistics(arg_29_0)
+HeroWindowCharacterSummary._sync_statistics = function (arg_29_0)
 	local var_29_0 = HeroStatisticsTemplate
 	local var_29_1 = UIUtils.get_hero_statistics_by_template(var_29_0)
 
 	arg_29_0:_populate_statistics(var_29_1)
 end
 
-function HeroWindowCharacterSummary._populate_talents(arg_30_0, arg_30_1, arg_30_2)
+HeroWindowCharacterSummary._populate_talents = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._ui_renderer
 	local var_30_1 = "talent_root"
 	local var_30_2 = var_0_5(var_30_1)
@@ -783,7 +783,7 @@ function HeroWindowCharacterSummary._populate_talents(arg_30_0, arg_30_1, arg_30
 	end
 end
 
-function HeroWindowCharacterSummary._populate_statistics(arg_31_0, arg_31_1)
+HeroWindowCharacterSummary._populate_statistics = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._ui_renderer
 	local var_31_1 = {}
 	local var_31_2 = "list_item"
@@ -826,7 +826,7 @@ function HeroWindowCharacterSummary._populate_statistics(arg_31_0, arg_31_1)
 	arg_31_0:_initialize_scrollbar()
 end
 
-function HeroWindowCharacterSummary._align_list_widgets(arg_32_0, arg_32_1, arg_32_2)
+HeroWindowCharacterSummary._align_list_widgets = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = 0
 	local var_32_1 = #arg_32_1
 
@@ -849,7 +849,7 @@ function HeroWindowCharacterSummary._align_list_widgets(arg_32_0, arg_32_1, arg_
 	return var_32_0
 end
 
-function HeroWindowCharacterSummary._initialize_scrollbar(arg_33_0)
+HeroWindowCharacterSummary._initialize_scrollbar = function (arg_33_0)
 	local var_33_0 = var_0_3.item_list.size
 	local var_33_1 = var_0_3.list_scrollbar.size
 	local var_33_2 = var_33_0[2]
@@ -865,7 +865,7 @@ function HeroWindowCharacterSummary._initialize_scrollbar(arg_33_0)
 	arg_33_0._list_thumb_scale = var_33_7:thumb_scale()
 end
 
-function HeroWindowCharacterSummary._update_scroll_position(arg_34_0)
+HeroWindowCharacterSummary._update_scroll_position = function (arg_34_0)
 	local var_34_0 = arg_34_0._scrollbar_logic:get_scrolled_length()
 
 	if var_34_0 ~= arg_34_0._scrolled_length then
@@ -874,7 +874,7 @@ function HeroWindowCharacterSummary._update_scroll_position(arg_34_0)
 	end
 end
 
-function HeroWindowCharacterSummary._update_visible_list_entries(arg_35_0)
+HeroWindowCharacterSummary._update_visible_list_entries = function (arg_35_0)
 	local var_35_0 = arg_35_0._scrollbar_logic
 
 	if not var_35_0:enabled() then
@@ -907,7 +907,7 @@ function HeroWindowCharacterSummary._update_visible_list_entries(arg_35_0)
 	end
 end
 
-function HeroWindowCharacterSummary._get_scrollbar_percentage_by_index(arg_36_0, arg_36_1)
+HeroWindowCharacterSummary._get_scrollbar_percentage_by_index = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._scrollbar_logic
 
 	if var_36_0:enabled() then
@@ -947,7 +947,7 @@ function HeroWindowCharacterSummary._get_scrollbar_percentage_by_index(arg_36_0,
 	return 0
 end
 
-function HeroWindowCharacterSummary._setup_title_texts(arg_37_0)
+HeroWindowCharacterSummary._setup_title_texts = function (arg_37_0)
 	local var_37_0 = arg_37_0._widgets_by_name.summary_title
 	local var_37_1 = var_37_0.content
 	local var_37_2 = var_37_0.style
@@ -968,7 +968,7 @@ function HeroWindowCharacterSummary._setup_title_texts(arg_37_0)
 	var_37_2.title_text2_shadow.offset[1] = var_37_2.title_text2.offset[1] + 2
 end
 
-function HeroWindowCharacterSummary._animate_title_button(arg_38_0, arg_38_1)
+HeroWindowCharacterSummary._animate_title_button = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._widgets_by_name.summary_title
 	local var_38_1 = var_38_0.content
 	local var_38_2 = var_38_0.style
@@ -1010,7 +1010,7 @@ function HeroWindowCharacterSummary._animate_title_button(arg_38_0, arg_38_1)
 	end
 end
 
-function HeroWindowCharacterSummary._populate_career_info(arg_39_0, arg_39_1)
+HeroWindowCharacterSummary._populate_career_info = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._ui_renderer
 	local var_39_1 = arg_39_0._ui_scenegraph
 	local var_39_2 = CareerSettings[arg_39_1]
@@ -1079,7 +1079,7 @@ function HeroWindowCharacterSummary._populate_career_info(arg_39_0, arg_39_1)
 	end
 end
 
-function HeroWindowCharacterSummary._animate_talent_widget(arg_40_0, arg_40_1, arg_40_2)
+HeroWindowCharacterSummary._animate_talent_widget = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = arg_40_1.content
 	local var_40_1 = arg_40_1.style
 	local var_40_2 = var_40_0.button_hotspot or var_40_0.hotspot
@@ -1123,7 +1123,7 @@ function HeroWindowCharacterSummary._animate_talent_widget(arg_40_0, arg_40_1, a
 	var_40_2.selection_progress = var_40_6
 end
 
-function HeroWindowCharacterSummary._update_talent_position_animation(arg_41_0, arg_41_1)
+HeroWindowCharacterSummary._update_talent_position_animation = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._selected_talent_index
 
 	if not var_41_0 then
@@ -1153,13 +1153,13 @@ function HeroWindowCharacterSummary._update_talent_position_animation(arg_41_0, 
 	arg_41_0:_set_talent_list_animation_progress(var_41_6, var_41_5(var_41_2))
 end
 
-function HeroWindowCharacterSummary._get_timer_progress(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+HeroWindowCharacterSummary._get_timer_progress = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_1 + arg_42_3
 
 	return math.min(var_42_0 / arg_42_2, 1), var_42_0
 end
 
-function HeroWindowCharacterSummary._set_talent_list_animation_progress(arg_43_0, arg_43_1, arg_43_2)
+HeroWindowCharacterSummary._set_talent_list_animation_progress = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = 255 * arg_43_2
 
 	for iter_43_0, iter_43_1 in ipairs(arg_43_1) do
@@ -1169,7 +1169,7 @@ function HeroWindowCharacterSummary._set_talent_list_animation_progress(arg_43_0
 	end
 end
 
-function HeroWindowCharacterSummary._setup_hero_selection_widgets(arg_44_0)
+HeroWindowCharacterSummary._setup_hero_selection_widgets = function (arg_44_0)
 	local var_44_0 = {}
 
 	arg_44_0._hero_widgets = var_44_0
@@ -1234,7 +1234,7 @@ function HeroWindowCharacterSummary._setup_hero_selection_widgets(arg_44_0)
 	arg_44_0._num_max_hero_columns = var_44_4
 end
 
-function HeroWindowCharacterSummary._animate_hero_widget(arg_45_0, arg_45_1, arg_45_2)
+HeroWindowCharacterSummary._animate_hero_widget = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_1.content
 	local var_45_1 = arg_45_1.style
 	local var_45_2 = var_45_0.button_hotspot or var_45_0.hotspot
@@ -1278,7 +1278,7 @@ function HeroWindowCharacterSummary._animate_hero_widget(arg_45_0, arg_45_1, arg
 	var_45_2.selection_progress = var_45_6
 end
 
-function HeroWindowCharacterSummary._animate_hero_icon_widget(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+HeroWindowCharacterSummary._animate_hero_icon_widget = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = arg_46_1.content
 	local var_46_1 = arg_46_1.style
 	local var_46_2 = var_46_0.animation_progress or 0

@@ -74,7 +74,7 @@ TrueFlightTemplates.sorcerer_magic_missile = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function(arg_1_0)
+	lerp_modifier_func = function (arg_1_0)
 		return arg_1_0 < 7 and 0.01 or 5 / arg_1_0
 	end
 }
@@ -93,10 +93,10 @@ TrueFlightTemplates.sorcerer_strike_missile = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function(arg_2_0)
+	lerp_modifier_func = function (arg_2_0)
 		return arg_2_0 < 7 and 0.01 or 3 / arg_2_0
 	end,
-	template_state_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	template_state_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if arg_3_2 == 1 then
 			Unit.flow_event(arg_3_1, "lua_projectile_triggered")
 		elseif arg_3_2 == 2 then
@@ -113,7 +113,7 @@ TrueFlightTemplates.sorcerer_magic_missile_ground = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function(arg_4_0)
+	lerp_modifier_func = function (arg_4_0)
 		return arg_4_0 < 7 and 0.01 or 5 / arg_4_0
 	end
 }
@@ -145,10 +145,10 @@ TrueFlightTemplates.sorcerer_slow_bomb_missile = {
 		1,
 		1
 	},
-	lerp_modifier_func = function(arg_5_0)
+	lerp_modifier_func = function (arg_5_0)
 		return arg_5_0 < 5 and 1 or 5 / arg_5_0
 	end,
-	template_state_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	template_state_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		if arg_6_2 == 1 then
 			Unit.flow_event(arg_6_1, "lua_projectile_triggered")
 		elseif arg_6_2 == 2 then
@@ -157,11 +157,11 @@ TrueFlightTemplates.sorcerer_slow_bomb_missile = {
 			end
 
 			if arg_6_3 then
-				-- block empty
+				-- Nothing
 			end
 		end
 	end,
-	init_func = function(arg_7_0, arg_7_1)
+	init_func = function (arg_7_0, arg_7_1)
 		local var_7_0 = Unit.actor(arg_7_0, "c_large")
 
 		Actor.set_collision_enabled(var_7_0, false)
@@ -173,7 +173,7 @@ TrueFlightTemplates.sorcerer_vortex_dummy_missile = {
 	target_tracking_check_func = "update_towards_position_target",
 	target_players = true,
 	broadphase_radius = 7.5,
-	lerp_modifier_func = function(arg_8_0, arg_8_1, arg_8_2)
+	lerp_modifier_func = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = math.clamp(112.5 / (arg_8_1 + 0.01)^2, 0.25, 40)
 
 		return arg_8_0 / (var_8_0 - 0.5 * var_8_0 * math.abs(math.sin(0.5 * arg_8_2)))
@@ -194,10 +194,10 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 	broadphase_radius = 7.5,
 	ignore_dead = true,
 	max_on_target_time = math.huge,
-	lerp_modifier_func = function(arg_9_0, arg_9_1, arg_9_2)
+	lerp_modifier_func = function (arg_9_0, arg_9_1, arg_9_2)
 		return 0.75
 	end,
-	init_func = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	init_func = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		arg_10_3.seed = arg_10_2
 		arg_10_3.spin_dir = 1 - bit.band(arg_10_2, 128) / 64
 		arg_10_2, arg_10_3.wobble_min = math.next_random_range(arg_10_2, 0.3, 0.3)
@@ -207,7 +207,7 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 		arg_10_2, arg_10_3.wobble_horizontal_mult = math.next_random_range(arg_10_2, 1, 1.2)
 		arg_10_2, arg_10_3.wobble_stabiliztion_speed = math.next_random_range(arg_10_2, 0.3, 0.5)
 	end,
-	update_unit_position = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	update_unit_position = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = Vector3Box.unbox(arg_11_4.target_vector_boxed)
 		local var_11_1 = arg_11_4.t - arg_11_4.spawn_time
 		local var_11_2 = arg_11_3.lerped_wobble_scale or 1

@@ -67,7 +67,7 @@ local var_0_6 = {
 
 DamageNumbersUI = class(DamageNumbersUI)
 
-function DamageNumbersUI.init(arg_1_0, arg_1_1, arg_1_2)
+DamageNumbersUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.camera = Managers.camera
@@ -93,13 +93,13 @@ function DamageNumbersUI.init(arg_1_0, arg_1_1, arg_1_2)
 	local var_1_5 = Managers.state.game_mode:settings()
 end
 
-function DamageNumbersUI.update(arg_2_0, arg_2_1)
+DamageNumbersUI.update = function (arg_2_0, arg_2_1)
 	arg_2_0._time = arg_2_0._time + arg_2_1
 
 	arg_2_0:draw(arg_2_1)
 end
 
-function DamageNumbersUI.event_alter_damage_number(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+DamageNumbersUI.event_alter_damage_number = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if arg_3_2 then
 		arg_3_2.text = arg_3_3.text
 		arg_3_2.time = arg_3_0._time + (arg_3_3.time or arg_3_0._unit_text_time)
@@ -113,11 +113,11 @@ end
 
 local var_0_7 = {}
 local var_0_8 = {
-	default = function(arg_4_0, arg_4_1, arg_4_2)
+	default = function (arg_4_0, arg_4_1, arg_4_2)
 		arg_4_0.random_x_offset = math.random(-60, 60)
 		arg_4_0.random_y_offset = math.random(-60, 60)
 	end,
-	floating_damage = function(arg_5_0, arg_5_1)
+	floating_damage = function (arg_5_0, arg_5_1)
 		local var_5_0 = 50
 		local var_5_1 = 125
 		local var_5_2 = math.random() - 0.5
@@ -125,13 +125,13 @@ local var_0_8 = {
 		arg_5_0.random_x_offset = var_5_2 * var_5_0
 		arg_5_0.random_y_offset = math.sin(2 * var_5_2 + math.pi * 0.5) * var_5_1
 	end,
-	critical_strike = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	critical_strike = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		arg_6_0.unit = arg_6_3
 	end,
-	streak_damage = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	streak_damage = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		arg_7_0.unit = arg_7_3
 	end,
-	floating_radial_damage = function(arg_8_0, arg_8_1, arg_8_2)
+	floating_radial_damage = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = arg_8_0.angle or (arg_8_2 - 1) * 0.5
 		local var_8_1 = 150
 		local var_8_2 = math.random(200, 700)
@@ -151,7 +151,7 @@ local function var_0_9(arg_9_0, arg_9_1)
 	return true
 end
 
-function DamageNumbersUI.event_add_damage_number(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8)
+DamageNumbersUI.event_add_damage_number = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8)
 	arg_10_8 = arg_10_8 or var_0_7
 
 	local var_10_0 = Camera.world_position(arg_10_0.camera)
@@ -214,7 +214,7 @@ function DamageNumbersUI.event_add_damage_number(arg_10_0, arg_10_1, arg_10_2, a
 	end
 end
 
-function DamageNumbersUI.destroy(arg_11_0)
+DamageNumbersUI.destroy = function (arg_11_0)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._unit_texts) do
 		arg_11_0:_destroy_unit_texts(iter_11_0)
 	end
@@ -225,11 +225,11 @@ function DamageNumbersUI.destroy(arg_11_0)
 	end
 end
 
-function DamageNumbersUI._destroy_unit_texts(arg_12_0, arg_12_1)
+DamageNumbersUI._destroy_unit_texts = function (arg_12_0, arg_12_1)
 	arg_12_0._unit_texts[arg_12_1] = nil
 end
 
-function DamageNumbersUI.create_ui_elements(arg_13_0)
+DamageNumbersUI.create_ui_elements = function (arg_13_0)
 	arg_13_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_13_0.damage_text = UIWidget.init(var_0_6.damage_text)
 
@@ -238,7 +238,7 @@ end
 
 DamageNumberVariants = {
 	default = {
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 			local var_14_0 = arg_14_0.size
 
 			arg_14_2.style.text.font_size = var_14_0
@@ -246,7 +246,7 @@ DamageNumberVariants = {
 		end
 	},
 	floating_damage = {
-		update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+		update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
 			local var_15_0 = arg_15_0.size
 
 			arg_15_2.style.text.font_size = var_15_0
@@ -261,7 +261,7 @@ DamageNumberVariants = {
 		end
 	},
 	critical_strike = {
-		update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+		update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 			local var_16_0 = arg_16_0.size
 			local var_16_1 = math.easeOutCubic(math.min(arg_16_5 * 7, 1))
 			local var_16_2 = var_16_0 + math.ease_pulse(var_16_1) * 60
@@ -271,7 +271,7 @@ DamageNumberVariants = {
 		end
 	},
 	streak_damage = {
-		update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+		update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 			local var_17_0 = arg_17_0.size
 			local var_17_1 = arg_17_4.x * arg_17_3
 			local var_17_2 = arg_17_4.z * arg_17_3
@@ -284,7 +284,7 @@ DamageNumberVariants = {
 			arg_17_2.style.text.text_color[1] = var_17_3
 			arg_17_2.style.text_shadow.text_color[1] = var_17_3
 		end,
-		complete = function(arg_18_0, arg_18_1, arg_18_2)
+		complete = function (arg_18_0, arg_18_1, arg_18_2)
 			arg_18_0.update_function = DamageNumberVariants.streak_damage.pop_update
 			arg_18_0.complete_function = DamageNumberVariants.streak_damage.pop_complete
 			arg_18_0.time = arg_18_1 + 0.4
@@ -309,7 +309,7 @@ DamageNumberVariants = {
 
 			return false
 		end,
-		pop_update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+		pop_update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 			local var_19_0 = arg_19_0.size
 
 			arg_19_2.style.text.font_size = var_19_0
@@ -335,7 +335,7 @@ DamageNumberVariants = {
 			arg_19_2.offset[1] = var_19_5
 			arg_19_2.offset[2] = var_19_6 + 60
 		end,
-		pop_complete = function(arg_20_0, arg_20_1, arg_20_2)
+		pop_complete = function (arg_20_0, arg_20_1, arg_20_2)
 			arg_20_0.update_function = DamageNumberVariants.streak_damage_fadeout.update
 			arg_20_0.complete_function = var_0_9
 			arg_20_0.time = arg_20_1 + 2
@@ -358,7 +358,7 @@ DamageNumberVariants = {
 		end
 	},
 	streak_damage_fadeout = {
-		update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+		update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 			arg_21_2.style.text.text_color = arg_21_0.color
 
 			local var_21_0 = arg_21_0.size
@@ -374,7 +374,7 @@ DamageNumberVariants = {
 		end
 	},
 	floating_radial_damage = {
-		update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+		update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 			local var_22_0 = arg_22_0.size
 
 			arg_22_2.style.text.font_size = var_22_0
@@ -396,7 +396,7 @@ DamageNumberVariants = {
 	}
 }
 
-function DamageNumbersUI.draw(arg_23_0, arg_23_1)
+DamageNumbersUI.draw = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0.ui_renderer
 	local var_23_1 = arg_23_0.ui_scenegraph
 	local var_23_2 = arg_23_0.input_manager:get_service("ingame_menu")

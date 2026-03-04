@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTBotMeleeAction = class(BTBotMeleeAction, BTNode)
 
-function BTBotMeleeAction.init(arg_1_0, ...)
+BTBotMeleeAction.init = function (arg_1_0, ...)
 	BTBotMeleeAction.super.init(arg_1_0, ...)
 end
 
@@ -68,7 +68,7 @@ local function var_0_6(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return nil
 end
 
-function BTBotMeleeAction.enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTBotMeleeAction.enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_2.node_timer = arg_4_3
 	arg_4_2.melee = {
 		engage_update_time = 0,
@@ -90,7 +90,7 @@ function BTBotMeleeAction.enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	var_4_3:set_aiming(true, var_4_4)
 end
 
-function BTBotMeleeAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTBotMeleeAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_2.input_extension:set_aiming(false)
 
 	if arg_5_2.melee.engaging then
@@ -106,7 +106,7 @@ function BTBotMeleeAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg
 	arg_5_2.wielded_item_template = nil
 end
 
-function BTBotMeleeAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTBotMeleeAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0, var_6_1 = arg_6_0:_update_melee(arg_6_1, arg_6_2, arg_6_4, arg_6_3)
 
 	if var_6_0 then
@@ -116,7 +116,7 @@ function BTBotMeleeAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 end
 
-function BTBotMeleeAction._update_engage_position(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTBotMeleeAction._update_engage_position = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_3.nav_world
 	local var_7_1 = POSITION_LOOKUP[arg_7_1]
 	local var_7_2 = arg_7_0:_target_unit_position(var_7_1, arg_7_2, var_7_0)
@@ -203,7 +203,7 @@ local var_0_7 = {
 	}
 }
 
-function BTBotMeleeAction._choose_attack(arg_8_0, arg_8_1, arg_8_2)
+BTBotMeleeAction._choose_attack = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0
 	local var_8_1
 	local var_8_2 = arg_8_1.wielded_slot_name
@@ -223,7 +223,7 @@ function BTBotMeleeAction._choose_attack(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_0, var_8_1
 end
 
-function BTBotMeleeAction._is_in_melee_range(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+BTBotMeleeAction._is_in_melee_range = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 	local var_9_0 = ScriptUnit.has_extension(arg_9_7, "locomotion_system")
 	local var_9_1 = var_9_0 and var_9_0:current_velocity() or Vector3.zero()
 	local var_9_2 = arg_9_1 + (arg_9_6.locomotion_extension:current_velocity() - var_9_1) * math.max(arg_9_0:_time_to_next_attack(arg_9_4, arg_9_6, arg_9_5) or 0, 0)
@@ -231,7 +231,7 @@ function BTBotMeleeAction._is_in_melee_range(arg_9_0, arg_9_1, arg_9_2, arg_9_3,
 	return arg_9_3^2 > Vector3.distance_squared(arg_9_2, var_9_2)
 end
 
-function BTBotMeleeAction._is_in_engage_range(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTBotMeleeAction._is_in_engage_range = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = AiUtils.get_party_danger()
 	local var_10_1 = math.lerp(arg_10_4.engage_range_near_follow_pos, arg_10_4.engage_range_near_follow_pos_threat, var_10_0)
 	local var_10_2 = math.lerp(arg_10_4.engage_range, arg_10_4.engage_range_threat, var_10_0)
@@ -243,7 +243,7 @@ function BTBotMeleeAction._is_in_engage_range(arg_10_0, arg_10_1, arg_10_2, arg_
 	return Vector3.distance_squared(var_10_3, var_10_6) < var_10_5 * var_10_5
 end
 
-function BTBotMeleeAction._target_unit_position(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTBotMeleeAction._target_unit_position = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0
 
 	if arg_11_0._tree_node.action_data.destroy_object then
@@ -270,7 +270,7 @@ function BTBotMeleeAction._target_unit_position(arg_11_0, arg_11_1, arg_11_2, ar
 	return var_11_0
 end
 
-function BTBotMeleeAction._is_being_attacked(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTBotMeleeAction._is_being_attacked = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_2.proximite_enemies
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -305,7 +305,7 @@ function BTBotMeleeAction._is_being_attacked(arg_12_0, arg_12_1, arg_12_2, arg_1
 	return false
 end
 
-function BTBotMeleeAction._is_targeting_me(arg_13_0, arg_13_1, arg_13_2)
+BTBotMeleeAction._is_targeting_me = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = ScriptUnit.has_extension(arg_13_2, "ai_system")
 
 	if not var_13_0 then
@@ -317,7 +317,7 @@ function BTBotMeleeAction._is_targeting_me(arg_13_0, arg_13_1, arg_13_2)
 	return var_13_1.target_unit == arg_13_1, var_13_1.breed
 end
 
-function BTBotMeleeAction._allow_engage(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
+BTBotMeleeAction._allow_engage = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
 	local var_14_0 = Managers.state.conflict
 	local var_14_1 = AiUtils.get_party_danger()
 	local var_14_2 = arg_14_4.override_engage_range_to_follow_pos
@@ -387,14 +387,14 @@ function BTBotMeleeAction._allow_engage(arg_14_0, arg_14_1, arg_14_2, arg_14_3, 
 	return true
 end
 
-function BTBotMeleeAction._calculate_melee_range(arg_15_0, arg_15_1, arg_15_2)
+BTBotMeleeAction._calculate_melee_range = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_2.max_range
 	local var_15_1 = Unit.get_data(arg_15_1, "breed")
 
 	return var_15_0 + (var_15_1 and (var_15_1.bot_hitbox_radius_approximation or var_0_3) or 0)
 end
 
-function BTBotMeleeAction._update_melee(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTBotMeleeAction._update_melee = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_0._tree_node.action_data
 	local var_16_1 = var_16_0.destroy_object and arg_16_2.breakable_object or arg_16_2.target_unit
 
@@ -473,7 +473,7 @@ local var_0_8 = {
 	push = "medium"
 }
 
-function BTBotMeleeAction._defend(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+BTBotMeleeAction._defend = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
 	local var_17_0 = arg_17_2.wielded_item_template.defense_meta_data or var_0_8
 	local var_17_1, var_17_2 = ScriptUnit.extension(arg_17_1, "status_system"):current_fatigue_points()
 	local var_17_3 = var_17_2 - var_17_1
@@ -506,7 +506,7 @@ function BTBotMeleeAction._defend(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17
 	end
 end
 
-function BTBotMeleeAction._is_pushable_shield_wearer(arg_18_0, arg_18_1)
+BTBotMeleeAction._is_pushable_shield_wearer = function (arg_18_0, arg_18_1)
 	local var_18_0 = Unit.get_data(arg_18_1, "breed")
 
 	if not var_18_0 then
@@ -522,7 +522,7 @@ function BTBotMeleeAction._is_pushable_shield_wearer(arg_18_0, arg_18_1)
 	return var_18_1 and var_18_1.is_blocking
 end
 
-function BTBotMeleeAction._can_stagger_target(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+BTBotMeleeAction._can_stagger_target = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not BLACKBOARDS[arg_19_2] then
 		return
 	end
@@ -551,7 +551,7 @@ function BTBotMeleeAction._can_stagger_target(arg_19_0, arg_19_1, arg_19_2, arg_
 	return DamageUtils.calculate_stagger_player(ImpactTypeOutput, arg_19_2, arg_19_1, "torso", var_19_8, var_19_9, var_19_2, var_19_5, var_19_6, var_19_7, var_19_1) ~= var_0_0.none
 end
 
-function BTBotMeleeAction._time_to_next_attack(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+BTBotMeleeAction._time_to_next_attack = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = AiUtils.get_bot_weapon_extension(arg_20_2)
 
 	if var_20_0 then
@@ -562,7 +562,7 @@ function BTBotMeleeAction._time_to_next_attack(arg_20_0, arg_20_1, arg_20_2, arg
 	end
 end
 
-function BTBotMeleeAction._attack(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTBotMeleeAction._attack = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = AiUtils.get_bot_weapon_extension(arg_21_2)
 
 	if var_21_0 then
@@ -585,7 +585,7 @@ function BTBotMeleeAction._attack(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	end
 end
 
-function BTBotMeleeAction._should_stop_attack_on_leave(arg_22_0, arg_22_1)
+BTBotMeleeAction._should_stop_attack_on_leave = function (arg_22_0, arg_22_1)
 	local var_22_0 = AiUtils.get_bot_weapon_extension(arg_22_1)
 
 	if var_22_0 then
@@ -593,7 +593,7 @@ function BTBotMeleeAction._should_stop_attack_on_leave(arg_22_0, arg_22_1)
 	end
 end
 
-function BTBotMeleeAction._stop_attack(arg_23_0, arg_23_1)
+BTBotMeleeAction._stop_attack = function (arg_23_0, arg_23_1)
 	local var_23_0 = AiUtils.get_bot_weapon_extension(arg_23_1)
 
 	if var_23_0 then
@@ -601,7 +601,7 @@ function BTBotMeleeAction._stop_attack(arg_23_0, arg_23_1)
 	end
 end
 
-function BTBotMeleeAction._clear_pending_attack(arg_24_0, arg_24_1)
+BTBotMeleeAction._clear_pending_attack = function (arg_24_0, arg_24_1)
 	local var_24_0 = AiUtils.get_bot_weapon_extension(arg_24_1)
 
 	if var_24_0 then
@@ -609,7 +609,7 @@ function BTBotMeleeAction._clear_pending_attack(arg_24_0, arg_24_1)
 	end
 end
 
-function BTBotMeleeAction._is_starting_attack(arg_25_0, arg_25_1)
+BTBotMeleeAction._is_starting_attack = function (arg_25_0, arg_25_1)
 	local var_25_0 = AiUtils.get_bot_weapon_extension(arg_25_1)
 
 	if var_25_0 then
@@ -619,7 +619,7 @@ function BTBotMeleeAction._is_starting_attack(arg_25_0, arg_25_1)
 	end
 end
 
-function BTBotMeleeAction._evaluation_timer(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+BTBotMeleeAction._evaluation_timer = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if arg_26_3 < arg_26_2 - arg_26_1.node_timer then
 		arg_26_1.node_timer = arg_26_2
 
@@ -629,7 +629,7 @@ function BTBotMeleeAction._evaluation_timer(arg_26_0, arg_26_1, arg_26_2, arg_26
 	end
 end
 
-function BTBotMeleeAction._disengage(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+BTBotMeleeAction._disengage = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = arg_27_3.melee
 
 	var_27_0.engaging = false
@@ -640,14 +640,14 @@ function BTBotMeleeAction._disengage(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg
 	end
 end
 
-function BTBotMeleeAction._engage(arg_28_0, arg_28_1, arg_28_2)
+BTBotMeleeAction._engage = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_2.melee
 
 	var_28_0.engaging = true
 	var_28_0.engage_change_time = arg_28_1
 end
 
-function BTBotMeleeAction._debug_draw_melee_range(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
+BTBotMeleeAction._debug_draw_melee_range = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
 	local var_29_0 = arg_29_7.max_range
 	local var_29_1 = arg_29_0:_calculate_melee_range(arg_29_2, arg_29_7)
 	local var_29_2 = arg_29_0:_is_in_melee_range(arg_29_4, arg_29_5, var_29_1, arg_29_6, arg_29_9, arg_29_3, arg_29_2) and Colors.get("green") or Colors.get("red")

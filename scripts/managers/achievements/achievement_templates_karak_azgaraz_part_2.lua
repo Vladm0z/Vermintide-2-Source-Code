@@ -50,7 +50,7 @@ var_0_3.dwarf_towers = {
 	events = {
 		"progress_dwarf_towers_challenge"
 	},
-	on_event = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	on_event = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		if not arg_1_2.num_fires then
 			arg_1_2.num_fires = 1
 
@@ -63,7 +63,7 @@ var_0_3.dwarf_towers = {
 			arg_1_0:increment_stat(arg_1_1, "dwarf_towers")
 		end
 	end,
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		return arg_2_0:get_persistent_stat(arg_2_1, "dwarf_towers") >= 1
 	end
 }
@@ -74,16 +74,16 @@ var_0_3.dwarf_chain_speed = {
 	name = "achv_dwarf_chain_speed_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_chain_speed",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_dwarf_chain_speed_desc"), var_0_14)
 	end,
 	events = {
 		"progress_dwarf_chain_speed_challenge"
 	},
-	completed = function(arg_4_0, arg_4_1, arg_4_2)
+	completed = function (arg_4_0, arg_4_1, arg_4_2)
 		return arg_4_0:get_persistent_stat(arg_4_1, "dwarf_chain_speed") >= 1
 	end,
-	on_event = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	on_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		if arg_5_2.failed then
 			return
 		end
@@ -123,10 +123,10 @@ var_0_3.dwarf_jump_puzzle = {
 	events = {
 		"complete_dwarf_jump_puzzle_challenge"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "dwarf_jump_puzzle") >= 1
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		arg_7_0:increment_stat(arg_7_1, "dwarf_jump_puzzle")
 	end
 }
@@ -137,13 +137,13 @@ var_0_3.dwarf_push = {
 	name = "achv_dwarf_push_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_push",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_dwarf_push_desc"), var_0_15)
 	end,
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_9_0, arg_9_1, arg_9_2)
+	progress = function (arg_9_0, arg_9_1, arg_9_2)
 		local var_9_0 = arg_9_0:get_persistent_stat(arg_9_1, "dwarf_push")
 
 		return {
@@ -151,10 +151,10 @@ var_0_3.dwarf_push = {
 			var_0_15
 		}
 	end,
-	completed = function(arg_10_0, arg_10_1, arg_10_2)
+	completed = function (arg_10_0, arg_10_1, arg_10_2)
 		return arg_10_0:get_persistent_stat(arg_10_1, "dwarf_push") >= var_0_15
 	end,
-	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	on_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = Managers.state.game_mode:level_key()
 
 		if not var_11_0 or var_11_0 ~= "dlc_dwarf_exterior" then

@@ -34,12 +34,12 @@ local function var_0_5(arg_2_0, arg_2_1)
 	return arg_2_0[1]
 end
 
-function PeakDelayer.init(arg_3_0, arg_3_1)
+PeakDelayer.init = function (arg_3_0, arg_3_1)
 	arg_3_0._peaks = arg_3_1
 	arg_3_0._state = var_0_3.WAITING_TO_REACH_DELAY
 end
 
-function PeakDelayer.update(arg_4_0, arg_4_1, arg_4_2)
+PeakDelayer.update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = var_0_5(arg_4_0._peaks, arg_4_1) or math.huge
 
 	if arg_4_0._state == var_0_3.WAITING_TO_REACH_DELAY then
@@ -83,14 +83,14 @@ function PeakDelayer.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function PeakDelayer.is_near_or_in_a_peak(arg_5_0)
+PeakDelayer.is_near_or_in_a_peak = function (arg_5_0)
 	return arg_5_0._state ~= var_0_3.WAITING_TO_REACH_DELAY
 end
 
-function PeakDelayer.set_peaks(arg_6_0, arg_6_1)
+PeakDelayer.set_peaks = function (arg_6_0, arg_6_1)
 	arg_6_0._peaks = table.clone(arg_6_1)
 end
 
-function PeakDelayer.get_peaks(arg_7_0)
+PeakDelayer.get_peaks = function (arg_7_0)
 	return arg_7_0._peaks and table.clone(arg_7_0._peaks) or {}
 end

@@ -4,7 +4,7 @@ return {
 	description = "weaves_death_mutator_desc",
 	icon = "mutator_icon_death_spirits",
 	display_name = "weaves_death_mutator_name",
-	spawn_spirit = function(arg_1_0, arg_1_1, arg_1_2)
+	spawn_spirit = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Vector3.add(Unit.local_position(arg_1_1, 0), Vector3(0, 0, arg_1_0.offset))
 		local var_1_1 = arg_1_0.unit_spawner:spawn_network_unit(arg_1_0.spirit_unit_name, "position_synched_dummy_unit", arg_1_0.extension_init_data, var_1_0)
 		local var_1_2 = {
@@ -20,7 +20,7 @@ return {
 
 		arg_1_0.spirits[var_1_3] = var_1_2
 	end,
-	update_spirits = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update_spirits = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_1.spirits
 		local var_2_1 = 1
 		local var_2_2 = 1
@@ -114,7 +114,7 @@ return {
 			end
 		end
 	end,
-	update_player_buff = function(arg_3_0, arg_3_1)
+	update_player_buff = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.player:players()
 
 		for iter_3_0, iter_3_1 in pairs(var_3_0) do
@@ -139,7 +139,7 @@ return {
 			end
 		end
 	end,
-	server_ai_hit_by_player_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	server_ai_hit_by_player_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		if not DamageUtils.is_player_unit(arg_4_3) then
 			return
 		end
@@ -160,7 +160,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	server_player_hit_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		local var_5_0 = arg_5_4[2]
 		local var_5_1 = DamageUtils.is_player_unit(arg_5_2)
 
@@ -173,17 +173,17 @@ return {
 			var_5_2.network_transmit:send_rpc_server("rpc_request_heal", var_5_5, var_5_4, var_5_3)
 		end
 	end,
-	server_ai_killed_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		if not DamageUtils.is_player_unit(arg_6_3) or not ScriptUnit.has_extension(arg_6_3, "status_system") then
 			return
 		end
 
 		arg_6_1.template.spawn_spirit(arg_6_1, arg_6_2, arg_6_3)
 	end,
-	server_players_left_safe_zone = function(arg_7_0, arg_7_1)
+	server_players_left_safe_zone = function (arg_7_0, arg_7_1)
 		arg_7_1.has_left_safe_zone = true
 	end,
-	server_start_function = function(arg_8_0, arg_8_1)
+	server_start_function = function (arg_8_0, arg_8_1)
 		printf("[Mutator]: mutator_start")
 
 		local var_8_0 = Managers.weave
@@ -207,7 +207,7 @@ return {
 		arg_8_1.extension_init_data = {}
 		arg_8_1.offset = 1
 	end,
-	server_update_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	server_update_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

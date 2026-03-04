@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMoveToRangedPositionAction = class(BTMoveToRangedPositionAction, BTNode)
 
-function BTMoveToRangedPositionAction.init(arg_1_0, ...)
+BTMoveToRangedPositionAction.init = function (arg_1_0, ...)
 	BTMoveToRangedPositionAction.super.init(arg_1_0, ...)
 end
 
 BTMoveToRangedPositionAction.name = "BTMoveToRangedPositionAction"
 
-function BTMoveToRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTMoveToRangedPositionAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -29,7 +29,7 @@ function BTMoveToRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	GwNavBot.set_use_avoidance(var_2_3, true)
 end
 
-function BTMoveToRangedPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMoveToRangedPositionAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.ranged_position = nil
 	arg_3_2.action = nil
 	arg_3_2.next_t_to_evaluate = nil
@@ -39,7 +39,7 @@ function BTMoveToRangedPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	GwNavBot.set_use_avoidance(var_3_0, false)
 end
 
-function BTMoveToRangedPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMoveToRangedPositionAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not Unit.alive(arg_4_2.target_unit) then
 		return "done"
 	end

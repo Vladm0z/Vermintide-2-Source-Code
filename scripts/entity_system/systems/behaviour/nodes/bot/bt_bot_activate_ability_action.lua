@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotActivateAbilityAction = class(BTBotActivateAbilityAction, BTNode)
 
-function BTBotActivateAbilityAction.init(arg_1_0, ...)
+BTBotActivateAbilityAction.init = function (arg_1_0, ...)
 	BTBotActivateAbilityAction.super.init(arg_1_0, ...)
 end
 
 BTBotActivateAbilityAction.name = "BTBotActivateAbilityAction"
 
-function BTBotActivateAbilityAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotActivateAbilityAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data[arg_2_2.career_extension:career_name()]
 	local var_2_1 = arg_2_2.inventory_extension
 	local var_2_2 = arg_2_2.activate_ability_data
@@ -35,7 +35,7 @@ function BTBotActivateAbilityAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTBotActivateAbilityAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotActivateAbilityAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.activate_ability_data
 
 	if var_3_0.activation.action == "aim_at_target" then
@@ -50,7 +50,7 @@ function BTBotActivateAbilityAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ar
 	end
 end
 
-function BTBotActivateAbilityAction._start_ability(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTBotActivateAbilityAction._start_ability = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = false
 	local var_4_1 = arg_4_1.do_start_input
 	local var_4_2 = arg_4_1.activation
@@ -92,11 +92,11 @@ function BTBotActivateAbilityAction._start_ability(arg_4_0, arg_4_1, arg_4_2, ar
 	return var_4_1, var_4_0
 end
 
-function BTBotActivateAbilityAction._cancel_ability(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTBotActivateAbilityAction._cancel_ability = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_2.input_extension:cancel_ability()
 end
 
-function BTBotActivateAbilityAction._perform_wait_action(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTBotActivateAbilityAction._perform_wait_action = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.wait_action
 
 	if var_6_0.input then
@@ -106,7 +106,7 @@ function BTBotActivateAbilityAction._perform_wait_action(arg_6_0, arg_6_1, arg_6
 	end
 end
 
-function BTBotActivateAbilityAction._evaluate_end_condition(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTBotActivateAbilityAction._evaluate_end_condition = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_1.end_condition
 
 	if var_7_0 == nil then
@@ -158,7 +158,7 @@ function BTBotActivateAbilityAction._evaluate_end_condition(arg_7_0, arg_7_1, ar
 	return "running"
 end
 
-function BTBotActivateAbilityAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTBotActivateAbilityAction.run = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_2.activate_ability_data
 	local var_8_1 = var_8_0.activation
 

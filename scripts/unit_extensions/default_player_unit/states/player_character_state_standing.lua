@@ -2,13 +2,13 @@
 
 PlayerCharacterStateStanding = class(PlayerCharacterStateStanding, PlayerCharacterState)
 
-function PlayerCharacterStateStanding.init(arg_1_0, arg_1_1)
+PlayerCharacterStateStanding.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "standing")
 
 	local var_1_0 = arg_1_1
 end
 
-function PlayerCharacterStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateStanding.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.unit
 	local var_2_1 = arg_2_0.input_extension
 
@@ -38,11 +38,11 @@ function PlayerCharacterStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	CharacterStateHelper.play_animation_event_first_person(var_2_3, "idle")
 end
 
-function PlayerCharacterStateStanding.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateStanding.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	return
 end
 
-function PlayerCharacterStateStanding._inspection_available(arg_4_0)
+PlayerCharacterStateStanding._inspection_available = function (arg_4_0)
 	if not (Managers.mechanism:get_state() == "ingame_deus") then
 		return true
 	end
@@ -50,7 +50,7 @@ function PlayerCharacterStateStanding._inspection_available(arg_4_0)
 	return not Managers.input:is_device_active("gamepad")
 end
 
-function PlayerCharacterStateStanding.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateStanding.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.world
 	local var_5_2 = arg_5_0.unit

@@ -69,7 +69,7 @@ SharedState.validate_spec(var_0_6)
 
 GameModeMapDeus = class(GameModeMapDeus, GameModeBase)
 
-function GameModeMapDeus.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+GameModeMapDeus.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	GameModeMapDeus.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	fassert(arg_1_8.deus_run_controller, "GameModeMapDeus is missing initialization data, see DeusMechanism.")
 
@@ -103,14 +103,14 @@ function GameModeMapDeus.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	arg_1_0._shop_view = DeusShopView:new(var_1_4)
 end
 
-function GameModeMapDeus.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+GameModeMapDeus.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	GameModeMapDeus.super.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._shared_state:register_rpcs(arg_2_0._network_event_delegate)
 	arg_2_0._map_decision_view:register_rpcs(arg_2_1, arg_2_2)
 	arg_2_0._shop_view:register_rpcs(arg_2_1, arg_2_2)
 end
 
-function GameModeMapDeus.unregister_rpcs(arg_3_0)
+GameModeMapDeus.unregister_rpcs = function (arg_3_0)
 	arg_3_0._shared_state:unregister_rpcs()
 
 	if arg_3_0._map_decision_view then
@@ -122,13 +122,13 @@ function GameModeMapDeus.unregister_rpcs(arg_3_0)
 	end
 end
 
-function GameModeMapDeus.ended(arg_4_0, arg_4_1)
+GameModeMapDeus.ended = function (arg_4_0, arg_4_1)
 	if not arg_4_0._network_server:are_all_peers_ingame() then
 		arg_4_0._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeMapDeus.local_player_ready_to_start(arg_5_0, arg_5_1)
+GameModeMapDeus.local_player_ready_to_start = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_1:profile_index()
 	local var_5_1 = arg_5_1:career_index()
 
@@ -139,7 +139,7 @@ function GameModeMapDeus.local_player_ready_to_start(arg_5_0, arg_5_1)
 	return true
 end
 
-function GameModeMapDeus.local_player_game_starts(arg_6_0, arg_6_1, arg_6_2)
+GameModeMapDeus.local_player_game_starts = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._game_started = true
 
 	if arg_6_0._is_server then
@@ -156,7 +156,7 @@ function GameModeMapDeus.local_player_game_starts(arg_6_0, arg_6_1, arg_6_2)
 	CosmeticUtils.sync_local_player_cosmetics(arg_6_1, var_6_0, var_6_1)
 end
 
-function GameModeMapDeus.profile_changed(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+GameModeMapDeus.profile_changed = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_1 == arg_7_0._own_peer_id then
 		local var_7_0 = Managers.player:player(arg_7_1, arg_7_2)
 
@@ -164,7 +164,7 @@ function GameModeMapDeus.profile_changed(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg
 	end
 end
 
-function GameModeMapDeus.mutators(arg_8_0)
+GameModeMapDeus.mutators = function (arg_8_0)
 	local var_8_0 = {}
 
 	arg_8_0:append_live_event_mutators(var_8_0)
@@ -186,7 +186,7 @@ function GameModeMapDeus.mutators(arg_8_0)
 	return var_8_0
 end
 
-function GameModeMapDeus.update(arg_9_0, arg_9_1, arg_9_2)
+GameModeMapDeus.update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._shared_state:get_server(arg_9_0._shared_state:get_key("state"))
 	local var_9_1 = arg_9_0._shared_state:get_own(arg_9_0._shared_state:get_key("state"))
 
@@ -225,12 +225,12 @@ function GameModeMapDeus.update(arg_9_0, arg_9_1, arg_9_2)
 			})
 
 			local var_9_4 = {
-				finish_cb = function(arg_10_0)
+				finish_cb = function (arg_10_0)
 					if arg_9_0._is_server then
 						arg_9_0._node_decided = arg_10_0
 					end
 
-					Managers.transition:fade_in(var_0_4, function()
+					Managers.transition:fade_in(var_0_4, function ()
 						arg_9_0._ui_done = true
 					end)
 				end
@@ -239,7 +239,7 @@ function GameModeMapDeus.update(arg_9_0, arg_9_1, arg_9_2)
 			arg_9_0._map_decision_view:start(var_9_4)
 			Wwise.set_state("level_morris_map", "map")
 		elseif var_9_0 == var_0_5.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION then
-			-- block empty
+			-- Nothing
 		elseif var_9_0 == var_0_5.SHOP then
 			arg_9_0._ui_done = false
 
@@ -250,12 +250,12 @@ function GameModeMapDeus.update(arg_9_0, arg_9_1, arg_9_2)
 			})
 
 			local var_9_5 = {
-				finish_cb = function()
+				finish_cb = function ()
 					if arg_9_0._is_server then
 						arg_9_0._shop_view_finished = true
 					end
 
-					Managers.transition:fade_in(var_0_4, function()
+					Managers.transition:fade_in(var_0_4, function ()
 						arg_9_0._shop_view:destroy_idol()
 
 						arg_9_0._ui_done = true
@@ -266,16 +266,16 @@ function GameModeMapDeus.update(arg_9_0, arg_9_1, arg_9_2)
 			arg_9_0._shop_view:start(var_9_5)
 			Wwise.set_state("level_morris_map", "shrine")
 		elseif var_9_0 == var_0_5.WAITING_FOR_PLAYERS_AFTER_SHOP then
-			-- block empty
+			-- Nothing
 		elseif var_9_0 == var_0_5.FINISHING then
-			-- block empty
+			-- Nothing
 		end
 
 		arg_9_0._shared_state:set_own(arg_9_0._shared_state:get_key("state"), var_9_0)
 	end
 end
 
-function GameModeMapDeus.post_update(arg_14_0, arg_14_1, arg_14_2)
+GameModeMapDeus.post_update = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._shared_state:get_own(arg_14_0._shared_state:get_key("state"))
 
 	if var_14_0 == var_0_5.MAP_DECISION then
@@ -295,7 +295,7 @@ function GameModeMapDeus.post_update(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function GameModeMapDeus.destroy(arg_15_0)
+GameModeMapDeus.destroy = function (arg_15_0)
 	if arg_15_0._map_decision_view then
 		arg_15_0._map_decision_view:destroy()
 
@@ -313,7 +313,7 @@ function GameModeMapDeus.destroy(arg_15_0)
 	arg_15_0._shared_state = nil
 end
 
-function GameModeMapDeus.server_update(arg_16_0, arg_16_1, arg_16_2)
+GameModeMapDeus.server_update = function (arg_16_0, arg_16_1, arg_16_2)
 	GameModeMapDeus.super.server_update(arg_16_0, arg_16_1, arg_16_2)
 
 	local var_16_0 = arg_16_0._shared_state:get_server(arg_16_0._shared_state:get_key("state"))
@@ -348,7 +348,7 @@ function GameModeMapDeus.server_update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function GameModeMapDeus._are_all_peers_in_same_state(arg_17_0)
+GameModeMapDeus._are_all_peers_in_same_state = function (arg_17_0)
 	local var_17_0 = arg_17_0._shared_state:get_server(arg_17_0._shared_state:get_key("state"))
 
 	for iter_17_0, iter_17_1 in ipairs(arg_17_0._deus_run_controller:get_peers()) do
@@ -360,7 +360,7 @@ function GameModeMapDeus._are_all_peers_in_same_state(arg_17_0)
 	return true
 end
 
-function GameModeMapDeus.player_entered_game_session(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+GameModeMapDeus.player_entered_game_session = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	GameModeMapDeus.super.player_entered_game_session(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 
 	if Managers.party:get_player_status(arg_18_1, arg_18_2).party_id ~= 1 then
@@ -372,7 +372,7 @@ function GameModeMapDeus.player_entered_game_session(arg_18_0, arg_18_1, arg_18_
 	arg_18_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_18_1, arg_18_2)
 end
 
-function GameModeMapDeus.evaluate_end_conditions(arg_19_0, arg_19_1)
+GameModeMapDeus.evaluate_end_conditions = function (arg_19_0, arg_19_1)
 	if var_0_2 then
 		var_0_2 = false
 

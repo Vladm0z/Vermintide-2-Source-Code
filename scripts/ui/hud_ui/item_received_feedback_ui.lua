@@ -6,17 +6,17 @@ local var_0_0 = local_require("scripts/ui/hud_ui/item_received_feedback_ui_defin
 local var_0_1 = var_0_0.MAX_NUMBER_OF_MESSAGES
 local var_0_2 = {
 	give_item = {
-		text_function = function(arg_1_0, arg_1_1, arg_1_2)
+		text_function = function (arg_1_0, arg_1_1, arg_1_2)
 			if arg_1_0 > 1 then
 				return string.format(Localize("positive_reinforcement_player_gave_item_player_multiple"), arg_1_1, arg_1_2, arg_1_0)
 			else
 				return string.format(Localize("positive_reinforcement_player_gave_item_player"), arg_1_1, arg_1_2)
 			end
 		end,
-		sound_function = function()
+		sound_function = function ()
 			return script_data.reinforcement_ui_local_sound or "hud_achievement_unlock_02" or script_data.enable_reinforcement_ui_remote_sound and "hud_info"
 		end,
-		icon_function = function(arg_3_0, arg_3_1)
+		icon_function = function (arg_3_0, arg_3_1)
 			return arg_3_0, arg_3_1
 		end
 	}
@@ -42,7 +42,7 @@ local var_0_4 = {
 
 ItemReceivedFeedbackUI = class(ItemReceivedFeedbackUI)
 
-function ItemReceivedFeedbackUI.init(arg_4_0, arg_4_1, arg_4_2)
+ItemReceivedFeedbackUI.init = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._parent = arg_4_1
 	arg_4_0.ui_renderer = arg_4_2.ui_renderer
 	arg_4_0.input_manager = arg_4_2.input_manager
@@ -63,12 +63,12 @@ function ItemReceivedFeedbackUI.init(arg_4_0, arg_4_1, arg_4_2)
 	Managers.state.event:register(arg_4_0, "give_item_feedback", "event_give_item_feedback")
 end
 
-function ItemReceivedFeedbackUI.destroy(arg_5_0)
+ItemReceivedFeedbackUI.destroy = function (arg_5_0)
 	GarbageLeakDetector.register_object(arg_5_0, "item_received_feedback_ui")
 	Managers.state.event:unregister("give_item_feedback", arg_5_0)
 end
 
-function ItemReceivedFeedbackUI.create_ui_elements(arg_6_0)
+ItemReceivedFeedbackUI.create_ui_elements = function (arg_6_0)
 	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
 
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -84,7 +84,7 @@ function ItemReceivedFeedbackUI.create_ui_elements(arg_6_0)
 	end
 end
 
-function ItemReceivedFeedbackUI.remove_event(arg_7_0, arg_7_1)
+ItemReceivedFeedbackUI.remove_event = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._received_events
 	local var_7_1 = table.remove(var_7_0, arg_7_1).widget
 	local var_7_2 = arg_7_0._unused_widgets
@@ -92,7 +92,7 @@ function ItemReceivedFeedbackUI.remove_event(arg_7_0, arg_7_1)
 	var_7_2[#var_7_2 + 1] = var_7_1
 end
 
-function ItemReceivedFeedbackUI.add_event(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ...)
+ItemReceivedFeedbackUI.add_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, ...)
 	if not script_data.disable_reinforcement_ui then
 		local var_8_0 = arg_8_0._received_events
 		local var_8_1 = arg_8_1 .. arg_8_3
@@ -156,7 +156,7 @@ local var_0_5 = {
 	112
 }
 
-function ItemReceivedFeedbackUI._assign_portrait_texture(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ItemReceivedFeedbackUI._assign_portrait_texture = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_1.content[arg_9_2].texture_id = arg_9_3
 
 	local var_9_0 = table.clone(var_0_5)
@@ -177,7 +177,7 @@ function ItemReceivedFeedbackUI._assign_portrait_texture(arg_9_0, arg_9_1, arg_9
 	var_9_2.size = var_9_0
 end
 
-function ItemReceivedFeedbackUI.event_give_item_feedback(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ItemReceivedFeedbackUI.event_give_item_feedback = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if not arg_10_2 or not arg_10_2:name() then
 		local var_10_0
 	end
@@ -194,7 +194,7 @@ function ItemReceivedFeedbackUI.event_give_item_feedback(arg_10_0, arg_10_1, arg
 	arg_10_0:add_event(arg_10_1, var_0_3.default, "give_item", var_10_5, var_10_8)
 end
 
-function ItemReceivedFeedbackUI._get_hero_portrait(arg_11_0, arg_11_1, arg_11_2)
+ItemReceivedFeedbackUI._get_hero_portrait = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = RESOLUTION_LOOKUP.scale
 	local var_11_1 = SPProfiles[arg_11_1]
 	local var_11_2 = var_11_1.careers[arg_11_2]
@@ -211,7 +211,7 @@ local var_0_6 = {
 	drag_scenegraph_id = "message_animated_dragger"
 }
 
-function ItemReceivedFeedbackUI.update(arg_12_0, arg_12_1, arg_12_2)
+ItemReceivedFeedbackUI.update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.input_manager:get_service("Player")

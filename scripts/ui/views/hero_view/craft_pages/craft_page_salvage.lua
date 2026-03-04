@@ -12,7 +12,7 @@ local var_0_5 = false
 CraftPageSalvage = class(CraftPageSalvage)
 CraftPageSalvage.NAME = "CraftPageSalvage"
 
-function CraftPageSalvage.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageSalvage.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageSalvage")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -56,7 +56,7 @@ function CraftPageSalvage.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.super_parent:clear_disabled_backend_ids()
 end
 
-function CraftPageSalvage.create_ui_elements(arg_2_0, arg_2_1)
+CraftPageSalvage.create_ui_elements = function (arg_2_0, arg_2_1)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_2_0 = {}
@@ -80,7 +80,7 @@ function CraftPageSalvage.create_ui_elements(arg_2_0, arg_2_1)
 	arg_2_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageSalvage.on_exit(arg_3_0, arg_3_1)
+CraftPageSalvage.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageSalvage")
 
 	arg_3_0.ui_animator = nil
@@ -90,7 +90,7 @@ function CraftPageSalvage.on_exit(arg_3_0, arg_3_1)
 	end
 end
 
-function CraftPageSalvage.update(arg_4_0, arg_4_1, arg_4_2)
+CraftPageSalvage.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -103,11 +103,11 @@ function CraftPageSalvage.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function CraftPageSalvage.post_update(arg_5_0, arg_5_1, arg_5_2)
+CraftPageSalvage.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function CraftPageSalvage._update_animations(arg_6_0, arg_6_1)
+CraftPageSalvage._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -131,7 +131,7 @@ function CraftPageSalvage._update_animations(arg_6_0, arg_6_1)
 	UIWidgetUtils.animate_icon_button(var_6_2.auto_fill_clear, arg_6_1)
 end
 
-function CraftPageSalvage._is_button_pressed(arg_7_0, arg_7_1)
+CraftPageSalvage._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -141,13 +141,13 @@ function CraftPageSalvage._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function CraftPageSalvage._is_button_hovered(arg_8_0, arg_8_1)
+CraftPageSalvage._is_button_hovered = function (arg_8_0, arg_8_1)
 	if arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageSalvage._is_button_held(arg_9_0, arg_9_1)
+CraftPageSalvage._is_button_held = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.is_clicked then
@@ -155,7 +155,7 @@ function CraftPageSalvage._is_button_held(arg_9_0, arg_9_1)
 	end
 end
 
-function CraftPageSalvage._handle_input(arg_10_0, arg_10_1, arg_10_2)
+CraftPageSalvage._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.parent
 
 	if var_10_0:waiting_for_craft() or arg_10_0._craft_result then
@@ -234,7 +234,7 @@ function CraftPageSalvage._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function CraftPageSalvage._fill_by_rarity(arg_11_0, arg_11_1)
+CraftPageSalvage._fill_by_rarity = function (arg_11_0, arg_11_1)
 	if not arg_11_0.parent:get_active_recipe() then
 		return
 	end
@@ -263,7 +263,7 @@ function CraftPageSalvage._fill_by_rarity(arg_11_0, arg_11_1)
 	end
 end
 
-function CraftPageSalvage._handle_craft_input_progress(arg_12_0, arg_12_1)
+CraftPageSalvage._handle_craft_input_progress = function (arg_12_0, arg_12_1)
 	local var_12_0
 
 	var_12_0 = arg_12_1 ~= 0
@@ -277,13 +277,13 @@ function CraftPageSalvage._handle_craft_input_progress(arg_12_0, arg_12_1)
 	end
 end
 
-function CraftPageSalvage.craft_result(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+CraftPageSalvage.craft_result = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not arg_13_2 then
 		arg_13_0._craft_result = arg_13_1
 	end
 end
 
-function CraftPageSalvage.clear_craft_items(arg_14_0)
+CraftPageSalvage.clear_craft_items = function (arg_14_0)
 	local var_14_0 = false
 
 	for iter_14_0, iter_14_1 in pairs(arg_14_0._craft_items) do
@@ -297,14 +297,14 @@ function CraftPageSalvage.clear_craft_items(arg_14_0)
 	arg_14_0:reset()
 end
 
-function CraftPageSalvage.reset(arg_15_0)
+CraftPageSalvage.reset = function (arg_15_0)
 	local var_15_0 = arg_15_0._item_grid
 
 	var_15_0:clear_locked_items()
 	var_15_0:update_items_status()
 end
 
-function CraftPageSalvage.on_craft_completed(arg_16_0)
+CraftPageSalvage.on_craft_completed = function (arg_16_0)
 	local var_16_0 = arg_16_0._craft_result
 	local var_16_1 = arg_16_0._item_grid
 
@@ -352,7 +352,7 @@ function CraftPageSalvage.on_craft_completed(arg_16_0)
 	arg_16_0._craft_result = nil
 end
 
-function CraftPageSalvage._update_craft_items(arg_17_0)
+CraftPageSalvage._update_craft_items = function (arg_17_0)
 	local var_17_0 = arg_17_0.super_parent
 	local var_17_1 = arg_17_0._item_grid
 	local var_17_2 = var_17_1:is_dragging_item() or var_17_1:is_item_dragged() ~= nil
@@ -381,7 +381,7 @@ function CraftPageSalvage._update_craft_items(arg_17_0)
 	end
 end
 
-function CraftPageSalvage._remove_craft_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CraftPageSalvage._remove_craft_item = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_0._craft_items
 
 	if arg_18_2 then
@@ -419,7 +419,7 @@ function CraftPageSalvage._remove_craft_item(arg_18_0, arg_18_1, arg_18_2, arg_1
 	return false
 end
 
-function CraftPageSalvage._add_craft_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+CraftPageSalvage._add_craft_item = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	if arg_19_0._num_craft_items == 0 then
 		arg_19_0._item_grid:clear_item_grid()
 		table.clear(arg_19_0._craft_items)
@@ -462,16 +462,16 @@ function CraftPageSalvage._add_craft_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3
 	return false
 end
 
-function CraftPageSalvage._set_craft_button_disabled(arg_20_0, arg_20_1)
+CraftPageSalvage._set_craft_button_disabled = function (arg_20_0, arg_20_1)
 	arg_20_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_20_1
 end
 
-function CraftPageSalvage._exit(arg_21_0, arg_21_1)
+CraftPageSalvage._exit = function (arg_21_0, arg_21_1)
 	arg_21_0.exit = true
 	arg_21_0.exit_level_id = arg_21_1
 end
 
-function CraftPageSalvage.draw(arg_22_0, arg_22_1)
+CraftPageSalvage.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_top_renderer
 	local var_22_2 = arg_22_0.ui_scenegraph
@@ -486,10 +486,10 @@ function CraftPageSalvage.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_1)
 end
 
-function CraftPageSalvage._play_sound(arg_23_0, arg_23_1)
+CraftPageSalvage._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.super_parent:play_sound(arg_23_1)
 end
 
-function CraftPageSalvage._set_craft_button_text(arg_24_0, arg_24_1, arg_24_2)
+CraftPageSalvage._set_craft_button_text = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._widgets_by_name.craft_button.content.button_text = arg_24_2 and Localize(arg_24_1) or arg_24_1
 end

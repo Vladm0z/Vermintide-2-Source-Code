@@ -3,27 +3,27 @@
 MatchmakingStateWaitForCountdown = class(MatchmakingStateWaitForCountdown)
 MatchmakingStateWaitForCountdown.NAME = "MatchmakingStateWaitForCountdown"
 
-function MatchmakingStateWaitForCountdown.init(arg_1_0, arg_1_1)
+MatchmakingStateWaitForCountdown.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 end
 
-function MatchmakingStateWaitForCountdown.destroy(arg_2_0)
+MatchmakingStateWaitForCountdown.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateWaitForCountdown.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateWaitForCountdown.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0._state_context = arg_3_1
 	arg_3_0._search_config = arg_3_1.search_config
 	arg_3_0._wait_to_start_game = arg_3_0._search_config.wait_to_start_game
 end
 
-function MatchmakingStateWaitForCountdown.on_exit(arg_4_0)
+MatchmakingStateWaitForCountdown.on_exit = function (arg_4_0)
 	if not arg_4_0._wait_to_start_game then
 		Managers.matchmaking:activate_waystone_portal(nil)
 	end
 end
 
-function MatchmakingStateWaitForCountdown.update(arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStateWaitForCountdown.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not DEDICATED_SERVER then
 		arg_5_0:_capture_telemetry()
 	end
@@ -49,7 +49,7 @@ function MatchmakingStateWaitForCountdown.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end
 
-function MatchmakingStateWaitForCountdown._capture_telemetry(arg_6_0)
+MatchmakingStateWaitForCountdown._capture_telemetry = function (arg_6_0)
 	local var_6_0 = arg_6_0._lobby:members():get_members_joined()
 
 	if #var_6_0 > 0 then

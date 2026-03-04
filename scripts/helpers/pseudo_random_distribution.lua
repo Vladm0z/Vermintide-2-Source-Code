@@ -4,7 +4,7 @@ PseudoRandomDistribution = PseudoRandomDistribution or {}
 
 local var_0_0
 
-function PseudoRandomDistribution.flip_coin(arg_1_0, arg_1_1)
+PseudoRandomDistribution.flip_coin = function (arg_1_0, arg_1_1)
 	if arg_1_1 > 0.99 then
 		return true, arg_1_0
 	elseif arg_1_1 < 0.01 then

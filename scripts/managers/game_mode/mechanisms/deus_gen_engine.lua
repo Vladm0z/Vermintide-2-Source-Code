@@ -44,10 +44,10 @@ local function var_0_2(arg_3_0, arg_3_1)
 end
 
 DeusGenEngine = {
-	get_generator = function(arg_4_0, arg_4_1)
+	get_generator = function (arg_4_0, arg_4_1)
 		local var_4_0 = false
 
-		return function()
+		return function ()
 			if #arg_4_0 > 0 then
 				local var_5_0 = arg_4_0[#arg_4_0]
 

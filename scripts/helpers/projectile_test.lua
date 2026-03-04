@@ -5,7 +5,7 @@ ProjectileTest = ProjectileTest or {}
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = {}
 
-function ProjectileTest.add_simulated_projectile(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+ProjectileTest.add_simulated_projectile = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	local var_1_0
 	local var_1_1
 	local var_1_2
@@ -57,7 +57,7 @@ function ProjectileTest.add_simulated_projectile(arg_1_0, arg_1_1, arg_1_2, arg_
 	end
 end
 
-function ProjectileTest.simulate_projectiles(arg_2_0, arg_2_1)
+ProjectileTest.simulate_projectiles = function (arg_2_0, arg_2_1)
 	Debug.text("PROJECTILES:%d", #var_0_1)
 
 	local var_2_0 = false
@@ -105,7 +105,7 @@ end
 
 local var_0_2 = 0
 
-function ProjectileTest.run_projectile_test(arg_3_0, arg_3_1, arg_3_2)
+ProjectileTest.run_projectile_test = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = 9.82
 	local var_3_1 = World.get_data(arg_3_0, "physics_world")
 	local var_3_2 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS[1]
@@ -142,7 +142,7 @@ function ProjectileTest.run_projectile_test(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function ProjectileTest.trajectory_test(arg_4_0, arg_4_1)
+ProjectileTest.trajectory_test = function (arg_4_0, arg_4_1)
 	for iter_4_0 = 20, 35 do
 		local var_4_0 = Vector3(0, 0, 0)
 		local var_4_1 = Vector3(iter_4_0, 0, 0) - var_4_0
@@ -155,7 +155,7 @@ function ProjectileTest.trajectory_test(arg_4_0, arg_4_1)
 	end
 end
 
-function ProjectileTest.draw_projectile_trajectory(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+ProjectileTest.draw_projectile_trajectory = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = 0.016666666666666666
 	local var_5_1 = arg_5_1 - arg_5_0
 	local var_5_2

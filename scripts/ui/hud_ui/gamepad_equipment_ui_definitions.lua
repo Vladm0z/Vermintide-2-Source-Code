@@ -306,7 +306,7 @@ local function var_0_6(arg_1_0)
 					style_id = "melee_weapon_texture",
 					texture_id = "melee_weapon_texture_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						return arg_2_0.wielded_slot == "melee"
 					end
 				},
@@ -315,7 +315,7 @@ local function var_0_6(arg_1_0)
 					style_id = "melee_weapon_texture_glow",
 					texture_id = "melee_weapon_texture_glow_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return arg_3_0.wielded_slot == "melee"
 					end
 				},
@@ -324,7 +324,7 @@ local function var_0_6(arg_1_0)
 					style_id = "deselected_weapon",
 					texture_id = "deselected_weapon_texture_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return arg_4_0.wielded_slot ~= "melee" and arg_4_0.wielded_slot ~= "ranged"
 					end
 				},
@@ -333,7 +333,7 @@ local function var_0_6(arg_1_0)
 					style_id = "ranged_weapon_texture",
 					texture_id = "ranged_weapon_texture_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return arg_5_0.wielded_slot == "ranged"
 					end
 				},
@@ -342,7 +342,7 @@ local function var_0_6(arg_1_0)
 					style_id = "ranged_weapon_texture_glow",
 					texture_id = "ranged_weapon_texture_glow_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return arg_6_0.wielded_slot == "ranged"
 					end
 				},
@@ -357,7 +357,7 @@ local function var_0_6(arg_1_0)
 					style_id = "wield_switch",
 					texture_id = "wield_switch_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return arg_7_0.wield_switch_id
 					end
 				},
@@ -366,7 +366,7 @@ local function var_0_6(arg_1_0)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						arg_8_0.gamepad_active = Managers.input:is_device_active("gamepad")
 
 						return not arg_8_0.gamepad_active
@@ -377,7 +377,7 @@ local function var_0_6(arg_1_0)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return not arg_9_0.gamepad_active
 					end
 				}
@@ -669,7 +669,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0, arg_11_1)
+					content_check_function = function (arg_11_0, arg_11_1)
 						return not Managers.input:is_device_active("gamepad") and arg_11_0.is_filled
 					end
 				},
@@ -678,7 +678,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0, arg_12_1)
+					content_check_function = function (arg_12_0, arg_12_1)
 						return not Managers.input:is_device_active("gamepad") and arg_12_0.is_filled
 					end
 				},
@@ -693,7 +693,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "secondary_texture_icon",
 					texture_id = "secondary_texture_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0, arg_13_1)
+					content_check_function = function (arg_13_0, arg_13_1)
 						return arg_13_0.secondary_texture_icon
 					end
 				},
@@ -702,7 +702,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "secondary_texture_icon_glow",
 					texture_id = "secondary_texture_icon_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0, arg_14_1)
+					content_check_function = function (arg_14_0, arg_14_1)
 						return arg_14_0.secondary_texture_icon
 					end
 				},
@@ -717,7 +717,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_up_arrow",
 					texture_id = "texture_selected_up_arrow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0, arg_15_1)
+					content_check_function = function (arg_15_0, arg_15_1)
 						return arg_15_0.texture_arrow_up_enabled and arg_15_0.is_filled
 					end
 				},
@@ -726,7 +726,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_left_arrow",
 					texture_id = "texture_selected_left_arrow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_16_0, arg_16_1)
+					content_check_function = function (arg_16_0, arg_16_1)
 						return arg_16_0.texture_arrow_left_enabled and arg_16_0.is_filled
 					end
 				},
@@ -735,7 +735,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_right_arrow",
 					texture_id = "texture_selected_right_arrow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return arg_17_0.texture_arrow_right_enabled and arg_17_0.is_filled
 					end
 				},
@@ -744,7 +744,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_up_arrow_glow",
 					texture_id = "texture_selected_up_arrow_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_18_0, arg_18_1)
+					content_check_function = function (arg_18_0, arg_18_1)
 						return arg_18_0.texture_arrow_up_enabled and arg_18_0.selected
 					end
 				},
@@ -753,7 +753,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_left_arrow_glow",
 					texture_id = "texture_selected_left_arrow_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_19_0, arg_19_1)
+					content_check_function = function (arg_19_0, arg_19_1)
 						return arg_19_0.texture_arrow_left_enabled and arg_19_0.selected
 					end
 				},
@@ -762,7 +762,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					style_id = "texture_selected_right_arrow_glow",
 					texture_id = "texture_selected_right_arrow_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_20_0, arg_20_1)
+					content_check_function = function (arg_20_0, arg_20_1)
 						return arg_20_0.texture_arrow_right_enabled and arg_20_0.selected
 					end
 				},
@@ -771,7 +771,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "use_count_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_21_0, arg_21_1)
+					content_check_function = function (arg_21_0, arg_21_1)
 						return arg_21_0.is_filled and arg_21_0.has_additional_slots
 					end
 				},
@@ -780,7 +780,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "use_count_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_22_0, arg_22_1)
+					content_check_function = function (arg_22_0, arg_22_1)
 						return arg_22_0.is_filled and arg_22_0.has_additional_slots
 					end
 				},
@@ -789,7 +789,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "can_swap_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_23_0, arg_23_1)
+					content_check_function = function (arg_23_0, arg_23_1)
 						return arg_23_0.is_filled and arg_23_0.can_swap
 					end
 				},
@@ -798,7 +798,7 @@ local function var_0_7(arg_10_0, arg_10_1)
 					pass_type = "text",
 					text_id = "can_swap_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_24_0, arg_24_1)
+					content_check_function = function (arg_24_0, arg_24_1)
 						return arg_24_0.is_filled and arg_24_0.can_swap
 					end
 				}
@@ -1448,7 +1448,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "minigun",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_27_0, arg_27_1)
+					content_check_function = function (arg_27_0, arg_27_1)
 						arg_27_0.using_career_skill_weapon = false
 						arg_27_0.visible = false
 
@@ -1489,7 +1489,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload_button",
 					texture_id = "reload_button_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_28_0, arg_28_1)
+					content_check_function = function (arg_28_0, arg_28_1)
 						return arg_28_0.on_cooldown and arg_28_0.reload_button_id and arg_28_0.using_career_skill_weapon and arg_28_0.using_gamepad
 					end
 				},
@@ -1497,7 +1497,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
-					content_check_function = function(arg_29_0, arg_29_1)
+					content_check_function = function (arg_29_0, arg_29_1)
 						return not arg_29_0.on_cooldown and arg_29_0.using_career_skill_weapon and arg_29_0.visible
 					end
 				},
@@ -1506,7 +1506,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload_icon_frame",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_30_0, arg_30_1)
+					content_check_function = function (arg_30_0, arg_30_1)
 						return not arg_30_0.on_cooldown and arg_30_0.using_career_skill_weapon and arg_30_0.visible
 					end
 				},
@@ -1515,7 +1515,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					style_id = "reload",
 					pass_type = "texture",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_31_0, arg_31_1)
+					content_check_function = function (arg_31_0, arg_31_1)
 						return arg_31_0.using_career_skill_weapon and arg_31_0.visible
 					end
 				},
@@ -1524,10 +1524,10 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_icon_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_32_0, arg_32_1)
+					content_check_function = function (arg_32_0, arg_32_1)
 						return arg_32_0.using_career_skill_weapon and arg_32_0.visible and arg_32_0.is_reloading
 					end,
-					content_change_function = function(arg_33_0, arg_33_1)
+					content_change_function = function (arg_33_0, arg_33_1)
 						arg_33_1.color[1] = 160 + -math.cos(arg_33_0.time * 2 * math.pi) * 95
 					end
 				},
@@ -1536,10 +1536,10 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_mask_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_34_0, arg_34_1)
+					content_check_function = function (arg_34_0, arg_34_1)
 						return arg_34_0.visible and arg_34_0.is_reloading
 					end,
-					content_change_function = function(arg_35_0, arg_35_1)
+					content_change_function = function (arg_35_0, arg_35_1)
 						arg_35_0.reload_mask_id = arg_35_0.using_career_skill_weapon and "reload_icon_mask" or "minigun_icon_mask"
 					end
 				},
@@ -1548,10 +1548,10 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "texture",
 					texture_id = "reload_overlay_id",
 					retained_mode = arg_26_2,
-					content_check_function = function(arg_36_0, arg_36_1)
+					content_check_function = function (arg_36_0, arg_36_1)
 						return arg_36_0.visible and arg_36_0.is_reloading
 					end,
-					content_change_function = function(arg_37_0, arg_37_1)
+					content_change_function = function (arg_37_0, arg_37_1)
 						local var_37_0 = arg_37_0.time % 1
 
 						arg_37_1.offset[2] = math.lerp(-137, 137, var_37_0)
@@ -1562,10 +1562,10 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						return arg_38_0.on_cooldown and arg_38_0.visible and not arg_38_0.using_gamepad and arg_38_0.using_career_skill_weapon
 					end,
-					content_change_function = function(arg_39_0, arg_39_1)
+					content_change_function = function (arg_39_0, arg_39_1)
 						local var_39_0 = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
 
 						if not var_39_0 then
@@ -1593,7 +1593,7 @@ local function var_0_12(arg_26_0, arg_26_1, arg_26_2)
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_40_0)
+					content_check_function = function (arg_40_0)
 						return arg_40_0.on_cooldown and arg_40_0.visible and not arg_40_0.using_gamepad and arg_40_0.using_career_skill_weapon
 					end
 				}
@@ -1983,15 +1983,15 @@ animations_definitions = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				arg_41_2.content.visible = true
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				local var_42_0 = 255 * math.easeOutCubic(arg_42_3)
 
 				arg_42_2.style.text.text_color[1] = var_42_0
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end
 		},
@@ -1999,15 +1999,15 @@ animations_definitions = {
 			name = "fade_out",
 			start_progress = 2.3,
 			end_progress = 2.6,
-			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 				local var_45_0 = 255 * (1 - math.easeOutCubic(arg_45_3))
 
 				arg_45_2.style.text.text_color[1] = var_45_0
 			end,
-			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				arg_46_2.content.visible = false
 			end
 		}

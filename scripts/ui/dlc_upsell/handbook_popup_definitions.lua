@@ -378,7 +378,7 @@ local var_0_13 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+					scroll_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 						local var_1_0 = arg_1_4.y * -1
 
 						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not arg_1_2.is_gamepad_active then
@@ -427,13 +427,13 @@ local var_0_14 = {
 		{
 			name = "fade_in",
 			duration = 0.6,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				arg_3_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_3_3)
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end
 		}
@@ -442,13 +442,13 @@ local var_0_14 = {
 		{
 			name = "fade_out",
 			duration = 0.1,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				arg_6_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_6_3)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		}

@@ -14,7 +14,7 @@ local var_0_9 = 1
 CraftPageCraftItem = class(CraftPageCraftItem)
 CraftPageCraftItem.NAME = "CraftPageCraftItem"
 
-function CraftPageCraftItem.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageCraftItem.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageCraftItem")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -58,7 +58,7 @@ function CraftPageCraftItem.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:setup_recipe_requirements()
 end
 
-function CraftPageCraftItem.setup_recipe_requirements(arg_2_0)
+CraftPageCraftItem.setup_recipe_requirements = function (arg_2_0)
 	local var_2_0 = arg_2_0.settings.name
 	local var_2_1 = arg_2_0._craft_items[1]
 	local var_2_2 = Managers.backend:get_interface("items")
@@ -141,7 +141,7 @@ function CraftPageCraftItem.setup_recipe_requirements(arg_2_0)
 	arg_2_0:_set_craft_button_disabled(not arg_2_0._has_all_requirements)
 end
 
-function CraftPageCraftItem.create_recipe_grid_by_amount(arg_3_0, arg_3_1)
+CraftPageCraftItem.create_recipe_grid_by_amount = function (arg_3_0, arg_3_1)
 	if arg_3_0._recipe_grid then
 		arg_3_0._recipe_grid:destroy()
 
@@ -165,7 +165,7 @@ function CraftPageCraftItem.create_recipe_grid_by_amount(arg_3_0, arg_3_1)
 	arg_3_0._recipe_grid:disable_item_drag()
 end
 
-function CraftPageCraftItem.create_ui_elements(arg_4_0, arg_4_1)
+CraftPageCraftItem.create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_4_0 = {}
@@ -188,7 +188,7 @@ function CraftPageCraftItem.create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageCraftItem.on_exit(arg_5_0, arg_5_1)
+CraftPageCraftItem.on_exit = function (arg_5_0, arg_5_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageCraftItem")
 
 	arg_5_0.ui_animator = nil
@@ -198,7 +198,7 @@ function CraftPageCraftItem.on_exit(arg_5_0, arg_5_1)
 	end
 end
 
-function CraftPageCraftItem.update(arg_6_0, arg_6_1, arg_6_2)
+CraftPageCraftItem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -211,11 +211,11 @@ function CraftPageCraftItem.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function CraftPageCraftItem.post_update(arg_7_0, arg_7_1, arg_7_2)
+CraftPageCraftItem.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function CraftPageCraftItem._update_animations(arg_8_0, arg_8_1)
+CraftPageCraftItem._update_animations = function (arg_8_0, arg_8_1)
 	arg_8_0.ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -234,7 +234,7 @@ function CraftPageCraftItem._update_animations(arg_8_0, arg_8_1)
 	UIWidgetUtils.animate_default_button(var_8_2.craft_button, arg_8_1)
 end
 
-function CraftPageCraftItem._is_button_pressed(arg_9_0, arg_9_1)
+CraftPageCraftItem._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -244,13 +244,13 @@ function CraftPageCraftItem._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function CraftPageCraftItem._is_button_hovered(arg_10_0, arg_10_1)
+CraftPageCraftItem._is_button_hovered = function (arg_10_0, arg_10_1)
 	if arg_10_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageCraftItem._is_button_held(arg_11_0, arg_11_1)
+CraftPageCraftItem._is_button_held = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.is_clicked then
@@ -258,7 +258,7 @@ function CraftPageCraftItem._is_button_held(arg_11_0, arg_11_1)
 	end
 end
 
-function CraftPageCraftItem._handle_input(arg_12_0, arg_12_1, arg_12_2)
+CraftPageCraftItem._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 
 	if var_12_0:waiting_for_craft() or arg_12_0._craft_result then
@@ -325,7 +325,7 @@ function CraftPageCraftItem._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function CraftPageCraftItem._handle_craft_input_progress(arg_13_0, arg_13_1)
+CraftPageCraftItem._handle_craft_input_progress = function (arg_13_0, arg_13_1)
 	local var_13_0
 
 	var_13_0 = arg_13_1 ~= 0
@@ -339,13 +339,13 @@ function CraftPageCraftItem._handle_craft_input_progress(arg_13_0, arg_13_1)
 	end
 end
 
-function CraftPageCraftItem.craft_result(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+CraftPageCraftItem.craft_result = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not arg_14_2 then
 		arg_14_0._craft_result = arg_14_1
 	end
 end
 
-function CraftPageCraftItem.reset(arg_15_0)
+CraftPageCraftItem.reset = function (arg_15_0)
 	local var_15_0 = arg_15_0._item_grid
 
 	var_15_0:clear_locked_items()
@@ -353,7 +353,7 @@ function CraftPageCraftItem.reset(arg_15_0)
 	arg_15_0:_set_craft_button_disabled(not arg_15_0._has_all_requirements)
 end
 
-function CraftPageCraftItem.on_craft_completed(arg_16_0)
+CraftPageCraftItem.on_craft_completed = function (arg_16_0)
 	local var_16_0 = arg_16_0._craft_result
 	local var_16_1 = arg_16_0._item_grid
 
@@ -399,7 +399,7 @@ function CraftPageCraftItem.on_craft_completed(arg_16_0)
 	arg_16_0:setup_recipe_requirements()
 end
 
-function CraftPageCraftItem._update_craft_items(arg_17_0)
+CraftPageCraftItem._update_craft_items = function (arg_17_0)
 	local var_17_0 = arg_17_0.super_parent
 	local var_17_1 = arg_17_0._item_grid
 	local var_17_2 = var_17_1:is_dragging_item() or var_17_1:is_item_dragged() ~= nil
@@ -429,7 +429,7 @@ function CraftPageCraftItem._update_craft_items(arg_17_0)
 	end
 end
 
-function CraftPageCraftItem._remove_craft_item(arg_18_0, arg_18_1, arg_18_2)
+CraftPageCraftItem._remove_craft_item = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._craft_items
 
 	if arg_18_2 then
@@ -460,7 +460,7 @@ function CraftPageCraftItem._remove_craft_item(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function CraftPageCraftItem._add_craft_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+CraftPageCraftItem._add_craft_item = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if arg_19_0._num_craft_items == 0 then
 		arg_19_0._item_grid:clear_item_grid()
 		table.clear(arg_19_0._craft_items)
@@ -499,16 +499,16 @@ function CraftPageCraftItem._add_craft_item(arg_19_0, arg_19_1, arg_19_2, arg_19
 	arg_19_0:setup_recipe_requirements()
 end
 
-function CraftPageCraftItem._set_craft_button_disabled(arg_20_0, arg_20_1)
+CraftPageCraftItem._set_craft_button_disabled = function (arg_20_0, arg_20_1)
 	arg_20_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_20_1
 end
 
-function CraftPageCraftItem._exit(arg_21_0, arg_21_1)
+CraftPageCraftItem._exit = function (arg_21_0, arg_21_1)
 	arg_21_0.exit = true
 	arg_21_0.exit_level_id = arg_21_1
 end
 
-function CraftPageCraftItem.draw(arg_22_0, arg_22_1)
+CraftPageCraftItem.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_top_renderer
 	local var_22_2 = arg_22_0.ui_scenegraph
@@ -523,10 +523,10 @@ function CraftPageCraftItem.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_1)
 end
 
-function CraftPageCraftItem._play_sound(arg_23_0, arg_23_1)
+CraftPageCraftItem._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.super_parent:play_sound(arg_23_1)
 end
 
-function CraftPageCraftItem._set_craft_button_text(arg_24_0, arg_24_1, arg_24_2)
+CraftPageCraftItem._set_craft_button_text = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._widgets_by_name.craft_button.content.button_text = arg_24_2 and Localize(arg_24_1) or arg_24_1
 end

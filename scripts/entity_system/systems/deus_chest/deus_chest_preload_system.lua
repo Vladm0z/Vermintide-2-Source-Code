@@ -78,7 +78,7 @@ local var_0_6 = 50
 local var_0_7 = 5
 local var_0_8 = {}
 
-function DeusChestPreloadSystem.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DeusChestPreloadSystem.init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	DeusChestPreloadSystem.super.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 
 	arg_4_0._deus_chest_to_extension = {}
@@ -101,7 +101,7 @@ function DeusChestPreloadSystem.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0:_setup_weapon_preload_settings()
 end
 
-function DeusChestPreloadSystem._setup_weapon_preload_settings(arg_5_0)
+DeusChestPreloadSystem._setup_weapon_preload_settings = function (arg_5_0)
 	local var_5_0 = false
 	local var_5_1
 	local var_5_2 = Managers.backend:get_deus_weapon_preload_settings()
@@ -183,7 +183,7 @@ function DeusChestPreloadSystem._setup_weapon_preload_settings(arg_5_0)
 	fassert(arg_5_0._deus_chest_update_frequency, "[DeusChestPreloadSystem] Missing weapon preload settings for chest_update_frequency")
 end
 
-function DeusChestPreloadSystem.destroy(arg_6_0)
+DeusChestPreloadSystem.destroy = function (arg_6_0)
 	arg_6_0._shared_state:unregister_rpcs()
 
 	local var_6_0 = arg_6_0._loaded_or_loading_packages
@@ -198,7 +198,7 @@ local var_0_9 = {}
 local var_0_10 = {}
 local var_0_11 = {}
 
-function DeusChestPreloadSystem.update(arg_7_0, arg_7_1, arg_7_2)
+DeusChestPreloadSystem.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._deus_chest_preload_amount == 0 then
 		return
 	end
@@ -294,7 +294,7 @@ function DeusChestPreloadSystem.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._timer = arg_7_2 + arg_7_0._deus_chest_update_frequency
 end
 
-function DeusChestPreloadSystem.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, ...)
+DeusChestPreloadSystem.on_add_extension = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, ...)
 	local var_8_0 = DeusChestPreloadSystem.super.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_1 = POSITION_LOOKUP[arg_8_2]
 	local var_8_2 = Broadphase.add(arg_8_0._broadphase, arg_8_2, var_8_1, 0.1)
@@ -305,7 +305,7 @@ function DeusChestPreloadSystem.on_add_extension(arg_8_0, arg_8_1, arg_8_2, arg_
 	return var_8_0
 end
 
-function DeusChestPreloadSystem.on_remove_extension(arg_9_0, arg_9_1, arg_9_2, ...)
+DeusChestPreloadSystem.on_remove_extension = function (arg_9_0, arg_9_1, arg_9_2, ...)
 	local var_9_0 = arg_9_0._broadphase_ids
 	local var_9_1 = var_9_0[arg_9_1]
 
@@ -317,7 +317,7 @@ function DeusChestPreloadSystem.on_remove_extension(arg_9_0, arg_9_1, arg_9_2, .
 	return DeusChestPreloadSystem.super.on_remove_extension(arg_9_0, arg_9_1, arg_9_2, ...)
 end
 
-function DeusChestPreloadSystem.get_player_preload_packages(arg_10_0, arg_10_1)
+DeusChestPreloadSystem.get_player_preload_packages = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.peer_id
 	local var_10_1 = arg_10_1:local_player_id()
 
@@ -330,7 +330,7 @@ function DeusChestPreloadSystem.get_player_preload_packages(arg_10_0, arg_10_1)
 	end
 end
 
-function DeusChestPreloadSystem.set_player_preload_packages(arg_11_0, arg_11_1, arg_11_2)
+DeusChestPreloadSystem.set_player_preload_packages = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_1.peer_id
 	local var_11_1 = arg_11_1:local_player_id()
 	local var_11_2 = arg_11_0._shared_state:get_key("preload_packages", nil, var_11_1)

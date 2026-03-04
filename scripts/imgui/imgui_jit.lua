@@ -5,7 +5,7 @@ local var_0_1 = string.format
 
 ImguiJIT = class(ImguiJIT)
 
-function ImguiJIT.init(arg_1_0)
+ImguiJIT.init = function (arg_1_0)
 	if not arg_1_0._bytes then
 		arg_1_0._bytes = {
 			n = 240,
@@ -163,7 +163,7 @@ end
 
 local var_0_2 = true
 
-function ImguiJIT.update(arg_2_0)
+ImguiJIT.update = function (arg_2_0)
 	if var_0_2 then
 		var_0_2 = arg_2_0:init()
 	end
@@ -217,7 +217,7 @@ end
 
 local var_0_6 = {}
 
-function ImguiJIT._recursive_header(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ImguiJIT._recursive_header = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	local var_6_0 = (arg_6_6[arg_6_1] - 1) * 10
 
 	Imgui.dummy(var_6_0, 0)
@@ -225,7 +225,7 @@ function ImguiJIT._recursive_header(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4,
 
 	if Imgui.collapsing_header(string.format("%s%s (self: %sb)", string.pad_right(arg_6_3[arg_6_1], arg_6_7 + 4, " ", var_0_6), string.pad_right(string.chunk_from_right(tostring(arg_6_4[arg_6_1]), 3, "'") .. "b", 15, " ", var_0_6), string.chunk_from_right(tostring(arg_6_5[arg_6_1]), 3, "'")), false) then
 		local var_6_1 = arg_6_2[arg_6_1]
-		local var_6_2, var_6_3 = table.max_func(var_6_1, function(arg_7_0)
+		local var_6_2, var_6_3 = table.max_func(var_6_1, function (arg_7_0)
 			return #arg_6_3[arg_7_0]
 		end)
 
@@ -239,7 +239,7 @@ function ImguiJIT._recursive_header(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4,
 	end
 end
 
-function ImguiJIT.draw(arg_8_0)
+ImguiJIT.draw = function (arg_8_0)
 	local var_8_0 = Imgui.begin_window("JIT utilities")
 	local var_8_1 = Imgui.checkbox("JIT enabled", arg_8_0._enabled or false)
 
@@ -420,6 +420,6 @@ function ImguiJIT.draw(arg_8_0)
 	return var_8_0
 end
 
-function ImguiJIT.is_persistent(arg_9_0)
+ImguiJIT.is_persistent = function (arg_9_0)
 	return false
 end

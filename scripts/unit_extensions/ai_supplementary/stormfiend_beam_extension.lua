@@ -9,7 +9,7 @@ local var_0_1 = {
 }
 local var_0_2 = table.mirror_array_inplace(var_0_1)
 
-function StormfiendBeamExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StormfiendBeamExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
@@ -21,13 +21,13 @@ function StormfiendBeamExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.particle_ids = {}
 end
 
-function StormfiendBeamExtension.destroy(arg_2_0)
+StormfiendBeamExtension.destroy = function (arg_2_0)
 	for iter_2_0, iter_2_1 in pairs(var_0_2) do
 		arg_2_0:_remove_beam(iter_2_1)
 	end
 end
 
-function StormfiendBeamExtension._remove_beam(arg_3_0, arg_3_1)
+StormfiendBeamExtension._remove_beam = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.world
 
 	if arg_3_0.particle_ids[arg_3_1] then
@@ -38,7 +38,7 @@ function StormfiendBeamExtension._remove_beam(arg_3_0, arg_3_1)
 	end
 end
 
-function StormfiendBeamExtension.set_beam(arg_4_0, arg_4_1, arg_4_2)
+StormfiendBeamExtension.set_beam = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = var_0_2[arg_4_1]
 
 	if not arg_4_2 and arg_4_0.particle_ids[var_4_0] then
@@ -48,7 +48,7 @@ function StormfiendBeamExtension.set_beam(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function StormfiendBeamExtension._create_beam(arg_5_0, arg_5_1)
+StormfiendBeamExtension._create_beam = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.unit
 
 	if ALIVE[var_5_0] then
@@ -69,7 +69,7 @@ function StormfiendBeamExtension._create_beam(arg_5_0, arg_5_1)
 	end
 end
 
-function StormfiendBeamExtension.get_target_position(arg_6_0, arg_6_1, arg_6_2)
+StormfiendBeamExtension.get_target_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.network:game()
 	local var_6_1 = Managers.state.unit_storage:go_id(arg_6_1)
 	local var_6_2 = GameSession.game_object_field(var_6_0, var_6_1, "aim_target")
@@ -85,7 +85,7 @@ function StormfiendBeamExtension.get_target_position(arg_6_0, arg_6_1, arg_6_2)
 	return false
 end
 
-function StormfiendBeamExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+StormfiendBeamExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.world
 
 	if not ALIVE[arg_7_1] then

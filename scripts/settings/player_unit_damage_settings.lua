@@ -9,7 +9,7 @@ PlayerUnitDamageSettings.REGEN_DELAY = 6
 PlayerUnitDamageSettings.REGEN_AMOUNT = 20
 PlayerUnitDamageSettings.REGEN_RAMP_SPEED = 1
 
-function PlayerUnitDamageSettings.REGEN_FUNCTION(arg_1_0)
+PlayerUnitDamageSettings.REGEN_FUNCTION = function (arg_1_0)
 	local var_1_0 = arg_1_0 * PlayerUnitDamageSettings.REGEN_RAMP_SPEED
 
 	return PlayerUnitDamageSettings.REGEN_AMOUNT * var_1_0 * var_1_0

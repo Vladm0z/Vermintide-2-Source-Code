@@ -54,10 +54,10 @@ var_0_4.tower_skulls = {
 	events = {
 		"on_tower_skull_found"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "tower_skulls") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		if arg_2_2.num_skulls then
 			arg_2_2.num_skulls = arg_2_2.num_skulls + 1
 		else
@@ -77,10 +77,10 @@ var_0_4.tower_wall_illusions = {
 	events = {
 		"tower_wall_illusion_found"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "tower_wall_illusions") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = arg_4_4[1]
 
 		if arg_4_2[var_4_0] then
@@ -110,10 +110,10 @@ var_0_4.tower_invisible_bridge = {
 	events = {
 		"update_tower_invisible_bridge_challenge"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "tower_invisible_bridge") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		if arg_6_2.done then
 			return
 		end
@@ -133,10 +133,10 @@ var_0_4.tower_enable_guardian_of_lustria = {
 	events = {
 		"tower_enable_guardian_of_lustria"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		return arg_7_0:get_persistent_stat(arg_7_1, "tower_enable_guardian_of_lustria") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		arg_8_0:increment_stat(arg_8_1, "tower_enable_guardian_of_lustria")
 	end
 }
@@ -148,10 +148,10 @@ var_0_4.tower_note_puzzle = {
 	events = {
 		"tower_note_puzzle"
 	},
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
+	completed = function (arg_9_0, arg_9_1, arg_9_2)
 		return arg_9_0:get_persistent_stat(arg_9_1, "tower_note_puzzle") >= 1
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		arg_10_0:increment_stat(arg_10_1, "tower_note_puzzle")
 	end
 }
@@ -163,10 +163,10 @@ var_0_4.tower_created_all_potions = {
 	events = {
 		"tower_potion_created"
 	},
-	completed = function(arg_11_0, arg_11_1, arg_11_2)
+	completed = function (arg_11_0, arg_11_1, arg_11_2)
 		return arg_11_0:get_persistent_stat(arg_11_1, "tower_created_all_potions") >= 1
 	end,
-	on_event = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		if arg_12_2.done then
 			return
 		end
@@ -187,17 +187,17 @@ var_0_4.tower_time_challenge = {
 	name = "achv_tower_time_challenge_name",
 	display_completion_ui = true,
 	icon = "achievement_wizards_tower_time_challenge",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_tower_time_challenge_desc"), var_0_15)
 	end,
 	events = {
 		"gameplay_start",
 		"register_completed_level"
 	},
-	completed = function(arg_14_0, arg_14_1, arg_14_2)
+	completed = function (arg_14_0, arg_14_1, arg_14_2)
 		return arg_14_0:get_persistent_stat(arg_14_1, "tower_time_challenge") >= 1
 	end,
-	on_event = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	on_event = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 		local var_15_0 = Managers.time:time("game")
 
 		if arg_15_3 == "gameplay_start" then

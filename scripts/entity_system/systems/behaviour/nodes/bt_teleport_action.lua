@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTeleportAction = class(BTTeleportAction, BTNode)
 
-function BTTeleportAction.init(arg_1_0, ...)
+BTTeleportAction.init = function (arg_1_0, ...)
 	BTTeleportAction.super.init(arg_1_0, ...)
 end
 
 BTTeleportAction.name = "BTTeleportAction"
 
-function BTTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTeleportAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = POSITION_LOOKUP[arg_2_1]
 	local var_2_1 = arg_2_2.next_smart_object_data
 	local var_2_2 = var_2_1.entrance_pos:unbox()
@@ -21,7 +21,7 @@ function BTTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.entrance_position = Vector3Box(var_2_2)
 end
 
-function BTTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTeleportAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.teleport_position = nil
 	arg_3_2.entrance_position = nil
 	arg_3_2.teleport_timeout = nil
@@ -33,7 +33,7 @@ function BTTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg
 	end
 end
 
-function BTTeleportAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTeleportAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.smart_object_data ~= arg_4_2.next_smart_object_data.smart_object_data then
 		return "failed"
 	end

@@ -323,16 +323,16 @@ local var_0_14 = {
 			name = "background_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 				arg_1_2.screen_timer_text_big.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeInCubic(arg_2_3)
 
 				arg_2_2.background.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -340,10 +340,10 @@ local var_0_14 = {
 			name = "round_title_in",
 			start_progress = 0.5,
 			end_progress = 2,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				if not arg_5_4.round_title_sound_played then
 					WwiseWorld.trigger_event(arg_5_4.wwise_world, "play_gui_mission_summary_level_up")
 
@@ -356,7 +356,7 @@ local var_0_14 = {
 				var_5_1.offset[1] = -(50 + 720 * var_5_0)
 				var_5_1.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		},
@@ -364,13 +364,13 @@ local var_0_14 = {
 			name = "round_title_move",
 			start_progress = 2,
 			end_progress = 4,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				arg_8_2.round_title.offset[1] = -50 + 50 * math.ease_out_exp(arg_8_3)
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		},
@@ -378,10 +378,10 @@ local var_0_14 = {
 			name = "round_title_out",
 			start_progress = 3,
 			end_progress = 4,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = arg_11_2.round_title
 				local var_11_1 = var_11_0.offset
 				local var_11_2 = math.ease_in_exp(arg_11_3)
@@ -389,7 +389,7 @@ local var_0_14 = {
 				var_11_1[1] = var_11_1[1] + 770 * var_11_2
 				var_11_0.alpha_multiplier = 1 - var_11_2
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		},
@@ -397,14 +397,14 @@ local var_0_14 = {
 			name = "banner_expand",
 			start_progress = 3.5,
 			end_progress = 4.5,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				local var_13_0 = "background_banner"
 				local var_13_1 = arg_13_0[var_13_0]
 				local var_13_2 = arg_13_1[var_13_0]
 
 				var_13_1.size[2] = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeCubic(arg_14_3)
 				local var_14_1 = "background_banner"
 				local var_14_2 = arg_14_0[var_14_1]
@@ -414,7 +414,7 @@ local var_0_14 = {
 				arg_14_2.background_banner.alpha_multiplier = var_14_0
 				arg_14_2.background_frame.alpha_multiplier = var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		},
@@ -422,11 +422,11 @@ local var_0_14 = {
 			name = "widgets_fade_in",
 			start_progress = 4.6,
 			end_progress = 4.9,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_3.render_settings.alpha_multiplier = 0
 				arg_16_3.show_diorama = true
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeInCubic(arg_17_3)
 
 				arg_17_4.render_settings.alpha_multiplier = var_17_0
@@ -451,7 +451,7 @@ local var_0_14 = {
 					arg_17_4.show_diorama = false
 				end
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				arg_18_2.background_banner.alpha_multiplier = nil
 				arg_18_2.background_frame.alpha_multiplier = nil
 			end
@@ -460,13 +460,13 @@ local var_0_14 = {
 			name = "fade_out",
 			start_progress = 7.5,
 			end_progress = 8,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				return
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				Managers.transition:fade_in(1.5)
 			end
 		},
@@ -474,7 +474,7 @@ local var_0_14 = {
 			name = "screen_move_out",
 			start_progress = 8.5,
 			end_progress = 9.5,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				local var_22_0 = "screen_timer_area"
 				local var_22_1 = arg_22_0[var_22_0]
 				local var_22_2 = arg_22_1[var_22_0]
@@ -482,7 +482,7 @@ local var_0_14 = {
 				var_22_1.local_position[2] = var_22_2.position[2]
 				arg_22_3.hide_diorama = true
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				local var_23_0 = arg_23_4.diorama_list
 
 				if var_23_0 then
@@ -523,7 +523,7 @@ local var_0_14 = {
 				var_23_10.font_size = var_23_13
 				var_23_11.font_size = var_23_13
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				arg_24_2.screen_timer_text_big.alpha_multiplier = 1
 			end
 		}

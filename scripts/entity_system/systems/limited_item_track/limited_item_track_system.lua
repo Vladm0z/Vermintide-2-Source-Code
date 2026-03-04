@@ -12,7 +12,7 @@ local var_0_1 = {
 	"WeaveLimitedItemTrackSpawner"
 }
 
-function LimitedItemTrackSystem.init(arg_1_0, arg_1_1, arg_1_2)
+LimitedItemTrackSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	LimitedItemTrackSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -33,13 +33,13 @@ function LimitedItemTrackSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.no_group_spawners = {}
 	arg_1_0.marked_items = {}
 
-	function arg_1_0.mark_item_for_transformation(arg_2_0)
+	arg_1_0.mark_item_for_transformation = function (arg_2_0)
 		local var_2_0 = arg_2_0.unit
 
 		arg_1_0.marked_items[var_2_0] = arg_2_0.id > 0 and arg_2_0.id or nil
 	end
 
-	function arg_1_0.enable_spawner(arg_3_0)
+	arg_1_0.enable_spawner = function (arg_3_0)
 		local var_3_0 = arg_3_0.unit
 		local var_3_1 = arg_1_0.active_spawners_n + 1
 		local var_3_2 = arg_1_0.spawners
@@ -50,7 +50,7 @@ function LimitedItemTrackSystem.init(arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0.active_spawners_n = var_3_1
 	end
 
-	function arg_1_0.disable_spawner(arg_4_0)
+	arg_1_0.disable_spawner = function (arg_4_0)
 		local var_4_0 = arg_4_0.unit
 		local var_4_1 = arg_1_0:find_active_spawner_id(var_4_0)
 
@@ -64,7 +64,7 @@ function LimitedItemTrackSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function LimitedItemTrackSystem.register_group(arg_5_0, arg_5_1, arg_5_2)
+LimitedItemTrackSystem.register_group = function (arg_5_0, arg_5_1, arg_5_2)
 	fassert(arg_5_0.groups[arg_5_1] == nil, "Limited Item Group with name %q, is already registered", arg_5_1)
 
 	local var_5_0 = arg_5_0.queued_group_spawners[arg_5_1] or {}
@@ -78,7 +78,7 @@ function LimitedItemTrackSystem.register_group(arg_5_0, arg_5_1, arg_5_2)
 	}
 end
 
-function LimitedItemTrackSystem.register_weave_group(arg_6_0, arg_6_1, arg_6_2)
+LimitedItemTrackSystem.register_weave_group = function (arg_6_0, arg_6_1, arg_6_2)
 	fassert(arg_6_0.groups[arg_6_1] == nil, "Limited Item Group with name %q, is already registered", arg_6_1)
 
 	local var_6_0 = arg_6_0.queued_weave_group_spawners[arg_6_1] or {}
@@ -92,7 +92,7 @@ function LimitedItemTrackSystem.register_weave_group(arg_6_0, arg_6_1, arg_6_2)
 	}
 end
 
-function LimitedItemTrackSystem.decrease_group_pool_size(arg_7_0, arg_7_1)
+LimitedItemTrackSystem.decrease_group_pool_size = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.groups[arg_7_1]
 	local var_7_1 = math.max(var_7_0.pool_size - 1, 0)
 
@@ -103,7 +103,7 @@ function LimitedItemTrackSystem.decrease_group_pool_size(arg_7_0, arg_7_1)
 	end
 end
 
-function LimitedItemTrackSystem.activate_group(arg_8_0, arg_8_1, arg_8_2)
+LimitedItemTrackSystem.activate_group = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.active_groups
 	local var_8_1 = arg_8_0.active_groups_n
 
@@ -120,7 +120,7 @@ function LimitedItemTrackSystem.activate_group(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.groups[arg_8_1].pool_size = arg_8_2
 end
 
-function LimitedItemTrackSystem.weave_activate_spawner(arg_9_0, arg_9_1, arg_9_2)
+LimitedItemTrackSystem.weave_activate_spawner = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0.groups[arg_9_2] then
 		arg_9_0:register_weave_group(arg_9_2, 0)
 	end
@@ -142,7 +142,7 @@ function LimitedItemTrackSystem.weave_activate_spawner(arg_9_0, arg_9_1, arg_9_2
 	arg_9_0.active_groups_n = #var_9_0
 end
 
-function LimitedItemTrackSystem.deactivate_group(arg_10_0, arg_10_1)
+LimitedItemTrackSystem.deactivate_group = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.active_groups
 	local var_10_1 = arg_10_0.active_groups_n
 
@@ -157,7 +157,7 @@ function LimitedItemTrackSystem.deactivate_group(arg_10_0, arg_10_1)
 	end
 end
 
-function LimitedItemTrackSystem.find_active_spawner_id(arg_11_0, arg_11_1)
+LimitedItemTrackSystem.find_active_spawner_id = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.active_spawners
 	local var_11_1 = arg_11_0.active_spawners_n
 
@@ -170,7 +170,7 @@ function LimitedItemTrackSystem.find_active_spawner_id(arg_11_0, arg_11_1)
 	return nil
 end
 
-function LimitedItemTrackSystem.destroy(arg_12_0)
+LimitedItemTrackSystem.destroy = function (arg_12_0)
 	arg_12_0.network_event_delegate:unregister(arg_12_0)
 
 	arg_12_0.network_event_delegate = nil
@@ -180,7 +180,7 @@ end
 local var_0_2 = {}
 local var_0_3 = {}
 
-function LimitedItemTrackSystem.on_add_extension(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LimitedItemTrackSystem.on_add_extension = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	arg_13_4 = next(arg_13_4) == nil and var_0_3 or arg_13_4
 	arg_13_4.network_manager = arg_13_0.network_manager
 
@@ -282,7 +282,7 @@ function LimitedItemTrackSystem.on_add_extension(arg_13_0, arg_13_1, arg_13_2, a
 	end
 end
 
-function LimitedItemTrackSystem.on_remove_extension(arg_14_0, arg_14_1, arg_14_2)
+LimitedItemTrackSystem.on_remove_extension = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_2 == "LimitedItemTrackSpawner" or arg_14_2 == "WeaveLimitedItemTrackSpawner" then
 		LimitedItemTrackSystem.super.on_remove_extension(arg_14_0, arg_14_1, arg_14_2)
 	elseif arg_14_2 == "LimitedItemExtension" then
@@ -314,7 +314,7 @@ function LimitedItemTrackSystem.on_remove_extension(arg_14_0, arg_14_1, arg_14_2
 	end
 end
 
-function LimitedItemTrackSystem.spawn_batch(arg_15_0, arg_15_1)
+LimitedItemTrackSystem.spawn_batch = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.spawners
 	local var_15_1 = arg_15_1.spawners_n
 	local var_15_2 = {}
@@ -347,7 +347,7 @@ function LimitedItemTrackSystem.spawn_batch(arg_15_0, arg_15_1)
 	end
 end
 
-function LimitedItemTrackSystem.update(arg_16_0, arg_16_1, arg_16_2)
+LimitedItemTrackSystem.update = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.active_groups_n
 
 	if var_16_0 > 0 then
@@ -387,7 +387,7 @@ function LimitedItemTrackSystem.update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function LimitedItemTrackSystem.held_limited_item_destroyed(arg_17_0, arg_17_1, arg_17_2)
+LimitedItemTrackSystem.held_limited_item_destroyed = function (arg_17_0, arg_17_1, arg_17_2)
 	assert(arg_17_0.is_server)
 	arg_17_0.spawners[arg_17_1]:remove(arg_17_2)
 end

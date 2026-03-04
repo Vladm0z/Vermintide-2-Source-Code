@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatDodgeAction = class(BTLootRatDodgeAction, BTNode)
 
-function BTLootRatDodgeAction.init(arg_1_0, ...)
+BTLootRatDodgeAction.init = function (arg_1_0, ...)
 	BTLootRatDodgeAction.super.init(arg_1_0, ...)
 end
 
@@ -13,7 +13,7 @@ BTLootRatDodgeAction.name = "BTLootRatDodgeAction"
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = script_data
 
-function BTLootRatDodgeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTLootRatDodgeAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -51,7 +51,7 @@ function BTLootRatDodgeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTLootRatDodgeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTLootRatDodgeAction.run = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if not arg_3_2.is_dodging then
 		return "done"
 	end
@@ -80,7 +80,7 @@ function BTLootRatDodgeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return "running"
 end
 
-function BTLootRatDodgeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTLootRatDodgeAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 	arg_4_2.is_dodging = nil
 	arg_4_2.pass_check_position = nil
@@ -101,7 +101,7 @@ function BTLootRatDodgeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4,
 	end
 end
 
-function BTLootRatDodgeAction.dodge(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTLootRatDodgeAction.dodge = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = var_0_0[arg_5_1]
 	local var_5_1 = arg_5_2.locomotion_extension:current_velocity()
 	local var_5_2 = Vector3.normalize(var_5_1)
@@ -134,7 +134,7 @@ function BTLootRatDodgeAction.dodge(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	end
 end
 
-function BTLootRatDodgeAction.try_dodge_position(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTLootRatDodgeAction.try_dodge_position = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0, var_6_1 = GwNavQueries.triangle_from_position(arg_6_2.nav_world, arg_6_4, 3, 3)
 
 	if var_6_0 then

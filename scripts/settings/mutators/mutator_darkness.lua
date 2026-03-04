@@ -5,11 +5,11 @@ return {
 	display_name = "display_name_mutator_darkness",
 	disable_environment_variations = true,
 	icon = "mutator_icon_darkness",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.tick_interval = 0.1
 		arg_1_1.next_tick = 0
 	end,
-	server_update_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	server_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		if arg_2_3 < arg_2_1.next_tick then
 			return
 		else
@@ -89,7 +89,7 @@ return {
 
 		arg_2_1.should_spawn_torch = false
 	end,
-	client_start_function = function(arg_3_0, arg_3_1)
+	client_start_function = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.world:world("level_world")
 
 		LevelHelper:flow_event(var_3_0, "mutator_darkness")
@@ -118,7 +118,7 @@ return {
 			end
 		end
 	end,
-	client_stop_function = function(arg_4_0, arg_4_1, arg_4_2)
+	client_stop_function = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = Managers.world:world("level_world")
 
 		if not arg_4_2 then

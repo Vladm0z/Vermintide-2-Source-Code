@@ -2,7 +2,7 @@
 
 EnvironmentBlendVolume = class(EnvironmentBlendVolume)
 
-function EnvironmentBlendVolume.init(arg_1_0, arg_1_1)
+EnvironmentBlendVolume.init = function (arg_1_0, arg_1_1)
 	arg_1_0._volume_name = arg_1_1.volume_name
 	arg_1_0._environment = arg_1_1.environment
 	arg_1_0._always_inside = arg_1_1.always_inside
@@ -25,43 +25,43 @@ function EnvironmentBlendVolume.init(arg_1_0, arg_1_1)
 	Managers.state.event:register(arg_1_0, "force_blend_environment_volume", "event_force_blend_environment_volume")
 end
 
-function EnvironmentBlendVolume.particle_light_intensity(arg_2_0)
+EnvironmentBlendVolume.particle_light_intensity = function (arg_2_0)
 	return arg_2_0._data.particle_light_intensity
 end
 
-function EnvironmentBlendVolume.event_force_blend_environment_volume(arg_3_0)
+EnvironmentBlendVolume.event_force_blend_environment_volume = function (arg_3_0)
 	if arg_3_0._enabled then
 		arg_3_0._force_blend = true
 	end
 end
 
-function EnvironmentBlendVolume.event_enable_environment_volume(arg_4_0, arg_4_1, arg_4_2)
+EnvironmentBlendVolume.event_enable_environment_volume = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._volume_name == arg_4_1 then
 		arg_4_0._enabled = arg_4_2
 	end
 end
 
-function EnvironmentBlendVolume.environment(arg_5_0)
+EnvironmentBlendVolume.environment = function (arg_5_0)
 	return arg_5_0._environment
 end
 
-function EnvironmentBlendVolume.level_key(arg_6_0)
+EnvironmentBlendVolume.level_key = function (arg_6_0)
 	return arg_6_0._level_key
 end
 
-function EnvironmentBlendVolume.value(arg_7_0)
+EnvironmentBlendVolume.value = function (arg_7_0)
 	return arg_7_0._value
 end
 
-function EnvironmentBlendVolume.is_inside(arg_8_0)
+EnvironmentBlendVolume.is_inside = function (arg_8_0)
 	return arg_8_0._is_inside
 end
 
-function EnvironmentBlendVolume.override_settings(arg_9_0)
+EnvironmentBlendVolume.override_settings = function (arg_9_0)
 	return arg_9_0._override_values
 end
 
-function EnvironmentBlendVolume.update(arg_10_0, arg_10_1)
+EnvironmentBlendVolume.update = function (arg_10_0, arg_10_1)
 	if arg_10_0._enabled and arg_10_0._always_inside then
 		arg_10_0._value = 1
 		arg_10_0._current_timer = 1
@@ -97,7 +97,7 @@ function EnvironmentBlendVolume.update(arg_10_0, arg_10_1)
 	arg_10_0._value = math.smoothstep(arg_10_0._current_timer, 0, 1)
 end
 
-function EnvironmentBlendVolume.destroy(arg_11_0)
+EnvironmentBlendVolume.destroy = function (arg_11_0)
 	local var_11_0 = Managers.state.event
 
 	if var_11_0 then

@@ -5,7 +5,7 @@ require("scripts/settings/ui_player_portrait_frame_settings")
 
 UIWidgets = UIWidgets or {}
 
-function UIWidgets.create_store_category_entry_definition(arg_1_0, arg_1_1, arg_1_2)
+UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = "button_frame_02_gold"
 	local var_1_1 = UIFrameSettings[var_1_0]
 	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
@@ -63,7 +63,7 @@ function UIWidgets.create_store_category_entry_definition(arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "category_texture",
 			texture_id = "category_texture",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.category_texture
 			end
 		}
@@ -275,7 +275,7 @@ function UIWidgets.create_store_category_entry_definition(arg_1_0, arg_1_1, arg_
 	return var_1_9
 end
 
-function UIWidgets.create_store_collection_entry_definition(arg_3_0, arg_3_1, arg_3_2)
+UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = "button_frame_02_gold"
 	local var_3_1 = UIFrameSettings[var_3_0]
 	local var_3_2 = var_3_1.texture_sizes.horizontal[2]
@@ -333,7 +333,7 @@ function UIWidgets.create_store_collection_entry_definition(arg_3_0, arg_3_1, ar
 			style_id = "category_texture",
 			pass_type = "texture_uv",
 			content_id = "category_texture",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.texture_id
 			end
 		},
@@ -341,7 +341,7 @@ function UIWidgets.create_store_collection_entry_definition(arg_3_0, arg_3_1, ar
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.owned
 			end
 		},
@@ -349,7 +349,7 @@ function UIWidgets.create_store_collection_entry_definition(arg_3_0, arg_3_1, ar
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.owned
 			end
 		}
@@ -625,7 +625,7 @@ end
 
 local var_0_0 = {}
 
-function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = "menu_frame_16"
 	local var_7_1 = UIFrameSettings[var_7_0]
 	local var_7_2 = "frame_outer_glow_04"
@@ -660,7 +660,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.background
 			end
 		},
@@ -668,7 +668,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "expire_time_icon",
 			texture_id = "expire_time_icon",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.discount
 			end
 		},
@@ -676,7 +676,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "background_price",
 			texture_id = "background_price",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return not arg_10_0.owned and (IS_WINDOWS or not arg_10_0.real_currency) and not arg_10_0.hide_price and not arg_10_0.old_price
 			end
 		},
@@ -684,7 +684,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "tiled_texture",
 			style_id = "background_price_center",
 			texture_id = "background_price_center",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return not arg_11_0.owned and (IS_WINDOWS or not arg_11_0.real_currency) and not arg_11_0.hide_price and not arg_11_0.old_price
 			end
 		},
@@ -692,7 +692,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "background_price_right",
 			texture_id = "background_price_right",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return not arg_12_0.owned and (IS_WINDOWS or not arg_12_0.real_currency) and not arg_12_0.hide_price and not arg_12_0.old_price
 			end
 		},
@@ -700,7 +700,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "price_gradient",
 			texture_id = "price_gradient",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return not arg_13_0.owned and (IS_WINDOWS or not arg_13_0.real_currency) and not arg_13_0.hide_price and arg_13_0.old_price
 			end
 		},
@@ -708,7 +708,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			texture_id = "price_strike_through",
 			style_id = "price_strike_through",
 			pass_type = "rotated_texture",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return not arg_14_0.owned and (IS_WINDOWS or not arg_14_0.real_currency) and not arg_14_0.hide_price and arg_14_0.old_price and arg_14_0.discount
 			end
 		},
@@ -716,7 +716,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return not arg_15_0.owned and arg_15_0.draw_price_icon
 			end
 		},
@@ -724,7 +724,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "optional_item_name",
 			pass_type = "text",
 			text_id = "optional_item_name",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.optional_item_name ~= ""
 			end
 		},
@@ -732,7 +732,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "optional_subtitle",
 			pass_type = "text",
 			text_id = "optional_subtitle",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return arg_17_0.optional_item_name ~= ""
 			end
 		},
@@ -740,7 +740,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_18_0)
+			content_check_function = function (arg_18_0)
 				return not arg_18_0.owned and (IS_WINDOWS or not arg_18_0.real_currency) and not arg_18_0.hide_price and not arg_18_0.old_price
 			end
 		},
@@ -748,7 +748,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "price_text_now",
 			pass_type = "text",
 			text_id = "price_text_now",
-			content_check_function = function(arg_19_0)
+			content_check_function = function (arg_19_0)
 				return not arg_19_0.owned and (IS_WINDOWS or not arg_19_0.real_currency) and not arg_19_0.hide_price and arg_19_0.old_price
 			end
 		},
@@ -756,7 +756,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "price_text_before",
 			pass_type = "text",
 			text_id = "price_text_before",
-			content_check_function = function(arg_20_0)
+			content_check_function = function (arg_20_0)
 				return not arg_20_0.owned and (IS_WINDOWS or not arg_20_0.real_currency) and not arg_20_0.hide_price and arg_20_0.old_price and arg_20_0.discount
 			end
 		},
@@ -764,7 +764,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function(arg_21_0)
+			content_check_function = function (arg_21_0)
 				return arg_21_0.owned
 			end
 		},
@@ -772,7 +772,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return arg_22_0.owned
 			end
 		},
@@ -780,7 +780,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "discount_bg",
 			texture_id = "discount_bg",
-			content_check_function = function(arg_23_0)
+			content_check_function = function (arg_23_0)
 				return arg_23_0.discount and not arg_23_0.hide_price
 			end
 		},
@@ -788,7 +788,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "multi_texture",
 			style_id = "discont_number_icons",
 			texture_id = "discont_number_icons",
-			content_check_function = function(arg_24_0)
+			content_check_function = function (arg_24_0)
 				return arg_24_0.discount and not arg_24_0.hide_price
 			end
 		},
@@ -811,10 +811,10 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "loading_icon",
 			pass_type = "rotated_texture",
 			texture_id = "loading_icon",
-			content_check_function = function(arg_25_0)
+			content_check_function = function (arg_25_0)
 				return not arg_25_0.icon
 			end,
-			content_change_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			content_change_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				local var_26_0 = ((arg_26_1.progress or 0) + arg_26_3) % 1
 
 				arg_26_1.angle = math.pow(2, math.smoothstep(var_26_0, 0, 1)) * (math.pi * 2)
@@ -825,7 +825,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_27_0)
+			content_check_function = function (arg_27_0)
 				return arg_27_0.icon and not arg_27_0.rendering_loading_icon
 			end
 		},
@@ -838,7 +838,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "type_tag_icon",
 			texture_id = "type_tag_icon",
-			content_check_function = function(arg_28_0, arg_28_1)
+			content_check_function = function (arg_28_0, arg_28_1)
 				return arg_28_0.type_tag_icon
 			end
 		},
@@ -846,7 +846,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "psplus_icon",
 			texture_id = "psplus_icon",
-			content_check_function = function(arg_29_0)
+			content_check_function = function (arg_29_0)
 				return arg_29_0.show_ps4_plus and IS_PS4 and arg_29_0.real_currency
 			end
 		},
@@ -854,7 +854,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "console_background_rect_bottom",
 			texture_id = "console_background_rect",
-			content_check_function = function(arg_30_0)
+			content_check_function = function (arg_30_0)
 				return not IS_WINDOWS and arg_30_0.real_currency
 			end
 		},
@@ -862,7 +862,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "console_background_rect_top",
 			texture_id = "console_background_rect",
-			content_check_function = function(arg_31_0)
+			content_check_function = function (arg_31_0)
 				return not IS_WINDOWS and arg_31_0.real_currency and arg_31_0.console_secondary_price_text ~= ""
 			end
 		},
@@ -870,7 +870,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			texture_id = "console_secondary_price_stroke",
 			style_id = "console_secondary_price_stroke",
 			pass_type = "texture",
-			content_check_function = function(arg_32_0)
+			content_check_function = function (arg_32_0)
 				return arg_32_0.show_secondary_stroke and not IS_WINDOWS and arg_32_0.real_currency
 			end
 		},
@@ -878,7 +878,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			texture_id = "console_third_price_stroke",
 			style_id = "console_third_price_stroke",
 			pass_type = "texture",
-			content_check_function = function(arg_33_0)
+			content_check_function = function (arg_33_0)
 				return arg_33_0.show_third_stroke and IS_PS4 and arg_33_0.real_currency
 			end
 		},
@@ -886,10 +886,10 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "console_first_price_text",
 			pass_type = "text",
 			text_id = "console_first_price_text",
-			content_check_function = function(arg_34_0)
+			content_check_function = function (arg_34_0)
 				return not IS_WINDOWS and arg_34_0.real_currency
 			end,
-			content_change_function = function(arg_35_0, arg_35_1)
+			content_change_function = function (arg_35_0, arg_35_1)
 				arg_35_1.text_color = arg_35_0.show_ps4_plus and arg_35_1.ps_plus_color or arg_35_1.base_color
 			end
 		},
@@ -897,7 +897,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "console_secondary_price_text",
 			pass_type = "text",
 			text_id = "console_secondary_price_text",
-			content_check_function = function(arg_36_0)
+			content_check_function = function (arg_36_0)
 				return arg_36_0.console_secondary_price_text ~= "" and not IS_WINDOWS and arg_36_0.real_currency
 			end
 		},
@@ -905,7 +905,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "console_third_price_text",
 			pass_type = "text",
 			text_id = "console_third_price_text",
-			content_check_function = function(arg_37_0)
+			content_check_function = function (arg_37_0)
 				return arg_37_0.console_third_price_text ~= "" and IS_PS4 and arg_37_0.real_currency
 			end
 		},
@@ -913,14 +913,14 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "new_marker",
 			pass_type = "texture",
 			texture_id = "new_marker",
-			content_check_function = function(arg_38_0)
+			content_check_function = function (arg_38_0)
 				if arg_38_0.discount then
 					return false
 				end
 
 				return not PlayerData.seen_shop_items[arg_38_0.item_key] and not arg_38_0.hide_new
 			end,
-			content_change_function = function(arg_39_0, arg_39_1)
+			content_change_function = function (arg_39_0, arg_39_1)
 				if not PlayerData.seen_shop_items[arg_39_0.item_key] then
 					local var_39_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
@@ -932,10 +932,10 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "additional_content_added",
 			pass_type = "text",
 			text_id = "additional_content_added",
-			content_check_function = function(arg_40_0)
+			content_check_function = function (arg_40_0)
 				return IS_CONSOLE and var_7_9.additional_content_added and not arg_40_0.owned
 			end,
-			content_change_function = function(arg_41_0, arg_41_1)
+			content_change_function = function (arg_41_0, arg_41_1)
 				local var_41_0 = Application.time_since_launch()
 				local var_41_1 = 0.5 + math.sin(var_41_0 * 3) * 0.5
 
@@ -948,7 +948,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "additional_content_added_shadow",
 			pass_type = "text",
 			text_id = "additional_content_added",
-			content_check_function = function(arg_42_0)
+			content_check_function = function (arg_42_0)
 				return IS_CONSOLE and var_7_9.additional_content_added and not arg_42_0.owned
 			end
 		},
@@ -956,7 +956,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			style_id = "additional_disclaimer",
 			pass_type = "text",
 			text_id = "additional_disclaimer",
-			content_check_function = function(arg_43_0, arg_43_1)
+			content_check_function = function (arg_43_0, arg_43_1)
 				return arg_43_0.has_disclamer
 			end
 		},
@@ -964,7 +964,7 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 			pass_type = "texture",
 			style_id = "disclaimer_marker",
 			texture_id = "disclaimer_marker",
-			content_check_function = function(arg_44_0, arg_44_1)
+			content_check_function = function (arg_44_0, arg_44_1)
 				return arg_44_0.has_disclamer
 			end
 		}
@@ -1861,13 +1861,13 @@ function UIWidgets.create_store_item_definition(arg_7_0, arg_7_1, arg_7_2, arg_7
 	return var_7_11
 end
 
-function UIWidgets.create_store_pose_item_definition(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+UIWidgets.create_store_pose_item_definition = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = arg_45_3.settings
 
 	return UIWidgets.create_store_item_definition(arg_45_0, arg_45_1, arg_45_2, arg_45_3, var_45_0)
 end
 
-function UIWidgets.create_store_header_text_definition(arg_46_0, arg_46_1, arg_46_2)
+UIWidgets.create_store_header_text_definition = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = -arg_46_1[2]
 	local var_46_1 = 25
 	local var_46_2 = {
@@ -1945,7 +1945,7 @@ function UIWidgets.create_store_header_text_definition(arg_46_0, arg_46_1, arg_4
 	return var_46_2
 end
 
-function UIWidgets.create_store_body_text_definition(arg_47_0, arg_47_1, arg_47_2)
+UIWidgets.create_store_body_text_definition = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = -arg_47_1[2]
 	local var_47_1 = 25
 	local var_47_2 = {
@@ -2023,7 +2023,7 @@ function UIWidgets.create_store_body_text_definition(arg_47_0, arg_47_1, arg_47_
 	return var_47_2
 end
 
-function UIWidgets.create_store_currency_summary_title_definition(arg_48_0, arg_48_1, arg_48_2)
+UIWidgets.create_store_currency_summary_title_definition = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = -arg_48_1[2]
 	local var_48_1 = 25
 	local var_48_2 = {
@@ -2204,7 +2204,7 @@ function UIWidgets.create_store_currency_summary_title_definition(arg_48_0, arg_
 	return var_48_3
 end
 
-function UIWidgets.create_store_currency_summary_entry_definition(arg_49_0, arg_49_1, arg_49_2)
+UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = -arg_49_1[2]
 	local var_49_1 = 25
 	local var_49_2 = {
@@ -2339,7 +2339,7 @@ function UIWidgets.create_store_currency_summary_entry_definition(arg_49_0, arg_
 	return var_49_3
 end
 
-function UIWidgets.create_store_dlc_feature_vertical_definition(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	local var_50_0 = "menu_frame_16"
 	local var_50_1 = UIFrameSettings[var_50_0]
 	local var_50_2 = {
@@ -2372,7 +2372,7 @@ function UIWidgets.create_store_dlc_feature_vertical_definition(arg_50_0, arg_50
 			pass_type = "texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function(arg_51_0)
+			content_check_function = function (arg_51_0)
 				return arg_51_0.add_frame
 			end
 		},
@@ -2380,7 +2380,7 @@ function UIWidgets.create_store_dlc_feature_vertical_definition(arg_50_0, arg_50
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function(arg_52_0)
+			content_check_function = function (arg_52_0)
 				return arg_52_0.add_frame
 			end
 		}
@@ -2514,7 +2514,7 @@ function UIWidgets.create_store_dlc_feature_vertical_definition(arg_50_0, arg_50
 	return var_50_6
 end
 
-function UIWidgets.create_store_dlc_feature_horizontal_definition(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+UIWidgets.create_store_dlc_feature_horizontal_definition = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	local var_53_0
 	local var_53_1
 	local var_53_2 = arg_53_3.settings
@@ -2556,7 +2556,7 @@ function UIWidgets.create_store_dlc_feature_horizontal_definition(arg_53_0, arg_
 			texture_id = "frame",
 			style_id = "frame",
 			pass_type = "texture_frame",
-			content_check_function = function(arg_54_0)
+			content_check_function = function (arg_54_0)
 				return arg_54_0.show_frame
 			end
 		}
@@ -2660,7 +2660,7 @@ function UIWidgets.create_store_dlc_feature_horizontal_definition(arg_53_0, arg_
 	return var_53_7
 end
 
-function UIWidgets.create_store_dlc_feature_pullet_point_definition(arg_55_0, arg_55_1, arg_55_2)
+UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = {
 		26,
 		28
@@ -2765,7 +2765,7 @@ function UIWidgets.create_store_dlc_feature_pullet_point_definition(arg_55_0, ar
 	return var_55_3
 end
 
-function UIWidgets.create_store_list_spacing_definition(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+UIWidgets.create_store_list_spacing_definition = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = {
 		element = {}
 	}
@@ -2788,7 +2788,7 @@ function UIWidgets.create_store_list_spacing_definition(arg_56_0, arg_56_1, arg_
 	return var_56_0
 end
 
-function UIWidgets.create_store_dlc_logo_definition(arg_57_0, arg_57_1, arg_57_2)
+UIWidgets.create_store_dlc_logo_definition = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0 = {
 		440,
 		64
@@ -2841,7 +2841,7 @@ function UIWidgets.create_store_dlc_logo_definition(arg_57_0, arg_57_1, arg_57_2
 	return var_57_2
 end
 
-function UIWidgets.create_store_list_divider_definition(arg_58_0, arg_58_1, arg_58_2)
+UIWidgets.create_store_list_divider_definition = function (arg_58_0, arg_58_1, arg_58_2)
 	local var_58_0 = {
 		618,
 		32
@@ -2894,7 +2894,7 @@ function UIWidgets.create_store_list_divider_definition(arg_58_0, arg_58_1, arg_
 	return var_58_2
 end
 
-function UIWidgets.create_store_header_video_definition(arg_59_0, arg_59_1, arg_59_2)
+UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, arg_59_2)
 	local var_59_0 = 0.6
 	local var_59_1 = 0.2
 	local var_59_2 = -(arg_59_1[2] * 0.6)
@@ -3097,7 +3097,7 @@ function UIWidgets.create_store_header_video_definition(arg_59_0, arg_59_1, arg_
 	return var_59_4
 end
 
-function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
+UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
 	local var_60_0 = "menu_frame_bg_07"
 	local var_60_1
 
@@ -3156,7 +3156,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 				{
 					style_id = "disabled_overlay",
 					pass_type = "rect",
-					content_check_function = function(arg_61_0)
+					content_check_function = function (arg_61_0)
 						return arg_61_0.button_hotspot.disable_button and not arg_61_0.owned
 					end
 				},
@@ -3164,7 +3164,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "owned_overlay",
 					pass_type = "texture_uv",
 					content_id = "owned_overlay",
-					content_check_function = function(arg_62_0)
+					content_check_function = function (arg_62_0)
 						return arg_62_0.parent.owned
 					end
 				},
@@ -3172,7 +3172,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "owned_text_write_mask",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function(arg_63_0)
+					content_check_function = function (arg_63_0)
 						return arg_63_0.owned
 					end
 				},
@@ -3180,7 +3180,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "owned_text_gradient",
 					style_id = "owned_text_gradient",
 					pass_type = "texture",
-					content_check_function = function(arg_64_0)
+					content_check_function = function (arg_64_0)
 						return arg_64_0.owned
 					end
 				},
@@ -3188,7 +3188,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					pass_type = "texture",
 					style_id = "owned_icon",
 					texture_id = "owned_icon",
-					content_check_function = function(arg_65_0)
+					content_check_function = function (arg_65_0)
 						return arg_65_0.owned
 					end
 				},
@@ -3196,7 +3196,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					pass_type = "texture",
 					style_id = "owned_icon_bg",
 					texture_id = "owned_icon_bg",
-					content_check_function = function(arg_66_0)
+					content_check_function = function (arg_66_0)
 						return arg_66_0.owned
 					end
 				},
@@ -3215,7 +3215,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "currency_text",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function(arg_67_0)
+					content_check_function = function (arg_67_0)
 						return not arg_67_0.button_hotspot.disable_button and not arg_67_0.owned and arg_67_0.present_currency
 					end
 				},
@@ -3223,7 +3223,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "currency_text_disabled",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function(arg_68_0)
+					content_check_function = function (arg_68_0)
 						local var_68_0 = arg_68_0.button_hotspot
 
 						return not arg_68_0.owned and arg_68_0.present_currency and var_68_0.disable_button
@@ -3233,7 +3233,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "currency_text_shadow",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function(arg_69_0)
+					content_check_function = function (arg_69_0)
 						return not arg_69_0.owned and arg_69_0.present_currency
 					end
 				},
@@ -3241,7 +3241,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_70_0)
+					content_check_function = function (arg_70_0)
 						return not arg_70_0.button_hotspot.disable_button and arg_70_0.title_text and (IS_WINDOWS or not arg_70_0.real_currency)
 					end
 				},
@@ -3249,7 +3249,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_71_0)
+					content_check_function = function (arg_71_0)
 						return arg_71_0.button_hotspot.disable_button and not arg_71_0.owned and arg_71_0.title_text and (IS_WINDOWS or not arg_71_0.real_currency)
 					end
 				},
@@ -3257,7 +3257,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_72_0)
+					content_check_function = function (arg_72_0)
 						return not arg_72_0.owned and arg_72_0.title_text and (IS_WINDOWS or not arg_72_0.real_currency)
 					end
 				},
@@ -3265,7 +3265,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "title_text_write_mask",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_73_0)
+					content_check_function = function (arg_73_0)
 						return not arg_73_0.button_hotspot.disable_button and arg_73_0.title_text and (IS_WINDOWS or not arg_73_0.real_currency)
 					end
 				},
@@ -3273,7 +3273,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "title_text_gradient",
 					style_id = "title_text_gradient",
 					pass_type = "texture",
-					content_check_function = function(arg_74_0)
+					content_check_function = function (arg_74_0)
 						return not arg_74_0.button_hotspot.disable_button and (IS_WINDOWS or not arg_74_0.real_currency)
 					end
 				},
@@ -3281,7 +3281,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "glass",
 					style_id = "glass",
 					pass_type = "texture",
-					content_check_function = function(arg_75_0)
+					content_check_function = function (arg_75_0)
 						return not arg_75_0.owned
 					end
 				},
@@ -3289,7 +3289,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "glass_top",
 					style_id = "glass_top",
 					pass_type = "texture",
-					content_check_function = function(arg_76_0)
+					content_check_function = function (arg_76_0)
 						return not arg_76_0.owned
 					end
 				},
@@ -3297,7 +3297,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "currency_icon",
 					style_id = "currency_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_77_0)
+					content_check_function = function (arg_77_0)
 						local var_77_0 = arg_77_0.button_hotspot
 
 						return not arg_77_0.owned and not var_77_0.disable_button and arg_77_0.present_currency
@@ -3307,7 +3307,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "currency_icon",
 					style_id = "currency_icon_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_78_0)
+					content_check_function = function (arg_78_0)
 						local var_78_0 = arg_78_0.button_hotspot
 
 						return not arg_78_0.owned and arg_78_0.present_currency and var_78_0.disable_button
@@ -3317,7 +3317,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					pass_type = "texture",
 					style_id = "psplus_icon",
 					texture_id = "psplus_icon",
-					content_check_function = function(arg_79_0)
+					content_check_function = function (arg_79_0)
 						return arg_79_0.show_ps4_plus and IS_PS4 and arg_79_0.real_currency
 					end
 				},
@@ -3325,7 +3325,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					pass_type = "texture",
 					style_id = "console_background_rect",
 					texture_id = "console_background_rect",
-					content_check_function = function(arg_80_0)
+					content_check_function = function (arg_80_0)
 						return not IS_WINDOWS and arg_80_0.real_currency
 					end
 				},
@@ -3333,7 +3333,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "console_secondary_price_stroke",
 					style_id = "console_secondary_price_stroke",
 					pass_type = "texture",
-					content_check_function = function(arg_81_0)
+					content_check_function = function (arg_81_0)
 						return arg_81_0.show_secondary_stroke and not IS_WINDOWS and arg_81_0.real_currency
 					end
 				},
@@ -3341,7 +3341,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "console_third_price_stroke",
 					style_id = "console_third_price_stroke",
 					pass_type = "texture",
-					content_check_function = function(arg_82_0)
+					content_check_function = function (arg_82_0)
 						return arg_82_0.show_third_stroke and IS_PS4 and arg_82_0.real_currency
 					end
 				},
@@ -3349,10 +3349,10 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "console_first_price_text",
 					pass_type = "text",
 					text_id = "console_first_price_text",
-					content_check_function = function(arg_83_0)
+					content_check_function = function (arg_83_0)
 						return not IS_WINDOWS and arg_83_0.real_currency
 					end,
-					content_change_function = function(arg_84_0, arg_84_1)
+					content_change_function = function (arg_84_0, arg_84_1)
 						arg_84_1.text_color = arg_84_0.show_ps4_plus and arg_84_1.ps_plus_color or arg_84_1.base_color
 					end
 				},
@@ -3360,7 +3360,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "console_secondary_price_text",
 					pass_type = "text",
 					text_id = "console_secondary_price_text",
-					content_check_function = function(arg_85_0)
+					content_check_function = function (arg_85_0)
 						return arg_85_0.console_secondary_price_text ~= "" and not IS_WINDOWS and arg_85_0.real_currency
 					end
 				},
@@ -3368,7 +3368,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					style_id = "console_third_price_text",
 					pass_type = "text",
 					text_id = "console_third_price_text",
-					content_check_function = function(arg_86_0)
+					content_check_function = function (arg_86_0)
 						return arg_86_0.console_third_price_text ~= "" and IS_PS4 and arg_86_0.real_currency
 					end
 				},
@@ -3376,7 +3376,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 					texture_id = "lock",
 					style_id = "lock",
 					pass_type = "texture",
-					content_check_function = function(arg_87_0)
+					content_check_function = function (arg_87_0)
 						return not arg_87_0.owns_required_dlc
 					end
 				}
@@ -4029,7 +4029,7 @@ function UIWidgets.create_store_purchase_button(arg_60_0, arg_60_1, arg_60_2, ar
 	}
 end
 
-function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
+UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
 	local var_88_0 = {
 		-55,
 		2,
@@ -4068,7 +4068,7 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_89_0)
+					content_check_function = function (arg_89_0)
 						return not arg_89_0.button_hotspot.disable_button and (arg_89_0.button_hotspot.is_hover or arg_89_0.button_hotspot.is_selected)
 					end
 				},
@@ -4076,7 +4076,7 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_90_0)
+					content_check_function = function (arg_90_0)
 						return not arg_90_0.button_hotspot.disable_button and not arg_90_0.button_hotspot.is_hover and not arg_90_0.button_hotspot.is_selected
 					end
 				},
@@ -4084,7 +4084,7 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_91_0)
+					content_check_function = function (arg_91_0)
 						return arg_91_0.button_hotspot.disable_button
 					end
 				},
@@ -4092,7 +4092,7 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 					texture_id = "new_marker",
 					style_id = "new_marker",
 					pass_type = "texture",
-					content_check_function = function(arg_92_0)
+					content_check_function = function (arg_92_0)
 						return arg_92_0.new and not arg_92_0.timer
 					end
 				},
@@ -4100,10 +4100,10 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 					style_id = "timer_marker",
 					pass_type = "texture",
 					texture_id = "timer_marker",
-					content_check_function = function(arg_93_0)
+					content_check_function = function (arg_93_0)
 						return arg_93_0.timer
 					end,
-					content_change_function = function(arg_94_0, arg_94_1)
+					content_change_function = function (arg_94_0, arg_94_1)
 						local var_94_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 						arg_94_1.color[1] = 100 + 155 * var_94_0
@@ -4244,7 +4244,7 @@ function UIWidgets.create_store_panel_button(arg_88_0, arg_88_1, arg_88_2, arg_8
 	}
 end
 
-function UIWidgets.create_store_panel_currency_widget(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
+UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
 	local var_95_0 = arg_95_1 and UIFrameSettings[arg_95_1] or UIFrameSettings.button_frame_01_gold
 
 	return {

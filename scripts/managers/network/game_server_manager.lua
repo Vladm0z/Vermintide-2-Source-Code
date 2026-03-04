@@ -2,18 +2,18 @@
 
 GameServerManager = class(GameServerManager)
 
-function GameServerManager.init(arg_1_0, arg_1_1)
+GameServerManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._last_error_reason = ""
 end
 
-function GameServerManager.setup_network_context(arg_2_0, arg_2_1)
+GameServerManager.setup_network_context = function (arg_2_0, arg_2_1)
 	arg_2_0._network_server = arg_2_1.network_server
 	arg_2_0._network_transmit = arg_2_1.network_transmit
 	arg_2_0._game_server = arg_2_1.game_server
 	arg_2_0._profile_synchronizer = arg_2_1.profile_synchronizer
 end
 
-function GameServerManager.destroy(arg_3_0)
+GameServerManager.destroy = function (arg_3_0)
 	if arg_3_0._network_transmit then
 		arg_3_0._network_transmit:destroy()
 
@@ -21,27 +21,27 @@ function GameServerManager.destroy(arg_3_0)
 	end
 end
 
-function GameServerManager.update(arg_4_0, arg_4_1, arg_4_2)
+GameServerManager.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_notify_backend_errors()
 end
 
-function GameServerManager.peer_name(arg_5_0, arg_5_1)
+GameServerManager.peer_name = function (arg_5_0, arg_5_1)
 	return arg_5_0._game_server:user_name(arg_5_1)
 end
 
-function GameServerManager.remove_peer(arg_6_0, arg_6_1)
+GameServerManager.remove_peer = function (arg_6_0, arg_6_1)
 	arg_6_0._game_server:remove_peer(arg_6_1)
 end
 
-function GameServerManager._update_game_server(arg_7_0, arg_7_1, arg_7_2)
+GameServerManager._update_game_server = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_leader()
 end
 
-function GameServerManager.server_name(arg_8_0)
+GameServerManager.server_name = function (arg_8_0)
 	return arg_8_0._game_server:server_name()
 end
 
-function GameServerManager.set_leader_peer_id(arg_9_0, arg_9_1)
+GameServerManager.set_leader_peer_id = function (arg_9_0, arg_9_1)
 	Managers.party:set_leader(arg_9_1)
 
 	local var_9_0 = arg_9_1 == nil and "0" or arg_9_1
@@ -54,21 +54,21 @@ function GameServerManager.set_leader_peer_id(arg_9_0, arg_9_1)
 	end
 end
 
-function GameServerManager.start_game_params(arg_10_0)
+GameServerManager.start_game_params = function (arg_10_0)
 	return arg_10_0._start_game_params
 end
 
-function GameServerManager.restart(arg_11_0)
+GameServerManager.restart = function (arg_11_0)
 	arg_11_0._wants_restart = true
 end
 
-function GameServerManager.get_transition(arg_12_0)
+GameServerManager.get_transition = function (arg_12_0)
 	if arg_12_0._wants_restart then
 		return "restart_game_server"
 	end
 end
 
-function GameServerManager.hot_join_sync(arg_13_0, arg_13_1)
+GameServerManager.hot_join_sync = function (arg_13_0, arg_13_1)
 	local var_13_0 = Managers.matchmaking
 
 	if var_13_0 and var_13_0:on_dedicated_server() then
@@ -82,7 +82,7 @@ function GameServerManager.hot_join_sync(arg_13_0, arg_13_1)
 	RPC.rpc_game_server_set_group_leader(var_13_3, var_13_2)
 end
 
-function GameServerManager.set_start_game_params(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+GameServerManager.set_start_game_params = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = Managers.party:leader()
 
 	if arg_14_1 ~= var_14_0 then
@@ -108,7 +108,7 @@ function GameServerManager.set_start_game_params(arg_14_0, arg_14_1, arg_14_2, a
 	}
 end
 
-function GameServerManager._notify_backend_errors(arg_15_0)
+GameServerManager._notify_backend_errors = function (arg_15_0)
 	local var_15_0 = Managers.backend
 
 	if var_15_0 ~= nil and var_15_0:has_error() then
@@ -122,7 +122,7 @@ function GameServerManager._notify_backend_errors(arg_15_0)
 	end
 end
 
-function GameServerManager._say(arg_16_0, arg_16_1)
+GameServerManager._say = function (arg_16_0, arg_16_1)
 	arg_16_1 = UTF8Utils.sub_string(arg_16_1, 1, 128)
 
 	local var_16_0 = Managers.chat

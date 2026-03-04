@@ -9,7 +9,7 @@ local var_0_1 = false
 
 GameModeInn = class(GameModeInn, GameModeBase)
 
-function GameModeInn.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeInn.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeInn.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._adventure_profile_rules = AdventureProfileRules:new(arg_1_0._profile_synchronizer, arg_1_0._network_server)
@@ -37,7 +37,7 @@ function GameModeInn.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	arg_1_0._local_player_spawned = false
 end
 
-function GameModeInn.destroy(arg_2_0)
+GameModeInn.destroy = function (arg_2_0)
 	local var_2_0 = Managers.state.event
 
 	if var_2_0 then
@@ -45,7 +45,7 @@ function GameModeInn.destroy(arg_2_0)
 	end
 end
 
-function GameModeInn.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
+GameModeInn.register_rpcs = function (arg_3_0, arg_3_1, arg_3_2)
 	GameModeInn.super.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._adventure_spawning:register_rpcs(arg_3_1, arg_3_2)
 
@@ -54,7 +54,7 @@ function GameModeInn.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._network_event_delegate:register(arg_3_0, "rpc_waystone_active")
 end
 
-function GameModeInn.unregister_rpcs(arg_4_0)
+GameModeInn.unregister_rpcs = function (arg_4_0)
 	arg_4_0._adventure_spawning:unregister_rpcs()
 	arg_4_0._network_event_delegate:unregister(arg_4_0)
 
@@ -63,16 +63,16 @@ function GameModeInn.unregister_rpcs(arg_4_0)
 	GameModeInn.super.unregister_rpcs(arg_4_0)
 end
 
-function GameModeInn.update(arg_5_0, arg_5_1, arg_5_2)
+GameModeInn.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_objectives()
 	arg_5_0._adventure_spawning:update(arg_5_1, arg_5_2)
 end
 
-function GameModeInn.server_update(arg_6_0, arg_6_1, arg_6_2)
+GameModeInn.server_update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._adventure_spawning:server_update(arg_6_1, arg_6_2)
 end
 
-function GameModeInn.evaluate_end_conditions(arg_7_0, arg_7_1)
+GameModeInn.evaluate_end_conditions = function (arg_7_0, arg_7_1)
 	if var_0_0 then
 		var_0_0 = false
 
@@ -98,20 +98,20 @@ function GameModeInn.evaluate_end_conditions(arg_7_0, arg_7_1)
 	end
 end
 
-function GameModeInn.event_local_player_spawned(arg_8_0, arg_8_1)
+GameModeInn.event_local_player_spawned = function (arg_8_0, arg_8_1)
 	arg_8_0._local_player_spawned = true
 	arg_8_0._is_initial_spawn = arg_8_1
 end
 
-function GameModeInn.COMPLETE_LEVEL(arg_9_0)
+GameModeInn.COMPLETE_LEVEL = function (arg_9_0)
 	var_0_0 = true
 end
 
-function GameModeInn.FAIL_LEVEL(arg_10_0)
+GameModeInn.FAIL_LEVEL = function (arg_10_0)
 	var_0_1 = true
 end
 
-function GameModeInn.player_entered_game_session(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+GameModeInn.player_entered_game_session = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	GameModeInn.super.player_entered_game_session(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 
 	if Managers.party:get_player_status(arg_11_1, arg_11_2).party_id ~= 1 then
@@ -123,23 +123,23 @@ function GameModeInn.player_entered_game_session(arg_11_0, arg_11_1, arg_11_2, a
 	arg_11_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_11_1, arg_11_2)
 end
 
-function GameModeInn.flow_callback_add_spawn_point(arg_12_0, arg_12_1)
+GameModeInn.flow_callback_add_spawn_point = function (arg_12_0, arg_12_1)
 	arg_12_0._adventure_spawning:add_spawn_point(arg_12_1)
 end
 
-function GameModeInn.respawn_unit_spawned(arg_13_0, arg_13_1)
+GameModeInn.respawn_unit_spawned = function (arg_13_0, arg_13_1)
 	arg_13_0._adventure_spawning:respawn_unit_spawned(arg_13_1)
 end
 
-function GameModeInn.get_respawn_handler(arg_14_0)
+GameModeInn.get_respawn_handler = function (arg_14_0)
 	return arg_14_0._adventure_spawning:get_respawn_handler()
 end
 
-function GameModeInn.respawn_gate_unit_spawned(arg_15_0, arg_15_1)
+GameModeInn.respawn_gate_unit_spawned = function (arg_15_0, arg_15_1)
 	arg_15_0._adventure_spawning:respawn_gate_unit_spawned(arg_15_1)
 end
 
-function GameModeInn.force_respawn(arg_16_0, arg_16_1, arg_16_2)
+GameModeInn.force_respawn = function (arg_16_0, arg_16_1, arg_16_2)
 	if Managers.party:get_player_status(arg_16_1, arg_16_2).party_id == 0 then
 		local var_16_0 = 1
 
@@ -149,7 +149,7 @@ function GameModeInn.force_respawn(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._adventure_spawning:force_respawn(arg_16_1, arg_16_2)
 end
 
-function GameModeInn._update_objectives(arg_17_0)
+GameModeInn._update_objectives = function (arg_17_0)
 	if not arg_17_0._objective_units then
 		arg_17_0._objective_units = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
@@ -167,7 +167,7 @@ function GameModeInn._update_objectives(arg_17_0)
 	end
 end
 
-function GameModeInn._update_objective_marker(arg_18_0)
+GameModeInn._update_objective_marker = function (arg_18_0)
 	local var_18_0 = arg_18_0._matchmaking_manager:is_game_matchmaking()
 
 	if arg_18_0._show_tutorial and not var_18_0 then
@@ -193,7 +193,7 @@ local var_0_2 = {
 	"waystone_weave"
 }
 
-function GameModeInn._state_game_is_matchmaking(arg_19_0)
+GameModeInn._state_game_is_matchmaking = function (arg_19_0)
 	if arg_19_0._is_server then
 		local var_19_0, var_19_1 = arg_19_0._matchmaking_manager:waystone_is_active()
 
@@ -227,7 +227,7 @@ local var_0_3 = {
 	"wom_tutorial_weave_select"
 }
 
-function GameModeInn._state_choose_map(arg_20_0)
+GameModeInn._state_choose_map = function (arg_20_0)
 	local var_20_0 = arg_20_0._current_objective_id
 	local var_20_1 = var_0_3[arg_20_0._current_waystone_type]
 
@@ -243,7 +243,7 @@ function GameModeInn._state_choose_map(arg_20_0)
 	end
 end
 
-function GameModeInn._should_show_tutorial(arg_21_0)
+GameModeInn._should_show_tutorial = function (arg_21_0)
 	local var_21_0 = arg_21_0._player_manager:local_player(1)
 
 	if var_21_0 then
@@ -256,7 +256,7 @@ function GameModeInn._should_show_tutorial(arg_21_0)
 	return false
 end
 
-function GameModeInn._state_tutorial(arg_22_0, arg_22_1)
+GameModeInn._state_tutorial = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._current_objective_id
 	local var_22_1
 
@@ -284,7 +284,7 @@ function GameModeInn._state_tutorial(arg_22_0, arg_22_1)
 	end
 end
 
-function GameModeInn._activate_objective_marker(arg_23_0, arg_23_1)
+GameModeInn._activate_objective_marker = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._objective_markers[arg_23_1]
 
 	if var_23_0 then
@@ -294,7 +294,7 @@ function GameModeInn._activate_objective_marker(arg_23_0, arg_23_1)
 	end
 end
 
-function GameModeInn._deactivate_objective_marker(arg_24_0, arg_24_1)
+GameModeInn._deactivate_objective_marker = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._objective_markers[arg_24_1]
 
 	if var_24_0 then
@@ -304,13 +304,13 @@ function GameModeInn._deactivate_objective_marker(arg_24_0, arg_24_1)
 	arg_24_0._current_objective_id = nil
 end
 
-function GameModeInn.rpc_waystone_active(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+GameModeInn.rpc_waystone_active = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	arg_25_0._waystone_is_active = arg_25_3
 	arg_25_0._waystone_type = arg_25_2
 	arg_25_0._current_waystone_type = arg_25_4
 end
 
-function GameModeInn.hot_join_sync(arg_26_0, arg_26_1)
+GameModeInn.hot_join_sync = function (arg_26_0, arg_26_1)
 	arg_26_0._waystone_is_active = false
 	arg_26_0._waystone_type = 0
 
@@ -319,7 +319,7 @@ function GameModeInn.hot_join_sync(arg_26_0, arg_26_1)
 	RPC.rpc_waystone_active(var_26_0, arg_26_0._waystone_type, arg_26_0._waystone_is_active, arg_26_0._current_waystone_type)
 end
 
-function GameModeInn.local_player_ready_to_start(arg_27_0, arg_27_1, arg_27_2)
+GameModeInn.local_player_ready_to_start = function (arg_27_0, arg_27_1, arg_27_2)
 	if not arg_27_0._local_player_spawned then
 		return false
 	end
@@ -327,7 +327,7 @@ function GameModeInn.local_player_ready_to_start(arg_27_0, arg_27_1, arg_27_2)
 	return true
 end
 
-function GameModeInn.local_player_game_starts(arg_28_0, arg_28_1, arg_28_2)
+GameModeInn.local_player_game_starts = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_2.show_profile_on_startup
 
 	arg_28_2.show_profile_on_startup = nil
@@ -371,7 +371,7 @@ function GameModeInn.local_player_game_starts(arg_28_0, arg_28_1, arg_28_2)
 	print("[GameModeInn] Start menu opened")
 end
 
-function GameModeInn._cb_start_menu_closed(arg_29_0)
+GameModeInn._cb_start_menu_closed = function (arg_29_0)
 	print("[GameModeInn] Start menu closed")
 
 	local var_29_0 = arg_29_0._world

@@ -14,7 +14,7 @@ local var_0_0 = {
 	"zh"
 }
 
-function ImguiLocalization.init(arg_1_0)
+ImguiLocalization.init = function (arg_1_0)
 	arg_1_0._text = ""
 	arg_1_0._cached_localizations = {}
 	arg_1_0._action_queue = {
@@ -22,7 +22,7 @@ function ImguiLocalization.init(arg_1_0)
 	}
 end
 
-function ImguiLocalization.update(arg_2_0)
+ImguiLocalization.update = function (arg_2_0)
 	local var_2_0 = table.remove(arg_2_0._action_queue)
 
 	if var_2_0 then
@@ -30,7 +30,7 @@ function ImguiLocalization.update(arg_2_0)
 	end
 end
 
-function ImguiLocalization.action_push(arg_3_0, arg_3_1)
+ImguiLocalization.action_push = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._action_queue
 
 	var_3_0.n = var_3_0.n + 1
@@ -38,7 +38,7 @@ function ImguiLocalization.action_push(arg_3_0, arg_3_1)
 	table.insert(var_3_0, 1, arg_3_1)
 end
 
-function ImguiLocalization.draw(arg_4_0)
+ImguiLocalization.draw = function (arg_4_0)
 	local var_4_0 = Imgui.begin_window("Localization", "menu_bar")
 	local var_4_1 = Managers.localizer:language_id()
 	local var_4_2 = #arg_4_0._action_queue
@@ -87,11 +87,11 @@ function ImguiLocalization.draw(arg_4_0)
 
 			if iter_4_2 ~= var_4_8 then
 				arg_4_0:action_push(NOP)
-				arg_4_0:action_push(function()
+				arg_4_0:action_push(function ()
 					Managers.localizer:_set_locale(iter_4_3)
 				end)
 				arg_4_0:action_push(NOP)
-				arg_4_0:action_push(function()
+				arg_4_0:action_push(function ()
 					local var_6_0 = Localize(var_4_5)
 
 					arg_4_0._cached_localizations[iter_4_2] = var_6_0
@@ -99,10 +99,10 @@ function ImguiLocalization.draw(arg_4_0)
 			end
 		end
 
-		arg_4_0:action_push(function()
+		arg_4_0:action_push(function ()
 			Managers.localizer:_set_locale(var_4_1)
 		end)
-		arg_4_0:action_push(function()
+		arg_4_0:action_push(function ()
 			local var_8_0 = Localize(var_4_5)
 
 			arg_4_0._cached_localizations[var_4_8] = var_8_0
@@ -157,6 +157,6 @@ function ImguiLocalization.draw(arg_4_0)
 	return var_4_0
 end
 
-function ImguiLocalization.is_persistent(arg_9_0)
+ImguiLocalization.is_persistent = function (arg_9_0)
 	return false
 end

@@ -228,7 +228,7 @@ local var_0_7 = {
 local var_0_8 = false
 local var_0_9 = 0.3
 
-function VoiceChatUI.init(arg_1_0, arg_1_1)
+VoiceChatUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.player_manager = arg_1_1.player_manager
 	arg_1_0._voip = arg_1_1.voip
@@ -242,11 +242,11 @@ function VoiceChatUI.init(arg_1_0, arg_1_1)
 	arg_1_0:create_ui_elements()
 end
 
-function VoiceChatUI.set_input_manager(arg_2_0, arg_2_1)
+VoiceChatUI.set_input_manager = function (arg_2_0, arg_2_1)
 	arg_2_0.input_manager = arg_2_1
 end
 
-function VoiceChatUI.create_ui_elements(arg_3_0)
+VoiceChatUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_top_renderer)
 
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
@@ -281,7 +281,7 @@ function VoiceChatUI.create_ui_elements(arg_3_0)
 	var_0_8 = false
 end
 
-function VoiceChatUI.destroy(arg_4_0)
+VoiceChatUI.destroy = function (arg_4_0)
 	if arg_4_0.icon_widgets then
 		for iter_4_0, iter_4_1 in ipairs(arg_4_0.icon_widgets) do
 			UIWidget.destroy(arg_4_0.ui_top_renderer, iter_4_1)
@@ -309,11 +309,11 @@ function VoiceChatUI.destroy(arg_4_0)
 	GarbageLeakDetector.register_object(arg_4_0, "voice_chat_ui")
 end
 
-function VoiceChatUI._update_timer(arg_5_0)
+VoiceChatUI._update_timer = function (arg_5_0)
 	arg_5_0._timer = Application.time_since_launch()
 end
 
-function VoiceChatUI._update_safe_rect(arg_6_0)
+VoiceChatUI._update_safe_rect = function (arg_6_0)
 	if IS_PS4 then
 		local var_6_0 = Application.user_setting("safe_rect") or 0
 
@@ -326,7 +326,7 @@ end
 
 local var_0_10 = {}
 
-function VoiceChatUI._update_talking_state(arg_7_0)
+VoiceChatUI._update_talking_state = function (arg_7_0)
 	local var_7_0 = arg_7_0._voip:members_in_own_room() or var_0_10
 	local var_7_1 = var_7_0.get_members and var_7_0:get_members() or var_7_0
 
@@ -348,7 +348,7 @@ function VoiceChatUI._update_talking_state(arg_7_0)
 	arg_7_0:_evaluate_push_to_talk()
 end
 
-function VoiceChatUI._evaluate_push_to_talk(arg_8_0)
+VoiceChatUI._evaluate_push_to_talk = function (arg_8_0)
 	if not arg_8_0._voip:push_to_talk_enabled() then
 		return
 	end
@@ -367,7 +367,7 @@ function VoiceChatUI._evaluate_push_to_talk(arg_8_0)
 	arg_8_0._dirty = var_8_3 ~= var_8_4 or arg_8_0._dirty
 end
 
-function VoiceChatUI._update_widgets(arg_9_0)
+VoiceChatUI._update_widgets = function (arg_9_0)
 	if not arg_9_0._dirty then
 		return
 	end
@@ -445,7 +445,7 @@ function VoiceChatUI._update_widgets(arg_9_0)
 	end
 end
 
-function VoiceChatUI.update(arg_10_0, arg_10_1)
+VoiceChatUI.update = function (arg_10_0, arg_10_1)
 	arg_10_0:_update_timer()
 	arg_10_0:_update_safe_rect()
 	arg_10_0:_update_talking_state()
@@ -453,7 +453,7 @@ function VoiceChatUI.update(arg_10_0, arg_10_1)
 	arg_10_0:_draw(arg_10_1)
 end
 
-function VoiceChatUI._draw(arg_11_0, arg_11_1)
+VoiceChatUI._draw = function (arg_11_0, arg_11_1)
 	if not arg_11_0._dirty then
 		return
 	end

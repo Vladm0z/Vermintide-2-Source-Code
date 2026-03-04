@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_game_play_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pbw_activate_ability_battle_wizard_non_drunk",
 		name = "pbw_activate_ability_battle_wizard_non_drunk",

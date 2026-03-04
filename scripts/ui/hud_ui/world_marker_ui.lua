@@ -57,7 +57,7 @@ local var_0_6 = "ping"
 
 WorldMarkerUI = class(WorldMarkerUI)
 
-function WorldMarkerUI.init(arg_2_0, arg_2_1, arg_2_2)
+WorldMarkerUI.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._parent = arg_2_1
 	arg_2_0.ui_renderer = arg_2_2.ui_renderer
 	arg_2_0.ingame_ui = arg_2_2.ingame_ui
@@ -81,7 +81,7 @@ function WorldMarkerUI.init(arg_2_0, arg_2_1, arg_2_2)
 	var_2_0:register(arg_2_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-function WorldMarkerUI.destroy(arg_3_0)
+WorldMarkerUI.destroy = function (arg_3_0)
 	local var_3_0 = Managers.state.event
 
 	var_3_0:unregister("add_world_marker_unit", arg_3_0)
@@ -90,7 +90,7 @@ function WorldMarkerUI.destroy(arg_3_0)
 	var_3_0:unregister("on_spectator_target_changed", arg_3_0)
 end
 
-function WorldMarkerUI._create_ui_elements(arg_4_0)
+WorldMarkerUI._create_ui_elements = function (arg_4_0)
 	arg_4_0._id_counter = 0
 	arg_4_0._markers = {}
 	arg_4_0._markers_by_id = {}
@@ -106,7 +106,7 @@ function WorldMarkerUI._create_ui_elements(arg_4_0)
 	end
 end
 
-function WorldMarkerUI.event_remove_world_marker(arg_5_0, arg_5_1)
+WorldMarkerUI.event_remove_world_marker = function (arg_5_0, arg_5_1)
 	local var_5_0
 	local var_5_1 = arg_5_0._markers
 
@@ -125,7 +125,7 @@ function WorldMarkerUI.event_remove_world_marker(arg_5_0, arg_5_1)
 	end
 end
 
-function WorldMarkerUI.event_add_world_marker_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+WorldMarkerUI.event_add_world_marker_unit = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0:_create_widget_by_type(arg_6_1)
 	local var_6_1 = arg_6_0:_register_marker({
 		type = arg_6_1,
@@ -143,7 +143,7 @@ function WorldMarkerUI.event_add_world_marker_unit(arg_6_0, arg_6_1, arg_6_2, ar
 	end
 end
 
-function WorldMarkerUI.event_add_world_marker_position(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+WorldMarkerUI.event_add_world_marker_position = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0:_create_widget_by_type(arg_7_1)
 	local var_7_1 = {
 		type = arg_7_1,
@@ -162,14 +162,14 @@ function WorldMarkerUI.event_add_world_marker_position(arg_7_0, arg_7_1, arg_7_2
 	end
 end
 
-function WorldMarkerUI.on_spectator_target_changed(arg_8_0, arg_8_1)
+WorldMarkerUI.on_spectator_target_changed = function (arg_8_0, arg_8_1)
 	arg_8_0._spectated_player_unit = arg_8_1
 	arg_8_0._spectated_player = Managers.player:owner(arg_8_1)
 	arg_8_0._is_spectator = true
 	arg_8_0.local_player = arg_8_0._spectated_player
 end
 
-function WorldMarkerUI._register_marker(arg_9_0, arg_9_1)
+WorldMarkerUI._register_marker = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._markers
 	local var_9_1 = arg_9_0._markers_by_id
 	local var_9_2 = arg_9_0._markers_by_type
@@ -191,7 +191,7 @@ function WorldMarkerUI._register_marker(arg_9_0, arg_9_1)
 	return var_9_3
 end
 
-function WorldMarkerUI._unregister_marker(arg_10_0, arg_10_1)
+WorldMarkerUI._unregister_marker = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._markers
 	local var_10_1 = arg_10_0._markers_by_id
 	local var_10_2 = arg_10_0._markers_by_type
@@ -218,17 +218,17 @@ function WorldMarkerUI._unregister_marker(arg_10_0, arg_10_1)
 	end
 end
 
-function WorldMarkerUI._create_widget_by_type(arg_11_0, arg_11_1)
+WorldMarkerUI._create_widget_by_type = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._widget_definitions_by_type[arg_11_1]
 
 	return UIWidget.init(var_11_0)
 end
 
-function WorldMarkerUI.update(arg_12_0, arg_12_1, arg_12_2)
+WorldMarkerUI.update = function (arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-function WorldMarkerUI.post_update(arg_13_0, arg_13_1, arg_13_2)
+WorldMarkerUI.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.local_player.player_unit
 
 	if not Unit.alive(var_13_0) then
@@ -533,7 +533,7 @@ function WorldMarkerUI.post_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function WorldMarkerUI._raycast_marker(arg_14_0, arg_14_1)
+WorldMarkerUI._raycast_marker = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.widget.content
 	local var_14_1 = arg_14_1.position
 	local var_14_2 = var_14_0.distance
@@ -553,7 +553,7 @@ function WorldMarkerUI._raycast_marker(arg_14_0, arg_14_1)
 	return PhysicsWorld.immediate_raycast(var_14_6, var_14_8, Vector3.normalize(var_14_1 - var_14_8), var_14_2, "closest", "collision_filter", "filter_physics_projectile")
 end
 
-function WorldMarkerUI._get_scale(arg_15_0, arg_15_1, arg_15_2)
+WorldMarkerUI._get_scale = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_1.min_scale
 	local var_15_1 = arg_15_1.start_scale_distance
 	local var_15_2 = arg_15_1.end_scale_distance
@@ -569,7 +569,7 @@ function WorldMarkerUI._get_scale(arg_15_0, arg_15_1, arg_15_2)
 	return 1
 end
 
-function WorldMarkerUI._apply_scale(arg_16_0, arg_16_1, arg_16_2)
+WorldMarkerUI._apply_scale = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_1.style
 
 	arg_16_1.content.scale = arg_16_2
@@ -599,7 +599,7 @@ function WorldMarkerUI._apply_scale(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function WorldMarkerUI._convert_world_to_screen_position(arg_17_0, arg_17_1, arg_17_2)
+WorldMarkerUI._convert_world_to_screen_position = function (arg_17_0, arg_17_1, arg_17_2)
 	if arg_17_1 then
 		local var_17_0, var_17_1 = Camera.world_to_screen(arg_17_1, arg_17_2)
 		local var_17_2 = RESOLUTION_LOOKUP.inv_scale
@@ -608,7 +608,7 @@ function WorldMarkerUI._convert_world_to_screen_position(arg_17_0, arg_17_1, arg
 	end
 end
 
-function WorldMarkerUI._normal_clamp_to_screen(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+WorldMarkerUI._normal_clamp_to_screen = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
 	local var_18_0 = UISceneGraph.get_size_scaled(arg_18_0.ui_scenegraph, "root")
 	local var_18_1 = arg_18_3 and arg_18_3.up or 0
 	local var_18_2 = arg_18_3 and arg_18_3.down or 0
@@ -656,7 +656,7 @@ function WorldMarkerUI._normal_clamp_to_screen(arg_18_0, arg_18_1, arg_18_2, arg
 	return var_18_5, var_18_6, var_18_7
 end
 
-function WorldMarkerUI._is_clamped(arg_19_0, arg_19_1, arg_19_2)
+WorldMarkerUI._is_clamped = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = UISceneGraph.get_size_scaled(arg_19_0.ui_scenegraph, "root")
 	local var_19_1 = RESOLUTION_LOOKUP.scale
 	local var_19_2 = var_19_0[1] * var_19_1
@@ -683,7 +683,7 @@ function WorldMarkerUI._is_clamped(arg_19_0, arg_19_1, arg_19_2)
 	return (var_19_12 or var_19_13) and true or false
 end
 
-function WorldMarkerUI._tutorial_clamp_to_screen(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+WorldMarkerUI._tutorial_clamp_to_screen = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = RESOLUTION_LOOKUP
 	local var_20_1 = var_20_0.scale
 	local var_20_2 = var_20_0.res_w * 0.5
@@ -708,7 +708,7 @@ local var_0_8 = 2
 local var_0_9 = 3
 local var_0_10 = 4
 
-function WorldMarkerUI._test_raycast(arg_21_0)
+WorldMarkerUI._test_raycast = function (arg_21_0)
 	local var_21_0 = arg_21_0.local_player.player_unit
 
 	if not Unit.alive(var_21_0) then
@@ -750,7 +750,7 @@ function WorldMarkerUI._test_raycast(arg_21_0)
 	end
 end
 
-function WorldMarkerUI._get_raycast_position(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+WorldMarkerUI._get_raycast_position = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	local var_22_0 = PhysicsWorld.immediate_raycast(arg_22_4, arg_22_2, arg_22_3, 100, "all", "collision_filter", arg_22_5)
 
 	if not var_22_0 then

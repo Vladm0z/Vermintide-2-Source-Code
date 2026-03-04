@@ -4,7 +4,7 @@ require("scripts/ui/views/popup_handler")
 
 PopupManager = class(PopupManager)
 
-function PopupManager.init(arg_1_0)
+PopupManager.init = function (arg_1_0)
 	local var_1_0 = Managers.world:world("top_ingame_view")
 
 	arg_1_0._ui_top_renderer = UIRenderer.create(var_1_0, "material", "materials/ui/ui_1080p_popup", "material", "materials/fonts/gw_fonts")
@@ -21,11 +21,11 @@ function PopupManager.init(arg_1_0)
 	}
 end
 
-function PopupManager.create_own_handler(arg_2_0, arg_2_1)
+PopupManager.create_own_handler = function (arg_2_0, arg_2_1)
 	arg_2_0._handler = PopupHandler:new(arg_2_1, true)
 end
 
-function PopupManager.update(arg_3_0, arg_3_1)
+PopupManager.update = function (arg_3_0, arg_3_1)
 	if arg_3_0._handler then
 		arg_3_0._handler:update(arg_3_1, true)
 
@@ -48,7 +48,7 @@ function PopupManager.update(arg_3_0, arg_3_1)
 	end
 end
 
-function PopupManager.destroy(arg_4_0)
+PopupManager.destroy = function (arg_4_0)
 	local var_4_0 = Managers.world:world("top_ingame_view")
 	local var_4_1 = arg_4_0._ui_top_renderer
 
@@ -57,11 +57,11 @@ function PopupManager.destroy(arg_4_0)
 	arg_4_0._ui_top_renderer = nil
 end
 
-function PopupManager.set_button_enabled(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PopupManager.set_button_enabled = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return arg_5_0._handler:set_button_enabled(arg_5_1, arg_5_2, arg_5_3)
 end
 
-function PopupManager.queue_popup(arg_6_0, arg_6_1, arg_6_2, ...)
+PopupManager.queue_popup = function (arg_6_0, arg_6_1, arg_6_2, ...)
 	print("PopupManager:queue_default_popup: ", arg_6_1, arg_6_2, ...)
 
 	local var_6_0 = "default"
@@ -69,7 +69,7 @@ function PopupManager.queue_popup(arg_6_0, arg_6_1, arg_6_2, ...)
 	return arg_6_0._handler:queue_popup(var_6_0, arg_6_1, arg_6_2, ...)
 end
 
-function PopupManager.queue_password_popup(arg_7_0, arg_7_1, arg_7_2, ...)
+PopupManager.queue_password_popup = function (arg_7_0, arg_7_1, arg_7_2, ...)
 	print("PopupManager:queue_password_popup: ", arg_7_1, arg_7_2, ...)
 
 	local var_7_0 = "password"
@@ -77,29 +77,29 @@ function PopupManager.queue_password_popup(arg_7_0, arg_7_1, arg_7_2, ...)
 	return arg_7_0._handler:queue_popup(var_7_0, arg_7_1, arg_7_2, ...)
 end
 
-function PopupManager.activate_timer(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+PopupManager.activate_timer = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	return arg_8_0._handler:activate_timer(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 end
 
-function PopupManager.has_popup(arg_9_0)
+PopupManager.has_popup = function (arg_9_0)
 	return arg_9_0._handler:has_popup()
 end
 
-function PopupManager.has_popup_with_id(arg_10_0, arg_10_1)
+PopupManager.has_popup_with_id = function (arg_10_0, arg_10_1)
 	return arg_10_0._handler:has_popup_with_id(arg_10_1)
 end
 
-function PopupManager.cancel_popup(arg_11_0, arg_11_1)
+PopupManager.cancel_popup = function (arg_11_0, arg_11_1)
 	return arg_11_0._handler:cancel_popup(arg_11_1)
 end
 
-function PopupManager.cancel_all_popups(arg_12_0)
+PopupManager.cancel_all_popups = function (arg_12_0)
 	Managers.account:cancel_all_popups()
 
 	return arg_12_0._handler:cancel_all_popups()
 end
 
-function PopupManager.query_result(arg_13_0, arg_13_1)
+PopupManager.query_result = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._poll_data
 
 	if var_13_0.current_popup_id == arg_13_1 then
@@ -115,18 +115,18 @@ function PopupManager.query_result(arg_13_0, arg_13_1)
 	return var_13_1, var_13_2
 end
 
-function PopupManager.set_input_manager(arg_14_0, arg_14_1)
+PopupManager.set_input_manager = function (arg_14_0, arg_14_1)
 	arg_14_0._handler:set_input_manager(arg_14_1)
 end
 
-function PopupManager.remove_input_manager(arg_15_0, arg_15_1)
+PopupManager.remove_input_manager = function (arg_15_0, arg_15_1)
 	arg_15_0._handler:remove_input_manager(arg_15_1)
 end
 
-function PopupManager.fit_text_width_to_popup(arg_16_0, arg_16_1)
+PopupManager.fit_text_width_to_popup = function (arg_16_0, arg_16_1)
 	return arg_16_0._handler:fit_text_width_to_popup(arg_16_1)
 end
 
-function PopupManager.set_popup_verifying_password(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+PopupManager.set_popup_verifying_password = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	return arg_17_0._handler:set_popup_verifying_password(arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 end

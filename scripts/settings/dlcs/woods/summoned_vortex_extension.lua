@@ -19,7 +19,7 @@ local var_0_6 = {
 	chaos_marauder = true
 }
 
-function SummonedVortexExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+SummonedVortexExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.world = var_1_0
@@ -102,7 +102,7 @@ function SummonedVortexExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_3.owner_unit or arg_1_2
 end
 
-function SummonedVortexExtension._create_nav_cost_maps(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+SummonedVortexExtension._create_nav_cost_maps = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_2 = Vector3Box(arg_2_2)
 
 	local function var_2_0()
@@ -132,7 +132,7 @@ function SummonedVortexExtension._create_nav_cost_maps(arg_2_0, arg_2_1, arg_2_2
 	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_2_0)
 end
 
-function SummonedVortexExtension.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+SummonedVortexExtension.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.vortex_template
 	local var_4_1 = Managers.time:time("game")
 	local var_4_2
@@ -169,7 +169,7 @@ function SummonedVortexExtension.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
 	WwiseUtils.trigger_unit_event(arg_4_1, var_4_4, arg_4_2)
 end
 
-function SummonedVortexExtension.refresh_duration(arg_5_0)
+SummonedVortexExtension.refresh_duration = function (arg_5_0)
 	if not arg_5_0.vortex_data then
 		return
 	end
@@ -193,7 +193,7 @@ function SummonedVortexExtension.refresh_duration(arg_5_0)
 	arg_5_0.vortex_data.time_of_death = var_5_0 + var_5_7
 end
 
-function SummonedVortexExtension.destroy(arg_6_0)
+SummonedVortexExtension.destroy = function (arg_6_0)
 	local var_6_0 = arg_6_0.unit
 
 	arg_6_0._nav_cb_blocker = true
@@ -265,7 +265,7 @@ end
 
 local var_0_7 = 2
 
-function SummonedVortexExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+SummonedVortexExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.vortex_template
 	local var_7_1 = arg_7_0.vortex_data
 
@@ -313,7 +313,7 @@ local function var_0_8(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function SummonedVortexExtension._update_nav_cost_map_volumes(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+SummonedVortexExtension._update_nav_cost_map_volumes = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = arg_9_6:current_velocity()
 	local var_9_1 = Vector3.normalize(var_9_0)
 	local var_9_2 = Vector3.cross(var_9_1, Vector3.up())
@@ -344,7 +344,7 @@ end
 
 local var_0_9 = 0.25
 
-function SummonedVortexExtension._update_height(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+SummonedVortexExtension._update_height = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = 1
 	local var_10_1 = arg_10_5.current_raycast_rad
 	local var_10_2 = arg_10_5.inner_radius
@@ -391,7 +391,7 @@ function SummonedVortexExtension._update_height(arg_10_0, arg_10_1, arg_10_2, ar
 	end
 end
 
-function SummonedVortexExtension._update_attract_outside_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+SummonedVortexExtension._update_attract_outside_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
 	local var_11_0 = arg_11_0._target_unit
 	local var_11_1 = var_0_2[var_11_0]
 	local var_11_2 = var_11_1.locomotion_extension or ScriptUnit.has_extension(var_11_0, "locomotion_system")
@@ -474,7 +474,7 @@ function SummonedVortexExtension._update_attract_outside_target(arg_11_0, arg_11
 	end
 end
 
-function SummonedVortexExtension._update_caught_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+SummonedVortexExtension._update_caught_target = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = arg_12_0._target_unit
 
 	if arg_12_0._target_is_player then
@@ -511,7 +511,7 @@ function SummonedVortexExtension._update_caught_target(arg_12_0, arg_12_1, arg_1
 	end
 end
 
-function SummonedVortexExtension.attract(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
+SummonedVortexExtension.attract = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
 	local var_13_0 = -0.5
 	local var_13_1 = arg_13_8 - arg_13_7
 	local var_13_2 = arg_13_7 + arg_13_4.max_allowed_inner_radius_dist
@@ -523,7 +523,7 @@ function SummonedVortexExtension.attract(arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 	end
 end
 
-function SummonedVortexExtension.is_position_inside(arg_14_0, arg_14_1, arg_14_2)
+SummonedVortexExtension.is_position_inside = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = (arg_14_0.vortex_data.outer_radius + (arg_14_2 or 0))^2
 	local var_14_1 = arg_14_0.unit
 	local var_14_2 = POSITION_LOOKUP[var_14_1]
@@ -535,7 +535,7 @@ local var_0_10 = {}
 local var_0_11 = 8
 local var_0_12 = 10
 
-function SummonedVortexExtension.debug_render_vortex(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
+SummonedVortexExtension.debug_render_vortex = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
 	arg_15_4 = arg_15_4 + math.sin(arg_15_1 * 1.7) * 0.4
 
 	local var_15_0 = 2 * math.pi / 6

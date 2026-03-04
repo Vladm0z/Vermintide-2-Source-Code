@@ -136,7 +136,7 @@ local var_0_5 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_2.style.texture_icon.color[1] = 0
 				arg_1_2.style.texture_frame.color[1] = 0
 
@@ -146,7 +146,7 @@ local var_0_5 = {
 				var_1_0[1] = var_1_1[1]
 				var_1_0[2] = var_1_1[2]
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 				local var_2_1 = math.catmullrom(var_2_0, -2, 0, 1, -5)
 
@@ -159,7 +159,7 @@ local var_0_5 = {
 				var_2_2[1] = math.floor(var_2_3[1] * var_2_1)
 				var_2_2[2] = math.floor(var_2_3[2] * var_2_1)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -167,10 +167,10 @@ local var_0_5 = {
 			name = "fade_out",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 				local var_5_1 = math.catmullrom(var_5_0, 5, 0, 1, 1)
 
@@ -183,7 +183,7 @@ local var_0_5 = {
 				var_5_2[1] = var_5_3[1] - math.floor(20 * var_5_1)
 				var_5_2[2] = var_5_3[2] - math.floor(20 * var_5_1)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}

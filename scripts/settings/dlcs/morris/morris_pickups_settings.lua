@@ -44,7 +44,7 @@ var_0_0.pickups = {
 			unit_template_name = "pickup_unit",
 			hud_description = "deus_soft_currency_item_desc",
 			disallow_bot_pickup = true,
-			on_pick_up_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			on_pick_up_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				local var_2_0 = Managers.state.game_mode:game_mode()
 
 				if var_2_0.on_picked_up_soft_currency then

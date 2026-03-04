@@ -11,7 +11,7 @@ local var_0_3 = 5
 local var_0_4 = 150
 local var_0_5 = 300
 
-function ScrollbarUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ScrollbarUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	arg_1_0._scroll_area_scenegraph_id = arg_1_2
 	arg_1_0._scroll_area_anchor_scenegraph_id = arg_1_3
 	arg_1_0._scroll_area_hotspot_widget = arg_1_6
@@ -25,7 +25,7 @@ function ScrollbarUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, 
 	arg_1_0:_create_ui_elements()
 end
 
-function ScrollbarUI._create_ui_elements(arg_2_0)
+ScrollbarUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._scrollbar_wait_timer = 0
 	arg_2_0._scrollbar_timer = 0
 	arg_2_0._auto_scroll_enabled = arg_2_0._auto_scroll_enabled_at_start
@@ -42,7 +42,7 @@ function ScrollbarUI._create_ui_elements(arg_2_0)
 	end
 end
 
-function ScrollbarUI.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ScrollbarUI.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_0:_auto_scroll(arg_3_1, arg_3_2)
 	arg_3_0:_update_input(arg_3_1, arg_3_2, arg_3_4, arg_3_3)
 	arg_3_0:_update_scroller_progress()
@@ -51,7 +51,7 @@ function ScrollbarUI.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5
 	arg_3_0:_draw(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 end
 
-function ScrollbarUI.force_update_progress(arg_4_0, arg_4_1)
+ScrollbarUI.force_update_progress = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1 or 1
 	local var_4_1 = arg_4_0._ui_scenegraph[arg_4_0._scroll_area_scenegraph_id].local_position[var_4_0]
 
@@ -60,7 +60,7 @@ function ScrollbarUI.force_update_progress(arg_4_0, arg_4_1)
 	table.clear(arg_4_0._ui_animations)
 end
 
-function ScrollbarUI._auto_scroll(arg_5_0, arg_5_1, arg_5_2)
+ScrollbarUI._auto_scroll = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._auto_scroll_enabled then
 		return
 	end
@@ -83,17 +83,17 @@ function ScrollbarUI._auto_scroll(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function ScrollbarUI.disable_input(arg_6_0, arg_6_1)
+ScrollbarUI.disable_input = function (arg_6_0, arg_6_1)
 	arg_6_0._input_disabled = arg_6_1
 	arg_6_0._widgets_by_name.scrollbar.content.gamepad_input_disabled = arg_6_1
 end
 
-function ScrollbarUI.disable_gamepad_input(arg_7_0, arg_7_1)
+ScrollbarUI.disable_gamepad_input = function (arg_7_0, arg_7_1)
 	arg_7_0._gamepad_input_disabled = arg_7_1
 	arg_7_0._widgets_by_name.scrollbar.content.gamepad_input_disabled = arg_7_1
 end
 
-function ScrollbarUI._update_input(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ScrollbarUI._update_input = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if arg_8_0._input_disabled then
 		return
 	end
@@ -147,7 +147,7 @@ function ScrollbarUI._update_input(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	arg_8_0._auto_scroll_enabled = false
 end
 
-function ScrollbarUI._calculate_input_offset(arg_9_0, arg_9_1, arg_9_2)
+ScrollbarUI._calculate_input_offset = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._widgets_by_name.scrollbar.style
 	local var_9_1 = arg_9_1:get("cursor")
 	local var_9_2 = arg_9_2[arg_9_0._scroll_area_anchor_scenegraph_id]
@@ -173,7 +173,7 @@ function ScrollbarUI._calculate_input_offset(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function ScrollbarUI._update_scroller_position(arg_10_0, arg_10_1, arg_10_2)
+ScrollbarUI._update_scroller_position = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._widgets_by_name.scrollbar.style
 	local var_10_1 = arg_10_1:get("cursor")
 	local var_10_2 = arg_10_2[arg_10_0._scroll_area_anchor_scenegraph_id]
@@ -205,7 +205,7 @@ function ScrollbarUI._update_scroller_position(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function ScrollbarUI._update_scroller_progress(arg_11_0)
+ScrollbarUI._update_scroller_progress = function (arg_11_0)
 	arg_11_0._widgets_by_name.scrollbar.content.progress = arg_11_0._progress
 
 	if arg_11_0._horizontal_scrollbar then
@@ -215,7 +215,7 @@ function ScrollbarUI._update_scroller_progress(arg_11_0)
 	end
 end
 
-function ScrollbarUI._update_scrollbar_hover_animations(arg_12_0)
+ScrollbarUI._update_scrollbar_hover_animations = function (arg_12_0)
 	local var_12_0 = arg_12_0._widgets_by_name.scrollbar
 	local var_12_1 = var_12_0.content
 	local var_12_2 = var_12_0.style
@@ -233,7 +233,7 @@ function ScrollbarUI._update_scrollbar_hover_animations(arg_12_0)
 	end
 end
 
-function ScrollbarUI._update_animations(arg_13_0, arg_13_1, arg_13_2)
+ScrollbarUI._update_animations = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._ui_animations
 
 	for iter_13_0, iter_13_1 in pairs(var_13_0) do
@@ -245,7 +245,7 @@ function ScrollbarUI._update_animations(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function ScrollbarUI._draw(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+ScrollbarUI._draw = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_0._ui_scenegraph
 
 	UIRenderer.begin_pass(arg_14_3, var_14_0, arg_14_4, arg_14_1, nil, arg_14_5)
@@ -261,7 +261,7 @@ function ScrollbarUI._draw(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg
 	UIRenderer.end_pass(arg_14_3)
 end
 
-function ScrollbarUI.destroy(arg_15_0, arg_15_1)
+ScrollbarUI.destroy = function (arg_15_0, arg_15_1)
 	arg_15_1[arg_15_0._scroll_area_scenegraph_id].local_position[2] = 0
 	arg_15_0._scroll_area_scenegraph_id = nil
 	arg_15_0._scroll_area_anchor_scenegraph_id = nil

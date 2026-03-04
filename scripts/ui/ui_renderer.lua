@@ -59,7 +59,7 @@ local function var_0_12(arg_2_0)
 	return arg_2_0
 end
 
-function var_0_9.script_draw_bitmap(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10)
+var_0_9.script_draw_bitmap = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10)
 	local var_3_0 = arg_3_1 and arg_3_1.snap_pixel_positions
 
 	if var_3_0 == nil then
@@ -120,7 +120,7 @@ function var_0_9.script_draw_bitmap(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4,
 	end
 end
 
-function var_0_9.script_draw_bitmap_uv(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11)
+var_0_9.script_draw_bitmap_uv = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10, arg_4_11)
 	local var_4_0 = arg_4_1 and arg_4_1.snap_pixel_positions
 
 	if var_4_0 == nil then
@@ -181,7 +181,7 @@ local var_0_14 = Gui.bitmap_3d_uv
 local var_0_15 = Gui.update_bitmap_3d
 local var_0_16 = Gui.bitmap_3d
 
-function var_0_9.script_draw_bitmap_3d(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9)
+var_0_9.script_draw_bitmap_3d = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9)
 	local var_5_0 = arg_5_1 and arg_5_1.alpha_multiplier or 1
 
 	arg_5_6 = arg_5_6 and var_0_0(arg_5_6[1] * var_5_0, arg_5_6[2], arg_5_6[3], arg_5_6[4])
@@ -252,7 +252,7 @@ local function var_0_17(arg_6_0, ...)
 	return ...
 end
 
-function var_0_9.create(arg_7_0, ...)
+var_0_9.create = function (arg_7_0, ...)
 	local var_7_0 = World.create_screen_gui(arg_7_0, "immediate", var_0_17(1, ...))
 	local var_7_1 = World.create_screen_gui(arg_7_0, var_0_17(1, ...))
 
@@ -273,7 +273,7 @@ local var_0_18 = table.set({
 	"debug_startpoint"
 })
 
-function var_0_9.create_ui_renderer(arg_8_0, arg_8_1, arg_8_2)
+var_0_9.create_ui_renderer = function (arg_8_0, arg_8_1, arg_8_2)
 	return table.make_strict({
 		gui = arg_8_1,
 		gui_retained = arg_8_2,
@@ -284,7 +284,7 @@ function var_0_9.create_ui_renderer(arg_8_0, arg_8_1, arg_8_2)
 	}, var_0_18)
 end
 
-function var_0_9.create_video_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+var_0_9.create_video_player = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if script_data.disable_video_player then
 		return
 	end
@@ -303,7 +303,7 @@ function var_0_9.create_video_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 	end
 end
 
-function var_0_9.destroy_video_player(arg_10_0, arg_10_1, arg_10_2)
+var_0_9.destroy_video_player = function (arg_10_0, arg_10_1, arg_10_2)
 	if script_data.disable_video_player then
 		return
 	end
@@ -317,7 +317,7 @@ function var_0_9.destroy_video_player(arg_10_0, arg_10_1, arg_10_2)
 	var_10_0[arg_10_1] = nil
 end
 
-function var_0_9.destroy(arg_11_0, arg_11_1)
+var_0_9.destroy = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.video_players
 
 	for iter_11_0, iter_11_1 in pairs(var_11_0) do
@@ -332,13 +332,13 @@ function var_0_9.destroy(arg_11_0, arg_11_1)
 	World.destroy_gui(arg_11_1, arg_11_0.gui_retained)
 end
 
-function var_0_9.clear_scenegraph_queue(arg_12_0)
+var_0_9.clear_scenegraph_queue = function (arg_12_0)
 	arg_12_0.ui_scenegraph = nil
 
 	table.clear(arg_12_0.scenegraph_queue)
 end
 
-function var_0_9.begin_pass(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+var_0_9.begin_pass = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	if arg_13_0.ui_scenegraph then
 		local var_13_0 = arg_13_0.ui_scenegraph
 
@@ -359,7 +359,7 @@ function var_0_9.begin_pass(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, ar
 	arg_13_0.render_settings = arg_13_5
 end
 
-function var_0_9.end_pass(arg_14_0)
+var_0_9.end_pass = function (arg_14_0)
 	arg_14_0.render_settings = nil
 
 	local var_14_0 = arg_14_0.scenegraph_queue
@@ -377,7 +377,7 @@ local var_0_19 = {
 	alpha_multiplier = 1
 }
 
-function var_0_9.draw_all_widgets(arg_15_0, arg_15_1)
+var_0_9.draw_all_widgets = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.render_settings or var_0_19
 	local var_15_1 = var_15_0.alpha_multiplier or 1
 	local var_15_2 = var_0_9.draw_widget
@@ -394,7 +394,7 @@ end
 local var_0_20 = Profiler.start
 local var_0_21 = Profiler.stop
 
-function var_0_9.draw_widget(arg_16_0, arg_16_1)
+var_0_9.draw_widget = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.animations
 
 	if next(var_16_0) then
@@ -557,7 +557,7 @@ function var_0_9.draw_widget(arg_16_0, arg_16_1)
 	var_16_18.dirty = nil
 end
 
-function var_0_9.set_element_visible(arg_17_0, arg_17_1, arg_17_2)
+var_0_9.set_element_visible = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = UIPasses
 	local var_17_1 = arg_17_1.pass_data
 	local var_17_2 = arg_17_1.passes
@@ -581,7 +581,7 @@ function var_0_9.set_element_visible(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function var_0_9.draw_rect(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+var_0_9.draw_rect = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_0.render_settings
 	local var_18_1 = var_18_0 and var_18_0.snap_pixel_positions
 
@@ -608,7 +608,7 @@ function var_0_9.draw_rect(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	end
 end
 
-function var_0_9.draw_triangle(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+var_0_9.draw_triangle = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_0.render_settings
 	local var_19_1 = var_19_0 and var_19_0.alpha_multiplier or 1
 	local var_19_2 = var_0_0(arg_19_3.color[1] * var_19_1, arg_19_3.color[2], arg_19_3.color[3], arg_19_3.color[4])
@@ -661,7 +661,7 @@ function var_0_9.draw_triangle(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	end
 end
 
-function var_0_9.draw_rect_rotated(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+var_0_9.draw_rect_rotated = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	arg_20_1 = UIScaleVectorToResolution(arg_20_1)
 
 	local var_20_0 = UIScaleVectorToResolution(arg_20_4)
@@ -771,7 +771,7 @@ local var_0_25 = {
 	}
 }
 
-function var_0_9.draw_texture_flip_horizontal(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+var_0_9.draw_texture_flip_horizontal = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
 		var_0_24(arg_22_0, arg_22_2, arg_22_3, arg_22_1)
 	end
@@ -783,7 +783,7 @@ function var_0_9.draw_texture_flip_horizontal(arg_22_0, arg_22_1, arg_22_2, arg_
 	return var_0_9.script_draw_bitmap_uv(arg_22_0.gui, arg_22_0.render_settings, arg_22_1, var_0_25, var_22_0, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 end
 
-function var_0_9.draw_texture(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+var_0_9.draw_texture = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 	local var_23_0 = arg_23_0.gui
 
 	if arg_23_7 then
@@ -799,7 +799,7 @@ function var_0_9.draw_texture(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, 
 	return var_0_9.script_draw_bitmap(var_23_0, arg_23_0.render_settings, arg_23_1, var_0_2(arg_23_2[1] * var_23_1, arg_23_2[2] * var_23_1, arg_23_2[3] or 0), var_0_2(arg_23_3[1] * var_23_1, arg_23_3[2] * var_23_1, arg_23_3[3] or 0), arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 end
 
-function var_0_9.draw_texture_uv(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9, arg_24_10)
+var_0_9.draw_texture_uv = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9, arg_24_10)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
 		var_0_24(arg_24_0, arg_24_2, arg_24_3, arg_24_1)
 	end
@@ -817,7 +817,7 @@ function var_0_9.draw_texture_uv(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_
 	end
 end
 
-function var_0_9.draw_gradient_mask_texture(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
+var_0_9.draw_gradient_mask_texture = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
 	if script_data.ui_debug_draw_texture and Keyboard.button(Keyboard.button_index("v")) > 0 then
 		var_0_24(arg_25_0, arg_25_2, arg_25_3, arg_25_1)
 	end
@@ -842,7 +842,7 @@ end
 
 local var_0_26 = {}
 
-function var_0_9.draw_multi_texture(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9, arg_26_10, arg_26_11, arg_26_12, arg_26_13, arg_26_14, arg_26_15, arg_26_16)
+var_0_9.draw_multi_texture = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9, arg_26_10, arg_26_11, arg_26_12, arg_26_13, arg_26_14, arg_26_15, arg_26_16)
 	local var_26_0 = var_0_9.script_draw_bitmap
 	local var_26_1 = var_0_9.draw_tiled_texture
 
@@ -1008,7 +1008,7 @@ local var_0_27 = {
 	}
 }
 
-function var_0_9.draw_tiled_texture(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
+var_0_9.draw_tiled_texture = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
 	local var_27_0 = var_0_7.scale
 	local var_27_1 = var_27_0 * arg_27_2[1]
 	local var_27_2 = var_27_0 * arg_27_2[2]
@@ -1064,7 +1064,7 @@ function var_0_9.draw_tiled_texture(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_
 	end
 end
 
-function var_0_9.draw_centered_texture_amount(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9, arg_28_10, arg_28_11)
+var_0_9.draw_centered_texture_amount = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9, arg_28_10, arg_28_11)
 	local var_28_0 = UIScaleVectorToResolution(arg_28_2)
 	local var_28_1 = UIScaleVectorToResolution(arg_28_3)
 
@@ -1101,7 +1101,7 @@ function var_0_9.draw_centered_texture_amount(arg_28_0, arg_28_1, arg_28_2, arg_
 	return var_28_7
 end
 
-function var_0_9.draw_texture_rotated(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
+var_0_9.draw_texture_rotated = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
 	arg_29_2 = UIScaleVectorToResolution(arg_29_2)
 
 	local var_29_0 = UIScaleVectorToResolution(arg_29_5)
@@ -1139,7 +1139,7 @@ end
 
 local var_0_28 = {}
 
-function var_0_9.draw_text(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
+var_0_9.draw_text = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
 	local var_30_0 = UIScaleVectorToResolution(arg_30_5)
 
 	if arg_30_8 and #arg_30_8 > 0 or nil then
@@ -1189,7 +1189,7 @@ function var_0_9.draw_text(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg
 	return var_30_2
 end
 
-function var_0_9.draw_justified_text(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, ...)
+var_0_9.draw_justified_text = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, ...)
 	local var_31_0 = UIScaleVectorToResolution(arg_31_5)
 	local var_31_1 = arg_31_0.render_settings
 	local var_31_2 = var_31_1 and var_31_1.alpha_multiplier or 1
@@ -1215,7 +1215,7 @@ function var_0_9.draw_justified_text(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg
 	end
 end
 
-function var_0_9.word_wrap(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+var_0_9.word_wrap = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0 = " 。，"
 	local var_32_1 = " -+&/*"
 	local var_32_2 = "\n"
@@ -1243,7 +1243,7 @@ function var_0_9.word_wrap(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg
 	return var_32_5, var_32_6
 end
 
-function var_0_9.text_size(arg_33_0, arg_33_1, arg_33_2, arg_33_3, ...)
+var_0_9.text_size = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, ...)
 	local var_33_0, var_33_1 = Gui.text_extents(arg_33_0.gui, arg_33_1, arg_33_2, arg_33_3, Gui.FormatDirectives, ...)
 	local var_33_2 = var_0_7.inv_scale
 	local var_33_3 = (var_33_1.x + var_33_0.x) * var_33_2
@@ -1252,7 +1252,7 @@ function var_0_9.text_size(arg_33_0, arg_33_1, arg_33_2, arg_33_3, ...)
 	return var_33_3, var_33_4, var_33_0
 end
 
-function var_0_9.text_alignment_size(arg_34_0, arg_34_1, arg_34_2, arg_34_3, ...)
+var_0_9.text_alignment_size = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, ...)
 	local var_34_0, var_34_1 = Gui.text_extents(arg_34_0.gui, arg_34_1, arg_34_2, arg_34_3, Gui.FormatDirectives, ...)
 	local var_34_2 = var_0_7.inv_scale
 	local var_34_3 = (var_34_1.x + 0) * var_34_2
@@ -1261,7 +1261,7 @@ function var_0_9.text_alignment_size(arg_34_0, arg_34_1, arg_34_2, arg_34_3, ...
 	return var_34_3, var_34_4, var_34_0
 end
 
-function var_0_9.break_paragraphs(arg_35_0, arg_35_1)
+var_0_9.break_paragraphs = function (arg_35_0, arg_35_1)
 	local var_35_0 = 1
 
 	for iter_35_0 in string.gmatch(arg_35_0, "[^\n]+") do
@@ -1272,7 +1272,7 @@ function var_0_9.break_paragraphs(arg_35_0, arg_35_1)
 	return arg_35_1, var_35_0
 end
 
-function var_0_9.draw_video(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
+var_0_9.draw_video = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
 	if script_data.disable_video_player then
 		return true
 	end
@@ -1290,7 +1290,7 @@ function var_0_9.draw_video(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, ar
 	return VideoPlayer.current_frame(var_36_1) == VideoPlayer.number_of_frames(var_36_1)
 end
 
-function var_0_9.draw_splash_video(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6)
+var_0_9.draw_splash_video = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6)
 	if script_data.disable_video_player then
 		return true
 	end
@@ -1336,7 +1336,7 @@ for iter_0_0 = 1, var_0_30 do
 	var_0_29[iter_0_0 * 2] = math.sin(var_0_31)
 end
 
-function var_0_9.draw_circle(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+var_0_9.draw_circle = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	local var_38_0 = arg_38_0.gui
 	local var_38_1 = Gui.triangle
 	local var_38_2 = arg_38_0.render_settings
@@ -1366,7 +1366,7 @@ function var_0_9.draw_circle(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	var_38_1(var_38_0, var_38_5, var_38_8, var_38_10, var_38_4, arg_38_4)
 end
 
-function var_0_9.draw_rounded_rect(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+var_0_9.draw_rounded_rect = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	local var_39_0 = var_0_7.scale
 	local var_39_1 = Gui.triangle
 
@@ -1436,7 +1436,7 @@ local var_0_32 = {
 	0
 }
 
-function var_0_9.scaled_cursor_position_by_scenegraph(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+var_0_9.scaled_cursor_position_by_scenegraph = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = arg_40_0:get("cursor") or var_0_32
 	local var_40_1 = not arg_40_3 and UIInverseScaleVectorToResolution(var_40_0) or var_40_0
 	local var_40_2 = UISceneGraph.get_world_position(arg_40_1, arg_40_2)
@@ -1447,7 +1447,7 @@ function var_0_9.scaled_cursor_position_by_scenegraph(arg_40_0, arg_40_1, arg_40
 	return var_40_1
 end
 
-function var_0_9.crop_text(arg_41_0, arg_41_1)
+var_0_9.crop_text = function (arg_41_0, arg_41_1)
 	if arg_41_1 < UTF8Utils.string_length(arg_41_0) then
 		return UTF8Utils.sub_string(arg_41_0, 1, arg_41_1) .. "..."
 	end
@@ -1457,7 +1457,7 @@ end
 
 local var_0_33 = "..."
 
-function var_0_9.crop_text_width(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+var_0_9.crop_text_width = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0, var_42_1 = UIFontByResolution(arg_42_3)
 	local var_42_2 = var_0_9.text_size(arg_42_0, arg_42_1, var_42_0[1], var_42_1)
 	local var_42_3 = var_0_9.text_size(arg_42_0, var_0_33, var_42_0[1], var_42_1)
@@ -1485,7 +1485,7 @@ function var_0_9.crop_text_width(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	return arg_42_1
 end
 
-function var_0_9.scaled_font_size_by_area(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+var_0_9.scaled_font_size_by_area = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = arg_43_2[1]
 	local var_43_1 = arg_43_2[2]
 	local var_43_2 = arg_43_3.font_type
@@ -1504,7 +1504,7 @@ function var_0_9.scaled_font_size_by_area(arg_43_0, arg_43_1, arg_43_2, arg_43_3
 	return 1
 end
 
-function var_0_9.scaled_font_size_by_width(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+var_0_9.scaled_font_size_by_width = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0, var_44_1 = UIFontByResolution(arg_44_3)
 	local var_44_2 = var_0_9.text_size(arg_44_0, arg_44_1, var_44_0[1], var_44_1)
 	local var_44_3 = 1
@@ -1560,7 +1560,7 @@ local var_0_36 = {
 	}
 }
 
-function var_0_9.draw_texture_frame(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11, arg_45_12, arg_45_13)
+var_0_9.draw_texture_frame = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11, arg_45_12, arg_45_13)
 	local var_45_0 = arg_45_0.gui
 	local var_45_1 = arg_45_0.gui_retained
 
@@ -1895,11 +1895,11 @@ function var_0_9.draw_texture_frame(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_
 	return var_45_13
 end
 
-function var_0_9.destroy_bitmap(arg_46_0, arg_46_1)
+var_0_9.destroy_bitmap = function (arg_46_0, arg_46_1)
 	Gui.destroy_bitmap(arg_46_0.gui_retained, arg_46_1)
 end
 
-function var_0_9.destroy_text(arg_47_0, arg_47_1)
+var_0_9.destroy_text = function (arg_47_0, arg_47_1)
 	Gui.destroy_text(arg_47_0.gui_retained, arg_47_1)
 end
 

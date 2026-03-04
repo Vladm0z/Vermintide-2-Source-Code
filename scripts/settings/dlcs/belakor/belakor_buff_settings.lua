@@ -30,7 +30,7 @@ local var_0_4 = {
 }
 
 var_0_1.buff_function_templates = {
-	update_belakor_grey_wings_teleport_trigger = function(arg_3_0, arg_3_1, arg_3_2)
+	update_belakor_grey_wings_teleport_trigger = function (arg_3_0, arg_3_1, arg_3_2)
 		if not var_0_2() then
 			return
 		end
@@ -62,7 +62,7 @@ var_0_1.buff_function_templates = {
 			var_3_2.teleport = true
 		end
 	end,
-	apply_belakor_grey_wings = function(arg_4_0, arg_4_1, arg_4_2)
+	apply_belakor_grey_wings = function (arg_4_0, arg_4_1, arg_4_2)
 		if not var_0_2() then
 			return
 		end
@@ -78,7 +78,7 @@ var_0_1.buff_function_templates = {
 		var_4_0.side = Managers.state.side.side_by_unit[arg_4_0]
 		var_4_0.health_extension = ScriptUnit.extension(arg_4_0, "health_system")
 	end,
-	update_belakor_grey_wings = function(arg_5_0, arg_5_1, arg_5_2)
+	update_belakor_grey_wings = function (arg_5_0, arg_5_1, arg_5_2)
 		if not var_0_2() then
 			return
 		end
@@ -215,12 +215,12 @@ var_0_1.buff_function_templates = {
 			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_5_12)
 		end
 	end,
-	remove_belakor_grey_wings = function(arg_8_0, arg_8_1, arg_8_2)
+	remove_belakor_grey_wings = function (arg_8_0, arg_8_1, arg_8_2)
 		if not var_0_2() then
 			return
 		end
 	end,
-	apply_belakor_homing_skull_drain_stamina = function(arg_9_0, arg_9_1, arg_9_2)
+	apply_belakor_homing_skull_drain_stamina = function (arg_9_0, arg_9_1, arg_9_2)
 		local var_9_0 = arg_9_1.template.fatigue_type
 		local var_9_1 = ScriptUnit.has_extension(arg_9_0, "status_system")
 
@@ -228,19 +228,19 @@ var_0_1.buff_function_templates = {
 			var_9_1:add_fatigue_points(var_9_0)
 		end
 	end,
-	belakor_cultists_apply_eye_glow = function(arg_10_0, arg_10_1, arg_10_2)
+	belakor_cultists_apply_eye_glow = function (arg_10_0, arg_10_1, arg_10_2)
 		if ALIVE[arg_10_0] then
 			arg_10_1.material_res_id = Unit.get_material_resource_id(arg_10_0, "mtr_eyes")
 
 			Unit.set_material(arg_10_0, "mtr_eyes", "units/beings/enemies/mtr_eyes_belakor_cultist")
 		end
 	end,
-	belakor_cultists_remove_eye_glow = function(arg_11_0, arg_11_1, arg_11_2)
+	belakor_cultists_remove_eye_glow = function (arg_11_0, arg_11_1, arg_11_2)
 		if ALIVE[arg_11_0] and arg_11_1.material_res_id then
 			Unit.set_material_from_id(arg_11_0, "mtr_eyes", arg_11_1.material_res_id)
 		end
 	end,
-	apply_one_from_list = function(arg_12_0, arg_12_1, arg_12_2)
+	apply_one_from_list = function (arg_12_0, arg_12_1, arg_12_2)
 		if var_0_2() then
 			local var_12_0 = arg_12_1.template.buff_list
 			local var_12_1 = var_12_0[math.random(1, #var_12_0)]
@@ -248,12 +248,12 @@ var_0_1.buff_function_templates = {
 			Managers.state.entity:system("buff_system"):add_buff(arg_12_0, var_12_1, arg_12_1.attacker_unit or arg_12_0, false)
 		end
 	end,
-	apply_homing_skull_achieve = function(arg_13_0, arg_13_1, arg_13_2)
+	apply_homing_skull_achieve = function (arg_13_0, arg_13_1, arg_13_2)
 		Managers.state.achievement:trigger_event("register_skull_hit", arg_13_0)
 	end
 }
 var_0_1.proc_functions = {
-	belakor_crystal_drop = function(arg_14_0, arg_14_1, arg_14_2)
+	belakor_crystal_drop = function (arg_14_0, arg_14_1, arg_14_2)
 		if var_0_2() then
 			local var_14_0 = arg_14_2[1]
 			local var_14_1 = Unit.world_position(var_14_0, 0) + Vector3(0, 0, 1.5)
@@ -263,7 +263,7 @@ var_0_1.proc_functions = {
 
 		return true
 	end,
-	belakor_shadow_lieutenant_drop_crystal = function(arg_15_0, arg_15_1, arg_15_2)
+	belakor_shadow_lieutenant_drop_crystal = function (arg_15_0, arg_15_1, arg_15_2)
 		if var_0_2() then
 			local var_15_0 = arg_15_2[1]
 			local var_15_1 = Unit.node(var_15_0, "c_spine")
@@ -294,7 +294,7 @@ var_0_1.proc_functions = {
 
 		return true
 	end,
-	on_grey_wings_damage_taken = function(arg_16_0, arg_16_1, arg_16_2)
+	on_grey_wings_damage_taken = function (arg_16_0, arg_16_1, arg_16_2)
 		if not var_0_2() then
 			return
 		end
@@ -339,7 +339,7 @@ var_0_1.explosion_templates = {
 		}
 	},
 	homing_skull_impact = {
-		server_hit_func = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+		server_hit_func = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 			local var_17_0 = Unit.local_position(arg_17_0, 0)
 			local var_17_1 = Managers.world:world("level_world")
 

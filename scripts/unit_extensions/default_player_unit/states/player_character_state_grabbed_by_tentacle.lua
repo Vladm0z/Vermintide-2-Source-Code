@@ -7,11 +7,11 @@ local var_0_1 = CharacterStateHelper.play_animation_event
 local var_0_2 = 100
 local var_0_3 = 9
 
-function PlayerCharacterStateGrabbedByTentacle.init(arg_1_0, arg_1_1)
+PlayerCharacterStateGrabbedByTentacle.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "grabbed_by_tentacle")
 end
 
-function PlayerCharacterStateGrabbedByTentacle.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+PlayerCharacterStateGrabbedByTentacle.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	local var_2_0 = arg_2_0.inventory_extension
 	local var_2_1 = arg_2_0.career_extension
 
@@ -89,7 +89,7 @@ local function var_0_4(arg_3_0, arg_3_1)
 	end
 end
 
-function PlayerCharacterStateGrabbedByTentacle.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateGrabbedByTentacle.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0.status_extension
 
 	var_4_0:set_grabbed_by_tentacle(false)
@@ -139,13 +139,13 @@ end
 
 PlayerCharacterStateGrabbedByTentacle.states = {
 	grabbed = {
-		enter = function(arg_5_0, arg_5_1, arg_5_2)
+		enter = function (arg_5_0, arg_5_1, arg_5_2)
 			local var_5_0 = arg_5_0.camera_state ~= "first_person" or false
 
 			CharacterStateHelper.show_inventory_3p(arg_5_1, false, var_5_0, arg_5_0.is_server, arg_5_0.inventory_extension)
 			var_0_1(arg_5_1, "tentacle_grabbed_loop")
 		end,
-		run = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Unit.world_position(arg_6_1, arg_6_0.hips_node)
 			local var_6_1 = arg_6_0.nav_world
 			local var_6_2 = arg_6_0:get_drag_velocity(var_6_0, arg_6_2, arg_6_3)
@@ -189,19 +189,19 @@ PlayerCharacterStateGrabbedByTentacle.states = {
 				end
 			end
 		end,
-		leave = function(arg_7_0, arg_7_1)
+		leave = function (arg_7_0, arg_7_1)
 			return
 		end
 	},
 	portal_hanging = {
-		enter = function(arg_8_0, arg_8_1, arg_8_2)
+		enter = function (arg_8_0, arg_8_1, arg_8_2)
 			var_0_1(arg_8_1, "tentacle_portal_struggle_loop")
 
 			local var_8_0 = Unit.world_rotation(arg_8_0.portal_unit, arg_8_0.hang_node)
 
 			Unit.set_local_rotation(arg_8_1, 0, var_8_0)
 		end,
-		run = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 			local var_9_0 = Unit.world_position(arg_9_1, 0)
 			local var_9_1 = Unit.world_position(arg_9_0.portal_unit, arg_9_0.hang_node) - var_9_0
 
@@ -213,12 +213,12 @@ PlayerCharacterStateGrabbedByTentacle.states = {
 				arg_9_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 			end
 		end,
-		leave = function(arg_10_0, arg_10_1)
+		leave = function (arg_10_0, arg_10_1)
 			return
 		end
 	},
 	portal_consume = {
-		enter = function(arg_11_0, arg_11_1, arg_11_2)
+		enter = function (arg_11_0, arg_11_1, arg_11_2)
 			local var_11_0 = arg_11_0.portal_unit
 			local var_11_1 = Unit.node(var_11_0, "a_surface_center")
 			local var_11_2 = Unit.world_position(var_11_0, var_11_1)
@@ -234,32 +234,32 @@ PlayerCharacterStateGrabbedByTentacle.states = {
 
 			arg_11_0.csm:change_state("dead", var_11_6)
 		end,
-		run = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		run = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 			return
 		end,
-		leave = function(arg_13_0, arg_13_1)
+		leave = function (arg_13_0, arg_13_1)
 			return
 		end
 	},
 	portal_release = {
-		enter = function(arg_14_0, arg_14_1, arg_14_2)
+		enter = function (arg_14_0, arg_14_1, arg_14_2)
 			var_0_1(arg_14_1, "tentacle_portal_struggle_release")
 			arg_14_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
 			arg_14_0.wait_for_release = arg_14_2 + arg_14_0.breed.portal_release_time
 		end,
-		run = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		run = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 			if arg_15_2 > arg_15_0.wait_for_release then
 				arg_15_0.csm:change_state("standing")
 			end
 		end,
-		leave = function(arg_16_0, arg_16_1)
+		leave = function (arg_16_0, arg_16_1)
 			return
 		end
 	}
 }
 
-function PlayerCharacterStateGrabbedByTentacle.get_drag_velocity(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+PlayerCharacterStateGrabbedByTentacle.get_drag_velocity = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0.winding_dist = arg_17_0.winding_dist - arg_17_0.drag_speed * arg_17_3
 
 	local var_17_0 = arg_17_0.tentacle_spline_extension.spline
@@ -309,7 +309,7 @@ function PlayerCharacterStateGrabbedByTentacle.get_drag_velocity(arg_17_0, arg_1
 	return var_17_5 * arg_17_0.drag_speed, var_17_19
 end
 
-function PlayerCharacterStateGrabbedByTentacle.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+PlayerCharacterStateGrabbedByTentacle.update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0 = arg_18_0.csm
 	local var_18_1 = arg_18_0.input_extension
 	local var_18_2 = arg_18_0.status_extension

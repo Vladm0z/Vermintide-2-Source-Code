@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_dlc_termite_3.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pes_gateway_accidental_bell_ring_a",
 		name = "pes_gateway_accidental_bell_ring_a",

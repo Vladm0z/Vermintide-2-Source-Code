@@ -800,7 +800,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2)
 		pass_type = "texture",
 		style_id = "plus_horizontal",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_2_0, arg_2_1)
+		content_check_function = function (arg_2_0, arg_2_1)
 			return arg_1_2 and arg_1_2 == "boon"
 		end
 	}
@@ -808,7 +808,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2)
 		pass_type = "texture",
 		style_id = "plus_vertical",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_3_0, arg_3_1)
+		content_check_function = function (arg_3_0, arg_3_1)
 			return arg_1_2 and arg_1_2 == "boon"
 		end
 	}
@@ -816,7 +816,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2)
 		pass_type = "texture",
 		style_id = "minus",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_4_0, arg_4_1)
+		content_check_function = function (arg_4_0, arg_4_1)
 			return arg_1_2 and arg_1_2 == "curse"
 		end
 	}
@@ -1043,7 +1043,7 @@ local function var_0_18(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					texture_id = "icon_frame",
 					style_id = "icon_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.icon_visible
 					end
 				},
@@ -1051,7 +1051,7 @@ local function var_0_18(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.icon_visible
 					end
 				},
@@ -1319,7 +1319,7 @@ local function var_0_19(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					pass_type = "rotated_texture",
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.icon_visible
 					end
 				},
@@ -1327,7 +1327,7 @@ local function var_0_19(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.icon_visible
 					end
 				},
@@ -1335,7 +1335,7 @@ local function var_0_19(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					texture_id = "journey_border",
 					style_id = "journey_border",
 					pass_type = "texture",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.icon_visible and arg_12_0.show_journey_border and not arg_12_0.with_belakor
 					end
 				},
@@ -1343,7 +1343,7 @@ local function var_0_19(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					texture_id = "belakor_journey_border",
 					style_id = "belakor_journey_border",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.icon_visible and arg_13_0.show_journey_border and arg_13_0.with_belakor
 					end
 				},
@@ -1597,7 +1597,7 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 					pass_type = "rotated_texture",
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.icon_visible
 					end
 				},
@@ -1605,7 +1605,7 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.icon_visible
 					end
 				},
@@ -1613,7 +1613,7 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 					texture_id = "journey_border",
 					style_id = "journey_border",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.icon_visible and arg_17_0.show_journey_border and not arg_17_0.with_belakor
 					end
 				},
@@ -1621,7 +1621,7 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 					texture_id = "belakor_journey_border",
 					style_id = "belakor_journey_border",
 					pass_type = "texture",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.icon_visible and arg_18_0.show_journey_border and arg_18_0.with_belakor
 					end
 				},
@@ -1946,7 +1946,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "icon_frame",
 					style_id = "icon_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.icon_visible
 					end
 				},
@@ -1954,7 +1954,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.icon_visible
 					end
 				},
@@ -1962,7 +1962,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "wind_icon",
 					style_id = "wind_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.icon_visible
 					end
 				},
@@ -1970,7 +1970,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "wind_icon_bg",
 					style_id = "wind_icon_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.icon_visible
 					end
 				},
@@ -1978,7 +1978,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "wind_icon_glow",
 					style_id = "wind_icon_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.icon_visible
 					end
 				},
@@ -1986,7 +1986,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 					texture_id = "wind_icon_slot",
 					style_id = "wind_icon_slot",
 					pass_type = "texture",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.icon_visible
 					end
 				},
@@ -4111,7 +4111,7 @@ local function var_0_26(arg_32_0, arg_32_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						return arg_33_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4119,7 +4119,7 @@ local function var_0_26(arg_32_0, arg_32_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_34_0)
+					content_check_function = function (arg_34_0)
 						return arg_34_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4127,7 +4127,7 @@ local function var_0_26(arg_32_0, arg_32_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_35_0)
+					content_check_function = function (arg_35_0)
 						return arg_35_0.text ~= "tutorial_no_text"
 					end
 				},
@@ -4135,7 +4135,7 @@ local function var_0_26(arg_32_0, arg_32_1)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_36_0)
+					content_check_function = function (arg_36_0)
 						return arg_36_0.text ~= "tutorial_no_text"
 					end
 				}
@@ -4230,7 +4230,7 @@ local function var_0_27(arg_37_0, arg_37_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						return #arg_38_0.text > 0
 					end
 				},
@@ -4238,7 +4238,7 @@ local function var_0_27(arg_37_0, arg_37_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_39_0)
+					content_check_function = function (arg_39_0)
 						return #arg_39_0.text > 0
 					end
 				}

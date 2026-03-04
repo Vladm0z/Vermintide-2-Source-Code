@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_bogenhafen_city.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_ib_level_bogenhafen_city_escape_01",

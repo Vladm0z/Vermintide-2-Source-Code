@@ -138,11 +138,11 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_egg_of_tzeentch"
 	},
-	client_start_function = function(arg_5_0, arg_5_1)
+	client_start_function = function (arg_5_0, arg_5_1)
 		arg_5_1.vfx_ids = {}
 		arg_5_1.wwise_world = Managers.world:wwise_world(arg_5_0.world)
 	end,
-	server_start_function = function(arg_6_0, arg_6_1)
+	server_start_function = function (arg_6_0, arg_6_1)
 		arg_6_1.seed = Managers.mechanism:get_level_seed()
 		arg_6_1.difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
 		arg_6_1.mission_system = Managers.state.entity:system("mission_system")
@@ -154,17 +154,17 @@ return {
 
 		Managers.state.event:register(arg_6_1, "spawned_timed_breed", "monster_spawned")
 	end,
-	tweak_zones = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	tweak_zones = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		arg_7_1.conflict_director = Managers.state.conflict
 		arg_7_1.peaks = arg_7_1.conflict_director:get_peaks()
 	end,
-	update_conflict_settings = function(arg_8_0, arg_8_1)
+	update_conflict_settings = function (arg_8_0, arg_8_1)
 		CurrentBossSettings.disabled = true
 	end,
-	server_players_left_safe_zone = function(arg_9_0, arg_9_1)
+	server_players_left_safe_zone = function (arg_9_0, arg_9_1)
 		arg_9_1.timer = MutatorCommonSettings.deus.initial_activation_delay
 	end,
-	server_update_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	server_update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		local var_10_0 = arg_10_1.mission_system
 		local var_10_1 = var_10_0:get_missions()
 		local var_10_2 = table.size(var_10_1)
@@ -253,7 +253,7 @@ return {
 		var_10_24.spawn_rate = var_10_22
 		var_10_24.spawnable_breeds = var_10_21
 
-		function var_10_24.cb_unit_spawned_function(arg_11_0)
+		var_10_24.cb_unit_spawned_function = function (arg_11_0)
 			arg_10_1.last_spawned_monster = arg_11_0
 
 			Managers.state.entity:system("audio_system"):play_2d_audio_event(var_0_9.EGG_DESTROYED)
@@ -264,7 +264,7 @@ return {
 		arg_10_1.alert_medium_triggered = false
 		arg_10_1.egg_unit = var_0_17(var_10_13, arg_10_1.unit_spawner, arg_10_1.nav_world, arg_10_1.mission_system, var_10_23, var_10_17)
 	end,
-	server_level_object_killed_function = function(arg_12_0, arg_12_1, arg_12_2)
+	server_level_object_killed_function = function (arg_12_0, arg_12_1, arg_12_2)
 		if Unit.is_a(arg_12_2, var_0_13) then
 			arg_12_1.template.on_egg_destroyed(arg_12_1, arg_12_2)
 
@@ -284,7 +284,7 @@ return {
 			end
 		end
 	end,
-	on_egg_destroyed = function(arg_13_0, arg_13_1)
+	on_egg_destroyed = function (arg_13_0, arg_13_1)
 		if not Unit.is_a(arg_13_1, var_0_13) then
 			return
 		end
@@ -297,7 +297,7 @@ return {
 			arg_13_0.timer = nil
 		end
 	end,
-	monster_spawned = function(arg_14_0, arg_14_1)
+	monster_spawned = function (arg_14_0, arg_14_1)
 		arg_14_0.template.on_egg_destroyed(arg_14_0, arg_14_1)
 
 		local var_14_0 = Managers.state.entity:system("dialogue_system"):get_random_player()
@@ -309,10 +309,10 @@ return {
 			var_14_1:trigger_dialogue_event("curse_very_negative_effect_happened", var_14_2)
 		end
 	end,
-	server_stop_function = function(arg_15_0, arg_15_1, arg_15_2)
+	server_stop_function = function (arg_15_0, arg_15_1, arg_15_2)
 		CurrentBossSettings.disabled = false
 	end,
-	client_level_object_killed_function = function(arg_16_0, arg_16_1, arg_16_2)
+	client_level_object_killed_function = function (arg_16_0, arg_16_1, arg_16_2)
 		if Unit.is_a(arg_16_2, var_0_13) then
 			local var_16_0 = POSITION_LOOKUP[arg_16_2]
 
@@ -321,7 +321,7 @@ return {
 
 		arg_16_1.alert_timer = nil
 	end,
-	play_effect = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	play_effect = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		if arg_17_3 then
 			local var_17_0 = World.create_particles(arg_17_0.world, arg_17_3, arg_17_2)
 
@@ -332,7 +332,7 @@ return {
 			WwiseUtils.trigger_position_event(arg_17_0.world, arg_17_4, arg_17_2)
 		end
 	end,
-	client_stop_function = function(arg_18_0, arg_18_1)
+	client_stop_function = function (arg_18_0, arg_18_1)
 		for iter_18_0, iter_18_1 in ipairs(arg_18_1.vfx_ids) do
 			World.destroy_particles(arg_18_0.world, iter_18_1)
 		end

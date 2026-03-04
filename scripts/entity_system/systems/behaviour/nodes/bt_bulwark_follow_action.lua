@@ -18,7 +18,7 @@ local var_0_10 = 7
 local var_0_11 = 30
 local var_0_12 = 3
 
-function BTBulwarkFollowAction.init(arg_1_0, ...)
+BTBulwarkFollowAction.init = function (arg_1_0, ...)
 	BTBulwarkFollowAction.super.init(arg_1_0, ...)
 
 	arg_1_0.next_time_to_trigger_running_dialogue = 0
@@ -29,7 +29,7 @@ BTBulwarkFollowAction.name = "BTBulwarkFollowAction"
 
 local var_0_13 = 0.0001
 
-function BTBulwarkFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBulwarkFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -68,7 +68,7 @@ function BTBulwarkFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.lerp_into_follow = nil
 end
 
-function BTBulwarkFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBulwarkFollowAction._should_walk = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_5.is_charging then
 		return false
 	end
@@ -83,7 +83,7 @@ function BTBulwarkFollowAction._should_walk(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	return var_3_3 < arg_3_3
 end
 
-function BTBulwarkFollowAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTBulwarkFollowAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.active_node = nil
 	arg_4_2.is_charging = nil
 
@@ -121,7 +121,7 @@ end
 
 local var_0_14 = Unit.alive
 
-function BTBulwarkFollowAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTBulwarkFollowAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not var_0_14(arg_5_2.target_unit) then
 		return "done"
 	end
@@ -190,7 +190,7 @@ function BTBulwarkFollowAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running", var_5_0
 end
 
-function BTBulwarkFollowAction._update_walking(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTBulwarkFollowAction._update_walking = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.target_unit
 	local var_6_1 = arg_6_2.locomotion_extension
 	local var_6_2 = LocomotionUtils.rotation_towards_unit_flat(arg_6_1, var_6_0)
@@ -244,7 +244,7 @@ local function var_0_15(arg_7_0)
 	end
 end
 
-function BTBulwarkFollowAction._calculate_walk_animation(arg_8_0, arg_8_1, arg_8_2)
+BTBulwarkFollowAction._calculate_walk_animation = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0
 
 	if arg_8_1 == "right" then
@@ -260,7 +260,7 @@ function BTBulwarkFollowAction._calculate_walk_animation(arg_8_0, arg_8_1, arg_8
 	return var_8_0
 end
 
-function BTBulwarkFollowAction._calculate_walk_dir(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTBulwarkFollowAction._calculate_walk_dir = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = Vector3.dot(arg_9_1, arg_9_3)
 	local var_9_1 = Vector3.dot(arg_9_2, arg_9_3)
 	local var_9_2 = math.abs(var_9_0)
@@ -271,7 +271,7 @@ function BTBulwarkFollowAction._calculate_walk_dir(arg_9_0, arg_9_1, arg_9_2, ar
 	return arg_9_3
 end
 
-function BTBulwarkFollowAction.follow(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTBulwarkFollowAction.follow = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.breed
 	local var_10_1 = arg_10_2.target_unit
 	local var_10_2 = arg_10_2.target_dist
@@ -367,7 +367,7 @@ function BTBulwarkFollowAction.follow(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ar
 	end
 end
 
-function BTBulwarkFollowAction._calculate_run_speed(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTBulwarkFollowAction._calculate_run_speed = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_3.target_dist
 	local var_11_1 = arg_11_3.destination_dist
 	local var_11_2 = 0
@@ -386,7 +386,7 @@ function BTBulwarkFollowAction._calculate_run_speed(arg_11_0, arg_11_1, arg_11_2
 	return arg_11_3.breed.run_speed + var_0_6 * var_11_2
 end
 
-function BTBulwarkFollowAction.start_move_animation(arg_12_0, arg_12_1, arg_12_2)
+BTBulwarkFollowAction.start_move_animation = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:set_start_move_animation_lock(arg_12_1, arg_12_2, true)
 
 	local var_12_0 = var_0_9[arg_12_2.target_unit]
@@ -399,7 +399,7 @@ function BTBulwarkFollowAction.start_move_animation(arg_12_0, arg_12_1, arg_12_2
 	arg_12_2.start_anim_locked = true
 end
 
-function BTBulwarkFollowAction.start_move_rotation(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+BTBulwarkFollowAction.start_move_rotation = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	if arg_13_2.move_animation_name == "move_start_fwd" or arg_13_2.move_animation_name == "move_start_fwd_jog" then
 		arg_13_0:set_start_move_animation_lock(arg_13_1, arg_13_2, false)
 
@@ -417,7 +417,7 @@ function BTBulwarkFollowAction.start_move_rotation(arg_13_0, arg_13_1, arg_13_2,
 	end
 end
 
-function BTBulwarkFollowAction.set_start_move_animation_lock(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+BTBulwarkFollowAction.set_start_move_animation_lock = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_2.locomotion_extension
 
 	if arg_14_3 then
@@ -432,7 +432,7 @@ end
 
 local var_0_16 = {}
 
-function BTBulwarkFollowAction.do_dialogue(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+BTBulwarkFollowAction.do_dialogue = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	if arg_15_3 > arg_15_0.next_time_to_trigger_running_dialogue and arg_15_0.triggered_units[arg_15_1] == nil then
 		local var_15_0 = math.ceil(Vector3.distance(var_0_9[arg_15_1], var_0_9[arg_15_2.target_unit]))
 

@@ -90,7 +90,7 @@ HoverUI = class(HoverUI)
 
 local var_0_2 = 1.1
 
-function HoverUI.init(arg_1_0, arg_1_1, arg_1_2)
+HoverUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.ui_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
 	arg_1_0.input_service = arg_1_2
@@ -99,14 +99,14 @@ function HoverUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function HoverUI.create_ui_elements(arg_2_0)
+HoverUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_2_0.default_widget = UIWidget.init(var_0_1.default_hover_widget)
 
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 end
 
-function HoverUI.update_animations(arg_3_0, arg_3_1)
+HoverUI.update_animations = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.ui_scenegraph
 
 	for iter_3_0, iter_3_1 in pairs(arg_3_0.ui_animations) do
@@ -118,7 +118,7 @@ function HoverUI.update_animations(arg_3_0, arg_3_1)
 	end
 end
 
-function HoverUI.update(arg_4_0, arg_4_1)
+HoverUI.update = function (arg_4_0, arg_4_1)
 	if not arg_4_0.show_ui then
 		return
 	end
@@ -130,7 +130,7 @@ function HoverUI.update(arg_4_0, arg_4_1)
 	arg_4_0:draw(arg_4_1, var_4_1, var_4_0)
 end
 
-function HoverUI.draw(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+HoverUI.draw = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0.ui_renderer
 
 	UIRenderer.begin_pass(var_5_0, arg_5_2, arg_5_3, arg_5_1)
@@ -144,7 +144,7 @@ function HoverUI.draw(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	UIRenderer.end_pass(var_5_0)
 end
 
-function HoverUI.update_objects(arg_6_0)
+HoverUI.update_objects = function (arg_6_0)
 	for iter_6_0, iter_6_1 in ipairs(arg_6_0._registered_hover_object) do
 		local var_6_0 = iter_6_1.hover_content
 
@@ -165,7 +165,7 @@ function HoverUI.update_objects(arg_6_0)
 	end
 end
 
-function HoverUI.display_object(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+HoverUI.display_object = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_0.display_object_name == arg_7_1 then
 		return
 	end
@@ -174,15 +174,15 @@ function HoverUI.display_object(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	arg_7_0.active_tooltip_widget = arg_7_0.default_widget
 end
 
-function HoverUI.stop_display_object(arg_8_0)
+HoverUI.stop_display_object = function (arg_8_0)
 	return
 end
 
-function HoverUI.destroy(arg_9_0, arg_9_1)
+HoverUI.destroy = function (arg_9_0, arg_9_1)
 	return
 end
 
-function HoverUI.register_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+HoverUI.register_widget = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = {
 		name = arg_10_1,
 		type = arg_10_2,
@@ -196,7 +196,7 @@ function HoverUI.register_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_
 	arg_10_0._registered_hover_object[var_10_1] = var_10_0
 end
 
-function HoverUI.unregister_widget(arg_11_0, arg_11_1)
+HoverUI.unregister_widget = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._registered_hover_index_by_name[arg_11_1]
 
 	if var_11_0 then
@@ -205,7 +205,7 @@ function HoverUI.unregister_widget(arg_11_0, arg_11_1)
 	end
 end
 
-function HoverUI.get_text_size(arg_12_0, arg_12_1, arg_12_2)
+HoverUI.get_text_size = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.font_size
 	local var_12_1, var_12_2 = UIFontByResolution(arg_12_2)
 	local var_12_3, var_12_4, var_12_5 = UIRenderer.text_size(arg_12_0.ui_renderer, arg_12_1, var_12_1[1], var_12_2)
@@ -213,11 +213,11 @@ function HoverUI.get_text_size(arg_12_0, arg_12_1, arg_12_2)
 	return var_12_3, var_12_4
 end
 
-function HoverUI.animate_default_widget(arg_13_0)
+HoverUI.animate_default_widget = function (arg_13_0)
 	return
 end
 
-function HoverUI.set_default_widget_text(arg_14_0, arg_14_1)
+HoverUI.set_default_widget_text = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.ui_scenegraph
 	local var_14_1 = arg_14_0.default_widget.style.text
 
@@ -225,7 +225,7 @@ function HoverUI.set_default_widget_text(arg_14_0, arg_14_1)
 	arg_14_0.default_widget.content.text = arg_14_1
 end
 
-function HoverUI.update_widget_pivot_position(arg_15_0, arg_15_1, arg_15_2)
+HoverUI.update_widget_pivot_position = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.active_tooltip_widget
 
 	if var_15_0 then

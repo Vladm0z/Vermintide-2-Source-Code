@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFindRangedPositionAction = class(BTFindRangedPositionAction, BTNode)
 
-function BTFindRangedPositionAction.init(arg_1_0, ...)
+BTFindRangedPositionAction.init = function (arg_1_0, ...)
 	BTFindRangedPositionAction.super.init(arg_1_0, ...)
 end
 
 BTFindRangedPositionAction.name = "BTFindRangedPositionAction"
 
-function BTFindRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTFindRangedPositionAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	if arg_2_2.move_state ~= "idle" then
@@ -29,13 +29,13 @@ function BTFindRangedPositionAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, false)
 end
 
-function BTFindRangedPositionAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTFindRangedPositionAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.find_ranged_position_t = nil
 	arg_3_2.action = nil
 	arg_3_2.num_failed_find_position_attempts = nil
 end
 
-function BTFindRangedPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTFindRangedPositionAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.find_ranged_position_t
 
 	if not Unit.alive(arg_4_2.target_unit) then
@@ -58,7 +58,7 @@ function BTFindRangedPositionAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	return "running", "evaluate"
 end
 
-function BTFindRangedPositionAction._find_ranged_position(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTFindRangedPositionAction._find_ranged_position = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = arg_5_2.nav_world
 	local var_5_2 = arg_5_2.target_unit

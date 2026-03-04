@@ -88,7 +88,7 @@ local function var_0_11(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 end
 
 BuffFunctionTemplates.functions = {
-	heal_owner = function(arg_8_0, arg_8_1, arg_8_2)
+	heal_owner = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = arg_8_1.template.heal_amount
 		local var_8_1 = arg_8_1.template.heal_type
 
@@ -102,7 +102,7 @@ BuffFunctionTemplates.functions = {
 			var_8_2.network_transmit:send_rpc_server("rpc_request_heal", var_8_3, var_8_0, var_8_4)
 		end
 	end,
-	apply_action_lerp_movement_buff = function(arg_9_0, arg_9_1, arg_9_2)
+	apply_action_lerp_movement_buff = function (arg_9_0, arg_9_1, arg_9_2)
 		local var_9_0 = arg_9_2.bonus
 		local var_9_1 = arg_9_2.multiplier
 
@@ -114,7 +114,7 @@ BuffFunctionTemplates.functions = {
 			arg_9_1.current_lerped_multiplier = 1
 		end
 	end,
-	update_action_lerp_movement_buff = function(arg_10_0, arg_10_1, arg_10_2)
+	update_action_lerp_movement_buff = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = arg_10_2.bonus
 		local var_10_1 = arg_10_2.multiplier
 		local var_10_2 = arg_10_2.time_into_buff
@@ -155,7 +155,7 @@ BuffFunctionTemplates.functions = {
 			BuffFunctionTemplates.functions.apply_movement_buff(arg_10_0, arg_10_1, buff_extension_function_params)
 		end
 	end,
-	remove_action_lerp_movement_buff = function(arg_11_0, arg_11_1, arg_11_2)
+	remove_action_lerp_movement_buff = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = ScriptUnit.extension(arg_11_0, "buff_system")
 
 		table.clear(var_0_5)
@@ -166,7 +166,7 @@ BuffFunctionTemplates.functions = {
 
 		var_11_0:add_buff(arg_11_1.template.remove_buff_name, var_0_5)
 	end,
-	apply_action_lerp_remove_movement_buff = function(arg_12_0, arg_12_1, arg_12_2)
+	apply_action_lerp_remove_movement_buff = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = arg_12_2.bonus
 		local var_12_1 = arg_12_2.multiplier
 
@@ -180,7 +180,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_12_1.last_frame_percentage = 1
 	end,
-	update_action_lerp_remove_movement_buff = function(arg_13_0, arg_13_1, arg_13_2)
+	update_action_lerp_remove_movement_buff = function (arg_13_0, arg_13_1, arg_13_2)
 		local var_13_0 = arg_13_2.bonus
 		local var_13_1 = arg_13_2.multiplier
 		local var_13_2 = arg_13_2.time_into_buff
@@ -227,7 +227,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	apply_movement_buff = function(arg_14_0, arg_14_1, arg_14_2)
+	apply_movement_buff = function (arg_14_0, arg_14_1, arg_14_2)
 		local var_14_0 = arg_14_2.bonus
 		local var_14_1 = arg_14_2.multiplier
 
@@ -248,7 +248,7 @@ BuffFunctionTemplates.functions = {
 
 		var_0_4(var_14_2, arg_14_0, var_14_3)
 	end,
-	remove_movement_buff = function(arg_15_0, arg_15_1, arg_15_2)
+	remove_movement_buff = function (arg_15_0, arg_15_1, arg_15_2)
 		local var_15_0 = arg_15_2.bonus
 		local var_15_1 = arg_15_2.multiplier
 
@@ -269,7 +269,7 @@ BuffFunctionTemplates.functions = {
 
 		var_0_4(var_15_2, arg_15_0, var_15_3)
 	end,
-	apply_ai_movement_buff = function(arg_16_0, arg_16_1, arg_16_2)
+	apply_ai_movement_buff = function (arg_16_0, arg_16_1, arg_16_2)
 		local var_16_0 = BLACKBOARDS[arg_16_0]
 		local var_16_1 = arg_16_2.multiplier
 
@@ -279,10 +279,10 @@ BuffFunctionTemplates.functions = {
 
 		arg_16_1.id = var_16_0.navigation_extension:add_movement_modifier(var_16_1)
 	end,
-	remove_ai_movement_buff = function(arg_17_0, arg_17_1, arg_17_2)
+	remove_ai_movement_buff = function (arg_17_0, arg_17_1, arg_17_2)
 		BLACKBOARDS[arg_17_0].navigation_extension:remove_movement_modifier(arg_17_1.id)
 	end,
-	apply_rotation_limit_buff = function(arg_18_0, arg_18_1, arg_18_2)
+	apply_rotation_limit_buff = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = ScriptUnit.extension(arg_18_0, "buff_system")
 		local var_18_1 = arg_18_1.bonus
 		local var_18_2 = var_18_0:get_stacking_buff(arg_18_1.template.name)
@@ -297,7 +297,7 @@ BuffFunctionTemplates.functions = {
 
 		var_0_4(var_18_4, arg_18_0, var_18_1)
 	end,
-	remove_rotation_limit_buff = function(arg_19_0, arg_19_1, arg_19_2)
+	remove_rotation_limit_buff = function (arg_19_0, arg_19_1, arg_19_2)
 		local var_19_0 = ScriptUnit.extension(arg_19_0, "buff_system")
 		local var_19_1 = math.huge
 		local var_19_2 = var_19_0:get_stacking_buff(arg_19_1.template.name)
@@ -318,7 +318,7 @@ BuffFunctionTemplates.functions = {
 
 		var_0_4(var_19_4, arg_19_0, var_19_1)
 	end,
-	apply_screenspace_effect = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	apply_screenspace_effect = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 		local var_20_0 = arg_20_1.template.screenspace_effect_name
 		local var_20_1 = ScriptUnit.has_extension(arg_20_0, "first_person_system")
 
@@ -326,10 +326,10 @@ BuffFunctionTemplates.functions = {
 			var_20_1:create_screen_particles(var_20_0)
 		end
 	end,
-	knock_down_bleed_start = function(arg_21_0, arg_21_1, arg_21_2)
+	knock_down_bleed_start = function (arg_21_0, arg_21_1, arg_21_2)
 		arg_21_1.next_damage_time = arg_21_2.t + arg_21_1.template.time_between_damage
 	end,
-	knock_down_bleed_update = function(arg_22_0, arg_22_1, arg_22_2)
+	knock_down_bleed_update = function (arg_22_0, arg_22_1, arg_22_2)
 		if arg_22_1.next_damage_time < arg_22_2.t then
 			local var_22_0 = arg_22_1.template
 
@@ -341,10 +341,10 @@ BuffFunctionTemplates.functions = {
 			DamageUtils.add_damage_network(arg_22_0, arg_22_0, var_22_1, "full", var_22_2, nil, Vector3(1, 0, 0), "knockdown_bleed", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	temporary_health_degen_start = function(arg_23_0, arg_23_1, arg_23_2)
+	temporary_health_degen_start = function (arg_23_0, arg_23_1, arg_23_2)
 		arg_23_1.next_damage_time = arg_23_2.t + arg_23_1.template.time_between_damage
 	end,
-	temporary_health_degen_update = function(arg_24_0, arg_24_1, arg_24_2)
+	temporary_health_degen_update = function (arg_24_0, arg_24_1, arg_24_2)
 		if arg_24_1.next_damage_time < arg_24_2.t then
 			local var_24_0 = arg_24_1.template
 
@@ -356,10 +356,10 @@ BuffFunctionTemplates.functions = {
 			DamageUtils.add_damage_network(arg_24_0, arg_24_0, var_24_1, "full", var_24_2, nil, Vector3(1, 0, 0), "temporary_health_degen", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	health_degen_start = function(arg_25_0, arg_25_1, arg_25_2)
+	health_degen_start = function (arg_25_0, arg_25_1, arg_25_2)
 		arg_25_1.next_damage_time = arg_25_2.t + arg_25_1.template.time_between_damage
 	end,
-	health_degen_update = function(arg_26_0, arg_26_1, arg_26_2)
+	health_degen_update = function (arg_26_0, arg_26_1, arg_26_2)
 		if arg_26_1.next_damage_time < arg_26_2.t then
 			local var_26_0 = arg_26_1.template
 
@@ -371,7 +371,7 @@ BuffFunctionTemplates.functions = {
 			DamageUtils.add_damage_network(arg_26_0, arg_26_0, var_26_1, "full", var_26_2, nil, Vector3(1, 0, 0), "health_degen", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	convert_permanent_to_temporary_health = function(arg_27_0, arg_27_1, arg_27_2)
+	convert_permanent_to_temporary_health = function (arg_27_0, arg_27_1, arg_27_2)
 		if Managers.state.network.is_server then
 			local var_27_0 = ScriptUnit.has_extension(arg_27_0, "health_system")
 
@@ -380,7 +380,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	life_drain_update_no_kill = function(arg_28_0, arg_28_1, arg_28_2)
+	life_drain_update_no_kill = function (arg_28_0, arg_28_1, arg_28_2)
 		if arg_28_1.next_damage_time < arg_28_2.t then
 			local var_28_0 = arg_28_1.template
 
@@ -404,12 +404,12 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	health_regen_all_start = function(arg_29_0, arg_29_1, arg_29_2)
+	health_regen_all_start = function (arg_29_0, arg_29_1, arg_29_2)
 		if Managers.state.network.is_server then
 			arg_29_1.next_heal_time = arg_29_2.t + arg_29_1.template.time_between_heal
 		end
 	end,
-	health_regen_all_update = function(arg_30_0, arg_30_1, arg_30_2)
+	health_regen_all_update = function (arg_30_0, arg_30_1, arg_30_2)
 		if Managers.state.network.is_server and arg_30_1.next_heal_time < arg_30_2.t then
 			local var_30_0 = arg_30_1.template
 
@@ -430,7 +430,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	health_regen_start = function(arg_31_0, arg_31_1, arg_31_2)
+	health_regen_start = function (arg_31_0, arg_31_1, arg_31_2)
 		if Managers.state.network.is_server then
 			local var_31_0 = arg_31_1.template.time_between_heal
 
@@ -443,7 +443,7 @@ BuffFunctionTemplates.functions = {
 			arg_31_1.next_heal_time = arg_31_2.t + var_31_0
 		end
 	end,
-	health_regen_update = function(arg_32_0, arg_32_1, arg_32_2)
+	health_regen_update = function (arg_32_0, arg_32_1, arg_32_2)
 		if Managers.state.network.is_server and arg_32_1.next_heal_time < arg_32_2.t then
 			local var_32_0 = arg_32_1.template
 			local var_32_1 = var_32_0.time_between_heal
@@ -463,13 +463,13 @@ BuffFunctionTemplates.functions = {
 			DamageUtils.heal_network(arg_32_0, arg_32_0, var_32_4, var_32_5)
 		end
 	end,
-	mutator_life_health_regeneration_start = function(arg_33_0, arg_33_1, arg_33_2)
+	mutator_life_health_regeneration_start = function (arg_33_0, arg_33_1, arg_33_2)
 		if Managers.state.network.is_server then
 			arg_33_1.next_buff_time = arg_33_2.t + 5
 			arg_33_1.health_regeneration_stack_ids = {}
 		end
 	end,
-	mutator_life_health_regeneration_update = function(arg_34_0, arg_34_1, arg_34_2)
+	mutator_life_health_regeneration_update = function (arg_34_0, arg_34_1, arg_34_2)
 		if Managers.state.network.is_server and arg_34_1.next_buff_time < arg_34_2.t then
 			local var_34_0 = arg_34_1.template
 
@@ -488,14 +488,14 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_metal_mutator_gromril_armour = function(arg_35_0, arg_35_1, arg_35_2)
+	remove_metal_mutator_gromril_armour = function (arg_35_0, arg_35_1, arg_35_2)
 		local var_35_0 = {
 			attacker_unit = arg_35_0
 		}
 
 		ScriptUnit.extension(arg_35_0, "buff_system"):add_buff("metal_mutator_damage_boost", var_35_0)
 	end,
-	start_blade_dance = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+	start_blade_dance = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 		arg_36_2.next_tick_t = arg_36_2.t + 0.5
 
 		local var_36_0 = Managers.player:local_player()
@@ -520,7 +520,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_36_1.linked_effect = var_36_3
 	end,
-	update_blade_dance = function(arg_37_0, arg_37_1, arg_37_2)
+	update_blade_dance = function (arg_37_0, arg_37_1, arg_37_2)
 		if arg_37_2.t >= arg_37_2.next_tick_t then
 			arg_37_2.next_tick_t = arg_37_2.t + 0.5
 
@@ -531,7 +531,7 @@ BuffFunctionTemplates.functions = {
 			var_37_0:create_explosion(arg_37_0, var_37_1, var_37_2, "metal_mutator_blade_dance", 1, "undefined", 0, false)
 		end
 	end,
-	remove_blade_dance = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+	remove_blade_dance = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 		local var_38_0 = Managers.state.network:unit_game_object_id(arg_38_0)
 		local var_38_1 = Managers.player:local_player()
 		local var_38_2 = var_38_1 and var_38_1.player_unit
@@ -549,7 +549,7 @@ BuffFunctionTemplates.functions = {
 			arg_38_1.linked_effect = nil
 		end
 	end,
-	apply_beasts_totem_buff = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	apply_beasts_totem_buff = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 		if not arg_39_1.fx_id then
 			local var_39_0 = World.create_particles(arg_39_3, "fx/chr_beastmen_standard_bearer_buff_01", POSITION_LOOKUP[arg_39_0])
 
@@ -558,12 +558,12 @@ BuffFunctionTemplates.functions = {
 			World.link_particles(arg_39_3, var_39_0, arg_39_0, Unit.node(arg_39_0, "root_point"), Matrix4x4.identity(), "stop")
 		end
 	end,
-	remove_beasts_totem_buff = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	remove_beasts_totem_buff = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 		if arg_40_1.fx_id then
 			World.stop_spawning_particles(arg_40_3, arg_40_1.fx_id)
 		end
 	end,
-	apply_fire_mutator_bomb = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+	apply_fire_mutator_bomb = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 		local var_41_0 = Managers.player:local_player()
 
 		if arg_41_0 == (var_41_0 and var_41_0.player_unit) then
@@ -580,10 +580,10 @@ BuffFunctionTemplates.functions = {
 			World.link_particles(arg_41_3, var_41_2, arg_41_0, Unit.node(arg_41_0, "root_point"), Matrix4x4.identity(), "stop")
 		end
 	end,
-	update_fire_mutator_bomb = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+	update_fire_mutator_bomb = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 		return
 	end,
-	remove_fire_mutator_bomb = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	remove_fire_mutator_bomb = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 		if arg_43_1.linked_effect then
 			World.destroy_particles(arg_43_3, arg_43_1.linked_effect)
 
@@ -596,12 +596,12 @@ BuffFunctionTemplates.functions = {
 			var_43_0:destroy_screen_particles(arg_43_1.screenspace_particle_id)
 		end
 	end,
-	apply_mutator_life_poison_buff = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	apply_mutator_life_poison_buff = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 		local var_44_0 = WindSettings.life
 		local var_44_1 = Managers.weave:get_wind_strength()
 		local var_44_2 = var_44_0.thorns_damage[var_44_1]
 	end,
-	start_dot_damage = function(arg_45_0, arg_45_1, arg_45_2)
+	start_dot_damage = function (arg_45_0, arg_45_1, arg_45_2)
 		if arg_45_1.template.damage_type == "burninating" then
 			local var_45_0 = arg_45_2.attacker_unit
 			local var_45_1 = var_45_0 and ScriptUnit.has_extension(var_45_0, "buff_system")
@@ -619,7 +619,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	reapply_dot_damage = function(arg_46_0, arg_46_1, arg_46_2)
+	reapply_dot_damage = function (arg_46_0, arg_46_1, arg_46_2)
 		if arg_46_1.template.damage_type == "burninating" then
 			local var_46_0 = arg_46_2.attacker_unit
 			local var_46_1 = var_46_0 and ScriptUnit.has_extension(var_46_0, "buff_system")
@@ -637,7 +637,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	apply_dot_damage = function(arg_47_0, arg_47_1, arg_47_2)
+	apply_dot_damage = function (arg_47_0, arg_47_1, arg_47_2)
 		local var_47_0 = arg_47_2.t
 		local var_47_1 = var_47_0
 
@@ -722,7 +722,7 @@ BuffFunctionTemplates.functions = {
 
 		return var_47_1
 	end,
-	apply_moving_through_vomit = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+	apply_moving_through_vomit = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 		local var_48_0 = Managers.state.difficulty:get_difficulty()
 
 		arg_48_1.damage = arg_48_1.template.difficulty_damage[var_48_0]
@@ -747,7 +747,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_moving_through_vomit = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+	update_moving_through_vomit = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 		local var_49_0 = arg_49_2.t
 		local var_49_1 = arg_49_1.template
 
@@ -789,17 +789,17 @@ BuffFunctionTemplates.functions = {
 
 		return var_49_0 + var_49_1.time_between_dot_damages
 	end,
-	remove_moving_through_vomit = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+	remove_moving_through_vomit = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 		local var_50_0 = ScriptUnit.has_extension(arg_50_0, "first_person_system")
 
 		if var_50_0 then
 			var_50_0:stop_spawning_screen_particles(arg_50_1.vomit_particle_id)
 		end
 	end,
-	apply_catacombs_corpse_pit = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+	apply_catacombs_corpse_pit = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 		arg_51_1.next_tick = arg_51_2.t + 0
 	end,
-	update_catacombs_corpse_pit = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+	update_catacombs_corpse_pit = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 		local var_52_0 = arg_52_2.t
 		local var_52_1 = arg_52_1.next_tick
 		local var_52_2 = arg_52_1.template
@@ -829,10 +829,10 @@ BuffFunctionTemplates.functions = {
 			arg_52_1.next_tick = var_52_0 + var_52_2.time_between_ticks
 		end
 	end,
-	remove_catacombs_corpse_pit = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+	remove_catacombs_corpse_pit = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 		return
 	end,
-	apply_moving_through_plague = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+	apply_moving_through_plague = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 		local var_54_0 = Managers.state.difficulty:get_difficulty()
 
 		arg_54_1.damage = arg_54_1.template.difficulty_damage[var_54_0]
@@ -857,7 +857,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_moving_through_plague = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+	update_moving_through_plague = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 		local var_55_0 = arg_55_2.t
 		local var_55_1 = arg_55_1.template
 
@@ -894,14 +894,14 @@ BuffFunctionTemplates.functions = {
 
 		return var_55_0 + var_55_1.time_between_dot_damages
 	end,
-	remove_moving_through_plague = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+	remove_moving_through_plague = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 		local var_56_0 = ScriptUnit.has_extension(arg_56_0, "first_person_system")
 
 		if var_56_0 then
 			var_56_0:stop_spawning_screen_particles(arg_56_1.plague_particle_id)
 		end
 	end,
-	apply_mutator_life_thorns_poison = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+	apply_mutator_life_thorns_poison = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 		local var_57_0 = Managers.state.difficulty:get_difficulty()
 
 		arg_57_1.damage = arg_57_1.template.difficulty_damage[var_57_0]
@@ -919,7 +919,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_mutator_life_thorns_poison = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+	update_mutator_life_thorns_poison = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 		local var_58_0 = arg_58_2.t
 		local var_58_1 = arg_58_1.template
 
@@ -949,25 +949,25 @@ BuffFunctionTemplates.functions = {
 
 		return var_58_0 + var_58_1.time_between_dot_damages
 	end,
-	remove_mutator_life_thorns_poison = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+	remove_mutator_life_thorns_poison = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 		return
 	end,
-	apply_ai_movement_debuff = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+	apply_ai_movement_debuff = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 		local var_60_0 = ScriptUnit.extension(arg_60_0, "ai_navigation_system")
 		local var_60_1 = arg_60_1.template.multiplier
 
 		arg_60_1.movement_modifier_id = var_60_0:add_movement_modifier(var_60_1)
 	end,
-	remove_ai_movement_debuff = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+	remove_ai_movement_debuff = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 		ScriptUnit.extension(arg_61_0, "ai_navigation_system"):remove_movement_modifier(arg_61_1.movement_modifier_id)
 	end,
-	apply_chaos_zombie_explosion_in_face = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+	apply_chaos_zombie_explosion_in_face = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 		return
 	end,
-	update_chaos_zombie_explosion_in_face = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+	update_chaos_zombie_explosion_in_face = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 		return
 	end,
-	remove_chaos_zombie_explosion_in_face = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+	remove_chaos_zombie_explosion_in_face = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 		local var_64_0 = ScriptUnit.has_extension(arg_64_0, "first_person_system")
 
 		if var_64_0 then
@@ -975,7 +975,7 @@ BuffFunctionTemplates.functions = {
 			var_64_0:stop_spawning_screen_particles(arg_64_1.nurgle_particle_id_02)
 		end
 	end,
-	apply_plague_wave_in_face = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+	apply_plague_wave_in_face = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 		local var_65_0 = Managers.state.difficulty:get_difficulty()
 		local var_65_1 = arg_65_1.template
 
@@ -1019,7 +1019,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_65_1.vomit_next_t = arg_65_2.t
 	end,
-	remove_plague_wave_in_face = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+	remove_plague_wave_in_face = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 		local var_66_0 = ScriptUnit.has_extension(arg_66_0, "first_person_system")
 
 		if var_66_0 then
@@ -1027,7 +1027,7 @@ BuffFunctionTemplates.functions = {
 			var_66_0:stop_spawning_screen_particles(arg_66_1.plague_wave_opaque_particle_id)
 		end
 	end,
-	apply_vermintide_in_face = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+	apply_vermintide_in_face = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 		local var_67_0 = Managers.state.difficulty:get_difficulty()
 		local var_67_1 = arg_67_1.template
 
@@ -1054,7 +1054,7 @@ BuffFunctionTemplates.functions = {
 
 		var_67_6:add_external_velocity(var_67_7)
 	end,
-	update_vermintide_in_face = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+	update_vermintide_in_face = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 		local var_68_0 = arg_68_2.t
 		local var_68_1 = arg_68_1.template
 
@@ -1088,10 +1088,10 @@ BuffFunctionTemplates.functions = {
 
 		return var_68_0 + var_68_1.time_between_dot_damages
 	end,
-	remove_vermintide_in_face = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+	remove_vermintide_in_face = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 		return
 	end,
-	apply_vomit_in_face = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+	apply_vomit_in_face = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 		local var_70_0 = Managers.state.difficulty:get_difficulty()
 		local var_70_1 = arg_70_1.template
 
@@ -1150,7 +1150,7 @@ BuffFunctionTemplates.functions = {
 
 		var_70_12:add_external_velocity(var_70_13)
 	end,
-	update_vomit_in_face = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+	update_vomit_in_face = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 		local var_71_0 = arg_71_2.t
 		local var_71_1 = arg_71_1.template
 
@@ -1192,7 +1192,7 @@ BuffFunctionTemplates.functions = {
 
 		return var_71_0 + var_71_1.time_between_dot_damages
 	end,
-	remove_vomit_in_face = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+	remove_vomit_in_face = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 		local var_72_0 = ScriptUnit.has_extension(arg_72_0, "first_person_system")
 
 		if var_72_0 then
@@ -1200,7 +1200,7 @@ BuffFunctionTemplates.functions = {
 			var_72_0:stop_spawning_screen_particles(arg_72_1.vomit_opaque_particle_id)
 		end
 	end,
-	apply_vortex = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+	apply_vortex = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 		local var_73_0 = Managers.state.difficulty:get_difficulty()
 
 		arg_73_1.damage = arg_73_1.template.difficulty_damage[var_73_0]
@@ -1222,7 +1222,7 @@ BuffFunctionTemplates.functions = {
 			arg_73_1.damage_source = var_73_3 and var_73_5 or "dot_debuff"
 		end
 	end,
-	update_vortex = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+	update_vortex = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 		local var_74_0 = arg_74_2.t
 		local var_74_1 = arg_74_1.template
 
@@ -1260,14 +1260,14 @@ BuffFunctionTemplates.functions = {
 
 		return var_74_0 + var_74_1.time_between_dot_damages
 	end,
-	remove_vortex = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+	remove_vortex = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 		local var_75_0 = ScriptUnit.has_extension(arg_75_0, "first_person_system")
 
 		if var_75_0 then
 			var_75_0:stop_spawning_screen_particles(arg_75_1.vortex_particle_id)
 		end
 	end,
-	apply_moving_through_warpfire = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+	apply_moving_through_warpfire = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 		local var_76_0 = Managers.state.difficulty:get_difficulty()
 
 		arg_76_1.damage = arg_76_1.template.difficulty_damage[var_76_0]
@@ -1308,7 +1308,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_76_1.warpfire_next_t = arg_76_2.t + 0.1
 	end,
-	update_moving_through_warpfire = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+	update_moving_through_warpfire = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 		local var_77_0 = arg_77_2.t
 		local var_77_1 = arg_77_1.template
 
@@ -1338,7 +1338,7 @@ BuffFunctionTemplates.functions = {
 
 		return var_77_0 + var_77_1.time_between_dot_damages
 	end,
-	update_heal_ticks = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+	update_heal_ticks = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 		local var_78_0 = arg_78_2.t
 		local var_78_1 = arg_78_1.template
 		local var_78_2 = arg_78_1.next_heal_tick or 0
@@ -1359,7 +1359,7 @@ BuffFunctionTemplates.functions = {
 			arg_78_1.next_heal_tick = var_78_0 + var_78_1.time_between_heals
 		end
 	end,
-	markus_huntsman_update_heal_ticks = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+	markus_huntsman_update_heal_ticks = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 		local var_79_0 = arg_79_2.t
 		local var_79_1 = arg_79_1.template
 		local var_79_2 = arg_79_1.next_heal_tick or 0
@@ -1380,7 +1380,7 @@ BuffFunctionTemplates.functions = {
 			arg_79_1.next_heal_tick = var_79_0 + var_79_1.time_between_heals
 		end
 	end,
-	delayed_buff_removal = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+	delayed_buff_removal = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 		if not ALIVE[arg_80_0] then
 			return
 		end
@@ -1411,7 +1411,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	delayed_buff_add = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+	delayed_buff_add = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 		if not ALIVE[arg_81_0] then
 			return
 		end
@@ -1445,7 +1445,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	delayed_single_buff_add = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+	delayed_single_buff_add = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 		if not ALIVE[arg_82_0] then
 			return
 		end
@@ -1480,7 +1480,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	add_buff_stacks_on_movement = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3)
+	add_buff_stacks_on_movement = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3)
 		if not ALIVE[arg_83_0] then
 			return
 		end
@@ -1530,7 +1530,7 @@ BuffFunctionTemplates.functions = {
 			arg_83_1.position:store(var_83_0)
 		end
 	end,
-	set_stacks_on_stacks = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+	set_stacks_on_stacks = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 		local var_84_0 = arg_84_0
 
 		if ALIVE[var_84_0] then
@@ -1567,7 +1567,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_kerillian_waywatcher_regen = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+	update_kerillian_waywatcher_regen = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 		local var_85_0 = arg_85_2.t
 		local var_85_1 = arg_85_1.template
 		local var_85_2 = arg_85_1.next_heal_tick or 0
@@ -1623,14 +1623,14 @@ BuffFunctionTemplates.functions = {
 			arg_85_1.next_heal_tick = var_85_0 + var_85_1.time_between_heals
 		end
 	end,
-	remove_moving_through_warpfire = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3)
+	remove_moving_through_warpfire = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3)
 		local var_86_0 = ScriptUnit.has_extension(arg_86_0, "first_person_system")
 
 		if var_86_0 then
 			var_86_0:stop_spawning_screen_particles(arg_86_1.warpfire_particle_id)
 		end
 	end,
-	apply_warpfirethrower_in_face = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+	apply_warpfirethrower_in_face = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 		local var_87_0 = Managers.state.difficulty:get_difficulty()
 		local var_87_1 = arg_87_1.template
 
@@ -1679,7 +1679,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_warpfirethrower_in_face = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+	update_warpfirethrower_in_face = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 		local var_88_0 = arg_88_2.t
 		local var_88_1 = arg_88_1.template
 
@@ -1717,7 +1717,7 @@ BuffFunctionTemplates.functions = {
 
 		return var_88_0 + var_88_1.time_between_dot_damages
 	end,
-	remove_warpfirethrower_in_face = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3)
+	remove_warpfirethrower_in_face = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3)
 		local var_89_0 = ScriptUnit.has_extension(arg_89_0, "first_person_system")
 
 		if var_89_0 then
@@ -1726,7 +1726,7 @@ BuffFunctionTemplates.functions = {
 			var_89_0:play_hud_sound_event("Stop_player_hit_warpfire_thrower")
 		end
 	end,
-	apply_warpfire_in_face = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+	apply_warpfire_in_face = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 		local var_90_0 = Managers.state.difficulty:get_difficulty()
 		local var_90_1 = arg_90_1.template
 
@@ -1773,7 +1773,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_warpfire_in_face = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+	update_warpfire_in_face = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 		local var_91_0 = arg_91_2.t
 		local var_91_1 = arg_91_1.template
 
@@ -1798,7 +1798,7 @@ BuffFunctionTemplates.functions = {
 
 		return var_91_0 + var_91_1.time_between_dot_damages
 	end,
-	remove_warpfire_in_face = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+	remove_warpfire_in_face = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 		local var_92_0 = ScriptUnit.has_extension(arg_92_0, "first_person_system")
 
 		if var_92_0 then
@@ -1806,7 +1806,7 @@ BuffFunctionTemplates.functions = {
 			var_92_0:play_hud_sound_event("Stop_player_hit_warpfire_thrower")
 		end
 	end,
-	start_aoe_buff = function(arg_93_0, arg_93_1, arg_93_2)
+	start_aoe_buff = function (arg_93_0, arg_93_1, arg_93_2)
 		local var_93_0 = arg_93_1.template
 
 		if var_93_0.target == "enemies" and Managers.state.network.is_server then
@@ -1834,7 +1834,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_93_1.reapply_t = arg_93_2.t + var_93_0.reapply_rate
 	end,
-	reapply_aoe_buff = function(arg_94_0, arg_94_1, arg_94_2)
+	reapply_aoe_buff = function (arg_94_0, arg_94_1, arg_94_2)
 		if arg_94_1.reapply_t <= arg_94_2.t then
 			local var_94_0 = arg_94_1.template
 
@@ -1864,10 +1864,10 @@ BuffFunctionTemplates.functions = {
 			arg_94_1.reapply_t = arg_94_2.t + var_94_0.reapply_rate
 		end
 	end,
-	remove_aoe_buff = function(arg_95_0, arg_95_1, arg_95_2)
+	remove_aoe_buff = function (arg_95_0, arg_95_1, arg_95_2)
 		return
 	end,
-	add_buff_local = function(arg_96_0, arg_96_1, arg_96_2)
+	add_buff_local = function (arg_96_0, arg_96_1, arg_96_2)
 		local var_96_0 = arg_96_1.template
 		local var_96_1 = ScriptUnit.has_extension(arg_96_0, "buff_system")
 		local var_96_2 = var_96_0.buffs_to_add
@@ -1884,7 +1884,7 @@ BuffFunctionTemplates.functions = {
 			var_96_1:add_buff(var_96_4)
 		end
 	end,
-	remove_buff_local = function(arg_97_0, arg_97_1, arg_97_2)
+	remove_buff_local = function (arg_97_0, arg_97_1, arg_97_2)
 		local var_97_0 = arg_97_1.template.buff_to_remove
 		local var_97_1 = ScriptUnit.extension(arg_97_0, "buff_system")
 		local var_97_2 = var_97_1:get_buff_type(var_97_0)
@@ -1893,7 +1893,7 @@ BuffFunctionTemplates.functions = {
 			var_97_1:remove_buff(var_97_2.id)
 		end
 	end,
-	add_buff_synced = function(arg_98_0, arg_98_1, arg_98_2)
+	add_buff_synced = function (arg_98_0, arg_98_1, arg_98_2)
 		local var_98_0 = arg_98_1.template
 
 		if var_98_0.ignore_if_client and not Managers.state.network.is_server then
@@ -1936,7 +1936,7 @@ BuffFunctionTemplates.functions = {
 			var_98_5:add_buff_synced(arg_98_0, var_98_8, var_98_2, nil, var_98_3)
 		end
 	end,
-	remove_buff_synced = function(arg_99_0, arg_99_1, arg_99_2)
+	remove_buff_synced = function (arg_99_0, arg_99_1, arg_99_2)
 		if arg_99_1.template.ignore_if_client and not Managers.state.network.is_server then
 			return
 		end
@@ -1948,7 +1948,7 @@ BuffFunctionTemplates.functions = {
 			Managers.state.entity:system("buff_system"):remove_buff_synced(arg_99_0, var_99_1.id)
 		end
 	end,
-	add_buff_server_controlled = function(arg_100_0, arg_100_1, arg_100_2)
+	add_buff_server_controlled = function (arg_100_0, arg_100_1, arg_100_2)
 		if not Managers.state.network:game() then
 			return
 		end
@@ -1969,7 +1969,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_buff_server_controlled = function(arg_101_0, arg_101_1, arg_101_2)
+	remove_buff_server_controlled = function (arg_101_0, arg_101_1, arg_101_2)
 		if not Managers.state.network:game() then
 			return
 		end
@@ -1991,7 +1991,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	add_buffs = function(arg_102_0, arg_102_1, arg_102_2)
+	add_buffs = function (arg_102_0, arg_102_1, arg_102_2)
 		if Unit.alive(arg_102_0) then
 			local var_102_0 = arg_102_1.template.add_buffs_data
 
@@ -2009,7 +2009,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_buffs = function(arg_103_0, arg_103_1, arg_103_2)
+	remove_buffs = function (arg_103_0, arg_103_1, arg_103_2)
 		if Unit.alive(arg_103_0) then
 			local var_103_0 = arg_103_1.template.remove_buffs_data
 
@@ -2032,7 +2032,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_buff_stack = function(arg_104_0, arg_104_1, arg_104_2)
+	remove_buff_stack = function (arg_104_0, arg_104_1, arg_104_2)
 		if Unit.alive(arg_104_0) then
 			local var_104_0 = ScriptUnit.has_extension(arg_104_0, "buff_system")
 
@@ -2077,14 +2077,14 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	add_health_on_application = function(arg_105_0, arg_105_1, arg_105_2)
+	add_health_on_application = function (arg_105_0, arg_105_1, arg_105_2)
 		if Unit.alive(arg_105_0) and Managers.state.network.is_server then
 			local var_105_0 = arg_105_1.template.heal_amount
 
 			DamageUtils.heal_network(arg_105_0, arg_105_0, var_105_0, "career_passive")
 		end
 	end,
-	kerillian_maidenguard_add_power_buff_on_unharmed = function(arg_106_0, arg_106_1, arg_106_2)
+	kerillian_maidenguard_add_power_buff_on_unharmed = function (arg_106_0, arg_106_1, arg_106_2)
 		if not var_0_9() then
 			return
 		end
@@ -2099,7 +2099,7 @@ BuffFunctionTemplates.functions = {
 			Managers.state.entity:system("buff_system"):add_buff(arg_106_0, var_106_0, arg_106_0, false)
 		end
 	end,
-	update_multiplier_based_on_enemy_proximity = function(arg_107_0, arg_107_1, arg_107_2)
+	update_multiplier_based_on_enemy_proximity = function (arg_107_0, arg_107_1, arg_107_2)
 		local var_107_0 = Managers.state.entity:system("ai_system").broadphase
 		local var_107_1 = arg_107_1.template
 		local var_107_2 = arg_107_1.range
@@ -2140,7 +2140,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_107_1.previous_multiplier = var_107_12
 	end,
-	update_bonus_based_on_enemy_proximity = function(arg_108_0, arg_108_1, arg_108_2)
+	update_bonus_based_on_enemy_proximity = function (arg_108_0, arg_108_1, arg_108_2)
 		local var_108_0 = Managers.state.entity:system("ai_system").broadphase
 		local var_108_1 = arg_108_1.template
 		local var_108_2 = arg_108_1.range
@@ -2181,7 +2181,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_108_1.previous_bonus = var_108_12
 	end,
-	activate_buff_stacks_based_on_enemy_proximity = function(arg_109_0, arg_109_1, arg_109_2)
+	activate_buff_stacks_based_on_enemy_proximity = function (arg_109_0, arg_109_1, arg_109_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2244,7 +2244,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_stacks_based_on_ally_proximity = function(arg_110_0, arg_110_1, arg_110_2)
+	activate_buff_stacks_based_on_ally_proximity = function (arg_110_0, arg_110_1, arg_110_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2310,7 +2310,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_multiplier_based_on_enemy_proximity = function(arg_111_0, arg_111_1, arg_111_2)
+	update_multiplier_based_on_enemy_proximity = function (arg_111_0, arg_111_1, arg_111_2)
 		local var_111_0 = Managers.state.entity:system("ai_system").broadphase
 		local var_111_1 = arg_111_1.template
 		local var_111_2 = arg_111_1.range
@@ -2351,7 +2351,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_111_1.previous_multiplier = var_111_12
 	end,
-	activate_buff_stacks_based_on_overcharge_chunks = function(arg_112_0, arg_112_1, arg_112_2)
+	activate_buff_stacks_based_on_overcharge_chunks = function (arg_112_0, arg_112_1, arg_112_2)
 		if var_0_7(arg_112_0) then
 			local var_112_0 = ScriptUnit.extension(arg_112_0, "overcharge_system")
 			local var_112_1 = ScriptUnit.extension(arg_112_0, "buff_system")
@@ -2389,7 +2389,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_server_buff_stacks_based_on_overcharge_chunks = function(arg_113_0, arg_113_1, arg_113_2)
+	activate_server_buff_stacks_based_on_overcharge_chunks = function (arg_113_0, arg_113_1, arg_113_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2428,7 +2428,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_stacks_based_on_health_chunks = function(arg_114_0, arg_114_1, arg_114_2)
+	activate_buff_stacks_based_on_health_chunks = function (arg_114_0, arg_114_1, arg_114_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2470,7 +2470,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	victor_zealot_activate_buff_stacks_based_on_health_percent = function(arg_115_0, arg_115_1, arg_115_2)
+	victor_zealot_activate_buff_stacks_based_on_health_percent = function (arg_115_0, arg_115_1, arg_115_2)
 		if Unit.alive(arg_115_0) then
 			local var_115_0 = ScriptUnit.extension(arg_115_0, "health_system")
 			local var_115_1 = ScriptUnit.extension(arg_115_0, "buff_system")
@@ -2508,7 +2508,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_stacks_based_on_clip_size = function(arg_116_0, arg_116_1, arg_116_2)
+	activate_buff_stacks_based_on_clip_size = function (arg_116_0, arg_116_1, arg_116_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2558,7 +2558,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_buff_stacks_based_on_clip_size = function(arg_117_0, arg_117_1, arg_117_2)
+	remove_buff_stacks_based_on_clip_size = function (arg_117_0, arg_117_1, arg_117_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2581,7 +2581,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	pause_activated_ability = function(arg_118_0, arg_118_1, arg_118_2)
+	pause_activated_ability = function (arg_118_0, arg_118_1, arg_118_2)
 		if Unit.alive(arg_118_0) then
 			local var_118_0 = ScriptUnit.has_extension(arg_118_0, "career_system")
 
@@ -2591,7 +2591,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	unpause_activated_ability = function(arg_119_0, arg_119_1, arg_119_2)
+	unpause_activated_ability = function (arg_119_0, arg_119_1, arg_119_2)
 		if Unit.alive(arg_119_0) then
 			local var_119_0 = ScriptUnit.has_extension(arg_119_0, "career_system")
 
@@ -2600,7 +2600,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_distance = function(arg_120_0, arg_120_1, arg_120_2)
+	activate_buff_on_distance = function (arg_120_0, arg_120_1, arg_120_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2652,7 +2652,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	side_buff_aura = function(arg_121_0, arg_121_1, arg_121_2)
+	side_buff_aura = function (arg_121_0, arg_121_1, arg_121_2)
 		local var_121_0 = arg_121_1.template
 
 		if var_121_0.server_only and not Managers.state.network.is_server then
@@ -2728,7 +2728,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_side_buff_aura = function(arg_122_0, arg_122_1, arg_122_2)
+	remove_side_buff_aura = function (arg_122_0, arg_122_1, arg_122_2)
 		if not arg_122_1.buffed_units then
 			return
 		end
@@ -2739,7 +2739,7 @@ BuffFunctionTemplates.functions = {
 			var_122_0:remove_buff_synced(iter_122_0, iter_122_1)
 		end
 	end,
-	remove_party_buff_stacks = function(arg_123_0, arg_123_1, arg_123_2)
+	remove_party_buff_stacks = function (arg_123_0, arg_123_1, arg_123_2)
 		if not Managers.state.network.is_server or not arg_123_1.stack_ids then
 			return
 		end
@@ -2771,7 +2771,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_party_buff_stacks_on_ally_proximity = function(arg_124_0, arg_124_1, arg_124_2)
+	activate_party_buff_stacks_on_ally_proximity = function (arg_124_0, arg_124_1, arg_124_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2862,7 +2862,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_closest_distance = function(arg_125_0, arg_125_1, arg_125_2)
+	activate_buff_on_closest_distance = function (arg_125_0, arg_125_1, arg_125_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -2959,14 +2959,14 @@ BuffFunctionTemplates.functions = {
 			arg_125_1.current_unit = nil
 		end
 	end,
-	markus_hero_time_reset = function(arg_126_0, arg_126_1, arg_126_2)
+	markus_hero_time_reset = function (arg_126_0, arg_126_1, arg_126_2)
 		local var_126_0 = arg_126_0
 
 		if Unit.alive(var_126_0) then
 			ScriptUnit.has_extension(var_126_0, "career_system"):reduce_activated_ability_cooldown_percent(1)
 		end
 	end,
-	add_buff_stacks = function(arg_127_0, arg_127_1, arg_127_2)
+	add_buff_stacks = function (arg_127_0, arg_127_1, arg_127_2)
 		local var_127_0 = arg_127_0
 
 		if Unit.alive(var_127_0) then
@@ -2983,7 +2983,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_aura_buff = function(arg_128_0, arg_128_1, arg_128_2)
+	remove_aura_buff = function (arg_128_0, arg_128_1, arg_128_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3013,7 +3013,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_nearby_ai_enemies = function(arg_129_0, arg_129_1, arg_129_2)
+	activate_buff_on_nearby_ai_enemies = function (arg_129_0, arg_129_1, arg_129_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3061,7 +3061,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_tracked_buffs = function(arg_130_0, arg_130_1, arg_130_2)
+	remove_tracked_buffs = function (arg_130_0, arg_130_1, arg_130_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3081,7 +3081,7 @@ BuffFunctionTemplates.functions = {
 			table.clear(var_130_0)
 		end
 	end,
-	update_ascending_descending_buff_stacks_on_time = function(arg_131_0, arg_131_1, arg_131_2)
+	update_ascending_descending_buff_stacks_on_time = function (arg_131_0, arg_131_1, arg_131_2)
 		if not Unit.alive(arg_131_0) then
 			return
 		end
@@ -3114,7 +3114,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_closest = function(arg_132_0, arg_132_1, arg_132_2)
+	activate_buff_on_closest = function (arg_132_0, arg_132_1, arg_132_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3166,7 +3166,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	markus_knight_proximity_buff_update = function(arg_133_0, arg_133_1, arg_133_2)
+	markus_knight_proximity_buff_update = function (arg_133_0, arg_133_1, arg_133_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3220,7 +3220,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	markus_knight_movespeed_on_incapacitated_ally = function(arg_134_0, arg_134_1, arg_134_2)
+	markus_knight_movespeed_on_incapacitated_ally = function (arg_134_0, arg_134_1, arg_134_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3259,7 +3259,7 @@ BuffFunctionTemplates.functions = {
 			arg_134_1.buff_id = var_134_4:add_buff(arg_134_0, var_134_5, arg_134_0, true)
 		end
 	end,
-	kerillian_maidenguard_proximity_buff_update = function(arg_135_0, arg_135_1, arg_135_2)
+	kerillian_maidenguard_proximity_buff_update = function (arg_135_0, arg_135_1, arg_135_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3310,7 +3310,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	victor_bountyhunter_blessed_combat_update = function(arg_136_0, arg_136_1, arg_136_2)
+	victor_bountyhunter_blessed_combat_update = function (arg_136_0, arg_136_1, arg_136_2)
 		local var_136_0 = arg_136_1.template
 		local var_136_1 = ScriptUnit.extension(arg_136_0, "buff_system")
 		local var_136_2 = var_136_0.ranged_buff_to_add
@@ -3339,7 +3339,7 @@ BuffFunctionTemplates.functions = {
 			var_136_1:remove_buff(var_136_9.id)
 		end
 	end,
-	victor_bountyhunter_contract_killing_update = function(arg_137_0, arg_137_1, arg_137_2)
+	victor_bountyhunter_contract_killing_update = function (arg_137_0, arg_137_1, arg_137_2)
 		local var_137_0 = arg_137_1.template
 		local var_137_1 = arg_137_2.t
 		local var_137_2 = var_137_0.update_frequency
@@ -3413,7 +3413,7 @@ BuffFunctionTemplates.functions = {
 			var_137_3:add_buff(var_137_10)
 		end
 	end,
-	maidenguard_attack_speed_on_block_update = function(arg_138_0, arg_138_1, arg_138_2)
+	maidenguard_attack_speed_on_block_update = function (arg_138_0, arg_138_1, arg_138_2)
 		local var_138_0 = arg_138_1.template
 		local var_138_1 = ScriptUnit.extension(arg_138_0, "buff_system")
 		local var_138_2 = var_138_0.stat_increase_buffs
@@ -3433,7 +3433,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_other_buff = function(arg_139_0, arg_139_1, arg_139_2)
+	activate_buff_on_other_buff = function (arg_139_0, arg_139_1, arg_139_2)
 		local var_139_0 = arg_139_1.template
 		local var_139_1 = var_139_0.buff_to_add
 		local var_139_2 = ScriptUnit.extension(arg_139_0, "buff_system")
@@ -3452,7 +3452,7 @@ BuffFunctionTemplates.functions = {
 			var_139_2:remove_buff(var_139_8.id)
 		end
 	end,
-	activate_bonus_on_last_standing = function(arg_140_0, arg_140_1, arg_140_2)
+	activate_bonus_on_last_standing = function (arg_140_0, arg_140_1, arg_140_2)
 		local var_140_0 = arg_140_1.template
 		local var_140_1 = var_140_0.activation_bonus
 		local var_140_2 = var_140_0.stat_buff
@@ -3504,7 +3504,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_140_1.previous_bonus = var_140_13
 	end,
-	activate_multiplier_on_last_standing = function(arg_141_0, arg_141_1, arg_141_2)
+	activate_multiplier_on_last_standing = function (arg_141_0, arg_141_1, arg_141_2)
 		local var_141_0 = arg_141_1.template
 		local var_141_1 = var_141_0.activation_multiplier
 		local var_141_2 = var_141_0.stat_buff
@@ -3559,7 +3559,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_141_1.previous_multiplier = var_141_13
 	end,
-	activate_buff_on_last_standing = function(arg_142_0, arg_142_1, arg_142_2)
+	activate_buff_on_last_standing = function (arg_142_0, arg_142_1, arg_142_2)
 		local var_142_0 = arg_142_1.template
 		local var_142_1 = Managers.state.side.side_by_unit[arg_142_0]
 
@@ -3631,7 +3631,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_health_percent = function(arg_143_0, arg_143_1, arg_143_2)
+	activate_buff_on_health_percent = function (arg_143_0, arg_143_1, arg_143_2)
 		local var_143_0 = arg_143_1.template
 		local var_143_1 = var_143_0.buff_to_add
 		local var_143_2 = arg_143_0
@@ -3671,7 +3671,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_disabled = function(arg_144_0, arg_144_1, arg_144_2)
+	activate_buff_on_disabled = function (arg_144_0, arg_144_1, arg_144_2)
 		local var_144_0 = arg_144_1.template.buff_to_add
 		local var_144_1 = arg_144_0
 		local var_144_2 = ScriptUnit.extension(var_144_1, "buff_system")
@@ -3708,7 +3708,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_buff_on_no_ammo = function(arg_145_0, arg_145_1, arg_145_2)
+	activate_buff_on_no_ammo = function (arg_145_0, arg_145_1, arg_145_2)
 		local var_145_0 = arg_145_1.template.buff_to_add
 		local var_145_1 = arg_145_0
 		local var_145_2 = ScriptUnit.extension(var_145_1, "buff_system")
@@ -3756,7 +3756,7 @@ BuffFunctionTemplates.functions = {
 
 		return false, 0
 	end,
-	activate_buff_on_grimoire_picked_up = function(arg_146_0, arg_146_1, arg_146_2)
+	activate_buff_on_grimoire_picked_up = function (arg_146_0, arg_146_1, arg_146_2)
 		local var_146_0 = arg_146_1.template.buff_to_add
 		local var_146_1 = arg_146_0
 		local var_146_2 = ScriptUnit.extension(var_146_1, "buff_system")
@@ -3797,7 +3797,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_multiplier_on_disabled = function(arg_147_0, arg_147_1, arg_147_2)
+	activate_multiplier_on_disabled = function (arg_147_0, arg_147_1, arg_147_2)
 		local var_147_0 = arg_147_1.template
 		local var_147_1 = var_147_0.activation_multiplier
 		local var_147_2 = var_147_0.stat_buff
@@ -3821,7 +3821,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_147_1.previous_multiplier = var_147_6
 	end,
-	activate_multiplier_on_wounded = function(arg_148_0, arg_148_1, arg_148_2)
+	activate_multiplier_on_wounded = function (arg_148_0, arg_148_1, arg_148_2)
 		local var_148_0 = arg_148_1.template
 		local var_148_1 = var_148_0.activation_multiplier
 		local var_148_2 = var_148_0.stat_buff
@@ -3844,7 +3844,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_148_1.previous_multiplier = var_148_5
 	end,
-	activate_bonus_on_wounded = function(arg_149_0, arg_149_1, arg_149_2)
+	activate_bonus_on_wounded = function (arg_149_0, arg_149_1, arg_149_2)
 		local var_149_0 = arg_149_1.template
 		local var_149_1 = var_149_0.activation_bonus or 0
 		local var_149_2 = var_149_0.stat_buff
@@ -3867,7 +3867,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_149_1.previous_bonus = var_149_5
 	end,
-	bardin_slayer_passive_update = function(arg_150_0, arg_150_1, arg_150_2)
+	bardin_slayer_passive_update = function (arg_150_0, arg_150_1, arg_150_2)
 		local var_150_0 = Managers.state.entity:system("ai_system").broadphase
 		local var_150_1 = arg_150_1.template
 		local var_150_2 = arg_150_1.range
@@ -3915,7 +3915,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_150_1.previous_bonus = var_150_11
 	end,
-	bardin_slayer_activate_buff_on_loadout = function(arg_151_0, arg_151_1, arg_151_2)
+	bardin_slayer_activate_buff_on_loadout = function (arg_151_0, arg_151_1, arg_151_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3955,7 +3955,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	bardin_slayer_remove_activate_buff_on_loadout = function(arg_152_0, arg_152_1, arg_152_2)
+	bardin_slayer_remove_activate_buff_on_loadout = function (arg_152_0, arg_152_1, arg_152_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -3973,7 +3973,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	bardin_slayer_active_buff_on_charge_action = function(arg_153_0, arg_153_1, arg_153_2)
+	bardin_slayer_active_buff_on_charge_action = function (arg_153_0, arg_153_1, arg_153_2)
 		if Unit.alive(arg_153_0) then
 			local var_153_0, var_153_1 = ScriptUnit.has_extension(arg_153_0, "inventory_system"):get_all_weapon_unit()
 			local var_153_2 = var_153_0 and ScriptUnit.has_extension(var_153_0, "weapon_system")
@@ -4014,7 +4014,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	activate_on_single_enemy = function(arg_154_0, arg_154_1, arg_154_2)
+	activate_on_single_enemy = function (arg_154_0, arg_154_1, arg_154_2)
 		local var_154_0 = Managers.state.entity:system("ai_system").broadphase
 		local var_154_1 = arg_154_1.template
 		local var_154_2 = arg_154_1.range
@@ -4053,7 +4053,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_154_1.previous_multiplier = var_154_10
 	end,
-	activate_bonus_on_health_percent = function(arg_155_0, arg_155_1, arg_155_2)
+	activate_bonus_on_health_percent = function (arg_155_0, arg_155_1, arg_155_2)
 		local var_155_0 = arg_155_1.template
 		local var_155_1 = var_155_0.activation_bonus
 		local var_155_2 = var_155_0.activation_health
@@ -4078,7 +4078,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_155_1.previous_bonus = var_155_7
 	end,
-	activate_multiplier_on_health_percent = function(arg_156_0, arg_156_1, arg_156_2)
+	activate_multiplier_on_health_percent = function (arg_156_0, arg_156_1, arg_156_2)
 		local var_156_0 = arg_156_1.template
 		local var_156_1 = var_156_0.activation_multiplier
 		local var_156_2 = var_156_0.activation_health
@@ -4103,7 +4103,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_156_1.previous_multiplier = var_156_7
 	end,
-	activate_bonus_on_ammo_percent = function(arg_157_0, arg_157_1, arg_157_2)
+	activate_bonus_on_ammo_percent = function (arg_157_0, arg_157_1, arg_157_2)
 		local var_157_0 = arg_157_1.template
 		local var_157_1 = var_157_0.activation_bonus
 		local var_157_2 = var_157_0.activation_ammo
@@ -4138,7 +4138,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_157_1.previous_bonus = var_157_6
 	end,
-	activate_multiplier_on_ammo_percent = function(arg_158_0, arg_158_1, arg_158_2)
+	activate_multiplier_on_ammo_percent = function (arg_158_0, arg_158_1, arg_158_2)
 		local var_158_0 = arg_158_1.template
 		local var_158_1 = var_158_0.activation_multiplier
 		local var_158_2 = var_158_0.activation_ammo
@@ -4173,7 +4173,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_158_1.previous_multiplier = var_158_6
 	end,
-	activate_multiplier_on_grimoire_picked_up = function(arg_159_0, arg_159_1, arg_159_2)
+	activate_multiplier_on_grimoire_picked_up = function (arg_159_0, arg_159_1, arg_159_2)
 		local var_159_0 = ScriptUnit.extension(arg_159_0, "buff_system")
 		local var_159_1 = arg_159_1.template
 		local var_159_2 = var_159_1.activation_multiplier
@@ -4195,7 +4195,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_159_1.previous_multiplier = var_159_5
 	end,
-	activate_bonus_on_grimoire_picked_up = function(arg_160_0, arg_160_1, arg_160_2)
+	activate_bonus_on_grimoire_picked_up = function (arg_160_0, arg_160_1, arg_160_2)
 		local var_160_0 = ScriptUnit.extension(arg_160_0, "buff_system")
 		local var_160_1 = arg_160_1.template
 		local var_160_2 = var_160_1.activation_bonus
@@ -4217,7 +4217,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_160_1.previous_bonus = var_160_5
 	end,
-	update_multiplier_based_on_missing_health = function(arg_161_0, arg_161_1, arg_161_2)
+	update_multiplier_based_on_missing_health = function (arg_161_0, arg_161_1, arg_161_2)
 		local var_161_0 = ScriptUnit.extension(arg_161_0, "health_system"):get_damage_taken()
 		local var_161_1 = arg_161_1.template
 		local var_161_2 = var_161_1.base_multiplier
@@ -4236,7 +4236,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_161_1.previous_multiplier = var_161_5
 	end,
-	sienna_unchained_activated_ability_pulse_remove = function(arg_162_0, arg_162_1, arg_162_2)
+	sienna_unchained_activated_ability_pulse_remove = function (arg_162_0, arg_162_1, arg_162_2)
 		local var_162_0 = Managers.world:world("level_world")
 
 		if arg_162_1.targeting_effect_id then
@@ -4251,7 +4251,7 @@ BuffFunctionTemplates.functions = {
 			arg_162_1.screenspace_effect_id = nil
 		end
 	end,
-	sienna_unchained_activated_ability_pulse_update = function(arg_163_0, arg_163_1, arg_163_2)
+	sienna_unchained_activated_ability_pulse_update = function (arg_163_0, arg_163_1, arg_163_2)
 		local var_163_0 = arg_163_1.template
 		local var_163_1 = arg_163_2.t
 		local var_163_2 = POSITION_LOOKUP[arg_163_0]
@@ -4314,7 +4314,7 @@ BuffFunctionTemplates.functions = {
 			arg_163_1.timer = var_163_1 + var_163_3
 		end
 	end,
-	sienna_unchained_health_to_cooldown_update = function(arg_164_0, arg_164_1, arg_164_2)
+	sienna_unchained_health_to_cooldown_update = function (arg_164_0, arg_164_1, arg_164_2)
 		local var_164_0 = arg_164_2.t
 		local var_164_1 = 0.25
 
@@ -4332,12 +4332,12 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	victor_bountyhunter_activated_ability_railgun_delayed = function(arg_165_0, arg_165_1, arg_165_2)
+	victor_bountyhunter_activated_ability_railgun_delayed = function (arg_165_0, arg_165_1, arg_165_2)
 		if ALIVE[arg_165_0] then
 			ScriptUnit.extension(arg_165_0, "career_system"):reduce_activated_ability_cooldown_percent(arg_165_1.multiplier)
 		end
 	end,
-	enter_sienna_unchained_activated_ability = function(arg_166_0, arg_166_1, arg_166_2)
+	enter_sienna_unchained_activated_ability = function (arg_166_0, arg_166_1, arg_166_2)
 		local var_166_0 = Managers.state.unit_storage:go_id(arg_166_0)
 		local var_166_1 = Managers.state.network
 		local var_166_2 = var_166_1:game()
@@ -4365,7 +4365,7 @@ BuffFunctionTemplates.functions = {
 			ScriptUnit.extension(arg_166_0, "first_person_system"):play_hud_sound_event("Play_career_ability_sienna_unchained", nil, true)
 		end
 	end,
-	sienna_adept_double_trail_talent_start_ability_cooldown_add = function(arg_167_0, arg_167_1, arg_167_2)
+	sienna_adept_double_trail_talent_start_ability_cooldown_add = function (arg_167_0, arg_167_1, arg_167_2)
 		if ALIVE[arg_167_0] and not arg_167_1.aborted and var_0_7(arg_167_0) then
 			local var_167_0 = ScriptUnit.extension(arg_167_0, "buff_system")
 			local var_167_1 = arg_167_1.template.buff_to_add
@@ -4373,7 +4373,7 @@ BuffFunctionTemplates.functions = {
 			var_167_0:add_buff(var_167_1)
 		end
 	end,
-	sienna_adept_double_trail_talent_start_ability_cooldown = function(arg_168_0, arg_168_1, arg_168_2)
+	sienna_adept_double_trail_talent_start_ability_cooldown = function (arg_168_0, arg_168_1, arg_168_2)
 		if ALIVE[arg_168_0] and not arg_168_1._already_removed and var_0_7(arg_168_0) then
 			local var_168_0 = ScriptUnit.extension(arg_168_0, "career_system")
 
@@ -4384,12 +4384,12 @@ BuffFunctionTemplates.functions = {
 
 		arg_168_1._already_removed = true
 	end,
-	end_sienna_unchained_activated_ability = function(arg_169_0, arg_169_1, arg_169_2)
+	end_sienna_unchained_activated_ability = function (arg_169_0, arg_169_1, arg_169_2)
 		if var_0_7(arg_169_0) then
 			ScriptUnit.extension(arg_169_0, "career_system"):set_state("default")
 		end
 	end,
-	apply_shade_activated_ability = function(arg_170_0, arg_170_1, arg_170_2, arg_170_3)
+	apply_shade_activated_ability = function (arg_170_0, arg_170_1, arg_170_2, arg_170_3)
 		local var_170_0 = Managers.state.network.network_transmit
 		local var_170_1 = Managers.state.unit_storage:go_id(arg_170_0)
 		local var_170_2 = NetworkLookup.flow_events.vfx_career_ability_start
@@ -4413,7 +4413,7 @@ BuffFunctionTemplates.functions = {
 			Managers.state.camera:set_mood("skill_shade", arg_170_1, true)
 		end
 	end,
-	on_apply_shade_dash_stealth = function(arg_171_0, arg_171_1, arg_171_2, arg_171_3)
+	on_apply_shade_dash_stealth = function (arg_171_0, arg_171_1, arg_171_2, arg_171_3)
 		if var_0_7(arg_171_0) then
 			local var_171_0 = ScriptUnit.extension(arg_171_0, "status_system")
 
@@ -4421,7 +4421,7 @@ BuffFunctionTemplates.functions = {
 			var_171_0:set_noclip(true, arg_171_1)
 		end
 	end,
-	on_remove_shade_dash_stealth = function(arg_172_0, arg_172_1, arg_172_2, arg_172_3)
+	on_remove_shade_dash_stealth = function (arg_172_0, arg_172_1, arg_172_2, arg_172_3)
 		if var_0_7(arg_172_0) then
 			local var_172_0 = ScriptUnit.has_extension(arg_172_0, "status_system")
 
@@ -4429,7 +4429,7 @@ BuffFunctionTemplates.functions = {
 			var_172_0:set_noclip(false, arg_172_1)
 		end
 	end,
-	kerillian_shade_noclip_on = function(arg_173_0, arg_173_1, arg_173_2)
+	kerillian_shade_noclip_on = function (arg_173_0, arg_173_1, arg_173_2)
 		if ALIVE[arg_173_0] then
 			local var_173_0 = ScriptUnit.has_extension(arg_173_0, "status_system")
 
@@ -4438,7 +4438,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	kerillian_shade_noclip_off = function(arg_174_0, arg_174_1, arg_174_2)
+	kerillian_shade_noclip_off = function (arg_174_0, arg_174_1, arg_174_2)
 		if ALIVE[arg_174_0] then
 			local var_174_0 = ScriptUnit.has_extension(arg_174_0, "status_system")
 
@@ -4447,7 +4447,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	kerillian_shade_missed_combo_window = function(arg_175_0, arg_175_1, arg_175_2)
+	kerillian_shade_missed_combo_window = function (arg_175_0, arg_175_1, arg_175_2)
 		if ALIVE[arg_175_0] and not arg_175_1.killed_target then
 			local var_175_0 = ScriptUnit.extension(arg_175_0, "buff_system")
 			local var_175_1 = var_175_0:get_buff_type("kerillian_shade_ult_invis")
@@ -4457,7 +4457,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	on_shade_activated_ability_remove = function(arg_176_0, arg_176_1, arg_176_2, arg_176_3)
+	on_shade_activated_ability_remove = function (arg_176_0, arg_176_1, arg_176_2, arg_176_3)
 		if not ALIVE[arg_176_0] then
 			return
 		end
@@ -4515,7 +4515,7 @@ BuffFunctionTemplates.functions = {
 			var_176_3:add_buff("kerillian_shade_power_buff")
 		end
 	end,
-	on_crit_passive_removed = function(arg_177_0, arg_177_1, arg_177_2)
+	on_crit_passive_removed = function (arg_177_0, arg_177_1, arg_177_2)
 		local var_177_0 = ScriptUnit.extension(arg_177_0, "buff_system")
 		local var_177_1 = arg_177_1.template.reference_buff
 		local var_177_2 = var_177_0:get_non_stacking_buff(var_177_1)
@@ -4534,17 +4534,17 @@ BuffFunctionTemplates.functions = {
 			var_177_2.buff_list = {}
 		end
 	end,
-	remove_invulnd_flash = function(arg_178_0, arg_178_1, arg_178_2)
+	remove_invulnd_flash = function (arg_178_0, arg_178_1, arg_178_2)
 		if ALIVE[arg_178_0] then
 			ScriptUnit.has_extension(arg_178_0, "career_system"):set_activated_ability_cooldown_unpaused()
 		end
 	end,
-	add_invulnd_flash = function(arg_179_0, arg_179_1, arg_179_2)
+	add_invulnd_flash = function (arg_179_0, arg_179_1, arg_179_2)
 		if ALIVE[arg_179_0] and Managers.player.is_server then
 			StatusUtils.set_knocked_down_network(arg_179_0, false)
 		end
 	end,
-	apply_huntsman_activated_ability = function(arg_180_0, arg_180_1, arg_180_2)
+	apply_huntsman_activated_ability = function (arg_180_0, arg_180_1, arg_180_2)
 		if var_0_10(arg_180_0) then
 			Unit.flow_event(arg_180_0, "vfx_career_ability_start")
 		end
@@ -4554,7 +4554,7 @@ BuffFunctionTemplates.functions = {
 			ScriptUnit.extension(arg_180_0, "first_person_system"):play_remote_hud_sound_event("Play_career_ability_markus_huntsman_loop_husk")
 		end
 	end,
-	end_huntsman_activated_ability = function(arg_181_0, arg_181_1, arg_181_2)
+	end_huntsman_activated_ability = function (arg_181_0, arg_181_1, arg_181_2)
 		if var_0_7(arg_181_0) then
 			ScriptUnit.extension(arg_181_0, "career_system"):set_state("default")
 			ScriptUnit.extension(arg_181_0, "status_system"):set_invisible(false, nil, "huntsman_ability")
@@ -4571,7 +4571,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	end_slayer_activated_ability = function(arg_182_0, arg_182_1, arg_182_2)
+	end_slayer_activated_ability = function (arg_182_0, arg_182_1, arg_182_2)
 		if var_0_7(arg_182_0) then
 			local var_182_0 = ScriptUnit.extension(arg_182_0, "career_system")
 			local var_182_1 = ScriptUnit.extension(arg_182_0, "status_system")
@@ -4587,7 +4587,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	add_victor_zealot_invulnerability_cooldown = function(arg_183_0, arg_183_1, arg_183_2)
+	add_victor_zealot_invulnerability_cooldown = function (arg_183_0, arg_183_1, arg_183_2)
 		local var_183_0 = arg_183_0
 		local var_183_1 = ScriptUnit.extension(var_183_0, "buff_system")
 
@@ -4595,7 +4595,7 @@ BuffFunctionTemplates.functions = {
 			var_183_1:add_buff("victor_zealot_invulnerability_cooldown")
 		end
 	end,
-	end_zealot_activated_ability = function(arg_184_0, arg_184_1, arg_184_2)
+	end_zealot_activated_ability = function (arg_184_0, arg_184_1, arg_184_2)
 		if var_0_7(arg_184_0) then
 			local var_184_0 = ScriptUnit.extension(arg_184_0, "career_system")
 			local var_184_1 = ScriptUnit.extension(arg_184_0, "status_system")
@@ -4612,7 +4612,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	bardin_ironbreaker_stacking_buff_gromril = function(arg_185_0, arg_185_1, arg_185_2)
+	bardin_ironbreaker_stacking_buff_gromril = function (arg_185_0, arg_185_1, arg_185_2)
 		local var_185_0 = arg_185_1.template
 		local var_185_1 = ScriptUnit.extension(arg_185_0, "buff_system")
 		local var_185_2 = var_185_0.activation_buff
@@ -4630,7 +4630,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_bardin_ironbreaker_activated_ability = function(arg_186_0, arg_186_1, arg_186_2)
+	update_bardin_ironbreaker_activated_ability = function (arg_186_0, arg_186_1, arg_186_2)
 		local var_186_0 = 3
 
 		if var_0_7(arg_186_0) then
@@ -4646,7 +4646,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	end_bardin_ironbreaker_activated_ability = function(arg_187_0, arg_187_1, arg_187_2)
+	end_bardin_ironbreaker_activated_ability = function (arg_187_0, arg_187_1, arg_187_2)
 		if var_0_7(arg_187_0) then
 			arg_187_2.next_vo_time = nil
 
@@ -4656,7 +4656,7 @@ BuffFunctionTemplates.functions = {
 			var_187_0:play_remote_unit_sound_event("Play_career_ability_bardin_ironbreaker_exit", arg_187_0, 0)
 		end
 	end,
-	play_sound_synced = function(arg_188_0, arg_188_1, arg_188_2)
+	play_sound_synced = function (arg_188_0, arg_188_1, arg_188_2)
 		if not ALIVE[arg_188_0] then
 			return false
 		end
@@ -4668,17 +4668,17 @@ BuffFunctionTemplates.functions = {
 			var_188_0:play_hud_sound_event(var_188_1, nil, true)
 		end
 	end,
-	ranger_activated_ability_buff = function(arg_189_0, arg_189_1, arg_189_2)
+	ranger_activated_ability_buff = function (arg_189_0, arg_189_1, arg_189_2)
 		if var_0_7(arg_189_0) then
 			ScriptUnit.extension(arg_189_0, "status_system"):set_invisible(true, nil, arg_189_1)
 		end
 	end,
-	ranger_activated_ability_buff_remove = function(arg_190_0, arg_190_1, arg_190_2)
+	ranger_activated_ability_buff_remove = function (arg_190_0, arg_190_1, arg_190_2)
 		if var_0_7(arg_190_0) then
 			ScriptUnit.extension(arg_190_0, "status_system"):set_invisible(false, nil, arg_190_1)
 		end
 	end,
-	bardin_ranger_smoke_buff = function(arg_191_0, arg_191_1, arg_191_2)
+	bardin_ranger_smoke_buff = function (arg_191_0, arg_191_1, arg_191_2)
 		local var_191_0 = arg_191_1.template
 		local var_191_1 = POSITION_LOOKUP[arg_191_1.area_buff_unit]
 
@@ -4712,7 +4712,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	bardin_ranger_heal_smoke = function(arg_192_0, arg_192_1, arg_192_2)
+	bardin_ranger_heal_smoke = function (arg_192_0, arg_192_1, arg_192_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -4738,7 +4738,7 @@ BuffFunctionTemplates.functions = {
 			arg_192_1.next_heal_tick = var_192_0 + var_192_1.time_between_heals
 		end
 	end,
-	update_server_buff_on_health_percent = function(arg_193_0, arg_193_1, arg_193_2)
+	update_server_buff_on_health_percent = function (arg_193_0, arg_193_1, arg_193_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -4762,7 +4762,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_server_buff_on_health_percent = function(arg_194_0, arg_194_1, arg_194_2)
+	remove_server_buff_on_health_percent = function (arg_194_0, arg_194_1, arg_194_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -4773,7 +4773,7 @@ BuffFunctionTemplates.functions = {
 			arg_194_1.has_buff = nil
 		end
 	end,
-	start_maidenguard_activated_ability = function(arg_195_0, arg_195_1, arg_195_2)
+	start_maidenguard_activated_ability = function (arg_195_0, arg_195_1, arg_195_2)
 		ScriptUnit.extension(arg_195_0, "status_system"):set_noclip(true, arg_195_1)
 
 		if var_0_7(arg_195_0) and not var_0_8(arg_195_0) then
@@ -4783,7 +4783,7 @@ BuffFunctionTemplates.functions = {
 			Managers.state.camera:set_additional_fov_multiplier_with_lerp_time(var_195_0, var_195_1)
 		end
 	end,
-	end_maidenguard_activated_ability = function(arg_196_0, arg_196_1, arg_196_2)
+	end_maidenguard_activated_ability = function (arg_196_0, arg_196_1, arg_196_2)
 		local var_196_0 = ScriptUnit.extension(arg_196_0, "status_system")
 
 		var_196_0:set_noclip(false, arg_196_1)
@@ -4808,7 +4808,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	start_maidenguard_ability_stealth = function(arg_197_0, arg_197_1, arg_197_2)
+	start_maidenguard_ability_stealth = function (arg_197_0, arg_197_1, arg_197_2)
 		local var_197_0 = ScriptUnit.extension(arg_197_0, "status_system")
 
 		var_197_0:set_invisible(true, nil, arg_197_1)
@@ -4818,7 +4818,7 @@ BuffFunctionTemplates.functions = {
 			Managers.state.camera:set_mood("skill_maiden_guard", arg_197_1, true)
 		end
 	end,
-	end_maidenguard_ability_stealth = function(arg_198_0, arg_198_1, arg_198_2)
+	end_maidenguard_ability_stealth = function (arg_198_0, arg_198_1, arg_198_2)
 		local var_198_0 = ScriptUnit.extension(arg_198_0, "status_system")
 
 		var_198_0:set_invisible(false, nil, arg_198_1)
@@ -4828,17 +4828,17 @@ BuffFunctionTemplates.functions = {
 			Managers.state.camera:set_mood("skill_maiden_guard", arg_198_1, false)
 		end
 	end,
-	end_knight_activated_ability = function(arg_199_0, arg_199_1, arg_199_2)
+	end_knight_activated_ability = function (arg_199_0, arg_199_1, arg_199_2)
 		if var_0_7(arg_199_0) then
 			ScriptUnit.extension(arg_199_0, "status_system"):set_noclip(false, "skill_knight")
 		end
 	end,
-	start_activated_ability_cooldown = function(arg_200_0, arg_200_1, arg_200_2)
+	start_activated_ability_cooldown = function (arg_200_0, arg_200_1, arg_200_2)
 		if var_0_7(arg_200_0) and arg_200_1.attacker_unit == arg_200_0 then
 			ScriptUnit.extension(arg_200_0, "career_system"):start_activated_ability_cooldown()
 		end
 	end,
-	update_bonus_based_on_missing_health_chunks = function(arg_201_0, arg_201_1, arg_201_2)
+	update_bonus_based_on_missing_health_chunks = function (arg_201_0, arg_201_1, arg_201_2)
 		local var_201_0 = ScriptUnit.extension(arg_201_0, "health_system"):get_damage_taken()
 		local var_201_1 = arg_201_1.template
 		local var_201_2 = var_201_1.min_bonus
@@ -4863,7 +4863,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_201_1.previous_bonus = var_201_7
 	end,
-	update_multiplier_based_on_missing_health_chunks = function(arg_202_0, arg_202_1, arg_202_2)
+	update_multiplier_based_on_missing_health_chunks = function (arg_202_0, arg_202_1, arg_202_2)
 		local var_202_0 = ScriptUnit.extension(arg_202_0, "health_system"):get_damage_taken()
 		local var_202_1 = arg_202_1.template
 		local var_202_2 = var_202_1.min_multiplier
@@ -4888,7 +4888,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_202_1.previous_multiplier = var_202_7
 	end,
-	update_bonus_based_on_overcharge_chunks = function(arg_203_0, arg_203_1, arg_203_2)
+	update_bonus_based_on_overcharge_chunks = function (arg_203_0, arg_203_1, arg_203_2)
 		if var_0_7(arg_203_0) then
 			local var_203_0, var_203_1, var_203_2 = ScriptUnit.extension(arg_203_0, "overcharge_system"):current_overcharge_status()
 			local var_203_3 = arg_203_1.template
@@ -4915,17 +4915,17 @@ BuffFunctionTemplates.functions = {
 			arg_203_1.previous_bonus = var_203_9
 		end
 	end,
-	apply_grenade_slow = function(arg_204_0, arg_204_1, arg_204_2)
+	apply_grenade_slow = function (arg_204_0, arg_204_1, arg_204_2)
 		if Managers.state.network.is_server then
 			arg_204_1.movement_modifier_id = ScriptUnit.extension(arg_204_0, "ai_navigation_system"):add_movement_modifier(0.2)
 		end
 	end,
-	remove_grenade_slow = function(arg_205_0, arg_205_1, arg_205_2)
+	remove_grenade_slow = function (arg_205_0, arg_205_1, arg_205_2)
 		if Managers.state.network.is_server then
 			ScriptUnit.extension(arg_205_0, "ai_navigation_system"):remove_movement_modifier(arg_205_1.movement_modifier_id)
 		end
 	end,
-	activate_bonus_based_on_low_health = function(arg_206_0, arg_206_1, arg_206_2)
+	activate_bonus_based_on_low_health = function (arg_206_0, arg_206_1, arg_206_2)
 		local var_206_0 = ScriptUnit.extension(arg_206_0, "health_system")
 		local var_206_1 = arg_206_1.template
 		local var_206_2 = var_206_0:get_damage_taken()
@@ -4949,7 +4949,7 @@ BuffFunctionTemplates.functions = {
 
 		arg_206_1.previous_multiplier = var_206_5
 	end,
-	reduce_cooldown_percent = function(arg_207_0, arg_207_1, arg_207_2)
+	reduce_cooldown_percent = function (arg_207_0, arg_207_1, arg_207_2)
 		local var_207_0 = ScriptUnit.has_extension(arg_207_0, "career_system")
 
 		if var_207_0 then
@@ -4958,10 +4958,10 @@ BuffFunctionTemplates.functions = {
 			var_207_0:reduce_activated_ability_cooldown_percent(var_207_1)
 		end
 	end,
-	apply_volume_dot_damage = function(arg_208_0, arg_208_1, arg_208_2)
+	apply_volume_dot_damage = function (arg_208_0, arg_208_1, arg_208_2)
 		arg_208_1.next_damage_time = arg_208_2.t + arg_208_2.bonus.time_between_damage
 	end,
-	update_volume_dot_damage = function(arg_209_0, arg_209_1, arg_209_2)
+	update_volume_dot_damage = function (arg_209_0, arg_209_1, arg_209_2)
 		if arg_209_1.next_damage_time < arg_209_2.t and HEALTH_ALIVE[arg_209_0] then
 			arg_209_1.next_damage_time = arg_209_1.next_damage_time + arg_209_2.bonus.time_between_damage
 
@@ -4970,22 +4970,22 @@ BuffFunctionTemplates.functions = {
 			DamageUtils.add_damage_network(arg_209_0, arg_209_2.attacker_unit, var_209_0, "full", arg_209_1.template.damage_type, nil, Vector3(1, 0, 0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	apply_volume_movement_buff = function(arg_210_0, arg_210_1, arg_210_2)
+	apply_volume_movement_buff = function (arg_210_0, arg_210_1, arg_210_2)
 		local var_210_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_210_0)
 
 		var_210_0.move_speed = var_210_0.move_speed * arg_210_2.multiplier
 	end,
-	remove_volume_movement_buff = function(arg_211_0, arg_211_1, arg_211_2)
+	remove_volume_movement_buff = function (arg_211_0, arg_211_1, arg_211_2)
 		local var_211_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_211_0)
 
 		var_211_0.move_speed = var_211_0.move_speed / arg_211_2.multiplier
 	end,
-	apply_speed_scaled_dot_buff = function(arg_212_0, arg_212_1, arg_212_2)
+	apply_speed_scaled_dot_buff = function (arg_212_0, arg_212_1, arg_212_2)
 		if var_0_7(arg_212_0) then
 			arg_212_1.next_damage_t = 0
 		end
 	end,
-	update_speed_scaled_dot_buff = function(arg_213_0, arg_213_1, arg_213_2)
+	update_speed_scaled_dot_buff = function (arg_213_0, arg_213_1, arg_213_2)
 		if var_0_7(arg_213_0) then
 			local var_213_0 = ScriptUnit.extension(arg_213_0, "locomotion_system")
 			local var_213_1 = Vector3.flat(var_213_0:current_velocity())
@@ -5001,12 +5001,12 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_speed_scaled_dot_buff = function(arg_214_0, arg_214_1, arg_214_2)
+	remove_speed_scaled_dot_buff = function (arg_214_0, arg_214_1, arg_214_2)
 		if var_0_7(arg_214_0) then
-			-- block empty
+			-- Nothing
 		end
 	end,
-	apply_twitch_invisibility_buff = function(arg_215_0, arg_215_1, arg_215_2)
+	apply_twitch_invisibility_buff = function (arg_215_0, arg_215_1, arg_215_2)
 		if var_0_7(arg_215_0) then
 			local var_215_0 = ScriptUnit.extension(arg_215_0, "status_system")
 
@@ -5019,10 +5019,10 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_twitch_invisibility_buff = function(arg_216_0, arg_216_1, arg_216_2)
+	update_twitch_invisibility_buff = function (arg_216_0, arg_216_1, arg_216_2)
 		return
 	end,
-	remove_twitch_invisibility_buff = function(arg_217_0, arg_217_1, arg_217_2)
+	remove_twitch_invisibility_buff = function (arg_217_0, arg_217_1, arg_217_2)
 		if var_0_7(arg_217_0) then
 			local var_217_0 = ScriptUnit.extension(arg_217_0, "status_system")
 			local var_217_1 = var_217_0:set_invisible(false, nil, "twitch_invis")
@@ -5034,10 +5034,10 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	apply_twitch_infinite_bombs = function(arg_218_0, arg_218_1, arg_218_2)
+	apply_twitch_infinite_bombs = function (arg_218_0, arg_218_1, arg_218_2)
 		return
 	end,
-	update_twitch_infinite_bombs = function(arg_219_0, arg_219_1, arg_219_2)
+	update_twitch_infinite_bombs = function (arg_219_0, arg_219_1, arg_219_2)
 		if var_0_7(arg_219_0) then
 			local var_219_0 = Managers.state.network.network_transmit
 			local var_219_1 = ScriptUnit.extension(arg_219_0, "inventory_system")
@@ -5064,7 +5064,7 @@ BuffFunctionTemplates.functions = {
 			local var_219_11
 
 			repeat
-				-- block empty
+				-- Nothing
 			until not var_219_1:store_additional_item(var_219_4, var_219_8)
 
 			if var_219_9 then
@@ -5087,23 +5087,23 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	remove_twitch_infinite_bombs = function(arg_220_0, arg_220_1, arg_220_2)
+	remove_twitch_infinite_bombs = function (arg_220_0, arg_220_1, arg_220_2)
 		return
 	end,
-	apply_twitch_invincibility = function(arg_221_0, arg_221_1, arg_221_2)
+	apply_twitch_invincibility = function (arg_221_0, arg_221_1, arg_221_2)
 		if var_0_9() and Unit.alive(arg_221_0) then
 			ScriptUnit.extension(arg_221_0, "health_system").is_invincible = true
 		end
 	end,
-	remove_twitch_invincibility = function(arg_222_0, arg_222_1, arg_222_2)
+	remove_twitch_invincibility = function (arg_222_0, arg_222_1, arg_222_2)
 		if var_0_9() and Unit.alive(arg_222_0) then
 			ScriptUnit.extension(arg_222_0, "health_system").is_invincible = false
 		end
 	end,
-	apply_twitch_pulsating_waves = function(arg_223_0, arg_223_1, arg_223_2)
+	apply_twitch_pulsating_waves = function (arg_223_0, arg_223_1, arg_223_2)
 		arg_223_1.next_pulse_t = arg_223_2.t
 	end,
-	update_twitch_pulsating_waves = function(arg_224_0, arg_224_1, arg_224_2, arg_224_3)
+	update_twitch_pulsating_waves = function (arg_224_0, arg_224_1, arg_224_2, arg_224_3)
 		if var_0_9() and Unit.alive(arg_224_0) then
 			local var_224_0 = arg_224_2.t
 
@@ -5124,17 +5124,17 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	add_modify_ability_max_cooldown = function(arg_225_0, arg_225_1, arg_225_2)
+	add_modify_ability_max_cooldown = function (arg_225_0, arg_225_1, arg_225_2)
 		if Unit.alive(arg_225_0) then
 			ScriptUnit.extension(arg_225_0, "career_system"):modify_max_cooldown(1, 0, arg_225_1.template.multiplier)
 		end
 	end,
-	remove_modify_ability_max_cooldown = function(arg_226_0, arg_226_1, arg_226_2)
+	remove_modify_ability_max_cooldown = function (arg_226_0, arg_226_1, arg_226_2)
 		if Unit.alive(arg_226_0) then
 			ScriptUnit.extension(arg_226_0, "career_system"):modify_max_cooldown(1, 0, -arg_226_1.template.multiplier)
 		end
 	end,
-	refresh_ranged_slot_buffs = function(arg_227_0, arg_227_1, arg_227_2)
+	refresh_ranged_slot_buffs = function (arg_227_0, arg_227_1, arg_227_2)
 		local var_227_0 = ScriptUnit.has_extension(arg_227_0, "inventory_system")
 
 		if var_227_0 then
@@ -5157,7 +5157,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	sienna_scholar_vent_zone_update = function(arg_228_0, arg_228_1, arg_228_2)
+	sienna_scholar_vent_zone_update = function (arg_228_0, arg_228_1, arg_228_2)
 		local var_228_0 = arg_228_1.template
 		local var_228_1 = var_228_0.buff_to_add
 		local var_228_2 = ScriptUnit.extension(arg_228_0, "buff_system")
@@ -5181,7 +5181,7 @@ BuffFunctionTemplates.functions = {
 			end
 		end
 	end,
-	update_kill_timer = function(arg_229_0, arg_229_1, arg_229_2)
+	update_kill_timer = function (arg_229_0, arg_229_1, arg_229_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -5195,7 +5195,7 @@ BuffFunctionTemplates.functions = {
 			AiUtils.kill_unit(arg_229_0, nil, nil, var_229_1, var_229_2)
 		end
 	end,
-	sorcerer_tether_buff_invulnerability_update = function(arg_230_0, arg_230_1, arg_230_2, arg_230_3)
+	sorcerer_tether_buff_invulnerability_update = function (arg_230_0, arg_230_1, arg_230_2, arg_230_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -5206,7 +5206,7 @@ BuffFunctionTemplates.functions = {
 			ScriptUnit.extension(arg_230_0, "buff_system"):remove_buff(arg_230_1.id)
 		end
 	end,
-	sorcerer_tether_buff_apply_visuals = function(arg_231_0, arg_231_1, arg_231_2, arg_231_3)
+	sorcerer_tether_buff_apply_visuals = function (arg_231_0, arg_231_1, arg_231_2, arg_231_3)
 		local var_231_0 = Unit.get_data(arg_231_0, "sorcerer_tether_buff_invulnerability_count") or 0
 
 		if var_231_0 == 0 then
@@ -5219,7 +5219,7 @@ BuffFunctionTemplates.functions = {
 
 		Unit.set_data(arg_231_0, "sorcerer_tether_buff_invulnerability_count", var_231_0 + 1)
 	end,
-	sorcerer_tether_buff_remove_visuals = function(arg_232_0, arg_232_1, arg_232_2, arg_232_3)
+	sorcerer_tether_buff_remove_visuals = function (arg_232_0, arg_232_1, arg_232_2, arg_232_3)
 		local var_232_0 = Unit.get_data(arg_232_0, "sorcerer_tether_buff_invulnerability_count")
 
 		if var_232_0 == 1 then
@@ -5232,7 +5232,7 @@ BuffFunctionTemplates.functions = {
 	end
 }
 
-function BuffFunctionTemplates.functions.update_charging_action_lerp_movement_buff(arg_233_0, arg_233_1, arg_233_2)
+BuffFunctionTemplates.functions.update_charging_action_lerp_movement_buff = function (arg_233_0, arg_233_1, arg_233_2)
 	local var_233_0 = arg_233_2.multiplier
 	local var_233_1 = arg_233_2.time_into_buff
 	local var_233_2
@@ -5270,7 +5270,7 @@ function BuffFunctionTemplates.functions.update_charging_action_lerp_movement_bu
 	end
 end
 
-BuffFunctionTemplates.functions.ai_update_max_health = function(arg_234_0, arg_234_1, arg_234_2)
+BuffFunctionTemplates.functions.ai_update_max_health = function (arg_234_0, arg_234_1, arg_234_2)
 	if var_0_9() then
 		local var_234_0 = ScriptUnit.extension(arg_234_0, "buff_system")
 		local var_234_1 = ScriptUnit.has_extension(arg_234_0, "health_system")

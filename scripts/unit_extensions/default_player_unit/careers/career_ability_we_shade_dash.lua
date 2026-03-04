@@ -2,7 +2,7 @@
 
 CareerAbilityWEShadeDash = class(CareerAbilityWEShadeDash)
 
-function CareerAbilityWEShadeDash.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityWEShadeDash.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -16,7 +16,7 @@ function CareerAbilityWEShadeDash.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._network_manager = Managers.state.network
 	arg_1_0._input_manager = Managers.input
 	arg_1_0._lunge_events = {
-		start = function(arg_2_0)
+		start = function (arg_2_0)
 			local var_2_0 = arg_1_0._owner_unit
 			local var_2_1 = arg_1_0._local_player
 			local var_2_2 = arg_1_0._bot_player
@@ -79,10 +79,10 @@ function CareerAbilityWEShadeDash.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				end
 			end
 		end,
-		impact = function(arg_3_0)
+		impact = function (arg_3_0)
 			return
 		end,
-		finished = function(arg_4_0)
+		finished = function (arg_4_0)
 			return
 		end
 	}
@@ -90,7 +90,7 @@ function CareerAbilityWEShadeDash.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._decal_unit_name = "units/decals/decal_arrow_kerillian"
 end
 
-function CareerAbilityWEShadeDash.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+CareerAbilityWEShadeDash.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._first_person_extension = ScriptUnit.has_extension(arg_5_2, "first_person_system")
 	arg_5_0._status_extension = ScriptUnit.extension(arg_5_2, "status_system")
 	arg_5_0._career_extension = ScriptUnit.extension(arg_5_2, "career_system")
@@ -102,11 +102,11 @@ function CareerAbilityWEShadeDash.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CareerAbilityWEShadeDash.destroy(arg_6_0)
+CareerAbilityWEShadeDash.destroy = function (arg_6_0)
 	return
 end
 
-function CareerAbilityWEShadeDash.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CareerAbilityWEShadeDash.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	if not arg_7_0:_ability_available() then
 		return
 	end
@@ -142,13 +142,13 @@ function CareerAbilityWEShadeDash.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg
 	end
 end
 
-function CareerAbilityWEShadeDash.stop(arg_8_0, arg_8_1)
+CareerAbilityWEShadeDash.stop = function (arg_8_0, arg_8_1)
 	if arg_8_1 ~= "pushed" and arg_8_1 ~= "stunned" and arg_8_0._is_priming then
 		arg_8_0:_stop_priming()
 	end
 end
 
-function CareerAbilityWEShadeDash._ability_available(arg_9_0)
+CareerAbilityWEShadeDash._ability_available = function (arg_9_0)
 	local var_9_0 = arg_9_0._career_extension
 	local var_9_1 = arg_9_0._status_extension
 	local var_9_2 = ScriptUnit.extension(arg_9_0._owner_unit, "talent_system")
@@ -157,7 +157,7 @@ function CareerAbilityWEShadeDash._ability_available(arg_9_0)
 	return var_9_3 and var_9_0:can_use_activated_ability() and not var_9_1:is_disabled()
 end
 
-function CareerAbilityWEShadeDash._start_priming(arg_10_0)
+CareerAbilityWEShadeDash._start_priming = function (arg_10_0)
 	if arg_10_0._local_player then
 		local var_10_0 = arg_10_0._decal_unit_name
 
@@ -167,7 +167,7 @@ function CareerAbilityWEShadeDash._start_priming(arg_10_0)
 	arg_10_0._is_priming = true
 end
 
-function CareerAbilityWEShadeDash._update_priming(arg_11_0)
+CareerAbilityWEShadeDash._update_priming = function (arg_11_0)
 	if arg_11_0._decal_unit then
 		local var_11_0 = arg_11_0._first_person_extension
 		local var_11_1 = Unit.local_position(arg_11_0._owner_unit, 0)
@@ -180,7 +180,7 @@ function CareerAbilityWEShadeDash._update_priming(arg_11_0)
 	end
 end
 
-function CareerAbilityWEShadeDash._stop_priming(arg_12_0)
+CareerAbilityWEShadeDash._stop_priming = function (arg_12_0)
 	if arg_12_0._decal_unit then
 		Managers.state.unit_spawner:mark_for_deletion(arg_12_0._decal_unit)
 	end
@@ -188,7 +188,7 @@ function CareerAbilityWEShadeDash._stop_priming(arg_12_0)
 	arg_12_0._is_priming = false
 end
 
-function CareerAbilityWEShadeDash._run_ability(arg_13_0)
+CareerAbilityWEShadeDash._run_ability = function (arg_13_0)
 	arg_13_0:_stop_priming()
 
 	local var_13_0 = arg_13_0._owner_unit
@@ -238,7 +238,7 @@ function CareerAbilityWEShadeDash._run_ability(arg_13_0)
 	arg_13_0:_play_vo()
 end
 
-function CareerAbilityWEShadeDash._play_vo(arg_14_0)
+CareerAbilityWEShadeDash._play_vo = function (arg_14_0)
 	local var_14_0 = arg_14_0._owner_unit
 	local var_14_1 = ScriptUnit.extension_input(var_14_0, "dialogue_system")
 	local var_14_2 = FrameTable.alloc_table()

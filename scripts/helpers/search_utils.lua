@@ -21,7 +21,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
 	return nil, nil
 end
 
-function SearchUtils.extract_queries(arg_2_0, arg_2_1, arg_2_2)
+SearchUtils.extract_queries = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0 = Utf8.lower(arg_2_0)
 
 	for iter_2_0 = 1, #arg_2_1 do
@@ -48,6 +48,6 @@ end
 local var_0_1 = string.find
 local var_0_2 = Utf8.lower
 
-function SearchUtils.simple_search(arg_3_0, arg_3_1)
+SearchUtils.simple_search = function (arg_3_0, arg_3_1)
 	return (var_0_1(var_0_2(arg_3_1), arg_3_0, 1, true))
 end

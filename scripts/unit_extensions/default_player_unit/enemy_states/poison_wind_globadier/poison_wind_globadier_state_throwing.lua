@@ -2,7 +2,7 @@
 
 PoisonWindGlobadierStateThrowing = class(PoisonWindGlobadierStateThrowing, EnemyCharacterState)
 
-function PoisonWindGlobadierStateThrowing.init(arg_1_0, arg_1_1)
+PoisonWindGlobadierStateThrowing.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "globadier_throwing")
 
 	arg_1_0.current_movement_speed_scale = 0
@@ -19,7 +19,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function PoisonWindGlobadierStateThrowing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PoisonWindGlobadierStateThrowing.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	arg_2_0._unit = arg_2_1
@@ -62,7 +62,7 @@ function PoisonWindGlobadierStateThrowing.on_enter(arg_2_0, arg_2_1, arg_2_2, ar
 	arg_2_0:set_breed_action("throw_poison_globe")
 end
 
-function PoisonWindGlobadierStateThrowing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PoisonWindGlobadierStateThrowing.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._throw_ready = nil
 	arg_3_0._throw_time = nil
 	arg_3_0._finish_time = nil
@@ -74,7 +74,7 @@ function PoisonWindGlobadierStateThrowing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg
 	arg_3_0:_destroy_indicator_unit()
 end
 
-function PoisonWindGlobadierStateThrowing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PoisonWindGlobadierStateThrowing.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_2 = arg_4_0._status_extension
@@ -199,7 +199,7 @@ function PoisonWindGlobadierStateThrowing.update(arg_4_0, arg_4_1, arg_4_2, arg_
 	CharacterStateHelper.look(arg_4_0._input_extension, arg_4_0._player.viewport_name, arg_4_0._first_person_extension, arg_4_0._status_extension, arg_4_0._inventory_extension, var_4_12)
 end
 
-function PoisonWindGlobadierStateThrowing._calculate_trajectory(arg_5_0)
+PoisonWindGlobadierStateThrowing._calculate_trajectory = function (arg_5_0)
 	local var_5_0 = arg_5_0._first_person_unit
 	local var_5_1 = arg_5_0._breed
 	local var_5_2 = Unit.local_rotation(var_5_0, 0)
@@ -300,7 +300,7 @@ function PoisonWindGlobadierStateThrowing._calculate_trajectory(arg_5_0)
 	end
 end
 
-function PoisonWindGlobadierStateThrowing._update_priming(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+PoisonWindGlobadierStateThrowing._update_priming = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_2 > arg_6_0._prime_time then
 		arg_6_0._done_priming = true
 
@@ -326,7 +326,7 @@ function PoisonWindGlobadierStateThrowing._update_priming(arg_6_0, arg_6_1, arg_
 	end
 end
 
-function PoisonWindGlobadierStateThrowing._set_priming_progress(arg_7_0, arg_7_1)
+PoisonWindGlobadierStateThrowing._set_priming_progress = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._career_extension
 	local var_7_1 = "fire"
 	local var_7_2 = var_7_0:ability_id(var_7_1)
@@ -334,7 +334,7 @@ function PoisonWindGlobadierStateThrowing._set_priming_progress(arg_7_0, arg_7_1
 	var_7_0:get_activated_ability_data(var_7_2).priming_progress = arg_7_1
 end
 
-function PoisonWindGlobadierStateThrowing._stop_priming(arg_8_0)
+PoisonWindGlobadierStateThrowing._stop_priming = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 	local var_8_1 = arg_8_0._first_person_extension
 
@@ -344,7 +344,7 @@ function PoisonWindGlobadierStateThrowing._stop_priming(arg_8_0)
 	arg_8_0._done_priming = false
 end
 
-function PoisonWindGlobadierStateThrowing._set_throw_start(arg_9_0, arg_9_1)
+PoisonWindGlobadierStateThrowing._set_throw_start = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._unit
 	local var_9_1 = arg_9_0._breed
 	local var_9_2 = arg_9_0._first_person_unit
@@ -365,7 +365,7 @@ function PoisonWindGlobadierStateThrowing._set_throw_start(arg_9_0, arg_9_1)
 	arg_9_0._throw_position_box = Vector3Box(var_9_5)
 end
 
-function PoisonWindGlobadierStateThrowing._throw_anim_update(arg_10_0, arg_10_1)
+PoisonWindGlobadierStateThrowing._throw_anim_update = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._throw_time
 
 	if var_10_0 and not arg_10_0._thrown and var_10_0 <= arg_10_1 then
@@ -383,7 +383,7 @@ function PoisonWindGlobadierStateThrowing._throw_anim_update(arg_10_0, arg_10_1)
 	return false
 end
 
-function PoisonWindGlobadierStateThrowing._throw(arg_11_0)
+PoisonWindGlobadierStateThrowing._throw = function (arg_11_0)
 	local var_11_0 = arg_11_0._unit
 	local var_11_1 = arg_11_0._breed
 
@@ -423,7 +423,7 @@ function PoisonWindGlobadierStateThrowing._throw(arg_11_0)
 	arg_11_0._thrown = true
 end
 
-function PoisonWindGlobadierStateThrowing._update_indicator_unit(arg_12_0)
+PoisonWindGlobadierStateThrowing._update_indicator_unit = function (arg_12_0)
 	if arg_12_0._indicator_unit then
 		local var_12_0 = arg_12_0._impact_data.position:unbox()
 
@@ -437,7 +437,7 @@ function PoisonWindGlobadierStateThrowing._update_indicator_unit(arg_12_0)
 	end
 end
 
-function PoisonWindGlobadierStateThrowing._create_indicator_unit(arg_13_0)
+PoisonWindGlobadierStateThrowing._create_indicator_unit = function (arg_13_0)
 	local var_13_0 = arg_13_0._world
 	local var_13_1 = arg_13_0._indicator_fx_unit_name
 
@@ -448,7 +448,7 @@ function PoisonWindGlobadierStateThrowing._create_indicator_unit(arg_13_0)
 	Unit.set_local_scale(arg_13_0._indicator_unit, 0, Vector3(var_13_2, var_13_2, var_13_2))
 end
 
-function PoisonWindGlobadierStateThrowing._destroy_indicator_unit(arg_14_0)
+PoisonWindGlobadierStateThrowing._destroy_indicator_unit = function (arg_14_0)
 	local var_14_0 = arg_14_0._world
 
 	if Unit.alive(arg_14_0._indicator_unit) then
@@ -458,7 +458,7 @@ function PoisonWindGlobadierStateThrowing._destroy_indicator_unit(arg_14_0)
 	end
 end
 
-function PoisonWindGlobadierStateThrowing._update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PoisonWindGlobadierStateThrowing._update_movement = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_0._input_extension
 	local var_15_1 = arg_15_0._buff_extension
 	local var_15_2 = arg_15_0._first_person_extension

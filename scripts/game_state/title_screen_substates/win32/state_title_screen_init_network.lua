@@ -5,7 +5,7 @@ require("scripts/game_state/state_loading")
 StateTitleScreenInitNetwork = class(StateTitleScreenInitNetwork)
 StateTitleScreenInitNetwork.NAME = "StateTitleScreenInitNetwork"
 
-function StateTitleScreenInitNetwork.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenInitNetwork.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenInitNetwork")
 
 	arg_1_0._params = arg_1_1
@@ -31,12 +31,12 @@ function StateTitleScreenInitNetwork.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function StateTitleScreenInitNetwork._load_save_data(arg_2_0)
+StateTitleScreenInitNetwork._load_save_data = function (arg_2_0)
 	print("[StateTitleScreenInitNetwork] SaveFileName", SaveFileName)
 	Managers.save:auto_load(SaveFileName, callback(arg_2_0, "cb_save_data_loaded"))
 end
 
-function StateTitleScreenInitNetwork.cb_save_data_loaded(arg_3_0, arg_3_1)
+StateTitleScreenInitNetwork.cb_save_data_loaded = function (arg_3_0, arg_3_1)
 	if arg_3_1.error then
 		Application.warning("Load error %q", arg_3_1.error)
 	else
@@ -48,7 +48,7 @@ function StateTitleScreenInitNetwork.cb_save_data_loaded(arg_3_0, arg_3_1)
 	arg_3_0.parent.parent.loading_context.restart_network = true
 end
 
-function StateTitleScreenInitNetwork.update(arg_4_0, arg_4_1, arg_4_2)
+StateTitleScreenInitNetwork.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._title_start_ui then
 		arg_4_0._title_start_ui:update(arg_4_1, arg_4_2)
 	end
@@ -77,7 +77,7 @@ function StateTitleScreenInitNetwork.update(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_0:_next_state()
 end
 
-function StateTitleScreenInitNetwork._connected_to_steam(arg_5_0)
+StateTitleScreenInitNetwork._connected_to_steam = function (arg_5_0)
 	if Development.parameter("use_lan_backend") then
 		return true
 	end
@@ -91,7 +91,7 @@ function StateTitleScreenInitNetwork._connected_to_steam(arg_5_0)
 	return var_5_0
 end
 
-function StateTitleScreenInitNetwork._next_state(arg_6_0)
+StateTitleScreenInitNetwork._next_state = function (arg_6_0)
 	local var_6_0, var_6_1 = Managers.eac:is_initialized()
 
 	if Managers.backend:profiles_loaded() and not Managers.backend:is_waiting_for_user_input() and var_6_0 then
@@ -113,11 +113,11 @@ function StateTitleScreenInitNetwork._next_state(arg_6_0)
 	end
 end
 
-function StateTitleScreenInitNetwork.on_exit(arg_7_0, arg_7_1)
+StateTitleScreenInitNetwork.on_exit = function (arg_7_0, arg_7_1)
 	return
 end
 
-function StateTitleScreenInitNetwork.create_popup(arg_8_0, arg_8_1)
+StateTitleScreenInitNetwork.create_popup = function (arg_8_0, arg_8_1)
 	assert(arg_8_1, "[StateTitleScreenInitNetwork] No error was passed to popup handler")
 	assert(arg_8_0._popup_id == nil, "Tried to show popup even though we already had one.")
 
@@ -127,7 +127,7 @@ function StateTitleScreenInitNetwork.create_popup(arg_8_0, arg_8_1)
 	arg_8_0._popup_id = Managers.popup:queue_popup(var_8_1, var_8_0, "retry", Localize("button_retry"), "quit", Localize("menu_quit"))
 end
 
-function StateTitleScreenInitNetwork._create_eac_error_popup(arg_9_0, arg_9_1)
+StateTitleScreenInitNetwork._create_eac_error_popup = function (arg_9_0, arg_9_1)
 	assert(arg_9_1, "[StateTitleScreenInitNetwork] No error was passed to popup handler")
 	assert(arg_9_0._popup_id == nil, "Tried to show popup even though we already had one.")
 
@@ -136,7 +136,7 @@ function StateTitleScreenInitNetwork._create_eac_error_popup(arg_9_0, arg_9_1)
 	arg_9_0._popup_id = Managers.popup:queue_popup(arg_9_1, var_9_0, "quit", Localize("menu_quit"))
 end
 
-function StateTitleScreenInitNetwork._handle_popup(arg_10_0)
+StateTitleScreenInitNetwork._handle_popup = function (arg_10_0)
 	local var_10_0 = Managers.popup:query_result(arg_10_0._popup_id)
 
 	if var_10_0 == "retry" then

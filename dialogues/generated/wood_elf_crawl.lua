@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwe_crawl_cheers",

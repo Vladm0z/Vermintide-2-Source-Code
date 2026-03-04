@@ -8,7 +8,7 @@ local var_0_2 = 2
 local var_0_3 = 1
 local var_0_4 = 1
 
-function DeusBelakorCrystalExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DeusBelakorCrystalExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = Managers.player.is_server
 
@@ -20,16 +20,16 @@ function DeusBelakorCrystalExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._astar = GwNavAStar.create()
 end
 
-function DeusBelakorCrystalExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
+DeusBelakorCrystalExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._go_id = arg_2_2
 end
 
-function DeusBelakorCrystalExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+DeusBelakorCrystalExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	if not arg_3_0._is_server then
 		return
 	end
 
-	ScriptUnit.extension(arg_3_2, "kill_volume_handler_system"):add_handler(function()
+	ScriptUnit.extension(arg_3_2, "kill_volume_handler_system"):add_handler(function ()
 		if not arg_3_0._nearest_locus then
 			arg_3_0._nearest_locus = arg_3_0:_find_nearest_locus()
 
@@ -44,7 +44,7 @@ function DeusBelakorCrystalExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	end)
 end
 
-function DeusBelakorCrystalExtension.destroy(arg_5_0)
+DeusBelakorCrystalExtension.destroy = function (arg_5_0)
 	if not arg_5_0._is_server then
 		return
 	end
@@ -55,7 +55,7 @@ function DeusBelakorCrystalExtension.destroy(arg_5_0)
 	arg_5_0._running_astar = nil
 end
 
-function DeusBelakorCrystalExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusBelakorCrystalExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if not arg_6_0._is_server then
 		return
 	end
@@ -114,7 +114,7 @@ function DeusBelakorCrystalExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, 
 	end
 end
 
-function DeusBelakorCrystalExtension._find_nearest_locus(arg_7_0)
+DeusBelakorCrystalExtension._find_nearest_locus = function (arg_7_0)
 	local var_7_0 = POSITION_LOOKUP[arg_7_0._unit]
 	local var_7_1 = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
 	local var_7_2

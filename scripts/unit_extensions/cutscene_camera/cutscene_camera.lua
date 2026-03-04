@@ -2,7 +2,7 @@
 
 CutsceneCamera = class(CutsceneCamera)
 
-function CutsceneCamera.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CutsceneCamera.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.level = LevelHelper:current_level(var_1_0)
@@ -21,7 +21,7 @@ function CutsceneCamera.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Camera.set_far_range(arg_1_0.camera, var_1_2)
 end
 
-function CutsceneCamera.destroy(arg_2_0)
+CutsceneCamera.destroy = function (arg_2_0)
 	arg_2_0.level = nil
 	arg_2_0.unit = nil
 	arg_2_0.camera = nil
@@ -29,7 +29,7 @@ function CutsceneCamera.destroy(arg_2_0)
 	arg_2_0.target_camera = nil
 end
 
-function CutsceneCamera.activate(arg_3_0, arg_3_1)
+CutsceneCamera.activate = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1.transition
 	local var_3_1
 	local var_3_2
@@ -72,7 +72,7 @@ function CutsceneCamera.activate(arg_3_0, arg_3_1)
 	}
 end
 
-function CutsceneCamera.setup_external_camera(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+CutsceneCamera.setup_external_camera = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = Managers.state.camera
 	local var_4_1 = var_4_0:tree_node(arg_4_0.viewport, arg_4_2, arg_4_3)
 
@@ -82,15 +82,15 @@ function CutsceneCamera.setup_external_camera(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	return var_4_1
 end
 
-function CutsceneCamera.update(arg_5_0)
+CutsceneCamera.update = function (arg_5_0)
 	arg_5_0:update_cutscene_camera()
 end
 
-function CutsceneCamera.unsafe_entity_update(arg_6_0)
+CutsceneCamera.unsafe_entity_update = function (arg_6_0)
 	arg_6_0:update_cutscene_camera()
 end
 
-function CutsceneCamera.update_cutscene_camera(arg_7_0)
+CutsceneCamera.update_cutscene_camera = function (arg_7_0)
 	local var_7_0 = arg_7_0.source_camera
 	local var_7_1 = arg_7_0.target_camera
 	local var_7_2
@@ -154,7 +154,7 @@ function CutsceneCamera.update_cutscene_camera(arg_7_0)
 	var_7_14:set_camera_node(var_7_15, "cutscene", "root_node")
 end
 
-function CutsceneCamera._handle_input(arg_8_0, arg_8_1)
+CutsceneCamera._handle_input = function (arg_8_0, arg_8_1)
 	local var_8_0 = Managers.input:get_input_service("cutscene")
 
 	if var_8_0 and var_8_0:is_blocked() then
@@ -208,7 +208,7 @@ function CutsceneCamera._handle_input(arg_8_0, arg_8_1)
 	Matrix4x4.set_rotation(arg_8_1, var_8_15)
 end
 
-function CutsceneCamera.transition_progress(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+CutsceneCamera.transition_progress = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0
 	local var_9_1 = arg_9_2 - arg_9_1
 	local var_9_2
@@ -224,18 +224,18 @@ function CutsceneCamera.transition_progress(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	return var_9_2
 end
 
-function CutsceneCamera.pose(arg_10_0)
+CutsceneCamera.pose = function (arg_10_0)
 	return Unit.world_pose(arg_10_0.unit, 0)
 end
 
-function CutsceneCamera.vertical_fov(arg_11_0)
+CutsceneCamera.vertical_fov = function (arg_11_0)
 	return Camera.vertical_fov(arg_11_0.camera)
 end
 
-function CutsceneCamera.near_range(arg_12_0)
+CutsceneCamera.near_range = function (arg_12_0)
 	return Camera.near_range(arg_12_0.camera)
 end
 
-function CutsceneCamera.far_range(arg_13_0)
+CutsceneCamera.far_range = function (arg_13_0)
 	return Camera.far_range(arg_13_0.camera)
 end

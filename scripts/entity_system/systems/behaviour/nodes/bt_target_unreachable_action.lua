@@ -4,24 +4,24 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetUnreachableAction = class(BTTargetUnreachableAction, BTNode)
 
-function BTTargetUnreachableAction.init(arg_1_0, ...)
+BTTargetUnreachableAction.init = function (arg_1_0, ...)
 	BTTargetUnreachableAction.super.init(arg_1_0, ...)
 end
 
 BTTargetUnreachableAction.name = "BTTargetUnreachableAction"
 
-function BTTargetUnreachableAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTargetUnreachableAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.unreachable_timer = arg_2_2.chasing_timer or 0
 end
 
-function BTTargetUnreachableAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTargetUnreachableAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-function BTTargetUnreachableAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTargetUnreachableAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = POSITION_LOOKUP[arg_4_1]
 	local var_4_1 = arg_4_2.target_unit
 
@@ -84,7 +84,7 @@ function BTTargetUnreachableAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	return "running", "evaluate"
 end
 
-function BTTargetUnreachableAction.move_closer(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTTargetUnreachableAction.move_closer = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
 	local var_5_1 = arg_5_4:distance_to_destination_sq(var_5_0)
 
@@ -122,7 +122,7 @@ function BTTargetUnreachableAction.move_closer(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	end
 end
 
-function BTTargetUnreachableAction._debug_distance_text(arg_6_0, arg_6_1, arg_6_2)
+BTTargetUnreachableAction._debug_distance_text = function (arg_6_0, arg_6_1, arg_6_2)
 	if script_data.debug_ai_movement then
 		local var_6_0 = POSITION_LOOKUP[arg_6_1]
 		local var_6_1 = arg_6_2:destination()

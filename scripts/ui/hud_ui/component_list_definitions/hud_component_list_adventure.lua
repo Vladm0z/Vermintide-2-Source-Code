@@ -80,7 +80,7 @@ local var_0_0 = {
 			"alive",
 			"in_menu"
 		},
-		validation_function = function(arg_1_0, arg_1_1)
+		validation_function = function (arg_1_0, arg_1_1)
 			return arg_1_1 or Managers.mechanism:current_mechanism_name() == "deus"
 		end
 	},
@@ -97,7 +97,7 @@ local var_0_0 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_2_0, arg_2_1)
+		validation_function = function (arg_2_0, arg_2_1)
 			return not script_data.disable_news_ticker
 		end
 	},
@@ -113,7 +113,7 @@ local var_0_0 = {
 			"dead",
 			"alive"
 		},
-		validation_function = function(arg_3_0, arg_3_1)
+		validation_function = function (arg_3_0, arg_3_1)
 			return arg_3_1
 		end
 	},
@@ -195,7 +195,7 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_4_0, arg_4_1)
+		validation_function = function (arg_4_0, arg_4_1)
 			return GameSettingsDevelopment.backend_settings.quests_enabled and not arg_4_1
 		end
 	},
@@ -206,7 +206,7 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_5_0, arg_5_1)
+		validation_function = function (arg_5_0, arg_5_1)
 			local var_5_0 = script_data.debug_show_damage_numbers
 			local var_5_1 = script_data.debug_ai_attack_pattern
 
@@ -230,7 +230,7 @@ local var_0_0 = {
 			"alive",
 			"dead"
 		},
-		validation_function = function(arg_6_0, arg_6_1)
+		validation_function = function (arg_6_0, arg_6_1)
 			return true
 		end
 	},
@@ -252,7 +252,7 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_7_0, arg_7_1)
+		validation_function = function (arg_7_0, arg_7_1)
 			return Managers.state.game_mode:game_mode_key() == "survival"
 		end
 	},
@@ -362,7 +362,7 @@ local var_0_0 = {
 			"game_mode_disable_hud",
 			"alive"
 		},
-		validation_function = function()
+		validation_function = function ()
 			local var_8_0 = LevelHelper.current_level_settings()
 
 			return var_8_0.tutorial_level or var_8_0.game_mode == "inn_vs"
@@ -400,7 +400,7 @@ local var_0_0 = {
 		visibility_groups = {
 			"alive"
 		},
-		validation_function = function(arg_9_0, arg_9_1)
+		validation_function = function (arg_9_0, arg_9_1)
 			return false
 		end
 	},
@@ -466,7 +466,7 @@ local var_0_0 = {
 			"alive",
 			"realism"
 		},
-		validation_function = function(arg_10_0, arg_10_1)
+		validation_function = function (arg_10_0, arg_10_1)
 			return Managers.state.game_mode:game_mode_key() ~= "tutorial"
 		end
 	},
@@ -504,13 +504,13 @@ DLCUtils.append("ingame_hud_components", var_0_0)
 local var_0_1 = {
 	{
 		name = "disable_ingame_ui",
-		validation_function = function(arg_11_0)
+		validation_function = function (arg_11_0)
 			return (arg_11_0:parent():disable_ingame_ui())
 		end
 	},
 	{
 		name = "entering_mission",
-		validation_function = function(arg_12_0)
+		validation_function = function (arg_12_0)
 			local var_12_0 = arg_12_0:component("LevelCountdownUI")
 
 			return var_12_0 and var_12_0:is_enter_game()
@@ -518,13 +518,13 @@ local var_0_1 = {
 	},
 	{
 		name = "hero_selection_popup",
-		validation_function = function(arg_13_0)
+		validation_function = function (arg_13_0)
 			return arg_13_0:parent():get_active_popup("profile_picker")
 		end
 	},
 	{
 		name = "mission_vote",
-		validation_function = function(arg_14_0)
+		validation_function = function (arg_14_0)
 			local var_14_0 = arg_14_0:component("MissionVotingUI")
 
 			return var_14_0 and var_14_0:is_active()
@@ -532,7 +532,7 @@ local var_0_1 = {
 	},
 	{
 		name = "in_endscreen",
-		validation_function = function(arg_15_0)
+		validation_function = function (arg_15_0)
 			local var_15_0 = arg_15_0:parent()
 			local var_15_1 = var_15_0:end_screen_active()
 
@@ -541,7 +541,7 @@ local var_0_1 = {
 	},
 	{
 		name = "in_menu",
-		validation_function = function(arg_16_0)
+		validation_function = function (arg_16_0)
 			local var_16_0 = arg_16_0:parent()
 			local var_16_1 = var_16_0.menu_active
 			local var_16_2 = var_16_0.current_view
@@ -551,7 +551,7 @@ local var_0_1 = {
 	},
 	{
 		name = "gift_popup",
-		validation_function = function(arg_17_0)
+		validation_function = function (arg_17_0)
 			local var_17_0 = arg_17_0:component("GiftPopupUI")
 
 			return var_17_0 and var_17_0:active()
@@ -559,7 +559,7 @@ local var_0_1 = {
 	},
 	{
 		name = "cutscene",
-		validation_function = function(arg_18_0)
+		validation_function = function (arg_18_0)
 			local var_18_0 = Managers.state.entity:system("cutscene_system")
 
 			return var_18_0.active_camera and not var_18_0.ingame_hud_enabled
@@ -567,7 +567,7 @@ local var_0_1 = {
 	},
 	{
 		name = "tab_menu",
-		validation_function = function(arg_19_0)
+		validation_function = function (arg_19_0)
 			local var_19_0 = arg_19_0:component("IngamePlayerListUI")
 			local var_19_1 = var_19_0 and var_19_0:is_active()
 			local var_19_2 = arg_19_0:component("VersusSlotStatusUI")
@@ -579,7 +579,7 @@ local var_0_1 = {
 	},
 	{
 		name = "realism",
-		validation_function = function(arg_20_0)
+		validation_function = function (arg_20_0)
 			local var_20_0 = Managers.state.game_mode
 
 			return var_20_0 and var_20_0:has_activated_mutator("realism")
@@ -587,7 +587,7 @@ local var_0_1 = {
 	},
 	{
 		name = "game_mode_disable_hud",
-		validation_function = function(arg_21_0)
+		validation_function = function (arg_21_0)
 			local var_21_0 = Managers.state.game_mode
 			local var_21_1 = var_21_0 and var_21_0:game_mode()
 
@@ -596,7 +596,7 @@ local var_0_1 = {
 	},
 	{
 		name = "emote_photomode",
-		validation_function = function(arg_22_0)
+		validation_function = function (arg_22_0)
 			local var_22_0 = Managers.state.game_mode
 			local var_22_1 = var_22_0 and var_22_0:game_mode()
 
@@ -605,13 +605,13 @@ local var_0_1 = {
 	},
 	{
 		name = "dead",
-		validation_function = function(arg_23_0)
+		validation_function = function (arg_23_0)
 			return arg_23_0:is_own_player_dead()
 		end
 	},
 	{
 		name = "alive",
-		validation_function = function(arg_24_0)
+		validation_function = function (arg_24_0)
 			local var_24_0 = Network.peer_id()
 			local var_24_1 = Managers.player:player_from_peer_id(var_24_0).player_unit
 

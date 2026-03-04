@@ -4,30 +4,30 @@ require("scripts/managers/status_effect/status_effect_templates")
 
 StatusEffectManager = class(StatusEffectManager)
 
-function StatusEffectManager.init(arg_1_0, arg_1_1)
+StatusEffectManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._statuses_by_unit = {}
 	arg_1_0._timed_status_datas = {}
 	arg_1_0._blacklisted_units = {}
 
-	function arg_1_0._on_unit_destroyed_cb(arg_2_0)
+	arg_1_0._on_unit_destroyed_cb = function (arg_2_0)
 		arg_1_0:_cleanup_unit(arg_2_0)
 	end
 end
 
-function StatusEffectManager.destroy(arg_3_0)
+StatusEffectManager.destroy = function (arg_3_0)
 	for iter_3_0 in pairs(arg_3_0._statuses_by_unit) do
 		arg_3_0:remove_all_statuses(iter_3_0)
 	end
 end
 
-function StatusEffectManager.update(arg_4_0, arg_4_1, arg_4_2)
+StatusEffectManager.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_timed_statuses(arg_4_1, arg_4_2)
 end
 
 local var_0_0 = {}
 
-function StatusEffectManager.set_status(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+StatusEffectManager.set_status = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_4 then
 		if arg_5_0._blacklisted_units[arg_5_1] then
 			return false
@@ -111,7 +111,7 @@ function StatusEffectManager.set_status(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_
 	return true
 end
 
-function StatusEffectManager.add_timed_status(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+StatusEffectManager.add_timed_status = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_3 or StatusEffectTemplates[arg_6_2].default_timed_duration
 	local var_6_1 = Managers.time:time("game")
 	local var_6_2 = {
@@ -127,7 +127,7 @@ function StatusEffectManager.add_timed_status(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	return var_6_2
 end
 
-function StatusEffectManager._remove_timed_status(arg_7_0, arg_7_1, arg_7_2)
+StatusEffectManager._remove_timed_status = function (arg_7_0, arg_7_1, arg_7_2)
 	if Unit.alive(arg_7_1) then
 		local var_7_0 = arg_7_2.status_name
 
@@ -137,7 +137,7 @@ function StatusEffectManager._remove_timed_status(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._timed_status_datas[arg_7_2] = nil
 end
 
-function StatusEffectManager.has_status(arg_8_0, arg_8_1, arg_8_2)
+StatusEffectManager.has_status = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._statuses_by_unit[arg_8_1]
 
 	if var_8_0 then
@@ -150,7 +150,7 @@ function StatusEffectManager.has_status(arg_8_0, arg_8_1, arg_8_2)
 	return false, false
 end
 
-function StatusEffectManager.remove_all_statuses(arg_9_0, arg_9_1, arg_9_2)
+StatusEffectManager.remove_all_statuses = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_2 then
 		arg_9_0._blacklisted_units[arg_9_1] = true
 	end
@@ -168,7 +168,7 @@ function StatusEffectManager.remove_all_statuses(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function StatusEffectManager._update_timed_statuses(arg_10_0, arg_10_1, arg_10_2)
+StatusEffectManager._update_timed_statuses = function (arg_10_0, arg_10_1, arg_10_2)
 	for iter_10_0, iter_10_1 in pairs(arg_10_0._timed_status_datas) do
 		if arg_10_2 > iter_10_0.remove_t then
 			arg_10_0:_remove_timed_status(iter_10_1, iter_10_0)
@@ -176,7 +176,7 @@ function StatusEffectManager._update_timed_statuses(arg_10_0, arg_10_1, arg_10_2
 	end
 end
 
-function StatusEffectManager._cleanup_unit(arg_11_0, arg_11_1)
+StatusEffectManager._cleanup_unit = function (arg_11_0, arg_11_1)
 	Managers.state.unit_spawner:remove_destroy_listener(arg_11_1, "StatusEffectManager")
 	Managers.state.event:unregister_referenced("on_unit_freeze", arg_11_1, arg_11_0)
 	arg_11_0:remove_all_statuses(arg_11_1)
@@ -184,7 +184,7 @@ function StatusEffectManager._cleanup_unit(arg_11_0, arg_11_1)
 	arg_11_0._blacklisted_units[arg_11_1] = nil
 end
 
-function StatusEffectManager.unit_is_burning(arg_12_0, arg_12_1)
+StatusEffectManager.unit_is_burning = function (arg_12_0, arg_12_1)
 	local var_12_0, var_12_1 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning)
 	local var_12_2, var_12_3 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning_balefire)
 	local var_12_4, var_12_5 = arg_12_0:has_status(arg_12_1, StatusEffectNames.burning_elven_magic)

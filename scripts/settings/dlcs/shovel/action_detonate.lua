@@ -2,7 +2,7 @@
 
 ActionDetonate = class(ActionDetonate, ActionBase)
 
-function ActionDetonate.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionDetonate.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionDetonate.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
@@ -23,7 +23,7 @@ function ActionDetonate.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_
 	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-function ActionDetonate.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionDetonate.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionDetonate.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -65,14 +65,14 @@ function ActionDetonate.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg
 	end
 end
 
-function ActionDetonate.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionDetonate.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-function ActionDetonate.finish(arg_4_0, arg_4_1)
+ActionDetonate.finish = function (arg_4_0, arg_4_1)
 	ActionDetonate.super.finish(arg_4_0, arg_4_1)
 end
 
-function ActionDetonate.destroy(arg_5_0)
+ActionDetonate.destroy = function (arg_5_0)
 	return
 end

@@ -7,7 +7,7 @@ local var_0_0 = {
 local var_0_1 = table.enum("default", "bleed")
 
 SpawnUnitTemplates.thornsister_thorn_wall_unit = {
-	spawn_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	spawn_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		local var_1_0 = var_0_0[var_0_1.default]
 		local var_1_1 = "thornsister_thorn_wall_unit"
 		local var_1_2 = arg_1_3
@@ -93,7 +93,7 @@ SpawnUnitTemplates.thornsister_thorn_wall_unit = {
 	end
 }
 SpawnUnitTemplates.vortex_unit = {
-	spawn_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	spawn_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = "units/weapons/enemy/wpn_chaos_plague_vortex/wpn_chaos_plague_vortex"
 		local var_2_1 = "spirit_storm"
 		local var_2_2 = VortexTemplates[var_2_1]

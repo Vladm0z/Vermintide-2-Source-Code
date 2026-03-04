@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_ussingen.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pes_level_ussingen_at_last_end",

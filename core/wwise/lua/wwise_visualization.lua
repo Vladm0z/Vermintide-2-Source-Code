@@ -24,7 +24,7 @@ local function var_0_6(arg_1_0)
 	return var_1_0
 end
 
-function WwiseVisualization.add_soundscape_unit(arg_2_0)
+WwiseVisualization.add_soundscape_unit = function (arg_2_0)
 	if not stingray.Wwise then
 		return
 	end
@@ -87,7 +87,7 @@ local function var_0_7(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function WwiseVisualization.render(arg_4_0, arg_4_1)
+WwiseVisualization.render = function (arg_4_0, arg_4_1)
 	if not stingray.Wwise then
 		return
 	end

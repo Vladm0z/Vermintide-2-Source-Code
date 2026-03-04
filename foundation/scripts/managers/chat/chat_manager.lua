@@ -10,7 +10,7 @@ if script_data.honduras_demo or Development.parameter("attract_mode") then
 	ChatGuiNull = class(ChatGuiNull)
 
 	for iter_0_0, iter_0_1 in pairs(ChatGui) do
-		ChatGuiNull[iter_0_0] = function()
+		ChatGuiNull[iter_0_0] = function ()
 			return
 		end
 	end
@@ -62,7 +62,7 @@ CHAT_VIEW_COLOR = {
 	Private = IRC_CHANNEL_COLORS[Irc.PRIVATE_MSG]
 }
 
-function ChatManager.init(arg_2_0)
+ChatManager.init = function (arg_2_0)
 	arg_2_0.channels = {}
 	arg_2_0.chat_messages = {}
 	arg_2_0.global_messages = {}
@@ -97,11 +97,11 @@ function ChatManager.init(arg_2_0)
 	end
 end
 
-function ChatManager.update_ignore_list(arg_3_0)
+ChatManager.update_ignore_list = function (arg_3_0)
 	arg_3_0.peer_ignore_list = SaveData.chat_ignore_list or arg_3_0.peer_ignore_list
 end
 
-function ChatManager.cb_encrypted_app_ticket_recieved(arg_4_0, arg_4_1)
+ChatManager.cb_encrypted_app_ticket_recieved = function (arg_4_0, arg_4_1)
 	local var_4_0
 
 	print("ENCRYPTED APP TICKET RECIEVED")
@@ -147,7 +147,7 @@ function ChatManager.cb_encrypted_app_ticket_recieved(arg_4_0, arg_4_1)
 	Managers.irc:connect(var_4_9, var_4_0, var_4_1, callback(arg_4_0, "cb_notify_connected"))
 end
 
-function ChatManager.cb_notify_connected(arg_5_0, arg_5_1)
+ChatManager.cb_notify_connected = function (arg_5_0, arg_5_1)
 	if arg_5_1 then
 		Application.warning("[ChatManager] Connected to IRC!")
 		Managers.irc:register_message_callback("chat_channel_message", Irc.CHANNEL_MSG, callback(arg_5_0, "cb_channel_msg_received"))
@@ -167,7 +167,7 @@ function ChatManager.cb_notify_connected(arg_5_0, arg_5_1)
 	end
 end
 
-function ChatManager.cb_channel_msg_received(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ChatManager.cb_channel_msg_received = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0, var_6_1 = arg_6_0:check_meta(arg_6_4, arg_6_3, arg_6_5)
 
 	if var_6_0 then
@@ -175,7 +175,7 @@ function ChatManager.cb_channel_msg_received(arg_6_0, arg_6_1, arg_6_2, arg_6_3,
 	end
 end
 
-function ChatManager.cb_private_msg_received(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+ChatManager.cb_private_msg_received = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0, var_7_1 = arg_7_0:check_meta(arg_7_4, arg_7_3, arg_7_5)
 
 	if var_7_0 then
@@ -183,27 +183,27 @@ function ChatManager.cb_private_msg_received(arg_7_0, arg_7_1, arg_7_2, arg_7_3,
 	end
 end
 
-function ChatManager.cb_system_msg_received(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ChatManager.cb_system_msg_received = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	Managers.chat:add_irc_message(arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 end
 
-function ChatManager.cb_join_msg_received(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ChatManager.cb_join_msg_received = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	arg_9_4 = arg_9_3 .. " " .. arg_9_4 .. arg_9_5
 
 	Managers.chat:add_irc_message(arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 end
 
-function ChatManager.cb_leave_msg_received(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+ChatManager.cb_leave_msg_received = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	arg_10_4 = arg_10_3 .. " " .. arg_10_4 .. arg_10_5
 
 	Managers.chat:add_irc_message(arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 end
 
-function ChatManager.cb_names_msg_received(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ChatManager.cb_names_msg_received = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	Managers.chat:add_irc_message(arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 end
 
-function ChatManager.check_meta(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+ChatManager.check_meta = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if string.find(arg_12_1, "$LINK;") then
 		local var_12_0, var_12_1 = string.find(arg_12_1, "$LINK;")
 
@@ -226,7 +226,7 @@ function ChatManager.check_meta(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return arg_12_1
 end
 
-function ChatManager.add_message_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ChatManager.add_message_target = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if arg_13_0:_verify_new_target(arg_13_1, arg_13_2) then
 		arg_13_0.message_targets[#arg_13_0.message_targets + 1] = {
 			message_target = arg_13_1,
@@ -237,7 +237,7 @@ function ChatManager.add_message_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function ChatManager.set_message_target_type(arg_14_0, arg_14_1)
+ChatManager.set_message_target_type = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.message_targets_lut[arg_14_1]
 
 	fassert(var_14_0, "[ChatManager] There is not message target for Irc target %q", arg_14_1)
@@ -245,7 +245,7 @@ function ChatManager.set_message_target_type(arg_14_0, arg_14_1)
 	arg_14_0.current_message_target_index = var_14_0
 end
 
-function ChatManager._verify_new_target(arg_15_0, arg_15_1, arg_15_2)
+ChatManager._verify_new_target = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_1 or arg_15_1 == "" then
 		return false
 	end
@@ -259,7 +259,7 @@ function ChatManager._verify_new_target(arg_15_0, arg_15_1, arg_15_2)
 	return true
 end
 
-function ChatManager.remove_message_target(arg_16_0, arg_16_1)
+ChatManager.remove_message_target = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.message_targets_lut[arg_16_1]
 
 	if var_16_0 then
@@ -274,21 +274,21 @@ function ChatManager.remove_message_target(arg_16_0, arg_16_1)
 	end
 end
 
-function ChatManager.current_view_and_color(arg_17_0)
+ChatManager.current_view_and_color = function (arg_17_0)
 	local var_17_0 = var_0_2[arg_17_0.current_view_index]
 
 	return var_17_0, CHAT_VIEW_COLOR[var_17_0]
 end
 
-function ChatManager.add_recent_chat_message(arg_18_0, arg_18_1)
+ChatManager.add_recent_chat_message = function (arg_18_0, arg_18_1)
 	arg_18_0.recently_sent_messages[#arg_18_0.recently_sent_messages + 1] = arg_18_1
 end
 
-function ChatManager.get_recently_sent_messages(arg_19_0)
+ChatManager.get_recently_sent_messages = function (arg_19_0)
 	return arg_19_0.recently_sent_messages
 end
 
-function ChatManager.next_message_target(arg_20_0)
+ChatManager.next_message_target = function (arg_20_0)
 	arg_20_0.current_message_target_index = 1 + arg_20_0.current_message_target_index % #arg_20_0.message_targets
 
 	local var_20_0 = arg_20_0.message_targets[arg_20_0.current_message_target_index].message_target_type
@@ -316,11 +316,11 @@ function ChatManager.next_message_target(arg_20_0)
 	return true
 end
 
-function ChatManager.current_message_target(arg_21_0)
+ChatManager.current_message_target = function (arg_21_0)
 	return arg_21_0.message_targets[arg_21_0.current_message_target_index]
 end
 
-function ChatManager.gui_should_clear(arg_22_0)
+ChatManager.gui_should_clear = function (arg_22_0)
 	local var_22_0 = arg_22_0.clear_messages
 
 	arg_22_0.clear_messages = nil
@@ -328,7 +328,7 @@ function ChatManager.gui_should_clear(arg_22_0)
 	return var_22_0
 end
 
-function ChatManager.create_chat_gui(arg_23_0)
+ChatManager.create_chat_gui = function (arg_23_0)
 	local var_23_0 = Managers.world:world("top_ingame_view")
 
 	arg_23_0._ui_top_renderer = UIRenderer.create(var_23_0, "material", "materials/ui/ui_1080p_chat", "material", "materials/fonts/gw_fonts")
@@ -358,7 +358,7 @@ function ChatManager.create_chat_gui(arg_23_0)
 	arg_23_0:set_font_size(var_23_2)
 end
 
-function ChatManager.set_profile_synchronizer(arg_24_0, arg_24_1)
+ChatManager.set_profile_synchronizer = function (arg_24_0, arg_24_1)
 	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
@@ -368,7 +368,7 @@ function ChatManager.set_profile_synchronizer(arg_24_0, arg_24_1)
 	arg_24_0.chat_gui:set_profile_synchronizer(arg_24_1)
 end
 
-function ChatManager.set_wwise_world(arg_25_0, arg_25_1)
+ChatManager.set_wwise_world = function (arg_25_0, arg_25_1)
 	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
@@ -378,7 +378,7 @@ function ChatManager.set_wwise_world(arg_25_0, arg_25_1)
 	arg_25_0.chat_gui:set_wwise_world(arg_25_1)
 end
 
-function ChatManager.set_input_manager(arg_26_0, arg_26_1)
+ChatManager.set_input_manager = function (arg_26_0, arg_26_1)
 	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
@@ -388,7 +388,7 @@ function ChatManager.set_input_manager(arg_26_0, arg_26_1)
 	arg_26_0.chat_gui:set_input_manager(arg_26_1)
 end
 
-function ChatManager.block_chat_input_for_one_frame(arg_27_0)
+ChatManager.block_chat_input_for_one_frame = function (arg_27_0)
 	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
@@ -398,19 +398,19 @@ function ChatManager.block_chat_input_for_one_frame(arg_27_0)
 	arg_27_0.chat_gui:block_chat_input_for_one_frame()
 end
 
-function ChatManager.register_network_event_delegate(arg_28_0, arg_28_1)
+ChatManager.register_network_event_delegate = function (arg_28_0, arg_28_1)
 	arg_28_1:register(arg_28_0, "rpc_chat_message")
 
 	arg_28_0.network_event_delegate = arg_28_1
 end
 
-function ChatManager.unregister_network_event_delegate(arg_29_0)
+ChatManager.unregister_network_event_delegate = function (arg_29_0)
 	arg_29_0.network_event_delegate:unregister(arg_29_0)
 
 	arg_29_0.network_event_delegate = nil
 end
 
-function ChatManager.setup_network_context(arg_30_0, arg_30_1)
+ChatManager.setup_network_context = function (arg_30_0, arg_30_1)
 	print(string.format("[ChatManager] Setting up network context, host_peer_id:%s my_peer_id:%s", arg_30_1.host_peer_id, arg_30_1.my_peer_id))
 
 	arg_30_0.is_server = arg_30_1.is_server
@@ -418,11 +418,11 @@ function ChatManager.setup_network_context(arg_30_0, arg_30_1)
 	arg_30_0.my_peer_id = arg_30_1.my_peer_id
 end
 
-function ChatManager.ignoring_peer_id(arg_31_0, arg_31_1)
+ChatManager.ignoring_peer_id = function (arg_31_0, arg_31_1)
 	return arg_31_0.peer_ignore_list[arg_31_1]
 end
 
-function ChatManager.ignore_peer_id(arg_32_0, arg_32_1)
+ChatManager.ignore_peer_id = function (arg_32_0, arg_32_1)
 	arg_32_0.peer_ignore_list[arg_32_1] = true
 
 	if rawget(_G, "Steam") or not IS_WINDOWS then
@@ -432,7 +432,7 @@ function ChatManager.ignore_peer_id(arg_32_0, arg_32_1)
 	end
 end
 
-function ChatManager.remove_ignore_peer_id(arg_33_0, arg_33_1)
+ChatManager.remove_ignore_peer_id = function (arg_33_0, arg_33_1)
 	arg_33_0.peer_ignore_list[arg_33_1] = nil
 
 	if rawget(_G, "Steam") or not IS_WINDOWS then
@@ -442,7 +442,7 @@ function ChatManager.remove_ignore_peer_id(arg_33_0, arg_33_1)
 	end
 end
 
-function ChatManager.destroy(arg_34_0)
+ChatManager.destroy = function (arg_34_0)
 	if not DEDICATED_SERVER then
 		arg_34_0.chat_gui:destroy()
 
@@ -457,17 +457,17 @@ function ChatManager.destroy(arg_34_0)
 	arg_34_0.message_targets = {}
 end
 
-function ChatManager.set_font_size(arg_35_0, arg_35_1)
+ChatManager.set_font_size = function (arg_35_0, arg_35_1)
 	if arg_35_0.chat_gui then
 		arg_35_0.chat_gui:set_font_size(arg_35_1)
 	end
 end
 
-function ChatManager.set_chat_enabled(arg_36_0, arg_36_1)
+ChatManager.set_chat_enabled = function (arg_36_0, arg_36_1)
 	arg_36_0._chat_enabled = arg_36_1
 end
 
-function ChatManager.is_chat_enabled(arg_37_0)
+ChatManager.is_chat_enabled = function (arg_37_0)
 	local var_37_0 = Managers.mechanism:network_handler()
 
 	if not var_37_0 or not var_37_0:get_match_handler() then
@@ -477,7 +477,7 @@ function ChatManager.is_chat_enabled(arg_37_0)
 	return arg_37_0._chat_enabled
 end
 
-function ChatManager.register_channel(arg_38_0, arg_38_1, arg_38_2)
+ChatManager.register_channel = function (arg_38_0, arg_38_1, arg_38_2)
 	print(string.format("[ChatManager] Registering channel %s", arg_38_1))
 
 	local var_38_0 = arg_38_0.channels
@@ -495,27 +495,27 @@ function ChatManager.register_channel(arg_38_0, arg_38_1, arg_38_2)
 	}
 end
 
-function ChatManager.unregister_channel(arg_39_0, arg_39_1)
+ChatManager.unregister_channel = function (arg_39_0, arg_39_1)
 	print(string.format("[ChatManager] Unregistering channel %s", arg_39_1))
 
 	arg_39_0.channels[arg_39_1] = nil
 end
 
-function ChatManager.chat_is_focused(arg_40_0)
+ChatManager.chat_is_focused = function (arg_40_0)
 	return arg_40_0.chat_gui.chat_focused
 end
 
-function ChatManager.enable_gui(arg_41_0, arg_41_1)
+ChatManager.enable_gui = function (arg_41_0, arg_41_1)
 	arg_41_0.gui_enabled = arg_41_1
 end
 
-function ChatManager.update(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
+ChatManager.update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
 	if arg_42_0.gui_enabled and not DEDICATED_SERVER then
 		arg_42_0.chat_gui:update(arg_42_1, arg_42_3, arg_42_4, arg_42_5, arg_42_0:is_chat_enabled())
 	end
 end
 
-function ChatManager._get_localized_message(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+ChatManager._get_localized_message = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	local var_43_0
 
 	if arg_43_4 then
@@ -533,7 +533,7 @@ function ChatManager._get_localized_message(arg_43_0, arg_43_1, arg_43_2, arg_43
 	return arg_43_1
 end
 
-function ChatManager._get_message_target(arg_44_0, arg_44_1)
+ChatManager._get_message_target = function (arg_44_0, arg_44_1)
 	for iter_44_0, iter_44_1 in ipairs(arg_44_0.message_targets) do
 		if arg_44_1 == iter_44_1.message_target then
 			return iter_44_1
@@ -541,7 +541,7 @@ function ChatManager._get_message_target(arg_44_0, arg_44_1)
 	end
 end
 
-function ChatManager.send_chat_message(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11)
+ChatManager.send_chat_message = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11)
 	local var_45_0, var_45_1, var_45_2 = arg_45_0:_handle_command(arg_45_3, arg_45_7, arg_45_8)
 
 	if var_45_0 then
@@ -626,7 +626,7 @@ function ChatManager.send_chat_message(arg_45_0, arg_45_1, arg_45_2, arg_45_3, a
 	end
 end
 
-function ChatManager.send_system_chat_message(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5)
+ChatManager.send_system_chat_message = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5)
 	fassert(arg_46_0:has_channel(arg_46_1), "Haven't registered channel: %s", tostring(arg_46_1))
 
 	local var_46_0 = true
@@ -674,7 +674,7 @@ function ChatManager.send_system_chat_message(arg_46_0, arg_46_1, arg_46_2, arg_
 	end
 end
 
-function ChatManager.add_local_system_message(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+ChatManager.add_local_system_message = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	if arg_47_0:is_channel_member(arg_47_1) then
 		local var_47_0 = "System"
 		local var_47_1 = true
@@ -684,7 +684,7 @@ function ChatManager.add_local_system_message(arg_47_0, arg_47_1, arg_47_2, arg_
 	end
 end
 
-function ChatManager.add_irc_message(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+ChatManager.add_irc_message = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
 	local var_48_0 = 1
 	local var_48_1 = {
 		username = arg_48_2,
@@ -725,7 +725,7 @@ function ChatManager.add_irc_message(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg
 	end
 end
 
-function ChatManager.channel_members(arg_49_0, arg_49_1)
+ChatManager.channel_members = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_0.channels[arg_49_1]
 
 	fassert(var_49_0, "[ChatManager] Trying to get members from unregistered channel %q", arg_49_1)
@@ -733,7 +733,7 @@ function ChatManager.channel_members(arg_49_0, arg_49_1)
 	return (var_49_0.members_func())
 end
 
-function ChatManager.is_channel_member(arg_50_0, arg_50_1)
+ChatManager.is_channel_member = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0.channels[arg_50_1]
 
 	if not var_50_0 then
@@ -750,11 +750,11 @@ function ChatManager.is_channel_member(arg_50_0, arg_50_1)
 	end
 end
 
-function ChatManager.has_channel(arg_51_0, arg_51_1)
+ChatManager.has_channel = function (arg_51_0, arg_51_1)
 	return arg_51_0.channels[arg_51_1] and true
 end
 
-function ChatManager.rpc_chat_message(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6, arg_52_7, arg_52_8, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
+ChatManager.rpc_chat_message = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6, arg_52_7, arg_52_8, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
 	if not arg_52_0:has_channel(arg_52_2) then
 		return
 	end
@@ -764,7 +764,7 @@ function ChatManager.rpc_chat_message(arg_52_0, arg_52_1, arg_52_2, arg_52_3, ar
 	if arg_52_0.is_server then
 		local var_52_1 = arg_52_0:channel_members(arg_52_2)
 
-		Managers.mechanism:network_handler():get_match_handler():propagate_rpc_if("rpc_chat_message", var_52_0, function(arg_53_0)
+		Managers.mechanism:network_handler():get_match_handler():propagate_rpc_if("rpc_chat_message", var_52_0, function (arg_53_0)
 			return table.find(var_52_1, arg_53_0)
 		end, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6, arg_52_7, arg_52_8, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
 	end
@@ -780,7 +780,7 @@ function ChatManager.rpc_chat_message(arg_52_0, arg_52_1, arg_52_2, arg_52_3, ar
 	end
 end
 
-function ChatManager._profanity_check(arg_54_0, arg_54_1)
+ChatManager._profanity_check = function (arg_54_0, arg_54_1)
 	for iter_54_0, iter_54_1 in pairs(var_0_0) do
 		local var_54_0, var_54_1 = string.find(arg_54_1, iter_54_1)
 
@@ -803,7 +803,7 @@ function ChatManager._profanity_check(arg_54_0, arg_54_1)
 	return arg_54_1
 end
 
-function ChatManager._add_message_to_list(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10)
+ChatManager._add_message_to_list = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10)
 	if not IS_WINDOWS and not arg_55_0:is_chat_enabled() then
 		return
 	end
@@ -875,7 +875,7 @@ function ChatManager._add_message_to_list(arg_55_0, arg_55_1, arg_55_2, arg_55_3
 	end
 end
 
-function ChatManager.get_chat_messages(arg_56_0, arg_56_1, arg_56_2)
+ChatManager.get_chat_messages = function (arg_56_0, arg_56_1, arg_56_2)
 	local var_56_0 = arg_56_2 or var_0_2[arg_56_0.current_view_index] or 1
 	local var_56_1 = var_0_3[var_56_0].filter
 	local var_56_2 = arg_56_0.chat_messages
@@ -889,7 +889,7 @@ function ChatManager.get_chat_messages(arg_56_0, arg_56_1, arg_56_2)
 	end
 end
 
-function ChatManager._switch_view_internally(arg_57_0, arg_57_1)
+ChatManager._switch_view_internally = function (arg_57_0, arg_57_1)
 	arg_57_0.current_view_index = arg_57_1
 
 	local var_57_0 = arg_57_0.chat_messages
@@ -912,7 +912,7 @@ function ChatManager._switch_view_internally(arg_57_0, arg_57_1)
 	end
 end
 
-function ChatManager.switch_view(arg_58_0, arg_58_1)
+ChatManager.switch_view = function (arg_58_0, arg_58_1)
 	arg_58_0.current_view_index = 1 + arg_58_0.current_view_index % #var_0_2
 
 	local var_58_0 = arg_58_0.chat_messages
@@ -953,7 +953,7 @@ COMMAND_LUT = {
 	["/part"] = "leave"
 }
 
-function ChatManager._handle_command(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+ChatManager._handle_command = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 	if string.find(arg_59_1, "/") == 1 then
 		local var_59_0 = string.split_deprecated(arg_59_1, " ")
 		local var_59_1 = COMMAND_LUT[var_59_0[1]]
@@ -969,7 +969,7 @@ function ChatManager._handle_command(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 	return false
 end
 
-function ChatManager.join_channel(arg_60_0, arg_60_1)
+ChatManager.join_channel = function (arg_60_0, arg_60_1)
 	if arg_60_1[2] then
 		Managers.irc:join_channel(arg_60_1[2])
 
@@ -983,7 +983,7 @@ function ChatManager.join_channel(arg_60_0, arg_60_1)
 	end
 end
 
-function ChatManager.game_invite(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
+ChatManager.game_invite = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
 	if #arg_61_1 > 0 then
 		local var_61_0
 
@@ -1030,7 +1030,7 @@ function ChatManager.game_invite(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_
 	end
 end
 
-function ChatManager.send_message(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+ChatManager.send_message = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 	if arg_62_1[2] then
 		local var_62_0, var_62_1 = string.find(arg_62_2, arg_62_1[2], 1, true)
 		local var_62_2 = string.sub(arg_62_2, var_62_1 + 2)
@@ -1060,7 +1060,7 @@ function ChatManager.send_message(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 	end
 end
 
-function ChatManager.leave(arg_63_0, arg_63_1)
+ChatManager.leave = function (arg_63_0, arg_63_1)
 	if arg_63_1[2] and string.find(arg_63_1[2], "#") == 1 then
 		local var_63_0 = string.lower(arg_63_1[2])
 
@@ -1072,7 +1072,7 @@ function ChatManager.leave(arg_63_0, arg_63_1)
 	end
 end
 
-function ChatManager.who(arg_64_0, arg_64_1)
+ChatManager.who = function (arg_64_0, arg_64_1)
 	if arg_64_1[2] and string.find(arg_64_1[2], "#") == 1 then
 		local var_64_0 = string.lower(arg_64_1[2])
 
@@ -1080,7 +1080,7 @@ function ChatManager.who(arg_64_0, arg_64_1)
 	end
 end
 
-function ChatManager.reply(arg_65_0, arg_65_1, arg_65_2)
+ChatManager.reply = function (arg_65_0, arg_65_1, arg_65_2)
 	local var_65_0 = arg_65_0._last_private_message_username
 
 	if arg_65_1[2] and var_65_0 then
@@ -1098,7 +1098,7 @@ function ChatManager.reply(arg_65_0, arg_65_1, arg_65_2)
 	end
 end
 
-function ChatManager.clear_chat(arg_66_0)
+ChatManager.clear_chat = function (arg_66_0)
 	arg_66_0.global_messages = {}
 	arg_66_0.chat_messages = {}
 	arg_66_0.clear_messages = true

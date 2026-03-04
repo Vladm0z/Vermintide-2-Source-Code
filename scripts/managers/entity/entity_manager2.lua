@@ -1,10 +1,10 @@
 -- chunkname: @scripts/managers/entity/entity_manager2.lua
 
-local var_0_0 = (function(arg_1_0)
+local var_0_0 = (function (arg_1_0)
 	return setmetatable({}, {
 		__metatable = false,
 		__index = arg_1_0,
-		__newindex = function(arg_2_0, arg_2_1, arg_2_2)
+		__newindex = function (arg_2_0, arg_2_1, arg_2_2)
 			error("Coder trying to modify EntityManager's read-only empty table. Don't do it!")
 		end
 	})
@@ -12,7 +12,7 @@ end)({})
 
 EntityManager2 = class(EntityManager2)
 
-function EntityManager2.init(arg_3_0)
+EntityManager2.init = function (arg_3_0)
 	arg_3_0.temp_table = {}
 	arg_3_0._ignore_extensions_list = {}
 	arg_3_0._units = {}
@@ -24,11 +24,11 @@ function EntityManager2.init(arg_3_0)
 	arg_3_0._networked_flow_state = Managers.state.networked_flow_state
 end
 
-function EntityManager2.set_extension_extractor_function(arg_4_0, arg_4_1)
+EntityManager2.set_extension_extractor_function = function (arg_4_0, arg_4_1)
 	arg_4_0.extension_extractor_function = arg_4_1
 end
 
-function EntityManager2.register_system(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+EntityManager2.register_system = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	assert(arg_5_0._systems[arg_5_2] == nil, string.format("Tried to register system whose name '%s' was already registered.", arg_5_2))
 
 	arg_5_0._systems[arg_5_2] = arg_5_1
@@ -41,21 +41,21 @@ function EntityManager2.register_system(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	GarbageLeakDetector.register_object(arg_5_1, arg_5_2)
 end
 
-function EntityManager2.system(arg_6_0, arg_6_1)
+EntityManager2.system = function (arg_6_0, arg_6_1)
 	return arg_6_0._systems[arg_6_1]
 end
 
-function EntityManager2.system_by_extension(arg_7_0, arg_7_1)
+EntityManager2.system_by_extension = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._extension_to_system_map[arg_7_1]
 
 	return var_7_0 and arg_7_0._systems[var_7_0]
 end
 
-function EntityManager2.get_entities(arg_8_0, arg_8_1)
+EntityManager2.get_entities = function (arg_8_0, arg_8_1)
 	return arg_8_0._extensions[arg_8_1] or var_0_0
 end
 
-function EntityManager2.destroy(arg_9_0)
+EntityManager2.destroy = function (arg_9_0)
 	arg_9_0.temp_table = nil
 	arg_9_0._units = nil
 	arg_9_0._unit_extensions_list = nil
@@ -67,7 +67,7 @@ function EntityManager2.destroy(arg_9_0)
 	GarbageLeakDetector.register_object(arg_9_0, "EntityManager")
 end
 
-function EntityManager2.add_unit_extensions(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+EntityManager2.add_unit_extensions = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_4 = arg_10_4 or var_0_0
 
 	local var_10_0 = arg_10_0._ignore_extensions_list
@@ -174,7 +174,7 @@ function EntityManager2.add_unit_extensions(arg_10_0, arg_10_1, arg_10_2, arg_10
 	return true
 end
 
-function EntityManager2.sync_unit_extensions(arg_11_0, arg_11_1, arg_11_2)
+EntityManager2.sync_unit_extensions = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._units[arg_11_1]
 
 	if var_11_0 then
@@ -195,7 +195,7 @@ function EntityManager2.sync_unit_extensions(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function EntityManager2.hot_join_sync(arg_12_0, arg_12_1)
+EntityManager2.hot_join_sync = function (arg_12_0, arg_12_1)
 	local var_12_0 = ScriptUnit.extensions(arg_12_1)
 
 	if not var_12_0 then
@@ -211,7 +211,7 @@ end
 
 local var_0_1 = {}
 
-function EntityManager2.register_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, ...)
+EntityManager2.register_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, ...)
 	local var_13_0
 
 	if type(arg_13_3) == "table" then
@@ -230,7 +230,7 @@ function EntityManager2.register_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, ..
 	end
 end
 
-function EntityManager2.add_and_register_units(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+EntityManager2.add_and_register_units = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_3 = arg_14_3 or #arg_14_2
 
 	local var_14_0 = arg_14_0.temp_table
@@ -251,7 +251,7 @@ function EntityManager2.add_and_register_units(arg_14_0, arg_14_1, arg_14_2, arg
 	end
 end
 
-function EntityManager2.register_units_extensions(arg_15_0, arg_15_1, arg_15_2)
+EntityManager2.register_units_extensions = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._units
 	local var_15_1 = arg_15_0._extensions
 
@@ -273,7 +273,7 @@ function EntityManager2.register_units_extensions(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function EntityManager2.remove_extensions_from_unit(arg_16_0, arg_16_1, arg_16_2)
+EntityManager2.remove_extensions_from_unit = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._unit_extensions_list
 	local var_16_1 = arg_16_0._extensions
 	local var_16_2 = ScriptUnit.destroy_extension
@@ -302,7 +302,7 @@ function EntityManager2.remove_extensions_from_unit(arg_16_0, arg_16_1, arg_16_2
 	end
 end
 
-function EntityManager2.freeze_extensions(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+EntityManager2.freeze_extensions = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	for iter_17_0 = #arg_17_2, 1, -1 do
 		local var_17_0 = arg_17_2[iter_17_0]
 		local var_17_1 = arg_17_0:system_by_extension(var_17_0)
@@ -313,7 +313,7 @@ function EntityManager2.freeze_extensions(arg_17_0, arg_17_1, arg_17_2, arg_17_3
 	end
 end
 
-function EntityManager2.unregister_units(arg_18_0, arg_18_1, arg_18_2)
+EntityManager2.unregister_units = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._networked_flow_state
 	local var_18_1 = arg_18_0._units
 	local var_18_2 = arg_18_0._extensions
@@ -390,7 +390,7 @@ function EntityManager2.unregister_units(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function EntityManager2.game_object_unit_destroyed(arg_19_0, arg_19_1)
+EntityManager2.game_object_unit_destroyed = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._unit_extensions_list[arg_19_1]
 	local var_19_1 = ScriptUnit.extensions(arg_19_1)
 
@@ -408,7 +408,7 @@ function EntityManager2.game_object_unit_destroyed(arg_19_0, arg_19_1)
 	end
 end
 
-function EntityManager2.add_ignore_extensions(arg_20_0, arg_20_1)
+EntityManager2.add_ignore_extensions = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._ignore_extensions_list
 	local var_20_1 = #arg_20_1
 
@@ -419,7 +419,7 @@ end
 
 local var_0_2 = {}
 
-function EntityManager2.unregister_unit(arg_21_0, arg_21_1)
+EntityManager2.unregister_unit = function (arg_21_0, arg_21_1)
 	var_0_2[1] = arg_21_1
 
 	arg_21_0:unregister_units(var_0_2, 1)

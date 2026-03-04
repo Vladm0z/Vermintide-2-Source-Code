@@ -165,7 +165,7 @@ local var_0_0 = {
 		0
 	},
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_1_0, arg_1_1)
+		prepare_func = function (arg_1_0, arg_1_1)
 			arg_1_1.ai_supplementary_system = {
 				tentacle_template_name = "blob"
 			}

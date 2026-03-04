@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterSkulkAroundAction = class(BTPackMasterSkulkAroundAction, BTNode)
 
-function BTPackMasterSkulkAroundAction.init(arg_1_0, ...)
+BTPackMasterSkulkAroundAction.init = function (arg_1_0, ...)
 	BTPackMasterSkulkAroundAction.super.init(arg_1_0, ...)
 
 	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
@@ -12,7 +12,7 @@ end
 
 BTPackMasterSkulkAroundAction.name = "BTPackMasterSkulkAroundAction"
 
-function BTPackMasterSkulkAroundAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterSkulkAroundAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 
@@ -29,7 +29,7 @@ function BTPackMasterSkulkAroundAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.attack_cooldown = arg_2_2.attack_cooldown or 0
 end
 
-function BTPackMasterSkulkAroundAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterSkulkAroundAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 	arg_3_2.skulk_pos = nil
 	arg_3_2.skulk_around_dir = nil
@@ -51,7 +51,7 @@ end
 
 local var_0_0 = {}
 
-function BTPackMasterSkulkAroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterSkulkAroundAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, arg_4_2.target_unit) then
 		return "failed"
 	end
@@ -137,7 +137,7 @@ function BTPackMasterSkulkAroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTPackMasterSkulkAroundAction.get_new_goal(arg_5_0, arg_5_1, arg_5_2)
+BTPackMasterSkulkAroundAction.get_new_goal = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.target_unit
 
 	if Unit.alive(var_5_0) then
@@ -166,7 +166,7 @@ function BTPackMasterSkulkAroundAction.get_new_goal(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BTPackMasterSkulkAroundAction.debug(arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterSkulkAroundAction.debug = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = POSITION_LOOKUP[arg_6_1]
 
 	if arg_6_2.skulk_pos then

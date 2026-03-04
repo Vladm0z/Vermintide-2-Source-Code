@@ -3,13 +3,13 @@
 VersusSocketObjectiveExtension = class(VersusSocketObjectiveExtension, BaseObjectiveExtension)
 VersusSocketObjectiveExtension.NAME = "VersusSocketObjectiveExtension"
 
-function VersusSocketObjectiveExtension.init(arg_1_0, ...)
+VersusSocketObjectiveExtension.init = function (arg_1_0, ...)
 	VersusSocketObjectiveExtension.super.init(arg_1_0, ...)
 
 	arg_1_0._num_closed_sockets = 0
 end
 
-function VersusSocketObjectiveExtension.extensions_ready(arg_2_0)
+VersusSocketObjectiveExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
 
 	if var_2_0 then
@@ -18,7 +18,7 @@ function VersusSocketObjectiveExtension.extensions_ready(arg_2_0)
 	end
 end
 
-function VersusSocketObjectiveExtension._set_objective_data(arg_3_0, arg_3_1)
+VersusSocketObjectiveExtension._set_objective_data = function (arg_3_0, arg_3_1)
 	local var_3_0 = GameModeSettings.versus.objectives.socket
 
 	arg_3_0._score_per_section = arg_3_1.score_per_socket or var_3_0.score_per_socket
@@ -30,15 +30,15 @@ function VersusSocketObjectiveExtension._set_objective_data(arg_3_0, arg_3_1)
 	arg_3_0._on_section_progress_sound_event = arg_3_1.on_section_progress_sound_event or var_3_0.on_section_progress_sound_event
 end
 
-function VersusSocketObjectiveExtension._activate(arg_4_0)
+VersusSocketObjectiveExtension._activate = function (arg_4_0)
 	return
 end
 
-function VersusSocketObjectiveExtension._deactivate(arg_5_0)
+VersusSocketObjectiveExtension._deactivate = function (arg_5_0)
 	return
 end
 
-function VersusSocketObjectiveExtension._server_update(arg_6_0, arg_6_1, arg_6_2)
+VersusSocketObjectiveExtension._server_update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._socket_extension.num_closed_sockets
 	local var_6_1 = var_6_0 - arg_6_0._num_closed_sockets
 
@@ -49,10 +49,10 @@ function VersusSocketObjectiveExtension._server_update(arg_6_0, arg_6_1, arg_6_2
 	arg_6_0._num_closed_sockets = var_6_0
 end
 
-function VersusSocketObjectiveExtension._client_update(arg_7_0, arg_7_1, arg_7_2)
+VersusSocketObjectiveExtension._client_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function VersusSocketObjectiveExtension.get_percentage_done(arg_8_0)
+VersusSocketObjectiveExtension.get_percentage_done = function (arg_8_0)
 	return arg_8_0._socket_extension.num_closed_sockets / arg_8_0._num_sections + math.epsilon
 end

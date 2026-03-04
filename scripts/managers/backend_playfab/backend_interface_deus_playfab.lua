@@ -4,14 +4,14 @@ require("scripts/managers/backend_playfab/backend_interface_deus_base")
 
 BackendInterfaceDeusPlayFab = class(BackendInterfaceDeusPlayFab, BackendInterfaceDeusBase)
 
-function BackendInterfaceDeusPlayFab.init(arg_1_0, arg_1_1)
+BackendInterfaceDeusPlayFab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._belakor_data = {}
 
 	arg_1_0.super.init(arg_1_0)
 end
 
-function BackendInterfaceDeusPlayFab.get_journey_cycle(arg_2_0)
+BackendInterfaceDeusPlayFab.get_journey_cycle = function (arg_2_0)
 	local var_2_0 = Managers.time:time("main")
 	local var_2_1 = arg_2_0._backend_mirror:get_deus_journey_cycle_data()
 	local var_2_2 = var_2_0 - var_2_1.time_of_update
@@ -32,15 +32,15 @@ function BackendInterfaceDeusPlayFab.get_journey_cycle(arg_2_0)
 	return arg_2_0:_generate_journey_cycle(var_2_0, var_2_3, var_2_4)
 end
 
-function BackendInterfaceDeusPlayFab.has_loaded_belakor_data(arg_3_0)
+BackendInterfaceDeusPlayFab.has_loaded_belakor_data = function (arg_3_0)
 	return arg_3_0._backend_mirror:has_loaded_belakor_data()
 end
 
-function BackendInterfaceDeusPlayFab.set_has_loaded_belakor_data(arg_4_0, arg_4_1)
+BackendInterfaceDeusPlayFab.set_has_loaded_belakor_data = function (arg_4_0, arg_4_1)
 	arg_4_0._backend_mirror:set_has_loaded_belakor_data(arg_4_1)
 end
 
-function BackendInterfaceDeusPlayFab.deus_journey_with_belakor(arg_5_0, arg_5_1)
+BackendInterfaceDeusPlayFab.deus_journey_with_belakor = function (arg_5_0, arg_5_1)
 	if not arg_5_1 then
 		return false
 	end
@@ -52,7 +52,7 @@ function BackendInterfaceDeusPlayFab.deus_journey_with_belakor(arg_5_0, arg_5_1)
 	return arg_5_0._belakor_data.journey_name == arg_5_1 and true or false
 end
 
-function BackendInterfaceDeusPlayFab.get_belakor_cycle(arg_6_0)
+BackendInterfaceDeusPlayFab.get_belakor_cycle = function (arg_6_0)
 	local var_6_0 = Managers.time:time("main")
 	local var_6_1 = arg_6_0._backend_mirror:get_deus_belakor_curse_data()
 	local var_6_2 = var_6_0 - var_6_1.time_of_update
@@ -73,7 +73,7 @@ function BackendInterfaceDeusPlayFab.get_belakor_cycle(arg_6_0)
 	return arg_6_0:_generate_belakor_curse_cycle(var_6_0, var_6_3, var_6_4)
 end
 
-function BackendInterfaceDeusPlayFab._generate_belakor_curse_cycle(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BackendInterfaceDeusPlayFab._generate_belakor_curse_cycle = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_3 % #AvailableJourneyOrder + 1
 	local var_7_1 = AvailableJourneyOrder[var_7_0]
 	local var_7_2 = {
@@ -87,15 +87,15 @@ function BackendInterfaceDeusPlayFab._generate_belakor_curse_cycle(arg_7_0, arg_
 	return var_7_2
 end
 
-function BackendInterfaceDeusPlayFab.refresh_belakor_cycle(arg_8_0)
+BackendInterfaceDeusPlayFab.refresh_belakor_cycle = function (arg_8_0)
 	arg_8_0._backend_mirror:deus_refresh_belakor_data()
 end
 
-function BackendInterfaceDeusPlayFab.get_rolled_over_soft_currency(arg_9_0)
+BackendInterfaceDeusPlayFab.get_rolled_over_soft_currency = function (arg_9_0)
 	return arg_9_0._backend_mirror:get_deus_rolled_over_soft_currency()
 end
 
-function BackendInterfaceDeusPlayFab.deus_run_started(arg_10_0)
+BackendInterfaceDeusPlayFab.deus_run_started = function (arg_10_0)
 	local var_10_0 = {
 		FunctionName = "deusRunStarted",
 		FunctionParameter = {}
@@ -111,7 +111,7 @@ function BackendInterfaceDeusPlayFab.deus_run_started(arg_10_0)
 	var_10_1:request_queue():enqueue(var_10_0, var_10_2)
 end
 
-function BackendInterfaceDeusPlayFab.write_player_event(arg_12_0, arg_12_1, arg_12_2)
+BackendInterfaceDeusPlayFab.write_player_event = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = {
 		EventName = arg_12_1,
 		Body = arg_12_2

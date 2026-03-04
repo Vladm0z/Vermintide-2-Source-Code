@@ -2,7 +2,7 @@
 
 DamageBlobHuskExtension = class(DamageBlobHuskExtension)
 
-function DamageBlobHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DamageBlobHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.world = var_1_0
@@ -49,7 +49,7 @@ function DamageBlobHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function DamageBlobHuskExtension.destroy(arg_2_0)
+DamageBlobHuskExtension.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0.world
 	local var_2_1 = arg_2_0.fx_list
 
@@ -84,7 +84,7 @@ function DamageBlobHuskExtension.destroy(arg_2_0)
 	arg_2_0.aborted = true
 end
 
-function DamageBlobHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+DamageBlobHuskExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0.game
 	local var_3_1 = arg_3_0.go_id
 	local var_3_2 = GameSession.game_object_field(var_3_0, var_3_1, "position")
@@ -101,7 +101,7 @@ function DamageBlobHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	end
 end
 
-function DamageBlobHuskExtension.update_blobs_fx_and_sfx(arg_4_0, arg_4_1, arg_4_2)
+DamageBlobHuskExtension.update_blobs_fx_and_sfx = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.world
 	local var_4_1 = arg_4_0.fx_name_filled
 	local var_4_2 = arg_4_0.fx_size_variable
@@ -146,7 +146,7 @@ function DamageBlobHuskExtension.update_blobs_fx_and_sfx(arg_4_0, arg_4_1, arg_4
 	end
 end
 
-function DamageBlobHuskExtension.add_damage_blob_fx(arg_5_0, arg_5_1, arg_5_2)
+DamageBlobHuskExtension.add_damage_blob_fx = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = arg_5_0.world
 	local var_5_2 = Unit.local_rotation(var_5_0, 0)
@@ -191,7 +191,7 @@ function DamageBlobHuskExtension.add_damage_blob_fx(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function DamageBlobHuskExtension.abort(arg_6_0)
+DamageBlobHuskExtension.abort = function (arg_6_0)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = arg_6_0._sfx_name_stop
 
@@ -202,6 +202,6 @@ function DamageBlobHuskExtension.abort(arg_6_0)
 	arg_6_0.aborted = true
 end
 
-function DamageBlobHuskExtension.get_source_attacker_unit(arg_7_0)
+DamageBlobHuskExtension.get_source_attacker_unit = function (arg_7_0)
 	return arg_7_0._source_unit
 end

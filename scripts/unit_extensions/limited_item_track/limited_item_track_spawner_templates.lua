@@ -6,10 +6,10 @@ LimitedItemTrackSpawnerTemplates.explosive_barrel_spawner = {
 		"explosive_barrel",
 		"explosive_barrel_objective"
 	},
-	init_func = function(arg_1_0, arg_1_1, arg_1_2)
+	init_func = function (arg_1_0, arg_1_1, arg_1_2)
 		return {}
 	end,
-	spawn_func = function(arg_2_0, arg_2_1, arg_2_2)
+	spawn_func = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Unit.local_position(arg_2_1, 0)
 		local var_2_1 = Unit.local_rotation(arg_2_1, 0)
 		local var_2_2 = AiAnimUtils.position_network_scale(var_2_0, true)
@@ -57,10 +57,10 @@ LimitedItemTrackSpawnerTemplates.sack_spawner = {
 	types = {
 		"grain_sack"
 	},
-	init_func = function(arg_3_0, arg_3_1, arg_3_2)
+	init_func = function (arg_3_0, arg_3_1, arg_3_2)
 		return {}
 	end,
-	spawn_func = function(arg_4_0, arg_4_1, arg_4_2)
+	spawn_func = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = Unit.local_position(arg_4_1, 0)
 		local var_4_1 = Unit.local_rotation(arg_4_1, 0)
 		local var_4_2 = AiAnimUtils.position_network_scale(var_4_0, true)
@@ -108,10 +108,10 @@ LimitedItemTrackSpawnerTemplates.cannon_ball_spawner = {
 	types = {
 		"cannon_ball"
 	},
-	init_func = function(arg_5_0, arg_5_1, arg_5_2)
+	init_func = function (arg_5_0, arg_5_1, arg_5_2)
 		return {}
 	end,
-	spawn_func = function(arg_6_0, arg_6_1, arg_6_2)
+	spawn_func = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = Unit.local_position(arg_6_1, 0)
 		local var_6_1 = Unit.local_rotation(arg_6_1, 0)
 		local var_6_2 = AiAnimUtils.position_network_scale(var_6_0, true)
@@ -159,10 +159,10 @@ LimitedItemTrackSpawnerTemplates.trail_cog_spawner = {
 	types = {
 		"trail_cog"
 	},
-	init_func = function(arg_7_0, arg_7_1, arg_7_2)
+	init_func = function (arg_7_0, arg_7_1, arg_7_2)
 		return {}
 	end,
-	spawn_func = function(arg_8_0, arg_8_1, arg_8_2)
+	spawn_func = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = Unit.local_position(arg_8_1, 0)
 		local var_8_1 = Unit.local_rotation(arg_8_1, 0)
 		local var_8_2 = AiAnimUtils.position_network_scale(var_8_0, true)
@@ -210,10 +210,10 @@ LimitedItemTrackSpawnerTemplates.gargoyle_head_spawner = {
 	types = {
 		"gargoyle_head_vs"
 	},
-	init_func = function(arg_9_0, arg_9_1, arg_9_2)
+	init_func = function (arg_9_0, arg_9_1, arg_9_2)
 		return {}
 	end,
-	spawn_func = function(arg_10_0, arg_10_1, arg_10_2)
+	spawn_func = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = Unit.local_position(arg_10_1, 0)
 		local var_10_1 = Unit.local_rotation(arg_10_1, 0)
 		local var_10_2 = AiAnimUtils.position_network_scale(var_10_0, true)
@@ -263,10 +263,10 @@ LimitedItemTrackSpawnerTemplates.magic_barrel_spawner = {
 		"explosive_barrel_objective",
 		"magic_barrel"
 	},
-	init_func = function(arg_11_0, arg_11_1, arg_11_2)
+	init_func = function (arg_11_0, arg_11_1, arg_11_2)
 		return {}
 	end,
-	spawn_func = function(arg_12_0, arg_12_1, arg_12_2)
+	spawn_func = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = Unit.local_position(arg_12_1, 0)
 		local var_12_1 = Unit.local_rotation(arg_12_1, 0)
 		local var_12_2 = AiAnimUtils.position_network_scale(var_12_0, true)
@@ -316,10 +316,10 @@ LimitedItemTrackSpawnerTemplates.wizards_barrel_spawner = {
 		"explosive_barrel_objective",
 		"wizards_barrel"
 	},
-	init_func = function(arg_13_0, arg_13_1, arg_13_2)
+	init_func = function (arg_13_0, arg_13_1, arg_13_2)
 		return {}
 	end,
-	spawn_func = function(arg_14_0, arg_14_1, arg_14_2)
+	spawn_func = function (arg_14_0, arg_14_1, arg_14_2)
 		local var_14_0 = Unit.local_position(arg_14_1, 0)
 		local var_14_1 = Unit.local_rotation(arg_14_1, 0)
 		local var_14_2 = AiAnimUtils.position_network_scale(var_14_0, true)
@@ -369,10 +369,10 @@ LimitedItemTrackSpawnerTemplates.belakor_crystal_spawner = {
 	types = {
 		"belakor_crystal"
 	},
-	init_func = function(arg_15_0, arg_15_1, arg_15_2)
+	init_func = function (arg_15_0, arg_15_1, arg_15_2)
 		return {}
 	end,
-	spawn_func = function(arg_16_0, arg_16_1, arg_16_2)
+	spawn_func = function (arg_16_0, arg_16_1, arg_16_2)
 		local var_16_0 = Unit.local_position(arg_16_1, 0)
 		local var_16_1 = Unit.local_rotation(arg_16_1, 0)
 		local var_16_2 = AiAnimUtils.position_network_scale(var_16_0, true)
@@ -412,10 +412,10 @@ LimitedItemTrackSpawnerTemplates.torch_spawner = {
 	types = {
 		"torch"
 	},
-	init_func = function(arg_17_0, arg_17_1, arg_17_2)
+	init_func = function (arg_17_0, arg_17_1, arg_17_2)
 		return {}
 	end,
-	spawn_func = function(arg_18_0, arg_18_1, arg_18_2)
+	spawn_func = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = Unit.local_position(arg_18_1, 0)
 		local var_18_1 = Unit.local_rotation(arg_18_1, 0)
 		local var_18_2 = AiAnimUtils.position_network_scale(var_18_0, true)
@@ -455,10 +455,10 @@ LimitedItemTrackSpawnerTemplates.gargoyle_head_spawner_vs = {
 	types = {
 		"gargoyle_head"
 	},
-	init_func = function(arg_19_0, arg_19_1, arg_19_2)
+	init_func = function (arg_19_0, arg_19_1, arg_19_2)
 		return {}
 	end,
-	spawn_func = function(arg_20_0, arg_20_1, arg_20_2)
+	spawn_func = function (arg_20_0, arg_20_1, arg_20_2)
 		local var_20_0 = Unit.local_position(arg_20_1, 0)
 		local var_20_1 = Unit.local_rotation(arg_20_1, 0)
 		local var_20_2 = AiAnimUtils.position_network_scale(var_20_0, true)

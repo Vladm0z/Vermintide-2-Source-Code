@@ -75,7 +75,7 @@ local function var_0_1(arg_1_0, arg_1_1, arg_1_2)
 end
 
 var_0_0.bt_enter_hooks = {
-	on_chaos_exalted_sorcerer_drachenfels_intro_enter = function(arg_2_0, arg_2_1, arg_2_2)
+	on_chaos_exalted_sorcerer_drachenfels_intro_enter = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_intro
 
 		if var_2_0 then
@@ -98,10 +98,10 @@ var_0_0.bt_enter_hooks = {
 		LevelHelper:flow_event(arg_2_1.world, "spawn_shield")
 		arg_2_1.health_extension:set_min_health_percentage(0.65)
 	end,
-	stop_fly_sound = function(arg_3_0, arg_3_1, arg_3_2)
+	stop_fly_sound = function (arg_3_0, arg_3_1, arg_3_2)
 		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_sorcerer_boss_fly_stop", arg_3_0)
 	end,
-	sorcerer_drachenfels_begin_defensive_mode = function(arg_4_0, arg_4_1, arg_4_2)
+	sorcerer_drachenfels_begin_defensive_mode = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = {
 			stay_still = true,
 			end_time = math.huge
@@ -122,7 +122,7 @@ var_0_0.bt_enter_hooks = {
 
 		var_4_2:trigger_networked_dialogue_event("ebh_summon", var_4_3)
 	end,
-	sorcerer_drachenfels_re_enter_defensive_mode = function(arg_5_0, arg_5_1, arg_5_2)
+	sorcerer_drachenfels_re_enter_defensive_mode = function (arg_5_0, arg_5_1, arg_5_2)
 		local var_5_0 = {
 			stay_still = true,
 			end_time = math.huge
@@ -156,7 +156,7 @@ var_0_0.bt_enter_hooks = {
 
 		var_5_4:trigger_networked_dialogue_event("ebh_summon", var_5_5)
 	end,
-	teleport_spawn_sequence_drachenfels = function(arg_6_0, arg_6_1, arg_6_2)
+	teleport_spawn_sequence_drachenfels = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = {
 			stay_still = true,
 			end_time = math.huge
@@ -166,7 +166,7 @@ var_0_0.bt_enter_hooks = {
 
 		arg_6_1.spawning_allies = var_6_0
 	end,
-	trickle_spawn_drachenfels = function(arg_7_0, arg_7_1, arg_7_2)
+	trickle_spawn_drachenfels = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = {
 			stay_still = true,
 			end_time = math.huge
@@ -176,7 +176,7 @@ var_0_0.bt_enter_hooks = {
 
 		arg_7_1.spawning_allies = var_7_0
 	end,
-	teleport_to_center_drachenfels = function(arg_8_0, arg_8_1, arg_8_2)
+	teleport_to_center_drachenfels = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = {
 			stay_still = true,
 			end_time = math.huge
@@ -199,26 +199,26 @@ var_0_0.bt_enter_hooks = {
 	end
 }
 var_0_0.bt_leave_hooks = {
-	sorcerer_drachenfels_go_offensive = function(arg_9_0, arg_9_1, arg_9_2)
+	sorcerer_drachenfels_go_offensive = function (arg_9_0, arg_9_1, arg_9_2)
 		arg_9_1.mode = "offensive"
 		arg_9_1.health_extension.is_invincible = false
 		arg_9_1.ring_cooldown = arg_9_1.ring_total_cooldown
 
 		LevelHelper:flow_event(arg_9_1.world, "destroy_shield")
 	end,
-	transition_at_two_thirds = function(arg_10_0, arg_10_1, arg_10_2)
+	transition_at_two_thirds = function (arg_10_0, arg_10_1, arg_10_2)
 		arg_10_1.two_thirds_transition_done = true
 	end,
-	transition_at_one_third = function(arg_11_0, arg_11_1, arg_11_2)
+	transition_at_one_third = function (arg_11_0, arg_11_1, arg_11_2)
 		arg_11_1.one_third_transition_done = true
 	end,
-	transition_at_one_fifth = function(arg_12_0, arg_12_1, arg_12_2)
+	transition_at_one_fifth = function (arg_12_0, arg_12_1, arg_12_2)
 		arg_12_1.one_fifth_transition_done = true
 	end,
-	transition_at_three_fifths = function(arg_13_0, arg_13_1, arg_13_2)
+	transition_at_three_fifths = function (arg_13_0, arg_13_1, arg_13_2)
 		arg_13_1.three_fifths_transition_done = true
 	end,
-	sorcerer_drachenfels_go_offensive_intense = function(arg_14_0, arg_14_1, arg_14_2)
+	sorcerer_drachenfels_go_offensive_intense = function (arg_14_0, arg_14_1, arg_14_2)
 		arg_14_1.mode = "offensive"
 		arg_14_1.health_extension.is_invincible = false
 		arg_14_1.ring_cooldown = arg_14_1.ring_total_cooldown
@@ -232,17 +232,17 @@ var_0_0.bt_leave_hooks = {
 
 		LevelHelper:flow_event(arg_14_1.world, "destroy_shield")
 	end,
-	sorcerer_drachenfels_go_defensive = function(arg_15_0, arg_15_1, arg_15_2)
+	sorcerer_drachenfels_go_defensive = function (arg_15_0, arg_15_1, arg_15_2)
 		arg_15_1.mode = "defensive"
 		arg_15_1.phase = "defensive_starts"
 		arg_15_1.setup_done = true
 	end,
-	sorcerer_drachenfels_re_enter_defensive = function(arg_16_0, arg_16_1, arg_16_2)
+	sorcerer_drachenfels_re_enter_defensive = function (arg_16_0, arg_16_1, arg_16_2)
 		arg_16_1.mode = "defensive"
 		arg_16_1.phase = "defensive_starts"
 		arg_16_1.transition_done = true
 	end,
-	on_drachenfels_sorcerer_intro_leave = function(arg_17_0, arg_17_1, arg_17_2)
+	on_drachenfels_sorcerer_intro_leave = function (arg_17_0, arg_17_1, arg_17_2)
 		if HEALTH_ALIVE[arg_17_0] and not arg_17_1.exit_last_action then
 			local var_17_0 = Managers.state.network:game()
 			local var_17_1 = Managers.state.unit_storage:go_id(arg_17_0)

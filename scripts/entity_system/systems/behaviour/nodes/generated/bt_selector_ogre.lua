@@ -12,17 +12,17 @@ end
 BTSelector_ogre = class(BTSelector_ogre, BTNode)
 BTSelector_ogre.name = "BTSelector_ogre"
 
-function BTSelector_ogre.init(arg_2_0, ...)
+BTSelector_ogre.init = function (arg_2_0, ...)
 	BTSelector_ogre.super.init(arg_2_0, ...)
 
 	arg_2_0._children = {}
 end
 
-function BTSelector_ogre.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_ogre.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
 end
 
-function BTSelector_ogre.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_ogre.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = var_0_1.start
 	local var_4_1 = var_0_1.stop
 	local var_4_2 = arg_4_0:current_running_child(arg_4_2)
@@ -150,6 +150,6 @@ function BTSelector_ogre.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	end
 end
 
-function BTSelector_ogre.add_child(arg_5_0, arg_5_1)
+BTSelector_ogre.add_child = function (arg_5_0, arg_5_1)
 	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
 end

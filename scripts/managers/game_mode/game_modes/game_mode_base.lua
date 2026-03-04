@@ -2,7 +2,7 @@
 
 GameModeBase = class(GameModeBase)
 
-function GameModeBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+GameModeBase.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	arg_1_0._network_server = arg_1_4 and arg_1_3 or nil
 	arg_1_0._settings = arg_1_1
 	arg_1_0._world = arg_1_2
@@ -30,41 +30,41 @@ function GameModeBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0._game_mode_state = var_1_0
 end
 
-function GameModeBase.destroy(arg_2_0)
+GameModeBase.destroy = function (arg_2_0)
 	return
 end
 
-function GameModeBase.cleanup_game_mode_units(arg_3_0)
+GameModeBase.cleanup_game_mode_units = function (arg_3_0)
 	return
 end
 
-function GameModeBase.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+GameModeBase.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._network_event_delegate = arg_4_1
 	arg_4_0._network_transmit = arg_4_2
 end
 
-function GameModeBase.unregister_rpcs(arg_5_0)
+GameModeBase.unregister_rpcs = function (arg_5_0)
 	arg_5_0._network_event_delegate = nil
 	arg_5_0._network_transmit = nil
 end
 
-function GameModeBase._register_player_spawner(arg_6_0, arg_6_1)
+GameModeBase._register_player_spawner = function (arg_6_0, arg_6_1)
 	arg_6_0._player_spawners[#arg_6_0._player_spawners + 1] = arg_6_1
 end
 
-function GameModeBase.settings(arg_7_0)
+GameModeBase.settings = function (arg_7_0)
 	return arg_7_0._settings
 end
 
-function GameModeBase.setup_done(arg_8_0)
+GameModeBase.setup_done = function (arg_8_0)
 	return
 end
 
-function GameModeBase.fail_level(arg_9_0)
+GameModeBase.fail_level = function (arg_9_0)
 	arg_9_0._level_failed = true
 end
 
-function GameModeBase._is_time_up(arg_10_0)
+GameModeBase._is_time_up = function (arg_10_0)
 	if LEVEL_EDITOR_TEST then
 		return false
 	end
@@ -72,7 +72,7 @@ function GameModeBase._is_time_up(arg_10_0)
 	return Managers.state.network:network_time() / NetworkConstants.clock_time.max > 0.9
 end
 
-function GameModeBase._add_bot_to_party(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+GameModeBase._add_bot_to_party = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = Network.peer_id()
 	local var_11_1 = Managers.player:next_available_local_player_id(var_11_0, arg_11_2)
 	local var_11_2 = arg_11_4
@@ -96,7 +96,7 @@ function GameModeBase._add_bot_to_party(arg_11_0, arg_11_1, arg_11_2, arg_11_3, 
 	return var_11_6
 end
 
-function GameModeBase._verify_career(arg_12_0, arg_12_1, arg_12_2)
+GameModeBase._verify_career = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = SPProfiles[arg_12_1]
 	local var_12_1 = var_12_0 and var_12_0.careers
 	local var_12_2 = var_12_1 and var_12_1[arg_12_2]
@@ -112,7 +112,7 @@ function GameModeBase._verify_career(arg_12_0, arg_12_1, arg_12_2)
 	return var_12_3 and arg_12_2 or 1
 end
 
-function GameModeBase._remove_bot_instant(arg_13_0, arg_13_1)
+GameModeBase._remove_bot_instant = function (arg_13_0, arg_13_1)
 	local var_13_0 = Managers.state.event
 
 	if var_13_0 then
@@ -137,7 +137,7 @@ function GameModeBase._remove_bot_instant(arg_13_0, arg_13_1)
 	Managers.player:remove_player(var_13_1, var_13_2)
 end
 
-function GameModeBase._remove_bot_update_safe(arg_14_0, arg_14_1)
+GameModeBase._remove_bot_update_safe = function (arg_14_0, arg_14_1)
 	if not Unit.alive(arg_14_1.player_unit) then
 		arg_14_0:_remove_bot_instant(arg_14_1)
 
@@ -156,43 +156,43 @@ function GameModeBase._remove_bot_update_safe(arg_14_0, arg_14_1)
 	Managers.state.spawn:delayed_despawn(arg_14_1)
 end
 
-function GameModeBase.disable_lose_condition(arg_15_0)
+GameModeBase.disable_lose_condition = function (arg_15_0)
 	arg_15_0._lose_condition_disabled = true
 end
 
-function GameModeBase.level_completed(arg_16_0)
+GameModeBase.level_completed = function (arg_16_0)
 	return arg_16_0._level_completed
 end
 
-function GameModeBase.complete_level(arg_17_0)
+GameModeBase.complete_level = function (arg_17_0)
 	arg_17_0._level_completed = true
 end
 
-function GameModeBase.ended(arg_18_0, arg_18_1)
+GameModeBase.ended = function (arg_18_0, arg_18_1)
 	return
 end
 
-function GameModeBase.game_won(arg_19_0)
+GameModeBase.game_won = function (arg_19_0)
 	return
 end
 
-function GameModeBase.game_lost(arg_20_0)
+GameModeBase.game_lost = function (arg_20_0)
 	return
 end
 
-function GameModeBase.gm_event_end_conditions_met(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+GameModeBase.gm_event_end_conditions_met = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	return
 end
 
-function GameModeBase.pre_update(arg_22_0, arg_22_1, arg_22_2)
+GameModeBase.pre_update = function (arg_22_0, arg_22_1, arg_22_2)
 	return
 end
 
-function GameModeBase.server_update(arg_23_0, arg_23_1, arg_23_2)
+GameModeBase.server_update = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0:_update_bot_remove()
 end
 
-function GameModeBase._update_bot_remove(arg_24_0)
+GameModeBase._update_bot_remove = function (arg_24_0)
 	local var_24_0 = arg_24_0._pending_bot_remove
 	local var_24_1 = arg_24_0._num_pending_bot_remove
 
@@ -213,25 +213,25 @@ function GameModeBase._update_bot_remove(arg_24_0)
 	arg_24_0._num_pending_bot_remove = var_24_1
 end
 
-function GameModeBase.evaluate_end_conditions(arg_25_0)
+GameModeBase.evaluate_end_conditions = function (arg_25_0)
 	return false, nil
 end
 
-function GameModeBase.ready_to_transition(arg_26_0)
+GameModeBase.ready_to_transition = function (arg_26_0)
 	if Managers.level_transition_handler:has_next_level() then
 		Managers.level_transition_handler:promote_next_level_data()
 	end
 end
 
-function GameModeBase.wanted_transition(arg_27_0)
+GameModeBase.wanted_transition = function (arg_27_0)
 	return
 end
 
-function GameModeBase.hot_join_sync(arg_28_0, arg_28_1)
+GameModeBase.hot_join_sync = function (arg_28_0, arg_28_1)
 	return
 end
 
-function GameModeBase.mutators(arg_29_0)
+GameModeBase.mutators = function (arg_29_0)
 	local var_29_0 = Managers.deed:mutators()
 
 	if var_29_0 then
@@ -250,7 +250,7 @@ function GameModeBase.mutators(arg_29_0)
 	return var_29_1
 end
 
-function GameModeBase.append_live_event_mutators(arg_30_0, arg_30_1)
+GameModeBase.append_live_event_mutators = function (arg_30_0, arg_30_1)
 	local var_30_0 = LevelSettings[arg_30_0._level_key]
 
 	if not var_30_0 or var_30_0.hub_level or var_30_0.tutorial_level then
@@ -282,15 +282,15 @@ function GameModeBase.append_live_event_mutators(arg_30_0, arg_30_1)
 	end
 end
 
-function GameModeBase.spawning_update(arg_31_0)
+GameModeBase.spawning_update = function (arg_31_0)
 	return
 end
 
-function GameModeBase.ready_to_spawn(arg_32_0, arg_32_1)
+GameModeBase.ready_to_spawn = function (arg_32_0, arg_32_1)
 	return
 end
 
-function GameModeBase.player_entered_game_session(arg_33_0, arg_33_1, arg_33_2)
+GameModeBase.player_entered_game_session = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._player_spawners
 
 	for iter_33_0 = 1, #var_33_0 do
@@ -298,15 +298,15 @@ function GameModeBase.player_entered_game_session(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function GameModeBase.player_left_game_session(arg_34_0, arg_34_1, arg_34_2)
+GameModeBase.player_left_game_session = function (arg_34_0, arg_34_1, arg_34_2)
 	return
 end
 
-function GameModeBase.all_peers_ready(arg_35_0)
+GameModeBase.all_peers_ready = function (arg_35_0)
 	arg_35_0._initial_peers_ready = true
 end
 
-function GameModeBase.player_joined_party(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5)
+GameModeBase.player_joined_party = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5)
 	local var_36_0 = arg_36_0._player_spawners
 
 	for iter_36_0 = 1, #var_36_0 do
@@ -314,7 +314,7 @@ function GameModeBase.player_joined_party(arg_36_0, arg_36_1, arg_36_2, arg_36_3
 	end
 end
 
-function GameModeBase.player_left_party(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+GameModeBase.player_left_party = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = arg_37_0._player_spawners
 
 	for iter_37_0 = 1, #var_37_0 do
@@ -322,11 +322,11 @@ function GameModeBase.player_left_party(arg_37_0, arg_37_1, arg_37_2, arg_37_3, 
 	end
 end
 
-function GameModeBase.game_mode_state(arg_38_0)
+GameModeBase.game_mode_state = function (arg_38_0)
 	return arg_38_0._game_mode_state
 end
 
-function GameModeBase.change_game_mode_state(arg_39_0, arg_39_1)
+GameModeBase.change_game_mode_state = function (arg_39_0, arg_39_1)
 	printf("[GameMode] Changing game mode state to %s", arg_39_1)
 
 	if DEDICATED_SERVER then
@@ -350,65 +350,65 @@ function GameModeBase.change_game_mode_state(arg_39_0, arg_39_1)
 	arg_39_0:_game_mode_state_changed(arg_39_1, var_39_0)
 end
 
-function GameModeBase._game_mode_state_changed(arg_40_0, arg_40_1)
+GameModeBase._game_mode_state_changed = function (arg_40_0, arg_40_1)
 	return
 end
 
-function GameModeBase.disable_player_spawning(arg_41_0)
+GameModeBase.disable_player_spawning = function (arg_41_0)
 	return
 end
 
-function GameModeBase.enable_player_spawning(arg_42_0, arg_42_1, arg_42_2)
+GameModeBase.enable_player_spawning = function (arg_42_0, arg_42_1, arg_42_2)
 	return
 end
 
-function GameModeBase.teleport_despawned_players(arg_43_0, arg_43_1)
+GameModeBase.teleport_despawned_players = function (arg_43_0, arg_43_1)
 	return
 end
 
-function GameModeBase.respawn_unit_spawned(arg_44_0, arg_44_1)
+GameModeBase.respawn_unit_spawned = function (arg_44_0, arg_44_1)
 	return
 end
 
-function GameModeBase.respawn_gate_unit_spawned(arg_45_0, arg_45_1)
+GameModeBase.respawn_gate_unit_spawned = function (arg_45_0, arg_45_1)
 	return
 end
 
-function GameModeBase.get_respawn_handler(arg_46_0)
+GameModeBase.get_respawn_handler = function (arg_46_0)
 	return nil
 end
 
-function GameModeBase.flow_callback_add_spawn_point(arg_47_0, arg_47_1)
+GameModeBase.flow_callback_add_spawn_point = function (arg_47_0, arg_47_1)
 	return
 end
 
-function GameModeBase.profile_changed(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+GameModeBase.profile_changed = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
 	return
 end
 
-function GameModeBase.force_respawn(arg_49_0, arg_49_1, arg_49_2)
+GameModeBase.force_respawn = function (arg_49_0, arg_49_1, arg_49_2)
 	return
 end
 
-function GameModeBase.force_respawn_dead_players(arg_50_0)
+GameModeBase.force_respawn_dead_players = function (arg_50_0)
 	return
 end
 
 local var_0_0 = {}
 
-function GameModeBase.get_active_respawn_units(arg_51_0)
+GameModeBase.get_active_respawn_units = function (arg_51_0)
 	return var_0_0
 end
 
-function GameModeBase.get_available_and_active_respawn_units(arg_52_0)
+GameModeBase.get_available_and_active_respawn_units = function (arg_52_0)
 	return var_0_0
 end
 
-function GameModeBase.get_player_wounds(arg_53_0, arg_53_1)
+GameModeBase.get_player_wounds = function (arg_53_0, arg_53_1)
 	return 5
 end
 
-function GameModeBase.get_initial_inventory(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+GameModeBase.get_initial_inventory = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 	return {
 		slot_packmaster_claw = "packmaster_claw",
 		slot_healthkit = arg_54_1,
@@ -418,7 +418,7 @@ function GameModeBase.get_initial_inventory(arg_54_0, arg_54_1, arg_54_2, arg_54
 	}
 end
 
-function GameModeBase.activate_end_level_area(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+GameModeBase.activate_end_level_area = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = (arg_55_4 - arg_55_3) * 0.5
 	local var_55_1 = (arg_55_3 + arg_55_4) * 0.5
 
@@ -429,7 +429,7 @@ function GameModeBase.activate_end_level_area(arg_55_0, arg_55_1, arg_55_2, arg_
 	}
 end
 
-function GameModeBase.debug_end_level_area(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+GameModeBase.debug_end_level_area = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	local var_56_0 = (arg_56_4 - arg_56_3) * 0.5
 	local var_56_1 = (arg_56_3 + arg_56_4) * 0.5
 
@@ -440,17 +440,17 @@ function GameModeBase.debug_end_level_area(arg_56_0, arg_56_1, arg_56_2, arg_56_
 	}
 end
 
-function GameModeBase.disable_end_level_area(arg_57_0, arg_57_1)
+GameModeBase.disable_end_level_area = function (arg_57_0, arg_57_1)
 	arg_57_0._end_level_areas[arg_57_1] = nil
 end
 
-function GameModeBase.trigger_end_level_area_events(arg_58_0)
+GameModeBase.trigger_end_level_area_events = function (arg_58_0)
 	for iter_58_0, iter_58_1 in pairs(arg_58_0._end_level_areas) do
 		Unit.flow_event(iter_58_0, "lua_level_completed_triggered")
 	end
 end
 
-function GameModeBase.update_end_level_areas(arg_59_0)
+GameModeBase.update_end_level_areas = function (arg_59_0)
 	for iter_59_0, iter_59_1 in pairs(arg_59_0._debug_end_level_areas) do
 		local var_59_0 = Unit.node(iter_59_0, iter_59_1.object)
 		local var_59_1 = Unit.world_rotation(iter_59_0, var_59_0)
@@ -515,52 +515,52 @@ function GameModeBase.update_end_level_areas(arg_59_0)
 	end
 end
 
-function GameModeBase.get_end_screen_config(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+GameModeBase.get_end_screen_config = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	return "none", {}
 end
 
-function GameModeBase.local_player_ready_to_start(arg_61_0, arg_61_1)
+GameModeBase.local_player_ready_to_start = function (arg_61_0, arg_61_1)
 	return true
 end
 
-function GameModeBase.local_player_game_starts(arg_62_0, arg_62_1, arg_62_2)
+GameModeBase.local_player_game_starts = function (arg_62_0, arg_62_1, arg_62_2)
 	return
 end
 
-function GameModeBase.is_about_to_end_game_early(arg_63_0)
+GameModeBase.is_about_to_end_game_early = function (arg_63_0)
 	return arg_63_0._about_to_end_game_early
 end
 
-function GameModeBase.set_about_to_end_game_early(arg_64_0, arg_64_1)
+GameModeBase.set_about_to_end_game_early = function (arg_64_0, arg_64_1)
 	Managers.state.entity:system("dialogue_system"):set_global_context("game_about_to_end", arg_64_1 and 1 or 0)
 
 	arg_64_0._about_to_end_game_early = arg_64_1
 end
 
-function GameModeBase.game_mode_hud_disabled(arg_65_0)
+GameModeBase.game_mode_hud_disabled = function (arg_65_0)
 	return arg_65_0._hud_disabled
 end
 
-function GameModeBase.disable_hud(arg_66_0, arg_66_1)
+GameModeBase.disable_hud = function (arg_66_0, arg_66_1)
 	arg_66_0._hud_disabled = arg_66_1
 end
 
-function GameModeBase.photomode_enabled(arg_67_0)
+GameModeBase.photomode_enabled = function (arg_67_0)
 	return arg_67_0._photomode_enabled
 end
 
-function GameModeBase.set_photomode_enabled(arg_68_0, arg_68_1)
+GameModeBase.set_photomode_enabled = function (arg_68_0, arg_68_1)
 	arg_68_0._photomode_enabled = arg_68_1
 end
 
-function GameModeBase.projectile_hit_character(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7, arg_69_8)
+GameModeBase.projectile_hit_character = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7, arg_69_8)
 	return
 end
 
-function GameModeBase.is_reservable(arg_70_0)
+GameModeBase.is_reservable = function (arg_70_0)
 	return true
 end
 
-function GameModeBase.is_joinable(arg_71_0)
+GameModeBase.is_joinable = function (arg_71_0)
 	return true
 end

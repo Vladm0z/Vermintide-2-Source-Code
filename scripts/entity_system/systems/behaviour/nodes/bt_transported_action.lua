@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTransportedAction = class(BTTransportedAction, BTNode)
 
-function BTTransportedAction.init(arg_1_0, ...)
+BTTransportedAction.init = function (arg_1_0, ...)
 	BTTransportedAction.super.init(arg_1_0, ...)
 end
 
 BTTransportedAction.name = "BTTransportedAction"
 
-function BTTransportedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+BTTransportedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	local var_2_0 = arg_2_2.navigation_extension
@@ -35,7 +35,7 @@ function BTTransportedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_2.move_state = "idle"
 end
 
-function BTTransportedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTTransportedAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_2.navigation_extension
 	local var_3_1 = arg_3_2.locomotion_extension
 	local var_3_2 = POSITION_LOOKUP[arg_3_1] or Unit.local_position(arg_3_1, 0)
@@ -48,6 +48,6 @@ function BTTransportedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
 end
 
-function BTTransportedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTTransportedAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	return "running"
 end

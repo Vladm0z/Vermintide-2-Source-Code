@@ -12,7 +12,7 @@ local var_0_0 = {
 LobbySetup = LobbySetup or {}
 LobbySetup._lobby_port_increment = 0
 
-function LobbySetup.network_hash()
+LobbySetup.network_hash = function ()
 	local var_1_0 = var_0_0.config_file_name
 	local var_1_1 = var_0_0.project_hash
 	local var_1_2 = true
@@ -20,13 +20,13 @@ function LobbySetup.network_hash()
 	return LobbyAux.create_network_hash(var_1_0, var_1_1, var_1_2, var_1_2)
 end
 
-function LobbySetup.network_options()
+LobbySetup.network_options = function ()
 	fassert(LobbySetup._network_options, "Network options has not been set up yet.")
 
 	return LobbySetup._network_options
 end
 
-function LobbySetup.setup_network_options(arg_3_0)
+LobbySetup.setup_network_options = function (arg_3_0)
 	printf("[LobbySetup] Setting up network options")
 
 	local var_3_0 = script_data.start_port_range
@@ -76,6 +76,6 @@ function LobbySetup.setup_network_options(arg_3_0)
 	print("LobbySetup:setup_network_options server_port:", var_0_0.server_port)
 end
 
-function LobbySetup.update_network_options_max_members()
+LobbySetup.update_network_options_max_members = function ()
 	var_0_0.max_members = Managers.mechanism:max_instance_members()
 end

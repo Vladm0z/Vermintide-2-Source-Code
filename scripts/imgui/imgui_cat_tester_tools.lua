@@ -81,7 +81,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 	return var_0_1(arg_2_0) < var_0_1(arg_2_1)
 end
 
-function ImguiCatTesterTools.init(arg_3_0)
+ImguiCatTesterTools.init = function (arg_3_0)
 	table.sort(ImguiCatTesterTools.curated_breed_list, var_0_2)
 
 	arg_3_0._breed_index = 0
@@ -93,7 +93,7 @@ function ImguiCatTesterTools.init(arg_3_0)
 
 	arg_3_0._pickup_index = 0
 	arg_3_0._pickup_filter_text = ""
-	arg_3_0._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function(arg_4_0)
+	arg_3_0._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function (arg_4_0)
 		local var_4_0 = AllPickups[arg_4_0]
 
 		return var_0_1(var_4_0 and var_4_0.hud_description or "_UNKNOWN")
@@ -103,11 +103,11 @@ function ImguiCatTesterTools.init(arg_3_0)
 	table.sort(arg_3_0._pickup_names)
 end
 
-function ImguiCatTesterTools.update(arg_5_0)
+ImguiCatTesterTools.update = function (arg_5_0)
 	return
 end
 
-function ImguiCatTesterTools.draw(arg_6_0)
+ImguiCatTesterTools.draw = function (arg_6_0)
 	local var_6_0 = Imgui.begin_window("CAT Tester Tools")
 
 	Imgui.begin_child_window("Pickups", 0, 150, false)
@@ -157,7 +157,7 @@ function ImguiCatTesterTools.draw(arg_6_0)
 	return var_6_0
 end
 
-function ImguiCatTesterTools._spawn_pickup(arg_7_0, arg_7_1)
+ImguiCatTesterTools._spawn_pickup = function (arg_7_0, arg_7_1)
 	local var_7_0 = Application.main_world()
 	local var_7_1 = Managers.state.conflict:player_aim_raycast(var_7_0, false, "filter_ray_horde_spawn")
 
@@ -166,10 +166,10 @@ function ImguiCatTesterTools._spawn_pickup(arg_7_0, arg_7_1)
 	end
 end
 
-function ImguiCatTesterTools._spawn_breed(arg_8_0, arg_8_1)
+ImguiCatTesterTools._spawn_breed = function (arg_8_0, arg_8_1)
 	Managers.state.conflict:aim_spawning(Breeds[arg_8_1], true)
 end
 
-function ImguiCatTesterTools.is_persistent(arg_9_0)
+ImguiCatTesterTools.is_persistent = function (arg_9_0)
 	return false
 end

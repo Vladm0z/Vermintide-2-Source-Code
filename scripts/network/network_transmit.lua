@@ -19,7 +19,7 @@ end
 
 NetworkTransmit = class(NetworkTransmit)
 
-function NetworkTransmit.init(arg_3_0, arg_3_1, arg_3_2)
+NetworkTransmit.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.is_server = arg_3_1
 	arg_3_0.peer_id = Network.peer_id()
 	arg_3_0.server_peer_id = arg_3_2
@@ -40,27 +40,27 @@ function NetworkTransmit.init(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.game_session = nil
 end
 
-function NetworkTransmit.update_receive(arg_4_0)
+NetworkTransmit.update_receive = function (arg_4_0)
 	arg_4_0._pack_temp_types = false
 end
 
-function NetworkTransmit.set_game_session(arg_5_0, arg_5_1)
+NetworkTransmit.set_game_session = function (arg_5_0, arg_5_1)
 	arg_5_0.game_session = arg_5_1
 end
 
-function NetworkTransmit.add_peer_ignore(arg_6_0, arg_6_1)
+NetworkTransmit.add_peer_ignore = function (arg_6_0, arg_6_1)
 	arg_6_0.peer_ignore_list[arg_6_1] = true
 end
 
-function NetworkTransmit.remove_peer_ignore(arg_7_0, arg_7_1)
+NetworkTransmit.remove_peer_ignore = function (arg_7_0, arg_7_1)
 	arg_7_0.peer_ignore_list[arg_7_1] = nil
 end
 
-function NetworkTransmit.destroy(arg_8_0)
+NetworkTransmit.destroy = function (arg_8_0)
 	GarbageLeakDetector.register_object(arg_8_0, "NetworkTransmit")
 end
 
-function NetworkTransmit.pack_temp_types(arg_9_0, arg_9_1, ...)
+NetworkTransmit.pack_temp_types = function (arg_9_0, arg_9_1, ...)
 	local var_9_0 = {
 		...
 	}
@@ -82,7 +82,7 @@ function NetworkTransmit.pack_temp_types(arg_9_0, arg_9_1, ...)
 	return var_9_0, var_9_1
 end
 
-function NetworkTransmit.unpack_temp_types(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+NetworkTransmit.unpack_temp_types = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_2 or 0
 
 	for iter_10_0 = 1, arg_10_3 or #arg_10_1 do
@@ -96,7 +96,7 @@ function NetworkTransmit.unpack_temp_types(arg_10_0, arg_10_1, arg_10_2, arg_10_
 	end
 end
 
-function NetworkTransmit.queue_local_rpc(arg_11_0, arg_11_1, ...)
+NetworkTransmit.queue_local_rpc = function (arg_11_0, arg_11_1, ...)
 	local var_11_0 = arg_11_0.local_rpc_buffer_index
 	local var_11_1 = arg_11_0.local_rpc_queue[var_11_0]
 	local var_11_2 = arg_11_0.local_rpc_queue_n[var_11_0]
@@ -120,7 +120,7 @@ function NetworkTransmit.queue_local_rpc(arg_11_0, arg_11_1, ...)
 	arg_11_0.local_rpc_queue_n[var_11_0] = var_11_2 + var_11_4 + 2
 end
 
-function NetworkTransmit.transmit_local_rpcs(arg_12_0)
+NetworkTransmit.transmit_local_rpcs = function (arg_12_0)
 	arg_12_0._pack_temp_types = true
 
 	local var_12_0 = arg_12_0.local_rpc_buffer_index
@@ -162,11 +162,11 @@ function NetworkTransmit.transmit_local_rpcs(arg_12_0)
 	table.clear(var_12_1)
 end
 
-function NetworkTransmit.set_network_event_delegate(arg_13_0, arg_13_1)
+NetworkTransmit.set_network_event_delegate = function (arg_13_0, arg_13_1)
 	arg_13_0.network_event_delegate = arg_13_1
 end
 
-function NetworkTransmit.send_rpc(arg_14_0, arg_14_1, arg_14_2, ...)
+NetworkTransmit.send_rpc = function (arg_14_0, arg_14_1, arg_14_2, ...)
 	local var_14_0 = var_0_0[arg_14_1]
 
 	fassert(var_14_0, "[NetworkTransmit:send_rpc()] rpc does not exist %q", arg_14_1)
@@ -182,7 +182,7 @@ function NetworkTransmit.send_rpc(arg_14_0, arg_14_1, arg_14_2, ...)
 	local var_14_2 = arg_14_0.peer_id
 end
 
-function NetworkTransmit.send_rpc_server(arg_15_0, arg_15_1, ...)
+NetworkTransmit.send_rpc_server = function (arg_15_0, arg_15_1, ...)
 	local var_15_0 = var_0_0[arg_15_1]
 
 	fassert(var_15_0, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", arg_15_1)
@@ -198,7 +198,7 @@ function NetworkTransmit.send_rpc_server(arg_15_0, arg_15_1, ...)
 	end
 end
 
-function NetworkTransmit.send_rpc_dedicated_server(arg_16_0, arg_16_1, ...)
+NetworkTransmit.send_rpc_dedicated_server = function (arg_16_0, arg_16_1, ...)
 	local var_16_0 = var_0_0[arg_16_1]
 
 	fassert(var_16_0, "[NetworkTransmit:send_rpc_server()] rpc does not exist %q", arg_16_1)
@@ -217,7 +217,7 @@ function NetworkTransmit.send_rpc_dedicated_server(arg_16_0, arg_16_1, ...)
 	end
 end
 
-function NetworkTransmit.send_rpc_party_clients(arg_17_0, arg_17_1, arg_17_2, arg_17_3, ...)
+NetworkTransmit.send_rpc_party_clients = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, ...)
 	fassert(arg_17_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_17_1)
 
 	local var_17_0 = var_0_0[arg_17_1]
@@ -266,7 +266,7 @@ function NetworkTransmit.send_rpc_party_clients(arg_17_0, arg_17_1, arg_17_2, ar
 	end
 end
 
-function NetworkTransmit.send_rpc_party(arg_18_0, arg_18_1, arg_18_2, arg_18_3, ...)
+NetworkTransmit.send_rpc_party = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, ...)
 	fassert(arg_18_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_18_1)
 
 	local var_18_0 = var_0_0[arg_18_1]
@@ -355,7 +355,7 @@ local function var_0_4(arg_19_0, arg_19_1, arg_19_2)
 	return var_19_0
 end
 
-function NetworkTransmit.send_rpc_side(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, ...)
+NetworkTransmit.send_rpc_side = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, ...)
 	fassert(arg_20_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_20_1)
 
 	local var_20_0 = var_0_0[arg_20_1]
@@ -387,7 +387,7 @@ function NetworkTransmit.send_rpc_side(arg_20_0, arg_20_1, arg_20_2, arg_20_3, a
 	end
 end
 
-function NetworkTransmit.send_rpc_side_clients(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, ...)
+NetworkTransmit.send_rpc_side_clients = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, ...)
 	fassert(arg_21_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_21_1)
 
 	local var_21_0 = var_0_0[arg_21_1]
@@ -415,7 +415,7 @@ function NetworkTransmit.send_rpc_side_clients(arg_21_0, arg_21_1, arg_21_2, arg
 	end
 end
 
-function NetworkTransmit.send_rpc_clients(arg_22_0, arg_22_1, ...)
+NetworkTransmit.send_rpc_clients = function (arg_22_0, arg_22_1, ...)
 	fassert(arg_22_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_22_1)
 
 	local var_22_0 = var_0_0[arg_22_1]
@@ -439,7 +439,7 @@ function NetworkTransmit.send_rpc_clients(arg_22_0, arg_22_1, ...)
 	end
 end
 
-function NetworkTransmit.send_rpc_clients_except(arg_23_0, arg_23_1, arg_23_2, ...)
+NetworkTransmit.send_rpc_clients_except = function (arg_23_0, arg_23_1, arg_23_2, ...)
 	fassert(arg_23_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_23_1)
 
 	local var_23_0 = var_0_0[arg_23_1]
@@ -463,7 +463,7 @@ function NetworkTransmit.send_rpc_clients_except(arg_23_0, arg_23_1, arg_23_2, .
 	end
 end
 
-function NetworkTransmit.send_rpc_side_clients_except(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, ...)
+NetworkTransmit.send_rpc_side_clients_except = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, ...)
 	fassert(arg_24_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_24_1)
 
 	local var_24_0 = var_0_0[arg_24_1]
@@ -492,7 +492,7 @@ function NetworkTransmit.send_rpc_side_clients_except(arg_24_0, arg_24_1, arg_24
 	end
 end
 
-function NetworkTransmit.send_rpc_all(arg_25_0, arg_25_1, ...)
+NetworkTransmit.send_rpc_all = function (arg_25_0, arg_25_1, ...)
 	fassert(arg_25_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_25_1)
 
 	local var_25_0 = var_0_0[arg_25_1]
@@ -517,7 +517,7 @@ function NetworkTransmit.send_rpc_all(arg_25_0, arg_25_1, ...)
 	end
 end
 
-function NetworkTransmit.send_rpc_all_except(arg_26_0, arg_26_1, arg_26_2, ...)
+NetworkTransmit.send_rpc_all_except = function (arg_26_0, arg_26_1, arg_26_2, ...)
 	fassert(arg_26_0.is_server, "Trying to send rpc %q on client to clients which is wrong. Only servers should use this function.", arg_26_1)
 
 	local var_26_0 = var_0_0[arg_26_1]

@@ -6,7 +6,7 @@ require("scripts/ui/weave_tutorial/weave_onboarding_utils")
 
 WeaveUIOnboardingTutorial = class(WeaveUIOnboardingTutorial)
 
-function WeaveUIOnboardingTutorial.init(arg_1_0, arg_1_1)
+WeaveUIOnboardingTutorial.init = function (arg_1_0, arg_1_1)
 	arg_1_0.onboarding_step = 0
 	arg_1_0.ui_onboarding_state = 0
 	arg_1_0.statistics_db = arg_1_1.statistics_db
@@ -23,7 +23,7 @@ function WeaveUIOnboardingTutorial.init(arg_1_0, arg_1_1)
 	arg_1_0:register_events()
 end
 
-function WeaveUIOnboardingTutorial.destroy(arg_2_0)
+WeaveUIOnboardingTutorial.destroy = function (arg_2_0)
 	arg_2_0:unregister_events()
 	arg_2_0:clear_all_popups()
 
@@ -34,7 +34,7 @@ function WeaveUIOnboardingTutorial.destroy(arg_2_0)
 	end
 end
 
-function WeaveUIOnboardingTutorial.update(arg_3_0, arg_3_1, arg_3_2)
+WeaveUIOnboardingTutorial.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if Managers.state.voting:vote_in_progress() then
 		if arg_3_0:is_showing_tutorial() then
 			arg_3_0:clear_all_popups()
@@ -63,7 +63,7 @@ function WeaveUIOnboardingTutorial.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function WeaveUIOnboardingTutorial.register_events(arg_4_0)
+WeaveUIOnboardingTutorial.register_events = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 then
@@ -78,7 +78,7 @@ function WeaveUIOnboardingTutorial.register_events(arg_4_0)
 	end
 end
 
-function WeaveUIOnboardingTutorial.unregister_events(arg_5_0)
+WeaveUIOnboardingTutorial.unregister_events = function (arg_5_0)
 	local var_5_0 = Managers.state.event
 
 	if var_5_0 then
@@ -93,7 +93,7 @@ function WeaveUIOnboardingTutorial.unregister_events(arg_5_0)
 	end
 end
 
-function WeaveUIOnboardingTutorial.get_tutorial_state(arg_6_0)
+WeaveUIOnboardingTutorial.get_tutorial_state = function (arg_6_0)
 	local var_6_0 = arg_6_0.statistics_db
 	local var_6_1 = arg_6_0.player_stats_id
 
@@ -103,15 +103,15 @@ function WeaveUIOnboardingTutorial.get_tutorial_state(arg_6_0)
 	end
 end
 
-function WeaveUIOnboardingTutorial.has_popup(arg_7_0, arg_7_1)
+WeaveUIOnboardingTutorial.has_popup = function (arg_7_0, arg_7_1)
 	return arg_7_1 and (arg_7_1.popup_body or arg_7_1.custom_popup)
 end
 
-function WeaveUIOnboardingTutorial.needs_to_show(arg_8_0, arg_8_1)
+WeaveUIOnboardingTutorial.needs_to_show = function (arg_8_0, arg_8_1)
 	return WeaveOnboardingUtils.reached_requirements(arg_8_0.onboarding_step, arg_8_1) and not WeaveOnboardingUtils.tutorial_completed(arg_8_0.ui_onboarding_state, arg_8_1)
 end
 
-function WeaveUIOnboardingTutorial.show_tutorial(arg_9_0, arg_9_1)
+WeaveUIOnboardingTutorial.show_tutorial = function (arg_9_0, arg_9_1)
 	if arg_9_1 and arg_9_0.tutorial_popup then
 		if arg_9_1.custom_popup then
 			arg_9_0.tutorial_popup:show_custom_popup(arg_9_1)
@@ -131,21 +131,21 @@ function WeaveUIOnboardingTutorial.show_tutorial(arg_9_0, arg_9_1)
 	end
 end
 
-function WeaveUIOnboardingTutorial.queue_tutorial(arg_10_0, arg_10_1)
+WeaveUIOnboardingTutorial.queue_tutorial = function (arg_10_0, arg_10_1)
 	if arg_10_1 then
 		table.insert(arg_10_0.tutorial_queue, arg_10_1)
 	end
 end
 
-function WeaveUIOnboardingTutorial.set_completed(arg_11_0, arg_11_1)
+WeaveUIOnboardingTutorial.set_completed = function (arg_11_0, arg_11_1)
 	WeaveOnboardingUtils.complete_tutorial(arg_11_0.statistics_db, arg_11_0.player_stats_id, arg_11_1)
 end
 
-function WeaveUIOnboardingTutorial.is_showing_tutorial(arg_12_0)
+WeaveUIOnboardingTutorial.is_showing_tutorial = function (arg_12_0)
 	return arg_12_0.tutorial_popup and arg_12_0.tutorial_popup.is_visible or arg_12_0.delayed_tutorial
 end
 
-function WeaveUIOnboardingTutorial.try_show_tutorial(arg_13_0, arg_13_1)
+WeaveUIOnboardingTutorial.try_show_tutorial = function (arg_13_0, arg_13_1)
 	if arg_13_1 then
 		arg_13_0:get_tutorial_state()
 
@@ -164,7 +164,7 @@ function WeaveUIOnboardingTutorial.try_show_tutorial(arg_13_0, arg_13_1)
 	end
 end
 
-function WeaveUIOnboardingTutorial.clear_all_popups(arg_14_0)
+WeaveUIOnboardingTutorial.clear_all_popups = function (arg_14_0)
 	arg_14_0.tutorial_queue = {}
 	arg_14_0.delayed_tutorial = nil
 
@@ -173,36 +173,36 @@ function WeaveUIOnboardingTutorial.clear_all_popups(arg_14_0)
 	end
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_entered(arg_15_0)
+WeaveUIOnboardingTutorial.event_weave_forge_entered = function (arg_15_0)
 	arg_15_0:try_show_tutorial(WeaveUITutorials.forge_initial)
 	arg_15_0:try_show_tutorial(WeaveUITutorials.amulet)
 	arg_15_0:try_show_tutorial(WeaveUITutorials.upgrade_forge)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_list_entered(arg_16_0)
+WeaveUIOnboardingTutorial.event_weave_list_entered = function (arg_16_0)
 	arg_16_0:try_show_tutorial(WeaveUITutorials.book_initial)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_weapons_entered(arg_17_0)
+WeaveUIOnboardingTutorial.event_weave_forge_weapons_entered = function (arg_17_0)
 	arg_17_0:try_show_tutorial(WeaveUITutorials.forge_weapon)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_item_unlocked(arg_18_0)
+WeaveUIOnboardingTutorial.event_weave_forge_item_unlocked = function (arg_18_0)
 	arg_18_0:try_show_tutorial(WeaveUITutorials.equip_weapon)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_upgrade_item_entered(arg_19_0)
+WeaveUIOnboardingTutorial.event_weave_forge_upgrade_item_entered = function (arg_19_0)
 	arg_19_0:try_show_tutorial(WeaveUITutorials.temper_item)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_item_upgraded(arg_20_0)
+WeaveUIOnboardingTutorial.event_weave_forge_item_upgraded = function (arg_20_0)
 	arg_20_0:try_show_tutorial(WeaveUITutorials.mastery)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_forge_upgraded(arg_21_0)
+WeaveUIOnboardingTutorial.event_weave_forge_upgraded = function (arg_21_0)
 	arg_21_0:try_show_tutorial(WeaveUITutorials.forge_upgrade)
 end
 
-function WeaveUIOnboardingTutorial.event_weave_tutorial_message(arg_22_0, arg_22_1)
+WeaveUIOnboardingTutorial.event_weave_tutorial_message = function (arg_22_0, arg_22_1)
 	arg_22_0:try_show_tutorial(arg_22_1)
 end

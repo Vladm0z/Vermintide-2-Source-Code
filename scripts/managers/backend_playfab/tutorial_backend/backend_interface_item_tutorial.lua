@@ -4,7 +4,7 @@ BackendInterfaceItemTutorial = class(BackendInterfaceItemTutorial)
 
 local var_0_0 = require("PlayFab.PlayFabClientApi")
 
-function BackendInterfaceItemTutorial.init(arg_1_0, arg_1_1)
+BackendInterfaceItemTutorial.init = function (arg_1_0, arg_1_1)
 	arg_1_0._loadouts = {}
 	arg_1_0._items = {}
 	arg_1_0._backend_mirror = arg_1_1
@@ -23,14 +23,14 @@ local var_0_1 = {
 	"slot_frame"
 }
 
-function BackendInterfaceItemTutorial._refresh(arg_2_0)
+BackendInterfaceItemTutorial._refresh = function (arg_2_0)
 	arg_2_0:_refresh_items()
 	arg_2_0:_refresh_loadouts()
 
 	arg_2_0._dirty = false
 end
 
-function BackendInterfaceItemTutorial._refresh_items(arg_3_0)
+BackendInterfaceItemTutorial._refresh_items = function (arg_3_0)
 	arg_3_0._items = {
 		{
 			key = "es_longbow_tutorial",
@@ -139,7 +139,7 @@ function BackendInterfaceItemTutorial._refresh_items(arg_3_0)
 	}
 end
 
-function BackendInterfaceItemTutorial._refresh_loadouts(arg_4_0)
+BackendInterfaceItemTutorial._refresh_loadouts = function (arg_4_0)
 	arg_4_0._loadouts = {
 		empire_soldier_tutorial = {
 			slot_skin = 3,
@@ -168,7 +168,7 @@ function BackendInterfaceItemTutorial._refresh_loadouts(arg_4_0)
 	}
 end
 
-function BackendInterfaceItemTutorial.ready(arg_5_0)
+BackendInterfaceItemTutorial.ready = function (arg_5_0)
 	if arg_5_0._items then
 		return true
 	end
@@ -176,31 +176,31 @@ function BackendInterfaceItemTutorial.ready(arg_5_0)
 	return false
 end
 
-function BackendInterfaceItemTutorial.type(arg_6_0)
+BackendInterfaceItemTutorial.type = function (arg_6_0)
 	return "backend"
 end
 
-function BackendInterfaceItemTutorial.update(arg_7_0)
+BackendInterfaceItemTutorial.update = function (arg_7_0)
 	return
 end
 
-function BackendInterfaceItemTutorial.refresh_entities(arg_8_0)
+BackendInterfaceItemTutorial.refresh_entities = function (arg_8_0)
 	return
 end
 
-function BackendInterfaceItemTutorial.check_for_errors(arg_9_0)
+BackendInterfaceItemTutorial.check_for_errors = function (arg_9_0)
 	return
 end
 
-function BackendInterfaceItemTutorial.num_current_item_server_requests(arg_10_0)
+BackendInterfaceItemTutorial.num_current_item_server_requests = function (arg_10_0)
 	return 0
 end
 
-function BackendInterfaceItemTutorial.set_properties_serialized(arg_11_0, arg_11_1, arg_11_2)
+BackendInterfaceItemTutorial.set_properties_serialized = function (arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.get_traits(arg_12_0, arg_12_1)
+BackendInterfaceItemTutorial.get_traits = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0:get_item_from_id(arg_12_1)
 
 	if var_12_0 then
@@ -210,23 +210,23 @@ function BackendInterfaceItemTutorial.get_traits(arg_12_0, arg_12_1)
 	return nil
 end
 
-function BackendInterfaceItemTutorial.set_runes(arg_13_0, arg_13_1, arg_13_2)
+BackendInterfaceItemTutorial.set_runes = function (arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.get_runes(arg_14_0, arg_14_1)
+BackendInterfaceItemTutorial.get_runes = function (arg_14_0, arg_14_1)
 	return
 end
 
-function BackendInterfaceItemTutorial.socket_rune(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BackendInterfaceItemTutorial.socket_rune = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	return
 end
 
-function BackendInterfaceItemTutorial.get_skin(arg_16_0)
+BackendInterfaceItemTutorial.get_skin = function (arg_16_0)
 	return nil
 end
 
-function BackendInterfaceItemTutorial.get_item_masterlist_data(arg_17_0, arg_17_1)
+BackendInterfaceItemTutorial.get_item_masterlist_data = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0:get_item_from_id(arg_17_1)
 
 	if var_17_0 then
@@ -234,27 +234,27 @@ function BackendInterfaceItemTutorial.get_item_masterlist_data(arg_17_0, arg_17_
 	end
 end
 
-function BackendInterfaceItemTutorial.get_item_amount(arg_18_0, arg_18_1)
+BackendInterfaceItemTutorial.get_item_amount = function (arg_18_0, arg_18_1)
 	return arg_18_0:get_item_from_id(arg_18_1).RemainingUses or 1
 end
 
-function BackendInterfaceItemTutorial.get_item_power_level(arg_19_0, arg_19_1)
+BackendInterfaceItemTutorial.get_item_power_level = function (arg_19_0, arg_19_1)
 	return arg_19_0:get_item_from_id(arg_19_1).power_level
 end
 
-function BackendInterfaceItemTutorial.get_item_rarity(arg_20_0, arg_20_1)
+BackendInterfaceItemTutorial.get_item_rarity = function (arg_20_0, arg_20_1)
 	return arg_20_0:get_item_from_id(arg_20_1).rarity
 end
 
-function BackendInterfaceItemTutorial.get_key(arg_21_0, arg_21_1)
+BackendInterfaceItemTutorial.get_key = function (arg_21_0, arg_21_1)
 	return arg_21_0:get_item_from_id(arg_21_1).key
 end
 
-function BackendInterfaceItemTutorial.get_item_from_id(arg_22_0, arg_22_1)
+BackendInterfaceItemTutorial.get_item_from_id = function (arg_22_0, arg_22_1)
 	return arg_22_0:get_all_backend_items()[arg_22_1]
 end
 
-function BackendInterfaceItemTutorial.get_item_from_key(arg_23_0, arg_23_1)
+BackendInterfaceItemTutorial.get_item_from_key = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0:get_all_backend_items()
 
 	for iter_23_0, iter_23_1 in pairs(var_23_0) do
@@ -264,7 +264,7 @@ function BackendInterfaceItemTutorial.get_item_from_key(arg_23_0, arg_23_1)
 	end
 end
 
-function BackendInterfaceItemTutorial.get_all_backend_items(arg_24_0)
+BackendInterfaceItemTutorial.get_all_backend_items = function (arg_24_0)
 	if arg_24_0._dirty then
 		arg_24_0:_refresh()
 	end
@@ -272,7 +272,7 @@ function BackendInterfaceItemTutorial.get_all_backend_items(arg_24_0)
 	return arg_24_0._items
 end
 
-function BackendInterfaceItemTutorial.get_loadout(arg_25_0)
+BackendInterfaceItemTutorial.get_loadout = function (arg_25_0)
 	if arg_25_0._dirty then
 		arg_25_0:_refresh()
 	end
@@ -280,7 +280,7 @@ function BackendInterfaceItemTutorial.get_loadout(arg_25_0)
 	return arg_25_0._loadouts
 end
 
-function BackendInterfaceItemTutorial.get_loadout_by_career_name(arg_26_0, arg_26_1)
+BackendInterfaceItemTutorial.get_loadout_by_career_name = function (arg_26_0, arg_26_1)
 	if arg_26_0._dirty then
 		arg_26_0:_refresh()
 	end
@@ -288,19 +288,19 @@ function BackendInterfaceItemTutorial.get_loadout_by_career_name(arg_26_0, arg_2
 	return arg_26_0._loadouts[arg_26_1]
 end
 
-function BackendInterfaceItemTutorial.get_loadout_item_id(arg_27_0, arg_27_1, arg_27_2)
+BackendInterfaceItemTutorial.get_loadout_item_id = function (arg_27_0, arg_27_1, arg_27_2)
 	return arg_27_0:get_loadout()[arg_27_1][arg_27_2]
 end
 
 local var_0_2 = {}
 
-function BackendInterfaceItemTutorial.get_filtered_items(arg_28_0, arg_28_1, arg_28_2)
+BackendInterfaceItemTutorial.get_filtered_items = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0:get_all_backend_items()
 
 	return (Managers.backend:get_interface("common"):filter_items(var_28_0, arg_28_1, arg_28_2 or var_0_2))
 end
 
-function BackendInterfaceItemTutorial.set_loadout_item(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+BackendInterfaceItemTutorial.set_loadout_item = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0:get_all_backend_items()
 
 	if arg_29_1 then
@@ -312,35 +312,35 @@ function BackendInterfaceItemTutorial.set_loadout_item(arg_29_0, arg_29_1, arg_2
 	arg_29_0._dirty = true
 end
 
-function BackendInterfaceItemTutorial.remove_item(arg_30_0, arg_30_1, arg_30_2)
+BackendInterfaceItemTutorial.remove_item = function (arg_30_0, arg_30_1, arg_30_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.award_item(arg_31_0, arg_31_1)
+BackendInterfaceItemTutorial.award_item = function (arg_31_0, arg_31_1)
 	return
 end
 
-function BackendInterfaceItemTutorial.data_server_script(arg_32_0, arg_32_1, ...)
+BackendInterfaceItemTutorial.data_server_script = function (arg_32_0, arg_32_1, ...)
 	return
 end
 
-function BackendInterfaceItemTutorial.upgrades_failed_game(arg_33_0, arg_33_1, arg_33_2)
+BackendInterfaceItemTutorial.upgrades_failed_game = function (arg_33_0, arg_33_1, arg_33_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.poll_upgrades_failed_game(arg_34_0)
+BackendInterfaceItemTutorial.poll_upgrades_failed_game = function (arg_34_0)
 	return
 end
 
-function BackendInterfaceItemTutorial.generate_item_server_loot(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
+BackendInterfaceItemTutorial.generate_item_server_loot = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
 	return
 end
 
-function BackendInterfaceItemTutorial.check_for_loot(arg_36_0)
+BackendInterfaceItemTutorial.check_for_loot = function (arg_36_0)
 	return
 end
 
-function BackendInterfaceItemTutorial.equipped_by(arg_37_0, arg_37_1)
+BackendInterfaceItemTutorial.equipped_by = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._loadouts
 	local var_37_1 = {}
 
@@ -355,19 +355,19 @@ function BackendInterfaceItemTutorial.equipped_by(arg_37_0, arg_37_1)
 	return var_37_1
 end
 
-function BackendInterfaceItemTutorial.is_equipped(arg_38_0, arg_38_1, arg_38_2)
+BackendInterfaceItemTutorial.is_equipped = function (arg_38_0, arg_38_1, arg_38_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.set_data_server_queue(arg_39_0, arg_39_1)
+BackendInterfaceItemTutorial.set_data_server_queue = function (arg_39_0, arg_39_1)
 	return
 end
 
-function BackendInterfaceItemTutorial.make_dirty(arg_40_0)
+BackendInterfaceItemTutorial.make_dirty = function (arg_40_0)
 	arg_40_0._dirty = true
 end
 
-function BackendInterfaceItemTutorial.has_item(arg_41_0, arg_41_1)
+BackendInterfaceItemTutorial.has_item = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0:get_all_backend_items()
 
 	for iter_41_0, iter_41_1 in pairs(var_41_0) do
@@ -379,7 +379,7 @@ function BackendInterfaceItemTutorial.has_item(arg_41_0, arg_41_1)
 	return false
 end
 
-function BackendInterfaceItemTutorial.get_item_template(arg_42_0, arg_42_1, arg_42_2)
+BackendInterfaceItemTutorial.get_item_template = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_1.temporary_template or arg_42_1.template
 	local var_42_1 = WeaponUtils.get_weapon_template(var_42_0)
 
@@ -402,15 +402,15 @@ function BackendInterfaceItemTutorial.get_item_template(arg_42_0, arg_42_1, arg_
 	fassert(false, "no item_template for item: " .. arg_42_1.key .. ", template name = " .. var_42_0)
 end
 
-function BackendInterfaceItemTutorial.sum_best_power_levels(arg_43_0)
+BackendInterfaceItemTutorial.sum_best_power_levels = function (arg_43_0)
 	return 10
 end
 
-function BackendInterfaceItemTutorial.configure_game_mode_specific_items(arg_44_0, arg_44_1, arg_44_2)
+BackendInterfaceItemTutorial.configure_game_mode_specific_items = function (arg_44_0, arg_44_1, arg_44_2)
 	return
 end
 
-function BackendInterfaceItemTutorial.set_game_mode_specific_items(arg_45_0, arg_45_1)
+BackendInterfaceItemTutorial.set_game_mode_specific_items = function (arg_45_0, arg_45_1)
 	return
 end
 
@@ -418,22 +418,22 @@ local var_0_3 = {
 	equipped_weapon_pose_skin = {}
 }
 
-function BackendInterfaceItemTutorial.get_dirty_weapon_pose_data(arg_46_0)
+BackendInterfaceItemTutorial.get_dirty_weapon_pose_data = function (arg_46_0)
 	return var_0_3
 end
 
 local var_0_4 = {}
 
-function BackendInterfaceItemTutorial.get_unlocked_weapon_poses(arg_47_0)
+BackendInterfaceItemTutorial.get_unlocked_weapon_poses = function (arg_47_0)
 	return var_0_4
 end
 
 local var_0_5 = {}
 
-function BackendInterfaceItemTutorial.get_equipped_weapon_pose_skins(arg_48_0)
+BackendInterfaceItemTutorial.get_equipped_weapon_pose_skins = function (arg_48_0)
 	return var_0_5
 end
 
-function BackendInterfaceItemTutorial.get_equipped_weapon_pose_skin(arg_49_0, arg_49_1)
+BackendInterfaceItemTutorial.get_equipped_weapon_pose_skin = function (arg_49_0, arg_49_1)
 	return nil
 end

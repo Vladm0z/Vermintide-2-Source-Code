@@ -725,7 +725,7 @@ local var_0_9 = {
 				style_id = "chat_text_box",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return Managers.twitch:is_connected()
 				end
 			}
@@ -786,7 +786,7 @@ local function var_0_10(arg_3_0, arg_3_1)
 		{
 			style_id = "login_rect_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_4_0, arg_4_1)
+			content_check_function = function (arg_4_0, arg_4_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
@@ -794,7 +794,7 @@ local function var_0_10(arg_3_0, arg_3_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function(arg_5_0, arg_5_1)
+			content_check_function = function (arg_5_0, arg_5_1)
 				if arg_5_0.text_input_hotspot.is_hover then
 					arg_5_1.text_color = {
 						128,
@@ -818,7 +818,7 @@ local function var_0_10(arg_3_0, arg_3_1)
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function(arg_6_0, arg_6_1)
+			content_check_function = function (arg_6_0, arg_6_1)
 				if not arg_6_0.text_field_active then
 					arg_6_1.caret_color[1] = 0
 				else
@@ -832,7 +832,7 @@ local function var_0_10(arg_3_0, arg_3_1)
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (arg_7_0, arg_7_1)
 				if not Managers.twitch:is_connecting() then
 					return
 				end
@@ -989,14 +989,14 @@ function create_twitch_rect_with_outer_frame(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function(arg_9_0, arg_9_1)
+			content_check_function = function (arg_9_0, arg_9_1)
 				return Managers.twitch:is_connected()
 			end
 		},
 		{
 			style_id = "rect",
 			pass_type = "rect",
-			content_check_function = function(arg_10_0, arg_10_1)
+			content_check_function = function (arg_10_0, arg_10_1)
 				return Managers.twitch:is_connected()
 			end
 		}
@@ -1104,10 +1104,10 @@ var_0_20.disconnect_button_frame.element.passes[1].content_check_function = var_
 local var_0_21 = {}
 local var_0_22 = {
 	{
-		enter_requirements = function(arg_13_0)
+		enter_requirements = function (arg_13_0)
 			return arg_13_0._is_server
 		end,
-		on_enter = function(arg_14_0, arg_14_1, arg_14_2)
+		on_enter = function (arg_14_0, arg_14_1, arg_14_2)
 			arg_14_0._expedition_level_index = 1
 
 			local var_14_0 = arg_14_0._expedition_widgets
@@ -1118,7 +1118,7 @@ local var_0_22 = {
 
 			var_14_0[arg_14_0._expedition_level_index].content.gamepad_selected = true
 		end,
-		update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 			local var_15_0 = arg_15_0._expedition_widgets
 			local var_15_1 = arg_15_0._expedition_level_index
 
@@ -1156,7 +1156,7 @@ local var_0_22 = {
 				end
 			end
 		end,
-		on_exit = function(arg_16_0, arg_16_1, arg_16_2)
+		on_exit = function (arg_16_0, arg_16_1, arg_16_2)
 			local var_16_0 = arg_16_0._expedition_level_index or 1
 			local var_16_1 = arg_16_0._expedition_widgets
 			local var_16_2 = var_16_1[var_16_0]
@@ -1171,13 +1171,13 @@ local var_0_22 = {
 		end
 	},
 	{
-		enter_requirements = function(arg_17_0)
+		enter_requirements = function (arg_17_0)
 			return arg_17_0._is_server
 		end,
-		on_enter = function(arg_18_0, arg_18_1, arg_18_2)
+		on_enter = function (arg_18_0, arg_18_1, arg_18_2)
 			arg_18_0._selection_widgets_by_name.difficulty_stepper.content.is_selected = true
 		end,
-		update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+		update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 			local var_19_0 = arg_19_0._selection_widgets_by_name.difficulty_stepper
 			local var_19_1 = {
 				difficulty_info = arg_19_0._widgets_by_name.difficulty_info,
@@ -1225,7 +1225,7 @@ local var_0_22 = {
 
 			arg_19_0:_update_difficulty_lock()
 		end,
-		on_exit = function(arg_20_0, arg_20_1, arg_20_2)
+		on_exit = function (arg_20_0, arg_20_1, arg_20_2)
 			arg_20_0._selection_widgets_by_name.difficulty_stepper.content.is_selected = false
 
 			local var_20_0 = arg_20_0._widgets_by_name.upsell_button
@@ -1241,18 +1241,18 @@ local var_0_22 = {
 		end
 	},
 	{
-		enter_requirements = function(arg_21_0)
+		enter_requirements = function (arg_21_0)
 			return not Managers.input:is_device_active("gamepad") and arg_21_0._is_server and Managers.twitch:is_connected()
 		end,
-		on_enter = function(arg_22_0, arg_22_1, arg_22_2)
+		on_enter = function (arg_22_0, arg_22_1, arg_22_2)
 			arg_22_0._selection_widgets_by_name.play_button.content.is_selected = true
 		end,
-		update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+		update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 			if arg_23_1:get("confirm_press") and Managers.twitch:is_connected() then
 				arg_23_0:_option_selected("play_button", nil, arg_23_3)
 			end
 		end,
-		on_exit = function(arg_24_0, arg_24_1, arg_24_2)
+		on_exit = function (arg_24_0, arg_24_1, arg_24_2)
 			arg_24_0._selection_widgets_by_name.play_button.content.is_selected = false
 		end
 	}
@@ -1263,15 +1263,15 @@ local var_0_23 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				arg_25_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				local var_26_0 = math.easeOutCubic(arg_26_3)
 
 				arg_26_4.render_settings.alpha_multiplier = var_26_0
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end
 		}
@@ -1281,13 +1281,13 @@ local var_0_23 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				arg_28_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				arg_29_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end
 		}
@@ -1297,13 +1297,13 @@ local var_0_23 = {
 			name = "right_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				arg_32_4.right_key.color[1] = 255 * (1 - math.easeOutCubic(arg_32_3))
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				arg_33_2.content.right_arrow_pressed = false
 			end
 		}
@@ -1313,13 +1313,13 @@ local var_0_23 = {
 			name = "left_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 				arg_35_4.left_key.color[1] = 255 * (1 - math.easeOutCubic(arg_35_3))
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				arg_36_2.content.left_arrow_pressed = false
 			end
 		}
@@ -1329,10 +1329,10 @@ local var_0_23 = {
 			name = "gamemode_swap_text_fade_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 				local var_38_0 = math.easeOutCubic(arg_38_3)
 
 				arg_38_2.style.game_mode_text.text_color[1] = 255 * (1 - var_38_0)
@@ -1342,7 +1342,7 @@ local var_0_23 = {
 					arg_38_2.style.note_text.text_color[1] = 255 * (1 - var_38_0)
 				end
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				return
 			end
 		},
@@ -1350,10 +1350,10 @@ local var_0_23 = {
 			name = "gamemode_swap_text_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 				if arg_41_2.content.is_showing_info then
 					arg_41_2.content.game_mode_text = Localize("expedition_info")
 					arg_41_2.content.show_note = true
@@ -1369,7 +1369,7 @@ local var_0_23 = {
 					arg_41_2.style.note_text.text_color[1] = 255 * math.easeOutCubic(arg_41_3)
 				end
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end
 		}
@@ -1379,7 +1379,7 @@ local var_0_23 = {
 			name = "difficulty_info_enter",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				arg_43_2.difficulty_info.content.visible = true
 
 				local var_43_0 = arg_43_2.difficulty_info.style
@@ -1390,7 +1390,7 @@ local var_0_23 = {
 				var_43_0.highest_obtainable_level.text_color[1] = 0
 				var_43_0.difficulty_separator.color[1] = 0
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				local var_44_0 = math.easeOutCubic(arg_44_3)
 				local var_44_1 = arg_44_2.difficulty_info
 				local var_44_2 = arg_44_2.difficulty_info.style
@@ -1418,7 +1418,7 @@ local var_0_23 = {
 					var_44_2.dlc_lock_text.text_color[1] = var_44_5
 				end
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end
 		}

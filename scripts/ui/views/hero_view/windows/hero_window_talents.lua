@@ -10,7 +10,7 @@ local var_0_5 = false
 HeroWindowTalents = class(HeroWindowTalents)
 HeroWindowTalents.NAME = "HeroWindowTalents"
 
-function HeroWindowTalents.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowTalents.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowTalents")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -50,7 +50,7 @@ function HeroWindowTalents.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_initialize_talents()
 end
 
-function HeroWindowTalents.on_exit(arg_2_0, arg_2_1)
+HeroWindowTalents.on_exit = function (arg_2_0, arg_2_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowTalents")
 
 	arg_2_0.ui_animator = nil
@@ -68,7 +68,7 @@ function HeroWindowTalents.on_exit(arg_2_0, arg_2_1)
 	end
 end
 
-function HeroWindowTalents.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowTalents.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -97,7 +97,7 @@ function HeroWindowTalents.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function HeroWindowTalents._initialize_talents(arg_4_0)
+HeroWindowTalents._initialize_talents = function (arg_4_0)
 	local var_4_0 = arg_4_0._career_name
 	local var_4_1 = Managers.backend:get_interface("talents")
 	local var_4_2 = var_4_1:get_talents(var_4_0)
@@ -110,7 +110,7 @@ function HeroWindowTalents._initialize_talents(arg_4_0)
 	arg_4_0._initialized = true
 end
 
-function HeroWindowTalents.update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowTalents.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -122,16 +122,16 @@ function HeroWindowTalents.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-function HeroWindowTalents.post_update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowTalents.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function HeroWindowTalents._update_talent_sync(arg_7_0, arg_7_1)
+HeroWindowTalents._update_talent_sync = function (arg_7_0, arg_7_1)
 	arg_7_0:_populate_talents_by_hero(arg_7_1)
 	arg_7_0:_populate_career_info(arg_7_1)
 end
 
-function HeroWindowTalents._update_animations(arg_8_0, arg_8_1)
+HeroWindowTalents._update_animations = function (arg_8_0, arg_8_1)
 	arg_8_0.ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -146,7 +146,7 @@ function HeroWindowTalents._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowTalents._is_button_pressed(arg_9_0, arg_9_1)
+HeroWindowTalents._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_pressed then
@@ -156,7 +156,7 @@ function HeroWindowTalents._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowTalents._is_button_released(arg_10_0, arg_10_1)
+HeroWindowTalents._is_button_released = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -166,7 +166,7 @@ function HeroWindowTalents._is_button_released(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowTalents._is_stepper_button_pressed(arg_11_0, arg_11_1)
+HeroWindowTalents._is_stepper_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content
 	local var_11_1 = var_11_0.button_hotspot_left
 	local var_11_2 = var_11_0.button_hotspot_right
@@ -182,13 +182,13 @@ function HeroWindowTalents._is_stepper_button_pressed(arg_11_0, arg_11_1)
 	end
 end
 
-function HeroWindowTalents._is_button_hover_enter(arg_12_0, arg_12_1)
+HeroWindowTalents._is_button_hover_enter = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	return var_12_0.on_hover_enter and not var_12_0.is_selected
 end
 
-function HeroWindowTalents._handle_input(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowTalents._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.parent
 	local var_13_1 = arg_13_0._widgets_by_name
 
@@ -220,7 +220,7 @@ function HeroWindowTalents._handle_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function HeroWindowTalents.draw(arg_14_0, arg_14_1)
+HeroWindowTalents.draw = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_top_renderer
 	local var_14_2 = arg_14_0.ui_scenegraph
@@ -244,11 +244,11 @@ function HeroWindowTalents.draw(arg_14_0, arg_14_1)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function HeroWindowTalents._play_sound(arg_15_0, arg_15_1)
+HeroWindowTalents._play_sound = function (arg_15_0, arg_15_1)
 	arg_15_0.parent:play_sound(arg_15_1)
 end
 
-function HeroWindowTalents._populate_talents_by_hero(arg_16_0, arg_16_1)
+HeroWindowTalents._populate_talents_by_hero = function (arg_16_0, arg_16_1)
 	arg_16_0:_clear_talents()
 
 	local var_16_0 = arg_16_0._widgets_by_name
@@ -329,7 +329,7 @@ function HeroWindowTalents._populate_talents_by_hero(arg_16_0, arg_16_1)
 	end
 end
 
-function HeroWindowTalents._clear_talents(arg_17_0)
+HeroWindowTalents._clear_talents = function (arg_17_0)
 	local var_17_0 = arg_17_0._widgets_by_name
 
 	for iter_17_0 = 1, NumTalentRows do
@@ -354,7 +354,7 @@ function HeroWindowTalents._clear_talents(arg_17_0)
 	end
 end
 
-function HeroWindowTalents._is_talent_pressed(arg_18_0)
+HeroWindowTalents._is_talent_pressed = function (arg_18_0)
 	local var_18_0 = arg_18_0._widgets_by_name
 
 	for iter_18_0 = 1, NumTalentRows do
@@ -379,7 +379,7 @@ function HeroWindowTalents._is_talent_pressed(arg_18_0)
 	end
 end
 
-function HeroWindowTalents._is_talent_hovered(arg_19_0)
+HeroWindowTalents._is_talent_hovered = function (arg_19_0)
 	local var_19_0 = arg_19_0._widgets_by_name
 
 	for iter_19_0 = 1, NumTalentRows do
@@ -400,7 +400,7 @@ function HeroWindowTalents._is_talent_hovered(arg_19_0)
 	end
 end
 
-function HeroWindowTalents._is_disabled_talent_hovered(arg_20_0)
+HeroWindowTalents._is_disabled_talent_hovered = function (arg_20_0)
 	local var_20_0 = arg_20_0._widgets_by_name
 
 	for iter_20_0 = 1, NumTalentRows do
@@ -421,7 +421,7 @@ function HeroWindowTalents._is_disabled_talent_hovered(arg_20_0)
 	end
 end
 
-function HeroWindowTalents._populate_career_info(arg_21_0, arg_21_1)
+HeroWindowTalents._populate_career_info = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.hero_name
 	local var_21_1 = arg_21_0.career_index
 	local var_21_2 = FindProfileIndex(var_21_0)
@@ -463,6 +463,6 @@ function HeroWindowTalents._populate_career_info(arg_21_0, arg_21_1)
 	end
 end
 
-function HeroWindowTalents._animate_pulse(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+HeroWindowTalents._animate_pulse = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5))
 end

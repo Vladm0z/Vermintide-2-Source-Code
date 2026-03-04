@@ -204,29 +204,29 @@ var_0_0.network_damage_types = {
 	"cursed_blood_spread"
 }
 var_0_0.bt_enter_hooks = {
-	disable_perception = function(arg_1_0, arg_1_1, arg_1_2)
+	disable_perception = function (arg_1_0, arg_1_1, arg_1_2)
 		arg_1_1.disable_perception_data = arg_1_1.override_target_selection_name
 		arg_1_1.override_target_selection_name = "perception_no_seeing"
 	end,
-	necromancer_trigger_explode = function(arg_2_0, arg_2_1, arg_2_2)
+	necromancer_trigger_explode = function (arg_2_0, arg_2_1, arg_2_2)
 		if not arg_2_1.explosion_triggered then
 			arg_2_1.explosion_triggered = true
 
 			AiUtils.kill_unit(arg_2_0)
 		end
 	end,
-	start_stand_ground = function(arg_3_0, arg_3_1, arg_3_2)
+	start_stand_ground = function (arg_3_0, arg_3_1, arg_3_2)
 		arg_3_1.goal_destination = Vector3Box(arg_3_1.stand_ground_position:unbox())
 
 		arg_3_1.navigation_extension:set_enabled(true)
 	end,
-	start_follow_commander = function(arg_4_0, arg_4_1, arg_4_2)
+	start_follow_commander = function (arg_4_0, arg_4_1, arg_4_2)
 		if arg_4_1.commander_extension then
 			arg_4_1.commander_extension:register_follow_node_update(arg_4_0)
 			arg_4_1.navigation_extension:set_enabled(true)
 		end
 	end,
-	start_command_attack = function(arg_5_0, arg_5_1, arg_5_2)
+	start_command_attack = function (arg_5_0, arg_5_1, arg_5_2)
 		arg_5_1.new_command_attack = nil
 		arg_5_1.undergoing_command_attack = true
 	end
@@ -235,23 +235,23 @@ var_0_0.projectile_templates = {
 	"necromancer_trapped_soul"
 }
 var_0_0.bt_leave_hooks = {
-	enable_perception = function(arg_6_0, arg_6_1, arg_6_2)
+	enable_perception = function (arg_6_0, arg_6_1, arg_6_2)
 		arg_6_1.override_target_selection_name = arg_6_1.disable_perception_data
 		arg_6_1.disable_perception_data = nil
 	end,
-	start_disabled_resume_timer = function(arg_7_0, arg_7_1, arg_7_2)
+	start_disabled_resume_timer = function (arg_7_0, arg_7_1, arg_7_2)
 		arg_7_1.disabled_resume_time = arg_7_2 + 0.5
 	end,
-	command_attack_done = function(arg_8_0, arg_8_1, arg_8_2)
+	command_attack_done = function (arg_8_0, arg_8_1, arg_8_2)
 		arg_8_1.undergoing_command_attack = false
 	end,
-	remove_charge_target = function(arg_9_0, arg_9_1, arg_9_2)
+	remove_charge_target = function (arg_9_0, arg_9_1, arg_9_2)
 		if arg_9_1.anim_cb_charge_impact_finished or arg_9_1.commander_target ~= arg_9_1.charge_target then
 			arg_9_1.stick_to_enemy_t = arg_9_2 + 5
 			arg_9_1.charge_target = nil
 		end
 	end,
-	stop_follow_commander = function(arg_10_0, arg_10_1, arg_10_2)
+	stop_follow_commander = function (arg_10_0, arg_10_1, arg_10_2)
 		if arg_10_1.commander_extension then
 			arg_10_1.commander_extension:unregister_follow_node_update(arg_10_0)
 		end

@@ -28,7 +28,7 @@ local var_0_4 = {
 	easy = 20
 }
 
-function var_0_3.server_start_function(arg_1_0, arg_1_1)
+var_0_3.server_start_function = function (arg_1_0, arg_1_1)
 	arg_1_1.spawn_nurgle_storm_at = Managers.time:time("game") + 30
 	arg_1_1.next_bleed_time = 0
 	arg_1_1.bleed_rate = 0.2
@@ -47,7 +47,7 @@ end
 
 local var_0_5 = var_0_3.server_pre_update_function
 
-function var_0_3.server_update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_3.server_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	var_0_5(arg_2_0, arg_2_1)
 
 	if arg_2_3 < arg_2_1.next_bleed_time then
@@ -83,7 +83,7 @@ function var_0_3.server_update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function var_0_3.server_player_hit_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+var_0_3.server_player_hit_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_4[2] == "blood_storm" then
 		local var_3_0 = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
 		local var_3_1 = FrameTable.alloc_table()

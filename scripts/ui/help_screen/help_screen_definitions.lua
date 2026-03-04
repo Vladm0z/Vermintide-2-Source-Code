@@ -116,7 +116,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "text_area",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.debug
 					end
 				},
@@ -143,7 +143,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "image_area",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.debug
 					end
 				},
@@ -160,7 +160,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 				{
 					style_id = "page_indicator_area",
 					pass_type = "rect",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.debug
 					end
 				},

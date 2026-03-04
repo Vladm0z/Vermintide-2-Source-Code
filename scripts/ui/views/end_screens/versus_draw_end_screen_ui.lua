@@ -6,11 +6,11 @@ local var_0_0 = local_require("scripts/ui/views/end_screens/versus_draw_end_scre
 
 VersusDrawEndScreenUI = class(VersusDrawEndScreenUI, BaseEndScreenUI)
 
-function VersusDrawEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+VersusDrawEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	VersusDrawEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-function VersusDrawEndScreenUI._start(arg_2_0)
+VersusDrawEndScreenUI._start = function (arg_2_0)
 	local var_2_0 = var_0_0.scenegraph_definition
 	local var_2_1 = {
 		draw_flags = arg_2_0._draw_flags,
@@ -20,7 +20,7 @@ function VersusDrawEndScreenUI._start(arg_2_0)
 	arg_2_0._draw_anim_id = arg_2_0._ui_animator:start_animation("draw", arg_2_0._widgets_by_name, var_2_0, var_2_1)
 end
 
-function VersusDrawEndScreenUI._update(arg_3_0, arg_3_1)
+VersusDrawEndScreenUI._update = function (arg_3_0, arg_3_1)
 	if arg_3_0._completed then
 		return
 	end

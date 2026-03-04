@@ -6,7 +6,7 @@ local var_0_2 = "boon_orb_pickup"
 
 OrbPickupUnitExtension = class(OrbPickupUnitExtension, PickupUnitExtension)
 
-function OrbPickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+OrbPickupUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	OrbPickupUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._is_server = Managers.player.is_server
@@ -41,19 +41,19 @@ function OrbPickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-function OrbPickupUnitExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
+OrbPickupUnitExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function OrbPickupUnitExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+OrbPickupUnitExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-function OrbPickupUnitExtension.destroy(arg_4_0)
+OrbPickupUnitExtension.destroy = function (arg_4_0)
 	return
 end
 
-function OrbPickupUnitExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+OrbPickupUnitExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_0._done then
 		return
 	end
@@ -180,11 +180,11 @@ function OrbPickupUnitExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5
 	end
 end
 
-function OrbPickupUnitExtension.get_orb_flight_target_position(arg_6_0)
+OrbPickupUnitExtension.get_orb_flight_target_position = function (arg_6_0)
 	return arg_6_0._orb_flight_target_position
 end
 
-function OrbPickupUnitExtension._set_custom_orb_color(arg_7_0, arg_7_1, arg_7_2)
+OrbPickupUnitExtension._set_custom_orb_color = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Color(arg_7_1[1], arg_7_1[2], arg_7_1[3], arg_7_1[4] or 1)
 	local var_7_1 = Vector3(arg_7_2[1], arg_7_2[2], arg_7_2[3])
 	local var_7_2 = arg_7_0._unit
@@ -206,7 +206,7 @@ function OrbPickupUnitExtension._set_custom_orb_color(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function OrbPickupUnitExtension.ensure_magnetic_target(arg_8_0, arg_8_1)
+OrbPickupUnitExtension.ensure_magnetic_target = function (arg_8_0, arg_8_1)
 	arg_8_0._magnetic_target = arg_8_1
 
 	if not arg_8_0._pickup_settings.local_only then

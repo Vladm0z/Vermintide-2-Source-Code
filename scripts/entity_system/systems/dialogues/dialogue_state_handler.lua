@@ -11,13 +11,13 @@ local function var_0_1(...)
 	end
 end
 
-function DialogueStateHandler.init(arg_2_0, arg_2_1)
+DialogueStateHandler.init = function (arg_2_0, arg_2_1)
 	arg_2_0._world = arg_2_1
 	arg_2_0._playing_dialogues = {}
 	arg_2_0._current_index = 1
 end
 
-function DialogueStateHandler.add_playing_dialogue(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+DialogueStateHandler.add_playing_dialogue = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._playing_dialogues[#arg_3_0._playing_dialogues + 1] = {
 		identifier = arg_3_1,
 		event_id = arg_3_2,
@@ -28,7 +28,7 @@ end
 
 local var_0_2 = {}
 
-function DialogueStateHandler.update(arg_4_0, arg_4_1)
+DialogueStateHandler.update = function (arg_4_0, arg_4_1)
 	if table.is_empty(arg_4_0._playing_dialogues) then
 		return
 	end

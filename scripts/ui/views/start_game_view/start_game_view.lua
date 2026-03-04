@@ -21,7 +21,7 @@ local var_0_9 = true
 local var_0_10 = {}
 
 if not IS_WINDOWS then
-	function var_0_10.console_friends_menu(arg_2_0)
+	var_0_10.console_friends_menu = function (arg_2_0)
 		Managers.input:block_device_except_service("console_friends_menu", "gamepad")
 		arg_2_0:_activate_view("console_friends_view")
 	end
@@ -29,7 +29,7 @@ end
 
 StartGameView = class(StartGameView)
 
-function StartGameView.init(arg_3_0, arg_3_1)
+StartGameView.init = function (arg_3_0, arg_3_1)
 	arg_3_0.world = arg_3_1.world
 	arg_3_0.player_manager = arg_3_1.player_manager
 	arg_3_0.ui_renderer = arg_3_1.ui_renderer
@@ -71,7 +71,7 @@ function StartGameView.init(arg_3_0, arg_3_1)
 	var_0_7 = false
 end
 
-function StartGameView._init_menu_views(arg_4_0)
+StartGameView._init_menu_views = function (arg_4_0)
 	local var_4_0 = arg_4_0.ingame_ui_context
 
 	arg_4_0._views = {
@@ -79,13 +79,13 @@ function StartGameView._init_menu_views(arg_4_0)
 	}
 
 	for iter_4_0, iter_4_1 in pairs(arg_4_0._views) do
-		function iter_4_1.exit()
+		iter_4_1.exit = function ()
 			arg_4_0:exit_current_view()
 		end
 	end
 end
 
-function StartGameView._activate_view(arg_6_0, arg_6_1)
+StartGameView._activate_view = function (arg_6_0, arg_6_1)
 	arg_6_0._active_view = arg_6_1
 
 	local var_6_0 = arg_6_0._views
@@ -97,11 +97,11 @@ function StartGameView._activate_view(arg_6_0, arg_6_1)
 	end
 end
 
-function StartGameView.active_view(arg_7_0)
+StartGameView.active_view = function (arg_7_0)
 	return arg_7_0._active_view
 end
 
-function StartGameView.exit_current_view(arg_8_0)
+StartGameView.exit_current_view = function (arg_8_0)
 	local var_8_0 = arg_8_0._active_view
 	local var_8_1 = arg_8_0._views
 
@@ -122,11 +122,11 @@ function StartGameView.exit_current_view(arg_8_0)
 	var_8_3:disable_gamepad_cursor()
 end
 
-function StartGameView.initial_profile_view(arg_9_0)
+StartGameView.initial_profile_view = function (arg_9_0)
 	return arg_9_0.ingame_ui.initial_profile_view
 end
 
-function StartGameView._setup_state_machine(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+StartGameView._setup_state_machine = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if arg_10_0._machine then
 		arg_10_0._machine:destroy()
 
@@ -143,31 +143,31 @@ function StartGameView._setup_state_machine(arg_10_0, arg_10_1, arg_10_2, arg_10
 	arg_10_1.state_params = nil
 end
 
-function StartGameView.wanted_state(arg_11_0)
+StartGameView.wanted_state = function (arg_11_0)
 	return arg_11_0._wanted_state
 end
 
-function StartGameView.clear_wanted_state(arg_12_0)
+StartGameView.clear_wanted_state = function (arg_12_0)
 	arg_12_0._wanted_state = nil
 end
 
-function StartGameView.input_service(arg_13_0)
+StartGameView.input_service = function (arg_13_0)
 	return arg_13_0._draw_loading and FAKE_INPUT_SERVICE or arg_13_0.input_manager:get_service("start_game_view")
 end
 
-function StartGameView.set_input_blocked(arg_14_0, arg_14_1)
+StartGameView.set_input_blocked = function (arg_14_0, arg_14_1)
 	arg_14_0._input_blocked = arg_14_1
 end
 
-function StartGameView.input_blocked(arg_15_0)
+StartGameView.input_blocked = function (arg_15_0)
 	return arg_15_0._input_blocked
 end
 
-function StartGameView.play_sound(arg_16_0, arg_16_1)
+StartGameView.play_sound = function (arg_16_0, arg_16_1)
 	WwiseWorld.trigger_event(arg_16_0.wwise_world, arg_16_1)
 end
 
-function StartGameView.play_mechanism_sound(arg_17_0, arg_17_1, arg_17_2)
+StartGameView.play_mechanism_sound = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Managers.mechanism:mechanism_setting(arg_17_1) or arg_17_2
 
 	if var_17_0 then
@@ -175,7 +175,7 @@ function StartGameView.play_mechanism_sound(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function StartGameView.create_ui_elements(arg_18_0)
+StartGameView.create_ui_elements = function (arg_18_0)
 	arg_18_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_18_0._static_widgets = {}
 	arg_18_0._loading_widgets = {
@@ -189,7 +189,7 @@ function StartGameView.create_ui_elements(arg_18_0)
 	arg_18_0.ui_animator = UIAnimator:new(arg_18_0.ui_scenegraph, var_0_0.animations)
 end
 
-function StartGameView.draw(arg_19_0, arg_19_1, arg_19_2)
+StartGameView.draw = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.ui_renderer
 	local var_19_1 = arg_19_0.ui_top_renderer
 	local var_19_2 = arg_19_0.ui_scenegraph
@@ -220,13 +220,13 @@ function StartGameView.draw(arg_19_0, arg_19_1, arg_19_2)
 	UIRenderer.end_pass(var_19_0)
 end
 
-function StartGameView.post_update(arg_20_0, arg_20_1, arg_20_2)
+StartGameView.post_update = function (arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0._machine then
 		arg_20_0._machine:post_update(arg_20_1, arg_20_2)
 	end
 end
 
-function StartGameView.update(arg_21_0, arg_21_1, arg_21_2)
+StartGameView.update = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0.suspended or arg_21_0.waiting_for_post_update_enter then
 		return
 	end
@@ -283,7 +283,7 @@ function StartGameView.update(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0:draw(arg_21_1, var_21_5)
 end
 
-function StartGameView.on_enter(arg_22_0, arg_22_1)
+StartGameView.on_enter = function (arg_22_0, arg_22_1)
 	ShowCursorStack.show("StartGameView")
 
 	local var_22_0 = arg_22_0.input_manager
@@ -313,7 +313,7 @@ function StartGameView.on_enter(arg_22_0, arg_22_1)
 	arg_22_0:_handle_new_ui_disclaimer()
 end
 
-function StartGameView._handle_new_ui_disclaimer(arg_23_0)
+StartGameView._handle_new_ui_disclaimer = function (arg_23_0)
 	local var_23_0 = Managers.mechanism:current_mechanism_name()
 	local var_23_1 = {
 		deus = {
@@ -336,11 +336,11 @@ function StartGameView._handle_new_ui_disclaimer(arg_23_0)
 	Managers.ui:handle_new_ui_disclaimer(var_23_2, var_23_4)
 end
 
-function StartGameView.on_enter_sub_state(arg_24_0)
+StartGameView.on_enter_sub_state = function (arg_24_0)
 	return arg_24_0._on_enter_sub_state
 end
 
-function StartGameView.set_current_hero(arg_25_0, arg_25_1)
+StartGameView.set_current_hero = function (arg_25_0, arg_25_1)
 	local var_25_0 = SPProfiles[arg_25_1]
 	local var_25_1 = var_25_0.display_name
 	local var_25_2 = var_25_0.character_name
@@ -349,7 +349,7 @@ function StartGameView.set_current_hero(arg_25_0, arg_25_1)
 	arg_25_0._state_machine_params.hero_name = var_25_1
 end
 
-function StartGameView._get_sorted_players(arg_26_0)
+StartGameView._get_sorted_players = function (arg_26_0)
 	local var_26_0 = arg_26_0.player_manager:human_players()
 	local var_26_1 = {}
 
@@ -357,18 +357,18 @@ function StartGameView._get_sorted_players(arg_26_0)
 		var_26_1[#var_26_1 + 1] = iter_26_1
 	end
 
-	table.sort(var_26_1, function(arg_27_0, arg_27_1)
+	table.sort(var_26_1, function (arg_27_0, arg_27_1)
 		return arg_27_0.local_player and not arg_27_1.local_player
 	end)
 
 	return var_26_1
 end
 
-function StartGameView._handle_mouse_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+StartGameView._handle_mouse_input = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	return
 end
 
-function StartGameView._handle_input(arg_29_0, arg_29_1, arg_29_2)
+StartGameView._handle_input = function (arg_29_0, arg_29_1, arg_29_2)
 	if Managers.account:offline_mode() then
 		return
 	end
@@ -384,7 +384,7 @@ function StartGameView._handle_input(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function StartGameView._is_selection_widget_pressed(arg_30_0, arg_30_1)
+StartGameView._is_selection_widget_pressed = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_1.content
 	local var_30_1 = var_30_0.steps
 
@@ -395,7 +395,7 @@ function StartGameView._is_selection_widget_pressed(arg_30_0, arg_30_1)
 	end
 end
 
-function StartGameView.hotkey_allowed(arg_31_0, arg_31_1, arg_31_2)
+StartGameView.hotkey_allowed = function (arg_31_0, arg_31_1, arg_31_2)
 	if arg_31_0:input_blocked() then
 		return false
 	end
@@ -430,7 +430,7 @@ function StartGameView.hotkey_allowed(arg_31_0, arg_31_1, arg_31_2)
 	return false
 end
 
-function StartGameView._get_screen_settings_by_state_name(arg_32_0, arg_32_1)
+StartGameView._get_screen_settings_by_state_name = function (arg_32_0, arg_32_1)
 	for iter_32_0, iter_32_1 in ipairs(var_0_3) do
 		if iter_32_1.state_name == arg_32_1 then
 			return iter_32_1
@@ -438,14 +438,14 @@ function StartGameView._get_screen_settings_by_state_name(arg_32_0, arg_32_1)
 	end
 end
 
-function StartGameView.requested_screen_change_by_name(arg_33_0, arg_33_1, arg_33_2)
+StartGameView.requested_screen_change_by_name = function (arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0._requested_screen_change_data = {
 		screen_name = arg_33_1,
 		sub_screen_name = arg_33_2
 	}
 end
 
-function StartGameView._change_screen_by_name(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+StartGameView._change_screen_by_name = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	local var_34_0
 	local var_34_1
 
@@ -470,13 +470,13 @@ function StartGameView._change_screen_by_name(arg_34_0, arg_34_1, arg_34_2, arg_
 	end
 end
 
-function StartGameView._change_screen_by_index(arg_35_0, arg_35_1)
+StartGameView._change_screen_by_index = function (arg_35_0, arg_35_1)
 	local var_35_0 = var_0_3[arg_35_1].name
 
 	arg_35_0:_change_screen_by_name(var_35_0)
 end
 
-function StartGameView.post_update_on_enter(arg_36_0)
+StartGameView.post_update_on_enter = function (arg_36_0)
 	arg_36_0.waiting_for_post_update_enter = nil
 
 	local var_36_0 = arg_36_0._on_enter_transition_params
@@ -493,11 +493,11 @@ function StartGameView.post_update_on_enter(arg_36_0)
 	end
 end
 
-function StartGameView.post_update_on_exit(arg_37_0)
+StartGameView.post_update_on_exit = function (arg_37_0)
 	return
 end
 
-function StartGameView.on_exit(arg_38_0)
+StartGameView.on_exit = function (arg_38_0)
 	arg_38_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_38_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_38_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -526,7 +526,7 @@ function StartGameView.on_exit(arg_38_0)
 	arg_38_0._draw_loading = false
 end
 
-function StartGameView.exit(arg_39_0, arg_39_1, arg_39_2)
+StartGameView.exit = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_1 and "exit_menu" or "ingame_menu"
 
 	arg_39_0.ingame_ui:transition_with_fade(var_39_0)
@@ -542,7 +542,7 @@ function StartGameView.exit(arg_39_0, arg_39_1, arg_39_2)
 	arg_39_0.exiting = true
 end
 
-function StartGameView.transitioning(arg_40_0)
+StartGameView.transitioning = function (arg_40_0)
 	if arg_40_0.exiting then
 		return true
 	else
@@ -550,7 +550,7 @@ function StartGameView.transitioning(arg_40_0)
 	end
 end
 
-function StartGameView.suspend(arg_41_0)
+StartGameView.suspend = function (arg_41_0)
 	arg_41_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_41_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_41_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -558,7 +558,7 @@ function StartGameView.suspend(arg_41_0)
 	arg_41_0.suspended = true
 end
 
-function StartGameView.unsuspend(arg_42_0)
+StartGameView.unsuspend = function (arg_42_0)
 	arg_42_0.input_manager:block_device_except_service("start_game_view", "keyboard", 1)
 	arg_42_0.input_manager:block_device_except_service("start_game_view", "mouse", 1)
 	arg_42_0.input_manager:block_device_except_service("start_game_view", "gamepad", 1)
@@ -566,13 +566,13 @@ function StartGameView.unsuspend(arg_42_0)
 	arg_42_0.suspended = nil
 end
 
-function StartGameView.close_menu(arg_43_0, arg_43_1, arg_43_2)
+StartGameView.close_menu = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = not arg_43_1
 
 	arg_43_0:exit(var_43_0, arg_43_2)
 end
 
-function StartGameView.destroy(arg_44_0)
+StartGameView.destroy = function (arg_44_0)
 	arg_44_0.ingame_ui_context = nil
 	arg_44_0.ui_animator = nil
 
@@ -583,7 +583,7 @@ function StartGameView.destroy(arg_44_0)
 	end
 end
 
-function StartGameView._is_button_pressed(arg_45_0, arg_45_1)
+StartGameView._is_button_pressed = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_1.content.button_hotspot
 
 	if var_45_0.on_release then
@@ -593,13 +593,13 @@ function StartGameView._is_button_pressed(arg_45_0, arg_45_1)
 	end
 end
 
-function StartGameView._has_active_level_vote(arg_46_0)
+StartGameView._has_active_level_vote = function (arg_46_0)
 	local var_46_0 = arg_46_0.voting_manager
 
 	return var_46_0:vote_in_progress() and var_46_0:is_mission_vote() and not var_46_0:has_voted(Network.peer_id())
 end
 
-function StartGameView._set_loading_overlay_enabled(arg_47_0, arg_47_1, arg_47_2)
+StartGameView._set_loading_overlay_enabled = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._loading_widgets
 	local var_47_1 = var_47_0.text
 	local var_47_2 = var_47_0.background
@@ -611,11 +611,11 @@ function StartGameView._set_loading_overlay_enabled(arg_47_0, arg_47_1, arg_47_2
 	arg_47_0._draw_loading = arg_47_1
 end
 
-function StartGameView.number_of_players(arg_48_0)
+StartGameView.number_of_players = function (arg_48_0)
 	return Managers.player:num_human_players()
 end
 
-function StartGameView.start_game(arg_49_0, arg_49_1, arg_49_2)
+StartGameView.start_game = function (arg_49_0, arg_49_1, arg_49_2)
 	if not arg_49_2 then
 		Managers.mechanism:request_vote(arg_49_1)
 	end
@@ -629,7 +629,7 @@ function StartGameView.start_game(arg_49_0, arg_49_1, arg_49_2)
 	arg_49_0:close_menu()
 end
 
-function StartGameView.cancel_matchmaking(arg_50_0)
+StartGameView.cancel_matchmaking = function (arg_50_0)
 	local var_50_0 = Managers.matchmaking
 
 	if var_50_0:is_game_matchmaking() then

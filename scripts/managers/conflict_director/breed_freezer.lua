@@ -76,7 +76,7 @@ local var_0_0 = require("scripts/network/unit_extension_templates")
 
 BreedFreezer = class(BreedFreezer)
 
-function BreedFreezer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+BreedFreezer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	local var_1_0 = Managers.player.is_server
 
 	arg_1_0.is_server = var_1_0
@@ -102,7 +102,7 @@ function BreedFreezer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	end
 end
 
-function BreedFreezer._setup_freezable_breeds(arg_2_0, arg_2_1)
+BreedFreezer._setup_freezable_breeds = function (arg_2_0, arg_2_1)
 	local var_2_0 = table.clone(BreedFreezerSettings)
 	local var_2_1 = arg_2_1:get_startup_breeds()
 	local var_2_2 = var_2_0.breeds
@@ -140,7 +140,7 @@ function BreedFreezer._setup_freezable_breeds(arg_2_0, arg_2_1)
 	return var_2_0
 end
 
-function BreedFreezer._setup_freeze_box(arg_3_0, arg_3_1)
+BreedFreezer._setup_freeze_box = function (arg_3_0, arg_3_1)
 	local var_3_0 = 0
 	local var_3_1 = script_data.debug_breed_freeze and Vector3Aux.unbox(arg_3_1.freezer_pos_debug) or Vector3Aux.unbox(arg_3_1.freezer_pos)
 	local var_3_2 = script_data.debug_breed_freeze and Vector3Aux.unbox(arg_3_1.freezer_offset_debug) or Vector3Aux.unbox(arg_3_1.freezer_offset)
@@ -211,7 +211,7 @@ function BreedFreezer._setup_freeze_box(arg_3_0, arg_3_1)
 	arg_3_0._freezer_initialized = true
 end
 
-function BreedFreezer._spawn_template_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BreedFreezer._spawn_template_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = World.spawn_unit(arg_4_1, arg_4_2, arg_4_3)
 
 	arg_4_0.breed_template_units[arg_4_2] = var_4_0
@@ -225,11 +225,11 @@ function BreedFreezer._spawn_template_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function BreedFreezer.destroy(arg_5_0)
+BreedFreezer.destroy = function (arg_5_0)
 	arg_5_0.network_event_delegate:unregister(arg_5_0)
 end
 
-function BreedFreezer.try_mark_unit_for_freeze(arg_6_0, arg_6_1, arg_6_2)
+BreedFreezer.try_mark_unit_for_freeze = function (arg_6_0, arg_6_1, arg_6_2)
 	assert(arg_6_0._breed_freezer_settings, "[BreedFreezer] 'try_mark_unit_for_freeze' was called before we've initialized the breed freezer")
 
 	local var_6_0 = arg_6_1.name
@@ -268,7 +268,7 @@ function BreedFreezer.try_mark_unit_for_freeze(arg_6_0, arg_6_1, arg_6_2)
 	return true
 end
 
-function BreedFreezer.rpc_breed_freeze_units(arg_7_0, arg_7_1, arg_7_2)
+BreedFreezer.rpc_breed_freeze_units = function (arg_7_0, arg_7_1, arg_7_2)
 	fassert(arg_7_0._freezer_initialized, "Received freeze before freezer was initialized!")
 
 	local var_7_0 = Managers.state.unit_storage
@@ -293,7 +293,7 @@ end
 
 local var_0_1 = GameSession.set_game_object_field
 
-function BreedFreezer.commit_freezes(arg_8_0)
+BreedFreezer.commit_freezes = function (arg_8_0)
 	if arg_8_0.num_to_freeze == 0 then
 		return
 	end
@@ -380,7 +380,7 @@ function BreedFreezer.commit_freezes(arg_8_0)
 	arg_8_0.num_to_freeze = 0
 end
 
-function BreedFreezer.try_unfreeze_breed(arg_9_0, arg_9_1, arg_9_2)
+BreedFreezer.try_unfreeze_breed = function (arg_9_0, arg_9_1, arg_9_2)
 	assert(arg_9_0._breed_freezer_settings, "[BreedFreezer] 'try_unfreeze_breed' was called before the breed freezer was initialized")
 
 	local var_9_0 = arg_9_1.name
@@ -409,7 +409,7 @@ function BreedFreezer.try_unfreeze_breed(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_2
 end
 
-function BreedFreezer.rpc_breed_unfreeze_breed(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+BreedFreezer.rpc_breed_unfreeze_breed = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	fassert(arg_10_0._freezer_initialized, "Received unfreeze before freezer was initialized!")
 
 	local var_10_0 = NetworkLookup.breeds[arg_10_2]
@@ -438,7 +438,7 @@ function BreedFreezer.rpc_breed_unfreeze_breed(arg_10_0, arg_10_1, arg_10_2, arg
 	arg_10_0:unfreeze_unit(var_10_1, var_10_0, var_10_5)
 end
 
-function BreedFreezer.unfreeze_unit(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BreedFreezer.unfreeze_unit = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	Unit.set_frozen(arg_11_1, false)
 
 	local var_11_0 = arg_11_3[2]:unbox()
@@ -480,7 +480,7 @@ function store_go_ids_in_array_func(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0[#arg_12_0 + 1] = arg_12_2[arg_12_1]
 end
 
-function BreedFreezer.hot_join_sync(arg_13_0, arg_13_1)
+BreedFreezer.hot_join_sync = function (arg_13_0, arg_13_1)
 	print("Breedfreezer (server) starting a hot join sync")
 
 	local var_13_0 = {}
@@ -525,7 +525,7 @@ function BreedFreezer.hot_join_sync(arg_13_0, arg_13_1)
 	end
 end
 
-function BreedFreezer.rpc_breed_freezer_sync_breeds(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+BreedFreezer.rpc_breed_freezer_sync_breeds = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not arg_14_0._current_synced_breed_index then
 		arg_14_0._current_synced_breed_index = 0
 		arg_14_0._breed_freezer_settings = arg_14_0:_setup_freezable_breeds(arg_14_0._enemy_package_loader)

@@ -92,7 +92,7 @@ local var_0_0 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2)
+	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = arg_1_0.impact_explosion_name
 		local var_1_1 = arg_1_0.collision_detection_sphere_radius
 		local var_1_2 = arg_1_0.only_one_impact
@@ -114,7 +114,7 @@ local var_0_0 = {
 		arg_1_2.projectile_system = var_1_7
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1)
+		prepare_func = function (arg_2_0, arg_2_1)
 			local var_2_0 = false
 
 			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)

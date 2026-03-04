@@ -6,7 +6,7 @@ local var_0_0 = {
 	"rpc_client_disrupt_ritual_update"
 }
 
-function DisruptRitualExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DisruptRitualExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._network_event_delegate = arg_1_1.network_transmit.network_event_delegate
 
@@ -27,7 +27,7 @@ function DisruptRitualExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._next_tick = 0
 end
 
-function DisruptRitualExtension.start_disrupt_ritual(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+DisruptRitualExtension.start_disrupt_ritual = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	if arg_2_1 ~= arg_2_0._unit then
 		return
 	end
@@ -102,7 +102,7 @@ function DisruptRitualExtension.start_disrupt_ritual(arg_2_0, arg_2_1, arg_2_2, 
 	arg_2_0._num_progression_events = arg_2_4
 end
 
-function DisruptRitualExtension.update(arg_3_0, arg_3_1)
+DisruptRitualExtension.update = function (arg_3_0, arg_3_1)
 	if not arg_3_0._active or arg_3_1 < arg_3_0._next_tick then
 		return
 	end
@@ -128,7 +128,7 @@ function DisruptRitualExtension.update(arg_3_0, arg_3_1)
 	arg_3_0:server_send_rpc_update_clients(var_3_4, arg_3_0._current_checkpoint or 0, arg_3_0._current_progression_event, arg_3_0._volume_name)
 end
 
-function DisruptRitualExtension.server_heal(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DisruptRitualExtension.server_heal = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_0._increasing_damage then
 		arg_4_0:fire_flow_event("decreased", "damage")
 
@@ -149,7 +149,7 @@ function DisruptRitualExtension.server_heal(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0._current_damage = var_4_1
 end
 
-function DisruptRitualExtension.server_apply_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+DisruptRitualExtension.server_apply_damage = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not arg_5_0._increasing_damage then
 		arg_5_0:fire_flow_event("increased", "damage")
 
@@ -178,7 +178,7 @@ function DisruptRitualExtension.server_apply_damage(arg_5_0, arg_5_1, arg_5_2, a
 	end
 end
 
-function DisruptRitualExtension.server_update_progression_status(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+DisruptRitualExtension.server_update_progression_status = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_1[arg_6_2 + 1]
 	local var_6_1
 
@@ -202,11 +202,11 @@ function DisruptRitualExtension.server_update_progression_status(arg_6_0, arg_6_
 	arg_6_0:print_progression_event(var_6_2)
 end
 
-function DisruptRitualExtension.server_send_rpc_update_clients(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+DisruptRitualExtension.server_send_rpc_update_clients = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	arg_7_0._network_transmit:send_rpc_clients("rpc_client_disrupt_ritual_update", arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 end
 
-function DisruptRitualExtension.rpc_client_disrupt_ritual_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+DisruptRitualExtension.rpc_client_disrupt_ritual_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	if not arg_8_0._active or arg_8_0._volume_name ~= arg_8_5 then
 		return
 	end
@@ -246,30 +246,30 @@ function DisruptRitualExtension.rpc_client_disrupt_ritual_update(arg_8_0, arg_8_
 	end
 end
 
-function DisruptRitualExtension.player_party_changed(arg_9_0)
+DisruptRitualExtension.player_party_changed = function (arg_9_0)
 	if arg_9_0._active then
 		Unit.flow_event(arg_9_0._unit, "show_health_bar")
 	end
 end
 
-function DisruptRitualExtension.fire_flow_event(arg_10_0, arg_10_1, arg_10_2)
+DisruptRitualExtension.fire_flow_event = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._volume_name .. "_" .. arg_10_2 .. "_" .. arg_10_1
 
 	Level.trigger_event(arg_10_0._level, var_10_0)
 end
 
-function DisruptRitualExtension.print_damage(arg_11_0, arg_11_1)
+DisruptRitualExtension.print_damage = function (arg_11_0, arg_11_1)
 	print("Disrupt Ritual ", arg_11_0._volume_name, " current damage: ", arg_11_1)
 end
 
-function DisruptRitualExtension.print_progression_event(arg_12_0, arg_12_1)
+DisruptRitualExtension.print_progression_event = function (arg_12_0, arg_12_1)
 	print(arg_12_0._volume_name, ": Disrupt Ritual progress updated. Current progression event: ", arg_12_1)
 end
 
-function DisruptRitualExtension.print_checkpoint(arg_13_0, arg_13_1)
+DisruptRitualExtension.print_checkpoint = function (arg_13_0, arg_13_1)
 	print(arg_13_0._volume_name, ": Disrupt Ritual checkpoint updated. Current checkpoint: ", arg_13_1)
 end
 
-function DisruptRitualExtension.destroy(arg_14_0)
+DisruptRitualExtension.destroy = function (arg_14_0)
 	arg_14_0._network_event_delegate:unregister(arg_14_0)
 end

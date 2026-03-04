@@ -2,20 +2,20 @@
 
 ActionAimEnergy = class(ActionAimEnergy, ActionAim)
 
-function ActionAimEnergy.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionAimEnergy.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionAimEnergy.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-function ActionAimEnergy.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionAimEnergy.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionAimEnergy.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 end
 
-function ActionAimEnergy.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionAimEnergy.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	ActionAimEnergy.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0:_process_energy_draining(arg_3_1, arg_3_2)
 end
 
-function ActionAimEnergy._process_energy_draining(arg_4_0, arg_4_1, arg_4_2)
+ActionAimEnergy._process_energy_draining = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = false
 	local var_4_1 = ScriptUnit.extension(arg_4_0.owner_unit, "energy_system")
 
@@ -32,7 +32,7 @@ function ActionAimEnergy._process_energy_draining(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ActionAimEnergy._fire_shot(arg_5_0, arg_5_1)
+ActionAimEnergy._fire_shot = function (arg_5_0, arg_5_1)
 	local var_5_0 = ScriptUnit.extension(arg_5_0.owner_unit, "inventory_system")
 	local var_5_1, var_5_2, var_5_3 = CharacterStateHelper.get_item_data_and_weapon_extensions(var_5_0)
 	local var_5_4 = BackendUtils.get_item_template(var_5_1)

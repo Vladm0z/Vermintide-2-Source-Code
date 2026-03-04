@@ -33,11 +33,11 @@ var_0_1.actions = {
 			overcharge_type = "life_staff_light",
 			apply_shot_cost_once = true,
 			total_time = 1.4,
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 				return arg_1_1 ~= "new_interupting_action"
 			end,
 			anim_time_scale = var_0_2,
-			enter_function = function(arg_2_0, arg_2_1)
+			enter_function = function (arg_2_0, arg_2_1)
 				arg_2_1:reset_release_input()
 				arg_2_1:clear_input_buffer()
 			end,
@@ -108,7 +108,7 @@ var_0_1.actions = {
 				link = true,
 				depth_offset = 0.05
 			},
-			condition_func = function(arg_3_0, arg_3_1)
+			condition_func = function (arg_3_0, arg_3_1)
 				return ScriptUnit.extension(arg_3_0, "overcharge_system"):are_you_locked_out() == false
 			end,
 			recoil_settings = {
@@ -147,11 +147,11 @@ var_0_1.actions = {
 			overcharge_type = "life_staff_light",
 			apply_shot_cost_once = true,
 			total_time = 1.4,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action"
 			end,
 			anim_time_scale = var_0_2,
-			enter_function = function(arg_5_0, arg_5_1)
+			enter_function = function (arg_5_0, arg_5_1)
 				arg_5_1:reset_release_input()
 				arg_5_1:clear_input_buffer()
 			end,
@@ -282,7 +282,7 @@ var_0_1.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_6_0, arg_6_1)
+			enter_function = function (arg_6_0, arg_6_1)
 				arg_6_1:reset_release_input()
 				arg_6_1:clear_input_buffer()
 			end
@@ -306,28 +306,28 @@ var_0_1.actions = {
 			num_projectiles = 1,
 			uninterruptible = true,
 			anim_event = "attack_charge_fireball",
-			anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+			anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 				return arg_7_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
-			can_target_players = function(arg_8_0)
+			can_target_players = function (arg_8_0)
 				if ScriptUnit.has_extension(arg_8_0, "buff_system"):has_buff_perk(var_0_0.sister_no_player_lift) then
 					return false
 				end
 
 				return true
 			end,
-			enter_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			enter_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_3:change_synced_state("targeting", true)
 			end,
-			finish_function = function(arg_10_0, arg_10_1, arg_10_2)
+			finish_function = function (arg_10_0, arg_10_1, arg_10_2)
 				arg_10_2:change_synced_state(nil, true)
 			end,
 			zoom_thresholds = {
 				"zoom_in_trueflight",
 				"zoom_in"
 			},
-			zoom_condition_function = function()
+			zoom_condition_function = function ()
 				return true
 			end,
 			prioritized_breeds = {
@@ -353,14 +353,14 @@ var_0_1.actions = {
 			ignored_breeds = table.set({
 				"chaos_greed_pinata"
 			}),
-			condition_func = function(arg_12_0, arg_12_1)
+			condition_func = function (arg_12_0, arg_12_1)
 				if ScriptUnit.extension(arg_12_0, "overcharge_system"):are_you_locked_out() ~= false then
 					return false
 				end
 
 				return true
 			end,
-			chain_condition_func = function(arg_13_0, arg_13_1)
+			chain_condition_func = function (arg_13_0, arg_13_1)
 				if ScriptUnit.extension(arg_13_0, "overcharge_system"):are_you_locked_out() ~= false then
 					return false
 				end
@@ -405,7 +405,7 @@ var_0_1.actions = {
 			hold_input = "weapon_reload_hold",
 			anim_event = "cooldown_start",
 			charge_sound_name = "Play_weapon_life_staff_cooldown_loop",
-			anim_end_event_condition_func = function(arg_14_0, arg_14_1)
+			anim_end_event_condition_func = function (arg_14_0, arg_14_1)
 				return arg_14_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -417,7 +417,7 @@ var_0_1.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_15_0, arg_15_1)
+			enter_function = function (arg_15_0, arg_15_1)
 				arg_15_1:reset_release_input()
 				arg_15_1:clear_input_buffer()
 			end,
@@ -429,7 +429,7 @@ var_0_1.actions = {
 					input = "action_wield"
 				}
 			},
-			condition_func = function(arg_16_0, arg_16_1)
+			condition_func = function (arg_16_0, arg_16_1)
 				local var_16_0 = ScriptUnit.extension(arg_16_0, "overcharge_system")
 
 				if var_16_0:get_overcharge_value() == 0 then
@@ -446,7 +446,7 @@ var_0_1.actions = {
 
 				return true
 			end,
-			chain_condition_func = function(arg_17_0, arg_17_1)
+			chain_condition_func = function (arg_17_0, arg_17_1)
 				local var_17_0 = ScriptUnit.extension(arg_17_0, "overcharge_system")
 
 				if var_17_0:get_overcharge_value() == 0 then
@@ -469,7 +469,7 @@ var_0_1.actions = {
 	action_wield = ActionTemplates.wield
 }
 
-function var_0_1.actions.action_inspect.default.condition_func(arg_18_0, arg_18_1)
+var_0_1.actions.action_inspect.default.condition_func = function (arg_18_0, arg_18_1)
 	if not ActionTemplates.action_inspect.default.condition_func(arg_18_0, arg_18_1) then
 		return false
 	end
@@ -587,7 +587,7 @@ var_0_1.tooltip_detail = {
 	}
 }
 
-function var_0_1.on_wield(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+var_0_1.on_wield = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not arg_19_3 then
 		return
 	end
@@ -629,7 +629,7 @@ end
 
 var_0_1.synced_states = {
 	wielding = {
-		enter = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+		enter = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 			if not arg_21_4 then
 				return
 			end
@@ -646,7 +646,7 @@ var_0_1.synced_states = {
 
 			arg_21_3.timer = 0.7
 		end,
-		update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+		update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 			if not arg_22_3.timer then
 				return
 			end
@@ -657,7 +657,7 @@ var_0_1.synced_states = {
 				arg_22_7:change_synced_state(nil, true)
 			end
 		end,
-		leave = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+		leave = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
 			if not arg_23_4 then
 				return
 			end
@@ -670,7 +670,7 @@ var_0_1.synced_states = {
 		end
 	},
 	targeting = {
-		enter = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+		enter = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 			if not arg_24_4 then
 				return
 			end
@@ -685,10 +685,10 @@ var_0_1.synced_states = {
 				arg_24_3.particle_ids[var_24_1] = ScriptWorld.create_particles_linked(arg_24_5, "fx/magic_thorn_sister_finger_trail", var_24_0, var_24_1, "destroy")
 			end
 		end,
-		update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+		update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
 			return
 		end,
-		leave = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
+		leave = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
 			if not arg_26_4 then
 				return
 			end

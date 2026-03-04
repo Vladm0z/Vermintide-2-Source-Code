@@ -2,7 +2,7 @@
 
 PlayerEyeTrackingExtension = class(PlayerEyeTrackingExtension)
 
-function PlayerEyeTrackingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerEyeTrackingExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.physics_world = World.get_data(arg_1_0.world, "physics_world")
 	arg_1_0.unit = arg_1_2
@@ -37,7 +37,7 @@ function PlayerEyeTrackingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function PlayerEyeTrackingExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PlayerEyeTrackingExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if not rawget(_G, "Tobii") or not Application.user_setting("tobii_eyetracking") then
 		return
 	end
@@ -53,11 +53,11 @@ function PlayerEyeTrackingExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	arg_2_0:calc_gaze_forward()
 end
 
-function PlayerEyeTrackingExtension.set_eyetracking_options_opened(arg_3_0, arg_3_1)
+PlayerEyeTrackingExtension.set_eyetracking_options_opened = function (arg_3_0, arg_3_1)
 	arg_3_0.eyetracking_options_opened = arg_3_1
 end
 
-function PlayerEyeTrackingExtension.update_extended_view(arg_4_0, arg_4_1)
+PlayerEyeTrackingExtension.update_extended_view = function (arg_4_0, arg_4_1)
 	if arg_4_0.is_aiming then
 		arg_4_0.current_fade_out_time = arg_4_0.current_fade_out_time + arg_4_1
 
@@ -96,11 +96,11 @@ function PlayerEyeTrackingExtension.update_extended_view(arg_4_0, arg_4_1)
 	Managers.state.camera:set_tobii_extended_view(arg_4_0.extended_view.yaw, arg_4_0.extended_view.pitch)
 end
 
-function PlayerEyeTrackingExtension.get_extended_view(arg_5_0, arg_5_1)
+PlayerEyeTrackingExtension.get_extended_view = function (arg_5_0, arg_5_1)
 	return arg_5_0.extended_view.yaw, arg_5_0.extended_view.pitch
 end
 
-function PlayerEyeTrackingExtension.get_direction_without_extended_view(arg_6_0, arg_6_1)
+PlayerEyeTrackingExtension.get_direction_without_extended_view = function (arg_6_0, arg_6_1)
 	if not Application.user_setting("tobii_extended_view") then
 		return arg_6_1
 	end
@@ -114,7 +114,7 @@ function PlayerEyeTrackingExtension.get_direction_without_extended_view(arg_6_0,
 	return Quaternion.multiply(arg_6_1, var_6_4)
 end
 
-function PlayerEyeTrackingExtension.update_forward_rayhit(arg_7_0)
+PlayerEyeTrackingExtension.update_forward_rayhit = function (arg_7_0)
 	local var_7_0 = ScriptUnit.extension(arg_7_0.unit, "first_person_system")
 	local var_7_1 = var_7_0:current_position()
 	local var_7_2 = var_7_0:current_rotation()
@@ -132,7 +132,7 @@ function PlayerEyeTrackingExtension.update_forward_rayhit(arg_7_0)
 	end
 end
 
-function PlayerEyeTrackingExtension.update_gaze_rayhit(arg_8_0)
+PlayerEyeTrackingExtension.update_gaze_rayhit = function (arg_8_0)
 	local var_8_0 = ScriptUnit.extension(arg_8_0.unit, "first_person_system"):current_position()
 	local var_8_1 = arg_8_0:gaze_forward()
 	local var_8_2, var_8_3 = arg_8_0.physics_world:immediate_raycast(var_8_0 + var_8_1, var_8_1, 100, "closest", "collision_filter", "filter_ray_ping")
@@ -148,7 +148,7 @@ function PlayerEyeTrackingExtension.update_gaze_rayhit(arg_8_0)
 	end
 end
 
-function PlayerEyeTrackingExtension.calc_gaze_forward(arg_9_0)
+PlayerEyeTrackingExtension.calc_gaze_forward = function (arg_9_0)
 	local var_9_0 = ScriptUnit.extension(arg_9_0.unit, "first_person_system")
 	local var_9_1, var_9_2 = Tobii.get_gaze_point()
 	local var_9_3 = RESOLUTION_LOOKUP.res_w
@@ -165,46 +165,46 @@ function PlayerEyeTrackingExtension.calc_gaze_forward(arg_9_0)
 	arg_9_0.current_gaze_forward:store(var_9_12)
 end
 
-function PlayerEyeTrackingExtension.gaze_forward(arg_10_0)
+PlayerEyeTrackingExtension.gaze_forward = function (arg_10_0)
 	return arg_10_0.current_gaze_forward:unbox()
 end
 
-function PlayerEyeTrackingExtension.gaze_rotation(arg_11_0)
+PlayerEyeTrackingExtension.gaze_rotation = function (arg_11_0)
 	local var_11_0 = arg_11_0:gaze_forward()
 
 	return Quaternion.look(var_11_0, Vector3.up())
 end
 
-function PlayerEyeTrackingExtension.get_forward_rayhit(arg_12_0)
+PlayerEyeTrackingExtension.get_forward_rayhit = function (arg_12_0)
 	return arg_12_0.forward_rayhit_position and arg_12_0.forward_rayhit_position:unbox() or nil
 end
 
-function PlayerEyeTrackingExtension.get_gaze_rayhit(arg_13_0)
+PlayerEyeTrackingExtension.get_gaze_rayhit = function (arg_13_0)
 	arg_13_0:update_gaze_rayhit()
 
 	return arg_13_0.gaze_rayhit_position and arg_13_0.gaze_rayhit_position:unbox() or nil
 end
 
-function PlayerEyeTrackingExtension.get_is_aiming(arg_14_0)
+PlayerEyeTrackingExtension.get_is_aiming = function (arg_14_0)
 	return arg_14_0.is_aiming
 end
 
-function PlayerEyeTrackingExtension.set_is_aiming(arg_15_0, arg_15_1)
+PlayerEyeTrackingExtension.set_is_aiming = function (arg_15_0, arg_15_1)
 	arg_15_0.is_aiming = arg_15_1
 end
 
-function PlayerEyeTrackingExtension.get_aim_at_gaze_cancelled(arg_16_0)
+PlayerEyeTrackingExtension.get_aim_at_gaze_cancelled = function (arg_16_0)
 	return arg_16_0.is_aiming_cancelled
 end
 
-function PlayerEyeTrackingExtension.set_aim_at_gaze_cancelled(arg_17_0, arg_17_1)
+PlayerEyeTrackingExtension.set_aim_at_gaze_cancelled = function (arg_17_0, arg_17_1)
 	arg_17_0.is_aiming_cancelled = arg_17_1
 end
 
-function PlayerEyeTrackingExtension.get_is_feature_enabled(arg_18_0, arg_18_1)
+PlayerEyeTrackingExtension.get_is_feature_enabled = function (arg_18_0, arg_18_1)
 	return rawget(_G, "Tobii") and Application.user_setting("tobii_eyetracking") and arg_18_0.is_connected and Application.user_setting(arg_18_1) and Tobii.get_time_since_last_gaze_point() < 5
 end
 
-function PlayerEyeTrackingExtension.get_is_connected(arg_19_0)
+PlayerEyeTrackingExtension.get_is_connected = function (arg_19_0)
 	return arg_19_0.is_connected
 end

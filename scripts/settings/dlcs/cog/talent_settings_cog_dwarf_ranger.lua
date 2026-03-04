@@ -128,7 +128,7 @@ local var_0_2 = {
 				buff_to_remove = "bardin_engineer_pump_buff_power",
 				on_max_stacks_func = "add_remove_buffs",
 				remove_buff_func = "remove_buff_local",
-				duration_modifier_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+				duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					if ScriptUnit.extension(arg_1_0, "talent_system"):has_talent("bardin_engineer_pump_buff_long") then
 						return nil, nil
 					end
@@ -168,7 +168,7 @@ local var_0_2 = {
 			{
 				max_stacks = 5,
 				stat_buff = "power_level",
-				apply_condition = function(arg_2_0, arg_2_1, arg_2_2)
+				apply_condition = function (arg_2_0, arg_2_1, arg_2_2)
 					return ScriptUnit.extension(arg_2_0, "talent_system"):has_talent("bardin_engineer_pump_buff_long")
 				end
 			}

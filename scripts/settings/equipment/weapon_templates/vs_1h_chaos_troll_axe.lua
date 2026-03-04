@@ -151,10 +151,10 @@ var_0_5.actions = {
 			dedicated_target_range = 2,
 			uninterruptible = true,
 			anim_event = "attack_cleave_charge",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 				return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 			end,
-			condition_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			condition_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				return not ScriptUnit.has_extension(arg_2_0, "ghost_mode_system"):is_in_ghost_mode()
 			end,
 			total_time = math.huge,
@@ -209,7 +209,7 @@ var_0_5.actions = {
 			dedicated_target_range = 2,
 			uninterruptible = true,
 			anim_event = "attack_cleave_charge",
-			anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 				return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 			end,
 			total_time = math.huge,
@@ -273,7 +273,7 @@ var_0_5.actions = {
 			uninterruptible = true,
 			anim_event = "attack_sweep",
 			total_time = 2,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 			end,
 			knockback_data = var_0_7.frenzy,
@@ -393,7 +393,7 @@ var_0_5.actions = {
 			anim_event = "attack_shove",
 			damage_profile_inner = "medium_push",
 			total_time = 2.4,
-			anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+			anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 				return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
 			end,
 			knockback_data = var_0_7.frenzy,
@@ -500,7 +500,7 @@ var_0_5.actions = {
 			anim_event = "attack_cleave",
 			hit_stop_anim = "attack_hit",
 			total_time = 2.57,
-			anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+			anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 				return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
 			end,
 			range_mod = var_0_4 * 1.65,
@@ -523,7 +523,7 @@ var_0_5.actions = {
 					release_required = var_0_2
 				}
 			},
-			enter_function = function(arg_7_0, arg_7_1)
+			enter_function = function (arg_7_0, arg_7_1)
 				return arg_7_1:reset_release_input()
 			end,
 			baked_sweep = {

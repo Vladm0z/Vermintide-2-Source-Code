@@ -24,7 +24,7 @@ local var_0_1 = {
 	"ProjectileEtherealSkullLocomotionExtension"
 }
 
-function ProjectileLocomotionSystem.init(arg_1_0, arg_1_1, arg_1_2)
+ProjectileLocomotionSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ProjectileLocomotionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -36,7 +36,7 @@ function ProjectileLocomotionSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._server_position_corrected_pickups = {}
 end
 
-function ProjectileLocomotionSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+ProjectileLocomotionSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
 	if arg_2_3 == "ProjectilePhysicsHuskLocomotionExtension" or arg_2_3 == "ProjectilePhysicsUnitLocomotionExtension" then
 		arg_2_0._server_position_corrected_pickups[arg_2_2] = arg_2_2
 	end
@@ -44,13 +44,13 @@ function ProjectileLocomotionSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, 
 	return ProjectileLocomotionSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
 end
 
-function ProjectileLocomotionSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2, ...)
+ProjectileLocomotionSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2, ...)
 	arg_3_0._server_position_corrected_pickups[arg_3_1] = nil
 
 	return ProjectileLocomotionSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2, ...)
 end
 
-function ProjectileLocomotionSystem.update(arg_4_0, arg_4_1, arg_4_2)
+ProjectileLocomotionSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
 	ProjectileLocomotionSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 
 	if arg_4_0.is_server then
@@ -60,11 +60,11 @@ function ProjectileLocomotionSystem.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ProjectileLocomotionSystem.destroy(arg_5_0)
+ProjectileLocomotionSystem.destroy = function (arg_5_0)
 	arg_5_0.network_event_delegate:unregister(arg_5_0)
 end
 
-function ProjectileLocomotionSystem._server_sync_position_rotation(arg_6_0, arg_6_1, arg_6_2)
+ProjectileLocomotionSystem._server_sync_position_rotation = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.network:game()
 
 	if var_6_0 then
@@ -89,7 +89,7 @@ end
 local var_0_2 = 0.05
 local var_0_3 = 5
 
-function ProjectileLocomotionSystem._client_validate_position_rotation(arg_7_0, arg_7_1, arg_7_2)
+ProjectileLocomotionSystem._client_validate_position_rotation = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.state.network:game()
 
 	if var_7_0 then
@@ -116,13 +116,13 @@ function ProjectileLocomotionSystem._client_validate_position_rotation(arg_7_0, 
 	end
 end
 
-function ProjectileLocomotionSystem.rpc_set_projectile_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+ProjectileLocomotionSystem.rpc_set_projectile_state = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0.unit_storage:unit(arg_8_2)
 
 	ScriptUnit.extension(var_8_0, "projectile_locomotion_system"):set_projectile_state(var_8_0, arg_8_3)
 end
 
-function ProjectileLocomotionSystem.rpc_projectile_stick_unit(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ProjectileLocomotionSystem.rpc_projectile_stick_unit = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
 	local var_9_1 = ScriptUnit.extension(var_9_0, "projectile_locomotion_system")
 	local var_9_2 = arg_9_0.unit_storage:unit(arg_9_3)
@@ -136,7 +136,7 @@ function ProjectileLocomotionSystem.rpc_projectile_stick_unit(arg_9_0, arg_9_1, 
 	end
 end
 
-function ProjectileLocomotionSystem.rpc_projectile_stick_position(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ProjectileLocomotionSystem.rpc_projectile_stick_position = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_2)
 
 	ScriptUnit.extension(var_10_0, "projectile_locomotion_system"):stick_to_position(arg_10_3)
@@ -148,7 +148,7 @@ function ProjectileLocomotionSystem.rpc_projectile_stick_position(arg_10_0, arg_
 	end
 end
 
-function ProjectileLocomotionSystem.rpc_hot_join_sync_projectile_sticky(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+ProjectileLocomotionSystem.rpc_hot_join_sync_projectile_sticky = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0.unit_storage:unit(arg_11_2)
 
 	if var_11_0 then

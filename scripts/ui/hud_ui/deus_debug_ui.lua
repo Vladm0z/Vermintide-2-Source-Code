@@ -2,27 +2,27 @@
 
 DeusDebugUI = class(DeusDebugUI)
 
-function DeusDebugUI.init(arg_1_0, arg_1_1, arg_1_2)
+DeusDebugUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._world = arg_1_2.world_manager:world("level_world")
 	arg_1_0._gui = World.create_screen_gui(arg_1_0._world, "immediate", "material", "materials/fonts/gw_fonts")
 end
 
-function DeusDebugUI.destroy(arg_2_0)
+DeusDebugUI.destroy = function (arg_2_0)
 	World.destroy_gui(arg_2_0._world, arg_2_0._gui)
 
 	arg_2_0._gui = nil
 end
 
-function DeusDebugUI.update(arg_3_0, arg_3_1, arg_3_2)
+DeusDebugUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_draw(arg_3_1, arg_3_2)
 end
 
-function DeusDebugUI._draw(arg_4_0, arg_4_1, arg_4_2)
+DeusDebugUI._draw = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_draw_left_side(arg_4_1, arg_4_2)
 	arg_4_0:_draw_right_side(arg_4_1, arg_4_2)
 end
 
-function DeusDebugUI._draw_right_side(arg_5_0, arg_5_1, arg_5_2)
+DeusDebugUI._draw_right_side = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = "materials/fonts/arial"
 	local var_5_1 = "arial"
 	local var_5_2 = 12
@@ -59,7 +59,7 @@ function DeusDebugUI._draw_right_side(arg_5_0, arg_5_1, arg_5_2)
 	Gui.text(arg_5_0._gui, var_5_7, var_5_0, var_5_2, var_5_1, Vector3(var_5_14, var_5_15, 0), Color(255, 255, 255, 0))
 end
 
-function DeusDebugUI._draw_left_side(arg_6_0, arg_6_1, arg_6_2)
+DeusDebugUI._draw_left_side = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 	if not var_6_0 then

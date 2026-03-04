@@ -6,7 +6,7 @@ require("scripts/ui/help_screen/help_screen_settings")
 
 HelpScreenUI = class(HelpScreenUI)
 
-function HelpScreenUI.init(arg_1_0, arg_1_1)
+HelpScreenUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
@@ -35,7 +35,7 @@ function HelpScreenUI.init(arg_1_0, arg_1_1)
 	arg_1_0._current_index = 1
 end
 
-function HelpScreenUI._create_ui_elements(arg_2_0)
+HelpScreenUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	arg_2_0:_set_page(arg_2_0._current_index)
@@ -45,7 +45,7 @@ end
 
 DO_RELOAD = true
 
-function HelpScreenUI.update(arg_3_0, arg_3_1)
+HelpScreenUI.update = function (arg_3_0, arg_3_1)
 	if not arg_3_0._current_view then
 		return
 	end
@@ -58,9 +58,9 @@ function HelpScreenUI.update(arg_3_0, arg_3_1)
 	arg_3_0:_draw(arg_3_1)
 end
 
-function HelpScreenUI.show_help(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+HelpScreenUI.show_help = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_3 then
-		-- block empty
+		-- Nothing
 	end
 
 	if HelpScreens[arg_4_1] then
@@ -86,11 +86,11 @@ function HelpScreenUI.show_help(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function HelpScreenUI.hide_help(arg_5_0)
+HelpScreenUI.hide_help = function (arg_5_0)
 	arg_5_0:_close_help()
 end
 
-function HelpScreenUI._set_page(arg_6_0, arg_6_1)
+HelpScreenUI._set_page = function (arg_6_0, arg_6_1)
 	local var_6_0 = HelpScreens[arg_6_0._current_view][arg_6_1]
 
 	arg_6_0._help_screen_widget = UIWidget.init(var_0_0.help_screen_widget_func(#HelpScreens[arg_6_0._current_view], arg_6_1))
@@ -100,7 +100,7 @@ function HelpScreenUI._set_page(arg_6_0, arg_6_1)
 	end
 end
 
-function HelpScreenUI._draw(arg_7_0, arg_7_1)
+HelpScreenUI._draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_renderer
 	local var_7_1 = arg_7_0._ui_top_renderer
 	local var_7_2 = arg_7_0._ui_scenegraph
@@ -112,7 +112,7 @@ function HelpScreenUI._draw(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_1)
 end
 
-function HelpScreenUI._update_input(arg_8_0, arg_8_1)
+HelpScreenUI._update_input = function (arg_8_0, arg_8_1)
 	if arg_8_0._input_service:get("move_left", true) then
 		arg_8_0._current_index = math.max(arg_8_0._current_index - 1, 1)
 
@@ -130,7 +130,7 @@ function HelpScreenUI._update_input(arg_8_0, arg_8_1)
 	end
 end
 
-function HelpScreenUI._close_help(arg_9_0)
+HelpScreenUI._close_help = function (arg_9_0)
 	if arg_9_0._disabled_input_service_name then
 		Managers.input:device_unblock_service("gamepad", 1, arg_9_0._disabled_input_service_name)
 		Managers.input:device_unblock_service("keyboard", 1, arg_9_0._disabled_input_service_name)
@@ -142,6 +142,6 @@ function HelpScreenUI._close_help(arg_9_0)
 	arg_9_0._disabled_input_service_name = nil
 end
 
-function HelpScreenUI.destroy(arg_10_0)
+HelpScreenUI.destroy = function (arg_10_0)
 	return
 end

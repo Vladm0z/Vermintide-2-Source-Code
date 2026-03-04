@@ -38,7 +38,7 @@ CameraManager.NODE_PROPERTY_MAP = {
 	"pitch_offset"
 }
 
-function CameraManager.init(arg_1_0, arg_1_1)
+CameraManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._scatter_system = World.scatter_system(arg_1_0._world)
 	arg_1_0._node_trees = {}
@@ -77,13 +77,13 @@ function CameraManager.init(arg_1_0, arg_1_1)
 	}
 end
 
-function CameraManager.destroy(arg_2_0)
+CameraManager.destroy = function (arg_2_0)
 	arg_2_0.mood_handler:destroy()
 
 	arg_2_0.mood_handler = nil
 end
 
-function CameraManager.set_shadow_lights(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+CameraManager.set_shadow_lights = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._shadow_lights_active = arg_3_1
 	arg_3_0._shadow_lights_max_active = arg_3_2
 
@@ -94,14 +94,14 @@ function CameraManager.set_shadow_lights(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function CameraManager.set_elevation_offset(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+CameraManager.set_elevation_offset = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0._listener_elevation_offset = arg_4_1
 	arg_4_0._listener_elevation_scale = arg_4_2
 	arg_4_0._listener_elevation_min = arg_4_3 or -math.huge
 	arg_4_0._listener_elevation_max = arg_4_4 or math.huge
 end
 
-function CameraManager.register_shadow_lights(arg_5_0, arg_5_1)
+CameraManager.register_shadow_lights = function (arg_5_0, arg_5_1)
 	local var_5_0 = LevelHelper:current_level(arg_5_0._world)
 
 	for iter_5_0, iter_5_1 in pairs(arg_5_1.units) do
@@ -118,7 +118,7 @@ function CameraManager.register_shadow_lights(arg_5_0, arg_5_1)
 	end
 end
 
-function CameraManager._set_shadow_light(arg_6_0, arg_6_1, arg_6_2)
+CameraManager._set_shadow_light = function (arg_6_0, arg_6_1, arg_6_2)
 	if not GameSettingsDevelopment.disable_shadow_lights_system then
 		for iter_6_0 = 1, Unit.num_lights(arg_6_1) do
 			local var_6_0 = Unit.light(arg_6_1, iter_6_0 - 1)
@@ -128,7 +128,7 @@ function CameraManager._set_shadow_light(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function CameraManager._update_shadow_lights(arg_7_0, arg_7_1, arg_7_2)
+CameraManager._update_shadow_lights = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._shadow_lights
 
 	if arg_7_0._shadow_lights_active and arg_7_2 == arg_7_0._shadow_lights_viewport and not table.is_empty(var_7_0) then
@@ -142,7 +142,7 @@ function CameraManager._update_shadow_lights(arg_7_0, arg_7_1, arg_7_2)
 			iter_7_1.distance = Vector3.length(Unit.world_position(var_7_2, 0) - arg_7_0:camera_position(arg_7_2))
 		end
 
-		table.sort(var_7_0, function(arg_8_0, arg_8_1)
+		table.sort(var_7_0, function (arg_8_0, arg_8_1)
 			return arg_8_0.distance < arg_8_1.distance
 		end)
 
@@ -162,7 +162,7 @@ function CameraManager._update_shadow_lights(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function CameraManager.add_viewport(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+CameraManager.add_viewport = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0._scatter_system_observers[arg_9_1] = ScatterSystem.make_observer(arg_9_0._scatter_system, arg_9_2, arg_9_3)
 	arg_9_0._node_trees[arg_9_1] = {}
 	arg_9_0._variables[arg_9_1] = {}
@@ -174,12 +174,12 @@ function CameraManager.add_viewport(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0._environment_blenders[arg_9_1] = EnvironmentBlender:new(arg_9_0._world, var_9_0)
 end
 
-function CameraManager.create_viewport(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+CameraManager.create_viewport = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	ScriptWorld.create_viewport(arg_10_0._world, arg_10_1, "default", 1, arg_10_2, arg_10_3, true)
 	arg_10_0:add_viewport(arg_10_1, arg_10_2, arg_10_3)
 end
 
-function CameraManager.destroy_viewport(arg_11_0, arg_11_1)
+CameraManager.destroy_viewport = function (arg_11_0, arg_11_1)
 	ScatterSystem.destroy_observer(arg_11_0._scatter_system, arg_11_0._scatter_system_observers[arg_11_1])
 
 	arg_11_0._scatter_system_observers[arg_11_1] = nil
@@ -192,7 +192,7 @@ function CameraManager.destroy_viewport(arg_11_0, arg_11_1)
 	arg_11_0._environment_blenders[arg_11_1] = nil
 end
 
-function CameraManager.load_node_tree(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CameraManager.load_node_tree = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = CameraSettings[arg_12_3]
 	local var_12_1 = {}
 	local var_12_2 = arg_12_0:_setup_child_nodes(var_12_1, arg_12_1, arg_12_2, nil, var_12_0)
@@ -204,7 +204,7 @@ function CameraManager.load_node_tree(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0._node_trees[arg_12_1][arg_12_2] = var_12_3
 end
 
-function CameraManager.node_tree_loaded(arg_13_0, arg_13_1, arg_13_2)
+CameraManager.node_tree_loaded = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._node_trees[arg_13_1] and arg_13_0._node_trees[arg_13_1][arg_13_2] then
 		return true
 	end
@@ -212,73 +212,73 @@ function CameraManager.node_tree_loaded(arg_13_0, arg_13_1, arg_13_2)
 	return false
 end
 
-function CameraManager.debug_reload_tree(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+CameraManager.debug_reload_tree = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	arg_14_0:load_node_tree(arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0:set_node_tree_root_unit(arg_14_1, arg_14_3, arg_14_5)
 	arg_14_0:set_camera_node(arg_14_1, arg_14_3, arg_14_4)
 end
 
-function CameraManager.set_node_tree_root_unit(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+CameraManager.set_node_tree_root_unit = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	arg_15_0._node_trees[arg_15_1][arg_15_2].root_node:set_root_unit(arg_15_3, arg_15_4, arg_15_5)
 end
 
-function CameraManager.current_node_tree_root_unit(arg_16_0, arg_16_1)
+CameraManager.current_node_tree_root_unit = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._current_trees[arg_16_1]
 
 	return arg_16_0._node_trees[arg_16_1][var_16_0].root_node:root_unit()
 end
 
-function CameraManager.set_node_tree_root_position(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+CameraManager.set_node_tree_root_position = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0._node_trees[arg_17_1][arg_17_2].root_node:set_root_position(arg_17_3)
 end
 
-function CameraManager.set_node_tree_root_rotation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CameraManager.set_node_tree_root_rotation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0._node_trees[arg_18_1][arg_18_2].root_node:set_root_rotation(arg_18_3)
 end
 
-function CameraManager.set_node_tree_root_vertical_fov(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+CameraManager.set_node_tree_root_vertical_fov = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0._node_trees[arg_19_1][arg_19_2].root_node:set_root_vertical_fov(arg_19_3)
 end
 
-function CameraManager.set_node_tree_root_near_range(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+CameraManager.set_node_tree_root_near_range = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_0._node_trees[arg_20_1][arg_20_2].root_node:set_root_near_range(arg_20_3)
 end
 
-function CameraManager.set_node_tree_root_far_range(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+CameraManager.set_node_tree_root_far_range = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	arg_21_0._node_trees[arg_21_1][arg_21_2].root_node:set_root_far_range(arg_21_3)
 end
 
-function CameraManager.set_node_tree_root_dof_enabled(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+CameraManager.set_node_tree_root_dof_enabled = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	arg_22_0._node_trees[arg_22_1][arg_22_2].root_node:set_root_dof_enabled(arg_22_3)
 end
 
-function CameraManager.set_node_tree_root_focal_distance(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+CameraManager.set_node_tree_root_focal_distance = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	arg_23_0._node_trees[arg_23_1][arg_23_2].root_node:set_root_focal_distance(arg_23_3)
 end
 
-function CameraManager.set_node_tree_root_focal_region(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+CameraManager.set_node_tree_root_focal_region = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	arg_24_0._node_trees[arg_24_1][arg_24_2].root_node:set_root_focal_region(arg_24_3)
 end
 
-function CameraManager.set_node_tree_root_focal_padding(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+CameraManager.set_node_tree_root_focal_padding = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	arg_25_0._node_trees[arg_25_1][arg_25_2].root_node:set_root_focal_padding(arg_25_3)
 end
 
-function CameraManager.set_node_tree_root_focal_scale(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+CameraManager.set_node_tree_root_focal_scale = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	arg_26_0._node_trees[arg_26_1][arg_26_2].root_node:set_root_focal_scale(arg_26_3)
 end
 
-function CameraManager.current_camera_node(arg_27_0, arg_27_1)
+CameraManager.current_camera_node = function (arg_27_0, arg_27_1)
 	return arg_27_0._camera_nodes[arg_27_1][#arg_27_0._camera_nodes[arg_27_1]].node:name()
 end
 
-function CameraManager.tree_node(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+CameraManager.tree_node = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	return arg_28_0._node_trees[arg_28_1][arg_28_2].nodes[arg_28_3]
 end
 
 local var_0_0 = {}
 
-function CameraManager.shading_callback(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+CameraManager.shading_callback = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	if arg_29_0._world == arg_29_1 then
 		local var_29_0 = arg_29_0._shading_environment[arg_29_3] or arg_29_0._shading_environment[Viewport.get_data(arg_29_3, "overridden_viewport")] or var_0_0
 
@@ -366,15 +366,15 @@ function CameraManager.shading_callback(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	end
 end
 
-function CameraManager._update_level_particle_effects(arg_30_0, arg_30_1)
+CameraManager._update_level_particle_effects = function (arg_30_0, arg_30_1)
 	for iter_30_0, iter_30_1 in pairs(arg_30_0._level_particle_effect_ids) do
 		World.move_particles(arg_30_0._world, iter_30_0, arg_30_0:camera_position(arg_30_1))
 	end
 end
 
-function CameraManager.set_camera_node(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+CameraManager.set_camera_node = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	if not script_data.camera_debug and script_data.camera_node_debug then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_31_0 = arg_31_0._current_trees[arg_31_1]
@@ -428,56 +428,56 @@ function CameraManager.set_camera_node(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	var_31_1[#var_31_1 + 1] = var_31_4
 end
 
-function CameraManager.set_frozen(arg_32_0, arg_32_1)
+CameraManager.set_frozen = function (arg_32_0, arg_32_1)
 	arg_32_0._frozen = arg_32_1
 end
 
-function CameraManager.is_in_view(arg_33_0, arg_33_1, arg_33_2)
+CameraManager.is_in_view = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = ScriptWorld.viewport(arg_33_0._world, arg_33_1)
 	local var_33_1 = ScriptViewport.camera(var_33_0)
 
 	return Camera.inside_frustum(var_33_1, arg_33_2) > 0
 end
 
-function CameraManager._remove_camera_node(arg_34_0, arg_34_1, arg_34_2)
+CameraManager._remove_camera_node = function (arg_34_0, arg_34_1, arg_34_2)
 	for iter_34_0 = 1, arg_34_2 do
 		table.remove(arg_34_1, 1).node:set_active(false)
 	end
 end
 
-function CameraManager.camera_position(arg_35_0, arg_35_1)
+CameraManager.camera_position = function (arg_35_0, arg_35_1)
 	local var_35_0 = ScriptWorld.viewport(arg_35_0._world, arg_35_1)
 	local var_35_1 = ScriptViewport.camera(var_35_0)
 
 	return Camera.world_position(var_35_1)
 end
 
-function CameraManager.camera_rotation(arg_36_0, arg_36_1)
+CameraManager.camera_rotation = function (arg_36_0, arg_36_1)
 	local var_36_0 = ScriptWorld.viewport(arg_36_0._world, arg_36_1)
 	local var_36_1 = ScriptViewport.camera(var_36_0)
 
 	return Camera.world_rotation(var_36_1)
 end
 
-function CameraManager.camera_pose(arg_37_0, arg_37_1)
+CameraManager.camera_pose = function (arg_37_0, arg_37_1)
 	local var_37_0 = ScriptWorld.viewport(arg_37_0._world, arg_37_1)
 	local var_37_1 = ScriptViewport.camera(var_37_0)
 
 	return Camera.world_pose(var_37_1)
 end
 
-function CameraManager.fov(arg_38_0, arg_38_1)
+CameraManager.fov = function (arg_38_0, arg_38_1)
 	local var_38_0 = ScriptWorld.viewport(arg_38_0._world, arg_38_1)
 	local var_38_1 = ScriptViewport.camera(var_38_0)
 
 	return Camera.vertical_fov(var_38_1)
 end
 
-function CameraManager.has_viewport(arg_39_0, arg_39_1)
+CameraManager.has_viewport = function (arg_39_0, arg_39_1)
 	return ScriptWorld.has_viewport(arg_39_0._world, arg_39_1)
 end
 
-function CameraManager.aim_rotation(arg_40_0, arg_40_1)
+CameraManager.aim_rotation = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._camera_nodes[arg_40_1]
 	local var_40_1 = arg_40_0:_current_node(var_40_0):root_node()
 	local var_40_2 = var_40_1:aim_pitch()
@@ -494,7 +494,7 @@ function CameraManager.aim_rotation(arg_40_0, arg_40_1)
 	end
 end
 
-function CameraManager._setup_child_nodes(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
+CameraManager._setup_child_nodes = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
 	local var_41_0 = arg_41_5._node
 	local var_41_1 = arg_41_0:_setup_node(var_41_0, arg_41_4, arg_41_6)
 
@@ -510,7 +510,7 @@ function CameraManager._setup_child_nodes(arg_41_0, arg_41_1, arg_41_2, arg_41_3
 	return var_41_1
 end
 
-function CameraManager._setup_node(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+CameraManager._setup_node = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = rawget(_G, arg_42_1.class):new(arg_42_3)
 
 	var_42_0:parse_parameters(arg_42_1, arg_42_2)
@@ -522,7 +522,7 @@ function CameraManager._setup_node(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	return var_42_0
 end
 
-function CameraManager.update(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+CameraManager.update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	if not GameSettingsDevelopment.disable_shadow_lights_system then
 		arg_43_0:_update_shadow_lights(arg_43_1, arg_43_3)
 	end
@@ -550,15 +550,15 @@ function CameraManager.update(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	arg_43_0._environment_blenders[arg_43_3]:update(arg_43_1, arg_43_2)
 end
 
-function CameraManager.set_fov_multiplier(arg_44_0, arg_44_1)
+CameraManager.set_fov_multiplier = function (arg_44_0, arg_44_1)
 	arg_44_0._fov_multiplier = arg_44_1
 end
 
-function CameraManager.set_additional_fov_multiplier(arg_45_0, arg_45_1)
+CameraManager.set_additional_fov_multiplier = function (arg_45_0, arg_45_1)
 	arg_45_0._additional_fov_multiplier = arg_45_1
 end
 
-function CameraManager.set_additional_fov_multiplier_with_lerp_time(arg_46_0, arg_46_1, arg_46_2)
+CameraManager.set_additional_fov_multiplier_with_lerp_time = function (arg_46_0, arg_46_1, arg_46_2)
 	arg_46_0._additional_fov_multiplier_data = {
 		current_lerp_time = 0,
 		total_lerp_time = arg_46_2,
@@ -566,7 +566,7 @@ function CameraManager.set_additional_fov_multiplier_with_lerp_time(arg_46_0, ar
 	}
 end
 
-function CameraManager.set_pitch_yaw(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+CameraManager.set_pitch_yaw = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = arg_47_0._node_trees[arg_47_1]
 
 	for iter_47_0, iter_47_1 in pairs(var_47_0) do
@@ -575,15 +575,15 @@ function CameraManager.set_pitch_yaw(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	end
 end
 
-function CameraManager.set_variable(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+CameraManager.set_variable = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	arg_48_0._variables[arg_48_1][arg_48_2] = arg_48_3
 end
 
-function CameraManager.variable(arg_49_0, arg_49_1, arg_49_2)
+CameraManager.variable = function (arg_49_0, arg_49_1, arg_49_2)
 	return arg_49_0._variables[arg_49_1][arg_49_2]
 end
 
-function CameraManager.post_update(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+CameraManager.post_update = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	if arg_50_0._frozen then
 		return
 	end
@@ -599,7 +599,7 @@ function CameraManager.post_update(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	arg_50_0:_update_sound_listener(arg_50_3)
 end
 
-function CameraManager.force_update_nodes(arg_51_0, arg_51_1, arg_51_2)
+CameraManager.force_update_nodes = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0 = arg_51_0._node_trees[arg_51_2]
 	local var_51_1 = arg_51_0._variables[arg_51_2]
 
@@ -611,7 +611,7 @@ end
 local var_0_1 = 0.01
 local var_0_2 = 20
 
-function CameraManager._smooth_camera_collision(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+CameraManager._smooth_camera_collision = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 	local var_52_0 = World.get_data(arg_52_0._world, "physics_world")
 	local var_52_1 = arg_52_2
 	local var_52_2 = arg_52_1
@@ -723,7 +723,7 @@ function CameraManager._smooth_camera_collision(arg_52_0, arg_52_1, arg_52_2, ar
 	end
 end
 
-function CameraManager._update_nodes(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+CameraManager._update_nodes = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 	local var_53_0 = arg_53_0._node_trees[arg_53_2][arg_53_3]
 	local var_53_1 = arg_53_0._camera_nodes[arg_53_2]
 	local var_53_2 = arg_53_0:_current_node(var_53_1)
@@ -731,11 +731,11 @@ function CameraManager._update_nodes(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg
 	var_53_0.root_node:update(arg_53_1, arg_53_4, var_53_2:pitch_speed(), var_53_2:yaw_speed())
 end
 
-function CameraManager._current_node(arg_54_0, arg_54_1)
+CameraManager._current_node = function (arg_54_0, arg_54_1)
 	return arg_54_1[#arg_54_1].node
 end
 
-function CameraManager.camera_effect_sequence_event(arg_55_0, arg_55_1, arg_55_2)
+CameraManager.camera_effect_sequence_event = function (arg_55_0, arg_55_1, arg_55_2)
 	if not Application.user_setting("camera_shake") then
 		return
 	end
@@ -778,7 +778,7 @@ function CameraManager.camera_effect_sequence_event(arg_55_0, arg_55_1, arg_55_2
 	end
 end
 
-function CameraManager.camera_effect_shake_event(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+CameraManager.camera_effect_shake_event = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	if not Application.user_setting("camera_shake") then
 		return
 	end
@@ -814,15 +814,15 @@ function CameraManager.camera_effect_shake_event(arg_56_0, arg_56_1, arg_56_2, a
 	return var_56_0
 end
 
-function CameraManager.stop_camera_effect_shake_event(arg_57_0, arg_57_1)
+CameraManager.stop_camera_effect_shake_event = function (arg_57_0, arg_57_1)
 	arg_57_0._shake_event_settings[arg_57_1] = nil
 end
 
-function CameraManager.is_recoiling(arg_58_0)
+CameraManager.is_recoiling = function (arg_58_0)
 	return arg_58_0._recoil_event_settings and table.size(arg_58_0._recoil_event_settings) > 0, arg_58_0._total_recoil_offset
 end
 
-function CameraManager.weapon_recoil(arg_59_0, arg_59_1)
+CameraManager.weapon_recoil = function (arg_59_0, arg_59_1)
 	local var_59_0 = {}
 	local var_59_1 = arg_59_1.climb_start_time
 	local var_59_2 = arg_59_1.climb_end_time
@@ -851,15 +851,15 @@ function CameraManager.weapon_recoil(arg_59_0, arg_59_1)
 	return var_59_0
 end
 
-function CameraManager.stop_weapon_recoil(arg_60_0, arg_60_1)
+CameraManager.stop_weapon_recoil = function (arg_60_0, arg_60_1)
 	arg_60_0._recoil_event_settings[arg_60_1] = nil
 end
 
-function CameraManager.set_offset(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+CameraManager.set_offset = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	arg_61_0._camera_offset = arg_61_0._camera_offset and arg_61_0._camera_offset:store(Vector3(arg_61_1, arg_61_2, arg_61_3)) or Vector3Box(arg_61_1, arg_61_2, arg_61_3)
 end
 
-function CameraManager._apply_offset(arg_62_0, arg_62_1, arg_62_2)
+CameraManager._apply_offset = function (arg_62_0, arg_62_1, arg_62_2)
 	local var_62_0 = arg_62_1
 	local var_62_1 = arg_62_0._camera_offset and arg_62_0._camera_offset:unbox() or Vector3(0, 0, 0)
 	local var_62_2 = var_62_1.x
@@ -874,7 +874,7 @@ function CameraManager._apply_offset(arg_62_0, arg_62_1, arg_62_2)
 	return var_62_0
 end
 
-function CameraManager._update_additional_fov_multiplier(arg_63_0, arg_63_1)
+CameraManager._update_additional_fov_multiplier = function (arg_63_0, arg_63_1)
 	local var_63_0 = arg_63_0._additional_fov_multiplier_data
 
 	if not var_63_0 then
@@ -893,7 +893,7 @@ function CameraManager._update_additional_fov_multiplier(arg_63_0, arg_63_1)
 	arg_63_0._additional_fov_multiplier = var_63_2
 end
 
-function CameraManager._update_camera(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+CameraManager._update_camera = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	local var_64_0 = ScriptWorld.viewport(arg_64_0._world, arg_64_3)
 	local var_64_1 = ScriptViewport.camera(var_64_0)
 	local var_64_2 = ScriptViewport.shadow_cull_camera(var_64_0)
@@ -935,7 +935,7 @@ function CameraManager._update_camera(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	end
 end
 
-function CameraManager._apply_sequence_event(arg_65_0, arg_65_1, arg_65_2)
+CameraManager._apply_sequence_event = function (arg_65_0, arg_65_1, arg_65_2)
 	local var_65_0 = arg_65_0._sequence_event_settings
 	local var_65_1
 
@@ -963,7 +963,7 @@ function CameraManager._apply_sequence_event(arg_65_0, arg_65_1, arg_65_2)
 	end
 end
 
-function CameraManager._calculate_sequence_event_values_recovery(arg_66_0, arg_66_1)
+CameraManager._calculate_sequence_event_values_recovery = function (arg_66_0, arg_66_1)
 	local var_66_0 = {
 		yaw = 0,
 		z = 0,
@@ -991,7 +991,7 @@ function CameraManager._calculate_sequence_event_values_recovery(arg_66_0, arg_6
 	return var_66_0
 end
 
-function CameraManager._calculate_sequence_event_values_normal(arg_67_0, arg_67_1, arg_67_2)
+CameraManager._calculate_sequence_event_values_normal = function (arg_67_0, arg_67_1, arg_67_2)
 	local var_67_0 = {
 		yaw = 0,
 		z = 0,
@@ -1027,7 +1027,7 @@ function CameraManager._calculate_sequence_event_values_normal(arg_67_0, arg_67_
 	return var_67_0
 end
 
-function CameraManager._calculate_sequence_event_position(arg_68_0, arg_68_1, arg_68_2)
+CameraManager._calculate_sequence_event_position = function (arg_68_0, arg_68_1, arg_68_2)
 	local var_68_0 = arg_68_1.position
 	local var_68_1 = arg_68_1.rotation
 	local var_68_2 = arg_68_2.x * Quaternion.right(var_68_1)
@@ -1037,7 +1037,7 @@ function CameraManager._calculate_sequence_event_position(arg_68_0, arg_68_1, ar
 	return var_68_0 + var_68_2 + var_68_3 + var_68_4
 end
 
-function CameraManager._calculate_sequence_event_rotation(arg_69_0, arg_69_1, arg_69_2)
+CameraManager._calculate_sequence_event_rotation = function (arg_69_0, arg_69_1, arg_69_2)
 	local var_69_0 = arg_69_1.rotation
 	local var_69_1 = math.pi / 180
 	local var_69_2 = Quaternion(Vector3.up(), arg_69_2.yaw * var_69_1)
@@ -1048,7 +1048,7 @@ function CameraManager._calculate_sequence_event_rotation(arg_69_0, arg_69_1, ar
 	return Quaternion.multiply(var_69_0, var_69_5)
 end
 
-function CameraManager._apply_shake_event(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+CameraManager._apply_shake_event = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 	local var_70_0 = arg_70_0._shake_event_settings
 	local var_70_1 = arg_70_1.start_time
 	local var_70_2 = arg_70_1.end_time
@@ -1076,7 +1076,7 @@ function CameraManager._apply_shake_event(arg_70_0, arg_70_1, arg_70_2, arg_70_3
 	end
 end
 
-function CameraManager._apply_recoil_event(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+CameraManager._apply_recoil_event = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 	local var_71_0 = arg_71_0._recoil_event_settings
 	local var_71_1 = arg_71_1.vertical_climb
 	local var_71_2 = arg_71_1.horizontal_climb
@@ -1121,7 +1121,7 @@ function CameraManager._apply_recoil_event(arg_71_0, arg_71_1, arg_71_2, arg_71_
 	return var_71_13
 end
 
-function CameraManager._apply_extended_view(arg_72_0, arg_72_1)
+CameraManager._apply_extended_view = function (arg_72_0, arg_72_1)
 	local var_72_0 = Quaternion(Vector3.up(), -arg_72_0._tobii_extended_view.yaw)
 	local var_72_1 = Quaternion.multiply(Quaternion.inverse(arg_72_1.rotation), var_72_0)
 	local var_72_2 = Quaternion.multiply(var_72_1, arg_72_1.rotation)
@@ -1131,12 +1131,12 @@ function CameraManager._apply_extended_view(arg_72_0, arg_72_1)
 	arg_72_1.rotation = Quaternion.multiply(arg_72_1.rotation, var_72_4)
 end
 
-function CameraManager.set_tobii_extended_view(arg_73_0, arg_73_1, arg_73_2)
+CameraManager.set_tobii_extended_view = function (arg_73_0, arg_73_1, arg_73_2)
 	arg_73_0._tobii_extended_view.yaw = arg_73_1
 	arg_73_0._tobii_extended_view.pitch = arg_73_2
 end
 
-function CameraManager._calculate_perlin_value(arg_74_0, arg_74_1, arg_74_2)
+CameraManager._calculate_perlin_value = function (arg_74_0, arg_74_1, arg_74_2)
 	local var_74_0 = 0
 	local var_74_1 = arg_74_2.event
 	local var_74_2 = var_74_1.persistance
@@ -1155,7 +1155,7 @@ function CameraManager._calculate_perlin_value(arg_74_0, arg_74_1, arg_74_2)
 	return var_74_0 * var_74_6 * var_74_7
 end
 
-function CameraManager._interpolated_noise(arg_75_0, arg_75_1, arg_75_2)
+CameraManager._interpolated_noise = function (arg_75_0, arg_75_1, arg_75_2)
 	local var_75_0 = math.floor(arg_75_1)
 	local var_75_1 = arg_75_1 - var_75_0
 	local var_75_2 = arg_75_0:_smoothed_noise(var_75_0, arg_75_2)
@@ -1164,18 +1164,18 @@ function CameraManager._interpolated_noise(arg_75_0, arg_75_1, arg_75_2)
 	return math.lerp(var_75_2, var_75_3, var_75_1)
 end
 
-function CameraManager._smoothed_noise(arg_76_0, arg_76_1, arg_76_2)
+CameraManager._smoothed_noise = function (arg_76_0, arg_76_1, arg_76_2)
 	return arg_76_0:_noise(arg_76_1, arg_76_2) / 2 + arg_76_0:_noise(arg_76_1 - 1, arg_76_2) / 4 + arg_76_0:_noise(arg_76_1 + 1, arg_76_2) / 4
 end
 
-function CameraManager._noise(arg_77_0, arg_77_1, arg_77_2)
+CameraManager._noise = function (arg_77_0, arg_77_1, arg_77_2)
 	local var_77_0, var_77_1 = Math.next_random(arg_77_1 + arg_77_2.seed)
 	local var_77_2, var_77_3 = Math.next_random(var_77_0)
 
 	return var_77_3 * 2 - 1
 end
 
-function CameraManager.apply_level_particle_effects(arg_78_0, arg_78_1, arg_78_2)
+CameraManager.apply_level_particle_effects = function (arg_78_0, arg_78_1, arg_78_2)
 	for iter_78_0, iter_78_1 in ipairs(arg_78_1) do
 		local var_78_0 = arg_78_0._world
 		local var_78_1 = World.create_particles(var_78_0, iter_78_1, arg_78_0:camera_position(arg_78_2))
@@ -1184,7 +1184,7 @@ function CameraManager.apply_level_particle_effects(arg_78_0, arg_78_1, arg_78_2
 	end
 end
 
-function CameraManager.apply_level_screen_effects(arg_79_0, arg_79_1, arg_79_2)
+CameraManager.apply_level_screen_effects = function (arg_79_0, arg_79_1, arg_79_2)
 	for iter_79_0, iter_79_1 in ipairs(arg_79_1) do
 		local var_79_0 = arg_79_0._world
 		local var_79_1 = World.create_particles(var_79_0, iter_79_1, Vector3(0, 0, 0))
@@ -1193,7 +1193,7 @@ function CameraManager.apply_level_screen_effects(arg_79_0, arg_79_1, arg_79_2)
 	end
 end
 
-function CameraManager._update_camera_properties(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5)
+CameraManager._update_camera_properties = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5)
 	if arg_80_4.position then
 		local var_80_0, var_80_1 = arg_80_3:root_unit()
 		local var_80_2 = arg_80_4.position
@@ -1287,7 +1287,7 @@ function CameraManager._update_camera_properties(arg_80_0, arg_80_1, arg_80_2, a
 	arg_80_0._shading_environment[var_80_10] = arg_80_4.shading_environment
 end
 
-function CameraManager._update_sound_listener(arg_81_0, arg_81_1)
+CameraManager._update_sound_listener = function (arg_81_0, arg_81_1)
 	local var_81_0 = arg_81_0._world
 	local var_81_1 = arg_81_0:listener_pose(arg_81_1)
 	local var_81_2 = Managers.world:wwise_world(var_81_0)
@@ -1314,7 +1314,7 @@ function CameraManager._update_sound_listener(arg_81_0, arg_81_1)
 	WwiseWorld.set_global_parameter(var_81_2, "lua_elevation", var_81_8)
 end
 
-function CameraManager.listener_pose(arg_82_0, arg_82_1)
+CameraManager.listener_pose = function (arg_82_0, arg_82_1)
 	local var_82_0 = arg_82_0._world
 	local var_82_1 = ScriptWorld.viewport(var_82_0, arg_82_1, true)
 	local var_82_2 = ScriptViewport.camera(var_82_1)
@@ -1322,7 +1322,7 @@ function CameraManager.listener_pose(arg_82_0, arg_82_1)
 	return (Camera.world_pose(var_82_2))
 end
 
-function CameraManager._add_transition(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+CameraManager._add_transition = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 	local var_83_0 = {}
 
 	for iter_83_0, iter_83_1 in ipairs(arg_83_0.NODE_PROPERTY_MAP) do
@@ -1339,7 +1339,7 @@ function CameraManager._add_transition(arg_83_0, arg_83_1, arg_83_2, arg_83_3, a
 	arg_83_3.transition = var_83_0
 end
 
-function CameraManager._update_transition(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+CameraManager._update_transition = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 	local var_84_0 = arg_84_0._property_temp_table
 
 	table.clear(var_84_0)
@@ -1386,14 +1386,14 @@ function CameraManager._update_transition(arg_84_0, arg_84_1, arg_84_2, arg_84_3
 	return var_84_0
 end
 
-function CameraManager.set_mood(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+CameraManager.set_mood = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 	arg_85_0.mood_handler:set_mood(arg_85_1, arg_85_2, arg_85_3)
 end
 
-function CameraManager.clear_mood(arg_86_0, arg_86_1)
+CameraManager.clear_mood = function (arg_86_0, arg_86_1)
 	arg_86_0.mood_handler:clear_mood(arg_86_1)
 end
 
-function CameraManager.has_mood(arg_87_0, arg_87_1)
+CameraManager.has_mood = function (arg_87_0, arg_87_1)
 	arg_87_0.mood_handler:has_mood(arg_87_1)
 end

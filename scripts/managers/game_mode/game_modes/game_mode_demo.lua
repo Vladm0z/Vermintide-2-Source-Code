@@ -8,11 +8,11 @@ GameModeDemo = class(GameModeDemo, GameModeBase)
 local var_0_0 = false
 local var_0_1 = false
 
-function GameModeDemo.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeDemo.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeDemo.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 end
 
-function GameModeDemo.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+GameModeDemo.evaluate_end_conditions = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = true
 	local var_2_1 = GameModeHelper.side_is_dead("heroes", var_2_0)
 	local var_2_2 = GameModeHelper.side_is_disabled("heroes")
@@ -26,7 +26,7 @@ function GameModeDemo.evaluate_end_conditions(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	end
 end
 
-function GameModeDemo.complete_level(arg_3_0)
+GameModeDemo.complete_level = function (arg_3_0)
 	if arg_3_0._transition ~= "demo_completed" then
 		if script_data.disable_video_player then
 			arg_3_0._transition = "return_to_demo_title_screen"
@@ -44,20 +44,20 @@ function GameModeDemo.complete_level(arg_3_0)
 	end
 end
 
-function GameModeDemo.ended(arg_4_0, arg_4_1)
+GameModeDemo.ended = function (arg_4_0, arg_4_1)
 	if not arg_4_0._network_server:are_all_peers_ingame() then
 		arg_4_0._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeDemo.wanted_transition(arg_5_0)
+GameModeDemo.wanted_transition = function (arg_5_0)
 	return arg_5_0._transition
 end
 
-function GameModeDemo.COMPLETE_LEVEL(arg_6_0)
+GameModeDemo.COMPLETE_LEVEL = function (arg_6_0)
 	var_0_0 = true
 end
 
-function GameModeDemo.FAIL_LEVEL(arg_7_0)
+GameModeDemo.FAIL_LEVEL = function (arg_7_0)
 	var_0_1 = true
 end

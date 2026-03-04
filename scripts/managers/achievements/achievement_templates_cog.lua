@@ -70,10 +70,10 @@ var_0_1.cog_penta_bomb = {
 	events = {
 		"register_damage"
 	},
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		return arg_2_0:get_persistent_stat(arg_2_1, "cog_penta_bomb") > 0
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = arg_3_4[var_0_16]
 		local var_3_1 = var_3_0[DamageDataIndex.DAMAGE_TYPE]
 		local var_3_2 = var_3_0[DamageDataIndex.SOURCE_ATTACKER_UNIT]
@@ -123,10 +123,10 @@ var_0_1.cog_air_bomb = {
 	events = {
 		"rat_ogre_stagger"
 	},
-	completed = function(arg_4_0, arg_4_1, arg_4_2)
+	completed = function (arg_4_0, arg_4_1, arg_4_2)
 		return arg_4_0:get_persistent_stat(arg_4_1, "cog_air_bomb") > 0
 	end,
-	on_event = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	on_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		local var_5_0 = arg_5_4[var_0_21]
 		local var_5_1 = ScriptUnit.has_extension(var_5_0, "career_system")
 
@@ -157,10 +157,10 @@ var_0_1.cog_kill_barrage = {
 		"register_kill",
 		"crank_gun_fire"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "cog_kill_barrage") > 0
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		if arg_7_3 == "crank_gun_fire" then
 			if not arg_7_2.time then
 				arg_7_2.time = 0
@@ -215,10 +215,10 @@ var_0_1.cog_all_kill_barrage = {
 		"register_kill",
 		"crank_gun_fire"
 	},
-	completed = function(arg_8_0, arg_8_1, arg_8_2)
+	completed = function (arg_8_0, arg_8_1, arg_8_2)
 		return arg_8_0:get_persistent_stat(arg_8_1, "cog_all_kill_barrage") > 0
 	end,
-	on_event = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		if arg_9_3 == "crank_gun_fire" then
 			if not arg_9_2.time then
 				arg_9_2.time = 0
@@ -285,7 +285,7 @@ var_0_1.cog_climb_kill = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_10_0, arg_10_1, arg_10_2)
+	progress = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = arg_10_0:get_persistent_stat(arg_10_1, "climbing_enemies_killed")
 
 		return {
@@ -293,10 +293,10 @@ var_0_1.cog_climb_kill = {
 			100
 		}
 	end,
-	completed = function(arg_11_0, arg_11_1, arg_11_2)
+	completed = function (arg_11_0, arg_11_1, arg_11_2)
 		return arg_11_0:get_persistent_stat(arg_11_1, "climbing_enemies_killed") >= 100
 	end,
-	on_event = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -347,10 +347,10 @@ var_0_1.cog_long_bomb = {
 		"on_grenade_thrown",
 		"register_kill"
 	},
-	completed = function(arg_13_0, arg_13_1, arg_13_2)
+	completed = function (arg_13_0, arg_13_1, arg_13_2)
 		return arg_13_0:get_persistent_stat(arg_13_1, "cog_long_bomb") > 0
 	end,
-	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		if arg_14_3 == "on_grenade_thrown" then
 			local var_14_0 = arg_14_4[var_0_28]
 
@@ -415,10 +415,10 @@ var_0_1.cog_steam_alt = {
 		"steam_alt_fire",
 		"register_damage"
 	},
-	completed = function(arg_15_0, arg_15_1, arg_15_2)
+	completed = function (arg_15_0, arg_15_1, arg_15_2)
 		return arg_15_0:get_persistent_stat(arg_15_1, "cog_steam_alt") > 0
 	end,
-	on_event = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		if arg_16_3 == "steam_alt_fire" then
 			if not arg_16_2.shot_counter then
 				arg_16_2.hit_counter = 0
@@ -479,7 +479,7 @@ var_0_1.cog_bomb_grind = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_17_0, arg_17_1, arg_17_2)
+	progress = function (arg_17_0, arg_17_1, arg_17_2)
 		local var_17_0 = arg_17_0:get_persistent_stat(arg_17_1, "cog_bomb_kills")
 
 		return {
@@ -487,10 +487,10 @@ var_0_1.cog_bomb_grind = {
 			500
 		}
 	end,
-	completed = function(arg_18_0, arg_18_1, arg_18_2)
+	completed = function (arg_18_0, arg_18_1, arg_18_2)
 		return arg_18_0:get_persistent_stat(arg_18_1, "cog_bomb_kills") >= 500
 	end,
-	on_event = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	on_event = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 		local var_19_0 = arg_19_4[var_0_26]
 		local var_19_1 = var_19_0[DamageDataIndex.DAMAGE_TYPE]
 
@@ -538,10 +538,10 @@ var_0_1.cog_chain_headshot = {
 		"on_hit",
 		"ammo_used"
 	},
-	completed = function(arg_20_0, arg_20_1, arg_20_2)
+	completed = function (arg_20_0, arg_20_1, arg_20_2)
 		return arg_20_0:get_persistent_stat(arg_20_1, "cog_chain_headshot") > 0
 	end,
-	on_event = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	on_event = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 		if arg_21_3 == "ammo_used" then
 			local var_21_0 = arg_21_4[var_0_30]
 			local var_21_1 = ScriptUnit.has_extension(var_21_0, "career_system")
@@ -625,7 +625,7 @@ var_0_1.cog_pistol_headshot_grind = {
 	events = {
 		"on_hit"
 	},
-	progress = function(arg_22_0, arg_22_1, arg_22_2)
+	progress = function (arg_22_0, arg_22_1, arg_22_2)
 		local var_22_0 = arg_22_0:get_persistent_stat(arg_22_1, "steam_pistol_headshots")
 
 		return {
@@ -633,10 +633,10 @@ var_0_1.cog_pistol_headshot_grind = {
 			1000
 		}
 	end,
-	completed = function(arg_23_0, arg_23_1, arg_23_2)
+	completed = function (arg_23_0, arg_23_1, arg_23_2)
 		return arg_23_0:get_persistent_stat(arg_23_1, "steam_pistol_headshots") >= 1000
 	end,
-	on_event = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	on_event = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 		if arg_24_4[var_0_32] ~= "instant_projectile" then
 			return
 		end
@@ -689,7 +689,7 @@ var_0_1.cog_clutch_pump = {
 	events = {
 		"clutch_pump"
 	},
-	progress = function(arg_25_0, arg_25_1, arg_25_2)
+	progress = function (arg_25_0, arg_25_1, arg_25_2)
 		local var_25_0 = arg_25_0:get_persistent_stat(arg_25_1, "clutch_pumps")
 
 		return {
@@ -697,10 +697,10 @@ var_0_1.cog_clutch_pump = {
 			100
 		}
 	end,
-	completed = function(arg_26_0, arg_26_1, arg_26_2)
+	completed = function (arg_26_0, arg_26_1, arg_26_2)
 		return arg_26_0:get_persistent_stat(arg_26_1, "clutch_pumps") >= 100
 	end,
-	on_event = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	on_event = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 		local var_27_0 = Managers.level_transition_handler:get_current_level_keys()
 		local var_27_1 = var_27_0 and LevelSettings[var_27_0]
 
@@ -718,7 +718,7 @@ var_0_1.cog_hammer_cliff_push = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_28_0, arg_28_1, arg_28_2)
+	progress = function (arg_28_0, arg_28_1, arg_28_2)
 		local var_28_0 = arg_28_0:get_persistent_stat(arg_28_1, "hammer_cliff_pushes")
 
 		return {
@@ -726,10 +726,10 @@ var_0_1.cog_hammer_cliff_push = {
 			200
 		}
 	end,
-	completed = function(arg_29_0, arg_29_1, arg_29_2)
+	completed = function (arg_29_0, arg_29_1, arg_29_2)
 		return arg_29_0:get_persistent_stat(arg_29_1, "hammer_cliff_pushes") >= 200
 	end,
-	on_event = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	on_event = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 		local var_30_0 = arg_30_4[var_0_26]
 		local var_30_1 = var_30_0[DamageDataIndex.DAMAGE_TYPE]
 
@@ -780,10 +780,10 @@ var_0_1.cog_only_crank = {
 		"register_kill",
 		"register_completed_level"
 	},
-	completed = function(arg_31_0, arg_31_1, arg_31_2)
+	completed = function (arg_31_0, arg_31_1, arg_31_2)
 		return arg_31_0:get_persistent_stat(arg_31_1, "cog_only_crank") > 0
 	end,
-	on_event = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	on_event = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 		if arg_32_3 == "register_kill" then
 			if arg_32_2.failed then
 				return false
@@ -827,14 +827,14 @@ var_0_1.cog_exploding_barrel_kills = {
 		"register_kill",
 		"explosive_barrel_destroyed"
 	},
-	completed = function(arg_33_0, arg_33_1, arg_33_2)
+	completed = function (arg_33_0, arg_33_1, arg_33_2)
 		if arg_33_0:get_persistent_stat(arg_33_1, "cog_exploding_barrel_kills") > 0 then
 			print("completed")
 		end
 
 		return arg_33_0:get_persistent_stat(arg_33_1, "cog_exploding_barrel_kills") > 0
 	end,
-	on_event = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	on_event = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 		if arg_34_3 == "register_kill" then
 			local var_34_0 = arg_34_4[var_0_26]
 			local var_34_1 = var_34_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
@@ -888,10 +888,10 @@ var_0_1.cog_long_crank_fire = {
 		"crank_gun_fire_start",
 		"crank_gun_fire"
 	},
-	completed = function(arg_35_0, arg_35_1, arg_35_2)
+	completed = function (arg_35_0, arg_35_1, arg_35_2)
 		return arg_35_0:get_persistent_stat(arg_35_1, "cog_long_crank_fire") > 0
 	end,
-	on_event = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	on_event = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 		if arg_36_3 == "crank_gun_fire_start" then
 			arg_36_2.start_time = Managers.time:time("game")
 		elseif arg_36_3 == "crank_gun_fire" then
@@ -934,7 +934,7 @@ var_0_1.cog_kill_register = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_37_0, arg_37_1, arg_37_2)
+	completed = function (arg_37_0, arg_37_1, arg_37_2)
 		local var_37_0 = 0
 
 		for iter_37_0 = 1, #var_0_47 do
@@ -950,7 +950,7 @@ var_0_1.cog_kill_register = {
 
 		return var_37_1 and var_37_2 and var_37_6
 	end,
-	on_event = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	on_event = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 		local var_38_0 = arg_38_4[3]
 		local var_38_1 = var_38_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
 		local var_38_2 = rawget(ItemMasterList, var_38_1)
@@ -999,7 +999,7 @@ var_0_1.cog_missing_cog = {
 	display_completion_ui = true,
 	icon = "achievement_trophy_cog_missing_cog",
 	desc = "achv_cog_missing_cog_desc",
-	completed = function(arg_39_0, arg_39_1)
+	completed = function (arg_39_0, arg_39_1)
 		return arg_39_0:get_persistent_stat(arg_39_1, "cog_missing_cog") > 0
 	end
 }

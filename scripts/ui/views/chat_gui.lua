@@ -7,7 +7,7 @@ local var_0_0 = local_require("scripts/ui/views/chat_gui_definitions")
 ChatGui = class(ChatGui)
 ChatGui.MAX_CHARS = 500
 
-function ChatGui.init(arg_1_0, arg_1_1)
+ChatGui.init = function (arg_1_0, arg_1_1)
 	arg_1_0.input_manager = arg_1_1.input_manager
 	arg_1_0.ui_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.chat_manager = arg_1_1.chat_manager
@@ -44,15 +44,15 @@ function ChatGui.init(arg_1_0, arg_1_1)
 	arg_1_0:_set_chat_window_alpha(0)
 end
 
-function ChatGui.set_profile_synchronizer(arg_2_0, arg_2_1)
+ChatGui.set_profile_synchronizer = function (arg_2_0, arg_2_1)
 	arg_2_0.profile_synchronizer = arg_2_1
 end
 
-function ChatGui.set_wwise_world(arg_3_0, arg_3_1)
+ChatGui.set_wwise_world = function (arg_3_0, arg_3_1)
 	arg_3_0.wwise_world = arg_3_1
 end
 
-function ChatGui.set_input_manager(arg_4_0, arg_4_1)
+ChatGui.set_input_manager = function (arg_4_0, arg_4_1)
 	if arg_4_1 then
 		local var_4_0 = {
 			keybind = true,
@@ -73,7 +73,7 @@ end
 
 local var_0_1 = true
 
-function ChatGui.create_ui_elements(arg_5_0)
+ChatGui.create_ui_elements = function (arg_5_0)
 	UIRenderer.clear_scenegraph_queue(arg_5_0.ui_renderer)
 
 	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -106,19 +106,19 @@ function ChatGui.create_ui_elements(arg_5_0)
 	var_0_1 = false
 end
 
-function ChatGui.clear_messages(arg_6_0)
+ChatGui.clear_messages = function (arg_6_0)
 	arg_6_0.chat_output_widget = UIWidget.init(var_0_0.chat_output_widget)
 end
 
-function ChatGui.animate_element_pulse(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+ChatGui.animate_element_pulse = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5))
 end
 
-function ChatGui.animate_element_by_time(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ChatGui.animate_element_by_time = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, math.ease_out_quad))
 end
 
-function ChatGui.destroy(arg_9_0)
+ChatGui.destroy = function (arg_9_0)
 	rawset(_G, "global_chat_gui", nil)
 
 	if arg_9_0.chat_focused then
@@ -128,19 +128,19 @@ function ChatGui.destroy(arg_9_0)
 	end
 end
 
-function ChatGui.ignoring_peer_id(arg_10_0, arg_10_1)
+ChatGui.ignoring_peer_id = function (arg_10_0, arg_10_1)
 	return arg_10_0.chat_manager:ignoring_peer_id(arg_10_1)
 end
 
-function ChatGui.ignore_peer_id(arg_11_0, arg_11_1)
+ChatGui.ignore_peer_id = function (arg_11_0, arg_11_1)
 	arg_11_0.chat_manager:ignore_peer_id(arg_11_1)
 end
 
-function ChatGui.remove_ignore_peer_id(arg_12_0, arg_12_1)
+ChatGui.remove_ignore_peer_id = function (arg_12_0, arg_12_1)
 	arg_12_0.chat_manager:remove_ignore_peer_id(arg_12_1)
 end
 
-function ChatGui.set_font_size(arg_13_0, arg_13_1)
+ChatGui.set_font_size = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.ui_scenegraph
 	local var_13_1 = var_0_0.scenegraph_definition
 	local var_13_2 = 0
@@ -171,7 +171,7 @@ local var_0_2 = {
 	use_plain_rects = true
 }
 
-function ChatGui.update(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+ChatGui.update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	if var_0_1 then
 		arg_14_0:create_ui_elements()
 	end
@@ -295,7 +295,7 @@ function ChatGui.update(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 	arg_14_0:_draw_widgets(arg_14_1, var_14_10, arg_14_5)
 end
 
-function ChatGui._update_chat_messages(arg_15_0)
+ChatGui._update_chat_messages = function (arg_15_0)
 	if Managers.chat:gui_should_clear() then
 		arg_15_0:clear_messages()
 	end
@@ -404,7 +404,7 @@ function ChatGui._update_chat_messages(arg_15_0)
 	return var_15_3
 end
 
-function ChatGui.show_chat(arg_16_0)
+ChatGui.show_chat = function (arg_16_0)
 	arg_16_0:clear_current_transition()
 	arg_16_0:set_menu_transition_fraction(1)
 	arg_16_0:_set_chat_window_alpha(1)
@@ -416,7 +416,7 @@ function ChatGui.show_chat(arg_16_0)
 	arg_16_0.scrollbar_widget.content.internal_scroll_value = 0
 end
 
-function ChatGui.hide_chat(arg_17_0)
+ChatGui.hide_chat = function (arg_17_0)
 	arg_17_0:clear_current_transition()
 	arg_17_0:set_menu_transition_fraction(0)
 	arg_17_0:_set_chat_window_alpha(0)
@@ -427,7 +427,7 @@ function ChatGui.hide_chat(arg_17_0)
 	arg_17_0.keep_chat_visible = false
 end
 
-function ChatGui.menu_open(arg_18_0)
+ChatGui.menu_open = function (arg_18_0)
 	arg_18_0:clear_current_transition()
 
 	local var_18_0 = UISettings.chat
@@ -438,14 +438,14 @@ function ChatGui.menu_open(arg_18_0)
 	arg_18_0.transition_timer = 0
 end
 
-function ChatGui.menu_close(arg_19_0)
+ChatGui.menu_close = function (arg_19_0)
 	arg_19_0:clear_current_transition()
 
 	arg_19_0.closing = true
 	arg_19_0.transition_timer = 0
 end
 
-function ChatGui.set_menu_transition_fraction(arg_20_0, arg_20_1)
+ChatGui.set_menu_transition_fraction = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.ui_scenegraph
 	local var_20_1 = var_0_0.scenegraph_definition
 	local var_20_2 = arg_20_0.chat_window_widget.scenegraph_id
@@ -454,7 +454,7 @@ function ChatGui.set_menu_transition_fraction(arg_20_0, arg_20_1)
 	var_20_0[var_20_2].size[1] = var_20_3.size[1] * arg_20_1
 end
 
-function ChatGui.update_transition(arg_21_0, arg_21_1)
+ChatGui.update_transition = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.transition_timer
 
 	if not var_21_0 then
@@ -484,13 +484,13 @@ function ChatGui.update_transition(arg_21_0, arg_21_1)
 	end
 end
 
-function ChatGui.clear_current_transition(arg_22_0)
+ChatGui.clear_current_transition = function (arg_22_0)
 	arg_22_0.opening = nil
 	arg_22_0.closing = nil
 	arg_22_0.transition_timer = nil
 end
 
-function ChatGui.block_input(arg_23_0)
+ChatGui.block_input = function (arg_23_0)
 	arg_23_0.input_manager:capture_input({
 		"keyboard",
 		"gamepad",
@@ -500,7 +500,7 @@ function ChatGui.block_input(arg_23_0)
 	Window.set_ime_enabled(true)
 end
 
-function ChatGui.unblock_input(arg_24_0)
+ChatGui.unblock_input = function (arg_24_0)
 	Window.set_ime_enabled(false)
 
 	if arg_24_0.input_manager then
@@ -514,7 +514,7 @@ function ChatGui.unblock_input(arg_24_0)
 	arg_24_0:_hide_cursor()
 end
 
-function ChatGui._show_cursor(arg_25_0)
+ChatGui._show_cursor = function (arg_25_0)
 	if not arg_25_0._cursor_visible then
 		arg_25_0._cursor_visible = true
 
@@ -522,7 +522,7 @@ function ChatGui._show_cursor(arg_25_0)
 	end
 end
 
-function ChatGui._hide_cursor(arg_26_0)
+ChatGui._hide_cursor = function (arg_26_0)
 	if arg_26_0._cursor_visible then
 		arg_26_0._cursor_visible = false
 
@@ -530,11 +530,11 @@ function ChatGui._hide_cursor(arg_26_0)
 	end
 end
 
-function ChatGui.block_chat_input_for_one_frame(arg_27_0)
+ChatGui.block_chat_input_for_one_frame = function (arg_27_0)
 	arg_27_0._block_keystrokes = true
 end
 
-function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+ChatGui._update_input = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_0.chat_focused
 	local var_28_1 = arg_28_0.chat_closed
 	local var_28_2 = arg_28_0.chat_close_time
@@ -965,7 +965,7 @@ function ChatGui._update_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4,
 	return var_28_0, var_28_6, var_28_2
 end
 
-function ChatGui._draw_widgets(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+ChatGui._draw_widgets = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0.input_manager:is_device_active("gamepad")
 	local var_29_1 = arg_29_0.chat_close_time
 	local var_29_2 = arg_29_0.menu_active
@@ -1062,7 +1062,7 @@ function ChatGui._draw_widgets(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	var_29_3.alpha_multiplier = var_29_12
 end
 
-function ChatGui._update_hud_scale(arg_30_0)
+ChatGui._update_hud_scale = function (arg_30_0)
 	if not arg_30_0._resolution_modified then
 		arg_30_0._resolution_modified = RESOLUTION_LOOKUP.modified
 	end
@@ -1075,7 +1075,7 @@ function ChatGui._update_hud_scale(arg_30_0)
 	end
 end
 
-function ChatGui._apply_hud_scale(arg_31_0)
+ChatGui._apply_hud_scale = function (arg_31_0)
 	arg_31_0:_update_hud_scale()
 
 	local var_31_0 = arg_31_0._scale_modified
@@ -1086,7 +1086,7 @@ function ChatGui._apply_hud_scale(arg_31_0)
 	UPDATE_RESOLUTION_LOOKUP(var_31_2, var_31_3)
 end
 
-function ChatGui._abort_hud_scale(arg_32_0)
+ChatGui._abort_hud_scale = function (arg_32_0)
 	local var_32_0 = arg_32_0._scale_modified
 	local var_32_1 = arg_32_0._resolution_modified
 	local var_32_2 = var_32_0 or var_32_1
@@ -1094,7 +1094,7 @@ function ChatGui._abort_hud_scale(arg_32_0)
 	UPDATE_RESOLUTION_LOOKUP(var_32_2)
 end
 
-function ChatGui._set_chat_window_alpha(arg_33_0, arg_33_1)
+ChatGui._set_chat_window_alpha = function (arg_33_0, arg_33_1)
 	local var_33_0 = UISettings.chat
 	local var_33_1 = arg_33_0.chat_window_widget
 	local var_33_2 = arg_33_0.chat_input_widget
@@ -1129,7 +1129,7 @@ function ChatGui._set_chat_window_alpha(arg_33_0, arg_33_1)
 	arg_33_0._output_text_alpha_multiplier = arg_33_1
 end
 
-function ChatGui._apply_color_values(arg_34_0, arg_34_1, arg_34_2)
+ChatGui._apply_color_values = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_1[2] = arg_34_2[2]
 	arg_34_1[3] = arg_34_2[3]
 	arg_34_1[4] = arg_34_2[4]

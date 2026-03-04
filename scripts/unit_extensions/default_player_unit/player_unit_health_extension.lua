@@ -4,7 +4,7 @@ local var_0_0 = require("scripts/unit_extensions/default_player_unit/buffs/setti
 
 PlayerUnitHealthExtension = class(PlayerUnitHealthExtension, GenericHealthExtension)
 
-function PlayerUnitHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	PlayerUnitHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	local var_1_0 = arg_1_3.player
@@ -38,7 +38,7 @@ function PlayerUnitHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Managers.state.event:register(arg_1_0, "on_game_options_changed", "update_options")
 end
 
-function PlayerUnitHealthExtension.update_options(arg_2_0)
+PlayerUnitHealthExtension.update_options = function (arg_2_0)
 	local var_2_0 = Managers.state.game_mode:settings()
 
 	arg_2_0._use_floating_damage_numbers = var_2_0.use_floating_damage_numbers and not DEDICATED_SERVER
@@ -57,19 +57,19 @@ function PlayerUnitHealthExtension.update_options(arg_2_0)
 	arg_2_0._percent_temp_health_on_revive = var_2_2.percent_temp_health_on_revive or 0.5
 end
 
-function PlayerUnitHealthExtension.hot_join_sync(arg_3_0, arg_3_1)
+PlayerUnitHealthExtension.hot_join_sync = function (arg_3_0, arg_3_1)
 	return
 end
 
-function PlayerUnitHealthExtension.cb_game_session_disconnect(arg_4_0)
+PlayerUnitHealthExtension.cb_game_session_disconnect = function (arg_4_0)
 	arg_4_0.health_game_object_id = nil
 end
 
-function PlayerUnitHealthExtension.set_health_game_object_id(arg_5_0, arg_5_1)
+PlayerUnitHealthExtension.set_health_game_object_id = function (arg_5_0, arg_5_1)
 	arg_5_0.health_game_object_id = arg_5_1
 end
 
-function PlayerUnitHealthExtension.create_health_game_object(arg_6_0)
+PlayerUnitHealthExtension.create_health_game_object = function (arg_6_0)
 	fassert(arg_6_0.is_server, "Trying to create health game object on a client")
 
 	local var_6_0 = arg_6_0.unit
@@ -100,7 +100,7 @@ function PlayerUnitHealthExtension.create_health_game_object(arg_6_0)
 	arg_6_0.previous_state = arg_6_0.state
 end
 
-function PlayerUnitHealthExtension.sync_health_state(arg_7_0)
+PlayerUnitHealthExtension.sync_health_state = function (arg_7_0)
 	local var_7_0 = arg_7_0.player
 	local var_7_1 = Managers.party:get_player_status(var_7_0:network_id(), var_7_0:local_player_id()).game_mode_data
 	local var_7_2 = var_7_1.health_state
@@ -126,7 +126,7 @@ function PlayerUnitHealthExtension.sync_health_state(arg_7_0)
 	end
 end
 
-function PlayerUnitHealthExtension._get_base_max_health(arg_8_0)
+PlayerUnitHealthExtension._get_base_max_health = function (arg_8_0)
 	local var_8_0 = arg_8_0._profile_index
 	local var_8_1 = arg_8_0._career_index
 	local var_8_2 = SPProfiles[var_8_0].careers[var_8_1]
@@ -141,7 +141,7 @@ function PlayerUnitHealthExtension._get_base_max_health(arg_8_0)
 	return var_8_3
 end
 
-function PlayerUnitHealthExtension._calculate_buffed_max_health(arg_9_0)
+PlayerUnitHealthExtension._calculate_buffed_max_health = function (arg_9_0)
 	local var_9_0 = arg_9_0.buff_extension
 	local var_9_1 = arg_9_0.state
 	local var_9_2
@@ -159,11 +159,11 @@ function PlayerUnitHealthExtension._calculate_buffed_max_health(arg_9_0)
 	return (var_9_0:apply_buffs_to_value(var_9_2, "max_health"))
 end
 
-function PlayerUnitHealthExtension.get_buffed_max_health(arg_10_0)
+PlayerUnitHealthExtension.get_buffed_max_health = function (arg_10_0)
 	return (arg_10_0:_calculate_buffed_max_health())
 end
 
-function PlayerUnitHealthExtension._calculate_max_health(arg_11_0)
+PlayerUnitHealthExtension._calculate_max_health = function (arg_11_0)
 	local var_11_0 = arg_11_0.buff_extension
 	local var_11_1 = arg_11_0.state
 	local var_11_2 = 1
@@ -191,7 +191,7 @@ function PlayerUnitHealthExtension._calculate_max_health(arg_11_0)
 	return arg_11_0:_calculate_buffed_max_health() * math.max(var_11_2, 0.01)
 end
 
-function PlayerUnitHealthExtension.extensions_ready(arg_12_0, arg_12_1, arg_12_2)
+PlayerUnitHealthExtension.extensions_ready = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._world = arg_12_1
 	arg_12_0.status_extension = ScriptUnit.extension(arg_12_2, "status_system")
 	arg_12_0.buff_extension = ScriptUnit.extension(arg_12_2, "buff_system")
@@ -205,7 +205,7 @@ function PlayerUnitHealthExtension.extensions_ready(arg_12_0, arg_12_1, arg_12_2
 	end
 end
 
-function PlayerUnitHealthExtension.knock_down(arg_13_0, arg_13_1)
+PlayerUnitHealthExtension.knock_down = function (arg_13_0, arg_13_1)
 	assert(arg_13_0.is_server, "[PlayerUnitHealthExtension] 'knock_down' is a server only function")
 
 	arg_13_0.state = "knocked_down"
@@ -254,7 +254,7 @@ function PlayerUnitHealthExtension.knock_down(arg_13_0, arg_13_1)
 	end
 end
 
-function PlayerUnitHealthExtension._revive(arg_14_0, arg_14_1, arg_14_2)
+PlayerUnitHealthExtension._revive = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0.state = "alive"
 
 	StatusUtils.set_knocked_down_network(arg_14_1, false)
@@ -262,7 +262,7 @@ function PlayerUnitHealthExtension._revive(arg_14_0, arg_14_1, arg_14_2)
 	StatusUtils.set_revived_network(arg_14_1, false)
 end
 
-function PlayerUnitHealthExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+PlayerUnitHealthExtension.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0.status_extension
 	local var_15_1 = arg_15_0.unit
 
@@ -405,7 +405,7 @@ function PlayerUnitHealthExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3
 	end
 end
 
-function PlayerUnitHealthExtension._update_outline_color(arg_16_0, arg_16_1, arg_16_2)
+PlayerUnitHealthExtension._update_outline_color = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = Managers.player:local_player()
 
 	if not var_16_0 then
@@ -466,14 +466,14 @@ local var_0_1 = {
 	death_explosion = true
 }
 
-function PlayerUnitHealthExtension.apply_client_predicted_damage(arg_17_0, arg_17_1)
+PlayerUnitHealthExtension.apply_client_predicted_damage = function (arg_17_0, arg_17_1)
 	return
 end
 
 local var_0_2 = true
 local var_0_3 = 2.2
 
-function PlayerUnitHealthExtension.create_streak_damage(arg_18_0, arg_18_1, arg_18_2)
+PlayerUnitHealthExtension.create_streak_damage = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = math.auto_lerp(0, 30, arg_18_0._min_streak_font_size, arg_18_0._max_streak_font_size, arg_18_1)
 	local var_18_1 = var_0_3
 	local var_18_2 = DamageUtils.get_color_from_damage(arg_18_1)
@@ -505,7 +505,7 @@ function PlayerUnitHealthExtension.create_streak_damage(arg_18_0, arg_18_1, arg_
 	end
 end
 
-function PlayerUnitHealthExtension.add_damage(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
+PlayerUnitHealthExtension.add_damage = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14, arg_19_15, arg_19_16, arg_19_17)
 	if DamageUtils.is_in_inn then
 		return
 	end
@@ -802,7 +802,7 @@ function PlayerUnitHealthExtension.add_damage(arg_19_0, arg_19_1, arg_19_2, arg_
 	end
 end
 
-function PlayerUnitHealthExtension.add_heal(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+PlayerUnitHealthExtension.add_heal = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = arg_20_0.unit
 	local var_20_1 = arg_20_0.status_extension
 
@@ -857,7 +857,7 @@ function PlayerUnitHealthExtension.add_heal(arg_20_0, arg_20_1, arg_20_2, arg_20
 	end
 end
 
-function PlayerUnitHealthExtension.die(arg_21_0, arg_21_1)
+PlayerUnitHealthExtension.die = function (arg_21_0, arg_21_1)
 	if not arg_21_0.is_server then
 		return
 	end
@@ -898,7 +898,7 @@ function PlayerUnitHealthExtension.die(arg_21_0, arg_21_1)
 	end
 end
 
-function PlayerUnitHealthExtension.entered_kill_volume(arg_22_0, arg_22_1)
+PlayerUnitHealthExtension.entered_kill_volume = function (arg_22_0, arg_22_1)
 	if arg_22_0.is_local_player then
 		local var_22_0 = arg_22_0.unit_storage:go_id(arg_22_0.unit)
 
@@ -911,7 +911,7 @@ function PlayerUnitHealthExtension.entered_kill_volume(arg_22_0, arg_22_1)
 	end
 end
 
-function PlayerUnitHealthExtension.destroy(arg_23_0)
+PlayerUnitHealthExtension.destroy = function (arg_23_0)
 	if arg_23_0.is_server and arg_23_0.health_game_object_id then
 		arg_23_0.network_manager:destroy_game_object(arg_23_0.health_game_object_id)
 	end
@@ -919,7 +919,7 @@ function PlayerUnitHealthExtension.destroy(arg_23_0)
 	arg_23_0.health_game_object_id = nil
 end
 
-function PlayerUnitHealthExtension.reset(arg_24_0)
+PlayerUnitHealthExtension.reset = function (arg_24_0)
 	if arg_24_0.is_server then
 		arg_24_0.state = "alive"
 
@@ -935,11 +935,11 @@ function PlayerUnitHealthExtension.reset(arg_24_0)
 	end
 end
 
-function PlayerUnitHealthExtension.is_alive(arg_25_0)
+PlayerUnitHealthExtension.is_alive = function (arg_25_0)
 	return arg_25_0.state ~= "dead"
 end
 
-function PlayerUnitHealthExtension._is_alive(arg_26_0)
+PlayerUnitHealthExtension._is_alive = function (arg_26_0)
 	local var_26_0 = arg_26_0.game
 	local var_26_1 = arg_26_0.health_game_object_id
 
@@ -950,7 +950,7 @@ function PlayerUnitHealthExtension._is_alive(arg_26_0)
 	return true
 end
 
-function PlayerUnitHealthExtension.current_health_percent(arg_27_0)
+PlayerUnitHealthExtension.current_health_percent = function (arg_27_0)
 	local var_27_0 = arg_27_0.game
 	local var_27_1 = arg_27_0.health_game_object_id
 
@@ -969,7 +969,7 @@ function PlayerUnitHealthExtension.current_health_percent(arg_27_0)
 	return 1
 end
 
-function PlayerUnitHealthExtension.current_permanent_health_percent(arg_28_0)
+PlayerUnitHealthExtension.current_permanent_health_percent = function (arg_28_0)
 	local var_28_0 = arg_28_0.game
 	local var_28_1 = arg_28_0.health_game_object_id
 
@@ -987,7 +987,7 @@ function PlayerUnitHealthExtension.current_permanent_health_percent(arg_28_0)
 	return 1
 end
 
-function PlayerUnitHealthExtension.current_temporary_health_percent(arg_29_0)
+PlayerUnitHealthExtension.current_temporary_health_percent = function (arg_29_0)
 	local var_29_0 = arg_29_0.game
 	local var_29_1 = arg_29_0.health_game_object_id
 
@@ -1005,7 +1005,7 @@ function PlayerUnitHealthExtension.current_temporary_health_percent(arg_29_0)
 	return 1
 end
 
-function PlayerUnitHealthExtension.current_health(arg_30_0)
+PlayerUnitHealthExtension.current_health = function (arg_30_0)
 	local var_30_0 = arg_30_0.game
 	local var_30_1 = arg_30_0.health_game_object_id
 
@@ -1018,7 +1018,7 @@ function PlayerUnitHealthExtension.current_health(arg_30_0)
 	return (DamageUtils.networkify_health(var_30_2))
 end
 
-function PlayerUnitHealthExtension.current_permanent_health(arg_31_0)
+PlayerUnitHealthExtension.current_permanent_health = function (arg_31_0)
 	local var_31_0 = arg_31_0.game
 	local var_31_1 = arg_31_0.health_game_object_id
 
@@ -1031,7 +1031,7 @@ function PlayerUnitHealthExtension.current_permanent_health(arg_31_0)
 	return (DamageUtils.networkify_health(var_31_2))
 end
 
-function PlayerUnitHealthExtension.current_temporary_health(arg_32_0)
+PlayerUnitHealthExtension.current_temporary_health = function (arg_32_0)
 	local var_32_0 = arg_32_0.game
 	local var_32_1 = arg_32_0.health_game_object_id
 
@@ -1044,7 +1044,7 @@ function PlayerUnitHealthExtension.current_temporary_health(arg_32_0)
 	return (DamageUtils.networkify_health(var_32_2))
 end
 
-function PlayerUnitHealthExtension.get_max_health(arg_33_0)
+PlayerUnitHealthExtension.get_max_health = function (arg_33_0)
 	local var_33_0 = arg_33_0.game
 	local var_33_1 = arg_33_0.health_game_object_id
 
@@ -1057,11 +1057,11 @@ function PlayerUnitHealthExtension.get_max_health(arg_33_0)
 	return (DamageUtils.networkify_health(var_33_2))
 end
 
-function PlayerUnitHealthExtension.get_base_max_health(arg_34_0)
+PlayerUnitHealthExtension.get_base_max_health = function (arg_34_0)
 	return (arg_34_0:_get_base_max_health())
 end
 
-function PlayerUnitHealthExtension.get_uncursed_max_health(arg_35_0)
+PlayerUnitHealthExtension.get_uncursed_max_health = function (arg_35_0)
 	local var_35_0 = arg_35_0.game
 	local var_35_1 = arg_35_0.health_game_object_id
 
@@ -1074,7 +1074,7 @@ function PlayerUnitHealthExtension.get_uncursed_max_health(arg_35_0)
 	return (DamageUtils.networkify_health(var_35_2))
 end
 
-function PlayerUnitHealthExtension.get_damage_taken(arg_36_0, arg_36_1)
+PlayerUnitHealthExtension.get_damage_taken = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0.game
 	local var_36_1 = arg_36_0.health_game_object_id
 
@@ -1087,7 +1087,7 @@ function PlayerUnitHealthExtension.get_damage_taken(arg_36_0, arg_36_1)
 	return 0
 end
 
-function PlayerUnitHealthExtension.convert_permanent_to_temporary_health(arg_37_0)
+PlayerUnitHealthExtension.convert_permanent_to_temporary_health = function (arg_37_0)
 	local var_37_0 = arg_37_0.game
 	local var_37_1 = arg_37_0.health_game_object_id
 
@@ -1100,7 +1100,7 @@ function PlayerUnitHealthExtension.convert_permanent_to_temporary_health(arg_37_
 	end
 end
 
-function PlayerUnitHealthExtension.convert_temporary_to_permanent_health(arg_38_0)
+PlayerUnitHealthExtension.convert_temporary_to_permanent_health = function (arg_38_0)
 	local var_38_0 = arg_38_0.game
 	local var_38_1 = arg_38_0.health_game_object_id
 
@@ -1113,7 +1113,7 @@ function PlayerUnitHealthExtension.convert_temporary_to_permanent_health(arg_38_
 	end
 end
 
-function PlayerUnitHealthExtension.convert_to_temp(arg_39_0, arg_39_1)
+PlayerUnitHealthExtension.convert_to_temp = function (arg_39_0, arg_39_1)
 	arg_39_1 = DamageUtils.networkify_damage(arg_39_1)
 
 	if arg_39_0.is_server then
@@ -1137,7 +1137,7 @@ function PlayerUnitHealthExtension.convert_to_temp(arg_39_0, arg_39_1)
 	end
 end
 
-function PlayerUnitHealthExtension.switch_permanent_and_temporary_health(arg_40_0)
+PlayerUnitHealthExtension.switch_permanent_and_temporary_health = function (arg_40_0)
 	local var_40_0 = arg_40_0.game
 	local var_40_1 = arg_40_0.health_game_object_id
 
@@ -1150,7 +1150,7 @@ function PlayerUnitHealthExtension.switch_permanent_and_temporary_health(arg_40_
 	end
 end
 
-function PlayerUnitHealthExtension.shield(arg_41_0, arg_41_1)
+PlayerUnitHealthExtension.shield = function (arg_41_0, arg_41_1)
 	arg_41_0._shield_amount = arg_41_1
 	arg_41_0._shield_duration_left = 10
 	arg_41_0._end_reason = nil
@@ -1160,21 +1160,21 @@ function PlayerUnitHealthExtension.shield(arg_41_0, arg_41_1)
 	end
 end
 
-function PlayerUnitHealthExtension.has_assist_shield(arg_42_0)
+PlayerUnitHealthExtension.has_assist_shield = function (arg_42_0)
 	return arg_42_0._shield_duration_left > 0 and arg_42_0._shield_amount > 0, arg_42_0._shield_amount
 end
 
-function PlayerUnitHealthExtension.remove_assist_shield(arg_43_0, arg_43_1)
+PlayerUnitHealthExtension.remove_assist_shield = function (arg_43_0, arg_43_1)
 	arg_43_0._shield_duration_left = 0
 	arg_43_0._shield_amount = 0
 	arg_43_0._end_reason = arg_43_1
 end
 
-function PlayerUnitHealthExtension.previous_shield_end_reason(arg_44_0)
+PlayerUnitHealthExtension.previous_shield_end_reason = function (arg_44_0)
 	return arg_44_0._end_reason
 end
 
-function PlayerUnitHealthExtension.set_dead(arg_45_0)
+PlayerUnitHealthExtension.set_dead = function (arg_45_0)
 	arg_45_0.state = "dead"
 
 	arg_45_0.status_extension:set_dead(true)
@@ -1196,15 +1196,15 @@ function PlayerUnitHealthExtension.set_dead(arg_45_0)
 	Managers.state.event:trigger("on_player_death", var_45_4, var_45_0, var_45_3)
 end
 
-function PlayerUnitHealthExtension.set_max_health(arg_46_0, arg_46_1)
+PlayerUnitHealthExtension.set_max_health = function (arg_46_0, arg_46_1)
 	return arg_46_0.health
 end
 
-function PlayerUnitHealthExtension.set_current_damage(arg_47_0, arg_47_1)
+PlayerUnitHealthExtension.set_current_damage = function (arg_47_0, arg_47_1)
 	return
 end
 
-function PlayerUnitHealthExtension.health_degen_settings(arg_48_0)
+PlayerUnitHealthExtension.health_degen_settings = function (arg_48_0)
 	local var_48_0 = arg_48_0.buff_extension
 	local var_48_1 = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_AMOUNT
 	local var_48_2 = PlayerUnitStatusSettings.NOT_WOUNDED_DEGEN_DELAY

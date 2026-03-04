@@ -16,7 +16,7 @@ local var_0_9 = 1.6
 HeroWindowWeaveForgeOverview = class(HeroWindowWeaveForgeOverview)
 HeroWindowWeaveForgeOverview.NAME = "HeroWindowWeaveForgeOverview"
 
-function HeroWindowWeaveForgeOverview.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowWeaveForgeOverview.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgeOverview")
 
 	arg_1_0._params = arg_1_1
@@ -56,7 +56,7 @@ function HeroWindowWeaveForgeOverview.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_sync_backend_loadout()
 end
 
-function HeroWindowWeaveForgeOverview._setup_definitions(arg_2_0)
+HeroWindowWeaveForgeOverview._setup_definitions = function (arg_2_0)
 	if arg_2_0._parent:gamepad_style_active() then
 		var_0_0 = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_overview_console_definitions")
 	else
@@ -72,7 +72,7 @@ function HeroWindowWeaveForgeOverview._setup_definitions(arg_2_0)
 	var_0_7 = var_0_0.weapon_crafting_tutorial_definitions
 end
 
-function HeroWindowWeaveForgeOverview._start_transition_animation(arg_3_0, arg_3_1)
+HeroWindowWeaveForgeOverview._start_transition_animation = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		parent = arg_3_0._parent,
 		render_settings = arg_3_0._render_settings
@@ -83,7 +83,7 @@ function HeroWindowWeaveForgeOverview._start_transition_animation(arg_3_0, arg_3
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-function HeroWindowWeaveForgeOverview.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowWeaveForgeOverview.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_setup_definitions()
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
@@ -159,11 +159,11 @@ function HeroWindowWeaveForgeOverview.create_ui_elements(arg_4_0, arg_4_1, arg_4
 	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 end
 
-function HeroWindowWeaveForgeOverview._play_sound(arg_5_0, arg_5_1)
+HeroWindowWeaveForgeOverview._play_sound = function (arg_5_0, arg_5_1)
 	arg_5_0._parent:play_sound(arg_5_1)
 end
 
-function HeroWindowWeaveForgeOverview._initialize_viewports(arg_6_0)
+HeroWindowWeaveForgeOverview._initialize_viewports = function (arg_6_0)
 	local var_6_0 = arg_6_0.weapon_crafting_tutorial
 	local var_6_1 = arg_6_0.amulet_introduced
 	local var_6_2 = {
@@ -319,7 +319,7 @@ function HeroWindowWeaveForgeOverview._initialize_viewports(arg_6_0)
 	arg_6_0._viewports_data = var_6_8
 end
 
-function HeroWindowWeaveForgeOverview._create_item_previewer(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+HeroWindowWeaveForgeOverview._create_item_previewer = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_2.data
 	local var_7_1 = var_7_0.key
 	local var_7_2 = var_7_0.slot_type
@@ -346,7 +346,7 @@ function HeroWindowWeaveForgeOverview._create_item_previewer(arg_7_0, arg_7_1, a
 	return var_7_13
 end
 
-function HeroWindowWeaveForgeOverview._create_unit_previewer(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+HeroWindowWeaveForgeOverview._create_unit_previewer = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_1.element.pass_data[1]
 	local var_8_1 = var_8_0.viewport
 	local var_8_2 = var_8_0.world
@@ -364,17 +364,17 @@ function HeroWindowWeaveForgeOverview._create_unit_previewer(arg_8_0, arg_8_1, a
 	return var_8_4
 end
 
-function HeroWindowWeaveForgeOverview.cb_unit_spawned_unit_preview(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowWeaveForgeOverview.cb_unit_spawned_unit_preview = function (arg_9_0, arg_9_1, arg_9_2)
 	print("cb_unit_spawned_unit_preview", arg_9_1, arg_9_2)
 end
 
-function HeroWindowWeaveForgeOverview.cb_unit_spawned_item_preview(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowWeaveForgeOverview.cb_unit_spawned_item_preview = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = true
 
 	arg_10_1:present_item(arg_10_2, var_10_0)
 end
 
-function HeroWindowWeaveForgeOverview._create_viewport_definition(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowWeaveForgeOverview._create_viewport_definition = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_2 and "environment/ui_weave_forge_preview_inverted" or "environment/ui_weave_forge_preview"
 
 	return {
@@ -409,7 +409,7 @@ function HeroWindowWeaveForgeOverview._create_viewport_definition(arg_11_0, arg_
 	}
 end
 
-function HeroWindowWeaveForgeOverview.on_exit(arg_12_0, arg_12_1)
+HeroWindowWeaveForgeOverview.on_exit = function (arg_12_0, arg_12_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgeOverview")
 
 	arg_12_0._ui_animator = nil
@@ -439,7 +439,7 @@ function HeroWindowWeaveForgeOverview.on_exit(arg_12_0, arg_12_1)
 	end
 end
 
-function HeroWindowWeaveForgeOverview.update(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowWeaveForgeOverview.update = function (arg_13_0, arg_13_1, arg_13_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -506,7 +506,7 @@ function HeroWindowWeaveForgeOverview.update(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:_draw(arg_13_1)
 end
 
-function HeroWindowWeaveForgeOverview.post_update(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowWeaveForgeOverview.post_update = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0._viewports_data then
 		arg_14_0:_initialize_viewports()
 	end
@@ -529,7 +529,7 @@ function HeroWindowWeaveForgeOverview.post_update(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_handle_input(arg_14_1, arg_14_2)
 end
 
-function HeroWindowWeaveForgeOverview._update_animations(arg_15_0, arg_15_1)
+HeroWindowWeaveForgeOverview._update_animations = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._ui_animations
 	local var_15_1 = arg_15_0._animations
 	local var_15_2 = arg_15_0._ui_animator
@@ -555,7 +555,7 @@ function HeroWindowWeaveForgeOverview._update_animations(arg_15_0, arg_15_1)
 	if arg_15_0._viewports_data then
 		for iter_15_4, iter_15_5 in ipairs(arg_15_0._viewports_data) do
 			if iter_15_5.customize_button then
-				-- block empty
+				-- Nothing
 			end
 
 			local var_15_3 = iter_15_5.change_button
@@ -571,7 +571,7 @@ function HeroWindowWeaveForgeOverview._update_animations(arg_15_0, arg_15_1)
 	UIWidgetUtils.animate_default_button(var_15_4.upgrade_button, arg_15_1)
 end
 
-function HeroWindowWeaveForgeOverview._is_button_pressed(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowWeaveForgeOverview._is_button_pressed = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_1.content
 	local var_16_1 = var_16_0.button_hotspot or var_16_0.hotspot
 
@@ -584,33 +584,33 @@ function HeroWindowWeaveForgeOverview._is_button_pressed(arg_16_0, arg_16_1, arg
 	end
 end
 
-function HeroWindowWeaveForgeOverview._is_button_hover_enter(arg_17_0, arg_17_1)
+HeroWindowWeaveForgeOverview._is_button_hover_enter = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.content
 	local var_17_1 = var_17_0.button_hotspot or var_17_0.hotspot
 
 	return var_17_1.on_hover_enter and not var_17_1.is_selected
 end
 
-function HeroWindowWeaveForgeOverview._is_button_hover(arg_18_0, arg_18_1)
+HeroWindowWeaveForgeOverview._is_button_hover = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.content
 
 	return (var_18_0.button_hotspot or var_18_0.hotspot).is_hover
 end
 
-function HeroWindowWeaveForgeOverview._is_button_hover_exit(arg_19_0, arg_19_1)
+HeroWindowWeaveForgeOverview._is_button_hover_exit = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.content
 	local var_19_1 = var_19_0.button_hotspot or var_19_0.hotspot
 
 	return var_19_1.on_hover_exit and not var_19_1.is_selected
 end
 
-function HeroWindowWeaveForgeOverview._is_button_selected(arg_20_0, arg_20_1)
+HeroWindowWeaveForgeOverview._is_button_selected = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.content
 
 	return (var_20_0.button_hotspot or var_20_0.hotspot).is_selected
 end
 
-function HeroWindowWeaveForgeOverview._sync_backend_loadout(arg_21_0)
+HeroWindowWeaveForgeOverview._sync_backend_loadout = function (arg_21_0)
 	local var_21_0 = Managers.backend:get_interface("weaves")
 	local var_21_1 = var_21_0:get_forge_level()
 	local var_21_2 = var_21_0:forge_max_level()
@@ -625,7 +625,7 @@ function HeroWindowWeaveForgeOverview._sync_backend_loadout(arg_21_0)
 	arg_21_0:_setup_upgrade_tooltip(1)
 end
 
-function HeroWindowWeaveForgeOverview._handle_input(arg_22_0, arg_22_1, arg_22_2)
+HeroWindowWeaveForgeOverview._handle_input = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._parent
 	local var_22_1 = arg_22_0._widgets_by_name
 	local var_22_2 = Managers.input:is_device_active("gamepad")
@@ -687,7 +687,7 @@ function HeroWindowWeaveForgeOverview._handle_input(arg_22_0, arg_22_1, arg_22_2
 	end
 end
 
-function HeroWindowWeaveForgeOverview._draw(arg_23_0, arg_23_1)
+HeroWindowWeaveForgeOverview._draw = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._parent:get_ui_renderer()
 	local var_23_1 = arg_23_0._ui_top_renderer
 	local var_23_2 = arg_23_0._ui_scenegraph
@@ -754,7 +754,7 @@ function HeroWindowWeaveForgeOverview._draw(arg_23_0, arg_23_1)
 	var_23_5.alpha_multiplier = var_23_8
 end
 
-function HeroWindowWeaveForgeOverview._set_forge_upgrade_price_by_level(arg_24_0, arg_24_1)
+HeroWindowWeaveForgeOverview._set_forge_upgrade_price_by_level = function (arg_24_0, arg_24_1)
 	local var_24_0 = Managers.backend:get_interface("weaves")
 	local var_24_1 = var_24_0:get_essence()
 	local var_24_2 = var_24_0:forge_upgrade_cost(arg_24_1 - arg_24_0._forge_level)
@@ -763,11 +763,11 @@ function HeroWindowWeaveForgeOverview._set_forge_upgrade_price_by_level(arg_24_0
 	arg_24_0:_set_essence_upgrade_cost(var_24_2, var_24_3)
 end
 
-function HeroWindowWeaveForgeOverview._upgrade_forge_cb(arg_25_0, arg_25_1)
+HeroWindowWeaveForgeOverview._upgrade_forge_cb = function (arg_25_0, arg_25_1)
 	arg_25_0._upgrade_forge_response = arg_25_1
 end
 
-function HeroWindowWeaveForgeOverview._upgrade_forge_done(arg_26_0, arg_26_1)
+HeroWindowWeaveForgeOverview._upgrade_forge_done = function (arg_26_0, arg_26_1)
 	arg_26_0._params.upgrading = nil
 
 	arg_26_0._parent:unblock_input()
@@ -800,7 +800,7 @@ function HeroWindowWeaveForgeOverview._upgrade_forge_done(arg_26_0, arg_26_1)
 	end
 end
 
-function HeroWindowWeaveForgeOverview._upgrade_forge(arg_27_0)
+HeroWindowWeaveForgeOverview._upgrade_forge = function (arg_27_0)
 	arg_27_0._params.upgrading = true
 
 	arg_27_0._parent:block_input()
@@ -816,7 +816,7 @@ function HeroWindowWeaveForgeOverview._upgrade_forge(arg_27_0)
 	var_27_1:upgrade_forge(var_27_0, var_27_2)
 end
 
-function HeroWindowWeaveForgeOverview._setup_upgrade_tooltip(arg_28_0, arg_28_1)
+HeroWindowWeaveForgeOverview._setup_upgrade_tooltip = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._widgets_by_name.upgrade_button
 	local var_28_1
 	local var_28_2 = Managers.backend:get_interface("weaves")
@@ -854,7 +854,7 @@ function HeroWindowWeaveForgeOverview._setup_upgrade_tooltip(arg_28_0, arg_28_1)
 		end
 
 		if var_28_7 then
-			table.sort(var_28_7, function(arg_29_0, arg_29_1)
+			table.sort(var_28_7, function (arg_29_0, arg_29_1)
 				local var_29_0 = arg_29_0.required_forge_level
 				local var_29_1 = arg_29_1.required_forge_level
 
@@ -889,7 +889,7 @@ function HeroWindowWeaveForgeOverview._setup_upgrade_tooltip(arg_28_0, arg_28_1)
 		end
 
 		if var_28_13 then
-			table.sort(var_28_13, function(arg_30_0, arg_30_1)
+			table.sort(var_28_13, function (arg_30_0, arg_30_1)
 				local var_30_0 = arg_30_0.required_forge_level
 				local var_30_1 = arg_30_1.required_forge_level
 
@@ -907,7 +907,7 @@ function HeroWindowWeaveForgeOverview._setup_upgrade_tooltip(arg_28_0, arg_28_1)
 	var_28_0.content.tooltip = var_28_1
 end
 
-function HeroWindowWeaveForgeOverview._set_essence_upgrade_cost(arg_31_0, arg_31_1, arg_31_2)
+HeroWindowWeaveForgeOverview._set_essence_upgrade_cost = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0._widgets_by_name.upgrade_button
 	local var_31_1 = var_31_0.content
 	local var_31_2 = var_31_0.style
@@ -964,7 +964,7 @@ function HeroWindowWeaveForgeOverview._set_essence_upgrade_cost(arg_31_0, arg_31
 	var_31_2.title_text_disabled.offset[1] = var_31_13
 end
 
-function HeroWindowWeaveForgeOverview._set_forge_level(arg_32_0, arg_32_1)
+HeroWindowWeaveForgeOverview._set_forge_level = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._widgets_by_name
 	local var_32_1 = var_32_0.forge_level_title
 	local var_32_2 = var_32_0.forge_level_text

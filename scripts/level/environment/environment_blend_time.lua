@@ -2,7 +2,7 @@
 
 EnvironmentBlendTime = class(EnvironmentBlendTime)
 
-function EnvironmentBlendTime.init(arg_1_0, arg_1_1)
+EnvironmentBlendTime.init = function (arg_1_0, arg_1_1)
 	arg_1_0._environment = arg_1_1.environment
 	arg_1_0._blend_function = arg_1_1.blend_function
 	arg_1_0._lerp_in_speed = arg_1_1.lerp_in_speed
@@ -17,19 +17,19 @@ function EnvironmentBlendTime.init(arg_1_0, arg_1_1)
 	Managers.state.event:register(arg_1_0, "force_blend_environment_volume", "event_force_blend_environment_volume")
 end
 
-function EnvironmentBlendTime.event_force_blend_environment_volume(arg_2_0)
+EnvironmentBlendTime.event_force_blend_environment_volume = function (arg_2_0)
 	arg_2_0._force_blend = true
 end
 
-function EnvironmentBlendTime.environment(arg_3_0)
+EnvironmentBlendTime.environment = function (arg_3_0)
 	return arg_3_0._environment
 end
 
-function EnvironmentBlendTime.value(arg_4_0)
+EnvironmentBlendTime.value = function (arg_4_0)
 	return arg_4_0._value
 end
 
-function EnvironmentBlendTime.update(arg_5_0, arg_5_1)
+EnvironmentBlendTime.update = function (arg_5_0, arg_5_1)
 	if arg_5_0._blend_function(arg_5_0._environment) then
 		arg_5_0._target_value = 1
 		arg_5_0._lerp_speed = arg_5_0._lerp_in_speed
@@ -46,7 +46,7 @@ function EnvironmentBlendTime.update(arg_5_0, arg_5_1)
 	end
 end
 
-function EnvironmentBlendTime.destroy(arg_6_0)
+EnvironmentBlendTime.destroy = function (arg_6_0)
 	local var_6_0 = Managers.state.event
 
 	if var_6_0 then

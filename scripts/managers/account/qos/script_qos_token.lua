@@ -2,20 +2,20 @@
 
 ScriptQoSToken = class(ScriptQoSToken)
 
-function ScriptQoSToken.init(arg_1_0, arg_1_1)
+ScriptQoSToken.init = function (arg_1_0, arg_1_1)
 	arg_1_0._token = arg_1_1
 	arg_1_0._result = {}
 	arg_1_0._done = false
 end
 
-function ScriptQoSToken.update(arg_2_0)
+ScriptQoSToken.update = function (arg_2_0)
 	local var_2_0, var_2_1, var_2_2, var_2_3 = QoS.status(arg_2_0._token)
 
 	arg_2_0._done = var_2_1
 	arg_2_0._result_code = var_2_3
 end
 
-function ScriptQoSToken.info(arg_3_0)
+ScriptQoSToken.info = function (arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = bit.band(arg_3_0._result_code, QoS.UP_FAILED) > 0
 	local var_3_2 = bit.band(arg_3_0._result_code, QoS.DOWN_FAILED) > 0
@@ -34,10 +34,10 @@ function ScriptQoSToken.info(arg_3_0)
 	return var_3_0
 end
 
-function ScriptQoSToken.done(arg_4_0)
+ScriptQoSToken.done = function (arg_4_0)
 	return arg_4_0._done
 end
 
-function ScriptQoSToken.close(arg_5_0)
+ScriptQoSToken.close = function (arg_5_0)
 	QoS.release(arg_5_0._token)
 end

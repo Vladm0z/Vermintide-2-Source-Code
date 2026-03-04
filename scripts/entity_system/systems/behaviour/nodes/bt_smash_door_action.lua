@@ -18,13 +18,13 @@ local function var_0_0(arg_1_0)
 	end
 end
 
-function BTSmashDoorAction.init(arg_2_0, ...)
+BTSmashDoorAction.init = function (arg_2_0, ...)
 	BTSmashDoorAction.super.init(arg_2_0, ...)
 end
 
 BTSmashDoorAction.name = "BTSmashDoorAction"
 
-function BTSmashDoorAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTSmashDoorAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 	local var_3_1 = arg_3_2.next_smart_object_data
 	local var_3_2 = var_3_1.smart_object_data.unit
@@ -64,7 +64,7 @@ function BTSmashDoorAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.spawn_to_running = nil
 end
 
-function BTSmashDoorAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTSmashDoorAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_5 then
 		local var_4_0 = arg_4_2.locomotion_extension
 
@@ -91,7 +91,7 @@ function BTSmashDoorAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, ar
 	arg_4_2.smash_door.target_unit = nil
 end
 
-function BTSmashDoorAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTSmashDoorAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not Unit.alive(arg_5_2.smash_door.target_unit) then
 		return "failed"
 	end
@@ -119,13 +119,13 @@ function BTSmashDoorAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTSmashDoorAction.StateInit.on_enter(arg_6_0, arg_6_1)
+BTSmashDoorAction.StateInit.on_enter = function (arg_6_0, arg_6_1)
 	arg_6_0.blackboard = arg_6_1.blackboard
 	arg_6_0.unit = arg_6_1.unit
 	arg_6_0.entrance_pos = arg_6_1.entrance_pos
 end
 
-function BTSmashDoorAction.StateInit.update(arg_7_0, arg_7_1, arg_7_2)
+BTSmashDoorAction.StateInit.update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.blackboard
 
 	if var_7_0.is_in_smartobject_range then
@@ -148,7 +148,7 @@ function BTSmashDoorAction.StateInit.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function BTSmashDoorAction.StateMovingToSmartObjectEntrance.on_enter(arg_8_0, arg_8_1)
+BTSmashDoorAction.StateMovingToSmartObjectEntrance.on_enter = function (arg_8_0, arg_8_1)
 	arg_8_0.blackboard = arg_8_1.blackboard
 	arg_8_0.unit = arg_8_1.unit
 	arg_8_0.target_unit = arg_8_1.blackboard.smash_door.target_unit
@@ -160,7 +160,7 @@ function BTSmashDoorAction.StateMovingToSmartObjectEntrance.on_enter(arg_8_0, ar
 	end
 end
 
-function BTSmashDoorAction.StateMovingToSmartObjectEntrance.update(arg_9_0, arg_9_1, arg_9_2)
+BTSmashDoorAction.StateMovingToSmartObjectEntrance.update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.unit
 	local var_9_1 = arg_9_0.blackboard
 	local var_9_2 = var_9_1.action
@@ -190,7 +190,7 @@ function BTSmashDoorAction.StateMovingToSmartObjectEntrance.update(arg_9_0, arg_
 	end
 end
 
-function BTSmashDoorAction.StateOpening.on_enter(arg_10_0, arg_10_1)
+BTSmashDoorAction.StateOpening.on_enter = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.blackboard
 	local var_10_1 = arg_10_1.unit
 	local var_10_2 = arg_10_1.action
@@ -210,7 +210,7 @@ function BTSmashDoorAction.StateOpening.on_enter(arg_10_0, arg_10_1)
 	var_10_4:set_wanted_rotation(var_10_5)
 end
 
-function BTSmashDoorAction.StateOpening.update(arg_11_0, arg_11_1, arg_11_2)
+BTSmashDoorAction.StateOpening.update = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.blackboard
 	local var_11_1 = arg_11_0.target_unit
 
@@ -231,7 +231,7 @@ function BTSmashDoorAction.StateOpening.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function BTSmashDoorAction.StateAttacking.on_enter(arg_12_0, arg_12_1)
+BTSmashDoorAction.StateAttacking.on_enter = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.blackboard.smash_door.target_unit
 	local var_12_1 = arg_12_1.blackboard
 
@@ -250,7 +250,7 @@ function BTSmashDoorAction.StateAttacking.on_enter(arg_12_0, arg_12_1)
 	arg_12_0:attack()
 end
 
-function BTSmashDoorAction.StateAttacking.update(arg_13_0, arg_13_1, arg_13_2)
+BTSmashDoorAction.StateAttacking.update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.blackboard
 	local var_13_1 = arg_13_0.target_unit
 	local var_13_2 = ScriptUnit.extension(var_13_1, "door_system")
@@ -272,14 +272,14 @@ function BTSmashDoorAction.StateAttacking.update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function BTSmashDoorAction.StateAttacking.on_exit(arg_14_0)
+BTSmashDoorAction.StateAttacking.on_exit = function (arg_14_0)
 	local var_14_0 = arg_14_0.target_unit
 	local var_14_1 = ScriptUnit.extension(var_14_0, "door_system")
 
 	var_14_1.num_attackers = var_14_1.num_attackers - 1
 end
 
-function BTSmashDoorAction.StateAttacking.attack(arg_15_0)
+BTSmashDoorAction.StateAttacking.attack = function (arg_15_0)
 	local var_15_0 = arg_15_0.target_unit
 	local var_15_1 = arg_15_0.unit
 	local var_15_2 = arg_15_0.blackboard
@@ -301,7 +301,7 @@ function BTSmashDoorAction.StateAttacking.attack(arg_15_0)
 	end
 end
 
-function BTSmashDoorAction.StateMovingToSmartObjectExit.on_enter(arg_16_0, arg_16_1)
+BTSmashDoorAction.StateMovingToSmartObjectExit.on_enter = function (arg_16_0, arg_16_1)
 	arg_16_0.blackboard = arg_16_1.blackboard
 	arg_16_0.unit = arg_16_1.unit
 	arg_16_0.exit_pos = arg_16_1.exit_pos
@@ -312,7 +312,7 @@ function BTSmashDoorAction.StateMovingToSmartObjectExit.on_enter(arg_16_0, arg_1
 	end
 end
 
-function BTSmashDoorAction.StateMovingToSmartObjectExit.update(arg_17_0, arg_17_1, arg_17_2)
+BTSmashDoorAction.StateMovingToSmartObjectExit.update = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.unit
 	local var_17_1 = arg_17_0.blackboard
 	local var_17_2 = POSITION_LOOKUP[var_17_0]
@@ -332,7 +332,7 @@ function BTSmashDoorAction.StateMovingToSmartObjectExit.update(arg_17_0, arg_17_
 	end
 end
 
-function BTSmashDoorAction.anim_cb_damage(arg_18_0, arg_18_1, arg_18_2)
+BTSmashDoorAction.anim_cb_damage = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_2.smash_door.target_unit then
 		local var_18_0 = arg_18_2.action
 
@@ -340,7 +340,7 @@ function BTSmashDoorAction.anim_cb_damage(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function BTSmashDoorAction.anim_cb_attack_overlap_done(arg_19_0, arg_19_1, arg_19_2)
+BTSmashDoorAction.anim_cb_attack_overlap_done = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_2.smash_door.target_unit then
 		local var_19_0 = arg_19_2.action
 

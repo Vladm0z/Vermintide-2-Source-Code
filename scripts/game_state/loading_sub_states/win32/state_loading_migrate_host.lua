@@ -11,20 +11,20 @@ StateLoadingMigrateHost.NAME = "StateLoadingMigrateHost"
 
 local var_0_1 = 5
 
-function StateLoadingMigrateHost.on_enter(arg_2_0, arg_2_1)
+StateLoadingMigrateHost.on_enter = function (arg_2_0, arg_2_1)
 	print("[Gamestate] Enter Substate StateLoadingMigrateHost")
 	arg_2_0:_init_params(arg_2_1)
 	arg_2_0:_init_network()
 end
 
-function StateLoadingMigrateHost._init_params(arg_3_0, arg_3_1)
+StateLoadingMigrateHost._init_params = function (arg_3_0, arg_3_1)
 	arg_3_0._loading_view = arg_3_1.loading_view
 	arg_3_0._lobby_client = arg_3_1.lobby_client
 	arg_3_0._lobby_joined = false
 	arg_3_0._server_created = false
 end
 
-function StateLoadingMigrateHost._init_network(arg_4_0)
+StateLoadingMigrateHost._init_network = function (arg_4_0)
 	LobbySetup.setup_network_options()
 
 	if not arg_4_0.parent:has_registered_rpcs() then
@@ -101,7 +101,7 @@ function StateLoadingMigrateHost._init_network(arg_4_0)
 	end
 end
 
-function StateLoadingMigrateHost.update(arg_5_0, arg_5_1, arg_5_2)
+StateLoadingMigrateHost.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._server_created or arg_5_0._lobby_joined then
 		return StateLoadingRunning
 	elseif IS_XB1 and arg_5_0.parent:lobby_verified() then
@@ -109,7 +109,7 @@ function StateLoadingMigrateHost.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function StateLoadingMigrateHost.on_exit(arg_6_0, arg_6_1)
+StateLoadingMigrateHost.on_exit = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.parent.parent.loading_context.host_migration_info
 	local var_6_1 = var_6_0 and var_6_0.game_mode_event_data
 
@@ -122,7 +122,7 @@ function StateLoadingMigrateHost.on_exit(arg_6_0, arg_6_1)
 	end
 end
 
-function StateLoadingMigrateHost.cb_server_created(arg_7_0)
+StateLoadingMigrateHost.cb_server_created = function (arg_7_0)
 	var_0_0("cb_server_created")
 
 	if IS_XB1 then
@@ -142,7 +142,7 @@ function StateLoadingMigrateHost.cb_server_created(arg_7_0)
 	arg_7_0._server_created = true
 end
 
-function StateLoadingMigrateHost.cb_lobby_joined(arg_8_0)
+StateLoadingMigrateHost.cb_lobby_joined = function (arg_8_0)
 	var_0_0("cb_lobby_joined")
 
 	arg_8_0._lobby_joined = true

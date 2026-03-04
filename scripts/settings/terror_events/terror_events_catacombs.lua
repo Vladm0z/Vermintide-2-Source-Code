@@ -130,7 +130,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 2 and var_0_1("skaven_storm_vermin_commander") < 1
 			end
 		},
@@ -294,7 +294,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("skaven_clan_rat") < 2 and var_0_1("skaven_slave") < 4 and var_0_1("chaos_marauder") < 2 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -335,7 +335,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 4 and var_0_1("skaven_storm_vermin_commander") < 2
 			end
 		},
@@ -359,7 +359,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 3 and var_0_1("chaos_warrior") < 2
 			end
 		},
@@ -413,7 +413,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2 and var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3 and var_0_1("chaos_warrior") < 2
 			end
 		},
@@ -456,7 +456,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 4 and var_0_1("skaven_storm_vermin_commander") < 2
 			end
 		},
@@ -498,7 +498,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_1("skaven_poison_wind_globadier") < 1 and var_0_1("skaven_pack_master") < 1
 			end
 		},
@@ -539,7 +539,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_1("skaven_warpfire_thrower") < 1 and var_0_1("skaven_gutter_runner") < 1
 			end
 		},
@@ -580,7 +580,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_1("skaven_ratling_gunner") < 1 and var_0_1("skaven_pack_master") < 1
 			end
 		},

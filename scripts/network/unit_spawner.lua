@@ -23,7 +23,7 @@ local var_0_2 = Unit.alive
 
 UnitSpawner = class(UnitSpawner)
 
-function UnitSpawner.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+UnitSpawner.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.world = arg_2_1
 	arg_2_0.entity_manager = arg_2_2
 	arg_2_0.unit_storage = nil
@@ -52,14 +52,14 @@ function UnitSpawner.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._spawned_async_units = {}
 end
 
-function UnitSpawner.destroy(arg_3_0)
+UnitSpawner.destroy = function (arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "UnitSpawner")
 
 	arg_3_0.unit_destroy_listeners = nil
 	arg_3_0.entity_manager = nil
 end
 
-function UnitSpawner.set_gameobject_initializer_data(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+UnitSpawner.set_gameobject_initializer_data = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0.game_session = Network.game_session()
 
 	fassert(arg_4_0.game_session, "No game session when initializing game object")
@@ -73,19 +73,19 @@ function UnitSpawner.set_gameobject_initializer_data(arg_4_0, arg_4_1, arg_4_2, 
 	arg_4_0.gameobject_extractors = arg_4_2
 end
 
-function UnitSpawner.set_unit_storage(arg_5_0, arg_5_1)
+UnitSpawner.set_unit_storage = function (arg_5_0, arg_5_1)
 	arg_5_0.unit_storage = arg_5_1
 end
 
-function UnitSpawner.set_gameobject_to_unit_creator_function(arg_6_0, arg_6_1)
+UnitSpawner.set_gameobject_to_unit_creator_function = function (arg_6_0, arg_6_1)
 	arg_6_0.create_unit_from_gameobject_function = arg_6_1
 end
 
-function UnitSpawner.set_unit_template_lookup_table(arg_7_0, arg_7_1)
+UnitSpawner.set_unit_template_lookup_table = function (arg_7_0, arg_7_1)
 	arg_7_0.unit_template_lut = arg_7_1
 end
 
-function UnitSpawner.push_unit_to_death_watch_list(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+UnitSpawner.push_unit_to_death_watch_list = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0:freeze_unit_extensions(arg_8_1, arg_8_2, arg_8_3)
 
 	arg_8_0.unit_death_watch_list_n = arg_8_0.unit_death_watch_list_n + 1
@@ -97,7 +97,7 @@ function UnitSpawner.push_unit_to_death_watch_list(arg_8_0, arg_8_1, arg_8_2, ar
 	arg_8_0.unit_death_watch_lookup[arg_8_1] = arg_8_0.unit_death_watch_list[arg_8_0.unit_death_watch_list_n]
 end
 
-function UnitSpawner.freeze_unit_extensions(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+UnitSpawner.freeze_unit_extensions = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = NetworkUnit.is_husk_unit(arg_9_1)
 	local var_9_1 = var_0_0.extensions_to_remove_on_death(arg_9_3.breed.unit_template, var_9_0, arg_9_0.is_server)
 
@@ -106,7 +106,7 @@ function UnitSpawner.freeze_unit_extensions(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function UnitSpawner.prioritize_death_watch_unit(arg_10_0, arg_10_1, arg_10_2)
+UnitSpawner.prioritize_death_watch_unit = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.unit_death_watch_lookup[arg_10_1]
 
 	if var_10_0 then
@@ -115,7 +115,7 @@ function UnitSpawner.prioritize_death_watch_unit(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function UnitSpawner.breed_in_death_watch(arg_11_0, arg_11_1)
+UnitSpawner.breed_in_death_watch = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.unit_death_watch_list
 
 	for iter_11_0 = 1, arg_11_0.unit_death_watch_list_n do
@@ -132,7 +132,7 @@ local function var_0_3(arg_12_0, arg_12_1)
 	return arg_12_0.t < arg_12_1.t
 end
 
-function UnitSpawner.update_death_watch_list(arg_13_0)
+UnitSpawner.update_death_watch_list = function (arg_13_0)
 	if arg_13_0.unit_death_watch_list_dirty then
 		table.sort(arg_13_0.unit_death_watch_list, var_0_3)
 
@@ -176,7 +176,7 @@ function UnitSpawner.update_death_watch_list(arg_13_0)
 	end
 end
 
-function UnitSpawner.mark_for_deletion(arg_14_0, arg_14_1)
+UnitSpawner.mark_for_deletion = function (arg_14_0, arg_14_1)
 	fassert(var_0_2(arg_14_1), "Tried to destroy a unit (%s) that was already destroyed.", tostring(arg_14_1))
 	arg_14_0.deletion_queue:push_back(arg_14_1)
 
@@ -195,20 +195,20 @@ function UnitSpawner.mark_for_deletion(arg_14_0, arg_14_1)
 	end
 end
 
-function UnitSpawner.is_marked_for_deletion(arg_15_0, arg_15_1)
+UnitSpawner.is_marked_for_deletion = function (arg_15_0, arg_15_1)
 	return (arg_15_0.deletion_queue:contains(arg_15_1))
 end
 
-function UnitSpawner.commit_and_remove_pending_units(arg_16_0)
+UnitSpawner.commit_and_remove_pending_units = function (arg_16_0)
 	local var_16_0 = 0
 	local var_16_1 = 0
 
 	repeat
-		-- block empty
+		-- Nothing
 	until arg_16_0:commit_pending_unit_system_registrations() + arg_16_0:remove_units_marked_for_deletion() == 0
 end
 
-function UnitSpawner.commit_pending_unit_system_registrations(arg_17_0)
+UnitSpawner.commit_pending_unit_system_registrations = function (arg_17_0)
 	fassert(not arg_17_0.locked)
 
 	local var_17_0 = arg_17_0.pending_extension_adds_list_n
@@ -235,7 +235,7 @@ function UnitSpawner.commit_pending_unit_system_registrations(arg_17_0)
 	return var_17_0
 end
 
-function UnitSpawner.remove_units_marked_for_deletion(arg_18_0)
+UnitSpawner.remove_units_marked_for_deletion = function (arg_18_0)
 	fassert(not arg_18_0.locked)
 
 	local var_18_0 = arg_18_0.pending_extension_adds_map
@@ -283,7 +283,7 @@ function UnitSpawner.remove_units_marked_for_deletion(arg_18_0)
 	return var_18_2
 end
 
-function UnitSpawner.spawn_local_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+UnitSpawner.spawn_local_unit = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = World.spawn_unit(arg_19_0.world, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_1 = arg_19_0.unit_unique_id
 
@@ -299,7 +299,7 @@ end
 
 local var_0_4 = {}
 
-function UnitSpawner.create_unit_extensions(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+UnitSpawner.create_unit_extensions = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if arg_20_0.entity_manager:add_unit_extensions(arg_20_1, arg_20_2, arg_20_3, arg_20_4) then
 		if not arg_20_0.locked then
 			var_0_4[1] = arg_20_2
@@ -312,7 +312,7 @@ function UnitSpawner.create_unit_extensions(arg_20_0, arg_20_1, arg_20_2, arg_20
 	end
 end
 
-function UnitSpawner.spawn_local_unit_with_extensions(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+UnitSpawner.spawn_local_unit_with_extensions = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 	local var_21_0 = arg_21_0:spawn_local_unit(arg_21_1, arg_21_4, arg_21_5, arg_21_6)
 
 	arg_21_2 = arg_21_2 or Unit.get_data(var_21_0, "unit_template")
@@ -322,7 +322,7 @@ function UnitSpawner.spawn_local_unit_with_extensions(arg_21_0, arg_21_1, arg_21
 	return var_21_0, arg_21_2
 end
 
-function UnitSpawner.spawn_network_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+UnitSpawner.spawn_network_unit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	local var_22_0, var_22_1 = arg_22_0:spawn_local_unit_with_extensions(arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	local var_22_2 = arg_22_0.unit_template_lut[var_22_1]
 
@@ -339,7 +339,7 @@ function UnitSpawner.spawn_network_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, 
 	return var_22_0, var_22_5
 end
 
-function UnitSpawner.queue_spawn_network_unit(arg_23_0, ...)
+UnitSpawner.queue_spawn_network_unit = function (arg_23_0, ...)
 	local var_23_0 = arg_23_0._async_spawn_queue
 	local var_23_1 = arg_23_0._async_spawn_handle
 
@@ -355,7 +355,7 @@ function UnitSpawner.queue_spawn_network_unit(arg_23_0, ...)
 	return var_23_1
 end
 
-function UnitSpawner.remove_queued_network_unit(arg_24_0, arg_24_1)
+UnitSpawner.remove_queued_network_unit = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._spawned_async_units[arg_24_1]
 
 	if var_24_0 then
@@ -375,7 +375,7 @@ function UnitSpawner.remove_queued_network_unit(arg_24_0, arg_24_1)
 	end
 end
 
-function UnitSpawner.spawn_queued_units(arg_25_0)
+UnitSpawner.spawn_queued_units = function (arg_25_0)
 	local var_25_0 = arg_25_0._async_spawn_queue
 
 	for iter_25_0 = 1, #var_25_0 do
@@ -390,7 +390,7 @@ function UnitSpawner.spawn_queued_units(arg_25_0)
 	end
 end
 
-function UnitSpawner.try_claim_async_unit(arg_26_0, arg_26_1)
+UnitSpawner.try_claim_async_unit = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._spawned_async_units[arg_26_1]
 
 	arg_26_0._spawned_async_units[arg_26_1] = nil
@@ -398,7 +398,7 @@ function UnitSpawner.try_claim_async_unit(arg_26_0, arg_26_1)
 	return var_26_0
 end
 
-function UnitSpawner.request_spawn_template_unit(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+UnitSpawner.request_spawn_template_unit = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 	arg_27_6 = arg_27_6 or 1
 
 	local var_27_0 = NetworkLookup.spawn_unit_templates[arg_27_1]
@@ -407,7 +407,7 @@ function UnitSpawner.request_spawn_template_unit(arg_27_0, arg_27_1, arg_27_2, a
 	Managers.state.network.network_transmit:send_rpc_server("rpc_request_spawn_template_unit", var_27_0, arg_27_2, arg_27_3, var_27_1, arg_27_5, arg_27_6)
 end
 
-function UnitSpawner.world_delete_units(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+UnitSpawner.world_delete_units = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = arg_28_0.game_session
 	local var_28_1 = arg_28_0.unit_storage
 
@@ -456,7 +456,7 @@ function UnitSpawner.world_delete_units(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	end
 end
 
-function UnitSpawner.spawn_unit_from_game_object(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+UnitSpawner.spawn_unit_from_game_object = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0.create_unit_from_gameobject_function(arg_29_0, arg_29_0.game_session, arg_29_1, arg_29_3)
 
 	NetworkUnit.add_unit(var_29_0)
@@ -478,7 +478,7 @@ function UnitSpawner.spawn_unit_from_game_object(arg_29_0, arg_29_1, arg_29_2, a
 	return var_29_0
 end
 
-function UnitSpawner.destroy_game_object_unit(arg_30_0, arg_30_1, arg_30_2)
+UnitSpawner.destroy_game_object_unit = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0.unit_storage
 	local var_30_1 = var_30_0:units()[arg_30_1]
 
@@ -495,7 +495,7 @@ function UnitSpawner.destroy_game_object_unit(arg_30_0, arg_30_1, arg_30_2)
 	var_30_0:remove(var_30_1, arg_30_1)
 end
 
-function UnitSpawner.add_destroy_listener(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+UnitSpawner.add_destroy_listener = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	local var_31_0 = arg_31_4 and arg_31_0.unit_destroy_listeners_post_cleanup or arg_31_0.unit_destroy_listeners
 	local var_31_1 = var_31_0[arg_31_1]
 
@@ -509,7 +509,7 @@ function UnitSpawner.add_destroy_listener(arg_31_0, arg_31_1, arg_31_2, arg_31_3
 	var_31_1[arg_31_2] = arg_31_3
 end
 
-function UnitSpawner.remove_destroy_listener(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+UnitSpawner.remove_destroy_listener = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = (arg_32_3 and arg_32_0.unit_destroy_listeners_post_cleanup or arg_32_0.unit_destroy_listeners)[arg_32_1]
 
 	if var_32_0 then

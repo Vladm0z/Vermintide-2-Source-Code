@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/fatigue_ui_definitions")
 
 FatigueUI = class(FatigueUI)
 
-function FatigueUI.init(arg_1_0, arg_1_1, arg_1_2)
+FatigueUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -14,7 +14,7 @@ function FatigueUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function FatigueUI.create_ui_elements(arg_2_0)
+FatigueUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_2_0 = {}
@@ -27,11 +27,11 @@ function FatigueUI.create_ui_elements(arg_2_0)
 	arg_2_0.shields = var_2_0
 end
 
-function FatigueUI.destroy(arg_3_0)
+FatigueUI.destroy = function (arg_3_0)
 	return
 end
 
-function FatigueUI.shield_state(arg_4_0, arg_4_1, arg_4_2)
+FatigueUI.shield_state = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_2 - arg_4_1
 
 	if var_4_0 >= 0 then
@@ -43,7 +43,7 @@ function FatigueUI.shield_state(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function FatigueUI.setup_hud(arg_5_0, arg_5_1)
+FatigueUI.setup_hud = function (arg_5_0, arg_5_1)
 	local var_5_0, var_5_1 = arg_5_1:current_fatigue_points()
 	local var_5_2 = math.clamp(var_5_0, 0, UISettings.max_fatigue_shields * 2)
 	local var_5_3 = math.clamp(var_5_1, 0, UISettings.max_fatigue_shields * 2)
@@ -74,7 +74,7 @@ function FatigueUI.setup_hud(arg_5_0, arg_5_1)
 	arg_5_0.max_fatigue_points = var_5_3
 end
 
-function FatigueUI.start_fade_in(arg_6_0)
+FatigueUI.start_fade_in = function (arg_6_0)
 	local var_6_0 = arg_6_0.active_shields
 	local var_6_1 = arg_6_0.shields
 
@@ -90,7 +90,7 @@ function FatigueUI.start_fade_in(arg_6_0)
 	end
 end
 
-function FatigueUI.start_fade_out(arg_7_0)
+FatigueUI.start_fade_out = function (arg_7_0)
 	local var_7_0 = arg_7_0.active_shields
 	local var_7_1 = arg_7_0.shields
 
@@ -113,7 +113,7 @@ local var_0_1 = {
 	drag_scenegraph_id = "background_dragger"
 }
 
-function FatigueUI.update(arg_8_0, arg_8_1)
+FatigueUI.update = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.local_player.player_unit
 
 	if not Unit.alive(var_8_0) then
@@ -161,11 +161,11 @@ function FatigueUI.update(arg_8_0, arg_8_1)
 	arg_8_0:draw(arg_8_1)
 end
 
-function FatigueUI.check_active(arg_9_0, arg_9_1)
+FatigueUI.check_active = function (arg_9_0, arg_9_1)
 	return arg_9_1:is_blocking() or arg_9_1.show_fatigue_gui
 end
 
-function FatigueUI.update_shields(arg_10_0, arg_10_1, arg_10_2)
+FatigueUI.update_shields = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.current_fatigue
 	local var_10_1, var_10_2 = arg_10_1:current_fatigue_points()
 
@@ -205,7 +205,7 @@ function FatigueUI.update_shields(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.current_fatigue = var_10_1
 end
 
-function FatigueUI.draw(arg_11_0, arg_11_1)
+FatigueUI.draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ui_renderer
 	local var_11_1 = arg_11_0.ui_scenegraph
 	local var_11_2 = arg_11_0.input_manager:get_service("ingame_menu")

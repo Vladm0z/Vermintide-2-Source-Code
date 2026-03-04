@@ -2,14 +2,14 @@
 
 CameraStateFollowThirdPerson = class(CameraStateFollowThirdPerson, CameraState)
 
-function CameraStateFollowThirdPerson.init(arg_1_0, arg_1_1)
+CameraStateFollowThirdPerson.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "follow_third_person")
 
 	arg_1_0._follow_unit = nil
 	arg_1_0._follow_node = 0
 end
 
-function CameraStateFollowThirdPerson.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateFollowThirdPerson.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.camera_extension
 	local var_2_1, var_2_2 = var_2_0:get_follow_data()
 	local var_2_3 = var_2_0.viewport_name
@@ -55,16 +55,16 @@ function CameraStateFollowThirdPerson.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	Unit.set_data(arg_2_1, "camera", "settings_node", arg_2_7.camera_node or "heal_self")
 end
 
-function CameraStateFollowThirdPerson.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateFollowThirdPerson.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._follow_unit = nil
 end
 
-function CameraStateFollowThirdPerson.refresh_follow_unit(arg_4_0, arg_4_1, arg_4_2)
+CameraStateFollowThirdPerson.refresh_follow_unit = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._follow_unit = arg_4_1
 	arg_4_0._follow_node = arg_4_2
 end
 
-function CameraStateFollowThirdPerson.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CameraStateFollowThirdPerson.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.camera_extension

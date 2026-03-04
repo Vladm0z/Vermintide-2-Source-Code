@@ -19,7 +19,7 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2)
 	return Vector3.normalize(var_1_8), var_1_5, var_1_6
 end
 
-function CareerAbilityDRSlayer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CareerAbilityDRSlayer.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._owner_unit = arg_2_2
 	arg_2_0._world = arg_2_1.world
 	arg_2_0._wwise_world = Managers.world:wwise_world(arg_2_0._world)
@@ -38,7 +38,7 @@ function CareerAbilityDRSlayer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._last_valid_landing_position = nil
 end
 
-function CareerAbilityDRSlayer.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+CareerAbilityDRSlayer.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._first_person_extension = ScriptUnit.has_extension(arg_3_2, "first_person_system")
 	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
 	arg_3_0._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
@@ -52,11 +52,11 @@ function CareerAbilityDRSlayer.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function CareerAbilityDRSlayer.destroy(arg_4_0)
+CareerAbilityDRSlayer.destroy = function (arg_4_0)
 	return
 end
 
-function CareerAbilityDRSlayer.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CareerAbilityDRSlayer.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._input_extension
 
 	if not var_5_0 then
@@ -114,13 +114,13 @@ function CareerAbilityDRSlayer.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_
 	end
 end
 
-function CareerAbilityDRSlayer.stop(arg_6_0, arg_6_1)
+CareerAbilityDRSlayer.stop = function (arg_6_0, arg_6_1)
 	if arg_6_1 ~= "pushed" and arg_6_1 ~= "stunned" and arg_6_0._is_priming then
 		arg_6_0:_stop_priming()
 	end
 end
 
-function CareerAbilityDRSlayer._ability_available(arg_7_0)
+CareerAbilityDRSlayer._ability_available = function (arg_7_0)
 	local var_7_0 = arg_7_0._career_extension
 	local var_7_1 = arg_7_0._status_extension
 	local var_7_2 = arg_7_0._locomotion_extension
@@ -128,7 +128,7 @@ function CareerAbilityDRSlayer._ability_available(arg_7_0)
 	return var_7_0:can_use_activated_ability() and not var_7_1:is_disabled() and var_7_2:is_on_ground()
 end
 
-function CareerAbilityDRSlayer._start_priming(arg_8_0)
+CareerAbilityDRSlayer._start_priming = function (arg_8_0)
 	if arg_8_0._local_player then
 		local var_8_0 = arg_8_0._world
 		local var_8_1 = arg_8_0._effect_name
@@ -140,7 +140,7 @@ function CareerAbilityDRSlayer._start_priming(arg_8_0)
 	arg_8_0._is_priming = true
 end
 
-function CareerAbilityDRSlayer._update_priming(arg_9_0)
+CareerAbilityDRSlayer._update_priming = function (arg_9_0)
 	local var_9_0 = arg_9_0._effect_id
 	local var_9_1 = arg_9_0._world
 	local var_9_2 = World.get_data(var_9_1, "physics_world")
@@ -181,7 +181,7 @@ function CareerAbilityDRSlayer._update_priming(arg_9_0)
 	return var_9_19, var_9_20, var_9_21
 end
 
-function CareerAbilityDRSlayer._stop_priming(arg_10_0)
+CareerAbilityDRSlayer._stop_priming = function (arg_10_0)
 	if arg_10_0._effect_id then
 		World.destroy_particles(arg_10_0._world, arg_10_0._effect_id)
 
@@ -192,7 +192,7 @@ function CareerAbilityDRSlayer._stop_priming(arg_10_0)
 	arg_10_0._last_valid_landing_position = nil
 end
 
-function CareerAbilityDRSlayer._do_common_stuff(arg_11_0)
+CareerAbilityDRSlayer._do_common_stuff = function (arg_11_0)
 	local var_11_0 = arg_11_0._owner_unit
 	local var_11_1 = arg_11_0._is_server
 	local var_11_2 = arg_11_0._local_player
@@ -249,7 +249,7 @@ function CareerAbilityDRSlayer._do_common_stuff(arg_11_0)
 	arg_11_0:_play_vo()
 end
 
-function CareerAbilityDRSlayer._do_stomp(arg_12_0, arg_12_1)
+CareerAbilityDRSlayer._do_stomp = function (arg_12_0, arg_12_1)
 	arg_12_0:_stop_priming()
 
 	if not arg_12_0._locomotion_extension:is_on_ground() then
@@ -278,7 +278,7 @@ function CareerAbilityDRSlayer._do_stomp(arg_12_0, arg_12_1)
 	end
 end
 
-function CareerAbilityDRSlayer._do_leap(arg_13_0)
+CareerAbilityDRSlayer._do_leap = function (arg_13_0)
 	local var_13_0 = arg_13_0._last_valid_landing_position:unbox()
 
 	arg_13_0:_stop_priming()
@@ -329,13 +329,13 @@ function CareerAbilityDRSlayer._do_leap(arg_13_0)
 		sfx_event_jump = var_13_3 and "Play_career_ability_bardin_slayer_jump",
 		sfx_event_land = var_13_3 and "Play_career_ability_bardin_slayer_impact",
 		leap_events = {
-			start = function(arg_14_0)
+			start = function (arg_14_0)
 				local var_14_0 = arg_14_0.unit
 				local var_14_1 = ScriptUnit.has_extension(var_14_0, "buff_system")
 
 				arg_13_0._uninterruptible_buff_id = var_14_1:add_buff("bardin_slayer_passive_uninterruptible_leap")
 			end,
-			finished = function(arg_15_0, arg_15_1, arg_15_2)
+			finished = function (arg_15_0, arg_15_1, arg_15_2)
 				local var_15_0 = arg_15_0.unit
 				local var_15_1 = arg_15_0.player
 
@@ -372,7 +372,7 @@ function CareerAbilityDRSlayer._do_leap(arg_13_0)
 	}
 end
 
-function CareerAbilityDRSlayer._play_vo(arg_16_0)
+CareerAbilityDRSlayer._play_vo = function (arg_16_0)
 	local var_16_0 = arg_16_0._owner_unit
 	local var_16_1 = ScriptUnit.extension_input(var_16_0, "dialogue_system")
 	local var_16_2 = FrameTable.alloc_table()

@@ -4,7 +4,7 @@ ImguiUmbraDebug = class(ImguiUmbraDebug)
 
 local var_0_0 = true
 
-function ImguiUmbraDebug.init(arg_1_0)
+ImguiUmbraDebug.init = function (arg_1_0)
 	arg_1_0.enable_debug = false
 	arg_1_0.debug_options = {
 		{
@@ -133,7 +133,7 @@ function ImguiUmbraDebug.init(arg_1_0)
 	}
 end
 
-function ImguiUmbraDebug.update(arg_2_0)
+ImguiUmbraDebug.update = function (arg_2_0)
 	if var_0_0 then
 		ImguiUmbraDebug:init()
 
@@ -141,11 +141,11 @@ function ImguiUmbraDebug.update(arg_2_0)
 	end
 end
 
-function ImguiUmbraDebug.is_persistent(arg_3_0)
+ImguiUmbraDebug.is_persistent = function (arg_3_0)
 	return arg_3_0:_has_floater()
 end
 
-function ImguiUmbraDebug._has_floater(arg_4_0)
+ImguiUmbraDebug._has_floater = function (arg_4_0)
 	local var_4_0 = 0
 
 	if arg_4_0.enable_debug == false then
@@ -159,7 +159,7 @@ function ImguiUmbraDebug._has_floater(arg_4_0)
 	return var_4_0 > 0
 end
 
-function ImguiUmbraDebug.draw(arg_5_0, arg_5_1)
+ImguiUmbraDebug.draw = function (arg_5_0, arg_5_1)
 	if not Managers.world:has_world("level_world") then
 		return
 	end
@@ -212,7 +212,7 @@ function ImguiUmbraDebug.draw(arg_5_0, arg_5_1)
 	return var_5_1
 end
 
-function ImguiUmbraDebug._update_floater(arg_6_0, arg_6_1)
+ImguiUmbraDebug._update_floater = function (arg_6_0, arg_6_1)
 	Imgui.begin_window("Umbra Floater")
 
 	for iter_6_0, iter_6_1 in ipairs(arg_6_0.sub_windows) do

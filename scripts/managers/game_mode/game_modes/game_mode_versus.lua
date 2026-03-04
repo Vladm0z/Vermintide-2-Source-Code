@@ -26,7 +26,7 @@ local var_0_2 = {
 	"rpc_set_playable_boss_can_be_picked"
 }
 
-function GameModeVersus.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeVersus.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeVersus.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._game_end_condition_timer = nil
@@ -106,11 +106,11 @@ function GameModeVersus.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	end
 end
 
-function GameModeVersus.level_start_objectives(arg_2_0)
+GameModeVersus.level_start_objectives = function (arg_2_0)
 	return arg_2_0:_get_objective_list_name_current_set()
 end
 
-function GameModeVersus._create_game_mode_data_game_object(arg_3_0)
+GameModeVersus._create_game_mode_data_game_object = function (arg_3_0)
 	local var_3_0 = Managers.state.network
 	local var_3_1 = arg_3_0._mechanism:get_objective_settings()
 	local var_3_2 = {
@@ -126,27 +126,27 @@ function GameModeVersus._create_game_mode_data_game_object(arg_3_0)
 	arg_3_0._go_id = var_3_3
 end
 
-function GameModeVersus.on_game_mode_data_created(arg_4_0, arg_4_1, arg_4_2)
+GameModeVersus.on_game_mode_data_created = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._win_conditions:on_game_mode_data_created(arg_4_1, arg_4_2)
 end
 
-function GameModeVersus.on_game_mode_data_destroyed(arg_5_0)
+GameModeVersus.on_game_mode_data_destroyed = function (arg_5_0)
 	arg_5_0._win_conditions:on_game_mode_data_destroyed()
 
 	arg_5_0._go_id = nil
 end
 
-function GameModeVersus.game_session_disconnect(arg_6_0)
+GameModeVersus.game_session_disconnect = function (arg_6_0)
 	arg_6_0._win_conditions:on_game_mode_data_destroyed()
 
 	arg_6_0._go_id = nil
 end
 
-function GameModeVersus.cleanup_game_mode_units(arg_7_0)
+GameModeVersus.cleanup_game_mode_units = function (arg_7_0)
 	arg_7_0:_clear_bots(true)
 end
 
-function GameModeVersus.register_rpcs(arg_8_0, arg_8_1, arg_8_2)
+GameModeVersus.register_rpcs = function (arg_8_0, arg_8_1, arg_8_2)
 	GameModeVersus.super.register_rpcs(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_1:register(arg_8_0, unpack(var_0_2))
 	arg_8_0._adventure_spawning:register_rpcs(arg_8_1, arg_8_2)
@@ -161,7 +161,7 @@ function GameModeVersus.register_rpcs(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function GameModeVersus.unregister_rpcs(arg_9_0)
+GameModeVersus.unregister_rpcs = function (arg_9_0)
 	arg_9_0._adventure_spawning:unregister_rpcs()
 	arg_9_0._versus_spawning:unregister_rpcs()
 	arg_9_0._network_event_delegate:unregister(arg_9_0)
@@ -177,7 +177,7 @@ function GameModeVersus.unregister_rpcs(arg_9_0)
 	GameModeVersus.super.unregister_rpcs(arg_9_0)
 end
 
-function GameModeVersus.event_local_player_spawned(arg_10_0, arg_10_1)
+GameModeVersus.event_local_player_spawned = function (arg_10_0, arg_10_1)
 	local var_10_0 = LevelHelper:current_level(arg_10_0._world)
 	local var_10_1 = "versus_activator"
 
@@ -215,11 +215,11 @@ function GameModeVersus.event_local_player_spawned(arg_10_0, arg_10_1)
 	arg_10_0._local_player_spawned = true
 end
 
-function GameModeVersus.party_selection_logic(arg_11_0)
+GameModeVersus.party_selection_logic = function (arg_11_0)
 	return arg_11_0._versus_party_selection_logic
 end
 
-function GameModeVersus.hot_join_sync(arg_12_0, arg_12_1)
+GameModeVersus.hot_join_sync = function (arg_12_0, arg_12_1)
 	if arg_12_0._initial_peers_spawned then
 		arg_12_0._network_transmit:send_rpc("rpc_gm_event_initial_peers_spawned", arg_12_1)
 	end
@@ -242,7 +242,7 @@ function GameModeVersus.hot_join_sync(arg_12_0, arg_12_1)
 	end
 end
 
-function GameModeVersus.destroy(arg_13_0)
+GameModeVersus.destroy = function (arg_13_0)
 	if arg_13_0._is_server then
 		arg_13_0._dark_pact_career_delegator:destroy()
 	end
@@ -263,7 +263,7 @@ function GameModeVersus.destroy(arg_13_0)
 	end
 end
 
-function GameModeVersus.evaluate_end_conditions(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+GameModeVersus.evaluate_end_conditions = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	repeat
 		if script_data.auto_complete_rounds and (arg_14_0._game_mode_state == "match_running_state" or arg_14_0._game_mode_state == "pre_start_round_state") then
 			break
@@ -357,7 +357,7 @@ function GameModeVersus.evaluate_end_conditions(arg_14_0, arg_14_1, arg_14_2, ar
 	end
 end
 
-function GameModeVersus._handle_round_end(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+GameModeVersus._handle_round_end = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = Development.parameter("versus_quick_match_end") or arg_15_0._current_mechanism_state == "round_2" and arg_15_0._mechanism:is_last_set()
 	local var_15_1 = Managers.state.side:get_side_from_name("heroes").party.party_id
 	local var_15_2 = arg_15_2 and arg_15_2.party_id == var_15_1 or false
@@ -385,7 +385,7 @@ function GameModeVersus._handle_round_end(arg_15_0, arg_15_1, arg_15_2, arg_15_3
 	return arg_15_1
 end
 
-function GameModeVersus._get_end_reason(arg_16_0, arg_16_1)
+GameModeVersus._get_end_reason = function (arg_16_0, arg_16_1)
 	local var_16_0 = "round_end"
 	local var_16_1
 
@@ -404,7 +404,7 @@ function GameModeVersus._get_end_reason(arg_16_0, arg_16_1)
 	return var_16_0, var_16_1
 end
 
-function GameModeVersus.ready_to_transition(arg_17_0)
+GameModeVersus.ready_to_transition = function (arg_17_0)
 	local var_17_0 = arg_17_0._current_mechanism_state == "round_2" and not arg_17_0._mechanism:should_start_next_set()
 
 	if var_17_0 or arg_17_0._win_conditions.party_won_early then
@@ -425,7 +425,7 @@ function GameModeVersus.ready_to_transition(arg_17_0)
 	printf("[GameModeVersus] Ready to transition. _transition_state: %s, _is_server: %s, all_rounds_played: %s, party_won-early: %s", arg_17_0._transition_state, arg_17_0._is_server, var_17_0, arg_17_0._win_conditions.party_won_early)
 end
 
-function GameModeVersus.wanted_transition(arg_18_0)
+GameModeVersus.wanted_transition = function (arg_18_0)
 	local var_18_0 = arg_18_0._transition_state
 
 	if var_18_0 == "next_level" then
@@ -439,7 +439,7 @@ function GameModeVersus.wanted_transition(arg_18_0)
 	end
 end
 
-function GameModeVersus.server_character_selection_completed(arg_19_0)
+GameModeVersus.server_character_selection_completed = function (arg_19_0)
 	if arg_19_0._settings.display_parading_view then
 		arg_19_0:change_game_mode_state("player_team_parading_state")
 	else
@@ -447,7 +447,7 @@ function GameModeVersus.server_character_selection_completed(arg_19_0)
 	end
 end
 
-function GameModeVersus.pre_update(arg_20_0, arg_20_1, arg_20_2)
+GameModeVersus.pre_update = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._game_mode_state
 
 	if arg_20_0._is_server and arg_20_0:is_in_round_state() then
@@ -459,11 +459,11 @@ function GameModeVersus.pre_update(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function GameModeVersus.player_ready(arg_21_0)
+GameModeVersus.player_ready = function (arg_21_0)
 	return arg_21_0._local_player_spawned and not arg_21_0._delayed_fade_out_timer
 end
 
-function GameModeVersus.update(arg_22_0, arg_22_1, arg_22_2)
+GameModeVersus.update = function (arg_22_0, arg_22_1, arg_22_2)
 	if arg_22_0._is_server then
 		arg_22_0._dark_pact_career_delegator:update()
 		arg_22_0:_update_hero_rushing(arg_22_1)
@@ -484,7 +484,7 @@ function GameModeVersus.update(arg_22_0, arg_22_1, arg_22_2)
 			arg_22_0._adventure_spawning:update(arg_22_1, arg_22_2)
 
 			if var_22_0 == "match_running_state" then
-				-- block empty
+				-- Nothing
 			end
 		end
 
@@ -500,7 +500,7 @@ end
 
 local var_0_3 = {}
 
-function GameModeVersus._clear_profile_reservations(arg_23_0, arg_23_1)
+GameModeVersus._clear_profile_reservations = function (arg_23_0, arg_23_1)
 	local var_23_0 = var_0_3
 
 	if arg_23_1 then
@@ -528,7 +528,7 @@ function GameModeVersus._clear_profile_reservations(arg_23_0, arg_23_1)
 	end
 end
 
-function GameModeVersus._game_mode_state_changed(arg_24_0, arg_24_1, arg_24_2)
+GameModeVersus._game_mode_state_changed = function (arg_24_0, arg_24_1, arg_24_2)
 	if arg_24_0._current_mechanism_state == "round_1" then
 		arg_24_0._round_id = 1
 	else
@@ -619,11 +619,11 @@ function GameModeVersus._game_mode_state_changed(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function GameModeVersus._advertise_playing(arg_25_0)
+GameModeVersus._advertise_playing = function (arg_25_0)
 	return
 end
 
-function GameModeVersus._stop_advertise_playing(arg_26_0)
+GameModeVersus._stop_advertise_playing = function (arg_26_0)
 	if not DEDICATED_SERVER then
 		local var_26_0 = Managers.mechanism:network_handler()
 
@@ -633,7 +633,7 @@ function GameModeVersus._stop_advertise_playing(arg_26_0)
 	end
 end
 
-function GameModeVersus._update_profiles(arg_27_0)
+GameModeVersus._update_profiles = function (arg_27_0)
 	if not arg_27_0._is_server then
 		return
 	end
@@ -655,7 +655,7 @@ function GameModeVersus._update_profiles(arg_27_0)
 	end
 end
 
-function GameModeVersus._init_pact_sworn_camera_state(arg_28_0)
+GameModeVersus._init_pact_sworn_camera_state = function (arg_28_0)
 	local var_28_0 = Managers.party:get_local_player_party()
 	local var_28_1 = Managers.state.side.side_by_party[var_28_0]
 
@@ -668,7 +668,7 @@ function GameModeVersus._init_pact_sworn_camera_state(arg_28_0)
 	end
 end
 
-function GameModeVersus._spawn_pact_sworn(arg_29_0)
+GameModeVersus._spawn_pact_sworn = function (arg_29_0)
 	local var_29_0 = Managers.state.entity:system("versus_horde_ability_system")
 	local var_29_1 = Managers.party:get_party_from_name("dark_pact")
 	local var_29_2 = 0
@@ -688,13 +688,13 @@ function GameModeVersus._spawn_pact_sworn(arg_29_0)
 	end
 end
 
-function GameModeVersus.assign_temporary_dark_pact_profile(arg_30_0, arg_30_1)
+GameModeVersus.assign_temporary_dark_pact_profile = function (arg_30_0, arg_30_1)
 	local var_30_0 = PROFILES_BY_NAME.vs_undecided
 
 	arg_30_0:set_profile(arg_30_1, var_30_0.index, 1, false)
 end
 
-function GameModeVersus.round_started(arg_31_0)
+GameModeVersus.round_started = function (arg_31_0)
 	if arg_31_0._is_server then
 		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_left_safe_room")
 	end
@@ -702,7 +702,7 @@ function GameModeVersus.round_started(arg_31_0)
 	Managers.state.entity:system("versus_horde_ability_system"):on_round_started()
 end
 
-function GameModeVersus.server_update(arg_32_0, arg_32_1, arg_32_2)
+GameModeVersus.server_update = function (arg_32_0, arg_32_1, arg_32_2)
 	GameModeVersus.super.server_update(arg_32_0, arg_32_1, arg_32_2)
 
 	local var_32_0 = arg_32_0._mechanism:get_slot_reservation_handler(Network.peer_id(), var_0_0.session)
@@ -768,13 +768,13 @@ function GameModeVersus.server_update(arg_32_0, arg_32_1, arg_32_2)
 			if script_data.testify then
 				arg_32_0._transition_state = "restart_game_server"
 			elseif arg_32_0:_delay_abort_game(arg_32_1) then
-				-- block empty
+				-- Nothing
 			else
 				arg_32_0._transition_state = "quit_game"
 			end
 		end
 	elseif var_32_1 == "character_selection_state" then
-		-- block empty
+		-- Nothing
 	elseif var_32_1 == "player_team_parading_state" then
 		if arg_32_1 > arg_32_0._parading_timer then
 			arg_32_0:change_game_mode_state("pre_start_round_state")
@@ -838,7 +838,7 @@ function GameModeVersus.server_update(arg_32_0, arg_32_1, arg_32_2)
 			arg_32_0._horde_surge_handler:server_update(arg_32_1, arg_32_2)
 		end
 	elseif var_32_1 == "post_round_state" then
-		-- block empty
+		-- Nothing
 	else
 		fassert(false, "Unknown state", var_32_1)
 	end
@@ -851,7 +851,7 @@ function GameModeVersus.server_update(arg_32_0, arg_32_1, arg_32_2)
 		arg_32_0._transition_state_time = arg_32_0._transition_state_time + arg_32_2
 
 		if not (arg_32_0._transition_state_time > GameModeVersus.WAIT_FOR_CLIENTS_TO_LEAVE_TIMEOUT) and not arg_32_0._network_server:all_client_peers_disconnected() or arg_32_0:_delay_abort_game(arg_32_1) then
-			-- block empty
+			-- Nothing
 		else
 			arg_32_0._transition_state = "quit_game"
 		end
@@ -860,7 +860,7 @@ end
 
 local var_0_4 = 30
 
-function GameModeVersus._delay_abort_game(arg_33_0, arg_33_1)
+GameModeVersus._delay_abort_game = function (arg_33_0, arg_33_1)
 	local var_33_0 = Managers.telemetry:batch_in_flight()
 	local var_33_1 = Managers.telemetry:has_events_to_post()
 
@@ -875,11 +875,11 @@ function GameModeVersus._delay_abort_game(arg_33_0, arg_33_1)
 	return arg_33_0._delay_abort_game_timer and arg_33_1 < arg_33_0._delay_abort_game_timer
 end
 
-function GameModeVersus._client_update(arg_34_0, arg_34_1, arg_34_2)
+GameModeVersus._client_update = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0._win_conditions:client_update(arg_34_1, arg_34_2)
 
 	if arg_34_0._game_mode_state == "match_running_state" then
-		-- block empty
+		-- Nothing
 	end
 
 	if arg_34_0._horde_surge_handler then
@@ -891,7 +891,7 @@ function GameModeVersus._client_update(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function GameModeVersus._start_game_timeout(arg_35_0)
+GameModeVersus._start_game_timeout = function (arg_35_0)
 	local var_35_0 = 10
 
 	if arg_35_0._game_mode_state == "waiting_for_players_to_join" then
@@ -901,7 +901,7 @@ function GameModeVersus._start_game_timeout(arg_35_0)
 	return var_35_0 < arg_35_0._start_game_timeout_timer
 end
 
-function GameModeVersus._update_initial_peers_spawned(arg_36_0)
+GameModeVersus._update_initial_peers_spawned = function (arg_36_0)
 	local var_36_0 = true
 	local var_36_1 = Managers.player
 	local var_36_2 = Managers.party:get_party_from_name("heroes").occupied_slots
@@ -922,7 +922,7 @@ function GameModeVersus._update_initial_peers_spawned(arg_36_0)
 	end
 end
 
-function GameModeVersus._handle_dedicated_input(arg_37_0, arg_37_1, arg_37_2)
+GameModeVersus._handle_dedicated_input = function (arg_37_0, arg_37_1, arg_37_2)
 	CommandWindow.update()
 
 	local var_37_0 = CommandWindow.read_line()
@@ -932,19 +932,19 @@ function GameModeVersus._handle_dedicated_input(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function GameModeVersus.all_peers_ready(arg_38_0)
+GameModeVersus.all_peers_ready = function (arg_38_0)
 	GameModeVersus.super.all_peers_ready(arg_38_0)
 end
 
-function GameModeVersus.complete_level(arg_39_0, arg_39_1)
+GameModeVersus.complete_level = function (arg_39_0, arg_39_1)
 	arg_39_0._level_completed = true
 end
 
-function GameModeVersus.FAIL_LEVEL(arg_40_0)
+GameModeVersus.FAIL_LEVEL = function (arg_40_0)
 	arg_40_0._level_failed = true
 end
 
-function GameModeVersus.evaluate_end_condition_outcome(arg_41_0, arg_41_1, arg_41_2)
+GameModeVersus.evaluate_end_condition_outcome = function (arg_41_0, arg_41_1, arg_41_2)
 	if DEDICATED_SERVER or arg_41_1 == nil then
 		return false, false
 	end
@@ -972,7 +972,7 @@ function GameModeVersus.evaluate_end_condition_outcome(arg_41_0, arg_41_1, arg_4
 	return var_41_0, var_41_1, arg_41_1
 end
 
-function GameModeVersus.gm_event_end_conditions_met(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+GameModeVersus.gm_event_end_conditions_met = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = Managers.state.entity:system("objective_system")
 
 	arg_42_0._objectives_completed = var_42_0:num_completed_main_objectives()
@@ -980,7 +980,7 @@ function GameModeVersus.gm_event_end_conditions_met(arg_42_0, arg_42_1, arg_42_2
 	arg_42_0._end_reason = arg_42_1
 end
 
-function GameModeVersus.gm_event_initial_peers_spawned(arg_43_0)
+GameModeVersus.gm_event_initial_peers_spawned = function (arg_43_0)
 	local var_43_0
 
 	if Managers.mechanism:game_mechanism():get_current_set() == 1 then
@@ -994,11 +994,11 @@ function GameModeVersus.gm_event_initial_peers_spawned(arg_43_0)
 	arg_43_0._initial_peers_spawned = true
 end
 
-function GameModeVersus.initial_peers_spawned(arg_44_0)
+GameModeVersus.initial_peers_spawned = function (arg_44_0)
 	return arg_44_0._initial_peers_spawned
 end
 
-function GameModeVersus.get_extra_observer_units(arg_45_0, arg_45_1)
+GameModeVersus.get_extra_observer_units = function (arg_45_0, arg_45_1)
 	local var_45_0
 
 	if not Managers.state.game_mode:is_round_started() then
@@ -1015,7 +1015,7 @@ function GameModeVersus.get_extra_observer_units(arg_45_0, arg_45_1)
 	return var_45_0
 end
 
-function GameModeVersus._player_entered_party(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+GameModeVersus._player_entered_party = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = arg_46_2:name()
 
 	if arg_46_3 and arg_46_3.local_player and var_46_0 == "heroes" then
@@ -1032,7 +1032,7 @@ function GameModeVersus._player_entered_party(arg_46_0, arg_46_1, arg_46_2, arg_
 	end
 end
 
-function GameModeVersus.player_entered_game_session(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+GameModeVersus.player_entered_game_session = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	GameModeVersus.super.player_entered_game_session(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 
 	local var_47_0 = Managers.party
@@ -1062,13 +1062,13 @@ function GameModeVersus.player_entered_game_session(arg_47_0, arg_47_1, arg_47_2
 	end
 end
 
-function GameModeVersus.player_left_game_session(arg_48_0, arg_48_1, arg_48_2)
+GameModeVersus.player_left_game_session = function (arg_48_0, arg_48_1, arg_48_2)
 	if table.size(arg_48_0._network_server.peer_state_machines) - 1 <= 0 then
 		arg_48_0:change_game_mode_state("dedicated_server_abort_game")
 	end
 end
 
-function GameModeVersus._assign_peer_to_wanted_hero_profile(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+GameModeVersus._assign_peer_to_wanted_hero_profile = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = Managers.party:get_player_status(arg_49_1, arg_49_2)
 
 	assert(not var_49_0.is_bot, "this should not be called on a bot, due to profile reservations ")
@@ -1082,7 +1082,7 @@ function GameModeVersus._assign_peer_to_wanted_hero_profile(arg_49_0, arg_49_1, 
 	return var_49_3, var_49_4
 end
 
-function GameModeVersus.set_profile(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+GameModeVersus.set_profile = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 	local var_50_0
 
 	if arg_50_4 ~= nil then
@@ -1100,7 +1100,7 @@ function GameModeVersus.set_profile(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_
 	end
 end
 
-function GameModeVersus._update_profile_in_party(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+GameModeVersus._update_profile_in_party = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = Managers.party:get_player_status(arg_51_1, arg_51_2)
 
 	if var_51_0.is_bot then
@@ -1118,7 +1118,7 @@ function GameModeVersus._update_profile_in_party(arg_51_0, arg_51_1, arg_51_2, a
 	end
 end
 
-function GameModeVersus.player_joined_party(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+GameModeVersus.player_joined_party = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
 	GameModeVersus.super.player_joined_party(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
 
 	local var_52_0 = Managers.party:get_party(arg_52_3)
@@ -1171,13 +1171,13 @@ function GameModeVersus.player_joined_party(arg_52_0, arg_52_1, arg_52_2, arg_52
 	end
 end
 
-function GameModeVersus.profile_changed(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+GameModeVersus.profile_changed = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 	if not arg_53_5 and arg_53_1 == Network.peer_id() then
 		arg_53_0:update_local_hero_cosmetics()
 	end
 end
 
-function GameModeVersus.server_validate_horde_timer(arg_54_0, arg_54_1)
+GameModeVersus.server_validate_horde_timer = function (arg_54_0, arg_54_1)
 	local var_54_0 = Managers.state.conflict
 
 	if not var_54_0 then
@@ -1203,12 +1203,12 @@ function GameModeVersus.server_validate_horde_timer(arg_54_0, arg_54_1)
 	end
 end
 
-function GameModeVersus.rpc_sync_next_horde_time(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+GameModeVersus.rpc_sync_next_horde_time = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 	arg_55_0._time_until_next_horde = arg_55_2 + Managers.time:time("game")
 	arg_55_0._horde_delayed = arg_55_3
 end
 
-function GameModeVersus.display_debug_horde_timer_pactsworn(arg_56_0, arg_56_1, arg_56_2)
+GameModeVersus.display_debug_horde_timer_pactsworn = function (arg_56_0, arg_56_1, arg_56_2)
 	if not arg_56_0._settings.show_horde_timer_pactsworn then
 		return
 	end
@@ -1238,19 +1238,19 @@ function GameModeVersus.display_debug_horde_timer_pactsworn(arg_56_0, arg_56_1, 
 	end
 end
 
-function GameModeVersus.players_left_safe_zone(arg_57_0)
+GameModeVersus.players_left_safe_zone = function (arg_57_0)
 	if arg_57_0._horde_surge_handler then
 		arg_57_0._horde_surge_handler:activate()
 	end
 end
 
-function GameModeVersus.player_left_party(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+GameModeVersus.player_left_party = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
 	if arg_58_0._versus_party_selection_logic then
 		arg_58_0._versus_party_selection_logic:player_left_party(arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
 	end
 end
 
-function GameModeVersus.local_player_ready_to_start(arg_59_0, arg_59_1)
+GameModeVersus.local_player_ready_to_start = function (arg_59_0, arg_59_1)
 	local var_59_0 = arg_59_0._game_mode_state
 
 	if not arg_59_0._is_server and not arg_59_0:is_in_round_state() and var_59_0 ~= "character_selection_state" then
@@ -1264,7 +1264,7 @@ function GameModeVersus.local_player_ready_to_start(arg_59_0, arg_59_1)
 	return true
 end
 
-function GameModeVersus.local_player_game_starts(arg_60_0, arg_60_1, arg_60_2)
+GameModeVersus.local_player_game_starts = function (arg_60_0, arg_60_1, arg_60_2)
 	local var_60_0 = arg_60_1:network_id()
 	local var_60_1 = arg_60_1:local_player_id()
 	local var_60_2 = Managers.party:get_party_from_player_id(var_60_0, var_60_1)
@@ -1273,11 +1273,11 @@ function GameModeVersus.local_player_game_starts(arg_60_0, arg_60_1, arg_60_2)
 	arg_60_0:_player_entered_party(var_60_2, var_60_3, arg_60_1)
 end
 
-function GameModeVersus.level_key(arg_61_0)
+GameModeVersus.level_key = function (arg_61_0)
 	return arg_61_0._level_key
 end
 
-function GameModeVersus._start_objective(arg_62_0)
+GameModeVersus._start_objective = function (arg_62_0)
 	if not arg_62_0._is_server then
 		return
 	end
@@ -1287,7 +1287,7 @@ function GameModeVersus._start_objective(arg_62_0)
 	end
 end
 
-function GameModeVersus._get_objective_list_name_current_set(arg_63_0)
+GameModeVersus._get_objective_list_name_current_set = function (arg_63_0)
 	local var_63_0 = arg_63_0._mechanism:get_objective_settings().objective_lists
 
 	if var_63_0 then
@@ -1295,40 +1295,40 @@ function GameModeVersus._get_objective_list_name_current_set(arg_63_0)
 	end
 end
 
-function GameModeVersus._get_objectives_current_set(arg_64_0)
+GameModeVersus._get_objectives_current_set = function (arg_64_0)
 	return ObjectiveLists[arg_64_0:_get_objective_list_name_current_set()]
 end
 
-function GameModeVersus.get_current_objective_data(arg_65_0)
+GameModeVersus.get_current_objective_data = function (arg_65_0)
 	local var_65_0 = Managers.state.entity:system("objective_system")
 
 	return arg_65_0:_get_objectives_current_set()[var_65_0:current_objective_index()]
 end
 
-function GameModeVersus.get_next_objective_data(arg_66_0)
+GameModeVersus.get_next_objective_data = function (arg_66_0)
 	local var_66_0 = Managers.state.entity:system("objective_system")
 
 	return arg_66_0:_get_objectives_current_set()[var_66_0:current_objective_index() + 1]
 end
 
-function GameModeVersus.disable_player_spawning(arg_67_0)
+GameModeVersus.disable_player_spawning = function (arg_67_0)
 	arg_67_0._adventure_spawning:set_spawning_disabled(true)
 end
 
-function GameModeVersus.enable_player_spawning(arg_68_0, arg_68_1, arg_68_2)
+GameModeVersus.enable_player_spawning = function (arg_68_0, arg_68_1, arg_68_2)
 	arg_68_0._adventure_spawning:set_spawning_disabled(false)
 	arg_68_0._adventure_spawning:force_update_spawn_positions(arg_68_1, arg_68_2)
 end
 
-function GameModeVersus.teleport_despawned_players(arg_69_0, arg_69_1)
+GameModeVersus.teleport_despawned_players = function (arg_69_0, arg_69_1)
 	arg_69_0._adventure_spawning:teleport_despawned_players(arg_69_1)
 end
 
-function GameModeVersus.flow_callback_add_spawn_point(arg_70_0, arg_70_1)
+GameModeVersus.flow_callback_add_spawn_point = function (arg_70_0, arg_70_1)
 	arg_70_0._adventure_spawning:add_spawn_point(arg_70_1)
 end
 
-function GameModeVersus.flow_callback_add_game_mode_specific_spawn_point(arg_71_0, arg_71_1, arg_71_2)
+GameModeVersus.flow_callback_add_game_mode_specific_spawn_point = function (arg_71_0, arg_71_1, arg_71_2)
 	for iter_71_0, iter_71_1 in ipairs(arg_71_2) do
 		if iter_71_1 == "heroes" then
 			arg_71_0._adventure_spawning:add_spawn_point_to_spawn_group(arg_71_1)
@@ -1338,25 +1338,25 @@ function GameModeVersus.flow_callback_add_game_mode_specific_spawn_point(arg_71_
 	end
 end
 
-function GameModeVersus.respawn_unit_spawned(arg_72_0, arg_72_1)
+GameModeVersus.respawn_unit_spawned = function (arg_72_0, arg_72_1)
 	if arg_72_0._hero_rescues_enabled and Unit.get_data(arg_72_1, "vs_set_id") == arg_72_0._mechanism:get_current_set() then
 		arg_72_0._adventure_spawning:respawn_unit_spawned(arg_72_1)
 	end
 end
 
-function GameModeVersus.get_respawn_handler(arg_73_0)
+GameModeVersus.get_respawn_handler = function (arg_73_0)
 	return arg_73_0._adventure_spawning:get_respawn_handler()
 end
 
-function GameModeVersus.respawn_gate_unit_spawned(arg_74_0, arg_74_1)
+GameModeVersus.respawn_gate_unit_spawned = function (arg_74_0, arg_74_1)
 	arg_74_0._adventure_spawning:respawn_gate_unit_spawned(arg_74_1)
 end
 
-function GameModeVersus.set_respawning_enabled(arg_75_0, arg_75_1)
+GameModeVersus.set_respawning_enabled = function (arg_75_0, arg_75_1)
 	arg_75_0._adventure_spawning:set_respawning_enabled(arg_75_1)
 end
 
-function GameModeVersus.force_respawn(arg_76_0, arg_76_1, arg_76_2)
+GameModeVersus.force_respawn = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = Managers.party:get_party_from_player_id(arg_76_1, arg_76_2)
 	local var_76_1 = Managers.state.side.side_by_party[var_76_0]:name()
 
@@ -1369,7 +1369,7 @@ function GameModeVersus.force_respawn(arg_76_0, arg_76_1, arg_76_2)
 	end
 end
 
-function GameModeVersus._handle_bots(arg_77_0, arg_77_1, arg_77_2)
+GameModeVersus._handle_bots = function (arg_77_0, arg_77_1, arg_77_2)
 	if not arg_77_0._hero_bots_enabled then
 		return
 	end
@@ -1404,11 +1404,11 @@ function GameModeVersus._handle_bots(arg_77_0, arg_77_1, arg_77_2)
 	end
 end
 
-function GameModeVersus.event_set_loadout_items(arg_78_0)
+GameModeVersus.event_set_loadout_items = function (arg_78_0)
 	arg_78_0:update_local_hero_cosmetics()
 end
 
-function GameModeVersus.update_local_hero_cosmetics(arg_79_0)
+GameModeVersus.update_local_hero_cosmetics = function (arg_79_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1459,7 +1459,7 @@ function GameModeVersus.update_local_hero_cosmetics(arg_79_0)
 	end
 end
 
-function GameModeVersus._pack_pactsworn_cosmetics(arg_80_0)
+GameModeVersus._pack_pactsworn_cosmetics = function (arg_80_0)
 	local var_80_0 = {}
 
 	for iter_80_0 = 1, #SPProfiles do
@@ -1493,7 +1493,7 @@ function GameModeVersus._pack_pactsworn_cosmetics(arg_80_0)
 	return var_80_0
 end
 
-function GameModeVersus._get_first_available_bot_profile(arg_81_0, arg_81_1)
+GameModeVersus._get_first_available_bot_profile = function (arg_81_0, arg_81_1)
 	local var_81_0 = arg_81_0._available_profiles_by_party[arg_81_1]
 	local var_81_1 = arg_81_0._profile_synchronizer
 	local var_81_2 = {}
@@ -1534,7 +1534,7 @@ function GameModeVersus._get_first_available_bot_profile(arg_81_0, arg_81_1)
 	fassert(false, "Failed to find available bot profile profile for party " .. tostring(arg_81_1))
 end
 
-function GameModeVersus._add_bot(arg_82_0, arg_82_1)
+GameModeVersus._add_bot = function (arg_82_0, arg_82_1)
 	local var_82_0 = Managers.party:get_party(arg_82_1)
 	local var_82_1 = Managers.party:find_first_empty_slot_id(var_82_0)
 	local var_82_2, var_82_3 = arg_82_0._profile_synchronizer:get_bot_profile(arg_82_1, var_82_1)
@@ -1560,7 +1560,7 @@ function GameModeVersus._add_bot(arg_82_0, arg_82_1)
 	var_82_5[#var_82_5 + 1] = var_82_6
 end
 
-function GameModeVersus._remove_bot(arg_83_0, arg_83_1, arg_83_2)
+GameModeVersus._remove_bot = function (arg_83_0, arg_83_1, arg_83_2)
 	printf("_remove_bot: %s", tostring(arg_83_2))
 
 	for iter_83_0, iter_83_1 in pairs(arg_83_0._bot_players) do
@@ -1583,7 +1583,7 @@ function GameModeVersus._remove_bot(arg_83_0, arg_83_1, arg_83_2)
 	end
 end
 
-function GameModeVersus._clear_bots(arg_84_0, arg_84_1)
+GameModeVersus._clear_bots = function (arg_84_0, arg_84_1)
 	for iter_84_0, iter_84_1 in pairs(arg_84_0._bot_players) do
 		for iter_84_2 = #iter_84_1, 1, -1 do
 			arg_84_0:_remove_bot(iter_84_1[iter_84_2], arg_84_1)
@@ -1591,7 +1591,7 @@ function GameModeVersus._clear_bots(arg_84_0, arg_84_1)
 	end
 end
 
-function GameModeVersus._remove_partyless_bots(arg_85_0, arg_85_1)
+GameModeVersus._remove_partyless_bots = function (arg_85_0, arg_85_1)
 	local var_85_0 = Managers.party
 
 	for iter_85_0 = #arg_85_1, 1, -1 do
@@ -1605,7 +1605,7 @@ function GameModeVersus._remove_partyless_bots(arg_85_0, arg_85_1)
 	end
 end
 
-function GameModeVersus._remove_last_added_bot(arg_86_0, arg_86_1, arg_86_2)
+GameModeVersus._remove_last_added_bot = function (arg_86_0, arg_86_1, arg_86_2)
 	printf("_remove_last_added_bot")
 
 	local var_86_0 = arg_86_0._bot_players[arg_86_1]
@@ -1614,7 +1614,7 @@ function GameModeVersus._remove_last_added_bot(arg_86_0, arg_86_1, arg_86_2)
 	arg_86_0:_remove_bot(var_86_0[var_86_1], arg_86_2)
 end
 
-function GameModeVersus._remove_bot_by_profile(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+GameModeVersus._remove_bot_by_profile = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 	printf("_remove_bot_by_profile: %s, from party: %s", arg_87_2, arg_87_1)
 
 	local var_87_0 = arg_87_0._bot_players[arg_87_1]
@@ -1630,27 +1630,27 @@ function GameModeVersus._remove_bot_by_profile(arg_87_0, arg_87_1, arg_87_2, arg
 	return arg_87_0:_remove_last_added_bot(arg_87_1, arg_87_3)
 end
 
-function GameModeVersus.get_active_respawn_units(arg_88_0)
+GameModeVersus.get_active_respawn_units = function (arg_88_0)
 	return arg_88_0._adventure_spawning:get_active_respawn_units()
 end
 
-function GameModeVersus.get_available_and_active_respawn_units(arg_89_0)
+GameModeVersus.get_available_and_active_respawn_units = function (arg_89_0)
 	return arg_89_0._adventure_spawning:get_available_and_active_respawn_units()
 end
 
-function GameModeVersus.adventure_spawning(arg_90_0)
+GameModeVersus.adventure_spawning = function (arg_90_0)
 	return arg_90_0._adventure_spawning
 end
 
-function GameModeVersus.horde_surge_handler(arg_91_0)
+GameModeVersus.horde_surge_handler = function (arg_91_0)
 	return arg_91_0._horde_surge_handler
 end
 
-function GameModeVersus.in_training_mode(arg_92_0)
+GameModeVersus.in_training_mode = function (arg_92_0)
 	return arg_92_0._training_mode
 end
 
-function GameModeVersus.get_num_occupied_profile_enemy_role(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+GameModeVersus.get_num_occupied_profile_enemy_role = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
 	local var_93_0 = 0
 	local var_93_1 = arg_93_2.occupied_slots
 
@@ -1668,7 +1668,7 @@ function GameModeVersus.get_num_occupied_profile_enemy_role(arg_93_0, arg_93_1, 
 	return var_93_0
 end
 
-function GameModeVersus.get_end_screen_config(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+GameModeVersus.get_end_screen_config = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 	local var_94_0
 	local var_94_1
 	local var_94_2
@@ -1694,17 +1694,17 @@ function GameModeVersus.get_end_screen_config(arg_94_0, arg_94_1, arg_94_2, arg_
 	return var_94_0 or "none", var_94_1 or {}, var_94_2
 end
 
-function GameModeVersus.get_end_of_round_screen_settings(arg_95_0)
+GameModeVersus.get_end_of_round_screen_settings = function (arg_95_0)
 	return "carousel_round_end", {}, {}
 end
 
-function GameModeVersus.ended(arg_96_0, arg_96_1)
+GameModeVersus.ended = function (arg_96_0, arg_96_1)
 	if arg_96_0._current_mechanism_state == "round_2" and arg_96_0._mechanism:is_last_set() and not arg_96_0._network_server:are_all_peers_ingame() then
 		arg_96_0._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeVersus.get_player_wounds(arg_97_0, arg_97_1)
+GameModeVersus.get_player_wounds = function (arg_97_0, arg_97_1)
 	local var_97_0 = arg_97_1.affiliation
 	local var_97_1 = arg_97_0._settings.player_wounds[var_97_0]
 
@@ -1717,7 +1717,7 @@ function GameModeVersus.get_player_wounds(arg_97_0, arg_97_1)
 	return var_97_1
 end
 
-function GameModeVersus.get_initial_inventory(arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5)
+GameModeVersus.get_initial_inventory = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5)
 	local var_98_0
 
 	if arg_98_5.affiliation == "heroes" then
@@ -1735,11 +1735,11 @@ function GameModeVersus.get_initial_inventory(arg_98_0, arg_98_1, arg_98_2, arg_
 	return var_98_0
 end
 
-function GameModeVersus.round_id(arg_99_0)
+GameModeVersus.round_id = function (arg_99_0)
 	return arg_99_0._round_id
 end
 
-function GameModeVersus.allowed_interactions(arg_100_0, arg_100_1, arg_100_2)
+GameModeVersus.allowed_interactions = function (arg_100_0, arg_100_1, arg_100_2)
 	local var_100_0 = Managers.state.side.side_by_unit[arg_100_1]:name()
 	local var_100_1 = GameModeSettings.versus.side_settings[var_100_0].allowed_interactions
 
@@ -1760,7 +1760,7 @@ function GameModeVersus.allowed_interactions(arg_100_0, arg_100_1, arg_100_2)
 	end
 end
 
-function GameModeVersus._disable_side_object_sets(arg_101_0)
+GameModeVersus._disable_side_object_sets = function (arg_101_0)
 	local var_101_0 = Managers.state.side:sides()
 
 	for iter_101_0 = 1, #var_101_0 do
@@ -1771,7 +1771,7 @@ function GameModeVersus._disable_side_object_sets(arg_101_0)
 	end
 end
 
-function GameModeVersus.rpc_rejoin_parties(arg_102_0, arg_102_1)
+GameModeVersus.rpc_rejoin_parties = function (arg_102_0, arg_102_1)
 	if arg_102_0._is_server then
 		return
 	end
@@ -1781,24 +1781,24 @@ function GameModeVersus.rpc_rejoin_parties(arg_102_0, arg_102_1)
 	arg_102_0._transition_state = "versus_migration"
 end
 
-function GameModeVersus.event_end_screen_ui_complete(arg_103_0)
+GameModeVersus.event_end_screen_ui_complete = function (arg_103_0)
 	return
 end
 
-function GameModeVersus.play_sound(arg_104_0, arg_104_1)
+GameModeVersus.play_sound = function (arg_104_0, arg_104_1)
 	local var_104_0 = Managers.world:wwise_world(arg_104_0._world)
 
 	WwiseWorld.trigger_event(var_104_0, arg_104_1)
 end
 
-function GameModeVersus._server_on_round_over(arg_105_0, arg_105_1)
+GameModeVersus._server_on_round_over = function (arg_105_0, arg_105_1)
 	local var_105_0 = Managers.state.entity:system("audio_system")
 	local var_105_1 = arg_105_1 and "Play_versus_hud_round_end_heroes_win" or "Play_versus_hud_round_end_heroes_fail"
 
 	var_105_0:play_2d_audio_event(var_105_1)
 end
 
-function GameModeVersus.pick_pactsworn_spawn_category(arg_106_0, arg_106_1, arg_106_2)
+GameModeVersus.pick_pactsworn_spawn_category = function (arg_106_0, arg_106_1, arg_106_2)
 	local var_106_0 = arg_106_0._settings.dark_pact_profile_rules
 	local var_106_1 = {}
 
@@ -1813,7 +1813,7 @@ function GameModeVersus.pick_pactsworn_spawn_category(arg_106_0, arg_106_1, arg_
 	return var_106_1[Math.random(1, #var_106_1)]
 end
 
-function GameModeVersus._round_start_telemetry(arg_107_0)
+GameModeVersus._round_start_telemetry = function (arg_107_0)
 	local var_107_0 = Managers.mechanism:game_mechanism()
 	local var_107_1 = Managers.player:local_player()
 	local var_107_2 = var_107_1.player_unit
@@ -1842,7 +1842,7 @@ function GameModeVersus._round_start_telemetry(arg_107_0)
 	Managers.telemetry_events:versus_round_started(var_107_5, var_107_3, var_107_4, var_107_6, var_107_7, var_107_8)
 end
 
-function GameModeVersus._custom_settings_telemetry(arg_108_0)
+GameModeVersus._custom_settings_telemetry = function (arg_108_0)
 	local var_108_0, var_108_1, var_108_2 = arg_108_0._mechanism:get_custom_game_settings_handler():get_telemetry_data()
 	local var_108_3 = Managers.player:local_player():telemetry_id()
 	local var_108_4 = arg_108_0._mechanism:match_id()
@@ -1850,7 +1850,7 @@ function GameModeVersus._custom_settings_telemetry(arg_108_0)
 	Managers.telemetry_events:versus_custom_game_settings(var_108_3, var_108_4, var_108_0, var_108_1, var_108_2)
 end
 
-function GameModeVersus._round_end_telemetry(arg_109_0)
+GameModeVersus._round_end_telemetry = function (arg_109_0)
 	local var_109_0 = Managers.mechanism:game_mechanism()
 	local var_109_1 = Managers.state.side:get_side_from_name("heroes").party.party_id
 	local var_109_2 = var_109_0:total_rounds_started()
@@ -1860,7 +1860,7 @@ function GameModeVersus._round_end_telemetry(arg_109_0)
 	Managers.telemetry_events:versus_round_ended(var_109_4, var_109_2, var_109_3)
 end
 
-function GameModeVersus._match_end_telemetry(arg_110_0, arg_110_1)
+GameModeVersus._match_end_telemetry = function (arg_110_0, arg_110_1)
 	local var_110_0
 	local var_110_1
 	local var_110_2 = arg_110_0._mechanism:match_id()
@@ -1882,7 +1882,7 @@ function GameModeVersus._match_end_telemetry(arg_110_0, arg_110_1)
 	Managers.telemetry_events:versus_match_ended(var_110_2, var_110_0, var_110_4)
 end
 
-function GameModeVersus.activated_ability_telemetry(arg_111_0, arg_111_1, arg_111_2)
+GameModeVersus.activated_ability_telemetry = function (arg_111_0, arg_111_1, arg_111_2)
 	local var_111_0 = Managers.mechanism:game_mechanism()
 	local var_111_1 = var_111_0:total_rounds_started()
 	local var_111_2 = var_111_0:match_id()
@@ -1891,7 +1891,7 @@ function GameModeVersus.activated_ability_telemetry(arg_111_0, arg_111_1, arg_11
 	Managers.telemetry_events:versus_activated_ability(var_111_2, var_111_1, var_111_3, arg_111_1)
 end
 
-function GameModeVersus.menu_access_allowed_in_state(arg_112_0)
+GameModeVersus.menu_access_allowed_in_state = function (arg_112_0)
 	if arg_112_0:is_in_round_state() then
 		return true
 	end
@@ -1899,7 +1899,7 @@ function GameModeVersus.menu_access_allowed_in_state(arg_112_0)
 	return false
 end
 
-function GameModeVersus.request_selectable_dark_pact_careers(arg_113_0)
+GameModeVersus.request_selectable_dark_pact_careers = function (arg_113_0)
 	arg_113_0._network_transmit:send_rpc_server("rpc_selectable_careers_request")
 end
 
@@ -1909,7 +1909,7 @@ local var_0_5 = {
 	initial_state = true
 }
 
-function GameModeVersus.is_in_pre_match_state(arg_114_0)
+GameModeVersus.is_in_pre_match_state = function (arg_114_0)
 	return var_0_5[arg_114_0._game_mode_state]
 end
 
@@ -1918,23 +1918,23 @@ local var_0_6 = {
 	match_running_state = true
 }
 
-function GameModeVersus.is_in_round_state(arg_115_0)
+GameModeVersus.is_in_round_state = function (arg_115_0)
 	return var_0_6[arg_115_0._game_mode_state]
 end
 
-function GameModeVersus.match_is_running(arg_116_0)
+GameModeVersus.match_is_running = function (arg_116_0)
 	return arg_116_0._game_mode_state == "match_running_state"
 end
 
-function GameModeVersus.match_in_round_over_state(arg_117_0)
+GameModeVersus.match_in_round_over_state = function (arg_117_0)
 	return arg_117_0._game_mode_state == "post_round_state"
 end
 
-function GameModeVersus.game_mode_state(arg_118_0)
+GameModeVersus.game_mode_state = function (arg_118_0)
 	return arg_118_0._game_mode_state
 end
 
-function GameModeVersus.rpc_selectable_careers_request(arg_119_0, arg_119_1)
+GameModeVersus.rpc_selectable_careers_request = function (arg_119_0, arg_119_1)
 	assert(arg_119_0._is_server, "[GameModeVersus] 'rpc_selectable_careers_request' may only be received by the server")
 
 	local var_119_0 = CHANNEL_TO_PEER_ID[arg_119_1]
@@ -1953,7 +1953,7 @@ function GameModeVersus.rpc_selectable_careers_request(arg_119_0, arg_119_1)
 	arg_119_0._network_transmit:send_rpc("rpc_selectable_careers_response", var_119_0, var_119_3, var_119_1)
 end
 
-function GameModeVersus.rpc_selectable_careers_response(arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+GameModeVersus.rpc_selectable_careers_response = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3)
 	local var_120_0 = NetworkLookup.versus_dark_pact_profile_rules[arg_120_2]
 
 	for iter_120_0 = 1, #arg_120_3 do
@@ -1963,15 +1963,15 @@ function GameModeVersus.rpc_selectable_careers_response(arg_120_0, arg_120_1, ar
 	Managers.state.event:trigger("versus_received_selectable_careers_response", var_120_0, arg_120_3)
 end
 
-function GameModeVersus.increment_num_picks_for_career(arg_121_0)
+GameModeVersus.increment_num_picks_for_career = function (arg_121_0)
 	arg_121_0._dark_pact_career_delegator:increment_num_picks_for_career()
 end
 
-function GameModeVersus.decrement_num_picks_for_career(arg_122_0)
+GameModeVersus.decrement_num_picks_for_career = function (arg_122_0)
 	arg_122_0._dark_pact_career_delegator:decrement_num_picks_for_career()
 end
 
-function GameModeVersus.set_playable_boss_can_be_picked(arg_123_0, arg_123_1)
+GameModeVersus.set_playable_boss_can_be_picked = function (arg_123_0, arg_123_1)
 	if arg_123_0._boss_has_been_played then
 		return
 	end
@@ -1988,7 +1988,7 @@ function GameModeVersus.set_playable_boss_can_be_picked(arg_123_0, arg_123_1)
 	end
 end
 
-function GameModeVersus.rpc_set_playable_boss_can_be_picked(arg_124_0, arg_124_1)
+GameModeVersus.rpc_set_playable_boss_can_be_picked = function (arg_124_0, arg_124_1)
 	assert(arg_124_0._is_server, "[Trying to set the boss to be pickable by client, it should only happen on server]")
 
 	arg_124_0._boss_has_been_played = true
@@ -1996,7 +1996,7 @@ function GameModeVersus.rpc_set_playable_boss_can_be_picked(arg_124_0, arg_124_1
 	arg_124_0._dark_pact_career_delegator:set_playable_boss_can_be_picked(arg_124_1)
 end
 
-function GameModeVersus._get_parading_screen_duration(arg_125_0)
+GameModeVersus._get_parading_screen_duration = function (arg_125_0)
 	local var_125_0 = 0
 	local var_125_1 = Managers.state.game_mode:setting("parading_times")
 
@@ -2007,7 +2007,7 @@ function GameModeVersus._get_parading_screen_duration(arg_125_0)
 	return var_125_0
 end
 
-function GameModeVersus.projectile_hit_character(arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5, arg_126_6, arg_126_7, arg_126_8)
+GameModeVersus.projectile_hit_character = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5, arg_126_6, arg_126_7, arg_126_8)
 	arg_126_3 = arg_126_2 or arg_126_3
 
 	if DamageUtils.is_player_unit(arg_126_3) then
@@ -2035,7 +2035,7 @@ function GameModeVersus.projectile_hit_character(arg_126_0, arg_126_1, arg_126_2
 	end
 end
 
-function GameModeVersus._trigger_early_win_vo(arg_127_0, arg_127_1)
+GameModeVersus._trigger_early_win_vo = function (arg_127_0, arg_127_1)
 	local var_127_0 = Managers.party:get_party(arg_127_1)
 	local var_127_1 = Managers.state.side.side_by_party[var_127_0]
 	local var_127_2 = arg_127_1 == 1 and 2 or 1
@@ -2047,7 +2047,7 @@ function GameModeVersus._trigger_early_win_vo(arg_127_0, arg_127_1)
 	var_127_5:trigger_mission_giver_event("vs_mg_early_loss", nil, var_127_4:name())
 end
 
-function GameModeVersus._trigger_draw_vo(arg_128_0)
+GameModeVersus._trigger_draw_vo = function (arg_128_0)
 	Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_match_draw")
 end
 
@@ -2056,7 +2056,7 @@ local var_0_8 = 5
 local var_0_9 = {}
 local var_0_10 = {}
 
-function GameModeVersus._update_hero_rushing(arg_129_0, arg_129_1)
+GameModeVersus._update_hero_rushing = function (arg_129_0, arg_129_1)
 	if not arg_129_0._is_server then
 		return
 	end
@@ -2084,7 +2084,7 @@ function GameModeVersus._update_hero_rushing(arg_129_0, arg_129_1)
 	end
 
 	if var_129_0 > 1 then
-		table.sort(var_0_9, function(arg_130_0, arg_130_1)
+		table.sort(var_0_9, function (arg_130_0, arg_130_1)
 			return var_0_10[arg_130_0] < var_0_10[arg_130_1]
 		end)
 
@@ -2113,7 +2113,7 @@ function GameModeVersus._update_hero_rushing(arg_129_0, arg_129_1)
 	end
 end
 
-function GameModeVersus._register_disabled_as_eliminiations(arg_131_0)
+GameModeVersus._register_disabled_as_eliminiations = function (arg_131_0)
 	local var_131_0 = Managers.player:players()
 	local var_131_1 = Managers.player:statistics_db()
 
@@ -2131,7 +2131,7 @@ function GameModeVersus._register_disabled_as_eliminiations(arg_131_0)
 					var_131_2 = Managers.player:owner(var_131_4:get_pouncer_unit())
 					var_131_3 = "vs_gutter_runner"
 				elseif var_131_4:is_disabled_by_pact_sworn() then
-					-- block empty
+					-- Nothing
 				end
 			end
 

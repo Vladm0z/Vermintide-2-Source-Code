@@ -7,7 +7,7 @@ local var_0_0 = script_data.testify and require("foundation/scripts/managers/fre
 
 FreeFlightManager = class(FreeFlightManager)
 
-function FreeFlightManager.init(arg_1_0)
+FreeFlightManager.init = function (arg_1_0)
 	arg_1_0.current_control_point = 1
 	arg_1_0._has_terrain = not not rawget(s3d, "TerrainDecoration")
 	arg_1_0.data = {}
@@ -17,7 +17,7 @@ function FreeFlightManager.init(arg_1_0)
 	arg_1_0._frames_to_step = 1
 	arg_1_0._max_players = 4
 	arg_1_0._input_service_wrapper = {
-		get = function(arg_2_0, arg_2_1)
+		get = function (arg_2_0, arg_2_1)
 			local var_2_0 = PLATFORM
 			local var_2_1 = FreeFlightFilters[var_2_0][arg_2_1]
 
@@ -42,7 +42,7 @@ function FreeFlightManager.init(arg_1_0)
 	}
 end
 
-function FreeFlightManager.register_input_manager(arg_3_0, arg_3_1)
+FreeFlightManager.register_input_manager = function (arg_3_0, arg_3_1)
 	arg_3_0.input_manager = arg_3_1
 
 	arg_3_1:create_input_service("FreeFlight", "FreeFlightKeymaps", "FreeFlightFilters")
@@ -51,16 +51,16 @@ function FreeFlightManager.register_input_manager(arg_3_0, arg_3_1)
 	arg_3_1:map_device_to_service("FreeFlight", "gamepad")
 end
 
-function FreeFlightManager.unregister_input_manager(arg_4_0)
+FreeFlightManager.unregister_input_manager = function (arg_4_0)
 	arg_4_0.input_manager = nil
 end
 
-function FreeFlightManager.destroy(arg_5_0)
+FreeFlightManager.destroy = function (arg_5_0)
 	arg_5_0.input_manager = nil
 	arg_5_0.data = nil
 end
 
-function FreeFlightManager.update(arg_6_0, arg_6_1)
+FreeFlightManager.update = function (arg_6_0, arg_6_1)
 	if Development.parameter("gdc") or GameSettingsDevelopment.disable_free_flight then
 		return
 	end
@@ -86,11 +86,11 @@ function FreeFlightManager.update(arg_6_0, arg_6_1)
 	end
 end
 
-function FreeFlightManager.set_teleport_override(arg_7_0, arg_7_1)
+FreeFlightManager.set_teleport_override = function (arg_7_0, arg_7_1)
 	arg_7_0._teleport_override = arg_7_1
 end
 
-function FreeFlightManager._get_camera(arg_8_0, arg_8_1)
+FreeFlightManager._get_camera = function (arg_8_0, arg_8_1)
 	if arg_8_1 then
 		local var_8_0 = arg_8_0.data[arg_8_1]
 		local var_8_1 = var_8_0.viewport_name
@@ -119,7 +119,7 @@ function FreeFlightManager._get_camera(arg_8_0, arg_8_1)
 	end
 end
 
-function FreeFlightManager.teleport_camera(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+FreeFlightManager.teleport_camera = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0:_get_camera(arg_9_1)
 
 	if not var_9_0 then
@@ -135,7 +135,7 @@ function FreeFlightManager.teleport_camera(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function FreeFlightManager.camera_position_rotation(arg_10_0, arg_10_1)
+FreeFlightManager.camera_position_rotation = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0:_get_camera(arg_10_1)
 
 	if not var_10_0 then
@@ -149,7 +149,7 @@ function FreeFlightManager.camera_position_rotation(arg_10_0, arg_10_1)
 	return var_10_2, var_10_3
 end
 
-function FreeFlightManager._update_global(arg_11_0, arg_11_1)
+FreeFlightManager._update_global = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.data.global
 	local var_11_1 = arg_11_0:_resolve_input_service()
 
@@ -178,7 +178,7 @@ function FreeFlightManager._update_global(arg_11_0, arg_11_1)
 	end
 end
 
-function FreeFlightManager._resolve_input_service(arg_12_0)
+FreeFlightManager._resolve_input_service = function (arg_12_0)
 	if arg_12_0.input_manager then
 		return arg_12_0.input_manager:get_service("FreeFlight")
 	else
@@ -186,7 +186,7 @@ function FreeFlightManager._resolve_input_service(arg_12_0)
 	end
 end
 
-function FreeFlightManager._exit_frustum_freeze(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+FreeFlightManager._exit_frustum_freeze = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	World.set_frustum_inspector_camera(arg_13_2, nil)
 
 	local var_13_0 = arg_13_1.frustum_freeze_camera
@@ -204,7 +204,7 @@ function FreeFlightManager._exit_frustum_freeze(arg_13_0, arg_13_1, arg_13_2, ar
 	arg_13_1.frustum_freeze_camera = nil
 end
 
-function FreeFlightManager._enter_frustum_freeze(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+FreeFlightManager._enter_frustum_freeze = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0
 	local var_14_1 = ScriptViewport.camera(arg_14_3)
 	local var_14_2 = Camera.vertical_fov(var_14_1)
@@ -229,7 +229,7 @@ function FreeFlightManager._enter_frustum_freeze(arg_14_0, arg_14_1, arg_14_2, a
 	World.set_frustum_inspector_camera(arg_14_2, var_14_0)
 end
 
-function FreeFlightManager._toggle_frustum_freeze(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+FreeFlightManager._toggle_frustum_freeze = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if arg_15_2.frustum_freeze_camera then
 		arg_15_0:_exit_frustum_freeze(arg_15_2, arg_15_3, arg_15_4, true)
 	else
@@ -237,7 +237,7 @@ function FreeFlightManager._toggle_frustum_freeze(arg_15_0, arg_15_1, arg_15_2, 
 	end
 end
 
-function FreeFlightManager.camera_pose(arg_16_0, arg_16_1)
+FreeFlightManager.camera_pose = function (arg_16_0, arg_16_1)
 	local var_16_0 = Managers.world:world(arg_16_1.viewport_world_name)
 	local var_16_1 = ScriptWorld.global_free_flight_viewport(var_16_0)
 	local var_16_2 = arg_16_1.frustum_freeze_camera or ScriptViewport.camera(var_16_1)
@@ -245,15 +245,15 @@ function FreeFlightManager.camera_pose(arg_16_0, arg_16_1)
 	return (Camera.local_pose(var_16_2))
 end
 
-function FreeFlightManager.set_pause_on_enter_freeflight(arg_17_0, arg_17_1)
+FreeFlightManager.set_pause_on_enter_freeflight = function (arg_17_0, arg_17_1)
 	arg_17_0._pause_on_enter_freeflight = arg_17_1
 end
 
-function FreeFlightManager.paused(arg_18_0)
+FreeFlightManager.paused = function (arg_18_0)
 	return arg_18_0._paused
 end
 
-function FreeFlightManager._pause_game(arg_19_0, arg_19_1)
+FreeFlightManager._pause_game = function (arg_19_0, arg_19_1)
 	arg_19_0._paused = arg_19_1
 
 	local var_19_0 = arg_19_0.data.global
@@ -266,7 +266,7 @@ function FreeFlightManager._pause_game(arg_19_0, arg_19_1)
 	end
 end
 
-function FreeFlightManager._update_global_free_flight(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+FreeFlightManager._update_global_free_flight = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = Managers.world:world(arg_20_2.viewport_world_name)
 	local var_20_1 = ScriptWorld.global_free_flight_viewport(var_20_0)
 	local var_20_2 = arg_20_2.frustum_freeze_camera or ScriptViewport.camera(var_20_1)
@@ -398,7 +398,7 @@ function FreeFlightManager._update_global_free_flight(arg_20_0, arg_20_1, arg_20
 	ScriptCamera.set_local_pose(var_20_2, var_20_6)
 end
 
-function FreeFlightManager.cleanup_free_flight(arg_21_0)
+FreeFlightManager.cleanup_free_flight = function (arg_21_0)
 	local var_21_0 = arg_21_0.data.global
 
 	if var_21_0.active then
@@ -416,7 +416,7 @@ function FreeFlightManager.cleanup_free_flight(arg_21_0)
 	end
 end
 
-function FreeFlightManager._enter_global_free_flight(arg_22_0, arg_22_1)
+FreeFlightManager._enter_global_free_flight = function (arg_22_0, arg_22_1)
 	local var_22_0 = Application.main_world()
 
 	if not var_22_0 then
@@ -450,7 +450,7 @@ function FreeFlightManager._enter_global_free_flight(arg_22_0, arg_22_1)
 	arg_22_0:_set_control_input(true)
 end
 
-function FreeFlightManager._set_control_input(arg_23_0, arg_23_1)
+FreeFlightManager._set_control_input = function (arg_23_0, arg_23_1)
 	arg_23_1 = not not arg_23_1
 
 	if arg_23_0._controlling_input == arg_23_1 then
@@ -476,7 +476,7 @@ function FreeFlightManager._set_control_input(arg_23_0, arg_23_1)
 	end
 end
 
-function FreeFlightManager._exit_global_free_flight(arg_24_0, arg_24_1)
+FreeFlightManager._exit_global_free_flight = function (arg_24_0, arg_24_1)
 	local var_24_0 = Managers.world:world(arg_24_1.viewport_world_name)
 
 	if arg_24_1.frustum_freeze_camera then
@@ -502,12 +502,12 @@ function FreeFlightManager._exit_global_free_flight(arg_24_0, arg_24_1)
 	arg_24_0:_set_control_input(false)
 end
 
-function FreeFlightManager._clear_global_free_flight(arg_25_0, arg_25_1)
+FreeFlightManager._clear_global_free_flight = function (arg_25_0, arg_25_1)
 	arg_25_1.active = false
 	arg_25_1.viewport_world_name = nil
 end
 
-function FreeFlightManager._update_player(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+FreeFlightManager._update_player = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_3.input_service
 	local var_26_1 = var_26_0:get("frustum_freeze_toggle")
 	local var_26_2 = var_26_0:get("free_flight_toggle")
@@ -527,13 +527,13 @@ function FreeFlightManager._update_player(arg_26_0, arg_26_1, arg_26_2, arg_26_3
 	end
 end
 
-function FreeFlightManager._clear_free_flight(arg_27_0, arg_27_1)
+FreeFlightManager._clear_free_flight = function (arg_27_0, arg_27_1)
 	arg_27_1.active = false
 	arg_27_1.viewport_world_name = nil
 	arg_27_1.viewport_name = nil
 end
 
-function FreeFlightManager.register_player(arg_28_0, arg_28_1)
+FreeFlightManager.register_player = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0.input_manager:get_service("FreeFlight")
 
 	arg_28_0.data[arg_28_1] = {
@@ -555,7 +555,7 @@ function FreeFlightManager.register_player(arg_28_0, arg_28_1)
 	}
 end
 
-function FreeFlightManager.unregister_player(arg_29_0, arg_29_1)
+FreeFlightManager.unregister_player = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0.data[arg_29_1]
 
 	fassert(var_29_0, "Trying to unregister player %i not registered", arg_29_1)
@@ -567,7 +567,7 @@ function FreeFlightManager.unregister_player(arg_29_0, arg_29_1)
 	arg_29_0.data[arg_29_1] = nil
 end
 
-function FreeFlightManager._setup_data(arg_30_0, arg_30_1)
+FreeFlightManager._setup_data = function (arg_30_0, arg_30_1)
 	arg_30_1.global = {
 		translation_speed = 0.05,
 		rotation_speed = 0.003,
@@ -580,7 +580,7 @@ function FreeFlightManager._setup_data(arg_30_0, arg_30_1)
 	}
 end
 
-function FreeFlightManager._enter_free_flight(arg_31_0, arg_31_1, arg_31_2)
+FreeFlightManager._enter_free_flight = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_1.viewport_world_name
 	local var_31_1 = arg_31_1.viewport_name
 	local var_31_2 = Managers.world:world(var_31_0)
@@ -615,7 +615,7 @@ function FreeFlightManager._enter_free_flight(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function FreeFlightManager._exit_free_flight(arg_32_0, arg_32_1, arg_32_2)
+FreeFlightManager._exit_free_flight = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = Managers.world:world(arg_32_2.viewport_world_name)
 
 	if arg_32_2.frustum_freeze_camera then
@@ -643,15 +643,15 @@ function FreeFlightManager._exit_free_flight(arg_32_0, arg_32_1, arg_32_2)
 	arg_32_0.input_manager:device_unblock_all_services("gamepad")
 end
 
-function FreeFlightManager.active(arg_33_0, arg_33_1)
+FreeFlightManager.active = function (arg_33_0, arg_33_1)
 	return arg_33_0.data[arg_33_1] and arg_33_0.data[arg_33_1].active
 end
 
-function FreeFlightManager.mode(arg_34_0, arg_34_1)
+FreeFlightManager.mode = function (arg_34_0, arg_34_1)
 	return arg_34_0.data[arg_34_1].mode
 end
 
-function FreeFlightManager._update_free_flight(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+FreeFlightManager._update_free_flight = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	local var_35_0 = Managers.world:world(arg_35_3.viewport_world_name)
 	local var_35_1 = ScriptWorld.free_flight_viewport(var_35_0, arg_35_3.viewport_name)
 	local var_35_2 = arg_35_3.frustum_freeze_camera or ScriptViewport.camera(var_35_1)
@@ -690,7 +690,7 @@ function FreeFlightManager._update_free_flight(arg_35_0, arg_35_1, arg_35_2, arg
 	local var_35_21 = var_35_16 + var_35_19 * math.min(var_35_18, var_35_20 * arg_35_1)
 
 	if not Vector3.equal(var_35_21, var_35_16) then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_35_3.current_translation_speed:store(var_35_21)
@@ -856,7 +856,7 @@ function FreeFlightManager._update_free_flight(arg_35_0, arg_35_1, arg_35_2, arg
 	end
 end
 
-function FreeFlightManager.drop_player_at_camera_pos(arg_36_0, arg_36_1, arg_36_2)
+FreeFlightManager.drop_player_at_camera_pos = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = Camera.local_position(arg_36_1)
 	local var_36_1 = Camera.local_rotation(arg_36_1)
 

@@ -419,7 +419,7 @@ for iter_0_0, iter_0_1 in pairs(DLCSettings) do
 end
 
 InGameChallengeRewardTypes = {
-	buff = function(arg_2_0, arg_2_1, arg_2_2)
+	buff = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Managers.state.entity:system("buff_system")
 		local var_2_1 = arg_2_0.buffs
 		local var_2_2 = arg_2_0.server_controlled
@@ -441,7 +441,7 @@ InGameChallengeRewardTypes = {
 
 		return var_2_3
 	end,
-	pickup = function(arg_3_0, arg_3_1, arg_3_2)
+	pickup = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = arg_3_0.pickup_type
 		local var_3_1 = Managers.state.network.network_transmit
 		local var_3_2 = Managers.state.entity:system("pickup_system")
@@ -478,7 +478,7 @@ InGameChallengeRewardTypes = {
 			end
 		end
 	end,
-	boon = function(arg_4_0, arg_4_1, arg_4_2)
+	boon = function (arg_4_0, arg_4_1, arg_4_2)
 		if Managers.player:player_from_unique_id(arg_4_2) then
 			Managers.boon:add_boon(arg_4_2, arg_4_0.reward_id, arg_4_0.consume_type, arg_4_0.consume_value, arg_4_0.reactivation_rule)
 		end
@@ -488,7 +488,7 @@ InGameChallengeRewardTypes = {
 DLCUtils.merge("ingame_challenge_reward_types", InGameChallengeRewardTypes)
 
 InGameChallengeRewardRevokeTypes = {
-	buff = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	buff = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if not arg_5_0.server_controlled then
 			return
 		end
@@ -513,7 +513,7 @@ DLCUtils.merge("ingame_challenge_revoke_types", InGameChallengeRewardRevokeTypes
 local var_0_2 = {}
 
 InGameChallengeRewardTargets = {
-	owner = function(arg_6_0)
+	owner = function (arg_6_0)
 		local var_6_0 = Managers.player:player_from_unique_id(arg_6_0)
 
 		if var_6_0 then
@@ -524,7 +524,7 @@ InGameChallengeRewardTargets = {
 
 		return var_0_2
 	end,
-	party = function(arg_7_0)
+	party = function (arg_7_0)
 		local var_7_0 = Managers.party
 		local var_7_1 = var_7_0:get_status_from_unique_id(arg_7_0)
 		local var_7_2 = var_7_1 and var_7_0:get_players_in_party(var_7_1.party_id)

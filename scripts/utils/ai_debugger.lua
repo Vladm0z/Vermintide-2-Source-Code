@@ -30,7 +30,7 @@ end
 
 AIDebugger = class(AIDebugger)
 
-function AIDebugger.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+AIDebugger.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_0.free_flight_manager = arg_2_5
 	arg_2_0.is_server = arg_2_4
 	arg_2_0.world = arg_2_1
@@ -47,7 +47,7 @@ function AIDebugger.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_0.hint_time_when_key_handle_visible = 0
 end
 
-function AIDebugger.lazy_create_drawer(arg_3_0)
+AIDebugger.lazy_create_drawer = function (arg_3_0)
 	if arg_3_0.drawer then
 		return
 	end
@@ -58,11 +58,11 @@ function AIDebugger.lazy_create_drawer(arg_3_0)
 	})
 end
 
-function AIDebugger.destroy(arg_4_0)
+AIDebugger.destroy = function (arg_4_0)
 	return
 end
 
-function AIDebugger.update(arg_5_0, arg_5_1, arg_5_2)
+AIDebugger.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:lazy_create_drawer()
 
 	if Unit.alive(script_data.debug_unit) then
@@ -262,7 +262,7 @@ function AIDebugger.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 
 	if DebugKeyHandler.key_pressed("c", "spawn bot player", "ai debugger", nil, "FreeFlight") then
-		-- block empty
+		-- Nothing
 	end
 
 	if arg_5_0._fake_players then
@@ -274,7 +274,7 @@ function AIDebugger.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AIDebugger.perlin_path(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+AIDebugger.perlin_path = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0, var_6_1 = Application.resolution()
 	local var_6_2 = 500
 	local var_6_3 = 3
@@ -312,7 +312,7 @@ function AIDebugger.perlin_path(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg
 	end
 end
 
-function AIDebugger.update_selection(arg_7_0, arg_7_1, arg_7_2)
+AIDebugger.update_selection = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:mouse_raycast(arg_7_1)
 
 	if not Unit.alive(arg_7_0.active_unit) then
@@ -331,7 +331,7 @@ function AIDebugger.update_selection(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function AIDebugger.update_ingame_selection(arg_8_0, arg_8_1)
+AIDebugger.update_ingame_selection = function (arg_8_0, arg_8_1)
 	if not Unit.alive(arg_8_0.active_unit) then
 		arg_8_0.active_unit = nil
 	end
@@ -351,7 +351,7 @@ function AIDebugger.update_ingame_selection(arg_8_0, arg_8_1)
 	end
 end
 
-function AIDebugger.closest_unit_in_aim_dir(arg_9_0, arg_9_1)
+AIDebugger.closest_unit_in_aim_dir = function (arg_9_0, arg_9_1)
 	if arg_9_1 then
 		return true
 	end
@@ -404,7 +404,7 @@ function AIDebugger.closest_unit_in_aim_dir(arg_9_0, arg_9_1)
 	end
 end
 
-function AIDebugger.mouse_raycast(arg_10_0, arg_10_1)
+AIDebugger.mouse_raycast = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.free_flight_manager.data.global
 	local var_10_1 = Managers.world:world(var_10_0.viewport_world_name)
 	local var_10_2 = World.get_data(var_10_1, "physics_world")
@@ -438,19 +438,19 @@ local var_0_6 = {
 	y = 0
 }
 
-function AIDebugger.update_mouse_input(arg_11_0, arg_11_1)
+AIDebugger.update_mouse_input = function (arg_11_0, arg_11_1)
 	if not Unit.alive(arg_11_0.hot_unit) then
 		return
 	end
 end
 
-function AIDebugger.draw_hot_unit(arg_12_0)
+AIDebugger.draw_hot_unit = function (arg_12_0)
 	local var_12_0 = Unit.local_position(arg_12_0.hot_unit, 0)
 
 	arg_12_0.drawer:sphere(var_12_0 + Vector3.up() * 2, 0.15, Color(255, 255, 100, 0))
 end
 
-function AIDebugger.draw_active_unit(arg_13_0, arg_13_1)
+AIDebugger.draw_active_unit = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.drawer
 	local var_13_1 = arg_13_0.active_unit
 	local var_13_2 = Unit.local_position(var_13_1, 0) + Vector3.up() * 2
@@ -467,7 +467,7 @@ for iter_0_0 = 1, 25 do
 	var_0_7[iter_0_0] = math.random(1, 15)
 end
 
-function AIDebugger.draw_nearby_navmesh(arg_14_0, arg_14_1)
+AIDebugger.draw_nearby_navmesh = function (arg_14_0, arg_14_1)
 	if not arg_14_0.show_navmesh then
 		return
 	end
@@ -539,7 +539,7 @@ function AIDebugger.draw_nearby_navmesh(arg_14_0, arg_14_1)
 	LineObject.dispatch(arg_14_0.world, arg_14_0._line_object)
 end
 
-function AIDebugger.draw_blackboard(arg_15_0, arg_15_1)
+AIDebugger.draw_blackboard = function (arg_15_0, arg_15_1)
 	if not arg_15_0.show_blackboard then
 		return
 	end
@@ -632,7 +632,7 @@ function AIDebugger.draw_blackboard(arg_15_0, arg_15_1)
 	end
 end
 
-function AIDebugger.draw_behavior_tree(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+AIDebugger.draw_behavior_tree = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if not arg_16_0.show_behavior_tree then
 		return
 	end
@@ -687,7 +687,7 @@ function AIDebugger.draw_behavior_tree(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	end
 end
 
-function AIDebugger.draw_reticule(arg_17_0)
+AIDebugger.draw_reticule = function (arg_17_0)
 	do return end
 
 	local var_17_0 = "crosshair_texture_1"
@@ -703,7 +703,7 @@ function AIDebugger.draw_reticule(arg_17_0)
 	end
 end
 
-function AIDebugger.debug_player_intensity(arg_18_0, arg_18_1, arg_18_2)
+AIDebugger.debug_player_intensity = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = {
 		Color(200, 160, 145, 0),
 		Color(200, 90, 150, 170),
@@ -757,7 +757,7 @@ function AIDebugger.debug_player_intensity(arg_18_0, arg_18_1, arg_18_2)
 		local var_18_23 = Managers.player:local_player(1)
 
 		if ScriptUnit.has_extension(var_18_23.player_unit, "status_system") then
-			-- block empty
+			-- Nothing
 		end
 	end
 
@@ -767,7 +767,7 @@ function AIDebugger.debug_player_intensity(arg_18_0, arg_18_1, arg_18_2)
 	ScriptGUI.itext(var_18_1, var_18_2, var_18_3, var_18_22, var_0_4, var_18_25, var_0_3, var_18_8, var_18_24 + var_18_6 * 0.75, 3, Color(255, 200, 200, 32))
 end
 
-function AIDebugger.debug_pacing(arg_19_0, arg_19_1, arg_19_2)
+AIDebugger.debug_pacing = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.screen_gui
 	local var_19_1 = Managers.state.conflict
 	local var_19_2, var_19_3 = Application.resolution()
@@ -856,7 +856,7 @@ end
 
 local var_0_8 = false
 
-function AIDebugger.draw_hint(arg_20_0, arg_20_1)
+AIDebugger.draw_hint = function (arg_20_0, arg_20_1)
 	if script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -892,7 +892,7 @@ function AIDebugger.draw_hint(arg_20_0, arg_20_1)
 	Gui.rect(var_20_0, Vector3(var_20_9 - 20, 0, 100), Vector2(var_20_8 + 40, 50), Color(var_20_4 * 0.75, 25, 50, 25))
 end
 
-function AIDebugger.create_fake_players(arg_21_0)
+AIDebugger.create_fake_players = function (arg_21_0)
 	local var_21_0 = Managers.player:player_from_peer_id(Network.peer_id()).player_unit
 	local var_21_1 = POSITION_LOOKUP[var_21_0]
 	local var_21_2 = Managers.state.entity:system("ai_system"):nav_world()
@@ -907,11 +907,11 @@ function AIDebugger.create_fake_players(arg_21_0)
 	return arg_21_0._fake_players
 end
 
-function AIDebugger.fake_players(arg_22_0)
+AIDebugger.fake_players = function (arg_22_0)
 	return arg_22_0._fake_players
 end
 
-function AIDebugger.draw_extensions(arg_23_0, arg_23_1)
+AIDebugger.draw_extensions = function (arg_23_0, arg_23_1)
 	if not arg_23_0.show_extensions then
 		return
 	end

@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_chaos_warrior_trickle",
 	icon = "mutator_icon_powerful_elites",
 	display_name = "display_name_mutator_chaos_warrior_trickle",
-	server_initialize_function = function(arg_1_0, arg_1_1)
+	server_initialize_function = function (arg_1_0, arg_1_1)
 		local var_1_0 = Managers.state.difficulty:get_difficulty_rank()
 		local var_1_1 = 2 + var_1_0 * 1
 		local var_1_2 = {}
@@ -24,7 +24,7 @@ return {
 
 		arg_1_1.side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
 	end,
-	server_update_function = function(arg_2_0, arg_2_1)
+	server_update_function = function (arg_2_0, arg_2_1)
 		local var_2_0 = Managers.time:time("game")
 
 		if var_2_0 > arg_2_1.spawn_at then
@@ -40,7 +40,7 @@ return {
 			arg_2_1.spawn_at = var_2_0 + math.random(40, var_2_5)
 		end
 	end,
-	server_stop_function = function(arg_3_0, arg_3_1)
+	server_stop_function = function (arg_3_0, arg_3_1)
 		Managers.state.conflict:set_threat_value("chaos_warrior", arg_3_1.old_threat_value)
 	end
 }

@@ -98,7 +98,7 @@ VortexTemplates = {
 			7,
 			8
 		},
-		suck_in_ai_func = function(arg_1_0)
+		suck_in_ai_func = function (arg_1_0)
 			local var_1_0 = {
 				"halescourge_tornado_enemies",
 				"halescourge_tornado_enemies_cata"

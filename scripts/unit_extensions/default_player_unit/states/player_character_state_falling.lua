@@ -28,14 +28,14 @@ PlayerCharacterStateFalling = class(PlayerCharacterStateFalling, PlayerCharacter
 
 local var_0_1 = POSITION_LOOKUP
 
-function PlayerCharacterStateFalling.init(arg_1_0, arg_1_1)
+PlayerCharacterStateFalling.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "falling")
 
 	arg_1_0.last_valid_nav_position = Vector3Box()
 	arg_1_0.shaking_ladder_unit = false
 end
 
-function PlayerCharacterStateFalling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateFalling.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.falling_reason = arg_2_6
 
 	local var_2_0 = arg_2_0.input_extension
@@ -79,7 +79,7 @@ function PlayerCharacterStateFalling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	arg_2_0.is_bot = var_2_10 and var_2_10.bot_player
 end
 
-function PlayerCharacterStateFalling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateFalling.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if not Managers.state.network:game() or not arg_3_6 then
 		return
 	end
@@ -104,7 +104,7 @@ function PlayerCharacterStateFalling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function PlayerCharacterStateFalling.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateFalling.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.world
 	local var_4_1 = arg_4_0.locomotion_extension
 	local var_4_2 = arg_4_0.first_person_extension

@@ -22,7 +22,7 @@ if not IS_WINDOWS then
 	StateSplashScreen.packages_to_load[#StateSplashScreen.packages_to_load + 1] = "resource_packages/news_splash/news_splash"
 end
 
-function StateSplashScreen.on_enter(arg_1_0)
+StateSplashScreen.on_enter = function (arg_1_0)
 	Framerate.set_low_power()
 
 	if IS_WINDOWS then
@@ -135,13 +135,13 @@ local var_0_0 = {
 	MX = true
 }
 
-function StateSplashScreen._is_in_esrb_region(arg_2_0)
+StateSplashScreen._is_in_esrb_region = function (arg_2_0)
 	local var_2_0 = XboxLive.region_info().GEO_ISO2
 
 	return var_0_0[var_2_0]
 end
 
-function StateSplashScreen.setup_esrb_logo(arg_3_0)
+StateSplashScreen.setup_esrb_logo = function (arg_3_0)
 	arg_3_0.gui = World.create_screen_gui(arg_3_0.world, "material", "materials/ui/esrb_console_logo", "immediate")
 
 	Managers.package:load("resource_packages/start_menu_splash", "StateSplashScreen", callback(arg_3_0, "cb_splashes_loaded"), true, true)
@@ -150,7 +150,7 @@ function StateSplashScreen.setup_esrb_logo(arg_3_0)
 	arg_3_0.esrb_timer = 0
 end
 
-function StateSplashScreen.update_esrb_logo(arg_4_0, arg_4_1, arg_4_2)
+StateSplashScreen.update_esrb_logo = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = 5
 	local var_4_1 = arg_4_0.esrb_timer
 	local var_4_2 = 0
@@ -180,7 +180,7 @@ function StateSplashScreen.update_esrb_logo(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function StateSplashScreen.cb_splashes_loaded(arg_5_0)
+StateSplashScreen.cb_splashes_loaded = function (arg_5_0)
 	arg_5_0.splashes_loaded = true
 
 	if not arg_5_0.showing_esrb then
@@ -188,7 +188,7 @@ function StateSplashScreen.cb_splashes_loaded(arg_5_0)
 	end
 end
 
-function StateSplashScreen.setup_world(arg_6_0)
+StateSplashScreen.setup_world = function (arg_6_0)
 	arg_6_0._world_name = "splash_ui"
 	arg_6_0._viewport_name = "splash_view_viewport"
 	arg_6_0.world = Managers.world:create_world(arg_6_0._world_name, GameSettingsDevelopment.default_environment, nil, 980, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
@@ -196,7 +196,7 @@ function StateSplashScreen.setup_world(arg_6_0)
 end
 
 if IS_WINDOWS or IS_XB1 then
-	function StateSplashScreen.setup_input(arg_7_0)
+	StateSplashScreen.setup_input = function (arg_7_0)
 		arg_7_0.input_manager = InputManager:new()
 		Managers.input = arg_7_0.input_manager
 
@@ -206,7 +206,7 @@ if IS_WINDOWS or IS_XB1 then
 	end
 end
 
-function StateSplashScreen.setup_splash_screen_view(arg_8_0)
+StateSplashScreen.setup_splash_screen_view = function (arg_8_0)
 	if not Managers.package:has_loaded("resource_packages/start_menu_splash", "StateSplashScreen") then
 		local var_8_0 = os.clock()
 
@@ -226,7 +226,7 @@ function StateSplashScreen.setup_splash_screen_view(arg_8_0)
 	end
 end
 
-function StateSplashScreen.update(arg_9_0, arg_9_1, arg_9_2)
+StateSplashScreen.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if not IS_CONSOLE then
 		Debug.update(arg_9_2, arg_9_1)
 		arg_9_0.input_manager:update(arg_9_1, arg_9_2)
@@ -246,13 +246,13 @@ function StateSplashScreen.update(arg_9_0, arg_9_1, arg_9_2)
 	return (arg_9_0:next_state())
 end
 
-function StateSplashScreen.render(arg_10_0)
+StateSplashScreen.render = function (arg_10_0)
 	if arg_10_0.splash_view then
 		arg_10_0.splash_view:render()
 	end
 end
 
-function StateSplashScreen.next_state(arg_11_0)
+StateSplashScreen.next_state = function (arg_11_0)
 	if not arg_11_0:packages_loaded() or not arg_11_0.wanted_state then
 		return
 	end
@@ -266,7 +266,7 @@ function StateSplashScreen.next_state(arg_11_0)
 	return arg_11_0.wanted_state
 end
 
-function StateSplashScreen.unload_packages(arg_12_0)
+StateSplashScreen.unload_packages = function (arg_12_0)
 	local var_12_0 = Managers.package
 
 	for iter_12_0, iter_12_1 in ipairs(StateSplashScreen.packages_to_load) do
@@ -276,7 +276,7 @@ function StateSplashScreen.unload_packages(arg_12_0)
 	end
 end
 
-function StateSplashScreen.load_packages(arg_13_0)
+StateSplashScreen.load_packages = function (arg_13_0)
 	local var_13_0 = Managers.package
 
 	for iter_13_0, iter_13_1 in ipairs(StateSplashScreen.packages_to_load) do
@@ -288,7 +288,7 @@ function StateSplashScreen.load_packages(arg_13_0)
 	arg_13_0._base_packages_loading = true
 end
 
-function StateSplashScreen.packages_loaded(arg_14_0)
+StateSplashScreen.packages_loaded = function (arg_14_0)
 	local var_14_0 = Managers.package
 
 	for iter_14_0, iter_14_1 in ipairs(StateSplashScreen.packages_to_load) do
@@ -310,11 +310,11 @@ function StateSplashScreen.packages_loaded(arg_14_0)
 	return (GlobalResources.update_loading())
 end
 
-function StateSplashScreen.cb_fade_in_done(arg_15_0)
+StateSplashScreen.cb_fade_in_done = function (arg_15_0)
 	arg_15_0.wanted_state = StateTitleScreen
 end
 
-function StateSplashScreen.on_exit(arg_16_0, arg_16_1)
+StateSplashScreen.on_exit = function (arg_16_0, arg_16_1)
 	Framerate.set_playing()
 
 	if arg_16_0.splash_view then

@@ -364,15 +364,15 @@ local var_0_12 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -380,16 +380,16 @@ local var_0_12 = {
 			name = "move_inner_panels",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeInCubic(1 - arg_5_3)
 
 				arg_5_0.player_panel_2.local_position[1] = -375 - 400 * var_5_0
 				arg_5_0.player_panel_3.local_position[1] = 375 + 400 * var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		},
@@ -397,16 +397,16 @@ local var_0_12 = {
 			name = "move_outer_panels",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeInCubic(1 - arg_8_3)
 
 				arg_8_0.player_panel_1.local_position[1] = -700 - 400 * var_8_0
 				arg_8_0.player_panel_4.local_position[1] = 700 + 400 * var_8_0
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		},
@@ -414,17 +414,17 @@ local var_0_12 = {
 			name = "move_level",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				local var_10_0 = 1
 
 				arg_10_0.level.local_position[2] = arg_10_1.level.position[2] + 50 * var_10_0
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = 1 - math.easeOutCubic(arg_11_3)
 
 				arg_11_0.level.local_position[2] = arg_11_1.level.position[2] + 50 * var_11_0
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		}
@@ -434,15 +434,15 @@ local var_0_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeInCubic(arg_14_3)
 
 				arg_14_4.render_settings.alpha_multiplier = 1 - var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		}

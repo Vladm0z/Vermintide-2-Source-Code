@@ -74,22 +74,22 @@ end
 DifficultyTweak = DifficultyTweak or {
 	range = var_0_0,
 	converters = {
-		composition = function(arg_6_0, arg_6_1)
+		composition = function (arg_6_0, arg_6_1)
 			return var_0_2(arg_6_0, 2, arg_6_1)
 		end,
-		composition_rank = function(arg_7_0, arg_7_1)
+		composition_rank = function (arg_7_0, arg_7_1)
 			return var_0_3(arg_7_0, 2, arg_7_1)
 		end,
-		pacing = function(arg_8_0, arg_8_1)
+		pacing = function (arg_8_0, arg_8_1)
 			return var_0_2(arg_8_0, 2, arg_8_1)
 		end,
-		intensity = function(arg_9_0, arg_9_1)
+		intensity = function (arg_9_0, arg_9_1)
 			return var_0_2(arg_9_0, 2, arg_9_1)
 		end,
-		tweaked_delay_threat_value = function(arg_10_0, arg_10_1, arg_10_2)
+		tweaked_delay_threat_value = function (arg_10_0, arg_10_1, arg_10_2)
 			return var_0_4(arg_10_0, arg_10_1, arg_10_2)
 		end,
-		closest_tweak_match = function(arg_11_0, arg_11_1, arg_11_2)
+		closest_tweak_match = function (arg_11_0, arg_11_1, arg_11_2)
 			return var_0_5(arg_11_0, arg_11_1, arg_11_2)
 		end
 	}

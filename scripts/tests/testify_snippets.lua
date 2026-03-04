@@ -1,19 +1,19 @@
 -- chunkname: @scripts/tests/testify_snippets.lua
 
 local var_0_0 = {
-	load_level = function(arg_1_0)
+	load_level = function (arg_1_0)
 		Testify:make_request("load_level", arg_1_0)
 		Testify:make_request("wait_for_level_to_be_loaded")
 	end
 }
 
-function var_0_0.disable_level_intro_dialogue()
+var_0_0.disable_level_intro_dialogue = function ()
 	var_0_0.set_script_data({
 		disable_level_intro_dialogue = true
 	})
 end
 
-function var_0_0.set_player_profile(arg_3_0, arg_3_1)
+var_0_0.set_player_profile = function (arg_3_0, arg_3_1)
 	Testify:make_request("set_player_profile", {
 		profile_name = arg_3_0,
 		career_name = arg_3_1
@@ -21,7 +21,7 @@ function var_0_0.set_player_profile(arg_3_0, arg_3_1)
 	Testify:make_request("wait_for_player_to_spawn")
 end
 
-function var_0_0.set_bot_profile(arg_4_0, arg_4_1)
+var_0_0.set_bot_profile = function (arg_4_0, arg_4_1)
 	Testify:make_request("set_bot_profile", {
 		profile_name = arg_4_0,
 		career_name = arg_4_1
@@ -31,11 +31,11 @@ function var_0_0.set_bot_profile(arg_4_0, arg_4_1)
 	Testify:make_request("wait_for_bots_to_spawn")
 end
 
-function var_0_0.set_script_data(arg_5_0)
+var_0_0.set_script_data = function (arg_5_0)
 	Testify:make_request("set_script_data", arg_5_0)
 end
 
-function var_0_0.wait(arg_6_0)
+var_0_0.wait = function (arg_6_0)
 	local var_6_0 = os.clock()
 
 	while arg_6_0 > os.clock() - var_6_0 do
@@ -43,13 +43,13 @@ function var_0_0.wait(arg_6_0)
 	end
 end
 
-function var_0_0.load_weave(arg_7_0)
+var_0_0.load_weave = function (arg_7_0)
 	Testify:make_request("set_next_weave", arg_7_0)
 	Testify:make_request("load_weave", arg_7_0)
 	Testify:make_request("wait_for_level_to_be_loaded")
 end
 
-function var_0_0.disable_ai()
+var_0_0.disable_ai = function ()
 	var_0_0.set_script_data({
 		ai_mini_patrol_disabled = true,
 		disable_plague_sorcerer = true,
@@ -73,7 +73,7 @@ function var_0_0.disable_ai()
 	})
 end
 
-function var_0_0.open_hero_view()
+var_0_0.open_hero_view = function ()
 	local var_9_0 = {
 		transition = "hero_view_force",
 		transition_params = {
@@ -85,12 +85,12 @@ function var_0_0.open_hero_view()
 	Testify:make_request("wait_for_hero_view")
 end
 
-function var_0_0.open_cosmetics_inventory()
+var_0_0.open_cosmetics_inventory = function ()
 	Testify:make_request("set_hero_window_layout", 4)
 	Testify:make_request("wait_for_cosmetics_inventory_window")
 end
 
-function var_0_0.equip_hats()
+var_0_0.equip_hats = function ()
 	local var_11_0 = Testify:make_request("get_hero_window_cosmetics_inventory_item_grid")._widget.content
 	local var_11_1 = var_11_0.rows
 	local var_11_2 = var_11_0.columns
@@ -115,7 +115,7 @@ function var_0_0.equip_hats()
 	end
 end
 
-function var_0_0.versus_server_wait_for_full_server()
+var_0_0.versus_server_wait_for_full_server = function ()
 	Testify:make_request("wait_for_game_mode_state", {
 		state = "dedicated_server_waiting_for_fully_reserved",
 		game_mode = "inn_vs"
@@ -126,7 +126,7 @@ function var_0_0.versus_server_wait_for_full_server()
 	})
 end
 
-function var_0_0.versus_client_wait_for_full_server()
+var_0_0.versus_client_wait_for_full_server = function ()
 	Testify:make_request("wait_for_matchmaking_substate", {
 		substate = "waiting_for_join_message",
 		state = "MatchmakingStateReserveLobby"
@@ -135,7 +135,7 @@ function var_0_0.versus_client_wait_for_full_server()
 	Testify:make_request("wait_for_matchmaking_state", "MatchmakingStateJoinGame")
 end
 
-function var_0_0.versus_complete_all_objectives()
+var_0_0.versus_complete_all_objectives = function ()
 	local var_14_0 = false
 
 	Testify:make_request("wait_for_objectives_to_activate")
@@ -157,7 +157,7 @@ function var_0_0.versus_complete_all_objectives()
 	return false
 end
 
-function var_0_0.versus_complete_next_objective()
+var_0_0.versus_complete_next_objective = function ()
 	local var_15_0 = Testify:make_request("versus_objective_type")
 
 	if tonumber(Testify:make_request("num_human_players_on_side", "heroes")) == 0 or var_15_0 == "objective_not_supported" then

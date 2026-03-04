@@ -749,7 +749,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon_discount_frame",
 			texture_id = "icon_discount_frame",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.has_discount
 			end
 		},
@@ -767,7 +767,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.is_bought or not arg_3_0.button_hotspot.disable_button
 			end
 		},
@@ -775,7 +775,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.button_hotspot.disable_button and not arg_4_0.is_bought
 			end
 		},
@@ -783,7 +783,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "sub_text_disabled",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.button_hotspot.disable_button and not arg_5_0.is_bought
 			end
 		},
@@ -791,7 +791,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.is_bought or not arg_6_0.button_hotspot.disable_button
 			end
 		},
@@ -804,7 +804,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.button_hotspot.disable_button and not arg_7_0.is_bought
 			end
 		},
@@ -812,7 +812,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.is_bought or not arg_8_0.button_hotspot.disable_button
 			end
 		},
@@ -835,7 +835,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return not arg_9_0.button_hotspot.disable_button and not arg_9_0.is_bought
 			end
 		},
@@ -843,7 +843,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.button_hotspot.disable_button and not arg_10_0.is_bought
 			end
 		},
@@ -851,7 +851,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text_shadow",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return not arg_11_0.is_bought
 			end
 		},
@@ -859,7 +859,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return not arg_12_0.is_bought
 			end
 		},
@@ -867,7 +867,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_title_text",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return not arg_13_0.is_bought and arg_13_0.current_value_text and arg_13_0.max_value_text
 			end
 		},
@@ -875,7 +875,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return not arg_14_0.is_bought and arg_14_0.current_value_text and arg_14_0.max_value_text
 			end
 		},
@@ -883,7 +883,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_text",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return not arg_15_0.is_bought and arg_15_0.current_value_text and arg_15_0.max_value_text
 			end
 		},
@@ -891,7 +891,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return not arg_16_0.is_bought and arg_16_0.current_value_text and arg_16_0.max_value_text
 			end
 		},
@@ -899,7 +899,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_title_text",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return not arg_17_0.is_bought and arg_17_0.current_value_text and arg_17_0.max_value_text
 			end
 		},
@@ -907,7 +907,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_18_0)
+			content_check_function = function (arg_18_0)
 				return not arg_18_0.is_bought and arg_18_0.current_value_text and arg_18_0.max_value_text
 			end
 		},
@@ -915,7 +915,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_text",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_19_0)
+			content_check_function = function (arg_19_0)
 				return not arg_19_0.is_bought and arg_19_0.current_value_text and arg_19_0.max_value_text
 			end
 		},
@@ -923,7 +923,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_20_0)
+			content_check_function = function (arg_20_0)
 				return not arg_20_0.is_bought and arg_20_0.current_value_text and arg_20_0.max_value_text
 			end
 		},
@@ -931,7 +931,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "unlocked_text",
 			pass_type = "text",
 			text_id = "unlocked_text",
-			content_check_function = function(arg_21_0)
+			content_check_function = function (arg_21_0)
 				return arg_21_0.is_bought
 			end
 		},
@@ -944,7 +944,7 @@ local function var_0_13(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "set_progression",
 			pass_type = "text",
 			text_id = "set_progression",
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return arg_22_0.is_part_of_set
 			end
 		}

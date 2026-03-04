@@ -2,41 +2,41 @@
 
 DebugHelper = DebugHelper or {}
 
-function DebugHelper.remove_debug_stuff()
-	function Commands.script()
+DebugHelper.remove_debug_stuff = function ()
+	Commands.script = function ()
 		return
 	end
 
-	function Commands.console()
+	Commands.console = function ()
 		return
 	end
 
-	function Commands.game_speed()
+	Commands.game_speed = function ()
 		return
 	end
 
-	function Commands.fov()
+	Commands.fov = function ()
 		return
 	end
 
-	function Commands.free_flight_settings()
+	Commands.free_flight_settings = function ()
 		return
 	end
 
-	function Commands.lag()
+	Commands.lag = function ()
 		return
 	end
 
-	function Commands.location()
+	Commands.location = function ()
 		return
 	end
 
-	function Commands.next_level()
+	Commands.next_level = function ()
 		return
 	end
 end
 
-function DebugHelper.enable_physics_dump()
+DebugHelper.enable_physics_dump = function ()
 	local var_10_0 = {
 		"PhysicsWorld",
 		"Actor",
@@ -48,7 +48,7 @@ function DebugHelper.enable_physics_dump()
 
 		for iter_10_2, iter_10_3 in pairs(var_10_1) do
 			if type(iter_10_3) == "function" then
-				var_10_1[iter_10_2] = function(...)
+				var_10_1[iter_10_2] = function (...)
 					local var_11_0 = string.format("%s.%s() : ", iter_10_1, iter_10_2)
 
 					print(var_11_0, select(2, ...))

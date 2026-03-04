@@ -831,7 +831,7 @@ local function var_0_4(arg_1_0)
 					style_id = "press_to_start",
 					pass_type = "text",
 					text_id = "press_to_start",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						local var_2_0 = Managers.time:time("main")
 						local var_2_1 = 192 + math.sin(var_2_0 * 5) * 63
 
@@ -839,7 +839,7 @@ local function var_0_4(arg_1_0)
 						arg_2_1.text_color[3] = var_2_1
 						arg_2_1.text_color[4] = var_2_1
 					end,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -847,7 +847,7 @@ local function var_0_4(arg_1_0)
 					style_id = "press",
 					pass_type = "text",
 					text_id = "press_str",
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						local var_4_0 = Managers.time:time("main")
 						local var_4_1 = 192 + math.sin(var_4_0 * 5) * 63
 
@@ -855,7 +855,7 @@ local function var_0_4(arg_1_0)
 						arg_4_1.text_color[3] = var_4_1
 						arg_4_1.text_color[4] = var_4_1
 					end,
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -863,7 +863,7 @@ local function var_0_4(arg_1_0)
 					style_id = "to_start",
 					pass_type = "text",
 					text_id = "to_start_str",
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						local var_6_0 = Managers.time:time("main")
 						local var_6_1 = 192 + math.sin(var_6_0 * 5) * 63
 
@@ -871,7 +871,7 @@ local function var_0_4(arg_1_0)
 						arg_6_1.text_color[3] = var_6_1
 						arg_6_1.text_color[4] = var_6_1
 					end,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -879,7 +879,7 @@ local function var_0_4(arg_1_0)
 					style_id = "button",
 					pass_type = "texture",
 					texture_id = "button_id",
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						local var_8_0 = Managers.time:time("main")
 						local var_8_1 = 192 + math.sin(var_8_0 * 5) * 63
 
@@ -887,7 +887,7 @@ local function var_0_4(arg_1_0)
 						arg_8_1.color[3] = var_8_1
 						arg_8_1.color[4] = var_8_1
 					end,
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return Managers.input:is_device_active("gamepad")
 					end
 				}
@@ -1058,7 +1058,7 @@ local function var_0_4(arg_1_0)
 	}
 end
 
-function UIWidgets.create_game_type_text(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_3 or {
 		255,
 		255,
@@ -1078,7 +1078,7 @@ function UIWidgets.create_game_type_text(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 					style_id = "status_text",
 					pass_type = "text",
 					text_id = "status_text",
-					content_check_function = function(arg_11_0, arg_11_1)
+					content_check_function = function (arg_11_0, arg_11_1)
 						return arg_11_0.text ~= ""
 					end
 				}
@@ -1200,7 +1200,7 @@ local function var_0_6(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						if Managers.input:is_device_active("mouse") then
 							return
 						end
@@ -1212,7 +1212,7 @@ local function var_0_6(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						if not Managers.input:is_device_active("mouse") then
 							return
 						end
@@ -1224,7 +1224,7 @@ local function var_0_6(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.button_text.disable_button
 					end
 				},
@@ -1233,7 +1233,7 @@ local function var_0_6(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "icon",
 					pass_type = "texture_uv",
 					content_id = "icon_content",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						local var_17_0 = arg_17_0.parent
 
 						if not var_17_0.show_icon or var_17_0.disabled then
@@ -1398,7 +1398,7 @@ local function var_0_7(arg_19_0, arg_19_1, arg_19_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_20_0, arg_20_1)
+					content_check_function = function (arg_20_0, arg_20_1)
 						if arg_20_0.text == nil then
 							return false
 						end
@@ -1431,7 +1431,7 @@ local function var_0_8(arg_21_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_22_0, arg_22_1)
+					content_check_function = function (arg_22_0, arg_22_1)
 						if arg_22_0.text == nil then
 							return false
 						end
@@ -1443,7 +1443,7 @@ local function var_0_8(arg_21_0)
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "texture_id",
-					content_check_function = function(arg_23_0, arg_23_1)
+					content_check_function = function (arg_23_0, arg_23_1)
 						if arg_23_0.text == nil then
 							return false
 						end
@@ -1579,15 +1579,15 @@ local var_0_13 = {
 			name = "video_fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				arg_24_2.start_screen_video_fade.style.rect.color[1] = 255
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = math.easeInCubic(arg_25_3)
 
 				arg_25_2.start_screen_video_fade.style.rect.color[1] = math.clamp(255 * (1 - var_25_0), 0, 255)
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		}

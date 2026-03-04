@@ -13,7 +13,7 @@ local var_0_8 = 1.5
 StartGameWindowWeaveInfo = class(StartGameWindowWeaveInfo)
 StartGameWindowWeaveInfo.NAME = "StartGameWindowWeaveInfo"
 
-function StartGameWindowWeaveInfo.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowWeaveInfo.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveInfo")
 
 	arg_1_0._params = arg_1_1
@@ -49,7 +49,7 @@ function StartGameWindowWeaveInfo.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowWeaveInfo._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowWeaveInfo._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -59,7 +59,7 @@ function StartGameWindowWeaveInfo._start_transition_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowWeaveInfo._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowWeaveInfo._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
 	local var_3_0 = {}
@@ -108,7 +108,7 @@ function StartGameWindowWeaveInfo._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_setup_input_buttons()
 end
 
-function StartGameWindowWeaveInfo._setup_input_buttons(arg_4_0)
+StartGameWindowWeaveInfo._setup_input_buttons = function (arg_4_0)
 	local var_4_0 = arg_4_0._parent:window_input_service()
 	local var_4_1 = UISettings.get_gamepad_input_texture_data(var_4_0, "refresh_press", true)
 	local var_4_2 = arg_4_0._widgets_by_name.play_button_console
@@ -123,13 +123,13 @@ function StartGameWindowWeaveInfo._setup_input_buttons(arg_4_0)
 	var_4_2.content.input_texture = var_4_1.texture
 end
 
-function StartGameWindowWeaveInfo.on_exit(arg_5_0, arg_5_1)
+StartGameWindowWeaveInfo.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveInfo")
 
 	arg_5_0._ui_animator = nil
 end
 
-function StartGameWindowWeaveInfo.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowWeaveInfo.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_7 then
 		var_0_7 = false
 
@@ -145,7 +145,7 @@ function StartGameWindowWeaveInfo.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function StartGameWindowWeaveInfo._handle_gamepad_activity(arg_7_0)
+StartGameWindowWeaveInfo._handle_gamepad_activity = function (arg_7_0)
 	local var_7_0 = arg_7_0.gamepad_active_last_frame == nil
 
 	if Managers.input:is_device_active("gamepad") then
@@ -167,7 +167,7 @@ function StartGameWindowWeaveInfo._handle_gamepad_activity(arg_7_0)
 	end
 end
 
-function StartGameWindowWeaveInfo._update_can_play(arg_8_0)
+StartGameWindowWeaveInfo._update_can_play = function (arg_8_0)
 	local var_8_0 = arg_8_0._widgets_by_name
 	local var_8_1 = Managers.matchmaking:is_game_matchmaking()
 	local var_8_2 = arg_8_0._is_matchmaking
@@ -206,11 +206,11 @@ function StartGameWindowWeaveInfo._update_can_play(arg_8_0)
 	end
 end
 
-function StartGameWindowWeaveInfo.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowWeaveInfo.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function StartGameWindowWeaveInfo._update_animations(arg_10_0, arg_10_1)
+StartGameWindowWeaveInfo._update_animations = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._ui_animations
 	local var_10_1 = arg_10_0._animations
 	local var_10_2 = arg_10_0._ui_animator
@@ -241,7 +241,7 @@ function StartGameWindowWeaveInfo._update_animations(arg_10_0, arg_10_1)
 	UIWidgetUtils.animate_default_button(var_10_3.private_checkbox, arg_10_1)
 end
 
-function StartGameWindowWeaveInfo._is_button_pressed(arg_11_0, arg_11_1)
+StartGameWindowWeaveInfo._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.on_release then
@@ -251,7 +251,7 @@ function StartGameWindowWeaveInfo._is_button_pressed(arg_11_0, arg_11_1)
 	end
 end
 
-function StartGameWindowWeaveInfo._is_button_released(arg_12_0, arg_12_1)
+StartGameWindowWeaveInfo._is_button_released = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	if var_12_0.on_release then
@@ -261,7 +261,7 @@ function StartGameWindowWeaveInfo._is_button_released(arg_12_0, arg_12_1)
 	end
 end
 
-function StartGameWindowWeaveInfo._is_stepper_button_pressed(arg_13_0, arg_13_1)
+StartGameWindowWeaveInfo._is_stepper_button_pressed = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1.content
 	local var_13_1 = var_13_0.button_hotspot_left
 	local var_13_2 = var_13_0.button_hotspot_right
@@ -277,19 +277,19 @@ function StartGameWindowWeaveInfo._is_stepper_button_pressed(arg_13_0, arg_13_1)
 	end
 end
 
-function StartGameWindowWeaveInfo._is_button_hover_enter(arg_14_0, arg_14_1)
+StartGameWindowWeaveInfo._is_button_hover_enter = function (arg_14_0, arg_14_1)
 	return arg_14_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowWeaveInfo._is_button_hover_exit(arg_15_0, arg_15_1)
+StartGameWindowWeaveInfo._is_button_hover_exit = function (arg_15_0, arg_15_1)
 	return arg_15_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowWeaveInfo._is_button_selected(arg_16_0, arg_16_1)
+StartGameWindowWeaveInfo._is_button_selected = function (arg_16_0, arg_16_1)
 	return arg_16_1.content.button_hotspot.is_selected
 end
 
-function StartGameWindowWeaveInfo._handle_input(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowWeaveInfo._handle_input = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._parent
 	local var_17_1 = arg_17_0._widgets_by_name
 	local var_17_2 = Managers.input:is_device_active("gamepad")
@@ -325,7 +325,7 @@ local var_0_9 = {
 	(Localize("menu_weave_play_find_party_cancel"))
 }
 
-function StartGameWindowWeaveInfo._update_party_status(arg_18_0, arg_18_1)
+StartGameWindowWeaveInfo._update_party_status = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.matchmaking
 	local var_18_1 = var_18_0:is_game_matchmaking()
 	local var_18_2 = var_18_0:active_game_mode()
@@ -342,11 +342,11 @@ function StartGameWindowWeaveInfo._update_party_status(arg_18_0, arg_18_1)
 	end
 end
 
-function StartGameWindowWeaveInfo._play_sound(arg_19_0, arg_19_1)
+StartGameWindowWeaveInfo._play_sound = function (arg_19_0, arg_19_1)
 	arg_19_0._parent:play_sound(arg_19_1)
 end
 
-function StartGameWindowWeaveInfo._update_selected_weave(arg_20_0)
+StartGameWindowWeaveInfo._update_selected_weave = function (arg_20_0)
 	local var_20_0 = arg_20_0._params.selected_weave_template
 
 	if not var_20_0 then
@@ -425,7 +425,7 @@ function StartGameWindowWeaveInfo._update_selected_weave(arg_20_0)
 	end
 end
 
-function StartGameWindowWeaveInfo._update_wind_icon_animation(arg_21_0, arg_21_1)
+StartGameWindowWeaveInfo._update_wind_icon_animation = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._wind_icon_animation_time
 
 	if not var_21_0 then
@@ -464,7 +464,7 @@ local var_0_10 = {
 	metal = 7
 }
 
-function StartGameWindowWeaveInfo._set_wind_icon_by_name(arg_22_0, arg_22_1)
+StartGameWindowWeaveInfo._set_wind_icon_by_name = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._widgets_by_name.wind_icon
 	local var_22_1 = var_0_10[arg_22_1]
 	local var_22_2 = arg_22_0._ui_renderer.gui
@@ -477,7 +477,7 @@ function StartGameWindowWeaveInfo._set_wind_icon_by_name(arg_22_0, arg_22_1)
 	arg_22_0._wind_icon_animation_time = var_0_8
 end
 
-function StartGameWindowWeaveInfo._set_colors_by_wind(arg_23_0, arg_23_1)
+StartGameWindowWeaveInfo._set_colors_by_wind = function (arg_23_0, arg_23_1)
 	local var_23_0 = Colors.get_color_table_with_alpha(arg_23_1, 255)
 	local var_23_1 = arg_23_0._widgets_by_name
 
@@ -485,7 +485,7 @@ function StartGameWindowWeaveInfo._set_colors_by_wind(arg_23_0, arg_23_1)
 	arg_23_0:_apply_color_values(var_23_1.wind_icon.style.texture_id.color, var_23_0)
 end
 
-function StartGameWindowWeaveInfo._align_private_checkbox(arg_24_0)
+StartGameWindowWeaveInfo._align_private_checkbox = function (arg_24_0)
 	local var_24_0 = Managers.input:is_device_active("gamepad")
 	local var_24_1 = arg_24_0._widgets_by_name.private_checkbox
 	local var_24_2 = var_24_1.content
@@ -508,7 +508,7 @@ function StartGameWindowWeaveInfo._align_private_checkbox(arg_24_0)
 	var_24_6[1] = var_24_10
 end
 
-function StartGameWindowWeaveInfo._apply_color_values(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+StartGameWindowWeaveInfo._apply_color_values = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	arg_25_3 = arg_25_3 or 1
 
 	if arg_25_4 then
@@ -520,7 +520,7 @@ function StartGameWindowWeaveInfo._apply_color_values(arg_25_0, arg_25_1, arg_25
 	arg_25_1[4] = math.floor(arg_25_2[4] * arg_25_3)
 end
 
-function StartGameWindowWeaveInfo._assign_objective(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+StartGameWindowWeaveInfo._assign_objective = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	local var_26_0 = arg_26_1.scenegraph_id
 	local var_26_1 = arg_26_1.content
 	local var_26_2 = arg_26_1.style
@@ -551,12 +551,12 @@ function StartGameWindowWeaveInfo._assign_objective(arg_26_0, arg_26_1, arg_26_2
 	return math.max(var_26_12, 50) + arg_26_5
 end
 
-function StartGameWindowWeaveInfo._exit(arg_27_0, arg_27_1)
+StartGameWindowWeaveInfo._exit = function (arg_27_0, arg_27_1)
 	arg_27_0.exit = true
 	arg_27_0.exit_level_id = arg_27_1
 end
 
-function StartGameWindowWeaveInfo.draw(arg_28_0, arg_28_1)
+StartGameWindowWeaveInfo.draw = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._ui_renderer
 	local var_28_1 = arg_28_0._ui_top_renderer
 	local var_28_2 = arg_28_0._ui_hdr_renderer
@@ -595,28 +595,28 @@ function StartGameWindowWeaveInfo.draw(arg_28_0, arg_28_1)
 	UIRenderer.end_pass(var_28_2)
 end
 
-function StartGameWindowWeaveInfo._play_sound(arg_29_0, arg_29_1)
+StartGameWindowWeaveInfo._play_sound = function (arg_29_0, arg_29_1)
 	arg_29_0._parent:play_sound(arg_29_1)
 end
 
-function StartGameWindowWeaveInfo._animate_pulse(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
+StartGameWindowWeaveInfo._animate_pulse = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5))
 end
 
-function StartGameWindowWeaveInfo._animate_element_by_time(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
+StartGameWindowWeaveInfo._animate_element_by_time = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, math.ease_out_quad))
 end
 
-function StartGameWindowWeaveInfo._animate_element_by_catmullrom(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8)
+StartGameWindowWeaveInfo._animate_element_by_catmullrom = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7, arg_32_8))
 end
 
-function StartGameWindowWeaveInfo._format_time(arg_33_0, arg_33_1)
+StartGameWindowWeaveInfo._format_time = function (arg_33_0, arg_33_1)
 	local var_33_0 = math.floor
 
 	return (string.format("%.2d:%.2d:%.2d", var_33_0(arg_33_1 / 3600), var_33_0(arg_33_1 / 60) % 60, var_33_0(arg_33_1) % 60))
 end
 
-function StartGameWindowWeaveInfo._get_save_data_by_weave_name(arg_34_0, arg_34_1)
+StartGameWindowWeaveInfo._get_save_data_by_weave_name = function (arg_34_0, arg_34_1)
 	return nil
 end

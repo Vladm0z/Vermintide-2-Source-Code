@@ -23,7 +23,7 @@ BeastmenStandardTemplates = {
 		sfx_loop_stop = "Stop_enemy_beastmen_standar_spell_loop",
 		apply_buff_to_player = false,
 		ai_buff_vfx_name = "fx/chr_beastmen_standard_bearer_buff_01",
-		custom_update_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		custom_update_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 			if arg_1_1.is_server and not arg_1_1.challenge_done and arg_1_2 > arg_1_1.challenge_time and HEALTH_ALIVE[arg_1_1.standard_bearer_unit] then
 				local var_1_0 = "scorpion_keep_standard_bearer_alive"
 				local var_1_1 = NetworkLookup.statistics[var_1_0]
@@ -50,7 +50,7 @@ BeastmenStandardTemplates = {
 		sfx_taking_damage = "Play_enemy_beastmen_standar_taking_damage",
 		astar_check_frequency = 10,
 		composition = "standard_bearer_ambush",
-		custom_update_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		custom_update_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 			if arg_2_2 > (arg_2_1.next_horde_t or 0) then
 				local var_2_0 = Managers.state.conflict
 				local var_2_1 = Unit.local_position(arg_2_4, 0)

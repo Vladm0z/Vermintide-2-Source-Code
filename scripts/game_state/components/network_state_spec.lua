@@ -228,13 +228,13 @@ local function var_0_18(arg_17_0)
 end
 
 local function var_0_19(arg_18_0)
-	return function(arg_19_0)
+	return function (arg_19_0)
 		return NetworkLookup[arg_18_0][arg_19_0]
 	end
 end
 
 local function var_0_20(arg_20_0)
-	return function(arg_21_0)
+	return function (arg_21_0)
 		return NetworkLookup[arg_20_0][arg_21_0]
 	end
 end
@@ -673,7 +673,7 @@ local var_0_31 = {
 			composite_keys = {},
 			encode = var_0_27,
 			decode = var_0_28,
-			immediate_initialization = function(arg_32_0, arg_32_1)
+			immediate_initialization = function (arg_32_0, arg_32_1)
 				local var_32_0 = Managers.unlock
 				local var_32_1 = NetworkLookup.dlcs
 				local var_32_2 = {}

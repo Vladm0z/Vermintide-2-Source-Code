@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hub_level_specific_greetings.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nik_greeting_evening",
 		name = "nik_greeting_evening",

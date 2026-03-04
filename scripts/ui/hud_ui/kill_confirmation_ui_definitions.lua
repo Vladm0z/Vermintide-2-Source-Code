@@ -221,7 +221,7 @@ local var_0_10 = {
 			name = "fade_in_scale_down",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 
 				WwiseWorld.trigger_event(arg_1_3.wwise_world, "play_gui_mission_summary_chest_upgrade")
@@ -245,7 +245,7 @@ local var_0_10 = {
 					var_0_6[2] - 40
 				}
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
@@ -267,7 +267,7 @@ local var_0_10 = {
 					var_0_6[2] - 40 + 60 * var_2_0
 				}
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				arg_3_3.start_size = {
 					arg_3_3.ui_scenegraph.badge_placement.size[1],
 					arg_3_3.ui_scenegraph.badge_placement.size[2]
@@ -280,13 +280,13 @@ local var_0_10 = {
 			name = "scale_down",
 			start_progress = 0.5,
 			end_progress = 0.62,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.ui_scenegraph.text_background_placement.size = {
 					0,
 					0
 				}
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = arg_5_4.start_size[1]
 				local var_5_1 = arg_5_4.start_size[2]
 				local var_5_2 = arg_5_1.badge_placement.size[1]
@@ -326,10 +326,10 @@ local var_0_10 = {
 			name = "fade_out_everything",
 			start_progress = 1.4,
 			end_progress = 1.8,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				arg_6_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				arg_7_4.render_settings.alpha_multiplier = 1 - arg_7_3
 			end,
 			on_complete = NOP

@@ -2,7 +2,7 @@
 
 ShadowFlareExtension = class(ShadowFlareExtension)
 
-function ShadowFlareExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ShadowFlareExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.owner_unit_id = arg_1_3.owner_unit_id
 	arg_1_0.glow_time = arg_1_3.glow_time or 10
 	arg_1_0.delete_time = arg_1_3.delete_time or 3
@@ -16,15 +16,15 @@ function ShadowFlareExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._player = Managers.player:owner(var_1_0)
 end
 
-function ShadowFlareExtension.flare_active(arg_2_0)
+ShadowFlareExtension.flare_active = function (arg_2_0)
 	return not arg_2_0._flare_done
 end
 
-function ShadowFlareExtension.set_flare_done(arg_3_0)
+ShadowFlareExtension.set_flare_done = function (arg_3_0)
 	arg_3_0._flare_done = true
 end
 
-function ShadowFlareExtension.update(arg_4_0, arg_4_1, arg_4_2)
+ShadowFlareExtension.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._player.remote then
 		return
 	end
@@ -56,7 +56,7 @@ function ShadowFlareExtension.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ShadowFlareExtension.delete_with_delay(arg_5_0, arg_5_1, arg_5_2)
+ShadowFlareExtension.delete_with_delay = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.delete_time
 	local var_5_1 = arg_5_0._delete_timer
 

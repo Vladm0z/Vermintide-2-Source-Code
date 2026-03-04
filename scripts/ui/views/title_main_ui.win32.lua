@@ -18,7 +18,7 @@ local var_0_11 = "TitleMainUI_ATTRACTMODE"
 
 TitleMainUI = class(TitleMainUI)
 
-function TitleMainUI.init(arg_1_0, arg_1_1)
+TitleMainUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._render_settings = {
 		snap_pixel_positions = true
@@ -34,7 +34,7 @@ function TitleMainUI.init(arg_1_0, arg_1_1)
 	arg_1_0:_init_animations()
 end
 
-function TitleMainUI._start_animation(arg_2_0, arg_2_1)
+TitleMainUI._start_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings,
 		ui_scenegraph = arg_2_0._ui_scenegraph
@@ -51,7 +51,7 @@ function TitleMainUI._start_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_3
 end
 
-function TitleMainUI._create_ui_renderer(arg_3_0)
+TitleMainUI._create_ui_renderer = function (arg_3_0)
 	local var_3_0 = {
 		"material",
 		"materials/ui/ui_1080p_title_screen",
@@ -92,7 +92,7 @@ function TitleMainUI._create_ui_renderer(arg_3_0)
 	UISetupFontHeights(arg_3_0._ui_renderer.gui)
 end
 
-function TitleMainUI._setup_input(arg_4_0)
+TitleMainUI._setup_input = function (arg_4_0)
 	arg_4_0._input_manager = Managers.input
 
 	arg_4_0._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
@@ -101,15 +101,15 @@ function TitleMainUI._setup_input(arg_4_0)
 	arg_4_0._input_manager:map_device_to_service("main_menu", "mouse")
 end
 
-function TitleMainUI._play_sound(arg_5_0, arg_5_1)
+TitleMainUI._play_sound = function (arg_5_0, arg_5_1)
 	return Managers.music:trigger_event(arg_5_1)
 end
 
-function TitleMainUI.get_ui_renderer(arg_6_0)
+TitleMainUI.get_ui_renderer = function (arg_6_0)
 	return arg_6_0._ui_renderer
 end
 
-function TitleMainUI._init_animations(arg_7_0)
+TitleMainUI._init_animations = function (arg_7_0)
 	arg_7_0._menu_item_animations = {}
 	arg_7_0._ui_animations = {}
 	arg_7_0._ui_animation_callbacks = {}
@@ -117,7 +117,7 @@ function TitleMainUI._init_animations(arg_7_0)
 	arg_7_0._ui_animator = UIAnimator:new(arg_7_0._ui_scenegraph, var_0_8)
 end
 
-function TitleMainUI._create_ui_elements(arg_8_0)
+TitleMainUI._create_ui_elements = function (arg_8_0)
 	arg_8_0._alpha_multiplier = 1
 	arg_8_0._disabled_buttons = {}
 	arg_8_0._current_menu_widgets = {}
@@ -149,7 +149,7 @@ function TitleMainUI._create_ui_elements(arg_8_0)
 	var_0_10 = false
 end
 
-function TitleMainUI._setup_legal_texts(arg_9_0)
+TitleMainUI._setup_legal_texts = function (arg_9_0)
 	local var_9_0 = UIWidget.init(var_0_3.legal_text)
 	local var_9_1 = var_9_0.style.text
 
@@ -166,7 +166,7 @@ function TitleMainUI._setup_legal_texts(arg_9_0)
 	arg_9_0._legal_text = var_9_0
 end
 
-function TitleMainUI._create_menu_option_widget(arg_10_0, arg_10_1, arg_10_2)
+TitleMainUI._create_menu_option_widget = function (arg_10_0, arg_10_1, arg_10_2)
 	for iter_10_0, iter_10_1 in ipairs(arg_10_1) do
 		local var_10_0 = iter_10_1.text
 		local var_10_1 = iter_10_1.callback
@@ -199,14 +199,14 @@ function TitleMainUI._create_menu_option_widget(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function TitleMainUI.create_menu_options(arg_11_0, arg_11_1)
+TitleMainUI.create_menu_options = function (arg_11_0, arg_11_1)
 	table.clear(arg_11_0._menu_hierarchy)
 	arg_11_0:_create_menu_option_widget(arg_11_1, arg_11_0._menu_hierarchy)
 
 	arg_11_0._current_menu_widgets = arg_11_0._menu_hierarchy
 end
 
-function TitleMainUI._update_animations(arg_12_0, arg_12_1)
+TitleMainUI._update_animations = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._animations
 	local var_12_1 = arg_12_0._ui_animations
 	local var_12_2 = arg_12_0._ui_animation_callbacks
@@ -244,7 +244,7 @@ function TitleMainUI._update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function TitleMainUI.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+TitleMainUI.update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if var_0_10 then
 		arg_13_0:_create_ui_elements()
 		arg_13_0:_init_animations()
@@ -256,7 +256,7 @@ function TitleMainUI.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_0:_draw(arg_13_1, arg_13_2, arg_13_3)
 end
 
-function TitleMainUI._update_information_text(arg_14_0, arg_14_1, arg_14_2)
+TitleMainUI._update_information_text = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0._show_menu then
 		local var_14_0 = Managers.backend and Managers.backend:get_current_api_call()
 
@@ -270,7 +270,7 @@ function TitleMainUI._update_information_text(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function TitleMainUI._destroy_video_players(arg_15_0)
+TitleMainUI._destroy_video_players = function (arg_15_0)
 	if arg_15_0._video_widgets then
 		for iter_15_0, iter_15_1 in pairs(arg_15_0._video_widgets) do
 			local var_15_0 = iter_15_1.content.video_content.video_player
@@ -285,7 +285,7 @@ function TitleMainUI._destroy_video_players(arg_15_0)
 	end
 end
 
-function TitleMainUI._change_video(arg_16_0, arg_16_1)
+TitleMainUI._change_video = function (arg_16_0, arg_16_1)
 	if arg_16_1 == arg_16_0._active_video_widget_name then
 		return
 	end
@@ -299,7 +299,7 @@ function TitleMainUI._change_video(arg_16_0, arg_16_1)
 	arg_16_0:_start_animation("video_fade_in")
 end
 
-function TitleMainUI._create_videos(arg_17_0)
+TitleMainUI._create_videos = function (arg_17_0)
 	arg_17_0:_destroy_video_players()
 
 	arg_17_0._video_widgets = {}
@@ -317,7 +317,7 @@ function TitleMainUI._create_videos(arg_17_0)
 	World.add_video_player(arg_17_0._world, arg_17_0._active_video_widget.content.video_content.video_player)
 end
 
-function TitleMainUI._draw_video(arg_18_0, arg_18_1, arg_18_2)
+TitleMainUI._draw_video = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._ui_renderer
 	local var_18_1 = arg_18_0._ui_scenegraph
 	local var_18_2 = arg_18_0._input_manager:get_service("main_menu")
@@ -332,7 +332,7 @@ function TitleMainUI._draw_video(arg_18_0, arg_18_1, arg_18_2)
 	var_18_3.alpha_multiplier = nil
 end
 
-function TitleMainUI._go_back(arg_19_0)
+TitleMainUI._go_back = function (arg_19_0)
 	arg_19_0:_play_sound("Play_console_menu_back")
 
 	local var_19_0 = arg_19_0._current_menu_index
@@ -366,7 +366,7 @@ local function var_0_12()
 	return
 end
 
-function TitleMainUI._activate_menu_widget(arg_21_0, arg_21_1)
+TitleMainUI._activate_menu_widget = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._current_menu_index
 
 	if (arg_21_0._current_menu_widgets[arg_21_1].content.callback or var_0_12)() then
@@ -399,7 +399,7 @@ function TitleMainUI._activate_menu_widget(arg_21_0, arg_21_1)
 	return var_21_0
 end
 
-function TitleMainUI._update_mouse_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+TitleMainUI._update_mouse_input = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0._current_menu_index or 1
 	local var_22_1 = arg_22_0._current_menu_widgets[var_22_0].content
 	local var_22_2 = arg_22_0._breadcrumbs
@@ -422,7 +422,7 @@ function TitleMainUI._update_mouse_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	arg_22_0:_update_selection(var_22_0)
 end
 
-function TitleMainUI._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+TitleMainUI._update_gamepad_input = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0._current_menu_index or 1
 	local var_23_1 = arg_23_0._current_menu_widgets[var_23_0].content
 	local var_23_2 = arg_23_0._breadcrumbs
@@ -444,7 +444,7 @@ function TitleMainUI._update_gamepad_input(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	arg_23_0:_update_selection(var_23_0)
 end
 
-function TitleMainUI._update_selection(arg_24_0, arg_24_1)
+TitleMainUI._update_selection = function (arg_24_0, arg_24_1)
 	if arg_24_1 and arg_24_1 ~= arg_24_0._current_menu_index then
 		if arg_24_0._current_menu_index then
 			arg_24_0:_add_menu_item_animation(arg_24_0._current_menu_index, "anim_deselect_button")
@@ -464,7 +464,7 @@ end
 
 local var_0_13 = {}
 
-function TitleMainUI._populate_additional_data(arg_25_0, arg_25_1)
+TitleMainUI._populate_additional_data = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1.content.menu_option_data or var_0_13
 	local var_25_1 = var_25_0.tag
 	local var_25_2 = var_25_0.logo_texture
@@ -480,7 +480,7 @@ function TitleMainUI._populate_additional_data(arg_25_0, arg_25_1)
 	arg_25_0:_change_video(var_25_5)
 end
 
-function TitleMainUI._update_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+TitleMainUI._update_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if arg_26_0._disable_input then
 		return
 	end
@@ -506,7 +506,7 @@ function TitleMainUI._update_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	end
 end
 
-function TitleMainUI._draw_menu_background(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+TitleMainUI._draw_menu_background = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 	UIRenderer.begin_pass(arg_27_3, arg_27_4, arg_27_5, arg_27_1, nil, arg_27_6)
 
 	for iter_27_0, iter_27_1 in pairs(arg_27_0._background_widgets) do
@@ -524,7 +524,7 @@ function TitleMainUI._draw_menu_background(arg_27_0, arg_27_1, arg_27_2, arg_27_
 	UIRenderer.end_pass(arg_27_3)
 end
 
-function TitleMainUI._draw_menu(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+TitleMainUI._draw_menu = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	if not arg_28_0._show_menu then
 		return
 	end
@@ -555,7 +555,7 @@ function TitleMainUI._draw_menu(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4
 	UIRenderer.end_pass(arg_28_3)
 end
 
-function TitleMainUI._draw_engage_screen(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+TitleMainUI._draw_engage_screen = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
 	UIRenderer.begin_pass(arg_29_3, arg_29_4, arg_29_5, arg_29_1, nil, arg_29_0._render_settings)
 
 	if not arg_29_0._show_menu then
@@ -573,7 +573,7 @@ function TitleMainUI._draw_engage_screen(arg_29_0, arg_29_1, arg_29_2, arg_29_3,
 	UIRenderer.end_pass(arg_29_3)
 end
 
-function TitleMainUI._draw(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+TitleMainUI._draw = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = arg_30_0._ui_renderer
 	local var_30_1 = arg_30_0._ui_scenegraph
 	local var_30_2 = arg_30_0._input_manager:get_service("main_menu")
@@ -594,7 +594,7 @@ function TitleMainUI._draw(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	arg_30_0:_draw_menu(arg_30_1, arg_30_2, var_30_0, var_30_1, var_30_2)
 end
 
-function TitleMainUI.destroy(arg_31_0)
+TitleMainUI.destroy = function (arg_31_0)
 	if arg_31_0._information_slate_ui then
 		arg_31_0._information_slate_ui:destroy()
 	end
@@ -604,11 +604,11 @@ function TitleMainUI.destroy(arg_31_0)
 	arg_31_0:_destroy_video_players()
 end
 
-function TitleMainUI.should_start(arg_32_0)
+TitleMainUI.should_start = function (arg_32_0)
 	return arg_32_0._has_engaged
 end
 
-function TitleMainUI.show_menu(arg_33_0, arg_33_1)
+TitleMainUI.show_menu = function (arg_33_0, arg_33_1)
 	if arg_33_1 then
 		arg_33_0:_play_sound("Play_console_menu_start")
 		arg_33_0:_change_video("main_menu")
@@ -617,7 +617,7 @@ function TitleMainUI.show_menu(arg_33_0, arg_33_1)
 		arg_33_0._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, arg_33_0, "_alpha_multiplier", 0, 1, 0.5, math.easeCubic)
 		arg_33_0._draw_information_text = false
 
-		function arg_33_0._ui_animation_callbacks.alpha_multiplier()
+		arg_33_0._ui_animation_callbacks.alpha_multiplier = function ()
 			local var_34_0 = Managers.input:get_service("main_menu")
 
 			arg_33_0._information_slate_ui = MenuInformationSlateUI:new(arg_33_0._ui_renderer, var_34_0)
@@ -649,7 +649,7 @@ function TitleMainUI.show_menu(arg_33_0, arg_33_1)
 	arg_33_0._current_menu_widgets = arg_33_0._menu_hierarchy
 end
 
-function TitleMainUI.set_start_pressed(arg_35_0, arg_35_1)
+TitleMainUI.set_start_pressed = function (arg_35_0, arg_35_1)
 	if arg_35_0._has_engaged ~= arg_35_1 then
 		if arg_35_1 then
 			arg_35_0._ui_animations.legal_text_fade = UIAnimation.init(UIAnimation.function_by_time, arg_35_0._legal_text.style.text.text_color, 1, 255, 0, 0.2, math.easeCubic)
@@ -667,7 +667,7 @@ end
 local var_0_14 = 0.2
 local var_0_15 = 0.2
 
-function TitleMainUI.anim_select_button(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+TitleMainUI.anim_select_button = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	if arg_36_1.progress == 1 then
 		return
 	end
@@ -709,7 +709,7 @@ function TitleMainUI.anim_select_button(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	end
 end
 
-function TitleMainUI.anim_deselect_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+TitleMainUI.anim_deselect_button = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	if arg_37_1 and arg_37_1.progress == 0 then
 		return
 	end
@@ -745,14 +745,14 @@ function TitleMainUI.anim_deselect_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3
 	end
 end
 
-function TitleMainUI._get_text_size(arg_38_0, arg_38_1, arg_38_2)
+TitleMainUI._get_text_size = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0, var_38_1 = UIFontByResolution(arg_38_2)
 	local var_38_2, var_38_3, var_38_4 = UIRenderer.text_size(arg_38_0._ui_renderer, arg_38_1, var_38_0[1], var_38_1)
 
 	return var_38_2, var_38_3
 end
 
-function TitleMainUI._get_word_wrap_size(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+TitleMainUI._get_word_wrap_size = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0, var_39_1 = UIFontByResolution(arg_39_2)
 	local var_39_2 = UIRenderer.word_wrap(arg_39_0._ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)
 	local var_39_3, var_39_4 = arg_39_0:_get_text_size(arg_39_1, arg_39_2)
@@ -760,14 +760,14 @@ function TitleMainUI._get_word_wrap_size(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	return var_39_3, var_39_4 * #var_39_2
 end
 
-function TitleMainUI._add_menu_item_animation(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+TitleMainUI._add_menu_item_animation = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	arg_40_0._menu_item_animations[arg_40_1] = {
 		progress = arg_40_0._menu_item_animations[arg_40_1] and arg_40_0._menu_item_animations[arg_40_1].progress or 0,
 		func = arg_40_2
 	}
 end
 
-function TitleMainUI.set_information_text(arg_41_0, arg_41_1)
+TitleMainUI.set_information_text = function (arg_41_0, arg_41_1)
 	arg_41_0._draw_information_text = true
 
 	local var_41_0 = arg_41_0._information_text
@@ -781,11 +781,11 @@ function TitleMainUI.set_information_text(arg_41_0, arg_41_1)
 	end
 end
 
-function TitleMainUI.disable_input(arg_42_0, arg_42_1)
+TitleMainUI.disable_input = function (arg_42_0, arg_42_1)
 	arg_42_0._disable_input = arg_42_1
 end
 
-function TitleMainUI.view_activated(arg_43_0, arg_43_1)
+TitleMainUI.view_activated = function (arg_43_0, arg_43_1)
 	if arg_43_1 then
 		arg_43_0._ui_animations.sidebar = UIAnimation.init(UIAnimation.function_by_time, arg_43_0._ui_scenegraph.sidebar.size, 1, 544, 1920, 0.5, math.easeCubic)
 		arg_43_0._ui_animations.alpha_multiplier = UIAnimation.init(UIAnimation.function_by_time, arg_43_0, "_alpha_multiplier", 1, 0, 0.5, math.easeCubic)

@@ -46,15 +46,15 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_shadow_homing_skulls"
 	},
-	server_start_function = function(arg_4_0, arg_4_1)
+	server_start_function = function (arg_4_0, arg_4_1)
 		arg_4_1.conflict_director = Managers.state.conflict
 		arg_4_1.physics_world = World.physics_world(arg_4_0.world)
 		arg_4_1.state = var_0_4.WAITING_TO_SPAWN
 	end,
-	server_players_left_safe_zone = function(arg_5_0, arg_5_1)
+	server_players_left_safe_zone = function (arg_5_0, arg_5_1)
 		arg_5_1.started = true
 	end,
-	server_pre_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_pre_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
@@ -120,7 +120,7 @@ return {
 			Debug.text("homing skulls state state: %s - %s", arg_6_1.state, arg_6_1.next_spawn_t and arg_6_1.next_spawn_t - arg_6_3 or 0)
 		end
 	end,
-	server_player_hit_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	server_player_hit_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		return
 	end
 }

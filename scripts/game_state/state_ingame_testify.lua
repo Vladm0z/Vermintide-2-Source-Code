@@ -46,33 +46,33 @@ local function var_0_3()
 end
 
 return {
-	load_level = function(arg_5_0, arg_5_1)
+	load_level = function (arg_5_0, arg_5_1)
 		local var_5_0 = arg_5_1.level_key
 		local var_5_1 = arg_5_1.environment_variation_id or 0
 
 		Managers.mechanism:debug_load_level(var_5_0, var_5_1)
 	end,
-	wait_for_state_ingame_reached = function()
+	wait_for_state_ingame_reached = function ()
 		return
 	end,
-	get_level_weather_variations = function(arg_7_0, arg_7_1)
+	get_level_weather_variations = function (arg_7_0, arg_7_1)
 		return LevelSettings[arg_7_1].environment_variations
 	end,
-	wait_for_player_to_spawn = function()
+	wait_for_player_to_spawn = function ()
 		local var_8_0 = Managers.player:local_player()
 
 		if not Unit.alive(var_8_0.player_unit) then
 			return Testify.RETRY
 		end
 	end,
-	wait_for_bots_to_spawn = function()
+	wait_for_bots_to_spawn = function ()
 		for iter_9_0, iter_9_1 in pairs(Managers.player:bots()) do
 			if not Unit.alive(iter_9_1.player_unit) then
 				return Testify.RETRY
 			end
 		end
 	end,
-	request_profiles = function(arg_10_0, arg_10_1)
+	request_profiles = function (arg_10_0, arg_10_1)
 		local var_10_0 = {}
 
 		for iter_10_0, iter_10_1 in pairs(SPProfiles) do
@@ -92,12 +92,12 @@ return {
 
 		return var_10_0
 	end,
-	set_player_profile = function(arg_11_0, arg_11_1)
+	set_player_profile = function (arg_11_0, arg_11_1)
 		Managers.state.network:request_profile(1, arg_11_1.profile_name, arg_11_1.career_name, true)
 
 		return Testify.RETRY
 	end,
-	set_bot_profile = function(arg_12_0, arg_12_1)
+	set_bot_profile = function (arg_12_0, arg_12_1)
 		script_data.allow_same_bots = true
 		script_data.wanted_bot_profile = arg_12_1.profile_name
 
@@ -106,13 +106,13 @@ return {
 
 		script_data.wanted_bot_career_index = var_12_1
 	end,
-	enable_bots = function()
+	enable_bots = function ()
 		script_data.ai_bots_disabled = false
 	end,
-	disable_bots = function()
+	disable_bots = function ()
 		script_data.ai_bots_disabled = true
 	end,
-	add_all_hats = function()
+	add_all_hats = function ()
 		for iter_15_0, iter_15_1 in ipairs(DebugScreen.console_settings) do
 			if iter_15_1.title == "Add All Hat Items" then
 				iter_15_1.func()
@@ -121,7 +121,7 @@ return {
 			end
 		end
 	end,
-	add_all_weapon_skins = function()
+	add_all_weapon_skins = function ()
 		for iter_16_0, iter_16_1 in ipairs(DebugScreen.console_settings) do
 			if iter_16_1.title == "Add All Weapon Skins" then
 				iter_16_1.func()
@@ -130,7 +130,7 @@ return {
 			end
 		end
 	end,
-	get_available_deus_talent_power_up_tests = function()
+	get_available_deus_talent_power_up_tests = function ()
 		local var_17_0 = {}
 
 		for iter_17_0, iter_17_1 in pairs(DeusPowerUps) do
@@ -146,7 +146,7 @@ return {
 
 		return var_17_0
 	end,
-	get_available_deus_generic_power_up_tests = function()
+	get_available_deus_generic_power_up_tests = function ()
 		local var_18_0 = {}
 
 		for iter_18_0, iter_18_1 in pairs(DeusPowerUps) do
@@ -162,7 +162,7 @@ return {
 
 		return var_18_0
 	end,
-	activate_bots_deus_power_up = function(arg_19_0, arg_19_1)
+	activate_bots_deus_power_up = function (arg_19_0, arg_19_1)
 		local var_19_0 = arg_19_1.power_up_name
 		local var_19_1 = arg_19_1.rarity
 		local var_19_2 = DeusPowerUpUtils.generate_specific_power_up(var_19_0, var_19_1)
@@ -179,7 +179,7 @@ return {
 			}, var_19_7, false)
 		end
 	end,
-	activate_player_deus_power_up = function(arg_20_0, arg_20_1)
+	activate_player_deus_power_up = function (arg_20_0, arg_20_1)
 		local var_20_0 = arg_20_1.power_up_name
 		local var_20_1 = arg_20_1.rarity
 		local var_20_2 = DeusPowerUpUtils.generate_specific_power_up(var_20_0, var_20_1)
@@ -190,7 +190,7 @@ return {
 			var_20_2
 		}, var_20_4, false)
 	end,
-	reset_deus_power_ups = function()
+	reset_deus_power_ups = function ()
 		local var_21_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 		local var_21_1 = var_21_0:get_own_peer_id()
 		local var_21_2 = Managers.player:human_and_bot_players()
@@ -203,17 +203,17 @@ return {
 			var_21_0:reset_power_ups(var_21_1, var_21_3, var_21_4, var_21_5)
 		end
 	end,
-	set_script_data = function(arg_22_0, arg_22_1)
+	set_script_data = function (arg_22_0, arg_22_1)
 		table.merge(script_data, arg_22_1)
 	end,
-	wait_for_inventory_to_be_loaded = function()
+	wait_for_inventory_to_be_loaded = function ()
 		local var_23_0 = Managers.player:local_player()
 
 		if ScriptUnit.extension(var_23_0.player_unit, "inventory_system"):resyncing_loadout() then
 			return Testify.RETRY
 		end
 	end,
-	wait_for_players_inventory_ready = function()
+	wait_for_players_inventory_ready = function ()
 		for iter_24_0, iter_24_1 in pairs(Managers.player:players()) do
 			local var_24_0 = ScriptUnit.extension(iter_24_1.player_unit, "inventory_system")
 
@@ -222,35 +222,35 @@ return {
 			end
 		end
 	end,
-	player_wield_weapon = function(arg_25_0, arg_25_1)
+	player_wield_weapon = function (arg_25_0, arg_25_1)
 		local var_25_0 = Managers.player:local_player()
 
 		ScriptUnit.extension(var_25_0.player_unit, "inventory_system"):testify_wield_weapon(arg_25_1)
 	end,
-	bot_wield_weapon = function(arg_26_0, arg_26_1)
+	bot_wield_weapon = function (arg_26_0, arg_26_1)
 		for iter_26_0, iter_26_1 in pairs(Managers.player:bots()) do
 			ScriptUnit.extension(iter_26_1.player_unit, "inventory_system"):testify_wield_weapon(arg_26_1)
 		end
 	end,
-	set_game_mode_to_weave = function(arg_27_0)
+	set_game_mode_to_weave = function (arg_27_0)
 		if Managers.state.game_mode:game_mode_key() ~= "weave" then
 			Managers.mechanism:choose_next_state("weave")
 			Managers.mechanism:progress_state()
 		end
 	end,
-	load_weave = function(arg_28_0, arg_28_1)
+	load_weave = function (arg_28_0, arg_28_1)
 		local var_28_0 = WeaveSettings.templates[arg_28_1].objectives[1].level_id
 		local var_28_1 = Managers.level_transition_handler
 
 		var_28_1:set_next_level(var_28_0)
 		var_28_1:promote_next_level_data()
 	end,
-	make_game_ready_for_next_weave = function(arg_29_0)
+	make_game_ready_for_next_weave = function (arg_29_0)
 		if not arg_29_0.is_in_inn then
 			return Testify.RETRY
 		end
 	end,
-	set_camera_to_observe_first_bot = function()
+	set_camera_to_observe_first_bot = function ()
 		local var_30_0 = Managers.player:bots()
 
 		if Unit.alive(var_30_0[1].player_unit) then
@@ -261,7 +261,7 @@ return {
 
 		return Testify.RETRY
 	end,
-	update_camera_to_follow_first_bot_rotation = function()
+	update_camera_to_follow_first_bot_rotation = function ()
 		local var_31_0 = Managers.player:local_player().camera_follow_unit
 		local var_31_1 = Managers.player:bots()[1].player_unit
 
@@ -271,24 +271,24 @@ return {
 			Unit.set_local_rotation(var_31_0, 0, var_31_2)
 		end
 	end,
-	teleport_player_to_main_path_point = function(arg_32_0, arg_32_1)
+	teleport_player_to_main_path_point = function (arg_32_0, arg_32_1)
 		local var_32_0 = Managers.player:local_player().player_unit
 		local var_32_1 = MainPathUtils.point_on_mainpath(nil, arg_32_1)
 
 		var_0_1(var_32_0, var_32_1 + Vector3(0, 0, 1))
 	end,
-	closest_travel_distance_to_player = function()
+	closest_travel_distance_to_player = function ()
 		local var_33_0 = Managers.player:local_player().player_unit
 		local var_33_1, var_33_2 = MainPathUtils.closest_pos_at_main_path(nil, POSITION_LOOKUP[var_33_0])
 
 		return var_33_2
 	end,
-	teleport_player_to_position = function(arg_34_0, arg_34_1)
+	teleport_player_to_position = function (arg_34_0, arg_34_1)
 		local var_34_0 = Managers.player:local_player().player_unit
 
 		var_0_1(var_34_0, arg_34_1:unbox() + Vector3(0, 0, 1))
 	end,
-	teleport_all_players_to_position = function(arg_35_0, arg_35_1)
+	teleport_all_players_to_position = function (arg_35_0, arg_35_1)
 		local var_35_0 = Managers.state.network
 
 		for iter_35_0, iter_35_1 in pairs(Managers.player:players()) do
@@ -307,21 +307,21 @@ return {
 			end
 		end
 	end,
-	teleport_player_randomly_on_main_path = function()
+	teleport_player_randomly_on_main_path = function ()
 		local var_36_0 = Managers.player:local_player().player_unit
 		local var_36_1 = math.random(1, EngineOptimized.main_path_total_length())
 		local var_36_2 = MainPathUtils.point_on_mainpath(nil, var_36_1)
 
 		var_0_1(var_36_0, var_36_2 + Vector3(0, 0, 1))
 	end,
-	set_player_unit_not_visible = function()
+	set_player_unit_not_visible = function ()
 		local var_37_0 = Managers.player:local_player()
 
 		if Unit.alive(var_37_0.player_unit) then
 			return Testify.RETRY
 		end
 	end,
-	teleport_bots_forward_on_main_path_if_blocked = function(arg_38_0, arg_38_1)
+	teleport_bots_forward_on_main_path_if_blocked = function (arg_38_0, arg_38_1)
 		local var_38_0 = arg_38_1.bots_stuck_data
 		local var_38_1 = arg_38_1.main_path_point
 		local var_38_2 = arg_38_1.bots_blocked_time_before_teleportation or 6
@@ -358,7 +358,7 @@ return {
 			end
 		end
 	end,
-	are_bots_blocked = function(arg_39_0, arg_39_1)
+	are_bots_blocked = function (arg_39_0, arg_39_1)
 		local var_39_0 = arg_39_1.bots_stuck_data
 		local var_39_1 = arg_39_1.bots_blocked_time_before_teleportation or 6
 
@@ -387,22 +387,22 @@ return {
 
 		return false
 	end,
-	make_players_invicible = function()
+	make_players_invicible = function ()
 		for iter_40_0, iter_40_1 in pairs(Managers.player:players()) do
 			var_0_2(iter_40_1.player_unit)
 		end
 	end,
-	make_player_and_two_bots_invicible = function()
+	make_player_and_two_bots_invicible = function ()
 		local var_41_0 = Managers.player:bots()
 
 		var_0_2(var_41_0[1].player_unit)
 		var_0_2(var_41_0[2].player_unit)
 		var_0_2(Managers.player:local_player().player_unit)
 	end,
-	post_telemetry_events = function()
+	post_telemetry_events = function ()
 		Managers.telemetry:post_batch()
 	end,
-	get_main_path_points = function(arg_43_0, arg_43_1)
+	get_main_path_points = function (arg_43_0, arg_43_1)
 		local var_43_0 = EngineOptimized.main_path_total_length()
 		local var_43_1 = {}
 
@@ -412,20 +412,20 @@ return {
 
 		return var_43_1
 	end,
-	set_difficulty = function(arg_44_0, arg_44_1)
+	set_difficulty = function (arg_44_0, arg_44_1)
 		local var_44_0 = 0
 
 		Managers.state.difficulty:set_difficulty(arg_44_1, var_44_0)
 	end,
-	get_player_current_position = function()
+	get_player_current_position = function ()
 		local var_45_0, var_45_1 = next(Managers.player._human_players)
 
 		return POSITION_LOOKUP[var_45_1.player_unit]
 	end,
-	is_unit_alive = function(arg_46_0, arg_46_1)
+	is_unit_alive = function (arg_46_0, arg_46_1)
 		return HEALTH_ALIVE[arg_46_1] or false
 	end,
-	get_unit_health_values = function(arg_47_0, arg_47_1)
+	get_unit_health_values = function (arg_47_0, arg_47_1)
 		local var_47_0
 		local var_47_1 = ScriptUnit.has_extension(arg_47_1, "health_system")
 
@@ -438,13 +438,13 @@ return {
 
 		return var_47_0
 	end,
-	kill_unit = function(arg_48_0, arg_48_1)
+	kill_unit = function (arg_48_0, arg_48_1)
 		local var_48_0 = "forced"
 		local var_48_1 = Vector3(0, 0, -1)
 
 		AiUtils.kill_unit(arg_48_1, nil, nil, var_48_0, var_48_1)
 	end,
-	add_buffs_to_heroes = function(arg_49_0, arg_49_1)
+	add_buffs_to_heroes = function (arg_49_0, arg_49_1)
 		local var_49_0 = Managers.state.side:get_side_from_name("heroes")
 
 		for iter_49_0, iter_49_1 in pairs(var_49_0.PLAYER_AND_BOT_UNITS) do
@@ -453,7 +453,7 @@ return {
 			end
 		end
 	end,
-	fail_test = function(arg_50_0, arg_50_1)
+	fail_test = function (arg_50_0, arg_50_1)
 		assert(false, arg_50_1)
 	end
 }

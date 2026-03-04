@@ -2,7 +2,7 @@
 
 ActionThrownProjectile = class(ActionThrownProjectile, ActionBase)
 
-function ActionThrownProjectile.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionThrownProjectile.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionThrownProjectile.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -12,7 +12,7 @@ function ActionThrownProjectile.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 	arg_1_0._spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
 end
 
-function ActionThrownProjectile.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionThrownProjectile.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionThrownProjectile.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -44,7 +44,7 @@ function ActionThrownProjectile.client_owner_start_action(arg_2_0, arg_2_1, arg_
 	arg_2_0._is_critical_strike = var_2_1
 end
 
-function ActionThrownProjectile._use_ammo(arg_3_0)
+ActionThrownProjectile._use_ammo = function (arg_3_0)
 	local var_3_0 = arg_3_0._ammo_extension
 
 	if var_3_0 and not arg_3_0._extra_buff_shot then
@@ -54,7 +54,7 @@ function ActionThrownProjectile._use_ammo(arg_3_0)
 	end
 end
 
-function ActionThrownProjectile._reload(arg_4_0)
+ActionThrownProjectile._reload = function (arg_4_0)
 	local var_4_0 = arg_4_0._ammo_extension
 
 	if var_4_0:can_reload() then
@@ -66,7 +66,7 @@ function ActionThrownProjectile._reload(arg_4_0)
 	end
 end
 
-function ActionThrownProjectile.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionThrownProjectile.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0._current_action
 
 	if arg_5_0._time_to_unzoom and arg_5_2 >= arg_5_0._time_to_unzoom then
@@ -127,7 +127,7 @@ function ActionThrownProjectile.client_owner_post_update(arg_5_0, arg_5_1, arg_5
 	end
 end
 
-function ActionThrownProjectile.finish(arg_6_0, arg_6_1, arg_6_2)
+ActionThrownProjectile.finish = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0.state == "waiting_to_shoot" then
 		arg_6_0:_fire()
 		arg_6_0:_use_ammo()
@@ -147,7 +147,7 @@ function ActionThrownProjectile.finish(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function ActionThrownProjectile._fire(arg_7_0, arg_7_1)
+ActionThrownProjectile._fire = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._current_action
 	local var_7_1 = arg_7_0.owner_unit
 	local var_7_2 = arg_7_0._first_person_extension

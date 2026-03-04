@@ -230,7 +230,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_change_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+					content_change_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 						local var_3_0 = arg_3_0.parent
 						local var_3_1 = arg_3_0.hover_progress or 0
 						local var_3_2 = 15
@@ -284,7 +284,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "texture_hover",
 					pass_type = "texture",
 					texture_id = "texture_hover",
-					content_change_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+					content_change_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 						local var_4_0 = arg_4_0.button_hotspot
 
 						var_1_3(arg_4_0, arg_4_1, var_4_0, arg_4_3)
@@ -294,7 +294,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						local var_5_0 = arg_5_0.button_hotspot
 
 						return not var_5_0.disable_button and (not var_5_0.is_selected or not var_5_0.is_hover)
@@ -304,7 +304,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "button_text_hovered",
 					pass_type = "text",
 					text_id = "button_text",
-					content_change_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+					content_change_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 						local var_6_0 = arg_6_0.button_hotspot
 
 						var_1_3(arg_6_0, arg_6_1, var_6_0, arg_6_3)
@@ -511,13 +511,13 @@ local var_0_11 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				arg_8_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_8_3)
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -527,13 +527,13 @@ local var_0_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				arg_11_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_11_3)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				if arg_12_3.on_exit_func then
 					arg_12_3.on_exit_func()
 				end

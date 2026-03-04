@@ -12,7 +12,7 @@ local var_0_1 = {
 	"BuffAreaExtension"
 }
 
-function BuffAreaSystem.init(arg_1_0, arg_1_1, arg_1_2)
+BuffAreaSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	BuffAreaSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	arg_1_0._inside_by_side_and_template = {}
@@ -26,11 +26,11 @@ function BuffAreaSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-function BuffAreaSystem.destroy(arg_2_0)
+BuffAreaSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function BuffAreaSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+BuffAreaSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 	local var_3_0 = BuffAreaSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 	local var_3_1 = var_3_0.template
 
@@ -61,7 +61,7 @@ function BuffAreaSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...
 	return var_3_0
 end
 
-function BuffAreaSystem.inside_by_area(arg_4_0, arg_4_1)
+BuffAreaSystem.inside_by_area = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.template
 
 	if var_4_0.shared_area then
@@ -74,7 +74,7 @@ function BuffAreaSystem.inside_by_area(arg_4_0, arg_4_1)
 	end
 end
 
-function BuffAreaSystem.rpc_play_enter_buff_zone_sfx(arg_5_0, arg_5_1, arg_5_2)
+BuffAreaSystem.rpc_play_enter_buff_zone_sfx = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.state.unit_storage:unit(arg_5_2)
 	local var_5_1 = arg_5_0._buff_area_extensions[var_5_0]
 
@@ -83,7 +83,7 @@ function BuffAreaSystem.rpc_play_enter_buff_zone_sfx(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BuffAreaSystem.rpc_play_leave_buff_zone_sfx(arg_6_0, arg_6_1, arg_6_2)
+BuffAreaSystem.rpc_play_leave_buff_zone_sfx = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.unit_storage:unit(arg_6_2)
 	local var_6_1 = arg_6_0._buff_area_extensions[var_6_0]
 

@@ -69,7 +69,7 @@ local var_0_1 = {
 
 SubtitleGui = class(SubtitleGui)
 
-function SubtitleGui.init(arg_1_0, arg_1_1, arg_1_2)
+SubtitleGui.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._dialogue_system = arg_1_2.dialogue_system
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
@@ -99,12 +99,12 @@ function SubtitleGui.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function SubtitleGui._create_ui_elements(arg_2_0)
+SubtitleGui._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_2_0._subtitle_widget = UIWidget.init(var_0_1)
 end
 
-function SubtitleGui.destroy(arg_3_0)
+SubtitleGui.destroy = function (arg_3_0)
 	local var_3_0 = Managers.state.event
 
 	if var_3_0 then
@@ -117,7 +117,7 @@ function SubtitleGui.destroy(arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "subtitle_gui")
 end
 
-function SubtitleGui._add_subtitle(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+SubtitleGui._add_subtitle = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = {
 		unit = arg_4_1,
 		speaker = arg_4_2,
@@ -127,7 +127,7 @@ function SubtitleGui._add_subtitle(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0.subtitle_list[#arg_4_0.subtitle_list + 1] = var_4_0
 end
 
-function SubtitleGui._remove_subtitle(arg_5_0, arg_5_1)
+SubtitleGui._remove_subtitle = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.subtitle_list
 	local var_5_1 = #var_5_0
 
@@ -140,7 +140,7 @@ function SubtitleGui._remove_subtitle(arg_5_0, arg_5_1)
 	end
 end
 
-function SubtitleGui._has_subtitle_for_unit(arg_6_0, arg_6_1)
+SubtitleGui._has_subtitle_for_unit = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.subtitle_list
 	local var_6_1 = #var_6_0
 
@@ -158,7 +158,7 @@ local var_0_2 = {
 	drag_scenegraph_id = "subtitle_background"
 }
 
-function SubtitleGui.update(arg_7_0, arg_7_1)
+SubtitleGui.update = function (arg_7_0, arg_7_1)
 	if not UISettings.use_subtitles then
 		return
 	end
@@ -275,16 +275,16 @@ function SubtitleGui.update(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_18)
 end
 
-function SubtitleGui.start_subtitle(arg_8_0, arg_8_1, arg_8_2)
+SubtitleGui.start_subtitle = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.subtitles_to_display[arg_8_1] = arg_8_2
 	arg_8_0._force_text_remake = true
 end
 
-function SubtitleGui.stop_subtitle(arg_9_0, arg_9_1)
+SubtitleGui.stop_subtitle = function (arg_9_0, arg_9_1)
 	arg_9_0.subtitles_to_display[arg_9_1] = nil
 	arg_9_0._force_text_remake = true
 end
 
-function SubtitleGui.is_displaying_subtitle(arg_10_0)
+SubtitleGui.is_displaying_subtitle = function (arg_10_0)
 	return arg_10_0.subtitles_to_display and arg_10_0._subtitle_text ~= ""
 end

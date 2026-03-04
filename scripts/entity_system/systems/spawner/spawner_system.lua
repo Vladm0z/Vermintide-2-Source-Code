@@ -15,7 +15,7 @@ local var_0_1 = {
 }
 local var_0_2 = script_data
 
-function SpawnerSystem.init(arg_2_0, arg_2_1, arg_2_2)
+SpawnerSystem.init = function (arg_2_0, arg_2_1, arg_2_2)
 	SpawnerSystem.super.init(arg_2_0, arg_2_1, arg_2_2, var_0_1)
 
 	arg_2_0._spawn_list = {}
@@ -49,7 +49,7 @@ local var_0_3 = {
 	"skaven_clan_rat"
 }
 
-function SpawnerSystem.update_test_all_spawners(arg_3_0, arg_3_1)
+SpawnerSystem.update_test_all_spawners = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._enabled_spawners
 	local var_3_1 = arg_3_0._test_data.index
 	local var_3_2 = 0
@@ -87,7 +87,7 @@ function SpawnerSystem.update_test_all_spawners(arg_3_0, arg_3_1)
 	end
 end
 
-function SpawnerSystem.test_all_spawners(arg_4_0)
+SpawnerSystem.test_all_spawners = function (arg_4_0)
 	arg_4_0.tests_running = 0
 
 	print("")
@@ -98,19 +98,19 @@ function SpawnerSystem.test_all_spawners(arg_4_0)
 	}
 end
 
-function SpawnerSystem.running_spawners(arg_5_0)
+SpawnerSystem.running_spawners = function (arg_5_0)
 	return arg_5_0._active_spawners
 end
 
-function SpawnerSystem.enabled_spawners(arg_6_0)
+SpawnerSystem.enabled_spawners = function (arg_6_0)
 	return arg_6_0._enabled_spawners
 end
 
-function SpawnerSystem.hidden_spawners_lookup(arg_7_0)
+SpawnerSystem.hidden_spawners_lookup = function (arg_7_0)
 	return arg_7_0._hidden_spawners
 end
 
-function SpawnerSystem.register_enabled_spawner(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+SpawnerSystem.register_enabled_spawner = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0._enabled_spawners[#arg_8_0._enabled_spawners + 1] = arg_8_1
 
 	if arg_8_2 then
@@ -129,7 +129,7 @@ function SpawnerSystem.register_enabled_spawner(arg_8_0, arg_8_1, arg_8_2, arg_8
 	end
 end
 
-function SpawnerSystem.hibernate_spawner(arg_9_0, arg_9_1, arg_9_2)
+SpawnerSystem.hibernate_spawner = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._enabled_spawners
 	local var_9_1 = #var_9_0
 	local var_9_2 = arg_9_0._disabled_spawners
@@ -160,7 +160,7 @@ function SpawnerSystem.hibernate_spawner(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function SpawnerSystem._hibernate_spawner(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+SpawnerSystem._hibernate_spawner = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	for iter_10_0 = 1, arg_10_1 do
 		if arg_10_2[iter_10_0] == arg_10_4 then
 			table.swap_delete(arg_10_2, iter_10_0)
@@ -172,22 +172,22 @@ function SpawnerSystem._hibernate_spawner(arg_10_0, arg_10_1, arg_10_2, arg_10_3
 	end
 end
 
-function SpawnerSystem._hibernate_hidden_spawner(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+SpawnerSystem._hibernate_hidden_spawner = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_1[arg_11_3] = nil
 	arg_11_2[arg_11_3] = true
 end
 
-function SpawnerSystem._awaken_spawner(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+SpawnerSystem._awaken_spawner = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_2[arg_12_3] = nil
 	arg_12_1[#arg_12_1 + 1] = arg_12_3
 end
 
-function SpawnerSystem._awaken_hidden_spawner(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+SpawnerSystem._awaken_hidden_spawner = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_2[arg_13_3] = nil
 	arg_13_1[arg_13_3] = true
 end
 
-function SpawnerSystem._add_broadphase(arg_14_0, arg_14_1)
+SpawnerSystem._add_broadphase = function (arg_14_0, arg_14_1)
 	local var_14_0 = Unit.local_position(arg_14_1, 0)
 	local var_14_1 = Broadphase.add(arg_14_0.hidden_spawners_broadphase, arg_14_1, var_14_0, 1)
 
@@ -196,7 +196,7 @@ function SpawnerSystem._add_broadphase(arg_14_0, arg_14_1)
 	arg_14_0._num_hidden_spawners = arg_14_0._num_hidden_spawners + 1
 end
 
-function SpawnerSystem._remove_broadphase(arg_15_0, arg_15_1)
+SpawnerSystem._remove_broadphase = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._spawner_broadphase_id[arg_15_1]
 
 	Broadphase.remove(arg_15_0.hidden_spawners_broadphase, var_15_0)
@@ -205,7 +205,7 @@ function SpawnerSystem._remove_broadphase(arg_15_0, arg_15_1)
 	arg_15_0._num_hidden_spawners = arg_15_0._num_hidden_spawners - 1
 end
 
-function SpawnerSystem.register_raw_spawner(arg_16_0, arg_16_1, arg_16_2)
+SpawnerSystem.register_raw_spawner = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_2 then
 		local var_16_0 = arg_16_0._raw_id_lookup[arg_16_2]
 
@@ -222,7 +222,7 @@ local var_0_4 = {}
 local var_0_5 = {}
 local var_0_6 = {}
 
-function SpawnerSystem.spawn_horde(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+SpawnerSystem.spawn_horde = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	local var_17_0 = ScriptUnit.extension(arg_17_1, "spawner_system")
 
 	arg_17_0._active_spawners[arg_17_1] = var_17_0
@@ -241,7 +241,7 @@ local function var_0_7(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	end
 end
 
-function SpawnerSystem.set_breed_event_horde_spawn_limit(arg_19_0, arg_19_1, arg_19_2)
+SpawnerSystem.set_breed_event_horde_spawn_limit = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._breed_limits[arg_19_1] = arg_19_2
 end
 
@@ -254,12 +254,12 @@ for iter_0_0, iter_0_1 in pairs(Breeds) do
 	var_0_10 = var_0_10 + 1
 end
 
-table.sort(var_0_9, function(arg_20_0, arg_20_1)
+table.sort(var_0_9, function (arg_20_0, arg_20_1)
 	return Breeds[arg_20_0].exchange_order < Breeds[arg_20_1].exchange_order
 end)
 table.dump(var_0_9)
 
-function SpawnerSystem._try_spawn_breed(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+SpawnerSystem._try_spawn_breed = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 	local var_21_0 = arg_21_2[arg_21_1]
 
 	if var_21_0 then
@@ -313,7 +313,7 @@ function SpawnerSystem._try_spawn_breed(arg_21_0, arg_21_1, arg_21_2, arg_21_3, 
 	return arg_21_5
 end
 
-function SpawnerSystem._fill_spawners(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+SpawnerSystem._fill_spawners = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
 	local var_22_0 = #arg_22_1
 
 	if var_22_0 <= 0 then
@@ -379,7 +379,7 @@ local var_0_11 = {
 	skaven_slave = true
 }
 
-function SpawnerSystem.spawn_horde_from_terror_event_ids(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+SpawnerSystem.spawn_horde_from_terror_event_ids = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 	local var_23_0 = ConflictUtils
 	local var_23_1 = arg_23_2.must_use_hidden_spawners
 	local var_23_2
@@ -520,7 +520,7 @@ function SpawnerSystem.spawn_horde_from_terror_event_ids(arg_23_0, arg_23_1, arg
 	end
 end
 
-function SpawnerSystem.change_spawner_id(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+SpawnerSystem.change_spawner_id = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if arg_24_1 then
 		local var_24_0 = Unit.get_data(arg_24_1, "terror_event_id")
 
@@ -581,7 +581,7 @@ function SpawnerSystem.change_spawner_id(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	end
 end
 
-function SpawnerSystem.get_raw_spawner_unit(arg_25_0, arg_25_1)
+SpawnerSystem.get_raw_spawner_unit = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._raw_id_lookup[arg_25_1] or arg_25_0._id_lookup[arg_25_1]
 
 	if var_25_0 then
@@ -592,15 +592,15 @@ function SpawnerSystem.get_raw_spawner_unit(arg_25_0, arg_25_1)
 	end
 end
 
-function SpawnerSystem.get_raw_spawner_units(arg_26_0, arg_26_1)
+SpawnerSystem.get_raw_spawner_units = function (arg_26_0, arg_26_1)
 	return arg_26_0._raw_id_lookup[arg_26_1] or arg_26_0._id_lookup[arg_26_1]
 end
 
-function SpawnerSystem.deactivate_spawner(arg_27_0, arg_27_1)
+SpawnerSystem.deactivate_spawner = function (arg_27_0, arg_27_1)
 	arg_27_0._active_spawners[arg_27_1] = nil
 end
 
-function SpawnerSystem.debug_show_spawners(arg_28_0, arg_28_1, arg_28_2)
+SpawnerSystem.debug_show_spawners = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = 70
 	local var_28_1 = Vector3(0, 0, var_28_0)
 	local var_28_2 = Color(255, 0, 200, 0)
@@ -618,11 +618,11 @@ function SpawnerSystem.debug_show_spawners(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function SpawnerSystem.set_spawn_list(arg_29_0, arg_29_1)
+SpawnerSystem.set_spawn_list = function (arg_29_0, arg_29_1)
 	arg_29_0._spawn_list = arg_29_1
 end
 
-function SpawnerSystem.pop_pawn_list(arg_30_0)
+SpawnerSystem.pop_pawn_list = function (arg_30_0)
 	local var_30_0 = arg_30_0._spawn_list
 	local var_30_1 = #var_30_0
 
@@ -640,13 +640,13 @@ end
 local var_0_12 = {}
 local var_0_13 = {}
 
-function SpawnerSystem.update(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+SpawnerSystem.update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	for iter_31_0, iter_31_1 in pairs(arg_31_0._active_spawners) do
 		iter_31_1:update(iter_31_0, var_0_12, arg_31_3, arg_31_1, arg_31_2)
 	end
 end
 
-function SpawnerSystem.show_hidden_spawners(arg_32_0, arg_32_1)
+SpawnerSystem.show_hidden_spawners = function (arg_32_0, arg_32_1)
 	local var_32_0 = Unit.local_position
 	local var_32_1 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS[1]
 	local var_32_2 = Managers.free_flight

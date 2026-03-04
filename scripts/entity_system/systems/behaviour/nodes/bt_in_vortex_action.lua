@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInVortexAction = class(BTInVortexAction, BTNode)
 
-function BTInVortexAction.init(arg_1_0, ...)
+BTInVortexAction.init = function (arg_1_0, ...)
 	BTInVortexAction.super.init(arg_1_0, ...)
 end
 
 BTInVortexAction.name = "BTInVortexAction"
 
-function BTInVortexAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInVortexAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_enabled(false)
 
 	local var_2_0 = arg_2_2.locomotion_extension
@@ -30,7 +30,7 @@ function BTInVortexAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTInVortexAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTInVortexAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_5 then
 		LocomotionUtils.set_animation_driven_movement(arg_3_1, false, false)
 	end
@@ -55,7 +55,7 @@ function BTInVortexAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg
 	ScriptUnit.extension(arg_3_1, "hit_reaction_system").force_ragdoll_on_death = nil
 end
 
-function BTInVortexAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTInVortexAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.in_vortex_state
 
 	if var_4_0 == "in_vortex_init" then

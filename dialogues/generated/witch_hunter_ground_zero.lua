@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/witch_hunter_ground_zero.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwh_ground_zero_intro_a",

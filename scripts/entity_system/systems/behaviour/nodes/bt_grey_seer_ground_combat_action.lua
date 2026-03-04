@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTGreySeerGroundCombatAction = class(BTGreySeerGroundCombatAction, BTNode)
 
-function BTGreySeerGroundCombatAction.init(arg_1_0, ...)
+BTGreySeerGroundCombatAction.init = function (arg_1_0, ...)
 	BTGreySeerGroundCombatAction.super.init(arg_1_0, ...)
 end
 
 BTGreySeerGroundCombatAction.name = "BTGreySeerGroundCombatAction"
 
-function BTGreySeerGroundCombatAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTGreySeerGroundCombatAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -41,7 +41,7 @@ function BTGreySeerGroundCombatAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	ScriptUnit.extension(arg_2_1, "health_system").is_invincible = false
 end
 
-function BTGreySeerGroundCombatAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTGreySeerGroundCombatAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 
 	arg_3_2.navigation_extension:set_enabled(true)
@@ -49,7 +49,7 @@ end
 
 local var_0_0 = Unit.alive
 
-function BTGreySeerGroundCombatAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTGreySeerGroundCombatAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_0:update_spells(arg_4_1, arg_4_2, arg_4_3) then
 		arg_4_2.ready_to_summon = true
 
@@ -59,7 +59,7 @@ function BTGreySeerGroundCombatAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	end
 end
 
-function BTGreySeerGroundCombatAction.update_spells(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTGreySeerGroundCombatAction.update_spells = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.current_phase
 	local var_5_1 = false
 	local var_5_2 = POSITION_LOOKUP[arg_5_1]
@@ -77,7 +77,7 @@ function BTGreySeerGroundCombatAction.update_spells(arg_5_0, arg_5_1, arg_5_2, a
 	return var_5_1
 end
 
-function BTGreySeerGroundCombatAction.update_final_phase(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTGreySeerGroundCombatAction.update_final_phase = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_2.action
 	local var_6_1
 	local var_6_2 = arg_6_2.final_phase_data
@@ -124,7 +124,7 @@ function BTGreySeerGroundCombatAction.update_final_phase(arg_6_0, arg_6_1, arg_6
 	return (arg_6_0:update_regular_spells(arg_6_1, arg_6_2, arg_6_3))
 end
 
-function BTGreySeerGroundCombatAction.update_regular_spells(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTGreySeerGroundCombatAction.update_regular_spells = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.spell_data
 	local var_7_1
 	local var_7_2 = ScriptUnit.extension_input(arg_7_1, "dialogue_system")
@@ -154,7 +154,7 @@ function BTGreySeerGroundCombatAction.update_regular_spells(arg_7_0, arg_7_1, ar
 	return var_7_1
 end
 
-function BTGreySeerGroundCombatAction.update_warp_lightning_spell(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTGreySeerGroundCombatAction.update_warp_lightning_spell = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_2.magic_missile_data
 
 	var_8_0.throw_pos:store(arg_8_4 + Vector3.up() * 2)
@@ -164,7 +164,7 @@ function BTGreySeerGroundCombatAction.update_warp_lightning_spell(arg_8_0, arg_8
 	end
 end
 
-function BTGreySeerGroundCombatAction.update_vermintide_spell(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTGreySeerGroundCombatAction.update_vermintide_spell = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_2.plague_wave_data
 
 	var_9_0.target_starting_pos:store(arg_9_4)
@@ -174,7 +174,7 @@ function BTGreySeerGroundCombatAction.update_vermintide_spell(arg_9_0, arg_9_1, 
 	end
 end
 
-function BTGreySeerGroundCombatAction.update_teleport_spell(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTGreySeerGroundCombatAction.update_teleport_spell = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.quick_teleport_timer or arg_10_3
 
 	arg_10_2.quick_teleport_timer = var_10_0
@@ -197,7 +197,7 @@ function BTGreySeerGroundCombatAction.update_teleport_spell(arg_10_0, arg_10_1, 
 	end
 end
 
-function BTGreySeerGroundCombatAction.spawn_allies(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTGreySeerGroundCombatAction.spawn_allies = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = Managers.state.difficulty:get_difficulty()
 	local var_11_1 = arg_11_2.action
 	local var_11_2 = true

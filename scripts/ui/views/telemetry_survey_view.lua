@@ -6,7 +6,7 @@ TelemetrySurveyView = class(TelemetrySurveyView)
 
 local var_0_1 = 20
 
-function TelemetrySurveyView.init(arg_1_0, arg_1_1)
+TelemetrySurveyView.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -39,31 +39,31 @@ function TelemetrySurveyView.init(arg_1_0, arg_1_1)
 	var_1_1:map_device_to_service("telemetry_survey", "gamepad")
 end
 
-function TelemetrySurveyView.input_service(arg_2_0)
+TelemetrySurveyView.input_service = function (arg_2_0)
 	return arg_2_0.input_manager:get_service("telemetry_survey")
 end
 
-function TelemetrySurveyView.set_transition(arg_3_0, arg_3_1)
+TelemetrySurveyView.set_transition = function (arg_3_0, arg_3_1)
 	arg_3_0.transition_to = arg_3_1
 end
 
-function TelemetrySurveyView.set_survey_context(arg_4_0, arg_4_1)
+TelemetrySurveyView.set_survey_context = function (arg_4_0, arg_4_1)
 	arg_4_0.survey_context = arg_4_1
 end
 
-function TelemetrySurveyView.get_survey_context(arg_5_0)
+TelemetrySurveyView.get_survey_context = function (arg_5_0)
 	return arg_5_0.survey_context
 end
 
-function TelemetrySurveyView.is_survey_answered(arg_6_0)
+TelemetrySurveyView.is_survey_answered = function (arg_6_0)
 	return arg_6_0.survey_answered and arg_6_0.survey_confirmed
 end
 
-function TelemetrySurveyView.is_survey_timed_out(arg_7_0)
+TelemetrySurveyView.is_survey_timed_out = function (arg_7_0)
 	return arg_7_0.timed_out
 end
 
-function TelemetrySurveyView.create_ui_elements(arg_8_0)
+TelemetrySurveyView.create_ui_elements = function (arg_8_0)
 	arg_8_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_8_0.background_1 = UIWidget.init(var_0_0.widget_definitions.background_1)
 	arg_8_0.background_2 = UIWidget.init(var_0_0.widget_definitions.background_2)
@@ -79,24 +79,24 @@ function TelemetrySurveyView.create_ui_elements(arg_8_0)
 	arg_8_0.continue_button = UIWidget.init(var_0_0.widget_definitions.continue_button)
 end
 
-function TelemetrySurveyView.destroy(arg_9_0)
+TelemetrySurveyView.destroy = function (arg_9_0)
 	if arg_9_0.active then
 		arg_9_0:set_active(false)
 	end
 end
 
-function TelemetrySurveyView.play_sound(arg_10_0, arg_10_1)
+TelemetrySurveyView.play_sound = function (arg_10_0, arg_10_1)
 	WwiseWorld.trigger_event(arg_10_0.wwise_world, arg_10_1)
 end
 
-function TelemetrySurveyView.on_enter(arg_11_0)
+TelemetrySurveyView.on_enter = function (arg_11_0)
 	arg_11_0.timed_out = false
 	arg_11_0.survey_confirmed = false
 
 	arg_11_0:set_active(not arg_11_0.active)
 end
 
-function TelemetrySurveyView.on_exit(arg_12_0)
+TelemetrySurveyView.on_exit = function (arg_12_0)
 	arg_12_0:set_active(not arg_12_0.active)
 	arg_12_0:play_sound("Play_hud_button_close")
 
@@ -109,13 +109,13 @@ function TelemetrySurveyView.on_exit(arg_12_0)
 	arg_12_0.session_rating = 0
 end
 
-function TelemetrySurveyView.transition(arg_13_0)
+TelemetrySurveyView.transition = function (arg_13_0)
 	if arg_13_0.transition_to ~= nil then
 		arg_13_0.ingame_ui:handle_transition(arg_13_0.transition_to)
 	end
 end
 
-function TelemetrySurveyView.record_telemetry_survey(arg_14_0)
+TelemetrySurveyView.record_telemetry_survey = function (arg_14_0)
 	assert(arg_14_0.session_rating ~= 0, "Session rating was never set!")
 
 	local var_14_0 = Managers.player:player_from_peer_id(arg_14_0.peer_id)
@@ -123,7 +123,7 @@ function TelemetrySurveyView.record_telemetry_survey(arg_14_0)
 	Managers.telemetry.event:session_rating(var_14_0, arg_14_0.session_rating)
 end
 
-function TelemetrySurveyView.update(arg_15_0, arg_15_1)
+TelemetrySurveyView.update = function (arg_15_0, arg_15_1)
 	if not arg_15_0.active then
 		return
 	end
@@ -145,11 +145,11 @@ function TelemetrySurveyView.update(arg_15_0, arg_15_1)
 	end
 end
 
-function TelemetrySurveyView.update_time_text(arg_16_0, arg_16_1)
+TelemetrySurveyView.update_time_text = function (arg_16_0, arg_16_1)
 	arg_16_0.headers.content.time_left = tostring(math.round(arg_16_1, 0))
 end
 
-function TelemetrySurveyView.update_rating_buttons(arg_17_0)
+TelemetrySurveyView.update_rating_buttons = function (arg_17_0)
 	local var_17_0 = arg_17_0.survey_ratings
 
 	for iter_17_0 = #var_17_0, 1, -1 do
@@ -166,7 +166,7 @@ function TelemetrySurveyView.update_rating_buttons(arg_17_0)
 	end
 end
 
-function TelemetrySurveyView.update_button_disabled(arg_18_0)
+TelemetrySurveyView.update_button_disabled = function (arg_18_0)
 	arg_18_0.continue_button.content.disabled = not arg_18_0.survey_answered
 
 	local var_18_0 = arg_18_0.continue_button.content.disabled
@@ -175,7 +175,7 @@ function TelemetrySurveyView.update_button_disabled(arg_18_0)
 	var_18_1.text_color = var_18_0 and var_18_1.disabled_color or var_18_1.base_color
 end
 
-function TelemetrySurveyView.set_active(arg_19_0, arg_19_1)
+TelemetrySurveyView.set_active = function (arg_19_0, arg_19_1)
 	arg_19_0.active = arg_19_1
 
 	local var_19_0 = arg_19_0.input_manager
@@ -195,7 +195,7 @@ function TelemetrySurveyView.set_active(arg_19_0, arg_19_1)
 	end
 end
 
-function TelemetrySurveyView.handle_interaction(arg_20_0, arg_20_1)
+TelemetrySurveyView.handle_interaction = function (arg_20_0, arg_20_1)
 	if arg_20_0.opened then
 		if not arg_20_0.continue_button.content.disabled then
 			local var_20_0 = arg_20_0.continue_button.content.button_hotspot.on_release
@@ -217,7 +217,7 @@ function TelemetrySurveyView.handle_interaction(arg_20_0, arg_20_1)
 	end
 end
 
-function TelemetrySurveyView.draw(arg_21_0, arg_21_1)
+TelemetrySurveyView.draw = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.ui_top_renderer
 	local var_21_1 = arg_21_0.ui_scenegraph
 	local var_21_2 = arg_21_0.input_manager:get_service("telemetry_survey")

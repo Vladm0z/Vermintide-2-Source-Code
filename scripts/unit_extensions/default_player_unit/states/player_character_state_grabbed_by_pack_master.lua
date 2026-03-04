@@ -4,7 +4,7 @@ PlayerCharacterStateGrabbedByPackMaster = class(PlayerCharacterStateGrabbedByPac
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerCharacterStateGrabbedByPackMaster.init(arg_1_0, arg_1_1)
+PlayerCharacterStateGrabbedByPackMaster.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "grabbed_by_pack_master")
 
 	arg_1_0.move_target_index = 0
@@ -15,7 +15,7 @@ function PlayerCharacterStateGrabbedByPackMaster.init(arg_1_0, arg_1_1)
 	arg_1_0._mechanism_name = Managers.mechanism:current_mechanism_name()
 end
 
-function PlayerCharacterStateGrabbedByPackMaster.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateGrabbedByPackMaster.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.inventory_extension
 	local var_2_1 = arg_2_0.career_extension
 
@@ -80,7 +80,7 @@ function PlayerCharacterStateGrabbedByPackMaster.on_enter(arg_2_0, arg_2_1, arg_
 	end
 end
 
-function PlayerCharacterStateGrabbedByPackMaster.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateGrabbedByPackMaster.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.first_person_extension
 	local var_3_1 = arg_3_0.status_extension
 
@@ -164,17 +164,17 @@ end
 
 PlayerCharacterStateGrabbedByPackMaster.states = {
 	pack_master_pulling = {
-		enter = function(arg_7_0, arg_7_1)
+		enter = function (arg_7_0, arg_7_1)
 			arg_7_0.locomotion_extension:enable_animation_driven_movement()
 			var_0_1(arg_7_0, arg_7_1, "pack_master_pulling")
 			Managers.state.network:anim_event(arg_7_1, "packmaster_hooked")
 		end,
-		run = function(arg_8_0, arg_8_1)
+		run = function (arg_8_0, arg_8_1)
 			arg_8_0.last_valid_position:store(var_0_0[arg_8_1])
 		end
 	},
 	pack_master_dragging = {
-		enter = function(arg_9_0, arg_9_1)
+		enter = function (arg_9_0, arg_9_1)
 			arg_9_0.locomotion_extension:enable_wanted_position_movement()
 			var_0_1(arg_9_0, arg_9_1, "pack_master_dragging")
 
@@ -182,7 +182,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 
 			CharacterStateHelper.play_animation_event_first_person(arg_9_0.first_person_extension, "move_bwd")
 		end,
-		run = function(arg_10_0, arg_10_1)
+		run = function (arg_10_0, arg_10_1)
 			local var_10_0 = arg_10_0._drag_delta_move:unbox()
 			local var_10_1 = Vector3.length(var_10_0)
 
@@ -206,7 +206,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 
 			return true
 		end,
-		leave = function(arg_11_0, arg_11_1)
+		leave = function (arg_11_0, arg_11_1)
 			local var_11_0 = arg_11_1 and var_0_0[arg_11_1]
 
 			if var_11_0 then
@@ -219,10 +219,10 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 		end
 	},
 	pack_master_unhooked = {
-		run = function(arg_12_0, arg_12_1)
+		run = function (arg_12_0, arg_12_1)
 			arg_12_0.last_valid_position:store(var_0_0[arg_12_1])
 		end,
-		enter = function(arg_13_0, arg_13_1)
+		enter = function (arg_13_0, arg_13_1)
 			CharacterStateHelper.show_inventory_3p(arg_13_1, false, true, Managers.player.is_server, arg_13_0.inventory_extension)
 
 			local var_13_0 = arg_13_0.status_extension
@@ -252,7 +252,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 		end
 	},
 	pack_master_hoisting = {
-		enter = function(arg_14_0, arg_14_1)
+		enter = function (arg_14_0, arg_14_1)
 			var_0_1(arg_14_0, arg_14_1, "pack_master_hoisting")
 
 			local var_14_0 = ScriptUnit.extension(arg_14_1, "inventory_system")
@@ -290,20 +290,20 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 
 			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_14_6)
 		end,
-		run = function(arg_16_0, arg_16_1)
+		run = function (arg_16_0, arg_16_1)
 			return
 		end
 	},
 	pack_master_hanging = {
-		enter = function(arg_17_0, arg_17_1)
+		enter = function (arg_17_0, arg_17_1)
 			return
 		end,
-		run = function(arg_18_0, arg_18_1)
+		run = function (arg_18_0, arg_18_1)
 			return
 		end
 	},
 	pack_master_dropping = {
-		enter = function(arg_19_0, arg_19_1)
+		enter = function (arg_19_0, arg_19_1)
 			CharacterStateHelper.show_inventory_3p(arg_19_1, false, true, Managers.player.is_server, arg_19_0.inventory_extension)
 
 			local var_19_0 = arg_19_0.status_extension
@@ -331,15 +331,15 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 
 			arg_19_0.locomotion_extension:enable_animation_driven_movement()
 		end,
-		run = function(arg_20_0, arg_20_1)
+		run = function (arg_20_0, arg_20_1)
 			return
 		end
 	},
 	pack_master_released = {
-		run = function(arg_21_0, arg_21_1)
+		run = function (arg_21_0, arg_21_1)
 			return
 		end,
-		enter = function(arg_22_0, arg_22_1)
+		enter = function (arg_22_0, arg_22_1)
 			arg_22_0.locomotion_extension:enable_script_driven_movement()
 			CharacterStateHelper.show_inventory_3p(arg_22_1, true, true, Managers.player.is_server, arg_22_0.inventory_extension)
 
@@ -365,7 +365,7 @@ PlayerCharacterStateGrabbedByPackMaster.states = {
 	}
 }
 
-function PlayerCharacterStateGrabbedByPackMaster.update(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+PlayerCharacterStateGrabbedByPackMaster.update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = arg_23_0.csm
 	local var_23_1 = arg_23_0.unit
 	local var_23_2 = arg_23_0.input_extension

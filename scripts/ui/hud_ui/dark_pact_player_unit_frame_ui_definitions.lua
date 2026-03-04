@@ -154,7 +154,7 @@ local function var_0_11()
 					style_id = "host_icon",
 					texture_id = "host_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_host
 					end
 				},
@@ -163,7 +163,7 @@ local function var_0_11()
 					style_id = "hp_bar_frame",
 					texture_id = "hp_bar_frame",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return arg_3_0.show_health_bar
 					end
 				}
@@ -322,7 +322,7 @@ local function var_0_13()
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.display_portrait_icon
 					end
 				},
@@ -355,7 +355,7 @@ local function var_0_13()
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.connecting
 					end
 				}
@@ -509,7 +509,7 @@ local function var_0_14()
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return not arg_9_0.has_shield
 					end
 				},
@@ -518,13 +518,13 @@ local function var_0_14()
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						local var_10_0 = arg_10_0.hp_bar.internal_bar_value
 						local var_10_1 = arg_10_0.actual_active_percentage or 1
 
 						return math.max(var_10_0, var_10_1) < 1
 					end,
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
 						local var_11_0 = arg_11_0.hp_bar.internal_bar_value
 						local var_11_1 = arg_11_0.actual_active_percentage or 1
 						local var_11_2 = math.max(var_11_0, var_11_1)
@@ -538,7 +538,7 @@ local function var_0_14()
 					texture_id = "texture_id",
 					content_id = "hp_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.draw_health_bar
 					end
 				},
@@ -548,7 +548,7 @@ local function var_0_14()
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.draw_health_bar
 					end
 				},
@@ -557,7 +557,7 @@ local function var_0_14()
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_14_0, arg_14_1)
+					content_change_function = function (arg_14_0, arg_14_1)
 						local var_14_0 = arg_14_0.parent
 						local var_14_1 = var_14_0.hp_bar.internal_bar_value
 						local var_14_2 = var_14_0.actual_active_percentage or 1

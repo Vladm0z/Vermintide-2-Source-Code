@@ -53,7 +53,7 @@ return {
 	packages = {
 		"resource_packages/dlcs/geheimnisnacht_2021_event"
 	},
-	server_start_function = function(arg_3_0, arg_3_1)
+	server_start_function = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.backend:get_interface("live_events")
 		local var_3_1 = var_3_0 and var_3_0:get_active_events()
 		local var_3_2
@@ -98,7 +98,7 @@ return {
 
 		Managers.state.entity:system("inventory_system"):register_event_objective("wpn_geheimnisnacht_2021_side_objective", var_0_5, var_0_6)
 	end,
-	spawn_ritual_ring = function(arg_4_0, arg_4_1)
+	spawn_ritual_ring = function (arg_4_0, arg_4_1)
 		local var_4_0 = "units/gameplay/ritual_site_01"
 		local var_4_1 = {
 			health_system = {
@@ -124,7 +124,7 @@ return {
 		local var_4_5 = {
 			far_off_despawn_immunity = true,
 			ignore_breed_limits = true,
-			spawned_func = function(arg_5_0, arg_5_1, arg_5_2)
+			spawned_func = function (arg_5_0, arg_5_1, arg_5_2)
 				ScriptUnit.extension(arg_5_0, "ai_system"):set_perception("perception_regular", "pick_closest_target_with_spillover_wakeup_group")
 
 				local var_5_0 = BLACKBOARDS[arg_5_0]

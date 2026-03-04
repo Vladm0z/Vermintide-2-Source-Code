@@ -14,22 +14,22 @@ end
 
 local var_0_1 = class(Session)
 
-function var_0_1.init(arg_1_0)
+var_0_1.init = function (arg_1_0)
 	arg_1_0._peers = {}
 	arg_1_0._peer_queue = {}
 	arg_1_0._debug_backend_session_done_timeout = false
 	arg_1_0._debug_backend_session_stop_timeout = false
 end
 
-function var_0_1.disable(arg_2_0)
+var_0_1.disable = function (arg_2_0)
 	arg_2_0._disabled = true
 end
 
-function var_0_1.enabled(arg_3_0)
+var_0_1.enabled = function (arg_3_0)
 	return not arg_3_0._disabled
 end
 
-function var_0_1.register_rpcs(arg_4_0, arg_4_1)
+var_0_1.register_rpcs = function (arg_4_0, arg_4_1)
 	arg_4_0._network_event_delegate = arg_4_1
 
 	if Managers.state.network.is_server then
@@ -39,11 +39,11 @@ function var_0_1.register_rpcs(arg_4_0, arg_4_1)
 	end
 end
 
-function var_0_1.rpc_backend_session_join(arg_5_0, arg_5_1, arg_5_2)
+var_0_1.rpc_backend_session_join = function (arg_5_0, arg_5_1, arg_5_2)
 	BackendSession.join(arg_5_2)
 end
 
-function var_0_1.rpc_backend_session_done(arg_6_0, arg_6_1)
+var_0_1.rpc_backend_session_done = function (arg_6_0, arg_6_1)
 	if not arg_6_0._debug_backend_session_done_timeout then
 		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
 
@@ -51,7 +51,7 @@ function var_0_1.rpc_backend_session_done(arg_6_0, arg_6_1)
 	end
 end
 
-function var_0_1._dice_player_done(arg_7_0, arg_7_1)
+var_0_1._dice_player_done = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._dice_data.players
 
 	var_7_0[arg_7_1] = nil
@@ -63,7 +63,7 @@ function var_0_1._dice_player_done(arg_7_0, arg_7_1)
 	end
 end
 
-function var_0_1.reset(arg_8_0)
+var_0_1.reset = function (arg_8_0)
 	if arg_8_0._disabled then
 		arg_8_0._disabled = nil
 	else
@@ -84,13 +84,13 @@ function var_0_1.reset(arg_8_0)
 	end
 end
 
-function var_0_1._unregister_rpcs(arg_9_0)
+var_0_1._unregister_rpcs = function (arg_9_0)
 	arg_9_0._network_event_delegate:unregister(arg_9_0)
 
 	arg_9_0._network_event_delegate = nil
 end
 
-function var_0_1.update(arg_10_0, arg_10_1)
+var_0_1.update = function (arg_10_0, arg_10_1)
 	local var_10_0 = BackendSession.get_state()
 
 	if arg_10_0._log_state then
@@ -135,7 +135,7 @@ function var_0_1.update(arg_10_0, arg_10_1)
 	end
 end
 
-function var_0_1.add_peer(arg_11_0, arg_11_1)
+var_0_1.add_peer = function (arg_11_0, arg_11_1)
 	local var_11_0 = BackendSession.get_session_id()
 
 	if var_11_0 then
@@ -147,7 +147,7 @@ function var_0_1.add_peer(arg_11_0, arg_11_1)
 	end
 end
 
-function var_0_1.end_of_round(arg_12_0)
+var_0_1.end_of_round = function (arg_12_0)
 	local var_12_0 = table.clone(arg_12_0._peers)
 
 	var_12_0[Network.peer_id()] = true
@@ -162,13 +162,13 @@ function var_0_1.end_of_round(arg_12_0)
 	BackendSession.end_of_round()
 end
 
-function var_0_1.received_dice_game_loot(arg_13_0)
+var_0_1.received_dice_game_loot = function (arg_13_0)
 	arg_13_0._post_dice_timeout = Managers.time:time("main") + 20
 
 	Managers.state.network.network_transmit:send_rpc_server("rpc_backend_session_done")
 end
 
-function var_0_1.check_for_errors(arg_14_0)
+var_0_1.check_for_errors = function (arg_14_0)
 	local var_14_0 = arg_14_0._error_data
 
 	arg_14_0._error_data = nil
@@ -178,11 +178,11 @@ end
 
 BackendInterfaceSession = class(BackendInterfaceSession)
 
-function BackendInterfaceSession.init(arg_15_0)
+BackendInterfaceSession.init = function (arg_15_0)
 	arg_15_0._backend_session = var_0_1:new()
 end
 
-function BackendInterfaceSession.setup(arg_16_0, arg_16_1, arg_16_2)
+BackendInterfaceSession.setup = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_2 then
 		arg_16_0._backend_session:disable()
 	else
@@ -190,7 +190,7 @@ function BackendInterfaceSession.setup(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function BackendInterfaceSession.update(arg_17_0)
+BackendInterfaceSession.update = function (arg_17_0)
 	local var_17_0 = arg_17_0._backend_session
 
 	if var_17_0:enabled() then
@@ -198,11 +198,11 @@ function BackendInterfaceSession.update(arg_17_0)
 	end
 end
 
-function BackendInterfaceSession.check_for_errors(arg_18_0)
+BackendInterfaceSession.check_for_errors = function (arg_18_0)
 	return arg_18_0._backend_session:check_for_errors()
 end
 
-function BackendInterfaceSession.add_peer(arg_19_0, arg_19_1)
+BackendInterfaceSession.add_peer = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._backend_session
 
 	if var_19_0:enabled() then
@@ -210,13 +210,13 @@ function BackendInterfaceSession.add_peer(arg_19_0, arg_19_1)
 	end
 end
 
-function BackendInterfaceSession.start(arg_20_0)
+BackendInterfaceSession.start = function (arg_20_0)
 	if arg_20_0._backend_session:enabled() then
 		BackendSession.start()
 	end
 end
 
-function BackendInterfaceSession.end_of_round(arg_21_0)
+BackendInterfaceSession.end_of_round = function (arg_21_0)
 	local var_21_0 = arg_21_0._backend_session
 
 	if var_21_0:enabled() then
@@ -224,7 +224,7 @@ function BackendInterfaceSession.end_of_round(arg_21_0)
 	end
 end
 
-function BackendInterfaceSession.received_dice_game_loot(arg_22_0)
+BackendInterfaceSession.received_dice_game_loot = function (arg_22_0)
 	local var_22_0 = arg_22_0._backend_session
 
 	if var_22_0:enabled() then
@@ -232,22 +232,22 @@ function BackendInterfaceSession.received_dice_game_loot(arg_22_0)
 	end
 end
 
-function BackendInterfaceSession.get_state(arg_23_0)
+BackendInterfaceSession.get_state = function (arg_23_0)
 	local var_23_0 = BackendSession.get_state()
 
 	return var_0_0[var_23_0]
 end
 
-function BackendInterfaceSession.leave(arg_24_0)
+BackendInterfaceSession.leave = function (arg_24_0)
 	arg_24_0._backend_session:reset()
 end
 
 BackendInterfaceSessionLocal = class(BackendInterfaceSessionLocal)
 
-function BackendInterfaceSessionLocal.init(arg_25_0)
+BackendInterfaceSessionLocal.init = function (arg_25_0)
 	local var_25_0 = {}
 
-	function var_25_0.__index()
+	var_25_0.__index = function ()
 		return var_25_0.__index
 	end
 
@@ -256,6 +256,6 @@ function BackendInterfaceSessionLocal.init(arg_25_0)
 	arg_25_0.is_local = true
 end
 
-function BackendInterfaceSessionLocal.ready(arg_27_0)
+BackendInterfaceSessionLocal.ready = function (arg_27_0)
 	return true
 end

@@ -169,7 +169,7 @@ end
 SocialWheelPriority = {
 	{
 		"item",
-		function(arg_11_0, arg_11_1, arg_11_2)
+		function (arg_11_0, arg_11_1, arg_11_2)
 			if not arg_11_2 then
 				return false
 			end
@@ -195,7 +195,7 @@ SocialWheelPriority = {
 	},
 	{
 		"friendly_hero_player",
-		function(arg_12_0, arg_12_1, arg_12_2)
+		function (arg_12_0, arg_12_1, arg_12_2)
 			local var_12_0 = arg_12_2 and Managers.player:owner(arg_12_2)
 
 			if not var_12_0 then
@@ -219,7 +219,7 @@ SocialWheelPriority = {
 	},
 	{
 		"enemy_hero_player",
-		function(arg_13_0, arg_13_1, arg_13_2)
+		function (arg_13_0, arg_13_1, arg_13_2)
 			local var_13_0 = arg_13_2 and Managers.player:owner(arg_13_2)
 
 			if not var_13_0 then
@@ -627,7 +627,7 @@ SocialWheelSettings = {
 			250,
 			250
 		},
-		validation_function = function()
+		validation_function = function ()
 			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end
@@ -726,7 +726,7 @@ SocialWheelSettings = {
 			250,
 			250
 		},
-		validation_function = function()
+		validation_function = function ()
 			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end
@@ -827,7 +827,7 @@ SocialWheelSettings = {
 			250,
 			250
 		},
-		validation_function = function()
+		validation_function = function ()
 			if not (Managers.mechanism:current_mechanism_name() == "versus") then
 				return false
 			end

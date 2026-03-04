@@ -216,7 +216,7 @@ local var_0_0 = {
 			}
 		}
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then

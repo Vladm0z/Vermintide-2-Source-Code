@@ -2,7 +2,7 @@
 
 HeroSpawnerHandler = class(HeroSpawnerHandler)
 
-function HeroSpawnerHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HeroSpawnerHandler.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.profile_synchronizer = arg_1_2
 	arg_1_0.is_server = arg_1_1
 	arg_1_0.request_id = 0
@@ -11,11 +11,11 @@ function HeroSpawnerHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_3:register(arg_1_0, "rpc_to_client_spawn_player")
 end
 
-function HeroSpawnerHandler.destroy(arg_2_0)
+HeroSpawnerHandler.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function HeroSpawnerHandler.spawn_hero_request(arg_3_0, arg_3_1, arg_3_2)
+HeroSpawnerHandler.spawn_hero_request = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0.pending_profile_request then
 		return false
 	end
@@ -34,7 +34,7 @@ function HeroSpawnerHandler.spawn_hero_request(arg_3_0, arg_3_1, arg_3_2)
 	return arg_3_0.request_id
 end
 
-function HeroSpawnerHandler.start(arg_4_0)
+HeroSpawnerHandler.start = function (arg_4_0)
 	local var_4_0 = arg_4_0.player
 	local var_4_1 = var_4_0.player_unit
 
@@ -54,7 +54,7 @@ function HeroSpawnerHandler.start(arg_4_0)
 	arg_4_0.pending_profile_request = true
 end
 
-function HeroSpawnerHandler.update(arg_5_0, arg_5_1)
+HeroSpawnerHandler.update = function (arg_5_0, arg_5_1)
 	if arg_5_0.pending_profile_request then
 		local var_5_0 = arg_5_0.profile_synchronizer
 
@@ -98,7 +98,7 @@ function HeroSpawnerHandler.update(arg_5_0, arg_5_1)
 	end
 end
 
-function HeroSpawnerHandler.save_selected_profile(arg_6_0, arg_6_1)
+HeroSpawnerHandler.save_selected_profile = function (arg_6_0, arg_6_1)
 	local var_6_0 = Managers.save
 
 	SaveData.wanted_profile_index = arg_6_1
@@ -106,13 +106,13 @@ function HeroSpawnerHandler.save_selected_profile(arg_6_0, arg_6_1)
 	var_6_0:auto_save(SaveFileName, SaveData, nil)
 end
 
-function HeroSpawnerHandler.query_result(arg_7_0, arg_7_1)
+HeroSpawnerHandler.query_result = function (arg_7_0, arg_7_1)
 	fassert(arg_7_1 == arg_7_0.request_id, "HeroSpawnerHandler:query_result with invalid request_id")
 
 	return arg_7_0.result
 end
 
-function HeroSpawnerHandler.rpc_to_client_spawn_player(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+HeroSpawnerHandler.rpc_to_client_spawn_player = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	if arg_8_0.hero_spawner_faded_in then
 		Managers.transition:fade_out(1)
 

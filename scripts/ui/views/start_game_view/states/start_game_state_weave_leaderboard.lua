@@ -33,7 +33,7 @@ local var_0_15 = {
 StartGameStateWeaveLeaderboard = class(StartGameStateWeaveLeaderboard)
 StartGameStateWeaveLeaderboard.NAME = "StartGameStateWeaveLeaderboard"
 
-function StartGameStateWeaveLeaderboard.on_enter(arg_1_0, arg_1_1)
+StartGameStateWeaveLeaderboard.on_enter = function (arg_1_0, arg_1_1)
 	print("[StartGameState] Enter Substate StartGameStateWeaveLeaderboard")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -157,7 +157,7 @@ function StartGameStateWeaveLeaderboard.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:play_sound("menu_leaderboard_open")
 end
 
-function StartGameStateWeaveLeaderboard._setup_poll_queue(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+StartGameStateWeaveLeaderboard._setup_poll_queue = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._poll_queues = {}
 
 	for iter_2_0, iter_2_1 in ipairs(arg_2_1) do
@@ -180,14 +180,14 @@ function StartGameStateWeaveLeaderboard._setup_poll_queue(arg_2_0, arg_2_1, arg_
 	end
 end
 
-function StartGameStateWeaveLeaderboard._restart_poll_queue(arg_3_0, arg_3_1)
+StartGameStateWeaveLeaderboard._restart_poll_queue = function (arg_3_0, arg_3_1)
 	arg_3_0._cashed_list_season_data = {}
 
 	arg_3_0:_setup_poll_queue(arg_3_0._leaderboard_tab_data, arg_3_0._filter_data, arg_3_0._season_stat_data)
 	arg_3_0:_handle_next_poll_request(arg_3_1)
 end
 
-function StartGameStateWeaveLeaderboard._add_poll_queue(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+StartGameStateWeaveLeaderboard._add_poll_queue = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if IS_WINDOWS and arg_4_4 ~= arg_4_0._current_season_id then
 		return
 	end
@@ -219,7 +219,7 @@ function StartGameStateWeaveLeaderboard._add_poll_queue(arg_4_0, arg_4_1, arg_4_
 	arg_4_0._polling_done = false
 end
 
-function StartGameStateWeaveLeaderboard._handle_next_poll_request(arg_5_0, arg_5_1)
+StartGameStateWeaveLeaderboard._handle_next_poll_request = function (arg_5_0, arg_5_1)
 	if arg_5_0._polling_done then
 		return true
 	end
@@ -286,7 +286,7 @@ function StartGameStateWeaveLeaderboard._handle_next_poll_request(arg_5_0, arg_5
 	arg_5_0._min_poll_time = Managers.time:time("ui") + var_0_12
 end
 
-function StartGameStateWeaveLeaderboard._update_leaderboard_presentation(arg_6_0)
+StartGameStateWeaveLeaderboard._update_leaderboard_presentation = function (arg_6_0)
 	local var_6_0
 	local var_6_1
 	local var_6_2
@@ -353,7 +353,7 @@ function StartGameStateWeaveLeaderboard._update_leaderboard_presentation(arg_6_0
 	arg_6_0._waiting_for_list = var_6_13
 end
 
-function StartGameStateWeaveLeaderboard._list_including_local_player(arg_7_0, arg_7_1)
+StartGameStateWeaveLeaderboard._list_including_local_player = function (arg_7_0, arg_7_1)
 	if arg_7_1 then
 		for iter_7_0 = 1, #arg_7_1 do
 			if arg_7_1[iter_7_0].local_player then
@@ -365,7 +365,7 @@ function StartGameStateWeaveLeaderboard._list_including_local_player(arg_7_0, ar
 	return false
 end
 
-function StartGameStateWeaveLeaderboard._get_cashed_list_data(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+StartGameStateWeaveLeaderboard._get_cashed_list_data = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0._cashed_list_season_data[arg_8_4]
 
 	if not var_8_0 or not var_8_0[arg_8_1] or not var_8_0[arg_8_1][arg_8_2] then
@@ -375,7 +375,7 @@ function StartGameStateWeaveLeaderboard._get_cashed_list_data(arg_8_0, arg_8_1, 
 	return var_8_0[arg_8_1][arg_8_2][arg_8_3]
 end
 
-function StartGameStateWeaveLeaderboard._cb_cashe_list_data(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+StartGameStateWeaveLeaderboard._cb_cashe_list_data = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	if arg_9_6 then
 		arg_9_0:_add_poll_queue(arg_9_1, arg_9_2, arg_9_3)
 
@@ -432,7 +432,7 @@ function StartGameStateWeaveLeaderboard._cb_cashe_list_data(arg_9_0, arg_9_1, ar
 	end
 end
 
-function StartGameStateWeaveLeaderboard._poll_list(arg_10_0, arg_10_1, arg_10_2)
+StartGameStateWeaveLeaderboard._poll_list = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.backend:get_interface("weaves")
 
 	if arg_10_0._polling_callback then
@@ -458,13 +458,13 @@ function StartGameStateWeaveLeaderboard._poll_list(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_handle_next_poll_request(arg_10_2)
 end
 
-function StartGameStateWeaveLeaderboard._set_refresh_time(arg_11_0, arg_11_1)
+StartGameStateWeaveLeaderboard._set_refresh_time = function (arg_11_0, arg_11_1)
 	arg_11_0._refreshed_at_time = arg_11_1
 
 	arg_11_0:_update_refresh_time(arg_11_1)
 end
 
-function StartGameStateWeaveLeaderboard._update_refresh_time(arg_12_0, arg_12_1)
+StartGameStateWeaveLeaderboard._update_refresh_time = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._refreshed_at_time
 	local var_12_1 = arg_12_0._widgets_by_name.refresh_text.content
 
@@ -489,7 +489,7 @@ function StartGameStateWeaveLeaderboard._update_refresh_time(arg_12_0, arg_12_1)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._initialize_stepper(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+StartGameStateWeaveLeaderboard._initialize_stepper = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	arg_13_0._stepper_settings = arg_13_0._stepper_settings or {}
 
 	local var_13_0 = arg_13_0._stepper_settings
@@ -509,7 +509,7 @@ function StartGameStateWeaveLeaderboard._initialize_stepper(arg_13_0, arg_13_1, 
 	arg_13_0:_set_stepper_read_index(arg_13_1, arg_13_4)
 end
 
-function StartGameStateWeaveLeaderboard._set_stepper_read_index(arg_14_0, arg_14_1, arg_14_2)
+StartGameStateWeaveLeaderboard._set_stepper_read_index = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._stepper_settings[arg_14_1]
 	local var_14_1 = var_14_0.content
 
@@ -520,7 +520,7 @@ function StartGameStateWeaveLeaderboard._set_stepper_read_index(arg_14_0, arg_14
 	var_14_0.widget.content.setting_text = var_14_2.text
 end
 
-function StartGameStateWeaveLeaderboard._on_stepper_pressed(arg_15_0, arg_15_1)
+StartGameStateWeaveLeaderboard._on_stepper_pressed = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = var_15_0.button_hotspot_left
 	local var_15_2 = var_15_0.button_hotspot_right
@@ -532,7 +532,7 @@ function StartGameStateWeaveLeaderboard._on_stepper_pressed(arg_15_0, arg_15_1)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._create_ui_elements(arg_16_0, arg_16_1)
+StartGameStateWeaveLeaderboard._create_ui_elements = function (arg_16_0, arg_16_1)
 	arg_16_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_16_0._console_cursor_widget = UIWidget.init(var_0_4)
 
@@ -572,7 +572,7 @@ function StartGameStateWeaveLeaderboard._create_ui_elements(arg_16_0, arg_16_1)
 	arg_16_0._widgets_by_name.no_placement_text.content.visible = false
 end
 
-function StartGameStateWeaveLeaderboard._setup_tab_widget(arg_17_0, arg_17_1)
+StartGameStateWeaveLeaderboard._setup_tab_widget = function (arg_17_0, arg_17_1)
 	local var_17_0 = #arg_17_1
 	local var_17_1 = arg_17_0._widgets
 	local var_17_2 = arg_17_0._widgets_by_name
@@ -619,7 +619,7 @@ function StartGameStateWeaveLeaderboard._setup_tab_widget(arg_17_0, arg_17_1)
 	end
 end
 
-function StartGameStateWeaveLeaderboard.disable_player_world(arg_18_0)
+StartGameStateWeaveLeaderboard.disable_player_world = function (arg_18_0)
 	if not arg_18_0._player_world_disabled then
 		arg_18_0._player_world_disabled = true
 
@@ -631,7 +631,7 @@ function StartGameStateWeaveLeaderboard.disable_player_world(arg_18_0)
 	end
 end
 
-function StartGameStateWeaveLeaderboard.enable_player_world(arg_19_0)
+StartGameStateWeaveLeaderboard.enable_player_world = function (arg_19_0)
 	if arg_19_0._player_world_disabled then
 		arg_19_0._player_world_disabled = false
 
@@ -643,11 +643,11 @@ function StartGameStateWeaveLeaderboard.enable_player_world(arg_19_0)
 	end
 end
 
-function StartGameStateWeaveLeaderboard.close_on_exit(arg_20_0)
+StartGameStateWeaveLeaderboard.close_on_exit = function (arg_20_0)
 	return arg_20_0._close_on_exit
 end
 
-function StartGameStateWeaveLeaderboard.transitioning(arg_21_0)
+StartGameStateWeaveLeaderboard.transitioning = function (arg_21_0)
 	if arg_21_0.exiting then
 		return true
 	else
@@ -655,23 +655,23 @@ function StartGameStateWeaveLeaderboard.transitioning(arg_21_0)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._wanted_state(arg_22_0)
+StartGameStateWeaveLeaderboard._wanted_state = function (arg_22_0)
 	return (arg_22_0.parent:wanted_state())
 end
 
-function StartGameStateWeaveLeaderboard.wanted_menu_state(arg_23_0)
+StartGameStateWeaveLeaderboard.wanted_menu_state = function (arg_23_0)
 	return arg_23_0._wanted_menu_state
 end
 
-function StartGameStateWeaveLeaderboard.clear_wanted_menu_state(arg_24_0)
+StartGameStateWeaveLeaderboard.clear_wanted_menu_state = function (arg_24_0)
 	arg_24_0._wanted_menu_state = nil
 end
 
-function StartGameStateWeaveLeaderboard.hotkey_allowed(arg_25_0)
+StartGameStateWeaveLeaderboard.hotkey_allowed = function (arg_25_0)
 	return true
 end
 
-function StartGameStateWeaveLeaderboard.on_exit(arg_26_0, arg_26_1)
+StartGameStateWeaveLeaderboard.on_exit = function (arg_26_0, arg_26_1)
 	print("[StartGameState] Exit Substate StartGameStateWeaveLeaderboard")
 
 	arg_26_0.ui_animator = nil
@@ -691,7 +691,7 @@ function StartGameStateWeaveLeaderboard.on_exit(arg_26_0, arg_26_1)
 	arg_26_0._polling_callback = nil
 end
 
-function StartGameStateWeaveLeaderboard._update_transition_timer(arg_27_0, arg_27_1)
+StartGameStateWeaveLeaderboard._update_transition_timer = function (arg_27_0, arg_27_1)
 	if not arg_27_0._transition_timer then
 		return
 	end
@@ -703,11 +703,11 @@ function StartGameStateWeaveLeaderboard._update_transition_timer(arg_27_0, arg_2
 	end
 end
 
-function StartGameStateWeaveLeaderboard.input_service(arg_28_0)
+StartGameStateWeaveLeaderboard.input_service = function (arg_28_0)
 	return arg_28_0.parent:input_service()
 end
 
-function StartGameStateWeaveLeaderboard.update(arg_29_0, arg_29_1, arg_29_2)
+StartGameStateWeaveLeaderboard.update = function (arg_29_0, arg_29_1, arg_29_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -734,7 +734,7 @@ function StartGameStateWeaveLeaderboard.update(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function StartGameStateWeaveLeaderboard.post_update(arg_30_0, arg_30_1, arg_30_2)
+StartGameStateWeaveLeaderboard.post_update = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0.ui_animator:update(arg_30_1)
 	arg_30_0:_update_animations(arg_30_1)
 
@@ -743,7 +743,7 @@ function StartGameStateWeaveLeaderboard.post_update(arg_30_0, arg_30_1, arg_30_2
 	end
 end
 
-function StartGameStateWeaveLeaderboard._update_animations(arg_31_0, arg_31_1)
+StartGameStateWeaveLeaderboard._update_animations = function (arg_31_0, arg_31_1)
 	for iter_31_0, iter_31_1 in pairs(arg_31_0._ui_animations) do
 		UIAnimation.update(iter_31_1, arg_31_1)
 
@@ -774,11 +774,11 @@ function StartGameStateWeaveLeaderboard._update_animations(arg_31_0, arg_31_1)
 	UIWidgetUtils.animate_default_text_tabs(var_31_5, arg_31_1)
 end
 
-function StartGameStateWeaveLeaderboard._is_button_hover_enter(arg_32_0, arg_32_1)
+StartGameStateWeaveLeaderboard._is_button_hover_enter = function (arg_32_0, arg_32_1)
 	return arg_32_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameStateWeaveLeaderboard._is_inventory_tab_pressed(arg_33_0)
+StartGameStateWeaveLeaderboard._is_inventory_tab_pressed = function (arg_33_0)
 	local var_33_0 = arg_33_0._widgets_by_name.option_tabs.content
 	local var_33_1 = var_33_0.amount
 
@@ -792,7 +792,7 @@ function StartGameStateWeaveLeaderboard._is_inventory_tab_pressed(arg_33_0)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._select_tab_by_index(arg_34_0, arg_34_1)
+StartGameStateWeaveLeaderboard._select_tab_by_index = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._widgets_by_name.option_tabs.content
 	local var_34_1 = var_34_0.amount
 
@@ -805,7 +805,7 @@ function StartGameStateWeaveLeaderboard._select_tab_by_index(arg_34_0, arg_34_1)
 	arg_34_0._selected_option_tab_index = arg_34_1
 end
 
-function StartGameStateWeaveLeaderboard._handle_input(arg_35_0, arg_35_1, arg_35_2)
+StartGameStateWeaveLeaderboard._handle_input = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._widgets_by_name
 	local var_35_1 = arg_35_0.parent:input_service()
 	local var_35_2 = var_35_1:get("toggle_menu", true)
@@ -865,11 +865,11 @@ function StartGameStateWeaveLeaderboard._handle_input(arg_35_0, arg_35_1, arg_35
 	end
 end
 
-function StartGameStateWeaveLeaderboard.close_menu(arg_36_0, arg_36_1)
+StartGameStateWeaveLeaderboard.close_menu = function (arg_36_0, arg_36_1)
 	arg_36_0.parent:close_menu(nil, arg_36_1)
 end
 
-function StartGameStateWeaveLeaderboard.set_input_description(arg_37_0, arg_37_1)
+StartGameStateWeaveLeaderboard.set_input_description = function (arg_37_0, arg_37_1)
 	if not arg_37_0._menu_input_description then
 		return
 	end
@@ -878,7 +878,7 @@ function StartGameStateWeaveLeaderboard.set_input_description(arg_37_0, arg_37_1
 	arg_37_0._menu_input_description:set_input_description(arg_37_0._generic_input_actions[arg_37_1])
 end
 
-function StartGameStateWeaveLeaderboard.change_generic_actions(arg_38_0, arg_38_1)
+StartGameStateWeaveLeaderboard.change_generic_actions = function (arg_38_0, arg_38_1)
 	if not arg_38_0._menu_input_description then
 		return
 	end
@@ -887,7 +887,7 @@ function StartGameStateWeaveLeaderboard.change_generic_actions(arg_38_0, arg_38_
 	arg_38_0._menu_input_description:change_generic_actions(arg_38_0._generic_input_actions[arg_38_1])
 end
 
-function StartGameStateWeaveLeaderboard.draw(arg_39_0, arg_39_1, arg_39_2)
+StartGameStateWeaveLeaderboard.draw = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0._ui_renderer
 	local var_39_1 = arg_39_0._ui_top_renderer
 	local var_39_2 = arg_39_0._ui_scenegraph
@@ -1011,7 +1011,7 @@ function StartGameStateWeaveLeaderboard.draw(arg_39_0, arg_39_1, arg_39_2)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._open_profile(arg_40_0, arg_40_1)
+StartGameStateWeaveLeaderboard._open_profile = function (arg_40_0, arg_40_1)
 	if not arg_40_1 then
 		return
 	end
@@ -1023,7 +1023,7 @@ function StartGameStateWeaveLeaderboard._open_profile(arg_40_0, arg_40_1)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._is_button_pressed(arg_41_0, arg_41_1)
+StartGameStateWeaveLeaderboard._is_button_pressed = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_1.content
 	local var_41_1 = var_41_0.button_hotspot or var_41_0.hotspot
 
@@ -1034,11 +1034,11 @@ function StartGameStateWeaveLeaderboard._is_button_pressed(arg_41_0, arg_41_1)
 	end
 end
 
-function StartGameStateWeaveLeaderboard.play_sound(arg_42_0, arg_42_1)
+StartGameStateWeaveLeaderboard.play_sound = function (arg_42_0, arg_42_1)
 	arg_42_0.parent:play_sound(arg_42_1)
 end
 
-function StartGameStateWeaveLeaderboard._start_transition_animation(arg_43_0, arg_43_1, arg_43_2)
+StartGameStateWeaveLeaderboard._start_transition_animation = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = {
 		wwise_world = arg_43_0._wwise_world,
 		render_settings = arg_43_0._render_settings
@@ -1049,7 +1049,7 @@ function StartGameStateWeaveLeaderboard._start_transition_animation(arg_43_0, ar
 	arg_43_0._animations[arg_43_1] = var_43_2
 end
 
-function StartGameStateWeaveLeaderboard.set_fullscreen_effect_enable_state(arg_44_0, arg_44_1)
+StartGameStateWeaveLeaderboard.set_fullscreen_effect_enable_state = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._ui_renderer.world
 	local var_44_1 = World.get_data(var_44_0, "shading_environment")
 
@@ -1062,7 +1062,7 @@ function StartGameStateWeaveLeaderboard.set_fullscreen_effect_enable_state(arg_4
 	arg_44_0._fullscreen_effect_enabled = arg_44_1
 end
 
-function StartGameStateWeaveLeaderboard._setup_list_widget(arg_45_0)
+StartGameStateWeaveLeaderboard._setup_list_widget = function (arg_45_0)
 	local var_45_0 = true
 	local var_45_1 = "list_entry"
 	local var_45_2 = var_0_2[var_45_1].size
@@ -1071,7 +1071,7 @@ function StartGameStateWeaveLeaderboard._setup_list_widget(arg_45_0)
 	arg_45_0._list_widget = UIWidget.init(var_45_3)
 end
 
-function StartGameStateWeaveLeaderboard._create_list_entries(arg_46_0, arg_46_1)
+StartGameStateWeaveLeaderboard._create_list_entries = function (arg_46_0, arg_46_1)
 	local var_46_0 = {}
 	local var_46_1 = #arg_46_1
 
@@ -1098,7 +1098,7 @@ function StartGameStateWeaveLeaderboard._create_list_entries(arg_46_0, arg_46_1)
 	return var_46_0
 end
 
-function StartGameStateWeaveLeaderboard._populate_list(arg_47_0, arg_47_1, arg_47_2)
+StartGameStateWeaveLeaderboard._populate_list = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_1 and #arg_47_1 or 0
 
 	arg_47_0._list_entries = arg_47_1
@@ -1111,7 +1111,7 @@ function StartGameStateWeaveLeaderboard._populate_list(arg_47_0, arg_47_1, arg_4
 	arg_47_0._widgets_by_name.no_placement_text.content.visible = arg_47_2
 end
 
-function StartGameStateWeaveLeaderboard._calculate_list_height(arg_48_0, arg_48_1)
+StartGameStateWeaveLeaderboard._calculate_list_height = function (arg_48_0, arg_48_1)
 	local var_48_0 = var_0_7
 	local var_48_1 = arg_48_0._list_widget.content.size
 
@@ -1126,7 +1126,7 @@ function StartGameStateWeaveLeaderboard._calculate_list_height(arg_48_0, arg_48_
 	arg_48_0._total_list_height = var_48_0 + var_0_7
 end
 
-function StartGameStateWeaveLeaderboard._initialize_scrollbar(arg_49_0)
+StartGameStateWeaveLeaderboard._initialize_scrollbar = function (arg_49_0)
 	local var_49_0 = var_0_2.list_mask.size
 	local var_49_1 = var_0_2.list_scrollbar.size
 	local var_49_2 = var_49_0[2]
@@ -1142,7 +1142,7 @@ function StartGameStateWeaveLeaderboard._initialize_scrollbar(arg_49_0)
 	arg_49_0._widgets_by_name.list_scrollbar.content.visible = var_49_2 < var_49_3
 end
 
-function StartGameStateWeaveLeaderboard._update_scroll_position(arg_50_0)
+StartGameStateWeaveLeaderboard._update_scroll_position = function (arg_50_0)
 	local var_50_0 = arg_50_0._scrollbar_logic:get_scrolled_length()
 
 	if var_50_0 ~= arg_50_0._scrolled_length then
@@ -1151,7 +1151,7 @@ function StartGameStateWeaveLeaderboard._update_scroll_position(arg_50_0)
 	end
 end
 
-function StartGameStateWeaveLeaderboard._update_visible_list_entries(arg_51_0)
+StartGameStateWeaveLeaderboard._update_visible_list_entries = function (arg_51_0)
 	local var_51_0 = arg_51_0._scrollbar_logic
 
 	if not var_51_0:enabled() then
@@ -1190,7 +1190,7 @@ function StartGameStateWeaveLeaderboard._update_visible_list_entries(arg_51_0)
 	arg_51_0._list_draw_index = var_51_9
 end
 
-function StartGameStateWeaveLeaderboard._get_scrollbar_percentage_by_index(arg_52_0, arg_52_1)
+StartGameStateWeaveLeaderboard._get_scrollbar_percentage_by_index = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0._scrollbar_logic
 
 	if var_52_0:enabled() then
@@ -1227,10 +1227,10 @@ function StartGameStateWeaveLeaderboard._get_scrollbar_percentage_by_index(arg_5
 	return 0
 end
 
-function StartGameStateWeaveLeaderboard._animate_element_by_time(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+StartGameStateWeaveLeaderboard._animate_element_by_time = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5, math.ease_out_quad))
 end
 
-function StartGameStateWeaveLeaderboard._animate_element_by_catmullrom(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8)
+StartGameStateWeaveLeaderboard._animate_element_by_catmullrom = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8))
 end

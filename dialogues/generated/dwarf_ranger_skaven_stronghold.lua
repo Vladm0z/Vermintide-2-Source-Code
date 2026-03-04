@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_skaven_stronghold.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_gameplay_chieftain_tips_special_attack_cleave",

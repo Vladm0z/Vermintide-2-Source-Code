@@ -15,7 +15,7 @@ local var_0_10 = "special_1_press"
 StartGameWindowTwitchOverviewConsole = class(StartGameWindowTwitchOverviewConsole)
 StartGameWindowTwitchOverviewConsole.NAME = "StartGameWindowTwitchOverviewConsole"
 
-function StartGameWindowTwitchOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowTwitchOverviewConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowTwitchOverviewConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -66,7 +66,7 @@ function StartGameWindowTwitchOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowTwitchOverviewConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowTwitchOverviewConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -76,7 +76,7 @@ function StartGameWindowTwitchOverviewConsole._start_transition_animation(arg_2_
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowTwitchOverviewConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowTwitchOverviewConsole._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = {}
@@ -138,7 +138,7 @@ function StartGameWindowTwitchOverviewConsole._create_ui_elements(arg_3_0, arg_3
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._set_input_description(arg_4_0, arg_4_1)
+StartGameWindowTwitchOverviewConsole._set_input_description = function (arg_4_0, arg_4_1)
 	if arg_4_0._is_server then
 		if arg_4_1 then
 			arg_4_0._parent:change_generic_actions("default_twitch_connected")
@@ -154,7 +154,7 @@ function StartGameWindowTwitchOverviewConsole._set_input_description(arg_4_0, ar
 	arg_4_0._input_description_connected = arg_4_1
 end
 
-function StartGameWindowTwitchOverviewConsole._set_disconnect_button_text(arg_5_0)
+StartGameWindowTwitchOverviewConsole._set_disconnect_button_text = function (arg_5_0)
 	local var_5_0 = arg_5_0._widgets_by_name.button_2
 
 	if var_5_0 then
@@ -164,7 +164,7 @@ function StartGameWindowTwitchOverviewConsole._set_disconnect_button_text(arg_5_
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole.on_exit(arg_6_0, arg_6_1)
+StartGameWindowTwitchOverviewConsole.on_exit = function (arg_6_0, arg_6_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowTwitchOverviewConsole")
 
 	arg_6_0._ui_animator = nil
@@ -178,11 +178,11 @@ function StartGameWindowTwitchOverviewConsole.on_exit(arg_6_0, arg_6_1)
 	arg_6_0:_set_active(false)
 end
 
-function StartGameWindowTwitchOverviewConsole.set_focus(arg_7_0, arg_7_1)
+StartGameWindowTwitchOverviewConsole.set_focus = function (arg_7_0, arg_7_1)
 	arg_7_0._is_focused = arg_7_1
 end
 
-function StartGameWindowTwitchOverviewConsole.update(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowTwitchOverviewConsole.update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_input_description()
 	arg_8_0:_update_can_play()
 	arg_8_0:_update_animations(arg_8_1)
@@ -191,11 +191,11 @@ function StartGameWindowTwitchOverviewConsole.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_draw(arg_8_1)
 end
 
-function StartGameWindowTwitchOverviewConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowTwitchOverviewConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function StartGameWindowTwitchOverviewConsole._update_input_description(arg_10_0)
+StartGameWindowTwitchOverviewConsole._update_input_description = function (arg_10_0)
 	local var_10_0 = arg_10_0._input_description_connected
 	local var_10_1 = Managers.twitch and Managers.twitch:is_connected()
 
@@ -204,7 +204,7 @@ function StartGameWindowTwitchOverviewConsole._update_input_description(arg_10_0
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._update_can_play(arg_11_0)
+StartGameWindowTwitchOverviewConsole._update_can_play = function (arg_11_0)
 	if arg_11_0._is_server then
 		local var_11_0 = arg_11_0:_can_play()
 
@@ -225,7 +225,7 @@ function StartGameWindowTwitchOverviewConsole._update_can_play(arg_11_0)
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._set_active(arg_12_0, arg_12_1)
+StartGameWindowTwitchOverviewConsole._set_active = function (arg_12_0, arg_12_1)
 	if arg_12_1 then
 		Managers.irc:register_message_callback("twitch_gamepad", Irc.CHANNEL_MSG, callback(arg_12_0, "cb_on_message_received"))
 	else
@@ -237,7 +237,7 @@ function StartGameWindowTwitchOverviewConsole._set_active(arg_12_0, arg_12_1)
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole.cb_on_message_received(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+StartGameWindowTwitchOverviewConsole.cb_on_message_received = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = arg_13_0._widgets_by_name.chat_output_widget.content
 	local var_13_1 = var_13_0.message_tables
 	local var_13_2 = {}
@@ -255,7 +255,7 @@ function StartGameWindowTwitchOverviewConsole.cb_on_message_received(arg_13_0, a
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._handle_virtual_keyboard(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowTwitchOverviewConsole._handle_virtual_keyboard = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0._virtual_keyboard_id then
 		return
 	end
@@ -299,7 +299,7 @@ function StartGameWindowTwitchOverviewConsole._handle_virtual_keyboard(arg_14_0,
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._handle_input(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowTwitchOverviewConsole._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_0._virtual_keyboard_id then
 		return
 	end
@@ -356,7 +356,7 @@ function StartGameWindowTwitchOverviewConsole._handle_input(arg_15_0, arg_15_1, 
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._handle_twitch_login_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+StartGameWindowTwitchOverviewConsole._handle_twitch_login_input = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if not Managers.twitch:is_connecting() then
 		local var_16_0 = Managers.twitch:is_connected()
 		local var_16_1 = arg_16_0._widgets_by_name.frame_widget
@@ -454,7 +454,7 @@ function StartGameWindowTwitchOverviewConsole._handle_twitch_login_input(arg_16_
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._is_button_pressed(arg_17_0, arg_17_1)
+StartGameWindowTwitchOverviewConsole._is_button_pressed = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.content.button_hotspot
 
 	if var_17_0.on_release then
@@ -464,23 +464,23 @@ function StartGameWindowTwitchOverviewConsole._is_button_pressed(arg_17_0, arg_1
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._is_button_hover_enter(arg_18_0, arg_18_1)
+StartGameWindowTwitchOverviewConsole._is_button_hover_enter = function (arg_18_0, arg_18_1)
 	return arg_18_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowTwitchOverviewConsole.cb_connection_success_callback(arg_19_0, arg_19_1)
+StartGameWindowTwitchOverviewConsole.cb_connection_success_callback = function (arg_19_0, arg_19_1)
 	arg_19_0:_set_disconnect_button_text()
 	arg_19_0:_setup_connected_status()
 	arg_19_0:_set_active(true)
 end
 
-function StartGameWindowTwitchOverviewConsole._setup_connected_status(arg_20_0)
+StartGameWindowTwitchOverviewConsole._setup_connected_status = function (arg_20_0)
 	local var_20_0 = Managers.twitch and Managers.twitch:user_name() or "N/A"
 
 	arg_20_0._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. var_20_0
 end
 
-function StartGameWindowTwitchOverviewConsole._can_play(arg_21_0)
+StartGameWindowTwitchOverviewConsole._can_play = function (arg_21_0)
 	if not arg_21_0._is_server then
 		return false
 	end
@@ -493,7 +493,7 @@ function StartGameWindowTwitchOverviewConsole._can_play(arg_21_0)
 	return var_21_1 ~= nil and var_21_2 ~= nil and var_21_3
 end
 
-function StartGameWindowTwitchOverviewConsole._update_mission_option(arg_22_0)
+StartGameWindowTwitchOverviewConsole._update_mission_option = function (arg_22_0)
 	local var_22_0 = arg_22_0._parent:get_selected_level_id()
 
 	if var_22_0 then
@@ -501,7 +501,7 @@ function StartGameWindowTwitchOverviewConsole._update_mission_option(arg_22_0)
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._set_selected_level(arg_23_0, arg_23_1)
+StartGameWindowTwitchOverviewConsole._set_selected_level = function (arg_23_0, arg_23_1)
 	local var_23_0 = LevelSettings[arg_23_1]
 	local var_23_1 = arg_23_0._widgets_by_name.mission_setting
 
@@ -517,7 +517,7 @@ function StartGameWindowTwitchOverviewConsole._set_selected_level(arg_23_0, arg_
 	var_23_1.content.icon_frame_texture = var_23_4
 end
 
-function StartGameWindowTwitchOverviewConsole._update_difficulty_option(arg_24_0)
+StartGameWindowTwitchOverviewConsole._update_difficulty_option = function (arg_24_0)
 	local var_24_0 = arg_24_0._parent:get_difficulty_option()
 
 	if var_24_0 then
@@ -536,7 +536,7 @@ function StartGameWindowTwitchOverviewConsole._update_difficulty_option(arg_24_0
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._option_selected(arg_25_0, arg_25_1, arg_25_2)
+StartGameWindowTwitchOverviewConsole._option_selected = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._parent
 	local var_25_1 = var_25_0:get_twitch_settings(arg_25_0._mechanism_name) or var_25_0:get_twitch_settings("adventure")
 	local var_25_2 = var_0_7[arg_25_1]
@@ -556,7 +556,7 @@ function StartGameWindowTwitchOverviewConsole._option_selected(arg_25_0, arg_25_
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._handle_new_selection(arg_26_0, arg_26_1)
+StartGameWindowTwitchOverviewConsole._handle_new_selection = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._widgets_by_name
 	local var_26_1 = #var_0_7
 
@@ -583,7 +583,7 @@ function StartGameWindowTwitchOverviewConsole._handle_new_selection(arg_26_0, ar
 	arg_26_0._input_index = arg_26_1
 end
 
-function StartGameWindowTwitchOverviewConsole._update_animations(arg_27_0, arg_27_1)
+StartGameWindowTwitchOverviewConsole._update_animations = function (arg_27_0, arg_27_1)
 	if not IS_PS4 and not Managers.input:is_device_active("gamepad") then
 		arg_27_0:_update_button_animations(arg_27_1)
 	end
@@ -611,7 +611,7 @@ function StartGameWindowTwitchOverviewConsole._update_animations(arg_27_0, arg_2
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._update_button_animations(arg_28_0, arg_28_1)
+StartGameWindowTwitchOverviewConsole._update_button_animations = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._widgets_by_name
 	local var_28_1 = "button_"
 
@@ -622,7 +622,7 @@ function StartGameWindowTwitchOverviewConsole._update_button_animations(arg_28_0
 	end
 end
 
-function StartGameWindowTwitchOverviewConsole._animate_button(arg_29_0, arg_29_1, arg_29_2)
+StartGameWindowTwitchOverviewConsole._animate_button = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_1.content.button_hotspot
 	local var_29_1 = 20
 	local var_29_2 = var_29_0.input_progress or 0
@@ -672,7 +672,7 @@ function StartGameWindowTwitchOverviewConsole._animate_button(arg_29_0, arg_29_1
 	var_29_0.selection_progress = var_29_5
 end
 
-function StartGameWindowTwitchOverviewConsole._draw(arg_30_0, arg_30_1)
+StartGameWindowTwitchOverviewConsole._draw = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._ui_top_renderer
 	local var_30_1 = arg_30_0._ui_scenegraph
 	local var_30_2 = arg_30_0._parent:window_input_service()
@@ -702,6 +702,6 @@ function StartGameWindowTwitchOverviewConsole._draw(arg_30_0, arg_30_1)
 	UIRenderer.end_pass(var_30_0)
 end
 
-function StartGameWindowTwitchOverviewConsole._play_sound(arg_31_0, arg_31_1)
+StartGameWindowTwitchOverviewConsole._play_sound = function (arg_31_0, arg_31_1)
 	arg_31_0._parent:play_sound(arg_31_1)
 end

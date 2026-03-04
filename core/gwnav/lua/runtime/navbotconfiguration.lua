@@ -8,11 +8,11 @@ local var_0_2 = safe_require("core/gwnav/lua/runtime/navhelpers")
 local var_0_3 = stingray.Unit
 local var_0_4 = stingray.GwNavTagLayerCostTable
 
-function var_0_1.get_configuration_value(arg_1_0, arg_1_1, ...)
+var_0_1.get_configuration_value = function (arg_1_0, arg_1_1, ...)
 	return var_0_2.unit_script_data(arg_1_0.unit, arg_1_1, ...)
 end
 
-function var_0_1.init(arg_2_0, arg_2_1)
+var_0_1.init = function (arg_2_0, arg_2_1)
 	arg_2_0.unit = arg_2_1
 	arg_2_0.config_name = "GwNavBotConfiguration"
 	arg_2_0.navtag_layer_cost_table = var_0_4.create()
@@ -65,7 +65,7 @@ function var_0_1.init(arg_2_0, arg_2_1)
 	arg_2_0.is_player = arg_2_0:get_configuration_value(false, arg_2_0.config_name, "is_player")
 end
 
-function var_0_1.configure_bot(arg_3_0, arg_3_1)
+var_0_1.configure_bot = function (arg_3_0, arg_3_1)
 	arg_3_1:set_use_avoidance(arg_3_0.enable_avoidance)
 	arg_3_1:set_use_channel(arg_3_0.use_channel)
 	arg_3_1:set_avoidance_computer_config(arg_3_0.avoidance_angle_span, arg_3_0.avoidance_minimal_time_to_collision, arg_3_0.avoidance_sample_count)
@@ -78,7 +78,7 @@ function var_0_1.configure_bot(arg_3_0, arg_3_1)
 	arg_3_1:set_navtag_layer_cost_table(arg_3_0.navtag_layer_cost_table)
 end
 
-function var_0_1.shutdown(arg_4_0)
+var_0_1.shutdown = function (arg_4_0)
 	var_0_4.destroy(arg_4_0.navtag_layer_cost_table)
 
 	arg_4_0.navtag_layer_cost_table = nil

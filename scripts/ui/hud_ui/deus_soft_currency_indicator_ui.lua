@@ -4,14 +4,14 @@ local var_0_0 = local_require("scripts/ui/hud_ui/deus_soft_currency_indicator_ui
 
 DeusSoftCurrencyIndicatorUI = class(DeusSoftCurrencyIndicatorUI)
 
-function DeusSoftCurrencyIndicatorUI.init(arg_1_0, arg_1_1, arg_1_2)
+DeusSoftCurrencyIndicatorUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui_context = arg_1_2
 
 	arg_1_0:_create_ui_elements()
 end
 
-function DeusSoftCurrencyIndicatorUI._create_ui_elements(arg_2_0)
+DeusSoftCurrencyIndicatorUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0._cached_coin_count = nil
 	arg_2_0._animation_id = nil
@@ -21,7 +21,7 @@ function DeusSoftCurrencyIndicatorUI._create_ui_elements(arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-function DeusSoftCurrencyIndicatorUI.play_animation(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+DeusSoftCurrencyIndicatorUI.play_animation = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = {
 		from_coin_count = arg_3_2,
 		to_coin_count = arg_3_3,
@@ -32,7 +32,7 @@ function DeusSoftCurrencyIndicatorUI.play_animation(arg_3_0, arg_3_1, arg_3_2, a
 	arg_3_0._animation_id = arg_3_0._ui_animator:start_animation(arg_3_1, arg_3_0._coin_widget, var_0_0.scenegraph_definition, var_3_0, nil, var_3_1)
 end
 
-function DeusSoftCurrencyIndicatorUI._update_animations(arg_4_0, arg_4_1)
+DeusSoftCurrencyIndicatorUI._update_animations = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._ui_animator
 
 	var_4_0:update(arg_4_1)
@@ -44,11 +44,11 @@ function DeusSoftCurrencyIndicatorUI._update_animations(arg_4_0, arg_4_1)
 	end
 end
 
-function DeusSoftCurrencyIndicatorUI.set_visible(arg_5_0, arg_5_1)
+DeusSoftCurrencyIndicatorUI.set_visible = function (arg_5_0, arg_5_1)
 	return
 end
 
-function DeusSoftCurrencyIndicatorUI._get_coins(arg_6_0)
+DeusSoftCurrencyIndicatorUI._get_coins = function (arg_6_0)
 	local var_6_0 = Managers.mechanism:game_mechanism()
 
 	if not var_6_0 or not var_6_0.get_deus_run_controller then
@@ -66,7 +66,7 @@ function DeusSoftCurrencyIndicatorUI._get_coins(arg_6_0)
 	end
 end
 
-function DeusSoftCurrencyIndicatorUI.update(arg_7_0, arg_7_1, arg_7_2)
+DeusSoftCurrencyIndicatorUI.update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0:_get_coins()
 
 	if not arg_7_0._animation_id and arg_7_0._cached_coin_count ~= var_7_0 then
@@ -83,7 +83,7 @@ function DeusSoftCurrencyIndicatorUI.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-function DeusSoftCurrencyIndicatorUI._draw(arg_8_0, arg_8_1, arg_8_2)
+DeusSoftCurrencyIndicatorUI._draw = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._ui_renderer
 	local var_8_1 = arg_8_0._ui_scenegraph
 	local var_8_2 = Managers.input:get_service("ingame_menu")

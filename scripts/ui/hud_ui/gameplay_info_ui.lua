@@ -8,7 +8,7 @@ local var_0_4 = var_0_0.animation_definitions
 
 GameplayInfoUI = class(GameplayInfoUI)
 
-function GameplayInfoUI.init(arg_1_0, arg_1_1, arg_1_2)
+GameplayInfoUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._render_settings = {
@@ -23,7 +23,7 @@ function GameplayInfoUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "add_gameplay_info_event", "add_gameplay_info_event", "update_range_to_spawn", "on_update_range_to_spawn")
 end
 
-function GameplayInfoUI.add_gameplay_info_event(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+GameplayInfoUI.add_gameplay_info_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_0._active_event = arg_2_1
 	arg_2_0._active_reason = arg_2_3
 	arg_2_0._show = arg_2_2
@@ -32,11 +32,11 @@ function GameplayInfoUI.add_gameplay_info_event(arg_2_0, arg_2_1, arg_2_2, arg_2
 	arg_2_0:_update_button_prompts()
 
 	if arg_2_0._first_time then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function GameplayInfoUI._update_spawn_info_texts(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+GameplayInfoUI._update_spawn_info_texts = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._widgets_by_name.spawn_text
 	local var_3_1 = arg_3_0._widgets_by_name.spawn_reason
 
@@ -46,7 +46,7 @@ function GameplayInfoUI._update_spawn_info_texts(arg_3_0, arg_3_1, arg_3_2, arg_
 	var_3_1.content.visible = arg_3_2 ~= nil
 end
 
-function GameplayInfoUI._update_selected_career_data(arg_4_0)
+GameplayInfoUI._update_selected_career_data = function (arg_4_0)
 	local var_4_0, var_4_1 = arg_4_0:_get_current_selected_career_data()
 	local var_4_2 = arg_4_0._widgets_by_name.spawn_help.content
 
@@ -54,7 +54,7 @@ function GameplayInfoUI._update_selected_career_data(arg_4_0)
 	var_4_2.pick_name = Localize(var_4_0)
 end
 
-function GameplayInfoUI._update_button_prompts(arg_5_0)
+GameplayInfoUI._update_button_prompts = function (arg_5_0)
 	local var_5_0 = arg_5_0._active_event
 	local var_5_1 = arg_5_0._active_reason
 
@@ -148,14 +148,14 @@ function GameplayInfoUI._update_button_prompts(arg_5_0)
 	arg_5_0:_update_spawn_info_texts(var_5_4, var_5_7, var_5_6)
 end
 
-function GameplayInfoUI._set_sub_text(arg_6_0, arg_6_1)
+GameplayInfoUI._set_sub_text = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._widgets_by_name.ghost_mode_text_sub
 
 	var_6_0.content.text = arg_6_1 or ""
 	var_6_0.content.visible = arg_6_1 ~= nil
 end
 
-function GameplayInfoUI._create_ui_elements(arg_7_0)
+GameplayInfoUI._create_ui_elements = function (arg_7_0)
 	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_7_0._ui_animator = UIAnimator:new(arg_7_0._ui_scenegraph, var_0_4)
 	arg_7_0._animations = {}
@@ -185,21 +185,21 @@ function GameplayInfoUI._create_ui_elements(arg_7_0)
 	UIRenderer.clear_scenegraph_queue(arg_7_0._ui_renderer)
 end
 
-function GameplayInfoUI.destroy(arg_8_0)
+GameplayInfoUI.destroy = function (arg_8_0)
 	local var_8_0 = Managers.state.event
 
 	var_8_0:unregister("add_gameplay_info_event", arg_8_0)
 	var_8_0:unregister("update_range_to_spawn", arg_8_0)
 end
 
-function GameplayInfoUI.on_update_range_to_spawn(arg_9_0, arg_9_1)
+GameplayInfoUI.on_update_range_to_spawn = function (arg_9_0, arg_9_1)
 	arg_9_1 = math.max(arg_9_1, 1)
 	arg_9_0._range = string.format("%2dm", arg_9_1)
 
 	arg_9_0:_update_button_prompts()
 end
 
-function GameplayInfoUI.update(arg_10_0, arg_10_1, arg_10_2)
+GameplayInfoUI.update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._animations
 	local var_10_1 = arg_10_0._ui_animator
 	local var_10_2 = Managers.input:is_device_active("gamepad")
@@ -226,7 +226,7 @@ function GameplayInfoUI.update(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_draw(arg_10_1)
 end
 
-function GameplayInfoUI._draw(arg_11_0, arg_11_1)
+GameplayInfoUI._draw = function (arg_11_0, arg_11_1)
 	if not arg_11_0._show then
 		return
 	end
@@ -254,7 +254,7 @@ function GameplayInfoUI._draw(arg_11_0, arg_11_1)
 	UIRenderer.end_pass(var_11_0)
 end
 
-function GameplayInfoUI._set_tele_prompt(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+GameplayInfoUI._set_tele_prompt = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = arg_12_0._widgets_by_name
 	local var_12_1 = arg_12_0._ui_scenegraph
 	local var_12_2 = Managers.input
@@ -284,7 +284,7 @@ function GameplayInfoUI._set_tele_prompt(arg_12_0, arg_12_1, arg_12_2, arg_12_3,
 	var_12_6.content.visible = not arg_12_6
 end
 
-function GameplayInfoUI._start_animation(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+GameplayInfoUI._start_animation = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = {
 		wwise_world = arg_13_0._wwise_world,
 		render_settings = arg_13_0._render_settings,
@@ -298,7 +298,7 @@ function GameplayInfoUI._start_animation(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	}
 end
 
-function GameplayInfoUI._update_catchup_tele_prompt(arg_14_0)
+GameplayInfoUI._update_catchup_tele_prompt = function (arg_14_0)
 	local var_14_0 = "Player"
 	local var_14_1 = "ghost_mode_enter"
 	local var_14_2 = Localize("vs_spawning_ghost_catchup")

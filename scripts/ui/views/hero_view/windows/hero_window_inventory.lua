@@ -10,7 +10,7 @@ local var_0_7 = false
 HeroWindowInventory = class(HeroWindowInventory)
 HeroWindowInventory.NAME = "HeroWindowInventory"
 
-function HeroWindowInventory.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowInventory.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowInventory")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -52,7 +52,7 @@ function HeroWindowInventory.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_inventory_grid(var_1_2)
 end
 
-function HeroWindowInventory.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowInventory.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
 	local var_2_0 = {}
@@ -81,7 +81,7 @@ function HeroWindowInventory.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function HeroWindowInventory.on_exit(arg_3_0, arg_3_1)
+HeroWindowInventory.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowInventory")
 
 	arg_3_0.ui_animator = nil
@@ -91,7 +91,7 @@ function HeroWindowInventory.on_exit(arg_3_0, arg_3_1)
 	arg_3_0._item_grid = nil
 end
 
-function HeroWindowInventory.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowInventory.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_7 then
 		var_0_7 = false
 
@@ -107,11 +107,11 @@ function HeroWindowInventory.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HeroWindowInventory.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowInventory.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function HeroWindowInventory._update_animations(arg_6_0, arg_6_1)
+HeroWindowInventory._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -128,7 +128,7 @@ function HeroWindowInventory._update_animations(arg_6_0, arg_6_1)
 	local var_6_2 = arg_6_0._widgets_by_name
 end
 
-function HeroWindowInventory._is_button_pressed(arg_7_0, arg_7_1)
+HeroWindowInventory._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -138,13 +138,13 @@ function HeroWindowInventory._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowInventory._is_button_hovered(arg_8_0, arg_8_1)
+HeroWindowInventory._is_button_hovered = function (arg_8_0, arg_8_1)
 	if arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowInventory._handle_input(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowInventory._handle_input = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._widgets_by_name
 	local var_9_1 = arg_9_0.parent
 	local var_9_2 = arg_9_0._item_grid
@@ -204,7 +204,7 @@ function HeroWindowInventory._handle_input(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function HeroWindowInventory._update_page_info(arg_10_0)
+HeroWindowInventory._update_page_info = function (arg_10_0)
 	local var_10_0, var_10_1 = arg_10_0._item_grid:get_page_info()
 
 	if var_10_0 ~= arg_10_0._current_page or var_10_1 ~= arg_10_0._total_pages then
@@ -222,7 +222,7 @@ function HeroWindowInventory._update_page_info(arg_10_0)
 	end
 end
 
-function HeroWindowInventory._update_crafting_material_panel(arg_11_0)
+HeroWindowInventory._update_crafting_material_panel = function (arg_11_0)
 	local var_11_0 = Managers.backend:get_interface("items")
 	local var_11_1 = UISettings.crafting_material_icons_small
 	local var_11_2 = UISettings.crafting_material_order
@@ -258,7 +258,7 @@ function HeroWindowInventory._update_crafting_material_panel(arg_11_0)
 	end
 end
 
-function HeroWindowInventory._update_inventory_items(arg_12_0)
+HeroWindowInventory._update_inventory_items = function (arg_12_0)
 	local var_12_0 = arg_12_0._item_grid
 	local var_12_1 = arg_12_0.parent
 	local var_12_2 = var_12_1.inventory_sync_id
@@ -282,7 +282,7 @@ function HeroWindowInventory._update_inventory_items(arg_12_0)
 	end
 end
 
-function HeroWindowInventory._update_disabled_backend_ids(arg_13_0)
+HeroWindowInventory._update_disabled_backend_ids = function (arg_13_0)
 	local var_13_0 = arg_13_0._item_grid
 	local var_13_1 = arg_13_0.parent.disabled_backend_ids_sync_id
 
@@ -301,12 +301,12 @@ function HeroWindowInventory._update_disabled_backend_ids(arg_13_0)
 	end
 end
 
-function HeroWindowInventory._exit(arg_14_0, arg_14_1)
+HeroWindowInventory._exit = function (arg_14_0, arg_14_1)
 	arg_14_0.exit = true
 	arg_14_0.exit_level_id = arg_14_1
 end
 
-function HeroWindowInventory.draw(arg_15_0, arg_15_1)
+HeroWindowInventory.draw = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.ui_renderer
 	local var_15_1 = arg_15_0.ui_top_renderer
 	local var_15_2 = arg_15_0.ui_scenegraph
@@ -321,11 +321,11 @@ function HeroWindowInventory.draw(arg_15_0, arg_15_1)
 	UIRenderer.end_pass(var_15_1)
 end
 
-function HeroWindowInventory._play_sound(arg_16_0, arg_16_1)
+HeroWindowInventory._play_sound = function (arg_16_0, arg_16_1)
 	arg_16_0.parent:play_sound(arg_16_1)
 end
 
-function HeroWindowInventory._change_category_by_name(arg_17_0, arg_17_1)
+HeroWindowInventory._change_category_by_name = function (arg_17_0, arg_17_1)
 	for iter_17_0, iter_17_1 in ipairs(var_0_0) do
 		if iter_17_1.name == arg_17_1 then
 			arg_17_0:_change_category_by_index(iter_17_0)
@@ -335,7 +335,7 @@ function HeroWindowInventory._change_category_by_name(arg_17_0, arg_17_1)
 	end
 end
 
-function HeroWindowInventory._change_category_by_index(arg_18_0, arg_18_1, arg_18_2)
+HeroWindowInventory._change_category_by_index = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_2 then
 		arg_18_1 = arg_18_0._current_category_index or 1
 	end
@@ -359,7 +359,7 @@ function HeroWindowInventory._change_category_by_index(arg_18_0, arg_18_1, arg_1
 	return true
 end
 
-function HeroWindowInventory.change_item_filter(arg_19_0, arg_19_1, arg_19_2)
+HeroWindowInventory.change_item_filter = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_2 = arg_19_2 or arg_19_2 == nil
 
 	arg_19_0._item_grid:change_item_filter(arg_19_1, arg_19_2)

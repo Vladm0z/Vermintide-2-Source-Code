@@ -82,7 +82,7 @@ GlobalShaderFlags = GlobalShaderFlags or {}
 GlobalShaderFlags.stored_values = GlobalShaderFlags.stored_values or {}
 GlobalShaderFlags.overridden_shader_flags = GlobalShaderFlags.overridden_shader_flags or {}
 
-function GlobalShaderFlags.reset()
+GlobalShaderFlags.reset = function ()
 	assert(#var_0_1 < 23, string.format("[GlobalShaderFlags] There is a maximum of 22 available shader flags. %q is out of scope", var_0_1[#var_0_1]))
 	var_0_5()
 	var_0_6()
@@ -105,13 +105,13 @@ local function var_0_7(arg_6_0, arg_6_1)
 	return var_6_2
 end
 
-function GlobalShaderFlags.set_global_shader_flag(arg_7_0, arg_7_1)
+GlobalShaderFlags.set_global_shader_flag = function (arg_7_0, arg_7_1)
 	local var_7_0 = var_0_7(arg_7_0, arg_7_1)
 
 	var_0_4("global_shader_flags", var_7_0, arg_7_0)
 end
 
-function GlobalShaderFlags.set_override_shader_flag(arg_8_0, arg_8_1)
+GlobalShaderFlags.set_override_shader_flag = function (arg_8_0, arg_8_1)
 	local var_8_0 = var_0_7(arg_8_0, arg_8_1)
 
 	Application.set_render_setting("global_shader_flags", var_8_0)
@@ -119,7 +119,7 @@ function GlobalShaderFlags.set_override_shader_flag(arg_8_0, arg_8_1)
 	GlobalShaderFlags.overridden_shader_flags[arg_8_0] = arg_8_1
 end
 
-function GlobalShaderFlags.remove_override_shader_flag(arg_9_0)
+GlobalShaderFlags.remove_override_shader_flag = function (arg_9_0)
 	local var_9_0 = GlobalShaderFlags.stored_values.global_shader_flags
 	local var_9_1 = var_0_3(var_0_1, arg_9_0)
 	local var_9_2 = bit.lshift(1, var_9_1 - 1)
@@ -131,13 +131,13 @@ function GlobalShaderFlags.remove_override_shader_flag(arg_9_0)
 	GlobalShaderFlags.overridden_shader_flags[arg_9_0] = nil
 end
 
-function GlobalShaderFlags.apply_settings()
+GlobalShaderFlags.apply_settings = function ()
 	for iter_10_0, iter_10_1 in pairs(GlobalShaderFlags.stored_values) do
 		var_0_4(iter_10_0, iter_10_1)
 	end
 end
 
-function GlobalShaderFlags.print_debug()
+GlobalShaderFlags.print_debug = function ()
 	if BUILD ~= "release" then
 		local var_11_0 = Application.render_config("settings", "global_shader_flags")
 

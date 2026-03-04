@@ -2,7 +2,7 @@
 
 local var_0_0 = BuffAreaHelper or {}
 
-function var_0_0.setup_range_check(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+var_0_0.setup_range_check = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_1.range_check = {
 		update_time = 0,
 		units_in_range = {},
@@ -10,7 +10,7 @@ function var_0_0.setup_range_check(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-function var_0_0.update_range_check(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_0.update_range_check = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_1.template
 	local var_2_1 = var_2_0.range_check
 
@@ -92,7 +92,7 @@ function var_0_0.update_range_check(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return false
 end
 
-function var_0_0.destroy_range_check(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+var_0_0.destroy_range_check = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_1.template.range_check
 	local var_3_1 = arg_3_1.range_check
 	local var_3_2 = var_3_0.unit_left_range_func

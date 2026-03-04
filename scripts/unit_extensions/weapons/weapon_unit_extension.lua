@@ -99,7 +99,7 @@ local var_0_0 = {
 }
 
 DLCUtils.require_list("action_template_file_names")
-DLCUtils.map("action_classes_lookup", function(arg_1_0)
+DLCUtils.map("action_classes_lookup", function (arg_1_0)
 	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
 		var_0_0[iter_1_0] = _G[iter_1_1]
 	end
@@ -142,7 +142,7 @@ end
 
 WeaponUnitExtension = class(WeaponUnitExtension)
 
-function WeaponUnitExtension.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+WeaponUnitExtension.init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0.weapon_system = arg_5_3.weapon_system
 
 	local var_5_0 = arg_5_1.world
@@ -239,17 +239,17 @@ function WeaponUnitExtension.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0:update_game_options()
 end
 
-function WeaponUnitExtension.update_game_options(arg_6_0)
+WeaponUnitExtension.update_game_options = function (arg_6_0)
 	local var_6_0 = Application.user_setting("weapon_trails")
 
 	Unit.set_data(arg_6_0.unit, "trails_enabled", var_6_0 ~= "none")
 end
 
-function WeaponUnitExtension.cb_game_session_disconnect(arg_7_0)
+WeaponUnitExtension.cb_game_session_disconnect = function (arg_7_0)
 	arg_7_0.sync_data_game_object_id = nil
 end
 
-function WeaponUnitExtension.extensions_ready(arg_8_0, arg_8_1, arg_8_2)
+WeaponUnitExtension.extensions_ready = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.ammo_extension = ScriptUnit.has_extension(arg_8_2, "ammo_system")
 
 	local var_8_0 = arg_8_0.owner_unit
@@ -259,13 +259,13 @@ function WeaponUnitExtension.extensions_ready(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._talent_extension = ScriptUnit.has_extension(var_8_0, "talent_system")
 end
 
-function WeaponUnitExtension.unlink_damage_unit(arg_9_0)
+WeaponUnitExtension.unlink_damage_unit = function (arg_9_0)
 	if arg_9_0.actual_damage_unit then
 		World.unlink_unit(arg_9_0.world, arg_9_0.actual_damage_unit)
 	end
 end
 
-function WeaponUnitExtension.destroy(arg_10_0)
+WeaponUnitExtension.destroy = function (arg_10_0)
 	Managers.state.event:unregister("on_game_options_changed", arg_10_0)
 
 	if arg_10_0._synced_weapon_state then
@@ -300,7 +300,7 @@ function WeaponUnitExtension.destroy(arg_10_0)
 	end
 end
 
-function WeaponUnitExtension.get_action(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+WeaponUnitExtension.get_action = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	return arg_11_3[arg_11_1][arg_11_2]
 end
 
@@ -327,7 +327,7 @@ local function var_0_5(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return arg_12_2 and arg_12_2[arg_12_3] or arg_12_1[arg_12_3]
 end
 
-function WeaponUnitExtension.start_action(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+WeaponUnitExtension.start_action = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = arg_13_0.owner_unit
 	local var_13_1 = ScriptUnit.extension(var_13_0, "buff_system")
 	local var_13_2 = ScriptUnit.has_extension(var_13_0, "talent_system")
@@ -592,7 +592,7 @@ function WeaponUnitExtension.start_action(arg_13_0, arg_13_1, arg_13_2, arg_13_3
 	end
 end
 
-function WeaponUnitExtension._play_1p_anim(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+WeaponUnitExtension._play_1p_anim = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	if not IS_WINDOWS and not IS_LINUX and arg_14_2 == "attack_shoot" then
 		arg_14_5 = arg_14_5 * 1.2
 	end
@@ -608,7 +608,7 @@ function WeaponUnitExtension._play_1p_anim(arg_14_0, arg_14_1, arg_14_2, arg_14_
 	end
 end
 
-function WeaponUnitExtension._play_3p_anim(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+WeaponUnitExtension._play_3p_anim = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = Managers.state.unit_storage:go_id(arg_15_3)
 	local var_15_1 = NetworkLookup.anims[arg_15_1]
 	local var_15_2 = NetworkLookup.anims.attack_speed
@@ -641,7 +641,7 @@ function WeaponUnitExtension._play_3p_anim(arg_15_0, arg_15_1, arg_15_2, arg_15_
 	end
 end
 
-function WeaponUnitExtension.stop_action(arg_16_0, arg_16_1, arg_16_2)
+WeaponUnitExtension.stop_action = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_0:has_current_action() and not arg_16_0._currently_stopping_action then
 		arg_16_0._currently_stopping_action = true
 
@@ -651,7 +651,7 @@ function WeaponUnitExtension.stop_action(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function WeaponUnitExtension._finish_action(arg_17_0, arg_17_1, arg_17_2)
+WeaponUnitExtension._finish_action = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.current_action_settings
 	local var_17_1 = var_17_0.kind
 	local var_17_2 = arg_17_0.actions[var_17_1]
@@ -721,11 +721,11 @@ function WeaponUnitExtension._finish_action(arg_17_0, arg_17_1, arg_17_2)
 	return var_17_5
 end
 
-function WeaponUnitExtension._weapon_template(arg_18_0)
+WeaponUnitExtension._weapon_template = function (arg_18_0)
 	return WeaponUtils.get_weapon_template(arg_18_0._weapon_template_name)
 end
 
-function WeaponUnitExtension.anim_end_event(arg_19_0, arg_19_1, arg_19_2)
+WeaponUnitExtension.anim_end_event = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_2.anim_end_event_condition_func
 
 	if not var_19_0 and true or var_19_0(arg_19_0.owner_unit, arg_19_1, arg_19_0.ammo_extension) then
@@ -770,7 +770,7 @@ function WeaponUnitExtension.anim_end_event(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function WeaponUnitExtension._play_end_event_3p(arg_20_0, arg_20_1)
+WeaponUnitExtension._play_end_event_3p = function (arg_20_0, arg_20_1)
 	local var_20_0 = NetworkLookup.anims[arg_20_1]
 	local var_20_1 = Managers.state.unit_storage:go_id(arg_20_0.owner_unit)
 
@@ -787,11 +787,11 @@ function WeaponUnitExtension._play_end_event_3p(arg_20_0, arg_20_1)
 	end
 end
 
-function WeaponUnitExtension._play_end_event_1p(arg_21_0, arg_21_1)
+WeaponUnitExtension._play_end_event_1p = function (arg_21_0, arg_21_1)
 	Unit.animation_event(arg_21_0.first_person_unit, arg_21_1)
 end
 
-function WeaponUnitExtension.trigger_anim_event(arg_22_0, arg_22_1)
+WeaponUnitExtension.trigger_anim_event = function (arg_22_0, arg_22_1)
 	if arg_22_1 then
 		local var_22_0 = NetworkLookup.anims[arg_22_1]
 
@@ -815,7 +815,7 @@ function WeaponUnitExtension.trigger_anim_event(arg_22_0, arg_22_1)
 	end
 end
 
-function WeaponUnitExtension.update(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+WeaponUnitExtension.update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = arg_23_0.current_action_settings
 
 	if var_23_0 then
@@ -881,13 +881,13 @@ function WeaponUnitExtension.update(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_
 	end
 end
 
-function WeaponUnitExtension._is_local_player(arg_24_0)
+WeaponUnitExtension._is_local_player = function (arg_24_0)
 	local var_24_0 = Managers.player:owner(arg_24_0.owner_unit)
 
 	return var_24_0 and var_24_0.local_player
 end
 
-function WeaponUnitExtension.is_streak_action_available(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+WeaponUnitExtension.is_streak_action_available = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_0.current_action_settings or arg_25_0.temporary_action_settings
 	local var_25_1 = arg_25_0.actions[var_25_0.kind]
 	local var_25_2 = arg_25_2 - arg_25_0.action_time_started
@@ -899,7 +899,7 @@ function WeaponUnitExtension.is_streak_action_available(arg_25_0, arg_25_1, arg_
 	return false
 end
 
-function WeaponUnitExtension.is_chain_action_available(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+WeaponUnitExtension.is_chain_action_available = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_0.current_action_settings or arg_26_0.temporary_action_settings
 	local var_26_1 = arg_26_2 - arg_26_0.action_time_started
 	local var_26_2 = var_26_0.total_time + 2
@@ -917,7 +917,7 @@ function WeaponUnitExtension.is_chain_action_available(arg_26_0, arg_26_1, arg_2
 	end
 end
 
-function WeaponUnitExtension.time_to_next_chain_action(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+WeaponUnitExtension.time_to_next_chain_action = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	arg_27_4 = arg_27_4 or arg_27_0.current_action_settings or arg_27_0.temporary_action_settings
 
 	local var_27_0 = arg_27_0:has_current_action() and arg_27_2 - arg_27_0.action_time_started or 0
@@ -930,7 +930,7 @@ function WeaponUnitExtension.time_to_next_chain_action(arg_27_0, arg_27_1, arg_2
 	return (arg_27_1.start_time and arg_27_1.start_time / var_27_2 or var_27_1) + arg_27_3 - var_27_0
 end
 
-function WeaponUnitExtension.get_scaled_min_hold_time(arg_28_0, arg_28_1)
+WeaponUnitExtension.get_scaled_min_hold_time = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_1.minimum_hold_time
 
 	if not var_28_0 then
@@ -951,7 +951,7 @@ function WeaponUnitExtension.get_scaled_min_hold_time(arg_28_0, arg_28_1)
 	return var_28_2
 end
 
-function WeaponUnitExtension.can_stop_hold_action(arg_29_0, arg_29_1)
+WeaponUnitExtension.can_stop_hold_action = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_1 - arg_29_0.action_time_started
 	local var_29_1 = arg_29_0.current_action_settings
 
@@ -962,23 +962,23 @@ function WeaponUnitExtension.can_stop_hold_action(arg_29_0, arg_29_1)
 	return var_29_0 > arg_29_0:get_scaled_min_hold_time(var_29_1)
 end
 
-function WeaponUnitExtension.get_action_cooldown(arg_30_0, arg_30_1)
+WeaponUnitExtension.get_action_cooldown = function (arg_30_0, arg_30_1)
 	return arg_30_0.cooldown_timer[arg_30_1]
 end
 
-function WeaponUnitExtension.get_current_action(arg_31_0)
+WeaponUnitExtension.get_current_action = function (arg_31_0)
 	return arg_31_0.actions[arg_31_0.current_action_settings.kind]
 end
 
-function WeaponUnitExtension.has_current_action(arg_32_0)
+WeaponUnitExtension.has_current_action = function (arg_32_0)
 	return arg_32_0.current_action_settings ~= nil
 end
 
-function WeaponUnitExtension.get_current_action_settings(arg_33_0)
+WeaponUnitExtension.get_current_action_settings = function (arg_33_0)
 	return arg_33_0.current_action_settings
 end
 
-function WeaponUnitExtension.is_after_damage_window(arg_34_0)
+WeaponUnitExtension.is_after_damage_window = function (arg_34_0)
 	local var_34_0 = arg_34_0.current_action_settings
 
 	if not var_34_0 then
@@ -1001,7 +1001,7 @@ function WeaponUnitExtension.is_after_damage_window(arg_34_0)
 	return var_34_4 >= var_34_2 / var_34_5
 end
 
-function WeaponUnitExtension.bot_should_stop_attack_on_leave(arg_35_0)
+WeaponUnitExtension.bot_should_stop_attack_on_leave = function (arg_35_0)
 	local var_35_0 = arg_35_0.current_action_settings
 
 	if var_35_0 then
@@ -1009,7 +1009,7 @@ function WeaponUnitExtension.bot_should_stop_attack_on_leave(arg_35_0)
 	end
 end
 
-function WeaponUnitExtension._is_before_end_time(arg_36_0, arg_36_1, arg_36_2)
+WeaponUnitExtension._is_before_end_time = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0.current_action_settings or arg_36_0.temporary_action_settings
 	local var_36_1 = arg_36_2 - arg_36_0.action_time_started
 	local var_36_2 = var_36_0.total_time + 2
@@ -1018,7 +1018,7 @@ function WeaponUnitExtension._is_before_end_time(arg_36_0, arg_36_1, arg_36_2)
 	return var_36_1 < (arg_36_1.end_time and arg_36_1.end_time / var_36_3 or var_36_2)
 end
 
-function WeaponUnitExtension._find_chain_action(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+WeaponUnitExtension._find_chain_action = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = 0
 	local var_37_1 = #arg_37_2
 	local var_37_2
@@ -1056,7 +1056,7 @@ function WeaponUnitExtension._find_chain_action(arg_37_0, arg_37_1, arg_37_2, ar
 	return var_37_2, var_37_3
 end
 
-function WeaponUnitExtension._get_attack_chain_data(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+WeaponUnitExtension._get_attack_chain_data = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	local var_38_0
 	local var_38_1
 	local var_38_2
@@ -1096,7 +1096,7 @@ function WeaponUnitExtension._get_attack_chain_data(arg_38_0, arg_38_1, arg_38_2
 	return var_38_12, var_38_13, var_38_2, var_38_3, var_38_4
 end
 
-function WeaponUnitExtension._process_bot_attack_request(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+WeaponUnitExtension._process_bot_attack_request = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
 	if arg_39_5 then
 		return arg_39_0:_get_attack_chain_data(arg_39_2, arg_39_5, arg_39_4)
 	end
@@ -1129,7 +1129,7 @@ function WeaponUnitExtension._process_bot_attack_request(arg_39_0, arg_39_1, arg
 	return var_39_0, var_39_1, var_39_2, var_39_4, var_39_5
 end
 
-function WeaponUnitExtension.update_bot_attack_request(arg_40_0, arg_40_1)
+WeaponUnitExtension.update_bot_attack_request = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0.bot_attack_data
 	local var_40_1 = var_40_0.request
 
@@ -1171,7 +1171,7 @@ function WeaponUnitExtension.update_bot_attack_request(arg_40_0, arg_40_1)
 	end
 end
 
-function WeaponUnitExtension.request_bot_attack_action(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+WeaponUnitExtension.request_bot_attack_action = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	local var_41_0 = arg_41_0.bot_attack_data
 	local var_41_1 = var_41_0.request
 
@@ -1187,7 +1187,7 @@ function WeaponUnitExtension.request_bot_attack_action(arg_41_0, arg_41_1, arg_4
 	end
 end
 
-function WeaponUnitExtension.clear_bot_attack_request(arg_42_0)
+WeaponUnitExtension.clear_bot_attack_request = function (arg_42_0)
 	local var_42_0 = arg_42_0.bot_attack_data
 	local var_42_1 = var_42_0.request
 
@@ -1197,13 +1197,13 @@ function WeaponUnitExtension.clear_bot_attack_request(arg_42_0)
 	var_42_0.request = var_42_1
 end
 
-function WeaponUnitExtension.is_starting_attack(arg_43_0)
+WeaponUnitExtension.is_starting_attack = function (arg_43_0)
 	local var_43_0 = arg_43_0.current_action_settings
 
 	return ActionUtils.is_melee_start_sub_action(var_43_0)
 end
 
-function WeaponUnitExtension.time_to_next_attack(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5)
+WeaponUnitExtension.time_to_next_attack = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5)
 	local var_44_0 = arg_44_0.bot_attack_data
 	local var_44_1
 	local var_44_2
@@ -1232,27 +1232,27 @@ function WeaponUnitExtension.time_to_next_attack(arg_44_0, arg_44_1, arg_44_2, a
 	end
 end
 
-function WeaponUnitExtension.set_mode(arg_45_0, arg_45_1)
+WeaponUnitExtension.set_mode = function (arg_45_0, arg_45_1)
 	arg_45_0.weapon_mode = arg_45_1
 end
 
-function WeaponUnitExtension.get_mode(arg_46_0)
+WeaponUnitExtension.get_mode = function (arg_46_0)
 	return arg_46_0.weapon_mode
 end
 
-function WeaponUnitExtension.get_custom_data(arg_47_0, arg_47_1)
+WeaponUnitExtension.get_custom_data = function (arg_47_0, arg_47_1)
 	fassert(arg_47_0._custom_data[arg_47_1] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", arg_47_1)
 
 	return arg_47_0._custom_data[arg_47_1]
 end
 
-function WeaponUnitExtension.set_custom_data(arg_48_0, arg_48_1, arg_48_2)
+WeaponUnitExtension.set_custom_data = function (arg_48_0, arg_48_1, arg_48_2)
 	fassert(arg_48_0._custom_data[arg_48_1] ~= nil, "Custom data key '%s' does not exist, add it to the weapon template", arg_48_1)
 
 	arg_48_0._custom_data[arg_48_1] = arg_48_2
 end
 
-function WeaponUnitExtension.set_weapon_buffs(arg_49_0, arg_49_1)
+WeaponUnitExtension.set_weapon_buffs = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_0.owner_unit
 	local var_49_1 = ScriptUnit.extension(var_49_0, "buff_system")
 	local var_49_2 = arg_49_0._current_weapon_buffs
@@ -1272,7 +1272,7 @@ function WeaponUnitExtension.set_weapon_buffs(arg_49_0, arg_49_1)
 	end
 end
 
-function WeaponUnitExtension.add_looping_audio(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4, arg_50_5, arg_50_6)
+WeaponUnitExtension.add_looping_audio = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4, arg_50_5, arg_50_6)
 	fassert(arg_50_2, "tried to add looping audio with no start event, id: %s", arg_50_1)
 	fassert(arg_50_3, "tried to add looping audio with no end event, id: %s", arg_50_1)
 
@@ -1297,7 +1297,7 @@ function WeaponUnitExtension.add_looping_audio(arg_50_0, arg_50_1, arg_50_2, arg
 	end
 end
 
-function WeaponUnitExtension.start_looping_audio(arg_51_0, arg_51_1)
+WeaponUnitExtension.start_looping_audio = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0.looping_audio_events[arg_51_1]
 
 	if not var_51_0 or var_51_0.is_playing then
@@ -1315,7 +1315,7 @@ function WeaponUnitExtension.start_looping_audio(arg_51_0, arg_51_1)
 	var_51_0.is_playing = true
 end
 
-function WeaponUnitExtension.stop_looping_audio(arg_52_0, arg_52_1)
+WeaponUnitExtension.stop_looping_audio = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.looping_audio_events[arg_52_1]
 
 	if not var_52_0 or not var_52_0.is_playing then
@@ -1337,7 +1337,7 @@ function WeaponUnitExtension.stop_looping_audio(arg_52_0, arg_52_1)
 	var_52_0.is_playing = false
 end
 
-function WeaponUnitExtension.is_playing_looping_audio(arg_53_0, arg_53_1)
+WeaponUnitExtension.is_playing_looping_audio = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0.looping_audio_events[arg_53_1]
 
 	if var_53_0 then
@@ -1347,7 +1347,7 @@ function WeaponUnitExtension.is_playing_looping_audio(arg_53_0, arg_53_1)
 	return false
 end
 
-function WeaponUnitExtension.set_looping_audio_switch(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+WeaponUnitExtension.set_looping_audio_switch = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 	if not arg_54_0.looping_audio_events[arg_54_1] or not arg_54_2 or not arg_54_3 then
 		return
 	end
@@ -1357,7 +1357,7 @@ function WeaponUnitExtension.set_looping_audio_switch(arg_54_0, arg_54_1, arg_54
 	WwiseWorld.set_switch(arg_54_0.wwise_world, arg_54_2, arg_54_3, var_54_0)
 end
 
-function WeaponUnitExtension.update_looping_audio_parameter(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+WeaponUnitExtension.update_looping_audio_parameter = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 	if not arg_55_0.looping_audio_events[arg_55_1] or not arg_55_2 or not arg_55_3 then
 		return
 	end
@@ -1367,7 +1367,7 @@ function WeaponUnitExtension.update_looping_audio_parameter(arg_55_0, arg_55_1, 
 	WwiseWorld.set_source_parameter(arg_55_0.wwise_world, var_55_0, arg_55_2, arg_55_3)
 end
 
-function WeaponUnitExtension.on_wield(arg_56_0, arg_56_1)
+WeaponUnitExtension.on_wield = function (arg_56_0, arg_56_1)
 	local var_56_0 = arg_56_0.first_person_extension
 
 	if var_56_0 then
@@ -1382,7 +1382,7 @@ function WeaponUnitExtension.on_wield(arg_56_0, arg_56_1)
 	end
 end
 
-function WeaponUnitExtension.on_unwield(arg_57_0, arg_57_1)
+WeaponUnitExtension.on_unwield = function (arg_57_0, arg_57_1)
 	if arg_57_0._weapon_unwield then
 		arg_57_0._weapon_unwield(arg_57_0, arg_57_1)
 	end
@@ -1396,7 +1396,7 @@ function WeaponUnitExtension.on_unwield(arg_57_0, arg_57_1)
 	end
 end
 
-function WeaponUnitExtension.change_synced_state(arg_58_0, arg_58_1, arg_58_2)
+WeaponUnitExtension.change_synced_state = function (arg_58_0, arg_58_1, arg_58_2)
 	if arg_58_0._synced_weapon_state then
 		local var_58_0 = arg_58_0._synced_weapon_states[arg_58_0._synced_weapon_state]
 
@@ -1436,6 +1436,6 @@ function WeaponUnitExtension.change_synced_state(arg_58_0, arg_58_1, arg_58_2)
 	end
 end
 
-function WeaponUnitExtension.current_synced_state(arg_59_0)
+WeaponUnitExtension.current_synced_state = function (arg_59_0)
 	return arg_59_0._synced_weapon_state
 end

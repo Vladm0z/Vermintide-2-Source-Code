@@ -8,7 +8,7 @@ local var_0_4 = var_0_0.hero_icon_widget_definition
 
 PopupProfilePicker = class(PopupProfilePicker)
 
-function PopupProfilePicker.init(arg_1_0, arg_1_1, ...)
+PopupProfilePicker.init = function (arg_1_0, arg_1_1, ...)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
@@ -35,7 +35,7 @@ function PopupProfilePicker.init(arg_1_0, arg_1_1, ...)
 	arg_1_0:show(...)
 end
 
-function PopupProfilePicker._create_ui_elements(arg_2_0)
+PopupProfilePicker._create_ui_elements = function (arg_2_0)
 	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_2)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
@@ -75,7 +75,7 @@ function PopupProfilePicker._create_ui_elements(arg_2_0)
 	end
 end
 
-function PopupProfilePicker.update(arg_3_0, arg_3_1, arg_3_2)
+PopupProfilePicker.update = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_update_occupied_profiles(arg_3_2)
 
 	local var_3_0 = arg_3_0._ui_top_renderer
@@ -105,7 +105,7 @@ PopupProfilePicker._INPUT_DEVICES = {
 	"mouse"
 }
 
-function PopupProfilePicker.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
+PopupProfilePicker.show = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
 	arg_4_0._join_lobby_result = nil
 	arg_4_0._makeshift_lobby_data = {}
 	arg_4_0._lobby_client = arg_4_6
@@ -127,7 +127,7 @@ function PopupProfilePicker.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, ar
 	arg_4_0:_play_sound("hud_hot_join_hero_popup")
 end
 
-function PopupProfilePicker.hide(arg_5_0)
+PopupProfilePicker.hide = function (arg_5_0)
 	arg_5_0._input_manager:release_input(arg_5_0._INPUT_DEVICES, 1, "popup_profile_picker", "PopupProfilePicker")
 	ShowCursorStack.hide("PopupProfilePicker")
 
@@ -138,11 +138,11 @@ function PopupProfilePicker.hide(arg_5_0)
 	arg_5_0:_play_sound("hud_hot_join_hero_popup_stop")
 end
 
-function PopupProfilePicker.input_service(arg_6_0)
+PopupProfilePicker.input_service = function (arg_6_0)
 	return arg_6_0._input_manager:get_service("popup_profile_picker")
 end
 
-function PopupProfilePicker.draw(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PopupProfilePicker.draw = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	UIRenderer.begin_pass(arg_7_1, arg_7_0._ui_scenegraph, arg_7_2, arg_7_3, nil, arg_7_0._render_settings)
 
 	local var_7_0 = arg_7_0._widgets
@@ -166,7 +166,7 @@ function PopupProfilePicker.draw(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function PopupProfilePicker.set_result(arg_8_0, arg_8_1, arg_8_2)
+PopupProfilePicker.set_result = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_1 and arg_8_0._selected_hero_name
 	local var_8_1 = arg_8_1 and arg_8_0._selected_career_name
 
@@ -184,15 +184,15 @@ function PopupProfilePicker.set_result(arg_8_0, arg_8_1, arg_8_2)
 	}
 end
 
-function PopupProfilePicker.query_result(arg_9_0)
+PopupProfilePicker.query_result = function (arg_9_0)
 	return arg_9_0._join_lobby_result
 end
 
-function PopupProfilePicker.destroy(arg_10_0)
+PopupProfilePicker.destroy = function (arg_10_0)
 	return
 end
 
-function PopupProfilePicker._handle_input(arg_11_0, arg_11_1, arg_11_2)
+PopupProfilePicker._handle_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._widgets_by_name
 	local var_11_1 = Managers.input:get_service("popup_profile_picker")
 
@@ -218,7 +218,7 @@ function PopupProfilePicker._handle_input(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function PopupProfilePicker._handle_mouse_selection(arg_12_0)
+PopupProfilePicker._handle_mouse_selection = function (arg_12_0)
 	local var_12_0 = arg_12_0._hero_icon_widgets
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -266,7 +266,7 @@ function PopupProfilePicker._handle_mouse_selection(arg_12_0)
 	end
 end
 
-function PopupProfilePicker._handle_gamepad_selection(arg_13_0, arg_13_1)
+PopupProfilePicker._handle_gamepad_selection = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._num_max_hero_columns
 	local var_13_1 = arg_13_0._num_max_career_columns
 	local var_13_2 = arg_13_0._selected_hero_column
@@ -300,7 +300,7 @@ function PopupProfilePicker._handle_gamepad_selection(arg_13_0, arg_13_1)
 	end
 end
 
-function PopupProfilePicker._select_hero(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+PopupProfilePicker._select_hero = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = SPProfiles[arg_14_1]
 	local var_14_1 = var_14_0.careers[arg_14_2]
 	local var_14_2 = Managers.backend:get_interface("dlcs")
@@ -367,13 +367,13 @@ function PopupProfilePicker._select_hero(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function PopupProfilePicker._set_hero_icon_selected(arg_15_0, arg_15_1)
+PopupProfilePicker._set_hero_icon_selected = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in ipairs(arg_15_0._hero_icon_widgets) do
 		iter_15_1.content.button_hotspot.is_selected = iter_15_0 == arg_15_1
 	end
 end
 
-function PopupProfilePicker._set_hero_info(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+PopupProfilePicker._set_hero_info = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0._widgets_by_name
 
 	var_16_0.info_hero_name.content.text = arg_16_1
@@ -381,17 +381,17 @@ function PopupProfilePicker._set_hero_info(arg_16_0, arg_16_1, arg_16_2, arg_16_
 	var_16_0.info_hero_level.content.text = arg_16_3
 end
 
-function PopupProfilePicker._set_timer_text(arg_17_0, arg_17_1)
+PopupProfilePicker._set_timer_text = function (arg_17_0, arg_17_1)
 	arg_17_0._widgets_by_name.timer_text.content.text = arg_17_1
 end
 
-function PopupProfilePicker.set_difficulty(arg_18_0, arg_18_1)
+PopupProfilePicker.set_difficulty = function (arg_18_0, arg_18_1)
 	arg_18_0._difficulty = arg_18_1
 end
 
 local var_0_5 = 2
 
-function PopupProfilePicker._update_occupied_profiles(arg_19_0, arg_19_1)
+PopupProfilePicker._update_occupied_profiles = function (arg_19_0, arg_19_1)
 	if arg_19_0._lobby_client.request_data and arg_19_1 > (arg_19_0._request_timer or 0) then
 		arg_19_0._lobby_client:request_data()
 
@@ -436,11 +436,11 @@ function PopupProfilePicker._update_occupied_profiles(arg_19_0, arg_19_1)
 	arg_19_0:set_select_button_enable_state(var_19_3)
 end
 
-function PopupProfilePicker._animate_element_by_time(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+PopupProfilePicker._animate_element_by_time = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, math.ease_out_quad))
 end
 
-function PopupProfilePicker.set_select_button_enable_state(arg_21_0, arg_21_1)
+PopupProfilePicker.set_select_button_enable_state = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name.select_button.content
 
 	var_21_0.title_text = arg_21_1 and Localize("input_description_confirm") or Localize("dlc1_2_difficulty_unavailable")
@@ -454,6 +454,6 @@ function PopupProfilePicker.set_select_button_enable_state(arg_21_0, arg_21_1)
 	end
 end
 
-function PopupProfilePicker._play_sound(arg_22_0, arg_22_1)
+PopupProfilePicker._play_sound = function (arg_22_0, arg_22_1)
 	WwiseWorld.trigger_event(arg_22_0._wwise_world, arg_22_1)
 end

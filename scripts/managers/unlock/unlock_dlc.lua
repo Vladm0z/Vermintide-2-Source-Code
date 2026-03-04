@@ -2,7 +2,7 @@
 
 UnlockDlc = class(UnlockDlc)
 
-function UnlockDlc.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+UnlockDlc.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	arg_1_0._name = arg_1_1
 	arg_1_0._id = arg_1_2
 	arg_1_0._backend_reward_id = arg_1_3
@@ -24,39 +24,39 @@ function UnlockDlc.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, ar
 	arg_1_0:update_is_installed()
 end
 
-function UnlockDlc.is_legacy_console_dlc(arg_2_0)
+UnlockDlc.is_legacy_console_dlc = function (arg_2_0)
 	return false
 end
 
-function UnlockDlc.ready(arg_3_0)
+UnlockDlc.ready = function (arg_3_0)
 	return true
 end
 
-function UnlockDlc.has_error(arg_4_0)
+UnlockDlc.has_error = function (arg_4_0)
 	return false
 end
 
-function UnlockDlc.id(arg_5_0)
+UnlockDlc.id = function (arg_5_0)
 	return arg_5_0._id
 end
 
-function UnlockDlc.backend_reward_id(arg_6_0)
+UnlockDlc.backend_reward_id = function (arg_6_0)
 	return arg_6_0._backend_reward_id
 end
 
-function UnlockDlc.remove_backend_reward_id(arg_7_0)
+UnlockDlc.remove_backend_reward_id = function (arg_7_0)
 	arg_7_0._backend_reward_id = nil
 end
 
-function UnlockDlc.unlocked(arg_8_0)
+UnlockDlc.unlocked = function (arg_8_0)
 	return arg_8_0._installed and arg_8_0._owned
 end
 
-function UnlockDlc.installed(arg_9_0)
+UnlockDlc.installed = function (arg_9_0)
 	return arg_9_0._installed
 end
 
-function UnlockDlc.set_owned(arg_10_0, arg_10_1, arg_10_2)
+UnlockDlc.set_owned = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_2 == nil or arg_10_2 then
 		arg_10_0._status_changed = arg_10_0._status_changed or arg_10_1 ~= arg_10_0._owned
 	end
@@ -64,11 +64,11 @@ function UnlockDlc.set_owned(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._owned = arg_10_1
 end
 
-function UnlockDlc.set_status_changed(arg_11_0, arg_11_1)
+UnlockDlc.set_status_changed = function (arg_11_0, arg_11_1)
 	arg_11_0._status_changed = arg_11_1
 end
 
-function UnlockDlc.update_is_installed(arg_12_0)
+UnlockDlc.update_is_installed = function (arg_12_0)
 	if not HAS_STEAM then
 		return arg_12_0._installed
 	end
@@ -88,10 +88,10 @@ function UnlockDlc.update_is_installed(arg_12_0)
 	return var_12_0
 end
 
-function UnlockDlc.is_cosmetic(arg_13_0)
+UnlockDlc.is_cosmetic = function (arg_13_0)
 	return arg_13_0._cosmetic
 end
 
-function UnlockDlc.requires_restart(arg_14_0)
+UnlockDlc.requires_restart = function (arg_14_0)
 	return arg_14_0._status_changed and arg_14_0._requires_restart
 end

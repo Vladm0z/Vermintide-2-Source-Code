@@ -4,7 +4,7 @@ require("scripts/settings/objective_unit_templates")
 
 ObjectiveItemSpawnerSystem = class(ObjectiveItemSpawnerSystem, ExtensionSystemBase)
 
-function ObjectiveItemSpawnerSystem.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ObjectiveItemSpawnerSystem.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ObjectiveItemSpawnerSystem.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._item_spawners = {}
@@ -22,7 +22,7 @@ function ObjectiveItemSpawnerSystem.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit_template_id = ""
 end
 
-function ObjectiveItemSpawnerSystem.item_gizmo_spawned(arg_2_0, arg_2_1)
+ObjectiveItemSpawnerSystem.item_gizmo_spawned = function (arg_2_0, arg_2_1)
 	local var_2_0, var_2_1 = arg_2_0:template_by_unit(arg_2_1)
 
 	fassert(var_2_0, "[ObjectiveItemSpawnerSystem] All item spawners need a unit template")
@@ -33,7 +33,7 @@ function ObjectiveItemSpawnerSystem.item_gizmo_spawned(arg_2_0, arg_2_1)
 	}
 end
 
-function ObjectiveItemSpawnerSystem.template_by_unit(arg_3_0, arg_3_1)
+ObjectiveItemSpawnerSystem.template_by_unit = function (arg_3_0, arg_3_1)
 	local var_3_0 = Unit.get_data(arg_3_1, "objective_id")
 	local var_3_1 = Unit.get_data(arg_3_1, "unit_template")
 
@@ -43,7 +43,7 @@ function ObjectiveItemSpawnerSystem.template_by_unit(arg_3_0, arg_3_1)
 	return ObjectiveUnitTemplates[var_3_1], var_3_0
 end
 
-function ObjectiveItemSpawnerSystem.spawn_item(arg_4_0, arg_4_1, arg_4_2)
+ObjectiveItemSpawnerSystem.spawn_item = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._item_spawners[arg_4_1]
 
 	if var_4_0 then
@@ -58,7 +58,7 @@ function ObjectiveItemSpawnerSystem.spawn_item(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ObjectiveItemSpawnerSystem._trigger_spawn(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+ObjectiveItemSpawnerSystem._trigger_spawn = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_1.unit
 	local var_5_1 = arg_5_1.unit_template
 	local var_5_2 = var_5_0 and Unit.local_position(var_5_0, 0) or Vector3(0, 0, 0)
@@ -69,7 +69,7 @@ function ObjectiveItemSpawnerSystem._trigger_spawn(arg_5_0, arg_5_1, arg_5_2, ar
 	return var_5_5, var_5_6
 end
 
-function ObjectiveItemSpawnerSystem._spawn_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ObjectiveItemSpawnerSystem._spawn_unit = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_1.unit_template_name
 	local var_6_1 = arg_6_1.unit_name
 	local var_6_2, var_6_3 = Managers.state.unit_spawner:spawn_network_unit(var_6_1, var_6_0, arg_6_2, arg_6_3, arg_6_4)
@@ -77,7 +77,7 @@ function ObjectiveItemSpawnerSystem._spawn_unit(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return var_6_2, var_6_3
 end
 
-function ObjectiveItemSpawnerSystem.destroy_objective(arg_7_0, arg_7_1)
+ObjectiveItemSpawnerSystem.destroy_objective = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._spawned_items[arg_7_1]
 
 	if var_7_0 then

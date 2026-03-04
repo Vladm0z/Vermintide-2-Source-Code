@@ -4,7 +4,7 @@ local var_0_0 = 10
 
 UnitFrameUI = class(UnitFrameUI)
 
-function UnitFrameUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+UnitFrameUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0.definitions = arg_1_2
 	arg_1_0.features_list = arg_1_2.features_list
 	arg_1_0.widget_name_by_feature = arg_1_2.widget_name_by_feature
@@ -40,11 +40,11 @@ function UnitFrameUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, 
 	end
 end
 
-function UnitFrameUI.on_enter_ghostmode(arg_2_0, arg_2_1, arg_2_2)
+UnitFrameUI.on_enter_ghostmode = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:show_main_healthbar(not arg_2_1)
 end
 
-function UnitFrameUI._create_ui_elements(arg_3_0, arg_3_1)
+UnitFrameUI._create_ui_elements = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.definitions
 	local var_3_1 = arg_3_0.definitions.scenegraph_definition
 
@@ -103,17 +103,17 @@ function UnitFrameUI._create_ui_elements(arg_3_0, arg_3_1)
 	arg_3_0:set_dirty()
 end
 
-function UnitFrameUI._widget_by_name(arg_4_0, arg_4_1)
+UnitFrameUI._widget_by_name = function (arg_4_0, arg_4_1)
 	return arg_4_0._widgets[arg_4_1]
 end
 
-function UnitFrameUI._widget_by_feature(arg_5_0, arg_5_1, arg_5_2)
+UnitFrameUI._widget_by_feature = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.widget_name_by_feature[arg_5_2][arg_5_1]
 
 	return arg_5_0:_widget_by_name(var_5_0)
 end
 
-function UnitFrameUI.set_position(arg_6_0, arg_6_1, arg_6_2)
+UnitFrameUI.set_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.ui_scenegraph.pivot.local_position
 
 	var_6_0[1] = arg_6_1
@@ -131,16 +131,16 @@ function UnitFrameUI.set_position(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:set_dirty()
 end
 
-function UnitFrameUI.destroy(arg_7_0)
+UnitFrameUI.destroy = function (arg_7_0)
 	arg_7_0:set_visible(false)
 	Managers.state.event:unregister("enter_ghostmode", arg_7_0)
 end
 
-function UnitFrameUI.is_visible(arg_8_0)
+UnitFrameUI.is_visible = function (arg_8_0)
 	return arg_8_0._is_visible
 end
 
-function UnitFrameUI.set_visible(arg_9_0, arg_9_1)
+UnitFrameUI.set_visible = function (arg_9_0, arg_9_1)
 	arg_9_0._is_visible = arg_9_1
 
 	local var_9_0 = arg_9_0.ui_renderer
@@ -152,7 +152,7 @@ function UnitFrameUI.set_visible(arg_9_0, arg_9_1)
 	arg_9_0:set_dirty()
 end
 
-function UnitFrameUI.set_alpha(arg_10_0, arg_10_1)
+UnitFrameUI.set_alpha = function (arg_10_0, arg_10_1)
 	arg_10_0.render_settings.alpha_multiplier = arg_10_1
 
 	for iter_10_0, iter_10_1 in pairs(arg_10_0._widgets) do
@@ -162,7 +162,7 @@ function UnitFrameUI.set_alpha(arg_10_0, arg_10_1)
 	arg_10_0:set_dirty()
 end
 
-function UnitFrameUI.set_default_alpha(arg_11_0, arg_11_1)
+UnitFrameUI.set_default_alpha = function (arg_11_0, arg_11_1)
 	arg_11_0._default_alpha_multiplier = arg_11_1
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._default_widgets) do
@@ -172,7 +172,7 @@ function UnitFrameUI.set_default_alpha(arg_11_0, arg_11_1)
 	arg_11_0:set_dirty()
 end
 
-function UnitFrameUI.set_portrait_alpha(arg_12_0, arg_12_1)
+UnitFrameUI.set_portrait_alpha = function (arg_12_0, arg_12_1)
 	arg_12_0._portrait_alpha_multiplier = arg_12_1
 
 	for iter_12_0, iter_12_1 in pairs(arg_12_0._portrait_widgets) do
@@ -182,7 +182,7 @@ function UnitFrameUI.set_portrait_alpha(arg_12_0, arg_12_1)
 	arg_12_0:set_dirty()
 end
 
-function UnitFrameUI.set_damage_alpha(arg_13_0, arg_13_1)
+UnitFrameUI.set_damage_alpha = function (arg_13_0, arg_13_1)
 	arg_13_0._damage_alpha_multiplier = arg_13_1
 
 	for iter_13_0, iter_13_1 in pairs(arg_13_0._damage_widgets) do
@@ -192,7 +192,7 @@ function UnitFrameUI.set_damage_alpha(arg_13_0, arg_13_1)
 	arg_13_0:set_dirty()
 end
 
-function UnitFrameUI.set_equipment_alpha(arg_14_0, arg_14_1)
+UnitFrameUI.set_equipment_alpha = function (arg_14_0, arg_14_1)
 	arg_14_0._equipment_alpha_multiplier = arg_14_1
 
 	for iter_14_0, iter_14_1 in pairs(arg_14_0._equipment_widgets) do
@@ -202,7 +202,7 @@ function UnitFrameUI.set_equipment_alpha(arg_14_0, arg_14_1)
 	arg_14_0:set_dirty()
 end
 
-function UnitFrameUI.set_health_alpha(arg_15_0, arg_15_1)
+UnitFrameUI.set_health_alpha = function (arg_15_0, arg_15_1)
 	arg_15_0._health_alpha_multiplier = arg_15_1
 
 	for iter_15_0, iter_15_1 in pairs(arg_15_0._health_widgets) do
@@ -212,7 +212,7 @@ function UnitFrameUI.set_health_alpha(arg_15_0, arg_15_1)
 	arg_15_0:set_dirty()
 end
 
-function UnitFrameUI.set_ability_alpha(arg_16_0, arg_16_1)
+UnitFrameUI.set_ability_alpha = function (arg_16_0, arg_16_1)
 	arg_16_0._ability_alpha_multiplier = arg_16_1
 
 	for iter_16_0, iter_16_1 in pairs(arg_16_0._ability_widgets) do
@@ -222,7 +222,7 @@ function UnitFrameUI.set_ability_alpha(arg_16_0, arg_16_1)
 	arg_16_0:set_dirty()
 end
 
-function UnitFrameUI.set_respawn_alpha(arg_17_0, arg_17_1)
+UnitFrameUI.set_respawn_alpha = function (arg_17_0, arg_17_1)
 	arg_17_0._respawn_alpha_multiplier = arg_17_1
 
 	for iter_17_0, iter_17_1 in pairs(arg_17_0._respawn_widgets) do
@@ -232,14 +232,14 @@ function UnitFrameUI.set_respawn_alpha(arg_17_0, arg_17_1)
 	arg_17_0:set_dirty()
 end
 
-function UnitFrameUI.show_main_healthbar(arg_18_0, arg_18_1)
+UnitFrameUI.show_main_healthbar = function (arg_18_0, arg_18_1)
 	arg_18_0._widgets.health_dynamic.content.visible = arg_18_1
 	arg_18_0._widgets.default_static.content.show_health_bar = arg_18_1
 
 	arg_18_0:set_dirty()
 end
 
-function UnitFrameUI.update(arg_19_0, arg_19_1, arg_19_2)
+UnitFrameUI.update = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.features_list
 	local var_19_1 = var_19_0.equipment
 	local var_19_2 = var_19_0.weapons
@@ -295,7 +295,7 @@ function UnitFrameUI.update(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function UnitFrameUI.on_resolution_modified(arg_20_0)
+UnitFrameUI.on_resolution_modified = function (arg_20_0)
 	arg_20_0:set_player_name(arg_20_0._player_name or "")
 
 	for iter_20_0, iter_20_1 in pairs(arg_20_0._widgets) do
@@ -323,7 +323,7 @@ local var_0_3 = {
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function UnitFrameUI.draw(arg_21_0, arg_21_1)
+UnitFrameUI.draw = function (arg_21_0, arg_21_1)
 	if not arg_21_0._is_visible then
 		return
 	end
@@ -411,15 +411,15 @@ function UnitFrameUI.draw(arg_21_0, arg_21_1)
 	arg_21_0._dirty = false
 end
 
-function UnitFrameUI.set_dirty(arg_22_0)
+UnitFrameUI.set_dirty = function (arg_22_0)
 	arg_22_0._dirty = true
 end
 
-function UnitFrameUI._set_widget_dirty(arg_23_0, arg_23_1)
+UnitFrameUI._set_widget_dirty = function (arg_23_0, arg_23_1)
 	arg_23_1.element.dirty = true
 end
 
-function UnitFrameUI.reset(arg_24_0)
+UnitFrameUI.reset = function (arg_24_0)
 	arg_24_0:set_player_name("")
 	arg_24_0:set_talking(false)
 	arg_24_0:set_icon_visibility(false)
@@ -441,7 +441,7 @@ function UnitFrameUI.reset(arg_24_0)
 	arg_24_0:set_dirty()
 end
 
-function UnitFrameUI.set_portrait_frame(arg_25_0, arg_25_1, arg_25_2)
+UnitFrameUI.set_portrait_frame = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._widgets
 	local var_25_1 = arg_25_0._portrait_widgets
 	local var_25_2 = var_25_0.portrait_static
@@ -469,7 +469,7 @@ function UnitFrameUI.set_portrait_frame(arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0:_set_widget_dirty(var_25_6)
 end
 
-function UnitFrameUI.set_portrait(arg_26_0, arg_26_1)
+UnitFrameUI.set_portrait = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0:_widget_by_feature("default", "static")
 
 	var_26_0.content.character_portrait = arg_26_1
@@ -477,7 +477,7 @@ function UnitFrameUI.set_portrait(arg_26_0, arg_26_1)
 	arg_26_0:_set_widget_dirty(var_26_0)
 end
 
-function UnitFrameUI.set_host_status(arg_27_0, arg_27_1)
+UnitFrameUI.set_host_status = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0:_widget_by_feature("default", "static")
 
 	var_27_0.content.is_host = arg_27_1
@@ -485,7 +485,7 @@ function UnitFrameUI.set_host_status(arg_27_0, arg_27_1)
 	arg_27_0:_set_widget_dirty(var_27_0)
 end
 
-function UnitFrameUI.set_versus_level(arg_28_0, arg_28_1)
+UnitFrameUI.set_versus_level = function (arg_28_0, arg_28_1)
 	local var_28_0, var_28_1 = UIAtlasHelper.get_insignia_texture_settings_from_level(arg_28_1)
 	local var_28_2 = arg_28_0:_widget_by_feature("versus_insignia", "static")
 
@@ -517,7 +517,7 @@ function UnitFrameUI.set_versus_level(arg_28_0, arg_28_1)
 	arg_28_0:set_dirty()
 end
 
-function UnitFrameUI.set_talking(arg_29_0, arg_29_1)
+UnitFrameUI.set_talking = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0:_widget_by_feature("default", "dynamic")
 
 	var_29_0.content.is_talking = arg_29_1
@@ -525,7 +525,7 @@ function UnitFrameUI.set_talking(arg_29_0, arg_29_1)
 	arg_29_0:_set_widget_dirty(var_29_0)
 end
 
-function UnitFrameUI.set_status_icon(arg_30_0, arg_30_1, arg_30_2)
+UnitFrameUI.set_status_icon = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0:_widget_by_feature("status_icon", "dynamic")
 	local var_30_1 = var_30_0.content
 	local var_30_2 = var_30_0.style
@@ -536,7 +536,7 @@ function UnitFrameUI.set_status_icon(arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0:_set_widget_dirty(var_30_0)
 end
 
-function UnitFrameUI.set_connecting_status(arg_31_0, arg_31_1)
+UnitFrameUI.set_connecting_status = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0:_widget_by_feature("default", "dynamic")
 
 	var_31_0.content.connecting = arg_31_1
@@ -544,7 +544,7 @@ function UnitFrameUI.set_connecting_status(arg_31_0, arg_31_1)
 	arg_31_0:_set_widget_dirty(var_31_0)
 end
 
-function UnitFrameUI.set_icon_visibility(arg_32_0, arg_32_1)
+UnitFrameUI.set_icon_visibility = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0:_widget_by_feature("status_icon", "dynamic")
 
 	var_32_0.content.display_portrait_icon = arg_32_1
@@ -552,7 +552,7 @@ function UnitFrameUI.set_icon_visibility(arg_32_0, arg_32_1)
 	arg_32_0:_set_widget_dirty(var_32_0)
 end
 
-function UnitFrameUI.set_portrait_status(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+UnitFrameUI.set_portrait_status = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 	local var_33_0 = arg_33_0:_widget_by_feature("default", "static")
 	local var_33_1 = var_33_0.content.character_portrait
 	local var_33_2 = arg_33_0.ui_renderer.gui_retained
@@ -575,7 +575,7 @@ function UnitFrameUI.set_portrait_status(arg_33_0, arg_33_1, arg_33_2, arg_33_3,
 	arg_33_0:_set_widget_dirty(var_33_0)
 end
 
-function UnitFrameUI.set_player_name(arg_34_0, arg_34_1)
+UnitFrameUI.set_player_name = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0:_widget_by_feature("player_name", "static")
 
 	if var_34_0 then
@@ -612,7 +612,7 @@ local var_0_4 = {
 	"item_count_3"
 }
 
-function UnitFrameUI.set_inventory_slot_data(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+UnitFrameUI.set_inventory_slot_data = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	local var_35_0 = arg_35_2 and arg_35_3.name
 	local var_35_1 = arg_35_2 and arg_35_3.hud_icon
 	local var_35_2 = arg_35_0:_widget_by_feature("equipment", "dynamic")
@@ -659,7 +659,7 @@ function UnitFrameUI.set_inventory_slot_data(arg_35_0, arg_35_1, arg_35_2, arg_3
 	arg_35_0:_set_widget_dirty(var_35_2)
 end
 
-function UnitFrameUI.set_equipped_weapon_info(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+UnitFrameUI.set_equipped_weapon_info = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 	local var_36_0 = arg_36_0:_widget_by_feature("weapons", "dynamic")
 	local var_36_1 = var_36_0.content
 	local var_36_2 = var_36_0.style
@@ -686,7 +686,7 @@ end
 
 local var_0_5 = " "
 
-function UnitFrameUI.set_ammo_for_slot(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+UnitFrameUI.set_ammo_for_slot = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	local var_37_0 = arg_37_0:_widget_by_feature("weapons", "dynamic")
 	local var_37_1 = var_37_0.content
 	local var_37_2 = arg_37_0.weapon_slot_widget_settings.ammo_fields[arg_37_1]
@@ -704,7 +704,7 @@ function UnitFrameUI.set_ammo_for_slot(arg_37_0, arg_37_1, arg_37_2, arg_37_3, a
 	arg_37_0:_set_widget_dirty(var_37_0)
 end
 
-function UnitFrameUI.set_ammo_percentage(arg_38_0, arg_38_1)
+UnitFrameUI.set_ammo_percentage = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0:_widget_by_feature("ammo", "dynamic")
 
 	var_38_0.content.ammo_percent = arg_38_1
@@ -713,7 +713,7 @@ function UnitFrameUI.set_ammo_percentage(arg_38_0, arg_38_1)
 	arg_38_0:set_dirty()
 end
 
-function UnitFrameUI.set_ability_percentage(arg_39_0, arg_39_1)
+UnitFrameUI.set_ability_percentage = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0:_widget_by_feature("ability", "dynamic")
 
 	var_39_0.content.actual_ability_percent = arg_39_1
@@ -722,7 +722,7 @@ function UnitFrameUI.set_ability_percentage(arg_39_0, arg_39_1)
 	arg_39_0:_set_widget_dirty(var_39_0)
 end
 
-function UnitFrameUI.set_overcharge_percentage(arg_40_0, arg_40_1, arg_40_2)
+UnitFrameUI.set_overcharge_percentage = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = arg_40_0:_widget_by_feature("weapons", "dynamic")
 	local var_40_1 = var_40_0.content
 
@@ -733,7 +733,7 @@ function UnitFrameUI.set_overcharge_percentage(arg_40_0, arg_40_1, arg_40_2)
 	arg_40_0:_set_widget_dirty(var_40_0)
 end
 
-function UnitFrameUI.set_active_percentage(arg_41_0, arg_41_1)
+UnitFrameUI.set_active_percentage = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0:_widget_by_feature("health", "dynamic")
 
 	var_41_0.content.actual_active_percentage = arg_41_1
@@ -741,7 +741,7 @@ function UnitFrameUI.set_active_percentage(arg_41_0, arg_41_1)
 	arg_41_0:_set_widget_dirty(var_41_0)
 end
 
-function UnitFrameUI.set_health_percentage(arg_42_0, arg_42_1, arg_42_2)
+UnitFrameUI.set_health_percentage = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0:_widget_by_feature("health", "dynamic")
 
 	var_42_0.content.actual_health_percent = arg_42_1
@@ -750,7 +750,7 @@ function UnitFrameUI.set_health_percentage(arg_42_0, arg_42_1, arg_42_2)
 	arg_42_0:_set_widget_dirty(var_42_0)
 end
 
-function UnitFrameUI.set_total_health_percentage(arg_43_0, arg_43_1, arg_43_2)
+UnitFrameUI.set_total_health_percentage = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0:_widget_by_feature("health", "dynamic")
 
 	var_43_0.content.actual_total_health_percent = arg_43_1
@@ -759,7 +759,7 @@ function UnitFrameUI.set_total_health_percentage(arg_43_0, arg_43_1, arg_43_2)
 	arg_43_0:_set_widget_dirty(var_43_0)
 end
 
-function UnitFrameUI.set_health_bar_status(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+UnitFrameUI.set_health_bar_status = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = arg_44_0:_widget_by_feature("health", "dynamic")
 	local var_44_1 = var_44_0.style
 	local var_44_2 = var_44_0.content
@@ -792,7 +792,7 @@ function UnitFrameUI.set_health_bar_status(arg_44_0, arg_44_1, arg_44_2, arg_44_
 	arg_44_0:_set_widget_dirty(var_44_0)
 end
 
-function UnitFrameUI.set_health_bar_divider_amount(arg_45_0, arg_45_1)
+UnitFrameUI.set_health_bar_divider_amount = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0:_widget_by_feature("health", "dynamic")
 
 	var_45_0.style.hp_bar_divider.texture_amount = arg_45_1
@@ -800,7 +800,7 @@ function UnitFrameUI.set_health_bar_divider_amount(arg_45_0, arg_45_1)
 	arg_45_0:_set_widget_dirty(var_45_0)
 end
 
-function UnitFrameUI._update_portrait_opacity(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+UnitFrameUI._update_portrait_opacity = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 	local var_46_0
 	local var_46_1 = arg_46_0:_widget_by_feature("default", "static")
 	local var_46_2 = var_46_1.style.character_portrait.color
@@ -822,7 +822,7 @@ function UnitFrameUI._update_portrait_opacity(arg_46_0, arg_46_1, arg_46_2, arg_
 	end
 end
 
-function UnitFrameUI._reset_voice_animation(arg_47_0)
+UnitFrameUI._reset_voice_animation = function (arg_47_0)
 	local var_47_0 = arg_47_0:_widget_by_feature("default", "dynamic")
 	local var_47_1 = var_47_0.style
 	local var_47_2 = var_47_1.talk_indicator.color
@@ -838,7 +838,7 @@ function UnitFrameUI._reset_voice_animation(arg_47_0)
 	arg_47_0:_set_widget_dirty(var_47_0)
 end
 
-function UnitFrameUI._update_voice_animation(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+UnitFrameUI._update_voice_animation = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = arg_48_0:_widget_by_feature("default", "dynamic")
 	local var_48_1 = var_48_0.style
 	local var_48_2 = var_48_1.talk_indicator.color
@@ -868,7 +868,7 @@ function UnitFrameUI._update_voice_animation(arg_48_0, arg_48_1, arg_48_2, arg_4
 	end
 end
 
-function UnitFrameUI._update_health_bar_animation(arg_49_0, arg_49_1, arg_49_2)
+UnitFrameUI._update_health_bar_animation = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0:_widget_by_feature("health", "dynamic").content.hp_bar
 	local var_49_1 = var_49_0.bar_value
 
@@ -879,7 +879,7 @@ function UnitFrameUI._update_health_bar_animation(arg_49_0, arg_49_1, arg_49_2)
 	end
 end
 
-function UnitFrameUI._update_total_health_bar_animation(arg_50_0, arg_50_1, arg_50_2)
+UnitFrameUI._update_total_health_bar_animation = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_0:_widget_by_feature("health", "dynamic").content.total_health_bar
 	local var_50_1 = var_50_0.bar_value
 
@@ -890,11 +890,11 @@ function UnitFrameUI._update_total_health_bar_animation(arg_50_0, arg_50_1, arg_
 	end
 end
 
-function UnitFrameUI.show_respawn_ui(arg_51_0)
+UnitFrameUI.show_respawn_ui = function (arg_51_0)
 	return arg_51_0._show_respawn_ui
 end
 
-function UnitFrameUI.show_respawn_countdown(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+UnitFrameUI.show_respawn_countdown = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	arg_52_0._show_respawn_ui = true
 
 	local var_52_0 = arg_52_0._frame_type == "player" and arg_52_0:_widget_by_name("respawn_dynamic") or arg_52_0:_widget_by_name("default_dynamic")
@@ -919,7 +919,7 @@ function UnitFrameUI.show_respawn_countdown(arg_52_0, arg_52_1, arg_52_2, arg_52
 	end
 end
 
-function UnitFrameUI.update_respawn_countdown(arg_53_0, arg_53_1, arg_53_2)
+UnitFrameUI.update_respawn_countdown = function (arg_53_0, arg_53_1, arg_53_2)
 	arg_53_2, arg_53_1 = Managers.time:time_and_delta("game")
 
 	local var_53_0 = arg_53_0.ui_renderer
@@ -977,7 +977,7 @@ function UnitFrameUI.update_respawn_countdown(arg_53_0, arg_53_1, arg_53_2)
 	return true
 end
 
-function UnitFrameUI._update_overcharge_animation(arg_54_0, arg_54_1, arg_54_2)
+UnitFrameUI._update_overcharge_animation = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_0:_widget_by_feature("weapons", "dynamic")
 	local var_54_1 = var_54_0.content
 	local var_54_2 = var_54_0.style
@@ -1021,7 +1021,7 @@ function UnitFrameUI._update_overcharge_animation(arg_54_0, arg_54_1, arg_54_2)
 	end
 end
 
-function UnitFrameUI._on_num_grimoires_changed(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+UnitFrameUI._on_num_grimoires_changed = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 	if not arg_55_0.bar_animations then
 		arg_55_0.bar_animations = {}
 	end
@@ -1058,7 +1058,7 @@ function UnitFrameUI._on_num_grimoires_changed(arg_55_0, arg_55_1, arg_55_2, arg
 	arg_55_0.bar_animations[arg_55_1] = var_55_0
 end
 
-function UnitFrameUI._on_overcharge_changed(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+UnitFrameUI._on_overcharge_changed = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	if not arg_56_0.bar_animations then
 		arg_56_0.bar_animations = {}
 	end
@@ -1089,7 +1089,7 @@ function UnitFrameUI._on_overcharge_changed(arg_56_0, arg_56_1, arg_56_2, arg_56
 	arg_56_0.bar_animations[arg_56_1] = var_56_0
 end
 
-function UnitFrameUI._on_player_ammo_changed(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+UnitFrameUI._on_player_ammo_changed = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	local var_57_0 = arg_57_0.bar_animations[arg_57_1] or {}
 
 	arg_57_0.bar_animations[arg_57_1] = var_57_0
@@ -1122,7 +1122,7 @@ function UnitFrameUI._on_player_ammo_changed(arg_57_0, arg_57_1, arg_57_2, arg_5
 	end
 end
 
-function UnitFrameUI._on_player_ability_changed(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+UnitFrameUI._on_player_ability_changed = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = arg_58_0.bar_animations[arg_58_1] or {}
 
 	arg_58_0.bar_animations[arg_58_1] = var_58_0
@@ -1155,7 +1155,7 @@ function UnitFrameUI._on_player_ability_changed(arg_58_0, arg_58_1, arg_58_2, ar
 	end
 end
 
-function UnitFrameUI._on_player_health_changed(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+UnitFrameUI._on_player_health_changed = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 	local var_59_0 = arg_59_0.bar_animations[arg_59_1] or {}
 
 	arg_59_0.bar_animations[arg_59_1] = var_59_0
@@ -1190,7 +1190,7 @@ function UnitFrameUI._on_player_health_changed(arg_59_0, arg_59_1, arg_59_2, arg
 	end
 end
 
-function UnitFrameUI._on_player_total_health_changed(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+UnitFrameUI._on_player_total_health_changed = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	local var_60_0 = arg_60_0.bar_animations[arg_60_1] or {}
 
 	arg_60_0.bar_animations[arg_60_1] = var_60_0
@@ -1225,7 +1225,7 @@ function UnitFrameUI._on_player_total_health_changed(arg_60_0, arg_60_1, arg_60_
 	end
 end
 
-function UnitFrameUI._update_bar_animations(arg_61_0, arg_61_1)
+UnitFrameUI._update_bar_animations = function (arg_61_0, arg_61_1)
 	local var_61_0 = false
 	local var_61_1 = arg_61_0.bar_animations
 
@@ -1282,7 +1282,7 @@ function UnitFrameUI._update_bar_animations(arg_61_0, arg_61_1)
 	return var_61_0
 end
 
-function UnitFrameUI._update_bar_flash(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+UnitFrameUI._update_bar_flash = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 	local var_62_0 = 0.3
 
 	arg_62_3 = arg_62_3 + arg_62_4
@@ -1301,7 +1301,7 @@ function UnitFrameUI._update_bar_flash(arg_62_0, arg_62_1, arg_62_2, arg_62_3, a
 	return nil
 end
 
-function UnitFrameUI._update_damage_highlight(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+UnitFrameUI._update_damage_highlight = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 	local var_63_0 = 0.2
 
 	arg_63_2 = arg_63_2 + arg_63_3
@@ -1321,7 +1321,7 @@ function UnitFrameUI._update_damage_highlight(arg_63_0, arg_63_1, arg_63_2, arg_
 	return nil
 end
 
-function UnitFrameUI._update_player_bar_animation(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7)
+UnitFrameUI._update_player_bar_animation = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7)
 	arg_64_3 = arg_64_3 + arg_64_7
 
 	if arg_64_4 > 0 then
@@ -1354,7 +1354,7 @@ function UnitFrameUI._update_player_bar_animation(arg_64_0, arg_64_1, arg_64_2, 
 	return nil
 end
 
-function UnitFrameUI._add_slot_equip_animation(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+UnitFrameUI._add_slot_equip_animation = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 	local var_65_0 = arg_65_0.slot_equip_animations
 	local var_65_1 = UISettings.inventory_hud.equip_animation_duration
 	local var_65_2 = var_65_0[arg_65_1]
@@ -1372,7 +1372,7 @@ function UnitFrameUI._add_slot_equip_animation(arg_65_0, arg_65_1, arg_65_2, arg
 	end
 end
 
-function UnitFrameUI._animate_slot_equip(arg_66_0, arg_66_1, arg_66_2)
+UnitFrameUI._animate_slot_equip = function (arg_66_0, arg_66_1, arg_66_2)
 	local var_66_0 = arg_66_1.style
 	local var_66_1 = arg_66_1.total_time
 	local var_66_2 = arg_66_1.time + arg_66_2
@@ -1385,7 +1385,7 @@ function UnitFrameUI._animate_slot_equip(arg_66_0, arg_66_1, arg_66_2)
 	return var_66_3 < 1 and arg_66_1 or nil
 end
 
-function UnitFrameUI._update_slot_equip_animations(arg_67_0, arg_67_1)
+UnitFrameUI._update_slot_equip_animations = function (arg_67_0, arg_67_1)
 	local var_67_0 = arg_67_0.slot_equip_animations
 	local var_67_1 = false
 
@@ -1402,7 +1402,7 @@ function UnitFrameUI._update_slot_equip_animations(arg_67_0, arg_67_1)
 	return var_67_1
 end
 
-function UnitFrameUI._update_connection_animation(arg_68_0, arg_68_1)
+UnitFrameUI._update_connection_animation = function (arg_68_0, arg_68_1)
 	if not arg_68_0._is_visible then
 		return false
 	end
@@ -1422,7 +1422,7 @@ function UnitFrameUI._update_connection_animation(arg_68_0, arg_68_1)
 	end
 end
 
-function UnitFrameUI.update_numeric_ui_health(arg_69_0, arg_69_1)
+UnitFrameUI.update_numeric_ui_health = function (arg_69_0, arg_69_1)
 	local var_69_0 = arg_69_0:_widget_by_feature("health", "dynamic")
 	local var_69_1 = arg_69_1.player
 	local var_69_2 = var_69_1 and var_69_1.player_unit
@@ -1457,7 +1457,7 @@ function UnitFrameUI.update_numeric_ui_health(arg_69_0, arg_69_1)
 	arg_69_0:_set_widget_dirty(var_69_0)
 end
 
-function UnitFrameUI.update_numeric_ui_ammo(arg_70_0, arg_70_1)
+UnitFrameUI.update_numeric_ui_ammo = function (arg_70_0, arg_70_1)
 	if arg_70_0._frame_type == "player" then
 		return
 	end
@@ -1526,7 +1526,7 @@ function UnitFrameUI.update_numeric_ui_ammo(arg_70_0, arg_70_1)
 	arg_70_0:_set_widget_dirty(var_70_1)
 end
 
-function UnitFrameUI.update_numeric_ui_career_ability(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+UnitFrameUI.update_numeric_ui_career_ability = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 	local var_71_0 = arg_71_0:_widget_by_name("default_dynamic")
 	local var_71_1 = arg_71_3.player
 	local var_71_2 = var_71_1 and var_71_1.player_unit
@@ -1592,7 +1592,7 @@ local var_0_9 = {
 }
 local var_0_10 = 4
 
-function UnitFrameUI.add_damage_feedback(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6)
+UnitFrameUI.add_damage_feedback = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6)
 	local var_72_0 = arg_72_0._damage_events
 	local var_72_1 = arg_72_1 .. arg_72_3
 	local var_72_2 = arg_72_0._hash_order
@@ -1674,18 +1674,18 @@ end
 
 local var_0_11 = {
 	dealing_damage = {
-		text_function = function(arg_73_0, arg_73_1, arg_73_2)
+		text_function = function (arg_73_0, arg_73_1, arg_73_2)
 			return string.format("%s", arg_73_1), arg_73_0, arg_73_2
 		end,
-		sound_function = function()
+		sound_function = function ()
 			return
 		end
 	},
 	other_dealing_damage = {
-		text_function = function(arg_75_0, arg_75_1, arg_75_2)
+		text_function = function (arg_75_0, arg_75_1, arg_75_2)
 			return string.format("%s  ", arg_75_1), arg_75_0, arg_75_2
 		end,
-		sound_function = function()
+		sound_function = function ()
 			return "versus_ui_team_damage_indicator"
 		end
 	}
@@ -1703,7 +1703,7 @@ local var_0_12 = {
 	"text_last_dmg_10"
 }
 
-function UnitFrameUI._cleanup_damage_event(arg_77_0, arg_77_1, arg_77_2)
+UnitFrameUI._cleanup_damage_event = function (arg_77_0, arg_77_1, arg_77_2)
 	arg_77_1.num_dmg_parts = 0
 	arg_77_1.shown_amount = 0
 	arg_77_1.shown_amount_decimal = ""
@@ -1731,7 +1731,7 @@ function UnitFrameUI._cleanup_damage_event(arg_77_0, arg_77_1, arg_77_2)
 	end
 end
 
-function UnitFrameUI._update_damage_feedback(arg_78_0, arg_78_1, arg_78_2)
+UnitFrameUI._update_damage_feedback = function (arg_78_0, arg_78_1, arg_78_2)
 	local var_78_0 = arg_78_0._hash_order
 	local var_78_1 = #var_78_0
 

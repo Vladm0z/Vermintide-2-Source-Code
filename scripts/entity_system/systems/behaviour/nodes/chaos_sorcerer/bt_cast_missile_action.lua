@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTCastMissileAction = class(BTCastMissileAction, BTNode)
 BTCastMissileAction.name = "BTCastMissileAction"
 
-function BTCastMissileAction.init(arg_1_0, ...)
+BTCastMissileAction.init = function (arg_1_0, ...)
 	BTCastMissileAction.super.init(arg_1_0, ...)
 end
 
-function BTCastMissileAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCastMissileAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -44,14 +44,14 @@ function BTCastMissileAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTCastMissileAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCastMissileAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.active_node = nil
 	arg_3_2.cast_time_done = nil
 	arg_3_2.summoning = nil
 	arg_3_2.ready_to_summon = false
 end
 
-function BTCastMissileAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCastMissileAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.cast_target_unit
 
 	if Unit.alive(var_4_0) then
@@ -135,7 +135,7 @@ function BTCastMissileAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTCastMissileAction.launch_projectile(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+BTCastMissileAction.launch_projectile = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
 	local var_5_0 = Managers.state.difficulty:get_difficulty_rank()
 	local var_5_1 = arg_5_2.aoe_dot_damage[var_5_0] or arg_5_2.aoe_dot_damage[2]
 	local var_5_2 = DamageUtils.calculate_damage(var_5_1)
@@ -186,7 +186,7 @@ function BTCastMissileAction.launch_projectile(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	local var_5_13 = Managers.state.unit_spawner:spawn_network_unit(var_5_12, "aoe_projectile_unit", var_5_11, arg_5_3)
 end
 
-function BTCastMissileAction.launch_magic_missile(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+BTCastMissileAction.launch_magic_missile = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
 	local var_6_0 = 1
 	local var_6_1 = 0.2
 	local var_6_2 = 0.5

@@ -63,7 +63,7 @@ local var_0_9 = {
 HeroWindowCrafting = class(HeroWindowCrafting)
 HeroWindowCrafting.NAME = "HeroWindowCrafting"
 
-function HeroWindowCrafting.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCrafting.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCrafting")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -107,7 +107,7 @@ function HeroWindowCrafting.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_change_recipe_page(1)
 end
 
-function HeroWindowCrafting.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowCrafting.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_2_0 = {}
@@ -138,7 +138,7 @@ function HeroWindowCrafting.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._widgets_by_name.crafting_fg_glow.style.texture_id.color[1] = 0
 end
 
-function HeroWindowCrafting.on_exit(arg_3_0, arg_3_1)
+HeroWindowCrafting.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCrafting")
 
 	arg_3_0.ui_animator = nil
@@ -154,7 +154,7 @@ function HeroWindowCrafting.on_exit(arg_3_0, arg_3_1)
 	end
 end
 
-function HeroWindowCrafting.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowCrafting.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -189,13 +189,13 @@ function HeroWindowCrafting.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HeroWindowCrafting.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCrafting.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._active_page and arg_5_0._active_page.post_update then
 		arg_5_0._active_page:post_update(arg_5_1, arg_5_2)
 	end
 end
 
-function HeroWindowCrafting._update_animations(arg_6_0, arg_6_1)
+HeroWindowCrafting._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -212,7 +212,7 @@ function HeroWindowCrafting._update_animations(arg_6_0, arg_6_1)
 	local var_6_2 = arg_6_0._widgets_by_name
 end
 
-function HeroWindowCrafting._is_button_pressed(arg_7_0, arg_7_1)
+HeroWindowCrafting._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -222,13 +222,13 @@ function HeroWindowCrafting._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowCrafting._is_button_hovered(arg_8_0, arg_8_1)
+HeroWindowCrafting._is_button_hovered = function (arg_8_0, arg_8_1)
 	if arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowCrafting._is_button_held(arg_9_0, arg_9_1)
+HeroWindowCrafting._is_button_held = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.is_clicked then
@@ -236,7 +236,7 @@ function HeroWindowCrafting._is_button_held(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowCrafting._handle_input(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowCrafting._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0:is_crafting_anim_playing() then
 		return
 	end
@@ -287,12 +287,12 @@ function HeroWindowCrafting._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function HeroWindowCrafting._exit(arg_11_0, arg_11_1)
+HeroWindowCrafting._exit = function (arg_11_0, arg_11_1)
 	arg_11_0.exit = true
 	arg_11_0.exit_level_id = arg_11_1
 end
 
-function HeroWindowCrafting.draw(arg_12_0, arg_12_1)
+HeroWindowCrafting.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_top_renderer
 	local var_12_2 = arg_12_0.ui_scenegraph
@@ -316,11 +316,11 @@ function HeroWindowCrafting.draw(arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_1)
 end
 
-function HeroWindowCrafting._play_sound(arg_13_0, arg_13_1)
+HeroWindowCrafting._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0.parent:play_sound(arg_13_1)
 end
 
-function HeroWindowCrafting._change_recipe_page(arg_14_0, arg_14_1)
+HeroWindowCrafting._change_recipe_page = function (arg_14_0, arg_14_1)
 	local var_14_0 = #var_0_9
 	local var_14_1 = var_0_9[arg_14_1].name
 	local var_14_2 = var_0_2[var_14_1]
@@ -350,11 +350,11 @@ function HeroWindowCrafting._change_recipe_page(arg_14_0, arg_14_1)
 	arg_14_0._selected_page_index = arg_14_1
 end
 
-function HeroWindowCrafting.window_input_service(arg_15_0)
+HeroWindowCrafting.window_input_service = function (arg_15_0)
 	return
 end
 
-function HeroWindowCrafting._set_page_index(arg_16_0, arg_16_1)
+HeroWindowCrafting._set_page_index = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._active_page
 	local var_16_1 = arg_16_0._page_params
 	local var_16_2 = var_0_9[arg_16_1]
@@ -386,7 +386,7 @@ function HeroWindowCrafting._set_page_index(arg_16_0, arg_16_1)
 	arg_16_0._active_page = var_16_5
 end
 
-function HeroWindowCrafting._update_craft_start_time(arg_17_0, arg_17_1, arg_17_2)
+HeroWindowCrafting._update_craft_start_time = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._craft_start_duration
 
 	if not var_17_0 then
@@ -410,7 +410,7 @@ function HeroWindowCrafting._update_craft_start_time(arg_17_0, arg_17_1, arg_17_
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_in_time(arg_18_0, arg_18_1, arg_18_2)
+HeroWindowCrafting._update_craft_glow_in_time = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._craft_glow_in_duration
 
 	if not var_18_0 then
@@ -432,7 +432,7 @@ function HeroWindowCrafting._update_craft_glow_in_time(arg_18_0, arg_18_1, arg_1
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_wait_time(arg_19_0, arg_19_1, arg_19_2)
+HeroWindowCrafting._update_craft_glow_wait_time = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._craft_glow_wait_duration
 
 	if not var_19_0 then
@@ -451,7 +451,7 @@ function HeroWindowCrafting._update_craft_glow_wait_time(arg_19_0, arg_19_1, arg
 	end
 end
 
-function HeroWindowCrafting._update_craft_glow_out_time(arg_20_0, arg_20_1, arg_20_2)
+HeroWindowCrafting._update_craft_glow_out_time = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._craft_glow_out_duration
 
 	if not var_20_0 or arg_20_0._craft_glow_in_duration or arg_20_0._craft_start_duration or arg_20_0._craft_glow_wait_duration then
@@ -479,7 +479,7 @@ function HeroWindowCrafting._update_craft_glow_out_time(arg_20_0, arg_20_1, arg_
 	end
 end
 
-function HeroWindowCrafting._set_crafting_fg_progress(arg_21_0, arg_21_1)
+HeroWindowCrafting._set_crafting_fg_progress = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name.crafting_fg
 	local var_21_1 = var_21_0.content.texture_id.uvs
 	local var_21_2 = var_21_0.scenegraph_id
@@ -489,7 +489,7 @@ function HeroWindowCrafting._set_crafting_fg_progress(arg_21_0, arg_21_1)
 	var_21_1[2][2] = 1
 end
 
-function HeroWindowCrafting._update_craft_end_time(arg_22_0, arg_22_1, arg_22_2)
+HeroWindowCrafting._update_craft_end_time = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._craft_end_duration
 
 	if not var_22_0 then
@@ -515,11 +515,11 @@ function HeroWindowCrafting._update_craft_end_time(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function HeroWindowCrafting.get_active_recipe(arg_23_0)
+HeroWindowCrafting.get_active_recipe = function (arg_23_0)
 	return arg_23_0._active_recipe
 end
 
-function HeroWindowCrafting.craft(arg_24_0, arg_24_1, arg_24_2)
+HeroWindowCrafting.craft = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.crafting_manager:craft(arg_24_1, arg_24_2)
 
 	if var_24_0 then
@@ -540,7 +540,7 @@ function HeroWindowCrafting.craft(arg_24_0, arg_24_1, arg_24_2)
 	return false
 end
 
-function HeroWindowCrafting.craft_complete(arg_25_0, arg_25_1)
+HeroWindowCrafting.craft_complete = function (arg_25_0, arg_25_1)
 	arg_25_0._waiting_for_craft = false
 	arg_25_0._craft_glow_out_duration = 0
 
@@ -549,15 +549,15 @@ function HeroWindowCrafting.craft_complete(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroWindowCrafting.waiting_for_craft(arg_26_0)
+HeroWindowCrafting.waiting_for_craft = function (arg_26_0)
 	return arg_26_0._waiting_for_craft
 end
 
-function HeroWindowCrafting.is_crafting_anim_playing(arg_27_0)
+HeroWindowCrafting.is_crafting_anim_playing = function (arg_27_0)
 	return arg_27_0._craft_start_duration ~= nil or arg_27_0._craft_glow_in_duration ~= nil or arg_27_0._craft_glow_wait_duration ~= nil or arg_27_0._craft_glow_out_duration ~= nil or arg_27_0._craft_end_duration ~= nil or arg_27_0:waiting_for_craft()
 end
 
-function HeroWindowCrafting.cancel_crafting_animation(arg_28_0)
+HeroWindowCrafting.cancel_crafting_animation = function (arg_28_0)
 	arg_28_0._waiting_for_craft = nil
 	arg_28_0._craft_start_duration = nil
 	arg_28_0._craft_glow_in_duration = nil
@@ -570,7 +570,7 @@ function HeroWindowCrafting.cancel_crafting_animation(arg_28_0)
 	arg_28_0._current_craft_id = nil
 end
 
-function HeroWindowCrafting.lock_input(arg_29_0)
+HeroWindowCrafting.lock_input = function (arg_29_0)
 	local var_29_0 = arg_29_0.input_manager
 
 	arg_29_0:unlock_input(true)
@@ -582,7 +582,7 @@ function HeroWindowCrafting.lock_input(arg_29_0)
 	var_29_0:device_block_services("mouse", 1, arg_29_0.unblocked_services, arg_29_0.unblocked_services_n, "crafting")
 end
 
-function HeroWindowCrafting.unlock_input(arg_30_0)
+HeroWindowCrafting.unlock_input = function (arg_30_0)
 	local var_30_0 = arg_30_0.input_manager
 
 	var_30_0:device_unblock_services("keyboard", 1, arg_30_0.unblocked_services, arg_30_0.unblocked_services_n)

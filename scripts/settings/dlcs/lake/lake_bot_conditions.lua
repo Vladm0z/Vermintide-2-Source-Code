@@ -13,7 +13,7 @@ local var_0_1 = var_0_0 * var_0_0
 local var_0_2 = 5
 local var_0_3 = 10
 
-function BTConditions.can_activate.es_questingknight(arg_1_0)
+BTConditions.can_activate.es_questingknight = function (arg_1_0)
 	local var_1_0 = arg_1_0.target_unit
 
 	if not ALIVE[var_1_0] then

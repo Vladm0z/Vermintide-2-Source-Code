@@ -454,11 +454,11 @@ local var_0_30 = {
 	initialized = "initialized"
 }
 
-function DeusMapScene.init(arg_17_0)
+DeusMapScene.init = function (arg_17_0)
 	arg_17_0._state = var_0_30.initialized
 end
 
-function DeusMapScene.on_enter(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+DeusMapScene.on_enter = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	arg_18_0:_clear()
 
 	arg_18_0._state = var_0_30.active
@@ -482,7 +482,7 @@ function DeusMapScene.on_enter(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4,
 	arg_18_0._event_manager:register(arg_18_0, "on_game_options_changed", "_on_game_options_changed")
 end
 
-function DeusMapScene.on_finish(arg_19_0)
+DeusMapScene.on_finish = function (arg_19_0)
 	if arg_19_0._hovered_node_key then
 		arg_19_0._node_unhovered_cb()
 
@@ -496,7 +496,7 @@ function DeusMapScene.on_finish(arg_19_0)
 	arg_19_0._event_manager = nil
 end
 
-function DeusMapScene.update(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+DeusMapScene.update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	if (RESOLUTION_LOOKUP.modified or arg_20_0._game_options_changed) and arg_20_0._last_visibility_data then
 		arg_20_0:setup_fog(arg_20_0._last_visibility_data)
 	end
@@ -508,13 +508,13 @@ function DeusMapScene.update(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	end
 end
 
-function DeusMapScene.post_update(arg_21_0, arg_21_1, arg_21_2)
+DeusMapScene.post_update = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0._state ~= var_0_30.initialized then
 		arg_21_0:_update_camera(arg_21_2)
 	end
 end
 
-function DeusMapScene.destroy(arg_22_0)
+DeusMapScene.destroy = function (arg_22_0)
 	arg_22_0:_clear()
 
 	if arg_22_0._event_manager then
@@ -524,7 +524,7 @@ function DeusMapScene.destroy(arg_22_0)
 	end
 end
 
-function DeusMapScene._clear(arg_23_0)
+DeusMapScene._clear = function (arg_23_0)
 	arg_23_0._node_pressed_cb = nil
 	arg_23_0._node_hovered_cb = nil
 	arg_23_0._node_unhovered_cb = nil
@@ -555,7 +555,7 @@ function DeusMapScene._clear(arg_23_0)
 	arg_23_0._own_hero_name = nil
 end
 
-function DeusMapScene._update_camera(arg_24_0, arg_24_1)
+DeusMapScene._update_camera = function (arg_24_0, arg_24_1)
 	if not arg_24_0._camera_animation_start_time then
 		arg_24_0._camera_animation_start_time = arg_24_1
 		arg_24_0._camera_animation_end_time = arg_24_1 + arg_24_0._camera_animation_duration
@@ -573,7 +573,7 @@ local var_0_31 = {
 	0
 }
 
-function DeusMapScene._update_cursor(arg_25_0, arg_25_1)
+DeusMapScene._update_cursor = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._input_service:get("cursor") or var_0_31
 	local var_25_1
 
@@ -619,18 +619,18 @@ function DeusMapScene._update_cursor(arg_25_0, arg_25_1)
 	end
 end
 
-function DeusMapScene.setup_fog(arg_26_0, arg_26_1)
+DeusMapScene.setup_fog = function (arg_26_0, arg_26_1)
 	arg_26_0._last_visibility_data = arg_26_1
 
 	var_0_25(arg_26_0._world, arg_26_0._level_ref_values, arg_26_0._graph_data, arg_26_0._last_visibility_data, arg_26_0._debug_drawer)
 	var_0_24(arg_26_0._nodes_to_units, arg_26_0._edges_to_units, arg_26_0._last_visibility_data)
 end
 
-function DeusMapScene._on_game_options_changed(arg_27_0)
+DeusMapScene._on_game_options_changed = function (arg_27_0)
 	arg_27_0._game_options_changed = true
 end
 
-function DeusMapScene.animate_camera_to(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+DeusMapScene.animate_camera_to = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	arg_28_0._started_once = true
 	arg_28_0._camera_animation_duration = arg_28_3
 	arg_28_0._camera_animation_start_time = nil
@@ -643,7 +643,7 @@ function DeusMapScene.animate_camera_to(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	arg_28_0._camera_target_pose = Matrix4x4Box(var_0_27(var_28_0, var_28_1, arg_28_1, arg_28_2))
 end
 
-function DeusMapScene.zoom_camera_to(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+DeusMapScene.zoom_camera_to = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	arg_29_0._started_once = true
 	arg_29_0._camera_animation_duration = arg_29_3
 	arg_29_0._camera_animation_start_time = nil
@@ -656,7 +656,7 @@ function DeusMapScene.zoom_camera_to(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	arg_29_0._camera_target_pose = Matrix4x4Box(var_0_27(var_29_0, var_29_1, arg_29_1, arg_29_2))
 end
 
-function DeusMapScene.set_zoomed_camera_to(arg_30_0, arg_30_1, arg_30_2)
+DeusMapScene.set_zoomed_camera_to = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._level_ref_values.camera_zoom_bottom_left_pose:unbox()
 	local var_30_1 = arg_30_0._level_ref_values.camera_zoom_top_right_pose:unbox()
 	local var_30_2 = var_0_27(var_30_0, var_30_1, arg_30_1, arg_30_2)
@@ -664,15 +664,15 @@ function DeusMapScene.set_zoomed_camera_to(arg_30_0, arg_30_1, arg_30_2)
 	var_0_29(arg_30_0._camera, arg_30_0._fov, var_30_2)
 end
 
-function DeusMapScene.place_token(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+DeusMapScene.place_token = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	arg_31_0:_place_token(arg_31_1, arg_31_2, arg_31_3)
 end
 
-function DeusMapScene.hide_token(arg_32_0, arg_32_1)
+DeusMapScene.hide_token = function (arg_32_0, arg_32_1)
 	arg_32_0:_hide_token(arg_32_1)
 end
 
-function DeusMapScene.set_own_hero_name(arg_33_0, arg_33_1)
+DeusMapScene.set_own_hero_name = function (arg_33_0, arg_33_1)
 	if arg_33_0._own_hero_name ~= arg_33_1 then
 		for iter_33_0, iter_33_1 in pairs(arg_33_0._nodes_to_units) do
 			Unit.set_data(iter_33_1, "hero_name", arg_33_1)
@@ -683,21 +683,21 @@ function DeusMapScene.set_own_hero_name(arg_33_0, arg_33_1)
 	arg_33_0._own_hero_name = arg_33_1
 end
 
-function DeusMapScene.undiscover_node(arg_34_0, arg_34_1)
+DeusMapScene.undiscover_node = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._nodes_to_units[arg_34_1]
 
 	Unit.set_data(var_34_0, "discovered", false)
 	Unit.flow_event(var_34_0, "update_visuals")
 end
 
-function DeusMapScene.discover_node(arg_35_0, arg_35_1)
+DeusMapScene.discover_node = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._nodes_to_units[arg_35_1]
 
 	Unit.set_data(var_35_0, "discovered", true)
 	Unit.flow_event(var_35_0, "update_visuals")
 end
 
-function DeusMapScene.selectable_node(arg_36_0, arg_36_1)
+DeusMapScene.selectable_node = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._nodes_to_units[arg_36_1]
 
 	Unit.set_data(var_36_0, "selectable", true)
@@ -714,7 +714,7 @@ function DeusMapScene.selectable_node(arg_36_0, arg_36_1)
 	arg_36_0._selectables[#arg_36_0._selectables + 1] = arg_36_1
 end
 
-function DeusMapScene.unselectable_node(arg_37_0, arg_37_1)
+DeusMapScene.unselectable_node = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._nodes_to_units[arg_37_1]
 
 	Unit.set_data(var_37_0, "selectable", false)
@@ -729,28 +729,28 @@ function DeusMapScene.unselectable_node(arg_37_0, arg_37_1)
 	end
 end
 
-function DeusMapScene.untraversed_node(arg_38_0, arg_38_1)
+DeusMapScene.untraversed_node = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._nodes_to_units[arg_38_1]
 
 	Unit.set_data(var_38_0, "traversed", false)
 	Unit.flow_event(var_38_0, "update_visuals")
 end
 
-function DeusMapScene.traversed_node(arg_39_0, arg_39_1)
+DeusMapScene.traversed_node = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._nodes_to_units[arg_39_1]
 
 	Unit.set_data(var_39_0, "traversed", true)
 	Unit.flow_event(var_39_0, "update_visuals")
 end
 
-function DeusMapScene.unreachable_node(arg_40_0, arg_40_1)
+DeusMapScene.unreachable_node = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._nodes_to_units[arg_40_1]
 
 	Unit.set_data(var_40_0, "unreachable", true)
 	Unit.flow_event(var_40_0, "update_visuals")
 end
 
-function DeusMapScene.select_node(arg_41_0, arg_41_1, arg_41_2)
+DeusMapScene.select_node = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0._nodes_to_units[arg_41_1]
 
 	Unit.set_data(var_41_0, "selected", true)
@@ -761,14 +761,14 @@ function DeusMapScene.select_node(arg_41_0, arg_41_1, arg_41_2)
 	end
 end
 
-function DeusMapScene.unselect_node(arg_42_0, arg_42_1)
+DeusMapScene.unselect_node = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._nodes_to_units[arg_42_1]
 
 	Unit.set_data(var_42_0, "selected", false)
 	Unit.flow_event(var_42_0, "update_visuals")
 end
 
-function DeusMapScene.set_final_node(arg_43_0, arg_43_1)
+DeusMapScene.set_final_node = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._nodes_to_units[arg_43_1]
 
 	Unit.set_data(var_43_0, "selected", true)
@@ -776,7 +776,7 @@ function DeusMapScene.set_final_node(arg_43_0, arg_43_1)
 	Unit.flow_event(var_43_0, "update_visuals")
 end
 
-function DeusMapScene.highlight_edge(arg_44_0, arg_44_1, arg_44_2)
+DeusMapScene.highlight_edge = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._edges_to_units[arg_44_1][arg_44_2]
 
 	if not var_44_0 then
@@ -792,7 +792,7 @@ function DeusMapScene.highlight_edge(arg_44_0, arg_44_1, arg_44_2)
 	Unit.flow_event(var_44_0, "update_visuals")
 end
 
-function DeusMapScene.unhighlight_edge(arg_45_0, arg_45_1, arg_45_2)
+DeusMapScene.unhighlight_edge = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._edges_to_units[arg_45_1][arg_45_2]
 
 	if not var_45_0 then
@@ -808,33 +808,33 @@ function DeusMapScene.unhighlight_edge(arg_45_0, arg_45_1, arg_45_2)
 	Unit.flow_event(var_45_0, "update_visuals")
 end
 
-function DeusMapScene.hover_node(arg_46_0, arg_46_1)
+DeusMapScene.hover_node = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._nodes_to_units[arg_46_1]
 
 	Unit.set_data(var_46_0, "hovered", true)
 	Unit.flow_event(var_46_0, "update_visuals")
 end
 
-function DeusMapScene.unhover_node(arg_47_0, arg_47_1)
+DeusMapScene.unhover_node = function (arg_47_0, arg_47_1)
 	local var_47_0 = arg_47_0._nodes_to_units[arg_47_1]
 
 	Unit.set_data(var_47_0, "hovered", false)
 	Unit.flow_event(var_47_0, "update_visuals")
 end
 
-function DeusMapScene.get_screen_pos_of_node(arg_48_0, arg_48_1)
+DeusMapScene.get_screen_pos_of_node = function (arg_48_0, arg_48_1)
 	local var_48_0 = arg_48_0._nodes_to_units[arg_48_1]
 
 	return Camera.world_to_screen(arg_48_0._camera, Unit.local_position(var_48_0, 0))
 end
 
-function DeusMapScene.animate_arena_belakor_node(arg_49_0, arg_49_1)
+DeusMapScene.animate_arena_belakor_node = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_0._nodes_to_units[arg_49_1]
 
 	Unit.flow_event(var_49_0, "first_time_seeing_arena_belakor_node")
 end
 
-function DeusMapScene._place_token(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+DeusMapScene._place_token = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	local var_50_0 = arg_50_0._profile_index_to_token[arg_50_1]
 	local var_50_1 = arg_50_0._nodes_to_units[arg_50_3]
 	local var_50_2 = arg_50_0._level_ref_values.referenced_token_poses[arg_50_2]
@@ -844,7 +844,7 @@ function DeusMapScene._place_token(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	Unit.set_local_pose(var_50_0, 0, var_50_3)
 end
 
-function DeusMapScene._hide_token(arg_51_0, arg_51_1)
+DeusMapScene._hide_token = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0._profile_index_to_token[arg_51_1]
 
 	Unit.set_unit_visibility(var_51_0, false)

@@ -13,7 +13,7 @@ local var_0_7 = 0.5
 local var_0_8 = 0.9 + var_0_6
 local var_0_9 = table.enum("linear", "radial")
 
-function ActionCareerWEThornsisterTargetWall.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEThornsisterTargetWall.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWEThornsisterTargetWall.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
@@ -41,7 +41,7 @@ function ActionCareerWEThornsisterTargetWall.init(arg_1_0, arg_1_1, arg_1_2, arg
 	arg_1_0._wall_shape = var_0_9.linear
 end
 
-function ActionCareerWEThornsisterTargetWall.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEThornsisterTargetWall.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 
 	ActionCareerWEThornsisterTargetWall.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
@@ -97,11 +97,11 @@ function ActionCareerWEThornsisterTargetWall.client_owner_start_action(arg_2_0, 
 	arg_2_0:_update_targeting()
 end
 
-function ActionCareerWEThornsisterTargetWall.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerWEThornsisterTargetWall.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_0:_update_targeting()
 end
 
-function ActionCareerWEThornsisterTargetWall._update_targeting(arg_4_0)
+ActionCareerWEThornsisterTargetWall._update_targeting = function (arg_4_0)
 	local var_4_0, var_4_1 = arg_4_0._first_person_extension:get_projectile_start_position_rotation()
 	local var_4_2 = arg_4_0._vertical_rotation and Quaternion.right or Quaternion.forward
 	local var_4_3 = Vector3.flat(var_4_2(var_4_1))
@@ -177,7 +177,7 @@ function ActionCareerWEThornsisterTargetWall._update_targeting(arg_4_0)
 	end
 end
 
-function ActionCareerWEThornsisterTargetWall.finish(arg_5_0, arg_5_1)
+ActionCareerWEThornsisterTargetWall.finish = function (arg_5_0, arg_5_1)
 	if arg_5_0._decal_unit then
 		arg_5_0._unit_spawner:mark_for_deletion(arg_5_0._decal_unit)
 
@@ -202,7 +202,7 @@ function ActionCareerWEThornsisterTargetWall.finish(arg_5_0, arg_5_1)
 	return nil
 end
 
-function ActionCareerWEThornsisterTargetWall._check_wall_linear(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ActionCareerWEThornsisterTargetWall._check_wall_linear = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if Network.game_session() then
 		local var_6_0 = arg_6_3 / 2
 		local var_6_1 = arg_6_4 / 2
@@ -260,7 +260,7 @@ function ActionCareerWEThornsisterTargetWall._check_wall_linear(arg_6_0, arg_6_1
 	return nil
 end
 
-function ActionCareerWEThornsisterTargetWall._check_wall_radial(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+ActionCareerWEThornsisterTargetWall._check_wall_radial = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if Network.game_session() then
 		local var_7_0 = arg_7_3 / 2
 		local var_7_1 = arg_7_4 / 2
@@ -291,7 +291,7 @@ function ActionCareerWEThornsisterTargetWall._check_wall_radial(arg_7_0, arg_7_1
 	return nil
 end
 
-function ActionCareerWEThornsisterTargetWall._check_segment(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+ActionCareerWEThornsisterTargetWall._check_segment = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_2 then
 		local var_8_0 = arg_8_0.physics_world
 		local var_8_1 = arg_8_2

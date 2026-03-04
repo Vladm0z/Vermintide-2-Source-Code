@@ -214,10 +214,10 @@ local function var_0_3(arg_1_0)
 					style_id = "outer_glow",
 					texture_id = "outer_glow",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_claimable
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						arg_3_1.color[1] = 150 + 105 * math.sin(5 * Managers.time:time("ui"))
 					end
 				},
@@ -560,7 +560,7 @@ local function var_0_4(arg_4_0, arg_4_1)
 			pass_type = "texture",
 			style_id = "hourglass_icon",
 			texture_id = "hourglass_icon",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.show_hourglass
 			end
 		},
@@ -1085,7 +1085,7 @@ local function var_0_5(arg_6_0)
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						local var_7_0 = 0.5 + math.sin(Managers.time:time("ui") * 3) * 0.5
 
 						arg_7_1.color[1] = 215 + 40 * var_7_0
@@ -1301,15 +1301,15 @@ local var_0_8 = {
 			name = "fence_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				arg_8_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				local var_9_0 = math.easeOutCubic(arg_9_3)
 
 				arg_9_4.render_settings.alpha_multiplier = var_9_0
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		},
@@ -1317,15 +1317,15 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.content_alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.content_alpha_multiplier = var_12_0
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -1335,15 +1335,15 @@ local var_0_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 
 				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}

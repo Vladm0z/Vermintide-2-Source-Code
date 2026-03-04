@@ -35,7 +35,7 @@ local var_0_6 = {
 
 VersusRoundEndScreenUI = class(VersusRoundEndScreenUI, BaseEndScreenUI)
 
-function VersusRoundEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+VersusRoundEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.player
 
 	arg_1_0._player = var_1_0
@@ -48,7 +48,7 @@ function VersusRoundEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	VersusRoundEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-function VersusRoundEndScreenUI._create_ui_elements(arg_2_0, arg_2_1)
+VersusRoundEndScreenUI._create_ui_elements = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_1.scenegraph_definition
 	local var_2_1 = arg_2_1.widget_definitions
 	local var_2_2, var_2_3 = Managers.party:get_party_from_player_id(arg_2_0._peer_id, arg_2_0._local_player_id)
@@ -94,7 +94,7 @@ function VersusRoundEndScreenUI._create_ui_elements(arg_2_0, arg_2_1)
 	local var_2_10 = arg_2_0._ingame_ui_context.world_manager:world("level_world")
 	local var_2_11 = LevelHelper:current_level(var_2_10)
 
-	Managers.state.entity:system("animation_system"):add_safe_animation_callback(function()
+	Managers.state.entity:system("animation_system"):add_safe_animation_callback(function ()
 		for iter_3_0, iter_3_1 in pairs(MoodSettings) do
 			Managers.state.camera:clear_mood(iter_3_0)
 		end
@@ -103,17 +103,17 @@ function VersusRoundEndScreenUI._create_ui_elements(arg_2_0, arg_2_1)
 	end)
 end
 
-function VersusRoundEndScreenUI._draw_widgets(arg_4_0, arg_4_1, arg_4_2)
+VersusRoundEndScreenUI._draw_widgets = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_2.alpha_multiplier = arg_4_2.alpha_multiplier
 
 	VersusRoundEndScreenUI.super._draw_widgets(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function VersusRoundEndScreenUI._on_fade_in(arg_5_0)
+VersusRoundEndScreenUI._on_fade_in = function (arg_5_0)
 	arg_5_0:_play_sound("versus_round_end_transition")
 end
 
-function VersusRoundEndScreenUI._start(arg_6_0)
+VersusRoundEndScreenUI._start = function (arg_6_0)
 	local var_6_0 = var_0_0.scenegraph_definition
 	local var_6_1 = {
 		draw_flags = arg_6_0._draw_flags,
@@ -125,7 +125,7 @@ function VersusRoundEndScreenUI._start(arg_6_0)
 	arg_6_0._round_end_anim_id = arg_6_0._ui_animator:start_animation("round_end", arg_6_0._widgets_by_name, var_6_0, var_6_1)
 end
 
-function VersusRoundEndScreenUI._update(arg_7_0, arg_7_1)
+VersusRoundEndScreenUI._update = function (arg_7_0, arg_7_1)
 	if arg_7_0._completed then
 		return
 	end
@@ -141,11 +141,11 @@ function VersusRoundEndScreenUI._update(arg_7_0, arg_7_1)
 	arg_7_0:draw(arg_7_1)
 end
 
-function VersusRoundEndScreenUI._get_round_count(arg_8_0)
+VersusRoundEndScreenUI._get_round_count = function (arg_8_0)
 	return (Managers.mechanism:game_mechanism():win_conditions():get_current_round())
 end
 
-function VersusRoundEndScreenUI._get_teams_ui_settings(arg_9_0, arg_9_1, arg_9_2)
+VersusRoundEndScreenUI._get_teams_ui_settings = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_9_1]
 	local var_9_1 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_9_2]
 	local var_9_2 = DLCSettings.carousel
@@ -155,7 +155,7 @@ function VersusRoundEndScreenUI._get_teams_ui_settings(arg_9_0, arg_9_1, arg_9_2
 	return var_9_3, var_9_4
 end
 
-function VersusRoundEndScreenUI._build_score_widgets_scenegraph(arg_10_0, arg_10_1)
+VersusRoundEndScreenUI._build_score_widgets_scenegraph = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.mechanism:game_mechanism():num_sets()
 
 	arg_10_0._num_rounds = var_10_0
@@ -209,7 +209,7 @@ function VersusRoundEndScreenUI._build_score_widgets_scenegraph(arg_10_0, arg_10
 	end
 end
 
-function VersusRoundEndScreenUI._setup_score_widgets(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+VersusRoundEndScreenUI._setup_score_widgets = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0._num_rounds
 	local var_11_1 = arg_11_0:_get_current_set()
 
@@ -261,7 +261,7 @@ function VersusRoundEndScreenUI._setup_score_widgets(arg_11_0, arg_11_1, arg_11_
 	arg_11_0._current_round_bg_widget_def = UIWidgets.create_round_end_round_score_bg_widget(var_11_22)
 end
 
-function VersusRoundEndScreenUI._set_team_banner(arg_12_0, arg_12_1, arg_12_2)
+VersusRoundEndScreenUI._set_team_banner = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0, var_12_1 = arg_12_0:_get_teams_ui_settings(arg_12_1, arg_12_2)
 
 	arg_12_0._widgets_by_name.team_1_banner.content.texture_id = var_12_0.local_flag_long_texture
@@ -278,7 +278,7 @@ function VersusRoundEndScreenUI._set_team_banner(arg_12_0, arg_12_1, arg_12_2)
 	var_12_3.content.team_side = Localize("vs_lobby_enemy_team")
 end
 
-function VersusRoundEndScreenUI._setup_top_detail_banner(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+VersusRoundEndScreenUI._setup_top_detail_banner = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = LevelSettings[arg_13_1]
 	local var_13_1 = var_13_0.display_name
 
@@ -291,7 +291,7 @@ function VersusRoundEndScreenUI._setup_top_detail_banner(arg_13_0, arg_13_1, arg
 	arg_13_0._widgets_by_name.round_counter.content.text = string.format(Localize("versus_round_count"), var_13_2, var_13_3)
 end
 
-function VersusRoundEndScreenUI._setup_total_score_progress_bars_widgets(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+VersusRoundEndScreenUI._setup_total_score_progress_bars_widgets = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = VersusObjectiveSettings[arg_14_1].max_score
 	local var_14_1 = arg_14_0._win_conditions:get_total_score(arg_14_2)
 	local var_14_2 = arg_14_0._win_conditions:get_total_score(arg_14_3)
@@ -345,13 +345,13 @@ function VersusRoundEndScreenUI._setup_total_score_progress_bars_widgets(arg_14_
 	arg_14_0._widgets_by_name.team_wining_status_text.content.text = var_14_16
 end
 
-function VersusRoundEndScreenUI._get_current_set(arg_15_0)
+VersusRoundEndScreenUI._get_current_set = function (arg_15_0)
 	local var_15_0 = arg_15_0._win_conditions:get_current_round()
 
 	return math.round(var_15_0 / 2)
 end
 
-function VersusRoundEndScreenUI._get_close_to_winning_score(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+VersusRoundEndScreenUI._get_close_to_winning_score = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0:_get_current_set()
 	local var_16_1 = arg_16_0:_get_round_count()
 	local var_16_2 = arg_16_0._num_rounds

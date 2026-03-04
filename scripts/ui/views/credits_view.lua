@@ -14,7 +14,7 @@ local var_0_3 = {
 
 CreditsView = class(CreditsView)
 
-function CreditsView.init(arg_1_0, arg_1_1)
+CreditsView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
@@ -31,7 +31,7 @@ function CreditsView.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function CreditsView._create_ui_elements(arg_2_0)
+CreditsView._create_ui_elements = function (arg_2_0)
 	arg_2_0._num_credits = #var_0_0.entries
 	arg_2_0._current_offset = 0
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1.scenegraph_definition)
@@ -39,11 +39,11 @@ function CreditsView._create_ui_elements(arg_2_0)
 	arg_2_0._back_button_widget = UIWidget.init(var_0_1.widget_definitions.back_button)
 end
 
-function CreditsView.input_service(arg_3_0)
+CreditsView.input_service = function (arg_3_0)
 	return arg_3_0._input_manager:get_service("credits_view")
 end
 
-function CreditsView.on_enter(arg_4_0)
+CreditsView.on_enter = function (arg_4_0)
 	arg_4_0._input_manager:capture_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
 
 	arg_4_0._current_offset = 0
@@ -52,7 +52,7 @@ function CreditsView.on_enter(arg_4_0)
 	UIWidgetUtils.reset_layout_button(arg_4_0._back_button_widget)
 end
 
-function CreditsView.on_exit(arg_5_0)
+CreditsView.on_exit = function (arg_5_0)
 	arg_5_0._input_manager:release_input(ALL_INPUT_METHODS, 1, "credits_view", "CreditsView")
 
 	arg_5_0.active = nil
@@ -61,7 +61,7 @@ function CreditsView.on_exit(arg_5_0)
 	Managers.music:trigger_event(IS_WINDOWS and "Play_console_menu_back" or "Play_console_menu_select")
 end
 
-function CreditsView.exit(arg_6_0, arg_6_1)
+CreditsView.exit = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1 and "exit_menu" or "ingame_menu"
 
 	arg_6_0.ingame_ui:handle_transition(var_6_0)
@@ -69,7 +69,7 @@ function CreditsView.exit(arg_6_0, arg_6_1)
 	arg_6_0.exiting = nil
 end
 
-function CreditsView.update(arg_7_0, arg_7_1)
+CreditsView.update = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._input_manager
 	local var_7_1 = var_7_0:get_service("credits_view")
 	local var_7_2 = var_7_0:is_device_active("gamepad")
@@ -150,7 +150,7 @@ function CreditsView.update(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_6)
 end
 
-function CreditsView._handle_back_button(arg_8_0, arg_8_1, arg_8_2)
+CreditsView._handle_back_button = function (arg_8_0, arg_8_1, arg_8_2)
 	if not Managers.input:is_device_active("mouse") then
 		return
 	end

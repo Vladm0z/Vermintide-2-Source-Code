@@ -7,31 +7,31 @@ local var_0_0 = {
 	"rpc_network_current_server_time_request"
 }
 
-function NetworkClockServer.init(arg_1_0)
+NetworkClockServer.init = function (arg_1_0)
 	arg_1_0._clock = 0
 end
 
-function NetworkClockServer.register_rpcs(arg_2_0, arg_2_1)
+NetworkClockServer.register_rpcs = function (arg_2_0, arg_2_1)
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
 	arg_2_0._network_event_delegate = arg_2_1
 end
 
-function NetworkClockServer.unregister_rpcs(arg_3_0)
+NetworkClockServer.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 end
 
-function NetworkClockServer.synchronized(arg_4_0)
+NetworkClockServer.synchronized = function (arg_4_0)
 	return true
 end
 
-function NetworkClockServer.time(arg_5_0)
+NetworkClockServer.time = function (arg_5_0)
 	return arg_5_0._clock
 end
 
-function NetworkClockServer.update(arg_6_0, arg_6_1)
+NetworkClockServer.update = function (arg_6_0, arg_6_1)
 	arg_6_0:_update_clock(arg_6_1)
 
 	if Development.parameter("network_clock_debug") then
@@ -39,15 +39,15 @@ function NetworkClockServer.update(arg_6_0, arg_6_1)
 	end
 end
 
-function NetworkClockServer._update_clock(arg_7_0, arg_7_1)
+NetworkClockServer._update_clock = function (arg_7_0, arg_7_1)
 	arg_7_0._clock = arg_7_0._clock + arg_7_1
 end
 
-function NetworkClockServer.destroy(arg_8_0)
+NetworkClockServer.destroy = function (arg_8_0)
 	return
 end
 
-function NetworkClockServer._debug_stuff(arg_9_0, arg_9_1)
+NetworkClockServer._debug_stuff = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.state.debug_text
 
 	if var_9_0 then
@@ -57,10 +57,10 @@ function NetworkClockServer._debug_stuff(arg_9_0, arg_9_1)
 	end
 end
 
-function NetworkClockServer.rpc_network_clock_sync_request(arg_10_0, arg_10_1, arg_10_2)
+NetworkClockServer.rpc_network_clock_sync_request = function (arg_10_0, arg_10_1, arg_10_2)
 	RPC.rpc_network_time_sync_response(arg_10_1, arg_10_2, arg_10_0._clock)
 end
 
-function NetworkClockServer.rpc_network_current_server_time_request(arg_11_0, arg_11_1, arg_11_2)
+NetworkClockServer.rpc_network_current_server_time_request = function (arg_11_0, arg_11_1, arg_11_2)
 	RPC.rpc_network_current_server_time_response(arg_11_1, arg_11_2, arg_11_0._clock)
 end

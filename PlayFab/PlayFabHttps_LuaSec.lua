@@ -6,7 +6,7 @@ local var_0_2 = require("PlayFab.json")
 local var_0_3 = require("PlayFab.PlayFabSettings")
 
 return {
-	MakePlayFabApiCall = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	MakePlayFabApiCall = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = var_0_2.encode(arg_1_1)
 		local var_1_1 = {
 			["X-ReportErrorAsSuccess"] = "true",

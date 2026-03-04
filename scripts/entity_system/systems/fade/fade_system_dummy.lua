@@ -10,43 +10,43 @@ local var_0_0 = {
 	"AIUnitFadeExtension"
 }
 
-function FadeSystemDummy.init(arg_1_0, arg_1_1, arg_1_2)
+FadeSystemDummy.init = function (arg_1_0, arg_1_1, arg_1_2)
 	FadeSystemDummy.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-function FadeSystemDummy.destroy(arg_2_0)
+FadeSystemDummy.destroy = function (arg_2_0)
 	return
 end
 
-function FadeSystemDummy.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+FadeSystemDummy.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return {}
 end
 
-function FadeSystemDummy.freeze(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+FadeSystemDummy.freeze = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return
 end
 
-function FadeSystemDummy.unfreeze(arg_5_0, arg_5_1)
+FadeSystemDummy.unfreeze = function (arg_5_0, arg_5_1)
 	return
 end
 
-function FadeSystemDummy.set_min_fade(arg_6_0, arg_6_1, arg_6_2)
+FadeSystemDummy.set_min_fade = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function FadeSystemDummy.new_linked_units(arg_7_0, arg_7_1, arg_7_2)
+FadeSystemDummy.new_linked_units = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function FadeSystemDummy.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
+FadeSystemDummy.on_remove_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-function FadeSystemDummy.local_player_created(arg_9_0, arg_9_1)
+FadeSystemDummy.local_player_created = function (arg_9_0, arg_9_1)
 	return
 end
 
-function FadeSystemDummy.update(arg_10_0, arg_10_1, arg_10_2)
+FadeSystemDummy.update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 

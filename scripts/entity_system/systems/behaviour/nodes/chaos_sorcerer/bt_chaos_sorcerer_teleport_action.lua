@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTChaosSorcererTeleportAction = class(BTChaosSorcererTeleportAction, BTNode)
 BTChaosSorcererTeleportAction.name = "BTChaosSorcererTeleportAction"
 
-function BTChaosSorcererTeleportAction.init(arg_1_0, ...)
+BTChaosSorcererTeleportAction.init = function (arg_1_0, ...)
 	BTChaosSorcererTeleportAction.super.init(arg_1_0, ...)
 end
 
-function BTChaosSorcererTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTChaosSorcererTeleportAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.next_smart_object_data
 	local var_2_1 = var_2_0.entrance_pos:unbox()
 	local var_2_2 = var_2_0.exit_pos:unbox()
@@ -24,7 +24,7 @@ function BTChaosSorcererTeleportAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.network:anim_event(arg_2_1, "teleport_start")
 end
 
-function BTChaosSorcererTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTChaosSorcererTeleportAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.teleport_position = nil
 	arg_3_2.entrance_position = nil
 	arg_3_2.teleport_timeout = nil
@@ -40,7 +40,7 @@ function BTChaosSorcererTeleportAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function BTChaosSorcererTeleportAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTChaosSorcererTeleportAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.smart_object_data ~= arg_4_2.next_smart_object_data.smart_object_data then
 		return "failed"
 	end
@@ -72,7 +72,7 @@ function BTChaosSorcererTeleportAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-function BTChaosSorcererTeleportAction.play_teleport_effect(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTChaosSorcererTeleportAction.play_teleport_effect = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._tree_node.action_data
 	local var_5_1 = var_5_0 and var_5_0.teleport_effect or "fx/chr_chaos_sorcerer_teleport"
 	local var_5_2 = NetworkLookup.effects[var_5_1]
@@ -85,6 +85,6 @@ function BTChaosSorcererTeleportAction.play_teleport_effect(arg_5_0, arg_5_1, ar
 	var_5_3:rpc_play_particle_effect(nil, var_5_2, NetworkConstants.invalid_game_object_id, var_5_5, arg_5_3, var_5_6, false)
 end
 
-function BTChaosSorcererTeleportAction.anim_cb_teleport_start_finished(arg_6_0, arg_6_1, arg_6_2)
+BTChaosSorcererTeleportAction.anim_cb_teleport_start_finished = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.anim_cb_teleport_finished = true
 end

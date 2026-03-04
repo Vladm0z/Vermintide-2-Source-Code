@@ -5,14 +5,14 @@ PlayerHuskVisualEffectsExtension = class(PlayerHuskVisualEffectsExtension)
 local var_0_0 = Unit.set_flow_variable
 local var_0_1 = Unit.flow_event
 
-function PlayerHuskVisualEffectsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskVisualEffectsExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.network_manager = Managers.state.network
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.overcharge_threshold_changed = true
 end
 
-function PlayerHuskVisualEffectsExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerHuskVisualEffectsExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
 	arg_2_0.overcharge_extension = ScriptUnit.extension(arg_2_2, "overcharge_system")
 
@@ -22,17 +22,17 @@ function PlayerHuskVisualEffectsExtension.extensions_ready(arg_2_0, arg_2_1, arg
 	arg_2_0.third_person_mesh_unit = var_2_0:get_third_person_mesh_unit()
 end
 
-function PlayerHuskVisualEffectsExtension.destroy(arg_3_0)
+PlayerHuskVisualEffectsExtension.destroy = function (arg_3_0)
 	return
 end
 
-function PlayerHuskVisualEffectsExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerHuskVisualEffectsExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0:_update_overcharge_thresholds()
 	arg_4_0:_set_overcharge_flow_values()
 	arg_4_0:_set_weapons_energy_drainable()
 end
 
-function PlayerHuskVisualEffectsExtension._update_overcharge_thresholds(arg_5_0)
+PlayerHuskVisualEffectsExtension._update_overcharge_thresholds = function (arg_5_0)
 	local var_5_0, var_5_1, var_5_2 = arg_5_0.overcharge_extension:current_overcharge_status()
 
 	if arg_5_0.above_overcharge_threshold and var_5_0 < var_5_1 then
@@ -46,7 +46,7 @@ function PlayerHuskVisualEffectsExtension._update_overcharge_thresholds(arg_5_0)
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_overcharge_flow_values(arg_6_0)
+PlayerHuskVisualEffectsExtension._set_overcharge_flow_values = function (arg_6_0)
 	local var_6_0 = arg_6_0.overcharge_extension:get_anim_blend_overcharge()
 
 	if arg_6_0._last_anim_blend_overcharge ~= var_6_0 then
@@ -64,7 +64,7 @@ function PlayerHuskVisualEffectsExtension._set_overcharge_flow_values(arg_6_0)
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_character_overcharge(arg_7_0, arg_7_1)
+PlayerHuskVisualEffectsExtension._set_character_overcharge = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.unit
 
 	if var_7_0 and Unit.alive(var_7_0) then
@@ -80,7 +80,7 @@ function PlayerHuskVisualEffectsExtension._set_character_overcharge(arg_7_0, arg
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_weapons_energy_drainable(arg_8_0)
+PlayerHuskVisualEffectsExtension._set_weapons_energy_drainable = function (arg_8_0)
 	local var_8_0 = arg_8_0.inventory_extension:equipment()
 	local var_8_1 = arg_8_0.unit
 	local var_8_2 = var_8_1 and ScriptUnit.has_extension(var_8_1, "energy_system")
@@ -110,7 +110,7 @@ function PlayerHuskVisualEffectsExtension._set_weapons_energy_drainable(arg_8_0)
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_character_overcharge_threshold(arg_9_0)
+PlayerHuskVisualEffectsExtension._set_character_overcharge_threshold = function (arg_9_0)
 	local var_9_0 = arg_9_0.unit
 	local var_9_1 = arg_9_0.third_person_mesh_unit
 	local var_9_2 = "below_overcharge_threshold"
@@ -128,7 +128,7 @@ function PlayerHuskVisualEffectsExtension._set_character_overcharge_threshold(ar
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_weapons_overcharge(arg_10_0, arg_10_1)
+PlayerHuskVisualEffectsExtension._set_weapons_overcharge = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.inventory_extension:equipment()
 
 	if var_10_0 then
@@ -147,7 +147,7 @@ function PlayerHuskVisualEffectsExtension._set_weapons_overcharge(arg_10_0, arg_
 	end
 end
 
-function PlayerHuskVisualEffectsExtension._set_weapons_overcharge_threshold(arg_11_0)
+PlayerHuskVisualEffectsExtension._set_weapons_overcharge_threshold = function (arg_11_0)
 	local var_11_0 = arg_11_0.inventory_extension:equipment()
 
 	if var_11_0 then

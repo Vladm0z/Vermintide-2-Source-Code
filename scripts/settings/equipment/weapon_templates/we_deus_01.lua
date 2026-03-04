@@ -72,7 +72,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -113,7 +113,7 @@ local var_0_3 = {
 				anim_event = "attack_shoot",
 				scale_total_time_on_mastercrafted = true,
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -144,7 +144,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					arg_4_1:clear_input_buffer()
 
 					return arg_4_1:reset_release_input()
@@ -183,7 +183,7 @@ local var_0_3 = {
 				anim_event = "attack_shoot",
 				scale_total_time_on_mastercrafted = true,
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -214,7 +214,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
 					arg_6_1:clear_input_buffer()
 
 					return arg_6_1:reset_release_input()
@@ -259,7 +259,7 @@ local var_0_3 = {
 				anim_event = "draw_bow",
 				allow_hold_toggle = true,
 				reload_when_out_of_ammo = true,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -316,10 +316,10 @@ local var_0_3 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_9_0)
+				unzoom_condition_function = function (arg_9_0)
 					return arg_9_0 ~= "new_interupting_action"
 				end
 			}

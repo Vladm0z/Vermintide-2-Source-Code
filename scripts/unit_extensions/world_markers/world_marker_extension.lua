@@ -2,7 +2,7 @@
 
 WorldMarkerExtension = class(WorldMarkerExtension)
 
-function WorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WorldMarkerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._visible = false
@@ -13,13 +13,13 @@ function WorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._remove_event_name = nil
 end
 
-function WorldMarkerExtension.extensions_ready(arg_2_0)
+WorldMarkerExtension.extensions_ready = function (arg_2_0)
 	if arg_2_0._extensions_ready then
 		arg_2_0:_extensions_ready()
 	end
 end
 
-function WorldMarkerExtension.destroy(arg_3_0)
+WorldMarkerExtension.destroy = function (arg_3_0)
 	if arg_3_0._destroy then
 		arg_3_0:_destroy()
 	end
@@ -27,7 +27,7 @@ function WorldMarkerExtension.destroy(arg_3_0)
 	arg_3_0:remove_marker()
 end
 
-function WorldMarkerExtension.add_marker(arg_4_0, arg_4_1)
+WorldMarkerExtension.add_marker = function (arg_4_0, arg_4_1)
 	if arg_4_0._adding_marker then
 		return
 	end
@@ -41,7 +41,7 @@ function WorldMarkerExtension.add_marker(arg_4_0, arg_4_1)
 	arg_4_0:_add_marker(var_4_0)
 end
 
-function WorldMarkerExtension.remove_marker(arg_5_0)
+WorldMarkerExtension.remove_marker = function (arg_5_0)
 	local var_5_0 = arg_5_0._id
 
 	if var_5_0 then
@@ -56,13 +56,13 @@ function WorldMarkerExtension.remove_marker(arg_5_0)
 	end
 end
 
-function WorldMarkerExtension.hot_join_sync(arg_6_0, arg_6_1)
+WorldMarkerExtension.hot_join_sync = function (arg_6_0, arg_6_1)
 	if arg_6_0._hot_join_sync then
 		arg_6_0:_hot_join_sync(arg_6_1)
 	end
 end
 
-function WorldMarkerExtension.cb_add_marker(arg_7_0, arg_7_1, arg_7_2)
+WorldMarkerExtension.cb_add_marker = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._id = arg_7_2
 	arg_7_0._adding_marker = false
 

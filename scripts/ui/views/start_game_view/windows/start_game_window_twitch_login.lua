@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowTwitchLogin = class(StartGameWindowTwitchLogin)
 StartGameWindowTwitchLogin.NAME = "StartGameWindowTwitchLogin"
 
-function StartGameWindowTwitchLogin.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowTwitchLogin.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowTwitchLogin")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -32,7 +32,7 @@ function StartGameWindowTwitchLogin.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_set_disconnect_button_text()
 end
 
-function StartGameWindowTwitchLogin.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowTwitchLogin.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_2_0 = {}
@@ -59,12 +59,12 @@ function StartGameWindowTwitchLogin.create_ui_elements(arg_2_0, arg_2_1, arg_2_2
 	end
 end
 
-function StartGameWindowTwitchLogin.on_exit(arg_3_0, arg_3_1)
+StartGameWindowTwitchLogin.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowTwitchLogin")
 	arg_3_0:set_active(false)
 end
 
-function StartGameWindowTwitchLogin.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowTwitchLogin.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_popup()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
@@ -72,7 +72,7 @@ function StartGameWindowTwitchLogin.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowTwitchLogin.set_active(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowTwitchLogin.set_active = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._active = arg_5_1
 
 	if IS_WINDOWS then
@@ -84,7 +84,7 @@ function StartGameWindowTwitchLogin.set_active(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function StartGameWindowTwitchLogin._update_popup(arg_6_0)
+StartGameWindowTwitchLogin._update_popup = function (arg_6_0)
 	if arg_6_0._error_popup_id then
 		local var_6_0 = Managers.popup:query_result(arg_6_0._error_popup_id)
 
@@ -96,7 +96,7 @@ function StartGameWindowTwitchLogin._update_popup(arg_6_0)
 	end
 end
 
-function StartGameWindowTwitchLogin._handle_input(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowTwitchLogin._handle_input = function (arg_7_0, arg_7_1, arg_7_2)
 	if not Managers.twitch:is_connecting() then
 		local var_7_0 = Managers.twitch:is_connected()
 		local var_7_1 = arg_7_0._widgets_by_name.frame_widget
@@ -183,7 +183,7 @@ function StartGameWindowTwitchLogin._handle_input(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function StartGameWindowTwitchLogin._update_game_options(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowTwitchLogin._update_game_options = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.twitch:is_connected()
 	local var_8_1 = Managers.twitch:is_connecting()
 
@@ -200,17 +200,17 @@ function StartGameWindowTwitchLogin._update_game_options(arg_8_0, arg_8_1, arg_8
 	end
 end
 
-function StartGameWindowTwitchLogin.cb_connection_success_callback(arg_9_0, arg_9_1)
+StartGameWindowTwitchLogin.cb_connection_success_callback = function (arg_9_0, arg_9_1)
 	arg_9_0:_set_disconnect_button_text()
 end
 
-function StartGameWindowTwitchLogin._set_disconnect_button_text(arg_10_0)
+StartGameWindowTwitchLogin._set_disconnect_button_text = function (arg_10_0)
 	local var_10_0 = Managers.twitch and Managers.twitch:user_name() or "N/A"
 
 	arg_10_0._widgets_by_name.button_2.content.button_hotspot.text = string.format(Localize("start_game_window_twitch_disconnect"), var_10_0)
 end
 
-function StartGameWindowTwitchLogin.cb_on_message_received(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+StartGameWindowTwitchLogin.cb_on_message_received = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0._widgets_by_name.chat_output_widget.content
 	local var_11_1 = var_11_0.message_tables
 	local var_11_2 = {}
@@ -228,7 +228,7 @@ function StartGameWindowTwitchLogin.cb_on_message_received(arg_11_0, arg_11_1, a
 	end
 end
 
-function StartGameWindowTwitchLogin._is_button_pressed(arg_12_0, arg_12_1)
+StartGameWindowTwitchLogin._is_button_pressed = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	if var_12_0.on_release then
@@ -238,19 +238,19 @@ function StartGameWindowTwitchLogin._is_button_pressed(arg_12_0, arg_12_1)
 	end
 end
 
-function StartGameWindowTwitchLogin._is_button_hover_enter(arg_13_0, arg_13_1)
+StartGameWindowTwitchLogin._is_button_hover_enter = function (arg_13_0, arg_13_1)
 	return arg_13_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowTwitchLogin.post_update(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowTwitchLogin.post_update = function (arg_14_0, arg_14_1, arg_14_2)
 	return
 end
 
-function StartGameWindowTwitchLogin._update_animations(arg_15_0, arg_15_1)
+StartGameWindowTwitchLogin._update_animations = function (arg_15_0, arg_15_1)
 	arg_15_0:_update_button_animations(arg_15_1)
 end
 
-function StartGameWindowTwitchLogin._update_button_animations(arg_16_0, arg_16_1)
+StartGameWindowTwitchLogin._update_button_animations = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._widgets_by_name
 	local var_16_1 = "button_"
 
@@ -261,7 +261,7 @@ function StartGameWindowTwitchLogin._update_button_animations(arg_16_0, arg_16_1
 	end
 end
 
-function StartGameWindowTwitchLogin._animate_button(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowTwitchLogin._animate_button = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_1.content.button_hotspot
 	local var_17_1 = 20
 	local var_17_2 = var_17_0.input_progress or 0
@@ -311,7 +311,7 @@ function StartGameWindowTwitchLogin._animate_button(arg_17_0, arg_17_1, arg_17_2
 	var_17_0.selection_progress = var_17_5
 end
 
-function StartGameWindowTwitchLogin.draw(arg_18_0, arg_18_1)
+StartGameWindowTwitchLogin.draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.ui_renderer
 	local var_18_1 = arg_18_0.ui_scenegraph
 	local var_18_2 = arg_18_0.parent:window_input_service()
@@ -329,6 +329,6 @@ function StartGameWindowTwitchLogin.draw(arg_18_0, arg_18_1)
 	UIRenderer.end_pass(var_18_0)
 end
 
-function StartGameWindowTwitchLogin._play_sound(arg_19_0, arg_19_1)
+StartGameWindowTwitchLogin._play_sound = function (arg_19_0, arg_19_1)
 	arg_19_0.parent:play_sound(arg_19_1)
 end

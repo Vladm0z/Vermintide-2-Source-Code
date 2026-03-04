@@ -1,7 +1,7 @@
 -- chunkname: @foundation/scripts/util/class.lua
 
 local var_0_0 = {
-	__index = function()
+	__index = function ()
 		error("This object has been destroyed")
 	end
 }
@@ -26,7 +26,7 @@ function class(arg_2_0, ...)
 		}
 		arg_2_0.__index = arg_2_0
 
-		function arg_2_0.new(arg_3_0, ...)
+		arg_2_0.new = function (arg_3_0, ...)
 			local var_3_0 = {}
 
 			setmetatable(var_3_0, arg_2_0)
@@ -38,7 +38,7 @@ function class(arg_2_0, ...)
 			return var_3_0
 		end
 
-		function arg_2_0.delete(arg_4_0, ...)
+		arg_2_0.delete = function (arg_4_0, ...)
 			if arg_4_0.destroy then
 				arg_4_0:destroy(...)
 			end

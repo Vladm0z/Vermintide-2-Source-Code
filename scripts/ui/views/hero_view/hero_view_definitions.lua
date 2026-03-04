@@ -83,7 +83,7 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -101,7 +101,7 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -121,7 +121,7 @@ local var_0_1 = {
 			0,
 			-1.2
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -139,7 +139,7 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -157,7 +157,7 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -175,7 +175,7 @@ local var_0_1 = {
 			0,
 			0
 		},
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	}

@@ -1,19 +1,19 @@
 -- chunkname: @foundation/scripts/util/misc_util.lua
 
-IDENTITY = IDENTITY or function(arg_1_0)
+IDENTITY = IDENTITY or function (arg_1_0)
 	return arg_1_0
 end
-NOP = NOP or function()
+NOP = NOP or function ()
 	return
 end
-TABLE_NEW = TABLE_NEW or function()
+TABLE_NEW = TABLE_NEW or function ()
 	return {}
 end
 CONST = CONST or setmetatable({}, {
-	__call = function(arg_4_0, arg_4_1)
+	__call = function (arg_4_0, arg_4_1)
 		return arg_4_1 == nil and NOP or arg_4_0[arg_4_1]
 	end,
-	__index = function(arg_5_0, arg_5_1)
+	__index = function (arg_5_0, arg_5_1)
 		local function var_5_0()
 			return arg_5_1
 		end
@@ -94,7 +94,7 @@ end
 
 varargs = varargs or {}
 
-function varargs.to_table(...)
+varargs.to_table = function (...)
 	local var_15_0 = {}
 	local var_15_1 = select("#", ...)
 
@@ -107,7 +107,7 @@ function varargs.to_table(...)
 	return var_15_0, #var_15_0
 end
 
-function varargs.join(arg_16_0, ...)
+varargs.join = function (arg_16_0, ...)
 	local var_16_0 = ""
 	local var_16_1 = select("#", ...)
 

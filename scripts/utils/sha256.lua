@@ -7,7 +7,7 @@ local function var_0_2(arg_1_0)
 	local var_1_0 = {}
 	local var_1_1 = setmetatable({}, var_1_0)
 
-	function var_1_0.__index(arg_2_0, arg_2_1)
+	var_1_0.__index = function (arg_2_0, arg_2_1)
 		local var_2_0 = arg_1_0(arg_2_1)
 
 		var_1_1[arg_2_1] = var_2_0
@@ -19,7 +19,7 @@ local function var_0_2(arg_1_0)
 end
 
 local function var_0_3(arg_3_0, arg_3_1)
-	return function(arg_4_0, arg_4_1)
+	return function (arg_4_0, arg_4_1)
 		local var_4_0 = 0
 		local var_4_1 = 1
 
@@ -37,10 +37,10 @@ local function var_0_3(arg_3_0, arg_3_1)
 	end
 end
 
-local var_0_4 = (function(arg_5_0)
+local var_0_4 = (function (arg_5_0)
 	local var_5_0 = var_0_3(arg_5_0, 2)
-	local var_5_1 = var_0_2(function(arg_6_0)
-		return var_0_2(function(arg_7_0)
+	local var_5_1 = var_0_2(function (arg_6_0)
+		return var_0_2(function (arg_7_0)
 			return var_5_0(arg_6_0, arg_7_0)
 		end)
 	end)
@@ -205,7 +205,7 @@ local var_0_12 = {
 }
 
 local function var_0_13(arg_15_0)
-	return (string.gsub(arg_15_0, ".", function(arg_16_0)
+	return (string.gsub(arg_15_0, ".", function (arg_16_0)
 		return string.format("%02x", string.byte(arg_16_0))
 	end))
 end

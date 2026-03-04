@@ -2,16 +2,16 @@
 
 ImguiStringScanner = class(ImguiStringScanner)
 
-function ImguiStringScanner.init(arg_1_0)
+ImguiStringScanner.init = function (arg_1_0)
 	arg_1_0._results = {}
 	arg_1_0._query = ""
 end
 
-function ImguiStringScanner.update(arg_2_0, arg_2_1)
+ImguiStringScanner.update = function (arg_2_0, arg_2_1)
 	return
 end
 
-function ImguiStringScanner.draw(arg_3_0)
+ImguiStringScanner.draw = function (arg_3_0)
 	local var_3_0 = Imgui.begin_window("String Scanner")
 
 	if not rawget(Script, "string_scan") then
@@ -64,6 +64,6 @@ function ImguiStringScanner.draw(arg_3_0)
 	return var_3_0
 end
 
-function ImguiStringScanner.is_persistent(arg_4_0)
+ImguiStringScanner.is_persistent = function (arg_4_0)
 	return false
 end

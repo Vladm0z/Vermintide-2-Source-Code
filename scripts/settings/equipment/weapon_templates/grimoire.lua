@@ -36,7 +36,7 @@ local var_0_0 = {
 				anim_event = "attack_throw",
 				weapon_action_hand = "left",
 				total_time = 0.7,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {}
@@ -173,7 +173,7 @@ var_0_5.actions = {
 			anim_event = "attack_throw",
 			weapon_action_hand = "left",
 			total_time = 1.6,
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 				return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 			end,
 			allowed_chain_actions = {}
@@ -189,10 +189,10 @@ var_0_5.actions = {
 			kind = "inspect_geheimnisnacht_2021",
 			hold_input = "action_two_hold",
 			anim_event = "inspect_start",
-			condition_func = function(arg_3_0, arg_3_1)
+			condition_func = function (arg_3_0, arg_3_1)
 				return Managers.input:is_device_active("gamepad")
 			end,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,

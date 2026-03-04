@@ -32,14 +32,14 @@ end
 
 AnimationMovementTemplates.chaos_troll = {
 	owner = {
-		init = function(arg_2_0, arg_2_1)
+		init = function (arg_2_0, arg_2_1)
 			arg_2_1.blackboard = var_0_0[arg_2_0]
 			arg_2_1.ai_extension = ScriptUnit.extension(arg_2_0, "ai_system")
 			arg_2_1.animation_variable_lean = Unit.animation_find_variable(arg_2_0, "lean")
 			arg_2_1.lean_lerp_speed = 5
 			arg_2_1.lean_amount = 25
 		end,
-		update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = arg_3_3.blackboard
 
 			if var_3_0.lean_target_position_boxed then
@@ -57,7 +57,7 @@ AnimationMovementTemplates.chaos_troll = {
 				end
 			end
 		end,
-		leave = function(arg_4_0, arg_4_1)
+		leave = function (arg_4_0, arg_4_1)
 			local var_4_0 = arg_4_1.animation_variable_lean
 
 			if var_4_0 then
@@ -66,13 +66,13 @@ AnimationMovementTemplates.chaos_troll = {
 		end
 	},
 	husk = {
-		init = function(arg_5_0, arg_5_1)
+		init = function (arg_5_0, arg_5_1)
 			arg_5_1.animation_variable_lean = Unit.animation_find_variable(arg_5_0, "lean")
 			arg_5_1.old_lean_target_position_boxed = Vector3Box(Vector3.zero())
 			arg_5_1.lean_lerp_speed = 5
 			arg_5_1.lean_amount = 25
 		end,
-		update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Managers.state.network:game()
 			local var_6_1 = Managers.state.unit_storage:go_id(arg_6_0)
 
@@ -89,7 +89,7 @@ AnimationMovementTemplates.chaos_troll = {
 				end
 			end
 		end,
-		leave = function(arg_7_0, arg_7_1)
+		leave = function (arg_7_0, arg_7_1)
 			local var_7_0 = arg_7_1.animation_variable_lean
 
 			if var_7_0 then

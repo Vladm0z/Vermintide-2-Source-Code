@@ -261,7 +261,7 @@ local function var_0_4(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					pass_type = "texture",
 					style_id = "selected_texture",
 					texture_id = "texture_id",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.selected
 					end
 				},
@@ -269,7 +269,7 @@ local function var_0_4(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					pass_type = "texture",
 					style_id = "hover",
 					texture_id = "texture_id",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.entry_hotspot.is_hover and not arg_4_0.selected
 					end
 				},
@@ -425,7 +425,7 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -438,7 +438,7 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
@@ -451,7 +451,7 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover_down",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.parent.down_hotspot.is_hover
 					end
 				},
@@ -460,7 +460,7 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.parent.up_hotspot.is_hover
 					end
 				}
@@ -613,7 +613,7 @@ local function var_0_5()
 					style_id = "loading_icon",
 					texture_id = "loading_icon_id",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
 						arg_11_1.angle = arg_11_1.angle + 0.25
 					end
 				}

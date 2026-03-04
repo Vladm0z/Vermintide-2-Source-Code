@@ -2,7 +2,7 @@
 
 CareerAbilityRatlingGunnerFire = class(CareerAbilityRatlingGunnerFire, CareerAbilityDarkPactBase)
 
-function CareerAbilityRatlingGunnerFire.ability_ready(arg_1_0)
+CareerAbilityRatlingGunnerFire.ability_ready = function (arg_1_0)
 	arg_1_0.super.ability_ready(arg_1_0)
 
 	if arg_1_0._first_person_extension then
@@ -16,11 +16,11 @@ end
 
 CareerAbilityRatlingGunnerReload = class(CareerAbilityRatlingGunnerReload, CareerAbilityDarkPactBase)
 
-function CareerAbilityRatlingGunnerReload.ability_ready(arg_2_0)
+CareerAbilityRatlingGunnerReload.ability_ready = function (arg_2_0)
 	arg_2_0.super.ability_ready(arg_2_0)
 end
 
-function CareerAbilityRatlingGunnerReload._start(arg_3_0)
+CareerAbilityRatlingGunnerReload._start = function (arg_3_0)
 	arg_3_0.super.ability_ready(arg_3_0)
 
 	local var_3_0 = arg_3_0._first_person_extension
@@ -35,11 +35,11 @@ function CareerAbilityRatlingGunnerReload._start(arg_3_0)
 	arg_3_0._career_extension:start_activated_ability_cooldown(2)
 end
 
-function CareerAbilityRatlingGunnerReload.force_trigger_ability(arg_4_0)
+CareerAbilityRatlingGunnerReload.force_trigger_ability = function (arg_4_0)
 	arg_4_0:_start()
 end
 
-function CareerAbilityRatlingGunnerReload._ability_available(arg_5_0)
+CareerAbilityRatlingGunnerReload._ability_available = function (arg_5_0)
 	local var_5_0 = arg_5_0._career_extension
 	local var_5_1 = arg_5_0._status_extension
 	local var_5_2 = arg_5_0._locomotion_extension

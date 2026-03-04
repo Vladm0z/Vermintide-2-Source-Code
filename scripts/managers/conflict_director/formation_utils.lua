@@ -2,7 +2,7 @@
 
 FormationUtils = {}
 
-function FormationUtils.make_formation(arg_1_0, arg_1_1)
+FormationUtils.make_formation = function (arg_1_0, arg_1_1)
 	local var_1_0 = {
 		arrangement = {},
 		formation_template = arg_1_0,
@@ -30,7 +30,7 @@ function FormationUtils.make_formation(arg_1_0, arg_1_1)
 	return var_1_0, var_1_7
 end
 
-function FormationUtils.make_encampment(arg_2_0)
+FormationUtils.make_encampment = function (arg_2_0)
 	local var_2_0 = {
 		army_size = 0,
 		encampment_template = arg_2_0
@@ -75,7 +75,7 @@ local var_0_0 = {
 	}
 }
 
-function FormationUtils.draw_encampment(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+FormationUtils.draw_encampment = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_3 = arg_3_3 or QuickDrawer
 
 	arg_3_3:sphere(arg_3_1, 0.25, Color(0, 180, 0))
@@ -91,7 +91,7 @@ function FormationUtils.draw_encampment(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function FormationUtils.draw_formation(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+FormationUtils.draw_formation = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_4:line(arg_4_1, arg_4_1 + Vector3(0, 0, 3), arg_4_3)
 
 	local var_4_0 = arg_4_0.formation_template.dir
@@ -107,7 +107,7 @@ function FormationUtils.draw_formation(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	end
 end
 
-function FormationUtils.spawn_formation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+FormationUtils.spawn_formation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = Managers.state.conflict
 	local var_5_1 = var_5_0.nav_world
 	local var_5_2 = arg_5_0.arrangement
@@ -136,7 +136,7 @@ function FormationUtils.spawn_formation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_
 	end
 end
 
-function FormationUtils.spawn_encampment(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+FormationUtils.spawn_encampment = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = {
 		template = "encampment",
 		id = Managers.state.entity:system("ai_group_system"):generate_group_id(),

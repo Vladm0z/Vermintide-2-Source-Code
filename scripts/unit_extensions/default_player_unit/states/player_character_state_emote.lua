@@ -6,13 +6,13 @@ local var_0_0 = 0.05
 local var_0_1 = 0.03
 local var_0_2 = 5
 
-function PlayerCharacterStateEmote.init(arg_1_0, arg_1_1)
+PlayerCharacterStateEmote.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "emote")
 
 	local var_1_0 = arg_1_1
 end
 
-function PlayerCharacterStateEmote.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateEmote.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
 	local var_2_0 = {
@@ -44,7 +44,7 @@ function PlayerCharacterStateEmote.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, 
 	arg_2_0._emote_ui = var_2_1
 end
 
-function PlayerCharacterStateEmote.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateEmote.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	CharacterStateHelper.change_camera_state(arg_3_0.player, "follow")
 	arg_3_0.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 	arg_3_0.status_extension:set_inspecting(false)
@@ -62,7 +62,7 @@ function PlayerCharacterStateEmote.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	arg_3_0.current_emote = nil
 end
 
-function PlayerCharacterStateEmote.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateEmote.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.input_extension
 	local var_4_2 = Managers.state.camera
@@ -158,7 +158,7 @@ function PlayerCharacterStateEmote.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	CharacterStateHelper.look(var_4_1, arg_4_0.player.viewport_name, var_4_4, var_4_3, arg_4_0.inventory_extension)
 end
 
-function PlayerCharacterStateEmote._update_emote(arg_5_0)
+PlayerCharacterStateEmote._update_emote = function (arg_5_0)
 	local var_5_0, var_5_1 = arg_5_0.cosmetic_extension:get_queued_3p_emote()
 
 	if var_5_0 then

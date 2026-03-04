@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_splitting_enemies",
 	display_name = "display_name_mutator_splitting_enemies",
 	icon = "mutator_icon_splitting_enemies",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.breed_tier_list = {
 			beastmen_standard_bearer = "beastmen_bestigor",
 			chaos_raider = "chaos_marauder",
@@ -72,7 +72,7 @@ return {
 			skaven_storm_vermin_with_shield = "generic_mutator_explosion_medium"
 		}
 
-		function arg_1_1.cb_enemy_spawned_function(arg_2_0, arg_2_1, arg_2_2)
+		arg_1_1.cb_enemy_spawned_function = function (arg_2_0, arg_2_1, arg_2_2)
 			local var_2_0 = BLACKBOARDS[arg_2_0]
 
 			if not arg_2_1.special then
@@ -84,7 +84,7 @@ return {
 		arg_1_1.spawn_queue = {}
 		arg_1_1.spawn_delay = 0.25
 	end,
-	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		local var_3_0 = arg_3_1.spawn_queue
 		local var_3_1
 
@@ -112,10 +112,10 @@ return {
 			table.remove(var_3_0, var_3_1)
 		end
 	end,
-	on_split_enemy = function(arg_4_0)
+	on_split_enemy = function (arg_4_0)
 		return
 	end,
-	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 		local var_5_0 = arg_5_5[DamageDataIndex.DAMAGE_TYPE]
 
 		if arg_5_5[DamageDataIndex.DAMAGE_SOURCE_NAME] == "suicide" and (var_5_0 == "volume_insta_kill" or var_5_0 == "forced") then

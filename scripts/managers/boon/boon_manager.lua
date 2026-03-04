@@ -22,20 +22,20 @@ local function var_0_1(arg_2_0, arg_2_1)
 	return arg_2_0
 end
 
-function BoonManager.init(arg_3_0)
+BoonManager.init = function (arg_3_0)
 	arg_3_0._network_event_delegate = nil
 	arg_3_0._boons = {}
 	arg_3_0._spawned_players_queue = {}
 	arg_3_0._unique_id = 0
 end
 
-function BoonManager.destroy(arg_4_0)
+BoonManager.destroy = function (arg_4_0)
 	arg_4_0:unregister_rpcs()
 end
 
 local var_0_2 = {}
 
-function BoonManager.update(arg_5_0, arg_5_1, arg_5_2)
+BoonManager.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._spawned_players_queue
 	local var_5_1 = #var_5_0
 	local var_5_2 = arg_5_0._boons
@@ -51,7 +51,7 @@ function BoonManager.update(arg_5_0, arg_5_1, arg_5_2)
 	table.clear_array(var_5_0, var_5_1)
 end
 
-function BoonManager.add_boon(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+BoonManager.add_boon = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._unique_id
 
 	arg_6_0._unique_id = var_6_0 + 1
@@ -76,7 +76,7 @@ function BoonManager.add_boon(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6
 	end
 end
 
-function BoonManager._activate_boon(arg_7_0, arg_7_1, arg_7_2)
+BoonManager._activate_boon = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = MechanismOverrides.get(InGameChallengeRewards[arg_7_1.reward_id])
 
 	if var_7_0 and arg_7_1.active then
@@ -110,7 +110,7 @@ function BoonManager._activate_boon(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function BoonManager._deactivate_boon(arg_8_0, arg_8_1, arg_8_2)
+BoonManager._deactivate_boon = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = MechanismOverrides.get(InGameChallengeRewards[arg_8_1.reward_id])
 
 	if var_8_0 and arg_8_1.reward_data then
@@ -128,7 +128,7 @@ function BoonManager._deactivate_boon(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function BoonManager._activate_player_boons(arg_9_0, arg_9_1, arg_9_2)
+BoonManager._activate_player_boons = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = PlayerUtils.unique_player_id(arg_9_1, arg_9_2)
 	local var_9_1 = Managers.state.side:get_side_from_player_unique_id(var_9_0).PLAYER_AND_BOT_UNITS
 	local var_9_2 = arg_9_0._boons
@@ -144,7 +144,7 @@ function BoonManager._activate_player_boons(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BoonManager._deactivate_player_boons(arg_10_0, arg_10_1, arg_10_2)
+BoonManager._deactivate_player_boons = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = PlayerUtils.unique_player_id(arg_10_1, arg_10_2)
 	local var_10_1 = Managers.party:get_party_from_player_id(arg_10_1, arg_10_2)
 	local var_10_2 = var_10_1 and Managers.state.side.side_by_party[var_10_1]
@@ -160,7 +160,7 @@ function BoonManager._deactivate_player_boons(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function BoonManager._has_been_consumed(arg_11_0, arg_11_1)
+BoonManager._has_been_consumed = function (arg_11_0, arg_11_1)
 	if arg_11_1.consume_type == "time" then
 		return false
 	else
@@ -168,7 +168,7 @@ function BoonManager._has_been_consumed(arg_11_0, arg_11_1)
 	end
 end
 
-function BoonManager.remove_boon(arg_12_0, arg_12_1)
+BoonManager.remove_boon = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._boons
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -180,7 +180,7 @@ function BoonManager.remove_boon(arg_12_0, arg_12_1)
 	end
 end
 
-function BoonManager.on_round_start(arg_13_0, arg_13_1, arg_13_2)
+BoonManager.on_round_start = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_2:register(arg_13_0, "new_player_unit", "on_player_spawned")
 	arg_13_2:register(arg_13_0, "on_player_joined_party", "on_player_joined_party")
 	arg_13_2:register(arg_13_0, "on_player_left_party", "on_player_left_party")
@@ -190,7 +190,7 @@ function BoonManager.on_round_start(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:register_rpcs(arg_13_1)
 end
 
-function BoonManager.on_round_end(arg_14_0)
+BoonManager.on_round_end = function (arg_14_0)
 	arg_14_0:unregister_rpcs()
 	table.clear_array(arg_14_0._spawned_players_queue, #arg_14_0._spawned_players_queue)
 
@@ -218,11 +218,11 @@ function BoonManager.on_round_end(arg_14_0)
 	end
 end
 
-function BoonManager.on_venture_start(arg_15_0)
+BoonManager.on_venture_start = function (arg_15_0)
 	return
 end
 
-function BoonManager.on_venture_end(arg_16_0)
+BoonManager.on_venture_end = function (arg_16_0)
 	local var_16_0 = arg_16_0._boons
 
 	for iter_16_0 = #var_16_0, 1, -1 do
@@ -238,27 +238,27 @@ function BoonManager.on_venture_end(arg_16_0)
 	end
 end
 
-function BoonManager.on_player_spawned(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+BoonManager.on_player_spawned = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0._spawned_players_queue[#arg_17_0._spawned_players_queue + 1] = arg_17_2
 end
 
-function BoonManager.on_player_joined_party(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+BoonManager.on_player_joined_party = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	arg_18_0:_activate_player_boons(arg_18_1, arg_18_2)
 end
 
-function BoonManager.on_player_left_party(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BoonManager.on_player_left_party = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	arg_19_0:_deactivate_player_boons(arg_19_1, arg_19_2)
 end
 
-function BoonManager.on_bot_added(arg_20_0, arg_20_1)
+BoonManager.on_bot_added = function (arg_20_0, arg_20_1)
 	arg_20_0:_activate_player_boons(arg_20_1:network_id(), arg_20_1:local_player_id())
 end
 
-function BoonManager.on_bot_removed(arg_21_0, arg_21_1)
+BoonManager.on_bot_removed = function (arg_21_0, arg_21_1)
 	arg_21_0:_deactivate_player_boons(arg_21_1:network_id(), arg_21_1:local_player_id())
 end
 
-function BoonManager.on_clean_up_server_controlled_buffs(arg_22_0, arg_22_1)
+BoonManager.on_clean_up_server_controlled_buffs = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._boons
 
 	for iter_22_0 = 1, #var_22_0 do
@@ -273,10 +273,10 @@ end
 
 local var_0_3 = {}
 
-function BoonManager.register_rpcs(arg_23_0, arg_23_1)
+BoonManager.register_rpcs = function (arg_23_0, arg_23_1)
 	return
 end
 
-function BoonManager.unregister_rpcs(arg_24_0)
+BoonManager.unregister_rpcs = function (arg_24_0)
 	return
 end

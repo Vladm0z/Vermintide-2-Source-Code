@@ -8,7 +8,7 @@ InteractionResult = table.mirror_array_inplace({
 })
 InteractionCustomChecks = InteractionCustomChecks or {}
 
-function InteractionCustomChecks.dialogue_not_playing(arg_1_0, arg_1_1)
+InteractionCustomChecks.dialogue_not_playing = function (arg_1_0, arg_1_1)
 	return not Managers.state.entity:system("dialogue_system"):is_dialogue_playing()
 end
 
@@ -21,15 +21,15 @@ InteractionDefinitions.player_generic = {
 		swap_to_3p = true
 	},
 	server = {
-		start = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		start = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 			InteractionDefinitions.player_generic.current_data = InteractionHelper.choose_player_interaction(arg_2_1, arg_2_2)
 
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].server.start(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		end,
-		update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+		update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].server.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 		end,
-		stop = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+		stop = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 			local var_4_0 = InteractionDefinitions[InteractionDefinitions.player_generic.current_data].server.stop(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 
 			InteractionDefinitions.player_generic.current_data = nil
@@ -38,25 +38,25 @@ InteractionDefinitions.player_generic = {
 		end
 	},
 	client = {
-		start = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+		start = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 			InteractionDefinitions.player_generic.current_data = InteractionHelper.choose_player_interaction(arg_5_1, arg_5_2)
 
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].client.start(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 		end,
-		update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].client.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 		end,
-		stop = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+		stop = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 			local var_7_0 = InteractionDefinitions[InteractionDefinitions.player_generic.current_data].client.stop(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 
 			InteractionDefinitions.player_generic.current_data = nil
 
 			return var_7_0
 		end,
-		get_progress = function(arg_8_0, arg_8_1, arg_8_2)
+		get_progress = function (arg_8_0, arg_8_1, arg_8_2)
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].client.get_progress(arg_8_0, arg_8_1, arg_8_2)
 		end,
-		hud_description = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		hud_description = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			local var_9_0
 			local var_9_1 = InteractionHelper.choose_player_interaction(arg_9_4, arg_9_0)
 
@@ -83,13 +83,13 @@ InteractionDefinitions.player_generic = {
 				return var_9_4, var_9_0
 			end
 		end,
-		can_interact = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		can_interact = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			local var_10_0 = InteractionHelper.choose_player_interaction(arg_10_0, arg_10_1)
 
 			return var_10_0 ~= nil, nil, var_10_0
 		end
 	},
-	get_config = function()
+	get_config = function ()
 		if InteractionDefinitions.player_generic.current_data then
 			return InteractionDefinitions[InteractionDefinitions.player_generic.current_data].config
 		else
@@ -120,7 +120,7 @@ InteractionDefinitions.revive = {
 		duration = 2
 	},
 	server = {
-		start = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		start = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 			local var_13_0 = arg_13_4.duration
 			local var_13_1 = ScriptUnit.extension(arg_13_1, "buff_system"):apply_buffs_to_value(var_13_0, "faster_revive")
 
@@ -128,7 +128,7 @@ InteractionDefinitions.revive = {
 
 			arg_13_3.done_time = arg_13_5 + var_13_1
 		end,
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 			if ScriptUnit.extension(arg_14_1, "status_system"):is_knocked_down() or not HEALTH_ALIVE[arg_14_1] then
 				return InteractionResult.FAILURE
 			end
@@ -143,7 +143,7 @@ InteractionDefinitions.revive = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+		stop = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
 			if arg_15_6 == InteractionResult.SUCCESS then
 				StatusUtils.set_revived_network(arg_15_2, true, arg_15_1)
 
@@ -162,7 +162,7 @@ InteractionDefinitions.revive = {
 				ScriptUnit.extension(arg_15_2, "status_system"):set_knocked_down_bleed_buff_paused(false)
 			end
 		end,
-		can_interact = function(arg_16_0, arg_16_1)
+		can_interact = function (arg_16_0, arg_16_1)
 			local var_16_0 = ScriptUnit.extension(arg_16_1, "status_system")
 			local var_16_1 = var_16_0:is_knocked_down()
 			local var_16_2 = var_16_0:is_pounced_down()
@@ -175,7 +175,7 @@ InteractionDefinitions.revive = {
 		end
 	},
 	client = {
-		start = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+		start = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 			arg_17_3.start_time = arg_17_5
 
 			local var_17_0 = Unit.animation_find_variable(arg_17_2, "revive_time")
@@ -215,10 +215,10 @@ InteractionDefinitions.revive = {
 				ScriptUnit.extension_input(arg_17_1, "dialogue_system"):trigger_dialogue_event("start_revive", var_17_2)
 			end
 		end,
-		update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+		update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 			return
 		end,
-		stop = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+		stop = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 			arg_19_3.start_time = nil
 
 			local var_19_0 = Unit.alive(arg_19_2)
@@ -255,7 +255,7 @@ InteractionDefinitions.revive = {
 
 			ScriptUnit.extension(arg_19_1, "status_system"):set_reviving(false, arg_19_2)
 		end,
-		get_progress = function(arg_20_0, arg_20_1, arg_20_2)
+		get_progress = function (arg_20_0, arg_20_1, arg_20_2)
 			local var_20_0 = arg_20_0.duration
 
 			if var_20_0 == 0 then
@@ -264,7 +264,7 @@ InteractionDefinitions.revive = {
 
 			return arg_20_0.start_time == nil and 0 or math.min(1, (arg_20_2 - arg_20_0.start_time) / var_20_0)
 		end,
-		can_interact = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		can_interact = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 			local var_21_0 = ScriptUnit.extension(arg_21_1, "interactable_system"):is_being_interacted_with()
 
 			if var_21_0 and var_21_0 ~= arg_21_0 then
@@ -278,7 +278,7 @@ InteractionDefinitions.revive = {
 
 			return not var_21_1:is_pounced_down() and not var_21_2 and not var_21_3 and not var_21_4 and var_21_1:is_knocked_down() and HEALTH_ALIVE[arg_21_1]
 		end,
-		hud_description = function(arg_22_0, arg_22_1, arg_22_2)
+		hud_description = function (arg_22_0, arg_22_1, arg_22_2)
 			if arg_22_0 and Unit.alive(arg_22_0) then
 				local var_22_0 = Managers.player
 				local var_22_1 = Managers.state.network.profile_synchronizer
@@ -313,10 +313,10 @@ InteractionDefinitions.pull_up = {
 		does_not_require_line_of_sight = true
 	},
 	server = {
-		start = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+		start = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 			arg_23_3.done_time = arg_23_5 + arg_23_4.duration
 		end,
-		update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+		update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 			if ScriptUnit.extension(arg_24_1, "status_system"):get_is_ledge_hanging() or not HEALTH_ALIVE[arg_24_1] then
 				return InteractionResult.FAILURE
 			end
@@ -327,12 +327,12 @@ InteractionDefinitions.pull_up = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+		stop = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
 			if arg_25_6 == InteractionResult.SUCCESS then
 				StatusUtils.set_pulled_up_network(arg_25_2, true, Unit.alive(arg_25_1) and arg_25_1 or nil)
 			end
 		end,
-		can_interact = function(arg_26_0, arg_26_1)
+		can_interact = function (arg_26_0, arg_26_1)
 			local var_26_0 = ScriptUnit.extension(arg_26_1, "status_system")
 			local var_26_1 = var_26_0:get_is_ledge_hanging()
 			local var_26_2 = var_26_0:is_pulled_up()
@@ -342,7 +342,7 @@ InteractionDefinitions.pull_up = {
 		end
 	},
 	client = {
-		start = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+		start = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
 			arg_27_3.start_time = arg_27_5
 
 			local var_27_0 = Unit.animation_find_variable(arg_27_1, "interaction_duration")
@@ -369,10 +369,10 @@ InteractionDefinitions.pull_up = {
 				var_27_2:trigger_dialogue_event("start_revive", var_27_3)
 			end
 		end,
-		update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+		update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
 			return
 		end,
-		stop = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+		stop = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
 			arg_29_3.start_time = nil
 
 			Unit.animation_event(arg_29_1, "interaction_end")
@@ -390,20 +390,20 @@ InteractionDefinitions.pull_up = {
 				end
 			end
 		end,
-		get_progress = function(arg_30_0, arg_30_1, arg_30_2)
+		get_progress = function (arg_30_0, arg_30_1, arg_30_2)
 			if arg_30_1.duration == 0 then
 				return 0
 			end
 
 			return arg_30_0.start_time == nil and 0 or math.min(1, (arg_30_2 - arg_30_0.start_time) / arg_30_1.duration)
 		end,
-		can_interact = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+		can_interact = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 			local var_31_0 = ScriptUnit.extension(arg_31_1, "status_system")
 			local var_31_1 = ScriptUnit.extension(arg_31_1, "buff_system"):has_buff_perk("ledge_self_rescue")
 
 			return var_31_0:get_is_ledge_hanging() and not var_31_0:is_pulled_up() and not var_31_1
 		end,
-		hud_description = function(arg_32_0, arg_32_1, arg_32_2)
+		hud_description = function (arg_32_0, arg_32_1, arg_32_2)
 			if arg_32_0 and Unit.alive(arg_32_0) then
 				local var_32_0 = Managers.player
 				local var_32_1 = Managers.state.network.profile_synchronizer
@@ -433,23 +433,23 @@ InteractionDefinitions.release_from_hook = {
 		duration = 2
 	},
 	server = {
-		start = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+		start = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
 			arg_33_3.done_time = arg_33_5 + arg_33_4.duration
 		end,
-		update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+		update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
 			if arg_34_6 > arg_34_3.done_time then
 				return InteractionResult.SUCCESS
 			end
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
+		stop = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
 			if arg_35_6 == InteractionResult.SUCCESS then
 				StatusUtils.set_grabbed_by_pack_master_network("pack_master_dropping", arg_35_2, true, nil)
 				QuestSettings.check_pack_master_rescue_hoisted_ally(arg_35_1)
 			end
 		end,
-		can_interact = function(arg_36_0, arg_36_1)
+		can_interact = function (arg_36_0, arg_36_1)
 			local var_36_0 = ScriptUnit.extension(arg_36_1, "status_system"):is_hanging_from_hook()
 			local var_36_1 = HEALTH_ALIVE[arg_36_1]
 
@@ -457,7 +457,7 @@ InteractionDefinitions.release_from_hook = {
 		end
 	},
 	client = {
-		start = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+		start = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 			arg_37_3.start_time = arg_37_5
 
 			local var_37_0 = Unit.animation_find_variable(arg_37_1, "interaction_duration")
@@ -473,28 +473,28 @@ InteractionDefinitions.release_from_hook = {
 
 			var_37_1:trigger_dialogue_event("start_revive", var_37_2)
 		end,
-		update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
+		update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
 			return
 		end,
-		stop = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
+		stop = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 			arg_39_3.start_time = nil
 
 			Unit.animation_event(arg_39_1, "interaction_end")
 		end,
-		get_progress = function(arg_40_0, arg_40_1, arg_40_2)
+		get_progress = function (arg_40_0, arg_40_1, arg_40_2)
 			if arg_40_1.duration == 0 then
 				return 0
 			end
 
 			return arg_40_0.start_time == nil and 0 or math.min(1, (arg_40_2 - arg_40_0.start_time) / arg_40_1.duration)
 		end,
-		can_interact = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+		can_interact = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 			local var_41_0 = ScriptUnit.extension(arg_41_1, "status_system"):is_hanging_from_hook()
 			local var_41_1 = HEALTH_ALIVE[arg_41_1]
 
 			return var_41_0 and var_41_1
 		end,
-		hud_description = function(arg_42_0, arg_42_1, arg_42_2)
+		hud_description = function (arg_42_0, arg_42_1, arg_42_2)
 			if arg_42_0 and Unit.alive(arg_42_0) then
 				local var_42_0 = Managers.player
 				local var_42_1 = Managers.state.network.profile_synchronizer
@@ -524,27 +524,27 @@ InteractionDefinitions.assisted_respawn = {
 		duration = 2
 	},
 	server = {
-		start = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+		start = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
 			arg_43_3.done_time = arg_43_5 + arg_43_4.duration
 		end,
-		update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
+		update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
 			if arg_44_6 > arg_44_3.done_time then
 				return InteractionResult.SUCCESS
 			end
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+		stop = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
 			if arg_45_6 == InteractionResult.SUCCESS then
 				StatusUtils.set_respawned_network(arg_45_2, true, arg_45_1)
 			end
 		end,
-		can_interact = function(arg_46_0, arg_46_1)
+		can_interact = function (arg_46_0, arg_46_1)
 			return (ScriptUnit.extension(arg_46_1, "status_system"):is_ready_for_assisted_respawn())
 		end
 	},
 	client = {
-		start = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5)
+		start = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5)
 			arg_47_3.start_time = arg_47_5
 
 			local var_47_0 = arg_47_4.duration
@@ -558,10 +558,10 @@ InteractionDefinitions.assisted_respawn = {
 			Unit.animation_set_variable(arg_47_1, var_47_2, arg_47_4.duration)
 			Unit.animation_event(arg_47_1, "interaction_revive")
 		end,
-		update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5, arg_48_6)
+		update = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5, arg_48_6)
 			return
 		end,
-		stop = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6)
+		stop = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6)
 			arg_49_3.start_time = nil
 
 			Unit.animation_event(arg_49_1, "interaction_end")
@@ -573,17 +573,17 @@ InteractionDefinitions.assisted_respawn = {
 				Unit.animation_event(arg_49_2, "revive_abort")
 			end
 		end,
-		get_progress = function(arg_50_0, arg_50_1, arg_50_2)
+		get_progress = function (arg_50_0, arg_50_1, arg_50_2)
 			if arg_50_1.duration == 0 then
 				return 0
 			end
 
 			return arg_50_0.start_time == nil and 0 or math.min(1, (arg_50_2 - arg_50_0.start_time) / arg_50_1.duration)
 		end,
-		can_interact = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+		can_interact = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 			return (ScriptUnit.extension(arg_51_1, "status_system"):is_ready_for_assisted_respawn())
 		end,
-		hud_description = function(arg_52_0, arg_52_1, arg_52_2)
+		hud_description = function (arg_52_0, arg_52_1, arg_52_2)
 			if arg_52_0 and Unit.alive(arg_52_0) then
 				local var_52_0 = Managers.player
 				local var_52_1 = Managers.state.network.profile_synchronizer
@@ -613,7 +613,7 @@ InteractionDefinitions.smartobject = {
 		swap_to_3p = false
 	},
 	server = {
-		start = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+		start = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 			local var_53_0 = Unit.get_data(arg_53_2, "interaction_data", "interaction_length")
 
 			fassert(var_53_0, "Interacting with %q that has no interaction length", arg_53_2)
@@ -633,7 +633,7 @@ InteractionDefinitions.smartobject = {
 
 			arg_53_3.start_offset = Vector3Box(var_53_3)
 		end,
-		update = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6)
+		update = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6)
 			if ScriptUnit.extension(arg_54_1, "status_system"):is_knocked_down() or not HEALTH_ALIVE[arg_54_1] then
 				return InteractionResult.FAILURE
 			end
@@ -655,14 +655,14 @@ InteractionDefinitions.smartobject = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6)
+		stop = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6)
 			if arg_55_6 == InteractionResult.SUCCESS then
 				local var_55_0 = ScriptUnit.extension(arg_55_2, "interactable_system")
 
 				var_55_0.num_times_successfully_completed = var_55_0.num_times_successfully_completed + 1
 			end
 		end,
-		can_interact = function(arg_56_0, arg_56_1)
+		can_interact = function (arg_56_0, arg_56_1)
 			local var_56_0 = Unit.get_data(arg_56_1, "interaction_data", "custom_interaction_check_name")
 
 			if var_56_0 and InteractionCustomChecks[var_56_0] and not InteractionCustomChecks[var_56_0](arg_56_0, arg_56_1) then
@@ -673,7 +673,7 @@ InteractionDefinitions.smartobject = {
 		end
 	},
 	client = {
-		start = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5)
+		start = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5)
 			arg_57_3.start_time = arg_57_5
 
 			local var_57_0 = Unit.get_data(arg_57_2, "interaction_data", "interaction_length")
@@ -707,10 +707,10 @@ InteractionDefinitions.smartobject = {
 			CharacterStateHelper.stop_career_abilities(var_57_4, "interacting")
 			Unit.set_data(arg_57_2, "interaction_data", "being_used", true)
 		end,
-		update = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5, arg_58_6)
+		update = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5, arg_58_6)
 			return
 		end,
-		stop = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6)
+		stop = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6)
 			if Unit.get_data(arg_59_2, "interaction_data", "resumable") then
 				local var_59_0 = arg_59_3.stored_progress or 0
 				local var_59_1 = arg_59_6 == InteractionResult.SUCCESS and 0 or var_59_0 + math.max(0, arg_59_5 - arg_59_3.start_time)
@@ -730,7 +730,7 @@ InteractionDefinitions.smartobject = {
 
 			Unit.set_data(arg_59_2, "interaction_data", "being_used", false)
 		end,
-		get_progress = function(arg_60_0, arg_60_1, arg_60_2)
+		get_progress = function (arg_60_0, arg_60_1, arg_60_2)
 			if arg_60_0.duration == 0 or arg_60_0.start_time == nil then
 				return 0
 			end
@@ -739,7 +739,7 @@ InteractionDefinitions.smartobject = {
 
 			return math.clamp((arg_60_2 + var_60_0 - arg_60_0.start_time) / arg_60_0.duration, 0, 1)
 		end,
-		can_interact = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+		can_interact = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 			local var_61_0 = Unit.get_data(arg_61_1, "interaction_data", "custom_interaction_check_name")
 
 			if var_61_0 and InteractionCustomChecks[var_61_0] and not InteractionCustomChecks[var_61_0](arg_61_0, arg_61_1) then
@@ -751,7 +751,7 @@ InteractionDefinitions.smartobject = {
 
 			return not var_61_1 and not var_61_2
 		end,
-		hud_description = function(arg_62_0, arg_62_1, arg_62_2)
+		hud_description = function (arg_62_0, arg_62_1, arg_62_2)
 			return Unit.get_data(arg_62_0, "interaction_data", "hud_description"), Unit.get_data(arg_62_0, "interaction_data", "hud_interaction_action")
 		end
 	}
@@ -787,7 +787,7 @@ local function var_0_2(arg_63_0)
 end
 
 local function var_0_3(arg_64_0)
-	return function(arg_65_0)
+	return function (arg_65_0)
 		return arg_64_0 ~= arg_65_0.name
 	end
 end
@@ -812,10 +812,10 @@ InteractionDefinitions.pickup_object = {
 		swap_to_3p = false
 	},
 	server = {
-		start = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5)
+		start = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5)
 			arg_67_3.done_time = arg_67_5 + Unit.get_data(arg_67_2, "interaction_data", "interaction_length")
 		end,
-		update = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5, arg_68_6)
+		update = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5, arg_68_6)
 			if ScriptUnit.extension(arg_68_1, "status_system"):is_knocked_down() or not HEALTH_ALIVE[arg_68_1] then
 				return InteractionResult.FAILURE
 			end
@@ -832,7 +832,7 @@ InteractionDefinitions.pickup_object = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6)
+		stop = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6)
 			if arg_69_6 == InteractionResult.SUCCESS then
 				if Unit.get_data(arg_69_2, "interaction_data", "only_once") and ScriptUnit.has_extension(arg_69_2, "limited_item_track_system") then
 					ScriptUnit.extension(arg_69_2, "limited_item_track_system"):mark_for_transformation()
@@ -878,22 +878,22 @@ InteractionDefinitions.pickup_object = {
 				end
 			end
 		end,
-		can_interact = function(arg_70_0, arg_70_1)
+		can_interact = function (arg_70_0, arg_70_1)
 			return not Managers.state.entity:system("pickup_system"):marked_for_consumption(arg_70_1)
 		end
 	},
 	client = {
-		start = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4, arg_71_5)
+		start = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4, arg_71_5)
 			local var_71_0 = Unit.get_data(arg_71_2, "interaction_data", "interaction_length")
 
 			arg_71_3.duration = var_71_0
 
 			fassert(var_71_0, "Interacting with %q that has no interaction length", arg_71_2)
 		end,
-		update = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6)
+		update = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6)
 			return
 		end,
-		stop = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6)
+		stop = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6)
 			arg_73_3.start_time = nil
 
 			Unit.animation_event(arg_73_1, "interaction_end")
@@ -1333,14 +1333,14 @@ InteractionDefinitions.pickup_object = {
 				end
 			end
 		end,
-		get_progress = function(arg_74_0, arg_74_1, arg_74_2)
+		get_progress = function (arg_74_0, arg_74_1, arg_74_2)
 			if arg_74_0.duration == 0 then
 				return nil
 			end
 
 			return arg_74_0.start_time == nil and 0 or math.min(1, (arg_74_2 - arg_74_0.start_time) / arg_74_0.duration)
 		end,
-		can_interact = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4)
+		can_interact = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4)
 			local var_75_0 = not Unit.get_data(arg_75_1, "interaction_data", "used")
 			local var_75_1 = ScriptUnit.extension(arg_75_1, "pickup_system")
 			local var_75_2 = var_75_1:get_pickup_settings()
@@ -1415,7 +1415,7 @@ InteractionDefinitions.pickup_object = {
 
 			return var_75_0, var_75_4
 		end,
-		hud_description = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
+		hud_description = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
 			local var_76_0 = "no_ammo_for_this_weapon"
 			local var_76_1 = false
 			local var_76_2 = "interaction_action_pick_up"
@@ -1464,10 +1464,10 @@ InteractionDefinitions.give_item = {
 		block_other_interactions = true
 	},
 	server = {
-		start = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5)
+		start = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5)
 			arg_77_3.done_time = arg_77_5 + arg_77_4.duration
 		end,
-		update = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5, arg_78_6)
+		update = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5, arg_78_6)
 			local var_78_0 = ScriptUnit.extension(arg_78_1, "status_system")
 
 			if var_78_0:is_knocked_down() or not HEALTH_ALIVE[arg_78_1] then
@@ -1488,10 +1488,10 @@ InteractionDefinitions.give_item = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6)
+		stop = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6)
 			return
 		end,
-		can_interact = function(arg_80_0, arg_80_1)
+		can_interact = function (arg_80_0, arg_80_1)
 			local var_80_0 = ScriptUnit.extension(arg_80_1, "status_system")
 			local var_80_1 = Managers.state.side:is_enemy(arg_80_0, arg_80_1)
 
@@ -1499,13 +1499,13 @@ InteractionDefinitions.give_item = {
 		end
 	},
 	client = {
-		start = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
+		start = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
 			return
 		end,
-		update = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6)
+		update = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6)
 			return
 		end,
-		stop = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5, arg_83_6)
+		stop = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5, arg_83_6)
 			arg_83_3.start_time = nil
 
 			Unit.animation_event(arg_83_1, "interaction_end")
@@ -1540,14 +1540,14 @@ InteractionDefinitions.give_item = {
 				end
 			end
 		end,
-		get_progress = function(arg_84_0, arg_84_1, arg_84_2)
+		get_progress = function (arg_84_0, arg_84_1, arg_84_2)
 			if arg_84_1.duration == 0 then
 				return 0
 			end
 
 			return arg_84_0.start_time == nil and 0 or math.min(1, (arg_84_2 - arg_84_0.start_time) / arg_84_1.duration)
 		end,
-		can_interact = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+		can_interact = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 			if not ScriptUnit.has_extension(arg_85_1, "health_system") then
 				return false
 			end
@@ -1581,10 +1581,10 @@ InteractionDefinitions.give_item = {
 
 			return var_85_3 and var_85_5.can_give_other and (not var_85_8 or var_85_9)
 		end,
-		set_interactor_data = function(arg_86_0, arg_86_1, arg_86_2)
+		set_interactor_data = function (arg_86_0, arg_86_1, arg_86_2)
 			arg_86_2.item_slot_name = ScriptUnit.extension(arg_86_0, "inventory_system"):get_wielded_slot_name()
 		end,
-		hud_description = function(arg_87_0, arg_87_1, arg_87_2)
+		hud_description = function (arg_87_0, arg_87_1, arg_87_2)
 			if arg_87_0 and Unit.alive(arg_87_0) then
 				local var_87_0 = Managers.player
 				local var_87_1 = Managers.state.network.profile_synchronizer
@@ -1613,10 +1613,10 @@ InteractionDefinitions.heal = {
 		attack_template = "heal_bandage"
 	},
 	server = {
-		start = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
+		start = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
 			arg_88_3.done_time = arg_88_5 + arg_88_4.duration
 		end,
-		update = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6)
+		update = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6)
 			local var_89_0 = ScriptUnit.extension(arg_89_1, "status_system")
 
 			if var_89_0:is_knocked_down() or not HEALTH_ALIVE[arg_89_1] then
@@ -1643,7 +1643,7 @@ InteractionDefinitions.heal = {
 
 			return InteractionResult.ONGOING
 		end,
-		stop = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6)
+		stop = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6)
 			if arg_90_6 == InteractionResult.SUCCESS then
 				local var_90_0 = DamageUtils.get_attack_template(arg_90_4.attack_template)
 				local var_90_1 = ScriptUnit.extension(arg_90_2, "health_system")
@@ -1675,7 +1675,7 @@ InteractionDefinitions.heal = {
 				local var_90_10 = POSITION_LOOKUP[arg_90_2]
 			end
 		end,
-		can_interact = function(arg_91_0, arg_91_1)
+		can_interact = function (arg_91_0, arg_91_1)
 			local var_91_0 = ScriptUnit.extension(arg_91_1, "status_system")
 			local var_91_1 = var_91_0:is_knocked_down()
 			local var_91_2 = var_91_0:is_dead()
@@ -1686,7 +1686,7 @@ InteractionDefinitions.heal = {
 		end
 	},
 	client = {
-		start = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
+		start = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
 			arg_92_3.start_time = arg_92_5
 
 			local var_92_0 = ScriptUnit.extension_input(arg_92_1, "dialogue_system")
@@ -1697,10 +1697,10 @@ InteractionDefinitions.heal = {
 
 			var_92_0:trigger_dialogue_event("heal_start", var_92_1)
 		end,
-		update = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6)
+		update = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6)
 			return
 		end,
-		stop = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4, arg_94_5, arg_94_6)
+		stop = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4, arg_94_5, arg_94_6)
 			arg_94_3.start_time = nil
 
 			Unit.animation_event(arg_94_1, "interaction_end")
@@ -1742,14 +1742,14 @@ InteractionDefinitions.heal = {
 				StatisticsUtil.register_heal(arg_94_1, arg_94_2, arg_94_3.statistics_db)
 			end
 		end,
-		get_progress = function(arg_95_0, arg_95_1, arg_95_2)
+		get_progress = function (arg_95_0, arg_95_1, arg_95_2)
 			if arg_95_1.duration == 0 then
 				return 0
 			end
 
 			return arg_95_0.start_time == nil and 0 or math.min(1, (arg_95_2 - arg_95_0.start_time) / arg_95_1.duration)
 		end,
-		can_interact = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+		can_interact = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 			if not ScriptUnit.has_extension(arg_96_1, "health_system") then
 				return false
 			end
@@ -1776,10 +1776,10 @@ InteractionDefinitions.heal = {
 
 			return var_96_7.can_heal_other and var_96_4 and (not var_96_5 or var_96_6)
 		end,
-		set_interactor_data = function(arg_97_0, arg_97_1, arg_97_2)
+		set_interactor_data = function (arg_97_0, arg_97_1, arg_97_2)
 			arg_97_2.item_slot_name = ScriptUnit.extension(arg_97_0, "inventory_system"):get_wielded_slot_name()
 		end,
-		hud_description = function(arg_98_0, arg_98_1, arg_98_2)
+		hud_description = function (arg_98_0, arg_98_1, arg_98_2)
 			if arg_98_0 and Unit.alive(arg_98_0) then
 				local var_98_0 = Managers.player
 				local var_98_1 = Managers.state.network.profile_synchronizer
@@ -1801,7 +1801,7 @@ InteractionDefinitions.heal = {
 				return var_98_2, var_98_9
 			end
 		end,
-		camera_node = function(arg_99_0, arg_99_1)
+		camera_node = function (arg_99_0, arg_99_1)
 			if arg_99_0 == arg_99_1 then
 				return "heal_self"
 			else
@@ -1813,7 +1813,7 @@ InteractionDefinitions.heal = {
 InteractionDefinitions.linker_transportation_unit = InteractionDefinitions.linker_transportation_unit or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.linker_transportation_unit.config.swap_to_3p = false
 
-function InteractionDefinitions.linker_transportation_unit.client.hud_description(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
+InteractionDefinitions.linker_transportation_unit.client.hud_description = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 	local var_100_0 = "interaction_action_activate"
 
 	if arg_100_3 then
@@ -1827,7 +1827,7 @@ function InteractionDefinitions.linker_transportation_unit.client.hud_descriptio
 	return Unit.get_data(arg_100_0, "interaction_data", "hud_description"), var_100_0
 end
 
-function InteractionDefinitions.linker_transportation_unit.client.stop(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6)
+InteractionDefinitions.linker_transportation_unit.client.stop = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6)
 	arg_101_3.start_time = nil
 
 	if arg_101_6 == InteractionResult.SUCCESS then
@@ -1843,7 +1843,7 @@ end
 
 local var_0_5 = {}
 
-function InteractionDefinitions.linker_transportation_unit.client.can_interact(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
+InteractionDefinitions.linker_transportation_unit.client.can_interact = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 	local var_102_0 = ScriptUnit.extension(arg_102_1, "transportation_system")
 	local var_102_1 = var_102_0:can_interact(arg_102_0)
 
@@ -1894,7 +1894,7 @@ InteractionDefinitions.door.config.swap_to_3p = false
 InteractionDefinitions.door.config.block_other_interactions = true
 InteractionDefinitions.door.config.allow_movement = true
 
-function InteractionDefinitions.door.client.stop(arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4, arg_103_5, arg_103_6)
+InteractionDefinitions.door.client.stop = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4, arg_103_5, arg_103_6)
 	arg_103_3.start_time = nil
 
 	if arg_103_6 == InteractionResult.SUCCESS then
@@ -1904,7 +1904,7 @@ function InteractionDefinitions.door.client.stop(arg_103_0, arg_103_1, arg_103_2
 	Unit.set_data(arg_103_2, "interaction_data", "being_used", false)
 end
 
-function InteractionDefinitions.door.client.hud_description(arg_104_0, arg_104_1, arg_104_2)
+InteractionDefinitions.door.client.hud_description = function (arg_104_0, arg_104_1, arg_104_2)
 	local var_104_0 = ScriptUnit.extension(arg_104_0, "door_system"):is_open() and "interaction_action_close" or "interaction_action_open"
 
 	return Unit.get_data(arg_104_0, "interaction_data", "hud_description"), var_104_0
@@ -1917,7 +1917,7 @@ InteractionDefinitions.chest.config.swap_to_3p = false
 InteractionDefinitions.chest.config.block_other_interactions = true
 InteractionDefinitions.chest.config.allow_movement = true
 
-function InteractionDefinitions.chest.client.start(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4, arg_105_5)
+InteractionDefinitions.chest.client.start = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4, arg_105_5)
 	arg_105_3.start_time = arg_105_5
 
 	local var_105_0 = Unit.get_data(arg_105_2, "interaction_data", "interaction_length")
@@ -1948,7 +1948,7 @@ function InteractionDefinitions.chest.client.start(arg_105_0, arg_105_1, arg_105
 	Unit.set_data(arg_105_2, "interaction_data", "being_used", true)
 end
 
-function InteractionDefinitions.chest.server.stop(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6)
+InteractionDefinitions.chest.server.stop = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6)
 	arg_106_3.start_time = nil
 
 	local var_106_0 = arg_106_6 == InteractionResult.SUCCESS
@@ -1994,11 +1994,11 @@ end
 InteractionDefinitions.inventory_access = InteractionDefinitions.inventory_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.inventory_access.config.swap_to_3p = false
 
-function InteractionDefinitions.inventory_access.client.can_interact(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+InteractionDefinitions.inventory_access.client.can_interact = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 	return true
 end
 
-function InteractionDefinitions.inventory_access.client.stop(arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4, arg_108_5, arg_108_6)
+InteractionDefinitions.inventory_access.client.stop = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4, arg_108_5, arg_108_6)
 	arg_108_3.start_time = nil
 
 	if arg_108_6 == InteractionResult.SUCCESS and not arg_108_3.is_husk then
@@ -2010,18 +2010,18 @@ function InteractionDefinitions.inventory_access.client.stop(arg_108_0, arg_108_
 	end
 end
 
-function InteractionDefinitions.inventory_access.client.hud_description(arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
+InteractionDefinitions.inventory_access.client.hud_description = function (arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
 	return Unit.get_data(arg_109_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.prestige_access = InteractionDefinitions.prestige_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.prestige_access.config.swap_to_3p = false
 
-function InteractionDefinitions.prestige_access.client.can_interact(arg_110_0, arg_110_1, arg_110_2, arg_110_3)
+InteractionDefinitions.prestige_access.client.can_interact = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3)
 	return true
 end
 
-function InteractionDefinitions.prestige_access.client.stop(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5, arg_111_6)
+InteractionDefinitions.prestige_access.client.stop = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5, arg_111_6)
 	arg_111_3.start_time = nil
 
 	if arg_111_6 == InteractionResult.SUCCESS and not arg_111_3.is_husk then
@@ -2033,18 +2033,18 @@ function InteractionDefinitions.prestige_access.client.stop(arg_111_0, arg_111_1
 	end
 end
 
-function InteractionDefinitions.prestige_access.client.can_interact(arg_112_0, arg_112_1, arg_112_2, arg_112_3)
+InteractionDefinitions.prestige_access.client.can_interact = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3)
 	return false
 end
 
-function InteractionDefinitions.prestige_access.client.hud_description(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
+InteractionDefinitions.prestige_access.client.hud_description = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
 	return Unit.get_data(arg_113_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.forge_access = InteractionDefinitions.forge_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.forge_access.config.swap_to_3p = false
 
-function InteractionDefinitions.forge_access.client.stop(arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4, arg_114_5, arg_114_6)
+InteractionDefinitions.forge_access.client.stop = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4, arg_114_5, arg_114_6)
 	arg_114_3.start_time = nil
 
 	if arg_114_6 == InteractionResult.SUCCESS and not arg_114_3.is_husk then
@@ -2056,18 +2056,18 @@ function InteractionDefinitions.forge_access.client.stop(arg_114_0, arg_114_1, a
 	end
 end
 
-function InteractionDefinitions.forge_access.client.can_interact(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+InteractionDefinitions.forge_access.client.can_interact = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3)
 	return not script_data["eac-untrusted"]
 end
 
-function InteractionDefinitions.forge_access.client.hud_description(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
+InteractionDefinitions.forge_access.client.hud_description = function (arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
 	return Unit.get_data(arg_116_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.talents_access = InteractionDefinitions.talents_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.talents_access.config.swap_to_3p = false
 
-function InteractionDefinitions.talents_access.client.stop(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6)
+InteractionDefinitions.talents_access.client.stop = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6)
 	arg_117_3.start_time = nil
 
 	if arg_117_6 == InteractionResult.SUCCESS and not arg_117_3.is_husk then
@@ -2079,18 +2079,18 @@ function InteractionDefinitions.talents_access.client.stop(arg_117_0, arg_117_1,
 	end
 end
 
-function InteractionDefinitions.talents_access.client.can_interact(arg_118_0, arg_118_1, arg_118_2, arg_118_3)
+InteractionDefinitions.talents_access.client.can_interact = function (arg_118_0, arg_118_1, arg_118_2, arg_118_3)
 	return true
 end
 
-function InteractionDefinitions.talents_access.client.hud_description(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+InteractionDefinitions.talents_access.client.hud_description = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
 	return Unit.get_data(arg_119_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.loadout_access = InteractionDefinitions.loadout_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.loadout_access.config.swap_to_3p = false
 
-function InteractionDefinitions.loadout_access.client.stop(arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4, arg_120_5, arg_120_6)
+InteractionDefinitions.loadout_access.client.stop = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4, arg_120_5, arg_120_6)
 	arg_120_3.start_time = nil
 
 	if arg_120_6 == InteractionResult.SUCCESS and not arg_120_3.is_husk then
@@ -2101,18 +2101,18 @@ function InteractionDefinitions.loadout_access.client.stop(arg_120_0, arg_120_1,
 	end
 end
 
-function InteractionDefinitions.loadout_access.client.can_interact(arg_121_0, arg_121_1, arg_121_2, arg_121_3)
+InteractionDefinitions.loadout_access.client.can_interact = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3)
 	return true
 end
 
-function InteractionDefinitions.loadout_access.client.hud_description(arg_122_0, arg_122_1, arg_122_2, arg_122_3, arg_122_4)
+InteractionDefinitions.loadout_access.client.hud_description = function (arg_122_0, arg_122_1, arg_122_2, arg_122_3, arg_122_4)
 	return Unit.get_data(arg_122_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.cosmetics_access = InteractionDefinitions.cosmetics_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.cosmetics_access.config.swap_to_3p = false
 
-function InteractionDefinitions.cosmetics_access.client.stop(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6)
+InteractionDefinitions.cosmetics_access.client.stop = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6)
 	arg_123_3.start_time = nil
 
 	if arg_123_6 == InteractionResult.SUCCESS and not arg_123_3.is_husk then
@@ -2124,18 +2124,18 @@ function InteractionDefinitions.cosmetics_access.client.stop(arg_123_0, arg_123_
 	end
 end
 
-function InteractionDefinitions.cosmetics_access.client.can_interact(arg_124_0, arg_124_1, arg_124_2, arg_124_3)
+InteractionDefinitions.cosmetics_access.client.can_interact = function (arg_124_0, arg_124_1, arg_124_2, arg_124_3)
 	return true
 end
 
-function InteractionDefinitions.cosmetics_access.client.hud_description(arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4)
+InteractionDefinitions.cosmetics_access.client.hud_description = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4)
 	return Unit.get_data(arg_125_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.loot_access = InteractionDefinitions.loot_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.loot_access.config.swap_to_3p = false
 
-function InteractionDefinitions.loot_access.client.stop(arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5, arg_126_6)
+InteractionDefinitions.loot_access.client.stop = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5, arg_126_6)
 	arg_126_3.start_time = nil
 
 	if arg_126_6 == InteractionResult.SUCCESS and not arg_126_3.is_husk then
@@ -2146,18 +2146,18 @@ function InteractionDefinitions.loot_access.client.stop(arg_126_0, arg_126_1, ar
 	end
 end
 
-function InteractionDefinitions.loot_access.client.can_interact(arg_127_0, arg_127_1, arg_127_2, arg_127_3)
+InteractionDefinitions.loot_access.client.can_interact = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3)
 	return not script_data["eac-untrusted"]
 end
 
-function InteractionDefinitions.loot_access.client.hud_description(arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4)
+InteractionDefinitions.loot_access.client.hud_description = function (arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4)
 	return Unit.get_data(arg_128_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.characters_access = InteractionDefinitions.characters_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.characters_access.config.swap_to_3p = false
 
-function InteractionDefinitions.characters_access.client.stop(arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6)
+InteractionDefinitions.characters_access.client.stop = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6)
 	arg_129_3.start_time = nil
 
 	if arg_129_6 == InteractionResult.SUCCESS and not arg_129_3.is_husk then
@@ -2168,18 +2168,18 @@ function InteractionDefinitions.characters_access.client.stop(arg_129_0, arg_129
 	end
 end
 
-function InteractionDefinitions.characters_access.client.can_interact(arg_130_0, arg_130_1, arg_130_2, arg_130_3)
+InteractionDefinitions.characters_access.client.can_interact = function (arg_130_0, arg_130_1, arg_130_2, arg_130_3)
 	return true
 end
 
-function InteractionDefinitions.characters_access.client.hud_description(arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4)
+InteractionDefinitions.characters_access.client.hud_description = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4)
 	return Unit.get_data(arg_131_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.altar_access = InteractionDefinitions.altar_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.altar_access.config.swap_to_3p = false
 
-function InteractionDefinitions.altar_access.client.stop(arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4, arg_132_5, arg_132_6)
+InteractionDefinitions.altar_access.client.stop = function (arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4, arg_132_5, arg_132_6)
 	arg_132_3.start_time = nil
 
 	if arg_132_6 == InteractionResult.SUCCESS and not arg_132_3.is_husk then
@@ -2189,14 +2189,14 @@ function InteractionDefinitions.altar_access.client.stop(arg_132_0, arg_132_1, a
 	end
 end
 
-function InteractionDefinitions.altar_access.client.can_interact(arg_133_0, arg_133_1, arg_133_2, arg_133_3)
+InteractionDefinitions.altar_access.client.can_interact = function (arg_133_0, arg_133_1, arg_133_2, arg_133_3)
 	return false
 end
 
 InteractionDefinitions.quest_access = InteractionDefinitions.quest_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.quest_access.config.swap_to_3p = false
 
-function InteractionDefinitions.quest_access.client.stop(arg_134_0, arg_134_1, arg_134_2, arg_134_3, arg_134_4, arg_134_5, arg_134_6)
+InteractionDefinitions.quest_access.client.stop = function (arg_134_0, arg_134_1, arg_134_2, arg_134_3, arg_134_4, arg_134_5, arg_134_6)
 	arg_134_3.start_time = nil
 
 	if arg_134_6 == InteractionResult.SUCCESS and not arg_134_3.is_husk then
@@ -2206,7 +2206,7 @@ function InteractionDefinitions.quest_access.client.stop(arg_134_0, arg_134_1, a
 	end
 end
 
-function InteractionDefinitions.quest_access.client.can_interact(arg_135_0, arg_135_1, arg_135_2, arg_135_3)
+InteractionDefinitions.quest_access.client.can_interact = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3)
 	local var_135_0 = false
 	local var_135_1 = GameSettingsDevelopment.backend_settings
 	local var_135_2 = var_135_0 and var_135_1.quests_enabled
@@ -2215,7 +2215,7 @@ function InteractionDefinitions.quest_access.client.can_interact(arg_135_0, arg_
 	return var_135_2, var_135_3
 end
 
-function InteractionDefinitions.quest_access.client.hud_description(arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
+InteractionDefinitions.quest_access.client.hud_description = function (arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
 	if arg_136_3 and arg_136_3 == "quest_access_locked" then
 		return Unit.get_data(arg_136_0, "interaction_data", "hud_description"), "dlc1_3_1_interact_open_quests_blocked"
 	end
@@ -2226,7 +2226,7 @@ end
 InteractionDefinitions.journal_access = InteractionDefinitions.journal_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.journal_access.config.swap_to_3p = false
 
-function InteractionDefinitions.journal_access.client.stop(arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4, arg_137_5, arg_137_6)
+InteractionDefinitions.journal_access.client.stop = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4, arg_137_5, arg_137_6)
 	arg_137_3.start_time = nil
 
 	if arg_137_6 == InteractionResult.SUCCESS and not arg_137_3.is_husk then
@@ -2236,14 +2236,14 @@ function InteractionDefinitions.journal_access.client.stop(arg_137_0, arg_137_1,
 	end
 end
 
-function InteractionDefinitions.journal_access.client.can_interact(arg_138_0, arg_138_1, arg_138_2, arg_138_3)
+InteractionDefinitions.journal_access.client.can_interact = function (arg_138_0, arg_138_1, arg_138_2, arg_138_3)
 	return true
 end
 
 InteractionDefinitions.map_access = InteractionDefinitions.map_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.map_access.config.swap_to_3p = false
 
-function InteractionDefinitions.map_access.client.stop(arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4, arg_139_5, arg_139_6)
+InteractionDefinitions.map_access.client.stop = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4, arg_139_5, arg_139_6)
 	arg_139_3.start_time = nil
 
 	local var_139_0
@@ -2258,11 +2258,11 @@ function InteractionDefinitions.map_access.client.stop(arg_139_0, arg_139_1, arg
 	end
 end
 
-function InteractionDefinitions.map_access.client.hud_description(arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
+InteractionDefinitions.map_access.client.hud_description = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
 	return Unit.get_data(arg_140_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
-function InteractionDefinitions.map_access.client.can_interact(arg_141_0, arg_141_1, arg_141_2, arg_141_3)
+InteractionDefinitions.map_access.client.can_interact = function (arg_141_0, arg_141_1, arg_141_2, arg_141_3)
 	local var_141_0
 	local var_141_1 = Managers.matchmaking:is_in_versus_custom_game_lobby()
 
@@ -2272,7 +2272,7 @@ end
 InteractionDefinitions.unlock_key_access = InteractionDefinitions.unlock_key_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.unlock_key_access.config.swap_to_3p = false
 
-function InteractionDefinitions.unlock_key_access.client.stop(arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4, arg_142_5, arg_142_6)
+InteractionDefinitions.unlock_key_access.client.stop = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4, arg_142_5, arg_142_6)
 	arg_142_3.start_time = nil
 
 	if arg_142_6 == InteractionResult.SUCCESS and not arg_142_3.is_husk then
@@ -2282,19 +2282,19 @@ function InteractionDefinitions.unlock_key_access.client.stop(arg_142_0, arg_142
 	end
 end
 
-function InteractionDefinitions.unlock_key_access.client.can_interact(arg_143_0, arg_143_1, arg_143_2, arg_143_3)
+InteractionDefinitions.unlock_key_access.client.can_interact = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3)
 	return true
 end
 
 for iter_0_0, iter_0_1 in pairs(InteractionDefinitions) do
 	if iter_0_1.client.camera_node == nil then
-		function iter_0_1.client.camera_node()
+		iter_0_1.client.camera_node = function ()
 			return iter_0_0
 		end
 	end
 
 	if iter_0_1.client.hud_description == nil then
-		function iter_0_1.client.hud_description()
+		iter_0_1.client.hud_description = function ()
 			return "interact_" .. iter_0_0
 		end
 	end
@@ -2303,7 +2303,7 @@ end
 InteractionDefinitions.pictureframe = InteractionDefinitions.pictureframe or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.pictureframe.config.swap_to_3p = false
 
-function InteractionDefinitions.pictureframe.client.stop(arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4, arg_146_5, arg_146_6)
+InteractionDefinitions.pictureframe.client.stop = function (arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4, arg_146_5, arg_146_6)
 	arg_146_3.start_time = nil
 
 	if arg_146_6 == InteractionResult.SUCCESS and not arg_146_3.is_husk and rawget(_G, "HeroViewStateKeepDecorations") then
@@ -2317,14 +2317,14 @@ function InteractionDefinitions.pictureframe.client.stop(arg_146_0, arg_146_1, a
 	end
 end
 
-function InteractionDefinitions.pictureframe.client.can_interact(arg_147_0, arg_147_1, arg_147_2, arg_147_3)
+InteractionDefinitions.pictureframe.client.can_interact = function (arg_147_0, arg_147_1, arg_147_2, arg_147_3)
 	local var_147_0 = ScriptUnit.extension(arg_147_1, "keep_decoration_system"):can_interact()
 	local var_147_1 = Unit.get_data(arg_147_1, "painting_data", "not_interactable")
 
 	return var_147_0 and not var_147_1
 end
 
-function InteractionDefinitions.pictureframe.client.hud_description(arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
+InteractionDefinitions.pictureframe.client.hud_description = function (arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
 	local var_148_0 = (not arg_148_1.is_server or Unit.get_data(arg_148_0, "interaction_data", "view_only")) and "interaction_action_view" or Unit.get_data(arg_148_0, "interaction_data", "hud_interaction_action")
 
 	return Unit.get_data(arg_148_0, "interaction_data", "hud_description"), var_148_0
@@ -2333,7 +2333,7 @@ end
 InteractionDefinitions.trophy = InteractionDefinitions.trophy or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.trophy.config.swap_to_3p = false
 
-function InteractionDefinitions.trophy.client.stop(arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4, arg_149_5, arg_149_6)
+InteractionDefinitions.trophy.client.stop = function (arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4, arg_149_5, arg_149_6)
 	arg_149_3.start_time = nil
 
 	if arg_149_6 == InteractionResult.SUCCESS and not arg_149_3.is_husk and rawget(_G, "HeroViewStateKeepDecorations") then
@@ -2347,14 +2347,14 @@ function InteractionDefinitions.trophy.client.stop(arg_149_0, arg_149_1, arg_149
 	end
 end
 
-function InteractionDefinitions.trophy.client.can_interact(arg_150_0, arg_150_1, arg_150_2, arg_150_3)
+InteractionDefinitions.trophy.client.can_interact = function (arg_150_0, arg_150_1, arg_150_2, arg_150_3)
 	local var_150_0 = ScriptUnit.extension(arg_150_1, "keep_decoration_system"):can_interact()
 	local var_150_1 = Unit.get_data(arg_150_1, "trophy_data", "not_interactable")
 
 	return var_150_0 and not var_150_1
 end
 
-function InteractionDefinitions.trophy.client.hud_description(arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
+InteractionDefinitions.trophy.client.hud_description = function (arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
 	local var_151_0 = (not arg_151_1.is_server or Unit.get_data(arg_151_0, "interaction_data", "view_only")) and "interaction_action_view" or Unit.get_data(arg_151_0, "interaction_data", "hud_interaction_action")
 
 	return Unit.get_data(arg_151_0, "interaction_data", "hud_description"), var_151_0
@@ -2363,7 +2363,7 @@ end
 InteractionDefinitions.decoration = InteractionDefinitions.decoration or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.decoration.config.swap_to_3p = false
 
-function InteractionDefinitions.decoration.client.stop(arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4, arg_152_5, arg_152_6)
+InteractionDefinitions.decoration.client.stop = function (arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4, arg_152_5, arg_152_6)
 	arg_152_3.start_time = nil
 
 	if arg_152_6 == InteractionResult.SUCCESS and not arg_152_3.is_husk and rawget(_G, "HeroViewStateKeepDecorations") then
@@ -2375,31 +2375,31 @@ function InteractionDefinitions.decoration.client.stop(arg_152_0, arg_152_1, arg
 	end
 end
 
-function InteractionDefinitions.decoration.client.can_interact(arg_153_0, arg_153_1, arg_153_2, arg_153_3)
+InteractionDefinitions.decoration.client.can_interact = function (arg_153_0, arg_153_1, arg_153_2, arg_153_3)
 	return Unit.get_data(arg_153_1, "interaction_data", "camera_interaction_name") ~= ""
 end
 
-function InteractionDefinitions.decoration.client.hud_description(arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
+InteractionDefinitions.decoration.client.hud_description = function (arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
 	return Unit.get_data(arg_154_0, "interaction_data", "hud_description"), Unit.get_data(arg_154_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.no_interaction_hud_only = InteractionDefinitions.no_interaction_hud_only or table.clone(InteractionDefinitions.smartobject)
 
-function InteractionDefinitions.no_interaction_hud_only.client.hud_description(arg_155_0, arg_155_1, arg_155_2, arg_155_3)
+InteractionDefinitions.no_interaction_hud_only.client.hud_description = function (arg_155_0, arg_155_1, arg_155_2, arg_155_3)
 	local var_155_0 = Unit.get_data(arg_155_0, "interaction_data", "hud_text_line_1")
 	local var_155_1 = Unit.get_data(arg_155_0, "interaction_data", "hud_text_line_2")
 
 	return var_155_0, var_155_1
 end
 
-function InteractionDefinitions.no_interaction_hud_only.client.can_interact(arg_156_0, arg_156_1, arg_156_2, arg_156_3)
+InteractionDefinitions.no_interaction_hud_only.client.can_interact = function (arg_156_0, arg_156_1, arg_156_2, arg_156_3)
 	return false, ""
 end
 
 InteractionDefinitions.achievement_access = InteractionDefinitions.achievement_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.achievement_access.config.swap_to_3p = false
 
-function InteractionDefinitions.achievement_access.client.stop(arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4, arg_157_5, arg_157_6)
+InteractionDefinitions.achievement_access.client.stop = function (arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4, arg_157_5, arg_157_6)
 	arg_157_3.start_time = nil
 
 	if arg_157_6 == InteractionResult.SUCCESS and not arg_157_3.is_husk then
@@ -2410,18 +2410,18 @@ function InteractionDefinitions.achievement_access.client.stop(arg_157_0, arg_15
 	end
 end
 
-function InteractionDefinitions.achievement_access.client.can_interact(arg_158_0, arg_158_1, arg_158_2, arg_158_3)
+InteractionDefinitions.achievement_access.client.can_interact = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3)
 	return not script_data.settings.use_beta_mode
 end
 
-function InteractionDefinitions.achievement_access.client.hud_description(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+InteractionDefinitions.achievement_access.client.hud_description = function (arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
 	return Unit.get_data(arg_159_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.luckstone_access = InteractionDefinitions.luckstone_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.luckstone_access.config.swap_to_3p = false
 
-function InteractionDefinitions.luckstone_access.server.stop(arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4, arg_160_5, arg_160_6)
+InteractionDefinitions.luckstone_access.server.stop = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4, arg_160_5, arg_160_6)
 	if arg_160_6 == InteractionResult.SUCCESS then
 		local var_160_0 = Managers.player
 		local var_160_1 = var_160_0:statistics_db()
@@ -2449,7 +2449,7 @@ function InteractionDefinitions.luckstone_access.server.stop(arg_160_0, arg_160_
 	end
 end
 
-function InteractionDefinitions.luckstone_access.client.stop(arg_161_0, arg_161_1, arg_161_2, arg_161_3, arg_161_4, arg_161_5, arg_161_6)
+InteractionDefinitions.luckstone_access.client.stop = function (arg_161_0, arg_161_1, arg_161_2, arg_161_3, arg_161_4, arg_161_5, arg_161_6)
 	if arg_161_6 == InteractionResult.SUCCESS then
 		local var_161_0 = Managers.world:world("level_world")
 		local var_161_1 = "emitter_rune_activate"
@@ -2461,7 +2461,7 @@ end
 
 local var_0_7 = Unit.get_data
 
-function InteractionDefinitions.luckstone_access.client.can_interact(arg_162_0, arg_162_1, arg_162_2, arg_162_3)
+InteractionDefinitions.luckstone_access.client.can_interact = function (arg_162_0, arg_162_1, arg_162_2, arg_162_3)
 	local var_162_0 = var_0_7(arg_162_1, "cemetery")
 	local var_162_1 = var_0_7(arg_162_1, "forest")
 	local var_162_2 = var_0_7(arg_162_1, "magnus")
@@ -2470,14 +2470,14 @@ function InteractionDefinitions.luckstone_access.client.can_interact(arg_162_0, 
 	return not Managers.matchmaking:is_game_matchmaking() and var_162_3
 end
 
-function InteractionDefinitions.luckstone_access.client.hud_description(arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4)
+InteractionDefinitions.luckstone_access.client.hud_description = function (arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4)
 	return var_0_7(arg_163_0, "interaction_data", "hud_description"), Unit.get_data(arg_163_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.difficulty_selection_access = InteractionDefinitions.difficulty_selection_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.difficulty_selection_access.config.swap_to_3p = false
 
-function InteractionDefinitions.difficulty_selection_access.server.stop(arg_164_0, arg_164_1, arg_164_2, arg_164_3, arg_164_4, arg_164_5, arg_164_6)
+InteractionDefinitions.difficulty_selection_access.server.stop = function (arg_164_0, arg_164_1, arg_164_2, arg_164_3, arg_164_4, arg_164_5, arg_164_6)
 	if arg_164_6 == InteractionResult.SUCCESS then
 		local var_164_0 = var_0_7(arg_164_2, "current_difficulty")
 		local var_164_1 = "scorpion"
@@ -2493,13 +2493,13 @@ function InteractionDefinitions.difficulty_selection_access.server.stop(arg_164_
 	end
 end
 
-function InteractionDefinitions.difficulty_selection_access.client.can_interact(arg_165_0, arg_165_1, arg_165_2, arg_165_3)
+InteractionDefinitions.difficulty_selection_access.client.can_interact = function (arg_165_0, arg_165_1, arg_165_2, arg_165_3)
 	local var_165_0 = var_0_7(arg_165_1, "is_interactable")
 
 	return not Managers.matchmaking:is_game_matchmaking() and var_165_0
 end
 
-function InteractionDefinitions.difficulty_selection_access.client.hud_description(arg_166_0, arg_166_1, arg_166_2, arg_166_3, arg_166_4)
+InteractionDefinitions.difficulty_selection_access.client.hud_description = function (arg_166_0, arg_166_1, arg_166_2, arg_166_3, arg_166_4)
 	local var_166_0 = var_0_7(arg_166_0, "current_difficulty")
 
 	return var_0_7(arg_166_0, "interaction_data", "hud_description"), DifficultySettings[DefaultDifficulties[var_166_0]].display_name
@@ -2508,7 +2508,7 @@ end
 InteractionDefinitions.handbook_access = InteractionDefinitions.handbook_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.handbook_access.config.swap_to_3p = false
 
-function InteractionDefinitions.handbook_access.client.stop(arg_167_0, arg_167_1, arg_167_2, arg_167_3, arg_167_4, arg_167_5, arg_167_6)
+InteractionDefinitions.handbook_access.client.stop = function (arg_167_0, arg_167_1, arg_167_2, arg_167_3, arg_167_4, arg_167_5, arg_167_6)
 	arg_167_3.start_time = nil
 
 	if arg_167_6 == InteractionResult.SUCCESS and not arg_167_3.is_husk then
@@ -2519,18 +2519,18 @@ function InteractionDefinitions.handbook_access.client.stop(arg_167_0, arg_167_1
 	end
 end
 
-function InteractionDefinitions.handbook_access.client.can_interact(arg_168_0, arg_168_1, arg_168_2, arg_168_3)
+InteractionDefinitions.handbook_access.client.can_interact = function (arg_168_0, arg_168_1, arg_168_2, arg_168_3)
 	return true
 end
 
-function InteractionDefinitions.handbook_access.client.hud_description(arg_169_0, arg_169_1, arg_169_2, arg_169_3, arg_169_4)
+InteractionDefinitions.handbook_access.client.hud_description = function (arg_169_0, arg_169_1, arg_169_2, arg_169_3, arg_169_4)
 	return Unit.get_data(arg_169_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 
 InteractionDefinitions.inn_door_transition = InteractionDefinitions.inn_door_transition or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.inn_door_transition.config.swap_to_3p = false
 
-function InteractionDefinitions.inn_door_transition.client.stop(arg_170_0, arg_170_1, arg_170_2, arg_170_3, arg_170_4, arg_170_5, arg_170_6)
+InteractionDefinitions.inn_door_transition.client.stop = function (arg_170_0, arg_170_1, arg_170_2, arg_170_3, arg_170_4, arg_170_5, arg_170_6)
 	if arg_170_6 == InteractionResult.SUCCESS and not arg_170_3.is_husk then
 		local var_170_0 = Managers.backend:get_level_variation_data()
 		local var_170_1 = {
@@ -2543,11 +2543,11 @@ function InteractionDefinitions.inn_door_transition.client.stop(arg_170_0, arg_1
 	end
 end
 
-function InteractionDefinitions.inn_door_transition.client.hud_description(arg_171_0, arg_171_1, arg_171_2, arg_171_3, arg_171_4)
+InteractionDefinitions.inn_door_transition.client.hud_description = function (arg_171_0, arg_171_1, arg_171_2, arg_171_3, arg_171_4)
 	return Unit.get_data(arg_171_0, "interaction_data", "hud_description"), "interaction_action_enter"
 end
 
-function InteractionDefinitions.inn_door_transition.client.can_interact(arg_172_0, arg_172_1, arg_172_2, arg_172_3)
+InteractionDefinitions.inn_door_transition.client.can_interact = function (arg_172_0, arg_172_1, arg_172_2, arg_172_3)
 	local var_172_0 = Managers.matchmaking:is_game_matchmaking()
 	local var_172_1 = Managers.state.voting:vote_in_progress()
 
@@ -2557,7 +2557,7 @@ end
 InteractionDefinitions.deus_door_transition = InteractionDefinitions.deus_door_transition or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.deus_door_transition.config.swap_to_3p = false
 
-function InteractionDefinitions.deus_door_transition.client.stop(arg_173_0, arg_173_1, arg_173_2, arg_173_3, arg_173_4, arg_173_5, arg_173_6)
+InteractionDefinitions.deus_door_transition.client.stop = function (arg_173_0, arg_173_1, arg_173_2, arg_173_3, arg_173_4, arg_173_5, arg_173_6)
 	if arg_173_6 == InteractionResult.SUCCESS and not arg_173_3.is_husk then
 		local var_173_0 = Managers.backend:get_level_variation_data()
 		local var_173_1 = {
@@ -2570,11 +2570,11 @@ function InteractionDefinitions.deus_door_transition.client.stop(arg_173_0, arg_
 	end
 end
 
-function InteractionDefinitions.deus_door_transition.client.hud_description(arg_174_0, arg_174_1, arg_174_2, arg_174_3, arg_174_4)
+InteractionDefinitions.deus_door_transition.client.hud_description = function (arg_174_0, arg_174_1, arg_174_2, arg_174_3, arg_174_4)
 	return Unit.get_data(arg_174_0, "interaction_data", "hud_description"), "interaction_action_enter"
 end
 
-function InteractionDefinitions.deus_door_transition.client.can_interact(arg_175_0, arg_175_1, arg_175_2, arg_175_3)
+InteractionDefinitions.deus_door_transition.client.can_interact = function (arg_175_0, arg_175_1, arg_175_2, arg_175_3)
 	if not DLCSettings.morris then
 		return false
 	end
@@ -2588,7 +2588,7 @@ end
 InteractionDefinitions.active_event = InteractionDefinitions.active_event or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.active_event.config.swap_to_3p = false
 
-function InteractionDefinitions.active_event.client.stop(arg_176_0, arg_176_1, arg_176_2, arg_176_3, arg_176_4, arg_176_5, arg_176_6)
+InteractionDefinitions.active_event.client.stop = function (arg_176_0, arg_176_1, arg_176_2, arg_176_3, arg_176_4, arg_176_5, arg_176_6)
 	arg_176_3.start_time = nil
 
 	if arg_176_6 == InteractionResult.SUCCESS and not arg_176_3.is_husk then
@@ -2612,14 +2612,14 @@ function InteractionDefinitions.active_event.client.stop(arg_176_0, arg_176_1, a
 	end
 end
 
-function InteractionDefinitions.active_event.client.can_interact(arg_177_0, arg_177_1, arg_177_2, arg_177_3)
+InteractionDefinitions.active_event.client.can_interact = function (arg_177_0, arg_177_1, arg_177_2, arg_177_3)
 	local var_177_0 = Managers.backend:get_interface("live_events")
 	local var_177_1 = var_177_0 and var_177_0:get_active_events()
 
 	return var_177_1 and #var_177_1 ~= 0
 end
 
-function InteractionDefinitions.active_event.client.hud_description(arg_178_0, arg_178_1, arg_178_2, arg_178_3, arg_178_4)
+InteractionDefinitions.active_event.client.hud_description = function (arg_178_0, arg_178_1, arg_178_2, arg_178_3, arg_178_4)
 	return Unit.get_data(arg_178_0, "interaction_data", "hud_description"), "interaction_action_open"
 end
 

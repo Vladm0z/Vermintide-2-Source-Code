@@ -9,7 +9,7 @@ local var_0_1 = false
 local var_0_2 = false
 local var_0_3 = false
 
-function TentacleSplineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TentacleSplineExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.is_server, arg_1_0._unit = Managers.player.is_server, arg_1_2
 	arg_1_0.world = arg_1_1.world
 
@@ -20,7 +20,7 @@ function TentacleSplineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.side_id = arg_1_3.side_id
 end
 
-function TentacleSplineExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+TentacleSplineExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = BLACKBOARDS[arg_2_2] or {}
 
 	arg_2_0.blackboard = var_2_0
@@ -152,7 +152,7 @@ function TentacleSplineExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function TentacleSplineExtension.get_spiral_length(arg_3_0, arg_3_1)
+TentacleSplineExtension.get_spiral_length = function (arg_3_0, arg_3_1)
 	local var_3_0 = #arg_3_1
 	local var_3_1 = 0
 
@@ -163,7 +163,7 @@ function TentacleSplineExtension.get_spiral_length(arg_3_0, arg_3_1)
 	return var_3_1
 end
 
-function TentacleSplineExtension.parse_nodes(arg_4_0, arg_4_1, arg_4_2)
+TentacleSplineExtension.parse_nodes = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = {}
 	local var_4_1 = {}
 	local var_4_2 = 0
@@ -207,7 +207,7 @@ function TentacleSplineExtension.parse_nodes(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_0, var_4_1, var_4_2
 end
 
-function TentacleSplineExtension.get_ground_pos_at_wall(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+TentacleSplineExtension.get_ground_pos_at_wall = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_3 + Quaternion.forward(Unit.local_rotation(arg_5_1, 0)) * 1.5
 	local var_5_1, var_5_2, var_5_3, var_5_4, var_5_5 = GwNavQueries.triangle_from_position(arg_5_2, var_5_0, 0.3, 5)
 
@@ -216,7 +216,7 @@ function TentacleSplineExtension.get_ground_pos_at_wall(arg_5_0, arg_5_1, arg_5_
 	end
 end
 
-function TentacleSplineExtension.get_ground_pos_at_floor(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+TentacleSplineExtension.get_ground_pos_at_floor = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_0.target_unit
 	local var_6_1 = Vector3.normalize(arg_6_4 - arg_6_3)
 	local var_6_2 = arg_6_3 + Vector3(0, 0, 1.3) + var_6_1
@@ -227,7 +227,7 @@ function TentacleSplineExtension.get_ground_pos_at_floor(arg_6_0, arg_6_1, arg_6
 	end
 end
 
-function TentacleSplineExtension.spawn_chaos_tentacle(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8)
+TentacleSplineExtension.spawn_chaos_tentacle = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8)
 	local var_7_0 = arg_7_2.breed or Breeds.chaos_tentacle
 	local var_7_1 = var_7_0.inside_wall_spawn_distance or 0
 	local var_7_2 = POSITION_LOOKUP[arg_7_1]
@@ -286,7 +286,7 @@ function TentacleSplineExtension.spawn_chaos_tentacle(arg_7_0, arg_7_1, arg_7_2,
 	}, var_7_0
 end
 
-function TentacleSplineExtension.destroy(arg_8_0)
+TentacleSplineExtension.destroy = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 
 	if Unit.alive(var_8_0) then
@@ -314,12 +314,12 @@ function TentacleSplineExtension.destroy(arg_8_0)
 	end
 end
 
-function TentacleSplineExtension.reset(arg_9_0)
+TentacleSplineExtension.reset = function (arg_9_0)
 	return
 end
 
 local var_0_4 = {
-	attack = function(arg_10_0, arg_10_1, arg_10_2)
+	attack = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = arg_10_2
 
 		arg_10_2 = arg_10_2 + 1
@@ -391,7 +391,7 @@ local var_0_4 = {
 
 		return var_10_0
 	end,
-	evaded = function(arg_11_0, arg_11_1, arg_11_2)
+	evaded = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = arg_11_2
 
 		arg_11_2 = arg_11_2 + 1
@@ -421,26 +421,26 @@ local var_0_4 = {
 	end
 }
 
-function TentacleSplineExtension.set_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+TentacleSplineExtension.set_target = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0.target_unit = arg_12_2
 	arg_12_0.active_template_name = arg_12_1
 	arg_12_0.tentacle_data.active_template_name = arg_12_1
 	arg_12_0.reach_dist = math.clamp(arg_12_3, 0, 31)
 end
 
-function TentacleSplineExtension.set_reach_dist(arg_13_0, arg_13_1)
+TentacleSplineExtension.set_reach_dist = function (arg_13_0, arg_13_1)
 	arg_13_0.reach_dist = math.clamp(arg_13_1, 0, 31)
 end
 
-function TentacleSplineExtension.set_target_unit(arg_14_0, arg_14_1)
+TentacleSplineExtension.set_target_unit = function (arg_14_0, arg_14_1)
 	arg_14_0.target_unit = arg_14_1
 end
 
-function TentacleSplineExtension.set_server_time(arg_15_0, arg_15_1)
+TentacleSplineExtension.set_server_time = function (arg_15_0, arg_15_1)
 	arg_15_0._server_time_delta = arg_15_1 - Managers.time:time("main")
 end
 
-function TentacleSplineExtension.set_astar_points(arg_16_0, arg_16_1)
+TentacleSplineExtension.set_astar_points = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.tentacle_data
 	local var_16_1 = #arg_16_1
 
@@ -470,7 +470,7 @@ function TentacleSplineExtension.set_astar_points(arg_16_0, arg_16_1)
 	var_16_0.astar_node_list = arg_16_1
 end
 
-function TentacleSplineExtension.update_global_movement_sound_intensity(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+TentacleSplineExtension.update_global_movement_sound_intensity = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0.previous_reach_dist or 0
 	local var_17_1 = arg_17_0.reach_dist or var_17_0
 	local var_17_2 = arg_17_2.movement_sound_scaling
@@ -481,7 +481,7 @@ function TentacleSplineExtension.update_global_movement_sound_intensity(arg_17_0
 	Managers.state.entity:system("audio_system"):set_global_parameter_with_lerp(var_17_5, var_17_4)
 end
 
-function TentacleSplineExtension.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+TentacleSplineExtension.update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	if not Unit.alive(arg_18_0.target_unit) then
 		return
 	end
@@ -581,7 +581,7 @@ function TentacleSplineExtension.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 	arg_18_0.previous_reach_dist = arg_18_0.reach_dist
 end
 
-function TentacleSplineExtension.get_last_ground_pos(arg_19_0)
+TentacleSplineExtension.get_last_ground_pos = function (arg_19_0)
 	return arg_19_0._last_good_ground_pos:unbox()
 end
 
@@ -595,7 +595,7 @@ end
 
 local var_0_6 = 0.6
 
-function TentacleSplineExtension.calculate_tentacle_path(arg_21_0, arg_21_1, arg_21_2)
+TentacleSplineExtension.calculate_tentacle_path = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_2.a_star
 
 	if GwNavAStar.processing_finished(var_21_0) then
@@ -686,7 +686,7 @@ local var_0_7 = {
 	}
 }
 
-function TentacleSplineExtension.keep_tentacle_above_ground(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+TentacleSplineExtension.keep_tentacle_above_ground = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	for iter_22_0 = arg_22_3, #arg_22_4 do
 		local var_22_0 = arg_22_4[iter_22_0]
 		local var_22_1 = arg_22_2[var_22_0]
@@ -700,7 +700,7 @@ function TentacleSplineExtension.keep_tentacle_above_ground(arg_22_0, arg_22_1, 
 	end
 end
 
-function TentacleSplineExtension.funnel_tentacle_to_center(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+TentacleSplineExtension.funnel_tentacle_to_center = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
 	local var_23_0 = 4
 
 	Debug.text("influence dist: %.2f", var_23_0)
@@ -731,7 +731,7 @@ function TentacleSplineExtension.funnel_tentacle_to_center(arg_23_0, arg_23_1, a
 	end
 end
 
-function TentacleSplineExtension.funnel_one_point(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+TentacleSplineExtension.funnel_one_point = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = 4
 	local var_24_1 = Geometry.closest_point_on_line(arg_24_1, arg_24_3, arg_24_2 + arg_24_4 * var_24_0)
 	local var_24_2 = Vector3.length(var_24_1 - arg_24_3)
@@ -768,7 +768,7 @@ local function var_0_8(arg_25_0, arg_25_1)
 	return path_list[1]:unbox(), 1
 end
 
-function TentacleSplineExtension.align_tentacle(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+TentacleSplineExtension.align_tentacle = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
 	local var_26_0 = arg_26_2.spline
 	local var_26_1 = Quaternion.forward(Unit.local_rotation(arg_26_2.portal_unit, 0))
 	local var_26_2 = arg_26_2.root_pos:unbox()

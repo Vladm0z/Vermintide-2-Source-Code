@@ -6,7 +6,7 @@ local var_0_0 = safe_require_guard()
 local var_0_1 = stingray.Color
 local var_0_2 = stingray.Unit
 
-function var_0_0.unit_script_data(arg_1_0, arg_1_1, ...)
+var_0_0.unit_script_data = function (arg_1_0, arg_1_1, ...)
 	if arg_1_0 and var_0_2.alive(arg_1_0) and var_0_2.has_data(arg_1_0, ...) then
 		return var_0_2.get_data(arg_1_0, ...)
 	else
@@ -14,7 +14,7 @@ function var_0_0.unit_script_data(arg_1_0, arg_1_1, ...)
 	end
 end
 
-function var_0_0.get_layer_and_smartobject(arg_2_0, arg_2_1)
+var_0_0.get_layer_and_smartobject = function (arg_2_0, arg_2_1)
 	local var_2_0 = var_0_0.unit_script_data(arg_2_0, false, arg_2_1, "is_exclusive")
 
 	if var_2_0 then

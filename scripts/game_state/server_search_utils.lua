@@ -2,7 +2,7 @@
 
 ServerSearchUtils = {}
 
-function ServerSearchUtils.trigger_game_server_finder_search(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ServerSearchUtils.trigger_game_server_finder_search = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	print("Attempting " .. arg_1_0 .. " search for game server")
 
 	local var_1_0 = GameServerFinder:new(arg_1_1)
@@ -29,7 +29,7 @@ function ServerSearchUtils.trigger_game_server_finder_search(arg_1_0, arg_1_1, a
 	return var_1_0
 end
 
-function ServerSearchUtils.trigger_lobby_finder_search(arg_2_0, arg_2_1, arg_2_2)
+ServerSearchUtils.trigger_lobby_finder_search = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = {
 		distance_filter = "world",
 		free_slots = arg_2_1,
@@ -48,8 +48,8 @@ function ServerSearchUtils.trigger_lobby_finder_search(arg_2_0, arg_2_1, arg_2_2
 	return var_2_2
 end
 
-function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-	table.array_remove_if(arg_3_0, function(arg_4_0)
+ServerSearchUtils.filter_game_server_search = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	table.array_remove_if(arg_3_0, function (arg_4_0)
 		if not Development.parameter("force_ignore_network_hash") then
 			local var_4_0 = arg_4_0.network_hash ~= arg_3_3
 
@@ -62,7 +62,7 @@ function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, 
 			return var_4_0
 		end
 	end)
-	table.array_remove_if(arg_3_0, function(arg_5_0)
+	table.array_remove_if(arg_3_0, function (arg_5_0)
 		if not script_data.blacklisting_disabled_vs then
 			local var_5_0 = arg_3_4[arg_5_0.server_info.ip_port] ~= nil
 
@@ -75,7 +75,7 @@ function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, 
 			return var_5_0
 		end
 	end)
-	table.array_remove_if(arg_3_0, function(arg_6_0)
+	table.array_remove_if(arg_3_0, function (arg_6_0)
 		local var_6_0 = arg_6_0.server_info.password
 
 		if var_6_0 then
@@ -86,15 +86,15 @@ function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, 
 
 		return var_6_0
 	end)
-	table.array_remove_if(arg_3_0, function(arg_7_0)
+	table.array_remove_if(arg_3_0, function (arg_7_0)
 		return not arg_7_0.game_state
 	end)
-	table.array_remove_if(arg_3_0, function(arg_8_0)
+	table.array_remove_if(arg_3_0, function (arg_8_0)
 		return arg_8_0.game_state == "dedicated_server_abort_game"
 	end)
 
 	if arg_3_2.hotjoin_disabled_game_states then
-		table.array_remove_if(arg_3_0, function(arg_9_0)
+		table.array_remove_if(arg_3_0, function (arg_9_0)
 			if Managers.state.game_mode:setting("allowed_hotjoin_states")[arg_9_0.game_state] then
 				return false
 			end
@@ -104,7 +104,7 @@ function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, 
 	end
 
 	if arg_3_2.filter_fully_reserved_servers then
-		table.array_remove_if(arg_3_0, function(arg_10_0)
+		table.array_remove_if(arg_3_0, function (arg_10_0)
 			local var_10_0 = arg_10_0.server_info
 
 			if not var_10_0 then
@@ -121,10 +121,10 @@ function ServerSearchUtils.filter_game_server_search(arg_3_0, arg_3_1, arg_3_2, 
 
 	local var_3_0 = tostring(NetworkLookup.host_types.official_dedicated_server)
 
-	table.array_remove_if(arg_3_0, function(arg_11_0)
+	table.array_remove_if(arg_3_0, function (arg_11_0)
 		return arg_11_0.host_type == var_3_0
 	end)
-	table.array_remove_if(arg_3_0, function(arg_12_0)
+	table.array_remove_if(arg_3_0, function (arg_12_0)
 		local var_12_0 = arg_12_0.server_info.ping or math.huge
 
 		if arg_3_5 >= 300 then

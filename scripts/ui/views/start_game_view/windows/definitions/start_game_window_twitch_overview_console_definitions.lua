@@ -19,15 +19,15 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -37,13 +37,13 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -743,7 +743,7 @@ local var_0_9 = {
 				style_id = "chat_text_box",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return Managers.twitch:is_connected()
 				end
 			}
@@ -804,7 +804,7 @@ local function var_0_10(arg_9_0, arg_9_1)
 		{
 			style_id = "login_rect_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_10_0, arg_10_1)
+			content_check_function = function (arg_10_0, arg_10_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
@@ -812,7 +812,7 @@ local function var_0_10(arg_9_0, arg_9_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function(arg_11_0, arg_11_1)
+			content_check_function = function (arg_11_0, arg_11_1)
 				if arg_11_0.text_input_hotspot.is_hover then
 					arg_11_1.text_color = {
 						128,
@@ -836,7 +836,7 @@ local function var_0_10(arg_9_0, arg_9_1)
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function(arg_12_0, arg_12_1)
+			content_check_function = function (arg_12_0, arg_12_1)
 				if not arg_12_0.text_field_active then
 					arg_12_1.caret_color[1] = 0
 				else
@@ -850,7 +850,7 @@ local function var_0_10(arg_9_0, arg_9_1)
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function(arg_13_0, arg_13_1)
+			content_check_function = function (arg_13_0, arg_13_1)
 				if not Managers.twitch:is_connecting() then
 					return
 				end
@@ -1007,14 +1007,14 @@ function create_twitch_rect_with_outer_frame(arg_14_0, arg_14_1, arg_14_2, arg_1
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function(arg_15_0, arg_15_1)
+			content_check_function = function (arg_15_0, arg_15_1)
 				return Managers.twitch:is_connected()
 			end
 		},
 		{
 			style_id = "rect",
 			pass_type = "rect",
-			content_check_function = function(arg_16_0, arg_16_1)
+			content_check_function = function (arg_16_0, arg_16_1)
 				return Managers.twitch:is_connected()
 			end
 		}

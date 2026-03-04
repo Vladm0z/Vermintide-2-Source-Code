@@ -12,7 +12,7 @@ NetworkedAnimationVariableTemplates = {
 			"attack_move_4",
 			"attack_cleave_moving_01"
 		},
-		init = function(arg_1_0, arg_1_1)
+		init = function (arg_1_0, arg_1_1)
 			local var_1_0 = Managers.state.network
 			local var_1_1 = var_1_0:unit_game_object_id(arg_1_0)
 			local var_1_2 = GameSession.game_object_field(var_1_0:game(), var_1_1, "target_unit_id")
@@ -21,7 +21,7 @@ NetworkedAnimationVariableTemplates = {
 			arg_1_1.previous_move_animation_value = nil
 			arg_1_1.move_animation_variable = Unit.animation_find_variable(arg_1_0, arg_1_1.variable_name)
 		end,
-		update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			local var_2_0 = arg_2_1.target_unit
 
 			if not var_2_0 then

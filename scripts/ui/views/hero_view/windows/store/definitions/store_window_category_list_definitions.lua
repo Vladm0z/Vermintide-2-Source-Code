@@ -216,11 +216,11 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				arg_2_3.render_settings.alpha_multiplier = 0
 				arg_2_3.mask_default_width = arg_2_2.widgets_by_name.list.style.mask.size[1]
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = math.easeOutCubic(arg_3_3)
 
 				arg_3_4.render_settings.alpha_multiplier = var_3_0
@@ -249,7 +249,7 @@ local var_0_7 = {
 				var_3_12.mask_top.size[1] = var_3_11
 				var_3_12.mask_bottom.size[1] = var_3_11
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end
 		}
@@ -259,15 +259,15 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = math.easeOutCubic(arg_6_3)
 
 				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		}

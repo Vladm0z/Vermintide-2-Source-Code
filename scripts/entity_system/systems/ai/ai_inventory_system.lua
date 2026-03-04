@@ -14,7 +14,7 @@ local var_0_1 = {
 
 AIInventorySystem = class(AIInventorySystem, ExtensionSystemBase)
 
-function AIInventorySystem.init(arg_1_0, arg_1_1, arg_1_2)
+AIInventorySystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -39,11 +39,11 @@ function AIInventorySystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.item_set_to_wield = {}
 end
 
-function AIInventorySystem.destroy(arg_2_0)
+AIInventorySystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function AIInventorySystem.drop_item(arg_3_0, arg_3_1)
+AIInventorySystem.drop_item = function (arg_3_0, arg_3_1)
 	arg_3_0.units_to_drop_n = arg_3_0.units_to_drop_n + 1
 	arg_3_0.units_to_drop[arg_3_0.units_to_drop_n] = arg_3_1
 end
@@ -61,7 +61,7 @@ end
 
 local var_0_3 = {}
 
-function AIInventorySystem.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+AIInventorySystem.on_add_extension = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0
 
 	fassert(next(arg_5_4) ~= nil, "AI's unit template specifies inventory extension but no init data was sent")
@@ -78,12 +78,12 @@ function AIInventorySystem.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5_3, 
 	return var_5_1
 end
 
-function AIInventorySystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+AIInventorySystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
 	ScriptUnit.remove_extension(arg_6_1, arg_6_0.NAME)
 end
 
-function AIInventorySystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
+AIInventorySystem.on_freeze_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._extensions[arg_7_1]
 
 	fassert(var_7_0, "Unit was already frozen.")
@@ -97,7 +97,7 @@ function AIInventorySystem.on_freeze_extension(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_cleanup_extension(arg_7_1, arg_7_2)
 end
 
-function AIInventorySystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
+AIInventorySystem._cleanup_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.units_to_wield
 	local var_8_1 = arg_8_0.units_to_wield_n
 	local var_8_2 = 1
@@ -129,7 +129,7 @@ function AIInventorySystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.units_to_drop_n = var_8_4
 end
 
-function AIInventorySystem.freeze(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+AIInventorySystem.freeze = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.frozen_unit_extension_data
 
 	if var_9_0[arg_9_1] then
@@ -147,7 +147,7 @@ function AIInventorySystem.freeze(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	var_9_1:freeze()
 end
 
-function AIInventorySystem.unfreeze(arg_10_0, arg_10_1)
+AIInventorySystem.unfreeze = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.frozen_unit_extension_data[arg_10_1]
 
 	fassert(var_10_0, "Unit to unfreeze didn't have frozen extension")
@@ -158,7 +158,7 @@ function AIInventorySystem.unfreeze(arg_10_0, arg_10_1)
 	var_10_0:unfreeze()
 end
 
-function AIInventorySystem.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+AIInventorySystem.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0.world
 	local var_11_1 = arg_11_0.units_to_wield
 	local var_11_2 = arg_11_0.units_to_wield_n
@@ -195,7 +195,7 @@ function AIInventorySystem.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 		var_11_12 = var_11_4.dropped and 0 or var_11_4.inventory_items_n
 
 		if script_data.ai_debug_inventory then
-			-- block empty
+			-- Nothing
 		end
 
 		for iter_11_1 = var_11_5, var_11_6 do
@@ -239,7 +239,7 @@ function AIInventorySystem.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_0.units_to_drop_n = 0
 end
 
-function AIInventorySystem.rpc_ai_inventory_wield(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+AIInventorySystem.rpc_ai_inventory_wield = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0.unit_storage:unit(arg_12_2)
 
 	if var_12_0 == nil then
@@ -255,7 +255,7 @@ function AIInventorySystem.rpc_ai_inventory_wield(arg_12_0, arg_12_1, arg_12_2, 
 	arg_12_0.item_set_to_wield[var_12_0] = arg_12_3
 end
 
-function AIInventorySystem.rpc_ai_drop_single_item(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+AIInventorySystem.rpc_ai_drop_single_item = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_2)
 
 	if var_13_0 == nil then
@@ -269,7 +269,7 @@ function AIInventorySystem.rpc_ai_drop_single_item(arg_13_0, arg_13_1, arg_13_2,
 	ScriptUnit.extension(var_13_0, "ai_inventory_system"):drop_single_item(arg_13_3, NetworkLookup.item_drop_reasons[arg_13_4])
 end
 
-function AIInventorySystem.rpc_ai_show_single_item(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+AIInventorySystem.rpc_ai_show_single_item = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = arg_14_0.unit_storage:unit(arg_14_2)
 
 	if var_14_0 == nil then
@@ -283,7 +283,7 @@ function AIInventorySystem.rpc_ai_show_single_item(arg_14_0, arg_14_1, arg_14_2,
 	ScriptUnit.extension(var_14_0, "ai_inventory_system"):show_single_item(arg_14_3, arg_14_4)
 end
 
-function AIInventorySystem.hot_join_sync(arg_15_0, arg_15_1)
+AIInventorySystem.hot_join_sync = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0.unit_extension_data) do
 		iter_15_1:hot_join_sync(arg_15_1)
 	end

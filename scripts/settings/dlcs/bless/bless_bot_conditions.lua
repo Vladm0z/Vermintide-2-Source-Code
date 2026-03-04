@@ -22,7 +22,7 @@ local function var_0_5(arg_1_0)
 	return not var_1_0 or var_1_0:has_buff_perk(var_0_0.invulnerable)
 end
 
-function BTConditions.can_activate.wh_priest(arg_2_0)
+BTConditions.can_activate.wh_priest = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 	local var_2_1 = arg_2_0.target_ally_unit
 	local var_2_2 = false

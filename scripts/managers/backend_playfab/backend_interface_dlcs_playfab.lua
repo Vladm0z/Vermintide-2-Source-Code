@@ -4,7 +4,7 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceDLCsPlayfab = class(BackendInterfaceDLCsPlayfab)
 
-function BackendInterfaceDLCsPlayfab.init(arg_1_0, arg_1_1)
+BackendInterfaceDLCsPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0.is_local = false
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._last_id = 0
@@ -13,21 +13,21 @@ function BackendInterfaceDLCsPlayfab.init(arg_1_0, arg_1_1)
 	arg_1_0._platform_dlcs = arg_1_1:get_platform_dlcs()
 end
 
-function BackendInterfaceDLCsPlayfab.ready(arg_2_0)
+BackendInterfaceDLCsPlayfab.ready = function (arg_2_0)
 	return true
 end
 
-function BackendInterfaceDLCsPlayfab.update(arg_3_0, arg_3_1)
+BackendInterfaceDLCsPlayfab.update = function (arg_3_0, arg_3_1)
 	return
 end
 
-function BackendInterfaceDLCsPlayfab._new_id(arg_4_0)
+BackendInterfaceDLCsPlayfab._new_id = function (arg_4_0)
 	arg_4_0._last_id = arg_4_0._last_id + 1
 
 	return arg_4_0._last_id
 end
 
-function BackendInterfaceDLCsPlayfab.update_dlc_ownership(arg_5_0)
+BackendInterfaceDLCsPlayfab.update_dlc_ownership = function (arg_5_0)
 	local var_5_0 = Managers.unlock:get_installed_dlcs()
 	local var_5_1 = cjson.encode(var_5_0)
 	local var_5_2 = {
@@ -43,7 +43,7 @@ function BackendInterfaceDLCsPlayfab.update_dlc_ownership(arg_5_0)
 	arg_5_0._updating_dlc_ownership = true
 end
 
-function BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb(arg_6_0, arg_6_1)
+BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.FunctionResult
 	local var_6_1 = var_6_0.new_dlcs
 	local var_6_2 = var_6_0.revoked_dlcs
@@ -61,7 +61,7 @@ function BackendInterfaceDLCsPlayfab._update_owned_dlcs_cb(arg_6_0, arg_6_1)
 	end
 end
 
-function BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data(arg_7_0)
+BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data = function (arg_7_0)
 	local var_7_0 = arg_7_0._owner_dlcs_cb_data
 	local var_7_1 = var_7_0.owned_dlcs
 	local var_7_2 = var_7_0.platform_dlcs
@@ -106,7 +106,7 @@ function BackendInterfaceDLCsPlayfab._handle_owned_dlcs_data(arg_7_0)
 	end
 end
 
-function BackendInterfaceDLCsPlayfab._execute_dlc_specific_logic(arg_8_0)
+BackendInterfaceDLCsPlayfab._execute_dlc_specific_logic = function (arg_8_0)
 	local var_8_0 = {
 		FunctionName = "executeDLCLogic",
 		FunctionParameter = {}
@@ -116,7 +116,7 @@ function BackendInterfaceDLCsPlayfab._execute_dlc_specific_logic(arg_8_0)
 	arg_8_0._backend_mirror:request_queue():enqueue(var_8_0, var_8_1, true)
 end
 
-function BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb(arg_9_0, arg_9_1)
+BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.FunctionResult.item_grant_results
 
 	arg_9_0:_handle_owned_dlcs_data()
@@ -212,19 +212,19 @@ function BackendInterfaceDLCsPlayfab._execute_dlc_logic_cb(arg_9_0, arg_9_1)
 	arg_9_0._updating_dlc_ownership = false
 end
 
-function BackendInterfaceDLCsPlayfab.get_owned_dlcs(arg_10_0)
+BackendInterfaceDLCsPlayfab.get_owned_dlcs = function (arg_10_0)
 	return arg_10_0._owned_dlcs
 end
 
-function BackendInterfaceDLCsPlayfab.get_platform_dlcs(arg_11_0)
+BackendInterfaceDLCsPlayfab.get_platform_dlcs = function (arg_11_0)
 	return arg_11_0._platform_dlcs
 end
 
-function BackendInterfaceDLCsPlayfab.updating_dlc_ownership(arg_12_0)
+BackendInterfaceDLCsPlayfab.updating_dlc_ownership = function (arg_12_0)
 	return arg_12_0._updating_dlc_ownership
 end
 
-function BackendInterfaceDLCsPlayfab.is_unreleased_career(arg_13_0, arg_13_1)
+BackendInterfaceDLCsPlayfab.is_unreleased_career = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._backend_mirror:get_title_data().unreleased_careers
 
 	if var_13_0 and string.find(var_13_0, arg_13_1) then

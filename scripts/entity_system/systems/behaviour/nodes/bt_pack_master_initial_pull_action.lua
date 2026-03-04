@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterInitialPullAction = class(BTPackMasterInitialPullAction, BTNode)
 
-function BTPackMasterInitialPullAction.init(arg_1_0, ...)
+BTPackMasterInitialPullAction.init = function (arg_1_0, ...)
 	BTPackMasterInitialPullAction.super.init(arg_1_0, ...)
 end
 
 BTPackMasterInitialPullAction.name = "BTPackMasterInitialPullAction"
 
-function BTPackMasterInitialPullAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterInitialPullAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	local var_2_0 = arg_2_2.navigation_extension
@@ -27,7 +27,7 @@ function BTPackMasterInitialPullAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	AiUtils.show_polearm(arg_2_1, false)
 end
 
-function BTPackMasterInitialPullAction._find_pull_position(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTPackMasterInitialPullAction._find_pull_position = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_2.action
 	local var_3_1 = arg_3_2.nav_world
 	local var_3_2 = POSITION_LOOKUP[arg_3_1]
@@ -69,7 +69,7 @@ function BTPackMasterInitialPullAction._find_pull_position(arg_3_0, arg_3_1, arg
 	arg_3_2.pull_t_end = arg_3_3 + var_3_0.pull_time
 end
 
-function BTPackMasterInitialPullAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPackMasterInitialPullAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.pull_position_start = nil
 	arg_4_2.pull_position_end = nil
 	arg_4_2.pull_t_end = nil
@@ -95,7 +95,7 @@ function BTPackMasterInitialPullAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3,
 	arg_4_2.attack_cooldown = arg_4_3 + arg_4_2.action.cooldown
 end
 
-function BTPackMasterInitialPullAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPackMasterInitialPullAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not AiUtils.is_of_interest_to_packmaster(arg_5_1, arg_5_2.drag_target_unit) then
 		return "failed"
 	end

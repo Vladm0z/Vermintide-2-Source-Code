@@ -2,6 +2,6 @@
 
 CurseCorruptorBeamExtension = class(CurseCorruptorBeamExtension, CorruptorBeamExtension)
 
-function CurseCorruptorBeamExtension._get_positions(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CurseCorruptorBeamExtension._get_positions = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return arg_1_3, arg_1_3
 end

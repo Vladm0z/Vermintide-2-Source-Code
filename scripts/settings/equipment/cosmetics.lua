@@ -3377,7 +3377,7 @@ Cosmetics.frame_dwarf_fest = {
 	texture_package_name = "resource_packages/store/item_icons/store_item_icon_frame_dwarf_fest"
 }
 
-DLCUtils.map_list("cosmetics_files", function(arg_1_0)
+DLCUtils.map_list("cosmetics_files", function (arg_1_0)
 	local var_1_0 = require(arg_1_0)
 
 	if var_1_0 then

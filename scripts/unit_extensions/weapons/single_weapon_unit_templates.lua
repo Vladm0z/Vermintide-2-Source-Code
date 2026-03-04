@@ -5,7 +5,7 @@ SingleWeaponUnitTemplates.templates = {}
 
 DLCUtils.require("single_weapon_templates")
 
-function SingleWeaponUnitTemplates.get_template(arg_1_0, arg_1_1)
+SingleWeaponUnitTemplates.get_template = function (arg_1_0, arg_1_1)
 	local var_1_0 = SingleWeaponUnitTemplates.templates
 	local var_1_1 = arg_1_1 == true and "husk" or arg_1_1 == false and "unit" or nil
 

@@ -21,7 +21,7 @@ local function var_0_1(arg_1_0)
 	return math.min(math.ceil(math.clamp(arg_1_0 * var_1_0.amulet_power_level_per_magic_level, 0, var_1_0.power_level_per_magic_level)), var_1_0.max_power_level)
 end
 
-function BackendInterfaceWeavesPlayFab.init(arg_2_0, arg_2_1)
+BackendInterfaceWeavesPlayFab.init = function (arg_2_0, arg_2_1)
 	arg_2_0._backend_mirror = arg_2_1
 	arg_2_0._dirty_loadouts = {}
 
@@ -70,7 +70,7 @@ function BackendInterfaceWeavesPlayFab.init(arg_2_0, arg_2_1)
 	arg_2_0._leaderboard_request_error = false
 end
 
-function BackendInterfaceWeavesPlayFab._validate_backend_progression_settings(arg_3_0, arg_3_1)
+BackendInterfaceWeavesPlayFab._validate_backend_progression_settings = function (arg_3_0, arg_3_1)
 	for iter_3_0, iter_3_1 in pairs(WeaveLoadoutSettings) do
 		for iter_3_2, iter_3_3 in ipairs(iter_3_1.properties) do
 			local var_3_0 = arg_3_1.properties[iter_3_3]
@@ -109,7 +109,7 @@ function BackendInterfaceWeavesPlayFab._validate_backend_progression_settings(ar
 	end
 end
 
-function BackendInterfaceWeavesPlayFab._parse_loadouts(arg_4_0)
+BackendInterfaceWeavesPlayFab._parse_loadouts = function (arg_4_0)
 	local var_4_0 = {}
 
 	for iter_4_0, iter_4_1 in pairs(CareerSettings) do
@@ -140,7 +140,7 @@ function BackendInterfaceWeavesPlayFab._parse_loadouts(arg_4_0)
 	return var_4_0
 end
 
-function BackendInterfaceWeavesPlayFab._validate_loadout(arg_5_0, arg_5_1, arg_5_2)
+BackendInterfaceWeavesPlayFab._validate_loadout = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._dirty_loadouts
 
 	if arg_5_2.properties then
@@ -199,19 +199,19 @@ function BackendInterfaceWeavesPlayFab._validate_loadout(arg_5_0, arg_5_1, arg_5
 	end
 end
 
-function BackendInterfaceWeavesPlayFab._parse_career_progress(arg_6_0)
+BackendInterfaceWeavesPlayFab._parse_career_progress = function (arg_6_0)
 	local var_6_0 = arg_6_0._backend_mirror:get_read_only_data("weaves_career_progress")
 
 	return (cjson.decode(var_6_0))
 end
 
-function BackendInterfaceWeavesPlayFab._new_id(arg_7_0)
+BackendInterfaceWeavesPlayFab._new_id = function (arg_7_0)
 	arg_7_0._last_id = arg_7_0._last_id and arg_7_0._last_id + 1 or 1
 
 	return arg_7_0._last_id
 end
 
-function BackendInterfaceWeavesPlayFab._create_leaderboard_entry(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BackendInterfaceWeavesPlayFab._create_leaderboard_entry = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if not arg_8_1 then
 		return {
 			score = "-",
@@ -263,7 +263,7 @@ function BackendInterfaceWeavesPlayFab._create_leaderboard_entry(arg_8_0, arg_8_
 	}
 end
 
-function BackendInterfaceWeavesPlayFab._get_magic_inventory_item(arg_9_0, arg_9_1)
+BackendInterfaceWeavesPlayFab._get_magic_inventory_item = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._backend_mirror:get_all_inventory_items()[arg_9_1]
 
 	fassert(var_9_0, "[BackendInterfaceWeavesPlayFab] Item %q doesn't exist", tostring(arg_9_1))
@@ -272,7 +272,7 @@ function BackendInterfaceWeavesPlayFab._get_magic_inventory_item(arg_9_0, arg_9_
 	return var_9_0
 end
 
-function BackendInterfaceWeavesPlayFab._update_item_custom_data(arg_10_0, arg_10_1, arg_10_2)
+BackendInterfaceWeavesPlayFab._update_item_custom_data = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0:_get_magic_inventory_item(arg_10_1)
 	local var_10_1 = arg_10_0._progression_settings
 
@@ -307,7 +307,7 @@ function BackendInterfaceWeavesPlayFab._update_item_custom_data(arg_10_0, arg_10
 	end
 end
 
-function BackendInterfaceWeavesPlayFab._get_loadout_mastery_cost(arg_11_0, arg_11_1)
+BackendInterfaceWeavesPlayFab._get_loadout_mastery_cost = function (arg_11_0, arg_11_1)
 	local var_11_0 = 0
 	local var_11_1 = arg_11_0._progression_settings
 
@@ -336,11 +336,11 @@ function BackendInterfaceWeavesPlayFab._get_loadout_mastery_cost(arg_11_0, arg_1
 	return var_11_0
 end
 
-function BackendInterfaceWeavesPlayFab.ready(arg_12_0)
+BackendInterfaceWeavesPlayFab.ready = function (arg_12_0)
 	return true
 end
 
-function BackendInterfaceWeavesPlayFab.submit_scores(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BackendInterfaceWeavesPlayFab.submit_scores = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = Managers.player:human_players()
 	local var_13_1 = {}
 
@@ -368,11 +368,11 @@ function BackendInterfaceWeavesPlayFab.submit_scores(arg_13_0, arg_13_1, arg_13_
 	arg_13_0._backend_mirror:request_queue():enqueue(var_13_4, var_13_5, true)
 end
 
-function BackendInterfaceWeavesPlayFab.submit_weave_score_request_cb(arg_14_0)
+BackendInterfaceWeavesPlayFab.submit_weave_score_request_cb = function (arg_14_0)
 	return
 end
 
-function BackendInterfaceWeavesPlayFab.request_player_rank(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BackendInterfaceWeavesPlayFab.request_player_rank = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = {
 		MaxResultsCount = 1,
 		StatisticName = arg_15_1,
@@ -395,7 +395,7 @@ function BackendInterfaceWeavesPlayFab.request_player_rank(arg_15_0, arg_15_1, a
 	arg_15_0._requesting_leaderboard = arg_15_0._requesting_leaderboard + 1
 end
 
-function BackendInterfaceWeavesPlayFab.player_rank_request_cb(arg_16_0, arg_16_1)
+BackendInterfaceWeavesPlayFab.player_rank_request_cb = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.Leaderboard[1]
 
 	if (var_16_0 and var_16_0.StatValue) == 0 then
@@ -406,7 +406,7 @@ function BackendInterfaceWeavesPlayFab.player_rank_request_cb(arg_16_0, arg_16_1
 	arg_16_0._leaderboard_player_rank_error = false
 end
 
-function BackendInterfaceWeavesPlayFab.request_leaderboard_around_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = {
 		MaxResultsCount = arg_17_3 or 1,
 		StatisticName = arg_17_1,
@@ -430,7 +430,7 @@ function BackendInterfaceWeavesPlayFab.request_leaderboard_around_player(arg_17_
 	arg_17_0._leaderboard_request_error = false
 end
 
-function BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb(arg_18_0, arg_18_1)
+BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.Leaderboard
 
 	table.clear(arg_18_0._leaderboard_entries)
@@ -458,11 +458,11 @@ function BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb(arg_
 	arg_18_0._requesting_leaderboard = arg_18_0._requesting_leaderboard - 1
 end
 
-function BackendInterfaceWeavesPlayFab.get_player_entry(arg_19_0)
+BackendInterfaceWeavesPlayFab.get_player_entry = function (arg_19_0)
 	return arg_19_0._player_entry
 end
 
-function BackendInterfaceWeavesPlayFab.request_leaderboard(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BackendInterfaceWeavesPlayFab.request_leaderboard = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = {
 		MaxResultsCount = 100,
 		StatisticName = arg_20_1,
@@ -486,7 +486,7 @@ function BackendInterfaceWeavesPlayFab.request_leaderboard(arg_20_0, arg_20_1, a
 	arg_20_0._requesting_leaderboard = arg_20_0._requesting_leaderboard + 1
 end
 
-function BackendInterfaceWeavesPlayFab.leaderboard_request_cb(arg_21_0, arg_21_1)
+BackendInterfaceWeavesPlayFab.leaderboard_request_cb = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.Leaderboard
 
 	table.clear(arg_21_0._leaderboard_entries)
@@ -504,19 +504,19 @@ function BackendInterfaceWeavesPlayFab.leaderboard_request_cb(arg_21_0, arg_21_1
 	arg_21_0._leaderboard_request_error = false
 end
 
-function BackendInterfaceWeavesPlayFab.is_requesting_leaderboard(arg_22_0)
+BackendInterfaceWeavesPlayFab.is_requesting_leaderboard = function (arg_22_0)
 	return arg_22_0._requesting_leaderboard > 0
 end
 
-function BackendInterfaceWeavesPlayFab.get_leaderboard_entries(arg_23_0)
+BackendInterfaceWeavesPlayFab.get_leaderboard_entries = function (arg_23_0)
 	return arg_23_0._leaderboard_entries
 end
 
-function BackendInterfaceWeavesPlayFab.has_leaderboard_request_failed(arg_24_0)
+BackendInterfaceWeavesPlayFab.has_leaderboard_request_failed = function (arg_24_0)
 	return arg_24_0._leaderboard_player_rank_error or arg_24_0._leaderboard_request_error
 end
 
-function BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	arg_25_0._requesting_leaderboard = arg_25_0._requesting_leaderboard - 1
 	arg_25_0._leaderboard_player_rank_error = true
 	arg_25_0._player_entry = arg_25_0:_create_leaderboard_entry(nil)
@@ -528,7 +528,7 @@ function BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb(arg_25_0, a
 	arg_25_3()
 end
 
-function BackendInterfaceWeavesPlayFab.request_leaderboard_failed_cb(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+BackendInterfaceWeavesPlayFab.request_leaderboard_failed_cb = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	arg_26_0._requesting_leaderboard = arg_26_0._requesting_leaderboard - 1
 	arg_26_0._leaderboard_request_error = true
 
@@ -541,7 +541,7 @@ function BackendInterfaceWeavesPlayFab.request_leaderboard_failed_cb(arg_26_0, a
 	arg_26_3()
 end
 
-function BackendInterfaceWeavesPlayFab.get_mastery(arg_27_0, arg_27_1, arg_27_2)
+BackendInterfaceWeavesPlayFab.get_mastery = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = WeaveMasterySettings
 	local var_27_1 = arg_27_0._loadouts[arg_27_1]
 	local var_27_2
@@ -571,19 +571,19 @@ function BackendInterfaceWeavesPlayFab.get_mastery(arg_27_0, arg_27_1, arg_27_2)
 	return var_27_2, var_27_5
 end
 
-function BackendInterfaceWeavesPlayFab.get_essence(arg_28_0)
+BackendInterfaceWeavesPlayFab.get_essence = function (arg_28_0)
 	return arg_28_0._backend_mirror:get_essence()
 end
 
-function BackendInterfaceWeavesPlayFab.get_total_essence(arg_29_0)
+BackendInterfaceWeavesPlayFab.get_total_essence = function (arg_29_0)
 	return arg_29_0._backend_mirror:get_total_essence()
 end
 
-function BackendInterfaceWeavesPlayFab.get_maximum_essence(arg_30_0)
+BackendInterfaceWeavesPlayFab.get_maximum_essence = function (arg_30_0)
 	return arg_30_0._backend_mirror:get_maximum_essence()
 end
 
-function BackendInterfaceWeavesPlayFab.get_average_power_level(arg_31_0, arg_31_1)
+BackendInterfaceWeavesPlayFab.get_average_power_level = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._loadouts[arg_31_1]
 	local var_31_1 = arg_31_0:_get_magic_inventory_item(var_31_0.slot_melee).power_level + arg_31_0:_get_magic_inventory_item(var_31_0.slot_ranged).power_level
 	local var_31_2 = arg_31_0:get_career_power_level(arg_31_1)
@@ -596,18 +596,18 @@ function BackendInterfaceWeavesPlayFab.get_average_power_level(arg_31_0, arg_31_
 	return var_31_3
 end
 
-function BackendInterfaceWeavesPlayFab.get_total_magic_level(arg_32_0, arg_32_1)
+BackendInterfaceWeavesPlayFab.get_total_magic_level = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0:get_career_magic_level(arg_32_1)
 	local var_32_1 = arg_32_0._loadouts[arg_32_1]
 
 	return var_32_0 + arg_32_0:get_item_magic_level(var_32_1.slot_melee) + arg_32_0:get_item_magic_level(var_32_1.slot_ranged)
 end
 
-function BackendInterfaceWeavesPlayFab.max_magic_level(arg_33_0)
+BackendInterfaceWeavesPlayFab.max_magic_level = function (arg_33_0)
 	return #arg_33_0._progression_settings.magic_levels
 end
 
-function BackendInterfaceWeavesPlayFab.get_career_power_level(arg_34_0, arg_34_1)
+BackendInterfaceWeavesPlayFab.get_career_power_level = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0:get_career_magic_level(arg_34_1)
 	local var_34_1 = var_0_1(var_34_0)
 
@@ -618,11 +618,11 @@ function BackendInterfaceWeavesPlayFab.get_career_power_level(arg_34_0, arg_34_1
 	return var_34_1
 end
 
-function BackendInterfaceWeavesPlayFab.get_career_magic_level(arg_35_0, arg_35_1)
+BackendInterfaceWeavesPlayFab.get_career_magic_level = function (arg_35_0, arg_35_1)
 	return arg_35_0._career_progress[arg_35_1].magic_level
 end
 
-function BackendInterfaceWeavesPlayFab.career_upgrade_cost(arg_36_0, arg_36_1, arg_36_2)
+BackendInterfaceWeavesPlayFab.career_upgrade_cost = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0:get_career_magic_level(arg_36_2)
 	local var_36_1 = math.clamp(var_36_0 + arg_36_1, 1, arg_36_0:max_magic_level())
 
@@ -639,7 +639,7 @@ function BackendInterfaceWeavesPlayFab.career_upgrade_cost(arg_36_0, arg_36_1, a
 	return var_36_2, var_36_1
 end
 
-function BackendInterfaceWeavesPlayFab.upgrade_career_magic_level(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+BackendInterfaceWeavesPlayFab.upgrade_career_magic_level = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0, var_37_1 = arg_37_0:career_upgrade_cost(arg_37_1, arg_37_2)
 
 	if not var_37_0 then
@@ -683,7 +683,7 @@ local var_0_2 = {
 	"bw_necromancer"
 }
 
-function BackendInterfaceWeavesPlayFab.upgrade_career_magic_level_cb(arg_38_0, arg_38_1, arg_38_2)
+BackendInterfaceWeavesPlayFab.upgrade_career_magic_level_cb = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_2.FunctionResult
 	local var_38_1 = var_38_0.error_message
 
@@ -725,17 +725,17 @@ function BackendInterfaceWeavesPlayFab.upgrade_career_magic_level_cb(arg_38_0, a
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.get_item_magic_level(arg_39_0, arg_39_1)
+BackendInterfaceWeavesPlayFab.get_item_magic_level = function (arg_39_0, arg_39_1)
 	return arg_39_0:_get_magic_inventory_item(arg_39_1).magic_level
 end
 
-function BackendInterfaceWeavesPlayFab.get_item_power_level(arg_40_0, arg_40_1)
+BackendInterfaceWeavesPlayFab.get_item_power_level = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0:get_item_magic_level(arg_40_1)
 
 	return (WeaveUtils.magic_level_to_power_level(var_40_0))
 end
 
-function BackendInterfaceWeavesPlayFab.magic_item_upgrade_cost(arg_41_0, arg_41_1, arg_41_2)
+BackendInterfaceWeavesPlayFab.magic_item_upgrade_cost = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0:get_item_magic_level(arg_41_2)
 	local var_41_1 = math.clamp(var_41_0 + arg_41_1, 1, arg_41_0:max_magic_level())
 
@@ -752,7 +752,7 @@ function BackendInterfaceWeavesPlayFab.magic_item_upgrade_cost(arg_41_0, arg_41_
 	return var_41_2, var_41_1
 end
 
-function BackendInterfaceWeavesPlayFab.upgrade_item_magic_level(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+BackendInterfaceWeavesPlayFab.upgrade_item_magic_level = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0, var_42_1 = arg_42_0:magic_item_upgrade_cost(arg_42_1, arg_42_2)
 
 	if not var_42_0 then
@@ -773,7 +773,7 @@ function BackendInterfaceWeavesPlayFab.upgrade_item_magic_level(arg_42_0, arg_42
 	arg_42_0._backend_mirror:request_queue():enqueue(var_42_2, callback(arg_42_0, "upgrade_item_magic_level_cb", arg_42_3), true)
 end
 
-function BackendInterfaceWeavesPlayFab.upgrade_item_magic_level_cb(arg_43_0, arg_43_1, arg_43_2)
+BackendInterfaceWeavesPlayFab.upgrade_item_magic_level_cb = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_2.FunctionResult
 	local var_43_1 = var_43_0.error_message
 
@@ -809,13 +809,13 @@ function BackendInterfaceWeavesPlayFab.upgrade_item_magic_level_cb(arg_43_0, arg
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.magic_item_cost(arg_44_0, arg_44_1)
+BackendInterfaceWeavesPlayFab.magic_item_cost = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._progression_settings.items[arg_44_1]
 
 	return var_44_0 and var_44_0.essence_cost
 end
 
-function BackendInterfaceWeavesPlayFab.buy_magic_item(arg_45_0, arg_45_1, arg_45_2)
+BackendInterfaceWeavesPlayFab.buy_magic_item = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0:magic_item_cost(arg_45_1)
 
 	if not var_45_0 then
@@ -835,7 +835,7 @@ function BackendInterfaceWeavesPlayFab.buy_magic_item(arg_45_0, arg_45_1, arg_45
 	arg_45_0._backend_mirror:request_queue():enqueue(var_45_1, callback(arg_45_0, "buy_magic_item_cb", arg_45_2), true)
 end
 
-function BackendInterfaceWeavesPlayFab.buy_magic_item_cb(arg_46_0, arg_46_1, arg_46_2)
+BackendInterfaceWeavesPlayFab.buy_magic_item_cb = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = arg_46_2.FunctionResult
 	local var_46_1 = var_46_0.error_message
 
@@ -878,21 +878,21 @@ function BackendInterfaceWeavesPlayFab.buy_magic_item_cb(arg_46_0, arg_46_1, arg
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.get_forge_level(arg_47_0)
+BackendInterfaceWeavesPlayFab.get_forge_level = function (arg_47_0)
 	return arg_47_0._forge_level
 end
 
-function BackendInterfaceWeavesPlayFab.forge_max_level(arg_48_0)
+BackendInterfaceWeavesPlayFab.forge_max_level = function (arg_48_0)
 	return #arg_48_0._progression_settings.forge_levels
 end
 
-function BackendInterfaceWeavesPlayFab.forge_magic_level_cap(arg_49_0)
+BackendInterfaceWeavesPlayFab.forge_magic_level_cap = function (arg_49_0)
 	local var_49_0 = arg_49_0._forge_level
 
 	return arg_49_0._progression_settings.forge_levels[var_49_0].magic_level_cap
 end
 
-function BackendInterfaceWeavesPlayFab.forge_upgrade_cost(arg_50_0, arg_50_1)
+BackendInterfaceWeavesPlayFab.forge_upgrade_cost = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._forge_level
 	local var_50_1 = math.clamp(var_50_0 + arg_50_1, 1, arg_50_0:forge_max_level())
 
@@ -909,7 +909,7 @@ function BackendInterfaceWeavesPlayFab.forge_upgrade_cost(arg_50_0, arg_50_1)
 	return var_50_2, var_50_1
 end
 
-function BackendInterfaceWeavesPlayFab.upgrade_forge(arg_51_0, arg_51_1, arg_51_2)
+BackendInterfaceWeavesPlayFab.upgrade_forge = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0, var_51_1 = arg_51_0:forge_upgrade_cost(arg_51_1)
 
 	if not var_51_0 then
@@ -929,7 +929,7 @@ function BackendInterfaceWeavesPlayFab.upgrade_forge(arg_51_0, arg_51_1, arg_51_
 	arg_51_0._backend_mirror:request_queue():enqueue(var_51_2, callback(arg_51_0, "upgrade_forge_cb", arg_51_2), true)
 end
 
-function BackendInterfaceWeavesPlayFab.upgrade_forge_cb(arg_52_0, arg_52_1, arg_52_2)
+BackendInterfaceWeavesPlayFab.upgrade_forge_cb = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_2.FunctionResult
 	local var_52_1 = var_52_0.error_message
 
@@ -954,15 +954,15 @@ function BackendInterfaceWeavesPlayFab.upgrade_forge_cb(arg_52_0, arg_52_1, arg_
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.get_property_mastery_costs(arg_53_0, arg_53_1)
+BackendInterfaceWeavesPlayFab.get_property_mastery_costs = function (arg_53_0, arg_53_1)
 	return arg_53_0._progression_settings.properties[arg_53_1].mastery_costs
 end
 
-function BackendInterfaceWeavesPlayFab.get_property_required_forge_level(arg_54_0, arg_54_1)
+BackendInterfaceWeavesPlayFab.get_property_required_forge_level = function (arg_54_0, arg_54_1)
 	return arg_54_0._progression_settings.properties[arg_54_1].required_forge_level
 end
 
-function BackendInterfaceWeavesPlayFab.set_loadout_property(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+BackendInterfaceWeavesPlayFab.set_loadout_property = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = WeavePropertiesByCareer[arg_55_1][arg_55_2]
 
 	fassert(var_55_0, "[BackendInterfaceWeavesPlayFab] Property %q not found for %q", arg_55_2, arg_55_1)
@@ -1011,7 +1011,7 @@ function BackendInterfaceWeavesPlayFab.set_loadout_property(arg_55_0, arg_55_1, 
 	arg_55_0._dirty_loadouts[arg_55_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.remove_loadout_property(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+BackendInterfaceWeavesPlayFab.remove_loadout_property = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	local var_56_0 = arg_56_0._loadouts[arg_56_1]
 
 	if arg_56_4 then
@@ -1034,7 +1034,7 @@ function BackendInterfaceWeavesPlayFab.remove_loadout_property(arg_56_0, arg_56_
 	arg_56_0._dirty_loadouts[arg_56_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.get_loadout_properties(arg_57_0, arg_57_1, arg_57_2)
+BackendInterfaceWeavesPlayFab.get_loadout_properties = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0 = arg_57_0._loadouts[arg_57_1]
 	local var_57_1
 
@@ -1049,15 +1049,15 @@ function BackendInterfaceWeavesPlayFab.get_loadout_properties(arg_57_0, arg_57_1
 	return var_57_1
 end
 
-function BackendInterfaceWeavesPlayFab.get_trait_mastery_cost(arg_58_0, arg_58_1)
+BackendInterfaceWeavesPlayFab.get_trait_mastery_cost = function (arg_58_0, arg_58_1)
 	return arg_58_0._progression_settings.traits[arg_58_1].mastery_cost
 end
 
-function BackendInterfaceWeavesPlayFab.get_trait_required_forge_level(arg_59_0, arg_59_1)
+BackendInterfaceWeavesPlayFab.get_trait_required_forge_level = function (arg_59_0, arg_59_1)
 	return arg_59_0._progression_settings.traits[arg_59_1].required_forge_level
 end
 
-function BackendInterfaceWeavesPlayFab.set_loadout_trait(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
+BackendInterfaceWeavesPlayFab.set_loadout_trait = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
 	local var_60_0 = WeaveTraitsByCareer[arg_60_1][arg_60_2]
 
 	fassert(var_60_0, "[BackendInterfaceWeavesPlayFab] Trait %q not allowed for %q", arg_60_2, arg_60_1)
@@ -1097,7 +1097,7 @@ function BackendInterfaceWeavesPlayFab.set_loadout_trait(arg_60_0, arg_60_1, arg
 	arg_60_0._dirty_loadouts[arg_60_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.remove_loadout_trait(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+BackendInterfaceWeavesPlayFab.remove_loadout_trait = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	local var_61_0 = arg_61_0._loadouts[arg_61_1]
 
 	if arg_61_3 then
@@ -1113,7 +1113,7 @@ function BackendInterfaceWeavesPlayFab.remove_loadout_trait(arg_61_0, arg_61_1, 
 	arg_61_0._dirty_loadouts[arg_61_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.get_loadout_traits(arg_62_0, arg_62_1, arg_62_2)
+BackendInterfaceWeavesPlayFab.get_loadout_traits = function (arg_62_0, arg_62_1, arg_62_2)
 	local var_62_0 = arg_62_0._loadouts[arg_62_1]
 	local var_62_1
 
@@ -1128,7 +1128,7 @@ function BackendInterfaceWeavesPlayFab.get_loadout_traits(arg_62_0, arg_62_1, ar
 	return var_62_1
 end
 
-function BackendInterfaceWeavesPlayFab.apply_career_item_loadouts(arg_63_0, arg_63_1)
+BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (arg_63_0, arg_63_1)
 	if arg_63_1 then
 		local var_63_0 = arg_63_0._loadouts[arg_63_1]
 		local var_63_1 = var_63_0 and var_63_0.item_loadouts
@@ -1153,15 +1153,15 @@ function BackendInterfaceWeavesPlayFab.apply_career_item_loadouts(arg_63_0, arg_
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.get_talent_mastery_cost(arg_64_0, arg_64_1)
+BackendInterfaceWeavesPlayFab.get_talent_mastery_cost = function (arg_64_0, arg_64_1)
 	return arg_64_0._progression_settings.talents[arg_64_1].mastery_cost
 end
 
-function BackendInterfaceWeavesPlayFab.get_talent_required_forge_level(arg_65_0, arg_65_1)
+BackendInterfaceWeavesPlayFab.get_talent_required_forge_level = function (arg_65_0, arg_65_1)
 	return arg_65_0._progression_settings.talents[arg_65_1].required_forge_level
 end
 
-function BackendInterfaceWeavesPlayFab.set_loadout_talent(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+BackendInterfaceWeavesPlayFab.set_loadout_talent = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 	local var_66_0 = WeaveTalentsByCareer[arg_66_1][arg_66_2]
 
 	fassert(var_66_0, "[BackendInterfaceWeavesPlayFab] Talent %q not allowed for %q", arg_66_2, arg_66_1)
@@ -1187,7 +1187,7 @@ function BackendInterfaceWeavesPlayFab.set_loadout_talent(arg_66_0, arg_66_1, ar
 	arg_66_0._dirty_loadouts[arg_66_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.remove_loadout_talent(arg_67_0, arg_67_1, arg_67_2)
+BackendInterfaceWeavesPlayFab.remove_loadout_talent = function (arg_67_0, arg_67_1, arg_67_2)
 	local var_67_0 = arg_67_0._loadouts[arg_67_1].talents
 
 	fassert(var_67_0[arg_67_2], "[BackendInterfaceWeavesPlayFab] Talent %q not found in loadout for %q", arg_67_2, arg_67_1)
@@ -1196,11 +1196,11 @@ function BackendInterfaceWeavesPlayFab.remove_loadout_talent(arg_67_0, arg_67_1,
 	arg_67_0._dirty_loadouts[arg_67_1] = true
 end
 
-function BackendInterfaceWeavesPlayFab.get_loadout_talents(arg_68_0, arg_68_1)
+BackendInterfaceWeavesPlayFab.get_loadout_talents = function (arg_68_0, arg_68_1)
 	return arg_68_0._loadouts[arg_68_1].talents
 end
 
-function BackendInterfaceWeavesPlayFab.get_talent_ids(arg_69_0, arg_69_1)
+BackendInterfaceWeavesPlayFab.get_talent_ids = function (arg_69_0, arg_69_1)
 	local var_69_0 = arg_69_0:get_talent_tree(arg_69_1)
 	local var_69_1 = {}
 	local var_69_2 = arg_69_0:get_talents(arg_69_1)
@@ -1223,7 +1223,7 @@ function BackendInterfaceWeavesPlayFab.get_talent_ids(arg_69_0, arg_69_1)
 	return var_69_1
 end
 
-function BackendInterfaceWeavesPlayFab.get_talent_tree(arg_70_0, arg_70_1)
+BackendInterfaceWeavesPlayFab.get_talent_tree = function (arg_70_0, arg_70_1)
 	local var_70_0 = WeaveLoadoutSettings[arg_70_1]
 
 	return var_70_0 and var_70_0.talent_tree
@@ -1231,7 +1231,7 @@ end
 
 local var_0_3 = {}
 
-function BackendInterfaceWeavesPlayFab.get_talents(arg_71_0, arg_71_1)
+BackendInterfaceWeavesPlayFab.get_talents = function (arg_71_0, arg_71_1)
 	local var_71_0 = arg_71_0._loadouts[arg_71_1].talents
 	local var_71_1 = arg_71_0:get_talent_tree(arg_71_1)
 
@@ -1252,11 +1252,11 @@ function BackendInterfaceWeavesPlayFab.get_talents(arg_71_0, arg_71_1)
 	return var_0_3
 end
 
-function BackendInterfaceWeavesPlayFab.get_total_power_level(arg_72_0, arg_72_1, arg_72_2)
+BackendInterfaceWeavesPlayFab.get_total_power_level = function (arg_72_0, arg_72_1, arg_72_2)
 	return arg_72_0:get_average_power_level(arg_72_2)
 end
 
-function BackendInterfaceWeavesPlayFab.has_loadout_item_id(arg_73_0, arg_73_1, arg_73_2)
+BackendInterfaceWeavesPlayFab.has_loadout_item_id = function (arg_73_0, arg_73_1, arg_73_2)
 	local var_73_0 = arg_73_0._loadouts[arg_73_1]
 
 	for iter_73_0, iter_73_1 in pairs(var_73_0) do
@@ -1266,13 +1266,13 @@ function BackendInterfaceWeavesPlayFab.has_loadout_item_id(arg_73_0, arg_73_1, a
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.get_loadout_item_id(arg_74_0, arg_74_1, arg_74_2)
+BackendInterfaceWeavesPlayFab.get_loadout_item_id = function (arg_74_0, arg_74_1, arg_74_2)
 	fassert(arg_74_0._valid_loadout_slots[arg_74_2], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be fetched from the weaves interface", tostring(arg_74_2))
 
 	return arg_74_0._loadouts[arg_74_1][arg_74_2]
 end
 
-function BackendInterfaceWeavesPlayFab.set_loadout_item(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+BackendInterfaceWeavesPlayFab.set_loadout_item = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 	fassert(arg_75_0._valid_loadout_slots[arg_75_3], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be set in the weaves interface", tostring(arg_75_3))
 
 	local var_75_0 = arg_75_0._backend_mirror:get_all_inventory_items()
@@ -1306,7 +1306,7 @@ function BackendInterfaceWeavesPlayFab.set_loadout_item(arg_75_0, arg_75_1, arg_
 	return true
 end
 
-function BackendInterfaceWeavesPlayFab.get_dirty_user_data(arg_76_0)
+BackendInterfaceWeavesPlayFab.get_dirty_user_data = function (arg_76_0)
 	local var_76_0 = false
 	local var_76_1 = {}
 	local var_76_2 = arg_76_0._dirty_loadouts
@@ -1323,6 +1323,6 @@ function BackendInterfaceWeavesPlayFab.get_dirty_user_data(arg_76_0)
 	end
 end
 
-function BackendInterfaceWeavesPlayFab.clear_dirty_user_data(arg_77_0)
+BackendInterfaceWeavesPlayFab.clear_dirty_user_data = function (arg_77_0)
 	table.clear(arg_77_0._dirty_loadouts)
 end

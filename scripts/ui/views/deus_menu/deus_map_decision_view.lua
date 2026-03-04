@@ -107,7 +107,7 @@ local function var_0_12(arg_1_0)
 	return var_1_0
 end
 
-function DeusMapDecisionView.init(arg_2_0, arg_2_1)
+DeusMapDecisionView.init = function (arg_2_0, arg_2_1)
 	arg_2_0.super.init(arg_2_0, arg_2_1)
 
 	arg_2_0._is_server = arg_2_1.is_server
@@ -123,7 +123,7 @@ function DeusMapDecisionView.init(arg_2_0, arg_2_1)
 	var_2_0:register(arg_2_0, "ingame_menu_closed", "on_ingame_menu_closed")
 end
 
-function DeusMapDecisionView._start(arg_3_0)
+DeusMapDecisionView._start = function (arg_3_0)
 	arg_3_0._state = var_0_10.IDLE
 
 	local var_3_0 = arg_3_0._deus_run_controller:get_current_node_key()
@@ -221,19 +221,19 @@ function DeusMapDecisionView._start(arg_3_0)
 	end
 end
 
-function DeusMapDecisionView.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+DeusMapDecisionView.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	DeusMapDecisionView.super.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
 
 	arg_4_0._network_event_delegate = arg_4_1
 end
 
-function DeusMapDecisionView.unregister_rpcs(arg_5_0)
+DeusMapDecisionView.unregister_rpcs = function (arg_5_0)
 	DeusMapDecisionView.super.unregister_rpcs(arg_5_0)
 
 	arg_5_0._network_event_delegate = nil
 end
 
-function DeusMapDecisionView.destroy(arg_6_0)
+DeusMapDecisionView.destroy = function (arg_6_0)
 	DeusMapDecisionView.super.destroy(arg_6_0)
 	arg_6_0:unregister_rpcs()
 
@@ -244,7 +244,7 @@ function DeusMapDecisionView.destroy(arg_6_0)
 	end
 end
 
-function DeusMapDecisionView._update(arg_7_0, arg_7_1, arg_7_2)
+DeusMapDecisionView._update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._shared_state:get_revision()
 	local var_7_1 = arg_7_0._deus_run_controller:get_state_revision()
 
@@ -317,11 +317,11 @@ function DeusMapDecisionView._update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._prev_state = var_7_2
 end
 
-function DeusMapDecisionView._get_rpcs(arg_8_0)
+DeusMapDecisionView._get_rpcs = function (arg_8_0)
 	return nil
 end
 
-function DeusMapDecisionView._node_pressed(arg_9_0, arg_9_1)
+DeusMapDecisionView._node_pressed = function (arg_9_0, arg_9_1)
 	if arg_9_0._prev_state == var_0_10.TWITCH_WAITING then
 		return
 	end
@@ -373,15 +373,15 @@ function DeusMapDecisionView._node_pressed(arg_9_0, arg_9_1)
 	arg_9_0:_play_sound(var_0_9.node_pressed)
 end
 
-function DeusMapDecisionView._node_hovered(arg_10_0, arg_10_1)
+DeusMapDecisionView._node_hovered = function (arg_10_0, arg_10_1)
 	arg_10_0:_enable_hover(arg_10_1)
 end
 
-function DeusMapDecisionView._node_unhovered(arg_11_0)
+DeusMapDecisionView._node_unhovered = function (arg_11_0)
 	arg_11_0:_disable_hover()
 end
 
-function DeusMapDecisionView._check_transition(arg_12_0, arg_12_1)
+DeusMapDecisionView._check_transition = function (arg_12_0, arg_12_1)
 	if arg_12_1 == var_0_10.TWITCH_STARTING then
 		if arg_12_0._starting_countdown == 0 or arg_12_0:_are_all_peers_ready() then
 			return var_0_10.TWITCH_WAITING
@@ -431,7 +431,7 @@ function DeusMapDecisionView._check_transition(arg_12_0, arg_12_1)
 	return arg_12_1
 end
 
-function DeusMapDecisionView._enable_hover(arg_13_0, arg_13_1)
+DeusMapDecisionView._enable_hover = function (arg_13_0, arg_13_1)
 	if arg_13_0._hovered_node then
 		arg_13_0:_disable_hover()
 	end
@@ -456,26 +456,26 @@ function DeusMapDecisionView._enable_hover(arg_13_0, arg_13_1)
 	arg_13_0:_play_sound(var_0_9.node_hover)
 end
 
-function DeusMapDecisionView._disable_hover(arg_14_0)
+DeusMapDecisionView._disable_hover = function (arg_14_0)
 	arg_14_0._ui:disable_hover_text()
 	arg_14_0._scene:unhover_node(arg_14_0._hovered_node)
 
 	arg_14_0._hovered_node = nil
 end
 
-function DeusMapDecisionView._on_enter_starting(arg_15_0, arg_15_1, arg_15_2)
+DeusMapDecisionView._on_enter_starting = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._ui:set_general_info(Localize("deus_map_info_waiting_title"), Localize("deus_map_info_waiting_desc"))
 
 	arg_15_0._starting_countdown = var_0_0
 end
 
-function DeusMapDecisionView._update_during_starting(arg_16_0, arg_16_1, arg_16_2)
+DeusMapDecisionView._update_during_starting = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._starting_countdown = math.max(0, arg_16_0._starting_countdown - arg_16_1)
 
 	arg_16_0._ui:update_timer(arg_16_0._starting_countdown)
 end
 
-function DeusMapDecisionView._on_enter_waiting(arg_17_0, arg_17_1, arg_17_2)
+DeusMapDecisionView._on_enter_waiting = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._ui:set_general_info(Localize("deus_map_info_voting_title"), Localize("deus_map_info_voting_desc"))
 
 	local var_17_0 = arg_17_0._deus_run_controller:get_current_node()
@@ -487,11 +487,11 @@ function DeusMapDecisionView._on_enter_waiting(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._ui:hide_timer()
 end
 
-function DeusMapDecisionView._update_during_waiting(arg_18_0, arg_18_1, arg_18_2)
+DeusMapDecisionView._update_during_waiting = function (arg_18_0, arg_18_1, arg_18_2)
 	return
 end
 
-function DeusMapDecisionView._on_enter_voting(arg_19_0, arg_19_1, arg_19_2)
+DeusMapDecisionView._on_enter_voting = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._deus_run_controller:get_current_node()
 
 	for iter_19_0, iter_19_1 in ipairs(var_19_0.next) do
@@ -505,13 +505,13 @@ function DeusMapDecisionView._on_enter_voting(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function DeusMapDecisionView._update_during_voting(arg_20_0, arg_20_1, arg_20_2)
+DeusMapDecisionView._update_during_voting = function (arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0._voting_countdown = math.max(0, arg_20_0._voting_countdown - arg_20_1)
 
 	arg_20_0._ui:update_timer(arg_20_0._voting_countdown)
 end
 
-function DeusMapDecisionView._on_enter_voting_finishing(arg_21_0, arg_21_1, arg_21_2)
+DeusMapDecisionView._on_enter_voting_finishing = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._deus_run_controller:get_current_node()
 
 	for iter_21_0, iter_21_1 in ipairs(var_21_0.next) do
@@ -525,13 +525,13 @@ function DeusMapDecisionView._on_enter_voting_finishing(arg_21_0, arg_21_1, arg_
 	end
 end
 
-function DeusMapDecisionView._update_during_voting_finishing(arg_22_0, arg_22_1, arg_22_2)
+DeusMapDecisionView._update_during_voting_finishing = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0._voting_countdown = math.max(0, arg_22_0._voting_countdown - arg_22_1)
 
 	arg_22_0._ui:update_timer(arg_22_0._voting_countdown)
 end
 
-function DeusMapDecisionView._on_enter_finishing(arg_23_0, arg_23_1, arg_23_2)
+DeusMapDecisionView._on_enter_finishing = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._final_countdown = var_0_3
 
 	local var_23_0 = arg_23_0._deus_run_controller:get_current_node_key()
@@ -559,7 +559,7 @@ function DeusMapDecisionView._on_enter_finishing(arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._deus_run_controller:map_finished_voting()
 end
 
-function DeusMapDecisionView._on_enter_finished(arg_24_0, arg_24_1, arg_24_2)
+DeusMapDecisionView._on_enter_finished = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._finish_cb
 
 	if var_24_0 then
@@ -573,7 +573,7 @@ function DeusMapDecisionView._on_enter_finished(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0:_finish()
 end
 
-function DeusMapDecisionView._finish(arg_25_0)
+DeusMapDecisionView._finish = function (arg_25_0)
 	DeusMapDecisionView.super._finish(arg_25_0)
 
 	arg_25_0._voting_countdown = nil
@@ -588,13 +588,13 @@ function DeusMapDecisionView._finish(arg_25_0)
 	end
 end
 
-function DeusMapDecisionView._update_during_finishing(arg_26_0, arg_26_1, arg_26_2)
+DeusMapDecisionView._update_during_finishing = function (arg_26_0, arg_26_1, arg_26_2)
 	arg_26_0._final_countdown = math.max(0, arg_26_0._final_countdown - arg_26_1)
 
 	arg_26_0._ui:update_timer(arg_26_0._final_countdown, Localize("game_starts_prepare"))
 end
 
-function DeusMapDecisionView._update_player_state(arg_27_0)
+DeusMapDecisionView._update_player_state = function (arg_27_0)
 	local var_27_0 = {}
 	local var_27_1 = Network.peer_id()
 	local var_27_2 = arg_27_0._deus_run_controller:get_graph_data()
@@ -684,7 +684,7 @@ function DeusMapDecisionView._update_player_state(arg_27_0)
 	end
 end
 
-function DeusMapDecisionView._handle_voting_end(arg_28_0)
+DeusMapDecisionView._handle_voting_end = function (arg_28_0)
 	local var_28_0 = arg_28_0._deus_run_controller
 	local var_28_1 = {}
 	local var_28_2 = 0
@@ -734,13 +734,13 @@ function DeusMapDecisionView._handle_voting_end(arg_28_0)
 	end
 end
 
-function DeusMapDecisionView._handle_twitch_waiting_end(arg_29_0)
+DeusMapDecisionView._handle_twitch_waiting_end = function (arg_29_0)
 	local var_29_0 = arg_29_0:_get_twitch_vote()
 
 	arg_29_0._shared_state:set_server(arg_29_0._shared_state:get_key("final_node_selected"), var_29_0)
 end
 
-function DeusMapDecisionView._are_all_peers_ready(arg_30_0)
+DeusMapDecisionView._are_all_peers_ready = function (arg_30_0)
 	for iter_30_0, iter_30_1 in ipairs(arg_30_0._deus_run_controller:get_peers()) do
 		if arg_30_0._shared_state:get_peer(iter_30_1, arg_30_0._shared_state:get_key("ready")) ~= true then
 			return false
@@ -750,7 +750,7 @@ function DeusMapDecisionView._are_all_peers_ready(arg_30_0)
 	return true
 end
 
-function DeusMapDecisionView._get_twitch_vote(arg_31_0)
+DeusMapDecisionView._get_twitch_vote = function (arg_31_0)
 	local var_31_0 = arg_31_0._is_server and arg_31_0._deus_run_controller:get_twitch_level_vote()
 
 	if var_31_0 then
@@ -760,7 +760,7 @@ function DeusMapDecisionView._get_twitch_vote(arg_31_0)
 	end
 end
 
-function DeusMapDecisionView._did_someone_vote(arg_32_0)
+DeusMapDecisionView._did_someone_vote = function (arg_32_0)
 	for iter_32_0, iter_32_1 in ipairs(arg_32_0._deus_run_controller:get_peers()) do
 		local var_32_0 = arg_32_0._shared_state:get_peer(iter_32_1, arg_32_0._shared_state:get_key("vote"))
 
@@ -772,7 +772,7 @@ function DeusMapDecisionView._did_someone_vote(arg_32_0)
 	return false
 end
 
-function DeusMapDecisionView._did_everyone_vote(arg_33_0)
+DeusMapDecisionView._did_everyone_vote = function (arg_33_0)
 	for iter_33_0, iter_33_1 in ipairs(arg_33_0._deus_run_controller:get_peers()) do
 		if (arg_33_0._shared_state:get_peer(iter_33_1, arg_33_0._shared_state:get_key("vote")) or "") == "" then
 			return false
@@ -782,18 +782,18 @@ function DeusMapDecisionView._did_everyone_vote(arg_33_0)
 	return true
 end
 
-function DeusMapDecisionView._play_sound(arg_34_0, arg_34_1)
+DeusMapDecisionView._play_sound = function (arg_34_0, arg_34_1)
 	WwiseWorld.trigger_event(arg_34_0._wwise_world, arg_34_1)
 end
 
-function DeusMapDecisionView._play_networked_2d_sound(arg_35_0, arg_35_1)
+DeusMapDecisionView._play_networked_2d_sound = function (arg_35_0, arg_35_1)
 	Managers.state.entity:system("audio_system"):play_2d_audio_event(arg_35_1)
 end
 
-function DeusMapDecisionView.on_ingame_menu_opened(arg_36_0)
+DeusMapDecisionView.on_ingame_menu_opened = function (arg_36_0)
 	Managers.input:disable_gamepad_cursor()
 end
 
-function DeusMapDecisionView.on_ingame_menu_closed(arg_37_0)
+DeusMapDecisionView.on_ingame_menu_closed = function (arg_37_0)
 	Managers.input:enable_gamepad_cursor()
 end

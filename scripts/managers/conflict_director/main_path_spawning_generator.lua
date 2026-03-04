@@ -4,7 +4,7 @@ require("foundation/scripts/util/error")
 
 MainPathSpawningGenerator = {}
 
-function MainPathSpawningGenerator._remove_zones_due_to_crossroads(arg_1_0, arg_1_1, arg_1_2)
+MainPathSpawningGenerator._remove_zones_due_to_crossroads = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = FrameTable.alloc_table()
 	local var_1_1 = #arg_1_2
 
@@ -34,7 +34,7 @@ function MainPathSpawningGenerator._remove_zones_due_to_crossroads(arg_1_0, arg_
 	return arg_1_1
 end
 
-function MainPathSpawningGenerator.inject_travel_dists(arg_2_0, arg_2_1)
+MainPathSpawningGenerator.inject_travel_dists = function (arg_2_0, arg_2_1)
 	print("[MainPathSpawningGenerator] Injecting travel distances")
 
 	local var_2_0 = Vector3.distance
@@ -68,7 +68,7 @@ function MainPathSpawningGenerator.inject_travel_dists(arg_2_0, arg_2_1)
 	end
 end
 
-function MainPathSpawningGenerator.main_path_has_marker_type(arg_3_0, arg_3_1, arg_3_2)
+MainPathSpawningGenerator.main_path_has_marker_type = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 
 	for iter_3_0 = 1, #arg_3_0 do
@@ -86,7 +86,7 @@ function MainPathSpawningGenerator.main_path_has_marker_type(arg_3_0, arg_3_1, a
 	return var_3_0
 end
 
-function MainPathSpawningGenerator.load_spawn_zone_data(arg_4_0)
+MainPathSpawningGenerator.load_spawn_zone_data = function (arg_4_0)
 	local var_4_0 = require(arg_4_0)
 	local var_4_1 = var_4_0.path_markers
 
@@ -100,7 +100,7 @@ function MainPathSpawningGenerator.load_spawn_zone_data(arg_4_0)
 	return var_4_0
 end
 
-function MainPathSpawningGenerator.generate_crossroad_path_choices(arg_5_0, arg_5_1)
+MainPathSpawningGenerator.generate_crossroad_path_choices = function (arg_5_0, arg_5_1)
 	if not arg_5_0 or not next(arg_5_0) then
 		return nil
 	end
@@ -117,7 +117,7 @@ function MainPathSpawningGenerator.generate_crossroad_path_choices(arg_5_0, arg_
 	return var_5_1
 end
 
-function MainPathSpawningGenerator.remove_crossroads_extra_path_branches(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+MainPathSpawningGenerator.remove_crossroads_extra_path_branches = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 	if not arg_6_0 or not next(arg_6_0) then
 		print("[MainPathSpawningGenerator] This levels contains no crossroads")
 
@@ -227,7 +227,7 @@ function MainPathSpawningGenerator.remove_crossroads_extra_path_branches(arg_6_0
 		until true
 	end
 
-	table.sort(var_6_0, function(arg_7_0, arg_7_1)
+	table.sort(var_6_0, function (arg_7_0, arg_7_1)
 		return arg_7_0 < arg_7_1
 	end)
 
@@ -252,7 +252,7 @@ function MainPathSpawningGenerator.remove_crossroads_extra_path_branches(arg_6_0
 	return true, arg_6_4, var_6_17
 end
 
-function MainPathSpawningGenerator.generate_great_cycles(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+MainPathSpawningGenerator.generate_great_cycles = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	local var_8_0 = 0
 	local var_8_1 = {}
 	local var_8_2 = {}
@@ -364,7 +364,7 @@ function MainPathSpawningGenerator.generate_great_cycles(arg_8_0, arg_8_1, arg_8
 	return var_8_2
 end
 
-function MainPathSpawningGenerator.process_conflict_directors_zones(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+MainPathSpawningGenerator.process_conflict_directors_zones = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = {}
 	local var_9_1 = 0
 

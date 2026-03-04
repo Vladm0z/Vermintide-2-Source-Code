@@ -107,7 +107,7 @@ var_0_2(var_0_3, 128, 255)
 
 local var_0_4 = #var_0_3
 
-function PatrolAnalysis.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+PatrolAnalysis.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.nav_world = arg_2_1
 	arg_2_0.using_editor = arg_2_2
 	arg_2_0.line_drawer = arg_2_3
@@ -147,7 +147,7 @@ function PatrolAnalysis.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-function PatrolAnalysis.destroy(arg_3_0)
+PatrolAnalysis.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0.navbot_setups
 
 	for iter_3_0, iter_3_1 in pairs(var_3_0) do
@@ -178,7 +178,7 @@ function PatrolAnalysis.destroy(arg_3_0)
 	end
 end
 
-function PatrolAnalysis.setup_nav(arg_4_0, arg_4_1, arg_4_2)
+PatrolAnalysis.setup_nav = function (arg_4_0, arg_4_1, arg_4_2)
 	for iter_4_0, iter_4_1 in pairs(arg_4_1) do
 		local var_4_0 = LAYER_ID_MAPPING[iter_4_0]
 
@@ -187,7 +187,7 @@ function PatrolAnalysis.setup_nav(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function PatrolAnalysis.generate_patrol_splines(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PatrolAnalysis.generate_patrol_splines = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	print("Generating patrol splines for level", arg_5_1)
 
 	if not arg_5_1 then
@@ -226,7 +226,7 @@ function PatrolAnalysis.generate_patrol_splines(arg_5_0, arg_5_1, arg_5_2, arg_5
 	return (arg_5_0:_finilize_splines(arg_5_2, arg_5_3))
 end
 
-function PatrolAnalysis._finilize_splines(arg_6_0, arg_6_1, arg_6_2)
+PatrolAnalysis._finilize_splines = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = "success"
 	local var_6_1 = arg_6_0.patrol_waypoints
 	local var_6_2
@@ -286,7 +286,7 @@ function PatrolAnalysis._finilize_splines(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_0
 end
 
-function PatrolAnalysis._generate_patrol_spline(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+PatrolAnalysis._generate_patrol_spline = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = arg_7_0.patrol_waypoints
 	local var_7_1 = "success"
 
@@ -357,7 +357,7 @@ end
 local var_0_5 = 0.38
 local var_0_6 = true
 
-function PatrolAnalysis.create_navbot(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+PatrolAnalysis.create_navbot = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = 5
 	local var_8_1 = 1.6
 	local var_8_2 = arg_8_0.navbot_setups[arg_8_3]
@@ -394,7 +394,7 @@ end
 
 local var_0_7 = 0.01
 
-function PatrolAnalysis.inject_spline_path(arg_9_0, arg_9_1, arg_9_2)
+PatrolAnalysis.inject_spline_path = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.navbot
 	local var_9_1 = GwNavBot.get_path_nodes_count(var_9_0)
 	local var_9_2 = arg_9_1.spline_points or {}
@@ -435,7 +435,7 @@ end
 
 local var_0_8 = 10
 
-function PatrolAnalysis.compute_spline_path(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PatrolAnalysis.compute_spline_path = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = {
 		unique_navbot = true,
 		wp_index = 2,
@@ -453,7 +453,7 @@ function PatrolAnalysis.compute_spline_path(arg_10_0, arg_10_1, arg_10_2, arg_10
 	arg_10_0.patrol_waypoints[arg_10_1] = var_10_0
 end
 
-function PatrolAnalysis.spline(arg_11_0, arg_11_1)
+PatrolAnalysis.spline = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ready_waypoints
 
 	for iter_11_0, iter_11_1 in ipairs(var_11_0) do
@@ -463,7 +463,7 @@ function PatrolAnalysis.spline(arg_11_0, arg_11_1)
 	end
 end
 
-function PatrolAnalysis.draw_raw_spline(arg_12_0, arg_12_1)
+PatrolAnalysis.draw_raw_spline = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0:spline(arg_12_1)
 	local var_12_1 = var_12_0[1].pos:unbox()
 
@@ -479,7 +479,7 @@ function PatrolAnalysis.draw_raw_spline(arg_12_0, arg_12_1)
 	end
 end
 
-function PatrolAnalysis.draw_astar_spline(arg_13_0, arg_13_1)
+PatrolAnalysis.draw_astar_spline = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1[1]:unbox()
 
 	QuickDrawerStay:sphere(var_13_0, 0.33, Color(0, 200, 175))
@@ -497,7 +497,7 @@ end
 local var_0_9 = Vector3.distance
 local var_0_10 = Vector3.length
 
-function PatrolAnalysis.get_path_point(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+PatrolAnalysis.get_path_point = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_2 or arg_14_0:get_path_length(arg_14_1)
 	local var_14_1 = 0
 	local var_14_2 = arg_14_3 * var_14_0
@@ -517,7 +517,7 @@ function PatrolAnalysis.get_path_point(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	return arg_14_1[#arg_14_1]:unbox(), #arg_14_1
 end
 
-function PatrolAnalysis.get_path_length(arg_15_0, arg_15_1)
+PatrolAnalysis.get_path_length = function (arg_15_0, arg_15_1)
 	local var_15_0 = 0
 	local var_15_1 = arg_15_1[1]:unbox()
 
@@ -531,7 +531,7 @@ function PatrolAnalysis.get_path_length(arg_15_0, arg_15_1)
 	return var_15_0
 end
 
-function PatrolAnalysis.run(arg_16_0)
+PatrolAnalysis.run = function (arg_16_0)
 	local var_16_0 = arg_16_0.line_drawer
 	local var_16_1 = arg_16_0.running_splines
 	local var_16_2 = arg_16_0.free_navbots_lists

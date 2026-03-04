@@ -2,7 +2,7 @@
 
 ActionCharge = class(ActionCharge, ActionBase)
 
-function ActionCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCharge.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCharge.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_4, "inventory_system") then
@@ -21,7 +21,7 @@ function ActionCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0._rumble_effect_id = nil
 end
 
-function ActionCharge.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionCharge.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionCharge.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -97,7 +97,7 @@ function ActionCharge.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function ActionCharge._start_charge_sound(arg_3_0)
+ActionCharge._start_charge_sound = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = var_3_0.charge_sound_name
 	local var_3_2 = var_3_0.charge_sound_stop_event
@@ -133,7 +133,7 @@ function ActionCharge._start_charge_sound(arg_3_0)
 	var_3_3:start_looping_audio(arg_3_0.audio_loop_id)
 end
 
-function ActionCharge._stop_charge_sound(arg_4_0, arg_4_1)
+ActionCharge._stop_charge_sound = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.current_action.charge_sound_stop_event_condition_func
 
 	if var_4_0 and not var_4_0(arg_4_0.owner_unit, arg_4_1) then
@@ -143,7 +143,7 @@ function ActionCharge._stop_charge_sound(arg_4_0, arg_4_1)
 	arg_4_0.weapon_extension:stop_looping_audio(arg_4_0.audio_loop_id)
 end
 
-function ActionCharge.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionCharge.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.charge_time
 	local var_5_2 = arg_5_0.charge_complete_time - arg_5_2
@@ -277,7 +277,7 @@ function ActionCharge.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	arg_5_0.charge_level = var_5_6
 end
 
-function ActionCharge._clean_up(arg_6_0, arg_6_1)
+ActionCharge._clean_up = function (arg_6_0, arg_6_1)
 	if arg_6_0.particle_id then
 		World.destroy_particles(arg_6_0.world, arg_6_0.particle_id)
 
@@ -299,7 +299,7 @@ function ActionCharge._clean_up(arg_6_0, arg_6_1)
 	arg_6_0:_stop_charge_sound(arg_6_1)
 end
 
-function ActionCharge.finish(arg_7_0, arg_7_1)
+ActionCharge.finish = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.owner_unit
 	local var_7_1 = arg_7_0.first_person_unit
 	local var_7_2 = arg_7_0.current_action
@@ -342,6 +342,6 @@ function ActionCharge.finish(arg_7_0, arg_7_1)
 	}
 end
 
-function ActionCharge.destroy(arg_8_0)
+ActionCharge.destroy = function (arg_8_0)
 	arg_8_0:_clean_up()
 end

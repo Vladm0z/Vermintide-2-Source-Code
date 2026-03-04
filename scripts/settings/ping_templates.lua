@@ -72,7 +72,7 @@ PingMessagesByPingType = {
 }
 PingTemplates = {
 	generic_item = {
-		check_func = function(arg_1_0, arg_1_1, arg_1_2)
+		check_func = function (arg_1_0, arg_1_1, arg_1_2)
 			return arg_1_2 and (ScriptUnit.has_extension(arg_1_2, "pickup_system") or Managers.state.network:level_object_id(arg_1_2))
 		end,
 		responses = {
@@ -124,7 +124,7 @@ PingTemplates = {
 				}
 			}
 		},
-		exec_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+		exec_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 			local var_2_0 = arg_2_0.responses[arg_2_4]
 
 			if var_2_0 then
@@ -150,7 +150,7 @@ PingTemplates = {
 		end
 	},
 	enemy_unit = {
-		check_func = function(arg_3_0, arg_3_1, arg_3_2)
+		check_func = function (arg_3_0, arg_3_1, arg_3_2)
 			return arg_3_2 and Managers.state.side:is_enemy(arg_3_1, arg_3_2)
 		end,
 		responses = {
@@ -192,7 +192,7 @@ PingTemplates = {
 				}
 			}
 		},
-		exec_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+		exec_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 			local var_4_0 = arg_4_0.responses[arg_4_4]
 
 			if var_4_0 then
@@ -218,7 +218,7 @@ PingTemplates = {
 		end
 	},
 	friendly_unit = {
-		check_func = function(arg_5_0, arg_5_1, arg_5_2)
+		check_func = function (arg_5_0, arg_5_1, arg_5_2)
 			return arg_5_2 and not Managers.state.side:is_enemy(arg_5_1, arg_5_2)
 		end,
 		responses = {
@@ -266,7 +266,7 @@ PingTemplates = {
 				true
 			}
 		},
-		exec_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		exec_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 			local var_6_0 = arg_6_0.responses[arg_6_4]
 
 			if var_6_0 then
@@ -277,7 +277,7 @@ PingTemplates = {
 		end
 	},
 	position_only = {
-		check_func = function(arg_7_0, arg_7_1, arg_7_2)
+		check_func = function (arg_7_0, arg_7_1, arg_7_2)
 			return not arg_7_2
 		end,
 		responses = {
@@ -326,7 +326,7 @@ PingTemplates = {
 				"ping_hostile"
 			}
 		},
-		exec_func = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+		exec_func = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 			local var_8_0 = arg_8_0.responses[arg_8_4]
 
 			if var_8_0 then

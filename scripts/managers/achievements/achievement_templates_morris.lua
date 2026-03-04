@@ -77,7 +77,7 @@ local function var_0_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg
 		required_dlc = arg_4_5,
 		ID_XB1 = arg_4_6,
 		ID_PS4 = arg_4_7,
-		completed = function(arg_5_0, arg_5_1)
+		completed = function (arg_5_0, arg_5_1)
 			return var_0_0(arg_5_0, arg_5_1, arg_4_2, arg_4_3)
 		end
 	}
@@ -91,7 +91,7 @@ local function var_0_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg
 		required_dlc = arg_6_5,
 		ID_XB1 = arg_6_6,
 		ID_PS4 = arg_6_7,
-		progress = function(arg_7_0, arg_7_1)
+		progress = function (arg_7_0, arg_7_1)
 			local var_7_0 = 0
 
 			for iter_7_0 = 1, #arg_6_2 do
@@ -105,7 +105,7 @@ local function var_0_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg
 				arg_6_3
 			}
 		end,
-		completed = function(arg_8_0, arg_8_1)
+		completed = function (arg_8_0, arg_8_1)
 			local var_8_0 = 0
 
 			for iter_8_0 = 1, #arg_6_2 do
@@ -127,7 +127,7 @@ local function var_0_5(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg
 		required_dlc = arg_9_5,
 		ID_XB1 = arg_9_6,
 		ID_PS4 = arg_9_7,
-		completed = function(arg_10_0, arg_10_1)
+		completed = function (arg_10_0, arg_10_1)
 			return var_0_1(arg_10_0, arg_10_1, arg_9_2, arg_9_3)
 		end
 	}
@@ -145,7 +145,7 @@ local function var_0_6(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_
 		required_dlc_extra = var_11_1.dlc_requirement,
 		ID_XB1 = arg_11_7,
 		ID_PS4 = arg_11_8,
-		completed = function(arg_12_0, arg_12_1)
+		completed = function (arg_12_0, arg_12_1)
 			return var_0_2(arg_12_0, arg_12_1, arg_11_2, arg_11_3, arg_11_4)
 		end
 	}

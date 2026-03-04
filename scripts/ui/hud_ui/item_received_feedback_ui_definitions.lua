@@ -65,7 +65,7 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_1",
 					texture_id = "icon_1",
-					content_check_function = function(arg_1_0)
+					content_check_function = function (arg_1_0)
 						if not arg_1_0.icon_1 then
 							return false
 						end
@@ -77,7 +77,7 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_2",
 					texture_id = "icon_2",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						if not arg_2_0.icon_2 then
 							return false
 						end
@@ -89,7 +89,7 @@ local var_0_3 = {
 					pass_type = "texture",
 					style_id = "icon_3",
 					texture_id = "icon_3",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						if not arg_3_0.icon_3 then
 							return false
 						end
@@ -170,7 +170,7 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_1",
 						texture_id = "icon_1",
-						content_check_function = function(arg_5_0)
+						content_check_function = function (arg_5_0)
 							if not arg_5_0.icon_1 then
 								return false
 							end
@@ -182,7 +182,7 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_2",
 						texture_id = "icon_2",
-						content_check_function = function(arg_6_0)
+						content_check_function = function (arg_6_0)
 							if not arg_6_0.icon_2 then
 								return false
 							end
@@ -194,7 +194,7 @@ local function var_0_4(arg_4_0)
 						pass_type = "texture",
 						style_id = "icon_3",
 						texture_id = "icon_3",
-						content_check_function = function(arg_7_0)
+						content_check_function = function (arg_7_0)
 							if not arg_7_0.icon_3 then
 								return false
 							end

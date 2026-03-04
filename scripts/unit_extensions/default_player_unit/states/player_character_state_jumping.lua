@@ -2,7 +2,7 @@
 
 PlayerCharacterStateJumping = class(PlayerCharacterStateJumping, PlayerCharacterState)
 
-function PlayerCharacterStateJumping.init(arg_1_0, arg_1_1)
+PlayerCharacterStateJumping.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "jumping")
 
 	local var_1_0 = arg_1_1
@@ -10,7 +10,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerCharacterStateJumping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateJumping.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0.temp_params)
 
 	local var_2_0 = arg_2_0.player
@@ -84,7 +84,7 @@ function PlayerCharacterStateJumping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	Unit.flow_event(arg_2_1, "sfx_player_jump")
 end
 
-function PlayerCharacterStateJumping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateJumping.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.input_extension
 
 	arg_3_0.locomotion_extension:reset_maximum_upwards_velocity()
@@ -105,7 +105,7 @@ function PlayerCharacterStateJumping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function PlayerCharacterStateJumping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateJumping.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_2 = arg_4_0.input_extension

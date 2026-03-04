@@ -2,7 +2,7 @@
 
 NetworkTimerHandler = class(NetworkTimerHandler)
 
-function NetworkTimerHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+NetworkTimerHandler.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._timer_state = "inactive"
 	arg_1_0._world = arg_1_1
 	arg_1_0._network_clock = arg_1_2
@@ -14,19 +14,19 @@ local var_0_0 = {
 	"rpc_start_network_timer"
 }
 
-function NetworkTimerHandler.register_rpcs(arg_2_0, arg_2_1)
+NetworkTimerHandler.register_rpcs = function (arg_2_0, arg_2_1)
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
 	arg_2_0._network_event_delegate = arg_2_1
 end
 
-function NetworkTimerHandler.unregister_rpcs(arg_3_0)
+NetworkTimerHandler.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 end
 
-function NetworkTimerHandler.start_timer_server(arg_4_0, arg_4_1)
+NetworkTimerHandler.start_timer_server = function (arg_4_0, arg_4_1)
 	assert(arg_4_0.is_server == true, "Tried starting timer as server; not server")
 
 	local var_4_0 = arg_4_0._network_clock:time() + arg_4_1
@@ -35,12 +35,12 @@ function NetworkTimerHandler.start_timer_server(arg_4_0, arg_4_1)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_start_network_timer", var_4_0)
 end
 
-function NetworkTimerHandler.start_timer_client(arg_5_0, arg_5_1)
+NetworkTimerHandler.start_timer_client = function (arg_5_0, arg_5_1)
 	arg_5_0._timer_state = "active"
 	arg_5_0._end_time = arg_5_1
 end
 
-function NetworkTimerHandler.update(arg_6_0, arg_6_1, arg_6_2)
+NetworkTimerHandler.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._timer_state == "inactive" then
 		return
 	end
@@ -57,7 +57,7 @@ function NetworkTimerHandler.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function NetworkTimerHandler._render_timer(arg_7_0)
+NetworkTimerHandler._render_timer = function (arg_7_0)
 	if not script_data.debug_enabled then
 		return
 	end
@@ -79,7 +79,7 @@ function NetworkTimerHandler._render_timer(arg_7_0)
 	Gui.text(arg_7_0._gui, var_7_2, var_7_9, var_7_10, var_7_8, var_7_7, Color(255, 0, 0, 0))
 end
 
-function NetworkTimerHandler.destroy(arg_8_0)
+NetworkTimerHandler.destroy = function (arg_8_0)
 	World.destroy_gui(arg_8_0._world, arg_8_0._gui)
 
 	arg_8_0._gui = nil
@@ -87,6 +87,6 @@ function NetworkTimerHandler.destroy(arg_8_0)
 	arg_8_0._network_clock = nil
 end
 
-function NetworkTimerHandler.rpc_start_network_timer(arg_9_0, arg_9_1, arg_9_2)
+NetworkTimerHandler.rpc_start_network_timer = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:start_timer_client(arg_9_2)
 end

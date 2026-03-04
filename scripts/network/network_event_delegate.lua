@@ -12,11 +12,11 @@ local function var_0_2()
 	return false
 end
 
-function NetworkEventDelegate.init(arg_3_0)
+NetworkEventDelegate.init = function (arg_3_0)
 	arg_3_0._registered_objects = {}
 
 	local var_3_0 = {
-		__index = function(arg_4_0, arg_4_1)
+		__index = function (arg_4_0, arg_4_1)
 			if arg_4_1 == "approve_channel" then
 				return var_0_2
 			end
@@ -32,7 +32,7 @@ function NetworkEventDelegate.init(arg_3_0)
 	arg_3_0._return_objects = {}
 end
 
-function NetworkEventDelegate.register(arg_5_0, arg_5_1, ...)
+NetworkEventDelegate.register = function (arg_5_0, arg_5_1, ...)
 	for iter_5_0 = 1, select("#", ...) do
 		local var_5_0 = select(iter_5_0, ...)
 
@@ -58,7 +58,7 @@ function NetworkEventDelegate.register(arg_5_0, arg_5_1, ...)
 	end
 end
 
-function NetworkEventDelegate.register_with_return(arg_7_0, arg_7_1, arg_7_2)
+NetworkEventDelegate.register_with_return = function (arg_7_0, arg_7_1, arg_7_2)
 	fassert(arg_7_1[arg_7_2], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", arg_7_2)
 	fassert(arg_7_0._return_objects[arg_7_2] == nil, "[NetworkEventDelegate]: Can only register one of these", arg_7_2)
 
@@ -75,7 +75,7 @@ function NetworkEventDelegate.register_with_return(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function NetworkEventDelegate.unregister(arg_9_0, arg_9_1)
+NetworkEventDelegate.unregister = function (arg_9_0, arg_9_1)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0._registered_objects) do
 		local var_9_0 = #iter_9_1
 		local var_9_1
@@ -102,11 +102,11 @@ function NetworkEventDelegate.unregister(arg_9_0, arg_9_1)
 	end
 end
 
-function NetworkEventDelegate.unregister_callback(arg_10_0, arg_10_1)
+NetworkEventDelegate.unregister_callback = function (arg_10_0, arg_10_1)
 	arg_10_0._registered_objects[arg_10_1] = nil
 end
 
-function NetworkEventDelegate._cleanup(arg_11_0)
+NetworkEventDelegate._cleanup = function (arg_11_0)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._registered_objects) do
 		local var_11_0 = #iter_11_1
 
@@ -118,7 +118,7 @@ function NetworkEventDelegate._cleanup(arg_11_0)
 	arg_11_0._registered_objects = nil
 end
 
-function NetworkEventDelegate.destroy(arg_12_0)
+NetworkEventDelegate.destroy = function (arg_12_0)
 	arg_12_0:_cleanup()
 
 	arg_12_0.event_table = nil

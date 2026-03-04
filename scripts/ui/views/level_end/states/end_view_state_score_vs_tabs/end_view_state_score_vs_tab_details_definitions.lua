@@ -1048,7 +1048,7 @@ local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, ar
 				pass_type = "texture",
 				texture_id = "highscore_marker",
 				style_id = var_3_8 .. "_highscore_marker",
-				content_check_function = function(arg_4_0, arg_4_1)
+				content_check_function = function (arg_4_0, arg_4_1)
 					return arg_4_0[var_3_8 .. "_is_highscore"]
 				end
 			}
@@ -1056,7 +1056,7 @@ local function var_0_23(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, ar
 				pass_type = "texture",
 				texture_id = "highscore_marker",
 				style_id = var_3_8 .. "_highscore_marker_shadow",
-				content_check_function = function(arg_5_0, arg_5_1)
+				content_check_function = function (arg_5_0, arg_5_1)
 					return arg_5_0[var_3_8 .. "_is_highscore"]
 				end
 			}
@@ -1540,15 +1540,15 @@ local var_0_32 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeOutCubic(arg_14_3)
 
 				arg_14_4.render_settings.alpha_multiplier = var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		}
@@ -1558,15 +1558,15 @@ local var_0_32 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeOutCubic(arg_17_3)
 
 				arg_17_4.render_settings.alpha_multiplier = 1 - var_17_0
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}

@@ -6,14 +6,14 @@ local var_0_0 = local_require("scripts/ui/act_presentation/act_presentation_ui_d
 
 DeusJourneyPresentationUI = class(DeusJourneyPresentationUI, ActPresentationUI)
 
-function DeusJourneyPresentationUI.create_ui_elements(arg_1_0)
+DeusJourneyPresentationUI.create_ui_elements = function (arg_1_0)
 	arg_1_0._widgets, arg_1_0._widgets_by_name = UIUtils.create_widgets(var_0_0.deus_widgets)
 	arg_1_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_1_0._ui_animator = UIAnimator:new(arg_1_0._ui_scenegraph, var_0_0.deus_animations)
 	arg_1_0._animations = {}
 end
 
-function DeusJourneyPresentationUI.start(arg_2_0, arg_2_1, arg_2_2)
+DeusJourneyPresentationUI.start = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._presentation_aborted = nil
 	arg_2_0._journey_name = arg_2_1
 
@@ -50,7 +50,7 @@ function DeusJourneyPresentationUI.start(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.active = true
 end
 
-function DeusJourneyPresentationUI._set_presentation_info(arg_3_0, arg_3_1, arg_3_2)
+DeusJourneyPresentationUI._set_presentation_info = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_1.display_name
 	local var_3_1 = arg_3_1.level_image
 	local var_3_2 = arg_3_0._widgets_by_name

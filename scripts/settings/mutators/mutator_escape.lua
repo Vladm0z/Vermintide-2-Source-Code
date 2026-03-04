@@ -41,7 +41,7 @@ end
 
 return {
 	hide_from_player_ui = true,
-	server_update_function = function(arg_3_0, arg_3_1)
+	server_update_function = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.state.conflict
 
 		if not var_3_0 then

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_crater.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pes_crater_ambush_done",

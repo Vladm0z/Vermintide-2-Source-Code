@@ -3,13 +3,13 @@
 TalentUtils = {}
 TalentUtils.NIL = {}
 
-function TalentUtils.get_talent(arg_1_0, arg_1_1)
+TalentUtils.get_talent = function (arg_1_0, arg_1_1)
 	local var_1_0 = TalentIDLookup[arg_1_1]
 
 	return TalentUtils.get_talent_by_id(arg_1_0, var_1_0.talent_id)
 end
 
-function TalentUtils.get_talent_by_id(arg_2_0, arg_2_1)
+TalentUtils.get_talent_by_id = function (arg_2_0, arg_2_1)
 	local var_2_0 = Talents[arg_2_0]
 
 	if not var_2_0 then
@@ -42,7 +42,7 @@ function TalentUtils.get_talent_by_id(arg_2_0, arg_2_1)
 	return var_2_1
 end
 
-function TalentUtils.get_talent_attribute(arg_3_0, arg_3_1)
+TalentUtils.get_talent_attribute = function (arg_3_0, arg_3_1)
 	local var_3_0 = TalentIDLookup[arg_3_0]
 
 	if not var_3_0 then

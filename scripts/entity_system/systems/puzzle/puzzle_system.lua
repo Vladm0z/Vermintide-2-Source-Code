@@ -12,7 +12,7 @@ local var_0_1 = {
 	"rpc_on_puzzle_completed"
 }
 
-function PuzzleSystem.init(arg_1_0, arg_1_1, arg_1_2)
+PuzzleSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	PuzzleSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._is_server = arg_1_1.is_server
@@ -28,12 +28,12 @@ function PuzzleSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._puzzle_id_hash_lookup = {}
 end
 
-function PuzzleSystem.destroy(arg_2_0)
+PuzzleSystem.destroy = function (arg_2_0)
 	PuzzleSystem.super.destroy(arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-function PuzzleSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PuzzleSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = PuzzleSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	arg_3_0._extensions[arg_3_2] = var_3_0
@@ -52,7 +52,7 @@ function PuzzleSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	return var_3_0
 end
 
-function PuzzleSystem._get_or_add_group(arg_4_0, arg_4_1)
+PuzzleSystem._get_or_add_group = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._puzzle_groups[arg_4_1] or {
 		extensions = {},
 		puzzles = {}
@@ -63,7 +63,7 @@ function PuzzleSystem._get_or_add_group(arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-function PuzzleSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+PuzzleSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._extensions[arg_5_1]
 	local var_5_1 = var_5_0:puzzle_group_id()
 
@@ -73,7 +73,7 @@ function PuzzleSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 	PuzzleSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-function PuzzleSystem.update(arg_6_0, arg_6_1, arg_6_2)
+PuzzleSystem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	PuzzleSystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 
 	if not arg_6_0._is_server then
@@ -83,7 +83,7 @@ function PuzzleSystem.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_puzzles()
 end
 
-function PuzzleSystem.register_puzzle(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+PuzzleSystem.register_puzzle = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = arg_7_0:_get_or_add_group(arg_7_1)
 
 	if var_7_0.puzzles[arg_7_2] then
@@ -131,7 +131,7 @@ function PuzzleSystem.register_puzzle(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_
 	arg_7_0._puzzle_id_hash_lookup[arg_7_2] = var_7_7
 end
 
-function PuzzleSystem.hot_join_sync(arg_8_0, arg_8_1)
+PuzzleSystem.hot_join_sync = function (arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._puzzle_groups) do
 		local var_8_0 = arg_8_0._group_id_hash_lookup[iter_8_0]
 
@@ -145,7 +145,7 @@ function PuzzleSystem.hot_join_sync(arg_8_0, arg_8_1)
 	end
 end
 
-function PuzzleSystem._update_puzzles(arg_9_0)
+PuzzleSystem._update_puzzles = function (arg_9_0)
 	local var_9_0 = arg_9_0._puzzles_to_update
 
 	for iter_9_0, iter_9_1 in pairs(var_9_0) do
@@ -160,7 +160,7 @@ end
 local var_0_2 = {}
 local var_0_3 = {}
 
-function PuzzleSystem._update_puzzle(arg_10_0, arg_10_1)
+PuzzleSystem._update_puzzle = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.group_name
 	local var_10_1 = arg_10_0:_get_or_add_group(var_10_0)
 	local var_10_2 = arg_10_1.combination
@@ -210,7 +210,7 @@ function PuzzleSystem._update_puzzle(arg_10_0, arg_10_1)
 	return var_10_7 <= var_10_6
 end
 
-function PuzzleSystem._on_puzzle_complete(arg_11_0, arg_11_1, arg_11_2)
+PuzzleSystem._on_puzzle_complete = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0:_get_or_add_group(arg_11_1)
 	local var_11_1 = var_11_0.puzzles[arg_11_2]
 
@@ -235,7 +235,7 @@ function PuzzleSystem._on_puzzle_complete(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function PuzzleSystem.rpc_on_puzzle_completed(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+PuzzleSystem.rpc_on_puzzle_completed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0._group_id_hash_lookup[arg_12_2]
 	local var_12_1 = arg_12_0._puzzle_id_hash_lookup[arg_12_3]
 
@@ -254,7 +254,7 @@ end
 
 local var_0_4 = "debug_puzzles"
 
-function PuzzleSystem._debug_draw_values(arg_13_0)
+PuzzleSystem._debug_draw_values = function (arg_13_0)
 	local var_13_0 = FrameTable.alloc_table()
 
 	Managers.state.debug_text:clear_world_text(var_0_4)

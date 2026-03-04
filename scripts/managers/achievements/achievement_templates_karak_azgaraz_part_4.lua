@@ -44,10 +44,10 @@ var_0_3.dwarf_feculent_buboes = {
 	events = {
 		"dwarf_feculent_buboes"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "dwarf_feculent_buboes") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		arg_2_0:increment_stat(arg_2_1, "dwarf_feculent_buboes")
 	end
 }
@@ -59,10 +59,10 @@ var_0_3.dwarf_statue_emote = {
 	events = {
 		"dwarf_statue_emote"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "dwarf_statue_emote") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		if not arg_4_4[1] then
 			arg_4_2.end_t = nil
 
@@ -96,10 +96,10 @@ var_0_3.dwarf_go_fish = {
 	events = {
 		"dwarf_go_fish"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "dwarf_go_fish") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		arg_6_0:increment_stat(arg_6_1, "dwarf_go_fish")
 	end
 }
@@ -114,10 +114,10 @@ var_0_3.dwarf_barrel_kill = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		return arg_7_0:get_persistent_stat(arg_7_1, "dwarf_barrel_kill") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		local var_8_0 = Managers.state.game_mode:level_key()
 
 		if not var_8_0 or var_8_0 ~= "dlc_dwarf_whaling" then
@@ -145,10 +145,10 @@ var_0_3.dwarf_elevator_speedrun = {
 	events = {
 		"dwarf_elevator_speedrun"
 	},
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
+	completed = function (arg_9_0, arg_9_1, arg_9_2)
 		return arg_9_0:get_persistent_stat(arg_9_1, "dwarf_elevator_speedrun") >= 1
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		arg_10_0:increment_stat(arg_10_1, "dwarf_elevator_speedrun")
 	end
 }

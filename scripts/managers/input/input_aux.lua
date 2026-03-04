@@ -59,40 +59,40 @@ var_0_0.input_map_types = {
 	held = "boolean"
 }
 
-function var_0_0.get_device_type(arg_1_0)
+var_0_0.get_device_type = function (arg_1_0)
 	return var_0_0.input_device_type_lookup[arg_1_0]
 end
 
-function var_0_0.remove_device(arg_2_0, arg_2_1)
+var_0_0.remove_device = function (arg_2_0, arg_2_1)
 	local var_2_0 = table.find(var_0_0.input_device_mapping[arg_2_0], arg_2_1)
 
 	fassert(var_2_0, "[InputAux] There is no controller with the name %s available", arg_2_1.name())
 	table.remove(var_0_0.input_device_mapping[arg_2_0], var_2_0)
 end
 
-function var_0_0.add_device(arg_3_0, arg_3_1)
+var_0_0.add_device = function (arg_3_0, arg_3_1)
 	var_0_0.input_device_mapping[arg_3_0][#var_0_0.input_device_mapping[arg_3_0] + 1] = arg_3_1
 end
 
 var_0_0.combination_functions = {
 	max = math.max,
 	min = math.min,
-	add = function(arg_4_0, arg_4_1)
+	add = function (arg_4_0, arg_4_1)
 		return arg_4_0 + arg_4_1
 	end,
-	sub = function(arg_5_0, arg_5_1)
+	sub = function (arg_5_0, arg_5_1)
 		return arg_5_0 - arg_5_1
 	end,
-	mul = function(arg_6_0, arg_6_1)
+	mul = function (arg_6_0, arg_6_1)
 		return arg_6_0 * arg_6_1
 	end,
-	avg = function(arg_7_0, arg_7_1)
+	avg = function (arg_7_0, arg_7_1)
 		return (arg_7_0 + arg_7_1) / 2
 	end,
-	["or"] = function(arg_8_0, arg_8_1)
+	["or"] = function (arg_8_0, arg_8_1)
 		return arg_8_0 or arg_8_1
 	end,
-	["and"] = function(arg_9_0, arg_9_1)
+	["and"] = function (arg_9_0, arg_9_1)
 		return arg_9_0 and arg_9_1
 	end
 }

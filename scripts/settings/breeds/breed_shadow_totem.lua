@@ -40,7 +40,7 @@ local var_0_0 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2)
+	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = arg_1_2.death_system or {}
 
 		var_1_0.death_reaction_template = "ai_default"
@@ -59,7 +59,7 @@ local var_0_0 = {
 		arg_1_2.ping_system = var_1_2
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1)
+		prepare_func = function (arg_2_0, arg_2_1)
 			local var_2_0 = false
 
 			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)

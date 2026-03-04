@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingFleeAction = class(BTCritterNurglingFleeAction, BTNode)
 
-function BTCritterNurglingFleeAction.init(arg_1_0, ...)
+BTCritterNurglingFleeAction.init = function (arg_1_0, ...)
 	BTCritterNurglingFleeAction.super.init(arg_1_0, ...)
 end
 
 BTCritterNurglingFleeAction.name = "BTCritterNurglingFleeAction"
 
-function BTCritterNurglingFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCritterNurglingFleeAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
@@ -22,7 +22,7 @@ function BTCritterNurglingFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTCritterNurglingFleeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterNurglingFleeAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = Managers.state.conflict
 
 	if arg_3_4 == "done" then
@@ -30,7 +30,7 @@ function BTCritterNurglingFleeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	end
 end
 
-function BTCritterNurglingFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTCritterNurglingFleeAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = arg_4_2.navigation_extension
 
@@ -67,13 +67,13 @@ function BTCritterNurglingFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return "running"
 end
 
-function BTCritterNurglingFleeAction.start_idle_animation(arg_5_0, arg_5_1, arg_5_2)
+BTCritterNurglingFleeAction.start_idle_animation = function (arg_5_0, arg_5_1, arg_5_2)
 	Managers.state.network:anim_event(arg_5_1, "idle")
 
 	arg_5_2.move_state = "idle"
 end
 
-function BTCritterNurglingFleeAction.has_escaped_players(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTCritterNurglingFleeAction.has_escaped_players = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_3.has_escaped_players
 	local var_6_1 = POSITION_LOOKUP[arg_6_1]
 	local var_6_2 = arg_6_2.side.ENEMY_PLAYER_AND_BOT_UNITS
@@ -90,7 +90,7 @@ function BTCritterNurglingFleeAction.has_escaped_players(arg_6_0, arg_6_1, arg_6
 	return false
 end
 
-function BTCritterNurglingFleeAction.get_random_move_pos(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTCritterNurglingFleeAction.get_random_move_pos = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.nav_world
 	local var_7_1 = POSITION_LOOKUP[arg_7_1]
 	local var_7_2 = arg_7_3.random_point_check
@@ -103,13 +103,13 @@ function BTCritterNurglingFleeAction.get_random_move_pos(arg_7_0, arg_7_1, arg_7
 	return LocomotionUtils.new_random_goal(var_7_0, arg_7_2, var_7_1, var_7_3, var_7_4, var_7_5, nil, var_7_6, var_7_7) or var_7_1
 end
 
-function BTCritterNurglingFleeAction.start_move_animation(arg_8_0, arg_8_1, arg_8_2)
+BTCritterNurglingFleeAction.start_move_animation = function (arg_8_0, arg_8_1, arg_8_2)
 	Managers.state.network:anim_event(arg_8_1, "move_fwd")
 
 	arg_8_2.move_state = "moving"
 end
 
-function BTCritterNurglingFleeAction.start_idle_animation(arg_9_0, arg_9_1, arg_9_2)
+BTCritterNurglingFleeAction.start_idle_animation = function (arg_9_0, arg_9_1, arg_9_2)
 	Managers.state.network:anim_event(arg_9_1, "idle")
 
 	arg_9_2.move_state = "idle"

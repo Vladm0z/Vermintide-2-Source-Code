@@ -15,7 +15,7 @@ local var_0_1 = {
 	"PlayerHuskGhostModeExtension"
 }
 
-function GhostModeSystem.init(arg_1_0, arg_1_1, arg_1_2)
+GhostModeSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	GhostModeSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	arg_1_0._network_transmit = arg_1_1.network_transmit
@@ -35,13 +35,13 @@ function GhostModeSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._active = false
 end
 
-function GhostModeSystem.destroy(arg_2_0)
+GhostModeSystem.destroy = function (arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0._network_event_delegate = nil
 end
 
-function GhostModeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+GhostModeSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = GhostModeSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	arg_3_0._unit_extensions[arg_3_2] = var_3_0
@@ -51,17 +51,17 @@ function GhostModeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ar
 	return var_3_0
 end
 
-function GhostModeSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+GhostModeSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	GhostModeSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 
 	arg_4_0._unit_extensions[arg_4_1] = nil
 end
 
-function GhostModeSystem.set_active(arg_5_0, arg_5_1)
+GhostModeSystem.set_active = function (arg_5_0, arg_5_1)
 	arg_5_0._active = arg_5_1
 end
 
-function GhostModeSystem.update(arg_6_0, arg_6_1, arg_6_2)
+GhostModeSystem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._is_server and arg_6_0._active then
 		arg_6_0:_update_safe_spot()
 	end
@@ -71,7 +71,7 @@ end
 
 local var_0_2 = "is_local_call"
 
-function GhostModeSystem._update_safe_spot(arg_7_0)
+GhostModeSystem._update_safe_spot = function (arg_7_0)
 	local var_7_0 = Managers.state.conflict
 	local var_7_1 = var_7_0.main_path_info.current_path_index
 
@@ -98,7 +98,7 @@ function GhostModeSystem._update_safe_spot(arg_7_0)
 	end
 end
 
-function GhostModeSystem.rpc_entered_ghost_mode(arg_8_0, arg_8_1, arg_8_2)
+GhostModeSystem.rpc_entered_ghost_mode = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.unit_storage:unit(arg_8_2)
 
 	if not ALIVE[var_8_0] then
@@ -116,7 +116,7 @@ function GhostModeSystem.rpc_entered_ghost_mode(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function GhostModeSystem.rpc_left_ghost_mode(arg_9_0, arg_9_1, arg_9_2)
+GhostModeSystem.rpc_left_ghost_mode = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
 
 	if not ALIVE[var_9_0] then
@@ -134,7 +134,7 @@ function GhostModeSystem.rpc_left_ghost_mode(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function GhostModeSystem.rpc_set_safe_spot(arg_10_0, arg_10_1, arg_10_2)
+GhostModeSystem.rpc_set_safe_spot = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._safe_spot = Vector3Box(arg_10_2)
 
 	local var_10_0 = Managers.player:local_player()
@@ -153,7 +153,7 @@ function GhostModeSystem.rpc_set_safe_spot(arg_10_0, arg_10_1, arg_10_2)
 	var_10_2:set_safe_spot(arg_10_0._safe_spot)
 end
 
-function GhostModeSystem.set_sweep_actors(arg_11_0, arg_11_1, arg_11_2)
+GhostModeSystem.set_sweep_actors = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 then
 		Unit.enable_proximity_unit(arg_11_0)
 	else
@@ -176,7 +176,7 @@ function GhostModeSystem.set_sweep_actors(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function GhostModeSystem.test_actors(arg_12_0, arg_12_1)
+GhostModeSystem.test_actors = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.hit_zones
 
 	for iter_12_0, iter_12_1 in pairs(var_12_0) do
@@ -195,7 +195,7 @@ function GhostModeSystem.test_actors(arg_12_0, arg_12_1)
 	end
 end
 
-function GhostModeSystem.hot_join_sync(arg_13_0, arg_13_1)
+GhostModeSystem.hot_join_sync = function (arg_13_0, arg_13_1)
 	if not arg_13_0._active then
 		return
 	end

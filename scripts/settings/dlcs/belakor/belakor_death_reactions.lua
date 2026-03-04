@@ -3,10 +3,10 @@
 return {
 	tiny_explosive_barrel = {
 		unit = {
-			pre_start = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			pre_start = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				return
 			end,
-			start = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			start = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = Managers.state.network:network_time()
 				local var_2_1 = arg_2_3[DamageDataIndex.ATTACKER]
 				local var_2_2 = {
@@ -23,7 +23,7 @@ return {
 
 				return var_2_2, DeathReactions.IS_NOT_DONE
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = Managers.state.network:network_time()
 
 				if not arg_3_4.exploded then
@@ -76,10 +76,10 @@ return {
 			end
 		},
 		husk = {
-			pre_start = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			pre_start = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			start = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			start = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = Managers.state.network:network_time()
 				local var_5_1 = {
 					explode_time = var_5_0,
@@ -95,7 +95,7 @@ return {
 
 				return var_5_1, DeathReactions.IS_NOT_DONE
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = Managers.state.network:network_time()
 
 				if not arg_6_4.exploded then

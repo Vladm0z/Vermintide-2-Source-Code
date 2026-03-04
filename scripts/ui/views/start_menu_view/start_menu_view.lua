@@ -22,7 +22,7 @@ local var_0_9 = true
 
 StartMenuView = class(StartMenuView)
 
-function StartMenuView.init(arg_2_0, arg_2_1)
+StartMenuView.init = function (arg_2_0, arg_2_1)
 	arg_2_0.world = arg_2_1.world
 	arg_2_0.player_manager = arg_2_1.player_manager
 	arg_2_0.ui_renderer = arg_2_1.ui_renderer
@@ -69,11 +69,11 @@ function StartMenuView.init(arg_2_0, arg_2_1)
 	var_0_7 = false
 end
 
-function StartMenuView.initial_profile_view(arg_3_0)
+StartMenuView.initial_profile_view = function (arg_3_0)
 	return arg_3_0.ingame_ui.initial_profile_view
 end
 
-function StartMenuView._setup_state_machine(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+StartMenuView._setup_state_machine = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_0._machine then
 		arg_4_0._machine:destroy()
 
@@ -90,15 +90,15 @@ function StartMenuView._setup_state_machine(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	arg_4_1.state_params = nil
 end
 
-function StartMenuView.wanted_state(arg_5_0)
+StartMenuView.wanted_state = function (arg_5_0)
 	return arg_5_0._wanted_state
 end
 
-function StartMenuView.clear_wanted_state(arg_6_0)
+StartMenuView.clear_wanted_state = function (arg_6_0)
 	arg_6_0._wanted_state = nil
 end
 
-function StartMenuView.input_service(arg_7_0, arg_7_1)
+StartMenuView.input_service = function (arg_7_0, arg_7_1)
 	if not arg_7_1 then
 		local var_7_0 = arg_7_0._machine
 
@@ -110,19 +110,19 @@ function StartMenuView.input_service(arg_7_0, arg_7_1)
 	return arg_7_0.input_manager:get_service("start_menu_view")
 end
 
-function StartMenuView.set_input_blocked(arg_8_0, arg_8_1)
+StartMenuView.set_input_blocked = function (arg_8_0, arg_8_1)
 	arg_8_0._input_blocked = arg_8_1
 end
 
-function StartMenuView.input_blocked(arg_9_0)
+StartMenuView.input_blocked = function (arg_9_0)
 	return arg_9_0._input_blocked
 end
 
-function StartMenuView.play_sound(arg_10_0, arg_10_1)
+StartMenuView.play_sound = function (arg_10_0, arg_10_1)
 	WwiseWorld.trigger_event(arg_10_0.wwise_world, arg_10_1)
 end
 
-function StartMenuView.create_ui_elements(arg_11_0)
+StartMenuView.create_ui_elements = function (arg_11_0)
 	arg_11_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_11_0._static_widgets = {}
 	arg_11_0._exit_button_widget = UIWidget.init(var_0_1.exit_button)
@@ -133,14 +133,14 @@ function StartMenuView.create_ui_elements(arg_11_0)
 	arg_11_0.ui_animator = UIAnimator:new(arg_11_0.ui_scenegraph, var_0_0.animations)
 end
 
-function StartMenuView.get_background_world(arg_12_0)
+StartMenuView.get_background_world = function (arg_12_0)
 	local var_12_0 = arg_12_0.viewport_widget.element.pass_data[1]
 	local var_12_1 = var_12_0.viewport
 
 	return var_12_0.world, var_12_1
 end
 
-function StartMenuView.show_hero_world(arg_13_0)
+StartMenuView.show_hero_world = function (arg_13_0)
 	if not arg_13_0._draw_menu_world then
 		arg_13_0._draw_menu_world = true
 
@@ -152,7 +152,7 @@ function StartMenuView.show_hero_world(arg_13_0)
 	end
 end
 
-function StartMenuView.hide_hero_world(arg_14_0)
+StartMenuView.hide_hero_world = function (arg_14_0)
 	if arg_14_0._draw_menu_world then
 		arg_14_0._draw_menu_world = false
 
@@ -164,7 +164,7 @@ function StartMenuView.hide_hero_world(arg_14_0)
 	end
 end
 
-function StartMenuView.draw(arg_15_0, arg_15_1, arg_15_2)
+StartMenuView.draw = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.ui_renderer
 	local var_15_1 = arg_15_0.ui_top_renderer
 	local var_15_2 = arg_15_0.ui_scenegraph
@@ -192,18 +192,18 @@ function StartMenuView.draw(arg_15_0, arg_15_1, arg_15_2)
 	UIRenderer.end_pass(var_15_1)
 end
 
-function StartMenuView.post_update(arg_16_0, arg_16_1, arg_16_2)
+StartMenuView.post_update = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._machine:post_update(arg_16_1, arg_16_2)
 	arg_16_0.world_previewer:post_update(arg_16_1, arg_16_2)
 end
 
-function StartMenuView._has_active_level_vote(arg_17_0)
+StartMenuView._has_active_level_vote = function (arg_17_0)
 	local var_17_0 = arg_17_0.voting_manager
 
 	return var_17_0:vote_in_progress() and var_17_0:is_mission_vote() and not var_17_0:has_voted(Network.peer_id())
 end
 
-function StartMenuView.update(arg_18_0, arg_18_1, arg_18_2)
+StartMenuView.update = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0.suspended or arg_18_0.waiting_for_post_update_enter then
 		return
 	end
@@ -252,7 +252,7 @@ function StartMenuView.update(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:draw(arg_18_1, var_18_6)
 end
 
-function StartMenuView.on_enter(arg_19_0, arg_19_1)
+StartMenuView.on_enter = function (arg_19_0, arg_19_1)
 	ShowCursorStack.show("StartMenuView")
 
 	local var_19_0 = arg_19_0.input_manager
@@ -281,7 +281,7 @@ function StartMenuView.on_enter(arg_19_0, arg_19_1)
 	UISettings.hero_fullscreen_menu_on_enter()
 end
 
-function StartMenuView.set_current_hero(arg_20_0, arg_20_1)
+StartMenuView.set_current_hero = function (arg_20_0, arg_20_1)
 	local var_20_0 = SPProfiles[arg_20_1]
 	local var_20_1 = var_20_0.display_name
 	local var_20_2 = var_20_0.character_name
@@ -290,7 +290,7 @@ function StartMenuView.set_current_hero(arg_20_0, arg_20_1)
 	arg_20_0._state_machine_params.hero_name = var_20_1
 end
 
-function StartMenuView._get_sorted_players(arg_21_0)
+StartMenuView._get_sorted_players = function (arg_21_0)
 	local var_21_0 = arg_21_0.player_manager:human_players()
 	local var_21_1 = {}
 
@@ -298,18 +298,18 @@ function StartMenuView._get_sorted_players(arg_21_0)
 		var_21_1[#var_21_1 + 1] = iter_21_1
 	end
 
-	table.sort(var_21_1, function(arg_22_0, arg_22_1)
+	table.sort(var_21_1, function (arg_22_0, arg_22_1)
 		return arg_22_0.local_player and not arg_22_1.local_player
 	end)
 
 	return var_21_1
 end
 
-function StartMenuView._handle_mouse_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+StartMenuView._handle_mouse_input = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	return
 end
 
-function StartMenuView._is_selection_widget_pressed(arg_24_0, arg_24_1)
+StartMenuView._is_selection_widget_pressed = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_1.content
 	local var_24_1 = var_24_0.steps
 
@@ -320,7 +320,7 @@ function StartMenuView._is_selection_widget_pressed(arg_24_0, arg_24_1)
 	end
 end
 
-function StartMenuView.hotkey_allowed(arg_25_0, arg_25_1, arg_25_2)
+StartMenuView.hotkey_allowed = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0:input_blocked() then
 		return false
 	end
@@ -351,7 +351,7 @@ function StartMenuView.hotkey_allowed(arg_25_0, arg_25_1, arg_25_2)
 	return false
 end
 
-function StartMenuView._get_screen_settings_by_state_name(arg_26_0, arg_26_1)
+StartMenuView._get_screen_settings_by_state_name = function (arg_26_0, arg_26_1)
 	for iter_26_0, iter_26_1 in ipairs(var_0_3) do
 		if iter_26_1.state_name == arg_26_1 then
 			return iter_26_1
@@ -359,14 +359,14 @@ function StartMenuView._get_screen_settings_by_state_name(arg_26_0, arg_26_1)
 	end
 end
 
-function StartMenuView.requested_screen_change_by_name(arg_27_0, arg_27_1, arg_27_2)
+StartMenuView.requested_screen_change_by_name = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0._requested_screen_change_data = {
 		screen_name = arg_27_1,
 		sub_screen_name = arg_27_2
 	}
 end
 
-function StartMenuView._change_screen_by_name(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+StartMenuView._change_screen_by_name = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0
 	local var_28_1
 
@@ -413,13 +413,13 @@ function StartMenuView._change_screen_by_name(arg_28_0, arg_28_1, arg_28_2, arg_
 	end
 end
 
-function StartMenuView._change_screen_by_index(arg_29_0, arg_29_1)
+StartMenuView._change_screen_by_index = function (arg_29_0, arg_29_1)
 	local var_29_0 = var_0_3[arg_29_1].name
 
 	arg_29_0:_change_screen_by_name(var_29_0)
 end
 
-function StartMenuView.post_update_on_enter(arg_30_0)
+StartMenuView.post_update_on_enter = function (arg_30_0)
 	assert(arg_30_0.viewport_widget == nil)
 
 	arg_30_0.viewport_widget = UIWidget.init(var_0_1.viewport)
@@ -441,7 +441,7 @@ function StartMenuView.post_update_on_enter(arg_30_0)
 	end
 end
 
-function StartMenuView.post_update_on_exit(arg_31_0)
+StartMenuView.post_update_on_exit = function (arg_31_0)
 	arg_31_0.world_previewer:prepare_exit()
 	arg_31_0.world_previewer:on_exit()
 
@@ -467,7 +467,7 @@ function StartMenuView.post_update_on_exit(arg_31_0)
 	end
 end
 
-function StartMenuView.on_exit(arg_32_0)
+StartMenuView.on_exit = function (arg_32_0)
 	arg_32_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_32_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_32_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -488,7 +488,7 @@ function StartMenuView.on_exit(arg_32_0)
 	UISettings.hero_fullscreen_menu_on_exit()
 end
 
-function StartMenuView.exit(arg_33_0, arg_33_1)
+StartMenuView.exit = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0:initial_profile_view() and "exit_initial_start_menu_view" or arg_33_1 and "exit_menu" or "ingame_menu"
 
 	arg_33_0.ingame_ui:transition_with_fade(var_33_0)
@@ -498,7 +498,7 @@ function StartMenuView.exit(arg_33_0, arg_33_1)
 	arg_33_0._public_game_search_time = nil
 end
 
-function StartMenuView.transitioning(arg_34_0)
+StartMenuView.transitioning = function (arg_34_0)
 	if arg_34_0.exiting then
 		return true
 	else
@@ -506,7 +506,7 @@ function StartMenuView.transitioning(arg_34_0)
 	end
 end
 
-function StartMenuView.suspend(arg_35_0)
+StartMenuView.suspend = function (arg_35_0)
 	arg_35_0.input_manager:device_unblock_all_services("keyboard", 1)
 	arg_35_0.input_manager:device_unblock_all_services("mouse", 1)
 	arg_35_0.input_manager:device_unblock_all_services("gamepad", 1)
@@ -526,7 +526,7 @@ function StartMenuView.suspend(arg_35_0)
 	ScriptWorld.deactivate_viewport(var_35_5, var_35_4)
 end
 
-function StartMenuView.unsuspend(arg_36_0)
+StartMenuView.unsuspend = function (arg_36_0)
 	arg_36_0.input_manager:block_device_except_service("start_menu_view", "keyboard", 1)
 	arg_36_0.input_manager:block_device_except_service("start_menu_view", "mouse", 1)
 	arg_36_0.input_manager:block_device_except_service("start_menu_view", "gamepad", 1)
@@ -548,7 +548,7 @@ function StartMenuView.unsuspend(arg_36_0)
 	end
 end
 
-function StartMenuView._handle_exit(arg_37_0, arg_37_1)
+StartMenuView._handle_exit = function (arg_37_0, arg_37_1)
 	if not arg_37_0:initial_profile_view() then
 		local var_37_0 = arg_37_0._exit_button_widget
 
@@ -563,7 +563,7 @@ function StartMenuView._handle_exit(arg_37_0, arg_37_1)
 	end
 end
 
-function StartMenuView._game_popup_active(arg_38_0)
+StartMenuView._game_popup_active = function (arg_38_0)
 	local var_38_0 = arg_38_0._machine
 
 	if var_38_0 then
@@ -575,7 +575,7 @@ function StartMenuView._game_popup_active(arg_38_0)
 	end
 end
 
-function StartMenuView.close_menu(arg_39_0, arg_39_1)
+StartMenuView.close_menu = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._machine
 
 	if var_39_0 then
@@ -593,7 +593,7 @@ function StartMenuView.close_menu(arg_39_0, arg_39_1)
 	arg_39_0:exit(var_39_2)
 end
 
-function StartMenuView.destroy(arg_40_0)
+StartMenuView.destroy = function (arg_40_0)
 	if arg_40_0.viewport_widget then
 		UIWidget.destroy(arg_40_0.ui_top_renderer, arg_40_0.viewport_widget)
 
@@ -620,7 +620,7 @@ function StartMenuView.destroy(arg_40_0)
 	end
 end
 
-function StartMenuView._is_button_pressed(arg_41_0, arg_41_1)
+StartMenuView._is_button_pressed = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_1.content.button_hotspot
 
 	if var_41_0.on_release then

@@ -11,7 +11,7 @@ DifficultyUnlockUI = class(DifficultyUnlockUI)
 
 local var_0_4 = false
 
-function DifficultyUnlockUI.init(arg_1_0, arg_1_1, arg_1_2)
+DifficultyUnlockUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -27,7 +27,7 @@ function DifficultyUnlockUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "difficulty_synced", "difficulty_set")
 end
 
-function DifficultyUnlockUI.create_ui_elements(arg_2_0)
+DifficultyUnlockUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_2_0 = var_0_0.widget_definitions
@@ -53,7 +53,7 @@ function DifficultyUnlockUI.create_ui_elements(arg_2_0)
 	arg_2_0.is_visible = true
 end
 
-function DifficultyUnlockUI.difficulty_set(arg_3_0)
+DifficultyUnlockUI.difficulty_set = function (arg_3_0)
 	local var_3_0 = arg_3_0.statistics_db
 	local var_3_1 = Managers.player:local_player():stats_id()
 	local var_3_2 = Managers.state.game_mode:level_key()
@@ -86,7 +86,7 @@ function DifficultyUnlockUI.difficulty_set(arg_3_0)
 	end
 end
 
-function DifficultyUnlockUI.align_icon_widgets(arg_4_0)
+DifficultyUnlockUI.align_icon_widgets = function (arg_4_0)
 	local var_4_0 = arg_4_0.icon_draw_count
 	local var_4_1 = arg_4_0.icon_widgets
 	local var_4_2 = 50
@@ -106,13 +106,13 @@ function DifficultyUnlockUI.align_icon_widgets(arg_4_0)
 	end
 end
 
-function DifficultyUnlockUI.destroy(arg_5_0)
+DifficultyUnlockUI.destroy = function (arg_5_0)
 	arg_5_0.ui_animator = nil
 
 	arg_5_0:set_visible(false)
 end
 
-function DifficultyUnlockUI.set_visible(arg_6_0, arg_6_1)
+DifficultyUnlockUI.set_visible = function (arg_6_0, arg_6_1)
 	arg_6_0.is_visible = arg_6_1
 
 	local var_6_0 = arg_6_0.ui_renderer
@@ -125,7 +125,7 @@ function DifficultyUnlockUI.set_visible(arg_6_0, arg_6_1)
 	end
 end
 
-function DifficultyUnlockUI._check_for_presentation_start(arg_7_0, arg_7_1)
+DifficultyUnlockUI._check_for_presentation_start = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.previous_wave_completed or 0
 	local var_7_1 = arg_7_1.wave_completed - arg_7_1.starting_wave
 
@@ -147,7 +147,7 @@ function DifficultyUnlockUI._check_for_presentation_start(arg_7_0, arg_7_1)
 	arg_7_0.previous_wave_completed = var_7_1
 end
 
-function DifficultyUnlockUI._update_start_timer(arg_8_0, arg_8_1)
+DifficultyUnlockUI._update_start_timer = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.presentation_start_time
 
 	if var_8_0 then
@@ -166,7 +166,7 @@ function DifficultyUnlockUI._update_start_timer(arg_8_0, arg_8_1)
 	end
 end
 
-function DifficultyUnlockUI.update(arg_9_0, arg_9_1, arg_9_2)
+DifficultyUnlockUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if var_0_4 then
 		var_0_4 = false
 
@@ -247,7 +247,7 @@ function DifficultyUnlockUI.update(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:draw(arg_9_1)
 end
 
-function DifficultyUnlockUI.draw(arg_10_0, arg_10_1)
+DifficultyUnlockUI.draw = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.ui_renderer
 	local var_10_1 = arg_10_0.ui_scenegraph
 	local var_10_2 = arg_10_0.input_manager:get_service("ingame_menu")
@@ -277,13 +277,13 @@ function DifficultyUnlockUI.draw(arg_10_0, arg_10_1)
 	UIRenderer.end_pass(var_10_0)
 end
 
-function DifficultyUnlockUI.set_difficulty_amount(arg_11_0, arg_11_1)
+DifficultyUnlockUI.set_difficulty_amount = function (arg_11_0, arg_11_1)
 	arg_11_0.icon_draw_count = arg_11_1
 
 	arg_11_0:align_icon_widgets()
 end
 
-function DifficultyUnlockUI.display_unlock(arg_12_0, arg_12_1, arg_12_2)
+DifficultyUnlockUI.display_unlock = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = DifficultySettings[arg_12_2]
 	local var_12_1 = var_12_0.rank
 	local var_12_2 = var_12_0.display_name
@@ -296,11 +296,11 @@ function DifficultyUnlockUI.display_unlock(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0.draw_widgets = true
 end
 
-function DifficultyUnlockUI.on_presentation_complete(arg_13_0)
+DifficultyUnlockUI.on_presentation_complete = function (arg_13_0)
 	arg_13_0.draw_widgets = false
 end
 
-function DifficultyUnlockUI.start_presentation_animation(arg_14_0)
+DifficultyUnlockUI.start_presentation_animation = function (arg_14_0)
 	local var_14_0 = {
 		wwise_world = arg_14_0.wwise_world
 	}
@@ -323,7 +323,7 @@ function DifficultyUnlockUI.start_presentation_animation(arg_14_0)
 	arg_14_0.presentation_anim_id = arg_14_0.ui_animator:start_animation("presentation", var_14_1, var_0_1, var_14_0)
 end
 
-function DifficultyUnlockUI.start_explode_animation(arg_15_0)
+DifficultyUnlockUI.start_explode_animation = function (arg_15_0)
 	local var_15_0 = {
 		wwise_world = arg_15_0.wwise_world
 	}

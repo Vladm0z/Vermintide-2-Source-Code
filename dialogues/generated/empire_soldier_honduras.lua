@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_honduras.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pes_activate_ability_grail_knight",
 		name = "pes_activate_ability_grail_knight",

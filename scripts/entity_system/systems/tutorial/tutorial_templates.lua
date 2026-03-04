@@ -33,16 +33,16 @@ TutorialTemplates.core_needs_help = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_attention",
 	is_mission_tutorial = true,
-	init_data = function(arg_3_0)
+	init_data = function (arg_3_0)
 		return
 	end,
-	clear_data = function(arg_4_0)
+	clear_data = function (arg_4_0)
 		return
 	end,
-	update_data = function(arg_5_0, arg_5_1, arg_5_2)
+	update_data = function (arg_5_0, arg_5_1, arg_5_2)
 		return
 	end,
-	can_show = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	can_show = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = Managers.player:human_and_bot_players()
 		local var_6_1 = Unit.local_position(arg_6_1, 0)
 		local var_6_2 = math.huge
@@ -83,7 +83,7 @@ TutorialTemplates.core_needs_help = {
 
 		return false
 	end,
-	is_completed = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	is_completed = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		return false
 	end
 }
@@ -96,16 +96,16 @@ TutorialTemplates.core_revive = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_attention",
 	is_mission_tutorial = true,
-	init_data = function(arg_8_0)
+	init_data = function (arg_8_0)
 		return
 	end,
-	clear_data = function(arg_9_0)
+	clear_data = function (arg_9_0)
 		return
 	end,
-	update_data = function(arg_10_0, arg_10_1, arg_10_2)
+	update_data = function (arg_10_0, arg_10_1, arg_10_2)
 		return
 	end,
-	can_show = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	can_show = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = Managers.player:human_and_bot_players()
 		local var_11_1 = Unit.local_position(arg_11_1, 0)
 		local var_11_2 = math.huge
@@ -148,7 +148,7 @@ TutorialTemplates.core_revive = {
 
 		return false
 	end,
-	is_completed = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	is_completed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		return false
 	end
 }
@@ -176,16 +176,16 @@ TutorialTemplates.advanced_grenade = {
 	display_type = "tooltip",
 	icon = "grenade_icon",
 	is_mission_tutorial = true,
-	init_data = function(arg_14_0)
+	init_data = function (arg_14_0)
 		return
 	end,
-	clear_data = function(arg_15_0)
+	clear_data = function (arg_15_0)
 		return
 	end,
-	update_data = function(arg_16_0, arg_16_1, arg_16_2)
+	update_data = function (arg_16_0, arg_16_1, arg_16_2)
 		return
 	end,
-	can_show = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	can_show = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		local var_17_0 = Unit.local_position(arg_17_1, 0)
 		local var_17_1 = Managers.state.entity
 		local var_17_2
@@ -199,7 +199,7 @@ TutorialTemplates.advanced_grenade = {
 
 		return true, var_17_6
 	end,
-	is_completed = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	is_completed = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 		return false
 	end
 }
@@ -219,30 +219,30 @@ TutorialTemplates.play_go_tutorial_tooltip = {
 		action_instant_drink_potion = "d_right",
 		action_instant_grenade_throw = "right_shoulder"
 	},
-	get_text = function(arg_19_0, arg_19_1)
+	get_text = function (arg_19_0, arg_19_1)
 		return arg_19_0.text
 	end,
-	get_inputs = function(arg_20_0)
+	get_inputs = function (arg_20_0)
 		return arg_20_0.inputs
 	end,
-	get_gamepad_inputs = function(arg_21_0)
+	get_gamepad_inputs = function (arg_21_0)
 		return arg_21_0.gamepad_inputs
 	end,
-	get_force_update = function(arg_22_0)
+	get_force_update = function (arg_22_0)
 		return arg_22_0.force_update
 	end,
-	init_data = function(arg_23_0)
+	init_data = function (arg_23_0)
 		return
 	end,
-	clear_data = function(arg_24_0)
+	clear_data = function (arg_24_0)
 		return
 	end,
-	update_data = function(arg_25_0, arg_25_1, arg_25_2)
+	update_data = function (arg_25_0, arg_25_1, arg_25_2)
 		if arg_25_2.force_update then
 			arg_25_2.force_update = false
 		end
 	end,
-	can_show = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	can_show = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		local var_26_0, var_26_1 = Managers.state.entity:system("mission_system"):get_missions()
 
 		for iter_26_0, iter_26_1 in pairs(var_26_0) do
@@ -270,7 +270,7 @@ TutorialTemplates.play_go_tutorial_tooltip = {
 
 		return false
 	end,
-	is_completed = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	is_completed = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 		return false
 	end
 }
@@ -281,16 +281,16 @@ TutorialTemplates.elite_cage_respawn = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_rescue",
 	is_mission_tutorial = true,
-	init_data = function(arg_28_0)
+	init_data = function (arg_28_0)
 		return
 	end,
-	clear_data = function(arg_29_0)
+	clear_data = function (arg_29_0)
 		return
 	end,
-	update_data = function(arg_30_0, arg_30_1, arg_30_2)
+	update_data = function (arg_30_0, arg_30_1, arg_30_2)
 		return
 	end,
-	can_show = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	can_show = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 		local var_31_0 = Managers.player:human_and_bot_players()
 		local var_31_1 = Unit.local_position(arg_31_1, 0)
 		local var_31_2 = math.huge
@@ -316,7 +316,7 @@ TutorialTemplates.elite_cage_respawn = {
 
 		return false
 	end,
-	is_completed = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+	is_completed = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 		return false
 	end
 }
@@ -361,19 +361,19 @@ TutorialTemplates.objective_pickup = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function(arg_33_0)
+	get_text = function (arg_33_0)
 		return arg_33_0.objective_text
 	end,
-	init_data = function(arg_34_0)
+	init_data = function (arg_34_0)
 		return
 	end,
-	clear_data = function(arg_35_0)
+	clear_data = function (arg_35_0)
 		return
 	end,
-	update_data = function(arg_36_0, arg_36_1, arg_36_2)
+	update_data = function (arg_36_0, arg_36_1, arg_36_2)
 		return
 	end,
-	can_show = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	can_show = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 		local var_37_0 = ScriptUnit.extension(arg_37_1, "inventory_system")
 		local var_37_1 = var_37_0:get_wielded_slot_name()
 		local var_37_2 = var_37_0:get_slot_data(var_37_1)
@@ -447,7 +447,7 @@ TutorialTemplates.objective_pickup = {
 
 		return false
 	end,
-	is_completed = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+	is_completed = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 		return false
 	end
 }
@@ -461,19 +461,19 @@ TutorialTemplates.objective_socket = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function(arg_39_0)
+	get_text = function (arg_39_0)
 		return arg_39_0.objective_text
 	end,
-	init_data = function(arg_40_0)
+	init_data = function (arg_40_0)
 		return
 	end,
-	clear_data = function(arg_41_0)
+	clear_data = function (arg_41_0)
 		return
 	end,
-	update_data = function(arg_42_0, arg_42_1, arg_42_2)
+	update_data = function (arg_42_0, arg_42_1, arg_42_2)
 		return
 	end,
-	can_show = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+	can_show = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 		local var_43_0 = Unit.local_position(arg_43_1, 0)
 		local var_43_1 = ScriptUnit.extension(arg_43_1, "inventory_system")
 		local var_43_2 = var_43_1:get_wielded_slot_name()
@@ -522,7 +522,7 @@ TutorialTemplates.objective_socket = {
 
 		return false
 	end,
-	is_completed = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	is_completed = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 		return false
 	end
 }
@@ -536,28 +536,28 @@ TutorialTemplates.objective_unit = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function(arg_45_0)
+	get_text = function (arg_45_0)
 		return arg_45_0.objective_text
 	end,
-	get_icon = function(arg_46_0)
+	get_icon = function (arg_46_0)
 		return arg_46_0.objective_icon
 	end,
-	get_alert = function(arg_47_0)
+	get_alert = function (arg_47_0)
 		return arg_47_0.alerts_horde
 	end,
-	get_wave = function(arg_48_0)
+	get_wave = function (arg_48_0)
 		return arg_48_0.objective_wave
 	end,
-	init_data = function(arg_49_0)
+	init_data = function (arg_49_0)
 		return
 	end,
-	clear_data = function(arg_50_0)
+	clear_data = function (arg_50_0)
 		return
 	end,
-	update_data = function(arg_51_0, arg_51_1, arg_51_2)
+	update_data = function (arg_51_0, arg_51_1, arg_51_2)
 		return
 	end,
-	can_show = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+	can_show = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 		local var_52_0 = Unit.local_position(arg_52_1, 0)
 		local var_52_1 = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 		local var_52_2 = Vector3.distance_squared
@@ -599,7 +599,7 @@ TutorialTemplates.objective_unit = {
 
 		return false
 	end,
-	is_completed = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+	is_completed = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 		return false
 	end
 }

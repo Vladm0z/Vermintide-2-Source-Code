@@ -2,7 +2,7 @@
 
 GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility or {}
 
-function GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings(arg_1_0, arg_1_1)
+GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings = function (arg_1_0, arg_1_1)
 	local var_1_0 = FrameTable.alloc_table()
 	local var_1_1 = string.split(arg_1_0, ";")
 	local var_1_2 = GameModeSettings[arg_1_1].custom_game_settings_templates
@@ -37,7 +37,7 @@ local var_0_0 = {
 	"rpc_game_mode_custom_settings_handler_set_enabled"
 }
 
-function GameModeCustomSettingsHandler.init(arg_2_0, arg_2_1, arg_2_2)
+GameModeCustomSettingsHandler.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._game_mode_settings = GameModeSettings[arg_2_1]
 	arg_2_0._settings_template = arg_2_0._game_mode_settings.custom_game_settings_templates
 	arg_2_0._settings = {}
@@ -45,7 +45,7 @@ function GameModeCustomSettingsHandler.init(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:set_enabled(false)
 end
 
-function GameModeCustomSettingsHandler.server_set_setting(arg_3_0, arg_3_1, arg_3_2)
+GameModeCustomSettingsHandler.server_set_setting = function (arg_3_0, arg_3_1, arg_3_2)
 	fassert(arg_3_0._enabled, "GameModeCustomSettingsHandler is disabled, cannot set setting %s", tostring(arg_3_1))
 
 	local var_3_0 = arg_3_0._settings_template[arg_3_1]
@@ -60,7 +60,7 @@ function GameModeCustomSettingsHandler.server_set_setting(arg_3_0, arg_3_1, arg_
 	var_3_1:send_rpc_others("rpc_game_mode_custom_settings_full_sync", var_3_2, arg_3_0._enabled)
 end
 
-function GameModeCustomSettingsHandler.pack_settings(arg_4_0, arg_4_1, arg_4_2)
+GameModeCustomSettingsHandler.pack_settings = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = FrameTable.alloc_table()
 
 	for iter_4_0, iter_4_1 in ipairs(arg_4_1) do
@@ -70,7 +70,7 @@ function GameModeCustomSettingsHandler.pack_settings(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_0
 end
 
-function GameModeCustomSettingsHandler.get_packed_custom_settings(arg_5_0)
+GameModeCustomSettingsHandler.get_packed_custom_settings = function (arg_5_0)
 	local var_5_0 = ""
 	local var_5_1 = arg_5_0._settings
 	local var_5_2 = false
@@ -89,7 +89,7 @@ function GameModeCustomSettingsHandler.get_packed_custom_settings(arg_5_0)
 	return var_5_2 and var_5_0 or "n/a"
 end
 
-function GameModeCustomSettingsHandler.unpack_settings(arg_6_0, arg_6_1, arg_6_2)
+GameModeCustomSettingsHandler.unpack_settings = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = {}
 
 	for iter_6_0, iter_6_1 in ipairs(arg_6_1) do
@@ -99,7 +99,7 @@ function GameModeCustomSettingsHandler.unpack_settings(arg_6_0, arg_6_1, arg_6_2
 	return var_6_0
 end
 
-function GameModeCustomSettingsHandler.request_full_sync(arg_7_0)
+GameModeCustomSettingsHandler.request_full_sync = function (arg_7_0)
 	local var_7_0 = Managers.mechanism:network_handler():get_match_handler()
 
 	if var_7_0:is_leader() then
@@ -107,7 +107,7 @@ function GameModeCustomSettingsHandler.request_full_sync(arg_7_0)
 	end
 end
 
-function GameModeCustomSettingsHandler.get_setting(arg_8_0, arg_8_1)
+GameModeCustomSettingsHandler.get_setting = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._settings_template[arg_8_1]
 	local var_8_1
 
@@ -118,13 +118,13 @@ function GameModeCustomSettingsHandler.get_setting(arg_8_0, arg_8_1)
 	return var_8_1, arg_8_0._enabled
 end
 
-function GameModeCustomSettingsHandler.reset_custom_settings(arg_9_0)
+GameModeCustomSettingsHandler.reset_custom_settings = function (arg_9_0)
 	for iter_9_0, iter_9_1 in ipairs(arg_9_0._settings_template) do
 		arg_9_0._settings[iter_9_0] = iter_9_1.default
 	end
 end
 
-function GameModeCustomSettingsHandler.set_enabled(arg_10_0, arg_10_1, arg_10_2)
+GameModeCustomSettingsHandler.set_enabled = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._enabled = arg_10_1
 
 	if not arg_10_1 then
@@ -146,27 +146,27 @@ function GameModeCustomSettingsHandler.set_enabled(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function GameModeCustomSettingsHandler.is_enabled(arg_11_0)
+GameModeCustomSettingsHandler.is_enabled = function (arg_11_0)
 	return arg_11_0._enabled
 end
 
-function GameModeCustomSettingsHandler.register_rpcs(arg_12_0, arg_12_1)
+GameModeCustomSettingsHandler.register_rpcs = function (arg_12_0, arg_12_1)
 	arg_12_1:register(arg_12_0, unpack(var_0_0))
 end
 
-function GameModeCustomSettingsHandler.unregister_rpcs(arg_13_0, arg_13_1)
+GameModeCustomSettingsHandler.unregister_rpcs = function (arg_13_0, arg_13_1)
 	arg_13_1:unregister(arg_13_0)
 end
 
-function GameModeCustomSettingsHandler.get_settings(arg_14_0)
+GameModeCustomSettingsHandler.get_settings = function (arg_14_0)
 	return arg_14_0._settings, arg_14_0._enabled
 end
 
-function GameModeCustomSettingsHandler.get_settings_template(arg_15_0)
+GameModeCustomSettingsHandler.get_settings_template = function (arg_15_0)
 	return arg_15_0._settings_template
 end
 
-function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_full_sync(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_full_sync = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	arg_16_0:set_enabled(arg_16_3)
 
 	arg_16_0._settings = arg_16_0:unpack_settings(arg_16_2, arg_16_0._settings_template)
@@ -175,7 +175,7 @@ function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_full_sync(a
 	Managers.mechanism:network_handler():get_match_handler():propagate_rpc("rpc_game_mode_custom_settings_full_sync", CHANNEL_TO_PEER_ID[arg_16_1], arg_16_2, arg_16_3)
 end
 
-function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_request_full_sync(arg_17_0, arg_17_1)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_request_full_sync = function (arg_17_0, arg_17_1)
 	local var_17_0 = CHANNEL_TO_PEER_ID[arg_17_1]
 
 	if var_17_0 then
@@ -186,7 +186,7 @@ function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_request_ful
 	end
 end
 
-function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set_enabled(arg_18_0, arg_18_1, arg_18_2)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set_enabled = function (arg_18_0, arg_18_1, arg_18_2)
 	printf("GameModeCustomSettingsHandler: rpc_game_mode_custom_settings_handler_set_enabled, enabled = %s", tostring(arg_18_2))
 	arg_18_0:set_enabled(arg_18_2)
 
@@ -204,7 +204,7 @@ function GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set
 	end
 end
 
-function GameModeCustomSettingsHandler._print_settings(arg_19_0)
+GameModeCustomSettingsHandler._print_settings = function (arg_19_0)
 	local var_19_0 = string.format("GameModeCustomSettingsHandler: settings updated: \n Custom Settings Enabled = %s \n", arg_19_0._enabled)
 
 	for iter_19_0 = 1, #arg_19_0._settings_template do
@@ -218,7 +218,7 @@ function GameModeCustomSettingsHandler._print_settings(arg_19_0)
 	print(var_19_0)
 end
 
-function GameModeCustomSettingsHandler.get_telemetry_data(arg_20_0)
+GameModeCustomSettingsHandler.get_telemetry_data = function (arg_20_0)
 	local var_20_0 = {}
 	local var_20_1 = {}
 
@@ -239,7 +239,7 @@ function GameModeCustomSettingsHandler.get_telemetry_data(arg_20_0)
 	return var_20_0, var_20_5, var_20_1
 end
 
-function GameModeCustomSettingsHandler.destroy(arg_21_0)
+GameModeCustomSettingsHandler.destroy = function (arg_21_0)
 	arg_21_0._game_mode_settings = nil
 	arg_21_0._settings_template = nil
 	arg_21_0._settings = nil

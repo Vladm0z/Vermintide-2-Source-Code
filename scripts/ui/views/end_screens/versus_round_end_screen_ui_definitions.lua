@@ -407,19 +407,19 @@ local var_0_10 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				var_0_8(arg_2_2.background, 0)
 
 				arg_2_3.draw_flags.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = math.easeCubic(arg_3_3)
 
 				arg_3_4.draw_flags.alpha_multiplier = var_3_0
 
 				var_0_8(arg_3_2.background, var_3_0 * 60)
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end
 		},
@@ -427,7 +427,7 @@ local var_0_10 = {
 			name = "set_team_score_progress",
 			start_progress = 0.9,
 			end_progress = 2.5,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				if arg_5_3.current_round > 1 then
 					for iter_5_0 = 1, 2 do
 						for iter_5_1 = 1, arg_5_3.current_round - 1 do
@@ -451,7 +451,7 @@ local var_0_10 = {
 					end
 				end
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = math.easeCubic(arg_6_3)
 
 				for iter_6_0 = 1, 2 do
@@ -474,7 +474,7 @@ local var_0_10 = {
 					var_6_3.current_bar_fil_threshold = var_6_5
 				end
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		},
@@ -482,10 +482,10 @@ local var_0_10 = {
 			name = "total_score_progress",
 			start_progress = 1.3,
 			end_progress = 2.5,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				local var_9_0 = math.easeCubic(arg_9_3)
 
 				for iter_9_0 = 1, 2 do
@@ -528,7 +528,7 @@ local var_0_10 = {
 					var_9_2.current_bar_fil_threshold = var_9_4
 				end
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		},
@@ -536,15 +536,15 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 9.5,
 			end_progress = 10,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				return
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = 1 - math.easeInCubic(arg_12_3)
 
 				arg_12_4.draw_flags.alpha_multiplier = var_12_0
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}

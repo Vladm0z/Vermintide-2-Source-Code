@@ -26,16 +26,16 @@ return {
 		skaven_storm_vermin = 3,
 		skaven_storm_vermin_with_shield = 3
 	},
-	add_buff = function(arg_1_0, arg_1_1, arg_1_2)
+	add_buff = function (arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0:add_buff(arg_1_1, arg_1_2, arg_1_1)
 	end,
-	add_debuff = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	add_debuff = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = true
 		local var_2_1 = arg_2_1:add_buff(arg_2_2, arg_2_3, arg_2_2, var_2_0)
 
 		arg_2_0[#arg_2_0 + 1] = var_2_1
 	end,
-	remove_buff = function(arg_3_0, arg_3_1, arg_3_2)
+	remove_buff = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = #arg_3_0
 		local var_3_1 = arg_3_0[var_3_0]
 
@@ -43,14 +43,14 @@ return {
 
 		arg_3_0[var_3_0] = nil
 	end,
-	server_start_function = function(arg_4_0, arg_4_1)
+	server_start_function = function (arg_4_0, arg_4_1)
 		arg_4_1.player_units = {}
 		arg_4_1.buff_system = Managers.state.entity:system("buff_system")
 		arg_4_1.player_manager = Managers.player
 		arg_4_1.buff_name = "mutator_bloodlust"
 		arg_4_1.debuff_name = "mutator_bloodlust_debuff"
 	end,
-	server_update_function = function(arg_5_0, arg_5_1)
+	server_update_function = function (arg_5_0, arg_5_1)
 		local var_5_0 = Managers.time:time("game")
 		local var_5_1 = arg_5_1.template
 		local var_5_2 = arg_5_1.player_units
@@ -74,7 +74,7 @@ return {
 			end
 		end
 	end,
-	server_ai_killed_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not arg_6_1.player_manager:is_player_unit(arg_6_3) then
 			return
 		end
@@ -110,7 +110,7 @@ return {
 
 		var_6_5.add_debuff_at_t = Managers.time:time("game") + var_6_2.debuff_start_time
 	end,
-	server_stop_function = function(arg_7_0, arg_7_1, arg_7_2)
+	server_stop_function = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = arg_7_1.player_units
 
 		for iter_7_0, iter_7_1 in pairs(var_7_0) do

@@ -2,7 +2,7 @@
 
 BotNavTransitionExtension = class(BotNavTransitionExtension)
 
-function BotNavTransitionExtension.init(arg_1_0, arg_1_1, arg_1_2)
+BotNavTransitionExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = Managers.state.network.is_server
 
@@ -11,7 +11,7 @@ function BotNavTransitionExtension.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function BotNavTransitionExtension.try_create_transition(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+BotNavTransitionExtension.try_create_transition = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = arg_2_1 or 0
 	local var_2_1 = Unit.world_position(arg_2_0, var_2_0)
 	local var_2_2 = Unit.world_position(arg_2_0, Unit.node(arg_2_0, "waypoint"))
@@ -37,7 +37,7 @@ function BotNavTransitionExtension.try_create_transition(arg_2_0, arg_2_1, arg_2
 	end
 end
 
-function BotNavTransitionExtension.destroy(arg_3_0)
+BotNavTransitionExtension.destroy = function (arg_3_0)
 	if arg_3_0._is_server and arg_3_0._transition_unit then
 		Managers.state.bot_nav_transition:unregister_transition(arg_3_0._transition_unit)
 	end

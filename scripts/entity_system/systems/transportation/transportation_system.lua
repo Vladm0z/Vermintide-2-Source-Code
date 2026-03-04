@@ -16,7 +16,7 @@ local var_0_1 = {
 	"rpc_remove_transporting_ai_units"
 }
 
-function TransportationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+TransportationSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	TransportationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -29,7 +29,7 @@ function TransportationSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._extension_lut = {}
 end
 
-function TransportationSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+TransportationSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = TransportationSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0._extension_lut[arg_2_2] = var_2_0
@@ -37,23 +37,23 @@ function TransportationSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	return var_2_0
 end
 
-function TransportationSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+TransportationSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._extension_lut[arg_3_1] = nil
 
 	return TransportationSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function TransportationSystem.world_updated(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+TransportationSystem.world_updated = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	for iter_4_0, iter_4_1 in pairs(arg_4_0._extension_lut) do
 		iter_4_1:world_updated(arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function TransportationSystem.clear_transporter_by_linked_unit(arg_5_0, arg_5_1)
+TransportationSystem.clear_transporter_by_linked_unit = function (arg_5_0, arg_5_1)
 	arg_5_0._transporting_extension_by_unit[arg_5_1] = nil
 end
 
-function TransportationSystem.try_claim_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+TransportationSystem.try_claim_unit = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._transporting_extension_by_unit[arg_6_1]
 
 	if not var_6_0 then
@@ -79,25 +79,25 @@ function TransportationSystem.try_claim_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return true
 end
 
-function TransportationSystem.destroy(arg_7_0)
+TransportationSystem.destroy = function (arg_7_0)
 	arg_7_0.network_event_delegate:unregister(arg_7_0)
 
 	arg_7_0.network_event_delegate = nil
 end
 
-function TransportationSystem.rpc_hot_join_sync_linker_transporting(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+TransportationSystem.rpc_hot_join_sync_linker_transporting = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = Level.unit_by_index(LevelHelper:current_level(arg_8_0.world), arg_8_2)
 
 	ScriptUnit.extension(var_8_0, "transportation_system"):rpc_hot_join_sync_linker_transporting(arg_8_3)
 end
 
-function TransportationSystem.rpc_hot_join_sync_linker_transport_state(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+TransportationSystem.rpc_hot_join_sync_linker_transport_state = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = Level.unit_by_index(LevelHelper:current_level(arg_9_0.world), arg_9_2)
 
 	ScriptUnit.extension(var_9_0, "transportation_system"):rpc_hot_join_sync_linker_transport_state(arg_9_3, arg_9_4)
 end
 
-function TransportationSystem.rpc_add_transporting_ai_units(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+TransportationSystem.rpc_add_transporting_ai_units = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = Level.unit_by_index(LevelHelper:current_level(arg_10_0.world), arg_10_2)
 	local var_10_1 = ScriptUnit.extension(var_10_0, "transportation_system")
 	local var_10_2 = Managers.state.network.unit_storage
@@ -111,7 +111,7 @@ function TransportationSystem.rpc_add_transporting_ai_units(arg_10_0, arg_10_1, 
 	end
 end
 
-function TransportationSystem.rpc_remove_transporting_ai_units(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+TransportationSystem.rpc_remove_transporting_ai_units = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = Level.unit_by_index(LevelHelper:current_level(arg_11_0.world), arg_11_2)
 	local var_11_1 = ScriptUnit.extension(var_11_0, "transportation_system")
 	local var_11_2 = Managers.state.network.unit_storage
@@ -123,7 +123,7 @@ function TransportationSystem.rpc_remove_transporting_ai_units(arg_11_0, arg_11_
 	end
 end
 
-function TransportationSystem.rpc_hot_join_sync_linker_transport_generic_units(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+TransportationSystem.rpc_hot_join_sync_linker_transport_generic_units = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = Level.unit_by_index(LevelHelper:current_level(arg_12_0.world), arg_12_2)
 	local var_12_1 = ScriptUnit.extension(var_12_0, "transportation_system")
 	local var_12_2 = Managers.state.network
@@ -140,7 +140,7 @@ function TransportationSystem.rpc_hot_join_sync_linker_transport_generic_units(a
 	end
 end
 
-function TransportationSystem.rpc_add_transporting_generic_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+TransportationSystem.rpc_add_transporting_generic_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = Managers.state.network:game_object_or_level_unit(arg_13_3, arg_13_4)
 
 	if var_13_0 then

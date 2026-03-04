@@ -7679,17 +7679,17 @@ WeaponSkins.skins = var_0_0
 
 DLCUtils.require_list("weapon_skins_file_names")
 
-function WeaponSkins.item_has_skin_table(arg_1_0)
+WeaponSkins.item_has_skin_table = function (arg_1_0)
 	return WeaponSkins.skins[arg_1_0] ~= nil
 end
 
-function WeaponSkins.will_have_skin(arg_2_0)
+WeaponSkins.will_have_skin = function (arg_2_0)
 	local var_2_0 = arg_2_0
 
 	return WeaponSkins.skin_weights[var_2_0] > math.random(1, 100)
 end
 
-function WeaponSkins.is_matching_skin(arg_3_0, arg_3_1)
+WeaponSkins.is_matching_skin = function (arg_3_0, arg_3_1)
 	local var_3_0 = ItemMasterList[arg_3_0].skin_combination_table
 	local var_3_1 = WeaponSkins.skin_combinations[var_3_0]
 
@@ -7712,7 +7712,7 @@ function WeaponSkins.is_matching_skin(arg_3_0, arg_3_1)
 	return false
 end
 
-function WeaponSkins.matching_weapon_skin_item_key(arg_4_0)
+WeaponSkins.matching_weapon_skin_item_key = function (arg_4_0)
 	if not WeaponSkins._matching_weapon_skin_item_keys then
 		WeaponSkins._matching_weapon_skin_item_keys = {}
 

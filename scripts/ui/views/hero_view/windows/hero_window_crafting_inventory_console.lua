@@ -15,7 +15,7 @@ local var_0_12 = "trigger_cycle_previous"
 HeroWindowCraftingInventoryConsole = class(HeroWindowCraftingInventoryConsole)
 HeroWindowCraftingInventoryConsole.NAME = "HeroWindowCraftingInventoryConsole"
 
-function HeroWindowCraftingInventoryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCraftingInventoryConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCraftingInventoryConsole")
 
 	arg_1_0.params = arg_1_1
@@ -65,7 +65,7 @@ function HeroWindowCraftingInventoryConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_inventory_grid(var_1_2)
 end
 
-function HeroWindowCraftingInventoryConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowCraftingInventoryConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings
@@ -76,7 +76,7 @@ function HeroWindowCraftingInventoryConsole._start_transition_animation(arg_2_0,
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowCraftingInventoryConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowCraftingInventoryConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
 	local var_3_0 = {}
@@ -132,7 +132,7 @@ function HeroWindowCraftingInventoryConsole.create_ui_elements(arg_3_0, arg_3_1,
 	arg_3_0:_set_input_blocked(false)
 end
 
-function HeroWindowCraftingInventoryConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowCraftingInventoryConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCraftingInventoryConsole")
 
 	arg_4_0.ui_animator = nil
@@ -145,7 +145,7 @@ function HeroWindowCraftingInventoryConsole.on_exit(arg_4_0, arg_4_1)
 	arg_4_0.parent:set_filter_active(false)
 end
 
-function HeroWindowCraftingInventoryConsole._input_service(arg_5_0)
+HeroWindowCraftingInventoryConsole._input_service = function (arg_5_0)
 	local var_5_0 = arg_5_0.parent
 
 	if var_5_0:is_friends_list_active() then
@@ -155,7 +155,7 @@ function HeroWindowCraftingInventoryConsole._input_service(arg_5_0)
 	return var_5_0:window_input_service()
 end
 
-function HeroWindowCraftingInventoryConsole.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowCraftingInventoryConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_10 then
 		var_0_10 = false
 
@@ -187,7 +187,7 @@ function HeroWindowCraftingInventoryConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_filter_status(arg_7_0)
+HeroWindowCraftingInventoryConsole._update_filter_status = function (arg_7_0)
 	local var_7_0, var_7_1 = arg_7_0.parent:filter_search_disabled()
 	local var_7_2 = arg_7_0._widgets_by_name.input.content
 
@@ -196,7 +196,7 @@ function HeroWindowCraftingInventoryConsole._update_filter_status(arg_7_0)
 	var_7_2.search_filters_hotspot.disable_button = var_7_0
 end
 
-function HeroWindowCraftingInventoryConsole._update_filter_reset(arg_8_0, arg_8_1)
+HeroWindowCraftingInventoryConsole._update_filter_reset = function (arg_8_0, arg_8_1)
 	if arg_8_0.parent:filter_reset() or arg_8_1 then
 		local var_8_0 = arg_8_0._filter_widget.content
 
@@ -214,11 +214,11 @@ function HeroWindowCraftingInventoryConsole._update_filter_reset(arg_8_0, arg_8_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowCraftingInventoryConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function HeroWindowCraftingInventoryConsole._update_animations(arg_10_0, arg_10_1)
+HeroWindowCraftingInventoryConsole._update_animations = function (arg_10_0, arg_10_1)
 	arg_10_0.ui_animator:update(arg_10_1)
 
 	local var_10_0 = arg_10_0._animations
@@ -241,7 +241,7 @@ function HeroWindowCraftingInventoryConsole._update_animations(arg_10_0, arg_10_
 	UIWidgetUtils.animate_default_button(arg_10_0._pc_filter_widgets_by_name.apply_button, arg_10_1)
 end
 
-function HeroWindowCraftingInventoryConsole._is_button_pressed(arg_11_0, arg_11_1)
+HeroWindowCraftingInventoryConsole._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content
 	local var_11_1 = var_11_0.button_hotspot or var_11_0.hotspot
 
@@ -252,7 +252,7 @@ function HeroWindowCraftingInventoryConsole._is_button_pressed(arg_11_0, arg_11_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._is_button_hovered(arg_12_0, arg_12_1)
+HeroWindowCraftingInventoryConsole._is_button_hovered = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content
 
 	if (var_12_0.button_hotspot or var_12_0.hotspot).on_hover_enter then
@@ -260,7 +260,7 @@ function HeroWindowCraftingInventoryConsole._is_button_hovered(arg_12_0, arg_12_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._handle_filter_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+HeroWindowCraftingInventoryConsole._handle_filter_input = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not arg_13_0.parent:filter_active() then
 		return false
 	end
@@ -296,7 +296,7 @@ function HeroWindowCraftingInventoryConsole._handle_filter_input(arg_13_0, arg_1
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._handle_filer_widgets_sounds(arg_14_0)
+HeroWindowCraftingInventoryConsole._handle_filer_widgets_sounds = function (arg_14_0)
 	local var_14_0 = arg_14_0._filter_widget
 	local var_14_1 = arg_14_0._widgets_by_name.input
 
@@ -346,7 +346,7 @@ function HeroWindowCraftingInventoryConsole._handle_filer_widgets_sounds(arg_14_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0.parent:filter_active()
 	local var_15_1 = arg_15_0.parent:filter_selected()
 
@@ -416,15 +416,15 @@ function HeroWindowCraftingInventoryConsole._handle_gamepad_filter_input(arg_15_
 	return var_15_0 or var_15_1
 end
 
-function HeroWindowCraftingInventoryConsole.filter_selected(arg_16_0)
+HeroWindowCraftingInventoryConsole.filter_selected = function (arg_16_0)
 	return arg_16_0.parent:filter_selected()
 end
 
-function HeroWindowCraftingInventoryConsole.filter_active(arg_17_0)
+HeroWindowCraftingInventoryConsole.filter_active = function (arg_17_0)
 	return arg_17_0.parent:filter_active()
 end
 
-function HeroWindowCraftingInventoryConsole._set_filter_selected(arg_18_0, arg_18_1)
+HeroWindowCraftingInventoryConsole._set_filter_selected = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._item_grid
 	local var_18_1 = Managers.input:is_device_active("gamepad")
 
@@ -439,7 +439,7 @@ function HeroWindowCraftingInventoryConsole._set_filter_selected(arg_18_0, arg_1
 	arg_18_0.parent:set_filter_selected(arg_18_1)
 end
 
-function HeroWindowCraftingInventoryConsole._handle_input(arg_19_0, arg_19_1, arg_19_2)
+HeroWindowCraftingInventoryConsole._handle_input = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0:_input_service()
 
 	if not Managers.input:is_device_active("gamepad") then
@@ -500,7 +500,7 @@ function HeroWindowCraftingInventoryConsole._handle_input(arg_19_0, arg_19_1, ar
 	arg_19_0:_handle_recipe_inputs(arg_19_1, arg_19_2)
 end
 
-function HeroWindowCraftingInventoryConsole._handle_gamepad_input(arg_20_0, arg_20_1, arg_20_2)
+HeroWindowCraftingInventoryConsole._handle_gamepad_input = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0.parent
 	local var_20_1 = arg_20_0:_input_service()
 	local var_20_2 = arg_20_0._item_grid
@@ -559,7 +559,7 @@ function HeroWindowCraftingInventoryConsole._handle_gamepad_input(arg_20_0, arg_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._set_input_blocked(arg_21_0, arg_21_1)
+HeroWindowCraftingInventoryConsole._set_input_blocked = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.input
 
 	if arg_21_1 then
@@ -578,7 +578,7 @@ function HeroWindowCraftingInventoryConsole._set_input_blocked(arg_21_0, arg_21_
 	arg_21_0.parent.parent:set_input_blocked(arg_21_1)
 end
 
-function HeroWindowCraftingInventoryConsole._handle_search_input(arg_22_0, arg_22_1, arg_22_2)
+HeroWindowCraftingInventoryConsole._handle_search_input = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = Managers.input:is_device_active("gamepad")
 	local var_22_1 = arg_22_0:_input_service()
 	local var_22_2 = arg_22_0._widgets_by_name.input.content
@@ -699,7 +699,7 @@ end
 
 local var_0_13 = {}
 
-function HeroWindowCraftingInventoryConsole._do_search(arg_23_0, arg_23_1, arg_23_2)
+HeroWindowCraftingInventoryConsole._do_search = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._search_query = arg_23_1
 	arg_23_0._filter_query = arg_23_2 or arg_23_0._filter_query or var_0_13
 	arg_23_0._widgets_by_name.input.content.search_query = arg_23_1
@@ -752,7 +752,7 @@ function HeroWindowCraftingInventoryConsole._do_search(arg_23_0, arg_23_1, arg_2
 	arg_23_0:_play_sound("Play_hud_select")
 end
 
-function HeroWindowCraftingInventoryConsole._handle_recipe_inputs(arg_24_0, arg_24_1, arg_24_2)
+HeroWindowCraftingInventoryConsole._handle_recipe_inputs = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0:_input_service()
 	local var_24_1 = var_0_1[arg_24_0._selected_craft_page_name]
 
@@ -761,7 +761,7 @@ function HeroWindowCraftingInventoryConsole._handle_recipe_inputs(arg_24_0, arg_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_page_info(arg_25_0)
+HeroWindowCraftingInventoryConsole._update_page_info = function (arg_25_0)
 	local var_25_0, var_25_1 = arg_25_0._item_grid:get_page_info()
 
 	if var_25_0 ~= arg_25_0._current_page or var_25_1 ~= arg_25_0._total_pages then
@@ -779,7 +779,7 @@ function HeroWindowCraftingInventoryConsole._update_page_info(arg_25_0)
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_crafting_material_panel(arg_26_0)
+HeroWindowCraftingInventoryConsole._update_crafting_material_panel = function (arg_26_0)
 	local var_26_0 = Managers.backend:get_interface("items")
 	local var_26_1 = UISettings.crafting_material_icons_small
 	local var_26_2 = UISettings.crafting_material_order
@@ -815,7 +815,7 @@ function HeroWindowCraftingInventoryConsole._update_crafting_material_panel(arg_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_inventory_items(arg_27_0)
+HeroWindowCraftingInventoryConsole._update_inventory_items = function (arg_27_0)
 	local var_27_0 = arg_27_0._item_grid
 	local var_27_1 = arg_27_0.parent
 	local var_27_2 = var_27_1.inventory_sync_id
@@ -842,7 +842,7 @@ function HeroWindowCraftingInventoryConsole._update_inventory_items(arg_27_0)
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_disabled_item_icon(arg_28_0)
+HeroWindowCraftingInventoryConsole._update_disabled_item_icon = function (arg_28_0)
 	local var_28_0 = arg_28_0._item_grid
 	local var_28_1 = arg_28_0.parent:disabled_item_icon()
 
@@ -853,7 +853,7 @@ function HeroWindowCraftingInventoryConsole._update_disabled_item_icon(arg_28_0)
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._update_disabled_backend_ids(arg_29_0)
+HeroWindowCraftingInventoryConsole._update_disabled_backend_ids = function (arg_29_0)
 	local var_29_0 = arg_29_0._item_grid
 	local var_29_1 = arg_29_0.parent.disabled_backend_ids_sync_id
 
@@ -872,12 +872,12 @@ function HeroWindowCraftingInventoryConsole._update_disabled_backend_ids(arg_29_
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._exit(arg_30_0, arg_30_1)
+HeroWindowCraftingInventoryConsole._exit = function (arg_30_0, arg_30_1)
 	arg_30_0.exit = true
 	arg_30_0.exit_level_id = arg_30_1
 end
 
-function HeroWindowCraftingInventoryConsole.draw(arg_31_0, arg_31_1)
+HeroWindowCraftingInventoryConsole.draw = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0.ui_renderer
 	local var_31_1 = arg_31_0.ui_top_renderer
 	local var_31_2 = arg_31_0.ui_scenegraph
@@ -909,11 +909,11 @@ function HeroWindowCraftingInventoryConsole.draw(arg_31_0, arg_31_1)
 	UIRenderer.end_pass(var_31_1)
 end
 
-function HeroWindowCraftingInventoryConsole._play_sound(arg_32_0, arg_32_1)
+HeroWindowCraftingInventoryConsole._play_sound = function (arg_32_0, arg_32_1)
 	arg_32_0.parent:play_sound(arg_32_1)
 end
 
-function HeroWindowCraftingInventoryConsole._change_category_by_name(arg_33_0, arg_33_1)
+HeroWindowCraftingInventoryConsole._change_category_by_name = function (arg_33_0, arg_33_1)
 	for iter_33_0, iter_33_1 in ipairs(var_0_0) do
 		if iter_33_1.name == arg_33_1 then
 			arg_33_0:_change_category_by_index(iter_33_0)
@@ -923,7 +923,7 @@ function HeroWindowCraftingInventoryConsole._change_category_by_name(arg_33_0, a
 	end
 end
 
-function HeroWindowCraftingInventoryConsole._change_category_by_index(arg_34_0, arg_34_1, arg_34_2)
+HeroWindowCraftingInventoryConsole._change_category_by_index = function (arg_34_0, arg_34_1, arg_34_2)
 	if arg_34_2 then
 		arg_34_1 = arg_34_0._current_category_index or 1
 	end
@@ -961,13 +961,13 @@ function HeroWindowCraftingInventoryConsole._change_category_by_index(arg_34_0, 
 	return true
 end
 
-function HeroWindowCraftingInventoryConsole.change_item_filter(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+HeroWindowCraftingInventoryConsole.change_item_filter = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	arg_35_2 = arg_35_2 or arg_35_2 == nil
 
 	arg_35_0._item_grid:change_item_filter(arg_35_1, arg_35_2, arg_35_3)
 end
 
-function HeroWindowCraftingInventoryConsole._update_selected_item_tooltip(arg_36_0, arg_36_1)
+HeroWindowCraftingInventoryConsole._update_selected_item_tooltip = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._item_grid:selected_item()
 	local var_36_1 = var_36_0 and var_36_0.backend_id
 
@@ -978,7 +978,7 @@ function HeroWindowCraftingInventoryConsole._update_selected_item_tooltip(arg_36
 	arg_36_0._selected_backend_id = var_36_1
 end
 
-function HeroWindowCraftingInventoryConsole._setup_input_buttons(arg_37_0)
+HeroWindowCraftingInventoryConsole._setup_input_buttons = function (arg_37_0)
 	local var_37_0 = arg_37_0.parent:window_input_service()
 	local var_37_1 = UISettings.get_gamepad_input_texture_data(var_37_0, var_0_11, true)
 	local var_37_2 = UISettings.get_gamepad_input_texture_data(var_37_0, var_0_12, true)
@@ -1006,7 +1006,7 @@ function HeroWindowCraftingInventoryConsole._setup_input_buttons(arg_37_0)
 	var_37_5.content.texture_id = var_37_2.texture
 end
 
-function HeroWindowCraftingInventoryConsole._set_gamepad_input_buttons_visibility(arg_38_0, arg_38_1)
+HeroWindowCraftingInventoryConsole._set_gamepad_input_buttons_visibility = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._widgets_by_name
 	local var_38_1 = var_38_0.input_icon_next
 	local var_38_2 = var_38_0.input_icon_previous
@@ -1019,7 +1019,7 @@ function HeroWindowCraftingInventoryConsole._set_gamepad_input_buttons_visibilit
 	var_38_4.content.visible = arg_38_1
 end
 
-function HeroWindowCraftingInventoryConsole._handle_gamepad_activity(arg_39_0, arg_39_1)
+HeroWindowCraftingInventoryConsole._handle_gamepad_activity = function (arg_39_0, arg_39_1)
 	if arg_39_0.parent.parent:input_blocked() then
 		return
 	end

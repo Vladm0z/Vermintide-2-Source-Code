@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatIdleAction = class(BTCombatIdleAction, BTNode)
 
-function BTCombatIdleAction.init(arg_1_0, ...)
+BTCombatIdleAction.init = function (arg_1_0, ...)
 	BTCombatIdleAction.super.init(arg_1_0, ...)
 end
 
@@ -18,18 +18,18 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTCombatIdleAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTCombatIdleAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0:_check_if_should_idle(arg_3_1, arg_3_2)
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTCombatIdleAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCombatIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.combat_idling = nil
 end
 
 local var_0_1 = 0.0001
 
-function BTCombatIdleAction._check_if_should_idle(arg_5_0, arg_5_1, arg_5_2)
+BTCombatIdleAction._check_if_should_idle = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_2.combat_idling then
 		local var_5_0 = arg_5_2.locomotion_extension
 
@@ -41,7 +41,7 @@ function BTCombatIdleAction._check_if_should_idle(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BTCombatIdleAction._init_idle_anim(arg_6_0, arg_6_1, arg_6_2)
+BTCombatIdleAction._init_idle_anim = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.network
 	local var_6_1 = "idle"
 	local var_6_2 = arg_6_0._tree_node.action_data
@@ -86,7 +86,7 @@ end
 
 local var_0_2 = Unit.alive
 
-function BTCombatIdleAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTCombatIdleAction.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	arg_7_0:_check_if_should_idle(arg_7_1, arg_7_2)
 
 	local var_7_0 = arg_7_2.target_unit

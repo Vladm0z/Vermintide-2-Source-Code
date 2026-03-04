@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StoreWindowBackground = class(StoreWindowBackground)
 StoreWindowBackground.NAME = "StoreWindowBackground"
 
-function StoreWindowBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowBackground.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowBackground")
 
 	arg_1_0._params = arg_1_1
@@ -27,7 +27,7 @@ function StoreWindowBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StoreWindowBackground._create_viewport_definition(arg_2_0)
+StoreWindowBackground._create_viewport_definition = function (arg_2_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
@@ -66,7 +66,7 @@ function StoreWindowBackground._create_viewport_definition(arg_2_0)
 	}
 end
 
-function StoreWindowBackground._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StoreWindowBackground._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0._viewport_widget then
 		UIWidget.destroy(arg_3_0.ui_renderer, arg_3_0._viewport_widget)
 
@@ -102,7 +102,7 @@ function StoreWindowBackground._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function StoreWindowBackground.on_exit(arg_4_0, arg_4_1)
+StoreWindowBackground.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate StoreWindowBackground")
 
 	arg_4_0._ui_animator = nil
@@ -114,12 +114,12 @@ function StoreWindowBackground.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StoreWindowBackground.update(arg_5_0, arg_5_1, arg_5_2)
+StoreWindowBackground.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_animations(arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function StoreWindowBackground.post_update(arg_6_0, arg_6_1, arg_6_2)
+StoreWindowBackground.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0._viewport_widget and arg_6_0._viewport_widget_definition then
 		arg_6_0._viewport_widget = UIWidget.init(arg_6_0._viewport_widget_definition)
 
@@ -127,7 +127,7 @@ function StoreWindowBackground.post_update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function StoreWindowBackground._hide_object_sets(arg_7_0)
+StoreWindowBackground._hide_object_sets = function (arg_7_0)
 	local var_7_0 = arg_7_0._viewport_widget.element.pass_data[1]
 	local var_7_1 = arg_7_0._viewport_widget_definition.style.viewport.level_name
 	local var_7_2 = var_7_0.level
@@ -147,7 +147,7 @@ function StoreWindowBackground._hide_object_sets(arg_7_0)
 	end
 end
 
-function StoreWindowBackground._update_animations(arg_8_0, arg_8_1, arg_8_2)
+StoreWindowBackground._update_animations = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -162,7 +162,7 @@ function StoreWindowBackground._update_animations(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function StoreWindowBackground._is_button_pressed(arg_9_0, arg_9_1)
+StoreWindowBackground._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -172,7 +172,7 @@ function StoreWindowBackground._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function StoreWindowBackground._is_stepper_button_pressed(arg_10_0, arg_10_1)
+StoreWindowBackground._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content
 	local var_10_1 = var_10_0.button_hotspot_left
 	local var_10_2 = var_10_0.button_hotspot_right
@@ -188,7 +188,7 @@ function StoreWindowBackground._is_stepper_button_pressed(arg_10_0, arg_10_1)
 	end
 end
 
-function StoreWindowBackground._draw(arg_11_0, arg_11_1)
+StoreWindowBackground._draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_renderer
 	local var_11_1 = arg_11_0._ui_top_renderer
 	local var_11_2 = arg_11_0._ui_scenegraph
@@ -209,6 +209,6 @@ function StoreWindowBackground._draw(arg_11_0, arg_11_1)
 	UIRenderer.end_pass(var_11_0)
 end
 
-function StoreWindowBackground._play_sound(arg_12_0, arg_12_1)
+StoreWindowBackground._play_sound = function (arg_12_0, arg_12_1)
 	arg_12_0._parent:play_sound(arg_12_1)
 end

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_game_play_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pes_activate_ability_grail_knight_non_drunk",
 		name = "pes_activate_ability_grail_knight_non_drunk",

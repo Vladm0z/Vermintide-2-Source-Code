@@ -2,7 +2,7 @@
 
 NavTagVolumeUtils = NavTagVolumeUtils or {}
 
-function NavTagVolumeUtils.nav_tags_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+NavTagVolumeUtils.nav_tags_from_position = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	local var_1_0 = arg_1_4 and LAYER_ID_MAPPING[arg_1_4]
 	local var_1_1 = GwNavQueries.tag_volumes_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_2
@@ -32,7 +32,7 @@ function NavTagVolumeUtils.nav_tags_from_position(arg_1_0, arg_1_1, arg_1_2, arg
 	return var_1_2
 end
 
-function NavTagVolumeUtils.inside_nav_tag_layer(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+NavTagVolumeUtils.inside_nav_tag_layer = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = LAYER_ID_MAPPING[arg_2_4]
 	local var_2_1 = GwNavQueries.tag_volumes_from_position(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_2
@@ -57,7 +57,7 @@ function NavTagVolumeUtils.inside_nav_tag_layer(arg_2_0, arg_2_1, arg_2_2, arg_2
 	return var_2_2
 end
 
-function NavTagVolumeUtils.inside_level_volume_layer(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+NavTagVolumeUtils.inside_level_volume_layer = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_1.level_volumes_by_layer[arg_3_3]
 
 	if not var_3_0 then

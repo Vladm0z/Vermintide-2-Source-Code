@@ -61,7 +61,7 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
 			end
 		},
@@ -105,7 +105,7 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
 			end
 		},
@@ -122,7 +122,7 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_0("chaos_berzerkers_small") < 1
 			end
 		},
@@ -198,14 +198,14 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_0("chaos_marauder_with_shield") < 3 and var_0_0("chaos_marauder") < 4
 			end
 		},
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_0("skaven_clan_rat") < 3 and var_0_0("skaven_slave") < 4
 			end
 		},
@@ -285,7 +285,7 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_0("chaos_berzerkers_small") < 1 and var_0_0("chaos_shields") < 1 and var_0_0("chaos_warriors") < 1 and var_0_0("skaven_clan_rat") < 2 and var_0_0("skaven_slave") < 2
 			end
 		},

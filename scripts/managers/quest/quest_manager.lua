@@ -20,7 +20,7 @@ end
 
 QuestManager = class(QuestManager)
 
-function QuestManager.init(arg_1_0, arg_1_1)
+QuestManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._statistics_db = arg_1_1
 	arg_1_0._backend_interface_quests = Managers.backend:get_interface("quests")
 
@@ -29,7 +29,7 @@ function QuestManager.init(arg_1_0, arg_1_1)
 	arg_1_0:on_quests_updated()
 end
 
-function QuestManager.event_stat_incremented(arg_2_0, arg_2_1, ...)
+QuestManager.event_stat_incremented = function (arg_2_0, arg_2_1, ...)
 	local var_2_0 = arg_2_0._backend_interface_quests:get_quests()
 	local var_2_1 = var_2_0.daily
 	local var_2_2 = var_2_0.weekly
@@ -48,7 +48,7 @@ function QuestManager.event_stat_incremented(arg_2_0, arg_2_1, ...)
 	end
 end
 
-function QuestManager.on_achievement_event(arg_3_0, arg_3_1, arg_3_2)
+QuestManager.on_achievement_event = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._backend_interface_quests:get_quests().event
 	local var_3_1 = var_0_0.quests
 	local var_3_2 = arg_3_0._statistics_db
@@ -67,7 +67,7 @@ function QuestManager.on_achievement_event(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function QuestManager._increment_quest_stats(arg_4_0, arg_4_1, arg_4_2, ...)
+QuestManager._increment_quest_stats = function (arg_4_0, arg_4_1, arg_4_2, ...)
 	local var_4_0 = var_0_0.quests
 	local var_4_1 = arg_4_0._statistics_db
 	local var_4_2 = select("#", ...)
@@ -106,7 +106,7 @@ function QuestManager._increment_quest_stats(arg_4_0, arg_4_1, arg_4_2, ...)
 	end
 end
 
-function QuestManager.update(arg_5_0, arg_5_1, arg_5_2)
+QuestManager.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._reward_poll_id
 	local var_5_1 = Managers.player:local_player()
 
@@ -176,7 +176,7 @@ end
 
 local var_0_7 = {}
 
-function QuestManager.get_quest_outline(arg_6_0)
+QuestManager.get_quest_outline = function (arg_6_0)
 	local var_6_0 = arg_6_0._backend_interface_quests:get_quests()
 	local var_6_1 = table.clone(var_0_1)
 	local var_6_2 = var_6_1.categories
@@ -268,7 +268,7 @@ function QuestManager.get_quest_outline(arg_6_0)
 	return var_6_1
 end
 
-function QuestManager.get_data_by_id(arg_7_0, arg_7_1)
+QuestManager.get_data_by_id = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._backend_interface_quests
 	local var_7_1 = var_7_0:get_quest_key(arg_7_1)
 	local var_7_2 = var_0_0.quests
@@ -380,7 +380,7 @@ function QuestManager.get_data_by_id(arg_7_0, arg_7_1)
 	}
 end
 
-function QuestManager.has_any_unclaimed_quests(arg_8_0)
+QuestManager.has_any_unclaimed_quests = function (arg_8_0)
 	local var_8_0 = arg_8_0:get_quest_outline()
 
 	for iter_8_0, iter_8_1 in ipairs(var_8_0.categories) do
@@ -400,7 +400,7 @@ function QuestManager.has_any_unclaimed_quests(arg_8_0)
 	return false
 end
 
-function QuestManager.can_refresh_daily_quest(arg_9_0)
+QuestManager.can_refresh_daily_quest = function (arg_9_0)
 	if not arg_9_0._backend_interface_quests:can_refresh_daily_quest() then
 		return nil, "Refresh Unavailable"
 	end
@@ -412,7 +412,7 @@ function QuestManager.can_refresh_daily_quest(arg_9_0)
 	return true
 end
 
-function QuestManager.refresh_daily_quest(arg_10_0, arg_10_1)
+QuestManager.refresh_daily_quest = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._backend_interface_quests
 	local var_10_1 = var_10_0:get_quest_key(arg_10_1)
 	local var_10_2 = var_10_0:refresh_daily_quest(var_10_1)
@@ -422,11 +422,11 @@ function QuestManager.refresh_daily_quest(arg_10_0, arg_10_1)
 	return var_10_2
 end
 
-function QuestManager.polling_quest_refresh(arg_11_0)
+QuestManager.polling_quest_refresh = function (arg_11_0)
 	return arg_11_0._refresh_poll_id and true or false
 end
 
-function QuestManager.claim_reward(arg_12_0, arg_12_1)
+QuestManager.claim_reward = function (arg_12_0, arg_12_1)
 	if arg_12_0._reward_poll_id or arg_12_0._refresh_poll_id then
 		return nil, "Polling in progress."
 	end
@@ -445,7 +445,7 @@ function QuestManager.claim_reward(arg_12_0, arg_12_1)
 	return var_12_2
 end
 
-function QuestManager.claim_multiple_quest_rewards(arg_13_0, arg_13_1)
+QuestManager.claim_multiple_quest_rewards = function (arg_13_0, arg_13_1)
 	if arg_13_0._reward_poll_id or arg_13_0._refresh_poll_id then
 		return nil, "Polling in progress."
 	end
@@ -473,11 +473,11 @@ function QuestManager.claim_multiple_quest_rewards(arg_13_0, arg_13_1)
 	return var_13_4
 end
 
-function QuestManager.polling_quest_reward(arg_14_0)
+QuestManager.polling_quest_reward = function (arg_14_0)
 	return arg_14_0._reward_poll_id and true or false
 end
 
-function QuestManager.can_claim_quest_rewards(arg_15_0, arg_15_1)
+QuestManager.can_claim_quest_rewards = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._backend_interface_quests
 	local var_15_1 = var_15_0:get_quest_key(arg_15_1)
 
@@ -496,7 +496,7 @@ function QuestManager.can_claim_quest_rewards(arg_15_0, arg_15_1)
 	return true
 end
 
-function QuestManager.can_claim_multiple_quest_rewards(arg_16_0, arg_16_1)
+QuestManager.can_claim_multiple_quest_rewards = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._backend_interface_quests
 	local var_16_1 = {}
 
@@ -526,15 +526,15 @@ function QuestManager.can_claim_multiple_quest_rewards(arg_16_0, arg_16_1)
 	return true, var_16_5
 end
 
-function QuestManager.time_until_new_daily_quest(arg_17_0)
+QuestManager.time_until_new_daily_quest = function (arg_17_0)
 	return (arg_17_0._backend_interface_quests:get_daily_quest_update_time())
 end
 
-function QuestManager.time_until_new_weekly_quest(arg_18_0)
+QuestManager.time_until_new_weekly_quest = function (arg_18_0)
 	return (arg_18_0._backend_interface_quests:get_weekly_quest_update_time())
 end
 
-function QuestManager.time_left_on_event_quest(arg_19_0)
+QuestManager.time_left_on_event_quest = function (arg_19_0)
 	local var_19_0 = arg_19_0._backend_interface_quests
 	local var_19_1 = var_19_0:get_quests().event
 
@@ -553,7 +553,7 @@ function QuestManager.time_left_on_event_quest(arg_19_0)
 	return 0
 end
 
-function QuestManager.update_quests(arg_20_0)
+QuestManager.update_quests = function (arg_20_0)
 	local var_20_0 = arg_20_0._backend_interface_quests
 
 	if var_20_0.update_quests then
@@ -563,7 +563,7 @@ end
 
 local var_0_8 = {}
 
-function QuestManager.on_quests_updated(arg_21_0)
+QuestManager.on_quests_updated = function (arg_21_0)
 	local var_21_0 = {}
 	local var_21_1 = arg_21_0._backend_interface_quests:get_quests().event or var_0_8
 	local var_21_2 = var_0_0.quests

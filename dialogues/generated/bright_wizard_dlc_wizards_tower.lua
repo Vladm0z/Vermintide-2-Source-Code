@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_wizards_tower.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_enchantment_dummy_trigger",

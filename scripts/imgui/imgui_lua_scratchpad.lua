@@ -47,7 +47,7 @@ ImguiLuaScratchpad._TYPE_TO_COLOR = setmetatable({
 		255
 	}
 }, {
-	__index = function()
+	__index = function ()
 		return var_0_0
 	end
 })
@@ -55,7 +55,7 @@ ImguiLuaScratchpad._TYPE_TO_COLOR = setmetatable({
 local var_0_1, var_0_2 = pcall(require, "jit.util")
 local var_0_3 = {
 	__mode = "kv",
-	__index = function(arg_2_0, arg_2_1)
+	__index = function (arg_2_0, arg_2_1)
 		local var_2_0 = var_0_2.funcinfo(arg_2_1)
 
 		arg_2_0[arg_2_1] = var_2_0
@@ -65,7 +65,7 @@ local var_0_3 = {
 }
 local var_0_4 = string.format
 
-function ImguiLuaScratchpad.init(arg_3_0)
+ImguiLuaScratchpad.init = function (arg_3_0)
 	if not script_data.lua_inspector_config then
 		local var_3_0 = Development.setting("lua_inspector_config")
 
@@ -85,11 +85,11 @@ function ImguiLuaScratchpad.init(arg_3_0)
 	arg_3_0._func_info_magic = setmetatable({}, var_0_3)
 end
 
-function ImguiLuaScratchpad.update(arg_4_0)
+ImguiLuaScratchpad.update = function (arg_4_0)
 	return
 end
 
-function ImguiLuaScratchpad.draw(arg_5_0)
+ImguiLuaScratchpad.draw = function (arg_5_0)
 	local var_5_0 = Imgui.begin_window("Lua Inspector")
 
 	script_data.lua_inspector_config.persistent = Imgui.checkbox("Is persistent", script_data.lua_inspector_config.persistent)
@@ -134,7 +134,7 @@ function ImguiLuaScratchpad.draw(arg_5_0)
 	return var_5_0
 end
 
-function ImguiLuaScratchpad._inspect_pair(arg_6_0, arg_6_1, arg_6_2)
+ImguiLuaScratchpad._inspect_pair = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1 = tostring(arg_6_1)
 
 	local var_6_0 = type(arg_6_2)
@@ -160,7 +160,7 @@ if var_0_5 then
 	var_0_6.cdef(" void *ShellExecuteA(void*, const char*, const char*, const char*, const char*, int); ")
 end
 
-function ImguiLuaScratchpad._inspect_function(arg_7_0, arg_7_1, arg_7_2)
+ImguiLuaScratchpad._inspect_function = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Imgui.tree_node(arg_7_1, false)
 
 	Imgui.same_line()
@@ -224,7 +224,7 @@ local function var_0_8(arg_8_0, arg_8_1)
 	end
 end
 
-function ImguiLuaScratchpad._inspect_table(arg_9_0, arg_9_1, arg_9_2)
+ImguiLuaScratchpad._inspect_table = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Imgui.tree_node(arg_9_1, false)
 	local var_9_1 = getmetatable(arg_9_2)
 	local var_9_2 = rawget(arg_9_2, "___is_class_metatable___") and "class" or var_9_1 and var_9_1 ~= true and var_9_1.___is_class_metatable___ and table.find(_G, var_9_1) or "table"
@@ -255,7 +255,7 @@ function ImguiLuaScratchpad._inspect_table(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function ImguiLuaScratchpad._load_expression(arg_10_0)
+ImguiLuaScratchpad._load_expression = function (arg_10_0)
 	arg_10_0._thunk, arg_10_0._error = loadstring("return " .. script_data.lua_inspector_config.expr, "Input")
 
 	if not arg_10_0._thunk then
@@ -312,7 +312,7 @@ local function var_0_9(arg_11_0)
 	}
 end
 
-function ImguiLuaScratchpad._execute_thunk(arg_12_0)
+ImguiLuaScratchpad._execute_thunk = function (arg_12_0)
 	local var_12_0, var_12_1 = xpcall(arg_12_0._thunk, var_0_9)
 
 	if var_12_0 then
@@ -329,6 +329,6 @@ function ImguiLuaScratchpad._execute_thunk(arg_12_0)
 	end
 end
 
-function ImguiLuaScratchpad.is_persistent(arg_13_0)
+ImguiLuaScratchpad.is_persistent = function (arg_13_0)
 	return script_data.lua_inspector_config.persistent
 end

@@ -5,16 +5,16 @@ local var_0_1 = require("scripts/tests/testify_snippets")
 
 TestCases = {}
 
-function TestCases.smoke()
-	Testify:run_case(function(arg_2_0, arg_2_1)
+TestCases.smoke = function ()
+	Testify:run_case(function (arg_2_0, arg_2_1)
 		var_0_1.load_level({
 			level_key = "inn_level"
 		})
 	end)
 end
 
-function TestCases.load_level(arg_3_0, arg_3_1, arg_3_2)
-	Testify:run_case(function(arg_4_0, arg_4_1)
+TestCases.load_level = function (arg_3_0, arg_3_1, arg_3_2)
+	Testify:run_case(function (arg_4_0, arg_4_1)
 		var_0_1.load_level({
 			level_key = arg_3_0
 		})
@@ -29,14 +29,14 @@ function TestCases.load_level(arg_3_0, arg_3_1, arg_3_2)
 	end)
 end
 
-function TestCases.wait_for_state_ingame_reached()
-	Testify:run_case(function(arg_6_0, arg_6_1)
+TestCases.wait_for_state_ingame_reached = function ()
+	Testify:run_case(function (arg_6_0, arg_6_1)
 		Testify:make_request("wait_for_state_ingame_reached")
 	end)
 end
 
-function TestCases.equip_weapons(arg_7_0)
-	Testify:run_case(function(arg_8_0, arg_8_1)
+TestCases.equip_weapons = function (arg_7_0)
+	Testify:run_case(function (arg_8_0, arg_8_1)
 		if arg_7_0 then
 			Testify:make_request("set_game_mode_to_weave")
 			var_0_1.load_weave("weave_1")
@@ -90,12 +90,12 @@ function TestCases.equip_weapons(arg_7_0)
 	end)
 end
 
-function TestCases.equip_magic_weapons()
+TestCases.equip_magic_weapons = function ()
 	TestCases.equip_weapons(true)
 end
 
-function TestCases.load_all_weaves()
-	Testify:run_case(function()
+TestCases.load_all_weaves = function ()
+	Testify:run_case(function ()
 		Testify:make_request("set_game_mode_to_weave")
 
 		for iter_11_0 = 1, 160 do
@@ -108,8 +108,8 @@ function TestCases.load_all_weaves()
 	end)
 end
 
-function TestCases.load_weave(arg_12_0)
-	Testify:run_case(function()
+TestCases.load_weave = function (arg_12_0)
+	Testify:run_case(function ()
 		Testify:make_request("set_game_mode_to_weave")
 
 		local var_13_0 = "weave_" .. arg_12_0
@@ -119,8 +119,8 @@ function TestCases.load_weave(arg_12_0)
 	end)
 end
 
-function TestCases.run_through_level(arg_14_0, arg_14_1)
-	Testify:run_case(function(arg_15_0, arg_15_1)
+TestCases.run_through_level = function (arg_14_0, arg_14_1)
+	Testify:run_case(function (arg_15_0, arg_15_1)
 		local var_15_0 = ""
 
 		var_0_1.set_script_data({
@@ -220,8 +220,8 @@ function TestCases.run_through_level(arg_14_0, arg_14_1)
 	end)
 end
 
-function TestCases.run_through_weave(arg_16_0)
-	Testify:run_case(function(arg_17_0, arg_17_1)
+TestCases.run_through_weave = function (arg_16_0)
+	Testify:run_case(function (arg_17_0, arg_17_1)
 		local var_17_0 = ""
 
 		var_0_1.set_script_data({
@@ -372,8 +372,8 @@ function TestCases.run_through_weave(arg_16_0)
 	end)
 end
 
-function TestCases.load_level_environment_variations(arg_18_0)
-	Testify:run_case(function()
+TestCases.load_level_environment_variations = function (arg_18_0)
+	Testify:run_case(function ()
 		local var_19_0 = "Variations loaded:\n"
 		local var_19_1 = Testify:make_request("get_level_weather_variations", arg_18_0)
 
@@ -403,8 +403,8 @@ function TestCases.load_level_environment_variations(arg_18_0)
 	end)
 end
 
-function TestCases.measure_performance(arg_20_0, arg_20_1)
-	Testify:run_case(function()
+TestCases.measure_performance = function (arg_20_0, arg_20_1)
+	Testify:run_case(function ()
 		var_0_1.disable_ai()
 		var_0_1.disable_level_intro_dialogue()
 		var_0_1.load_level({
@@ -462,16 +462,16 @@ function TestCases.measure_performance(arg_20_0, arg_20_1)
 	end)
 end
 
-function TestCases.measure_deus_performance(arg_22_0)
+TestCases.measure_deus_performance = function (arg_22_0)
 	TestCases.measure_performance(arg_22_0, true)
 end
 
-function TestCases.run_through_deus_level(arg_23_0)
+TestCases.run_through_deus_level = function (arg_23_0)
 	TestCases.run_through_level(arg_23_0, true)
 end
 
-function TestCases.run_through_deus_level_terror_event(arg_24_0, arg_24_1, arg_24_2)
-	Testify:run_case(function(arg_25_0, arg_25_1)
+TestCases.run_through_deus_level_terror_event = function (arg_24_0, arg_24_1, arg_24_2)
+	Testify:run_case(function (arg_25_0, arg_25_1)
 		arg_24_1 = arg_24_1 or "deus_TEST_ALL_BREED"
 		arg_24_2 = arg_24_2 or 10
 
@@ -575,8 +575,8 @@ function TestCases.run_through_deus_level_terror_event(arg_24_0, arg_24_1, arg_2
 	end)
 end
 
-function TestCases.run_through_pvp_level(arg_26_0)
-	Testify:run_case(function(arg_27_0, arg_27_1)
+TestCases.run_through_pvp_level = function (arg_26_0)
+	Testify:run_case(function (arg_27_0, arg_27_1)
 		local var_27_0 = ""
 
 		var_0_1.set_script_data({
@@ -694,8 +694,8 @@ function TestCases.run_through_pvp_level(arg_26_0)
 	end)
 end
 
-function TestCases.spawn_all_enemies(arg_28_0)
-	Testify:run_case(function(arg_29_0, arg_29_1)
+TestCases.spawn_all_enemies = function (arg_28_0)
+	Testify:run_case(function (arg_29_0, arg_29_1)
 		local var_29_0 = ""
 		local var_29_1 = {}
 		local var_29_2 = {}
@@ -793,8 +793,8 @@ function TestCases.spawn_all_enemies(arg_28_0)
 	end)
 end
 
-function TestCases.equip_deus_power_ups(arg_30_0)
-	Testify:run_case(function(arg_31_0, arg_31_1)
+TestCases.equip_deus_power_ups = function (arg_30_0)
+	Testify:run_case(function (arg_31_0, arg_31_1)
 		local var_31_0 = cjson.decode(arg_30_0 or "{}")
 		local var_31_1 = var_31_0.power_up_type
 		local var_31_2 = var_31_0.terror_event_name
@@ -876,8 +876,8 @@ function TestCases.equip_deus_power_ups(arg_30_0)
 	end)
 end
 
-function TestCases.write_morris_levels_to_file()
-	Testify:run_case(function(arg_33_0, arg_33_1)
+TestCases.write_morris_levels_to_file = function ()
+	Testify:run_case(function (arg_33_0, arg_33_1)
 		local var_33_0 = "C:\\deus_erb_variables.yaml"
 		local var_33_1 = io.open(var_33_0, "w")
 
@@ -905,8 +905,8 @@ function TestCases.write_morris_levels_to_file()
 	end)
 end
 
-function TestCases.equip_hats()
-	Testify:run_case(function(arg_35_0, arg_35_1)
+TestCases.equip_hats = function ()
+	Testify:run_case(function (arg_35_0, arg_35_1)
 		var_0_1.load_level({
 			level_key = "inn_level"
 		})
@@ -928,8 +928,8 @@ function TestCases.equip_hats()
 	end)
 end
 
-function TestCases.versus_multiplayer_server(arg_36_0)
-	Testify:run_case(function(arg_37_0, arg_37_1)
+TestCases.versus_multiplayer_server = function (arg_36_0)
+	Testify:run_case(function (arg_37_0, arg_37_1)
 		local var_37_0 = cjson.decode(arg_36_0 or "{}")
 		local var_37_1 = var_37_0.do_early_win or false
 		local var_37_2 = var_37_0.match_outcome or "draw"
@@ -1008,8 +1008,8 @@ function TestCases.versus_multiplayer_server(arg_36_0)
 	end)
 end
 
-function TestCases.versus_multiplayer_client(arg_38_0)
-	Testify:run_case(function(arg_39_0, arg_39_1)
+TestCases.versus_multiplayer_client = function (arg_38_0)
+	Testify:run_case(function (arg_39_0, arg_39_1)
 		var_0_1.set_script_data({
 			player_invincible = true,
 			versus_config = {

@@ -74,7 +74,7 @@ end
 
 return {
 	hide_from_player_ui = true,
-	tweak_pack_spawning_settings = function(arg_2_0, arg_2_1)
+	tweak_pack_spawning_settings = function (arg_2_0, arg_2_1)
 		local var_2_0, var_2_1 = Managers.state.difficulty:get_difficulty()
 		local var_2_2 = var_0_4(var_0_0, var_2_1)
 
@@ -85,7 +85,7 @@ return {
 
 		MutatorUtils.tweak_pack_spawning_settings_override_chance(arg_2_1, var_2_3, var_2_4)
 	end,
-	server_ai_spawned_function = function(arg_3_0, arg_3_1, arg_3_2)
+	server_ai_spawned_function = function (arg_3_0, arg_3_1, arg_3_2)
 		if Unit.get_data(arg_3_2, "breed").boss then
 			local var_3_0, var_3_1 = Managers.state.difficulty:get_difficulty()
 			local var_3_2 = DifficultyTweak.range

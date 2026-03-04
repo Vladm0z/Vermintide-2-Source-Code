@@ -4,7 +4,7 @@ BackendInterfaceItemPlayfab = class(BackendInterfaceItemPlayfab)
 
 local var_0_0 = require("PlayFab.PlayFabClientApi")
 
-function BackendInterfaceItemPlayfab.init(arg_1_0, arg_1_1)
+BackendInterfaceItemPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._loadouts = {}
 	arg_1_0._items = {}
 	arg_1_0._game_mode_specific_items = {}
@@ -34,7 +34,7 @@ local var_0_1 = {
 	"slot_pose"
 }
 
-function BackendInterfaceItemPlayfab._refresh(arg_2_0)
+BackendInterfaceItemPlayfab._refresh = function (arg_2_0)
 	if not DEDICATED_SERVER then
 		arg_2_0:_refresh_career_loadouts()
 		arg_2_0:_refresh_default_loadouts()
@@ -53,7 +53,7 @@ function BackendInterfaceItemPlayfab._refresh(arg_2_0)
 	arg_2_0:_unmark_favorites()
 end
 
-function BackendInterfaceItemPlayfab._refresh_items(arg_3_0)
+BackendInterfaceItemPlayfab._refresh_items = function (arg_3_0)
 	local var_3_0 = arg_3_0._backend_mirror
 	local var_3_1 = var_3_0:get_all_inventory_items()
 	local var_3_2 = var_3_0:get_unlocked_weapon_skins()
@@ -90,7 +90,7 @@ function BackendInterfaceItemPlayfab._refresh_items(arg_3_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab._unmark_favorites(arg_4_0)
+BackendInterfaceItemPlayfab._unmark_favorites = function (arg_4_0)
 	local var_4_0 = ItemHelper.get_favorite_backend_ids()
 
 	if var_4_0 then
@@ -104,7 +104,7 @@ function BackendInterfaceItemPlayfab._unmark_favorites(arg_4_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab._refresh_loadouts(arg_5_0)
+BackendInterfaceItemPlayfab._refresh_loadouts = function (arg_5_0)
 	local var_5_0 = arg_5_0._loadouts
 	local var_5_1 = arg_5_0._backend_mirror
 
@@ -123,7 +123,7 @@ end
 
 local var_0_2 = {}
 
-function BackendInterfaceItemPlayfab.refresh_bot_loadouts(arg_6_0)
+BackendInterfaceItemPlayfab.refresh_bot_loadouts = function (arg_6_0)
 	arg_6_0._bot_loadouts = table.clone(arg_6_0._loadouts)
 
 	local var_6_0 = arg_6_0._bot_loadouts
@@ -156,7 +156,7 @@ function BackendInterfaceItemPlayfab.refresh_bot_loadouts(arg_6_0)
 	print("[BackendInterfaceItemPlayfab] Refreshing bot loadout")
 end
 
-function BackendInterfaceItemPlayfab._refresh_career_loadouts(arg_7_0)
+BackendInterfaceItemPlayfab._refresh_career_loadouts = function (arg_7_0)
 	local var_7_0 = arg_7_0._career_loadouts
 	local var_7_1 = arg_7_0._backend_mirror
 
@@ -189,7 +189,7 @@ function BackendInterfaceItemPlayfab._refresh_career_loadouts(arg_7_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab._refresh_default_loadouts(arg_8_0)
+BackendInterfaceItemPlayfab._refresh_default_loadouts = function (arg_8_0)
 	local var_8_0 = arg_8_0._default_loadouts
 	local var_8_1 = arg_8_0._backend_mirror
 
@@ -220,7 +220,7 @@ function BackendInterfaceItemPlayfab._refresh_default_loadouts(arg_8_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab._setup_default_overrides(arg_9_0)
+BackendInterfaceItemPlayfab._setup_default_overrides = function (arg_9_0)
 	local var_9_0 = Managers.mechanism:current_mechanism_name()
 	local var_9_1 = PlayerData.loadout_selection and PlayerData.loadout_selection[var_9_0] or {}
 
@@ -245,12 +245,12 @@ function BackendInterfaceItemPlayfab._setup_default_overrides(arg_9_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab.set_loadout_index(arg_10_0, arg_10_1, arg_10_2)
+BackendInterfaceItemPlayfab.set_loadout_index = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._backend_mirror:set_loadout_index(arg_10_1, arg_10_2)
 	Managers.telemetry_events:loadout_equipped()
 end
 
-function BackendInterfaceItemPlayfab.add_loadout(arg_11_0, arg_11_1)
+BackendInterfaceItemPlayfab.add_loadout = function (arg_11_0, arg_11_1)
 	arg_11_0._backend_mirror:add_loadout(arg_11_1)
 
 	local var_11_0 = arg_11_0:get_career_loadouts(arg_11_1)
@@ -258,7 +258,7 @@ function BackendInterfaceItemPlayfab.add_loadout(arg_11_0, arg_11_1)
 	Managers.telemetry_events:loadout_created(#var_11_0, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
 end
 
-function BackendInterfaceItemPlayfab.delete_loadout(arg_12_0, arg_12_1, arg_12_2)
+BackendInterfaceItemPlayfab.delete_loadout = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._backend_mirror:delete_loadout(arg_12_1, arg_12_2)
 
 	local var_12_0 = arg_12_0:get_career_loadouts(arg_12_1)
@@ -266,17 +266,17 @@ function BackendInterfaceItemPlayfab.delete_loadout(arg_12_0, arg_12_1, arg_12_2
 	Managers.telemetry_events:loadout_deleted(#var_12_0, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
 end
 
-function BackendInterfaceItemPlayfab.set_default_override(arg_13_0, arg_13_1, arg_13_2)
+BackendInterfaceItemPlayfab.set_default_override = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._default_loadouts[arg_13_1]
 
 	arg_13_0._default_loadout_overrides[arg_13_1] = var_13_0 and var_13_0[arg_13_2]
 end
 
-function BackendInterfaceItemPlayfab.get_default_override(arg_14_0, arg_14_1)
+BackendInterfaceItemPlayfab.get_default_override = function (arg_14_0, arg_14_1)
 	return arg_14_0._default_loadout_overrides[arg_14_1]
 end
 
-function BackendInterfaceItemPlayfab.ready(arg_15_0)
+BackendInterfaceItemPlayfab.ready = function (arg_15_0)
 	if arg_15_0._items then
 		return true
 	end
@@ -284,31 +284,31 @@ function BackendInterfaceItemPlayfab.ready(arg_15_0)
 	return false
 end
 
-function BackendInterfaceItemPlayfab.type(arg_16_0)
+BackendInterfaceItemPlayfab.type = function (arg_16_0)
 	return "backend"
 end
 
-function BackendInterfaceItemPlayfab.update(arg_17_0)
+BackendInterfaceItemPlayfab.update = function (arg_17_0)
 	return
 end
 
-function BackendInterfaceItemPlayfab.refresh_entities(arg_18_0)
+BackendInterfaceItemPlayfab.refresh_entities = function (arg_18_0)
 	return
 end
 
-function BackendInterfaceItemPlayfab.check_for_errors(arg_19_0)
+BackendInterfaceItemPlayfab.check_for_errors = function (arg_19_0)
 	return
 end
 
-function BackendInterfaceItemPlayfab.num_current_item_server_requests(arg_20_0)
+BackendInterfaceItemPlayfab.num_current_item_server_requests = function (arg_20_0)
 	return 0
 end
 
-function BackendInterfaceItemPlayfab.set_properties_serialized(arg_21_0, arg_21_1, arg_21_2)
+BackendInterfaceItemPlayfab.set_properties_serialized = function (arg_21_0, arg_21_1, arg_21_2)
 	return
 end
 
-function BackendInterfaceItemPlayfab.get_traits(arg_22_0, arg_22_1)
+BackendInterfaceItemPlayfab.get_traits = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0:get_item_from_id(arg_22_1)
 
 	if var_22_0 then
@@ -318,23 +318,23 @@ function BackendInterfaceItemPlayfab.get_traits(arg_22_0, arg_22_1)
 	return nil
 end
 
-function BackendInterfaceItemPlayfab.set_runes(arg_23_0, arg_23_1, arg_23_2)
+BackendInterfaceItemPlayfab.set_runes = function (arg_23_0, arg_23_1, arg_23_2)
 	return
 end
 
-function BackendInterfaceItemPlayfab.get_runes(arg_24_0, arg_24_1)
+BackendInterfaceItemPlayfab.get_runes = function (arg_24_0, arg_24_1)
 	return
 end
 
-function BackendInterfaceItemPlayfab.socket_rune(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+BackendInterfaceItemPlayfab.socket_rune = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	return
 end
 
-function BackendInterfaceItemPlayfab.get_skin(arg_26_0, arg_26_1)
+BackendInterfaceItemPlayfab.get_skin = function (arg_26_0, arg_26_1)
 	return arg_26_0:get_item_from_id(arg_26_1).skin
 end
 
-function BackendInterfaceItemPlayfab.get_item_masterlist_data(arg_27_0, arg_27_1)
+BackendInterfaceItemPlayfab.get_item_masterlist_data = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0:get_item_from_id(arg_27_1)
 
 	if var_27_0 then
@@ -342,31 +342,31 @@ function BackendInterfaceItemPlayfab.get_item_masterlist_data(arg_27_0, arg_27_1
 	end
 end
 
-function BackendInterfaceItemPlayfab.get_item_amount(arg_28_0, arg_28_1)
+BackendInterfaceItemPlayfab.get_item_amount = function (arg_28_0, arg_28_1)
 	return arg_28_0:get_item_from_id(arg_28_1).RemainingUses or 1
 end
 
-function BackendInterfaceItemPlayfab.get_item_power_level(arg_29_0, arg_29_1)
+BackendInterfaceItemPlayfab.get_item_power_level = function (arg_29_0, arg_29_1)
 	return arg_29_0:get_item_from_id(arg_29_1).power_level
 end
 
-function BackendInterfaceItemPlayfab.get_item_rarity(arg_30_0, arg_30_1)
+BackendInterfaceItemPlayfab.get_item_rarity = function (arg_30_0, arg_30_1)
 	return arg_30_0:get_item_from_id(arg_30_1).rarity
 end
 
-function BackendInterfaceItemPlayfab.get_key(arg_31_0, arg_31_1)
+BackendInterfaceItemPlayfab.get_key = function (arg_31_0, arg_31_1)
 	return arg_31_0:get_item_from_id(arg_31_1).key
 end
 
-function BackendInterfaceItemPlayfab.get_item_from_id(arg_32_0, arg_32_1)
+BackendInterfaceItemPlayfab.get_item_from_id = function (arg_32_0, arg_32_1)
 	return arg_32_0:get_all_backend_items()[arg_32_1]
 end
 
-function BackendInterfaceItemPlayfab.get_backend_id_from_cosmetic_item(arg_33_0, arg_33_1)
+BackendInterfaceItemPlayfab.get_backend_id_from_cosmetic_item = function (arg_33_0, arg_33_1)
 	return arg_33_0._backend_mirror:get_unlocked_cosmetics()[arg_33_1]
 end
 
-function BackendInterfaceItemPlayfab.get_item_from_key(arg_34_0, arg_34_1)
+BackendInterfaceItemPlayfab.get_item_from_key = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0:get_all_backend_items()
 
 	for iter_34_0, iter_34_1 in pairs(var_34_0) do
@@ -376,7 +376,7 @@ function BackendInterfaceItemPlayfab.get_item_from_key(arg_34_0, arg_34_1)
 	end
 end
 
-function BackendInterfaceItemPlayfab.get_weapon_skin_from_skin_key(arg_35_0, arg_35_1)
+BackendInterfaceItemPlayfab.get_weapon_skin_from_skin_key = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0:get_all_fake_backend_items()
 
 	for iter_35_0, iter_35_1 in pairs(var_35_0) do
@@ -386,7 +386,7 @@ function BackendInterfaceItemPlayfab.get_weapon_skin_from_skin_key(arg_35_0, arg
 	end
 end
 
-function BackendInterfaceItemPlayfab.free_inventory_slots(arg_36_0)
+BackendInterfaceItemPlayfab.free_inventory_slots = function (arg_36_0)
 	local var_36_0 = arg_36_0:get_all_backend_items()
 	local var_36_1 = 0
 	local var_36_2 = ItemHelper.is_fake_item
@@ -400,7 +400,7 @@ function BackendInterfaceItemPlayfab.free_inventory_slots(arg_36_0)
 	return UISettings.max_inventory_items - var_36_1
 end
 
-function BackendInterfaceItemPlayfab.get_all_backend_items(arg_37_0)
+BackendInterfaceItemPlayfab.get_all_backend_items = function (arg_37_0)
 	if arg_37_0._dirty then
 		arg_37_0:_refresh()
 	end
@@ -408,7 +408,7 @@ function BackendInterfaceItemPlayfab.get_all_backend_items(arg_37_0)
 	return arg_37_0._items
 end
 
-function BackendInterfaceItemPlayfab.get_all_fake_backend_items(arg_38_0)
+BackendInterfaceItemPlayfab.get_all_fake_backend_items = function (arg_38_0)
 	if arg_38_0._dirty then
 		arg_38_0:_refresh()
 	end
@@ -416,7 +416,7 @@ function BackendInterfaceItemPlayfab.get_all_fake_backend_items(arg_38_0)
 	return arg_38_0._fake_items
 end
 
-function BackendInterfaceItemPlayfab.get_loadout(arg_39_0)
+BackendInterfaceItemPlayfab.get_loadout = function (arg_39_0)
 	if arg_39_0._dirty then
 		arg_39_0:_refresh()
 	end
@@ -430,7 +430,7 @@ function BackendInterfaceItemPlayfab.get_loadout(arg_39_0)
 	return var_39_0
 end
 
-function BackendInterfaceItemPlayfab.get_bot_loadout(arg_40_0)
+BackendInterfaceItemPlayfab.get_bot_loadout = function (arg_40_0)
 	if arg_40_0._dirty then
 		arg_40_0:_refresh()
 	end
@@ -438,7 +438,7 @@ function BackendInterfaceItemPlayfab.get_bot_loadout(arg_40_0)
 	return arg_40_0._bot_loadouts
 end
 
-function BackendInterfaceItemPlayfab.get_career_loadouts(arg_41_0, arg_41_1)
+BackendInterfaceItemPlayfab.get_career_loadouts = function (arg_41_0, arg_41_1)
 	if arg_41_0._dirty then
 		arg_41_0:_refresh()
 	end
@@ -446,7 +446,7 @@ function BackendInterfaceItemPlayfab.get_career_loadouts(arg_41_0, arg_41_1)
 	return arg_41_0._career_loadouts[arg_41_1]
 end
 
-function BackendInterfaceItemPlayfab.get_selected_career_loadout(arg_42_0, arg_42_1)
+BackendInterfaceItemPlayfab.get_selected_career_loadout = function (arg_42_0, arg_42_1)
 	if arg_42_0._dirty then
 		arg_42_0:_refresh()
 	end
@@ -454,7 +454,7 @@ function BackendInterfaceItemPlayfab.get_selected_career_loadout(arg_42_0, arg_4
 	return arg_42_0._selected_career_custom_loadouts[arg_42_1]
 end
 
-function BackendInterfaceItemPlayfab.get_default_loadouts(arg_43_0, arg_43_1)
+BackendInterfaceItemPlayfab.get_default_loadouts = function (arg_43_0, arg_43_1)
 	if arg_43_0._dirty then
 		arg_43_0:_refresh()
 	end
@@ -462,7 +462,7 @@ function BackendInterfaceItemPlayfab.get_default_loadouts(arg_43_0, arg_43_1)
 	return arg_43_0._default_loadouts[arg_43_1]
 end
 
-function BackendInterfaceItemPlayfab.get_loadout_by_career_name(arg_44_0, arg_44_1, arg_44_2)
+BackendInterfaceItemPlayfab.get_loadout_by_career_name = function (arg_44_0, arg_44_1, arg_44_2)
 	if arg_44_0._dirty then
 		arg_44_0:_refresh()
 	end
@@ -479,7 +479,7 @@ function BackendInterfaceItemPlayfab.get_loadout_by_career_name(arg_44_0, arg_44
 	return var_44_1 and arg_44_2 and var_44_4 or arg_44_2 and var_44_2 and var_44_6 or var_44_7
 end
 
-function BackendInterfaceItemPlayfab.get_loadout_item_id(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+BackendInterfaceItemPlayfab.get_loadout_item_id = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = Managers.state.game_mode and Managers.state.game_mode:game_mode_key()
 	local var_45_1 = InventorySettings.bot_loadout_allowed_game_modes[var_45_0]
 	local var_45_2 = InventorySettings.default_loadout_allowed_game_modes[var_45_0]
@@ -503,29 +503,29 @@ function BackendInterfaceItemPlayfab.get_loadout_item_id(arg_45_0, arg_45_1, arg
 	return var_45_8 and var_45_8[arg_45_2]
 end
 
-function BackendInterfaceItemPlayfab.get_unlocked_weapon_poses(arg_46_0)
+BackendInterfaceItemPlayfab.get_unlocked_weapon_poses = function (arg_46_0)
 	return arg_46_0._backend_mirror:get_unlocked_weapon_poses()
 end
 
-function BackendInterfaceItemPlayfab.get_dirty_weapon_pose_data(arg_47_0)
+BackendInterfaceItemPlayfab.get_dirty_weapon_pose_data = function (arg_47_0)
 	return {
 		equipped_weapon_pose_skin = arg_47_0._dirty_weapon_pose_skins
 	}
 end
 
-function BackendInterfaceItemPlayfab.clear_dirty_weapon_pose_data(arg_48_0)
+BackendInterfaceItemPlayfab.clear_dirty_weapon_pose_data = function (arg_48_0)
 	table.clear(arg_48_0._dirty_weapon_pose_skins)
 end
 
-function BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skins(arg_49_0)
+BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skins = function (arg_49_0)
 	return arg_49_0._backend_mirror:get_equipped_weapon_pose_skins()
 end
 
-function BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skin(arg_50_0, arg_50_1)
+BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skin = function (arg_50_0, arg_50_1)
 	return arg_50_0._backend_mirror:get_equipped_weapon_pose_skin(arg_50_1)
 end
 
-function BackendInterfaceItemPlayfab.get_weapon_pose_from_pose_key(arg_51_0, arg_51_1)
+BackendInterfaceItemPlayfab.get_weapon_pose_from_pose_key = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0:get_all_fake_backend_items()
 
 	for iter_51_0, iter_51_1 in pairs(var_51_0) do
@@ -535,14 +535,14 @@ function BackendInterfaceItemPlayfab.get_weapon_pose_from_pose_key(arg_51_0, arg
 	end
 end
 
-function BackendInterfaceItemPlayfab.get_backend_id_from_unlocked_weapon_poses(arg_52_0, arg_52_1)
+BackendInterfaceItemPlayfab.get_backend_id_from_unlocked_weapon_poses = function (arg_52_0, arg_52_1)
 	local var_52_0 = ItemMasterList[arg_52_1].parent
 	local var_52_1 = arg_52_0:get_unlocked_weapon_poses()[var_52_0]
 
 	return var_52_1 and var_52_1[arg_52_1]
 end
 
-function BackendInterfaceItemPlayfab.set_weapon_pose_skin(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+BackendInterfaceItemPlayfab.set_weapon_pose_skin = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	if arg_53_2 then
 		local var_53_0 = arg_53_0._backend_mirror:get_equipped_weapon_pose_skins()[arg_53_1]
 
@@ -556,7 +556,7 @@ function BackendInterfaceItemPlayfab.set_weapon_pose_skin(arg_53_0, arg_53_1, ar
 	end
 end
 
-function BackendInterfaceItemPlayfab.get_cosmetic_loadout(arg_54_0, arg_54_1, arg_54_2)
+BackendInterfaceItemPlayfab.get_cosmetic_loadout = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = Managers.state.game_mode and Managers.state.game_mode:game_mode_key()
 	local var_54_1 = InventorySettings.bot_loadout_allowed_game_modes[var_54_0]
 	local var_54_2 = InventorySettings.default_loadout_allowed_game_modes[var_54_0]
@@ -570,19 +570,19 @@ function BackendInterfaceItemPlayfab.get_cosmetic_loadout(arg_54_0, arg_54_1, ar
 	return var_54_8.slot_hat, var_54_8.slot_skin, var_54_8.slot_frame
 end
 
-function BackendInterfaceItemPlayfab.get_item_name(arg_55_0, arg_55_1)
+BackendInterfaceItemPlayfab.get_item_name = function (arg_55_0, arg_55_1)
 	return arg_55_0:get_all_backend_items()[arg_55_1].key
 end
 
 local var_0_3 = {}
 
-function BackendInterfaceItemPlayfab.get_filtered_items(arg_56_0, arg_56_1, arg_56_2)
+BackendInterfaceItemPlayfab.get_filtered_items = function (arg_56_0, arg_56_1, arg_56_2)
 	local var_56_0 = arg_56_0:get_all_backend_items()
 
 	return (Managers.backend:get_interface("common"):filter_items(var_56_0, arg_56_1, arg_56_2 or var_0_3))
 end
 
-function BackendInterfaceItemPlayfab.set_loadout_item(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+BackendInterfaceItemPlayfab.set_loadout_item = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 	local var_57_0 = arg_57_0:get_all_backend_items()
 	local var_57_1
 
@@ -619,7 +619,7 @@ function BackendInterfaceItemPlayfab.set_loadout_item(arg_57_0, arg_57_1, arg_57
 	return true
 end
 
-function BackendInterfaceItemPlayfab.add_steam_items(arg_58_0, arg_58_1)
+BackendInterfaceItemPlayfab.add_steam_items = function (arg_58_0, arg_58_1)
 	arg_58_0._backend_mirror:add_steam_items(arg_58_1)
 	arg_58_0:_refresh_items()
 end
@@ -632,7 +632,7 @@ local var_0_4 = {
 	keep_decoration_painting = true
 }
 
-function BackendInterfaceItemPlayfab.get_unseen_item_rewards(arg_59_0)
+BackendInterfaceItemPlayfab.get_unseen_item_rewards = function (arg_59_0)
 	local var_59_0 = arg_59_0._backend_mirror:get_user_data("unseen_rewards")
 
 	if not var_59_0 then
@@ -664,35 +664,35 @@ function BackendInterfaceItemPlayfab.get_unseen_item_rewards(arg_59_0)
 	return var_59_2
 end
 
-function BackendInterfaceItemPlayfab.remove_item(arg_60_0, arg_60_1, arg_60_2)
+BackendInterfaceItemPlayfab.remove_item = function (arg_60_0, arg_60_1, arg_60_2)
 	return
 end
 
-function BackendInterfaceItemPlayfab.award_item(arg_61_0, arg_61_1)
+BackendInterfaceItemPlayfab.award_item = function (arg_61_0, arg_61_1)
 	return
 end
 
-function BackendInterfaceItemPlayfab.data_server_script(arg_62_0, arg_62_1, ...)
+BackendInterfaceItemPlayfab.data_server_script = function (arg_62_0, arg_62_1, ...)
 	return
 end
 
-function BackendInterfaceItemPlayfab.upgrades_failed_game(arg_63_0, arg_63_1, arg_63_2)
+BackendInterfaceItemPlayfab.upgrades_failed_game = function (arg_63_0, arg_63_1, arg_63_2)
 	return
 end
 
-function BackendInterfaceItemPlayfab.poll_upgrades_failed_game(arg_64_0)
+BackendInterfaceItemPlayfab.poll_upgrades_failed_game = function (arg_64_0)
 	return
 end
 
-function BackendInterfaceItemPlayfab.generate_item_server_loot(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6)
+BackendInterfaceItemPlayfab.generate_item_server_loot = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6)
 	return
 end
 
-function BackendInterfaceItemPlayfab.check_for_loot(arg_66_0)
+BackendInterfaceItemPlayfab.check_for_loot = function (arg_66_0)
 	return
 end
 
-function BackendInterfaceItemPlayfab.equipped_by(arg_67_0, arg_67_1)
+BackendInterfaceItemPlayfab.equipped_by = function (arg_67_0, arg_67_1)
 	local var_67_0 = arg_67_0:get_loadout()
 	local var_67_1 = {}
 
@@ -709,7 +709,7 @@ end
 
 local var_0_5 = {}
 
-function BackendInterfaceItemPlayfab.equipped_by_loadout(arg_68_0, arg_68_1)
+BackendInterfaceItemPlayfab.equipped_by_loadout = function (arg_68_0, arg_68_1)
 	local var_68_0 = arg_68_0._career_loadouts
 
 	table.clear(var_0_5)
@@ -732,7 +732,7 @@ function BackendInterfaceItemPlayfab.equipped_by_loadout(arg_68_0, arg_68_1)
 	return var_0_5
 end
 
-function BackendInterfaceItemPlayfab.is_equipped_by_any_loadout(arg_69_0, arg_69_1)
+BackendInterfaceItemPlayfab.is_equipped_by_any_loadout = function (arg_69_0, arg_69_1)
 	local var_69_0 = arg_69_0._career_loadouts
 	local var_69_1 = {}
 
@@ -749,19 +749,19 @@ function BackendInterfaceItemPlayfab.is_equipped_by_any_loadout(arg_69_0, arg_69
 	return var_69_1
 end
 
-function BackendInterfaceItemPlayfab.is_equipped(arg_70_0, arg_70_1, arg_70_2)
+BackendInterfaceItemPlayfab.is_equipped = function (arg_70_0, arg_70_1, arg_70_2)
 	return
 end
 
-function BackendInterfaceItemPlayfab.set_data_server_queue(arg_71_0, arg_71_1)
+BackendInterfaceItemPlayfab.set_data_server_queue = function (arg_71_0, arg_71_1)
 	return
 end
 
-function BackendInterfaceItemPlayfab.make_dirty(arg_72_0)
+BackendInterfaceItemPlayfab.make_dirty = function (arg_72_0)
 	arg_72_0._dirty = true
 end
 
-function BackendInterfaceItemPlayfab.has_item(arg_73_0, arg_73_1)
+BackendInterfaceItemPlayfab.has_item = function (arg_73_0, arg_73_1)
 	local var_73_0 = arg_73_0:get_all_backend_items()
 
 	for iter_73_0, iter_73_1 in pairs(var_73_0) do
@@ -773,7 +773,7 @@ function BackendInterfaceItemPlayfab.has_item(arg_73_0, arg_73_1)
 	return false
 end
 
-function BackendInterfaceItemPlayfab.has_weapon_illusion(arg_74_0, arg_74_1)
+BackendInterfaceItemPlayfab.has_weapon_illusion = function (arg_74_0, arg_74_1)
 	local var_74_0 = arg_74_0:get_all_fake_backend_items()
 
 	for iter_74_0, iter_74_1 in pairs(var_74_0) do
@@ -785,7 +785,7 @@ function BackendInterfaceItemPlayfab.has_weapon_illusion(arg_74_0, arg_74_1)
 	return false
 end
 
-function BackendInterfaceItemPlayfab.has_bundle_contents(arg_75_0, arg_75_1)
+BackendInterfaceItemPlayfab.has_bundle_contents = function (arg_75_0, arg_75_1)
 	if not arg_75_1 then
 		return false, false, nil
 	end
@@ -813,7 +813,7 @@ function BackendInterfaceItemPlayfab.has_bundle_contents(arg_75_0, arg_75_1)
 	return var_75_0, var_75_1, var_75_2
 end
 
-function BackendInterfaceItemPlayfab.get_item_template(arg_76_0, arg_76_1, arg_76_2)
+BackendInterfaceItemPlayfab.get_item_template = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = arg_76_1.temporary_template or arg_76_1.template
 	local var_76_1 = WeaponUtils.get_weapon_template(var_76_0)
 
@@ -836,7 +836,7 @@ function BackendInterfaceItemPlayfab.get_item_template(arg_76_0, arg_76_1, arg_7
 	fassert(false, "no item_template for item: " .. arg_76_1.key .. ", template name = " .. var_76_0)
 end
 
-function BackendInterfaceItemPlayfab.sum_best_power_levels(arg_77_0)
+BackendInterfaceItemPlayfab.sum_best_power_levels = function (arg_77_0)
 	local var_77_0 = script_data.sum_of_best_power_levels_override
 
 	if var_77_0 then
@@ -846,23 +846,23 @@ function BackendInterfaceItemPlayfab.sum_best_power_levels(arg_77_0)
 	end
 end
 
-function BackendInterfaceItemPlayfab.configure_game_mode_specific_items(arg_78_0, arg_78_1, arg_78_2)
+BackendInterfaceItemPlayfab.configure_game_mode_specific_items = function (arg_78_0, arg_78_1, arg_78_2)
 	arg_78_0._game_mode_specific_items[arg_78_1] = arg_78_2
 end
 
-function BackendInterfaceItemPlayfab.set_game_mode_specific_items(arg_79_0, arg_79_1)
+BackendInterfaceItemPlayfab.set_game_mode_specific_items = function (arg_79_0, arg_79_1)
 	arg_79_0._active_game_mode_specific_items = arg_79_0._game_mode_specific_items[arg_79_1]
 
 	arg_79_0:make_dirty()
 end
 
-function BackendInterfaceItemPlayfab.refresh_game_mode_specific_items(arg_80_0)
+BackendInterfaceItemPlayfab.refresh_game_mode_specific_items = function (arg_80_0)
 	arg_80_0:make_dirty()
 end
 
 local var_0_6 = 300
 
-function BackendInterfaceItemPlayfab.delete_marked_deeds(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+BackendInterfaceItemPlayfab.delete_marked_deeds = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 	arg_81_0._is_deleting_deeds = true
 	arg_81_2 = arg_81_2 or 1
 	arg_81_3 = arg_81_3 or var_0_6
@@ -877,7 +877,7 @@ function BackendInterfaceItemPlayfab.delete_marked_deeds(arg_81_0, arg_81_1, arg
 		var_81_1 = arg_81_1
 	end
 
-	local var_81_3 = table.map(var_81_1, function(arg_82_0)
+	local var_81_3 = table.map(var_81_1, function (arg_82_0)
 		return {
 			ItemInstanceId = arg_82_0.ItemInstanceId
 		}
@@ -904,7 +904,7 @@ function BackendInterfaceItemPlayfab.delete_marked_deeds(arg_81_0, arg_81_1, arg
 	arg_81_0._backend_mirror:request_queue():enqueue(var_81_4, var_81_6, true)
 end
 
-function BackendInterfaceItemPlayfab.delete_marked_deeds_request_cb(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5)
+BackendInterfaceItemPlayfab.delete_marked_deeds_request_cb = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5)
 	local var_83_0 = arg_83_5.FunctionResult
 	local var_83_1 = var_83_0.item_revokes
 	local var_83_2 = arg_83_0._backend_mirror
@@ -939,17 +939,17 @@ function BackendInterfaceItemPlayfab.delete_marked_deeds_request_cb(arg_83_0, ar
 	end
 end
 
-function BackendInterfaceItemPlayfab.is_deleting_deeds(arg_84_0)
+BackendInterfaceItemPlayfab.is_deleting_deeds = function (arg_84_0)
 	return arg_84_0._is_deleting_deeds
 end
 
-function BackendInterfaceItemPlayfab._new_id(arg_85_0)
+BackendInterfaceItemPlayfab._new_id = function (arg_85_0)
 	arg_85_0._last_id = arg_85_0._last_id + 1
 
 	return arg_85_0._last_id
 end
 
-function BackendInterfaceItemPlayfab.can_delete_deeds(arg_86_0, arg_86_1, arg_86_2)
+BackendInterfaceItemPlayfab.can_delete_deeds = function (arg_86_0, arg_86_1, arg_86_2)
 	if #arg_86_1 == #arg_86_2 then
 		return true, arg_86_1, arg_86_2
 	end

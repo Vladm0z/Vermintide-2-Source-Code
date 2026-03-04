@@ -98,7 +98,7 @@ local function var_0_4(arg_3_0, arg_3_1)
 	return var_0_3(arg_3_0, arg_3_1)
 end
 
-function TrueFlightUtility.sort_prioritize_specials(arg_4_0, arg_4_1)
+TrueFlightUtility.sort_prioritize_specials = function (arg_4_0, arg_4_1)
 	var_0_0 = table.mirror_array(arg_4_0, FrameTable.alloc_table())
 	var_0_1 = arg_4_1
 
@@ -107,7 +107,7 @@ function TrueFlightUtility.sort_prioritize_specials(arg_4_0, arg_4_1)
 	return arg_4_0
 end
 
-function TrueFlightUtility.sort_prioritize_elites(arg_5_0, arg_5_1)
+TrueFlightUtility.sort_prioritize_elites = function (arg_5_0, arg_5_1)
 	var_0_0 = table.mirror_array(arg_5_0, FrameTable.alloc_table())
 	var_0_1 = arg_5_1
 
@@ -116,7 +116,7 @@ function TrueFlightUtility.sort_prioritize_elites(arg_5_0, arg_5_1)
 	return arg_5_0
 end
 
-function TrueFlightUtility.sort_prioritize_bosses(arg_6_0, arg_6_1)
+TrueFlightUtility.sort_prioritize_bosses = function (arg_6_0, arg_6_1)
 	var_0_0 = table.mirror_array(arg_6_0, FrameTable.alloc_table())
 	var_0_1 = arg_6_1
 
@@ -175,7 +175,7 @@ local function var_0_7(arg_8_0, arg_8_1)
 	return var_0_6[arg_8_0] > var_0_6[arg_8_1]
 end
 
-function TrueFlightUtility.sort(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
+TrueFlightUtility.sort = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
 	table.clear(var_0_6)
 
 	for iter_9_0 = 1, #arg_9_0 do

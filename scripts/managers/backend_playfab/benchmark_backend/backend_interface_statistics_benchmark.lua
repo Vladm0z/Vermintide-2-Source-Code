@@ -2,38 +2,38 @@
 
 BackendInterfaceStatisticsBenchmark = class(BackendInterfaceStatisticsBenchmark)
 
-function BackendInterfaceStatisticsBenchmark.update(arg_1_0, arg_1_1)
+BackendInterfaceStatisticsBenchmark.update = function (arg_1_0, arg_1_1)
 	return
 end
 
-function BackendInterfaceStatisticsBenchmark.init(arg_2_0, arg_2_1)
+BackendInterfaceStatisticsBenchmark.init = function (arg_2_0, arg_2_1)
 	return
 end
 
-function BackendInterfaceStatisticsBenchmark.ready(arg_3_0)
+BackendInterfaceStatisticsBenchmark.ready = function (arg_3_0)
 	return true
 end
 
-function BackendInterfaceStatisticsBenchmark.get_stats(arg_4_0)
+BackendInterfaceStatisticsBenchmark.get_stats = function (arg_4_0)
 	return {}
 end
 
-function BackendInterfaceStatisticsBenchmark.clear_dirty_flags(arg_5_0, arg_5_1)
+BackendInterfaceStatisticsBenchmark.clear_dirty_flags = function (arg_5_0, arg_5_1)
 	return
 end
 
-function BackendInterfaceStatisticsBenchmark.save(arg_6_0)
+BackendInterfaceStatisticsBenchmark.save = function (arg_6_0)
 	return
 end
 
-function BackendInterfaceStatisticsBenchmark.clear_saved_stats(arg_7_0)
+BackendInterfaceStatisticsBenchmark.clear_saved_stats = function (arg_7_0)
 	return
 end
 
-function BackendInterfaceStatisticsBenchmark.get_stat_save_request(arg_8_0)
+BackendInterfaceStatisticsBenchmark.get_stat_save_request = function (arg_8_0)
 	return nil
 end
 
-function BackendInterfaceStatisticsBenchmark.reset(arg_9_0)
+BackendInterfaceStatisticsBenchmark.reset = function (arg_9_0)
 	return
 end

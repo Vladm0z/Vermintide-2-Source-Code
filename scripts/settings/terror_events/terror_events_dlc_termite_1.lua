@@ -84,7 +84,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},
@@ -123,7 +123,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5 and var_0_1("skaven_plague_monk") < 1
 			end
 		},
@@ -153,7 +153,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("skaven_clan_rat") < 3 and var_0_1("skaven_slave") < 3
 			end
 		},
@@ -189,7 +189,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},
@@ -267,7 +267,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},

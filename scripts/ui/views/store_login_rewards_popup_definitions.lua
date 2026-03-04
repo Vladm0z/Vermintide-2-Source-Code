@@ -402,7 +402,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					texture_id = "item_illusion",
 					style_id = "item_illusion",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_illusion
 					end
 				},
@@ -419,7 +419,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					style_id = "item_tooltip",
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						local var_3_0 = Managers.input:is_device_active("gamepad")
 
 						return arg_3_0.is_hover or var_3_0 and arg_3_0.is_selected and arg_3_0.show_tooltips
@@ -429,7 +429,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "cursor",
 					texture_id = "cursor",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						if Managers.input:is_device_active("gamepad") then
 							return arg_4_0.is_selected
 						else
@@ -603,7 +603,7 @@ local function var_0_12(arg_5_0)
 					pass_type = "texture_frame",
 					style_id = "selection_frame",
 					texture_id = "selection_frame",
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return Managers.input:is_device_active("gamepad") and arg_6_0.selection_index == arg_6_0.day_index
 					end
 				},
@@ -616,7 +616,7 @@ local function var_0_12(arg_5_0)
 					pass_type = "texture_frame",
 					style_id = "glow",
 					texture_id = "glow",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.is_today
 					end
 				},
@@ -624,7 +624,7 @@ local function var_0_12(arg_5_0)
 					style_id = "bottom_glow",
 					pass_type = "texture_uv",
 					content_id = "bottom_glow",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.parent.is_today
 					end
 				},
@@ -632,7 +632,7 @@ local function var_0_12(arg_5_0)
 					style_id = "day_text",
 					pass_type = "text",
 					text_id = "day_text",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.calendar_type == "personal_time_strike"
 					end
 				},
@@ -640,7 +640,7 @@ local function var_0_12(arg_5_0)
 					style_id = "day_text_shadow",
 					pass_type = "text",
 					text_id = "day_text",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.calendar_type == "personal_time_strike"
 					end
 				},
@@ -648,7 +648,7 @@ local function var_0_12(arg_5_0)
 					style_id = "day_number",
 					pass_type = "text",
 					text_id = "day_number",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return not arg_11_0.is_today
 					end
 				},
@@ -656,7 +656,7 @@ local function var_0_12(arg_5_0)
 					style_id = "day_number_shadow",
 					pass_type = "text",
 					text_id = "day_number",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.is_today
 					end
 				},
@@ -664,7 +664,7 @@ local function var_0_12(arg_5_0)
 					texture_id = "day_number_texture",
 					style_id = "day_number_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.is_today
 					end
 				},
@@ -672,17 +672,17 @@ local function var_0_12(arg_5_0)
 					texture_id = "claimed",
 					style_id = "claimed",
 					pass_type = "texture",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.is_claimed
 					end
 				},
 				{
 					style_id = "unclaimed_tint",
 					pass_type = "rect",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.calendar_type == "calendar" and not arg_15_0.is_claimed and arg_15_0.day_index <= arg_15_0.current_day and not arg_15_0.is_loop
 					end,
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						if arg_16_0.calendar_type == "calendar" and not arg_16_0.is_claimed and arg_16_0.day_index <= arg_16_0.current_day and not arg_16_0.is_loop then
 							arg_16_1.color[1] = 120
 						end
@@ -1034,7 +1034,7 @@ local var_0_14 = {
 				style_id = "loading_icon",
 				pass_type = "rotated_texture",
 				texture_id = "loading_icon",
-				content_change_function = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+				content_change_function = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 					local var_17_0 = ((arg_17_1.progress or 0) + arg_17_3) % 1
 
 					arg_17_1.angle = math.pow(2, math.smoothstep(var_17_0, 0, 1)) * (math.pi * 2)
@@ -1076,7 +1076,7 @@ local var_0_17 = {
 				style_id = "outer_glow",
 				texture_id = "outer_glow",
 				pass_type = "texture_frame",
-				content_change_function = function(arg_18_0, arg_18_1)
+				content_change_function = function (arg_18_0, arg_18_1)
 					arg_18_1.color[1] = 150 + 105 * math.sin(5 * Managers.time:time("ui"))
 				end
 			}
@@ -1195,10 +1195,10 @@ local var_0_22 = {
 		{
 			name = "fade_in",
 			duration = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.alpha_multiplier = 0
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				arg_20_4.alpha_multiplier = math.easeOutCubic(arg_20_3)
 			end,
 			on_complete = NOP
@@ -1206,10 +1206,10 @@ local var_0_22 = {
 		{
 			name = "slide_in",
 			duration = 0.8,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				arg_21_0.window.local_position[2] = 432
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				arg_22_0.window.local_position[2] = math.round(432 * (1 - math.ease_out_elastic(arg_22_3)))
 			end,
 			on_complete = NOP
@@ -1218,10 +1218,10 @@ local var_0_22 = {
 			name = "fade_in_glows",
 			delay = 0.5,
 			duration = 0.8,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				arg_23_2.background_glows.content.alpha_multiplier = 0
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				arg_24_2.background_glows.content.alpha_multiplier = math.easeOutCubic(arg_24_3)
 			end,
 			on_complete = NOP
@@ -1231,10 +1231,10 @@ local var_0_22 = {
 		{
 			name = "fade_out",
 			duration = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				arg_25_3.alpha_multiplier = 1
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				arg_26_4.alpha_multiplier = 1 - math.easeOutCubic(arg_26_3)
 			end,
 			on_complete = NOP
@@ -1244,14 +1244,14 @@ local var_0_22 = {
 		{
 			name = "sigil",
 			duration = 0.25,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				local var_27_0 = arg_27_2.style.claimed
 
 				arg_27_3.og_size_x = var_27_0.texture_size[1]
 				arg_27_3.og_size_y = var_27_0.texture_size[2]
 				var_27_0.color[1] = 0
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.easeInCubic(arg_28_3)
 				local var_28_1 = arg_28_2.style.claimed
 
@@ -1265,10 +1265,10 @@ local var_0_22 = {
 			name = "fade_in_glow",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_2.style.glow.color[1] = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				arg_30_2.style.glow.color[1] = 255 * arg_30_3
 			end,
 			on_complete = NOP
@@ -1277,10 +1277,10 @@ local var_0_22 = {
 			name = "fade_in_bottom_glow",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				arg_31_2.style.bottom_glow.color[1] = 0
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				arg_32_2.style.bottom_glow.color[1] = 255 * arg_32_3
 			end,
 			on_complete = NOP

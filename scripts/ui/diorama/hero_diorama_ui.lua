@@ -9,7 +9,7 @@ local var_0_4 = 0.8
 HeroDioramaUI = class(HeroDioramaUI)
 HeroDioramaUI.unique_id = HeroDioramaUI.unique_id or 0
 
-function HeroDioramaUI.init(arg_1_0, arg_1_1, arg_1_2)
+HeroDioramaUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._settings = arg_1_2
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
@@ -33,7 +33,7 @@ function HeroDioramaUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._viewport_active = true
 end
 
-function HeroDioramaUI._get_unique_id(arg_2_0)
+HeroDioramaUI._get_unique_id = function (arg_2_0)
 	local var_2_0 = HeroDioramaUI.unique_id
 
 	HeroDioramaUI.unique_id = var_2_0 + 1
@@ -41,7 +41,7 @@ function HeroDioramaUI._get_unique_id(arg_2_0)
 	return var_2_0
 end
 
-function HeroDioramaUI._create_ui_elements(arg_3_0)
+HeroDioramaUI._create_ui_elements = function (arg_3_0)
 	var_0_3 = false
 
 	if arg_3_0._viewport_widget then
@@ -82,11 +82,11 @@ function HeroDioramaUI._create_ui_elements(arg_3_0)
 	arg_3_0:_reset_overlay()
 end
 
-function HeroDioramaUI._cb_level_package_loaded(arg_4_0)
+HeroDioramaUI._cb_level_package_loaded = function (arg_4_0)
 	arg_4_0._level_package_loaded = true
 end
 
-function HeroDioramaUI._cb_diorama_package_loaded(arg_5_0)
+HeroDioramaUI._cb_diorama_package_loaded = function (arg_5_0)
 	arg_5_0._diorama_package_loaded = true
 
 	local var_5_0 = arg_5_0._viewport_widget_definition.style.viewport.level_package_name
@@ -97,27 +97,27 @@ function HeroDioramaUI._cb_diorama_package_loaded(arg_5_0)
 	Managers.package:load(var_5_0, var_5_1, var_5_3, var_5_2)
 end
 
-function HeroDioramaUI.fade_in(arg_6_0, arg_6_1)
+HeroDioramaUI.fade_in = function (arg_6_0, arg_6_1)
 	arg_6_0._fade_in_duration = arg_6_1
 	arg_6_0._fade_timer = 0
 end
 
-function HeroDioramaUI.fade_out(arg_7_0, arg_7_1)
+HeroDioramaUI.fade_out = function (arg_7_0, arg_7_1)
 	arg_7_0._fade_out_duration = arg_7_1
 	arg_7_0._fade_timer = 0
 end
 
-function HeroDioramaUI._fade_out_overlay(arg_8_0)
+HeroDioramaUI._fade_out_overlay = function (arg_8_0)
 	arg_8_0._overlay_fade_out_time = 0
 end
 
-function HeroDioramaUI._reset_overlay(arg_9_0)
+HeroDioramaUI._reset_overlay = function (arg_9_0)
 	arg_9_0._widgets_by_name.overlay.alpha_multiplier = 1
 	arg_9_0._overlay_fade_out_time = nil
 	arg_9_0._destroy_previewer_on_fade_out = true
 end
 
-function HeroDioramaUI._update_overlay_fade_out_animation(arg_10_0, arg_10_1)
+HeroDioramaUI._update_overlay_fade_out_animation = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._overlay_fade_out_time
 
 	if not var_10_0 then
@@ -136,13 +136,13 @@ function HeroDioramaUI._update_overlay_fade_out_animation(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroDioramaUI._update_fade_animations(arg_11_0, arg_11_1)
+HeroDioramaUI._update_fade_animations = function (arg_11_0, arg_11_1)
 	arg_11_0:_update_fade_in_animation(arg_11_1)
 	arg_11_0:_update_fade_out_animation(arg_11_1)
 	arg_11_0:_update_overlay_fade_out_animation(arg_11_1)
 end
 
-function HeroDioramaUI._update_fade_in_animation(arg_12_0, arg_12_1)
+HeroDioramaUI._update_fade_in_animation = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._fade_timer
 	local var_12_1 = arg_12_0._fade_in_duration
 
@@ -163,7 +163,7 @@ function HeroDioramaUI._update_fade_in_animation(arg_12_0, arg_12_1)
 	end
 end
 
-function HeroDioramaUI._update_fade_out_animation(arg_13_0, arg_13_1)
+HeroDioramaUI._update_fade_out_animation = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._fade_timer
 	local var_13_1 = arg_13_0._fade_out_duration
 
@@ -184,11 +184,11 @@ function HeroDioramaUI._update_fade_out_animation(arg_13_0, arg_13_1)
 	end
 end
 
-function HeroDioramaUI.set_viewport_active(arg_14_0, arg_14_1)
+HeroDioramaUI.set_viewport_active = function (arg_14_0, arg_14_1)
 	arg_14_0._viewport_active = arg_14_1
 end
 
-function HeroDioramaUI._update_viewport_active_state(arg_15_0)
+HeroDioramaUI._update_viewport_active_state = function (arg_15_0)
 	local var_15_0 = arg_15_0._viewport_active
 
 	if arg_15_0._synced_viewport_active_state ~= var_15_0 then
@@ -215,7 +215,7 @@ function HeroDioramaUI._update_viewport_active_state(arg_15_0)
 	end
 end
 
-function HeroDioramaUI._create_viewport_definition(arg_16_0)
+HeroDioramaUI._create_viewport_definition = function (arg_16_0)
 	local var_16_0 = "environment/ui_store_preview"
 	local var_16_1 = arg_16_0._instance_id
 	local var_16_2 = {
@@ -274,7 +274,7 @@ function HeroDioramaUI._create_viewport_definition(arg_16_0)
 	}
 end
 
-function HeroDioramaUI._set_size(arg_17_0, arg_17_1)
+HeroDioramaUI._set_size = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_scenegraph
 	local var_17_1 = var_17_0.background
 	local var_17_2 = var_17_0.viewport
@@ -300,7 +300,7 @@ function HeroDioramaUI._set_size(arg_17_0, arg_17_1)
 	arg_17_0:_update_panel_background()
 end
 
-function HeroDioramaUI._update_panel_background(arg_18_0, arg_18_1)
+HeroDioramaUI._update_panel_background = function (arg_18_0, arg_18_1)
 	local var_18_0 = var_0_0.create_panel_background
 	local var_18_1 = "bottom_panel"
 	local var_18_2 = arg_18_0._ui_scenegraph[var_18_1].size
@@ -316,7 +316,7 @@ function HeroDioramaUI._update_panel_background(arg_18_0, arg_18_1)
 	arg_18_0._bottom_panel_widget = UIWidget.init(var_18_5)
 end
 
-function HeroDioramaUI.update_position(arg_19_0)
+HeroDioramaUI.update_position = function (arg_19_0)
 	local var_19_0 = arg_19_0._settings
 
 	if var_19_0 then
@@ -332,7 +332,7 @@ function HeroDioramaUI.update_position(arg_19_0)
 	end
 end
 
-function HeroDioramaUI._set_position(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+HeroDioramaUI._set_position = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_0._ui_scenegraph.background
 	local var_20_1 = var_20_0.position
 
@@ -343,7 +343,7 @@ function HeroDioramaUI._set_position(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	var_20_0.horizontal_alignment = arg_20_2 or "center"
 end
 
-function HeroDioramaUI.destroy(arg_21_0)
+HeroDioramaUI.destroy = function (arg_21_0)
 	arg_21_0:_destroy_previewers()
 
 	if arg_21_0._viewport_widget then
@@ -358,11 +358,11 @@ function HeroDioramaUI.destroy(arg_21_0)
 	arg_21_0._ui_animator = nil
 end
 
-function HeroDioramaUI._resource_id(arg_22_0)
+HeroDioramaUI._resource_id = function (arg_22_0)
 	return "HeroDioramaUI_" .. arg_22_0._instance_id
 end
 
-function HeroDioramaUI._can_create_viewport(arg_23_0)
+HeroDioramaUI._can_create_viewport = function (arg_23_0)
 	if arg_23_0._viewport_widget then
 		return false
 	end
@@ -370,7 +370,7 @@ function HeroDioramaUI._can_create_viewport(arg_23_0)
 	return arg_23_0._level_package_loaded and arg_23_0._cb_diorama_package_loaded
 end
 
-function HeroDioramaUI.set_hero_profile(arg_24_0, arg_24_1, arg_24_2)
+HeroDioramaUI.set_hero_profile = function (arg_24_0, arg_24_1, arg_24_2)
 	if arg_24_0._viewport_widget then
 		arg_24_0._cashed_profile_data = nil
 
@@ -383,7 +383,7 @@ function HeroDioramaUI.set_hero_profile(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function HeroDioramaUI._set_hero_profile(arg_25_0, arg_25_1, arg_25_2)
+HeroDioramaUI._set_hero_profile = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0:_setup_character_previewer(arg_25_1, arg_25_2)
 
 	local var_25_0 = SPProfiles[arg_25_1].display_name
@@ -401,7 +401,7 @@ function HeroDioramaUI._set_hero_profile(arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0:_update_panel_background(var_25_6)
 end
 
-function HeroDioramaUI.post_update(arg_26_0, arg_26_1, arg_26_2)
+HeroDioramaUI.post_update = function (arg_26_0, arg_26_1, arg_26_2)
 	if var_0_3 then
 		arg_26_0:_destroy_previewers()
 		arg_26_0:_create_ui_elements()
@@ -435,7 +435,7 @@ function HeroDioramaUI.post_update(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function HeroDioramaUI.update(arg_27_0, arg_27_1, arg_27_2)
+HeroDioramaUI.update = function (arg_27_0, arg_27_1, arg_27_2)
 	if arg_27_0._world_previewer and not var_0_3 then
 		local var_27_0 = true
 
@@ -446,7 +446,7 @@ function HeroDioramaUI.update(arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0:_draw(arg_27_1)
 end
 
-function HeroDioramaUI._update_animations(arg_28_0, arg_28_1, arg_28_2)
+HeroDioramaUI._update_animations = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._animations
 	local var_28_1 = arg_28_0._ui_animator
 
@@ -463,7 +463,7 @@ function HeroDioramaUI._update_animations(arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0:_update_fade_animations(arg_28_1)
 end
 
-function HeroDioramaUI._draw(arg_29_0, arg_29_1)
+HeroDioramaUI._draw = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._ui_renderer
 	local var_29_1 = arg_29_0._ui_top_renderer
 	local var_29_2 = arg_29_0._ui_scenegraph
@@ -517,7 +517,7 @@ function HeroDioramaUI._draw(arg_29_0, arg_29_1)
 	var_29_4.alpha_multiplier = var_29_5
 end
 
-function HeroDioramaUI._unload_level_package(arg_30_0)
+HeroDioramaUI._unload_level_package = function (arg_30_0)
 	local var_30_0 = arg_30_0:_resource_id()
 	local var_30_1 = arg_30_0._viewport_widget_definition.style.viewport.level_package_name
 
@@ -526,13 +526,13 @@ function HeroDioramaUI._unload_level_package(arg_30_0)
 	arg_30_0._level_package_loaded = false
 end
 
-function HeroDioramaUI._unload_diorama_package(arg_31_0)
+HeroDioramaUI._unload_diorama_package = function (arg_31_0)
 	Managers.package:unload("resource_packages/dlcs/carousel_diorama", "diorama_test")
 
 	arg_31_0._diorama_package_loaded = false
 end
 
-function HeroDioramaUI._destroy_previewers(arg_32_0)
+HeroDioramaUI._destroy_previewers = function (arg_32_0)
 	local var_32_0 = arg_32_0._world_previewer
 
 	if var_32_0 then
@@ -552,7 +552,7 @@ local var_0_5 = {
 	}
 }
 
-function HeroDioramaUI._setup_character_previewer(arg_33_0, arg_33_1, arg_33_2)
+HeroDioramaUI._setup_character_previewer = function (arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0:_destroy_previewers()
 
 	local var_33_0 = arg_33_0._viewport_widget
@@ -600,7 +600,7 @@ function HeroDioramaUI._setup_character_previewer(arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0:_reset_overlay()
 end
 
-function HeroDioramaUI.cb_hero_unit_spawned_preview(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+HeroDioramaUI.cb_hero_unit_spawned_preview = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	arg_34_1:set_hero_location({
 		0,
 		0,
@@ -628,7 +628,7 @@ function HeroDioramaUI.cb_hero_unit_spawned_preview(arg_34_0, arg_34_1, arg_34_2
 	end
 
 	if var_34_2 then
-		-- block empty
+		-- Nothing
 	end
 
 	if arg_34_0._viewport_active then
@@ -636,7 +636,7 @@ function HeroDioramaUI.cb_hero_unit_spawned_preview(arg_34_0, arg_34_1, arg_34_2
 	end
 end
 
-function HeroDioramaUI.cb_flag_spawned(arg_35_0, arg_35_1, arg_35_2)
+HeroDioramaUI.cb_flag_spawned = function (arg_35_0, arg_35_1, arg_35_2)
 	arg_35_1:set_unit_location(arg_35_2, {
 		0,
 		-1.5,
@@ -644,7 +644,7 @@ function HeroDioramaUI.cb_flag_spawned(arg_35_0, arg_35_1, arg_35_2)
 	})
 end
 
-function HeroDioramaUI.cb_pole_spawned(arg_36_0, arg_36_1, arg_36_2)
+HeroDioramaUI.cb_pole_spawned = function (arg_36_0, arg_36_1, arg_36_2)
 	arg_36_1:set_unit_location(arg_36_2, {
 		0,
 		-1.5,
@@ -652,7 +652,7 @@ function HeroDioramaUI.cb_pole_spawned(arg_36_0, arg_36_1, arg_36_2)
 	})
 end
 
-function HeroDioramaUI.cb_podium_spawned(arg_37_0, arg_37_1, arg_37_2)
+HeroDioramaUI.cb_podium_spawned = function (arg_37_0, arg_37_1, arg_37_2)
 	arg_37_1:set_unit_location(arg_37_2, {
 		0,
 		0,
@@ -660,23 +660,23 @@ function HeroDioramaUI.cb_podium_spawned(arg_37_0, arg_37_1, arg_37_2)
 	})
 end
 
-function HeroDioramaUI._set_career_name(arg_38_0, arg_38_1, arg_38_2)
+HeroDioramaUI._set_career_name = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = SPProfiles[arg_38_1].careers[arg_38_2].display_name
 
 	arg_38_0._widgets_by_name.career_name.content.text = Localize(var_38_0)
 end
 
-function HeroDioramaUI._set_hero_name(arg_39_0, arg_39_1)
+HeroDioramaUI._set_hero_name = function (arg_39_0, arg_39_1)
 	local var_39_0 = SPProfiles[arg_39_1].ingame_short_display_name
 
 	arg_39_0._widgets_by_name.hero_name.content.text = Localize(var_39_0)
 end
 
-function HeroDioramaUI.set_player_name(arg_40_0, arg_40_1)
+HeroDioramaUI.set_player_name = function (arg_40_0, arg_40_1)
 	arg_40_0._widgets_by_name.player_name.content.text = arg_40_1
 end
 
-function HeroDioramaUI._set_portrait_frame(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+HeroDioramaUI._set_portrait_frame = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	local var_41_0 = arg_41_4 or 1
 	local var_41_1 = false
 	local var_41_2 = UIWidgets.create_portrait_frame("portrait_pivot", arg_41_1, arg_41_2, var_41_0, var_41_1, arg_41_3)
@@ -688,7 +688,7 @@ function HeroDioramaUI._set_portrait_frame(arg_41_0, arg_41_1, arg_41_2, arg_41_
 	arg_41_0._portrait_widget = var_41_3
 end
 
-function HeroDioramaUI._get_portrait_frame(arg_42_0, arg_42_1, arg_42_2)
+HeroDioramaUI._get_portrait_frame = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = SPProfiles[arg_42_1].careers[arg_42_2].name
 	local var_42_1 = "default"
 	local var_42_2 = BackendUtils.get_loadout_item(var_42_0, "slot_frame")

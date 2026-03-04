@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowEvent = class(StartGameWindowEvent)
 StartGameWindowEvent.NAME = "StartGameWindowEvent"
 
-function StartGameWindowEvent.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowEvent.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowEvent")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -24,7 +24,7 @@ function StartGameWindowEvent.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent:set_play_button_enabled(true)
 end
 
-function StartGameWindowEvent._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowEvent._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -55,7 +55,7 @@ function StartGameWindowEvent._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_setup_content_from_backend()
 end
 
-function StartGameWindowEvent._setup_content_from_backend(arg_3_0)
+StartGameWindowEvent._setup_content_from_backend = function (arg_3_0)
 	local var_3_0 = arg_3_0._widgets_by_name
 	local var_3_1 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
 	local var_3_2 = var_3_1.title_text_id
@@ -80,19 +80,19 @@ function StartGameWindowEvent._setup_content_from_backend(arg_3_0)
 	end
 end
 
-function StartGameWindowEvent.on_exit(arg_4_0, arg_4_1)
+StartGameWindowEvent.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowEvent")
 end
 
-function StartGameWindowEvent.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowEvent.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function StartGameWindowEvent.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowEvent.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function StartGameWindowEvent._draw(arg_7_0, arg_7_1)
+StartGameWindowEvent._draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0._parent:window_input_service()

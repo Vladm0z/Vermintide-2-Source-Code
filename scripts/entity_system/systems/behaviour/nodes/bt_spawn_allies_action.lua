@@ -2,7 +2,7 @@
 
 BTSpawnAllies = class(BTSpawnAllies, BTNode)
 
-function BTSpawnAllies.init(arg_1_0, ...)
+BTSpawnAllies.init = function (arg_1_0, ...)
 	BTSpawnAllies.super.init(arg_1_0, ...)
 end
 
@@ -16,7 +16,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTSpawnAllies.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTSpawnAllies.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -103,7 +103,7 @@ function BTSpawnAllies.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTSpawnAllies.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSpawnAllies.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.navigation_extension
 
 	var_4_0:set_enabled(true)
@@ -149,7 +149,7 @@ function BTSpawnAllies.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_2.active_node = nil
 end
 
-function BTSpawnAllies._activate_ward(arg_5_0, arg_5_1, arg_5_2)
+BTSpawnAllies._activate_ward = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.action.ward_function
 
 	if not arg_5_2.ward_active then
@@ -173,7 +173,7 @@ end
 
 local var_0_3 = {}
 
-function BTSpawnAllies.find_spawn_point(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTSpawnAllies.find_spawn_point = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_4 or arg_8_2.optional_go_to_spawn or arg_8_2.spawn_group
 	local var_8_1 = Managers.state.entity:system("spawner_system")
 	local var_8_2 = var_8_1._id_lookup[var_8_0]
@@ -312,7 +312,7 @@ function BTSpawnAllies.find_spawn_point(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_
 	return var_8_11
 end
 
-function BTSpawnAllies._spawn(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTSpawnAllies._spawn = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_3.action
 
 	if var_9_0.animation then
@@ -379,7 +379,7 @@ function BTSpawnAllies._spawn(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	end
 end
 
-function BTSpawnAllies.run(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTSpawnAllies.run = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.spawning_allies
 
 	if not var_10_0 then
@@ -412,7 +412,7 @@ function BTSpawnAllies.run(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	end
 end
 
-function BTSpawnAllies._release_animation_lock(arg_11_0, arg_11_1, arg_11_2)
+BTSpawnAllies._release_animation_lock = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_2.follow_animation_locked = nil
 
 	LocomotionUtils.set_animation_driven_movement(arg_11_1, false)

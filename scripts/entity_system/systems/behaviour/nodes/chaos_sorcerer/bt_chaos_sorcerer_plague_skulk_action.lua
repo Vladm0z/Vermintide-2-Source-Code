@@ -7,13 +7,13 @@ BTChaosSorcererPlagueSkulkAction = class(BTChaosSorcererPlagueSkulkAction, BTNod
 local var_0_0 = BTChaosSorcererPlagueSkulkAction
 local var_0_1 = POSITION_LOOKUP
 
-function var_0_0.init(arg_1_0, ...)
+var_0_0.init = function (arg_1_0, ...)
 	var_0_0.super.init(arg_1_0, ...)
 end
 
 var_0_0.name = "BTChaosSorcererPlagueSkulkAction"
 
-function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_0.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.breed
 
@@ -76,7 +76,7 @@ function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+var_0_0.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.skulk_data
 	local var_3_1 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 	local var_3_2 = arg_3_2.navigation_extension
@@ -106,7 +106,7 @@ function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	end
 end
 
-function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+var_0_0.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not AiUtils.is_of_interest_plague_wave_sorcerer(arg_4_2.target_unit) then
 		return "failed"
 	end
@@ -219,7 +219,7 @@ function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.at_goal = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.move_pos
 	local var_5_1 = var_0_1[arg_5_1]
 
@@ -234,13 +234,13 @@ function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function var_0_0.move_to(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_0.move_to = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_3.navigation_extension:move_to(arg_6_1)
 
 	arg_6_3.move_pos = Vector3Box(arg_6_1)
 end
 
-function var_0_0.vanish(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+var_0_0.vanish = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = BTNinjaVanishAction.find_escape_position(arg_7_1, arg_7_2)
 
@@ -260,13 +260,13 @@ function var_0_0.vanish(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return false
 end
 
-function var_0_0.idle(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.idle = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:anim_event(arg_8_1, arg_8_2, "idle")
 
 	arg_8_2.move_state = "idle"
 end
 
-function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.start_move_animation = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action.move_animation
 
 	arg_9_0:anim_event(arg_9_1, arg_9_2, var_9_0)
@@ -274,7 +274,7 @@ function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_2.move_state = "moving"
 end
 
-function var_0_0.anim_event(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+var_0_0.anim_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_2.skulk_data
 
 	if var_10_0.animation_state ~= arg_10_3 then
@@ -286,7 +286,7 @@ end
 
 local var_0_2 = false
 
-function var_0_0.get_plague_wave_cast_position(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+var_0_0.get_plague_wave_cast_position = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.action
 	local var_11_1 = arg_11_2.nav_world
 	local var_11_2 = arg_11_2.target_unit
@@ -353,7 +353,7 @@ end
 
 local var_0_3 = 15
 
-function var_0_0.get_skulk_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+var_0_0.get_skulk_target = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_2.action
 	local var_12_1 = arg_12_2.nav_world
 	local var_12_2 = arg_12_2.skulk_data

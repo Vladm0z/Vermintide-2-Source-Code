@@ -751,7 +751,7 @@ local var_0_36 = {
 			name = "init",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				local var_3_0 = arg_3_2.emblem.style
 				local var_3_1 = 40
 				local var_3_2 = -100
@@ -894,10 +894,10 @@ local var_0_36 = {
 					var_3_42.color[1] = 0
 				end
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				return
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				return
 			end
 		},
@@ -905,17 +905,17 @@ local var_0_36 = {
 			name = "init_title_text",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				local var_6_0 = arg_6_2.title_title
 				local var_6_1 = arg_6_2.sub_title_text
 
 				var_6_0.alpha_multiplier = 0
 				var_6_1.alpha_multiplier = 0
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				return
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end
 		},
@@ -923,16 +923,16 @@ local var_0_36 = {
 			name = "overall_alpha_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				local var_10_0 = math.easeOutCubic(arg_10_3)
 
 				arg_10_4.render_settings.alpha_multiplier = var_10_0
 				arg_10_4.render_settings.blur_progress = var_10_0
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				WwiseWorld.trigger_event(arg_11_3.wwise_world, "versus_round_end_coin_bird_finnish")
 			end
 		},
@@ -940,10 +940,10 @@ local var_0_36 = {
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				local var_13_0 = math.easeInCubic(arg_13_3)
 				local var_13_1 = math.easeOutCubic(1 - var_13_0)
 				local var_13_2 = math.easeInCubic(var_13_0)
@@ -974,7 +974,7 @@ local var_0_36 = {
 					var_13_10.color[1] = var_13_5
 				end
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end
 		},
@@ -982,10 +982,10 @@ local var_0_36 = {
 			name = "background_smoke",
 			start_progress = 0.5,
 			end_progress = 1,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				local var_16_0 = 1 - math.easeOutCubic(arg_16_3)
 				local var_16_1 = arg_16_2.emblem.style
 				local var_16_2 = 1
@@ -1002,7 +1002,7 @@ local var_0_36 = {
 					var_16_4.color[1] = var_16_3
 				end
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end
 		},
@@ -1010,10 +1010,10 @@ local var_0_36 = {
 			name = "skull_bounce",
 			start_progress = 0.45,
 			end_progress = 0.75,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				local var_19_0 = math.ease_pulse(math.easeCubic(arg_19_3))
 				local var_19_1 = arg_19_2.emblem.style
 				local var_19_2 = 0.03
@@ -1028,7 +1028,7 @@ local var_0_36 = {
 					var_19_5[2] = var_19_6[2] + var_19_6[1] * var_19_2 * var_19_0
 				end
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end
 		},
@@ -1036,10 +1036,10 @@ local var_0_36 = {
 			name = "fade_in_arms",
 			start_progress = 0.8,
 			end_progress = 0.9,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeInCubic(arg_22_3)
 				local var_22_1 = arg_22_2.emblem.style
 				local var_22_2 = 255 * var_22_0
@@ -1067,7 +1067,7 @@ local var_0_36 = {
 					var_22_6.color[1] = var_22_2
 				end
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end
 		},
@@ -1075,10 +1075,10 @@ local var_0_36 = {
 			name = "move_up",
 			start_progress = 0.8,
 			end_progress = 1.2,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				return
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = 1 - math.easeCubic(arg_25_3)
 				local var_25_1 = arg_25_2.emblem.style
 				local var_25_2 = 40
@@ -1122,7 +1122,7 @@ local var_0_36 = {
 					arg_25_0[var_25_16].local_position[2] = arg_25_1[var_25_16].position[2] + var_25_3 * var_25_0 + 40
 				end
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		},
@@ -1130,10 +1130,10 @@ local var_0_36 = {
 			name = "fade_in_wings",
 			start_progress = 1.15,
 			end_progress = 1.25,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.easeInCubic(arg_28_3)
 				local var_28_1 = arg_28_2.emblem.style
 				local var_28_2 = 255 * var_28_0
@@ -1161,7 +1161,7 @@ local var_0_36 = {
 					var_28_6.color[1] = var_28_2
 				end
 			end,
-			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
 			end
 		},
@@ -1169,10 +1169,10 @@ local var_0_36 = {
 			name = "fade_in_medalion",
 			start_progress = 1,
 			end_progress = 1.1,
-			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end,
-			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 				local var_31_0 = math.ease_out_exp(arg_31_3)
 				local var_31_1 = arg_31_2.emblem.style
 				local var_31_2 = 255 * var_31_0
@@ -1182,7 +1182,7 @@ local var_0_36 = {
 					var_31_3.color[1] = var_31_2
 				end
 			end,
-			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end
 		},
@@ -1190,10 +1190,10 @@ local var_0_36 = {
 			name = "move_medalion",
 			start_progress = 1,
 			end_progress = 1.3,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = 1 - math.ease_out_exp(arg_34_3)
 				local var_34_1 = arg_34_2.emblem.style
 				local var_34_2 = 200 * var_34_0
@@ -1205,7 +1205,7 @@ local var_0_36 = {
 					arg_34_0[var_34_4].local_position[2] = arg_34_1[var_34_4].position[2] + var_34_2
 				end
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		},
@@ -1213,10 +1213,10 @@ local var_0_36 = {
 			name = "skull_bounce_down",
 			start_progress = 1.15,
 			end_progress = 1.55,
-			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end,
-			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 				local var_37_0 = math.ease_pulse(math.easeOutCubic(arg_37_3))
 				local var_37_1 = arg_37_2.emblem.style
 				local var_37_2 = 0.03
@@ -1228,7 +1228,7 @@ local var_0_36 = {
 					arg_37_0[var_37_4].local_position[2] = arg_37_1[var_37_4].position[2] - 5 * var_37_0
 				end
 			end,
-			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end
 		},
@@ -1236,10 +1236,10 @@ local var_0_36 = {
 			name = "smoke_skull",
 			start_progress = 1.15,
 			end_progress = 2.15,
-			init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				return
 			end,
-			update = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 				local var_40_0 = 1 - math.easeOutCubic(arg_40_3)
 				local var_40_1 = math.easeOutCubic(arg_40_3)
 				local var_40_2 = arg_40_2.emblem.style
@@ -1256,7 +1256,7 @@ local var_0_36 = {
 					var_40_5.color[1] = var_40_4
 				end
 			end,
-			on_complete = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end
 		},
@@ -1264,10 +1264,10 @@ local var_0_36 = {
 			name = "smoke_wings",
 			start_progress = 1.3,
 			end_progress = 2.6,
-			init = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end,
-			update = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 				local var_43_0 = 1 - math.easeOutCubic(arg_43_3)
 				local var_43_1 = math.easeOutCubic(arg_43_3)
 				local var_43_2 = arg_43_2.emblem.style
@@ -1295,7 +1295,7 @@ local var_0_36 = {
 					var_43_9.color[1] = var_43_4
 				end
 			end,
-			on_complete = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end
 		},
@@ -1303,10 +1303,10 @@ local var_0_36 = {
 			name = "fold_out",
 			start_progress = 1.1,
 			end_progress = 3.1,
-			init = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			init = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end,
-			update = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+			update = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 				local var_46_0 = var_0_35(arg_46_3)
 				local var_46_1 = 1 - math.easeInCubic(var_46_0)
 				local var_46_2 = arg_46_2.emblem.style
@@ -1395,7 +1395,7 @@ local var_0_36 = {
 					var_46_30.angle = math.degrees_to_radians((var_46_5 - 15) * var_46_1)
 				end
 			end,
-			on_complete = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			on_complete = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 				return
 			end
 		},
@@ -1403,10 +1403,10 @@ local var_0_36 = {
 			name = "fade_in_title_text",
 			start_progress = 1.1,
 			end_progress = 1.6,
-			init = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			init = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				return
 			end,
-			update = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+			update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 				local var_49_0 = math.easeOutCubic(arg_49_3)
 				local var_49_1 = arg_49_2.title_title
 				local var_49_2 = arg_49_2.sub_title_text
@@ -1419,7 +1419,7 @@ local var_0_36 = {
 				var_49_1.offset[2] = var_49_3 - var_49_3 * var_49_0
 				var_49_2.offset[2] = -var_49_3 + var_49_3 * var_49_0
 			end,
-			on_complete = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+			on_complete = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 				return
 			end
 		},
@@ -1427,16 +1427,16 @@ local var_0_36 = {
 			name = "overall_alpha_out",
 			start_progress = 7.1,
 			end_progress = 7.6,
-			init = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			init = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 				return
 			end,
-			update = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 				local var_52_0 = 1 - math.easeOutCubic(arg_52_3)
 
 				arg_52_4.render_settings.alpha_multiplier = var_52_0
 				arg_52_4.render_settings.blur_progress = var_52_0
 			end,
-			on_complete = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			on_complete = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 				return
 			end
 		},
@@ -1444,10 +1444,10 @@ local var_0_36 = {
 			name = "fade_out_title_text",
 			start_progress = 6.1,
 			end_progress = 6.6,
-			init = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			init = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 				return
 			end,
-			update = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+			update = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 				local var_55_0 = 1 - math.easeOutCubic(arg_55_3)
 				local var_55_1 = arg_55_2.title_title
 				local var_55_2 = arg_55_2.sub_title_text
@@ -1455,7 +1455,7 @@ local var_0_36 = {
 				var_55_1.alpha_multiplier = var_55_0
 				var_55_2.alpha_multiplier = var_55_0
 			end,
-			on_complete = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			on_complete = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 				return
 			end
 		}

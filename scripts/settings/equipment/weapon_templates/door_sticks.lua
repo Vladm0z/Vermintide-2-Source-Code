@@ -50,7 +50,7 @@ local var_0_1 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {
@@ -63,7 +63,7 @@ local var_0_1 = {
 					}
 				},
 				push_radius = var_0_0,
-				condition_func = function(arg_2_0, arg_2_1)
+				condition_func = function (arg_2_0, arg_2_1)
 					return not ScriptUnit.extension(arg_2_0, "status_system"):fatigued()
 				end
 			}

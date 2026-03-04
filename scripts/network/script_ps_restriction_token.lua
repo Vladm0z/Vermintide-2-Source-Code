@@ -2,12 +2,12 @@
 
 ScriptPSRestrictionToken = class(ScriptPSRestrictionToken)
 
-function ScriptPSRestrictionToken.init(arg_1_0, arg_1_1)
+ScriptPSRestrictionToken.init = function (arg_1_0, arg_1_1)
 	arg_1_0._token = arg_1_1
 	arg_1_0._done = false
 end
 
-function ScriptPSRestrictionToken.update(arg_2_0)
+ScriptPSRestrictionToken.update = function (arg_2_0)
 	local var_2_0 = NpCheck.status(arg_2_0._token)
 
 	if var_2_0 == NpCheck.COMPLETED or var_2_0 == NpCheck.ERROR then
@@ -15,7 +15,7 @@ function ScriptPSRestrictionToken.update(arg_2_0)
 	end
 end
 
-function ScriptPSRestrictionToken.info(arg_3_0)
+ScriptPSRestrictionToken.info = function (arg_3_0)
 	local var_3_0 = {}
 
 	if NpCheck.status(arg_3_0._token) == NpCheck.ERROR then
@@ -29,10 +29,10 @@ function ScriptPSRestrictionToken.info(arg_3_0)
 	return var_3_0
 end
 
-function ScriptPSRestrictionToken.done(arg_4_0)
+ScriptPSRestrictionToken.done = function (arg_4_0)
 	return arg_4_0._done
 end
 
-function ScriptPSRestrictionToken.close(arg_5_0)
+ScriptPSRestrictionToken.close = function (arg_5_0)
 	NpCheck.free(arg_5_0._token)
 end

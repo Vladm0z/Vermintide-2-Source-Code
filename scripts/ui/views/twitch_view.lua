@@ -6,7 +6,7 @@ local var_0_0 = local_require("scripts/ui/views/twitch_view_definitions")
 
 TwitchView = class(TwitchView)
 
-function TwitchView.init(arg_1_0, arg_1_1)
+TwitchView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
 	arg_1_0._network_lobby = arg_1_1.network_lobby
@@ -32,7 +32,7 @@ function TwitchView.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function TwitchView._create_ui_elements(arg_2_0)
+TwitchView._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0._widgets = {}
 
@@ -60,14 +60,14 @@ function TwitchView._create_ui_elements(arg_2_0)
 	arg_2_0._error_timer = nil
 end
 
-function TwitchView.on_enter(arg_3_0)
+TwitchView.on_enter = function (arg_3_0)
 	ShowCursorStack.show("TwitchView")
 	arg_3_0:set_active(true)
 end
 
 local var_0_1 = true
 
-function TwitchView.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+TwitchView.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if var_0_1 then
 		var_0_1 = false
 
@@ -83,7 +83,7 @@ function TwitchView.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0:_update_error(arg_4_1, arg_4_2)
 end
 
-function TwitchView.cb_on_message_received(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+TwitchView.cb_on_message_received = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._widgets.chat_output_widget.content
 	local var_5_1 = var_5_0.message_tables
 	local var_5_2 = {}
@@ -101,11 +101,11 @@ function TwitchView.cb_on_message_received(arg_5_0, arg_5_1, arg_5_2, arg_5_3, a
 	end
 end
 
-function TwitchView._play_sound(arg_6_0, arg_6_1)
+TwitchView._play_sound = function (arg_6_0, arg_6_1)
 	WwiseWorld.trigger_event(arg_6_0._wwise_world, arg_6_1)
 end
 
-function TwitchView._update_input(arg_7_0, arg_7_1, arg_7_2)
+TwitchView._update_input = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._widgets.frame_widget.content
 	local var_7_1 = arg_7_0._input_manager:get_service("twitch_view")
 
@@ -179,7 +179,7 @@ function TwitchView._update_input(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function TwitchView._update_error(arg_8_0, arg_8_1, arg_8_2)
+TwitchView._update_error = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0._error_timer then
 		return
 	end
@@ -198,7 +198,7 @@ function TwitchView._update_error(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function TwitchView.cb_connection_callback(arg_9_0, arg_9_1)
+TwitchView.cb_connection_callback = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._widgets.frame_widget.content
 	local var_9_1 = arg_9_0._widgets.frame_widget.style
 
@@ -207,7 +207,7 @@ function TwitchView.cb_connection_callback(arg_9_0, arg_9_1)
 	arg_9_0._error_timer = 5
 end
 
-function TwitchView.set_active(arg_10_0, arg_10_1)
+TwitchView.set_active = function (arg_10_0, arg_10_1)
 	arg_10_0._active = arg_10_1
 
 	if arg_10_0._active then
@@ -226,11 +226,11 @@ function TwitchView.set_active(arg_10_0, arg_10_1)
 	end
 end
 
-function TwitchView.is_active(arg_11_0)
+TwitchView.is_active = function (arg_11_0)
 	return arg_11_0._active
 end
 
-function TwitchView.suspend(arg_12_0)
+TwitchView.suspend = function (arg_12_0)
 	arg_12_0._suspended = true
 
 	arg_12_0._input_manager:device_unblock_all_services("keyboard", 1)
@@ -238,7 +238,7 @@ function TwitchView.suspend(arg_12_0)
 	arg_12_0._input_manager:device_unblock_all_services("gamepad", 1)
 end
 
-function TwitchView.unsuspend(arg_13_0)
+TwitchView.unsuspend = function (arg_13_0)
 	arg_13_0._input_manager:block_device_except_service("twitch_view", "keyboard", 1, "twitch")
 	arg_13_0._input_manager:block_device_except_service("twitch_view", "mouse", 1, "twitch")
 	arg_13_0._input_manager:block_device_except_service("twitch_view", "gamepad", 1, "twitch")
@@ -246,7 +246,7 @@ function TwitchView.unsuspend(arg_13_0)
 	arg_13_0._suspended = nil
 end
 
-function TwitchView._draw(arg_14_0, arg_14_1, arg_14_2)
+TwitchView._draw = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._ui_renderer
 	local var_14_1 = arg_14_0._ui_scenegraph
 	local var_14_2 = arg_14_0._input_manager:get_service("twitch_view")
@@ -271,21 +271,21 @@ function TwitchView._draw(arg_14_0, arg_14_1, arg_14_2)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function TwitchView.on_exit(arg_15_0)
+TwitchView.on_exit = function (arg_15_0)
 	ShowCursorStack.hide("TwitchView")
 	arg_15_0:set_active(false)
 end
 
-function TwitchView.destroy(arg_16_0)
+TwitchView.destroy = function (arg_16_0)
 	return
 end
 
-function TwitchView._exit(arg_17_0, arg_17_1)
+TwitchView._exit = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1 and "exit_menu" or "ingame_menu"
 
 	arg_17_0._ingame_ui:handle_transition(var_17_0)
 end
 
-function TwitchView.input_service(arg_18_0)
+TwitchView.input_service = function (arg_18_0)
 	return arg_18_0._input_manager:get_service("twitch_view")
 end

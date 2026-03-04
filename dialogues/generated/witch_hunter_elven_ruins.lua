@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/witch_hunter_elven_ruins.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwh_elven_ruins_intro_a",

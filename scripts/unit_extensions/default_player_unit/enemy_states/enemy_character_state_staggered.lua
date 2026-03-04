@@ -4,7 +4,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 EnemyCharacterStateStaggered = class(EnemyCharacterStateStaggered, EnemyCharacterState)
 
-function EnemyCharacterStateStaggered.init(arg_1_0, arg_1_1)
+EnemyCharacterStateStaggered.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "staggered")
 
 	arg_1_0._status_extension = nil
@@ -15,12 +15,12 @@ function EnemyCharacterStateStaggered.init(arg_1_0, arg_1_1)
 	arg_1_0._last_stagger_anim = nil
 end
 
-function EnemyCharacterStateStaggered.reset_stagger(arg_2_0)
+EnemyCharacterStateStaggered.reset_stagger = function (arg_2_0)
 	arg_2_0._accumulated_stagger = 0
 	arg_2_0._stagger_type = nil
 end
 
-function EnemyCharacterStateStaggered._select_animation(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+EnemyCharacterStateStaggered._select_animation = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = Vector3.normalize(arg_3_2)
 	local var_3_1 = Quaternion.forward(Unit.local_rotation(arg_3_1, 0))
 	local var_3_2 = Vector3.dot(var_3_1, var_3_0)
@@ -83,7 +83,7 @@ function EnemyCharacterStateStaggered._select_animation(arg_3_0, arg_3_1, arg_3_
 	return var_3_19, var_3_21
 end
 
-function EnemyCharacterStateStaggered.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+EnemyCharacterStateStaggered.on_enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	Managers.state.camera:set_mood("staggered", arg_4_0, true)
 
 	arg_4_0._exit_anim_triggered = false
@@ -145,7 +145,7 @@ function EnemyCharacterStateStaggered.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_
 	end
 end
 
-function EnemyCharacterStateStaggered.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+EnemyCharacterStateStaggered.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	arg_5_0:reset_stagger()
 	arg_5_0._status_extension:set_stagger_values(var_0_0.none, Vector3(0, 0, 0), 0, 0, 0, 1, false, true)
 	arg_5_0._locomotion_extension:enable_script_driven_movement()
@@ -154,7 +154,7 @@ function EnemyCharacterStateStaggered.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3
 	Managers.state.camera:set_mood("staggered", arg_5_0, false)
 end
 
-function EnemyCharacterStateStaggered.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateStaggered.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._csm
 	local var_6_1 = arg_6_0._status_extension
 	local var_6_2 = arg_6_0._locomotion_extension

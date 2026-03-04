@@ -82,7 +82,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return arg_1_0.boss <= 0 and arg_1_0.main <= 0 and arg_1_0.elite <= 0
 			end
 		},
@@ -214,7 +214,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return arg_2_0.main < 10
 			end
 		},
@@ -271,14 +271,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return arg_3_0.boss < 1
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return arg_4_0.main < 10
 			end
 		}
@@ -301,7 +301,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return arg_5_0.main < 10
 			end
 		},
@@ -328,14 +328,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return arg_6_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return arg_7_0.main < 10
 			end
 		},
@@ -392,7 +392,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return arg_8_0.main < 8
 			end
 		},
@@ -419,7 +419,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return arg_9_0.main < 10
 			end
 		},
@@ -470,7 +470,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_10_0)
+			condition = function (arg_10_0)
 				return arg_10_0.boss < 1
 			end
 		},
@@ -501,14 +501,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_11_0)
+			condition = function (arg_11_0)
 				return arg_11_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_12_0)
+			condition = function (arg_12_0)
 				return arg_12_0.main < 10
 			end
 		}
@@ -559,14 +559,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_13_0)
+			condition = function (arg_13_0)
 				return arg_13_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_14_0)
+			condition = function (arg_14_0)
 				return arg_14_0.main < 10
 			end
 		},
@@ -615,14 +615,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_15_0)
+			condition = function (arg_15_0)
 				return arg_15_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_16_0)
+			condition = function (arg_16_0)
 				return arg_16_0.main < 10
 			end
 		},
@@ -703,14 +703,14 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_17_0)
+			condition = function (arg_17_0)
 				return arg_17_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_18_0)
+			condition = function (arg_18_0)
 				return arg_18_0.main < 10
 			end
 		},
@@ -770,21 +770,21 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_19_0)
+			condition = function (arg_19_0)
 				return arg_19_0.boss < 1
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_20_0)
+			condition = function (arg_20_0)
 				return arg_20_0.elite < 4
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_21_0)
+			condition = function (arg_21_0)
 				return arg_21_0.main < 10
 			end
 		}
@@ -817,7 +817,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_22_0)
+			condition = function (arg_22_0)
 				return arg_22_0.main < 10
 			end
 		},
@@ -848,7 +848,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_23_0)
+			condition = function (arg_23_0)
 				return arg_23_0.main < 10
 			end
 		},
@@ -928,7 +928,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_24_0)
+			condition = function (arg_24_0)
 				return arg_24_0.special < 1
 			end
 		},
@@ -982,7 +982,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_25_0)
+			condition = function (arg_25_0)
 				return arg_25_0.special < 1
 			end
 		},
@@ -1016,7 +1016,7 @@ local var_0_3 = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function(arg_26_0)
+			condition = function (arg_26_0)
 				return arg_26_0.special < 1
 			end
 		},

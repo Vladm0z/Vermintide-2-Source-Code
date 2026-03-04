@@ -113,7 +113,7 @@ local function var_0_1(arg_1_0)
 					pass_type = "texture",
 					style_id = "check",
 					texture_id = "check",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.checked
 					end
 				},
@@ -229,7 +229,7 @@ local var_0_2 = {
 					scenegraph_id = "screen",
 					style_id = "fx_fade_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						if not arg_3_0 or not arg_3_1 then
 							return
 						end
@@ -266,7 +266,7 @@ local var_0_2 = {
 				{
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						if not arg_4_0 or not arg_4_1 then
 							return
 						end

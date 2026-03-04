@@ -2,13 +2,13 @@
 
 EventManager = class(EventManager)
 
-function EventManager.init(arg_1_0, arg_1_1)
+EventManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._events = {}
 	arg_1_0._referenced_events = {}
 	arg_1_0._passthrough = arg_1_1
 end
 
-function EventManager.register(arg_2_0, arg_2_1, ...)
+EventManager.register = function (arg_2_0, arg_2_1, ...)
 	for iter_2_0 = 1, select("#", ...), 2 do
 		local var_2_0 = select(iter_2_0, ...)
 		local var_2_1 = select(iter_2_0 + 1, ...)
@@ -22,7 +22,7 @@ function EventManager.register(arg_2_0, arg_2_1, ...)
 	end
 end
 
-function EventManager.unregister(arg_3_0, arg_3_1, arg_3_2)
+EventManager.unregister = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._events[arg_3_1]
 
 	if var_3_0 then
@@ -34,7 +34,7 @@ function EventManager.unregister(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function EventManager.trigger(arg_4_0, arg_4_1, ...)
+EventManager.trigger = function (arg_4_0, arg_4_1, ...)
 	if arg_4_0._events[arg_4_1] then
 		for iter_4_0, iter_4_1 in pairs(arg_4_0._events[arg_4_1]) do
 			iter_4_0[iter_4_1](iter_4_0, ...)
@@ -46,7 +46,7 @@ function EventManager.trigger(arg_4_0, arg_4_1, ...)
 	end
 end
 
-function EventManager.register_referenced(arg_5_0, arg_5_1, arg_5_2, ...)
+EventManager.register_referenced = function (arg_5_0, arg_5_1, arg_5_2, ...)
 	local var_5_0 = arg_5_0._referenced_events
 	local var_5_1 = var_5_0[arg_5_1] or {}
 
@@ -63,7 +63,7 @@ function EventManager.register_referenced(arg_5_0, arg_5_1, arg_5_2, ...)
 	end
 end
 
-function EventManager.unregister_referenced(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+EventManager.unregister_referenced = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._referenced_events[arg_6_2]
 
 	if not var_6_0 then
@@ -87,11 +87,11 @@ function EventManager.unregister_referenced(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function EventManager.unregister_referenced_all(arg_7_0, arg_7_1)
+EventManager.unregister_referenced_all = function (arg_7_0, arg_7_1)
 	arg_7_0._referenced_events[arg_7_1] = nil
 end
 
-function EventManager.trigger_referenced(arg_8_0, arg_8_1, arg_8_2, ...)
+EventManager.trigger_referenced = function (arg_8_0, arg_8_1, arg_8_2, ...)
 	local var_8_0 = arg_8_0._referenced_events[arg_8_1]
 	local var_8_1 = var_8_0 and var_8_0[arg_8_2]
 

@@ -20,7 +20,7 @@ end
 TelemetryManager = class(TelemetryManager)
 TelemetryManager.NAME = "TelemetryManager"
 
-function TelemetryManager.create()
+TelemetryManager.create = function ()
 	if (IS_WINDOWS or IS_LINUX) and rawget(_G, "lcurl") == nil then
 		print("[TelemetryManager] No lcurl interface found! Fallback to dummy...")
 
@@ -42,7 +42,7 @@ function TelemetryManager.create()
 	end
 end
 
-function TelemetryManager.init(arg_3_0)
+TelemetryManager.init = function (arg_3_0)
 	arg_3_0._events = {}
 	arg_3_0._batch_post_time = 0
 	arg_3_0._t = 0
@@ -50,13 +50,13 @@ function TelemetryManager.init(arg_3_0)
 	arg_3_0:reload_settings()
 end
 
-function TelemetryManager.reload_settings(arg_4_0)
+TelemetryManager.reload_settings = function (arg_4_0)
 	var_0_6("[TelemetryManager] Refreshing settings")
 
 	arg_4_0._blacklisted_events = table.set(TelemetrySettings.blacklist or {})
 end
 
-function TelemetryManager.update(arg_5_0, arg_5_1, arg_5_2)
+TelemetryManager.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._t = arg_5_2
 
 	if arg_5_0:_ready_to_post_batch(arg_5_2) then
@@ -64,7 +64,7 @@ function TelemetryManager.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function TelemetryManager.register_event(arg_6_0, arg_6_1)
+TelemetryManager.register_event = function (arg_6_0, arg_6_1)
 	if not var_0_0 then
 		return
 	end
@@ -88,7 +88,7 @@ function TelemetryManager.register_event(arg_6_0, arg_6_1)
 	end
 end
 
-function TelemetryManager._convert_userdata(arg_7_0, arg_7_1)
+TelemetryManager._convert_userdata = function (arg_7_0, arg_7_1)
 	local var_7_0 = {}
 
 	if type(arg_7_1) == "table" then
@@ -114,7 +114,7 @@ function TelemetryManager._convert_userdata(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function TelemetryManager._ready_to_post_batch(arg_8_0, arg_8_1)
+TelemetryManager._ready_to_post_batch = function (arg_8_0, arg_8_1)
 	if arg_8_0._batch_in_flight then
 		return false
 	end
@@ -126,7 +126,7 @@ function TelemetryManager._ready_to_post_batch(arg_8_0, arg_8_1)
 	end
 end
 
-function TelemetryManager.post_batch(arg_9_0)
+TelemetryManager.post_batch = function (arg_9_0)
 	if not arg_9_0:has_events_to_post() then
 		return
 	end
@@ -157,21 +157,21 @@ function TelemetryManager.post_batch(arg_9_0)
 	end
 end
 
-function TelemetryManager.has_events_to_post(arg_10_0)
+TelemetryManager.has_events_to_post = function (arg_10_0)
 	return var_0_0 and not table.is_empty(arg_10_0._events)
 end
 
-function TelemetryManager.batch_in_flight(arg_11_0)
+TelemetryManager.batch_in_flight = function (arg_11_0)
 	return arg_11_0._batch_in_flight
 end
 
-function TelemetryManager._encode(arg_12_0, arg_12_1)
+TelemetryManager._encode = function (arg_12_0, arg_12_1)
 	local var_12_0 = table.map(arg_12_1, cjson.encode)
 
 	return "[" .. table.concat(var_12_0, ",") .. "]"
 end
 
-function TelemetryManager.cb_post_batch(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+TelemetryManager.cb_post_batch = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	if arg_13_1 then
 		var_0_6("[TelemetryManager] Batch sent successfully")
 		table.clear(arg_13_0._events)
@@ -184,6 +184,6 @@ function TelemetryManager.cb_post_batch(arg_13_0, arg_13_1, arg_13_2, arg_13_3, 
 	end
 end
 
-function TelemetryManager.destroy(arg_14_0)
+TelemetryManager.destroy = function (arg_14_0)
 	arg_14_0:post_batch()
 end

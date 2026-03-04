@@ -2,7 +2,7 @@
 
 CareerAbilityCorruptorTeleport = class(CareerAbilityCorruptorTeleport)
 
-function CareerAbilityCorruptorTeleport.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityCorruptorTeleport.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -18,7 +18,7 @@ function CareerAbilityCorruptorTeleport.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3,
 	arg_1_0._input_manager = Managers.input
 end
 
-function CareerAbilityCorruptorTeleport.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+CareerAbilityCorruptorTeleport.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
@@ -34,11 +34,11 @@ function CareerAbilityCorruptorTeleport.extensions_ready(arg_2_0, arg_2_1, arg_2
 	end
 end
 
-function CareerAbilityCorruptorTeleport.destroy(arg_3_0)
+CareerAbilityCorruptorTeleport.destroy = function (arg_3_0)
 	return
 end
 
-function CareerAbilityCorruptorTeleport._ability_available(arg_4_0)
+CareerAbilityCorruptorTeleport._ability_available = function (arg_4_0)
 	local var_4_0 = arg_4_0._career_extension
 	local var_4_1 = arg_4_0._status_extension
 	local var_4_2 = arg_4_0._locomotion_extension
@@ -47,11 +47,11 @@ function CareerAbilityCorruptorTeleport._ability_available(arg_4_0)
 	return var_4_0:can_use_activated_ability() and not var_4_1:is_disabled() and var_4_2:is_on_ground() and not var_4_3
 end
 
-function CareerAbilityCorruptorTeleport.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CareerAbilityCorruptorTeleport.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-function CareerAbilityCorruptorTeleport.was_triggered(arg_6_0)
+CareerAbilityCorruptorTeleport.was_triggered = function (arg_6_0)
 	if not arg_6_0:_ability_available() then
 		return false
 	end
@@ -71,14 +71,14 @@ function CareerAbilityCorruptorTeleport.was_triggered(arg_6_0)
 	return false
 end
 
-function CareerAbilityCorruptorTeleport.finish(arg_7_0, arg_7_1)
+CareerAbilityCorruptorTeleport.finish = function (arg_7_0, arg_7_1)
 	return
 end
 
-function CareerAbilityCorruptorTeleport.stop(arg_8_0, arg_8_1)
+CareerAbilityCorruptorTeleport.stop = function (arg_8_0, arg_8_1)
 	return
 end
 
-function CareerAbilityCorruptorTeleport._start(arg_9_0)
+CareerAbilityCorruptorTeleport._start = function (arg_9_0)
 	return
 end

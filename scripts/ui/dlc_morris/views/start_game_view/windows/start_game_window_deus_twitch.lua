@@ -16,7 +16,7 @@ local var_0_11 = "special_1_press"
 StartGameWindowDeusTwitch = class(StartGameWindowDeusTwitch)
 StartGameWindowDeusTwitch.NAME = "StartGameWindowDeusTwitch"
 
-function StartGameWindowDeusTwitch.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusTwitch.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowTwitchOverviewConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -65,7 +65,7 @@ function StartGameWindowDeusTwitch.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "_update_additional_curse_frame", "_update_additional_curse_frame")
 end
 
-function StartGameWindowDeusTwitch._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowDeusTwitch._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_2)
 	arg_2_0._expedition_widgets = {}
@@ -108,11 +108,11 @@ function StartGameWindowDeusTwitch._create_ui_elements(arg_2_0, arg_2_1, arg_2_2
 	arg_2_0._widgets_by_name.upsell_button.content.visible = false
 end
 
-function StartGameWindowDeusTwitch.set_focus(arg_3_0, arg_3_1)
+StartGameWindowDeusTwitch.set_focus = function (arg_3_0, arg_3_1)
 	arg_3_0._is_focused = arg_3_1
 end
 
-function StartGameWindowDeusTwitch._set_active(arg_4_0, arg_4_1)
+StartGameWindowDeusTwitch._set_active = function (arg_4_0, arg_4_1)
 	if arg_4_1 then
 		Managers.irc:register_message_callback("twitch_gamepad", Irc.CHANNEL_MSG, callback(arg_4_0, "cb_on_message_received"))
 	else
@@ -124,7 +124,7 @@ function StartGameWindowDeusTwitch._set_active(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowDeusTwitch._set_disconnect_button_text(arg_5_0)
+StartGameWindowDeusTwitch._set_disconnect_button_text = function (arg_5_0)
 	local var_5_0 = arg_5_0._widgets_by_name.button_2
 
 	if var_5_0 then
@@ -134,7 +134,7 @@ function StartGameWindowDeusTwitch._set_disconnect_button_text(arg_5_0)
 	end
 end
 
-function StartGameWindowDeusTwitch.cb_on_message_received(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+StartGameWindowDeusTwitch.cb_on_message_received = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._widgets_by_name.chat_output_widget.content
 	local var_6_1 = var_6_0.message_tables
 	local var_6_2 = {}
@@ -152,7 +152,7 @@ function StartGameWindowDeusTwitch.cb_on_message_received(arg_6_0, arg_6_1, arg_
 	end
 end
 
-function StartGameWindowDeusTwitch.set_input_blocked(arg_7_0, arg_7_1)
+StartGameWindowDeusTwitch.set_input_blocked = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.input
 
 	if arg_7_1 then
@@ -171,7 +171,7 @@ function StartGameWindowDeusTwitch.set_input_blocked(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowDeusTwitch._handle_twitch_login_input(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+StartGameWindowDeusTwitch._handle_twitch_login_input = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if not Managers.twitch:is_connecting() then
 		local var_8_0 = Managers.twitch:is_connected()
 		local var_8_1 = arg_8_0._widgets_by_name.frame_widget
@@ -277,13 +277,13 @@ function StartGameWindowDeusTwitch._handle_twitch_login_input(arg_8_0, arg_8_1, 
 	end
 end
 
-function StartGameWindowDeusTwitch.cb_connection_success_callback(arg_9_0, arg_9_1)
+StartGameWindowDeusTwitch.cb_connection_success_callback = function (arg_9_0, arg_9_1)
 	arg_9_0:_set_disconnect_button_text()
 	arg_9_0:_setup_connected_status()
 	arg_9_0:_set_active(true)
 end
 
-function StartGameWindowDeusTwitch._setup_connected_status(arg_10_0)
+StartGameWindowDeusTwitch._setup_connected_status = function (arg_10_0)
 	local var_10_0 = Managers.twitch and Managers.twitch:user_name() or "N/A"
 
 	arg_10_0._widgets_by_name.frame_widget.content.connected = Localize("start_game_window_twitch_connected_to") .. var_10_0
@@ -293,7 +293,7 @@ local function var_0_12(arg_11_0, arg_11_1)
 	return arg_11_0.remaining_time - (arg_11_1 - arg_11_0.time_of_update) < 0
 end
 
-function StartGameWindowDeusTwitch._gather_unlocked_journeys(arg_12_0)
+StartGameWindowDeusTwitch._gather_unlocked_journeys = function (arg_12_0)
 	local var_12_0 = {}
 
 	for iter_12_0, iter_12_1 in ipairs(LevelUnlockUtils.unlocked_journeys(arg_12_0._statistics_db, arg_12_0._stats_id)) do
@@ -311,7 +311,7 @@ function StartGameWindowDeusTwitch._gather_unlocked_journeys(arg_12_0)
 	arg_12_0._unlocked_journeys = var_12_0
 end
 
-function StartGameWindowDeusTwitch._setup_journey_widgets(arg_13_0)
+StartGameWindowDeusTwitch._setup_journey_widgets = function (arg_13_0)
 	local var_13_0 = arg_13_0._node_widgets
 	local var_13_1 = arg_13_0._statistics_db
 	local var_13_2 = arg_13_0._stats_id
@@ -359,17 +359,17 @@ function StartGameWindowDeusTwitch._setup_journey_widgets(arg_13_0)
 	arg_13_0._expedition_widgets = var_13_4
 end
 
-function StartGameWindowDeusTwitch._refresh_journey_cycle(arg_14_0)
+StartGameWindowDeusTwitch._refresh_journey_cycle = function (arg_14_0)
 	arg_14_0._journey_cycle = arg_14_0._backend_deus:get_journey_cycle()
 
 	arg_14_0:_on_new_journey_cycle()
 end
 
-function StartGameWindowDeusTwitch._on_new_journey_cycle(arg_15_0)
+StartGameWindowDeusTwitch._on_new_journey_cycle = function (arg_15_0)
 	arg_15_0:_update_journey_god_icons()
 end
 
-function StartGameWindowDeusTwitch._update_journey_god_icons(arg_16_0)
+StartGameWindowDeusTwitch._update_journey_god_icons = function (arg_16_0)
 	local var_16_0 = arg_16_0._journey_cycle
 
 	for iter_16_0, iter_16_1 in ipairs(arg_16_0._expedition_widgets) do
@@ -380,7 +380,7 @@ function StartGameWindowDeusTwitch._update_journey_god_icons(arg_16_0)
 	end
 end
 
-function StartGameWindowDeusTwitch.update(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowDeusTwitch.update = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_update_modifiers(arg_17_1, arg_17_2)
 	arg_17_0:_update_input_description(arg_17_1, arg_17_2)
 	arg_17_0:_update_can_play(arg_17_1, arg_17_2)
@@ -391,11 +391,11 @@ function StartGameWindowDeusTwitch.update(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_draw(arg_17_1, arg_17_2)
 end
 
-function StartGameWindowDeusTwitch.post_update(arg_18_0, arg_18_1, arg_18_2)
+StartGameWindowDeusTwitch.post_update = function (arg_18_0, arg_18_1, arg_18_2)
 	return
 end
 
-function StartGameWindowDeusTwitch._handle_input(arg_19_0, arg_19_1, arg_19_2)
+StartGameWindowDeusTwitch._handle_input = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0._virtual_keyboard_id then
 		return
 	end
@@ -530,13 +530,13 @@ function StartGameWindowDeusTwitch._handle_input(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_handle_twitch_login_input(arg_19_1, arg_19_2, var_19_1)
 end
 
-function StartGameWindowDeusTwitch._update_input_description(arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowDeusTwitch._update_input_description = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Managers.twitch and Managers.twitch:is_connected()
 
 	arg_20_0:_set_input_description(var_20_0)
 end
 
-function StartGameWindowDeusTwitch._update_modifiers(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowDeusTwitch._update_modifiers = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = Managers.time:time("main")
 	local var_21_1 = arg_21_0._journey_cycle
 
@@ -545,7 +545,7 @@ function StartGameWindowDeusTwitch._update_modifiers(arg_21_0, arg_21_1, arg_21_
 	end
 end
 
-function StartGameWindowDeusTwitch._update_expedition_option(arg_22_0)
+StartGameWindowDeusTwitch._update_expedition_option = function (arg_22_0)
 	local var_22_0 = arg_22_0._parent:get_selected_level_id()
 
 	if not var_22_0 then
@@ -569,14 +569,14 @@ function StartGameWindowDeusTwitch._update_expedition_option(arg_22_0)
 	end
 end
 
-function StartGameWindowDeusTwitch._update_button_animations(arg_23_0, arg_23_1)
+StartGameWindowDeusTwitch._update_button_animations = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._widgets_by_name
 
 	arg_23_0:_animate_button(var_23_0.button_1, arg_23_1)
 	arg_23_0:_animate_button(var_23_0.button_2, arg_23_1)
 end
 
-function StartGameWindowDeusTwitch._update_animations(arg_24_0, arg_24_1, arg_24_2)
+StartGameWindowDeusTwitch._update_animations = function (arg_24_0, arg_24_1, arg_24_2)
 	if not IS_PS4 and not Managers.input:is_device_active("gamepad") then
 		arg_24_0:_update_button_animations(arg_24_1)
 	end
@@ -602,7 +602,7 @@ function StartGameWindowDeusTwitch._update_animations(arg_24_0, arg_24_1, arg_24
 	end
 end
 
-function StartGameWindowDeusTwitch._draw(arg_25_0, arg_25_1, arg_25_2)
+StartGameWindowDeusTwitch._draw = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._ui_top_renderer
 	local var_25_1 = arg_25_0._ui_scenegraph
 	local var_25_2 = arg_25_0._parent:window_input_service()
@@ -621,7 +621,7 @@ function StartGameWindowDeusTwitch._draw(arg_25_0, arg_25_1, arg_25_2)
 	UIRenderer.end_pass(var_25_0)
 end
 
-function StartGameWindowDeusTwitch._start_transition_animation(arg_26_0, arg_26_1)
+StartGameWindowDeusTwitch._start_transition_animation = function (arg_26_0, arg_26_1)
 	local var_26_0 = {
 		render_settings = arg_26_0._render_settings
 	}
@@ -630,7 +630,7 @@ function StartGameWindowDeusTwitch._start_transition_animation(arg_26_0, arg_26_
 	arg_26_0._animations[arg_26_1] = var_26_1
 end
 
-function StartGameWindowDeusTwitch._animate_button(arg_27_0, arg_27_1, arg_27_2)
+StartGameWindowDeusTwitch._animate_button = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_1.content.button_hotspot
 	local var_27_1 = 20
 	local var_27_2 = var_27_0.input_progress or 0
@@ -665,7 +665,7 @@ function StartGameWindowDeusTwitch._animate_button(arg_27_0, arg_27_1, arg_27_2)
 	var_27_0.selection_progress = var_27_11
 end
 
-function StartGameWindowDeusTwitch._animate_expedition_widget(arg_28_0, arg_28_1, arg_28_2)
+StartGameWindowDeusTwitch._animate_expedition_widget = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_1.content.button_hotspot
 	local var_28_1 = var_28_0.is_selected
 	local var_28_2 = var_28_0.selected_progress or 0
@@ -676,11 +676,11 @@ function StartGameWindowDeusTwitch._animate_expedition_widget(arg_28_0, arg_28_1
 	var_28_0.selected_progress = var_28_4
 end
 
-function StartGameWindowDeusTwitch._play_sound(arg_29_0, arg_29_1)
+StartGameWindowDeusTwitch._play_sound = function (arg_29_0, arg_29_1)
 	arg_29_0._parent:play_sound(arg_29_1)
 end
 
-function StartGameWindowDeusTwitch._handle_virtual_keyboard(arg_30_0, arg_30_1, arg_30_2)
+StartGameWindowDeusTwitch._handle_virtual_keyboard = function (arg_30_0, arg_30_1, arg_30_2)
 	if not arg_30_0._virtual_keyboard_id then
 		return
 	end
@@ -724,7 +724,7 @@ function StartGameWindowDeusTwitch._handle_virtual_keyboard(arg_30_0, arg_30_1, 
 	end
 end
 
-function StartGameWindowDeusTwitch._handle_gamepad_activity(arg_31_0, arg_31_1, arg_31_2)
+StartGameWindowDeusTwitch._handle_gamepad_activity = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -749,7 +749,7 @@ function StartGameWindowDeusTwitch._handle_gamepad_activity(arg_31_0, arg_31_1, 
 	end
 end
 
-function StartGameWindowDeusTwitch._verify_selection_index(arg_32_0, arg_32_1, arg_32_2)
+StartGameWindowDeusTwitch._verify_selection_index = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0._input_index
 	local var_32_1 = #var_0_8
 
@@ -773,7 +773,7 @@ function StartGameWindowDeusTwitch._verify_selection_index(arg_32_0, arg_32_1, a
 	return var_32_0
 end
 
-function StartGameWindowDeusTwitch._gamepad_selector_input_func(arg_33_0, arg_33_1, arg_33_2)
+StartGameWindowDeusTwitch._gamepad_selector_input_func = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = Managers.input:is_device_active("mouse")
 
 	arg_33_1 = arg_33_0:_verify_selection_index(arg_33_1, arg_33_2)
@@ -791,7 +791,7 @@ function StartGameWindowDeusTwitch._gamepad_selector_input_func(arg_33_0, arg_33
 	arg_33_0._input_index = arg_33_1
 end
 
-function StartGameWindowDeusTwitch._update_difficulty_option(arg_34_0, arg_34_1)
+StartGameWindowDeusTwitch._update_difficulty_option = function (arg_34_0, arg_34_1)
 	if arg_34_1 then
 		local var_34_0 = DifficultySettings[arg_34_1]
 		local var_34_1 = arg_34_0._selection_widgets_by_name.difficulty_stepper
@@ -808,7 +808,7 @@ function StartGameWindowDeusTwitch._update_difficulty_option(arg_34_0, arg_34_1)
 	end
 end
 
-function StartGameWindowDeusTwitch._option_selected(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+StartGameWindowDeusTwitch._option_selected = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	local var_35_0 = arg_35_0._parent
 	local var_35_1 = var_35_0:get_twitch_settings(arg_35_0._mechanism_name) or var_35_0:get_twitch_settings("adventure")
 
@@ -841,7 +841,7 @@ function StartGameWindowDeusTwitch._option_selected(arg_35_0, arg_35_1, arg_35_2
 	end
 end
 
-function StartGameWindowDeusTwitch._set_input_description(arg_36_0, arg_36_1)
+StartGameWindowDeusTwitch._set_input_description = function (arg_36_0, arg_36_1)
 	if arg_36_0._is_server then
 		if arg_36_1 then
 			local var_36_0 = arg_36_0._dlc_locked and "deus_twitch_buy_connected" or "deus_default_twitch_connected"
@@ -861,7 +861,7 @@ function StartGameWindowDeusTwitch._set_input_description(arg_36_0, arg_36_1)
 	arg_36_0._input_description_connected = arg_36_1
 end
 
-function StartGameWindowDeusTwitch._update_can_play(arg_37_0, arg_37_1, arg_37_2)
+StartGameWindowDeusTwitch._update_can_play = function (arg_37_0, arg_37_1, arg_37_2)
 	if arg_37_0._is_server then
 		local var_37_0 = arg_37_0:_can_play()
 
@@ -878,7 +878,7 @@ function StartGameWindowDeusTwitch._update_can_play(arg_37_0, arg_37_1, arg_37_2
 	end
 end
 
-function StartGameWindowDeusTwitch._can_play(arg_38_0)
+StartGameWindowDeusTwitch._can_play = function (arg_38_0)
 	if not arg_38_0._is_server then
 		return false
 	end
@@ -889,7 +889,7 @@ function StartGameWindowDeusTwitch._can_play(arg_38_0)
 	return var_38_0 ~= nil and var_38_1 and not arg_38_0._dlc_locked
 end
 
-function StartGameWindowDeusTwitch.on_exit(arg_39_0, arg_39_1)
+StartGameWindowDeusTwitch.on_exit = function (arg_39_0, arg_39_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowTwitchOverviewConsole")
 
 	arg_39_0._ui_animator = nil
@@ -905,7 +905,7 @@ function StartGameWindowDeusTwitch.on_exit(arg_39_0, arg_39_1)
 	Managers.state.event:unregister("_update_additional_curse_frame", arg_39_0)
 end
 
-function StartGameWindowDeusTwitch._set_info_window(arg_40_0, arg_40_1)
+StartGameWindowDeusTwitch._set_info_window = function (arg_40_0, arg_40_1)
 	local var_40_0 = DifficultySettings[arg_40_1]
 	local var_40_1 = var_40_0.description
 	local var_40_2 = var_40_0.max_chest_power_level
@@ -915,7 +915,7 @@ function StartGameWindowDeusTwitch._set_info_window(arg_40_0, arg_40_1)
 	var_40_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_40_2)
 end
 
-function StartGameWindowDeusTwitch._update_difficulty_lock(arg_41_0)
+StartGameWindowDeusTwitch._update_difficulty_lock = function (arg_41_0)
 	local var_41_0 = arg_41_0._current_difficulty
 	local var_41_1 = arg_41_0._widgets_by_name.difficulty_info
 	local var_41_2 = arg_41_0._widgets_by_name.upsell_button
@@ -972,7 +972,7 @@ function StartGameWindowDeusTwitch._update_difficulty_lock(arg_41_0)
 	var_41_2.offset[2] = -math.floor(var_41_7) / 2 + 24
 end
 
-function StartGameWindowDeusTwitch._calculate_difficulty_info_widget_size(arg_42_0, arg_42_1)
+StartGameWindowDeusTwitch._calculate_difficulty_info_widget_size = function (arg_42_0, arg_42_1)
 	local var_42_0 = 20
 	local var_42_1 = arg_42_1.style.difficulty_description
 	local var_42_2 = arg_42_1.content.difficulty_description
@@ -1003,7 +1003,7 @@ function StartGameWindowDeusTwitch._calculate_difficulty_info_widget_size(arg_42
 	return var_42_6 + var_42_3 + var_42_9 + var_42_12 + 50
 end
 
-function StartGameWindowDeusTwitch._resize_difficulty_info(arg_43_0, arg_43_1, arg_43_2)
+StartGameWindowDeusTwitch._resize_difficulty_info = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0._widgets_by_name.difficulty_info
 
 	var_43_0.content.should_resize = true
@@ -1013,7 +1013,7 @@ function StartGameWindowDeusTwitch._resize_difficulty_info(arg_43_0, arg_43_1, a
 	var_43_0.style.widget_hotspot.offset = arg_43_2
 end
 
-function StartGameWindowDeusTwitch._update_gamemode_info_text(arg_44_0, arg_44_1)
+StartGameWindowDeusTwitch._update_gamemode_info_text = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._widgets_by_name.twitch_gamemode_info_box
 
 	if arg_44_1:get("trigger_cycle_next") and not var_44_0.content.is_showing_info then
@@ -1039,7 +1039,7 @@ function StartGameWindowDeusTwitch._update_gamemode_info_text(arg_44_0, arg_44_1
 	end
 end
 
-function StartGameWindowDeusTwitch._update_additional_curse_frame(arg_45_0, arg_45_1)
+StartGameWindowDeusTwitch._update_additional_curse_frame = function (arg_45_0, arg_45_1)
 	for iter_45_0, iter_45_1 in ipairs(arg_45_0._expedition_widgets) do
 		local var_45_0 = iter_45_1.content
 

@@ -9,7 +9,7 @@ local var_0_1 = {
 	"definitions"
 }
 
-function ImguiUILiveCode.init(arg_1_0)
+ImguiUILiveCode.init = function (arg_1_0)
 	arg_1_0._require_datas = {}
 	arg_1_0._file_hashes = {}
 	arg_1_0._dirty_packages = {}
@@ -19,7 +19,7 @@ end
 
 local var_0_2 = true
 
-function ImguiUILiveCode.update(arg_2_0, arg_2_1, arg_2_2)
+ImguiUILiveCode.update = function (arg_2_0, arg_2_1, arg_2_2)
 	if var_0_2 then
 		arg_2_0:init()
 
@@ -31,7 +31,7 @@ function ImguiUILiveCode.update(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_safeguard_dirty_packages()
 end
 
-function ImguiUILiveCode._safeguard_dirty_packages(arg_3_0)
+ImguiUILiveCode._safeguard_dirty_packages = function (arg_3_0)
 	if table.is_empty(arg_3_0._dirty_packages) then
 		return
 	end
@@ -51,13 +51,13 @@ function ImguiUILiveCode._safeguard_dirty_packages(arg_3_0)
 	end
 end
 
-function ImguiUILiveCode.on_show(arg_5_0)
+ImguiUILiveCode.on_show = function (arg_5_0)
 	return
 end
 
 local var_0_3 = string.format("\n-------------------------------------------------\n\nFor a file to support live coding it must contain\none of the following words in thier filenames:\n\n[\n\t%s\n]\n\nand return a table, or specify 'live_code = true'\nin their return table.\n\n-------------------------------------------------\n\nIt's now running on a fairly naive solution of\nopening every relevant file in packages.loaded,\nreads it all, and diffs its content. This limits\nhow many files we can process each frame. If you\nhave the time, please implement a file watcher\ninstead.\n\n-------------------------------------------------\n\n", table.concat(var_0_1, ",\n\t"))
 
-function ImguiUILiveCode.draw(arg_6_0)
+ImguiUILiveCode.draw = function (arg_6_0)
 	local var_6_0, var_6_1 = Imgui.begin_window("UI Live Code", "always_auto_resize")
 
 	if not var_6_1 then
@@ -85,23 +85,23 @@ function ImguiUILiveCode.draw(arg_6_0)
 	return var_6_0
 end
 
-function ImguiUILiveCode.is_persistent(arg_7_0)
+ImguiUILiveCode.is_persistent = function (arg_7_0)
 	return true
 end
 
-function ImguiUILiveCode._next_package(arg_8_0)
+ImguiUILiveCode._next_package = function (arg_8_0)
 	arg_8_0._next_package_name = next(package.loaded, arg_8_0._next_package_name) or next(package.loaded)
 
 	return arg_8_0._next_package_name
 end
 
-function ImguiUILiveCode._num_packages(arg_9_0)
+ImguiUILiveCode._num_packages = function (arg_9_0)
 	arg_9_0._cache.num_packages = arg_9_0._cache.num_packages or table.size(package.loaded)
 
 	return arg_9_0._cache.num_packages
 end
 
-function ImguiUILiveCode._num_processable_packages(arg_10_0)
+ImguiUILiveCode._num_processable_packages = function (arg_10_0)
 	if not arg_10_0._cache.num_processable_packages then
 		local var_10_0 = 0
 
@@ -117,13 +117,13 @@ function ImguiUILiveCode._num_processable_packages(arg_10_0)
 	return arg_10_0._cache.num_processable_packages
 end
 
-function ImguiUILiveCode._clear_cache_if_dirty(arg_11_0)
+ImguiUILiveCode._clear_cache_if_dirty = function (arg_11_0)
 	if arg_11_0:_num_packages() ~= table.size(package.loaded) then
 		table.clear(arg_11_0._cache)
 	end
 end
 
-function ImguiUILiveCode._process_packages(arg_12_0, arg_12_1)
+ImguiUILiveCode._process_packages = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0:_calculate_num_frame_packages(arg_12_1)
 	local var_12_1 = 0
 	local var_12_2 = arg_12_0:_num_packages()
@@ -141,7 +141,7 @@ function ImguiUILiveCode._process_packages(arg_12_0, arg_12_1)
 	end
 end
 
-function ImguiUILiveCode._update_package(arg_13_0, arg_13_1)
+ImguiUILiveCode._update_package = function (arg_13_0, arg_13_1)
 	local var_13_0 = package.loaded[arg_13_1]
 	local var_13_1 = false
 
@@ -160,13 +160,13 @@ function ImguiUILiveCode._update_package(arg_13_0, arg_13_1)
 	return var_13_1
 end
 
-function ImguiUILiveCode._file_name(arg_14_0, arg_14_1)
+ImguiUILiveCode._file_name = function (arg_14_0, arg_14_1)
 	arg_14_0._src_dir = arg_14_0._src_dir or string.gsub(Application.source_directory(), "\\", "/") .. "/"
 
 	return arg_14_0._src_dir .. arg_14_1 .. ".lua"
 end
 
-function ImguiUILiveCode._is_live_code_file(arg_15_0, arg_15_1, arg_15_2)
+ImguiUILiveCode._is_live_code_file = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0._cache.is_live_code_file then
 		arg_15_0._cache.is_live_code_file = {}
 	end
@@ -192,7 +192,7 @@ function ImguiUILiveCode._is_live_code_file(arg_15_0, arg_15_1, arg_15_2)
 	return arg_15_0._cache.is_live_code_file[arg_15_1]
 end
 
-function ImguiUILiveCode._hash_file(arg_16_0, arg_16_1)
+ImguiUILiveCode._hash_file = function (arg_16_0, arg_16_1)
 	local var_16_0 = io.open(arg_16_0:_file_name(arg_16_1))
 
 	if var_16_0 then
@@ -206,11 +206,11 @@ function ImguiUILiveCode._hash_file(arg_16_0, arg_16_1)
 	return var_0_0, ""
 end
 
-function ImguiUILiveCode._mark_package_dirty(arg_17_0, arg_17_1, arg_17_2)
+ImguiUILiveCode._mark_package_dirty = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._dirty_packages[arg_17_1] = arg_17_2
 end
 
-function ImguiUILiveCode._merge_changes(arg_18_0, arg_18_1, arg_18_2)
+ImguiUILiveCode._merge_changes = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = loadstring(arg_18_2)
 	local var_18_1, var_18_2 = pcall(var_18_0)
 
@@ -224,7 +224,7 @@ function ImguiUILiveCode._merge_changes(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function ImguiUILiveCode._handle_nil_recursive(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+ImguiUILiveCode._handle_nil_recursive = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	for iter_19_0, iter_19_1 in pairs(arg_19_1) do
 		if not arg_19_2[iter_19_0] then
 			arg_19_3[iter_19_0] = nil
@@ -236,7 +236,7 @@ function ImguiUILiveCode._handle_nil_recursive(arg_19_0, arg_19_1, arg_19_2, arg
 	end
 end
 
-function ImguiUILiveCode._revert_dirty_packages(arg_20_0, arg_20_1)
+ImguiUILiveCode._revert_dirty_packages = function (arg_20_0, arg_20_1)
 	for iter_20_0, iter_20_1 in pairs(arg_20_0._dirty_packages) do
 		local var_20_0 = table.clone(arg_20_0._require_datas[iter_20_0])
 
@@ -249,7 +249,7 @@ function ImguiUILiveCode._revert_dirty_packages(arg_20_0, arg_20_1)
 	table.clear(arg_20_0._dirty_packages)
 end
 
-function ImguiUILiveCode._calculate_num_frame_packages(arg_21_0, arg_21_1)
+ImguiUILiveCode._calculate_num_frame_packages = function (arg_21_0, arg_21_1)
 	arg_21_0._last_num_packages = arg_21_0._last_num_packages or 0
 
 	local var_21_0 = 1 / arg_21_0._target_fps

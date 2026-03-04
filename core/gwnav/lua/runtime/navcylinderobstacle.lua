@@ -15,11 +15,11 @@ local var_0_9 = stingray.GwNavWorld
 local var_0_10 = stingray.GwNavCylinderObstacle
 local var_0_11 = {}
 
-function var_0_1.get_navcylinderostacle(arg_1_0)
+var_0_1.get_navcylinderostacle = function (arg_1_0)
 	return var_0_11[arg_1_0]
 end
 
-function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
+var_0_1.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.unit = arg_2_2
 	arg_2_0.navworld = arg_2_1
 
@@ -37,16 +37,16 @@ function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
 	var_0_11[arg_2_0.unit] = arg_2_0
 end
 
-function var_0_1.set_does_trigger_tagvolume(arg_3_0, arg_3_1)
+var_0_1.set_does_trigger_tagvolume = function (arg_3_0, arg_3_1)
 	var_0_10.set_does_trigger_tagvolume(arg_3_0.nav_cylinderobstacle, arg_3_1)
 end
 
-function var_0_1.set_next_update_config(arg_4_0, arg_4_1, arg_4_2)
+var_0_1.set_next_update_config = function (arg_4_0, arg_4_1, arg_4_2)
 	var_0_10.set_position(arg_4_0.nav_cylinderobstacle, arg_4_1)
 	var_0_10.set_velocity(arg_4_0.nav_cylinderobstacle, arg_4_2)
 end
 
-function var_0_1.update(arg_5_0, arg_5_1)
+var_0_1.update = function (arg_5_0, arg_5_1)
 	local var_5_0 = var_0_8.world_position(arg_5_0.unit, 1)
 	local var_5_1 = (var_5_0 - arg_5_0.lastpos:unbox()) / arg_5_1
 
@@ -55,7 +55,7 @@ function var_0_1.update(arg_5_0, arg_5_1)
 	arg_5_0.lastpos:store(var_5_0)
 end
 
-function var_0_1.shutdown(arg_6_0)
+var_0_1.shutdown = function (arg_6_0)
 	arg_6_0.navworld:remove_cylinderobstacle(arg_6_0.unit)
 	var_0_10.destroy(arg_6_0.nav_cylinderobstacle)
 
@@ -63,11 +63,11 @@ function var_0_1.shutdown(arg_6_0)
 	var_0_11[arg_6_0.unit] = nil
 end
 
-function var_0_1.add_to_world(arg_7_0)
+var_0_1.add_to_world = function (arg_7_0)
 	var_0_10.add_to_world(arg_7_0.nav_cylinderobstacle)
 end
 
-function var_0_1.remove_from_world(arg_8_0)
+var_0_1.remove_from_world = function (arg_8_0)
 	var_0_10.remove_from_world(arg_8_0.nav_cylinderobstacle)
 end
 

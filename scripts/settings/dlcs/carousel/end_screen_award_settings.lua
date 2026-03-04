@@ -29,7 +29,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	award_mask_material = "mvp_award_mask",
 	award_material = "mvp_award",
 	name = Localize("vs_award_mvp_name"),
-	evaluate = function(arg_3_0)
+	evaluate = function (arg_3_0)
 		return false
 	end
 }
@@ -49,7 +49,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_hero_killer_name"),
 	sub_header = Localize("vs_award_hero_killer_description"),
 	screen_sub_header = Localize("vs_award_hero_killer_sub_header"),
-	evaluate = function(arg_4_0)
+	evaluate = function (arg_4_0)
 		return var_0_1(arg_4_0, "kills_heroes")
 	end
 }
@@ -62,7 +62,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_slayer_name"),
 	sub_header = Localize("vs_award_slayer_description"),
 	screen_sub_header = Localize("vs_award_slayer_sub_header"),
-	evaluate = function(arg_5_0)
+	evaluate = function (arg_5_0)
 		return var_0_1(arg_5_0, "kills_specials")
 	end
 }
@@ -75,7 +75,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_smiter_name"),
 	sub_header = Localize("vs_award_smiter_description"),
 	screen_sub_header = Localize("vs_award_smiter_sub_header"),
-	evaluate = function(arg_6_0)
+	evaluate = function (arg_6_0)
 		return var_0_1(arg_6_0, "vs_damage_dealt_to_pactsworn")
 	end
 }
@@ -95,7 +95,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_damage_dealer_name"),
 	sub_header = Localize("vs_award_damage_dealer_description"),
 	screen_sub_header = Localize("vs_award_damage_dealer_sub_header"),
-	evaluate = function(arg_7_0)
+	evaluate = function (arg_7_0)
 		return var_0_1(arg_7_0, "damage_dealt_heroes")
 	end
 }
@@ -108,7 +108,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_saviour_name"),
 	sub_header = Localize("vs_award_saviour_description"),
 	screen_sub_header = Localize("vs_award_saviour_sub_header"),
-	evaluate = function(arg_8_0)
+	evaluate = function (arg_8_0)
 		return var_0_1(arg_8_0, "saves")
 	end
 }
@@ -124,7 +124,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_hero_napper_name"),
 	sub_header = Localize("vs_award_hero_napper_description"),
 	screen_sub_header = Localize("vs_award_hero_napper_sub_header"),
-	evaluate = function(arg_9_0)
+	evaluate = function (arg_9_0)
 		return var_0_1(arg_9_0, "packmaster_disables")
 	end
 }
@@ -140,7 +140,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_assassin_name"),
 	sub_header = Localize("vs_award_assassin_description"),
 	screen_sub_header = Localize("vs_award_assassin_sub_header"),
-	evaluate = function(arg_10_0)
+	evaluate = function (arg_10_0)
 		return var_0_1(arg_10_0, "gutter_runner_disables")
 	end
 }
@@ -153,7 +153,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_horde_killer_name"),
 	sub_header = Localize("vs_award_horde_killer_description"),
 	screen_sub_header = Localize("vs_award_horde_killer_sub_header"),
-	evaluate = function(arg_11_0)
+	evaluate = function (arg_11_0)
 		return var_0_1(arg_11_0, "kills_total")
 	end
 }
@@ -169,7 +169,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_troll_name"),
 	sub_header = Localize("vs_award_troll_description"),
 	screen_sub_header = Localize("vs_award_troll_sub_header"),
-	evaluate = function(arg_12_0)
+	evaluate = function (arg_12_0)
 		return var_0_1(arg_12_0, "troll_damage")
 	end
 }
@@ -185,7 +185,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_rat_ogre_name"),
 	sub_header = Localize("vs_award_rat_ogre_description"),
 	screen_sub_header = Localize("vs_award_rat_ogre_sub_header"),
-	evaluate = function(arg_13_0)
+	evaluate = function (arg_13_0)
 		return var_0_1(arg_13_0, "rat_ogre_damage")
 	end
 }
@@ -198,7 +198,7 @@ EndScreenAwardSettings[#EndScreenAwardSettings + 1] = {
 	name = Localize("vs_award_monster_killer_name"),
 	sub_header = Localize("vs_award_monster_killer_description"),
 	screen_sub_header = Localize("vs_award_monster_killer_sub_header"),
-	evaluate = function(arg_14_0)
+	evaluate = function (arg_14_0)
 		return var_0_1(arg_14_0, "damage_to_monster")
 	end
 }

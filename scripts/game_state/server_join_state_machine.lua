@@ -4,7 +4,7 @@ local var_0_0 = class(FindServerState)
 
 var_0_0.NAME = "FindServerState"
 
-function var_0_0.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+var_0_0.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	print("Attempting " .. arg_1_2 .. " search for game server " .. arg_1_4)
 	assert(arg_1_2 == "internet" or arg_1_2 == "lan")
 
@@ -13,7 +13,7 @@ function var_0_0.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._ip_port = arg_1_4
 end
 
-function var_0_0.enter(arg_2_0)
+var_0_0.enter = function (arg_2_0)
 	arg_2_0._finder = GameServerFinder:new(arg_2_0._network_options)
 
 	arg_2_0._finder:set_search_type(arg_2_0._search_type)
@@ -31,13 +31,13 @@ function var_0_0.enter(arg_2_0)
 	arg_2_0._finder:refresh()
 end
 
-function var_0_0.destroy(arg_3_0)
+var_0_0.destroy = function (arg_3_0)
 	arg_3_0._finder:destroy()
 
 	arg_3_0._finder = nil
 end
 
-function var_0_0.update(arg_4_0, arg_4_1)
+var_0_0.update = function (arg_4_0, arg_4_1)
 	arg_4_0._finder:update(arg_4_1)
 
 	if arg_4_0._finder:is_refreshing() then
@@ -69,7 +69,7 @@ local var_0_1 = class(FindServerLANState, var_0_0)
 
 var_0_1.NAME = "FindServerLANState"
 
-function var_0_1.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+var_0_1.init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0.super.init(arg_5_0, arg_5_1, "lan", arg_5_2, arg_5_3)
 end
 
@@ -77,7 +77,7 @@ local var_0_2 = class(FindServerInternetState, var_0_0)
 
 var_0_2.NAME = "FindServerInternetState"
 
-function var_0_2.init(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_2.init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0.super.init(arg_6_0, arg_6_1, "internet", arg_6_2, arg_6_3)
 end
 
@@ -85,17 +85,17 @@ local var_0_3 = class(PasswordDialogState)
 
 var_0_3.NAME = "PasswordDialogState"
 
-function var_0_3.init(arg_7_0, arg_7_1)
+var_0_3.init = function (arg_7_0, arg_7_1)
 	arg_7_0._popup_id = Managers.popup:queue_password_popup(Localize("lb_password"), Localize("lb_password_protected"), "ok", Localize("lb_ok"), "cancel", Localize("lb_cancel"))
 end
 
-function var_0_3.destroy(arg_8_0)
+var_0_3.destroy = function (arg_8_0)
 	Managers.popup:cancel_popup(arg_8_0._popup_id)
 
 	arg_8_0._popup_id = nil
 end
 
-function var_0_3.update(arg_9_0)
+var_0_3.update = function (arg_9_0)
 	local var_9_0, var_9_1 = Managers.popup:query_result(arg_9_0._popup_id)
 
 	if var_9_0 then
@@ -113,11 +113,11 @@ local var_0_4 = class(ServerJoinState)
 
 var_0_4.NAME = "ServerJoinState"
 
-function var_0_4.init(arg_10_0, arg_10_1)
+var_0_4.init = function (arg_10_0, arg_10_1)
 	arg_10_0._sm = arg_10_1
 end
 
-function var_0_4.enter(arg_11_0, arg_11_1)
+var_0_4.enter = function (arg_11_0, arg_11_1)
 	arg_11_0._sm._action = "join"
 	arg_11_0._sm._password = arg_11_1
 end
@@ -126,14 +126,14 @@ local var_0_5 = class(AbortState)
 
 var_0_5.NAME = "AbortState"
 
-function var_0_5.init(arg_12_0, arg_12_1)
+var_0_5.init = function (arg_12_0, arg_12_1)
 	arg_12_1._action = "cancel"
 	arg_12_1._password = ""
 end
 
 ServerJoinStateMachine = class(ServerJoinStateMachine, VisualStateMachine)
 
-function ServerJoinStateMachine.init(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ServerJoinStateMachine.init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0
 
 	arg_13_0.super.init(arg_13_0, "ServerJoinStateMachine", var_13_0, arg_13_1, arg_13_2)
@@ -156,7 +156,7 @@ function ServerJoinStateMachine.init(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_0:set_initial_state(var_0_2)
 end
 
-function ServerJoinStateMachine.result(arg_14_0)
+ServerJoinStateMachine.result = function (arg_14_0)
 	if arg_14_0._action == nil then
 		return
 	end

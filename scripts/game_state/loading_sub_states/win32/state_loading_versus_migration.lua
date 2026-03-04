@@ -9,7 +9,7 @@ end
 StateLoadingVersusMigration = class(StateLoadingVersusMigration)
 StateLoadingVersusMigration.NAME = "StateLoadingVersusMigration"
 
-function StateLoadingVersusMigration.on_enter(arg_2_0, arg_2_1)
+StateLoadingVersusMigration.on_enter = function (arg_2_0, arg_2_1)
 	print("[Gamestate] Enter Substate StateLoadingVersusMigration")
 
 	arg_2_0._party_manager = Managers.party
@@ -18,14 +18,14 @@ function StateLoadingVersusMigration.on_enter(arg_2_0, arg_2_1)
 	arg_2_0:_init_network()
 end
 
-function StateLoadingVersusMigration._init_params(arg_3_0, arg_3_1)
+StateLoadingVersusMigration._init_params = function (arg_3_0, arg_3_1)
 	arg_3_0._loading_view = arg_3_1.loading_view
 	arg_3_0._lobby_client = arg_3_1.lobby_client
 	arg_3_0._lobby_joined = false
 	arg_3_0._server_created = false
 end
 
-function StateLoadingVersusMigration._init_network(arg_4_0)
+StateLoadingVersusMigration._init_network = function (arg_4_0)
 	LobbySetup.setup_network_options()
 
 	if not arg_4_0.parent:has_registered_rpcs() then
@@ -65,17 +65,17 @@ function StateLoadingVersusMigration._init_network(arg_4_0)
 	end
 end
 
-function StateLoadingVersusMigration.update(arg_5_0, arg_5_1, arg_5_2)
+StateLoadingVersusMigration.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._server_created or arg_5_0._lobby_joined then
 		return StateLoadingRunning
 	end
 end
 
-function StateLoadingVersusMigration.on_exit(arg_6_0, arg_6_1)
+StateLoadingVersusMigration.on_exit = function (arg_6_0, arg_6_1)
 	arg_6_0.parent.parent.loading_context.versus_migration_info = nil
 end
 
-function StateLoadingVersusMigration.cb_server_created(arg_7_0)
+StateLoadingVersusMigration.cb_server_created = function (arg_7_0)
 	var_0_0("cb_server_created")
 
 	local var_7_0 = arg_7_0._migration_info.lobby_data
@@ -91,13 +91,13 @@ function StateLoadingVersusMigration.cb_server_created(arg_7_0)
 	arg_7_0._server_created = true
 end
 
-function StateLoadingVersusMigration.cb_lobby_joined(arg_8_0)
+StateLoadingVersusMigration.cb_lobby_joined = function (arg_8_0)
 	var_0_0("cb_lobby_joined")
 
 	arg_8_0._lobby_joined = true
 end
 
-function StateLoadingVersusMigration.set_up_lobby(arg_9_0)
+StateLoadingVersusMigration.set_up_lobby = function (arg_9_0)
 	local var_9_0 = Managers.level_transition_handler
 	local var_9_1 = arg_9_0._migration_info.level_data
 
@@ -106,7 +106,7 @@ function StateLoadingVersusMigration.set_up_lobby(arg_9_0)
 	arg_9_0.parent:start_matchmaking()
 end
 
-function StateLoadingVersusMigration.get_host_to_migrate_to(arg_10_0)
+StateLoadingVersusMigration.get_host_to_migrate_to = function (arg_10_0)
 	local var_10_0 = arg_10_0._friend_party[1]
 	local var_10_1 = tostring(var_10_0)
 

@@ -105,7 +105,7 @@ local function var_0_6(arg_1_0)
 			style_id = "marked_portrait_frame",
 			texture_id = "marked_portrait_frame",
 			retained_mode = var_0_0,
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.attributes[1]
 			end
 		},
@@ -120,7 +120,7 @@ local function var_0_6(arg_1_0)
 			style_id = "lower_normal_bg",
 			texture_id = "lower_normal_bg",
 			retained_mode = var_0_0,
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return not arg_3_0.attributes[1] or arg_1_0
 			end
 		}
@@ -216,7 +216,7 @@ local function var_0_6(arg_1_0)
 			style_id = "lower_marked_bg",
 			texture_id = "lower_marked_bg",
 			retained_mode = var_0_0,
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.attributes[1] and not arg_1_0
 			end
 		}
@@ -233,7 +233,7 @@ local function var_0_6(arg_1_0)
 				text_id = var_1_16,
 				style_id = var_1_16,
 				retained_mode = var_0_0,
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.attributes[iter_1_0]
 				end
 			}
@@ -269,7 +269,7 @@ local function var_0_6(arg_1_0)
 					texture_id = var_1_19,
 					style_id = var_1_19,
 					retained_mode = var_0_0,
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.attributes[iter_1_0]
 					end
 				}
@@ -564,7 +564,7 @@ local function var_0_6(arg_1_0)
 		texture_id = var_1_30,
 		style_id = var_1_30,
 		retained_mode = var_0_0,
-		content_check_function = function(arg_7_0)
+		content_check_function = function (arg_7_0)
 			return (arg_7_0.max_health_fraction or 1) ~= 1
 		end
 	}
@@ -591,7 +591,7 @@ local function var_0_6(arg_1_0)
 		texture_id = var_1_31,
 		style_id = var_1_31,
 		retained_mode = var_0_0,
-		content_check_function = function(arg_8_0)
+		content_check_function = function (arg_8_0)
 			return (arg_8_0.bar_edge_fraction or 1) ~= 1
 		end
 	}

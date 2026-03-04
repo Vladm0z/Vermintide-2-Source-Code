@@ -46,7 +46,7 @@ CareerSettings.we_thornsister = {
 			item_name = "thornsister_hat_0000"
 		}
 	},
-	is_unlocked_function = function(arg_1_0, arg_1_1, arg_1_2)
+	is_unlocked_function = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0, var_1_1 = arg_1_0:override_available_for_mechanism()
 
 		if not var_1_0 then
@@ -64,14 +64,14 @@ CareerSettings.we_thornsister = {
 
 		return true, var_1_7, var_1_6
 	end,
-	is_dlc_unlocked = function(arg_2_0)
+	is_dlc_unlocked = function (arg_2_0)
 		if Managers.unlock:is_dlc_unlocked("woods") then
 			return true, nil, "woods"
 		else
 			return false, "dlc_not_owned", "woods"
 		end
 	end,
-	override_available_for_mechanism = function(arg_3_0)
+	override_available_for_mechanism = function (arg_3_0)
 		local var_3_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 		local var_3_1 = arg_3_0.display_name
 

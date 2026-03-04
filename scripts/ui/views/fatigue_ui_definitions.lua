@@ -102,7 +102,7 @@ local var_0_2 = {
 				pass_type = "texture",
 				style_id = "texture_glow_id",
 				texture_id = "texture_glow_id",
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return arg_1_0.show_glow
 				end
 			}

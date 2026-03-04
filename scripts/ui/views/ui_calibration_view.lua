@@ -230,7 +230,7 @@ local var_0_5 = {
 
 UICalibrationView = class(UICalibrationView)
 
-function UICalibrationView.init(arg_1_0)
+UICalibrationView.init = function (arg_1_0)
 	arg_1_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_1_0.background = UIWidget.init(var_0_3.background)
 	arg_1_0.top_left_reticule = UIWidget.init(var_0_3.top_left_reticule)
@@ -245,11 +245,11 @@ function UICalibrationView.init(arg_1_0)
 	arg_1_0.buttons = var_1_0
 end
 
-function UICalibrationView.destroy(arg_2_0)
+UICalibrationView.destroy = function (arg_2_0)
 	return
 end
 
-function UICalibrationView.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+UICalibrationView.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0.ui_scenegraph
 	local var_3_1 = arg_3_0.top_left_reticule
 	local var_3_2 = arg_3_0.bottom_right_reticule
@@ -328,14 +328,14 @@ function UICalibrationView.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function UICalibrationView.reset_root_scale(arg_4_0)
+UICalibrationView.reset_root_scale = function (arg_4_0)
 	UISettings.root_scale[1] = 1
 	UISettings.root_scale[2] = 1
 
 	arg_4_0:save_new_root_scale(UISettings.root_scale)
 end
 
-function UICalibrationView.evaluate_new_root_scale(arg_5_0, arg_5_1)
+UICalibrationView.evaluate_new_root_scale = function (arg_5_0, arg_5_1)
 	local var_5_0, var_5_1 = Application.resolution()
 	local var_5_2 = arg_5_1[1]
 
@@ -361,7 +361,7 @@ function UICalibrationView.evaluate_new_root_scale(arg_5_0, arg_5_1)
 	arg_5_1[2] = var_5_4
 end
 
-function UICalibrationView.save_new_root_scale(arg_6_0, arg_6_1)
+UICalibrationView.save_new_root_scale = function (arg_6_0, arg_6_1)
 	Application.set_user_setting("root_scale_x", arg_6_1[1])
 	Application.set_user_setting("root_scale_y", arg_6_1[2])
 	Application.save_user_settings()

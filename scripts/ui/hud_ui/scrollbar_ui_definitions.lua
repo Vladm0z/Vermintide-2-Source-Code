@@ -25,7 +25,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				{
 					style_id = "scroller",
 					pass_type = "rounded_background",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						if arg_2_0.horizontal_scrollbar then
 							local var_2_0 = arg_2_1.rect_size[1]
 							local var_2_1 = arg_2_1.parent.scrollbar_bg.rect_size[1]
@@ -47,7 +47,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "gamepad_input",
 					texture_id = "xbox_input",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = Managers.input:is_device_active("gamepad")
 						local var_3_1 = UISettings.use_ps4_input_icons
 
@@ -55,7 +55,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
 						return var_3_0 and not var_3_1 and not arg_3_0.gamepad_input_disabled
 					end,
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						if arg_4_0.horizontal_scrollbar then
 							local var_4_0 = arg_4_1.parent.scroller
 							local var_4_1 = var_4_0.rect_size[1]
@@ -75,7 +75,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "gamepad_input",
 					texture_id = "ps_input",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						local var_5_0 = Managers.input:is_device_active("gamepad")
 						local var_5_1 = UISettings.use_ps4_input_icons
 
@@ -83,7 +83,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
 						return var_5_0 and var_5_1 and not arg_5_0.gamepad_input_disabled
 					end,
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						if arg_6_0.horizontal_scrollbar then
 							local var_6_0 = arg_6_1.parent.scroller
 							local var_6_1 = var_6_0.rect_size[1]

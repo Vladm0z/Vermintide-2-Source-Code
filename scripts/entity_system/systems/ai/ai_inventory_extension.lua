@@ -45,7 +45,7 @@ local function var_0_2(arg_3_0, arg_3_1)
 	end
 end
 
-function AIInventoryExtension._setup_configuration(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+AIInventoryExtension._setup_configuration = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_3.items
 	local var_4_1 = arg_4_3.items_n
 	local var_4_2 = arg_4_0.inventory_item_units
@@ -135,7 +135,7 @@ function AIInventoryExtension._setup_configuration(arg_4_0, arg_4_1, arg_4_2, ar
 	return var_4_6
 end
 
-function AIInventoryExtension.init(arg_5_0, arg_5_1, arg_5_2)
+AIInventoryExtension.init = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.world = arg_5_2.world
 	arg_5_0.unit = arg_5_1
 	arg_5_0.is_server = arg_5_2.is_server
@@ -201,7 +201,7 @@ function AIInventoryExtension.init(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AIInventoryExtension.destroy(arg_6_0)
+AIInventoryExtension.destroy = function (arg_6_0)
 	local var_6_0 = Managers.state.unit_spawner
 	local var_6_1 = arg_6_0.inventory_items_n
 	local var_6_2 = arg_6_0.world
@@ -229,7 +229,7 @@ function AIInventoryExtension.destroy(arg_6_0)
 	arg_6_0.stump_items = {}
 end
 
-function AIInventoryExtension.destroy_dropped_items(arg_7_0, arg_7_1)
+AIInventoryExtension.destroy_dropped_items = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.dropped_items[arg_7_1]
 	local var_7_1 = arg_7_0.world
 
@@ -248,11 +248,11 @@ function AIInventoryExtension.destroy_dropped_items(arg_7_0, arg_7_1)
 	end
 end
 
-function AIInventoryExtension.get_skin_unit(arg_8_0)
+AIInventoryExtension.get_skin_unit = function (arg_8_0)
 	return arg_8_0.inventory_item_skin_unit
 end
 
-function AIInventoryExtension.freeze(arg_9_0)
+AIInventoryExtension.freeze = function (arg_9_0)
 	local var_9_0 = Managers.state.unit_spawner
 	local var_9_1 = arg_9_0.world
 	local var_9_2 = arg_9_0.inventory_items_n
@@ -304,7 +304,7 @@ function AIInventoryExtension.freeze(arg_9_0)
 	arg_9_0.stump_items = {}
 end
 
-function AIInventoryExtension.unfreeze(arg_10_0)
+AIInventoryExtension.unfreeze = function (arg_10_0)
 	local var_10_0 = arg_10_0.unit
 
 	arg_10_0.dropped = false
@@ -349,7 +349,7 @@ function AIInventoryExtension.unfreeze(arg_10_0)
 	end
 end
 
-function AIInventoryExtension.show_single_item(arg_11_0, arg_11_1, arg_11_2)
+AIInventoryExtension.show_single_item = function (arg_11_0, arg_11_1, arg_11_2)
 	if script_data.ai_debug_inventory then
 		printf("[AIInventorySystem] showing[%s] item_inventory_index[%d]", tostring(arg_11_2), arg_11_1)
 	end
@@ -361,11 +361,11 @@ function AIInventoryExtension.show_single_item(arg_11_0, arg_11_1, arg_11_2)
 	Unit.set_unit_visibility(var_11_0, arg_11_2)
 end
 
-function AIInventoryExtension.get_unit(arg_12_0, arg_12_1)
+AIInventoryExtension.get_unit = function (arg_12_0, arg_12_1)
 	return arg_12_0.inventory_item_units_by_category[arg_12_1]
 end
 
-function AIInventoryExtension.get_item_inventory_index(arg_13_0, arg_13_1)
+AIInventoryExtension.get_item_inventory_index = function (arg_13_0, arg_13_1)
 	for iter_13_0 = 1, arg_13_0.inventory_items_n do
 		if arg_13_0.inventory_item_units[iter_13_0] == arg_13_1 then
 			return iter_13_0
@@ -375,7 +375,7 @@ function AIInventoryExtension.get_item_inventory_index(arg_13_0, arg_13_1)
 	assert(false, "item_unit not found in ai inventory")
 end
 
-function AIInventoryExtension.drop_single_item(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+AIInventoryExtension.drop_single_item = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if script_data.ai_debug_inventory then
 		printf("[AIInventorySystem] dropping item_inventory_index[%d] with [%d] total items in inventory", arg_14_1, arg_14_0.inventory_items_n)
 	end
@@ -427,7 +427,7 @@ function AIInventoryExtension.drop_single_item(arg_14_0, arg_14_1, arg_14_2, arg
 	end
 end
 
-function AIInventoryExtension.disable_inventory_item(arg_15_0, arg_15_1, arg_15_2)
+AIInventoryExtension.disable_inventory_item = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = ScriptUnit.has_extension(arg_15_2, "ai_inventory_item_system")
 	local var_15_1 = Unit.num_actors(arg_15_2)
 
@@ -452,7 +452,7 @@ function AIInventoryExtension.disable_inventory_item(arg_15_0, arg_15_1, arg_15_
 	end
 end
 
-function AIInventoryExtension._drop_unit(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+AIInventoryExtension._drop_unit = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
 	local var_16_0 = Unit.world_position(arg_16_2, 0)
 	local var_16_1 = Unit.world_rotation(arg_16_2, 0)
 	local var_16_2 = World.spawn_unit(arg_16_0.world, arg_16_1, var_16_0, var_16_1, nil)
@@ -476,7 +476,7 @@ function AIInventoryExtension._drop_unit(arg_16_0, arg_16_1, arg_16_2, arg_16_3,
 	end
 end
 
-function AIInventoryExtension.wield_item_set(arg_17_0, arg_17_1, arg_17_2)
+AIInventoryExtension.wield_item_set = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.unit
 	local var_17_1 = Managers.state.network
 	local var_17_2 = var_17_1:unit_game_object_id(var_17_0)
@@ -505,7 +505,7 @@ function AIInventoryExtension.wield_item_set(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function AIInventoryExtension.unwield_set(arg_18_0, arg_18_1)
+AIInventoryExtension.unwield_set = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.item_sets[arg_18_1]
 
 	for iter_18_0 = var_18_0.start_index, var_18_0.end_index do
@@ -520,7 +520,7 @@ function AIInventoryExtension.unwield_set(arg_18_0, arg_18_1)
 	end
 end
 
-function AIInventoryExtension.play_hit_sound(arg_19_0, arg_19_1, arg_19_2)
+AIInventoryExtension.play_hit_sound = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = Managers.player:owner(arg_19_1)
 	local var_19_1 = var_19_0.remote or var_19_0.bot_player or false
 	local var_19_2 = arg_19_0.world
@@ -547,7 +547,7 @@ function AIInventoryExtension.play_hit_sound(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function AIInventoryExtension.hot_join_sync(arg_20_0, arg_20_1)
+AIInventoryExtension.hot_join_sync = function (arg_20_0, arg_20_1)
 	local var_20_0 = PEER_ID_TO_CHANNEL[arg_20_1]
 
 	if arg_20_0.hidden_item_index and ALIVE[arg_20_0.unit] then
@@ -557,7 +557,7 @@ function AIInventoryExtension.hot_join_sync(arg_20_0, arg_20_1)
 	end
 
 	if arg_20_0.dropped then
-		-- block empty
+		-- Nothing
 	elseif arg_20_0.wielded then
 		local var_20_2 = Managers.state.unit_storage:go_id(arg_20_0.unit)
 
@@ -567,7 +567,7 @@ function AIInventoryExtension.hot_join_sync(arg_20_0, arg_20_1)
 	end
 end
 
-function AIInventoryExtension.add_additional_hit_sfx(arg_21_0, arg_21_1)
+AIInventoryExtension.add_additional_hit_sfx = function (arg_21_0, arg_21_1)
 	if not arg_21_1 then
 		return nil
 	end
@@ -602,7 +602,7 @@ function AIInventoryExtension.add_additional_hit_sfx(arg_21_0, arg_21_1)
 	return var_21_2
 end
 
-function AIInventoryExtension.remove_additioanl_hit_sfx(arg_22_0, arg_22_1)
+AIInventoryExtension.remove_additioanl_hit_sfx = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._additional_hit_sounds_ids
 
 	if not var_22_0 then

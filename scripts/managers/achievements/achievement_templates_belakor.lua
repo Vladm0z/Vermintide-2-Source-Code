@@ -24,7 +24,7 @@ var_0_1.blk_complete_arena = {
 	display_completion_ui = true,
 	icon = "achievement_morris_complete_arena",
 	desc = "achv_blk_complete_arena_desc",
-	completed = function(arg_1_0, arg_1_1)
+	completed = function (arg_1_0, arg_1_1)
 		return AchievementTemplateHelper.check_level(arg_1_0, arg_1_1, "arena_belakor")
 	end
 }
@@ -37,10 +37,10 @@ var_0_1.blk_three_champions = {
 		"register_lieutenant_spawned",
 		"register_kill"
 	},
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		return arg_2_0:get_persistent_stat(arg_2_1, "blk_three_champions") > 0
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if arg_3_3 == "register_lieutenant_spawned" then
 			if not arg_3_2.num_champs then
 				arg_3_2.num_champs = 0
@@ -72,10 +72,10 @@ var_0_1.blk_fast_arena = {
 	events = {
 		"register_locus_destroyed"
 	},
-	completed = function(arg_4_0, arg_4_1, arg_4_2)
+	completed = function (arg_4_0, arg_4_1, arg_4_2)
 		return arg_4_0:get_persistent_stat(arg_4_1, "blk_fast_arena") >= 1
 	end,
-	on_event = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	on_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		local var_5_0 = Managers.time:time("game")
 
 		if not arg_5_2.locus_destroyed then
@@ -101,10 +101,10 @@ var_0_1.blk_fast_kill_totems = {
 		"register_totem_state_change",
 		"register_completed_level"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "blk_fast_kill_totems") >= 1
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		if not arg_7_2.failed then
 			if arg_7_3 == "register_totem_state_change" then
 				if not arg_7_2.totem_life_time then
@@ -159,10 +159,10 @@ var_0_1.blk_synced_destruction = {
 	events = {
 		"register_locus_destroyed"
 	},
-	completed = function(arg_8_0, arg_8_1, arg_8_2)
+	completed = function (arg_8_0, arg_8_1, arg_8_2)
 		return arg_8_0:get_persistent_stat(arg_8_1, "blk_synced_destruction") >= 1
 	end,
-	on_event = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		local var_9_0 = Managers.time:time("game")
 
 		if not arg_9_2.locus_destroyed then
@@ -184,10 +184,10 @@ var_0_1.blk_white_run = {
 	events = {
 		"register_completed_level"
 	},
-	completed = function(arg_10_0, arg_10_1, arg_10_2)
+	completed = function (arg_10_0, arg_10_1, arg_10_2)
 		return arg_10_0:get_persistent_stat(arg_10_1, "blk_white_run") >= 1
 	end,
-	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	on_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = Managers.mechanism:game_mechanism()
 
 		if not var_11_0 or var_11_0.name ~= "Deus" then
@@ -216,7 +216,7 @@ var_0_1.blk_clutch_skull = {
 	events = {
 		"register_damage"
 	},
-	progress = function(arg_12_0, arg_12_1, arg_12_2)
+	progress = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = arg_12_0:get_persistent_stat(arg_12_1, "blk_clutch_skull")
 
 		return {
@@ -224,10 +224,10 @@ var_0_1.blk_clutch_skull = {
 			5
 		}
 	end,
-	completed = function(arg_13_0, arg_13_1, arg_13_2)
+	completed = function (arg_13_0, arg_13_1, arg_13_2)
 		return arg_13_0:get_persistent_stat(arg_13_1, "blk_clutch_skull") >= 5
 	end,
-	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		local var_14_0 = arg_14_4[var_0_13]
 		local var_14_1 = arg_14_4[var_0_10]
 		local var_14_2 = arg_14_4[var_0_12]
@@ -275,10 +275,10 @@ var_0_1.blk_no_totem = {
 		"register_kill",
 		"register_completed_level"
 	},
-	completed = function(arg_15_0, arg_15_1, arg_15_2)
+	completed = function (arg_15_0, arg_15_1, arg_15_2)
 		return arg_15_0:get_persistent_stat(arg_15_1, "blk_no_totem") >= 1
 	end,
-	on_event = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		if arg_16_3 == "register_kill" then
 			local var_16_0 = arg_16_4[var_0_17]
 
@@ -299,10 +299,10 @@ var_0_1.blk_hitless_skull = {
 		"register_skull_hit",
 		"register_completed_level"
 	},
-	completed = function(arg_17_0, arg_17_1, arg_17_2)
+	completed = function (arg_17_0, arg_17_1, arg_17_2)
 		return arg_17_0:get_persistent_stat(arg_17_1, "blk_hitless_skull") >= 1
 	end,
-	on_event = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	on_event = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 		if arg_18_3 == "register_skull_hit" then
 			local var_18_0 = arg_18_4[1]
 			local var_18_1 = Managers.player:local_player()

@@ -4,12 +4,12 @@ require("core/gwnav/lua/safe_require")
 
 local var_0_0 = safe_require_guard()
 
-function var_0_0.NavClass(arg_1_0, arg_1_1)
+var_0_0.NavClass = function (arg_1_0, arg_1_1)
 	arg_1_0 = arg_1_0 or {}
 
 	if next(arg_1_0) == nil then
 		local var_1_0 = {
-			__call = function(arg_2_0, ...)
+			__call = function (arg_2_0, ...)
 				local var_2_0 = {}
 
 				setmetatable(var_2_0, arg_1_0)

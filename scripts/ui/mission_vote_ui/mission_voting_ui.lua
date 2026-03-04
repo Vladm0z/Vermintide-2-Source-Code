@@ -21,7 +21,7 @@ local var_0_17 = var_0_0.deus_weekly_event_create_entry_widget
 
 MissionVotingUI = class(MissionVotingUI)
 
-function MissionVotingUI.init(arg_1_0, arg_1_1, arg_1_2)
+MissionVotingUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_2.ui_top_renderer
@@ -53,7 +53,7 @@ function MissionVotingUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-function MissionVotingUI.create_ui_elements(arg_2_0)
+MissionVotingUI.create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_animations = {}
 	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widgets)
 	arg_2_0._widgets_deus, arg_2_0._widgets_deus_by_name = UIUtils.create_widgets(var_0_0.widgets_deus)
@@ -90,13 +90,13 @@ function MissionVotingUI.create_ui_elements(arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_top_renderer)
 end
 
-function MissionVotingUI.destroy(arg_3_0)
+MissionVotingUI.destroy = function (arg_3_0)
 	if arg_3_0.vote_started then
 		arg_3_0:on_vote_ended()
 	end
 end
 
-function MissionVotingUI.get_chrome_widgets(arg_4_0)
+MissionVotingUI.get_chrome_widgets = function (arg_4_0)
 	if arg_4_0._active_mechanism == "deus" then
 		return arg_4_0._widgets_deus_by_name, arg_4_0._widgets_deus
 	else
@@ -104,11 +104,11 @@ function MissionVotingUI.get_chrome_widgets(arg_4_0)
 	end
 end
 
-function MissionVotingUI.is_active(arg_5_0)
+MissionVotingUI.is_active = function (arg_5_0)
 	return arg_5_0.vote_started and not arg_5_0.has_voted
 end
 
-function MissionVotingUI.setup_option_input(arg_6_0, arg_6_1, arg_6_2)
+MissionVotingUI.setup_option_input = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.text
 	local var_6_1 = arg_6_2.input
 	local var_6_2 = arg_6_0.input_manager:get_service("mission_voting")
@@ -124,7 +124,7 @@ function MissionVotingUI.setup_option_input(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.content.title_text = var_6_7
 end
 
-function MissionVotingUI.start_vote(arg_7_0, arg_7_1)
+MissionVotingUI.start_vote = function (arg_7_0, arg_7_1)
 	arg_7_0.render_settings.alpha_multiplier = 0
 	arg_7_0._scrollbar_ui = nil
 
@@ -283,7 +283,7 @@ function MissionVotingUI.start_vote(arg_7_0, arg_7_1)
 	arg_7_0:_setup_gamepad_input_desc(var_7_0)
 end
 
-function MissionVotingUI._setup_gamepad_input_desc(arg_8_0, arg_8_1)
+MissionVotingUI._setup_gamepad_input_desc = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.gamepad_input_desc
 
 	if var_8_0 then
@@ -293,13 +293,13 @@ function MissionVotingUI._setup_gamepad_input_desc(arg_8_0, arg_8_1)
 	end
 end
 
-function MissionVotingUI._check_initial_votes(arg_9_0)
+MissionVotingUI._check_initial_votes = function (arg_9_0)
 	if arg_9_0.voting_manager:has_voted(Network.peer_id()) then
 		arg_9_0:on_vote_casted()
 	end
 end
 
-function MissionVotingUI.on_vote_casted(arg_10_0, arg_10_1)
+MissionVotingUI.on_vote_casted = function (arg_10_0, arg_10_1)
 	arg_10_0.has_voted = true
 
 	arg_10_0.voting_manager:allow_vote_input(false)
@@ -322,7 +322,7 @@ function MissionVotingUI.on_vote_casted(arg_10_0, arg_10_1)
 	end
 end
 
-function MissionVotingUI.on_vote_ended(arg_11_0)
+MissionVotingUI.on_vote_ended = function (arg_11_0)
 	if not arg_11_0.has_voted then
 		arg_11_0.voting_manager:allow_vote_input(false)
 		arg_11_0:_release_input()
@@ -347,7 +347,7 @@ function MissionVotingUI.on_vote_ended(arg_11_0)
 	arg_11_0.vote_started = nil
 end
 
-function MissionVotingUI._set_weave_quickplay_presentation(arg_12_0, arg_12_1)
+MissionVotingUI._set_weave_quickplay_presentation = function (arg_12_0, arg_12_1)
 	local var_12_0 = DifficultySettings[arg_12_1]
 	local var_12_1 = var_12_0.display_name
 	local var_12_2 = var_12_0.display_image
@@ -360,7 +360,7 @@ function MissionVotingUI._set_weave_quickplay_presentation(arg_12_0, arg_12_1)
 	arg_12_0._presentation_type = "weave_quickplay"
 end
 
-function MissionVotingUI._set_adventure_presentation(arg_13_0, arg_13_1)
+MissionVotingUI._set_adventure_presentation = function (arg_13_0, arg_13_1)
 	local var_13_0 = DifficultySettings[arg_13_1]
 	local var_13_1 = var_13_0.display_name
 	local var_13_2 = var_13_0.display_image
@@ -373,12 +373,12 @@ function MissionVotingUI._set_adventure_presentation(arg_13_0, arg_13_1)
 	arg_13_0._presentation_type = "adventure"
 end
 
-function MissionVotingUI._set_game_mode_presentation(arg_14_0, arg_14_1)
+MissionVotingUI._set_game_mode_presentation = function (arg_14_0, arg_14_1)
 	arg_14_0._game_mode_widgets_by_name.game_mode_text.content.text = Localize("vs_game_mode_title_" .. arg_14_1)
 	arg_14_0._presentation_type = "game_mode"
 end
 
-function MissionVotingUI._set_switch_mechanism_presentation(arg_15_0, arg_15_1)
+MissionVotingUI._set_switch_mechanism_presentation = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.mechanism or "adventure"
 	local var_15_1 = arg_15_1.level_key or "inn_level"
 	local var_15_2 = LevelSettings[var_15_1]
@@ -404,7 +404,7 @@ function MissionVotingUI._set_switch_mechanism_presentation(arg_15_0, arg_15_1)
 	arg_15_0._presentation_type = "switch_mechanism"
 end
 
-function MissionVotingUI._set_custom_game_presentation(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+MissionVotingUI._set_custom_game_presentation = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = DifficultySettings[arg_16_1]
 	local var_16_1 = var_16_0.display_name
 	local var_16_2 = var_16_0.display_image
@@ -456,7 +456,7 @@ function MissionVotingUI._set_custom_game_presentation(arg_16_0, arg_16_1, arg_1
 	arg_16_0._presentation_type = "custom"
 end
 
-function MissionVotingUI._set_deed_presentation(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+MissionVotingUI._set_deed_presentation = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = ItemMasterList[arg_17_1]
 	local var_17_1 = {
 		data = var_17_0,
@@ -468,7 +468,7 @@ function MissionVotingUI._set_deed_presentation(arg_17_0, arg_17_1, arg_17_2, ar
 	arg_17_0._presentation_type = "deed"
 end
 
-function MissionVotingUI._set_event_game_presentation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+MissionVotingUI._set_event_game_presentation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = DifficultySettings[arg_18_1]
 	local var_18_1 = var_18_0.display_name
 	local var_18_2 = var_18_0.display_image
@@ -486,7 +486,7 @@ function MissionVotingUI._set_event_game_presentation(arg_18_0, arg_18_1, arg_18
 	arg_18_0._presentation_type = "event"
 end
 
-function MissionVotingUI._set_weave_presentation(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+MissionVotingUI._set_weave_presentation = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = 1
 	local var_19_1 = arg_19_2
 	local var_19_2 = WeaveSettings.templates[var_19_1]
@@ -571,7 +571,7 @@ function MissionVotingUI._set_weave_presentation(arg_19_0, arg_19_1, arg_19_2, a
 	arg_19_0._presentation_type = "weave"
 end
 
-function MissionVotingUI._assign_objective(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+MissionVotingUI._assign_objective = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = arg_20_0._weave_game_widgets_by_name["objective_" .. arg_20_1]
 	local var_20_1 = var_20_0.content
 	local var_20_2 = var_20_0.style
@@ -580,7 +580,7 @@ function MissionVotingUI._assign_objective(arg_20_0, arg_20_1, arg_20_2, arg_20_
 	var_20_1.text = arg_20_2 or "-"
 end
 
-function MissionVotingUI._set_deus_quickplay_presentation(arg_21_0, arg_21_1)
+MissionVotingUI._set_deus_quickplay_presentation = function (arg_21_0, arg_21_1)
 	local var_21_0 = DifficultySettings[arg_21_1]
 	local var_21_1 = var_21_0.display_name
 	local var_21_2 = var_21_0.display_image
@@ -593,7 +593,7 @@ function MissionVotingUI._set_deus_quickplay_presentation(arg_21_0, arg_21_1)
 	arg_21_0._presentation_type = "deus_quickplay"
 end
 
-function MissionVotingUI._set_deus_weekly_expedition_presentation(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+MissionVotingUI._set_deus_weekly_expedition_presentation = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
 	arg_22_0._presentation_type = "deus_weekly"
 
 	local var_22_0 = arg_22_0._deus_weekly_event_widgets_by_name
@@ -652,7 +652,7 @@ end
 
 local var_0_18 = {}
 
-function MissionVotingUI._setup_curses(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+MissionVotingUI._setup_curses = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = "curse"
 	local var_23_1 = var_0_16("cw_weekly_expedition_modifier_negative", arg_23_3, var_23_0)
 	local var_23_2 = UIWidget.init(var_23_1)
@@ -700,7 +700,7 @@ function MissionVotingUI._setup_curses(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	return arg_23_3 - arg_23_2
 end
 
-function MissionVotingUI._setup_boons(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+MissionVotingUI._setup_boons = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = "boon"
 	local var_24_1 = var_0_16("cw_weekly_expedition_modifier_positive", arg_24_3, var_24_0)
 	local var_24_2 = UIWidget.init(var_24_1)
@@ -751,7 +751,7 @@ function MissionVotingUI._setup_boons(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	return arg_24_3 - arg_24_2
 end
 
-function MissionVotingUI._set_deus_custom_game_presentation(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+MissionVotingUI._set_deus_custom_game_presentation = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
 	arg_25_0._presentation_type = "deus_custom"
 
 	local var_25_0 = arg_25_0._deus_custom_widgets_by_name
@@ -816,11 +816,11 @@ function MissionVotingUI._set_deus_custom_game_presentation(arg_25_0, arg_25_1, 
 	var_25_17.style.hover_glow.color[1] = 0
 end
 
-function MissionVotingUI._set_versus_quickplay_presentation(arg_26_0, arg_26_1)
+MissionVotingUI._set_versus_quickplay_presentation = function (arg_26_0, arg_26_1)
 	arg_26_0._presentation_type = "versus_quickplay"
 end
 
-function MissionVotingUI._set_versus_custom_game_presentation(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+MissionVotingUI._set_versus_custom_game_presentation = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
 	local var_27_0 = arg_27_0._versus_custom_widgets_by_name
 	local var_27_1 = var_27_0.game_option_1
 	local var_27_2 = var_27_1.content
@@ -877,7 +877,7 @@ function MissionVotingUI._set_versus_custom_game_presentation(arg_27_0, arg_27_1
 	arg_27_0._presentation_type = "versus_custom"
 end
 
-function MissionVotingUI._update_vote_timer(arg_28_0)
+MissionVotingUI._update_vote_timer = function (arg_28_0)
 	local var_28_0 = arg_28_0.voting_manager
 	local var_28_1 = var_28_0:active_vote_template().duration
 	local var_28_2 = var_28_0:vote_time_left()
@@ -886,7 +886,7 @@ function MissionVotingUI._update_vote_timer(arg_28_0)
 	arg_28_0:_set_vote_time_progress(var_28_3)
 end
 
-function MissionVotingUI._set_vote_time_progress(arg_29_0, arg_29_1)
+MissionVotingUI._set_vote_time_progress = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0:get_chrome_widgets().timer_fg
 	local var_29_1 = var_29_0.content.texture_id.uvs
 	local var_29_2 = var_29_0.scenegraph_id
@@ -896,7 +896,7 @@ function MissionVotingUI._set_vote_time_progress(arg_29_0, arg_29_1)
 	var_29_1[2][1] = arg_29_1
 end
 
-function MissionVotingUI._update_animations(arg_30_0, arg_30_1, arg_30_2)
+MissionVotingUI._update_animations = function (arg_30_0, arg_30_1, arg_30_2)
 	for iter_30_0, iter_30_1 in pairs(arg_30_0._ui_animations) do
 		UIAnimation.update(iter_30_1, arg_30_1)
 
@@ -906,7 +906,7 @@ function MissionVotingUI._update_animations(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function MissionVotingUI.update(arg_31_0, arg_31_1, arg_31_2)
+MissionVotingUI.update = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0._parent:parent()
 	local var_31_1 = var_31_0.menu_active or var_31_0.current_view or var_31_0._transition_fade_data
 
@@ -979,7 +979,7 @@ function MissionVotingUI.update(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function MissionVotingUI.draw(arg_32_0, arg_32_1, arg_32_2)
+MissionVotingUI.draw = function (arg_32_0, arg_32_1, arg_32_2)
 	arg_32_0:_update_pulse_animations(arg_32_1)
 
 	local var_32_0 = arg_32_0.ui_top_renderer
@@ -1217,7 +1217,7 @@ function MissionVotingUI.draw(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function MissionVotingUI._update_pulse_animations(arg_33_0, arg_33_1)
+MissionVotingUI._update_pulse_animations = function (arg_33_0, arg_33_1)
 	if arg_33_0.has_voted then
 		return
 	end
@@ -1234,7 +1234,7 @@ function MissionVotingUI._update_pulse_animations(arg_33_0, arg_33_1)
 	end
 end
 
-function MissionVotingUI._acquire_input(arg_34_0, arg_34_1)
+MissionVotingUI._acquire_input = function (arg_34_0, arg_34_1)
 	arg_34_0:_release_input(true)
 	arg_34_0.input_manager:capture_input({
 		"keyboard",
@@ -1247,7 +1247,7 @@ function MissionVotingUI._acquire_input(arg_34_0, arg_34_1)
 	end
 end
 
-function MissionVotingUI._release_input(arg_35_0, arg_35_1)
+MissionVotingUI._release_input = function (arg_35_0, arg_35_1)
 	arg_35_0.input_manager:release_input({
 		"keyboard",
 		"gamepad",
@@ -1259,13 +1259,13 @@ function MissionVotingUI._release_input(arg_35_0, arg_35_1)
 	end
 end
 
-function MissionVotingUI.active_input_service(arg_36_0)
+MissionVotingUI.active_input_service = function (arg_36_0)
 	local var_36_0 = arg_36_0.input_manager
 	local var_36_1 = "mission_voting"
 
 	return (var_36_0:get_service(var_36_1))
 end
 
-function MissionVotingUI._play_sound(arg_37_0, arg_37_1)
+MissionVotingUI._play_sound = function (arg_37_0, arg_37_1)
 	WwiseWorld.trigger_event(arg_37_0.wwise_world, arg_37_1)
 end

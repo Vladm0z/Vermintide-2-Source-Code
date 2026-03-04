@@ -19,7 +19,7 @@ local var_0_0 = {
 }
 
 return {
-	server_start_function = function(arg_1_0, arg_1_1, arg_1_2)
+	server_start_function = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Managers.venture.challenge
 		local var_1_1 = Managers.state.difficulty:get_difficulty()
 		local var_1_2 = DifficultySettings[var_1_1].rank
@@ -31,7 +31,7 @@ return {
 
 		arg_1_1.challenge = var_1_0:add_challenge(var_0_0.type, var_1_4, var_1_5, var_1_3, var_1_6, var_0_0.amount[var_1_2], var_1_7)
 	end,
-	server_stop_function = function(arg_2_0, arg_2_1, arg_2_2)
+	server_stop_function = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = arg_2_1.challenge
 
 		if var_2_0 then

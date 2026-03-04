@@ -13,7 +13,7 @@ local var_0_1 = {
 }
 local var_0_2 = 30
 
-function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
+ProjectileLinkerSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ProjectileLinkerSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -25,7 +25,7 @@ function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.linked_projectile_units = {}
 	arg_1_0.owner_units_count = 0
 
-	function arg_1_0.cb_linked_projectile_owner_destroyed(arg_2_0)
+	arg_1_0.cb_linked_projectile_owner_destroyed = function (arg_2_0)
 		for iter_2_0, iter_2_1 in pairs(arg_1_0.linked_projectile_units) do
 			if iter_2_0 == arg_2_0 then
 				for iter_2_2, iter_2_3 in pairs(iter_2_1) do
@@ -44,7 +44,7 @@ function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0.owner_units_count = arg_1_0.owner_units_count - 1
 	end
 
-	function arg_1_0.cb_linked_pickup_projectile_owner_destroyed(arg_3_0)
+	arg_1_0.cb_linked_pickup_projectile_owner_destroyed = function (arg_3_0)
 		for iter_3_0, iter_3_1 in pairs(arg_1_0.linked_projectile_units) do
 			if iter_3_0 == arg_3_0 then
 				for iter_3_2, iter_3_3 in pairs(iter_3_1) do
@@ -73,7 +73,7 @@ function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 		arg_1_0.owner_units_count = arg_1_0.owner_units_count - 1
 	end
 
-	function arg_1_0.cb_linked_projectile_timeout(arg_4_0, arg_4_1)
+	arg_1_0.cb_linked_projectile_timeout = function (arg_4_0, arg_4_1)
 		if arg_1_0:_has_reference(arg_4_1) then
 			arg_1_0:_remove_linked_projectile_reference(arg_4_1)
 		end
@@ -83,7 +83,7 @@ function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 		end
 	end
 
-	function arg_1_0.cb_linked_pickup_projectile_timeout(arg_5_0, arg_5_1)
+	arg_1_0.cb_linked_pickup_projectile_timeout = function (arg_5_0, arg_5_1)
 		if arg_1_0:_has_reference(arg_5_1) then
 			arg_1_0:_remove_linked_projectile_reference(arg_5_1)
 		end
@@ -108,17 +108,17 @@ function ProjectileLinkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function ProjectileLinkerSystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+ProjectileLinkerSystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:clear_linked_projectiles(arg_6_1)
 
 	return ProjectileLinkerSystem.super.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
 end
 
-function ProjectileLinkerSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ProjectileLinkerSystem.freeze = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:clear_linked_projectiles(arg_7_1)
 end
 
-function ProjectileLinkerSystem.clear_linked_projectiles(arg_8_0, arg_8_1)
+ProjectileLinkerSystem.clear_linked_projectiles = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.linked_projectile_units[arg_8_1]
 
 	if not var_8_0 then
@@ -132,7 +132,7 @@ end
 
 local var_0_3 = {}
 
-function ProjectileLinkerSystem.update(arg_9_0, arg_9_1, arg_9_2)
+ProjectileLinkerSystem.update = function (arg_9_0, arg_9_1, arg_9_2)
 	ProjectileLinkerSystem.super.update(arg_9_0, arg_9_1, arg_9_2)
 
 	local var_9_0 = arg_9_0.linked_projectile_units
@@ -155,11 +155,11 @@ function ProjectileLinkerSystem.update(arg_9_0, arg_9_1, arg_9_2)
 	table.clear(var_0_3)
 end
 
-function ProjectileLinkerSystem.destroy(arg_10_0)
+ProjectileLinkerSystem.destroy = function (arg_10_0)
 	arg_10_0.network_event_delegate:unregister(arg_10_0)
 end
 
-function ProjectileLinkerSystem.add_linked_projectile_reference(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ProjectileLinkerSystem.add_linked_projectile_reference = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = Managers.time:time("game")
 
 	if not arg_11_0.linked_projectile_units[arg_11_1] then
@@ -177,13 +177,13 @@ function ProjectileLinkerSystem.add_linked_projectile_reference(arg_11_0, arg_11
 	}
 end
 
-function ProjectileLinkerSystem._remove_linked_projectile_reference(arg_12_0, arg_12_1)
+ProjectileLinkerSystem._remove_linked_projectile_reference = function (arg_12_0, arg_12_1)
 	for iter_12_0, iter_12_1 in pairs(arg_12_0.linked_projectile_units) do
 		iter_12_1[arg_12_1] = nil
 	end
 end
 
-function ProjectileLinkerSystem._has_reference(arg_13_0, arg_13_1)
+ProjectileLinkerSystem._has_reference = function (arg_13_0, arg_13_1)
 	for iter_13_0, iter_13_1 in pairs(arg_13_0.linked_projectile_units) do
 		if iter_13_1[arg_13_1] then
 			return true
@@ -193,7 +193,7 @@ function ProjectileLinkerSystem._has_reference(arg_13_0, arg_13_1)
 	return false
 end
 
-function ProjectileLinkerSystem.link_pickup(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+ProjectileLinkerSystem.link_pickup = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	if Unit.actor(arg_14_1, "throw") then
 		Unit.destroy_actor(arg_14_1, "throw")
 	end
@@ -210,7 +210,7 @@ function ProjectileLinkerSystem.link_pickup(arg_14_0, arg_14_1, arg_14_2, arg_14
 	end
 end
 
-function ProjectileLinkerSystem.rpc_link_pickup(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+ProjectileLinkerSystem.rpc_link_pickup = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 	local var_15_0 = Managers.state.unit_storage:unit(arg_15_2)
 	local var_15_1 = Managers.state.network:game_object_or_level_unit(arg_15_5, arg_15_7)
 
@@ -221,7 +221,7 @@ function ProjectileLinkerSystem.rpc_link_pickup(arg_15_0, arg_15_1, arg_15_2, ar
 	arg_15_0:link_pickup(var_15_0, arg_15_3, arg_15_4, var_15_1, arg_15_6)
 end
 
-function ProjectileLinkerSystem.spawn_and_link_units(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ProjectileLinkerSystem.spawn_and_link_units = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = Managers.state.unit_spawner
 
 	if ScriptUnit.has_extension(arg_16_4, "projectile_linker_system") then
@@ -239,7 +239,7 @@ function ProjectileLinkerSystem.spawn_and_link_units(arg_16_0, arg_16_1, arg_16_
 	end
 end
 
-function ProjectileLinkerSystem.rpc_spawn_and_link_units(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+ProjectileLinkerSystem.rpc_spawn_and_link_units = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
 	local var_17_0 = Managers.state.network:game_object_or_level_unit(arg_17_5, arg_17_7)
 	local var_17_1 = NetworkLookup.husks[arg_17_2]
 

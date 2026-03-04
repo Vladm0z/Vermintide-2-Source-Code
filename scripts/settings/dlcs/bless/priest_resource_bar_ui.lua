@@ -20,7 +20,7 @@ local var_0_2 = {
 	glow_brightness_max = 0.8
 }
 
-function PriestResourceBarUI.init(arg_1_0, arg_1_1, arg_1_2)
+PriestResourceBarUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.platform = PLATFORM
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
@@ -60,18 +60,18 @@ local function var_0_3(arg_2_0)
 	return var_2_0, var_2_1, 0.8, var_2_2
 end
 
-function PriestResourceBarUI.on_spectator_target_changed(arg_3_0, arg_3_1)
+PriestResourceBarUI.on_spectator_target_changed = function (arg_3_0, arg_3_1)
 	arg_3_0._spectated_player_unit = arg_3_1
 	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
 	arg_3_0._is_spectator = true
 end
 
-function PriestResourceBarUI._set_player_extensions(arg_4_0, arg_4_1)
+PriestResourceBarUI._set_player_extensions = function (arg_4_0, arg_4_1)
 	arg_4_0.inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
 	arg_4_0.initialize_charge_bar = true
 end
 
-function PriestResourceBarUI._update_resource_bar(arg_5_0, arg_5_1, arg_5_2)
+PriestResourceBarUI._update_resource_bar = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_1 then
 		return
 	end
@@ -97,7 +97,7 @@ function PriestResourceBarUI._update_resource_bar(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function PriestResourceBarUI.create_ui_elements(arg_6_0)
+PriestResourceBarUI.create_ui_elements = function (arg_6_0)
 	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
 
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -114,7 +114,7 @@ local var_0_4 = {
 	drag_scenegraph_id = "charge_bar"
 }
 
-function PriestResourceBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PriestResourceBarUI.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager
@@ -153,7 +153,7 @@ function PriestResourceBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function PriestResourceBarUI.set_charge_bar_fraction(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+PriestResourceBarUI.set_charge_bar_fraction = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	local var_8_0 = arg_8_0.charge_bar
 	local var_8_1 = var_8_0.style
 	local var_8_2 = var_8_0.content
@@ -213,17 +213,17 @@ function PriestResourceBarUI.set_charge_bar_fraction(arg_8_0, arg_8_1, arg_8_2, 
 	var_8_4[4] = var_8_6[4]
 end
 
-function PriestResourceBarUI.destroy(arg_9_0)
+PriestResourceBarUI.destroy = function (arg_9_0)
 	Managers.state.event:unregister("on_spectator_target_changed", arg_9_0)
 	Managers.state.event:unregister("glow_feedback", arg_9_0)
 	Managers.state.event:unregister("activate_passive_feedback", arg_9_0)
 end
 
-function PriestResourceBarUI.set_alpha(arg_10_0, arg_10_1)
+PriestResourceBarUI.set_alpha = function (arg_10_0, arg_10_1)
 	arg_10_0.render_settings.alpha_multiplier = arg_10_1
 end
 
-function PriestResourceBarUI._apply_crosshair_position(arg_11_0, arg_11_1, arg_11_2)
+PriestResourceBarUI._apply_crosshair_position = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = "screen_bottom_pivot"
 	local var_11_1 = arg_11_0.ui_scenegraph[var_11_0].local_position
 
@@ -231,13 +231,13 @@ function PriestResourceBarUI._apply_crosshair_position(arg_11_0, arg_11_1, arg_1
 	var_11_1[2] = arg_11_2
 end
 
-function PriestResourceBarUI.glow_feedback(arg_12_0)
+PriestResourceBarUI.glow_feedback = function (arg_12_0)
 	if not arg_12_0._play_glow_feedback then
 		arg_12_0._play_glow_feedback = true
 	end
 end
 
-function PriestResourceBarUI.handle_glow_feedback(arg_13_0, arg_13_1, arg_13_2)
+PriestResourceBarUI.handle_glow_feedback = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0._play_glow_feedback then
 		return
 	end
@@ -272,7 +272,7 @@ function PriestResourceBarUI.handle_glow_feedback(arg_13_0, arg_13_1, arg_13_2)
 	Material.set_scalar(var_13_4, "detail_offset", var_13_2)
 end
 
-function PriestResourceBarUI.active_passive_feedback(arg_14_0, arg_14_1)
+PriestResourceBarUI.active_passive_feedback = function (arg_14_0, arg_14_1)
 	arg_14_0._active_passive = arg_14_1
 
 	if arg_14_1 then
@@ -282,7 +282,7 @@ function PriestResourceBarUI.active_passive_feedback(arg_14_0, arg_14_1)
 	end
 end
 
-function PriestResourceBarUI.handle_active_passive_feedback(arg_15_0, arg_15_1)
+PriestResourceBarUI.handle_active_passive_feedback = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.charge_bar.content.bar_detail
 	local var_15_1 = Gui.material(arg_15_0._gui, var_15_0)
 

@@ -90,7 +90,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						return arg_2_0.icon ~= nil
 					end
 				},

@@ -235,7 +235,7 @@ local function var_0_4()
 					pass_type = "texture",
 					style_id = "icon_frame",
 					texture_id = "icon_frame",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.draw_frame
 					end
 				},
@@ -243,7 +243,7 @@ local function var_0_4()
 					pass_type = "texture",
 					style_id = "selection",
 					texture_id = "selection",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.selected
 					end
 				}
@@ -385,14 +385,14 @@ local var_0_8 = {
 			name = "rotation",
 			start_progress = 0,
 			end_progress = 0.7,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_2.popup_bg.style.texture_id.color[1] = 0
 
 				local var_4_0 = arg_4_3.chest_unit
 
 				arg_4_3.rotation_value = 0
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = arg_5_4.chest_unit
 
 				if var_5_0 and Unit.alive(var_5_0) then
@@ -403,7 +403,7 @@ local var_0_8 = {
 					Unit.set_local_rotation(var_5_0, 0, var_5_3)
 				end
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		},
@@ -411,7 +411,7 @@ local var_0_8 = {
 			name = "scale",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				local var_7_0 = arg_7_3.chest_unit
 
 				if var_7_0 and Unit.alive(var_7_0) then
@@ -444,7 +444,7 @@ local var_0_8 = {
 					end
 				end
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = arg_8_4.chest_unit
 
 				if var_8_0 and Unit.alive(var_8_0) then
@@ -459,7 +459,7 @@ local var_0_8 = {
 					Unit.set_local_scale(var_8_0, 0, var_8_3)
 				end
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		},
@@ -467,10 +467,10 @@ local var_0_8 = {
 			name = "position",
 			start_progress = 0.01,
 			end_progress = 0.7,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = arg_11_4.chest_unit
 
 				if var_11_0 and Unit.alive(var_11_0) then
@@ -488,7 +488,7 @@ local var_0_8 = {
 					Unit.set_local_position(var_11_0, 0, var_11_8)
 				end
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		},
@@ -496,10 +496,10 @@ local var_0_8 = {
 			name = "bg_fade_in",
 			start_progress = 0.6,
 			end_progress = 1,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeInCubic(arg_14_3)
 				local var_14_1 = arg_14_2.divider
 				local var_14_2 = arg_14_2.popup_bg
@@ -512,7 +512,7 @@ local var_0_8 = {
 				var_14_3.style.text.text_color[1] = var_14_5
 				var_14_4.style.text.text_color[1] = var_14_5
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		},
@@ -520,10 +520,10 @@ local var_0_8 = {
 			name = "button_fade_in",
 			start_progress = 1.4,
 			end_progress = 1.71,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = 255 * math.easeInCubic(arg_17_3)
 				local var_17_1 = arg_17_2.claim_button
 
@@ -533,7 +533,7 @@ local var_0_8 = {
 				var_17_1.style.text_selected.text_color[1] = var_17_0
 				var_17_1.style.text_disabled.text_color[1] = var_17_0
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		},
@@ -541,13 +541,13 @@ local var_0_8 = {
 			name = "animation_fall",
 			start_progress = 0.65,
 			end_progress = 0.71,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				return
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				local var_21_0 = arg_21_3.chest_unit
 
 				if var_21_0 and Unit.alive(var_21_0) then
@@ -559,13 +559,13 @@ local var_0_8 = {
 			name = "chest_land",
 			start_progress = 0.71,
 			end_progress = 1,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				return
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				WwiseWorld.trigger_event(arg_24_3.wwise_world, "hud_reward_chest_land")
 			end
 		},
@@ -573,13 +573,13 @@ local var_0_8 = {
 			name = "animation_fall_xxx",
 			start_progress = 0.71,
 			end_progress = 1.71,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				return
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end
 		}
@@ -589,17 +589,17 @@ local var_0_8 = {
 			name = "animation_open",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				local var_28_0 = arg_28_3.chest_unit
 
 				if var_28_0 and Unit.alive(var_28_0) then
 					Unit.flow_event(var_28_0, "loot_chest_open")
 				end
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				return
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end
 		},
@@ -607,7 +607,7 @@ local var_0_8 = {
 			name = "scale",
 			start_progress = 1.1,
 			end_progress = 1.25,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				local var_31_0 = arg_31_3.chest_unit
 
 				if var_31_0 and Unit.alive(var_31_0) then
@@ -635,7 +635,7 @@ local var_0_8 = {
 					end
 				end
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				local var_32_0 = arg_32_4.chest_unit
 
 				if var_32_0 and Unit.alive(var_32_0) then
@@ -646,7 +646,7 @@ local var_0_8 = {
 					Unit.set_local_scale(var_32_0, 0, var_32_3)
 				end
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end
 		}
@@ -656,17 +656,17 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 				local var_35_0 = arg_35_2.thumb_widgets
 
 				for iter_35_0, iter_35_1 in ipairs(var_35_0) do
-					-- block empty
+					-- Nothing
 				end
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				return
 			end
 		}

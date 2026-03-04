@@ -5,7 +5,7 @@ DamageBlobExtension = class(DamageBlobExtension)
 local var_0_0 = Unit.alive
 local var_0_1 = POSITION_LOOKUP
 
-function DamageBlobExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DamageBlobExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = Managers.state.entity
 	local var_1_2 = var_1_1:system("ai_system")
@@ -76,7 +76,7 @@ function DamageBlobExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function DamageBlobExtension.start_placing_blobs(arg_2_0, arg_2_1, arg_2_2)
+DamageBlobExtension.start_placing_blobs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.state = "waiting"
 	arg_2_0.last_blob_pos = Vector3Box()
 	arg_2_0.last_blob_dist = 0
@@ -105,7 +105,7 @@ end
 
 local var_0_2 = 0.5
 
-function DamageBlobExtension.stop_placing_blobs(arg_3_0, arg_3_1)
+DamageBlobExtension.stop_placing_blobs = function (arg_3_0, arg_3_1)
 	arg_3_0.state = "lingering"
 	arg_3_0.linger_time = arg_3_1 + arg_3_0.time_of_life
 
@@ -137,7 +137,7 @@ function DamageBlobExtension.stop_placing_blobs(arg_3_0, arg_3_1)
 	arg_3_0.aborted = true
 end
 
-function DamageBlobExtension._remove_blob(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DamageBlobExtension._remove_blob = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0.buff_system
 	local var_4_1 = arg_4_0.ai_units_inside
 	local var_4_2 = arg_4_1[5]
@@ -162,7 +162,7 @@ function DamageBlobExtension._remove_blob(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	table.remove(arg_4_3, arg_4_2)
 end
 
-function DamageBlobExtension.destroy(arg_5_0)
+DamageBlobExtension.destroy = function (arg_5_0)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = arg_5_0.buff_system
 	local var_5_2 = arg_5_0.player_units_inside
@@ -236,7 +236,7 @@ function DamageBlobExtension.destroy(arg_5_0)
 	arg_5_0.aborted = true
 end
 
-function DamageBlobExtension.place_blobs(arg_6_0, arg_6_1, arg_6_2)
+DamageBlobExtension.place_blobs = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = var_0_1[arg_6_1]
 	local var_6_1 = arg_6_0.nav_world
 	local var_6_2, var_6_3, var_6_4, var_6_5, var_6_6 = GwNavQueries.triangle_from_position(var_6_1, var_6_0, 5, 5)
@@ -290,7 +290,7 @@ function DamageBlobExtension.place_blobs(arg_6_0, arg_6_1, arg_6_2)
 	GameSession.set_game_object_field(var_6_19, var_6_20, "rotation", var_6_10)
 end
 
-function DamageBlobExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+DamageBlobExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.state
 
 	if var_7_0 == "waiting" then
@@ -326,7 +326,7 @@ function DamageBlobExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4,
 	end
 end
 
-function DamageBlobExtension.insert_blob(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+DamageBlobExtension.insert_blob = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0
 
 	if arg_8_0.use_nav_cost_map_volumes then
@@ -381,7 +381,7 @@ function DamageBlobExtension.insert_blob(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg
 	end
 end
 
-function DamageBlobExtension.insert_fx(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+DamageBlobExtension.insert_fx = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.world
 	local var_9_1 = arg_9_0.fx_list
 	local var_9_2 = arg_9_3 + arg_9_0.blob_life_time
@@ -419,7 +419,7 @@ function DamageBlobExtension.insert_fx(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0.last_fx_pos:store(arg_9_1)
 end
 
-function DamageBlobExtension.update_blobs_fx_and_sfx(arg_10_0, arg_10_1, arg_10_2)
+DamageBlobExtension.update_blobs_fx_and_sfx = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.world
 	local var_10_1 = arg_10_0.fx_name_filled
 	local var_10_2 = arg_10_0.fx_size_variable
@@ -473,7 +473,7 @@ function DamageBlobExtension.update_blobs_fx_and_sfx(arg_10_0, arg_10_1, arg_10_
 	end
 end
 
-function DamageBlobExtension.update_blob_overlaps(arg_11_0, arg_11_1)
+DamageBlobExtension.update_blob_overlaps = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.blobs
 	local var_11_1 = #var_11_0
 
@@ -573,7 +573,7 @@ function DamageBlobExtension.update_blob_overlaps(arg_11_0, arg_11_1)
 	arg_11_0.ai_blob_index = var_11_12
 end
 
-function DamageBlobExtension.check_overlap(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+DamageBlobExtension.check_overlap = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
 	local var_12_0 = arg_12_0.player_units_inside
 	local var_12_1 = var_0_1[arg_12_2]
 	local var_12_2 = Geometry.closest_point_on_line(var_12_1, arg_12_4, arg_12_5)
@@ -612,11 +612,11 @@ function DamageBlobExtension.check_overlap(arg_12_0, arg_12_1, arg_12_2, arg_12_
 	end
 end
 
-function DamageBlobExtension.get_rim_nodes(arg_13_0)
+DamageBlobExtension.get_rim_nodes = function (arg_13_0)
 	return arg_13_0.rim_nodes, true
 end
 
-function DamageBlobExtension.is_position_inside(arg_14_0, arg_14_1, arg_14_2)
+DamageBlobExtension.is_position_inside = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.blobs
 	local var_14_1 = #var_14_0
 
@@ -639,7 +639,7 @@ function DamageBlobExtension.is_position_inside(arg_14_0, arg_14_1, arg_14_2)
 	return Vector3.distance_squared(arg_14_1, var_14_7) <= arg_14_0.blob_radius^2
 end
 
-function DamageBlobExtension.hot_join_sync(arg_15_0, arg_15_1)
+DamageBlobExtension.hot_join_sync = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.fx_list
 	local var_15_1 = arg_15_0.unit_id
 	local var_15_2 = arg_15_0.network_transmit
@@ -655,7 +655,7 @@ function DamageBlobExtension.hot_join_sync(arg_15_0, arg_15_1)
 	end
 end
 
-function DamageBlobExtension._debug_render_blobs(arg_16_0)
+DamageBlobExtension._debug_render_blobs = function (arg_16_0)
 	local var_16_0 = arg_16_0.blobs
 
 	for iter_16_0 = 1, #var_16_0 do
@@ -696,6 +696,6 @@ function DamageBlobExtension._debug_render_blobs(arg_16_0)
 	end
 end
 
-function DamageBlobExtension.get_source_attacker_unit(arg_17_0)
+DamageBlobExtension.get_source_attacker_unit = function (arg_17_0)
 	return arg_17_0._source_unit
 end

@@ -2,7 +2,7 @@
 
 Gathering = class(Gathering)
 
-function Gathering.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+Gathering.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_3 = arg_1_3 or Vector3(0, 0, 0)
 	arg_1_0.traverse_logic = arg_1_2
 	arg_1_0.balls = {}
@@ -26,7 +26,7 @@ local var_0_0 = {
 	"yellow"
 }
 
-function Gathering.write_dogpiled_attackers(arg_2_0, arg_2_1)
+Gathering.write_dogpiled_attackers = function (arg_2_0, arg_2_1)
 	local var_2_0 = ""
 	local var_2_1 = Managers.state.side:sides()
 
@@ -65,7 +65,7 @@ function Gathering.write_dogpiled_attackers(arg_2_0, arg_2_1)
 	Debug.text("Dogpiled: %s", var_2_0)
 end
 
-function Gathering.draw(arg_3_0)
+Gathering.draw = function (arg_3_0)
 	if script_data.debug_gathering then
 		Debug.text("balls=%d, bchecks=%d, uchecks=%d", arg_3_0.num_balls, arg_3_0.num_boid_checks or 0, arg_3_0.num_unit_checks or 0)
 	end
@@ -106,19 +106,19 @@ function Gathering.draw(arg_3_0)
 	end
 end
 
-function Gathering.respawn_balls(arg_4_0, arg_4_1, arg_4_2)
+Gathering.respawn_balls = function (arg_4_0, arg_4_1, arg_4_2)
 	for iter_4_0 = 1, 100 do
 		arg_4_0:add_ball(arg_4_1 + Vector3(math.random() * 10 - 5, math.random() * 10 - 5, 0), math.random() + 0.25, nil, arg_4_2)
 	end
 end
 
-function Gathering.add_static_ball(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+Gathering.add_static_ball = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0:add_ball(arg_5_1, arg_5_2, arg_5_3, nil, true)
 
 	arg_5_0.static_units[arg_5_3] = var_5_0
 end
 
-function Gathering.remove_static_ball(arg_6_0, arg_6_1)
+Gathering.remove_static_ball = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.static_units[arg_6_1].id
 
 	arg_6_0:remove_ball(var_6_0)
@@ -126,7 +126,7 @@ function Gathering.remove_static_ball(arg_6_0, arg_6_1)
 	arg_6_0.static_units[arg_6_1] = nil
 end
 
-function Gathering.add_ball(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+Gathering.add_ball = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	fassert(arg_7_3 ~= arg_7_4, "Wut?!? can't have yourself as your target")
 
 	local var_7_0 = arg_7_0.balls
@@ -173,7 +173,7 @@ function Gathering.add_ball(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5
 	return var_7_4
 end
 
-function Gathering.remove_ball(arg_8_0, arg_8_1)
+Gathering.remove_ball = function (arg_8_0, arg_8_1)
 	if arg_8_1.destroyed then
 		return
 	end
@@ -205,11 +205,11 @@ function Gathering.remove_ball(arg_8_0, arg_8_1)
 	arg_8_0.num_balls = var_8_3 - 1
 end
 
-function Gathering.release_attacking_balls(arg_9_0, arg_9_1)
+Gathering.release_attacking_balls = function (arg_9_0, arg_9_1)
 	return
 end
 
-function Gathering.notify_attackers(arg_10_0, arg_10_1)
+Gathering.notify_attackers = function (arg_10_0, arg_10_1)
 	notify_attackers(arg_10_1, arg_10_0.dogpiled_attackers_on_unit)
 end
 
@@ -239,7 +239,7 @@ end
 
 local var_0_2 = {}
 
-function Gathering.overlap_update(arg_13_0, arg_13_1, arg_13_2)
+Gathering.overlap_update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = AiUtils.broadphase_query
 
 	for iter_13_0 = 1, arg_13_0.num_balls do
@@ -247,7 +247,7 @@ function Gathering.overlap_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function Gathering.slot_vs_slot_overlap(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+Gathering.slot_vs_slot_overlap = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	local var_14_0 = Vector3.distance(Vector3(arg_14_1[1], arg_14_1[2], 0), Vector3(arg_14_3[1], arg_14_3[2], 0))
 
 	if var_14_0 < 0.001 then
@@ -267,7 +267,7 @@ function Gathering.slot_vs_slot_overlap(arg_14_0, arg_14_1, arg_14_2, arg_14_3, 
 	end
 end
 
-function Gathering.slot_vs_breed_overlap(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+Gathering.slot_vs_breed_overlap = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = Vector3.distance(Vector3(arg_15_1[1], arg_15_1[2], 0), Vector3(arg_15_3[1], arg_15_3[2], 0))
 
 	if var_15_0 < 0.001 then
@@ -284,7 +284,7 @@ function Gathering.slot_vs_breed_overlap(arg_15_0, arg_15_1, arg_15_2, arg_15_3,
 	end
 end
 
-function Gathering.update_efficient(arg_16_0, arg_16_1, arg_16_2)
+Gathering.update_efficient = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.nav_world
 	local var_16_1 = arg_16_0.balls
 	local var_16_2 = AiUtils.broadphase_query
@@ -382,7 +382,7 @@ function Gathering.update_efficient(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0.num_unit_checks = var_16_6
 end
 
-function Gathering.update_brute_force(arg_17_0, arg_17_1, arg_17_2)
+Gathering.update_brute_force = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.nav_world
 	local var_17_1 = arg_17_0.balls
 
@@ -438,7 +438,7 @@ function Gathering.update_brute_force(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function Gathering.update(arg_18_0, arg_18_1, arg_18_2)
+Gathering.update = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:update_efficient(arg_18_1, arg_18_2)
 
 	if arg_18_0.debug_draw then

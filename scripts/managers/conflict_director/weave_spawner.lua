@@ -4,19 +4,19 @@ require("scripts/settings/weave_spawning_settings")
 
 WeaveSpawner = class(WeaveSpawner)
 
-function WeaveSpawner.init(arg_1_0, arg_1_1)
+WeaveSpawner.init = function (arg_1_0, arg_1_1)
 	arg_1_0.main_path_spawning_index = 1
 	arg_1_0.started_trickle = false
 	arg_1_0.players_has_left_safe_zone = false
 end
 
-function WeaveSpawner.players_left_safe_zone(arg_2_0)
+WeaveSpawner.players_left_safe_zone = function (arg_2_0)
 	arg_2_0.players_has_left_safe_zone = true
 end
 
 local var_0_0 = true
 
-function WeaveSpawner.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+WeaveSpawner.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_3.spawning_settings
 
 	if not var_3_0 or var_3_0.disabled then
@@ -30,13 +30,13 @@ function WeaveSpawner.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0:_update_main_path_spawning(arg_3_1, arg_3_2, var_3_2)
 end
 
-function WeaveSpawner.start_terror_event_from_template(arg_4_0, arg_4_1, arg_4_2)
+WeaveSpawner.start_terror_event_from_template = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.original_seed
 
 	Managers.state.conflict:start_terror_event_from_template(arg_4_1, arg_4_2, var_4_0)
 end
 
-function WeaveSpawner._update_terror_event_trickle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+WeaveSpawner._update_terror_event_trickle = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_0.players_has_left_safe_zone and not arg_5_0.started_trickle and arg_5_3 and arg_5_0.conflict_director_setup_done and Managers.matchmaking:are_all_players_spawned() then
 		arg_5_0.started_trickle = true
 
@@ -44,7 +44,7 @@ function WeaveSpawner._update_terror_event_trickle(arg_5_0, arg_5_1, arg_5_2, ar
 	end
 end
 
-function WeaveSpawner._update_main_path_spawning(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+WeaveSpawner._update_main_path_spawning = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0.players_has_left_safe_zone and arg_6_0.conflict_director_setup_done then
 		local var_6_0 = arg_6_0.main_path_spawning_index
 		local var_6_1 = arg_6_3 and arg_6_3[var_6_0]
@@ -80,14 +80,14 @@ function WeaveSpawner._update_main_path_spawning(arg_6_0, arg_6_1, arg_6_2, arg_
 	end
 end
 
-function WeaveSpawner.set_seed(arg_7_0, arg_7_1)
+WeaveSpawner.set_seed = function (arg_7_0, arg_7_1)
 	fassert(arg_7_1 and type(arg_7_1) == "number", "Bad seed input!")
 
 	arg_7_0.seed = arg_7_1
 	arg_7_0.original_seed = arg_7_1
 end
 
-function WeaveSpawner._random(arg_8_0, ...)
+WeaveSpawner._random = function (arg_8_0, ...)
 	fassert(arg_8_0.seed, "No seed set for weave spawning!")
 
 	local var_8_0, var_8_1 = Math.next_random(arg_8_0.seed, ...)
@@ -97,7 +97,7 @@ function WeaveSpawner._random(arg_8_0, ...)
 	return var_8_1
 end
 
-function WeaveSpawner.get_hidden_spawn_pos_from_position_seeded(arg_9_0, arg_9_1)
+WeaveSpawner.get_hidden_spawn_pos_from_position_seeded = function (arg_9_0, arg_9_1)
 	fassert(arg_9_1 ~= nil, "Need to supply position when triggering get_hidden_spawn_pos_from_position_seeded")
 
 	local var_9_0 = Managers.state.conflict

@@ -5,7 +5,7 @@ require("scripts/game_state/state_loading")
 StateTitleScreenLoadSave = class(StateTitleScreenLoadSave)
 StateTitleScreenLoadSave.NAME = "StateTitleScreenLoadSave"
 
-function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenLoadSave.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenLoadSave")
 
 	arg_1_0._params = arg_1_1
@@ -26,7 +26,7 @@ function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function StateTitleScreenLoadSave._handle_tutorial_auto_start(arg_2_0)
+StateTitleScreenLoadSave._handle_tutorial_auto_start = function (arg_2_0)
 	local var_2_0 = arg_2_0.parent.parent.loading_context
 	local var_2_1 = var_2_0.force_run_tutorial
 
@@ -53,7 +53,7 @@ function StateTitleScreenLoadSave._handle_tutorial_auto_start(arg_2_0)
 	Managers.backend:commit()
 end
 
-function StateTitleScreenLoadSave._setup_init_network_view(arg_3_0)
+StateTitleScreenLoadSave._setup_init_network_view = function (arg_3_0)
 	if Development.parameter("goto_endoflevel") and false then
 		local var_3_0 = false
 
@@ -65,7 +65,7 @@ function StateTitleScreenLoadSave._setup_init_network_view(arg_3_0)
 	arg_3_0.wanted_state = StateLoading
 end
 
-function StateTitleScreenLoadSave.update(arg_4_0, arg_4_1, arg_4_2)
+StateTitleScreenLoadSave.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._title_start_ui then
 		arg_4_0._title_start_ui:update(arg_4_1, arg_4_2)
 	end
@@ -73,7 +73,7 @@ function StateTitleScreenLoadSave.update(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_0:_next_state()
 end
 
-function StateTitleScreenLoadSave._next_state(arg_5_0)
+StateTitleScreenLoadSave._next_state = function (arg_5_0)
 	if Managers.backend:profiles_loaded() and not Managers.backend:is_waiting_for_user_input() and arg_5_0.wanted_state then
 		Managers.transition:fade_in(GameSettings.transition_fade_out_speed, callback(arg_5_0, "cb_fade_in_done", arg_5_0.wanted_state))
 
@@ -81,10 +81,10 @@ function StateTitleScreenLoadSave._next_state(arg_5_0)
 	end
 end
 
-function StateTitleScreenLoadSave.cb_fade_in_done(arg_6_0, arg_6_1)
+StateTitleScreenLoadSave.cb_fade_in_done = function (arg_6_0, arg_6_1)
 	arg_6_0.parent.state = arg_6_1
 end
 
-function StateTitleScreenLoadSave.on_exit(arg_7_0, arg_7_1)
+StateTitleScreenLoadSave.on_exit = function (arg_7_0, arg_7_1)
 	return
 end

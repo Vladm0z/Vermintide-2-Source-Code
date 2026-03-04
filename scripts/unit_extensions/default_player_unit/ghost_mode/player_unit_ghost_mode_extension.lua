@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/ghost_mode/ghost_mode_utils")
 
 PlayerUnitGhostModeExtension = class(PlayerUnitGhostModeExtension)
 
-function PlayerUnitGhostModeExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitGhostModeExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._network_transmit = arg_1_1.network_transmit
@@ -40,14 +40,14 @@ function PlayerUnitGhostModeExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._prev_round_started = Managers.state.game_mode:is_round_started()
 end
 
-function PlayerUnitGhostModeExtension.extensions_ready(arg_2_0)
+PlayerUnitGhostModeExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_0._unit, "locomotion_system")
 	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_0._unit, "inventory_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_0._unit, "career_system")
 	arg_2_0._breed = Unit.get_data(arg_2_0._unit, "breed")
 end
 
-function PlayerUnitGhostModeExtension.game_object_initialized(arg_3_0, arg_3_1, arg_3_2)
+PlayerUnitGhostModeExtension.game_object_initialized = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = true
 
 	if var_3_0 then
@@ -57,11 +57,11 @@ function PlayerUnitGhostModeExtension.game_object_initialized(arg_3_0, arg_3_1, 
 	end
 end
 
-function PlayerUnitGhostModeExtension.destroy(arg_4_0)
+PlayerUnitGhostModeExtension.destroy = function (arg_4_0)
 	return
 end
 
-function PlayerUnitGhostModeExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerUnitGhostModeExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_0:is_in_ghost_mode() then
 		arg_5_0:_update_allowed_to_leave(arg_5_5)
 	else
@@ -69,7 +69,7 @@ function PlayerUnitGhostModeExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3,
 	end
 end
 
-function PlayerUnitGhostModeExtension._update_allowed_to_leave(arg_6_0, arg_6_1, arg_6_2)
+PlayerUnitGhostModeExtension._update_allowed_to_leave = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._unit
 
 	arg_6_0._range = math.ceil(arg_6_0:get_distance_from_players(var_6_0))
@@ -152,7 +152,7 @@ function PlayerUnitGhostModeExtension._update_allowed_to_leave(arg_6_0, arg_6_1,
 	end
 end
 
-function PlayerUnitGhostModeExtension._update_allowed_to_enter(arg_7_0, arg_7_1, arg_7_2)
+PlayerUnitGhostModeExtension._update_allowed_to_enter = function (arg_7_0, arg_7_1, arg_7_2)
 	if not arg_7_2 and arg_7_1 < arg_7_0._enter_ghost_mode_allowance_check_time then
 		return
 	end
@@ -183,12 +183,12 @@ function PlayerUnitGhostModeExtension._update_allowed_to_enter(arg_7_0, arg_7_1,
 	end
 end
 
-function PlayerUnitGhostModeExtension._set_allowed_to_leave(arg_8_0, arg_8_1, arg_8_2)
+PlayerUnitGhostModeExtension._set_allowed_to_leave = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._allowed_to_leave = arg_8_1
 	arg_8_0._reason_not_allowed_to_leave = arg_8_2
 end
 
-function PlayerUnitGhostModeExtension._update_allowed_to_leave_ui(arg_9_0, arg_9_1)
+PlayerUnitGhostModeExtension._update_allowed_to_leave_ui = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._allowed_to_leave
 	local var_9_1 = arg_9_0._reason_not_allowed_to_leave
 	local var_9_2 = Managers.state.game_mode:is_round_started()
@@ -214,7 +214,7 @@ function PlayerUnitGhostModeExtension._update_allowed_to_leave_ui(arg_9_0, arg_9
 	end
 end
 
-function PlayerUnitGhostModeExtension.get_distance_from_players(arg_10_0, arg_10_1)
+PlayerUnitGhostModeExtension.get_distance_from_players = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._side.ENEMY_PLAYER_AND_BOT_POSITIONS
 	local var_10_1 = POSITION_LOOKUP[arg_10_1]
 	local var_10_2 = math.huge
@@ -245,7 +245,7 @@ function PlayerUnitGhostModeExtension.get_distance_from_players(arg_10_0, arg_10
 	end
 end
 
-function PlayerUnitGhostModeExtension.allowed_to_leave(arg_11_0)
+PlayerUnitGhostModeExtension.allowed_to_leave = function (arg_11_0)
 	if Development.parameter("disable_ghost_mode") then
 		return true
 	else
@@ -253,7 +253,7 @@ function PlayerUnitGhostModeExtension.allowed_to_leave(arg_11_0)
 	end
 end
 
-function PlayerUnitGhostModeExtension._get_target_teleport_unit(arg_12_0)
+PlayerUnitGhostModeExtension._get_target_teleport_unit = function (arg_12_0)
 	if ALIVE[arg_12_0._teleport_target_unit] then
 		return arg_12_0._teleport_target_unit
 	end
@@ -263,7 +263,7 @@ function PlayerUnitGhostModeExtension._get_target_teleport_unit(arg_12_0)
 	return arg_12_0._teleport_target_unit
 end
 
-function PlayerUnitGhostModeExtension._progress_teleport_target(arg_13_0, arg_13_1)
+PlayerUnitGhostModeExtension._progress_teleport_target = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._side.ENEMY_PLAYER_AND_BOT_UNITS
 	local var_13_1 = #var_13_0
 	local var_13_2
@@ -286,7 +286,7 @@ function PlayerUnitGhostModeExtension._progress_teleport_target(arg_13_0, arg_13
 	arg_13_0._teleport_target_index_fallback = var_13_3
 end
 
-function PlayerUnitGhostModeExtension._set_allowed_to_enter(arg_14_0, arg_14_1, arg_14_2)
+PlayerUnitGhostModeExtension._set_allowed_to_enter = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_1 then
 		local var_14_0 = arg_14_0:_get_target_teleport_unit()
 
@@ -301,19 +301,19 @@ function PlayerUnitGhostModeExtension._set_allowed_to_enter(arg_14_0, arg_14_1, 
 	arg_14_0._reason_allowed_to_enter = arg_14_2
 end
 
-function PlayerUnitGhostModeExtension.allowed_to_enter(arg_15_0)
+PlayerUnitGhostModeExtension.allowed_to_enter = function (arg_15_0)
 	return arg_15_0._allowed_to_enter, arg_15_0._reason_allowed_to_enter
 end
 
-function PlayerUnitGhostModeExtension.is_in_ghost_mode(arg_16_0)
+PlayerUnitGhostModeExtension.is_in_ghost_mode = function (arg_16_0)
 	return arg_16_0._ghost_mode_active, arg_16_0._has_left_once
 end
 
-function PlayerUnitGhostModeExtension.is_husk(arg_17_0)
+PlayerUnitGhostModeExtension.is_husk = function (arg_17_0)
 	return arg_17_0._is_husk
 end
 
-function PlayerUnitGhostModeExtension.teleport_player(arg_18_0, arg_18_1)
+PlayerUnitGhostModeExtension.teleport_player = function (arg_18_0, arg_18_1)
 	if arg_18_0._teleport_target_type == "player" then
 		arg_18_0:_teleport_to_next_enemy(arg_18_1)
 	elseif arg_18_0._teleport_target_type == "safe_spot" then
@@ -321,7 +321,7 @@ function PlayerUnitGhostModeExtension.teleport_player(arg_18_0, arg_18_1)
 	end
 end
 
-function PlayerUnitGhostModeExtension._furthest_player_enemy_unit(arg_19_0)
+PlayerUnitGhostModeExtension._furthest_player_enemy_unit = function (arg_19_0)
 	local var_19_0 = POSITION_LOOKUP[arg_19_0._unit]
 	local var_19_1 = arg_19_0._side.ENEMY_PLAYER_AND_BOT_UNITS
 	local var_19_2 = 0
@@ -340,7 +340,7 @@ function PlayerUnitGhostModeExtension._furthest_player_enemy_unit(arg_19_0)
 	return var_19_3
 end
 
-function PlayerUnitGhostModeExtension._teleport_to_next_enemy(arg_20_0, arg_20_1)
+PlayerUnitGhostModeExtension._teleport_to_next_enemy = function (arg_20_0, arg_20_1)
 	if #arg_20_0._side.ENEMY_PLAYER_AND_BOT_UNITS == 0 then
 		return
 	end
@@ -358,11 +358,11 @@ function PlayerUnitGhostModeExtension._teleport_to_next_enemy(arg_20_0, arg_20_1
 	arg_20_0:_update_allowed_to_leave_ui(true)
 end
 
-function PlayerUnitGhostModeExtension._teleport_to_safe_spot(arg_21_0)
+PlayerUnitGhostModeExtension._teleport_to_safe_spot = function (arg_21_0)
 	arg_21_0._locomotion_extension:teleport_to(arg_21_0._safe_spot:unbox() + Vector3(0, 0, 0.2))
 end
 
-function PlayerUnitGhostModeExtension._enter_ghost_mode(arg_22_0, arg_22_1)
+PlayerUnitGhostModeExtension._enter_ghost_mode = function (arg_22_0, arg_22_1)
 	arg_22_0._ghost_mode_active = true
 
 	if not DEDICATED_SERVER then
@@ -407,7 +407,7 @@ function PlayerUnitGhostModeExtension._enter_ghost_mode(arg_22_0, arg_22_1)
 	Managers.state.entity:system("dialogue_context_system"):set_context_value(arg_22_0._unit, "is_in_ghost_mode", true)
 end
 
-function PlayerUnitGhostModeExtension._leave_ghost_mode(arg_23_0)
+PlayerUnitGhostModeExtension._leave_ghost_mode = function (arg_23_0)
 	arg_23_0._ghost_mode_active = false
 	arg_23_0._has_teleported = false
 	arg_23_0._has_left_once = true
@@ -478,7 +478,7 @@ function PlayerUnitGhostModeExtension._leave_ghost_mode(arg_23_0)
 	end
 end
 
-function PlayerUnitGhostModeExtension.try_enter_ghost_mode(arg_24_0)
+PlayerUnitGhostModeExtension.try_enter_ghost_mode = function (arg_24_0)
 	fassert(not arg_24_0:is_in_ghost_mode(), "In ghost mode already.")
 
 	local var_24_0 = Managers.time:time("game")
@@ -492,7 +492,7 @@ function PlayerUnitGhostModeExtension.try_enter_ghost_mode(arg_24_0)
 	end
 end
 
-function PlayerUnitGhostModeExtension.try_leave_ghost_mode(arg_25_0, arg_25_1)
+PlayerUnitGhostModeExtension.try_leave_ghost_mode = function (arg_25_0, arg_25_1)
 	fassert(arg_25_0:is_in_ghost_mode(), "In ghost mode already.")
 
 	local var_25_0 = Managers.time:time("game")
@@ -504,11 +504,11 @@ function PlayerUnitGhostModeExtension.try_leave_ghost_mode(arg_25_0, arg_25_1)
 	end
 end
 
-function PlayerUnitGhostModeExtension.set_safe_spot(arg_26_0, arg_26_1)
+PlayerUnitGhostModeExtension.set_safe_spot = function (arg_26_0, arg_26_1)
 	arg_26_0._safe_spot = arg_26_1
 end
 
-function PlayerUnitGhostModeExtension._set_teleport_target_type(arg_27_0, arg_27_1)
+PlayerUnitGhostModeExtension._set_teleport_target_type = function (arg_27_0, arg_27_1)
 	if arg_27_0:allowed_to_enter() and arg_27_1 ~= "player" then
 		print(arg_27_0:allowed_to_enter(), arg_27_1)
 		Crashify.print_exception("GhostModeSystem", "Allowed to enter ghost mode while not allowed to teleport.")
@@ -517,14 +517,14 @@ function PlayerUnitGhostModeExtension._set_teleport_target_type(arg_27_0, arg_27
 	arg_27_0._teleport_target_type = arg_27_1
 end
 
-function PlayerUnitGhostModeExtension._play_sound(arg_28_0, arg_28_1)
+PlayerUnitGhostModeExtension._play_sound = function (arg_28_0, arg_28_1)
 	local var_28_0 = Managers.world:world("level_world")
 	local var_28_1 = Managers.world:wwise_world(var_28_0)
 
 	WwiseWorld.trigger_event(var_28_1, arg_28_1)
 end
 
-function PlayerUnitGhostModeExtension.set_external_no_spawn_reason(arg_29_0, arg_29_1, arg_29_2)
+PlayerUnitGhostModeExtension.set_external_no_spawn_reason = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0._external_no_spawn_reasons[arg_29_1] = arg_29_2 or nil
 
 	local var_29_0 = Managers.time:time("game")
@@ -533,6 +533,6 @@ function PlayerUnitGhostModeExtension.set_external_no_spawn_reason(arg_29_0, arg
 	arg_29_0:_update_allowed_to_leave(var_29_0, var_29_1)
 end
 
-function PlayerUnitGhostModeExtension._external_no_spawn_reason(arg_30_0)
+PlayerUnitGhostModeExtension._external_no_spawn_reason = function (arg_30_0)
 	return next(arg_30_0._external_no_spawn_reasons)
 end

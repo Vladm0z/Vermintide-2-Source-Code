@@ -7,7 +7,7 @@ ActionTemplates.action_career_dr_4 = {
 		input_override = "action_career",
 		weapon_action_hand = "either",
 		kind = "instant_wield",
-		condition_func = function(arg_1_0, arg_1_1)
+		condition_func = function (arg_1_0, arg_1_1)
 			if ScriptUnit.extension(arg_1_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end
@@ -18,7 +18,7 @@ ActionTemplates.action_career_dr_4 = {
 
 			return ScriptUnit.extension(arg_1_0, "career_system"):get_activated_ability_data().action_name == "action_career_dr_4"
 		end,
-		enter_function = function(arg_2_0, arg_2_1)
+		enter_function = function (arg_2_0, arg_2_1)
 			local var_2_0 = ScriptUnit.has_extension(arg_2_0, "inventory_system")
 
 			if var_2_0 then

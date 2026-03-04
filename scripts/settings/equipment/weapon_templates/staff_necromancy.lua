@@ -25,7 +25,7 @@ var_0_0.actions = {
 			hold_input = "action_one_hold",
 			anim_event = "attack_charge",
 			charge_sound_name = "player_combat_weapon_staff_charge_fireball",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 				return arg_1_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -76,7 +76,7 @@ var_0_0.actions = {
 			hold_input = "action_one_hold",
 			anim_event = "attack_charge",
 			charge_sound_name = "player_combat_weapon_staff_charge_fireball",
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 				return arg_2_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -162,7 +162,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_3_0, arg_3_1)
+			enter_function = function (arg_3_0, arg_3_1)
 				local var_3_0 = Managers.state.entity:system("projectile_system")
 
 				if var_3_0:get_indexed_projectile_count(arg_3_0) >= var_0_1 then
@@ -178,7 +178,7 @@ var_0_0.actions = {
 
 				return arg_3_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
 				return math.random(0, 127)
 			end,
 			projectile_info = Projectiles.skull,
@@ -259,7 +259,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_5_0, arg_5_1)
+			enter_function = function (arg_5_0, arg_5_1)
 				local var_5_0 = Managers.state.entity:system("projectile_system")
 
 				if var_5_0:get_indexed_projectile_count(arg_5_0) >= var_0_1 then
@@ -275,7 +275,7 @@ var_0_0.actions = {
 
 				return arg_5_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -356,7 +356,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_7_0, arg_7_1)
+			enter_function = function (arg_7_0, arg_7_1)
 				local var_7_0 = Managers.state.entity:system("projectile_system")
 
 				if var_7_0:get_indexed_projectile_count(arg_7_0) >= var_0_1 then
@@ -372,7 +372,7 @@ var_0_0.actions = {
 
 				return arg_7_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -453,7 +453,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_9_0, arg_9_1)
+			enter_function = function (arg_9_0, arg_9_1)
 				local var_9_0 = Managers.state.entity:system("projectile_system")
 
 				if var_9_0:get_indexed_projectile_count(arg_9_0) >= var_0_1 then
@@ -469,7 +469,7 @@ var_0_0.actions = {
 
 				return arg_9_1:reset_release_input()
 			end,
-			generate_seed = function()
+			generate_seed = function ()
 				return math.random(128, 255)
 			end,
 			projectile_info = Projectiles.skull,
@@ -503,7 +503,7 @@ var_0_0.actions = {
 			conditional_actions = {
 				{
 					sub_action = "dummy",
-					condition = function(arg_11_0, arg_11_1, arg_11_2)
+					condition = function (arg_11_0, arg_11_1, arg_11_2)
 						if arg_11_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_11_2.owner_unit) <= 0
 						end
@@ -513,7 +513,7 @@ var_0_0.actions = {
 				},
 				{
 					sub_action = "detonate_one",
-					condition = function(arg_12_0, arg_12_1, arg_12_2)
+					condition = function (arg_12_0, arg_12_1, arg_12_2)
 						if arg_12_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_12_2.owner_unit) == 1
 						end
@@ -563,7 +563,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_13_0, arg_13_1)
+			enter_function = function (arg_13_0, arg_13_1)
 				arg_13_1:clear_input_buffer()
 
 				return arg_13_1:reset_release_input()
@@ -613,7 +613,7 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_14_0, arg_14_1)
+			enter_function = function (arg_14_0, arg_14_1)
 				arg_14_1:clear_input_buffer()
 
 				return arg_14_1:reset_release_input()
@@ -651,7 +651,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_15_0, arg_15_1)
+			enter_function = function (arg_15_0, arg_15_1)
 				arg_15_1:clear_input_buffer()
 
 				return arg_15_1:reset_release_input()
@@ -675,7 +675,7 @@ var_0_0.actions = {
 			uninterruptible = true,
 			anim_event = "cooldown_start",
 			charge_sound_name = "player_combat_weapon_staff_cooldown",
-			anim_end_event_condition_func = function(arg_16_0, arg_16_1)
+			anim_end_event_condition_func = function (arg_16_0, arg_16_1)
 				return arg_16_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -687,7 +687,7 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_17_0, arg_17_1)
+			enter_function = function (arg_17_0, arg_17_1)
 				arg_17_1:reset_release_input()
 				arg_17_1:clear_input_buffer()
 			end,
@@ -699,10 +699,10 @@ var_0_0.actions = {
 					input = "action_wield"
 				}
 			},
-			condition_func = function(arg_18_0, arg_18_1)
+			condition_func = function (arg_18_0, arg_18_1)
 				return ScriptUnit.extension(arg_18_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end,
-			chain_condition_func = function(arg_19_0, arg_19_1)
+			chain_condition_func = function (arg_19_0, arg_19_1)
 				return ScriptUnit.extension(arg_19_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end
 		}
@@ -713,7 +713,7 @@ var_0_0.actions = {
 			conditional_actions = {
 				{
 					sub_action = "dummy",
-					condition = function(arg_20_0, arg_20_1, arg_20_2)
+					condition = function (arg_20_0, arg_20_1, arg_20_2)
 						if arg_20_2 then
 							return Managers.state.entity:system("projectile_system"):get_indexed_projectile_count(arg_20_2.owner_unit) <= 0
 						end
@@ -770,7 +770,7 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_21_0, arg_21_1)
+			enter_function = function (arg_21_0, arg_21_1)
 				arg_21_1:clear_input_buffer()
 
 				return arg_21_1:reset_release_input()
@@ -808,7 +808,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_22_0, arg_22_1)
+			enter_function = function (arg_22_0, arg_22_1)
 				arg_22_1:clear_input_buffer()
 
 				return arg_22_1:reset_release_input()

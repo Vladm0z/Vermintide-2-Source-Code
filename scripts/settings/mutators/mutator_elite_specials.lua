@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_elite_specials",
 	icon = "mutator_icon_powerful_elites",
 	display_name = "display_name_mutator_elite_specials",
-	server_initialize_function = function(arg_1_0, arg_1_1)
+	server_initialize_function = function (arg_1_0, arg_1_1)
 		MutatorUtils.store_breed_and_action_settings(arg_1_0, arg_1_1)
 
 		Breeds.skaven_gutter_runner.run_speed = 14
@@ -78,7 +78,7 @@ return {
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.third_wave_min_distance = 4
 		BreedActions.chaos_corruptor_sorcerer.skulk_approach.third_wave_max_distance = 15
 	end,
-	server_stop_function = function(arg_2_0, arg_2_1)
+	server_stop_function = function (arg_2_0, arg_2_1)
 		MutatorUtils.restore_breed_and_action_settings(arg_2_0, arg_2_1)
 	end
 }

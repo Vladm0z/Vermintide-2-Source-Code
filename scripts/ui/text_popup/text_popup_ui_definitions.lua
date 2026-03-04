@@ -241,7 +241,7 @@ local var_0_11 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+					scroll_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 						local var_1_0 = arg_1_4.y * -1
 
 						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not Managers.input:is_device_active("gamepad") then

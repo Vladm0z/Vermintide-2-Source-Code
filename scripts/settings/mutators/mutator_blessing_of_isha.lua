@@ -84,11 +84,11 @@ return {
 	description = DeusBlessingSettings.blessing_of_isha.description,
 	icon = DeusBlessingSettings.blessing_of_isha.icon,
 	temp_not_disabled_units = {},
-	server_start_function = function(arg_6_0, arg_6_1, arg_6_2)
+	server_start_function = function (arg_6_0, arg_6_1, arg_6_2)
 		arg_6_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 		arg_6_1.buff_ids = {}
 	end,
-	try_activate_blessing = function(arg_7_0, arg_7_1, arg_7_2)
+	try_activate_blessing = function (arg_7_0, arg_7_1, arg_7_2)
 		if ALIVE[arg_7_2] then
 			var_0_4(var_0_0, arg_7_2, var_0_1)
 			var_0_6(arg_7_1.buff_ids)
@@ -115,7 +115,7 @@ return {
 
 		return false
 	end,
-	server_player_disabled_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	server_player_disabled_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		if arg_8_3 ~= arg_8_1.blessed_unit then
 			return
 		end
@@ -135,7 +135,7 @@ return {
 			var_0_4(var_8_1, arg_8_3, var_0_1, var_8_0)
 		end
 	end,
-	server_player_hit_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	server_player_hit_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		if arg_9_2 ~= arg_9_1.blessed_unit then
 			return
 		end
@@ -148,7 +148,7 @@ return {
 			arg_9_1.template.try_activate_blessing(arg_9_0, arg_9_1, arg_9_2)
 		end
 	end,
-	server_update_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	server_update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		if not arg_10_1.hero_side then
 			return
 		end

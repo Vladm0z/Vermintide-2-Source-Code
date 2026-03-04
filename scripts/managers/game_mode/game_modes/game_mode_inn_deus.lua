@@ -9,7 +9,7 @@ local var_0_1 = false
 
 GameModeInnDeus = class(GameModeInnDeus, GameModeBase)
 
-function GameModeInnDeus.init(arg_1_0, arg_1_1, arg_1_2, ...)
+GameModeInnDeus.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	GameModeInnDeus.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._adventure_profile_rules = AdventureProfileRules:new(arg_1_0._profile_synchronizer, arg_1_0._network_server)
@@ -36,7 +36,7 @@ function GameModeInnDeus.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	arg_1_0._local_player_spawned = false
 end
 
-function GameModeInnDeus.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+GameModeInnDeus.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	GameModeInnDeus.super.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._adventure_spawning:register_rpcs(arg_2_1, arg_2_2)
 
@@ -45,7 +45,7 @@ function GameModeInnDeus.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._network_event_delegate:register(arg_2_0, "rpc_waystone_active")
 end
 
-function GameModeInnDeus.unregister_rpcs(arg_3_0)
+GameModeInnDeus.unregister_rpcs = function (arg_3_0)
 	arg_3_0._adventure_spawning:unregister_rpcs()
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
@@ -54,16 +54,16 @@ function GameModeInnDeus.unregister_rpcs(arg_3_0)
 	GameModeInnDeus.super.unregister_rpcs(arg_3_0)
 end
 
-function GameModeInnDeus.update(arg_4_0, arg_4_1, arg_4_2)
+GameModeInnDeus.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_objectives()
 	arg_4_0._adventure_spawning:update(arg_4_1, arg_4_2)
 end
 
-function GameModeInnDeus.server_update(arg_5_0, arg_5_1, arg_5_2)
+GameModeInnDeus.server_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._adventure_spawning:server_update(arg_5_1, arg_5_2)
 end
 
-function GameModeInnDeus.evaluate_end_conditions(arg_6_0, arg_6_1)
+GameModeInnDeus.evaluate_end_conditions = function (arg_6_0, arg_6_1)
 	if var_0_0 then
 		var_0_0 = false
 
@@ -89,20 +89,20 @@ function GameModeInnDeus.evaluate_end_conditions(arg_6_0, arg_6_1)
 	end
 end
 
-function GameModeInnDeus.event_local_player_spawned(arg_7_0, arg_7_1)
+GameModeInnDeus.event_local_player_spawned = function (arg_7_0, arg_7_1)
 	arg_7_0._local_player_spawned = true
 	arg_7_0._is_initial_spawn = arg_7_1
 end
 
-function GameModeInnDeus.COMPLETE_LEVEL(arg_8_0)
+GameModeInnDeus.COMPLETE_LEVEL = function (arg_8_0)
 	var_0_0 = true
 end
 
-function GameModeInnDeus.FAIL_LEVEL(arg_9_0)
+GameModeInnDeus.FAIL_LEVEL = function (arg_9_0)
 	var_0_1 = true
 end
 
-function GameModeInnDeus.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+GameModeInnDeus.player_entered_game_session = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	GameModeInnDeus.super.player_entered_game_session(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 
 	if Managers.party:get_player_status(arg_10_1, arg_10_2).party_id ~= 1 then
@@ -114,23 +114,23 @@ function GameModeInnDeus.player_entered_game_session(arg_10_0, arg_10_1, arg_10_
 	arg_10_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_10_1, arg_10_2)
 end
 
-function GameModeInnDeus.flow_callback_add_spawn_point(arg_11_0, arg_11_1)
+GameModeInnDeus.flow_callback_add_spawn_point = function (arg_11_0, arg_11_1)
 	arg_11_0._adventure_spawning:add_spawn_point(arg_11_1)
 end
 
-function GameModeInnDeus.respawn_unit_spawned(arg_12_0, arg_12_1)
+GameModeInnDeus.respawn_unit_spawned = function (arg_12_0, arg_12_1)
 	arg_12_0._adventure_spawning:respawn_unit_spawned(arg_12_1)
 end
 
-function GameModeInnDeus.get_respawn_handler(arg_13_0)
+GameModeInnDeus.get_respawn_handler = function (arg_13_0)
 	return arg_13_0._adventure_spawning:get_respawn_handler()
 end
 
-function GameModeInnDeus.respawn_gate_unit_spawned(arg_14_0, arg_14_1)
+GameModeInnDeus.respawn_gate_unit_spawned = function (arg_14_0, arg_14_1)
 	arg_14_0._adventure_spawning:respawn_gate_unit_spawned(arg_14_1)
 end
 
-function GameModeInnDeus.force_respawn(arg_15_0, arg_15_1, arg_15_2)
+GameModeInnDeus.force_respawn = function (arg_15_0, arg_15_1, arg_15_2)
 	if Managers.party:get_player_status(arg_15_1, arg_15_2).party_id == 0 then
 		local var_15_0 = 1
 
@@ -140,7 +140,7 @@ function GameModeInnDeus.force_respawn(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._adventure_spawning:force_respawn(arg_15_1, arg_15_2)
 end
 
-function GameModeInnDeus._update_objectives(arg_16_0)
+GameModeInnDeus._update_objectives = function (arg_16_0)
 	if not arg_16_0._objective_units then
 		arg_16_0._objective_units = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
@@ -158,7 +158,7 @@ function GameModeInnDeus._update_objectives(arg_16_0)
 	end
 end
 
-function GameModeInnDeus._update_objective_marker(arg_17_0)
+GameModeInnDeus._update_objective_marker = function (arg_17_0)
 	if arg_17_0._matchmaking_manager:is_game_matchmaking() then
 		arg_17_0:_state_game_is_matchmaking()
 	else
@@ -172,7 +172,7 @@ local var_0_2 = {
 	"waystone_weave"
 }
 
-function GameModeInnDeus._state_game_is_matchmaking(arg_18_0)
+GameModeInnDeus._state_game_is_matchmaking = function (arg_18_0)
 	if arg_18_0._is_server then
 		local var_18_0, var_18_1 = arg_18_0._matchmaking_manager:waystone_is_active()
 
@@ -205,7 +205,7 @@ local var_0_3 = {
 	"map"
 }
 
-function GameModeInnDeus._state_choose_map(arg_19_0)
+GameModeInnDeus._state_choose_map = function (arg_19_0)
 	local var_19_0 = arg_19_0._current_objective_id
 	local var_19_1 = var_0_3[arg_19_0._current_waystone_type]
 
@@ -221,7 +221,7 @@ function GameModeInnDeus._state_choose_map(arg_19_0)
 	end
 end
 
-function GameModeInnDeus._activate_objective_marker(arg_20_0, arg_20_1)
+GameModeInnDeus._activate_objective_marker = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._objective_markers[arg_20_1]
 
 	if var_20_0 then
@@ -231,7 +231,7 @@ function GameModeInnDeus._activate_objective_marker(arg_20_0, arg_20_1)
 	end
 end
 
-function GameModeInnDeus._deactivate_objective_marker(arg_21_0, arg_21_1)
+GameModeInnDeus._deactivate_objective_marker = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._objective_markers[arg_21_1]
 
 	if var_21_0 then
@@ -241,13 +241,13 @@ function GameModeInnDeus._deactivate_objective_marker(arg_21_0, arg_21_1)
 	arg_21_0._current_objective_id = nil
 end
 
-function GameModeInnDeus.rpc_waystone_active(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+GameModeInnDeus.rpc_waystone_active = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	arg_22_0._waystone_is_active = arg_22_3
 	arg_22_0._waystone_type = arg_22_2
 	arg_22_0._current_waystone_type = arg_22_4
 end
 
-function GameModeInnDeus.hot_join_sync(arg_23_0, arg_23_1)
+GameModeInnDeus.hot_join_sync = function (arg_23_0, arg_23_1)
 	arg_23_0._waystone_is_active = false
 	arg_23_0._waystone_type = 0
 
@@ -256,7 +256,7 @@ function GameModeInnDeus.hot_join_sync(arg_23_0, arg_23_1)
 	RPC.rpc_waystone_active(var_23_0, arg_23_0._waystone_type, arg_23_0._waystone_is_active, arg_23_0._current_waystone_type)
 end
 
-function GameModeInnDeus.local_player_ready_to_start(arg_24_0, arg_24_1, arg_24_2)
+GameModeInnDeus.local_player_ready_to_start = function (arg_24_0, arg_24_1, arg_24_2)
 	if not arg_24_0._local_player_spawned then
 		return false
 	end
@@ -264,7 +264,7 @@ function GameModeInnDeus.local_player_ready_to_start(arg_24_0, arg_24_1, arg_24_
 	return true
 end
 
-function GameModeInnDeus.local_player_game_starts(arg_25_0, arg_25_1, arg_25_2)
+GameModeInnDeus.local_player_game_starts = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_2.show_profile_on_startup
 
 	arg_25_2.show_profile_on_startup = nil
@@ -306,6 +306,6 @@ function GameModeInnDeus.local_player_game_starts(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function GameModeInnDeus._cb_start_menu_closed(arg_26_0)
+GameModeInnDeus._cb_start_menu_closed = function (arg_26_0)
 	Managers.state.event:trigger("tutorial_trigger", "keep_menu_left")
 end

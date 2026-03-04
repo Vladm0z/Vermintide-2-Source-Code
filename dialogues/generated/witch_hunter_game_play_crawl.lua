@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/witch_hunter_game_play_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pwh_activate_ability_bounty_hunter_non_drunk",
 		name = "pwh_activate_ability_bounty_hunter_non_drunk",

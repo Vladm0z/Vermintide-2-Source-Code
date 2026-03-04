@@ -9,7 +9,7 @@ local var_0_0 = {
 }
 local var_0_1 = 0.3
 
-function TrailUrnAlignmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TrailUrnAlignmentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._interactable_type = Unit.get_data(arg_1_2, "interaction_data", "interaction_type")
 	arg_1_0._elapsed_time = 0
@@ -23,7 +23,7 @@ function TrailUrnAlignmentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 end
 
-function TrailUrnAlignmentExtension.update_interaction_position(arg_2_0, arg_2_1)
+TrailUrnAlignmentExtension.update_interaction_position = function (arg_2_0, arg_2_1)
 	local var_2_0 = POSITION_LOOKUP[arg_2_1]
 	local var_2_1 = arg_2_0._position:unbox()
 	local var_2_2 = Vector3.normalize(var_2_0 - var_2_1) * arg_2_0._interaction_distance + var_2_1
@@ -55,7 +55,7 @@ function TrailUrnAlignmentExtension.update_interaction_position(arg_2_0, arg_2_1
 	end
 end
 
-function TrailUrnAlignmentExtension.can_interact(arg_3_0)
+TrailUrnAlignmentExtension.can_interact = function (arg_3_0)
 	if arg_3_0._align_state ~= var_0_0.WAITING_FOR_INTERACTION then
 		return false
 	end
@@ -63,7 +63,7 @@ function TrailUrnAlignmentExtension.can_interact(arg_3_0)
 	return true
 end
 
-function TrailUrnAlignmentExtension.on_client_start_interaction(arg_4_0, arg_4_1, arg_4_2)
+TrailUrnAlignmentExtension.on_client_start_interaction = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._elapsed_time = 0
 	arg_4_0._start_time = arg_4_2
 	arg_4_0._start_position = Vector3Box(POSITION_LOOKUP[arg_4_1])
@@ -77,7 +77,7 @@ end
 
 local var_0_2 = 1
 
-function TrailUrnAlignmentExtension.is_unit_pushed_out_off_range(arg_5_0, arg_5_1, arg_5_2)
+TrailUrnAlignmentExtension.is_unit_pushed_out_off_range = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
 	local var_5_1 = arg_5_0._start_offset:unbox()
 	local var_5_2 = var_5_0 - arg_5_0._position:unbox()
@@ -91,7 +91,7 @@ function TrailUrnAlignmentExtension.is_unit_pushed_out_off_range(arg_5_0, arg_5_
 	return false
 end
 
-function TrailUrnAlignmentExtension.on_client_move_to_node(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+TrailUrnAlignmentExtension.on_client_move_to_node = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_0._align_state ~= var_0_0.MOVE_TO_NODE then
 		return false
 	end
@@ -118,7 +118,7 @@ function TrailUrnAlignmentExtension.on_client_move_to_node(arg_6_0, arg_6_1, arg
 	end
 end
 
-function TrailUrnAlignmentExtension.lerp_to_node(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+TrailUrnAlignmentExtension.lerp_to_node = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0._elapsed_time = arg_7_3 - arg_7_0._start_time
 
 	local var_7_0 = arg_7_0._elapsed_time / arg_7_2
@@ -128,7 +128,7 @@ function TrailUrnAlignmentExtension.lerp_to_node(arg_7_0, arg_7_1, arg_7_2, arg_
 	return (Vector3.lerp(arg_7_0._start_position:unbox(), arg_7_0._interaction_position:unbox(), var_7_2))
 end
 
-function TrailUrnAlignmentExtension.on_client_stop(arg_8_0, arg_8_1)
+TrailUrnAlignmentExtension.on_client_stop = function (arg_8_0, arg_8_1)
 	if arg_8_1 == InteractionResult.SUCCESS then
 		local var_8_0 = "lua_interaction_stopped_" .. arg_8_0._interactable_type .. "_" .. arg_8_1
 
@@ -140,7 +140,7 @@ function TrailUrnAlignmentExtension.on_client_stop(arg_8_0, arg_8_1)
 	end
 end
 
-function TrailUrnAlignmentExtension.is_state_move_to_node(arg_9_0)
+TrailUrnAlignmentExtension.is_state_move_to_node = function (arg_9_0)
 	if arg_9_0._align_state == var_0_0.MOVE_TO_NODE then
 		return true
 	end
@@ -148,11 +148,11 @@ function TrailUrnAlignmentExtension.is_state_move_to_node(arg_9_0)
 	return false
 end
 
-function TrailUrnAlignmentExtension.set_state_waiting_for_interaction(arg_10_0)
+TrailUrnAlignmentExtension.set_state_waiting_for_interaction = function (arg_10_0)
 	arg_10_0._align_state = var_0_0.WAITING_FOR_INTERACTION
 end
 
-function TrailUrnAlignmentExtension.is_state_aligned(arg_11_0)
+TrailUrnAlignmentExtension.is_state_aligned = function (arg_11_0)
 	if arg_11_0._align_state == var_0_0.IS_ALIGNED then
 		return true
 	end

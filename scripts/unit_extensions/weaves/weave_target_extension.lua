@@ -3,7 +3,7 @@
 WeaveTargetExtension = class(WeaveTargetExtension, BaseObjectiveExtension)
 WeaveTargetExtension.NAME = "WeaveTargetExtension"
 
-function WeaveTargetExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveTargetExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveTargetExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._on_start_func = arg_1_3.on_start_func
@@ -25,7 +25,7 @@ function WeaveTargetExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Unit.set_data(arg_1_2, "allow_ranged_damage", arg_1_0._attacks_allowed.ranged)
 end
 
-function WeaveTargetExtension.extensions_ready(arg_2_0)
+WeaveTargetExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._health_extension = ScriptUnit.has_extension(arg_2_0._unit, "health_system")
 
 	if arg_2_0._health_extension then
@@ -34,23 +34,23 @@ function WeaveTargetExtension.extensions_ready(arg_2_0)
 	end
 end
 
-function WeaveTargetExtension.display_name(arg_3_0)
+WeaveTargetExtension.display_name = function (arg_3_0)
 	return "objective_targets_name_single"
 end
 
-function WeaveTargetExtension.is_stacking_objective(arg_4_0)
+WeaveTargetExtension.is_stacking_objective = function (arg_4_0)
 	return "target"
 end
 
-function WeaveTargetExtension.initial_sync_data(arg_5_0, arg_5_1)
+WeaveTargetExtension.initial_sync_data = function (arg_5_0, arg_5_1)
 	arg_5_1.value = arg_5_0:get_percentage_done()
 end
 
-function WeaveTargetExtension._set_objective_data(arg_6_0, arg_6_1)
+WeaveTargetExtension._set_objective_data = function (arg_6_0, arg_6_1)
 	return
 end
 
-function WeaveTargetExtension._activate(arg_7_0)
+WeaveTargetExtension._activate = function (arg_7_0)
 	local var_7_0 = ScriptUnit.has_extension(arg_7_0._unit, "tutorial_system")
 
 	if var_7_0 then
@@ -58,7 +58,7 @@ function WeaveTargetExtension._activate(arg_7_0)
 	end
 end
 
-function WeaveTargetExtension._deactivate(arg_8_0)
+WeaveTargetExtension._deactivate = function (arg_8_0)
 	Unit.flow_event(arg_8_0._unit, "target_destroyed")
 
 	ScriptUnit.extension(arg_8_0._unit, "tutorial_system").active = false
@@ -74,7 +74,7 @@ function WeaveTargetExtension._deactivate(arg_8_0)
 	end
 end
 
-function WeaveTargetExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveTargetExtension._server_update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._health_extension:current_health()
 
 	if var_9_0 ~= arg_9_0._health then
@@ -96,18 +96,18 @@ function WeaveTargetExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function WeaveTargetExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+WeaveTargetExtension._client_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function WeaveTargetExtension.is_done(arg_11_0)
+WeaveTargetExtension.is_done = function (arg_11_0)
 	return arg_11_0._health_extension:is_dead()
 end
 
-function WeaveTargetExtension.attacks_allowed(arg_12_0)
+WeaveTargetExtension.attacks_allowed = function (arg_12_0)
 	return arg_12_0._attacks_allowed
 end
 
-function WeaveTargetExtension.get_percentage_done(arg_13_0)
+WeaveTargetExtension.get_percentage_done = function (arg_13_0)
 	return math.clamp(1 - arg_13_0._health / arg_13_0._max_health, 0, 1)
 end

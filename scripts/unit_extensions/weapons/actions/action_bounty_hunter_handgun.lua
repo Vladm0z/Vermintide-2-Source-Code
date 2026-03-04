@@ -2,11 +2,11 @@
 
 ActionBountyHunterHandgun = class(ActionBountyHunterHandgun, ActionBase)
 
-function ActionBountyHunterHandgun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBountyHunterHandgun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionBountyHunterHandgun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-function ActionBountyHunterHandgun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionBountyHunterHandgun.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionBountyHunterHandgun.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	local var_2_0 = arg_2_0.weapon_unit
@@ -62,7 +62,7 @@ function ActionBountyHunterHandgun.client_owner_start_action(arg_2_0, arg_2_1, a
 	end
 end
 
-function ActionBountyHunterHandgun.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionBountyHunterHandgun.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_0.upper_shot_done and arg_3_2 >= arg_3_0.time_to_shoot_upper then
 		arg_3_0.upper_shoot_function(arg_3_0)
 
@@ -82,7 +82,7 @@ function ActionBountyHunterHandgun.client_owner_post_update(arg_3_0, arg_3_1, ar
 	end
 end
 
-function ActionBountyHunterHandgun._railgun_shoot(arg_4_0)
+ActionBountyHunterHandgun._railgun_shoot = function (arg_4_0)
 	local var_4_0 = arg_4_0.owner_unit
 	local var_4_1 = arg_4_0.current_action
 	local var_4_2 = true
@@ -119,7 +119,7 @@ function ActionBountyHunterHandgun._railgun_shoot(arg_4_0)
 	var_4_3:reset_aim_assist_multiplier()
 end
 
-function ActionBountyHunterHandgun._shotgun_shoot(arg_5_0)
+ActionBountyHunterHandgun._shotgun_shoot = function (arg_5_0)
 	local var_5_0 = arg_5_0.world
 	local var_5_1 = arg_5_0.owner_unit
 	local var_5_2 = arg_5_0.current_action
@@ -191,7 +191,7 @@ function ActionBountyHunterHandgun._shotgun_shoot(arg_5_0)
 	end
 end
 
-function ActionBountyHunterHandgun._do_aoe(arg_6_0)
+ActionBountyHunterHandgun._do_aoe = function (arg_6_0)
 	local var_6_0 = arg_6_0.world
 	local var_6_1 = arg_6_0.owner_unit
 	local var_6_2 = arg_6_0.current_action
@@ -238,7 +238,7 @@ function ActionBountyHunterHandgun._do_aoe(arg_6_0)
 	end
 end
 
-function ActionBountyHunterHandgun.finish(arg_7_0, arg_7_1)
+ActionBountyHunterHandgun.finish = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.current_action
 	local var_7_1 = arg_7_0.owner_unit
 

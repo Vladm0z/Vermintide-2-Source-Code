@@ -11,7 +11,7 @@ local var_0_4 = false
 HeroWindowWeaveForgeBackground = class(HeroWindowWeaveForgeBackground)
 HeroWindowWeaveForgeBackground.NAME = "HeroWindowWeaveForgeBackground"
 
-function HeroWindowWeaveForgeBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowWeaveForgeBackground.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgeBackground")
 
 	arg_1_0._params = arg_1_1
@@ -38,7 +38,7 @@ function HeroWindowWeaveForgeBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._hero_name = var_1_1
 end
 
-function HeroWindowWeaveForgeBackground._setup_definitions(arg_2_0)
+HeroWindowWeaveForgeBackground._setup_definitions = function (arg_2_0)
 	if arg_2_0._parent:gamepad_style_active() then
 		var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_console_definitions")
 	else
@@ -50,7 +50,7 @@ function HeroWindowWeaveForgeBackground._setup_definitions(arg_2_0)
 	var_0_3 = var_0_0.animation_definitions
 end
 
-function HeroWindowWeaveForgeBackground.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowWeaveForgeBackground.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_setup_definitions()
 
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
@@ -80,13 +80,13 @@ function HeroWindowWeaveForgeBackground.create_ui_elements(arg_3_0, arg_3_1, arg
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 end
 
-function HeroWindowWeaveForgeBackground.on_exit(arg_4_0, arg_4_1)
+HeroWindowWeaveForgeBackground.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgeBackground")
 
 	arg_4_0._ui_animator = nil
 end
 
-function HeroWindowWeaveForgeBackground.update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowWeaveForgeBackground.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_4 then
 		var_0_4 = false
 
@@ -97,11 +97,11 @@ function HeroWindowWeaveForgeBackground.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function HeroWindowWeaveForgeBackground.post_update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowWeaveForgeBackground.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function HeroWindowWeaveForgeBackground._update_animations(arg_7_0, arg_7_1)
+HeroWindowWeaveForgeBackground._update_animations = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_animations
 	local var_7_1 = arg_7_0._animations
 	local var_7_2 = arg_7_0._ui_animator
@@ -125,7 +125,7 @@ function HeroWindowWeaveForgeBackground._update_animations(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowWeaveForgeBackground._draw(arg_8_0, arg_8_1)
+HeroWindowWeaveForgeBackground._draw = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._parent:get_ui_renderer()
 	local var_8_1 = arg_8_0._ui_scenegraph
 	local var_8_2 = arg_8_0._parent:window_input_service()

@@ -2,7 +2,7 @@
 
 KeepDecorationTrophyExtension = class(KeepDecorationTrophyExtension)
 
-function KeepDecorationTrophyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+KeepDecorationTrophyExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = LevelHelper:current_level(var_1_0)
 
@@ -25,17 +25,17 @@ function KeepDecorationTrophyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._backend_key = var_1_3.backend_key
 end
 
-function KeepDecorationTrophyExtension.interacted_with(arg_2_0)
+KeepDecorationTrophyExtension.interacted_with = function (arg_2_0)
 	return
 end
 
-function KeepDecorationTrophyExtension.destroy(arg_3_0)
+KeepDecorationTrophyExtension.destroy = function (arg_3_0)
 	arg_3_0._unit = nil
 	arg_3_0._world = nil
 	arg_3_0._go_id = nil
 end
 
-function KeepDecorationTrophyExtension.extensions_ready(arg_4_0)
+KeepDecorationTrophyExtension.extensions_ready = function (arg_4_0)
 	if not arg_4_0._is_leader then
 		return
 	end
@@ -51,19 +51,19 @@ function KeepDecorationTrophyExtension.extensions_ready(arg_4_0)
 	arg_4_0:_load_trophy(var_4_0)
 end
 
-function KeepDecorationTrophyExtension.get_settings(arg_5_0)
+KeepDecorationTrophyExtension.get_settings = function (arg_5_0)
 	return arg_5_0._trophies_lookup
 end
 
-function KeepDecorationTrophyExtension.can_interact(arg_6_0)
+KeepDecorationTrophyExtension.can_interact = function (arg_6_0)
 	return arg_6_0._go_id
 end
 
-function KeepDecorationTrophyExtension.decoration_selected(arg_7_0, arg_7_1)
+KeepDecorationTrophyExtension.decoration_selected = function (arg_7_0, arg_7_1)
 	arg_7_0:_load_trophy(arg_7_1)
 end
 
-function KeepDecorationTrophyExtension.reset_selection(arg_8_0)
+KeepDecorationTrophyExtension.reset_selection = function (arg_8_0)
 	local var_8_0 = arg_8_0._current_preview_trophy
 	local var_8_1 = arg_8_0._currently_set_trophy or "hub_trophy_empty"
 
@@ -74,21 +74,21 @@ function KeepDecorationTrophyExtension.reset_selection(arg_8_0)
 	arg_8_0._current_preview_trophy = nil
 end
 
-function KeepDecorationTrophyExtension.unequip_decoration(arg_9_0, arg_9_1)
+KeepDecorationTrophyExtension.unequip_decoration = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1 or "hub_trophy_empty"
 
 	arg_9_0:_load_trophy(var_9_0)
 	arg_9_0:sync_decoration()
 end
 
-function KeepDecorationTrophyExtension.confirm_selection(arg_10_0)
+KeepDecorationTrophyExtension.confirm_selection = function (arg_10_0)
 	local var_10_0 = arg_10_0._current_preview_trophy
 
 	arg_10_0.keep_decoration_system:on_decoration_set(var_10_0, arg_10_0)
 	arg_10_0:sync_decoration()
 end
 
-function KeepDecorationTrophyExtension.sync_decoration(arg_11_0)
+KeepDecorationTrophyExtension.sync_decoration = function (arg_11_0)
 	local var_11_0 = arg_11_0._current_preview_trophy
 
 	arg_11_0:_set_selected_decoration(var_11_0)
@@ -102,11 +102,11 @@ function KeepDecorationTrophyExtension.sync_decoration(arg_11_0)
 	end
 end
 
-function KeepDecorationTrophyExtension.hot_join_sync(arg_12_0, arg_12_1)
+KeepDecorationTrophyExtension.hot_join_sync = function (arg_12_0, arg_12_1)
 	return
 end
 
-function KeepDecorationTrophyExtension.distributed_update(arg_13_0)
+KeepDecorationTrophyExtension.distributed_update = function (arg_13_0)
 	if arg_13_0._is_leader then
 		if arg_13_0._waiting_for_game_session and Managers.state.network:in_game_session() then
 			local var_13_0 = arg_13_0:get_selected_decoration()
@@ -136,7 +136,7 @@ function KeepDecorationTrophyExtension.distributed_update(arg_13_0)
 	end
 end
 
-function KeepDecorationTrophyExtension.get_selected_decoration(arg_14_0)
+KeepDecorationTrophyExtension.get_selected_decoration = function (arg_14_0)
 	if arg_14_0._is_leader then
 		local var_14_0 = arg_14_0._backend_key
 
@@ -146,7 +146,7 @@ function KeepDecorationTrophyExtension.get_selected_decoration(arg_14_0)
 	end
 end
 
-function KeepDecorationTrophyExtension._set_selected_decoration(arg_15_0, arg_15_1)
+KeepDecorationTrophyExtension._set_selected_decoration = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._backend_key
 	local var_15_1 = Managers.backend
 	local var_15_2 = var_15_1:get_interface("keep_decorations")
@@ -158,7 +158,7 @@ function KeepDecorationTrophyExtension._set_selected_decoration(arg_15_0, arg_15
 	var_15_1:commit()
 end
 
-function KeepDecorationTrophyExtension._load_trophy(arg_16_0, arg_16_1, arg_16_2)
+KeepDecorationTrophyExtension._load_trophy = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._unit
 	local var_16_1 = arg_16_0._current_preview_trophy_unit
 	local var_16_2 = Unit.local_position(var_16_1, 0)
@@ -183,7 +183,7 @@ function KeepDecorationTrophyExtension._load_trophy(arg_16_0, arg_16_1, arg_16_2
 	arg_16_0._current_preview_trophy = arg_16_1
 end
 
-function KeepDecorationTrophyExtension._create_game_object(arg_17_0, arg_17_1)
+KeepDecorationTrophyExtension._create_game_object = function (arg_17_0, arg_17_1)
 	local var_17_0 = {
 		go_type = NetworkLookup.go_types.keep_decoration_trophy,
 		level_unit_index = arg_17_0._level_unit_index,
@@ -194,11 +194,11 @@ function KeepDecorationTrophyExtension._create_game_object(arg_17_0, arg_17_1)
 	arg_17_0._go_id = Managers.state.network:create_game_object("keep_decoration_trophy", var_17_0, var_17_1)
 end
 
-function KeepDecorationTrophyExtension.cb_game_session_disconnect(arg_18_0)
+KeepDecorationTrophyExtension.cb_game_session_disconnect = function (arg_18_0)
 	arg_18_0._go_id = nil
 end
 
-function KeepDecorationTrophyExtension.on_game_object_created(arg_19_0, arg_19_1)
+KeepDecorationTrophyExtension.on_game_object_created = function (arg_19_0, arg_19_1)
 	local var_19_0 = Managers.state.network:game()
 	local var_19_1 = GameSession.game_object_field(var_19_0, arg_19_1, "trophy_index")
 	local var_19_2 = arg_19_0._trophies_lookup[var_19_1]
@@ -210,6 +210,6 @@ function KeepDecorationTrophyExtension.on_game_object_created(arg_19_0, arg_19_1
 	arg_19_0._go_id = arg_19_1
 end
 
-function KeepDecorationTrophyExtension.on_game_object_destroyed(arg_20_0)
+KeepDecorationTrophyExtension.on_game_object_destroyed = function (arg_20_0)
 	arg_20_0._go_id = nil
 end

@@ -4,12 +4,12 @@ GeneralSyncedPackageLoader = class(GeneralSyncedPackageLoader)
 
 local var_0_0 = {}
 
-function GeneralSyncedPackageLoader.init(arg_1_0)
+GeneralSyncedPackageLoader.init = function (arg_1_0)
 	arg_1_0._loaded_mutator_map = {}
 	arg_1_0._cached_mutator_map = {}
 end
 
-function GeneralSyncedPackageLoader.network_context_created(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+GeneralSyncedPackageLoader.network_context_created = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	printf("[GeneralSyncedPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_2_2, arg_2_3)
 
 	arg_2_0._lobby = arg_2_1
@@ -17,11 +17,11 @@ function GeneralSyncedPackageLoader.network_context_created(arg_2_0, arg_2_1, ar
 	arg_2_0._network_handler = arg_2_4
 end
 
-function GeneralSyncedPackageLoader.matching_session(arg_3_0, arg_3_1)
+GeneralSyncedPackageLoader.matching_session = function (arg_3_0, arg_3_1)
 	return arg_3_0._network_handler == arg_3_1
 end
 
-function GeneralSyncedPackageLoader.network_context_destroyed(arg_4_0)
+GeneralSyncedPackageLoader.network_context_destroyed = function (arg_4_0)
 	print("[GeneralSyncedPackageLoader] network_context_destroyed")
 
 	arg_4_0._lobby = nil
@@ -34,11 +34,11 @@ function GeneralSyncedPackageLoader.network_context_destroyed(arg_4_0)
 	arg_4_0._is_server = nil
 end
 
-function GeneralSyncedPackageLoader.update(arg_5_0)
+GeneralSyncedPackageLoader.update = function (arg_5_0)
 	arg_5_0:_update_package_diffs()
 end
 
-function GeneralSyncedPackageLoader._mutator_package_reference(arg_6_0, arg_6_1)
+GeneralSyncedPackageLoader._mutator_package_reference = function (arg_6_0, arg_6_1)
 	local var_6_0 = var_0_0[arg_6_1]
 
 	if var_6_0 then
@@ -50,7 +50,7 @@ function GeneralSyncedPackageLoader._mutator_package_reference(arg_6_0, arg_6_1)
 	return var_0_0[arg_6_1]
 end
 
-function GeneralSyncedPackageLoader._has_loaded_mutator(arg_7_0, arg_7_1)
+GeneralSyncedPackageLoader._has_loaded_mutator = function (arg_7_0, arg_7_1)
 	local var_7_0 = MutatorTemplates[arg_7_1].packages
 
 	if not var_7_0 then
@@ -71,7 +71,7 @@ function GeneralSyncedPackageLoader._has_loaded_mutator(arg_7_0, arg_7_1)
 	return true
 end
 
-function GeneralSyncedPackageLoader._is_loading_mutator(arg_8_0, arg_8_1)
+GeneralSyncedPackageLoader._is_loading_mutator = function (arg_8_0, arg_8_1)
 	local var_8_0 = MutatorTemplates[arg_8_1].packages
 
 	if not var_8_0 then
@@ -92,7 +92,7 @@ function GeneralSyncedPackageLoader._is_loading_mutator(arg_8_0, arg_8_1)
 	return false
 end
 
-function GeneralSyncedPackageLoader._load_mutator(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+GeneralSyncedPackageLoader._load_mutator = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = MutatorTemplates[arg_9_1].packages
 
 	if not var_9_0 then
@@ -109,7 +109,7 @@ function GeneralSyncedPackageLoader._load_mutator(arg_9_0, arg_9_1, arg_9_2, arg
 	end
 end
 
-function GeneralSyncedPackageLoader._unload_mutator(arg_10_0, arg_10_1)
+GeneralSyncedPackageLoader._unload_mutator = function (arg_10_0, arg_10_1)
 	local var_10_0 = MutatorTemplates[arg_10_1].packages
 
 	if not var_10_0 then
@@ -126,7 +126,7 @@ function GeneralSyncedPackageLoader._unload_mutator(arg_10_0, arg_10_1)
 	end
 end
 
-function GeneralSyncedPackageLoader._update_package_diffs(arg_11_0, arg_11_1)
+GeneralSyncedPackageLoader._update_package_diffs = function (arg_11_0, arg_11_1)
 	if not arg_11_0._network_handler or not arg_11_0._network_handler:is_fully_synced() then
 		return
 	end
@@ -164,7 +164,7 @@ function GeneralSyncedPackageLoader._update_package_diffs(arg_11_0, arg_11_1)
 	end
 end
 
-function GeneralSyncedPackageLoader.load_sync_done_for_peer(arg_12_0, arg_12_1)
+GeneralSyncedPackageLoader.load_sync_done_for_peer = function (arg_12_0, arg_12_1)
 	if not arg_12_0._network_handler or not arg_12_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -181,7 +181,7 @@ function GeneralSyncedPackageLoader.load_sync_done_for_peer(arg_12_0, arg_12_1)
 	return true
 end
 
-function GeneralSyncedPackageLoader.loading_completed(arg_13_0)
+GeneralSyncedPackageLoader.loading_completed = function (arg_13_0)
 	if not arg_13_0._network_handler or not arg_13_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -198,7 +198,7 @@ function GeneralSyncedPackageLoader.loading_completed(arg_13_0)
 	return true
 end
 
-function GeneralSyncedPackageLoader.on_application_shutdown(arg_14_0)
+GeneralSyncedPackageLoader.on_application_shutdown = function (arg_14_0)
 	local var_14_0 = arg_14_0._loaded_mutator_map
 
 	for iter_14_0 in pairs(var_14_0) do
@@ -217,12 +217,12 @@ function GeneralSyncedPackageLoader.on_application_shutdown(arg_14_0)
 	end
 end
 
-function GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers(arg_15_0, arg_15_1, arg_15_2)
+GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._is_server and arg_15_0._network_handler:hot_join_synced_peers()
 
 	if arg_15_2 then
 		var_15_0 = table.shallow_copy(arg_15_0._network_handler:get_peers(), true)
-		var_15_0 = table.array_to_map(var_15_0, function(arg_16_0, arg_16_1)
+		var_15_0 = table.array_to_map(var_15_0, function (arg_16_0, arg_16_1)
 			return arg_16_1, true
 		end)
 	end
@@ -236,7 +236,7 @@ function GeneralSyncedPackageLoader.is_mutator_loaded_on_all_peers(arg_15_0, arg
 	return true
 end
 
-function GeneralSyncedPackageLoader._mutator_map(arg_17_0)
+GeneralSyncedPackageLoader._mutator_map = function (arg_17_0)
 	local var_17_0 = arg_17_0._network_handler:state_revision()
 
 	if arg_17_0._cached_mutator_map_version == var_17_0 then
@@ -257,7 +257,7 @@ function GeneralSyncedPackageLoader._mutator_map(arg_17_0)
 	return arg_17_0._cached_mutator_map
 end
 
-function GeneralSyncedPackageLoader.debug_loaded_packages(arg_18_0)
+GeneralSyncedPackageLoader.debug_loaded_packages = function (arg_18_0)
 	if not arg_18_0._network_handler then
 		Debug.text("[GeneralSyncedPackageLoader] network handler not avaiable")
 
@@ -276,7 +276,7 @@ function GeneralSyncedPackageLoader.debug_loaded_packages(arg_18_0)
 
 	if not arg_18_0._is_server then
 		var_18_1 = table.shallow_copy(arg_18_0._network_handler:get_peers(), true)
-		var_18_1 = table.array_to_map(var_18_1, function(arg_19_0, arg_19_1)
+		var_18_1 = table.array_to_map(var_18_1, function (arg_19_0, arg_19_1)
 			return arg_19_1, true
 		end)
 	end

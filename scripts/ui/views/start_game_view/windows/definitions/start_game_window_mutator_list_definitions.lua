@@ -19,15 +19,15 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -37,15 +37,15 @@ local var_0_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -184,7 +184,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					style_id = "background",
 					pass_type = "texture_uv",
 					content_id = "background",
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						if arg_8_0.parent.button_hotspot.disable_button then
 							arg_8_1.saturated = true
 						else
@@ -201,7 +201,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					texture_id = "glow_frame",
 					style_id = "glow_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return not arg_9_0.button_hotspot.disable_button and not arg_9_0.has_item
 					end
 				},
@@ -217,7 +217,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						local var_10_0 = arg_10_0.button_hotspot.is_clicked
 
 						return not var_10_0 or var_10_0 == 0
@@ -230,7 +230,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.button_hotspot.disable_button
 					end
 				},
@@ -243,7 +243,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					style_id = "option_text",
 					pass_type = "text",
 					text_id = "option_text",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.button_hotspot.disable_button and not arg_12_0.has_item
 					end
 				},
@@ -251,7 +251,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					style_id = "option_text_shadow",
 					pass_type = "text",
 					text_id = "option_text",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return not arg_13_0.button_hotspot.disable_button and not arg_13_0.has_item
 					end
 				},
@@ -259,7 +259,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					style_id = "warning_text",
 					pass_type = "text",
 					text_id = "warning_text",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.button_hotspot.disable_button and not arg_14_0.has_item
 					end
 				},
@@ -267,7 +267,7 @@ local function var_0_9(arg_7_0, arg_7_1)
 					style_id = "warning_text_shadow",
 					pass_type = "text",
 					text_id = "warning_text",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.button_hotspot.disable_button and not arg_15_0.has_item
 					end
 				}

@@ -4,7 +4,7 @@ return {
 	description = "description_explosive_loot_rats",
 	icon = "mutator_icon_explosive_loot_rats",
 	display_name = "display_name_explosive_loot_rats",
-	server_initialize_function = function(arg_1_0, arg_1_1)
+	server_initialize_function = function (arg_1_0, arg_1_1)
 		arg_1_1.amount_of_rats_per_difficulty = {
 			normal = {
 				3,
@@ -73,14 +73,14 @@ return {
 		}
 		arg_1_1.side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
 	end,
-	server_players_left_safe_zone = function(arg_2_0, arg_2_1)
+	server_players_left_safe_zone = function (arg_2_0, arg_2_1)
 		arg_2_1.has_left_safe_zone = true
 
 		local var_2_0 = 20
 
 		arg_2_1.spawn_loot_rats_at = Managers.time:time("game") + var_2_0
 	end,
-	server_update_function = function(arg_3_0, arg_3_1)
+	server_update_function = function (arg_3_0, arg_3_1)
 		if not arg_3_1.has_left_safe_zone then
 			return
 		end
@@ -116,7 +116,7 @@ return {
 			end
 		end
 	end,
-	server_stop_function = function(arg_4_0, arg_4_1)
+	server_stop_function = function (arg_4_0, arg_4_1)
 		return
 	end
 }

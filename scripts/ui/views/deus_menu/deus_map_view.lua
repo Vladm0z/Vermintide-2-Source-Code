@@ -9,7 +9,7 @@ DeusMapView = class(DeusMapView)
 
 local var_0_1 = "deus_map_input_service_name"
 
-function DeusMapView.init(arg_1_0, arg_1_1)
+DeusMapView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui = DeusMapUI:new(arg_1_1)
 	arg_1_0._scene = DeusMapScene:new()
 	arg_1_0._active = false
@@ -26,7 +26,7 @@ function DeusMapView.init(arg_1_0, arg_1_1)
 	var_1_0:map_device_to_service(var_0_1, "gamepad")
 end
 
-function DeusMapView.start(arg_2_0, arg_2_1)
+DeusMapView.start = function (arg_2_0, arg_2_1)
 	fassert(arg_2_1, "DeusMapView needs params to be set in order to function properly, see GameModeMapDeus")
 
 	arg_2_0._finish_cb = arg_2_1.finish_cb
@@ -47,7 +47,7 @@ function DeusMapView.start(arg_2_0, arg_2_1)
 	arg_2_0:_start()
 end
 
-function DeusMapView._finish(arg_3_0)
+DeusMapView._finish = function (arg_3_0)
 	local var_3_0 = arg_3_0._input_manager
 
 	var_3_0:release_input({
@@ -61,7 +61,7 @@ function DeusMapView._finish(arg_3_0)
 	arg_3_0._scene:on_finish()
 end
 
-function DeusMapView.update(arg_4_0, arg_4_1, arg_4_2)
+DeusMapView.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._active then
 		arg_4_0:_update(arg_4_1, arg_4_2)
 	end
@@ -70,19 +70,19 @@ function DeusMapView.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._scene:update(arg_4_1, arg_4_2, Managers.input:is_device_active("gamepad"))
 end
 
-function DeusMapView.post_update(arg_5_0, arg_5_1, arg_5_2)
+DeusMapView.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._scene:post_update(arg_5_1, arg_5_2)
 end
 
-function DeusMapView.input_service(arg_6_0)
+DeusMapView.input_service = function (arg_6_0)
 	return arg_6_0._input_manager:get_service(var_0_1)
 end
 
-function DeusMapView.is_active(arg_7_0)
+DeusMapView.is_active = function (arg_7_0)
 	return arg_7_0._active
 end
 
-function DeusMapView.destroy(arg_8_0)
+DeusMapView.destroy = function (arg_8_0)
 	if arg_8_0._active then
 		arg_8_0:_finish()
 	end
@@ -91,7 +91,7 @@ function DeusMapView.destroy(arg_8_0)
 	arg_8_0._ui:destroy()
 end
 
-function DeusMapView.register_rpcs(arg_9_0, arg_9_1, arg_9_2)
+DeusMapView.register_rpcs = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_1 then
 		local var_9_0 = arg_9_0._get_rpcs and arg_9_0:_get_rpcs()
 
@@ -101,32 +101,32 @@ function DeusMapView.register_rpcs(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function DeusMapView.unregister_rpcs(arg_10_0)
+DeusMapView.unregister_rpcs = function (arg_10_0)
 	if arg_10_0._network_event_delegate then
 		arg_10_0._network_event_delegate:unregister(arg_10_0)
 	end
 end
 
-function DeusMapView._start(arg_11_0, arg_11_1)
+DeusMapView._start = function (arg_11_0, arg_11_1)
 	return
 end
 
-function DeusMapView._update(arg_12_0, arg_12_1, arg_12_2)
+DeusMapView._update = function (arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-function DeusMapView._get_rpcs(arg_13_0)
+DeusMapView._get_rpcs = function (arg_13_0)
 	return
 end
 
-function DeusMapView._node_pressed(arg_14_0, arg_14_1)
+DeusMapView._node_pressed = function (arg_14_0, arg_14_1)
 	return
 end
 
-function DeusMapView._node_hovered(arg_15_0, arg_15_1)
+DeusMapView._node_hovered = function (arg_15_0, arg_15_1)
 	return
 end
 
-function DeusMapView._node_unhovered(arg_16_0)
+DeusMapView._node_unhovered = function (arg_16_0)
 	return
 end

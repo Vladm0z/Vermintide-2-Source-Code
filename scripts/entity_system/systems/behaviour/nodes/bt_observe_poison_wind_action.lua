@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTObservePoisonWind = class(BTObservePoisonWind, BTNode)
 BTObservePoisonWind.name = "BTObservePoisonWind"
 
-function BTObservePoisonWind.init(arg_1_0, ...)
+BTObservePoisonWind.init = function (arg_1_0, ...)
 	BTObservePoisonWind.super.init(arg_1_0, ...)
 end
 
-function BTObservePoisonWind.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTObservePoisonWind.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	arg_2_2.navigation_extension:set_enabled(false)
@@ -21,14 +21,14 @@ function BTObservePoisonWind.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.network:anim_event(arg_2_1, "attack_throw_look")
 end
 
-function BTObservePoisonWind.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTObservePoisonWind.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.observe_poison_wind = nil
 	arg_3_2.action = nil
 
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTObservePoisonWind.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTObservePoisonWind.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.throw_globe_data
 
 	if not var_4_0 then

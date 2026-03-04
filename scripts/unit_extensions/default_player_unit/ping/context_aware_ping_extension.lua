@@ -8,7 +8,7 @@ local var_0_4 = 50
 
 ContextAwarePingExtension = class(ContextAwarePingExtension)
 
-function ContextAwarePingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ContextAwarePingExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._physics_world = World.get_data(arg_1_0._world, "physics_world")
 	arg_1_0._unit = arg_1_2
@@ -37,25 +37,25 @@ function ContextAwarePingExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._ping_system = Managers.state.entity:system("ping_system")
 end
 
-function ContextAwarePingExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+ContextAwarePingExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._input_extension = ScriptUnit.extension(arg_2_2, "input_system")
 	arg_2_0._first_person_extension = ScriptUnit.extension(arg_2_2, "first_person_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 end
 
-function ContextAwarePingExtension.ping_context(arg_3_0)
+ContextAwarePingExtension.ping_context = function (arg_3_0)
 	return arg_3_0._ping_context
 end
 
-function ContextAwarePingExtension.social_wheel_context(arg_4_0)
+ContextAwarePingExtension.social_wheel_context = function (arg_4_0)
 	return arg_4_0._social_wheel_context
 end
 
-function ContextAwarePingExtension.destroy(arg_5_0)
+ContextAwarePingExtension.destroy = function (arg_5_0)
 	return
 end
 
-function ContextAwarePingExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ContextAwarePingExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0._num_free_events < var_0_0 then
 		local var_6_0 = (arg_6_5 - arg_6_0._last_update_t) / var_0_1
 
@@ -73,23 +73,23 @@ function ContextAwarePingExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, ar
 	arg_6_0._last_update_t = arg_6_5
 end
 
-function ContextAwarePingExtension._have_free_events(arg_7_0)
+ContextAwarePingExtension._have_free_events = function (arg_7_0)
 	return arg_7_0._num_free_events > 0
 end
 
-function ContextAwarePingExtension._have_free_combat_events(arg_8_0)
+ContextAwarePingExtension._have_free_combat_events = function (arg_8_0)
 	return arg_8_0._num_free_combat_events > 0
 end
 
-function ContextAwarePingExtension._consume_ping_event(arg_9_0)
+ContextAwarePingExtension._consume_ping_event = function (arg_9_0)
 	arg_9_0._num_free_events = arg_9_0._num_free_events - 1
 end
 
-function ContextAwarePingExtension._consume_combat_ping_event(arg_10_0)
+ContextAwarePingExtension._consume_combat_ping_event = function (arg_10_0)
 	arg_10_0._num_free_combat_events = arg_10_0._num_free_combat_events - 1
 end
 
-function ContextAwarePingExtension.ping_attempt(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ContextAwarePingExtension.ping_attempt = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if not IgnoreFreeEvents[arg_11_4] and not arg_11_0:_have_free_events() then
 		if arg_11_4 ~= nil then
 			local var_11_0 = Localize("social_wheel_too_many_messages_warning")
@@ -125,7 +125,7 @@ function ContextAwarePingExtension.ping_attempt(arg_11_0, arg_11_1, arg_11_2, ar
 	return true
 end
 
-function ContextAwarePingExtension.ping_world_position_attempt(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+ContextAwarePingExtension.ping_world_position_attempt = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	if not arg_12_0._world_markers_enabled then
 		return
 	end
@@ -172,7 +172,7 @@ function ContextAwarePingExtension.ping_world_position_attempt(arg_12_0, arg_12_
 	return true
 end
 
-function ContextAwarePingExtension.social_message_attempt(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ContextAwarePingExtension.social_message_attempt = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not arg_13_0:_have_free_events() then
 		local var_13_0 = Localize("social_wheel_too_many_messages_warning")
 
@@ -202,7 +202,7 @@ local var_0_6 = 2
 local var_0_7 = 4
 local var_0_8 = {}
 
-function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
+ContextAwarePingExtension._check_raycast = function (arg_14_0, arg_14_1)
 	local var_14_0
 	local var_14_1
 	local var_14_2
@@ -304,7 +304,7 @@ function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
 						end
 					end
 				elseif Unit.get_data(var_14_20, "breed") then
-					-- block empty
+					-- Nothing
 				else
 					var_14_4 = var_14_18
 
@@ -359,7 +359,7 @@ function ContextAwarePingExtension._check_raycast(arg_14_0, arg_14_1)
 	return var_14_0, var_14_1, var_14_2, var_14_3, var_14_4
 end
 
-function ContextAwarePingExtension._is_camera_looking_at_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+ContextAwarePingExtension._is_camera_looking_at_position = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0._first_person_extension:camera()
 
 	if Camera.inside_frustum(var_15_0, arg_15_2) then
@@ -376,7 +376,7 @@ function ContextAwarePingExtension._is_camera_looking_at_position(arg_15_0, arg_
 	end
 end
 
-function ContextAwarePingExtension._handle_ping_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ContextAwarePingExtension._handle_ping_input = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	if arg_16_0._ping_context and arg_16_0._can_ping then
 		local var_16_0 = arg_16_0._ping_context
 		local var_16_1 = arg_16_0._input_extension:get("ping_release")
@@ -541,20 +541,20 @@ function ContextAwarePingExtension._handle_ping_input(arg_16_0, arg_16_1, arg_16
 	end
 end
 
-function ContextAwarePingExtension._start_listen_for_double_press(arg_17_0, arg_17_1)
+ContextAwarePingExtension._start_listen_for_double_press = function (arg_17_0, arg_17_1)
 	arg_17_0._listen_for_double_press = true
 	arg_17_0._double_press_start_time = arg_17_1
 	arg_17_0._double_press_end_time = arg_17_1 + arg_17_0._double_press_listen_duration
 end
 
-function ContextAwarePingExtension._reset_listen_for_double_press(arg_18_0)
+ContextAwarePingExtension._reset_listen_for_double_press = function (arg_18_0)
 	arg_18_0._double_press_start_time = nil
 	arg_18_0._double_press_end_time = nil
 	arg_18_0._double_press_counter = 0
 	arg_18_0._listen_for_double_press = false
 end
 
-function ContextAwarePingExtension._get_ping_context_lifetime_t(arg_19_0, arg_19_1, arg_19_2)
+ContextAwarePingExtension._get_ping_context_lifetime_t = function (arg_19_0, arg_19_1, arg_19_2)
 	if Managers.state.game_mode:setting("extended_social_wheel_time") then
 		return arg_19_1 + arg_19_2 + arg_19_0._double_press_listen_duration
 	else

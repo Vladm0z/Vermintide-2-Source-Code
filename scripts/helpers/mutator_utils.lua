@@ -51,7 +51,7 @@ local function var_0_3(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0[2] = var_4_1 - var_4_1 * arg_4_1
 end
 
-function MutatorUtils.apply_buff_to_alive_player_units(arg_5_0, arg_5_1, arg_5_2)
+MutatorUtils.apply_buff_to_alive_player_units = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_1.buffed_player_units then
 		arg_5_1.buffed_player_units = {}
 	end
@@ -97,14 +97,14 @@ function MutatorUtils.apply_buff_to_alive_player_units(arg_5_0, arg_5_1, arg_5_2
 	return var_5_6
 end
 
-function MutatorUtils.store_breed_and_action_settings(arg_6_0, arg_6_1)
+MutatorUtils.store_breed_and_action_settings = function (arg_6_0, arg_6_1)
 	if not arg_6_0.original_breed_settings and not arg_6_0.original_breed_action_settings then
 		arg_6_0.original_breed_settings = table.clone(Breeds)
 		arg_6_0.original_breed_action_settings = table.clone(BreedActions)
 	end
 end
 
-function MutatorUtils.restore_breed_and_action_settings(arg_7_0, arg_7_1)
+MutatorUtils.restore_breed_and_action_settings = function (arg_7_0, arg_7_1)
 	if arg_7_0.original_breed_settings and arg_7_0.original_breed_action_settings then
 		Breeds = arg_7_0.original_breed_settings
 		BreedActions = arg_7_0.original_breed_action_settings
@@ -113,7 +113,7 @@ function MutatorUtils.restore_breed_and_action_settings(arg_7_0, arg_7_1)
 	end
 end
 
-function MutatorUtils.update_conflict_settings_horde_size_modifier(arg_8_0)
+MutatorUtils.update_conflict_settings_horde_size_modifier = function (arg_8_0)
 	if CurrentPacing.disabled then
 		return
 	end
@@ -127,7 +127,7 @@ function MutatorUtils.update_conflict_settings_horde_size_modifier(arg_8_0)
 	var_0_2(var_8_0, CurrentHordeSettings.mini_patrol_composition, var_8_1, arg_8_0)
 end
 
-function MutatorUtils.update_conflict_settings_horde_frequency(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+MutatorUtils.update_conflict_settings_horde_frequency = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = CurrentPacing
 
 	if not var_9_0.disabled then
@@ -141,7 +141,7 @@ function MutatorUtils.update_conflict_settings_horde_frequency(arg_9_0, arg_9_1,
 	end
 end
 
-function MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_10_0, arg_10_1)
+MutatorUtils.tweak_pack_spawning_settings_convert_breeds = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.roaming_set.breed_packs
 
 	arg_10_0.roaming_set.breed_packs = arg_10_1[var_10_0] or var_10_0
@@ -164,7 +164,7 @@ function MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_10_0, arg_
 	end
 end
 
-function MutatorUtils.tweak_pack_spawning_settings_density_multiplier(arg_11_0, arg_11_1)
+MutatorUtils.tweak_pack_spawning_settings_density_multiplier = function (arg_11_0, arg_11_1)
 	arg_11_0.area_density_coefficient = arg_11_0.area_density_coefficient * arg_11_1
 
 	if arg_11_0.difficulty_overrides then
@@ -180,12 +180,12 @@ function MutatorUtils.tweak_pack_spawning_settings_density_multiplier(arg_11_0, 
 	end
 end
 
-function MutatorUtils.tweak_pack_spawning_settings_override_chance(arg_12_0, arg_12_1, arg_12_2)
+MutatorUtils.tweak_pack_spawning_settings_override_chance = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0.roaming_set.breed_packs_peeks_overide_chance[1] = math.clamp(arg_12_1, 0, 1)
 	arg_12_0.roaming_set.breed_packs_peeks_overide_chance[2] = math.clamp(arg_12_2, 0, 1)
 end
 
-function MutatorUtils.update_conflict_settings_specials_frequency(arg_13_0, arg_13_1)
+MutatorUtils.update_conflict_settings_specials_frequency = function (arg_13_0, arg_13_1)
 	local var_13_0 = CurrentSpecialsSettings
 
 	if not var_13_0.disabled then

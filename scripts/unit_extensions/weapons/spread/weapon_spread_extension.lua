@@ -4,7 +4,7 @@ require("scripts/unit_extensions/weapons/spread/spread_templates")
 
 WeaponSpreadExtension = class(WeaponSpreadExtension)
 
-function WeaponSpreadExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaponSpreadExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.owner_unit = arg_1_3.owner_unit
 
@@ -29,7 +29,7 @@ function WeaponSpreadExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.hit_timer = 0
 end
 
-function WeaponSpreadExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+WeaponSpreadExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0.owner_unit
 
 	arg_2_0.owner_health_extension = ScriptUnit.extension(var_2_0, "health_system")
@@ -38,7 +38,7 @@ function WeaponSpreadExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.owner_locomotion_extension = ScriptUnit.extension(var_2_0, "locomotion_system")
 end
 
-function WeaponSpreadExtension.destroy(arg_3_0)
+WeaponSpreadExtension.destroy = function (arg_3_0)
 	return
 end
 
@@ -56,7 +56,7 @@ local var_0_0 = {
 	life_drain = true
 }
 
-function WeaponSpreadExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+WeaponSpreadExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.current_pitch
 	local var_4_1 = arg_4_0.current_yaw
 	local var_4_2 = arg_4_0.current_state
@@ -129,11 +129,11 @@ function WeaponSpreadExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	arg_4_0.current_yaw = math.min(var_4_26, SpreadTemplates.maximum_yaw)
 end
 
-function WeaponSpreadExtension.set_shooting(arg_5_0)
+WeaponSpreadExtension.set_shooting = function (arg_5_0)
 	arg_5_0.shooting = true
 end
 
-function WeaponSpreadExtension.combine_spread_rotations(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+WeaponSpreadExtension.combine_spread_rotations = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Quaternion(Vector3.forward(), arg_6_1)
 	local var_6_1 = Quaternion(Vector3.right(), arg_6_2)
 	local var_6_2 = Quaternion.multiply(arg_6_3, var_6_0)
@@ -141,7 +141,7 @@ function WeaponSpreadExtension.combine_spread_rotations(arg_6_0, arg_6_1, arg_6_
 	return (Quaternion.multiply(var_6_2, var_6_1))
 end
 
-function WeaponSpreadExtension.get_max_pitch_rotation(arg_7_0, arg_7_1)
+WeaponSpreadExtension.get_max_pitch_rotation = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.current_pitch
 	local var_7_1 = arg_7_0.current_yaw
 	local var_7_2 = var_7_1 * math.cos(arg_7_1)
@@ -157,11 +157,11 @@ function WeaponSpreadExtension.get_max_pitch_rotation(arg_7_0, arg_7_1)
 	return math.degrees_to_radians(var_7_5)
 end
 
-function WeaponSpreadExtension.get_current_pitch_and_yaw(arg_8_0)
+WeaponSpreadExtension.get_current_pitch_and_yaw = function (arg_8_0)
 	return arg_8_0.current_pitch, arg_8_0.current_yaw
 end
 
-function WeaponSpreadExtension.override_spread_template(arg_9_0, arg_9_1)
+WeaponSpreadExtension.override_spread_template = function (arg_9_0, arg_9_1)
 	arg_9_0.spread_settings = SpreadTemplates[arg_9_1]
 
 	local var_9_0 = arg_9_0.current_state
@@ -171,18 +171,18 @@ function WeaponSpreadExtension.override_spread_template(arg_9_0, arg_9_1)
 	arg_9_0.current_yaw = var_9_1.max_yaw
 end
 
-function WeaponSpreadExtension.reset_spread_template(arg_10_0)
+WeaponSpreadExtension.reset_spread_template = function (arg_10_0)
 	arg_10_0.spread_settings = SpreadTemplates[arg_10_0.default_spread_template_name]
 end
 
-function WeaponSpreadExtension.get_randomised_spread(arg_11_0, arg_11_1)
+WeaponSpreadExtension.get_randomised_spread = function (arg_11_0, arg_11_1)
 	local var_11_0 = math.random() * math.pi * 2
 	local var_11_1 = math.random() * arg_11_0:get_max_pitch_rotation(var_11_0)
 
 	return (arg_11_0:combine_spread_rotations(var_11_0, var_11_1, arg_11_1))
 end
 
-function WeaponSpreadExtension.get_target_style_spread(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+WeaponSpreadExtension.get_target_style_spread = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	if arg_12_5 and arg_12_1 == 1 then
 		return arg_12_3
 	end

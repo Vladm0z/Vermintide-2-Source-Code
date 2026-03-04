@@ -3,7 +3,7 @@
 CareerActionNames.dwarf_ranger[#CareerActionNames.dwarf_ranger + 1] = "action_career_dr_4"
 
 setmetatable(PlayerBreeds.hero_dr_engineer, {
-	__newindex = function(arg_1_0, arg_1_1, arg_1_2)
+	__newindex = function (arg_1_0, arg_1_1, arg_1_2)
 		if type(arg_1_1) == "number" then
 			error("HON-32308. Trying to modify read only table.")
 		end
@@ -54,7 +54,7 @@ CareerSettings.dr_engineer = {
 			item_name = "engineer_hat_0000"
 		}
 	},
-	is_unlocked_function = function(arg_2_0, arg_2_1, arg_2_2)
+	is_unlocked_function = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0, var_2_1 = arg_2_0:override_available_for_mechanism()
 
 		if not var_2_0 then
@@ -72,14 +72,14 @@ CareerSettings.dr_engineer = {
 
 		return true, var_2_7, var_2_6
 	end,
-	is_dlc_unlocked = function(arg_3_0)
+	is_dlc_unlocked = function (arg_3_0)
 		if Managers.unlock:is_dlc_unlocked("cog") then
 			return true, nil, "cog"
 		else
 			return false, "dlc_not_owned", "cog"
 		end
 	end,
-	override_available_for_mechanism = function(arg_4_0)
+	override_available_for_mechanism = function (arg_4_0)
 		local var_4_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 		local var_4_1 = arg_4_0.display_name
 
@@ -92,7 +92,7 @@ CareerSettings.dr_engineer = {
 	animation_variables = {
 		is_engineer = 1
 	},
-	talent_packages = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	talent_packages = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		local var_5_0 = 1
 
 		for iter_5_0, iter_5_1 in ipairs(arg_5_0) do

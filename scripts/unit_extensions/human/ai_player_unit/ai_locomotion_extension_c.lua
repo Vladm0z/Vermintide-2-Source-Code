@@ -6,7 +6,7 @@ local var_0_0 = 20
 
 AILocomotionExtensionC = class(AILocomotionExtensionC)
 
-function AILocomotionExtensionC.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AILocomotionExtensionC.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 
 	local var_1_0 = arg_1_3.breed
@@ -35,13 +35,13 @@ function AILocomotionExtensionC.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	MoverHelper.set_active_mover(arg_1_2, arg_1_0._mover_state, var_1_0.default_mover or "mover")
 end
 
-function AILocomotionExtensionC.ready(arg_2_0, arg_2_1, arg_2_2)
+AILocomotionExtensionC.ready = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_0._engine_extension_id then
 		EngineOptimizedExtensions.ai_locomotion_ai_ready(arg_2_0._engine_extension_id, arg_2_1)
 	end
 end
 
-function AILocomotionExtensionC.destroy(arg_3_0)
+AILocomotionExtensionC.destroy = function (arg_3_0)
 	if arg_3_0._engine_extension_id then
 		EngineOptimizedExtensions.ai_locomotion_destroy_extension(arg_3_0._engine_extension_id)
 
@@ -49,7 +49,7 @@ function AILocomotionExtensionC.destroy(arg_3_0)
 	end
 end
 
-function AILocomotionExtensionC.freeze(arg_4_0)
+AILocomotionExtensionC.freeze = function (arg_4_0)
 	if arg_4_0._engine_extension_id then
 		EngineOptimizedExtensions.ai_locomotion_destroy_extension(arg_4_0._engine_extension_id)
 
@@ -57,7 +57,7 @@ function AILocomotionExtensionC.freeze(arg_4_0)
 	end
 end
 
-function AILocomotionExtensionC.unfreeze(arg_5_0, arg_5_1)
+AILocomotionExtensionC.unfreeze = function (arg_5_0, arg_5_1)
 	local var_5_0 = BLACKBOARDS[arg_5_1].breed
 	local var_5_1 = var_5_0.run_speed
 	local var_5_2 = Managers.state.unit_spawner.unit_template_lut[var_5_0.unit_template].go_type
@@ -71,7 +71,7 @@ function AILocomotionExtensionC.unfreeze(arg_5_0, arg_5_1)
 	arg_5_0:teleport_to(POSITION_LOOKUP[arg_5_1], Unit.local_rotation(arg_5_1, 0))
 end
 
-function AILocomotionExtensionC.hot_join_sync(arg_6_0, arg_6_1)
+AILocomotionExtensionC.hot_join_sync = function (arg_6_0, arg_6_1)
 	if FROZEN[arg_6_0._unit] then
 		return
 	end
@@ -89,19 +89,19 @@ function AILocomotionExtensionC.hot_join_sync(arg_6_0, arg_6_1)
 	end
 end
 
-function AILocomotionExtensionC.set_mover_displacement(arg_7_0, arg_7_1, arg_7_2)
+AILocomotionExtensionC.set_mover_displacement = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._engine_extension_id then
 		EngineOptimizedExtensions.ai_locomotion_set_mover_displacement(arg_7_0._engine_extension_id, arg_7_1, arg_7_2)
 	end
 end
 
-function AILocomotionExtensionC.teleport_to(arg_8_0, arg_8_1, arg_8_2)
+AILocomotionExtensionC.teleport_to = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._engine_extension_id then
 		EngineOptimizedExtensions.ai_locomotion_teleport_to(arg_8_0._engine_extension_id, arg_8_1, arg_8_2)
 	end
 end
 
-function AILocomotionExtensionC.set_animation_driven(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+AILocomotionExtensionC.set_animation_driven = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if not arg_9_0._engine_extension_id then
 		return
 	end
@@ -142,7 +142,7 @@ function AILocomotionExtensionC.set_animation_driven(arg_9_0, arg_9_1, arg_9_2, 
 	end
 end
 
-function AILocomotionExtensionC.set_animation_translation_scale(arg_10_0, arg_10_1)
+AILocomotionExtensionC.set_animation_translation_scale = function (arg_10_0, arg_10_1)
 	if not arg_10_0._engine_extension_id then
 		return
 	end
@@ -151,7 +151,7 @@ function AILocomotionExtensionC.set_animation_translation_scale(arg_10_0, arg_10
 	arg_10_0._animation_translation_scale_box:store(arg_10_1)
 end
 
-function AILocomotionExtensionC.set_animation_rotation_scale(arg_11_0, arg_11_1)
+AILocomotionExtensionC.set_animation_rotation_scale = function (arg_11_0, arg_11_1)
 	if not arg_11_0._engine_extension_id then
 		return
 	end
@@ -161,7 +161,7 @@ function AILocomotionExtensionC.set_animation_rotation_scale(arg_11_0, arg_11_1)
 	arg_11_0._animation_rotation_scale = arg_11_1
 end
 
-function AILocomotionExtensionC.set_wanted_velocity_flat(arg_12_0, arg_12_1)
+AILocomotionExtensionC.set_wanted_velocity_flat = function (arg_12_0, arg_12_1)
 	if not arg_12_0._engine_extension_id then
 		return
 	end
@@ -169,7 +169,7 @@ function AILocomotionExtensionC.set_wanted_velocity_flat(arg_12_0, arg_12_1)
 	EngineOptimizedExtensions.ai_locomotion_set_wanted_velocity_flat(arg_12_0._engine_extension_id, arg_12_1)
 end
 
-function AILocomotionExtensionC.set_wanted_velocity(arg_13_0, arg_13_1)
+AILocomotionExtensionC.set_wanted_velocity = function (arg_13_0, arg_13_1)
 	if not arg_13_0._engine_extension_id then
 		return
 	end
@@ -177,7 +177,7 @@ function AILocomotionExtensionC.set_wanted_velocity(arg_13_0, arg_13_1)
 	EngineOptimizedExtensions.ai_locomotion_set_wanted_velocity(arg_13_0._engine_extension_id, arg_13_1)
 end
 
-function AILocomotionExtensionC.set_external_velocity(arg_14_0, arg_14_1)
+AILocomotionExtensionC.set_external_velocity = function (arg_14_0, arg_14_1)
 	if not arg_14_0._engine_extension_id then
 		return
 	end
@@ -185,7 +185,7 @@ function AILocomotionExtensionC.set_external_velocity(arg_14_0, arg_14_1)
 	EngineOptimizedExtensions.ai_locomotion_set_external_velocity(arg_14_0._engine_extension_id, arg_14_1)
 end
 
-function AILocomotionExtensionC.set_animation_external_velocity(arg_15_0, arg_15_1)
+AILocomotionExtensionC.set_animation_external_velocity = function (arg_15_0, arg_15_1)
 	if not arg_15_0._engine_extension_id then
 		return
 	end
@@ -193,7 +193,7 @@ function AILocomotionExtensionC.set_animation_external_velocity(arg_15_0, arg_15
 	EngineOptimizedExtensions.ai_locomotion_set_animation_external_velocity(arg_15_0._engine_extension_id, arg_15_1)
 end
 
-function AILocomotionExtensionC.set_wanted_rotation(arg_16_0, arg_16_1)
+AILocomotionExtensionC.set_wanted_rotation = function (arg_16_0, arg_16_1)
 	if not arg_16_0._engine_extension_id then
 		return
 	end
@@ -201,7 +201,7 @@ function AILocomotionExtensionC.set_wanted_rotation(arg_16_0, arg_16_1)
 	EngineOptimizedExtensions.ai_locomotion_set_wanted_rotation(arg_16_0._engine_extension_id, arg_16_1)
 end
 
-function AILocomotionExtensionC.use_lerp_rotation(arg_17_0, arg_17_1)
+AILocomotionExtensionC.use_lerp_rotation = function (arg_17_0, arg_17_1)
 	if not arg_17_0._engine_extension_id then
 		return
 	end
@@ -209,7 +209,7 @@ function AILocomotionExtensionC.use_lerp_rotation(arg_17_0, arg_17_1)
 	EngineOptimizedExtensions.ai_locomotion_use_lerp_rotation(arg_17_0._engine_extension_id, arg_17_1)
 end
 
-function AILocomotionExtensionC.set_rotation_speed(arg_18_0, arg_18_1)
+AILocomotionExtensionC.set_rotation_speed = function (arg_18_0, arg_18_1)
 	if not arg_18_0._engine_extension_id then
 		return
 	end
@@ -217,7 +217,7 @@ function AILocomotionExtensionC.set_rotation_speed(arg_18_0, arg_18_1)
 	EngineOptimizedExtensions.ai_locomotion_set_rotation_speed(arg_18_0._engine_extension_id, arg_18_1)
 end
 
-function AILocomotionExtensionC.set_rotation_speed_modifier(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+AILocomotionExtensionC.set_rotation_speed_modifier = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not arg_19_0._engine_extension_id then
 		return
 	end
@@ -225,7 +225,7 @@ function AILocomotionExtensionC.set_rotation_speed_modifier(arg_19_0, arg_19_1, 
 	EngineOptimizedExtensions.ai_locomotion_set_rotation_speed_modifier(arg_19_0._engine_extension_id, arg_19_1, arg_19_2, arg_19_3)
 end
 
-function AILocomotionExtensionC.set_affected_by_gravity(arg_20_0, arg_20_1)
+AILocomotionExtensionC.set_affected_by_gravity = function (arg_20_0, arg_20_1)
 	if not arg_20_0._engine_extension_id then
 		return
 	end
@@ -233,7 +233,7 @@ function AILocomotionExtensionC.set_affected_by_gravity(arg_20_0, arg_20_1)
 	EngineOptimizedExtensions.ai_locomotion_set_affected_by_gravity(arg_20_0._engine_extension_id, arg_20_1)
 end
 
-function AILocomotionExtensionC.set_gravity(arg_21_0, arg_21_1)
+AILocomotionExtensionC.set_gravity = function (arg_21_0, arg_21_1)
 	if not arg_21_0._engine_extension_id then
 		return
 	end
@@ -241,7 +241,7 @@ function AILocomotionExtensionC.set_gravity(arg_21_0, arg_21_1)
 	EngineOptimizedExtensions.ai_locomotion_set_gravity(arg_21_0._engine_extension_id, arg_21_1)
 end
 
-function AILocomotionExtensionC.set_check_falling(arg_22_0, arg_22_1)
+AILocomotionExtensionC.set_check_falling = function (arg_22_0, arg_22_1)
 	if not arg_22_0._engine_extension_id then
 		return
 	end
@@ -256,7 +256,7 @@ local var_0_1 = {
 	disabled = 3
 }
 
-function AILocomotionExtensionC.set_movement_type(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+AILocomotionExtensionC.set_movement_type = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if not arg_23_0._engine_extension_id then
 		return
 	end
@@ -287,7 +287,7 @@ function AILocomotionExtensionC.set_movement_type(arg_23_0, arg_23_1, arg_23_2, 
 	return not var_23_0
 end
 
-function AILocomotionExtensionC.current_velocity(arg_24_0)
+AILocomotionExtensionC.current_velocity = function (arg_24_0)
 	if not arg_24_0._engine_extension_id then
 		return
 	end
@@ -295,7 +295,7 @@ function AILocomotionExtensionC.current_velocity(arg_24_0)
 	return EngineOptimizedExtensions.ai_locomotion_get_velocity(arg_24_0._engine_extension_id)
 end
 
-function AILocomotionExtensionC.is_falling(arg_25_0)
+AILocomotionExtensionC.is_falling = function (arg_25_0)
 	if not arg_25_0._engine_extension_id then
 		return
 	end
@@ -303,7 +303,7 @@ function AILocomotionExtensionC.is_falling(arg_25_0)
 	return EngineOptimizedExtensions.ai_locomotion_is_falling(arg_25_0._engine_extension_id)
 end
 
-function AILocomotionExtensionC.get_rotation_speed(arg_26_0)
+AILocomotionExtensionC.get_rotation_speed = function (arg_26_0)
 	if not arg_26_0._engine_extension_id then
 		return
 	end
@@ -311,7 +311,7 @@ function AILocomotionExtensionC.get_rotation_speed(arg_26_0)
 	return EngineOptimizedExtensions.ai_locomotion_get_rotation_speed(arg_26_0._engine_extension_id)
 end
 
-function AILocomotionExtensionC.get_rotation_speed_modifier(arg_27_0)
+AILocomotionExtensionC.get_rotation_speed_modifier = function (arg_27_0)
 	if not arg_27_0._engine_extension_id then
 		return
 	end
@@ -319,15 +319,15 @@ function AILocomotionExtensionC.get_rotation_speed_modifier(arg_27_0)
 	return EngineOptimizedExtensions.ai_locomotion_get_rotation_speed_modifier(arg_27_0._engine_extension_id)
 end
 
-function AILocomotionExtensionC.get_animation_rotation_scale(arg_28_0)
+AILocomotionExtensionC.get_animation_rotation_scale = function (arg_28_0)
 	return arg_28_0._animation_rotation_scale
 end
 
-function AILocomotionExtensionC.get_animation_translation_scale(arg_29_0)
+AILocomotionExtensionC.get_animation_translation_scale = function (arg_29_0)
 	return arg_29_0._animation_translation_scale_box:unbox()
 end
 
-function AILocomotionExtensionC.set_disabled(arg_30_0)
+AILocomotionExtensionC.set_disabled = function (arg_30_0)
 	if not arg_30_0._engine_extension_id then
 		return
 	end
@@ -336,11 +336,11 @@ function AILocomotionExtensionC.set_disabled(arg_30_0)
 	MoverHelper.set_disable_reason(arg_30_0._unit, arg_30_0._mover_state, "constrained_by_mover", true)
 end
 
-function AILocomotionExtensionC.set_mover_disable_reason(arg_31_0, arg_31_1, arg_31_2)
+AILocomotionExtensionC.set_mover_disable_reason = function (arg_31_0, arg_31_1, arg_31_2)
 	MoverHelper.set_disable_reason(arg_31_0._unit, arg_31_0._mover_state, arg_31_1, arg_31_2)
 end
 
-function AILocomotionExtensionC.set_collision_disabled(arg_32_0, arg_32_1, arg_32_2)
+AILocomotionExtensionC.set_collision_disabled = function (arg_32_0, arg_32_1, arg_32_2)
 	if arg_32_0._collision_state then
 		MoverHelper.set_collision_disable_reason(arg_32_0._unit, arg_32_0._collision_state, arg_32_1, arg_32_2)
 	end

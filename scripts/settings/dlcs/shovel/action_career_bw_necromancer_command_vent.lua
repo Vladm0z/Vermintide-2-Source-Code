@@ -2,7 +2,7 @@
 
 ActionCareerBWNecromancerCommandVent = class(ActionCareerBWNecromancerCommandVent, ActionBase)
 
-function ActionCareerBWNecromancerCommandVent.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerCommandVent.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerBWNecromancerCommandVent.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.commander_extension = ScriptUnit.extension(arg_1_4, "ai_commander_system")
@@ -16,7 +16,7 @@ function ActionCareerBWNecromancerCommandVent.init(arg_1_0, arg_1_1, arg_1_2, ar
 	arg_1_0._world = arg_1_1
 end
 
-function ActionCareerBWNecromancerCommandVent.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionCareerBWNecromancerCommandVent.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionCareerBWNecromancerCommandVent.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0._command_ability:vent_command_target()
@@ -52,7 +52,7 @@ function ActionCareerBWNecromancerCommandVent.client_owner_start_action(arg_2_0,
 	end
 end
 
-function ActionCareerBWNecromancerCommandVent.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerBWNecromancerCommandVent.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_0._vfx_stop_t and arg_3_2 > arg_3_0._vfx_stop_t then
 		World.stop_spawning_particles(arg_3_0._world, arg_3_0._sacrifice_vfx_trail)
 
@@ -60,7 +60,7 @@ function ActionCareerBWNecromancerCommandVent.client_owner_post_update(arg_3_0, 
 	end
 end
 
-function ActionCareerBWNecromancerCommandVent.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionCareerBWNecromancerCommandVent.finish = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._fp_extension then
 		World.destroy_particles(arg_4_0._world, arg_4_0._sacrifice_vfx_trail)
 		World.destroy_particles(arg_4_0._world, arg_4_0._sacrifice_vfx_hand)
@@ -70,6 +70,6 @@ function ActionCareerBWNecromancerCommandVent.finish(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ActionCareerBWNecromancerCommandVent.destroy(arg_5_0)
+ActionCareerBWNecromancerCommandVent.destroy = function (arg_5_0)
 	return
 end

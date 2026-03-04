@@ -104,10 +104,10 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -132,10 +132,10 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	},
@@ -160,10 +160,10 @@ local var_0_1 = {
 			0,
 			-0.1
 		},
-		require_function = function()
+		require_function = function ()
 			return
 		end,
-		contains_new_content = function()
+		contains_new_content = function ()
 			return false
 		end
 	}

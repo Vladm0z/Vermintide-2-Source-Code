@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_fort.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_level_fort_story_four_01",

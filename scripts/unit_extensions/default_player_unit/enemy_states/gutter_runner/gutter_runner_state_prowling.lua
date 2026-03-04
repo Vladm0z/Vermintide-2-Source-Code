@@ -2,7 +2,7 @@
 
 GutterRunnerStateProwling = class(GutterRunnerStateProwling, EnemyCharacterState)
 
-function GutterRunnerStateProwling.init(arg_1_0, arg_1_1)
+GutterRunnerStateProwling.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "gutter_runner_prowling")
 
 	local var_1_0 = arg_1_1
@@ -12,7 +12,7 @@ function GutterRunnerStateProwling.init(arg_1_0, arg_1_1)
 	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function GutterRunnerStateProwling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+GutterRunnerStateProwling.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0._pounce_ready = false
 
 	local var_2_0 = arg_2_0._unit
@@ -71,7 +71,7 @@ function GutterRunnerStateProwling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, 
 	arg_2_0._ghost_mode_extension:set_external_no_spawn_reason("prowling", true)
 end
 
-function GutterRunnerStateProwling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+GutterRunnerStateProwling.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	EnemyCharacterState.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 
 	if arg_3_7 or not Managers.state.network:game() then
@@ -89,7 +89,7 @@ function GutterRunnerStateProwling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	arg_3_0._ghost_mode_extension:set_external_no_spawn_reason("prowling", nil)
 end
 
-function GutterRunnerStateProwling.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+GutterRunnerStateProwling.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0._world
 	local var_4_2 = arg_4_0._unit
@@ -225,7 +225,7 @@ function GutterRunnerStateProwling.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	arg_4_0.current_movement_speed_scale = var_4_11
 end
 
-function GutterRunnerStateProwling._start_priming(arg_5_0, arg_5_1)
+GutterRunnerStateProwling._start_priming = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._first_person_extension
 
 	var_5_0:play_hud_sound_event("Play_versus_gutterrunner_jump_charge_loop")
@@ -241,7 +241,7 @@ function GutterRunnerStateProwling._start_priming(arg_5_0, arg_5_1)
 	var_5_1:set_active_mover("crouch")
 end
 
-function GutterRunnerStateProwling._set_priming_progress(arg_6_0, arg_6_1)
+GutterRunnerStateProwling._set_priming_progress = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = "pounce"
 	local var_6_2 = var_6_0:ability_id(var_6_1)
@@ -253,7 +253,7 @@ end
 
 local var_0_0 = 0.025
 
-function GutterRunnerStateProwling._update_priming(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+GutterRunnerStateProwling._update_priming = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if arg_7_1 > arg_7_0._prime_time or arg_7_3 and arg_7_1 > arg_7_0._prime_time - var_0_0 then
 		if not arg_7_0._done_priming then
 			arg_7_0._first_person_extension:play_hud_sound_event("Play_versus_gutterrunner_jump_charge_end")
@@ -268,7 +268,7 @@ function GutterRunnerStateProwling._update_priming(arg_7_0, arg_7_1, arg_7_2, ar
 	arg_7_0:_set_priming_progress(var_7_1)
 end
 
-function GutterRunnerStateProwling._stop_priming(arg_8_0, arg_8_1)
+GutterRunnerStateProwling._stop_priming = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._first_person_extension
 
 	CharacterStateHelper.play_animation_event(arg_8_0._unit, "to_upright")
@@ -280,7 +280,7 @@ function GutterRunnerStateProwling._stop_priming(arg_8_0, arg_8_1)
 	var_8_1:set_active_mover("standing")
 end
 
-function GutterRunnerStateProwling._start_pounce(arg_9_0)
+GutterRunnerStateProwling._start_pounce = function (arg_9_0)
 	if not arg_9_0._locomotion_extension:is_on_ground() then
 		return
 	end

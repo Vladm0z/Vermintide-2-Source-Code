@@ -861,7 +861,7 @@ local function var_0_9(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "counter_text",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.amount > 0
 					end
 				},
@@ -869,7 +869,7 @@ local function var_0_9(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "counter_text_disabled",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.amount == 0
 					end
 				},
@@ -882,7 +882,7 @@ local function var_0_9(arg_2_0, arg_2_1, arg_2_2)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.amount > 0
 					end
 				},
@@ -1065,7 +1065,7 @@ local function var_0_10()
 						{
 							style_id = "curse_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_7_0)
+							content_check_function = function (arg_7_0)
 								return arg_7_0.curse_text ~= ""
 							end,
 							sub_passes = {
@@ -1084,7 +1084,7 @@ local function var_0_10()
 						{
 							style_id = "breed_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_8_0)
+							content_check_function = function (arg_8_0)
 								return arg_8_0.breed_text ~= ""
 							end,
 							sub_passes = {
@@ -1104,7 +1104,7 @@ local function var_0_10()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_1_section",
-							content_check_function = function(arg_9_0)
+							content_check_function = function (arg_9_0)
 								return arg_9_0.text ~= ""
 							end,
 							sub_passes = {
@@ -1124,7 +1124,7 @@ local function var_0_10()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_2_section",
-							content_check_function = function(arg_10_0)
+							content_check_function = function (arg_10_0)
 								return arg_10_0.text ~= ""
 							end,
 							sub_passes = {
@@ -1144,7 +1144,7 @@ local function var_0_10()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_3_section",
-							content_check_function = function(arg_11_0)
+							content_check_function = function (arg_11_0)
 								return arg_11_0.text ~= ""
 							end,
 							sub_passes = {
@@ -1163,7 +1163,7 @@ local function var_0_10()
 						{
 							style_id = "terror_event_power_up_section",
 							pass_type = "auto_layout",
-							content_check_function = function(arg_12_0)
+							content_check_function = function (arg_12_0)
 								return arg_12_0.terror_event_power_up_text ~= ""
 							end,
 							sub_passes = {
@@ -1626,7 +1626,7 @@ local function var_0_12(arg_14_0, arg_14_1)
 					style_id = "description_text",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.text ~= ""
 					end
 				},
@@ -1729,7 +1729,7 @@ local function var_0_13(arg_16_0, arg_16_1)
 					scenegraph_id = "reward_item_tooltip",
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.hotspot.is_hover and arg_17_0.item
 					end
 				}
@@ -1794,7 +1794,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "texture",
 					style_id = "host_texture",
 					texture_id = "host_texture",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.show_host
 					end
 				},
@@ -1802,7 +1802,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "texture",
 					style_id = "ping_texture",
 					texture_id = "ping_texture",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.show_ping
 					end
 				},
@@ -1810,7 +1810,7 @@ local function var_0_14(arg_18_0)
 					style_id = "ping_text",
 					pass_type = "text",
 					text_id = "ping_text",
-					content_check_function = function(arg_21_0, arg_21_1)
+					content_check_function = function (arg_21_0, arg_21_1)
 						return arg_21_0.show_ping and Application.user_setting("show_numerical_latency")
 					end
 				},
@@ -1818,7 +1818,7 @@ local function var_0_14(arg_18_0)
 					style_id = "build_private_text",
 					pass_type = "text",
 					text_id = "build_private_text",
-					content_check_function = function(arg_22_0, arg_22_1)
+					content_check_function = function (arg_22_0, arg_22_1)
 						return not arg_22_0.is_build_visible
 					end
 				},
@@ -1836,7 +1836,7 @@ local function var_0_14(arg_18_0)
 					style_id = "chat_button_hotspot",
 					texture_id = "chat_button_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_23_0, arg_23_1)
+					content_change_function = function (arg_23_0, arg_23_1)
 						arg_23_1.color[1] = arg_23_0.show_chat_button and 255 or 60
 					end
 				},
@@ -1844,7 +1844,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "texture",
 					style_id = "chat_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.show_chat_button and arg_24_0.chat_button_hotspot.is_selected
 					end
 				},
@@ -1852,7 +1852,7 @@ local function var_0_14(arg_18_0)
 					style_id = "chat_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "chat_button_hotspot",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return not arg_25_0.disable_button
 					end
 				},
@@ -1860,7 +1860,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_mute",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return arg_26_0.show_chat_button and not arg_26_0.chat_button_hotspot.is_selected and arg_26_0.chat_button_hotspot.is_hover
 					end
 				},
@@ -1868,7 +1868,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_unmute",
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.show_chat_button and arg_27_0.chat_button_hotspot.is_selected and arg_27_0.chat_button_hotspot.is_hover
 					end
 				},
@@ -1886,7 +1886,7 @@ local function var_0_14(arg_18_0)
 					style_id = "voice_button_hotspot",
 					texture_id = "voice_button_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_28_0, arg_28_1)
+					content_change_function = function (arg_28_0, arg_28_1)
 						arg_28_1.color[1] = arg_28_0.show_voice_button and 255 or 60
 					end
 				},
@@ -1894,7 +1894,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "texture",
 					style_id = "voice_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return arg_29_0.show_voice_button and arg_29_0.voice_button_hotspot.is_selected
 					end
 				},
@@ -1902,7 +1902,7 @@ local function var_0_14(arg_18_0)
 					style_id = "voice_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "voice_button_hotspot",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return not arg_30_0.disable_button
 					end
 				},
@@ -1910,7 +1910,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "voice_tooltip_text_mute",
-					content_check_function = function(arg_31_0)
+					content_check_function = function (arg_31_0)
 						return arg_31_0.show_voice_button and not arg_31_0.voice_button_hotspot.is_selected and arg_31_0.voice_button_hotspot.is_hover
 					end
 				},
@@ -1918,7 +1918,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "voice_tooltip_text_unmute",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.show_voice_button and arg_32_0.voice_button_hotspot.is_selected and arg_32_0.voice_button_hotspot.is_hover
 					end
 				},
@@ -1936,7 +1936,7 @@ local function var_0_14(arg_18_0)
 					style_id = "kick_button_hotspot",
 					texture_id = "kick_button_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_33_0, arg_33_1)
+					content_change_function = function (arg_33_0, arg_33_1)
 						arg_33_1.color[1] = arg_33_0.show_kick_button and 255 or 60
 					end
 				},
@@ -1944,7 +1944,7 @@ local function var_0_14(arg_18_0)
 					style_id = "kick_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "kick_button_hotspot",
-					content_check_function = function(arg_34_0)
+					content_check_function = function (arg_34_0)
 						return not arg_34_0.disable_button
 					end
 				},
@@ -1952,7 +1952,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "kick_tooltip_text",
-					content_check_function = function(arg_35_0)
+					content_check_function = function (arg_35_0)
 						return arg_35_0.show_kick_button and arg_35_0.kick_button_hotspot.is_hover
 					end
 				},
@@ -1970,7 +1970,7 @@ local function var_0_14(arg_18_0)
 					style_id = "profile_button_hotspot",
 					texture_id = "profile_button_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_36_0, arg_36_1)
+					content_change_function = function (arg_36_0, arg_36_1)
 						arg_36_1.color[1] = arg_36_0.show_profile_button and 255 or 60
 					end
 				},
@@ -1978,7 +1978,7 @@ local function var_0_14(arg_18_0)
 					style_id = "profile_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "profile_button_hotspot",
-					content_check_function = function(arg_37_0)
+					content_check_function = function (arg_37_0)
 						return not arg_37_0.disable_button
 					end
 				},
@@ -1986,7 +1986,7 @@ local function var_0_14(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "profile_tooltip_text",
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						return arg_38_0.show_profile_button and arg_38_0.profile_button_hotspot.is_hover
 					end
 				},
@@ -1994,7 +1994,7 @@ local function var_0_14(arg_18_0)
 					style_id = "name",
 					pass_type = "text",
 					text_id = "name",
-					content_check_function = function(arg_39_0, arg_39_1)
+					content_check_function = function (arg_39_0, arg_39_1)
 						if arg_39_0.button_hotspot.is_selected or arg_39_0.controller_button_hotspot.is_hover then
 							arg_39_1.text_color = arg_39_1.hover_color
 						else
@@ -2013,7 +2013,7 @@ local function var_0_14(arg_18_0)
 					style_id = "hero",
 					pass_type = "text",
 					text_id = "hero",
-					content_check_function = function(arg_40_0, arg_40_1)
+					content_check_function = function (arg_40_0, arg_40_1)
 						if arg_40_0.button_hotspot.is_selected or arg_40_0.controller_button_hotspot.is_hover then
 							arg_40_1.text_color = arg_40_1.hover_color
 						else
@@ -2063,7 +2063,7 @@ local function var_0_14(arg_18_0)
 					style_id = "ability_bar",
 					pass_type = "texture_uv",
 					content_id = "ability_bar",
-					content_change_function = function(arg_41_0, arg_41_1)
+					content_change_function = function (arg_41_0, arg_41_1)
 						local var_41_0 = arg_41_0.bar_value
 						local var_41_1 = arg_41_1.texture_size
 						local var_41_2 = arg_41_0.uvs
@@ -2077,7 +2077,7 @@ local function var_0_14(arg_18_0)
 					style_id = "grimoire_bar",
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
-					content_change_function = function(arg_42_0, arg_42_1)
+					content_change_function = function (arg_42_0, arg_42_1)
 						arg_42_1.texture_size[1] = (200 - var_18_6) * arg_42_1.grimoire_debuff
 						arg_42_0.uvs[1][1] = 1 - arg_42_1.grimoire_debuff
 					end
@@ -2086,7 +2086,7 @@ local function var_0_14(arg_18_0)
 					style_id = "grimoire_debuff_divider",
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
-					content_change_function = function(arg_43_0, arg_43_1)
+					content_change_function = function (arg_43_0, arg_43_1)
 						local var_43_0 = arg_43_1.grimoire_debuff
 
 						arg_43_1.offset[1] = arg_43_1.base_offset[1] - (200 - var_18_6) * var_43_0
@@ -2096,7 +2096,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_melee",
 					style_id = "slot_melee",
 					pass_type = "texture",
-					content_check_function = function(arg_44_0)
+					content_check_function = function (arg_44_0)
 						return arg_44_0.slot_melee
 					end
 				},
@@ -2104,7 +2104,7 @@ local function var_0_14(arg_18_0)
 					style_id = "slot_melee",
 					pass_type = "hotspot",
 					content_id = "slot_melee_hotspot",
-					content_check_function = function(arg_45_0)
+					content_check_function = function (arg_45_0)
 						return arg_45_0.parent.slot_melee
 					end
 				},
@@ -2112,7 +2112,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_melee_frame",
 					style_id = "slot_melee_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_46_0)
+					content_check_function = function (arg_46_0)
 						return arg_46_0.slot_melee
 					end
 				},
@@ -2120,7 +2120,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_melee_rarity_texture",
 					style_id = "slot_melee_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_47_0)
+					content_check_function = function (arg_47_0)
 						return arg_47_0.slot_melee
 					end
 				},
@@ -2128,7 +2128,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ranged",
 					style_id = "slot_ranged",
 					pass_type = "texture",
-					content_check_function = function(arg_48_0)
+					content_check_function = function (arg_48_0)
 						return arg_48_0.slot_ranged
 					end
 				},
@@ -2136,7 +2136,7 @@ local function var_0_14(arg_18_0)
 					style_id = "slot_ranged",
 					pass_type = "hotspot",
 					content_id = "slot_ranged_hotspot",
-					content_check_function = function(arg_49_0)
+					content_check_function = function (arg_49_0)
 						return arg_49_0.parent.slot_ranged
 					end
 				},
@@ -2144,7 +2144,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ranged_frame",
 					style_id = "slot_ranged_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_50_0)
+					content_check_function = function (arg_50_0)
 						return arg_50_0.slot_ranged
 					end
 				},
@@ -2152,7 +2152,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ranged_rarity_texture",
 					style_id = "slot_ranged_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_51_0)
+					content_check_function = function (arg_51_0)
 						return arg_51_0.slot_ranged
 					end
 				},
@@ -2160,7 +2160,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_necklace",
 					style_id = "slot_necklace",
 					pass_type = "texture",
-					content_check_function = function(arg_52_0)
+					content_check_function = function (arg_52_0)
 						return arg_52_0.slot_necklace
 					end
 				},
@@ -2168,7 +2168,7 @@ local function var_0_14(arg_18_0)
 					style_id = "slot_necklace",
 					pass_type = "hotspot",
 					content_id = "slot_necklace_hotspot",
-					content_check_function = function(arg_53_0)
+					content_check_function = function (arg_53_0)
 						return arg_53_0.parent.slot_necklace
 					end
 				},
@@ -2176,7 +2176,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_necklace_frame",
 					style_id = "slot_necklace_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_54_0)
+					content_check_function = function (arg_54_0)
 						return arg_54_0.slot_necklace
 					end
 				},
@@ -2184,7 +2184,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_necklace_rarity_texture",
 					style_id = "slot_necklace_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_55_0)
+					content_check_function = function (arg_55_0)
 						return arg_55_0.slot_necklace
 					end
 				},
@@ -2192,7 +2192,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ring",
 					style_id = "slot_ring",
 					pass_type = "texture",
-					content_check_function = function(arg_56_0)
+					content_check_function = function (arg_56_0)
 						return arg_56_0.slot_ring
 					end
 				},
@@ -2200,7 +2200,7 @@ local function var_0_14(arg_18_0)
 					style_id = "slot_ring",
 					pass_type = "hotspot",
 					content_id = "slot_ring_hotspot",
-					content_check_function = function(arg_57_0)
+					content_check_function = function (arg_57_0)
 						return arg_57_0.parent.slot_ring
 					end
 				},
@@ -2208,7 +2208,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ring_frame",
 					style_id = "slot_ring_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_58_0)
+					content_check_function = function (arg_58_0)
 						return arg_58_0.slot_ring
 					end
 				},
@@ -2216,7 +2216,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_ring_rarity_texture",
 					style_id = "slot_ring_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_59_0)
+					content_check_function = function (arg_59_0)
 						return arg_59_0.slot_ring
 					end
 				},
@@ -2224,7 +2224,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_trinket_1",
 					style_id = "slot_trinket_1",
 					pass_type = "texture",
-					content_check_function = function(arg_60_0)
+					content_check_function = function (arg_60_0)
 						return arg_60_0.slot_trinket_1
 					end
 				},
@@ -2232,7 +2232,7 @@ local function var_0_14(arg_18_0)
 					style_id = "slot_trinket_1",
 					pass_type = "hotspot",
 					content_id = "slot_trinket_1_hotspot",
-					content_check_function = function(arg_61_0)
+					content_check_function = function (arg_61_0)
 						return arg_61_0.parent.slot_trinket_1
 					end
 				},
@@ -2240,7 +2240,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_trinket_1_frame",
 					style_id = "slot_trinket_1_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_62_0)
+					content_check_function = function (arg_62_0)
 						return arg_62_0.slot_trinket_1
 					end
 				},
@@ -2248,7 +2248,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "slot_trinket_1_rarity_texture",
 					style_id = "slot_trinket_1_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_63_0)
+					content_check_function = function (arg_63_0)
 						return arg_63_0.slot_trinket_1
 					end
 				},
@@ -2256,7 +2256,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_1_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_64_0)
+					content_check_function = function (arg_64_0)
 						return arg_64_0.talent_1.talent
 					end
 				},
@@ -2270,7 +2270,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_1",
 					pass_type = "texture",
 					content_id = "talent_1",
-					content_check_function = function(arg_65_0)
+					content_check_function = function (arg_65_0)
 						return arg_65_0.talent
 					end
 				},
@@ -2280,7 +2280,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_1",
-					content_check_function = function(arg_66_0)
+					content_check_function = function (arg_66_0)
 						return arg_66_0.talent and arg_66_0.is_hover
 					end
 				},
@@ -2288,7 +2288,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_2_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_67_0)
+					content_check_function = function (arg_67_0)
 						return arg_67_0.talent_2.talent
 					end
 				},
@@ -2302,7 +2302,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_2",
 					pass_type = "texture",
 					content_id = "talent_2",
-					content_check_function = function(arg_68_0)
+					content_check_function = function (arg_68_0)
 						return arg_68_0.talent
 					end
 				},
@@ -2312,7 +2312,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_2",
-					content_check_function = function(arg_69_0)
+					content_check_function = function (arg_69_0)
 						return arg_69_0.talent and arg_69_0.is_hover
 					end
 				},
@@ -2320,7 +2320,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_3_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_70_0)
+					content_check_function = function (arg_70_0)
 						return arg_70_0.talent_3.talent
 					end
 				},
@@ -2334,7 +2334,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_3",
 					pass_type = "texture",
 					content_id = "talent_3",
-					content_check_function = function(arg_71_0)
+					content_check_function = function (arg_71_0)
 						return arg_71_0.talent
 					end
 				},
@@ -2344,7 +2344,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_3",
-					content_check_function = function(arg_72_0)
+					content_check_function = function (arg_72_0)
 						return arg_72_0.talent and arg_72_0.is_hover
 					end
 				},
@@ -2352,7 +2352,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_4_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_73_0)
+					content_check_function = function (arg_73_0)
 						return arg_73_0.talent_4.talent
 					end
 				},
@@ -2366,7 +2366,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_4",
 					pass_type = "texture",
 					content_id = "talent_4",
-					content_check_function = function(arg_74_0)
+					content_check_function = function (arg_74_0)
 						return arg_74_0.talent
 					end
 				},
@@ -2376,7 +2376,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_4",
-					content_check_function = function(arg_75_0)
+					content_check_function = function (arg_75_0)
 						return arg_75_0.talent and arg_75_0.is_hover
 					end
 				},
@@ -2384,7 +2384,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_5_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_76_0)
+					content_check_function = function (arg_76_0)
 						return arg_76_0.talent_5.talent
 					end
 				},
@@ -2398,7 +2398,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_5",
 					pass_type = "texture",
 					content_id = "talent_5",
-					content_check_function = function(arg_77_0)
+					content_check_function = function (arg_77_0)
 						return arg_77_0.talent
 					end
 				},
@@ -2408,7 +2408,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_5",
-					content_check_function = function(arg_78_0)
+					content_check_function = function (arg_78_0)
 						return arg_78_0.talent and arg_78_0.is_hover
 					end
 				},
@@ -2416,7 +2416,7 @@ local function var_0_14(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_6_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_79_0)
+					content_check_function = function (arg_79_0)
 						return arg_79_0.talent_6.talent
 					end
 				},
@@ -2430,7 +2430,7 @@ local function var_0_14(arg_18_0)
 					style_id = "talent_6",
 					pass_type = "texture",
 					content_id = "talent_6",
-					content_check_function = function(arg_80_0)
+					content_check_function = function (arg_80_0)
 						return arg_80_0.talent
 					end
 				},
@@ -2440,7 +2440,7 @@ local function var_0_14(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_6",
-					content_check_function = function(arg_81_0)
+					content_check_function = function (arg_81_0)
 						return arg_81_0.talent and arg_81_0.is_hover
 					end
 				}
@@ -3810,7 +3810,7 @@ local var_0_16 = {
 					{
 						pass_type = "hotspot",
 						content_id = "button_hotspot",
-						content_check_function = function(arg_82_0, arg_82_1)
+						content_check_function = function (arg_82_0, arg_82_1)
 							return arg_82_0.button_hotspot.disable_button ~= true
 						end
 					},
@@ -3818,7 +3818,7 @@ local var_0_16 = {
 						style_id = "button_text",
 						pass_type = "text",
 						text_id = "button_text",
-						content_check_function = function(arg_83_0, arg_83_1)
+						content_check_function = function (arg_83_0, arg_83_1)
 							if arg_83_0.button_hotspot.disable_button ~= true then
 								if arg_83_0.button_hotspot.is_hover then
 									arg_83_1.button_text.text_color = arg_83_1.button_text.hover_color

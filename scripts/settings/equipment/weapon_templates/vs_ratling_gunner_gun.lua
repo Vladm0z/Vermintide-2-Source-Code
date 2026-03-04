@@ -59,12 +59,12 @@ local var_0_18 = {
 				anim_event = "attack_shoot_start",
 				charge_sound_husk_stop_event = "Stop_player_engineer_engine_loop_husk",
 				anim_time_scale = var_0_12,
-				enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					arg_4_1:clear_input_buffer()
 					arg_4_1:reset_release_input()
 					arg_4_3:change_synced_state("winding")
 				end,
-				finish_function = function(arg_5_0, arg_5_1, arg_5_2)
+				finish_function = function (arg_5_0, arg_5_1, arg_5_2)
 					if arg_5_1 ~= "new_interupting_action" then
 						arg_5_2:change_synced_state(nil)
 					end
@@ -113,12 +113,12 @@ local var_0_18 = {
 				shot_count = 1,
 				hold_input = var_0_2,
 				chain_condition_func = var_0_15,
-				enter_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				enter_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 					arg_6_1:reset_release_input()
 					arg_6_1:clear_input_buffer()
 					arg_6_3:change_synced_state("firing")
 				end,
-				finish_function = function(arg_7_0, arg_7_1, arg_7_2)
+				finish_function = function (arg_7_0, arg_7_1, arg_7_2)
 					arg_7_2:change_synced_state(nil)
 				end,
 				initial_rounds_per_second = var_0_7,
@@ -156,14 +156,14 @@ local var_0_18 = {
 				anim_event = "wind_up_start",
 				condition_func = var_0_16,
 				chain_condition_func = var_0_16,
-				enter_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				enter_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 					arg_8_3:change_synced_state("reloading")
 
 					local var_8_0 = Managers.world:wwise_world(arg_8_3.world)
 
 					WwiseWorld.trigger_event(var_8_0, "Play_player_ratling_gunner_weapon_reload")
 				end,
-				finish_function = function(arg_9_0, arg_9_1, arg_9_2)
+				finish_function = function (arg_9_0, arg_9_1, arg_9_2)
 					arg_9_2:change_synced_state(nil)
 
 					local var_9_0 = Managers.world:wwise_world(arg_9_2.world)
@@ -200,7 +200,7 @@ local var_0_18 = {
 				kind = "dummy",
 				total_time = 0,
 				allowed_chain_actions = {},
-				enter_function = function(arg_10_0, arg_10_1)
+				enter_function = function (arg_10_0, arg_10_1)
 					arg_10_1:clear_input_buffer()
 
 					return arg_10_1:reset_release_input()
@@ -241,7 +241,7 @@ var_0_18.custom_data = {
 	windup_loss_per_second = var_0_6
 }
 
-function var_0_18.update(arg_11_0, arg_11_1, arg_11_2)
+var_0_18.update = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0:get_custom_data("windup") - arg_11_0:get_custom_data("windup_loss_per_second") * arg_11_1
 
 	arg_11_0:set_custom_data("windup", var_11_0)
@@ -313,14 +313,14 @@ end
 var_0_18.synced_states = {
 	winding = {
 		clear_data_on_enter = true,
-		enter = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		enter = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 			local var_13_0 = Managers.world:wwise_world(arg_13_5)
 
 			if arg_13_4 then
 				WwiseWorld.trigger_event(var_13_0, "Play_player_ratling_gunner_weapon_ready", arg_13_2)
 			end
 		end,
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 			if not arg_14_4 then
 				return
 			end
@@ -333,7 +333,7 @@ var_0_18.synced_states = {
 
 			var_0_19(var_14_0, arg_14_2)
 		end,
-		leave = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+		leave = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 			local var_15_0 = Managers.world:wwise_world(arg_15_5)
 
 			if arg_15_4 then
@@ -361,7 +361,7 @@ var_0_18.synced_states = {
 		end
 	},
 	firing = {
-		enter = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+		enter = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 			arg_16_3.shoot_time = 0
 
 			local var_16_0 = true
@@ -380,7 +380,7 @@ var_0_18.synced_states = {
 
 			arg_16_3.shoot_sound_source_id = var_16_2
 		end,
-		update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+		update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 			if arg_17_4 then
 				var_0_17(arg_17_1, arg_17_2)
 			end
@@ -397,7 +397,7 @@ var_0_18.synced_states = {
 
 			WwiseWorld.set_source_parameter(var_17_2, var_17_0, "ratling_gun_shooting_loop_parameter", var_17_1)
 		end,
-		leave = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+		leave = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
 			if not arg_18_7 then
 				if arg_18_4 then
 					local var_18_0 = ScriptUnit.extension(arg_18_1, "first_person_system")
@@ -423,7 +423,7 @@ var_0_18.synced_states = {
 		end
 	},
 	reloading = {
-		enter = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+		enter = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 			if arg_19_4 then
 				arg_19_3.time_in_reload = 0
 			end
@@ -436,7 +436,7 @@ var_0_18.synced_states = {
 				WwiseWorld.trigger_event(var_19_1, "Play_player_ratling_gunner_weapon_reload_husk", arg_19_2)
 			end
 		end,
-		update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+		update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 			if not arg_20_4 then
 				return
 			end
@@ -447,7 +447,7 @@ var_0_18.synced_states = {
 
 			ScriptUnit.extension(arg_20_2, "weapon_system"):set_custom_data("reload_progress", var_20_0)
 		end,
-		leave = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+		leave = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 			if not arg_21_7 then
 				if arg_21_4 then
 					ScriptUnit.extension(arg_21_2, "weapon_system"):set_custom_data("reload_progress", 0)

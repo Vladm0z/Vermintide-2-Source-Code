@@ -10,13 +10,13 @@ local var_0_2 = 0.25
 
 CLIENT_CONTROLLED_RATLING_GUN = true
 
-function BTRatlingGunnerShootAction.init(arg_1_0, ...)
+BTRatlingGunnerShootAction.init = function (arg_1_0, ...)
 	BTRatlingGunnerShootAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerShootAction.name = "BTRatlingGunnerShootAction"
 
-function BTRatlingGunnerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTRatlingGunnerShootAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.attack_pattern_data or {}
 	local var_2_2, var_2_3, var_2_4 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
@@ -62,7 +62,7 @@ function BTRatlingGunnerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:_notify_attacking(arg_2_1, var_2_5)
 end
 
-function BTRatlingGunnerShootAction._create_nav_obstacles(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTRatlingGunnerShootAction._create_nav_obstacles = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = POSITION_LOOKUP[arg_3_1]
 	local var_3_1 = POSITION_LOOKUP[arg_3_2]
 	local var_3_2 = Vector3(0, 0, 0)
@@ -77,7 +77,7 @@ function BTRatlingGunnerShootAction._create_nav_obstacles(arg_3_0, arg_3_1, arg_
 	return var_3_8, var_3_9
 end
 
-function BTRatlingGunnerShootAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTRatlingGunnerShootAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.anim_cb_attack_shoot_start_finished = nil
 	arg_4_2.anim_cb_attack_shoot_random_shot = nil
 
@@ -124,7 +124,7 @@ function BTRatlingGunnerShootAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	arg_4_2.navigation_extension:set_enabled(true)
 end
 
-function BTRatlingGunnerShootAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTRatlingGunnerShootAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.attack_pattern_data
 	local var_5_1 = var_5_0.target_unit
 
@@ -182,7 +182,7 @@ function BTRatlingGunnerShootAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_
 	end
 end
 
-function BTRatlingGunnerShootAction._notify_attacking(arg_6_0, arg_6_1, arg_6_2)
+BTRatlingGunnerShootAction._notify_attacking = function (arg_6_0, arg_6_1, arg_6_2)
 	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_6_1, arg_6_2, "ratling_gun_fire")
 
 	if Unit.alive(arg_6_2) then
@@ -190,7 +190,7 @@ function BTRatlingGunnerShootAction._notify_attacking(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BTRatlingGunnerShootAction._notify_no_longer_attacking(arg_7_0, arg_7_1, arg_7_2)
+BTRatlingGunnerShootAction._notify_no_longer_attacking = function (arg_7_0, arg_7_1, arg_7_2)
 	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_7_1, arg_7_2, "ratling_gun_fire")
 
 	if Unit.alive(arg_7_2) then
@@ -198,7 +198,7 @@ function BTRatlingGunnerShootAction._notify_no_longer_attacking(arg_7_0, arg_7_1
 	end
 end
 
-function BTRatlingGunnerShootAction.stop_shooting(arg_8_0, arg_8_1, arg_8_2)
+BTRatlingGunnerShootAction.stop_shooting = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.is_shooting = nil
 
 	local var_8_0 = Managers.state.unit_storage:go_id(arg_8_1)
@@ -216,7 +216,7 @@ function BTRatlingGunnerShootAction.stop_shooting(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function BTRatlingGunnerShootAction._update_shooting(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTRatlingGunnerShootAction._update_shooting = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_4 - arg_9_3.shoot_start
 	local var_9_1 = math.clamp(var_9_0 / arg_9_3.shoot_duration * arg_9_3.max_fire_rate_at_percentage_modifier, 0, 1)
 	local var_9_2 = math.lerp(arg_9_3.time_between_shots_at_start, arg_9_3.time_between_shots_at_end, var_9_1)
@@ -267,7 +267,7 @@ function BTRatlingGunnerShootAction._update_shooting(arg_9_0, arg_9_1, arg_9_2, 
 	end
 end
 
-function BTRatlingGunnerShootAction._start_shooting(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTRatlingGunnerShootAction._start_shooting = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = math.round(arg_10_3.shoot_duration * 100)
 	local var_10_1 = Managers.state.unit_storage:go_id(arg_10_2)
 
@@ -321,7 +321,7 @@ end
 
 local var_0_3 = 0.7071067
 
-function BTRatlingGunnerShootAction._update_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+BTRatlingGunnerShootAction._update_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 	local var_11_0 = false
 
 	if arg_11_5 > arg_11_4.target_check then
@@ -372,7 +372,7 @@ function BTRatlingGunnerShootAction._update_target(arg_11_0, arg_11_1, arg_11_2,
 	return var_11_0
 end
 
-function BTRatlingGunnerShootAction._calculate_wanted_target_position(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTRatlingGunnerShootAction._calculate_wanted_target_position = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0
 	local var_12_1
 	local var_12_2 = arg_12_3.target_obscured
@@ -390,7 +390,7 @@ function BTRatlingGunnerShootAction._calculate_wanted_target_position(arg_12_0, 
 	return var_12_0, var_12_3, var_12_1
 end
 
-function BTRatlingGunnerShootAction._start_align_towards_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+BTRatlingGunnerShootAction._start_align_towards_target = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	arg_13_3.state = "align"
 
 	local var_13_0 = arg_13_3.shoot_direction_box:unbox()
@@ -411,7 +411,7 @@ function BTRatlingGunnerShootAction._start_align_towards_target(arg_13_0, arg_13
 	Managers.state.network:anim_event(arg_13_1, "attack_shoot_align")
 end
 
-function BTRatlingGunnerShootAction._end_align_towards_target(arg_14_0, arg_14_1, arg_14_2)
+BTRatlingGunnerShootAction._end_align_towards_target = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_2.state = "ready"
 	arg_14_2.align_start = nil
 	arg_14_2.shoot_direction_start = nil
@@ -431,7 +431,7 @@ local var_0_9 = var_0_0 * 6
 local var_0_10 = var_0_0 / 32
 local var_0_11 = 0.7
 
-function BTRatlingGunnerShootAction._update_align_towards_target(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+BTRatlingGunnerShootAction._update_align_towards_target = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_2.attack_pattern_data
 	local var_15_1 = arg_15_2.action
 	local var_15_2 = var_15_0.target_unit
@@ -470,7 +470,7 @@ function BTRatlingGunnerShootAction._update_align_towards_target(arg_15_0, arg_1
 	return math.abs(var_15_8) < var_0_10
 end
 
-function BTRatlingGunnerShootAction._angle_to_speed(arg_16_0, arg_16_1)
+BTRatlingGunnerShootAction._angle_to_speed = function (arg_16_0, arg_16_1)
 	if arg_16_1 > var_0_7 then
 		return var_0_4
 	elseif arg_16_1 < -var_0_7 then
@@ -482,7 +482,7 @@ function BTRatlingGunnerShootAction._angle_to_speed(arg_16_0, arg_16_1)
 	end
 end
 
-function BTRatlingGunnerShootAction._aim_at_target(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+BTRatlingGunnerShootAction._aim_at_target = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = arg_17_2.attack_pattern_data
 	local var_17_1 = arg_17_2.action
 	local var_17_2 = var_17_0.target_unit
@@ -523,7 +523,7 @@ function BTRatlingGunnerShootAction._aim_at_target(arg_17_0, arg_17_1, arg_17_2,
 	return var_17_22
 end
 
-function BTRatlingGunnerShootAction._remaining_angle(arg_18_0, arg_18_1, arg_18_2)
+BTRatlingGunnerShootAction._remaining_angle = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = Quaternion.forward(arg_18_1)
 	local var_18_1 = Quaternion.forward(arg_18_2)
 	local var_18_2 = math.atan2(var_18_0.y, var_18_0.x)
@@ -534,7 +534,7 @@ function BTRatlingGunnerShootAction._remaining_angle(arg_18_0, arg_18_1, arg_18_
 	return ((var_18_3 - var_18_2) % var_18_5 + var_18_4) % var_18_5 - var_18_4
 end
 
-function BTRatlingGunnerShootAction._rotate_from_to(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTRatlingGunnerShootAction._rotate_from_to = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_3 * arg_19_4
 	local var_19_1 = Quaternion.dot(arg_19_2, arg_19_1)
 	local var_19_2 = 2 * math.acos(math.clamp(var_19_1, -1, 1))
@@ -544,7 +544,7 @@ function BTRatlingGunnerShootAction._rotate_from_to(arg_19_0, arg_19_1, arg_19_2
 	return Quaternion.lerp(arg_19_1, arg_19_2, var_19_4), math.max(var_19_3 - var_19_0, 0)
 end
 
-function BTRatlingGunnerShootAction._fire_from_position_direction(arg_20_0, arg_20_1, arg_20_2)
+BTRatlingGunnerShootAction._fire_from_position_direction = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_2.ratling_gun_unit
 	local var_20_1 = Unit.node(var_20_0, "p_fx")
 	local var_20_2 = Unit.world_position(var_20_0, var_20_1)
@@ -559,7 +559,7 @@ function BTRatlingGunnerShootAction._fire_from_position_direction(arg_20_0, arg_
 	return var_20_2 - Vector3.normalize(var_20_3) * 0.25, var_20_3
 end
 
-function BTRatlingGunnerShootAction._shoot(arg_21_0, arg_21_1, arg_21_2)
+BTRatlingGunnerShootAction._shoot = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_2.action
 	local var_21_1 = arg_21_2.attack_pattern_data
 	local var_21_2 = var_21_0.light_weight_projectile_template_name
@@ -590,7 +590,7 @@ function BTRatlingGunnerShootAction._shoot(arg_21_0, arg_21_1, arg_21_2)
 	var_21_17:create_light_weight_projectile(arg_21_2.breed.name, arg_21_1, var_21_4, var_21_12, var_21_3.projectile_speed, nil, nil, var_21_3.projectile_max_range, var_21_13, var_21_16, var_21_3.light_weight_projectile_effect, var_21_18, nil, var_21_19)
 end
 
-function BTRatlingGunnerShootAction._create_bot_threat_box(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+BTRatlingGunnerShootAction._create_bot_threat_box = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	local var_22_0 = POSITION_LOOKUP[arg_22_1]
 	local var_22_1 = POSITION_LOOKUP[arg_22_2.target_unit]
 

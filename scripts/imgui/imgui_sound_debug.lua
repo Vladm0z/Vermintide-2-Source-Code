@@ -13,7 +13,7 @@ local function var_0_3(arg_1_0)
 	return os.date("%H:%M", var_1_1) .. string.format(":%06.3f", var_1_0)
 end
 
-function ImguiSoundDebug.init(arg_2_0)
+ImguiSoundDebug.init = function (arg_2_0)
 	arg_2_0._event_name = "pwe_activate_ability_handmaiden_03"
 	arg_2_0._music_players = {}
 	arg_2_0._music_flags = {}
@@ -30,11 +30,11 @@ function ImguiSoundDebug.init(arg_2_0)
 	var_0_0 = false
 end
 
-function ImguiSoundDebug.destroy(arg_3_0)
+ImguiSoundDebug.destroy = function (arg_3_0)
 	arg_3_0:unregister_events()
 end
 
-function ImguiSoundDebug.register_events(arg_4_0)
+ImguiSoundDebug.register_events = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 then
@@ -43,7 +43,7 @@ function ImguiSoundDebug.register_events(arg_4_0)
 	end
 end
 
-function ImguiSoundDebug.unregister_events(arg_5_0)
+ImguiSoundDebug.unregister_events = function (arg_5_0)
 	local var_5_0 = Managers.state.event
 
 	if var_5_0 then
@@ -52,11 +52,11 @@ function ImguiSoundDebug.unregister_events(arg_5_0)
 	end
 end
 
-function ImguiSoundDebug.is_persistent(arg_6_0)
+ImguiSoundDebug.is_persistent = function (arg_6_0)
 	return arg_6_0._is_persistent
 end
 
-function ImguiSoundDebug.update(arg_7_0)
+ImguiSoundDebug.update = function (arg_7_0)
 	if var_0_0 then
 		arg_7_0:unregister_events()
 		arg_7_0:init()
@@ -66,7 +66,7 @@ function ImguiSoundDebug.update(arg_7_0)
 	arg_7_0:_update_music_players()
 end
 
-function ImguiSoundDebug._update_music_flags(arg_8_0)
+ImguiSoundDebug._update_music_flags = function (arg_8_0)
 	local var_8_0 = Managers.music
 	local var_8_1 = var_8_0._flags
 	local var_8_2 = var_8_0.flags_update_disabled
@@ -79,7 +79,7 @@ function ImguiSoundDebug._update_music_flags(arg_8_0)
 	end
 end
 
-function ImguiSoundDebug._update_music_players(arg_9_0)
+ImguiSoundDebug._update_music_players = function (arg_9_0)
 	local var_9_0 = Managers.music._music_players
 
 	for iter_9_0, iter_9_1 in pairs(var_9_0) do
@@ -101,7 +101,7 @@ function ImguiSoundDebug._update_music_players(arg_9_0)
 	end
 end
 
-function ImguiSoundDebug.draw(arg_10_0)
+ImguiSoundDebug.draw = function (arg_10_0)
 	if arg_10_0._first_run then
 		Imgui.set_next_window_size(var_0_1, var_0_2)
 
@@ -127,7 +127,7 @@ function ImguiSoundDebug.draw(arg_10_0)
 	return var_10_0
 end
 
-function ImguiSoundDebug._draw_music_player(arg_11_0)
+ImguiSoundDebug._draw_music_player = function (arg_11_0)
 	arg_11_0._event_name = Imgui.input_text("Event", arg_11_0._event_name)
 
 	Imgui.same_line()
@@ -140,7 +140,7 @@ function ImguiSoundDebug._draw_music_player(arg_11_0)
 	end
 end
 
-function ImguiSoundDebug._draw_music_flags(arg_12_0)
+ImguiSoundDebug._draw_music_flags = function (arg_12_0)
 	Imgui.text("Music Flags")
 	Imgui.dummy(0, 2)
 	arg_12_0:_set_columns(3, true, 300)
@@ -192,7 +192,7 @@ function ImguiSoundDebug._draw_music_flags(arg_12_0)
 	arg_12_0:_reset_columns()
 end
 
-function ImguiSoundDebug._draw_music_players(arg_13_0)
+ImguiSoundDebug._draw_music_players = function (arg_13_0)
 	Imgui.text("Music Players")
 	Imgui.dummy(0, 2)
 
@@ -253,7 +253,7 @@ local var_0_4 = {
 	"new_value"
 }
 
-function ImguiSoundDebug._draw_history(arg_14_0)
+ImguiSoundDebug._draw_history = function (arg_14_0)
 	local var_14_0 = arg_14_0._history_running and "Stop" or "Start"
 
 	if Imgui.button(var_14_0) then
@@ -288,7 +288,7 @@ function ImguiSoundDebug._draw_history(arg_14_0)
 
 	if not arg_14_0._history_sorted then
 		for iter_14_2, iter_14_3 in pairs(arg_14_0._history) do
-			table.sort(arg_14_0._history, function(arg_15_0, arg_15_1)
+			table.sort(arg_14_0._history, function (arg_15_0, arg_15_1)
 				if arg_14_0._sort_direction == "asc" then
 					return arg_15_0[arg_14_0._sort_history_by]:lower() < arg_15_1[arg_14_0._sort_history_by]:lower()
 				else
@@ -316,7 +316,7 @@ function ImguiSoundDebug._draw_history(arg_14_0)
 	Imgui.end_child_window()
 end
 
-function ImguiSoundDebug._draw_sort_button(arg_16_0, arg_16_1)
+ImguiSoundDebug._draw_sort_button = function (arg_16_0, arg_16_1)
 	local var_16_0
 
 	if arg_16_0._sort_history_by == arg_16_1 then
@@ -333,7 +333,7 @@ function ImguiSoundDebug._draw_sort_button(arg_16_0, arg_16_1)
 	end
 end
 
-function ImguiSoundDebug.on_music_flag_change(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+ImguiSoundDebug.on_music_flag_change = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = {
 		name = "flag",
 		timestamp = var_0_3(os.time()),
@@ -346,7 +346,7 @@ function ImguiSoundDebug.on_music_flag_change(arg_17_0, arg_17_1, arg_17_2, arg_
 	arg_17_0._history_sorted = false
 end
 
-function ImguiSoundDebug.on_music_player_state_change(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+ImguiSoundDebug.on_music_player_state_change = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = {
 		timestamp = var_0_3(os.time()),
 		name = arg_18_1,
@@ -359,7 +359,7 @@ function ImguiSoundDebug.on_music_player_state_change(arg_18_0, arg_18_1, arg_18
 	arg_18_0._history_sorted = false
 end
 
-function ImguiSoundDebug._set_columns(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+ImguiSoundDebug._set_columns = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_2 = arg_19_2 or false
 
 	Imgui.columns(arg_19_1, arg_19_2)
@@ -379,24 +379,24 @@ function ImguiSoundDebug._set_columns(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	end
 end
 
-function ImguiSoundDebug._reset_columns(arg_20_0)
+ImguiSoundDebug._reset_columns = function (arg_20_0)
 	arg_20_0:_set_columns(1)
 end
 
 local var_0_5 = 8
 
-function ImguiSoundDebug._indent(arg_21_0)
+ImguiSoundDebug._indent = function (arg_21_0)
 	arg_21_0._indent_counter = arg_21_0._indent_counter + 1
 
 	Imgui.indent(var_0_5)
 end
 
-function ImguiSoundDebug._unindent(arg_22_0)
+ImguiSoundDebug._unindent = function (arg_22_0)
 	arg_22_0._indent_counter = arg_22_0._indent_counter - 1
 
 	Imgui.unindent(var_0_5)
 end
 
-function ImguiSoundDebug._verify_indent(arg_23_0)
+ImguiSoundDebug._verify_indent = function (arg_23_0)
 	fassert(arg_23_0._indent_counter == 0, tostring(arg_23_0._indent_counter))
 end

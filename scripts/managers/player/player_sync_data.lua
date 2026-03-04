@@ -7,7 +7,7 @@ PrivacyLevels = table.mirror_array_inplace({
 })
 PlayerSyncData = class(PlayerSyncData)
 
-function PlayerSyncData.init(arg_1_0, arg_1_1, arg_1_2)
+PlayerSyncData.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._player = arg_1_1
 	arg_1_0._network_manager = arg_1_2
 
@@ -40,11 +40,11 @@ function PlayerSyncData.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function PlayerSyncData._on_game_options_changed(arg_2_0)
+PlayerSyncData._on_game_options_changed = function (arg_2_0)
 	arg_2_0:set_data("playerlist_build_privacy", Application.user_setting("playerlist_build_privacy"))
 end
 
-function PlayerSyncData._calc_highest_unlocked_difficulty(arg_3_0)
+PlayerSyncData._calc_highest_unlocked_difficulty = function (arg_3_0)
 	if Development.parameter("unlock_all_difficulties") then
 		local var_3_0 = "normal"
 		local var_3_1 = 0
@@ -88,7 +88,7 @@ function PlayerSyncData._calc_highest_unlocked_difficulty(arg_3_0)
 	return var_3_2
 end
 
-function PlayerSyncData.reevaluate_highest_difficulty(arg_4_0)
+PlayerSyncData.reevaluate_highest_difficulty = function (arg_4_0)
 	if not arg_4_0._game_object_id then
 		return
 	end
@@ -102,19 +102,19 @@ function PlayerSyncData.reevaluate_highest_difficulty(arg_4_0)
 	arg_4_0:set_data("highest_unlocked_difficulty", NetworkLookup.difficulties[var_4_0])
 end
 
-function PlayerSyncData.cb_game_session_disconnect(arg_5_0)
+PlayerSyncData.cb_game_session_disconnect = function (arg_5_0)
 	arg_5_0._game_object_id = nil
 end
 
-function PlayerSyncData.set_game_object_id(arg_6_0, arg_6_1)
+PlayerSyncData.set_game_object_id = function (arg_6_0, arg_6_1)
 	arg_6_0._game_object_id = arg_6_1
 end
 
-function PlayerSyncData.active(arg_7_0)
+PlayerSyncData.active = function (arg_7_0)
 	return arg_7_0._game_object_id ~= nil
 end
 
-function PlayerSyncData.destroy(arg_8_0)
+PlayerSyncData.destroy = function (arg_8_0)
 	local var_8_0 = arg_8_0._player
 
 	if (var_8_0.local_player or var_8_0.bot_player and var_8_0.is_server) and arg_8_0._game_object_id then
@@ -132,7 +132,7 @@ function PlayerSyncData.destroy(arg_8_0)
 	arg_8_0._player = nil
 end
 
-function PlayerSyncData.set_data(arg_9_0, arg_9_1, arg_9_2)
+PlayerSyncData.set_data = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0._game_object_id then
 		return
 	end
@@ -146,7 +146,7 @@ function PlayerSyncData.set_data(arg_9_0, arg_9_1, arg_9_2)
 	GameSession.set_game_object_field(var_9_0, arg_9_0._game_object_id, arg_9_1, arg_9_2)
 end
 
-function PlayerSyncData.get_data(arg_10_0, arg_10_1)
+PlayerSyncData.get_data = function (arg_10_0, arg_10_1)
 	if not arg_10_0._game_object_id then
 		print("[PlayerSyncData] Game object id is not initialized")
 

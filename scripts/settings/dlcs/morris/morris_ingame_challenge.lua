@@ -115,7 +115,7 @@ var_0_0.ingame_challenge_templates = {
 		default_target = 1,
 		description = "challenge_description_find_deus_soft_currency_01",
 		events = {
-			player_pickup_deus_soft_currency = function(arg_2_0, arg_2_1, arg_2_2)
+			player_pickup_deus_soft_currency = function (arg_2_0, arg_2_1, arg_2_2)
 				return 1
 			end
 		}
@@ -124,7 +124,7 @@ var_0_0.ingame_challenge_templates = {
 		default_target = 1,
 		description = "challenge_description_find_deus_weapon_chest_01",
 		events = {
-			player_pickup_deus_weapon_chest = function(arg_3_0, arg_3_1, arg_3_2)
+			player_pickup_deus_weapon_chest = function (arg_3_0, arg_3_1, arg_3_2)
 				return 1
 			end
 		}
@@ -133,7 +133,7 @@ var_0_0.ingame_challenge_templates = {
 		default_target = 1,
 		description = "challenge_description_cleansed_deus_curse_chest_01",
 		events = {
-			player_cleansed_deus_cursed_chest = function(arg_4_0, arg_4_1, arg_4_2)
+			player_cleansed_deus_cursed_chest = function (arg_4_0, arg_4_1, arg_4_2)
 				return 1
 			end
 		}

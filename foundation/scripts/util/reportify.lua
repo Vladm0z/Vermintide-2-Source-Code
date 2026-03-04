@@ -2,14 +2,14 @@
 
 Reportify = Reportify or {}
 
-function Reportify.setup(arg_1_0)
+Reportify.setup = function (arg_1_0)
 	arg_1_0.has_setup = true
 	arg_1_0.content_revision = script_data.settings.content_revision or ""
 	arg_1_0.engine_revision = Application.build_identifier() or ""
 	arg_1_0.project = "HON"
 end
 
-function Reportify.get_data(arg_2_0)
+Reportify.get_data = function (arg_2_0)
 	if not arg_2_0.has_setup then
 		arg_2_0:setup()
 	end
@@ -36,7 +36,7 @@ function Reportify.get_data(arg_2_0)
 	})
 end
 
-function Reportify._get_level(arg_3_0)
+Reportify._get_level = function (arg_3_0)
 	if not Managers.state.game_mode then
 		return ""
 	end
@@ -44,7 +44,7 @@ function Reportify._get_level(arg_3_0)
 	return Managers.state.game_mode:level_key() or ""
 end
 
-function Reportify._get_location(arg_4_0)
+Reportify._get_location = function (arg_4_0)
 	local var_4_0 = arg_4_0:_get_local_player()
 
 	if not var_4_0 or not Managers.state.camera then
@@ -54,7 +54,7 @@ function Reportify._get_location(arg_4_0)
 	return tostring(Managers.state.camera:camera_position(var_4_0.viewport_name)), tostring(Managers.state.camera:camera_rotation(var_4_0.viewport_name))
 end
 
-function Reportify._get_player_info(arg_5_0)
+Reportify._get_player_info = function (arg_5_0)
 	local var_5_0 = {
 		wielded_slot = "",
 		primary_name = "",
@@ -85,7 +85,7 @@ function Reportify._get_player_info(arg_5_0)
 	return var_5_0
 end
 
-function Reportify._get_local_player(arg_6_0)
+Reportify._get_local_player = function (arg_6_0)
 	if not Managers.player then
 		return false
 	end

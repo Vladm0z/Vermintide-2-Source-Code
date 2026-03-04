@@ -36,7 +36,7 @@ var_0_2.vs_disable_reviving_hero = {
 	events = {
 		"register_player_disabled"
 	},
-	on_event = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	on_event = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -62,7 +62,7 @@ var_0_2.vs_disable_reviving_hero = {
 
 		arg_1_0:increment_stat(arg_1_1, "vs_disable_reviving_hero")
 	end,
-	completed = function(arg_2_0, arg_2_1)
+	completed = function (arg_2_0, arg_2_1)
 		return arg_2_0:get_persistent_stat(arg_2_1, "vs_disable_reviving_hero") >= 1
 	end
 }
@@ -75,7 +75,7 @@ var_0_2.vs_kill_invisible_hero = {
 	events = {
 		"register_knockdown"
 	},
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -111,7 +111,7 @@ var_0_2.vs_kill_invisible_hero = {
 			arg_3_0:increment_stat(arg_3_1, "vs_kill_invisible_hero")
 		end
 	end,
-	completed = function(arg_4_0, arg_4_1)
+	completed = function (arg_4_0, arg_4_1)
 		return arg_4_0:get_persistent_stat(arg_4_1, "vs_kill_invisible_hero") >= 1
 	end
 }
@@ -171,17 +171,17 @@ for iter_0_0 = 1, #var_0_26 do
 		display_completion_ui = true,
 		required_dlc = "carousel",
 		name = "achv_hero_eliminations_" .. string.format("%02d", iter_0_0) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_hero_eliminations_" .. string.format("%02d", iter_0_0) .. "_vs_desc"), var_0_26[iter_0_0])
 		end,
 		icon = "hero_eliminations_" .. iter_0_0,
 		always_run = var_0_27,
 		events = var_0_28,
 		on_event = var_0_29,
-		completed = function(arg_7_0, arg_7_1)
+		completed = function (arg_7_0, arg_7_1)
 			return arg_7_0:get_persistent_stat(arg_7_1, "vs_hero_eliminations") >= var_0_26[iter_0_0]
 		end,
-		progress = function(arg_8_0, arg_8_1)
+		progress = function (arg_8_0, arg_8_1)
 			local var_8_0 = var_0_26[iter_0_0]
 			local var_8_1 = math.min(arg_8_0:get_persistent_stat(arg_8_1, "vs_hero_eliminations"), var_8_0)
 
@@ -200,13 +200,13 @@ var_0_2.vs_hero_monster_kills = {
 	display_completion_ui = true,
 	icon = "kill_x_monsters",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_monster_kills_vs_desc"), var_0_30)
 	end,
 	events = {
 		"register_kill"
 	},
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -235,10 +235,10 @@ var_0_2.vs_hero_monster_kills = {
 
 		arg_10_0:increment_stat(arg_10_1, "vs_hero_monster_kill")
 	end,
-	completed = function(arg_11_0, arg_11_1)
+	completed = function (arg_11_0, arg_11_1)
 		return arg_11_0:get_persistent_stat(arg_11_1, "vs_hero_monster_kill") >= var_0_30
 	end,
-	progress = function(arg_12_0, arg_12_1)
+	progress = function (arg_12_0, arg_12_1)
 		local var_12_0 = var_0_30
 		local var_12_1 = math.min(arg_12_0:get_persistent_stat(arg_12_1, "vs_hero_monster_kill"), var_12_0)
 
@@ -256,13 +256,13 @@ var_0_2.vs_hero_obj_barrels = {
 	display_completion_ui = true,
 	icon = "socket_x_items",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_obj_barrels_vs_desc"), var_0_31)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -278,7 +278,7 @@ var_0_2.vs_hero_obj_barrels = {
 			arg_14_0:increment_stat(arg_14_1, "vs_hero_obj_barrels")
 		end
 	end,
-	progress = function(arg_15_0, arg_15_1)
+	progress = function (arg_15_0, arg_15_1)
 		local var_15_0 = var_0_31
 		local var_15_1 = math.min(arg_15_0:get_persistent_stat(arg_15_1, "vs_hero_obj_barrels"), var_15_0)
 
@@ -287,7 +287,7 @@ var_0_2.vs_hero_obj_barrels = {
 			var_15_0
 		}
 	end,
-	completed = function(arg_16_0, arg_16_1)
+	completed = function (arg_16_0, arg_16_1)
 		return arg_16_0:get_persistent_stat(arg_16_1, "vs_hero_obj_barrels") >= var_0_31
 	end
 }
@@ -299,13 +299,13 @@ var_0_2.vs_hero_obj_chains = {
 	display_completion_ui = true,
 	icon = "destroy_x_chains_as_team",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_obj_chains_vs_desc"), var_0_32)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	on_event = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -321,7 +321,7 @@ var_0_2.vs_hero_obj_chains = {
 			arg_18_0:increment_stat(arg_18_1, "vs_hero_obj_chains")
 		end
 	end,
-	progress = function(arg_19_0, arg_19_1)
+	progress = function (arg_19_0, arg_19_1)
 		local var_19_0 = var_0_32
 		local var_19_1 = math.min(arg_19_0:get_persistent_stat(arg_19_1, "vs_hero_obj_chains"), var_19_0)
 
@@ -330,7 +330,7 @@ var_0_2.vs_hero_obj_chains = {
 			var_19_0
 		}
 	end,
-	completed = function(arg_20_0, arg_20_1)
+	completed = function (arg_20_0, arg_20_1)
 		return arg_20_0:get_persistent_stat(arg_20_1, "vs_hero_obj_chains") >= var_0_32
 	end
 }
@@ -342,13 +342,13 @@ var_0_2.vs_hero_obj_capture = {
 	display_completion_ui = true,
 	icon = "contribute_x_to_capture_points",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_obj_capture_vs_desc"), var_0_33)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	on_event = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -364,7 +364,7 @@ var_0_2.vs_hero_obj_capture = {
 			arg_22_0:increment_stat(arg_22_1, "vs_hero_obj_capture")
 		end
 	end,
-	progress = function(arg_23_0, arg_23_1)
+	progress = function (arg_23_0, arg_23_1)
 		local var_23_0 = var_0_33
 		local var_23_1 = math.min(arg_23_0:get_persistent_stat(arg_23_1, "vs_hero_obj_capture"), var_23_0)
 
@@ -373,7 +373,7 @@ var_0_2.vs_hero_obj_capture = {
 			var_23_0
 		}
 	end,
-	completed = function(arg_24_0, arg_24_1)
+	completed = function (arg_24_0, arg_24_1)
 		return arg_24_0:get_persistent_stat(arg_24_1, "vs_hero_obj_capture") >= var_0_33
 	end
 }
@@ -392,14 +392,14 @@ for iter_0_1 = 1, #var_0_34 do
 		display_completion_ui = true,
 		group = "vs_wins",
 		name = "achv_wins_" .. string.format("%02d", iter_0_1) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_wins_" .. string.format("%02d", iter_0_1) .. "_vs_desc"), var_0_34[iter_0_1])
 		end,
 		icon = "wins_" .. iter_0_1,
-		completed = function(arg_26_0, arg_26_1)
+		completed = function (arg_26_0, arg_26_1)
 			return arg_26_0:get_persistent_stat(arg_26_1, "vs_game_won") >= var_0_34[iter_0_1]
 		end,
-		progress = function(arg_27_0, arg_27_1)
+		progress = function (arg_27_0, arg_27_1)
 			local var_27_0 = var_0_34[iter_0_1]
 			local var_27_1 = math.min(arg_27_0:get_persistent_stat(arg_27_1, "vs_game_won"), var_27_0)
 
@@ -418,13 +418,13 @@ var_0_2.vs_hero_obj_safezone = {
 	display_completion_ui = true,
 	icon = "safe_zone",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_obj_safezone_vs_desc"), var_0_35)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+	on_event = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -440,7 +440,7 @@ var_0_2.vs_hero_obj_safezone = {
 			arg_29_0:increment_stat(arg_29_1, "vs_hero_obj_safezone")
 		end
 	end,
-	progress = function(arg_30_0, arg_30_1)
+	progress = function (arg_30_0, arg_30_1)
 		local var_30_0 = var_0_35
 		local var_30_1 = math.min(arg_30_0:get_persistent_stat(arg_30_1, "vs_hero_obj_safezone"), var_30_0)
 
@@ -449,7 +449,7 @@ var_0_2.vs_hero_obj_safezone = {
 			var_30_0
 		}
 	end,
-	completed = function(arg_31_0, arg_31_1)
+	completed = function (arg_31_0, arg_31_1)
 		return arg_31_0:get_persistent_stat(arg_31_1, "vs_hero_obj_safezone") >= var_0_35
 	end
 }
@@ -461,13 +461,13 @@ var_0_2.vs_hero_revive = {
 	display_completion_ui = true,
 	icon = "revive",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_revive_vs_desc"), var_0_36)
 	end,
 	events = {
 		"register_revive"
 	},
-	on_event = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	on_event = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -481,10 +481,10 @@ var_0_2.vs_hero_revive = {
 
 		arg_33_0:increment_stat(arg_33_1, "vs_hero_revive")
 	end,
-	completed = function(arg_34_0, arg_34_1)
+	completed = function (arg_34_0, arg_34_1)
 		return arg_34_0:get_persistent_stat(arg_34_1, "vs_hero_revive") >= var_0_36
 	end,
-	progress = function(arg_35_0, arg_35_1)
+	progress = function (arg_35_0, arg_35_1)
 		local var_35_0 = var_0_36
 		local var_35_1 = math.min(arg_35_0:get_persistent_stat(arg_35_1, "vs_hero_revive"), var_35_0)
 
@@ -502,13 +502,13 @@ var_0_2.vs_hero_obj_reach = {
 	display_completion_ui = true,
 	icon = "hero_objective_reach",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_obj_reach_vs_desc"), var_0_37)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	on_event = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -526,7 +526,7 @@ var_0_2.vs_hero_obj_reach = {
 			arg_37_0:increment_stat(arg_37_1, "vs_hero_obj_reach")
 		end
 	end,
-	progress = function(arg_38_0, arg_38_1)
+	progress = function (arg_38_0, arg_38_1)
 		local var_38_0 = var_0_37
 		local var_38_1 = math.min(arg_38_0:get_persistent_stat(arg_38_1, "vs_hero_obj_reach"), var_38_0)
 
@@ -535,7 +535,7 @@ var_0_2.vs_hero_obj_reach = {
 			var_38_0
 		}
 	end,
-	completed = function(arg_39_0, arg_39_1)
+	completed = function (arg_39_0, arg_39_1)
 		return arg_39_0:get_persistent_stat(arg_39_1, "vs_hero_obj_reach") >= var_0_37
 	end
 }
@@ -547,13 +547,13 @@ var_0_2.vs_hero_rescue = {
 	display_completion_ui = true,
 	icon = "rescue_prisoners",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hero_rescue_vs_desc"), var_0_38)
 	end,
 	events = {
 		"register_objective_completed"
 	},
-	on_event = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	on_event = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -569,10 +569,10 @@ var_0_2.vs_hero_rescue = {
 			arg_41_0:increment_stat(arg_41_1, "vs_hero_rescue")
 		end
 	end,
-	completed = function(arg_42_0, arg_42_1)
+	completed = function (arg_42_0, arg_42_1)
 		return arg_42_0:get_persistent_stat(arg_42_1, "vs_hero_rescue") >= var_0_38
 	end,
-	progress = function(arg_43_0, arg_43_1)
+	progress = function (arg_43_0, arg_43_1)
 		local var_43_0 = var_0_38
 		local var_43_1 = math.min(arg_43_0:get_persistent_stat(arg_43_1, "vs_hero_rescue"), var_43_0)
 
@@ -591,7 +591,7 @@ var_0_2.vs_air_gutter_runner = {
 	events = {
 		"register_kill"
 	},
-	on_event = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+	on_event = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -616,7 +616,7 @@ var_0_2.vs_air_gutter_runner = {
 			arg_44_0:increment_stat(arg_44_1, "vs_air_gutter_runner")
 		end
 	end,
-	completed = function(arg_45_0, arg_45_1)
+	completed = function (arg_45_0, arg_45_1)
 		return arg_45_0:get_persistent_stat(arg_45_1, "vs_air_gutter_runner") >= 1
 	end
 }
@@ -629,7 +629,7 @@ var_0_2.vs_clutch_revive = {
 	events = {
 		"register_revive"
 	},
-	on_event = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+	on_event = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -655,7 +655,7 @@ var_0_2.vs_clutch_revive = {
 
 		arg_46_0:increment_stat(arg_46_1, "vs_clutch_revive")
 	end,
-	completed = function(arg_47_0, arg_47_1)
+	completed = function (arg_47_0, arg_47_1)
 		return arg_47_0:get_persistent_stat(arg_47_1, "vs_clutch_revive") >= 1
 	end
 }
@@ -674,14 +674,14 @@ for iter_0_2 = 1, #var_0_39 do
 		display_completion_ui = true,
 		group = "vs_packmaster_eliminations",
 		name = "achv_packmaster_" .. string.format("%02d", iter_0_2) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_packmaster_" .. string.format("%02d", iter_0_2) .. "_vs_desc"), var_0_39[iter_0_2])
 		end,
 		icon = "packmaster_" .. iter_0_2,
-		completed = function(arg_49_0, arg_49_1)
+		completed = function (arg_49_0, arg_49_1)
 			return arg_49_0:get_persistent_stat(arg_49_1, "eliminations_as_breed", "vs_packmaster") >= var_0_39[iter_0_2]
 		end,
-		progress = function(arg_50_0, arg_50_1)
+		progress = function (arg_50_0, arg_50_1)
 			local var_50_0 = var_0_39[iter_0_2]
 			local var_50_1 = math.min(arg_50_0:get_persistent_stat(arg_50_1, "eliminations_as_breed", "vs_packmaster"), var_50_0)
 
@@ -700,13 +700,13 @@ var_0_2.vs_hoist_heroes = {
 	display_completion_ui = true,
 	icon = "hoist_heroes",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_hoist_heroes_vs_desc"), var_0_40)
 	end,
 	events = {
 		"register_player_disabled"
 	},
-	on_event = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+	on_event = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -738,10 +738,10 @@ var_0_2.vs_hoist_heroes = {
 			arg_52_0:increment_stat(arg_52_1, "vs_hoist_heroes")
 		end
 	end,
-	completed = function(arg_53_0, arg_53_1)
+	completed = function (arg_53_0, arg_53_1)
 		return arg_53_0:get_persistent_stat(arg_53_1, "vs_hoist_heroes") >= var_0_40
 	end,
-	progress = function(arg_54_0, arg_54_1)
+	progress = function (arg_54_0, arg_54_1)
 		local var_54_0 = math.min(arg_54_0:get_persistent_stat(arg_54_1, "vs_hoist_heroes"), var_0_40)
 
 		return {
@@ -758,13 +758,13 @@ var_0_2.vs_drag_heroes = {
 	name = "achv_drag_heroes_vs_name",
 	display_completion_ui = true,
 	icon = "drag_heroes",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_drag_heroes_vs_desc"), var_0_41)
 	end,
-	completed = function(arg_56_0, arg_56_1)
+	completed = function (arg_56_0, arg_56_1)
 		return arg_56_0:get_persistent_stat(arg_56_1, "vs_drag_heroes") >= var_0_41
 	end,
-	progress = function(arg_57_0, arg_57_1)
+	progress = function (arg_57_0, arg_57_1)
 		local var_57_0 = math.min(arg_57_0:get_persistent_stat(arg_57_1, "vs_drag_heroes"), var_0_41)
 
 		return {
@@ -788,14 +788,14 @@ for iter_0_3 = 1, #var_0_42 do
 		display_completion_ui = true,
 		group = "vs_gutter_runner_eliminations",
 		name = "achv_gutter_runner_" .. string.format("%02d", iter_0_3) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_gutter_runner_" .. string.format("%02d", iter_0_3) .. "_vs_desc"), var_0_42[iter_0_3])
 		end,
 		icon = "gutter_runner_" .. iter_0_3,
-		completed = function(arg_59_0, arg_59_1)
+		completed = function (arg_59_0, arg_59_1)
 			return arg_59_0:get_persistent_stat(arg_59_1, "eliminations_as_breed", "vs_gutter_runner") >= var_0_42[iter_0_3]
 		end,
-		progress = function(arg_60_0, arg_60_1)
+		progress = function (arg_60_0, arg_60_1)
 			local var_60_0 = var_0_42[iter_0_3]
 			local var_60_1 = math.min(arg_60_0:get_persistent_stat(arg_60_1, "eliminations_as_breed", "vs_gutter_runner"), var_60_0)
 
@@ -814,13 +814,13 @@ var_0_2.vs_pounce_heroes = {
 	display_completion_ui = true,
 	icon = "pounce_heroes",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_pounce_heroes_vs_desc"), var_0_43)
 	end,
 	events = {
 		"register_player_disabled"
 	},
-	on_event = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+	on_event = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -853,10 +853,10 @@ var_0_2.vs_pounce_heroes = {
 			arg_62_0:increment_stat(arg_62_1, "vs_pounce_heroes")
 		end
 	end,
-	completed = function(arg_63_0, arg_63_1)
+	completed = function (arg_63_0, arg_63_1)
 		return arg_63_0:get_persistent_stat(arg_63_1, "vs_pounce_heroes") >= var_0_43
 	end,
-	progress = function(arg_64_0, arg_64_1)
+	progress = function (arg_64_0, arg_64_1)
 		local var_64_0 = math.min(arg_64_0:get_persistent_stat(arg_64_1, "vs_pounce_heroes"), var_0_43)
 
 		return {
@@ -874,7 +874,7 @@ var_0_2.vs_gas_combo_pounce = {
 	events = {
 		"register_player_disabled"
 	},
-	on_event = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+	on_event = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -921,7 +921,7 @@ var_0_2.vs_gas_combo_pounce = {
 			end
 		end
 	end,
-	completed = function(arg_66_0, arg_66_1)
+	completed = function (arg_66_0, arg_66_1)
 		return arg_66_0:get_persistent_stat(arg_66_1, "vs_gas_combo_pounce") >= 1
 	end
 }
@@ -940,14 +940,14 @@ for iter_0_4 = 1, #var_0_44 do
 		display_completion_ui = true,
 		group = "vs_warpfire_thrower_damage",
 		name = "achv_warpfire_thrower_" .. string.format("%02d", iter_0_4) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_warpfire_thrower_" .. string.format("%02d", iter_0_4) .. "_vs_desc"), var_0_44[iter_0_4])
 		end,
 		icon = "warpfire_thrower_" .. iter_0_4,
-		completed = function(arg_68_0, arg_68_1)
+		completed = function (arg_68_0, arg_68_1)
 			return arg_68_0:get_persistent_stat(arg_68_1, "damage_dealt_as_breed", "vs_warpfire_thrower") >= var_0_44[iter_0_4]
 		end,
-		progress = function(arg_69_0, arg_69_1)
+		progress = function (arg_69_0, arg_69_1)
 			local var_69_0 = var_0_44[iter_0_4]
 			local var_69_1 = math.min(arg_69_0:get_persistent_stat(arg_69_1, "damage_dealt_as_breed", "vs_warpfire_thrower"), var_69_0)
 
@@ -985,10 +985,10 @@ var_0_2.vs_push_hero_off_map = {
 		"register_damage",
 		"register_player_disabled"
 	},
-	completed = function(arg_71_0, arg_71_1, arg_71_2)
+	completed = function (arg_71_0, arg_71_1, arg_71_2)
 		return arg_71_0:get_persistent_stat(arg_71_1, "vs_push_hero_off_map") >= 1
 	end,
-	on_event = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
+	on_event = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
 		local var_72_0 = Managers.time:time("game")
 
 		if arg_72_3 == "register_kill" then
@@ -1080,7 +1080,7 @@ var_0_2.vs_kill_hoisted_hero = {
 	events = {
 		"register_kill"
 	},
-	on_event = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
+	on_event = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1117,7 +1117,7 @@ var_0_2.vs_kill_hoisted_hero = {
 			arg_73_0:increment_stat(arg_73_1, "vs_kill_hoisted_hero")
 		end
 	end,
-	completed = function(arg_74_0, arg_74_1)
+	completed = function (arg_74_0, arg_74_1)
 		return arg_74_0:get_persistent_stat(arg_74_1, "vs_kill_hoisted_hero") >= 1
 	end
 }
@@ -1136,14 +1136,14 @@ for iter_0_5 = 1, #var_0_49 do
 		display_completion_ui = true,
 		group = "vs_ratling_gunner_damage",
 		name = "achv_ratling_gunner_" .. string.format("%02d", iter_0_5) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_ratling_gunner_" .. string.format("%02d", iter_0_5) .. "_vs_desc"), var_0_49[iter_0_5])
 		end,
 		icon = "ratling_gunner_" .. iter_0_5,
-		completed = function(arg_76_0, arg_76_1)
+		completed = function (arg_76_0, arg_76_1)
 			return arg_76_0:get_persistent_stat(arg_76_1, "damage_dealt_as_breed", "vs_ratling_gunner") >= var_0_49[iter_0_5]
 		end,
-		progress = function(arg_77_0, arg_77_1)
+		progress = function (arg_77_0, arg_77_1)
 			local var_77_0 = var_0_49[iter_0_5]
 			local var_77_1 = math.min(arg_77_0:get_persistent_stat(arg_77_1, "damage_dealt_as_breed", "vs_ratling_gunner"), var_77_0)
 
@@ -1164,7 +1164,7 @@ var_0_2.vs_break_hero_shield = {
 	events = {
 		"register_block_broken"
 	},
-	on_event = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
+	on_event = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1192,7 +1192,7 @@ var_0_2.vs_break_hero_shield = {
 
 		arg_78_0:increment_stat(arg_78_1, "vs_break_hero_shield")
 	end,
-	completed = function(arg_79_0, arg_79_1)
+	completed = function (arg_79_0, arg_79_1)
 		return arg_79_0:get_persistent_stat(arg_79_1, "vs_break_hero_shield") >= 1
 	end
 }
@@ -1205,7 +1205,7 @@ var_0_2.vs_kill_ko_hero = {
 	events = {
 		"register_kill"
 	},
-	on_event = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+	on_event = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1248,7 +1248,7 @@ var_0_2.vs_kill_ko_hero = {
 			arg_80_0:increment_stat(arg_80_1, "vs_kill_ko_hero")
 		end
 	end,
-	completed = function(arg_81_0, arg_81_1)
+	completed = function (arg_81_0, arg_81_1)
 		return arg_81_0:get_persistent_stat(arg_81_1, "vs_kill_ko_hero") >= 1
 	end
 }
@@ -1267,14 +1267,14 @@ for iter_0_6 = 1, #var_0_50 do
 		display_completion_ui = true,
 		group = "vs_poison_wind_globadier_damage",
 		name = "achv_globadier_" .. string.format("%02d", iter_0_6) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_globadier_" .. string.format("%02d", iter_0_6) .. "_vs_desc"), var_0_50[iter_0_6])
 		end,
 		icon = "globadier_" .. iter_0_6,
-		completed = function(arg_83_0, arg_83_1)
+		completed = function (arg_83_0, arg_83_1)
 			return arg_83_0:get_persistent_stat(arg_83_1, "damage_dealt_as_breed", "vs_poison_wind_globadier") >= var_0_50[iter_0_6]
 		end,
-		progress = function(arg_84_0, arg_84_1)
+		progress = function (arg_84_0, arg_84_1)
 			local var_84_0 = var_0_50[iter_0_6]
 			local var_84_1 = math.min(arg_84_0:get_persistent_stat(arg_84_1, "damage_dealt_as_breed", "vs_poison_wind_globadier"), var_84_0)
 
@@ -1295,7 +1295,7 @@ var_0_2.vs_gas_combo = {
 	events = {
 		"register_damage"
 	},
-	on_event = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+	on_event = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1339,7 +1339,7 @@ var_0_2.vs_gas_combo = {
 			arg_85_0:modify_stat_by_amount(arg_85_1, "vs_gas_combo", var_85_2)
 		end
 	end,
-	completed = function(arg_86_0, arg_86_1)
+	completed = function (arg_86_0, arg_86_1)
 		return arg_86_0:get_persistent_stat(arg_86_1, "vs_gas_combo") >= 1
 	end
 }
@@ -1351,13 +1351,13 @@ var_0_2.vs_globe_damage = {
 	name = "achv_globe_damage_vs_name",
 	display_completion_ui = true,
 	icon = "globadier_damage",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_globe_damage_vs_desc"), var_0_51)
 	end,
 	events = {
 		"register_damage"
 	},
-	on_event = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
+	on_event = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1408,7 +1408,7 @@ var_0_2.vs_globe_damage = {
 
 		arg_88_0:modify_stat_by_amount(arg_88_1, "vs_globe_damage", var_88_2)
 	end,
-	completed = function(arg_89_0, arg_89_1)
+	completed = function (arg_89_0, arg_89_1)
 		return arg_89_0:get_persistent_stat(arg_89_1, "vs_globe_damage") >= var_0_51
 	end
 }
@@ -1425,14 +1425,14 @@ for iter_0_7 = 1, #var_0_52 do
 		display_completion_ui = true,
 		group = "vs_chaos_troll_damage",
 		name = "achv_bile_troll_" .. string.format("%02d", iter_0_7) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_bile_troll_" .. string.format("%02d", iter_0_7) .. "_vs_desc"), var_0_52[iter_0_7])
 		end,
 		icon = "bile_troll_" .. iter_0_7,
-		completed = function(arg_91_0, arg_91_1)
+		completed = function (arg_91_0, arg_91_1)
 			return arg_91_0:get_persistent_stat(arg_91_1, "damage_dealt_as_breed", "vs_chaos_troll") >= var_0_52[iter_0_7]
 		end,
-		progress = function(arg_92_0, arg_92_1)
+		progress = function (arg_92_0, arg_92_1)
 			local var_92_0 = var_0_52[iter_0_7]
 			local var_92_1 = math.min(arg_92_0:get_persistent_stat(arg_92_1, "damage_dealt_as_breed", "vs_chaos_troll"), var_92_0)
 
@@ -1451,13 +1451,13 @@ var_0_2.vs_bile_troll_vomit = {
 	display_completion_ui = true,
 	icon = "bile_troll_vomit",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_bile_troll_vomit_vs_desc"), var_0_53)
 	end,
 	events = {
 		"on_troll_vomit_hit"
 	},
-	on_event = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+	on_event = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1485,10 +1485,10 @@ var_0_2.vs_bile_troll_vomit = {
 
 		arg_94_0:increment_stat(arg_94_1, "vs_bile_troll_vomit")
 	end,
-	completed = function(arg_95_0, arg_95_1)
+	completed = function (arg_95_0, arg_95_1)
 		return arg_95_0:get_persistent_stat(arg_95_1, "vs_bile_troll_vomit") >= var_0_53
 	end,
-	progress = function(arg_96_0, arg_96_1)
+	progress = function (arg_96_0, arg_96_1)
 		local var_96_0 = math.min(arg_96_0:get_persistent_stat(arg_96_1, "vs_bile_troll_vomit"), var_0_53)
 
 		return {
@@ -1510,14 +1510,14 @@ for iter_0_8 = 1, #var_0_54 do
 		display_completion_ui = true,
 		group = "vs_rat_ogre_damage",
 		name = "achv_rat_ogre_" .. string.format("%02d", iter_0_8) .. "_vs_name",
-		desc = function()
+		desc = function ()
 			return string.format(Localize("achv_rat_ogre_" .. string.format("%02d", iter_0_8) .. "_vs_desc"), var_0_54[iter_0_8])
 		end,
 		icon = "rat_ogre_" .. iter_0_8,
-		completed = function(arg_98_0, arg_98_1)
+		completed = function (arg_98_0, arg_98_1)
 			return arg_98_0:get_persistent_stat(arg_98_1, "damage_dealt_as_breed", "vs_rat_ogre") >= var_0_54[iter_0_8]
 		end,
-		progress = function(arg_99_0, arg_99_1)
+		progress = function (arg_99_0, arg_99_1)
 			local var_99_0 = var_0_54[iter_0_8]
 			local var_99_1 = math.min(arg_99_0:get_persistent_stat(arg_99_1, "damage_dealt_as_breed", "vs_rat_ogre"), var_99_0)
 
@@ -1536,13 +1536,13 @@ var_0_2.vs_rat_ogre_hit_heroes_heavy = {
 	display_completion_ui = true,
 	icon = "rat_ogre_attack",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_rat_ogre_hit_heroes_vs_desc"), var_0_55)
 	end,
 	events = {
 		"on_hit"
 	},
-	on_event = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4)
+	on_event = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1585,10 +1585,10 @@ var_0_2.vs_rat_ogre_hit_heroes_heavy = {
 
 		arg_101_0:increment_stat(arg_101_1, "vs_rat_ogre_hit_heroes_heavy")
 	end,
-	completed = function(arg_102_0, arg_102_1)
+	completed = function (arg_102_0, arg_102_1)
 		return arg_102_0:get_persistent_stat(arg_102_1, "vs_rat_ogre_hit_heroes_heavy") >= var_0_55
 	end,
-	progress = function(arg_103_0, arg_103_1)
+	progress = function (arg_103_0, arg_103_1)
 		local var_103_0 = math.min(arg_103_0:get_persistent_stat(arg_103_1, "vs_rat_ogre_hit_heroes_heavy"), var_0_55)
 
 		return {
@@ -1605,13 +1605,13 @@ var_0_2.vs_rat_ogre_hit_leap = {
 	display_completion_ui = true,
 	icon = "rat_ogre_leap",
 	required_dlc = "carousel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_rat_ogre_leap_vs_desc"), var_0_56)
 	end,
 	events = {
 		"on_hit"
 	},
-	on_event = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+	on_event = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
 		if Managers.mechanism:current_mechanism_name() ~= "versus" then
 			return
 		end
@@ -1643,10 +1643,10 @@ var_0_2.vs_rat_ogre_hit_leap = {
 
 		arg_105_0:increment_stat(arg_105_1, "vs_rat_ogre_hit_leap")
 	end,
-	completed = function(arg_106_0, arg_106_1)
+	completed = function (arg_106_0, arg_106_1)
 		return arg_106_0:get_persistent_stat(arg_106_1, "vs_rat_ogre_hit_leap") >= var_0_56
 	end,
-	progress = function(arg_107_0, arg_107_1)
+	progress = function (arg_107_0, arg_107_1)
 		local var_107_0 = math.min(arg_107_0:get_persistent_stat(arg_107_1, "vs_rat_ogre_hit_leap"), var_0_56)
 
 		return {

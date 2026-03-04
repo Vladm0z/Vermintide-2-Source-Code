@@ -8,19 +8,19 @@ ATTEMPT_RESOLUTION_PRIVILEGES = ATTEMPT_RESOLUTION_PRIVILEGES or {}
 XBOX_PRIVILEGE_LUT = XBOX_PRIVILEGE_LUT or {}
 PRIVILEGES_ERROR_CODES = PRIVILEGES_ERROR_CODES or {}
 
-function XboxUserPrivileges.init(arg_1_0)
+XboxUserPrivileges.init = function (arg_1_0)
 	arg_1_0:reset()
 	arg_1_0:_setup_lookup_tables()
 end
 
-function XboxUserPrivileges.reset(arg_2_0)
+XboxUserPrivileges.reset = function (arg_2_0)
 	arg_2_0._current_users = {}
 	arg_2_0._initialized = false
 	arg_2_0._has_error = nil
 	arg_2_0._check_privilege_cb = {}
 end
 
-function XboxUserPrivileges.add_user(arg_3_0, arg_3_1)
+XboxUserPrivileges.add_user = function (arg_3_0, arg_3_1)
 	arg_3_0:reset()
 
 	arg_3_0._current_users[arg_3_1] = {}
@@ -46,7 +46,7 @@ function XboxUserPrivileges.add_user(arg_3_0, arg_3_1)
 	end
 end
 
-function XboxUserPrivileges.get_privilege_async(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+XboxUserPrivileges.get_privilege_async = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not arg_4_0._current_users[arg_4_1] then
 		fassert(false, "ERROR ERROR")
 
@@ -64,7 +64,7 @@ function XboxUserPrivileges.get_privilege_async(arg_4_0, arg_4_1, arg_4_2, arg_4
 	end
 end
 
-function XboxUserPrivileges.update_privilege(arg_5_0, arg_5_1, arg_5_2)
+XboxUserPrivileges.update_privilege = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0
 
 	for iter_5_0, iter_5_1 in pairs(XBOX_PRIVILEGE_LUT) do
@@ -97,7 +97,7 @@ function XboxUserPrivileges.update_privilege(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function XboxUserPrivileges.cb_user_privilege_done(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+XboxUserPrivileges.cb_user_privilege_done = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_4.error then
 		Application.error(string.format("[XboxUserPrivileges] Something went wrong when trying to fetch privilege [%s] for User [%s]. Error: %s", XBOX_PRIVILEGE_LUT[arg_6_2] or "unknown", tostring(arg_6_1), PRIVILEGES_ERROR_CODES[arg_6_4.error] or "UNKNOWN"))
 
@@ -128,7 +128,7 @@ function XboxUserPrivileges.cb_user_privilege_done(arg_6_0, arg_6_1, arg_6_2, ar
 	end
 end
 
-function XboxUserPrivileges.has_privilege(arg_7_0, arg_7_1, arg_7_2)
+XboxUserPrivileges.has_privilege = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1 and arg_7_0._current_users[arg_7_1] then
 		return arg_7_0._current_users[arg_7_1][arg_7_2]
 	else
@@ -136,7 +136,7 @@ function XboxUserPrivileges.has_privilege(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function XboxUserPrivileges.is_initialized(arg_8_0)
+XboxUserPrivileges.is_initialized = function (arg_8_0)
 	if arg_8_0._initialized then
 		return true
 	else
@@ -159,11 +159,11 @@ function XboxUserPrivileges.is_initialized(arg_8_0)
 	end
 end
 
-function XboxUserPrivileges.has_error(arg_9_0)
+XboxUserPrivileges.has_error = function (arg_9_0)
 	return arg_9_0._has_error
 end
 
-function XboxUserPrivileges._setup_lookup_tables(arg_10_0)
+XboxUserPrivileges._setup_lookup_tables = function (arg_10_0)
 	XBOX_PRIVILEGE_LUT[UserPrivilege.ADD_FRIEND] = "ADD_FRIEND"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.BROADCAST] = "BROADCAST"
 	XBOX_PRIVILEGE_LUT[UserPrivilege.CLOUD_GAMING_JOIN_SESSION] = "CLOUD_GAMING_JOIN_SESSION"

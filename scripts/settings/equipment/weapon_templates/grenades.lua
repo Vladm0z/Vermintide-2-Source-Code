@@ -16,7 +16,7 @@ var_0_0.actions = {
 			block_pickup = true,
 			uninterruptible = true,
 			anim_event = "grenade_charge",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 				return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 			end,
 			total_time = math.huge,
@@ -70,7 +70,7 @@ var_0_0.actions = {
 			throw_offset_length_in_target_direction = 0.1,
 			anim_event = "attack_throw",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 				return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 			end,
 			throw_offset = Vector3Box(0, 0, 0.9),
@@ -155,7 +155,7 @@ var_0_1.actions = {
 			block_pickup = true,
 			uninterruptible = true,
 			anim_event = "grenade_charge",
-			anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 				return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 			end,
 			total_time = math.huge,
@@ -208,7 +208,7 @@ var_0_1.actions = {
 			throw_offset_length_in_target_direction = 0.1,
 			anim_event = "attack_throw",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 			end,
 			throw_offset = Vector3Box(0, 0, 0.1),

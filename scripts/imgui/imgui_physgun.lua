@@ -14,13 +14,13 @@ end
 
 ImguiPhysgun = class(ImguiPhysgun)
 
-function ImguiPhysgun.init(arg_2_0)
+ImguiPhysgun.init = function (arg_2_0)
 	arg_2_0._delayed_initialization_done = false
 	arg_2_0._camera_locked = false
 	arg_2_0._is_rotating = false
 end
 
-function ImguiPhysgun._delayed_initialization(arg_3_0)
+ImguiPhysgun._delayed_initialization = function (arg_3_0)
 	local var_3_0 = Managers.state and Managers.state.entity:system("ai_system")
 
 	if not var_3_0 then
@@ -38,11 +38,11 @@ function ImguiPhysgun._delayed_initialization(arg_3_0)
 	arg_3_0._delayed_initialization_done = true
 end
 
-function ImguiPhysgun.is_persistent(arg_4_0)
+ImguiPhysgun.is_persistent = function (arg_4_0)
 	return true
 end
 
-function ImguiPhysgun.destroy_gui(arg_5_0)
+ImguiPhysgun.destroy_gui = function (arg_5_0)
 	local var_5_0 = arg_5_0._world
 	local var_5_1 = arg_5_0._gui_navmesh
 
@@ -53,7 +53,7 @@ function ImguiPhysgun.destroy_gui(arg_5_0)
 	end
 end
 
-function ImguiPhysgun.destroy(arg_6_0)
+ImguiPhysgun.destroy = function (arg_6_0)
 	local var_6_0 = arg_6_0._world
 
 	if var_6_0 then
@@ -70,7 +70,7 @@ function ImguiPhysgun.destroy(arg_6_0)
 	arg_6_0:set_camera_lock(false)
 end
 
-function ImguiPhysgun.get_player_pos_rot(arg_7_0)
+ImguiPhysgun.get_player_pos_rot = function (arg_7_0)
 	local var_7_0 = Managers.player:local_player()
 	local var_7_1 = var_7_0 and var_7_0.player_unit
 
@@ -93,7 +93,7 @@ local function var_0_7(arg_9_0)
 	return string.gsub(arg_9_0, ".", var_0_6)
 end
 
-function ImguiPhysgun.show_unit_info(arg_10_0, arg_10_1)
+ImguiPhysgun.show_unit_info = function (arg_10_0, arg_10_1)
 	local var_10_0 = var_0_4
 
 	var_0_5("ID string", "%s", var_10_0.id_string(arg_10_1))
@@ -112,7 +112,7 @@ end
 
 local function var_0_8(arg_11_0)
 	return setmetatable({}, {
-		__index = function(arg_12_0, arg_12_1)
+		__index = function (arg_12_0, arg_12_1)
 			local var_12_0 = arg_11_0.button_index(arg_12_1)
 			local var_12_1 = "pressed"
 
@@ -152,7 +152,7 @@ local var_0_11 = {
 	rotate = var_0_10.right,
 	arcball = var_0_9.e,
 	generate_navmesh = var_0_9.f1,
-	wheel = function(arg_14_0)
+	wheel = function (arg_14_0)
 		return var_0_10.wheel("axis").y
 	end,
 	spawn_seedpoint = var_0_9.f,
@@ -164,7 +164,7 @@ local function var_0_12(arg_15_0, arg_15_1)
 	return var_0_11[arg_15_0](arg_15_1)
 end
 
-function ImguiPhysgun.set_camera_lock(arg_16_0, arg_16_1)
+ImguiPhysgun.set_camera_lock = function (arg_16_0, arg_16_1)
 	if arg_16_1 ~= arg_16_0._camera_locked then
 		if arg_16_1 then
 			Managers.input:capture_input(ALL_INPUT_METHODS, 1, "imgui", "ImguiManager")
@@ -177,7 +177,7 @@ function ImguiPhysgun.set_camera_lock(arg_16_0, arg_16_1)
 	end
 end
 
-function ImguiPhysgun.can_grab(arg_17_0, arg_17_1)
+ImguiPhysgun.can_grab = function (arg_17_0, arg_17_1)
 	if not arg_17_1 then
 		return false, "actor is nil"
 	end
@@ -191,7 +191,7 @@ function ImguiPhysgun.can_grab(arg_17_0, arg_17_1)
 	return true
 end
 
-function ImguiPhysgun.grab_begin(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+ImguiPhysgun.grab_begin = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = Actor.unit(arg_18_3)
 	local var_18_1 = var_0_4.local_position(var_18_0, 0)
 	local var_18_2 = var_0_4.local_rotation(var_18_0, 0)
@@ -226,7 +226,7 @@ function ImguiPhysgun.grab_begin(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 	end
 end
 
-function ImguiPhysgun.grab_end(arg_19_0)
+ImguiPhysgun.grab_end = function (arg_19_0)
 	arg_19_0._physgun_unit = nil
 	arg_19_0._physgun_actor = nil
 	arg_19_0._physgun_pos = nil
@@ -250,7 +250,7 @@ local function var_0_13()
 	return var_0_0(var_20_4, var_20_5, var_20_6 < 0.5 and math.sqrt(1 - var_20_6) or 0.5 / math.sqrt(var_20_6))
 end
 
-function ImguiPhysgun.grab_update(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+ImguiPhysgun.grab_update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0._physgun_unit
 	local var_21_1 = arg_21_0._physgun_actor
 	local var_21_2 = arg_21_0._physgun_pos:unbox()
@@ -359,11 +359,11 @@ function ImguiPhysgun.grab_update(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	arg_21_0:laser_update(arg_21_3)
 end
 
-function ImguiPhysgun.laser_update(arg_22_0, arg_22_1)
+ImguiPhysgun.laser_update = function (arg_22_0, arg_22_1)
 	return
 end
 
-function ImguiPhysgun.do_grab(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+ImguiPhysgun.do_grab = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	if not arg_23_0._physgun_actor then
 		local var_23_0 = var_0_12("rotate", "held")
 
@@ -394,7 +394,7 @@ function ImguiPhysgun.do_grab(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, 
 	end
 end
 
-function ImguiPhysgun.on_hide(arg_24_0)
+ImguiPhysgun.on_hide = function (arg_24_0)
 	if arg_24_0._delayed_initialization_done then
 		local var_24_0 = arg_24_0._line_object
 
@@ -405,13 +405,13 @@ end
 
 local var_0_14 = true
 
-function ImguiPhysgun.update(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+ImguiPhysgun.update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	if var_0_14 then
 		var_0_14 = arg_25_0:init()
 	end
 end
 
-function ImguiPhysgun.draw(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+ImguiPhysgun.draw = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if not arg_26_0._delayed_initialization_done then
 		arg_26_0:_delayed_initialization()
 	end
@@ -441,7 +441,7 @@ function ImguiPhysgun.draw(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 
 				var_26_10 = nil
 			elseif var_0_12("spawn_cylinder") then
-				-- block empty
+				-- Nothing
 			end
 		end
 

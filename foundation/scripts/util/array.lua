@@ -456,14 +456,14 @@ local function var_0_36(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37
 end
 
 local var_0_37 = {
-	function(arg_38_0, arg_38_1)
+	function (arg_38_0, arg_38_1)
 		local var_38_0 = arg_38_0[1]
 		local var_38_1 = arg_38_0[2]
 
 		var_38_0[var_38_1 + 1] = arg_38_1[1]
 		arg_38_0[2] = var_38_1 + 1
 	end,
-	function(arg_39_0, arg_39_1)
+	function (arg_39_0, arg_39_1)
 		local var_39_0 = arg_39_0[1]
 		local var_39_1 = arg_39_0[2]
 
@@ -471,7 +471,7 @@ local var_0_37 = {
 		var_39_0[var_39_1 + 2] = arg_39_1[2]
 		arg_39_0[2] = var_39_1 + 2
 	end,
-	function(arg_40_0, arg_40_1)
+	function (arg_40_0, arg_40_1)
 		local var_40_0 = arg_40_0[1]
 		local var_40_1 = arg_40_0[2]
 
@@ -480,7 +480,7 @@ local var_0_37 = {
 		var_40_0[var_40_1 + 3] = arg_40_1[3]
 		arg_40_0[2] = var_40_1 + 3
 	end,
-	function(arg_41_0, arg_41_1)
+	function (arg_41_0, arg_41_1)
 		local var_41_0 = arg_41_0[1]
 		local var_41_1 = arg_41_0[2]
 
@@ -490,7 +490,7 @@ local var_0_37 = {
 		var_41_0[var_41_1 + 4] = arg_41_1[4]
 		arg_41_0[2] = var_41_1 + 4
 	end,
-	function(arg_42_0, arg_42_1)
+	function (arg_42_0, arg_42_1)
 		local var_42_0 = arg_42_0[1]
 		local var_42_1 = arg_42_0[2]
 
@@ -501,7 +501,7 @@ local var_0_37 = {
 		var_42_0[var_42_1 + 5] = arg_42_1[5]
 		arg_42_0[2] = var_42_1 + 5
 	end,
-	function(arg_43_0, arg_43_1)
+	function (arg_43_0, arg_43_1)
 		local var_43_0 = arg_43_0[1]
 		local var_43_1 = arg_43_0[2]
 
@@ -513,7 +513,7 @@ local var_0_37 = {
 		var_43_0[var_43_1 + 6] = arg_43_1[6]
 		arg_43_0[2] = var_43_1 + 6
 	end,
-	function(arg_44_0, arg_44_1)
+	function (arg_44_0, arg_44_1)
 		local var_44_0 = arg_44_0[1]
 		local var_44_1 = arg_44_0[2]
 
@@ -526,7 +526,7 @@ local var_0_37 = {
 		var_44_0[var_44_1 + 7] = arg_44_1[7]
 		arg_44_0[2] = var_44_1 + 7
 	end,
-	function(arg_45_0, arg_45_1)
+	function (arg_45_0, arg_45_1)
 		local var_45_0 = arg_45_0[1]
 		local var_45_1 = arg_45_0[2]
 

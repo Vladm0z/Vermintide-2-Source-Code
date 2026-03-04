@@ -28,14 +28,14 @@ EnemyCharacterStateFalling = class(EnemyCharacterStateFalling, EnemyCharacterSta
 
 local var_0_1 = POSITION_LOOKUP
 
-function EnemyCharacterStateFalling.init(arg_1_0, arg_1_1)
+EnemyCharacterStateFalling.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "falling")
 
 	arg_1_0.last_valid_nav_position = Vector3Box()
 	arg_1_0.shaking_ladder_unit = false
 end
 
-function EnemyCharacterStateFalling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateFalling.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.falling_reason = arg_2_6
 
 	local var_2_0 = arg_2_0._input_extension
@@ -78,7 +78,7 @@ end
 local var_0_2 = 7
 local var_0_3 = 1
 
-function EnemyCharacterStateFalling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+EnemyCharacterStateFalling.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if not Managers.state.network:game() or not arg_3_6 then
 		return
 	end
@@ -128,7 +128,7 @@ function EnemyCharacterStateFalling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	end
 end
 
-function EnemyCharacterStateFalling.common_movement(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+EnemyCharacterStateFalling.common_movement = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0._locomotion_extension
 	local var_4_1 = arg_4_0._first_person_extension
 	local var_4_2 = arg_4_0._breed
@@ -209,7 +209,7 @@ function EnemyCharacterStateFalling.common_movement(arg_4_0, arg_4_1, arg_4_2, a
 	CharacterStateHelper.look(var_4_5, arg_4_0._player.viewport_name, arg_4_0._first_person_extension, var_4_6, arg_4_0._inventory_extension)
 end
 
-function EnemyCharacterStateFalling.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+EnemyCharacterStateFalling.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._ghost_mode_extension:is_in_ghost_mode()
 	local var_5_1 = arg_5_0:common_movement(var_5_0, arg_5_3, arg_5_1)
 end

@@ -187,7 +187,7 @@ local var_0_0 = {
 
 EntitySystem = class(EntitySystem)
 
-function EntitySystem.init(arg_1_0, arg_1_1)
+EntitySystem.init = function (arg_1_0, arg_1_1)
 	assert(arg_1_1.entity_manager, "Entity Manager is missing!")
 	assert(arg_1_1.world, "World is missing!")
 	assert(arg_1_1.unit_spawner, "Unit Spawner is missing!")
@@ -207,7 +207,7 @@ function EntitySystem.init(arg_1_0, arg_1_1)
 	arg_1_0:_init_systems(arg_1_1)
 end
 
-function EntitySystem._init_systems(arg_2_0, arg_2_1)
+EntitySystem._init_systems = function (arg_2_0, arg_2_1)
 	local var_2_0 = false
 	local var_2_1 = true
 	local var_2_2 = true
@@ -438,11 +438,11 @@ function EntitySystem._init_systems(arg_2_0, arg_2_1)
 	end
 end
 
-function EntitySystem.register_system(arg_3_0, arg_3_1, arg_3_2, ...)
+EntitySystem.register_system = function (arg_3_0, arg_3_1, arg_3_2, ...)
 	return
 end
 
-function EntitySystem._add_system(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
+EntitySystem._add_system = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
 	if DEDICATED_SERVER and arg_4_8 then
 		local var_4_0 = arg_4_2.system_extensions or {}
 
@@ -474,27 +474,27 @@ function EntitySystem._add_system(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, a
 	end
 end
 
-function EntitySystem.pre_update(arg_5_0, arg_5_1)
+EntitySystem.pre_update = function (arg_5_0, arg_5_1)
 	arg_5_0:system_update("pre_update", arg_5_1)
 end
 
-function EntitySystem.update(arg_6_0, arg_6_1)
+EntitySystem.update = function (arg_6_0, arg_6_1)
 	arg_6_0:system_update("update", arg_6_1)
 end
 
-function EntitySystem.unsafe_entity_update(arg_7_0, arg_7_1)
+EntitySystem.unsafe_entity_update = function (arg_7_0, arg_7_1)
 	arg_7_0:system_update("unsafe_entity_update", arg_7_1)
 end
 
-function EntitySystem.post_update(arg_8_0, arg_8_1)
+EntitySystem.post_update = function (arg_8_0, arg_8_1)
 	arg_8_0:system_update("post_update", arg_8_1)
 end
 
-function EntitySystem.physics_async_update(arg_9_0)
+EntitySystem.physics_async_update = function (arg_9_0)
 	arg_9_0:system_update("physics_async_update", arg_9_0.system_update_context.dt)
 end
 
-function EntitySystem.system_update(arg_10_0, arg_10_1, arg_10_2)
+EntitySystem.system_update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.system_update_context
 
 	var_10_0.world = arg_10_0.world
@@ -512,7 +512,7 @@ function EntitySystem.system_update(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.entity_system_bag:update(var_10_0, arg_10_1)
 end
 
-function EntitySystem.commit_and_remove_pending_units(arg_11_0)
+EntitySystem.commit_and_remove_pending_units = function (arg_11_0)
 	local var_11_0 = arg_11_0.unit_spawner
 
 	var_11_0.locked = false
@@ -522,11 +522,11 @@ function EntitySystem.commit_and_remove_pending_units(arg_11_0)
 	var_11_0.locked = true
 end
 
-function EntitySystem.hot_join_sync(arg_12_0, arg_12_1)
+EntitySystem.hot_join_sync = function (arg_12_0, arg_12_1)
 	arg_12_0.entity_system_bag:hot_join_sync(arg_12_1)
 end
 
-function EntitySystem.destroy(arg_13_0)
+EntitySystem.destroy = function (arg_13_0)
 	local var_13_0 = World.units(arg_13_0.world)
 
 	arg_13_0.entity_manager:unregister_units(var_13_0, #var_13_0)

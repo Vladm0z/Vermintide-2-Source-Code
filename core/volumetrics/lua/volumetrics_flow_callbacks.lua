@@ -2,7 +2,7 @@
 
 VolumetricsFlowCallbacks = VolumetricsFlowCallbacks or {}
 
-function VolumetricsFlowCallbacks.register_fog_volume(arg_1_0)
+VolumetricsFlowCallbacks.register_fog_volume = function (arg_1_0)
 	local var_1_0 = arg_1_0.unit
 	local var_1_1 = stingray.Unit.get_data(var_1_0, "FogProperties", "albedo", 0)
 	local var_1_2 = stingray.Unit.get_data(var_1_0, "FogProperties", "albedo", 1)
@@ -20,7 +20,7 @@ function VolumetricsFlowCallbacks.register_fog_volume(arg_1_0)
 	end
 end
 
-function VolumetricsFlowCallbacks.unregister_fog_volume(arg_2_0)
+VolumetricsFlowCallbacks.unregister_fog_volume = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 
 	if var_2_0 then
@@ -28,7 +28,7 @@ function VolumetricsFlowCallbacks.unregister_fog_volume(arg_2_0)
 	end
 end
 
-function VolumetricsFlowCallbacks.register_fog_volume_manual(arg_3_0)
+VolumetricsFlowCallbacks.register_fog_volume_manual = function (arg_3_0)
 	local var_3_0 = arg_3_0.unit
 
 	if var_3_0 then
@@ -36,7 +36,7 @@ function VolumetricsFlowCallbacks.register_fog_volume_manual(arg_3_0)
 	end
 end
 
-function VolumetricsFlowCallbacks.update_fog_volume(arg_4_0)
+VolumetricsFlowCallbacks.update_fog_volume = function (arg_4_0)
 	local var_4_0 = arg_4_0.unit
 
 	if var_4_0 then

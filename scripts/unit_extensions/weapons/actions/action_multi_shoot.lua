@@ -5,7 +5,7 @@ ActionMultiShoot = class(ActionMultiShoot, ActionShotgun)
 local var_0_0 = Unit.set_flow_variable
 local var_0_1 = Unit.flow_event
 
-function ActionMultiShoot._use_ammo(arg_1_0)
+ActionMultiShoot._use_ammo = function (arg_1_0)
 	local var_1_0 = arg_1_0.current_action
 	local var_1_1 = arg_1_0.ammo_extension
 	local var_1_2 = var_1_0.ammo_usage
@@ -23,7 +23,7 @@ function ActionMultiShoot._use_ammo(arg_1_0)
 	arg_1_0._num_shots_total = var_1_3
 end
 
-function ActionMultiShoot._get_barrel_data(arg_2_0, arg_2_1)
+ActionMultiShoot._get_barrel_data = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.current_action.barrels
 	local var_2_1 = 0
 
@@ -40,7 +40,7 @@ function ActionMultiShoot._get_barrel_data(arg_2_0, arg_2_1)
 	return var_2_0[1]
 end
 
-function ActionMultiShoot._get_total_shots(arg_3_0)
+ActionMultiShoot._get_total_shots = function (arg_3_0)
 	local var_3_0 = 0
 	local var_3_1 = arg_3_0.current_action.barrels
 
@@ -51,7 +51,7 @@ function ActionMultiShoot._get_total_shots(arg_3_0)
 	return var_3_0
 end
 
-function ActionMultiShoot._combine_rotations(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ActionMultiShoot._combine_rotations = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = Quaternion(Vector3.up(), arg_4_1)
 	local var_4_1 = Quaternion(Vector3.right(), arg_4_2)
 	local var_4_2 = Quaternion.multiply(arg_4_3, var_4_0)
@@ -59,7 +59,7 @@ function ActionMultiShoot._combine_rotations(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return (Quaternion.multiply(var_4_2, var_4_1))
 end
 
-function ActionMultiShoot._get_spread_rotation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionMultiShoot._get_spread_rotation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.spread_extension
 
 	if var_5_0 then
@@ -74,7 +74,7 @@ function ActionMultiShoot._get_spread_rotation(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	end
 end
 
-function ActionMultiShoot._shoot(arg_6_0, arg_6_1, arg_6_2)
+ActionMultiShoot._shoot = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.current_action
 	local var_6_1 = arg_6_0._fire_position:unbox()
 	local var_6_2 = arg_6_0._fire_rotation:unbox()
@@ -120,7 +120,7 @@ function ActionMultiShoot._shoot(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._check_buffs = var_6_5
 end
 
-function ActionMultiShoot.finish(arg_7_0, arg_7_1)
+ActionMultiShoot.finish = function (arg_7_0, arg_7_1)
 	ActionMultiShoot.super.finish(arg_7_0, arg_7_1)
 
 	local var_7_0 = arg_7_0.ammo_extension

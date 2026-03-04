@@ -2,17 +2,17 @@
 
 SimplePopup = class(SimplePopup)
 
-function SimplePopup.init(arg_1_0)
+SimplePopup.init = function (arg_1_0)
 	arg_1_0._tracked_popups = {}
 end
 
-function SimplePopup.queue_popup(arg_2_0, arg_2_1, arg_2_2, ...)
+SimplePopup.queue_popup = function (arg_2_0, arg_2_1, arg_2_2, ...)
 	local var_2_0 = Managers.popup:queue_popup(arg_2_1, arg_2_2, ...)
 
 	arg_2_0._tracked_popups[#arg_2_0._tracked_popups + 1] = var_2_0
 end
 
-function SimplePopup.update(arg_3_0, arg_3_1)
+SimplePopup.update = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.popup
 	local var_3_1 = arg_3_0._tracked_popups[1]
 
@@ -27,6 +27,6 @@ function SimplePopup.update(arg_3_0, arg_3_1)
 	end
 end
 
-function SimplePopup.destroy(arg_4_0)
+SimplePopup.destroy = function (arg_4_0)
 	return
 end

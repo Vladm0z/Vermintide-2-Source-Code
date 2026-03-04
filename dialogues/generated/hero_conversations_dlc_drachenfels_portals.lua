@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_drachenfels_portals.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_portals_conversation_eight_01",

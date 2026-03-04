@@ -213,7 +213,7 @@ local function var_0_9(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return not arg_2_0.warning
 					end
 				},
@@ -221,7 +221,7 @@ local function var_0_9(arg_1_0)
 					style_id = "text_warning",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.warning
 					end
 				},
@@ -233,21 +233,21 @@ local function var_0_9(arg_1_0)
 				{
 					style_id = "text_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.draw_background
 					end
 				},
 				{
 					style_id = "text_bg_2",
 					pass_type = "rect",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.draw_background
 					end
 				},
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.is_hover and arg_6_0.item
 					end
 				}
@@ -414,15 +414,15 @@ local var_0_12 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 
 				arg_8_4.render_settings.alpha_multiplier = var_8_0
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -432,15 +432,15 @@ local var_0_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				arg_10_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 
 				arg_11_4.render_settings.alpha_multiplier = 1 - var_11_0
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		}

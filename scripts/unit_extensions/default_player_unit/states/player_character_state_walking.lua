@@ -2,7 +2,7 @@
 
 PlayerCharacterStateWalking = class(PlayerCharacterStateWalking, PlayerCharacterState)
 
-function PlayerCharacterStateWalking.init(arg_1_0, arg_1_1)
+PlayerCharacterStateWalking.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "walking")
 
 	arg_1_0.current_movement_speed_scale = 0
@@ -10,7 +10,7 @@ function PlayerCharacterStateWalking.init(arg_1_0, arg_1_1)
 	arg_1_0.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-function PlayerCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateWalking.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.input_extension
 	local var_2_1 = arg_2_0.first_person_extension
 	local var_2_2 = arg_2_0.status_extension
@@ -55,13 +55,13 @@ function PlayerCharacterStateWalking.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	arg_2_0.is_bot = var_2_7
 end
 
-function PlayerCharacterStateWalking.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateWalking.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.first_person_extension
 
 	CharacterStateHelper.play_animation_event_first_person(var_3_0, "idle")
 end
 
-function PlayerCharacterStateWalking._handle_ladder_collision(arg_4_0, arg_4_1, arg_4_2)
+PlayerCharacterStateWalking._handle_ladder_collision = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.unit
 	local var_4_1 = arg_4_0.status_extension
 	local var_4_2 = arg_4_0.first_person_extension
@@ -115,7 +115,7 @@ function PlayerCharacterStateWalking._handle_ladder_collision(arg_4_0, arg_4_1, 
 	end
 end
 
-function PlayerCharacterStateWalking.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateWalking.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.world
 	local var_5_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)

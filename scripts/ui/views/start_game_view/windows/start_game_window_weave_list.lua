@@ -13,7 +13,7 @@ local var_0_8 = true
 StartGameWindowWeaveList = class(StartGameWindowWeaveList)
 StartGameWindowWeaveList.NAME = "StartGameWindowWeaveList"
 
-function StartGameWindowWeaveList.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowWeaveList.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveList")
 
 	arg_1_0._params = arg_1_1
@@ -47,7 +47,7 @@ function StartGameWindowWeaveList.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent:change_generic_actions("default_weave")
 end
 
-function StartGameWindowWeaveList._setup_definitions(arg_2_0, arg_2_1)
+StartGameWindowWeaveList._setup_definitions = function (arg_2_0, arg_2_1)
 	if arg_2_1.use_gamepad_layout or not IS_WINDOWS then
 		var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_list_console_definitions")
 	else
@@ -63,7 +63,7 @@ function StartGameWindowWeaveList._setup_definitions(arg_2_0, arg_2_1)
 	var_0_7 = var_0_0.num_visible_weave_entries
 end
 
-function StartGameWindowWeaveList._start_transition_animation(arg_3_0, arg_3_1)
+StartGameWindowWeaveList._start_transition_animation = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		render_settings = arg_3_0._render_settings
 	}
@@ -73,7 +73,7 @@ function StartGameWindowWeaveList._start_transition_animation(arg_3_0, arg_3_1)
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-function StartGameWindowWeaveList._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowWeaveList._create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	var_0_8 = false
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
@@ -97,14 +97,14 @@ function StartGameWindowWeaveList._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._ui_animator = UIAnimator:new(arg_4_0.ui_scenegraph, var_0_3)
 end
 
-function StartGameWindowWeaveList.on_exit(arg_5_0, arg_5_1)
+StartGameWindowWeaveList.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveList")
 
 	arg_5_0._ui_animator = nil
 	arg_5_0._params.selected_weave_template = nil
 end
 
-function StartGameWindowWeaveList.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowWeaveList.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_8 then
 		arg_6_0:_setup_definitions(arg_6_0._params)
 		arg_6_0:_create_ui_elements()
@@ -121,7 +121,7 @@ function StartGameWindowWeaveList.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowWeaveList._can_play(arg_7_0)
+StartGameWindowWeaveList._can_play = function (arg_7_0)
 	if not (arg_7_0._selected_weave_name ~= nil) then
 		return false
 	end
@@ -131,13 +131,13 @@ function StartGameWindowWeaveList._can_play(arg_7_0)
 	return not var_7_0 or not var_7_0.content.locked
 end
 
-function StartGameWindowWeaveList._can_set_next_weave(arg_8_0)
+StartGameWindowWeaveList._can_set_next_weave = function (arg_8_0)
 	local var_8_0 = arg_8_0._next_weave_widget.content.weave_template_name
 
 	return arg_8_0._selected_weave_name ~= var_8_0
 end
 
-function StartGameWindowWeaveList._update_can_play(arg_9_0)
+StartGameWindowWeaveList._update_can_play = function (arg_9_0)
 	local var_9_0 = Managers.matchmaking:is_game_matchmaking()
 	local var_9_1 = arg_9_0:_can_play()
 	local var_9_2 = arg_9_0:_can_set_next_weave()
@@ -173,11 +173,11 @@ function StartGameWindowWeaveList._update_can_play(arg_9_0)
 	end
 end
 
-function StartGameWindowWeaveList.post_update(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowWeaveList.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function StartGameWindowWeaveList._update_animations(arg_11_0, arg_11_1)
+StartGameWindowWeaveList._update_animations = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._animations
 	local var_11_1 = arg_11_0._ui_animator
 
@@ -192,7 +192,7 @@ function StartGameWindowWeaveList._update_animations(arg_11_0, arg_11_1)
 	end
 end
 
-function StartGameWindowWeaveList._on_list_index_selected(arg_12_0, arg_12_1)
+StartGameWindowWeaveList._on_list_index_selected = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._weave_entry_widgets
 	local var_12_1 = var_12_0[arg_12_1]
 
@@ -233,7 +233,7 @@ function StartGameWindowWeaveList._on_list_index_selected(arg_12_0, arg_12_1)
 	arg_12_0:_play_sound("menu_wind_level_select")
 end
 
-function StartGameWindowWeaveList._handle_gamepad_input(arg_13_0, arg_13_1, arg_13_2)
+StartGameWindowWeaveList._handle_gamepad_input = function (arg_13_0, arg_13_1, arg_13_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -312,7 +312,7 @@ function StartGameWindowWeaveList._handle_gamepad_input(arg_13_0, arg_13_1, arg_
 	arg_13_0:_animate_list_entries(false, arg_13_1)
 end
 
-function StartGameWindowWeaveList._handle_gamepad_scrollbar(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowWeaveList._handle_gamepad_scrollbar = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = #arg_14_0._weave_entry_widgets
 
 	if var_14_0 <= var_0_7 then
@@ -343,7 +343,7 @@ function StartGameWindowWeaveList._handle_gamepad_scrollbar(arg_14_0, arg_14_1, 
 	arg_14_0:_set_scrollbar_value(arg_14_0._current_scroll_value)
 end
 
-function StartGameWindowWeaveList._handle_input(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowWeaveList._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	if Managers.input:is_device_active("gamepad") then
 		return
 	end
@@ -379,11 +379,11 @@ function StartGameWindowWeaveList._handle_input(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_animate_list_entries(var_15_3, arg_15_1)
 end
 
-function StartGameWindowWeaveList._is_list_hovered(arg_16_0)
+StartGameWindowWeaveList._is_list_hovered = function (arg_16_0)
 	return arg_16_0._widgets_by_name.list_hotspot.content.hotspot.is_hover == true
 end
 
-function StartGameWindowWeaveList._on_weave_widget_pressed(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowWeaveList._on_weave_widget_pressed = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._weave_entry_widgets
 	local var_17_1 = arg_17_1
 
@@ -425,7 +425,7 @@ function StartGameWindowWeaveList._on_weave_widget_pressed(arg_17_0, arg_17_1, a
 	end
 end
 
-function StartGameWindowWeaveList._draw(arg_18_0, arg_18_1)
+StartGameWindowWeaveList._draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ui_top_renderer
 	local var_18_1 = arg_18_0.ui_scenegraph
 	local var_18_2 = arg_18_0._parent:window_input_service()
@@ -458,7 +458,7 @@ function StartGameWindowWeaveList._draw(arg_18_0, arg_18_1)
 	UIRenderer.end_pass(var_18_0)
 end
 
-function StartGameWindowWeaveList._calculate_first_widget_to_draw(arg_19_0)
+StartGameWindowWeaveList._calculate_first_widget_to_draw = function (arg_19_0)
 	local var_19_0 = arg_19_0._total_scroll_height
 	local var_19_1 = #arg_19_0._weave_entry_widgets
 	local var_19_2 = arg_19_0._scroll_value
@@ -467,11 +467,11 @@ function StartGameWindowWeaveList._calculate_first_widget_to_draw(arg_19_0)
 	return (math.floor(math.lerp(1, var_19_3, var_19_2)))
 end
 
-function StartGameWindowWeaveList._play_sound(arg_20_0, arg_20_1)
+StartGameWindowWeaveList._play_sound = function (arg_20_0, arg_20_1)
 	arg_20_0._parent:play_sound(arg_20_1)
 end
 
-function StartGameWindowWeaveList._populate_list(arg_21_0)
+StartGameWindowWeaveList._populate_list = function (arg_21_0)
 	local var_21_0 = false
 	local var_21_1 = arg_21_0._widgets_by_name.list
 	local var_21_2 = WeaveSettings.templates_ordered
@@ -527,7 +527,7 @@ function StartGameWindowWeaveList._populate_list(arg_21_0)
 	arg_21_0:_setup_scrollbar()
 end
 
-function StartGameWindowWeaveList._setup_scrollbar(arg_22_0)
+StartGameWindowWeaveList._setup_scrollbar = function (arg_22_0)
 	local var_22_0 = #arg_22_0._weave_entry_widgets
 
 	arg_22_0._total_scroll_height = var_22_0 * var_0_5[2] + (var_22_0 + 1) * var_0_6
@@ -553,7 +553,7 @@ function StartGameWindowWeaveList._setup_scrollbar(arg_22_0)
 	end
 end
 
-function StartGameWindowWeaveList._next_weave_widget_pressed(arg_23_0)
+StartGameWindowWeaveList._next_weave_widget_pressed = function (arg_23_0)
 	local var_23_0 = arg_23_0._next_weave_widget.content.button_hotspot
 
 	if var_23_0 and var_23_0.on_release then
@@ -563,7 +563,7 @@ function StartGameWindowWeaveList._next_weave_widget_pressed(arg_23_0)
 	end
 end
 
-function StartGameWindowWeaveList._next_weave_widget_hover_enter(arg_24_0)
+StartGameWindowWeaveList._next_weave_widget_hover_enter = function (arg_24_0)
 	local var_24_0 = arg_24_0._next_weave_widget.content.button_hotspot
 
 	if var_24_0 and var_24_0.on_hover_enter then
@@ -573,7 +573,7 @@ function StartGameWindowWeaveList._next_weave_widget_hover_enter(arg_24_0)
 	end
 end
 
-function StartGameWindowWeaveList._weave_widget_pressed(arg_25_0)
+StartGameWindowWeaveList._weave_widget_pressed = function (arg_25_0)
 	local var_25_0 = arg_25_0._weave_entry_widgets
 
 	for iter_25_0, iter_25_1 in pairs(var_25_0) do
@@ -591,7 +591,7 @@ function StartGameWindowWeaveList._weave_widget_pressed(arg_25_0)
 	end
 end
 
-function StartGameWindowWeaveList._weave_widget_hover_enter(arg_26_0)
+StartGameWindowWeaveList._weave_widget_hover_enter = function (arg_26_0)
 	local var_26_0 = arg_26_0._weave_entry_widgets
 
 	for iter_26_0, iter_26_1 in pairs(var_26_0) do
@@ -609,7 +609,7 @@ function StartGameWindowWeaveList._weave_widget_hover_enter(arg_26_0)
 	end
 end
 
-function StartGameWindowWeaveList._update_mouse_scroll_input(arg_27_0)
+StartGameWindowWeaveList._update_mouse_scroll_input = function (arg_27_0)
 	local var_27_0 = arg_27_0._widgets_by_name.list_scrollbar.content.scroll_bar_info
 
 	if var_27_0.on_pressed then
@@ -632,7 +632,7 @@ function StartGameWindowWeaveList._update_mouse_scroll_input(arg_27_0)
 	end
 end
 
-function StartGameWindowWeaveList._set_scrollbar_value(arg_28_0, arg_28_1)
+StartGameWindowWeaveList._set_scrollbar_value = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._scroll_value
 
 	if arg_28_1 then
@@ -649,7 +649,7 @@ function StartGameWindowWeaveList._set_scrollbar_value(arg_28_0, arg_28_1)
 	end
 end
 
-function StartGameWindowWeaveList._animate_list_entries(arg_29_0, arg_29_1, arg_29_2)
+StartGameWindowWeaveList._animate_list_entries = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._weave_entry_widgets
 
 	for iter_29_0, iter_29_1 in pairs(var_29_0) do
@@ -667,7 +667,7 @@ function StartGameWindowWeaveList._animate_list_entries(arg_29_0, arg_29_1, arg_
 	arg_29_0:_animate_list_entry(var_29_3, var_29_4, arg_29_2, true)
 end
 
-function StartGameWindowWeaveList._animate_list_entry(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+StartGameWindowWeaveList._animate_list_entry = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = Managers.input:is_device_active("mouse")
 	local var_30_1 = arg_30_1.button_hotspot or arg_30_1.hotspot
 	local var_30_2 = (var_30_1.is_hover or not var_30_0) and var_30_1.has_focus

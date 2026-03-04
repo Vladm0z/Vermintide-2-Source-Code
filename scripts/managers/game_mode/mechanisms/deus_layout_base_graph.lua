@@ -219,7 +219,7 @@ function debug_deus_create_realtime_layout_updater(arg_11_0, arg_11_1)
 	local var_11_0, var_11_1 = var_0_6(arg_11_1, arg_11_0)
 	local var_11_2 = arg_11_1.LAYOUT_TICKS
 
-	return function()
+	return function ()
 		if var_11_2 > 0 then
 			var_0_4(arg_11_1, var_11_0, var_11_1)
 			var_0_7(arg_11_1, var_11_0, arg_11_0)

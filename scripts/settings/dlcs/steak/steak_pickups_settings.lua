@@ -13,7 +13,7 @@ DLCSettings.steak.pickups = {
 			unit_name = "units/weapons/player/pup_crater_painting/pup_crater_painting",
 			local_pickup_sound = true,
 			hud_description = "interaction_crater_painting",
-			can_spawn_func = function(arg_1_0, arg_1_1)
+			can_spawn_func = function (arg_1_0, arg_1_1)
 				return true
 			end
 		}
@@ -30,7 +30,7 @@ DLCSettings.steak.pickups = {
 			unit_name = "units/weapons/player/pup_cameo_pendant/pup_crater_cameo_pendant",
 			local_pickup_sound = true,
 			hud_description = "crater_pendant",
-			can_spawn_func = function(arg_2_0, arg_2_1)
+			can_spawn_func = function (arg_2_0, arg_2_1)
 				return true
 			end
 		}

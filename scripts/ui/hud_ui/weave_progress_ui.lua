@@ -6,7 +6,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 
 WeaveProgressUI = class(WeaveProgressUI)
 
-function WeaveProgressUI.init(arg_1_0, arg_1_1, arg_1_2)
+WeaveProgressUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui_context = arg_1_2
@@ -18,11 +18,11 @@ function WeaveProgressUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function WeaveProgressUI.destroy(arg_2_0)
+WeaveProgressUI.destroy = function (arg_2_0)
 	return
 end
 
-function WeaveProgressUI._create_ui_elements(arg_3_0)
+WeaveProgressUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_3_0._render_settings = arg_3_0._render_settings or {}
 	arg_3_0._bonus_objective_widgets = {}
@@ -41,7 +41,7 @@ function WeaveProgressUI._create_ui_elements(arg_3_0)
 	arg_3_0._progress = 0
 end
 
-function WeaveProgressUI._sync_weave_objectives(arg_4_0)
+WeaveProgressUI._sync_weave_objectives = function (arg_4_0)
 	local var_4_0 = Managers.weave:get_active_objective_template()
 
 	if not var_4_0 then
@@ -89,7 +89,7 @@ function WeaveProgressUI._sync_weave_objectives(arg_4_0)
 	arg_4_0._initiated = true
 end
 
-function WeaveProgressUI.update(arg_5_0, arg_5_1, arg_5_2)
+WeaveProgressUI.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._initiated then
 		arg_5_0:_sync_weave_objectives()
 	end
@@ -108,7 +108,7 @@ local var_0_4 = {}
 local var_0_5 = {}
 local var_0_6 = {}
 
-function WeaveProgressUI._update_bonus_objectives(arg_7_0, arg_7_1, arg_7_2)
+WeaveProgressUI._update_bonus_objectives = function (arg_7_0, arg_7_1, arg_7_2)
 	table.clear(var_0_4)
 	table.clear(var_0_5)
 	table.clear(var_0_6)
@@ -192,12 +192,12 @@ function WeaveProgressUI._update_bonus_objectives(arg_7_0, arg_7_1, arg_7_2)
 				arg_7_0._animations["checkmark_color_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 2, 255, 192, 0.4, math.easeOutCubic)
 				arg_7_0._animations["checkmark_color_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 3, 255, 192, 0.4, math.easeOutCubic)
 				arg_7_0._animations["checkmark_color_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.checkmark.color, 4, 255, 192, 0.4, math.easeOutCubic)
-				arg_7_0._animation_callbacks["checkmark_x_" .. iter_7_4] = function()
+				arg_7_0._animation_callbacks["checkmark_x_" .. iter_7_4] = function ()
 					arg_7_0._animations["stroke_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.stroke.texture_size, 1, 0, var_7_22, 0.25, math.easeInCubic)
 					arg_7_0._animations["essence_icon_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 2, 255, 60, 0.4, math.easeOutCubic)
 					arg_7_0._animations["essence_icon_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 3, 255, 60, 0.4, math.easeOutCubic)
 					arg_7_0._animations["essence_icon_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, iter_7_5.style.essence_icon.color, 4, 255, 60, 0.4, math.easeOutCubic)
-					arg_7_0._animation_callbacks["stroke_" .. iter_7_4] = function()
+					arg_7_0._animation_callbacks["stroke_" .. iter_7_4] = function ()
 						arg_7_0._animations["objective_color_r_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 2, 255, 192, 0.5, math.easeInCubic)
 						arg_7_0._animations["objective_color_g_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 3, 255, 192, 0.5, math.easeInCubic)
 						arg_7_0._animations["objective_color_b_" .. iter_7_4] = UIAnimation.init(UIAnimation.function_by_time, var_7_19.text_color, 4, 255, 192, 0.5, math.easeInCubic)
@@ -208,7 +208,7 @@ function WeaveProgressUI._update_bonus_objectives(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function WeaveProgressUI._handle_stacks(arg_10_0, arg_10_1, arg_10_2)
+WeaveProgressUI._handle_stacks = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.content
 
 	if not var_10_0.stack then
@@ -223,7 +223,7 @@ function WeaveProgressUI._handle_stacks(arg_10_0, arg_10_1, arg_10_2)
 	return table.size(var_10_2) == table.size(var_10_1)
 end
 
-function WeaveProgressUI._update_animations(arg_11_0, arg_11_1)
+WeaveProgressUI._update_animations = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._animations
 	local var_11_1 = arg_11_0._animation_callbacks
 
@@ -248,7 +248,7 @@ local var_0_7
 
 var_0_7 = DEBUG and 0 or nil
 
-function WeaveProgressUI._update_bar(arg_12_0, arg_12_1, arg_12_2)
+WeaveProgressUI._update_bar = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.weave
 
 	if var_12_0:get_active_weave() then
@@ -264,7 +264,7 @@ function WeaveProgressUI._update_bar(arg_12_0, arg_12_1, arg_12_2)
 
 			arg_12_0._animations.update_bar_glow = UIAnimation.init(UIAnimation.function_by_time, var_12_5.bar_glow.color, 1, 255, 0, 0.5, math.easeInCubic)
 
-			function arg_12_0._animation_callbacks.update_bar_glow()
+			arg_12_0._animation_callbacks.update_bar_glow = function ()
 				arg_12_0._animations.update_bar = UIAnimation.init(UIAnimation.function_by_time, var_12_4, "bar_progress", var_12_4.bar_progress, arg_12_0._progress, 0.5, math.easeOutCubic)
 			end
 
@@ -282,7 +282,7 @@ function WeaveProgressUI._update_bar(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function WeaveProgressUI._draw(arg_14_0, arg_14_1, arg_14_2)
+WeaveProgressUI._draw = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._ui_renderer
 	local var_14_1 = arg_14_0._ui_scenegraph
 	local var_14_2 = arg_14_0._render_settings

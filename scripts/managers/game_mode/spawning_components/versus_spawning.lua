@@ -9,7 +9,7 @@ local var_0_0 = {
 	"rpc_to_server_spawn_failed"
 }
 
-function VersusSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+VersusSpawning.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0._side_name = arg_1_1
 	arg_1_0._profile_synchronizer = arg_1_2
 	arg_1_0._available_profiles = arg_1_3
@@ -33,14 +33,14 @@ function VersusSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_
 	end
 end
 
-function VersusSpawning.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+VersusSpawning.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
 	arg_2_0._network_event_delegate = arg_2_1
 	arg_2_0._network_transmit = arg_2_2
 end
 
-function VersusSpawning.unregister_rpcs(arg_3_0)
+VersusSpawning.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
@@ -61,7 +61,7 @@ function get_special_profiles(arg_4_0)
 	return var_4_0
 end
 
-function VersusSpawning.get_spawn_time(arg_5_0, arg_5_1)
+VersusSpawning.get_spawn_time = function (arg_5_0, arg_5_1)
 	if arg_5_0._respawn_time_override then
 		return arg_5_0._respawn_time_override
 	end
@@ -91,7 +91,7 @@ local function var_0_1(arg_6_0, arg_6_1, arg_6_2)
 	var_6_0.unit = arg_6_0
 end
 
-function VersusSpawning.update(arg_7_0, arg_7_1, arg_7_2)
+VersusSpawning.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if Managers.state.network:game() then
 		local var_7_0 = arg_7_0._side_name
 		local var_7_1 = FindProfileIndex("vs_undecided")
@@ -155,11 +155,11 @@ function VersusSpawning.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function VersusSpawning.client_update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+VersusSpawning.client_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	return
 end
 
-function VersusSpawning.add_spawn_point(arg_9_0, arg_9_1)
+VersusSpawning.add_spawn_point = function (arg_9_0, arg_9_1)
 	local var_9_0 = Unit.local_position(arg_9_1, 0)
 	local var_9_1 = Unit.local_rotation(arg_9_1, 0)
 	local var_9_2 = {
@@ -180,7 +180,7 @@ function VersusSpawning.add_spawn_point(arg_9_0, arg_9_1)
 	arg_9_0._spawn_groups[var_9_3][var_9_4 + 1] = var_9_2
 end
 
-function VersusSpawning.get_spawn_point(arg_10_0, arg_10_1, arg_10_2)
+VersusSpawning.get_spawn_point = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._spawn_groups[arg_10_1]
 
 	if not var_10_0 then
@@ -194,7 +194,7 @@ function VersusSpawning.get_spawn_point(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function VersusSpawning._check_spawn_observer(arg_11_0, arg_11_1)
+VersusSpawning._check_spawn_observer = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._settings.side_settings.dark_pact.spawn_at_players_on_side
 	local var_11_1 = arg_11_1:observed_unit()
 
@@ -241,7 +241,7 @@ function VersusSpawning._check_spawn_observer(arg_11_0, arg_11_1)
 	return nil, nil
 end
 
-function VersusSpawning._get_fallback_spawn_position(arg_12_0, arg_12_1)
+VersusSpawning._get_fallback_spawn_position = function (arg_12_0, arg_12_1)
 	local var_12_0
 	local var_12_1 = Managers.state.conflict.main_path_info.ahead_travel_dist
 	local var_12_2 = MainPathUtils.point_on_mainpath(nil, var_12_1)
@@ -255,7 +255,7 @@ function VersusSpawning._get_fallback_spawn_position(arg_12_0, arg_12_1)
 	return var_12_2
 end
 
-function VersusSpawning._get_allowed_spawn_position(arg_13_0, arg_13_1)
+VersusSpawning._get_allowed_spawn_position = function (arg_13_0, arg_13_1)
 	local var_13_0, var_13_1 = arg_13_0:_check_spawn_observer(arg_13_1)
 
 	if not var_13_0 and not Managers.state.game_mode:is_round_started() then
@@ -274,7 +274,7 @@ function VersusSpawning._get_allowed_spawn_position(arg_13_0, arg_13_1)
 	return var_13_0, var_13_1
 end
 
-function VersusSpawning._spawn_enemy(arg_14_0, arg_14_1)
+VersusSpawning._spawn_enemy = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.peer_id
 	local var_14_1 = arg_14_1.local_player_id
 	local var_14_2 = arg_14_1.profile_index
@@ -319,7 +319,7 @@ function VersusSpawning._spawn_enemy(arg_14_0, arg_14_1)
 	end
 end
 
-function VersusSpawning.setup_data(arg_15_0, arg_15_1, arg_15_2)
+VersusSpawning.setup_data = function (arg_15_0, arg_15_1, arg_15_2)
 	Managers.party:get_player_status(arg_15_1, arg_15_2).game_mode_data = {
 		health_percentage = 1,
 		temporary_health_percentage = 0,
@@ -334,11 +334,11 @@ function VersusSpawning.setup_data(arg_15_0, arg_15_1, arg_15_2)
 	}
 end
 
-function VersusSpawning.handle_transporter(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+VersusSpawning.handle_transporter = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	return
 end
 
-function VersusSpawning.force_respawn(arg_17_0, arg_17_1, arg_17_2)
+VersusSpawning.force_respawn = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Managers.party:get_player_status(arg_17_1, arg_17_2).game_mode_data
 
 	if not var_17_0.spawn_timer then
@@ -348,13 +348,13 @@ function VersusSpawning.force_respawn(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:set_spawn_state(arg_17_1, arg_17_2, "w8_to_spawn", 0, 0, false)
 end
 
-function VersusSpawning.rpc_from_server_send_spawn_state(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+VersusSpawning.rpc_from_server_send_spawn_state = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
 	local var_18_0 = NetworkLookup.spawn_states[arg_18_4]
 
 	arg_18_0:set_spawn_state(arg_18_2, arg_18_3, var_18_0, arg_18_5, arg_18_6, arg_18_7)
 end
 
-function VersusSpawning.set_spawn_state(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+VersusSpawning.set_spawn_state = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	local var_19_0 = Managers
 	local var_19_1 = var_19_0.party:get_player_status(arg_19_1, arg_19_2)
 
@@ -389,14 +389,14 @@ function VersusSpawning.set_spawn_state(arg_19_0, arg_19_1, arg_19_2, arg_19_3, 
 	end
 end
 
-function VersusSpawning._play_sound(arg_20_0, arg_20_1)
+VersusSpawning._play_sound = function (arg_20_0, arg_20_1)
 	local var_20_0 = Managers.world:world("level_world")
 	local var_20_1 = Managers.world:wwise_world(var_20_0)
 
 	WwiseWorld.trigger_event(var_20_1, arg_20_1)
 end
 
-function VersusSpawning.rpc_to_server_spawn_failed(arg_21_0, arg_21_1, arg_21_2)
+VersusSpawning.rpc_to_server_spawn_failed = function (arg_21_0, arg_21_1, arg_21_2)
 	print("[VersusSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_21_0 = CHANNEL_TO_PEER_ID[arg_21_1]

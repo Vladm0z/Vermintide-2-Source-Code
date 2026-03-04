@@ -5,7 +5,7 @@ ImguiTeleportTool = class(ImguiTeleportTool)
 local var_0_0 = true
 local var_0_1 = {}
 
-function ImguiTeleportTool.init(arg_1_0)
+ImguiTeleportTool.init = function (arg_1_0)
 	arg_1_0._current_level = nil
 	arg_1_0._teleport_name_map = {}
 	arg_1_0._teleport_point_map = {}
@@ -43,7 +43,7 @@ function ImguiTeleportTool.init(arg_1_0)
 	arg_1_0:_refresh_filter()
 end
 
-function ImguiTeleportTool.update(arg_2_0)
+ImguiTeleportTool.update = function (arg_2_0)
 	if var_0_0 then
 		arg_2_0:init()
 
@@ -60,11 +60,11 @@ function ImguiTeleportTool.update(arg_2_0)
 	end
 end
 
-function ImguiTeleportTool.is_persistent(arg_3_0)
+ImguiTeleportTool.is_persistent = function (arg_3_0)
 	return arg_3_0._is_persistent
 end
 
-function ImguiTeleportTool.draw(arg_4_0, arg_4_1)
+ImguiTeleportTool.draw = function (arg_4_0, arg_4_1)
 	local var_4_0 = false
 	local var_4_1 = Imgui.begin_window("Teleport Tool", "menu_bar")
 
@@ -212,7 +212,7 @@ function ImguiTeleportTool.draw(arg_4_0, arg_4_1)
 	return var_4_1
 end
 
-function ImguiTeleportTool._update_input(arg_5_0)
+ImguiTeleportTool._update_input = function (arg_5_0)
 	for iter_5_0, iter_5_1 in pairs(arg_5_0._key_bindings) do
 		local var_5_0 = Keyboard.button_index(iter_5_1)
 
@@ -220,7 +220,7 @@ function ImguiTeleportTool._update_input(arg_5_0)
 	end
 end
 
-function ImguiTeleportTool._handle_input(arg_6_0)
+ImguiTeleportTool._handle_input = function (arg_6_0)
 	if arg_6_0._key_states.delete then
 		local var_6_0 = arg_6_0:_get_selected_teleport_id()
 		local var_6_1 = arg_6_0._current_level
@@ -254,14 +254,14 @@ function ImguiTeleportTool._handle_input(arg_6_0)
 	end
 end
 
-function ImguiTeleportTool._refresh_filter(arg_7_0)
+ImguiTeleportTool._refresh_filter = function (arg_7_0)
 	local var_7_0 = arg_7_0:_get_teleport_names(arg_7_0._current_level)
 
 	arg_7_0._filtered_teleport_names, arg_7_0._filtered_teleport_ids = arg_7_0:_apply_filter(arg_7_0._filter_text, var_7_0)
 	arg_7_0._selected_teleport = math.max(math.min(arg_7_0._selected_teleport, #arg_7_0._filtered_teleport_names) - 1, 0)
 end
 
-function ImguiTeleportTool._apply_filter(arg_8_0, arg_8_1, arg_8_2)
+ImguiTeleportTool._apply_filter = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_1 == "" then
 		return arg_8_2
 	end
@@ -282,7 +282,7 @@ function ImguiTeleportTool._apply_filter(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_0, var_8_1
 end
 
-function ImguiTeleportTool._register_point(arg_9_0, arg_9_1)
+ImguiTeleportTool._register_point = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._current_level
 
 	if not var_9_0 then
@@ -305,7 +305,7 @@ function ImguiTeleportTool._register_point(arg_9_0, arg_9_1)
 	end
 end
 
-function ImguiTeleportTool._get_unit_location(arg_10_0, arg_10_1)
+ImguiTeleportTool._get_unit_location = function (arg_10_0, arg_10_1)
 	if Unit.alive(arg_10_1) then
 		local var_10_0 = Unit.world_position(arg_10_1, 0)
 		local var_10_1 = Unit.world_rotation(arg_10_1, 0)
@@ -326,7 +326,7 @@ function ImguiTeleportTool._get_unit_location(arg_10_0, arg_10_1)
 	return nil
 end
 
-function ImguiTeleportTool._get_selected_teleport_coords(arg_11_0)
+ImguiTeleportTool._get_selected_teleport_coords = function (arg_11_0)
 	local var_11_0 = arg_11_0._current_level
 	local var_11_1 = arg_11_0:_get_selected_teleport_id()
 
@@ -339,13 +339,13 @@ function ImguiTeleportTool._get_selected_teleport_coords(arg_11_0)
 	return nil
 end
 
-function ImguiTeleportTool._teleport_to_selected(arg_12_0, arg_12_1)
+ImguiTeleportTool._teleport_to_selected = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0:_get_selected_teleport_coords()
 
 	arg_12_0:_teleport_to_point(arg_12_1, var_12_0)
 end
 
-function ImguiTeleportTool._teleport_to_point(arg_13_0, arg_13_1, arg_13_2)
+ImguiTeleportTool._teleport_to_point = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_2 and Unit.alive(arg_13_1) then
 		local var_13_0 = Vector3(arg_13_2[1], arg_13_2[2], arg_13_2[3])
 		local var_13_1 = Quaternion.from_elements(arg_13_2[4], arg_13_2[5], arg_13_2[6], arg_13_2[7])
@@ -360,11 +360,11 @@ function ImguiTeleportTool._teleport_to_point(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function ImguiTeleportTool._get_teleport_names(arg_14_0, arg_14_1)
+ImguiTeleportTool._get_teleport_names = function (arg_14_0, arg_14_1)
 	return arg_14_1 and arg_14_0._teleport_name_map[arg_14_1] or var_0_1
 end
 
-function ImguiTeleportTool._get_selected_teleport_id(arg_15_0)
+ImguiTeleportTool._get_selected_teleport_id = function (arg_15_0)
 	local var_15_0 = arg_15_0._selected_teleport
 	local var_15_1 = arg_15_0._filtered_teleport_ids
 
@@ -375,20 +375,20 @@ function ImguiTeleportTool._get_selected_teleport_id(arg_15_0)
 	return var_15_0
 end
 
-function ImguiTeleportTool._save_points(arg_16_0)
+ImguiTeleportTool._save_points = function (arg_16_0)
 	Development.set_setting("ImguiTeleportTool_names", arg_16_0._teleport_name_map)
 	Development.set_setting("ImguiTeleportTool_points", arg_16_0._teleport_point_map)
 	Development.set_setting("ImguiTeleportTool_keybinds", arg_16_0._key_bindings)
 	Application.save_user_settings()
 end
 
-function ImguiTeleportTool._load_points(arg_17_0)
+ImguiTeleportTool._load_points = function (arg_17_0)
 	arg_17_0._teleport_name_map = Development.setting("ImguiTeleportTool_names") or arg_17_0._teleport_name_map
 	arg_17_0._teleport_point_map = Development.setting("ImguiTeleportTool_points") or arg_17_0._teleport_point_map
 	arg_17_0._key_bindings = Development.setting("ImguiTeleportTool_keybinds") or arg_17_0._key_bindings
 end
 
-function ImguiTeleportTool._save_point_to_clipboard(arg_18_0, arg_18_1)
+ImguiTeleportTool._save_point_to_clipboard = function (arg_18_0, arg_18_1)
 	if arg_18_1 then
 		local var_18_0 = "ITT##" .. tostring(arg_18_0._current_level) .. "##" .. cjson.encode(arg_18_1) .. "##END"
 
@@ -396,7 +396,7 @@ function ImguiTeleportTool._save_point_to_clipboard(arg_18_0, arg_18_1)
 	end
 end
 
-function ImguiTeleportTool._get_point_from_clipboard(arg_19_0)
+ImguiTeleportTool._get_point_from_clipboard = function (arg_19_0)
 	local var_19_0 = Clipboard.get()
 	local var_19_1 = string.split_deprecated(var_19_0, "##")
 	local var_19_2 = true and #var_19_1 == 4

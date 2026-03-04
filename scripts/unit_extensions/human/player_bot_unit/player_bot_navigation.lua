@@ -2,7 +2,7 @@
 
 PlayerBotNavigation = class(PlayerBotNavigation)
 
-function PlayerBotNavigation.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerBotNavigation.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._nav_world = arg_1_3.nav_world
 	arg_1_0._final_goal_reached = false
@@ -23,17 +23,17 @@ function PlayerBotNavigation.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._astar_cancelled = false
 end
 
-function PlayerBotNavigation.destroy(arg_2_0)
+PlayerBotNavigation.destroy = function (arg_2_0)
 	GwNavAStar.destroy(arg_2_0._astar)
 
 	arg_2_0._astar = nil
 end
 
-function PlayerBotNavigation.reset(arg_3_0)
+PlayerBotNavigation.reset = function (arg_3_0)
 	return
 end
 
-function PlayerBotNavigation.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerBotNavigation.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if arg_4_0._astar_cancelled then
 		arg_4_0._astar_cancelled = false
 	end
@@ -47,7 +47,7 @@ end
 
 local var_0_0 = math.cos(math.pi / 8)
 
-function PlayerBotNavigation.move_to(arg_5_0, arg_5_1, arg_5_2)
+PlayerBotNavigation.move_to = function (arg_5_0, arg_5_1, arg_5_2)
 	fassert(not arg_5_2 or type(arg_5_2) == "function", "Tried to pass invalid callback value to PlayerBotNavigation:move_to()")
 
 	if arg_5_0._astar_cancelled then
@@ -107,7 +107,7 @@ function PlayerBotNavigation.move_to(arg_5_0, arg_5_1, arg_5_2)
 	return true
 end
 
-function PlayerBotNavigation.teleport(arg_6_0, arg_6_1)
+PlayerBotNavigation.teleport = function (arg_6_0, arg_6_1)
 	if not arg_6_0._astar then
 		return
 	end
@@ -138,13 +138,13 @@ function PlayerBotNavigation.teleport(arg_6_0, arg_6_1)
 	arg_6_0._current_transition = nil
 end
 
-function PlayerBotNavigation.stop(arg_7_0)
+PlayerBotNavigation.stop = function (arg_7_0)
 	local var_7_0 = POSITION_LOOKUP[arg_7_0._unit]
 
 	arg_7_0:teleport(var_7_0)
 end
 
-function PlayerBotNavigation.is_path_safe_from_vortex(arg_8_0, arg_8_1, arg_8_2)
+PlayerBotNavigation.is_path_safe_from_vortex = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._path
 
 	if not var_8_0 or arg_8_0._final_goal_reached then
@@ -224,7 +224,7 @@ local function var_0_1(arg_9_0, arg_9_1)
 	end
 end
 
-function PlayerBotNavigation._update_path(arg_10_0, arg_10_1)
+PlayerBotNavigation._update_path = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._path
 
 	if not var_10_0 or arg_10_0._final_goal_reached then
@@ -257,7 +257,7 @@ function PlayerBotNavigation._update_path(arg_10_0, arg_10_1)
 	end
 end
 
-function PlayerBotNavigation._reevaluate_current_nav_transition(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+PlayerBotNavigation._reevaluate_current_nav_transition = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0._current_transition
 
 	arg_11_0._current_transition = nil
@@ -344,7 +344,7 @@ local var_0_4 = 0.2
 local var_0_5 = 0.25
 local var_0_6 = (var_0_4 - var_0_2) / var_0_5
 
-function PlayerBotNavigation._goal_reached(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+PlayerBotNavigation._goal_reached = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_2 - arg_12_1
 	local var_12_1 = arg_12_2 - arg_12_3
 	local var_12_2 = Vector3.dot(var_12_0, var_12_1) < 0
@@ -369,7 +369,7 @@ function PlayerBotNavigation._goal_reached(arg_12_0, arg_12_1, arg_12_2, arg_12_
 	return var_12_8
 end
 
-function PlayerBotNavigation.current_goal(arg_13_0)
+PlayerBotNavigation.current_goal = function (arg_13_0)
 	if arg_13_0._final_goal_reached then
 		return nil
 	elseif arg_13_0._path then
@@ -381,7 +381,7 @@ function PlayerBotNavigation.current_goal(arg_13_0)
 	end
 end
 
-function PlayerBotNavigation.is_following_last_goal(arg_14_0)
+PlayerBotNavigation.is_following_last_goal = function (arg_14_0)
 	if arg_14_0._final_goal_reached then
 		return false
 	elseif arg_14_0._path then
@@ -393,11 +393,11 @@ function PlayerBotNavigation.is_following_last_goal(arg_14_0)
 	end
 end
 
-function PlayerBotNavigation.destination_reached(arg_15_0)
+PlayerBotNavigation.destination_reached = function (arg_15_0)
 	return arg_15_0._final_goal_reached
 end
 
-function PlayerBotNavigation._update_astar(arg_16_0, arg_16_1)
+PlayerBotNavigation._update_astar = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._astar
 
 	if GwNavAStar.processing_finished(var_16_0) then
@@ -451,11 +451,11 @@ function PlayerBotNavigation._update_astar(arg_16_0, arg_16_1)
 	end
 end
 
-function PlayerBotNavigation.path_callback(arg_17_0)
+PlayerBotNavigation.path_callback = function (arg_17_0)
 	return arg_17_0._path_callback
 end
 
-function PlayerBotNavigation._path_failed(arg_18_0, arg_18_1)
+PlayerBotNavigation._path_failed = function (arg_18_0, arg_18_1)
 	if script_data.debug_ai_movement then
 		print("AI bot failed to find path")
 	end
@@ -469,7 +469,7 @@ function PlayerBotNavigation._path_failed(arg_18_0, arg_18_1)
 	end
 end
 
-function PlayerBotNavigation._path_successful(arg_19_0, arg_19_1)
+PlayerBotNavigation._path_successful = function (arg_19_0, arg_19_1)
 	arg_19_0._last_successful_path = arg_19_1
 	arg_19_0._successive_failed_paths = 0
 
@@ -480,11 +480,11 @@ function PlayerBotNavigation._path_successful(arg_19_0, arg_19_1)
 	end
 end
 
-function PlayerBotNavigation.successive_failed_paths(arg_20_0)
+PlayerBotNavigation.successive_failed_paths = function (arg_20_0)
 	return arg_20_0._successive_failed_paths, arg_20_0._last_successful_path
 end
 
-function PlayerBotNavigation.destination(arg_21_0)
+PlayerBotNavigation.destination = function (arg_21_0)
 	if arg_21_0._has_queued_target then
 		return arg_21_0._queued_target_position:unbox()
 	else
@@ -492,7 +492,7 @@ function PlayerBotNavigation.destination(arg_21_0)
 	end
 end
 
-function PlayerBotNavigation.position_when_destination_reached(arg_22_0)
+PlayerBotNavigation.position_when_destination_reached = function (arg_22_0)
 	if arg_22_0._final_goal_reached then
 		return arg_22_0._position_when_final_goal_reached:unbox()
 	else
@@ -500,7 +500,7 @@ function PlayerBotNavigation.position_when_destination_reached(arg_22_0)
 	end
 end
 
-function PlayerBotNavigation._debug_draw_path(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+PlayerBotNavigation._debug_draw_path = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if script_data.ai_bots_debug then
 		local var_23_0 = arg_23_0._player.color:unbox()
 		local var_23_1 = Managers.state.debug:drawer(debug_drawer_info)
@@ -529,15 +529,15 @@ function PlayerBotNavigation._debug_draw_path(arg_23_0, arg_23_1, arg_23_2, arg_
 	end
 end
 
-function PlayerBotNavigation.is_in_transition(arg_24_0)
+PlayerBotNavigation.is_in_transition = function (arg_24_0)
 	return arg_24_0._current_transition ~= nil
 end
 
-function PlayerBotNavigation.transition_type(arg_25_0)
+PlayerBotNavigation.transition_type = function (arg_25_0)
 	return arg_25_0._current_transition.type
 end
 
-function PlayerBotNavigation.transition_requires_jump(arg_26_0, arg_26_1, arg_26_2)
+PlayerBotNavigation.transition_requires_jump = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0:current_goal()
 
 	fassert(arg_26_0._current_transition, "Trying to check if transition requires jump with no active transition")
@@ -552,7 +552,7 @@ function PlayerBotNavigation.transition_requires_jump(arg_26_0, arg_26_1, arg_26
 	return false
 end
 
-function PlayerBotNavigation.flow_cb_entered_nav_transition(arg_27_0, arg_27_1, arg_27_2)
+PlayerBotNavigation.flow_cb_entered_nav_transition = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0._available_nav_transitions
 	local var_27_1 = Unit.get_data(arg_27_1, "bot_nav_transition_manager_index")
 	local var_27_2, var_27_3, var_27_4, var_27_5 = Managers.state.bot_nav_transition:transition_data(arg_27_1)
@@ -574,18 +574,18 @@ function PlayerBotNavigation.flow_cb_entered_nav_transition(arg_27_0, arg_27_1, 
 	end
 end
 
-function PlayerBotNavigation.flow_cb_left_nav_transition(arg_28_0, arg_28_1, arg_28_2)
+PlayerBotNavigation.flow_cb_left_nav_transition = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._available_nav_transitions
 	local var_28_1 = Unit.get_data(arg_28_1, "bot_nav_transition_manager_index")
 
 	var_28_0[arg_28_1] = nil
 end
 
-function PlayerBotNavigation.traverse_logic(arg_29_0)
+PlayerBotNavigation.traverse_logic = function (arg_29_0)
 	return arg_29_0._traverse_data
 end
 
-function PlayerBotNavigation.add_transition(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+PlayerBotNavigation.add_transition = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = {
 		unit = arg_30_1,
 		type = arg_30_2,
@@ -596,6 +596,6 @@ function PlayerBotNavigation.add_transition(arg_30_0, arg_30_1, arg_30_2, arg_30
 	arg_30_0._available_nav_transitions[arg_30_1] = var_30_0
 end
 
-function PlayerBotNavigation.remove_transition(arg_31_0, arg_31_1)
+PlayerBotNavigation.remove_transition = function (arg_31_0, arg_31_1)
 	arg_31_0._available_nav_transitions[arg_31_1] = nil
 end

@@ -4,7 +4,7 @@ local var_0_0 = true
 
 ImguiObjectivesDebug = class(ImguiObjectivesDebug)
 
-function ImguiObjectivesDebug.init(arg_1_0)
+ImguiObjectivesDebug.init = function (arg_1_0)
 	arg_1_0._objectives = {}
 	arg_1_0._timer = 0
 	arg_1_0._objective_system = nil
@@ -14,7 +14,7 @@ function ImguiObjectivesDebug.init(arg_1_0)
 	arg_1_0._objective_lists = nil
 end
 
-function ImguiObjectivesDebug._initialize(arg_2_0)
+ImguiObjectivesDebug._initialize = function (arg_2_0)
 	arg_2_0._objective_system = Managers.state.entity:system("objective_system")
 
 	if Managers.weave:get_active_weave() then
@@ -28,7 +28,7 @@ function ImguiObjectivesDebug._initialize(arg_2_0)
 	arg_2_0._initialized = true
 end
 
-function ImguiObjectivesDebug.update(arg_3_0)
+ImguiObjectivesDebug.update = function (arg_3_0)
 	if var_0_0 then
 		arg_3_0:init()
 
@@ -52,7 +52,7 @@ function ImguiObjectivesDebug.update(arg_3_0)
 	end
 end
 
-function ImguiObjectivesDebug._update_versus(arg_4_0)
+ImguiObjectivesDebug._update_versus = function (arg_4_0)
 	local var_4_0 = Managers.mechanism:game_mechanism()
 
 	if var_4_0 then
@@ -60,11 +60,11 @@ function ImguiObjectivesDebug._update_versus(arg_4_0)
 	end
 end
 
-function ImguiObjectivesDebug.is_persistent(arg_5_0)
+ImguiObjectivesDebug.is_persistent = function (arg_5_0)
 	return true
 end
 
-function ImguiObjectivesDebug._temp(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+ImguiObjectivesDebug._temp = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_3 = arg_6_3 or 1
 
 	for iter_6_0, iter_6_1 in pairs(arg_6_1) do
@@ -103,13 +103,13 @@ function ImguiObjectivesDebug._temp(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function ImguiObjectivesDebug._same_line_dummy(arg_7_0, arg_7_1, arg_7_2)
+ImguiObjectivesDebug._same_line_dummy = function (arg_7_0, arg_7_1, arg_7_2)
 	Imgui.same_line()
 	Imgui.dummy(arg_7_1, arg_7_2)
 	Imgui.same_line()
 end
 
-function ImguiObjectivesDebug._draw_versus(arg_8_0, arg_8_1)
+ImguiObjectivesDebug._draw_versus = function (arg_8_0, arg_8_1)
 	Imgui.text("Timer")
 	Imgui.indent()
 	Imgui.text("Pause")
@@ -141,7 +141,7 @@ function ImguiObjectivesDebug._draw_versus(arg_8_0, arg_8_1)
 	Imgui.text(string.format("Current Num Optional Sub Objectives: %q", var_8_1._current_num_optional_sub_objectives))
 end
 
-function ImguiObjectivesDebug.draw(arg_9_0, arg_9_1)
+ImguiObjectivesDebug.draw = function (arg_9_0, arg_9_1)
 	local var_9_0 = Imgui.begin_window("Objectives Debug")
 
 	Imgui.text(string.format("Completed Objectives: %s/%s", arg_9_0._num_completed_main_objectives, arg_9_0._num_main_objectives))

@@ -15,14 +15,14 @@ local var_0_0 = {
 				anim_event = "attack_heal",
 				total_time = 1.2,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
+				condition_func = function (arg_1_0)
 					local var_1_0 = ScriptUnit.extension(arg_1_0, "health_system")
 					local var_1_1 = ScriptUnit.extension(arg_1_0, "status_system")
 					local var_1_2 = var_1_0:current_permanent_health_percent() >= 1
 
 					return var_1_1:is_wounded() or not var_1_2
 				end,
-				chain_condition_func = function(arg_2_0)
+				chain_condition_func = function (arg_2_0)
 					local var_2_0 = ScriptUnit.extension(arg_2_0, "health_system")
 					local var_2_1 = ScriptUnit.extension(arg_2_0, "status_system")
 					local var_2_2 = var_2_0:current_permanent_health_percent() >= 1

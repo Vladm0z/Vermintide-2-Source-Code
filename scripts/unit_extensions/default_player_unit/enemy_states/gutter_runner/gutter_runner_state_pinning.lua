@@ -2,7 +2,7 @@
 
 GutterRunnerStatePinning = class(GutterRunnerStatePinning, EnemyCharacterState)
 
-function GutterRunnerStatePinning.init(arg_1_0, arg_1_1)
+GutterRunnerStatePinning.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "pinning_enemy")
 
 	arg_1_0.lerp_target_position = Vector3Box()
@@ -11,12 +11,12 @@ function GutterRunnerStatePinning.init(arg_1_0, arg_1_1)
 	arg_1_0._foff_ability_id = arg_1_0._career_extension:ability_id("foff")
 end
 
-function GutterRunnerStatePinning.change_to_third_person_camera(arg_2_0)
+GutterRunnerStatePinning.change_to_third_person_camera = function (arg_2_0)
 	CharacterStateHelper.change_camera_state(arg_2_0._player, "follow_third_person")
 	arg_2_0._first_person_extension:set_first_person_mode(false)
 end
 
-function GutterRunnerStatePinning.pounce_down(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+GutterRunnerStatePinning.pounce_down = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._locomotion_extension
 	local var_3_1 = POSITION_LOOKUP[arg_3_2]
 
@@ -63,7 +63,7 @@ function GutterRunnerStatePinning.pounce_down(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	BTTargetPouncedAction.impact_pushback(arg_3_1, var_3_1, var_3_14.close_impact_radius, var_3_14.far_impact_radius, var_3_14.impact_speed_given, var_3_7.target_unit)
 end
 
-function GutterRunnerStatePinning.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+GutterRunnerStatePinning.on_enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	local var_4_0 = arg_4_0._unit
 	local var_4_1 = arg_4_0._first_person_extension
 	local var_4_2 = arg_4_7.target_unit
@@ -88,7 +88,7 @@ function GutterRunnerStatePinning.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	arg_4_0._status_extension:set_pinning_enemy(true, var_4_2)
 end
 
-function GutterRunnerStatePinning.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+GutterRunnerStatePinning.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	CharacterStateHelper.change_camera_state(arg_5_0._player, "follow")
 	arg_5_0._first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
@@ -107,7 +107,7 @@ function GutterRunnerStatePinning.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, ar
 	end
 end
 
-function GutterRunnerStatePinning.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+GutterRunnerStatePinning.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._csm
 	local var_6_1 = arg_6_0._unit
 	local var_6_2 = arg_6_0._locomotion_extension
@@ -155,7 +155,7 @@ function GutterRunnerStatePinning.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg
 	CharacterStateHelper.look(var_6_3, arg_6_0._player.viewport_name, arg_6_0._first_person_extension, var_6_4, arg_6_0._inventory_extension)
 end
 
-function GutterRunnerStatePinning.update_stabbing(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+GutterRunnerStatePinning.update_stabbing = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = 0.5
 
 	if arg_7_1 > arg_7_0._next_stab_time then

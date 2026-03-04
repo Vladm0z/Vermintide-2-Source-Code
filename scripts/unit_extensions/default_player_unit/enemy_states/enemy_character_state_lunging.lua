@@ -4,14 +4,14 @@ local var_0_0 = POSITION_LOOKUP
 
 EnemyCharacterStateLunging = class(EnemyCharacterStateLunging, EnemyCharacterState)
 
-function EnemyCharacterStateLunging.init(arg_1_0, arg_1_1)
+EnemyCharacterStateLunging.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "lunging")
 
 	arg_1_0._direction = Vector3Box()
 	arg_1_0._last_position = Vector3Box()
 end
 
-function EnemyCharacterStateLunging._on_enter_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+EnemyCharacterStateLunging._on_enter_animation = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_3 then
 		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	else
@@ -23,7 +23,7 @@ function EnemyCharacterStateLunging._on_enter_animation(arg_2_0, arg_2_1, arg_2_
 	CharacterStateHelper.play_animation_event_first_person(var_2_0, arg_2_5 or arg_2_2)
 end
 
-function EnemyCharacterStateLunging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+EnemyCharacterStateLunging.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0._unit
 	local var_3_1 = arg_3_0._input_extension
 	local var_3_2 = arg_3_0._first_person_extension
@@ -102,7 +102,7 @@ function EnemyCharacterStateLunging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function EnemyCharacterStateLunging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+EnemyCharacterStateLunging.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0._lunge_data
 	local var_4_1 = arg_4_0._hit
 	local var_4_2 = var_4_0.first_person_animation_end_event
@@ -154,7 +154,7 @@ function EnemyCharacterStateLunging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	arg_4_0._first_person_extension:enable_rig_movement()
 end
 
-function EnemyCharacterStateLunging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+EnemyCharacterStateLunging.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._csm
 	local var_5_1 = arg_5_0._unit
 	local var_5_2 = arg_5_0._first_person_unit
@@ -288,7 +288,7 @@ function EnemyCharacterStateLunging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, a
 	CharacterStateHelper.look(var_5_4, arg_5_0._player.viewport_name, var_5_7, var_5_5, arg_5_0._inventory_extension, 0.5)
 end
 
-function EnemyCharacterStateLunging._update_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+EnemyCharacterStateLunging._update_movement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_0._falling then
 		return arg_6_0:_move_in_air(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
@@ -296,7 +296,7 @@ function EnemyCharacterStateLunging._update_movement(arg_6_0, arg_6_1, arg_6_2, 
 	return arg_6_0:_move_on_ground(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 end
 
-function EnemyCharacterStateLunging._move_on_ground(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+EnemyCharacterStateLunging._move_on_ground = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_0._locomotion_extension
 	local var_7_1 = arg_7_0._first_person_extension
 	local var_7_2 = arg_7_4.duration
@@ -334,7 +334,7 @@ function EnemyCharacterStateLunging._move_on_ground(arg_7_0, arg_7_1, arg_7_2, a
 	return var_7_3 < var_7_2
 end
 
-function EnemyCharacterStateLunging._move_in_air(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+EnemyCharacterStateLunging._move_in_air = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0._locomotion_extension
 	local var_8_1 = arg_8_0._first_person_extension
 	local var_8_2 = arg_8_4.duration
@@ -370,7 +370,7 @@ function EnemyCharacterStateLunging._move_in_air(arg_8_0, arg_8_1, arg_8_2, arg_
 	return var_8_3 < var_8_2
 end
 
-function EnemyCharacterStateLunging._parse_attack_data(arg_9_0, arg_9_1)
+EnemyCharacterStateLunging._parse_attack_data = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._career_extension:get_career_power_level() * arg_9_1.power_level_multiplier
 	local var_9_1 = arg_9_1.damage_profile or "default"
 	local var_9_2 = NetworkLookup.damage_profiles[var_9_1]
@@ -380,7 +380,7 @@ function EnemyCharacterStateLunging._parse_attack_data(arg_9_0, arg_9_1)
 	return var_9_2, var_9_0, var_9_4, arg_9_1.ignore_shield, arg_9_1.allow_backstab
 end
 
-function EnemyCharacterStateLunging._calculate_hit_mass(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+EnemyCharacterStateLunging._calculate_hit_mass = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if arg_10_4 and HEALTH_ALIVE[arg_10_3] then
 		local var_10_0 = Managers.state.difficulty:get_difficulty_rank()
 		local var_10_1 = arg_10_1 and (arg_10_4.hit_mass_counts_block and (arg_10_4.hit_mass_counts_block[var_10_0] or arg_10_4.hit_mass_counts_block[2]) or arg_10_4.hit_mass_count_block) or arg_10_4.hit_mass_counts and (arg_10_4.hit_mass_counts[var_10_0] or arg_10_4.hit_mass_counts[2]) or arg_10_4.hit_mass_count or 1
@@ -398,7 +398,7 @@ function EnemyCharacterStateLunging._calculate_hit_mass(arg_10_0, arg_10_1, arg_
 	return arg_10_1
 end
 
-function EnemyCharacterStateLunging._update_damage(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+EnemyCharacterStateLunging._update_damage = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_4.depth_padding
 	local var_11_1 = 0.5 * arg_11_4.width
 	local var_11_2 = 0.5 * arg_11_4.height
@@ -513,7 +513,7 @@ end
 
 local var_0_1 = {}
 
-function EnemyCharacterStateLunging._do_blast(arg_12_0, arg_12_1, arg_12_2)
+EnemyCharacterStateLunging._do_blast = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._hit = true
 
 	local var_12_0 = arg_12_0._lunge_data.damage

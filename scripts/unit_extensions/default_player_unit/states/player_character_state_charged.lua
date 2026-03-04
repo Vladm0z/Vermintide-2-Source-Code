@@ -2,7 +2,7 @@
 
 PlayerCharacterStateCharged = class(PlayerCharacterStateCharged, PlayerCharacterState)
 
-function PlayerCharacterStateCharged.init(arg_1_0, arg_1_1)
+PlayerCharacterStateCharged.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "charged")
 
 	local var_1_0 = arg_1_1
@@ -25,7 +25,7 @@ function PlayerCharacterStateCharged.init(arg_1_0, arg_1_1)
 	arg_1_0.look_override = Vector3Box(0, 0, 0)
 end
 
-function PlayerCharacterStateCharged.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateCharged.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "charged")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "charged")
 	CharacterStateHelper.play_animation_event_first_person(arg_2_0.first_person_extension, arg_2_7.first_person_anim_name)
@@ -73,7 +73,7 @@ function PlayerCharacterStateCharged.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	print("-----Enter charged")
 end
 
-function PlayerCharacterStateCharged.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateCharged.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.input_extension
 
 	if var_3_0:get("action_one_hold") then
@@ -99,7 +99,7 @@ function PlayerCharacterStateCharged.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	print("-----Exit charged")
 end
 
-function PlayerCharacterStateCharged.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateCharged.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.input_extension
@@ -232,7 +232,7 @@ function PlayerCharacterStateCharged.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	arg_4_0.look_override:store(0, 0, 0)
 end
 
-function PlayerCharacterStateCharged.queue_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PlayerCharacterStateCharged.queue_input = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = CharacterStateHelper.wield_input(arg_5_2, arg_5_3, "action_wield")
 
 	if var_5_0 then

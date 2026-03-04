@@ -14,7 +14,7 @@ local var_0_9 = 1
 CraftPageExtractSkinConsole = class(CraftPageExtractSkinConsole)
 CraftPageExtractSkinConsole.NAME = "CraftPageExtractSkinConsole"
 
-function CraftPageExtractSkinConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageExtractSkinConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageExtractSkinConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -57,7 +57,7 @@ function CraftPageExtractSkinConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.super_parent:clear_disabled_backend_ids()
 end
 
-function CraftPageExtractSkinConsole.create_ui_elements(arg_2_0, arg_2_1)
+CraftPageExtractSkinConsole.create_ui_elements = function (arg_2_0, arg_2_1)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_2_0 = {}
@@ -81,7 +81,7 @@ function CraftPageExtractSkinConsole.create_ui_elements(arg_2_0, arg_2_1)
 	arg_2_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageExtractSkinConsole.on_exit(arg_3_0, arg_3_1)
+CraftPageExtractSkinConsole.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageExtractSkinConsole")
 
 	arg_3_0.ui_animator = nil
@@ -91,7 +91,7 @@ function CraftPageExtractSkinConsole.on_exit(arg_3_0, arg_3_1)
 	end
 end
 
-function CraftPageExtractSkinConsole.update(arg_4_0, arg_4_1, arg_4_2)
+CraftPageExtractSkinConsole.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -104,11 +104,11 @@ function CraftPageExtractSkinConsole.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function CraftPageExtractSkinConsole.post_update(arg_5_0, arg_5_1, arg_5_2)
+CraftPageExtractSkinConsole.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function CraftPageExtractSkinConsole._update_animations(arg_6_0, arg_6_1)
+CraftPageExtractSkinConsole._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -125,7 +125,7 @@ function CraftPageExtractSkinConsole._update_animations(arg_6_0, arg_6_1)
 	local var_6_2 = arg_6_0._widgets_by_name
 end
 
-function CraftPageExtractSkinConsole._is_button_pressed(arg_7_0, arg_7_1)
+CraftPageExtractSkinConsole._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -135,13 +135,13 @@ function CraftPageExtractSkinConsole._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function CraftPageExtractSkinConsole._is_button_hovered(arg_8_0, arg_8_1)
+CraftPageExtractSkinConsole._is_button_hovered = function (arg_8_0, arg_8_1)
 	if arg_8_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageExtractSkinConsole._is_button_held(arg_9_0, arg_9_1)
+CraftPageExtractSkinConsole._is_button_held = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.is_clicked then
@@ -149,7 +149,7 @@ function CraftPageExtractSkinConsole._is_button_held(arg_9_0, arg_9_1)
 	end
 end
 
-function CraftPageExtractSkinConsole._handle_input(arg_10_0, arg_10_1, arg_10_2)
+CraftPageExtractSkinConsole._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.parent
 
 	if var_10_0:waiting_for_craft() or arg_10_0._craft_result then
@@ -220,17 +220,17 @@ function CraftPageExtractSkinConsole._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function CraftPageExtractSkinConsole._handle_craft_input_progress(arg_11_0, arg_11_1)
+CraftPageExtractSkinConsole._handle_craft_input_progress = function (arg_11_0, arg_11_1)
 	return arg_11_0.parent:_set_input_progress(arg_11_1)
 end
 
-function CraftPageExtractSkinConsole.craft_result(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CraftPageExtractSkinConsole.craft_result = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if not arg_12_2 then
 		arg_12_0._craft_result = arg_12_1
 	end
 end
 
-function CraftPageExtractSkinConsole.reset(arg_13_0)
+CraftPageExtractSkinConsole.reset = function (arg_13_0)
 	for iter_13_0 = 1, var_0_9 do
 		local var_13_0 = arg_13_0._craft_items[iter_13_0]
 
@@ -245,7 +245,7 @@ function CraftPageExtractSkinConsole.reset(arg_13_0)
 	var_13_1:update_items_status()
 end
 
-function CraftPageExtractSkinConsole.present_results(arg_14_0)
+CraftPageExtractSkinConsole.present_results = function (arg_14_0)
 	local var_14_0 = arg_14_0._item_grid
 
 	var_14_0:clear_locked_items()
@@ -254,7 +254,7 @@ function CraftPageExtractSkinConsole.present_results(arg_14_0)
 	arg_14_0.super_parent:update_inventory_items()
 end
 
-function CraftPageExtractSkinConsole.on_craft_completed(arg_15_0)
+CraftPageExtractSkinConsole.on_craft_completed = function (arg_15_0)
 	local var_15_0 = arg_15_0._craft_result
 	local var_15_1
 
@@ -277,7 +277,7 @@ function CraftPageExtractSkinConsole.on_craft_completed(arg_15_0)
 	arg_15_0:_remove_craft_item(arg_15_0._craft_items[1])
 end
 
-function CraftPageExtractSkinConsole._update_craft_items(arg_16_0)
+CraftPageExtractSkinConsole._update_craft_items = function (arg_16_0)
 	local var_16_0 = arg_16_0.super_parent
 	local var_16_1 = arg_16_0._item_grid
 
@@ -306,7 +306,7 @@ function CraftPageExtractSkinConsole._update_craft_items(arg_16_0)
 	end
 end
 
-function CraftPageExtractSkinConsole._remove_craft_item(arg_17_0, arg_17_1, arg_17_2)
+CraftPageExtractSkinConsole._remove_craft_item = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._craft_items
 
 	if arg_17_2 then
@@ -338,7 +338,7 @@ function CraftPageExtractSkinConsole._remove_craft_item(arg_17_0, arg_17_1, arg_
 	end
 end
 
-function CraftPageExtractSkinConsole._add_craft_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CraftPageExtractSkinConsole._add_craft_item = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0:_clear_item_grid()
 
 	local var_18_0 = arg_18_0._craft_items
@@ -374,7 +374,7 @@ function CraftPageExtractSkinConsole._add_craft_item(arg_18_0, arg_18_1, arg_18_
 	end
 end
 
-function CraftPageExtractSkinConsole._clear_item_grid(arg_19_0)
+CraftPageExtractSkinConsole._clear_item_grid = function (arg_19_0)
 	local var_19_0 = arg_19_0._craft_items
 	local var_19_1 = arg_19_0.super_parent
 
@@ -388,7 +388,7 @@ function CraftPageExtractSkinConsole._clear_item_grid(arg_19_0)
 	table.clear(var_19_0)
 end
 
-function CraftPageExtractSkinConsole._has_added_item_by_id(arg_20_0, arg_20_1)
+CraftPageExtractSkinConsole._has_added_item_by_id = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._craft_items
 
 	for iter_20_0 = 1, var_0_9 do
@@ -400,18 +400,18 @@ function CraftPageExtractSkinConsole._has_added_item_by_id(arg_20_0, arg_20_1)
 	return false
 end
 
-function CraftPageExtractSkinConsole._set_craft_button_disabled(arg_21_0, arg_21_1)
+CraftPageExtractSkinConsole._set_craft_button_disabled = function (arg_21_0, arg_21_1)
 	arg_21_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_21_1
 
 	arg_21_0.parent:set_input_description(not arg_21_1 and arg_21_0.settings.name or "disabled")
 end
 
-function CraftPageExtractSkinConsole._exit(arg_22_0, arg_22_1)
+CraftPageExtractSkinConsole._exit = function (arg_22_0, arg_22_1)
 	arg_22_0.exit = true
 	arg_22_0.exit_level_id = arg_22_1
 end
 
-function CraftPageExtractSkinConsole.draw(arg_23_0, arg_23_1)
+CraftPageExtractSkinConsole.draw = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0.ui_renderer
 	local var_23_1 = arg_23_0.ui_top_renderer
 	local var_23_2 = arg_23_0.ui_scenegraph
@@ -426,10 +426,10 @@ function CraftPageExtractSkinConsole.draw(arg_23_0, arg_23_1)
 	UIRenderer.end_pass(var_23_1)
 end
 
-function CraftPageExtractSkinConsole._play_sound(arg_24_0, arg_24_1)
+CraftPageExtractSkinConsole._play_sound = function (arg_24_0, arg_24_1)
 	arg_24_0.super_parent:play_sound(arg_24_1)
 end
 
-function CraftPageExtractSkinConsole._set_craft_button_text(arg_25_0, arg_25_1, arg_25_2)
+CraftPageExtractSkinConsole._set_craft_button_text = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0._widgets_by_name.craft_button.content.button_text = arg_25_2 and Localize(arg_25_1) or arg_25_1
 end

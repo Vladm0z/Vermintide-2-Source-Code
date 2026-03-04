@@ -246,7 +246,7 @@ EmojiHelper = {}
 
 local var_0_3 = {}
 
-function EmojiHelper.parse_emojis(arg_2_0)
+EmojiHelper.parse_emojis = function (arg_2_0)
 	local var_2_0 = arg_2_0
 
 	table.clear(var_0_3)
@@ -274,7 +274,7 @@ function EmojiHelper.parse_emojis(arg_2_0)
 	return var_0_3
 end
 
-function EmojiHelper.replace_emojis(arg_3_0)
+EmojiHelper.replace_emojis = function (arg_3_0)
 	for iter_3_0, iter_3_1 in ipairs(EMOJI_REPLACEMENTS) do
 		local var_3_0 = iter_3_1.data
 

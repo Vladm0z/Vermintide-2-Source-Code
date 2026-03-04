@@ -784,7 +784,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						local var_4_0 = arg_4_0.button_hotspot
 
 						return not var_4_0.disable_button and (var_4_0.is_selected or var_4_0.is_hover)
@@ -794,7 +794,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.button_hotspot.disable_button
 					end
 				},
@@ -802,7 +802,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -814,7 +814,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						local var_7_0 = arg_7_0.button_hotspot.is_clicked
 
 						return not var_7_0 or var_7_0 == 0
@@ -823,7 +823,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.button_hotspot.disable_button
 					end
 				},
@@ -831,7 +831,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					texture_id = "bottom_edge",
 					style_id = "bottom_edge",
 					pass_type = "tiled_texture",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.use_bottom_edge
 					end
 				},
@@ -839,7 +839,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					texture_id = "edge_holder_left",
 					style_id = "edge_holder_left",
 					pass_type = "texture",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.use_bottom_edge
 					end
 				},
@@ -847,7 +847,7 @@ local function var_0_15(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 					texture_id = "edge_holder_right",
 					style_id = "edge_holder_right",
 					pass_type = "texture",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.use_bottom_edge
 					end
 				}
@@ -1115,13 +1115,13 @@ local var_0_16 = {
 					pass_type = "texture",
 					style_id = "hover",
 					texture_id = "hover",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.button_hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "hero_power_tooltip",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.button_hotspot.is_hover
 					end
 				},
@@ -1242,15 +1242,15 @@ local var_0_17 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 
 				arg_15_4.render_settings.alpha_multiplier = var_15_0
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}
@@ -1260,15 +1260,15 @@ local var_0_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				arg_17_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 
 				arg_18_4.render_settings.alpha_multiplier = 1 - var_18_0
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		}

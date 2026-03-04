@@ -10,30 +10,30 @@ end
 
 SmartMatchCleaner = class(SmartMatchCleaner)
 
-function SmartMatchCleaner.init(arg_2_0)
+SmartMatchCleaner.init = function (arg_2_0)
 	arg_2_0:reset()
 end
 
-function SmartMatchCleaner.reset(arg_3_0)
+SmartMatchCleaner.reset = function (arg_3_0)
 	arg_3_0._sessions_to_clean = {}
 end
 
-function SmartMatchCleaner.ready(arg_4_0)
+SmartMatchCleaner.ready = function (arg_4_0)
 	return #arg_4_0._sessions_to_clean == 0
 end
 
-function SmartMatchCleaner.add_session(arg_5_0, arg_5_1)
+SmartMatchCleaner.add_session = function (arg_5_0, arg_5_1)
 	arg_5_0._sessions_to_clean[#arg_5_0._sessions_to_clean + 1] = arg_5_1
 end
 
 local var_0_2 = ENTRIES_TO_REMOVE or {}
 
-function SmartMatchCleaner.update(arg_6_0, arg_6_1)
+SmartMatchCleaner.update = function (arg_6_0, arg_6_1)
 	arg_6_0:_update_cleanup(arg_6_1)
 	arg_6_0:_update_remove(arg_6_1)
 end
 
-function SmartMatchCleaner._update_cleanup(arg_7_0, arg_7_1)
+SmartMatchCleaner._update_cleanup = function (arg_7_0, arg_7_1)
 	for iter_7_0 = 1, #arg_7_0._sessions_to_clean do
 		local var_7_0 = arg_7_0._sessions_to_clean[iter_7_0]
 
@@ -41,7 +41,7 @@ function SmartMatchCleaner._update_cleanup(arg_7_0, arg_7_1)
 	end
 end
 
-function SmartMatchCleaner._update_remove(arg_8_0, arg_8_1)
+SmartMatchCleaner._update_remove = function (arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in ipairs(arg_8_0._sessions_to_clean) do
 		if iter_8_1.state == "_do_remove" then
 			local var_8_0 = iter_8_1.session_id
@@ -60,7 +60,7 @@ function SmartMatchCleaner._update_remove(arg_8_0, arg_8_1)
 	table.clear(var_0_2)
 end
 
-function SmartMatchCleaner._change_state(arg_9_0, arg_9_1, arg_9_2)
+SmartMatchCleaner._change_state = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_2 and arg_9_0[arg_9_2] then
 		var_0_1("Changed state from: %s to: %s", arg_9_1.state, arg_9_2)
 
@@ -70,7 +70,7 @@ function SmartMatchCleaner._change_state(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function SmartMatchCleaner._cleanup_ticket(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+SmartMatchCleaner._cleanup_ticket = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_3.session_id
 	local var_10_1 = arg_10_3.session_name
 	local var_10_2 = arg_10_3.hopper_name
@@ -108,7 +108,7 @@ function SmartMatchCleaner._cleanup_ticket(arg_10_0, arg_10_1, arg_10_2, arg_10_
 	end
 end
 
-function SmartMatchCleaner._cleanup_session(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+SmartMatchCleaner._cleanup_session = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_3.session_id
 	local var_11_1 = arg_11_3.session_name
 	local var_11_2 = arg_11_3.session_name
@@ -124,7 +124,7 @@ function SmartMatchCleaner._cleanup_session(arg_11_0, arg_11_1, arg_11_2, arg_11
 	end
 end
 
-function SmartMatchCleaner._free_session(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+SmartMatchCleaner._free_session = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_3.session_id
 	local var_12_1 = arg_12_3.session_name
 
@@ -135,6 +135,6 @@ function SmartMatchCleaner._free_session(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function SmartMatchCleaner._do_remove(arg_13_0)
+SmartMatchCleaner._do_remove = function (arg_13_0)
 	return
 end

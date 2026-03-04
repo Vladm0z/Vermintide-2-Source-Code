@@ -2,14 +2,14 @@
 
 CameraStateFollow = class(CameraStateFollow, CameraState)
 
-function CameraStateFollow.init(arg_1_0, arg_1_1)
+CameraStateFollow.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "follow")
 
 	arg_1_0._follow_unit = nil
 	arg_1_0._follow_node = 0
 end
 
-function CameraStateFollow.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateFollow.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0, var_2_1 = arg_2_0.camera_extension:get_follow_data()
 
 	arg_2_0._follow_unit = var_2_0
@@ -28,11 +28,11 @@ function CameraStateFollow.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4,
 	end
 end
 
-function CameraStateFollow.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateFollow.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._follow_unit = nil
 end
 
-function CameraStateFollow.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CameraStateFollow.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.camera_extension

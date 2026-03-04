@@ -7,11 +7,11 @@ PlayerCharacterStateCatapulted = class(PlayerCharacterStateCatapulted, PlayerCha
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = PlayerUnitMovementSettings.catapulted.directions
 
-function PlayerCharacterStateCatapulted.init(arg_1_0, arg_1_1)
+PlayerCharacterStateCatapulted.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "catapulted")
 end
 
-function PlayerCharacterStateCatapulted.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateCatapulted.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "stunned")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "stunned")
 
@@ -53,7 +53,7 @@ function PlayerCharacterStateCatapulted.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_
 	arg_2_0.start_catapulted_height = var_0_0[arg_2_1].z
 end
 
-function PlayerCharacterStateCatapulted.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateCatapulted.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._direction = nil
 
 	arg_3_0.status_extension:set_catapulted(false)
@@ -70,7 +70,7 @@ function PlayerCharacterStateCatapulted.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3
 	arg_3_0.status_extension:set_falling_height(nil, arg_3_0.start_catapulted_height)
 end
 
-function PlayerCharacterStateCatapulted.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateCatapulted.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.world

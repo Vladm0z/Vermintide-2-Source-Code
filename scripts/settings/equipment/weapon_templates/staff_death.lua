@@ -36,7 +36,7 @@ local var_0_1 = {
 		climb_function = math.easeInCubic,
 		restore_function = math.ease_out_quad
 	},
-	enter_function = function(arg_1_0, arg_1_1)
+	enter_function = function (arg_1_0, arg_1_1)
 		arg_1_1:clear_input_buffer()
 
 		return arg_1_1:reset_release_input()
@@ -114,7 +114,7 @@ var_0_0.actions = {
 					0
 				}
 			},
-			fire_pos_rot = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			fire_pos_rot = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = Unit.node(arg_2_1, "j_leftweaponattach")
 				local var_2_1 = Unit.world_position(arg_2_1, var_2_0)
 				local var_2_2 = Unit.local_position(arg_2_1, 0)
@@ -182,7 +182,7 @@ var_0_0.actions = {
 					0
 				}
 			},
-			fire_pos_rot = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			fire_pos_rot = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = World.physics_world(arg_3_4)
 				local var_3_1 = Unit.world_position(arg_3_2, 0)
 				local var_3_2 = Unit.local_position(arg_3_1, 0)
@@ -245,7 +245,7 @@ var_0_0.actions = {
 					buff_name = "planted_fast_decrease_movement"
 				}
 			},
-			enter_function = function(arg_4_0, arg_4_1)
+			enter_function = function (arg_4_0, arg_4_1)
 				arg_4_1:clear_input_buffer()
 
 				return arg_4_1:reset_release_input()
@@ -272,7 +272,7 @@ var_0_0.actions = {
 				action_name = "action_one",
 				sub_action_name = "soul_rip_cooldown"
 			},
-			chain_condition_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			chain_condition_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				if arg_5_3 then
 					local var_5_0 = arg_5_3:get_current_action()
 
@@ -315,7 +315,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_6_0, arg_6_1)
+			enter_function = function (arg_6_0, arg_6_1)
 				arg_6_1:clear_input_buffer()
 
 				return arg_6_1:reset_release_input()
@@ -344,7 +344,7 @@ var_0_0.actions = {
 			uninterruptible = true,
 			anim_event = "soul_rip_start",
 			allow_hold_toggle = true,
-			anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+			anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 				return arg_7_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -359,7 +359,7 @@ var_0_0.actions = {
 				"zoom_in_trueflight",
 				"zoom_in"
 			},
-			zoom_condition_function = function()
+			zoom_condition_function = function ()
 				return true
 			end,
 			prioritized_breeds = {
@@ -426,7 +426,7 @@ var_0_0.actions = {
 			uninterruptible = true,
 			anim_event = "cooldown_start",
 			charge_sound_name = "player_combat_weapon_staff_cooldown",
-			anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+			anim_end_event_condition_func = function (arg_9_0, arg_9_1)
 				return arg_9_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -438,7 +438,7 @@ var_0_0.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function(arg_10_0, arg_10_1)
+			enter_function = function (arg_10_0, arg_10_1)
 				arg_10_1:reset_release_input()
 				arg_10_1:clear_input_buffer()
 			end,
@@ -450,10 +450,10 @@ var_0_0.actions = {
 					input = "action_wield"
 				}
 			},
-			condition_func = function(arg_11_0, arg_11_1)
+			condition_func = function (arg_11_0, arg_11_1)
 				return ScriptUnit.extension(arg_11_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end,
-			chain_condition_func = function(arg_12_0, arg_12_1)
+			chain_condition_func = function (arg_12_0, arg_12_1)
 				return ScriptUnit.extension(arg_12_0, "overcharge_system"):get_overcharge_value() ~= 0
 			end
 		}

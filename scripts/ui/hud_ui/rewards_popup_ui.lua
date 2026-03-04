@@ -2,7 +2,7 @@
 
 RewardsPopupUI = class(RewardsPopupUI)
 
-function RewardsPopupUI.init(arg_1_0, arg_1_1, arg_1_2)
+RewardsPopupUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui = arg_1_2.ingame_ui
@@ -25,18 +25,18 @@ function RewardsPopupUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "present_rewards", "present_rewards")
 end
 
-function RewardsPopupUI.destroy(arg_2_0)
+RewardsPopupUI.destroy = function (arg_2_0)
 	Managers.state.event:unregister("present_rewards", arg_2_0)
 end
 
-function RewardsPopupUI.update(arg_3_0, arg_3_1, arg_3_2)
+RewardsPopupUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0._reward_popup then
 		arg_3_0._reward_popup:update(arg_3_1)
 		arg_3_0:_handle_queued_presentations()
 	end
 end
 
-function RewardsPopupUI.present_rewards(arg_4_0, arg_4_1)
+RewardsPopupUI.present_rewards = function (arg_4_0, arg_4_1)
 	if #arg_4_1 > 0 then
 		local var_4_0 = {}
 		local var_4_1 = Managers.backend:get_interface("items")
@@ -134,14 +134,14 @@ function RewardsPopupUI.present_rewards(arg_4_0, arg_4_1)
 					for iter_4_2 = 1, #var_4_23 do
 						local var_4_24 = var_4_23[iter_4_2]
 
-						if var_4_24.progress_sfx and table.find_func(var_4_24.pieces, function(arg_5_0, arg_5_1)
+						if var_4_24.progress_sfx and table.find_func(var_4_24.pieces, function (arg_5_0, arg_5_1)
 							return arg_5_1.name == var_4_22 and arg_5_1.rarity == var_4_21
 						end) then
 							var_4_3 = var_4_3 and table.shallow_copy(var_4_3) or {}
 							var_4_3[#var_4_3 + 1] = var_4_24.progress_sfx
 
 							break
-						elseif var_4_24.completed_sfx and table.find_func(var_4_24.rewards, function(arg_6_0, arg_6_1)
+						elseif var_4_24.completed_sfx and table.find_func(var_4_24.rewards, function (arg_6_0, arg_6_1)
 							return arg_6_1.name == var_4_22 and arg_6_1.rarity == var_4_21
 						end) then
 							var_4_3 = var_4_3 and table.shallow_copy(var_4_3) or {}
@@ -224,22 +224,22 @@ function RewardsPopupUI.present_rewards(arg_4_0, arg_4_1)
 	end
 end
 
-function RewardsPopupUI._displaying_reward_presentation(arg_7_0)
+RewardsPopupUI._displaying_reward_presentation = function (arg_7_0)
 	return arg_7_0._reward_popup:is_presentation_active()
 end
 
-function RewardsPopupUI._is_reward_presentation_complete(arg_8_0)
+RewardsPopupUI._is_reward_presentation_complete = function (arg_8_0)
 	return arg_8_0._reward_popup:is_presentation_complete()
 end
 
-function RewardsPopupUI.all_presentations_done(arg_9_0)
+RewardsPopupUI.all_presentations_done = function (arg_9_0)
 	local var_9_0 = not arg_9_0:_displaying_reward_presentation()
 	local var_9_1 = #arg_9_0._reward_presentation_queue
 
 	return var_9_0 and var_9_1 == 0
 end
 
-function RewardsPopupUI._handle_queued_presentations(arg_10_0)
+RewardsPopupUI._handle_queued_presentations = function (arg_10_0)
 	if arg_10_0:_is_reward_presentation_complete() or #arg_10_0._reward_presentation_queue == 0 and not arg_10_0:_displaying_reward_presentation() then
 		local var_10_0 = arg_10_0._reward_presentation_queue
 
@@ -253,7 +253,7 @@ function RewardsPopupUI._handle_queued_presentations(arg_10_0)
 	end
 end
 
-function RewardsPopupUI._play_sounds(arg_11_0, arg_11_1)
+RewardsPopupUI._play_sounds = function (arg_11_0, arg_11_1)
 	if not arg_11_1 then
 		return
 	end
@@ -265,7 +265,7 @@ function RewardsPopupUI._play_sounds(arg_11_0, arg_11_1)
 	end
 end
 
-function RewardsPopupUI._present_reward(arg_12_0, arg_12_1)
+RewardsPopupUI._present_reward = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._reward_popup
 
 	if arg_12_0:_displaying_reward_presentation() then

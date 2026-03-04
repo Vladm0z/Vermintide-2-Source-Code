@@ -2,7 +2,7 @@
 
 ActionAim = class(ActionAim, ActionBase)
 
-function ActionAim.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionAim.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionAim.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
@@ -14,7 +14,7 @@ local function var_0_0(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return arg_2_1 / ActionUtils.get_action_time_scale(arg_2_2, arg_2_0)
 end
 
-function ActionAim.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2)
+ActionAim.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2)
 	ActionAim.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2)
 
 	local var_3_0 = arg_3_0.owner_unit
@@ -61,7 +61,7 @@ function ActionAim.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_start_charge_sound()
 end
 
-function ActionAim._start_charge_sound(arg_4_0)
+ActionAim._start_charge_sound = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.owner_player
@@ -79,7 +79,7 @@ function ActionAim._start_charge_sound(arg_4_0)
 	ActionUtils.play_husk_sound_event(var_4_5, var_4_0.charge_sound_husk_name, var_4_1, var_4_3)
 end
 
-function ActionAim._stop_charge_sound(arg_5_0)
+ActionAim._stop_charge_sound = function (arg_5_0)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.owner_unit
 	local var_5_2 = arg_5_0.owner_player
@@ -97,7 +97,7 @@ function ActionAim._stop_charge_sound(arg_5_0)
 	ActionUtils.play_husk_sound_event(var_5_5, var_5_0.charge_sound_husk_stop_event, var_5_1, var_5_3)
 end
 
-function ActionAim.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ActionAim.client_owner_post_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_0.current_action
 	local var_6_1 = arg_6_0.owner_unit
 
@@ -182,7 +182,7 @@ function ActionAim.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, 
 	end
 end
 
-function ActionAim.finish(arg_7_0, arg_7_1)
+ActionAim.finish = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.current_action
 	local var_7_1 = arg_7_0.ammo_extension
 	local var_7_2 = arg_7_0.owner_unit

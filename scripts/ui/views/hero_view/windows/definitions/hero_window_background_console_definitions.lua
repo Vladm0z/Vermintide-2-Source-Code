@@ -164,7 +164,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				pass_type = "tiled_texture",
 				style_id = "drop_down_edge",
 				texture_id = "drop_down_edge",
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return arg_2_0.active
 				end
 			},
@@ -172,7 +172,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "title",
 				pass_type = "text",
 				text_id = "title",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.active
 				end
 			},
@@ -180,14 +180,14 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "title_shadow",
 				pass_type = "text",
 				text_id = "title",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.active
 				end
 			},
 			{
 				style_id = "title_rect",
 				pass_type = "rect",
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.active
 				end
 			},
@@ -195,7 +195,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "scrollbar",
 				pass_type = "scrollbar_hotspot",
 				content_id = "scrollbar",
-				content_check_function = function(arg_6_0)
+				content_check_function = function (arg_6_0)
 					return arg_6_0.active
 				end
 			},
@@ -203,7 +203,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "scrollbar",
 				pass_type = "scrollbar",
 				content_id = "scrollbar",
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return arg_7_0.active
 				end
 			},
@@ -216,7 +216,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "list_background",
 				pass_type = "texture_uv",
 				content_id = "list_background",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return arg_8_0.parent.active
 				end
 			},
@@ -224,7 +224,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_texture",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return arg_9_0.active
 				end
 			},
@@ -232,7 +232,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "list_background",
 				pass_type = "scroll",
 				content_id = "scrollbar",
-				scroll_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+				scroll_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 					local var_10_0 = arg_10_4.y
 					local var_10_1 = arg_10_2.parent.list_hotspot
 
@@ -269,7 +269,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				style_id = "list_style",
 				pass_type = "list_pass",
 				content_id = "list_content",
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return arg_11_0.active
 				end,
 				passes = {
@@ -307,7 +307,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 						pass_type = "texture",
 						style_id = "title_divider",
 						texture_id = "title_divider",
-						content_check_function = function(arg_12_0)
+						content_check_function = function (arg_12_0)
 							return arg_12_0.title ~= ""
 						end
 					}
@@ -802,15 +802,15 @@ local var_0_17 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeOutCubic(arg_14_3)
 
 				arg_14_4.render_settings.alpha_multiplier = var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		}
@@ -820,15 +820,15 @@ local var_0_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeOutCubic(arg_17_3)
 
 				arg_17_4.render_settings.alpha_multiplier = 1 - var_17_0
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}

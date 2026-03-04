@@ -6,7 +6,7 @@ local var_0_0 = {
 	"AILineOfSightExtension"
 }
 
-function AILineOfSightSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AILineOfSightSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	AILineOfSightSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._is_server = arg_1_1.is_server
@@ -17,11 +17,11 @@ function AILineOfSightSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._num_raycasts = 0
 end
 
-function AILineOfSightSystem.destroy(arg_2_0)
+AILineOfSightSystem.destroy = function (arg_2_0)
 	return
 end
 
-function AILineOfSightSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AILineOfSightSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	ScriptUnit.add_extension(nil, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
 
 	local var_3_0 = ScriptUnit.extension(arg_3_2, arg_3_0.NAME)
@@ -31,14 +31,14 @@ function AILineOfSightSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	return var_3_0
 end
 
-function AILineOfSightSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+AILineOfSightSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._frozen_extensions[arg_4_1] = nil
 
 	arg_4_0:_cleanup_extension(arg_4_1, arg_4_2)
 	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 end
 
-function AILineOfSightSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
+AILineOfSightSystem.on_freeze_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._extensions[arg_5_1]
 
 	fassert(var_5_0, "Unit was already frozen.")
@@ -52,7 +52,7 @@ function AILineOfSightSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 end
 
-function AILineOfSightSystem._cleanup_extension(arg_6_0, arg_6_1, arg_6_2)
+AILineOfSightSystem._cleanup_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._extensions
 
 	if var_6_0[arg_6_1] == nil then
@@ -62,7 +62,7 @@ function AILineOfSightSystem._cleanup_extension(arg_6_0, arg_6_1, arg_6_2)
 	var_6_0[arg_6_1] = nil
 end
 
-function AILineOfSightSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+AILineOfSightSystem.freeze = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0._frozen_extensions
 
 	if arg_7_0._frozen_extensions[arg_7_1] then
@@ -77,30 +77,30 @@ function AILineOfSightSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	var_7_0[arg_7_1] = var_7_1
 end
 
-function AILineOfSightSystem.unfreeze(arg_8_0, arg_8_1)
+AILineOfSightSystem.unfreeze = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._frozen_extensions[arg_8_1]
 
 	arg_8_0._frozen_extensions[arg_8_1] = nil
 	arg_8_0._extensions[arg_8_1] = var_8_0
 end
 
-function AILineOfSightSystem.hot_join_sync(arg_9_0, arg_9_1, arg_9_2)
+AILineOfSightSystem.hot_join_sync = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function AILineOfSightSystem.extensions_ready(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+AILineOfSightSystem.extensions_ready = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = BLACKBOARDS[arg_10_2]
 
 	arg_10_0._extensions[arg_10_2].blackboard = var_10_0
 end
 
-function AILineOfSightSystem.target_changed(arg_11_0, arg_11_1)
+AILineOfSightSystem.target_changed = function (arg_11_0, arg_11_1)
 	arg_11_0._extensions[arg_11_1].blackboard.has_line_of_sight = true
 end
 
 local var_0_1 = PLATFORM == Application.WIN32 and 10 or 2
 
-function AILineOfSightSystem.update(arg_12_0, arg_12_1, arg_12_2)
+AILineOfSightSystem.update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1.dt
 	local var_12_1 = arg_12_0._extensions
 

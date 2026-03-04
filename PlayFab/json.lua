@@ -108,7 +108,7 @@ function var_0_1(arg_6_0, arg_6_1)
 	error("unexpected type '" .. var_6_0 .. "'")
 end
 
-function var_0_0.encode(arg_7_0)
+var_0_0.encode = function (arg_7_0)
 	return (var_0_1(arg_7_0))
 end
 
@@ -388,7 +388,7 @@ function var_0_10(arg_18_0, arg_18_1)
 	var_0_18(arg_18_0, arg_18_1, "unexpected character '" .. var_18_0 .. "'")
 end
 
-function var_0_0.decode(arg_19_0)
+var_0_0.decode = function (arg_19_0)
 	if type(arg_19_0) ~= "string" then
 		error("expected argument of type string, got " .. type(arg_19_0))
 	end

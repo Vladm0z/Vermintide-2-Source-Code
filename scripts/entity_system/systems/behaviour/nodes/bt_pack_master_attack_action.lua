@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterAttackAction = class(BTPackMasterAttackAction, BTNode)
 
-function BTPackMasterAttackAction.init(arg_1_0, ...)
+BTPackMasterAttackAction.init = function (arg_1_0, ...)
 	BTPackMasterAttackAction.super.init(arg_1_0, ...)
 end
 
 BTPackMasterAttackAction.name = "BTPackMasterAttackAction"
 
-function BTPackMasterAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterAttackAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.active_node = BTPackMasterAttackAction
 	arg_2_2.attacks_done = 0
@@ -23,7 +23,7 @@ function BTPackMasterAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-function BTPackMasterAttackAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterAttackAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	if arg_3_4 ~= "done" then
@@ -53,7 +53,7 @@ function BTPackMasterAttackAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	arg_3_2.create_bot_threat_at = nil
 end
 
-function BTPackMasterAttackAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterAttackAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, arg_4_2.target_unit) then
 		return "failed"
 	end
@@ -73,7 +73,7 @@ function BTPackMasterAttackAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	return "running"
 end
 
-function BTPackMasterAttackAction.attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPackMasterAttackAction.attack = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_4.action
 	local var_5_1 = arg_5_4.locomotion_extension
 
@@ -103,7 +103,7 @@ function BTPackMasterAttackAction.attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	end
 end
 
-function BTPackMasterAttackAction.attack_success(arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterAttackAction.attack_success = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_2.active_node and arg_6_2.active_node == BTPackMasterAttackAction then
 		local var_6_0 = arg_6_2.target_unit
 		local var_6_1 = arg_6_2.target_unit_status_extension
@@ -136,7 +136,7 @@ function BTPackMasterAttackAction.attack_success(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BTPackMasterAttackAction.create_bot_threat(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTPackMasterAttackAction.create_bot_threat = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = ScriptUnit.has_extension(arg_7_2.target_unit, "first_person_system")
 
 	if var_7_0 then

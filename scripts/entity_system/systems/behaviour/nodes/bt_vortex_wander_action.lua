@@ -6,21 +6,21 @@ BTVortexWanderAction = class(BTVortexWanderAction, BTNode)
 
 local var_0_0 = POSITION_LOOKUP
 
-function BTVortexWanderAction.init(arg_1_0, ...)
+BTVortexWanderAction.init = function (arg_1_0, ...)
 	BTVortexWanderAction.super.init(arg_1_0, ...)
 end
 
 BTVortexWanderAction.name = "BTVortexWanderAction"
 
-function BTVortexWanderAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTVortexWanderAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 end
 
-function BTVortexWanderAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTVortexWanderAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-function BTVortexWanderAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTVortexWanderAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.vortex_data
 
 	arg_4_0:_wander_around(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
@@ -28,7 +28,7 @@ function BTVortexWanderAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTVortexWanderAction._wander_around(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTVortexWanderAction._wander_around = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_4.action
 	local var_5_1 = arg_5_5.wander_state
 	local var_5_2 = arg_5_5.vortex_template
@@ -108,6 +108,6 @@ function BTVortexWanderAction._wander_around(arg_5_0, arg_5_1, arg_5_2, arg_5_3,
 			arg_5_5.wander_state = "recalc_path"
 		end
 	elseif var_5_1 ~= "standing_still" and var_5_1 == "forced_standing_still" then
-		-- block empty
+		-- Nothing
 	end
 end

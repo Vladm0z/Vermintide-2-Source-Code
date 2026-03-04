@@ -7,14 +7,14 @@ ChallengeTrackerUI = class(ChallengeTrackerUI)
 local var_0_1 = 500
 local var_0_2 = var_0_0.RETAINED_MODE_ENABLED
 
-function ChallengeTrackerUI.init(arg_1_0, arg_1_1, arg_1_2)
+ChallengeTrackerUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._wwise_world = arg_1_2.wwise_world
 
 	arg_1_0:_create_ui_elements()
 end
 
-function ChallengeTrackerUI.destroy(arg_2_0)
+ChallengeTrackerUI.destroy = function (arg_2_0)
 	if var_0_2 then
 		local var_2_0 = arg_2_0._data and arg_2_0._data.widgets
 
@@ -24,11 +24,11 @@ function ChallengeTrackerUI.destroy(arg_2_0)
 	end
 end
 
-function ChallengeTrackerUI._play_sound(arg_3_0, arg_3_1)
+ChallengeTrackerUI._play_sound = function (arg_3_0, arg_3_1)
 	return WwiseWorld.trigger_event(arg_3_0._wwise_world, arg_3_1)
 end
 
-function ChallengeTrackerUI._create_ui_elements(arg_4_0)
+ChallengeTrackerUI._create_ui_elements = function (arg_4_0)
 	arg_4_0:destroy()
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -58,7 +58,7 @@ local function var_0_3(arg_5_0, arg_5_1)
 	return arg_5_0:get_category() < arg_5_1:get_category()
 end
 
-function ChallengeTrackerUI._refresh_challenge_data(arg_6_0, arg_6_1)
+ChallengeTrackerUI._refresh_challenge_data = function (arg_6_0, arg_6_1)
 	table.clear(arg_6_1.challenges)
 
 	local var_6_0, var_6_1 = Managers.venture.challenge:get_challenges_filtered(arg_6_1.challenges)
@@ -121,7 +121,7 @@ function ChallengeTrackerUI._refresh_challenge_data(arg_6_0, arg_6_1)
 	end
 end
 
-function ChallengeTrackerUI._cb_on_done(arg_7_0, arg_7_1, arg_7_2)
+ChallengeTrackerUI._cb_on_done = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._data
 	local var_7_1 = table.index_of(var_7_0.widgets, arg_7_1)
 	local var_7_2 = #var_7_0.widgets
@@ -145,7 +145,7 @@ function ChallengeTrackerUI._cb_on_done(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function ChallengeTrackerUI._play_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+ChallengeTrackerUI._play_animation = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._ui_animator
 
 	var_8_0:stop_animation(arg_8_2.content.animation_id or false)
@@ -156,7 +156,7 @@ function ChallengeTrackerUI._play_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	}, arg_8_3)
 end
 
-function ChallengeTrackerUI._play_animation_queued(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ChallengeTrackerUI._play_animation_queued = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0._ui_animator
 	local var_9_1 = arg_9_2.content.animation_id
 
@@ -173,7 +173,7 @@ function ChallengeTrackerUI._play_animation_queued(arg_9_0, arg_9_1, arg_9_2, ar
 	end
 end
 
-function ChallengeTrackerUI._update_animation_queue(arg_10_0)
+ChallengeTrackerUI._update_animation_queue = function (arg_10_0)
 	local var_10_0 = arg_10_0._ui_animator
 
 	for iter_10_0, iter_10_1 in pairs(arg_10_0._animation_queue) do
@@ -192,7 +192,7 @@ function ChallengeTrackerUI._update_animation_queue(arg_10_0)
 	end
 end
 
-function ChallengeTrackerUI._update_restacking(arg_11_0, arg_11_1)
+ChallengeTrackerUI._update_restacking = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._restack_targets
 	local var_11_1 = var_0_1 * arg_11_1
 
@@ -213,12 +213,12 @@ function ChallengeTrackerUI._update_restacking(arg_11_0, arg_11_1)
 	end
 end
 
-function ChallengeTrackerUI._set_widget_dirty(arg_12_0, arg_12_1)
+ChallengeTrackerUI._set_widget_dirty = function (arg_12_0, arg_12_1)
 	arg_12_1.element.dirty = true
 	arg_12_0._dirty = true
 end
 
-function ChallengeTrackerUI._update_animations(arg_13_0, arg_13_1, arg_13_2)
+ChallengeTrackerUI._update_animations = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._ui_animator
 
 	var_13_0:update(arg_13_1)
@@ -236,7 +236,7 @@ function ChallengeTrackerUI._update_animations(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function ChallengeTrackerUI._handle_resolution_modified(arg_14_0)
+ChallengeTrackerUI._handle_resolution_modified = function (arg_14_0)
 	if RESOLUTION_LOOKUP.modified then
 		UIUtils.mark_dirty(arg_14_0._data.widgets)
 
@@ -253,7 +253,7 @@ local var_0_4 = {
 	lock_x = false
 }
 
-function ChallengeTrackerUI.update(arg_15_0, arg_15_1, arg_15_2)
+ChallengeTrackerUI.update = function (arg_15_0, arg_15_1, arg_15_2)
 	HudCustomizer.run(arg_15_0._ui_renderer, arg_15_0._ui_scenegraph, var_0_4)
 	arg_15_0:_handle_resolution_modified()
 	arg_15_0:_update_restacking(arg_15_1)
@@ -263,7 +263,7 @@ function ChallengeTrackerUI.update(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_draw(arg_15_1)
 end
 
-function ChallengeTrackerUI._draw(arg_16_0, arg_16_1)
+ChallengeTrackerUI._draw = function (arg_16_0, arg_16_1)
 	if not arg_16_0._dirty and var_0_2 or not arg_16_0._is_visible then
 		return
 	end
@@ -287,7 +287,7 @@ function ChallengeTrackerUI._draw(arg_16_0, arg_16_1)
 	arg_16_0._dirty = false
 end
 
-function ChallengeTrackerUI.set_visible(arg_17_0, arg_17_1)
+ChallengeTrackerUI.set_visible = function (arg_17_0, arg_17_1)
 	arg_17_0._is_visible = arg_17_1
 
 	local var_17_0 = arg_17_0._ui_renderer

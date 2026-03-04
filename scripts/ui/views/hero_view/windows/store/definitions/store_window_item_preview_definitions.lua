@@ -530,7 +530,7 @@ local var_0_10 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 						local var_1_0 = ((arg_1_1.progress or 0) + arg_1_3) % 1
 
 						arg_1_1.angle = math.pow(2, math.smoothstep(var_1_0, 0, 1)) * (math.pi * 2)
@@ -903,7 +903,7 @@ local var_0_14 = {
 					pass_type = "texture",
 					style_id = "normal",
 					texture_id = "normal",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return not arg_4_0.button_hotspot.is_selected
 					end
 				},
@@ -911,7 +911,7 @@ local var_0_14 = {
 					pass_type = "texture",
 					style_id = "normal_glow",
 					texture_id = "normal_glow",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.button_hotspot.is_selected
 					end
 				},
@@ -919,7 +919,7 @@ local var_0_14 = {
 					pass_type = "texture",
 					style_id = "expanded",
 					texture_id = "expanded",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.is_selected
 					end
 				},
@@ -927,7 +927,7 @@ local var_0_14 = {
 					pass_type = "texture",
 					style_id = "expanded_glow",
 					texture_id = "expanded_glow",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.button_hotspot.is_selected
 					end
 				}
@@ -1077,13 +1077,13 @@ local var_0_23 = {
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				return
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		},
@@ -1091,15 +1091,15 @@ local var_0_23 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = var_12_0
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -1109,10 +1109,10 @@ local var_0_23 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 				local var_15_1 = 255
 				local var_15_2 = 130
@@ -1149,7 +1149,7 @@ local var_0_23 = {
 				var_15_12.style.text.text_color[1] = var_15_8
 				var_15_12.style.text_shadow.text_color[1] = var_15_8
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}
@@ -1159,10 +1159,10 @@ local var_0_23 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 				local var_18_1 = 255
 				local var_18_2 = 130
@@ -1199,7 +1199,7 @@ local var_0_23 = {
 				var_18_12.style.text.text_color[1] = var_18_8
 				var_18_12.style.text_shadow.text_color[1] = var_18_8
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		}
@@ -1228,7 +1228,7 @@ local var_0_24 = {
 			input_action = "special_1",
 			priority = 4,
 			description_text = "input_description_toggle_hero_details",
-			content_check_function = function()
+			content_check_function = function ()
 				return IS_PS4 or IS_XB1
 			end
 		},

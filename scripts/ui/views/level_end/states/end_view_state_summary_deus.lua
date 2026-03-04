@@ -5,7 +5,7 @@ require("scripts/ui/views/level_end/states/end_view_state_summary")
 EndViewStateSummaryDeus = class(EndViewStateSummaryDeus, EndViewStateSummary)
 EndViewStateSummaryDeus.NAME = "EndViewStateSummaryDeus"
 
-function EndViewStateSummaryDeus.on_enter(arg_1_0, arg_1_1)
+EndViewStateSummaryDeus.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0.super.on_enter(arg_1_0, arg_1_1)
 
 	arg_1_0._widgets_by_name.summary_title.content.text = Localize("expedition_summary")
@@ -19,6 +19,6 @@ function EndViewStateSummaryDeus.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._widgets_by_name.coins_retained_total_text.content.coin_count_text = string.format("%d", var_1_0)
 end
 
-function EndViewStateSummaryDeus._get_definitions(arg_2_0)
+EndViewStateSummaryDeus._get_definitions = function (arg_2_0)
 	return local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_deus_definitions")
 end

@@ -34,7 +34,7 @@ local var_0_10 = {
 
 PingSystem = class(PingSystem, ExtensionSystemBase)
 
-function PingSystem.init(arg_1_0, arg_1_1, arg_1_2)
+PingSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	PingSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_8)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -66,11 +66,11 @@ function PingSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._current_mechanism_name = Managers.mechanism:current_mechanism_name()
 end
 
-function PingSystem.destroy(arg_2_0)
+PingSystem.destroy = function (arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-function PingSystem.freeze(arg_3_0, arg_3_1)
+PingSystem.freeze = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._pinged_units[arg_3_1]
 
 	if var_3_0 then
@@ -84,11 +84,11 @@ function PingSystem.freeze(arg_3_0, arg_3_1)
 	end
 end
 
-function PingSystem.unfreeze(arg_4_0, arg_4_1)
+PingSystem.unfreeze = function (arg_4_0, arg_4_1)
 	return
 end
 
-function PingSystem.update(arg_5_0, arg_5_1, arg_5_2)
+PingSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
 	PingSystem.super.update(arg_5_0, arg_5_1, arg_5_2)
 
 	if not arg_5_0._pings_enabled then
@@ -102,7 +102,7 @@ function PingSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function PingSystem._update_server(arg_6_0, arg_6_1, arg_6_2)
+PingSystem._update_server = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._pinged_units
 
 	for iter_6_0, iter_6_1 in pairs(var_6_0) do
@@ -136,7 +136,7 @@ function PingSystem._update_server(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function PingSystem._update_client(arg_7_0, arg_7_1, arg_7_2)
+PingSystem._update_client = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._pinged_units
 
 	for iter_7_0, iter_7_1 in pairs(var_7_0) do
@@ -146,7 +146,7 @@ function PingSystem._update_client(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function PingSystem.hot_join_sync(arg_8_0, arg_8_1)
+PingSystem.hot_join_sync = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._pinged_units
 	local var_8_1 = Managers.state.network
 	local var_8_2 = PEER_ID_TO_CHANNEL[arg_8_1]
@@ -186,7 +186,7 @@ function PingSystem.hot_join_sync(arg_8_0, arg_8_1)
 	end
 end
 
-function PingSystem._handle_ping(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+PingSystem._handle_ping = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 	if arg_9_5 and not Unit.alive(arg_9_5) then
 		return
 	end
@@ -308,7 +308,7 @@ function PingSystem._handle_ping(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, ar
 	end
 end
 
-function PingSystem._handle_chat(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+PingSystem._handle_chat = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	if arg_10_5 and arg_10_1 == PingTypes.ENEMY_GENERIC then
 		local var_10_0 = Unit.get_data(arg_10_5, "breed")
 
@@ -376,11 +376,11 @@ function PingSystem._handle_chat(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_
 	end
 end
 
-function PingSystem.handle_local_ping(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+PingSystem.handle_local_ping = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 	arg_11_0:_handle_chat(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 end
 
-function PingSystem.is_ping_cancel(arg_12_0, arg_12_1, arg_12_2)
+PingSystem.is_ping_cancel = function (arg_12_0, arg_12_1, arg_12_2)
 	if not arg_12_0._world_markers_enabled then
 		return
 	end
@@ -414,7 +414,7 @@ function PingSystem.is_ping_cancel(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function PingSystem._get_unit_ping_type(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+PingSystem._get_unit_ping_type = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not arg_13_0._world_markers_enabled then
 		return arg_13_3
 	end
@@ -447,7 +447,7 @@ function PingSystem._get_unit_ping_type(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return arg_13_3
 end
 
-function PingSystem._get_world_position_ping_type(arg_14_0, arg_14_1, arg_14_2)
+PingSystem._get_world_position_ping_type = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_2 then
 		return PingTypes.ENEMY_POSITION
 	end
@@ -463,7 +463,7 @@ function PingSystem._get_world_position_ping_type(arg_14_0, arg_14_1, arg_14_2)
 	return arg_14_1, nil
 end
 
-function PingSystem._add_unit_ping(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PingSystem._add_unit_ping = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = ScriptUnit.has_extension(arg_15_2, "ping_system")
 
 	if not var_15_0 then
@@ -507,7 +507,7 @@ function PingSystem._add_unit_ping(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_1
 	end
 end
 
-function PingSystem._add_world_marker(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+PingSystem._add_world_marker = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	if not arg_16_2 and not arg_16_3 then
 		return
 	end
@@ -591,7 +591,7 @@ function PingSystem._add_world_marker(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 	Managers.state.event:trigger("add_world_marker_position", "ping", arg_16_3, var_16_9)
 end
 
-function PingSystem.remove_ping_from_unit(arg_18_0, arg_18_1)
+PingSystem.remove_ping_from_unit = function (arg_18_0, arg_18_1)
 	if not arg_18_0._pings_enabled then
 		return
 	end
@@ -603,7 +603,7 @@ function PingSystem.remove_ping_from_unit(arg_18_0, arg_18_1)
 	end
 end
 
-function PingSystem._remove_ping(arg_19_0, arg_19_1, arg_19_2)
+PingSystem._remove_ping = function (arg_19_0, arg_19_1, arg_19_2)
 	if not arg_19_1 then
 		return
 	end
@@ -653,13 +653,13 @@ function PingSystem._remove_ping(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function PingSystem.get_pinged_unit(arg_20_0, arg_20_1)
+PingSystem.get_pinged_unit = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._pinged_units[arg_20_1]
 
 	return var_20_0 and Unit.alive(var_20_0.pinged_unit) and var_20_0.pinged_unit
 end
 
-function PingSystem._is_outline_enabled(arg_21_0, arg_21_1)
+PingSystem._is_outline_enabled = function (arg_21_0, arg_21_1)
 	if arg_21_0._outlines_enabled.item and ScriptUnit.has_extension(arg_21_1, "pickup_system") and ScriptUnit.has_extension(arg_21_1, "interactable_system") then
 		return true
 	end
@@ -667,7 +667,7 @@ function PingSystem._is_outline_enabled(arg_21_0, arg_21_1)
 	return arg_21_0._outlines_enabled.unit
 end
 
-function PingSystem._play_ping_vo(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PingSystem._play_ping_vo = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = FrameTable.alloc_table()
 	local var_22_1 = ScriptUnit.extension_input(arg_22_1, "dialogue_system")
 
@@ -753,7 +753,7 @@ function PingSystem._play_ping_vo(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22
 	end
 end
 
-function PingSystem.rpc_ping_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+PingSystem.rpc_ping_unit = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
 	local var_23_0 = arg_23_0._unit_storage:unit(arg_23_2)
 	local var_23_1 = Managers.state.network:game_object_or_level_unit(arg_23_3, arg_23_4)
 	local var_23_2 = Managers.player:unit_owner(var_23_0)
@@ -794,7 +794,7 @@ function PingSystem.rpc_ping_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23
 	end
 end
 
-function PingSystem.rpc_ping_world_position(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+PingSystem.rpc_ping_world_position = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = arg_24_0._unit_storage:unit(arg_24_2)
 	local var_24_1 = Managers.player:unit_owner(var_24_0)
 
@@ -831,7 +831,7 @@ function PingSystem.rpc_ping_world_position(arg_24_0, arg_24_1, arg_24_2, arg_24
 	end
 end
 
-function PingSystem.rpc_social_message(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+PingSystem.rpc_social_message = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	fassert(arg_25_0.is_server, "Only server should get this")
 
 	local var_25_0 = arg_25_0._unit_storage:unit(arg_25_2)
@@ -841,7 +841,7 @@ function PingSystem.rpc_social_message(arg_25_0, arg_25_1, arg_25_2, arg_25_3, a
 	arg_25_0:_handle_chat(nil, arg_25_3, var_25_2, var_25_0, var_25_1)
 end
 
-function PingSystem.rpc_remove_ping(arg_26_0, arg_26_1, arg_26_2)
+PingSystem.rpc_remove_ping = function (arg_26_0, arg_26_1, arg_26_2)
 	if not arg_26_0._pings_enabled then
 		return
 	end
@@ -851,6 +851,6 @@ function PingSystem.rpc_remove_ping(arg_26_0, arg_26_1, arg_26_2)
 	arg_26_0:_remove_ping(var_26_0)
 end
 
-function PingSystem._play_sound(arg_27_0, arg_27_1)
+PingSystem._play_sound = function (arg_27_0, arg_27_1)
 	WwiseWorld.trigger_event(arg_27_0._wwise_world, arg_27_1)
 end

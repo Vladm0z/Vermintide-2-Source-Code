@@ -271,7 +271,7 @@ local var_0_30 = {
 							{
 								pass_type = "on_click",
 								click_check_content_id = "button_hotspot",
-								click_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+								click_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 									arg_1_2.button_hotspot.is_selected = true
 								end
 							},
@@ -284,7 +284,7 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_normal_hover",
-								content_check_function = function(arg_2_0)
+								content_check_function = function (arg_2_0)
 									local var_2_0 = arg_2_0.button_hotspot
 
 									return var_2_0.is_hover and not var_2_0.is_selected
@@ -294,7 +294,7 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected",
-								content_check_function = function(arg_3_0)
+								content_check_function = function (arg_3_0)
 									local var_3_0 = arg_3_0.button_hotspot
 
 									return var_3_0.is_selected and not var_3_0.is_hover
@@ -304,7 +304,7 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected_hover",
-								content_check_function = function(arg_4_0)
+								content_check_function = function (arg_4_0)
 									local var_4_0 = arg_4_0.button_hotspot
 
 									return var_4_0.is_selected and var_4_0.is_hover
@@ -314,7 +314,7 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "locked_level",
 								texture_id = "locked_level",
-								content_check_function = function(arg_5_0)
+								content_check_function = function (arg_5_0)
 									return arg_5_0.level_is_locked
 								end
 							},
@@ -322,7 +322,7 @@ local var_0_30 = {
 								pass_type = "texture",
 								style_id = "locked_difficulty",
 								texture_id = "locked_difficulty",
-								content_check_function = function(arg_6_0)
+								content_check_function = function (arg_6_0)
 									return arg_6_0.difficulty_is_locked
 								end
 							},
@@ -438,7 +438,7 @@ local function var_0_32(arg_8_0, arg_8_1)
 			passes = {
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+					scroll_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 						local var_9_0 = arg_9_2.scroll_step or 0.1
 						local var_9_1 = arg_9_2.internal_scroll_value + var_9_0 * -arg_9_4.y
 
@@ -849,7 +849,7 @@ end
 
 LobbyItemsList = class(LobbyItemsList)
 
-function LobbyItemsList.init(arg_21_0, arg_21_1, arg_21_2)
+LobbyItemsList.init = function (arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0.ui_renderer = arg_21_1.ui_top_renderer
 	arg_21_0.input_manager = arg_21_1.input_manager
 
@@ -904,11 +904,11 @@ function LobbyItemsList.init(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0.selected_list_index = 1
 end
 
-function LobbyItemsList.destroy(arg_22_0)
+LobbyItemsList.destroy = function (arg_22_0)
 	return
 end
 
-function LobbyItemsList.lobby_status_text(arg_23_0)
+LobbyItemsList.lobby_status_text = function (arg_23_0)
 	local var_23_0 = arg_23_0.server_info ~= nil
 	local var_23_1 = Managers.matchmaking.get_matchmaking_settings_for_mechanism(arg_23_0.mechanism)
 	local var_23_2 = arg_23_0.mission_id
@@ -933,7 +933,7 @@ function LobbyItemsList.lobby_status_text(arg_23_0)
 	return var_23_12 and Localize(var_23_12) or ""
 end
 
-function LobbyItemsList.create_ui_elements(arg_24_0, arg_24_1)
+LobbyItemsList.create_ui_elements = function (arg_24_0, arg_24_1)
 	arg_24_0.ui_scenegraph = UISceneGraph.init_scenegraph(arg_24_0.scenegraph_definition)
 
 	local var_24_0 = "scrollbar_root"
@@ -1019,7 +1019,7 @@ local function var_0_56(arg_36_0, arg_36_1)
 	return var_0_37(arg_36_0) > var_0_37(arg_36_1)
 end
 
-function LobbyItemsList.update(arg_37_0, arg_37_1, arg_37_2)
+LobbyItemsList.update = function (arg_37_0, arg_37_1, arg_37_2)
 	if arg_37_2 then
 		if not arg_37_0._loading_previous_frame then
 			arg_37_0:loading_overlay_fade_in(180)
@@ -1118,7 +1118,7 @@ function LobbyItemsList.update(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function LobbyItemsList.handle_gamepad_input(arg_38_0, arg_38_1, arg_38_2)
+LobbyItemsList.handle_gamepad_input = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0.input_manager:get_service(arg_38_0.input_service_name)
 	local var_38_1 = arg_38_0.controller_cooldown
 
@@ -1165,7 +1165,7 @@ function LobbyItemsList.handle_gamepad_input(arg_38_0, arg_38_1, arg_38_2)
 	arg_38_0.speed_multiplier = 1
 end
 
-function LobbyItemsList.update_gamepad_list_scroll(arg_39_0)
+LobbyItemsList.update_gamepad_list_scroll = function (arg_39_0)
 	local var_39_0 = arg_39_0.selected_list_index
 
 	if not var_39_0 then
@@ -1192,7 +1192,7 @@ function LobbyItemsList.update_gamepad_list_scroll(arg_39_0)
 	end
 end
 
-function LobbyItemsList.is_entry_outside(arg_40_0, arg_40_1)
+LobbyItemsList.is_entry_outside = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0.item_list_widget
 
 	if var_40_0 then
@@ -1212,7 +1212,7 @@ function LobbyItemsList.is_entry_outside(arg_40_0, arg_40_1)
 	return false
 end
 
-function LobbyItemsList._pick_sort_func(arg_41_0, arg_41_1, arg_41_2)
+LobbyItemsList._pick_sort_func = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0.sort_lobbies_function
 
 	if var_41_0 and var_41_0 == arg_41_1 then
@@ -1226,7 +1226,7 @@ function LobbyItemsList._pick_sort_func(arg_41_0, arg_41_1, arg_41_2)
 	return var_41_0
 end
 
-function LobbyItemsList.rotate_loading_icon(arg_42_0, arg_42_1)
+LobbyItemsList.rotate_loading_icon = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0.loading_icon.style.texture_id
 	local var_42_1 = ((var_42_0.fraction or 0) + arg_42_1) % 1
 
@@ -1234,7 +1234,7 @@ function LobbyItemsList.rotate_loading_icon(arg_42_0, arg_42_1)
 	var_42_0.fraction = var_42_1
 end
 
-function LobbyItemsList.loading_overlay_fade_in(arg_43_0, arg_43_1)
+LobbyItemsList.loading_overlay_fade_in = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0.loading_icon
 	local var_43_1 = var_43_0.style.texture_id.color
 	local var_43_2 = UIAnimation.init(UIAnimation.function_by_time, var_43_1, 1, var_43_1[1], 255, 0.3, math.easeOutCubic)
@@ -1248,7 +1248,7 @@ function LobbyItemsList.loading_overlay_fade_in(arg_43_0, arg_43_1)
 	arg_43_0.loading_overlay.style.rect.color[1] = arg_43_1
 end
 
-function LobbyItemsList.loading_overlay_fade_out(arg_44_0)
+LobbyItemsList.loading_overlay_fade_out = function (arg_44_0)
 	local function var_44_0(arg_45_0, arg_45_1)
 		local var_45_0 = UIAnimation.init(UIAnimation.function_by_time, arg_45_1, 1, arg_45_1[1], 0, 0.3, math.easeOutCubic)
 
@@ -1262,7 +1262,7 @@ function LobbyItemsList.loading_overlay_fade_out(arg_44_0)
 	var_44_0(arg_44_0.loading_text, arg_44_0.loading_text.style.text.text_color)
 end
 
-function LobbyItemsList.animate_loading_text(arg_46_0)
+LobbyItemsList.animate_loading_text = function (arg_46_0)
 	local var_46_0 = arg_46_0.loading_text
 	local var_46_1 = var_46_0.style.text.text_color
 
@@ -1275,7 +1275,7 @@ function LobbyItemsList.animate_loading_text(arg_46_0)
 	end
 end
 
-function LobbyItemsList.draw(arg_47_0, arg_47_1)
+LobbyItemsList.draw = function (arg_47_0, arg_47_1)
 	local var_47_0 = arg_47_0.ui_renderer
 	local var_47_1 = arg_47_0.ui_scenegraph
 	local var_47_2 = arg_47_0.input_manager:get_service(arg_47_0.input_service_name)
@@ -1294,11 +1294,11 @@ function LobbyItemsList.draw(arg_47_0, arg_47_1)
 	UIRenderer.end_pass(var_47_0)
 end
 
-function LobbyItemsList.sort_lobbies(arg_48_0, arg_48_1, arg_48_2)
+LobbyItemsList.sort_lobbies = function (arg_48_0, arg_48_1, arg_48_2)
 	table.sort(arg_48_1, arg_48_2)
 end
 
-function LobbyItemsList.remove_invalid_lobbies(arg_49_0, arg_49_1)
+LobbyItemsList.remove_invalid_lobbies = function (arg_49_0, arg_49_1)
 	local var_49_0 = {}
 	local var_49_1 = #arg_49_1
 
@@ -1313,7 +1313,7 @@ function LobbyItemsList.remove_invalid_lobbies(arg_49_0, arg_49_1)
 	return var_49_0
 end
 
-function LobbyItemsList.populate_lobby_list(arg_50_0, arg_50_1, arg_50_2)
+LobbyItemsList.populate_lobby_list = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_0.settings
 	local var_50_1 = arg_50_0.item_list_widget
 	local var_50_2 = {}
@@ -1372,7 +1372,7 @@ function LobbyItemsList.populate_lobby_list(arg_50_0, arg_50_1, arg_50_2)
 	arg_50_0.selected_list_index = nil
 end
 
-function LobbyItemsList.update_scroll(arg_51_0)
+LobbyItemsList.update_scroll = function (arg_51_0)
 	local var_51_0 = arg_51_0.scrollbar_widget.content.scroll_bar_info.value
 	local var_51_1 = arg_51_0.scroll_field_widget.content.internal_scroll_value
 	local var_51_2 = arg_51_0.scroll_value
@@ -1384,7 +1384,7 @@ function LobbyItemsList.update_scroll(arg_51_0)
 	end
 end
 
-function LobbyItemsList.set_scroll_amount(arg_52_0, arg_52_1)
+LobbyItemsList.set_scroll_amount = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.scroll_value
 
 	if not var_52_0 or arg_52_1 ~= var_52_0 then
@@ -1396,7 +1396,7 @@ function LobbyItemsList.set_scroll_amount(arg_52_0, arg_52_1)
 	end
 end
 
-function LobbyItemsList.set_scrollbar_length(arg_53_0, arg_53_1, arg_53_2)
+LobbyItemsList.set_scrollbar_length = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0.settings
 	local var_53_1 = var_53_0.columns
 	local var_53_2 = var_53_0.num_list_items
@@ -1433,7 +1433,7 @@ function LobbyItemsList.set_scrollbar_length(arg_53_0, arg_53_1, arg_53_2)
 	end
 end
 
-function LobbyItemsList.scroll_inventory_list(arg_54_0, arg_54_1)
+LobbyItemsList.scroll_inventory_list = function (arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0.item_list_widget
 
 	if var_54_0 then
@@ -1456,7 +1456,7 @@ function LobbyItemsList.scroll_inventory_list(arg_54_0, arg_54_1)
 	end
 end
 
-function LobbyItemsList.on_lobby_selected(arg_55_0, arg_55_1, arg_55_2)
+LobbyItemsList.on_lobby_selected = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = arg_55_0.item_list_widget.content.list_content
 	local var_55_1 = arg_55_0.number_of_items_in_list
 
@@ -1478,7 +1478,7 @@ function LobbyItemsList.on_lobby_selected(arg_55_0, arg_55_1, arg_55_2)
 	end
 end
 
-function LobbyItemsList.selected_lobby(arg_56_0)
+LobbyItemsList.selected_lobby = function (arg_56_0)
 	local var_56_0 = arg_56_0.selected_list_index
 
 	if not var_56_0 then
@@ -1494,7 +1494,7 @@ function LobbyItemsList.selected_lobby(arg_56_0)
 	return var_56_1.lobby_data
 end
 
-function LobbyItemsList.set_selected_lobby(arg_57_0, arg_57_1)
+LobbyItemsList.set_selected_lobby = function (arg_57_0, arg_57_1)
 	arg_57_0.selected_list_index = nil
 
 	local var_57_0 = arg_57_1.id
@@ -1508,10 +1508,10 @@ function LobbyItemsList.set_selected_lobby(arg_57_0, arg_57_1)
 	end
 end
 
-function LobbyItemsList.animate_element_by_time(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+LobbyItemsList.animate_element_by_time = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5, math.easeInCubic))
 end
 
-function LobbyItemsList.play_sound(arg_59_0, arg_59_1)
+LobbyItemsList.play_sound = function (arg_59_0, arg_59_1)
 	WwiseWorld.trigger_event(arg_59_0.wwise_world, arg_59_1)
 end

@@ -15,7 +15,7 @@ local var_0_7 = var_0_0.loading_overlay_widgets
 HeroWindowGotwfBackground = class(HeroWindowGotwfBackground)
 HeroWindowGotwfBackground.NAME = "HeroWindowGotwfBackground"
 
-function HeroWindowGotwfBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowGotwfBackground.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfBackground")
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -40,7 +40,7 @@ function HeroWindowGotwfBackground.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function HeroWindowGotwfBackground._start_animation(arg_2_0, arg_2_1)
+HeroWindowGotwfBackground._start_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		parent = arg_2_0._parent,
 		render_settings = arg_2_0._render_settings
@@ -51,7 +51,7 @@ function HeroWindowGotwfBackground._start_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowGotwfBackground._create_viewport_definition(arg_3_0)
+HeroWindowGotwfBackground._create_viewport_definition = function (arg_3_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
@@ -90,7 +90,7 @@ function HeroWindowGotwfBackground._create_viewport_definition(arg_3_0)
 	}
 end
 
-function HeroWindowGotwfBackground._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowGotwfBackground._create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._viewport_widget then
 		UIWidget.destroy(arg_4_0._ui_renderer, arg_4_0._viewport_widget)
 
@@ -155,12 +155,12 @@ function HeroWindowGotwfBackground._create_ui_elements(arg_4_0, arg_4_1, arg_4_2
 	end
 end
 
-function HeroWindowGotwfBackground._package_loaded(arg_5_0)
+HeroWindowGotwfBackground._package_loaded = function (arg_5_0)
 	arg_5_0._viewport_widget_definition = arg_5_0:_create_viewport_definition()
 	arg_5_0._fadeout_loading_overlay = true
 end
 
-function HeroWindowGotwfBackground.on_exit(arg_6_0, arg_6_1)
+HeroWindowGotwfBackground.on_exit = function (arg_6_0, arg_6_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfBackground")
 
 	arg_6_0._ui_animator = nil
@@ -185,13 +185,13 @@ function HeroWindowGotwfBackground.on_exit(arg_6_0, arg_6_1)
 	end
 end
 
-function HeroWindowGotwfBackground.update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowGotwfBackground.update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_pan(arg_7_1, arg_7_2)
 	arg_7_0:_update_animations(arg_7_1, arg_7_2)
 	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-function HeroWindowGotwfBackground._update_pan(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowGotwfBackground._update_pan = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0._world_previewer then
 		return
 	end
@@ -224,7 +224,7 @@ function HeroWindowGotwfBackground._update_pan(arg_8_0, arg_8_1, arg_8_2)
 	var_8_6.content.fade_start = (var_8_3 - var_8_2) / var_8_3
 end
 
-function HeroWindowGotwfBackground.post_update(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowGotwfBackground.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_0._viewport_widget_definition and not arg_9_0._viewport_widget then
 		arg_9_0._viewport_widget = UIWidget.init(arg_9_0._viewport_widget_definition)
 
@@ -259,7 +259,7 @@ function HeroWindowGotwfBackground.post_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function HeroWindowGotwfBackground._update_animations(arg_10_0, arg_10_1)
+HeroWindowGotwfBackground._update_animations = function (arg_10_0, arg_10_1)
 	arg_10_0._ui_animator:update(arg_10_1)
 
 	local var_10_0 = arg_10_0._animations
@@ -283,7 +283,7 @@ function HeroWindowGotwfBackground._update_animations(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowGotwfBackground._draw(arg_11_0, arg_11_1)
+HeroWindowGotwfBackground._draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_renderer
 	local var_11_1 = arg_11_0._parent:get_layout_renderer()
 	local var_11_2 = arg_11_0._ui_top_renderer
@@ -321,7 +321,7 @@ function HeroWindowGotwfBackground._draw(arg_11_0, arg_11_1)
 	end
 end
 
-function HeroWindowGotwfBackground._update_loading_overlay_fadeout_animation(arg_12_0, arg_12_1)
+HeroWindowGotwfBackground._update_loading_overlay_fadeout_animation = function (arg_12_0, arg_12_1)
 	if not arg_12_0._fadeout_loading_overlay then
 		return
 	end

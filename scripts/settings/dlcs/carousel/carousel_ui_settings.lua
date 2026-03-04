@@ -20,10 +20,10 @@ var_0_0.ui_views = {
 			versus = true
 		},
 		transitions = {
-			versus_party_char_selection_view = function(arg_1_0)
+			versus_party_char_selection_view = function (arg_1_0)
 				arg_1_0.current_view = "versus_party_char_selection_view"
 			end,
-			versus_party_char_view_from_character_selection = function(arg_2_0)
+			versus_party_char_view_from_character_selection = function (arg_2_0)
 				arg_2_0.current_view = "versus_party_char_selection_view"
 				arg_2_0.views[arg_2_0.current_view].new_character = true
 			end
@@ -39,7 +39,7 @@ var_0_0.ui_views = {
 			versus = true
 		},
 		transitions = {
-			versus_team_parading_view = function(arg_3_0)
+			versus_team_parading_view = function (arg_3_0)
 				arg_3_0.current_view = "versus_team_parading_view"
 			end
 		}
@@ -509,7 +509,7 @@ var_0_0.start_game_window_layout_console = {
 				versus_quickplay = 3,
 				versus_background = 2
 			},
-			can_add_function = function(arg_4_0)
+			can_add_function = function (arg_4_0)
 				return arg_4_0:is_in_mechanism("versus")
 			end,
 			save_data_table = var_0_3.quickplay
@@ -531,7 +531,7 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game = 3
 			},
-			can_add_function = function(arg_5_0)
+			can_add_function = function (arg_5_0)
 				return arg_5_0:is_in_mechanism("versus")
 			end,
 			save_data_table = var_0_3.custom
@@ -549,7 +549,7 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game_settings = 4
 			},
-			can_add_function = function(arg_6_0)
+			can_add_function = function (arg_6_0)
 				return arg_6_0:is_in_mechanism("versus")
 			end,
 			save_data_table = var_0_3.custom
@@ -579,7 +579,7 @@ var_0_0.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_lobby_browser = 3
 			},
-			can_add_function = function(arg_7_0)
+			can_add_function = function (arg_7_0)
 				return arg_7_0:is_in_mechanism("versus") and not IS_XB1
 			end,
 			save_data_table = var_0_3.lobby_browser

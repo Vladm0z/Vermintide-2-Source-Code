@@ -25,7 +25,7 @@ local var_0_1 = {
 	"rpc_set_observer_camera"
 }
 
-function CameraSystem.init(arg_1_0, arg_1_1, arg_1_2)
+CameraSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	CameraSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0.camera_units = {}
@@ -39,11 +39,11 @@ function CameraSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.network_event_delegate = var_1_0
 end
 
-function CameraSystem.destroy(arg_2_0)
+CameraSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function CameraSystem.idle_camera_dummy_spawned(arg_3_0, arg_3_1)
+CameraSystem.idle_camera_dummy_spawned = function (arg_3_0, arg_3_1)
 	local var_3_0 = Unit.local_position(arg_3_1, 0)
 	local var_3_1 = Unit.local_rotation(arg_3_1, 0)
 
@@ -55,7 +55,7 @@ function CameraSystem.idle_camera_dummy_spawned(arg_3_0, arg_3_1)
 	end
 end
 
-function CameraSystem.external_state_change(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+CameraSystem.external_state_change = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0.camera_units[arg_4_1]
 	local var_4_1 = arg_4_0.unit_extension_data[var_4_0]
 
@@ -64,7 +64,7 @@ function CameraSystem.external_state_change(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function CameraSystem.external_state_change_delayed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+CameraSystem.external_state_change_delayed = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0.camera_units[arg_5_1]
 	local var_5_1 = arg_5_0.unit_extension_data[var_5_0]
 
@@ -73,7 +73,7 @@ function CameraSystem.external_state_change_delayed(arg_5_0, arg_5_1, arg_5_2, a
 	end
 end
 
-function CameraSystem.set_follow_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+CameraSystem.set_follow_unit = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0.camera_units[arg_6_1]
 	local var_6_1 = arg_6_0.unit_extension_data[var_6_0]
 
@@ -92,7 +92,7 @@ function CameraSystem.set_follow_unit(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function CameraSystem.get_follow_data(arg_7_0, arg_7_1)
+CameraSystem.get_follow_data = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.camera_units[arg_7_1]
 	local var_7_1 = arg_7_0.unit_extension_data[var_7_0]
 
@@ -103,7 +103,7 @@ function CameraSystem.get_follow_data(arg_7_0, arg_7_1)
 	end
 end
 
-function CameraSystem.update_tunnel_camera_position(arg_8_0, arg_8_1, arg_8_2)
+CameraSystem.update_tunnel_camera_position = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.camera_units[arg_8_1]
 	local var_8_1 = ScriptUnit.has_extension(var_8_0, "camera_state_machine_system")
 
@@ -116,7 +116,7 @@ function CameraSystem.update_tunnel_camera_position(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function CameraSystem.local_player_created(arg_9_0, arg_9_1)
+CameraSystem.local_player_created = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.state.camera
 	local var_9_1 = arg_9_1.viewport_name
 
@@ -130,11 +130,11 @@ function CameraSystem.local_player_created(arg_9_0, arg_9_1)
 	arg_9_1:set_camera_follow_unit(var_9_2)
 end
 
-function CameraSystem._setup_viewport(arg_10_0, arg_10_1)
+CameraSystem._setup_viewport = function (arg_10_0, arg_10_1)
 	Managers.state.camera:create_viewport(arg_10_1, Vector3.zero(), Quaternion.identity())
 end
 
-function CameraSystem._setup_camera(arg_11_0, arg_11_1)
+CameraSystem._setup_camera = function (arg_11_0, arg_11_1)
 	local var_11_0 = ScriptWorld.viewport(arg_11_0.world, arg_11_1)
 	local var_11_1 = ScriptViewport.camera(var_11_0)
 	local var_11_2 = Managers.state.camera
@@ -145,7 +145,7 @@ function CameraSystem._setup_camera(arg_11_0, arg_11_1)
 	var_11_2:load_node_tree(arg_11_1, "cutscene", "cutscene")
 end
 
-function CameraSystem._setup_camera_unit(arg_12_0, arg_12_1, arg_12_2)
+CameraSystem._setup_camera_unit = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = DefaultUnits.standard.backlit_camera
 	local var_12_1 = "camera_unit"
 	local var_12_2 = Vector3.zero()
@@ -203,7 +203,7 @@ function CameraSystem._setup_camera_unit(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function CameraSystem.set_backlight_color(arg_13_0, arg_13_1, arg_13_2)
+CameraSystem.set_backlight_color = function (arg_13_0, arg_13_1, arg_13_2)
 	for iter_13_0, iter_13_1 in pairs(arg_13_0.camera_units) do
 		local var_13_0 = Unit.light(iter_13_1, "light")
 
@@ -212,7 +212,7 @@ function CameraSystem.set_backlight_color(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function CameraSystem.set_backlight_falloff(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+CameraSystem.set_backlight_falloff = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0.camera_units) do
 		local var_14_0 = Unit.light(iter_14_1, "light")
 
@@ -223,7 +223,7 @@ end
 
 local var_0_2 = {}
 
-function CameraSystem.update(arg_15_0, arg_15_1)
+CameraSystem.update = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.dt
 	local var_15_1 = arg_15_1.t
 	local var_15_2 = Managers.state.camera
@@ -243,7 +243,7 @@ function CameraSystem.update(arg_15_0, arg_15_1)
 	end
 end
 
-function CameraSystem.post_update(arg_16_0, arg_16_1)
+CameraSystem.post_update = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.dt
 	local var_16_1 = arg_16_1.t
 	local var_16_2 = Managers.state.camera
@@ -255,13 +255,13 @@ function CameraSystem.post_update(arg_16_0, arg_16_1)
 	end
 end
 
-function CameraSystem.rpc_set_observer_camera(arg_17_0, arg_17_1, arg_17_2)
+CameraSystem.rpc_set_observer_camera = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Managers.player:local_player(arg_17_2)
 
 	CharacterStateHelper.change_camera_state(var_17_0, "observer")
 end
 
-function CameraSystem.initialize_camera_states(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CameraSystem.initialize_camera_states = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = SPProfiles[arg_18_2].careers[arg_18_3].camera_state_list
 	local var_18_1 = {}
 

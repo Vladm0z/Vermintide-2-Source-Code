@@ -2,7 +2,7 @@
 
 PlayerCharacterState = class(PlayerCharacterState)
 
-function PlayerCharacterState.init(arg_1_0, arg_1_1, arg_1_2)
+PlayerCharacterState.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.unit
 
 	arg_1_0.name = arg_1_2

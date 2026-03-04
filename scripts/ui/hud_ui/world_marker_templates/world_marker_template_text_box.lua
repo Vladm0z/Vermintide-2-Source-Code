@@ -10,7 +10,7 @@ var_0_1.max_distance = 20
 var_0_1.screen_clamp = false
 var_0_1.screen_margins = nil
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	local var_1_0 = "shadow_frame_02"
 	local var_1_1 = UIFrameSettings[var_1_0]
 	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
@@ -27,7 +27,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						local var_2_0 = arg_2_0.scale_progress
 
 						return var_2_0 and var_2_0 < 1
@@ -41,7 +41,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						local var_3_0 = arg_3_0.text_progress
 
 						return var_3_0 and var_3_0 > 0
@@ -164,7 +164,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.check_widget_visible(arg_4_0, arg_4_1, arg_4_2)
+var_0_1.check_widget_visible = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.style.background.texture_size
 
 	if arg_4_2 and arg_4_2 > var_4_0[1] * 0.5 then
@@ -178,11 +178,11 @@ function var_0_1.check_widget_visible(arg_4_0, arg_4_1, arg_4_2)
 	return true
 end
 
-function var_0_1.on_enter(arg_5_0)
+var_0_1.on_enter = function (arg_5_0)
 	arg_5_0.content.spawn_progress_timer = 0
 end
 
-function var_0_1.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+var_0_1.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = false
 	local var_6_1 = arg_6_1.content
 	local var_6_2 = arg_6_1.style

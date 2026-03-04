@@ -33,7 +33,7 @@ local var_0_7 = {
 StartGameWindowLobbyBrowser = class(StartGameWindowLobbyBrowser)
 StartGameWindowLobbyBrowser.NAME = "StartGameWindowLobbyBrowser"
 
-function StartGameWindowLobbyBrowser.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowLobbyBrowser.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowLobbyBrowser")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -106,7 +106,7 @@ function StartGameWindowLobbyBrowser.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_populate_lobby_list()
 end
 
-function StartGameWindowLobbyBrowser.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowLobbyBrowser.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -261,7 +261,7 @@ function StartGameWindowLobbyBrowser.create_ui_elements(arg_2_0, arg_2_1, arg_2_
 	arg_2_0:_reset_filters()
 end
 
-function StartGameWindowLobbyBrowser._assign_hero_portraits(arg_3_0)
+StartGameWindowLobbyBrowser._assign_hero_portraits = function (arg_3_0)
 	local var_3_0 = arg_3_0._lobby_info_box_base_widgets_by_name.hero_tabs.content
 
 	for iter_3_0 = 1, #ProfilePriority do
@@ -291,7 +291,7 @@ function StartGameWindowLobbyBrowser._assign_hero_portraits(arg_3_0)
 	end
 end
 
-function StartGameWindowLobbyBrowser.on_exit(arg_4_0, arg_4_1)
+StartGameWindowLobbyBrowser.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowLobbyBrowser")
 
 	arg_4_0.ui_animator = nil
@@ -306,7 +306,7 @@ function StartGameWindowLobbyBrowser.on_exit(arg_4_0, arg_4_1)
 	arg_4_0.game_server_finder = nil
 end
 
-function StartGameWindowLobbyBrowser.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowLobbyBrowser.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.lobby_finder:update(arg_5_1)
 	arg_5_0.game_server_finder:update(arg_5_1)
 
@@ -420,11 +420,11 @@ function StartGameWindowLobbyBrowser.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function StartGameWindowLobbyBrowser.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowLobbyBrowser.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function StartGameWindowLobbyBrowser._handle_weave_data(arg_7_0, arg_7_1)
+StartGameWindowLobbyBrowser._handle_weave_data = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._lobby_info_box_weaves_widgets_by_name
 	local var_7_1 = arg_7_0._lobby_info_box_base_widgets_by_name
 	local var_7_2 = arg_7_0._lobby_info_box_lobbies_weaves_widgets_by_name
@@ -590,7 +590,7 @@ function StartGameWindowLobbyBrowser._handle_weave_data(arg_7_0, arg_7_1)
 	arg_7_0._show_widget_type = "weave"
 end
 
-function StartGameWindowLobbyBrowser._handle_lobby_data(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowLobbyBrowser._handle_lobby_data = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._lobby_info_box_base_widgets_by_name
 	local var_8_1 = arg_8_0._lobby_info_box_lobbies_widgets_by_name
 	local var_8_2 = arg_8_0._lobby_info_box_servers_widgets_by_name
@@ -686,7 +686,7 @@ function StartGameWindowLobbyBrowser._handle_lobby_data(arg_8_0, arg_8_1, arg_8_
 	arg_8_0._show_widget_type = "adventure"
 end
 
-function StartGameWindowLobbyBrowser._gather_unlocked_journeys(arg_9_0)
+StartGameWindowLobbyBrowser._gather_unlocked_journeys = function (arg_9_0)
 	local var_9_0 = {}
 	local var_9_1 = Managers.player:statistics_db()
 	local var_9_2 = Managers.player:local_player():stats_id()
@@ -698,7 +698,7 @@ function StartGameWindowLobbyBrowser._gather_unlocked_journeys(arg_9_0)
 	return var_9_0
 end
 
-function StartGameWindowLobbyBrowser._handle_deus_data(arg_10_0, arg_10_1)
+StartGameWindowLobbyBrowser._handle_deus_data = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0:_gather_unlocked_journeys()
 	local var_10_1 = arg_10_0._lobby_info_box_deus_widgets_by_name
 	local var_10_2 = arg_10_0._lobby_info_box_lobbies_deus_widgets_by_name
@@ -776,7 +776,7 @@ function StartGameWindowLobbyBrowser._handle_deus_data(arg_10_0, arg_10_1)
 	arg_10_0._show_widget_type = "deus"
 end
 
-function StartGameWindowLobbyBrowser._assign_objective(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+StartGameWindowLobbyBrowser._assign_objective = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0._lobby_info_box_weaves_widgets_by_name["objective_" .. arg_11_1]
 	local var_11_1 = var_11_0.content
 	local var_11_2 = var_11_0.style
@@ -785,7 +785,7 @@ function StartGameWindowLobbyBrowser._assign_objective(arg_11_0, arg_11_1, arg_1
 	var_11_1.text = arg_11_2 or "-"
 end
 
-function StartGameWindowLobbyBrowser._setup_lobby_info_box(arg_12_0, arg_12_1)
+StartGameWindowLobbyBrowser._setup_lobby_info_box = function (arg_12_0, arg_12_1)
 	local var_12_0 = "lb_unknown"
 	local var_12_1 = arg_12_1.mechanism
 	local var_12_2 = arg_12_1.matchmaking_type
@@ -830,7 +830,7 @@ function StartGameWindowLobbyBrowser._setup_lobby_info_box(arg_12_0, arg_12_1)
 	end
 end
 
-function StartGameWindowLobbyBrowser._update_animations(arg_13_0, arg_13_1)
+StartGameWindowLobbyBrowser._update_animations = function (arg_13_0, arg_13_1)
 	arg_13_0.ui_animator:update(arg_13_1)
 
 	local var_13_0 = arg_13_0._ui_animations
@@ -844,7 +844,7 @@ function StartGameWindowLobbyBrowser._update_animations(arg_13_0, arg_13_1)
 	end
 end
 
-function StartGameWindowLobbyBrowser._is_refreshing(arg_14_0)
+StartGameWindowLobbyBrowser._is_refreshing = function (arg_14_0)
 	local var_14_0 = arg_14_0._current_lobby_type
 
 	if var_14_0 == "lobbies" then
@@ -856,7 +856,7 @@ function StartGameWindowLobbyBrowser._is_refreshing(arg_14_0)
 	end
 end
 
-function StartGameWindowLobbyBrowser._handle_input(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowLobbyBrowser._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._lobbies_widgets_by_name
 
 	arg_15_0:_handle_stepper_input("game_type_stepper", var_15_0.game_type_stepper, callback(arg_15_0, "_on_game_type_stepper_input"))
@@ -872,7 +872,7 @@ function StartGameWindowLobbyBrowser._handle_input(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_handle_selected_lobby_input()
 end
 
-function StartGameWindowLobbyBrowser._handle_name_input_box(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowLobbyBrowser._handle_name_input_box = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.parent:window_input_service()
 	local var_16_1 = arg_16_0._server_widgets_by_name.name_input_box.content
 
@@ -891,7 +891,7 @@ function StartGameWindowLobbyBrowser._handle_name_input_box(arg_16_0, arg_16_1, 
 	end
 end
 
-function StartGameWindowLobbyBrowser._handle_selected_lobby_input(arg_17_0)
+StartGameWindowLobbyBrowser._handle_selected_lobby_input = function (arg_17_0)
 	local var_17_0 = arg_17_0.lobby_list:selected_lobby()
 
 	if not var_17_0 then
@@ -907,7 +907,7 @@ function StartGameWindowLobbyBrowser._handle_selected_lobby_input(arg_17_0)
 	end
 end
 
-function StartGameWindowLobbyBrowser._add_server_to_favorites(arg_18_0, arg_18_1)
+StartGameWindowLobbyBrowser._add_server_to_favorites = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.server_info
 	local var_18_1 = var_18_0.ip_address
 	local var_18_2 = var_18_0.connection_port
@@ -916,7 +916,7 @@ function StartGameWindowLobbyBrowser._add_server_to_favorites(arg_18_0, arg_18_1
 	arg_18_0.game_server_finder:add_to_favorites(var_18_1, var_18_2, var_18_3)
 end
 
-function StartGameWindowLobbyBrowser._remove_server_from_favorites(arg_19_0, arg_19_1)
+StartGameWindowLobbyBrowser._remove_server_from_favorites = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.server_info
 	local var_19_1 = var_19_0.ip_address
 	local var_19_2 = var_19_0.connection_port
@@ -925,7 +925,7 @@ function StartGameWindowLobbyBrowser._remove_server_from_favorites(arg_19_0, arg
 	arg_19_0.game_server_finder:remove_from_favorites(var_19_1, var_19_2, var_19_3)
 end
 
-function StartGameWindowLobbyBrowser.draw(arg_20_0, arg_20_1)
+StartGameWindowLobbyBrowser.draw = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.ui_renderer
 	local var_20_1 = arg_20_0.ui_scenegraph
 	local var_20_2 = arg_20_0.parent:window_input_service()
@@ -1040,15 +1040,15 @@ function StartGameWindowLobbyBrowser.draw(arg_20_0, arg_20_1)
 	UIRenderer.end_pass(var_20_0)
 end
 
-function StartGameWindowLobbyBrowser._play_sound(arg_21_0, arg_21_1)
+StartGameWindowLobbyBrowser._play_sound = function (arg_21_0, arg_21_1)
 	arg_21_0.parent:play_sound(arg_21_1)
 end
 
-function StartGameWindowLobbyBrowser.cancel_join_lobby(arg_22_0, arg_22_1)
+StartGameWindowLobbyBrowser.cancel_join_lobby = function (arg_22_0, arg_22_1)
 	arg_22_0.join_lobby_data_id = nil
 end
 
-function StartGameWindowLobbyBrowser._populate_lobby_list(arg_23_0, arg_23_1)
+StartGameWindowLobbyBrowser._populate_lobby_list = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0.lobby_list:selected_lobby()
 	local var_23_1 = arg_23_0:_get_lobbies()
 	local var_23_2 = true
@@ -1080,7 +1080,7 @@ end
 
 local var_0_8 = {}
 
-function StartGameWindowLobbyBrowser._get_lobbies(arg_24_0)
+StartGameWindowLobbyBrowser._get_lobbies = function (arg_24_0)
 	local var_24_0 = arg_24_0._current_lobby_type
 
 	if var_24_0 == "lobbies" then
@@ -1092,7 +1092,7 @@ function StartGameWindowLobbyBrowser._get_lobbies(arg_24_0)
 	end
 end
 
-function StartGameWindowLobbyBrowser._valid_lobby(arg_25_0, arg_25_1)
+StartGameWindowLobbyBrowser._valid_lobby = function (arg_25_0, arg_25_1)
 	if not arg_25_1.valid then
 		return false
 	end
@@ -1183,7 +1183,7 @@ function StartGameWindowLobbyBrowser._valid_lobby(arg_25_0, arg_25_1)
 	return true
 end
 
-function StartGameWindowLobbyBrowser._update_auto_refresh(arg_26_0, arg_26_1)
+StartGameWindowLobbyBrowser._update_auto_refresh = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0.lobby_list_update_timer
 
 	if var_26_0 then
@@ -1197,7 +1197,7 @@ function StartGameWindowLobbyBrowser._update_auto_refresh(arg_26_0, arg_26_1)
 	end
 end
 
-function StartGameWindowLobbyBrowser._update_join_button(arg_27_0, arg_27_1)
+StartGameWindowLobbyBrowser._update_join_button = function (arg_27_0, arg_27_1)
 	local var_27_0 = Managers.matchmaking:is_game_matchmaking()
 	local var_27_1 = arg_27_0._base_widgets_by_name.join_button
 
@@ -1212,7 +1212,7 @@ function StartGameWindowLobbyBrowser._update_join_button(arg_27_0, arg_27_1)
 	end
 end
 
-function StartGameWindowLobbyBrowser._reset_filters(arg_28_0)
+StartGameWindowLobbyBrowser._reset_filters = function (arg_28_0)
 	local var_28_0 = arg_28_0._game_mode_data
 	local var_28_1 = arg_28_0._game_mode_data.game_modes.any
 
@@ -1221,24 +1221,24 @@ function StartGameWindowLobbyBrowser._reset_filters(arg_28_0)
 	arg_28_0:_on_distance_stepper_input(0, 2)
 end
 
-function StartGameWindowLobbyBrowser._reset_level_filter(arg_29_0)
+StartGameWindowLobbyBrowser._reset_level_filter = function (arg_29_0)
 	local var_29_0 = #arg_29_0:_get_levels()
 
 	arg_29_0:_on_level_stepper_input(0, var_29_0)
 end
 
-function StartGameWindowLobbyBrowser._reset_difficulty_filter(arg_30_0)
+StartGameWindowLobbyBrowser._reset_difficulty_filter = function (arg_30_0)
 	local var_30_0 = #arg_30_0:_get_difficulties()
 
 	arg_30_0:_on_difficulty_stepper_input(0, var_30_0)
 end
 
-function StartGameWindowLobbyBrowser._switch_lobby_type(arg_31_0, arg_31_1)
+StartGameWindowLobbyBrowser._switch_lobby_type = function (arg_31_0, arg_31_1)
 	arg_31_0._current_lobby_type = arg_31_1
 	arg_31_0._base_widgets_by_name.lobby_type_button.content.button_text = arg_31_1 == "lobbies" and Localize("lb_lobby_type_lobbies") or Localize("lb_lobby_type_servers")
 
 	if arg_31_1 == "lobbies" then
-		-- block empty
+		-- Nothing
 	elseif arg_31_1 == "servers" then
 		arg_31_0:_on_search_type_stepper_input(0, 1)
 	else
@@ -1248,7 +1248,7 @@ function StartGameWindowLobbyBrowser._switch_lobby_type(arg_31_0, arg_31_1)
 	arg_31_0:_search()
 end
 
-function StartGameWindowLobbyBrowser._create_filter_requirements(arg_32_0)
+StartGameWindowLobbyBrowser._create_filter_requirements = function (arg_32_0)
 	local var_32_0 = arg_32_0.lobby_finder
 	local var_32_1 = arg_32_0.selected_game_mode_index
 	local var_32_2 = arg_32_0._game_mode_data.game_modes[var_32_1] or "any"
@@ -1333,13 +1333,13 @@ function StartGameWindowLobbyBrowser._create_filter_requirements(arg_32_0)
 	return var_32_12
 end
 
-function StartGameWindowLobbyBrowser._join(arg_33_0, arg_33_1, arg_33_2)
+StartGameWindowLobbyBrowser._join = function (arg_33_0, arg_33_1, arg_33_2)
 	Managers.matchmaking:request_join_lobby(arg_33_1, arg_33_2)
 
 	arg_33_0.join_lobby_data_id = arg_33_1.id
 end
 
-function StartGameWindowLobbyBrowser._search(arg_34_0)
+StartGameWindowLobbyBrowser._search = function (arg_34_0)
 	local var_34_0 = arg_34_0:_create_filter_requirements()
 
 	if arg_34_0._current_lobby_type == "lobbies" then
@@ -1374,7 +1374,7 @@ function StartGameWindowLobbyBrowser._search(arg_34_0)
 	arg_34_0:_populate_lobby_list()
 end
 
-function StartGameWindowLobbyBrowser._get_levels(arg_35_0)
+StartGameWindowLobbyBrowser._get_levels = function (arg_35_0)
 	local var_35_0 = arg_35_0._game_mode_data
 	local var_35_1 = var_35_0.game_modes
 	local var_35_2 = var_35_0[arg_35_0.selected_game_mode_index or var_35_1.any]
@@ -1384,7 +1384,7 @@ function StartGameWindowLobbyBrowser._get_levels(arg_35_0)
 	}
 end
 
-function StartGameWindowLobbyBrowser._get_difficulties(arg_36_0)
+StartGameWindowLobbyBrowser._get_difficulties = function (arg_36_0)
 	local var_36_0 = arg_36_0._game_mode_data
 	local var_36_1 = var_36_0.game_modes
 	local var_36_2 = var_36_0[arg_36_0.selected_game_mode_index or var_36_1.any]
@@ -1394,7 +1394,7 @@ function StartGameWindowLobbyBrowser._get_difficulties(arg_36_0)
 	}
 end
 
-function StartGameWindowLobbyBrowser._on_game_type_stepper_input(arg_37_0, arg_37_1, arg_37_2)
+StartGameWindowLobbyBrowser._on_game_type_stepper_input = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._lobbies_widgets_by_name.game_type_stepper
 	local var_37_1 = arg_37_0._game_mode_data.game_modes
 	local var_37_2 = arg_37_0.selected_game_mode_index or var_37_1.any
@@ -1443,7 +1443,7 @@ function StartGameWindowLobbyBrowser._on_game_type_stepper_input(arg_37_0, arg_3
 	arg_37_0:_reset_difficulty_filter()
 end
 
-function StartGameWindowLobbyBrowser._on_level_stepper_input(arg_38_0, arg_38_1, arg_38_2)
+StartGameWindowLobbyBrowser._on_level_stepper_input = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0._lobbies_widgets_by_name.level_stepper
 	local var_38_1 = arg_38_0:_get_levels()
 	local var_38_2 = arg_38_0.selected_level_index or 1
@@ -1460,7 +1460,7 @@ function StartGameWindowLobbyBrowser._on_level_stepper_input(arg_38_0, arg_38_1,
 	arg_38_0.search_timer = var_0_4
 end
 
-function StartGameWindowLobbyBrowser._on_difficulty_stepper_input(arg_39_0, arg_39_1, arg_39_2)
+StartGameWindowLobbyBrowser._on_difficulty_stepper_input = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0._lobbies_widgets_by_name.difficulty_stepper
 	local var_39_1 = arg_39_0:_get_difficulties()
 	local var_39_2 = arg_39_0.selected_difficulty_index or 1
@@ -1477,7 +1477,7 @@ function StartGameWindowLobbyBrowser._on_difficulty_stepper_input(arg_39_0, arg_
 	arg_39_0.search_timer = var_0_4
 end
 
-function StartGameWindowLobbyBrowser._on_show_lobbies_stepper_input(arg_40_0, arg_40_1, arg_40_2)
+StartGameWindowLobbyBrowser._on_show_lobbies_stepper_input = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = arg_40_0._lobbies_widgets_by_name.show_lobbies_stepper
 	local var_40_1 = var_0_0.show_lobbies_table
 	local var_40_2 = arg_40_0.selected_show_lobbies_index or 1
@@ -1489,7 +1489,7 @@ function StartGameWindowLobbyBrowser._on_show_lobbies_stepper_input(arg_40_0, ar
 	arg_40_0.search_timer = var_0_4
 end
 
-function StartGameWindowLobbyBrowser._on_distance_stepper_input(arg_41_0, arg_41_1, arg_41_2)
+StartGameWindowLobbyBrowser._on_distance_stepper_input = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0._lobbies_widgets_by_name.distance_stepper
 	local var_41_1 = var_0_0.distance_table
 	local var_41_2 = arg_41_0.selected_distance_index or 1
@@ -1501,7 +1501,7 @@ function StartGameWindowLobbyBrowser._on_distance_stepper_input(arg_41_0, arg_41
 	arg_41_0.search_timer = var_0_4
 end
 
-function StartGameWindowLobbyBrowser._on_search_type_stepper_input(arg_42_0, arg_42_1, arg_42_2)
+StartGameWindowLobbyBrowser._on_search_type_stepper_input = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._server_widgets_by_name.search_type_stepper
 	local var_42_1 = var_0_0.search_type_text_table
 	local var_42_2 = arg_42_0.selected_search_type_index or 1
@@ -1517,7 +1517,7 @@ function StartGameWindowLobbyBrowser._on_search_type_stepper_input(arg_42_0, arg
 	arg_42_0.game_server_finder:set_search_type(var_42_5)
 end
 
-function StartGameWindowLobbyBrowser._on_stepper_input(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+StartGameWindowLobbyBrowser._on_stepper_input = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
 	local var_43_0 = #arg_43_2
 
 	if arg_43_5 then
@@ -1537,7 +1537,7 @@ function StartGameWindowLobbyBrowser._on_stepper_input(arg_43_0, arg_43_1, arg_4
 	return var_43_1
 end
 
-function StartGameWindowLobbyBrowser._handle_stepper_input(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+StartGameWindowLobbyBrowser._handle_stepper_input = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = arg_44_2
 	local var_44_1 = var_44_0.content
 	local var_44_2 = var_44_1.button_hotspot_left
@@ -1576,7 +1576,7 @@ function StartGameWindowLobbyBrowser._handle_stepper_input(arg_44_0, arg_44_1, a
 	end
 end
 
-function StartGameWindowLobbyBrowser._on_stepper_arrow_pressed(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+StartGameWindowLobbyBrowser._on_stepper_arrow_pressed = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = arg_45_0._ui_animations
 	local var_45_1 = "stepper_widget_arrow_" .. arg_45_2 .. arg_45_3
 	local var_45_2 = arg_45_1.style[arg_45_3]
@@ -1597,7 +1597,7 @@ function StartGameWindowLobbyBrowser._on_stepper_arrow_pressed(arg_45_0, arg_45_
 	end
 end
 
-function StartGameWindowLobbyBrowser._on_stepper_arrow_hover(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+StartGameWindowLobbyBrowser._on_stepper_arrow_hover = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = arg_46_0._ui_animations
 	local var_46_1 = "stepper_widget_arrow_" .. arg_46_2 .. arg_46_3
 	local var_46_2 = arg_46_1.style[arg_46_3]
@@ -1615,7 +1615,7 @@ function StartGameWindowLobbyBrowser._on_stepper_arrow_hover(arg_46_0, arg_46_1,
 	arg_46_0:_play_sound("Play_hud_hover")
 end
 
-function StartGameWindowLobbyBrowser._on_stepper_arrow_dehover(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+StartGameWindowLobbyBrowser._on_stepper_arrow_dehover = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = arg_47_0._ui_animations
 	local var_47_1 = "stepper_widget_arrow_" .. arg_47_2 .. arg_47_3
 	local var_47_2 = arg_47_1.style[arg_47_3]
@@ -1631,10 +1631,10 @@ function StartGameWindowLobbyBrowser._on_stepper_arrow_dehover(arg_47_0, arg_47_
 	end
 end
 
-function StartGameWindowLobbyBrowser._animate_element_by_time(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+StartGameWindowLobbyBrowser._animate_element_by_time = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5, math.ease_out_quad))
 end
 
-function StartGameWindowLobbyBrowser._animate_element_by_catmullrom(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8)
+StartGameWindowLobbyBrowser._animate_element_by_catmullrom = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8))
 end

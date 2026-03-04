@@ -17,7 +17,7 @@ local var_0_2 = 3
 
 UnitFramesHandler = class(UnitFramesHandler)
 
-function UnitFramesHandler.init(arg_1_0, arg_1_1, arg_1_2)
+UnitFramesHandler.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ingame_ui_context = arg_1_2
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -75,7 +75,7 @@ function UnitFramesHandler.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function UnitFramesHandler.add_damage_feedback_event(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+UnitFramesHandler.add_damage_feedback_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	if arg_2_2 then
 		if not Application.user_setting("hud_damage_feedback_on_yourself") then
 			return
@@ -91,7 +91,7 @@ function UnitFramesHandler.add_damage_feedback_event(arg_2_0, arg_2_1, arg_2_2, 
 	end
 end
 
-function UnitFramesHandler.add_respawn_counter_event(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+UnitFramesHandler.add_respawn_counter_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.unit_frame_by_player[arg_3_1]
 
 	if var_3_0 and arg_3_3 > 0 then
@@ -99,7 +99,7 @@ function UnitFramesHandler.add_respawn_counter_event(arg_3_0, arg_3_1, arg_3_2, 
 	end
 end
 
-function UnitFramesHandler.on_spectator_target_changed(arg_4_0, arg_4_1)
+UnitFramesHandler.on_spectator_target_changed = function (arg_4_0, arg_4_1)
 	arg_4_0._spectated_player_unit = arg_4_1
 	arg_4_0._spectated_player = Managers.player:owner(arg_4_1)
 	arg_4_0._is_spectator = true
@@ -132,7 +132,7 @@ function UnitFramesHandler.on_spectator_target_changed(arg_4_0, arg_4_1)
 	arg_4_0:set_visible(true)
 end
 
-function UnitFramesHandler.on_game_options_changed(arg_5_0)
+UnitFramesHandler.on_game_options_changed = function (arg_5_0)
 	local var_5_0 = arg_5_0._insignia_visibility
 	local var_5_1 = Application.user_setting("toggle_versus_level_in_all_game_modes")
 
@@ -142,11 +142,11 @@ function UnitFramesHandler.on_game_options_changed(arg_5_0)
 	end
 end
 
-function UnitFramesHandler.unit_frame_amount(arg_6_0)
+UnitFramesHandler.unit_frame_amount = function (arg_6_0)
 	return #arg_6_0._unit_frames
 end
 
-function UnitFramesHandler.get_unit_widget(arg_7_0, arg_7_1)
+UnitFramesHandler.get_unit_widget = function (arg_7_0, arg_7_1)
 	return arg_7_0._unit_frames[arg_7_1].widget
 end
 
@@ -154,7 +154,7 @@ local function var_0_3(arg_8_0, arg_8_1)
 	return SPProfiles[arg_8_0].careers[arg_8_1].portrait_image
 end
 
-function UnitFramesHandler._create_player_unit_frame(arg_9_0)
+UnitFramesHandler._create_player_unit_frame = function (arg_9_0)
 	local var_9_0 = arg_9_0._is_spectator and arg_9_0._spectated_player or arg_9_0.my_player
 	local var_9_1 = var_9_0:ui_id()
 	local var_9_2 = {
@@ -178,7 +178,7 @@ function UnitFramesHandler._create_player_unit_frame(arg_9_0)
 	return true
 end
 
-function UnitFramesHandler._create_party_members_unit_frames(arg_10_0)
+UnitFramesHandler._create_party_members_unit_frames = function (arg_10_0)
 	local var_10_0 = arg_10_0._unit_frames
 
 	for iter_10_0 = 1, var_0_2 do
@@ -190,7 +190,7 @@ function UnitFramesHandler._create_party_members_unit_frames(arg_10_0)
 	return true
 end
 
-function UnitFramesHandler._create_enemy_party_members_unit_frames(arg_11_0)
+UnitFramesHandler._create_enemy_party_members_unit_frames = function (arg_11_0)
 	local var_11_0 = arg_11_0._unit_frames
 
 	for iter_11_0 = 1, var_0_2 + 1 do
@@ -202,7 +202,7 @@ function UnitFramesHandler._create_enemy_party_members_unit_frames(arg_11_0)
 	return true
 end
 
-function UnitFramesHandler._create_unit_frame_by_type(arg_12_0, arg_12_1, arg_12_2)
+UnitFramesHandler._create_unit_frame_by_type = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.ingame_ui_context
 	local var_12_1 = {}
 	local var_12_2 = {}
@@ -249,7 +249,7 @@ function UnitFramesHandler._create_unit_frame_by_type(arg_12_0, arg_12_1, arg_12
 	return var_12_1
 end
 
-function UnitFramesHandler._get_unused_unit_frame(arg_13_0)
+UnitFramesHandler._get_unused_unit_frame = function (arg_13_0)
 	local var_13_0 = arg_13_0._unit_frames
 
 	for iter_13_0 = 1, #var_13_0 do
@@ -262,7 +262,7 @@ function UnitFramesHandler._get_unused_unit_frame(arg_13_0)
 	end
 end
 
-function UnitFramesHandler._get_unit_frame_by_connecting_peer_id(arg_14_0, arg_14_1)
+UnitFramesHandler._get_unit_frame_by_connecting_peer_id = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._unit_frames
 
 	for iter_14_0 = 1, #var_14_0 do
@@ -274,7 +274,7 @@ function UnitFramesHandler._get_unit_frame_by_connecting_peer_id(arg_14_0, arg_1
 	end
 end
 
-function UnitFramesHandler._reset_unit_frame(arg_15_0, arg_15_1)
+UnitFramesHandler._reset_unit_frame = function (arg_15_0, arg_15_1)
 	arg_15_1.widget:reset()
 	table.clear(arg_15_1.player_data)
 	table.clear(arg_15_1.data)
@@ -286,7 +286,7 @@ local var_0_4 = {}
 local var_0_5 = {}
 local var_0_6 = {}
 
-function UnitFramesHandler._handle_unit_frame_assigning(arg_16_0)
+UnitFramesHandler._handle_unit_frame_assigning = function (arg_16_0)
 	local var_16_0 = arg_16_0.player_manager
 	local var_16_1 = arg_16_0._unit_frame_index_by_ui_id
 	local var_16_2 = 0
@@ -449,7 +449,7 @@ function UnitFramesHandler._handle_unit_frame_assigning(arg_16_0)
 	end
 end
 
-function UnitFramesHandler._handle_connecting_peers(arg_17_0, arg_17_1, arg_17_2)
+UnitFramesHandler._handle_connecting_peers = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = false
 
 	table.clear(var_0_6)
@@ -489,7 +489,7 @@ function UnitFramesHandler._handle_connecting_peers(arg_17_0, arg_17_1, arg_17_2
 	return var_17_0
 end
 
-function UnitFramesHandler._cleanup_unused_unit_frames(arg_18_0, arg_18_1, arg_18_2)
+UnitFramesHandler._cleanup_unused_unit_frames = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = false
 	local var_18_1 = arg_18_0._unit_frames
 
@@ -513,7 +513,7 @@ function UnitFramesHandler._cleanup_unused_unit_frames(arg_18_0, arg_18_1, arg_1
 	return var_18_0
 end
 
-function UnitFramesHandler._align_party_member_frames(arg_19_0)
+UnitFramesHandler._align_party_member_frames = function (arg_19_0)
 	local var_19_0 = -100
 	local var_19_1 = 80
 	local var_19_2 = -80
@@ -592,7 +592,7 @@ local function var_0_8(arg_21_0)
 	return true, var_21_1, var_21_2, var_21_3
 end
 
-function UnitFramesHandler._set_player_extensions(arg_22_0, arg_22_1, arg_22_2)
+UnitFramesHandler._set_player_extensions = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_1.extensions = {
 		career = ScriptUnit.extension(arg_22_2, "career_system"),
 		health = ScriptUnit.extension(arg_22_2, "health_system"),
@@ -605,7 +605,7 @@ end
 
 local var_0_9 = {}
 
-function UnitFramesHandler._sync_player_stats(arg_23_0, arg_23_1)
+UnitFramesHandler._sync_player_stats = function (arg_23_0, arg_23_1)
 	if not arg_23_1.sync then
 		return
 	end
@@ -1059,7 +1059,7 @@ function UnitFramesHandler._sync_player_stats(arg_23_0, arg_23_1)
 	arg_23_0.gamepad_was_active = var_23_2
 end
 
-function UnitFramesHandler._slot_item_count(arg_24_0, arg_24_1, arg_24_2)
+UnitFramesHandler._slot_item_count = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = 0
 	local var_24_1 = arg_24_1:get_slot_data(arg_24_2)
 
@@ -1080,7 +1080,7 @@ function UnitFramesHandler._slot_item_count(arg_24_0, arg_24_1, arg_24_2)
 	return var_24_0
 end
 
-function UnitFramesHandler.destroy(arg_25_0)
+UnitFramesHandler.destroy = function (arg_25_0)
 	arg_25_0.ui_animator = nil
 
 	arg_25_0:set_visible(false)
@@ -1096,7 +1096,7 @@ function UnitFramesHandler.destroy(arg_25_0)
 	end
 end
 
-function UnitFramesHandler.set_visible(arg_26_0, arg_26_1)
+UnitFramesHandler.set_visible = function (arg_26_0, arg_26_1)
 	arg_26_0._is_visible = arg_26_1
 
 	local var_26_0 = arg_26_0._parent:is_own_player_dead() and not arg_26_0._is_spectator
@@ -1120,7 +1120,7 @@ function UnitFramesHandler.set_visible(arg_26_0, arg_26_1)
 	end
 end
 
-function UnitFramesHandler.on_gamepad_activated(arg_27_0)
+UnitFramesHandler.on_gamepad_activated = function (arg_27_0)
 	local var_27_0 = arg_27_0._unit_frames[1]
 
 	if not var_27_0.gamepad_version then
@@ -1138,7 +1138,7 @@ function UnitFramesHandler.on_gamepad_activated(arg_27_0)
 	end
 end
 
-function UnitFramesHandler.on_gamepad_deactivated(arg_28_0)
+UnitFramesHandler.on_gamepad_deactivated = function (arg_28_0)
 	local var_28_0 = arg_28_0._unit_frames[1]
 
 	if var_28_0.gamepad_version then
@@ -1156,7 +1156,7 @@ function UnitFramesHandler.on_gamepad_deactivated(arg_28_0)
 	end
 end
 
-function UnitFramesHandler.update(arg_29_0, arg_29_1, arg_29_2)
+UnitFramesHandler.update = function (arg_29_0, arg_29_1, arg_29_2)
 	if not arg_29_0._is_visible then
 		return
 	end
@@ -1205,7 +1205,7 @@ function UnitFramesHandler.update(arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0:_update_numeric_ui()
 end
 
-function UnitFramesHandler.resolution_modified(arg_30_0)
+UnitFramesHandler.resolution_modified = function (arg_30_0)
 	if not arg_30_0._is_visible then
 		arg_30_0._update_resolution_modified = true
 
@@ -1221,7 +1221,7 @@ function UnitFramesHandler.resolution_modified(arg_30_0)
 	arg_30_0._update_resolution_modified = nil
 end
 
-function UnitFramesHandler._draw(arg_31_0, arg_31_1)
+UnitFramesHandler._draw = function (arg_31_0, arg_31_1)
 	if not arg_31_0._is_visible then
 		return
 	end
@@ -1233,7 +1233,7 @@ function UnitFramesHandler._draw(arg_31_0, arg_31_1)
 	end
 end
 
-function UnitFramesHandler._update_numeric_ui(arg_32_0)
+UnitFramesHandler._update_numeric_ui = function (arg_32_0)
 	local var_32_0 = false
 
 	if arg_32_0._numeric_ui_enabled ~= Application.user_setting("numeric_ui") then

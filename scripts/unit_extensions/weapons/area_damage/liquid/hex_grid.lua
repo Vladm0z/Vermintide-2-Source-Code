@@ -4,7 +4,7 @@ require("scripts/managers/debug/debug_manager")
 
 HexGrid = class(HexGrid)
 
-function HexGrid.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+HexGrid.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	local var_1_0 = Vector3.right()
 	local var_1_1 = Vector3.forward()
 	local var_1_2 = Vector3.up()
@@ -56,11 +56,11 @@ function HexGrid.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._check_player_units = true
 end
 
-function HexGrid.directions(arg_2_0)
+HexGrid.directions = function (arg_2_0)
 	return arg_2_0._directions
 end
 
-function HexGrid.find_index(arg_3_0, arg_3_1)
+HexGrid.find_index = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1 - arg_3_0._root_position:unbox()
 	local var_3_1 = arg_3_0._x_cell_size
 	local var_3_2 = arg_3_0._y_cell_size
@@ -72,14 +72,14 @@ function HexGrid.find_index(arg_3_0, arg_3_1)
 	return var_3_5, var_3_4, var_3_6
 end
 
-function HexGrid.real_index(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+HexGrid.real_index = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0._xy_extents * 2 + 1
 	local var_4_1 = var_4_0 * var_4_0
 
 	return arg_4_1 + (arg_4_2 - 1) * var_4_0 + (arg_4_3 - 1) * var_4_1
 end
 
-function HexGrid.ijk(arg_5_0, arg_5_1)
+HexGrid.ijk = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._xy_extents * 2 + 1
 	local var_5_1 = arg_5_1 % var_5_0
 	local var_5_2 = (arg_5_1 - var_5_1) / var_5_0
@@ -89,13 +89,13 @@ function HexGrid.ijk(arg_5_0, arg_5_1)
 	return var_5_1, var_5_3 + 1, var_5_4 + 1
 end
 
-function HexGrid.is_out_of_bounds(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+HexGrid.is_out_of_bounds = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._xy_extents * 2 + 1
 
 	return arg_6_1 < 0 or var_6_0 <= arg_6_1 or arg_6_2 < 0 or var_6_0 <= arg_6_2 or arg_6_3 < 0
 end
 
-function HexGrid.find_position(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+HexGrid.find_position = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0._root_position:unbox()
 	local var_7_1 = arg_7_3 * arg_7_0._z_cell_size
 	local var_7_2 = arg_7_2 * arg_7_0._y_cell_size
@@ -104,7 +104,7 @@ function HexGrid.find_position(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return var_7_0 + Vector3(var_7_3, var_7_2, var_7_1)
 end
 
-function HexGrid.sample_grid(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+HexGrid.sample_grid = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = QuickDrawerStay
 
 	var_8_0:reset()

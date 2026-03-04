@@ -164,15 +164,15 @@ end
 ProgressionUnlocks = {}
 ProgressionUnlocks.all_unlocks_for_debug = var_0_0
 
-function ProgressionUnlocks.get_unlock(arg_1_0, arg_1_1)
+ProgressionUnlocks.get_unlock = function (arg_1_0, arg_1_1)
 	return MechanismOverrides.get(var_0_0)[arg_1_0]
 end
 
-function ProgressionUnlocks.get_profile_unlock(arg_2_0, arg_2_1)
+ProgressionUnlocks.get_profile_unlock = function (arg_2_0, arg_2_1)
 	return MechanismOverrides.get(var_0_1)[arg_2_1][arg_2_0]
 end
 
-function ProgressionUnlocks.is_unlocked(arg_3_0, arg_3_1)
+ProgressionUnlocks.is_unlocked = function (arg_3_0, arg_3_1)
 	local var_3_0 = MechanismOverrides.get(var_0_0)[arg_3_0]
 
 	fassert(var_3_0, "[ProgressionUnlocks] no template named %q", tostring(arg_3_0))
@@ -182,7 +182,7 @@ function ProgressionUnlocks.is_unlocked(arg_3_0, arg_3_1)
 	end
 end
 
-function ProgressionUnlocks.get_level_unlocks(arg_4_0, arg_4_1)
+ProgressionUnlocks.get_level_unlocks = function (arg_4_0, arg_4_1)
 	local var_4_0 = {}
 	local var_4_1 = MechanismOverrides.get(var_0_0)
 
@@ -195,7 +195,7 @@ function ProgressionUnlocks.get_level_unlocks(arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-function ProgressionUnlocks.is_unlocked_for_profile(arg_5_0, arg_5_1, arg_5_2)
+ProgressionUnlocks.is_unlocked_for_profile = function (arg_5_0, arg_5_1, arg_5_2)
 	if Development.parameter("unlock_all_careers") then
 		return true
 	end
@@ -221,7 +221,7 @@ function ProgressionUnlocks.is_unlocked_for_profile(arg_5_0, arg_5_1, arg_5_2)
 	return true
 end
 
-function ProgressionUnlocks.get_quests_unlocked(arg_6_0)
+ProgressionUnlocks.get_quests_unlocked = function (arg_6_0)
 	if LevelSettings[arg_6_0].dlc_name or not table.contains(MainGameLevels, arg_6_0) then
 		return
 	end
@@ -297,15 +297,15 @@ local var_0_3 = {
 	}
 }
 
-function ProgressionUnlocks.prestige_reward_by_level(arg_7_0, arg_7_1)
+ProgressionUnlocks.prestige_reward_by_level = function (arg_7_0, arg_7_1)
 	return var_0_3[arg_7_1][arg_7_0]
 end
 
-function ProgressionUnlocks.get_max_prestige_levels()
+ProgressionUnlocks.get_max_prestige_levels = function ()
 	return 5
 end
 
-function ProgressionUnlocks.can_upgrade_prestige(arg_9_0)
+ProgressionUnlocks.can_upgrade_prestige = function (arg_9_0)
 	local var_9_0 = Managers.backend:get_interface("hero_attributes"):get(arg_9_0, "prestige")
 	local var_9_1 = ExperienceSettings.get_experience(arg_9_0)
 	local var_9_2 = ExperienceSettings.get_level(var_9_1)
@@ -313,7 +313,7 @@ function ProgressionUnlocks.can_upgrade_prestige(arg_9_0)
 	return (ProgressionUnlocks.is_unlocked("prestige", var_9_2))
 end
 
-function ProgressionUnlocks.upgrade_prestige(arg_10_0)
+ProgressionUnlocks.upgrade_prestige = function (arg_10_0)
 	local var_10_0 = Managers.backend:get_interface("hero_attributes")
 
 	if not ProgressionUnlocks.can_upgrade_prestige(arg_10_0) then
@@ -335,11 +335,11 @@ function ProgressionUnlocks.upgrade_prestige(arg_10_0)
 	Managers.backend:get_interface("items"):award_item(var_10_3)
 end
 
-function ProgressionUnlocks.get_prestige_level(arg_11_0)
+ProgressionUnlocks.get_prestige_level = function (arg_11_0)
 	return Managers.backend:get_interface("hero_attributes"):get(arg_11_0, "prestige") or 0
 end
 
-function ProgressionUnlocks.get_num_talent_points(arg_12_0)
+ProgressionUnlocks.get_num_talent_points = function (arg_12_0)
 	local var_12_0 = ExperienceSettings.get_experience(arg_12_0)
 	local var_12_1 = ExperienceSettings.get_level(var_12_0)
 	local var_12_2 = 0
@@ -355,7 +355,7 @@ end
 
 local var_0_4 = ""
 
-function ProgressionUnlocks.debug_use_hero_template(arg_13_0)
+ProgressionUnlocks.debug_use_hero_template = function (arg_13_0)
 	if var_0_4 ~= arg_13_0.name then
 		local var_13_0 = Managers.backend:get_interface("items")
 		local var_13_1 = Managers.backend:get_interface("hero_attributes")
@@ -384,11 +384,11 @@ function ProgressionUnlocks.debug_use_hero_template(arg_13_0)
 	end
 end
 
-function ProgressionUnlocks.debug_get_current_hero_template()
+ProgressionUnlocks.debug_get_current_hero_template = function ()
 	return var_0_4
 end
 
-function ProgressionUnlocks.debug_reset_current_hero_template()
+ProgressionUnlocks.debug_reset_current_hero_template = function ()
 	var_0_4 = ""
 end
 

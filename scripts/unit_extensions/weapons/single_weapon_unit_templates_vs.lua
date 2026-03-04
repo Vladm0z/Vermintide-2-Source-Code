@@ -19,7 +19,7 @@ end
 
 SingleWeaponUnitTemplates.templates = {
 	ratlinggun = {
-		shoot_start = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		shoot_start = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			local var_2_0 = 8
 
 			arg_2_3.shoot_time = var_2_0
@@ -39,7 +39,7 @@ SingleWeaponUnitTemplates.templates = {
 
 			arg_2_3.shoot_sound_source_id = var_2_3
 		end,
-		destroy = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		destroy = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			if arg_3_3.shoot_sound_source_id then
 				local var_3_0 = Managers.world:wwise_world(arg_3_0)
 
@@ -54,10 +54,10 @@ SingleWeaponUnitTemplates.templates = {
 				arg_3_3.shoot_time = nil
 			end
 		end,
-		shoot = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		shoot = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			return
 		end,
-		shoot_end = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		shoot_end = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			if arg_5_3.shoot_sound_source_id then
 				local var_5_0 = Managers.world:wwise_world(arg_5_0)
 
@@ -74,7 +74,7 @@ SingleWeaponUnitTemplates.templates = {
 				arg_5_3.shoot_time = nil
 			end
 		end,
-		windup_start = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		windup_start = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Managers.world:wwise_world(arg_6_0)
 
 			if var_0_1(arg_6_2) then
@@ -86,7 +86,7 @@ SingleWeaponUnitTemplates.templates = {
 			arg_6_3.windup_time = var_6_1
 			arg_6_3.windup_timer = var_6_1
 		end,
-		windup_end = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		windup_end = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 			local var_7_0 = Managers.world:wwise_world(arg_7_0)
 
 			if var_0_1(arg_7_2) then
@@ -96,7 +96,7 @@ SingleWeaponUnitTemplates.templates = {
 			arg_7_3.windup_timer = nil
 			arg_7_3.windup_time = nil
 		end,
-		update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+		update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 			if arg_8_3.shoot_timer then
 				arg_8_3.shoot_timer = arg_8_3.shoot_timer - arg_8_5
 
@@ -105,7 +105,7 @@ SingleWeaponUnitTemplates.templates = {
 		end
 	},
 	warpfire_gun = {
-		windup_start = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		windup_start = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 			local var_9_0 = true
 			local var_9_1 = 0
 			local var_9_2, var_9_3 = WwiseUtils.make_unit_auto_source(arg_9_0, arg_9_1, var_9_1)
@@ -116,10 +116,10 @@ SingleWeaponUnitTemplates.templates = {
 				WwiseWorld.trigger_event(var_9_3, "husk_vce_warpfire_shoot_start_sequence", var_9_0, var_9_2)
 			end
 		end,
-		windup_end = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		windup_end = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			return
 		end,
-		shoot_start = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		shoot_start = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 			arg_11_3.shoot_time = arg_11_4
 			arg_11_3.shoot_timer = arg_11_4
 
@@ -137,7 +137,7 @@ SingleWeaponUnitTemplates.templates = {
 
 			arg_11_3.shoot_sound_source_id = var_11_2
 		end,
-		destroy = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		destroy = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 			if arg_12_3.shoot_sound_source_id then
 				local var_12_0 = Managers.world:wwise_world(arg_12_0)
 
@@ -152,7 +152,7 @@ SingleWeaponUnitTemplates.templates = {
 				arg_12_3.shoot_time = nil
 			end
 		end,
-		shoot_end = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		shoot_end = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			local var_13_0 = Managers.world:wwise_world(arg_13_0)
 
 			if var_0_1(arg_13_2) then
@@ -167,7 +167,7 @@ SingleWeaponUnitTemplates.templates = {
 			arg_13_3.shoot_timer = nil
 			arg_13_3.shoot_time = nil
 		end,
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 			if arg_14_3.shoot_timer then
 				arg_14_3.shoot_timer = arg_14_3.shoot_timer - arg_14_5
 

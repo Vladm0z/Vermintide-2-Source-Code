@@ -24,7 +24,7 @@ local var_0_1 = {
 			data = {},
 			settings = {},
 			events = {
-				event_stat_incremented = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+				event_stat_incremented = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					if not arg_2_3 or arg_2_4 ~= "kills_per_breed" then
 						return false
 					end
@@ -38,7 +38,7 @@ local var_0_1 = {
 					return true
 				end
 			},
-			complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+			complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
 				local var_3_0 = Managers.player:player_from_unique_id(arg_3_3)
 
 				if not var_3_0 then
@@ -55,7 +55,7 @@ local var_0_1 = {
 			data = {},
 			settings = {},
 			events = {
-				event_stat_incremented = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, ...)
+				event_stat_incremented = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, ...)
 					if not arg_4_3 or arg_4_4 ~= "vs_badge_knocked_down_target_per_breed" then
 						return false
 					end
@@ -70,7 +70,7 @@ local var_0_1 = {
 					return true
 				end
 			},
-			complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, ...)
+			complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, ...)
 				local var_5_0 = Managers.player:player_from_unique_id(arg_5_3)
 
 				if not var_5_0 then

@@ -6,7 +6,7 @@ PlayerUnitAttackIntensityExtension = class(PlayerUnitAttackIntensityExtension)
 
 local var_0_0 = 25
 
-function PlayerUnitAttackIntensityExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitAttackIntensityExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._network_manager = Managers.state.network
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._unit = arg_1_2
@@ -25,7 +25,7 @@ function PlayerUnitAttackIntensityExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_
 	arg_1_0:_setup_intensity()
 end
 
-function PlayerUnitAttackIntensityExtension._setup_intensity(arg_2_0)
+PlayerUnitAttackIntensityExtension._setup_intensity = function (arg_2_0)
 	for iter_2_0, iter_2_1 in pairs(AttackIntensitySettings.attack_type_intesities) do
 		local var_2_0 = arg_2_0._attack_intensity_difficulty[iter_2_0]
 
@@ -38,11 +38,11 @@ function PlayerUnitAttackIntensityExtension._setup_intensity(arg_2_0)
 	end
 end
 
-function PlayerUnitAttackIntensityExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+PlayerUnitAttackIntensityExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
 end
 
-function PlayerUnitAttackIntensityExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerUnitAttackIntensityExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	for iter_4_0, iter_4_1 in pairs(AttackIntensitySettings.attack_type_intesities) do
 		local var_4_0 = arg_4_0._attack_intensity_decay_grace[iter_4_0]
 
@@ -77,7 +77,7 @@ function PlayerUnitAttackIntensityExtension.update(arg_4_0, arg_4_1, arg_4_2, ar
 	end
 end
 
-function PlayerUnitAttackIntensityExtension.add_attack_intensity(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PlayerUnitAttackIntensityExtension.add_attack_intensity = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	fassert(AttackIntensitySettings.attack_type_intesities[arg_5_1], "No attack intesity settings defined for attack type \"%s\"", arg_5_1)
 
 	arg_5_0._attack_intensity_decay_grace[arg_5_1] = arg_5_0._attack_intensity_difficulty[arg_5_1].decay_grace
@@ -90,7 +90,7 @@ function PlayerUnitAttackIntensityExtension.add_attack_intensity(arg_5_0, arg_5_
 	end
 end
 
-function PlayerUnitAttackIntensityExtension.want_an_attack(arg_6_0, arg_6_1)
+PlayerUnitAttackIntensityExtension.want_an_attack = function (arg_6_0, arg_6_1)
 	fassert(AttackIntensitySettings.attack_type_intesities[arg_6_1], "No attack intesity settings defined for attack type \"%s\"", arg_6_1)
 
 	return arg_6_0._attack_allowed[arg_6_1]

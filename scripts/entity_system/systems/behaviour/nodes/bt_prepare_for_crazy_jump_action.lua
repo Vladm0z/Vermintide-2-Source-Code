@@ -9,7 +9,7 @@ local var_0_0 = POSITION_LOOKUP
 local var_0_1 = AiUtils
 local var_0_2 = Unit.alive
 
-function BTPrepareForCrazyJumpAction.init(arg_1_0, ...)
+BTPrepareForCrazyJumpAction.init = function (arg_1_0, ...)
 	BTPrepareForCrazyJumpAction.super.init(arg_1_0, ...)
 end
 
@@ -19,7 +19,7 @@ local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BTPrepareForCrazyJumpAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTPrepareForCrazyJumpAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	aiprint("ENTER BTPrepareForCrazyJumpAction")
 
 	local var_3_0 = arg_3_0._tree_node.action_data
@@ -49,7 +49,7 @@ function BTPrepareForCrazyJumpAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTPrepareForCrazyJumpAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPrepareForCrazyJumpAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	aiprint("LEAVE BTPrepareForCrazyJumpAction")
 
 	arg_4_2.jump_data.jump_at_target_outside_mesh = nil
@@ -65,7 +65,7 @@ function BTPrepareForCrazyJumpAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-function BTPrepareForCrazyJumpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPrepareForCrazyJumpAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = ScriptUnit.extension(arg_5_1, "locomotion_system")
 	local var_5_1 = arg_5_2.breed
 
@@ -162,7 +162,7 @@ function BTPrepareForCrazyJumpAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	return "running"
 end
 
-function BTPrepareForCrazyJumpAction.start_crawling(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTPrepareForCrazyJumpAction.start_crawling = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.action
 
 	arg_6_1.navigation_extension:set_max_speed(arg_6_1.breed.walk_speed)
@@ -174,7 +174,7 @@ function BTPrepareForCrazyJumpAction.start_crawling(arg_6_0, arg_6_1, arg_6_2, a
 	arg_6_3.ready_crouch_time = arg_6_2 + (var_6_1 or 0.5)
 end
 
-function BTPrepareForCrazyJumpAction.ready_to_jump(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTPrepareForCrazyJumpAction.ready_to_jump = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = Unit.node(arg_7_1.target_unit, "j_neck")
 	local var_7_1 = var_0_0[arg_7_0]
 	local var_7_2 = Unit.world_position(arg_7_1.target_unit, 0) + Vector3(0, 0, 0.2)
@@ -210,7 +210,7 @@ function BTPrepareForCrazyJumpAction.ready_to_jump(arg_7_0, arg_7_1, arg_7_2, ar
 	return var_7_5, var_7_6, var_7_7
 end
 
-function BTPrepareForCrazyJumpAction.test_trajectory(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTPrepareForCrazyJumpAction.test_trajectory = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = World.get_data(arg_8_0.world, "physics_world")
 	local var_8_1 = arg_8_0.breed.jump_gravity
 	local var_8_2
@@ -273,7 +273,7 @@ function BTPrepareForCrazyJumpAction.test_trajectory(arg_8_0, arg_8_1, arg_8_2, 
 	return var_8_11, var_8_12, var_8_13
 end
 
-function BTPrepareForCrazyJumpAction.test_simple_jump(arg_9_0, arg_9_1)
+BTPrepareForCrazyJumpAction.test_simple_jump = function (arg_9_0, arg_9_1)
 	local var_9_0 = WeaponHelper:wanted_projectile_angle(arg_9_0, 9.82, arg_9_1)
 
 	if var_9_0 then

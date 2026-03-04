@@ -1,7 +1,7 @@
 -- chunkname: @scripts/utils/action_assert_funcs.lua
 
 ActionAssertFuncs = {
-	handgun = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	handgun = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = arg_1_3.impact_data
 
 		if var_1_0 then
@@ -16,7 +16,7 @@ ActionAssertFuncs = {
 			fassert(DamageProfileTemplates[var_1_2], "Damage profile [\"%s\"] does not exist", var_1_2)
 		end
 	end,
-	sweep = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	sweep = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		if arg_2_3.weapon_action_hand == "both" then
 			local var_2_0 = arg_2_3.damage_profile_left
 
@@ -34,7 +34,7 @@ ActionAssertFuncs = {
 			fassert(DamageProfileTemplates[var_2_2], "Damage profile [\"%s\"] does not exist", var_2_2)
 		end
 	end,
-	charged_sweep = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	charged_sweep = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if arg_3_3.weapon_action_hand == "both" then
 			local var_3_0 = arg_3_3.damage_profile_left
 
@@ -60,7 +60,7 @@ ActionAssertFuncs = {
 			fassert(arg_3_3.overcharge_type, "Action marked as charge attack, but no overcharge_type set for [\"%s.%s\"] in weapon [\"%s\"]", arg_3_1, arg_3_2, arg_3_0)
 		end
 	end,
-	push_stagger = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	push_stagger = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = arg_4_3.damage_profile_inner
 
 		fassert(var_4_0, "No inner damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_4_1, arg_4_2, arg_4_0)
@@ -71,7 +71,7 @@ ActionAssertFuncs = {
 		fassert(var_4_1, "No outer damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_4_1, arg_4_2, arg_4_0)
 		fassert(DamageProfileTemplates[var_4_1], "Damage profile [\"%s\"] does not exist", var_4_1)
 	end,
-	shield_slam = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	shield_slam = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		local var_5_0 = arg_5_3.damage_profile
 
 		fassert(var_5_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_5_1, arg_5_2, arg_5_0)
@@ -82,42 +82,42 @@ ActionAssertFuncs = {
 		fassert(var_5_1, "No aoe damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_5_1, arg_5_2, arg_5_0)
 		fassert(DamageProfileTemplates[var_5_1], "Damage profile [\"%s\"] does not exist", var_5_1)
 	end,
-	shotgun = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	shotgun = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = arg_6_3.damage_profile
 
 		fassert(var_6_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_6_1, arg_6_2, arg_6_0)
 		fassert(DamageProfileTemplates[var_6_0], "Damage profile [\"%s\"] does not exist", var_6_0)
 	end,
-	geiser = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	geiser = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		local var_7_0 = arg_7_3.damage_profile
 
 		fassert(var_7_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_7_1, arg_7_2, arg_7_0)
 		fassert(DamageProfileTemplates[var_7_0], "Damage profile [\"%s\"] does not exist", var_7_0)
 	end,
-	beam = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	beam = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		local var_8_0 = arg_8_3.damage_profile
 
 		fassert(var_8_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_8_1, arg_8_2, arg_8_0)
 		fassert(DamageProfileTemplates[var_8_0], "Damage profile [\"%s\"] does not exist", var_8_0)
 	end,
-	flamethrower = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	flamethrower = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		local var_9_0 = arg_9_3.damage_profile
 
 		fassert(var_9_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_9_1, arg_9_2, arg_9_0)
 		fassert(DamageProfileTemplates[var_9_0], "Damage profile [\"%s\"] does not exist", var_9_0)
 	end,
-	warpfire_thrower = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	warpfire_thrower = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		local var_10_0 = arg_10_3.damage_profile
 
 		fassert(var_10_0, "No damage profile set for [\"%s.%s\"] in weapon [\"%s\"]", arg_10_1, arg_10_2, arg_10_0)
 		fassert(DamageProfileTemplates[var_10_0], "Damage profile [\"%s\"] does not exist", var_10_0)
 	end,
-	charge = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	charge = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 		local var_11_0 = arg_11_3.charge_time
 
 		fassert(var_11_0, "No charge time set for [\"%s.%s\"] in weapon [\"%s\"]", arg_11_1, arg_11_2, arg_11_0)
 	end,
-	action_selector = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	action_selector = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		local var_12_0 = rawget(Weapons, arg_12_0).actions
 		local var_12_1 = arg_12_3.conditional_actions
 		local var_12_2 = arg_12_3.default_action

@@ -94,7 +94,7 @@ local var_0_19 = {
 HeroWindowItemCustomization = class(HeroWindowItemCustomization)
 HeroWindowItemCustomization.NAME = "HeroWindowItemCustomization"
 
-function HeroWindowItemCustomization.on_enter(arg_1_0, arg_1_1)
+HeroWindowItemCustomization.on_enter = function (arg_1_0, arg_1_1)
 	print("[HeroViewWindow] Enter Substate HeroWindowItemCustomization")
 
 	arg_1_0._params = arg_1_1
@@ -132,7 +132,7 @@ function HeroWindowItemCustomization.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowItemCustomization._setup_menu_input_description(arg_2_0)
+HeroWindowItemCustomization._setup_menu_input_description = function (arg_2_0)
 	local var_2_0 = UILayer.default + 300
 	local var_2_1 = arg_2_0._parent:window_input_service()
 
@@ -141,7 +141,7 @@ function HeroWindowItemCustomization._setup_menu_input_description(arg_2_0)
 	arg_2_0._menu_input_description:set_input_description(nil)
 end
 
-function HeroWindowItemCustomization._find_equipment_slot(arg_3_0)
+HeroWindowItemCustomization._find_equipment_slot = function (arg_3_0)
 	local var_3_0 = Managers.backend:get_interface("items")
 	local var_3_1
 
@@ -162,7 +162,7 @@ function HeroWindowItemCustomization._find_equipment_slot(arg_3_0)
 	arg_3_0._equipment_slot_name = var_3_1
 end
 
-function HeroWindowItemCustomization._setup_availble_states(arg_4_0, arg_4_1)
+HeroWindowItemCustomization._setup_availble_states = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.data
 	local var_4_1 = arg_4_1.rarity or var_4_0.rarity or "default"
 	local var_4_2 = UISettings.item_rarity_order
@@ -222,28 +222,28 @@ function HeroWindowItemCustomization._setup_availble_states(arg_4_0, arg_4_1)
 	end
 end
 
-function HeroWindowItemCustomization._set_camera_position(arg_5_0, arg_5_1)
+HeroWindowItemCustomization._set_camera_position = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._preview_widget.element.pass_data[1].viewport
 	local var_5_1 = ScriptViewport.camera(var_5_0)
 
 	ScriptCamera.set_local_position(var_5_1, arg_5_1)
 end
 
-function HeroWindowItemCustomization._camera_position(arg_6_0)
+HeroWindowItemCustomization._camera_position = function (arg_6_0)
 	local var_6_0 = arg_6_0._preview_widget.element.pass_data[1].viewport
 	local var_6_1 = ScriptViewport.camera(var_6_0)
 
 	return ScriptCamera.position(var_6_1)
 end
 
-function HeroWindowItemCustomization._set_camera_fov(arg_7_0, arg_7_1)
+HeroWindowItemCustomization._set_camera_fov = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._preview_widget.element.pass_data[1].viewport
 	local var_7_1 = ScriptViewport.camera(var_7_0)
 
 	Camera.set_vertical_fov(var_7_1, math.pi * arg_7_1 / 180)
 end
 
-function HeroWindowItemCustomization._camera_fov(arg_8_0)
+HeroWindowItemCustomization._camera_fov = function (arg_8_0)
 	local var_8_0 = arg_8_0._preview_widget.element.pass_data[1].viewport
 	local var_8_1 = ScriptViewport.camera(var_8_0)
 	local var_8_2 = Camera.vertical_fov(var_8_1)
@@ -251,7 +251,7 @@ function HeroWindowItemCustomization._camera_fov(arg_8_0)
 	return math.floor(var_8_2 * 180 / math.pi)
 end
 
-function HeroWindowItemCustomization._change_state(arg_9_0, arg_9_1)
+HeroWindowItemCustomization._change_state = function (arg_9_0, arg_9_1)
 	if not (arg_9_0._state == arg_9_1) then
 		local var_9_0 = arg_9_0._states[arg_9_1]
 
@@ -288,13 +288,13 @@ function HeroWindowItemCustomization._change_state(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowItemCustomization._get_item(arg_10_0, arg_10_1)
+HeroWindowItemCustomization._get_item = function (arg_10_0, arg_10_1)
 	arg_10_0._item_backend_id = arg_10_1
 
 	return Managers.backend:get_interface("items"):get_item_from_id(arg_10_1)
 end
 
-function HeroWindowItemCustomization._start_transition_animation(arg_11_0, arg_11_1)
+HeroWindowItemCustomization._start_transition_animation = function (arg_11_0, arg_11_1)
 	local var_11_0 = {
 		render_settings = arg_11_0._render_settings,
 		state_render_settings = arg_11_0._state_render_settings
@@ -305,7 +305,7 @@ function HeroWindowItemCustomization._start_transition_animation(arg_11_0, arg_1
 	arg_11_0._animations[arg_11_1] = var_11_2
 end
 
-function HeroWindowItemCustomization._create_ui_elements(arg_12_0)
+HeroWindowItemCustomization._create_ui_elements = function (arg_12_0)
 	if arg_12_0._preview_widget then
 		UIWidget.destroy(arg_12_0._ui_top_renderer, arg_12_0._preview_widget)
 
@@ -347,7 +347,7 @@ function HeroWindowItemCustomization._create_ui_elements(arg_12_0)
 	arg_12_0._ui_animator = UIAnimator:new(var_12_0, var_0_5)
 end
 
-function HeroWindowItemCustomization._create_preview_widget(arg_13_0)
+HeroWindowItemCustomization._create_preview_widget = function (arg_13_0)
 	local var_13_0 = arg_13_0:_create_item_preview_widget_definition()
 
 	arg_13_0._preview_widget = UIWidget.init(var_13_0)
@@ -355,7 +355,7 @@ function HeroWindowItemCustomization._create_preview_widget(arg_13_0)
 	arg_13_0:_register_object_sets(arg_13_0._preview_widget, var_13_0)
 end
 
-function HeroWindowItemCustomization._create_item_preview_widget_definition(arg_14_0)
+HeroWindowItemCustomization._create_item_preview_widget_definition = function (arg_14_0)
 	local var_14_0 = {
 		element = {}
 	}
@@ -410,7 +410,7 @@ function HeroWindowItemCustomization._create_item_preview_widget_definition(arg_
 	return var_14_0
 end
 
-function HeroWindowItemCustomization.on_exit(arg_15_0, arg_15_1)
+HeroWindowItemCustomization.on_exit = function (arg_15_0, arg_15_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowItemCustomization")
 
 	arg_15_0._ui_animator = nil
@@ -428,11 +428,11 @@ function HeroWindowItemCustomization.on_exit(arg_15_0, arg_15_1)
 	end
 end
 
-function HeroWindowItemCustomization.play_sound(arg_16_0, arg_16_1)
+HeroWindowItemCustomization.play_sound = function (arg_16_0, arg_16_1)
 	arg_16_0._parent:play_sound(arg_16_1)
 end
 
-function HeroWindowItemCustomization.update(arg_17_0, arg_17_1, arg_17_2)
+HeroWindowItemCustomization.update = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_handle_gamepad_activity()
 	arg_17_0:_update_craft_response()
 
@@ -467,13 +467,13 @@ function HeroWindowItemCustomization.update(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_draw(var_17_0, arg_17_1)
 end
 
-function HeroWindowItemCustomization.post_update(arg_18_0, arg_18_1, arg_18_2)
+HeroWindowItemCustomization.post_update = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0._previewer then
 		arg_18_0._previewer:post_update(arg_18_1, arg_18_2)
 	end
 end
 
-function HeroWindowItemCustomization._register_object_sets(arg_19_0, arg_19_1, arg_19_2)
+HeroWindowItemCustomization._register_object_sets = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_2.style.viewport
 	local var_19_1 = arg_19_1.content
 	local var_19_2 = arg_19_1.element.pass_data[1]
@@ -498,7 +498,7 @@ function HeroWindowItemCustomization._register_object_sets(arg_19_0, arg_19_1, a
 	arg_19_0:_show_object_set(nil, true)
 end
 
-function HeroWindowItemCustomization._show_object_set(arg_20_0, arg_20_1, arg_20_2)
+HeroWindowItemCustomization._show_object_set = function (arg_20_0, arg_20_1, arg_20_2)
 	if not arg_20_0._preview_widget then
 		print("[StoreWindowItemPreview:show_object_set] Viewport not initiated")
 
@@ -553,7 +553,7 @@ function HeroWindowItemCustomization._show_object_set(arg_20_0, arg_20_1, arg_20
 	end
 end
 
-function HeroWindowItemCustomization._update_environment(arg_21_0, arg_21_1, arg_21_2)
+HeroWindowItemCustomization._update_environment = function (arg_21_0, arg_21_1, arg_21_2)
 	if not arg_21_0._preview_widget then
 		return
 	end
@@ -564,15 +564,15 @@ function HeroWindowItemCustomization._update_environment(arg_21_0, arg_21_1, arg
 	World.get_data(var_21_1, "shading_settings")[1] = arg_21_2 and "default" or var_21_0
 end
 
-function HeroWindowItemCustomization._is_button_hover(arg_22_0, arg_22_1)
+HeroWindowItemCustomization._is_button_hover = function (arg_22_0, arg_22_1)
 	return arg_22_1.content.button_hotspot.is_hover
 end
 
-function HeroWindowItemCustomization._is_button_hover_enter(arg_23_0, arg_23_1)
+HeroWindowItemCustomization._is_button_hover_enter = function (arg_23_0, arg_23_1)
 	return arg_23_1.content.button_hotspot.on_hover_enter
 end
 
-function HeroWindowItemCustomization._is_button_pressed(arg_24_0, arg_24_1)
+HeroWindowItemCustomization._is_button_pressed = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_1.content.button_hotspot
 
 	if var_24_0.on_release then
@@ -582,11 +582,11 @@ function HeroWindowItemCustomization._is_button_pressed(arg_24_0, arg_24_1)
 	end
 end
 
-function HeroWindowItemCustomization._navigation_menu_disabled(arg_25_0)
+HeroWindowItemCustomization._navigation_menu_disabled = function (arg_25_0)
 	return arg_25_0._mission_selection_grid ~= nil
 end
 
-function HeroWindowItemCustomization._handle_gamepad_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+HeroWindowItemCustomization._handle_gamepad_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_0._parent
 	local var_26_1 = false
 	local var_26_2 = arg_26_0:_navigation_menu_disabled()
@@ -658,7 +658,7 @@ function HeroWindowItemCustomization._handle_gamepad_input(arg_26_0, arg_26_1, a
 	end
 end
 
-function HeroWindowItemCustomization._handle_input(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowItemCustomization._handle_input = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_0._parent
 	local var_27_1 = false
 	local var_27_2 = arg_27_0._widgets_by_name
@@ -750,13 +750,13 @@ function HeroWindowItemCustomization._handle_input(arg_27_0, arg_27_1, arg_27_2,
 	arg_27_0._hover_index = var_27_3
 end
 
-function HeroWindowItemCustomization._update_active_preview(arg_28_0)
+HeroWindowItemCustomization._update_active_preview = function (arg_28_0)
 	local var_28_0 = arg_28_0._active_selection_index or arg_28_0._hover_index or arg_28_0._input_index
 
 	arg_28_0._active_selector_preview = arg_28_0._available_states[var_28_0]
 end
 
-function HeroWindowItemCustomization._option_selected(arg_29_0, arg_29_1, arg_29_2)
+HeroWindowItemCustomization._option_selected = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._parent
 	local var_29_1 = arg_29_0._available_states[arg_29_1]
 	local var_29_2 = false
@@ -790,7 +790,7 @@ function HeroWindowItemCustomization._option_selected(arg_29_0, arg_29_1, arg_29
 	end
 end
 
-function HeroWindowItemCustomization._setting_option_pressed(arg_30_0, arg_30_1)
+HeroWindowItemCustomization._setting_option_pressed = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_1.content
 	local var_30_1 = var_30_0.num_options
 
@@ -803,7 +803,7 @@ function HeroWindowItemCustomization._setting_option_pressed(arg_30_0, arg_30_1)
 	end
 end
 
-function HeroWindowItemCustomization._set_setting_option_selected(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+HeroWindowItemCustomization._set_setting_option_selected = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_1.content
 	local var_31_1 = var_31_0.num_options
 
@@ -814,7 +814,7 @@ function HeroWindowItemCustomization._set_setting_option_selected(arg_31_0, arg_
 	end
 end
 
-function HeroWindowItemCustomization._handle_new_selection(arg_32_0, arg_32_1)
+HeroWindowItemCustomization._handle_new_selection = function (arg_32_0, arg_32_1)
 	local var_32_0 = #arg_32_0._available_states
 
 	arg_32_1 = arg_32_1 and math.clamp(arg_32_1, 1, var_32_0)
@@ -842,7 +842,7 @@ function HeroWindowItemCustomization._handle_new_selection(arg_32_0, arg_32_1)
 	arg_32_0._input_index = arg_32_1
 end
 
-function HeroWindowItemCustomization._update_animations(arg_33_0, arg_33_1)
+HeroWindowItemCustomization._update_animations = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._ui_animator
 
 	var_33_0:update(arg_33_1)
@@ -884,7 +884,7 @@ function HeroWindowItemCustomization._update_animations(arg_33_0, arg_33_1)
 	arg_33_0:_animate_state_transition(arg_33_1)
 end
 
-function HeroWindowItemCustomization._animate_state_transition(arg_34_0, arg_34_1)
+HeroWindowItemCustomization._animate_state_transition = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._state_transition_timer
 
 	if not var_34_0 then
@@ -938,7 +938,7 @@ function HeroWindowItemCustomization._animate_state_transition(arg_34_0, arg_34_
 	end
 end
 
-function HeroWindowItemCustomization._draw(arg_35_0, arg_35_1, arg_35_2)
+HeroWindowItemCustomization._draw = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._ui_renderer
 	local var_35_1 = arg_35_0._ui_top_renderer
 	local var_35_2 = arg_35_0._ui_scenegraph
@@ -992,7 +992,7 @@ function HeroWindowItemCustomization._draw(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function HeroWindowItemCustomization._state_draw_overview(arg_36_0, arg_36_1, arg_36_2)
+HeroWindowItemCustomization._state_draw_overview = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._info_widgets
 
 	if var_36_0 then
@@ -1028,7 +1028,7 @@ function HeroWindowItemCustomization._state_draw_overview(arg_36_0, arg_36_1, ar
 	end
 end
 
-function HeroWindowItemCustomization._state_draw_property_reroll(arg_37_0, arg_37_1, arg_37_2)
+HeroWindowItemCustomization._state_draw_property_reroll = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._property_reroll_widgets
 
 	if var_37_0 then
@@ -1054,7 +1054,7 @@ function HeroWindowItemCustomization._state_draw_property_reroll(arg_37_0, arg_3
 	end
 end
 
-function HeroWindowItemCustomization._handle_gamepad_activity(arg_38_0)
+HeroWindowItemCustomization._handle_gamepad_activity = function (arg_38_0)
 	local var_38_0 = arg_38_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -1080,7 +1080,7 @@ function HeroWindowItemCustomization._handle_gamepad_activity(arg_38_0)
 	end
 end
 
-function HeroWindowItemCustomization._update_item_rarity(arg_39_0)
+HeroWindowItemCustomization._update_item_rarity = function (arg_39_0)
 	local var_39_0 = arg_39_0:_get_item(arg_39_0._item_backend_id)
 	local var_39_1 = var_39_0.data
 	local var_39_2 = var_39_0.rarity or var_39_1.rarity
@@ -1119,7 +1119,7 @@ function HeroWindowItemCustomization._update_item_rarity(arg_39_0)
 	var_39_15.select_text_color = var_39_12
 end
 
-function HeroWindowItemCustomization._update_property_option(arg_40_0)
+HeroWindowItemCustomization._update_property_option = function (arg_40_0)
 	local var_40_0 = arg_40_0:_get_item(arg_40_0._item_backend_id).properties
 
 	if var_40_0 then
@@ -1144,7 +1144,7 @@ function HeroWindowItemCustomization._update_property_option(arg_40_0)
 	end
 end
 
-function HeroWindowItemCustomization._update_upgrade_option(arg_41_0)
+HeroWindowItemCustomization._update_upgrade_option = function (arg_41_0)
 	local var_41_0 = arg_41_0._ui_top_renderer
 	local var_41_1 = arg_41_0._ui_scenegraph
 	local var_41_2 = arg_41_0:_get_item(arg_41_0._item_backend_id)
@@ -1219,7 +1219,7 @@ function HeroWindowItemCustomization._update_upgrade_option(arg_41_0)
 	var_41_1[var_41_6].size[2] = var_41_23
 end
 
-function HeroWindowItemCustomization._update_trait_option(arg_42_0)
+HeroWindowItemCustomization._update_trait_option = function (arg_42_0)
 	local var_42_0 = arg_42_0._ui_top_renderer
 	local var_42_1 = arg_42_0._ui_scenegraph
 	local var_42_2 = arg_42_0:_get_item(arg_42_0._item_backend_id).traits
@@ -1250,7 +1250,7 @@ function HeroWindowItemCustomization._update_trait_option(arg_42_0)
 			var_42_6 = var_42_6 + math.floor(UIUtils.get_text_height(var_42_0, var_42_5, var_42_15, var_42_14))
 
 			if var_42_6 ~= var_42_7.size[2] then
-				-- block empty
+				-- Nothing
 			end
 
 			var_42_8.title_text.size[2] = var_42_6
@@ -1269,7 +1269,7 @@ function HeroWindowItemCustomization._update_trait_option(arg_42_0)
 	var_42_17[2] = -var_42_6
 end
 
-function HeroWindowItemCustomization._present_item(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+HeroWindowItemCustomization._present_item = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	arg_43_0._item_dirty = true
 
 	arg_43_0:_spawn_item_unit(arg_43_1, arg_43_2, arg_43_3)
@@ -1304,7 +1304,7 @@ function HeroWindowItemCustomization._present_item(arg_43_0, arg_43_1, arg_43_2,
 	arg_43_0:_update_environment(var_43_16)
 end
 
-function HeroWindowItemCustomization._spawn_item_unit(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+HeroWindowItemCustomization._spawn_item_unit = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	if arg_44_0._previewer then
 		arg_44_0._previewer:destroy()
 	end
@@ -1333,12 +1333,12 @@ function HeroWindowItemCustomization._spawn_item_unit(arg_44_0, arg_44_1, arg_44
 	arg_44_0._previewer = var_44_12
 end
 
-function HeroWindowItemCustomization.cb_on_item_loaded(arg_45_0, arg_45_1, arg_45_2)
+HeroWindowItemCustomization.cb_on_item_loaded = function (arg_45_0, arg_45_1, arg_45_2)
 	print("cb_on_item_loaded", arg_45_1)
 	arg_45_0._previewer:present_item(arg_45_1, arg_45_2)
 end
 
-function HeroWindowItemCustomization._select_illusion_by_key(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+HeroWindowItemCustomization._select_illusion_by_key = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	if not arg_46_1 then
 		return
 	end
@@ -1354,7 +1354,7 @@ function HeroWindowItemCustomization._select_illusion_by_key(arg_46_0, arg_46_1,
 	end
 end
 
-function HeroWindowItemCustomization._on_illusion_index_pressed(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+HeroWindowItemCustomization._on_illusion_index_pressed = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = arg_47_0._illusion_widgets[arg_47_1].content
 	local var_47_1 = var_47_0.skin_key
 
@@ -1428,7 +1428,7 @@ end
 
 local var_0_21 = {}
 
-function HeroWindowItemCustomization._setup_illusions(arg_49_0, arg_49_1)
+HeroWindowItemCustomization._setup_illusions = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_1.key
 	local var_49_1 = arg_49_1.data
 	local var_49_2 = 0
@@ -1537,7 +1537,7 @@ function HeroWindowItemCustomization._setup_illusions(arg_49_0, arg_49_1)
 	arg_49_0._weapon_illusion_base_widgets_by_name.illusions_counter.content.text = "(" .. tostring(var_49_2) .. "/" .. tostring(#var_49_13) .. ")"
 end
 
-function HeroWindowItemCustomization._state_setup_overview(arg_50_0)
+HeroWindowItemCustomization._state_setup_overview = function (arg_50_0)
 	local var_50_0 = {}
 	local var_50_1 = {}
 
@@ -1696,7 +1696,7 @@ function HeroWindowItemCustomization._state_setup_overview(arg_50_0)
 	arg_50_0._menu_input_description:change_generic_actions(var_0_18.default)
 end
 
-function HeroWindowItemCustomization._state_setup_property_reroll(arg_51_0)
+HeroWindowItemCustomization._state_setup_property_reroll = function (arg_51_0)
 	local var_51_0 = {}
 	local var_51_1 = {}
 
@@ -1782,7 +1782,7 @@ function HeroWindowItemCustomization._state_setup_property_reroll(arg_51_0)
 	arg_51_0._menu_input_description:change_generic_actions(var_0_18[arg_51_0._state])
 end
 
-function HeroWindowItemCustomization._enable_craft_button(arg_52_0, arg_52_1, arg_52_2)
+HeroWindowItemCustomization._enable_craft_button = function (arg_52_0, arg_52_1, arg_52_2)
 	if script_data["eac-untrusted"] then
 		arg_52_1 = false
 	end
@@ -1807,7 +1807,7 @@ function HeroWindowItemCustomization._enable_craft_button(arg_52_0, arg_52_1, ar
 	end
 end
 
-function HeroWindowItemCustomization._update_state_craft_button(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+HeroWindowItemCustomization._update_state_craft_button = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 	local var_53_0, var_53_1 = arg_53_0:_create_material_requirement_widgets(arg_53_1)
 	local var_53_2 = math.max(var_53_1 + 30, 100)
 	local var_53_3 = arg_53_0._widgets_by_name
@@ -1850,7 +1850,7 @@ local var_0_22 = {
 	0
 }
 
-function HeroWindowItemCustomization._create_weapon_diagram_widget(arg_54_0, arg_54_1)
+HeroWindowItemCustomization._create_weapon_diagram_widget = function (arg_54_0, arg_54_1)
 	local var_54_0 = 0.25
 	local var_54_1 = 8
 	local var_54_2 = (1 - var_54_0) / var_54_1
@@ -1905,7 +1905,7 @@ function HeroWindowItemCustomization._create_weapon_diagram_widget(arg_54_0, arg
 	return UIWidget.init(var_54_21), var_54_20
 end
 
-function HeroWindowItemCustomization._create_item_feature_widget(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+HeroWindowItemCustomization._create_item_feature_widget = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 	local var_55_0 = false
 	local var_55_1 = "item_feature"
 	local var_55_2 = var_0_4[var_55_1].size
@@ -1914,7 +1914,7 @@ function HeroWindowItemCustomization._create_item_feature_widget(arg_55_0, arg_5
 	return UIWidget.init(var_55_3), var_55_2
 end
 
-function HeroWindowItemCustomization._create_description_widget(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+HeroWindowItemCustomization._create_description_widget = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = false
 
 	arg_56_3 = arg_56_3 or {
@@ -1944,7 +1944,7 @@ function HeroWindowItemCustomization._create_description_widget(arg_56_0, arg_56
 	return var_56_2, var_56_5
 end
 
-function HeroWindowItemCustomization._create_property_option_entry(arg_57_0, arg_57_1, arg_57_2)
+HeroWindowItemCustomization._create_property_option_entry = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0 = "property_options"
 	local var_57_1 = arg_57_1 .. arg_57_2
 	local var_57_2 = var_0_14(var_57_0, var_57_1)
@@ -1961,12 +1961,12 @@ function HeroWindowItemCustomization._create_property_option_entry(arg_57_0, arg
 	return var_57_3
 end
 
-function HeroWindowItemCustomization._set_scroll_area_height(arg_58_0, arg_58_1, arg_58_2)
+HeroWindowItemCustomization._set_scroll_area_height = function (arg_58_0, arg_58_1, arg_58_2)
 	arg_58_0._ui_scenegraph.scroll_area.size[2] = arg_58_2
 	arg_58_1.style.mask.size[2] = arg_58_2
 end
 
-function HeroWindowItemCustomization._destroy_scrollbar(arg_59_0)
+HeroWindowItemCustomization._destroy_scrollbar = function (arg_59_0)
 	if arg_59_0._scrollbar_logic then
 		arg_59_0._scrollbar_logic = nil
 	end
@@ -1974,7 +1974,7 @@ function HeroWindowItemCustomization._destroy_scrollbar(arg_59_0)
 	arg_59_0._widgets_by_name.scrollbar.content.visible = false
 end
 
-function HeroWindowItemCustomization._initialize_scrollbar(arg_60_0, arg_60_1, arg_60_2)
+HeroWindowItemCustomization._initialize_scrollbar = function (arg_60_0, arg_60_1, arg_60_2)
 	local var_60_0 = arg_60_0._widgets_by_name
 	local var_60_1 = arg_60_0._ui_scenegraph
 
@@ -2009,7 +2009,7 @@ function HeroWindowItemCustomization._initialize_scrollbar(arg_60_0, arg_60_1, a
 	return var_60_4
 end
 
-function HeroWindowItemCustomization._update_scroll_position(arg_61_0)
+HeroWindowItemCustomization._update_scroll_position = function (arg_61_0)
 	local var_61_0 = arg_61_0._scrollbar_logic
 
 	if not var_61_0 then
@@ -2024,7 +2024,7 @@ function HeroWindowItemCustomization._update_scroll_position(arg_61_0)
 	end
 end
 
-function HeroWindowItemCustomization._create_material_requirement_widgets(arg_62_0, arg_62_1)
+HeroWindowItemCustomization._create_material_requirement_widgets = function (arg_62_0, arg_62_1)
 	local var_62_0 = var_0_1[arg_62_1].ingredients
 	local var_62_1 = UIWidgets.create_craft_material_widget("material_root")
 	local var_62_2 = Managers.backend:get_interface("items")
@@ -2098,11 +2098,11 @@ function HeroWindowItemCustomization._create_material_requirement_widgets(arg_62
 	return var_62_6, var_62_19
 end
 
-function HeroWindowItemCustomization._play_sound(arg_63_0, arg_63_1)
+HeroWindowItemCustomization._play_sound = function (arg_63_0, arg_63_1)
 	arg_63_0._parent:play_sound(arg_63_1)
 end
 
-function HeroWindowItemCustomization._state_setup_trait_reroll(arg_64_0)
+HeroWindowItemCustomization._state_setup_trait_reroll = function (arg_64_0)
 	local var_64_0 = {}
 	local var_64_1 = {}
 
@@ -2185,7 +2185,7 @@ function HeroWindowItemCustomization._state_setup_trait_reroll(arg_64_0)
 	arg_64_0._menu_input_description:change_generic_actions(var_0_18[arg_64_0._state])
 end
 
-function HeroWindowItemCustomization._create_trait_option_entry(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+HeroWindowItemCustomization._create_trait_option_entry = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 	local var_65_0 = arg_65_0._ui_top_renderer
 	local var_65_1 = "trait_options"
 	local var_65_2 = var_0_15(var_65_1, arg_65_1, arg_65_2, arg_65_3)
@@ -2201,7 +2201,7 @@ function HeroWindowItemCustomization._create_trait_option_entry(arg_65_0, arg_65
 	return var_65_3, var_65_10
 end
 
-function HeroWindowItemCustomization._state_draw_trait_reroll(arg_66_0, arg_66_1, arg_66_2)
+HeroWindowItemCustomization._state_draw_trait_reroll = function (arg_66_0, arg_66_1, arg_66_2)
 	local var_66_0 = arg_66_0._trait_reroll_widgets
 
 	if var_66_0 then
@@ -2227,7 +2227,7 @@ function HeroWindowItemCustomization._state_draw_trait_reroll(arg_66_0, arg_66_1
 	end
 end
 
-function HeroWindowItemCustomization._state_setup_upgrade(arg_67_0)
+HeroWindowItemCustomization._state_setup_upgrade = function (arg_67_0)
 	arg_67_0:_destroy_scrollbar()
 
 	local var_67_0 = {}
@@ -2304,7 +2304,7 @@ function HeroWindowItemCustomization._state_setup_upgrade(arg_67_0)
 	arg_67_0._menu_input_description:change_generic_actions(var_0_18[arg_67_0._state])
 end
 
-function HeroWindowItemCustomization._state_draw_upgrade(arg_68_0, arg_68_1, arg_68_2)
+HeroWindowItemCustomization._state_draw_upgrade = function (arg_68_0, arg_68_1, arg_68_2)
 	local var_68_0 = arg_68_0._upgrade_widgets
 
 	if var_68_0 then
@@ -2322,7 +2322,7 @@ function HeroWindowItemCustomization._state_draw_upgrade(arg_68_0, arg_68_1, arg
 	end
 end
 
-function HeroWindowItemCustomization._craft(arg_69_0, arg_69_1, arg_69_2)
+HeroWindowItemCustomization._craft = function (arg_69_0, arg_69_1, arg_69_2)
 	local var_69_0 = arg_69_0:_get_item(arg_69_0._item_backend_id).backend_id
 	local var_69_1 = table.clone(arg_69_1)
 
@@ -2353,7 +2353,7 @@ function HeroWindowItemCustomization._craft(arg_69_0, arg_69_1, arg_69_2)
 	return false
 end
 
-function HeroWindowItemCustomization._update_craft_response(arg_70_0)
+HeroWindowItemCustomization._update_craft_response = function (arg_70_0)
 	local var_70_0 = arg_70_0._current_crafting_data and arg_70_0._current_crafting_data.craft_id
 
 	if not var_70_0 then
@@ -2372,7 +2372,7 @@ function HeroWindowItemCustomization._update_craft_response(arg_70_0)
 	end
 end
 
-function HeroWindowItemCustomization._craft_completed(arg_71_0, arg_71_1)
+HeroWindowItemCustomization._craft_completed = function (arg_71_0, arg_71_1)
 	arg_71_0._waiting_for_craft = false
 
 	arg_71_0._parent:unblock_input()
@@ -2390,7 +2390,7 @@ function HeroWindowItemCustomization._craft_completed(arg_71_0, arg_71_1)
 
 	arg_71_0._ui_animations.on_crafting_exit = UIAnimation.init(UIAnimation.function_by_time, var_71_2.style.texture_id.color, 1, 255, 0, 0.3, math.easeOutCubic)
 
-	function arg_71_0._animation_callbacks.on_crafting_exit()
+	arg_71_0._animation_callbacks.on_crafting_exit = function ()
 		var_71_2.content.active = false
 	end
 
@@ -2401,7 +2401,7 @@ function HeroWindowItemCustomization._craft_completed(arg_71_0, arg_71_1)
 	arg_71_0._playing_craft_sound = false
 end
 
-function HeroWindowItemCustomization._apply_weapon_skin_craft_complete(arg_73_0, arg_73_1)
+HeroWindowItemCustomization._apply_weapon_skin_craft_complete = function (arg_73_0, arg_73_1)
 	local var_73_0 = arg_73_0:_get_item(arg_73_0._item_backend_id)
 	local var_73_1 = var_73_0.key
 	local var_73_2 = var_73_0.skin or WeaponSkins.default_skins[var_73_1]
@@ -2419,7 +2419,7 @@ function HeroWindowItemCustomization._apply_weapon_skin_craft_complete(arg_73_0,
 	arg_73_0:_enable_craft_button(false)
 end
 
-function HeroWindowItemCustomization._update_skin_gamepad_input(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+HeroWindowItemCustomization._update_skin_gamepad_input = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 	local var_74_0 = arg_74_0._selected_skin_index or 1
 	local var_74_1 = arg_74_0._selected_skin_index
 	local var_74_2 = arg_74_0._illusion_widgets
@@ -2449,7 +2449,7 @@ function HeroWindowItemCustomization._update_skin_gamepad_input(arg_74_0, arg_74
 	return var_74_4
 end
 
-function HeroWindowItemCustomization._upgrade_item_craft_complete(arg_75_0, arg_75_1)
+HeroWindowItemCustomization._upgrade_item_craft_complete = function (arg_75_0, arg_75_1)
 	local var_75_0 = arg_75_0._item_backend_id
 	local var_75_1 = Managers.backend:get_interface("dlcs")
 	local var_75_2 = Managers.backend:get_interface("items")

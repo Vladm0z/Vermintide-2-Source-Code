@@ -72,7 +72,7 @@ local function var_0_22(arg_2_0)
 	end
 end
 
-function ActionSweep.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+ActionSweep.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 	ActionSweep.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
 	arg_3_0.stored_half_extents = Vector3Box()
@@ -93,7 +93,7 @@ function ActionSweep.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, 
 	arg_3_0._dt = 0
 end
 
-function ActionSweep.check_precision_target(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ActionSweep.check_precision_target = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._precision_target_unit
 
 	if not HEALTH_ALIVE[var_4_0] then
@@ -123,7 +123,7 @@ function ActionSweep.check_precision_target(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	return var_4_7 and var_4_0 or nil
 end
 
-function ActionSweep.client_owner_start_action(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionSweep.client_owner_start_action = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	ActionSweep.super.client_owner_start_action(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 
 	arg_5_0._has_played_rumble_effect = false
@@ -301,7 +301,7 @@ if PhysicsWorld.stop_reusing_sweep_tables then
 	PhysicsWorld.stop_reusing_sweep_tables()
 end
 
-function ActionSweep.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ActionSweep.client_owner_post_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.owner_unit
 	local var_6_1 = arg_6_0._current_action
 
@@ -330,7 +330,7 @@ function ActionSweep.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	end
 end
 
-function ActionSweep._update_sweep(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+ActionSweep._update_sweep = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0
 
 	if arg_7_0._baked_sweep_data then
@@ -350,7 +350,7 @@ function ActionSweep._update_sweep(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return var_7_0
 end
 
-function ActionSweep._update_sweep_baked(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ActionSweep._update_sweep_baked = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0
 	local var_8_1 = arg_8_3.damage_window_start / arg_8_0._anim_time_scale
 
@@ -384,7 +384,7 @@ function ActionSweep._update_sweep_baked(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg
 	return var_8_0
 end
 
-function ActionSweep._update_sweep_runtime(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ActionSweep._update_sweep_runtime = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0.owner_unit
 	local var_9_1 = arg_9_0.weapon_unit
 	local var_9_2 = arg_9_0.physics_world
@@ -413,7 +413,7 @@ function ActionSweep._update_sweep_runtime(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	return var_9_10
 end
 
-function ActionSweep._get_power_boost(arg_10_0)
+ActionSweep._get_power_boost = function (arg_10_0)
 	local var_10_0 = arg_10_0._has_starting_melee_boost
 	local var_10_1 = arg_10_0._starting_melee_boost_curve_multiplier
 
@@ -429,7 +429,7 @@ function ActionSweep._get_power_boost(arg_10_0)
 	return var_10_0, var_10_1
 end
 
-function ActionSweep._is_within_damage_window(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ActionSweep._is_within_damage_window = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.damage_window_start
 	local var_11_1 = arg_11_2.damage_window_end
 
@@ -449,7 +449,7 @@ function ActionSweep._is_within_damage_window(arg_11_0, arg_11_1, arg_11_2, arg_
 	return var_11_5 and var_11_6
 end
 
-function ActionSweep._get_target_hit_mass(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+ActionSweep._get_target_hit_mass = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = arg_12_2 and (arg_12_4.hit_mass_counts_block and (arg_12_4.hit_mass_counts_block[arg_12_1] or arg_12_4.hit_mass_counts_block[2]) or arg_12_4.hit_mass_count_block) or arg_12_4.hit_mass_counts and (arg_12_4.hit_mass_counts[arg_12_1] or arg_12_4.hit_mass_counts[2]) or arg_12_4.hit_mass_count or 1
 	local var_12_1 = arg_12_0._overridable_settings.hit_mass_count
 
@@ -480,7 +480,7 @@ function ActionSweep._get_target_hit_mass(arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	return (arg_12_0._owner_buff_extension:apply_buffs_to_value(var_12_0, "hit_mass_reduction"))
 end
 
-function ActionSweep._calculate_hit_mass(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+ActionSweep._calculate_hit_mass = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 	local var_13_0 = false
 	local var_13_1 = false
 
@@ -500,7 +500,7 @@ function ActionSweep._calculate_hit_mass(arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 	return math.ceil(arg_13_2), arg_13_3, var_13_0, var_13_1
 end
 
-function ActionSweep._calculate_hit_mass_level_object(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ActionSweep._calculate_hit_mass_level_object = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if HEALTH_ALIVE[arg_14_1] then
 		local var_14_0 = var_0_3(arg_14_1, "hit_mass")
 
@@ -513,14 +513,14 @@ function ActionSweep._calculate_hit_mass_level_object(arg_14_0, arg_14_1, arg_14
 	end
 end
 
-function ActionSweep._calculate_attack_direction(arg_15_0, arg_15_1, arg_15_2)
+ActionSweep._calculate_attack_direction = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_1.attack_direction or "forward"
 	local var_15_1 = Quaternion[var_15_0](arg_15_2)
 
 	return arg_15_0._overridable_settings.invert_attack_direction and -var_15_1 or var_15_1
 end
 
-function ActionSweep._check_backstab(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ActionSweep._check_backstab = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = 1
 
 	if arg_16_1 and HEALTH_ALIVE[arg_16_2] then
@@ -557,7 +557,7 @@ function ActionSweep._check_backstab(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg
 	return var_16_0
 end
 
-function ActionSweep._send_attack_hit(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
+ActionSweep._send_attack_hit = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, ...)
 	if arg_17_1 < arg_17_0._time_to_hit then
 		local var_17_0 = Vector3Box(arg_17_6)
 		local var_17_1 = Vector3Box(arg_17_7)
@@ -615,7 +615,7 @@ function _revalidate_actor_and_get_unit(arg_18_0)
 	return Script.type_name(arg_18_0) == "Actor" and Actor.unit(arg_18_0) or nil
 end
 
-function ActionSweep._do_overlap(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+ActionSweep._do_overlap = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
 	if arg_19_0._attack_aborted then
 		return
 	end
@@ -1159,7 +1159,7 @@ function ActionSweep._do_overlap(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_
 	end
 end
 
-function ActionSweep._push_target(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+ActionSweep._push_target = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_3.catapult
 	local var_20_1 = arg_20_3.catapult_players
 
@@ -1200,7 +1200,7 @@ function ActionSweep._push_target(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20
 	end
 end
 
-function ActionSweep._play_environmental_effect(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+ActionSweep._play_environmental_effect = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 	local var_21_0 = Quaternion.forward(arg_21_1)
 	local var_21_1 = Quaternion.right(arg_21_1)
 	local var_21_2 = Quaternion.up(arg_21_1)
@@ -1233,7 +1233,7 @@ local var_0_24 = {
 	blunt_hit = "blunt_hit"
 }
 
-function ActionSweep._play_character_impact(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15)
+ActionSweep._play_character_impact = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14, arg_22_15)
 	local var_22_0 = Managers.player:owner(arg_22_2).bot_player
 	local var_22_1 = arg_22_0.world
 	local var_22_2 = arg_22_0.owner_unit
@@ -1375,7 +1375,7 @@ function ActionSweep._play_character_impact(arg_22_0, arg_22_1, arg_22_2, arg_22
 	return var_22_24
 end
 
-function ActionSweep.hit_level_object(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+ActionSweep.hit_level_object = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
 	arg_23_1[arg_23_2] = true
 	arg_23_0._has_hit_environment = true
 
@@ -1401,7 +1401,7 @@ function ActionSweep.hit_level_object(arg_23_0, arg_23_1, arg_23_2, arg_23_3, ar
 	end
 end
 
-function ActionSweep.finish(arg_24_0, arg_24_1, arg_24_2)
+ActionSweep.finish = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._current_action
 
 	if arg_24_1 == "new_interupting_action" then
@@ -1460,11 +1460,11 @@ function ActionSweep.finish(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function ActionSweep.destroy(arg_25_0)
+ActionSweep.destroy = function (arg_25_0)
 	return
 end
 
-function ActionSweep._play_hit_animations(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
+ActionSweep._play_hit_animations = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
 	local var_26_0 = arg_26_2.dual_hit_stop_anims and arg_26_0._action_hand and arg_26_2.dual_hit_stop_anims[arg_26_0._action_hand] or arg_26_0._overridable_settings.hit_stop_anim
 	local var_26_1 = arg_26_3 and arg_26_7 and arg_26_2.hit_stop_kill_anim or arg_26_4 ~= "head" and arg_26_5 == 2 and arg_26_3 and arg_26_2.hit_armor_anim or arg_26_3 and arg_26_6 and arg_26_2.hit_shield_stop_anim or arg_26_3 and var_26_0 or arg_26_2.first_person_hit_anim
 	local var_26_2 = arg_26_3 and arg_26_0._overridable_settings.hit_stop_anim
@@ -1490,11 +1490,11 @@ function ActionSweep._play_hit_animations(arg_26_0, arg_26_1, arg_26_2, arg_26_3
 	end
 end
 
-function ActionSweep._get_damage_profile_name(arg_27_0, arg_27_1, arg_27_2)
+ActionSweep._get_damage_profile_name = function (arg_27_0, arg_27_1, arg_27_2)
 	return arg_27_1 and arg_27_2["damage_profile_" .. arg_27_1] or arg_27_0._overridable_settings.damage_profile or "default"
 end
 
-function ActionSweep._populate_sweep_action_data(arg_28_0, arg_28_1, arg_28_2)
+ActionSweep._populate_sweep_action_data = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._overridable_settings
 
 	table.clear(arg_28_0._overridable_settings)
@@ -1506,7 +1506,7 @@ function ActionSweep._populate_sweep_action_data(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function ActionSweep._weapon_sweep_rotation(arg_29_0, arg_29_1, arg_29_2)
+ActionSweep._weapon_sweep_rotation = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = var_0_5(arg_29_2, 0)
 	local var_29_1 = arg_29_1.sweep_rotation_offset
 

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_military.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_helmgart_military_a",

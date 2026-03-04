@@ -191,7 +191,7 @@ var_0_0.explosion_templates = {
 		}
 	},
 	ethereal_skull_impact = {
-		server_hit_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		server_hit_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 			local var_1_0 = Unit.local_position(arg_1_0, 0)
 			local var_1_1 = Managers.world:world("level_world")
 

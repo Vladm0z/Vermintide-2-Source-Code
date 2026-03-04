@@ -5,7 +5,7 @@ WeaveCapturePointExtension.NAME = "WeaveCapturePointExtension"
 
 local var_0_0 = 10
 
-function WeaveCapturePointExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveCapturePointExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveCapturePointExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._is_already_inside = false
@@ -36,11 +36,11 @@ function WeaveCapturePointExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._predicted_value = 0
 end
 
-function WeaveCapturePointExtension.display_name(arg_2_0)
+WeaveCapturePointExtension.display_name = function (arg_2_0)
 	return "objective_capture_points_name_single"
 end
 
-function WeaveCapturePointExtension._calculate_size(arg_3_0)
+WeaveCapturePointExtension._calculate_size = function (arg_3_0)
 	local var_3_0 = Unit.local_scale(arg_3_0._unit, 0)
 	local var_3_1, var_3_2 = Unit.box(arg_3_0._unit)
 
@@ -51,11 +51,11 @@ function WeaveCapturePointExtension._calculate_size(arg_3_0)
 	end
 end
 
-function WeaveCapturePointExtension._set_objective_data(arg_4_0, arg_4_1)
+WeaveCapturePointExtension._set_objective_data = function (arg_4_0, arg_4_1)
 	return
 end
 
-function WeaveCapturePointExtension._activate(arg_5_0)
+WeaveCapturePointExtension._activate = function (arg_5_0)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0._unit, "tutorial_system")
 
 	if var_5_0 then
@@ -114,12 +114,12 @@ function WeaveCapturePointExtension._activate(arg_5_0)
 	end
 end
 
-function WeaveCapturePointExtension.complete(arg_6_0, ...)
+WeaveCapturePointExtension.complete = function (arg_6_0, ...)
 	WeaveCapturePointExtension.super.complete(arg_6_0, ...)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_winds_gameplay_capture_success", arg_6_0._unit)
 end
 
-function WeaveCapturePointExtension._deactivate(arg_7_0)
+WeaveCapturePointExtension._deactivate = function (arg_7_0)
 	local var_7_0 = arg_7_0._size
 
 	for iter_7_0 = 1, var_7_0 * 15 do
@@ -131,7 +131,7 @@ function WeaveCapturePointExtension._deactivate(arg_7_0)
 	end
 end
 
-function WeaveCapturePointExtension._update_num_players_required(arg_8_0, arg_8_1)
+WeaveCapturePointExtension._update_num_players_required = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._percentage_of_players_required
 	local var_8_1 = math.floor(arg_8_1 * var_8_0)
 
@@ -139,7 +139,7 @@ function WeaveCapturePointExtension._update_num_players_required(arg_8_0, arg_8_
 	arg_8_0._num_players = arg_8_1
 end
 
-function WeaveCapturePointExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveCapturePointExtension._server_update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Unit.local_position(arg_9_0._unit, 0)
 	local var_9_1 = 0
 	local var_9_2 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
@@ -219,7 +219,7 @@ function WeaveCapturePointExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function WeaveCapturePointExtension._client_average_progress_speed(arg_10_0)
+WeaveCapturePointExtension._client_average_progress_speed = function (arg_10_0)
 	local var_10_0 = arg_10_0._client_progress_buffer
 	local var_10_1 = #var_10_0
 
@@ -245,7 +245,7 @@ function WeaveCapturePointExtension._client_average_progress_speed(arg_10_0)
 	return var_10_5 / var_10_1
 end
 
-function WeaveCapturePointExtension._client_register_value_progress(arg_11_0, arg_11_1, arg_11_2)
+WeaveCapturePointExtension._client_register_value_progress = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._progress_buffer_index = math.index_wrapper(arg_11_0._progress_buffer_index + 1, var_0_0)
 
 	local var_11_0 = arg_11_0._client_progress_buffer[arg_11_0._progress_buffer_index] or {}
@@ -255,7 +255,7 @@ function WeaveCapturePointExtension._client_register_value_progress(arg_11_0, ar
 	arg_11_0._client_progress_buffer[arg_11_0._progress_buffer_index] = var_11_0
 end
 
-function WeaveCapturePointExtension._client_update(arg_12_0, arg_12_1, arg_12_2)
+WeaveCapturePointExtension._client_update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0:client_get_value()
 
 	if var_12_0 > arg_12_0._latest_value then
@@ -277,6 +277,6 @@ function WeaveCapturePointExtension._client_update(arg_12_0, arg_12_1, arg_12_2)
 	Material.set_scalar(arg_12_0._material, "radial_cutoff", var_12_4)
 end
 
-function WeaveCapturePointExtension.get_percentage_done(arg_13_0)
+WeaveCapturePointExtension.get_percentage_done = function (arg_13_0)
 	return math.clamp(1 - arg_13_0._timer / arg_13_0._max_time, 0, 1)
 end

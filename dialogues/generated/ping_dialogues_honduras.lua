@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/ping_dialogues_honduras.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_gameplay_dwarf_ranger_grabbed_ping",

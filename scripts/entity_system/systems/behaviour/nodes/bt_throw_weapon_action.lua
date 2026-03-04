@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowWeaponAction = class(BTThrowWeaponAction, BTNode)
 
-function BTThrowWeaponAction.init(arg_1_0, ...)
+BTThrowWeaponAction.init = function (arg_1_0, ...)
 	BTThrowWeaponAction.super.init(arg_1_0, ...)
 end
 
 BTThrowWeaponAction.name = "BTThrowWeaponAction"
 
-function BTThrowWeaponAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTThrowWeaponAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -37,7 +37,7 @@ function BTThrowWeaponAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTThrowWeaponAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTThrowWeaponAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_5 then
 		arg_3_2.locomotion_extension:set_rotation_speed(nil)
 	end
@@ -69,7 +69,7 @@ function BTThrowWeaponAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	Managers.state.network:anim_event(arg_3_1, "move_fwd")
 end
 
-function BTThrowWeaponAction.anim_cb_throw_weapon(arg_4_0, arg_4_1, arg_4_2)
+BTThrowWeaponAction.anim_cb_throw_weapon = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = Unit.local_rotation(arg_4_1, 0)
 	local var_4_2 = POSITION_LOOKUP[arg_4_1] + Vector3.up() * 2
@@ -107,11 +107,11 @@ function BTThrowWeaponAction.anim_cb_throw_weapon(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function BTThrowWeaponAction.anim_cb_throw_finished(arg_5_0, arg_5_1, arg_5_2)
+BTThrowWeaponAction.anim_cb_throw_finished = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_2.throw_finished = true
 end
 
-function BTThrowWeaponAction.catch_weapon(arg_6_0, arg_6_1, arg_6_2)
+BTThrowWeaponAction.catch_weapon = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.state.network
 	local var_6_1 = var_6_0:unit_game_object_id(arg_6_1)
 
@@ -133,7 +133,7 @@ function BTThrowWeaponAction.catch_weapon(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.close_attack_target = nil
 end
 
-function BTThrowWeaponAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTThrowWeaponAction.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_3 < arg_7_2.rotation_timer then
 		local var_7_0 = arg_7_2.target_unit
 
@@ -169,7 +169,7 @@ function BTThrowWeaponAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	end
 end
 
-function BTThrowWeaponAction.update_thrown_weapon(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTThrowWeaponAction.update_thrown_weapon = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_2.thrown_unit
 
 	if not var_8_0 or not Unit.alive(var_8_0) then
@@ -265,7 +265,7 @@ function BTThrowWeaponAction.update_thrown_weapon(arg_8_0, arg_8_1, arg_8_2, arg
 	return false
 end
 
-function BTThrowWeaponAction.check_overlap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTThrowWeaponAction.check_overlap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_1.radius
 	local var_9_1 = arg_9_1.push_speed
 	local var_9_2 = arg_9_1.push_speed_z
@@ -304,7 +304,7 @@ function BTThrowWeaponAction.check_overlap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	end
 end
 
-function BTThrowWeaponAction.attack_close_units(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTThrowWeaponAction.attack_close_units = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_1.attack_close_range
 	local var_10_1 = POSITION_LOOKUP[arg_10_4] - Vector3.flat(Unit.local_position(arg_10_2, 0))
 
@@ -316,7 +316,7 @@ function BTThrowWeaponAction.attack_close_units(arg_10_0, arg_10_1, arg_10_2, ar
 	end
 end
 
-function BTThrowWeaponAction.anim_cb_damage(arg_11_0, arg_11_1, arg_11_2)
+BTThrowWeaponAction.anim_cb_damage = function (arg_11_0, arg_11_1, arg_11_2)
 	if not Unit.alive(arg_11_2.close_attack_target) then
 		return
 	end

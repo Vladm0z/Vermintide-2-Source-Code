@@ -5,7 +5,7 @@ local var_0_0 = script_data.testify and require("scripts/unit_extensions/objecti
 VersusCapturePointObjectiveExtension = class(VersusCapturePointObjectiveExtension, BaseObjectiveExtension)
 VersusCapturePointObjectiveExtension.NAME = "VersusCapturePointObjectiveExtension"
 
-function VersusCapturePointObjectiveExtension.init(arg_1_0, ...)
+VersusCapturePointObjectiveExtension.init = function (arg_1_0, ...)
 	VersusCapturePointObjectiveExtension.super.init(arg_1_0, ...)
 
 	local var_1_0, var_1_1 = Unit.box(arg_1_0._unit)
@@ -14,7 +14,7 @@ function VersusCapturePointObjectiveExtension.init(arg_1_0, ...)
 	arg_1_0._percentage = 0
 end
 
-function VersusCapturePointObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
+VersusCapturePointObjectiveExtension._set_objective_data = function (arg_2_0, arg_2_1)
 	local var_2_0 = GameModeSettings.versus.objectives.capture_point
 
 	arg_2_0._capture_rate_multiplier = arg_2_1.capture_rate_multiplier or var_2_0.capture_rate_multiplier
@@ -30,7 +30,7 @@ function VersusCapturePointObjectiveExtension._set_objective_data(arg_2_0, arg_2
 	arg_2_0._capture_time_remaining = arg_2_0._capture_time
 end
 
-function VersusCapturePointObjectiveExtension._activate(arg_3_0)
+VersusCapturePointObjectiveExtension._activate = function (arg_3_0)
 	local var_3_0 = Unit.mesh(arg_3_0._unit, "g_projector002")
 
 	arg_3_0._material = Mesh.material(var_3_0, "projector")
@@ -44,14 +44,14 @@ function VersusCapturePointObjectiveExtension._activate(arg_3_0)
 	end
 end
 
-function VersusCapturePointObjectiveExtension._deactivate(arg_4_0)
+VersusCapturePointObjectiveExtension._deactivate = function (arg_4_0)
 	if not DEDICATED_SERVER then
 		arg_4_0:play_local_unit_sound("Stop_versus_objective_capture_loop")
 		arg_4_0:play_local_unit_sound("Stop_versus_objective_capture_ticking_loop")
 	end
 end
 
-function VersusCapturePointObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+VersusCapturePointObjectiveExtension._server_update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0:_get_num_players_inside()
 	local var_5_1 = arg_5_0:get_percentage_done()
 
@@ -78,7 +78,7 @@ function VersusCapturePointObjectiveExtension._server_update(arg_5_0, arg_5_1, a
 	end
 end
 
-function VersusCapturePointObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+VersusCapturePointObjectiveExtension._client_update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0:get_percentage_done()
 
 	arg_6_0._percentage = arg_6_0:client_get_value()
@@ -86,11 +86,11 @@ function VersusCapturePointObjectiveExtension._client_update(arg_6_0, arg_6_1, a
 	arg_6_0:_update_local_player(arg_6_1, arg_6_2, var_6_0)
 end
 
-function VersusCapturePointObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+VersusCapturePointObjectiveExtension.update_testify = function (arg_7_0, arg_7_1, arg_7_2)
 	Testify:poll_requests_through_handler(var_0_0, arg_7_0)
 end
 
-function VersusCapturePointObjectiveExtension._update_local_player(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+VersusCapturePointObjectiveExtension._update_local_player = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0:get_percentage_done()
 
 	if arg_8_3 ~= var_8_0 then
@@ -113,7 +113,7 @@ function VersusCapturePointObjectiveExtension._update_local_player(arg_8_0, arg_
 	arg_8_0._local_player_entered = var_8_1
 end
 
-function VersusCapturePointObjectiveExtension._is_local_player_inside(arg_9_0)
+VersusCapturePointObjectiveExtension._is_local_player_inside = function (arg_9_0)
 	local var_9_0 = Managers.player:local_player()
 	local var_9_1 = var_9_0 and var_9_0.player_unit
 
@@ -127,7 +127,7 @@ function VersusCapturePointObjectiveExtension._is_local_player_inside(arg_9_0)
 	return Vector3.distance_squared(var_9_3, var_9_2) <= arg_9_0._inside_radius * arg_9_0._inside_radius
 end
 
-function VersusCapturePointObjectiveExtension._get_num_players_inside(arg_10_0)
+VersusCapturePointObjectiveExtension._get_num_players_inside = function (arg_10_0)
 	local var_10_0 = ALIVE
 	local var_10_1 = POSITION_LOOKUP
 	local var_10_2 = ScriptUnit.extension
@@ -150,7 +150,7 @@ function VersusCapturePointObjectiveExtension._get_num_players_inside(arg_10_0)
 	return var_10_5
 end
 
-function VersusCapturePointObjectiveExtension.get_percentage_done(arg_11_0)
+VersusCapturePointObjectiveExtension.get_percentage_done = function (arg_11_0)
 	if arg_11_0._is_server then
 		local var_11_0 = 1 - arg_11_0._capture_time_remaining / arg_11_0._capture_time
 

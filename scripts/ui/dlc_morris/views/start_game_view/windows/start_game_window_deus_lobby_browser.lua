@@ -13,7 +13,7 @@ local var_0_1 = {
 	max_members = MatchmakingSettings.MAX_NUMBER_OF_PLAYERS
 }
 
-function StartGameWindowDeusLobbyBrowser.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusLobbyBrowser.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindowDeusLobbyBrowser] Enter Substate StartGameWindowDeusLobbyBrowser")
 
 	arg_1_0._parent = arg_1_1.parent

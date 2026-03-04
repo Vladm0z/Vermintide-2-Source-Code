@@ -16,7 +16,7 @@ var_0_1.unit_node = "j_spine"
 var_0_1.check_line_of_sight = true
 var_0_1.screen_clamp = false
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	return {
 		scenegraph_id = arg_1_0,
 		offset = {
@@ -30,7 +30,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.text
 					end
 				},
@@ -38,7 +38,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.text
 					end
 				}
@@ -88,6 +88,6 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_4_0)
+var_0_1.on_enter = function (arg_4_0)
 	arg_4_0.content.progress = 1
 end

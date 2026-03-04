@@ -508,7 +508,7 @@ local function var_0_9(arg_1_0)
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.highlight and arg_2_0.is_local_player and not arg_2_0.done
 					end
 				},
@@ -516,7 +516,7 @@ local function var_0_9(arg_1_0)
 					texture_id = "glow_done",
 					style_id = "glow_done",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.done
 					end
 				},
@@ -524,10 +524,10 @@ local function var_0_9(arg_1_0)
 					style_id = "glow_done_animation",
 					pass_type = "texture",
 					texture_id = "glow_done",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.done
 					end,
-					content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 						local var_5_0 = arg_5_0.done
 						local var_5_1 = arg_5_1.anim_progress
 
@@ -673,7 +673,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.locked
 					end
 				},
@@ -681,7 +681,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture_shadow",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.locked
 					end
 				},
@@ -699,7 +699,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.locked or arg_9_0.taken or arg_9_0.other_picking
 					end
 				},
@@ -707,7 +707,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.locked or arg_10_0.taken or arg_10_0.other_picking
 					end
 				},
@@ -715,7 +715,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "local_player_frame",
 					texture_id = "local_player_frame",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return not arg_11_0.locked and not arg_11_0.taken and not arg_11_0.other_picking
 					end
 				},
@@ -723,7 +723,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					pass_type = "texture",
 					style_id = "other_hover",
 					texture_id = "other_hover",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.hovered_by_other and not arg_12_0.button_hotspot.is_hover
 					end
 				},
@@ -731,7 +731,7 @@ local function var_0_10(arg_6_0, arg_6_1)
 					pass_type = "texture",
 					style_id = "local_player_select_frame",
 					texture_id = "local_player_select_frame",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.button_hotspot.is_hover or arg_13_0.gamepad_selected
 					end
 				}
@@ -1003,7 +1003,7 @@ local function var_0_11(arg_14_0)
 					style_id = "hero_name",
 					pass_type = "text",
 					text_id = "hero_name",
-					content_change_function = function(arg_15_0, arg_15_1)
+					content_change_function = function (arg_15_0, arg_15_1)
 						if arg_15_0.taken then
 							arg_15_1.text_color = {
 								255,
@@ -1018,7 +1018,7 @@ local function var_0_11(arg_14_0)
 					style_id = "available_text",
 					pass_type = "text",
 					text_id = "available_text",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.side == "dark_pact"
 					end
 				}
@@ -1185,7 +1185,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_background_fade",
 					texture_id = "mute_background_fade",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						local var_19_0 = arg_19_0.is_player
 
 						return arg_19_0.is_player and not arg_19_0.is_local_player
@@ -1195,7 +1195,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					texture_id = "mute_button_frame",
 					style_id = "mute_button_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						local var_20_0 = arg_20_0.is_player
 
 						return arg_20_0.is_player and not arg_20_0.is_local_player
@@ -1205,7 +1205,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon",
 					texture_id = "mute_icon",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						local var_21_0 = arg_21_0.is_player
 
 						return arg_21_0.is_player and not arg_21_0.is_local_player
@@ -1215,7 +1215,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon_hovered",
 					texture_id = "mute_icon",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.is_player and not arg_22_0.is_local_player and arg_22_0.hotspot.is_hover
 					end
 				},
@@ -1223,7 +1223,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon_muted",
 					texture_id = "mute_icon_muted",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.is_player and not arg_23_0.is_local_player and arg_23_0.muted
 					end
 				},
@@ -1231,7 +1231,7 @@ local function var_0_13(arg_18_0, arg_18_1, arg_18_2)
 					style_id = "mute_icon",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.parent.is_player and not arg_24_0.parent.is_local_player
 					end
 				}
@@ -1423,7 +1423,7 @@ local function var_0_16(arg_26_0)
 					style_id = "arrow_texture",
 					texture_id = "arrow_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_27_0, arg_27_1)
+					content_change_function = function (arg_27_0, arg_27_1)
 						arg_27_1.color[1] = 165 + 95 * math.sin(Managers.time:time("ui") * 5) * 0.75
 					end
 				}
@@ -1634,15 +1634,15 @@ local var_0_18 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeOutCubic(arg_30_3)
 
 				arg_30_4.render_settings.alpha_multiplier = var_30_0
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		}
@@ -1652,15 +1652,15 @@ local var_0_18 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				arg_32_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = math.easeOutCubic(arg_33_3)
 
 				arg_33_4.render_settings.alpha_multiplier = 1 - var_33_0
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		}
@@ -1670,10 +1670,10 @@ local var_0_18 = {
 			name = "fade_out_startup",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 				local var_36_0 = arg_36_4.self._widgets_by_name
 				local var_36_1 = var_36_0.countdown_timer
 				local var_36_2 = var_36_0.your_turn_indicator_text
@@ -1682,7 +1682,7 @@ local var_0_18 = {
 				var_36_1.alpha_multiplier = 1 - var_36_3
 				var_36_2.style.text.text_color[1] = 255 * (1 - var_36_3)
 			end,
-			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end
 		},
@@ -1690,10 +1690,10 @@ local var_0_18 = {
 			name = "fade_in_top_details",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 				local var_39_0 = arg_39_4.self._top_detail_widgets
 				local var_39_1 = math.easeOutCubic(arg_39_3)
 
@@ -1701,7 +1701,7 @@ local var_0_18 = {
 					iter_39_1.alpha_multiplier = var_39_1
 				end
 			end,
-			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end
 		}
@@ -1711,10 +1711,10 @@ local var_0_18 = {
 			name = "fade_out_hero_selection",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				local var_42_0 = arg_42_4.self
 				local var_42_1 = math.easeOutCubic(arg_42_3)
 
@@ -1740,7 +1740,7 @@ local var_0_18 = {
 					iter_42_9.alpha_multiplier = 1 - var_42_1
 				end
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end
 		}
@@ -1750,10 +1750,10 @@ local var_0_18 = {
 			name = "fade_to_black",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 				local var_45_0 = 155 + 100 * (1 - math.easeOutCubic(arg_45_3))
 
 				arg_45_2.style.background.color = {
@@ -1763,7 +1763,7 @@ local var_0_18 = {
 					var_45_0
 				}
 			end,
-			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				return
 			end
 		}
@@ -1773,10 +1773,10 @@ local var_0_18 = {
 			name = "fade_to_gray",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			init = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 				return
 			end,
-			update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+			update = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
 				local var_48_0 = 255 * math.easeOutCubic(arg_48_3)
 
 				arg_48_2.style.background.color = {
@@ -1786,7 +1786,7 @@ local var_0_18 = {
 					var_48_0
 				}
 			end,
-			on_complete = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			on_complete = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 				return
 			end
 		}

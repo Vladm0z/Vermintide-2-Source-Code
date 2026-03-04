@@ -2,11 +2,11 @@
 
 EnemyCharacterStateInteracting = class(EnemyCharacterStateInteracting, EnemyCharacterState)
 
-function EnemyCharacterStateInteracting.init(arg_1_0, arg_1_1)
+EnemyCharacterStateInteracting.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "interacting")
 end
 
-function EnemyCharacterStateInteracting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateInteracting.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.has_started_interacting = false
 	arg_2_0.swap_to_3p = arg_2_7.swap_to_3p
 
@@ -56,7 +56,7 @@ function EnemyCharacterStateInteracting.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_
 	end
 end
 
-function EnemyCharacterStateInteracting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+EnemyCharacterStateInteracting.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.activate_block = nil
 
 	if arg_3_0.swap_to_3p then
@@ -89,7 +89,7 @@ function EnemyCharacterStateInteracting.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3
 	end
 end
 
-function EnemyCharacterStateInteracting.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+EnemyCharacterStateInteracting.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0._input_extension
 	local var_4_2 = arg_4_0._interactor_extension

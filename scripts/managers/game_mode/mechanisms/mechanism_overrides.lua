@@ -10,7 +10,7 @@ local var_0_0 = MechanismOverrides.CACHE
 local var_0_1 = MechanismOverrides.CACHED_MECHANISM
 local var_0_2 = MechanismOverrides.TEMP_CACHE
 
-function MechanismOverrides.get(arg_1_0, arg_1_1)
+MechanismOverrides.get = function (arg_1_0, arg_1_1)
 	if arg_1_0 == nil then
 		return nil
 	end
@@ -20,7 +20,7 @@ function MechanismOverrides.get(arg_1_0, arg_1_1)
 	return MechanismOverrides.recursive_override(arg_1_0, var_1_0, 1)
 end
 
-function MechanismOverrides.mechanism_switched()
+MechanismOverrides.mechanism_switched = function ()
 	var_0_0 = {}
 	var_0_1 = {}
 	MechanismOverrides.CACHE = var_0_0
@@ -41,7 +41,7 @@ local function var_0_3(arg_3_0, arg_3_1)
 	end
 end
 
-function MechanismOverrides.recursive_override(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+MechanismOverrides.recursive_override = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if var_0_2[arg_4_0] then
 		return var_0_2[arg_4_0]
 	end
@@ -117,7 +117,7 @@ function MechanismOverrides.recursive_override(arg_4_0, arg_4_1, arg_4_2, arg_4_
 	return var_0_0[arg_4_0] or var_0_2[arg_4_0], var_4_4
 end
 
-function MechanismOverrides.recursive_cleanup(arg_5_0, arg_5_1)
+MechanismOverrides.recursive_cleanup = function (arg_5_0, arg_5_1)
 	local var_5_0 = var_0_0[arg_5_0]
 
 	if var_5_0 then

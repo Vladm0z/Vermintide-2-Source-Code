@@ -57,7 +57,7 @@ local function var_0_8(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 			arg_5_0[var_5_4.package_name] = false
 		end
 	elseif var_5_2 == "cosmetic" then
-		-- block empty
+		-- Nothing
 	else
 		error("ProfileSynchronizer unknown slot_category: " .. var_5_2)
 	end
@@ -357,7 +357,7 @@ end
 
 ProfileSynchronizer = class(ProfileSynchronizer)
 
-function ProfileSynchronizer.init(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+ProfileSynchronizer.init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	arg_15_0._state = arg_15_3
 	arg_15_0._lobby = arg_15_2
 	arg_15_0._cached_all_synced_for_peer = {
@@ -370,25 +370,25 @@ local var_0_25 = {
 	"rpc_assign_peer_to_profile"
 }
 
-function ProfileSynchronizer.register_rpcs(arg_16_0, arg_16_1, arg_16_2)
+ProfileSynchronizer.register_rpcs = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._network_event_delegate = arg_16_1
 
 	arg_16_0._network_event_delegate:register(arg_16_0, unpack(var_0_25))
 end
 
-function ProfileSynchronizer.unregister_network_events(arg_17_0)
+ProfileSynchronizer.unregister_network_events = function (arg_17_0)
 	arg_17_0._network_event_delegate:unregister(arg_17_0)
 end
 
-function ProfileSynchronizer.destroy(arg_18_0)
+ProfileSynchronizer.destroy = function (arg_18_0)
 	var_0_24(arg_18_0._state)
 end
 
-function ProfileSynchronizer.update(arg_19_0)
+ProfileSynchronizer.update = function (arg_19_0)
 	var_0_23(arg_19_0._state)
 end
 
-function ProfileSynchronizer.hot_join_sync(arg_20_0, arg_20_1)
+ProfileSynchronizer.hot_join_sync = function (arg_20_0, arg_20_1)
 	fassert(arg_20_0._state:is_server(), "only for the server")
 	var_0_5("Peer %s entered session", arg_20_1)
 	var_0_5("Running hot_join_sync for peer %s", arg_20_1)
@@ -407,7 +407,7 @@ function ProfileSynchronizer.hot_join_sync(arg_20_0, arg_20_1)
 	end
 end
 
-function ProfileSynchronizer.clear_peer_data(arg_21_0, arg_21_1)
+ProfileSynchronizer.clear_peer_data = function (arg_21_0, arg_21_1)
 	fassert(arg_21_0._state:is_server(), "only for the server")
 	var_0_5("Peer %s left session", arg_21_1)
 	arg_21_0:_unassign_profiles_of_peer(arg_21_1)
@@ -415,7 +415,7 @@ function ProfileSynchronizer.clear_peer_data(arg_21_0, arg_21_1)
 	arg_21_0:_request_lobby_data_sync()
 end
 
-function ProfileSynchronizer.get_profile_index_reservation(arg_22_0, arg_22_1, arg_22_2)
+ProfileSynchronizer.get_profile_index_reservation = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._state:get_profile_index_reservation(arg_22_1, arg_22_2)
 	local var_22_1
 	local var_22_2
@@ -429,13 +429,13 @@ function ProfileSynchronizer.get_profile_index_reservation(arg_22_0, arg_22_1, a
 	return var_22_0, var_22_2
 end
 
-function ProfileSynchronizer.get_persistent_profile_index_reservation(arg_23_0, arg_23_1)
+ProfileSynchronizer.get_persistent_profile_index_reservation = function (arg_23_0, arg_23_1)
 	local var_23_0, var_23_1 = arg_23_0._state:get_persistent_profile_index_reservation(arg_23_1)
 
 	return var_23_0, var_23_1
 end
 
-function ProfileSynchronizer.try_reserve_profile_for_peer(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+ProfileSynchronizer.try_reserve_profile_for_peer = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	fassert(arg_24_0._state:is_server(), "Should only be called on server.")
 
 	local var_24_0, var_24_1 = arg_24_0._state:get_profile_index_reservation(arg_24_1, arg_24_3)
@@ -459,12 +459,12 @@ function ProfileSynchronizer.try_reserve_profile_for_peer(arg_24_0, arg_24_1, ar
 	return false
 end
 
-function ProfileSynchronizer.clear_profile_index_reservation(arg_25_0, arg_25_1, arg_25_2)
+ProfileSynchronizer.clear_profile_index_reservation = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0:_clear_profile_index_reservation(arg_25_1, arg_25_2)
 	arg_25_0:_request_lobby_data_sync()
 end
 
-function ProfileSynchronizer.profile_by_peer(arg_26_0, arg_26_1, arg_26_2)
+ProfileSynchronizer.profile_by_peer = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._state:get_peers_with_full_profiles()
 
 	for iter_26_0, iter_26_1 in ipairs(var_26_0) do
@@ -482,11 +482,11 @@ function ProfileSynchronizer.profile_by_peer(arg_26_0, arg_26_1, arg_26_2)
 	return nil, nil
 end
 
-function ProfileSynchronizer.get_peers_with_full_profiles(arg_27_0)
+ProfileSynchronizer.get_peers_with_full_profiles = function (arg_27_0)
 	return arg_27_0._state:get_peers_with_full_profiles()
 end
 
-function ProfileSynchronizer.assign_full_profile(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+ProfileSynchronizer.assign_full_profile = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_0._state
 
 	fassert(var_28_0:is_server(), "Should only be called on server.")
@@ -525,11 +525,11 @@ function ProfileSynchronizer.assign_full_profile(arg_28_0, arg_28_1, arg_28_2, a
 	end
 end
 
-function ProfileSynchronizer.unassign_profiles_of_peer(arg_29_0, arg_29_1, arg_29_2)
+ProfileSynchronizer.unassign_profiles_of_peer = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0:_unassign_profiles_of_peer(arg_29_1, arg_29_2)
 end
 
-function ProfileSynchronizer.get_first_free_profile(arg_30_0, arg_30_1)
+ProfileSynchronizer.get_first_free_profile = function (arg_30_0, arg_30_1)
 	local var_30_0 = 1
 
 	for iter_30_0 = 1, var_0_0 do
@@ -549,7 +549,7 @@ function ProfileSynchronizer.get_first_free_profile(arg_30_0, arg_30_1)
 	fassert(false, "Trying to get free profile when there are no free profiles.")
 end
 
-function ProfileSynchronizer.is_profile_in_use(arg_31_0, arg_31_1)
+ProfileSynchronizer.is_profile_in_use = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._state:get_peers_with_full_profiles()
 
 	for iter_31_0, iter_31_1 in ipairs(var_31_0) do
@@ -561,7 +561,7 @@ function ProfileSynchronizer.is_profile_in_use(arg_31_0, arg_31_1)
 	return false
 end
 
-function ProfileSynchronizer.all_synced(arg_32_0)
+ProfileSynchronizer.all_synced = function (arg_32_0)
 	local var_32_0 = arg_32_0._state:get_revision()
 
 	if arg_32_0._cached_all_synced_revision ~= var_32_0 then
@@ -574,7 +574,7 @@ function ProfileSynchronizer.all_synced(arg_32_0)
 	return arg_32_0._cached_all_synced
 end
 
-function ProfileSynchronizer.all_ingame_synced(arg_33_0)
+ProfileSynchronizer.all_ingame_synced = function (arg_33_0)
 	local var_33_0 = arg_33_0._state:get_revision()
 
 	if arg_33_0._cached_all_ingame_synced_revision ~= var_33_0 then
@@ -587,19 +587,19 @@ function ProfileSynchronizer.all_ingame_synced(arg_33_0)
 	return arg_33_0._cached_all_ingame_synced
 end
 
-function ProfileSynchronizer.all_synced_for_peer(arg_34_0, arg_34_1, arg_34_2)
+ProfileSynchronizer.all_synced_for_peer = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = false
 
 	return arg_34_0:_all_synced_for_peer(arg_34_1, arg_34_2, var_34_0)
 end
 
-function ProfileSynchronizer.all_ingame_synced_for_peer(arg_35_0, arg_35_1, arg_35_2)
+ProfileSynchronizer.all_ingame_synced_for_peer = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = true
 
 	return arg_35_0:_all_synced_for_peer(arg_35_1, arg_35_2, var_35_0)
 end
 
-function ProfileSynchronizer._all_synced_for_peer(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+ProfileSynchronizer._all_synced_for_peer = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = arg_36_0._state:get_revision()
 	local var_36_1 = arg_36_3 and "ingame" or "any"
 	local var_36_2 = arg_36_0._cached_all_synced_for_peer[var_36_1][arg_36_1]
@@ -622,7 +622,7 @@ function ProfileSynchronizer._all_synced_for_peer(arg_36_0, arg_36_1, arg_36_2, 
 	return var_36_3[var_36_5]
 end
 
-function ProfileSynchronizer.is_peer_all_synced(arg_37_0, arg_37_1)
+ProfileSynchronizer.is_peer_all_synced = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._state:get_peers_with_full_profiles()
 
 	for iter_37_0, iter_37_1 in ipairs(var_37_0) do
@@ -639,7 +639,7 @@ function ProfileSynchronizer.is_peer_all_synced(arg_37_0, arg_37_1)
 	return true
 end
 
-function ProfileSynchronizer.resync_loadout(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+ProfileSynchronizer.resync_loadout = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
 	var_0_5("Resyncing loadout of peer(%s:%s)", arg_38_1, arg_38_2)
 
 	local var_38_0, var_38_1 = arg_38_0:profile_by_peer(arg_38_1, arg_38_2)
@@ -647,7 +647,7 @@ function ProfileSynchronizer.resync_loadout(arg_38_0, arg_38_1, arg_38_2, arg_38
 	var_0_15(arg_38_0._state, arg_38_1, arg_38_2, var_38_0, var_38_1, arg_38_3, arg_38_4, arg_38_5)
 end
 
-function ProfileSynchronizer.rpc_assign_peer_to_profile(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
+ProfileSynchronizer.rpc_assign_peer_to_profile = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 	var_0_5("rpc_assign_peer_to_profile peer_id:%s local_player_id:%d profile_index:%d career_index:%d is_bot:%s", arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6 and "true" or "false")
 
 	if not Managers.party:get_player_status(arg_39_2, arg_39_3) then
@@ -659,7 +659,7 @@ function ProfileSynchronizer.rpc_assign_peer_to_profile(arg_39_0, arg_39_1, arg_
 	arg_39_0:_assign_peer_to_profile(arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 end
 
-function ProfileSynchronizer._clear_profile_index_reservation(arg_40_0, arg_40_1, arg_40_2)
+ProfileSynchronizer._clear_profile_index_reservation = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = Managers.party:get_num_parties()
 
 	for iter_40_0 = 1, var_0_0 do
@@ -675,7 +675,7 @@ function ProfileSynchronizer._clear_profile_index_reservation(arg_40_0, arg_40_1
 	end
 end
 
-function ProfileSynchronizer._unassign_profiles_of_peer(arg_41_0, arg_41_1, arg_41_2)
+ProfileSynchronizer._unassign_profiles_of_peer = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0._state:get_peers_with_full_profiles()
 
 	for iter_41_0, iter_41_1 in ipairs(var_41_0) do
@@ -688,7 +688,7 @@ function ProfileSynchronizer._unassign_profiles_of_peer(arg_41_0, arg_41_1, arg_
 	end
 end
 
-function ProfileSynchronizer._assign_peer_to_profile(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+ProfileSynchronizer._assign_peer_to_profile = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	local var_42_0 = Managers.party:get_player_status(arg_42_1, arg_42_2)
 
 	var_42_0.profile_index = arg_42_3
@@ -731,15 +731,15 @@ end
 local var_0_26 = "0"
 local var_0_27 = "0:0"
 
-function ProfileSynchronizer.set_own_actually_ingame(arg_43_0, arg_43_1)
+ProfileSynchronizer.set_own_actually_ingame = function (arg_43_0, arg_43_1)
 	arg_43_0._state:set_own_actually_ingame(arg_43_1)
 end
 
-function ProfileSynchronizer.get_own_actually_ingame(arg_44_0)
+ProfileSynchronizer.get_own_actually_ingame = function (arg_44_0)
 	return arg_44_0._state:get_actually_ingame(arg_44_0._state:get_own_peer_id())
 end
 
-function ProfileSynchronizer.others_actually_ingame(arg_45_0)
+ProfileSynchronizer.others_actually_ingame = function (arg_45_0)
 	local var_45_0 = arg_45_0._state
 	local var_45_1 = var_45_0:get_own_peer_id()
 	local var_45_2 = arg_45_0:get_peers_with_full_profiles()
@@ -755,11 +755,11 @@ function ProfileSynchronizer.others_actually_ingame(arg_45_0)
 	return true
 end
 
-function ProfileSynchronizer._request_lobby_data_sync(arg_46_0)
+ProfileSynchronizer._request_lobby_data_sync = function (arg_46_0)
 	arg_46_0._lobby_data_sync_requested = true
 end
 
-function ProfileSynchronizer.poll_sync_lobby_data_required(arg_47_0)
+ProfileSynchronizer.poll_sync_lobby_data_required = function (arg_47_0)
 	if arg_47_0._lobby_data_sync_requested then
 		arg_47_0._lobby_data_sync_requested = false
 
@@ -769,23 +769,23 @@ function ProfileSynchronizer.poll_sync_lobby_data_required(arg_47_0)
 	return false
 end
 
-function ProfileSynchronizer.hash_inventory(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+ProfileSynchronizer.hash_inventory = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0, var_48_1 = var_0_12(arg_48_1, arg_48_2, arg_48_3)
 
 	return var_0_14(var_48_0, var_48_1)
 end
 
-function ProfileSynchronizer.cached_inventory_hash(arg_49_0, arg_49_1, arg_49_2)
+ProfileSynchronizer.cached_inventory_hash = function (arg_49_0, arg_49_1, arg_49_2)
 	return arg_49_0._state:get_inventory_data(arg_49_1, arg_49_2).inventory_hash
 end
 
-function ProfileSynchronizer.own_loaded_inventory_id(arg_50_0)
+ProfileSynchronizer.own_loaded_inventory_id = function (arg_50_0)
 	local var_50_0 = arg_50_0._state:get_own_peer_id()
 
 	return arg_50_0._state:get_loaded_inventory_id(var_50_0, var_50_0, 1)
 end
 
-function ProfileSynchronizer.net_pack_lobby_profile_slots(arg_51_0)
+ProfileSynchronizer.net_pack_lobby_profile_slots = function (arg_51_0)
 	local var_51_0 = {}
 	local var_51_1 = {}
 	local var_51_2 = LobbyAux.deserialize_lobby_reservation_data(arg_51_0)
@@ -808,7 +808,7 @@ function ProfileSynchronizer.net_pack_lobby_profile_slots(arg_51_0)
 	return var_51_0, var_51_1
 end
 
-function ProfileSynchronizer.owner_in_lobby(arg_52_0, arg_52_1, arg_52_2)
+ProfileSynchronizer.owner_in_lobby = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = LobbyAux.deserialize_lobby_reservation_data(arg_52_1)[arg_52_2 or 1]
 
 	if var_52_0 then
@@ -825,7 +825,7 @@ function ProfileSynchronizer.owner_in_lobby(arg_52_0, arg_52_1, arg_52_2)
 	end
 end
 
-function ProfileSynchronizer.is_free_in_lobby(arg_53_0, arg_53_1, arg_53_2)
+ProfileSynchronizer.is_free_in_lobby = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = LobbyAux.deserialize_lobby_reservation_data(arg_53_1)[arg_53_2 or 1]
 
 	if var_53_0 then
@@ -839,7 +839,7 @@ function ProfileSynchronizer.is_free_in_lobby(arg_53_0, arg_53_1, arg_53_2)
 	return true
 end
 
-function ProfileSynchronizer.join_reservation_data_arrays(arg_54_0, arg_54_1)
+ProfileSynchronizer.join_reservation_data_arrays = function (arg_54_0, arg_54_1)
 	assert(#arg_54_0 == #arg_54_1, "Mismatch in received reservation data")
 
 	local var_54_0 = {}
@@ -866,10 +866,10 @@ function ProfileSynchronizer.join_reservation_data_arrays(arg_54_0, arg_54_1)
 	return var_54_0
 end
 
-function ProfileSynchronizer.get_bot_profile(arg_55_0, arg_55_1, arg_55_2)
+ProfileSynchronizer.get_bot_profile = function (arg_55_0, arg_55_1, arg_55_2)
 	return arg_55_0._state:get_bot_profile(arg_55_1, arg_55_2)
 end
 
-function ProfileSynchronizer.set_bot_profile(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+ProfileSynchronizer.set_bot_profile = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	return arg_56_0._state:set_bot_profile(arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 end

@@ -4,13 +4,13 @@ require("foundation/scripts/util/state_machine")
 
 GameStateMachine = class(GameStateMachine, StateMachine)
 
-function GameStateMachine.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+GameStateMachine.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._notify_mod_manager = arg_1_3.notify_mod_manager
 
 	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 end
 
-function GameStateMachine._change_state(arg_2_0, arg_2_1, ...)
+GameStateMachine._change_state = function (arg_2_0, arg_2_1, ...)
 	local var_2_0 = arg_2_0._notify_mod_manager
 	local var_2_1 = arg_2_0._state
 
@@ -27,37 +27,37 @@ function GameStateMachine._change_state(arg_2_0, arg_2_1, ...)
 	end
 end
 
-function GameStateMachine.pre_update(arg_3_0, arg_3_1, arg_3_2)
+GameStateMachine.pre_update = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0._state and arg_3_0._state.pre_update then
 		arg_3_0._state:pre_update(arg_3_1, arg_3_2)
 	end
 end
 
-function GameStateMachine.post_update(arg_4_0, arg_4_1, arg_4_2)
+GameStateMachine.post_update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._state and arg_4_0._state.post_update then
 		arg_4_0._state:post_update(arg_4_1, arg_4_2)
 	end
 end
 
-function GameStateMachine.pre_render(arg_5_0)
+GameStateMachine.pre_render = function (arg_5_0)
 	if arg_5_0._state and arg_5_0._state.pre_render then
 		arg_5_0._state:pre_render()
 	end
 end
 
-function GameStateMachine.render(arg_6_0)
+GameStateMachine.render = function (arg_6_0)
 	if arg_6_0._state and arg_6_0._state.render then
 		arg_6_0._state:render()
 	end
 end
 
-function GameStateMachine.post_render(arg_7_0)
+GameStateMachine.post_render = function (arg_7_0)
 	if arg_7_0._state and arg_7_0._state.post_render then
 		arg_7_0._state:post_render()
 	end
 end
 
-function GameStateMachine.destroy(arg_8_0, ...)
+GameStateMachine.destroy = function (arg_8_0, ...)
 	local var_8_0 = arg_8_0._state
 
 	if arg_8_0._notify_mod_manager and var_8_0 then

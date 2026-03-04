@@ -48,7 +48,7 @@ local var_0_8 = script_data.testify and require("scripts/ui/views/hero_view/wind
 HeroWindowCosmeticsInventory = class(HeroWindowCosmeticsInventory)
 HeroWindowCosmeticsInventory.NAME = "HeroWindowCosmeticsInventory"
 
-function HeroWindowCosmeticsInventory.on_enter(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowCosmeticsInventory.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCosmeticsInventory")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -87,7 +87,7 @@ function HeroWindowCosmeticsInventory.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	var_2_2:apply_item_sorting_function(var_0_7)
 end
 
-function HeroWindowCosmeticsInventory.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowCosmeticsInventory.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_3_0 = {}
@@ -118,7 +118,7 @@ function HeroWindowCosmeticsInventory.create_ui_elements(arg_3_0, arg_3_1, arg_3
 	arg_3_0:_assign_tab_icons()
 end
 
-function HeroWindowCosmeticsInventory._assign_tab_icons(arg_4_0)
+HeroWindowCosmeticsInventory._assign_tab_icons = function (arg_4_0)
 	local var_4_0 = arg_4_0._widgets_by_name.item_tabs.content
 	local var_4_1 = var_4_0.amount
 
@@ -131,7 +131,7 @@ function HeroWindowCosmeticsInventory._assign_tab_icons(arg_4_0)
 	end
 end
 
-function HeroWindowCosmeticsInventory.on_exit(arg_5_0, arg_5_1)
+HeroWindowCosmeticsInventory.on_exit = function (arg_5_0, arg_5_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCosmeticsInventory")
 
 	arg_5_0.ui_animator = nil
@@ -141,7 +141,7 @@ function HeroWindowCosmeticsInventory.on_exit(arg_5_0, arg_5_1)
 	arg_5_0._item_grid = nil
 end
 
-function HeroWindowCosmeticsInventory.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowCosmeticsInventory.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -161,11 +161,11 @@ function HeroWindowCosmeticsInventory.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function HeroWindowCosmeticsInventory.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowCosmeticsInventory.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowCosmeticsInventory._update_animations(arg_8_0, arg_8_1)
+HeroWindowCosmeticsInventory._update_animations = function (arg_8_0, arg_8_1)
 	arg_8_0.ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -182,7 +182,7 @@ function HeroWindowCosmeticsInventory._update_animations(arg_8_0, arg_8_1)
 	local var_8_2 = arg_8_0._widgets_by_name
 end
 
-function HeroWindowCosmeticsInventory._is_button_pressed(arg_9_0, arg_9_1)
+HeroWindowCosmeticsInventory._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -192,13 +192,13 @@ function HeroWindowCosmeticsInventory._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowCosmeticsInventory._is_button_hovered(arg_10_0, arg_10_1)
+HeroWindowCosmeticsInventory._is_button_hovered = function (arg_10_0, arg_10_1)
 	if arg_10_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowCosmeticsInventory._is_inventory_tab_hovered(arg_11_0)
+HeroWindowCosmeticsInventory._is_inventory_tab_hovered = function (arg_11_0)
 	local var_11_0 = arg_11_0._widgets_by_name.item_tabs.content
 	local var_11_1 = var_11_0.amount
 
@@ -211,7 +211,7 @@ function HeroWindowCosmeticsInventory._is_inventory_tab_hovered(arg_11_0)
 	end
 end
 
-function HeroWindowCosmeticsInventory._is_inventory_tab_pressed(arg_12_0)
+HeroWindowCosmeticsInventory._is_inventory_tab_pressed = function (arg_12_0)
 	local var_12_0 = arg_12_0._widgets_by_name.item_tabs.content
 	local var_12_1 = var_12_0.amount
 
@@ -225,7 +225,7 @@ function HeroWindowCosmeticsInventory._is_inventory_tab_pressed(arg_12_0)
 	end
 end
 
-function HeroWindowCosmeticsInventory._select_tab_by_category_index(arg_13_0, arg_13_1)
+HeroWindowCosmeticsInventory._select_tab_by_category_index = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._widgets_by_name.item_tabs.content
 	local var_13_1 = var_13_0.amount
 
@@ -236,7 +236,7 @@ function HeroWindowCosmeticsInventory._select_tab_by_category_index(arg_13_0, ar
 	end
 end
 
-function HeroWindowCosmeticsInventory._handle_input(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowCosmeticsInventory._handle_input = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._widgets_by_name
 	local var_14_1 = arg_14_0.parent
 	local var_14_2 = arg_14_0._item_grid
@@ -311,7 +311,7 @@ function HeroWindowCosmeticsInventory._handle_input(arg_14_0, arg_14_1, arg_14_2
 	end
 end
 
-function HeroWindowCosmeticsInventory._update_page_info(arg_15_0)
+HeroWindowCosmeticsInventory._update_page_info = function (arg_15_0)
 	local var_15_0, var_15_1 = arg_15_0._item_grid:get_page_info()
 
 	if var_15_0 ~= arg_15_0._current_page or var_15_1 ~= arg_15_0._total_pages then
@@ -329,7 +329,7 @@ function HeroWindowCosmeticsInventory._update_page_info(arg_15_0)
 	end
 end
 
-function HeroWindowCosmeticsInventory._update_selected_cosmetic_slot_index(arg_16_0)
+HeroWindowCosmeticsInventory._update_selected_cosmetic_slot_index = function (arg_16_0)
 	local var_16_0 = arg_16_0.parent:get_selected_cosmetic_slot_index()
 
 	if var_16_0 ~= arg_16_0._selected_cosmetic_slot_index then
@@ -339,7 +339,7 @@ function HeroWindowCosmeticsInventory._update_selected_cosmetic_slot_index(arg_1
 	end
 end
 
-function HeroWindowCosmeticsInventory._update_loadout_sync(arg_17_0)
+HeroWindowCosmeticsInventory._update_loadout_sync = function (arg_17_0)
 	local var_17_0 = arg_17_0._item_grid
 	local var_17_1 = arg_17_0.parent.loadout_sync_id
 
@@ -350,12 +350,12 @@ function HeroWindowCosmeticsInventory._update_loadout_sync(arg_17_0)
 	end
 end
 
-function HeroWindowCosmeticsInventory._exit(arg_18_0, arg_18_1)
+HeroWindowCosmeticsInventory._exit = function (arg_18_0, arg_18_1)
 	arg_18_0.exit = true
 	arg_18_0.exit_level_id = arg_18_1
 end
 
-function HeroWindowCosmeticsInventory.draw(arg_19_0, arg_19_1)
+HeroWindowCosmeticsInventory.draw = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.ui_renderer
 	local var_19_1 = arg_19_0.ui_top_renderer
 	local var_19_2 = arg_19_0.ui_scenegraph
@@ -379,11 +379,11 @@ function HeroWindowCosmeticsInventory.draw(arg_19_0, arg_19_1)
 	UIRenderer.end_pass(var_19_1)
 end
 
-function HeroWindowCosmeticsInventory._play_sound(arg_20_0, arg_20_1)
+HeroWindowCosmeticsInventory._play_sound = function (arg_20_0, arg_20_1)
 	arg_20_0.parent:play_sound(arg_20_1)
 end
 
-function HeroWindowCosmeticsInventory._change_category_by_index(arg_21_0, arg_21_1, arg_21_2)
+HeroWindowCosmeticsInventory._change_category_by_index = function (arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0:_select_tab_by_category_index(arg_21_1)
 
 	if arg_21_2 then

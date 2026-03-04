@@ -466,7 +466,7 @@ local function var_0_7(arg_1_0)
 					content_passes = {
 						"additional_option_info"
 					},
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.tooltip and arg_2_0.button_hotspot.is_hover
 					end
 				},
@@ -647,10 +647,10 @@ local var_0_9 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				arg_3_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				local var_4_0 = math.easeOutCubic(arg_4_3)
 
 				arg_4_4.render_settings.alpha_multiplier = var_4_0
@@ -661,7 +661,7 @@ local var_0_9 = {
 
 				arg_4_0.window.local_position[1] = math.floor(var_4_3[1] + var_4_1 - var_4_2)
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				return
 			end
 		}
@@ -671,15 +671,15 @@ local var_0_9 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				arg_6_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = math.easeOutCubic(arg_7_3)
 
 				arg_7_4.render_settings.alpha_multiplier = 1 - var_7_0
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end
 		}

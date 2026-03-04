@@ -2,27 +2,27 @@
 
 ScriptWorld = ScriptWorld or {}
 
-function ScriptWorld.name(arg_1_0)
+ScriptWorld.name = function (arg_1_0)
 	return World.get_data(arg_1_0, "name")
 end
 
-function ScriptWorld.activate(arg_2_0)
+ScriptWorld.activate = function (arg_2_0)
 	World.set_data(arg_2_0, "active", true)
 end
 
-function ScriptWorld.deactivate(arg_3_0)
+ScriptWorld.deactivate = function (arg_3_0)
 	World.set_data(arg_3_0, "active", false)
 end
 
-function ScriptWorld.pause(arg_4_0)
+ScriptWorld.pause = function (arg_4_0)
 	World.set_data(arg_4_0, "paused", true)
 end
 
-function ScriptWorld.unpause(arg_5_0)
+ScriptWorld.unpause = function (arg_5_0)
 	World.set_data(arg_5_0, "paused", false)
 end
 
-function ScriptWorld.create_viewport(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ScriptWorld.create_viewport = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	local var_6_0 = World.get_data(arg_6_0, "viewports")
 
 	fassert(var_6_0[arg_6_1] == nil, "Viewport %q already exists", arg_6_1)
@@ -84,7 +84,7 @@ function ScriptWorld.create_viewport(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4
 	return var_6_1
 end
 
-function ScriptWorld.render(arg_7_0)
+ScriptWorld.render = function (arg_7_0)
 	local var_7_0 = World.get_data(arg_7_0, "shading_environment")
 
 	if not var_7_0 then
@@ -133,7 +133,7 @@ function ScriptWorld.render(arg_7_0)
 	end
 end
 
-function ScriptWorld.create_global_free_flight_viewport(arg_8_0, arg_8_1)
+ScriptWorld.create_global_free_flight_viewport = function (arg_8_0, arg_8_1)
 	fassert(not World.has_data(arg_8_0, "global_free_flight_viewport"), "Trying to spawn global freeflight viewport when one already exists.")
 
 	local var_8_0 = World.get_data(arg_8_0, "viewports")
@@ -176,7 +176,7 @@ function ScriptWorld.create_global_free_flight_viewport(arg_8_0, arg_8_1)
 	return var_8_4
 end
 
-function ScriptWorld.destroy_global_free_flight_viewport(arg_9_0)
+ScriptWorld.destroy_global_free_flight_viewport = function (arg_9_0)
 	local var_9_0 = World.get_data(arg_9_0, "global_free_flight_viewport")
 
 	fassert(var_9_0, "Trying to destroy global free flight viewport when none exists.")
@@ -189,11 +189,11 @@ function ScriptWorld.destroy_global_free_flight_viewport(arg_9_0)
 	World.set_data(arg_9_0, "global_free_flight_viewport", nil)
 end
 
-function ScriptWorld.global_free_flight_viewport(arg_10_0)
+ScriptWorld.global_free_flight_viewport = function (arg_10_0)
 	return World.get_data(arg_10_0, "global_free_flight_viewport")
 end
 
-function ScriptWorld.create_free_flight_viewport(arg_11_0, arg_11_1, arg_11_2)
+ScriptWorld.create_free_flight_viewport = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = ScriptWorld.viewport(arg_11_0, arg_11_1)
 	local var_11_1 = Application.create_viewport(arg_11_0, arg_11_2)
 
@@ -221,7 +221,7 @@ function ScriptWorld.create_free_flight_viewport(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_1
 end
 
-function ScriptWorld.destroy_free_flight_viewport(arg_12_0, arg_12_1)
+ScriptWorld.destroy_free_flight_viewport = function (arg_12_0, arg_12_1)
 	local var_12_0 = World.get_data(arg_12_0, "free_flight_viewports")
 
 	fassert(var_12_0[arg_12_1], "Viewport %q doesn't exist", arg_12_1)
@@ -238,7 +238,7 @@ function ScriptWorld.destroy_free_flight_viewport(arg_12_0, arg_12_1)
 	ScriptWorld._update_render_queue(arg_12_0)
 end
 
-function ScriptWorld.destroy_viewport(arg_13_0, arg_13_1)
+ScriptWorld.destroy_viewport = function (arg_13_0, arg_13_1)
 	local var_13_0 = World.get_data(arg_13_0, "viewports")
 
 	fassert(var_13_0[arg_13_1], "Viewport %q doesn't exist", arg_13_1)
@@ -255,21 +255,21 @@ function ScriptWorld.destroy_viewport(arg_13_0, arg_13_1)
 	ScriptWorld._update_render_queue(arg_13_0)
 end
 
-function ScriptWorld.activate_viewport(arg_14_0, arg_14_1)
+ScriptWorld.activate_viewport = function (arg_14_0, arg_14_1)
 	Viewport.set_data(arg_14_1, "active", true)
 	ScriptWorld._update_render_queue(arg_14_0)
 end
 
-function ScriptWorld.deactivate_viewport(arg_15_0, arg_15_1)
+ScriptWorld.deactivate_viewport = function (arg_15_0, arg_15_1)
 	Viewport.set_data(arg_15_1, "active", false)
 	ScriptWorld._update_render_queue(arg_15_0)
 end
 
-function ScriptWorld.has_viewport(arg_16_0, arg_16_1)
+ScriptWorld.has_viewport = function (arg_16_0, arg_16_1)
 	return World.get_data(arg_16_0, "viewports")[arg_16_1] and true or false
 end
 
-function ScriptWorld.viewport(arg_17_0, arg_17_1, arg_17_2)
+ScriptWorld.viewport = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0
 
 	if arg_17_2 then
@@ -283,7 +283,7 @@ function ScriptWorld.viewport(arg_17_0, arg_17_1, arg_17_2)
 	return var_17_0
 end
 
-function ScriptWorld.free_flight_viewport(arg_18_0, arg_18_1)
+ScriptWorld.free_flight_viewport = function (arg_18_0, arg_18_1)
 	local var_18_0 = World.get_data(arg_18_0, "free_flight_viewports")
 
 	fassert(var_18_0[arg_18_1], "Free flight viewport %q doesn't exists", arg_18_1)
@@ -291,7 +291,7 @@ function ScriptWorld.free_flight_viewport(arg_18_0, arg_18_1)
 	return var_18_0[arg_18_1]
 end
 
-function ScriptWorld._run_safe_animation_callbacks()
+ScriptWorld._run_safe_animation_callbacks = function ()
 	local var_19_0 = Managers.state.entity
 
 	if not var_19_0 then
@@ -305,7 +305,7 @@ function ScriptWorld._run_safe_animation_callbacks()
 	end
 end
 
-function ScriptWorld.update(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+ScriptWorld.update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	if World.get_data(arg_20_0, "active") then
 		if World.get_data(arg_20_0, "paused") then
 			arg_20_1 = 0
@@ -333,7 +333,7 @@ function ScriptWorld.update(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, ar
 	end
 end
 
-function ScriptWorld._update_render_queue(arg_21_0)
+ScriptWorld._update_render_queue = function (arg_21_0)
 	local var_21_0 = {}
 	local var_21_1 = World.get_data(arg_21_0, "viewports")
 	local var_21_2 = World.get_data(arg_21_0, "free_flight_viewports")
@@ -352,7 +352,7 @@ function ScriptWorld._update_render_queue(arg_21_0)
 	World.set_data(arg_21_0, "render_queue", var_21_0)
 end
 
-function ScriptWorld.create_shading_environment(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+ScriptWorld.create_shading_environment = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = World.create_shading_environment(arg_23_0, arg_23_1)
 
 	World.set_data(arg_23_0, "shading_environment", var_23_0)
@@ -365,7 +365,7 @@ function ScriptWorld.create_shading_environment(arg_23_0, arg_23_1, arg_23_2, ar
 	return var_23_0
 end
 
-function ScriptWorld.spawn_level(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+ScriptWorld.spawn_level = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
 	local var_24_0 = World.get_data(arg_24_0, "levels")
 
 	fassert(var_24_0[arg_24_1] == nil, "Level %q already loaded", arg_24_1)
@@ -414,7 +414,7 @@ function ScriptWorld.spawn_level(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_
 	return var_24_4, var_24_2
 end
 
-function ScriptWorld.level(arg_25_0, arg_25_1)
+ScriptWorld.level = function (arg_25_0, arg_25_1)
 	local var_25_0 = World.get_data(arg_25_0, "levels")[arg_25_1]
 
 	fassert(var_25_0, "Level %q doesn't exist", arg_25_1)
@@ -422,7 +422,7 @@ function ScriptWorld.level(arg_25_0, arg_25_1)
 	return var_25_0.nested_levels[1] or var_25_0.level
 end
 
-function ScriptWorld.nested_levels(arg_26_0, arg_26_1)
+ScriptWorld.nested_levels = function (arg_26_0, arg_26_1)
 	local var_26_0 = World.get_data(arg_26_0, "levels")[arg_26_1]
 
 	fassert(var_26_0, "Level %q doesn't exist", arg_26_1)
@@ -430,7 +430,7 @@ function ScriptWorld.nested_levels(arg_26_0, arg_26_1)
 	return var_26_0.nested_levels
 end
 
-function ScriptWorld.destroy_level(arg_27_0, arg_27_1)
+ScriptWorld.destroy_level = function (arg_27_0, arg_27_1)
 	local var_27_0 = World.get_data(arg_27_0, "levels")
 	local var_27_1 = var_27_0[arg_27_1]
 
@@ -444,7 +444,7 @@ function ScriptWorld.destroy_level(arg_27_0, arg_27_1)
 	var_27_0[arg_27_1] = nil
 end
 
-function ScriptWorld.destroy_level_from_reference(arg_28_0, arg_28_1)
+ScriptWorld.destroy_level_from_reference = function (arg_28_0, arg_28_1)
 	local var_28_0 = World.get_data(arg_28_0, "levels")
 
 	for iter_28_0, iter_28_1 in pairs(var_28_0) do
@@ -464,7 +464,7 @@ function ScriptWorld.destroy_level_from_reference(arg_28_0, arg_28_1)
 	fassert(false, "Level doesn't exist")
 end
 
-function ScriptWorld.destroy_sublevels(arg_29_0, arg_29_1)
+ScriptWorld.destroy_sublevels = function (arg_29_0, arg_29_1)
 	local var_29_0 = World.get_data(arg_29_0, "levels")
 	local var_29_1 = Level.get_data(arg_29_1, "sub_levels")
 
@@ -477,7 +477,7 @@ function ScriptWorld.destroy_sublevels(arg_29_0, arg_29_1)
 	end
 end
 
-function ScriptWorld.optimize_level_units(arg_30_0, arg_30_1)
+ScriptWorld.optimize_level_units = function (arg_30_0, arg_30_1)
 	local var_30_0 = World.get_data(arg_30_0, "levels")[arg_30_1]
 	local var_30_1 = var_30_0.level
 	local var_30_2 = var_30_0.nested_levels
@@ -498,7 +498,7 @@ function ScriptWorld.optimize_level_units(arg_30_0, arg_30_1)
 	end
 end
 
-function ScriptWorld.trigger_level_loaded(arg_31_0, arg_31_1)
+ScriptWorld.trigger_level_loaded = function (arg_31_0, arg_31_1)
 	local var_31_0 = World.get_data(arg_31_0, "levels")[arg_31_1]
 	local var_31_1 = var_31_0.level
 	local var_31_2 = var_31_0.nested_levels
@@ -520,7 +520,7 @@ function ScriptWorld.trigger_level_loaded(arg_31_0, arg_31_1)
 	end
 end
 
-function ScriptWorld.trigger_level_shutdown(arg_32_0)
+ScriptWorld.trigger_level_shutdown = function (arg_32_0)
 	local var_32_0 = Level.get_data(arg_32_0, "sub_levels")
 
 	if var_32_0 then
@@ -532,7 +532,7 @@ function ScriptWorld.trigger_level_shutdown(arg_32_0)
 	Level.trigger_level_shutdown(arg_32_0)
 end
 
-function ScriptWorld.create_particles_linked(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+ScriptWorld.create_particles_linked = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
 	local var_33_0 = World.create_particles(arg_33_0, arg_33_1, Vector3(0, 0, 0))
 
 	arg_33_5 = arg_33_5 or Matrix4x4.identity()
@@ -542,7 +542,7 @@ function ScriptWorld.create_particles_linked(arg_33_0, arg_33_1, arg_33_2, arg_3
 	return var_33_0
 end
 
-function ScriptWorld.set_material_variable_for_particles(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+ScriptWorld.set_material_variable_for_particles = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	if type(arg_34_4) == "number" then
 		World.set_particles_material_scalar(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	elseif type(arg_34_4) == "table" then

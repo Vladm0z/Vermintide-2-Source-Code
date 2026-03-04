@@ -3,7 +3,7 @@
 ProjectilePhysicsUnitLocomotionExtension = class(ProjectilePhysicsUnitLocomotionExtension)
 script_data.debug_projectiles = script_data.debug_projectiles or Development.parameter("debug_projectiles")
 
-function ProjectilePhysicsUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectilePhysicsUnitLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.physics_world = World.get_data(arg_1_1.world, "physics_world")
 	arg_1_0.owner_unit = arg_1_3.owner_unit
@@ -45,14 +45,14 @@ function ProjectilePhysicsUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2
 	end
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.destroy(arg_2_0)
+ProjectilePhysicsUnitLocomotionExtension.destroy = function (arg_2_0)
 	return
 end
 
 local var_0_0 = 0.1
 local var_0_1 = 0.5
 
-function ProjectilePhysicsUnitLocomotionExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectilePhysicsUnitLocomotionExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_0.stopped then
 		return
 	end
@@ -77,13 +77,13 @@ end
 
 local var_0_2 = 1
 
-function ProjectilePhysicsUnitLocomotionExtension.bounce(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ProjectilePhysicsUnitLocomotionExtension.bounce = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if Vector3.length(arg_4_5) > var_0_2 then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.stop(arg_5_0)
+ProjectilePhysicsUnitLocomotionExtension.stop = function (arg_5_0)
 	arg_5_0.stopped = true
 
 	Actor.put_to_sleep(arg_5_0.physics_actor)
@@ -94,7 +94,7 @@ function ProjectilePhysicsUnitLocomotionExtension.stop(arg_5_0)
 	var_5_0.network_transmit:send_rpc_clients("rpc_projectile_stopped", var_5_1)
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.drop(arg_6_0)
+ProjectilePhysicsUnitLocomotionExtension.drop = function (arg_6_0)
 	arg_6_0.dropped = true
 
 	Actor.set_velocity(arg_6_0.physics_actor, Vector3(0, 0, 0))
@@ -105,6 +105,6 @@ function ProjectilePhysicsUnitLocomotionExtension.drop(arg_6_0)
 	var_6_0.network_transmit:send_rpc_clients("rpc_drop_projectile", var_6_1)
 end
 
-function ProjectilePhysicsUnitLocomotionExtension.has_stopped(arg_7_0)
+ProjectilePhysicsUnitLocomotionExtension.has_stopped = function (arg_7_0)
 	return arg_7_0.stopped
 end

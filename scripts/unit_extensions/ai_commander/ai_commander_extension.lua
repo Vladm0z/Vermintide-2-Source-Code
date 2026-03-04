@@ -20,7 +20,7 @@ local var_0_4 = {
 
 AICommanderExtension = class(AICommanderExtension)
 
-function AICommanderExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AICommanderExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.ai_commander_system = arg_1_1.owning_system
 	arg_1_0._controlled_units = {}
@@ -63,18 +63,18 @@ function AICommanderExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._command_buffs = {}
 end
 
-function AICommanderExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+AICommanderExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._locomotion_ext = ScriptUnit.has_extension(arg_2_2, "locomotion_system")
 	arg_2_0._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 	arg_2_0._buff_system = Managers.state.entity:system("buff_system")
 end
 
-function AICommanderExtension.destroy(arg_3_0)
+AICommanderExtension.destroy = function (arg_3_0)
 	return
 end
 
-function AICommanderExtension._claim_follow_index(arg_4_0, arg_4_1)
+AICommanderExtension._claim_follow_index = function (arg_4_0, arg_4_1)
 	local var_4_0 = #arg_4_0._follow_indices + 1
 
 	arg_4_0._follow_indices[var_4_0] = arg_4_1
@@ -89,7 +89,7 @@ function AICommanderExtension._claim_follow_index(arg_4_0, arg_4_1)
 	}
 end
 
-function AICommanderExtension._free_follow_index(arg_5_0, arg_5_1)
+AICommanderExtension._free_follow_index = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._follow_datas[arg_5_1].follow_index
 
 	arg_5_0._follow_datas[arg_5_1] = nil
@@ -105,29 +105,29 @@ function AICommanderExtension._free_follow_index(arg_5_0, arg_5_1)
 	end
 end
 
-function AICommanderExtension.register_follow_node_update(arg_6_0, arg_6_1)
+AICommanderExtension.register_follow_node_update = function (arg_6_0, arg_6_1)
 	arg_6_0._follow_units[arg_6_1] = true
 	arg_6_0._force_follow_update = true
 
 	arg_6_0._follow_datas[arg_6_1].lerped_follow_position:store(POSITION_LOOKUP[arg_6_1])
 end
 
-function AICommanderExtension.unregister_follow_node_update(arg_7_0, arg_7_1)
+AICommanderExtension.unregister_follow_node_update = function (arg_7_0, arg_7_1)
 	arg_7_0._follow_units[arg_7_1] = nil
 	arg_7_0._units_to_recalculate[arg_7_1] = nil
 end
 
-function AICommanderExtension.follow_node_pending(arg_8_0, arg_8_1)
+AICommanderExtension.follow_node_pending = function (arg_8_0, arg_8_1)
 	return arg_8_1.waiting_for_follow_node
 end
 
-function AICommanderExtension.follow_node_position(arg_9_0, arg_9_1)
+AICommanderExtension.follow_node_position = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._follow_datas[arg_9_1]
 
 	return var_9_0 and var_9_0.lerped_follow_position
 end
 
-function AICommanderExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+AICommanderExtension.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	if arg_10_0._is_server then
 		arg_10_0:_update_units(arg_10_3, arg_10_5)
 		arg_10_0:_update_follow(arg_10_3, arg_10_5)
@@ -140,11 +140,11 @@ function AICommanderExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg
 	arg_10_0._cached_hovered_commanded_unit = false
 end
 
-function AICommanderExtension._on_controlled_unit_destroyed(arg_11_0, arg_11_1)
+AICommanderExtension._on_controlled_unit_destroyed = function (arg_11_0, arg_11_1)
 	arg_11_0:remove_controlled_unit(arg_11_1)
 end
 
-function AICommanderExtension.set_controlled_unit_template(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+AICommanderExtension.set_controlled_unit_template = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	if arg_12_3 then
 		arg_12_0._controlled_units[arg_12_1] = {
 			start_t = arg_12_4 or Managers.time:time("game"),
@@ -165,13 +165,13 @@ function AICommanderExtension.set_controlled_unit_template(arg_12_0, arg_12_1, a
 	arg_12_0._controlled_units[arg_12_1].template = var_12_0
 end
 
-function AICommanderExtension.controlled_unit_template(arg_13_0, arg_13_1)
+AICommanderExtension.controlled_unit_template = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._controlled_units[arg_13_1]
 
 	return var_13_0 and var_13_0.template
 end
 
-function AICommanderExtension.add_controlled_unit(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+AICommanderExtension.add_controlled_unit = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if not ALIVE[arg_14_1] then
 		return
 	end
@@ -238,7 +238,7 @@ function AICommanderExtension.add_controlled_unit(arg_14_0, arg_14_1, arg_14_2, 
 	end
 end
 
-function AICommanderExtension.remove_controlled_unit(arg_15_0, arg_15_1, arg_15_2)
+AICommanderExtension.remove_controlled_unit = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._controlled_units
 
 	if not var_15_0[arg_15_1] then
@@ -308,18 +308,18 @@ function AICommanderExtension.remove_controlled_unit(arg_15_0, arg_15_1, arg_15_
 	end
 end
 
-function AICommanderExtension.get_controlled_units(arg_16_0)
+AICommanderExtension.get_controlled_units = function (arg_16_0)
 	return arg_16_0._controlled_units
 end
 
-function AICommanderExtension.get_controlled_units_count(arg_17_0)
+AICommanderExtension.get_controlled_units_count = function (arg_17_0)
 	return arg_17_0._controlled_units_n
 end
 
 local var_0_5 = 0.5
 local var_0_6 = var_0_5 * var_0_5
 
-function AICommanderExtension._update_follow(arg_18_0, arg_18_1, arg_18_2)
+AICommanderExtension._update_follow = function (arg_18_0, arg_18_1, arg_18_2)
 	if not arg_18_0:_commander_is_on_navmesh() then
 		return
 	end
@@ -385,7 +385,7 @@ function AICommanderExtension._update_follow(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:_lerp_follow_positions(arg_18_1)
 end
 
-function AICommanderExtension._update_follow_nodes(arg_19_0, arg_19_1, arg_19_2)
+AICommanderExtension._update_follow_nodes = function (arg_19_0, arg_19_1, arg_19_2)
 	if script_data.bots_dont_follow then
 		return
 	end
@@ -498,7 +498,7 @@ function AICommanderExtension._update_follow_nodes(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function AICommanderExtension._lerp_follow_positions(arg_20_0, arg_20_1)
+AICommanderExtension._lerp_follow_positions = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._nav_world
 
 	for iter_20_0 in pairs(arg_20_0._follow_units) do
@@ -536,14 +536,14 @@ function AICommanderExtension._lerp_follow_positions(arg_20_0, arg_20_1)
 	end
 end
 
-function AICommanderExtension._unit_arrived_at_follow_node(arg_21_0, arg_21_1)
+AICommanderExtension._unit_arrived_at_follow_node = function (arg_21_0, arg_21_1)
 	local var_21_0 = POSITION_LOOKUP[arg_21_1]
 	local var_21_1 = arg_21_0._follow_datas[arg_21_1]
 
 	return Vector3.distance_squared(var_21_0, var_21_1.target_follow_position:unbox()) < 0.25
 end
 
-function AICommanderExtension._avoid_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10)
+AICommanderExtension._avoid_unit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10)
 	local var_22_0 = POSITION_LOOKUP[arg_22_1]
 	local var_22_1 = POSITION_LOOKUP[arg_22_2]
 
@@ -634,7 +634,7 @@ function AICommanderExtension._avoid_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3
 	return arg_22_3
 end
 
-function AICommanderExtension._pair_best_follow_nodes(arg_23_0)
+AICommanderExtension._pair_best_follow_nodes = function (arg_23_0)
 	local var_23_0 = arg_23_0._follow_indices
 	local var_23_1 = arg_23_0._follow_datas
 	local var_23_2 = FrameTable.alloc_table()
@@ -667,7 +667,7 @@ function AICommanderExtension._pair_best_follow_nodes(arg_23_0)
 	end
 end
 
-function AICommanderExtension._navify_follow_pos(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+AICommanderExtension._navify_follow_pos = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_5.navigation_extension:traverse_logic()
 
 	if var_24_0 then
@@ -687,7 +687,7 @@ function AICommanderExtension._navify_follow_pos(arg_24_0, arg_24_1, arg_24_2, a
 	return arg_24_1
 end
 
-function AICommanderExtension._update_units(arg_25_0, arg_25_1, arg_25_2)
+AICommanderExtension._update_units = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = POSITION_LOOKUP[arg_25_0._unit]
 	local var_25_1 = arg_25_0._controlled_units
 	local var_25_2 = table.is_empty(arg_25_0._combat_units) and var_0_1 or var_0_2
@@ -745,7 +745,7 @@ function AICommanderExtension._update_units(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function AICommanderExtension.pet_ui_data(arg_26_0, arg_26_1)
+AICommanderExtension.pet_ui_data = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._controlled_units[arg_26_1]
 
 	if not var_26_0 then
@@ -778,15 +778,15 @@ function AICommanderExtension.pet_ui_data(arg_26_0, arg_26_1)
 	return nil, nil, nil
 end
 
-function AICommanderExtension.controlled_units_in_combat(arg_27_0)
+AICommanderExtension.controlled_units_in_combat = function (arg_27_0)
 	return arg_27_0._combat_units
 end
 
-function AICommanderExtension.set_in_combat(arg_28_0, arg_28_1, arg_28_2)
+AICommanderExtension.set_in_combat = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0._combat_units[arg_28_1] = arg_28_2 or nil
 end
 
-function AICommanderExtension._calculate_hovered_friendly_unit(arg_29_0)
+AICommanderExtension._calculate_hovered_friendly_unit = function (arg_29_0)
 	local var_29_0 = 1
 	local var_29_1 = arg_29_0._first_person_extension
 	local var_29_2 = var_29_1:current_position()
@@ -832,7 +832,7 @@ function AICommanderExtension._calculate_hovered_friendly_unit(arg_29_0)
 	arg_29_0._cached_hovered_commanded_unit = var_29_7
 end
 
-function AICommanderExtension._set_command_state(arg_30_0, arg_30_1, arg_30_2)
+AICommanderExtension._set_command_state = function (arg_30_0, arg_30_1, arg_30_2)
 	fassert(arg_30_0._is_local, "[AICommanderExtension] Local only function")
 
 	local var_30_0 = arg_30_0._controlled_units[arg_30_1]
@@ -842,13 +842,13 @@ function AICommanderExtension._set_command_state(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function AICommanderExtension.command_state(arg_31_0, arg_31_1)
+AICommanderExtension.command_state = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._controlled_units[arg_31_1]
 
 	return var_31_0 and var_31_0.command_state
 end
 
-function AICommanderExtension.cancel_current_command(arg_32_0, arg_32_1, arg_32_2)
+AICommanderExtension.cancel_current_command = function (arg_32_0, arg_32_1, arg_32_2)
 	if arg_32_2 and arg_32_0:command_state(arg_32_1) == CommandStates.Attacking then
 		return
 	end
@@ -879,7 +879,7 @@ function AICommanderExtension.cancel_current_command(arg_32_0, arg_32_1, arg_32_
 	var_32_1.target_unit = nil
 end
 
-function AICommanderExtension.command_attack(arg_33_0, arg_33_1, arg_33_2)
+AICommanderExtension.command_attack = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_0._is_server then
 		arg_33_0:cancel_current_command(arg_33_1)
 
@@ -912,7 +912,7 @@ function AICommanderExtension.command_attack(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function AICommanderExtension.command_stand_ground(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+AICommanderExtension.command_stand_ground = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	if arg_34_0._is_server then
 		arg_34_0:cancel_current_command(arg_34_1)
 
@@ -945,7 +945,7 @@ function AICommanderExtension.command_stand_ground(arg_34_0, arg_34_1, arg_34_2,
 	end
 end
 
-function AICommanderExtension.hovered_friendly_unit(arg_35_0)
+AICommanderExtension.hovered_friendly_unit = function (arg_35_0)
 	if not arg_35_0._cached_hovered_fallback_unit then
 		arg_35_0:_calculate_hovered_friendly_unit()
 	end
@@ -953,7 +953,7 @@ function AICommanderExtension.hovered_friendly_unit(arg_35_0)
 	return arg_35_0._cached_hovered_friendly_unit, arg_35_0._cached_hovered_fallback_unit
 end
 
-function AICommanderExtension.hovered_commanded_unit(arg_36_0)
+AICommanderExtension.hovered_commanded_unit = function (arg_36_0)
 	if not arg_36_0._cached_hovered_commanded_unit then
 		arg_36_0:_calculate_hovered_friendly_unit()
 	end
@@ -961,7 +961,7 @@ function AICommanderExtension.hovered_commanded_unit(arg_36_0)
 	return arg_36_0._cached_hovered_commanded_unit
 end
 
-function AICommanderExtension._update_command_stand_ground(arg_37_0)
+AICommanderExtension._update_command_stand_ground = function (arg_37_0)
 	if arg_37_0._stand_ground_active then
 		local var_37_0 = false
 
@@ -1000,7 +1000,7 @@ function AICommanderExtension._update_command_stand_ground(arg_37_0)
 	end
 end
 
-function AICommanderExtension._update_commands(arg_38_0)
+AICommanderExtension._update_commands = function (arg_38_0)
 	if arg_38_0._is_local then
 		local var_38_0 = false
 
@@ -1016,7 +1016,7 @@ function AICommanderExtension._update_commands(arg_38_0)
 	arg_38_0:_update_command_stand_ground()
 end
 
-function AICommanderExtension.command_stand_ground_group(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+AICommanderExtension.command_stand_ground_group = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0 = arg_39_0._stand_ground_queue
 
 	var_39_0[#var_39_0 + 1] = {
@@ -1026,8 +1026,8 @@ function AICommanderExtension.command_stand_ground_group(arg_39_0, arg_39_1, arg
 	}
 end
 
-function AICommanderExtension._command_stand_ground_group(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
-	table.array_remove_if(arg_40_1, function(arg_41_0)
+AICommanderExtension._command_stand_ground_group = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	table.array_remove_if(arg_40_1, function (arg_41_0)
 		return not arg_40_0._controlled_units[arg_41_0]
 	end)
 
@@ -1062,7 +1062,7 @@ function AICommanderExtension._command_stand_ground_group(arg_40_0, arg_40_1, ar
 	end
 end
 
-function AICommanderExtension._commander_is_on_navmesh(arg_42_0)
+AICommanderExtension._commander_is_on_navmesh = function (arg_42_0)
 	local var_42_0 = POSITION_LOOKUP[arg_42_0._unit]
 
 	if not var_42_0 then
@@ -1077,7 +1077,7 @@ function AICommanderExtension._commander_is_on_navmesh(arg_42_0)
 	return (GwNavQueries.triangle_from_position(arg_42_0._nav_world, var_42_0, var_42_1, var_42_2))
 end
 
-function AICommanderExtension._cleanup_command_buffs(arg_43_0, arg_43_1, arg_43_2)
+AICommanderExtension._cleanup_command_buffs = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0._buff_system
 	local var_43_1 = arg_43_0._command_buffs[arg_43_1]
 
@@ -1094,7 +1094,7 @@ function AICommanderExtension._cleanup_command_buffs(arg_43_0, arg_43_1, arg_43_
 	end
 end
 
-function AICommanderExtension._add_command_buffs(arg_44_0, arg_44_1, arg_44_2)
+AICommanderExtension._add_command_buffs = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._controlled_units[arg_44_1].template.buff_on_command
 	local var_44_1 = var_44_0 and var_44_0[arg_44_2]
 
@@ -1116,7 +1116,7 @@ function AICommanderExtension._add_command_buffs(arg_44_0, arg_44_1, arg_44_2)
 	end
 end
 
-function AICommanderExtension._get_fallback_position(arg_45_0, arg_45_1)
+AICommanderExtension._get_fallback_position = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0._fallback_positions
 	local var_45_1 = arg_45_0._stored_fallback_positions
 	local var_45_2 = arg_45_0._fallback_position_data
@@ -1180,7 +1180,7 @@ function AICommanderExtension._get_fallback_position(arg_45_0, arg_45_1)
 	return var_45_15
 end
 
-function AICommanderExtension._store_fallback_position(arg_46_0, arg_46_1)
+AICommanderExtension._store_fallback_position = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._fallback_positions
 
 	if var_46_0[arg_46_1] then

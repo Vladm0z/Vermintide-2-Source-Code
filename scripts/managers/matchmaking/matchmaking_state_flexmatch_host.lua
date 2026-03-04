@@ -30,21 +30,21 @@ local function var_0_9(arg_1_0, ...)
 	printf(arg_1_0, ...)
 end
 
-function MatchmakingStateFlexmatchHost.init(arg_2_0, arg_2_1)
+MatchmakingStateFlexmatchHost.init = function (arg_2_0, arg_2_1)
 	arg_2_0._network_transmit = arg_2_1.network_transmit
 	arg_2_0._network_options = arg_2_1.network_options
 	arg_2_0._lobby = arg_2_1.lobby
 end
 
-function MatchmakingStateFlexmatchHost.terminate(arg_3_0)
+MatchmakingStateFlexmatchHost.terminate = function (arg_3_0)
 	return
 end
 
-function MatchmakingStateFlexmatchHost.destroy(arg_4_0)
+MatchmakingStateFlexmatchHost.destroy = function (arg_4_0)
 	arg_4_0:_cleanup()
 end
 
-function MatchmakingStateFlexmatchHost.on_enter(arg_5_0, arg_5_1)
+MatchmakingStateFlexmatchHost.on_enter = function (arg_5_0, arg_5_1)
 	arg_5_0._state_context = arg_5_1
 
 	local var_5_0 = arg_5_1.search_config.party_lobby_host.lobby_members
@@ -65,11 +65,11 @@ function MatchmakingStateFlexmatchHost.on_enter(arg_5_0, arg_5_1)
 	arg_5_0._state = var_0_1.Init
 end
 
-function MatchmakingStateFlexmatchHost.on_exit(arg_6_0)
+MatchmakingStateFlexmatchHost.on_exit = function (arg_6_0)
 	arg_6_0:_cleanup()
 end
 
-function MatchmakingStateFlexmatchHost.update(arg_7_0, arg_7_1, arg_7_2)
+MatchmakingStateFlexmatchHost.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._state == var_0_1.Init then
 		arg_7_0._state = var_0_1.RequestingRegions
 	elseif arg_7_0._state == var_0_1.RequestingRegions then
@@ -94,7 +94,7 @@ function MatchmakingStateFlexmatchHost.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function MatchmakingStateFlexmatchHost._update_requesting_regions(arg_8_0, arg_8_1, arg_8_2)
+MatchmakingStateFlexmatchHost._update_requesting_regions = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._requesting_regions then
 		return
 	end
@@ -115,7 +115,7 @@ function MatchmakingStateFlexmatchHost._update_requesting_regions(arg_8_0, arg_8
 	arg_8_0._timeout = arg_8_2 + var_0_4 + var_0_3
 end
 
-function MatchmakingStateFlexmatchHost._update_checking_latency(arg_9_0, arg_9_1, arg_9_2)
+MatchmakingStateFlexmatchHost._update_checking_latency = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_2 >= arg_9_0._timeout then
 		return arg_9_0:_cancel_matchmaking("Failed to get latency before timeout")
 	end
@@ -133,7 +133,7 @@ function MatchmakingStateFlexmatchHost._update_checking_latency(arg_9_0, arg_9_1
 	arg_9_0._requesting_latency = true
 end
 
-function MatchmakingStateFlexmatchHost._ping_cb(arg_10_0, arg_10_1, arg_10_2)
+MatchmakingStateFlexmatchHost._ping_cb = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0._ignore_results then
 		return
 	end
@@ -146,7 +146,7 @@ function MatchmakingStateFlexmatchHost._ping_cb(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._state = var_0_1.RequestingTicket
 end
 
-function MatchmakingStateFlexmatchHost._update_requesting_ticket(arg_11_0, arg_11_1, arg_11_2)
+MatchmakingStateFlexmatchHost._update_requesting_ticket = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = Managers.backend:get_interface("versus")
 
 	if not var_11_0 then
@@ -160,7 +160,7 @@ function MatchmakingStateFlexmatchHost._update_requesting_ticket(arg_11_0, arg_1
 	arg_11_0._state = var_0_1.CollectingTickets
 end
 
-function MatchmakingStateFlexmatchHost._update_collecting_tickets(arg_12_0, arg_12_1, arg_12_2)
+MatchmakingStateFlexmatchHost._update_collecting_tickets = function (arg_12_0, arg_12_1, arg_12_2)
 	if arg_12_2 >= arg_12_0._timeout then
 		arg_12_0:_cancel_matchmaking("Failed to collect tickets before timeout")
 
@@ -182,7 +182,7 @@ function MatchmakingStateFlexmatchHost._update_collecting_tickets(arg_12_0, arg_
 	arg_12_0._state = var_0_1.StartingMatchmaking
 end
 
-function MatchmakingStateFlexmatchHost._update_starting_matchmaking(arg_13_0, arg_13_1, arg_13_2)
+MatchmakingStateFlexmatchHost._update_starting_matchmaking = function (arg_13_0, arg_13_1, arg_13_2)
 	var_0_9("Starting matchmaking")
 	Managers.backend:get_interface("versus"):start_matchmaking(arg_13_0._queue_tickets, callback(arg_13_0, "_start_matchmaking_cb"))
 
@@ -190,13 +190,13 @@ function MatchmakingStateFlexmatchHost._update_starting_matchmaking(arg_13_0, ar
 	arg_13_0._state = var_0_1.WaitingForMatchmaking
 end
 
-function MatchmakingStateFlexmatchHost._update_waiting_for_matchmaking(arg_14_0, arg_14_1, arg_14_2)
+MatchmakingStateFlexmatchHost._update_waiting_for_matchmaking = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_2 >= arg_14_0._timeout then
 		return arg_14_0:_cancel_matchmaking("Failed to start matchmaking before timeout")
 	end
 end
 
-function MatchmakingStateFlexmatchHost._update_in_queue(arg_15_0, arg_15_1, arg_15_2)
+MatchmakingStateFlexmatchHost._update_in_queue = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_2 >= arg_15_0._timeout then
 		return arg_15_0:_cancel_matchmaking("Failed to get response from matchmaking before timeout")
 	end
@@ -208,7 +208,7 @@ function MatchmakingStateFlexmatchHost._update_in_queue(arg_15_0, arg_15_1, arg_
 	end
 end
 
-function MatchmakingStateFlexmatchHost._update_succeeded(arg_16_0, arg_16_1, arg_16_2)
+MatchmakingStateFlexmatchHost._update_succeeded = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = string.format("%s:%s", arg_16_0._connection_info.ipAddress, arg_16_0._connection_info.port)
 
 	arg_16_0._state_context.server_info = {
@@ -220,7 +220,7 @@ function MatchmakingStateFlexmatchHost._update_succeeded(arg_16_0, arg_16_1, arg
 	return MatchmakingStateReserveLobby, arg_16_0._state_context
 end
 
-function MatchmakingStateFlexmatchHost._request_regions_cb(arg_17_0, arg_17_1)
+MatchmakingStateFlexmatchHost._request_regions_cb = function (arg_17_0, arg_17_1)
 	if arg_17_0._ignore_results then
 		return
 	end
@@ -234,7 +234,7 @@ function MatchmakingStateFlexmatchHost._request_regions_cb(arg_17_0, arg_17_1)
 	arg_17_0._state = var_0_1.CheckingLatency
 end
 
-function MatchmakingStateFlexmatchHost._request_matchmaking_ticket_cb(arg_18_0, arg_18_1)
+MatchmakingStateFlexmatchHost._request_matchmaking_ticket_cb = function (arg_18_0, arg_18_1)
 	if arg_18_0._ignore_results then
 		return
 	end
@@ -252,7 +252,7 @@ function MatchmakingStateFlexmatchHost._request_matchmaking_ticket_cb(arg_18_0, 
 	arg_18_0._queue_tickets[Network.peer_id()] = arg_18_1.ticket
 end
 
-function MatchmakingStateFlexmatchHost._start_matchmaking_cb(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+MatchmakingStateFlexmatchHost._start_matchmaking_cb = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	if not arg_19_1 or arg_19_2 ~= 200 then
 		return arg_19_0:_cancel_matchmaking("Starting matchmaking request failed. result: %s, code: %s", arg_19_1, tostring(arg_19_2))
 	end
@@ -286,7 +286,7 @@ function MatchmakingStateFlexmatchHost._start_matchmaking_cb(arg_19_0, arg_19_1,
 	end
 end
 
-function MatchmakingStateFlexmatchHost._fetch_matchmaking_cb(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+MatchmakingStateFlexmatchHost._fetch_matchmaking_cb = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if arg_20_0._ignore_results then
 		return
 	end
@@ -327,7 +327,7 @@ function MatchmakingStateFlexmatchHost._fetch_matchmaking_cb(arg_20_0, arg_20_1,
 	end
 end
 
-function MatchmakingStateFlexmatchHost._cleanup(arg_21_0)
+MatchmakingStateFlexmatchHost._cleanup = function (arg_21_0)
 	local var_21_0 = Managers.state.event
 
 	if var_21_0 then
@@ -343,13 +343,13 @@ function MatchmakingStateFlexmatchHost._cleanup(arg_21_0)
 	arg_21_0._queue_status = nil
 end
 
-function MatchmakingStateFlexmatchHost.on_friend_party_peer_left(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+MatchmakingStateFlexmatchHost.on_friend_party_peer_left = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	if arg_22_2 then
 		return arg_22_0:_cancel_matchmaking("Player left party")
 	end
 end
 
-function MatchmakingStateFlexmatchHost._cancel_matchmaking(arg_23_0, arg_23_1, ...)
+MatchmakingStateFlexmatchHost._cancel_matchmaking = function (arg_23_0, arg_23_1, ...)
 	if arg_23_1 then
 		var_0_9("Cancelling matchmaking")
 		var_0_9(arg_23_1, ...)
@@ -362,7 +362,7 @@ function MatchmakingStateFlexmatchHost._cancel_matchmaking(arg_23_0, arg_23_1, .
 	end
 end
 
-function MatchmakingStateFlexmatchHost._cancel_matchmaking_cb(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+MatchmakingStateFlexmatchHost._cancel_matchmaking_cb = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	var_0_9("Matchmaking cancelled")
 
 	arg_24_0._matchmaking_session_id = nil
@@ -374,7 +374,7 @@ function MatchmakingStateFlexmatchHost._cancel_matchmaking_cb(arg_24_0, arg_24_1
 	Managers.matchmaking:cancel_matchmaking()
 end
 
-function MatchmakingStateFlexmatchHost.rpc_matchmaking_ticket_response(arg_25_0, arg_25_1, arg_25_2)
+MatchmakingStateFlexmatchHost.rpc_matchmaking_ticket_response = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = CHANNEL_TO_PEER_ID[arg_25_1]
 
 	arg_25_0._queue_tickets[var_25_0] = NetworkUtils.unnet_pack_flexmatch_ticket(arg_25_2)

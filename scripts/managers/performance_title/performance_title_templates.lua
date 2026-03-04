@@ -56,12 +56,12 @@ end
 
 PerformanceTitles.templates = {
 	equal_higher = {
-		evaluate = function(arg_2_0, arg_2_1, arg_2_2)
+		evaluate = function (arg_2_0, arg_2_1, arg_2_2)
 			local var_2_0 = var_0_0(arg_2_0, arg_2_1, arg_2_2.stat_types)
 
 			return var_2_0 >= arg_2_2.amount, var_2_0
 		end,
-		compare = function(arg_3_0, arg_3_1)
+		compare = function (arg_3_0, arg_3_1)
 			return arg_3_1 <= arg_3_0
 		end
 	}

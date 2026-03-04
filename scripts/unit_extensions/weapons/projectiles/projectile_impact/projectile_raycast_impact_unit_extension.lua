@@ -7,7 +7,7 @@ local var_0_1 = 2
 local var_0_2 = 3
 local var_0_3 = 4
 
-function ProjectileRaycastImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileRaycastImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ProjectileRaycastImpactUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0.collision_filter = arg_1_3.collision_filter or "filter_player_ray_projectile"
@@ -26,11 +26,11 @@ function ProjectileRaycastImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, ar
 	arg_1_0.last_position = nil
 end
 
-function ProjectileRaycastImpactUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+ProjectileRaycastImpactUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 end
 
-function ProjectileRaycastImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectileRaycastImpactUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ProjectileRaycastImpactUnitExtension.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	if arg_3_0.server_side_raycast and not arg_3_0.is_server then
@@ -60,7 +60,7 @@ function ProjectileRaycastImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, 
 	arg_3_0:_do_raycast(arg_3_1, var_3_2, var_3_3, var_3_0, var_3_1, arg_3_5, arg_3_3)
 end
 
-function ProjectileRaycastImpactUnitExtension._do_raycast(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+ProjectileRaycastImpactUnitExtension._do_raycast = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	local var_4_0, var_4_1 = Vector3.direction_length(arg_4_3 - arg_4_2)
 
 	if var_4_1 < math.epsilon then
@@ -107,7 +107,7 @@ function ProjectileRaycastImpactUnitExtension._do_raycast(arg_4_0, arg_4_1, arg_
 	end
 end
 
-function ProjectileRaycastImpactUnitExtension._valid_target(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+ProjectileRaycastImpactUnitExtension._valid_target = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_2 == arg_5_1 or arg_5_2 == arg_5_0.owner_unit then
 		return false
 	end

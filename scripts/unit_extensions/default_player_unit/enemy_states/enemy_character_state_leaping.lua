@@ -2,7 +2,7 @@
 
 EnemyCharacterStateLeaping = class(EnemyCharacterStateLeaping, EnemyCharacterState)
 
-function EnemyCharacterStateLeaping.init(arg_1_0, arg_1_1)
+EnemyCharacterStateLeaping.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "leaping")
 
 	arg_1_0._direction = Vector3Box()
@@ -10,7 +10,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function EnemyCharacterStateLeaping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateLeaping.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	arg_2_0._time_entered_leap = arg_2_5
@@ -48,7 +48,7 @@ function EnemyCharacterStateLeaping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	arg_2_0._played_landing_event = nil
 end
 
-function EnemyCharacterStateLeaping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+EnemyCharacterStateLeaping.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0._locomotion_extension
 
 	var_3_0:set_mover_filter_property("enemy_leap_state", false)
@@ -92,7 +92,7 @@ function EnemyCharacterStateLeaping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	end
 end
 
-function EnemyCharacterStateLeaping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+EnemyCharacterStateLeaping.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_2 = arg_4_0._input_extension
@@ -199,7 +199,7 @@ local function var_0_1(arg_5_0, arg_5_1, arg_5_2)
 	return (math.clamp(arg_5_2, arg_5_0, arg_5_1) - arg_5_0) / (arg_5_1 - arg_5_0)
 end
 
-function PlayerCharacterStateLeaping._reset_speed_and_gravity(arg_6_0, arg_6_1)
+PlayerCharacterStateLeaping._reset_speed_and_gravity = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.locomotion_extension
 
 	PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
@@ -210,7 +210,7 @@ function PlayerCharacterStateLeaping._reset_speed_and_gravity(arg_6_0, arg_6_1)
 	var_6_0:set_external_velocity_enabled(true)
 end
 
-function EnemyCharacterStateLeaping._move_in_air(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+EnemyCharacterStateLeaping._move_in_air = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0._locomotion_extension
 	local var_7_1 = var_0_0[arg_7_1]
 	local var_7_2 = arg_7_0._leap_data.starting_pos:unbox()
@@ -343,7 +343,7 @@ function EnemyCharacterStateLeaping._move_in_air(arg_7_0, arg_7_1, arg_7_2, arg_
 	return var_7_20
 end
 
-function EnemyCharacterStateLeaping._update_movement(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+EnemyCharacterStateLeaping._update_movement = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_0._leap_done then
 		return true
 	end
@@ -364,7 +364,7 @@ function EnemyCharacterStateLeaping._update_movement(arg_8_0, arg_8_1, arg_8_2, 
 	return arg_8_0._leap_done, var_8_1, var_8_5
 end
 
-function EnemyCharacterStateLeaping._finish(arg_9_0, arg_9_1, arg_9_2)
+EnemyCharacterStateLeaping._finish = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._locomotion_extension
 	local var_9_1 = arg_9_0._first_person_extension
 
@@ -394,7 +394,7 @@ function EnemyCharacterStateLeaping._finish(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._leap_done = true
 end
 
-function EnemyCharacterStateLeaping._start_leap(arg_10_0, arg_10_1, arg_10_2)
+EnemyCharacterStateLeaping._start_leap = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._locomotion_extension
 	local var_10_1 = arg_10_0._first_person_extension
 
@@ -430,7 +430,7 @@ function EnemyCharacterStateLeaping._start_leap(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._leap_done = false
 end
 
-function EnemyCharacterStateLeaping._camera_effects(arg_11_0, arg_11_1, arg_11_2)
+EnemyCharacterStateLeaping._camera_effects = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = 1.5
 	local var_11_1 = math.lerp(1, var_11_0, arg_11_2)
 

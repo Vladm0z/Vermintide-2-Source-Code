@@ -72,7 +72,7 @@ local function var_0_4(arg_2_0, arg_2_1)
 end
 
 var_0_0.achievement_events = {
-	on_challenge_completed = function(arg_3_0, arg_3_1)
+	on_challenge_completed = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.player
 		local var_3_1 = var_3_0:local_player()
 

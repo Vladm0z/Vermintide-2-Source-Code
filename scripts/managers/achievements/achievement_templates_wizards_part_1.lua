@@ -48,10 +48,10 @@ var_0_4.trail_cog_strike = {
 		"on_trail_cog_strike",
 		"on_trail_cog_reset_stat"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "trail_cog_strike") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		if arg_2_3 == "on_trail_cog_strike" then
 			if not arg_2_2.current_hits or not arg_2_2.units then
 				arg_2_2.current_hits = 0
@@ -83,7 +83,7 @@ var_0_4.trail_shatterer = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_break_icicles",
 	desc = "achv_onions_icicles_desc",
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "trail_shatterer") >= 1
 	end
 }
@@ -92,7 +92,7 @@ var_0_4.trail_sleigher = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_kill_enemies_with_sleigh",
 	desc = "achv_onions_sleigh_kills_desc",
-	progress = function(arg_4_0, arg_4_1, arg_4_2)
+	progress = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = arg_4_0:get_persistent_stat(arg_4_1, "trail_sleigher") or 0
 
 		return {
@@ -100,7 +100,7 @@ var_0_4.trail_sleigher = {
 			50
 		}
 	end,
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "trail_sleigher") >= 50
 	end
 }
@@ -109,7 +109,7 @@ var_0_4.trail_beacons_are_lit = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_light_bonfires",
 	desc = "achv_onions_light_beacons_desc",
-	progress = function(arg_6_0, arg_6_1, arg_6_2)
+	progress = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = arg_6_0:get_persistent_stat(arg_6_1, "trail_bonfire_watch_tower") or 0
 		local var_6_1 = arg_6_0:get_persistent_stat(arg_6_1, "trail_bonfire_river_path") or 0
 		local var_6_2 = arg_6_0:get_persistent_stat(arg_6_1, "trail_bonfire_lookout_point") or 0
@@ -134,7 +134,7 @@ var_0_4.trail_beacons_are_lit = {
 			3
 		}
 	end,
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = arg_7_0:get_persistent_stat(arg_7_1, "trail_bonfire_watch_tower")
 		local var_7_1 = arg_7_0:get_persistent_stat(arg_7_1, "trail_bonfire_river_path")
 		local var_7_2 = arg_7_0:get_persistent_stat(arg_7_1, "trail_bonfire_lookout_point")

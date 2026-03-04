@@ -7,7 +7,7 @@ local var_0_1 = Unit.animation_set_variable
 local var_0_2 = GameSession.set_game_object_field
 local var_0_3 = GameSession.game_object_field
 
-function PassiveAbilityWarriorPriest.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityWarriorPriest.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._player = arg_1_3.player
 	arg_1_0._ability_init_data = arg_1_4
@@ -23,7 +23,7 @@ function PassiveAbilityWarriorPriest.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ar
 	arg_1_0._game = Managers.state.network:game()
 end
 
-function PassiveAbilityWarriorPriest.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PassiveAbilityWarriorPriest.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._buff_system = Managers.state.entity:system("buff_system")
 	arg_2_0._talent_extension = ScriptUnit.has_extension(arg_2_2, "talent_system")
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
@@ -39,11 +39,11 @@ function PassiveAbilityWarriorPriest.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_register_events()
 end
 
-function PassiveAbilityWarriorPriest.destroy(arg_3_0)
+PassiveAbilityWarriorPriest.destroy = function (arg_3_0)
 	arg_3_0:_unregister_events()
 end
 
-function PassiveAbilityWarriorPriest._register_events(arg_4_0)
+PassiveAbilityWarriorPriest._register_events = function (arg_4_0)
 	Managers.state.event:register(arg_4_0, "on_player_killed_enemy", "on_player_killed_enemy")
 	Managers.state.event:register(arg_4_0, "on_hit", "on_hit")
 	Managers.state.event:register(arg_4_0, "on_weapon_wield", "on_weapon_wield")
@@ -51,7 +51,7 @@ function PassiveAbilityWarriorPriest._register_events(arg_4_0)
 	Managers.state.event:register(arg_4_0, "on_talents_changed", "on_talents_changed")
 end
 
-function PassiveAbilityWarriorPriest._unregister_events(arg_5_0)
+PassiveAbilityWarriorPriest._unregister_events = function (arg_5_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("on_player_killed_enemy", arg_5_0)
 		Managers.state.event:unregister("on_hit", arg_5_0)
@@ -61,7 +61,7 @@ function PassiveAbilityWarriorPriest._unregister_events(arg_5_0)
 	end
 end
 
-function PassiveAbilityWarriorPriest.update(arg_6_0, arg_6_1, arg_6_2)
+PassiveAbilityWarriorPriest.update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._game_object_id
 	local var_6_1 = arg_6_0._game
 
@@ -95,7 +95,7 @@ function PassiveAbilityWarriorPriest.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function PassiveAbilityWarriorPriest.on_player_killed_enemy(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PassiveAbilityWarriorPriest.on_player_killed_enemy = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if ScriptUnit.has_extension(arg_7_0._owner_unit, "status_system"):is_knocked_down() then
 		return
 	end
@@ -132,17 +132,17 @@ function PassiveAbilityWarriorPriest.on_player_killed_enemy(arg_7_0, arg_7_1, ar
 	arg_7_0:modify_resource(var_7_6)
 end
 
-function PassiveAbilityWarriorPriest.on_hit(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
+PassiveAbilityWarriorPriest.on_hit = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
 	if arg_8_0._is_local_player and arg_8_8 == arg_8_0._owner_unit then
 		arg_8_0:set_in_combat()
 	end
 end
 
-function PassiveAbilityWarriorPriest.buff_on_damage_taken(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+PassiveAbilityWarriorPriest.buff_on_damage_taken = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0:modify_resource(arg_9_2)
 end
 
-function PassiveAbilityWarriorPriest.modify_resource(arg_10_0, arg_10_1, arg_10_2)
+PassiveAbilityWarriorPriest.modify_resource = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._current_resource ~= arg_10_0._max_resource
 
 	if arg_10_1 > 0 then
@@ -174,30 +174,30 @@ function PassiveAbilityWarriorPriest.modify_resource(arg_10_0, arg_10_1, arg_10_
 	return arg_10_0._current_resource
 end
 
-function PassiveAbilityWarriorPriest.modify_resource_percent(arg_11_0, arg_11_1)
+PassiveAbilityWarriorPriest.modify_resource_percent = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._max_resource * arg_11_1
 
 	return arg_11_0:modify_resource(var_11_0, true)
 end
 
-function PassiveAbilityWarriorPriest.get_resource_fraction(arg_12_0)
+PassiveAbilityWarriorPriest.get_resource_fraction = function (arg_12_0)
 	return arg_12_0._current_resource / arg_12_0._max_resource
 end
 
-function PassiveAbilityWarriorPriest.is_active(arg_13_0)
+PassiveAbilityWarriorPriest.is_active = function (arg_13_0)
 	return arg_13_0._is_active
 end
 
-function PassiveAbilityWarriorPriest.degenerate_resource(arg_14_0, arg_14_1)
+PassiveAbilityWarriorPriest.degenerate_resource = function (arg_14_0, arg_14_1)
 	return arg_14_0:modify_resource(-var_0_0 * arg_14_1)
 end
 
-function PassiveAbilityWarriorPriest.set_in_combat(arg_15_0)
+PassiveAbilityWarriorPriest.set_in_combat = function (arg_15_0)
 	arg_15_0._not_in_combat = false
 	arg_15_0._combat_timer = Managers.time:time("game") + arg_15_0._time_to_ooc
 end
 
-function PassiveAbilityWarriorPriest.combat_timer_update(arg_16_0, arg_16_1)
+PassiveAbilityWarriorPriest.combat_timer_update = function (arg_16_0, arg_16_1)
 	if not arg_16_0._combat_timer then
 		arg_16_0._combat_timer = arg_16_1 + arg_16_0._time_to_ooc
 	end
@@ -207,7 +207,7 @@ function PassiveAbilityWarriorPriest.combat_timer_update(arg_16_0, arg_16_1)
 	end
 end
 
-function PassiveAbilityWarriorPriest.activate_buff(arg_17_0)
+PassiveAbilityWarriorPriest.activate_buff = function (arg_17_0)
 	if not arg_17_0._is_active then
 		arg_17_0._is_active = true
 		arg_17_0._activation_time = Managers.time:time("game")
@@ -232,7 +232,7 @@ function PassiveAbilityWarriorPriest.activate_buff(arg_17_0)
 	end
 end
 
-function PassiveAbilityWarriorPriest.deactivate_buff(arg_18_0)
+PassiveAbilityWarriorPriest.deactivate_buff = function (arg_18_0)
 	if arg_18_0._is_active then
 		arg_18_0._is_active = false
 
@@ -251,7 +251,7 @@ function PassiveAbilityWarriorPriest.deactivate_buff(arg_18_0)
 	end
 end
 
-function PassiveAbilityWarriorPriest._play_vo(arg_19_0)
+PassiveAbilityWarriorPriest._play_vo = function (arg_19_0)
 	local var_19_0 = arg_19_0._owner_unit
 	local var_19_1 = ScriptUnit.extension_input(var_19_0, "dialogue_system")
 	local var_19_2 = FrameTable.alloc_table()
@@ -259,7 +259,7 @@ function PassiveAbilityWarriorPriest._play_vo(arg_19_0)
 	var_19_1:trigger_networked_dialogue_event("activate_fury", var_19_2)
 end
 
-function PassiveAbilityWarriorPriest._set_fury_glow_enabled(arg_20_0, arg_20_1)
+PassiveAbilityWarriorPriest._set_fury_glow_enabled = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1 and "lua_enable_eye_glow" or "lua_disable_eye_glow"
 	local var_20_1 = arg_20_0._inventory_extension
 
@@ -293,17 +293,17 @@ function PassiveAbilityWarriorPriest._set_fury_glow_enabled(arg_20_0, arg_20_1)
 	Unit.flow_event(arg_20_0._owner_unit, var_20_0)
 end
 
-function PassiveAbilityWarriorPriest.on_weapon_wield(arg_21_0, arg_21_1)
+PassiveAbilityWarriorPriest.on_weapon_wield = function (arg_21_0, arg_21_1)
 	arg_21_0:_set_fury_glow_enabled(arg_21_0._is_active)
 end
 
-function PassiveAbilityWarriorPriest.on_level_start_local_player_spawned(arg_22_0, arg_22_1)
+PassiveAbilityWarriorPriest.on_level_start_local_player_spawned = function (arg_22_0, arg_22_1)
 	if arg_22_0._is_local_player and not arg_22_0._game_object_id then
 		arg_22_0:create_game_object()
 	end
 end
 
-function PassiveAbilityWarriorPriest.on_talents_changed(arg_23_0, arg_23_1, arg_23_2)
+PassiveAbilityWarriorPriest.on_talents_changed = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_1 ~= arg_23_0._owner_unit then
 		return
 	end
@@ -335,7 +335,7 @@ function PassiveAbilityWarriorPriest.on_talents_changed(arg_23_0, arg_23_1, arg_
 	end
 end
 
-function PassiveAbilityWarriorPriest.create_game_object(arg_24_0)
+PassiveAbilityWarriorPriest.create_game_object = function (arg_24_0)
 	local var_24_0 = Managers.state.network
 	local var_24_1 = arg_24_0._owner_unit
 	local var_24_2 = var_24_0:unit_game_object_id(var_24_1)
@@ -349,10 +349,10 @@ function PassiveAbilityWarriorPriest.create_game_object(arg_24_0)
 	arg_24_0._game_object_id = var_24_0:create_game_object("priest_career_data", var_24_3, var_24_4)
 end
 
-function PassiveAbilityWarriorPriest.set_career_game_object_id(arg_25_0, arg_25_1)
+PassiveAbilityWarriorPriest.set_career_game_object_id = function (arg_25_0, arg_25_1)
 	arg_25_0._game_object_id = arg_25_1
 end
 
-function PassiveAbilityWarriorPriest.cb_game_session_disconnect(arg_26_0)
+PassiveAbilityWarriorPriest.cb_game_session_disconnect = function (arg_26_0)
 	arg_26_0._game_object_id = nil
 end

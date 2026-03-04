@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterHoistAction = class(BTPackMasterHoistAction, BTNode)
 
-function BTPackMasterHoistAction.init(arg_1_0, ...)
+BTPackMasterHoistAction.init = function (arg_1_0, ...)
 	BTPackMasterHoistAction.super.init(arg_1_0, ...)
 end
 
 BTPackMasterHoistAction.name = "BTPackMasterHoistAction"
 
-function BTPackMasterHoistAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterHoistAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -21,7 +21,7 @@ function BTPackMasterHoistAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	AiUtils.show_polearm(arg_2_1, false)
 end
 
-function BTPackMasterHoistAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterHoistAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 == "done" then
 		arg_3_2.needs_hook = true
 
@@ -45,7 +45,7 @@ function BTPackMasterHoistAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function BTPackMasterHoistAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterHoistAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.drag_target_unit
 
 	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, var_4_0) and not ScriptUnit.extension(var_4_0, "status_system"):is_knocked_down() then

@@ -45,7 +45,7 @@ local var_0_20 = {}
 local var_0_21 = {}
 local var_0_22 = {}
 
-function PlayerInventoryUI.init(arg_1_0, arg_1_1, arg_1_2)
+PlayerInventoryUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.platform = PLATFORM
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
@@ -65,7 +65,7 @@ function PlayerInventoryUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._visible = not arg_1_0.input_manager:is_device_active("gamepad")
 end
 
-function PlayerInventoryUI.destroy(arg_2_0)
+PlayerInventoryUI.destroy = function (arg_2_0)
 	arg_2_0:set_visible(false)
 end
 
@@ -77,7 +77,7 @@ local var_0_23 = {
 	var_0_0.small_inventory_widget_definition
 }
 
-function PlayerInventoryUI.create_ui_elements(arg_3_0)
+PlayerInventoryUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
 	local var_3_0 = var_0_0.inventory_entry_definitions
@@ -101,7 +101,7 @@ function PlayerInventoryUI.create_ui_elements(arg_3_0)
 	end
 end
 
-function PlayerInventoryUI.set_visible(arg_4_0, arg_4_1)
+PlayerInventoryUI.set_visible = function (arg_4_0, arg_4_1)
 	if arg_4_1 and arg_4_0.input_manager:is_device_active("gamepad") then
 		arg_4_1 = false
 	end
@@ -139,7 +139,7 @@ local function var_0_24(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_3, not var_5_2 and var_5_4
 end
 
-function PlayerInventoryUI.overcharge_amount(arg_6_0, arg_6_1)
+PlayerInventoryUI.overcharge_amount = function (arg_6_0, arg_6_1)
 	local var_6_0 = ScriptUnit.extension(arg_6_1, "overcharge_system")
 	local var_6_1 = var_6_0:overcharge_fraction()
 	local var_6_2 = var_6_0:threshold_fraction()
@@ -148,7 +148,7 @@ function PlayerInventoryUI.overcharge_amount(arg_6_0, arg_6_1)
 	return var_6_1, var_6_2, var_6_3
 end
 
-function PlayerInventoryUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PlayerInventoryUI.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.ui_scenegraph
 	local var_7_1 = arg_7_0.input_manager
 	local var_7_2 = var_7_1:get_service("ingame_menu")
@@ -211,17 +211,17 @@ function PlayerInventoryUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	UIRenderer.end_pass(var_7_4)
 end
 
-function PlayerInventoryUI.on_gamepad_activated(arg_8_0)
+PlayerInventoryUI.on_gamepad_activated = function (arg_8_0)
 	local var_8_0 = Application.user_setting("gamepad_layout")
 
 	arg_8_0:set_visible(false)
 end
 
-function PlayerInventoryUI.on_gamepad_deactivated(arg_9_0)
+PlayerInventoryUI.on_gamepad_deactivated = function (arg_9_0)
 	arg_9_0:set_visible(true)
 end
 
-function PlayerInventoryUI.update_inventory_slots(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+PlayerInventoryUI.update_inventory_slots = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_0.profile_synchronizer
 	local var_10_1 = arg_10_4.player_unit
 	local var_10_2
@@ -396,7 +396,7 @@ function PlayerInventoryUI.update_inventory_slots(arg_10_0, arg_10_1, arg_10_2, 
 	end
 end
 
-function PlayerInventoryUI.update_inventory_slots_positions(arg_11_0, arg_11_1)
+PlayerInventoryUI.update_inventory_slots_positions = function (arg_11_0, arg_11_1)
 	local var_11_0 = var_0_0.scenegraph_definition
 
 	if not arg_11_0.selected_index then
@@ -431,7 +431,7 @@ function PlayerInventoryUI.update_inventory_slots_positions(arg_11_0, arg_11_1)
 	end
 end
 
-function PlayerInventoryUI.on_inventory_selected_slot_changed(arg_12_0, arg_12_1)
+PlayerInventoryUI.on_inventory_selected_slot_changed = function (arg_12_0, arg_12_1)
 	if arg_12_0.selected_index == arg_12_1 then
 		return
 	end
@@ -450,7 +450,7 @@ function PlayerInventoryUI.on_inventory_selected_slot_changed(arg_12_0, arg_12_1
 	return true
 end
 
-function PlayerInventoryUI.add_animation_for_slot_index(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+PlayerInventoryUI.add_animation_for_slot_index = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.slot_animations
 	local var_13_1 = arg_13_0.ui_scenegraph
 	local var_13_2 = var_0_0.scenegraph_definition
@@ -518,7 +518,7 @@ function PlayerInventoryUI.add_animation_for_slot_index(arg_13_0, arg_13_1, arg_
 	return var_13_9
 end
 
-function PlayerInventoryUI.update_slot_animations(arg_14_0, arg_14_1)
+PlayerInventoryUI.update_slot_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.slot_animations
 
 	for iter_14_0, iter_14_1 in pairs(var_14_0) do
@@ -526,7 +526,7 @@ function PlayerInventoryUI.update_slot_animations(arg_14_0, arg_14_1)
 	end
 end
 
-function PlayerInventoryUI.animate_slot_widget(arg_15_0, arg_15_1, arg_15_2)
+PlayerInventoryUI.animate_slot_widget = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.ui_scenegraph
 	local var_15_1 = var_0_0.scenegraph_definition
 	local var_15_2 = arg_15_1.widget

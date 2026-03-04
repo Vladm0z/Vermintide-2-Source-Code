@@ -220,7 +220,7 @@ local function var_0_12(arg_5_0)
 end
 
 var_0_0.buff_function_templates = {
-	apply_skulls_2023_buff = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	apply_skulls_2023_buff = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not var_0_11(arg_6_0) then
 			return
 		end
@@ -256,7 +256,7 @@ var_0_0.buff_function_templates = {
 			var_6_4:play_hud_sound_event("Play_skulls_event_buff_on")
 		end
 	end,
-	reapply_skulls_2023_buff = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	reapply_skulls_2023_buff = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		if not var_0_11(arg_7_0) then
 			return
 		end
@@ -282,7 +282,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_skulls_2023_buff = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	remove_skulls_2023_buff = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		if arg_8_1.effect_id then
 			ScriptUnit.extension(arg_8_0, "first_person_system"):stop_spawning_screen_particles(arg_8_1.effect_id)
 
@@ -318,7 +318,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	cleanup_skulls_2023_buff = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	cleanup_skulls_2023_buff = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if not ALIVE[arg_9_0] or not var_0_11(arg_9_0) then
 			return
 		end
@@ -334,7 +334,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	apply_skulls_2023_debuff = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	apply_skulls_2023_debuff = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		if var_0_12(arg_10_0) or not var_0_11(arg_10_0) then
 			return
 		end
@@ -358,14 +358,14 @@ var_0_0.buff_function_templates = {
 			var_10_1:play_hud_sound_event("Play_skulls_event_buff_off")
 		end
 	end,
-	remove_skulls_2023_debuff = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	remove_skulls_2023_debuff = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 		if arg_11_1.effect_id then
 			ScriptUnit.extension(arg_11_0, "first_person_system"):stop_spawning_screen_particles(arg_11_1.effect_id)
 
 			arg_11_1.effect_id = nil
 		end
 	end,
-	update_skulls_2023_debuff_dot = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	update_skulls_2023_debuff_dot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -389,7 +389,7 @@ var_0_0.buff_function_templates = {
 	end
 }
 var_0_0.proc_functions = {
-	on_kill_skulls_2023_buff = function(arg_13_0, arg_13_1, arg_13_2)
+	on_kill_skulls_2023_buff = function (arg_13_0, arg_13_1, arg_13_2)
 		if not var_0_11(arg_13_0) then
 			return
 		end
@@ -400,14 +400,14 @@ var_0_0.proc_functions = {
 	end
 }
 var_0_0.stacking_buff_functions = {
-	skulls_2023_buff_refresh = function(arg_14_0, arg_14_1)
+	skulls_2023_buff_refresh = function (arg_14_0, arg_14_1)
 		if ALIVE[arg_14_0] then
 			local var_14_0 = ScriptUnit.has_extension(arg_14_0, "buff_system"):num_buff_stacks("skulls_2023_buff")
 
 			var_0_10(arg_14_0, var_14_0)
 		end
 	end,
-	skulls_2023_stack_refresh = function(arg_15_0, arg_15_1)
+	skulls_2023_stack_refresh = function (arg_15_0, arg_15_1)
 		if ALIVE[arg_15_0] then
 			Managers.state.entity:system("buff_system"):add_buff_synced(arg_15_0, "skulls_2023_buff", BuffSyncType.LocalAndServer, {
 				refresh_duration_only = true

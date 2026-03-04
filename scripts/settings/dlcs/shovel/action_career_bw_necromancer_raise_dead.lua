@@ -10,7 +10,7 @@ local var_0_6 = math.degrees_to_radians(60)
 
 ActionCareerBWNecromancerRaiseDead = class(ActionCareerBWNecromancerRaiseDead, ActionBase)
 
-function ActionCareerBWNecromancerRaiseDead.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerRaiseDead.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerBWNecromancerRaiseDead.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -33,14 +33,14 @@ function ActionCareerBWNecromancerRaiseDead.init(arg_1_0, arg_1_1, arg_1_2, arg_
 		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
 	}
 
-	function arg_1_0._nav_callback()
+	arg_1_0._nav_callback = function ()
 		local var_2_0 = Managers.time:time("game")
 
 		arg_1_0:_update_spawning(var_2_0)
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBWNecromancerRaiseDead.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_5 = arg_3_5 or {}
 
 	ActionCareerBWNecromancerRaiseDead.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
@@ -52,7 +52,7 @@ function ActionCareerBWNecromancerRaiseDead.client_owner_start_action(arg_3_0, a
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead._trigger_spawn(arg_4_0)
+ActionCareerBWNecromancerRaiseDead._trigger_spawn = function (arg_4_0)
 	local var_4_0 = arg_4_0:_generate_position()
 
 	if var_4_0 then
@@ -80,11 +80,11 @@ function ActionCareerBWNecromancerRaiseDead._trigger_spawn(arg_4_0)
 	arg_4_0._career_extension:reduce_activated_ability_cooldown_percent(-var_0_3)
 end
 
-function ActionCareerBWNecromancerRaiseDead.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionCareerBWNecromancerRaiseDead.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_0._ai_navigation_system:add_safe_navigation_callback(arg_5_0._nav_callback)
 end
 
-function ActionCareerBWNecromancerRaiseDead._update_spawning(arg_6_0, arg_6_1)
+ActionCareerBWNecromancerRaiseDead._update_spawning = function (arg_6_0, arg_6_1)
 	if arg_6_0._career_extension:current_ability_cooldown_percentage() >= 1 - var_0_4 then
 		arg_6_0._weapon_extension:stop_action("action_complete")
 	end
@@ -96,7 +96,7 @@ function ActionCareerBWNecromancerRaiseDead._update_spawning(arg_6_0, arg_6_1)
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDead._play_vo(arg_7_0)
+ActionCareerBWNecromancerRaiseDead._play_vo = function (arg_7_0)
 	local var_7_0 = arg_7_0.owner_unit
 	local var_7_1 = ScriptUnit.extension_input(var_7_0, "dialogue_system")
 	local var_7_2 = FrameTable.alloc_table()
@@ -104,7 +104,7 @@ function ActionCareerBWNecromancerRaiseDead._play_vo(arg_7_0)
 	var_7_1:trigger_networked_dialogue_event("activate_ability", var_7_2)
 end
 
-function ActionCareerBWNecromancerRaiseDead._generate_position(arg_8_0)
+ActionCareerBWNecromancerRaiseDead._generate_position = function (arg_8_0)
 	local var_8_0 = arg_8_0._position:unbox()
 	local var_8_1 = 1
 	local var_8_2 = 3

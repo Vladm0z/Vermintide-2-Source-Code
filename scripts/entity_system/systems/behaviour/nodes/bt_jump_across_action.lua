@@ -25,13 +25,13 @@ end
 
 BTJumpAcrossAction = class(BTJumpAcrossAction, BTNode)
 
-function BTJumpAcrossAction.init(arg_3_0, ...)
+BTJumpAcrossAction.init = function (arg_3_0, ...)
 	BTJumpAcrossAction.super.init(arg_3_0, ...)
 end
 
 BTJumpAcrossAction.name = "BTJumpAcrossAction"
 
-function BTJumpAcrossAction.enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTJumpAcrossAction.enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	Managers.state.debug:drawer({
 		mode = "retained",
 		name = "BTJumpAcrossAction"
@@ -71,7 +71,7 @@ function BTJumpAcrossAction.enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function BTJumpAcrossAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTJumpAcrossAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_2.jump_spline_ground = nil
 	arg_5_2.jump_spline_ledge = nil
 	arg_5_2.jump_entrance_pos = nil
@@ -100,7 +100,7 @@ function BTJumpAcrossAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, a
 	end
 end
 
-function BTJumpAcrossAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTJumpAcrossAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.navigation_extension
 	local var_6_1 = arg_6_2.locomotion_extension
 	local var_6_2 = POSITION_LOOKUP[arg_6_1]
@@ -205,7 +205,7 @@ function BTJumpAcrossAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return "running"
 end
 
-function BTJumpAcrossAction._debug_draw_update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTJumpAcrossAction._debug_draw_update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "BTJumpAcrossAction2"

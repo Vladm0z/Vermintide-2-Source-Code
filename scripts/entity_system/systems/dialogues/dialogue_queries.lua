@@ -3,7 +3,7 @@
 local var_0_0 = {}
 local var_0_1 = {}
 
-function var_0_0.get_sound_event_duration(arg_1_0, arg_1_1)
+var_0_0.get_sound_event_duration = function (arg_1_0, arg_1_1)
 	local var_1_0 = (arg_1_0.sound_events_duration or var_0_1)[arg_1_1]
 
 	if var_1_0 then
@@ -13,11 +13,11 @@ function var_0_0.get_sound_event_duration(arg_1_0, arg_1_1)
 	return DialogueSettings.sound_event_default_length
 end
 
-function var_0_0.get_dialogue_event(arg_2_0, arg_2_1)
+var_0_0.get_dialogue_event = function (arg_2_0, arg_2_1)
 	return arg_2_0.sound_events[arg_2_1], arg_2_0.localization_strings[arg_2_1], arg_2_0.face_animations[arg_2_1], arg_2_0.dialogue_animations[arg_2_1]
 end
 
-function var_0_0.build_randomized_indexes(arg_3_0)
+var_0_0.build_randomized_indexes = function (arg_3_0)
 	if arg_3_0.sound_events_weights then
 		local var_3_0 = {}
 		local var_3_1 = {}
@@ -81,7 +81,7 @@ function var_0_0.build_randomized_indexes(arg_3_0)
 	end
 end
 
-function var_0_0.get_dialogue_event_index(arg_4_0, arg_4_1)
+var_0_0.get_dialogue_event_index = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.sound_events_n
 
 	if var_4_0 == 1 then
@@ -106,7 +106,7 @@ function var_0_0.get_dialogue_event_index(arg_4_0, arg_4_1)
 	return arg_4_0.randomize_indexes[var_4_2], var_4_1
 end
 
-function var_0_0.get_filtered_dialogue_event_index(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.get_filtered_dialogue_event_index = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0, var_5_1 = var_0_0.get_dialogue_event_index(arg_5_0)
 	local var_5_2 = false
 
@@ -129,7 +129,7 @@ function var_0_0.get_filtered_dialogue_event_index(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_0
 end
 
-function var_0_0.filter_sound_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_0.filter_sound_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0.sound_events[arg_6_1]
 	local var_6_1 = arg_6_3[var_6_0]
 

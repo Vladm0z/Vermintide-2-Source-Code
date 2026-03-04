@@ -19,7 +19,7 @@ local function var_0_2(arg_1_0, ...)
 	end
 end
 
-function NetworkClient.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+NetworkClient.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0:set_state(NetworkClientStates.connecting)
 
 	arg_2_0.server_peer_id = arg_2_1
@@ -84,7 +84,7 @@ function NetworkClient.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5
 	Managers.mechanism:set_network_client(arg_2_0)
 end
 
-function NetworkClient.destroy(arg_3_0)
+NetworkClient.destroy = function (arg_3_0)
 	if Managers.eac:eac_ready_locally() then
 		Managers.eac:after_leave()
 	end
@@ -114,7 +114,7 @@ function NetworkClient.destroy(arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "Network Client")
 end
 
-function NetworkClient.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+NetworkClient.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_1:register(arg_4_0, "rpc_loading_synced", "rpc_notify_in_post_game", "rpc_game_started", "rpc_connection_failed", "rpc_notify_connected", IS_XB1 and "rpc_set_migration_host_xbox" or "rpc_set_migration_host", "rpc_client_update_lobby_data", "rpc_client_connection_state", "rpc_slot_reservation_request_peers")
 
 	arg_4_0._network_event_delegate = arg_4_1
@@ -127,7 +127,7 @@ function NetworkClient.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._match_handler:sync_data_up()
 end
 
-function NetworkClient.unregister_rpcs(arg_5_0)
+NetworkClient.unregister_rpcs = function (arg_5_0)
 	arg_5_0.voip:unregister_rpcs()
 	arg_5_0._profile_requester:unregister_rpcs()
 	arg_5_0._network_event_delegate:unregister(arg_5_0)
@@ -139,7 +139,7 @@ function NetworkClient.unregister_rpcs(arg_5_0)
 	arg_5_0._match_handler:unregister_rpcs()
 end
 
-function NetworkClient.rpc_connection_failed(arg_6_0, arg_6_1, arg_6_2)
+NetworkClient.rpc_connection_failed = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.fail_reason = NetworkLookup.connection_fails[arg_6_2]
 
 	var_0_2("rpc_connection_failed due to %s", arg_6_0.fail_reason)
@@ -147,7 +147,7 @@ function NetworkClient.rpc_connection_failed(arg_6_0, arg_6_1, arg_6_2)
 	var_0_2("Connection to server failed with reason %s", arg_6_0.fail_reason)
 end
 
-function NetworkClient.rpc_notify_connected(arg_7_0, arg_7_1)
+NetworkClient.rpc_notify_connected = function (arg_7_0, arg_7_1)
 	if not arg_7_0._notification_sent then
 		local var_7_0 = "peer_to_peer"
 
@@ -177,7 +177,7 @@ function NetworkClient.rpc_notify_connected(arg_7_0, arg_7_1)
 	end
 end
 
-function NetworkClient.is_network_state_fully_synced_for_peer(arg_8_0, arg_8_1)
+NetworkClient.is_network_state_fully_synced_for_peer = function (arg_8_0, arg_8_1)
 	if not Managers.mechanism:is_peer_fully_synced(arg_8_1) then
 		return false
 	end
@@ -185,7 +185,7 @@ function NetworkClient.is_network_state_fully_synced_for_peer(arg_8_0, arg_8_1)
 	return arg_8_0._network_state:is_peer_fully_synced(arg_8_1)
 end
 
-function NetworkClient.is_fully_synced(arg_9_0)
+NetworkClient.is_fully_synced = function (arg_9_0)
 	local var_9_0 = arg_9_0.my_peer_id
 
 	if not Managers.mechanism:is_peer_fully_synced(var_9_0) then
@@ -195,7 +195,7 @@ function NetworkClient.is_fully_synced(arg_9_0)
 	return arg_9_0._network_state:is_peer_fully_synced(var_9_0)
 end
 
-function NetworkClient.rpc_notify_in_post_game(arg_10_0, arg_10_1, arg_10_2)
+NetworkClient.rpc_notify_in_post_game = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0._is_in_post_game ~= arg_10_2 then
 		arg_10_0._is_in_post_game = arg_10_2
 
@@ -205,11 +205,11 @@ function NetworkClient.rpc_notify_in_post_game(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function NetworkClient.is_in_post_game(arg_11_0)
+NetworkClient.is_in_post_game = function (arg_11_0)
 	return arg_11_0._is_in_post_game
 end
 
-function NetworkClient.rpc_client_connection_state(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+NetworkClient.rpc_client_connection_state = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = NetworkLookup.connection_states[arg_12_3]
 
 	printf("rpc_client_connection_state Channel: %d, PeerID: %s, Reason: %s", arg_12_1, arg_12_2, var_12_0)
@@ -221,7 +221,7 @@ function NetworkClient.rpc_client_connection_state(arg_12_0, arg_12_1, arg_12_2,
 	end
 end
 
-function NetworkClient.rpc_loading_synced(arg_13_0, arg_13_1)
+NetworkClient.rpc_loading_synced = function (arg_13_0, arg_13_1)
 	var_0_2("rpc_loading_synced. State: %q", arg_13_0.state)
 
 	if arg_13_0.state ~= NetworkClientStates.game_started then
@@ -231,7 +231,7 @@ function NetworkClient.rpc_loading_synced(arg_13_0, arg_13_1)
 	end
 end
 
-function NetworkClient.rpc_set_migration_host(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+NetworkClient.rpc_set_migration_host = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if arg_14_3 then
 		local var_14_0 = Managers.player:player_from_peer_id(arg_14_2)
 		local var_14_1 = var_14_0 and var_14_0:name() or tostring(arg_14_2)
@@ -245,7 +245,7 @@ function NetworkClient.rpc_set_migration_host(arg_14_0, arg_14_1, arg_14_2, arg_
 	end
 end
 
-function NetworkClient.rpc_set_migration_host_xbox(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+NetworkClient.rpc_set_migration_host_xbox = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if arg_15_3 then
 		local var_15_0 = Managers.player:player_from_peer_id(arg_15_2)
 		local var_15_1 = var_15_0 and var_15_0:name() or tostring(arg_15_2)
@@ -261,23 +261,23 @@ function NetworkClient.rpc_set_migration_host_xbox(arg_15_0, arg_15_1, arg_15_2,
 	end
 end
 
-function NetworkClient.rpc_client_update_lobby_data(arg_16_0, arg_16_1)
+NetworkClient.rpc_client_update_lobby_data = function (arg_16_0, arg_16_1)
 	arg_16_0.lobby_client:force_update_lobby_data()
 end
 
-function NetworkClient.set_state(arg_17_0, arg_17_1)
+NetworkClient.set_state = function (arg_17_0, arg_17_1)
 	var_0_2("New State %s (old state %s)", arg_17_1, tostring(arg_17_0.state))
 
 	arg_17_0.state = arg_17_1
 end
 
-function NetworkClient.has_bad_state(arg_18_0)
+NetworkClient.has_bad_state = function (arg_18_0)
 	local var_18_0 = arg_18_0.state
 
 	return var_18_0 == NetworkClientStates.denied_enter_game or var_18_0 == NetworkClientStates.lost_connection_to_host or var_18_0 == NetworkClientStates.eac_match_failed, var_18_0
 end
 
-function NetworkClient.on_game_entered(arg_19_0)
+NetworkClient.on_game_entered = function (arg_19_0)
 	arg_19_0:set_state(NetworkClientStates.is_ingame)
 
 	local var_19_0 = PEER_ID_TO_CHANNEL[arg_19_0.server_peer_id]
@@ -286,15 +286,15 @@ function NetworkClient.on_game_entered(arg_19_0)
 	RPC.rpc_is_ingame(var_19_0)
 end
 
-function NetworkClient.request_profile(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+NetworkClient.request_profile = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	arg_20_0._profile_requester:request_profile(arg_20_0.my_peer_id, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 end
 
-function NetworkClient.profile_requester(arg_21_0)
+NetworkClient.profile_requester = function (arg_21_0)
 	return arg_21_0._profile_requester
 end
 
-function NetworkClient.rpc_game_started(arg_22_0, arg_22_1, arg_22_2)
+NetworkClient.rpc_game_started = function (arg_22_0, arg_22_1, arg_22_2)
 	Application.error(string.format("SETTING ROUND ID %s", tostring(arg_22_2)))
 
 	if IS_XB1 then
@@ -306,7 +306,7 @@ function NetworkClient.rpc_game_started(arg_22_0, arg_22_1, arg_22_2)
 	Managers.state.event:trigger("game_started")
 end
 
-function NetworkClient.on_level_loaded(arg_23_0, arg_23_1)
+NetworkClient.on_level_loaded = function (arg_23_0, arg_23_1)
 	var_0_2("on_level_loaded %s", arg_23_1)
 
 	if arg_23_0.state ~= NetworkClientStates.connecting then
@@ -320,7 +320,7 @@ function NetworkClient.on_level_loaded(arg_23_0, arg_23_1)
 	end
 end
 
-function NetworkClient._update_connections(arg_24_0)
+NetworkClient._update_connections = function (arg_24_0)
 	local var_24_0 = PEER_ID_TO_CHANNEL[arg_24_0.server_peer_id]
 
 	if not var_24_0 then
@@ -342,7 +342,7 @@ function NetworkClient._update_connections(arg_24_0)
 	end
 end
 
-function NetworkClient.update(arg_25_0, arg_25_1, arg_25_2)
+NetworkClient.update = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0._profile_requester:update(arg_25_1)
 	arg_25_0.profile_synchronizer:update()
 	arg_25_0:_update_connections()
@@ -382,7 +382,7 @@ function NetworkClient.update(arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0.voip:update(arg_25_1, arg_25_2)
 end
 
-function NetworkClient._update_eac_match(arg_26_0)
+NetworkClient._update_eac_match = function (arg_26_0)
 	if arg_26_0:has_bad_state() or not arg_26_0._notification_sent then
 		return
 	end
@@ -406,39 +406,39 @@ function NetworkClient._update_eac_match(arg_26_0)
 	end
 end
 
-function NetworkClient.can_enter_game(arg_27_0)
+NetworkClient.can_enter_game = function (arg_27_0)
 	return arg_27_0.state == NetworkClientStates.waiting_enter_game
 end
 
-function NetworkClient.is_ingame(arg_28_0)
+NetworkClient.is_ingame = function (arg_28_0)
 	return arg_28_0.state == NetworkClientStates.is_ingame or arg_28_0.state == NetworkClientStates.game_started
 end
 
-function NetworkClient.set_wait_for_state_loading(arg_29_0, arg_29_1)
+NetworkClient.set_wait_for_state_loading = function (arg_29_0, arg_29_1)
 	arg_29_0.wait_for_state_loading = arg_29_1
 end
 
-function NetworkClient.is_peer_ingame(arg_30_0, arg_30_1)
+NetworkClient.is_peer_ingame = function (arg_30_0, arg_30_1)
 	return arg_30_0._network_state:is_peer_ingame(arg_30_1)
 end
 
-function NetworkClient.get_peers(arg_31_0)
+NetworkClient.get_peers = function (arg_31_0)
 	return arg_31_0._network_state and arg_31_0._network_state:get_peers() or {}
 end
 
-function NetworkClient.get_side_order_state(arg_32_0)
+NetworkClient.get_side_order_state = function (arg_32_0)
 	return arg_32_0._network_state and arg_32_0._network_state:get_side_order_state()
 end
 
-function NetworkClient.get_network_state(arg_33_0)
+NetworkClient.get_network_state = function (arg_33_0)
 	return arg_33_0._network_state
 end
 
-function NetworkClient.is_peer_hot_join_synced(arg_34_0, arg_34_1)
+NetworkClient.is_peer_hot_join_synced = function (arg_34_0, arg_34_1)
 	return arg_34_0._network_state:is_peer_hot_join_synced(arg_34_1)
 end
 
-function NetworkClient.rpc_slot_reservation_request_peers(arg_35_0, arg_35_1)
+NetworkClient.rpc_slot_reservation_request_peers = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0.my_peer_id
 
 	printf("[NetworkClient] Game host requested peers to reserve. Responding with (%s)", var_35_0)
@@ -447,70 +447,70 @@ function NetworkClient.rpc_slot_reservation_request_peers(arg_35_0, arg_35_1)
 	}, arg_35_0.server_peer_id)
 end
 
-function NetworkClient.get_match_handler(arg_36_0)
+NetworkClient.get_match_handler = function (arg_36_0)
 	return arg_36_0._match_handler
 end
 
-function NetworkClient.get_session_breed_map(arg_37_0)
+NetworkClient.get_session_breed_map = function (arg_37_0)
 	return arg_37_0._network_state:get_session_breed_map()
 end
 
-function NetworkClient.get_loaded_session_breeds(arg_38_0, arg_38_1)
+NetworkClient.get_loaded_session_breeds = function (arg_38_0, arg_38_1)
 	return arg_38_0._network_state:get_loaded_session_breed_map(arg_38_1)
 end
 
-function NetworkClient.get_own_loaded_session_breed_map(arg_39_0)
+NetworkClient.get_own_loaded_session_breed_map = function (arg_39_0)
 	return arg_39_0._network_state:get_own_loaded_session_breed_map()
 end
 
-function NetworkClient.set_own_loaded_session_breeds(arg_40_0, arg_40_1)
+NetworkClient.set_own_loaded_session_breeds = function (arg_40_0, arg_40_1)
 	arg_40_0._network_state:set_own_loaded_session_breeds(arg_40_1)
 end
 
-function NetworkClient.get_startup_breeds(arg_41_0)
+NetworkClient.get_startup_breeds = function (arg_41_0)
 	return arg_41_0._network_state:get_startup_breeds()
 end
 
-function NetworkClient.get_session_pickup_map(arg_42_0)
+NetworkClient.get_session_pickup_map = function (arg_42_0)
 	return arg_42_0._network_state:get_session_pickup_map()
 end
 
-function NetworkClient.get_own_loaded_session_pickup_map(arg_43_0)
+NetworkClient.get_own_loaded_session_pickup_map = function (arg_43_0)
 	return arg_43_0._network_state:get_own_loaded_session_pickup_map()
 end
 
-function NetworkClient.set_own_loaded_session_pickups(arg_44_0, arg_44_1)
+NetworkClient.set_own_loaded_session_pickups = function (arg_44_0, arg_44_1)
 	arg_44_0._network_state:set_own_loaded_session_pickups(arg_44_1)
 end
 
-function NetworkClient.get_loaded_session_pickups(arg_45_0, arg_45_1)
+NetworkClient.get_loaded_session_pickups = function (arg_45_0, arg_45_1)
 	return arg_45_0._network_state:get_loaded_session_pickup_map(arg_45_1)
 end
 
-function NetworkClient.get_initialized_mutator_map(arg_46_0)
+NetworkClient.get_initialized_mutator_map = function (arg_46_0)
 	return arg_46_0._network_state:get_initialized_mutator_map()
 end
 
-function NetworkClient.get_game_mode_event_data(arg_47_0)
+NetworkClient.get_game_mode_event_data = function (arg_47_0)
 	return arg_47_0._network_state:get_game_mode_event_data()
 end
 
-function NetworkClient.has_unlocked_dlc(arg_48_0, arg_48_1, arg_48_2)
+NetworkClient.has_unlocked_dlc = function (arg_48_0, arg_48_1, arg_48_2)
 	return arg_48_0._network_state:get_unlocked_dlcs_set(arg_48_1)[arg_48_2]
 end
 
-function NetworkClient.get_loaded_mutator_map(arg_49_0, arg_49_1)
+NetworkClient.get_loaded_mutator_map = function (arg_49_0, arg_49_1)
 	return arg_49_0._network_state:get_loaded_mutator_map(arg_49_1)
 end
 
-function NetworkClient.get_own_loaded_mutator_map(arg_50_0)
+NetworkClient.get_own_loaded_mutator_map = function (arg_50_0)
 	return arg_50_0._network_state:get_own_loaded_mutator_map()
 end
 
-function NetworkClient.set_own_loaded_mutator_map(arg_51_0, arg_51_1)
+NetworkClient.set_own_loaded_mutator_map = function (arg_51_0, arg_51_1)
 	arg_51_0._network_state:set_own_loaded_mutator_map(arg_51_1)
 end
 
-function NetworkClient.state_revision(arg_52_0)
+NetworkClient.state_revision = function (arg_52_0)
 	return arg_52_0._network_state:get_revision()
 end

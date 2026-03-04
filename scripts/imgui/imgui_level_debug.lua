@@ -46,7 +46,7 @@ local function var_0_6(arg_1_0, arg_1_1)
 	Imgui.text_colored(arg_1_0, arg_1_1[1], arg_1_1[2], arg_1_1[3], 255)
 end
 
-function ImguiLevelDebug.init(arg_2_0)
+ImguiLevelDebug.init = function (arg_2_0)
 	arg_2_0._error = ""
 	arg_2_0._index = 1
 	arg_2_0._search_results = {}
@@ -59,11 +59,11 @@ function ImguiLevelDebug.init(arg_2_0)
 	arg_2_0._selected_respawn_unit = nil
 end
 
-function ImguiLevelDebug.is_persistent(arg_3_0)
+ImguiLevelDebug.is_persistent = function (arg_3_0)
 	return true
 end
 
-function ImguiLevelDebug._load_flow_events(arg_4_0)
+ImguiLevelDebug._load_flow_events = function (arg_4_0)
 	local var_4_0 = Managers.level_transition_handler:get_current_level_keys()
 
 	printf("[ImguiLevelDebug] Loading flow events for %s", var_4_0)
@@ -115,11 +115,11 @@ function ImguiLevelDebug._load_flow_events(arg_4_0)
 	return ""
 end
 
-function ImguiLevelDebug.update(arg_5_0)
+ImguiLevelDebug.update = function (arg_5_0)
 	return
 end
 
-function ImguiLevelDebug.draw(arg_6_0)
+ImguiLevelDebug.draw = function (arg_6_0)
 	local var_6_0 = Imgui.begin_window("Level helper")
 	local var_6_1 = Managers.state
 	local var_6_2 = var_6_1 and var_6_1.game_mode
@@ -140,7 +140,7 @@ function ImguiLevelDebug.draw(arg_6_0)
 	return var_6_0
 end
 
-function ImguiLevelDebug.draw_flow_debug(arg_7_0)
+ImguiLevelDebug.draw_flow_debug = function (arg_7_0)
 	if Imgui.button("Load flow events for the current level") then
 		arg_7_0._error = arg_7_0:_load_flow_events()
 	end
@@ -177,7 +177,7 @@ local function var_0_7(arg_8_0)
 	return Level.unit_by_index(var_8_1, arg_8_0)
 end
 
-function ImguiLevelDebug.draw_unit_finder(arg_9_0)
+ImguiLevelDebug.draw_unit_finder = function (arg_9_0)
 	arg_9_0._unit_level_index = Imgui.input_int("Level index", arg_9_0._unit_level_index)
 
 	local var_9_0, var_9_1 = pcall(var_0_7, arg_9_0._unit_level_index)
@@ -203,7 +203,7 @@ function ImguiLevelDebug.draw_unit_finder(arg_9_0)
 	end
 end
 
-function ImguiLevelDebug.draw_respawn_debug(arg_10_0, arg_10_1)
+ImguiLevelDebug.draw_respawn_debug = function (arg_10_0, arg_10_1)
 	arg_10_0._draw_respawn_points = Imgui.checkbox("Draw Respawn Points", arg_10_0._draw_respawn_points)
 	arg_10_0._show_valid_points_only = Imgui.checkbox("Show Valid Points Only", arg_10_0._show_valid_points_only)
 

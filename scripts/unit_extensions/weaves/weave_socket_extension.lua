@@ -3,7 +3,7 @@
 WeaveSocketExtension = class(WeaveSocketExtension, BaseObjectiveExtension)
 WeaveSocketExtension.NAME = "WeaveSocketExtension"
 
-function WeaveSocketExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveSocketExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveSocketExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._value = 0
@@ -13,7 +13,7 @@ function WeaveSocketExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._num_closed_sockets = 0
 end
 
-function WeaveSocketExtension.extensions_ready(arg_2_0)
+WeaveSocketExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._objective_socket_extension = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
 
 	if arg_2_0._objective_socket_extension then
@@ -22,25 +22,25 @@ function WeaveSocketExtension.extensions_ready(arg_2_0)
 	end
 end
 
-function WeaveSocketExtension.display_name(arg_3_0)
+WeaveSocketExtension.display_name = function (arg_3_0)
 	return "objective_sockets_name_single"
 end
 
-function WeaveSocketExtension.initial_sync_data(arg_4_0, arg_4_1)
+WeaveSocketExtension.initial_sync_data = function (arg_4_0, arg_4_1)
 	arg_4_1.value = arg_4_0:get_percentage_done()
 end
 
-function WeaveSocketExtension._set_objective_data(arg_5_0, arg_5_1)
+WeaveSocketExtension._set_objective_data = function (arg_5_0, arg_5_1)
 	arg_5_0._on_start_func = arg_5_1.on_start_func
 	arg_5_0._on_progress_func = arg_5_1.on_progress_func
 	arg_5_0._on_complete_func = arg_5_1.on_complete_func
 end
 
-function WeaveSocketExtension._activate(arg_6_0)
+WeaveSocketExtension._activate = function (arg_6_0)
 	Unit.flow_event(arg_6_0._unit, "enable_socket")
 end
 
-function WeaveSocketExtension._deactivate(arg_7_0)
+WeaveSocketExtension._deactivate = function (arg_7_0)
 	local var_7_0 = Unit.local_position(arg_7_0._unit, 0)
 
 	for iter_7_0 = 1, 15 do
@@ -52,11 +52,11 @@ function WeaveSocketExtension._deactivate(arg_7_0)
 	end
 end
 
-function WeaveSocketExtension.is_done(arg_8_0)
+WeaveSocketExtension.is_done = function (arg_8_0)
 	return arg_8_0._is_done
 end
 
-function WeaveSocketExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveSocketExtension._server_update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._objective_socket_extension.num_closed_sockets
 
 	if var_9_0 > arg_9_0._num_closed_sockets then
@@ -80,11 +80,11 @@ function WeaveSocketExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function WeaveSocketExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+WeaveSocketExtension._client_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function WeaveSocketExtension.get_percentage_done(arg_11_0)
+WeaveSocketExtension.get_percentage_done = function (arg_11_0)
 	if arg_11_0._num_sockets == 0 then
 		return 0
 	end

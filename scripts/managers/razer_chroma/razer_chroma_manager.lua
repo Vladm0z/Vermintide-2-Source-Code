@@ -9,7 +9,7 @@ RAZER_ADD_ANIMATION_TYPE = {
 	DO_NOTHING = 1
 }
 
-function RazerChromaManager.init(arg_1_0)
+RazerChromaManager.init = function (arg_1_0)
 	arg_1_0._initialized = false
 	arg_1_0._current_animations = {}
 	arg_1_0._is_playing = false
@@ -18,11 +18,11 @@ function RazerChromaManager.init(arg_1_0)
 	arg_1_0._progress = 0
 end
 
-function RazerChromaManager.destroy(arg_2_0)
+RazerChromaManager.destroy = function (arg_2_0)
 	arg_2_0:unload_packages()
 end
 
-function RazerChromaManager.load_packages(arg_3_0)
+RazerChromaManager.load_packages = function (arg_3_0)
 	if not rawget(_G, "RazerChroma") or not GameSettingsDevelopment.use_razer_chroma or arg_3_0._initialized then
 		return
 	end
@@ -30,7 +30,7 @@ function RazerChromaManager.load_packages(arg_3_0)
 	Managers.package:load("resource_packages/razer_chroma", "RazerChroma", callback(arg_3_0, "cb_load_chroma_files"), true, false)
 end
 
-function RazerChromaManager.unload_packages(arg_4_0)
+RazerChromaManager.unload_packages = function (arg_4_0)
 	if not arg_4_0._initialized then
 		return
 	end
@@ -43,7 +43,7 @@ function RazerChromaManager.unload_packages(arg_4_0)
 	arg_4_0._initialized = false
 end
 
-function RazerChromaManager.cb_load_chroma_files(arg_5_0)
+RazerChromaManager.cb_load_chroma_files = function (arg_5_0)
 	for iter_5_0, iter_5_1 in pairs(RazerChromaSettings) do
 		local var_5_0 = iter_5_1.file_path
 		local var_5_1 = RazerChroma.load_chroma_file(var_5_0)
@@ -56,7 +56,7 @@ function RazerChromaManager.cb_load_chroma_files(arg_5_0)
 	arg_5_0:lit_keybindings(true)
 end
 
-function RazerChromaManager.update(arg_6_0, arg_6_1)
+RazerChromaManager.update = function (arg_6_0, arg_6_1)
 	if not arg_6_0._initialized or not GameSettingsDevelopment.use_razer_chroma then
 		return
 	end
@@ -65,7 +65,7 @@ function RazerChromaManager.update(arg_6_0, arg_6_1)
 	arg_6_0:_update_current_animations(arg_6_1)
 end
 
-function RazerChromaManager._check_should_play_conditions(arg_7_0)
+RazerChromaManager._check_should_play_conditions = function (arg_7_0)
 	local var_7_0
 	local var_7_1
 	local var_7_2
@@ -83,13 +83,13 @@ function RazerChromaManager._check_should_play_conditions(arg_7_0)
 	end
 end
 
-function RazerChromaManager._get_button_name(arg_8_0, arg_8_1)
+RazerChromaManager._get_button_name = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1[arg_8_0][2]
 
 	return var_8_0 ~= "unassigned_keymap" and Keyboard.button_name(var_8_0) or nil
 end
 
-function RazerChromaManager.lit_keybindings(arg_9_0, arg_9_1)
+RazerChromaManager.lit_keybindings = function (arg_9_0, arg_9_1)
 	if not arg_9_0._initialized then
 		return
 	end
@@ -129,7 +129,7 @@ function RazerChromaManager.lit_keybindings(arg_9_0, arg_9_1)
 	arg_9_0:set_keys_color(arg_9_0._default_keys, 255, 0, 0)
 end
 
-function RazerChromaManager._update_current_animations(arg_10_0, arg_10_1)
+RazerChromaManager._update_current_animations = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._current_animations[1]
 
 	if not var_10_0 then
@@ -164,23 +164,23 @@ function RazerChromaManager._update_current_animations(arg_10_0, arg_10_1)
 	end
 end
 
-function RazerChromaManager.set_keyboard_color(arg_11_0, arg_11_1, arg_11_2)
+RazerChromaManager.set_keyboard_color = function (arg_11_0, arg_11_1, arg_11_2)
 	RazerChroma.set_keyboard_color(arg_11_0, arg_11_1, arg_11_2)
 end
 
-function RazerChromaManager.set_mouse_color(arg_12_0, arg_12_1, arg_12_2)
+RazerChromaManager.set_mouse_color = function (arg_12_0, arg_12_1, arg_12_2)
 	RazerChroma.set_mouse_color(arg_12_0, arg_12_1, arg_12_2)
 end
 
-function RazerChromaManager.reset_keyboard()
+RazerChromaManager.reset_keyboard = function ()
 	RazerChroma.set_keyboard_color(0, 0, 0)
 end
 
-function RazerChromaManager.reset_mouse()
+RazerChromaManager.reset_mouse = function ()
 	RazerChroma.set_mouse_color(0, 0, 0)
 end
 
-function RazerChromaManager.play_animation(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+RazerChromaManager.play_animation = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	if not arg_15_0._initialized then
 		return
 	end
@@ -228,7 +228,7 @@ function RazerChromaManager.play_animation(arg_15_0, arg_15_1, arg_15_2, arg_15_
 	arg_15_0:_start_animation(var_15_3)
 end
 
-function RazerChromaManager._start_animation(arg_16_0, arg_16_1)
+RazerChromaManager._start_animation = function (arg_16_0, arg_16_1)
 	if arg_16_1.on_play_func then
 		arg_16_1.on_play_func(arg_16_0)
 	else
@@ -240,7 +240,7 @@ function RazerChromaManager._start_animation(arg_16_0, arg_16_1)
 	arg_16_0._progress = 0
 end
 
-function RazerChromaManager.stop_animation(arg_17_0)
+RazerChromaManager.stop_animation = function (arg_17_0)
 	local var_17_0 = arg_17_0._current_animations[1]
 
 	if not var_17_0 then
@@ -253,7 +253,7 @@ function RazerChromaManager.stop_animation(arg_17_0)
 	arg_17_0._is_playing = false
 end
 
-function RazerChromaManager._string_to_key_mapping(arg_18_0, arg_18_1)
+RazerChromaManager._string_to_key_mapping = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1
 
 	if tonumber(var_18_0) then
@@ -269,7 +269,7 @@ function RazerChromaManager._string_to_key_mapping(arg_18_0, arg_18_1)
 	return RazerChroma[string.upper(var_18_0)]
 end
 
-function RazerChromaManager.set_keys_color(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+RazerChromaManager.set_keys_color = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	assert(type(arg_19_1) == "table")
 
 	for iter_19_0, iter_19_1 in pairs(arg_19_1) do

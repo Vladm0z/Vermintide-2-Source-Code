@@ -15,7 +15,7 @@ local function var_0_7(arg_1_0)
 	return arg_1_0:get("toggle_menu", true) or arg_1_0:get("back", true) or arg_1_0:get("skip_pressed", true) or arg_1_0:get("left_press")
 end
 
-function RewardPopupUI.init(arg_2_0, arg_2_1)
+RewardPopupUI.init = function (arg_2_0, arg_2_1)
 	arg_2_0._ui_top_renderer = arg_2_1.ui_top_renderer
 	arg_2_0._input_manager = arg_2_1.input_manager
 	arg_2_0.world = arg_2_1.world or arg_2_1.ui_renderer.world
@@ -29,7 +29,7 @@ function RewardPopupUI.init(arg_2_0, arg_2_1)
 	arg_2_0:_setup_input()
 end
 
-function RewardPopupUI.create_ui_elements(arg_3_0)
+RewardPopupUI.create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = var_0_0.widget_definitions
@@ -52,13 +52,13 @@ function RewardPopupUI.create_ui_elements(arg_3_0)
 	arg_3_0._done_reset_speed_up_popup = false
 end
 
-function RewardPopupUI.set_input_manager(arg_4_0, arg_4_1)
+RewardPopupUI.set_input_manager = function (arg_4_0, arg_4_1)
 	arg_4_0._input_manager = arg_4_1
 
 	arg_4_0:_setup_input()
 end
 
-function RewardPopupUI.destroy(arg_5_0)
+RewardPopupUI.destroy = function (arg_5_0)
 	arg_5_0:_release_input()
 
 	arg_5_0._ui_animator = nil
@@ -70,11 +70,11 @@ function RewardPopupUI.destroy(arg_5_0)
 	end
 end
 
-function RewardPopupUI.set_visible(arg_6_0, arg_6_1)
+RewardPopupUI.set_visible = function (arg_6_0, arg_6_1)
 	arg_6_0._is_visible = arg_6_1
 end
 
-function RewardPopupUI.update(arg_7_0, arg_7_1, arg_7_2)
+RewardPopupUI.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0.input_acquired and arg_7_0:is_presentation_complete() then
 		arg_7_0:_release_input()
 	end
@@ -115,7 +115,7 @@ function RewardPopupUI.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:draw(arg_7_1)
 end
 
-function RewardPopupUI._update_animations(arg_8_0, arg_8_1)
+RewardPopupUI._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._animations
 	local var_8_1 = arg_8_0._ui_animator
 
@@ -136,7 +136,7 @@ function RewardPopupUI._update_animations(arg_8_0, arg_8_1)
 	return var_8_2
 end
 
-function RewardPopupUI.draw(arg_9_0, arg_9_1)
+RewardPopupUI.draw = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._ui_top_renderer
 	local var_9_1 = arg_9_0._ui_scenegraph
 	local var_9_2 = arg_9_0._input_manager:get_service(var_0_6)
@@ -192,7 +192,7 @@ function RewardPopupUI.draw(arg_9_0, arg_9_1)
 	end
 end
 
-function RewardPopupUI.display_presentation(arg_10_0, arg_10_1, arg_10_2)
+RewardPopupUI.display_presentation = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._draw_widgets = true
 	arg_10_0._ui_animator = UIAnimator:new(arg_10_0._ui_scenegraph, var_0_2)
 	arg_10_0._animations = {}
@@ -210,15 +210,15 @@ function RewardPopupUI.display_presentation(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function RewardPopupUI.is_presentation_active(arg_11_0)
+RewardPopupUI.is_presentation_active = function (arg_11_0)
 	return arg_11_0._animation_presentation_data ~= nil
 end
 
-function RewardPopupUI.is_presentation_complete(arg_12_0)
+RewardPopupUI.is_presentation_complete = function (arg_12_0)
 	return arg_12_0._presentation_complete
 end
 
-function RewardPopupUI.on_presentation_complete(arg_13_0)
+RewardPopupUI.on_presentation_complete = function (arg_13_0)
 	arg_13_0._presentation_complete = true
 	arg_13_0._draw_widgets = false
 
@@ -234,7 +234,7 @@ function RewardPopupUI.on_presentation_complete(arg_13_0)
 	end
 end
 
-function RewardPopupUI.start_presentation_animation(arg_14_0, arg_14_1, arg_14_2)
+RewardPopupUI.start_presentation_animation = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = {
 		wwise_world = arg_14_0._wwise_world
 	}
@@ -268,7 +268,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 	var_15_0[2] = arg_15_2
 end
 
-function RewardPopupUI._hacky_get_tooltip_size(arg_16_0, arg_16_1)
+RewardPopupUI._hacky_get_tooltip_size = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._ui_top_renderer
 	local var_16_1 = arg_16_0._render_settings
 	local var_16_2 = var_16_1.alpha_multiplier
@@ -284,7 +284,7 @@ function RewardPopupUI._hacky_get_tooltip_size(arg_16_0, arg_16_1)
 	return arg_16_1.style.item.item_presentation_height
 end
 
-function RewardPopupUI._setup_entry_widget(arg_17_0, arg_17_1, arg_17_2)
+RewardPopupUI._setup_entry_widget = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = var_0_0.widget_definitions
 	local var_17_1 = arg_17_1.value
 	local var_17_2 = arg_17_1.widget_type and var_17_0[arg_17_1.widget_type] and arg_17_1.widget_type or "item"
@@ -488,7 +488,7 @@ function RewardPopupUI._setup_entry_widget(arg_17_0, arg_17_1, arg_17_2)
 	return var_17_4, var_17_3 and 0 or var_17_8
 end
 
-function RewardPopupUI._setup_presentation(arg_18_0, arg_18_1)
+RewardPopupUI._setup_presentation = function (arg_18_0, arg_18_1)
 	local var_18_0 = #arg_18_1
 	local var_18_1 = {}
 	local var_18_2 = {
@@ -560,7 +560,7 @@ function RewardPopupUI._setup_presentation(arg_18_0, arg_18_1)
 	return var_18_2
 end
 
-function RewardPopupUI._align_entry_widgets(arg_19_0, arg_19_1)
+RewardPopupUI._align_entry_widgets = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ui_scenegraph
 	local var_19_1 = arg_19_1.widgets_data
 
@@ -569,7 +569,7 @@ function RewardPopupUI._align_entry_widgets(arg_19_0, arg_19_1)
 	end
 end
 
-function RewardPopupUI._play_animation(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+RewardPopupUI._play_animation = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_2 .. "_key"
 	local var_20_1 = arg_20_1[var_20_0]
 
@@ -582,7 +582,7 @@ function RewardPopupUI._play_animation(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	end
 end
 
-function RewardPopupUI._update_presentation_animation(arg_21_0, arg_21_1)
+RewardPopupUI._update_presentation_animation = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._animation_presentation_data
 
 	if not var_21_0 or var_21_0.complete then
@@ -653,7 +653,7 @@ function RewardPopupUI._update_presentation_animation(arg_21_0, arg_21_1)
 	arg_21_0:on_presentation_complete()
 end
 
-function RewardPopupUI._handle_input(arg_22_0, arg_22_1)
+RewardPopupUI._handle_input = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0:input_service()
 
 	arg_22_1.claimed = arg_22_1.claimed or var_22_0:get("skip_pressed", true) or var_22_0:get("confirm_press", true) or UIUtils.is_button_pressed(arg_22_0.claim_button_widget)
@@ -723,7 +723,7 @@ function RewardPopupUI._handle_input(arg_22_0, arg_22_1)
 	return true
 end
 
-function RewardPopupUI.set_fullscreen_effect_enable_state(arg_23_0, arg_23_1, arg_23_2)
+RewardPopupUI.set_fullscreen_effect_enable_state = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_0._skip_blur then
 		return
 	end
@@ -744,7 +744,7 @@ function RewardPopupUI.set_fullscreen_effect_enable_state(arg_23_0, arg_23_1, ar
 	arg_23_0._fullscreen_effect_enabled = arg_23_1
 end
 
-function RewardPopupUI._setup_input(arg_24_0)
+RewardPopupUI._setup_input = function (arg_24_0)
 	local var_24_0 = arg_24_0._input_manager
 
 	if var_24_0 and not arg_24_0._input_set_up then
@@ -757,7 +757,7 @@ function RewardPopupUI._setup_input(arg_24_0)
 	end
 end
 
-function RewardPopupUI._acquire_input(arg_25_0)
+RewardPopupUI._acquire_input = function (arg_25_0)
 	if not arg_25_0.input_acquired then
 		local var_25_0 = arg_25_0._input_manager
 
@@ -781,7 +781,7 @@ function RewardPopupUI._acquire_input(arg_25_0)
 	end
 end
 
-function RewardPopupUI._release_input(arg_26_0)
+RewardPopupUI._release_input = function (arg_26_0)
 	if arg_26_0.input_acquired then
 		local var_26_0 = arg_26_0._input_manager
 
@@ -801,7 +801,7 @@ function RewardPopupUI._release_input(arg_26_0)
 	end
 end
 
-function RewardPopupUI.input_service(arg_27_0)
+RewardPopupUI.input_service = function (arg_27_0)
 	if arg_27_0._input_set_up and arg_27_0.input_acquired then
 		return arg_27_0._input_manager:get_service(var_0_6)
 	else

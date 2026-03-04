@@ -2,7 +2,7 @@
 
 CareerAbilityChaosTrollVomit = class(CareerAbilityChaosTrollVomit)
 
-function CareerAbilityChaosTrollVomit.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityChaosTrollVomit.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -19,7 +19,7 @@ function CareerAbilityChaosTrollVomit.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0._input_manager = Managers.input
 end
 
-function CareerAbilityChaosTrollVomit.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+CareerAbilityChaosTrollVomit.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
@@ -35,15 +35,15 @@ function CareerAbilityChaosTrollVomit.extensions_ready(arg_2_0, arg_2_1, arg_2_2
 	end
 end
 
-function CareerAbilityChaosTrollVomit.destroy(arg_3_0)
+CareerAbilityChaosTrollVomit.destroy = function (arg_3_0)
 	return
 end
 
-function CareerAbilityChaosTrollVomit.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityChaosTrollVomit.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	return
 end
 
-function CareerAbilityChaosTrollVomit.was_triggered(arg_5_0)
+CareerAbilityChaosTrollVomit.was_triggered = function (arg_5_0)
 	local var_5_0 = arg_5_0._input_extension
 
 	if not var_5_0 then
@@ -65,7 +65,7 @@ function CareerAbilityChaosTrollVomit.was_triggered(arg_5_0)
 	return false
 end
 
-function CareerAbilityChaosTrollVomit._ability_available(arg_6_0)
+CareerAbilityChaosTrollVomit._ability_available = function (arg_6_0)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = arg_6_0._status_extension
 	local var_6_2 = arg_6_0._locomotion_extension
@@ -74,18 +74,18 @@ function CareerAbilityChaosTrollVomit._ability_available(arg_6_0)
 	return var_6_0:can_use_activated_ability(arg_6_0._ability_data.ability_id) and not var_6_1:is_disabled() and var_6_2:is_on_ground() and not var_6_3
 end
 
-function CareerAbilityChaosTrollVomit.finish(arg_7_0, arg_7_1)
+CareerAbilityChaosTrollVomit.finish = function (arg_7_0, arg_7_1)
 	return
 end
 
-function CareerAbilityChaosTrollVomit.stop(arg_8_0, arg_8_1)
+CareerAbilityChaosTrollVomit.stop = function (arg_8_0, arg_8_1)
 	return
 end
 
-function CareerAbilityChaosTrollVomit._start(arg_9_0)
+CareerAbilityChaosTrollVomit._start = function (arg_9_0)
 	arg_9_0:_play_vo()
 end
 
-function CareerAbilityChaosTrollVomit._play_vo(arg_10_0)
+CareerAbilityChaosTrollVomit._play_vo = function (arg_10_0)
 	return
 end

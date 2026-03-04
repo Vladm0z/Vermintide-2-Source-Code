@@ -61,14 +61,14 @@ end
 
 AimTemplates.ungor_archer = {
 	owner = {
-		init = function(arg_2_0, arg_2_1)
+		init = function (arg_2_0, arg_2_1)
 			arg_2_1.blackboard = BLACKBOARDS[arg_2_0]
 			arg_2_1.ai_extension = ScriptUnit.extension(arg_2_0, "ai_system")
 			arg_2_1.head_constraint_target = Unit.animation_find_constraint_target(arg_2_0, "aim_bow_target")
 			arg_2_1.previous_look_target = Vector3Box()
 			arg_2_1.look_at_on_animation = "aim_bow_on"
 		end,
-		update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = arg_3_3.blackboard
 			local var_3_1 = arg_3_3.ai_extension:current_action_name()
 			local var_3_2 = Managers.state.network:game()
@@ -120,7 +120,7 @@ AimTemplates.ungor_archer = {
 				Unit.animation_event(arg_3_0, "aim_bow_off")
 			end
 		end,
-		leave = function(arg_4_0, arg_4_1)
+		leave = function (arg_4_0, arg_4_1)
 			if arg_4_1.is_using_head_constraint then
 				arg_4_1.is_using_head_constraint = false
 
@@ -129,12 +129,12 @@ AimTemplates.ungor_archer = {
 		end
 	},
 	husk = {
-		init = function(arg_5_0, arg_5_1)
+		init = function (arg_5_0, arg_5_1)
 			arg_5_1.head_constraint_target = Unit.animation_find_constraint_target(arg_5_0, "aim_bow_target")
 			arg_5_1.previous_look_target = Vector3Box()
 			arg_5_1.look_at_on_animation = "aim_bow_on"
 		end,
-		update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Managers.state.network:game()
 			local var_6_1 = Managers.state.unit_storage
 			local var_6_2 = var_6_1:go_id(arg_6_0)
@@ -169,7 +169,7 @@ AimTemplates.ungor_archer = {
 				end
 			end
 		end,
-		leave = function(arg_7_0, arg_7_1)
+		leave = function (arg_7_0, arg_7_1)
 			if arg_7_1.is_using_head_constraint then
 				arg_7_1.is_using_head_constraint = false
 

@@ -9,7 +9,7 @@ RoundEndEmblemPopupUI = class(RoundEndEmblemPopupUI)
 
 local var_0_4 = false
 
-function RoundEndEmblemPopupUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+RoundEndEmblemPopupUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._input_manager = arg_1_1.input_manager
@@ -27,15 +27,15 @@ function RoundEndEmblemPopupUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0:_set_sub_title_text(arg_1_4 or "")
 end
 
-function RoundEndEmblemPopupUI._set_title_text(arg_2_0, arg_2_1)
+RoundEndEmblemPopupUI._set_title_text = function (arg_2_0, arg_2_1)
 	arg_2_0._title_title_widget.content.text = arg_2_1
 end
 
-function RoundEndEmblemPopupUI._set_sub_title_text(arg_3_0, arg_3_1)
+RoundEndEmblemPopupUI._set_sub_title_text = function (arg_3_0, arg_3_1)
 	arg_3_0._sub_title_text_widget.content.text = arg_3_1
 end
 
-function RoundEndEmblemPopupUI._create_ui_elements(arg_4_0)
+RoundEndEmblemPopupUI._create_ui_elements = function (arg_4_0)
 	local var_4_0 = "silver"
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
@@ -56,11 +56,11 @@ function RoundEndEmblemPopupUI._create_ui_elements(arg_4_0)
 	arg_4_0._animation_key = arg_4_0:start_presentation_animation(var_4_2)
 end
 
-function RoundEndEmblemPopupUI.set_input_manager(arg_5_0, arg_5_1)
+RoundEndEmblemPopupUI.set_input_manager = function (arg_5_0, arg_5_1)
 	arg_5_0._input_manager = arg_5_1
 end
 
-function RoundEndEmblemPopupUI.destroy(arg_6_0)
+RoundEndEmblemPopupUI.destroy = function (arg_6_0)
 	arg_6_0._ui_animator = nil
 
 	if arg_6_0._viewport_world and arg_6_0._fullscreen_effect_enabled then
@@ -68,7 +68,7 @@ function RoundEndEmblemPopupUI.destroy(arg_6_0)
 	end
 end
 
-function RoundEndEmblemPopupUI.update(arg_7_0, arg_7_1)
+RoundEndEmblemPopupUI.update = function (arg_7_0, arg_7_1)
 	if var_0_4 then
 		var_0_4 = false
 
@@ -80,7 +80,7 @@ function RoundEndEmblemPopupUI.update(arg_7_0, arg_7_1)
 	arg_7_0:_draw(arg_7_1)
 end
 
-function RoundEndEmblemPopupUI._update_animations(arg_8_0, arg_8_1)
+RoundEndEmblemPopupUI._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._animations
 	local var_8_1 = arg_8_0._ui_animator
 
@@ -111,7 +111,7 @@ function RoundEndEmblemPopupUI._update_animations(arg_8_0, arg_8_1)
 	return var_8_3
 end
 
-function RoundEndEmblemPopupUI._draw(arg_9_0, arg_9_1)
+RoundEndEmblemPopupUI._draw = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._ui_renderer
 	local var_9_1 = arg_9_0._ui_top_renderer
 	local var_9_2 = arg_9_0._ui_scenegraph
@@ -138,11 +138,11 @@ function RoundEndEmblemPopupUI._draw(arg_9_0, arg_9_1)
 	var_9_4.alpha_multiplier = var_9_5
 end
 
-function RoundEndEmblemPopupUI.is_presentation_complete(arg_10_0)
+RoundEndEmblemPopupUI.is_presentation_complete = function (arg_10_0)
 	return not arg_10_0._animations_running
 end
 
-function RoundEndEmblemPopupUI.start_presentation_animation(arg_11_0, arg_11_1, arg_11_2)
+RoundEndEmblemPopupUI.start_presentation_animation = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = {
 		wwise_world = arg_11_0._wwise_world,
 		render_settings = arg_11_0._render_settings
@@ -161,7 +161,7 @@ function RoundEndEmblemPopupUI.start_presentation_animation(arg_11_0, arg_11_1, 
 	return var_11_3
 end
 
-function RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+RoundEndEmblemPopupUI.set_fullscreen_effect_enable_state = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = World.get_data(arg_12_3, "shading_environment")
 
 	arg_12_2 = arg_12_2 or arg_12_1 and 1 or 0

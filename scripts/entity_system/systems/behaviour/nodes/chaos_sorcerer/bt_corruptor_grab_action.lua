@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCorruptorGrabAction = class(BTCorruptorGrabAction, BTNode)
 
-function BTCorruptorGrabAction.init(arg_1_0, ...)
+BTCorruptorGrabAction.init = function (arg_1_0, ...)
 	BTCorruptorGrabAction.super.init(arg_1_0, ...)
 end
 
 BTCorruptorGrabAction.name = "BTCorruptorGrabAction"
 
-function BTCorruptorGrabAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCorruptorGrabAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.active_node = BTCorruptorGrabAction
 	arg_2_2.attacks_done = 0
@@ -26,7 +26,7 @@ function BTCorruptorGrabAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-function BTCorruptorGrabAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCorruptorGrabAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_2.action.ignore_bot_threat then
 		Managers.state.entity:system("ai_bot_group_system"):ranged_attack_ended(arg_3_1, arg_3_2.corruptor_target, "corruptor_grabbed", 2)
 	end
@@ -72,7 +72,7 @@ function BTCorruptorGrabAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	arg_3_2.vanish_countdown = arg_3_3
 end
 
-function BTCorruptorGrabAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCorruptorGrabAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = arg_4_2.corruptor_target
 
@@ -133,7 +133,7 @@ function BTCorruptorGrabAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTCorruptorGrabAction.attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTCorruptorGrabAction.attack = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_4.action
 	local var_5_1 = arg_5_4.locomotion_extension
 	local var_5_2 = arg_5_4.corruptor_target
@@ -161,7 +161,7 @@ function BTCorruptorGrabAction.attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_
 	return false
 end
 
-function BTCorruptorGrabAction.drain_life(arg_6_0, arg_6_1, arg_6_2)
+BTCorruptorGrabAction.drain_life = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.corruptor_target
 	local var_6_1 = arg_6_2.action
 
@@ -179,13 +179,13 @@ function BTCorruptorGrabAction.drain_life(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.has_dealed_damage = true
 end
 
-function BTCorruptorGrabAction.anim_cb_damage(arg_7_0, arg_7_1, arg_7_2)
+BTCorruptorGrabAction.anim_cb_damage = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2.active_node and arg_7_2.active_node == BTCorruptorGrabAction then
 		arg_7_0:set_beam_state(arg_7_1, arg_7_2, "projectile")
 	end
 end
 
-function BTCorruptorGrabAction.overlap_players(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTCorruptorGrabAction.overlap_players = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if not arg_8_4.projectile_target_position then
 		return
 	end
@@ -203,7 +203,7 @@ function BTCorruptorGrabAction.overlap_players(arg_8_0, arg_8_1, arg_8_2, arg_8_
 	end
 end
 
-function BTCorruptorGrabAction.grab_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+BTCorruptorGrabAction.grab_player = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_3.corruptor_target
 	local var_9_1 = POSITION_LOOKUP[arg_9_2]
 	local var_9_2 = POSITION_LOOKUP[var_9_0]
@@ -263,7 +263,7 @@ function BTCorruptorGrabAction.grab_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function BTCorruptorGrabAction.set_beam_state(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTCorruptorGrabAction.set_beam_state = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = Managers.state.network
 	local var_10_1 = var_10_0:unit_game_object_id(arg_10_1)
 	local var_10_2 = var_10_0:unit_game_object_id(arg_10_2.corruptor_target or arg_10_2.grabbed_unit)

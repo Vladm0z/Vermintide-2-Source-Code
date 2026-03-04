@@ -72,7 +72,7 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -160,7 +160,7 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -247,7 +247,7 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -277,7 +277,7 @@ local var_0_0 = {
 				spread_template_override = "pistol_special",
 				hold_input = "action_two_hold",
 				ammo_requirement = 1,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -325,7 +325,7 @@ local var_0_0 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_5_0, arg_5_1, arg_5_2)
+				condition_func = function (arg_5_0, arg_5_1, arg_5_2)
 					if arg_5_2 and arg_5_2:total_remaining_ammo() <= 0 then
 						return false
 					end
@@ -342,7 +342,7 @@ local var_0_0 = {
 				kind = "dummy",
 				anim_event = "special_action",
 				total_time = 1.71,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -393,7 +393,7 @@ local var_0_0 = {
 						input = "action_three"
 					}
 				},
-				condition_func = function(arg_7_0, arg_7_1, arg_7_2)
+				condition_func = function (arg_7_0, arg_7_1, arg_7_2)
 					if arg_7_2 and arg_7_2:total_remaining_ammo() <= 0 then
 						return false
 					end
@@ -407,7 +407,7 @@ local var_0_0 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_8_0, arg_8_1)
+				condition_func = function (arg_8_0, arg_8_1)
 					local var_8_0 = ScriptUnit.extension(arg_8_0, "inventory_system")
 					local var_8_1 = ScriptUnit.extension(arg_8_0, "status_system")
 					local var_8_2
@@ -426,7 +426,7 @@ local var_0_0 = {
 
 					return var_8_2 and var_8_2:can_reload()
 				end,
-				chain_condition_func = function(arg_9_0, arg_9_1)
+				chain_condition_func = function (arg_9_0, arg_9_1)
 					local var_9_0 = ScriptUnit.extension(arg_9_0, "inventory_system")
 					local var_9_1 = ScriptUnit.extension(arg_9_0, "status_system")
 					local var_9_2
@@ -451,7 +451,7 @@ local var_0_0 = {
 				weapon_action_hand = "either",
 				kind = "reload",
 				total_time = 0,
-				condition_func = function(arg_10_0, arg_10_1)
+				condition_func = function (arg_10_0, arg_10_1)
 					local var_10_0 = ScriptUnit.extension(arg_10_0, "inventory_system")
 					local var_10_1 = ScriptUnit.extension(arg_10_0, "status_system")
 					local var_10_2
@@ -470,7 +470,7 @@ local var_0_0 = {
 
 					return var_10_2 and var_10_2:ammo_count() == 0 and var_10_2:can_reload()
 				end,
-				chain_condition_func = function(arg_11_0, arg_11_1)
+				chain_condition_func = function (arg_11_0, arg_11_1)
 					local var_11_0 = ScriptUnit.extension(arg_11_0, "inventory_system")
 					local var_11_1 = ScriptUnit.extension(arg_11_0, "status_system")
 					local var_11_2

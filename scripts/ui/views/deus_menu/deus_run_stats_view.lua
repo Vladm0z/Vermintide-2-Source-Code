@@ -6,7 +6,7 @@ DeusRunStatsView = class(DeusRunStatsView)
 
 local var_0_0 = 1
 
-function DeusRunStatsView.init(arg_1_0, arg_1_1, arg_1_2)
+DeusRunStatsView.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ingame_hud = arg_1_1
 	arg_1_0._is_server = arg_1_2.is_server
 	arg_1_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
@@ -25,7 +25,7 @@ function DeusRunStatsView.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui = DeusRunStatsUi:new(arg_1_2, arg_1_0)
 end
 
-function DeusRunStatsView.on_enter(arg_2_0)
+DeusRunStatsView.on_enter = function (arg_2_0)
 	arg_2_0._input_manager:capture_input({
 		"keyboard",
 		"gamepad",
@@ -33,7 +33,7 @@ function DeusRunStatsView.on_enter(arg_2_0)
 	}, 1, arg_2_0._input_service_name, "DeusRunStatsView")
 end
 
-function DeusRunStatsView.on_exit(arg_3_0)
+DeusRunStatsView.on_exit = function (arg_3_0)
 	arg_3_0._input_manager:release_input({
 		"keyboard",
 		"gamepad",
@@ -41,20 +41,20 @@ function DeusRunStatsView.on_exit(arg_3_0)
 	}, 1, arg_3_0._input_service_name, "DeusRunStatsView")
 end
 
-function DeusRunStatsView.update(arg_4_0, arg_4_1, arg_4_2)
+DeusRunStatsView.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._ui:update(arg_4_1, arg_4_2)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 end
 
-function DeusRunStatsView.input_service(arg_5_0)
+DeusRunStatsView.input_service = function (arg_5_0)
 	return arg_5_0._input_manager:get_service(arg_5_0._input_service_name)
 end
 
-function DeusRunStatsView.is_ui_active(arg_6_0)
+DeusRunStatsView.is_ui_active = function (arg_6_0)
 	return arg_6_0._ui:active()
 end
 
-function DeusRunStatsView._handle_input(arg_7_0, arg_7_1, arg_7_2)
+DeusRunStatsView._handle_input = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._input_manager:get_service(arg_7_0._input_service_name)
 	local var_7_1 = var_7_0:get("hotkey_deus_inventory", false)
 	local var_7_2 = Managers.input:is_device_active("gamepad")
@@ -84,11 +84,11 @@ function DeusRunStatsView._handle_input(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._ui:set_active(var_7_5 or var_7_1)
 end
 
-function DeusRunStatsView.destroy(arg_8_0)
+DeusRunStatsView.destroy = function (arg_8_0)
 	arg_8_0._ui:destroy()
 end
 
-function DeusRunStatsView._update_dynamic_values(arg_9_0)
+DeusRunStatsView._update_dynamic_values = function (arg_9_0)
 	local var_9_0 = arg_9_0._deus_run_controller
 	local var_9_1 = var_9_0:get_blessings()
 	local var_9_2 = table.keys(DeusBlessingSettings)
@@ -107,7 +107,7 @@ function DeusRunStatsView._update_dynamic_values(arg_9_0)
 	arg_9_0._ui:update_dynamic_values(var_9_8)
 end
 
-function DeusRunStatsView._update_inventory(arg_10_0)
+DeusRunStatsView._update_inventory = function (arg_10_0)
 	local var_10_0 = arg_10_0._deus_run_controller
 	local var_10_1, var_10_2 = var_10_0:get_own_loadout()
 	local var_10_3 = var_10_0:get_own_peer_id()
@@ -145,7 +145,7 @@ function DeusRunStatsView._update_inventory(arg_10_0)
 	end
 end
 
-function DeusRunStatsView._is_in_deus_map_view(arg_11_0)
+DeusRunStatsView._is_in_deus_map_view = function (arg_11_0)
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		return false
 	end

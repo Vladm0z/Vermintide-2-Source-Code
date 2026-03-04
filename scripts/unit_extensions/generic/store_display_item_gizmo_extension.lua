@@ -2,7 +2,7 @@
 
 StoreDisplayItemGizmoExtension = class(StoreDisplayItemGizmoExtension)
 
-function StoreDisplayItemGizmoExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StoreDisplayItemGizmoExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._gizmo_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 
@@ -18,7 +18,7 @@ function StoreDisplayItemGizmoExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function StoreDisplayItemGizmoExtension.cb_display_item_loaded(arg_2_0)
+StoreDisplayItemGizmoExtension.cb_display_item_loaded = function (arg_2_0)
 	local var_2_0 = arg_2_0._gizmo_unit
 	local var_2_1 = "ap_hat"
 	local var_2_2 = 0
@@ -36,7 +36,7 @@ function StoreDisplayItemGizmoExtension.cb_display_item_loaded(arg_2_0)
 	World.link_unit(var_2_3, var_2_5, var_2_0, var_2_2)
 end
 
-function StoreDisplayItemGizmoExtension.spawn_prop(arg_3_0, arg_3_1)
+StoreDisplayItemGizmoExtension.spawn_prop = function (arg_3_0, arg_3_1)
 	local var_3_0 = ItemMasterList[arg_3_1]
 
 	if var_3_0 then
@@ -61,7 +61,7 @@ function StoreDisplayItemGizmoExtension.spawn_prop(arg_3_0, arg_3_1)
 	end
 end
 
-function StoreDisplayItemGizmoExtension.destroy(arg_4_0)
+StoreDisplayItemGizmoExtension.destroy = function (arg_4_0)
 	if Unit.alive(arg_4_0._display_unit) then
 		World.destroy_unit(arg_4_0._world, arg_4_0._display_unit)
 	end

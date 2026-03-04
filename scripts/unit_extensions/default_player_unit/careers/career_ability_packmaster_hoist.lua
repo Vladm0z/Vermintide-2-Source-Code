@@ -2,7 +2,7 @@
 
 CareerAbilityPackmasterHoist = class(CareerAbilityPackmasterHoist, CareerAbilityDarkPactBase)
 
-function CareerAbilityPackmasterHoist._ability_available(arg_1_0)
+CareerAbilityPackmasterHoist._ability_available = function (arg_1_0)
 	local var_1_0 = arg_1_0.super._ability_available(arg_1_0)
 	local var_1_1 = arg_1_0._status_extension
 	local var_1_2 = arg_1_0._locomotion_extension

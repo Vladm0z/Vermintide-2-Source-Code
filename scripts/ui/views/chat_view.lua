@@ -58,7 +58,7 @@ local var_0_5 = {
 	}
 }
 
-function ChatView.init(arg_1_0, arg_1_1)
+ChatView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
 	arg_1_0._network_lobby = arg_1_1.network_lobby
@@ -131,11 +131,11 @@ function ChatView.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function ChatView._strip_identifier_from_user_name(arg_2_0, arg_2_1)
+ChatView._strip_identifier_from_user_name = function (arg_2_0, arg_2_1)
 	return string.sub(arg_2_1, 1, -11)
 end
 
-function ChatView.cb_private_message(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ChatView.cb_private_message = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0._widgets.chat_output_widget
 	local var_3_1 = arg_3_0._widgets.private_messages_widget
 	local var_3_2 = var_3_0.content
@@ -172,7 +172,7 @@ function ChatView.cb_private_message(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	var_3_3.has_private_conversations = not table.is_empty(var_3_4)
 end
 
-function ChatView._find_end_index(arg_4_0, arg_4_1, arg_4_2)
+ChatView._find_end_index = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = (string.find(arg_4_1, " ", arg_4_2) or math.huge) - 1
 	local var_4_1 = string.find(arg_4_1, ":", arg_4_2) or math.huge
 	local var_4_2 = var_4_0 <= var_4_1 and var_4_0 or var_4_1
@@ -180,7 +180,7 @@ function ChatView._find_end_index(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_2 < math.huge - 1 and var_4_2 or nil
 end
 
-function ChatView.cb_channel_message(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ChatView.cb_channel_message = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._widgets.chat_output_widget.content
 	local var_5_1 = var_5_0.channel_messages_table
 
@@ -208,7 +208,7 @@ function ChatView.cb_channel_message(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	var_5_0.text_start_offset = #var_5_2
 end
 
-function ChatView.cb_join_updated(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ChatView.cb_join_updated = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = Managers.irc:user_name()
 
 	if arg_6_3 == var_6_0 then
@@ -235,11 +235,11 @@ function ChatView.cb_join_updated(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, a
 	end
 end
 
-function ChatView.cb_meta_updated(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+ChatView.cb_meta_updated = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_0:_update_members()
 end
 
-function ChatView.cb_list_updated(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ChatView.cb_list_updated = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	print(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 
 	arg_8_0._popular_channel_list[#arg_8_0._popular_channel_list + 1] = arg_8_4 .. "," .. arg_8_5
@@ -247,7 +247,7 @@ function ChatView.cb_list_updated(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, a
 	arg_8_0._popular_channel_list_lookup[arg_8_4] = arg_8_5
 end
 
-function ChatView.cb_list_end(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ChatView.cb_list_end = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	arg_9_0._list_updated = true
 
 	local function var_9_0(arg_10_0, arg_10_1)
@@ -268,7 +268,7 @@ function ChatView.cb_list_end(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9
 	table.clear(arg_9_0._list_channels_cbs)
 end
 
-function ChatView._change_channel(arg_11_0, arg_11_1)
+ChatView._change_channel = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._widgets.chat_output_widget.content
 	local var_11_1 = arg_11_0._widgets.name_list_widget.content
 
@@ -292,7 +292,7 @@ end
 
 local var_0_6 = {}
 
-function ChatView._verify_channel_tabs(arg_12_0)
+ChatView._verify_channel_tabs = function (arg_12_0)
 	local var_12_0 = Managers.irc:get_channels()
 	local var_12_1 = var_0_0.widget_definitions
 	local var_12_2 = Managers.irc:get_channels()
@@ -329,7 +329,7 @@ function ChatView._verify_channel_tabs(arg_12_0)
 	end
 end
 
-function ChatView._change_to_private(arg_13_0, arg_13_1)
+ChatView._change_to_private = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._widgets.chat_output_widget.content
 
 	var_13_0.private_user_name = arg_13_1
@@ -345,7 +345,7 @@ function ChatView._change_to_private(arg_13_0, arg_13_1)
 	Managers.chat:add_message_target(arg_13_1, Irc.PRIVATE_MSG)
 end
 
-function ChatView._list_private_messages(arg_14_0, arg_14_1)
+ChatView._list_private_messages = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._widgets.chat_output_widget.content
 	local var_14_1 = arg_14_0._widgets.name_list_widget.content
 
@@ -357,7 +357,7 @@ function ChatView._list_private_messages(arg_14_0, arg_14_1)
 	var_14_0.text_start_offset = #(var_14_0.channel_messages_table[channel_name] or {})
 end
 
-function ChatView.cb_leave_updated(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+ChatView.cb_leave_updated = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if arg_15_3 == Managers.irc:user_name() then
 		arg_15_0._channels[arg_15_5] = nil
 
@@ -375,11 +375,11 @@ function ChatView.cb_leave_updated(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_1
 	arg_15_0:_update_members()
 end
 
-function ChatView.cb_members_updated(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ChatView.cb_members_updated = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	arg_16_0:_update_members()
 end
 
-function ChatView._create_ui_elements(arg_17_0)
+ChatView._create_ui_elements = function (arg_17_0)
 	arg_17_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_17_0 = {}
@@ -468,13 +468,13 @@ function ChatView._create_ui_elements(arg_17_0)
 	Managers.input:device_unblock_service("mouse", 1, "chat_view")
 end
 
-function ChatView.on_enter(arg_18_0)
+ChatView.on_enter = function (arg_18_0)
 	arg_18_0:set_active(true)
 end
 
 local var_0_7 = false
 
-function ChatView.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+ChatView.update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if var_0_7 then
 		var_0_7 = false
 
@@ -501,7 +501,7 @@ function ChatView.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0:_handle_command_list(arg_19_1, arg_19_2)
 end
 
-function ChatView._update_filter(arg_20_0, arg_20_1)
+ChatView._update_filter = function (arg_20_0, arg_20_1)
 	local var_20_0 = os.clock()
 
 	arg_20_1 = string.gsub(arg_20_1, "%W", "")
@@ -538,11 +538,11 @@ function ChatView._update_filter(arg_20_0, arg_20_1)
 	print(string.format("Search time: %f", tostring(os.clock() - var_20_0)))
 end
 
-function ChatView._play_sound(arg_21_0, arg_21_1)
+ChatView._play_sound = function (arg_21_0, arg_21_1)
 	WwiseWorld.trigger_event(arg_21_0._wwise_world, arg_21_1)
 end
 
-function ChatView._update_recent_channels_input(arg_22_0, arg_22_1, arg_22_2)
+ChatView._update_recent_channels_input = function (arg_22_0, arg_22_1, arg_22_2)
 	if table.is_empty(arg_22_0._recent_channels_widgets) then
 		return
 	end
@@ -606,7 +606,7 @@ function ChatView._update_recent_channels_input(arg_22_0, arg_22_1, arg_22_2)
 	var_22_5.disable_button = var_22_4.selected_channel == nil
 end
 
-function ChatView._create_recent_channels_window(arg_23_0)
+ChatView._create_recent_channels_window = function (arg_23_0)
 	local var_23_0 = var_0_0.widget_definitions
 
 	arg_23_0._recent_channels_widgets.recent_channels_window = UIWidget.init(var_23_0.recent_channels_window)
@@ -624,7 +624,7 @@ function ChatView._create_recent_channels_window(arg_23_0)
 	arg_23_0._recent_channels_widgets.recent_channels_window.content.fetching_channels = true
 end
 
-function ChatView.cb_populate_recent_channels(arg_24_0, arg_24_1, arg_24_2)
+ChatView.cb_populate_recent_channels = function (arg_24_0, arg_24_1, arg_24_2)
 	if table.is_empty(arg_24_0._recent_channels_widgets) then
 		return
 	end
@@ -662,7 +662,7 @@ function ChatView.cb_populate_recent_channels(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._recent_channels_widgets.recent_channels_window.content.fetching_channels = false
 end
 
-function ChatView._destroy_recent_channels_window(arg_25_0, arg_25_1)
+ChatView._destroy_recent_channels_window = function (arg_25_0, arg_25_1)
 	table.clear(arg_25_0._recent_channels_widgets)
 
 	if not arg_25_1 then
@@ -673,7 +673,7 @@ function ChatView._destroy_recent_channels_window(arg_25_0, arg_25_1)
 	end
 end
 
-function ChatView._create_invite_window(arg_26_0)
+ChatView._create_invite_window = function (arg_26_0)
 	local var_26_0 = var_0_0.widget_definitions
 	local var_26_1 = var_0_0.scenegraph_definition
 
@@ -686,13 +686,13 @@ function ChatView._create_invite_window(arg_26_0)
 	arg_26_0._invite_widgets.send_invite_window.content.text_field_active = true
 end
 
-function ChatView._destroy_send_invite_window(arg_27_0)
+ChatView._destroy_send_invite_window = function (arg_27_0)
 	table.clear(arg_27_0._invite_widgets)
 	Managers.input:device_unblock_service("keyboard", 1, "chat_view")
 	Managers.input:device_unblock_service("mouse", 1, "chat_view")
 end
 
-function ChatView._update_send_invite_input(arg_28_0, arg_28_1, arg_28_2)
+ChatView._update_send_invite_input = function (arg_28_0, arg_28_1, arg_28_2)
 	if table.is_empty(arg_28_0._invite_widgets) then
 		return
 	end
@@ -765,7 +765,7 @@ function ChatView._update_send_invite_input(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function ChatView._create_create_channels_window(arg_29_0)
+ChatView._create_create_channels_window = function (arg_29_0)
 	local var_29_0 = var_0_0.widget_definitions
 	local var_29_1 = var_0_0.scenegraph_definition
 
@@ -778,7 +778,7 @@ function ChatView._create_create_channels_window(arg_29_0)
 	arg_29_0._create_channel_widgets.create_channel_window.content.text_field_active = true
 end
 
-function ChatView._destroy_create_channel_window(arg_30_0, arg_30_1)
+ChatView._destroy_create_channel_window = function (arg_30_0, arg_30_1)
 	table.clear(arg_30_0._create_channel_widgets)
 	Managers.input:device_unblock_service("keyboard", 1, "chat_view")
 	Managers.input:device_unblock_service("mouse", 1, "chat_view")
@@ -788,7 +788,7 @@ function ChatView._destroy_create_channel_window(arg_30_0, arg_30_1)
 	end
 end
 
-function ChatView._update_create_channel_input(arg_31_0, arg_31_1, arg_31_2)
+ChatView._update_create_channel_input = function (arg_31_0, arg_31_1, arg_31_2)
 	if table.is_empty(arg_31_0._create_channel_widgets) then
 		return
 	end
@@ -862,7 +862,7 @@ end
 
 local var_0_8 = {}
 
-function ChatView._create_channels_list(arg_32_0)
+ChatView._create_channels_list = function (arg_32_0)
 	local var_32_0 = var_0_0.widget_definitions
 	local var_32_1 = var_0_0.scenegraph_definition
 
@@ -936,14 +936,14 @@ function ChatView._create_channels_list(arg_32_0)
 	arg_32_0._channels_list_widgets.channel_window_widget.content.fetching_channels = true
 end
 
-function ChatView._destroy_channels_list(arg_33_0)
+ChatView._destroy_channels_list = function (arg_33_0)
 	table.clear(var_0_8)
 	table.clear(arg_33_0._channels_list_widgets)
 	Managers.input:device_unblock_service("keyboard", 1, "chat_view")
 	Managers.input:device_unblock_service("mouse", 1, "chat_view")
 end
 
-function ChatView.cb_populate_channels_list(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+ChatView.cb_populate_channels_list = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	if table.is_empty(arg_34_0._channels_list_widgets) then
 		return
 	end
@@ -966,7 +966,7 @@ function ChatView.cb_populate_channels_list(arg_34_0, arg_34_1, arg_34_2, arg_34
 	arg_34_0._channels_list_widgets.channel_window_widget.content.fetching_channels = false
 end
 
-function ChatView._handle_and_draw_channels_list(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+ChatView._handle_and_draw_channels_list = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	local var_35_0 = var_0_0.channels_list_settings
 	local var_35_1 = arg_35_0._channels_list_widgets.channel_window_widget
 
@@ -1028,7 +1028,7 @@ function ChatView._handle_and_draw_channels_list(arg_35_0, arg_35_1, arg_35_2, a
 	var_35_2.content.button_hotspot.disable_button = var_35_11.selected_channel == nil
 end
 
-function ChatView._update_channels_list_input(arg_36_0, arg_36_1, arg_36_2)
+ChatView._update_channels_list_input = function (arg_36_0, arg_36_1, arg_36_2)
 	if table.is_empty(arg_36_0._channels_list_widgets) then
 		return
 	end
@@ -1133,7 +1133,7 @@ function ChatView._update_channels_list_input(arg_36_0, arg_36_1, arg_36_2)
 	end
 end
 
-function ChatView._update_input(arg_37_0, arg_37_1, arg_37_2)
+ChatView._update_input = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._input_manager:get_service("chat_view")
 
 	arg_37_0:_handle_user_pressed()
@@ -1378,7 +1378,7 @@ function ChatView._update_input(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function ChatView._handle_command_list(arg_38_0)
+ChatView._handle_command_list = function (arg_38_0)
 	local var_38_0 = arg_38_0._widgets.frame_widget.content
 	local var_38_1 = arg_38_0._widgets.commands_widget.content.button_hotspot
 
@@ -1434,7 +1434,7 @@ function ChatView._handle_command_list(arg_38_0)
 	end
 end
 
-function ChatView._create_channel_list(arg_39_0)
+ChatView._create_channel_list = function (arg_39_0)
 	local var_39_0 = Managers.irc:get_channels()
 	local var_39_1 = var_0_0.widget_definitions
 	local var_39_2 = var_39_1.create_channel_entry_func
@@ -1463,13 +1463,13 @@ function ChatView._create_channel_list(arg_39_0)
 	arg_39_0._ui_scenegraph.channel_list_entry.size[1] = var_39_5 + 30
 end
 
-function ChatView._destroy_emoji_list(arg_40_0)
+ChatView._destroy_emoji_list = function (arg_40_0)
 	table.clear(arg_40_0._emoji_widgets)
 
 	arg_40_0._base_offset = 0
 end
 
-function ChatView._create_emoji_list(arg_41_0)
+ChatView._create_emoji_list = function (arg_41_0)
 	local var_41_0 = var_0_0.widget_definitions
 
 	table.clear(arg_41_0._emoji_widgets)
@@ -1518,7 +1518,7 @@ function ChatView._create_emoji_list(arg_41_0)
 	end
 end
 
-function ChatView._handle_and_draw_emoji_list_input(arg_42_0, arg_42_1)
+ChatView._handle_and_draw_emoji_list_input = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._ui_renderer
 	local var_42_1 = arg_42_0._ui_scenegraph
 	local var_42_2 = arg_42_0._input_manager:get_service("chat_view")
@@ -1625,7 +1625,7 @@ function ChatView._handle_and_draw_emoji_list_input(arg_42_0, arg_42_1)
 	end
 end
 
-function ChatView._create_private_list(arg_43_0)
+ChatView._create_private_list = function (arg_43_0)
 	local var_43_0 = arg_43_0._widgets.chat_output_widget.content.private_messages_table
 	local var_43_1 = var_0_0.widget_definitions
 	local var_43_2 = var_43_1.create_private_user_entry_func
@@ -1658,7 +1658,7 @@ function ChatView._create_private_list(arg_43_0)
 	var_43_3.num_private_messages = 0
 end
 
-function ChatView._create_filtered_user_list(arg_44_0, arg_44_1)
+ChatView._create_filtered_user_list = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0:_update_filter(arg_44_1)
 
 	arg_44_0:_destroy_filtered_user_names_list()
@@ -1693,25 +1693,25 @@ function ChatView._create_filtered_user_list(arg_44_0, arg_44_1)
 	arg_44_0._ui_scenegraph.filtered_user_names_list_entry.size[1] = var_44_4 + 10
 end
 
-function ChatView._destroy_channel_list(arg_45_0)
+ChatView._destroy_channel_list = function (arg_45_0)
 	table.clear(arg_45_0._channel_list_widgets)
 end
 
-function ChatView._destroy_private_list(arg_46_0)
+ChatView._destroy_private_list = function (arg_46_0)
 	table.clear(arg_46_0._private_list_widgets)
 end
 
-function ChatView._destroy_command_list(arg_47_0)
+ChatView._destroy_command_list = function (arg_47_0)
 	table.clear(arg_47_0._commands_list_widgets)
 
 	arg_47_0._widgets.commands_widget.content.button_hotspot.disable_button = false
 end
 
-function ChatView._destroy_filtered_user_names_list(arg_48_0)
+ChatView._destroy_filtered_user_names_list = function (arg_48_0)
 	table.clear(arg_48_0._filtered_user_names_list_widgets)
 end
 
-function ChatView._handle_channel_list_input(arg_49_0)
+ChatView._handle_channel_list_input = function (arg_49_0)
 	for iter_49_0, iter_49_1 in pairs(arg_49_0._channel_list_widgets) do
 		local var_49_0 = iter_49_1.content
 
@@ -1734,7 +1734,7 @@ function ChatView._handle_channel_list_input(arg_49_0)
 	end
 end
 
-function ChatView._handle_private_list_input(arg_50_0)
+ChatView._handle_private_list_input = function (arg_50_0)
 	for iter_50_0, iter_50_1 in pairs(arg_50_0._private_list_widgets) do
 		local var_50_0 = iter_50_1.content
 
@@ -1759,7 +1759,7 @@ function ChatView._handle_private_list_input(arg_50_0)
 	end
 end
 
-function ChatView._handle_command_list_input(arg_51_0)
+ChatView._handle_command_list_input = function (arg_51_0)
 	for iter_51_0, iter_51_1 in pairs(arg_51_0._commands_list_widgets) do
 		local var_51_0 = iter_51_1.content
 
@@ -1780,7 +1780,7 @@ function ChatView._handle_command_list_input(arg_51_0)
 	end
 end
 
-function ChatView._handle_filtered_user_names_list_input(arg_52_0)
+ChatView._handle_filtered_user_names_list_input = function (arg_52_0)
 	for iter_52_0, iter_52_1 in pairs(arg_52_0._filtered_user_names_list_widgets) do
 		local var_52_0 = iter_52_1.content
 
@@ -1798,7 +1798,7 @@ function ChatView._handle_filtered_user_names_list_input(arg_52_0)
 	end
 end
 
-function ChatView._handle_user_list_scroll_input(arg_53_0, arg_53_1)
+ChatView._handle_user_list_scroll_input = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0._user_list
 	local var_53_1 = arg_53_0._user_list_read_index
 
@@ -1824,7 +1824,7 @@ function ChatView._handle_user_list_scroll_input(arg_53_0, arg_53_1)
 	end
 end
 
-function ChatView._handle_link_presses(arg_54_0)
+ChatView._handle_link_presses = function (arg_54_0)
 	local var_54_0 = arg_54_0._widgets.chat_output_widget
 
 	if var_54_0.content.link_pressed then
@@ -1838,7 +1838,7 @@ function ChatView._handle_link_presses(arg_54_0)
 	end
 end
 
-function ChatView._send_message(arg_55_0, arg_55_1)
+ChatView._send_message = function (arg_55_0, arg_55_1)
 	arg_55_1.chat_text.text = EmojiHelper.replace_emojis(arg_55_1.chat_text.text)
 
 	local var_55_0 = EmojiHelper.parse_emojis(arg_55_1.chat_text.text)
@@ -1850,7 +1850,7 @@ function ChatView._send_message(arg_55_0, arg_55_1)
 	end
 end
 
-function ChatView._show_welcome_message(arg_56_0)
+ChatView._show_welcome_message = function (arg_56_0)
 	local var_56_0 = arg_56_0._widgets.chat_output_widget.content
 	local var_56_1 = var_56_0.channel_messages_table
 
@@ -1872,7 +1872,7 @@ function ChatView._show_welcome_message(arg_56_0)
 	end
 end
 
-function ChatView._send_channel_message(arg_57_0, arg_57_1, arg_57_2)
+ChatView._send_channel_message = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0 = false
 	local var_57_1 = false
 	local var_57_2, var_57_3, var_57_4 = Managers.chat:send_chat_message(1, arg_57_0._local_player_id, arg_57_1.chat_text.text, var_57_0, nil, var_57_1, arg_57_0._recent_message_index, arg_57_0._current_channel_name, Irc.CHANNEL_MSG)
@@ -1980,7 +1980,7 @@ function ChatView._send_channel_message(arg_57_0, arg_57_1, arg_57_2)
 	arg_57_0._recent_message_index = nil
 end
 
-function ChatView._send_private_message(arg_58_0, arg_58_1, arg_58_2)
+ChatView._send_private_message = function (arg_58_0, arg_58_1, arg_58_2)
 	local var_58_0 = arg_58_1.private_user_name
 	local var_58_1 = false
 	local var_58_2 = false
@@ -2058,7 +2058,7 @@ function ChatView._send_private_message(arg_58_0, arg_58_1, arg_58_2)
 	arg_58_0._recent_message_index = nil
 end
 
-function ChatView.set_active(arg_59_0, arg_59_1)
+ChatView.set_active = function (arg_59_0, arg_59_1)
 	arg_59_0._active = arg_59_1
 
 	if arg_59_0._active then
@@ -2072,7 +2072,7 @@ function ChatView.set_active(arg_59_0, arg_59_1)
 	end
 end
 
-function ChatView.suspend(arg_60_0)
+ChatView.suspend = function (arg_60_0)
 	arg_60_0._suspended = true
 
 	arg_60_0._input_manager:device_unblock_all_services("keyboard", 1)
@@ -2080,7 +2080,7 @@ function ChatView.suspend(arg_60_0)
 	arg_60_0._input_manager:device_unblock_all_services("gamepad", 1)
 end
 
-function ChatView.unsuspend(arg_61_0)
+ChatView.unsuspend = function (arg_61_0)
 	arg_61_0._input_manager:block_device_except_service("chat_view", "keyboard", 1, "irc_chat")
 	arg_61_0._input_manager:block_device_except_service("chat_view", "mouse", 1, "irc_chat")
 	arg_61_0._input_manager:block_device_except_service("chat_view", "gamepad", 1, "irc_chat")
@@ -2088,7 +2088,7 @@ function ChatView.unsuspend(arg_61_0)
 	arg_61_0._suspended = nil
 end
 
-function ChatView._update_animations(arg_62_0, arg_62_1, arg_62_2)
+ChatView._update_animations = function (arg_62_0, arg_62_1, arg_62_2)
 	for iter_62_0, iter_62_1 in pairs(arg_62_0._ui_animations) do
 		UIAnimation.update(iter_62_1, arg_62_1)
 
@@ -2098,7 +2098,7 @@ function ChatView._update_animations(arg_62_0, arg_62_1, arg_62_2)
 	end
 end
 
-function ChatView._draw(arg_63_0, arg_63_1, arg_63_2)
+ChatView._draw = function (arg_63_0, arg_63_1, arg_63_2)
 	local var_63_0 = arg_63_0._ui_renderer
 	local var_63_1 = arg_63_0._ui_scenegraph
 	local var_63_2 = arg_63_0._input_manager:get_service("chat_view")
@@ -2182,7 +2182,7 @@ function ChatView._draw(arg_63_0, arg_63_1, arg_63_2)
 	end
 end
 
-function ChatView._update_channel_tabs(arg_64_0, arg_64_1, arg_64_2)
+ChatView._update_channel_tabs = function (arg_64_0, arg_64_1, arg_64_2)
 	for iter_64_0, iter_64_1 in ipairs(arg_64_0._channel_tabs) do
 		local var_64_0 = iter_64_1.content
 
@@ -2194,33 +2194,33 @@ function ChatView._update_channel_tabs(arg_64_0, arg_64_1, arg_64_2)
 	end
 end
 
-function ChatView.on_exit(arg_65_0)
+ChatView.on_exit = function (arg_65_0)
 	arg_65_0:set_active(false)
 end
 
-function ChatView.destroy(arg_66_0)
+ChatView.destroy = function (arg_66_0)
 	return
 end
 
-function ChatView._exit(arg_67_0, arg_67_1)
+ChatView._exit = function (arg_67_0, arg_67_1)
 	local var_67_0 = arg_67_1 and "exit_menu" or "ingame_menu"
 
 	arg_67_0._ingame_ui:handle_transition(var_67_0)
 end
 
-function ChatView.input_service(arg_68_0)
+ChatView.input_service = function (arg_68_0)
 	return arg_68_0._input_manager:get_service("chat_view")
 end
 
-function ChatView._is_widget_pressed(arg_69_0, arg_69_1)
+ChatView._is_widget_pressed = function (arg_69_0, arg_69_1)
 	return arg_69_1.content.button_hotspot.on_pressed
 end
 
-function ChatView._set_text_field_active(arg_70_0, arg_70_1)
+ChatView._set_text_field_active = function (arg_70_0, arg_70_1)
 	arg_70_0._widgets.frame_widget.content.text_field_active = arg_70_1
 end
 
-function ChatView._handle_user_pressed(arg_71_0)
+ChatView._handle_user_pressed = function (arg_71_0)
 	local var_71_0 = arg_71_0._user_entry_widgets
 
 	for iter_71_0, iter_71_1 in ipairs(var_71_0) do
@@ -2238,7 +2238,7 @@ function ChatView._handle_user_pressed(arg_71_0)
 	end
 end
 
-function ChatView._populate_user_widgets(arg_72_0, arg_72_1, arg_72_2)
+ChatView._populate_user_widgets = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = arg_72_0._user_entry_widgets
 	local var_72_1 = arg_72_2
 
@@ -2266,7 +2266,7 @@ for iter_0_0, iter_0_1 in pairs(ItemMasterList) do
 	end
 end
 
-function ChatView._update_members(arg_73_0, arg_73_1)
+ChatView._update_members = function (arg_73_0, arg_73_1)
 	arg_73_1 = arg_73_1 or arg_73_0._user_list_read_index or 1
 	arg_73_0._current_channel_name = arg_73_0._current_channel_name or Managers.irc:home_channel()
 

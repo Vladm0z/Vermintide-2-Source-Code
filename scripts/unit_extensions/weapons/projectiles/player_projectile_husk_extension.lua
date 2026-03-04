@@ -2,7 +2,7 @@
 
 PlayerProjectileHuskExtension = class(PlayerProjectileHuskExtension)
 
-function PlayerProjectileHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerProjectileHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_3.owner_unit
 	local var_1_1 = arg_1_3.item_name
 
@@ -109,17 +109,17 @@ function PlayerProjectileHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:initialize_projectile(var_1_20, var_1_21)
 end
 
-function PlayerProjectileHuskExtension.destroy(arg_2_0)
+PlayerProjectileHuskExtension.destroy = function (arg_2_0)
 	if arg_2_0._projectile_unit and arg_2_0._active and not arg_2_0.is_server then
 		arg_2_0:stop()
 	end
 end
 
-function PlayerProjectileHuskExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+PlayerProjectileHuskExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.locomotion_extension = ScriptUnit.extension(arg_3_2, "projectile_locomotion_system")
 end
 
-function PlayerProjectileHuskExtension.initialize_projectile(arg_4_0, arg_4_1, arg_4_2)
+PlayerProjectileHuskExtension.initialize_projectile = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._projectile_unit
 
 	if arg_4_2 then
@@ -169,13 +169,13 @@ function PlayerProjectileHuskExtension.initialize_projectile(arg_4_0, arg_4_1, a
 	Unit.flow_event(var_4_0, "lua_trail")
 end
 
-function PlayerProjectileHuskExtension._handle_critical_strike(arg_5_0, arg_5_1, arg_5_2)
+PlayerProjectileHuskExtension._handle_critical_strike = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._is_critical_strike then
 		Unit.flow_event(arg_5_1, "vfx_critical_strike")
 	end
 end
 
-function PlayerProjectileHuskExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PlayerProjectileHuskExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if not arg_6_0._active then
 		if arg_6_0._was_active then
 			arg_6_0._was_active = false
@@ -189,7 +189,7 @@ function PlayerProjectileHuskExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	end
 end
 
-function PlayerProjectileHuskExtension.stop(arg_7_0, arg_7_1, arg_7_2)
+PlayerProjectileHuskExtension.stop = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.projectile_info.custom_stop_func
 
 	if var_7_0 and var_7_0(arg_7_0, arg_7_1, arg_7_2) then
@@ -211,7 +211,7 @@ function PlayerProjectileHuskExtension.stop(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._stop_impacts = true
 end
 
-function PlayerProjectileHuskExtension._stop_by_life_time(arg_8_0)
+PlayerProjectileHuskExtension._stop_by_life_time = function (arg_8_0)
 	Unit.flow_event(arg_8_0._projectile_unit, "lua_projectile_end")
 
 	arg_8_0._active = false
@@ -221,7 +221,7 @@ function PlayerProjectileHuskExtension._stop_by_life_time(arg_8_0)
 	arg_8_0._stop_impacts = true
 end
 
-function PlayerProjectileHuskExtension.handle_timed_events(arg_9_0, arg_9_1)
+PlayerProjectileHuskExtension.handle_timed_events = function (arg_9_0, arg_9_1)
 	if arg_9_1 >= arg_9_0._life_time then
 		local var_9_0 = arg_9_0._projectile_unit
 		local var_9_1 = arg_9_0._timed_data
@@ -262,14 +262,14 @@ function PlayerProjectileHuskExtension.handle_timed_events(arg_9_0, arg_9_1)
 	end
 end
 
-function PlayerProjectileHuskExtension.impact_level(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+PlayerProjectileHuskExtension.impact_level = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	local var_10_0 = arg_10_0._impact_data
 
 	arg_10_0:hit_level_unit(var_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_0._hit_units, arg_10_6)
 	arg_10_0:_on_impact()
 end
 
-function PlayerProjectileHuskExtension._on_impact(arg_11_0)
+PlayerProjectileHuskExtension._on_impact = function (arg_11_0)
 	local var_11_0 = arg_11_0._timed_data
 
 	if var_11_0 and var_11_0.activate_life_time_on_impact then
@@ -279,7 +279,7 @@ function PlayerProjectileHuskExtension._on_impact(arg_11_0)
 	end
 end
 
-function PlayerProjectileHuskExtension._activate_life_time(arg_12_0, arg_12_1)
+PlayerProjectileHuskExtension._activate_life_time = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._timed_data
 	local var_12_1 = var_12_0.life_time_activate_sound_start_event
 
@@ -290,7 +290,7 @@ function PlayerProjectileHuskExtension._activate_life_time(arg_12_0, arg_12_1)
 	arg_12_0._life_time = arg_12_1 + var_12_0.life_time
 end
 
-function PlayerProjectileHuskExtension.impact_dynamic(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+PlayerProjectileHuskExtension.impact_dynamic = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = arg_13_0._impact_data
 	local var_13_1 = Unit.get_data(arg_13_1, "breed")
 	local var_13_2 = false
@@ -320,14 +320,14 @@ function PlayerProjectileHuskExtension.impact_dynamic(arg_13_0, arg_13_1, arg_13
 	arg_13_0:_on_impact()
 end
 
-function PlayerProjectileHuskExtension.hit_afro(arg_14_0, arg_14_1, arg_14_2)
+PlayerProjectileHuskExtension.hit_afro = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Actor.node(arg_14_2)
 	local var_14_1 = arg_14_1.hit_zones_lookup[var_14_0].name
 
 	return var_14_1 == "afro", var_14_1
 end
 
-function PlayerProjectileHuskExtension.hit_enemy(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
+PlayerProjectileHuskExtension.hit_enemy = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
 	if arg_15_6 == nil then
 		return
 	end
@@ -382,7 +382,7 @@ function PlayerProjectileHuskExtension.hit_enemy(arg_15_0, arg_15_1, arg_15_2, a
 	end
 end
 
-function PlayerProjectileHuskExtension.hit_enemy_damage(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+PlayerProjectileHuskExtension.hit_enemy_damage = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 	local var_16_0 = arg_16_0._owner_player
 	local var_16_1 = arg_16_0._owner_unit
 	local var_16_2 = arg_16_0._current_action
@@ -473,7 +473,7 @@ function PlayerProjectileHuskExtension.hit_enemy_damage(arg_16_0, arg_16_1, arg_
 	return var_16_5 ~= "ward", var_16_11
 end
 
-function PlayerProjectileHuskExtension.hit_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+PlayerProjectileHuskExtension.hit_player = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
 	if arg_17_6 == nil then
 		return
 	end
@@ -527,7 +527,7 @@ function PlayerProjectileHuskExtension.hit_player(arg_17_0, arg_17_1, arg_17_2, 
 	end
 end
 
-function PlayerProjectileHuskExtension.hit_player_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+PlayerProjectileHuskExtension.hit_player_damage = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
 	local var_18_0 = arg_18_0._owner_unit
 
 	arg_18_8[arg_18_2] = true
@@ -561,7 +561,7 @@ function PlayerProjectileHuskExtension.hit_player_damage(arg_18_0, arg_18_1, arg
 	end
 end
 
-function PlayerProjectileHuskExtension.hit_level_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+PlayerProjectileHuskExtension.hit_level_unit = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
 	local var_19_0 = ScriptUnit.has_extension(arg_19_2, "health_system")
 	local var_19_1 = arg_19_1.damage_profile_prop or arg_19_1.damage_profile or "default"
 	local var_19_2 = DamageProfileTemplates[var_19_1]
@@ -635,11 +635,11 @@ function PlayerProjectileHuskExtension.hit_level_unit(arg_19_0, arg_19_1, arg_19
 	arg_19_0:stop()
 end
 
-function PlayerProjectileHuskExtension.hit_damagable_prop(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+PlayerProjectileHuskExtension.hit_damagable_prop = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 	arg_20_7[arg_20_2] = true
 end
 
-function PlayerProjectileHuskExtension.hit_non_level_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+PlayerProjectileHuskExtension.hit_non_level_unit = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 	local var_21_0 = arg_21_1.damage_profile_prop or arg_21_1.damage_profile or "default"
 	local var_21_1 = DamageProfileTemplates[var_21_0]
 	local var_21_2 = false
@@ -685,7 +685,7 @@ function PlayerProjectileHuskExtension.hit_non_level_unit(arg_21_0, arg_21_1, ar
 	end
 end
 
-function PlayerProjectileHuskExtension.hit_non_level_damagable_unit(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+PlayerProjectileHuskExtension.hit_non_level_damagable_unit = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
 	arg_22_7[arg_22_2] = true
 
 	local var_22_0 = arg_22_0._current_action.hit_effect
@@ -699,7 +699,7 @@ function PlayerProjectileHuskExtension.hit_non_level_damagable_unit(arg_22_0, ar
 	end
 end
 
-function PlayerProjectileHuskExtension._get_projectile_units_names(arg_23_0, arg_23_1)
+PlayerProjectileHuskExtension._get_projectile_units_names = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.projectile_units_template
 
 	var_23_0 = arg_23_1.use_weapon_skin and arg_23_0._skin_projectile_units_template or var_23_0
@@ -707,7 +707,7 @@ function PlayerProjectileHuskExtension._get_projectile_units_names(arg_23_0, arg
 	return ProjectileUnits[var_23_0]
 end
 
-function PlayerProjectileHuskExtension._handle_linking(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8)
+PlayerProjectileHuskExtension._handle_linking = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8)
 	if not arg_24_1.link and not arg_24_1.link_pickup then
 		return
 	end
@@ -763,7 +763,7 @@ function PlayerProjectileHuskExtension._handle_linking(arg_24_0, arg_24_1, arg_2
 	end
 end
 
-function PlayerProjectileHuskExtension._link_projectile(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+PlayerProjectileHuskExtension._link_projectile = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
 	if Managers.state.side:versus_is_dark_pact(arg_25_1) then
 		local var_25_0 = Managers.player:unit_owner(arg_25_1)
 
@@ -814,7 +814,7 @@ function PlayerProjectileHuskExtension._link_projectile(arg_25_0, arg_25_1, arg_
 	end
 end
 
-function PlayerProjectileHuskExtension.do_aoe(arg_26_0, arg_26_1, arg_26_2)
+PlayerProjectileHuskExtension.do_aoe = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._world
 	local var_26_1 = arg_26_0._projectile_unit
 	local var_26_2 = arg_26_0._owner_unit
@@ -842,7 +842,7 @@ function PlayerProjectileHuskExtension.do_aoe(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function PlayerProjectileHuskExtension.trigger_external_event(arg_27_0, arg_27_1, arg_27_2)
+PlayerProjectileHuskExtension.trigger_external_event = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0.projectile_info.external_events
 	local var_27_1 = var_27_0 and var_27_0[arg_27_1]
 

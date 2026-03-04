@@ -9,7 +9,7 @@ local var_0_0 = {
 	"rpc_complete_badge"
 }
 
-function BadgeManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BadgeManager.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._statistics_db = arg_1_1
 	arg_1_0._is_server = arg_1_3
 	arg_1_0._registered_events = {}
@@ -22,7 +22,7 @@ function BadgeManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	if var_1_0 == "versus" then
 		require("scripts/settings/dlcs/carousel/carousel_badge_templates")
 	elseif var_1_0 == "adventure" then
-		-- block empty
+		-- Nothing
 	end
 
 	if arg_1_3 then
@@ -32,7 +32,7 @@ function BadgeManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function BadgeManager._initialize_server(arg_2_0)
+BadgeManager._initialize_server = function (arg_2_0)
 	local var_2_0 = BadgeTemplates.server
 	local var_2_1 = {}
 	local var_2_2 = arg_2_0._statistics_db
@@ -44,7 +44,7 @@ function BadgeManager._initialize_server(arg_2_0)
 
 		for iter_2_2, iter_2_3 in pairs(var_2_5) do
 			local var_2_6 = {
-				callback_function = function(arg_3_0, ...)
+				callback_function = function (arg_3_0, ...)
 					local var_3_0 = Managers.time:time("main")
 					local var_3_1 = iter_2_1.settings
 					local var_3_2 = iter_2_1.data
@@ -73,7 +73,7 @@ function BadgeManager._initialize_server(arg_2_0)
 	arg_2_0._update_cache = var_2_1
 end
 
-function BadgeManager._initialize_client(arg_4_0)
+BadgeManager._initialize_client = function (arg_4_0)
 	local var_4_0 = BadgeTemplates.client
 	local var_4_1 = {}
 	local var_4_2 = arg_4_0._statistics_db
@@ -85,7 +85,7 @@ function BadgeManager._initialize_client(arg_4_0)
 
 		for iter_4_2, iter_4_3 in pairs(var_4_5) do
 			local var_4_6 = {
-				callback_function = function(arg_5_0, ...)
+				callback_function = function (arg_5_0, ...)
 					local var_5_0 = Managers.time:time("main")
 					local var_5_1 = iter_4_1.settings
 					local var_5_2 = iter_4_1.data
@@ -114,7 +114,7 @@ function BadgeManager._initialize_client(arg_4_0)
 	arg_4_0._update_cache = var_4_1
 end
 
-function BadgeManager.destroy(arg_6_0)
+BadgeManager.destroy = function (arg_6_0)
 	arg_6_0.network_event_delegate:unregister(arg_6_0)
 
 	for iter_6_0, iter_6_1 in pairs(arg_6_0._templates) do
@@ -126,7 +126,7 @@ function BadgeManager.destroy(arg_6_0)
 	end
 end
 
-function BadgeManager.update(arg_7_0, arg_7_1, arg_7_2)
+BadgeManager.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._is_server then
 		arg_7_0:_update_server(arg_7_1, arg_7_2)
 	else
@@ -134,7 +134,7 @@ function BadgeManager.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function BadgeManager._update_server(arg_8_0, arg_8_1, arg_8_2)
+BadgeManager._update_server = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._update_cache
 	local var_8_1 = Managers.state.network.network_transmit
 
@@ -155,7 +155,7 @@ function BadgeManager._update_server(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function BadgeManager._update_client(arg_9_0, arg_9_1, arg_9_2)
+BadgeManager._update_client = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._update_cache
 	local var_9_1 = Managers.state.network.network_transmit
 
@@ -176,12 +176,12 @@ function BadgeManager._update_client(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BadgeManager.rpc_show_badge(arg_10_0, arg_10_1, arg_10_2)
+BadgeManager.rpc_show_badge = function (arg_10_0, arg_10_1, arg_10_2)
 	Managers.telemetry_events:badge_gained(NetworkLookup.badges[arg_10_2])
 	Managers.state.event:trigger("add_local_badge", arg_10_2)
 end
 
-function BadgeManager.rpc_complete_badge(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BadgeManager.rpc_complete_badge = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	fassert(arg_11_0._is_server, "Only server should get this")
 	Managers.state.network.network_transmit:send_rpc("rpc_show_badge", arg_11_3, arg_11_2)
 end

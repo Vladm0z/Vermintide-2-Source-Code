@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_reikwald_river.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "npces_reik2_conversation_group_one_01_b",
 		name = "npces_reik2_conversation_group_one_01_b",

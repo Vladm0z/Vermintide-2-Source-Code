@@ -20,15 +20,15 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -38,15 +38,15 @@ local var_0_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -416,7 +416,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			style_id = "icon",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return not arg_8_0.parent.locked
 			end
 		},
@@ -424,7 +424,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			style_id = "icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.button_hotspot.is_hover
 			end
 		},
@@ -432,7 +432,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "icon_glow",
 			texture_id = "icon_glow",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.button_hotspot.is_hover or arg_10_0.button_hotspot.is_selected
 			end
 		},
@@ -440,7 +440,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return not arg_11_0.locked
 			end
 		},
@@ -448,7 +448,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "icon_locked",
 			texture_id = "icon",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return arg_12_0.locked
 			end
 		},
@@ -456,7 +456,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return arg_13_0.locked
 			end
 		},
@@ -464,7 +464,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0.locked
 			end
 		},
@@ -482,7 +482,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0.draw_path
 			end
 		},
@@ -490,7 +490,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.draw_path and arg_16_0.draw_path_fill and not arg_16_0.locked
 			end
 		},
@@ -498,7 +498,7 @@ local function var_0_14(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "boss_icon",
 			texture_id = "boss_icon",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return arg_17_0.boss_level
 			end
 		}

@@ -340,7 +340,7 @@ local var_0_3 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -857,7 +857,7 @@ local var_0_7 = {
 				attack_anim = {
 					"attack_grab"
 				},
-				hit_player_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				hit_player_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 					local var_2_0 = ScriptUnit.has_extension(arg_2_2, "status_system")
 
 					if not var_2_0:is_disabled() and not var_2_0:is_invisible() then

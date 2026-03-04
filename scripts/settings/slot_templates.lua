@@ -497,6 +497,6 @@ SlotTemplates = {
 	}
 }
 
-DLCUtils.map_list("slot_templates_file_names", function(arg_1_0)
+DLCUtils.map_list("slot_templates_file_names", function (arg_1_0)
 	return table.merge_recursive(SlotTemplates, require(arg_1_0))
 end)

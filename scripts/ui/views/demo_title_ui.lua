@@ -21,7 +21,7 @@ local var_0_12 = 1920
 local var_0_13 = 2
 local var_0_14 = "DemoTitleUI"
 
-function DemoTitleUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DemoTitleUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._world = arg_1_1
 	arg_1_0._viewport = arg_1_2
 	arg_1_0._parent = arg_1_3
@@ -40,11 +40,11 @@ function DemoTitleUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:_setup_input()
 end
 
-function DemoTitleUI.menu_input_enabled(arg_2_0)
+DemoTitleUI.menu_input_enabled = function (arg_2_0)
 	return true
 end
 
-function DemoTitleUI._setup_gui(arg_3_0)
+DemoTitleUI._setup_gui = function (arg_3_0)
 	arg_3_0._render_settings = {
 		snap_pixel_positions = true
 	}
@@ -64,7 +64,7 @@ function DemoTitleUI._setup_gui(arg_3_0)
 	UISetupFontHeights(arg_3_0._ui_renderer.gui)
 end
 
-function DemoTitleUI._setup_world_gui(arg_4_0)
+DemoTitleUI._setup_world_gui = function (arg_4_0)
 	arg_4_0._world_gui = World.create_world_gui(arg_4_0._world, Matrix4x4.identity(), var_0_12, var_0_12, "material", "materials/ui/ui_1080p_demo_textures", "immediate")
 
 	local var_4_0 = arg_4_0._camera_poses[DemoSettings.starting_camera_name] or Matrix4x4Box(Matrix4x4.identity())
@@ -76,7 +76,7 @@ function DemoTitleUI._setup_world_gui(arg_4_0)
 	Gui.move(arg_4_0._world_gui, var_4_4)
 end
 
-function DemoTitleUI._setup_level(arg_5_0)
+DemoTitleUI._setup_level = function (arg_5_0)
 	local var_5_0 = DemoSettings.level_name
 	local var_5_1 = {}
 	local var_5_2 = LevelResource.object_set_names(var_5_0)
@@ -101,7 +101,7 @@ function DemoTitleUI._setup_level(arg_5_0)
 	Level.spawn_background(arg_5_0._level)
 end
 
-function DemoTitleUI.shading_callback(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+DemoTitleUI.shading_callback = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	for iter_6_0, iter_6_1 in pairs(OutlineSettings.colors) do
 		local var_6_0 = iter_6_1.color
 		local var_6_1 = Vector3(var_6_0[2] / 255, var_6_0[3] / 255, var_6_0[4] / 255)
@@ -116,7 +116,7 @@ function DemoTitleUI.shading_callback(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function DemoTitleUI._collect_cameras(arg_7_0)
+DemoTitleUI._collect_cameras = function (arg_7_0)
 	arg_7_0._camera_poses = {}
 
 	local var_7_0 = LevelResource.unit_indices(DemoSettings.level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
@@ -139,7 +139,7 @@ function DemoTitleUI._collect_cameras(arg_7_0)
 	end
 end
 
-function DemoTitleUI._position_camera(arg_8_0)
+DemoTitleUI._position_camera = function (arg_8_0)
 	local var_8_0 = ScriptViewport.camera(arg_8_0._viewport)
 	local var_8_1 = DemoSettings.starting_camera_name
 	local var_8_2 = var_8_1 and arg_8_0._camera_poses[var_8_1]
@@ -153,7 +153,7 @@ function DemoTitleUI._position_camera(arg_8_0)
 	arg_8_0._scatter_system_observer = ScatterSystem.make_observer(arg_8_0._scatter_system, Matrix4x4.translation(var_8_2:unbox()), Matrix4x4.rotation(var_8_2:unbox()))
 end
 
-function DemoTitleUI._create_ui_elements(arg_9_0)
+DemoTitleUI._create_ui_elements = function (arg_9_0)
 	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_9_0._attract_video = UIWidget.init(UIWidgets.create_splash_video(var_0_4, var_0_14))
 	arg_9_0._widgets = {}
@@ -209,7 +209,7 @@ function DemoTitleUI._create_ui_elements(arg_9_0)
 	arg_9_0._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, arg_9_0._ui_scenegraph.right_side_root.local_position, 1, arg_9_0._ui_scenegraph.right_side_root.local_position[1], 450, 0, math.easeOutCubic)
 end
 
-function DemoTitleUI._populate_career_page(arg_10_0, arg_10_1, arg_10_2)
+DemoTitleUI._populate_career_page = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = FindProfileIndex(arg_10_1)
 	local var_10_1 = SPProfiles[var_10_0]
 	local var_10_2 = var_10_1.careers[arg_10_2]
@@ -255,11 +255,11 @@ function DemoTitleUI._populate_career_page(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_set_career_widget_text("player_hero_name", var_10_21)
 end
 
-function DemoTitleUI._set_career_widget_text(arg_11_0, arg_11_1, arg_11_2)
+DemoTitleUI._set_career_widget_text = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._career_widgets[arg_11_1].content.text = arg_11_2
 end
 
-function DemoTitleUI._destroy_career_video_player(arg_12_0)
+DemoTitleUI._destroy_career_video_player = function (arg_12_0)
 	local var_12_0 = arg_12_0._career_video_ui_renderer
 	local var_12_1 = arg_12_0._video_widget
 
@@ -270,7 +270,7 @@ function DemoTitleUI._destroy_career_video_player(arg_12_0)
 	arg_12_0._video_created = nil
 end
 
-function DemoTitleUI._setup_video_player(arg_13_0, arg_13_1, arg_13_2)
+DemoTitleUI._setup_video_player = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:_destroy_career_video_player()
 	UIRenderer.create_video_player(arg_13_0._career_video_ui_renderer, var_0_14, arg_13_0._world, arg_13_2, true)
 
@@ -281,7 +281,7 @@ function DemoTitleUI._setup_video_player(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._video_widget.content.video_player_reference = var_0_14
 end
 
-function DemoTitleUI._setup_input(arg_14_0)
+DemoTitleUI._setup_input = function (arg_14_0)
 	arg_14_0._input_manager = Managers.input
 
 	arg_14_0._input_manager:create_input_service("main_menu", "TitleScreenKeyMaps", "TitleScreenFilters")
@@ -290,7 +290,7 @@ function DemoTitleUI._setup_input(arg_14_0)
 	arg_14_0._input_manager:map_device_to_service("main_menu", "mouse")
 end
 
-function DemoTitleUI._setup_characters(arg_15_0)
+DemoTitleUI._setup_characters = function (arg_15_0)
 	arg_15_0._character_previewers = {}
 
 	local var_15_0 = World.physics_world(arg_15_0._world)
@@ -323,19 +323,19 @@ function DemoTitleUI._setup_characters(arg_15_0)
 	end
 end
 
-function DemoTitleUI._play_sound(arg_16_0, arg_16_1)
+DemoTitleUI._play_sound = function (arg_16_0, arg_16_1)
 	return Managers.music:trigger_event(arg_16_1)
 end
 
-function DemoTitleUI.get_ui_renderer(arg_17_0)
+DemoTitleUI.get_ui_renderer = function (arg_17_0)
 	return arg_17_0._ui_renderer
 end
 
-function DemoTitleUI.in_transition(arg_18_0)
+DemoTitleUI.in_transition = function (arg_18_0)
 	return arg_18_0._camera_transition
 end
 
-function DemoTitleUI._recreate_characters(arg_19_0)
+DemoTitleUI._recreate_characters = function (arg_19_0)
 	for iter_19_0, iter_19_1 in pairs(arg_19_0._character_previewers) do
 		iter_19_1:destroy()
 	end
@@ -347,7 +347,7 @@ end
 
 local var_0_15 = false
 
-function DemoTitleUI.update(arg_20_0, arg_20_1, arg_20_2)
+DemoTitleUI.update = function (arg_20_0, arg_20_1, arg_20_2)
 	if var_0_15 then
 		arg_20_0:_create_ui_elements()
 		arg_20_0:_recreate_characters()
@@ -373,7 +373,7 @@ function DemoTitleUI.update(arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0:_update_character_previewers(arg_20_1, arg_20_2)
 end
 
-function DemoTitleUI._update_scatter(arg_21_0, arg_21_1, arg_21_2)
+DemoTitleUI._update_scatter = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0._scatter_system then
 		local var_21_0 = ScriptWorld.viewport(arg_21_0._world, "title_screen_viewport")
 		local var_21_1 = ScriptViewport.camera(var_21_0)
@@ -383,7 +383,7 @@ function DemoTitleUI._update_scatter(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function DemoTitleUI._update_input(arg_22_0, arg_22_1, arg_22_2)
+DemoTitleUI._update_input = function (arg_22_0, arg_22_1, arg_22_2)
 	if arg_22_0._selected_profile and (Managers.input:get_service("main_menu"):get("back", true) or arg_22_0._back_pressed) and not arg_22_0:in_transition() then
 		arg_22_0._character_previewers[arg_22_0._selected_profile]:reset_state()
 		arg_22_0:animate_to_camera(DemoSettings.camera_end_position, nil, nil, 0.5)
@@ -393,7 +393,7 @@ function DemoTitleUI._update_input(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function DemoTitleUI._update_character_previewers(arg_23_0, arg_23_1, arg_23_2)
+DemoTitleUI._update_character_previewers = function (arg_23_0, arg_23_1, arg_23_2)
 	for iter_23_0, iter_23_1 in pairs(arg_23_0._character_previewers) do
 		iter_23_1:update(arg_23_0._ui_activated and not arg_23_0._selected_profile and not arg_23_0._camera_transition, arg_23_1, arg_23_2)
 	end
@@ -411,7 +411,7 @@ function DemoTitleUI._update_character_previewers(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function DemoTitleUI._update_start_game(arg_24_0, arg_24_1, arg_24_2)
+DemoTitleUI._update_start_game = function (arg_24_0, arg_24_1, arg_24_2)
 	if arg_24_0._camera_transition and arg_24_0._selected_profile then
 		return
 	end
@@ -422,7 +422,7 @@ function DemoTitleUI._update_start_game(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function DemoTitleUI._update_back(arg_25_0, arg_25_1, arg_25_2)
+DemoTitleUI._update_back = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0._camera_transition and arg_25_0._selected_profile then
 		return
 	end
@@ -433,7 +433,7 @@ function DemoTitleUI._update_back(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function DemoTitleUI._update_career_information(arg_26_0, arg_26_1, arg_26_2)
+DemoTitleUI._update_career_information = function (arg_26_0, arg_26_1, arg_26_2)
 	if arg_26_0._input_disabled then
 		return
 	end
@@ -515,7 +515,7 @@ function DemoTitleUI._update_career_information(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function DemoTitleUI._update_animation(arg_28_0, arg_28_1, arg_28_2)
+DemoTitleUI._update_animation = function (arg_28_0, arg_28_1, arg_28_2)
 	for iter_28_0, iter_28_1 in pairs(arg_28_0._ui_animations) do
 		UIAnimation.update(iter_28_1, arg_28_1)
 
@@ -531,7 +531,7 @@ function DemoTitleUI._update_animation(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function DemoTitleUI._update_camera(arg_29_0, arg_29_1, arg_29_2)
+DemoTitleUI._update_camera = function (arg_29_0, arg_29_1, arg_29_2)
 	if arg_29_0._camera_transition then
 		arg_29_0._timer = arg_29_0._timer or 0
 
@@ -583,14 +583,14 @@ function DemoTitleUI._update_camera(arg_29_0, arg_29_1, arg_29_2)
 	Gui.move(arg_29_0._world_gui, var_29_13)
 end
 
-function DemoTitleUI._draw_3d_logo(arg_30_0, arg_30_1, arg_30_2)
+DemoTitleUI._draw_3d_logo = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = Vector2(1920, 1080)
 	local var_30_1, var_30_2 = Gui.resolution()
 
 	Gui.bitmap(arg_30_0._world_gui, "vermintide_2_logo_demo", Vector3(-var_30_0[1] * var_30_1 / var_0_12 * 0.5, -var_30_0[2] * var_30_1 / var_0_12 * 0.3, 1), Vector2(var_30_0[1] * var_30_1 / var_0_12, var_30_0[2] * var_30_1 / var_0_12))
 end
 
-function DemoTitleUI._draw(arg_31_0, arg_31_1, arg_31_2)
+DemoTitleUI._draw = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0._ui_renderer
 	local var_31_1 = arg_31_0._career_video_ui_renderer
 	local var_31_2 = arg_31_0._ui_scenegraph
@@ -689,7 +689,7 @@ local var_0_22 = Colors.color_definitions.red
 local var_0_23 = 0
 local var_0_24 = 0
 
-function DemoTitleUI._draw_fps(arg_32_0, arg_32_1, arg_32_2)
+DemoTitleUI._draw_fps = function (arg_32_0, arg_32_1, arg_32_2)
 	if BUILD == "release" then
 		return
 	end
@@ -753,7 +753,7 @@ function DemoTitleUI._draw_fps(arg_32_0, arg_32_1, arg_32_2)
 	UIRenderer.draw_text(var_32_0, var_32_2, var_0_17, var_32_11, var_0_16, Vector3(unpack(var_0_19)), var_0_21)
 end
 
-function DemoTitleUI.activate_career_ui(arg_33_0, arg_33_1)
+DemoTitleUI.activate_career_ui = function (arg_33_0, arg_33_1)
 	arg_33_0._ui_activated = arg_33_1
 	arg_33_0._selected_profile = nil
 	arg_33_0._ui_animations.reset = UIAnimation.init(UIAnimation.function_by_time, arg_33_0._ui_scenegraph.right_side_root.position, 1, arg_33_0._ui_scenegraph.right_side_root.position[1], 450, 0, math.easeOutCubic)
@@ -765,7 +765,7 @@ function DemoTitleUI.activate_career_ui(arg_33_0, arg_33_1)
 	end
 end
 
-function DemoTitleUI.animate_to_camera(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+DemoTitleUI.animate_to_camera = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	local var_34_0 = ScriptViewport.camera(arg_34_0._viewport)
 	local var_34_1 = ScriptCamera.pose(var_34_0)
 
@@ -777,26 +777,26 @@ function DemoTitleUI.animate_to_camera(arg_34_0, arg_34_1, arg_34_2, arg_34_3, a
 	arg_34_0._ref_time = arg_34_4
 end
 
-function DemoTitleUI.enter_attract_mode(arg_35_0)
+DemoTitleUI.enter_attract_mode = function (arg_35_0)
 	arg_35_0._attract_mode_enabled = true
 	arg_35_0._sound_started = false
 	arg_35_0._attract_video.content.video_content.video_completed = false
 end
 
-function DemoTitleUI.exit_attract_mode(arg_36_0)
+DemoTitleUI.exit_attract_mode = function (arg_36_0)
 	arg_36_0._attract_mode_enabled = false
 	arg_36_0._destroy_video_player = true
 end
 
-function DemoTitleUI.video_completed(arg_37_0)
+DemoTitleUI.video_completed = function (arg_37_0)
 	return arg_37_0._attract_video.content.video_content.video_completed
 end
 
-function DemoTitleUI.attract_mode(arg_38_0)
+DemoTitleUI.attract_mode = function (arg_38_0)
 	return arg_38_0._attract_mode_enabled
 end
 
-function DemoTitleUI.is_ready(arg_39_0)
+DemoTitleUI.is_ready = function (arg_39_0)
 	for iter_39_0, iter_39_1 in pairs(arg_39_0._character_previewers) do
 		if not iter_39_1:character_spawned() then
 			return false
@@ -806,47 +806,47 @@ function DemoTitleUI.is_ready(arg_39_0)
 	return true
 end
 
-function DemoTitleUI.should_start(arg_40_0)
+DemoTitleUI.should_start = function (arg_40_0)
 	return arg_40_0._start_pressed
 end
 
-function DemoTitleUI.selected_profile(arg_41_0)
+DemoTitleUI.selected_profile = function (arg_41_0)
 	return arg_41_0._selected_profile
 end
 
-function DemoTitleUI.set_start_pressed(arg_42_0, arg_42_1)
+DemoTitleUI.set_start_pressed = function (arg_42_0, arg_42_1)
 	arg_42_0._entering = arg_42_1
 end
 
-function DemoTitleUI.clear_playgo_status(arg_43_0)
+DemoTitleUI.clear_playgo_status = function (arg_43_0)
 	return
 end
 
-function DemoTitleUI.set_playgo_status(arg_44_0)
+DemoTitleUI.set_playgo_status = function (arg_44_0)
 	return
 end
 
-function DemoTitleUI.show_menu(arg_45_0)
+DemoTitleUI.show_menu = function (arg_45_0)
 	return
 end
 
-function DemoTitleUI.clear_user_name(arg_46_0)
+DemoTitleUI.clear_user_name = function (arg_46_0)
 	return
 end
 
-function DemoTitleUI.current_menu_index(arg_47_0)
+DemoTitleUI.current_menu_index = function (arg_47_0)
 	return
 end
 
-function DemoTitleUI.active_menu_selection(arg_48_0)
+DemoTitleUI.active_menu_selection = function (arg_48_0)
 	return
 end
 
-function DemoTitleUI.set_menu_item_enable_state_by_index(arg_49_0)
+DemoTitleUI.set_menu_item_enable_state_by_index = function (arg_49_0)
 	return
 end
 
-function DemoTitleUI.destroy(arg_50_0)
+DemoTitleUI.destroy = function (arg_50_0)
 	for iter_50_0, iter_50_1 in pairs(arg_50_0._character_previewers) do
 		iter_50_1:destroy()
 	end
@@ -860,11 +860,11 @@ function DemoTitleUI.destroy(arg_50_0)
 	World.destroy_gui(arg_50_0._world, arg_50_0._world_gui)
 end
 
-function DemoTitleUI.set_information_text(arg_51_0, arg_51_1)
+DemoTitleUI.set_information_text = function (arg_51_0, arg_51_1)
 	return
 end
 
-function DemoTitleUI.set_user_name(arg_52_0, arg_52_1)
+DemoTitleUI.set_user_name = function (arg_52_0, arg_52_1)
 	arg_52_0._draw_gamertag = true
 	arg_52_0._user_gamertag_widget.content.text = arg_52_1
 
@@ -873,19 +873,19 @@ function DemoTitleUI.set_user_name(arg_52_0, arg_52_1)
 	end
 end
 
-function DemoTitleUI.clear_user_name(arg_53_0)
+DemoTitleUI.clear_user_name = function (arg_53_0)
 	arg_53_0._draw_gamertag = nil
 	arg_53_0._switch_profile_blocked = nil
 end
 
-function DemoTitleUI.set_update_offline_data_enabled(arg_54_0, arg_54_1)
+DemoTitleUI.set_update_offline_data_enabled = function (arg_54_0, arg_54_1)
 	return
 end
 
-function DemoTitleUI.disable_input(arg_55_0, arg_55_1)
+DemoTitleUI.disable_input = function (arg_55_0, arg_55_1)
 	return
 end
 
-function DemoTitleUI.set_game_type(arg_56_0, arg_56_1)
+DemoTitleUI.set_game_type = function (arg_56_0, arg_56_1)
 	return
 end

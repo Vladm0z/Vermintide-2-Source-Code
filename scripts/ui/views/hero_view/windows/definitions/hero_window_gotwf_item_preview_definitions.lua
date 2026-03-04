@@ -428,7 +428,7 @@ local var_0_12 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 						local var_1_0 = ((arg_1_1.progress or 0) + arg_1_3) % 1
 
 						arg_1_1.angle = math.pow(2, math.smoothstep(var_1_0, 0, 1)) * (math.pi * 2)
@@ -480,7 +480,7 @@ local function var_0_13(arg_2_0)
 			style_id = "painting",
 			pass_type = "texture_uv",
 			content_id = "painting",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.texture_id
 			end
 		},
@@ -488,7 +488,7 @@ local function var_0_13(arg_2_0)
 			pass_type = "texture_frame",
 			style_id = "painting_frame",
 			texture_id = "painting_frame",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.painting
 			end
 		}
@@ -716,7 +716,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "texture_id",
 					pass_type = "texture",
 					retained_mode = arg_6_3,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.texture_id
 					end
 				}
@@ -893,7 +893,7 @@ local function var_0_19(arg_9_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return not arg_10_0.already_owned
 					end
 				},
@@ -901,14 +901,14 @@ local function var_0_19(arg_9_0)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return not arg_11_0.already_owned
 					end
 				},
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.already_owned
 					end
 				},
@@ -916,7 +916,7 @@ local function var_0_19(arg_9_0)
 					texture_id = "sigil",
 					style_id = "sigil",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return not arg_13_0.already_owned
 					end
 				},
@@ -924,7 +924,7 @@ local function var_0_19(arg_9_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.already_owned
 					end
 				},
@@ -932,14 +932,14 @@ local function var_0_19(arg_9_0)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.already_owned
 					end
 				},
 				{
 					style_id = "background_owned",
 					pass_type = "rect",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.already_owned
 					end
 				},
@@ -947,7 +947,7 @@ local function var_0_19(arg_9_0)
 					pass_type = "texture",
 					style_id = "sigil_owned",
 					texture_id = "sigil",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.already_owned
 					end
 				}
@@ -1065,13 +1065,13 @@ local var_0_22 = {
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				return
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end
 		},
@@ -1079,15 +1079,15 @@ local var_0_22 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				arg_21_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeOutCubic(arg_22_3)
 
 				arg_22_4.render_settings.alpha_multiplier = var_22_0
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end
 		}
@@ -1097,7 +1097,7 @@ local var_0_22 = {
 			name = "animate_in",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				arg_24_2.claimed.alpha_multiplier = 0
 				arg_24_2.title_text.alpha_multiplier = 0
 				arg_24_2.type_title_text.alpha_multiplier = 0
@@ -1106,7 +1106,7 @@ local var_0_22 = {
 				arg_24_2.description_text.alpha_multiplier = 0
 				arg_24_0.info_anchor.local_position[1] = arg_24_1.info_anchor.position[1] + 50
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = math.easeOutCubic(arg_25_3)
 
 				arg_25_0.info_anchor.local_position[1] = math.lerp(arg_25_1.info_anchor.position[1] + 50, arg_25_1.info_anchor.position[1], var_25_0)
@@ -1117,7 +1117,7 @@ local var_0_22 = {
 				arg_25_2.career_title_text.alpha_multiplier = var_25_0
 				arg_25_2.description_text.alpha_multiplier = var_25_0
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		}

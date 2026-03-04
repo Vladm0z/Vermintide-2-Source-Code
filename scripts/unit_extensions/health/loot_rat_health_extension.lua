@@ -2,28 +2,28 @@
 
 LootRatHealthExtension = class(LootRatHealthExtension, GenericHealthExtension)
 
-function LootRatHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LootRatHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	LootRatHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
-function LootRatHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+LootRatHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = BLACKBOARDS[arg_2_2]
 
 	var_2_0.dodge_damage_points = var_2_0.breed.dodge_damage_points
 	var_2_0.dodge_damage_success = false
 end
 
-function LootRatHealthExtension.destroy(arg_3_0)
+LootRatHealthExtension.destroy = function (arg_3_0)
 	LootRatHealthExtension.super.destroy(arg_3_0)
 
 	arg_3_0.blackboard = nil
 end
 
-function LootRatHealthExtension.apply_client_predicted_damage(arg_4_0, arg_4_1)
+LootRatHealthExtension.apply_client_predicted_damage = function (arg_4_0, arg_4_1)
 	return
 end
 
-function LootRatHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+LootRatHealthExtension.add_damage = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 	local var_5_0 = BLACKBOARDS[arg_5_0.unit]
 	local var_5_1 = var_5_0.dodge_damage_points
 	local var_5_2 = false
@@ -45,7 +45,7 @@ function LootRatHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, a
 	var_5_0.dodge_damage_success = var_5_2
 end
 
-function LootRatHealthExtension.regen_dodge_damage_points(arg_6_0)
+LootRatHealthExtension.regen_dodge_damage_points = function (arg_6_0)
 	local var_6_0 = BLACKBOARDS[arg_6_0.unit]
 
 	var_6_0.dodge_damage_points = var_6_0.breed.dodge_damage_points

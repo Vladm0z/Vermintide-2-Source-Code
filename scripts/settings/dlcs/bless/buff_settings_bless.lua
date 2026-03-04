@@ -37,7 +37,7 @@ var_0_2.buff_templates = {
 				name = "victor_priest_6_1_pulse_attack",
 				buff_func = "victor_priest_6_1_pulse_attack",
 				event = "on_melee_hit",
-				apply_condition = function(arg_1_0, arg_1_1, arg_1_2)
+				apply_condition = function (arg_1_0, arg_1_1, arg_1_2)
 					if not Managers.state.network.is_server then
 						return false
 					end
@@ -238,7 +238,7 @@ var_0_2.buff_templates = {
 	}
 }
 var_0_2.proc_functions = {
-	add_buff_to_hit_enemy = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	add_buff_to_hit_enemy = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_2[1]
 		local var_2_1 = arg_2_2[7]
 
@@ -262,7 +262,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_4_1_on_damage_taken = function(arg_3_0, arg_3_1, arg_3_2)
+	victor_priest_4_1_on_damage_taken = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = ScriptUnit.extension(arg_3_0, "career_system"):get_passive_ability_by_name("wh_priest")
 		local var_3_1 = arg_3_2[1]
 
@@ -278,7 +278,7 @@ var_0_2.proc_functions = {
 
 		var_3_0:modify_resource(var_3_2)
 	end,
-	add_buff_to_first_hit_enemy = function(arg_4_0, arg_4_1, arg_4_2)
+	add_buff_to_first_hit_enemy = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = arg_4_2[1]
 		local var_4_1 = arg_4_2[7]
 		local var_4_2 = arg_4_2[8]
@@ -301,7 +301,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_book_buff_heal_on_kill_proc = function(arg_5_0, arg_5_1, arg_5_2)
+	victor_priest_book_buff_heal_on_kill_proc = function (arg_5_0, arg_5_1, arg_5_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -324,12 +324,12 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	add_buff_on_elite_kill = function(arg_6_0, arg_6_1, arg_6_2)
+	add_buff_on_elite_kill = function (arg_6_0, arg_6_1, arg_6_2)
 		if ALIVE[arg_6_0] and arg_6_2[1][DamageDataIndex.ATTACKER] == arg_6_0 then
 			ScriptUnit.extension(arg_6_0, "buff_system"):add_buff(arg_6_1.template.buff_to_add)
 		end
 	end,
-	victor_priest_store_damage = function(arg_7_0, arg_7_1, arg_7_2)
+	victor_priest_store_damage = function (arg_7_0, arg_7_1, arg_7_2)
 		if ALIVE[arg_7_0] then
 			if not arg_7_1.damage_table then
 				arg_7_1.damage_table = {}
@@ -396,7 +396,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_damage_stagger = function(arg_8_0, arg_8_1, arg_8_2)
+	victor_priest_damage_stagger = function (arg_8_0, arg_8_1, arg_8_2)
 		if ALIVE[arg_8_0] then
 			local var_8_0 = arg_8_2[var_0_4]
 
@@ -425,7 +425,7 @@ var_0_2.proc_functions = {
 			var_8_2:add_buff(var_8_8, var_8_6)
 		end
 	end,
-	add_buff_on_num_targets_hit = function(arg_9_0, arg_9_1, arg_9_2)
+	add_buff_on_num_targets_hit = function (arg_9_0, arg_9_1, arg_9_2)
 		if ALIVE[arg_9_0] then
 			local var_9_0 = arg_9_1.template
 
@@ -451,7 +451,7 @@ var_0_2.proc_functions = {
 			Managers.state.entity:system("buff_system"):add_buff(arg_9_0, var_9_4, arg_9_0, false)
 		end
 	end,
-	victor_priest_knockback_on_hit = function(arg_10_0, arg_10_1, arg_10_2)
+	victor_priest_knockback_on_hit = function (arg_10_0, arg_10_1, arg_10_2)
 		if ALIVE[arg_10_0] then
 			if arg_10_2[4] > 1 then
 				return
@@ -475,7 +475,7 @@ var_0_2.proc_functions = {
 			var_10_4:remove_buff(arg_10_1.id)
 		end
 	end,
-	victor_priest_add_buff_first_target = function(arg_11_0, arg_11_1, arg_11_2)
+	victor_priest_add_buff_first_target = function (arg_11_0, arg_11_1, arg_11_2)
 		if ALIVE[arg_11_0] then
 			if arg_11_2[4] > 1 then
 				return
@@ -491,7 +491,7 @@ var_0_2.proc_functions = {
 			arg_11_1.buff_ids[#arg_11_1.buff_ids + 1] = var_11_1:add_buff(var_11_0)
 		end
 	end,
-	victor_priest_passive_resource = function(arg_12_0, arg_12_1, arg_12_2)
+	victor_priest_passive_resource = function (arg_12_0, arg_12_1, arg_12_2)
 		if ALIVE[arg_12_0] then
 			local var_12_0
 			local var_12_1 = arg_12_1.template
@@ -514,7 +514,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_passive_resource_activate = function(arg_13_0, arg_13_1, arg_13_2)
+	victor_priest_passive_resource_activate = function (arg_13_0, arg_13_1, arg_13_2)
 		if ALIVE[arg_13_0] then
 			local var_13_0 = ScriptUnit.has_extension(arg_13_0, "overcharge_system")
 
@@ -554,7 +554,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_4_3_heal_on_kill = function(arg_14_0, arg_14_1, arg_14_2)
+	victor_priest_4_3_heal_on_kill = function (arg_14_0, arg_14_1, arg_14_2)
 		local var_14_0 = Managers.state.network.is_server
 
 		if not Managers.player:owner(arg_14_0).remote and ScriptUnit.extension(arg_14_0, "talent_system"):has_talent("victor_priest_4_3") then
@@ -601,7 +601,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	victor_priest_6_1_pulse_attack = function(arg_15_0, arg_15_1, arg_15_2)
+	victor_priest_6_1_pulse_attack = function (arg_15_0, arg_15_1, arg_15_2)
 		local var_15_0 = arg_15_1.template
 		local var_15_1 = var_15_0.push_radius
 		local var_15_2 = var_15_0.stagger_impact
@@ -624,7 +624,7 @@ var_0_2.proc_functions = {
 	end
 }
 var_0_2.buff_function_templates = {
-	victor_priest_passive_active_update = function(arg_16_0, arg_16_1, arg_16_2)
+	victor_priest_passive_active_update = function (arg_16_0, arg_16_1, arg_16_2)
 		if ALIVE[arg_16_0] then
 			local var_16_0 = ScriptUnit.has_extension(arg_16_0, "overcharge_system")
 
@@ -644,7 +644,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_passive_grow = function(arg_17_0, arg_17_1, arg_17_2)
+	victor_priest_passive_grow = function (arg_17_0, arg_17_1, arg_17_2)
 		if ALIVE[arg_17_0] then
 			if not arg_17_1.stack_ids then
 				arg_17_1.stack_ids = {}
@@ -663,7 +663,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_delayed_buff_remove = function(arg_18_0, arg_18_1, arg_18_2)
+	victor_priest_delayed_buff_remove = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = arg_18_0
 
 		if ALIVE[var_18_0] then
@@ -681,7 +681,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_deal_damage_on_remove = function(arg_19_0, arg_19_1, arg_19_2)
+	victor_priest_deal_damage_on_remove = function (arg_19_0, arg_19_1, arg_19_2)
 		if ALIVE[arg_19_0] then
 			local var_19_0 = arg_19_1.attacker_unit
 			local var_19_1 = arg_19_1.value
@@ -707,7 +707,7 @@ var_0_2.buff_function_templates = {
 			Managers.state.entity:system("area_damage_system"):create_explosion(var_19_0, var_19_6, Quaternion.identity(), "victor_priest_career_skill_aftershock", 1, "career_ability", var_19_5, false)
 		end
 	end,
-	victor_priest_activated_ability_aftershock_update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	victor_priest_activated_ability_aftershock_update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -788,7 +788,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_on_career_skill_applied = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	victor_priest_on_career_skill_applied = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 		local var_21_0 = "fx/wp_immortality_allies"
 		local var_21_1 = "fx/wp_immortality_self"
 		local var_21_2 = Managers.player
@@ -899,7 +899,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_6_1_removed = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	victor_priest_6_1_removed = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -916,7 +916,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_on_career_skill_removed = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	victor_priest_on_career_skill_removed = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 		if arg_23_1.screen_space_id then
 			local var_23_0 = ScriptUnit.has_extension(arg_23_0, "first_person_system")
 
@@ -929,7 +929,7 @@ var_0_2.buff_function_templates = {
 			World.destroy_particles(arg_23_3, arg_23_1.third_person_effect_id)
 		end
 	end,
-	victor_priest_on_career_skill_update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	victor_priest_on_career_skill_update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 		if arg_24_1.third_person_effect_id then
 			if ALIVE[arg_24_0] then
 				local var_24_0 = arg_24_1._tp_node or 0
@@ -943,7 +943,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	damage_stagger_dot = function(arg_25_0, arg_25_1, arg_25_2)
+	damage_stagger_dot = function (arg_25_0, arg_25_1, arg_25_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -979,7 +979,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	victor_priest_activated_ability_nuke_start = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+	victor_priest_activated_ability_nuke_start = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 		local var_26_0 = "fx/wp_explosion_allies"
 		local var_26_1 = "fx/wp_explosion_self"
 		local var_26_2 = Managers.player
@@ -1004,7 +1004,7 @@ var_0_2.buff_function_templates = {
 			WwiseUtils.trigger_unit_event(arg_26_3, "career_ability_priest_buildup_husk", arg_26_0, 0)
 		end
 	end,
-	victor_priest_activated_ability_nuke = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	victor_priest_activated_ability_nuke = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 		if arg_27_1.screen_space_id then
 			local var_27_0 = ScriptUnit.has_extension(arg_27_0, "first_person_system")
 
@@ -1046,7 +1046,7 @@ var_0_2.buff_function_templates = {
 
 		DamageUtils.create_explosion(arg_27_3, var_27_1, var_27_3, var_27_6, var_27_5, var_27_7, var_27_8, var_27_10, var_27_12, var_27_1, var_27_9, false, arg_27_0)
 	end,
-	victor_priest_activated_noclip_apply = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+	victor_priest_activated_noclip_apply = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 		local var_28_0 = ScriptUnit.extension(arg_28_0, "locomotion_system")
 
 		if var_28_0.apply_no_clip_filter then
@@ -1058,14 +1058,14 @@ var_0_2.buff_function_templates = {
 			arg_28_1.pushed_units = {}
 		end
 	end,
-	victor_priest_activated_noclip_remove = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	victor_priest_activated_noclip_remove = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 		local var_29_0 = ScriptUnit.extension(arg_29_0, "locomotion_system")
 
 		if var_29_0.remove_no_clip_filter then
 			var_29_0:remove_no_clip_filter("victor_priest_activated_noclip")
 		end
 	end,
-	victor_priest_activated_noclip_update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+	victor_priest_activated_noclip_update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 		if not Managers.state.network.is_server then
 			return
 		end

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/unit_extensions/objectives/testify/versus_volume_objective_extension_testify.lua
 
 return {
-	versus_volume_objective_get_num_players_inside = function(arg_1_0)
+	versus_volume_objective_get_num_players_inside = function (arg_1_0)
 		if arg_1_0._volume_type == "all_alive_human_players_inside" then
 			return arg_1_0:_get_num_players_inside()
 		end

@@ -2,7 +2,7 @@
 
 ActionBow = class(ActionBow, ActionBase)
 
-function ActionBow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBow.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionBow.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -12,7 +12,7 @@ function ActionBow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, ar
 	arg_1_0.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
 end
 
-function ActionBow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionBow.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionBow.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -37,7 +37,7 @@ function ActionBow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	arg_2_0._is_critical_strike = var_2_1
 end
 
-function ActionBow.reload(arg_3_0, arg_3_1)
+ActionBow.reload = function (arg_3_0, arg_3_1)
 	if arg_3_0.ammo_extension:can_reload() then
 		local var_3_0 = arg_3_1.play_reload_animation
 
@@ -47,7 +47,7 @@ function ActionBow.reload(arg_3_0, arg_3_1)
 	end
 end
 
-function ActionBow.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionBow.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0.current_action
 
 	if arg_4_0.time_to_unzoom and arg_4_2 >= arg_4_0.time_to_unzoom then
@@ -113,7 +113,7 @@ function ActionBow.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	end
 end
 
-function ActionBow.finish(arg_5_0, arg_5_1, arg_5_2)
+ActionBow.finish = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.owner_unit
 
@@ -146,7 +146,7 @@ function ActionBow.finish(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function ActionBow.fire(arg_6_0, arg_6_1, arg_6_2)
+ActionBow.fire = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.owner_unit
 	local var_6_1 = ScriptUnit.extension(var_6_0, "first_person_system")
 	local var_6_2 = arg_6_1.speed

@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCirclePreyAction = class(BTCirclePreyAction, BTNode)
 
-function BTCirclePreyAction.init(arg_1_0, ...)
+BTCirclePreyAction.init = function (arg_1_0, ...)
 	BTCirclePreyAction.super.init(arg_1_0, ...)
 end
 
 BTCirclePreyAction.name = "BTCirclePreyAction"
 
-function BTCirclePreyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCirclePreyAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
 
 	if GwNavQueries.triangle_from_position(arg_2_2.nav_world, POSITION_LOOKUP[arg_2_1], 0.5, 0.5) then
@@ -38,7 +38,7 @@ function BTCirclePreyAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTCirclePreyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCirclePreyAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 == "aborted" then
 		arg_3_2.need_to_recalculate_skulk_pos = true
 	end
@@ -48,7 +48,7 @@ function BTCirclePreyAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, a
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-function BTCirclePreyAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCirclePreyAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.navigation_extension
 
 	if not arg_4_2.ninja_vanish and var_4_0:has_reached_destination() then
@@ -70,7 +70,7 @@ function BTCirclePreyAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTCirclePreyAction.get_new_goal(arg_5_0, arg_5_1, arg_5_2)
+BTCirclePreyAction.get_new_goal = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.secondary_target or arg_5_2.target_unit
 
 	if Unit.alive(var_5_0) then
@@ -83,7 +83,7 @@ function BTCirclePreyAction.get_new_goal(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BTCirclePreyAction.move_to_goal(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTCirclePreyAction.move_to_goal = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_2.move_state ~= "moving" then
 		Managers.state.network:anim_event(arg_6_1, "move_fwd")
 
@@ -94,7 +94,7 @@ function BTCirclePreyAction.move_to_goal(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.navigation_extension:move_to(arg_6_3)
 end
 
-function BTCirclePreyAction.stop(arg_7_0, arg_7_1, arg_7_2)
+BTCirclePreyAction.stop = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2.move_state ~= "idle" then
 		Managers.state.network:anim_event(arg_7_1, "idle")
 

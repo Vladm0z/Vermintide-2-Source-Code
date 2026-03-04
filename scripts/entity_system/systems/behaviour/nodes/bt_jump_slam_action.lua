@@ -6,13 +6,13 @@ local var_0_0 = POSITION_LOOKUP
 
 BTJumpSlamAction = class(BTJumpSlamAction, BTNode)
 
-function BTJumpSlamAction.init(arg_1_0, ...)
+BTJumpSlamAction.init = function (arg_1_0, ...)
 	BTJumpSlamAction.super.init(arg_1_0, ...)
 end
 
 BTJumpSlamAction.name = "BTJumpSlamAction"
 
-function BTJumpSlamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTJumpSlamAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.jump_slam_data
 
 	var_2_0.anim_jump_rot_var = Unit.animation_find_variable(arg_2_1, "jump_rotation")
@@ -44,7 +44,7 @@ function BTJumpSlamAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	AiUtils.add_attack_intensity(var_2_6, var_2_1, arg_2_2)
 end
 
-function BTJumpSlamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTJumpSlamAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	Managers.state.entity:system("animation_system"):set_update_anim_variable_done(arg_3_1)
 
 	arg_3_2.jump_slam_data.updating_jump_rot = false
@@ -68,7 +68,7 @@ function BTJumpSlamAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg
 	arg_3_2.bot_threats_data = nil
 end
 
-function BTJumpSlamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTJumpSlamAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.jump_slam_data
 
 	if arg_4_2.locomotion_extension:current_velocity().z < 0 and not var_4_0.constrained then
@@ -112,14 +112,14 @@ function BTJumpSlamAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTJumpSlamAction._calculate_sphere_collision(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTJumpSlamAction._calculate_sphere_collision = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.radius or arg_5_1.radius
 	local var_5_1 = arg_5_2.offset_forward or arg_5_1.forward_offset
 
 	return arg_5_3 + Quaternion.forward(arg_5_4) * var_5_1, var_5_0
 end
 
-function BTJumpSlamAction._create_bot_aoe_threat(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTJumpSlamAction._create_bot_aoe_threat = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_4.duration
 	local var_6_1 = arg_6_1.target_pos:unbox()
 	local var_6_2, var_6_3 = arg_6_0:_calculate_sphere_collision(arg_6_3, arg_6_4, var_6_1, arg_6_2)
@@ -127,7 +127,7 @@ function BTJumpSlamAction._create_bot_aoe_threat(arg_6_0, arg_6_1, arg_6_2, arg_
 	Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_6_2, "sphere", var_6_3, nil, var_6_0, "Jump Slam")
 end
 
-function BTJumpSlamAction.progress_to_landing(arg_7_0, arg_7_1, arg_7_2)
+BTJumpSlamAction.progress_to_landing = function (arg_7_0, arg_7_1, arg_7_2)
 	LocomotionUtils.set_animation_driven_movement(arg_7_1, true, false, false)
 	Managers.state.network:anim_event(arg_7_1, "attack_jump_land")
 
@@ -138,7 +138,7 @@ function BTJumpSlamAction.progress_to_landing(arg_7_0, arg_7_1, arg_7_2)
 	var_7_0:set_gravity(nil)
 end
 
-function BTJumpSlamAction.progress_to_in_flight(arg_8_0, arg_8_1, arg_8_2)
+BTJumpSlamAction.progress_to_in_flight = function (arg_8_0, arg_8_1, arg_8_2)
 	LocomotionUtils.set_animation_driven_movement(arg_8_1, false, true)
 
 	local var_8_0 = arg_8_0.locomotion_extension

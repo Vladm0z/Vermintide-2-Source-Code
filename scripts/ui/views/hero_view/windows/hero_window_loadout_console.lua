@@ -10,7 +10,7 @@ local var_0_5 = false
 HeroWindowLoadoutConsole = class(HeroWindowLoadoutConsole)
 HeroWindowLoadoutConsole.NAME = "HeroWindowLoadoutConsole"
 
-function HeroWindowLoadoutConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowLoadoutConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutConsole")
 
 	arg_1_0.params = arg_1_1
@@ -47,7 +47,7 @@ function HeroWindowLoadoutConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowLoadoutConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowLoadoutConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings
@@ -58,7 +58,7 @@ function HeroWindowLoadoutConsole._start_transition_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowLoadoutConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowLoadoutConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -106,7 +106,7 @@ function HeroWindowLoadoutConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	var_3_1.loadout_grid.content.career_index = arg_3_0.params.career_index
 end
 
-function HeroWindowLoadoutConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowLoadoutConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutConsole")
 
 	arg_4_0.ui_animator = nil
@@ -116,7 +116,7 @@ function HeroWindowLoadoutConsole.on_exit(arg_4_0, arg_4_1)
 	arg_4_0._menu_input_description = nil
 end
 
-function HeroWindowLoadoutConsole._input_service(arg_5_0)
+HeroWindowLoadoutConsole._input_service = function (arg_5_0)
 	local var_5_0 = arg_5_0.parent
 
 	if var_5_0:is_friends_list_active() then
@@ -126,7 +126,7 @@ function HeroWindowLoadoutConsole._input_service(arg_5_0)
 	return var_5_0:window_input_service()
 end
 
-function HeroWindowLoadoutConsole.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowLoadoutConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -142,11 +142,11 @@ function HeroWindowLoadoutConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function HeroWindowLoadoutConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowLoadoutConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowLoadoutConsole._update_input_description(arg_8_0)
+HeroWindowLoadoutConsole._update_input_description = function (arg_8_0)
 	local var_8_0 = arg_8_0.params
 	local var_8_1 = arg_8_0.params.hero_statistics_active
 	local var_8_2 = "default"
@@ -164,7 +164,7 @@ function HeroWindowLoadoutConsole._update_input_description(arg_8_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._update_animations(arg_9_0, arg_9_1)
+HeroWindowLoadoutConsole._update_animations = function (arg_9_0, arg_9_1)
 	arg_9_0.ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._animations
@@ -181,7 +181,7 @@ function HeroWindowLoadoutConsole._update_animations(arg_9_0, arg_9_1)
 	local var_9_2 = arg_9_0._widgets_by_name
 end
 
-function HeroWindowLoadoutConsole._is_button_pressed(arg_10_0, arg_10_1)
+HeroWindowLoadoutConsole._is_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -191,7 +191,7 @@ function HeroWindowLoadoutConsole._is_button_pressed(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowLoadoutConsole._handle_gamepad_input(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowLoadoutConsole._handle_gamepad_input = function (arg_11_0, arg_11_1, arg_11_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -241,7 +241,7 @@ function HeroWindowLoadoutConsole._handle_gamepad_input(arg_11_0, arg_11_1, arg_
 	end
 end
 
-function HeroWindowLoadoutConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowLoadoutConsole._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 	local var_12_1 = arg_12_0:_is_equipment_slot_hovered()
 
@@ -263,7 +263,7 @@ function HeroWindowLoadoutConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function HeroWindowLoadoutConsole._customize_item(arg_13_0, arg_13_1)
+HeroWindowLoadoutConsole._customize_item = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1.data.slot_type
 
 	arg_13_0.params.item_to_customize = arg_13_1
@@ -271,7 +271,7 @@ function HeroWindowLoadoutConsole._customize_item(arg_13_0, arg_13_1)
 	arg_13_0.parent:set_layout_by_name("item_customization")
 end
 
-function HeroWindowLoadoutConsole._update_selected_loadout_slot_index(arg_14_0)
+HeroWindowLoadoutConsole._update_selected_loadout_slot_index = function (arg_14_0)
 	local var_14_0 = arg_14_0.parent:get_selected_loadout_slot_index()
 
 	if var_14_0 ~= arg_14_0._selected_loadout_slot_index then
@@ -281,7 +281,7 @@ function HeroWindowLoadoutConsole._update_selected_loadout_slot_index(arg_14_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._update_loadout_sync(arg_15_0)
+HeroWindowLoadoutConsole._update_loadout_sync = function (arg_15_0)
 	local var_15_0 = arg_15_0.parent.loadout_sync_id
 
 	if var_15_0 ~= arg_15_0._loadout_sync_id then
@@ -291,12 +291,12 @@ function HeroWindowLoadoutConsole._update_loadout_sync(arg_15_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._exit(arg_16_0, arg_16_1)
+HeroWindowLoadoutConsole._exit = function (arg_16_0, arg_16_1)
 	arg_16_0.exit = true
 	arg_16_0.exit_level_id = arg_16_1
 end
 
-function HeroWindowLoadoutConsole.draw(arg_17_0, arg_17_1)
+HeroWindowLoadoutConsole.draw = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.ui_renderer
 	local var_17_1 = arg_17_0.ui_top_renderer
 	local var_17_2 = arg_17_0.ui_scenegraph
@@ -324,11 +324,11 @@ function HeroWindowLoadoutConsole.draw(arg_17_0, arg_17_1)
 	end
 end
 
-function HeroWindowLoadoutConsole._play_sound(arg_18_0, arg_18_1)
+HeroWindowLoadoutConsole._play_sound = function (arg_18_0, arg_18_1)
 	arg_18_0.parent:play_sound(arg_18_1)
 end
 
-function HeroWindowLoadoutConsole._setup_slot_icons(arg_19_0)
+HeroWindowLoadoutConsole._setup_slot_icons = function (arg_19_0)
 	local var_19_0 = InventorySettings.slots_by_slot_index
 
 	for iter_19_0, iter_19_1 in pairs(var_19_0) do
@@ -348,7 +348,7 @@ function HeroWindowLoadoutConsole._setup_slot_icons(arg_19_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._populate_loadout(arg_20_0)
+HeroWindowLoadoutConsole._populate_loadout = function (arg_20_0)
 	local var_20_0 = arg_20_0.hero_name
 	local var_20_1 = InventorySettings.slots_by_slot_index
 	local var_20_2 = arg_20_0.career_index
@@ -368,7 +368,7 @@ function HeroWindowLoadoutConsole._populate_loadout(arg_20_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._equip_item_presentation(arg_21_0, arg_21_1, arg_21_2)
+HeroWindowLoadoutConsole._equip_item_presentation = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_1.data.slot_type
 	local var_21_1 = arg_21_2.slot_index
 	local var_21_2 = arg_21_2.ui_slot_index
@@ -405,7 +405,7 @@ function HeroWindowLoadoutConsole._equip_item_presentation(arg_21_0, arg_21_1, a
 	end
 end
 
-function HeroWindowLoadoutConsole._clear_item_slot(arg_22_0, arg_22_1)
+HeroWindowLoadoutConsole._clear_item_slot = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_1.type
 	local var_22_1 = arg_22_1.slot_index
 	local var_22_2 = arg_22_1.ui_slot_index
@@ -432,7 +432,7 @@ function HeroWindowLoadoutConsole._clear_item_slot(arg_22_0, arg_22_1)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_equipment_slot_right_clicked(arg_23_0)
+HeroWindowLoadoutConsole._is_equipment_slot_right_clicked = function (arg_23_0)
 	local var_23_0 = arg_23_0._widgets_by_name.loadout_grid.content
 	local var_23_1 = var_23_0.rows
 	local var_23_2 = var_23_0.columns
@@ -448,7 +448,7 @@ function HeroWindowLoadoutConsole._is_equipment_slot_right_clicked(arg_23_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_customize_item_pressed(arg_24_0)
+HeroWindowLoadoutConsole._is_customize_item_pressed = function (arg_24_0)
 	local var_24_0 = arg_24_0._widgets_by_name.loadout_grid.content
 	local var_24_1 = var_24_0.rows
 	local var_24_2 = var_24_0.columns
@@ -464,7 +464,7 @@ function HeroWindowLoadoutConsole._is_customize_item_pressed(arg_24_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_selected_item_customizable(arg_25_0)
+HeroWindowLoadoutConsole._is_selected_item_customizable = function (arg_25_0)
 	local var_25_0 = arg_25_0._widgets_by_name.loadout_grid.content
 	local var_25_1 = var_25_0.rows
 	local var_25_2 = var_25_0.columns
@@ -480,7 +480,7 @@ function HeroWindowLoadoutConsole._is_selected_item_customizable(arg_25_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._get_selected_item(arg_26_0)
+HeroWindowLoadoutConsole._get_selected_item = function (arg_26_0)
 	local var_26_0 = arg_26_0._widgets_by_name.loadout_grid.content
 	local var_26_1 = var_26_0.rows
 	local var_26_2 = var_26_0.columns
@@ -496,7 +496,7 @@ function HeroWindowLoadoutConsole._get_selected_item(arg_26_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_equipment_slot_pressed(arg_27_0)
+HeroWindowLoadoutConsole._is_equipment_slot_pressed = function (arg_27_0)
 	local var_27_0 = arg_27_0._widgets_by_name.loadout_grid.content
 	local var_27_1 = var_27_0.rows
 	local var_27_2 = var_27_0.columns
@@ -512,7 +512,7 @@ function HeroWindowLoadoutConsole._is_equipment_slot_pressed(arg_27_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_equipment_slot_hovered(arg_28_0)
+HeroWindowLoadoutConsole._is_equipment_slot_hovered = function (arg_28_0)
 	local var_28_0 = arg_28_0._widgets_by_name.loadout_grid.content
 	local var_28_1 = var_28_0.rows
 	local var_28_2 = var_28_0.columns
@@ -528,7 +528,7 @@ function HeroWindowLoadoutConsole._is_equipment_slot_hovered(arg_28_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._set_equipment_slot_selected(arg_29_0, arg_29_1)
+HeroWindowLoadoutConsole._set_equipment_slot_selected = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._widgets_by_name.loadout_grid.content
 	local var_29_1 = var_29_0.rows
 	local var_29_2 = var_29_0.columns
@@ -544,7 +544,7 @@ function HeroWindowLoadoutConsole._set_equipment_slot_selected(arg_29_0, arg_29_
 	end
 end
 
-function HeroWindowLoadoutConsole._enable_selection_highlight(arg_30_0)
+HeroWindowLoadoutConsole._enable_selection_highlight = function (arg_30_0)
 	local var_30_0 = arg_30_0._widgets_by_name.loadout_grid.content
 	local var_30_1 = var_30_0.rows
 	local var_30_2 = var_30_0.columns
@@ -559,7 +559,7 @@ function HeroWindowLoadoutConsole._enable_selection_highlight(arg_30_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._disable_selection_highlight(arg_31_0)
+HeroWindowLoadoutConsole._disable_selection_highlight = function (arg_31_0)
 	local var_31_0 = arg_31_0._widgets_by_name.loadout_grid.content
 	local var_31_1 = var_31_0.rows
 	local var_31_2 = var_31_0.columns
@@ -573,7 +573,7 @@ function HeroWindowLoadoutConsole._disable_selection_highlight(arg_31_0)
 	end
 end
 
-function HeroWindowLoadoutConsole._is_equipment_slot_hovered_by_type(arg_32_0, arg_32_1)
+HeroWindowLoadoutConsole._is_equipment_slot_hovered_by_type = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._widgets_by_name.loadout_grid.content
 	local var_32_1 = var_32_0.rows
 	local var_32_2 = var_32_0.columns
@@ -592,7 +592,7 @@ function HeroWindowLoadoutConsole._is_equipment_slot_hovered_by_type(arg_32_0, a
 	end
 end
 
-function HeroWindowLoadoutConsole._highlight_equipment_slot_by_type(arg_33_0, arg_33_1)
+HeroWindowLoadoutConsole._highlight_equipment_slot_by_type = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._widgets_by_name.loadout_grid
 	local var_33_1 = var_33_0.content
 	local var_33_2 = var_33_0.style
@@ -618,7 +618,7 @@ function HeroWindowLoadoutConsole._highlight_equipment_slot_by_type(arg_33_0, ar
 	end
 end
 
-function HeroWindowLoadoutConsole._show_weapon_disclaimer(arg_34_0, arg_34_1)
+HeroWindowLoadoutConsole._show_weapon_disclaimer = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._widgets_by_name.disclaimer_text.content
 
 	arg_34_0._widgets_by_name.disclaimer_text_background.content.visible = arg_34_1

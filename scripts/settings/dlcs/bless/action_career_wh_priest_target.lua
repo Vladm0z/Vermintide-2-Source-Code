@@ -7,7 +7,7 @@ local var_0_0 = {
 	target_ally = "wh_priest_ally"
 }
 
-function ActionCareerWHPriestTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWHPriestTarget.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWHPriestTarget.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
@@ -17,7 +17,7 @@ function ActionCareerWHPriestTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg
 	arg_1_0._marked_target = {}
 end
 
-function ActionCareerWHPriestTarget.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWHPriestTarget.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCareerWHPriestTarget.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	arg_2_0.aim_timer = arg_2_1.target_sticky_time
@@ -33,7 +33,7 @@ function ActionCareerWHPriestTarget.client_owner_start_action(arg_2_0, arg_2_1, 
 	arg_2_0:_start_charge_sound()
 end
 
-function ActionCareerWHPriestTarget._start_charge_sound(arg_3_0)
+ActionCareerWHPriestTarget._start_charge_sound = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.owner_unit
 	local var_3_2 = arg_3_0.wwise_world
@@ -53,7 +53,7 @@ function ActionCareerWHPriestTarget._start_charge_sound(arg_3_0)
 	ActionUtils.play_husk_sound_event(var_3_2, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-function ActionCareerWHPriestTarget._stop_charge_sound(arg_4_0)
+ActionCareerWHPriestTarget._stop_charge_sound = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.wwise_world
@@ -73,7 +73,7 @@ function ActionCareerWHPriestTarget._stop_charge_sound(arg_4_0)
 	ActionUtils.play_husk_sound_event(var_4_2, var_4_0.charge_sound_husk_stop_event, var_4_1, var_4_3)
 end
 
-function ActionCareerWHPriestTarget.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionCareerWHPriestTarget.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.owner_unit
 	local var_5_2 = arg_5_0.aimed_target
@@ -119,7 +119,7 @@ function ActionCareerWHPriestTarget.client_owner_post_update(arg_5_0, arg_5_1, a
 	arg_5_0.aim_timer = arg_5_0.aim_timer + arg_5_1
 end
 
-function ActionCareerWHPriestTarget._mark_target(arg_6_0, arg_6_1)
+ActionCareerWHPriestTarget._mark_target = function (arg_6_0, arg_6_1)
 	if arg_6_0.is_bot then
 		return
 	end
@@ -169,7 +169,7 @@ function ActionCareerWHPriestTarget._mark_target(arg_6_0, arg_6_1)
 	arg_6_0.aimed_target = arg_6_1
 end
 
-function ActionCareerWHPriestTarget._target_ally_from_crosshair(arg_7_0)
+ActionCareerWHPriestTarget._target_ally_from_crosshair = function (arg_7_0)
 	local var_7_0 = arg_7_0._max_range
 	local var_7_1 = var_7_0 * var_7_0
 	local var_7_2 = arg_7_0._cone_cos_angle
@@ -205,7 +205,7 @@ function ActionCareerWHPriestTarget._target_ally_from_crosshair(arg_7_0)
 	return var_7_10, var_7_11
 end
 
-function ActionCareerWHPriestTarget._check_cone_from_crosshair(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ActionCareerWHPriestTarget._check_cone_from_crosshair = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = Unit.world_position(arg_8_3, Unit.node(arg_8_3, "j_claw_attach")) - arg_8_1
 	local var_8_1 = Vector3.length_squared(var_8_0)
 	local var_8_2 = Vector3.normalize(var_8_0)
@@ -216,7 +216,7 @@ function ActionCareerWHPriestTarget._check_cone_from_crosshair(arg_8_0, arg_8_1,
 	end
 end
 
-function ActionCareerWHPriestTarget.finish(arg_9_0, arg_9_1, arg_9_2)
+ActionCareerWHPriestTarget.finish = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.is_bot
 	local var_9_1 = arg_9_0.aimed_target or arg_9_0.owner_unit
 

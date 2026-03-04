@@ -17,10 +17,10 @@ local function var_0_1(arg_1_0)
 					uninterruptible = true,
 					anim_event = "attack_heal",
 					total_time = 1.3,
-					anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+					anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 						return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 					end,
-					condition_func = function(arg_3_0)
+					condition_func = function (arg_3_0)
 						local var_3_0 = ScriptUnit.extension(arg_3_0, "buff_system")
 						local var_3_1 = var_3_0:has_buff_type(arg_1_0 .. "_potion")
 						local var_3_2 = var_3_0:has_buff_type(arg_1_0 .. "_potion_increased")
@@ -54,12 +54,12 @@ local function var_0_1(arg_1_0)
 					anim_event = "attack_heal",
 					auto_validate_on_gamepad = true,
 					total_time = 1.3,
-					anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+					anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 						return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 					end,
 					allowed_chain_actions = {},
 					buff_template = arg_1_0 .. "_potion",
-					condition_func = function(arg_5_0)
+					condition_func = function (arg_5_0)
 						return true
 					end
 				}

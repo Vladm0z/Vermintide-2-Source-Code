@@ -174,7 +174,7 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return var_7_6, var_7_5, var_7_4
 end
 
-local var_0_9 = table.select_map(table.set(DeusPowerUpRarities), function(arg_8_0, arg_8_1)
+local var_0_9 = table.select_map(table.set(DeusPowerUpRarities), function (arg_8_0, arg_8_1)
 	return {}
 end)
 
@@ -257,7 +257,7 @@ end
 
 DeusPowerUpUtils = DeusPowerUpUtils or {}
 
-function DeusPowerUpUtils.get_talent_from_power_up(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+DeusPowerUpUtils.get_talent_from_power_up = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = SPProfiles[arg_12_2].careers[arg_12_3]
 	local var_12_1 = var_12_0.profile_name
 	local var_12_2 = var_12_0.talent_tree_index
@@ -267,7 +267,7 @@ function DeusPowerUpUtils.get_talent_from_power_up(arg_12_0, arg_12_1, arg_12_2,
 	return TalentUtils.get_talent_by_id(var_12_1, var_12_4.talent_id)
 end
 
-function DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(arg_13_0, arg_13_1)
+DeusPowerUpUtils.get_talent_power_up_from_tier_and_column = function (arg_13_0, arg_13_1)
 	local var_13_0 = DeusPowerUpTalentLookup[arg_13_0][arg_13_1]
 
 	for iter_13_0, iter_13_1 in pairs(DeusPowerUps) do
@@ -281,7 +281,7 @@ function DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(arg_13_0, arg
 	ferror("could not find power_up for tier %s and column %s", arg_13_0, arg_13_1)
 end
 
-function DeusPowerUpUtils.get_power_up_description(arg_14_0, arg_14_1, arg_14_2)
+DeusPowerUpUtils.get_power_up_description = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = DeusPowerUps[arg_14_0.rarity][arg_14_0.name]
 
 	if var_14_0.talent then
@@ -293,7 +293,7 @@ function DeusPowerUpUtils.get_power_up_description(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function DeusPowerUpUtils.get_power_up_icon(arg_15_0, arg_15_1, arg_15_2)
+DeusPowerUpUtils.get_power_up_icon = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = DeusPowerUps[arg_15_0.rarity][arg_15_0.name]
 
 	if var_15_0.talent then
@@ -303,7 +303,7 @@ function DeusPowerUpUtils.get_power_up_icon(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function DeusPowerUpUtils.get_power_up_name_text(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+DeusPowerUpUtils.get_power_up_name_text = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0
 	local var_16_1 = ""
 
@@ -318,7 +318,7 @@ function DeusPowerUpUtils.get_power_up_name_text(arg_16_0, arg_16_1, arg_16_2, a
 	return var_16_0, var_16_1
 end
 
-function DeusPowerUpUtils.power_ups_to_string(arg_17_0)
+DeusPowerUpUtils.power_ups_to_string = function (arg_17_0)
 	local var_17_0 = {}
 
 	for iter_17_0, iter_17_1 in ipairs(arg_17_0) do
@@ -335,7 +335,7 @@ end
 
 assert(table.size(DeusPowerUpTemplates) <= 256, "[DeusPowerUpUtils] Number of power ups exceeds expectation. Change 'ByteArray.write_uint8' to 'ByteArray.write_uint16' in DeusPowerUpUtils.power_ups_to_encoded_string, and it's counterpart 'encoded_string_to_power_ups'")
 
-function DeusPowerUpUtils.power_ups_to_encoded_string(arg_18_0)
+DeusPowerUpUtils.power_ups_to_encoded_string = function (arg_18_0)
 	local var_18_0 = {}
 
 	for iter_18_0 = 1, #arg_18_0 do
@@ -353,7 +353,7 @@ end
 
 local var_0_13 = {}
 
-function DeusPowerUpUtils.encoded_string_to_power_ups(arg_19_0)
+DeusPowerUpUtils.encoded_string_to_power_ups = function (arg_19_0)
 	local var_19_0 = var_0_1:DecompressDeflate(arg_19_0)
 
 	var_0_0.write_string(var_0_13, var_19_0)
@@ -389,11 +389,11 @@ function DeusPowerUpUtils.encoded_string_to_power_ups(arg_19_0)
 	return var_19_1
 end
 
-function DeusPowerUpUtils.generate_specific_power_up(arg_20_0, arg_20_1)
+DeusPowerUpUtils.generate_specific_power_up = function (arg_20_0, arg_20_1)
 	return var_0_11(arg_20_0, arg_20_1)
 end
 
-function DeusPowerUpUtils.generate_random_power_ups(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+DeusPowerUpUtils.generate_random_power_ups = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
 	local var_21_0 = {}
 	local var_21_1 = true
 
@@ -414,7 +414,7 @@ function DeusPowerUpUtils.generate_random_power_ups(arg_21_0, arg_21_1, arg_21_2
 	return arg_21_0, var_21_0
 end
 
-function DeusPowerUpUtils.activate_deus_power_up(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+DeusPowerUpUtils.activate_deus_power_up = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 	fassert(arg_22_0 and arg_22_1 and arg_22_2 and arg_22_3 and arg_22_4 and arg_22_5 and arg_22_6 and arg_22_7, "DeusPowerUpUtils.activate_deus_power_up invalid arguments")
 
 	local var_22_0 = DeusPowerUps[arg_22_0.rarity][arg_22_0.name]

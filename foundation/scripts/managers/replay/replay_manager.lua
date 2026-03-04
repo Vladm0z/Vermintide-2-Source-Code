@@ -2,7 +2,7 @@
 
 ReplayManager = class(ReplayManager)
 
-function ReplayManager.init(arg_1_0, arg_1_1)
+ReplayManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._playing = true
 	arg_1_0._level_name = nil
@@ -15,7 +15,7 @@ function ReplayManager.init(arg_1_0, arg_1_1)
 	arg_1_0._have_had_proper_level = false
 end
 
-function ReplayManager.update(arg_2_0, arg_2_1)
+ReplayManager.update = function (arg_2_0, arg_2_1)
 	local var_2_0 = 0
 
 	if arg_2_0._playing then
@@ -39,7 +39,7 @@ function ReplayManager.update(arg_2_0, arg_2_1)
 	return var_2_0
 end
 
-function ReplayManager.move_to_current_frame(arg_3_0)
+ReplayManager.move_to_current_frame = function (arg_3_0)
 	ExtendedReplay.set_frame(arg_3_0._frame)
 
 	arg_3_0._frame_needs_drawing = false
@@ -99,7 +99,7 @@ function ReplayManager.move_to_current_frame(arg_3_0)
 	end
 end
 
-function ReplayManager.report_frame(arg_4_0)
+ReplayManager.report_frame = function (arg_4_0)
 	local var_4_0 = {
 		message = "frame",
 		type = "replay",
@@ -109,30 +109,30 @@ function ReplayManager.report_frame(arg_4_0)
 	Application.console_send(var_4_0)
 end
 
-function ReplayManager.overriding_camera(arg_5_0)
+ReplayManager.overriding_camera = function (arg_5_0)
 	if arg_5_0._current_story_id ~= nil then
 		return arg_5_0._world:storyteller():first_camera(arg_5_0._current_story_id)
 	end
 end
 
-function ReplayManager.reload(arg_6_0)
+ReplayManager.reload = function (arg_6_0)
 	arg_6_0._current_story_id = nil
 	arg_6_0._frame_needs_drawing = true
 end
 
-function ReplayManager.play(arg_7_0, arg_7_1)
+ReplayManager.play = function (arg_7_0, arg_7_1)
 	arg_7_0._playing = arg_7_1
 end
 
-function ReplayManager.set_frame(arg_8_0, arg_8_1)
+ReplayManager.set_frame = function (arg_8_0, arg_8_1)
 	arg_8_0._frame = arg_8_1
 	arg_8_0._frame_needs_drawing = true
 end
 
-function ReplayManager.set_level(arg_9_0, arg_9_1)
+ReplayManager.set_level = function (arg_9_0, arg_9_1)
 	arg_9_0._level_name = arg_9_1
 end
 
-function ReplayManager.set_stories(arg_10_0, arg_10_1)
+ReplayManager.set_stories = function (arg_10_0, arg_10_1)
 	arg_10_0._stories = arg_10_1
 end

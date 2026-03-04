@@ -42,7 +42,7 @@ local var_0_5 = "gui/1080p/single_textures/generic/transparent_placeholder_textu
 StartGameStateSettingsOverview = class(StartGameStateSettingsOverview)
 StartGameStateSettingsOverview.NAME = "StartGameStateSettingsOverview"
 
-function StartGameStateSettingsOverview.on_enter(arg_1_0, arg_1_1)
+StartGameStateSettingsOverview.on_enter = function (arg_1_0, arg_1_1)
 	print("[StartGameState] Enter Substate StartGameStateSettingsOverview")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -114,7 +114,7 @@ function StartGameStateSettingsOverview.on_enter(arg_1_0, arg_1_1)
 	Managers.state.event:trigger("tutorial_trigger", "start_game_menu_opened")
 end
 
-function StartGameStateSettingsOverview._calculate_current_weave(arg_2_0)
+StartGameStateSettingsOverview._calculate_current_weave = function (arg_2_0)
 	local var_2_0 = false
 	local var_2_1 = WeaveSettings.templates_ordered
 	local var_2_2 = #var_2_1
@@ -146,7 +146,7 @@ function StartGameStateSettingsOverview._calculate_current_weave(arg_2_0)
 	end
 end
 
-function StartGameStateSettingsOverview._setup_menu_layout(arg_3_0, arg_3_1)
+StartGameStateSettingsOverview._setup_menu_layout = function (arg_3_0, arg_3_1)
 	local var_3_0
 	local var_3_1 = IS_CONSOLE or Managers.input:is_device_active("gamepad") or not UISettings.use_pc_menu_layout or MechanismSettings[arg_3_1].use_gamepad_layout
 
@@ -170,7 +170,7 @@ function StartGameStateSettingsOverview._setup_menu_layout(arg_3_0, arg_3_1)
 	arg_3_0._save_data_table_maps = var_3_0.save_data_table_maps
 end
 
-function StartGameStateSettingsOverview._create_ui_elements(arg_4_0, arg_4_1)
+StartGameStateSettingsOverview._create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_4_0 = {}
@@ -205,7 +205,7 @@ function StartGameStateSettingsOverview._create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0:_create_video_players()
 end
 
-function StartGameStateSettingsOverview._create_hdr_gui(arg_5_0)
+StartGameStateSettingsOverview._create_hdr_gui = function (arg_5_0)
 	local var_5_0 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
@@ -224,11 +224,11 @@ function StartGameStateSettingsOverview._create_hdr_gui(arg_5_0)
 	arg_5_0._ui_hdr_renderer = arg_5_0._ingame_ui:create_ui_renderer(var_5_5, false, arg_5_0._is_in_inn)
 end
 
-function StartGameStateSettingsOverview.hdr_renderer(arg_6_0)
+StartGameStateSettingsOverview.hdr_renderer = function (arg_6_0)
 	return arg_6_0._ui_hdr_renderer
 end
 
-function StartGameStateSettingsOverview.ui_renderer(arg_7_0)
+StartGameStateSettingsOverview.ui_renderer = function (arg_7_0)
 	if arg_7_0._gamepad_style_active then
 		return arg_7_0._gui_data.bottom.renderer
 	else
@@ -236,7 +236,7 @@ function StartGameStateSettingsOverview.ui_renderer(arg_7_0)
 	end
 end
 
-function StartGameStateSettingsOverview._create_video_players(arg_8_0)
+StartGameStateSettingsOverview._create_video_players = function (arg_8_0)
 	arg_8_0:_destroy_video_players()
 
 	local var_8_0 = {}
@@ -254,7 +254,7 @@ function StartGameStateSettingsOverview._create_video_players(arg_8_0)
 	arg_8_0._video_players = var_8_0
 end
 
-function StartGameStateSettingsOverview._destroy_video_players(arg_9_0)
+StartGameStateSettingsOverview._destroy_video_players = function (arg_9_0)
 	local var_9_0 = arg_9_0._video_players
 
 	if var_9_0 then
@@ -268,11 +268,11 @@ function StartGameStateSettingsOverview._destroy_video_players(arg_9_0)
 	arg_9_0._video_players = nil
 end
 
-function StartGameStateSettingsOverview.get_video_player_by_name(arg_10_0, arg_10_1)
+StartGameStateSettingsOverview.get_video_player_by_name = function (arg_10_0, arg_10_1)
 	return arg_10_0._video_players[arg_10_1]
 end
 
-function StartGameStateSettingsOverview._setup_gamepad_gui(arg_11_0)
+StartGameStateSettingsOverview._setup_gamepad_gui = function (arg_11_0)
 	if arg_11_0._is_in_inn then
 		local var_11_0 = {}
 		local var_11_1 = "start_weave_gamepad"
@@ -287,7 +287,7 @@ function StartGameStateSettingsOverview._setup_gamepad_gui(arg_11_0)
 	end
 end
 
-function StartGameStateSettingsOverview._setup_gamepad_renderer(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+StartGameStateSettingsOverview._setup_gamepad_renderer = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
@@ -301,7 +301,7 @@ function StartGameStateSettingsOverview._setup_gamepad_renderer(arg_12_0, arg_12
 	return arg_12_0._ingame_ui:create_ui_renderer(var_12_3, false, arg_12_0._is_in_inn), var_12_3, var_12_2
 end
 
-function StartGameStateSettingsOverview._destroy_gamepad_gui(arg_13_0)
+StartGameStateSettingsOverview._destroy_gamepad_gui = function (arg_13_0)
 	local var_13_0 = arg_13_0._gui_data
 
 	if var_13_0 then
@@ -319,7 +319,7 @@ function StartGameStateSettingsOverview._destroy_gamepad_gui(arg_13_0)
 	end
 end
 
-function StartGameStateSettingsOverview.disable_player_world(arg_14_0)
+StartGameStateSettingsOverview.disable_player_world = function (arg_14_0)
 	if not arg_14_0._player_world_disabled then
 		arg_14_0._player_world_disabled = true
 
@@ -331,7 +331,7 @@ function StartGameStateSettingsOverview.disable_player_world(arg_14_0)
 	end
 end
 
-function StartGameStateSettingsOverview.enable_player_world(arg_15_0)
+StartGameStateSettingsOverview.enable_player_world = function (arg_15_0)
 	if arg_15_0._player_world_disabled then
 		arg_15_0._player_world_disabled = false
 
@@ -343,7 +343,7 @@ function StartGameStateSettingsOverview.enable_player_world(arg_15_0)
 	end
 end
 
-function StartGameStateSettingsOverview._start_layout_name(arg_16_0)
+StartGameStateSettingsOverview._start_layout_name = function (arg_16_0)
 	local var_16_0 = PlayerData.mission_selection.start_layout
 	local var_16_1 = arg_16_0:get_layout_setting_by_name(var_16_0)
 
@@ -354,13 +354,13 @@ function StartGameStateSettingsOverview._start_layout_name(arg_16_0)
 	end
 end
 
-function StartGameStateSettingsOverview.can_add_layout(arg_17_0, arg_17_1)
+StartGameStateSettingsOverview.can_add_layout = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.can_add_function
 
 	return var_17_0 and var_17_0(arg_17_0)
 end
 
-function StartGameStateSettingsOverview._initial_windows_setups(arg_18_0, arg_18_1)
+StartGameStateSettingsOverview._initial_windows_setups = function (arg_18_0, arg_18_1)
 	arg_18_0._active_windows = {}
 	arg_18_0._window_params = arg_18_1
 
@@ -371,11 +371,11 @@ function StartGameStateSettingsOverview._initial_windows_setups(arg_18_0, arg_18
 	arg_18_0:set_top_level_layout_name(var_18_1)
 end
 
-function StartGameStateSettingsOverview.window_input_service(arg_19_0)
+StartGameStateSettingsOverview.window_input_service = function (arg_19_0)
 	return arg_19_0._show_difficulty_option and FAKE_INPUT_SERVICE or arg_19_0:input_service()
 end
 
-function StartGameStateSettingsOverview._close_window_at_index(arg_20_0, arg_20_1)
+StartGameStateSettingsOverview._close_window_at_index = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._active_windows
 	local var_20_1 = arg_20_0._window_params
 	local var_20_2 = var_20_0[arg_20_1]
@@ -387,7 +387,7 @@ function StartGameStateSettingsOverview._close_window_at_index(arg_20_0, arg_20_
 	var_20_0[arg_20_1] = nil
 end
 
-function StartGameStateSettingsOverview._change_window(arg_21_0, arg_21_1, arg_21_2)
+StartGameStateSettingsOverview._change_window = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._active_windows
 	local var_21_1 = arg_21_0._windows_settings[arg_21_2]
 	local var_21_2 = var_21_1.class_name
@@ -431,7 +431,7 @@ function StartGameStateSettingsOverview._change_window(arg_21_0, arg_21_1, arg_2
 	var_21_0[arg_21_1] = var_21_4
 end
 
-function StartGameStateSettingsOverview._set_new_save_data_table(arg_22_0, arg_22_1)
+StartGameStateSettingsOverview._set_new_save_data_table = function (arg_22_0, arg_22_1)
 	if arg_22_1 then
 		local var_22_0 = PlayerData.mission_selection
 		local var_22_1 = var_22_0[arg_22_1]
@@ -456,7 +456,7 @@ function StartGameStateSettingsOverview._set_new_save_data_table(arg_22_0, arg_2
 	end
 end
 
-function StartGameStateSettingsOverview._validate_mission_save_data(arg_23_0, arg_23_1)
+StartGameStateSettingsOverview._validate_mission_save_data = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1 and arg_23_1.level_id
 
 	if not var_23_0 then
@@ -471,19 +471,19 @@ function StartGameStateSettingsOverview._validate_mission_save_data(arg_23_0, ar
 	return LevelUnlockUtils.level_unlocked(var_23_2, var_23_1, var_23_0)
 end
 
-function StartGameStateSettingsOverview.close_on_exit(arg_24_0)
+StartGameStateSettingsOverview.close_on_exit = function (arg_24_0)
 	return arg_24_0._close_on_exit
 end
 
-function StartGameStateSettingsOverview.set_hide_panel_title_butttons(arg_25_0, arg_25_1)
+StartGameStateSettingsOverview.set_hide_panel_title_butttons = function (arg_25_0, arg_25_1)
 	arg_25_0._panel_title_buttons_hidden = arg_25_1
 end
 
-function StartGameStateSettingsOverview.panel_title_buttons_hidden(arg_26_0)
+StartGameStateSettingsOverview.panel_title_buttons_hidden = function (arg_26_0)
 	return arg_26_0._panel_title_buttons_hidden
 end
 
-function StartGameStateSettingsOverview.get_current_window_layout_settings(arg_27_0)
+StartGameStateSettingsOverview.get_current_window_layout_settings = function (arg_27_0)
 	for iter_27_0, iter_27_1 in ipairs(arg_27_0._window_layouts) do
 		if iter_27_1.name == arg_27_0._selected_layout_name then
 			return iter_27_1
@@ -491,13 +491,13 @@ function StartGameStateSettingsOverview.get_current_window_layout_settings(arg_2
 	end
 end
 
-function StartGameStateSettingsOverview.set_layout_by_name(arg_28_0, arg_28_1)
+StartGameStateSettingsOverview.set_layout_by_name = function (arg_28_0, arg_28_1)
 	printf("[StartGameStateSettingsOverview]:set_layout_by_name() - %s", arg_28_1)
 
 	local var_28_0 = table.find_by_key(arg_28_0._window_layouts, "name", arg_28_1)
 
 	if not var_28_0 then
-		ferror("[StartGameStateSettingsOverview]:set_layout_by_name() - Could not find a layout with name %s. Layouts: (%s)", arg_28_1, table.concat(table.select_array(arg_28_0._window_layouts, function(arg_29_0, arg_29_1)
+		ferror("[StartGameStateSettingsOverview]:set_layout_by_name() - Could not find a layout with name %s. Layouts: (%s)", arg_28_1, table.concat(table.select_array(arg_28_0._window_layouts, function (arg_29_0, arg_29_1)
 			return arg_29_1.name
 		end), ", "))
 	end
@@ -505,11 +505,11 @@ function StartGameStateSettingsOverview.set_layout_by_name(arg_28_0, arg_28_1)
 	arg_28_0:set_layout(var_28_0)
 end
 
-function StartGameStateSettingsOverview.get_mechanism_name(arg_30_0)
+StartGameStateSettingsOverview.get_mechanism_name = function (arg_30_0)
 	return arg_30_0._mechanism_name
 end
 
-function StartGameStateSettingsOverview.is_in_mechanism(arg_31_0, arg_31_1)
+StartGameStateSettingsOverview.is_in_mechanism = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0.parent:on_enter_sub_state() == "weave_quickplay"
 
 	if arg_31_1 == "weave" then
@@ -519,27 +519,27 @@ function StartGameStateSettingsOverview.is_in_mechanism(arg_31_0, arg_31_1)
 	end
 end
 
-function StartGameStateSettingsOverview.is_weekly_event_active(arg_32_0)
+StartGameStateSettingsOverview.is_weekly_event_active = function (arg_32_0)
 	return Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data() ~= nil
 end
 
-function StartGameStateSettingsOverview.get_quickplay_settings(arg_33_0, arg_33_1)
+StartGameStateSettingsOverview.get_quickplay_settings = function (arg_33_0, arg_33_1)
 	return arg_33_0._mechanism_quickplay_settings[arg_33_1 or arg_33_0._mechanism_name]
 end
 
-function StartGameStateSettingsOverview.get_custom_game_settings(arg_34_0, arg_34_1)
+StartGameStateSettingsOverview.get_custom_game_settings = function (arg_34_0, arg_34_1)
 	return arg_34_0._mechanism_custom_game_settings[arg_34_1 or arg_34_0._mechanism_name]
 end
 
-function StartGameStateSettingsOverview.get_twitch_settings(arg_35_0, arg_35_1)
+StartGameStateSettingsOverview.get_twitch_settings = function (arg_35_0, arg_35_1)
 	return arg_35_0._mechanism_twitch_settings[arg_35_1 or arg_35_0._mechanism_name]
 end
 
-function StartGameStateSettingsOverview.get_save_data_table_map(arg_36_0, arg_36_1)
+StartGameStateSettingsOverview.get_save_data_table_map = function (arg_36_0, arg_36_1)
 	return arg_36_0._save_data_table_maps[arg_36_1 or arg_36_0._mechanism_name]
 end
 
-function StartGameStateSettingsOverview.set_layout(arg_37_0, arg_37_1)
+StartGameStateSettingsOverview.set_layout = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0:get_layout_setting(arg_37_1)
 	local var_37_1 = var_37_0.sound_event_enter
 
@@ -559,7 +559,7 @@ function StartGameStateSettingsOverview.set_layout(arg_37_0, arg_37_1)
 	local var_37_6 = arg_37_0._widgets_by_name.exit_button.content
 
 	if var_37_5 then
-		-- block empty
+		-- Nothing
 	end
 
 	var_37_6.visible = var_37_4
@@ -607,7 +607,7 @@ function StartGameStateSettingsOverview.set_layout(arg_37_0, arg_37_1)
 	arg_37_0:set_window_input_focus(var_37_11)
 end
 
-function StartGameStateSettingsOverview.set_window_input_focus(arg_38_0, arg_38_1)
+StartGameStateSettingsOverview.set_window_input_focus = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._windows_settings[arg_38_1]
 	local var_38_1 = var_38_0 and var_38_0.class_name
 	local var_38_2 = false
@@ -632,35 +632,35 @@ function StartGameStateSettingsOverview.set_window_input_focus(arg_38_0, arg_38_
 	arg_38_0._window_focused = arg_38_1
 end
 
-function StartGameStateSettingsOverview.set_top_level_layout_name(arg_39_0, arg_39_1)
+StartGameStateSettingsOverview.set_top_level_layout_name = function (arg_39_0, arg_39_1)
 	arg_39_0._top_level_layout_name = arg_39_1
 end
 
-function StartGameStateSettingsOverview.get_top_level_layout_name(arg_40_0)
+StartGameStateSettingsOverview.get_top_level_layout_name = function (arg_40_0)
 	return arg_40_0._top_level_layout_name
 end
 
-function StartGameStateSettingsOverview.get_selected_game_mode_layout_name(arg_41_0)
+StartGameStateSettingsOverview.get_selected_game_mode_layout_name = function (arg_41_0)
 	return arg_41_0._selected_game_mode_layout_name
 end
 
-function StartGameStateSettingsOverview.get_previous_selected_game_mode_layout_name(arg_42_0)
+StartGameStateSettingsOverview.get_previous_selected_game_mode_layout_name = function (arg_42_0)
 	return arg_42_0._previous_selected_game_mode_layout_name
 end
 
-function StartGameStateSettingsOverview.get_selected_layout_name(arg_43_0)
+StartGameStateSettingsOverview.get_selected_layout_name = function (arg_43_0)
 	return arg_43_0._selected_layout_name
 end
 
-function StartGameStateSettingsOverview.get_previous_selected_layout_name(arg_44_0)
+StartGameStateSettingsOverview.get_previous_selected_layout_name = function (arg_44_0)
 	return arg_44_0._previous_selected_layout_name
 end
 
-function StartGameStateSettingsOverview.get_layout_setting(arg_45_0, arg_45_1)
+StartGameStateSettingsOverview.get_layout_setting = function (arg_45_0, arg_45_1)
 	return arg_45_0._window_layouts[arg_45_1]
 end
 
-function StartGameStateSettingsOverview.get_layout_setting_by_name(arg_46_0, arg_46_1)
+StartGameStateSettingsOverview.get_layout_setting_by_name = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._window_layouts
 
 	for iter_46_0 = 1, #var_46_0 do
@@ -672,7 +672,7 @@ function StartGameStateSettingsOverview.get_layout_setting_by_name(arg_46_0, arg
 	end
 end
 
-function StartGameStateSettingsOverview._get_first_game_mode_option_layout(arg_47_0)
+StartGameStateSettingsOverview._get_first_game_mode_option_layout = function (arg_47_0)
 	local var_47_0 = arg_47_0._window_layouts
 
 	for iter_47_0 = 1, #var_47_0 do
@@ -684,7 +684,7 @@ function StartGameStateSettingsOverview._get_first_game_mode_option_layout(arg_4
 	end
 end
 
-function StartGameStateSettingsOverview._windows_update(arg_48_0, arg_48_1, arg_48_2)
+StartGameStateSettingsOverview._windows_update = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0._active_windows
 
 	for iter_48_0, iter_48_1 in pairs(var_48_0) do
@@ -692,7 +692,7 @@ function StartGameStateSettingsOverview._windows_update(arg_48_0, arg_48_1, arg_
 	end
 end
 
-function StartGameStateSettingsOverview._windows_post_update(arg_49_0, arg_49_1, arg_49_2)
+StartGameStateSettingsOverview._windows_post_update = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._active_windows
 
 	for iter_49_0, iter_49_1 in pairs(var_49_0) do
@@ -700,7 +700,7 @@ function StartGameStateSettingsOverview._windows_post_update(arg_49_0, arg_49_1,
 	end
 end
 
-function StartGameStateSettingsOverview.enable_widget(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+StartGameStateSettingsOverview.enable_widget = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	local var_50_0 = arg_50_0._active_windows[arg_50_1]._widgets_by_name[arg_50_2]
 
 	if var_50_0 then
@@ -712,7 +712,7 @@ function StartGameStateSettingsOverview.enable_widget(arg_50_0, arg_50_1, arg_50
 	end
 end
 
-function StartGameStateSettingsOverview.disable_input(arg_51_0, arg_51_1)
+StartGameStateSettingsOverview.disable_input = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0._active_windows
 
 	for iter_51_0, iter_51_1 in pairs(var_51_0) do
@@ -722,7 +722,7 @@ function StartGameStateSettingsOverview.disable_input(arg_51_0, arg_51_1)
 	end
 end
 
-function StartGameStateSettingsOverview.transitioning(arg_52_0)
+StartGameStateSettingsOverview.transitioning = function (arg_52_0)
 	if arg_52_0.exiting then
 		return true
 	else
@@ -730,19 +730,19 @@ function StartGameStateSettingsOverview.transitioning(arg_52_0)
 	end
 end
 
-function StartGameStateSettingsOverview._wanted_state(arg_53_0)
+StartGameStateSettingsOverview._wanted_state = function (arg_53_0)
 	return (arg_53_0.parent:wanted_state())
 end
 
-function StartGameStateSettingsOverview.wanted_menu_state(arg_54_0)
+StartGameStateSettingsOverview.wanted_menu_state = function (arg_54_0)
 	return arg_54_0._wanted_menu_state
 end
 
-function StartGameStateSettingsOverview.clear_wanted_menu_state(arg_55_0)
+StartGameStateSettingsOverview.clear_wanted_menu_state = function (arg_55_0)
 	arg_55_0._wanted_menu_state = nil
 end
 
-function StartGameStateSettingsOverview.on_exit(arg_56_0, arg_56_1)
+StartGameStateSettingsOverview.on_exit = function (arg_56_0, arg_56_1)
 	print("[StartGameState] Exit Substate StartGameStateSettingsOverview")
 
 	arg_56_0.ui_animator = nil
@@ -779,7 +779,7 @@ function StartGameStateSettingsOverview.on_exit(arg_56_0, arg_56_1)
 	end
 end
 
-function StartGameStateSettingsOverview._close_active_windows(arg_57_0)
+StartGameStateSettingsOverview._close_active_windows = function (arg_57_0)
 	local var_57_0 = arg_57_0._active_windows
 	local var_57_1 = arg_57_0._window_params
 
@@ -792,7 +792,7 @@ function StartGameStateSettingsOverview._close_active_windows(arg_57_0)
 	table.clear(var_57_0)
 end
 
-function StartGameStateSettingsOverview._update_transition_timer(arg_58_0, arg_58_1)
+StartGameStateSettingsOverview._update_transition_timer = function (arg_58_0, arg_58_1)
 	if not arg_58_0._transition_timer then
 		return
 	end
@@ -804,11 +804,11 @@ function StartGameStateSettingsOverview._update_transition_timer(arg_58_0, arg_5
 	end
 end
 
-function StartGameStateSettingsOverview.input_service(arg_59_0)
+StartGameStateSettingsOverview.input_service = function (arg_59_0)
 	return arg_59_0.parent:input_service()
 end
 
-function StartGameStateSettingsOverview.update(arg_60_0, arg_60_1, arg_60_2)
+StartGameStateSettingsOverview.update = function (arg_60_0, arg_60_1, arg_60_2)
 	if var_0_4 then
 		var_0_4 = false
 
@@ -843,7 +843,7 @@ function StartGameStateSettingsOverview.update(arg_60_0, arg_60_1, arg_60_2)
 	end
 end
 
-function StartGameStateSettingsOverview.post_update(arg_61_0, arg_61_1, arg_61_2)
+StartGameStateSettingsOverview.post_update = function (arg_61_0, arg_61_1, arg_61_2)
 	arg_61_0.ui_animator:update(arg_61_1)
 	arg_61_0:_update_animations(arg_61_1)
 
@@ -854,7 +854,7 @@ function StartGameStateSettingsOverview.post_update(arg_61_0, arg_61_1, arg_61_2
 	arg_61_0:_windows_post_update(arg_61_1, arg_61_2)
 end
 
-function StartGameStateSettingsOverview._update_animations(arg_62_0, arg_62_1)
+StartGameStateSettingsOverview._update_animations = function (arg_62_0, arg_62_1)
 	for iter_62_0, iter_62_1 in pairs(arg_62_0._ui_animations) do
 		UIAnimation.update(iter_62_1, arg_62_1)
 
@@ -875,11 +875,11 @@ function StartGameStateSettingsOverview._update_animations(arg_62_0, arg_62_1)
 	end
 end
 
-function StartGameStateSettingsOverview._is_button_hover_enter(arg_63_0, arg_63_1)
+StartGameStateSettingsOverview._is_button_hover_enter = function (arg_63_0, arg_63_1)
 	return arg_63_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameStateSettingsOverview._handle_input(arg_64_0, arg_64_1, arg_64_2)
+StartGameStateSettingsOverview._handle_input = function (arg_64_0, arg_64_1, arg_64_2)
 	local var_64_0 = arg_64_0._widgets_by_name
 	local var_64_1 = arg_64_0.parent:input_service()
 	local var_64_2 = var_64_1:get("toggle_menu", true)
@@ -931,25 +931,25 @@ function StartGameStateSettingsOverview._handle_input(arg_64_0, arg_64_1, arg_64
 	end
 end
 
-function StartGameStateSettingsOverview.pause_input(arg_65_0, arg_65_1)
+StartGameStateSettingsOverview.pause_input = function (arg_65_0, arg_65_1)
 	arg_65_0._input_paused = arg_65_1
 end
 
-function StartGameStateSettingsOverview.input_paused(arg_66_0)
+StartGameStateSettingsOverview.input_paused = function (arg_66_0)
 	return arg_66_0._input_paused
 end
 
-function StartGameStateSettingsOverview.close_menu(arg_67_0, arg_67_1)
+StartGameStateSettingsOverview.close_menu = function (arg_67_0, arg_67_1)
 	arg_67_0.parent:close_menu(nil, arg_67_1)
 end
 
-function StartGameStateSettingsOverview.cancel_matchmaking(arg_68_0)
+StartGameStateSettingsOverview.cancel_matchmaking = function (arg_68_0)
 	arg_68_0.parent:cancel_matchmaking()
 end
 
 local var_0_6 = {}
 
-function StartGameStateSettingsOverview.play(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+StartGameStateSettingsOverview.play = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 	printf("[StartGameStateSettingsOverview:play() - vote_type(%s)", arg_69_2)
 
 	local var_69_0 = Managers.account:offline_mode()
@@ -1218,11 +1218,11 @@ function StartGameStateSettingsOverview.play(arg_69_0, arg_69_1, arg_69_2, arg_6
 	end
 end
 
-function StartGameStateSettingsOverview.is_confirm_putton_pressed(arg_70_0)
+StartGameStateSettingsOverview.is_confirm_putton_pressed = function (arg_70_0)
 	return false
 end
 
-function StartGameStateSettingsOverview.set_input_description(arg_71_0, arg_71_1)
+StartGameStateSettingsOverview.set_input_description = function (arg_71_0, arg_71_1)
 	if not arg_71_0._menu_input_description then
 		return
 	end
@@ -1231,7 +1231,7 @@ function StartGameStateSettingsOverview.set_input_description(arg_71_0, arg_71_1
 	arg_71_0._menu_input_description:set_input_description(arg_71_0._generic_input_actions[arg_71_1])
 end
 
-function StartGameStateSettingsOverview.change_generic_actions(arg_72_0, arg_72_1)
+StartGameStateSettingsOverview.change_generic_actions = function (arg_72_0, arg_72_1)
 	if not arg_72_0._menu_input_description then
 		return
 	end
@@ -1240,7 +1240,7 @@ function StartGameStateSettingsOverview.change_generic_actions(arg_72_0, arg_72_
 	arg_72_0._menu_input_description:change_generic_actions(arg_72_0._generic_input_actions[arg_72_1])
 end
 
-function StartGameStateSettingsOverview.draw(arg_73_0, arg_73_1, arg_73_2)
+StartGameStateSettingsOverview.draw = function (arg_73_0, arg_73_1, arg_73_2)
 	local var_73_0 = arg_73_0._ui_renderer
 	local var_73_1 = arg_73_0._ui_top_renderer
 	local var_73_2 = arg_73_0._ui_scenegraph
@@ -1270,13 +1270,13 @@ function StartGameStateSettingsOverview.draw(arg_73_0, arg_73_1, arg_73_2)
 	end
 end
 
-function StartGameStateSettingsOverview.draw_menu_input_description(arg_74_0, arg_74_1, arg_74_2)
+StartGameStateSettingsOverview.draw_menu_input_description = function (arg_74_0, arg_74_1, arg_74_2)
 	local var_74_0 = arg_74_0._ui_top_renderer
 
 	arg_74_0._menu_input_description:draw(var_74_0, arg_74_2)
 end
 
-function StartGameStateSettingsOverview._is_button_pressed(arg_75_0, arg_75_1)
+StartGameStateSettingsOverview._is_button_pressed = function (arg_75_0, arg_75_1)
 	local var_75_0 = arg_75_1.content
 	local var_75_1 = var_75_0.button_hotspot or var_75_0.hotspot
 
@@ -1287,11 +1287,11 @@ function StartGameStateSettingsOverview._is_button_pressed(arg_75_0, arg_75_1)
 	end
 end
 
-function StartGameStateSettingsOverview.play_sound(arg_76_0, arg_76_1)
+StartGameStateSettingsOverview.play_sound = function (arg_76_0, arg_76_1)
 	arg_76_0.parent:play_sound(arg_76_1)
 end
 
-function StartGameStateSettingsOverview._start_transition_animation(arg_77_0, arg_77_1, arg_77_2)
+StartGameStateSettingsOverview._start_transition_animation = function (arg_77_0, arg_77_1, arg_77_2)
 	local var_77_0 = {
 		wwise_world = arg_77_0._wwise_world,
 		render_settings = arg_77_0._render_settings
@@ -1302,15 +1302,15 @@ function StartGameStateSettingsOverview._start_transition_animation(arg_77_0, ar
 	arg_77_0._animations[arg_77_1] = var_77_2
 end
 
-function StartGameStateSettingsOverview.get_selected_weave_id(arg_78_0)
+StartGameStateSettingsOverview.get_selected_weave_id = function (arg_78_0)
 	return arg_78_0._selected_weave_id
 end
 
-function StartGameStateSettingsOverview.get_selected_weave_objective_index(arg_79_0)
+StartGameStateSettingsOverview.get_selected_weave_objective_index = function (arg_79_0)
 	return arg_79_0._selected_weave_objective_index
 end
 
-function StartGameStateSettingsOverview.set_next_weave(arg_80_0)
+StartGameStateSettingsOverview.set_next_weave = function (arg_80_0)
 	if arg_80_0._selected_weave_id ~= arg_80_0._next_weave then
 		arg_80_0:set_selected_weave_id(arg_80_0._next_weave)
 		arg_80_0:set_selected_weave_objective_index(1)
@@ -1318,7 +1318,7 @@ function StartGameStateSettingsOverview.set_next_weave(arg_80_0)
 	end
 end
 
-function StartGameStateSettingsOverview.set_selected_weave_id(arg_81_0, arg_81_1)
+StartGameStateSettingsOverview.set_selected_weave_id = function (arg_81_0, arg_81_1)
 	if arg_81_0._layout_save_settings then
 		arg_81_0._layout_save_settings.weave_id = arg_81_1
 	end
@@ -1328,19 +1328,19 @@ function StartGameStateSettingsOverview.set_selected_weave_id(arg_81_0, arg_81_1
 	end
 end
 
-function StartGameStateSettingsOverview.set_selected_weave_objective_index(arg_82_0, arg_82_1)
+StartGameStateSettingsOverview.set_selected_weave_objective_index = function (arg_82_0, arg_82_1)
 	arg_82_0._selected_weave_objective_index = arg_82_1
 end
 
-function StartGameStateSettingsOverview.get_selected_heroic_deed_backend_id(arg_83_0)
+StartGameStateSettingsOverview.get_selected_heroic_deed_backend_id = function (arg_83_0)
 	return arg_83_0._selected_heroic_deed_backend_id
 end
 
-function StartGameStateSettingsOverview.set_selected_heroic_deed_backend_id(arg_84_0, arg_84_1)
+StartGameStateSettingsOverview.set_selected_heroic_deed_backend_id = function (arg_84_0, arg_84_1)
 	arg_84_0._selected_heroic_deed_backend_id = arg_84_1
 end
 
-function StartGameStateSettingsOverview.get_selected_level_id(arg_85_0)
+StartGameStateSettingsOverview.get_selected_level_id = function (arg_85_0)
 	local var_85_0 = true
 	local var_85_1 = true
 	local var_85_2 = arg_85_0._specific_level_id and LevelSettings[arg_85_0._specific_level_id]
@@ -1362,7 +1362,7 @@ function StartGameStateSettingsOverview.get_selected_level_id(arg_85_0)
 	return var_85_0 and var_85_1 and arg_85_0._specific_level_id or nil
 end
 
-function StartGameStateSettingsOverview.set_selected_level_id(arg_86_0, arg_86_1)
+StartGameStateSettingsOverview.set_selected_level_id = function (arg_86_0, arg_86_1)
 	if arg_86_0._layout_save_settings then
 		arg_86_0._layout_save_settings.level_id = arg_86_1
 	end
@@ -1370,7 +1370,7 @@ function StartGameStateSettingsOverview.set_selected_level_id(arg_86_0, arg_86_1
 	arg_86_0._specific_level_id = arg_86_1
 end
 
-function StartGameStateSettingsOverview.get_selected_area_name(arg_87_0)
+StartGameStateSettingsOverview.get_selected_area_name = function (arg_87_0)
 	if arg_87_0._specific_area_name then
 		local var_87_0 = arg_87_0._specific_area_name
 
@@ -1390,7 +1390,7 @@ function StartGameStateSettingsOverview.get_selected_area_name(arg_87_0)
 	return "helmgart"
 end
 
-function StartGameStateSettingsOverview.set_selected_area_name(arg_88_0, arg_88_1)
+StartGameStateSettingsOverview.set_selected_area_name = function (arg_88_0, arg_88_1)
 	if arg_88_0._layout_save_settings then
 		arg_88_0._layout_save_settings.area_name = arg_88_1
 	end
@@ -1398,15 +1398,15 @@ function StartGameStateSettingsOverview.set_selected_area_name(arg_88_0, arg_88_
 	arg_88_0._specific_area_name = arg_88_1
 end
 
-function StartGameStateSettingsOverview.show_difficulty_option(arg_89_0)
+StartGameStateSettingsOverview.show_difficulty_option = function (arg_89_0)
 	arg_89_0._show_difficulty_option = true
 end
 
-function StartGameStateSettingsOverview.hide_difficulty_option(arg_90_0)
+StartGameStateSettingsOverview.hide_difficulty_option = function (arg_90_0)
 	arg_90_0._show_difficulty_option = false
 end
 
-function StartGameStateSettingsOverview.set_private_option_enabled(arg_91_0, arg_91_1)
+StartGameStateSettingsOverview.set_private_option_enabled = function (arg_91_0, arg_91_1)
 	if arg_91_1 == nil then
 		arg_91_1 = false
 	end
@@ -1418,11 +1418,11 @@ function StartGameStateSettingsOverview.set_private_option_enabled(arg_91_0, arg
 	arg_91_0._is_game_private = arg_91_1
 end
 
-function StartGameStateSettingsOverview.is_private_option_enabled(arg_92_0)
+StartGameStateSettingsOverview.is_private_option_enabled = function (arg_92_0)
 	return arg_92_0._is_game_private
 end
 
-function StartGameStateSettingsOverview.set_always_host_option_enabled(arg_93_0, arg_93_1)
+StartGameStateSettingsOverview.set_always_host_option_enabled = function (arg_93_0, arg_93_1)
 	if arg_93_1 == nil then
 		arg_93_1 = false
 	end
@@ -1434,11 +1434,11 @@ function StartGameStateSettingsOverview.set_always_host_option_enabled(arg_93_0,
 	arg_93_0._always_host = arg_93_1
 end
 
-function StartGameStateSettingsOverview.is_always_host_option_enabled(arg_94_0)
+StartGameStateSettingsOverview.is_always_host_option_enabled = function (arg_94_0)
 	return arg_94_0._always_host
 end
 
-function StartGameStateSettingsOverview.set_strict_matchmaking_option_enabled(arg_95_0, arg_95_1)
+StartGameStateSettingsOverview.set_strict_matchmaking_option_enabled = function (arg_95_0, arg_95_1)
 	if arg_95_1 == nil then
 		arg_95_1 = true
 	end
@@ -1450,13 +1450,13 @@ function StartGameStateSettingsOverview.set_strict_matchmaking_option_enabled(ar
 	arg_95_0._use_strict_matchmaking = arg_95_1
 end
 
-function StartGameStateSettingsOverview.is_strict_matchmaking_option_enabled(arg_96_0)
+StartGameStateSettingsOverview.is_strict_matchmaking_option_enabled = function (arg_96_0)
 	return arg_96_0._use_strict_matchmaking
 end
 
 local var_0_7 = {}
 
-function StartGameStateSettingsOverview.is_difficulty_approved(arg_97_0, arg_97_1)
+StartGameStateSettingsOverview.is_difficulty_approved = function (arg_97_0, arg_97_1)
 	if Development.parameter("unlock_all_difficulties") then
 		return true
 	end
@@ -1523,7 +1523,7 @@ function StartGameStateSettingsOverview.is_difficulty_approved(arg_97_0, arg_97_
 	return var_97_0, var_97_1, var_97_2, var_97_3
 end
 
-function StartGameStateSettingsOverview.set_difficulty_option(arg_98_0, arg_98_1)
+StartGameStateSettingsOverview.set_difficulty_option = function (arg_98_0, arg_98_1)
 	if arg_98_0._layout_save_settings then
 		arg_98_0._layout_save_settings.difficulty_key = arg_98_1
 	end
@@ -1531,7 +1531,7 @@ function StartGameStateSettingsOverview.set_difficulty_option(arg_98_0, arg_98_1
 	arg_98_0._selected_difficulty_key = arg_98_1
 end
 
-function StartGameStateSettingsOverview.get_difficulty_option(arg_99_0, arg_99_1)
+StartGameStateSettingsOverview.get_difficulty_option = function (arg_99_0, arg_99_1)
 	local var_99_0 = Managers.mechanism:mechanism_setting("default_difficulty")
 	local var_99_1 = arg_99_0._selected_difficulty_key
 
@@ -1548,7 +1548,7 @@ function StartGameStateSettingsOverview.get_difficulty_option(arg_99_0, arg_99_1
 	return var_99_1
 end
 
-function StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search(arg_100_0, arg_100_1, arg_100_2, arg_100_3)
+StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3)
 	arg_100_0._use_dedicated_win_servers = arg_100_1 == nil and true or arg_100_1
 	arg_100_0._use_dedicated_aws_servers = arg_100_2 == nil and true or arg_100_2
 	arg_100_0._use_player_hosted = arg_100_3 == nil and true or arg_100_3
@@ -1560,23 +1560,23 @@ function StartGameStateSettingsOverview.set_dedicated_or_player_hosted_search(ar
 	end
 end
 
-function StartGameStateSettingsOverview.using_player_hosted_search(arg_101_0)
+StartGameStateSettingsOverview.using_player_hosted_search = function (arg_101_0)
 	return arg_101_0._use_player_hosted
 end
 
-function StartGameStateSettingsOverview.using_dedicated_servers_search(arg_102_0)
+StartGameStateSettingsOverview.using_dedicated_servers_search = function (arg_102_0)
 	return arg_102_0._use_dedicated_win_servers, arg_102_0._use_dedicated_aws_servers
 end
 
-function StartGameStateSettingsOverview.set_play_button_enabled(arg_103_0, arg_103_1)
+StartGameStateSettingsOverview.set_play_button_enabled = function (arg_103_0, arg_103_1)
 	return
 end
 
-function StartGameStateSettingsOverview.set_confirm_button_visibility(arg_104_0, arg_104_1)
+StartGameStateSettingsOverview.set_confirm_button_visibility = function (arg_104_0, arg_104_1)
 	return
 end
 
-function StartGameStateSettingsOverview.set_fullscreen_effect_enable_state(arg_105_0, arg_105_1)
+StartGameStateSettingsOverview.set_fullscreen_effect_enable_state = function (arg_105_0, arg_105_1)
 	local var_105_0 = arg_105_0._ui_renderer.world
 	local var_105_1 = World.get_data(var_105_0, "shading_environment")
 
@@ -1589,21 +1589,21 @@ function StartGameStateSettingsOverview.set_fullscreen_effect_enable_state(arg_1
 	arg_105_0._fullscreen_effect_enabled = arg_105_1
 end
 
-function StartGameStateSettingsOverview.set_mutator_option(arg_106_0, arg_106_1)
+StartGameStateSettingsOverview.set_mutator_option = function (arg_106_0, arg_106_1)
 	arg_106_0._selected_mutator_key = arg_106_1
 end
 
-function StartGameStateSettingsOverview.get_mutator_option(arg_107_0)
+StartGameStateSettingsOverview.get_mutator_option = function (arg_107_0)
 	return arg_107_0._selected_mutator_key
 end
 
-function StartGameStateSettingsOverview.get_completed_level_difficulty_index(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
+StartGameStateSettingsOverview.get_completed_level_difficulty_index = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3)
 	local var_108_0 = (arg_108_0:get_custom_game_settings(arg_108_0._mechanism_name) or arg_108_0:get_custom_game_settings("adventure")).difficulty_index_getter_name
 
 	return LevelUnlockUtils[var_108_0](arg_108_1, arg_108_2, arg_108_3)
 end
 
-function StartGameStateSettingsOverview.can_use_streaming(arg_109_0)
+StartGameStateSettingsOverview.can_use_streaming = function (arg_109_0)
 	if IS_WINDOWS then
 		return true
 	end
@@ -1614,7 +1614,7 @@ function StartGameStateSettingsOverview.can_use_streaming(arg_109_0)
 	return var_109_0 and not var_109_1
 end
 
-function StartGameStateSettingsOverview.setup_backend_image_material(arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
+StartGameStateSettingsOverview.setup_backend_image_material = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
 	local var_110_0 = "StartGameStateSettingsOverview_" .. arg_110_2
 
 	if arg_110_0._cloned_materials_by_reference[arg_110_2] then
@@ -1635,7 +1635,7 @@ function StartGameStateSettingsOverview.setup_backend_image_material(arg_110_0, 
 	return var_110_0
 end
 
-function StartGameStateSettingsOverview._cb_on_backend_url_loaded(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5)
+StartGameStateSettingsOverview._cb_on_backend_url_loaded = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5)
 	local var_111_0 = arg_111_5[arg_111_3]
 
 	if not var_111_0 then
@@ -1653,7 +1653,7 @@ function StartGameStateSettingsOverview._cb_on_backend_url_loaded(arg_111_0, arg
 	Managers.url_loader:load_resource(arg_111_2, var_111_0, var_111_1, arg_111_3)
 end
 
-function StartGameStateSettingsOverview._cb_on_backend_image_loaded(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
+StartGameStateSettingsOverview._cb_on_backend_image_loaded = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
 	if not arg_112_0._cloned_materials_by_reference[arg_112_2] then
 		return
 	end
@@ -1667,14 +1667,14 @@ function StartGameStateSettingsOverview._cb_on_backend_image_loaded(arg_112_0, a
 	end
 end
 
-function StartGameStateSettingsOverview._create_material_instance(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
+StartGameStateSettingsOverview._create_material_instance = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
 	arg_113_0._cloned_materials_by_reference[arg_113_4] = arg_113_2
 	arg_113_0._gui_by_cloned_material_reference[arg_113_4] = arg_113_1
 
 	return Gui.clone_material_from_template(arg_113_1, arg_113_2, arg_113_3)
 end
 
-function StartGameStateSettingsOverview._set_material_diffuse_by_resource(arg_114_0, arg_114_1, arg_114_2, arg_114_3)
+StartGameStateSettingsOverview._set_material_diffuse_by_resource = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3)
 	local var_114_0 = Gui.material(arg_114_1, arg_114_2)
 
 	if var_114_0 then
@@ -1682,7 +1682,7 @@ function StartGameStateSettingsOverview._set_material_diffuse_by_resource(arg_11
 	end
 end
 
-function StartGameStateSettingsOverview._set_material_diffuse_by_path(arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+StartGameStateSettingsOverview._set_material_diffuse_by_path = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3)
 	local var_115_0 = Gui.material(arg_115_1, arg_115_2)
 
 	if var_115_0 then
@@ -1690,7 +1690,7 @@ function StartGameStateSettingsOverview._set_material_diffuse_by_path(arg_115_0,
 	end
 end
 
-function StartGameStateSettingsOverview._is_unique_reference_to_material(arg_116_0, arg_116_1)
+StartGameStateSettingsOverview._is_unique_reference_to_material = function (arg_116_0, arg_116_1)
 	local var_116_0 = arg_116_0._cloned_materials_by_reference
 	local var_116_1 = var_116_0[arg_116_1]
 
@@ -1705,7 +1705,7 @@ function StartGameStateSettingsOverview._is_unique_reference_to_material(arg_116
 	return true
 end
 
-function StartGameStateSettingsOverview.reset_cloned_material(arg_117_0, arg_117_1)
+StartGameStateSettingsOverview.reset_cloned_material = function (arg_117_0, arg_117_1)
 	local var_117_0 = arg_117_0._gui_by_cloned_material_reference
 	local var_117_1 = arg_117_0._cloned_materials_by_reference
 	local var_117_2 = arg_117_0._material_references_to_unload
@@ -1727,7 +1727,7 @@ function StartGameStateSettingsOverview.reset_cloned_material(arg_117_0, arg_117
 	var_117_0[arg_117_1] = nil
 end
 
-function StartGameStateSettingsOverview._reset_cloned_materials(arg_118_0)
+StartGameStateSettingsOverview._reset_cloned_materials = function (arg_118_0)
 	local var_118_0 = arg_118_0._cloned_materials_by_reference
 
 	for iter_118_0, iter_118_1 in pairs(var_118_0) do

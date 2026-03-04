@@ -18,7 +18,7 @@ local var_0_11 = "gui/1080p/single_textures/generic/transparent_placeholder_text
 HeroWindowGotwfItemPreview = class(HeroWindowGotwfItemPreview)
 HeroWindowGotwfItemPreview.NAME = "HeroWindowGotwfItemPreview"
 
-function HeroWindowGotwfItemPreview.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowGotwfItemPreview.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfItemPreview")
 
 	arg_1_0._params = arg_1_1
@@ -45,7 +45,7 @@ function HeroWindowGotwfItemPreview.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowGotwfItemPreview._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowGotwfItemPreview._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -63,7 +63,7 @@ function HeroWindowGotwfItemPreview._start_transition_animation(arg_2_0, arg_2_1
 	arg_2_0._animations[arg_2_1] = var_2_3
 end
 
-function HeroWindowGotwfItemPreview._create_viewport_definition(arg_3_0)
+HeroWindowGotwfItemPreview._create_viewport_definition = function (arg_3_0)
 	local var_3_0 = "environment/ui_store_preview"
 
 	return {
@@ -106,7 +106,7 @@ function HeroWindowGotwfItemPreview._create_viewport_definition(arg_3_0)
 	}
 end
 
-function HeroWindowGotwfItemPreview._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowGotwfItemPreview._create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._viewport_widget then
 		UIWidget.destroy(arg_4_0._ui_renderer, arg_4_0._viewport_widget)
 
@@ -162,7 +162,7 @@ function HeroWindowGotwfItemPreview._create_ui_elements(arg_4_0, arg_4_1, arg_4_
 	arg_4_0._viewport_widget_definition = arg_4_0:_create_viewport_definition()
 end
 
-function HeroWindowGotwfItemPreview.on_exit(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowGotwfItemPreview.on_exit = function (arg_5_0, arg_5_1, arg_5_2)
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfItemPreview")
 
 	arg_5_0._ui_animator = nil
@@ -184,13 +184,13 @@ function HeroWindowGotwfItemPreview.on_exit(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function HeroWindowGotwfItemPreview.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowGotwfItemPreview.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_sync_layout_path()
 	arg_6_0:_update_previewers(arg_6_1, arg_6_2)
 end
 
-function HeroWindowGotwfItemPreview._update_previewers(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowGotwfItemPreview._update_previewers = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._selected_product then
 		local var_7_0 = arg_7_0._parent:window_input_service()
 		local var_7_1 = false
@@ -213,7 +213,7 @@ function HeroWindowGotwfItemPreview._update_previewers(arg_7_0, arg_7_1, arg_7_2
 	end
 end
 
-function HeroWindowGotwfItemPreview._register_object_sets(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowGotwfItemPreview._register_object_sets = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2.style.viewport
 	local var_8_1 = arg_8_1.style
 	local var_8_2 = arg_8_1.content
@@ -239,7 +239,7 @@ function HeroWindowGotwfItemPreview._register_object_sets(arg_8_0, arg_8_1, arg_
 	arg_8_0:_show_object_set(nil, true)
 end
 
-function HeroWindowGotwfItemPreview._show_object_set(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowGotwfItemPreview._show_object_set = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0._viewport_widget then
 		print("[HeroWindowGotwfItemPreview:show_object_set] Viewport not initiated")
 
@@ -296,7 +296,7 @@ function HeroWindowGotwfItemPreview._show_object_set(arg_9_0, arg_9_1, arg_9_2)
 	print("Showing object set:", arg_9_1)
 end
 
-function HeroWindowGotwfItemPreview._update_environment(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowGotwfItemPreview._update_environment = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._viewport_widget then
 		return
 	end
@@ -307,7 +307,7 @@ function HeroWindowGotwfItemPreview._update_environment(arg_10_0, arg_10_1, arg_
 	World.get_data(var_10_1, "shading_settings")[1] = arg_10_2 and "default" or var_10_0
 end
 
-function HeroWindowGotwfItemPreview._destroy_viewport_gui(arg_11_0)
+HeroWindowGotwfItemPreview._destroy_viewport_gui = function (arg_11_0)
 	if arg_11_0._viewport_gui then
 		local var_11_0 = Managers.world:world("item_preview")
 
@@ -317,7 +317,7 @@ function HeroWindowGotwfItemPreview._destroy_viewport_gui(arg_11_0)
 	end
 end
 
-function HeroWindowGotwfItemPreview._create_viewport_gui(arg_12_0)
+HeroWindowGotwfItemPreview._create_viewport_gui = function (arg_12_0)
 	local var_12_0 = Managers.world:world("item_preview")
 	local var_12_1 = false
 	local var_12_2 = arg_12_0._is_in_inn
@@ -333,7 +333,7 @@ function HeroWindowGotwfItemPreview._create_viewport_gui(arg_12_0)
 	}
 end
 
-function HeroWindowGotwfItemPreview.post_update(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowGotwfItemPreview.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._viewport_widget_definition and not arg_13_0._viewport_widget then
 		arg_13_0._viewport_widget = UIWidget.init(arg_13_0._viewport_widget_definition)
 
@@ -360,7 +360,7 @@ function HeroWindowGotwfItemPreview.post_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function HeroWindowGotwfItemPreview._update_animations(arg_14_0, arg_14_1)
+HeroWindowGotwfItemPreview._update_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ui_animations
 	local var_14_1 = arg_14_0._animations
 	local var_14_2 = arg_14_0._ui_animator
@@ -386,11 +386,11 @@ function HeroWindowGotwfItemPreview._update_animations(arg_14_0, arg_14_1)
 	arg_14_0:_update_title_edge_animation(arg_14_1)
 end
 
-function HeroWindowGotwfItemPreview._exit(arg_15_0)
+HeroWindowGotwfItemPreview._exit = function (arg_15_0)
 	arg_15_0.exit = true
 end
 
-function HeroWindowGotwfItemPreview._get_alpha_multiplier(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowGotwfItemPreview._get_alpha_multiplier = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._render_settings
 	local var_16_1 = arg_16_1.alpha_multiplier
 
@@ -401,7 +401,7 @@ function HeroWindowGotwfItemPreview._get_alpha_multiplier(arg_16_0, arg_16_1, ar
 	return arg_16_2
 end
 
-function HeroWindowGotwfItemPreview.draw(arg_17_0, arg_17_1)
+HeroWindowGotwfItemPreview.draw = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_renderer
 	local var_17_1 = arg_17_0._ui_top_renderer
 	local var_17_2 = arg_17_0._ui_scenegraph
@@ -445,7 +445,7 @@ end
 
 local var_0_12 = {}
 
-function HeroWindowGotwfItemPreview._render_viewport_mask(arg_18_0)
+HeroWindowGotwfItemPreview._render_viewport_mask = function (arg_18_0)
 	local var_18_0, var_18_1 = Application.resolution()
 	local var_18_2 = arg_18_0._gui_resolution or var_0_12
 
@@ -477,18 +477,18 @@ function HeroWindowGotwfItemPreview._render_viewport_mask(arg_18_0)
 	Gui.bitmap(var_18_3, "gui_lock_test_viewport_mask", Vector3(var_18_0 * var_18_5 - var_18_11, 0, 2), Vector2(var_18_11, var_18_12))
 end
 
-function HeroWindowGotwfItemPreview._play_sound(arg_19_0, arg_19_1)
+HeroWindowGotwfItemPreview._play_sound = function (arg_19_0, arg_19_1)
 	arg_19_0._parent:play_sound(arg_19_1)
 end
 
-function HeroWindowGotwfItemPreview._start_loading_overlay(arg_20_0)
+HeroWindowGotwfItemPreview._start_loading_overlay = function (arg_20_0)
 	arg_20_0._show_loading_overlay = true
 	arg_20_0._fadeout_loading_overlay = nil
 	arg_20_0._fadeout_progress = nil
 	arg_20_0._loading_widgets_by_name.loading_icon.style.texture_id.color[1] = 255
 end
 
-function HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation(arg_21_0, arg_21_1)
+HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation = function (arg_21_0, arg_21_1)
 	if not arg_21_0._fadeout_loading_overlay and arg_21_0._show_loading_overlay then
 		return
 	end
@@ -510,7 +510,7 @@ function HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation(ar
 	end
 end
 
-function HeroWindowGotwfItemPreview._destroy_previewers(arg_22_0)
+HeroWindowGotwfItemPreview._destroy_previewers = function (arg_22_0)
 	local var_22_0 = arg_22_0._item_previewer
 
 	if var_22_0 then
@@ -532,7 +532,7 @@ function HeroWindowGotwfItemPreview._destroy_previewers(arg_22_0)
 	arg_22_0._item_texture_widget = nil
 end
 
-function HeroWindowGotwfItemPreview._sync_presentation_item(arg_23_0, arg_23_1)
+HeroWindowGotwfItemPreview._sync_presentation_item = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._params.selected_item
 
 	if var_23_0 ~= arg_23_0._selected_product or arg_23_1 then
@@ -557,7 +557,7 @@ end
 
 local var_0_13 = {}
 
-function HeroWindowGotwfItemPreview._present_item(arg_24_0, arg_24_1)
+HeroWindowGotwfItemPreview._present_item = function (arg_24_0, arg_24_1)
 	local var_24_0
 	local var_24_1
 	local var_24_2 = arg_24_1.item_id
@@ -679,7 +679,7 @@ function HeroWindowGotwfItemPreview._present_item(arg_24_0, arg_24_1)
 	arg_24_0._delayed_item_unit_presentation_delay = 0.3
 end
 
-function HeroWindowGotwfItemPreview._update_claimed_status(arg_25_0)
+HeroWindowGotwfItemPreview._update_claimed_status = function (arg_25_0)
 	local var_25_0 = arg_25_0._params.selected_item_claimed
 	local var_25_1 = arg_25_0._params.selected_item_already_owned
 	local var_25_2 = arg_25_0._top_widgets_by_name.claimed
@@ -688,13 +688,13 @@ function HeroWindowGotwfItemPreview._update_claimed_status(arg_25_0)
 	var_25_2.content.already_owned = var_25_1
 end
 
-function HeroWindowGotwfItemPreview._create_material_instance(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+HeroWindowGotwfItemPreview._create_material_instance = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	arg_26_0._cloned_materials_by_reference[arg_26_4] = arg_26_2
 
 	return Gui.clone_material_from_template(arg_26_1, arg_26_2, arg_26_3)
 end
 
-function HeroWindowGotwfItemPreview._set_material_diffuse(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowGotwfItemPreview._set_material_diffuse = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = Gui.material(arg_27_1, arg_27_2)
 
 	if var_27_0 then
@@ -702,7 +702,7 @@ function HeroWindowGotwfItemPreview._set_material_diffuse(arg_27_0, arg_27_1, ar
 	end
 end
 
-function HeroWindowGotwfItemPreview._load_texture_package(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+HeroWindowGotwfItemPreview._load_texture_package = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = true
 	local var_28_1 = false
 
@@ -711,7 +711,7 @@ function HeroWindowGotwfItemPreview._load_texture_package(arg_28_0, arg_28_1, ar
 	arg_28_0._loaded_package_names[arg_28_2] = arg_28_1
 end
 
-function HeroWindowGotwfItemPreview._is_unique_reference_to_material(arg_29_0, arg_29_1)
+HeroWindowGotwfItemPreview._is_unique_reference_to_material = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._cloned_materials_by_reference
 	local var_29_1 = var_29_0[arg_29_1]
 
@@ -726,7 +726,7 @@ function HeroWindowGotwfItemPreview._is_unique_reference_to_material(arg_29_0, a
 	return true
 end
 
-function HeroWindowGotwfItemPreview._unload_texture_by_reference(arg_30_0, arg_30_1)
+HeroWindowGotwfItemPreview._unload_texture_by_reference = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._loaded_package_names
 	local var_30_1 = arg_30_0._cloned_materials_by_reference
 	local var_30_2 = var_30_0[arg_30_1]
@@ -746,7 +746,7 @@ function HeroWindowGotwfItemPreview._unload_texture_by_reference(arg_30_0, arg_3
 	var_30_1[arg_30_1] = nil
 end
 
-function HeroWindowGotwfItemPreview._delayed_item_unit_presentation(arg_31_0, arg_31_1)
+HeroWindowGotwfItemPreview._delayed_item_unit_presentation = function (arg_31_0, arg_31_1)
 	if arg_31_1.reward_type == "keep_decoration_painting" then
 		arg_31_0:_setup_painting_presentation(arg_31_1)
 	else
@@ -754,7 +754,7 @@ function HeroWindowGotwfItemPreview._delayed_item_unit_presentation(arg_31_0, ar
 	end
 end
 
-function HeroWindowGotwfItemPreview._setup_painting_presentation(arg_32_0, arg_32_1)
+HeroWindowGotwfItemPreview._setup_painting_presentation = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_1.item_id
 	local var_32_1 = Paintings[var_32_0]
 
@@ -853,7 +853,7 @@ function HeroWindowGotwfItemPreview._setup_painting_presentation(arg_32_0, arg_3
 	end
 end
 
-function HeroWindowGotwfItemPreview._setup_item_presentation(arg_34_0, arg_34_1)
+HeroWindowGotwfItemPreview._setup_item_presentation = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_1.item_id
 	local var_34_1 = arg_34_1.reward_type
 	local var_34_2
@@ -987,7 +987,7 @@ function HeroWindowGotwfItemPreview._setup_item_presentation(arg_34_0, arg_34_1)
 	end
 end
 
-function HeroWindowGotwfItemPreview._update_delayed_item_unit_presentation(arg_36_0, arg_36_1)
+HeroWindowGotwfItemPreview._update_delayed_item_unit_presentation = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._delayed_item_unit_presentation_delay
 
 	if not var_36_0 then
@@ -1007,42 +1007,42 @@ function HeroWindowGotwfItemPreview._update_delayed_item_unit_presentation(arg_3
 	end
 end
 
-function HeroWindowGotwfItemPreview._set_title_name(arg_37_0, arg_37_1)
+HeroWindowGotwfItemPreview._set_title_name = function (arg_37_0, arg_37_1)
 	arg_37_0._top_widgets_by_name.title_text.content.text = arg_37_1
 end
 
-function HeroWindowGotwfItemPreview._set_sub_title_name(arg_38_0, arg_38_1)
+HeroWindowGotwfItemPreview._set_sub_title_name = function (arg_38_0, arg_38_1)
 	arg_38_0._top_widgets_by_name.sub_title_text.content.text = arg_38_1
 end
 
-function HeroWindowGotwfItemPreview._set_description_text(arg_39_0, arg_39_1)
+HeroWindowGotwfItemPreview._set_description_text = function (arg_39_0, arg_39_1)
 	arg_39_0._top_widgets_by_name.description_text.content.text = arg_39_1
 end
 
-function HeroWindowGotwfItemPreview._set_sub_title_alpha_multiplier(arg_40_0, arg_40_1)
+HeroWindowGotwfItemPreview._set_sub_title_alpha_multiplier = function (arg_40_0, arg_40_1)
 	arg_40_0._top_widgets_by_name.sub_title_text.alpha_multiplier = arg_40_1
 end
 
-function HeroWindowGotwfItemPreview._set_type_title_name(arg_41_0, arg_41_1)
+HeroWindowGotwfItemPreview._set_type_title_name = function (arg_41_0, arg_41_1)
 	arg_41_0._top_widgets_by_name.type_title_text.content.text = arg_41_1
 end
 
-function HeroWindowGotwfItemPreview._set_career_title_name(arg_42_0, arg_42_1)
+HeroWindowGotwfItemPreview._set_career_title_name = function (arg_42_0, arg_42_1)
 	arg_42_0._top_widgets_by_name.career_title_text.content.text = arg_42_1
 end
 
-function HeroWindowGotwfItemPreview._set_disclaimer_text(arg_43_0, arg_43_1)
+HeroWindowGotwfItemPreview._set_disclaimer_text = function (arg_43_0, arg_43_1)
 	arg_43_0._disclaimer_text = arg_43_1
 	arg_43_0._top_widgets_by_name.disclaimer_text.content.text = arg_43_1
 
 	arg_43_0:_update_info_text_alignment()
 end
 
-function HeroWindowGotwfItemPreview._set_amount_text(arg_44_0, arg_44_1)
+HeroWindowGotwfItemPreview._set_amount_text = function (arg_44_0, arg_44_1)
 	arg_44_0._top_widgets_by_name.amount_text.content.text = arg_44_1
 end
 
-function HeroWindowGotwfItemPreview._update_info_text_alignment(arg_45_0)
+HeroWindowGotwfItemPreview._update_info_text_alignment = function (arg_45_0)
 	local var_45_0 = arg_45_0._top_widgets_by_name.expire_timer_text
 	local var_45_1 = arg_45_0._top_widgets_by_name.disclaimer_text
 	local var_45_2 = arg_45_0._top_widgets_by_name.disclaimer_divider
@@ -1085,7 +1085,7 @@ function HeroWindowGotwfItemPreview._update_info_text_alignment(arg_45_0)
 	var_45_2.content.visible = var_45_7
 end
 
-function HeroWindowGotwfItemPreview.cb_unit_spawned_item_preview(arg_46_0, arg_46_1, arg_46_2)
+HeroWindowGotwfItemPreview.cb_unit_spawned_item_preview = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = true
 
 	arg_46_1:present_item(arg_46_2, var_46_0)
@@ -1093,19 +1093,19 @@ function HeroWindowGotwfItemPreview.cb_unit_spawned_item_preview(arg_46_0, arg_4
 	arg_46_0._fadeout_loading_overlay = true
 end
 
-function HeroWindowGotwfItemPreview._spawn_hero_skin(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+HeroWindowGotwfItemPreview._spawn_hero_skin = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 	local var_47_0 = callback(arg_47_0, "cb_hero_unit_spawned_skin_preview", arg_47_1, arg_47_2, arg_47_3)
 
 	arg_47_1:request_spawn_hero_unit(arg_47_2, arg_47_3, false, var_47_0, 1, nil, arg_47_4)
 end
 
-function HeroWindowGotwfItemPreview._spawn_hero_with_hat(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+HeroWindowGotwfItemPreview._spawn_hero_with_hat = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
 	local var_48_0 = callback(arg_48_0, "cb_hero_unit_spawned_hat_preview", arg_48_1, arg_48_2, arg_48_3, arg_48_5)
 
 	arg_48_1:request_spawn_hero_unit(arg_48_2, arg_48_3, false, var_48_0, 1, nil, arg_48_4)
 end
 
-function HeroWindowGotwfItemPreview.cb_hero_unit_spawned_skin_preview(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+HeroWindowGotwfItemPreview.cb_hero_unit_spawned_skin_preview = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = FindProfileIndex(arg_49_2)
 	local var_49_1 = SPProfiles[var_49_0].careers[arg_49_3]
 	local var_49_2 = "store_idle"
@@ -1132,7 +1132,7 @@ function HeroWindowGotwfItemPreview.cb_hero_unit_spawned_skin_preview(arg_49_0, 
 	arg_49_0._fadeout_loading_overlay = true
 end
 
-function HeroWindowGotwfItemPreview.cb_hero_unit_spawned_hat_preview(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+HeroWindowGotwfItemPreview.cb_hero_unit_spawned_hat_preview = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 	local var_50_0 = FindProfileIndex(arg_50_2)
 	local var_50_1 = SPProfiles[var_50_0].careers[arg_50_3]
 	local var_50_2 = "store_idle"
@@ -1162,7 +1162,7 @@ function HeroWindowGotwfItemPreview.cb_hero_unit_spawned_hat_preview(arg_50_0, a
 	arg_50_0._fadeout_loading_overlay = true
 end
 
-function HeroWindowGotwfItemPreview._get_can_wield_display_text(arg_51_0, arg_51_1)
+HeroWindowGotwfItemPreview._get_can_wield_display_text = function (arg_51_0, arg_51_1)
 	local var_51_0 = ""
 	local var_51_1 = ""
 
@@ -1202,7 +1202,7 @@ function HeroWindowGotwfItemPreview._get_can_wield_display_text(arg_51_0, arg_51
 	return var_51_0, var_51_1
 end
 
-function HeroWindowGotwfItemPreview._get_hero_wield_info_by_item(arg_52_0, arg_52_1)
+HeroWindowGotwfItemPreview._get_hero_wield_info_by_item = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_1.can_wield[1]
 
 	for iter_52_0, iter_52_1 in ipairs(SPProfiles) do
@@ -1220,7 +1220,7 @@ function HeroWindowGotwfItemPreview._get_hero_wield_info_by_item(arg_52_0, arg_5
 	end
 end
 
-function HeroWindowGotwfItemPreview._sync_layout_path(arg_53_0)
+HeroWindowGotwfItemPreview._sync_layout_path = function (arg_53_0)
 	local var_53_0 = arg_53_0._parent
 	local var_53_1 = arg_53_0._old_layout_name
 	local var_53_2 = var_53_0:get_layout_name()
@@ -1230,7 +1230,7 @@ function HeroWindowGotwfItemPreview._sync_layout_path(arg_53_0)
 	end
 end
 
-function HeroWindowGotwfItemPreview._update_title_edge_animation(arg_54_0, arg_54_1)
+HeroWindowGotwfItemPreview._update_title_edge_animation = function (arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0._title_edge_animation_data
 
 	if not var_54_0 then

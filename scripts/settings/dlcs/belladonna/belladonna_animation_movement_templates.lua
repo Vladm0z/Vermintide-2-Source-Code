@@ -64,14 +64,14 @@ end
 
 AnimationMovementTemplates.beastmen_bestigor = {
 	owner = {
-		init = function(arg_3_0, arg_3_1)
+		init = function (arg_3_0, arg_3_1)
 			arg_3_1.blackboard = var_0_0[arg_3_0]
 			arg_3_1.ai_extension = ScriptUnit.extension(arg_3_0, "ai_system")
 			arg_3_1.animation_variable_lean = Unit.animation_find_variable(arg_3_0, "lean")
 			arg_3_1.lean_lerp_speed = 10
 			arg_3_1.lean_amount = 25
 		end,
-		update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0 = arg_4_3.blackboard
 
 			if var_4_0.lean_target_position_boxed then
@@ -93,7 +93,7 @@ AnimationMovementTemplates.beastmen_bestigor = {
 				end
 			end
 		end,
-		leave = function(arg_5_0, arg_5_1)
+		leave = function (arg_5_0, arg_5_1)
 			local var_5_0 = arg_5_1.animation_variable_lean
 
 			if var_5_0 then
@@ -102,13 +102,13 @@ AnimationMovementTemplates.beastmen_bestigor = {
 		end
 	},
 	husk = {
-		init = function(arg_6_0, arg_6_1)
+		init = function (arg_6_0, arg_6_1)
 			arg_6_1.animation_variable_lean = Unit.animation_find_variable(arg_6_0, "lean")
 			arg_6_1.old_lean_target_position_boxed = Vector3Box(Vector3.zero())
 			arg_6_1.lean_lerp_speed = 10
 			arg_6_1.lean_amount = 25
 		end,
-		update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 			local var_7_0 = Managers.state.network:game()
 			local var_7_1 = Managers.state.unit_storage:go_id(arg_7_0)
 
@@ -125,7 +125,7 @@ AnimationMovementTemplates.beastmen_bestigor = {
 				end
 			end
 		end,
-		leave = function(arg_8_0, arg_8_1)
+		leave = function (arg_8_0, arg_8_1)
 			local var_8_0 = arg_8_1.animation_variable_lean
 
 			if var_8_0 then
@@ -136,7 +136,7 @@ AnimationMovementTemplates.beastmen_bestigor = {
 }
 AnimationMovementTemplates.beastmen_minotaur = {
 	owner = {
-		init = function(arg_9_0, arg_9_1)
+		init = function (arg_9_0, arg_9_1)
 			arg_9_1.blackboard = var_0_0[arg_9_0]
 			arg_9_1.ai_extension = ScriptUnit.extension(arg_9_0, "ai_system")
 			arg_9_1.animation_variable_lean = Unit.animation_find_variable(arg_9_0, "lean")
@@ -147,7 +147,7 @@ AnimationMovementTemplates.beastmen_minotaur = {
 			arg_9_1.lean_downwards_max = 3
 			arg_9_1.sent_downwards_lean = false
 		end,
-		update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			local var_10_0 = arg_10_3.blackboard
 
 			if var_10_0.lean_downwards then
@@ -196,7 +196,7 @@ AnimationMovementTemplates.beastmen_minotaur = {
 				end
 			end
 		end,
-		leave = function(arg_11_0, arg_11_1)
+		leave = function (arg_11_0, arg_11_1)
 			local var_11_0 = arg_11_1.animation_variable_lean
 
 			if var_11_0 then
@@ -217,7 +217,7 @@ AnimationMovementTemplates.beastmen_minotaur = {
 		end
 	},
 	husk = {
-		init = function(arg_12_0, arg_12_1)
+		init = function (arg_12_0, arg_12_1)
 			arg_12_1.animation_variable_lean = Unit.animation_find_variable(arg_12_0, "lean")
 			arg_12_1.old_lean_target_position_boxed = Vector3Box(Vector3.zero())
 			arg_12_1.lean_lerp_speed = 10
@@ -226,7 +226,7 @@ AnimationMovementTemplates.beastmen_minotaur = {
 			arg_12_1.lean_downwards_min = 2
 			arg_12_1.lean_downwards_max = 3
 		end,
-		update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			local var_13_0 = Managers.state.network:game()
 			local var_13_1 = Managers.state.unit_storage:go_id(arg_13_0)
 
@@ -245,7 +245,7 @@ AnimationMovementTemplates.beastmen_minotaur = {
 				end
 			end
 		end,
-		leave = function(arg_14_0, arg_14_1)
+		leave = function (arg_14_0, arg_14_1)
 			local var_14_0 = arg_14_1.animation_variable_lean
 
 			if var_14_0 then

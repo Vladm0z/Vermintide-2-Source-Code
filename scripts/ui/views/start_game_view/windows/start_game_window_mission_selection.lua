@@ -14,7 +14,7 @@ end
 StartGameWindowMissionSelection = class(StartGameWindowMissionSelection)
 StartGameWindowMissionSelection.NAME = "StartGameWindowMissionSelection"
 
-function StartGameWindowMissionSelection.on_enter(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowMissionSelection.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMissionSelection")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -49,7 +49,7 @@ function StartGameWindowMissionSelection.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1.return_layout_name = nil
 end
 
-function StartGameWindowMissionSelection.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowMissionSelection.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = UISceneGraph.init_scenegraph(var_0_4)
 
 	arg_3_0.ui_scenegraph = var_3_0
@@ -80,7 +80,7 @@ function StartGameWindowMissionSelection.create_ui_elements(arg_3_0, arg_3_1, ar
 	end
 end
 
-function StartGameWindowMissionSelection._setup_levels_by_area(arg_4_0, arg_4_1)
+StartGameWindowMissionSelection._setup_levels_by_area = function (arg_4_0, arg_4_1)
 	local var_4_0 = AreaSettings[arg_4_1]
 	local var_4_1 = var_4_0.acts
 
@@ -100,7 +100,7 @@ function StartGameWindowMissionSelection._setup_levels_by_area(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowMissionSelection._setup_level_acts(arg_5_0)
+StartGameWindowMissionSelection._setup_level_acts = function (arg_5_0)
 	local var_5_0 = {}
 	local var_5_1 = 0
 
@@ -127,7 +127,7 @@ function StartGameWindowMissionSelection._setup_level_acts(arg_5_0)
 	arg_5_0._levels_by_act = var_5_0
 end
 
-function StartGameWindowMissionSelection._present_acts(arg_6_0, arg_6_1)
+StartGameWindowMissionSelection._present_acts = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._is_dlc
 
 	if var_6_0 then
@@ -232,7 +232,7 @@ function StartGameWindowMissionSelection._present_acts(arg_6_0, arg_6_1)
 	arg_6_0:_setup_required_act_connections()
 end
 
-function StartGameWindowMissionSelection._setup_required_act_connections(arg_7_0)
+StartGameWindowMissionSelection._setup_required_act_connections = function (arg_7_0)
 	local var_7_0 = arg_7_0.statistics_db
 	local var_7_1 = arg_7_0._stats_id
 	local var_7_2 = arg_7_0.ui_scenegraph
@@ -283,7 +283,7 @@ function StartGameWindowMissionSelection._setup_required_act_connections(arg_7_0
 	end
 end
 
-function StartGameWindowMissionSelection._get_last_level_in_act(arg_8_0, arg_8_1)
+StartGameWindowMissionSelection._get_last_level_in_act = function (arg_8_0, arg_8_1)
 	local var_8_0 = GameActs[arg_8_1]
 	local var_8_1
 	local var_8_2 = 0
@@ -301,7 +301,7 @@ function StartGameWindowMissionSelection._get_last_level_in_act(arg_8_0, arg_8_1
 	return var_8_1, var_8_2
 end
 
-function StartGameWindowMissionSelection._get_first_level_id(arg_9_0)
+StartGameWindowMissionSelection._get_first_level_id = function (arg_9_0)
 	local var_9_0 = arg_9_0._active_node_widgets
 
 	if var_9_0 then
@@ -309,7 +309,7 @@ function StartGameWindowMissionSelection._get_first_level_id(arg_9_0)
 	end
 end
 
-function StartGameWindowMissionSelection._is_level_presented(arg_10_0, arg_10_1)
+StartGameWindowMissionSelection._is_level_presented = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._active_node_widgets
 
 	if var_10_0 then
@@ -323,7 +323,7 @@ function StartGameWindowMissionSelection._is_level_presented(arg_10_0, arg_10_1)
 	return false
 end
 
-function StartGameWindowMissionSelection._select_level(arg_11_0, arg_11_1)
+StartGameWindowMissionSelection._select_level = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._active_node_widgets
 
 	if var_11_0 then
@@ -342,7 +342,7 @@ function StartGameWindowMissionSelection._select_level(arg_11_0, arg_11_1)
 	arg_11_0._widgets_by_name.select_button.content.button_hotspot.disable_button = arg_11_1 == nil
 end
 
-function StartGameWindowMissionSelection._set_presentation_info(arg_12_0, arg_12_1)
+StartGameWindowMissionSelection._set_presentation_info = function (arg_12_0, arg_12_1)
 	local var_12_0 = ""
 	local var_12_1 = ""
 	local var_12_2 = "map_frame_00"
@@ -380,7 +380,7 @@ function StartGameWindowMissionSelection._set_presentation_info(arg_12_0, arg_12
 	var_12_4.description_text.content.text = var_12_1
 end
 
-function StartGameWindowMissionSelection.on_exit(arg_13_0, arg_13_1)
+StartGameWindowMissionSelection.on_exit = function (arg_13_0, arg_13_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMissionSelection")
 
 	arg_13_0.ui_animator = nil
@@ -388,16 +388,16 @@ function StartGameWindowMissionSelection.on_exit(arg_13_0, arg_13_1)
 	arg_13_0.parent:set_input_description(nil)
 end
 
-function StartGameWindowMissionSelection.update(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowMissionSelection.update = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_update_animations(arg_14_1)
 	arg_14_0:draw(arg_14_1)
 end
 
-function StartGameWindowMissionSelection.post_update(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowMissionSelection.post_update = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_handle_input(arg_15_1, arg_15_2)
 end
 
-function StartGameWindowMissionSelection._update_animations(arg_16_0, arg_16_1)
+StartGameWindowMissionSelection._update_animations = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.ui_animator
 
 	var_16_0:update(arg_16_1)
@@ -413,7 +413,7 @@ function StartGameWindowMissionSelection._update_animations(arg_16_0, arg_16_1)
 	end
 end
 
-function StartGameWindowMissionSelection._is_button_pressed(arg_17_0, arg_17_1)
+StartGameWindowMissionSelection._is_button_pressed = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.content.button_hotspot
 
 	if var_17_0.on_release then
@@ -423,13 +423,13 @@ function StartGameWindowMissionSelection._is_button_pressed(arg_17_0, arg_17_1)
 	end
 end
 
-function StartGameWindowMissionSelection._is_button_hovered(arg_18_0, arg_18_1)
+StartGameWindowMissionSelection._is_button_hovered = function (arg_18_0, arg_18_1)
 	if arg_18_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function StartGameWindowMissionSelection._update_level_option(arg_19_0)
+StartGameWindowMissionSelection._update_level_option = function (arg_19_0)
 	local var_19_0 = arg_19_0.parent:get_selected_level_id()
 
 	if var_19_0 ~= arg_19_0._selected_level_id then
@@ -443,7 +443,7 @@ function StartGameWindowMissionSelection._update_level_option(arg_19_0)
 	end
 end
 
-function StartGameWindowMissionSelection._handle_input(arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowMissionSelection._handle_input = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._active_node_widgets
 
 	if var_20_0 then
@@ -486,7 +486,7 @@ function StartGameWindowMissionSelection._handle_input(arg_20_0, arg_20_1, arg_2
 	end
 end
 
-function StartGameWindowMissionSelection.draw(arg_21_0, arg_21_1)
+StartGameWindowMissionSelection.draw = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.ui_renderer
 	local var_21_1 = arg_21_0.ui_scenegraph
 	local var_21_2 = arg_21_0.parent:window_input_service()
@@ -520,6 +520,6 @@ function StartGameWindowMissionSelection.draw(arg_21_0, arg_21_1)
 	UIRenderer.end_pass(var_21_0)
 end
 
-function StartGameWindowMissionSelection._play_sound(arg_22_0, arg_22_1)
+StartGameWindowMissionSelection._play_sound = function (arg_22_0, arg_22_1)
 	arg_22_0.parent:play_sound(arg_22_1)
 end

@@ -2,11 +2,11 @@
 
 EnemyCharacterStateDead = class(EnemyCharacterStateDead, EnemyCharacterState)
 
-function EnemyCharacterStateDead.init(arg_1_0, arg_1_1)
+EnemyCharacterStateDead.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "dead")
 end
 
-function EnemyCharacterStateDead.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateDead.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0.despawn_time_start = arg_2_5
 	arg_2_0.despawned = false
 	arg_2_0.switched_to_observer_camera = false
@@ -90,7 +90,7 @@ function EnemyCharacterStateDead.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 	end
 end
 
-function EnemyCharacterStateDead.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+EnemyCharacterStateDead.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.override_item_drop_position = nil
 	arg_3_0.override_item_drop_direction = nil
 
@@ -116,7 +116,7 @@ function EnemyCharacterStateDead.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	end
 end
 
-function EnemyCharacterStateDead.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+EnemyCharacterStateDead.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_5 - arg_4_0.despawn_time_start
 
 	if not arg_4_0.despawned and var_4_0 > arg_4_0.dead_player_destroy_time then

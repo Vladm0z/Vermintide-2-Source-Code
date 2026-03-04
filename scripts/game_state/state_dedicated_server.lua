@@ -21,7 +21,7 @@ StateDedicatedServer = class(StateDedicatedServer)
 StateDedicatedServer.NAME = "StateDedicatedServer"
 StateDedicatedServer.packages_to_load = {}
 
-function StateDedicatedServer.on_enter(arg_1_0, arg_1_1)
+StateDedicatedServer.on_enter = function (arg_1_0, arg_1_1)
 	VisualAssertLog.setup(nil)
 	arg_1_0:_setup_garbage_collection()
 	arg_1_0:_setup_network()
@@ -38,14 +38,14 @@ function StateDedicatedServer.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_load_packages()
 end
 
-function StateDedicatedServer._setup_garbage_collection(arg_2_0)
+StateDedicatedServer._setup_garbage_collection = function (arg_2_0)
 	local var_2_0 = true
 
 	GarbageLeakDetector.run_leak_detection(var_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "StateDedicatedServer")
 end
 
-function StateDedicatedServer._init_input(arg_3_0)
+StateDedicatedServer._init_input = function (arg_3_0)
 	arg_3_0._input_manager = InputManager:new()
 
 	local var_3_0 = arg_3_0._input_manager
@@ -57,34 +57,34 @@ function StateDedicatedServer._init_input(arg_3_0)
 	var_3_0:initialize_device("gamepad")
 end
 
-function StateDedicatedServer._setup_network(arg_4_0)
+StateDedicatedServer._setup_network = function (arg_4_0)
 	arg_4_0._network_event_delegate = NetworkEventDelegate:new()
 end
 
-function StateDedicatedServer._setup_state_machine(arg_5_0)
+StateDedicatedServer._setup_state_machine = function (arg_5_0)
 	local var_5_0 = {}
 
 	arg_5_0._machine = GameStateMachine:new(arg_5_0, StateDedicatedServerInit, var_5_0, true)
 end
 
-function StateDedicatedServer._setup_popup_manager(arg_6_0)
+StateDedicatedServer._setup_popup_manager = function (arg_6_0)
 	Managers.popup = PopupManager:new()
 	Managers.simple_popup = SimplePopup:new()
 end
 
-function StateDedicatedServer._setup_chat_manager(arg_7_0)
+StateDedicatedServer._setup_chat_manager = function (arg_7_0)
 	Managers.chat = Managers.chat or ChatManager:new()
 end
 
-function StateDedicatedServer._setup_account_manager(arg_8_0)
+StateDedicatedServer._setup_account_manager = function (arg_8_0)
 	Managers.account = Managers.account or AccountManager:new()
 end
 
-function StateDedicatedServer._setup_eac_manager(arg_9_0)
+StateDedicatedServer._setup_eac_manager = function (arg_9_0)
 	Managers.eac = Managers.eac or EacManager:new()
 end
 
-function StateDedicatedServer._load_packages(arg_10_0)
+StateDedicatedServer._load_packages = function (arg_10_0)
 	local var_10_0 = Managers.package
 
 	for iter_10_0, iter_10_1 in ipairs(StateDedicatedServer.packages_to_load) do
@@ -96,7 +96,7 @@ function StateDedicatedServer._load_packages(arg_10_0)
 	GlobalResources.update_loading()
 end
 
-function StateDedicatedServer._unload_packages(arg_11_0)
+StateDedicatedServer._unload_packages = function (arg_11_0)
 	local var_11_0 = Managers.package
 
 	for iter_11_0, iter_11_1 in ipairs(StateDedicatedServer.packages_to_load) do
@@ -114,7 +114,7 @@ function StateDedicatedServer._unload_packages(arg_11_0)
 	end
 end
 
-function StateDedicatedServer._packages_loaded(arg_12_0)
+StateDedicatedServer._packages_loaded = function (arg_12_0)
 	local var_12_0 = Managers.package
 
 	for iter_12_0, iter_12_1 in ipairs(StateDedicatedServer.packages_to_load) do
@@ -126,7 +126,7 @@ function StateDedicatedServer._packages_loaded(arg_12_0)
 	return true
 end
 
-function StateDedicatedServer.update(arg_13_0, arg_13_1, arg_13_2)
+StateDedicatedServer.update = function (arg_13_0, arg_13_1, arg_13_2)
 	Network.update_receive(arg_13_1, arg_13_0._network_event_delegate.event_table)
 	arg_13_0._machine:update(arg_13_1, arg_13_2)
 	arg_13_0:_update_network(arg_13_1, arg_13_2)
@@ -170,7 +170,7 @@ function StateDedicatedServer.update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function StateDedicatedServer.setup_network_server(arg_14_0)
+StateDedicatedServer.setup_network_server = function (arg_14_0)
 	local var_14_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 	local var_14_1 = Managers.mechanism:default_level_key()
 	local var_14_2 = arg_14_0.parent.loading_context
@@ -221,7 +221,7 @@ function StateDedicatedServer.setup_network_server(arg_14_0)
 	var_14_5:promote_next_level_data()
 end
 
-function StateDedicatedServer.setup_chat_manager(arg_15_0, arg_15_1)
+StateDedicatedServer.setup_chat_manager = function (arg_15_0, arg_15_1)
 	local var_15_0 = Network.peer_id()
 	local var_15_1 = {
 		is_server = true,
@@ -239,7 +239,7 @@ function StateDedicatedServer.setup_chat_manager(arg_15_0, arg_15_1)
 	Managers.chat:register_channel(1, var_15_2)
 end
 
-function StateDedicatedServer.setup_enemy_package_loader(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+StateDedicatedServer.setup_enemy_package_loader = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = Network.peer_id()
 
 	Managers.level_transition_handler.enemy_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0, arg_17_4)
@@ -248,7 +248,7 @@ function StateDedicatedServer.setup_enemy_package_loader(arg_17_0, arg_17_1, arg
 	Managers.level_transition_handler.transient_package_loader:network_context_created(arg_17_1, var_17_0, var_17_0)
 end
 
-function StateDedicatedServer.setup_global_managers(arg_18_0, arg_18_1)
+StateDedicatedServer.setup_global_managers = function (arg_18_0, arg_18_1)
 	local var_18_0 = Network.peer_id()
 	local var_18_1 = true
 	local var_18_2 = arg_18_0._network_server
@@ -257,19 +257,19 @@ function StateDedicatedServer.setup_global_managers(arg_18_0, arg_18_1)
 	Managers.party:network_context_created(arg_18_1, var_18_0, var_18_0)
 end
 
-function StateDedicatedServer._update_network(arg_19_0, arg_19_1, arg_19_2)
+StateDedicatedServer._update_network = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0._network_server then
 		arg_19_0._network_server:update(arg_19_1, arg_19_2)
 	end
 end
 
-function StateDedicatedServer._update_wanted_state(arg_20_0)
+StateDedicatedServer._update_wanted_state = function (arg_20_0)
 	if arg_20_0._machine:state().NAME == "StateDedicatedServerRunning" then
 		arg_20_0._wanted_state = StateLoading
 	end
 end
 
-function StateDedicatedServer._destroy_network(arg_21_0)
+StateDedicatedServer._destroy_network = function (arg_21_0)
 	if arg_21_0._network_server then
 		arg_21_0._network_server:destroy()
 
@@ -292,7 +292,7 @@ function StateDedicatedServer._destroy_network(arg_21_0)
 	end
 end
 
-function StateDedicatedServer.on_exit(arg_22_0, arg_22_1)
+StateDedicatedServer.on_exit = function (arg_22_0, arg_22_1)
 	if arg_22_0._network_server then
 		arg_22_0._network_server:unregister_rpcs()
 	end

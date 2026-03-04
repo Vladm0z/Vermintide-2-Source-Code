@@ -11,7 +11,7 @@ local var_0_2 = table.merge(WorldMarkerTemplates[var_0_0] or {}, var_0_1)
 
 WorldMarkerTemplates[var_0_0] = var_0_2
 
-function var_0_2.on_enter(arg_1_0)
+var_0_2.on_enter = function (arg_1_0)
 	var_0_1.on_enter(arg_1_0)
 
 	arg_1_0.content.icon = "world_marker_versus_pactsworn_interact_crawling"

@@ -6,7 +6,7 @@ SpawnManager = class(SpawnManager)
 
 local var_0_0 = 8
 
-function SpawnManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+SpawnManager.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	arg_1_0.world = arg_1_1
 	arg_1_0.spawn_points = {}
 	arg_1_0.last_spawn_point = 0
@@ -34,7 +34,7 @@ function SpawnManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0._despawn_queue_size = 0
 end
 
-function SpawnManager.destroy(arg_2_0)
+SpawnManager.destroy = function (arg_2_0)
 	arg_2_0.hero_spawner_handler:destroy()
 
 	if arg_2_0._despawn_queue_size > 0 then
@@ -44,7 +44,7 @@ function SpawnManager.destroy(arg_2_0)
 	assert(arg_2_0._despawn_queue_size == 0, "Players left to despawn when the spawn manager is destroyed")
 end
 
-function SpawnManager._default_player_statuses(arg_3_0)
+SpawnManager._default_player_statuses = function (arg_3_0)
 	local var_3_0 = Managers.state.game_mode:settings().team_a_num_slots or var_0_0
 	local var_3_1 = {}
 
@@ -66,7 +66,7 @@ function SpawnManager._default_player_statuses(arg_3_0)
 	return var_3_1
 end
 
-function SpawnManager._spawn_pos_rot_from_index(arg_4_0, arg_4_1)
+SpawnManager._spawn_pos_rot_from_index = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.spawn_points[arg_4_1]
 	local var_4_1 = var_4_0.pos:unbox()
 	local var_4_2 = var_4_0.rot:unbox()
@@ -74,7 +74,7 @@ function SpawnManager._spawn_pos_rot_from_index(arg_4_0, arg_4_1)
 	return var_4_1, var_4_2
 end
 
-function SpawnManager.flow_callback_set_checkpoint(arg_5_0, arg_5_1, arg_5_2, ...)
+SpawnManager.flow_callback_set_checkpoint = function (arg_5_0, arg_5_1, arg_5_2, ...)
 	if not arg_5_0._is_server then
 		print("calling flow_callback_set_checkpoint on client.")
 
@@ -98,7 +98,7 @@ function SpawnManager.flow_callback_set_checkpoint(arg_5_0, arg_5_1, arg_5_2, ..
 	}
 end
 
-function SpawnManager.load_checkpoint_data(arg_6_0, arg_6_1)
+SpawnManager.load_checkpoint_data = function (arg_6_0, arg_6_1)
 	arg_6_0._checkpoint_data = arg_6_1
 
 	local var_6_0 = arg_6_0:_clone_player_status(arg_6_1.player_statuses)
@@ -122,11 +122,11 @@ function SpawnManager.load_checkpoint_data(arg_6_0, arg_6_1)
 	arg_6_0._player_statuses = var_6_0
 end
 
-function SpawnManager.checkpoint_data(arg_7_0)
+SpawnManager.checkpoint_data = function (arg_7_0)
 	return arg_7_0._checkpoint_data
 end
 
-function SpawnManager._clone_player_status(arg_8_0, arg_8_1)
+SpawnManager._clone_player_status = function (arg_8_0, arg_8_1)
 	local var_8_0 = {}
 
 	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
@@ -144,7 +144,7 @@ function SpawnManager._clone_player_status(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function SpawnManager._pack_spawn_unit_level_indices(arg_9_0, ...)
+SpawnManager._pack_spawn_unit_level_indices = function (arg_9_0, ...)
 	local var_9_0 = {}
 	local var_9_1 = LevelHelper:current_level(arg_9_0.world)
 
@@ -157,13 +157,13 @@ function SpawnManager._pack_spawn_unit_level_indices(arg_9_0, ...)
 	return var_9_0
 end
 
-function SpawnManager.pre_update(arg_10_0, arg_10_1, arg_10_2)
+SpawnManager.pre_update = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0._despawn_queue_size > 0 then
 		arg_10_0:_update_despawns()
 	end
 end
 
-function SpawnManager.delayed_despawn(arg_11_0, arg_11_1)
+SpawnManager.delayed_despawn = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._despawn_queue
 
 	arg_11_0._despawn_queue_size = arg_11_0._despawn_queue_size + 1
@@ -172,7 +172,7 @@ function SpawnManager.delayed_despawn(arg_11_0, arg_11_1)
 	arg_11_1:mark_as_queued_for_despawn()
 end
 
-function SpawnManager._update_despawns(arg_12_0)
+SpawnManager._update_despawns = function (arg_12_0)
 	local var_12_0 = arg_12_0._despawn_queue
 
 	for iter_12_0 = arg_12_0._despawn_queue_size, 1, -1 do

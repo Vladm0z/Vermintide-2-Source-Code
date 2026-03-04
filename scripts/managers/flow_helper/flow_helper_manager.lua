@@ -2,19 +2,19 @@
 
 FlowHelperManager = class(FlowHelperManager)
 
-function FlowHelperManager.init(arg_1_0, arg_1_1)
+FlowHelperManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._line_of_sight_checks = {}
 	arg_1_0._physics_world = World.physics_world(arg_1_1)
 end
 
-function FlowHelperManager.update(arg_2_0, arg_2_1)
+FlowHelperManager.update = function (arg_2_0, arg_2_1)
 	arg_2_0:_update_line_of_sight_checks(arg_2_1)
 end
 
 local var_0_0 = 1
 local var_0_1 = 4
 
-function FlowHelperManager._update_line_of_sight_checks(arg_3_0, arg_3_1)
+FlowHelperManager._update_line_of_sight_checks = function (arg_3_0, arg_3_1)
 	for iter_3_0, iter_3_1 in pairs(arg_3_0._line_of_sight_checks) do
 		for iter_3_2, iter_3_3 in pairs(iter_3_1) do
 			local var_3_0 = iter_3_3.source_unit
@@ -68,7 +68,7 @@ function FlowHelperManager._update_line_of_sight_checks(arg_3_0, arg_3_1)
 	end
 end
 
-function FlowHelperManager.register_line_of_sight_check(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9)
+FlowHelperManager.register_line_of_sight_check = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9)
 	local var_4_0 = arg_4_0._line_of_sight_checks
 	local var_4_1 = var_4_0[arg_4_1] or {}
 
@@ -91,7 +91,7 @@ function FlowHelperManager.register_line_of_sight_check(arg_4_0, arg_4_1, arg_4_
 	}
 end
 
-function FlowHelperManager.unregister_line_of_sight_check(arg_5_0, arg_5_1, arg_5_2)
+FlowHelperManager.unregister_line_of_sight_check = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._line_of_sight_checks
 	local var_5_1 = var_5_0[arg_5_1]
 

@@ -14,7 +14,7 @@ local var_0_5 = {
 }
 local var_0_6 = #var_0_5
 
-function ActionBulletSpray.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBulletSpray.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionBulletSpray.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -26,7 +26,7 @@ function ActionBulletSpray.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 	arg_1_0.targets = {}
 end
 
-function ActionBulletSpray.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionBulletSpray.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionBulletSpray.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -66,7 +66,7 @@ function ActionBulletSpray.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, 
 	arg_2_0._is_critical_strike = var_2_1
 end
 
-function ActionBulletSpray.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionBulletSpray.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.current_action
 
 	if arg_3_0.use_ammo_time and not arg_3_0.used_ammo and arg_3_2 >= arg_3_0.use_ammo_time then
@@ -163,7 +163,7 @@ function ActionBulletSpray.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, a
 	end
 end
 
-function ActionBulletSpray.finish(arg_4_0, arg_4_1)
+ActionBulletSpray.finish = function (arg_4_0, arg_4_1)
 	arg_4_0:_clear_targets()
 
 	local var_4_0 = arg_4_0.ammo_extension
@@ -189,7 +189,7 @@ function ActionBulletSpray.finish(arg_4_0, arg_4_1)
 	end
 end
 
-function ActionBulletSpray._clear_targets(arg_5_0)
+ActionBulletSpray._clear_targets = function (arg_5_0)
 	table.clear(arg_5_0.targets)
 end
 
@@ -197,7 +197,7 @@ local var_0_7 = Actor.unit
 local var_0_8 = Vector3.distance_squared
 local var_0_9 = Unit.local_position
 
-function ActionBulletSpray._select_targets(arg_6_0, arg_6_1, arg_6_2)
+ActionBulletSpray._select_targets = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = World.get_data(arg_6_1, "physics_world")
 	local var_6_1 = arg_6_0.first_person_unit
 	local var_6_2 = POSITION_LOOKUP[var_6_1]
@@ -220,7 +220,7 @@ function ActionBulletSpray._select_targets(arg_6_0, arg_6_1, arg_6_2)
 
 	local var_6_9 = PhysicsWorld.linear_sphere_sweep(var_6_0, var_6_7, var_6_8, var_0_2, 100, "collision_filter", "filter_character_trigger", "report_initial_overlap")
 
-	table.sort(var_6_9, function(arg_7_0, arg_7_1)
+	table.sort(var_6_9, function (arg_7_0, arg_7_1)
 		local var_7_0 = var_0_7(arg_7_0.actor)
 		local var_7_1 = var_0_7(arg_7_1.actor)
 		local var_7_2 = var_0_9(var_7_0, 0)
@@ -270,7 +270,7 @@ function ActionBulletSpray._select_targets(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function ActionBulletSpray._check_within_cone(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ActionBulletSpray._check_within_cone = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0.CONE_COS_ALPHA
 
 	if arg_8_4 then
@@ -289,7 +289,7 @@ function ActionBulletSpray._check_within_cone(arg_8_0, arg_8_1, arg_8_2, arg_8_3
 	return false
 end
 
-function ActionBulletSpray._is_infront_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ActionBulletSpray._is_infront_player = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = Vector3.normalize(arg_9_3 - arg_9_1)
 
 	if Vector3.dot(var_9_0, arg_9_2) > 0 then
@@ -297,7 +297,7 @@ function ActionBulletSpray._is_infront_player(arg_9_0, arg_9_1, arg_9_2, arg_9_3
 	end
 end
 
-function ActionBulletSpray.raycast_to_target(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+ActionBulletSpray.raycast_to_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = World.get_data(arg_10_1, "physics_world")
 	local var_10_1 = "filter_player_ray_projectile"
 

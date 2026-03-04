@@ -2,7 +2,7 @@
 
 LiquidAreaDamageHuskExtension = class(LiquidAreaDamageHuskExtension)
 
-function LiquidAreaDamageHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LiquidAreaDamageHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0._unit = arg_1_2
@@ -44,7 +44,7 @@ function LiquidAreaDamageHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function LiquidAreaDamageHuskExtension._get_rotation_from_navmesh(arg_2_0, arg_2_1)
+LiquidAreaDamageHuskExtension._get_rotation_from_navmesh = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0._nav_world
 	local var_2_1, var_2_2, var_2_3, var_2_4, var_2_5 = GwNavQueries.triangle_from_position(var_2_0, arg_2_1, 2, 2)
 	local var_2_6
@@ -62,7 +62,7 @@ function LiquidAreaDamageHuskExtension._get_rotation_from_navmesh(arg_2_0, arg_2
 	return var_2_6
 end
 
-function LiquidAreaDamageHuskExtension.add_damage_blob(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+LiquidAreaDamageHuskExtension.add_damage_blob = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0
 	local var_3_1 = arg_3_0._fx_name_rim
 
@@ -83,7 +83,7 @@ function LiquidAreaDamageHuskExtension.add_damage_blob(arg_3_0, arg_3_1, arg_3_2
 	end
 end
 
-function LiquidAreaDamageHuskExtension.set_damage_blob_filled(arg_4_0, arg_4_1)
+LiquidAreaDamageHuskExtension.set_damage_blob_filled = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._blobs[arg_4_1]
 	local var_4_1 = var_4_0.fx_id
 	local var_4_2 = arg_4_0._world
@@ -106,17 +106,17 @@ function LiquidAreaDamageHuskExtension.set_damage_blob_filled(arg_4_0, arg_4_1)
 	var_4_0.full = true
 end
 
-function LiquidAreaDamageHuskExtension.remove_damage_blob(arg_5_0, arg_5_1)
+LiquidAreaDamageHuskExtension.remove_damage_blob = function (arg_5_0, arg_5_1)
 	return
 end
 
-function LiquidAreaDamageHuskExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+LiquidAreaDamageHuskExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0._liquid_update_function and not arg_6_0._liquid_update_function(arg_6_0, arg_6_5, arg_6_3) then
 		arg_6_0._liquid_update_function = nil
 	end
 end
 
-function LiquidAreaDamageHuskExtension.destroy(arg_7_0)
+LiquidAreaDamageHuskExtension.destroy = function (arg_7_0)
 	local var_7_0 = arg_7_0._world
 	local var_7_1 = arg_7_0._sfx_name_stop
 
@@ -135,6 +135,6 @@ function LiquidAreaDamageHuskExtension.destroy(arg_7_0)
 	end
 end
 
-function LiquidAreaDamageHuskExtension.get_source_attacker_unit(arg_8_0)
+LiquidAreaDamageHuskExtension.get_source_attacker_unit = function (arg_8_0)
 	return arg_8_0._source_attacker_unit
 end

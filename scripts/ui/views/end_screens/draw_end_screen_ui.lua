@@ -7,7 +7,7 @@ local var_0_0 = local_require("scripts/ui/views/end_screens/draw_end_screen_ui_d
 
 DrawEndScreenUI = class(DrawEndScreenUI, BaseEndScreenUI)
 
-function DrawEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DrawEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	DrawEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0, arg_1_4)
 	fassert(arg_1_3.show_act_presentation ~= nil, "show_act_presentation not set.")
 
@@ -25,7 +25,7 @@ function DrawEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0:_play_sound("play_gui_splash_draw")
 end
 
-function DrawEndScreenUI._destroy(arg_2_0)
+DrawEndScreenUI._destroy = function (arg_2_0)
 	if arg_2_0._act_presentation_ui then
 		arg_2_0._act_presentation_ui:destroy()
 
@@ -33,7 +33,7 @@ function DrawEndScreenUI._destroy(arg_2_0)
 	end
 end
 
-function DrawEndScreenUI._start(arg_3_0)
+DrawEndScreenUI._start = function (arg_3_0)
 	local var_3_0 = var_0_0.scenegraph_definition
 	local var_3_1 = {
 		draw_flags = arg_3_0._draw_flags,
@@ -47,7 +47,7 @@ function DrawEndScreenUI._start(arg_3_0)
 	end
 end
 
-function DrawEndScreenUI._update(arg_4_0, arg_4_1)
+DrawEndScreenUI._update = function (arg_4_0, arg_4_1)
 	if arg_4_0._completed then
 		return
 	end

@@ -11,7 +11,7 @@ local var_0_6 = "cycle_previous"
 StartGameWindowWeavePanel = class(StartGameWindowWeavePanel)
 StartGameWindowWeavePanel.NAME = "StartGameWindowWeavePanel"
 
-function StartGameWindowWeavePanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowWeavePanel.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeavePanel")
 
 	arg_1_0._params = arg_1_1
@@ -35,7 +35,7 @@ function StartGameWindowWeavePanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_input_buttons()
 end
 
-function StartGameWindowWeavePanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowWeavePanel._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_2_0 = {}
@@ -103,24 +103,24 @@ function StartGameWindowWeavePanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2
 	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_4)
 end
 
-function StartGameWindowWeavePanel.on_exit(arg_3_0, arg_3_1)
+StartGameWindowWeavePanel.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeavePanel")
 
 	arg_3_0._ui_animator = nil
 end
 
-function StartGameWindowWeavePanel.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowWeavePanel.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_handle_gamepad_activity()
 	arg_4_0:_update_selected_option()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_draw(arg_4_1)
 end
 
-function StartGameWindowWeavePanel.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowWeavePanel.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
 end
 
-function StartGameWindowWeavePanel._update_animations(arg_6_0, arg_6_1)
+StartGameWindowWeavePanel._update_animations = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_animations
 	local var_6_1 = arg_6_0._animations
 	local var_6_2 = arg_6_0._ui_animator
@@ -152,7 +152,7 @@ function StartGameWindowWeavePanel._update_animations(arg_6_0, arg_6_1)
 	arg_6_0:_update_panel_selection_animation(arg_6_1)
 end
 
-function StartGameWindowWeavePanel._is_button_pressed(arg_7_0, arg_7_1)
+StartGameWindowWeavePanel._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content
 	local var_7_1 = var_7_0.button_hotspot or var_7_0.button_text
 
@@ -163,7 +163,7 @@ function StartGameWindowWeavePanel._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowWeavePanel._is_stepper_button_pressed(arg_8_0, arg_8_1)
+StartGameWindowWeavePanel._is_stepper_button_pressed = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content
 	local var_8_1 = var_8_0.button_hotspot_left
 	local var_8_2 = var_8_0.button_hotspot_right
@@ -179,19 +179,19 @@ function StartGameWindowWeavePanel._is_stepper_button_pressed(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowWeavePanel._is_button_hover_enter(arg_9_0, arg_9_1)
+StartGameWindowWeavePanel._is_button_hover_enter = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowWeavePanel._is_button_hover_exit(arg_10_0, arg_10_1)
+StartGameWindowWeavePanel._is_button_hover_exit = function (arg_10_0, arg_10_1)
 	return arg_10_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowWeavePanel._is_button_selected(arg_11_0, arg_11_1)
+StartGameWindowWeavePanel._is_button_selected = function (arg_11_0, arg_11_1)
 	return arg_11_1.content.button_hotspot.is_selected
 end
 
-function StartGameWindowWeavePanel._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowWeavePanel._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._parent
 	local var_12_1 = arg_12_0._widgets_by_name
 	local var_12_2 = arg_12_0._parent:window_input_service()
@@ -229,7 +229,7 @@ function StartGameWindowWeavePanel._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function StartGameWindowWeavePanel._on_panel_button_selected(arg_13_0, arg_13_1)
+StartGameWindowWeavePanel._on_panel_button_selected = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._parent
 	local var_13_1 = arg_13_0._title_button_widgets[arg_13_1].content.layout_name
 
@@ -237,7 +237,7 @@ function StartGameWindowWeavePanel._on_panel_button_selected(arg_13_0, arg_13_1)
 	arg_13_0:_play_sound("menu_wind_level_tab")
 end
 
-function StartGameWindowWeavePanel._set_selected_option(arg_14_0, arg_14_1)
+StartGameWindowWeavePanel._set_selected_option = function (arg_14_0, arg_14_1)
 	arg_14_0:_start_panel_selection_animation(arg_14_0._selected_index, arg_14_1)
 
 	local var_14_0 = arg_14_0._title_button_widgets
@@ -247,7 +247,7 @@ function StartGameWindowWeavePanel._set_selected_option(arg_14_0, arg_14_1)
 	end
 end
 
-function StartGameWindowWeavePanel._update_selected_option(arg_15_0)
+StartGameWindowWeavePanel._update_selected_option = function (arg_15_0)
 	local var_15_0 = arg_15_0._parent:get_selected_layout_name()
 
 	if var_15_0 then
@@ -263,7 +263,7 @@ function StartGameWindowWeavePanel._update_selected_option(arg_15_0)
 	end
 end
 
-function StartGameWindowWeavePanel._draw(arg_16_0, arg_16_1)
+StartGameWindowWeavePanel._draw = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._ui_renderer
 	local var_16_1 = arg_16_0._ui_top_renderer
 	local var_16_2 = arg_16_0._ui_scenegraph
@@ -283,11 +283,11 @@ function StartGameWindowWeavePanel._draw(arg_16_0, arg_16_1)
 	UIRenderer.end_pass(var_16_1)
 end
 
-function StartGameWindowWeavePanel._play_sound(arg_17_0, arg_17_1)
+StartGameWindowWeavePanel._play_sound = function (arg_17_0, arg_17_1)
 	arg_17_0._parent:play_sound(arg_17_1)
 end
 
-function StartGameWindowWeavePanel._setup_input_buttons(arg_18_0)
+StartGameWindowWeavePanel._setup_input_buttons = function (arg_18_0)
 	local var_18_0 = arg_18_0._parent:window_input_service()
 	local var_18_1 = UISettings.get_gamepad_input_texture_data(var_18_0, var_0_6, true)
 	local var_18_2 = UISettings.get_gamepad_input_texture_data(var_18_0, var_0_5, true)
@@ -315,7 +315,7 @@ function StartGameWindowWeavePanel._setup_input_buttons(arg_18_0)
 	var_18_5.content.texture_id = var_18_2.texture
 end
 
-function StartGameWindowWeavePanel._handle_gamepad_activity(arg_19_0)
+StartGameWindowWeavePanel._handle_gamepad_activity = function (arg_19_0)
 	local var_19_0 = Managers.input:is_device_active("gamepad")
 	local var_19_1 = arg_19_0.gamepad_active_last_frame == nil
 
@@ -338,7 +338,7 @@ function StartGameWindowWeavePanel._handle_gamepad_activity(arg_19_0)
 	end
 end
 
-function StartGameWindowWeavePanel._set_text_button_size(arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowWeavePanel._set_text_button_size = function (arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0._ui_scenegraph[arg_20_1.scenegraph_id].size[1] = arg_20_2
 
 	local var_20_0 = arg_20_1.style
@@ -355,7 +355,7 @@ function StartGameWindowWeavePanel._set_text_button_size(arg_20_0, arg_20_1, arg
 	var_20_0.text_disabled.offset[1] = var_20_0.text_disabled.default_offset[1] + var_20_1
 end
 
-function StartGameWindowWeavePanel._get_text_width(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowWeavePanel._get_text_width = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_1.localize then
 		arg_21_2 = Localize(arg_21_2)
 	end
@@ -371,11 +371,11 @@ function StartGameWindowWeavePanel._get_text_width(arg_21_0, arg_21_1, arg_21_2)
 	return var_21_3
 end
 
-function StartGameWindowWeavePanel._set_text_button_horizontal_position(arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowWeavePanel._set_text_button_horizontal_position = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_1.offset[1] = arg_22_2
 end
 
-function StartGameWindowWeavePanel._animate_title_entry(arg_23_0, arg_23_1, arg_23_2)
+StartGameWindowWeavePanel._animate_title_entry = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_1.content
 	local var_23_1 = arg_23_1.style
 	local var_23_2 = var_23_0.button_hotspot
@@ -439,7 +439,7 @@ function StartGameWindowWeavePanel._animate_title_entry(arg_23_0, arg_23_1, arg_
 	var_23_2.selection_progress = var_23_8
 end
 
-function StartGameWindowWeavePanel._start_panel_selection_animation(arg_24_0, arg_24_1, arg_24_2)
+StartGameWindowWeavePanel._start_panel_selection_animation = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._widgets_by_name.entry_panel_selection
 	local var_24_1 = var_24_0.offset
 	local var_24_2 = var_24_0.content.size
@@ -461,7 +461,7 @@ function StartGameWindowWeavePanel._start_panel_selection_animation(arg_24_0, ar
 	var_24_3.start_width = var_24_5
 end
 
-function StartGameWindowWeavePanel._update_panel_selection_animation(arg_25_0, arg_25_1)
+StartGameWindowWeavePanel._update_panel_selection_animation = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._panel_selection_animation
 
 	if not var_25_0 then

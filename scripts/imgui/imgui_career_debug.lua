@@ -12,7 +12,7 @@ for iter_0_0 = 0, var_0_3 do
 	var_0_4[iter_0_0 + 1] = tostring(iter_0_0)
 end
 
-function ImguiCareerDebug.init(arg_1_0)
+ImguiCareerDebug.init = function (arg_1_0)
 	arg_1_0._first_run = true
 	arg_1_0._is_persistent = false
 	arg_1_0._indent_counter = 0
@@ -25,7 +25,7 @@ function ImguiCareerDebug.init(arg_1_0)
 	var_0_0 = false
 end
 
-function ImguiCareerDebug._get_profile_requester(arg_2_0)
+ImguiCareerDebug._get_profile_requester = function (arg_2_0)
 	if arg_2_0._profile_requester then
 		return arg_2_0._profile_requester
 	end
@@ -41,7 +41,7 @@ function ImguiCareerDebug._get_profile_requester(arg_2_0)
 	return arg_2_0._profile_requester
 end
 
-function ImguiCareerDebug._get_profile_synchronizer(arg_3_0)
+ImguiCareerDebug._get_profile_synchronizer = function (arg_3_0)
 	if arg_3_0._profile_synchronizer then
 		return arg_3_0._profile_synchronizer
 	end
@@ -57,27 +57,27 @@ function ImguiCareerDebug._get_profile_synchronizer(arg_3_0)
 	return arg_3_0._profile_synchronizer
 end
 
-function ImguiCareerDebug.destroy(arg_4_0)
+ImguiCareerDebug.destroy = function (arg_4_0)
 	arg_4_0:unregister_events()
 end
 
-function ImguiCareerDebug.register_events(arg_5_0)
+ImguiCareerDebug.register_events = function (arg_5_0)
 	if Managers.state.event then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function ImguiCareerDebug.unregister_events(arg_6_0)
+ImguiCareerDebug.unregister_events = function (arg_6_0)
 	if Managers.state.event then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function ImguiCareerDebug.is_persistent(arg_7_0)
+ImguiCareerDebug.is_persistent = function (arg_7_0)
 	return arg_7_0._is_persistent
 end
 
-function ImguiCareerDebug.update(arg_8_0)
+ImguiCareerDebug.update = function (arg_8_0)
 	if var_0_0 then
 		arg_8_0:unregister_events()
 		arg_8_0:init()
@@ -87,7 +87,7 @@ function ImguiCareerDebug.update(arg_8_0)
 	arg_8_0:_update_players()
 end
 
-function ImguiCareerDebug._update_profiles_and_careers(arg_9_0)
+ImguiCareerDebug._update_profiles_and_careers = function (arg_9_0)
 	arg_9_0._profiles = {}
 	arg_9_0._careers = {}
 
@@ -101,11 +101,11 @@ function ImguiCareerDebug._update_profiles_and_careers(arg_9_0)
 	end
 end
 
-function ImguiCareerDebug._update_players(arg_10_0)
+ImguiCareerDebug._update_players = function (arg_10_0)
 	arg_10_0._players = Managers.player:players()
 end
 
-function ImguiCareerDebug.draw(arg_11_0)
+ImguiCareerDebug.draw = function (arg_11_0)
 	if arg_11_0._first_run then
 		Imgui.set_next_window_size(var_0_1, var_0_2)
 
@@ -138,7 +138,7 @@ local var_0_5 = {
 	"Is Server"
 }
 
-function ImguiCareerDebug._draw_players(arg_12_0)
+ImguiCareerDebug._draw_players = function (arg_12_0)
 	arg_12_0:_set_columns(5, true, 164)
 
 	for iter_12_0, iter_12_1 in pairs(var_0_5) do
@@ -168,7 +168,7 @@ function ImguiCareerDebug._draw_players(arg_12_0)
 	arg_12_0:_reset_columns()
 end
 
-function ImguiCareerDebug._draw_profile_combo(arg_13_0, arg_13_1)
+ImguiCareerDebug._draw_profile_combo = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1:profile_index()
 
 	Imgui.tree_push("profile")
@@ -205,7 +205,7 @@ function ImguiCareerDebug._draw_profile_combo(arg_13_0, arg_13_1)
 	end
 end
 
-function ImguiCareerDebug._draw_career_combo(arg_14_0, arg_14_1)
+ImguiCareerDebug._draw_career_combo = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1:profile_index()
 	local var_14_1 = arg_14_1:career_index()
 	local var_14_2 = arg_14_0._careers[var_14_0]
@@ -224,7 +224,7 @@ function ImguiCareerDebug._draw_career_combo(arg_14_0, arg_14_1)
 	end
 end
 
-function ImguiCareerDebug._find_who_uses_profile(arg_15_0, arg_15_1)
+ImguiCareerDebug._find_who_uses_profile = function (arg_15_0, arg_15_1)
 	local var_15_0 = Managers.party:parties()
 
 	for iter_15_0, iter_15_1 in pairs(var_15_0) do
@@ -240,7 +240,7 @@ function ImguiCareerDebug._find_who_uses_profile(arg_15_0, arg_15_1)
 	end
 end
 
-function ImguiCareerDebug._set_columns(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+ImguiCareerDebug._set_columns = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	arg_16_2 = arg_16_2 or false
 
 	Imgui.columns(arg_16_1, arg_16_2)
@@ -260,24 +260,24 @@ function ImguiCareerDebug._set_columns(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	end
 end
 
-function ImguiCareerDebug._reset_columns(arg_17_0)
+ImguiCareerDebug._reset_columns = function (arg_17_0)
 	arg_17_0:_set_columns(1)
 end
 
 local var_0_6 = 8
 
-function ImguiCareerDebug._indent(arg_18_0)
+ImguiCareerDebug._indent = function (arg_18_0)
 	arg_18_0._indent_counter = arg_18_0._indent_counter + 1
 
 	Imgui.indent(var_0_6)
 end
 
-function ImguiCareerDebug._unindent(arg_19_0)
+ImguiCareerDebug._unindent = function (arg_19_0)
 	arg_19_0._indent_counter = arg_19_0._indent_counter - 1
 
 	Imgui.unindent(var_0_6)
 end
 
-function ImguiCareerDebug._verify_indent(arg_20_0)
+ImguiCareerDebug._verify_indent = function (arg_20_0)
 	fassert(arg_20_0._indent_counter == 0, tostring(arg_20_0._indent_counter))
 end

@@ -6,7 +6,7 @@ local var_0_0 = {
 	"WardExtension"
 }
 
-function WardSystem.init(arg_1_0, arg_1_1, arg_1_2, ...)
+WardSystem.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	WardSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0, ...)
 
 	arg_1_0._update_index = 1
@@ -16,7 +16,7 @@ function WardSystem.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	arg_1_0._profiler_name = arg_1_0.profiler_names.WardExtension
 end
 
-function WardSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WardSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = arg_2_0.NAME
 	local var_2_1
 	local var_2_2 = ScriptUnit.add_extension(arg_2_0.extension_init_context, arg_2_2, arg_2_3, var_2_0, arg_2_4, var_2_1)
@@ -35,7 +35,7 @@ function WardSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4
 	return var_2_2
 end
 
-function WardSystem.update(arg_3_0, arg_3_1, arg_3_2)
+WardSystem.update = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = #arg_3_0._to_update
 	local var_3_1 = arg_3_1.dt
 
@@ -57,7 +57,7 @@ function WardSystem.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function WardSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+WardSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	if not ScriptUnit.has_extension(arg_4_1, arg_4_0.NAME) then
 		return
 	end

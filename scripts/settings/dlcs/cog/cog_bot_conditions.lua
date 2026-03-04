@@ -12,7 +12,7 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 local var_0_0 = Vector3.distance_squared
 local var_0_1 = 400
 
-function BTConditions.can_activate.dr_engineer(arg_1_0)
+BTConditions.can_activate.dr_engineer = function (arg_1_0)
 	local var_1_0 = arg_1_0.target_unit
 
 	if not ALIVE[var_1_0] or Unit.get_data(var_1_0, "breed") == nil then
@@ -65,7 +65,7 @@ function BTConditions.can_activate.dr_engineer(arg_1_0)
 	return Managers.state.conflict:get_threat_value() > 10
 end
 
-function BTConditions.reload_ability_weapon.dr_engineer(arg_2_0, arg_2_1)
+BTConditions.reload_ability_weapon.dr_engineer = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.career_extension
 
 	if var_2_0 then

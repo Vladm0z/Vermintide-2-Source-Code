@@ -10,7 +10,7 @@ local var_0_5 = "StartGameWindowAreaSelection"
 StartGameWindowAreaSelection = class(StartGameWindowAreaSelection)
 StartGameWindowAreaSelection.NAME = "StartGameWindowAreaSelection"
 
-function StartGameWindowAreaSelection.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAreaSelection.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAreaSelection")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -43,7 +43,7 @@ function StartGameWindowAreaSelection.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_input_description("select_mission")
 end
 
-function StartGameWindowAreaSelection.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowAreaSelection.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_3)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -87,7 +87,7 @@ function StartGameWindowAreaSelection.create_ui_elements(arg_2_0, arg_2_1, arg_2
 	end
 end
 
-function StartGameWindowAreaSelection._setup_area_widgets(arg_3_0)
+StartGameWindowAreaSelection._setup_area_widgets = function (arg_3_0)
 	local var_3_0 = {}
 
 	for iter_3_0, iter_3_1 in pairs(AreaSettings) do
@@ -150,7 +150,7 @@ function StartGameWindowAreaSelection._setup_area_widgets(arg_3_0)
 	arg_3_0._active_area_widgets = var_3_6
 end
 
-function StartGameWindowAreaSelection._select_area_by_name(arg_5_0, arg_5_1)
+StartGameWindowAreaSelection._select_area_by_name = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._active_area_widgets
 
 	if var_5_0 then
@@ -169,7 +169,7 @@ function StartGameWindowAreaSelection._select_area_by_name(arg_5_0, arg_5_1)
 	arg_5_0._widgets_by_name.select_button.content.button_hotspot.disable_button = arg_5_1 == nil
 end
 
-function StartGameWindowAreaSelection._set_area_presentation_info(arg_6_0, arg_6_1)
+StartGameWindowAreaSelection._set_area_presentation_info = function (arg_6_0, arg_6_1)
 	local var_6_0 = ""
 	local var_6_1 = ""
 	local var_6_2 = true
@@ -233,7 +233,7 @@ function StartGameWindowAreaSelection._set_area_presentation_info(arg_6_0, arg_6
 	arg_6_0:_play_sound(var_6_12)
 end
 
-function StartGameWindowAreaSelection.on_exit(arg_7_0, arg_7_1)
+StartGameWindowAreaSelection.on_exit = function (arg_7_0, arg_7_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAreaSelection")
 
 	arg_7_0.ui_animator = nil
@@ -249,17 +249,17 @@ function StartGameWindowAreaSelection.on_exit(arg_7_0, arg_7_1)
 	arg_7_0:_play_sound("Stop_hud_menu_area_music")
 end
 
-function StartGameWindowAreaSelection.update(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowAreaSelection.update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_animations(arg_8_1)
 	arg_8_0:_handle_input(arg_8_1, arg_8_2)
 	arg_8_0:draw(arg_8_1)
 end
 
-function StartGameWindowAreaSelection.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowAreaSelection.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:draw_video(arg_9_1)
 end
 
-function StartGameWindowAreaSelection._update_animations(arg_10_0, arg_10_1)
+StartGameWindowAreaSelection._update_animations = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.ui_animator
 
 	var_10_0:update(arg_10_1)
@@ -285,7 +285,7 @@ function StartGameWindowAreaSelection._update_animations(arg_10_0, arg_10_1)
 	end
 end
 
-function StartGameWindowAreaSelection._is_button_pressed(arg_11_0, arg_11_1)
+StartGameWindowAreaSelection._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.on_release then
@@ -295,13 +295,13 @@ function StartGameWindowAreaSelection._is_button_pressed(arg_11_0, arg_11_1)
 	end
 end
 
-function StartGameWindowAreaSelection._is_button_hovered(arg_12_0, arg_12_1)
+StartGameWindowAreaSelection._is_button_hovered = function (arg_12_0, arg_12_1)
 	if arg_12_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function StartGameWindowAreaSelection._update_area_option(arg_13_0)
+StartGameWindowAreaSelection._update_area_option = function (arg_13_0)
 	local var_13_0 = arg_13_0.parent:get_selected_area_name()
 
 	if var_13_0 ~= arg_13_0._selected_area_name then
@@ -309,7 +309,7 @@ function StartGameWindowAreaSelection._update_area_option(arg_13_0)
 	end
 end
 
-function StartGameWindowAreaSelection._handle_input(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowAreaSelection._handle_input = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._active_area_widgets
 
 	if var_14_0 then
@@ -345,7 +345,7 @@ function StartGameWindowAreaSelection._handle_input(arg_14_0, arg_14_1, arg_14_2
 	end
 end
 
-function StartGameWindowAreaSelection._on_select_button_pressed(arg_15_0)
+StartGameWindowAreaSelection._on_select_button_pressed = function (arg_15_0)
 	local var_15_0 = arg_15_0._selected_area_name
 	local var_15_1 = AreaSettings[var_15_0]
 	local var_15_2 = true
@@ -380,7 +380,7 @@ function StartGameWindowAreaSelection._on_select_button_pressed(arg_15_0)
 	arg_15_0:_play_sound("Play_hud_menu_area_start")
 end
 
-function StartGameWindowAreaSelection.draw(arg_16_0, arg_16_1)
+StartGameWindowAreaSelection.draw = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.ui_renderer
 	local var_16_1 = arg_16_0.ui_scenegraph
 	local var_16_2 = arg_16_0.parent:window_input_service()
@@ -408,7 +408,7 @@ function StartGameWindowAreaSelection.draw(arg_16_0, arg_16_1)
 	UIRenderer.end_pass(var_16_0)
 end
 
-function StartGameWindowAreaSelection.draw_video(arg_17_0, arg_17_1)
+StartGameWindowAreaSelection.draw_video = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.ui_renderer
 	local var_17_1 = arg_17_0.ui_scenegraph
 	local var_17_2 = arg_17_0.parent:window_input_service()
@@ -430,11 +430,11 @@ function StartGameWindowAreaSelection.draw_video(arg_17_0, arg_17_1)
 	UIRenderer.end_pass(var_17_0)
 end
 
-function StartGameWindowAreaSelection._play_sound(arg_18_0, arg_18_1)
+StartGameWindowAreaSelection._play_sound = function (arg_18_0, arg_18_1)
 	arg_18_0.parent:play_sound(arg_18_1)
 end
 
-function StartGameWindowAreaSelection._setup_video_player(arg_19_0, arg_19_1, arg_19_2)
+StartGameWindowAreaSelection._setup_video_player = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_destroy_video_player()
 
 	local var_19_0 = arg_19_0.ui_renderer
@@ -453,7 +453,7 @@ function StartGameWindowAreaSelection._setup_video_player(arg_19_0, arg_19_1, ar
 	arg_19_0._draw_video_next_frame = true
 end
 
-function StartGameWindowAreaSelection._destroy_video_player(arg_20_0)
+StartGameWindowAreaSelection._destroy_video_player = function (arg_20_0)
 	local var_20_0 = arg_20_0.ui_renderer
 	local var_20_1 = arg_20_0._video_widget
 
@@ -472,7 +472,7 @@ function StartGameWindowAreaSelection._destroy_video_player(arg_20_0)
 	arg_20_0._video_created = nil
 end
 
-function StartGameWindowAreaSelection._animate_area_widget(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowAreaSelection._animate_area_widget = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_1.content
 	local var_21_1 = arg_21_1.style
 	local var_21_2 = var_21_0.button_hotspot
@@ -511,7 +511,7 @@ function StartGameWindowAreaSelection._animate_area_widget(arg_21_0, arg_21_1, a
 	var_21_2.selection_progress = var_21_8
 end
 
-function StartGameWindowAreaSelection._show_storepage(arg_22_0, arg_22_1)
+StartGameWindowAreaSelection._show_storepage = function (arg_22_0, arg_22_1)
 	local var_22_0 = PLATFORM
 
 	if IS_WINDOWS and rawget(_G, "Steam") then

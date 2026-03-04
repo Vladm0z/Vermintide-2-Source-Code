@@ -12,13 +12,13 @@ end
 
 BTClimbAction = class(BTClimbAction, BTNode)
 
-function BTClimbAction.init(arg_2_0, ...)
+BTClimbAction.init = function (arg_2_0, ...)
 	BTClimbAction.super.init(arg_2_0, ...)
 end
 
 BTClimbAction.name = "BTClimbAction"
 
-function BTClimbAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTClimbAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_2.next_smart_object_data
 	local var_3_1 = var_3_0.entrance_pos:unbox()
 	local var_3_2 = var_3_0.exit_pos:unbox()
@@ -86,7 +86,7 @@ function BTClimbAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.climb_state = "moving_to_within_smartobject_range"
 end
 
-function BTClimbAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTClimbAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 	arg_4_2.climb_spline_ground = nil
 	arg_4_2.climb_spline_ledge = nil
@@ -140,7 +140,7 @@ end
 local var_0_1 = 2.1
 local var_0_2 = 0.125
 
-function BTClimbAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTClimbAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.navigation_extension
 	local var_5_1 = arg_5_2.locomotion_extension
 	local var_5_2 = POSITION_LOOKUP[arg_5_1]
@@ -444,7 +444,7 @@ function BTClimbAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTClimbAction._catapult_players(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTClimbAction._catapult_players = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_3.shape
 	local var_6_1 = arg_6_3.radius
 	local var_6_2 = Unit.world_position(arg_6_1, 0)

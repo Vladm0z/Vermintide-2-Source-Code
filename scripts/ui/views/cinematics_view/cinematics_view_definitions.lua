@@ -267,7 +267,7 @@ local function var_0_7(arg_2_0)
 				{
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = arg_3_0.parent
 
 						if var_3_0.scroller_hotspot.selected then
@@ -288,7 +288,7 @@ local function var_0_7(arg_2_0)
 					style_id = "scroller",
 					pass_type = "hotspot",
 					content_id = "scroller_hotspot",
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						local var_4_0 = arg_4_0.parent
 						local var_4_1 = arg_4_0.is_hover or arg_4_0.selected
 						local var_4_2, var_4_3 = Managers.time:time_and_delta("main")
@@ -301,7 +301,7 @@ local function var_0_7(arg_2_0)
 				{
 					style_id = "scrollbar_bg",
 					pass_type = "rounded_background",
-					content_change_function = function(arg_5_0, arg_5_1)
+					content_change_function = function (arg_5_0, arg_5_1)
 						local var_5_0 = math.easeOutCubic(arg_5_0.scrollbar_hover_progress)
 
 						arg_5_1.color[2] = math.lerp(30, 60, var_5_0)
@@ -316,7 +316,7 @@ local function var_0_7(arg_2_0)
 				{
 					style_id = "scroller",
 					pass_type = "rounded_background",
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						local var_6_0 = arg_6_0.scroller_hotspot
 						local var_6_1 = math.easeOutCubic(arg_6_0.hover_progress)
 
@@ -432,7 +432,7 @@ local function var_0_10(arg_7_0)
 					style_id = "video_style",
 					pass_type = "video",
 					content_id = "video_content",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return arg_7_0:is_video_active(arg_8_0.video_player_reference)
 					end
 				},
@@ -440,14 +440,14 @@ local function var_0_10(arg_7_0)
 					style_id = "video_fade",
 					pass_type = "rect",
 					scenegraph_id = "fullscreen_video",
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						local var_9_0 = arg_7_0:is_video_active(arg_9_0.video_content.video_player_reference)
 
 						arg_9_0.fade_progress = var_9_0 and arg_9_0.fade_progress or 0
 
 						return var_9_0
 					end,
-					content_change_function = function(arg_10_0, arg_10_1)
+					content_change_function = function (arg_10_0, arg_10_1)
 						local var_10_0 = arg_10_0.fade_progress
 						local var_10_1 = math.easeInCubic(var_10_0)
 
@@ -462,7 +462,7 @@ local function var_0_10(arg_7_0)
 					scenegraph_id = "root",
 					style_id = "video_background",
 					pass_type = "rect",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						if not arg_7_0:is_video_active(arg_11_0.video_content.video_player_reference) then
 							return false
 						end
@@ -605,10 +605,10 @@ local function var_0_11(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "play_icon",
 					texture_id = "play_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0, arg_13_1)
+					content_check_function = function (arg_13_0, arg_13_1)
 						return not arg_12_4:is_video_active(arg_13_0.video_content.video_player_reference)
 					end,
-					content_change_function = function(arg_14_0, arg_14_1)
+					content_change_function = function (arg_14_0, arg_14_1)
 						if Managers.input:is_device_active("gamepad") or Managers.input:is_device_active("keyboard") then
 							if arg_12_2 == arg_12_4:current_gamepad_selection() then
 								arg_14_1.color[1] = 255
@@ -642,12 +642,12 @@ local function var_0_11(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_15_0, arg_15_1)
+					content_check_function = function (arg_15_0, arg_15_1)
 						local var_15_0 = arg_15_0.parent
 
 						return not arg_12_4:is_video_active(var_15_0.video_content.video_player_reference)
 					end,
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						local var_16_0 = arg_16_0.parent
 
 						if arg_16_0.on_pressed then
@@ -689,10 +689,10 @@ local function var_0_11(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "thumbnail",
 					texture_id = "thumbnail",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.thumbnail
 					end,
-					content_change_function = function(arg_18_0, arg_18_1)
+					content_change_function = function (arg_18_0, arg_18_1)
 						if Managers.input:is_device_active("gamepad") or Managers.input:is_device_active("keyboard") then
 							if arg_12_2 == arg_12_4:current_gamepad_selection() then
 								arg_18_1.color[1] = 255
@@ -1074,10 +1074,10 @@ local var_0_12 = {
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = math.easeOutCubic(arg_20_3)
 
 				arg_20_0.screen_anchor.local_position[1] = math.lerp(1920, 0, var_20_0)
@@ -1085,7 +1085,7 @@ local var_0_12 = {
 				arg_20_0.fade_area_edge.local_position[1] = math.lerp(1920 + var_0_3.fade_area_edge.position[1], var_0_3.fade_area_edge.position[1], var_20_0)
 				arg_20_4.render_settings.alpha_multiplier = var_20_0 * var_20_0 * var_20_0
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				arg_21_3.render_settings.alpha_multiplier = 1
 			end
 		}
@@ -1095,10 +1095,10 @@ local var_0_12 = {
 			name = "slide_and_fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				arg_22_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 				local var_23_0 = math.easeOutCubic(arg_23_3)
 
 				arg_23_0.screen_anchor.local_position[1] = math.lerp(0, 1920, var_23_0)
@@ -1106,7 +1106,7 @@ local var_0_12 = {
 				arg_23_0.fade_area_edge.local_position[1] = math.lerp(var_0_3.fade_area_edge.position[1], 1920 + var_0_3.fade_area_edge.position[1], var_23_0)
 				arg_23_4.render_settings.alpha_multiplier = 1 - var_23_0 * var_23_0 * var_23_0
 			end,
-			on_complete = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				arg_24_3.render_settings.alpha_multiplier = 0
 			end
 		}

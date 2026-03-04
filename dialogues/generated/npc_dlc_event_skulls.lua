@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/npc_dlc_event_skulls.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nik_greeting_skulls_event_first",
 		name = "nik_greeting_skulls_event_first",

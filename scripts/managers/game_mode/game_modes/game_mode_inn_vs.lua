@@ -10,7 +10,7 @@ local var_0_2 = false
 
 GameModeInnVs = class(GameModeInnVs, GameModeBase)
 
-function GameModeInnVs.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+GameModeInnVs.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 	GameModeInnVs.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 
 	arg_1_0._mechanism = Managers.mechanism:game_mechanism()
@@ -41,13 +41,13 @@ function GameModeInnVs.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 	end
 end
 
-function GameModeInnVs.destroy(arg_2_0)
+GameModeInnVs.destroy = function (arg_2_0)
 	if DEDICATED_SERVER then
 		Managers.state.event:unregister("game_server_unreserve_party_slot", arg_2_0)
 	end
 end
 
-function GameModeInnVs.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
+GameModeInnVs.register_rpcs = function (arg_3_0, arg_3_1, arg_3_2)
 	GameModeInnVs.super.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
 
 	if arg_3_0._simple_spawning then
@@ -55,7 +55,7 @@ function GameModeInnVs.register_rpcs(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function GameModeInnVs.unregister_rpcs(arg_4_0)
+GameModeInnVs.unregister_rpcs = function (arg_4_0)
 	GameModeInnVs.super.unregister_rpcs(arg_4_0)
 
 	if arg_4_0._simple_spawning then
@@ -63,11 +63,11 @@ function GameModeInnVs.unregister_rpcs(arg_4_0)
 	end
 end
 
-function GameModeInnVs.local_player_ready_to_start(arg_5_0)
+GameModeInnVs.local_player_ready_to_start = function (arg_5_0)
 	return arg_5_0._game_mode_state ~= "initial_state"
 end
 
-function GameModeInnVs.local_player_game_starts(arg_6_0, arg_6_1, arg_6_2)
+GameModeInnVs.local_player_game_starts = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.show_profile_on_startup
 
 	arg_6_2.show_profile_on_startup = nil
@@ -124,11 +124,11 @@ function GameModeInnVs.local_player_game_starts(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function GameModeInnVs._cb_start_menu_closed(arg_7_0)
+GameModeInnVs._cb_start_menu_closed = function (arg_7_0)
 	Managers.state.event:trigger("tutorial_trigger", "keep_menu_left")
 end
 
-function GameModeInnVs.evaluate_end_conditions(arg_8_0, arg_8_1)
+GameModeInnVs.evaluate_end_conditions = function (arg_8_0, arg_8_1)
 	if var_0_1 then
 		var_0_1 = false
 
@@ -152,7 +152,7 @@ function GameModeInnVs.evaluate_end_conditions(arg_8_0, arg_8_1)
 	end
 end
 
-function GameModeInnVs.setup_done(arg_9_0)
+GameModeInnVs.setup_done = function (arg_9_0)
 	if DEDICATED_SERVER then
 		arg_9_0:change_game_mode_state("dedicated_server_waiting_for_fully_reserved")
 		arg_9_0._mechanism:set_side_order_state(1)
@@ -162,15 +162,15 @@ function GameModeInnVs.setup_done(arg_9_0)
 	end
 end
 
-function GameModeInnVs.COMPLETE_LEVEL(arg_10_0)
+GameModeInnVs.COMPLETE_LEVEL = function (arg_10_0)
 	var_0_1 = true
 end
 
-function GameModeInnVs.FAIL_LEVEL(arg_11_0)
+GameModeInnVs.FAIL_LEVEL = function (arg_11_0)
 	var_0_2 = true
 end
 
-function GameModeInnVs.player_entered_game_session(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+GameModeInnVs.player_entered_game_session = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0._mechanism:handle_party_assignment_for_joining_peer(arg_12_1, arg_12_2)
 	local var_12_1, var_12_2 = Managers.party:get_party_from_player_id(arg_12_1, arg_12_2)
 
@@ -187,7 +187,7 @@ function GameModeInnVs.player_entered_game_session(arg_12_0, arg_12_1, arg_12_2,
 	end
 end
 
-function GameModeInnVs.player_left_game_session(arg_13_0, arg_13_1, arg_13_2)
+GameModeInnVs.player_left_game_session = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.party:get_player_status(arg_13_1, arg_13_2)
 
 	if var_13_0 then
@@ -195,29 +195,29 @@ function GameModeInnVs.player_left_game_session(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function GameModeInnVs.player_joined_party(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+GameModeInnVs.player_joined_party = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if not DEDICATED_SERVER then
 		arg_14_0._simple_spawning:setup_data(arg_14_1, arg_14_2)
 	end
 end
 
-function GameModeInnVs.player_left_party(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+GameModeInnVs.player_left_party = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	return
 end
 
-function GameModeInnVs.on_game_server_unreserve_party_slot(arg_16_0, arg_16_1, arg_16_2)
+GameModeInnVs.on_game_server_unreserve_party_slot = function (arg_16_0, arg_16_1, arg_16_2)
 	if DEDICATED_SERVER and arg_16_0._mechanism:get_slot_reservation_handler(Network.peer_id(), var_0_0.session):is_empty() then
 		arg_16_0._transition_state = "restart_game_server"
 	end
 end
 
-function GameModeInnVs.flow_callback_add_spawn_point(arg_17_0, arg_17_1)
+GameModeInnVs.flow_callback_add_spawn_point = function (arg_17_0, arg_17_1)
 	if not DEDICATED_SERVER then
 		arg_17_0._simple_spawning:flow_callback_add_spawn_point(arg_17_1)
 	end
 end
 
-function GameModeInnVs.get_initial_inventory(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+GameModeInnVs.get_initial_inventory = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0
 
 	if arg_18_5.affiliation == "heroes" then
@@ -235,27 +235,27 @@ function GameModeInnVs.get_initial_inventory(arg_18_0, arg_18_1, arg_18_2, arg_1
 	return var_18_0
 end
 
-function GameModeInnVs.hot_join_sync(arg_19_0, arg_19_1)
+GameModeInnVs.hot_join_sync = function (arg_19_0, arg_19_1)
 	GameModeInnVs.super.hot_join_sync(arg_19_0, arg_19_1)
 end
 
-function GameModeInnVs._send_system_message(arg_20_0, arg_20_1, ...)
+GameModeInnVs._send_system_message = function (arg_20_0, arg_20_1, ...)
 	local var_20_0 = false
 	local var_20_1 = true
 
 	Managers.chat:send_system_chat_message(1, arg_20_1, nil, var_20_0, var_20_1)
 end
 
-function GameModeInnVs.force_map_pool(arg_21_0, arg_21_1)
+GameModeInnVs.force_map_pool = function (arg_21_0, arg_21_1)
 	arg_21_0._force_map_pool = arg_21_1
 end
 
-function GameModeInnVs.event_local_player_spawned(arg_22_0, arg_22_1)
+GameModeInnVs.event_local_player_spawned = function (arg_22_0, arg_22_1)
 	arg_22_0._local_player_spawned = true
 	arg_22_0._is_initial_spawn = arg_22_1
 end
 
-function GameModeInnVs.server_update(arg_23_0, arg_23_1, arg_23_2)
+GameModeInnVs.server_update = function (arg_23_0, arg_23_1, arg_23_2)
 	if DEDICATED_SERVER then
 		arg_23_0:_handle_dedicated_start_game(arg_23_1, arg_23_2)
 		arg_23_0:_handle_dedicated_input(arg_23_1, arg_23_2)
@@ -279,20 +279,20 @@ function GameModeInnVs.server_update(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function GameModeInnVs._game_mode_state_changed(arg_24_0, arg_24_1)
+GameModeInnVs._game_mode_state_changed = function (arg_24_0, arg_24_1)
 	if arg_24_0._is_server and arg_24_1 == "dedicated_server_starting_game" then
 		arg_24_0:_start_hosting_server()
 		arg_24_0._mechanism:server_decide_side_order()
 	end
 end
 
-function GameModeInnVs._handle_dedicated_start_game(arg_25_0, arg_25_1, arg_25_2)
+GameModeInnVs._handle_dedicated_start_game = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0._game_mode_state == "dedicated_server_waiting_for_fully_reserved" and arg_25_0._mechanism:should_game_server_start_game() then
 		arg_25_0:change_game_mode_state("dedicated_server_starting_game")
 	end
 end
 
-function GameModeInnVs._handle_dedicated_input(arg_26_0, arg_26_1, arg_26_2)
+GameModeInnVs._handle_dedicated_input = function (arg_26_0, arg_26_1, arg_26_2)
 	CommandWindow.update()
 
 	local var_26_0 = CommandWindow.read_line()
@@ -302,7 +302,7 @@ function GameModeInnVs._handle_dedicated_input(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function GameModeInnVs._start_hosting_server(arg_27_0)
+GameModeInnVs._start_hosting_server = function (arg_27_0)
 	local var_27_0 = arg_27_0._force_map_pool or Managers.mechanism:mechanism_setting_for_title("map_pool")
 	local var_27_1 = arg_27_0._settings.forced_difficulty
 	local var_27_2 = Managers.mechanism:game_mechanism():get_level_override_key()
@@ -327,25 +327,25 @@ function GameModeInnVs._start_hosting_server(arg_27_0)
 	arg_27_0._force_map_pool = nil
 end
 
-function GameModeInnVs.wanted_transition(arg_28_0)
+GameModeInnVs.wanted_transition = function (arg_28_0)
 	if arg_28_0._transition_state == "restart_game_server" then
 		return "restart_game_server"
 	end
 end
 
-function GameModeInnVs.is_reservable(arg_29_0)
+GameModeInnVs.is_reservable = function (arg_29_0)
 	return true
 end
 
-function GameModeInnVs.is_joinable(arg_30_0)
+GameModeInnVs.is_joinable = function (arg_30_0)
 	return arg_30_0:is_reservable() and arg_30_0:game_mode_state() ~= "dedicated_server_waiting_for_fully_reserved"
 end
 
-function GameModeInnVs.update_auto_force_start_conditions(arg_31_0, arg_31_1)
+GameModeInnVs.update_auto_force_start_conditions = function (arg_31_0, arg_31_1)
 	return
 end
 
-function GameModeInnVs._set_auto_force_start_time(arg_32_0)
+GameModeInnVs._set_auto_force_start_time = function (arg_32_0)
 	local var_32_0 = arg_32_0._settings.auto_force_start
 
 	if not var_32_0.enabled then
@@ -365,7 +365,7 @@ function GameModeInnVs._set_auto_force_start_time(arg_32_0)
 	printf("[GameModeInnVS:_set_auto_force_start_time]: Automatic force start in %s seconds if teams remain unchanged", var_32_0.start_after_seconds)
 end
 
-function GameModeInnVs._handle_auto_force_start(arg_33_0, arg_33_1, arg_33_2)
+GameModeInnVs._handle_auto_force_start = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_1 < arg_33_0._auto_force_start_time then
 		return
 	end
@@ -373,7 +373,7 @@ function GameModeInnVs._handle_auto_force_start(arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0._auto_force_start_time = math.huge
 end
 
-function GameModeInnVs.play_sound(arg_34_0, arg_34_1)
+GameModeInnVs.play_sound = function (arg_34_0, arg_34_1)
 	local var_34_0 = Managers.world:wwise_world(arg_34_0._world)
 
 	WwiseWorld.trigger_event(var_34_0, arg_34_1)

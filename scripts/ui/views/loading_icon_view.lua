@@ -23,7 +23,7 @@ end
 
 LoadingIconView = class(LoadingIconView)
 
-function LoadingIconView.init(arg_1_0, arg_1_1)
+LoadingIconView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/ui/ui_1080p_loading")
 	arg_1_0._render_settings = {
@@ -36,34 +36,34 @@ function LoadingIconView.init(arg_1_0, arg_1_1)
 	arg_1_0._show_loading_icon = false
 end
 
-function LoadingIconView._create_ui_elements(arg_2_0)
+LoadingIconView._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0._loading_icon_widget = UIWidget.init(var_0_0.loading_icon)
 end
 
-function LoadingIconView.show_loading_icon(arg_3_0)
+LoadingIconView.show_loading_icon = function (arg_3_0)
 	arg_3_0._show_loading_icon = true
 end
 
-function LoadingIconView.hide_loading_icon(arg_4_0)
+LoadingIconView.hide_loading_icon = function (arg_4_0)
 	arg_4_0._show_loading_icon = false
 end
 
-function LoadingIconView.show_icon_background(arg_5_0)
+LoadingIconView.show_icon_background = function (arg_5_0)
 	arg_5_0._loading_icon_widget.style.background_rect.color[1] = 255
 end
 
-function LoadingIconView.hide_icon_background(arg_6_0)
+LoadingIconView.hide_icon_background = function (arg_6_0)
 	arg_6_0._loading_icon_widget.style.background_rect.color[1] = 0
 end
 
-function LoadingIconView.active(arg_7_0)
+LoadingIconView.active = function (arg_7_0)
 	return arg_7_0._show_loading_icon or arg_7_0._icon_fade_timer > 0
 end
 
 local var_0_6 = true
 
-function LoadingIconView.update(arg_8_0, arg_8_1)
+LoadingIconView.update = function (arg_8_0, arg_8_1)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -76,7 +76,7 @@ function LoadingIconView.update(arg_8_0, arg_8_1)
 	end
 end
 
-function LoadingIconView._update_loading_icon(arg_9_0, arg_9_1)
+LoadingIconView._update_loading_icon = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._loading_icon_widget
 	local var_9_1 = var_9_0.content
 	local var_9_2 = var_9_0.style.loading_icon
@@ -109,7 +109,7 @@ function LoadingIconView._update_loading_icon(arg_9_0, arg_9_1)
 	var_9_2.color[1] = arg_9_0._icon_fade_timer / var_0_1 * 255
 end
 
-function LoadingIconView._draw(arg_10_0, arg_10_1)
+LoadingIconView._draw = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._ui_renderer
 	local var_10_1 = arg_10_0._ui_scenegraph
 
@@ -118,6 +118,6 @@ function LoadingIconView._draw(arg_10_0, arg_10_1)
 	UIRenderer.end_pass(var_10_0)
 end
 
-function LoadingIconView.destroy(arg_11_0)
+LoadingIconView.destroy = function (arg_11_0)
 	UIRenderer.destroy(arg_11_0._ui_renderer, arg_11_0._world)
 end

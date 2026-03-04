@@ -922,7 +922,7 @@ local function var_0_14(arg_1_0)
 					pass_type = "texture_frame",
 					style_id = "shadow_frame",
 					texture_id = "shadow_frame",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.empty
 					end
 				},
@@ -930,7 +930,7 @@ local function var_0_14(arg_1_0)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.empty and arg_3_0.hotspot.is_hover
 					end
 				},
@@ -938,7 +938,7 @@ local function var_0_14(arg_1_0)
 					pass_type = "texture_frame",
 					style_id = "empty_hover",
 					texture_id = "empty_hover",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.empty and arg_4_0.hotspot.is_hover
 					end
 				},
@@ -946,7 +946,7 @@ local function var_0_14(arg_1_0)
 					pass_type = "texture_frame",
 					style_id = "empty_frame",
 					texture_id = "empty_frame",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.empty
 					end
 				}
@@ -1104,7 +1104,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "setting_value",
 					pass_type = "text",
 					text_id = "setting_value",
-					content_change_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+					content_change_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 						local var_9_0 = arg_9_0.data.values
 						local var_9_1 = arg_9_0.ui_data
 						local var_9_2 = var_9_0[arg_9_0.setting_idx]
@@ -1152,7 +1152,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "setting_highlight_hotspot",
 					pass_type = "hotspot",
 					content_id = "setting_highlight_hotspot",
-					content_change_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+					content_change_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 						local var_10_0 = arg_10_0.hover_progress or 0
 						local var_10_1 = 15
 
@@ -1169,7 +1169,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "setting_highlight",
 					texture_id = "setting_highlight",
 					pass_type = "texture",
-					content_change_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+					content_change_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 						local var_11_0 = arg_11_0.setting_highlight_hotspot.hover_progress or 0
 
 						arg_11_1.color[1] = 255 * var_11_0
@@ -1179,7 +1179,7 @@ local function var_0_15(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, ar
 					style_id = "tooltip_text",
 					pass_type = "option_tooltip",
 					text_id = "tooltip_text",
-					content_check_function = function(arg_12_0, arg_12_1)
+					content_check_function = function (arg_12_0, arg_12_1)
 						return arg_12_0.setting_highlight_hotspot.is_hover
 					end
 				}
@@ -1391,17 +1391,17 @@ local var_0_19 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeCubic(arg_14_3)
 
 				arg_14_4.render_settings.alpha_multiplier = var_14_0
 				arg_14_0.team_1.position[1] = arg_14_1.team_1.position[1] - (1 - var_14_0) * 100
 				arg_14_0.team_2.position[1] = arg_14_1.team_2.position[1] + (1 - var_14_0) * 100
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		}

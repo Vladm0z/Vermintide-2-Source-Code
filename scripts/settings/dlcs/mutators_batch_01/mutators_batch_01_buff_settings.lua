@@ -36,7 +36,7 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.buff_function_templates = {
-	apply_ticking_bomb = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	apply_ticking_bomb = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		WwiseUtils.trigger_unit_event(arg_1_3, "Play_mutator_ticking_bomb_tick", arg_1_0, 0)
 
 		local var_1_0 = Managers.player:local_player()
@@ -56,10 +56,10 @@ var_0_0.buff_function_templates = {
 			World.link_particles(arg_1_3, var_1_4, arg_1_0, Unit.node(arg_1_0, "root_point"), Matrix4x4.identity(), "stop")
 		end
 	end,
-	update_ticking_bomb = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update_ticking_bomb = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		return
 	end,
-	remove_ticking_bomb = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	remove_ticking_bomb = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if Managers.state.network.is_server then
 			local var_3_0 = POSITION_LOOKUP[arg_3_0]
 			local var_3_1 = "grenade_frag_01"

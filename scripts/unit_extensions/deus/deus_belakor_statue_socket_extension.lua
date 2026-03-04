@@ -32,20 +32,20 @@ local function var_0_0(arg_1_0, arg_1_1)
 	return false
 end
 
-function DeusBelakorStatueSocketExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+DeusBelakorStatueSocketExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._world = arg_2_1.world
 	arg_2_0._unit = arg_2_2
 end
 
-function DeusBelakorStatueSocketExtension.game_object_initialized(arg_3_0, arg_3_1, arg_3_2)
+DeusBelakorStatueSocketExtension.game_object_initialized = function (arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-function DeusBelakorStatueSocketExtension.destroy(arg_4_0)
+DeusBelakorStatueSocketExtension.destroy = function (arg_4_0)
 	return
 end
 
-function DeusBelakorStatueSocketExtension.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+DeusBelakorStatueSocketExtension.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = ScriptUnit.extension(arg_5_2, "tutorial_system")
 
 	var_5_0:set_active(false)
@@ -55,7 +55,7 @@ function DeusBelakorStatueSocketExtension.extensions_ready(arg_5_0, arg_5_1, arg
 	arg_5_0._socket_extension = ScriptUnit.extension(arg_5_2, "objective_socket_system")
 end
 
-function DeusBelakorStatueSocketExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusBelakorStatueSocketExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._objective_extension
 
 	if not var_6_0 then

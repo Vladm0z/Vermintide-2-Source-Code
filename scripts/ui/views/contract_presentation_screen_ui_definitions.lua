@@ -154,7 +154,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_divider",
 					texture_id = "texture_divider",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						return arg_2_1.texture_amount > 0
 					end
 				},
@@ -181,7 +181,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_text_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return arg_3_0.task_amount > 0 and not arg_3_0.texture_task_icon_1
 					end
 				},
@@ -190,7 +190,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_value_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return arg_4_0.task_amount > 0
 					end
 				},
@@ -199,7 +199,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_icon_1",
 					texture_id = "texture_task_icon_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return arg_5_0.texture_task_icon_1 and arg_5_0.task_amount > 0
 					end
 				},
@@ -208,7 +208,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_marker_1",
 					texture_id = "texture_task_marker_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return arg_6_0.task_completed_1 and arg_6_0.task_amount > 0
 					end
 				},
@@ -217,7 +217,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_glow_1",
 					texture_id = "texture_task_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return arg_7_0.task_amount > 0
 					end
 				},
@@ -226,7 +226,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_text_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return arg_8_0.task_amount > 1 and not arg_8_0.texture_task_icon_2
 					end
 				},
@@ -235,7 +235,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_value_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return arg_9_0.task_amount > 1
 					end
 				},
@@ -244,7 +244,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_icon_2",
 					texture_id = "texture_task_icon_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0, arg_10_1)
+					content_check_function = function (arg_10_0, arg_10_1)
 						return arg_10_0.texture_task_icon_2 and arg_10_0.task_amount > 1
 					end
 				},
@@ -253,7 +253,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_marker_2",
 					texture_id = "texture_task_marker_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0, arg_11_1)
+					content_check_function = function (arg_11_0, arg_11_1)
 						local var_11_0 = arg_11_0.task_amount
 
 						return arg_11_0.task_completed_2 and var_11_0 > 1
@@ -264,7 +264,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_glow_2",
 					texture_id = "texture_task_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0, arg_12_1)
+					content_check_function = function (arg_12_0, arg_12_1)
 						return arg_12_0.task_amount > 1
 					end
 				},
@@ -273,7 +273,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_text_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0, arg_13_1)
+					content_check_function = function (arg_13_0, arg_13_1)
 						return arg_13_0.task_amount > 2 and not arg_13_0.texture_task_icon_3
 					end
 				},
@@ -282,7 +282,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "text",
 					text_id = "task_value_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0, arg_14_1)
+					content_check_function = function (arg_14_0, arg_14_1)
 						return arg_14_0.task_amount > 2
 					end
 				},
@@ -291,7 +291,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_icon_3",
 					texture_id = "texture_task_icon_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0, arg_15_1)
+					content_check_function = function (arg_15_0, arg_15_1)
 						return arg_15_0.texture_task_icon_3 and arg_15_0.task_amount > 2
 					end
 				},
@@ -300,7 +300,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_marker_3",
 					texture_id = "texture_task_marker_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_16_0, arg_16_1)
+					content_check_function = function (arg_16_0, arg_16_1)
 						local var_16_0 = arg_16_0.task_amount
 
 						return arg_16_0.task_completed_3 and var_16_0 > 2
@@ -311,7 +311,7 @@ local function var_0_4(arg_1_0)
 					style_id = "texture_task_glow_3",
 					texture_id = "texture_task_glow",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return arg_17_0.task_amount > 2
 					end
 				}
@@ -806,7 +806,7 @@ local var_0_7 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				local var_18_0 = 0
 				local var_18_1 = arg_18_3.widget_index
 				local var_18_2 = arg_18_2[var_18_1]
@@ -835,10 +835,10 @@ local var_0_7 = {
 
 				arg_18_0[var_18_5].local_position[2] = arg_18_1[var_18_5].position[2]
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				return
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end
 		},
@@ -846,10 +846,10 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				WwiseWorld.trigger_event(arg_21_3.wwise_world, "Play_hud_quest_menu_select_quest")
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeCubic(arg_22_3) * 255
 				local var_22_1 = math.easeCubic(arg_22_3) * 150
 				local var_22_2 = arg_22_2[arg_22_4.widget_index].style
@@ -872,7 +872,7 @@ local var_0_7 = {
 				var_22_2.task_value_2.text_color[1] = var_22_1
 				var_22_2.task_value_3.text_color[1] = var_22_1
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end
 		}
@@ -882,7 +882,7 @@ local var_0_7 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				local var_24_0 = {}
 				local var_24_1 = arg_24_3.widget_index
 				local var_24_2 = arg_24_3.num_widgets
@@ -895,7 +895,7 @@ local var_0_7 = {
 
 				WwiseWorld.trigger_event(arg_24_3.wwise_world, "Play_hud_shift")
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = arg_25_4.widget_index
 				local var_25_1 = arg_25_4.num_widgets
 				local var_25_2 = arg_25_4.start_heights
@@ -907,7 +907,7 @@ local var_0_7 = {
 					arg_25_0[var_25_3].local_position[2] = var_25_2[iter_25_0] - 260 * math.easeOutCubic(arg_25_3)
 				end
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		}
@@ -917,17 +917,17 @@ local var_0_7 = {
 			name = "fade_in_selection",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.easeOutCubic(arg_28_3) * 255
 				local var_28_1 = arg_28_4.widget_index
 				local var_28_2 = arg_28_4.task_index
 
 				arg_28_2[var_28_1].style["texture_task_glow_" .. var_28_2].color[1] = var_28_0
 			end,
-			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
 			end
 		},
@@ -935,10 +935,10 @@ local var_0_7 = {
 			name = "font_size",
 			start_progress = 0.1,
 			end_progress = 0.5,
-			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end,
-			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 				local var_31_0 = arg_31_4.widget_index
 				local var_31_1 = arg_31_4.task_index
 				local var_31_2 = arg_31_4.task_data[var_31_1]
@@ -947,7 +947,7 @@ local var_0_7 = {
 					arg_31_2[var_31_0].style["task_value_" .. var_31_1].font_size = 32 * math.catmullrom(arg_31_3, -0.5, 1, 1, -0.5)
 				end
 			end,
-			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end
 		},
@@ -955,10 +955,10 @@ local var_0_7 = {
 			name = "set_new_value",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = arg_34_4.widget_index
 				local var_34_1 = arg_34_4.task_index
 				local var_34_2 = arg_34_4.task_data[var_34_1]
@@ -979,7 +979,7 @@ local var_0_7 = {
 					end
 				end
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		},
@@ -987,12 +987,12 @@ local var_0_7 = {
 			name = "set_completed",
 			start_progress = 0.45,
 			end_progress = 0.6,
-			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				if arg_36_3.task_completed then
 					WwiseWorld.trigger_event(arg_36_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen")
 				end
 			end,
-			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 				if arg_37_4.task_completed then
 					local var_37_0 = arg_37_2[arg_37_4.widget_index]
 					local var_37_1 = var_37_0.content
@@ -1008,7 +1008,7 @@ local var_0_7 = {
 					var_37_5.gradient_threshold = var_37_4
 				end
 			end,
-			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end
 		},
@@ -1016,17 +1016,17 @@ local var_0_7 = {
 			name = "fade_out_selection",
 			start_progress = 0.6,
 			end_progress = 0.75,
-			init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				return
 			end,
-			update = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 				local var_40_0 = 255 - math.easeOutCubic(arg_40_3) * 255
 				local var_40_1 = arg_40_4.widget_index
 				local var_40_2 = arg_40_4.task_index
 
 				arg_40_2[var_40_1].style["texture_task_glow_" .. var_40_2].color[1] = var_40_0
 			end,
-			on_complete = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end
 		}
@@ -1036,10 +1036,10 @@ local var_0_7 = {
 			name = "bar_progress",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				WwiseWorld.trigger_event(arg_42_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_progress")
 			end,
-			update = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 				local var_43_0 = arg_43_2[arg_43_4.widget_index]
 				local var_43_1 = var_43_0.content
 				local var_43_2 = var_43_0.style
@@ -1060,7 +1060,7 @@ local var_0_7 = {
 
 				var_43_1.bar_text = Localize("dlc1_3_1_contract_presentation_progress_prefix") .. ": " .. tostring(var_43_8) .. "%"
 			end,
-			on_complete = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end
 		},
@@ -1068,10 +1068,10 @@ local var_0_7 = {
 			name = "completed_stamp",
 			start_progress = 0.5,
 			end_progress = 0.7,
-			init = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			init = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				WwiseWorld.trigger_event(arg_45_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_completed")
 			end,
-			update = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+			update = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 				if arg_46_4.play_completed then
 					local var_46_0 = arg_46_2[arg_46_4.widget_index]
 					local var_46_1 = var_46_0.content
@@ -1098,7 +1098,7 @@ local var_0_7 = {
 					var_46_6[2] = var_46_12 - (var_46_7[2] - var_46_10) * 0.5
 				end
 			end,
-			on_complete = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			on_complete = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 				return
 			end
 		},
@@ -1106,13 +1106,13 @@ local var_0_7 = {
 			name = "delay",
 			start_progress = 0.7,
 			end_progress = 0.8,
-			init = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			init = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				return
 			end,
-			update = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+			update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
 				return
 			end,
-			on_complete = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+			on_complete = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 				return
 			end
 		}
@@ -1122,17 +1122,17 @@ local var_0_7 = {
 			name = "overlay_fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			init = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 				return
 			end,
-			update = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
 				local var_52_0 = math.easeOutCubic(arg_52_3) * 50
 				local var_52_1 = arg_52_4.widget_index
 				local var_52_2 = arg_52_4.task_index
 
 				arg_52_2[var_52_1].style.overlay.color[1] = var_52_0
 			end,
-			on_complete = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			on_complete = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 				return
 			end
 		}
@@ -1142,10 +1142,10 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			init = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 				return
 			end,
-			update = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+			update = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 				local var_55_0 = 255 - math.easeCubic(arg_55_3) * 255
 				local var_55_1 = 150 - math.easeCubic(arg_55_3) * 150
 				local var_55_2 = 50 - math.easeCubic(arg_55_3) * 50
@@ -1182,7 +1182,7 @@ local var_0_7 = {
 					var_55_5.task_value_3.text_color[1] = var_55_1
 				end
 			end,
-			on_complete = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			on_complete = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 				return
 			end
 		}

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/vs_level_fort_pvp.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nde_vs_fort_set1_briefing_a",
 		name = "nde_vs_fort_set1_briefing_a",

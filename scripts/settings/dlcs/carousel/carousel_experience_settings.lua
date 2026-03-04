@@ -261,13 +261,13 @@ end
 
 ExperienceSettings = ExperienceSettings or {}
 
-function ExperienceSettings.get_versus_level()
+ExperienceSettings.get_versus_level = function ()
 	local var_1_0 = ExperienceSettings.get_versus_experience()
 
 	return ExperienceSettings.get_versus_level_from_experience(var_1_0)
 end
 
-function ExperienceSettings.get_versus_player_level(arg_2_0)
+ExperienceSettings.get_versus_player_level = function (arg_2_0)
 	local var_2_0 = Managers.state.network:game()
 
 	if not var_2_0 then
@@ -285,11 +285,11 @@ function ExperienceSettings.get_versus_player_level(arg_2_0)
 	return (GameSession.game_object_field(var_2_0, var_2_3, "versus_level"))
 end
 
-function ExperienceSettings.get_versus_experience()
+ExperienceSettings.get_versus_experience = function ()
 	return Managers.backend:get_interface("versus"):get_profile_data("experience") or 0
 end
 
-function ExperienceSettings.get_versus_level_from_experience(arg_4_0)
+ExperienceSettings.get_versus_level_from_experience = function (arg_4_0)
 	arg_4_0 = arg_4_0 or 0
 
 	assert(arg_4_0 >= 0, "Negative XP!??")
@@ -321,7 +321,7 @@ function ExperienceSettings.get_versus_level_from_experience(arg_4_0)
 	return var_4_1, var_4_2, var_4_3
 end
 
-function ExperienceSettings.get_versus_progress_breakdown(arg_5_0, arg_5_1)
+ExperienceSettings.get_versus_progress_breakdown = function (arg_5_0, arg_5_1)
 	local var_5_0, var_5_1 = ExperienceSettings.get_versus_level_from_experience(arg_5_0)
 	local var_5_2, var_5_3 = ExperienceSettings.get_versus_level_from_experience(arg_5_0 + arg_5_1)
 	local var_5_4 = {}

@@ -4,7 +4,7 @@ require("scripts/settings/dlcs/morris/rarity_settings")
 
 RarityUtils = RarityUtils or {}
 
-function RarityUtils.get_previous_rarity(arg_1_0)
+RarityUtils.get_previous_rarity = function (arg_1_0)
 	local var_1_0 = RaritySettings
 	local var_1_1 = var_1_0[arg_1_0].order
 	local var_1_2 = arg_1_0
@@ -22,7 +22,7 @@ function RarityUtils.get_previous_rarity(arg_1_0)
 	return var_1_2, var_1_4
 end
 
-function RarityUtils.get_lower_rarities(arg_2_0)
+RarityUtils.get_lower_rarities = function (arg_2_0)
 	local var_2_0 = RaritySettings
 	local var_2_1 = var_2_0[arg_2_0].order
 	local var_2_2 = {}
@@ -36,7 +36,7 @@ function RarityUtils.get_lower_rarities(arg_2_0)
 	return var_2_2
 end
 
-function RarityUtils.get_higher_rarities(arg_3_0)
+RarityUtils.get_higher_rarities = function (arg_3_0)
 	local var_3_0 = RaritySettings
 	local var_3_1 = var_3_0[arg_3_0].order
 	local var_3_2 = {}

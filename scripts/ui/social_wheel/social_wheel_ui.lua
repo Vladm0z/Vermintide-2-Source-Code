@@ -55,7 +55,7 @@ else
 end
 
 local var_0_16 = {
-	__index = function(arg_1_0, arg_1_1, arg_1_2)
+	__index = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0.default
 	end
 }
@@ -82,7 +82,7 @@ end
 
 setmetatable(var_0_17, var_0_16)
 
-function SocialWheelUI.init(arg_2_0, arg_2_1, arg_2_2)
+SocialWheelUI.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._parent = arg_2_1
 	arg_2_0._ui_top_renderer = arg_2_2.ui_top_renderer
 	arg_2_0._render_settings = {
@@ -123,7 +123,7 @@ function SocialWheelUI.init(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_register_rpcs()
 end
 
-function SocialWheelUI._create_ui_elements(arg_3_0)
+SocialWheelUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_8)
 	arg_3_0._animations = {}
 	arg_3_0._animation_callbacks = {}
@@ -144,7 +144,7 @@ function SocialWheelUI._create_ui_elements(arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_top_renderer)
 end
 
-function SocialWheelUI._create_social_wheel(arg_4_0, arg_4_1)
+SocialWheelUI._create_social_wheel = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1 or SocialWheelSettings
 
 	local function var_4_1()
@@ -201,15 +201,15 @@ function SocialWheelUI._create_social_wheel(arg_4_0, arg_4_1)
 	end
 end
 
-function SocialWheelUI._register_rpcs(arg_6_0)
+SocialWheelUI._register_rpcs = function (arg_6_0)
 	arg_6_0._ingame_ui_context.network_event_delegate:register(arg_6_0, unpack(var_0_9))
 end
 
-function SocialWheelUI._unregister_rpcs(arg_7_0)
+SocialWheelUI._unregister_rpcs = function (arg_7_0)
 	arg_7_0._ingame_ui_context.network_event_delegate:unregister(arg_7_0)
 end
 
-function SocialWheelUI.destroy(arg_8_0)
+SocialWheelUI.destroy = function (arg_8_0)
 	arg_8_0:_unregister_rpcs()
 
 	local var_8_0 = ScriptUnit.has_extension(arg_8_0._player.player_unit, "interactor_system")
@@ -230,14 +230,14 @@ function SocialWheelUI.destroy(arg_8_0)
 	arg_8_0:_set_player_input_scale(1, nil)
 end
 
-function SocialWheelUI._widget_angle(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+SocialWheelUI._widget_angle = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = math.pi
 	local var_9_1 = arg_9_1 / arg_9_2
 
 	return -(var_9_0 * 0.5 + var_9_0 - arg_9_1 * 0.5 + var_9_1 * 0.5) - (arg_9_3 - 1) * var_9_1
 end
 
-function SocialWheelUI._select_widget(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+SocialWheelUI._select_widget = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = math.pi
 	local var_10_1 = arg_10_1 / arg_10_2
 	local var_10_2 = var_10_0 * 0.5 + var_10_0 - arg_10_1 * 0.5
@@ -255,7 +255,7 @@ local var_0_19 = {
 	0
 }
 
-function SocialWheelUI._add_social_wheel_event(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+SocialWheelUI._add_social_wheel_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = SocialWheelSettingsLookup[arg_11_2]
 	local var_11_1, var_11_2 = var_11_0.event_text, var_11_0.event_text_func
 	local var_11_3
@@ -303,7 +303,7 @@ function SocialWheelUI._add_social_wheel_event(arg_11_0, arg_11_1, arg_11_2, arg
 	end
 end
 
-function SocialWheelUI._add_social_wheel_event_animation(arg_12_0, arg_12_1, arg_12_2)
+SocialWheelUI._add_social_wheel_event_animation = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1.content.is_local_player
 
 	arg_12_0._social_event_widgets[#arg_12_0._social_event_widgets + 1] = arg_12_1
@@ -312,17 +312,17 @@ function SocialWheelUI._add_social_wheel_event_animation(arg_12_0, arg_12_1, arg
 	local var_12_1 = arg_12_0._event_index
 
 	arg_12_0._animations["social_event_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.offset, 1, 500, -60, 0.25, math.easeOutCubic)
-	arg_12_0._animation_callbacks["social_event_" .. var_12_1] = function()
+	arg_12_0._animation_callbacks["social_event_" .. var_12_1] = function ()
 		local var_13_0 = var_12_0 and Colors.get_color_table_with_alpha("medium_purple", 255) or Colors.get_color_table_with_alpha("light_sky_blue", 255)
 
 		arg_12_0._animations["social_event_color_" .. var_12_1] = UIAnimation.init(UIAnimation.linear_scale_color, arg_12_1.style.text.text_color, 255, 255, 255, var_13_0[2], var_13_0[3], var_13_0[4], 2)
 		arg_12_0._animations["timer_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, var_0_19, 1, 0, 0, 5, math.easeInCubic)
-		arg_12_0._animation_callbacks["timer_" .. var_12_1] = function()
+		arg_12_0._animation_callbacks["timer_" .. var_12_1] = function ()
 			arg_12_0._animations["social_event_alpha_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.text.text_color, 1, 255, 0, 1, math.easeInCubic)
 			arg_12_0._animations["social_event_texture_alpha_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.style.texture.color, 1, 255, 0, 1, math.easeInCubic)
-			arg_12_0._animation_callbacks["social_event_alpha_" .. var_12_1] = function()
+			arg_12_0._animation_callbacks["social_event_alpha_" .. var_12_1] = function ()
 				arg_12_0._animations["spacing_" .. var_12_1] = UIAnimation.init(UIAnimation.function_by_time, arg_12_1.content, "spacing", arg_12_1.content.spacing, 0, 0.5, math.easeOutCubic)
-				arg_12_0._animation_callbacks["spacing_" .. var_12_1] = function()
+				arg_12_0._animation_callbacks["spacing_" .. var_12_1] = function ()
 					table.remove(arg_12_0._social_event_widgets, 1)
 
 					if #arg_12_0._social_event_widgets < 6 then
@@ -339,7 +339,7 @@ function SocialWheelUI._add_social_wheel_event_animation(arg_12_0, arg_12_1, arg
 	end
 end
 
-function SocialWheelUI.rpc_social_wheel_event(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+SocialWheelUI.rpc_social_wheel_event = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	if IS_XB1 and Managers.chat:ignoring_peer_id(arg_17_2) then
 		return
 	end
@@ -359,14 +359,14 @@ function SocialWheelUI.rpc_social_wheel_event(arg_17_0, arg_17_1, arg_17_2, arg_
 	end
 end
 
-function SocialWheelUI.post_update(arg_18_0, arg_18_1)
+SocialWheelUI.post_update = function (arg_18_0, arg_18_1)
 	arg_18_0:_post_update_remove_icon(arg_18_1)
 	arg_18_0:_post_update_render(arg_18_1)
 end
 
 local var_0_20 = {}
 
-function SocialWheelUI._post_update_remove_icon(arg_19_0, arg_19_1)
+SocialWheelUI._post_update_remove_icon = function (arg_19_0, arg_19_1)
 	table.clear(var_0_20)
 
 	local var_19_0 = Managers.time:time("game")
@@ -384,7 +384,7 @@ end
 
 local var_0_21 = {}
 
-function SocialWheelUI._post_update_render(arg_20_0, arg_20_1)
+SocialWheelUI._post_update_render = function (arg_20_0, arg_20_1)
 	if not arg_20_0._is_visible then
 		return
 	end
@@ -402,13 +402,13 @@ function SocialWheelUI._post_update_render(arg_20_0, arg_20_1)
 	UIRenderer.end_pass(var_20_0)
 end
 
-function SocialWheelUI.update(arg_21_0, arg_21_1, arg_21_2)
+SocialWheelUI.update = function (arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0:_update_animations(arg_21_1, arg_21_2)
 	arg_21_0:_update_input(arg_21_1, arg_21_2)
 	arg_21_0:_draw(arg_21_1, arg_21_2)
 end
 
-function SocialWheelUI._update_animations(arg_22_0, arg_22_1)
+SocialWheelUI._update_animations = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._animations
 	local var_22_1 = arg_22_0._animation_callbacks
 
@@ -427,7 +427,7 @@ function SocialWheelUI._update_animations(arg_22_0, arg_22_1)
 	end
 end
 
-function SocialWheelUI._update_input(arg_23_0, arg_23_1, arg_23_2)
+SocialWheelUI._update_input = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = Managers.input:get_service("Player")
 
 	arg_23_0[arg_23_0._state](arg_23_0, arg_23_1, arg_23_2, var_23_0)
@@ -438,7 +438,7 @@ function SocialWheelUI._update_input(arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0.previous_photomode_only_held = var_23_0:get("photomode_only_hold")
 end
 
-function SocialWheelUI._draw(arg_24_0, arg_24_1, arg_24_2)
+SocialWheelUI._draw = function (arg_24_0, arg_24_1, arg_24_2)
 	if not arg_24_0._is_visible then
 		return
 	end
@@ -496,11 +496,11 @@ function SocialWheelUI._draw(arg_24_0, arg_24_1, arg_24_2)
 	UIRenderer.end_pass(var_24_0)
 end
 
-function SocialWheelUI.set_visible(arg_25_0, arg_25_1)
+SocialWheelUI.set_visible = function (arg_25_0, arg_25_1)
 	arg_25_0._is_visible = arg_25_1
 end
 
-function SocialWheelUI._set_player_input_scale(arg_26_0, arg_26_1, arg_26_2)
+SocialWheelUI._set_player_input_scale = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._player.player_unit
 
 	if Unit.alive(var_26_0) then
@@ -524,7 +524,7 @@ function SocialWheelUI._set_player_input_scale(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function SocialWheelUI._ping_unit_attempt(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+SocialWheelUI._ping_unit_attempt = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_0._player.player_unit
 
 	if Unit.alive(var_27_0) and Unit.alive(arg_27_1) then
@@ -534,7 +534,7 @@ function SocialWheelUI._ping_unit_attempt(arg_27_0, arg_27_1, arg_27_2, arg_27_3
 	end
 end
 
-function SocialWheelUI._ping_world_position_attempt(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+SocialWheelUI._ping_world_position_attempt = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = arg_28_0._player.player_unit
 
 	if Unit.alive(var_28_0) then
@@ -544,7 +544,7 @@ function SocialWheelUI._ping_world_position_attempt(arg_28_0, arg_28_1, arg_28_2
 	end
 end
 
-function SocialWheelUI._social_message_attempt(arg_29_0, arg_29_1, arg_29_2)
+SocialWheelUI._social_message_attempt = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._player.player_unit
 
 	if Unit.alive(var_29_0) then
@@ -554,7 +554,7 @@ function SocialWheelUI._social_message_attempt(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function SocialWheelUI._local_ping_attempt(arg_30_0, arg_30_1, arg_30_2)
+SocialWheelUI._local_ping_attempt = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._player
 	local var_30_1 = var_30_0.player_unit
 
@@ -563,7 +563,7 @@ function SocialWheelUI._local_ping_attempt(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function SocialWheelUI._play_sound(arg_31_0, arg_31_1)
+SocialWheelUI._play_sound = function (arg_31_0, arg_31_1)
 	if not arg_31_1 then
 		return
 	end
@@ -571,13 +571,13 @@ function SocialWheelUI._play_sound(arg_31_0, arg_31_1)
 	WwiseWorld.trigger_event(arg_31_0._wwise_world, arg_31_1)
 end
 
-function SocialWheelUI._change_state(arg_32_0, arg_32_1)
+SocialWheelUI._change_state = function (arg_32_0, arg_32_1)
 	fassert(arg_32_0._states[arg_32_1], "[SocialWheelUI:_change_state] There is no state called %s", tostring(arg_32_1))
 
 	arg_32_0._state = arg_32_1
 end
 
-function SocialWheelUI.update_closed(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+SocialWheelUI.update_closed = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	local var_33_0 = arg_33_0._player.player_unit
 
 	if Unit.alive(var_33_0) then
@@ -603,7 +603,7 @@ function SocialWheelUI.update_closed(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	end
 end
 
-function SocialWheelUI._set_pulsing(arg_34_0, arg_34_1, arg_34_2)
+SocialWheelUI._set_pulsing = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_1.unit
 
 	if Unit.alive(var_34_0) then
@@ -619,7 +619,7 @@ function SocialWheelUI._set_pulsing(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function SocialWheelUI._set_current_context(arg_35_0, arg_35_1)
+SocialWheelUI._set_current_context = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._current_context
 
 	if arg_35_1 ~= var_35_0 then
@@ -635,7 +635,7 @@ function SocialWheelUI._set_current_context(arg_35_0, arg_35_1)
 	end
 end
 
-function SocialWheelUI._open_menu(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+SocialWheelUI._open_menu = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 	arg_36_0._block_next_input = false
 
 	local var_36_0 = true
@@ -796,7 +796,7 @@ function SocialWheelUI._open_menu(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36
 	return var_36_0
 end
 
-function SocialWheelUI._inject_weapon_poses(arg_38_0)
+SocialWheelUI._inject_weapon_poses = function (arg_38_0)
 	local var_38_0 = Managers.player:local_player()
 	local var_38_1 = var_38_0.player_unit
 
@@ -862,7 +862,7 @@ function SocialWheelUI._inject_weapon_poses(arg_38_0)
 	arg_38_0:_create_weapon_pose_wheel(var_38_6, var_38_2, var_38_8)
 end
 
-function SocialWheelUI._is_dirty(arg_39_0, arg_39_1)
+SocialWheelUI._is_dirty = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0:_gather_weapon_poses_by_parent_item(arg_39_1) ~= nil
 	local var_39_1 = Managers.state.side.side_by_unit[arg_39_0._player.player_unit]:name()
 	local var_39_2 = Managers.state.game_mode:setting("social_wheel_by_side")
@@ -885,7 +885,7 @@ function SocialWheelUI._is_dirty(arg_39_0, arg_39_1)
 	end
 end
 
-function SocialWheelUI._reset_social_wheel(arg_40_0)
+SocialWheelUI._reset_social_wheel = function (arg_40_0)
 	local var_40_0 = Managers.state.side.side_by_unit[arg_40_0._player.player_unit]:name()
 	local var_40_1 = Managers.state.game_mode:setting("social_wheel_by_side")
 	local var_40_2 = "general"
@@ -899,7 +899,7 @@ function SocialWheelUI._reset_social_wheel(arg_40_0)
 	local var_40_5 = SocialWheelSettings[var_40_3 .. "_gamepad"]
 
 	if var_40_4 then
-		local var_40_6 = table.find_func_array(var_40_4, function(arg_41_0)
+		local var_40_6 = table.find_func_array(var_40_4, function (arg_41_0)
 			return arg_41_0.weapon_poses
 		end)
 
@@ -909,7 +909,7 @@ function SocialWheelUI._reset_social_wheel(arg_40_0)
 	end
 
 	if var_40_5 then
-		local var_40_7 = table.find_func_array(var_40_5, function(arg_42_0)
+		local var_40_7 = table.find_func_array(var_40_5, function (arg_42_0)
 			return arg_42_0.weapon_poses
 		end)
 
@@ -921,7 +921,7 @@ function SocialWheelUI._reset_social_wheel(arg_40_0)
 	arg_40_0:_create_social_wheel()
 end
 
-function SocialWheelUI._create_weapon_pose_wheel(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+SocialWheelUI._create_weapon_pose_wheel = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	arg_43_0:_reset_social_wheel()
 
 	local var_43_0 = arg_43_0:_gather_weapon_poses_by_parent_item(arg_43_1)
@@ -1007,7 +1007,7 @@ function SocialWheelUI._create_weapon_pose_wheel(arg_43_0, arg_43_1, arg_43_2, a
 	arg_43_0:_create_social_wheel()
 end
 
-function SocialWheelUI._create_material_instance(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+SocialWheelUI._create_material_instance = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = arg_44_0._cloned_materials_by_reference or {}
 
 	if not var_44_0[arg_44_3] then
@@ -1019,7 +1019,7 @@ function SocialWheelUI._create_material_instance(arg_44_0, arg_44_1, arg_44_2, a
 	end
 end
 
-function SocialWheelUI._gather_weapon_poses_by_parent_item(arg_45_0, arg_45_1)
+SocialWheelUI._gather_weapon_poses_by_parent_item = function (arg_45_0, arg_45_1)
 	local var_45_0 = {}
 	local var_45_1 = Managers.backend:get_interface("items")
 	local var_45_2 = var_45_1:get_unlocked_weapon_poses()[arg_45_1]
@@ -1043,7 +1043,7 @@ function SocialWheelUI._gather_weapon_poses_by_parent_item(arg_45_0, arg_45_1)
 	return var_45_0
 end
 
-function SocialWheelUI._reset_materials_for_item_type(arg_47_0, arg_47_1, arg_47_2)
+SocialWheelUI._reset_materials_for_item_type = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0:_gather_weapon_poses_by_parent_item(arg_47_1)
 
 	if not var_47_0 then
@@ -1062,7 +1062,7 @@ function SocialWheelUI._reset_materials_for_item_type(arg_47_0, arg_47_1, arg_47
 	end
 end
 
-function SocialWheelUI._weapon_pose_package_loaded_cb(arg_48_0, arg_48_1, arg_48_2)
+SocialWheelUI._weapon_pose_package_loaded_cb = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0:_gather_weapon_poses_by_parent_item(arg_48_1)
 
 	if not var_48_0 then
@@ -1086,7 +1086,7 @@ function SocialWheelUI._weapon_pose_package_loaded_cb(arg_48_0, arg_48_1, arg_48
 	end
 end
 
-function SocialWheelUI._set_material_diffuse_by_texture_path(arg_49_0, arg_49_1, arg_49_2)
+SocialWheelUI._set_material_diffuse_by_texture_path = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = Gui.material(arg_49_0._ui_top_renderer.gui, arg_49_1)
 
 	if var_49_0 then
@@ -1096,7 +1096,7 @@ function SocialWheelUI._set_material_diffuse_by_texture_path(arg_49_0, arg_49_1,
 	end
 end
 
-function SocialWheelUI._reset_cloned_material(arg_50_0, arg_50_1)
+SocialWheelUI._reset_cloned_material = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._cloned_materials_by_reference[arg_50_1]
 
 	if var_50_0 then
@@ -1106,7 +1106,7 @@ function SocialWheelUI._reset_cloned_material(arg_50_0, arg_50_1)
 	end
 end
 
-function SocialWheelUI.update_open(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+SocialWheelUI.update_open = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = arg_51_3:get("ping_hold")
 	local var_51_1 = arg_51_3:get("ping_release") or arg_51_0.previous_ping_held and not var_51_0
 	local var_51_2 = arg_51_3:get("social_wheel_only_hold")
@@ -1147,7 +1147,7 @@ function SocialWheelUI.update_open(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	arg_51_0:_update_pointer(arg_51_3, true, arg_51_2)
 end
 
-function SocialWheelUI._update_pointer(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+SocialWheelUI._update_pointer = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	local var_52_0 = arg_52_0._arrow_widget
 	local var_52_1 = var_52_0.content
 	local var_52_2 = var_52_0.style
@@ -1236,7 +1236,7 @@ function SocialWheelUI._update_pointer(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	end
 end
 
-function SocialWheelUI._update_selection(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+SocialWheelUI._update_selection = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	local var_53_0 = arg_53_0._current_selection_widgets
 
 	local function var_53_1()
@@ -1314,7 +1314,7 @@ function SocialWheelUI._update_selection(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	end
 end
 
-function SocialWheelUI._close_menu(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+SocialWheelUI._close_menu = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = var_0_15.CLOSE
 	local var_55_1 = arg_55_0._animations
 
@@ -1377,13 +1377,13 @@ function SocialWheelUI._close_menu(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_5
 			var_55_1["icon_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_19, 1, var_55_19[1], var_55_19[1] * 0.5, 10, 0.5)
 			var_55_1["icon_shadow_size_x_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_22, 1, var_55_24[1], var_55_24[1] * 0.75, 10, 0.5)
 			var_55_1["icon_shadow_size_y_" .. iter_55_0] = UIAnimation.init(UIAnimation.pulse_animation3, var_55_22, 2, var_55_24[2], var_55_24[2] * 0.75, 10, 0.5)
-			arg_55_0._animation_callbacks["icon_color_a_" .. iter_55_0] = function()
+			arg_55_0._animation_callbacks["icon_color_a_" .. iter_55_0] = function ()
 				var_55_1["fade_text_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_25, 1, var_55_25[1], 0, 0.25, math.easeOutCubic)
 				var_55_1["fade_text_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_26, 1, var_55_26[1], 0, 0.25, math.easeOutCubic)
 				var_55_1["fade_icon_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_18, 1, var_55_18[1], 0, 0.25, math.easeOutCubic)
 				var_55_1["fade_icon_shadow_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_19, 1, var_55_19[1], 0, 0.25, math.easeOutCubic)
 				var_55_1["fade_icon_bg_color_a_" .. iter_55_0] = UIAnimation.init(UIAnimation.function_by_time, var_55_20, 1, var_55_20[1], 0, 0.25, math.easeOutCubic)
-				arg_55_0._animation_callbacks["fade_icon_color_a_" .. iter_55_0] = function()
+				arg_55_0._animation_callbacks["fade_icon_color_a_" .. iter_55_0] = function ()
 					arg_55_0._selected_widget = nil
 					var_55_16.activated = false
 				end
@@ -1466,6 +1466,6 @@ function SocialWheelUI._close_menu(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_5
 	ScriptUnit.extension(arg_55_0._player.player_unit, "interactor_system"):enable_interactions(true)
 end
 
-function SocialWheelUI.is_active(arg_59_0)
+SocialWheelUI.is_active = function (arg_59_0)
 	return arg_59_0._active_context ~= nil
 end

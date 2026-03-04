@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMeleeSlamAction = class(BTMeleeSlamAction, BTNode)
 
-function BTMeleeSlamAction.init(arg_1_0, ...)
+BTMeleeSlamAction.init = function (arg_1_0, ...)
 	BTMeleeSlamAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTMeleeSlamAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTMeleeSlamAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -41,7 +41,7 @@ function BTMeleeSlamAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	AiUtils.add_attack_intensity(var_3_1, var_3_0, arg_3_2)
 end
 
-function BTMeleeSlamAction.init_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMeleeSlamAction.init_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0, var_4_1 = LocomotionUtils.get_attack_anim(arg_4_1, arg_4_2, arg_4_3.attack_anims)
 
 	var_4_1 = var_4_1 or arg_4_3.anim_driven or false
@@ -79,7 +79,7 @@ function BTMeleeSlamAction.init_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	end
 end
 
-function BTMeleeSlamAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTMeleeSlamAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_2.attack_anim_driven and not arg_5_5 then
 		local var_5_0 = arg_5_2.locomotion_extension
 
@@ -101,7 +101,7 @@ function BTMeleeSlamAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, ar
 	arg_5_2.rotate_towards_target = nil
 end
 
-function BTMeleeSlamAction._calculate_collision(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTMeleeSlamAction._calculate_collision = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.height
 	local var_6_1 = arg_6_2 + arg_6_3 * arg_6_1.forward_offset + Vector3(0, 0, var_6_0 * 0.5)
 	local var_6_2 = Vector3(arg_6_1.radius, var_6_0, arg_6_1.radius)
@@ -110,7 +110,7 @@ function BTMeleeSlamAction._calculate_collision(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return var_6_1, var_6_3, var_6_2
 end
 
-function BTMeleeSlamAction._calculate_cylinder_collision(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTMeleeSlamAction._calculate_cylinder_collision = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_2.radius or arg_7_1.radius
 	local var_7_1 = arg_7_2.height or arg_7_1.height
 	local var_7_2 = arg_7_2.offset_forward or arg_7_1.forward_offset
@@ -124,7 +124,7 @@ function BTMeleeSlamAction._calculate_cylinder_collision(arg_7_0, arg_7_1, arg_7
 	return var_7_7, var_7_8, var_7_4
 end
 
-function BTMeleeSlamAction._create_bot_aoe_threat(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTMeleeSlamAction._create_bot_aoe_threat = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_4.duration
 	local var_8_1 = POSITION_LOOKUP[arg_8_1]
 	local var_8_2 = Managers.state.entity:system("ai_bot_group_system")
@@ -133,7 +133,7 @@ function BTMeleeSlamAction._create_bot_aoe_threat(arg_8_0, arg_8_1, arg_8_2, arg
 	var_8_2:aoe_threat_created(var_8_3, "cylinder", var_8_5, nil, var_8_0, "Melee Slam")
 end
 
-function BTMeleeSlamAction.anim_cb_damage(arg_9_0, arg_9_1, arg_9_2)
+BTMeleeSlamAction.anim_cb_damage = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_2.is_illusion then
 		arg_9_2.rotate_towards_target = false
 
@@ -225,7 +225,7 @@ function BTMeleeSlamAction.anim_cb_damage(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_2.rotate_towards_target = false
 end
 
-function BTMeleeSlamAction.run(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTMeleeSlamAction.run = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2.attacking_target
 
 	if arg_10_2.attack_finished or not Unit.alive(var_10_0) or arg_10_2.attack_aborted then

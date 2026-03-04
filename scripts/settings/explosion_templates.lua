@@ -847,7 +847,7 @@ ExplosionTemplates.cannon_ball_throw = {
 			far_scale = 0.15,
 			far_distance = 20
 		},
-		on_death_func = function(arg_1_0)
+		on_death_func = function (arg_1_0)
 			local var_1_0 = {
 				"forest_fort_kill_cannonball",
 				"forest_fort_kill_cannonball_cata"
@@ -1303,7 +1303,7 @@ ExplosionTemplates.grey_seer_warp_lightning_impact = {
 	}
 }
 ExplosionTemplates.chaos_slow_bomb_missile = {
-	server_hit_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	server_hit_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		local var_2_0 = arg_2_4[ProjectileImpactDataIndex.UNIT]
 		local var_2_1 = false
 		local var_2_2 = Managers.state.side.side_by_unit[arg_2_2]
@@ -1332,7 +1332,7 @@ ExplosionTemplates.chaos_slow_bomb_missile = {
 	end
 }
 ExplosionTemplates.chaos_slow_bomb_missile_new = {
-	server_hit_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	server_hit_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 		local var_3_0 = arg_3_4[ProjectileImpactDataIndex.UNIT]
 		local var_3_1 = false
 		local var_3_2 = Managers.state.side.side_by_unit[arg_3_2]

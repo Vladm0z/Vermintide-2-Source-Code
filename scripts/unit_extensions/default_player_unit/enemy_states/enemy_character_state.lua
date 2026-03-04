@@ -4,7 +4,7 @@ require("scripts/unit_extensions/default_player_unit/enemy_states/enemy_characte
 
 EnemyCharacterState = class(EnemyCharacterState)
 
-function EnemyCharacterState.init(arg_1_0, arg_1_1, arg_1_2)
+EnemyCharacterState.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.unit
 	local var_1_1 = Unit.get_data(var_1_0, "breed")
 
@@ -44,11 +44,11 @@ function EnemyCharacterState.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._taunt_cooldown = 20
 end
 
-function EnemyCharacterState.on_exit(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+EnemyCharacterState.on_exit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0:destroy_particles()
 end
 
-function EnemyCharacterState.handle_disabled_ghost_mode(arg_3_0)
+EnemyCharacterState.handle_disabled_ghost_mode = function (arg_3_0)
 	local var_3_0 = arg_3_0._ghost_mode_extension
 
 	if var_3_0:is_in_ghost_mode() and Development.parameter("disable_ghost_mode") then
@@ -58,7 +58,7 @@ function EnemyCharacterState.handle_disabled_ghost_mode(arg_3_0)
 	end
 end
 
-function EnemyCharacterState.set_breed_action(arg_4_0, arg_4_1)
+EnemyCharacterState.set_breed_action = function (arg_4_0, arg_4_1)
 	local var_4_0 = Unit.get_data(arg_4_0._unit, "breed").name
 
 	if not Managers.state.network:game() then
@@ -76,19 +76,19 @@ function EnemyCharacterState.set_breed_action(arg_4_0, arg_4_1)
 	end
 end
 
-function EnemyCharacterState.has_move_input(arg_5_0)
+EnemyCharacterState.has_move_input = function (arg_5_0)
 	local var_5_0 = arg_5_0._input_extension
 
 	return CharacterStateHelper.has_move_input(var_5_0)
 end
 
-function EnemyCharacterState.has_jump_input(arg_6_0)
+EnemyCharacterState.has_jump_input = function (arg_6_0)
 	local var_6_0 = arg_6_0._input_extension
 
 	return var_6_0:get("jump") or var_6_0:get("jump_only")
 end
 
-function EnemyCharacterState.has_movement_input(arg_7_0)
+EnemyCharacterState.has_movement_input = function (arg_7_0)
 	local var_7_0 = false or arg_7_0:has_move_input()
 
 	var_7_0 = var_7_0 or arg_7_0:has_jump_input()
@@ -96,7 +96,7 @@ function EnemyCharacterState.has_movement_input(arg_7_0)
 	return var_7_0
 end
 
-function EnemyCharacterState.to_movement_state(arg_8_0)
+EnemyCharacterState.to_movement_state = function (arg_8_0)
 	local var_8_0 = arg_8_0._csm
 	local var_8_1 = arg_8_0._locomotion_extension
 
@@ -112,7 +112,7 @@ function EnemyCharacterState.to_movement_state(arg_8_0)
 	end
 end
 
-function EnemyCharacterState.update_movement(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+EnemyCharacterState.update_movement = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = arg_9_0._input_extension
 	local var_9_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_1)
 	local var_9_2 = CharacterStateHelper.has_move_input(var_9_0)
@@ -165,7 +165,7 @@ function EnemyCharacterState.update_movement(arg_9_0, arg_9_1, arg_9_2, arg_9_3,
 	arg_9_0.current_movement_speed_scale = var_9_3
 end
 
-function EnemyCharacterState.create_particles(arg_10_0)
+EnemyCharacterState.create_particles = function (arg_10_0)
 	if #arg_10_0._particle_ids == 0 then
 		local var_10_0, var_10_1 = arg_10_0._inventory_extension:get_all_weapon_unit()
 
@@ -179,14 +179,14 @@ function EnemyCharacterState.create_particles(arg_10_0)
 	end
 end
 
-function EnemyCharacterState._create_particle_for_weapon(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+EnemyCharacterState._create_particle_for_weapon = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_3 and Unit.node(arg_11_1, arg_11_3) or 0
 	local var_11_1 = ScriptWorld.create_particles_linked(arg_11_0._world, arg_11_2, arg_11_1, var_11_0, "destroy")
 
 	arg_11_0._particle_ids[#arg_11_0._particle_ids + 1] = var_11_1
 end
 
-function EnemyCharacterState.destroy_particles(arg_12_0)
+EnemyCharacterState.destroy_particles = function (arg_12_0)
 	local var_12_0 = arg_12_0._particle_ids
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -198,7 +198,7 @@ function EnemyCharacterState.destroy_particles(arg_12_0)
 	table.clear(var_12_0)
 end
 
-function EnemyCharacterState.check_enemies_in_range_vfx(arg_13_0, ...)
+EnemyCharacterState.check_enemies_in_range_vfx = function (arg_13_0, ...)
 	if EnemyCharacterStateHelper.get_enemies_in_line_of_sight(arg_13_0._unit, arg_13_0._first_person_unit, arg_13_0._physics_world, ...) then
 		arg_13_0:create_particles()
 	else
@@ -206,7 +206,7 @@ function EnemyCharacterState.check_enemies_in_range_vfx(arg_13_0, ...)
 	end
 end
 
-function EnemyCharacterState._update_taunt_dialogue(arg_14_0, arg_14_1)
+EnemyCharacterState._update_taunt_dialogue = function (arg_14_0, arg_14_1)
 	if arg_14_0._ghost_mode_extension:is_in_ghost_mode() then
 		return
 	end
@@ -269,6 +269,6 @@ function EnemyCharacterState._update_taunt_dialogue(arg_14_0, arg_14_1)
 	end
 end
 
-function EnemyCharacterState.debug_display_ratling_gunner_ammo(arg_15_0, arg_15_1, arg_15_2)
+EnemyCharacterState.debug_display_ratling_gunner_ammo = function (arg_15_0, arg_15_1, arg_15_2)
 	Managers.state.event:trigger("on_dark_pact_ammo_changed", arg_15_1, arg_15_2)
 end

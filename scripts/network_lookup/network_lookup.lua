@@ -2349,7 +2349,7 @@ local function var_0_56(arg_4_0, arg_4_1)
 
 	local var_4_0 = "[NetworkLookup.lua] Table " .. arg_4_1 .. " does not contain key: "
 	local var_4_1 = {
-		__index = function(arg_5_0, arg_5_1)
+		__index = function (arg_5_0, arg_5_1)
 			error(var_4_0 .. tostring(arg_5_1))
 		end
 	}
@@ -2369,7 +2369,7 @@ NetworkLookup.dialogue_profiles = {
 	"npc_empire_soldier"
 }
 
-table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function(arg_6_0, arg_6_1)
+table.append_unique(NetworkLookup.dialogue_profiles, table.values(table.select_map(SPProfiles, function (arg_6_0, arg_6_1)
 	return arg_6_1.character_vo
 end)))
 

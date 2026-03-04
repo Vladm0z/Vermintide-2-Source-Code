@@ -6,7 +6,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return arg_1_1 / ActionUtils.get_action_time_scale(arg_1_2, arg_1_0)
 end
 
-function ActionMeleeStart.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionMeleeStart.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 	ActionMeleeStart.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
 	arg_2_0._owner_unit = arg_2_4
@@ -15,7 +15,7 @@ function ActionMeleeStart.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 	arg_2_0.spread_extension = ScriptUnit.has_extension(arg_2_7, "spread_system")
 end
 
-function ActionMeleeStart.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionMeleeStart.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ActionMeleeStart.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	Unit.flow_event(arg_3_0.first_person_unit, "sfx_swing_charge")
 	arg_3_0:_play_additional_animation(arg_3_1.custom_start_anim_data)
@@ -32,7 +32,7 @@ function ActionMeleeStart.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, a
 	end
 end
 
-function ActionMeleeStart.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ActionMeleeStart.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.action_start_t
@@ -72,7 +72,7 @@ function ActionMeleeStart.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, ar
 	end
 end
 
-function ActionMeleeStart.finish(arg_5_0, arg_5_1, arg_5_2)
+ActionMeleeStart.finish = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = true
 	local var_5_1 = true
 

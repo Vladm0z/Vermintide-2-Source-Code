@@ -14,28 +14,28 @@ local var_0_2 = require("PlayFab.PlayFabClientApi")
 var_0_2.settings.titleId = GameSettingsDevelopment.backend_settings.title_id
 ScriptBackendPlayFab = class(ScriptBackendPlayFab)
 
-function ScriptBackendPlayFab.init(arg_1_0)
+ScriptBackendPlayFab.init = function (arg_1_0)
 	if HAS_STEAM then
 		arg_1_0._steam_ticket_id = Steam.retrieve_auth_session_ticket("AzurePlayFab")
 	elseif GameSettingsDevelopment.use_offline_backend then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_1_0._metadata = Managers.backend:get_metadata()
 end
 
-function ScriptBackendPlayFab.update_state(arg_2_0)
+ScriptBackendPlayFab.update_state = function (arg_2_0)
 	return
 end
 
-function ScriptBackendPlayFab.update_signin(arg_3_0)
+ScriptBackendPlayFab.update_signin = function (arg_3_0)
 	if arg_3_0._steam_ticket_id then
 		local var_3_0
 
 		if HAS_STEAM then
 			var_3_0 = Steam.poll_auth_session_ticket(arg_3_0._steam_ticket_id)
 		elseif GameSettingsDevelopment.use_offline_backend then
-			-- block empty
+			-- Nothing
 		end
 
 		if var_3_0 then
@@ -102,7 +102,7 @@ function ScriptBackendPlayFab.update_signin(arg_3_0)
 	return nil
 end
 
-function ScriptBackendPlayFab.login_request_cb(arg_4_0, arg_4_1)
+ScriptBackendPlayFab.login_request_cb = function (arg_4_0, arg_4_1)
 	arg_4_0._signin_result = arg_4_1
 
 	local var_4_0 = arg_4_1.InfoResultPayload.UserReadOnlyData
@@ -123,7 +123,7 @@ function ScriptBackendPlayFab.login_request_cb(arg_4_0, arg_4_1)
 	arg_4_0._signed_in = true
 end
 
-function ScriptBackendPlayFab._update_telemetry_settings(arg_5_0)
+ScriptBackendPlayFab._update_telemetry_settings = function (arg_5_0)
 	local var_5_0 = arg_5_0._signin_result.InfoResultPayload.TitleData.telemetry_settings_override
 
 	if var_5_0 then
@@ -132,7 +132,7 @@ function ScriptBackendPlayFab._update_telemetry_settings(arg_5_0)
 	end
 end
 
-function ScriptBackendPlayFab._validate_version(arg_6_0)
+ScriptBackendPlayFab._validate_version = function (arg_6_0)
 	local var_6_0 = {
 		FunctionName = "validateVersion",
 		FunctionParameter = {
@@ -147,7 +147,7 @@ function ScriptBackendPlayFab._validate_version(arg_6_0)
 	arg_6_0._validating_version = true
 end
 
-function ScriptBackendPlayFab._validate_version_cb(arg_7_0, arg_7_1)
+ScriptBackendPlayFab._validate_version_cb = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.FunctionResult and arg_7_1.FunctionResult.valid_version
 
 	arg_7_0._validating_version = nil
@@ -164,7 +164,7 @@ function ScriptBackendPlayFab._validate_version_cb(arg_7_0, arg_7_1)
 	end
 end
 
-function ScriptBackendPlayFab._set_up_initial_account(arg_8_0)
+ScriptBackendPlayFab._set_up_initial_account = function (arg_8_0)
 	local var_8_0 = {
 		FunctionName = "initialAccountSetUp",
 		FunctionParameter = {
@@ -178,7 +178,7 @@ function ScriptBackendPlayFab._set_up_initial_account(arg_8_0)
 	arg_8_0._setting_up_initial_account = true
 end
 
-function ScriptBackendPlayFab.initial_setup_request_cb(arg_9_0, arg_9_1)
+ScriptBackendPlayFab.initial_setup_request_cb = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.FunctionResult.read_only_data
 
 	if var_9_0 then
@@ -195,7 +195,7 @@ function ScriptBackendPlayFab.initial_setup_request_cb(arg_9_0, arg_9_1)
 	arg_9_0._setup_initial_account_needed = nil
 end
 
-function ScriptBackendPlayFab._set_up_initial_inventory(arg_10_0, arg_10_1)
+ScriptBackendPlayFab._set_up_initial_inventory = function (arg_10_0, arg_10_1)
 	local var_10_0 = {
 		FunctionName = "initialInventorySetup",
 		FunctionParameter = {
@@ -210,7 +210,7 @@ function ScriptBackendPlayFab._set_up_initial_inventory(arg_10_0, arg_10_1)
 	arg_10_0._setting_up_initial_inventory = true
 end
 
-function ScriptBackendPlayFab.initial_inventory_setup_request_cb(arg_11_0, arg_11_1)
+ScriptBackendPlayFab.initial_inventory_setup_request_cb = function (arg_11_0, arg_11_1)
 	if not arg_11_1.FunctionResult.done then
 		local var_11_0 = arg_11_1.FunctionResult.new_start_index
 
@@ -221,7 +221,7 @@ function ScriptBackendPlayFab.initial_inventory_setup_request_cb(arg_11_0, arg_1
 	end
 end
 
-function ScriptBackendPlayFab.authenticated(arg_12_0)
+ScriptBackendPlayFab.authenticated = function (arg_12_0)
 	if arg_12_0._validating_version or arg_12_0._setting_up_initial_account or arg_12_0._setting_up_initial_inventory then
 		return false
 	end
@@ -229,10 +229,10 @@ function ScriptBackendPlayFab.authenticated(arg_12_0)
 	return arg_12_0._signed_in
 end
 
-function ScriptBackendPlayFab.get_signin_result(arg_13_0)
+ScriptBackendPlayFab.get_signin_result = function (arg_13_0)
 	return arg_13_0._signin_result
 end
 
-function ScriptBackendPlayFab.destroy(arg_14_0)
+ScriptBackendPlayFab.destroy = function (arg_14_0)
 	return
 end

@@ -82,7 +82,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
 			end
 		},
@@ -137,7 +137,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("skaven_slave") < 5 and var_0_1("skaven_clan_rat") < 5
 			end
 		},

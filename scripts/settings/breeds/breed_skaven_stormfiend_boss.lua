@@ -277,7 +277,7 @@ local var_0_1 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	before_stagger_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	before_stagger_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		QuestSettings.handle_charge_stagger(arg_1_0, arg_1_1, arg_1_2)
 	end
 }

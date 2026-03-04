@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_morris_sig_volcano.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_morris_volcano_face",

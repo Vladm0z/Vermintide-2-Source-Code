@@ -2,7 +2,7 @@
 
 PackmasterStateEquipping = class(PackmasterStateEquipping, EnemyCharacterState)
 
-function PackmasterStateEquipping.init(arg_1_0, arg_1_1)
+PackmasterStateEquipping.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_equipping")
 
 	arg_1_0.current_movement_speed_scale = 0
@@ -11,7 +11,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function PackmasterStateEquipping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateEquipping.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	arg_2_0._unit = arg_2_1
@@ -33,7 +33,7 @@ function PackmasterStateEquipping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	arg_2_0._finish_time = arg_2_5 + var_2_0.equip_hook_exit_state_time
 end
 
-function PackmasterStateEquipping.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PackmasterStateEquipping.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0._csm
 	local var_3_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_3_1)
 	local var_3_2 = arg_3_0._input_extension
@@ -103,7 +103,7 @@ function PackmasterStateEquipping.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	CharacterStateHelper.look(var_3_2, arg_3_0._player.viewport_name, var_3_4, var_3_3, var_3_6, var_3_12)
 end
 
-function PackmasterStateEquipping._finish(arg_4_0, arg_4_1)
+PackmasterStateEquipping._finish = function (arg_4_0, arg_4_1)
 	if not arg_4_0._locomotion_extension:is_on_ground() then
 		return
 	end
@@ -116,7 +116,7 @@ function PackmasterStateEquipping._finish(arg_4_0, arg_4_1)
 	arg_4_0:_play_vo()
 end
 
-function PackmasterStateEquipping.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+PackmasterStateEquipping.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	if not Managers.state.network:in_game_session() then
 		return
 	end
@@ -130,6 +130,6 @@ function PackmasterStateEquipping.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, ar
 	arg_5_0._finish_time = nil
 end
 
-function PackmasterStateEquipping._play_vo(arg_6_0, arg_6_1, arg_6_2)
+PackmasterStateEquipping._play_vo = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._unit
 end

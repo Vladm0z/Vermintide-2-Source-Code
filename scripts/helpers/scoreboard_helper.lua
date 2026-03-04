@@ -43,7 +43,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_bestigor"
 			}
 		},
-		sort_function = function(arg_1_0, arg_1_1)
+		sort_function = function (arg_1_0, arg_1_1)
 			return arg_1_0.score > arg_1_1.score
 		end
 	},
@@ -84,7 +84,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_standard_bearer"
 			}
 		},
-		sort_function = function(arg_2_0, arg_2_1)
+		sort_function = function (arg_2_0, arg_2_1)
 			return arg_2_0.score > arg_2_1.score
 		end
 	},
@@ -92,7 +92,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "kills_total",
 		stat_type = "kills_total",
 		display_text = "scoreboard_topic_kills_total",
-		sort_function = function(arg_3_0, arg_3_1)
+		sort_function = function (arg_3_0, arg_3_1)
 			return arg_3_0.score > arg_3_1.score
 		end
 	},
@@ -100,7 +100,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "kills_melee",
 		stat_type = "kills_melee",
 		display_text = "scoreboard_topic_kills_melee",
-		sort_function = function(arg_4_0, arg_4_1)
+		sort_function = function (arg_4_0, arg_4_1)
 			return arg_4_0.score > arg_4_1.score
 		end
 	},
@@ -108,7 +108,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "kills_ranged",
 		stat_type = "kills_ranged",
 		display_text = "scoreboard_topic_kills_ranged",
-		sort_function = function(arg_5_0, arg_5_1)
+		sort_function = function (arg_5_0, arg_5_1)
 			return arg_5_0.score > arg_5_1.score
 		end
 	},
@@ -116,7 +116,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "damage_taken",
 		stat_type = "damage_taken",
 		display_text = "scoreboard_topic_damage_taken",
-		sort_function = function(arg_6_0, arg_6_1)
+		sort_function = function (arg_6_0, arg_6_1)
 			return arg_6_0.score < arg_6_1.score
 		end
 	},
@@ -124,7 +124,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "damage_dealt",
 		stat_type = "damage_dealt",
 		display_text = "scoreboard_topic_damage_dealt",
-		sort_function = function(arg_7_0, arg_7_1)
+		sort_function = function (arg_7_0, arg_7_1)
 			return arg_7_0.score > arg_7_1.score
 		end
 	},
@@ -157,7 +157,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_minotaur"
 			}
 		},
-		sort_function = function(arg_8_0, arg_8_1)
+		sort_function = function (arg_8_0, arg_8_1)
 			return arg_8_0.score > arg_8_1.score
 		end
 	},
@@ -165,7 +165,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "headshots",
 		stat_type = "headshots",
 		display_text = "scoreboard_topic_headshots",
-		sort_function = function(arg_9_0, arg_9_1)
+		sort_function = function (arg_9_0, arg_9_1)
 			return arg_9_0.score > arg_9_1.score
 		end
 	},
@@ -173,7 +173,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "saves",
 		stat_type = "saves",
 		display_text = "scoreboard_topic_saves",
-		sort_function = function(arg_10_0, arg_10_1)
+		sort_function = function (arg_10_0, arg_10_1)
 			return arg_10_0.score > arg_10_1.score
 		end
 	},
@@ -181,7 +181,7 @@ ScoreboardHelper.scoreboard_topic_stats = {
 		name = "revives",
 		stat_type = "revives",
 		display_text = "scoreboard_topic_revives",
-		sort_function = function(arg_11_0, arg_11_1)
+		sort_function = function (arg_11_0, arg_11_1)
 			return arg_11_0.score > arg_11_1.score
 		end
 	}
@@ -282,7 +282,7 @@ local function var_0_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	}
 end
 
-function ScoreboardHelper.get_weave_stats(arg_14_0, arg_14_1)
+ScoreboardHelper.get_weave_stats = function (arg_14_0, arg_14_1)
 	assert(arg_14_0, "Missing statistics_database reference.")
 	assert(arg_14_1, "Missing profile_synchronizer reference.")
 
@@ -336,7 +336,7 @@ function ScoreboardHelper.get_weave_stats(arg_14_0, arg_14_1)
 	return var_14_1
 end
 
-function ScoreboardHelper.get_grouped_topic_statistics(arg_15_0, arg_15_1, arg_15_2)
+ScoreboardHelper.get_grouped_topic_statistics = function (arg_15_0, arg_15_1, arg_15_2)
 	assert(arg_15_0, "Missing statistics_database reference.")
 	assert(arg_15_1, "Missing profile_synchronizer reference.")
 
@@ -424,7 +424,7 @@ end
 local var_0_4 = {}
 local var_0_5 = {}
 
-function ScoreboardHelper.get_current_players(arg_16_0)
+ScoreboardHelper.get_current_players = function (arg_16_0)
 	local var_16_0 = Managers.mechanism:max_instance_members()
 	local var_16_1 = Managers.player:human_and_bot_players()
 
@@ -476,7 +476,7 @@ function ScoreboardHelper.get_current_players(arg_16_0)
 	end
 end
 
-function ScoreboardHelper.debug_get_grouped_topic_statistics()
+ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 	local var_17_0 = {}
 
 	for iter_17_0 = 1, 4 do
@@ -547,7 +547,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_warpfire_thrower"
 			}
 		},
-		sort_function = function(arg_18_0, arg_18_1)
+		sort_function = function (arg_18_0, arg_18_1)
 			return arg_18_0.score > arg_18_1.score
 		end
 	},
@@ -716,7 +716,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"hero_we_waywatcher"
 			}
 		},
-		sort_function = function(arg_19_0, arg_19_1)
+		sort_function = function (arg_19_0, arg_19_1)
 			return arg_19_0.score > arg_19_1.score
 		end
 	},
@@ -805,7 +805,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"hero_we_waywatcher"
 			}
 		},
-		sort_function = function(arg_20_0, arg_20_1)
+		sort_function = function (arg_20_0, arg_20_1)
 			return arg_20_0.score > arg_20_1.score
 		end
 	},
@@ -813,7 +813,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 		name = "vs_damage_dealt_to_pactsworn",
 		stat_type = "vs_damage_dealt_to_pactsworn",
 		display_text = "scoreboard_topic_damage_dealt_pactsworn",
-		sort_function = function(arg_21_0, arg_21_1)
+		sort_function = function (arg_21_0, arg_21_1)
 			return arg_21_0.score > arg_21_1.score
 		end
 	},
@@ -821,7 +821,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 		name = "saves",
 		stat_type = "saves",
 		display_text = "scoreboard_topic_saves",
-		sort_function = function(arg_22_0, arg_22_1)
+		sort_function = function (arg_22_0, arg_22_1)
 			return arg_22_0.score > arg_22_1.score
 		end
 	},
@@ -829,7 +829,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 		name = "revives",
 		stat_type = "revives",
 		display_text = "scoreboard_topic_revives",
-		sort_function = function(arg_23_0, arg_23_1)
+		sort_function = function (arg_23_0, arg_23_1)
 			return arg_23_0.score > arg_23_1.score
 		end
 	},
@@ -847,7 +847,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_packmaster"
 			}
 		},
-		sort_function = function(arg_24_0, arg_24_1)
+		sort_function = function (arg_24_0, arg_24_1)
 			return arg_24_0.score > arg_24_1.score
 		end
 	},
@@ -861,7 +861,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_gutter_runner"
 			}
 		},
-		sort_function = function(arg_25_0, arg_25_1)
+		sort_function = function (arg_25_0, arg_25_1)
 			return arg_25_0.score > arg_25_1.score
 		end
 	},
@@ -875,7 +875,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_packmaster"
 			}
 		},
-		sort_function = function(arg_26_0, arg_26_1)
+		sort_function = function (arg_26_0, arg_26_1)
 			return arg_26_0.score > arg_26_1.score
 		end
 	},
@@ -883,7 +883,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 		name = "kills_total",
 		stat_type = "kills_total",
 		display_text = "scoreboard_topic_kills_total",
-		sort_function = function(arg_27_0, arg_27_1)
+		sort_function = function (arg_27_0, arg_27_1)
 			return arg_27_0.score > arg_27_1.score
 		end
 	},
@@ -900,7 +900,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_rat_ogre"
 			}
 		},
-		sort_function = function(arg_28_0, arg_28_1)
+		sort_function = function (arg_28_0, arg_28_1)
 			return arg_28_0.score > arg_28_1.score
 		end
 	},
@@ -912,7 +912,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_chaos_troll"
 			}
 		},
-		sort_function = function(arg_29_0, arg_29_1)
+		sort_function = function (arg_29_0, arg_29_1)
 			return arg_29_0.score > arg_29_1.score
 		end
 	},
@@ -924,7 +924,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_rat_ogre"
 			}
 		},
-		sort_function = function(arg_30_0, arg_30_1)
+		sort_function = function (arg_30_0, arg_30_1)
 			return arg_30_0.score > arg_30_1.score
 		end
 	},
@@ -937,7 +937,7 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_chaos_troll"
 			}
 		},
-		sort_function = function(arg_31_0, arg_31_1)
+		sort_function = function (arg_31_0, arg_31_1)
 			return arg_31_0.score > arg_31_1.score
 		end
 	}
@@ -962,7 +962,7 @@ ScoreboardHelper.scoreboard_grouped_topic_stats_versus = {
 	}
 }
 
-function ScoreboardHelper.get_versus_stats(arg_32_0, arg_32_1)
+ScoreboardHelper.get_versus_stats = function (arg_32_0, arg_32_1)
 	assert(arg_32_0, "Missing statistics_database reference.")
 
 	local var_32_0 = Managers.player:human_players()

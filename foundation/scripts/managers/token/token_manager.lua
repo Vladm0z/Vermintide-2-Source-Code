@@ -2,11 +2,11 @@
 
 TokenManager = class(TokenManager)
 
-function TokenManager.init(arg_1_0)
+TokenManager.init = function (arg_1_0)
 	arg_1_0._tokens = {}
 end
 
-function TokenManager.register_token(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+TokenManager.register_token = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._tokens[#arg_2_0._tokens + 1] = {
 		token = arg_2_1,
 		callback = arg_2_2,
@@ -14,7 +14,7 @@ function TokenManager.register_token(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-function TokenManager.update(arg_3_0, arg_3_1, arg_3_2)
+TokenManager.update = function (arg_3_0, arg_3_1, arg_3_2)
 	for iter_3_0, iter_3_1 in pairs(arg_3_0._tokens) do
 		local var_3_0 = iter_3_1.token
 
@@ -36,7 +36,7 @@ function TokenManager.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function TokenManager.destroy(arg_4_0)
+TokenManager.destroy = function (arg_4_0)
 	for iter_4_0, iter_4_1 in pairs(arg_4_0._tokens) do
 		iter_4_1.token:close()
 

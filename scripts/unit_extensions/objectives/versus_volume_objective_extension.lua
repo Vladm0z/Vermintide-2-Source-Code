@@ -10,14 +10,14 @@ local var_0_1 = {
 	any_alive = "any_alive_human_players_inside"
 }
 
-function VersusVolumeObjectiveExtension.init(arg_1_0, ...)
+VersusVolumeObjectiveExtension.init = function (arg_1_0, ...)
 	VersusVolumeObjectiveExtension.super.init(arg_1_0, ...)
 
 	arg_1_0._volume_system = Managers.state.entity:system("volume_system")
 	arg_1_0._percentage = 0
 end
 
-function VersusVolumeObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
+VersusVolumeObjectiveExtension._set_objective_data = function (arg_2_0, arg_2_1)
 	local var_2_0 = GameModeSettings.versus.objectives.volume
 
 	arg_2_0._score_for_completion = arg_2_1.score_for_completion or var_2_0.score_for_completion
@@ -36,7 +36,7 @@ function VersusVolumeObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
 	arg_2_0._condition_func = arg_2_0._volume_system[var_2_1]
 end
 
-function VersusVolumeObjectiveExtension._activate(arg_3_0)
+VersusVolumeObjectiveExtension._activate = function (arg_3_0)
 	if arg_3_0._is_server then
 		arg_3_0._volume_system:register_volume(arg_3_0._volume_name, "trigger_volume", {
 			sub_type = "players_inside"
@@ -44,11 +44,11 @@ function VersusVolumeObjectiveExtension._activate(arg_3_0)
 	end
 end
 
-function VersusVolumeObjectiveExtension._deactivate(arg_4_0)
+VersusVolumeObjectiveExtension._deactivate = function (arg_4_0)
 	return
 end
 
-function VersusVolumeObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+VersusVolumeObjectiveExtension._server_update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._condition_func(arg_5_0._volume_system, arg_5_0._volume_name)
 
 	if arg_5_0._percentage < 1 and var_5_0 then
@@ -58,19 +58,19 @@ function VersusVolumeObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2
 	end
 end
 
-function VersusVolumeObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+VersusVolumeObjectiveExtension._client_update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-function VersusVolumeObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+VersusVolumeObjectiveExtension.update_testify = function (arg_7_0, arg_7_1, arg_7_2)
 	Testify:poll_requests_through_handler(var_0_0, arg_7_0)
 end
 
-function VersusVolumeObjectiveExtension.get_percentage_done(arg_8_0)
+VersusVolumeObjectiveExtension.get_percentage_done = function (arg_8_0)
 	return arg_8_0._percentage
 end
 
-function VersusVolumeObjectiveExtension._get_num_players_inside(arg_9_0)
+VersusVolumeObjectiveExtension._get_num_players_inside = function (arg_9_0)
 	local var_9_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 	local var_9_1 = 0
 
@@ -97,7 +97,7 @@ function VersusVolumeObjectiveExtension._get_num_players_inside(arg_9_0)
 	return var_9_1
 end
 
-function VersusVolumeObjectiveExtension.get_score_for_completion(arg_10_0)
+VersusVolumeObjectiveExtension.get_score_for_completion = function (arg_10_0)
 	if not arg_10_0:is_done() then
 		return 0
 	end
@@ -109,7 +109,7 @@ function VersusVolumeObjectiveExtension.get_score_for_completion(arg_10_0)
 	return arg_10_0._score_for_completion + arg_10_0:_get_num_players_inside() * arg_10_0._score_for_each_player_inside
 end
 
-function VersusVolumeObjectiveExtension.get_time_for_completion(arg_11_0)
+VersusVolumeObjectiveExtension.get_time_for_completion = function (arg_11_0)
 	if not arg_11_0:is_done() then
 		return 0
 	end

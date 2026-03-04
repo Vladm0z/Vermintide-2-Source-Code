@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMountUnitAction = class(BTMountUnitAction, BTNode)
 
-function BTMountUnitAction.init(arg_1_0, ...)
+BTMountUnitAction.init = function (arg_1_0, ...)
 	BTMountUnitAction.super.init(arg_1_0, ...)
 end
 
 BTMountUnitAction.name = "BTMountUnitAction"
 
-function BTMountUnitAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTMountUnitAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.state.network
 	local var_2_1 = arg_2_0._tree_node.action_data
 
@@ -40,7 +40,7 @@ function BTMountUnitAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTMountUnitAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMountUnitAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	arg_3_2.mounting_finished = nil
@@ -56,7 +56,7 @@ end
 
 local var_0_0 = Unit.alive
 
-function BTMountUnitAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMountUnitAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.mounting_finished
 	local var_4_1 = arg_4_2.action
 

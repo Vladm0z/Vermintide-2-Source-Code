@@ -6,7 +6,7 @@ local var_0_2 = var_0_0.create_ability_charges_widget
 
 GamePadAbilityUI = class(GamePadAbilityUI)
 
-function GamePadAbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
+GamePadAbilityUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -23,7 +23,7 @@ function GamePadAbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "input_changed", "event_input_changed")
 end
 
-function GamePadAbilityUI._create_ui_elements(arg_2_0)
+GamePadAbilityUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
@@ -31,7 +31,7 @@ function GamePadAbilityUI._create_ui_elements(arg_2_0)
 	arg_2_0:event_input_changed()
 end
 
-function GamePadAbilityUI._setup_activated_ability(arg_3_0)
+GamePadAbilityUI._setup_activated_ability = function (arg_3_0)
 	local var_3_0 = arg_3_0._player.player_unit
 
 	if not var_3_0 then
@@ -50,7 +50,7 @@ function GamePadAbilityUI._setup_activated_ability(arg_3_0)
 	arg_3_0._initialized = true
 end
 
-function GamePadAbilityUI._sync_ability_cooldown(arg_4_0)
+GamePadAbilityUI._sync_ability_cooldown = function (arg_4_0)
 	local var_4_0 = arg_4_0._player.player_unit
 
 	if not var_4_0 then
@@ -78,7 +78,7 @@ function GamePadAbilityUI._sync_ability_cooldown(arg_4_0)
 	end
 end
 
-function GamePadAbilityUI._update_thornsister_passive(arg_5_0)
+GamePadAbilityUI._update_thornsister_passive = function (arg_5_0)
 	local var_5_0 = arg_5_0._player.player_unit
 
 	if not var_5_0 then
@@ -107,7 +107,7 @@ function GamePadAbilityUI._update_thornsister_passive(arg_5_0)
 	end
 end
 
-function GamePadAbilityUI._set_ability_activated(arg_6_0, arg_6_1)
+GamePadAbilityUI._set_ability_activated = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._widgets_by_name.ability
 	local var_6_1 = var_6_0.content
 	local var_6_2 = var_6_0.style
@@ -116,7 +116,7 @@ function GamePadAbilityUI._set_ability_activated(arg_6_0, arg_6_1)
 	arg_6_0._ability_activated = arg_6_1
 end
 
-function GamePadAbilityUI._set_ability_cooldown_state(arg_7_0, arg_7_1, arg_7_2)
+GamePadAbilityUI._set_ability_cooldown_state = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._current_cooldown_fraction = arg_7_1
 
 	local var_7_0 = arg_7_1 ~= 0
@@ -137,19 +137,19 @@ function GamePadAbilityUI._set_ability_cooldown_state(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:set_dirty()
 end
 
-function GamePadAbilityUI.destroy(arg_8_0)
+GamePadAbilityUI.destroy = function (arg_8_0)
 	Managers.state.event:unregister("input_changed", arg_8_0)
 	arg_8_0:set_visible(false)
 	print("[GamePadAbilityUI] - Destroy")
 end
 
-function GamePadAbilityUI.set_visible(arg_9_0, arg_9_1)
+GamePadAbilityUI.set_visible = function (arg_9_0, arg_9_1)
 	arg_9_0._is_visible = arg_9_1
 
 	arg_9_0:_set_elements_visible(arg_9_1)
 end
 
-function GamePadAbilityUI._set_elements_visible(arg_10_0, arg_10_1)
+GamePadAbilityUI._set_elements_visible = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._ui_renderer
 
 	for iter_10_0, iter_10_1 in ipairs(arg_10_0._widgets) do
@@ -161,7 +161,7 @@ function GamePadAbilityUI._set_elements_visible(arg_10_0, arg_10_1)
 	arg_10_0:set_dirty()
 end
 
-function GamePadAbilityUI._handle_gamepad_activity(arg_11_0)
+GamePadAbilityUI._handle_gamepad_activity = function (arg_11_0)
 	local var_11_0 = Managers.input:is_device_active("gamepad")
 	local var_11_1 = Managers.input:get_most_recent_device()
 	local var_11_2 = arg_11_0.gamepad_active_last_frame == nil or var_11_0 and var_11_1 ~= arg_11_0._most_recent_device
@@ -181,7 +181,7 @@ function GamePadAbilityUI._handle_gamepad_activity(arg_11_0)
 	arg_11_0._most_recent_device = var_11_1
 end
 
-function GamePadAbilityUI._handle_gamepad(arg_12_0)
+GamePadAbilityUI._handle_gamepad = function (arg_12_0)
 	local var_12_0 = arg_12_0:_handle_active_ability()
 
 	if (not (Managers.input:is_device_active("gamepad") or IS_XB1) or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" or var_12_0 then
@@ -200,7 +200,7 @@ function GamePadAbilityUI._handle_gamepad(arg_12_0)
 	end
 end
 
-function GamePadAbilityUI.update(arg_13_0, arg_13_1, arg_13_2)
+GamePadAbilityUI.update = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0:_handle_gamepad() then
 		return
 	end
@@ -235,7 +235,7 @@ function GamePadAbilityUI.update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function GamePadAbilityUI._handle_active_ability(arg_14_0)
+GamePadAbilityUI._handle_active_ability = function (arg_14_0)
 	local var_14_0 = Managers.player:local_player()
 
 	if not var_14_0 then
@@ -253,7 +253,7 @@ function GamePadAbilityUI._handle_active_ability(arg_14_0)
 	return var_14_2 and var_14_2:get_wielded_slot_name() == "slot_career_skill_weapon"
 end
 
-function GamePadAbilityUI._handle_resolution_modified(arg_15_0)
+GamePadAbilityUI._handle_resolution_modified = function (arg_15_0)
 	if RESOLUTION_LOOKUP.modified then
 		UIUtils.mark_dirty(arg_15_0._widgets)
 
@@ -265,7 +265,7 @@ function GamePadAbilityUI._handle_resolution_modified(arg_15_0)
 	end
 end
 
-function GamePadAbilityUI.draw(arg_16_0, arg_16_1)
+GamePadAbilityUI.draw = function (arg_16_0, arg_16_1)
 	if not arg_16_0._is_visible then
 		return
 	end
@@ -293,15 +293,15 @@ function GamePadAbilityUI.draw(arg_16_0, arg_16_1)
 	arg_16_0._dirty = false
 end
 
-function GamePadAbilityUI.set_dirty(arg_17_0)
+GamePadAbilityUI.set_dirty = function (arg_17_0)
 	arg_17_0._dirty = true
 end
 
-function GamePadAbilityUI._set_widget_dirty(arg_18_0, arg_18_1)
+GamePadAbilityUI._set_widget_dirty = function (arg_18_0, arg_18_1)
 	arg_18_1.element.dirty = true
 end
 
-function GamePadAbilityUI.event_input_changed(arg_19_0)
+GamePadAbilityUI.event_input_changed = function (arg_19_0)
 	local var_19_0 = #InventorySettings.slots
 	local var_19_1 = arg_19_0._input_manager:is_device_active("gamepad") and "ability" or "action_career"
 	local var_19_2 = arg_19_0._widgets_by_name.ability
@@ -311,7 +311,7 @@ function GamePadAbilityUI.event_input_changed(arg_19_0)
 	arg_19_0:set_dirty()
 end
 
-function GamePadAbilityUI._set_input(arg_20_0, arg_20_1, arg_20_2)
+GamePadAbilityUI._set_input = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0, var_20_1, var_20_2 = arg_20_0:_get_input_texture_data(arg_20_2)
 
 	if not var_20_1 or not UTF8Utils.string_length(var_20_1) then
@@ -343,7 +343,7 @@ function GamePadAbilityUI._set_input(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function GamePadAbilityUI._get_input_texture_data(arg_21_0, arg_21_1)
+GamePadAbilityUI._get_input_texture_data = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._input_manager
 	local var_21_1 = var_21_0:get_service("Player")
 	local var_21_2 = var_21_0:is_device_active("gamepad")
@@ -384,7 +384,7 @@ function GamePadAbilityUI._get_input_texture_data(arg_21_0, arg_21_1)
 	return nil, ""
 end
 
-function GamePadAbilityUI._update_ability_animations(arg_22_0, arg_22_1, arg_22_2)
+GamePadAbilityUI._update_ability_animations = function (arg_22_0, arg_22_1, arg_22_2)
 	if not arg_22_0._is_visible then
 		return false
 	end
@@ -401,7 +401,7 @@ function GamePadAbilityUI._update_ability_animations(arg_22_0, arg_22_1, arg_22_
 	return true
 end
 
-function GamePadAbilityUI.set_alpha(arg_23_0, arg_23_1)
+GamePadAbilityUI.set_alpha = function (arg_23_0, arg_23_1)
 	for iter_23_0, iter_23_1 in pairs(arg_23_0._widgets) do
 		arg_23_0:_set_widget_dirty(iter_23_1)
 	end
@@ -411,7 +411,7 @@ function GamePadAbilityUI.set_alpha(arg_23_0, arg_23_1)
 	arg_23_0:set_dirty()
 end
 
-function GamePadAbilityUI._update_muneric_ui_ability_cooldown(arg_24_0)
+GamePadAbilityUI._update_muneric_ui_ability_cooldown = function (arg_24_0)
 	local var_24_0 = Managers.player:local_player()
 
 	if not var_24_0 then
@@ -446,7 +446,7 @@ function GamePadAbilityUI._update_muneric_ui_ability_cooldown(arg_24_0)
 	arg_24_0:_set_widget_dirty(var_24_2)
 end
 
-function GamePadAbilityUI._update_ability_charges_widgets(arg_25_0, arg_25_1, arg_25_2)
+GamePadAbilityUI._update_ability_charges_widgets = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = false
 	local var_25_1 = arg_25_0._player.player_unit
 

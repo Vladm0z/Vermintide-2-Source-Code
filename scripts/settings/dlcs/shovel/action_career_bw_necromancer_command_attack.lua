@@ -10,7 +10,7 @@ local var_0_2 = {}
 local var_0_3 = {}
 local var_0_4 = {}
 
-function ActionCareerBWNecromancerCommandAttack.pre_calculate_target(arg_1_0)
+ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (arg_1_0)
 	local var_1_0 = ScriptUnit.extension(arg_1_0, "ai_commander_system")
 	local var_1_1 = ScriptUnit.extension(arg_1_0, "first_person_system")
 	local var_1_2 = var_1_0:get_controlled_units()
@@ -73,7 +73,7 @@ function ActionCareerBWNecromancerCommandAttack.pre_calculate_target(arg_1_0)
 	end
 end
 
-function ActionCareerBWNecromancerCommandAttack.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionCareerBWNecromancerCommandAttack.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 	ActionCareerBWNecromancerCommandAttack.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
 	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
@@ -84,7 +84,7 @@ function ActionCareerBWNecromancerCommandAttack.init(arg_2_0, arg_2_1, arg_2_2, 
 	arg_2_0._owner_unit = arg_2_4
 end
 
-function ActionCareerBWNecromancerCommandAttack.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	ActionCareerBWNecromancerCommandAttack.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	local var_3_0 = var_0_1[arg_3_0._owner_unit]
@@ -98,23 +98,23 @@ function ActionCareerBWNecromancerCommandAttack.client_owner_start_action(arg_3_
 	end
 end
 
-function ActionCareerBWNecromancerCommandAttack.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack.destroy(arg_5_0)
+ActionCareerBWNecromancerCommandAttack.destroy = function (arg_5_0)
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack._select_target(arg_6_0)
+ActionCareerBWNecromancerCommandAttack._select_target = function (arg_6_0)
 	return
 end
 
-function ActionCareerBWNecromancerCommandAttack._is_charge_off_cooldown(arg_7_0)
+ActionCareerBWNecromancerCommandAttack._is_charge_off_cooldown = function (arg_7_0)
 	return arg_7_0._buff_extension:get_buff_type("sienna_necromancer_6_3_available_charge")
 end
 
-function ActionCareerBWNecromancerCommandAttack._has_armored_pet(arg_8_0)
+ActionCareerBWNecromancerCommandAttack._has_armored_pet = function (arg_8_0)
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._commander_extension:get_controlled_units()) do
 		if Unit.get_data(iter_8_0, "breed").name == "pet_skeleton_armored" then
 			return true

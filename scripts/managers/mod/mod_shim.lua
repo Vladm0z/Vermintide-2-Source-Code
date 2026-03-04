@@ -7,7 +7,7 @@ ModShim.patches = {
 		mods = {
 			"HideBuffs"
 		},
-		func = function()
+		func = function ()
 			return RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
 		end
 	},
@@ -17,7 +17,7 @@ ModShim.patches = {
 			"item_filter",
 			"VMF"
 		},
-		func = function()
+		func = function ()
 			local var_2_0 = RESOLUTION_LOOKUP.res_w / 1920
 			local var_2_1 = math
 			local var_2_2, var_2_3 = var_2_1.frexp(var_2_0)
@@ -34,7 +34,7 @@ ModShim.patches = {
 		mods = {
 			"loadout_manager_vt2"
 		},
-		func = function()
+		func = function ()
 			return 1920
 		end
 	},
@@ -43,7 +43,7 @@ ModShim.patches = {
 		mods = {
 			"loadout_manager_vt2"
 		},
-		func = function()
+		func = function ()
 			return 1080
 		end
 	},
@@ -59,7 +59,7 @@ ModShim.patches = {
 		mods = {
 			"VMF"
 		},
-		func = function(arg_5_0)
+		func = function (arg_5_0)
 			return arg_5_0:get_active_popup("profile_picker")
 		end
 	},
@@ -68,14 +68,14 @@ ModShim.patches = {
 		mods = {
 			"ui_improvements"
 		},
-		func = function(arg_6_0, arg_6_1, arg_6_2)
+		func = function (arg_6_0, arg_6_1, arg_6_2)
 			return UIUtils.is_button_hover_enter(arg_6_1, arg_6_2)
 		end
 	}
 }
 ModShim.error_handling = {
 	error_state = {},
-	state_bound_log = function(arg_7_0, arg_7_1, arg_7_2, ...)
+	state_bound_log = function (arg_7_0, arg_7_1, arg_7_2, ...)
 		local var_7_0 = ModShim.error_handling.error_state[arg_7_1] or {
 			printed = {}
 		}
@@ -92,7 +92,7 @@ ModShim.error_handling = {
 
 		ModShim.error_handling.log(arg_7_0, arg_7_2, ...)
 	end,
-	log = function(arg_8_0, arg_8_1, ...)
+	log = function (arg_8_0, arg_8_1, ...)
 		arg_8_0:error(arg_8_1, ...)
 	end
 }
@@ -105,7 +105,7 @@ ModShim.wedges = {
 		override_hooks = {
 			{
 				name = "BackendUtils.get_loadout_item",
-				func = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, ...)
+				func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, ...)
 					local var_9_0 = arg_9_1(arg_9_3, ...)
 					local var_9_1 = Managers.mechanism:current_mechanism_name()
 
@@ -130,7 +130,7 @@ ModShim.wedges = {
 			},
 			{
 				name = "BackendInterfaceTalentsPlayfab:get_talents",
-				func = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ...)
+				func = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, ...)
 					local var_10_0 = arg_10_1(arg_10_3, ...)
 					local var_10_1 = Managers.mechanism:current_mechanism_name()
 
@@ -154,11 +154,11 @@ ModShim.wedges = {
 				end
 			}
 		},
-		initializer = function(arg_11_0)
+		initializer = function (arg_11_0)
 			local var_11_0 = arg_11_0.restore_loadout
 
 			if var_11_0 then
-				function arg_11_0.restore_loadout(...)
+				arg_11_0.restore_loadout = function (...)
 					local var_12_0 = Managers.mechanism:current_mechanism_name()
 
 					if var_12_0 == "versus" and not global_is_inside_inn then
@@ -186,7 +186,7 @@ ModShim.wedges = {
 		override_hooks = {
 			{
 				name = "UnitFrameUI.draw",
-				func = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, ...)
+				func = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, ...)
 					local var_13_0 = Managers.player:local_player()
 					local var_13_1 = var_13_0 and var_13_0:get_party()
 
@@ -199,7 +199,7 @@ ModShim.wedges = {
 			},
 			{
 				name = "OverchargeBarUI._update_overcharge",
-				func = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, ...)
+				func = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, ...)
 					local var_14_0 = Managers.player:local_player()
 					local var_14_1 = var_14_0 and var_14_0:get_party()
 
@@ -220,7 +220,7 @@ ModShim.wedges = {
 		new_hooks = {
 			{
 				name = "MoodHandler.set_mood",
-				func = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, ...)
+				func = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, ...)
 					if not arg_15_0.SETTING_NAMES then
 						return arg_15_2(arg_15_3, arg_15_4, ...)
 					end
@@ -247,7 +247,7 @@ ModShim.wedges = {
 		override_hooks = {
 			{
 				name = "BuffFunctionTemplates.functions.apply_huntsman_activated_ability",
-				func = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ...)
+				func = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, ...)
 					if arg_16_0:get(arg_16_0.SETTING_NAMES.HUNTSMAN_VISUAL) then
 						local var_16_0 = Unit.flow_event
 						local var_16_1 = PlayerUnitFirstPerson.play_remote_hud_sound_event
@@ -297,7 +297,7 @@ local function var_0_1(arg_18_0)
 	end
 end
 
-function ModShim.init(arg_19_0)
+ModShim.init = function (arg_19_0)
 	arg_19_0._enable_wedges = not script_data["eac-untrusted"]
 
 	if arg_19_0._enable_wedges then
@@ -328,7 +328,7 @@ function ModShim.init(arg_19_0)
 
 		local var_19_7 = var_19_1.func
 
-		rawset(var_19_5, var_19_4, function(...)
+		rawset(var_19_5, var_19_4, function (...)
 			var_0_1(var_19_2)
 
 			return var_19_7(...)
@@ -336,7 +336,7 @@ function ModShim.init(arg_19_0)
 	end
 end
 
-function ModShim._parse_timestamp(arg_21_0, arg_21_1)
+ModShim._parse_timestamp = function (arg_21_0, arg_21_1)
 	local var_21_0 = "(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+) (%a+)"
 	local var_21_1, var_21_2, var_21_3, var_21_4, var_21_5, var_21_6, var_21_7 = arg_21_1:match(var_21_0)
 	local var_21_8 = tonumber(var_21_4)
@@ -357,7 +357,7 @@ function ModShim._parse_timestamp(arg_21_0, arg_21_1)
 	})
 end
 
-function ModShim._wedge_hook(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
+ModShim._wedge_hook = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
 	local var_22_0 = arg_22_1[arg_22_3]
 
 	if not var_22_0 then
@@ -377,7 +377,7 @@ function ModShim._wedge_hook(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, a
 		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", arg_22_2, arg_22_3, arg_22_7, arg_22_8, arg_22_5, arg_22_6)
 	end
 
-	arg_22_1[arg_22_3] = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, ...)
+	arg_22_1[arg_22_3] = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, ...)
 		local var_23_0 = arg_23_3
 		local var_23_1 = arg_22_4[arg_23_1] and arg_22_4[arg_23_1][arg_23_2]
 
@@ -414,7 +414,7 @@ function ModShim._wedge_hook(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, a
 	end
 end
 
-function ModShim._add_hook(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
+ModShim._add_hook = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
 	local var_25_0 = arg_25_1[arg_25_3]
 
 	if not var_25_0 then
@@ -425,7 +425,7 @@ function ModShim._add_hook(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg
 
 	local var_25_1 = {}
 
-	var_25_0(arg_25_1, arg_25_5 or arg_25_7, arg_25_8 or arg_25_6, function(arg_26_0, ...)
+	var_25_0(arg_25_1, arg_25_5 or arg_25_7, arg_25_8 or arg_25_6, function (arg_26_0, ...)
 		if var_25_1.func then
 			return var_25_1.func(arg_26_0, ...)
 		end
@@ -444,7 +444,7 @@ function ModShim._add_hook(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg
 		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", arg_25_2, arg_25_3, arg_25_7, arg_25_8, arg_25_5, arg_25_6)
 	end
 
-	arg_25_1[arg_25_3] = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, ...)
+	arg_25_1[arg_25_3] = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, ...)
 		local var_27_0 = arg_27_3
 
 		if arg_25_4[arg_27_1] and arg_25_4[arg_27_1][arg_27_2] then
@@ -457,12 +457,12 @@ function ModShim._add_hook(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg
 	end
 end
 
-function ModShim._mod_wedges(arg_28_0, arg_28_1, arg_28_2)
+ModShim._mod_wedges = function (arg_28_0, arg_28_1, arg_28_2)
 	if not arg_28_2 then
 		printf("[ModShim] <%s> Wedges ignored due to not being able to deduce timestamp", arg_28_1)
 	end
 
-	return (table.select_array(ModShim.wedges, function(arg_29_0, arg_29_1)
+	return (table.select_array(ModShim.wedges, function (arg_29_0, arg_29_1)
 		if arg_29_1.mods and not table.contains(arg_29_1.mods, arg_28_1) then
 			return
 		end
@@ -479,7 +479,7 @@ function ModShim._mod_wedges(arg_28_0, arg_28_1, arg_28_2)
 	end))
 end
 
-function ModShim._mod_created(arg_30_0, arg_30_1, arg_30_2)
+ModShim._mod_created = function (arg_30_0, arg_30_1, arg_30_2)
 	if not arg_30_0._enable_wedges then
 		return
 	end
@@ -493,7 +493,7 @@ function ModShim._mod_created(arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0:_handle_wedges(arg_30_1, arg_30_2, var_30_0)
 end
 
-function ModShim._handle_wedges(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+ModShim._handle_wedges = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_0:_mod_wedges(arg_31_2, arg_31_3.timestamp)
 
 	if table.is_empty(var_31_0) then
@@ -527,7 +527,7 @@ function ModShim._handle_wedges(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	end
 end
 
-function ModShim._handle_hook_overrides(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+ModShim._handle_hook_overrides = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
 	for iter_32_0 = 1, #arg_32_4 do
 		repeat
 			local var_32_0 = arg_32_4[iter_32_0]
@@ -591,7 +591,7 @@ function ModShim._handle_hook_overrides(arg_32_0, arg_32_1, arg_32_2, arg_32_3, 
 	end
 end
 
-function ModShim._handle_new_hooks(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+ModShim._handle_new_hooks = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
 	for iter_33_0 = 1, #arg_33_4 do
 		local var_33_0 = arg_33_4[iter_33_0]
 		local var_33_1 = var_33_0.name
@@ -626,7 +626,7 @@ function ModShim._handle_new_hooks(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_3
 	end
 end
 
-function ModShim.mod_post_create(arg_34_0, arg_34_1)
+ModShim.mod_post_create = function (arg_34_0, arg_34_1)
 	if not arg_34_0._enable_wedges then
 		return
 	end
@@ -651,7 +651,7 @@ function ModShim.mod_post_create(arg_34_0, arg_34_1)
 		end
 
 		local var_34_2 = {
-			__newindex = function(arg_35_0, arg_35_1, arg_35_2, ...)
+			__newindex = function (arg_35_0, arg_35_1, arg_35_2, ...)
 				rawset(arg_35_0, arg_35_1, arg_35_2, ...)
 
 				if script_data.debug_mod_shim then

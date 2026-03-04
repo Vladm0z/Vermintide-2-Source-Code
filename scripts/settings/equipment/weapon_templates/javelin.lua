@@ -10,7 +10,7 @@ local var_0_2 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -69,7 +69,7 @@ local var_0_2 = {
 						input = "action_one_hold"
 					}
 				},
-				condition_func = function(arg_2_0, arg_2_1, arg_2_2)
+				condition_func = function (arg_2_0, arg_2_1, arg_2_2)
 					if arg_2_2 and (arg_2_2:total_remaining_ammo() <= 0 or arg_2_2:is_reloading()) then
 						return false
 					end
@@ -82,7 +82,7 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -147,11 +147,11 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_01",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:reset_release_input()
 					arg_5_1:clear_input_buffer()
 				end,
@@ -196,11 +196,11 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_02",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
 					arg_7_1:reset_release_input()
 					arg_7_1:clear_input_buffer()
 				end,
@@ -245,11 +245,11 @@ local var_0_2 = {
 				anim_end_event = "attack_finished",
 				anim_event = "attack_chain_03",
 				attack_hold_input = "action_one_hold",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					arg_9_1:reset_release_input()
 					arg_9_1:clear_input_buffer()
 				end,
@@ -313,7 +313,7 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab",
 				height_mod = 4,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -330,7 +330,7 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
 					arg_11_1:clear_input_buffer()
 
 					return arg_11_1:reset_release_input()
@@ -461,7 +461,7 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab_02",
 				height_mod = 4,
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
 					return arg_12_1 ~= "new_interupting_action" and arg_12_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -478,7 +478,7 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_13_0, arg_13_1)
+				enter_function = function (arg_13_0, arg_13_1)
 					arg_13_1:clear_input_buffer()
 
 					return arg_13_1:reset_release_input()
@@ -608,7 +608,7 @@ local var_0_2 = {
 				anim_event = "attack_swing_stab_charge",
 				height_mod = 4,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_14_0, arg_14_1)
+				anim_end_event_condition_func = function (arg_14_0, arg_14_1)
 					return arg_14_1 ~= "new_interupting_action" and arg_14_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -625,7 +625,7 @@ local var_0_2 = {
 						buff_name = "planted_fast_decrease_movement"
 					}
 				},
-				enter_function = function(arg_15_0, arg_15_1)
+				enter_function = function (arg_15_0, arg_15_1)
 					arg_15_1:clear_input_buffer()
 
 					return arg_15_1:reset_release_input()
@@ -762,10 +762,10 @@ local var_0_2 = {
 				anim_event = "attack_swing_left",
 				height_mod = 4,
 				total_time = 0.4,
-				anim_end_event_condition_func = function(arg_16_0, arg_16_1)
+				anim_end_event_condition_func = function (arg_16_0, arg_16_1)
 					return arg_16_1 ~= "new_interupting_action" and arg_16_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_17_0, arg_17_1)
+				enter_function = function (arg_17_0, arg_17_1)
 					arg_17_1:clear_input_buffer()
 
 					return arg_17_1:reset_release_input()
@@ -895,10 +895,10 @@ local var_0_2 = {
 				anim_event = "attack_swing_right",
 				height_mod = 4,
 				total_time = 0.6,
-				anim_end_event_condition_func = function(arg_18_0, arg_18_1)
+				anim_end_event_condition_func = function (arg_18_0, arg_18_1)
 					return arg_18_1 ~= "new_interupting_action" and arg_18_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_19_0, arg_19_1)
+				enter_function = function (arg_19_0, arg_19_1)
 					arg_19_1:clear_input_buffer()
 
 					return arg_19_1:reset_release_input()
@@ -1028,10 +1028,10 @@ local var_0_2 = {
 				anim_event = "attack_swing_up",
 				height_mod = 4,
 				total_time = 0.85,
-				anim_end_event_condition_func = function(arg_20_0, arg_20_1)
+				anim_end_event_condition_func = function (arg_20_0, arg_20_1)
 					return arg_20_1 ~= "new_interupting_action" and arg_20_1 ~= "action_complete"
 				end,
-				enter_function = function(arg_21_0, arg_21_1)
+				enter_function = function (arg_21_0, arg_21_1)
 					arg_21_1:clear_input_buffer()
 
 					return arg_21_1:reset_release_input()
@@ -1157,7 +1157,7 @@ local var_0_2 = {
 				anim_event = "attack_throw",
 				no_out_of_ammo_vo = true,
 				total_time = 0.55,
-				anim_end_event_condition_func = function(arg_22_0, arg_22_1)
+				anim_end_event_condition_func = function (arg_22_0, arg_22_1)
 					return arg_22_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -1188,7 +1188,7 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_23_0, arg_23_1)
+				enter_function = function (arg_23_0, arg_23_1)
 					arg_23_1:clear_input_buffer()
 
 					return arg_23_1:reset_release_input()
@@ -1231,7 +1231,7 @@ local var_0_2 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_24_0, arg_24_1)
+				anim_end_event_condition_func = function (arg_24_0, arg_24_1)
 					return arg_24_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -1276,20 +1276,20 @@ local var_0_2 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function(arg_25_0)
+				zoom_condition_function = function (arg_25_0)
 					return true
 				end,
-				unzoom_condition_function = function(arg_26_0, arg_26_1)
+				unzoom_condition_function = function (arg_26_0, arg_26_1)
 					return arg_26_1 == nil or arg_26_1.new_action ~= "action_one"
 				end,
-				condition_func = function(arg_27_0, arg_27_1, arg_27_2)
+				condition_func = function (arg_27_0, arg_27_1, arg_27_2)
 					if arg_27_2 and (arg_27_2:total_remaining_ammo() <= 0 or arg_27_2:is_reloading()) then
 						return false
 					end
 
 					return true
 				end,
-				chain_condition_func = function(arg_28_0, arg_28_1, arg_28_2)
+				chain_condition_func = function (arg_28_0, arg_28_1, arg_28_2)
 					if arg_28_2 and (arg_28_2:total_remaining_ammo() <= 0 or arg_28_2:is_reloading()) then
 						return false
 					end
@@ -1306,7 +1306,7 @@ local var_0_2 = {
 				hold_input = "action_two_hold",
 				anim_event = "throw_charge",
 				minimum_hold_time = 0.2,
-				anim_end_event_condition_func = function(arg_29_0, arg_29_1)
+				anim_end_event_condition_func = function (arg_29_0, arg_29_1)
 					return arg_29_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -1347,14 +1347,14 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				condition_func = function(arg_30_0, arg_30_1, arg_30_2)
+				condition_func = function (arg_30_0, arg_30_1, arg_30_2)
 					if arg_30_2 and (arg_30_2:total_remaining_ammo() <= 0 or arg_30_2:is_reloading()) then
 						return false
 					end
 
 					return true
 				end,
-				chain_condition_func = function(arg_31_0, arg_31_1, arg_31_2)
+				chain_condition_func = function (arg_31_0, arg_31_1, arg_31_2)
 					if arg_31_2 and (arg_31_2:total_remaining_ammo() <= 0 or arg_31_2:is_reloading()) then
 						return false
 					end
@@ -1374,7 +1374,7 @@ local var_0_2 = {
 				hold_input = "weapon_reload_hold",
 				anim_event = "reload",
 				total_time = 1.25,
-				anim_end_event_condition_func = function(arg_32_0, arg_32_1)
+				anim_end_event_condition_func = function (arg_32_0, arg_32_1)
 					return arg_32_1 ~= "new_interupting_action"
 				end,
 				buff_data = {
@@ -1385,7 +1385,7 @@ local var_0_2 = {
 						end_time = math.huge
 					}
 				},
-				enter_function = function(arg_33_0, arg_33_1)
+				enter_function = function (arg_33_0, arg_33_1)
 					arg_33_1:reset_release_input()
 					arg_33_1:clear_input_buffer()
 				end,
@@ -1403,14 +1403,14 @@ local var_0_2 = {
 						auto_chain = true
 					}
 				},
-				condition_func = function(arg_34_0, arg_34_1, arg_34_2)
+				condition_func = function (arg_34_0, arg_34_1, arg_34_2)
 					if arg_34_2 and arg_34_2:total_remaining_ammo() < arg_34_2:max_ammo() then
 						return true
 					end
 
 					return false
 				end,
-				chain_condition_func = function(arg_35_0, arg_35_1, arg_35_2)
+				chain_condition_func = function (arg_35_0, arg_35_1, arg_35_2)
 					if arg_35_2 and arg_35_2:total_remaining_ammo() < arg_35_2:max_ammo() then
 						return true
 					end

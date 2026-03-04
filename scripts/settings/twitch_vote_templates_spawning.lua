@@ -56,7 +56,7 @@ TwitchVoteTemplates.twitch_spawn_rat_ogre = {
 		60,
 		70
 	},
-	on_success = function(arg_4_0)
+	on_success = function (arg_4_0)
 		if arg_4_0 then
 			var_0_1("[TWITCH VOTE] Spawning rat ogre")
 
@@ -80,7 +80,7 @@ TwitchVoteTemplates.twitch_spawn_stormfiend = {
 		60,
 		70
 	},
-	on_success = function(arg_5_0)
+	on_success = function (arg_5_0)
 		if arg_5_0 then
 			var_0_1("[TWITCH VOTE] Spawning stormfiend")
 
@@ -104,7 +104,7 @@ TwitchVoteTemplates.twitch_spawn_chaos_troll = {
 		60,
 		70
 	},
-	on_success = function(arg_6_0)
+	on_success = function (arg_6_0)
 		if arg_6_0 then
 			var_0_1("[TWITCH VOTE] Spawning chaos troll")
 
@@ -128,7 +128,7 @@ TwitchVoteTemplates.twitch_spawn_chaos_spawn = {
 		60,
 		70
 	},
-	on_success = function(arg_7_0)
+	on_success = function (arg_7_0)
 		if arg_7_0 then
 			var_0_1("[TWITCH VOTE] Spawning chaos spawn")
 
@@ -152,10 +152,10 @@ TwitchVoteTemplates.twitch_spawn_minotaur = {
 		60,
 		70
 	},
-	condition_func = function(arg_8_0)
+	condition_func = function (arg_8_0)
 		return Managers.unlock:is_dlc_unlocked("scorpion")
 	end,
-	on_success = function(arg_9_0)
+	on_success = function (arg_9_0)
 		if arg_9_0 then
 			var_0_1("[TWITCH VOTE] Spawning chaos spawn")
 
@@ -179,7 +179,7 @@ TwitchVoteTemplates.twitch_spawn_corruptor_sorcerer = {
 		60,
 		70
 	},
-	on_success = function(arg_10_0)
+	on_success = function (arg_10_0)
 		if arg_10_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of corruptor sorcerers")
 
@@ -203,7 +203,7 @@ TwitchVoteTemplates.twitch_spawn_vortex_sorcerer = {
 		60,
 		70
 	},
-	on_success = function(arg_11_0)
+	on_success = function (arg_11_0)
 		if arg_11_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of vortex sorceres")
 
@@ -227,7 +227,7 @@ TwitchVoteTemplates.twitch_spawn_gutter_runner = {
 		60,
 		70
 	},
-	on_success = function(arg_12_0)
+	on_success = function (arg_12_0)
 		if arg_12_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of gutter runners")
 
@@ -251,7 +251,7 @@ TwitchVoteTemplates.twitch_spawn_pack_master = {
 		60,
 		70
 	},
-	on_success = function(arg_13_0)
+	on_success = function (arg_13_0)
 		if arg_13_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of packmasters")
 
@@ -275,7 +275,7 @@ TwitchVoteTemplates.twitch_spawn_poison_wind_globadier = {
 		60,
 		70
 	},
-	on_success = function(arg_14_0)
+	on_success = function (arg_14_0)
 		if arg_14_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of poison wind globadiers")
 
@@ -299,7 +299,7 @@ TwitchVoteTemplates.twitch_spawn_ratling_gunner = {
 		60,
 		70
 	},
-	on_success = function(arg_15_0)
+	on_success = function (arg_15_0)
 		if arg_15_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of ratling gunners")
 
@@ -323,7 +323,7 @@ TwitchVoteTemplates.twitch_spawn_warpfire_thrower = {
 		60,
 		70
 	},
-	on_success = function(arg_16_0)
+	on_success = function (arg_16_0)
 		if arg_16_0 then
 			var_0_1("[TWITCH VOTE] Spawning group of warpfire throwers")
 
@@ -346,7 +346,7 @@ TwitchVoteTemplates.twitch_spawn_horde_vector_blob = {
 		60,
 		70
 	},
-	on_success = function(arg_17_0)
+	on_success = function (arg_17_0)
 		if arg_17_0 then
 			var_0_1("[TWITCH VOTE] Spawning horde")
 
@@ -386,7 +386,7 @@ TwitchVoteTemplates.twitch_spawn_explosive_loot_rats = {
 		60,
 		70
 	},
-	on_success = function(arg_18_0)
+	on_success = function (arg_18_0)
 		if arg_18_0 then
 			var_0_1("[TWITCH VOTE] Spawning explosive loot rats")
 
@@ -421,7 +421,7 @@ TwitchVoteTemplates.twitch_spawn_plague_monks = {
 		60,
 		70
 	},
-	on_success = function(arg_19_0)
+	on_success = function (arg_19_0)
 		if arg_19_0 then
 			var_0_1("[TWITCH VOTE] Spawning plague_monks")
 
@@ -456,7 +456,7 @@ TwitchVoteTemplates.twitch_spawn_berzerkers = {
 		60,
 		70
 	},
-	on_success = function(arg_20_0)
+	on_success = function (arg_20_0)
 		if arg_20_0 then
 			var_0_1("[TWITCH VOTE] Spawning chaos_berzerker")
 
@@ -492,7 +492,7 @@ TwitchVoteTemplates.twitch_spawn_death_squad_storm_vermin = {
 		60,
 		70
 	},
-	on_success = function(arg_21_0)
+	on_success = function (arg_21_0)
 		if arg_21_0 then
 			var_0_1("[TWITCH VOTE] Spawning storm vermin patrol")
 
@@ -528,7 +528,7 @@ TwitchVoteTemplates.twitch_spawn_death_squad_chaos_warrior = {
 		60,
 		70
 	},
-	on_success = function(arg_22_0)
+	on_success = function (arg_22_0)
 		if arg_22_0 then
 			var_0_1("[TWITCH VOTE] Spawning chaos warriors death squad")
 
@@ -563,7 +563,7 @@ TwitchVoteTemplates.twitch_spawn_loot_rat_fiesta = {
 		60,
 		70
 	},
-	on_success = function(arg_23_0)
+	on_success = function (arg_23_0)
 		if arg_23_0 then
 			var_0_1("[TWITCH VOTE] Spawning loot rat fiesta")
 

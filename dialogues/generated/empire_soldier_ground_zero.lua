@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_ground_zero.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pes_ground_zero_intro_a",

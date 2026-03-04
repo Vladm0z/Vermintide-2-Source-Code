@@ -2,7 +2,7 @@
 
 CrawlSpaceExtension = class(CrawlSpaceExtension)
 
-function CrawlSpaceExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CrawlSpaceExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.partner_unit = nil
 	arg_1_0.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
@@ -23,21 +23,21 @@ function CrawlSpaceExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.type = arg_1_0.id == 0 and "spawner" or "tunnel"
 end
 
-function CrawlSpaceExtension.extensions_ready(arg_2_0)
+CrawlSpaceExtension.extensions_ready = function (arg_2_0)
 	if arg_2_0.entrance_type == "chimney" then
 		ScriptUnit.extension(arg_2_0.unit, "interactable_system"):set_enabled(false)
 	end
 end
 
-function CrawlSpaceExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+CrawlSpaceExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-function CrawlSpaceExtension.hot_join_sync(arg_4_0, arg_4_1)
+CrawlSpaceExtension.hot_join_sync = function (arg_4_0, arg_4_1)
 	return
 end
 
-function CrawlSpaceExtension.destroy(arg_5_0)
+CrawlSpaceExtension.destroy = function (arg_5_0)
 	arg_5_0.unit = nil
 	arg_5_0.partner_unit = nil
 end

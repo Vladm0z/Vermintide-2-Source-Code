@@ -39,7 +39,7 @@ var_0_0.start_game_window_layout = {
 				game_mode = 1,
 				event_settings = 3
 			},
-			can_add_function = function(arg_1_0)
+			can_add_function = function (arg_1_0)
 				return arg_1_0:is_in_mechanism("adventure") and arg_1_0:is_weekly_event_active()
 			end
 		},
@@ -86,7 +86,7 @@ var_0_0.start_game_window_layout_console = {
 				background = 2,
 				event_summary = 4
 			},
-			can_add_function = function(arg_2_0)
+			can_add_function = function (arg_2_0)
 				return arg_2_0:is_in_mechanism("adventure") and arg_2_0:is_weekly_event_active()
 			end
 		},

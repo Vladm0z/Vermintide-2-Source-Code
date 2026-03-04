@@ -8,26 +8,26 @@ local var_0_0 = {
 	"rpc_to_server_spawn_failed"
 }
 
-function SimpleSpawning.init(arg_1_0, arg_1_1, arg_1_2)
+SimpleSpawning.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._profile_synchronizer = arg_1_1
 	arg_1_0._spawn_point_groups = {}
 	arg_1_0._peers_ongoing_game_object_sync = {}
 	arg_1_0._use_spawn_point_groups = arg_1_2
 end
 
-function SimpleSpawning.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+SimpleSpawning.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
 	arg_2_0._network_event_delegate = arg_2_1
 end
 
-function SimpleSpawning.unregister_rpcs(arg_3_0)
+SimpleSpawning.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 end
 
-function SimpleSpawning.setup_data(arg_4_0, arg_4_1, arg_4_2)
+SimpleSpawning.setup_data = function (arg_4_0, arg_4_1, arg_4_2)
 	Managers.party:get_player_status(arg_4_1, arg_4_2).game_mode_data = {
 		health_state = "alive",
 		spawn_pos_stored = false,
@@ -43,7 +43,7 @@ function SimpleSpawning.setup_data(arg_4_0, arg_4_1, arg_4_2)
 	}
 end
 
-function SimpleSpawning._get_random_spawn_point(arg_5_0)
+SimpleSpawning._get_random_spawn_point = function (arg_5_0)
 	local var_5_0 = arg_5_0._spawn_point_groups[1]
 	local var_5_1 = var_5_0[Math.random(1, #var_5_0)]
 	local var_5_2 = var_5_1.pos:unbox()
@@ -52,7 +52,7 @@ function SimpleSpawning._get_random_spawn_point(arg_5_0)
 	return var_5_2, var_5_3
 end
 
-function SimpleSpawning._get_free_spawn_point(arg_6_0, arg_6_1, arg_6_2)
+SimpleSpawning._get_free_spawn_point = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._spawn_point_groups[arg_6_1][arg_6_2]
 	local var_6_1 = var_6_0.pos:unbox()
 	local var_6_2 = var_6_0.rot:unbox()
@@ -60,7 +60,7 @@ function SimpleSpawning._get_free_spawn_point(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_1, var_6_2
 end
 
-function SimpleSpawning.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+SimpleSpawning.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if Managers.state.network:game() then
 		local var_7_0 = Managers.player
 		local var_7_1, var_7_2 = Managers.state.network.network_server:peers_ongoing_game_object_sync(arg_7_0._peers_ongoing_game_object_sync)
@@ -153,7 +153,7 @@ function SimpleSpawning.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function SimpleSpawning.flow_callback_add_spawn_point(arg_8_0, arg_8_1)
+SimpleSpawning.flow_callback_add_spawn_point = function (arg_8_0, arg_8_1)
 	local var_8_0 = Unit.local_position(arg_8_1, 0)
 	local var_8_1 = Unit.local_rotation(arg_8_1, 0)
 	local var_8_2 = {
@@ -171,7 +171,7 @@ function SimpleSpawning.flow_callback_add_spawn_point(arg_8_0, arg_8_1)
 	var_8_4[#var_8_4 + 1] = var_8_2
 end
 
-function SimpleSpawning.rpc_to_server_spawn_failed(arg_9_0, arg_9_1, arg_9_2)
+SimpleSpawning.rpc_to_server_spawn_failed = function (arg_9_0, arg_9_1, arg_9_2)
 	print("[SimpleSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_9_0 = CHANNEL_TO_PEER_ID[arg_9_1]

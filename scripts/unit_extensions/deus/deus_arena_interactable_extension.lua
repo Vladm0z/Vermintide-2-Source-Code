@@ -10,7 +10,7 @@ local var_0_1 = {
 	"rpc_deus_set_arena_interactable_state"
 }
 
-function DeusArenaInteractableExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DeusArenaInteractableExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = arg_1_1.is_server
 	arg_1_0._world = arg_1_1.world
@@ -21,13 +21,13 @@ function DeusArenaInteractableExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:register_rpcs(arg_1_1.network_transmit.network_event_delegate)
 end
 
-function DeusArenaInteractableExtension.register_rpcs(arg_2_0, arg_2_1)
+DeusArenaInteractableExtension.register_rpcs = function (arg_2_0, arg_2_1)
 	arg_2_0._network_event_delegate = arg_2_1
 
 	arg_2_1:register(arg_2_0, unpack(var_0_1))
 end
 
-function DeusArenaInteractableExtension.unregister_rpcs(arg_3_0)
+DeusArenaInteractableExtension.unregister_rpcs = function (arg_3_0)
 	if arg_3_0._network_event_delegate then
 		arg_3_0._network_event_delegate:unregister(arg_3_0)
 	end
@@ -35,17 +35,17 @@ function DeusArenaInteractableExtension.unregister_rpcs(arg_3_0)
 	arg_3_0._network_event_delegate = nil
 end
 
-function DeusArenaInteractableExtension.destroy(arg_4_0)
+DeusArenaInteractableExtension.destroy = function (arg_4_0)
 	arg_4_0:unregister_rpcs()
 end
 
-function DeusArenaInteractableExtension.hot_join_sync(arg_5_0, arg_5_1)
+DeusArenaInteractableExtension.hot_join_sync = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0:_get_state()
 
 	Managers.state.network.network_transmit:send_rpc("rpc_deus_set_arena_interactable_state", arg_5_1, arg_5_0._level_unit_id, var_5_0)
 end
 
-function DeusArenaInteractableExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusArenaInteractableExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._prev_state
 	local var_6_1 = arg_6_0:_get_state()
 
@@ -75,7 +75,7 @@ function DeusArenaInteractableExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	arg_6_0._timer = var_6_2
 end
 
-function DeusArenaInteractableExtension._on_state_changed(arg_7_0, arg_7_1, arg_7_2)
+DeusArenaInteractableExtension._on_state_changed = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._unit
 
 	if arg_7_2 == var_0_0.WAITING then
@@ -91,17 +91,17 @@ function DeusArenaInteractableExtension._on_state_changed(arg_7_0, arg_7_1, arg_
 	end
 end
 
-function DeusArenaInteractableExtension.rpc_deus_set_arena_interactable_state(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+DeusArenaInteractableExtension.rpc_deus_set_arena_interactable_state = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_0._level_unit_id == arg_8_2 then
 		arg_8_0._state = arg_8_3
 	end
 end
 
-function DeusArenaInteractableExtension.can_interact(arg_9_0)
+DeusArenaInteractableExtension.can_interact = function (arg_9_0)
 	return arg_9_0:_get_state() == var_0_0.WAITING
 end
 
-function DeusArenaInteractableExtension.get_interact_hud_description(arg_10_0)
+DeusArenaInteractableExtension.get_interact_hud_description = function (arg_10_0)
 	if Managers.mechanism:game_mechanism():get_deus_run_controller():get_current_node().base_level == DEUS_LEVEL_SETTINGS.arena_citadel.base_level_name then
 		return "deus_altar_hud_desc"
 	else
@@ -109,7 +109,7 @@ function DeusArenaInteractableExtension.get_interact_hud_description(arg_10_0)
 	end
 end
 
-function DeusArenaInteractableExtension.on_server_interact(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+DeusArenaInteractableExtension.on_server_interact = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
 	if arg_11_0:_get_state() == var_0_0.WAITING then
 		if HEALTH_ALIVE[arg_11_2] then
 			local var_11_0 = ScriptUnit.extension_input(arg_11_2, "dialogue_system")
@@ -126,22 +126,22 @@ function DeusArenaInteractableExtension.on_server_interact(arg_11_0, arg_11_1, a
 	end
 end
 
-function DeusArenaInteractableExtension.on_client_interact(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+DeusArenaInteractableExtension.on_client_interact = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
 	if not arg_12_0._is_server then
 		arg_12_0._state = var_0_0.INTERACTED
 	end
 end
 
-function DeusArenaInteractableExtension._get_state(arg_13_0)
+DeusArenaInteractableExtension._get_state = function (arg_13_0)
 	return arg_13_0._state
 end
 
-function DeusArenaInteractableExtension._set_state(arg_14_0, arg_14_1)
+DeusArenaInteractableExtension._set_state = function (arg_14_0, arg_14_1)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_deus_set_arena_interactable_state", arg_14_0._level_unit_id, arg_14_1)
 
 	arg_14_0._state = arg_14_1
 end
 
-function DeusArenaInteractableExtension.override_interactable_action(arg_15_0)
+DeusArenaInteractableExtension.override_interactable_action = function (arg_15_0)
 	return arg_15_0._override_interactable_action
 end

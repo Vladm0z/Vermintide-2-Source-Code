@@ -4,7 +4,7 @@ local var_0_0 = {}
 local var_0_1
 local var_0_2
 
-function var_0_0.save(arg_1_0, arg_1_1, arg_1_2)
+var_0_0.save = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_2 = arg_1_2 or {}
 
 	assert(arg_1_1)
@@ -19,7 +19,7 @@ function var_0_0.save(arg_1_0, arg_1_1, arg_1_2)
 	return table.concat(var_1_0, "\n"), arg_1_2
 end
 
-function var_0_0.save_simple(arg_2_0, arg_2_1)
+var_0_0.save_simple = function (arg_2_0, arg_2_1)
 	local var_2_0 = {}
 
 	var_0_2(arg_2_0, var_2_0, arg_2_1 or 1)

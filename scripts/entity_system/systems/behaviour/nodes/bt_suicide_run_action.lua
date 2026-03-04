@@ -7,7 +7,7 @@ BTSuicideRunAction.StateInit = class(BTSuicideRunAction.StateInit)
 BTSuicideRunAction.StateMove = class(BTSuicideRunAction.StateMove)
 BTSuicideRunAction.StateExplode = class(BTSuicideRunAction.StateExplode)
 
-function BTSuicideRunAction.init(arg_1_0, ...)
+BTSuicideRunAction.init = function (arg_1_0, ...)
 	BTSuicideRunAction.super.init(arg_1_0, ...)
 end
 
@@ -16,7 +16,7 @@ BTSuicideRunAction.name = "BTSuicideRunAction"
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = 0.25
 
-function BTSuicideRunAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTSuicideRunAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.suicide_run = arg_2_2.suicide_run or {}
 
 	local var_2_0 = arg_2_0._tree_node.action_data
@@ -55,7 +55,7 @@ function BTSuicideRunAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_2_1, "enemy_attack", DialogueSettings.suicide_run_broadcast_range, "attack_tag", "pwg_suicide_run")
 end
 
-function BTSuicideRunAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSuicideRunAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
@@ -64,7 +64,7 @@ function BTSuicideRunAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, a
 	arg_3_2.attack_finished = nil
 end
 
-function BTSuicideRunAction.update_target_position(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSuicideRunAction.update_target_position = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.target_unit
 
 	if ALIVE[var_4_0] and not arg_4_4 then
@@ -93,11 +93,11 @@ function BTSuicideRunAction.update_target_position(arg_4_0, arg_4_1, arg_4_2, ar
 	arg_4_3:stop()
 end
 
-function BTSuicideRunAction.play_unit_audio(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTSuicideRunAction.play_unit_audio = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_5_3, arg_5_1)
 end
 
-function BTSuicideRunAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTSuicideRunAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.suicide_run
 
 	if not var_6_0.state_machine then
@@ -113,7 +113,7 @@ function BTSuicideRunAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 end
 
-function BTSuicideRunAction.StateInit.on_enter(arg_7_0, arg_7_1)
+BTSuicideRunAction.StateInit.on_enter = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.unit
 	local var_7_1 = arg_7_1.blackboard
 	local var_7_2 = arg_7_1.action
@@ -133,7 +133,7 @@ function BTSuicideRunAction.StateInit.on_enter(arg_7_0, arg_7_1)
 	arg_7_0.blackboard = var_7_1
 end
 
-function BTSuicideRunAction.StateInit.update(arg_8_0, arg_8_1, arg_8_2)
+BTSuicideRunAction.StateInit.update = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.unit
 	local var_8_1 = arg_8_0.blackboard
 	local var_8_2 = var_8_1.suicide_run
@@ -156,7 +156,7 @@ function BTSuicideRunAction.StateInit.update(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function BTSuicideRunAction.StateMove.on_enter(arg_9_0, arg_9_1)
+BTSuicideRunAction.StateMove.on_enter = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.unit
 	local var_9_1 = arg_9_1.blackboard
 	local var_9_2 = "Play_enemy_globadier_suicide_start"
@@ -176,7 +176,7 @@ function BTSuicideRunAction.StateMove.on_enter(arg_9_0, arg_9_1)
 	arg_9_0.explode_timer = var_9_1.suicide_run.action.suicide_explosion_timer
 end
 
-function BTSuicideRunAction.StateMove.update(arg_10_0, arg_10_1, arg_10_2)
+BTSuicideRunAction.StateMove.update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.unit
 	local var_10_1 = arg_10_0.blackboard
 	local var_10_2 = var_10_1.suicide_run
@@ -200,7 +200,7 @@ function BTSuicideRunAction.StateMove.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function BTSuicideRunAction.StateExplode.on_enter(arg_11_0, arg_11_1)
+BTSuicideRunAction.StateExplode.on_enter = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.unit
 	local var_11_1 = arg_11_1.blackboard
 
@@ -215,7 +215,7 @@ function BTSuicideRunAction.StateExplode.on_enter(arg_11_0, arg_11_1)
 	arg_11_0.blackboard = var_11_1
 end
 
-function BTSuicideRunAction.StateExplode.update(arg_12_0, arg_12_1, arg_12_2)
+BTSuicideRunAction.StateExplode.update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.unit
 	local var_12_1 = arg_12_0.blackboard
 	local var_12_2 = var_12_1.suicide_run

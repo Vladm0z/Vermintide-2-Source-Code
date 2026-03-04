@@ -7,11 +7,11 @@ BTChaosPlagueWaveSpawnerSummoningAction.name = "BTChaosPlagueWaveSpawnerSummonin
 
 local var_0_0 = BTChaosPlagueWaveSpawnerSummoningAction
 
-function var_0_0.init(arg_1_0, ...)
+var_0_0.init = function (arg_1_0, ...)
 	var_0_0.super.init(arg_1_0, ...)
 end
 
-function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_0.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.breed
 
@@ -31,11 +31,11 @@ function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+var_0_0.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 end
 
-function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+var_0_0.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = arg_4_2.plague_wave_data
 	local var_4_2 = arg_4_2.skulk_data

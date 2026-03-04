@@ -7,7 +7,7 @@ local var_0_2 = "cycle_previous"
 StartGameWindowPanelConsole = class(StartGameWindowPanelConsole)
 StartGameWindowPanelConsole.NAME = "StartGameWindowPanelConsole"
 
-function StartGameWindowPanelConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowPanelConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StartGameWindowPanelConsole")
 
 	arg_1_0.params = arg_1_1
@@ -31,7 +31,7 @@ function StartGameWindowPanelConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_input_buttons()
 end
 
-function StartGameWindowPanelConsole._create_ui_elements(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+StartGameWindowPanelConsole._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_1.scenegraph_definition
 	local var_2_1 = UISceneGraph.init_scenegraph(var_2_0)
 
@@ -76,7 +76,7 @@ function StartGameWindowPanelConsole._create_ui_elements(arg_2_0, arg_2_1, arg_2
 	end
 end
 
-function StartGameWindowPanelConsole._setup_text_buttons_width_and_position(arg_3_0)
+StartGameWindowPanelConsole._setup_text_buttons_width_and_position = function (arg_3_0)
 	local var_3_0 = arg_3_0.ui_scenegraph
 	local var_3_1 = var_3_0.panel_entry_area.size[1]
 	local var_3_2 = arg_3_0._title_button_widgets
@@ -98,7 +98,7 @@ function StartGameWindowPanelConsole._setup_text_buttons_width_and_position(arg_
 	arg_3_0._widgets_by_name.panel_input_area_2.offset[1] = var_3_4 * (var_3_3 - 1)
 end
 
-function StartGameWindowPanelConsole._set_text_button_size(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowPanelConsole._set_text_button_size = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_1.style
 
 	var_4_0.selected_texture.texture_size[1] = arg_4_2
@@ -116,13 +116,13 @@ function StartGameWindowPanelConsole._set_text_button_size(arg_4_0, arg_4_1, arg
 	var_4_0.text_disabled.offset[1] = var_4_0.text_disabled.default_offset[1] + var_4_1
 end
 
-function StartGameWindowPanelConsole.on_exit(arg_5_0, arg_5_1)
+StartGameWindowPanelConsole.on_exit = function (arg_5_0, arg_5_1)
 	print("[HeroViewWindow] Exit Substate StartGameWindowPanelConsole")
 
 	arg_5_0.ui_animator = nil
 end
 
-function StartGameWindowPanelConsole.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowPanelConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_handle_gamepad_activity()
 	arg_6_0:_handle_back_button_visibility()
 	arg_6_0:_update_title_buttons_disable_status()
@@ -131,7 +131,7 @@ function StartGameWindowPanelConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function StartGameWindowPanelConsole._update_selected_option(arg_7_0)
+StartGameWindowPanelConsole._update_selected_option = function (arg_7_0)
 	local var_7_0 = arg_7_0.parent:get_selected_layout_name()
 
 	if var_7_0 ~= arg_7_0._selected_layout_name then
@@ -139,7 +139,7 @@ function StartGameWindowPanelConsole._update_selected_option(arg_7_0)
 	end
 end
 
-function StartGameWindowPanelConsole._update_title_buttons_disable_status(arg_8_0)
+StartGameWindowPanelConsole._update_title_buttons_disable_status = function (arg_8_0)
 	local var_8_0 = arg_8_0._title_button_widgets
 
 	for iter_8_0 = 1, #var_8_0 do
@@ -156,11 +156,11 @@ function StartGameWindowPanelConsole._update_title_buttons_disable_status(arg_8_
 	end
 end
 
-function StartGameWindowPanelConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowPanelConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_handle_input(arg_9_1, arg_9_2)
 end
 
-function StartGameWindowPanelConsole._update_animations(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowPanelConsole._update_animations = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._ui_animations
 
 	for iter_10_0, iter_10_1 in pairs(var_10_0) do
@@ -193,7 +193,7 @@ function StartGameWindowPanelConsole._update_animations(arg_10_0, arg_10_1, arg_
 	arg_10_0:_animate_back_button(arg_10_0._widgets_by_name.close_button, arg_10_1)
 end
 
-function StartGameWindowPanelConsole._find_next_layout_name(arg_11_0, arg_11_1)
+StartGameWindowPanelConsole._find_next_layout_name = function (arg_11_0, arg_11_1)
 	local var_11_0 = 1
 	local var_11_1 = arg_11_0._selected_layout_name
 	local var_11_2 = arg_11_0._title_button_widgets
@@ -226,7 +226,7 @@ function StartGameWindowPanelConsole._find_next_layout_name(arg_11_0, arg_11_1)
 	return var_11_3
 end
 
-function StartGameWindowPanelConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowPanelConsole._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = false
 	local var_12_1
 	local var_12_2 = arg_12_0._title_button_widgets
@@ -298,7 +298,7 @@ function StartGameWindowPanelConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function StartGameWindowPanelConsole._set_selected_option(arg_13_0, arg_13_1)
+StartGameWindowPanelConsole._set_selected_option = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._title_button_widgets
 
 	for iter_13_0 = 1, #var_13_0 do
@@ -311,7 +311,7 @@ function StartGameWindowPanelConsole._set_selected_option(arg_13_0, arg_13_1)
 	arg_13_0._selected_layout_name = arg_13_1
 end
 
-function StartGameWindowPanelConsole.draw(arg_14_0, arg_14_1)
+StartGameWindowPanelConsole.draw = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_scenegraph
 	local var_14_2 = arg_14_0.parent:window_input_service()
@@ -326,11 +326,11 @@ function StartGameWindowPanelConsole.draw(arg_14_0, arg_14_1)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function StartGameWindowPanelConsole._play_sound(arg_15_0, arg_15_1)
+StartGameWindowPanelConsole._play_sound = function (arg_15_0, arg_15_1)
 	arg_15_0.parent:play_sound(arg_15_1)
 end
 
-function StartGameWindowPanelConsole._setup_input_buttons(arg_16_0)
+StartGameWindowPanelConsole._setup_input_buttons = function (arg_16_0)
 	local var_16_0 = arg_16_0.parent:window_input_service()
 	local var_16_1 = arg_16_0._widgets_by_name
 	local var_16_2 = var_16_1.panel_input_area_1
@@ -358,7 +358,7 @@ function StartGameWindowPanelConsole._setup_input_buttons(arg_16_0)
 	var_16_5.content.texture_id = var_16_7.texture
 end
 
-function StartGameWindowPanelConsole._handle_back_button_visibility(arg_17_0)
+StartGameWindowPanelConsole._handle_back_button_visibility = function (arg_17_0)
 	if not arg_17_0.gamepad_active_last_frame then
 		local var_17_0 = not arg_17_0.parent:close_on_exit()
 
@@ -366,13 +366,13 @@ function StartGameWindowPanelConsole._handle_back_button_visibility(arg_17_0)
 	end
 end
 
-function StartGameWindowPanelConsole._reset_back_button(arg_18_0)
+StartGameWindowPanelConsole._reset_back_button = function (arg_18_0)
 	local var_18_0 = arg_18_0._widgets_by_name.back_button.content.button_hotspot
 
 	table.clear(var_18_0)
 end
 
-function StartGameWindowPanelConsole._handle_gamepad_activity(arg_19_0)
+StartGameWindowPanelConsole._handle_gamepad_activity = function (arg_19_0)
 	local var_19_0
 
 	var_19_0 = arg_19_0.gamepad_active_last_frame == nil
@@ -409,11 +409,11 @@ function StartGameWindowPanelConsole._handle_gamepad_activity(arg_19_0)
 	arg_19_0._most_recent_device = var_19_2
 end
 
-function StartGameWindowPanelConsole._is_in_quickplay_weave_menu(arg_20_0)
+StartGameWindowPanelConsole._is_in_quickplay_weave_menu = function (arg_20_0)
 	return arg_20_0.parent.parent:on_enter_sub_state() == "weave_quickplay"
 end
 
-function StartGameWindowPanelConsole._is_supported_with_twitch(arg_21_0, arg_21_1)
+StartGameWindowPanelConsole._is_supported_with_twitch = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.twitch
 
 	if var_21_0 and (var_21_0:is_connecting() or var_21_0:is_connected()) then
@@ -423,47 +423,47 @@ function StartGameWindowPanelConsole._is_supported_with_twitch(arg_21_0, arg_21_
 	return true
 end
 
-function StartGameWindowPanelConsole._event_disable_function(arg_22_0)
+StartGameWindowPanelConsole._event_disable_function = function (arg_22_0)
 	return arg_22_0:_is_in_quickplay_weave_menu() or not arg_22_0:_is_supported_with_twitch("event")
 end
 
-function StartGameWindowPanelConsole._adventure_disable_function(arg_23_0)
+StartGameWindowPanelConsole._adventure_disable_function = function (arg_23_0)
 	return arg_23_0:_is_in_quickplay_weave_menu() or not arg_23_0:_is_supported_with_twitch("adventure")
 end
 
-function StartGameWindowPanelConsole._custom_game_disable_function(arg_24_0)
+StartGameWindowPanelConsole._custom_game_disable_function = function (arg_24_0)
 	return arg_24_0:_is_in_quickplay_weave_menu() or not arg_24_0:_is_supported_with_twitch("custom")
 end
 
-function StartGameWindowPanelConsole._heroic_deed_disable_function(arg_25_0)
+StartGameWindowPanelConsole._heroic_deed_disable_function = function (arg_25_0)
 	return arg_25_0:_is_in_quickplay_weave_menu() or not arg_25_0:_is_supported_with_twitch("deed") or script_data.use_beta_mode
 end
 
-function StartGameWindowPanelConsole._lobby_browser_disable_function(arg_26_0)
+StartGameWindowPanelConsole._lobby_browser_disable_function = function (arg_26_0)
 	return not arg_26_0:_is_supported_with_twitch("lobby_browser")
 end
 
-function StartGameWindowPanelConsole._weave_disable_function(arg_27_0)
+StartGameWindowPanelConsole._weave_disable_function = function (arg_27_0)
 	return arg_27_0:_is_in_quickplay_weave_menu() or not arg_27_0:_is_supported_with_twitch("weave")
 end
 
-function StartGameWindowPanelConsole._deus_quickplay_disable_function(arg_28_0)
+StartGameWindowPanelConsole._deus_quickplay_disable_function = function (arg_28_0)
 	return arg_28_0:_is_in_quickplay_weave_menu() or not arg_28_0:_is_supported_with_twitch("deus_quickplay")
 end
 
-function StartGameWindowPanelConsole._deus_custom_disable_function(arg_29_0)
+StartGameWindowPanelConsole._deus_custom_disable_function = function (arg_29_0)
 	return arg_29_0:_is_in_quickplay_weave_menu() or not arg_29_0:_is_supported_with_twitch("deus_custom")
 end
 
-function StartGameWindowPanelConsole._versus_quickplay_disable_function(arg_30_0)
+StartGameWindowPanelConsole._versus_quickplay_disable_function = function (arg_30_0)
 	return arg_30_0:_is_in_quickplay_weave_menu() or not arg_30_0:_is_supported_with_twitch("versus_quickplay")
 end
 
-function StartGameWindowPanelConsole._versus_custom_disable_function(arg_31_0)
+StartGameWindowPanelConsole._versus_custom_disable_function = function (arg_31_0)
 	return arg_31_0:_is_in_quickplay_weave_menu() or not arg_31_0:_is_supported_with_twitch("versus_custom")
 end
 
-function StartGameWindowPanelConsole._streaming_disable_function(arg_32_0)
+StartGameWindowPanelConsole._streaming_disable_function = function (arg_32_0)
 	if arg_32_0:_is_in_quickplay_weave_menu() then
 		return true
 	end
@@ -474,7 +474,7 @@ function StartGameWindowPanelConsole._streaming_disable_function(arg_32_0)
 	return not var_32_0 or var_32_1
 end
 
-function StartGameWindowPanelConsole._animate_title_entry(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+StartGameWindowPanelConsole._animate_title_entry = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	local var_33_0 = arg_33_1.content.button_hotspot
 	local var_33_1 = var_33_0.is_selected
 	local var_33_2 = 20
@@ -504,7 +504,7 @@ function StartGameWindowPanelConsole._animate_title_entry(arg_33_0, arg_33_1, ar
 	var_33_0.selection_progress = var_33_7
 end
 
-function StartGameWindowPanelConsole._animate_back_button(arg_34_0, arg_34_1, arg_34_2)
+StartGameWindowPanelConsole._animate_back_button = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_1.content
 	local var_34_1 = arg_34_1.style
 	local var_34_2 = var_34_0.button_hotspot

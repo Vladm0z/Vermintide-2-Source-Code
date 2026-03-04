@@ -9,7 +9,7 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-function BTConditions.can_activate.bw_necromancer(arg_1_0)
+BTConditions.can_activate.bw_necromancer = function (arg_1_0)
 	if arg_1_0.ai_slot_extension.num_occupied_slots >= 3 then
 		return true
 	end

@@ -4,7 +4,7 @@ ImguiBoonsDebug = class(ImguiBoonsDebug)
 
 local var_0_0 = true
 
-function ImguiBoonsDebug.init(arg_1_0)
+ImguiBoonsDebug.init = function (arg_1_0)
 	arg_1_0._selected_boon_id = 1
 	arg_1_0._filter_text = ""
 	arg_1_0._boon_list = {}
@@ -15,7 +15,7 @@ function ImguiBoonsDebug.init(arg_1_0)
 	arg_1_0._filtered_boon_list = arg_1_0:_apply_boon_filter(arg_1_0._filter_text, arg_1_0._boon_list)
 end
 
-function ImguiBoonsDebug._get_boons(arg_2_0)
+ImguiBoonsDebug._get_boons = function (arg_2_0)
 	table.clear(arg_2_0._boon_list)
 
 	for iter_2_0, iter_2_1 in pairs(DeusPowerUpTemplates) do
@@ -25,7 +25,7 @@ function ImguiBoonsDebug._get_boons(arg_2_0)
 	table.sort(arg_2_0._boon_list)
 end
 
-function ImguiBoonsDebug._apply_boon_filter(arg_3_0, arg_3_1, arg_3_2)
+ImguiBoonsDebug._apply_boon_filter = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_1 == "" then
 		return arg_3_2
 	end
@@ -44,7 +44,7 @@ function ImguiBoonsDebug._apply_boon_filter(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0
 end
 
-function ImguiBoonsDebug.update(arg_4_0)
+ImguiBoonsDebug.update = function (arg_4_0)
 	if var_0_0 then
 		arg_4_0:init()
 
@@ -52,15 +52,15 @@ function ImguiBoonsDebug.update(arg_4_0)
 	end
 end
 
-function ImguiBoonsDebug.on_round_start(arg_5_0)
+ImguiBoonsDebug.on_round_start = function (arg_5_0)
 	return
 end
 
-function ImguiBoonsDebug.is_persistent(arg_6_0)
+ImguiBoonsDebug.is_persistent = function (arg_6_0)
 	return true
 end
 
-function ImguiBoonsDebug.draw(arg_7_0, arg_7_1)
+ImguiBoonsDebug.draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = Imgui.begin_window("Boons Debug", "always_auto_resize")
 
 	arg_7_0:_update_controls()
@@ -69,7 +69,7 @@ function ImguiBoonsDebug.draw(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function ImguiBoonsDebug._update_controls(arg_8_0)
+ImguiBoonsDebug._update_controls = function (arg_8_0)
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		Imgui.text("This UI only works when playing with the deus mechanism.")
 
@@ -123,7 +123,7 @@ function ImguiBoonsDebug._update_controls(arg_8_0)
 	end
 end
 
-function ImguiBoonsDebug._fetch_aliases(arg_9_0, arg_9_1)
+ImguiBoonsDebug._fetch_aliases = function (arg_9_0, arg_9_1)
 	local var_9_0 = {}
 	local var_9_1 = {}
 	local var_9_2

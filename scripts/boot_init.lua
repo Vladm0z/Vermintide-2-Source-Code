@@ -21,7 +21,7 @@ end
 GLOBAL_MUSIC_WORLD = true
 
 local var_0_1 = {
-	stop_all = function()
+	stop_all = function ()
 		return
 	end
 }
@@ -65,11 +65,11 @@ for iter_0_0, iter_0_1 in pairs(var_0_2) do
 	end
 end
 
-function Application.build()
+Application.build = function ()
 	error("Trying to use Application.build, use global variable BUILD instead.")
 end
 
-function Application.platform()
+Application.platform = function ()
 	error("Trying to use Application.platform(), use global variable PLATFORM instead.")
 end
 
@@ -167,7 +167,7 @@ end
 
 GlobalResources.unload = {}
 GlobalResources.handle_and_remove_on_load = {
-	["resource_packages/dialogues/auto_load_files"] = function(arg_5_0, arg_5_1)
+	["resource_packages/dialogues/auto_load_files"] = function (arg_5_0, arg_5_1)
 		DialogueSettings.cached_auto_load_files = {}
 
 		local var_5_0 = DialogueSettings.auto_load_files
@@ -184,7 +184,7 @@ GlobalResources.handle_and_remove_on_load = {
 	end
 }
 
-function GlobalResources.update_loading()
+GlobalResources.update_loading = function ()
 	if not GlobalResources.loaded then
 		local var_6_0 = true
 		local var_6_1 = Managers.package

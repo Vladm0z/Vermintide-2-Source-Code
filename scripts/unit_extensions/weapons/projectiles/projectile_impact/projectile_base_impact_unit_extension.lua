@@ -10,7 +10,7 @@ ProjectileImpactDataIndex = {
 	NORMAL = 4
 }
 
-function ProjectileBaseImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileBaseImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.world = var_1_0
@@ -19,13 +19,13 @@ function ProjectileBaseImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1
 	arg_1_0.impact_buffer = pdArray.new()
 end
 
-function ProjectileBaseImpactUnitExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ProjectileBaseImpactUnitExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	pdArray.set_empty(arg_2_0.impact_buffer)
 end
 
 local var_0_0 = {}
 
-function ProjectileBaseImpactUnitExtension.impact(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectileBaseImpactUnitExtension.impact = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0.impact_buffer
 
 	var_0_0[ProjectileImpactDataIndex.UNIT] = arg_3_1
@@ -43,6 +43,6 @@ function ProjectileBaseImpactUnitExtension.impact(arg_3_0, arg_3_1, arg_3_2, arg
 	end
 end
 
-function ProjectileBaseImpactUnitExtension.recent_impacts(arg_4_0)
+ProjectileBaseImpactUnitExtension.recent_impacts = function (arg_4_0)
 	return pdArray.data(arg_4_0.impact_buffer)
 end

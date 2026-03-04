@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTWarpfireThrowerShootAction = class(BTWarpfireThrowerShootAction, BTNode)
 
-function BTWarpfireThrowerShootAction.init(arg_1_0, ...)
+BTWarpfireThrowerShootAction.init = function (arg_1_0, ...)
 	BTWarpfireThrowerShootAction.super.init(arg_1_0, ...)
 end
 
@@ -14,7 +14,7 @@ BTWarpfireThrowerShootAction.name = "BTWarpfireThrowerShootAction"
 
 local var_0_1 = {}
 
-function BTWarpfireThrowerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTWarpfireThrowerShootAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.attack_finished = false
 
@@ -58,7 +58,7 @@ function BTWarpfireThrowerShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.entity:system("ai_bot_group_system"):ranged_attack_started(arg_2_1, var_2_5, "warpfire_thrower_fire")
 end
 
-function BTWarpfireThrowerShootAction._init_attack(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTWarpfireThrowerShootAction._init_attack = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = POSITION_LOOKUP[arg_3_2]
 	local var_3_1
 
@@ -74,13 +74,13 @@ function BTWarpfireThrowerShootAction._init_attack(arg_3_0, arg_3_1, arg_3_2, ar
 	return var_3_1
 end
 
-function BTWarpfireThrowerShootAction._abort_shooting(arg_4_0, arg_4_1, arg_4_2)
+BTWarpfireThrowerShootAction._abort_shooting = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_2.blob_extension:stop_placing_blobs(arg_4_1)
 
 	arg_4_2.is_firing = false
 end
 
-function BTWarpfireThrowerShootAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTWarpfireThrowerShootAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_2.warpfire_data
 
 	if var_5_0.is_firing then
@@ -103,7 +103,7 @@ function BTWarpfireThrowerShootAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, 
 	end
 end
 
-function BTWarpfireThrowerShootAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTWarpfireThrowerShootAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_2.attack_aborted then
 		return "failed"
 	end
@@ -191,7 +191,7 @@ function BTWarpfireThrowerShootAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, ar
 	return "running"
 end
 
-function BTWarpfireThrowerShootAction._move_warpfire_blob(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTWarpfireThrowerShootAction._move_warpfire_blob = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_2.blob_unit
 	local var_7_1 = POSITION_LOOKUP[var_7_0]
 
@@ -221,7 +221,7 @@ function BTWarpfireThrowerShootAction._move_warpfire_blob(arg_7_0, arg_7_1, arg_
 	end
 end
 
-function BTWarpfireThrowerShootAction._end_align_towards_target(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTWarpfireThrowerShootAction._end_align_towards_target = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	arg_8_3.state = "ready"
 	arg_8_3.shoot_direction_start = nil
 	arg_8_3.current_aim_rotation = QuaternionBox(Quaternion.look(arg_8_3.shoot_direction_box:unbox(), Vector3.up()))
@@ -232,7 +232,7 @@ function BTWarpfireThrowerShootAction._end_align_towards_target(arg_8_0, arg_8_1
 	arg_8_4.close_attack_cooldown = 0
 end
 
-function BTWarpfireThrowerShootAction._start_align_towards_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTWarpfireThrowerShootAction._start_align_towards_target = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	arg_9_3.state = "align"
 	arg_9_3.align_speed = 0
 	arg_9_3.current_aim_rotation = nil
@@ -256,7 +256,7 @@ local var_0_5 = var_0_2 * 6
 local var_0_6 = var_0_2 / 32
 local var_0_7 = 0.7
 
-function BTWarpfireThrowerShootAction._remaining_angle(arg_10_0, arg_10_1, arg_10_2)
+BTWarpfireThrowerShootAction._remaining_angle = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Quaternion.forward(arg_10_1)
 	local var_10_1 = Quaternion.forward(arg_10_2)
 	local var_10_2 = math.atan2(var_10_0.y, var_10_0.x)
@@ -267,7 +267,7 @@ function BTWarpfireThrowerShootAction._remaining_angle(arg_10_0, arg_10_1, arg_1
 	return ((var_10_3 - var_10_2) % var_10_5 + var_10_4) % var_10_5 - var_10_4
 end
 
-function BTWarpfireThrowerShootAction._angle_to_speed(arg_11_0, arg_11_1, arg_11_2)
+BTWarpfireThrowerShootAction._angle_to_speed = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 > 0 then
 		return arg_11_1
 	else
@@ -275,7 +275,7 @@ function BTWarpfireThrowerShootAction._angle_to_speed(arg_11_0, arg_11_1, arg_11
 	end
 end
 
-function BTWarpfireThrowerShootAction._update_align_towards_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BTWarpfireThrowerShootAction._update_align_towards_target = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0, var_12_1, var_12_2 = arg_12_0:_calculate_wanted_target_position(arg_12_1, arg_12_4)
 	local var_12_3 = arg_12_2.action
 	local var_12_4 = Unit.local_rotation(arg_12_1, 0)
@@ -312,11 +312,11 @@ function BTWarpfireThrowerShootAction._update_align_towards_target(arg_12_0, arg
 	return math.abs(var_12_5) < var_0_6
 end
 
-function BTWarpfireThrowerShootAction._close_range_attack_check(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTWarpfireThrowerShootAction._close_range_attack_check = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return arg_13_1.target_dist < arg_13_2.close_attack_range and arg_13_3 > arg_13_1.close_attack_cooldown
 end
 
-function BTWarpfireThrowerShootAction._close_range_attack(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+BTWarpfireThrowerShootAction._close_range_attack = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_4.muzzle_node
 	local var_14_1 = arg_14_2.warpfire_gun_unit
 	local var_14_2 = Unit.node(var_14_1, var_14_0)
@@ -392,7 +392,7 @@ function BTWarpfireThrowerShootAction._close_range_attack(arg_14_0, arg_14_1, ar
 	arg_14_3.close_attack_cooldown = arg_14_5 + arg_14_4.close_attack_cooldown
 end
 
-function BTWarpfireThrowerShootAction._aim_at_target(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+BTWarpfireThrowerShootAction._aim_at_target = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 	local var_15_0, var_15_1, var_15_2, var_15_3 = arg_15_0:_calculate_wanted_target_position(arg_15_1, arg_15_2)
 	local var_15_4 = ScriptUnit.has_extension(arg_15_4.target_unit, "status_system")
 	local var_15_5 = var_15_4 and var_15_4:get_is_dodging()
@@ -448,7 +448,7 @@ function BTWarpfireThrowerShootAction._aim_at_target(arg_15_0, arg_15_1, arg_15_
 	return var_15_22, var_15_27
 end
 
-function BTWarpfireThrowerShootAction._rotate_from_to(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTWarpfireThrowerShootAction._rotate_from_to = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = Quaternion.dot(arg_16_2, arg_16_1)
 	local var_16_1 = 2 * math.acos(math.clamp(var_16_0, -1, 1))
 	local var_16_2 = arg_16_3 * arg_16_4
@@ -458,7 +458,7 @@ function BTWarpfireThrowerShootAction._rotate_from_to(arg_16_0, arg_16_1, arg_16
 	return Quaternion.lerp(arg_16_1, arg_16_2, var_16_3), math.max(var_16_4 - var_16_2, 0)
 end
 
-function BTWarpfireThrowerShootAction._calculate_wanted_target_position(arg_17_0, arg_17_1, arg_17_2)
+BTWarpfireThrowerShootAction._calculate_wanted_target_position = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Unit.world_position(arg_17_1, Unit.node(arg_17_1, "c_spine"))
 	local var_17_1 = POSITION_LOOKUP[arg_17_2] + Vector3.up()
 	local var_17_2 = var_17_0 + (var_17_1 - var_17_0) * 0.5
@@ -475,7 +475,7 @@ function BTWarpfireThrowerShootAction._calculate_wanted_target_position(arg_17_0
 	return var_17_2, var_17_4, var_17_0, var_17_1
 end
 
-function BTWarpfireThrowerShootAction._calculate_align_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTWarpfireThrowerShootAction._calculate_align_animation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = Vector3.dot(arg_18_1, arg_18_3)
 	local var_18_1 = Vector3.dot(arg_18_2, arg_18_3)
 	local var_18_2 = math.abs(var_18_0)
@@ -496,14 +496,14 @@ function BTWarpfireThrowerShootAction._calculate_align_animation(arg_18_0, arg_1
 	return var_18_4
 end
 
-function BTWarpfireThrowerShootAction._attack_fire(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+BTWarpfireThrowerShootAction._attack_fire = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	arg_19_0:_create_warpfire_blob(arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 
 	arg_19_2.is_firing = true
 	arg_19_4.has_fired = true
 end
 
-function BTWarpfireThrowerShootAction._create_warpfire_blob(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+BTWarpfireThrowerShootAction._create_warpfire_blob = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_4.attack_pattern_data
 	local var_20_1 = arg_20_4.warpfire_data
 	local var_20_2 = var_20_0.warpfire_gun_unit
@@ -528,7 +528,7 @@ function BTWarpfireThrowerShootAction._create_warpfire_blob(arg_20_0, arg_20_1, 
 	var_20_9:start_placing_blobs(var_20_10, arg_20_5)
 end
 
-function BTWarpfireThrowerShootAction._calculate_cylinder_collision(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTWarpfireThrowerShootAction._calculate_cylinder_collision = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_1.bot_threat_radius
 	local var_21_1 = arg_21_1.bot_threat_height
 	local var_21_2 = arg_21_1.bot_threat_offset_up
@@ -541,7 +541,7 @@ function BTWarpfireThrowerShootAction._calculate_cylinder_collision(arg_21_0, ar
 	return arg_21_2 + var_21_6 * var_21_3 + var_21_7 * (var_21_4 + var_21_2), var_21_5
 end
 
-function BTWarpfireThrowerShootAction._create_bot_aoe_threat(arg_22_0, arg_22_1, arg_22_2)
+BTWarpfireThrowerShootAction._create_bot_aoe_threat = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = POSITION_LOOKUP[arg_22_1]
 	local var_22_1 = Unit.local_rotation(arg_22_1, 0)
 	local var_22_2 = arg_22_2.bot_threat_duration

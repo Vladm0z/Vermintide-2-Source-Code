@@ -19,11 +19,11 @@ local function var_0_3(arg_1_0, ...)
 	end
 end
 
-function IRCManager.init(arg_2_0)
+IRCManager.init = function (arg_2_0)
 	arg_2_0:_reset()
 end
 
-function IRCManager._reset(arg_3_0)
+IRCManager._reset = function (arg_3_0)
 	arg_3_0._state = "none"
 	arg_3_0._connection_retries = 0
 	arg_3_0._user_name = nil
@@ -44,7 +44,7 @@ function IRCManager._reset(arg_3_0)
 	}
 end
 
-function IRCManager.connect(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+IRCManager.connect = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_3.address
 	local var_4_1 = arg_4_3.port or 6667
 	local var_4_2 = arg_4_3.channel_name
@@ -69,23 +69,23 @@ function IRCManager.connect(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0._allow_send = var_4_3
 end
 
-function IRCManager.home_channel(arg_5_0)
+IRCManager.home_channel = function (arg_5_0)
 	return arg_5_0._home_channel
 end
 
-function IRCManager.set_user_name(arg_6_0, arg_6_1)
+IRCManager.set_user_name = function (arg_6_0, arg_6_1)
 	fassert(arg_6_0._state == "none", "[IRCManager] You can't change user name after you've connected")
 
 	arg_6_0._user_name = string.gsub(arg_6_1, " ", "_")
 end
 
-function IRCManager.register_message_callback(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+IRCManager.register_message_callback = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	fassert(arg_7_0._callback_by_type[arg_7_2], "[IRCManager] There is no message type called %s", arg_7_2)
 
 	arg_7_0._callback_by_type[arg_7_2][arg_7_1] = arg_7_3
 end
 
-function IRCManager.unregister_message_callback(arg_8_0, arg_8_1, arg_8_2)
+IRCManager.unregister_message_callback = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_2 then
 		arg_8_0._callback_by_type[arg_8_2][arg_8_1] = nil
 	else
@@ -95,15 +95,15 @@ function IRCManager.unregister_message_callback(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function IRCManager.user_name(arg_9_0)
+IRCManager.user_name = function (arg_9_0)
 	return arg_9_0._user_name
 end
 
-function IRCManager.force_disconnect(arg_10_0)
+IRCManager.force_disconnect = function (arg_10_0)
 	Irc.disconnect()
 end
 
-function IRCManager.send_message(arg_11_0, arg_11_1, arg_11_2)
+IRCManager.send_message = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0._allow_send then
 		local var_11_0 = arg_11_2
 
@@ -126,25 +126,25 @@ function IRCManager.send_message(arg_11_0, arg_11_1, arg_11_2)
 	return false
 end
 
-function IRCManager.join_channel(arg_12_0, arg_12_1)
+IRCManager.join_channel = function (arg_12_0, arg_12_1)
 	var_0_3("Joining Channel: %s", tostring(arg_12_1))
 	Irc.join_channel(arg_12_1)
 end
 
-function IRCManager.leave_channel(arg_13_0, arg_13_1)
+IRCManager.leave_channel = function (arg_13_0, arg_13_1)
 	var_0_3("Leaving Channel: %s", tostring(arg_13_1))
 	Irc.leave_channel(arg_13_1)
 end
 
-function IRCManager.who(arg_14_0, arg_14_1)
+IRCManager.who = function (arg_14_0, arg_14_1)
 	Irc.who(arg_14_1)
 end
 
-function IRCManager.destroy(arg_15_0)
+IRCManager.destroy = function (arg_15_0)
 	Irc.disconnect()
 end
 
-function IRCManager._handle_irc_message(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+IRCManager._handle_irc_message = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	var_0_3("Message: %s %s %s %s", arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 
 	if arg_16_0:_handle_meta(arg_16_1, arg_16_2, arg_16_3, arg_16_4) then
@@ -164,7 +164,7 @@ function IRCManager._handle_irc_message(arg_16_0, arg_16_1, arg_16_2, arg_16_3, 
 	end
 end
 
-function IRCManager._handle_connections(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+IRCManager._handle_connections = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	arg_17_0._channels = arg_17_0._channels or {}
 	arg_17_0._channel_members = arg_17_0._channel_members or {}
 
@@ -249,7 +249,7 @@ function IRCManager._handle_connections(arg_17_0, arg_17_1, arg_17_2, arg_17_3, 
 	return arg_17_1
 end
 
-function IRCManager._handle_meta(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+IRCManager._handle_meta = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	if arg_18_1 == Irc.CHANNEL_MSG then
 		local var_18_0, var_18_1 = string.find(arg_18_3, "$META;")
 
@@ -265,11 +265,11 @@ function IRCManager._handle_meta(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 	return false
 end
 
-function IRCManager._create_metadata_table(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+IRCManager._create_metadata_table = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	return "$META;" .. arg_19_1 .. ";" .. arg_19_2 .. ";" .. arg_19_3 .. ";" .. arg_19_4
 end
 
-function IRCManager.parse_metadata(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+IRCManager.parse_metadata = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = string.split_deprecated(arg_20_1, ";")
 	local var_20_1 = arg_20_0._channel_members[arg_20_3][arg_20_2]
 
@@ -284,7 +284,7 @@ function IRCManager.parse_metadata(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	end
 end
 
-function IRCManager._update_meta_data(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+IRCManager._update_meta_data = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = Irc.META_MSG
 	local var_21_1 = arg_21_0._callback_by_type[var_21_0]
 
@@ -295,7 +295,7 @@ function IRCManager._update_meta_data(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	end
 end
 
-function IRCManager.get_channel_members(arg_22_0, arg_22_1)
+IRCManager.get_channel_members = function (arg_22_0, arg_22_1)
 	if arg_22_1 and arg_22_0._channel_members[arg_22_1] then
 		return arg_22_0._channel_members[arg_22_1]
 	else
@@ -303,11 +303,11 @@ function IRCManager.get_channel_members(arg_22_0, arg_22_1)
 	end
 end
 
-function IRCManager.get_channels(arg_23_0)
+IRCManager.get_channels = function (arg_23_0)
 	return arg_23_0._channels
 end
 
-function IRCManager._parse_names_list(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+IRCManager._parse_names_list = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0, var_24_1 = string.find(arg_24_4, arg_24_1 .. " :")
 	local var_24_2 = string.sub(arg_24_4, var_24_1)
 	local var_24_3 = string.split_deprecated(var_24_2, " ")
@@ -317,16 +317,16 @@ function IRCManager._parse_names_list(arg_24_0, arg_24_1, arg_24_2, arg_24_3, ar
 	end
 end
 
-function IRCManager.update(arg_25_0, arg_25_1)
+IRCManager.update = function (arg_25_0, arg_25_1)
 	IRCStates[arg_25_0._state](arg_25_0, arg_25_1)
 end
 
-function IRCManager.cb_connect_token_received(arg_26_0, arg_26_1)
+IRCManager.cb_connect_token_received = function (arg_26_0, arg_26_1)
 	print("[IrcManager:cb_connect_token_received] Result: " .. tostring(arg_26_1.result))
 	arg_26_0:_change_state("verify_connection")
 end
 
-function IRCManager._change_state(arg_27_0, arg_27_1)
+IRCManager._change_state = function (arg_27_0, arg_27_1)
 	fassert(IRCStates[arg_27_1], "[IRCManager] There is no state called %s", arg_27_1)
 	var_0_3("Leaving state: %s", arg_27_0._state)
 
@@ -335,7 +335,7 @@ function IRCManager._change_state(arg_27_0, arg_27_1)
 	var_0_3("Entering state: %s", arg_27_0._state)
 end
 
-function IRCManager._notify_connected(arg_28_0, arg_28_1)
+IRCManager._notify_connected = function (arg_28_0, arg_28_1)
 	if arg_28_0._callback then
 		arg_28_0._callback(arg_28_1)
 	end
@@ -343,11 +343,11 @@ end
 
 IRCStates = IRCStates or {}
 
-function IRCStates.none(arg_29_0, arg_29_1)
+IRCStates.none = function (arg_29_0, arg_29_1)
 	return
 end
 
-function IRCStates.initialize(arg_30_0, arg_30_1)
+IRCStates.initialize = function (arg_30_0, arg_30_1)
 	if IS_PS4 then
 		arg_30_0._initialized = true
 
@@ -373,7 +373,7 @@ function IRCStates.initialize(arg_30_0, arg_30_1)
 	end
 end
 
-function IRCStates.connect(arg_31_0, arg_31_1)
+IRCStates.connect = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._host_address
 	local var_31_1 = arg_31_0._port
 	local var_31_2 = "justinfan" .. Math.random(9999)
@@ -388,7 +388,7 @@ function IRCStates.connect(arg_31_0, arg_31_1)
 	arg_31_0._connection_retries = arg_31_0._connection_retries + 1
 end
 
-function IRCStates.join_channel(arg_32_0, arg_32_1)
+IRCStates.join_channel = function (arg_32_0, arg_32_1)
 	if Irc.is_connected() then
 		arg_32_0:join_channel(arg_32_0._auto_join_channel)
 
@@ -402,7 +402,7 @@ function IRCStates.join_channel(arg_32_0, arg_32_1)
 	end
 end
 
-function IRCStates.connected(arg_33_0, arg_33_1)
+IRCStates.connected = function (arg_33_0, arg_33_1)
 	if Irc.is_connected() then
 		for iter_33_0, iter_33_1 in ipairs(var_0_2) do
 			Irc.send_message(iter_33_1.message, iter_33_1.channel_or_user)
@@ -421,7 +421,7 @@ function IRCStates.connected(arg_33_0, arg_33_1)
 	end
 end
 
-function IRCStates.disconnect(arg_34_0, arg_34_1)
+IRCStates.disconnect = function (arg_34_0, arg_34_1)
 	if Irc.is_connected() then
 		Irc.disconnect()
 	end
@@ -431,7 +431,7 @@ function IRCStates.disconnect(arg_34_0, arg_34_1)
 	arg_34_0:_change_state("none")
 end
 
-function IRCStates.verify_connection(arg_35_0, arg_35_1)
+IRCStates.verify_connection = function (arg_35_0, arg_35_1)
 	if Irc.is_connected() then
 		if arg_35_0._auto_join_channel then
 			arg_35_0:_change_state("join_channel")
@@ -450,6 +450,6 @@ function IRCStates.verify_connection(arg_35_0, arg_35_1)
 	end
 end
 
-function IRCStates.wait_for_connection(arg_36_0, arg_36_1)
+IRCStates.wait_for_connection = function (arg_36_0, arg_36_1)
 	return
 end

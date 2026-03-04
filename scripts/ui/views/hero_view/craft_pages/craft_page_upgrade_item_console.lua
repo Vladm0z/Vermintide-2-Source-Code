@@ -14,7 +14,7 @@ local var_0_9 = 1
 CraftPageUpgradeItemConsole = class(CraftPageUpgradeItemConsole)
 CraftPageUpgradeItemConsole.NAME = "CraftPageUpgradeItemConsole"
 
-function CraftPageUpgradeItemConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageUpgradeItemConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageUpgradeItemConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -60,7 +60,7 @@ function CraftPageUpgradeItemConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:setup_recipe_requirements()
 end
 
-function CraftPageUpgradeItemConsole.setup_recipe_requirements(arg_2_0)
+CraftPageUpgradeItemConsole.setup_recipe_requirements = function (arg_2_0)
 	local var_2_0 = arg_2_0.settings.name
 	local var_2_1 = arg_2_0._craft_items[1]
 
@@ -142,7 +142,7 @@ function CraftPageUpgradeItemConsole.setup_recipe_requirements(arg_2_0)
 	end
 end
 
-function CraftPageUpgradeItemConsole.reset_requirements(arg_3_0, arg_3_1)
+CraftPageUpgradeItemConsole.reset_requirements = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._widgets_by_name
 	local var_3_1 = 60
 	local var_3_2 = 10
@@ -162,7 +162,7 @@ function CraftPageUpgradeItemConsole.reset_requirements(arg_3_0, arg_3_1)
 	end
 end
 
-function CraftPageUpgradeItemConsole.create_ui_elements(arg_4_0, arg_4_1)
+CraftPageUpgradeItemConsole.create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_4_0 = {}
@@ -186,7 +186,7 @@ function CraftPageUpgradeItemConsole.create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageUpgradeItemConsole.on_exit(arg_5_0, arg_5_1)
+CraftPageUpgradeItemConsole.on_exit = function (arg_5_0, arg_5_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageUpgradeItemConsole")
 
 	arg_5_0.ui_animator = nil
@@ -196,7 +196,7 @@ function CraftPageUpgradeItemConsole.on_exit(arg_5_0, arg_5_1)
 	end
 end
 
-function CraftPageUpgradeItemConsole.update(arg_6_0, arg_6_1, arg_6_2)
+CraftPageUpgradeItemConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -209,11 +209,11 @@ function CraftPageUpgradeItemConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function CraftPageUpgradeItemConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+CraftPageUpgradeItemConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function CraftPageUpgradeItemConsole._update_animations(arg_8_0, arg_8_1)
+CraftPageUpgradeItemConsole._update_animations = function (arg_8_0, arg_8_1)
 	arg_8_0.ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -230,7 +230,7 @@ function CraftPageUpgradeItemConsole._update_animations(arg_8_0, arg_8_1)
 	local var_8_2 = arg_8_0._widgets_by_name
 end
 
-function CraftPageUpgradeItemConsole._is_button_pressed(arg_9_0, arg_9_1)
+CraftPageUpgradeItemConsole._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -240,13 +240,13 @@ function CraftPageUpgradeItemConsole._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function CraftPageUpgradeItemConsole._is_button_hovered(arg_10_0, arg_10_1)
+CraftPageUpgradeItemConsole._is_button_hovered = function (arg_10_0, arg_10_1)
 	if arg_10_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageUpgradeItemConsole._is_button_held(arg_11_0, arg_11_1)
+CraftPageUpgradeItemConsole._is_button_held = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.is_clicked then
@@ -254,7 +254,7 @@ function CraftPageUpgradeItemConsole._is_button_held(arg_11_0, arg_11_1)
 	end
 end
 
-function CraftPageUpgradeItemConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+CraftPageUpgradeItemConsole._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 
 	if var_12_0:waiting_for_craft() or arg_12_0._craft_result then
@@ -324,17 +324,17 @@ function CraftPageUpgradeItemConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function CraftPageUpgradeItemConsole._handle_craft_input_progress(arg_13_0, arg_13_1)
+CraftPageUpgradeItemConsole._handle_craft_input_progress = function (arg_13_0, arg_13_1)
 	return arg_13_0.parent:_set_input_progress(arg_13_1)
 end
 
-function CraftPageUpgradeItemConsole.craft_result(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+CraftPageUpgradeItemConsole.craft_result = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not arg_14_2 then
 		arg_14_0._craft_result = arg_14_1
 	end
 end
 
-function CraftPageUpgradeItemConsole.reset(arg_15_0)
+CraftPageUpgradeItemConsole.reset = function (arg_15_0)
 	for iter_15_0 = 1, var_0_9 do
 		local var_15_0 = arg_15_0._craft_items[iter_15_0]
 
@@ -350,7 +350,7 @@ function CraftPageUpgradeItemConsole.reset(arg_15_0)
 	arg_15_0:setup_recipe_requirements()
 end
 
-function CraftPageUpgradeItemConsole.present_results(arg_16_0)
+CraftPageUpgradeItemConsole.present_results = function (arg_16_0)
 	local var_16_0 = arg_16_0._item_grid
 
 	var_16_0:clear_locked_items()
@@ -359,7 +359,7 @@ function CraftPageUpgradeItemConsole.present_results(arg_16_0)
 	arg_16_0:setup_recipe_requirements()
 end
 
-function CraftPageUpgradeItemConsole.on_craft_completed(arg_17_0)
+CraftPageUpgradeItemConsole.on_craft_completed = function (arg_17_0)
 	local var_17_0 = arg_17_0._craft_result
 	local var_17_1 = arg_17_0._item_grid
 	local var_17_2 = arg_17_0.parent
@@ -395,7 +395,7 @@ function CraftPageUpgradeItemConsole.on_craft_completed(arg_17_0)
 	arg_17_0:setup_recipe_requirements()
 end
 
-function CraftPageUpgradeItemConsole._update_craft_items(arg_18_0)
+CraftPageUpgradeItemConsole._update_craft_items = function (arg_18_0)
 	local var_18_0 = arg_18_0.super_parent
 	local var_18_1 = arg_18_0._item_grid
 
@@ -424,7 +424,7 @@ function CraftPageUpgradeItemConsole._update_craft_items(arg_18_0)
 	end
 end
 
-function CraftPageUpgradeItemConsole._remove_craft_item(arg_19_0, arg_19_1, arg_19_2)
+CraftPageUpgradeItemConsole._remove_craft_item = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._craft_items
 
 	if arg_19_2 then
@@ -457,7 +457,7 @@ function CraftPageUpgradeItemConsole._remove_craft_item(arg_19_0, arg_19_1, arg_
 	end
 end
 
-function CraftPageUpgradeItemConsole._add_craft_item(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+CraftPageUpgradeItemConsole._add_craft_item = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_0:_clear_item_grid()
 
 	local var_20_0 = arg_20_0._craft_items
@@ -491,18 +491,18 @@ function CraftPageUpgradeItemConsole._add_craft_item(arg_20_0, arg_20_1, arg_20_
 	arg_20_0:setup_recipe_requirements()
 end
 
-function CraftPageUpgradeItemConsole._set_craft_button_disabled(arg_21_0, arg_21_1)
+CraftPageUpgradeItemConsole._set_craft_button_disabled = function (arg_21_0, arg_21_1)
 	arg_21_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_21_1
 
 	arg_21_0.parent:set_input_description(not arg_21_1 and arg_21_0.settings.name or "disabled")
 end
 
-function CraftPageUpgradeItemConsole._exit(arg_22_0, arg_22_1)
+CraftPageUpgradeItemConsole._exit = function (arg_22_0, arg_22_1)
 	arg_22_0.exit = true
 	arg_22_0.exit_level_id = arg_22_1
 end
 
-function CraftPageUpgradeItemConsole.draw(arg_23_0, arg_23_1)
+CraftPageUpgradeItemConsole.draw = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0.ui_renderer
 	local var_23_1 = arg_23_0.ui_top_renderer
 	local var_23_2 = arg_23_0.ui_scenegraph
@@ -517,15 +517,15 @@ function CraftPageUpgradeItemConsole.draw(arg_23_0, arg_23_1)
 	UIRenderer.end_pass(var_23_1)
 end
 
-function CraftPageUpgradeItemConsole._play_sound(arg_24_0, arg_24_1)
+CraftPageUpgradeItemConsole._play_sound = function (arg_24_0, arg_24_1)
 	arg_24_0.super_parent:play_sound(arg_24_1)
 end
 
-function CraftPageUpgradeItemConsole._set_craft_button_text(arg_25_0, arg_25_1, arg_25_2)
+CraftPageUpgradeItemConsole._set_craft_button_text = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0._widgets_by_name.craft_button.content.button_text = arg_25_2 and Localize(arg_25_1) or arg_25_1
 end
 
-function CraftPageUpgradeItemConsole._add_crafting_material_requirement(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+CraftPageUpgradeItemConsole._add_crafting_material_requirement = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = UISettings.crafting_material_icons_small
 	local var_26_1 = arg_26_0._widgets_by_name["material_text_" .. arg_26_1].content
 
@@ -536,7 +536,7 @@ function CraftPageUpgradeItemConsole._add_crafting_material_requirement(arg_26_0
 	}
 end
 
-function CraftPageUpgradeItemConsole._clear_item_grid(arg_27_0)
+CraftPageUpgradeItemConsole._clear_item_grid = function (arg_27_0)
 	local var_27_0 = arg_27_0._craft_items
 	local var_27_1 = arg_27_0.super_parent
 
@@ -550,7 +550,7 @@ function CraftPageUpgradeItemConsole._clear_item_grid(arg_27_0)
 	table.clear(var_27_0)
 end
 
-function CraftPageUpgradeItemConsole._has_added_item_by_id(arg_28_0, arg_28_1)
+CraftPageUpgradeItemConsole._has_added_item_by_id = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._craft_items
 
 	for iter_28_0 = 1, var_0_9 do

@@ -255,7 +255,7 @@ end
 
 local var_0_16 = 1
 
-function OptionsView.init(arg_4_0, arg_4_1)
+OptionsView.init = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_renderer = arg_4_1.ui_renderer
 	arg_4_0.ui_top_renderer = arg_4_1.ui_top_renderer
 	arg_4_0.ingame_ui = arg_4_1.ingame_ui
@@ -302,15 +302,15 @@ function OptionsView.init(arg_4_0, arg_4_1)
 	arg_4_0:_setup_input_functions()
 end
 
-function OptionsView._setup_input_functions(arg_5_0)
+OptionsView._setup_input_functions = function (arg_5_0)
 	arg_5_0._input_functions = {
-		checkbox = function(arg_6_0, arg_6_1, arg_6_2)
+		checkbox = function (arg_6_0, arg_6_1, arg_6_2)
 			if arg_6_0.content.hotspot.on_release then
 				WwiseWorld.trigger_event(arg_5_0.wwise_world, "Play_hud_select")
 				arg_6_0.content.callback(arg_6_0.content)
 			end
 		end,
-		option = function(arg_7_0, arg_7_1, arg_7_2)
+		option = function (arg_7_0, arg_7_1, arg_7_2)
 			local var_7_0 = arg_7_0.content
 			local var_7_1 = var_7_0.num_options
 			local var_7_2 = var_7_0.current_selection
@@ -327,7 +327,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		slider = function(arg_8_0, arg_8_1, arg_8_2)
+		slider = function (arg_8_0, arg_8_1, arg_8_2)
 			local var_8_0 = arg_8_0.content
 			local var_8_1 = arg_8_0.style
 			local var_8_2 = var_8_0.left_hotspot
@@ -398,7 +398,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		drop_down = function(arg_9_0, arg_9_1, arg_9_2)
+		drop_down = function (arg_9_0, arg_9_1, arg_9_2)
 			local var_9_0 = arg_9_0.content
 			local var_9_1 = arg_9_0.style.list_style
 			local var_9_2 = var_9_0.list_content
@@ -499,7 +499,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		stepper = function(arg_10_0, arg_10_1, arg_10_2)
+		stepper = function (arg_10_0, arg_10_1, arg_10_2)
 			local var_10_0 = arg_10_0.content
 			local var_10_1 = var_10_0.current_selection or 0
 			local var_10_2 = var_10_1
@@ -534,7 +534,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				var_10_0.callback(var_10_0, var_10_5)
 			end
 		end,
-		keybind = function(arg_11_0, arg_11_1, arg_11_2)
+		keybind = function (arg_11_0, arg_11_1, arg_11_2)
 			if Managers.input:is_device_active("gamepad") then
 				return
 			end
@@ -622,7 +622,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		sorted_list = function(arg_12_0, arg_12_1, arg_12_2)
+		sorted_list = function (arg_12_0, arg_12_1, arg_12_2)
 			local var_12_0 = arg_12_0.content
 			local var_12_1 = arg_12_0.style
 			local var_12_2 = var_12_0.list_content
@@ -703,7 +703,7 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		text_link = function(arg_13_0, arg_13_1, arg_13_2)
+		text_link = function (arg_13_0, arg_13_1, arg_13_2)
 			local var_13_0 = arg_13_0.content
 
 			if var_13_0.hotspot.on_release or var_13_0.controller_input_pressed then
@@ -717,23 +717,23 @@ function OptionsView._setup_input_functions(arg_5_0)
 				end
 			end
 		end,
-		image = function()
+		image = function ()
 			return
 		end,
-		title = function()
+		title = function ()
 			return
 		end,
-		gamepad_layout = function()
+		gamepad_layout = function ()
 			return
 		end
 	}
 end
 
-function OptionsView.input_service(arg_17_0)
+OptionsView.input_service = function (arg_17_0)
 	return arg_17_0.input_manager:get_service("options_menu")
 end
 
-function OptionsView.cleanup_popups(arg_18_0)
+OptionsView.cleanup_popups = function (arg_18_0)
 	if arg_18_0.save_data_error_popup_id then
 		Managers.popup:cancel_popup(arg_18_0.save_data_error_popup_id)
 
@@ -773,7 +773,7 @@ function OptionsView.cleanup_popups(arg_18_0)
 	end
 end
 
-function OptionsView.destroy(arg_19_0)
+OptionsView.destroy = function (arg_19_0)
 	arg_19_0:cleanup_popups()
 
 	if arg_19_0._cursor_pushed then
@@ -791,7 +791,7 @@ end
 
 RELOAD_OPTIONS_VIEW = true
 
-function OptionsView.create_ui_elements(arg_20_0)
+OptionsView.create_ui_elements = function (arg_20_0)
 	arg_20_0.background_widgets = {}
 
 	local var_20_0 = 0
@@ -866,7 +866,7 @@ function OptionsView.create_ui_elements(arg_20_0)
 
 			var_20_3.tobii_eyetracking_settings = var_20_6
 
-			function var_20_6.on_enter(arg_21_0)
+			var_20_6.on_enter = function (arg_21_0)
 				local var_21_0 = Managers.player:players()
 
 				for iter_21_0, iter_21_1 in pairs(var_21_0) do
@@ -878,7 +878,7 @@ function OptionsView.create_ui_elements(arg_20_0)
 				end
 			end
 
-			function var_20_6.on_exit()
+			var_20_6.on_exit = function ()
 				local var_22_0 = Managers.player:players()
 
 				for iter_22_0, iter_22_1 in pairs(var_22_0) do
@@ -949,7 +949,7 @@ function OptionsView.create_ui_elements(arg_20_0)
 	arg_20_0:_setup_text_buttons_width()
 end
 
-function OptionsView._setup_text_buttons_width(arg_23_0)
+OptionsView._setup_text_buttons_width = function (arg_23_0)
 	local var_23_0 = arg_23_0:_setup_text_button_size(arg_23_0.apply_button)
 
 	arg_23_0:_setup_text_button_size(arg_23_0.reset_to_default)
@@ -966,7 +966,7 @@ function OptionsView._setup_text_buttons_width(arg_23_0)
 	end
 end
 
-function OptionsView._setup_text_button_size(arg_24_0, arg_24_1)
+OptionsView._setup_text_button_size = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_1.scenegraph_id
 	local var_24_1 = arg_24_1.content
 	local var_24_2 = arg_24_1.style.text
@@ -990,11 +990,11 @@ function OptionsView._setup_text_button_size(arg_24_0, arg_24_1)
 	return var_24_8
 end
 
-function OptionsView._set_text_button_horizontal_position(arg_25_0, arg_25_1, arg_25_2)
+OptionsView._set_text_button_horizontal_position = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0.ui_scenegraph[arg_25_1.scenegraph_id].local_position[1] = arg_25_2
 end
 
-function OptionsView.build_settings_list(arg_26_0, arg_26_1, arg_26_2)
+OptionsView.build_settings_list = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = var_0_0.scenegraph_definition
 	local var_26_1 = arg_26_2 .. "start"
 	local var_26_2 = 0
@@ -1144,8 +1144,8 @@ function OptionsView.build_settings_list(arg_26_0, arg_26_1, arg_26_2)
 	}
 end
 
-function OptionsView.make_callback(arg_27_0, arg_27_1)
-	return function(...)
+OptionsView.make_callback = function (arg_27_0, arg_27_1)
+	return function (...)
 		arg_27_0[arg_27_1](arg_27_0, ...)
 
 		local var_28_0 = arg_27_0.changed_user_settings
@@ -1189,7 +1189,7 @@ function OptionsView.make_callback(arg_27_0, arg_27_1)
 	end
 end
 
-function OptionsView.build_stepper_widget(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+OptionsView.build_stepper_widget = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_1.callback
 	local var_29_1 = arg_29_0:make_callback(var_29_0)
 	local var_29_2 = arg_29_1.saved_value
@@ -1210,7 +1210,7 @@ function OptionsView.build_stepper_widget(arg_29_0, arg_29_1, arg_29_2, arg_29_3
 	return var_29_10
 end
 
-function OptionsView.build_option_widget(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+OptionsView.build_option_widget = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = arg_30_1.callback
 	local var_30_1 = arg_30_0:make_callback(var_30_0)
 	local var_30_2 = arg_30_1.saved_value
@@ -1230,7 +1230,7 @@ function OptionsView.build_option_widget(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	return var_30_11
 end
 
-function OptionsView.build_drop_down_widget(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+OptionsView.build_drop_down_widget = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_1.callback
 	local var_31_1 = arg_31_0:make_callback(var_31_0)
 	local var_31_2 = arg_31_1.saved_value
@@ -1250,7 +1250,7 @@ function OptionsView.build_drop_down_widget(arg_31_0, arg_31_1, arg_31_2, arg_31
 	return var_31_11
 end
 
-function OptionsView.build_slider_widget(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+OptionsView.build_slider_widget = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = arg_32_1.callback
 	local var_32_1 = arg_32_0:make_callback(var_32_0)
 	local var_32_2 = arg_32_1.callback_on_release
@@ -1283,15 +1283,15 @@ function OptionsView.build_slider_widget(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	return var_32_16
 end
 
-function OptionsView.build_image(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+OptionsView.build_image = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	local var_33_0 = var_0_0.create_simple_texture_widget(arg_33_1.image, arg_33_1.image_size, arg_33_2, arg_33_3)
 	local var_33_1 = var_33_0.content
 
-	function var_33_1.callback()
+	var_33_1.callback = function ()
 		return
 	end
 
-	function var_33_1.saved_value_cb()
+	var_33_1.saved_value_cb = function ()
 		return
 	end
 
@@ -1300,15 +1300,15 @@ function OptionsView.build_image(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	return var_33_0
 end
 
-function OptionsView.build_title(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+OptionsView.build_title = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = var_0_0.create_title_widget(arg_36_1.text, arg_36_1.font_size, arg_36_1.color, arg_36_1.horizontal_alignment, arg_36_2, arg_36_3)
 	local var_36_1 = var_36_0.content
 
-	function var_36_1.callback()
+	var_36_1.callback = function ()
 		return
 	end
 
-	function var_36_1.saved_value_cb()
+	var_36_1.saved_value_cb = function ()
 		return
 	end
 
@@ -1317,22 +1317,22 @@ function OptionsView.build_title(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	return var_36_0
 end
 
-function OptionsView.build_text_link(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+OptionsView.build_text_link = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0 = var_0_0.create_text_link_widget(arg_39_1.text, arg_39_1.url, arg_39_1.font_size, arg_39_1.color, arg_39_1.horizontal_alignment, arg_39_2, arg_39_3)
 	local var_39_1 = var_39_0.content
 
-	function var_39_1.callback()
+	var_39_1.callback = function ()
 		return
 	end
 
-	function var_39_1.saved_value_cb()
+	var_39_1.saved_value_cb = function ()
 		return
 	end
 
 	return var_39_0
 end
 
-function OptionsView.clear_gamepad_layout_widget(arg_42_0)
+OptionsView.clear_gamepad_layout_widget = function (arg_42_0)
 	local var_42_0 = var_0_12(arg_42_0.changed_user_settings.gamepad_left_handed, Application.user_setting("gamepad_left_handed")) and AlternatateGamepadSettings.left_handed.default_gamepad_actions_by_key or AlternatateGamepadSettings.default.default_gamepad_actions_by_key
 	local var_42_1 = arg_42_0.gamepad_layout_widget.content
 	local var_42_2 = var_42_1.background
@@ -1356,7 +1356,7 @@ function OptionsView.clear_gamepad_layout_widget(arg_42_0)
 	end
 end
 
-function OptionsView.update_gamepad_layout_widget(arg_43_0, arg_43_1, arg_43_2)
+OptionsView.update_gamepad_layout_widget = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0.gamepad_layout_widget.content
 	local var_43_1 = {}
 
@@ -1414,15 +1414,15 @@ function OptionsView.update_gamepad_layout_widget(arg_43_0, arg_43_1, arg_43_2)
 	end
 end
 
-function OptionsView.build_gamepad_layout(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+OptionsView.build_gamepad_layout = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = var_0_0.create_gamepad_layout_widget(arg_44_1.bg_image, arg_44_1.bg_image_size, arg_44_1.bg_image2, arg_44_1.bg_image_size2, arg_44_2, arg_44_3)
 	local var_44_1 = var_44_0.content
 
-	function var_44_1.callback()
+	var_44_1.callback = function ()
 		return
 	end
 
-	function var_44_1.saved_value_cb()
+	var_44_1.saved_value_cb = function ()
 		return
 	end
 
@@ -1431,7 +1431,7 @@ function OptionsView.build_gamepad_layout(arg_44_0, arg_44_1, arg_44_2, arg_44_3
 	return var_44_0
 end
 
-function OptionsView.build_checkbox_widget(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+OptionsView.build_checkbox_widget = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = arg_47_1.callback
 	local var_47_1 = arg_47_0:make_callback(var_47_0)
 	local var_47_2 = arg_47_1.saved_value
@@ -1454,7 +1454,7 @@ function OptionsView.build_checkbox_widget(arg_47_0, arg_47_1, arg_47_2, arg_47_
 	return var_47_9
 end
 
-function OptionsView.build_keybind_widget(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+OptionsView.build_keybind_widget = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = callback(arg_48_0, "cb_keybind_changed")
 	local var_48_1 = callback(arg_48_0, "cb_keybind_saved_value")
 	local var_48_2, var_48_3, var_48_4, var_48_5 = arg_48_0:cb_keybind_setup(arg_48_1.keymappings_key, arg_48_1.keymappings_table_key, arg_48_1.actions)
@@ -1470,7 +1470,7 @@ function OptionsView.build_keybind_widget(arg_48_0, arg_48_1, arg_48_2, arg_48_3
 	return var_48_6
 end
 
-function OptionsView.build_sorted_list_widget(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+OptionsView.build_sorted_list_widget = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = arg_49_1.callback
 	local var_49_1 = callback(arg_49_0, var_49_0)
 	local var_49_2 = arg_49_1.saved_value
@@ -1489,7 +1489,7 @@ function OptionsView.build_sorted_list_widget(arg_49_0, arg_49_1, arg_49_2, arg_
 	return var_49_12
 end
 
-function OptionsView.widget_from_name(arg_50_0, arg_50_1)
+OptionsView.widget_from_name = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0.selected_settings_list
 
 	fassert(var_50_0, "[OptionsView] Trying to set disable on widget without a selected settings list.")
@@ -1506,7 +1506,7 @@ function OptionsView.widget_from_name(arg_50_0, arg_50_1)
 	end
 end
 
-function OptionsView.force_set_widget_value(arg_51_0, arg_51_1, arg_51_2)
+OptionsView.force_set_widget_value = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0 = arg_51_0:widget_from_name(arg_51_1)
 
 	fassert(var_51_0, "No widget with name %q in current settings list", arg_51_1)
@@ -1529,7 +1529,7 @@ function OptionsView.force_set_widget_value(arg_51_0, arg_51_1, arg_51_2)
 	end
 end
 
-function OptionsView.set_widget_disabled(arg_52_0, arg_52_1, arg_52_2)
+OptionsView.set_widget_disabled = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_0:widget_from_name(arg_52_1)
 
 	if var_52_0 then
@@ -1537,7 +1537,7 @@ function OptionsView.set_widget_disabled(arg_52_0, arg_52_1, arg_52_2)
 	end
 end
 
-function OptionsView.on_enter(arg_53_0, arg_53_1)
+OptionsView.on_enter = function (arg_53_0, arg_53_1)
 	ShowCursorStack.show("OptionsView")
 
 	arg_53_0._cursor_pushed = true
@@ -1582,7 +1582,7 @@ function OptionsView.on_enter(arg_53_0, arg_53_1)
 	arg_53_0:_start_animation("on_enter")
 end
 
-function OptionsView._start_animation(arg_54_0, arg_54_1)
+OptionsView._start_animation = function (arg_54_0, arg_54_1)
 	arg_54_0.render_settings = arg_54_0.render_settings or {
 		alpha_multiplier = 0,
 		snap_pixel_positions = false
@@ -1595,7 +1595,7 @@ function OptionsView._start_animation(arg_54_0, arg_54_1)
 	arg_54_0._animations[arg_54_1] = arg_54_0._ui_animator:start_animation(arg_54_1, nil, arg_54_0.ui_scenegraph, var_54_0, 1, 0)
 end
 
-function OptionsView.on_exit(arg_55_0)
+OptionsView.on_exit = function (arg_55_0)
 	if not arg_55_0.exiting then
 		Crashify.print_exception("[OptionsView]", "triggering on_exit() without triggering exit()")
 	end
@@ -1622,7 +1622,7 @@ function OptionsView.on_exit(arg_55_0)
 	end
 end
 
-function OptionsView.exit_reset_params(arg_56_0)
+OptionsView.exit_reset_params = function (arg_56_0)
 	arg_56_0:cleanup_popups()
 
 	if arg_56_0.selected_title then
@@ -1639,7 +1639,7 @@ function OptionsView.exit_reset_params(arg_56_0)
 	arg_56_0.exiting = true
 end
 
-function OptionsView.exit(arg_57_0, arg_57_1)
+OptionsView.exit = function (arg_57_0, arg_57_1)
 	arg_57_0:exit_reset_params()
 
 	local var_57_0 = arg_57_1 and "exit_menu" or arg_57_0._exit_transition or "ingame_menu"
@@ -1647,7 +1647,7 @@ function OptionsView.exit(arg_57_0, arg_57_1)
 	arg_57_0.ingame_ui:transition_with_fade(var_57_0)
 end
 
-function OptionsView.transitioning(arg_58_0)
+OptionsView.transitioning = function (arg_58_0)
 	if arg_58_0.exiting then
 		return true
 	else
@@ -1655,7 +1655,7 @@ function OptionsView.transitioning(arg_58_0)
 	end
 end
 
-function OptionsView.get_keymaps(arg_59_0, arg_59_1, arg_59_2)
+OptionsView.get_keymaps = function (arg_59_0, arg_59_1, arg_59_2)
 	local var_59_0 = {}
 	local var_59_1 = var_0_1.keybind_settings_definition
 
@@ -1720,7 +1720,7 @@ function OptionsView.get_keymaps(arg_59_0, arg_59_1, arg_59_2)
 	return var_59_0
 end
 
-function OptionsView._get_original_bot_spawn_priority(arg_60_0)
+OptionsView._get_original_bot_spawn_priority = function (arg_60_0)
 	local var_60_0 = PlayerData.bot_spawn_priority
 
 	if #var_60_0 > 0 then
@@ -1730,7 +1730,7 @@ function OptionsView._get_original_bot_spawn_priority(arg_60_0)
 	end
 end
 
-function OptionsView.reset_changed_settings(arg_61_0)
+OptionsView.reset_changed_settings = function (arg_61_0)
 	arg_61_0.changed_user_settings = {}
 	arg_61_0.changed_render_settings = {}
 	arg_61_0.changed_versus_settings = {}
@@ -1743,7 +1743,7 @@ function OptionsView.reset_changed_settings(arg_61_0)
 	arg_61_0.changed_bot_spawn_priority = false
 end
 
-function OptionsView.set_original_settings(arg_62_0)
+OptionsView.set_original_settings = function (arg_62_0)
 	arg_62_0.original_user_settings = {}
 	arg_62_0.original_render_settings = {}
 	arg_62_0.original_versus_settings = {}
@@ -1754,7 +1754,7 @@ function OptionsView.set_original_settings(arg_62_0)
 	arg_62_0.original_bot_spawn_priority = table.create_copy(arg_62_0.original_bot_spawn_priority, arg_62_0:_get_original_bot_spawn_priority())
 end
 
-function OptionsView._get_setting(arg_63_0, arg_63_1, arg_63_2)
+OptionsView._get_setting = function (arg_63_0, arg_63_1, arg_63_2)
 	if arg_63_1 == "user_settings" then
 		return var_0_12(arg_63_0.changed_user_settings[arg_63_2], Application.user_setting(arg_63_2))
 	elseif arg_63_1 == "render_settings" then
@@ -1766,7 +1766,7 @@ function OptionsView._get_setting(arg_63_0, arg_63_1, arg_63_2)
 	fassert(false, "Unknown setting_type: %q", arg_63_1)
 end
 
-function OptionsView._set_setting(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+OptionsView._set_setting = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	if arg_64_1 == "user_settings" then
 		arg_64_0.changed_user_settings[arg_64_2] = arg_64_3
 	elseif arg_64_1 == "render_settings" then
@@ -1778,7 +1778,7 @@ function OptionsView._set_setting(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	end
 end
 
-function OptionsView._set_setting_override(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+OptionsView._set_setting_override = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 	local var_65_0 = arg_65_1.options_values
 	local var_65_1 = table.find(var_65_0, arg_65_4)
 
@@ -1808,7 +1808,7 @@ function OptionsView._set_setting_override(arg_65_0, arg_65_1, arg_65_2, arg_65_
 	end
 end
 
-function OptionsView._restore_setting_override(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+OptionsView._restore_setting_override = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 	local var_66_0 = arg_66_0.overriden_settings[arg_66_3]
 
 	if var_66_0 == nil then
@@ -1832,13 +1832,13 @@ function OptionsView._restore_setting_override(arg_66_0, arg_66_1, arg_66_2, arg
 	arg_66_0.overriden_settings[arg_66_3] = nil
 end
 
-function OptionsView._clear_setting_override(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+OptionsView._clear_setting_override = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	arg_67_1.overriden_setting = nil
 	arg_67_1.overriden_reason = nil
 	arg_67_0.overriden_settings[arg_67_3] = nil
 end
 
-function OptionsView._set_override_reason(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+OptionsView._set_override_reason = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	if not arg_68_1.overriden_reason then
 		if arg_68_3 then
 			arg_68_1.overriden_reason = Localize(arg_68_1.text) .. "\n" .. Localize(arg_68_2)
@@ -1848,11 +1848,11 @@ function OptionsView._set_override_reason(arg_68_0, arg_68_1, arg_68_2, arg_68_3
 	end
 end
 
-function OptionsView.set_wwise_parameter(arg_69_0, arg_69_1, arg_69_2)
+OptionsView.set_wwise_parameter = function (arg_69_0, arg_69_1, arg_69_2)
 	WwiseWorld.set_global_parameter(arg_69_0.wwise_world, arg_69_1, arg_69_2)
 end
 
-function OptionsView.changes_been_made(arg_70_0)
+OptionsView.changes_been_made = function (arg_70_0)
 	return not table.is_empty(arg_70_0.changed_user_settings) or not table.is_empty(arg_70_0.changed_render_settings) or not table.is_empty(arg_70_0.changed_versus_settings) or arg_70_0.changed_keymaps or arg_70_0.changed_bot_spawn_priority
 end
 
@@ -1860,7 +1860,7 @@ local var_0_17 = {}
 local var_0_18 = var_0_1.needs_reload_settings
 local var_0_19 = var_0_1.needs_restart_settings
 
-function OptionsView.apply_changes(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4, arg_71_5)
+OptionsView.apply_changes = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4, arg_71_5)
 	local var_71_0 = false
 
 	for iter_71_0, iter_71_1 in pairs(arg_71_1) do
@@ -2494,7 +2494,7 @@ function OptionsView.apply_changes(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_7
 	end
 end
 
-function OptionsView.apply_bot_spawn_priority_changes(arg_72_0, arg_72_1, arg_72_2)
+OptionsView.apply_bot_spawn_priority_changes = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = PlayerData.bot_spawn_priority
 
 	for iter_72_0 = 1, #arg_72_1 do
@@ -2508,7 +2508,7 @@ function OptionsView.apply_bot_spawn_priority_changes(arg_72_0, arg_72_1, arg_72
 	end
 end
 
-function OptionsView.apply_keymap_changes(arg_73_0, arg_73_1, arg_73_2)
+OptionsView.apply_keymap_changes = function (arg_73_0, arg_73_1, arg_73_2)
 	if not PlayerData.controls then
 		PlayerData.controls = {}
 	end
@@ -2560,7 +2560,7 @@ end
 
 local var_0_20 = {}
 
-function OptionsView._apply_keybinding_changes(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+OptionsView._apply_keybinding_changes = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 	table.clear(var_0_20)
 
 	local var_74_0 = 0
@@ -2612,20 +2612,20 @@ function OptionsView._apply_keybinding_changes(arg_74_0, arg_74_1, arg_74_2, arg
 	end
 end
 
-function OptionsView.cb_save_done(arg_75_0, arg_75_1)
+OptionsView.cb_save_done = function (arg_75_0, arg_75_1)
 	Managers.transition:hide_loading_icon()
 
 	arg_75_0.disable_all_input = false
 end
 
-function OptionsView.apply_gamepad_changes(arg_76_0, arg_76_1, arg_76_2)
+OptionsView.apply_gamepad_changes = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = false
 
 	arg_76_0:apply_keymap_changes(arg_76_1, var_76_0)
 	arg_76_0:update_gamepad_layout_widget(arg_76_1, arg_76_2)
 end
 
-function OptionsView.has_popup(arg_77_0)
+OptionsView.has_popup = function (arg_77_0)
 	return arg_77_0.exit_popup_id or arg_77_0.title_popup_id or arg_77_0.apply_popup_id or arg_77_0.apply_bot_spawn_priority_popup_id or arg_77_0.reset_popup_id
 end
 
@@ -2633,7 +2633,7 @@ OPTIONS_VIEW_PRINT_ORIGINAL_VALUES = false
 
 local var_0_21 = rawget(_G, "Tobii")
 
-function OptionsView.update(arg_78_0, arg_78_1)
+OptionsView.update = function (arg_78_0, arg_78_1)
 	if arg_78_0.suspended then
 		return
 	end
@@ -2832,7 +2832,7 @@ function OptionsView.update(arg_78_0, arg_78_1)
 	end
 end
 
-function OptionsView._update_animations(arg_79_0, arg_79_1)
+OptionsView._update_animations = function (arg_79_0, arg_79_1)
 	local var_79_0 = arg_79_0._ui_animator
 
 	var_79_0:update(arg_79_1)
@@ -2846,7 +2846,7 @@ function OptionsView._update_animations(arg_79_0, arg_79_1)
 	end
 end
 
-function OptionsView._handle_ps_pads(arg_80_0, arg_80_1)
+OptionsView._handle_ps_pads = function (arg_80_0, arg_80_1)
 	if not IS_WINDOWS or not arg_80_1 then
 		return
 	end
@@ -2863,7 +2863,7 @@ function OptionsView._handle_ps_pads(arg_80_0, arg_80_1)
 	var_80_0.content.use_texture2_layout = var_80_1.type() == "sce_pad" or var_80_2
 end
 
-function OptionsView.cb_delete_save(arg_81_0, arg_81_1)
+OptionsView.cb_delete_save = function (arg_81_0, arg_81_1)
 	if arg_81_1.error then
 		Application.warning(string.format("[StateTitleScreenLoadSave] Error when overriding save data %q", arg_81_1.error))
 	end
@@ -2871,7 +2871,7 @@ function OptionsView.cb_delete_save(arg_81_0, arg_81_1)
 	arg_81_0.disable_all_input = false
 end
 
-function OptionsView.on_gamepad_activated(arg_82_0)
+OptionsView.on_gamepad_activated = function (arg_82_0)
 	local var_82_0 = arg_82_0.title_buttons
 	local var_82_1 = arg_82_0.title_buttons_n
 
@@ -2880,7 +2880,7 @@ function OptionsView.on_gamepad_activated(arg_82_0)
 	end
 end
 
-function OptionsView.on_gamepad_deactivated(arg_83_0)
+OptionsView.on_gamepad_deactivated = function (arg_83_0)
 	local var_83_0 = arg_83_0.title_buttons
 	local var_83_1 = arg_83_0.title_buttons_n
 
@@ -2889,7 +2889,7 @@ function OptionsView.on_gamepad_deactivated(arg_83_0)
 	end
 end
 
-function OptionsView.on_exit_pressed(arg_84_0)
+OptionsView.on_exit_pressed = function (arg_84_0)
 	if arg_84_0:changes_been_made() then
 		local var_84_0 = Localize("unapplied_changes_popup_text")
 
@@ -2901,7 +2901,7 @@ end
 
 local var_0_22 = var_0_1.needs_restart_settings
 
-function OptionsView.handle_apply_popup_results(arg_85_0, arg_85_1)
+OptionsView.handle_apply_popup_results = function (arg_85_0, arg_85_1)
 	if arg_85_1 == "keep_changes" then
 		local var_85_0 = false
 
@@ -2965,12 +2965,12 @@ function OptionsView.handle_apply_popup_results(arg_85_0, arg_85_1)
 	end
 end
 
-function OptionsView.restart(arg_86_0)
+OptionsView.restart = function (arg_86_0)
 	arg_86_0:exit()
 	arg_86_0.ingame_ui:handle_transition("leave_game")
 end
 
-function OptionsView.handle_title_buttons_popup_results(arg_87_0, arg_87_1)
+OptionsView.handle_title_buttons_popup_results = function (arg_87_0, arg_87_1)
 	if arg_87_1 == "revert_changes" then
 		if arg_87_0.changed_keymaps then
 			arg_87_0:apply_keymap_changes(arg_87_0.original_keymaps, true)
@@ -2995,7 +2995,7 @@ function OptionsView.handle_title_buttons_popup_results(arg_87_0, arg_87_1)
 	end
 end
 
-function OptionsView.handle_exit_button_popup_results(arg_88_0, arg_88_1)
+OptionsView.handle_exit_button_popup_results = function (arg_88_0, arg_88_1)
 	if arg_88_1 == "revert_changes" then
 		if arg_88_0.changed_keymaps then
 			arg_88_0:apply_keymap_changes(arg_88_0.original_keymaps, true)
@@ -3007,13 +3007,13 @@ function OptionsView.handle_exit_button_popup_results(arg_88_0, arg_88_1)
 		arg_88_0:reset_changed_settings()
 		arg_88_0:exit()
 	elseif arg_88_1 == "cancel" then
-		-- block empty
+		-- Nothing
 	else
 		print(arg_88_1)
 	end
 end
 
-function OptionsView.update_apply_button(arg_89_0)
+OptionsView.update_apply_button = function (arg_89_0)
 	local var_89_0 = arg_89_0.apply_button
 
 	if arg_89_0:changes_been_made() then
@@ -3026,7 +3026,7 @@ function OptionsView.update_apply_button(arg_89_0)
 	end
 end
 
-function OptionsView.handle_apply_changes(arg_90_0)
+OptionsView.handle_apply_changes = function (arg_90_0)
 	if arg_90_0.changed_keymaps then
 		arg_90_0:apply_keymap_changes(arg_90_0.session_keymaps, true)
 	else
@@ -3050,7 +3050,7 @@ function OptionsView.handle_apply_changes(arg_90_0)
 	end
 end
 
-function OptionsView.handle_apply_button(arg_91_0, arg_91_1, arg_91_2)
+OptionsView.handle_apply_button = function (arg_91_0, arg_91_1, arg_91_2)
 	if arg_91_0.apply_button.content.button_text.disabled then
 		return
 	end
@@ -3082,7 +3082,7 @@ function OptionsView.handle_apply_button(arg_91_0, arg_91_1, arg_91_2)
 	end
 end
 
-function OptionsView.reset_to_default_drop_down(arg_92_0, arg_92_1)
+OptionsView.reset_to_default_drop_down = function (arg_92_0, arg_92_1)
 	local var_92_0 = arg_92_1.content
 	local var_92_1 = var_92_0.default_value
 
@@ -3092,7 +3092,7 @@ function OptionsView.reset_to_default_drop_down(arg_92_0, arg_92_1)
 	var_92_0.callback(var_92_0, var_92_1)
 end
 
-function OptionsView.reset_to_default_slider(arg_93_0, arg_93_1)
+OptionsView.reset_to_default_slider = function (arg_93_0, arg_93_1)
 	local var_93_0 = arg_93_1.content
 	local var_93_1 = arg_93_1.style
 	local var_93_2 = var_93_0.default_value
@@ -3103,7 +3103,7 @@ function OptionsView.reset_to_default_slider(arg_93_0, arg_93_1)
 	var_93_0.callback(var_93_0, var_93_1)
 end
 
-function OptionsView.reset_to_default_checkbox(arg_94_0, arg_94_1)
+OptionsView.reset_to_default_checkbox = function (arg_94_0, arg_94_1)
 	local var_94_0 = arg_94_1.content
 
 	var_94_0.flag = var_94_0.default_value
@@ -3111,7 +3111,7 @@ function OptionsView.reset_to_default_checkbox(arg_94_0, arg_94_1)
 	var_94_0.callback(var_94_0)
 end
 
-function OptionsView.reset_to_default_stepper(arg_95_0, arg_95_1)
+OptionsView.reset_to_default_stepper = function (arg_95_0, arg_95_1)
 	local var_95_0 = arg_95_1.content
 	local var_95_1 = arg_95_1.style
 
@@ -3120,7 +3120,7 @@ function OptionsView.reset_to_default_stepper(arg_95_0, arg_95_1)
 	var_95_0.callback(var_95_0, var_95_1)
 end
 
-function OptionsView.reset_to_default_option(arg_96_0, arg_96_1)
+OptionsView.reset_to_default_option = function (arg_96_0, arg_96_1)
 	local var_96_0 = arg_96_1.content
 
 	var_96_0.current_selection = var_96_0.default_value
@@ -3128,7 +3128,7 @@ function OptionsView.reset_to_default_option(arg_96_0, arg_96_1)
 	var_96_0.callback(var_96_0)
 end
 
-function OptionsView.reset_to_default_keybind(arg_97_0, arg_97_1)
+OptionsView.reset_to_default_keybind = function (arg_97_0, arg_97_1)
 	local var_97_0 = arg_97_1.content
 	local var_97_1 = var_97_0.default_value
 
@@ -3136,7 +3136,7 @@ function OptionsView.reset_to_default_keybind(arg_97_0, arg_97_1)
 	var_97_0.callback(var_97_1.key, var_97_1.controller, var_97_0, 1)
 end
 
-function OptionsView.reset_to_default_sorted_list(arg_98_0, arg_98_1)
+OptionsView.reset_to_default_sorted_list = function (arg_98_0, arg_98_1)
 	local var_98_0 = arg_98_1.content
 	local var_98_1 = arg_98_1.style
 	local var_98_2 = var_98_0.default_value
@@ -3152,7 +3152,7 @@ function OptionsView.reset_to_default_sorted_list(arg_98_0, arg_98_1)
 	var_98_0.callback(var_98_0, var_98_1, var_98_2)
 end
 
-function OptionsView.reset_current_settings_list_to_default(arg_99_0)
+OptionsView.reset_current_settings_list_to_default = function (arg_99_0)
 	local var_99_0 = arg_99_0.selected_settings_list
 	local var_99_1 = var_99_0.widgets
 	local var_99_2 = var_99_0.widgets_n
@@ -3188,7 +3188,7 @@ function OptionsView.reset_current_settings_list_to_default(arg_99_0)
 	end
 end
 
-function OptionsView.handle_reset_to_default_button(arg_100_0, arg_100_1, arg_100_2)
+OptionsView.handle_reset_to_default_button = function (arg_100_0, arg_100_1, arg_100_2)
 	local var_100_0 = arg_100_0.reset_to_default.content
 
 	if var_100_0.button_text.disabled or var_100_0.hidden then
@@ -3210,7 +3210,7 @@ function OptionsView.handle_reset_to_default_button(arg_100_0, arg_100_1, arg_10
 	end
 end
 
-function OptionsView.draw_widgets(arg_101_0, arg_101_1, arg_101_2)
+OptionsView.draw_widgets = function (arg_101_0, arg_101_1, arg_101_2)
 	local var_101_0 = arg_101_0.ui_renderer
 	local var_101_1 = arg_101_0.ui_top_renderer or arg_101_0.ui_renderer
 	local var_101_2 = arg_101_0.ui_scenegraph
@@ -3291,7 +3291,7 @@ local var_0_23 = {
 	0
 }
 
-function OptionsView.update_settings_list(arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6)
+OptionsView.update_settings_list = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6)
 	if arg_102_1.scrollbar then
 		local var_102_0 = arg_102_0.scrollbar.content
 
@@ -3413,7 +3413,7 @@ function OptionsView.update_settings_list(arg_102_0, arg_102_1, arg_102_2, arg_1
 	arg_102_1.visible_widgets_n = var_102_9
 end
 
-function OptionsView.update_scrollbar(arg_103_0, arg_103_1, arg_103_2)
+OptionsView.update_scrollbar = function (arg_103_0, arg_103_1, arg_103_2)
 	local var_103_0 = arg_103_0.scrollbar.content.scroll_bar_info.value
 	local var_103_1 = arg_103_1.max_offset_y * var_103_0
 	local var_103_2 = arg_103_2[arg_103_1.scenegraph_id]
@@ -3426,7 +3426,7 @@ function OptionsView.update_scrollbar(arg_103_0, arg_103_1, arg_103_2)
 	var_103_2.offset[2] = var_103_1
 end
 
-function OptionsView.handle_title_buttons(arg_104_0, arg_104_1, arg_104_2)
+OptionsView.handle_title_buttons = function (arg_104_0, arg_104_1, arg_104_2)
 	local var_104_0 = arg_104_0.title_buttons
 	local var_104_1 = arg_104_0.title_buttons_n
 	local var_104_2 = table.find(var_0_9, "versus_settings")
@@ -3482,7 +3482,7 @@ function OptionsView.handle_title_buttons(arg_104_0, arg_104_1, arg_104_2)
 	end
 end
 
-function OptionsView.set_in_versus(arg_105_0, arg_105_1)
+OptionsView.set_in_versus = function (arg_105_0, arg_105_1)
 	arg_105_0.is_in_versus = arg_105_1
 
 	if arg_105_1 and table.find(var_0_9, "versus_settings") then
@@ -3492,7 +3492,7 @@ function OptionsView.set_in_versus(arg_105_0, arg_105_1)
 	end
 end
 
-function OptionsView.set_widget_values(arg_106_0, arg_106_1)
+OptionsView.set_widget_values = function (arg_106_0, arg_106_1)
 	local var_106_0 = arg_106_1.widgets
 	local var_106_1 = arg_106_1.widgets_n
 
@@ -3503,7 +3503,7 @@ function OptionsView.set_widget_values(arg_106_0, arg_106_1)
 	end
 end
 
-function OptionsView.select_settings_list_widget(arg_107_0, arg_107_1)
+OptionsView.select_settings_list_widget = function (arg_107_0, arg_107_1)
 	local var_107_0 = arg_107_0.selected_settings_list
 
 	if not var_107_0 then
@@ -3541,7 +3541,7 @@ function OptionsView.select_settings_list_widget(arg_107_0, arg_107_1)
 	end
 end
 
-function OptionsView.deselect_settings_list_widget(arg_108_0, arg_108_1)
+OptionsView.deselect_settings_list_widget = function (arg_108_0, arg_108_1)
 	arg_108_1.content.is_highlighted = false
 
 	if arg_108_1.content.highlight_hotspot then
@@ -3555,7 +3555,7 @@ function OptionsView.deselect_settings_list_widget(arg_108_0, arg_108_1)
 	arg_108_0.menu_input_description:set_input_description(nil)
 end
 
-function OptionsView.settings_list_widget_enter(arg_109_0, arg_109_1)
+OptionsView.settings_list_widget_enter = function (arg_109_0, arg_109_1)
 	local var_109_0 = arg_109_0.selected_settings_list
 
 	if not var_109_0 then
@@ -3565,7 +3565,7 @@ function OptionsView.settings_list_widget_enter(arg_109_0, arg_109_1)
 	var_109_0.widgets[arg_109_1].content.is_active = true
 end
 
-function OptionsView.select_settings_title(arg_110_0, arg_110_1)
+OptionsView.select_settings_title = function (arg_110_0, arg_110_1)
 	arg_110_0.menu_input_description:set_input_description(nil)
 
 	if arg_110_0.selected_title then
@@ -3611,7 +3611,7 @@ function OptionsView.select_settings_title(arg_110_0, arg_110_1)
 	arg_110_0.keybind_info_text = var_110_3 == "keybind_settings" and Localize("keybind_deselect_info") or nil
 end
 
-function OptionsView.deselect_title(arg_111_0, arg_111_1)
+OptionsView.deselect_title = function (arg_111_0, arg_111_1)
 	local var_111_0 = var_0_9[arg_111_1]
 	local var_111_1 = arg_111_0.settings_lists and arg_111_0.settings_lists[var_111_0]
 
@@ -3636,7 +3636,7 @@ function OptionsView.deselect_title(arg_111_0, arg_111_1)
 	arg_111_0.title_buttons[arg_111_1].content.button_text.is_selected = false
 end
 
-function OptionsView.handle_dropdown_lists(arg_112_0, arg_112_1, arg_112_2)
+OptionsView.handle_dropdown_lists = function (arg_112_0, arg_112_1, arg_112_2)
 	for iter_112_0 = 1, arg_112_2 do
 		local var_112_0 = arg_112_1[iter_112_0].content
 		local var_112_1 = content.list_content
@@ -3651,7 +3651,7 @@ function OptionsView.handle_dropdown_lists(arg_112_0, arg_112_1, arg_112_2)
 	end
 end
 
-function OptionsView.setup_scrollbar(arg_113_0, arg_113_1, arg_113_2)
+OptionsView.setup_scrollbar = function (arg_113_0, arg_113_1, arg_113_2)
 	local var_113_0 = arg_113_0.scrollbar
 	local var_113_1 = arg_113_1.scenegraph_id
 	local var_113_2 = arg_113_0.ui_scenegraph[var_113_1].size[2]
@@ -3662,7 +3662,7 @@ function OptionsView.setup_scrollbar(arg_113_0, arg_113_1, arg_113_2)
 	arg_113_0:set_scrollbar_value(arg_113_2 or 0)
 end
 
-function OptionsView.update_mouse_scroll_input(arg_114_0, arg_114_1)
+OptionsView.update_mouse_scroll_input = function (arg_114_0, arg_114_1)
 	local var_114_0 = arg_114_0.selected_settings_list
 
 	if var_114_0 and var_114_0.scrollbar then
@@ -3688,7 +3688,7 @@ function OptionsView.update_mouse_scroll_input(arg_114_0, arg_114_1)
 	end
 end
 
-function OptionsView.set_scrollbar_value(arg_115_0, arg_115_1)
+OptionsView.set_scrollbar_value = function (arg_115_0, arg_115_1)
 	local var_115_0 = arg_115_0.scroll_value
 
 	if not var_115_0 or arg_115_1 ~= var_115_0 then
@@ -3698,7 +3698,7 @@ function OptionsView.set_scrollbar_value(arg_115_0, arg_115_1)
 	end
 end
 
-function OptionsView.change_gamepad_generic_input_action(arg_116_0, arg_116_1)
+OptionsView.change_gamepad_generic_input_action = function (arg_116_0, arg_116_1)
 	local var_116_0 = arg_116_0.in_settings_sub_menu
 	local var_116_1 = "default"
 	local var_116_2 = var_116_0 and "sub_menu" or "main_menu"
@@ -3728,7 +3728,7 @@ function OptionsView.change_gamepad_generic_input_action(arg_116_0, arg_116_1)
 	end
 end
 
-function OptionsView._find_next_title_tab(arg_117_0)
+OptionsView._find_next_title_tab = function (arg_117_0)
 	local var_117_0 = 1 + arg_117_0.selected_title % arg_117_0.title_buttons_n
 	local var_117_1
 
@@ -3749,7 +3749,7 @@ function OptionsView._find_next_title_tab(arg_117_0)
 	return var_117_1
 end
 
-function OptionsView._find_previous_title_tab(arg_118_0)
+OptionsView._find_previous_title_tab = function (arg_118_0)
 	local var_118_0 = arg_118_0.selected_title - 1
 
 	if var_118_0 < 1 then
@@ -3775,7 +3775,7 @@ function OptionsView._find_previous_title_tab(arg_118_0)
 	return var_118_1
 end
 
-function OptionsView.handle_controller_navigation_input(arg_119_0, arg_119_1, arg_119_2)
+OptionsView.handle_controller_navigation_input = function (arg_119_0, arg_119_1, arg_119_2)
 	arg_119_0:change_gamepad_generic_input_action()
 
 	if arg_119_0.controller_cooldown > 0 then
@@ -3922,13 +3922,13 @@ function OptionsView.handle_controller_navigation_input(arg_119_0, arg_119_1, ar
 	arg_119_0.speed_multiplier = 1
 end
 
-function OptionsView.handle_mouse_widget_input(arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+OptionsView.handle_mouse_widget_input = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3)
 	local var_120_0 = arg_120_1.type
 
 	arg_120_0._input_functions[var_120_0](arg_120_1, arg_120_2, arg_120_3)
 end
 
-function OptionsView.handle_settings_list_widget_input(arg_121_0, arg_121_1, arg_121_2)
+OptionsView.handle_settings_list_widget_input = function (arg_121_0, arg_121_1, arg_121_2)
 	local var_121_0 = arg_121_0.selected_settings_list
 	local var_121_1 = var_121_0.widgets[var_121_0.selected_index or 1]
 
@@ -3941,7 +3941,7 @@ function OptionsView.handle_settings_list_widget_input(arg_121_0, arg_121_1, arg
 	return var_0_10[var_121_2].input_function(var_121_1, arg_121_1, arg_121_2)
 end
 
-function OptionsView.set_console_title_selection(arg_122_0, arg_122_1, arg_122_2)
+OptionsView.set_console_title_selection = function (arg_122_0, arg_122_1, arg_122_2)
 	local var_122_0 = arg_122_0.selected_title
 
 	if var_122_0 == arg_122_1 then
@@ -3961,7 +3961,7 @@ function OptionsView.set_console_title_selection(arg_122_0, arg_122_1, arg_122_2
 	arg_122_0:select_settings_title(arg_122_1)
 end
 
-function OptionsView.set_console_setting_list_selection(arg_123_0, arg_123_1, arg_123_2, arg_123_3)
+OptionsView.set_console_setting_list_selection = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3)
 	local var_123_0 = arg_123_0.selected_settings_list
 	local var_123_1 = var_123_0.selected_index
 	local var_123_2 = var_123_0.widgets
@@ -3997,11 +3997,11 @@ function OptionsView.set_console_setting_list_selection(arg_123_0, arg_123_1, ar
 	arg_123_0:select_settings_list_widget(var_123_4)
 end
 
-function OptionsView.is_widget_selectable(arg_124_0, arg_124_1)
+OptionsView.is_widget_selectable = function (arg_124_0, arg_124_1)
 	return arg_124_1 and arg_124_1.type ~= "image" and arg_124_1.type ~= "gamepad_layout" and arg_124_1.type ~= "title"
 end
 
-function OptionsView.clear_console_setting_list_selection(arg_125_0)
+OptionsView.clear_console_setting_list_selection = function (arg_125_0)
 	local var_125_0 = arg_125_0.selected_settings_list
 
 	if not var_125_0 then
@@ -4019,7 +4019,7 @@ function OptionsView.clear_console_setting_list_selection(arg_125_0)
 	end
 end
 
-function OptionsView.move_scrollbar_based_on_selection(arg_126_0, arg_126_1)
+OptionsView.move_scrollbar_based_on_selection = function (arg_126_0, arg_126_1)
 	local var_126_0 = arg_126_0.selected_settings_list
 	local var_126_1 = var_126_0.selected_index
 	local var_126_2 = not var_126_1 and true or var_126_1 < arg_126_1
@@ -4100,7 +4100,7 @@ function OptionsView.move_scrollbar_based_on_selection(arg_126_0, arg_126_1)
 	end
 end
 
-function OptionsView.set_selected_input_description_by_active(arg_127_0, arg_127_1)
+OptionsView.set_selected_input_description_by_active = function (arg_127_0, arg_127_1)
 	local var_127_0 = arg_127_0.selected_settings_list
 
 	if not var_127_0 then
@@ -4121,15 +4121,15 @@ function OptionsView.set_selected_input_description_by_active(arg_127_0, arg_127
 	end
 end
 
-function OptionsView.animate_element_by_time(arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4, arg_128_5)
+OptionsView.animate_element_by_time = function (arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4, arg_128_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_128_1, arg_128_2, arg_128_3, arg_128_4, arg_128_5, math.ease_out_quad))
 end
 
-function OptionsView.animate_element_by_catmullrom(arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8)
+OptionsView.animate_element_by_catmullrom = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8))
 end
 
-function OptionsView.on_stepper_arrow_pressed(arg_130_0, arg_130_1, arg_130_2)
+OptionsView.on_stepper_arrow_pressed = function (arg_130_0, arg_130_1, arg_130_2)
 	local var_130_0 = arg_130_1.ui_animations
 	local var_130_1 = arg_130_1.style[arg_130_2]
 	local var_130_2 = {
@@ -4153,7 +4153,7 @@ function OptionsView.on_stepper_arrow_pressed(arg_130_0, arg_130_1, arg_130_2)
 	end
 end
 
-function OptionsView.on_stepper_arrow_hover(arg_131_0, arg_131_1, arg_131_2)
+OptionsView.on_stepper_arrow_hover = function (arg_131_0, arg_131_1, arg_131_2)
 	local var_131_0 = arg_131_1.ui_animations
 	local var_131_1 = arg_131_1.style[arg_131_2]
 	local var_131_2 = var_131_1.color[1]
@@ -4168,7 +4168,7 @@ function OptionsView.on_stepper_arrow_hover(arg_131_0, arg_131_1, arg_131_2)
 	end
 end
 
-function OptionsView.on_stepper_arrow_dehover(arg_132_0, arg_132_1, arg_132_2)
+OptionsView.on_stepper_arrow_dehover = function (arg_132_0, arg_132_1, arg_132_2)
 	local var_132_0 = arg_132_1.ui_animations
 	local var_132_1 = arg_132_1.style[arg_132_2]
 	local var_132_2 = var_132_1.color[1]
@@ -4183,35 +4183,35 @@ function OptionsView.on_stepper_arrow_dehover(arg_132_0, arg_132_1, arg_132_2)
 	end
 end
 
-function OptionsView.checkbox_test_setup(arg_133_0)
+OptionsView.checkbox_test_setup = function (arg_133_0)
 	return false, "test"
 end
 
-function OptionsView.checkbox_test_saved_value(arg_134_0, arg_134_1)
+OptionsView.checkbox_test_saved_value = function (arg_134_0, arg_134_1)
 	arg_134_1.content.flag = false
 end
 
-function OptionsView.checkbox_test(arg_135_0, arg_135_1)
+OptionsView.checkbox_test = function (arg_135_0, arg_135_1)
 	local var_135_0 = arg_135_1.flag
 
 	print("OptionsView:checkbox_test(flag)", arg_135_0, var_135_0)
 end
 
-function OptionsView.slider_test_setup(arg_136_0)
+OptionsView.slider_test_setup = function (arg_136_0)
 	return 0.5, 5, 500, 0, "Music Volume"
 end
 
-function OptionsView.slider_test_saved_value(arg_137_0, arg_137_1)
+OptionsView.slider_test_saved_value = function (arg_137_0, arg_137_1)
 	arg_137_1.content.value = 0.5
 end
 
-function OptionsView.slider_test(arg_138_0, arg_138_1)
+OptionsView.slider_test = function (arg_138_0, arg_138_1)
 	local var_138_0 = arg_138_1.value
 
 	print("OptionsView:slider_test(flag)", arg_138_0, var_138_0)
 end
 
-function OptionsView.drop_down_test_setup(arg_139_0)
+OptionsView.drop_down_test_setup = function (arg_139_0)
 	local var_139_0 = {
 		{
 			text = "1920x1080",
@@ -4239,18 +4239,18 @@ function OptionsView.drop_down_test_setup(arg_139_0)
 	return 1, var_139_0, "Resolution"
 end
 
-function OptionsView.drop_down_test_saved_value(arg_140_0, arg_140_1)
+OptionsView.drop_down_test_saved_value = function (arg_140_0, arg_140_1)
 	local var_140_0 = arg_140_1.content.options_values
 	local var_140_1 = arg_140_1.content.options_texts
 
 	arg_140_1.content.selected_option = var_140_1[1]
 end
 
-function OptionsView.drop_down_test(arg_141_0, arg_141_1, arg_141_2)
+OptionsView.drop_down_test = function (arg_141_0, arg_141_1, arg_141_2)
 	print("OptionsView:dropdown_test(flag)", arg_141_0, arg_141_1, arg_141_2)
 end
 
-function OptionsView.cb_stepper_test_setup(arg_142_0)
+OptionsView.cb_stepper_test_setup = function (arg_142_0)
 	local var_142_0 = {
 		{
 			text = "value_1",
@@ -4269,17 +4269,17 @@ function OptionsView.cb_stepper_test_setup(arg_142_0)
 	return 1, var_142_0, "stepper_test"
 end
 
-function OptionsView.cb_stepper_test_saved_value(arg_143_0, arg_143_1)
+OptionsView.cb_stepper_test_saved_value = function (arg_143_0, arg_143_1)
 	arg_143_1.content.current_selection = 1
 end
 
-function OptionsView.cb_stepper_test(arg_144_0, arg_144_1)
+OptionsView.cb_stepper_test = function (arg_144_0, arg_144_1)
 	local var_144_0 = arg_144_1.options_values[arg_144_1.current_selection]
 
 	print(var_144_0)
 end
 
-function OptionsView.cb_vsync_setup(arg_145_0)
+OptionsView.cb_vsync_setup = function (arg_145_0)
 	local var_145_0 = {
 		{
 			value = false,
@@ -4296,20 +4296,20 @@ function OptionsView.cb_vsync_setup(arg_145_0)
 	return var_145_1, var_145_0, "settings_menu_vsync", var_145_2
 end
 
-function OptionsView.cb_vsync_saved_value(arg_146_0, arg_146_1)
+OptionsView.cb_vsync_saved_value = function (arg_146_0, arg_146_1)
 	local var_146_0 = var_0_12(arg_146_0.changed_user_settings.vsync, Application.user_setting("vsync"))
 
 	arg_146_1.content.current_selection = var_146_0 and 2 or 1
 end
 
-function OptionsView.cb_vsync(arg_147_0, arg_147_1)
+OptionsView.cb_vsync = function (arg_147_0, arg_147_1)
 	local var_147_0 = arg_147_1.options_values
 	local var_147_1 = arg_147_1.current_selection
 
 	arg_147_0.changed_user_settings.vsync = var_147_0[var_147_1]
 end
 
-function OptionsView.cb_vsync_condition(arg_148_0, arg_148_1, arg_148_2)
+OptionsView.cb_vsync_condition = function (arg_148_0, arg_148_1, arg_148_2)
 	if arg_148_0:_get_setting("render_settings", "dlss_g_enabled") then
 		arg_148_0:_set_setting_override(arg_148_1, arg_148_2, "vsync", false)
 		arg_148_0:_set_override_reason(arg_148_1, "menu_settings_dlss_frame_generation")
@@ -4322,7 +4322,7 @@ function OptionsView.cb_vsync_condition(arg_148_0, arg_148_1, arg_148_2)
 	end
 end
 
-function OptionsView.cb_hud_clamp_ui_scaling_setup(arg_149_0)
+OptionsView.cb_hud_clamp_ui_scaling_setup = function (arg_149_0)
 	local var_149_0 = {
 		{
 			value = false,
@@ -4339,13 +4339,13 @@ function OptionsView.cb_hud_clamp_ui_scaling_setup(arg_149_0)
 	return var_149_1, var_149_0, "settings_menu_hud_clamp_ui_scaling", var_149_2
 end
 
-function OptionsView.cb_hud_clamp_ui_scaling_saved_value(arg_150_0, arg_150_1)
+OptionsView.cb_hud_clamp_ui_scaling_saved_value = function (arg_150_0, arg_150_1)
 	local var_150_0 = var_0_12(arg_150_0.changed_user_settings.hud_clamp_ui_scaling, Application.user_setting("hud_clamp_ui_scaling"))
 
 	arg_150_1.content.current_selection = var_150_0 and 2 or 1
 end
 
-function OptionsView.cb_hud_clamp_ui_scaling(arg_151_0, arg_151_1)
+OptionsView.cb_hud_clamp_ui_scaling = function (arg_151_0, arg_151_1)
 	local var_151_0 = arg_151_1.options_values[arg_151_1.current_selection]
 
 	arg_151_0.changed_user_settings.hud_clamp_ui_scaling = var_151_0
@@ -4355,14 +4355,14 @@ function OptionsView.cb_hud_clamp_ui_scaling(arg_151_0, arg_151_1)
 	UPDATE_RESOLUTION_LOOKUP(var_151_1)
 end
 
-function OptionsView.cb_vs_floating_damage(arg_152_0, arg_152_1)
+OptionsView.cb_vs_floating_damage = function (arg_152_0, arg_152_1)
 	local var_152_0 = arg_152_1.options_values
 	local var_152_1 = arg_152_1.current_selection
 
 	arg_152_0.changed_user_settings.vs_floating_damage = var_152_0[var_152_1]
 end
 
-function OptionsView.cb_vs_floating_damage_setup(arg_153_0)
+OptionsView.cb_vs_floating_damage_setup = function (arg_153_0)
 	local var_153_0 = {
 		{
 			value = "none",
@@ -4401,7 +4401,7 @@ function OptionsView.cb_vs_floating_damage_setup(arg_153_0)
 	return var_153_4 or var_153_3, var_153_0, "menu_settings_vs_floating_damage", var_153_3
 end
 
-function OptionsView.cb_vs_floating_damage_saved_value(arg_154_0, arg_154_1)
+OptionsView.cb_vs_floating_damage_saved_value = function (arg_154_0, arg_154_1)
 	local var_154_0 = var_0_12(arg_154_0.changed_user_settings.vs_floating_damage, Application.user_setting("vs_floating_damage")) or DefaultUserSettings.get("user_settings", "vs_floating_damage")
 	local var_154_1 = arg_154_1.content.options_values
 	local var_154_2 = 1
@@ -4417,7 +4417,7 @@ function OptionsView.cb_vs_floating_damage_saved_value(arg_154_0, arg_154_1)
 	arg_154_1.content.current_selection = var_154_2
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_in_world_setup(arg_155_0)
+OptionsView.cb_vs_hud_damage_feedback_in_world_setup = function (arg_155_0)
 	local var_155_0 = {
 		{
 			value = false,
@@ -4434,19 +4434,19 @@ function OptionsView.cb_vs_hud_damage_feedback_in_world_setup(arg_155_0)
 	return var_155_1, var_155_0, "settings_menu_hud_damage_feedback_in_world", var_155_2
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_in_world_saved_value(arg_156_0, arg_156_1)
+OptionsView.cb_vs_hud_damage_feedback_in_world_saved_value = function (arg_156_0, arg_156_1)
 	local var_156_0 = var_0_12(arg_156_0.changed_user_settings.hud_damage_feedback_in_world, Application.user_setting("hud_damage_feedback_in_world"))
 
 	arg_156_1.content.current_selection = var_156_0 and 2 or 1
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_in_world(arg_157_0, arg_157_1)
+OptionsView.cb_vs_hud_damage_feedback_in_world = function (arg_157_0, arg_157_1)
 	local var_157_0 = arg_157_1.options_values[arg_157_1.current_selection]
 
 	arg_157_0.changed_user_settings.hud_damage_feedback_in_world = var_157_0
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_yourself_setup(arg_158_0)
+OptionsView.cb_vs_hud_damage_feedback_on_yourself_setup = function (arg_158_0)
 	local var_158_0 = {
 		{
 			value = false,
@@ -4463,19 +4463,19 @@ function OptionsView.cb_vs_hud_damage_feedback_on_yourself_setup(arg_158_0)
 	return var_158_1, var_158_0, "settings_menu_hud_damage_feedback_on_yourself", var_158_2
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_yourself_saved_value(arg_159_0, arg_159_1)
+OptionsView.cb_vs_hud_damage_feedback_on_yourself_saved_value = function (arg_159_0, arg_159_1)
 	local var_159_0 = var_0_12(arg_159_0.changed_user_settings.hud_damage_feedback_on_yourself, Application.user_setting("hud_damage_feedback_on_yourself"))
 
 	arg_159_1.content.current_selection = var_159_0 and 2 or 1
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_yourself(arg_160_0, arg_160_1)
+OptionsView.cb_vs_hud_damage_feedback_on_yourself = function (arg_160_0, arg_160_1)
 	local var_160_0 = arg_160_1.options_values[arg_160_1.current_selection]
 
 	arg_160_0.changed_user_settings.hud_damage_feedback_on_yourself = var_160_0
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_teammates_setup(arg_161_0)
+OptionsView.cb_vs_hud_damage_feedback_on_teammates_setup = function (arg_161_0)
 	local var_161_0 = {
 		{
 			value = false,
@@ -4492,19 +4492,19 @@ function OptionsView.cb_vs_hud_damage_feedback_on_teammates_setup(arg_161_0)
 	return var_161_1, var_161_0, "settings_menu_hud_damage_feedback_on_teammates", var_161_2
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_teammates_saved_value(arg_162_0, arg_162_1)
+OptionsView.cb_vs_hud_damage_feedback_on_teammates_saved_value = function (arg_162_0, arg_162_1)
 	local var_162_0 = var_0_12(arg_162_0.changed_user_settings.hud_damage_feedback_on_teammates, Application.user_setting("hud_damage_feedback_on_teammates"))
 
 	arg_162_1.content.current_selection = var_162_0 and 2 or 1
 end
 
-function OptionsView.cb_vs_hud_damage_feedback_on_teammates(arg_163_0, arg_163_1)
+OptionsView.cb_vs_hud_damage_feedback_on_teammates = function (arg_163_0, arg_163_1)
 	local var_163_0 = arg_163_1.options_values[arg_163_1.current_selection]
 
 	arg_163_0.changed_user_settings.hud_damage_feedback_on_teammates = var_163_0
 end
 
-function OptionsView.cb_hud_custom_scale_setup(arg_164_0)
+OptionsView.cb_hud_custom_scale_setup = function (arg_164_0)
 	local var_164_0 = {
 		{
 			value = false,
@@ -4521,13 +4521,13 @@ function OptionsView.cb_hud_custom_scale_setup(arg_164_0)
 	return var_164_1, var_164_0, "settings_menu_hud_custom_scale", var_164_2
 end
 
-function OptionsView.cb_hud_custom_scale_saved_value(arg_165_0, arg_165_1)
+OptionsView.cb_hud_custom_scale_saved_value = function (arg_165_0, arg_165_1)
 	local var_165_0 = var_0_12(arg_165_0.changed_user_settings.use_custom_hud_scale, Application.user_setting("use_custom_hud_scale"))
 
 	arg_165_1.content.current_selection = var_165_0 and 2 or 1
 end
 
-function OptionsView.cb_hud_custom_scale(arg_166_0, arg_166_1)
+OptionsView.cb_hud_custom_scale = function (arg_166_0, arg_166_1)
 	local var_166_0 = arg_166_1.options_values[arg_166_1.current_selection]
 
 	arg_166_0.changed_user_settings.use_custom_hud_scale = var_166_0
@@ -4543,7 +4543,7 @@ function OptionsView.cb_hud_custom_scale(arg_166_0, arg_166_1)
 	UPDATE_RESOLUTION_LOOKUP(var_166_1)
 end
 
-function OptionsView.cb_enabled_pc_menu_layout_setup(arg_167_0)
+OptionsView.cb_enabled_pc_menu_layout_setup = function (arg_167_0)
 	local var_167_0 = {
 		{
 			value = false,
@@ -4560,20 +4560,20 @@ function OptionsView.cb_enabled_pc_menu_layout_setup(arg_167_0)
 	return var_167_1, var_167_0, "settings_menu_enabled_pc_menu_layout", var_167_2
 end
 
-function OptionsView.cb_enabled_pc_menu_layout_saved_value(arg_168_0, arg_168_1)
+OptionsView.cb_enabled_pc_menu_layout_saved_value = function (arg_168_0, arg_168_1)
 	local var_168_0 = var_0_12(arg_168_0.changed_user_settings.use_pc_menu_layout, Application.user_setting("use_pc_menu_layout"))
 
 	arg_168_1.content.current_selection = var_168_0 and 2 or 1
 end
 
-function OptionsView.cb_enabled_pc_menu_layout(arg_169_0, arg_169_1)
+OptionsView.cb_enabled_pc_menu_layout = function (arg_169_0, arg_169_1)
 	local var_169_0 = arg_169_1.options_values
 	local var_169_1 = arg_169_1.current_selection
 
 	arg_169_0.changed_user_settings.use_pc_menu_layout = var_169_0[var_169_1]
 end
 
-function OptionsView.cb_enabled_gamepad_hud_layout_setup(arg_170_0)
+OptionsView.cb_enabled_gamepad_hud_layout_setup = function (arg_170_0)
 	local var_170_0 = {
 		{
 			value = "auto",
@@ -4601,7 +4601,7 @@ function OptionsView.cb_enabled_gamepad_hud_layout_setup(arg_170_0)
 	return var_170_2, var_170_0, "settings_menu_enabled_gamepad_hud_layout", var_170_3
 end
 
-function OptionsView.cb_enabled_gamepad_hud_layout_saved_value(arg_171_0, arg_171_1)
+OptionsView.cb_enabled_gamepad_hud_layout_saved_value = function (arg_171_0, arg_171_1)
 	local var_171_0 = var_0_12(arg_171_0.changed_user_settings.use_gamepad_hud_layout, Application.user_setting("use_gamepad_hud_layout"))
 	local var_171_1 = arg_171_1.content.options_values
 
@@ -4614,14 +4614,14 @@ function OptionsView.cb_enabled_gamepad_hud_layout_saved_value(arg_171_0, arg_17
 	end
 end
 
-function OptionsView.cb_enabled_gamepad_hud_layout(arg_172_0, arg_172_1)
+OptionsView.cb_enabled_gamepad_hud_layout = function (arg_172_0, arg_172_1)
 	local var_172_0 = arg_172_1.options_values
 	local var_172_1 = arg_172_1.current_selection
 
 	arg_172_0.changed_user_settings.use_gamepad_hud_layout = var_172_0[var_172_1]
 end
 
-function OptionsView.cb_fullscreen_setup(arg_173_0)
+OptionsView.cb_fullscreen_setup = function (arg_173_0)
 	local var_173_0 = {
 		{
 			value = "fullscreen",
@@ -4650,7 +4650,7 @@ function OptionsView.cb_fullscreen_setup(arg_173_0)
 	return var_173_4, var_173_0, "menu_settings_windowed_mode", var_173_7
 end
 
-function OptionsView.cb_fullscreen_saved_value(arg_174_0, arg_174_1)
+OptionsView.cb_fullscreen_saved_value = function (arg_174_0, arg_174_1)
 	local var_174_0 = arg_174_1.content.options_values
 	local var_174_1 = arg_174_1.content.options_texts
 	local var_174_2 = var_0_12(arg_174_0.changed_user_settings.fullscreen, Application.user_setting("fullscreen"))
@@ -4664,7 +4664,7 @@ function OptionsView.cb_fullscreen_saved_value(arg_174_0, arg_174_1)
 	arg_174_1.content.current_selection = var_174_5
 end
 
-function OptionsView.cb_fullscreen(arg_175_0, arg_175_1)
+OptionsView.cb_fullscreen = function (arg_175_0, arg_175_1)
 	local var_175_0 = arg_175_1.current_selection
 	local var_175_1 = arg_175_1.options_values[var_175_0]
 	local var_175_2 = arg_175_0.changed_user_settings
@@ -4693,7 +4693,7 @@ function OptionsView.cb_fullscreen(arg_175_0, arg_175_1)
 	end
 end
 
-function OptionsView.cb_adapter_setup(arg_176_0)
+OptionsView.cb_adapter_setup = function (arg_176_0)
 	local var_176_0 = DisplayAdapter.num_adapters()
 	local var_176_1 = {}
 
@@ -4710,20 +4710,20 @@ function OptionsView.cb_adapter_setup(arg_176_0)
 	return var_176_2, var_176_1, "menu_settings_adapter", var_176_3
 end
 
-function OptionsView.cb_adapter_saved_value(arg_177_0, arg_177_1)
+OptionsView.cb_adapter_saved_value = function (arg_177_0, arg_177_1)
 	local var_177_0 = arg_177_1.content.options_values
 	local var_177_1 = var_0_12(arg_177_0.changed_user_settings.adapter_index, Application.user_setting("adapter_index")) + 1
 
 	arg_177_1.content.current_selection = var_177_1
 end
 
-function OptionsView.cb_adapter(arg_178_0, arg_178_1, arg_178_2)
+OptionsView.cb_adapter = function (arg_178_0, arg_178_1, arg_178_2)
 	local var_178_0 = arg_178_1.options_values[arg_178_1.current_selection]
 
 	arg_178_0.changed_user_settings.adapter_index = var_178_0
 end
 
-function OptionsView.cb_minimize_on_alt_tab_setup(arg_179_0)
+OptionsView.cb_minimize_on_alt_tab_setup = function (arg_179_0)
 	local var_179_0 = {
 		{
 			value = true,
@@ -4748,7 +4748,7 @@ function OptionsView.cb_minimize_on_alt_tab_setup(arg_179_0)
 	return var_179_2, var_179_0, "menu_settings_minimize_on_alt_tab", true
 end
 
-function OptionsView.cb_minimize_on_alt_tab_saved_value(arg_180_0, arg_180_1)
+OptionsView.cb_minimize_on_alt_tab_saved_value = function (arg_180_0, arg_180_1)
 	local var_180_0 = arg_180_1.content.options_values
 	local var_180_1 = var_0_12(arg_180_0.changed_user_settings.fullscreen_minimize_on_alt_tab, Application.user_setting("fullscreen_minimize_on_alt_tab"))
 	local var_180_2 = 1
@@ -4764,13 +4764,13 @@ function OptionsView.cb_minimize_on_alt_tab_saved_value(arg_180_0, arg_180_1)
 	arg_180_1.content.current_selection = var_180_2
 end
 
-function OptionsView.cb_minimize_on_alt_tab(arg_181_0, arg_181_1, arg_181_2)
+OptionsView.cb_minimize_on_alt_tab = function (arg_181_0, arg_181_1, arg_181_2)
 	local var_181_0 = arg_181_1.options_values[arg_181_1.current_selection]
 
 	arg_181_0.changed_user_settings.fullscreen_minimize_on_alt_tab = var_181_0
 end
 
-function OptionsView.cb_graphics_quality_setup(arg_182_0)
+OptionsView.cb_graphics_quality_setup = function (arg_182_0)
 	local var_182_0 = {
 		{
 			value = "custom",
@@ -4811,7 +4811,7 @@ function OptionsView.cb_graphics_quality_setup(arg_182_0)
 	return var_182_2, var_182_0, "menu_settings_graphics_quality", "high"
 end
 
-function OptionsView.cb_graphics_quality_saved_value(arg_183_0, arg_183_1)
+OptionsView.cb_graphics_quality_saved_value = function (arg_183_0, arg_183_1)
 	local var_183_0 = var_0_12(arg_183_0.changed_user_settings.graphics_quality, Application.user_setting("graphics_quality"))
 	local var_183_1 = arg_183_1.content.options_values
 	local var_183_2 = 1
@@ -4827,7 +4827,7 @@ function OptionsView.cb_graphics_quality_saved_value(arg_183_0, arg_183_1)
 	arg_183_1.content.current_selection = var_183_2
 end
 
-function OptionsView.cb_graphics_quality(arg_184_0, arg_184_1)
+OptionsView.cb_graphics_quality = function (arg_184_0, arg_184_1)
 	local var_184_0 = arg_184_1.options_values[arg_184_1.current_selection]
 
 	arg_184_0.changed_user_settings.graphics_quality = var_184_0
@@ -4864,7 +4864,7 @@ function OptionsView.cb_graphics_quality(arg_184_0, arg_184_1)
 	end
 end
 
-function OptionsView.cb_resolutions_setup(arg_185_0)
+OptionsView.cb_resolutions_setup = function (arg_185_0)
 	local var_185_0 = Application.user_setting("screen_resolution")
 	local var_185_1 = Application.user_setting("fullscreen_output")
 	local var_185_2 = Application.user_setting("adapter_index")
@@ -4937,7 +4937,7 @@ function OptionsView.cb_resolutions_setup(arg_185_0)
 	return var_185_10, var_185_4, "menu_settings_resolution"
 end
 
-function OptionsView.cb_resolutions_saved_value(arg_187_0, arg_187_1)
+OptionsView.cb_resolutions_saved_value = function (arg_187_0, arg_187_1)
 	local var_187_0 = arg_187_1.content.options_values
 	local var_187_1 = arg_187_1.content.options_texts
 	local var_187_2 = var_0_12(arg_187_0.changed_user_settings.screen_resolution, Application.user_setting("screen_resolution"))
@@ -4965,7 +4965,7 @@ function OptionsView.cb_resolutions_saved_value(arg_187_0, arg_187_1)
 	end
 end
 
-function OptionsView.cb_resolutions(arg_188_0, arg_188_1)
+OptionsView.cb_resolutions = function (arg_188_0, arg_188_1)
 	local var_188_0 = arg_188_1.current_selection
 	local var_188_1 = arg_188_1.options_values[var_188_0]
 
@@ -5014,7 +5014,7 @@ local var_0_25 = {
 	}
 }
 
-function OptionsView.cb_lock_framerate_setup(arg_189_0)
+OptionsView.cb_lock_framerate_setup = function (arg_189_0)
 	local var_189_0 = var_0_25
 	local var_189_1 = var_0_24[Application.user_setting("max_fps")] or 1
 	local var_189_2 = var_0_24[DefaultUserSettings.get("user_settings", "max_fps")] or 1
@@ -5022,19 +5022,19 @@ function OptionsView.cb_lock_framerate_setup(arg_189_0)
 	return var_189_1, var_189_0, "menu_settings_lock_framerate", var_189_2
 end
 
-function OptionsView.cb_lock_framerate_saved_value(arg_190_0, arg_190_1)
+OptionsView.cb_lock_framerate_saved_value = function (arg_190_0, arg_190_1)
 	local var_190_0 = arg_190_0:_get_setting("user_settings", "max_fps")
 
 	arg_190_1.content.current_selection = var_0_24[var_190_0] or 1
 end
 
-function OptionsView.cb_lock_framerate(arg_191_0, arg_191_1)
+OptionsView.cb_lock_framerate = function (arg_191_0, arg_191_1)
 	local var_191_0 = arg_191_1.options_values[arg_191_1.current_selection]
 
 	arg_191_0.changed_user_settings.max_fps = var_191_0
 end
 
-function OptionsView.cb_max_stacking_frames_setup(arg_192_0)
+OptionsView.cb_max_stacking_frames_setup = function (arg_192_0)
 	local var_192_0 = {
 		{
 			value = -1,
@@ -5075,7 +5075,7 @@ function OptionsView.cb_max_stacking_frames_setup(arg_192_0)
 	return var_192_3, var_192_0, "menu_settings_max_stacking_frames", var_192_2
 end
 
-function OptionsView.cb_max_stacking_frames_saved_value(arg_193_0, arg_193_1)
+OptionsView.cb_max_stacking_frames_saved_value = function (arg_193_0, arg_193_1)
 	local var_193_0 = arg_193_1.content.options_values
 	local var_193_1
 	local var_193_2 = var_0_12(arg_193_0.changed_user_settings.max_stacking_frames, Application.user_setting("max_stacking_frames")) or -1
@@ -5091,11 +5091,11 @@ function OptionsView.cb_max_stacking_frames_saved_value(arg_193_0, arg_193_1)
 	arg_193_1.content.current_selection = var_193_1
 end
 
-function OptionsView.cb_max_stacking_frames(arg_194_0, arg_194_1)
+OptionsView.cb_max_stacking_frames = function (arg_194_0, arg_194_1)
 	arg_194_0.changed_user_settings.max_stacking_frames = arg_194_1.options_values[arg_194_1.current_selection]
 end
 
-function OptionsView.cb_anti_aliasing_setup(arg_195_0)
+OptionsView.cb_anti_aliasing_setup = function (arg_195_0)
 	local var_195_0 = {
 		{
 			value = "none",
@@ -5120,7 +5120,7 @@ function OptionsView.cb_anti_aliasing_setup(arg_195_0)
 	return var_195_3, var_195_0, "menu_settings_anti_aliasing", var_195_6
 end
 
-function OptionsView.cb_anti_aliasing_saved_value(arg_196_0, arg_196_1)
+OptionsView.cb_anti_aliasing_saved_value = function (arg_196_0, arg_196_1)
 	local var_196_0 = var_0_12(arg_196_0.changed_render_settings.fxaa_enabled, Application.user_setting("render_settings", "fxaa_enabled"))
 	local var_196_1 = var_0_12(arg_196_0.changed_render_settings.taa_enabled, Application.user_setting("render_settings", "taa_enabled"))
 	local var_196_2 = var_196_0 and 2 or var_196_1 and 3 or 1
@@ -5128,7 +5128,7 @@ function OptionsView.cb_anti_aliasing_saved_value(arg_196_0, arg_196_1)
 	arg_196_1.content.current_selection = var_196_2
 end
 
-function OptionsView.cb_anti_aliasing(arg_197_0, arg_197_1, arg_197_2, arg_197_3)
+OptionsView.cb_anti_aliasing = function (arg_197_0, arg_197_1, arg_197_2, arg_197_3)
 	local var_197_0 = arg_197_1.current_selection
 	local var_197_1 = arg_197_1.options_values[var_197_0]
 
@@ -5148,7 +5148,7 @@ function OptionsView.cb_anti_aliasing(arg_197_0, arg_197_1, arg_197_2, arg_197_3
 	end
 end
 
-function OptionsView.cb_anti_aliasing_condition(arg_198_0, arg_198_1, arg_198_2)
+OptionsView.cb_anti_aliasing_condition = function (arg_198_0, arg_198_1, arg_198_2)
 	if arg_198_0:_get_setting("render_settings", "fsr_enabled") then
 		arg_198_0:_set_setting_override(arg_198_1, arg_198_2, "anti_aliasing", "TAA")
 		arg_198_0:_set_override_reason(arg_198_1, "settings_view_header_fidelityfx_super_resolution")
@@ -5171,7 +5171,7 @@ function OptionsView.cb_anti_aliasing_condition(arg_198_0, arg_198_1, arg_198_2)
 	end
 end
 
-function OptionsView.cb_gamma_setup(arg_199_0)
+OptionsView.cb_gamma_setup = function (arg_199_0)
 	local var_199_0 = 1.5
 	local var_199_1 = 5
 	local var_199_2 = Application.user_setting("render_settings", "gamma") or 2.2
@@ -5183,7 +5183,7 @@ function OptionsView.cb_gamma_setup(arg_199_0)
 	return var_199_3, var_199_0, var_199_1, 1, "menu_settings_gamma", var_199_4
 end
 
-function OptionsView.cb_gamma_saved_value(arg_200_0, arg_200_1)
+OptionsView.cb_gamma_saved_value = function (arg_200_0, arg_200_1)
 	local var_200_0 = arg_200_1.content
 	local var_200_1 = var_200_0.min
 	local var_200_2 = var_200_0.max
@@ -5196,13 +5196,13 @@ function OptionsView.cb_gamma_saved_value(arg_200_0, arg_200_1)
 	Application.set_render_setting("gamma", var_200_0.value)
 end
 
-function OptionsView.cb_gamma(arg_201_0, arg_201_1)
+OptionsView.cb_gamma = function (arg_201_0, arg_201_1)
 	arg_201_0.changed_render_settings.gamma = arg_201_1.value
 
 	Application.set_render_setting("gamma", arg_201_1.value)
 end
 
-function OptionsView.cb_fsr_enabled_setup(arg_202_0)
+OptionsView.cb_fsr_enabled_setup = function (arg_202_0)
 	local var_202_0 = {
 		{
 			value = false,
@@ -5225,13 +5225,13 @@ function OptionsView.cb_fsr_enabled_setup(arg_202_0)
 	return var_202_3, var_202_0, "settings_view_header_fidelityfx_super_resolution", var_202_4
 end
 
-function OptionsView.cb_fsr_enabled_saved_value(arg_203_0, arg_203_1)
+OptionsView.cb_fsr_enabled_saved_value = function (arg_203_0, arg_203_1)
 	local var_203_0 = var_0_12(arg_203_0.changed_render_settings.fsr_enabled, Application.user_setting("render_settings", "fsr_enabled")) and 2 or 1
 
 	arg_203_1.content.current_selection = var_203_0
 end
 
-function OptionsView.cb_fsr_enabled(arg_204_0, arg_204_1, arg_204_2, arg_204_3)
+OptionsView.cb_fsr_enabled = function (arg_204_0, arg_204_1, arg_204_2, arg_204_3)
 	local var_204_0 = arg_204_1.options_values[arg_204_1.current_selection]
 
 	arg_204_0.changed_render_settings.fsr_enabled = var_204_0
@@ -5241,7 +5241,7 @@ function OptionsView.cb_fsr_enabled(arg_204_0, arg_204_1, arg_204_2, arg_204_3)
 	end
 end
 
-function OptionsView.cb_fsr_enabled_condition(arg_205_0, arg_205_1, arg_205_2)
+OptionsView.cb_fsr_enabled_condition = function (arg_205_0, arg_205_1, arg_205_2)
 	if arg_205_0:_get_setting("user_settings", "dlss_enabled") then
 		arg_205_0:_set_setting_override(arg_205_1, arg_205_2, "fsr_enabled", false)
 		arg_205_0:_set_override_reason(arg_205_1, "menu_settings_dlss_enabled")
@@ -5259,7 +5259,7 @@ function OptionsView.cb_fsr_enabled_condition(arg_205_0, arg_205_1, arg_205_2)
 	end
 end
 
-function OptionsView.cb_fsr_quality_setup(arg_206_0)
+OptionsView.cb_fsr_quality_setup = function (arg_206_0)
 	local var_206_0 = {
 		{
 			value = 1,
@@ -5284,13 +5284,13 @@ function OptionsView.cb_fsr_quality_setup(arg_206_0)
 	return var_206_3, var_206_0, "menu_settings_fsr_quality", var_206_2
 end
 
-function OptionsView.cb_fsr_quality_saved_value(arg_207_0, arg_207_1)
+OptionsView.cb_fsr_quality_saved_value = function (arg_207_0, arg_207_1)
 	local var_207_0 = var_0_12(arg_207_0.changed_render_settings.fsr_quality, Application.user_setting("render_settings", "fsr_quality"))
 
 	arg_207_1.content.current_selection = var_207_0
 end
 
-function OptionsView.cb_fsr_quality(arg_208_0, arg_208_1, arg_208_2, arg_208_3)
+OptionsView.cb_fsr_quality = function (arg_208_0, arg_208_1, arg_208_2, arg_208_3)
 	local var_208_0 = arg_208_1.options_values[arg_208_1.current_selection]
 
 	arg_208_0.changed_render_settings.fsr_quality = var_208_0
@@ -5300,7 +5300,7 @@ function OptionsView.cb_fsr_quality(arg_208_0, arg_208_1, arg_208_2, arg_208_3)
 	end
 end
 
-function OptionsView.cb_fsr_quality_condition(arg_209_0, arg_209_1, arg_209_2)
+OptionsView.cb_fsr_quality_condition = function (arg_209_0, arg_209_1, arg_209_2)
 	if not arg_209_0:_get_setting("render_settings", "fsr_enabled") then
 		arg_209_0:_set_setting_override(arg_209_1, arg_209_2, "fsr_quality", arg_209_1.current_selection)
 		arg_209_0:_set_override_reason(arg_209_1, "settings_view_header_fidelityfx_super_resolution")
@@ -5313,7 +5313,7 @@ function OptionsView.cb_fsr_quality_condition(arg_209_0, arg_209_1, arg_209_2)
 	end
 end
 
-function OptionsView.cb_fsr2_enabled_setup(arg_210_0)
+OptionsView.cb_fsr2_enabled_setup = function (arg_210_0)
 	local var_210_0 = {
 		{
 			value = false,
@@ -5332,13 +5332,13 @@ function OptionsView.cb_fsr2_enabled_setup(arg_210_0)
 	return var_210_3, var_210_0, "menu_settings_fsr2_enabled", var_210_4
 end
 
-function OptionsView.cb_fsr2_enabled_saved_value(arg_211_0, arg_211_1)
+OptionsView.cb_fsr2_enabled_saved_value = function (arg_211_0, arg_211_1)
 	local var_211_0 = arg_211_0:_get_setting("user_settings", "fsr2_enabled") and 2 or 1
 
 	arg_211_1.content.current_selection = var_211_0
 end
 
-function OptionsView.cb_fsr2_enabled(arg_212_0, arg_212_1, arg_212_2, arg_212_3)
+OptionsView.cb_fsr2_enabled = function (arg_212_0, arg_212_1, arg_212_2, arg_212_3)
 	local var_212_0 = arg_212_1.options_values[arg_212_1.current_selection]
 
 	arg_212_0.changed_user_settings.fsr2_enabled = var_212_0
@@ -5354,7 +5354,7 @@ function OptionsView.cb_fsr2_enabled(arg_212_0, arg_212_1, arg_212_2, arg_212_3)
 	end
 end
 
-function OptionsView.cb_fsr2_enabled_condition(arg_213_0, arg_213_1, arg_213_2)
+OptionsView.cb_fsr2_enabled_condition = function (arg_213_0, arg_213_1, arg_213_2)
 	if not Application.render_caps("d3d12") then
 		arg_213_0:_set_setting_override(arg_213_1, arg_213_2, "fsr2_enabled", false)
 		arg_213_0:_set_override_reason(arg_213_1, "backend_err_playfab_unsupported_version", true)
@@ -5384,7 +5384,7 @@ local var_0_26 = table.mirror_array_inplace({
 	"ultra_performance"
 })
 
-function OptionsView.cb_fsr2_quality_setup(arg_214_0)
+OptionsView.cb_fsr2_quality_setup = function (arg_214_0)
 	local var_214_0 = {
 		{
 			value = "quality",
@@ -5419,7 +5419,7 @@ function OptionsView.cb_fsr2_quality_setup(arg_214_0)
 	return var_214_2, var_214_0, "menu_settings_fsr2_quality", var_214_1
 end
 
-function OptionsView.cb_fsr2_quality_saved_value(arg_215_0, arg_215_1)
+OptionsView.cb_fsr2_quality_saved_value = function (arg_215_0, arg_215_1)
 	local var_215_0
 
 	if arg_215_0:_get_setting("render_settings", "upscaling_mode") == "fsr2" then
@@ -5431,7 +5431,7 @@ function OptionsView.cb_fsr2_quality_saved_value(arg_215_0, arg_215_1)
 	arg_215_1.content.current_selection = var_0_26[var_215_0] or 1
 end
 
-function OptionsView.cb_fsr2_quality(arg_216_0, arg_216_1, arg_216_2, arg_216_3)
+OptionsView.cb_fsr2_quality = function (arg_216_0, arg_216_1, arg_216_2, arg_216_3)
 	local var_216_0 = arg_216_1.options_values[arg_216_1.current_selection]
 
 	if arg_216_0:_get_setting("user_settings", "fsr2_enabled") then
@@ -5439,7 +5439,7 @@ function OptionsView.cb_fsr2_quality(arg_216_0, arg_216_1, arg_216_2, arg_216_3)
 	end
 end
 
-function OptionsView.cb_fsr2_quality_condition(arg_217_0, arg_217_1, arg_217_2)
+OptionsView.cb_fsr2_quality_condition = function (arg_217_0, arg_217_1, arg_217_2)
 	if not arg_217_0:_get_setting("user_settings", "fsr2_enabled") then
 		local var_217_0 = arg_217_1.options_values[arg_217_1.current_selection]
 
@@ -5454,7 +5454,7 @@ function OptionsView.cb_fsr2_quality_condition(arg_217_0, arg_217_1, arg_217_2)
 	end
 end
 
-function OptionsView.cb_dlss_enabled_setup(arg_218_0)
+OptionsView.cb_dlss_enabled_setup = function (arg_218_0)
 	local var_218_0 = {
 		{
 			value = false,
@@ -5473,19 +5473,19 @@ function OptionsView.cb_dlss_enabled_setup(arg_218_0)
 	return var_218_3, var_218_0, "menu_settings_dlss_enabled", var_218_4
 end
 
-function OptionsView.cb_dlss_enabled_saved_value(arg_219_0, arg_219_1)
+OptionsView.cb_dlss_enabled_saved_value = function (arg_219_0, arg_219_1)
 	local var_219_0 = arg_219_0:_get_setting("user_settings", "dlss_enabled") and 2 or 1
 
 	arg_219_1.content.current_selection = var_219_0
 end
 
-function OptionsView.cb_dlss_enabled(arg_220_0, arg_220_1, arg_220_2, arg_220_3)
+OptionsView.cb_dlss_enabled = function (arg_220_0, arg_220_1, arg_220_2, arg_220_3)
 	local var_220_0 = arg_220_1.options_values[arg_220_1.current_selection]
 
 	arg_220_0.changed_user_settings.dlss_enabled = var_220_0
 end
 
-function OptionsView.cb_dlss_enabled_condition(arg_221_0, arg_221_1, arg_221_2)
+OptionsView.cb_dlss_enabled_condition = function (arg_221_0, arg_221_1, arg_221_2)
 	if arg_221_0:_get_setting("render_settings", "fsr_enabled") then
 		arg_221_0:_set_setting_override(arg_221_1, arg_221_2, "dlss_enabled", false)
 		arg_221_0:_set_override_reason(arg_221_1, "settings_view_header_fidelityfx_super_resolution")
@@ -5503,7 +5503,7 @@ function OptionsView.cb_dlss_enabled_condition(arg_221_0, arg_221_1, arg_221_2)
 	end
 end
 
-function OptionsView.cb_dlss_frame_generation_setup(arg_222_0)
+OptionsView.cb_dlss_frame_generation_setup = function (arg_222_0)
 	local var_222_0 = {
 		{
 			value = false,
@@ -5522,19 +5522,19 @@ function OptionsView.cb_dlss_frame_generation_setup(arg_222_0)
 	return var_222_3, var_222_0, "menu_settings_dlss_frame_generation", var_222_4
 end
 
-function OptionsView.cb_dlss_frame_generation_saved_value(arg_223_0, arg_223_1)
+OptionsView.cb_dlss_frame_generation_saved_value = function (arg_223_0, arg_223_1)
 	local var_223_0 = arg_223_0:_get_setting("render_settings", "dlss_g_enabled") and 2 or 1
 
 	arg_223_1.content.current_selection = var_223_0
 end
 
-function OptionsView.cb_dlss_frame_generation(arg_224_0, arg_224_1, arg_224_2, arg_224_3)
+OptionsView.cb_dlss_frame_generation = function (arg_224_0, arg_224_1, arg_224_2, arg_224_3)
 	local var_224_0 = arg_224_1.options_values[arg_224_1.current_selection]
 
 	arg_224_0.changed_render_settings.dlss_g_enabled = var_224_0
 end
 
-function OptionsView.cb_dlss_frame_generation_condition(arg_225_0, arg_225_1, arg_225_2)
+OptionsView.cb_dlss_frame_generation_condition = function (arg_225_0, arg_225_1, arg_225_2)
 	if not Application.render_caps("dlss_g_supported") then
 		arg_225_0:_set_setting_override(arg_225_1, arg_225_2, "dlss_frame_generation", false)
 		arg_225_0:_set_override_reason(arg_225_1, "backend_err_playfab_unsupported_version", true)
@@ -5562,7 +5562,7 @@ local var_0_27 = table.mirror_array_inplace({
 	"dlaa"
 })
 
-function OptionsView.cb_dlss_super_resolution_setup(arg_226_0)
+OptionsView.cb_dlss_super_resolution_setup = function (arg_226_0)
 	local var_226_0 = {
 		{
 			value = "none",
@@ -5605,7 +5605,7 @@ function OptionsView.cb_dlss_super_resolution_setup(arg_226_0)
 	return var_0_27[var_226_2] or selected_option, var_226_0, "menu_settings_dlss_super_resolution", var_226_1
 end
 
-function OptionsView.cb_dlss_super_resolution_saved_value(arg_227_0, arg_227_1)
+OptionsView.cb_dlss_super_resolution_saved_value = function (arg_227_0, arg_227_1)
 	local var_227_0
 
 	if arg_227_0:_get_setting("user_settings", "dlss_enabled") then
@@ -5617,7 +5617,7 @@ function OptionsView.cb_dlss_super_resolution_saved_value(arg_227_0, arg_227_1)
 	arg_227_1.content.current_selection = var_0_27[var_227_0] or 1
 end
 
-function OptionsView.cb_dlss_super_resolution(arg_228_0, arg_228_1, arg_228_2, arg_228_3)
+OptionsView.cb_dlss_super_resolution = function (arg_228_0, arg_228_1, arg_228_2, arg_228_3)
 	local var_228_0 = arg_228_1.options_values[arg_228_1.current_selection]
 
 	if var_228_0 == "none" then
@@ -5631,7 +5631,7 @@ function OptionsView.cb_dlss_super_resolution(arg_228_0, arg_228_1, arg_228_2, a
 	end
 end
 
-function OptionsView.cb_dlss_super_resolution_condition(arg_229_0, arg_229_1, arg_229_2)
+OptionsView.cb_dlss_super_resolution_condition = function (arg_229_0, arg_229_1, arg_229_2)
 	if not arg_229_0:_get_setting("user_settings", "dlss_enabled") then
 		arg_229_0:_set_setting_override(arg_229_1, arg_229_2, "dlss_super_resolution", "none")
 		arg_229_0:_set_override_reason(arg_229_1, "menu_settings_dlss_enabled")
@@ -5648,7 +5648,7 @@ local function var_0_28(arg_230_0, arg_230_1)
 	return arg_230_0 and (arg_230_1 and 3 or 2) or 1
 end
 
-function OptionsView.cb_reflex_low_latency_setup(arg_231_0)
+OptionsView.cb_reflex_low_latency_setup = function (arg_231_0)
 	local var_231_0 = {
 		{
 			value = 1,
@@ -5669,14 +5669,14 @@ function OptionsView.cb_reflex_low_latency_setup(arg_231_0)
 	return var_231_1, var_231_0, "menu_settings_reflex_low_latency", var_231_2
 end
 
-function OptionsView.cb_reflex_low_latency_saved_value(arg_232_0, arg_232_1)
+OptionsView.cb_reflex_low_latency_saved_value = function (arg_232_0, arg_232_1)
 	local var_232_0 = arg_232_0:_get_setting("render_settings", "nv_low_latency_mode")
 	local var_232_1 = arg_232_0:_get_setting("render_settings", "nv_low_latency_boost")
 
 	arg_232_1.content.current_selection = var_0_28(var_232_0, var_232_1)
 end
 
-function OptionsView.cb_reflex_low_latency(arg_233_0, arg_233_1, arg_233_2, arg_233_3, arg_233_4)
+OptionsView.cb_reflex_low_latency = function (arg_233_0, arg_233_1, arg_233_2, arg_233_3, arg_233_4)
 	local var_233_0 = arg_233_1.options_values[arg_233_1.current_selection]
 	local var_233_1 = false
 	local var_233_2 = false
@@ -5695,7 +5695,7 @@ function OptionsView.cb_reflex_low_latency(arg_233_0, arg_233_1, arg_233_2, arg_
 	end
 end
 
-function OptionsView.cb_reflex_low_latency_condition(arg_234_0, arg_234_1, arg_234_2)
+OptionsView.cb_reflex_low_latency_condition = function (arg_234_0, arg_234_1, arg_234_2)
 	if arg_234_0:_get_setting("render_settings", "dlss_g_enabled") then
 		if arg_234_1.current_selection == 1 or arg_234_0.overriden_settings.reflex_low_latency == 1 then
 			arg_234_0:_set_setting_override(arg_234_1, arg_234_2, "reflex_low_latency", 2)
@@ -5710,7 +5710,7 @@ function OptionsView.cb_reflex_low_latency_condition(arg_234_0, arg_234_1, arg_2
 	end
 end
 
-function OptionsView.cb_reflex_framerate_cap_setup(arg_235_0)
+OptionsView.cb_reflex_framerate_cap_setup = function (arg_235_0)
 	local var_235_0 = var_0_25
 	local var_235_1 = var_0_24[Application.user_setting("render_settings", "nv_framerate_cap")] or 1
 	local var_235_2 = var_0_24[DefaultUserSettings.get("render_settings", "nv_framerate_cap")]
@@ -5718,19 +5718,19 @@ function OptionsView.cb_reflex_framerate_cap_setup(arg_235_0)
 	return var_235_1, var_235_0, "menu_settings_reflex_framerate_cap", var_235_2
 end
 
-function OptionsView.cb_reflex_framerate_cap_saved_value(arg_236_0, arg_236_1)
+OptionsView.cb_reflex_framerate_cap_saved_value = function (arg_236_0, arg_236_1)
 	local var_236_0 = arg_236_0:_get_setting("render_settings", "nv_framerate_cap")
 
 	arg_236_1.content.current_selection = var_0_24[var_236_0] or 1
 end
 
-function OptionsView.cb_reflex_framerate_cap(arg_237_0, arg_237_1, arg_237_2, arg_237_3)
+OptionsView.cb_reflex_framerate_cap = function (arg_237_0, arg_237_1, arg_237_2, arg_237_3)
 	local var_237_0 = arg_237_1.options_values[arg_237_1.current_selection]
 
 	arg_237_0.changed_render_settings.nv_framerate_cap = var_237_0
 end
 
-function OptionsView.cb_sun_shadows_setup(arg_238_0)
+OptionsView.cb_sun_shadows_setup = function (arg_238_0)
 	local var_238_0 = {
 		{
 			value = "off",
@@ -5774,7 +5774,7 @@ function OptionsView.cb_sun_shadows_setup(arg_238_0)
 	return var_238_3, var_238_0, "menu_settings_sun_shadows"
 end
 
-function OptionsView.cb_sun_shadows_saved_value(arg_239_0, arg_239_1)
+OptionsView.cb_sun_shadows_saved_value = function (arg_239_0, arg_239_1)
 	local var_239_0 = var_0_12(arg_239_0.changed_render_settings.sun_shadows, Application.user_setting("render_settings", "sun_shadows"))
 	local var_239_1 = var_0_12(arg_239_0.changed_user_settings.sun_shadow_quality, Application.user_setting("sun_shadow_quality"))
 	local var_239_2
@@ -5796,7 +5796,7 @@ function OptionsView.cb_sun_shadows_saved_value(arg_239_0, arg_239_1)
 	arg_239_1.content.current_selection = var_239_2
 end
 
-function OptionsView.cb_sun_shadows(arg_240_0, arg_240_1, arg_240_2, arg_240_3)
+OptionsView.cb_sun_shadows = function (arg_240_0, arg_240_1, arg_240_2, arg_240_3)
 	local var_240_0 = arg_240_1.options_values
 	local var_240_1 = arg_240_1.current_selection
 	local var_240_2
@@ -5824,7 +5824,7 @@ function OptionsView.cb_sun_shadows(arg_240_0, arg_240_1, arg_240_2, arg_240_3)
 	end
 end
 
-function OptionsView.cb_lod_quality_setup(arg_241_0)
+OptionsView.cb_lod_quality_setup = function (arg_241_0)
 	local var_241_0 = {
 		{
 			value = 0.6,
@@ -5857,7 +5857,7 @@ function OptionsView.cb_lod_quality_setup(arg_241_0)
 	return var_241_4, var_241_0, "menu_settings_lod_quality", var_241_2
 end
 
-function OptionsView.cb_lod_quality_saved_value(arg_242_0, arg_242_1)
+OptionsView.cb_lod_quality_saved_value = function (arg_242_0, arg_242_1)
 	local var_242_0 = arg_242_1.content.options_values
 	local var_242_1 = 1
 	local var_242_2 = var_0_12(arg_242_0.changed_render_settings.lod_object_multiplier, Application.user_setting("render_settings", "lod_object_multiplier")) or 1
@@ -5873,13 +5873,13 @@ function OptionsView.cb_lod_quality_saved_value(arg_242_0, arg_242_1)
 	arg_242_1.content.current_selection = var_242_1
 end
 
-function OptionsView.cb_lod_quality(arg_243_0, arg_243_1)
+OptionsView.cb_lod_quality = function (arg_243_0, arg_243_1)
 	local var_243_0 = arg_243_1.options_values[arg_243_1.current_selection] or 1
 
 	arg_243_0.changed_render_settings.lod_object_multiplier = var_243_0
 end
 
-function OptionsView.cb_scatter_density_setup(arg_244_0)
+OptionsView.cb_scatter_density_setup = function (arg_244_0)
 	local var_244_0 = {
 		{
 			value = 0,
@@ -5920,7 +5920,7 @@ function OptionsView.cb_scatter_density_setup(arg_244_0)
 	return var_244_4, var_244_0, "menu_settings_scatter_density", var_244_2
 end
 
-function OptionsView.cb_scatter_density_saved_value(arg_245_0, arg_245_1)
+OptionsView.cb_scatter_density_saved_value = function (arg_245_0, arg_245_1)
 	local var_245_0 = arg_245_1.content.options_values
 	local var_245_1 = 1
 	local var_245_2 = var_0_12(arg_245_0.changed_render_settings.lod_scatter_density, Application.user_setting("render_settings", "lod_scatter_density")) or 1
@@ -5936,7 +5936,7 @@ function OptionsView.cb_scatter_density_saved_value(arg_245_0, arg_245_1)
 	arg_245_1.content.current_selection = var_245_1
 end
 
-function OptionsView.cb_scatter_density(arg_246_0, arg_246_1, arg_246_2, arg_246_3)
+OptionsView.cb_scatter_density = function (arg_246_0, arg_246_1, arg_246_2, arg_246_3)
 	local var_246_0 = arg_246_1.options_values[arg_246_1.current_selection] or 1
 
 	arg_246_0.changed_render_settings.lod_scatter_density = var_246_0
@@ -5946,7 +5946,7 @@ function OptionsView.cb_scatter_density(arg_246_0, arg_246_1, arg_246_2, arg_246
 	end
 end
 
-function OptionsView.cb_decoration_density_setup(arg_247_0)
+OptionsView.cb_decoration_density_setup = function (arg_247_0)
 	local var_247_0 = {
 		{
 			value = 0,
@@ -5983,7 +5983,7 @@ function OptionsView.cb_decoration_density_setup(arg_247_0)
 	return var_247_2, var_247_0, "menu_settings_decoration_density"
 end
 
-function OptionsView.cb_decoration_density_saved_value(arg_248_0, arg_248_1)
+OptionsView.cb_decoration_density_saved_value = function (arg_248_0, arg_248_1)
 	local var_248_0 = arg_248_1.content.options_values
 	local var_248_1 = 1
 	local var_248_2 = var_0_12(arg_248_0.changed_render_settings.lod_decoration_density, Application.user_setting("render_settings", "lod_decoration_density")) or 1
@@ -5999,13 +5999,13 @@ function OptionsView.cb_decoration_density_saved_value(arg_248_0, arg_248_1)
 	arg_248_1.content.current_selection = var_248_1
 end
 
-function OptionsView.cb_decoration_density(arg_249_0, arg_249_1)
+OptionsView.cb_decoration_density = function (arg_249_0, arg_249_1)
 	local var_249_0 = arg_249_1.options_values[arg_249_1.current_selection] or 1
 
 	arg_249_0.changed_render_settings.lod_decoration_density = var_249_0
 end
 
-function OptionsView.cb_maximum_shadow_casting_lights_setup(arg_250_0)
+OptionsView.cb_maximum_shadow_casting_lights_setup = function (arg_250_0)
 	local var_250_0 = 1
 	local var_250_1 = 10
 	local var_250_2 = Application.user_setting("render_settings", "max_shadow_casting_lights")
@@ -6013,7 +6013,7 @@ function OptionsView.cb_maximum_shadow_casting_lights_setup(arg_250_0)
 	return var_0_11(var_250_0, var_250_1, var_250_2), var_250_0, var_250_1, 0, "menu_settings_maximum_shadow_casting_lights"
 end
 
-function OptionsView.cb_maximum_shadow_casting_lights_saved_value(arg_251_0, arg_251_1)
+OptionsView.cb_maximum_shadow_casting_lights_saved_value = function (arg_251_0, arg_251_1)
 	local var_251_0 = arg_251_1.content
 	local var_251_1 = var_251_0.min
 	local var_251_2 = var_251_0.max
@@ -6024,7 +6024,7 @@ function OptionsView.cb_maximum_shadow_casting_lights_saved_value(arg_251_0, arg
 	var_251_0.value = var_251_4
 end
 
-function OptionsView.cb_maximum_shadow_casting_lights(arg_252_0, arg_252_1, arg_252_2, arg_252_3)
+OptionsView.cb_maximum_shadow_casting_lights = function (arg_252_0, arg_252_1, arg_252_2, arg_252_3)
 	arg_252_0.changed_render_settings.max_shadow_casting_lights = arg_252_1.value
 
 	print("max_shadow_casting_lights", arg_252_1.value)
@@ -6034,7 +6034,7 @@ function OptionsView.cb_maximum_shadow_casting_lights(arg_252_0, arg_252_1, arg_
 	end
 end
 
-function OptionsView.cb_local_light_shadow_quality_setup(arg_253_0)
+OptionsView.cb_local_light_shadow_quality_setup = function (arg_253_0)
 	local var_253_0 = {
 		{
 			value = "off",
@@ -6077,7 +6077,7 @@ function OptionsView.cb_local_light_shadow_quality_setup(arg_253_0)
 	return var_253_4, var_253_0, "menu_settings_local_light_shadow_quality"
 end
 
-function OptionsView.cb_local_light_shadow_quality_saved_value(arg_254_0, arg_254_1)
+OptionsView.cb_local_light_shadow_quality_saved_value = function (arg_254_0, arg_254_1)
 	local var_254_0 = var_0_12(arg_254_0.changed_user_settings.local_light_shadow_quality, Application.user_setting("local_light_shadow_quality"))
 	local var_254_1 = var_0_12(arg_254_0.changed_render_settings.deferred_local_lights_cast_shadows, Application.user_setting("render_settings", "deferred_local_lights_cast_shadows"))
 	local var_254_2 = var_0_12(arg_254_0.changed_render_settings.forward_local_lights_cast_shadows, Application.user_setting("render_settings", "forward_local_lights_cast_shadows"))
@@ -6098,7 +6098,7 @@ function OptionsView.cb_local_light_shadow_quality_saved_value(arg_254_0, arg_25
 	arg_254_1.content.current_selection = var_254_3
 end
 
-function OptionsView.cb_local_light_shadow_quality(arg_255_0, arg_255_1, arg_255_2, arg_255_3)
+OptionsView.cb_local_light_shadow_quality = function (arg_255_0, arg_255_1, arg_255_2, arg_255_3)
 	local var_255_0 = arg_255_1.options_values[arg_255_1.current_selection]
 	local var_255_1
 	local var_255_2
@@ -6126,7 +6126,7 @@ function OptionsView.cb_local_light_shadow_quality(arg_255_0, arg_255_1, arg_255
 	end
 end
 
-function OptionsView.cb_motion_blur_setup(arg_256_0)
+OptionsView.cb_motion_blur_setup = function (arg_256_0)
 	local var_256_0 = {
 		{
 			value = false,
@@ -6154,13 +6154,13 @@ function OptionsView.cb_motion_blur_setup(arg_256_0)
 	return var_256_3, var_256_0, "menu_settings_motion_blur", var_256_4
 end
 
-function OptionsView.cb_motion_blur_saved_value(arg_257_0, arg_257_1)
+OptionsView.cb_motion_blur_saved_value = function (arg_257_0, arg_257_1)
 	local var_257_0 = var_0_12(arg_257_0.changed_render_settings.motion_blur_enabled, Application.user_setting("render_settings", "motion_blur_enabled")) and 2 or 1
 
 	arg_257_1.content.current_selection = var_257_0
 end
 
-function OptionsView.cb_motion_blur(arg_258_0, arg_258_1, arg_258_2, arg_258_3)
+OptionsView.cb_motion_blur = function (arg_258_0, arg_258_1, arg_258_2, arg_258_3)
 	local var_258_0 = arg_258_1.options_values[arg_258_1.current_selection]
 
 	arg_258_0.changed_render_settings.motion_blur_enabled = var_258_0
@@ -6172,7 +6172,7 @@ function OptionsView.cb_motion_blur(arg_258_0, arg_258_1, arg_258_2, arg_258_3)
 	end
 end
 
-function OptionsView.cb_dof_setup(arg_259_0)
+OptionsView.cb_dof_setup = function (arg_259_0)
 	local var_259_0 = {
 		{
 			value = false,
@@ -6187,13 +6187,13 @@ function OptionsView.cb_dof_setup(arg_259_0)
 	return Application.user_setting("render_settings", "dof_enabled") and 2 or 1, var_259_0, "menu_settings_dof"
 end
 
-function OptionsView.cb_dof_saved_value(arg_260_0, arg_260_1)
+OptionsView.cb_dof_saved_value = function (arg_260_0, arg_260_1)
 	local var_260_0 = var_0_12(arg_260_0.changed_render_settings.dof_enabled, Application.user_setting("render_settings", "dof_enabled")) and 2 or 1
 
 	arg_260_1.content.current_selection = var_260_0
 end
 
-function OptionsView.cb_dof(arg_261_0, arg_261_1, arg_261_2, arg_261_3)
+OptionsView.cb_dof = function (arg_261_0, arg_261_1, arg_261_2, arg_261_3)
 	local var_261_0 = arg_261_1.options_values[arg_261_1.current_selection]
 
 	arg_261_0.changed_render_settings.dof_enabled = var_261_0
@@ -6203,7 +6203,7 @@ function OptionsView.cb_dof(arg_261_0, arg_261_1, arg_261_2, arg_261_3)
 	end
 end
 
-function OptionsView.cb_bloom_setup(arg_262_0)
+OptionsView.cb_bloom_setup = function (arg_262_0)
 	local var_262_0 = {
 		{
 			value = false,
@@ -6222,13 +6222,13 @@ function OptionsView.cb_bloom_setup(arg_262_0)
 	return var_262_3, var_262_0, "menu_settings_bloom", var_262_4
 end
 
-function OptionsView.cb_bloom_saved_value(arg_263_0, arg_263_1)
+OptionsView.cb_bloom_saved_value = function (arg_263_0, arg_263_1)
 	local var_263_0 = var_0_12(arg_263_0.changed_render_settings.bloom_enabled, Application.user_setting("render_settings", "bloom_enabled")) or false
 
 	arg_263_1.content.current_selection = var_263_0 and 2 or 1
 end
 
-function OptionsView.cb_bloom(arg_264_0, arg_264_1, arg_264_2, arg_264_3)
+OptionsView.cb_bloom = function (arg_264_0, arg_264_1, arg_264_2, arg_264_3)
 	local var_264_0 = arg_264_1.options_values
 	local var_264_1 = arg_264_1.current_selection
 
@@ -6239,7 +6239,7 @@ function OptionsView.cb_bloom(arg_264_0, arg_264_1, arg_264_2, arg_264_3)
 	end
 end
 
-function OptionsView.cb_light_shafts_setup(arg_265_0)
+OptionsView.cb_light_shafts_setup = function (arg_265_0)
 	local var_265_0 = {
 		{
 			value = false,
@@ -6258,13 +6258,13 @@ function OptionsView.cb_light_shafts_setup(arg_265_0)
 	return var_265_3, var_265_0, "menu_settings_light_shafts", var_265_4
 end
 
-function OptionsView.cb_light_shafts_saved_value(arg_266_0, arg_266_1)
+OptionsView.cb_light_shafts_saved_value = function (arg_266_0, arg_266_1)
 	local var_266_0 = var_0_12(arg_266_0.changed_render_settings.light_shafts_enabled, Application.user_setting("render_settings", "light_shafts_enabled")) or false
 
 	arg_266_1.content.current_selection = var_266_0 and 2 or 1
 end
 
-function OptionsView.cb_light_shafts(arg_267_0, arg_267_1, arg_267_2, arg_267_3)
+OptionsView.cb_light_shafts = function (arg_267_0, arg_267_1, arg_267_2, arg_267_3)
 	local var_267_0 = arg_267_1.options_values
 	local var_267_1 = arg_267_1.current_selection
 
@@ -6275,7 +6275,7 @@ function OptionsView.cb_light_shafts(arg_267_0, arg_267_1, arg_267_2, arg_267_3)
 	end
 end
 
-function OptionsView.cb_sun_flare_setup(arg_268_0)
+OptionsView.cb_sun_flare_setup = function (arg_268_0)
 	local var_268_0 = {
 		{
 			value = false,
@@ -6294,13 +6294,13 @@ function OptionsView.cb_sun_flare_setup(arg_268_0)
 	return var_268_3, var_268_0, "menu_settings_sun_flare", var_268_4
 end
 
-function OptionsView.cb_sun_flare_saved_value(arg_269_0, arg_269_1)
+OptionsView.cb_sun_flare_saved_value = function (arg_269_0, arg_269_1)
 	local var_269_0 = var_0_12(arg_269_0.changed_render_settings.sun_flare_enabled, Application.user_setting("render_settings", "sun_flare_enabled")) or false
 
 	arg_269_1.content.current_selection = var_269_0 and 2 or 1
 end
 
-function OptionsView.cb_sun_flare(arg_270_0, arg_270_1, arg_270_2, arg_270_3)
+OptionsView.cb_sun_flare = function (arg_270_0, arg_270_1, arg_270_2, arg_270_3)
 	local var_270_0 = arg_270_1.options_values
 	local var_270_1 = arg_270_1.current_selection
 
@@ -6311,7 +6311,7 @@ function OptionsView.cb_sun_flare(arg_270_0, arg_270_1, arg_270_2, arg_270_3)
 	end
 end
 
-function OptionsView.cb_sharpen_setup(arg_271_0)
+OptionsView.cb_sharpen_setup = function (arg_271_0)
 	local var_271_0 = {
 		{
 			value = false,
@@ -6330,13 +6330,13 @@ function OptionsView.cb_sharpen_setup(arg_271_0)
 	return var_271_3, var_271_0, "menu_settings_sharpen", var_271_4
 end
 
-function OptionsView.cb_sharpen_saved_value(arg_272_0, arg_272_1)
+OptionsView.cb_sharpen_saved_value = function (arg_272_0, arg_272_1)
 	local var_272_0 = var_0_12(arg_272_0.changed_render_settings.sharpen_enabled, Application.user_setting("render_settings", "sharpen_enabled")) or false
 
 	arg_272_1.content.current_selection = var_272_0 and 2 or 1
 end
 
-function OptionsView.cb_sharpen(arg_273_0, arg_273_1, arg_273_2, arg_273_3)
+OptionsView.cb_sharpen = function (arg_273_0, arg_273_1, arg_273_2, arg_273_3)
 	local var_273_0 = arg_273_1.options_values[arg_273_1.current_selection]
 
 	arg_273_0.changed_render_settings.sharpen_enabled = var_273_0
@@ -6346,11 +6346,11 @@ function OptionsView.cb_sharpen(arg_273_0, arg_273_1, arg_273_2, arg_273_3)
 	end
 end
 
-function OptionsView.cb_sharpen_condition(arg_274_0, arg_274_1, arg_274_2)
+OptionsView.cb_sharpen_condition = function (arg_274_0, arg_274_1, arg_274_2)
 	return
 end
 
-function OptionsView.cb_lens_quality_setup(arg_275_0)
+OptionsView.cb_lens_quality_setup = function (arg_275_0)
 	local var_275_0 = {
 		{
 			value = false,
@@ -6369,13 +6369,13 @@ function OptionsView.cb_lens_quality_setup(arg_275_0)
 	return var_275_3, var_275_0, "menu_settings_lens_quality", var_275_4
 end
 
-function OptionsView.cb_lens_quality_saved_value(arg_276_0, arg_276_1)
+OptionsView.cb_lens_quality_saved_value = function (arg_276_0, arg_276_1)
 	local var_276_0 = var_0_12(arg_276_0.changed_render_settings.lens_quality_enabled, Application.user_setting("render_settings", "lens_quality_enabled")) or false
 
 	arg_276_1.content.current_selection = var_276_0 and 2 or 1
 end
 
-function OptionsView.cb_lens_quality(arg_277_0, arg_277_1, arg_277_2, arg_277_3)
+OptionsView.cb_lens_quality = function (arg_277_0, arg_277_1, arg_277_2, arg_277_3)
 	local var_277_0 = arg_277_1.options_values
 	local var_277_1 = arg_277_1.current_selection
 
@@ -6386,7 +6386,7 @@ function OptionsView.cb_lens_quality(arg_277_0, arg_277_1, arg_277_2, arg_277_3)
 	end
 end
 
-function OptionsView.cb_skin_shading_setup(arg_278_0)
+OptionsView.cb_skin_shading_setup = function (arg_278_0)
 	local var_278_0 = {
 		{
 			value = false,
@@ -6405,13 +6405,13 @@ function OptionsView.cb_skin_shading_setup(arg_278_0)
 	return var_278_3, var_278_0, "menu_settings_skin_shading", var_278_4
 end
 
-function OptionsView.cb_skin_shading_saved_value(arg_279_0, arg_279_1)
+OptionsView.cb_skin_shading_saved_value = function (arg_279_0, arg_279_1)
 	local var_279_0 = var_0_12(arg_279_0.changed_render_settings.skin_material_enabled, Application.user_setting("render_settings", "skin_material_enabled")) or false
 
 	arg_279_1.content.current_selection = var_279_0 and 2 or 1
 end
 
-function OptionsView.cb_skin_shading(arg_280_0, arg_280_1, arg_280_2, arg_280_3)
+OptionsView.cb_skin_shading = function (arg_280_0, arg_280_1, arg_280_2, arg_280_3)
 	local var_280_0 = arg_280_1.options_values
 	local var_280_1 = arg_280_1.current_selection
 
@@ -6422,7 +6422,7 @@ function OptionsView.cb_skin_shading(arg_280_0, arg_280_1, arg_280_2, arg_280_3)
 	end
 end
 
-function OptionsView.cb_ssao_setup(arg_281_0)
+OptionsView.cb_ssao_setup = function (arg_281_0)
 	local var_281_0 = {
 		{
 			value = "off",
@@ -6459,7 +6459,7 @@ function OptionsView.cb_ssao_setup(arg_281_0)
 	return var_281_3, var_281_0, "menu_settings_ssao", var_281_4
 end
 
-function OptionsView.cb_ssao_saved_value(arg_282_0, arg_282_1)
+OptionsView.cb_ssao_saved_value = function (arg_282_0, arg_282_1)
 	local var_282_0 = var_0_12(arg_282_0.changed_user_settings.ao_quality, Application.user_setting("ao_quality"))
 	local var_282_1 = arg_282_1.content.options_values
 	local var_282_2 = 1
@@ -6473,7 +6473,7 @@ function OptionsView.cb_ssao_saved_value(arg_282_0, arg_282_1)
 	arg_282_1.content.current_selection = var_282_2
 end
 
-function OptionsView.cb_ssao(arg_283_0, arg_283_1, arg_283_2, arg_283_3)
+OptionsView.cb_ssao = function (arg_283_0, arg_283_1, arg_283_2, arg_283_3)
 	local var_283_0 = arg_283_1.options_values[arg_283_1.current_selection]
 
 	arg_283_0.changed_user_settings.ao_quality = var_283_0
@@ -6489,7 +6489,7 @@ function OptionsView.cb_ssao(arg_283_0, arg_283_1, arg_283_2, arg_283_3)
 	end
 end
 
-function OptionsView.cb_char_texture_quality_setup(arg_284_0)
+OptionsView.cb_char_texture_quality_setup = function (arg_284_0)
 	local var_284_0 = {
 		{
 			value = "low",
@@ -6522,7 +6522,7 @@ function OptionsView.cb_char_texture_quality_setup(arg_284_0)
 	return var_284_3, var_284_0, "menu_settings_char_texture_quality", var_284_4
 end
 
-function OptionsView.cb_char_texture_quality_saved_value(arg_285_0, arg_285_1)
+OptionsView.cb_char_texture_quality_saved_value = function (arg_285_0, arg_285_1)
 	local var_285_0 = var_0_12(arg_285_0.changed_user_settings.char_texture_quality, Application.user_setting("char_texture_quality"))
 	local var_285_1 = arg_285_1.content.options_values
 	local var_285_2 = 1
@@ -6538,7 +6538,7 @@ function OptionsView.cb_char_texture_quality_saved_value(arg_285_0, arg_285_1)
 	print("OptionsView:cb_char_texture_quality_saved_value", var_285_2, var_285_0)
 end
 
-function OptionsView.cb_char_texture_quality(arg_286_0, arg_286_1, arg_286_2, arg_286_3)
+OptionsView.cb_char_texture_quality = function (arg_286_0, arg_286_1, arg_286_2, arg_286_3)
 	local var_286_0 = arg_286_1.options_values[arg_286_1.current_selection]
 
 	arg_286_0.changed_user_settings.char_texture_quality = var_286_0
@@ -6548,7 +6548,7 @@ function OptionsView.cb_char_texture_quality(arg_286_0, arg_286_1, arg_286_2, ar
 	end
 end
 
-function OptionsView.cb_env_texture_quality_setup(arg_287_0)
+OptionsView.cb_env_texture_quality_setup = function (arg_287_0)
 	local var_287_0 = {
 		{
 			value = "low",
@@ -6581,7 +6581,7 @@ function OptionsView.cb_env_texture_quality_setup(arg_287_0)
 	return var_287_3, var_287_0, "menu_settings_env_texture_quality", var_287_4
 end
 
-function OptionsView.cb_env_texture_quality_saved_value(arg_288_0, arg_288_1)
+OptionsView.cb_env_texture_quality_saved_value = function (arg_288_0, arg_288_1)
 	local var_288_0 = var_0_12(arg_288_0.changed_user_settings.env_texture_quality, Application.user_setting("env_texture_quality"))
 	local var_288_1 = arg_288_1.content.options_values
 	local var_288_2 = 1
@@ -6597,7 +6597,7 @@ function OptionsView.cb_env_texture_quality_saved_value(arg_288_0, arg_288_1)
 	print("OptionsView:cb_env_texture_quality_saved_value", var_288_2, var_288_0)
 end
 
-function OptionsView.cb_env_texture_quality(arg_289_0, arg_289_1, arg_289_2, arg_289_3)
+OptionsView.cb_env_texture_quality = function (arg_289_0, arg_289_1, arg_289_2, arg_289_3)
 	local var_289_0 = arg_289_1.options_values[arg_289_1.current_selection]
 
 	arg_289_0.changed_user_settings.env_texture_quality = var_289_0
@@ -6607,7 +6607,7 @@ function OptionsView.cb_env_texture_quality(arg_289_0, arg_289_1, arg_289_2, arg
 	end
 end
 
-function OptionsView.cb_subtitles_setup(arg_290_0)
+OptionsView.cb_subtitles_setup = function (arg_290_0)
 	local var_290_0 = {
 		{
 			value = false,
@@ -6624,20 +6624,20 @@ function OptionsView.cb_subtitles_setup(arg_290_0)
 	return var_290_1, var_290_0, "menu_settings_subtitles", var_290_2
 end
 
-function OptionsView.cb_subtitles_saved_value(arg_291_0, arg_291_1)
+OptionsView.cb_subtitles_saved_value = function (arg_291_0, arg_291_1)
 	local var_291_0 = var_0_12(arg_291_0.changed_user_settings.use_subtitles, Application.user_setting("use_subtitles")) or false
 
 	arg_291_1.content.current_selection = var_291_0 and 2 or 1
 end
 
-function OptionsView.cb_subtitles(arg_292_0, arg_292_1)
+OptionsView.cb_subtitles = function (arg_292_0, arg_292_1)
 	local var_292_0 = arg_292_1.options_values
 	local var_292_1 = arg_292_1.current_selection
 
 	arg_292_0.changed_user_settings.use_subtitles = var_292_0[var_292_1]
 end
 
-function OptionsView.cb_language_setup(arg_293_0)
+OptionsView.cb_language_setup = function (arg_293_0)
 	local var_293_0 = {
 		{
 			value = "en",
@@ -6689,7 +6689,7 @@ function OptionsView.cb_language_setup(arg_293_0)
 	return var_293_3, var_293_0, "menu_settings_language", var_293_2
 end
 
-function OptionsView.cb_language_saved_value(arg_294_0, arg_294_1)
+OptionsView.cb_language_saved_value = function (arg_294_0, arg_294_1)
 	local var_294_0 = var_0_12(arg_294_0.changed_user_settings.language_id, Application.user_setting("language_id")) or "en"
 	local var_294_1 = arg_294_1.content.options_values
 	local var_294_2 = 1
@@ -6703,14 +6703,14 @@ function OptionsView.cb_language_saved_value(arg_294_0, arg_294_1)
 	arg_294_1.content.current_selection = var_294_2
 end
 
-function OptionsView.cb_language(arg_295_0, arg_295_1)
+OptionsView.cb_language = function (arg_295_0, arg_295_1)
 	local var_295_0 = arg_295_1.options_values
 	local var_295_1 = arg_295_1.current_selection
 
 	arg_295_0.changed_user_settings.language_id = var_295_0[var_295_1]
 end
 
-function OptionsView.reload_language(arg_296_0, arg_296_1)
+OptionsView.reload_language = function (arg_296_0, arg_296_1)
 	if Managers.package:has_loaded("resource_packages/strings", "boot") then
 		Managers.package:unload("resource_packages/strings", "boot")
 	end
@@ -6793,7 +6793,7 @@ function OptionsView.reload_language(arg_296_0, arg_296_1)
 	Managers.localizer:add_macro("KEY", var_296_1)
 end
 
-function OptionsView.cb_mouse_look_sensitivity_setup(arg_299_0)
+OptionsView.cb_mouse_look_sensitivity_setup = function (arg_299_0)
 	local var_299_0 = -10
 	local var_299_1 = 10
 	local var_299_2 = Application.user_setting("mouse_look_sensitivity") or 0
@@ -6807,7 +6807,7 @@ function OptionsView.cb_mouse_look_sensitivity_setup(arg_299_0)
 	return var_299_4, var_299_0, var_299_1, 1, "menu_settings_mouse_look_sensitivity", var_299_3
 end
 
-function OptionsView.cb_mouse_look_sensitivity_saved_value(arg_300_0, arg_300_1)
+OptionsView.cb_mouse_look_sensitivity_saved_value = function (arg_300_0, arg_300_1)
 	local var_300_0 = arg_300_1.content
 	local var_300_1 = var_300_0.min
 	local var_300_2 = var_300_0.max
@@ -6818,11 +6818,11 @@ function OptionsView.cb_mouse_look_sensitivity_saved_value(arg_300_0, arg_300_1)
 	var_300_0.value = var_300_4
 end
 
-function OptionsView.cb_mouse_look_sensitivity(arg_301_0, arg_301_1)
+OptionsView.cb_mouse_look_sensitivity = function (arg_301_0, arg_301_1)
 	arg_301_0.changed_user_settings.mouse_look_sensitivity = arg_301_1.value
 end
 
-function OptionsView.cb_hud_scale_setup(arg_302_0)
+OptionsView.cb_hud_scale_setup = function (arg_302_0)
 	local var_302_0 = 50
 	local var_302_1 = 100
 	local var_302_2 = Application.user_setting("hud_scale") or 100
@@ -6832,7 +6832,7 @@ function OptionsView.cb_hud_scale_setup(arg_302_0)
 	return var_302_3, var_302_0, var_302_1, 0, "settings_menu_hud_scale", var_302_4
 end
 
-function OptionsView.cb_hud_scale_saved_value(arg_303_0, arg_303_1)
+OptionsView.cb_hud_scale_saved_value = function (arg_303_0, arg_303_1)
 	local var_303_0 = arg_303_1.content
 	local var_303_1 = var_303_0.min
 	local var_303_2 = var_303_0.max
@@ -6844,7 +6844,7 @@ function OptionsView.cb_hud_scale_saved_value(arg_303_0, arg_303_1)
 	var_303_0.disabled = not (Application.user_setting("use_custom_hud_scale") or DefaultUserSettings.get("user_settings", "use_custom_hud_scale"))
 end
 
-function OptionsView.cb_hud_scale(arg_304_0, arg_304_1)
+OptionsView.cb_hud_scale = function (arg_304_0, arg_304_1)
 	local var_304_0 = arg_304_1.value
 
 	arg_304_0.changed_user_settings.hud_scale = var_304_0
@@ -6856,7 +6856,7 @@ function OptionsView.cb_hud_scale(arg_304_0, arg_304_1)
 	arg_304_0:_setup_text_buttons_width()
 end
 
-function OptionsView.cb_safe_rect_setup(arg_305_0)
+OptionsView.cb_safe_rect_setup = function (arg_305_0)
 	local var_305_0, var_305_1 = Gui.resolution()
 	local var_305_2 = 0
 	local var_305_3 = 20
@@ -6867,7 +6867,7 @@ function OptionsView.cb_safe_rect_setup(arg_305_0)
 	return var_305_5, var_305_2, var_305_3, 0, "settings_menu_hud_safe_rect", var_305_6
 end
 
-function OptionsView.cb_safe_rect_saved_value(arg_306_0, arg_306_1)
+OptionsView.cb_safe_rect_saved_value = function (arg_306_0, arg_306_1)
 	local var_306_0, var_306_1 = Gui.resolution()
 	local var_306_2 = 0
 	local var_306_3 = 20
@@ -6886,7 +6886,7 @@ function OptionsView.cb_safe_rect_saved_value(arg_306_0, arg_306_1)
 	var_306_5.value = var_306_9
 end
 
-function OptionsView.cb_safe_rect(arg_307_0, arg_307_1)
+OptionsView.cb_safe_rect = function (arg_307_0, arg_307_1)
 	local var_307_0 = 0
 	local var_307_1 = 20
 
@@ -6906,7 +6906,7 @@ function OptionsView.cb_safe_rect(arg_307_0, arg_307_1)
 	end
 end
 
-function OptionsView.cb_gamepad_look_sensitivity_setup(arg_308_0)
+OptionsView.cb_gamepad_look_sensitivity_setup = function (arg_308_0)
 	local var_308_0 = -10
 	local var_308_1 = 10
 	local var_308_2 = Application.user_setting("gamepad_look_sensitivity") or 0
@@ -6945,7 +6945,7 @@ function OptionsView.cb_gamepad_look_sensitivity_setup(arg_308_0)
 	return var_308_4, var_308_0, var_308_1, 1, "menu_settings_gamepad_look_sensitivity", var_308_3
 end
 
-function OptionsView.cb_gamepad_look_sensitivity_saved_value(arg_309_0, arg_309_1)
+OptionsView.cb_gamepad_look_sensitivity_saved_value = function (arg_309_0, arg_309_1)
 	local var_309_0 = arg_309_1.content
 	local var_309_1 = var_309_0.min
 	local var_309_2 = var_309_0.max
@@ -6956,11 +6956,11 @@ function OptionsView.cb_gamepad_look_sensitivity_saved_value(arg_309_0, arg_309_
 	var_309_0.value = var_309_4
 end
 
-function OptionsView.cb_gamepad_look_sensitivity(arg_310_0, arg_310_1)
+OptionsView.cb_gamepad_look_sensitivity = function (arg_310_0, arg_310_1)
 	arg_310_0.changed_user_settings.gamepad_look_sensitivity = arg_310_1.value
 end
 
-function OptionsView.cb_gamepad_look_sensitivity_y_setup(arg_311_0)
+OptionsView.cb_gamepad_look_sensitivity_y_setup = function (arg_311_0)
 	local var_311_0 = -10
 	local var_311_1 = 10
 	local var_311_2 = Application.user_setting("gamepad_look_sensitivity_y") or 0
@@ -6989,7 +6989,7 @@ function OptionsView.cb_gamepad_look_sensitivity_y_setup(arg_311_0)
 	return var_311_4, var_311_0, var_311_1, 1, "menu_settings_gamepad_look_sensitivity_y", var_311_3
 end
 
-function OptionsView.cb_gamepad_look_sensitivity_y_saved_value(arg_312_0, arg_312_1)
+OptionsView.cb_gamepad_look_sensitivity_y_saved_value = function (arg_312_0, arg_312_1)
 	local var_312_0 = arg_312_1.content
 	local var_312_1 = var_312_0.min
 	local var_312_2 = var_312_0.max
@@ -7000,11 +7000,11 @@ function OptionsView.cb_gamepad_look_sensitivity_y_saved_value(arg_312_0, arg_31
 	var_312_0.value = var_312_4
 end
 
-function OptionsView.cb_gamepad_look_sensitivity_y(arg_313_0, arg_313_1)
+OptionsView.cb_gamepad_look_sensitivity_y = function (arg_313_0, arg_313_1)
 	arg_313_0.changed_user_settings.gamepad_look_sensitivity_y = arg_313_1.value
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity_setup(arg_314_0)
+OptionsView.cb_gamepad_zoom_sensitivity_setup = function (arg_314_0)
 	local var_314_0 = -10
 	local var_314_1 = 10
 	local var_314_2 = Application.user_setting("gamepad_zoom_sensitivity") or 0
@@ -7030,7 +7030,7 @@ function OptionsView.cb_gamepad_zoom_sensitivity_setup(arg_314_0)
 	return var_314_4, var_314_0, var_314_1, 1, "menu_settings_gamepad_zoom_sensitivity", var_314_3
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity_saved_value(arg_315_0, arg_315_1)
+OptionsView.cb_gamepad_zoom_sensitivity_saved_value = function (arg_315_0, arg_315_1)
 	local var_315_0 = arg_315_1.content
 	local var_315_1 = var_315_0.min
 	local var_315_2 = var_315_0.max
@@ -7041,11 +7041,11 @@ function OptionsView.cb_gamepad_zoom_sensitivity_saved_value(arg_315_0, arg_315_
 	var_315_0.value = var_315_4
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity(arg_316_0, arg_316_1)
+OptionsView.cb_gamepad_zoom_sensitivity = function (arg_316_0, arg_316_1)
 	arg_316_0.changed_user_settings.gamepad_zoom_sensitivity = arg_316_1.value
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity_y_setup(arg_317_0)
+OptionsView.cb_gamepad_zoom_sensitivity_y_setup = function (arg_317_0)
 	local var_317_0 = -10
 	local var_317_1 = 10
 	local var_317_2 = Application.user_setting("gamepad_zoom_sensitivity_y") or 0
@@ -7068,7 +7068,7 @@ function OptionsView.cb_gamepad_zoom_sensitivity_y_setup(arg_317_0)
 	return var_317_4, var_317_0, var_317_1, 1, "menu_settings_gamepad_zoom_sensitivity_y", var_317_3
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity_y_saved_value(arg_318_0, arg_318_1)
+OptionsView.cb_gamepad_zoom_sensitivity_y_saved_value = function (arg_318_0, arg_318_1)
 	local var_318_0 = arg_318_1.content
 	local var_318_1 = var_318_0.min
 	local var_318_2 = var_318_0.max
@@ -7079,18 +7079,18 @@ function OptionsView.cb_gamepad_zoom_sensitivity_y_saved_value(arg_318_0, arg_31
 	var_318_0.value = var_318_4
 end
 
-function OptionsView.cb_gamepad_zoom_sensitivity_y(arg_319_0, arg_319_1)
+OptionsView.cb_gamepad_zoom_sensitivity_y = function (arg_319_0, arg_319_1)
 	arg_319_0.changed_user_settings.gamepad_zoom_sensitivity_y = arg_319_1.value
 end
 
-function OptionsView.cb_max_upload_speed(arg_320_0, arg_320_1)
+OptionsView.cb_max_upload_speed = function (arg_320_0, arg_320_1)
 	local var_320_0 = arg_320_1.options_values
 	local var_320_1 = arg_320_1.current_selection
 
 	arg_320_0.changed_user_settings.max_upload_speed = var_320_0[var_320_1]
 end
 
-function OptionsView.cb_max_upload_speed_setup(arg_321_0)
+OptionsView.cb_max_upload_speed_setup = function (arg_321_0)
 	local var_321_0 = {
 		{
 			value = 256,
@@ -7129,7 +7129,7 @@ function OptionsView.cb_max_upload_speed_setup(arg_321_0)
 	return var_321_4 or var_321_3, var_321_0, "menu_settings_max_upload", var_321_3
 end
 
-function OptionsView.cb_max_upload_speed_saved_value(arg_322_0, arg_322_1)
+OptionsView.cb_max_upload_speed_saved_value = function (arg_322_0, arg_322_1)
 	local var_322_0 = var_0_12(arg_322_0.changed_user_settings.max_upload_speed, Application.user_setting("max_upload_speed")) or DefaultUserSettings.get("user_settings", "max_upload_speed")
 	local var_322_1 = arg_322_1.content.options_values
 	local var_322_2 = 1
@@ -7145,14 +7145,14 @@ function OptionsView.cb_max_upload_speed_saved_value(arg_322_0, arg_322_1)
 	arg_322_1.content.current_selection = var_322_2
 end
 
-function OptionsView.cb_small_network_packets(arg_323_0, arg_323_1)
+OptionsView.cb_small_network_packets = function (arg_323_0, arg_323_1)
 	local var_323_0 = arg_323_1.options_values
 	local var_323_1 = arg_323_1.current_selection
 
 	arg_323_0.changed_user_settings.small_network_packets = var_323_0[var_323_1]
 end
 
-function OptionsView.cb_small_network_packets_setup(arg_324_0)
+OptionsView.cb_small_network_packets_setup = function (arg_324_0)
 	local var_324_0 = {
 		{
 			value = false,
@@ -7170,20 +7170,20 @@ function OptionsView.cb_small_network_packets_setup(arg_324_0)
 	return var_324_2, var_324_0, "menu_settings_small_network_packets", var_324_3
 end
 
-function OptionsView.cb_small_network_packets_saved_value(arg_325_0, arg_325_1)
+OptionsView.cb_small_network_packets_saved_value = function (arg_325_0, arg_325_1)
 	local var_325_0 = var_0_12(arg_325_0.changed_user_settings.small_network_packets, Application.user_setting("small_network_packets")) or false
 
 	arg_325_1.content.current_selection = var_325_0 and 2 or 1
 end
 
-function OptionsView.cb_max_quick_play_search_range(arg_326_0, arg_326_1)
+OptionsView.cb_max_quick_play_search_range = function (arg_326_0, arg_326_1)
 	local var_326_0 = arg_326_1.options_values
 	local var_326_1 = arg_326_1.current_selection
 
 	arg_326_0.changed_user_settings.max_quick_play_search_range = var_326_0[var_326_1]
 end
 
-function OptionsView.cb_max_quick_play_search_range_setup(arg_327_0)
+OptionsView.cb_max_quick_play_search_range_setup = function (arg_327_0)
 	local var_327_0 = {
 		{
 			value = "close",
@@ -7214,7 +7214,7 @@ function OptionsView.cb_max_quick_play_search_range_setup(arg_327_0)
 	return var_327_4 or var_327_3, var_327_0, "menu_settings_max_quick_play_search_range", var_327_3
 end
 
-function OptionsView.cb_max_quick_play_search_range_saved_value(arg_328_0, arg_328_1)
+OptionsView.cb_max_quick_play_search_range_saved_value = function (arg_328_0, arg_328_1)
 	local var_328_0 = var_0_12(arg_328_0.changed_user_settings.max_quick_play_search_range, Application.user_setting("max_quick_play_search_range")) or DefaultUserSettings.get("user_settings", "max_quick_play_search_range")
 	local var_328_1 = arg_328_1.content.options_values
 	local var_328_2 = 1
@@ -7230,7 +7230,7 @@ function OptionsView.cb_max_quick_play_search_range_saved_value(arg_328_0, arg_3
 	arg_328_1.content.current_selection = var_328_2
 end
 
-function OptionsView.cb_mouse_look_invert_y_setup(arg_329_0)
+OptionsView.cb_mouse_look_invert_y_setup = function (arg_329_0)
 	local var_329_0 = {
 		{
 			value = false,
@@ -7254,20 +7254,20 @@ function OptionsView.cb_mouse_look_invert_y_setup(arg_329_0)
 	return var_329_5, var_329_0, "menu_settings_mouse_look_invert_y", var_329_6
 end
 
-function OptionsView.cb_mouse_look_invert_y_saved_value(arg_330_0, arg_330_1)
+OptionsView.cb_mouse_look_invert_y_saved_value = function (arg_330_0, arg_330_1)
 	local var_330_0 = var_0_12(arg_330_0.changed_user_settings.mouse_look_invert_y, Application.user_setting("mouse_look_invert_y")) or false
 
 	arg_330_1.content.current_selection = var_330_0 and 2 or 1
 end
 
-function OptionsView.cb_mouse_look_invert_y(arg_331_0, arg_331_1)
+OptionsView.cb_mouse_look_invert_y = function (arg_331_0, arg_331_1)
 	local var_331_0 = arg_331_1.options_values
 	local var_331_1 = arg_331_1.current_selection
 
 	arg_331_0.changed_user_settings.mouse_look_invert_y = var_331_0[var_331_1]
 end
 
-function OptionsView.cb_gamepad_look_invert_y_setup(arg_332_0)
+OptionsView.cb_gamepad_look_invert_y_setup = function (arg_332_0)
 	local var_332_0 = {
 		{
 			value = false,
@@ -7303,20 +7303,20 @@ function OptionsView.cb_gamepad_look_invert_y_setup(arg_332_0)
 	return var_332_6, var_332_0, "menu_settings_gamepad_look_invert_y", var_332_7
 end
 
-function OptionsView.cb_gamepad_look_invert_y_saved_value(arg_333_0, arg_333_1)
+OptionsView.cb_gamepad_look_invert_y_saved_value = function (arg_333_0, arg_333_1)
 	local var_333_0 = var_0_12(arg_333_0.changed_user_settings.gamepad_look_invert_y, Application.user_setting("gamepad_look_invert_y")) or false
 
 	arg_333_1.content.current_selection = var_333_0 and 2 or 1
 end
 
-function OptionsView.cb_gamepad_look_invert_y(arg_334_0, arg_334_1)
+OptionsView.cb_gamepad_look_invert_y = function (arg_334_0, arg_334_1)
 	local var_334_0 = arg_334_1.options_values
 	local var_334_1 = arg_334_1.current_selection
 
 	arg_334_0.changed_user_settings.gamepad_look_invert_y = var_334_0[var_334_1]
 end
 
-function OptionsView.cb_gamepad_left_dead_zone_setup(arg_335_0)
+OptionsView.cb_gamepad_left_dead_zone_setup = function (arg_335_0)
 	local var_335_0 = 0
 	local var_335_1 = 1
 	local var_335_2 = Managers.account:active_controller()
@@ -7337,7 +7337,7 @@ function OptionsView.cb_gamepad_left_dead_zone_setup(arg_335_0)
 	return var_335_7, var_335_0, var_335_1, 1, "menu_settings_gamepad_left_dead_zone", var_335_5
 end
 
-function OptionsView.cb_gamepad_left_dead_zone_saved_value(arg_336_0, arg_336_1)
+OptionsView.cb_gamepad_left_dead_zone_saved_value = function (arg_336_0, arg_336_1)
 	local var_336_0 = arg_336_1.content
 	local var_336_1 = var_336_0.min
 	local var_336_2 = var_336_0.max
@@ -7348,11 +7348,11 @@ function OptionsView.cb_gamepad_left_dead_zone_saved_value(arg_336_0, arg_336_1)
 	var_336_0.value = var_336_4
 end
 
-function OptionsView.cb_gamepad_left_dead_zone(arg_337_0, arg_337_1)
+OptionsView.cb_gamepad_left_dead_zone = function (arg_337_0, arg_337_1)
 	arg_337_0.changed_user_settings.gamepad_left_dead_zone = arg_337_1.value
 end
 
-function OptionsView.cb_gamepad_right_dead_zone_setup(arg_338_0)
+OptionsView.cb_gamepad_right_dead_zone_setup = function (arg_338_0)
 	local var_338_0 = 0
 	local var_338_1 = 1
 	local var_338_2 = Managers.account:active_controller()
@@ -7373,7 +7373,7 @@ function OptionsView.cb_gamepad_right_dead_zone_setup(arg_338_0)
 	return var_338_7, var_338_0, var_338_1, 1, "menu_settings_gamepad_right_dead_zone", var_338_5
 end
 
-function OptionsView.cb_gamepad_right_dead_zone_saved_value(arg_339_0, arg_339_1)
+OptionsView.cb_gamepad_right_dead_zone_saved_value = function (arg_339_0, arg_339_1)
 	local var_339_0 = arg_339_1.content
 	local var_339_1 = var_339_0.min
 	local var_339_2 = var_339_0.max
@@ -7384,11 +7384,11 @@ function OptionsView.cb_gamepad_right_dead_zone_saved_value(arg_339_0, arg_339_1
 	var_339_0.value = var_339_4
 end
 
-function OptionsView.cb_gamepad_right_dead_zone(arg_340_0, arg_340_1)
+OptionsView.cb_gamepad_right_dead_zone = function (arg_340_0, arg_340_1)
 	arg_340_0.changed_user_settings.gamepad_right_dead_zone = arg_340_1.value
 end
 
-function OptionsView.cb_gamepad_auto_aim_enabled_setup(arg_341_0)
+OptionsView.cb_gamepad_auto_aim_enabled_setup = function (arg_341_0)
 	local var_341_0 = {
 		{
 			value = true,
@@ -7406,20 +7406,20 @@ function OptionsView.cb_gamepad_auto_aim_enabled_setup(arg_341_0)
 	return var_341_2, var_341_0, "menu_settings_gamepad_auto_aim_enabled", var_341_3
 end
 
-function OptionsView.cb_gamepad_auto_aim_enabled_saved_value(arg_342_0, arg_342_1)
+OptionsView.cb_gamepad_auto_aim_enabled_saved_value = function (arg_342_0, arg_342_1)
 	local var_342_0 = var_0_12(arg_342_0.changed_user_settings.gamepad_auto_aim_enabled, Application.user_setting("gamepad_auto_aim_enabled"))
 
 	arg_342_1.content.current_selection = var_342_0 and 1 or 2
 end
 
-function OptionsView.cb_gamepad_auto_aim_enabled(arg_343_0, arg_343_1)
+OptionsView.cb_gamepad_auto_aim_enabled = function (arg_343_0, arg_343_1)
 	local var_343_0 = arg_343_1.options_values
 	local var_343_1 = arg_343_1.current_selection
 
 	arg_343_0.changed_user_settings.gamepad_auto_aim_enabled = var_343_0[var_343_1]
 end
 
-function OptionsView.cb_gamepad_acceleration_enabled_setup(arg_344_0)
+OptionsView.cb_gamepad_acceleration_enabled_setup = function (arg_344_0)
 	local var_344_0 = {
 		{
 			value = true,
@@ -7437,20 +7437,20 @@ function OptionsView.cb_gamepad_acceleration_enabled_setup(arg_344_0)
 	return var_344_2, var_344_0, "menu_settings_enable_gamepad_acceleration", var_344_3
 end
 
-function OptionsView.cb_gamepad_acceleration_enabled_saved_value(arg_345_0, arg_345_1)
+OptionsView.cb_gamepad_acceleration_enabled_saved_value = function (arg_345_0, arg_345_1)
 	local var_345_0 = var_0_12(arg_345_0.changed_user_settings.enable_gamepad_acceleration, Application.user_setting("enable_gamepad_acceleration"))
 
 	arg_345_1.content.current_selection = var_345_0 and 1 or 2
 end
 
-function OptionsView.cb_gamepad_acceleration_enabled(arg_346_0, arg_346_1)
+OptionsView.cb_gamepad_acceleration_enabled = function (arg_346_0, arg_346_1)
 	local var_346_0 = arg_346_1.options_values
 	local var_346_1 = arg_346_1.current_selection
 
 	arg_346_0.changed_user_settings.enable_gamepad_acceleration = var_346_0[var_346_1]
 end
 
-function OptionsView.cb_gamepad_rumble_enabled_setup(arg_347_0)
+OptionsView.cb_gamepad_rumble_enabled_setup = function (arg_347_0)
 	local var_347_0 = {
 		{
 			value = true,
@@ -7468,20 +7468,20 @@ function OptionsView.cb_gamepad_rumble_enabled_setup(arg_347_0)
 	return var_347_2, var_347_0, "menu_settings_gamepad_rumble_enabled", var_347_3
 end
 
-function OptionsView.cb_gamepad_rumble_enabled_saved_value(arg_348_0, arg_348_1)
+OptionsView.cb_gamepad_rumble_enabled_saved_value = function (arg_348_0, arg_348_1)
 	local var_348_0 = var_0_12(arg_348_0.changed_user_settings.gamepad_rumble_enabled, Application.user_setting("gamepad_rumble_enabled"))
 
 	arg_348_1.content.current_selection = var_348_0 and 1 or 2
 end
 
-function OptionsView.cb_gamepad_rumble_enabled(arg_349_0, arg_349_1)
+OptionsView.cb_gamepad_rumble_enabled = function (arg_349_0, arg_349_1)
 	local var_349_0 = arg_349_1.options_values
 	local var_349_1 = arg_349_1.current_selection
 
 	arg_349_0.changed_user_settings.gamepad_rumble_enabled = var_349_0[var_349_1]
 end
 
-function OptionsView.cb_motion_controls_enabled_setup(arg_350_0)
+OptionsView.cb_motion_controls_enabled_setup = function (arg_350_0)
 	local var_350_0 = {
 		{
 			value = true,
@@ -7506,20 +7506,20 @@ function OptionsView.cb_motion_controls_enabled_setup(arg_350_0)
 	return var_350_3, var_350_0, "menu_settings_motion_controls_enabled", var_350_4
 end
 
-function OptionsView.cb_motion_controls_enabled_saved_value(arg_351_0, arg_351_1)
+OptionsView.cb_motion_controls_enabled_saved_value = function (arg_351_0, arg_351_1)
 	local var_351_0 = var_0_12(arg_351_0.changed_user_settings.use_motion_controls, Application.user_setting("use_motion_controls"))
 
 	arg_351_1.content.current_selection = var_351_0 and 1 or 2
 end
 
-function OptionsView.cb_motion_controls_enabled(arg_352_0, arg_352_1)
+OptionsView.cb_motion_controls_enabled = function (arg_352_0, arg_352_1)
 	local var_352_0 = arg_352_1.options_values
 	local var_352_1 = arg_352_1.current_selection
 
 	arg_352_0.changed_user_settings.use_motion_controls = var_352_0[var_352_1]
 end
 
-function OptionsView.cb_motion_yaw_sensitivity_setup(arg_353_0)
+OptionsView.cb_motion_yaw_sensitivity_setup = function (arg_353_0)
 	local var_353_0 = MotionControlSettings.sensitivity_yaw_min
 	local var_353_1 = MotionControlSettings.sensitivity_yaw_max
 	local var_353_2 = Application.user_setting("motion_sensitivity_yaw") or MotionControlSettings.default_sensitivity_yaw
@@ -7536,7 +7536,7 @@ function OptionsView.cb_motion_yaw_sensitivity_setup(arg_353_0)
 	return var_353_4, var_353_0, var_353_1, 0, "menu_settings_sensitivity_yaw", var_353_3
 end
 
-function OptionsView.cb_motion_yaw_sensitivity_saved_value(arg_354_0, arg_354_1)
+OptionsView.cb_motion_yaw_sensitivity_saved_value = function (arg_354_0, arg_354_1)
 	local var_354_0 = arg_354_1.content
 	local var_354_1 = var_354_0.min
 	local var_354_2 = var_354_0.max
@@ -7547,11 +7547,11 @@ function OptionsView.cb_motion_yaw_sensitivity_saved_value(arg_354_0, arg_354_1)
 	var_354_0.value = var_354_4
 end
 
-function OptionsView.cb_motion_yaw_sensitivity(arg_355_0, arg_355_1)
+OptionsView.cb_motion_yaw_sensitivity = function (arg_355_0, arg_355_1)
 	arg_355_0.changed_user_settings.motion_sensitivity_yaw = arg_355_1.value
 end
 
-function OptionsView.cb_motion_pitch_sensitivity_setup(arg_356_0)
+OptionsView.cb_motion_pitch_sensitivity_setup = function (arg_356_0)
 	local var_356_0 = MotionControlSettings.sensitivity_pitch_min
 	local var_356_1 = MotionControlSettings.sensitivity_pitch_max
 	local var_356_2 = Application.user_setting("motion_sensitivity_pitch") or MotionControlSettings.default_sensitivity_pitch
@@ -7568,7 +7568,7 @@ function OptionsView.cb_motion_pitch_sensitivity_setup(arg_356_0)
 	return var_356_4, var_356_0, var_356_1, 0, "menu_settings_sensitivity_pitch", var_356_3
 end
 
-function OptionsView.cb_motion_pitch_sensitivity_saved_value(arg_357_0, arg_357_1)
+OptionsView.cb_motion_pitch_sensitivity_saved_value = function (arg_357_0, arg_357_1)
 	local var_357_0 = arg_357_1.content
 	local var_357_1 = var_357_0.min
 	local var_357_2 = var_357_0.max
@@ -7579,11 +7579,11 @@ function OptionsView.cb_motion_pitch_sensitivity_saved_value(arg_357_0, arg_357_
 	var_357_0.value = var_357_4
 end
 
-function OptionsView.cb_motion_pitch_sensitivity(arg_358_0, arg_358_1)
+OptionsView.cb_motion_pitch_sensitivity = function (arg_358_0, arg_358_1)
 	arg_358_0.changed_user_settings.motion_sensitivity_pitch = arg_358_1.value
 end
 
-function OptionsView.cb_disable_right_stick_look_setup(arg_359_0)
+OptionsView.cb_disable_right_stick_look_setup = function (arg_359_0)
 	local var_359_0 = {
 		{
 			value = true,
@@ -7608,20 +7608,20 @@ function OptionsView.cb_disable_right_stick_look_setup(arg_359_0)
 	return var_359_3, var_359_0, "menu_settings_disable_right_stick_vertical", var_359_4
 end
 
-function OptionsView.cb_disable_right_stick_look_saved_value(arg_360_0, arg_360_1)
+OptionsView.cb_disable_right_stick_look_saved_value = function (arg_360_0, arg_360_1)
 	local var_360_0 = var_0_12(arg_360_0.changed_user_settings.motion_disable_right_stick_vertical, Application.user_setting("motion_disable_right_stick_vertical"))
 
 	arg_360_1.content.current_selection = var_360_0 and 1 or 2
 end
 
-function OptionsView.cb_disable_right_stick_look(arg_361_0, arg_361_1)
+OptionsView.cb_disable_right_stick_look = function (arg_361_0, arg_361_1)
 	local var_361_0 = arg_361_1.options_values
 	local var_361_1 = arg_361_1.current_selection
 
 	arg_361_0.changed_user_settings.motion_disable_right_stick_vertical = var_361_0[var_361_1]
 end
 
-function OptionsView.cb_yaw_motion_enabled_setup(arg_362_0)
+OptionsView.cb_yaw_motion_enabled_setup = function (arg_362_0)
 	local var_362_0 = {
 		{
 			value = true,
@@ -7646,20 +7646,20 @@ function OptionsView.cb_yaw_motion_enabled_setup(arg_362_0)
 	return var_362_3, var_362_0, "menu_settings_motion_yaw_enabled", var_362_4
 end
 
-function OptionsView.cb_yaw_motion_enabled_saved_value(arg_363_0, arg_363_1)
+OptionsView.cb_yaw_motion_enabled_saved_value = function (arg_363_0, arg_363_1)
 	local var_363_0 = var_0_12(arg_363_0.changed_user_settings.motion_enable_yaw_motion, Application.user_setting("motion_enable_yaw_motion"))
 
 	arg_363_1.content.current_selection = var_363_0 and 1 or 2
 end
 
-function OptionsView.cb_yaw_motion_enabled(arg_364_0, arg_364_1)
+OptionsView.cb_yaw_motion_enabled = function (arg_364_0, arg_364_1)
 	local var_364_0 = arg_364_1.options_values
 	local var_364_1 = arg_364_1.current_selection
 
 	arg_364_0.changed_user_settings.motion_enable_yaw_motion = var_364_0[var_364_1]
 end
 
-function OptionsView.cb_pitch_motion_enabled_setup(arg_365_0)
+OptionsView.cb_pitch_motion_enabled_setup = function (arg_365_0)
 	local var_365_0 = {
 		{
 			value = true,
@@ -7684,20 +7684,20 @@ function OptionsView.cb_pitch_motion_enabled_setup(arg_365_0)
 	return var_365_3, var_365_0, "menu_settings_motion_pitch_enabled", var_365_4
 end
 
-function OptionsView.cb_pitch_motion_enabled_saved_value(arg_366_0, arg_366_1)
+OptionsView.cb_pitch_motion_enabled_saved_value = function (arg_366_0, arg_366_1)
 	local var_366_0 = var_0_12(arg_366_0.changed_user_settings.motion_enable_pitch_motion, Application.user_setting("motion_enable_pitch_motion"))
 
 	arg_366_1.content.current_selection = var_366_0 and 1 or 2
 end
 
-function OptionsView.cb_pitch_motion_enabled(arg_367_0, arg_367_1)
+OptionsView.cb_pitch_motion_enabled = function (arg_367_0, arg_367_1)
 	local var_367_0 = arg_367_1.options_values
 	local var_367_1 = arg_367_1.current_selection
 
 	arg_367_0.changed_user_settings.motion_enable_pitch_motion = var_367_0[var_367_1]
 end
 
-function OptionsView.cb_invert_yaw_enabled_setup(arg_368_0)
+OptionsView.cb_invert_yaw_enabled_setup = function (arg_368_0)
 	local var_368_0 = {
 		{
 			value = true,
@@ -7722,20 +7722,20 @@ function OptionsView.cb_invert_yaw_enabled_setup(arg_368_0)
 	return var_368_3, var_368_0, "menu_settings_invert_yaw", var_368_4
 end
 
-function OptionsView.cb_invert_yaw_enabled_saved_value(arg_369_0, arg_369_1)
+OptionsView.cb_invert_yaw_enabled_saved_value = function (arg_369_0, arg_369_1)
 	local var_369_0 = var_0_12(arg_369_0.changed_user_settings.motion_invert_yaw, Application.user_setting("motion_invert_yaw"))
 
 	arg_369_1.content.current_selection = var_369_0 and 1 or 2
 end
 
-function OptionsView.cb_invert_yaw_enabled(arg_370_0, arg_370_1)
+OptionsView.cb_invert_yaw_enabled = function (arg_370_0, arg_370_1)
 	local var_370_0 = arg_370_1.options_values
 	local var_370_1 = arg_370_1.current_selection
 
 	arg_370_0.changed_user_settings.motion_invert_yaw = var_370_0[var_370_1]
 end
 
-function OptionsView.cb_invert_pitch_enabled_setup(arg_371_0)
+OptionsView.cb_invert_pitch_enabled_setup = function (arg_371_0)
 	local var_371_0 = {
 		{
 			value = true,
@@ -7760,20 +7760,20 @@ function OptionsView.cb_invert_pitch_enabled_setup(arg_371_0)
 	return var_371_3, var_371_0, "menu_settings_invert_pitch", var_371_4
 end
 
-function OptionsView.cb_invert_pitch_enabled_saved_value(arg_372_0, arg_372_1)
+OptionsView.cb_invert_pitch_enabled_saved_value = function (arg_372_0, arg_372_1)
 	local var_372_0 = var_0_12(arg_372_0.changed_user_settings.motion_invert_pitch, Application.user_setting("motion_invert_pitch"))
 
 	arg_372_1.content.current_selection = var_372_0 and 1 or 2
 end
 
-function OptionsView.cb_invert_pitch_enabled(arg_373_0, arg_373_1)
+OptionsView.cb_invert_pitch_enabled = function (arg_373_0, arg_373_1)
 	local var_373_0 = arg_373_1.options_values
 	local var_373_1 = arg_373_1.current_selection
 
 	arg_373_0.changed_user_settings.motion_invert_pitch = var_373_0[var_373_1]
 end
 
-function OptionsView.cb_gamepad_use_ps4_style_input_icons_setup(arg_374_0)
+OptionsView.cb_gamepad_use_ps4_style_input_icons_setup = function (arg_374_0)
 	local var_374_0 = {
 		{
 			value = false,
@@ -7791,13 +7791,13 @@ function OptionsView.cb_gamepad_use_ps4_style_input_icons_setup(arg_374_0)
 	return var_374_2, var_374_0, "menu_settings_gamepad_use_ps4_style_input_icons", var_374_3
 end
 
-function OptionsView.cb_gamepad_use_ps4_style_input_icons_saved_value(arg_375_0, arg_375_1)
+OptionsView.cb_gamepad_use_ps4_style_input_icons_saved_value = function (arg_375_0, arg_375_1)
 	local var_375_0 = var_0_12(arg_375_0.changed_user_settings.gamepad_use_ps4_style_input_icons, Application.user_setting("gamepad_use_ps4_style_input_icons"))
 
 	arg_375_1.content.current_selection = var_375_0 and 2 or 1
 end
 
-function OptionsView.cb_gamepad_use_ps4_style_input_icons(arg_376_0, arg_376_1)
+OptionsView.cb_gamepad_use_ps4_style_input_icons = function (arg_376_0, arg_376_1)
 	local var_376_0 = arg_376_1.options_values
 	local var_376_1 = arg_376_1.current_selection
 
@@ -7809,7 +7809,7 @@ function OptionsView.cb_gamepad_use_ps4_style_input_icons(arg_376_0, arg_376_1)
 	var_376_2.content.use_texture2_layout = var_376_3
 end
 
-function OptionsView.cb_gamepad_layout_setup(arg_377_0)
+OptionsView.cb_gamepad_layout_setup = function (arg_377_0)
 	local var_377_0 = AlternatateGamepadKeymapsOptionsMenu
 	local var_377_1 = DefaultUserSettings.get("user_settings", "gamepad_layout") or "default"
 	local var_377_2 = Application.user_setting("gamepad_layout")
@@ -7836,7 +7836,7 @@ function OptionsView.cb_gamepad_layout_setup(arg_377_0)
 	return var_377_3, var_377_0, "menu_settings_gamepad_layout", var_377_4
 end
 
-function OptionsView.cb_gamepad_layout_saved_value(arg_378_0, arg_378_1)
+OptionsView.cb_gamepad_layout_saved_value = function (arg_378_0, arg_378_1)
 	local var_378_0 = var_0_12(arg_378_0.changed_user_settings.gamepad_layout, Application.user_setting("gamepad_layout"))
 	local var_378_1 = arg_378_1.content.options_values
 	local var_378_2 = 1
@@ -7850,7 +7850,7 @@ function OptionsView.cb_gamepad_layout_saved_value(arg_378_0, arg_378_1)
 	arg_378_1.content.current_selection = var_378_2
 end
 
-function OptionsView.cb_gamepad_layout(arg_379_0, arg_379_1)
+OptionsView.cb_gamepad_layout = function (arg_379_0, arg_379_1)
 	local var_379_0 = arg_379_1.options_values[arg_379_1.current_selection]
 
 	arg_379_0.changed_user_settings.gamepad_layout = var_379_0
@@ -7869,7 +7869,7 @@ function OptionsView.cb_gamepad_layout(arg_379_0, arg_379_1)
 	arg_379_0:update_gamepad_layout_widget(var_379_3, var_379_1)
 end
 
-function OptionsView.using_left_handed_gamepad_layout(arg_380_0)
+OptionsView.using_left_handed_gamepad_layout = function (arg_380_0)
 	local var_380_0 = Application.user_setting("gamepad_left_handed")
 	local var_380_1 = arg_380_0.changed_user_settings.gamepad_left_handed
 	local var_380_2
@@ -7883,7 +7883,7 @@ function OptionsView.using_left_handed_gamepad_layout(arg_380_0)
 	return var_380_2
 end
 
-function OptionsView.cb_gamepad_left_handed_enabled_setup(arg_381_0)
+OptionsView.cb_gamepad_left_handed_enabled_setup = function (arg_381_0)
 	local var_381_0 = {
 		{
 			value = true,
@@ -7901,13 +7901,13 @@ function OptionsView.cb_gamepad_left_handed_enabled_setup(arg_381_0)
 	return var_381_2, var_381_0, "menu_settings_gamepad_left_handed_enabled", var_381_3
 end
 
-function OptionsView.cb_gamepad_left_handed_enabled_saved_value(arg_382_0, arg_382_1)
+OptionsView.cb_gamepad_left_handed_enabled_saved_value = function (arg_382_0, arg_382_1)
 	local var_382_0 = var_0_12(arg_382_0.changed_user_settings.gamepad_left_handed, Application.user_setting("gamepad_left_handed"))
 
 	arg_382_1.content.current_selection = var_382_0 and 1 or 2
 end
 
-function OptionsView.cb_gamepad_left_handed_enabled(arg_383_0, arg_383_1)
+OptionsView.cb_gamepad_left_handed_enabled = function (arg_383_0, arg_383_1)
 	local var_383_0 = arg_383_1.options_values
 	local var_383_1 = arg_383_1.current_selection
 
@@ -7918,7 +7918,7 @@ function OptionsView.cb_gamepad_left_handed_enabled(arg_383_0, arg_383_1)
 	arg_383_0:force_set_widget_value("gamepad_layout", var_383_2)
 end
 
-function OptionsView.cb_toggle_crouch_setup(arg_384_0)
+OptionsView.cb_toggle_crouch_setup = function (arg_384_0)
 	local var_384_0 = {
 		{
 			value = true,
@@ -7936,20 +7936,20 @@ function OptionsView.cb_toggle_crouch_setup(arg_384_0)
 	return var_384_2, var_384_0, "menu_settings_toggle_crouch", var_384_3
 end
 
-function OptionsView.cb_toggle_crouch_saved_value(arg_385_0, arg_385_1)
+OptionsView.cb_toggle_crouch_saved_value = function (arg_385_0, arg_385_1)
 	local var_385_0 = var_0_12(arg_385_0.changed_user_settings.toggle_crouch, Application.user_setting("toggle_crouch"))
 
 	arg_385_1.content.current_selection = var_385_0 and 1 or 2
 end
 
-function OptionsView.cb_toggle_crouch(arg_386_0, arg_386_1)
+OptionsView.cb_toggle_crouch = function (arg_386_0, arg_386_1)
 	local var_386_0 = arg_386_1.options_values
 	local var_386_1 = arg_386_1.current_selection
 
 	arg_386_0.changed_user_settings.toggle_crouch = var_386_0[var_386_1]
 end
 
-function OptionsView.cb_toggle_stationary_dodge_setup(arg_387_0)
+OptionsView.cb_toggle_stationary_dodge_setup = function (arg_387_0)
 	local var_387_0 = {
 		{
 			value = true,
@@ -7967,20 +7967,20 @@ function OptionsView.cb_toggle_stationary_dodge_setup(arg_387_0)
 	return var_387_2, var_387_0, "menu_settings_toggle_stationary_dodge", var_387_3
 end
 
-function OptionsView.cb_toggle_stationary_dodge_saved_value(arg_388_0, arg_388_1)
+OptionsView.cb_toggle_stationary_dodge_saved_value = function (arg_388_0, arg_388_1)
 	local var_388_0 = var_0_12(arg_388_0.changed_user_settings.toggle_stationary_dodge, Application.user_setting("toggle_stationary_dodge"))
 
 	arg_388_1.content.current_selection = var_388_0 and 1 or 2
 end
 
-function OptionsView.cb_toggle_stationary_dodge(arg_389_0, arg_389_1)
+OptionsView.cb_toggle_stationary_dodge = function (arg_389_0, arg_389_1)
 	local var_389_0 = arg_389_1.options_values
 	local var_389_1 = arg_389_1.current_selection
 
 	arg_389_0.changed_user_settings.toggle_stationary_dodge = var_389_0[var_389_1]
 end
 
-function OptionsView.cb_matchmaking_region_setup(arg_390_0)
+OptionsView.cb_matchmaking_region_setup = function (arg_390_0)
 	local var_390_0 = {}
 
 	for iter_390_0, iter_390_1 in pairs(MatchmakingRegions) do
@@ -8019,7 +8019,7 @@ function OptionsView.cb_matchmaking_region_setup(arg_390_0)
 	return var_390_5, var_390_1, "menu_settings_matchmaking_region", var_390_4
 end
 
-function OptionsView.cb_matchmaking_region_saved_value(arg_391_0, arg_391_1)
+OptionsView.cb_matchmaking_region_saved_value = function (arg_391_0, arg_391_1)
 	local var_391_0 = var_0_12(arg_391_0.changed_user_settings.matchmaking_region, Application.user_setting("matchmaking_region"))
 	local var_391_1 = 1
 
@@ -8034,14 +8034,14 @@ function OptionsView.cb_matchmaking_region_saved_value(arg_391_0, arg_391_1)
 	arg_391_1.content.current_selection = var_391_1
 end
 
-function OptionsView.cb_matchmaking_region(arg_392_0, arg_392_1)
+OptionsView.cb_matchmaking_region = function (arg_392_0, arg_392_1)
 	local var_392_0 = arg_392_1.current_selection
 	local var_392_1 = arg_392_1.options_values[var_392_0]
 
 	arg_392_0.changed_user_settings.matchmaking_region = var_392_1
 end
 
-function OptionsView.cb_overcharge_opacity_setup(arg_393_0)
+OptionsView.cb_overcharge_opacity_setup = function (arg_393_0)
 	local var_393_0 = 0
 	local var_393_1 = 100
 	local var_393_2 = Application.user_setting("overcharge_opacity") or DefaultUserSettings.get("user_settings", "overcharge_opacity")
@@ -8050,7 +8050,7 @@ function OptionsView.cb_overcharge_opacity_setup(arg_393_0)
 	return var_0_11(var_393_0, var_393_1, var_393_2), var_393_0, var_393_1, 0, "menu_settings_overcharge_opacity", var_393_3
 end
 
-function OptionsView.cb_overcharge_opacity_saved_value(arg_394_0, arg_394_1)
+OptionsView.cb_overcharge_opacity_saved_value = function (arg_394_0, arg_394_1)
 	local var_394_0 = arg_394_1.content
 	local var_394_1 = var_394_0.min
 	local var_394_2 = var_394_0.max
@@ -8061,11 +8061,11 @@ function OptionsView.cb_overcharge_opacity_saved_value(arg_394_0, arg_394_1)
 	var_394_0.value = var_394_4
 end
 
-function OptionsView.cb_overcharge_opacity(arg_395_0, arg_395_1)
+OptionsView.cb_overcharge_opacity = function (arg_395_0, arg_395_1)
 	arg_395_0.changed_user_settings.overcharge_opacity = arg_395_1.value
 end
 
-function OptionsView.cb_input_buffer_setup(arg_396_0)
+OptionsView.cb_input_buffer_setup = function (arg_396_0)
 	local var_396_0 = 0
 	local var_396_1 = 1
 	local var_396_2 = Application.user_setting("input_buffer") or DefaultUserSettings.get("user_settings", "input_buffer")
@@ -8074,7 +8074,7 @@ function OptionsView.cb_input_buffer_setup(arg_396_0)
 	return var_0_11(var_396_0, var_396_1, var_396_2), var_396_0, var_396_1, 1, "menu_settings_input_buffer", var_396_3
 end
 
-function OptionsView.cb_input_buffer_saved_value(arg_397_0, arg_397_1)
+OptionsView.cb_input_buffer_saved_value = function (arg_397_0, arg_397_1)
 	local var_397_0 = arg_397_1.content
 	local var_397_1 = var_397_0.min
 	local var_397_2 = var_397_0.max
@@ -8085,11 +8085,11 @@ function OptionsView.cb_input_buffer_saved_value(arg_397_0, arg_397_1)
 	var_397_0.value = var_397_4
 end
 
-function OptionsView.cb_input_buffer(arg_398_0, arg_398_1)
+OptionsView.cb_input_buffer = function (arg_398_0, arg_398_1)
 	arg_398_0.changed_user_settings.input_buffer = arg_398_1.value
 end
 
-function OptionsView.cb_priority_input_buffer_setup(arg_399_0)
+OptionsView.cb_priority_input_buffer_setup = function (arg_399_0)
 	local var_399_0 = 0
 	local var_399_1 = 2
 	local var_399_2 = Application.user_setting("priority_input_buffer") or DefaultUserSettings.get("user_settings", "priority_input_buffer")
@@ -8098,7 +8098,7 @@ function OptionsView.cb_priority_input_buffer_setup(arg_399_0)
 	return var_0_11(var_399_0, var_399_1, var_399_2), var_399_0, var_399_1, 1, "menu_settings_priority_input_buffer", var_399_3
 end
 
-function OptionsView.cb_priority_input_buffer_saved_value(arg_400_0, arg_400_1)
+OptionsView.cb_priority_input_buffer_saved_value = function (arg_400_0, arg_400_1)
 	local var_400_0 = arg_400_1.content
 	local var_400_1 = var_400_0.min
 	local var_400_2 = var_400_0.max
@@ -8109,11 +8109,11 @@ function OptionsView.cb_priority_input_buffer_saved_value(arg_400_0, arg_400_1)
 	var_400_0.value = var_400_4
 end
 
-function OptionsView.cb_priority_input_buffer(arg_401_0, arg_401_1)
+OptionsView.cb_priority_input_buffer = function (arg_401_0, arg_401_1)
 	arg_401_0.changed_user_settings.priority_input_buffer = arg_401_1.value
 end
 
-function OptionsView.cb_weapon_scroll_type_setup(arg_402_0)
+OptionsView.cb_weapon_scroll_type_setup = function (arg_402_0)
 	local var_402_0 = {
 		{
 			value = "scroll_wrap",
@@ -8136,27 +8136,27 @@ function OptionsView.cb_weapon_scroll_type_setup(arg_402_0)
 	return var_402_3, var_402_0, "menu_settings_weapon_scroll_type", var_402_4
 end
 
-function OptionsView.cb_weapon_scroll_type_saved_value(arg_403_0, arg_403_1)
+OptionsView.cb_weapon_scroll_type_saved_value = function (arg_403_0, arg_403_1)
 	local var_403_0 = var_0_12(arg_403_0.changed_user_settings.weapon_scroll_type, Application.user_setting("weapon_scroll_type")) or "scroll_wrap"
 
 	arg_403_1.content.current_selection = var_403_0 == "scroll_clamp" and 2 or var_403_0 == "scroll_disabled" and 3 or 1
 end
 
-function OptionsView.cb_weapon_scroll_type(arg_404_0, arg_404_1)
+OptionsView.cb_weapon_scroll_type = function (arg_404_0, arg_404_1)
 	local var_404_0 = arg_404_1.options_values
 	local var_404_1 = arg_404_1.current_selection
 
 	arg_404_0.changed_user_settings.weapon_scroll_type = var_404_0[var_404_1]
 end
 
-function OptionsView.cb_double_tap_dodge(arg_405_0, arg_405_1)
+OptionsView.cb_double_tap_dodge = function (arg_405_0, arg_405_1)
 	local var_405_0 = arg_405_1.options_values
 	local var_405_1 = arg_405_1.current_selection
 
 	arg_405_0.changed_user_settings.double_tap_dodge = var_405_0[var_405_1]
 end
 
-function OptionsView.cb_double_tap_dodge_setup(arg_406_0)
+OptionsView.cb_double_tap_dodge_setup = function (arg_406_0)
 	local var_406_0 = {
 		{
 			value = true,
@@ -8180,7 +8180,7 @@ function OptionsView.cb_double_tap_dodge_setup(arg_406_0)
 	return var_406_3, var_406_0, "menu_settings_double_tap_dodge", var_406_4
 end
 
-function OptionsView.cb_double_tap_dodge_saved_value(arg_407_0, arg_407_1)
+OptionsView.cb_double_tap_dodge_saved_value = function (arg_407_0, arg_407_1)
 	local var_407_0 = var_0_12(arg_407_0.changed_user_settings.double_tap_dodge, Application.user_setting("double_tap_dodge"))
 
 	if var_407_0 == nil then
@@ -8190,7 +8190,7 @@ function OptionsView.cb_double_tap_dodge_saved_value(arg_407_0, arg_407_1)
 	arg_407_1.content.current_selection = var_407_0 and 1 or 2
 end
 
-function OptionsView.cb_tutorials_enabled_setup(arg_408_0)
+OptionsView.cb_tutorials_enabled_setup = function (arg_408_0)
 	local var_408_0 = {
 		{
 			value = true,
@@ -8214,7 +8214,7 @@ function OptionsView.cb_tutorials_enabled_setup(arg_408_0)
 	return var_408_3, var_408_0, "menu_settings_tutorials_enabled", var_408_4
 end
 
-function OptionsView.cb_tutorials_enabled_saved_value(arg_409_0, arg_409_1)
+OptionsView.cb_tutorials_enabled_saved_value = function (arg_409_0, arg_409_1)
 	local var_409_0 = var_0_12(arg_409_0.changed_user_settings.tutorials_enabled, Application.user_setting("tutorials_enabled"))
 
 	if var_409_0 == nil then
@@ -8224,14 +8224,14 @@ function OptionsView.cb_tutorials_enabled_saved_value(arg_409_0, arg_409_1)
 	arg_409_1.content.current_selection = var_409_0 and 1 or 2
 end
 
-function OptionsView.cb_tutorials_enabled(arg_410_0, arg_410_1)
+OptionsView.cb_tutorials_enabled = function (arg_410_0, arg_410_1)
 	local var_410_0 = arg_410_1.options_values
 	local var_410_1 = arg_410_1.current_selection
 
 	arg_410_0.changed_user_settings.tutorials_enabled = var_410_0[var_410_1]
 end
 
-function OptionsView.cb_master_volume_setup(arg_411_0)
+OptionsView.cb_master_volume_setup = function (arg_411_0)
 	local var_411_0 = 0
 	local var_411_1 = 100
 	local var_411_2 = Application.user_setting("master_bus_volume") or 90
@@ -8239,7 +8239,7 @@ function OptionsView.cb_master_volume_setup(arg_411_0)
 	return var_0_11(var_411_0, var_411_1, var_411_2), var_411_0, var_411_1, 0, "menu_settings_master_volume", DefaultUserSettings.get("user_settings", "master_bus_volume")
 end
 
-function OptionsView.cb_master_volume_saved_value(arg_412_0, arg_412_1)
+OptionsView.cb_master_volume_saved_value = function (arg_412_0, arg_412_1)
 	local var_412_0 = arg_412_1.content
 	local var_412_1 = var_412_0.min
 	local var_412_2 = var_412_0.max
@@ -8249,7 +8249,7 @@ function OptionsView.cb_master_volume_saved_value(arg_412_0, arg_412_1)
 	var_412_0.value = var_412_3
 end
 
-function OptionsView.cb_master_volume(arg_413_0, arg_413_1)
+OptionsView.cb_master_volume = function (arg_413_0, arg_413_1)
 	local var_413_0 = arg_413_1.value
 
 	arg_413_0.changed_user_settings.master_bus_volume = var_413_0
@@ -8258,7 +8258,7 @@ function OptionsView.cb_master_volume(arg_413_0, arg_413_1)
 	Managers.music:set_master_volume(var_413_0)
 end
 
-function OptionsView.cb_music_bus_volume_setup(arg_414_0)
+OptionsView.cb_music_bus_volume_setup = function (arg_414_0)
 	local var_414_0 = 0
 	local var_414_1 = 100
 	local var_414_2 = Application.user_setting("music_bus_volume") or 90
@@ -8266,7 +8266,7 @@ function OptionsView.cb_music_bus_volume_setup(arg_414_0)
 	return var_0_11(var_414_0, var_414_1, var_414_2), var_414_0, var_414_1, 0, "menu_settings_music_volume", DefaultUserSettings.get("user_settings", "music_bus_volume")
 end
 
-function OptionsView.cb_music_bus_volume_saved_value(arg_415_0, arg_415_1)
+OptionsView.cb_music_bus_volume_saved_value = function (arg_415_0, arg_415_1)
 	local var_415_0 = arg_415_1.content
 	local var_415_1 = var_415_0.min
 	local var_415_2 = var_415_0.max
@@ -8276,7 +8276,7 @@ function OptionsView.cb_music_bus_volume_saved_value(arg_415_0, arg_415_1)
 	var_415_0.value = var_415_3
 end
 
-function OptionsView.cb_music_bus_volume(arg_416_0, arg_416_1)
+OptionsView.cb_music_bus_volume = function (arg_416_0, arg_416_1)
 	local var_416_0 = arg_416_1.value
 
 	arg_416_0.changed_user_settings.music_bus_volume = var_416_0
@@ -8284,7 +8284,7 @@ function OptionsView.cb_music_bus_volume(arg_416_0, arg_416_1)
 	Managers.music:set_music_volume(var_416_0)
 end
 
-function OptionsView.cb_sfx_bus_volume_setup(arg_417_0)
+OptionsView.cb_sfx_bus_volume_setup = function (arg_417_0)
 	local var_417_0 = 0
 	local var_417_1 = 100
 	local var_417_2 = Application.user_setting("sfx_bus_volume") or 90
@@ -8292,7 +8292,7 @@ function OptionsView.cb_sfx_bus_volume_setup(arg_417_0)
 	return var_0_11(var_417_0, var_417_1, var_417_2), var_417_0, var_417_1, 0, "menu_settings_sfx_volume", DefaultUserSettings.get("user_settings", "sfx_bus_volume")
 end
 
-function OptionsView.cb_sfx_bus_volume_saved_value(arg_418_0, arg_418_1)
+OptionsView.cb_sfx_bus_volume_saved_value = function (arg_418_0, arg_418_1)
 	local var_418_0 = arg_418_1.content
 	local var_418_1 = var_418_0.min
 	local var_418_2 = var_418_0.max
@@ -8302,7 +8302,7 @@ function OptionsView.cb_sfx_bus_volume_saved_value(arg_418_0, arg_418_1)
 	var_418_0.value = var_418_3
 end
 
-function OptionsView.cb_sfx_bus_volume(arg_419_0, arg_419_1)
+OptionsView.cb_sfx_bus_volume = function (arg_419_0, arg_419_1)
 	local var_419_0 = arg_419_1.value
 
 	arg_419_0.changed_user_settings.sfx_bus_volume = var_419_0
@@ -8310,7 +8310,7 @@ function OptionsView.cb_sfx_bus_volume(arg_419_0, arg_419_1)
 	arg_419_0:set_wwise_parameter("sfx_bus_volume", var_419_0)
 end
 
-function OptionsView.cb_voice_bus_volume_setup(arg_420_0)
+OptionsView.cb_voice_bus_volume_setup = function (arg_420_0)
 	local var_420_0 = 0
 	local var_420_1 = 100
 	local var_420_2 = Application.user_setting("voice_bus_volume") or 90
@@ -8318,7 +8318,7 @@ function OptionsView.cb_voice_bus_volume_setup(arg_420_0)
 	return var_0_11(var_420_0, var_420_1, var_420_2), var_420_0, var_420_1, 0, "menu_settings_voice_volume", DefaultUserSettings.get("user_settings", "voice_bus_volume")
 end
 
-function OptionsView.cb_voice_bus_volume_saved_value(arg_421_0, arg_421_1)
+OptionsView.cb_voice_bus_volume_saved_value = function (arg_421_0, arg_421_1)
 	local var_421_0 = arg_421_1.content
 	local var_421_1 = var_421_0.min
 	local var_421_2 = var_421_0.max
@@ -8328,7 +8328,7 @@ function OptionsView.cb_voice_bus_volume_saved_value(arg_421_0, arg_421_1)
 	var_421_0.value = var_421_3
 end
 
-function OptionsView.cb_voice_bus_volume(arg_422_0, arg_422_1)
+OptionsView.cb_voice_bus_volume = function (arg_422_0, arg_422_1)
 	local var_422_0 = arg_422_1.value
 
 	arg_422_0.changed_user_settings.voice_bus_volume = var_422_0
@@ -8336,7 +8336,7 @@ function OptionsView.cb_voice_bus_volume(arg_422_0, arg_422_1)
 	arg_422_0:set_wwise_parameter("voice_bus_volume", var_422_0)
 end
 
-function OptionsView.cb_voip_bus_volume_setup(arg_423_0)
+OptionsView.cb_voip_bus_volume_setup = function (arg_423_0)
 	local var_423_0 = 0
 	local var_423_1 = 100
 	local var_423_2 = Application.user_setting("voip_bus_volume") or 0
@@ -8344,7 +8344,7 @@ function OptionsView.cb_voip_bus_volume_setup(arg_423_0)
 	return var_0_11(var_423_0, var_423_1, var_423_2), var_423_0, var_423_1, 0, "menu_settings_voip_volume", DefaultUserSettings.get("user_settings", "voip_bus_volume")
 end
 
-function OptionsView.cb_voip_bus_volume_saved_value(arg_424_0, arg_424_1)
+OptionsView.cb_voip_bus_volume_saved_value = function (arg_424_0, arg_424_1)
 	local var_424_0 = arg_424_1.content
 	local var_424_1 = var_424_0.min
 	local var_424_2 = var_424_0.max
@@ -8354,7 +8354,7 @@ function OptionsView.cb_voip_bus_volume_saved_value(arg_424_0, arg_424_1)
 	var_424_0.value = var_424_3
 end
 
-function OptionsView.cb_voip_bus_volume(arg_425_0, arg_425_1)
+OptionsView.cb_voip_bus_volume = function (arg_425_0, arg_425_1)
 	local var_425_0 = arg_425_1.value
 
 	arg_425_0.changed_user_settings.voip_bus_volume = var_425_0
@@ -8362,7 +8362,7 @@ function OptionsView.cb_voip_bus_volume(arg_425_0, arg_425_1)
 	arg_425_0.voip:set_volume(var_425_0)
 end
 
-function OptionsView.cb_voip_enabled_setup(arg_426_0)
+OptionsView.cb_voip_enabled_setup = function (arg_426_0)
 	local var_426_0 = {
 		{
 			value = true,
@@ -8399,7 +8399,7 @@ function OptionsView.cb_voip_enabled_setup(arg_426_0)
 	return var_426_3, var_426_0, "menu_settings_voip_enabled", var_426_4
 end
 
-function OptionsView.cb_voip_enabled_saved_value(arg_427_0, arg_427_1)
+OptionsView.cb_voip_enabled_saved_value = function (arg_427_0, arg_427_1)
 	local var_427_0 = arg_427_1.content.options_values
 	local var_427_1 = var_0_12(arg_427_0.changed_user_settings.voip_is_enabled, Application.user_setting("voip_is_enabled"))
 
@@ -8421,7 +8421,7 @@ function OptionsView.cb_voip_enabled_saved_value(arg_427_0, arg_427_1)
 	arg_427_1.content.selected_option = var_427_2
 end
 
-function OptionsView.cb_voip_enabled(arg_428_0, arg_428_1)
+OptionsView.cb_voip_enabled = function (arg_428_0, arg_428_1)
 	local var_428_0 = arg_428_1.options_values[arg_428_1.current_selection]
 
 	arg_428_0.changed_user_settings.voip_is_enabled = var_428_0
@@ -8429,7 +8429,7 @@ function OptionsView.cb_voip_enabled(arg_428_0, arg_428_1)
 	arg_428_0.voip:set_enabled(var_428_0)
 end
 
-function OptionsView.cb_voip_push_to_talk_setup(arg_429_0)
+OptionsView.cb_voip_push_to_talk_setup = function (arg_429_0)
 	local var_429_0 = {
 		{
 			value = true,
@@ -8464,7 +8464,7 @@ function OptionsView.cb_voip_push_to_talk_setup(arg_429_0)
 	return var_429_3, var_429_0, "menu_settings_voip_push_to_talk", var_429_4
 end
 
-function OptionsView.cb_voip_push_to_talk_saved_value(arg_430_0, arg_430_1)
+OptionsView.cb_voip_push_to_talk_saved_value = function (arg_430_0, arg_430_1)
 	local var_430_0 = arg_430_1.content.options_values
 	local var_430_1 = var_0_12(arg_430_0.changed_user_settings.voip_push_to_talk, Application.user_setting("voip_push_to_talk"))
 
@@ -8486,7 +8486,7 @@ function OptionsView.cb_voip_push_to_talk_saved_value(arg_430_0, arg_430_1)
 	arg_430_1.content.selected_option = var_430_2
 end
 
-function OptionsView.cb_voip_push_to_talk(arg_431_0, arg_431_1)
+OptionsView.cb_voip_push_to_talk = function (arg_431_0, arg_431_1)
 	local var_431_0 = arg_431_1.options_values[arg_431_1.current_selection]
 
 	arg_431_0.changed_user_settings.voip_push_to_talk = var_431_0
@@ -8494,7 +8494,7 @@ function OptionsView.cb_voip_push_to_talk(arg_431_0, arg_431_1)
 	arg_431_0.voip:set_push_to_talk(var_431_0)
 end
 
-function OptionsView.cb_particles_resolution_setup(arg_432_0)
+OptionsView.cb_particles_resolution_setup = function (arg_432_0)
 	local var_432_0 = {
 		{
 			value = false,
@@ -8509,13 +8509,13 @@ function OptionsView.cb_particles_resolution_setup(arg_432_0)
 	return Application.user_setting("render_settings", "low_res_transparency") and 2 or 1, var_432_0, "menu_settings_low_res_transparency"
 end
 
-function OptionsView.cb_particles_resolution_saved_value(arg_433_0, arg_433_1)
+OptionsView.cb_particles_resolution_saved_value = function (arg_433_0, arg_433_1)
 	local var_433_0 = var_0_12(arg_433_0.changed_render_settings.low_res_transparency, Application.user_setting("render_settings", "low_res_transparency")) and 2 or 1
 
 	arg_433_1.content.current_selection = var_433_0
 end
 
-function OptionsView.cb_particles_resolution(arg_434_0, arg_434_1, arg_434_2, arg_434_3)
+OptionsView.cb_particles_resolution = function (arg_434_0, arg_434_1, arg_434_2, arg_434_3)
 	local var_434_0 = arg_434_1.options_values[arg_434_1.current_selection]
 
 	arg_434_0.changed_render_settings.low_res_transparency = var_434_0
@@ -8525,7 +8525,7 @@ function OptionsView.cb_particles_resolution(arg_434_0, arg_434_1, arg_434_2, ar
 	end
 end
 
-function OptionsView.cb_particles_quality_setup(arg_435_0)
+OptionsView.cb_particles_quality_setup = function (arg_435_0)
 	local var_435_0 = {
 		{
 			value = "lowest",
@@ -8566,7 +8566,7 @@ function OptionsView.cb_particles_quality_setup(arg_435_0)
 	return var_435_3, var_435_0, "menu_settings_particles_quality", var_435_4
 end
 
-function OptionsView.cb_particles_quality_saved_value(arg_436_0, arg_436_1)
+OptionsView.cb_particles_quality_saved_value = function (arg_436_0, arg_436_1)
 	local var_436_0 = var_0_12(arg_436_0.changed_user_settings.particles_quality, Application.user_setting("particles_quality"))
 	local var_436_1 = arg_436_1.content.options_values
 	local var_436_2 = 1
@@ -8580,7 +8580,7 @@ function OptionsView.cb_particles_quality_saved_value(arg_436_0, arg_436_1)
 	arg_436_1.content.current_selection = var_436_2
 end
 
-function OptionsView.cb_particles_quality(arg_437_0, arg_437_1, arg_437_2, arg_437_3)
+OptionsView.cb_particles_quality = function (arg_437_0, arg_437_1, arg_437_2, arg_437_3)
 	local var_437_0 = arg_437_1.options_values[arg_437_1.current_selection]
 
 	arg_437_0.changed_user_settings.particles_quality = var_437_0
@@ -8596,7 +8596,7 @@ function OptionsView.cb_particles_quality(arg_437_0, arg_437_1, arg_437_2, arg_4
 	end
 end
 
-function OptionsView.cb_ambient_light_quality_setup(arg_438_0)
+OptionsView.cb_ambient_light_quality_setup = function (arg_438_0)
 	local var_438_0 = {
 		{
 			value = "low",
@@ -8625,7 +8625,7 @@ function OptionsView.cb_ambient_light_quality_setup(arg_438_0)
 	return var_438_3, var_438_0, "menu_settings_ambient_light_quality", var_438_4
 end
 
-function OptionsView.cb_ambient_light_quality_saved_value(arg_439_0, arg_439_1)
+OptionsView.cb_ambient_light_quality_saved_value = function (arg_439_0, arg_439_1)
 	local var_439_0 = var_0_12(arg_439_0.changed_user_settings.ambient_light_quality, Application.user_setting("ambient_light_quality"))
 	local var_439_1 = arg_439_1.content.options_values
 	local var_439_2 = 1
@@ -8639,7 +8639,7 @@ function OptionsView.cb_ambient_light_quality_saved_value(arg_439_0, arg_439_1)
 	arg_439_1.content.current_selection = var_439_2
 end
 
-function OptionsView.cb_ambient_light_quality(arg_440_0, arg_440_1, arg_440_2, arg_440_3)
+OptionsView.cb_ambient_light_quality = function (arg_440_0, arg_440_1, arg_440_2, arg_440_3)
 	local var_440_0 = arg_440_1.options_values[arg_440_1.current_selection]
 
 	arg_440_0.changed_user_settings.ambient_light_quality = var_440_0
@@ -8655,7 +8655,7 @@ function OptionsView.cb_ambient_light_quality(arg_440_0, arg_440_1, arg_440_2, a
 	end
 end
 
-function OptionsView.cb_auto_exposure_speed_setup(arg_441_0)
+OptionsView.cb_auto_exposure_speed_setup = function (arg_441_0)
 	local var_441_0 = 0.1
 	local var_441_1 = 2
 	local var_441_2 = Application.user_setting("render_settings", "eye_adaptation_speed") or 1
@@ -8665,7 +8665,7 @@ function OptionsView.cb_auto_exposure_speed_setup(arg_441_0)
 	return var_441_3, var_441_0, var_441_1, 1, "menu_settings_auto_exposure_speed"
 end
 
-function OptionsView.cb_auto_exposure_speed_saved_value(arg_442_0, arg_442_1)
+OptionsView.cb_auto_exposure_speed_saved_value = function (arg_442_0, arg_442_1)
 	local var_442_0 = arg_442_1.content
 	local var_442_1 = var_442_0.min
 	local var_442_2 = var_442_0.max
@@ -8676,7 +8676,7 @@ function OptionsView.cb_auto_exposure_speed_saved_value(arg_442_0, arg_442_1)
 	var_442_0.value = var_442_4
 end
 
-function OptionsView.cb_auto_exposure_speed(arg_443_0, arg_443_1, arg_443_2, arg_443_3)
+OptionsView.cb_auto_exposure_speed = function (arg_443_0, arg_443_1, arg_443_2, arg_443_3)
 	arg_443_0.changed_render_settings.eye_adaptation_speed = arg_443_1.value
 
 	if not arg_443_3 then
@@ -8684,7 +8684,7 @@ function OptionsView.cb_auto_exposure_speed(arg_443_0, arg_443_1, arg_443_2, arg
 	end
 end
 
-function OptionsView.cb_volumetric_fog_quality_setup(arg_444_0)
+OptionsView.cb_volumetric_fog_quality_setup = function (arg_444_0)
 	local var_444_0 = {
 		{
 			value = "lowest",
@@ -8725,7 +8725,7 @@ function OptionsView.cb_volumetric_fog_quality_setup(arg_444_0)
 	return var_444_3, var_444_0, "menu_settings_volumetric_fog_quality", var_444_4
 end
 
-function OptionsView.cb_volumetric_fog_quality_saved_value(arg_445_0, arg_445_1)
+OptionsView.cb_volumetric_fog_quality_saved_value = function (arg_445_0, arg_445_1)
 	local var_445_0 = var_0_12(arg_445_0.changed_user_settings.volumetric_fog_quality, Application.user_setting("volumetric_fog_quality"))
 	local var_445_1 = arg_445_1.content.options_values
 	local var_445_2 = 1
@@ -8739,7 +8739,7 @@ function OptionsView.cb_volumetric_fog_quality_saved_value(arg_445_0, arg_445_1)
 	arg_445_1.content.current_selection = var_445_2
 end
 
-function OptionsView.cb_volumetric_fog_quality(arg_446_0, arg_446_1, arg_446_2, arg_446_3)
+OptionsView.cb_volumetric_fog_quality = function (arg_446_0, arg_446_1, arg_446_2, arg_446_3)
 	local var_446_0 = arg_446_1.options_values[arg_446_1.current_selection]
 
 	arg_446_0.changed_user_settings.volumetric_fog_quality = var_446_0
@@ -8755,7 +8755,7 @@ function OptionsView.cb_volumetric_fog_quality(arg_446_0, arg_446_1, arg_446_2, 
 	end
 end
 
-function OptionsView.cb_physic_debris_setup(arg_447_0)
+OptionsView.cb_physic_debris_setup = function (arg_447_0)
 	local var_447_0 = {
 		{
 			value = false,
@@ -8778,7 +8778,7 @@ function OptionsView.cb_physic_debris_setup(arg_447_0)
 	return var_447_2, var_447_0, "menu_settings_physic_debris", var_447_3
 end
 
-function OptionsView.cb_physic_debris_saved_value(arg_448_0, arg_448_1)
+OptionsView.cb_physic_debris_saved_value = function (arg_448_0, arg_448_1)
 	local var_448_0 = var_0_12(arg_448_0.changed_user_settings.use_physic_debris, Application.user_setting("use_physic_debris"))
 
 	if var_448_0 == nil then
@@ -8788,7 +8788,7 @@ function OptionsView.cb_physic_debris_saved_value(arg_448_0, arg_448_1)
 	arg_448_1.content.current_selection = var_448_0 and 2 or 1
 end
 
-function OptionsView.cb_physic_debris(arg_449_0, arg_449_1, arg_449_2, arg_449_3)
+OptionsView.cb_physic_debris = function (arg_449_0, arg_449_1, arg_449_2, arg_449_3)
 	local var_449_0 = arg_449_1.options_values
 	local var_449_1 = arg_449_1.current_selection
 
@@ -8799,7 +8799,7 @@ function OptionsView.cb_physic_debris(arg_449_0, arg_449_1, arg_449_2, arg_449_3
 	end
 end
 
-function OptionsView.cb_alien_fx_setup(arg_450_0)
+OptionsView.cb_alien_fx_setup = function (arg_450_0)
 	local var_450_0 = {
 		{
 			value = false,
@@ -8824,7 +8824,7 @@ function OptionsView.cb_alien_fx_setup(arg_450_0)
 	return var_450_2, var_450_0, "menu_settings_alien_fx", var_450_3
 end
 
-function OptionsView.cb_alien_fx_saved_value(arg_451_0, arg_451_1)
+OptionsView.cb_alien_fx_saved_value = function (arg_451_0, arg_451_1)
 	local var_451_0 = var_0_12(arg_451_0.changed_user_settings.use_alien_fx, Application.user_setting("use_alien_fx"))
 
 	if var_451_0 == nil then
@@ -8834,7 +8834,7 @@ function OptionsView.cb_alien_fx_saved_value(arg_451_0, arg_451_1)
 	arg_451_1.content.current_selection = var_451_0 and 2 or 1
 end
 
-function OptionsView.cb_alien_fx(arg_452_0, arg_452_1)
+OptionsView.cb_alien_fx = function (arg_452_0, arg_452_1)
 	local var_452_0 = arg_452_1.options_values
 	local var_452_1 = arg_452_1.current_selection
 
@@ -8842,7 +8842,7 @@ function OptionsView.cb_alien_fx(arg_452_0, arg_452_1)
 	GameSettingsDevelopment.use_alien_fx = var_452_0[var_452_1]
 end
 
-function OptionsView.cb_razer_chroma_setup(arg_453_0)
+OptionsView.cb_razer_chroma_setup = function (arg_453_0)
 	print("cb_razer_chroma_setup")
 
 	local var_453_0 = {
@@ -8869,7 +8869,7 @@ function OptionsView.cb_razer_chroma_setup(arg_453_0)
 	return var_453_2, var_453_0, "menu_settings_razer_chroma", var_453_3
 end
 
-function OptionsView.cb_razer_chroma_saved_value(arg_454_0, arg_454_1)
+OptionsView.cb_razer_chroma_saved_value = function (arg_454_0, arg_454_1)
 	local var_454_0 = var_0_12(arg_454_0.changed_user_settings.use_razer_chroma, Application.user_setting("use_razer_chroma"))
 
 	if var_454_0 == nil then
@@ -8879,7 +8879,7 @@ function OptionsView.cb_razer_chroma_saved_value(arg_454_0, arg_454_1)
 	arg_454_1.content.current_selection = var_454_0 and 2 or 1
 end
 
-function OptionsView.cb_razer_chroma(arg_455_0, arg_455_1)
+OptionsView.cb_razer_chroma = function (arg_455_0, arg_455_1)
 	local var_455_0 = arg_455_1.options_values
 	local var_455_1 = arg_455_1.current_selection
 
@@ -8887,7 +8887,7 @@ function OptionsView.cb_razer_chroma(arg_455_0, arg_455_1)
 	GameSettingsDevelopment.use_razer_chroma = var_455_0[var_455_1]
 end
 
-function OptionsView.cb_ssr_setup(arg_456_0)
+OptionsView.cb_ssr_setup = function (arg_456_0)
 	local var_456_0 = {
 		{
 			value = false,
@@ -8906,13 +8906,13 @@ function OptionsView.cb_ssr_setup(arg_456_0)
 	return var_456_3, var_456_0, "menu_settings_ssr", var_456_4
 end
 
-function OptionsView.cb_ssr_saved_value(arg_457_0, arg_457_1)
+OptionsView.cb_ssr_saved_value = function (arg_457_0, arg_457_1)
 	local var_457_0 = var_0_12(arg_457_0.changed_render_settings.ssr_enabled, Application.user_setting("render_settings", "ssr_enabled")) or false
 
 	arg_457_1.content.current_selection = var_457_0 and 2 or 1
 end
 
-function OptionsView.cb_ssr(arg_458_0, arg_458_1, arg_458_2, arg_458_3)
+OptionsView.cb_ssr = function (arg_458_0, arg_458_1, arg_458_2, arg_458_3)
 	local var_458_0 = arg_458_1.options_values
 	local var_458_1 = arg_458_1.current_selection
 
@@ -8923,7 +8923,7 @@ function OptionsView.cb_ssr(arg_458_0, arg_458_1, arg_458_2, arg_458_3)
 	end
 end
 
-function OptionsView.cb_fov_setup(arg_459_0)
+OptionsView.cb_fov_setup = function (arg_459_0)
 	local var_459_0 = 45
 	local var_459_1 = 120
 
@@ -8946,7 +8946,7 @@ function OptionsView.cb_fov_setup(arg_459_0)
 	return var_459_4, var_459_0, var_459_1, 0, "menu_settings_fov", var_459_7
 end
 
-function OptionsView.cb_fov_saved_value(arg_460_0, arg_460_1)
+OptionsView.cb_fov_saved_value = function (arg_460_0, arg_460_1)
 	local var_460_0 = arg_460_1.content
 	local var_460_1 = var_460_0.min
 	local var_460_2 = var_460_0.max
@@ -8958,18 +8958,18 @@ function OptionsView.cb_fov_saved_value(arg_460_0, arg_460_1)
 	var_460_0.value = var_460_5
 end
 
-function OptionsView.cb_fov(arg_461_0, arg_461_1)
+OptionsView.cb_fov = function (arg_461_0, arg_461_1)
 	arg_461_0.changed_render_settings.fov = arg_461_1.value
 end
 
-function OptionsView.cb_enabled_crosshairs(arg_462_0, arg_462_1)
+OptionsView.cb_enabled_crosshairs = function (arg_462_0, arg_462_1)
 	local var_462_0 = arg_462_1.options_values
 	local var_462_1 = arg_462_1.current_selection
 
 	arg_462_0.changed_user_settings.enabled_crosshairs = var_462_0[var_462_1]
 end
 
-function OptionsView.cb_enabled_crosshairs_setup(arg_463_0)
+OptionsView.cb_enabled_crosshairs_setup = function (arg_463_0)
 	local var_463_0 = {
 		{
 			value = "all",
@@ -9008,7 +9008,7 @@ function OptionsView.cb_enabled_crosshairs_setup(arg_463_0)
 	return var_463_4 or var_463_3, var_463_0, "menu_settings_enabled_crosshairs", var_463_3
 end
 
-function OptionsView.cb_enabled_crosshairs_saved_value(arg_464_0, arg_464_1)
+OptionsView.cb_enabled_crosshairs_saved_value = function (arg_464_0, arg_464_1)
 	local var_464_0 = var_0_12(arg_464_0.changed_user_settings.enabled_crosshairs, Application.user_setting("enabled_crosshairs")) or DefaultUserSettings.get("user_settings", "enabled_crosshairs")
 	local var_464_1 = arg_464_1.content.options_values
 	local var_464_2 = 1
@@ -9024,7 +9024,7 @@ function OptionsView.cb_enabled_crosshairs_saved_value(arg_464_0, arg_464_1)
 	arg_464_1.content.current_selection = var_464_2
 end
 
-function OptionsView.cb_blood_enabled_setup(arg_465_0)
+OptionsView.cb_blood_enabled_setup = function (arg_465_0)
 	local var_465_0 = {
 		{
 			value = true,
@@ -9057,7 +9057,7 @@ function OptionsView.cb_blood_enabled_setup(arg_465_0)
 	return var_465_3, var_465_0, "menu_settings_blood_enabled", var_465_4
 end
 
-function OptionsView.cb_blood_enabled_saved_value(arg_466_0, arg_466_1)
+OptionsView.cb_blood_enabled_saved_value = function (arg_466_0, arg_466_1)
 	local var_466_0 = arg_466_1.content.options_values
 	local var_466_1 = var_0_12(arg_466_0.changed_user_settings.blood_enabled, Application.user_setting("blood_enabled"))
 
@@ -9079,13 +9079,13 @@ function OptionsView.cb_blood_enabled_saved_value(arg_466_0, arg_466_1)
 	arg_466_1.content.selected_option = var_466_2
 end
 
-function OptionsView.cb_blood_enabled(arg_467_0, arg_467_1)
+OptionsView.cb_blood_enabled = function (arg_467_0, arg_467_1)
 	local var_467_0 = arg_467_1.options_values[arg_467_1.current_selection]
 
 	arg_467_0.changed_user_settings.blood_enabled = var_467_0
 end
 
-function OptionsView.cb_screen_blood_enabled_setup(arg_468_0)
+OptionsView.cb_screen_blood_enabled_setup = function (arg_468_0)
 	local var_468_0 = {
 		{
 			value = true,
@@ -9118,7 +9118,7 @@ function OptionsView.cb_screen_blood_enabled_setup(arg_468_0)
 	return var_468_3, var_468_0, "menu_settings_screen_blood_enabled", var_468_4
 end
 
-function OptionsView.cb_screen_blood_enabled_saved_value(arg_469_0, arg_469_1)
+OptionsView.cb_screen_blood_enabled_saved_value = function (arg_469_0, arg_469_1)
 	local var_469_0 = arg_469_1.content.options_values
 	local var_469_1 = var_0_12(arg_469_0.changed_user_settings.screen_blood_enabled, Application.user_setting("screen_blood_enabled"))
 
@@ -9140,13 +9140,13 @@ function OptionsView.cb_screen_blood_enabled_saved_value(arg_469_0, arg_469_1)
 	arg_469_1.content.selected_option = var_469_2
 end
 
-function OptionsView.cb_screen_blood_enabled(arg_470_0, arg_470_1)
+OptionsView.cb_screen_blood_enabled = function (arg_470_0, arg_470_1)
 	local var_470_0 = arg_470_1.options_values[arg_470_1.current_selection]
 
 	arg_470_0.changed_user_settings.screen_blood_enabled = var_470_0
 end
 
-function OptionsView.cb_dismemberment_enabled_setup(arg_471_0)
+OptionsView.cb_dismemberment_enabled_setup = function (arg_471_0)
 	local var_471_0 = {
 		{
 			value = true,
@@ -9179,7 +9179,7 @@ function OptionsView.cb_dismemberment_enabled_setup(arg_471_0)
 	return var_471_3, var_471_0, "menu_settings_dismemberment_enabled", var_471_4
 end
 
-function OptionsView.cb_dismemberment_enabled_saved_value(arg_472_0, arg_472_1)
+OptionsView.cb_dismemberment_enabled_saved_value = function (arg_472_0, arg_472_1)
 	local var_472_0 = arg_472_1.content.options_values
 	local var_472_1 = var_0_12(arg_472_0.changed_user_settings.dismemberment_enabled, Application.user_setting("dismemberment_enabled"))
 
@@ -9201,13 +9201,13 @@ function OptionsView.cb_dismemberment_enabled_saved_value(arg_472_0, arg_472_1)
 	arg_472_1.content.selected_option = var_472_2
 end
 
-function OptionsView.cb_dismemberment_enabled(arg_473_0, arg_473_1)
+OptionsView.cb_dismemberment_enabled = function (arg_473_0, arg_473_1)
 	local var_473_0 = arg_473_1.options_values[arg_473_1.current_selection]
 
 	arg_473_0.changed_user_settings.dismemberment_enabled = var_473_0
 end
 
-function OptionsView.cb_ragdoll_enabled_setup(arg_474_0)
+OptionsView.cb_ragdoll_enabled_setup = function (arg_474_0)
 	local var_474_0 = {
 		{
 			value = true,
@@ -9240,7 +9240,7 @@ function OptionsView.cb_ragdoll_enabled_setup(arg_474_0)
 	return var_474_3, var_474_0, "menu_settings_ragdoll_enabled", var_474_4
 end
 
-function OptionsView.cb_ragdoll_enabled_saved_value(arg_475_0, arg_475_1)
+OptionsView.cb_ragdoll_enabled_saved_value = function (arg_475_0, arg_475_1)
 	local var_475_0 = arg_475_1.content.options_values
 	local var_475_1 = var_0_12(arg_475_0.changed_user_settings.ragdoll_enabled, Application.user_setting("ragdoll_enabled"))
 
@@ -9262,13 +9262,13 @@ function OptionsView.cb_ragdoll_enabled_saved_value(arg_475_0, arg_475_1)
 	arg_475_1.content.selected_option = var_475_2
 end
 
-function OptionsView.cb_ragdoll_enabled(arg_476_0, arg_476_1)
+OptionsView.cb_ragdoll_enabled = function (arg_476_0, arg_476_1)
 	local var_476_0 = arg_476_1.options_values[arg_476_1.current_selection]
 
 	arg_476_0.changed_user_settings.ragdoll_enabled = var_476_0
 end
 
-function OptionsView.cb_chat_enabled_setup(arg_477_0)
+OptionsView.cb_chat_enabled_setup = function (arg_477_0)
 	local var_477_0 = {
 		{
 			value = true,
@@ -9307,7 +9307,7 @@ function OptionsView.cb_chat_enabled_setup(arg_477_0)
 	return var_477_3, var_477_0, var_477_5, var_477_4
 end
 
-function OptionsView.cb_chat_enabled_saved_value(arg_478_0, arg_478_1)
+OptionsView.cb_chat_enabled_saved_value = function (arg_478_0, arg_478_1)
 	local var_478_0 = arg_478_1.content.options_values
 	local var_478_1 = var_0_12(arg_478_0.changed_user_settings.chat_enabled, Application.user_setting("chat_enabled"))
 
@@ -9329,20 +9329,20 @@ function OptionsView.cb_chat_enabled_saved_value(arg_478_0, arg_478_1)
 	arg_478_1.content.selected_option = var_478_2
 end
 
-function OptionsView.cb_chat_enabled(arg_479_0, arg_479_1)
+OptionsView.cb_chat_enabled = function (arg_479_0, arg_479_1)
 	local var_479_0 = arg_479_1.options_values[arg_479_1.current_selection]
 
 	arg_479_0.changed_user_settings.chat_enabled = var_479_0
 end
 
-function OptionsView.cb_chat_font_size(arg_480_0, arg_480_1)
+OptionsView.cb_chat_font_size = function (arg_480_0, arg_480_1)
 	local var_480_0 = arg_480_1.options_values
 	local var_480_1 = arg_480_1.current_selection
 
 	arg_480_0.changed_user_settings.chat_font_size = var_480_0[var_480_1]
 end
 
-function OptionsView.cb_chat_font_size_setup(arg_481_0)
+OptionsView.cb_chat_font_size_setup = function (arg_481_0)
 	local var_481_0 = {
 		{
 			text = "16",
@@ -9385,7 +9385,7 @@ function OptionsView.cb_chat_font_size_setup(arg_481_0)
 	return var_481_4 or var_481_3, var_481_0, "menu_settings_chat_font_size", var_481_3
 end
 
-function OptionsView.cb_chat_font_size_saved_value(arg_482_0, arg_482_1)
+OptionsView.cb_chat_font_size_saved_value = function (arg_482_0, arg_482_1)
 	local var_482_0 = var_0_12(arg_482_0.changed_user_settings.chat_font_size, Application.user_setting("chat_font_size")) or DefaultUserSettings.get("user_settings", "chat_font_size")
 	local var_482_1 = arg_482_1.content.options_values
 	local var_482_2 = 1
@@ -9401,7 +9401,7 @@ function OptionsView.cb_chat_font_size_saved_value(arg_482_0, arg_482_1)
 	arg_482_1.content.current_selection = var_482_2
 end
 
-function OptionsView.cb_clan_tag_setup(arg_483_0)
+OptionsView.cb_clan_tag_setup = function (arg_483_0)
 	local var_483_0 = {
 		{
 			value = "0",
@@ -9432,7 +9432,7 @@ function OptionsView.cb_clan_tag_setup(arg_483_0)
 	return var_483_5, var_483_0, "menu_settings_clan_tag", var_483_4
 end
 
-function OptionsView.cb_clan_tag_saved_value(arg_484_0, arg_484_1)
+OptionsView.cb_clan_tag_saved_value = function (arg_484_0, arg_484_1)
 	local var_484_0 = arg_484_1.content.options_values
 	local var_484_1 = var_0_12(arg_484_0.changed_user_settings.clan_tag, Application.user_setting("clan_tag"))
 
@@ -9454,13 +9454,13 @@ function OptionsView.cb_clan_tag_saved_value(arg_484_0, arg_484_1)
 	arg_484_1.content.selected_option = var_484_2
 end
 
-function OptionsView.cb_clan_tag(arg_485_0, arg_485_1)
+OptionsView.cb_clan_tag = function (arg_485_0, arg_485_1)
 	local var_485_0 = arg_485_1.options_values[arg_485_1.current_selection]
 
 	arg_485_0.changed_user_settings.clan_tag = var_485_0
 end
 
-function OptionsView.cb_blood_decals_setup(arg_486_0)
+OptionsView.cb_blood_decals_setup = function (arg_486_0)
 	local var_486_0 = 0
 	local var_486_1 = 500
 	local var_486_2 = Application.user_setting("num_blood_decals") or BloodSettings.blood_decals.num_decals
@@ -9473,7 +9473,7 @@ function OptionsView.cb_blood_decals_setup(arg_486_0)
 	return var_486_4, var_486_0, var_486_1, 0, "menu_settings_num_blood_decals", var_486_3
 end
 
-function OptionsView.cb_blood_decals_saved_value(arg_487_0, arg_487_1)
+OptionsView.cb_blood_decals_saved_value = function (arg_487_0, arg_487_1)
 	local var_487_0 = arg_487_1.content
 	local var_487_1 = var_487_0.min
 	local var_487_2 = var_487_0.max
@@ -9484,7 +9484,7 @@ function OptionsView.cb_blood_decals_saved_value(arg_487_0, arg_487_1)
 	var_487_0.value = var_487_4
 end
 
-function OptionsView.cb_blood_decals(arg_488_0, arg_488_1, arg_488_2, arg_488_3)
+OptionsView.cb_blood_decals = function (arg_488_0, arg_488_1, arg_488_2, arg_488_3)
 	arg_488_0.changed_user_settings.num_blood_decals = arg_488_1.value
 
 	if not arg_488_3 then
@@ -9492,7 +9492,7 @@ function OptionsView.cb_blood_decals(arg_488_0, arg_488_1, arg_488_2, arg_488_3)
 	end
 end
 
-function OptionsView.cb_dynamic_range_sound_setup(arg_489_0)
+OptionsView.cb_dynamic_range_sound_setup = function (arg_489_0)
 	local var_489_0 = {
 		{
 			value = "high",
@@ -9524,7 +9524,7 @@ function OptionsView.cb_dynamic_range_sound_setup(arg_489_0)
 	return var_489_3, var_489_0, "menu_settings_dynamic_range_sound", var_489_4
 end
 
-function OptionsView.cb_dynamic_range_sound_saved_value(arg_490_0, arg_490_1)
+OptionsView.cb_dynamic_range_sound_saved_value = function (arg_490_0, arg_490_1)
 	local var_490_0 = var_0_12(arg_490_0.changed_user_settings.dynamic_range_sound, Application.user_setting("dynamic_range_sound")) or "low"
 	local var_490_1 = 1
 
@@ -9539,7 +9539,7 @@ function OptionsView.cb_dynamic_range_sound_saved_value(arg_490_0, arg_490_1)
 	arg_490_1.content.current_selection = var_490_1
 end
 
-function OptionsView.cb_dynamic_range_sound(arg_491_0, arg_491_1)
+OptionsView.cb_dynamic_range_sound = function (arg_491_0, arg_491_1)
 	local var_491_0 = arg_491_1.options_values[arg_491_1.current_selection]
 
 	arg_491_0.changed_user_settings.dynamic_range_sound = var_491_0
@@ -9557,7 +9557,7 @@ function OptionsView.cb_dynamic_range_sound(arg_491_0, arg_491_1)
 	arg_491_0:set_wwise_parameter("dynamic_range_sound", var_491_1)
 end
 
-function OptionsView.cb_sound_panning_rule_setup(arg_492_0)
+OptionsView.cb_sound_panning_rule_setup = function (arg_492_0)
 	local var_492_0 = {
 		{
 			value = "headphones",
@@ -9588,7 +9588,7 @@ function OptionsView.cb_sound_panning_rule_setup(arg_492_0)
 	return var_492_1, var_492_0, "menu_settings_sound_panning_rule", var_492_2
 end
 
-function OptionsView.cb_sound_panning_rule_saved_value(arg_493_0, arg_493_1)
+OptionsView.cb_sound_panning_rule_saved_value = function (arg_493_0, arg_493_1)
 	local var_493_0 = 1
 	local var_493_1 = var_0_12(arg_493_0.changed_user_settings.sound_panning_rule, Application.user_setting("sound_panning_rule")) or "headphones"
 
@@ -9601,7 +9601,7 @@ function OptionsView.cb_sound_panning_rule_saved_value(arg_493_0, arg_493_1)
 	arg_493_1.content.current_selection = var_493_0
 end
 
-function OptionsView.cb_sound_panning_rule(arg_494_0, arg_494_1)
+OptionsView.cb_sound_panning_rule = function (arg_494_0, arg_494_1)
 	local var_494_0 = arg_494_1.options_values[arg_494_1.current_selection]
 
 	arg_494_0.changed_user_settings.sound_panning_rule = var_494_0
@@ -9613,7 +9613,7 @@ function OptionsView.cb_sound_panning_rule(arg_494_0, arg_494_1)
 	end
 end
 
-function OptionsView.cb_sound_quality_setup(arg_495_0)
+OptionsView.cb_sound_quality_setup = function (arg_495_0)
 	local var_495_0 = {
 		{
 			value = "low",
@@ -9647,7 +9647,7 @@ function OptionsView.cb_sound_quality_setup(arg_495_0)
 	return var_495_3, var_495_0, "menu_settings_sound_quality", var_495_2
 end
 
-function OptionsView.cb_sound_quality_saved_value(arg_496_0, arg_496_1)
+OptionsView.cb_sound_quality_saved_value = function (arg_496_0, arg_496_1)
 	local var_496_0 = var_0_12(arg_496_0.changed_user_settings.sound_quality, Application.user_setting("sound_quality"))
 	local var_496_1 = arg_496_1.content.options_values
 	local var_496_2
@@ -9661,13 +9661,13 @@ function OptionsView.cb_sound_quality_saved_value(arg_496_0, arg_496_1)
 	arg_496_1.content.current_selection = var_496_2
 end
 
-function OptionsView.cb_sound_quality(arg_497_0, arg_497_1)
+OptionsView.cb_sound_quality = function (arg_497_0, arg_497_1)
 	local var_497_0 = arg_497_1.options_values[arg_497_1.current_selection]
 
 	arg_497_0.changed_user_settings.sound_quality = var_497_0
 end
 
-function OptionsView.cb_animation_lod_distance_setup(arg_498_0)
+OptionsView.cb_animation_lod_distance_setup = function (arg_498_0)
 	local var_498_0 = 0
 	local var_498_1 = 1
 	local var_498_2 = Application.user_setting("animation_lod_distance_multiplier") or GameSettingsDevelopment.bone_lod_husks.lod_multiplier
@@ -9675,7 +9675,7 @@ function OptionsView.cb_animation_lod_distance_setup(arg_498_0)
 	return var_0_11(var_498_0, var_498_1, var_498_2), var_498_0, var_498_1, 1, "menu_settings_animation_lod_multiplier"
 end
 
-function OptionsView.cb_animation_lod_distance_saved_value(arg_499_0, arg_499_1)
+OptionsView.cb_animation_lod_distance_saved_value = function (arg_499_0, arg_499_1)
 	local var_499_0 = arg_499_1.content
 	local var_499_1 = var_499_0.min
 	local var_499_2 = var_499_0.max
@@ -9686,7 +9686,7 @@ function OptionsView.cb_animation_lod_distance_saved_value(arg_499_0, arg_499_1)
 	var_499_0.value = var_499_4
 end
 
-function OptionsView.cb_animation_lod_distance(arg_500_0, arg_500_1, arg_500_2, arg_500_3)
+OptionsView.cb_animation_lod_distance = function (arg_500_0, arg_500_1, arg_500_2, arg_500_3)
 	arg_500_0.changed_user_settings.animation_lod_distance_multiplier = arg_500_1.value
 
 	if not arg_500_3 then
@@ -9694,7 +9694,7 @@ function OptionsView.cb_animation_lod_distance(arg_500_0, arg_500_1, arg_500_2, 
 	end
 end
 
-function OptionsView.cb_player_outlines_setup(arg_501_0)
+OptionsView.cb_player_outlines_setup = function (arg_501_0)
 	local var_501_0 = {
 		{
 			value = "off",
@@ -9727,7 +9727,7 @@ function OptionsView.cb_player_outlines_setup(arg_501_0)
 	return var_501_3, var_501_0, "menu_settings_player_outlines", var_501_4
 end
 
-function OptionsView.cb_player_outlines_saved_value(arg_502_0, arg_502_1)
+OptionsView.cb_player_outlines_saved_value = function (arg_502_0, arg_502_1)
 	local var_502_0 = var_0_12(arg_502_0.changed_user_settings.player_outlines, Application.user_setting("player_outlines"))
 	local var_502_1
 	local var_502_2 = arg_502_1.content.options_values
@@ -9741,21 +9741,21 @@ function OptionsView.cb_player_outlines_saved_value(arg_502_0, arg_502_1)
 	arg_502_1.content.current_selection = var_502_1
 end
 
-function OptionsView.cb_player_outlines(arg_503_0, arg_503_1)
+OptionsView.cb_player_outlines = function (arg_503_0, arg_503_1)
 	local var_503_0 = arg_503_1.current_selection
 	local var_503_1 = arg_503_1.options_values[var_503_0]
 
 	arg_503_0.changed_user_settings.player_outlines = var_503_1
 end
 
-function OptionsView.cb_minion_outlines(arg_504_0, arg_504_1)
+OptionsView.cb_minion_outlines = function (arg_504_0, arg_504_1)
 	local var_504_0 = arg_504_1.current_selection
 	local var_504_1 = arg_504_1.options_values[var_504_0]
 
 	arg_504_0.changed_user_settings.minion_outlines = var_504_1
 end
 
-function OptionsView.cb_minion_outlines_setup(arg_505_0)
+OptionsView.cb_minion_outlines_setup = function (arg_505_0)
 	local var_505_0 = {
 		{
 			value = "off",
@@ -9788,7 +9788,7 @@ function OptionsView.cb_minion_outlines_setup(arg_505_0)
 	return var_505_3, var_505_0, "menu_settings_minion_outlines", var_505_4
 end
 
-function OptionsView.cb_minion_outlines_saved_value(arg_506_0, arg_506_1)
+OptionsView.cb_minion_outlines_saved_value = function (arg_506_0, arg_506_1)
 	local var_506_0 = var_0_12(arg_506_0.changed_user_settings.minion_outlines, Application.user_setting("minion_outlines"))
 	local var_506_1
 	local var_506_2 = arg_506_1.content.options_values
@@ -9806,7 +9806,7 @@ local function var_0_29(arg_507_0, arg_507_1)
 	local var_507_0 = "cb_" .. arg_507_0
 	local var_507_1 = var_507_0 .. "_setup"
 
-	OptionsView[var_507_1] = function(arg_508_0)
+	OptionsView[var_507_1] = function (arg_508_0)
 		local var_508_0 = {
 			{
 				value = false,
@@ -9830,7 +9830,7 @@ local function var_0_29(arg_507_0, arg_507_1)
 
 		return var_508_2, var_508_0, "menu_settings_" .. arg_507_0, var_508_3
 	end
-	OptionsView[var_507_0] = function(arg_509_0, arg_509_1)
+	OptionsView[var_507_0] = function (arg_509_0, arg_509_1)
 		local var_509_0 = arg_509_1.options_values
 		local var_509_1 = arg_509_1.current_selection
 
@@ -9844,7 +9844,7 @@ local function var_0_29(arg_507_0, arg_507_1)
 
 	local var_507_2 = var_507_0 .. "_saved_value"
 
-	OptionsView[var_507_2] = function(arg_510_0, arg_510_1)
+	OptionsView[var_507_2] = function (arg_510_0, arg_510_1)
 		local var_510_0 = var_0_12(arg_510_0.changed_user_settings[arg_507_0], Application.user_setting(arg_507_0))
 
 		if var_510_0 == nil then
@@ -9859,13 +9859,13 @@ local function var_0_30(arg_511_0, arg_511_1, arg_511_2, arg_511_3, arg_511_4)
 	local var_511_0 = "cb_" .. arg_511_0
 	local var_511_1 = var_511_0 .. "_setup"
 
-	OptionsView[var_511_1] = function(arg_512_0)
+	OptionsView[var_511_1] = function (arg_512_0)
 		local var_512_0 = Application.user_setting(arg_511_0) or DefaultUserSettings[arg_511_0]
 		local var_512_1 = DefaultUserSettings.get("user_settings", arg_511_0)
 
 		return var_0_11(arg_511_1, arg_511_2, var_512_0), arg_511_1, arg_511_2, arg_511_3, "menu_settings_" .. arg_511_0, var_512_1
 	end
-	OptionsView[var_511_0] = function(arg_513_0, arg_513_1)
+	OptionsView[var_511_0] = function (arg_513_0, arg_513_1)
 		arg_513_0.changed_user_settings[arg_511_0] = arg_513_1.value
 
 		if arg_511_4 ~= nil then
@@ -9875,7 +9875,7 @@ local function var_0_30(arg_511_0, arg_511_1, arg_511_2, arg_511_3, arg_511_4)
 
 	local var_511_2 = var_511_0 .. "_saved_value"
 
-	OptionsView[var_511_2] = function(arg_514_0, arg_514_1)
+	OptionsView[var_511_2] = function (arg_514_0, arg_514_1)
 		local var_514_0 = arg_514_1.content
 		local var_514_1 = var_0_12(arg_514_0.changed_user_settings[arg_511_0], Application.user_setting(arg_511_0))
 		local var_514_2 = math.clamp(var_514_1, arg_511_1, arg_511_2)
@@ -9886,13 +9886,13 @@ local function var_0_30(arg_511_0, arg_511_1, arg_511_2, arg_511_3, arg_511_4)
 end
 
 local var_0_31 = {
-	responsiveness = function(arg_515_0, arg_515_1)
+	responsiveness = function (arg_515_0, arg_515_1)
 		Tobii.set_extended_view_responsiveness(arg_515_1)
 	end,
-	use_head_tracking = function(arg_516_0, arg_516_1)
+	use_head_tracking = function (arg_516_0, arg_516_1)
 		Tobii.set_extended_view_use_head_tracking(arg_516_1)
 	end,
-	use_clean_ui = function(arg_517_0, arg_517_1)
+	use_clean_ui = function (arg_517_0, arg_517_1)
 		if not arg_517_0.in_title_screen then
 			arg_517_0.ingame_ui.ingame_hud:enable_clean_ui(arg_517_1)
 		end
@@ -9929,7 +9929,7 @@ local function var_0_32(arg_518_0, arg_518_1)
 	return var_518_0 ~= "" and var_518_0 or TextToUpper(arg_518_1), var_518_1
 end
 
-function OptionsView.cb_keybind_setup(arg_519_0, arg_519_1, arg_519_2, arg_519_3)
+OptionsView.cb_keybind_setup = function (arg_519_0, arg_519_1, arg_519_2, arg_519_3)
 	local var_519_0 = arg_519_0.session_keymaps[arg_519_1][arg_519_2]
 	local var_519_1 = {}
 
@@ -9954,7 +9954,7 @@ function OptionsView.cb_keybind_setup(arg_519_0, arg_519_1, arg_519_2, arg_519_3
 	return var_519_4, var_519_5, var_519_1, var_519_7
 end
 
-function OptionsView.cb_keybind_saved_value(arg_520_0, arg_520_1)
+OptionsView.cb_keybind_saved_value = function (arg_520_0, arg_520_1)
 	local var_520_0 = arg_520_1.content.actions
 
 	if not var_520_0 then
@@ -9982,7 +9982,7 @@ function OptionsView.cb_keybind_saved_value(arg_520_0, arg_520_1)
 	arg_520_1.content.actions_info = var_520_4
 end
 
-function OptionsView.cleanup_duplicates(arg_521_0, arg_521_1, arg_521_2)
+OptionsView.cleanup_duplicates = function (arg_521_0, arg_521_1, arg_521_2)
 	local var_521_0 = arg_521_0.selected_settings_list
 	local var_521_1 = var_521_0.widgets
 	local var_521_2 = var_521_0.widgets_n
@@ -10002,7 +10002,7 @@ function OptionsView.cleanup_duplicates(arg_521_0, arg_521_1, arg_521_2)
 	end
 end
 
-function OptionsView.cb_keybind_changed(arg_522_0, arg_522_1, arg_522_2, arg_522_3, arg_522_4)
+OptionsView.cb_keybind_changed = function (arg_522_0, arg_522_1, arg_522_2, arg_522_3, arg_522_4)
 	local var_522_0 = arg_522_3.actions_info
 
 	if not var_522_0 then
@@ -10073,13 +10073,13 @@ function OptionsView.cb_keybind_changed(arg_522_0, arg_522_1, arg_522_2, arg_522
 	end
 end
 
-function OptionsView.cb_twitch_vote_time(arg_523_0, arg_523_1)
+OptionsView.cb_twitch_vote_time = function (arg_523_0, arg_523_1)
 	local var_523_0 = arg_523_1.options_values[arg_523_1.current_selection]
 
 	arg_523_0.changed_user_settings.twitch_vote_time = var_523_0
 end
 
-function OptionsView.cb_twitch_vote_time_setup(arg_524_0)
+OptionsView.cb_twitch_vote_time_setup = function (arg_524_0)
 	local var_524_0 = {
 		{
 			text = "15",
@@ -10126,7 +10126,7 @@ function OptionsView.cb_twitch_vote_time_setup(arg_524_0)
 	return var_524_4 or var_524_3, var_524_0, "menu_settings_twitch_vote_time", var_524_3
 end
 
-function OptionsView.cb_twitch_vote_time_saved_value(arg_525_0, arg_525_1)
+OptionsView.cb_twitch_vote_time_saved_value = function (arg_525_0, arg_525_1)
 	local var_525_0 = var_0_12(arg_525_0.changed_user_settings.twitch_vote_time, Application.user_setting("twitch_vote_time")) or DefaultUserSettings.get("user_settings", "twitch_vote_time")
 	local var_525_1 = arg_525_1.content.options_values
 	local var_525_2 = 1
@@ -10142,13 +10142,13 @@ function OptionsView.cb_twitch_vote_time_saved_value(arg_525_0, arg_525_1)
 	arg_525_1.content.current_selection = var_525_2
 end
 
-function OptionsView.cb_twitch_time_between_votes(arg_526_0, arg_526_1)
+OptionsView.cb_twitch_time_between_votes = function (arg_526_0, arg_526_1)
 	local var_526_0 = arg_526_1.options_values[arg_526_1.current_selection]
 
 	arg_526_0.changed_user_settings.twitch_time_between_votes = var_526_0
 end
 
-function OptionsView.cb_twitch_time_between_votes_setup(arg_527_0)
+OptionsView.cb_twitch_time_between_votes_setup = function (arg_527_0)
 	local var_527_0 = {
 		{
 			text = "5",
@@ -10199,7 +10199,7 @@ function OptionsView.cb_twitch_time_between_votes_setup(arg_527_0)
 	return var_527_4 or var_527_3, var_527_0, "menu_settings_twitch_time_between_votes", var_527_3
 end
 
-function OptionsView.cb_twitch_time_between_votes_saved_value(arg_528_0, arg_528_1)
+OptionsView.cb_twitch_time_between_votes_saved_value = function (arg_528_0, arg_528_1)
 	local var_528_0 = var_0_12(arg_528_0.changed_user_settings.twitch_time_between_votes, Application.user_setting("twitch_time_between_votes")) or DefaultUserSettings.get("user_settings", "twitch_time_between_votes")
 	local var_528_1 = arg_528_1.content.options_values
 	local var_528_2 = 1
@@ -10215,7 +10215,7 @@ function OptionsView.cb_twitch_time_between_votes_saved_value(arg_528_0, arg_528
 	arg_528_1.content.current_selection = var_528_2
 end
 
-function OptionsView.cb_twitch_difficulty_setup(arg_529_0)
+OptionsView.cb_twitch_difficulty_setup = function (arg_529_0)
 	local var_529_0 = 0
 	local var_529_1 = 100
 	local var_529_2 = Application.user_setting("twitch_difficulty") or DefaultUserSettings.get("user_settings", "twitch_difficulty")
@@ -10224,7 +10224,7 @@ function OptionsView.cb_twitch_difficulty_setup(arg_529_0)
 	return var_0_11(var_529_0, var_529_1, var_529_2), var_529_0, var_529_1, 0, "menu_settings_twitch_difficulty", var_529_3
 end
 
-function OptionsView.cb_twitch_difficulty_saved_value(arg_530_0, arg_530_1)
+OptionsView.cb_twitch_difficulty_saved_value = function (arg_530_0, arg_530_1)
 	local var_530_0 = arg_530_1.content
 	local var_530_1 = var_530_0.min
 	local var_530_2 = var_530_0.max
@@ -10235,13 +10235,13 @@ function OptionsView.cb_twitch_difficulty_saved_value(arg_530_0, arg_530_1)
 	var_530_0.value = var_530_4
 end
 
-function OptionsView.cb_twitch_difficulty(arg_531_0, arg_531_1)
+OptionsView.cb_twitch_difficulty = function (arg_531_0, arg_531_1)
 	local var_531_0 = arg_531_1.value
 
 	arg_531_0.changed_user_settings.twitch_difficulty = var_531_0
 end
 
-function OptionsView.cb_twitch_spawn_amount_setup(arg_532_0)
+OptionsView.cb_twitch_spawn_amount_setup = function (arg_532_0)
 	local var_532_0 = 100
 	local var_532_1 = 300
 	local var_532_2 = DefaultUserSettings.get("user_settings", "twitch_spawn_amount")
@@ -10250,7 +10250,7 @@ function OptionsView.cb_twitch_spawn_amount_setup(arg_532_0)
 	return var_0_11(var_532_0, var_532_1, var_532_3), var_532_0, var_532_1, 0, "menu_settings_twitch_spawn_amount", 100 * var_532_2
 end
 
-function OptionsView.cb_twitch_spawn_amount_saved_value(arg_533_0, arg_533_1)
+OptionsView.cb_twitch_spawn_amount_saved_value = function (arg_533_0, arg_533_1)
 	local var_533_0 = arg_533_1.content
 	local var_533_1 = var_533_0.min
 	local var_533_2 = var_533_0.max
@@ -10261,6 +10261,6 @@ function OptionsView.cb_twitch_spawn_amount_saved_value(arg_533_0, arg_533_1)
 	var_533_0.value = var_533_4
 end
 
-function OptionsView.cb_twitch_spawn_amount(arg_534_0, arg_534_1, arg_534_2, arg_534_3)
+OptionsView.cb_twitch_spawn_amount = function (arg_534_0, arg_534_1, arg_534_2, arg_534_3)
 	arg_534_0.changed_user_settings.twitch_spawn_amount = 0.01 * arg_534_1.value
 end

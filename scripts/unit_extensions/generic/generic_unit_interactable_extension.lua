@@ -2,7 +2,7 @@
 
 GenericUnitInteractableExtension = class(GenericUnitInteractableExtension)
 
-function GenericUnitInteractableExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericUnitInteractableExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0._is_level_object = Unit.level(arg_1_2) ~= nil
 	arg_1_0.interactable_type = Unit.get_data(arg_1_2, "interaction_data", "interaction_type") or "player_generic"
@@ -15,23 +15,23 @@ function GenericUnitInteractableExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	fassert(arg_1_0.interactable_type, "Unit: %s missing interaction_type in its unit data, should it have an interaction extension?", arg_1_2)
 end
 
-function GenericUnitInteractableExtension.destroy(arg_2_0)
+GenericUnitInteractableExtension.destroy = function (arg_2_0)
 	return
 end
 
-function GenericUnitInteractableExtension.interaction_type(arg_3_0)
+GenericUnitInteractableExtension.interaction_type = function (arg_3_0)
 	return arg_3_0.interactable_type
 end
 
-function GenericUnitInteractableExtension.local_only(arg_4_0)
+GenericUnitInteractableExtension.local_only = function (arg_4_0)
 	return false
 end
 
-function GenericUnitInteractableExtension.set_interactable_type(arg_5_0, arg_5_1)
+GenericUnitInteractableExtension.set_interactable_type = function (arg_5_0, arg_5_1)
 	arg_5_0.interactable_type = arg_5_1
 end
 
-function GenericUnitInteractableExtension.set_is_being_interacted_with(arg_6_0, arg_6_1, arg_6_2)
+GenericUnitInteractableExtension.set_is_being_interacted_with = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = arg_6_0.interactable_type
 
@@ -61,11 +61,11 @@ function GenericUnitInteractableExtension.set_is_being_interacted_with(arg_6_0, 
 	arg_6_0.interaction_result = arg_6_2
 end
 
-function GenericUnitInteractableExtension.is_being_interacted_with(arg_7_0)
+GenericUnitInteractableExtension.is_being_interacted_with = function (arg_7_0)
 	return arg_7_0.interactor_unit
 end
 
-function GenericUnitInteractableExtension.hot_join_sync(arg_8_0, arg_8_1)
+GenericUnitInteractableExtension.hot_join_sync = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.unit
 
 	if Unit.get_data(var_8_0, "interaction_data", "only_once") then
@@ -80,14 +80,14 @@ function GenericUnitInteractableExtension.hot_join_sync(arg_8_0, arg_8_1)
 	end
 end
 
-function GenericUnitInteractableExtension.is_enabled(arg_9_0)
+GenericUnitInteractableExtension.is_enabled = function (arg_9_0)
 	return arg_9_0._enabled
 end
 
-function GenericUnitInteractableExtension.set_enabled(arg_10_0, arg_10_1)
+GenericUnitInteractableExtension.set_enabled = function (arg_10_0, arg_10_1)
 	arg_10_0._enabled = arg_10_1
 end
 
-function GenericUnitInteractableExtension.override_interactable_action(arg_11_0)
+GenericUnitInteractableExtension.override_interactable_action = function (arg_11_0)
 	return arg_11_0._override_interactable_action
 end

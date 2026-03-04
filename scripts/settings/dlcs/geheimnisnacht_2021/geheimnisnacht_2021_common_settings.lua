@@ -104,7 +104,7 @@ var_0_0.game_object_templates = {
 	}
 }
 var_0_0.game_object_initializers = {
-	geheimnisnacht_2021_altar = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	geheimnisnacht_2021_altar = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "health_system")
 		local var_1_1 = ScriptUnit.has_extension(arg_1_0, "props_system")
 
@@ -119,7 +119,7 @@ var_0_0.game_object_initializers = {
 	end
 }
 var_0_0.game_object_extractors = {
-	geheimnisnacht_2021_altar = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	geheimnisnacht_2021_altar = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = GameSession.game_object_field(arg_2_0, arg_2_1, "health")
 		local var_2_1 = GameSession.game_object_field(arg_2_0, arg_2_1, "state")
 		local var_2_2 = "geheimnisnacht_2021_altar"
@@ -145,24 +145,24 @@ var_0_0.game_object_extractors = {
 }
 var_0_0.ai_group_templates = {
 	geheimnisnacht_2021_altar_cultists = {
-		setup_group = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		setup_group = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			arg_3_2.idle = true
 		end,
-		init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			return
 		end,
-		update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			return
 		end,
-		destroy = function(arg_6_0, arg_6_1, arg_6_2)
+		destroy = function (arg_6_0, arg_6_1, arg_6_2)
 			Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_killed", arg_6_2.id)
 		end,
-		wake_up_group = function(arg_7_0, arg_7_1)
+		wake_up_group = function (arg_7_0, arg_7_1)
 			arg_7_0.idle = false, Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_aggroed", arg_7_0.id)
 
 			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_7_0, AIGroupTemplates.geheimnisnacht_2021_altar_cultists.wake_up_unit, arg_7_1)
 		end,
-		wake_up_unit = function(arg_8_0, arg_8_1, arg_8_2)
+		wake_up_unit = function (arg_8_0, arg_8_1, arg_8_2)
 			Managers.state.network:anim_event(arg_8_0, "idle")
 
 			local var_8_0 = ScriptUnit.extension(arg_8_0, "ai_system")
@@ -186,22 +186,22 @@ var_0_0.ai_group_templates = {
 		end
 	},
 	critter_nurglings = {
-		setup_group = function(arg_9_0, arg_9_1, arg_9_2)
+		setup_group = function (arg_9_0, arg_9_1, arg_9_2)
 			return
 		end,
-		init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			return
 		end,
-		update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 			return
 		end,
-		destroy = function(arg_12_0, arg_12_1, arg_12_2)
+		destroy = function (arg_12_0, arg_12_1, arg_12_2)
 			return
 		end,
-		wake_up_group = function(arg_13_0)
+		wake_up_group = function (arg_13_0)
 			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_13_0, AIGroupTemplates.critter_nurglings.wake_up_unit)
 		end,
-		wake_up_unit = function(arg_14_0, arg_14_1)
+		wake_up_unit = function (arg_14_0, arg_14_1)
 			BLACKBOARDS[arg_14_0].is_fleeing = true
 		end
 	}

@@ -3,7 +3,7 @@
 MatchmakingStateSearchGame = class(MatchmakingStateSearchGame)
 MatchmakingStateSearchGame.NAME = "MatchmakingStateSearchGame"
 
-function MatchmakingStateSearchGame.init(arg_1_0, arg_1_1)
+MatchmakingStateSearchGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby_finder = arg_1_1.lobby_finder
 	arg_1_0._peer_id = Network.peer_id()
 	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
@@ -12,18 +12,18 @@ function MatchmakingStateSearchGame.init(arg_1_0, arg_1_1)
 	Managers.matchmaking.countdown_has_finished = false
 end
 
-function MatchmakingStateSearchGame.destroy(arg_2_0)
+MatchmakingStateSearchGame.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateSearchGame.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateSearchGame.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0.state_context = arg_3_1
 	arg_3_0.search_config = arg_3_1.search_config
 
 	arg_3_0:_start_searching_for_games()
 end
 
-function MatchmakingStateSearchGame._start_searching_for_games(arg_4_0)
+MatchmakingStateSearchGame._start_searching_for_games = function (arg_4_0)
 	local var_4_0 = arg_4_0.search_config
 	local var_4_1 = {
 		difficulty = {
@@ -133,11 +133,11 @@ function MatchmakingStateSearchGame._start_searching_for_games(arg_4_0)
 	Managers.telemetry_events:matchmaking_search(var_4_15, arg_4_0.search_config)
 end
 
-function MatchmakingStateSearchGame.on_exit(arg_5_0)
+MatchmakingStateSearchGame.on_exit = function (arg_5_0)
 	return
 end
 
-function MatchmakingStateSearchGame.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateSearchGame.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._network_server:num_active_peers() > 1 then
 		mm_printf("Leaving MatchmakingStateSearchGame and becoming host due to having connections, probably a friend joining.")
 
@@ -204,7 +204,7 @@ function MatchmakingStateSearchGame.update(arg_6_0, arg_6_1, arg_6_2)
 	return nil
 end
 
-function MatchmakingStateSearchGame._search_for_game(arg_7_0, arg_7_1)
+MatchmakingStateSearchGame._search_for_game = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0:_get_server_lobbies()
 	local var_7_1
 	local var_7_2
@@ -244,7 +244,7 @@ end
 
 local var_0_0 = {}
 
-function MatchmakingStateSearchGame._get_server_lobbies(arg_8_0)
+MatchmakingStateSearchGame._get_server_lobbies = function (arg_8_0)
 	local var_8_0 = arg_8_0:_get_lobbies()
 
 	table.clear(var_0_0)
@@ -253,15 +253,15 @@ function MatchmakingStateSearchGame._get_server_lobbies(arg_8_0)
 	return var_0_0
 end
 
-function MatchmakingStateSearchGame._get_lobbies(arg_9_0)
+MatchmakingStateSearchGame._get_lobbies = function (arg_9_0)
 	return arg_9_0._lobby_finder:lobbies()
 end
 
-function MatchmakingStateSearchGame._get_servers(arg_10_0)
+MatchmakingStateSearchGame._get_servers = function (arg_10_0)
 	return arg_10_0._game_server_finder:servers()
 end
 
-function MatchmakingStateSearchGame._times_party_completed_level(arg_11_0, arg_11_1)
+MatchmakingStateSearchGame._times_party_completed_level = function (arg_11_0, arg_11_1)
 	local var_11_0 = 0
 	local var_11_1 = arg_11_0._statistics_db
 	local var_11_2 = Managers.player:human_players()
@@ -273,7 +273,7 @@ function MatchmakingStateSearchGame._times_party_completed_level(arg_11_0, arg_1
 	return var_11_0
 end
 
-function MatchmakingStateSearchGame._compare_first_prio_lobbies(arg_12_0, arg_12_1, arg_12_2)
+MatchmakingStateSearchGame._compare_first_prio_lobbies = function (arg_12_0, arg_12_1, arg_12_2)
 	if arg_12_1 == nil then
 		return arg_12_2
 	end
@@ -299,7 +299,7 @@ function MatchmakingStateSearchGame._compare_first_prio_lobbies(arg_12_0, arg_12
 	return arg_12_1
 end
 
-function MatchmakingStateSearchGame._compare_secondary_prio_lobbies(arg_13_0, arg_13_1, arg_13_2)
+MatchmakingStateSearchGame._compare_secondary_prio_lobbies = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_1 == nil then
 		return arg_13_2
 	end
@@ -325,7 +325,7 @@ function MatchmakingStateSearchGame._compare_secondary_prio_lobbies(arg_13_0, ar
 	return arg_13_1
 end
 
-function MatchmakingStateSearchGame._find_suitable_lobby(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+MatchmakingStateSearchGame._find_suitable_lobby = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = arg_14_2.mission_id
 	local var_14_1 = arg_14_2.difficulty
 	local var_14_2 = arg_14_2.matchmaking_type

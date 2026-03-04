@@ -3,7 +3,7 @@
 core = core or {}
 core.vis_modes = core.vis_modes or {}
 
-function core.render_vis_on(arg_1_0)
+core.render_vis_on = function (arg_1_0)
 	for iter_1_0, iter_1_1 in pairs(core.vis_modes) do
 		Application.set_render_setting(iter_1_1, "false")
 	end

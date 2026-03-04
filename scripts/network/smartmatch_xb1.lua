@@ -82,7 +82,7 @@ local var_0_6 = {
 
 SmartMatch = class(SmartMatch)
 
-function SmartMatch.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+SmartMatch.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._hopper_name = arg_3_1 or LobbyInternal.HOPPER_NAME
 	arg_3_0._is_host = arg_3_2 or false
 	arg_3_0._ticket_params = arg_3_3 or {}
@@ -101,7 +101,7 @@ function SmartMatch.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return arg_3_0._hopper_name
 end
 
-function SmartMatch._create_smartmatch_session(arg_4_0)
+SmartMatch._create_smartmatch_session = function (arg_4_0)
 	local var_4_0 = Application.guid()
 	local var_4_1 = arg_4_0._hopper_name
 	local var_4_2 = LobbyInternal.SMARTMATCH_SESSION_TEMPLATE_NAME
@@ -114,7 +114,7 @@ function SmartMatch._create_smartmatch_session(arg_4_0)
 	arg_4_0._session_name = var_4_0
 end
 
-function SmartMatch._handle_smartmatch_session(arg_5_0)
+SmartMatch._handle_smartmatch_session = function (arg_5_0)
 	local var_5_0 = MultiplayerSession.status(arg_5_0._session_id)
 
 	if var_5_0 ~= arg_5_0._status then
@@ -126,7 +126,7 @@ function SmartMatch._handle_smartmatch_session(arg_5_0)
 	end
 end
 
-function SmartMatch._start_smartmatch(arg_6_0, arg_6_1)
+SmartMatch._start_smartmatch = function (arg_6_0, arg_6_1)
 	if not arg_6_0._ready then
 		return
 	end
@@ -151,7 +151,7 @@ function SmartMatch._start_smartmatch(arg_6_0, arg_6_1)
 	arg_6_0._state = "_check_smartmatch_result"
 end
 
-function SmartMatch._check_smartmatch_result(arg_7_0, arg_7_1)
+SmartMatch._check_smartmatch_result = function (arg_7_0, arg_7_1)
 	if not arg_7_0._ready then
 		return
 	end
@@ -214,11 +214,11 @@ function SmartMatch._check_smartmatch_result(arg_7_0, arg_7_1)
 	end
 end
 
-function SmartMatch._smartmatch_done(arg_8_0, arg_8_1)
+SmartMatch._smartmatch_done = function (arg_8_0, arg_8_1)
 	return
 end
 
-function SmartMatch._convert_to_json(arg_9_0, arg_9_1, arg_9_2)
+SmartMatch._convert_to_json = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = var_0_2[arg_9_1]
 	local var_9_1 = var_0_4[arg_9_1]
 
@@ -264,26 +264,26 @@ function SmartMatch._convert_to_json(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function SmartMatch.update(arg_10_0, arg_10_1)
+SmartMatch.update = function (arg_10_0, arg_10_1)
 	arg_10_0:_handle_smartmatch_session()
 	arg_10_0[arg_10_0._state](arg_10_0, arg_10_1)
 
 	return arg_10_0._ready and not arg_10_0._done
 end
 
-function SmartMatch.is_search_done(arg_11_0)
+SmartMatch.is_search_done = function (arg_11_0)
 	return arg_11_0._done
 end
 
-function SmartMatch.results(arg_12_0)
+SmartMatch.results = function (arg_12_0)
 	return arg_12_0._found_session_name, arg_12_0._found_session_template
 end
 
-function SmartMatch.success(arg_13_0)
+SmartMatch.success = function (arg_13_0)
 	return not arg_13_0._failed
 end
 
-function SmartMatch.destroy(arg_14_0)
+SmartMatch.destroy = function (arg_14_0)
 	local var_14_0 = {
 		destroy_session = true,
 		state = "_cleanup_ticket",

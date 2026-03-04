@@ -2,19 +2,19 @@
 
 EnemyCharacterStateAnimatedJump = class(EnemyCharacterStateAnimatedJump, EnemyCharacterState)
 
-function EnemyCharacterStateAnimatedJump.do_the_transition(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+EnemyCharacterStateAnimatedJump.do_the_transition = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	return
 end
 
-function EnemyCharacterStateAnimatedJump.setup_transition(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+EnemyCharacterStateAnimatedJump.setup_transition = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	return
 end
 
-function EnemyCharacterStateAnimatedJump.init(arg_3_0, arg_3_1, arg_3_2)
+EnemyCharacterStateAnimatedJump.init = function (arg_3_0, arg_3_1, arg_3_2)
 	EnemyCharacterStateAnimatedJump.super.init(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function EnemyCharacterStateAnimatedJump.on_enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+EnemyCharacterStateAnimatedJump.on_enter = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	local var_4_0 = arg_4_0._input_extension
 	local var_4_1 = arg_4_0._first_person_extension
 	local var_4_2 = arg_4_0._status_extension
@@ -105,7 +105,7 @@ function EnemyCharacterStateAnimatedJump.on_enter(arg_4_0, arg_4_1, arg_4_2, arg
 	arg_4_0:set_breed_action("climbing")
 end
 
-function EnemyCharacterStateAnimatedJump.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+EnemyCharacterStateAnimatedJump.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	local var_5_0 = BLACKBOARDS[arg_5_1]
 
 	if var_5_0 then
@@ -135,7 +135,7 @@ function EnemyCharacterStateAnimatedJump.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_
 	ScriptUnit.extension(arg_5_1, "hit_reaction_system").force_ragdoll_on_death = nil
 end
 
-function EnemyCharacterStateAnimatedJump.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateAnimatedJump.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._csm
 	local var_6_1 = arg_6_0._input_extension
 	local var_6_2 = arg_6_0._status_extension
@@ -187,7 +187,7 @@ function EnemyCharacterStateAnimatedJump.update(arg_6_0, arg_6_1, arg_6_2, arg_6
 	var_6_6.look(var_6_1, arg_6_0._player.viewport_name, var_6_3, var_6_2, var_6_5)
 end
 
-function EnemyCharacterStateAnimatedJump.grant_control_to_player(arg_7_0)
+EnemyCharacterStateAnimatedJump.grant_control_to_player = function (arg_7_0)
 	local var_7_0 = arg_7_0._locomotion_extension
 	local var_7_1 = Unit.animation_wanted_root_pose(arg_7_0._unit)
 
@@ -200,7 +200,7 @@ function EnemyCharacterStateAnimatedJump.grant_control_to_player(arg_7_0)
 	arg_7_0._control_back = true
 end
 
-function EnemyCharacterStateAnimatedJump.start_camera_transition(arg_8_0)
+EnemyCharacterStateAnimatedJump.start_camera_transition = function (arg_8_0)
 	local var_8_0 = arg_8_0._first_person_extension
 
 	CharacterStateHelper.change_camera_state(arg_8_0._player, "follow")

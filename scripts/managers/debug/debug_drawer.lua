@@ -2,32 +2,32 @@
 
 DebugDrawer = class(DebugDrawer)
 
-function DebugDrawer.init(arg_1_0, arg_1_1, arg_1_2)
+DebugDrawer.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._line_object = arg_1_1
 	arg_1_0._mode = arg_1_2
 end
 
-function DebugDrawer.reset(arg_2_0)
+DebugDrawer.reset = function (arg_2_0)
 	LineObject.reset(arg_2_0._line_object)
 end
 
-function DebugDrawer.line_object(arg_3_0)
+DebugDrawer.line_object = function (arg_3_0)
 	return arg_3_0._line_object
 end
 
-function DebugDrawer.line(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DebugDrawer.line = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_3 = arg_4_3 or Color(255, 255, 255)
 
 	LineObject.add_line(arg_4_0._line_object, arg_4_3, arg_4_1, arg_4_2)
 end
 
-function DebugDrawer.sphere(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+DebugDrawer.sphere = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_3 = arg_5_3 or Color(255, 255, 255)
 
 	LineObject.add_sphere(arg_5_0._line_object, arg_5_3, arg_5_1, arg_5_2, arg_5_4 or 20, arg_5_5 or 2)
 end
 
-function DebugDrawer.capsule_overlap(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+DebugDrawer.capsule_overlap = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	fassert(arg_6_2.x == arg_6_2.z, "Passing diffent x and y size doesn't do anything, capsules overlaps are always sphere swept, not spheroid shaped.")
 
 	local var_6_0 = (arg_6_2.x + arg_6_2.z) * 0.5
@@ -38,13 +38,13 @@ function DebugDrawer.capsule_overlap(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4
 	arg_6_0:capsule(var_6_2, var_6_3, var_6_0, arg_6_4)
 end
 
-function DebugDrawer.oobb_overlap(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+DebugDrawer.oobb_overlap = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = Matrix4x4.from_quaternion_position(arg_7_3, arg_7_1)
 
 	arg_7_0:box(var_7_0, arg_7_2, arg_7_4)
 end
 
-function DebugDrawer.box_sweep(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+DebugDrawer.box_sweep = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	arg_8_4 = arg_8_4 or Color(255, 255, 255)
 	arg_8_5 = arg_8_5 or Color(255, 0, 0)
 
@@ -83,37 +83,37 @@ function DebugDrawer.box_sweep(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_
 	arg_8_0:line(var_8_19, var_8_19 + arg_8_3, arg_8_5)
 end
 
-function DebugDrawer.capsule(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+DebugDrawer.capsule = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	arg_9_4 = arg_9_4 or Color(255, 255, 255)
 
 	LineObject.add_capsule(arg_9_0._line_object, arg_9_4, arg_9_1, arg_9_2, arg_9_3)
 end
 
-function DebugDrawer.actor(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+DebugDrawer.actor = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_2 = arg_10_2 or Color(255, 255, 255)
 
 	Actor.debug_draw(arg_10_1, arg_10_0._line_object, arg_10_2, arg_10_3)
 end
 
-function DebugDrawer.box(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+DebugDrawer.box = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_3 = arg_11_3 or Color(255, 255, 255)
 
 	LineObject.add_box(arg_11_0._line_object, arg_11_3, arg_11_1, arg_11_2)
 end
 
-function DebugDrawer.cone(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+DebugDrawer.cone = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	arg_12_4 = arg_12_4 or Color(255, 255, 255)
 
 	LineObject.add_cone(arg_12_0._line_object, arg_12_4, arg_12_1, arg_12_2, arg_12_3, arg_12_5, arg_12_6)
 end
 
-function DebugDrawer.circle(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+DebugDrawer.circle = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	arg_13_4 = arg_13_4 or Color(255, 255, 255)
 
 	LineObject.add_circle(arg_13_0._line_object, arg_13_4, arg_13_1, arg_13_2, arg_13_3, arg_13_5 or 20)
 end
 
-function DebugDrawer.arrow_2d(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+DebugDrawer.arrow_2d = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0:line(arg_14_1, arg_14_2, arg_14_3)
 
 	local var_14_0 = arg_14_2 - arg_14_1
@@ -124,7 +124,7 @@ function DebugDrawer.arrow_2d(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0:line(arg_14_2, arg_14_2 - 0.2 * var_14_0 - var_14_2 * var_14_1 * 0.2, arg_14_3)
 end
 
-function DebugDrawer.cylinder(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+DebugDrawer.cylinder = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	arg_15_4 = arg_15_4 or Color(255, 255, 255)
 	arg_15_5 = arg_15_5 or 5
 
@@ -141,7 +141,7 @@ function DebugDrawer.cylinder(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, 
 	end
 end
 
-function DebugDrawer.vector(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+DebugDrawer.vector = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	arg_16_3 = arg_16_3 or Color(255, 255, 255)
 
 	local var_16_0 = Vector3.length(arg_16_2)
@@ -160,7 +160,7 @@ function DebugDrawer.vector(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	arg_16_0:line(var_16_5, var_16_8 + var_16_7 * var_16_4, arg_16_3)
 end
 
-function DebugDrawer.quaternion(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+DebugDrawer.quaternion = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_3 = arg_17_3 or 1
 
 	arg_17_0:vector(arg_17_1, arg_17_3 * Quaternion.right(arg_17_2), Color(255, 0, 0))
@@ -168,7 +168,7 @@ function DebugDrawer.quaternion(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0:vector(arg_17_1, arg_17_3 * Quaternion.up(arg_17_2), Color(0, 0, 255))
 end
 
-function DebugDrawer.matrix4x4(arg_18_0, arg_18_1, arg_18_2)
+DebugDrawer.matrix4x4 = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_2 = arg_18_2 or 1
 
 	local var_18_0 = Matrix4x4.translation(arg_18_1)
@@ -180,7 +180,7 @@ function DebugDrawer.matrix4x4(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:quaternion(var_18_0, var_18_1, arg_18_2)
 end
 
-function DebugDrawer.unit(arg_19_0, arg_19_1, arg_19_2)
+DebugDrawer.unit = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_2 = arg_19_2 or Color(255, 255, 255)
 
 	local var_19_0, var_19_1 = Unit.box(arg_19_1)
@@ -196,11 +196,11 @@ function DebugDrawer.unit(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:quaternion(var_19_2, var_19_3)
 end
 
-function DebugDrawer.navigation_mesh_search(arg_20_0, arg_20_1)
+DebugDrawer.navigation_mesh_search = function (arg_20_0, arg_20_1)
 	NavigationMesh.visualize_last_search(arg_20_1, arg_20_0._line_object)
 end
 
-function DebugDrawer.update(arg_21_0, arg_21_1)
+DebugDrawer.update = function (arg_21_0, arg_21_1)
 	if script_data and script_data.disable_debug_draw then
 		arg_21_0:reset()
 

@@ -4,12 +4,12 @@ MatchmakingStatePartyJoins = class(MatchmakingStatePartyJoins)
 MatchmakingStatePartyJoins.NAME = "MatchmakingStatePartyJoins"
 MatchmakingStatePartyJoins.TIMEOUT = 30
 
-function MatchmakingStatePartyJoins.init(arg_1_0, arg_1_1)
+MatchmakingStatePartyJoins.init = function (arg_1_0, arg_1_1)
 	arg_1_0._time = 0
 	arg_1_0._peer_id = arg_1_1.peer_id
 end
 
-function MatchmakingStatePartyJoins.terminate(arg_2_0)
+MatchmakingStatePartyJoins.terminate = function (arg_2_0)
 	local var_2_0 = Managers.lobby
 
 	if var_2_0:query_lobby("matchmaking_join_lobby") then
@@ -21,11 +21,11 @@ function MatchmakingStatePartyJoins.terminate(arg_2_0)
 	arg_2_0._state_context.reserved_lobby = nil
 end
 
-function MatchmakingStatePartyJoins.destroy(arg_3_0)
+MatchmakingStatePartyJoins.destroy = function (arg_3_0)
 	return
 end
 
-function MatchmakingStatePartyJoins.on_enter(arg_4_0, arg_4_1)
+MatchmakingStatePartyJoins.on_enter = function (arg_4_0, arg_4_1)
 	arg_4_0._state_context = arg_4_1
 	arg_4_0._peer_failed_to_follow = false
 
@@ -70,7 +70,7 @@ function MatchmakingStatePartyJoins.on_enter(arg_4_0, arg_4_1)
 	mm_printf("Wait for %d clients to leave party lobby", #var_4_2 - 1)
 end
 
-function MatchmakingStatePartyJoins.on_exit(arg_5_0)
+MatchmakingStatePartyJoins.on_exit = function (arg_5_0)
 	local var_5_0 = Managers.mechanism:game_mechanism()
 	local var_5_1 = var_5_0 and var_5_0.get_server_id and var_5_0:get_server_id()
 
@@ -79,7 +79,7 @@ function MatchmakingStatePartyJoins.on_exit(arg_5_0)
 	end
 end
 
-function MatchmakingStatePartyJoins.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStatePartyJoins.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._time = arg_6_0._time + arg_6_1
 
 	if arg_6_0:_all_clients_have_left_lobby() then
@@ -96,7 +96,7 @@ function MatchmakingStatePartyJoins.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MatchmakingStatePartyJoins._all_clients_have_left_lobby(arg_7_0)
+MatchmakingStatePartyJoins._all_clients_have_left_lobby = function (arg_7_0)
 	local var_7_0 = arg_7_0._state_context.search_config.party_lobby_host:members():get_members()
 
 	for iter_7_0, iter_7_1 in ipairs(var_7_0) do

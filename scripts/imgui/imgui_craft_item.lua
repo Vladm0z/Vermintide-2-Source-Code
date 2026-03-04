@@ -9,7 +9,7 @@ local var_0_3 = 300
 local var_0_4 = 0.1
 local var_0_5 = 1
 
-function ImguiCraftItem.init(arg_1_0)
+ImguiCraftItem.init = function (arg_1_0)
 	arg_1_0._properties = {}
 	arg_1_0._traits = {}
 	arg_1_0._skins = {}
@@ -39,7 +39,7 @@ function ImguiCraftItem.init(arg_1_0)
 	arg_1_0:_parse_master_list()
 end
 
-function ImguiCraftItem.update(arg_2_0)
+ImguiCraftItem.update = function (arg_2_0)
 	if var_0_0 then
 		arg_2_0:init()
 
@@ -47,11 +47,11 @@ function ImguiCraftItem.update(arg_2_0)
 	end
 end
 
-function ImguiCraftItem.is_persistent(arg_3_0)
+ImguiCraftItem.is_persistent = function (arg_3_0)
 	return false
 end
 
-function ImguiCraftItem.draw(arg_4_0, arg_4_1)
+ImguiCraftItem.draw = function (arg_4_0, arg_4_1)
 	local var_4_0 = Imgui.begin_window("Craft Item")
 
 	Imgui.set_window_size(500, 335, "once")
@@ -146,7 +146,7 @@ function ImguiCraftItem.draw(arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-function ImguiCraftItem.give_item(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+ImguiCraftItem.give_item = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
 	if arg_5_1 and arg_5_2 then
 		local var_5_0 = Managers.backend:get_interface("items")
 
@@ -156,7 +156,7 @@ function ImguiCraftItem.give_item(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, a
 	end
 end
 
-function ImguiCraftItem._parse_master_list(arg_6_0)
+ImguiCraftItem._parse_master_list = function (arg_6_0)
 	local var_6_0 = arg_6_0._types
 	local var_6_1 = arg_6_0._items_per_type
 	local var_6_2 = ItemMasterList
@@ -200,7 +200,7 @@ function ImguiCraftItem._parse_master_list(arg_6_0)
 	table.sort(arg_6_0._traits)
 end
 
-function ImguiCraftItem._get_skins_for_item(arg_7_0, arg_7_1)
+ImguiCraftItem._get_skins_for_item = function (arg_7_0, arg_7_1)
 	if arg_7_1 then
 		local var_7_0 = ItemMasterList[arg_7_1]
 		local var_7_1 = var_7_0 and var_7_0.skin_combination_table

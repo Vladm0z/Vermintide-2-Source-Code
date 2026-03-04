@@ -4,7 +4,7 @@ require("scripts/managers/camera/cameras/base_camera")
 
 RootCamera = class(RootCamera, BaseCamera)
 
-function RootCamera.init(arg_1_0)
+RootCamera.init = function (arg_1_0)
 	BaseCamera.init(arg_1_0, arg_1_0)
 
 	arg_1_0._aim_pitch = 0
@@ -14,7 +14,7 @@ function RootCamera.init(arg_1_0)
 	arg_1_0._environment_params = {}
 end
 
-function RootCamera.set_root_unit(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+RootCamera.set_root_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	BaseCamera.set_root_unit(arg_2_0, arg_2_1, arg_2_2)
 
 	if not arg_2_3 then
@@ -34,7 +34,7 @@ function RootCamera.set_root_unit(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function RootCamera.parse_parameters(arg_3_0, arg_3_1, arg_3_2)
+RootCamera.parse_parameters = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_1.name then
 		arg_3_0._name = arg_3_1.name
 	end
@@ -61,7 +61,7 @@ function RootCamera.parse_parameters(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function RootCamera.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+RootCamera.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not arg_4_0:active() then
 		return
 	end
@@ -85,7 +85,7 @@ function RootCamera.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	BaseCamera.update(arg_4_0, arg_4_1, var_4_0, var_4_1, arg_4_2)
 end
 
-function RootCamera.update_pitch_yaw(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+RootCamera.update_pitch_yaw = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.pitch_speed or arg_5_0._pitch_speed
 	local var_5_1 = arg_5_2.yaw_speed or arg_5_0._yaw_speed
 	local var_5_2 = 1
@@ -154,18 +154,18 @@ function RootCamera.update_pitch_yaw(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function RootCamera.aim_pitch(arg_6_0)
+RootCamera.aim_pitch = function (arg_6_0)
 	return arg_6_0._aim_pitch
 end
 
-function RootCamera.aim_yaw(arg_7_0)
+RootCamera.aim_yaw = function (arg_7_0)
 	return arg_7_0._aim_yaw
 end
 
-function RootCamera.set_aim_pitch(arg_8_0, arg_8_1)
+RootCamera.set_aim_pitch = function (arg_8_0, arg_8_1)
 	arg_8_0._aim_pitch = arg_8_1
 end
 
-function RootCamera.set_aim_yaw(arg_9_0, arg_9_1)
+RootCamera.set_aim_yaw = function (arg_9_0, arg_9_1)
 	arg_9_0._aim_yaw = arg_9_1
 end

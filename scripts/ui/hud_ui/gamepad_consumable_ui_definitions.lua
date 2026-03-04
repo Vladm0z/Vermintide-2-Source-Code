@@ -106,7 +106,7 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "texture_icon_lit",
 					pass_type = "texture",
 					retained_mode = true,
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.has_data and arg_2_0.wielded
 					end
 				},
@@ -115,7 +115,7 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "text",
 					text_id = "text_ammo",
 					retained_mode = true,
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.has_data and arg_3_0.show_ammo
 					end
 				}
@@ -259,15 +259,15 @@ local var_0_7 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeInCubic(arg_5_3)
 
 				arg_5_2[1].style.texture_highlight.color[1] = 255 * var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}

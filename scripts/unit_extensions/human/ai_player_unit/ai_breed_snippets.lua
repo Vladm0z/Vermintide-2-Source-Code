@@ -64,7 +64,7 @@ local function var_0_3(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function AiBreedSnippets.on_rat_ogre_spawn(arg_3_0, arg_3_1)
+AiBreedSnippets.on_rat_ogre_spawn = function (arg_3_0, arg_3_1)
 	arg_3_1.cycle_rage_anim_index = 0
 	arg_3_1.aggro_list = {}
 	arg_3_1.fling_skaven_timer = 0
@@ -78,7 +78,7 @@ function AiBreedSnippets.on_rat_ogre_spawn(arg_3_0, arg_3_1)
 	var_3_0:add_unit_to_bosses(arg_3_0)
 end
 
-function AiBreedSnippets.on_rat_ogre_death(arg_4_0, arg_4_1)
+AiBreedSnippets.on_rat_ogre_death = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.state.conflict
 
 	var_4_0:freeze_intensity_decay(1)
@@ -92,7 +92,7 @@ function AiBreedSnippets.on_rat_ogre_death(arg_4_0, arg_4_1)
 	AiBreedSnippets.reward_boss_kill_loot(arg_4_0, arg_4_1)
 end
 
-function AiBreedSnippets.on_rat_ogre_despawn(arg_5_0, arg_5_1)
+AiBreedSnippets.on_rat_ogre_despawn = function (arg_5_0, arg_5_1)
 	local var_5_0 = Managers.state.conflict
 
 	var_5_0:freeze_intensity_decay(1)
@@ -125,7 +125,7 @@ local function var_0_4(arg_6_0, arg_6_1)
 	arg_6_1.group_blackboard.firewall_environment_intensity = 0
 end
 
-function AiBreedSnippets.on_stormfiend_spawn(arg_7_0, arg_7_1)
+AiBreedSnippets.on_stormfiend_spawn = function (arg_7_0, arg_7_1)
 	arg_7_1.aggro_list = {}
 	arg_7_1.fling_skaven_timer = 0
 	arg_7_1.next_move_check = 0
@@ -143,7 +143,7 @@ function AiBreedSnippets.on_stormfiend_spawn(arg_7_0, arg_7_1)
 	end
 end
 
-function AiBreedSnippets.on_stormfiend_death(arg_8_0, arg_8_1)
+AiBreedSnippets.on_stormfiend_death = function (arg_8_0, arg_8_1)
 	local var_8_0 = Managers.state.conflict
 
 	var_8_0:freeze_intensity_decay(1)
@@ -163,7 +163,7 @@ function AiBreedSnippets.on_stormfiend_death(arg_8_0, arg_8_1)
 	AiBreedSnippets.reward_boss_kill_loot(arg_8_0, arg_8_1)
 end
 
-function AiBreedSnippets.on_stormfiend_despawn(arg_9_0, arg_9_1)
+AiBreedSnippets.on_stormfiend_despawn = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.state.conflict
 
 	var_9_0:freeze_intensity_decay(1)
@@ -184,7 +184,7 @@ function AiBreedSnippets.on_stormfiend_despawn(arg_9_0, arg_9_1)
 	end
 end
 
-function AiBreedSnippets.on_stormfiend_demo_death(arg_10_0, arg_10_1)
+AiBreedSnippets.on_stormfiend_demo_death = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.state.conflict
 
 	var_10_0:freeze_intensity_decay(1)
@@ -203,7 +203,7 @@ function AiBreedSnippets.on_stormfiend_demo_death(arg_10_0, arg_10_1)
 	AiBreedSnippets.on_stormfiend_demo_shoot(arg_10_0, arg_10_1)
 end
 
-function AiBreedSnippets.on_stormfiend_demo_despawn(arg_11_0, arg_11_1)
+AiBreedSnippets.on_stormfiend_demo_despawn = function (arg_11_0, arg_11_1)
 	local var_11_0 = Managers.state.conflict
 
 	var_11_0:freeze_intensity_decay(1)
@@ -222,7 +222,7 @@ function AiBreedSnippets.on_stormfiend_demo_despawn(arg_11_0, arg_11_1)
 	AiBreedSnippets.on_stormfiend_demo_shoot(arg_11_0, arg_11_1)
 end
 
-function AiBreedSnippets.on_stormfiend_demo_shoot(arg_12_0, arg_12_1)
+AiBreedSnippets.on_stormfiend_demo_shoot = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.world
 
 	LevelHelper:flow_event(var_12_0, "demo_fire_event")
@@ -241,7 +241,7 @@ function AiBreedSnippets.on_stormfiend_demo_shoot(arg_12_0, arg_12_1)
 	Managers.state.entity:system("audio_system"):set_global_parameter_with_lerp("demo_slowmo", var_12_5)
 end
 
-function AiBreedSnippets.on_loot_rat_update(arg_13_0, arg_13_1)
+AiBreedSnippets.on_loot_rat_update = function (arg_13_0, arg_13_1)
 	local var_13_0 = Managers.time:time("game")
 	local var_13_1 = arg_13_1.dodge_cooldown_time
 
@@ -257,7 +257,7 @@ function AiBreedSnippets.on_loot_rat_update(arg_13_0, arg_13_1)
 	end
 end
 
-function AiBreedSnippets.on_loot_rat_alerted(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+AiBreedSnippets.on_loot_rat_alerted = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = Managers.time:time("game")
 	local var_14_1 = arg_14_1.dodge_cooldown_time
 
@@ -290,13 +290,13 @@ function AiBreedSnippets.on_loot_rat_alerted(arg_14_0, arg_14_1, arg_14_2, arg_1
 	end
 end
 
-function AiBreedSnippets.on_loot_rat_stagger_action_done(arg_15_0)
+AiBreedSnippets.on_loot_rat_stagger_action_done = function (arg_15_0)
 	if Unit.alive(arg_15_0) then
 		ScriptUnit.extension(arg_15_0, "health_system"):regen_dodge_damage_points()
 	end
 end
 
-function AiBreedSnippets.on_skaven_explosive_loot_rat_spawn(arg_16_0)
+AiBreedSnippets.on_skaven_explosive_loot_rat_spawn = function (arg_16_0)
 	if Unit.alive(arg_16_0) then
 		local var_16_0 = ScriptUnit.has_extension(arg_16_0, "buff_system")
 		local var_16_1 = "enemy_kill_timer"
@@ -305,7 +305,7 @@ function AiBreedSnippets.on_skaven_explosive_loot_rat_spawn(arg_16_0)
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_spawn(arg_17_0, arg_17_1)
+AiBreedSnippets.on_chaos_troll_spawn = function (arg_17_0, arg_17_1)
 	arg_17_1.aggro_list = {}
 	arg_17_1.fling_skaven_timer = 0
 	arg_17_1.can_get_downed = true
@@ -335,7 +335,7 @@ function AiBreedSnippets.on_chaos_troll_spawn(arg_17_0, arg_17_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_chief_spawn(arg_18_0, arg_18_1)
+AiBreedSnippets.on_chaos_troll_chief_spawn = function (arg_18_0, arg_18_1)
 	arg_18_1.aggro_list = {}
 	arg_18_1.fling_skaven_timer = 0
 	arg_18_1.can_get_downed = true
@@ -368,7 +368,7 @@ function AiBreedSnippets.on_chaos_troll_chief_spawn(arg_18_0, arg_18_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_chief_update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+AiBreedSnippets.on_chaos_troll_chief_update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not Managers.state.network.is_server then
 		return
 	end
@@ -432,7 +432,7 @@ function AiBreedSnippets.on_chaos_troll_chief_update(arg_19_0, arg_19_1, arg_19_
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_chief_death(arg_20_0, arg_20_1)
+AiBreedSnippets.on_chaos_troll_chief_death = function (arg_20_0, arg_20_1)
 	AiBreedSnippets.on_chaos_troll_death(arg_20_0, arg_20_1)
 
 	local var_20_0 = arg_20_1.running_downed_chunk_events
@@ -456,7 +456,7 @@ function AiBreedSnippets.on_chaos_troll_chief_death(arg_20_0, arg_20_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_chief_despawn(arg_21_0, arg_21_1)
+AiBreedSnippets.on_chaos_troll_chief_despawn = function (arg_21_0, arg_21_1)
 	AiBreedSnippets.on_chaos_troll_despawn(arg_21_0, arg_21_1)
 
 	local var_21_0 = arg_21_1.running_downed_chunk_events
@@ -480,7 +480,7 @@ function AiBreedSnippets.on_chaos_troll_chief_despawn(arg_21_0, arg_21_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_troll_death(arg_22_0, arg_22_1)
+AiBreedSnippets.on_chaos_troll_death = function (arg_22_0, arg_22_1)
 	local var_22_0 = Managers.state.conflict
 
 	var_22_0:freeze_intensity_decay(1)
@@ -494,7 +494,7 @@ function AiBreedSnippets.on_chaos_troll_death(arg_22_0, arg_22_1)
 	AiBreedSnippets.reward_boss_kill_loot(arg_22_0, arg_22_1)
 end
 
-function AiBreedSnippets.on_chaos_troll_despawn(arg_23_0, arg_23_1)
+AiBreedSnippets.on_chaos_troll_despawn = function (arg_23_0, arg_23_1)
 	local var_23_0 = Managers.state.conflict
 
 	var_23_0:freeze_intensity_decay(1)
@@ -510,7 +510,7 @@ function AiBreedSnippets.on_chaos_troll_despawn(arg_23_0, arg_23_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_dummy_troll_spawn(arg_24_0, arg_24_1)
+AiBreedSnippets.on_chaos_dummy_troll_spawn = function (arg_24_0, arg_24_1)
 	arg_24_1.aggro_list = {}
 	arg_24_1.can_get_downed = true
 	arg_24_1.crouch_sticky_timer = 0
@@ -525,7 +525,7 @@ function AiBreedSnippets.on_chaos_dummy_troll_spawn(arg_24_0, arg_24_1)
 	arg_24_1.play_alert = true
 end
 
-function AiBreedSnippets.on_chaos_dummy_troll_update(arg_25_0, arg_25_1)
+AiBreedSnippets.on_chaos_dummy_troll_update = function (arg_25_0, arg_25_1)
 	local var_25_0 = Managers.time:time("game")
 	local var_25_1 = arg_25_1.idle_sound_timer
 	local var_25_2 = Managers.state.entity:system("audio_system")
@@ -545,15 +545,15 @@ function AiBreedSnippets.on_chaos_dummy_troll_update(arg_25_0, arg_25_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_dummy_troll_death(arg_26_0, arg_26_1)
+AiBreedSnippets.on_chaos_dummy_troll_death = function (arg_26_0, arg_26_1)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_enemy_troll_vce_hurt", arg_26_0)
 end
 
-function AiBreedSnippets.on_chaos_dummy_sorcerer_spawn(arg_27_0, arg_27_1, arg_27_2)
+AiBreedSnippets.on_chaos_dummy_sorcerer_spawn = function (arg_27_0, arg_27_1, arg_27_2)
 	ScriptUnit.extension(arg_27_0, "health_system").is_invincible = true
 end
 
-function AiBreedSnippets.on_storm_vermin_champion_spawn(arg_28_0, arg_28_1)
+AiBreedSnippets.on_storm_vermin_champion_spawn = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_1.breed
 
 	arg_28_1.aggro_list = {}
@@ -609,14 +609,14 @@ function AiBreedSnippets.on_storm_vermin_champion_spawn(arg_28_0, arg_28_1)
 	end
 end
 
-function AiBreedSnippets.on_storm_vermin_champion_husk_spawn(arg_29_0)
+AiBreedSnippets.on_storm_vermin_champion_husk_spawn = function (arg_29_0)
 	local var_29_0 = Unit.actor(arg_29_0, "c_trophy_rack_ward")
 
 	Actor.set_collision_enabled(var_29_0, false)
 	Actor.set_scene_query_enabled(var_29_0, false)
 end
 
-function AiBreedSnippets.on_storm_vermin_hot_join_sync(arg_30_0, arg_30_1)
+AiBreedSnippets.on_storm_vermin_hot_join_sync = function (arg_30_0, arg_30_1)
 	if BLACKBOARDS[arg_30_1].ward_active then
 		local var_30_0 = Managers.state.network:unit_game_object_id(arg_30_0)
 		local var_30_1 = PEER_ID_TO_CHANNEL[arg_30_0]
@@ -625,7 +625,7 @@ function AiBreedSnippets.on_storm_vermin_hot_join_sync(arg_30_0, arg_30_1)
 	end
 end
 
-function AiBreedSnippets.on_storm_vermin_champion_update(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+AiBreedSnippets.on_storm_vermin_champion_update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = Managers.state.side.side_by_unit[arg_31_0]
 	local var_31_1 = var_31_0.ENEMY_PLAYER_AND_BOT_UNITS
 	local var_31_2 = var_31_0.ENEMY_PLAYER_AND_BOT_POSITIONS
@@ -713,7 +713,7 @@ function AiBreedSnippets.on_storm_vermin_champion_update(arg_31_0, arg_31_1, arg
 	end
 end
 
-function AiBreedSnippets.on_storm_vermin_champion_death(arg_32_0, arg_32_1)
+AiBreedSnippets.on_storm_vermin_champion_death = function (arg_32_0, arg_32_1)
 	local var_32_0 = Managers.state.conflict
 
 	var_32_0:freeze_intensity_decay(1)
@@ -730,7 +730,7 @@ function AiBreedSnippets.on_storm_vermin_champion_death(arg_32_0, arg_32_1)
 	AiBreedSnippets.drop_loot(2, Vector3(166.5, -46, 38), true, arg_32_0)
 end
 
-function AiBreedSnippets.on_storm_vermin_champion_despawn(arg_33_0, arg_33_1)
+AiBreedSnippets.on_storm_vermin_champion_despawn = function (arg_33_0, arg_33_1)
 	local var_33_0 = Managers.state.conflict
 
 	var_33_0:freeze_intensity_decay(1)
@@ -741,12 +741,12 @@ function AiBreedSnippets.on_storm_vermin_champion_despawn(arg_33_0, arg_33_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_warrior_spawn(arg_34_0, arg_34_1)
+AiBreedSnippets.on_chaos_warrior_spawn = function (arg_34_0, arg_34_1)
 	arg_34_1.displaced_units = {}
 	arg_34_1.aggro_list = {}
 end
 
-function AiBreedSnippets.on_chaos_warrior_update(arg_35_0, arg_35_1, arg_35_2)
+AiBreedSnippets.on_chaos_warrior_update = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_1.breed.displace_players_data
 
 	if not var_35_0 or not HEALTH_ALIVE[arg_35_0] then
@@ -756,7 +756,7 @@ function AiBreedSnippets.on_chaos_warrior_update(arg_35_0, arg_35_1, arg_35_2)
 	AiUtils.push_intersecting_players(arg_35_0, arg_35_0, arg_35_1.displaced_units, var_35_0, arg_35_2)
 end
 
-function AiBreedSnippets.on_chaos_tentacle_despawn(arg_36_0, arg_36_1)
+AiBreedSnippets.on_chaos_tentacle_despawn = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1.tentacle_data
 
 	if var_36_0 and var_36_0.portal_unit then
@@ -776,7 +776,7 @@ function AiBreedSnippets.on_chaos_tentacle_despawn(arg_36_0, arg_36_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_spawn_spawn(arg_37_0, arg_37_1)
+AiBreedSnippets.on_chaos_spawn_spawn = function (arg_37_0, arg_37_1)
 	arg_37_1.aggro_list = {}
 	arg_37_1.fling_skaven_timer = 0
 	arg_37_1.next_move_check = 0
@@ -794,7 +794,7 @@ function AiBreedSnippets.on_chaos_spawn_spawn(arg_37_0, arg_37_1)
 	var_37_0:add_unit_to_bosses(arg_37_0)
 end
 
-function AiBreedSnippets.on_chaos_spawn_death(arg_38_0, arg_38_1)
+AiBreedSnippets.on_chaos_spawn_death = function (arg_38_0, arg_38_1)
 	local var_38_0 = Managers.state.conflict
 
 	var_38_0:freeze_intensity_decay(1)
@@ -808,7 +808,7 @@ function AiBreedSnippets.on_chaos_spawn_death(arg_38_0, arg_38_1)
 	AiBreedSnippets.reward_boss_kill_loot(arg_38_0, arg_38_1)
 end
 
-function AiBreedSnippets.on_chaos_spawn_despawn(arg_39_0, arg_39_1)
+AiBreedSnippets.on_chaos_spawn_despawn = function (arg_39_0, arg_39_1)
 	local var_39_0 = Managers.state.conflict
 
 	var_39_0:freeze_intensity_decay(1)
@@ -823,7 +823,7 @@ function AiBreedSnippets.on_chaos_spawn_despawn(arg_39_0, arg_39_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_vortex_sorcerer_spawn(arg_40_0, arg_40_1)
+AiBreedSnippets.on_chaos_vortex_sorcerer_spawn = function (arg_40_0, arg_40_1)
 	arg_40_1.max_vortex_units = arg_40_1.breed.max_vortex_units
 	arg_40_1.spell_count = 0
 
@@ -877,19 +877,19 @@ function remove_vortex_units(arg_41_0, arg_41_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_vortex_sorcerer_death(arg_42_0, arg_42_1)
+AiBreedSnippets.on_chaos_vortex_sorcerer_death = function (arg_42_0, arg_42_1)
 	remove_vortex_units(arg_42_0, arg_42_1)
 end
 
-function AiBreedSnippets.on_chaos_vortex_sorcerer_despawn(arg_43_0, arg_43_1)
+AiBreedSnippets.on_chaos_vortex_sorcerer_despawn = function (arg_43_0, arg_43_1)
 	remove_vortex_units(arg_43_0, arg_43_1)
 end
 
-function AiBreedSnippets.on_chaos_sorcerer_spawn(arg_44_0, arg_44_1)
+AiBreedSnippets.on_chaos_sorcerer_spawn = function (arg_44_0, arg_44_1)
 	arg_44_1.spell_count = 0
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_spawn(arg_45_0, arg_45_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_spawn = function (arg_45_0, arg_45_1)
 	local var_45_0 = Managers.time:time("game")
 	local var_45_1 = arg_45_1.breed
 
@@ -1093,7 +1093,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_spawn(arg_45_0, arg_45_1)
 		arg_45_1.arena_pose_boxed = Matrix4x4Box(Matrix4x4.from_quaternion_position(var_45_22, var_45_21))
 		arg_45_1.arena_half_extents = Vector3Box(12, 12, 1)
 
-		function arg_45_1.valid_teleport_pos_func(arg_46_0, arg_46_1)
+		arg_45_1.valid_teleport_pos_func = function (arg_46_0, arg_46_1)
 			local var_46_0 = arg_46_1.arena_pose_boxed:unbox()
 			local var_46_1 = arg_46_1.arena_half_extents:unbox()
 
@@ -1102,7 +1102,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_spawn(arg_45_0, arg_45_1)
 	else
 		arg_45_1.phase = "offensive"
 
-		function arg_45_1.valid_teleport_pos_func(arg_47_0, arg_47_1)
+		arg_45_1.valid_teleport_pos_func = function (arg_47_0, arg_47_1)
 			return true
 		end
 
@@ -1173,7 +1173,7 @@ end
 
 local var_0_5 = false
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_update(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+AiBreedSnippets.on_chaos_exalted_sorcerer_update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	check_for_recent_attackers(arg_49_0, arg_49_1, arg_49_2)
 
 	if not arg_49_1.in_boss_arena then
@@ -1229,7 +1229,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_update(arg_49_0, arg_49_1, ar
 	end
 end
 
-function AiBreedSnippets.reward_boss_kill_loot(arg_50_0, arg_50_1)
+AiBreedSnippets.reward_boss_kill_loot = function (arg_50_0, arg_50_1)
 	local var_50_0 = Managers.state.game_mode:get_boss_loot_pickup()
 
 	if not var_50_0 then
@@ -1285,7 +1285,7 @@ function AiBreedSnippets.reward_boss_kill_loot(arg_50_0, arg_50_1)
 	arg_50_1.rewarded_boss_loot = true
 end
 
-function AiBreedSnippets.drop_loot(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+AiBreedSnippets.drop_loot = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = Managers.state.game_mode:get_boss_loot_pickup()
 
 	if not var_51_0 then
@@ -1315,7 +1315,7 @@ function AiBreedSnippets.drop_loot(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_death(arg_52_0, arg_52_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_death = function (arg_52_0, arg_52_1)
 	local var_52_0 = Managers.state.conflict
 
 	var_52_0:remove_unit_from_bosses(arg_52_0)
@@ -1331,7 +1331,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_death(arg_52_0, arg_52_1)
 	AiBreedSnippets.drop_loot(2, Vector3(362.5, 51.6, -9.1), true, arg_52_0)
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_despawn(arg_53_0, arg_53_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_despawn = function (arg_53_0, arg_53_1)
 	local var_53_0 = Managers.state.conflict
 
 	var_53_0:remove_unit_from_bosses(arg_53_0)
@@ -1341,7 +1341,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_despawn(arg_53_0, arg_53_1)
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_spawn(arg_54_0, arg_54_1)
+AiBreedSnippets.on_chaos_exalted_champion_spawn = function (arg_54_0, arg_54_1)
 	local var_54_0 = Managers.time:time("game")
 	local var_54_1 = arg_54_1.breed
 
@@ -1382,7 +1382,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_spawn(arg_54_0, arg_54_1)
 	arg_54_1.num_times_hit_chaos_warrior = 0
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_norsca_spawn(arg_55_0, arg_55_1)
+AiBreedSnippets.on_chaos_exalted_champion_norsca_spawn = function (arg_55_0, arg_55_1)
 	local var_55_0 = Managers.time:time("game")
 	local var_55_1 = arg_55_1.breed
 
@@ -1414,7 +1414,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_norsca_spawn(arg_55_0, arg_55
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_update(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+AiBreedSnippets.on_chaos_exalted_champion_update = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = Unit.local_position(arg_56_0, 0)
 	local var_56_1 = arg_56_1.breed
 	local var_56_2 = BreedActions.chaos_exalted_champion.special_attack_aoe.radius
@@ -1513,7 +1513,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_update(arg_56_0, arg_56_1, ar
 	end
 end
 
-function AiBreedSnippets.update_exalted_champion_cheer_state(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+AiBreedSnippets.update_exalted_champion_cheer_state = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 	local var_57_0 = Managers.state.network.network_transmit
 	local var_57_1 = Managers.state.entity:system("audio_system")
 	local var_57_2 = ScriptUnit.extension(arg_57_1.unit, "health_system"):current_health_percent()
@@ -1546,7 +1546,7 @@ function AiBreedSnippets.update_exalted_champion_cheer_state(arg_57_0, arg_57_1,
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_norsca_update(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+AiBreedSnippets.on_chaos_exalted_champion_norsca_update = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = arg_58_1.breed
 	local var_58_1 = ScriptUnit.extension(arg_58_1.unit, "health_system"):current_health_percent()
 
@@ -1567,7 +1567,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_norsca_update(arg_58_0, arg_5
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_death(arg_59_0, arg_59_1)
+AiBreedSnippets.on_chaos_exalted_champion_death = function (arg_59_0, arg_59_1)
 	local var_59_0 = Managers.state.conflict
 
 	var_59_0:remove_unit_from_bosses(arg_59_0)
@@ -1590,7 +1590,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_death(arg_59_0, arg_59_1)
 	AiBreedSnippets.drop_loot(2, Vector3(231, -75, 45), true, arg_59_0)
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_norsca_death(arg_60_0, arg_60_1)
+AiBreedSnippets.on_chaos_exalted_champion_norsca_death = function (arg_60_0, arg_60_1)
 	local var_60_0 = Managers.state.conflict
 
 	var_60_0:freeze_intensity_decay(1)
@@ -1605,7 +1605,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_norsca_death(arg_60_0, arg_60
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_champion_despawn(arg_61_0, arg_61_1)
+AiBreedSnippets.on_chaos_exalted_champion_despawn = function (arg_61_0, arg_61_1)
 	local var_61_0 = Managers.state.conflict
 
 	var_61_0:remove_unit_from_bosses(arg_61_0)
@@ -1615,7 +1615,7 @@ function AiBreedSnippets.on_chaos_exalted_champion_despawn(arg_61_0, arg_61_1)
 	end
 end
 
-function AiBreedSnippets.on_stormfiend_boss_spawn(arg_62_0, arg_62_1)
+AiBreedSnippets.on_stormfiend_boss_spawn = function (arg_62_0, arg_62_1)
 	AiBreedSnippets.on_stormfiend_spawn(arg_62_0, arg_62_1)
 
 	arg_62_1.hp_at_mounted = ScriptUnit.extension(arg_62_1.unit, "health_system"):current_health_percent()
@@ -1623,7 +1623,7 @@ function AiBreedSnippets.on_stormfiend_boss_spawn(arg_62_0, arg_62_1)
 	arg_62_1.current_phase = 1
 end
 
-function AiBreedSnippets.on_stormfiend_boss_update(arg_63_0, arg_63_1)
+AiBreedSnippets.on_stormfiend_boss_update = function (arg_63_0, arg_63_1)
 	local var_63_0 = ScriptUnit.extension(arg_63_1.unit, "health_system"):current_health_percent()
 	local var_63_1 = arg_63_1.hp_at_mounted
 	local var_63_2 = Unit.local_position(arg_63_0, 0)
@@ -1648,7 +1648,7 @@ function AiBreedSnippets.on_stormfiend_boss_update(arg_63_0, arg_63_1)
 	end
 end
 
-function AiBreedSnippets.on_stormfiend_boss_dismount(arg_64_0, arg_64_1)
+AiBreedSnippets.on_stormfiend_boss_dismount = function (arg_64_0, arg_64_1)
 	local var_64_0 = arg_64_1.linked_unit
 
 	if HEALTH_ALIVE[var_64_0] then
@@ -1678,7 +1678,7 @@ function AiBreedSnippets.on_stormfiend_boss_dismount(arg_64_0, arg_64_1)
 	end
 end
 
-function AiBreedSnippets.on_grey_seer_spawn(arg_65_0, arg_65_1)
+AiBreedSnippets.on_grey_seer_spawn = function (arg_65_0, arg_65_1)
 	local var_65_0 = Managers.time:time("game")
 	local var_65_1 = World.get_data(arg_65_1.world, "physics_world")
 
@@ -1782,7 +1782,7 @@ function AiBreedSnippets.on_grey_seer_spawn(arg_65_0, arg_65_1)
 	end
 end
 
-function AiBreedSnippets.on_grey_seer_update(arg_66_0, arg_66_1, arg_66_2)
+AiBreedSnippets.on_grey_seer_update = function (arg_66_0, arg_66_1, arg_66_2)
 	local var_66_0 = arg_66_1.mounted_data
 	local var_66_1 = ScriptUnit.extension(arg_66_1.unit, "health_system"):current_health_percent()
 	local var_66_2 = Unit.local_position(arg_66_0, 0)
@@ -1921,7 +1921,7 @@ function AiBreedSnippets.on_grey_seer_update(arg_66_0, arg_66_1, arg_66_2)
 	end
 end
 
-function AiBreedSnippets.on_grey_seer_death(arg_67_0, arg_67_1)
+AiBreedSnippets.on_grey_seer_death = function (arg_67_0, arg_67_1)
 	local var_67_0 = Managers.state.conflict
 
 	var_67_0:remove_unit_from_bosses(arg_67_0)
@@ -1937,7 +1937,7 @@ function AiBreedSnippets.on_grey_seer_death(arg_67_0, arg_67_1)
 	AiBreedSnippets.drop_loot(3, Vector3(-308, -364, -126), true, arg_67_0)
 end
 
-function AiBreedSnippets.on_grey_seer_despawn(arg_68_0, arg_68_1, arg_68_2)
+AiBreedSnippets.on_grey_seer_despawn = function (arg_68_0, arg_68_1, arg_68_2)
 	local var_68_0 = Managers.state.conflict
 
 	var_68_0:remove_unit_from_bosses(arg_68_0)
@@ -1947,13 +1947,13 @@ function AiBreedSnippets.on_grey_seer_despawn(arg_68_0, arg_68_1, arg_68_2)
 	end
 end
 
-function AiBreedSnippets.on_gutter_runner_spawn(arg_69_0, arg_69_1)
+AiBreedSnippets.on_gutter_runner_spawn = function (arg_69_0, arg_69_1)
 	arg_69_1.initial_pounce_timer = Managers.time:time("game") + math.random(2, 3)
 
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_69_0, "heard_enemy", DialogueSettings.enemies_distant_distance, "enemy_tag", "skaven_gutter_runner")
 end
 
-function AiBreedSnippets.update_enemy_sighting_within_commander_sticky(arg_70_0)
+AiBreedSnippets.update_enemy_sighting_within_commander_sticky = function (arg_70_0)
 	local var_70_0 = false
 
 	repeat

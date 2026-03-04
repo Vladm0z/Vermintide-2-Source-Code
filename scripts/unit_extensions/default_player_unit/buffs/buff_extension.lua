@@ -21,7 +21,7 @@ local var_0_3 = {
 	removed = true
 }
 
-function BuffExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BuffExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._unit = arg_2_2
 	arg_2_0.world = arg_2_1.world
 	arg_2_0._breed = arg_2_3.breed
@@ -64,7 +64,7 @@ function BuffExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.reset_material_cache = nil
 end
 
-function BuffExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+BuffExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_activate_initial_buffs()
 
 	local var_3_0 = Unit.get_data(arg_3_2, "breed")
@@ -95,21 +95,21 @@ function BuffExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.debug_buff_names = {}
 end
 
-function BuffExtension.destroy(arg_4_0)
+BuffExtension.destroy = function (arg_4_0)
 	arg_4_0:clear()
 end
 
-function BuffExtension.freeze(arg_5_0)
+BuffExtension.freeze = function (arg_5_0)
 	arg_5_0:clear()
 
 	arg_5_0._ai_frozen = true
 end
 
-function BuffExtension.unfreeze(arg_6_0)
+BuffExtension.unfreeze = function (arg_6_0)
 	arg_6_0._ai_frozen = nil
 end
 
-function BuffExtension.clear(arg_7_0)
+BuffExtension.clear = function (arg_7_0)
 	local var_7_0 = arg_7_0._buffs
 	local var_7_1 = Managers.time:time("game")
 	local var_7_2 = buff_extension_function_params
@@ -158,7 +158,7 @@ function BuffExtension.clear(arg_7_0)
 	Managers.state.entity:system("buff_system"):set_buff_ext_active(arg_7_0._unit, false)
 end
 
-function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
+BuffExtension.add_buff = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._unit
 
 	if FROZEN[var_8_0] or arg_8_0._ai_frozen then
@@ -182,7 +182,7 @@ function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
 		local var_8_13 = var_8_12.apply_condition
 
 		if var_8_13 and not var_8_13(var_8_0, var_8_12, arg_8_2) then
-			-- block empty
+			-- Nothing
 		else
 			local var_8_14 = var_8_12.duration
 			local var_8_15 = var_8_12.ticks
@@ -267,7 +267,7 @@ function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
 			local var_8_40 = var_8_14 and var_8_5 + var_8_14
 
 			if var_8_18 and not arg_8_0:_add_stacking_buff(var_8_12, var_8_17, var_8_5, var_8_14, var_8_40, arg_8_2) then
-				-- block empty
+				-- Nothing
 			else
 				local var_8_41 = var_8_12.refresh_duration_of_buffs_on_apply
 
@@ -501,7 +501,7 @@ function BuffExtension.add_buff(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_6, var_8_11, var_8_9
 end
 
-function BuffExtension._add_stacking_buff(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+BuffExtension._add_stacking_buff = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = arg_9_0._stacking_buffs[arg_9_1.name]
 	local var_9_1 = var_9_0 and #var_9_0 or 0
 
@@ -577,7 +577,7 @@ function BuffExtension._add_stacking_buff(arg_9_0, arg_9_1, arg_9_2, arg_9_3, ar
 	return var_9_5
 end
 
-function BuffExtension._refresh_duration(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+BuffExtension._refresh_duration = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	if arg_10_1.area_buff_unit then
 		local var_10_0 = ScriptUnit.has_extension(arg_10_1.area_buff_unit, "buff_area_system")
 
@@ -609,7 +609,7 @@ function BuffExtension._refresh_duration(arg_10_0, arg_10_1, arg_10_2, arg_10_3,
 	end
 end
 
-function BuffExtension._add_stat_buff(arg_11_0, arg_11_1, arg_11_2)
+BuffExtension._add_stat_buff = function (arg_11_0, arg_11_1, arg_11_2)
 	if FROZEN[arg_11_0._unit] or arg_11_0._ai_frozen then
 		return
 	end
@@ -687,7 +687,7 @@ function BuffExtension._add_stat_buff(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_11
 end
 
-function BuffExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BuffExtension.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_0.world
 	local var_12_1 = arg_12_0._buffs
 	local var_12_2 = buff_extension_function_params
@@ -805,7 +805,7 @@ function BuffExtension.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, 
 	end
 end
 
-function BuffExtension.update_stat_buff(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BuffExtension.update_stat_buff = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0._stat_buffs[arg_13_1]
 	local var_13_1 = StatBuffApplicationMethods[arg_13_1]
 
@@ -828,7 +828,7 @@ function BuffExtension.update_stat_buff(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function BuffExtension.num_sub_buffs(arg_14_0, arg_14_1)
+BuffExtension.num_sub_buffs = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._buffs
 	local var_14_1 = table.find_by_key(var_14_0, "id", arg_14_1)
 
@@ -853,7 +853,7 @@ function BuffExtension.num_sub_buffs(arg_14_0, arg_14_1)
 	return var_14_3
 end
 
-function BuffExtension.remove_buff(arg_15_0, arg_15_1, arg_15_2)
+BuffExtension.remove_buff = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_1 then
 		return 0
 	end
@@ -897,14 +897,14 @@ function BuffExtension.remove_buff(arg_15_0, arg_15_1, arg_15_2)
 	return var_15_4
 end
 
-function BuffExtension.queue_remove_buff(arg_16_0, arg_16_1)
+BuffExtension.queue_remove_buff = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._remove_buff_queue or {}
 
 	var_16_0[#var_16_0 + 1] = arg_16_1
 	arg_16_0._remove_buff_queue = var_16_0
 end
 
-function BuffExtension._remove_sub_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+BuffExtension._remove_sub_buff = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = arg_17_0.world
 	local var_17_1 = arg_17_0._buffs
 	local var_17_2 = arg_17_1.template
@@ -1079,7 +1079,7 @@ function BuffExtension._remove_sub_buff(arg_17_0, arg_17_1, arg_17_2, arg_17_3, 
 	end
 end
 
-function BuffExtension._remove_stat_buff(arg_18_0, arg_18_1)
+BuffExtension._remove_stat_buff = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.template
 	local var_18_1 = arg_18_1.bonus or 0
 	local var_18_2 = arg_18_1.multiplier or 0
@@ -1142,7 +1142,7 @@ function BuffExtension._remove_stat_buff(arg_18_0, arg_18_1)
 	end
 end
 
-function BuffExtension.get_buff_type(arg_19_0, arg_19_1)
+BuffExtension.get_buff_type = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._buffs
 
 	for iter_19_0 = 1, arg_19_0._num_buffs do
@@ -1156,7 +1156,7 @@ function BuffExtension.get_buff_type(arg_19_0, arg_19_1)
 	return nil
 end
 
-function BuffExtension.get_buff_by_id(arg_20_0, arg_20_1)
+BuffExtension.get_buff_by_id = function (arg_20_0, arg_20_1)
 	if not arg_20_1 then
 		return nil
 	end
@@ -1174,7 +1174,7 @@ function BuffExtension.get_buff_by_id(arg_20_0, arg_20_1)
 	return nil
 end
 
-function BuffExtension.has_buff_type(arg_21_0, arg_21_1)
+BuffExtension.has_buff_type = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._buffs
 
 	for iter_21_0 = 1, arg_21_0._num_buffs do
@@ -1186,17 +1186,17 @@ function BuffExtension.has_buff_type(arg_21_0, arg_21_1)
 	return false
 end
 
-function BuffExtension.has_buff_perk(arg_22_0, arg_22_1)
+BuffExtension.has_buff_perk = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._perks[arg_22_1]
 
 	return var_22_0 and var_22_0 > 0
 end
 
-function BuffExtension.num_buff_perk(arg_23_0, arg_23_1)
+BuffExtension.num_buff_perk = function (arg_23_0, arg_23_1)
 	return arg_23_0._perks[arg_23_1] or 0
 end
 
-function BuffExtension.get_non_stacking_buff(arg_24_0, arg_24_1)
+BuffExtension.get_non_stacking_buff = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._buffs
 
 	for iter_24_0 = 1, arg_24_0._num_buffs do
@@ -1212,17 +1212,17 @@ function BuffExtension.get_non_stacking_buff(arg_24_0, arg_24_1)
 	return nil
 end
 
-function BuffExtension.get_stacking_buff(arg_25_0, arg_25_1)
+BuffExtension.get_stacking_buff = function (arg_25_0, arg_25_1)
 	return arg_25_0._stacking_buffs[arg_25_1]
 end
 
-function BuffExtension.num_buff_stacks(arg_26_0, arg_26_1)
+BuffExtension.num_buff_stacks = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._stacking_buffs[arg_26_1]
 
 	return var_26_0 and #var_26_0 or 0
 end
 
-function BuffExtension.num_buff_type(arg_27_0, arg_27_1)
+BuffExtension.num_buff_type = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._stacking_buffs[arg_27_1]
 
 	if var_27_0 then
@@ -1241,7 +1241,7 @@ function BuffExtension.num_buff_type(arg_27_0, arg_27_1)
 	return var_27_2
 end
 
-function BuffExtension.has_procced(arg_28_0, arg_28_1, arg_28_2)
+BuffExtension.has_procced = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._prd_states
 	local var_28_1
 	local var_28_2 = var_28_0[arg_28_2]
@@ -1262,7 +1262,7 @@ local function var_0_5(arg_30_0, arg_30_1, arg_30_2)
 	return not var_30_0 or var_30_0 == "server" and arg_30_1 or var_30_0 == "client" and arg_30_2
 end
 
-function BuffExtension.trigger_procs(arg_31_0, arg_31_1, ...)
+BuffExtension.trigger_procs = function (arg_31_0, arg_31_1, ...)
 	local var_31_0 = arg_31_0._event_buffs[arg_31_1]
 
 	if table.size(var_31_0) == 0 then
@@ -1321,7 +1321,7 @@ function BuffExtension.trigger_procs(arg_31_0, arg_31_1, ...)
 	end
 end
 
-function BuffExtension.get_buff_value(arg_32_0, arg_32_1)
+BuffExtension.get_buff_value = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._stat_buffs[arg_32_1]
 	local var_32_1 = false
 	local var_32_2 = StatBuffApplicationMethods[arg_32_1] == "proc"
@@ -1344,7 +1344,7 @@ function BuffExtension.get_buff_value(arg_32_0, arg_32_1)
 	return var_32_3, var_32_1, var_32_4
 end
 
-function BuffExtension.apply_buffs_to_value(arg_33_0, arg_33_1, arg_33_2)
+BuffExtension.apply_buffs_to_value = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._stat_buffs[arg_33_2]
 	local var_33_1 = arg_33_1
 	local var_33_2 = false
@@ -1398,7 +1398,7 @@ function BuffExtension.apply_buffs_to_value(arg_33_0, arg_33_1, arg_33_2)
 	return var_33_1 * var_33_5 + var_33_6, var_33_2, var_33_4
 end
 
-function BuffExtension._play_buff_sound(arg_34_0, arg_34_1, arg_34_2)
+BuffExtension._play_buff_sound = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._unit
 
 	if arg_34_2 then
@@ -1408,7 +1408,7 @@ function BuffExtension._play_buff_sound(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function BuffExtension._play_screen_effect(arg_35_0, arg_35_1)
+BuffExtension._play_screen_effect = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._unit
 
 	if ScriptUnit.has_extension(var_35_0, "first_person_system") then
@@ -1418,7 +1418,7 @@ function BuffExtension._play_screen_effect(arg_35_0, arg_35_1)
 	return nil
 end
 
-function BuffExtension._stop_screen_effect(arg_36_0, arg_36_1)
+BuffExtension._stop_screen_effect = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._unit
 
 	if arg_36_1 and ScriptUnit.has_extension(var_36_0, "first_person_system") then
@@ -1426,15 +1426,15 @@ function BuffExtension._stop_screen_effect(arg_36_0, arg_36_1)
 	end
 end
 
-function BuffExtension.active_buffs(arg_37_0)
+BuffExtension.active_buffs = function (arg_37_0)
 	return arg_37_0._buffs, arg_37_0._num_buffs
 end
 
-function BuffExtension.initial_buff_names(arg_38_0)
+BuffExtension.initial_buff_names = function (arg_38_0)
 	return arg_38_0._initial_buff_names
 end
 
-function BuffExtension.get_persistent_buff_names(arg_39_0)
+BuffExtension.get_persistent_buff_names = function (arg_39_0)
 	local var_39_0 = {}
 
 	for iter_39_0, iter_39_1 in pairs(arg_39_0._buffs) do
@@ -1448,7 +1448,7 @@ function BuffExtension.get_persistent_buff_names(arg_39_0)
 	return var_39_0
 end
 
-function BuffExtension._activate_initial_buffs(arg_40_0)
+BuffExtension._activate_initial_buffs = function (arg_40_0)
 	local var_40_0 = arg_40_0._initial_buff_names
 
 	if var_40_0 then
@@ -1458,7 +1458,7 @@ function BuffExtension._activate_initial_buffs(arg_40_0)
 	end
 end
 
-function BuffExtension.set_pending_sync_id(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+BuffExtension.set_pending_sync_id = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	arg_41_0:_initalize_sync_tables()
 
 	arg_41_0._id_to_local_sync[arg_41_1] = arg_41_2
@@ -1466,7 +1466,7 @@ function BuffExtension.set_pending_sync_id(arg_41_0, arg_41_1, arg_41_2, arg_41_
 	arg_41_0._buff_to_sync_type[arg_41_1] = arg_41_3
 end
 
-function BuffExtension.apply_sync_id(arg_42_0, arg_42_1, arg_42_2)
+BuffExtension.apply_sync_id = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._local_sync_to_id and arg_42_0._local_sync_to_id[arg_42_1]
 
 	if var_42_0 then
@@ -1481,7 +1481,7 @@ function BuffExtension.apply_sync_id(arg_42_0, arg_42_1, arg_42_2)
 	return false
 end
 
-function BuffExtension.apply_remote_sync_id(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+BuffExtension.apply_remote_sync_id = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	if arg_43_1 then
 		arg_43_0:_initalize_sync_tables()
 
@@ -1492,7 +1492,7 @@ function BuffExtension.apply_remote_sync_id(arg_43_0, arg_43_1, arg_43_2, arg_43
 	end
 end
 
-function BuffExtension.generate_sync_id(arg_44_0)
+BuffExtension.generate_sync_id = function (arg_44_0)
 	local var_44_0
 	local var_44_1 = arg_44_0._free_sync_ids
 
@@ -1501,7 +1501,7 @@ function BuffExtension.generate_sync_id(arg_44_0)
 
 		if not var_44_0 then
 			if arg_44_0.debug_buff_names then
-				table.dump(table.select_map(arg_44_0._local_sync_to_id, function(arg_45_0, arg_45_1)
+				table.dump(table.select_map(arg_44_0._local_sync_to_id, function (arg_45_0, arg_45_1)
 					return string.format("(id: %s) %s", arg_45_0, arg_44_0.debug_buff_names[arg_45_1])
 				end), "Synced Buffs")
 			else
@@ -1527,7 +1527,7 @@ function BuffExtension.generate_sync_id(arg_44_0)
 	return var_44_0
 end
 
-function BuffExtension.claim_buff_id(arg_46_0, arg_46_1)
+BuffExtension.claim_buff_id = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0.id
 
 	arg_46_0.id = var_46_0 + 1
@@ -1539,19 +1539,19 @@ function BuffExtension.claim_buff_id(arg_46_0, arg_46_1)
 	return var_46_0
 end
 
-function BuffExtension.sync_id_to_id(arg_47_0, arg_47_1)
+BuffExtension.sync_id_to_id = function (arg_47_0, arg_47_1)
 	return arg_47_0._server_sync_to_id and arg_47_0._server_sync_to_id[arg_47_1]
 end
 
-function BuffExtension.id_to_sync_id(arg_48_0, arg_48_1)
+BuffExtension.id_to_sync_id = function (arg_48_0, arg_48_1)
 	return arg_48_0._id_to_server_sync and arg_48_0._id_to_server_sync[arg_48_1]
 end
 
-function BuffExtension.buff_sync_type(arg_49_0, arg_49_1)
+BuffExtension.buff_sync_type = function (arg_49_0, arg_49_1)
 	return arg_49_0._buff_to_sync_type[arg_49_1]
 end
 
-function BuffExtension._free_sync_id(arg_50_0, arg_50_1)
+BuffExtension._free_sync_id = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._buff_to_sync_type
 
 	if not var_50_0 or not var_50_0[arg_50_1] then
@@ -1582,7 +1582,7 @@ function BuffExtension._free_sync_id(arg_50_0, arg_50_1)
 	arg_50_0._synced_buff_owner[arg_50_1] = nil
 end
 
-function BuffExtension._build_free_sync_ids_array(arg_51_0)
+BuffExtension._build_free_sync_ids_array = function (arg_51_0)
 	local var_51_0 = NetworkConstants.server_controlled_buff_id.max
 
 	arg_51_0._free_sync_ids = Script.new_array(var_51_0)
@@ -1598,7 +1598,7 @@ function BuffExtension._build_free_sync_ids_array(arg_51_0)
 	end
 end
 
-function BuffExtension._initalize_sync_tables(arg_52_0)
+BuffExtension._initalize_sync_tables = function (arg_52_0)
 	if not arg_52_0._id_to_local_sync then
 		arg_52_0._id_to_local_sync = {}
 		arg_52_0._local_sync_to_id = {}
@@ -1609,7 +1609,7 @@ function BuffExtension._initalize_sync_tables(arg_52_0)
 	end
 end
 
-function BuffExtension.create_shared_lifetime_buff_unit(arg_53_0, arg_53_1)
+BuffExtension.create_shared_lifetime_buff_unit = function (arg_53_0, arg_53_1)
 	arg_53_0._shared_buff_units = arg_53_0._shared_buff_units or {}
 	arg_53_0._shared_buff_units[#arg_53_0._shared_buff_units + 1] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "buff_unit", arg_53_0._buff_unit_params, arg_53_1, Quaternion.identity(), nil)
 
@@ -1618,7 +1618,7 @@ end
 
 local var_0_6 = Managers
 
-function BuffExtension._remove_buff_synced(arg_54_0, arg_54_1)
+BuffExtension._remove_buff_synced = function (arg_54_0, arg_54_1)
 	local var_54_0 = arg_54_0._id_to_server_sync
 
 	if not var_54_0 then

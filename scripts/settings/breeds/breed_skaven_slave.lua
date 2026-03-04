@@ -576,7 +576,7 @@ local var_0_2 = {
 	stagger = {
 		scale_animation_speeds = true,
 		imation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			if arg_1_1.stagger_type == var_0_0.heavy then
 				arg_1_1.stagger_immune_time = arg_1_2 + 1.25
 				arg_1_1.heavy_stagger_immune_time = arg_1_2 + 0.5

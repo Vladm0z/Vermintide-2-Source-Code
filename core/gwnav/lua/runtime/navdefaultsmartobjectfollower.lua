@@ -13,7 +13,7 @@ local var_0_7 = stingray.GwNavBot
 local var_0_8 = stingray.GwNavSmartObjectInterval
 local var_0_9 = stingray.Mover
 
-function var_0_1.init(arg_1_0, arg_1_1)
+var_0_1.init = function (arg_1_0, arg_1_1)
 	arg_1_0.navbot = arg_1_1
 	arg_1_0.free_fall_acceleration = 9.81
 	arg_1_0.jump_start = var_0_4(0, 0, 0)
@@ -23,7 +23,7 @@ function var_0_1.init(arg_1_0, arg_1_1)
 	arg_1_0.jump_forward = var_0_4(0, 0, 0)
 end
 
-function var_0_1.initial_jump_velocity(arg_2_0)
+var_0_1.initial_jump_velocity = function (arg_2_0)
 	local var_2_0 = arg_2_0.jump_start:unbox()
 	local var_2_1 = arg_2_0.jump_target:unbox()
 	local var_2_2 = var_0_3.z(var_2_0)
@@ -43,13 +43,13 @@ function var_0_1.initial_jump_velocity(arg_2_0)
 	arg_2_0.jump_velocity:store(var_2_9)
 end
 
-function var_0_1.update_follow(arg_3_0, arg_3_1)
+var_0_1.update_follow = function (arg_3_0, arg_3_1)
 	if 0.5 > var_0_3.distance(arg_3_0.jump_target:unbox(), arg_3_0.navbot:get_position()) and var_0_7.exit_manual_control(arg_3_0.navbot.gwnavbot) == true then
 		arg_3_0.navbot.is_smartobject_driven = false
 	end
 end
 
-function var_0_1.move_unit(arg_4_0, arg_4_1)
+var_0_1.move_unit = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.navbot:get_position()
 	local var_4_1 = arg_4_0.jump_velocity:unbox()
 	local var_4_2 = arg_4_0.jump_forward:unbox()
@@ -58,7 +58,7 @@ function var_0_1.move_unit(arg_4_0, arg_4_1)
 	arg_4_0.jump_velocity:store(var_4_1 - var_0_3(0, 0, arg_4_0.free_fall_acceleration) * arg_4_1)
 end
 
-function var_0_1.move_unit_with_mover(arg_5_0, arg_5_1, arg_5_2)
+var_0_1.move_unit_with_mover = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.navbot:get_position()
 	local var_5_1 = arg_5_0.jump_velocity:unbox()
 	local var_5_2 = arg_5_0.jump_forward:unbox()
@@ -68,11 +68,11 @@ function var_0_1.move_unit_with_mover(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.jump_velocity:store(var_5_1 - var_0_3(0, 0, arg_5_0.free_fall_acceleration) * arg_5_1)
 end
 
-function var_0_1.get_smartobject_type(arg_6_0, arg_6_1)
+var_0_1.get_smartobject_type = function (arg_6_0, arg_6_1)
 	return arg_6_0.navbot.navworld:get_smartobject_type(var_0_8.smartobject_id(arg_6_1))
 end
 
-function var_0_1.handle_next_smartobject(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+var_0_1.handle_next_smartobject = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = 1
 	local var_7_1 = arg_7_0:get_smartobject_type(arg_7_2)
 
@@ -83,13 +83,13 @@ function var_0_1.handle_next_smartobject(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg
 	end
 end
 
-function var_0_1.manage_door_smartobject(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+var_0_1.manage_door_smartobject = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if arg_8_4 > var_0_3.distance(arg_8_3, arg_8_1) and var_0_8.can_traverse_smartobject(arg_8_2) == false then
 		arg_8_0.navbot:repath()
 	end
 end
 
-function var_0_1.start_follow(arg_9_0, arg_9_1, arg_9_2)
+var_0_1.start_follow = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0.navbot.is_smartobject_driven = true
 
 	arg_9_0.jump_start:store(arg_9_0.navbot:get_position())
@@ -97,7 +97,7 @@ function var_0_1.start_follow(arg_9_0, arg_9_1, arg_9_2)
 	var_0_5.animation_event(arg_9_0.navbot.unit, arg_9_2)
 end
 
-function var_0_1.manage_jump_smartobject(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+var_0_1.manage_jump_smartobject = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	if arg_10_5 > var_0_3.distance(arg_10_3, arg_10_1) then
 		if arg_10_0.navbot.is_smartobject_driven == false and var_0_8.can_traverse_smartobject(arg_10_2) == false then
 			arg_10_0.navbot:repath()

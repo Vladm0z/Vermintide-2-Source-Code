@@ -4,14 +4,14 @@ XboxEventManager = class(XboxEventManager)
 
 local var_0_0 = 2
 
-function XboxEventManager.init(arg_1_0)
+XboxEventManager.init = function (arg_1_0)
 	arg_1_0._events_to_write_queue = {}
 	arg_1_0._priority_events_queue = {}
 	arg_1_0._immediate_queue = {}
 	arg_1_0._timer = var_0_0
 end
 
-function XboxEventManager.write(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+XboxEventManager.write = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	Application.warning("[XboxEventManager:write] No Stats are implemented yet")
 
 	do return end
@@ -42,7 +42,7 @@ function XboxEventManager.write(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg
 	end
 end
 
-function XboxEventManager.update(arg_3_0, arg_3_1)
+XboxEventManager.update = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._priority_events_queue[1]
 
 	if not var_3_0 and arg_3_0._timer > 0 then
@@ -60,7 +60,7 @@ function XboxEventManager.update(arg_3_0, arg_3_1)
 	arg_3_0._timer = arg_3_0._timer - arg_3_1
 end
 
-function XboxEventManager._handle_priority_event(arg_4_0, arg_4_1)
+XboxEventManager._handle_priority_event = function (arg_4_0, arg_4_1)
 	Application.error(string.format("Writing Prioritized Event: %s", arg_4_1.event))
 	Events.write(arg_4_1.event, arg_4_1.event_data)
 
@@ -71,7 +71,7 @@ function XboxEventManager._handle_priority_event(arg_4_0, arg_4_1)
 	table.remove(arg_4_0._priority_events_queue, 1)
 end
 
-function XboxEventManager._handle_event(arg_5_0)
+XboxEventManager._handle_event = function (arg_5_0)
 	local var_5_0 = arg_5_0._events_to_write_queue[1]
 
 	if var_5_0 then
@@ -86,7 +86,7 @@ function XboxEventManager._handle_event(arg_5_0)
 	end
 end
 
-function XboxEventManager._handle_immediate_event(arg_6_0)
+XboxEventManager._handle_immediate_event = function (arg_6_0)
 	local var_6_0 = arg_6_0._immediate_queue[1]
 
 	if var_6_0 then
@@ -101,7 +101,7 @@ function XboxEventManager._handle_immediate_event(arg_6_0)
 	end
 end
 
-function XboxEventManager.flush(arg_7_0)
+XboxEventManager.flush = function (arg_7_0)
 	Application.warning("[XboxEventManager:flush] No Stats are implemented yet")
 
 	do return end
@@ -138,6 +138,6 @@ function XboxEventManager.flush(arg_7_0)
 	table.clear(arg_7_0._immediate_queue)
 end
 
-function XboxEventManager.destroy(arg_8_0)
+XboxEventManager.destroy = function (arg_8_0)
 	return
 end

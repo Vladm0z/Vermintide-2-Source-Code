@@ -18,7 +18,7 @@ local var_0_7 = {
 
 DeusCursedChestView = class(DeusCursedChestView)
 
-function DeusCursedChestView.init(arg_1_0, arg_1_1)
+DeusCursedChestView.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -41,11 +41,11 @@ function DeusCursedChestView.init(arg_1_0, arg_1_1)
 	var_1_1:map_device_to_service(var_1_0, "gamepad")
 end
 
-function DeusCursedChestView.destroy(arg_2_0)
+DeusCursedChestView.destroy = function (arg_2_0)
 	return
 end
 
-function DeusCursedChestView.on_enter(arg_3_0, arg_3_1)
+DeusCursedChestView.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0._interactable = arg_3_1 and arg_3_1.interactable_unit
 	arg_3_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 	arg_3_0._circle_speed_modifier = var_0_4
@@ -74,7 +74,7 @@ function DeusCursedChestView.on_enter(arg_3_0, arg_3_1)
 	arg_3_0:_play_sound(var_0_7.open_ui)
 end
 
-function DeusCursedChestView.create_ui_elements(arg_4_0)
+DeusCursedChestView.create_ui_elements = function (arg_4_0)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_4_0 = {}
@@ -130,22 +130,22 @@ function DeusCursedChestView.create_ui_elements(arg_4_0)
 	UIRenderer.clear_scenegraph_queue(arg_4_0.ui_renderer)
 end
 
-function DeusCursedChestView.post_update_on_enter(arg_5_0)
+DeusCursedChestView.post_update_on_enter = function (arg_5_0)
 	return
 end
 
-function DeusCursedChestView.on_exit(arg_6_0)
+DeusCursedChestView.on_exit = function (arg_6_0)
 	arg_6_0._power_up_data = nil
 	arg_6_0._interactable = nil
 
 	arg_6_0:_release_input()
 end
 
-function DeusCursedChestView.post_update_on_exit(arg_7_0)
+DeusCursedChestView.post_update_on_exit = function (arg_7_0)
 	return
 end
 
-function DeusCursedChestView._init_power_up_widget(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+DeusCursedChestView._init_power_up_widget = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	local var_8_0 = DeusPowerUps[arg_8_2.rarity][arg_8_2.name]
 	local var_8_1 = var_8_0.rarity
 	local var_8_2 = arg_8_1.content
@@ -210,7 +210,7 @@ function DeusCursedChestView._init_power_up_widget(arg_8_0, arg_8_1, arg_8_2, ar
 	var_8_3.max_value_text_shadow.offset[2] = var_8_3.max_value_text_shadow.offset[2] + var_8_14
 end
 
-function DeusCursedChestView.draw(arg_9_0, arg_9_1)
+DeusCursedChestView.draw = function (arg_9_0, arg_9_1)
 	for iter_9_0, iter_9_1 in ipairs(arg_9_0._power_up_widgets) do
 		arg_9_0:_animate_power_up_widget(arg_9_1, iter_9_1)
 	end
@@ -244,7 +244,7 @@ function DeusCursedChestView.draw(arg_9_0, arg_9_1)
 	UIRenderer.end_pass(var_9_1)
 end
 
-function DeusCursedChestView._get_selected_power_up_count(arg_10_0)
+DeusCursedChestView._get_selected_power_up_count = function (arg_10_0)
 	local var_10_0 = 0
 
 	for iter_10_0, iter_10_1 in ipairs(arg_10_0._power_up_data) do
@@ -256,7 +256,7 @@ function DeusCursedChestView._get_selected_power_up_count(arg_10_0)
 	return var_10_0
 end
 
-function DeusCursedChestView.update(arg_11_0, arg_11_1, arg_11_2)
+DeusCursedChestView.update = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._deus_run_controller:get_own_peer_id()
 	local var_11_1 = DeusPowerUpSettings.cursed_chest_max_picks
 	local var_11_2 = arg_11_0:_get_selected_power_up_count()
@@ -285,7 +285,7 @@ function DeusCursedChestView.update(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:draw(arg_11_1)
 end
 
-function DeusCursedChestView._on_button_pressed(arg_12_0, arg_12_1)
+DeusCursedChestView._on_button_pressed = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.power_up
 
 	arg_12_1.selected = true
@@ -308,12 +308,12 @@ function DeusCursedChestView._on_button_pressed(arg_12_0, arg_12_1)
 	arg_12_0:_close()
 end
 
-function DeusCursedChestView._handle_input(arg_13_0, arg_13_1)
+DeusCursedChestView._handle_input = function (arg_13_0, arg_13_1)
 	for iter_13_0, iter_13_1 in ipairs(arg_13_0._power_up_data) do
 		local var_13_0 = iter_13_1.widget
 
 		if arg_13_0:_is_button_pressed(var_13_0) then
-			Managers.state.entity:system("animation_system"):add_safe_animation_callback(function()
+			Managers.state.entity:system("animation_system"):add_safe_animation_callback(function ()
 				arg_13_0:_on_button_pressed(iter_13_1)
 			end)
 		end
@@ -332,20 +332,20 @@ function DeusCursedChestView._handle_input(arg_13_0, arg_13_1)
 	arg_13_0:_update_button_hover_sound(var_13_3)
 end
 
-function DeusCursedChestView.disable_toggle_menu(arg_15_0)
+DeusCursedChestView.disable_toggle_menu = function (arg_15_0)
 	return true
 end
 
-function DeusCursedChestView.input_service(arg_16_0)
+DeusCursedChestView.input_service = function (arg_16_0)
 	return arg_16_0._input_manager:get_service(arg_16_0._input_service_name)
 end
 
-function DeusCursedChestView._close(arg_17_0)
+DeusCursedChestView._close = function (arg_17_0)
 	arg_17_0:_play_sound(var_0_7.close_ui)
 	arg_17_0.ingame_ui:handle_transition("exit_menu")
 end
 
-function DeusCursedChestView._acquire_input(arg_18_0, arg_18_1)
+DeusCursedChestView._acquire_input = function (arg_18_0, arg_18_1)
 	arg_18_0:_release_input(true)
 
 	local var_18_0 = arg_18_0._input_manager
@@ -366,7 +366,7 @@ function DeusCursedChestView._acquire_input(arg_18_0, arg_18_1)
 	end
 end
 
-function DeusCursedChestView._release_input(arg_19_0, arg_19_1)
+DeusCursedChestView._release_input = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._input_manager
 
 	var_19_0:release_input({
@@ -381,7 +381,7 @@ function DeusCursedChestView._release_input(arg_19_0, arg_19_1)
 	end
 end
 
-function DeusCursedChestView._is_button_pressed(arg_20_0, arg_20_1)
+DeusCursedChestView._is_button_pressed = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.content.button_hotspot
 
 	if var_20_0.on_release then
@@ -391,19 +391,19 @@ function DeusCursedChestView._is_button_pressed(arg_20_0, arg_20_1)
 	end
 end
 
-function DeusCursedChestView._is_button_hovered(arg_21_0, arg_21_1)
+DeusCursedChestView._is_button_hovered = function (arg_21_0, arg_21_1)
 	if arg_21_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function DeusCursedChestView._update_button_hover_sound(arg_22_0, arg_22_1)
+DeusCursedChestView._update_button_hover_sound = function (arg_22_0, arg_22_1)
 	if arg_22_0:_is_button_hovered(arg_22_1) then
 		arg_22_0:_play_sound(var_0_7.button_hover)
 	end
 end
 
-function DeusCursedChestView._animate_power_up_widget(arg_23_0, arg_23_1, arg_23_2)
+DeusCursedChestView._animate_power_up_widget = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_2.content
 	local var_23_1 = arg_23_2.style
 	local var_23_2 = var_23_0.hotspot or var_23_0.button_hotspot
@@ -459,11 +459,11 @@ function DeusCursedChestView._animate_power_up_widget(arg_23_0, arg_23_1, arg_23
 	var_23_2.selection_progress = var_23_8
 end
 
-function DeusCursedChestView._play_sound(arg_24_0, arg_24_1)
+DeusCursedChestView._play_sound = function (arg_24_0, arg_24_1)
 	WwiseWorld.trigger_event(arg_24_0._wwise_world, arg_24_1)
 end
 
-function DeusCursedChestView._update_background_animations(arg_25_0, arg_25_1)
+DeusCursedChestView._update_background_animations = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._widgets_by_name
 	local var_25_1 = arg_25_0._circle_speed_modifier
 	local var_25_2 = arg_25_0._circle_max_speed_modifier

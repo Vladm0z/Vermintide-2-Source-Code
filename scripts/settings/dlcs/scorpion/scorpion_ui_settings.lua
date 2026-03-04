@@ -59,7 +59,7 @@ var_0_0.start_game_window_layout = {
 				weave_list = 3,
 				weave_panel = 2
 			},
-			can_add_function = function(arg_1_0)
+			can_add_function = function (arg_1_0)
 				return arg_1_0:is_in_mechanism("weave")
 			end
 		},
@@ -77,7 +77,7 @@ var_0_0.start_game_window_layout = {
 				weave_background = 1,
 				weave_panel = 2
 			},
-			can_add_function = function(arg_2_0)
+			can_add_function = function (arg_2_0)
 				return arg_2_0:is_in_mechanism("weave")
 			end
 		}
@@ -131,7 +131,7 @@ var_0_0.start_game_window_layout_console = {
 				weave_list = 3,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_3_0)
+			can_add_function = function (arg_3_0)
 				return arg_3_0:is_in_mechanism("weave")
 			end
 		},
@@ -149,7 +149,7 @@ var_0_0.start_game_window_layout_console = {
 				weave_background = 2,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_4_0)
+			can_add_function = function (arg_4_0)
 				return arg_4_0:is_in_mechanism("weave")
 			end
 		},
@@ -165,7 +165,7 @@ var_0_0.start_game_window_layout_console = {
 				weave_background = 2,
 				weave_panel = 1
 			},
-			can_add_function = function(arg_5_0)
+			can_add_function = function (arg_5_0)
 				return arg_5_0:is_in_mechanism("weave") and not IS_XB1
 			end
 		},
@@ -204,7 +204,7 @@ var_0_0.ingame_hud_components = {
 			"dead",
 			"alive"
 		},
-		validation_function = function()
+		validation_function = function ()
 			return Managers.mechanism:game_mechanism():get_state() == "weave"
 		end
 	},
@@ -217,7 +217,7 @@ var_0_0.ingame_hud_components = {
 			"dead",
 			"alive"
 		},
-		validation_function = function()
+		validation_function = function ()
 			return Managers.mechanism:game_mechanism():get_state() == "weave"
 		end
 	}

@@ -7,11 +7,11 @@ BTTentacleAttackAction.name = "BTTentacleAttackAction"
 
 local var_0_0 = false
 
-function BTTentacleAttackAction.init(arg_1_0, ...)
+BTTentacleAttackAction.init = function (arg_1_0, ...)
 	BTTentacleAttackAction.super.init(arg_1_0, ...)
 end
 
-function BTTentacleAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTentacleAttackAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	local var_2_0 = arg_2_2.target_unit
@@ -27,7 +27,7 @@ function BTTentacleAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.tentacle_satisfied = false
 end
 
-function BTTentacleAttackAction.sync_state_to_clients(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTentacleAttackAction.sync_state_to_clients = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = Managers.state.network
 	local var_3_1 = var_3_0:unit_game_object_id(arg_3_1)
 	local var_3_2 = var_3_0:unit_game_object_id(arg_3_2.current_target)
@@ -38,13 +38,13 @@ function BTTentacleAttackAction.sync_state_to_clients(arg_3_0, arg_3_1, arg_3_2,
 	var_3_0.network_transmit:send_rpc_clients("rpc_change_tentacle_state", var_3_1, var_3_2, var_3_3, arg_3_4, arg_3_5)
 end
 
-function BTTentacleAttackAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTTentacleAttackAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.tentacle_satisfied = true
 end
 
 local var_0_1 = Unit.alive
 
-function BTTentacleAttackAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTTentacleAttackAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_0:update_tentacle(arg_5_1, arg_5_2, arg_5_3, arg_5_4) then
 		return "running"
 	end
@@ -54,7 +54,7 @@ end
 
 local var_0_2 = 10
 
-function BTTentacleAttackAction.update_tentacle(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTTentacleAttackAction.update_tentacle = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.tentacle_data
 	local var_6_1 = arg_6_2.current_target
 
@@ -239,7 +239,7 @@ function BTTentacleAttackAction.update_tentacle(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return true
 end
 
-function BTTentacleAttackAction.dist_sqr_to_tentacle_tip(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTTentacleAttackAction.dist_sqr_to_tentacle_tip = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.bone_nodes[arg_7_2.num_bone_nodes]
 	local var_7_1 = Unit.world_position(arg_7_1, var_7_0)
 	local var_7_2 = Vector3.flat(POSITION_LOOKUP[arg_7_3] - var_7_1)
@@ -247,7 +247,7 @@ function BTTentacleAttackAction.dist_sqr_to_tentacle_tip(arg_7_0, arg_7_1, arg_7
 	return (Vector3.length_squared(var_7_2))
 end
 
-function BTTentacleAttackAction.target_evade_through_dodge_check(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTTentacleAttackAction.target_evade_through_dodge_check = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = ScriptUnit.has_extension(arg_8_3, "status_system")
 
 	if var_8_0 and var_8_0.is_dodging and arg_8_4 > arg_8_1.dodge_mitigation_radius_squared then
@@ -255,7 +255,7 @@ function BTTentacleAttackAction.target_evade_through_dodge_check(arg_8_0, arg_8_
 	end
 end
 
-function BTTentacleAttackAction.target_tentacle_status_check(arg_9_0, arg_9_1, arg_9_2)
+BTTentacleAttackAction.target_tentacle_status_check = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = ScriptUnit.has_extension(arg_9_1, "status_system")
 
 	if var_9_0 and var_9_0.grabbed_by_tentacle_status == arg_9_2 then

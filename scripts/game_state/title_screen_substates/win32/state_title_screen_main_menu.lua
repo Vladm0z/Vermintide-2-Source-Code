@@ -5,7 +5,7 @@ local var_0_0 = local_require("scripts/game_state/title_screen_substates/win32/s
 StateTitleScreenMainMenu = class(StateTitleScreenMainMenu)
 StateTitleScreenMainMenu.NAME = "StateTitleScreenMainMenu"
 
-function StateTitleScreenMainMenu.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenMainMenu.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0._params = arg_1_1
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._viewport = arg_1_1.viewport
@@ -23,7 +23,7 @@ function StateTitleScreenMainMenu.on_enter(arg_1_0, arg_1_1)
 	Managers.transition:hide_loading_icon()
 end
 
-function StateTitleScreenMainMenu._check_prologue_status(arg_2_0)
+StateTitleScreenMainMenu._check_prologue_status = function (arg_2_0)
 	local var_2_0 = true
 
 	if Managers.backend:get_user_data("has_completed_tutorial") or SaveData.has_completed_tutorial or false or script_data.disable_tutorial_at_start then
@@ -40,7 +40,7 @@ function StateTitleScreenMainMenu._check_prologue_status(arg_2_0)
 	return var_2_0
 end
 
-function StateTitleScreenMainMenu._start_game(arg_3_0, arg_3_1)
+StateTitleScreenMainMenu._start_game = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1 == "prologue"
 
 	arg_3_0.parent.parent.loading_context.restart_network = true
@@ -70,28 +70,28 @@ function StateTitleScreenMainMenu._start_game(arg_3_0, arg_3_1)
 	arg_3_0._new_state = StateTitleScreenLoadSave
 end
 
-function StateTitleScreenMainMenu._quit_game(arg_4_0)
+StateTitleScreenMainMenu._quit_game = function (arg_4_0)
 	arg_4_0._popup_id = Managers.popup:queue_popup(Localize("quit_game_popup_text"), Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel", Localize("popup_choice_no"))
 end
 
-function StateTitleScreenMainMenu._initiate_quit_game(arg_5_0)
+StateTitleScreenMainMenu._initiate_quit_game = function (arg_5_0)
 	arg_5_0._input_disabled = true
 
 	arg_5_0._title_start_ui:disable_input(true)
 	Managers.transition:fade_in(GameSettings.transition_fade_in_speed, callback(arg_5_0, "cb_quit_game"))
 end
 
-function StateTitleScreenMainMenu.cb_quit_game(arg_6_0)
+StateTitleScreenMainMenu.cb_quit_game = function (arg_6_0)
 	Boot.quit_game = true
 end
 
-function StateTitleScreenMainMenu._setup_menu_options(arg_7_0)
+StateTitleScreenMainMenu._setup_menu_options = function (arg_7_0)
 	local var_7_0 = var_0_0.create_menu_layout(arg_7_0)
 
 	arg_7_0._title_start_ui:create_menu_options(var_7_0)
 end
 
-function StateTitleScreenMainMenu._setup_sound(arg_8_0)
+StateTitleScreenMainMenu._setup_sound = function (arg_8_0)
 	local var_8_0 = Application.user_setting("master_bus_volume") or 90
 	local var_8_1 = Application.user_setting("music_bus_volume") or 90
 	local var_8_2
@@ -109,16 +109,16 @@ function StateTitleScreenMainMenu._setup_sound(arg_8_0)
 	Managers.music:set_music_volume(var_8_1)
 end
 
-function StateTitleScreenMainMenu.cb_camera_animation_complete(arg_9_0)
+StateTitleScreenMainMenu.cb_camera_animation_complete = function (arg_9_0)
 	ShowCursorStack.show("StateTitleScreenMainMenu")
 	arg_9_0._title_start_ui:activate_career_ui(true)
 end
 
-function StateTitleScreenMainMenu.cb_camera_animation_complete_back(arg_10_0)
+StateTitleScreenMainMenu.cb_camera_animation_complete_back = function (arg_10_0)
 	arg_10_0._new_state = StateTitleScreenMain
 end
 
-function StateTitleScreenMainMenu._init_menu_views(arg_11_0)
+StateTitleScreenMainMenu._init_menu_views = function (arg_11_0)
 	local var_11_0 = arg_11_0._title_start_ui:get_ui_renderer()
 	local var_11_1 = {
 		in_title_screen = true,
@@ -137,13 +137,13 @@ function StateTitleScreenMainMenu._init_menu_views(arg_11_0)
 	ShowCursorStack.show("StateTitleScreenMainMenu")
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._views) do
-		function iter_11_1.exit()
+		iter_11_1.exit = function ()
 			arg_11_0:exit_current_view()
 		end
 	end
 end
 
-function StateTitleScreenMainMenu.update(arg_13_0, arg_13_1, arg_13_2)
+StateTitleScreenMainMenu.update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._active_view
 
 	if arg_13_0._auto_start and (Development.parameter("auto_host_level") or Development.parameter("auto_join") or Development.parameter("deus_auto_host") or Development.parameter("vs_auto_search") or Development.parameter("weave_name")) then
@@ -175,7 +175,7 @@ function StateTitleScreenMainMenu.update(arg_13_0, arg_13_1, arg_13_2)
 	return arg_13_0._new_state
 end
 
-function StateTitleScreenMainMenu._handle_popups(arg_14_0)
+StateTitleScreenMainMenu._handle_popups = function (arg_14_0)
 	if not arg_14_0._popup_id then
 		return
 	end
@@ -189,13 +189,13 @@ function StateTitleScreenMainMenu._handle_popups(arg_14_0)
 	end
 end
 
-function StateTitleScreenMainMenu._handle_popup_result(arg_15_0, arg_15_1)
+StateTitleScreenMainMenu._handle_popup_result = function (arg_15_0, arg_15_1)
 	if arg_15_1 == "end_game" then
 		arg_15_0:_initiate_quit_game()
 	end
 end
 
-function StateTitleScreenMainMenu._close_menu(arg_16_0)
+StateTitleScreenMainMenu._close_menu = function (arg_16_0)
 	arg_16_0.parent:show_menu(false)
 	arg_16_0._title_start_ui:set_start_pressed(false)
 	arg_16_0._title_start_ui:disable_input(false)
@@ -209,7 +209,7 @@ function StateTitleScreenMainMenu._close_menu(arg_16_0)
 	arg_16_0._new_state = StateTitleScreenMain
 end
 
-function StateTitleScreenMainMenu.on_exit(arg_17_0)
+StateTitleScreenMainMenu.on_exit = function (arg_17_0)
 	for iter_17_0, iter_17_1 in pairs(arg_17_0._views) do
 		if iter_17_1.destroy then
 			iter_17_1:destroy()
@@ -221,7 +221,7 @@ function StateTitleScreenMainMenu.on_exit(arg_17_0)
 	ShowCursorStack.hide("StateTitleScreenMainMenu")
 end
 
-function StateTitleScreenMainMenu.cb_fade_in_done(arg_18_0, arg_18_1, arg_18_2)
+StateTitleScreenMainMenu.cb_fade_in_done = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._new_state = StateTitleScreenLoadSave
 	arg_18_0.parent.parent.loading_context.restart_network = true
 	arg_18_0.parent.parent.loading_context.level_key = arg_18_1
@@ -238,7 +238,7 @@ function StateTitleScreenMainMenu.cb_fade_in_done(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function StateTitleScreenMainMenu._activate_view(arg_19_0, arg_19_1)
+StateTitleScreenMainMenu._activate_view = function (arg_19_0, arg_19_1)
 	arg_19_0._active_view = arg_19_1
 
 	local var_19_0 = arg_19_0._views
@@ -255,7 +255,7 @@ function StateTitleScreenMainMenu._activate_view(arg_19_0, arg_19_1)
 	end
 end
 
-function StateTitleScreenMainMenu.exit_current_view(arg_20_0)
+StateTitleScreenMainMenu.exit_current_view = function (arg_20_0)
 	local var_20_0 = arg_20_0._active_view
 	local var_20_1 = arg_20_0._views
 

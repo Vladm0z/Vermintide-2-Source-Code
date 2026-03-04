@@ -14,7 +14,7 @@ local var_0_9 = 1
 CraftPageConvertDustConsole = class(CraftPageConvertDustConsole)
 CraftPageConvertDustConsole.NAME = "CraftPageConvertDustConsole"
 
-function CraftPageConvertDustConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageConvertDustConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageConvertDustConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -60,7 +60,7 @@ function CraftPageConvertDustConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.super_parent:disable_search(true)
 end
 
-function CraftPageConvertDustConsole._has_required_item_amount(arg_2_0, arg_2_1)
+CraftPageConvertDustConsole._has_required_item_amount = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0:_get_recipe_by_backend_id(arg_2_1)
 	local var_2_1 = var_0_1[var_2_0]
 	local var_2_2 = var_2_1.item_filter
@@ -84,7 +84,7 @@ function CraftPageConvertDustConsole._has_required_item_amount(arg_2_0, arg_2_1)
 	return false
 end
 
-function CraftPageConvertDustConsole._get_recipe_by_backend_id(arg_3_0, arg_3_1)
+CraftPageConvertDustConsole._get_recipe_by_backend_id = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.backend:get_interface("items"):get_key(arg_3_1)
 	local var_3_1
 
@@ -97,7 +97,7 @@ function CraftPageConvertDustConsole._get_recipe_by_backend_id(arg_3_0, arg_3_1)
 	return var_3_1
 end
 
-function CraftPageConvertDustConsole.setup_recipe_requirements(arg_4_0)
+CraftPageConvertDustConsole.setup_recipe_requirements = function (arg_4_0)
 	local var_4_0 = arg_4_0.settings
 	local var_4_1
 	local var_4_2 = var_4_0.item_filter
@@ -176,7 +176,7 @@ function CraftPageConvertDustConsole.setup_recipe_requirements(arg_4_0)
 	end
 end
 
-function CraftPageConvertDustConsole.reset_requirements(arg_5_0, arg_5_1)
+CraftPageConvertDustConsole.reset_requirements = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._widgets_by_name
 	local var_5_1 = 60
 	local var_5_2 = 30
@@ -196,7 +196,7 @@ function CraftPageConvertDustConsole.reset_requirements(arg_5_0, arg_5_1)
 	end
 end
 
-function CraftPageConvertDustConsole._add_crafting_material_requirement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+CraftPageConvertDustConsole._add_crafting_material_requirement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = UISettings.crafting_material_icons_small
 	local var_6_1 = arg_6_0._widgets_by_name["material_text_" .. arg_6_1].content
 
@@ -207,7 +207,7 @@ function CraftPageConvertDustConsole._add_crafting_material_requirement(arg_6_0,
 	}
 end
 
-function CraftPageConvertDustConsole.create_ui_elements(arg_7_0, arg_7_1)
+CraftPageConvertDustConsole.create_ui_elements = function (arg_7_0, arg_7_1)
 	arg_7_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_7_0 = {}
@@ -231,7 +231,7 @@ function CraftPageConvertDustConsole.create_ui_elements(arg_7_0, arg_7_1)
 	arg_7_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageConvertDustConsole.on_exit(arg_8_0, arg_8_1)
+CraftPageConvertDustConsole.on_exit = function (arg_8_0, arg_8_1)
 	print("[HeroWindowCraft] Exit Substate CraftPageConvertDustConsole")
 
 	arg_8_0.ui_animator = nil
@@ -244,7 +244,7 @@ function CraftPageConvertDustConsole.on_exit(arg_8_0, arg_8_1)
 	end
 end
 
-function CraftPageConvertDustConsole.update(arg_9_0, arg_9_1, arg_9_2)
+CraftPageConvertDustConsole.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -257,11 +257,11 @@ function CraftPageConvertDustConsole.update(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:draw(arg_9_1)
 end
 
-function CraftPageConvertDustConsole.post_update(arg_10_0, arg_10_1, arg_10_2)
+CraftPageConvertDustConsole.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function CraftPageConvertDustConsole._update_animations(arg_11_0, arg_11_1)
+CraftPageConvertDustConsole._update_animations = function (arg_11_0, arg_11_1)
 	arg_11_0.ui_animator:update(arg_11_1)
 
 	local var_11_0 = arg_11_0._animations
@@ -278,7 +278,7 @@ function CraftPageConvertDustConsole._update_animations(arg_11_0, arg_11_1)
 	local var_11_2 = arg_11_0._widgets_by_name
 end
 
-function CraftPageConvertDustConsole._is_button_pressed(arg_12_0, arg_12_1)
+CraftPageConvertDustConsole._is_button_pressed = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	if var_12_0.on_release then
@@ -288,13 +288,13 @@ function CraftPageConvertDustConsole._is_button_pressed(arg_12_0, arg_12_1)
 	end
 end
 
-function CraftPageConvertDustConsole._is_button_hovered(arg_13_0, arg_13_1)
+CraftPageConvertDustConsole._is_button_hovered = function (arg_13_0, arg_13_1)
 	if arg_13_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageConvertDustConsole._is_button_held(arg_14_0, arg_14_1)
+CraftPageConvertDustConsole._is_button_held = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.content.button_hotspot
 
 	if var_14_0.is_clicked then
@@ -302,7 +302,7 @@ function CraftPageConvertDustConsole._is_button_held(arg_14_0, arg_14_1)
 	end
 end
 
-function CraftPageConvertDustConsole._handle_input(arg_15_0, arg_15_1, arg_15_2)
+CraftPageConvertDustConsole._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.parent
 
 	if var_15_0:waiting_for_craft() or arg_15_0._craft_result then
@@ -367,17 +367,17 @@ function CraftPageConvertDustConsole._handle_input(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function CraftPageConvertDustConsole._handle_craft_input_progress(arg_16_0, arg_16_1)
+CraftPageConvertDustConsole._handle_craft_input_progress = function (arg_16_0, arg_16_1)
 	return arg_16_0.parent:_set_input_progress(arg_16_1)
 end
 
-function CraftPageConvertDustConsole.craft_result(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+CraftPageConvertDustConsole.craft_result = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if not arg_17_2 then
 		arg_17_0._craft_result = arg_17_1
 	end
 end
 
-function CraftPageConvertDustConsole.reset(arg_18_0)
+CraftPageConvertDustConsole.reset = function (arg_18_0)
 	if arg_18_0._craft_items[1] then
 		arg_18_0:_remove_craft_item(arg_18_0._craft_items[1])
 	end
@@ -389,7 +389,7 @@ function CraftPageConvertDustConsole.reset(arg_18_0)
 	arg_18_0:setup_recipe_requirements()
 end
 
-function CraftPageConvertDustConsole.present_results(arg_19_0)
+CraftPageConvertDustConsole.present_results = function (arg_19_0)
 	local var_19_0 = arg_19_0._item_grid
 
 	var_19_0:clear_locked_items()
@@ -398,7 +398,7 @@ function CraftPageConvertDustConsole.present_results(arg_19_0)
 	arg_19_0.super_parent:update_inventory_items()
 end
 
-function CraftPageConvertDustConsole.on_craft_completed(arg_20_0)
+CraftPageConvertDustConsole.on_craft_completed = function (arg_20_0)
 	local var_20_0 = arg_20_0._item_grid
 	local var_20_1 = false
 	local var_20_2 = arg_20_0._craft_items[1]
@@ -433,7 +433,7 @@ function CraftPageConvertDustConsole.on_craft_completed(arg_20_0)
 	arg_20_0:setup_recipe_requirements()
 end
 
-function CraftPageConvertDustConsole._update_craft_items(arg_21_0)
+CraftPageConvertDustConsole._update_craft_items = function (arg_21_0)
 	local var_21_0 = arg_21_0.super_parent
 	local var_21_1 = arg_21_0._item_grid
 
@@ -464,7 +464,7 @@ function CraftPageConvertDustConsole._update_craft_items(arg_21_0)
 	end
 end
 
-function CraftPageConvertDustConsole._remove_craft_item(arg_22_0, arg_22_1, arg_22_2)
+CraftPageConvertDustConsole._remove_craft_item = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._craft_items
 
 	if arg_22_2 then
@@ -497,7 +497,7 @@ function CraftPageConvertDustConsole._remove_craft_item(arg_22_0, arg_22_1, arg_
 	end
 end
 
-function CraftPageConvertDustConsole._add_craft_item(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+CraftPageConvertDustConsole._add_craft_item = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	arg_23_0:_clear_item_grid()
 
 	local var_23_0 = arg_23_0._craft_items
@@ -534,18 +534,18 @@ function CraftPageConvertDustConsole._add_craft_item(arg_23_0, arg_23_1, arg_23_
 	end
 end
 
-function CraftPageConvertDustConsole._set_craft_button_disabled(arg_24_0, arg_24_1)
+CraftPageConvertDustConsole._set_craft_button_disabled = function (arg_24_0, arg_24_1)
 	arg_24_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_24_1
 
 	arg_24_0.parent:set_input_description(not arg_24_1 and arg_24_0.settings.name or "disabled")
 end
 
-function CraftPageConvertDustConsole._exit(arg_25_0, arg_25_1)
+CraftPageConvertDustConsole._exit = function (arg_25_0, arg_25_1)
 	arg_25_0.exit = true
 	arg_25_0.exit_level_id = arg_25_1
 end
 
-function CraftPageConvertDustConsole.draw(arg_26_0, arg_26_1)
+CraftPageConvertDustConsole.draw = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0.ui_renderer
 	local var_26_1 = arg_26_0.ui_top_renderer
 	local var_26_2 = arg_26_0.ui_scenegraph
@@ -560,15 +560,15 @@ function CraftPageConvertDustConsole.draw(arg_26_0, arg_26_1)
 	UIRenderer.end_pass(var_26_1)
 end
 
-function CraftPageConvertDustConsole._play_sound(arg_27_0, arg_27_1)
+CraftPageConvertDustConsole._play_sound = function (arg_27_0, arg_27_1)
 	arg_27_0.super_parent:play_sound(arg_27_1)
 end
 
-function CraftPageConvertDustConsole._set_craft_button_text(arg_28_0, arg_28_1, arg_28_2)
+CraftPageConvertDustConsole._set_craft_button_text = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0._widgets_by_name.craft_button.content.button_text = arg_28_2 and Localize(arg_28_1) or arg_28_1
 end
 
-function CraftPageConvertDustConsole._has_added_item_by_id(arg_29_0, arg_29_1)
+CraftPageConvertDustConsole._has_added_item_by_id = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._craft_items
 
 	for iter_29_0 = 1, var_0_9 do
@@ -580,7 +580,7 @@ function CraftPageConvertDustConsole._has_added_item_by_id(arg_29_0, arg_29_1)
 	return false
 end
 
-function CraftPageConvertDustConsole._clear_item_grid(arg_30_0)
+CraftPageConvertDustConsole._clear_item_grid = function (arg_30_0)
 	local var_30_0 = arg_30_0._craft_items
 	local var_30_1 = arg_30_0.super_parent
 

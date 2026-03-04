@@ -136,7 +136,7 @@ local var_0_1 = {
 			background = 2,
 			crafting_list = 3
 		},
-		can_add_function = function(arg_1_0)
+		can_add_function = function (arg_1_0)
 			return arg_1_0 ~= "versus" and arg_1_0 ~= "inn_vs"
 		end
 	},
@@ -277,10 +277,10 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_2_0)
+		can_add_function = function (arg_2_0)
 			return arg_2_0 == "versus"
 		end,
-		on_exit = function(arg_3_0)
+		on_exit = function (arg_3_0)
 			local var_3_0 = Managers.player:local_player()
 			local var_3_1 = var_3_0:profile_index()
 			local var_3_2 = var_3_0:career_index()
@@ -302,7 +302,7 @@ local var_0_1 = {
 }
 local var_0_2 = 6
 
-DLCUtils.map("hero_view_window_layout_console", function(arg_4_0)
+DLCUtils.map("hero_view_window_layout_console", function (arg_4_0)
 	local var_4_0 = arg_4_0.windows
 
 	if var_4_0 then
@@ -319,7 +319,7 @@ DLCUtils.map("hero_view_window_layout_console", function(arg_4_0)
 		end
 	end
 end)
-DLCUtils.map("hero_view_window_layout_console", function(arg_5_0)
+DLCUtils.map("hero_view_window_layout_console", function (arg_5_0)
 	local var_5_0 = arg_5_0.windows
 
 	if var_5_0 then

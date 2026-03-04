@@ -4,7 +4,7 @@ local var_0_0 = 0
 
 LootItemUnitPreviewer = class(LootItemUnitPreviewer)
 
-function LootItemUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+LootItemUnitPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
 	arg_1_0._unique_id = arg_1_5
 	arg_1_0._loaded_packages = {}
 	arg_1_0._packages_to_load = {}
@@ -29,7 +29,7 @@ function LootItemUnitPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4,
 	arg_1_0._units_to_spawn = arg_1_0:_load_item_units(arg_1_1)
 end
 
-function LootItemUnitPreviewer.activate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+LootItemUnitPreviewer.activate = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	if not arg_2_0._delayed_spawn then
 		return
 	end
@@ -53,15 +53,15 @@ function LootItemUnitPreviewer.activate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_
 	arg_2_0._force_present = arg_2_4
 end
 
-function LootItemUnitPreviewer.activate_auto_spin(arg_3_0)
+LootItemUnitPreviewer.activate_auto_spin = function (arg_3_0)
 	arg_3_0._auto_spin_random_seed = math.random(5, 30000)
 end
 
-function LootItemUnitPreviewer.register_spawn_callback(arg_4_0, arg_4_1)
+LootItemUnitPreviewer.register_spawn_callback = function (arg_4_0, arg_4_1)
 	arg_4_0._spawn_callback = arg_4_1
 end
 
-function LootItemUnitPreviewer.destroy(arg_5_0)
+LootItemUnitPreviewer.destroy = function (arg_5_0)
 	arg_5_0:_destroy_units()
 	arg_5_0:_unload_packages()
 	table.clear(arg_5_0._loaded_packages)
@@ -69,7 +69,7 @@ function LootItemUnitPreviewer.destroy(arg_5_0)
 	Renderer.set_automatic_streaming(true)
 end
 
-function LootItemUnitPreviewer._destroy_units(arg_6_0)
+LootItemUnitPreviewer._destroy_units = function (arg_6_0)
 	local var_6_0 = arg_6_0._background_world
 	local var_6_1 = arg_6_0._spawned_units
 
@@ -92,7 +92,7 @@ function LootItemUnitPreviewer._destroy_units(arg_6_0)
 	arg_6_0._items_spawned = nil
 end
 
-function LootItemUnitPreviewer.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+LootItemUnitPreviewer.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if not arg_7_0._activated then
 		return
 	end
@@ -157,16 +157,16 @@ function LootItemUnitPreviewer.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function LootItemUnitPreviewer.set_zoom_fraction(arg_8_0, arg_8_1)
+LootItemUnitPreviewer.set_zoom_fraction = function (arg_8_0, arg_8_1)
 	arg_8_0._zoom_fraction = math.clamp(arg_8_1, 0, 1)
 	arg_8_0._zoom_dirty = true
 end
 
-function LootItemUnitPreviewer.zoom_fraction(arg_9_0)
+LootItemUnitPreviewer.zoom_fraction = function (arg_9_0)
 	return arg_9_0._zoom_fraction or 0
 end
 
-function LootItemUnitPreviewer._auto_spin_values(arg_10_0, arg_10_1, arg_10_2)
+LootItemUnitPreviewer._auto_spin_values = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._auto_spin_random_seed
 
 	if not var_10_0 then
@@ -184,7 +184,7 @@ end
 
 local var_0_1 = {}
 
-function LootItemUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
+LootItemUnitPreviewer._handle_mouse_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_1:get("cursor")
 
 	if not var_11_0 then
@@ -218,7 +218,7 @@ function LootItemUnitPreviewer._handle_mouse_input(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function LootItemUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_12_2)
+LootItemUnitPreviewer._handle_controller_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1:get("gamepad_right_axis")
 
 	if var_12_0 and Vector3.length(var_12_0) > 0.01 then
@@ -226,7 +226,7 @@ function LootItemUnitPreviewer._handle_controller_input(arg_12_0, arg_12_1, arg_
 	end
 end
 
-function LootItemUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
+LootItemUnitPreviewer.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0._activated then
 		return
 	end
@@ -242,7 +242,7 @@ function LootItemUnitPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function LootItemUnitPreviewer._load_item_units(arg_14_0, arg_14_1)
+LootItemUnitPreviewer._load_item_units = function (arg_14_0, arg_14_1)
 	if not arg_14_1 then
 		return
 	end
@@ -347,31 +347,31 @@ function LootItemUnitPreviewer._load_item_units(arg_14_0, arg_14_1)
 	return var_14_9
 end
 
-function LootItemUnitPreviewer._trigger_unit_flow_event(arg_15_0, arg_15_1, arg_15_2)
+LootItemUnitPreviewer._trigger_unit_flow_event = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_1 and Unit.alive(arg_15_1) then
 		Unit.flow_event(arg_15_1, arg_15_2)
 	end
 end
 
-function LootItemUnitPreviewer._get_world(arg_16_0)
+LootItemUnitPreviewer._get_world = function (arg_16_0)
 	return arg_16_0._background_world, arg_16_0._background_viewport
 end
 
-function LootItemUnitPreviewer._get_camera_position(arg_17_0)
+LootItemUnitPreviewer._get_camera_position = function (arg_17_0)
 	local var_17_0 = arg_17_0._background_viewport
 	local var_17_1 = ScriptViewport.camera(var_17_0)
 
 	return ScriptCamera.position(var_17_1)
 end
 
-function LootItemUnitPreviewer._get_camera_rotation(arg_18_0)
+LootItemUnitPreviewer._get_camera_rotation = function (arg_18_0)
 	local var_18_0 = arg_18_0._background_viewport
 	local var_18_1 = ScriptViewport.camera(var_18_0)
 
 	return ScriptCamera.rotation(var_18_1)
 end
 
-function LootItemUnitPreviewer._packages_loaded(arg_19_0)
+LootItemUnitPreviewer._packages_loaded = function (arg_19_0)
 	local var_19_0 = arg_19_0._units_to_spawn
 	local var_19_1 = arg_19_0._loaded_packages
 
@@ -392,7 +392,7 @@ function LootItemUnitPreviewer._packages_loaded(arg_19_0)
 	return true
 end
 
-function LootItemUnitPreviewer.load_package(arg_20_0, arg_20_1)
+LootItemUnitPreviewer.load_package = function (arg_20_0, arg_20_1)
 	if arg_20_0._packages_to_load[arg_20_1] ~= nil then
 		return
 	end
@@ -410,12 +410,12 @@ function LootItemUnitPreviewer.load_package(arg_20_0, arg_20_1)
 	var_20_0:load(arg_20_1, var_20_2, var_20_1, true)
 end
 
-function LootItemUnitPreviewer._on_load_complete(arg_21_0, arg_21_1)
+LootItemUnitPreviewer._on_load_complete = function (arg_21_0, arg_21_1)
 	arg_21_0._loaded_packages[arg_21_1] = true
 	arg_21_0._packages_to_load[arg_21_1] = false
 end
 
-function LootItemUnitPreviewer._unload_packages(arg_22_0)
+LootItemUnitPreviewer._unload_packages = function (arg_22_0)
 	local var_22_0 = "LootItemUnitPreviewer"
 
 	if arg_22_0._unique_id then
@@ -445,7 +445,7 @@ function LootItemUnitPreviewer._unload_packages(arg_22_0)
 	end
 end
 
-function LootItemUnitPreviewer._spawn_link_unit(arg_23_0, arg_23_1)
+LootItemUnitPreviewer._spawn_link_unit = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.data
 	local var_23_1 = arg_23_1.key or var_23_0.key
 	local var_23_2 = arg_23_1.skin or var_23_1
@@ -454,7 +454,7 @@ function LootItemUnitPreviewer._spawn_link_unit(arg_23_0, arg_23_1)
 	local var_23_5 = var_23_4.item_type
 
 	if var_23_5 ~= "rune" and var_23_5 ~= "material" and var_23_5 ~= "ring" and var_23_5 == "necklace" then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_23_6 = arg_23_0._display_unit_key
@@ -492,7 +492,7 @@ function LootItemUnitPreviewer._spawn_link_unit(arg_23_0, arg_23_1)
 	return var_23_18
 end
 
-function LootItemUnitPreviewer._spawn_items(arg_24_0)
+LootItemUnitPreviewer._spawn_items = function (arg_24_0)
 	local var_24_0 = true
 	local var_24_1 = arg_24_0._units_to_spawn
 
@@ -524,7 +524,7 @@ function LootItemUnitPreviewer._spawn_items(arg_24_0)
 	return var_24_0
 end
 
-function LootItemUnitPreviewer.spawn_units(arg_25_0, arg_25_1)
+LootItemUnitPreviewer.spawn_units = function (arg_25_0, arg_25_1)
 	local var_25_0 = {}
 	local var_25_1 = arg_25_0._link_unit
 
@@ -556,7 +556,7 @@ function LootItemUnitPreviewer.spawn_units(arg_25_0, arg_25_1)
 	return var_25_0
 end
 
-function LootItemUnitPreviewer.present_item(arg_26_0, arg_26_1, arg_26_2)
+LootItemUnitPreviewer.present_item = function (arg_26_0, arg_26_1, arg_26_2)
 	if arg_26_0._use_highest_mip_levels and not arg_26_0:_update_manual_mip_streaming() then
 		arg_26_0._request_show_settings = {
 			item_key = arg_26_1,
@@ -567,7 +567,7 @@ function LootItemUnitPreviewer.present_item(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function LootItemUnitPreviewer._enable_item_units_visibility(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+LootItemUnitPreviewer._enable_item_units_visibility = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_0._spawned_units
 
 	if var_27_0 then
@@ -590,7 +590,7 @@ function LootItemUnitPreviewer._enable_item_units_visibility(arg_27_0, arg_27_1,
 	end
 end
 
-function LootItemUnitPreviewer._request_all_mips_for_unit(arg_28_0, arg_28_1)
+LootItemUnitPreviewer._request_all_mips_for_unit = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._requested_all_mips_units
 
 	var_28_0[#var_28_0 + 1] = arg_28_1
@@ -599,7 +599,7 @@ function LootItemUnitPreviewer._request_all_mips_for_unit(arg_28_0, arg_28_1)
 	Renderer.set_automatic_streaming(false)
 end
 
-function LootItemUnitPreviewer._update_manual_mip_streaming(arg_29_0)
+LootItemUnitPreviewer._update_manual_mip_streaming = function (arg_29_0)
 	local var_29_0 = true
 	local var_29_1 = arg_29_0._requested_all_mips_units
 

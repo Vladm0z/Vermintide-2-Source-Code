@@ -5,17 +5,17 @@ require("scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui")
 DeusUpgradeWeaponInteractionUI = class(DeusUpgradeWeaponInteractionUI, DeusSwapWeaponInteractionUI)
 DeusUpgradeWeaponInteractionUI.TYPE = "upgrade"
 
-function DeusUpgradeWeaponInteractionUI.init(arg_1_0, arg_1_1, arg_1_2)
+DeusUpgradeWeaponInteractionUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	DeusUpgradeWeaponInteractionUI.super.init(arg_1_0, arg_1_1, arg_1_2)
 end
 
-function DeusUpgradeWeaponInteractionUI.chest_unlock_failed(arg_2_0, arg_2_1)
+DeusUpgradeWeaponInteractionUI.chest_unlock_failed = function (arg_2_0, arg_2_1)
 	if arg_2_1 == DeusUpgradeWeaponInteractionUI.TYPE then
 		arg_2_0:_start_animation("chest_unlock_failed")
 	end
 end
 
-function DeusUpgradeWeaponInteractionUI._populate_widget(arg_3_0, arg_3_1, arg_3_2)
+DeusUpgradeWeaponInteractionUI._populate_widget = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 	if not var_3_0 then

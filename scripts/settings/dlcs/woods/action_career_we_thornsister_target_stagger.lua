@@ -4,7 +4,7 @@ ActionCareerWEThornsisterTargetStagger = class(ActionCareerWEThornsisterTargetSt
 
 local var_0_0 = "units/decals/decal_arrow_kerillian"
 
-function ActionCareerWEThornsisterTargetStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEThornsisterTargetStagger.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWEThornsisterTargetStagger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
@@ -12,7 +12,7 @@ function ActionCareerWEThornsisterTargetStagger.init(arg_1_0, arg_1_1, arg_1_2, 
 	arg_1_0._unit_spawner = Managers.state.unit_spawner
 end
 
-function ActionCareerWEThornsisterTargetStagger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEThornsisterTargetStagger.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 
 	ActionCareerWEThornsisterTargetStagger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
@@ -24,7 +24,7 @@ function ActionCareerWEThornsisterTargetStagger.client_owner_start_action(arg_2_
 	end
 end
 
-function ActionCareerWEThornsisterTargetStagger.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerWEThornsisterTargetStagger.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_0._decal_unit then
 		local var_3_0 = Unit.local_position(arg_3_0.owner_unit, 0)
 		local var_3_1 = arg_3_0:_get_direction(true)
@@ -35,7 +35,7 @@ function ActionCareerWEThornsisterTargetStagger.client_owner_post_update(arg_3_0
 	end
 end
 
-function ActionCareerWEThornsisterTargetStagger.finish(arg_4_0, arg_4_1)
+ActionCareerWEThornsisterTargetStagger.finish = function (arg_4_0, arg_4_1)
 	if arg_4_0._decal_unit then
 		arg_4_0._unit_spawner:mark_for_deletion(arg_4_0._decal_unit)
 
@@ -51,7 +51,7 @@ function ActionCareerWEThornsisterTargetStagger.finish(arg_4_0, arg_4_1)
 	end
 end
 
-function ActionCareerWEThornsisterTargetStagger._get_direction(arg_5_0, arg_5_1)
+ActionCareerWEThornsisterTargetStagger._get_direction = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._first_person_extension:current_rotation()
 	local var_5_1 = Quaternion.forward(var_5_0)
 

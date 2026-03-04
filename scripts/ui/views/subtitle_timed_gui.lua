@@ -150,11 +150,11 @@ local function var_0_3(arg_1_0)
 	return var_1_1
 end
 
-function SubtitleTimedGui.is_complete(arg_2_0)
+SubtitleTimedGui.is_complete = function (arg_2_0)
 	return arg_2_0._complete
 end
 
-function SubtitleTimedGui.init(arg_3_0, arg_3_1, arg_3_2)
+SubtitleTimedGui.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._num_rows = arg_3_2 or 5
 	arg_3_0.render_settings = {
 		snap_pixel_positions = true
@@ -177,7 +177,7 @@ function SubtitleTimedGui.init(arg_3_0, arg_3_1, arg_3_2)
 	var_0_2 = false
 end
 
-function SubtitleTimedGui._create_ui_elements(arg_4_0, arg_4_1)
+SubtitleTimedGui._create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 
 	local var_4_0 = {}
@@ -198,7 +198,7 @@ function SubtitleTimedGui._create_ui_elements(arg_4_0, arg_4_1)
 	UIRenderer.clear_scenegraph_queue(arg_4_1)
 end
 
-function SubtitleTimedGui.update(arg_5_0, arg_5_1, arg_5_2)
+SubtitleTimedGui.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._widgets_initialized then
 		arg_5_0._widgets_initialized = true
 
@@ -268,7 +268,7 @@ function SubtitleTimedGui.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1, arg_5_2)
 end
 
-function SubtitleTimedGui.draw(arg_6_0, arg_6_1, arg_6_2)
+SubtitleTimedGui.draw = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.ui_scenegraph
 	local var_6_1 = arg_6_0.render_settings
 	local var_6_2 = arg_6_0._widgets

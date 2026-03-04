@@ -11,13 +11,13 @@ end
 
 MusicManager = class(MusicManager)
 MusicManager.bus_transition_functions = {
-	linear = function(arg_2_0, arg_2_1)
+	linear = function (arg_2_0, arg_2_1)
 		return math.lerp(arg_2_0.start_value, arg_2_0.target_value, arg_2_1)
 	end,
-	sine = function(arg_3_0, arg_3_1)
+	sine = function (arg_3_0, arg_3_1)
 		return math.lerp(arg_3_0.start_value, arg_3_0.target_value, math.sin(arg_3_1 * math.pi * 0.5))
 	end,
-	smoothstep = function(arg_4_0, arg_4_1)
+	smoothstep = function (arg_4_0, arg_4_1)
 		return math.lerp(arg_4_0.start_value, arg_4_0.target_value, math.smoothstep(arg_4_1, 0, 1))
 	end
 }
@@ -26,7 +26,7 @@ MusicManager.panning_rules = {
 	PANNING_RULE_HEADPHONES = 1
 }
 
-function MusicManager.init(arg_5_0)
+MusicManager.init = function (arg_5_0)
 	var_0_0("init")
 
 	if GLOBAL_MUSIC_WORLD then
@@ -80,7 +80,7 @@ function MusicManager.init(arg_5_0)
 	end
 end
 
-function MusicManager.duck_sounds(arg_6_0)
+MusicManager.duck_sounds = function (arg_6_0)
 	if arg_6_0._duck_sounds_stack == 0 then
 		arg_6_0:trigger_event("hud_in_inventory_state_on")
 	end
@@ -88,7 +88,7 @@ function MusicManager.duck_sounds(arg_6_0)
 	arg_6_0._duck_sounds_stack = arg_6_0._duck_sounds_stack + 1
 end
 
-function MusicManager.unduck_sounds(arg_7_0, arg_7_1)
+MusicManager.unduck_sounds = function (arg_7_0, arg_7_1)
 	if arg_7_0._duck_sounds_stack == 1 or arg_7_1 then
 		arg_7_0:trigger_event("hud_in_inventory_state_off")
 	end
@@ -96,7 +96,7 @@ function MusicManager.unduck_sounds(arg_7_0, arg_7_1)
 	arg_7_0._duck_sounds_stack = arg_7_1 and 0 or math.max(0, arg_7_0._duck_sounds_stack - 1)
 end
 
-function MusicManager._update_window_focus(arg_8_0)
+MusicManager._update_window_focus = function (arg_8_0)
 	if not DEDICATED_SERVER then
 		local var_8_0 = Window.has_focus()
 
@@ -112,12 +112,12 @@ function MusicManager._update_window_focus(arg_8_0)
 	end
 end
 
-function MusicManager.stop_all_sounds(arg_9_0)
+MusicManager.stop_all_sounds = function (arg_9_0)
 	var_0_0("stop_all_sounds")
 	arg_9_0._wwise_world:stop_all()
 end
 
-function MusicManager.stop_event_id(arg_10_0, arg_10_1)
+MusicManager.stop_event_id = function (arg_10_0, arg_10_1)
 	var_0_0("stop_event_id")
 
 	if arg_10_0._wwise_world:is_playing(arg_10_1) then
@@ -125,7 +125,7 @@ function MusicManager.stop_event_id(arg_10_0, arg_10_1)
 	end
 end
 
-function MusicManager.trigger_event(arg_11_0, arg_11_1)
+MusicManager.trigger_event = function (arg_11_0, arg_11_1)
 	var_0_0("trigger_event", arg_11_1)
 
 	local var_11_0 = arg_11_0._wwise_world
@@ -136,7 +136,7 @@ function MusicManager.trigger_event(arg_11_0, arg_11_1)
 	return var_11_1, var_11_2
 end
 
-function MusicManager.trigger_event_queue(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MusicManager.trigger_event_queue = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	fassert(not arg_12_0._event_queues[arg_12_1], "[MusicManager:trigger_event_queue] There is already an event queue playing with that name")
 
 	local var_12_0 = 1
@@ -152,7 +152,7 @@ function MusicManager.trigger_event_queue(arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	}
 end
 
-function MusicManager.update(arg_13_0, arg_13_1, arg_13_2)
+MusicManager.update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.state.conflict
 
 	if var_13_0 then
@@ -191,7 +191,7 @@ end
 
 local var_0_1 = {}
 
-function MusicManager._handle_event_queues(arg_14_0, arg_14_1, arg_14_2)
+MusicManager._handle_event_queues = function (arg_14_0, arg_14_1, arg_14_2)
 	table.clear(var_0_1)
 
 	for iter_14_0, iter_14_1 in pairs(arg_14_0._event_queues) do
@@ -224,7 +224,7 @@ function MusicManager._handle_event_queues(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function MusicManager.stop_event_queue(arg_15_0, arg_15_1)
+MusicManager.stop_event_queue = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._event_queues[arg_15_1]
 
 	if not var_15_0 then
@@ -240,7 +240,7 @@ function MusicManager.stop_event_queue(arg_15_0, arg_15_1)
 	arg_15_0._event_queues[arg_15_1] = nil
 end
 
-function MusicManager.destroy(arg_16_0)
+MusicManager.destroy = function (arg_16_0)
 	var_0_0("DESTROY")
 
 	if not GLOBAL_MUSIC_WORLD then
@@ -250,7 +250,7 @@ function MusicManager.destroy(arg_16_0)
 	arg_16_0:_unregister_events()
 end
 
-function MusicManager.on_enter_level(arg_17_0, arg_17_1, arg_17_2)
+MusicManager.on_enter_level = function (arg_17_0, arg_17_1, arg_17_2)
 	var_0_0("on_enter_level")
 
 	arg_17_0._network_event_delegate = arg_17_1
@@ -292,7 +292,7 @@ function MusicManager.on_enter_level(arg_17_0, arg_17_1, arg_17_2)
 
 		fassert(not arg_17_0._game_object_id, "Creating game object when already exists")
 
-		arg_17_0._game_object_id = Managers.state.network:create_game_object("music_states", var_17_6, function(arg_18_0)
+		arg_17_0._game_object_id = Managers.state.network:create_game_object("music_states", var_17_6, function (arg_18_0)
 			arg_17_0:server_game_session_disconnect_music_states(arg_18_0)
 		end)
 	end
@@ -308,7 +308,7 @@ function MusicManager.on_enter_level(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0:_register_events()
 end
 
-function MusicManager.on_exit_level(arg_19_0)
+MusicManager.on_exit_level = function (arg_19_0)
 	var_0_0("on_exit_level")
 	arg_19_0:set_flag("in_level", false)
 	arg_19_0:set_flag("in_combat", false)
@@ -322,7 +322,7 @@ function MusicManager.on_exit_level(arg_19_0)
 	arg_19_0:_unregister_events()
 end
 
-function MusicManager._register_events(arg_20_0)
+MusicManager._register_events = function (arg_20_0)
 	local var_20_0 = Managers.state.event
 
 	if not var_20_0 then
@@ -333,7 +333,7 @@ function MusicManager._register_events(arg_20_0)
 	var_20_0:register(arg_20_0, "versus_pre_start_initialized", "versus_update_sides")
 end
 
-function MusicManager._unregister_events(arg_21_0)
+MusicManager._unregister_events = function (arg_21_0)
 	local var_21_0 = Managers.state.event
 
 	if not var_21_0 then
@@ -344,15 +344,15 @@ function MusicManager._unregister_events(arg_21_0)
 	var_21_0:unregister("versus_pre_start_initialized", arg_21_0)
 end
 
-function MusicManager.client_game_session_disconnect_music_states(arg_22_0, arg_22_1)
+MusicManager.client_game_session_disconnect_music_states = function (arg_22_0, arg_22_1)
 	return
 end
 
-function MusicManager.server_game_session_disconnect_music_states(arg_23_0, arg_23_1)
+MusicManager.server_game_session_disconnect_music_states = function (arg_23_0, arg_23_1)
 	arg_23_0:game_object_destroyed(arg_23_1, arg_23_0._owner_id, arg_23_0._go_template)
 end
 
-function MusicManager.game_object_created(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+MusicManager.game_object_created = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	var_0_0("game_object_created")
 
 	arg_24_0._game_object_id = arg_24_1
@@ -360,7 +360,7 @@ function MusicManager.game_object_created(arg_24_0, arg_24_1, arg_24_2, arg_24_3
 	arg_24_0._go_template = arg_24_3
 end
 
-function MusicManager.game_object_destroyed(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+MusicManager.game_object_destroyed = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	var_0_0("game_object_destroyed")
 	Application.warning("[MusicManager:game_object_destroyed] Removed go_template == self._go_template check due to crash")
 
@@ -369,7 +369,7 @@ function MusicManager.game_object_destroyed(arg_25_0, arg_25_1, arg_25_2, arg_25
 	arg_25_0._go_template = nil
 end
 
-function MusicManager._update_flags(arg_26_0)
+MusicManager._update_flags = function (arg_26_0)
 	arg_26_0:set_flag("combat_music_enabled", not script_data.debug_disable_combat_music)
 
 	local var_26_0 = arg_26_0._game_object_id
@@ -387,7 +387,7 @@ function MusicManager._update_flags(arg_26_0)
 	end
 end
 
-function MusicManager.set_flag(arg_27_0, arg_27_1, arg_27_2)
+MusicManager.set_flag = function (arg_27_0, arg_27_1, arg_27_2)
 	if arg_27_0._flags[arg_27_1] == arg_27_2 then
 		return
 	end
@@ -403,7 +403,7 @@ function MusicManager.set_flag(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function MusicManager._setup_level_music_players(arg_28_0)
+MusicManager._setup_level_music_players = function (arg_28_0)
 	var_0_0("_setup_level_music_players")
 
 	local var_28_0 = MusicSettings
@@ -424,7 +424,7 @@ function MusicManager._setup_level_music_players(arg_28_0)
 	end
 end
 
-function MusicManager._reset_level_music_players(arg_29_0)
+MusicManager._reset_level_music_players = function (arg_29_0)
 	var_0_0("_reset_level_music_players")
 
 	local var_29_0 = MusicSettings
@@ -442,11 +442,11 @@ function MusicManager._reset_level_music_players(arg_29_0)
 	end
 end
 
-function MusicManager._number_of_aggroed_enemies(arg_30_0)
+MusicManager._number_of_aggroed_enemies = function (arg_30_0)
 	return Managers.state.entity:system("ai_slot_system").num_total_enemies
 end
 
-function MusicManager._update_flag_in_combat(arg_31_0, arg_31_1)
+MusicManager._update_flag_in_combat = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0:_number_of_aggroed_enemies()
 	local var_31_1 = arg_31_1.pacing.total_intensity
 	local var_31_2 = var_31_0 >= CombatMusic.minimum_enemies
@@ -454,7 +454,7 @@ function MusicManager._update_flag_in_combat(arg_31_0, arg_31_1)
 	arg_31_0:set_flag("in_combat", var_31_2)
 end
 
-function MusicManager._update_combat_intensity(arg_32_0, arg_32_1)
+MusicManager._update_combat_intensity = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_1.pacing.total_intensity
 	local var_32_1
 
@@ -469,7 +469,7 @@ function MusicManager._update_combat_intensity(arg_32_0, arg_32_1)
 	end
 end
 
-function MusicManager._update_boss_state(arg_33_0, arg_33_1)
+MusicManager._update_boss_state = function (arg_33_0, arg_33_1)
 	if not arg_33_0._music_players.combat_music then
 		return
 	end
@@ -486,7 +486,7 @@ function MusicManager._update_boss_state(arg_33_0, arg_33_1)
 	arg_33_0:set_music_group_state("combat_music", "boss_state", var_33_1)
 end
 
-function MusicManager._get_versus_combat_music_state(arg_34_0)
+MusicManager._get_versus_combat_music_state = function (arg_34_0)
 	local var_34_0 = Managers.state.side:get_side(2).PLAYER_AND_BOT_UNITS
 	local var_34_1 = "no_boss"
 
@@ -503,7 +503,7 @@ function MusicManager._get_versus_combat_music_state(arg_34_0)
 	return var_34_1
 end
 
-function MusicManager._get_combat_music_state(arg_35_0, arg_35_1)
+MusicManager._get_combat_music_state = function (arg_35_0, arg_35_1)
 	local var_35_0 = "rat_ogre"
 	local var_35_1 = arg_35_1:alive_bosses()
 	local var_35_2 = BLACKBOARDS
@@ -525,7 +525,7 @@ function MusicManager._get_combat_music_state(arg_35_0, arg_35_1)
 	return var_35_0
 end
 
-function MusicManager._update_boss_music_intensity(arg_36_0, arg_36_1)
+MusicManager._update_boss_music_intensity = function (arg_36_0, arg_36_1)
 	local var_36_0 = BossFightMusicIntensity.default_state
 	local var_36_1 = BossFightMusicIntensity.group_name
 	local var_36_2 = arg_36_0:_get_player()
@@ -571,7 +571,7 @@ function MusicManager._update_boss_music_intensity(arg_36_0, arg_36_1)
 	arg_36_0:set_wwise_state(var_36_1, var_36_0)
 end
 
-function MusicManager.set_wwise_state(arg_37_0, arg_37_1, arg_37_2)
+MusicManager.set_wwise_state = function (arg_37_0, arg_37_1, arg_37_2)
 	arg_37_0._group_states[arg_37_1] = arg_37_0._group_states[arg_37_1] or nil
 
 	if arg_37_2 ~= arg_37_0._group_states[arg_37_1] then
@@ -581,7 +581,7 @@ function MusicManager.set_wwise_state(arg_37_0, arg_37_1, arg_37_2)
 	arg_37_0._group_states[arg_37_1] = arg_37_2
 end
 
-function MusicManager.check_last_man_standing_music_state(arg_38_0)
+MusicManager.check_last_man_standing_music_state = function (arg_38_0)
 	local var_38_0 = Managers.player
 
 	if var_38_0:num_players() == 1 then
@@ -626,7 +626,7 @@ local var_0_3 = {
 	horde = true
 }
 
-function MusicManager._update_game_state(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+MusicManager._update_game_state = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = Managers.party:parties()
 	local var_40_1
 
@@ -660,7 +660,7 @@ function MusicManager._update_game_state(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	end
 end
 
-function MusicManager._get_game_state_for_player(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
+MusicManager._get_game_state_for_player = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
 	local var_41_0 = Managers.state.game_mode
 	local var_41_1 = var_41_0:game_mode():is_about_to_end_game_early()
 	local var_41_2 = var_41_0:game_mode_key()
@@ -742,7 +742,7 @@ end
 
 local var_0_4 = {}
 
-function MusicManager._horde_done_spawning(arg_42_0, arg_42_1)
+MusicManager._horde_done_spawning = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_1 == "ambush" and 25 or 25
 	local var_42_1
 	local var_42_2 = Managers.player:players()
@@ -768,7 +768,7 @@ function MusicManager._horde_done_spawning(arg_42_0, arg_42_1)
 	return false
 end
 
-function MusicManager._update_player_state(arg_43_0, arg_43_1, arg_43_2)
+MusicManager._update_player_state = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0._music_players.combat_music
 
 	if var_43_0 then
@@ -790,7 +790,7 @@ function MusicManager._update_player_state(arg_43_0, arg_43_1, arg_43_2)
 	end
 end
 
-function MusicManager._update_career_state(arg_44_0, arg_44_1, arg_44_2)
+MusicManager._update_career_state = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._music_players.combat_music
 	local var_44_1 = arg_44_0:_get_player()
 	local var_44_2 = "default"
@@ -808,7 +808,7 @@ function MusicManager._update_career_state(arg_44_0, arg_44_1, arg_44_2)
 	end
 end
 
-function MusicManager._update_enemy_aggro_state(arg_45_0, arg_45_1, arg_45_2)
+MusicManager._update_enemy_aggro_state = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._music_players.combat_music
 	local var_45_1 = arg_45_0._active_local_player_id
 
@@ -828,7 +828,7 @@ function MusicManager._update_enemy_aggro_state(arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-function MusicManager._update_game_mode(arg_46_0, arg_46_1, arg_46_2)
+MusicManager._update_game_mode = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = arg_46_0._music_players.combat_music
 
 	if var_46_0 then
@@ -837,7 +837,7 @@ function MusicManager._update_game_mode(arg_46_0, arg_46_1, arg_46_2)
 		var_46_0:set_group_state("game_mode", var_46_1)
 
 		if var_46_1 == "adventure" then
-			-- block empty
+			-- Nothing
 		elseif var_46_1 == "versus" then
 			arg_46_0:_update_versus_game_state(var_46_0, arg_46_1, arg_46_2)
 		else
@@ -846,7 +846,7 @@ function MusicManager._update_game_mode(arg_46_0, arg_46_1, arg_46_2)
 	end
 end
 
-function MusicManager._update_side_state(arg_47_0, arg_47_1, arg_47_2)
+MusicManager._update_side_state = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._music_players.combat_music
 
 	if not var_47_0 or not arg_47_0._active_local_player_id then
@@ -878,7 +878,7 @@ function MusicManager._update_side_state(arg_47_0, arg_47_1, arg_47_2)
 	end
 end
 
-function MusicManager._update_versus_game_state(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+MusicManager._update_versus_game_state = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = arg_48_0._music_players.combat_music
 
 	if not var_48_0 or not arg_48_0._active_local_player_id then
@@ -940,7 +940,7 @@ function MusicManager._update_versus_game_state(arg_48_0, arg_48_1, arg_48_2, ar
 	end
 end
 
-function MusicManager.register_active_player(arg_49_0, arg_49_1)
+MusicManager.register_active_player = function (arg_49_0, arg_49_1)
 	var_0_0("register_active_player")
 	fassert(not arg_49_0._active_local_player_id, "Active player %q already registered!", arg_49_1)
 
@@ -948,7 +948,7 @@ function MusicManager.register_active_player(arg_49_0, arg_49_1)
 	arg_49_0._player = nil
 end
 
-function MusicManager.unregister_active_player(arg_50_0, arg_50_1)
+MusicManager.unregister_active_player = function (arg_50_0, arg_50_1)
 	var_0_0("unregister_active_player")
 	fassert(arg_50_0._active_local_player_id == arg_50_1, "Trying to unregister player %q when player %q is active player", arg_50_1, arg_50_0._player_id)
 
@@ -956,7 +956,7 @@ function MusicManager.unregister_active_player(arg_50_0, arg_50_1)
 	arg_50_0._player = nil
 end
 
-function MusicManager.set_music_group_state(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+MusicManager.set_music_group_state = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = arg_51_0._game_object_id
 
 	if arg_51_0._is_server then
@@ -972,29 +972,29 @@ function MusicManager.set_music_group_state(arg_51_0, arg_51_1, arg_51_2, arg_51
 	end
 end
 
-function MusicManager.music_trigger(arg_52_0, arg_52_1, arg_52_2)
+MusicManager.music_trigger = function (arg_52_0, arg_52_1, arg_52_2)
 	var_0_0("music_trigger")
 	arg_52_0._music_players[arg_52_1]:post_trigger(arg_52_2)
 end
 
-function MusicManager.set_music_volume(arg_53_0, arg_53_1)
+MusicManager.set_music_volume = function (arg_53_0, arg_53_1)
 	WwiseWorld.set_global_parameter(arg_53_0._wwise_world, "music_bus_volume", arg_53_1)
 end
 
-function MusicManager.set_master_volume(arg_54_0, arg_54_1)
+MusicManager.set_master_volume = function (arg_54_0, arg_54_1)
 	WwiseWorld.set_global_parameter(arg_54_0._wwise_world, "master_bus_volume", arg_54_1)
 end
 
-function MusicManager.set_panning_rule(arg_55_0, arg_55_1)
+MusicManager.set_panning_rule = function (arg_55_0, arg_55_1)
 	fassert(MusicManager.panning_rules[arg_55_1] ~= nil, "[MusicManager] Panning rule does not exist: %q", arg_55_1)
 	Wwise.set_panning_rule(MusicManager.panning_rules[arg_55_1])
 end
 
-function MusicManager.is_playing(arg_56_0, arg_56_1)
+MusicManager.is_playing = function (arg_56_0, arg_56_1)
 	return WwiseWorld.is_playing(arg_56_0._wwise_world, arg_56_1)
 end
 
-function MusicManager.delay_trigger_horde_dialogue(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+MusicManager.delay_trigger_horde_dialogue = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	if arg_57_2 ~= nil then
 		arg_57_0._horde_delay = arg_57_2
 		arg_57_0._horde_type = arg_57_3
@@ -1008,7 +1008,7 @@ function MusicManager.delay_trigger_horde_dialogue(arg_57_0, arg_57_1, arg_57_2,
 	end
 end
 
-function MusicManager.trigger_horde_dialogue(arg_58_0, arg_58_1)
+MusicManager.trigger_horde_dialogue = function (arg_58_0, arg_58_1)
 	local var_58_0 = Managers.state.entity:system("dialogue_system"):get_random_player()
 
 	if var_58_0 then
@@ -1016,7 +1016,7 @@ function MusicManager.trigger_horde_dialogue(arg_58_0, arg_58_1)
 	end
 end
 
-function MusicManager._get_player(arg_59_0)
+MusicManager._get_player = function (arg_59_0)
 	if arg_59_0._player then
 		return arg_59_0._player
 	end
@@ -1034,7 +1034,7 @@ function MusicManager._get_player(arg_59_0)
 	return arg_59_0._player
 end
 
-function MusicManager._get_party(arg_60_0)
+MusicManager._get_party = function (arg_60_0)
 	if arg_60_0._party then
 		return arg_60_0._party
 	end
@@ -1046,7 +1046,7 @@ function MusicManager._get_party(arg_60_0)
 	return arg_60_0._party
 end
 
-function MusicManager._get_side_name(arg_61_0)
+MusicManager._get_side_name = function (arg_61_0)
 	if arg_61_0._side then
 		return arg_61_0._side:name()
 	end
@@ -1058,7 +1058,7 @@ function MusicManager._get_side_name(arg_61_0)
 	return arg_61_0._side and arg_61_0._side:name()
 end
 
-function MusicManager.on_player_party_changed(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+MusicManager.on_player_party_changed = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 	if not arg_62_2 then
 		return
 	end
@@ -1067,7 +1067,7 @@ function MusicManager.on_player_party_changed(arg_62_0, arg_62_1, arg_62_2, arg_
 	arg_62_0._side = arg_62_0._side_manager.side_by_party[arg_62_0._party]
 end
 
-function MusicManager.versus_update_sides(arg_63_0)
+MusicManager.versus_update_sides = function (arg_63_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1076,10 +1076,10 @@ function MusicManager.versus_update_sides(arg_63_0)
 	arg_63_0._side = arg_63_0._side_manager.side_by_party[arg_63_0._party]
 end
 
-function MusicManager.on_enter_game(arg_64_0)
+MusicManager.on_enter_game = function (arg_64_0)
 	arg_64_0._is_ingame = true
 end
 
-function MusicManager.on_exit_game(arg_65_0)
+MusicManager.on_exit_game = function (arg_65_0)
 	arg_65_0._is_ingame = false
 end

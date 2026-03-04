@@ -12,7 +12,7 @@ local var_0_5 = {
 	"rpc_respawn_confirmed"
 }
 
-function RespawnHandler.init(arg_1_0, arg_1_1, arg_1_2)
+RespawnHandler.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._profile_synchronizer = arg_1_1
 	arg_1_0._respawn_units = {}
 	arg_1_0._respawn_gate_units = {}
@@ -38,21 +38,21 @@ function RespawnHandler.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function RespawnHandler.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+RespawnHandler.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1:register(arg_2_0, unpack(var_0_5))
 
 	arg_2_0._network_event_delegate = arg_2_1
 	arg_2_0._network_transmit = arg_2_2
 end
 
-function RespawnHandler.unregister_rpcs(arg_3_0)
+RespawnHandler.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 	arg_3_0._network_transmit = nil
 end
 
-function RespawnHandler.set_respawn_unit_available(arg_4_0, arg_4_1)
+RespawnHandler.set_respawn_unit_available = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0:find_respawn_data_from_unit(arg_4_1)
 
 	if var_4_0 then
@@ -60,7 +60,7 @@ function RespawnHandler.set_respawn_unit_available(arg_4_0, arg_4_1)
 	end
 end
 
-function RespawnHandler.find_respawn_data_from_unit(arg_5_0, arg_5_1)
+RespawnHandler.find_respawn_data_from_unit = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._respawn_units
 	local var_5_1 = #var_5_0
 
@@ -85,7 +85,7 @@ local function var_0_6(arg_6_0, arg_6_1)
 	return var_6_0 < var_6_1
 end
 
-function RespawnHandler.set_override_respawn_group(arg_7_0, arg_7_1, arg_7_2)
+RespawnHandler.set_override_respawn_group = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._respawner_groups[arg_7_1]
 
 	if not var_7_0 then
@@ -114,7 +114,7 @@ function RespawnHandler.set_override_respawn_group(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function RespawnHandler.set_respawn_group_enabled(arg_8_0, arg_8_1, arg_8_2)
+RespawnHandler.set_respawn_group_enabled = function (arg_8_0, arg_8_1, arg_8_2)
 	print("Setting player respawning group enabled", arg_8_1, arg_8_2)
 
 	local var_8_0 = arg_8_0._disabled_respawn_groups
@@ -126,7 +126,7 @@ function RespawnHandler.set_respawn_group_enabled(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function RespawnHandler.set_respawn_gate_enabled(arg_9_0, arg_9_1, arg_9_2)
+RespawnHandler.set_respawn_gate_enabled = function (arg_9_0, arg_9_1, arg_9_2)
 	print("Setting player respawning gate enabled", arg_9_2)
 
 	local var_9_0 = arg_9_0._respawn_gate_units
@@ -144,7 +144,7 @@ function RespawnHandler.set_respawn_gate_enabled(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function RespawnHandler.respawn_unit_spawned(arg_10_0, arg_10_1)
+RespawnHandler.respawn_unit_spawned = function (arg_10_0, arg_10_1)
 	local var_10_0 = Unit.get_data(arg_10_1, "distance_through_level")
 	local var_10_1 = Unit.get_data(arg_10_1, "respawn_group_id")
 
@@ -177,7 +177,7 @@ function RespawnHandler.respawn_unit_spawned(arg_10_0, arg_10_1)
 	end
 end
 
-function RespawnHandler.respawn_gate_unit_spawned(arg_11_0, arg_11_1)
+RespawnHandler.respawn_gate_unit_spawned = function (arg_11_0, arg_11_1)
 	local var_11_0 = Unit.get_data(arg_11_1, "distance_through_level")
 	local var_11_1 = Unit.get_data(arg_11_1, "gate_enabled")
 	local var_11_2 = {
@@ -192,7 +192,7 @@ function RespawnHandler.respawn_gate_unit_spawned(arg_11_0, arg_11_1)
 	table.sort(arg_11_0._respawn_gate_units, var_0_6)
 end
 
-function RespawnHandler.remove_respawn_units_due_to_crossroads(arg_12_0, arg_12_1, arg_12_2)
+RespawnHandler.remove_respawn_units_due_to_crossroads = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = script_data.debug_player_respawns
 	local var_12_1 = Vector3(0, 0, 1.5)
 	local var_12_2 = {}
@@ -239,7 +239,7 @@ function RespawnHandler.remove_respawn_units_due_to_crossroads(arg_12_0, arg_12_
 	end
 end
 
-function RespawnHandler.recalc_respawner_dist_due_to_crossroads(arg_13_0)
+RespawnHandler.recalc_respawner_dist_due_to_crossroads = function (arg_13_0)
 	local var_13_0 = arg_13_0._respawn_units
 	local var_13_1 = Unit.local_position
 
@@ -251,7 +251,7 @@ function RespawnHandler.recalc_respawner_dist_due_to_crossroads(arg_13_0)
 	end
 end
 
-function RespawnHandler.update(arg_14_0, arg_14_1, arg_14_2)
+RespawnHandler.update = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._delayed_respawn_queue
 	local var_14_1 = #var_14_0
 	local var_14_2 = arg_14_0._is_server
@@ -280,7 +280,7 @@ function RespawnHandler.update(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function RespawnHandler._check_all_synced(arg_15_0)
+RespawnHandler._check_all_synced = function (arg_15_0)
 	if not arg_15_0._all_synced_checked then
 		arg_15_0._all_synced_checked = true
 		arg_15_0._all_synced = arg_15_0._profile_synchronizer:all_synced()
@@ -289,7 +289,7 @@ function RespawnHandler._check_all_synced(arg_15_0)
 	return arg_15_0._all_synced
 end
 
-function RespawnHandler.server_update(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+RespawnHandler.server_update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	arg_16_0._all_synced_checked = false
 	arg_16_0._all_synced = false
 
@@ -419,11 +419,11 @@ function RespawnHandler.server_update(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	end
 end
 
-function RespawnHandler.set_move_dead_players_to_next_respawn(arg_17_0, arg_17_1)
+RespawnHandler.set_move_dead_players_to_next_respawn = function (arg_17_0, arg_17_1)
 	arg_17_0._move_players = arg_17_1
 end
 
-function RespawnHandler.queue_force_move_dead_players(arg_18_0)
+RespawnHandler.queue_force_move_dead_players = function (arg_18_0)
 	arg_18_0._move_players = true
 	arg_18_0._force_move = true
 end
@@ -436,11 +436,11 @@ local var_0_7 = {
 	boss_event_rat_ogre = true
 }
 
-function RespawnHandler.destroy(arg_19_0)
+RespawnHandler.destroy = function (arg_19_0)
 	return
 end
 
-function RespawnHandler.get_active_respawn_units(arg_20_0)
+RespawnHandler.get_active_respawn_units = function (arg_20_0)
 	local var_20_0 = arg_20_0._respawn_units
 	local var_20_1 = {}
 
@@ -455,11 +455,11 @@ function RespawnHandler.get_active_respawn_units(arg_20_0)
 	return var_20_1
 end
 
-function RespawnHandler.get_available_and_active_respawn_units(arg_21_0)
+RespawnHandler.get_available_and_active_respawn_units = function (arg_21_0)
 	return arg_21_0._respawn_units
 end
 
-function RespawnHandler.rpc_to_client_respawn_player(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10)
+RespawnHandler.rpc_to_client_respawn_player = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10)
 	local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
 
 	printf("RespawnSystem:rpc_to_client_respawn_player(%s, %s)", tostring(var_22_0), tostring(arg_22_3))
@@ -476,7 +476,7 @@ function RespawnHandler.rpc_to_client_respawn_player(arg_22_0, arg_22_1, arg_22_
 	end
 end
 
-function RespawnHandler._respawn_player(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+RespawnHandler._respawn_player = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
 	arg_23_1:set_profile_index(arg_23_2)
 	arg_23_1:set_career_index(arg_23_3)
 
@@ -495,13 +495,13 @@ function RespawnHandler._respawn_player(arg_23_0, arg_23_1, arg_23_2, arg_23_3, 
 	var_23_7.network_transmit:send_rpc_server("rpc_respawn_confirmed", arg_23_1:local_player_id())
 end
 
-function RespawnHandler.rpc_respawn_confirmed(arg_24_0, arg_24_1, arg_24_2)
+RespawnHandler.rpc_respawn_confirmed = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = CHANNEL_TO_PEER_ID[arg_24_1]
 
 	Managers.party:get_player_status(var_24_0, arg_24_2).game_mode_data.ready_for_respawn = false
 end
 
-function RespawnHandler.force_respawn_dead_players(arg_25_0, arg_25_1)
+RespawnHandler.force_respawn_dead_players = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1.occupied_slots
 
 	for iter_25_0 = 1, #var_25_0 do
@@ -509,7 +509,7 @@ function RespawnHandler.force_respawn_dead_players(arg_25_0, arg_25_1)
 	end
 end
 
-function RespawnHandler._delayed_respawn_player(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
+RespawnHandler._delayed_respawn_player = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
 	local var_26_0 = {
 		arg_26_1,
 		arg_26_2,
@@ -525,7 +525,7 @@ function RespawnHandler._delayed_respawn_player(arg_26_0, arg_26_1, arg_26_2, ar
 	table.insert(arg_26_0._delayed_respawn_queue, var_26_0)
 end
 
-function RespawnHandler.is_respawn_enabled(arg_27_0, arg_27_1)
+RespawnHandler.is_respawn_enabled = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._active_overridden_units
 
 	if next(var_27_0) then
@@ -535,11 +535,11 @@ function RespawnHandler.is_respawn_enabled(arg_27_0, arg_27_1)
 	return not arg_27_0._disabled_respawn_groups[arg_27_1.group_id]
 end
 
-function RespawnHandler.is_spawn_group_override_active(arg_28_0, arg_28_1)
+RespawnHandler.is_spawn_group_override_active = function (arg_28_0, arg_28_1)
 	return arg_28_0._active_overrides[arg_28_1]
 end
 
-function RespawnHandler.get_boss_door_dist(arg_29_0, arg_29_1, arg_29_2)
+RespawnHandler.get_boss_door_dist = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._boss_door_dist_lookup[arg_29_2]
 
 	if var_29_0 then
@@ -554,7 +554,7 @@ function RespawnHandler.get_boss_door_dist(arg_29_0, arg_29_1, arg_29_2)
 	return var_29_3
 end
 
-function RespawnHandler.get_next_boss_door_dist(arg_30_0, arg_30_1, arg_30_2)
+RespawnHandler.get_next_boss_door_dist = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_1.main_paths
 	local var_30_1 = Managers.state.conflict.enemy_recycler
 	local var_30_2 = var_30_1.main_path_events[var_30_1.current_main_path_event_id]
@@ -594,7 +594,7 @@ function RespawnHandler.get_next_boss_door_dist(arg_30_0, arg_30_1, arg_30_2)
 	return math.min(var_30_8, var_30_10)
 end
 
-function RespawnHandler.get_next_respawn_gate_dist(arg_31_0, arg_31_1)
+RespawnHandler.get_next_respawn_gate_dist = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._respawn_gate_units
 
 	for iter_31_0 = 1, arg_31_0._respawn_gate_units_n do
@@ -608,13 +608,13 @@ function RespawnHandler.get_next_respawn_gate_dist(arg_31_0, arg_31_1)
 	return math.huge
 end
 
-function RespawnHandler.get_main_path_segment_start(arg_32_0, arg_32_1)
+RespawnHandler.get_main_path_segment_start = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_1.current_path_index
 
 	return arg_32_1.main_paths[var_32_0].travel_dist[1]
 end
 
-function RespawnHandler.get_behind_unit_segment_start(arg_33_0, arg_33_1)
+RespawnHandler.get_behind_unit_segment_start = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_1.behind_unit
 
 	if ALIVE[var_33_0] then
@@ -627,7 +627,7 @@ function RespawnHandler.get_behind_unit_segment_start(arg_33_0, arg_33_1)
 	return 0
 end
 
-function RespawnHandler.get_respawn_dist_range(arg_34_0, arg_34_1, arg_34_2)
+RespawnHandler.get_respawn_dist_range = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0:get_main_path_segment_start(arg_34_1)
 	local var_34_1 = math.huge
 	local var_34_2 = arg_34_0:get_next_boss_door_dist(arg_34_1, arg_34_2)
@@ -638,7 +638,7 @@ function RespawnHandler.get_respawn_dist_range(arg_34_0, arg_34_1, arg_34_2)
 	return var_34_0, var_34_5
 end
 
-function RespawnHandler._is_respawn_reachable(arg_35_0, arg_35_1)
+RespawnHandler._is_respawn_reachable = function (arg_35_0, arg_35_1)
 	if not arg_35_1 then
 		return false
 	end
@@ -653,7 +653,7 @@ function RespawnHandler._is_respawn_reachable(arg_35_0, arg_35_1)
 	return arg_35_1.distance_through_level >= var_35_1 - 0.01
 end
 
-function RespawnHandler.find_best_respawn_point(arg_36_0, arg_36_1, arg_36_2)
+RespawnHandler.find_best_respawn_point = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = Managers.state.conflict.main_path_info
 	local var_36_1 = var_36_0.ahead_travel_dist
 	local var_36_2 = var_36_1 + arg_36_0._respawn_distance

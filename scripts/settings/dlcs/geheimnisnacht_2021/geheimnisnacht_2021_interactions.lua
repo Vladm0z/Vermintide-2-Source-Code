@@ -13,7 +13,7 @@ InteractionDefinitions.geheimnisnacht_2021_altar.config = {
 	block_other_interactions = true
 }
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.server.stop(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.stop = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	local var_1_0 = arg_1_6 == InteractionResult.SUCCESS
 
 	if var_1_0 then
@@ -33,7 +33,7 @@ function InteractionDefinitions.geheimnisnacht_2021_altar.server.stop(arg_1_0, a
 	Unit.flow_event(arg_1_2, var_1_6)
 end
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.client.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.stop = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	InteractionDefinitions.smartobject.client.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 
 	local var_2_0 = ScriptUnit.has_extension(arg_2_2, "props_system")
@@ -43,7 +43,7 @@ function InteractionDefinitions.geheimnisnacht_2021_altar.client.stop(arg_2_0, a
 	end
 end
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.server.can_interact(arg_3_0, arg_3_1)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.can_interact = function (arg_3_0, arg_3_1)
 	if not ScriptUnit.extension(arg_3_1, "props_system"):can_interact() then
 		return
 	end
@@ -57,7 +57,7 @@ function InteractionDefinitions.geheimnisnacht_2021_altar.server.can_interact(ar
 	return not Unit.get_data(arg_3_1, "interaction_data", "used")
 end
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if not ScriptUnit.extension(arg_4_1, "props_system"):can_interact() then
 		return
 	end
@@ -74,7 +74,7 @@ function InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact(ar
 	return not var_4_1 and not var_4_2
 end
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.client.start(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.start = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	InteractionDefinitions.smartobject.client.start(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 
 	local var_5_0 = ScriptUnit.has_extension(arg_5_2, "props_system")
@@ -84,7 +84,7 @@ function InteractionDefinitions.geheimnisnacht_2021_altar.client.start(arg_5_0, 
 	end
 end
 
-function InteractionDefinitions.geheimnisnacht_2021_altar.server.start(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.start = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	InteractionDefinitions.smartobject.server.start(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 
 	local var_6_0 = ScriptUnit.has_extension(arg_6_2, "props_system")

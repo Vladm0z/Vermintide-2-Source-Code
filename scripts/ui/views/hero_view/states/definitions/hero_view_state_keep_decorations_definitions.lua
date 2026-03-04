@@ -339,7 +339,7 @@ local function var_0_12()
 			style_id = "title",
 			pass_type = "text",
 			text_id = "title",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return not arg_2_0.locked
 			end
 		},
@@ -347,7 +347,7 @@ local function var_0_12()
 			style_id = "locked_title",
 			pass_type = "text",
 			text_id = "title",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.locked
 			end
 		},
@@ -375,10 +375,10 @@ local function var_0_12()
 			style_id = "new_frame",
 			texture_id = "new_frame",
 			pass_type = "texture_frame",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.new and not arg_4_0.button_hotspot.is_hover
 			end,
-			content_change_function = function(arg_5_0, arg_5_1)
+			content_change_function = function (arg_5_0, arg_5_1)
 				local var_5_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 				arg_5_1.color[1] = 55 + var_5_0 * 200
@@ -388,7 +388,7 @@ local function var_0_12()
 			pass_type = "texture",
 			style_id = "dot_texture",
 			texture_id = "dot_texture",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				local var_6_0 = arg_6_0.locked
 				local var_6_1 = arg_6_0.equipped
 				local var_6_2 = arg_6_0.new
@@ -401,7 +401,7 @@ local function var_0_12()
 			pass_type = "texture",
 			style_id = "lock_texture",
 			texture_id = "lock_texture",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.locked
 			end
 		},
@@ -409,7 +409,7 @@ local function var_0_12()
 			pass_type = "texture",
 			style_id = "equipped_texture",
 			texture_id = "equipped_texture",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.equipped
 			end
 		},
@@ -417,7 +417,7 @@ local function var_0_12()
 			pass_type = "texture",
 			style_id = "equipped_shadow_texture",
 			texture_id = "equipped_texture",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.equipped
 			end
 		},
@@ -425,7 +425,7 @@ local function var_0_12()
 			pass_type = "texture",
 			style_id = "in_use_texture",
 			texture_id = "equipped_texture",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.in_use and not arg_10_0.equipped
 			end
 		},
@@ -433,10 +433,10 @@ local function var_0_12()
 			style_id = "new_texture",
 			texture_id = "new_texture",
 			pass_type = "texture",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return arg_11_0.new
 			end,
-			content_change_function = function(arg_12_0, arg_12_1)
+			content_change_function = function (arg_12_0, arg_12_1)
 				local var_12_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 				arg_12_1.color[1] = 55 + var_12_0 * 200
@@ -1123,10 +1123,10 @@ local var_0_18 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeOutCubic(arg_17_3)
 
 				arg_17_4.render_settings.alpha_multiplier = var_17_0
@@ -1148,7 +1148,7 @@ local var_0_18 = {
 
 				arg_17_0.confirm_button.position[2] = var_17_5[2] - var_17_1
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}

@@ -9,7 +9,7 @@ local var_0_3 = var_0_0.RETAINED_MODE_ENABLED
 
 PetUI = class(PetUI)
 
-function PetUI.init(arg_1_0, arg_1_1, arg_1_2)
+PetUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._render_settings = {
@@ -22,7 +22,7 @@ function PetUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function PetUI.destroy(arg_2_0, arg_2_1, arg_2_2)
+PetUI.destroy = function (arg_2_0, arg_2_1, arg_2_2)
 	for iter_2_0, iter_2_1 in pairs(arg_2_0._pet_widget_by_unit) do
 		local var_2_0 = iter_2_1.content.marker_id
 
@@ -36,7 +36,7 @@ function PetUI.destroy(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function PetUI._destroy_all_widgets(arg_3_0)
+PetUI._destroy_all_widgets = function (arg_3_0)
 	for iter_3_0, iter_3_1 in pairs(arg_3_0._pet_widget_list) do
 		UIWidget.destroy(arg_3_0._ui_renderer, iter_3_1)
 	end
@@ -44,7 +44,7 @@ function PetUI._destroy_all_widgets(arg_3_0)
 	UIWidget.destroy(arg_3_0._ui_renderer, arg_3_0._container_widget)
 end
 
-function PetUI._create_ui_elements(arg_4_0)
+PetUI._create_ui_elements = function (arg_4_0)
 	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -73,13 +73,13 @@ function PetUI._create_ui_elements(arg_4_0)
 	arg_4_0._dirty = true
 end
 
-function PetUI.set_visible(arg_5_0, arg_5_1)
+PetUI.set_visible = function (arg_5_0, arg_5_1)
 	arg_5_0._is_visible = arg_5_1
 
 	arg_5_0:_set_elements_visible(arg_5_1)
 end
 
-function PetUI._set_elements_visible(arg_6_0, arg_6_1)
+PetUI._set_elements_visible = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_renderer
 
 	UIRenderer.set_element_visible(var_6_0, arg_6_0._container_widget.element, arg_6_1)
@@ -93,17 +93,17 @@ function PetUI._set_elements_visible(arg_6_0, arg_6_1)
 	arg_6_0:_set_all_dirty()
 end
 
-function PetUI._set_widget_dirty(arg_7_0, arg_7_1)
+PetUI._set_widget_dirty = function (arg_7_0, arg_7_1)
 	arg_7_1.element.dirty = true
 	arg_7_0._dirty = true
 end
 
-function PetUI._set_all_dirty(arg_8_0)
+PetUI._set_all_dirty = function (arg_8_0)
 	UIUtils.mark_dirty(arg_8_0._pet_widget_list)
 	arg_8_0:_set_widget_dirty(arg_8_0._container_widget)
 end
 
-function PetUI._create_pet_widget(arg_9_0, arg_9_1)
+PetUI._create_pet_widget = function (arg_9_0, arg_9_1)
 	local var_9_0 = #arg_9_0._pet_widget_list + 1
 	local var_9_1 = UIWidget.init(var_0_0.pet_widget_definition)
 	local var_9_2 = var_9_1.content
@@ -146,7 +146,7 @@ local function var_0_4(arg_10_0, arg_10_1)
 	return var_10_4 or "???"
 end
 
-function PetUI._pet_ui_available(arg_11_0, arg_11_1)
+PetUI._pet_ui_available = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_available
 	local var_11_1 = arg_11_1 and arg_11_1:career_name()
 
@@ -172,7 +172,7 @@ end
 
 local var_0_5 = {}
 
-function PetUI._update_animations(arg_12_0, arg_12_1)
+PetUI._update_animations = function (arg_12_0, arg_12_1)
 	table.clear(var_0_5)
 
 	local var_12_0 = arg_12_0._ui_animator
@@ -208,7 +208,7 @@ local function var_0_6(arg_13_0, arg_13_1)
 	return arg_13_0.content.order_index < arg_13_1.content.order_index
 end
 
-function PetUI._update_pet_container(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+PetUI._update_pet_container = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_3.player_unit
 	local var_14_1 = ScriptUnit.has_extension(var_14_0, "ai_commander_system")
 	local var_14_2 = var_14_1:get_controlled_units()
@@ -324,9 +324,9 @@ function PetUI._update_pet_container(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function PetUI.add_pet_nameplate(arg_15_0, arg_15_1, arg_15_2)
+PetUI.add_pet_nameplate = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_0._show_nameplates then
-		Managers.state.event:trigger("add_world_marker_unit", "pet_nameplate", arg_15_1, function(arg_16_0, arg_16_1)
+		Managers.state.event:trigger("add_world_marker_unit", "pet_nameplate", arg_15_1, function (arg_16_0, arg_16_1)
 			if arg_15_2.content.marker_id ~= false then
 				arg_15_2.content.marker_id = arg_16_0
 				arg_15_2.content.marker_widget = arg_16_1
@@ -336,7 +336,7 @@ function PetUI.add_pet_nameplate(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function PetUI.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+PetUI.update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if not arg_17_0._is_visible then
 		return
 	end
@@ -352,7 +352,7 @@ function PetUI.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0:_draw(arg_17_1, arg_17_2)
 end
 
-function PetUI._handle_gamepad_activity(arg_18_0)
+PetUI._handle_gamepad_activity = function (arg_18_0)
 	local var_18_0 = Managers.input:is_device_active("gamepad")
 	local var_18_1 = arg_18_0._gamepad_active_last_frame == nil
 
@@ -373,7 +373,7 @@ function PetUI._handle_gamepad_activity(arg_18_0)
 	end
 end
 
-function PetUI._handle_resolution_modified(arg_19_0)
+PetUI._handle_resolution_modified = function (arg_19_0)
 	local var_19_0 = RESOLUTION_LOOKUP.res_w
 	local var_19_1 = RESOLUTION_LOOKUP.res_h
 
@@ -385,11 +385,11 @@ function PetUI._handle_resolution_modified(arg_19_0)
 	end
 end
 
-function PetUI.resolution_modified(arg_20_0)
+PetUI.resolution_modified = function (arg_20_0)
 	arg_20_0:_set_all_dirty()
 end
 
-function PetUI._draw(arg_21_0, arg_21_1, arg_21_2)
+PetUI._draw = function (arg_21_0, arg_21_1, arg_21_2)
 	if not arg_21_0._dirty and var_0_3 then
 		return
 	end
@@ -404,7 +404,7 @@ function PetUI._draw(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0._dirty = false
 end
 
-function PetUI._update_pet_widget(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PetUI._update_pet_widget = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = arg_22_1.content
 	local var_22_1 = var_22_0.unit
 	local var_22_2, var_22_3, var_22_4 = arg_22_2:pet_ui_data(var_22_1)

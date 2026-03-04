@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInGravityWellAction = class(BTInGravityWellAction, BTNode)
 
-function BTInGravityWellAction.init(arg_1_0, ...)
+BTInGravityWellAction.init = function (arg_1_0, ...)
 	BTInGravityWellAction.super.init(arg_1_0, ...)
 end
 
@@ -12,7 +12,7 @@ BTInGravityWellAction.name = "BTInGravityWellAction"
 
 local var_0_0 = 0.35
 
-function BTInGravityWellAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInGravityWellAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.locomotion_extension
 
 	arg_2_2.navigation_extension:set_enabled(false)
@@ -40,7 +40,7 @@ function BTInGravityWellAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.spawn_to_running = nil
 end
 
-function BTInGravityWellAction._set_wanted_velocity(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTInGravityWellAction._set_wanted_velocity = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_2.locomotion_extension
 	local var_3_1 = arg_3_2.gravity_well_position:unbox()
 	local var_3_2 = arg_3_2.gravity_well_strength
@@ -67,7 +67,7 @@ function BTInGravityWellAction._set_wanted_velocity(arg_3_0, arg_3_1, arg_3_2, a
 	return var_3_8, var_3_7
 end
 
-function BTInGravityWellAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTInGravityWellAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 	arg_4_2.stagger_hit_wall = nil
 
@@ -82,7 +82,7 @@ function BTInGravityWellAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	arg_4_2.gravity_well_time = nil
 end
 
-function BTInGravityWellAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTInGravityWellAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
 	local var_5_1, var_5_2 = arg_5_0:_set_wanted_velocity(arg_5_4, arg_5_2, var_5_0)
 	local var_5_3 = arg_5_2.locomotion_extension

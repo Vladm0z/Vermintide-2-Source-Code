@@ -8,7 +8,7 @@ local var_0_0 = {
 
 PlayGoTutorialSystem = class(PlayGoTutorialSystem, ExtensionSystemBase)
 
-function PlayGoTutorialSystem.init(arg_1_0, arg_1_1, arg_1_2)
+PlayGoTutorialSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	PlayGoTutorialSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._profile_synchronizer = arg_1_1.profile_synchronizer
@@ -23,7 +23,7 @@ function PlayGoTutorialSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._bot_portraits_enabled = {}
 end
 
-function PlayGoTutorialSystem.destroy(arg_2_0)
+PlayGoTutorialSystem.destroy = function (arg_2_0)
 	if arg_2_0._unit_animation_event then
 		Unit.animation_event = arg_2_0._unit_animation_event
 		arg_2_0._unit_animation_event = nil
@@ -42,13 +42,13 @@ function PlayGoTutorialSystem.destroy(arg_2_0)
 	end
 end
 
-function PlayGoTutorialSystem.active(arg_3_0)
+PlayGoTutorialSystem.active = function (arg_3_0)
 	return arg_3_0._active
 end
 
 local var_0_1 = {}
 
-function PlayGoTutorialSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ...)
+PlayGoTutorialSystem.on_add_extension = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, ...)
 	fassert(arg_4_0._tutorial_unit == nil, "Multiple tutorial units spawned on level!")
 
 	local var_4_0 = {}
@@ -80,7 +80,7 @@ function PlayGoTutorialSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_
 	return var_4_0
 end
 
-function PlayGoTutorialSystem.trigger_pause_event(arg_5_0, arg_5_1, arg_5_2)
+PlayGoTutorialSystem.trigger_pause_event = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._current_pause_event = nil
 
 	fassert(not arg_5_0._current_animation_hook, "[PlayGoTutorialSystem:trigger_pause_event] Trying to trigger pause event %q while an animation hook is active", arg_5_1.name)
@@ -93,13 +93,13 @@ function PlayGoTutorialSystem.trigger_pause_event(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._current_pause_event.on_enter(arg_5_1, nil, arg_5_2)
 end
 
-function PlayGoTutorialSystem.add_animation_hook(arg_6_0, arg_6_1)
+PlayGoTutorialSystem.add_animation_hook = function (arg_6_0, arg_6_1)
 	arg_6_0._animation_hooks[#arg_6_0._animation_hooks + 1] = arg_6_1
 
 	arg_6_0:_add_next_animation_hook()
 end
 
-function PlayGoTutorialSystem._add_next_animation_hook(arg_7_0)
+PlayGoTutorialSystem._add_next_animation_hook = function (arg_7_0)
 	arg_7_0._unit_animation_event = arg_7_0._unit_animation_event or Unit.animation_event
 
 	local var_7_0 = arg_7_0._animation_hooks[1]
@@ -107,7 +107,7 @@ function PlayGoTutorialSystem._add_next_animation_hook(arg_7_0)
 	if var_7_0 then
 		arg_7_0._current_animation_hook = var_7_0
 
-		function Unit.animation_event(arg_8_0, arg_8_1)
+		Unit.animation_event = function (arg_8_0, arg_8_1)
 			local var_8_0 = Unit.get_data(arg_8_0, "breed")
 
 			if var_8_0 and var_8_0.name == var_7_0.breed and not var_7_0.activated and table.find(var_7_0.animations, arg_8_1) and var_7_0.check_prerequisites() then
@@ -127,7 +127,7 @@ function PlayGoTutorialSystem._add_next_animation_hook(arg_7_0)
 	end
 end
 
-function PlayGoTutorialSystem.on_remove_extension(arg_9_0, arg_9_1, arg_9_2)
+PlayGoTutorialSystem.on_remove_extension = function (arg_9_0, arg_9_1, arg_9_2)
 	ScriptUnit.remove_extension(arg_9_1, arg_9_0.NAME)
 	arg_9_0:_unload_profile_packages()
 
@@ -139,11 +139,11 @@ function PlayGoTutorialSystem.on_remove_extension(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._tutorial_unit = nil
 end
 
-function PlayGoTutorialSystem.set_bot_ready_for_assisted_respawn(arg_10_0, arg_10_1, arg_10_2)
+PlayGoTutorialSystem.set_bot_ready_for_assisted_respawn = function (arg_10_0, arg_10_1, arg_10_2)
 	ScriptUnit.extension(arg_10_1, "status_system"):set_ready_for_assisted_respawn(true, arg_10_2)
 end
 
-function PlayGoTutorialSystem.remove_player_ammo(arg_11_0)
+PlayGoTutorialSystem.remove_player_ammo = function (arg_11_0)
 	local var_11_0 = Managers.player:local_player()
 	local var_11_1 = ScriptUnit.extension(var_11_0.player_unit, "inventory_system")
 	local var_11_2, var_11_3 = var_11_1:current_ammo_status("slot_ranged")
@@ -161,7 +161,7 @@ function PlayGoTutorialSystem.remove_player_ammo(arg_11_0)
 	end
 end
 
-function PlayGoTutorialSystem.check_player_ammo(arg_12_0)
+PlayGoTutorialSystem.check_player_ammo = function (arg_12_0)
 	local var_12_0 = Managers.player:local_player()
 	local var_12_1, var_12_2 = ScriptUnit.extension(var_12_0.player_unit, "inventory_system"):current_ammo_status("slot_ranged")
 
@@ -172,11 +172,11 @@ function PlayGoTutorialSystem.check_player_ammo(arg_12_0)
 	return false
 end
 
-function PlayGoTutorialSystem.enable_player_ammo_refill(arg_13_0)
+PlayGoTutorialSystem.enable_player_ammo_refill = function (arg_13_0)
 	arg_13_0.player_ammo_refill = true
 end
 
-function PlayGoTutorialSystem.give_player_potion_from_bot(arg_14_0, arg_14_1, arg_14_2)
+PlayGoTutorialSystem.give_player_potion_from_bot = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = ScriptUnit.extension(arg_14_1, "inventory_system")
 	local var_14_1 = "potion_speed_boost_01"
 	local var_14_2 = ItemMasterList[var_14_1]
@@ -190,7 +190,7 @@ function PlayGoTutorialSystem.give_player_potion_from_bot(arg_14_0, arg_14_1, ar
 	end
 end
 
-function PlayGoTutorialSystem.update(arg_15_0, arg_15_1, arg_15_2)
+PlayGoTutorialSystem.update = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0._tutorial_started then
 		return
 	end
@@ -210,7 +210,7 @@ function PlayGoTutorialSystem.update(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_capture_attacks(var_15_0)
 end
 
-function PlayGoTutorialSystem._update_animation_hooks(arg_16_0, arg_16_1, arg_16_2)
+PlayGoTutorialSystem._update_animation_hooks = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_0._current_animation_hook and arg_16_0._current_animation_hook.activated and arg_16_0._current_animation_hook.update(arg_16_0._current_animation_hook, arg_16_2) then
 		arg_16_0._current_animation_hook.on_exit(arg_16_0._current_animation_hook)
 		table.remove(arg_16_0._animation_hooks, 1)
@@ -221,7 +221,7 @@ function PlayGoTutorialSystem._update_animation_hooks(arg_16_0, arg_16_1, arg_16
 	end
 end
 
-function PlayGoTutorialSystem._update_pause_events(arg_17_0, arg_17_1)
+PlayGoTutorialSystem._update_pause_events = function (arg_17_0, arg_17_1)
 	if arg_17_0._current_pause_event and arg_17_0._current_pause_event.update(arg_17_0._current_pause_event, arg_17_1) then
 		arg_17_0._current_pause_event.on_exit(arg_17_0._current_pause_event)
 
@@ -229,7 +229,7 @@ function PlayGoTutorialSystem._update_pause_events(arg_17_0, arg_17_1)
 	end
 end
 
-function PlayGoTutorialSystem._update_player_health(arg_18_0, arg_18_1)
+PlayGoTutorialSystem._update_player_health = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.player_unit
 	local var_18_1 = ScriptUnit.extension(var_18_0, "health_system")
 
@@ -238,7 +238,7 @@ function PlayGoTutorialSystem._update_player_health(arg_18_0, arg_18_1)
 	end
 end
 
-function PlayGoTutorialSystem._capture_wield_switch(arg_19_0, arg_19_1)
+PlayGoTutorialSystem._capture_wield_switch = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.player_unit
 	local var_19_1 = ScriptUnit.extension(var_19_0, "inventory_system")
 
@@ -249,7 +249,7 @@ function PlayGoTutorialSystem._capture_wield_switch(arg_19_0, arg_19_1)
 	end
 end
 
-function PlayGoTutorialSystem._capture_attacks(arg_20_0, arg_20_1)
+PlayGoTutorialSystem._capture_attacks = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.player_unit
 	local var_20_1 = ScriptUnit.extension(var_20_0, "inventory_system"):equipment()
 	local var_20_2 = var_20_1.right_hand_wielded_unit or var_20_1.left_hand_wielded_unit
@@ -267,7 +267,7 @@ function PlayGoTutorialSystem._capture_attacks(arg_20_0, arg_20_1)
 	end
 end
 
-function PlayGoTutorialSystem._update_player_ammo(arg_21_0, arg_21_1)
+PlayGoTutorialSystem._update_player_ammo = function (arg_21_0, arg_21_1)
 	if not arg_21_0.player_ammo_refill then
 		return
 	end
@@ -289,7 +289,7 @@ function PlayGoTutorialSystem._update_player_ammo(arg_21_0, arg_21_1)
 	end
 end
 
-function PlayGoTutorialSystem._update_ai_units(arg_22_0)
+PlayGoTutorialSystem._update_ai_units = function (arg_22_0)
 	for iter_22_0, iter_22_1 in pairs(arg_22_0._spawned_ai_units) do
 		if not HEALTH_ALIVE[iter_22_1.ai_unit] then
 			if iter_22_1.outline_id then
@@ -305,7 +305,7 @@ function PlayGoTutorialSystem._update_ai_units(arg_22_0)
 	end
 end
 
-function PlayGoTutorialSystem.clear_hooks(arg_23_0)
+PlayGoTutorialSystem.clear_hooks = function (arg_23_0)
 	if arg_23_0._unit_animation_event then
 		Unit.animation_event = arg_23_0._unit_animation_event
 		arg_23_0._unit_animation_event = nil
@@ -324,7 +324,7 @@ function PlayGoTutorialSystem.clear_hooks(arg_23_0)
 	end
 end
 
-function PlayGoTutorialSystem._load_profile_packages(arg_24_0)
+PlayGoTutorialSystem._load_profile_packages = function (arg_24_0)
 	local var_24_0 = {
 		3,
 		4
@@ -456,7 +456,7 @@ function PlayGoTutorialSystem._load_profile_packages(arg_24_0)
 	print("[PlayGoTutorialSystem]:_load_profile_packages()")
 end
 
-function PlayGoTutorialSystem._unload_profile_packages(arg_25_0)
+PlayGoTutorialSystem._unload_profile_packages = function (arg_25_0)
 	local var_25_0 = arg_25_0._profile_packages
 
 	for iter_25_0, iter_25_1 in pairs(var_25_0) do
@@ -468,7 +468,7 @@ function PlayGoTutorialSystem._unload_profile_packages(arg_25_0)
 	print("[PlayGoTutorialSystem]:_unload_profile_packages()")
 end
 
-function PlayGoTutorialSystem.register_dodge(arg_26_0, arg_26_1)
+PlayGoTutorialSystem.register_dodge = function (arg_26_0, arg_26_1)
 	if arg_26_0._tutorial_started then
 		local var_26_0 = arg_26_0._tutorial_unit
 		local var_26_1 = Vector3.x(arg_26_1)
@@ -484,19 +484,19 @@ function PlayGoTutorialSystem.register_dodge(arg_26_0, arg_26_1)
 	end
 end
 
-function PlayGoTutorialSystem.register_push(arg_27_0, arg_27_1)
+PlayGoTutorialSystem.register_push = function (arg_27_0, arg_27_1)
 	if arg_27_0._tutorial_started and HEALTH_ALIVE[arg_27_1] then
 		Unit.flow_event(arg_27_0._tutorial_unit, "lua_pushed_enemy")
 	end
 end
 
-function PlayGoTutorialSystem.register_block(arg_28_0)
+PlayGoTutorialSystem.register_block = function (arg_28_0)
 	if arg_28_0._tutorial_started then
 		Unit.flow_event(arg_28_0._tutorial_unit, "lua_blocked_attack")
 	end
 end
 
-function PlayGoTutorialSystem.register_killing_blow(arg_29_0, arg_29_1, arg_29_2)
+PlayGoTutorialSystem.register_killing_blow = function (arg_29_0, arg_29_1, arg_29_2)
 	if arg_29_0._tutorial_started and arg_29_2 == Managers.player:local_player().player_unit then
 		local var_29_0 = arg_29_0._tutorial_unit
 		local var_29_1 = arg_29_0._last_known_attack
@@ -515,7 +515,7 @@ function PlayGoTutorialSystem.register_killing_blow(arg_29_0, arg_29_1, arg_29_2
 	end
 end
 
-function PlayGoTutorialSystem.register_unit(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+PlayGoTutorialSystem.register_unit = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	if not arg_30_0._tutorial_started then
 		return
 	end
@@ -541,7 +541,7 @@ function PlayGoTutorialSystem.register_unit(arg_30_0, arg_30_1, arg_30_2, arg_30
 	table.insert(arg_30_0._spawned_ai_units, var_30_0)
 end
 
-function PlayGoTutorialSystem.teleport_unit(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+PlayGoTutorialSystem.teleport_unit = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	ScriptUnit.extension(arg_31_1, "locomotion_system"):teleport_to(arg_31_2, arg_31_3)
 
 	if Unit.get_data(arg_31_1, "bot") then
@@ -549,19 +549,19 @@ function PlayGoTutorialSystem.teleport_unit(arg_31_0, arg_31_1, arg_31_2, arg_31
 	end
 end
 
-function PlayGoTutorialSystem.enable_bot_loot(arg_32_0, arg_32_1)
+PlayGoTutorialSystem.enable_bot_loot = function (arg_32_0, arg_32_1)
 	arg_32_0._bot_loot_enabled = arg_32_1
 end
 
-function PlayGoTutorialSystem.bot_loot_enabled(arg_33_0)
+PlayGoTutorialSystem.bot_loot_enabled = function (arg_33_0)
 	return arg_33_0._bot_loot_enabled
 end
 
-function PlayGoTutorialSystem.set_bot_portrait_enabled(arg_34_0, arg_34_1)
+PlayGoTutorialSystem.set_bot_portrait_enabled = function (arg_34_0, arg_34_1)
 	arg_34_0._bot_portraits_enabled[arg_34_1] = true
 end
 
-function PlayGoTutorialSystem.bot_portrait_enabled(arg_35_0, arg_35_1)
+PlayGoTutorialSystem.bot_portrait_enabled = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_1.player_name
 
 	return arg_35_0._bot_portraits_enabled[var_35_0]

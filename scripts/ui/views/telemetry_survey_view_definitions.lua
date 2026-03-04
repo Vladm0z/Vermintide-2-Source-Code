@@ -221,7 +221,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "texture",
 					style_id = "style_normal",
 					texture_id = "texture_id",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return not arg_2_0.button_hotspot.is_hover and arg_2_0.button_hotspot.is_clicked > 0
 					end
 				},
@@ -229,7 +229,7 @@ local function var_0_4(arg_1_0)
 					pass_type = "texture",
 					style_id = "style_hover",
 					texture_id = "texture_hover_id",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.button_hotspot.is_hover and arg_3_0.button_hotspot.is_clicked > 0
 					end
 				},
@@ -237,14 +237,14 @@ local function var_0_4(arg_1_0)
 					pass_type = "texture",
 					style_id = "style_click",
 					texture_id = "texture_click_id",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.button_hotspot.is_clicked == 0 or arg_4_0.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "on_click",
 					click_check_content_id = "button_hotspot",
-					click_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+					click_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 						arg_5_2.button_hotspot.is_selected = true
 					end
 				}

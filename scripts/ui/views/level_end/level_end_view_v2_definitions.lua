@@ -594,7 +594,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_1",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0, arg_2_1)
+					content_check_function = function (arg_2_0, arg_2_1)
 						return GameSettingsDevelopment.allow_retry_weave and arg_2_0.votes > 0
 					end
 				},
@@ -602,7 +602,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_2",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return GameSettingsDevelopment.allow_retry_weave and arg_3_0.votes > 1
 					end
 				},
@@ -610,7 +610,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_3",
 					pass_type = "texture",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return GameSettingsDevelopment.allow_retry_weave and arg_4_0.votes > 2
 					end
 				},
@@ -618,7 +618,7 @@ local function var_0_2(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_4",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return GameSettingsDevelopment.allow_retry_weave and arg_5_0.votes > 3
 					end
 				}
@@ -862,17 +862,17 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				arg_6_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = math.easeCubic(arg_7_3)
 				local var_7_1 = math.easeCubic(1 - arg_7_3)
 
 				arg_7_0.ready_button_alone.local_position[2] = arg_7_1.ready_button_alone.position[2] - 100 * var_7_1
 				arg_7_4.render_settings.alpha_multiplier = var_7_0
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end
 		}
@@ -882,14 +882,14 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				arg_10_0.ready_button_alone.local_position[2] = arg_10_1.ready_button_alone.position[2]
 				arg_10_4.render_settings.alpha_multiplier = 0
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				return
 			end
 		}
@@ -899,17 +899,17 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				arg_12_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				local var_13_0 = math.easeCubic(arg_13_3)
 				local var_13_1 = math.easeCubic(1 - arg_13_3)
 
 				arg_13_0.ready_button.local_position[2] = arg_13_1.ready_button.position[2] - 100 * var_13_1
 				arg_13_4.render_settings.alpha_multiplier = var_13_0
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end
 		}
@@ -919,17 +919,17 @@ local var_0_14 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				arg_15_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				local var_16_0 = math.easeCubic(arg_16_3)
 				local var_16_1 = math.easeCubic(1 - arg_16_3)
 
 				arg_16_0.retry_button.local_position[2] = arg_16_1.retry_button.position[2] - 100 * var_16_1
 				arg_16_4.render_settings.alpha_multiplier = var_16_0
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end
 		}

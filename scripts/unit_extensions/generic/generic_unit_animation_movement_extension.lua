@@ -4,7 +4,7 @@ require("scripts/unit_extensions/generic/animation_movement_templates")
 
 GenericUnitAnimationMovementExtension = class(GenericUnitAnimationMovementExtension)
 
-function GenericUnitAnimationMovementExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericUnitAnimationMovementExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 
 	local var_1_0 = arg_1_3.template
@@ -15,24 +15,24 @@ function GenericUnitAnimationMovementExtension.init(arg_1_0, arg_1_1, arg_1_2, a
 	arg_1_0.enabled = false
 end
 
-function GenericUnitAnimationMovementExtension.extensions_ready(arg_2_0)
+GenericUnitAnimationMovementExtension.extensions_ready = function (arg_2_0)
 	arg_2_0.template[arg_2_0.network_type].init(arg_2_0.unit, arg_2_0.data)
 
 	local var_2_0 = Unit.get_data(arg_2_0.unit, "breed")
 end
 
-function GenericUnitAnimationMovementExtension.destroy(arg_3_0)
+GenericUnitAnimationMovementExtension.destroy = function (arg_3_0)
 	arg_3_0.template[arg_3_0.network_type].leave(arg_3_0.unit, arg_3_0.data)
 
 	arg_3_0.template = nil
 	arg_3_0.data = nil
 end
 
-function GenericUnitAnimationMovementExtension.reset(arg_4_0)
+GenericUnitAnimationMovementExtension.reset = function (arg_4_0)
 	return
 end
 
-function GenericUnitAnimationMovementExtension.set_enabled(arg_5_0, arg_5_1)
+GenericUnitAnimationMovementExtension.set_enabled = function (arg_5_0, arg_5_1)
 	arg_5_0.enabled = arg_5_1
 
 	if not arg_5_1 then
@@ -40,7 +40,7 @@ function GenericUnitAnimationMovementExtension.set_enabled(arg_5_0, arg_5_1)
 	end
 end
 
-function GenericUnitAnimationMovementExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+GenericUnitAnimationMovementExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.data
 	local var_6_1 = arg_6_0.template
 

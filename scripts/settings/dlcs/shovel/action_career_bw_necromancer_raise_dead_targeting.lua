@@ -6,7 +6,7 @@ local var_0_2 = -12
 
 ActionCareerBWNecromancerRaiseDeadTargeting = class(ActionCareerBWNecromancerRaiseDeadTargeting, ActionBase)
 
-function ActionCareerBWNecromancerRaiseDeadTargeting.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerRaiseDeadTargeting.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerBWNecromancerRaiseDeadTargeting.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
@@ -25,14 +25,14 @@ function ActionCareerBWNecromancerRaiseDeadTargeting.init(arg_1_0, arg_1_1, arg_
 		is_husk = true
 	}
 
-	function arg_1_0._nav_callback()
+	arg_1_0._nav_callback = function ()
 		local var_2_0 = Managers.time:time("game")
 
 		arg_1_0:_update_targeting(var_2_0)
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_5 = arg_3_5 or {}
 
 	ActionCareerBWNecromancerRaiseDeadTargeting.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
@@ -65,11 +65,11 @@ function ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_start_action(a
 	arg_3_0._ai_navigation_system:add_safe_navigation_callback(arg_3_0._nav_callback)
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0._ai_navigation_system:add_safe_navigation_callback(arg_4_0._nav_callback)
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting._start_targeting(arg_5_0)
+ActionCareerBWNecromancerRaiseDeadTargeting._start_targeting = function (arg_5_0)
 	local var_5_0 = arg_5_0._world
 
 	arg_5_0._spawn_decal_id = World.create_particles(var_5_0, var_0_0, Vector3(0, 0, -600))
@@ -81,7 +81,7 @@ function ActionCareerBWNecromancerRaiseDeadTargeting._start_targeting(arg_5_0)
 	arg_5_0._last_valid_spawn_position:store(var_5_1)
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting._update_targeting(arg_6_0, arg_6_1)
+ActionCareerBWNecromancerRaiseDeadTargeting._update_targeting = function (arg_6_0, arg_6_1)
 	local var_6_0, var_6_1 = arg_6_0:_get_projectile_position(var_0_1)
 	local var_6_2 = arg_6_0._world
 
@@ -93,7 +93,7 @@ function ActionCareerBWNecromancerRaiseDeadTargeting._update_targeting(arg_6_0, 
 	end
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting._get_projectile_position(arg_7_0)
+ActionCareerBWNecromancerRaiseDeadTargeting._get_projectile_position = function (arg_7_0)
 	local var_7_0 = arg_7_0._world
 	local var_7_1 = World.get_data(var_7_0, "physics_world")
 	local var_7_2 = "filter_adept_teleport"
@@ -122,7 +122,7 @@ function ActionCareerBWNecromancerRaiseDeadTargeting._get_projectile_position(ar
 	return var_7_7, var_7_8
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting._get_first_person_position_direction(arg_8_0)
+ActionCareerBWNecromancerRaiseDeadTargeting._get_first_person_position_direction = function (arg_8_0)
 	local var_8_0 = arg_8_0._first_person_extension
 	local var_8_1 = var_8_0:current_position()
 	local var_8_2 = var_8_0:current_rotation()
@@ -138,7 +138,7 @@ function ActionCareerBWNecromancerRaiseDeadTargeting._get_first_person_position_
 	return var_8_1, var_8_10
 end
 
-function ActionCareerBWNecromancerRaiseDeadTargeting.finish(arg_9_0, arg_9_1, arg_9_2)
+ActionCareerBWNecromancerRaiseDeadTargeting.finish = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._world
 	local var_9_1 = arg_9_0._spawn_decal_id
 

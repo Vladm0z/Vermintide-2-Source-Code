@@ -2,11 +2,11 @@
 
 ActionCatch = class(ActionCatch, ActionBase)
 
-function ActionCatch.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCatch.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCatch.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 end
 
-function ActionCatch.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCatch.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCatch.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -24,7 +24,7 @@ function ActionCatch.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	end
 end
 
-function ActionCatch.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCatch.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_0._state == "waiting_to_catch" and arg_3_2 >= arg_3_0._catch_time then
 		arg_3_0:_add_ammo()
 
@@ -32,7 +32,7 @@ function ActionCatch.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	end
 end
 
-function ActionCatch._remove_pickup(arg_4_0)
+ActionCatch._remove_pickup = function (arg_4_0)
 	if arg_4_0._inventory_extension then
 		local var_4_0 = false
 		local var_4_1 = Network.peer_id()
@@ -55,7 +55,7 @@ function ActionCatch._remove_pickup(arg_4_0)
 	end
 end
 
-function ActionCatch._add_ammo(arg_5_0)
+ActionCatch._add_ammo = function (arg_5_0)
 	local var_5_0 = arg_5_0._inventory_extension
 	local var_5_1
 	local var_5_2 = var_5_0:equipment().slots.slot_ranged
@@ -93,6 +93,6 @@ function ActionCatch._add_ammo(arg_5_0)
 	end
 end
 
-function ActionCatch.finish(arg_6_0, arg_6_1)
+ActionCatch.finish = function (arg_6_0, arg_6_1)
 	return
 end

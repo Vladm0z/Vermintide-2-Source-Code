@@ -23,13 +23,13 @@ end
 
 BTFallAction = class(BTFallAction, BTNode)
 
-function BTFallAction.init(arg_2_0, ...)
+BTFallAction.init = function (arg_2_0, ...)
 	BTFallAction.super.init(arg_2_0, ...)
 end
 
 BTFallAction.name = "BTFallAction"
 
-function BTFallAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTFallAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = var_0_0(arg_3_1, arg_3_2)
 
 	Managers.state.network:anim_event(arg_3_1, var_3_0)
@@ -57,7 +57,7 @@ function BTFallAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTFallAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTFallAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_5 then
 		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
 
@@ -79,7 +79,7 @@ function BTFallAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5
 	end
 end
 
-function BTFallAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTFallAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.fall_state == "waiting_to_stop_freefall" then
 		local var_5_0 = arg_5_2.locomotion_extension:is_falling()
 		local var_5_1 = arg_5_3 >= arg_5_2.fall_failsafe_timer

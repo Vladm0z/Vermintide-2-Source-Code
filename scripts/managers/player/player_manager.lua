@@ -17,7 +17,7 @@ for iter_0_0 = 1, #SPProfiles do
 	var_0_0[SPProfiles[iter_0_0].index] = iter_0_0 + 1
 end
 
-function PlayerManager.init(arg_1_0)
+PlayerManager.init = function (arg_1_0)
 	arg_1_0._players = {}
 	arg_1_0._players_by_peer = {}
 	arg_1_0._num_human_players = 0
@@ -35,7 +35,7 @@ local var_0_1 = {
 	"rpc_sync_loadout_slot"
 }
 
-function PlayerManager.set_is_server(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+PlayerManager.set_is_server = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.is_server = arg_2_1
 
 	arg_2_2:register(arg_2_0, unpack(var_0_1))
@@ -52,19 +52,19 @@ function PlayerManager.set_is_server(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function PlayerManager.set_statistics_db(arg_3_0, arg_3_1)
+PlayerManager.set_statistics_db = function (arg_3_0, arg_3_1)
 	arg_3_0._statistics_db = arg_3_1
 end
 
-function PlayerManager.statistics_db(arg_4_0)
+PlayerManager.statistics_db = function (arg_4_0)
 	return arg_4_0._statistics_db
 end
 
-function PlayerManager.player_loadouts(arg_5_0)
+PlayerManager.player_loadouts = function (arg_5_0)
 	return arg_5_0._player_loadouts
 end
 
-function PlayerManager.rpc_sync_loadout_slot(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+PlayerManager.rpc_sync_loadout_slot = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
 	if not Managers.state.network:in_game_session() then
 		return
 	end
@@ -80,7 +80,7 @@ function PlayerManager.rpc_sync_loadout_slot(arg_6_0, arg_6_1, arg_6_2, arg_6_3,
 	end
 end
 
-function PlayerManager.rpc_to_client_spawn_player(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15, arg_7_16)
+PlayerManager.rpc_to_client_spawn_player = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15, arg_7_16)
 	if script_data.network_debug_connections then
 		printf("PlayerManager:rpc_to_client_spawn_player(%s, %s, %s, %s)", tostring(arg_7_1), tostring(arg_7_3), tostring(arg_7_5), tostring(arg_7_6))
 	end
@@ -161,7 +161,7 @@ function PlayerManager.rpc_to_client_spawn_player(arg_7_0, arg_7_1, arg_7_2, arg
 	end
 end
 
-function PlayerManager.exit_ingame(arg_9_0)
+PlayerManager.exit_ingame = function (arg_9_0)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0._players) do
 		if iter_9_1.remote then
 			arg_9_0:remove_player(iter_9_1:network_id(), iter_9_1:local_player_id())
@@ -179,7 +179,7 @@ function PlayerManager.exit_ingame(arg_9_0)
 	end
 end
 
-function PlayerManager.assign_unit_ownership(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PlayerManager.assign_unit_ownership = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if script_data.network_debug_connections then
 		printf("PlayerManager:assign_unit_ownership %s %s %i", arg_10_2:name(), tostring(arg_10_2:network_id()), arg_10_2:local_player_id())
 	end
@@ -202,23 +202,23 @@ function PlayerManager.assign_unit_ownership(arg_10_0, arg_10_1, arg_10_2, arg_1
 	Managers.state.unit_spawner:add_destroy_listener(arg_10_1, "player_manager", callback(arg_10_0, "unit_destroy_callback"))
 end
 
-function PlayerManager.unit_destroy_callback(arg_11_0, arg_11_1)
+PlayerManager.unit_destroy_callback = function (arg_11_0, arg_11_1)
 	arg_11_0:relinquish_unit_ownership(arg_11_1)
 end
 
-function PlayerManager.unit_owner(arg_12_0, arg_12_1)
+PlayerManager.unit_owner = function (arg_12_0, arg_12_1)
 	return arg_12_0._unit_owners[arg_12_1]
 end
 
-function PlayerManager.player_from_unique_id(arg_13_0, arg_13_1)
+PlayerManager.player_from_unique_id = function (arg_13_0, arg_13_1)
 	return arg_13_0._players[arg_13_1]
 end
 
-function PlayerManager.player_from_stats_id(arg_14_0, arg_14_1)
+PlayerManager.player_from_stats_id = function (arg_14_0, arg_14_1)
 	return arg_14_0:player_from_unique_id(arg_14_1)
 end
 
-function PlayerManager.player_from_game_object_id(arg_15_0, arg_15_1)
+PlayerManager.player_from_game_object_id = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0._players) do
 		if iter_15_1.game_object_id == arg_15_1 then
 			return iter_15_1
@@ -226,7 +226,7 @@ function PlayerManager.player_from_game_object_id(arg_15_0, arg_15_1)
 	end
 end
 
-function PlayerManager.relinquish_unit_ownership(arg_16_0, arg_16_1)
+PlayerManager.relinquish_unit_ownership = function (arg_16_0, arg_16_1)
 	fassert(arg_16_0._unit_owners[arg_16_1], "[PlayerManager:relinquish_unit_ownership] Unit %s ownership cannot be relinquished, not owned.", arg_16_1)
 
 	local var_16_0 = arg_16_0._unit_owners[arg_16_1]
@@ -250,7 +250,7 @@ function PlayerManager.relinquish_unit_ownership(arg_16_0, arg_16_1)
 	Managers.state.unit_spawner:remove_destroy_listener(arg_16_1, "player_manager")
 end
 
-function PlayerManager.add_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+PlayerManager.add_player = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	if script_data.network_debug_connections then
 		printf("PlayerManager:add_player %s", tostring(arg_17_2))
 	end
@@ -287,7 +287,7 @@ function PlayerManager.add_player(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17
 	return var_17_4
 end
 
-function PlayerManager.add_remote_player(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+PlayerManager.add_remote_player = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	if script_data.network_debug_connections then
 		printf("PlayerManager:add_remote_player %s", tostring(arg_18_1))
 	end
@@ -324,17 +324,17 @@ function PlayerManager.add_remote_player(arg_18_0, arg_18_1, arg_18_2, arg_18_3,
 	return var_18_2
 end
 
-function PlayerManager.player_exists(arg_19_0, arg_19_1, arg_19_2)
+PlayerManager.player_exists = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._players_by_peer[arg_19_1]
 
 	return var_19_0 and var_19_0[arg_19_2 or 1] or false
 end
 
-function PlayerManager.owner(arg_20_0, arg_20_1)
+PlayerManager.owner = function (arg_20_0, arg_20_1)
 	return arg_20_0._unit_owners[arg_20_1]
 end
 
-function PlayerManager.is_player_unit(arg_21_0, arg_21_1)
+PlayerManager.is_player_unit = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._unit_owners[arg_21_1]
 
 	if var_21_0 and var_21_0.player_unit == arg_21_1 then
@@ -344,13 +344,13 @@ function PlayerManager.is_player_unit(arg_21_0, arg_21_1)
 	return false
 end
 
-function PlayerManager._create_ui_id(arg_22_0)
+PlayerManager._create_ui_id = function (arg_22_0)
 	arg_22_0._ui_id_increment = arg_22_0._ui_id_increment % 1000 + 1
 
 	return arg_22_0._ui_id_increment
 end
 
-function PlayerManager.add_bot_player(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+PlayerManager.add_bot_player = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 	local var_23_0 = Network.peer_id()
 	local var_23_1 = PlayerUtils.unique_player_id(var_23_0, arg_23_6)
 	local var_23_2 = arg_23_0:_create_ui_id()
@@ -371,13 +371,13 @@ function PlayerManager.add_bot_player(arg_23_0, arg_23_1, arg_23_2, arg_23_3, ar
 	return var_23_3
 end
 
-function PlayerManager.clear_all_players(arg_24_0)
+PlayerManager.clear_all_players = function (arg_24_0)
 	for iter_24_0, iter_24_1 in pairs(arg_24_0._players) do
 		arg_24_0:remove_player(iter_24_1:network_id(), iter_24_1:local_player_id())
 	end
 end
 
-function PlayerManager.remove_all_players_from_peer(arg_25_0, arg_25_1)
+PlayerManager.remove_all_players_from_peer = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._players_by_peer[arg_25_1]
 
 	if var_25_0 then
@@ -387,7 +387,7 @@ function PlayerManager.remove_all_players_from_peer(arg_25_0, arg_25_1)
 	end
 end
 
-function PlayerManager.set_stats_backend(arg_26_0, arg_26_1)
+PlayerManager.set_stats_backend = function (arg_26_0, arg_26_1)
 	if arg_26_1.local_player then
 		local var_26_0 = {}
 
@@ -396,7 +396,7 @@ function PlayerManager.set_stats_backend(arg_26_0, arg_26_1)
 	end
 end
 
-function PlayerManager.remove_player(arg_27_0, arg_27_1, arg_27_2)
+PlayerManager.remove_player = function (arg_27_0, arg_27_1, arg_27_2)
 	if script_data.network_debug_connections then
 		printf("PlayerManager:remove_player peer_id=%s %i", tostring(arg_27_1), arg_27_2 or -1)
 	end
@@ -446,13 +446,13 @@ function PlayerManager.remove_player(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function PlayerManager.player(arg_28_0, arg_28_1, arg_28_2)
+PlayerManager.player = function (arg_28_0, arg_28_1, arg_28_2)
 	fassert(arg_28_1 and arg_28_2, "Required peer id and local player id.")
 
 	return arg_28_0:player_from_peer_id(arg_28_1, arg_28_2)
 end
 
-function PlayerManager.player_from_peer_id(arg_29_0, arg_29_1, arg_29_2)
+PlayerManager.player_from_peer_id = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._players_by_peer[arg_29_1]
 
 	if not var_29_0 then
@@ -462,27 +462,27 @@ function PlayerManager.player_from_peer_id(arg_29_0, arg_29_1, arg_29_2)
 	return var_29_0[arg_29_2 or 1]
 end
 
-function PlayerManager.players_at_peer(arg_30_0, arg_30_1)
+PlayerManager.players_at_peer = function (arg_30_0, arg_30_1)
 	return arg_30_0._players_by_peer[arg_30_1]
 end
 
-function PlayerManager.human_players(arg_31_0)
+PlayerManager.human_players = function (arg_31_0)
 	return arg_31_0._human_players
 end
 
-function PlayerManager.human_and_bot_players(arg_32_0)
+PlayerManager.human_and_bot_players = function (arg_32_0)
 	return arg_32_0._players
 end
 
-function PlayerManager.players(arg_33_0)
+PlayerManager.players = function (arg_33_0)
 	return arg_33_0._players
 end
 
-function PlayerManager.num_human_players(arg_34_0)
+PlayerManager.num_human_players = function (arg_34_0)
 	return arg_34_0._num_human_players
 end
 
-function PlayerManager.num_alive_allies(arg_35_0, arg_35_1)
+PlayerManager.num_alive_allies = function (arg_35_0, arg_35_1)
 	local var_35_0 = Managers.player:human_and_bot_players()
 	local var_35_1 = 0
 
@@ -499,14 +499,14 @@ function PlayerManager.num_alive_allies(arg_35_0, arg_35_1)
 	return var_35_1
 end
 
-function PlayerManager.server_player(arg_36_0)
+PlayerManager.server_player = function (arg_36_0)
 	local var_36_0 = Managers.state.network.network_transmit
 	local var_36_1 = var_36_0.server_peer_id or var_36_0.peer_id
 
 	return arg_36_0:player_from_peer_id(var_36_1, 1)
 end
 
-function PlayerManager.party_leader_player(arg_37_0)
+PlayerManager.party_leader_player = function (arg_37_0)
 	if not Managers.party or not Managers.party.leader then
 		Application.warning("[PlayerManager:party_leader_player] Could not get the party leader -> using local player")
 
@@ -530,7 +530,7 @@ function PlayerManager.party_leader_player(arg_37_0)
 	end
 end
 
-function PlayerManager.next_available_local_player_id(arg_38_0, arg_38_1, arg_38_2)
+PlayerManager.next_available_local_player_id = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = 2
 	local var_38_1 = arg_38_0._players_by_peer[arg_38_1]
 
@@ -553,7 +553,7 @@ function PlayerManager.next_available_local_player_id(arg_38_0, arg_38_1, arg_38
 	return var_38_0
 end
 
-function PlayerManager.num_players(arg_39_0)
+PlayerManager.num_players = function (arg_39_0)
 	local var_39_0 = 0
 
 	for iter_39_0, iter_39_1 in pairs(arg_39_0._players) do
@@ -563,7 +563,7 @@ function PlayerManager.num_players(arg_39_0)
 	return var_39_0
 end
 
-function PlayerManager.local_player(arg_40_0, arg_40_1)
+PlayerManager.local_player = function (arg_40_0, arg_40_1)
 	if DEDICATED_SERVER then
 		return nil
 	end
@@ -571,7 +571,7 @@ function PlayerManager.local_player(arg_40_0, arg_40_1)
 	return arg_40_0:player(Network.peer_id(), arg_40_1 or 1)
 end
 
-function PlayerManager.local_player_safe(arg_41_0, arg_41_1)
+PlayerManager.local_player_safe = function (arg_41_0, arg_41_1)
 	local var_41_0 = Managers.state and Managers.state.network
 
 	if not var_41_0 or not var_41_0:game() then
@@ -581,11 +581,11 @@ function PlayerManager.local_player_safe(arg_41_0, arg_41_1)
 	return arg_41_0:player(Network.peer_id(), arg_41_1 or 1)
 end
 
-function PlayerManager.local_human_player(arg_42_0)
+PlayerManager.local_human_player = function (arg_42_0)
 	return arg_42_0._local_human_player
 end
 
-function PlayerManager.bots(arg_43_0)
+PlayerManager.bots = function (arg_43_0)
 	local var_43_0 = {}
 
 	for iter_43_0, iter_43_1 in pairs(arg_43_0._players) do
@@ -609,7 +609,7 @@ function DEBUG_PLAYERS()
 	print(" ")
 end
 
-function PlayerManager.rpc_set_observed_unit(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+PlayerManager.rpc_set_observed_unit = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 	fassert(arg_45_0.is_server, "Only server should get this")
 
 	local var_45_0 = Managers.state.network:game_object_or_level_unit(arg_45_3, arg_45_4)

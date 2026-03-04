@@ -2,29 +2,29 @@
 
 ImguiProfiler = class(ImguiProfiler)
 
-function ImguiProfiler.init(arg_1_0)
+ImguiProfiler.init = function (arg_1_0)
 	arg_1_0._filter = ""
 	arg_1_0._filter_applied = false
 	arg_1_0._auto_update_filter = false
 end
 
-function ImguiProfiler.is_persistent(arg_2_0)
+ImguiProfiler.is_persistent = function (arg_2_0)
 	return true
 end
 
-function ImguiProfiler.on_show(arg_3_0)
+ImguiProfiler.on_show = function (arg_3_0)
 	CALCULATE_AVERAGE = true
 end
 
-function ImguiProfiler.on_hide(arg_4_0)
+ImguiProfiler.on_hide = function (arg_4_0)
 	CALCULATE_AVERAGE = false
 end
 
-function ImguiProfiler.update(arg_5_0, arg_5_1, arg_5_2)
+ImguiProfiler.update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function ImguiProfiler.draw(arg_6_0)
+ImguiProfiler.draw = function (arg_6_0)
 	return
 end
 
@@ -33,7 +33,7 @@ local var_0_0 = 1
 FILTERED_SCOPES = {}
 FILTERED_SCOPES_INDEX = 1
 
-function ImguiProfiler.post_draw(arg_7_0)
+ImguiProfiler.post_draw = function (arg_7_0)
 	local var_7_0 = Imgui.begin_window("Profiler")
 
 	Imgui.set_window_size(700, 512, "once")
@@ -81,7 +81,7 @@ function ImguiProfiler.post_draw(arg_7_0)
 	return var_7_0
 end
 
-function ImguiProfiler._draw_filtered_scopes(arg_8_0)
+ImguiProfiler._draw_filtered_scopes = function (arg_8_0)
 	if FILTERED_SCOPES_INDEX > 1 then
 		local var_8_0 = Imgui.tree_node("root", true)
 
@@ -97,7 +97,7 @@ function ImguiProfiler._draw_filtered_scopes(arg_8_0)
 	end
 end
 
-function ImguiProfiler._draw_lookup_table(arg_9_0, arg_9_1, arg_9_2)
+ImguiProfiler._draw_lookup_table = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.name
 
 	if arg_9_1.frame_index and arg_9_1.frame_index < CURRENT_FRAME_INDEX then
@@ -197,7 +197,7 @@ function ImguiProfiler._draw_lookup_table(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function ImguiProfiler._apply_filter(arg_11_0, arg_11_1)
+ImguiProfiler._apply_filter = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.name
 
 	if arg_11_1.frame_index and arg_11_1.frame_index < CURRENT_FRAME_INDEX then
@@ -244,6 +244,6 @@ function ImguiProfiler._apply_filter(arg_11_0, arg_11_1)
 	end
 end
 
-function ImguiProfiler.post_update(arg_13_0, arg_13_1, arg_13_2)
+ImguiProfiler.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	return
 end

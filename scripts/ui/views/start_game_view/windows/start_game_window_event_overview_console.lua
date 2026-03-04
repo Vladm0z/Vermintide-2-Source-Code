@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowEventOverviewConsole = class(StartGameWindowEventOverviewConsole)
 StartGameWindowEventOverviewConsole.NAME = "StartGameWindowEventOverviewConsole"
 
-function StartGameWindowEventOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowEventOverviewConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowEventOverviewConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -45,7 +45,7 @@ function StartGameWindowEventOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowEventOverviewConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowEventOverviewConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -55,7 +55,7 @@ function StartGameWindowEventOverviewConsole._start_transition_animation(arg_2_0
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowEventOverviewConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowEventOverviewConsole._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = {}
@@ -86,7 +86,7 @@ function StartGameWindowEventOverviewConsole._create_ui_elements(arg_3_0, arg_3_
 	arg_3_0:_setup_content_from_backend()
 end
 
-function StartGameWindowEventOverviewConsole._setup_content_from_backend(arg_4_0)
+StartGameWindowEventOverviewConsole._setup_content_from_backend = function (arg_4_0)
 	local var_4_0 = arg_4_0._widgets_by_name
 	local var_4_1 = Managers.backend:get_interface("live_events"):get_weekly_events_game_mode_data()
 	local var_4_2 = var_4_1.title_text_id
@@ -98,7 +98,7 @@ function StartGameWindowEventOverviewConsole._setup_content_from_backend(arg_4_0
 	var_4_0.event_description.content.text = Localize(var_4_3)
 end
 
-function StartGameWindowEventOverviewConsole.on_exit(arg_5_0, arg_5_1)
+StartGameWindowEventOverviewConsole.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowEventOverviewConsole")
 
 	arg_5_0._ui_animator = nil
@@ -110,22 +110,22 @@ function StartGameWindowEventOverviewConsole.on_exit(arg_5_0, arg_5_1)
 	end
 end
 
-function StartGameWindowEventOverviewConsole.set_focus(arg_6_0, arg_6_1)
+StartGameWindowEventOverviewConsole.set_focus = function (arg_6_0, arg_6_1)
 	arg_6_0._is_focused = arg_6_1
 end
 
-function StartGameWindowEventOverviewConsole.update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowEventOverviewConsole.update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_can_play()
 	arg_7_0:_update_animations(arg_7_1)
 	arg_7_0:_handle_input(arg_7_1, arg_7_2)
 	arg_7_0:_draw(arg_7_1)
 end
 
-function StartGameWindowEventOverviewConsole.post_update(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowEventOverviewConsole.post_update = function (arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-function StartGameWindowEventOverviewConsole._update_can_play(arg_9_0)
+StartGameWindowEventOverviewConsole._update_can_play = function (arg_9_0)
 	local var_9_0 = arg_9_0:_can_play()
 
 	if arg_9_0._previous_can_play ~= var_9_0 then
@@ -144,11 +144,11 @@ function StartGameWindowEventOverviewConsole._update_can_play(arg_9_0)
 	end
 end
 
-function StartGameWindowEventOverviewConsole._is_button_hover_enter(arg_10_0, arg_10_1)
+StartGameWindowEventOverviewConsole._is_button_hover_enter = function (arg_10_0, arg_10_1)
 	return arg_10_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowEventOverviewConsole._is_button_pressed(arg_11_0, arg_11_1)
+StartGameWindowEventOverviewConsole._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.on_release then
@@ -158,7 +158,7 @@ function StartGameWindowEventOverviewConsole._is_button_pressed(arg_11_0, arg_11
 	end
 end
 
-function StartGameWindowEventOverviewConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowEventOverviewConsole._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._parent
 	local var_12_1 = var_12_0:window_input_service()
 
@@ -205,15 +205,15 @@ function StartGameWindowEventOverviewConsole._handle_input(arg_12_0, arg_12_1, a
 	end
 end
 
-function StartGameWindowEventOverviewConsole._play_sound(arg_13_0, arg_13_1)
+StartGameWindowEventOverviewConsole._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-function StartGameWindowEventOverviewConsole._can_play(arg_14_0)
+StartGameWindowEventOverviewConsole._can_play = function (arg_14_0)
 	return arg_14_0._parent:get_difficulty_option() ~= nil
 end
 
-function StartGameWindowEventOverviewConsole._update_difficulty_option(arg_15_0)
+StartGameWindowEventOverviewConsole._update_difficulty_option = function (arg_15_0)
 	local var_15_0 = arg_15_0._parent:get_difficulty_option()
 
 	if var_15_0 then
@@ -232,7 +232,7 @@ function StartGameWindowEventOverviewConsole._update_difficulty_option(arg_15_0)
 	end
 end
 
-function StartGameWindowEventOverviewConsole._option_selected(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowEventOverviewConsole._option_selected = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = var_0_4[arg_16_1]
 
 	if var_16_0 == "difficulty_setting" then
@@ -246,7 +246,7 @@ function StartGameWindowEventOverviewConsole._option_selected(arg_16_0, arg_16_1
 	end
 end
 
-function StartGameWindowEventOverviewConsole._handle_new_selection(arg_17_0, arg_17_1)
+StartGameWindowEventOverviewConsole._handle_new_selection = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._widgets_by_name
 	local var_17_1 = #var_0_4
 
@@ -266,7 +266,7 @@ function StartGameWindowEventOverviewConsole._handle_new_selection(arg_17_0, arg
 	arg_17_0._input_index = arg_17_1
 end
 
-function StartGameWindowEventOverviewConsole._update_animations(arg_18_0, arg_18_1)
+StartGameWindowEventOverviewConsole._update_animations = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ui_animator
 
 	var_18_0:update(arg_18_1)
@@ -287,7 +287,7 @@ function StartGameWindowEventOverviewConsole._update_animations(arg_18_0, arg_18
 	UIWidgetUtils.animate_play_button(var_18_2.play_button, arg_18_1)
 end
 
-function StartGameWindowEventOverviewConsole._draw(arg_19_0, arg_19_1)
+StartGameWindowEventOverviewConsole._draw = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ui_top_renderer
 	local var_19_1 = arg_19_0._ui_scenegraph
 	local var_19_2 = arg_19_0._parent:window_input_service()

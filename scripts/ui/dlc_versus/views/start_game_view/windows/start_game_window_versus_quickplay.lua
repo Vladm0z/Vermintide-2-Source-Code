@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowVersusQuickplay = class(StartGameWindowVersusQuickplay)
 StartGameWindowVersusQuickplay.NAME = "StartGameWindowVersusQuickplay"
 
-function StartGameWindowVersusQuickplay.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowVersusQuickplay.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowVersusQuickplay")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -41,7 +41,7 @@ function StartGameWindowVersusQuickplay.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowVersusQuickplay._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowVersusQuickplay._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -51,7 +51,7 @@ function StartGameWindowVersusQuickplay._start_transition_animation(arg_2_0, arg
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowVersusQuickplay._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowVersusQuickplay._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
@@ -68,7 +68,7 @@ function StartGameWindowVersusQuickplay._create_ui_elements(arg_3_0, arg_3_1, ar
 	end
 end
 
-function StartGameWindowVersusQuickplay.on_exit(arg_4_0, arg_4_1)
+StartGameWindowVersusQuickplay.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowVersusQuickplay")
 
 	arg_4_0._ui_animator = nil
@@ -80,11 +80,11 @@ function StartGameWindowVersusQuickplay.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowVersusQuickplay.set_focus(arg_5_0, arg_5_1)
+StartGameWindowVersusQuickplay.set_focus = function (arg_5_0, arg_5_1)
 	arg_5_0._is_focused = arg_5_1
 end
 
-function StartGameWindowVersusQuickplay.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowVersusQuickplay.update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.input:is_device_active("gamepad")
 
 	arg_6_0:_update_can_play()
@@ -95,11 +95,11 @@ function StartGameWindowVersusQuickplay.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowVersusQuickplay.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowVersusQuickplay.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowVersusQuickplay._handle_gamepad_activity(arg_8_0)
+StartGameWindowVersusQuickplay._handle_gamepad_activity = function (arg_8_0)
 	local var_8_0 = arg_8_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -121,7 +121,7 @@ function StartGameWindowVersusQuickplay._handle_gamepad_activity(arg_8_0)
 	end
 end
 
-function StartGameWindowVersusQuickplay._update_can_play(arg_9_0)
+StartGameWindowVersusQuickplay._update_can_play = function (arg_9_0)
 	local var_9_0, var_9_1 = arg_9_0:_can_play()
 
 	arg_9_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not var_9_0
@@ -151,7 +151,7 @@ function StartGameWindowVersusQuickplay._update_can_play(arg_9_0)
 	end
 end
 
-function StartGameWindowVersusQuickplay._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowVersusQuickplay._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._is_focused then
 		return
 	end
@@ -209,11 +209,11 @@ function StartGameWindowVersusQuickplay._handle_input(arg_10_0, arg_10_1, arg_10
 	end
 end
 
-function StartGameWindowVersusQuickplay._play_sound(arg_11_0, arg_11_1)
+StartGameWindowVersusQuickplay._play_sound = function (arg_11_0, arg_11_1)
 	return arg_11_0._parent:play_sound(arg_11_1)
 end
 
-function StartGameWindowVersusQuickplay._can_play(arg_12_0)
+StartGameWindowVersusQuickplay._can_play = function (arg_12_0)
 	if script_data["eac-untrusted"] then
 		return false, "versus_disabled_in_modded_realm_disclaimer"
 	end
@@ -229,7 +229,7 @@ function StartGameWindowVersusQuickplay._can_play(arg_12_0)
 	return true
 end
 
-function StartGameWindowVersusQuickplay._option_selected(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+StartGameWindowVersusQuickplay._option_selected = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if arg_13_1 == "play_button" then
 		arg_13_0._parent:play(arg_13_3, "versus_quickplay")
 	else
@@ -237,7 +237,7 @@ function StartGameWindowVersusQuickplay._option_selected(arg_13_0, arg_13_1, arg
 	end
 end
 
-function StartGameWindowVersusQuickplay._verify_selection_index(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowVersusQuickplay._verify_selection_index = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._input_index
 	local var_14_1 = #var_0_4
 
@@ -261,7 +261,7 @@ function StartGameWindowVersusQuickplay._verify_selection_index(arg_14_0, arg_14
 	return var_14_0
 end
 
-function StartGameWindowVersusQuickplay._gamepad_selector_input_func(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowVersusQuickplay._gamepad_selector_input_func = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = Managers.input:is_device_active("mouse")
 
 	arg_15_1 = arg_15_0:_verify_selection_index(arg_15_1, arg_15_2)
@@ -279,7 +279,7 @@ function StartGameWindowVersusQuickplay._gamepad_selector_input_func(arg_15_0, a
 	arg_15_0._input_index = arg_15_1
 end
 
-function StartGameWindowVersusQuickplay._handle_new_selection(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowVersusQuickplay._handle_new_selection = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = #var_0_4
 
 	arg_16_1 = math.clamp(arg_16_1, 1, var_16_0)
@@ -296,7 +296,7 @@ function StartGameWindowVersusQuickplay._handle_new_selection(arg_16_0, arg_16_1
 	arg_16_0._input_index = arg_16_1
 end
 
-function StartGameWindowVersusQuickplay._update_animations(arg_17_0, arg_17_1)
+StartGameWindowVersusQuickplay._update_animations = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_animator
 
 	var_17_0:update(arg_17_1)
@@ -320,11 +320,11 @@ function StartGameWindowVersusQuickplay._update_animations(arg_17_0, arg_17_1)
 	UIWidgetUtils.animate_play_button(var_17_2.play_button, arg_17_1)
 end
 
-function StartGameWindowVersusQuickplay._update_button_animations(arg_18_0, arg_18_1)
+StartGameWindowVersusQuickplay._update_button_animations = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._widgets_by_name
 end
 
-function StartGameWindowVersusQuickplay._draw(arg_19_0, arg_19_1)
+StartGameWindowVersusQuickplay._draw = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ui_top_renderer
 	local var_19_1 = arg_19_0._ui_scenegraph
 	local var_19_2 = arg_19_0._parent:window_input_service()
@@ -336,7 +336,7 @@ function StartGameWindowVersusQuickplay._draw(arg_19_0, arg_19_1)
 	UIRenderer.end_pass(var_19_0)
 end
 
-function StartGameWindowVersusQuickplay._update_play_button_texture(arg_20_0, arg_20_1)
+StartGameWindowVersusQuickplay._update_play_button_texture = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._widgets_by_name
 
 	if arg_20_0._gamepad_active ~= arg_20_1 then

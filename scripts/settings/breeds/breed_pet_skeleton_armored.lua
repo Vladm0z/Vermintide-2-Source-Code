@@ -167,7 +167,7 @@ local var_0_2 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	stagger_modifier_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if arg_2_4.stagger_type == var_0_0.heavy then
 			if arg_2_0 == var_0_0.heavy and arg_2_4.heavy_stagger_immune_time then
 				arg_2_0 = var_0_0.none
@@ -1402,7 +1402,7 @@ local var_0_5 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			if arg_3_1.stagger_type == var_0_0.heavy then
 				arg_3_1.stagger_immune_time = arg_3_2 + 2.25
 				arg_3_1.heavy_stagger_immune_time = arg_3_2 + 1.5

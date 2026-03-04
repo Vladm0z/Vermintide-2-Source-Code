@@ -25,7 +25,7 @@ local var_0_1 = {
 StateInGameRunning = class(StateInGameRunning)
 StateInGameRunning.NAME = "StateInGameRunning"
 
-function StateInGameRunning.on_enter(arg_1_0, arg_1_1)
+StateInGameRunning.on_enter = function (arg_1_0, arg_1_1)
 	GarbageLeakDetector.register_object(arg_1_0, "StateInGameRunning")
 
 	arg_1_0.world = arg_1_0.parent.world
@@ -129,7 +129,7 @@ function StateInGameRunning.on_enter(arg_1_0, arg_1_1)
 
 	arg_1_0.free_flight_manager = arg_1_1.free_flight_manager
 
-	arg_1_0.free_flight_manager:set_teleport_override(function(arg_2_0, arg_2_1)
+	arg_1_0.free_flight_manager:set_teleport_override(function (arg_2_0, arg_2_1)
 		for iter_2_0, iter_2_1 in pairs(arg_1_0.player.owned_units) do
 			if ScriptUnit.has_extension(iter_2_0, "input_system") then
 				ScriptUnit.extension(iter_2_0, "locomotion_system"):teleport_to(arg_2_0, arg_2_1)
@@ -249,7 +249,7 @@ function StateInGameRunning.on_enter(arg_1_0, arg_1_1)
 	Managers.music:on_enter_game()
 end
 
-function StateInGameRunning._setup_end_of_level_UI(arg_3_0)
+StateInGameRunning._setup_end_of_level_UI = function (arg_3_0)
 	if script_data.disable_end_screens then
 		Managers.state.network.network_transmit:send_rpc_server("rpc_is_ready_for_transition")
 	elseif not Managers.state.game_mode:setting("skip_level_end_view") then
@@ -346,19 +346,19 @@ function StateInGameRunning._setup_end_of_level_UI(arg_3_0)
 	arg_3_0.has_setup_end_of_level = true
 end
 
-function StateInGameRunning.level_end_view_wrapper(arg_4_0)
+StateInGameRunning.level_end_view_wrapper = function (arg_4_0)
 	return arg_4_0._level_end_view_wrapper
 end
 
-function StateInGameRunning.handle_end_conditions(arg_5_0)
+StateInGameRunning.handle_end_conditions = function (arg_5_0)
 	local var_5_0 = Managers.state.game_mode
 
 	if var_5_0 and var_5_0:is_game_mode_ended() and var_5_0:is_game_mode_ended() then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function StateInGameRunning.check_invites(arg_6_0)
+StateInGameRunning.check_invites = function (arg_6_0)
 	if arg_6_0.popup_id then
 		return
 	end
@@ -431,7 +431,7 @@ function StateInGameRunning.check_invites(arg_6_0)
 	end
 end
 
-function StateInGameRunning.wanted_transition(arg_7_0)
+StateInGameRunning.wanted_transition = function (arg_7_0)
 	if arg_7_0.popup_id then
 		return
 	end
@@ -481,7 +481,7 @@ function StateInGameRunning.wanted_transition(arg_7_0)
 	var_7_0 = var_7_0 or Managers.state.game_mode:wanted_transition()
 
 	if not var_7_0 or not IS_XB1 or arg_7_0.is_in_inn or arg_7_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil then
-		-- block empty
+		-- Nothing
 	elseif not arg_7_0._xbox_event_end_triggered then
 		Application.warning("MultiplyerRoundStart was triggered without end conditions met")
 		arg_7_0:_xbone_end_of_round_events(arg_7_0.statistics_db)
@@ -490,7 +490,7 @@ function StateInGameRunning.wanted_transition(arg_7_0)
 	return var_7_0, var_7_1
 end
 
-function StateInGameRunning.event_end_screen_ui_complete(arg_8_0)
+StateInGameRunning.event_end_screen_ui_complete = function (arg_8_0)
 	Managers.state.conflict:destroy_all_units()
 	Managers.ui:set_ingame_ui_enabled(false)
 
@@ -499,7 +499,7 @@ function StateInGameRunning.event_end_screen_ui_complete(arg_8_0)
 	end
 end
 
-function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+StateInGameRunning.gm_event_end_conditions_met = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if not arg_9_0.is_server and arg_9_0.game_mode_key == "versus" and Managers.mechanism:is_final_round() and not arg_9_0._player_session_score_synced then
 		arg_9_0._player_session_score_synced_cb = callback(arg_9_0, "gm_event_end_conditions_met", arg_9_1, arg_9_2, arg_9_3)
 
@@ -752,7 +752,7 @@ function StateInGameRunning.gm_event_end_conditions_met(arg_9_0, arg_9_1, arg_9_
 	end
 end
 
-function StateInGameRunning._award_end_of_level_rewards(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+StateInGameRunning._award_end_of_level_rewards = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = Network.peer_id()
 	local var_11_1, var_11_2 = arg_11_0.profile_synchronizer:get_persistent_profile_index_reservation(var_11_0)
 	local var_11_3 = SPProfiles[var_11_1]
@@ -777,7 +777,7 @@ function StateInGameRunning._award_end_of_level_rewards(arg_11_0, arg_11_1, arg_
 	end
 end
 
-function StateInGameRunning._get_weave_scores(arg_12_0)
+StateInGameRunning._get_weave_scores = function (arg_12_0)
 	local var_12_0 = Managers.weave
 	local var_12_1 = var_12_0:get_weave_tier()
 	local var_12_2 = var_12_0:get_score()
@@ -786,11 +786,11 @@ function StateInGameRunning._get_weave_scores(arg_12_0)
 	return var_12_1, var_12_2, var_12_3
 end
 
-function StateInGameRunning._submit_weave_scores(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+StateInGameRunning._submit_weave_scores = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	Managers.backend:get_interface("weaves"):submit_scores(arg_13_1, arg_13_2, arg_13_3)
 end
 
-function StateInGameRunning.on_checkpoint_vote_cancelled(arg_14_0)
+StateInGameRunning.on_checkpoint_vote_cancelled = function (arg_14_0)
 	arg_14_0.checkpoint_vote_cancelled = true
 end
 
@@ -812,7 +812,7 @@ if not IS_WINDOWS and (BUILD == "dev" or BUILD == "debug") then
 	end
 end
 
-function StateInGameRunning.update(arg_16_0, arg_16_1, arg_16_2)
+StateInGameRunning.update = function (arg_16_0, arg_16_1, arg_16_2)
 	if not arg_16_0._transitioned_from_black_screen and arg_16_0:_check_black_screen_transition_requirements(arg_16_1, arg_16_2) then
 		arg_16_0:_game_actually_starts()
 
@@ -891,7 +891,7 @@ function StateInGameRunning.update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function StateInGameRunning.check_for_new_quests_or_contracts(arg_17_0, arg_17_1)
+StateInGameRunning.check_for_new_quests_or_contracts = function (arg_17_0, arg_17_1)
 	arg_17_0._quest_expire_check_cooldown = arg_17_0._quest_expire_check_cooldown and arg_17_0._quest_expire_check_cooldown - arg_17_1 or 0
 
 	if arg_17_0._quest_expire_check_cooldown <= 0 then
@@ -905,11 +905,11 @@ function StateInGameRunning.check_for_new_quests_or_contracts(arg_17_0, arg_17_1
 	end
 end
 
-function StateInGameRunning.disable_ui(arg_18_0)
+StateInGameRunning.disable_ui = function (arg_18_0)
 	Managers.ui:set_ingame_ui_enabled(false)
 end
 
-function StateInGameRunning.event_close_ingame_menu(arg_19_0)
+StateInGameRunning.event_close_ingame_menu = function (arg_19_0)
 	local var_19_0 = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 
 	if var_19_0 then
@@ -917,7 +917,7 @@ function StateInGameRunning.event_close_ingame_menu(arg_19_0)
 	end
 end
 
-function StateInGameRunning.event_realtime_multiplay(arg_20_0, arg_20_1)
+StateInGameRunning.event_realtime_multiplay = function (arg_20_0, arg_20_1)
 	if arg_20_1 and (arg_20_0.is_in_tutorial or arg_20_0.is_in_inn) then
 		return
 	end
@@ -925,13 +925,13 @@ function StateInGameRunning.event_realtime_multiplay(arg_20_0, arg_20_1)
 	Managers.account:set_realtime_multiplay(arg_20_1)
 end
 
-function StateInGameRunning.cb_loading_view_fade_in_done(arg_21_0)
+StateInGameRunning.cb_loading_view_fade_in_done = function (arg_21_0)
 	Managers.transition:fade_out(GameSettings.transition_fade_out_speed, nil)
 
 	arg_21_0.show_loading_view = false
 end
 
-function StateInGameRunning.post_update(arg_22_0, arg_22_1, arg_22_2)
+StateInGameRunning.post_update = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._level_end_view_wrapper
 	local var_22_1 = script_data.disable_ui or var_22_0 ~= nil or arg_22_0.waiting_for_transition and Managers.state.network:game_session_host() ~= nil
 
@@ -956,7 +956,7 @@ function StateInGameRunning.post_update(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function StateInGameRunning.trigger_xbox_multiplayer_round_end_events(arg_23_0)
+StateInGameRunning.trigger_xbox_multiplayer_round_end_events = function (arg_23_0)
 	if arg_23_0.is_in_inn or arg_23_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or arg_23_0._xbox_event_end_triggered then
 		return
 	end
@@ -964,7 +964,7 @@ function StateInGameRunning.trigger_xbox_multiplayer_round_end_events(arg_23_0)
 	arg_23_0:_xbone_end_of_round_events(arg_23_0.statistics_db)
 end
 
-function StateInGameRunning.on_exit(arg_24_0)
+StateInGameRunning.on_exit = function (arg_24_0)
 	Managers.music:on_exit_game()
 	Managers.state.network.profile_synchronizer:set_own_actually_ingame(false)
 	arg_24_0.free_flight_manager:set_teleport_override(nil)
@@ -1011,7 +1011,7 @@ function StateInGameRunning.on_exit(arg_24_0)
 	arg_24_0:_cancel_afk_warning()
 end
 
-function StateInGameRunning.event_game_started(arg_25_0)
+StateInGameRunning.event_game_started = function (arg_25_0)
 	local var_25_0 = arg_25_0.parent.world
 	local var_25_1 = LevelHelper:current_level(var_25_0)
 
@@ -1037,11 +1037,11 @@ function StateInGameRunning.event_game_started(arg_25_0)
 end
 
 if IS_XB1 then
-	function StateInGameRunning.event_trigger_xbox_round_end(arg_26_0)
+	StateInGameRunning.event_trigger_xbox_round_end = function (arg_26_0)
 		arg_26_0:_xbone_end_of_round_events(arg_26_0.statistics_db)
 	end
 
-	function StateInGameRunning._xbone_round_start_events(arg_27_0)
+	StateInGameRunning._xbone_round_start_events = function (arg_27_0)
 		if arg_27_0.is_in_inn or arg_27_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
 			return
 		end
@@ -1075,7 +1075,7 @@ if IS_XB1 then
 		end
 	end
 
-	function StateInGameRunning._xbone_end_of_round_events(arg_28_0, arg_28_1)
+	StateInGameRunning._xbone_end_of_round_events = function (arg_28_0, arg_28_1)
 		if arg_28_0.is_in_inn or arg_28_0.is_in_tutorial or Development.parameter("auto-host-level") ~= nil or not Managers.account:is_online() then
 			return
 		end
@@ -1128,7 +1128,7 @@ if IS_XB1 then
 	end
 end
 
-function StateInGameRunning._check_black_screen_transition_requirements(arg_29_0)
+StateInGameRunning._check_black_screen_transition_requirements = function (arg_29_0)
 	if not arg_29_0._game_mode_ready_to_start then
 		arg_29_0._game_mode_ready_to_start = Managers.state.game_mode:local_player_ready_to_start(arg_29_0.player)
 	end
@@ -1153,17 +1153,17 @@ function StateInGameRunning._check_black_screen_transition_requirements(arg_29_0
 	return false
 end
 
-function StateInGameRunning.event_conflict_director_setup_done(arg_30_0)
+StateInGameRunning.event_conflict_director_setup_done = function (arg_30_0)
 	arg_30_0._conflict_directory_is_ready = true
 end
 
-function StateInGameRunning._catchup_framerate_before_starting(arg_31_0)
+StateInGameRunning._catchup_framerate_before_starting = function (arg_31_0)
 	Framerate.set_catchup()
 
 	arg_31_0._frame_catchup_counter = 20
 end
 
-function StateInGameRunning._update_catchup_framerate_before_starting(arg_32_0)
+StateInGameRunning._update_catchup_framerate_before_starting = function (arg_32_0)
 	if arg_32_0._frame_catchup_counter == nil then
 		return
 	end
@@ -1177,7 +1177,7 @@ function StateInGameRunning._update_catchup_framerate_before_starting(arg_32_0)
 	end
 end
 
-function StateInGameRunning._game_actually_starts(arg_33_0)
+StateInGameRunning._game_actually_starts = function (arg_33_0)
 	print("StateInGameRunning:_game_actually_starts()")
 
 	local var_33_0 = arg_33_0.parent.parent.loading_context
@@ -1216,7 +1216,7 @@ end
 local var_0_2 = 120
 local var_0_3 = 180
 
-function StateInGameRunning.update_player_afk_check(arg_34_0, arg_34_1, arg_34_2)
+StateInGameRunning.update_player_afk_check = function (arg_34_0, arg_34_1, arg_34_2)
 	do return end
 
 	local var_34_0 = Managers.state.entity:system("cutscene_system").active_camera
@@ -1258,7 +1258,7 @@ function StateInGameRunning.update_player_afk_check(arg_34_0, arg_34_1, arg_34_2
 	arg_34_0:_handle_afk_warning_result()
 end
 
-function StateInGameRunning._show_afk_warning(arg_35_0)
+StateInGameRunning._show_afk_warning = function (arg_35_0)
 	arg_35_0.afk_popup_id = Managers.popup:queue_popup(Localize("afk_kick_warning"), Localize("popup_notice_topic"), "ok", Localize("button_ok"))
 
 	if _G.Window ~= nil and Window.flash_window ~= nil and not Window.has_focus() then
@@ -1279,7 +1279,7 @@ function StateInGameRunning._show_afk_warning(arg_35_0)
 	arg_35_0:rpc_trigger_local_afk_system_message(var_35_4, var_35_2, var_35_3)
 end
 
-function StateInGameRunning.rpc_trigger_local_afk_system_message(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+StateInGameRunning.rpc_trigger_local_afk_system_message = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	if arg_36_0.is_server then
 		Managers.state.network.network_transmit:send_rpc_clients_except(rpc, arg_36_3, arg_36_2, arg_36_3)
 	end
@@ -1303,7 +1303,7 @@ function StateInGameRunning.rpc_trigger_local_afk_system_message(arg_36_0, arg_3
 	end
 end
 
-function StateInGameRunning._cancel_afk_warning(arg_37_0)
+StateInGameRunning._cancel_afk_warning = function (arg_37_0)
 	if arg_37_0.afk_popup_id then
 		Managers.popup:cancel_popup(arg_37_0.afk_popup_id)
 
@@ -1311,13 +1311,13 @@ function StateInGameRunning._cancel_afk_warning(arg_37_0)
 	end
 end
 
-function StateInGameRunning._handle_afk_warning_result(arg_38_0)
+StateInGameRunning._handle_afk_warning_result = function (arg_38_0)
 	if arg_38_0.afk_popup_id and Managers.popup:query_result(arg_38_0.afk_popup_id) then
 		arg_38_0.afk_popup_id = nil
 	end
 end
 
-function StateInGameRunning._kick_afk_player(arg_39_0)
+StateInGameRunning._kick_afk_player = function (arg_39_0)
 	arg_39_0:_cancel_afk_warning()
 
 	local var_39_0 = Managers.player:local_player(1)
@@ -1336,11 +1336,11 @@ function StateInGameRunning._kick_afk_player(arg_39_0)
 	arg_39_0.afk_kick = true
 end
 
-function StateInGameRunning.transitioned_from_black_screen(arg_40_0)
+StateInGameRunning.transitioned_from_black_screen = function (arg_40_0)
 	return arg_40_0._transitioned_from_black_screen
 end
 
-function StateInGameRunning.rpc_follow_to_lobby(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+StateInGameRunning.rpc_follow_to_lobby = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	printf("Got message from lobby host to join %s %s", NetworkLookup.lobby_type[arg_41_2], arg_41_3)
 
 	local var_41_0 = CHANNEL_TO_PEER_ID[arg_41_1]
@@ -1371,7 +1371,7 @@ function StateInGameRunning.rpc_follow_to_lobby(arg_41_0, arg_41_1, arg_41_2, ar
 	Managers.matchmaking:request_join_lobby(var_41_1, var_41_2)
 end
 
-function StateInGameRunning.player_session_scores_synced(arg_42_0)
+StateInGameRunning.player_session_scores_synced = function (arg_42_0)
 	arg_42_0._player_session_score_synced = true
 
 	if arg_42_0._player_session_score_synced_cb then

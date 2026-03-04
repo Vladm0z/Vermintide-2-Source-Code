@@ -4,7 +4,7 @@ local var_0_0 = 0.01
 
 ProjectileLinearSphereSweepImpactUnitExtension = class(ProjectileLinearSphereSweepImpactUnitExtension, ProjectileBaseImpactUnitExtension)
 
-function ProjectileLinearSphereSweepImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileLinearSphereSweepImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ProjectileLinearSphereSweepImpactUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0.collision_filter = arg_1_3.collision_filter or "filter_player_ray_projectile"
@@ -20,11 +20,11 @@ function ProjectileLinearSphereSweepImpactUnitExtension.init(arg_1_0, arg_1_1, a
 	arg_1_0._last_position = Vector3Box(var_1_0)
 end
 
-function ProjectileLinearSphereSweepImpactUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+ProjectileLinearSphereSweepImpactUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 end
 
-function ProjectileLinearSphereSweepImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectileLinearSphereSweepImpactUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ProjectileLinearSphereSweepImpactUnitExtension.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	if not arg_3_0.locomotion_extension:moved_this_frame() then
@@ -86,7 +86,7 @@ function ProjectileLinearSphereSweepImpactUnitExtension.update(arg_3_0, arg_3_1,
 	end
 end
 
-function ProjectileLinearSphereSweepImpactUnitExtension._valid_target(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ProjectileLinearSphereSweepImpactUnitExtension._valid_target = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_2 == arg_4_1 or Unit.is_frozen(arg_4_2) or arg_4_3 == Unit.actor(arg_4_2, "c_afro") then
 		return false
 	end

@@ -217,7 +217,7 @@ var_0_1.buff_templates = {
 	}
 }
 var_0_1.proc_functions = {
-	kerillian_thorn_sister_health_conversion = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	kerillian_thorn_sister_health_conversion = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		if ALIVE[arg_1_0] then
 			local var_1_0 = ScriptUnit.has_extension(arg_1_0, "health_system")
 
@@ -251,7 +251,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	kerillian_thorn_sister_set_back = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	kerillian_thorn_sister_set_back = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_2[1]
 
 		if ALIVE[arg_2_0] and ALIVE[var_2_0] then
@@ -267,7 +267,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	thorn_sister_transfer_temp_health_at_full = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	thorn_sister_transfer_temp_health_at_full = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		local var_3_0 = arg_3_2[3]
 		local var_3_1 = arg_3_2[1]
 		local var_3_2 = arg_3_1.attacker_unit
@@ -292,7 +292,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	add_buff_reff_buff_stack = function(arg_4_0, arg_4_1, arg_4_2)
+	add_buff_reff_buff_stack = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = arg_4_2[1]
 
 		if ALIVE[arg_4_0] and var_4_0 == arg_4_0 then
@@ -306,7 +306,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	remove_ref_buff_stack_woods = function(arg_5_0, arg_5_1, arg_5_2)
+	remove_ref_buff_stack_woods = function (arg_5_0, arg_5_1, arg_5_2)
 		if ALIVE[arg_5_0] then
 			local var_5_0 = arg_5_1.template.buff_to_remove
 			local var_5_1 = ScriptUnit.extension(arg_5_0, "buff_system")
@@ -323,7 +323,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	thorn_sister_add_bleed_on_hit = function(arg_6_0, arg_6_1, arg_6_2)
+	thorn_sister_add_bleed_on_hit = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = arg_6_2[1]
 
 		if ALIVE[arg_6_0] and ALIVE[var_6_0] then
@@ -344,7 +344,7 @@ var_0_1.proc_functions = {
 			var_6_2:add_buff_synced(var_6_0, var_6_1, BuffSyncType.LocalAndServer, var_0_2)
 		end
 	end,
-	kerillian_thorn_sister_crit_aoe_poison_func = function(arg_7_0, arg_7_1, arg_7_2)
+	kerillian_thorn_sister_crit_aoe_poison_func = function (arg_7_0, arg_7_1, arg_7_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -371,7 +371,7 @@ var_0_1.proc_functions = {
 			var_7_1:create_explosion(arg_7_0, var_7_4, var_7_8, var_7_6, var_7_9, var_7_5, var_7_2, var_7_10)
 		end
 	end,
-	thorn_sister_add_melee_poison = function(arg_8_0, arg_8_1, arg_8_2)
+	thorn_sister_add_melee_poison = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = arg_8_2[1]
 
 		if ALIVE[arg_8_0] and HEALTH_ALIVE[var_8_0] then
@@ -404,7 +404,7 @@ var_0_1.proc_functions = {
 			var_8_5:add_buff_synced(var_8_0, var_8_3, BuffSyncType.LocalAndServer, var_0_2)
 		end
 	end,
-	thorn_sister_big_push = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	thorn_sister_big_push = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if ALIVE[arg_9_0] and arg_9_2[1].kind == "push_stagger" and ScriptUnit.has_extension(arg_9_0, "status_system"):current_fatigue_points() == 0 then
 			local var_9_0 = ScriptUnit.extension(arg_9_0, "buff_system")
 			local var_9_1 = arg_9_1.template
@@ -421,7 +421,7 @@ var_0_1.proc_functions = {
 			World.create_particles(arg_9_3, "fx/thornsister_push", var_9_4, Quaternion.identity())
 		end
 	end,
-	kerillian_thorn_sister_add_buff_remove = function(arg_10_0, arg_10_1, arg_10_2)
+	kerillian_thorn_sister_add_buff_remove = function (arg_10_0, arg_10_1, arg_10_2)
 		if ALIVE[arg_10_0] then
 			local var_10_0 = arg_10_1.template.buff_to_add
 
@@ -429,7 +429,7 @@ var_0_1.proc_functions = {
 			ScriptUnit.extension(arg_10_0, "buff_system"):remove_buff(arg_10_1.id)
 		end
 	end,
-	kerillian_thorn_sister_restore_health_on_ranged_hit = function(arg_11_0, arg_11_1, arg_11_2)
+	kerillian_thorn_sister_restore_health_on_ranged_hit = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = arg_11_2[7]
 
 		if ALIVE[arg_11_0] and var_11_0 and (var_11_0 == "projectile" or var_11_0 == "instant_projectile" or var_11_0 == "heavy_instant_projectile") then
@@ -442,7 +442,7 @@ var_0_1.proc_functions = {
 			ScriptUnit.extension(arg_11_0, "buff_system"):remove_buff(arg_11_1.id)
 		end
 	end,
-	kerillian_thorn_sister_wall_buff_enemies = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	kerillian_thorn_sister_wall_buff_enemies = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		local var_12_0 = arg_12_1.attacker_unit
 		local var_12_1 = arg_12_2[arg_12_4.target_number]
 
@@ -466,7 +466,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	add_buff_on_proc_thorn = function(arg_13_0, arg_13_1, arg_13_2)
+	add_buff_on_proc_thorn = function (arg_13_0, arg_13_1, arg_13_2)
 		if ALIVE[arg_13_0] then
 			local var_13_0 = Managers.state.entity:system("buff_system")
 			local var_13_1 = arg_13_1.template.buff_to_add
@@ -474,7 +474,7 @@ var_0_1.proc_functions = {
 			var_13_0:add_buff(arg_13_0, var_13_1, arg_13_0, false)
 		end
 	end,
-	kerillian_thorn_sister_reduce_passive_on_elite = function(arg_14_0, arg_14_1, arg_14_2)
+	kerillian_thorn_sister_reduce_passive_on_elite = function (arg_14_0, arg_14_1, arg_14_2)
 		if ALIVE[arg_14_0] then
 			local var_14_0 = ScriptUnit.extension(arg_14_0, "career_system")
 			local var_14_1 = arg_14_1.template.time_removed_per_kill or 0
@@ -482,7 +482,7 @@ var_0_1.proc_functions = {
 			var_14_0:modify_extra_ability_charge(var_14_1)
 		end
 	end,
-	kerillian_thorn_sister_team_buff_on_passive = function(arg_15_0, arg_15_1, arg_15_2)
+	kerillian_thorn_sister_team_buff_on_passive = function (arg_15_0, arg_15_1, arg_15_2)
 		if ALIVE[arg_15_0] then
 			local var_15_0 = Managers.state.side.side_by_unit[arg_15_0].PLAYER_AND_BOT_UNITS
 			local var_15_1 = #var_15_0
@@ -506,7 +506,7 @@ var_0_1.proc_functions = {
 	end
 }
 var_0_1.buff_function_templates = {
-	kerillian_thorn_sister_healing_wall_buff_counter_remove = function(arg_16_0, arg_16_1, arg_16_2)
+	kerillian_thorn_sister_healing_wall_buff_counter_remove = function (arg_16_0, arg_16_1, arg_16_2)
 		if ALIVE[arg_16_0] then
 			local var_16_0 = ScriptUnit.extension(arg_16_0, "buff_system")
 
@@ -524,7 +524,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	start_dot_damage_kerillian = function(arg_17_0, arg_17_1, arg_17_2)
+	start_dot_damage_kerillian = function (arg_17_0, arg_17_1, arg_17_2)
 		local var_17_0 = arg_17_1.attacker_unit
 
 		if ALIVE[var_17_0] then
@@ -545,7 +545,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	activate_stacking_buff_on_distance = function(arg_18_0, arg_18_1, arg_18_2)
+	activate_stacking_buff_on_distance = function (arg_18_0, arg_18_1, arg_18_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -587,7 +587,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	remove_aura_stacking_buff = function(arg_19_0, arg_19_1, arg_19_2)
+	remove_aura_stacking_buff = function (arg_19_0, arg_19_1, arg_19_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -604,7 +604,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	kerillian_thorn_sister_passive_health_convert = function(arg_20_0, arg_20_1, arg_20_2)
+	kerillian_thorn_sister_passive_health_convert = function (arg_20_0, arg_20_1, arg_20_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -627,7 +627,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	kerillian_thorn_sister_add_buff_to_attacker = function(arg_21_0, arg_21_1, arg_21_2)
+	kerillian_thorn_sister_add_buff_to_attacker = function (arg_21_0, arg_21_1, arg_21_2)
 		if ALIVE[arg_21_0] then
 			local var_21_0 = arg_21_1.template.buff_to_add
 			local var_21_1 = arg_21_1.attacker_unit
@@ -638,7 +638,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	kerillian_thorn_sister_remove_buff_from_attacker = function(arg_22_0, arg_22_1, arg_22_2)
+	kerillian_thorn_sister_remove_buff_from_attacker = function (arg_22_0, arg_22_1, arg_22_2)
 		if arg_22_1.added_id then
 			local var_22_0 = arg_22_1.attacker_unit
 			local var_22_1 = ScriptUnit.has_extension(var_22_0, "buff_system")
@@ -648,14 +648,14 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	buff_system_add_buff = function(arg_23_0, arg_23_1, arg_23_2)
+	buff_system_add_buff = function (arg_23_0, arg_23_1, arg_23_2)
 		if ALIVE[arg_23_0] then
 			local var_23_0 = arg_23_1.template.buff_to_add
 
 			Managers.state.entity:system("buff_system"):add_buff(arg_23_0, var_23_0, arg_23_0, false)
 		end
 	end,
-	kerillian_thorn_sister_noclip_on = function(arg_24_0, arg_24_1, arg_24_2)
+	kerillian_thorn_sister_noclip_on = function (arg_24_0, arg_24_1, arg_24_2)
 		if ALIVE[arg_24_0] then
 			local var_24_0 = ScriptUnit.has_extension(arg_24_0, "status_system")
 
@@ -664,7 +664,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	kerillian_thorn_sister_noclip_off = function(arg_25_0, arg_25_1, arg_25_2)
+	kerillian_thorn_sister_noclip_off = function (arg_25_0, arg_25_1, arg_25_2)
 		if ALIVE[arg_25_0] then
 			local var_25_0 = ScriptUnit.has_extension(arg_25_0, "status_system")
 
@@ -675,7 +675,7 @@ var_0_1.buff_function_templates = {
 	end
 }
 var_0_1.stacking_buff_functions = {
-	kerillian_thorn_sister_avatar = function(arg_26_0, arg_26_1)
+	kerillian_thorn_sister_avatar = function (arg_26_0, arg_26_1)
 		if ALIVE[arg_26_0] then
 			local var_26_0 = arg_26_1.max_stack_data
 

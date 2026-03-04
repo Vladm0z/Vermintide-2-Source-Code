@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTChampionAttackAction = class(BTChampionAttackAction, BTNode)
 
-function BTChampionAttackAction.init(arg_1_0, ...)
+BTChampionAttackAction.init = function (arg_1_0, ...)
 	BTChampionAttackAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTChampionAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTChampionAttackAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -57,7 +57,7 @@ local var_0_5 = {
 	name = "BTChampionAttackAction"
 }
 
-function BTChampionAttackAction._init_attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTChampionAttackAction._init_attack = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	arg_5_2.move_state = "attacking"
 
 	local var_5_0 = arg_5_2.world
@@ -218,7 +218,7 @@ function BTChampionAttackAction._init_attack(arg_5_0, arg_5_1, arg_5_2, arg_5_3,
 	end
 end
 
-function BTChampionAttackAction._attack_threat_over(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTChampionAttackAction._attack_threat_over = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_2.attacking_target
 	local var_6_1 = Unit.alive(var_6_0)
 	local var_6_2 = arg_6_2.hit_players[var_6_0]
@@ -230,7 +230,7 @@ function BTChampionAttackAction._attack_threat_over(arg_6_0, arg_6_1, arg_6_2, a
 	end
 end
 
-function BTChampionAttackAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTChampionAttackAction.leave = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = arg_7_2.catapulted_players
 
@@ -291,7 +291,7 @@ function BTChampionAttackAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_
 		arg_7_2.overlap_wall_collision_time = nil
 		arg_7_2.overlap_walls_check_time = nil
 	elseif var_7_0.mode == "radial_cylinder" then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_7_9 = var_7_0.exit_flow_event
@@ -301,7 +301,7 @@ function BTChampionAttackAction.leave(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_
 	end
 end
 
-function BTChampionAttackAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTChampionAttackAction.run = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_2.attacking_target
 
 	if not Unit.alive(var_8_0) or arg_8_2.attack_aborted then
@@ -352,7 +352,7 @@ function BTChampionAttackAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	return "running"
 end
 
-function BTChampionAttackAction._next_in_sequence(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTChampionAttackAction._next_in_sequence = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_3[arg_9_4]
 	local var_9_1 = var_9_0.attack_anim
 	local var_9_2 = var_9_0.animation_drive_scale
@@ -365,7 +365,7 @@ function BTChampionAttackAction._next_in_sequence(arg_9_0, arg_9_1, arg_9_2, arg
 	if var_9_4 then
 		local var_9_6 = var_9_4.at
 
-		arg_9_1.attack_next_sequence_ready = var_9_6 and function(arg_10_0, arg_10_1, arg_10_2)
+		arg_9_1.attack_next_sequence_ready = var_9_6 and function (arg_10_0, arg_10_1, arg_10_2)
 			return arg_10_2 - var_9_5 >= var_9_6
 		end or var_9_4.ready_function
 		arg_9_1.attack_next_sequence_index = var_9_3
@@ -377,7 +377,7 @@ function BTChampionAttackAction._next_in_sequence(arg_9_0, arg_9_1, arg_9_2, arg
 	return var_9_1, var_9_2 or 1
 end
 
-function BTChampionAttackAction._update_rotation(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTChampionAttackAction._update_rotation = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_4.target_unit_status_extension
 	local var_11_1 = arg_11_4.target_dodged or var_11_0 and (var_11_0:get_is_dodging() or var_11_0:is_invisible())
 
@@ -405,7 +405,7 @@ function BTChampionAttackAction._update_rotation(arg_11_0, arg_11_1, arg_11_2, a
 	arg_11_4.locomotion_extension:set_wanted_rotation(var_11_2)
 end
 
-function BTChampionAttackAction._update_overlap(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BTChampionAttackAction._update_overlap = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_2.overlap_start_time
 	local var_12_1 = arg_12_2.overlap_end_time
 	local var_12_2 = arg_12_2.last_attack_overlap_position_time
@@ -511,7 +511,7 @@ end
 
 local var_0_6 = {}
 
-function BTChampionAttackAction._update_nav_mesh_wave(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+BTChampionAttackAction._update_nav_mesh_wave = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	local var_13_0 = arg_13_2.world
 	local var_13_1 = arg_13_2.overlap_start_time
 	local var_13_2 = arg_13_2.overlap_end_time
@@ -596,7 +596,7 @@ function BTChampionAttackAction._update_nav_mesh_wave(arg_13_0, arg_13_1, arg_13
 	arg_13_2.last_overlap_index = var_13_6
 end
 
-function BTChampionAttackAction.anim_cb_damage(arg_14_0, arg_14_1, arg_14_2)
+BTChampionAttackAction.anim_cb_damage = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_2.action
 	local var_14_1 = var_14_0.mode
 
@@ -653,7 +653,7 @@ function BTChampionAttackAction.anim_cb_damage(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_attack_threat_over(arg_14_1, arg_14_2, var_14_0)
 end
 
-function BTChampionAttackAction._update_radial_cylinder(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTChampionAttackAction._update_radial_cylinder = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if arg_15_5 > arg_15_2.overlap_end_time and arg_15_2.attacking_target then
 		arg_15_0:_attack_threat_over(arg_15_1, arg_15_2, arg_15_3)
 
@@ -729,7 +729,7 @@ function BTChampionAttackAction._update_radial_cylinder(arg_15_0, arg_15_1, arg_
 	arg_15_2.overlap_last_angle = var_15_14
 end
 
-function BTChampionAttackAction._calculate_cylinder_collision(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+BTChampionAttackAction._calculate_cylinder_collision = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_1.radius
 	local var_16_1 = arg_16_1.height
 	local var_16_2 = arg_16_1.offset_up
@@ -746,7 +746,7 @@ function BTChampionAttackAction._calculate_cylinder_collision(arg_16_0, arg_16_1
 	return var_16_10, var_16_6, var_16_11
 end
 
-function BTChampionAttackAction._calculate_oobb_collision(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+BTChampionAttackAction._calculate_oobb_collision = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_1.range
 	local var_17_1 = arg_17_1.height
 	local var_17_2 = arg_17_1.width
@@ -761,7 +761,7 @@ function BTChampionAttackAction._calculate_oobb_collision(arg_17_0, arg_17_1, ar
 	return arg_17_2 + var_17_8 + var_17_9, arg_17_3, var_17_7
 end
 
-function BTChampionAttackAction._deal_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+BTChampionAttackAction._deal_damage = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
 	local var_18_0 = arg_18_2.hit_players
 	local var_18_1 = Unit.alive
 	local var_18_2 = Actor.unit
@@ -839,7 +839,7 @@ function BTChampionAttackAction._deal_damage(arg_18_0, arg_18_1, arg_18_2, arg_1
 	end
 end
 
-function BTChampionAttackAction._catapult_players(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTChampionAttackAction._catapult_players = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_3.shove_speed
 	local var_19_1 = arg_19_3.shove_z_speed
 	local var_19_2 = arg_19_3.impact_shove_multiplier
@@ -859,7 +859,7 @@ function BTChampionAttackAction._catapult_players(arg_19_0, arg_19_1, arg_19_2, 
 	table.clear(arg_19_4)
 end
 
-function BTChampionAttackAction._catapult_player(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+BTChampionAttackAction._catapult_player = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_0 = ScriptUnit.extension(arg_20_4, "status_system")
 
 	if not var_20_0:is_knocked_down() and not var_20_0:is_dead() then

@@ -15,7 +15,7 @@ local var_0_7 = false
 HeroWindowCharacterPreview = class(HeroWindowCharacterPreview)
 HeroWindowCharacterPreview.NAME = "HeroWindowCharacterPreview"
 
-function HeroWindowCharacterPreview.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCharacterPreview.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCharacterPreview")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -49,7 +49,7 @@ function HeroWindowCharacterPreview.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function HeroWindowCharacterPreview.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowCharacterPreview.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_0._viewport_widget then
 		UIWidget.destroy(arg_2_0.ui_renderer, arg_2_0._viewport_widget)
 
@@ -110,7 +110,7 @@ function HeroWindowCharacterPreview.create_ui_elements(arg_2_0, arg_2_1, arg_2_2
 	end
 end
 
-function HeroWindowCharacterPreview.on_exit(arg_3_0, arg_3_1)
+HeroWindowCharacterPreview.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCharacterPreview")
 
 	arg_3_0.ui_animator = nil
@@ -132,7 +132,7 @@ function HeroWindowCharacterPreview.on_exit(arg_3_0, arg_3_1)
 	arg_3_0._level_package_name = nil
 end
 
-function HeroWindowCharacterPreview.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowCharacterPreview.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_7 then
 		var_0_7 = false
 
@@ -157,7 +157,7 @@ function HeroWindowCharacterPreview.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function HeroWindowCharacterPreview.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCharacterPreview.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._viewport_widget and Managers.package:has_loaded(arg_5_0._level_package_name, "HeroWindowCharacterPreview") then
 		arg_5_0._viewport_widget = UIWidget.init(var_0_2)
 		arg_5_0._fadeout_loading_overlay = true
@@ -194,7 +194,7 @@ end
 
 local var_0_8 = -1
 
-function HeroWindowCharacterPreview.respawn_hero(arg_7_0)
+HeroWindowCharacterPreview.respawn_hero = function (arg_7_0)
 	local var_7_0 = arg_7_0.world_previewer
 
 	if not var_7_0 then
@@ -217,7 +217,7 @@ function HeroWindowCharacterPreview.respawn_hero(arg_7_0)
 	var_7_0:respawn_hero_unit(arg_7_0.hero_name, arg_7_0.career_index, false, var_7_1)
 end
 
-function HeroWindowCharacterPreview._update_animations(arg_9_0, arg_9_1)
+HeroWindowCharacterPreview._update_animations = function (arg_9_0, arg_9_1)
 	arg_9_0.ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._animations
@@ -234,7 +234,7 @@ function HeroWindowCharacterPreview._update_animations(arg_9_0, arg_9_1)
 	local var_9_2 = arg_9_0._widgets_by_name
 end
 
-function HeroWindowCharacterPreview._update_loadout_sync(arg_10_0)
+HeroWindowCharacterPreview._update_loadout_sync = function (arg_10_0)
 	local var_10_0 = arg_10_0.parent.loadout_sync_id
 
 	if var_10_0 ~= arg_10_0._loadout_sync_id then
@@ -246,7 +246,7 @@ function HeroWindowCharacterPreview._update_loadout_sync(arg_10_0)
 	end
 end
 
-function HeroWindowCharacterPreview._update_skin_sync(arg_11_0)
+HeroWindowCharacterPreview._update_skin_sync = function (arg_11_0)
 	local var_11_0 = arg_11_0.parent.skin_sync_id
 
 	if var_11_0 ~= arg_11_0.skin_sync_id then
@@ -256,7 +256,7 @@ function HeroWindowCharacterPreview._update_skin_sync(arg_11_0)
 	end
 end
 
-function HeroWindowCharacterPreview._update_wielded_slot(arg_12_0)
+HeroWindowCharacterPreview._update_wielded_slot = function (arg_12_0)
 	local var_12_0 = arg_12_0.parent:get_selected_loadout_slot_index()
 
 	if var_12_0 ~= arg_12_0._selected_loadout_slot_index then
@@ -282,7 +282,7 @@ function HeroWindowCharacterPreview._update_wielded_slot(arg_12_0)
 	end
 end
 
-function HeroWindowCharacterPreview._populate_loadout(arg_13_0)
+HeroWindowCharacterPreview._populate_loadout = function (arg_13_0)
 	local var_13_0 = arg_13_0.world_previewer
 	local var_13_1 = arg_13_0.hero_name
 	local var_13_2 = InventorySettings.slots_by_slot_index
@@ -308,7 +308,7 @@ function HeroWindowCharacterPreview._populate_loadout(arg_13_0)
 	end
 end
 
-function HeroWindowCharacterPreview._is_button_pressed(arg_14_0, arg_14_1)
+HeroWindowCharacterPreview._is_button_pressed = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.content.button_hotspot
 
 	if var_14_0.on_release then
@@ -318,7 +318,7 @@ function HeroWindowCharacterPreview._is_button_pressed(arg_14_0, arg_14_1)
 	end
 end
 
-function HeroWindowCharacterPreview._is_stepper_button_pressed(arg_15_0, arg_15_1)
+HeroWindowCharacterPreview._is_stepper_button_pressed = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = var_15_0.button_hotspot_left
 	local var_15_2 = var_15_0.button_hotspot_right
@@ -334,7 +334,7 @@ function HeroWindowCharacterPreview._is_stepper_button_pressed(arg_15_0, arg_15_
 	end
 end
 
-function HeroWindowCharacterPreview._handle_input(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowCharacterPreview._handle_input = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._widgets_by_name.detailed
 
 	if arg_16_0:_is_button_pressed(var_16_0) then
@@ -342,12 +342,12 @@ function HeroWindowCharacterPreview._handle_input(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function HeroWindowCharacterPreview._exit(arg_17_0, arg_17_1)
+HeroWindowCharacterPreview._exit = function (arg_17_0, arg_17_1)
 	arg_17_0.exit = true
 	arg_17_0.exit_level_id = arg_17_1
 end
 
-function HeroWindowCharacterPreview.draw(arg_18_0, arg_18_1)
+HeroWindowCharacterPreview.draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.ui_renderer
 	local var_18_1 = arg_18_0.ui_top_renderer
 	local var_18_2 = arg_18_0.ui_scenegraph
@@ -374,11 +374,11 @@ function HeroWindowCharacterPreview.draw(arg_18_0, arg_18_1)
 	end
 end
 
-function HeroWindowCharacterPreview._play_sound(arg_19_0, arg_19_1)
+HeroWindowCharacterPreview._play_sound = function (arg_19_0, arg_19_1)
 	arg_19_0.parent:play_sound(arg_19_1)
 end
 
-function HeroWindowCharacterPreview._update_loading_overlay_fadeout_animation(arg_20_0, arg_20_1)
+HeroWindowCharacterPreview._update_loading_overlay_fadeout_animation = function (arg_20_0, arg_20_1)
 	if not arg_20_0._fadeout_loading_overlay then
 		return
 	end
@@ -405,7 +405,7 @@ function HeroWindowCharacterPreview._update_loading_overlay_fadeout_animation(ar
 	end
 end
 
-function HeroWindowCharacterPreview._handle_statistics_pressed(arg_21_0)
+HeroWindowCharacterPreview._handle_statistics_pressed = function (arg_21_0)
 	local var_21_0 = arg_21_0._widgets_by_name.detailed
 
 	if var_21_0.content.active then
@@ -415,11 +415,11 @@ function HeroWindowCharacterPreview._handle_statistics_pressed(arg_21_0)
 	end
 end
 
-function HeroWindowCharacterPreview._statistics_activate(arg_22_0)
+HeroWindowCharacterPreview._statistics_activate = function (arg_22_0)
 	return arg_22_0._widgets_by_name.detailed.content.active
 end
 
-function HeroWindowCharacterPreview._activate_statistics(arg_23_0)
+HeroWindowCharacterPreview._activate_statistics = function (arg_23_0)
 	local var_23_0 = arg_23_0._widgets_by_name.detailed
 
 	var_23_0.content.active = true
@@ -436,7 +436,7 @@ function HeroWindowCharacterPreview._activate_statistics(arg_23_0)
 	arg_23_0:_sync_statistics()
 end
 
-function HeroWindowCharacterPreview._sync_statistics(arg_24_0)
+HeroWindowCharacterPreview._sync_statistics = function (arg_24_0)
 	if not arg_24_0:_statistics_activate() then
 		return
 	end
@@ -447,7 +447,7 @@ function HeroWindowCharacterPreview._sync_statistics(arg_24_0)
 	arg_24_0:_populate_statistics(var_24_1)
 end
 
-function HeroWindowCharacterPreview._deactivate_statistics(arg_25_0)
+HeroWindowCharacterPreview._deactivate_statistics = function (arg_25_0)
 	local var_25_0 = arg_25_0._widgets_by_name.detailed
 
 	var_25_0.content.active = false
@@ -456,7 +456,7 @@ function HeroWindowCharacterPreview._deactivate_statistics(arg_25_0)
 	var_25_0.style.drop_down_arrow.angle = 0
 end
 
-function HeroWindowCharacterPreview._update_statistics_widget(arg_26_0, arg_26_1, arg_26_2)
+HeroWindowCharacterPreview._update_statistics_widget = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._widgets_by_name.detailed
 
 	if not var_26_0.content.active then
@@ -484,7 +484,7 @@ function HeroWindowCharacterPreview._update_statistics_widget(arg_26_0, arg_26_1
 	var_26_9[2] = -var_26_1[2] + var_26_7 * var_26_10
 end
 
-function HeroWindowCharacterPreview._populate_statistics(arg_27_0, arg_27_1)
+HeroWindowCharacterPreview._populate_statistics = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._widgets_by_name.detailed
 	local var_27_1 = var_27_0.content
 	local var_27_2 = var_27_0.style.list_style
@@ -524,7 +524,7 @@ function HeroWindowCharacterPreview._populate_statistics(arg_27_0, arg_27_1)
 	arg_27_0:_setup_tab_scrollbar(var_27_0)
 end
 
-function HeroWindowCharacterPreview._setup_tab_scrollbar(arg_28_0, arg_28_1)
+HeroWindowCharacterPreview._setup_tab_scrollbar = function (arg_28_0, arg_28_1)
 	local var_28_0 = var_0_3.detailed_button.size
 	local var_28_1 = var_0_3.detailed_list.size
 	local var_28_2 = arg_28_1.style.list_style
@@ -554,7 +554,7 @@ function HeroWindowCharacterPreview._setup_tab_scrollbar(arg_28_0, arg_28_1)
 	end
 end
 
-function HeroWindowCharacterPreview._show_weapon_disclaimer(arg_29_0, arg_29_1)
+HeroWindowCharacterPreview._show_weapon_disclaimer = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._widgets_by_name.disclaimer_text.content
 
 	arg_29_0._widgets_by_name.disclaimer_text_background.content.visible = arg_29_1

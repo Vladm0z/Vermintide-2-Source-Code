@@ -2,7 +2,7 @@
 
 RemotePlayer = class(RemotePlayer)
 
-function RemotePlayer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+RemotePlayer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
 	arg_1_0.network_manager = arg_1_1
 	arg_1_0.remote = true
 	arg_1_0.peer_id = arg_1_2
@@ -26,19 +26,19 @@ function RemotePlayer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0._cached_name = nil
 end
 
-function RemotePlayer.profile_id(arg_2_0)
+RemotePlayer.profile_id = function (arg_2_0)
 	return arg_2_0._unique_id
 end
 
-function RemotePlayer.ui_id(arg_3_0)
+RemotePlayer.ui_id = function (arg_3_0)
 	return arg_3_0._ui_id
 end
 
-function RemotePlayer.unique_id(arg_4_0)
+RemotePlayer.unique_id = function (arg_4_0)
 	return arg_4_0._unique_id
 end
 
-function RemotePlayer.platform_id(arg_5_0)
+RemotePlayer.platform_id = function (arg_5_0)
 	if IS_WINDOWS or IS_LINUX then
 		return arg_5_0.peer_id
 	else
@@ -46,32 +46,32 @@ function RemotePlayer.platform_id(arg_5_0)
 	end
 end
 
-function RemotePlayer.despawn(arg_6_0)
+RemotePlayer.despawn = function (arg_6_0)
 	assert(arg_6_0.is_server)
 end
 
-function RemotePlayer.type(arg_7_0)
+RemotePlayer.type = function (arg_7_0)
 	return "RemotePlayer"
 end
 
-function RemotePlayer.set_player_unit(arg_8_0, arg_8_1)
+RemotePlayer.set_player_unit = function (arg_8_0, arg_8_1)
 	arg_8_0.player_unit = arg_8_1
 	arg_8_0._career_index = ScriptUnit.extension(arg_8_1, "career_system"):career_index()
 end
 
-function RemotePlayer.profile_index(arg_9_0)
+RemotePlayer.profile_index = function (arg_9_0)
 	return (arg_9_0.network_manager.profile_synchronizer:profile_by_peer(arg_9_0.peer_id, arg_9_0._local_player_id))
 end
 
-function RemotePlayer.set_profile_index(arg_10_0, arg_10_1)
+RemotePlayer.set_profile_index = function (arg_10_0, arg_10_1)
 	assert(true, "Why are we trying to set profile index for a remote player?")
 end
 
-function RemotePlayer.set_career_index(arg_11_0, arg_11_1)
+RemotePlayer.set_career_index = function (arg_11_0, arg_11_1)
 	error("Why are we trying to set career index for a remote player?")
 end
 
-function RemotePlayer.character_name(arg_12_0)
+RemotePlayer.character_name = function (arg_12_0)
 	local var_12_0 = arg_12_0.network_manager.profile_synchronizer:profile_by_peer(arg_12_0.peer_id, arg_12_0._local_player_id)
 
 	if var_12_0 then
@@ -83,7 +83,7 @@ function RemotePlayer.character_name(arg_12_0)
 	end
 end
 
-function RemotePlayer.profile_display_name(arg_13_0)
+RemotePlayer.profile_display_name = function (arg_13_0)
 	local var_13_0 = arg_13_0.network_manager.profile_synchronizer:profile_by_peer(arg_13_0.peer_id, arg_13_0._local_player_id)
 
 	if var_13_0 then
@@ -95,13 +95,13 @@ function RemotePlayer.profile_display_name(arg_13_0)
 	end
 end
 
-function RemotePlayer.career_index(arg_14_0)
+RemotePlayer.career_index = function (arg_14_0)
 	local var_14_0, var_14_1 = arg_14_0.network_manager.profile_synchronizer:profile_by_peer(arg_14_0.peer_id, arg_14_0._local_player_id)
 
 	return var_14_1 or 1
 end
 
-function RemotePlayer.career_name(arg_15_0)
+RemotePlayer.career_name = function (arg_15_0)
 	local var_15_0 = arg_15_0:profile_index()
 	local var_15_1 = SPProfiles[var_15_0]
 
@@ -112,31 +112,31 @@ function RemotePlayer.career_name(arg_15_0)
 	end
 end
 
-function RemotePlayer.stats_id(arg_16_0)
+RemotePlayer.stats_id = function (arg_16_0)
 	return arg_16_0._unique_id
 end
 
-function RemotePlayer.telemetry_id(arg_17_0)
+RemotePlayer.telemetry_id = function (arg_17_0)
 	return arg_17_0._unique_id
 end
 
-function RemotePlayer.local_player_id(arg_18_0)
+RemotePlayer.local_player_id = function (arg_18_0)
 	return arg_18_0._local_player_id
 end
 
-function RemotePlayer.network_id(arg_19_0)
+RemotePlayer.network_id = function (arg_19_0)
 	return arg_19_0.peer_id
 end
 
-function RemotePlayer.is_player_controlled(arg_20_0)
+RemotePlayer.is_player_controlled = function (arg_20_0)
 	return arg_20_0._player_controlled
 end
 
-function RemotePlayer.get_data(arg_21_0, arg_21_1)
+RemotePlayer.get_data = function (arg_21_0, arg_21_1)
 	return arg_21_0._player_sync_data:get_data(arg_21_1)
 end
 
-function RemotePlayer.name(arg_22_0)
+RemotePlayer.name = function (arg_22_0)
 	local var_22_0
 
 	if not arg_22_0._player_controlled then
@@ -191,11 +191,11 @@ function RemotePlayer.name(arg_22_0)
 	return var_22_0
 end
 
-function RemotePlayer.cached_name(arg_23_0)
+RemotePlayer.cached_name = function (arg_23_0)
 	return arg_23_0._cached_name or arg_23_0._debug_name
 end
 
-function RemotePlayer.destroy(arg_24_0)
+RemotePlayer.destroy = function (arg_24_0)
 	if arg_24_0._player_sync_data then
 		arg_24_0._player_sync_data:destroy()
 	end
@@ -209,7 +209,7 @@ function RemotePlayer.destroy(arg_24_0)
 	end
 end
 
-function RemotePlayer.create_game_object(arg_25_0)
+RemotePlayer.create_game_object = function (arg_25_0)
 	local var_25_0 = {
 		ping = 0,
 		go_type = NetworkLookup.go_types.player,
@@ -230,38 +230,38 @@ function RemotePlayer.create_game_object(arg_25_0)
 	end
 end
 
-function RemotePlayer.cb_game_session_disconnect(arg_26_0)
+RemotePlayer.cb_game_session_disconnect = function (arg_26_0)
 	arg_26_0.game_object_id = nil
 end
 
-function RemotePlayer.set_game_object_id(arg_27_0, arg_27_1)
+RemotePlayer.set_game_object_id = function (arg_27_0, arg_27_1)
 	arg_27_0.game_object_id = arg_27_1
 end
 
-function RemotePlayer.create_sync_data(arg_28_0)
+RemotePlayer.create_sync_data = function (arg_28_0)
 	assert(arg_28_0._player_sync_data == nil)
 
 	arg_28_0._player_sync_data = PlayerSyncData:new(arg_28_0, arg_28_0.network_manager)
 end
 
-function RemotePlayer.set_sync_data_game_object_id(arg_29_0, arg_29_1)
+RemotePlayer.set_sync_data_game_object_id = function (arg_29_0, arg_29_1)
 	arg_29_0._player_sync_data:set_game_object_id(arg_29_1)
 end
 
-function RemotePlayer.sync_data_active(arg_30_0)
+RemotePlayer.sync_data_active = function (arg_30_0)
 	return arg_30_0._player_sync_data and arg_30_0._player_sync_data:active()
 end
 
-function RemotePlayer.get_party(arg_31_0)
+RemotePlayer.get_party = function (arg_31_0)
 	local var_31_0 = Managers.party:get_status_from_unique_id(arg_31_0._unique_id)
 
 	return Managers.party:get_party(var_31_0.party_id)
 end
 
-function RemotePlayer.observed_unit(arg_32_0)
+RemotePlayer.observed_unit = function (arg_32_0)
 	return arg_32_0._observed_unit
 end
 
-function RemotePlayer.set_observed_unit(arg_33_0, arg_33_1)
+RemotePlayer.set_observed_unit = function (arg_33_0, arg_33_1)
 	arg_33_0._observed_unit = arg_33_1
 end

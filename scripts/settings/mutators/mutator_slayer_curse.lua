@@ -6,13 +6,13 @@ return {
 	decay_tick = 1,
 	icon = "mutator_icon_slayer_curse",
 	decay_start = 5,
-	add_buff = function(arg_1_0, arg_1_1, arg_1_2)
+	add_buff = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = true
 		local var_1_1 = arg_1_1:add_buff(arg_1_2, "slayer_curse_debuff", arg_1_2, var_1_0)
 
 		arg_1_0[#arg_1_0 + 1] = var_1_1
 	end,
-	remove_buff = function(arg_2_0, arg_2_1, arg_2_2)
+	remove_buff = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = #arg_2_0
 		local var_2_1 = arg_2_0[var_2_0]
 
@@ -20,12 +20,12 @@ return {
 
 		arg_2_0[var_2_0] = nil
 	end,
-	server_start_function = function(arg_3_0, arg_3_1)
+	server_start_function = function (arg_3_0, arg_3_1)
 		arg_3_1.player_units = {}
 		arg_3_1.buff_system = Managers.state.entity:system("buff_system")
 		arg_3_1.player_manager = Managers.player
 	end,
-	server_update_function = function(arg_4_0, arg_4_1)
+	server_update_function = function (arg_4_0, arg_4_1)
 		local var_4_0 = Managers.time:time("game")
 		local var_4_1 = arg_4_1.template
 		local var_4_2 = arg_4_1.player_units
@@ -55,7 +55,7 @@ return {
 			end
 		end
 	end,
-	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if not arg_5_1.player_manager:is_player_unit(arg_5_3) then
 			return
 		end
@@ -75,7 +75,7 @@ return {
 
 		var_5_1.next_decay = Managers.time:time("game") + arg_5_1.template.decay_start
 	end,
-	server_stop_function = function(arg_6_0, arg_6_1, arg_6_2)
+	server_stop_function = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = arg_6_1.template
 		local var_6_1 = arg_6_1.player_units
 

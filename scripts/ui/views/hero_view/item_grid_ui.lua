@@ -10,7 +10,7 @@ local function var_0_0(arg_1_0, arg_1_1)
 	end
 end
 
-function ItemGridUI.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ItemGridUI.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_0._platform = PLATFORM
 	arg_2_0._category_settings = arg_2_1
 	arg_2_0._widget = arg_2_2
@@ -27,14 +27,14 @@ function ItemGridUI.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_0._locked_items = {}
 end
 
-function ItemGridUI._append_widget_content(arg_3_0, arg_3_1, arg_3_2)
+ItemGridUI._append_widget_content = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_1.content
 
 	var_3_0.profile_index = arg_3_2 and arg_3_2.profile_index
 	var_3_0.career_index = arg_3_2 and arg_3_2.career_index
 end
 
-function ItemGridUI.change_category(arg_4_0, arg_4_1, arg_4_2)
+ItemGridUI.change_category = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:clear_item_grid()
 
 	for iter_4_0, iter_4_1 in ipairs(arg_4_0._category_settings) do
@@ -46,7 +46,7 @@ function ItemGridUI.change_category(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ItemGridUI.set_item_page(arg_5_0, arg_5_1)
+ItemGridUI.set_item_page = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._total_item_pages
 
 	if var_5_0 < arg_5_1 or arg_5_1 < 1 then
@@ -64,15 +64,15 @@ function ItemGridUI.set_item_page(arg_5_0, arg_5_1)
 	arg_5_0._selected_page_index = arg_5_1
 end
 
-function ItemGridUI.items(arg_6_0)
+ItemGridUI.items = function (arg_6_0)
 	return arg_6_0._items
 end
 
-function ItemGridUI.get_page_info(arg_7_0)
+ItemGridUI.get_page_info = function (arg_7_0)
 	return arg_7_0._selected_page_index, arg_7_0._total_item_pages
 end
 
-function ItemGridUI.get_equipped_items(arg_8_0, arg_8_1, arg_8_2)
+ItemGridUI.get_equipped_items = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = InventorySettings.slots
 	local var_8_1 = {}
 	local var_8_2 = SPProfiles[FindProfileIndex(arg_8_1)].careers[arg_8_2].name
@@ -89,7 +89,7 @@ function ItemGridUI.get_equipped_items(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_1
 end
 
-function ItemGridUI.get_equipped_weapon_pose_parent(arg_9_0, arg_9_1, arg_9_2)
+ItemGridUI.get_equipped_weapon_pose_parent = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = SPProfiles[FindProfileIndex(arg_9_1)].careers[arg_9_2].name
 	local var_9_1 = BackendUtils.get_loadout_item(var_9_0, "slot_pose")
 
@@ -102,71 +102,71 @@ function ItemGridUI.get_equipped_weapon_pose_parent(arg_9_0, arg_9_1, arg_9_2)
 	return (Managers.backend:get_interface("items"):get_item_from_key(var_9_2))
 end
 
-function ItemGridUI.apply_item_sorting_function(arg_10_0, arg_10_1)
+ItemGridUI.apply_item_sorting_function = function (arg_10_0, arg_10_1)
 	arg_10_0._item_sort_func = arg_10_1
 end
 
-function ItemGridUI.set_locked_items_icon(arg_11_0, arg_11_1)
+ItemGridUI.set_locked_items_icon = function (arg_11_0, arg_11_1)
 	arg_11_0._locked_item_icon = arg_11_1
 
 	arg_11_0:update_items_status()
 end
 
-function ItemGridUI.disable_locked_items(arg_12_0, arg_12_1)
+ItemGridUI.disable_locked_items = function (arg_12_0, arg_12_1)
 	arg_12_0._disable_locked_items = arg_12_1
 
 	arg_12_0:mark_locked_items(arg_12_0._mark_locked_items)
 end
 
-function ItemGridUI.lock_item_by_id(arg_13_0, arg_13_1, arg_13_2)
+ItemGridUI.lock_item_by_id = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._locked_items[arg_13_1] = arg_13_2
 end
 
-function ItemGridUI.clear_locked_items(arg_14_0)
+ItemGridUI.clear_locked_items = function (arg_14_0)
 	arg_14_0._locked_items = {}
 end
 
-function ItemGridUI.hide_slots(arg_15_0, arg_15_1)
+ItemGridUI.hide_slots = function (arg_15_0, arg_15_1)
 	arg_15_0._hide_slots = arg_15_1
 
 	arg_15_0:update_items_status()
 end
 
-function ItemGridUI.mark_locked_items(arg_16_0, arg_16_1)
+ItemGridUI.mark_locked_items = function (arg_16_0, arg_16_1)
 	arg_16_0._mark_locked_items = arg_16_1
 
 	arg_16_0:update_items_status()
 end
 
-function ItemGridUI.disable_unwieldable_items(arg_17_0, arg_17_1)
+ItemGridUI.disable_unwieldable_items = function (arg_17_0, arg_17_1)
 	arg_17_0._disable_unwieldable_items = arg_17_1
 end
 
-function ItemGridUI.disable_equipped_items(arg_18_0, arg_18_1)
+ItemGridUI.disable_equipped_items = function (arg_18_0, arg_18_1)
 	arg_18_0._disable_equipped_items = arg_18_1
 
 	arg_18_0:mark_equipped_items(arg_18_0._mark_equipped_items)
 end
 
-function ItemGridUI.mark_equipped_items(arg_19_0, arg_19_1)
+ItemGridUI.mark_equipped_items = function (arg_19_0, arg_19_1)
 	arg_19_0._mark_equipped_items = arg_19_1
 
 	arg_19_0:update_items_status()
 end
 
-function ItemGridUI.mark_equipped_weapon_pose_parent(arg_20_0, arg_20_1)
+ItemGridUI.mark_equipped_weapon_pose_parent = function (arg_20_0, arg_20_1)
 	arg_20_0._mark_equipped_weapon_pose_parent = arg_20_1
 
 	arg_20_0:update_items_status()
 end
 
-function ItemGridUI.disable_item_drag(arg_21_0)
+ItemGridUI.disable_item_drag = function (arg_21_0)
 	arg_21_0._item_drag_disabled = true
 
 	arg_21_0:update_items_status()
 end
 
-function ItemGridUI.update_items_status(arg_22_0)
+ItemGridUI.update_items_status = function (arg_22_0)
 	local var_22_0 = arg_22_0._hero_name
 	local var_22_1 = FindProfileIndex(var_22_0)
 	local var_22_2 = arg_22_0._career_index
@@ -262,7 +262,7 @@ function ItemGridUI.update_items_status(arg_22_0)
 	end
 end
 
-function ItemGridUI.has_item(arg_23_0, arg_23_1)
+ItemGridUI.has_item = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._items
 
 	if var_23_0 then
@@ -278,7 +278,7 @@ function ItemGridUI.has_item(arg_23_0, arg_23_1)
 	return false
 end
 
-function ItemGridUI.set_item_selected(arg_24_0, arg_24_1)
+ItemGridUI.set_item_selected = function (arg_24_0, arg_24_1)
 	arg_24_0._selected_item = arg_24_1
 
 	local var_24_0 = arg_24_0._widget.content
@@ -308,7 +308,7 @@ function ItemGridUI.set_item_selected(arg_24_0, arg_24_1)
 	end
 end
 
-function ItemGridUI.is_item_wieldable(arg_25_0, arg_25_1)
+ItemGridUI.is_item_wieldable = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._widget.content
 	local var_25_1 = var_25_0.rows
 	local var_25_2 = var_25_0.columns
@@ -337,7 +337,7 @@ function ItemGridUI.is_item_wieldable(arg_25_0, arg_25_1)
 	return false
 end
 
-function ItemGridUI.handle_favorite_marking(arg_26_0, arg_26_1)
+ItemGridUI.handle_favorite_marking = function (arg_26_0, arg_26_1)
 	if arg_26_1 and arg_26_1:has("hotkey_mark_favorite_item") and arg_26_1:get("hotkey_mark_favorite_item") then
 		local var_26_0
 
@@ -365,7 +365,7 @@ function ItemGridUI.handle_favorite_marking(arg_26_0, arg_26_1)
 	end
 end
 
-function ItemGridUI.handle_gamepad_selection(arg_27_0, arg_27_1)
+ItemGridUI.handle_gamepad_selection = function (arg_27_0, arg_27_1)
 	if not arg_27_0._selected_item then
 		return
 	end
@@ -409,7 +409,7 @@ function ItemGridUI.handle_gamepad_selection(arg_27_0, arg_27_1)
 	end
 end
 
-function ItemGridUI.get_item_in_slot(arg_28_0, arg_28_1, arg_28_2)
+ItemGridUI.get_item_in_slot = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0._widget.content
 	local var_28_1 = var_28_0.rows
 	local var_28_2 = var_28_0.columns
@@ -427,18 +427,18 @@ function ItemGridUI.get_item_in_slot(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function ItemGridUI.set_backend_id_selected(arg_29_0, arg_29_1)
+ItemGridUI.set_backend_id_selected = function (arg_29_0, arg_29_1)
 	local var_29_0 = Managers.backend:get_interface("items")
 	local var_29_1 = arg_29_1 and var_29_0:get_item_from_id(arg_29_1)
 
 	arg_29_0:set_item_selected(var_29_1)
 end
 
-function ItemGridUI.selected_item(arg_30_0)
+ItemGridUI.selected_item = function (arg_30_0)
 	return arg_30_0._selected_item, arg_30_0._selected_item_equipped
 end
 
-function ItemGridUI.add_item_to_slot_index(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+ItemGridUI.add_item_to_slot_index = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_0._widget
 	local var_31_1 = var_31_0.content
 	local var_31_2 = var_31_0.style
@@ -533,13 +533,13 @@ function ItemGridUI.add_item_to_slot_index(arg_31_0, arg_31_1, arg_31_2, arg_31_
 	end
 end
 
-function ItemGridUI._set_color_values(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+ItemGridUI._set_color_values = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	arg_32_1[2] = arg_32_2
 	arg_32_1[3] = arg_32_3
 	arg_32_1[4] = arg_32_4
 end
 
-function ItemGridUI.repopulate_current_inventory_page(arg_33_0)
+ItemGridUI.repopulate_current_inventory_page = function (arg_33_0)
 	local var_33_0 = arg_33_0._widget
 	local var_33_1 = var_33_0.content
 	local var_33_2 = arg_33_0._items
@@ -554,7 +554,7 @@ function ItemGridUI.repopulate_current_inventory_page(arg_33_0)
 	arg_33_0._selected_page_index = var_33_3
 end
 
-function ItemGridUI._populate_inventory_page(arg_34_0, arg_34_1, arg_34_2)
+ItemGridUI._populate_inventory_page = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._widget
 	local var_34_1 = var_34_0.content
 	local var_34_2 = var_34_0.style
@@ -663,7 +663,7 @@ function ItemGridUI._populate_inventory_page(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function ItemGridUI.clear_item_grid(arg_35_0)
+ItemGridUI.clear_item_grid = function (arg_35_0)
 	local var_35_0 = arg_35_0._widget
 	local var_35_1 = var_35_0.content
 	local var_35_2 = var_35_0.style
@@ -689,7 +689,7 @@ function ItemGridUI.clear_item_grid(arg_35_0)
 	end
 end
 
-function ItemGridUI._on_category_index_change(arg_36_0, arg_36_1, arg_36_2)
+ItemGridUI._on_category_index_change = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._category_settings[arg_36_1]
 	local var_36_1 = var_36_0.display_name
 	local var_36_2 = var_36_0.item_filter
@@ -722,7 +722,7 @@ end
 
 local var_0_1 = {}
 
-function ItemGridUI._apply_search_query(arg_37_0, arg_37_1, arg_37_2)
+ItemGridUI._apply_search_query = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = Utf8.lower(arg_37_2)
 
 	table.clear(var_0_1)
@@ -746,7 +746,7 @@ function ItemGridUI._apply_search_query(arg_37_0, arg_37_1, arg_37_2)
 	return var_0_1
 end
 
-function ItemGridUI.change_item_filter(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+ItemGridUI.change_item_filter = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	arg_38_1 = "available_in_current_mechanism and ( " .. arg_38_1 .. " )"
 
 	local var_38_0 = arg_38_0:_get_items_by_filter("can_wield_by_current_career and ( " .. arg_38_1 .. " )")
@@ -782,17 +782,17 @@ function ItemGridUI.change_item_filter(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	end
 end
 
-function ItemGridUI._sort_items(arg_39_0, arg_39_1, arg_39_2)
+ItemGridUI._sort_items = function (arg_39_0, arg_39_1, arg_39_2)
 	if arg_39_2 and #arg_39_1 > 1 then
 		table.sort(arg_39_1, arg_39_2)
 	end
 end
 
-function ItemGridUI._get_items_by_filter(arg_40_0, arg_40_1)
+ItemGridUI._get_items_by_filter = function (arg_40_0, arg_40_1)
 	return (Managers.backend:get_interface("items"):get_filtered_items(arg_40_1, arg_40_0._params))
 end
 
-function ItemGridUI._get_slot_by_ui_index(arg_41_0, arg_41_1)
+ItemGridUI._get_slot_by_ui_index = function (arg_41_0, arg_41_1)
 	local var_41_0 = InventorySettings.slots
 
 	for iter_41_0, iter_41_1 in pairs(var_41_0) do
@@ -802,7 +802,7 @@ function ItemGridUI._get_slot_by_ui_index(arg_41_0, arg_41_1)
 	end
 end
 
-function ItemGridUI._handle_page_arrow_pressed(arg_42_0)
+ItemGridUI._handle_page_arrow_pressed = function (arg_42_0)
 	local var_42_0 = arg_42_0._selected_page_index or 0
 	local var_42_1 = arg_42_0._total_item_pages
 	local var_42_2 = var_42_1 == 0
@@ -836,7 +836,7 @@ function ItemGridUI._handle_page_arrow_pressed(arg_42_0)
 	end
 end
 
-function ItemGridUI.is_item_pressed(arg_43_0, arg_43_1)
+ItemGridUI.is_item_pressed = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._widget.content
 	local var_43_1 = var_43_0.rows
 	local var_43_2 = var_43_0.columns
@@ -860,7 +860,7 @@ function ItemGridUI.is_item_pressed(arg_43_0, arg_43_1)
 	end
 end
 
-function ItemGridUI.is_item_hovered(arg_44_0)
+ItemGridUI.is_item_hovered = function (arg_44_0)
 	local var_44_0 = arg_44_0._widget.content
 	local var_44_1 = var_44_0.rows
 	local var_44_2 = var_44_0.columns
@@ -876,7 +876,7 @@ function ItemGridUI.is_item_hovered(arg_44_0)
 	end
 end
 
-function ItemGridUI.get_item_hovered(arg_45_0)
+ItemGridUI.get_item_hovered = function (arg_45_0)
 	local var_45_0 = arg_45_0._widget.content
 	local var_45_1 = var_45_0.rows
 	local var_45_2 = var_45_0.columns
@@ -896,7 +896,7 @@ function ItemGridUI.get_item_hovered(arg_45_0)
 	end
 end
 
-function ItemGridUI.get_item_hovered_slot(arg_46_0)
+ItemGridUI.get_item_hovered_slot = function (arg_46_0)
 	local var_46_0 = arg_46_0._widget.content
 	local var_46_1 = var_46_0.rows
 	local var_46_2 = var_46_0.columns
@@ -912,14 +912,14 @@ function ItemGridUI.get_item_hovered_slot(arg_46_0)
 	end
 end
 
-function ItemGridUI.get_item_content(arg_47_0, arg_47_1, arg_47_2)
+ItemGridUI.get_item_content = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._widget.content
 	local var_47_1 = "_" .. tostring(arg_47_1) .. "_" .. tostring(arg_47_2)
 
 	return var_47_0["hotspot" .. var_47_1]
 end
 
-function ItemGridUI.is_slot_hovered(arg_48_0)
+ItemGridUI.is_slot_hovered = function (arg_48_0)
 	local var_48_0 = arg_48_0._widget.content
 	local var_48_1 = var_48_0.rows
 	local var_48_2 = var_48_0.columns
@@ -935,7 +935,7 @@ function ItemGridUI.is_slot_hovered(arg_48_0)
 	end
 end
 
-function ItemGridUI.highlight_slots(arg_49_0, arg_49_1, arg_49_2)
+ItemGridUI.highlight_slots = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._widget
 	local var_49_1 = var_49_0.content
 	local var_49_2 = var_49_0.style
@@ -954,7 +954,7 @@ function ItemGridUI.highlight_slots(arg_49_0, arg_49_1, arg_49_2)
 	end
 end
 
-function ItemGridUI.highlight_drop_slots(arg_50_0, arg_50_1)
+ItemGridUI.highlight_drop_slots = function (arg_50_0, arg_50_1)
 	local var_50_0 = arg_50_0._widget
 	local var_50_1 = var_50_0.content
 	local var_50_2 = var_50_0.style
@@ -978,7 +978,7 @@ function ItemGridUI.highlight_drop_slots(arg_50_0, arg_50_1)
 	end
 end
 
-function ItemGridUI.is_item_dragged(arg_51_0)
+ItemGridUI.is_item_dragged = function (arg_51_0)
 	local var_51_0 = arg_51_0._widget.content
 	local var_51_1 = var_51_0.rows
 	local var_51_2 = var_51_0.columns
@@ -1003,7 +1003,7 @@ function ItemGridUI.is_item_dragged(arg_51_0)
 	return var_51_3
 end
 
-function ItemGridUI.is_dragging_item(arg_52_0)
+ItemGridUI.is_dragging_item = function (arg_52_0)
 	local var_52_0 = arg_52_0._widget.content
 	local var_52_1 = var_52_0.rows
 	local var_52_2 = var_52_0.columns
@@ -1027,14 +1027,14 @@ function ItemGridUI.is_dragging_item(arg_52_0)
 	return var_52_3
 end
 
-function ItemGridUI.update(arg_53_0, arg_53_1, arg_53_2)
+ItemGridUI.update = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0:_handle_page_arrow_pressed()
 end
 
-function ItemGridUI.destroy(arg_54_0)
+ItemGridUI.destroy = function (arg_54_0)
 	return
 end
 
-function ItemGridUI.get_selected_item_grid_slot(arg_55_0)
+ItemGridUI.get_selected_item_grid_slot = function (arg_55_0)
 	return arg_55_0._selected_item_row, arg_55_0._selected_item_column
 end

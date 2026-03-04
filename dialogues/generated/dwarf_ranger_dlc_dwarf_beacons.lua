@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_dlc_dwarf_beacons.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_dummy_memory_trigger_beacons",

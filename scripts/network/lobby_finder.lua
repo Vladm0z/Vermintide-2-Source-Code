@@ -10,7 +10,7 @@ end
 
 local var_0_1 = script_data.verbose_lobby_finder and printf or NOP
 
-function LobbyFinder.init(arg_1_0, arg_1_1, arg_1_2)
+LobbyFinder.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.config_file_name
 	local var_1_1 = arg_1_1.project_hash
 
@@ -32,18 +32,18 @@ function LobbyFinder.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function LobbyFinder.get_lobby_browser(arg_2_0)
+LobbyFinder.get_lobby_browser = function (arg_2_0)
 	return arg_2_0._browser
 end
 
-function LobbyFinder.destroy(arg_3_0)
+LobbyFinder.destroy = function (arg_3_0)
 	if not IS_XB1 then
 		LobbyInternal.client.destroy_lobby_browser(LobbyInternal.client, arg_3_0._browser)
 		print("===========Lobbyfinder DESTROYED", arg_3_0._browser)
 	end
 end
 
-function LobbyFinder.add_filter_requirements(arg_4_0, arg_4_1, arg_4_2)
+LobbyFinder.add_filter_requirements = function (arg_4_0, arg_4_1, arg_4_2)
 	LobbyInternal.add_filter_requirements(arg_4_1, arg_4_0._browser)
 
 	if arg_4_2 then
@@ -54,19 +54,19 @@ function LobbyFinder.add_filter_requirements(arg_4_0, arg_4_1, arg_4_2)
 	table.clear(arg_4_0._cached_lobbies)
 end
 
-function LobbyFinder.network_hash(arg_5_0)
+LobbyFinder.network_hash = function (arg_5_0)
 	return arg_5_0._network_hash
 end
 
-function LobbyFinder.lobbies(arg_6_0)
+LobbyFinder.lobbies = function (arg_6_0)
 	return arg_6_0._cached_lobbies
 end
 
-function LobbyFinder.latest_filter_lobbies(arg_7_0)
+LobbyFinder.latest_filter_lobbies = function (arg_7_0)
 	print("[LobbyFinder]:latest_filter_lobbies is deprecated")
 end
 
-function LobbyFinder.refresh(arg_8_0)
+LobbyFinder.refresh = function (arg_8_0)
 	var_0_1("===========LobbyFinder:refresh() _refresing=%s", arg_8_0._refreshing)
 
 	if not arg_8_0._refreshing then
@@ -76,11 +76,11 @@ function LobbyFinder.refresh(arg_8_0)
 	end
 end
 
-function LobbyFinder.is_refreshing(arg_9_0)
+LobbyFinder.is_refreshing = function (arg_9_0)
 	return arg_9_0._refreshing
 end
 
-function LobbyFinder.update(arg_10_0, arg_10_1)
+LobbyFinder.update = function (arg_10_0, arg_10_1)
 	if arg_10_0._refreshing then
 		local var_10_0 = arg_10_0._browser
 

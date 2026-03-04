@@ -4,7 +4,7 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionPositionLinear = class(CameraTransitionPositionLinear, CameraTransitionBase)
 
-function CameraTransitionPositionLinear.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+CameraTransitionPositionLinear.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
 	arg_1_0._freeze_node_1 = arg_1_5.freeze_start_node
@@ -18,7 +18,7 @@ function CameraTransitionPositionLinear.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3,
 	arg_1_0._transition_func = arg_1_5.transition_func
 end
 
-function CameraTransitionPositionLinear.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CameraTransitionPositionLinear.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
 	local var_2_0 = arg_2_0._freeze_node_1 and arg_2_0._node_1_pos_table:unbox() or arg_2_2

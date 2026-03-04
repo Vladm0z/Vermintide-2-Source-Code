@@ -3,7 +3,7 @@
 BulldozerPlayer = class(BulldozerPlayer, Player)
 EnergyData = EnergyData or {}
 
-function BulldozerPlayer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+BulldozerPlayer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
 	BulldozerPlayer.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 
 	arg_1_0.local_player = true
@@ -23,7 +23,7 @@ function BulldozerPlayer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	arg_1_0._cached_name = nil
 end
 
-function BulldozerPlayer.profile_index(arg_2_0)
+BulldozerPlayer.profile_index = function (arg_2_0)
 	if arg_2_0._profile_index then
 		return arg_2_0._profile_index
 	end
@@ -31,26 +31,26 @@ function BulldozerPlayer.profile_index(arg_2_0)
 	return (arg_2_0.network_manager.profile_synchronizer:profile_by_peer(arg_2_0.peer_id, arg_2_0._local_player_id))
 end
 
-function BulldozerPlayer.set_profile_index(arg_3_0, arg_3_1)
+BulldozerPlayer.set_profile_index = function (arg_3_0, arg_3_1)
 	arg_3_0._profile_index = arg_3_1
 end
 
-function BulldozerPlayer.set_player_unit(arg_4_0, arg_4_1)
+BulldozerPlayer.set_player_unit = function (arg_4_0, arg_4_1)
 	arg_4_0.player_unit = arg_4_1
 end
 
-function BulldozerPlayer.type(arg_5_0)
+BulldozerPlayer.type = function (arg_5_0)
 	return "BulldozerPlayer"
 end
 
-function BulldozerPlayer.profile_display_name(arg_6_0)
+BulldozerPlayer.profile_display_name = function (arg_6_0)
 	local var_6_0 = arg_6_0:profile_index()
 	local var_6_1 = SPProfiles[var_6_0]
 
 	return var_6_1 and var_6_1.display_name
 end
 
-function BulldozerPlayer.despawn(arg_7_0)
+BulldozerPlayer.despawn = function (arg_7_0)
 	if arg_7_0._spawn_state == "despawned" then
 		return
 	end
@@ -81,7 +81,7 @@ function BulldozerPlayer.despawn(arg_7_0)
 	Managers.state.event:trigger("delete_limited_owned_pickups", arg_7_0.peer_id)
 end
 
-function BulldozerPlayer.career_index(arg_8_0)
+BulldozerPlayer.career_index = function (arg_8_0)
 	if arg_8_0._career_index then
 		return arg_8_0._career_index
 	end
@@ -91,11 +91,11 @@ function BulldozerPlayer.career_index(arg_8_0)
 	return var_8_1
 end
 
-function BulldozerPlayer.set_career_index(arg_9_0, arg_9_1)
+BulldozerPlayer.set_career_index = function (arg_9_0, arg_9_1)
 	arg_9_0._career_index = arg_9_1
 end
 
-function BulldozerPlayer.career_name(arg_10_0)
+BulldozerPlayer.career_name = function (arg_10_0)
 	local var_10_0 = arg_10_0:profile_index()
 	local var_10_1 = SPProfiles[var_10_0]
 
@@ -106,12 +106,12 @@ function BulldozerPlayer.career_name(arg_10_0)
 	end
 end
 
-function BulldozerPlayer.set_spawn_position_rotation(arg_11_0, arg_11_1, arg_11_2)
+BulldozerPlayer.set_spawn_position_rotation = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0.spawn_position = Vector3Box(arg_11_1)
 	arg_11_0.spawn_rotation = QuaternionBox(arg_11_2)
 end
 
-function BulldozerPlayer._spawn_unit_at_pos_rot(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BulldozerPlayer._spawn_unit_at_pos_rot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0
 	local var_12_1 = Managers.state.unit_spawner
 
@@ -128,7 +128,7 @@ function BulldozerPlayer._spawn_unit_at_pos_rot(arg_12_0, arg_12_1, arg_12_2, ar
 	return var_12_0
 end
 
-function BulldozerPlayer.spawn_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+BulldozerPlayer.spawn_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	if LEVEL_EDITOR_TEST then
 		local var_13_0 = Application.get_data("camera")
 		local var_13_1 = Matrix4x4.translation(var_13_0)
@@ -143,7 +143,7 @@ function BulldozerPlayer.spawn_unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 	end
 end
 
-function BulldozerPlayer.spawn(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10, arg_14_11, arg_14_12)
+BulldozerPlayer.spawn = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10, arg_14_11, arg_14_12)
 	local var_14_0 = arg_14_0:profile_index()
 	local var_14_1 = SPProfiles[var_14_0]
 	local var_14_2 = var_14_1.careers
@@ -392,7 +392,7 @@ function BulldozerPlayer.spawn(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4,
 	return var_14_34
 end
 
-function BulldozerPlayer.create_game_object(arg_15_0)
+BulldozerPlayer.create_game_object = function (arg_15_0)
 	local var_15_0 = {
 		ping = 0,
 		player_controlled = true,
@@ -409,32 +409,32 @@ function BulldozerPlayer.create_game_object(arg_15_0)
 	arg_15_0:create_sync_data()
 end
 
-function BulldozerPlayer.create_sync_data(arg_16_0)
+BulldozerPlayer.create_sync_data = function (arg_16_0)
 	fassert(arg_16_0._player_sync_data == nil)
 
 	arg_16_0._player_sync_data = PlayerSyncData:new(arg_16_0, arg_16_0.network_manager)
 end
 
-function BulldozerPlayer.cb_game_session_disconnect(arg_17_0)
+BulldozerPlayer.cb_game_session_disconnect = function (arg_17_0)
 	arg_17_0.game_object_id = nil
 	arg_17_0._player_sync_data = nil
 end
 
-function BulldozerPlayer.game_object_destroyed(arg_18_0)
+BulldozerPlayer.game_object_destroyed = function (arg_18_0)
 	printf("destroyed player game object with id %s callback", arg_18_0.game_object_id)
 
 	arg_18_0.game_object_id = nil
 end
 
-function BulldozerPlayer.network_id(arg_19_0)
+BulldozerPlayer.network_id = function (arg_19_0)
 	return arg_19_0.peer_id
 end
 
-function BulldozerPlayer.local_player_id(arg_20_0)
+BulldozerPlayer.local_player_id = function (arg_20_0)
 	return arg_20_0._local_player_id
 end
 
-function BulldozerPlayer.platform_id(arg_21_0)
+BulldozerPlayer.platform_id = function (arg_21_0)
 	if IS_WINDOWS or IS_LINUX then
 		return arg_21_0.peer_id
 	else
@@ -442,51 +442,51 @@ function BulldozerPlayer.platform_id(arg_21_0)
 	end
 end
 
-function BulldozerPlayer.profile_id(arg_22_0)
+BulldozerPlayer.profile_id = function (arg_22_0)
 	return arg_22_0._unique_id
 end
 
-function BulldozerPlayer.ui_id(arg_23_0)
+BulldozerPlayer.ui_id = function (arg_23_0)
 	return arg_23_0._ui_id
 end
 
-function BulldozerPlayer.unique_id(arg_24_0)
+BulldozerPlayer.unique_id = function (arg_24_0)
 	return arg_24_0._unique_id
 end
 
-function BulldozerPlayer.stats_id(arg_25_0)
+BulldozerPlayer.stats_id = function (arg_25_0)
 	return arg_25_0._unique_id
 end
 
-function BulldozerPlayer.telemetry_id(arg_26_0)
+BulldozerPlayer.telemetry_id = function (arg_26_0)
 	return arg_26_0._backend_id or arg_26_0._unique_id
 end
 
-function BulldozerPlayer.is_player_controlled(arg_27_0)
+BulldozerPlayer.is_player_controlled = function (arg_27_0)
 	return true
 end
 
-function BulldozerPlayer.set_game_object_id(arg_28_0, arg_28_1)
+BulldozerPlayer.set_game_object_id = function (arg_28_0, arg_28_1)
 	arg_28_0.game_object_id = arg_28_1
 end
 
-function BulldozerPlayer.sync_data_active(arg_29_0)
+BulldozerPlayer.sync_data_active = function (arg_29_0)
 	return arg_29_0._player_sync_data and arg_29_0._player_sync_data:active()
 end
 
-function BulldozerPlayer.set_data(arg_30_0, arg_30_1, arg_30_2)
+BulldozerPlayer.set_data = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0._player_sync_data:set_data(arg_30_1, arg_30_2)
 end
 
-function BulldozerPlayer.get_data(arg_31_0, arg_31_1)
+BulldozerPlayer.get_data = function (arg_31_0, arg_31_1)
 	return arg_31_0._player_sync_data:get_data(arg_31_1)
 end
 
-function BulldozerPlayer.reevaluate_highest_difficulty(arg_32_0)
+BulldozerPlayer.reevaluate_highest_difficulty = function (arg_32_0)
 	arg_32_0._player_sync_data:reevaluate_highest_difficulty()
 end
 
-function BulldozerPlayer.name(arg_33_0)
+BulldozerPlayer.name = function (arg_33_0)
 	if arg_33_0._cached_name then
 		return arg_33_0._cached_name
 	end
@@ -507,11 +507,11 @@ function BulldozerPlayer.name(arg_33_0)
 	return var_33_0
 end
 
-function BulldozerPlayer.cached_name(arg_34_0)
+BulldozerPlayer.cached_name = function (arg_34_0)
 	return arg_34_0._cached_name or arg_34_0._debug_name
 end
 
-function BulldozerPlayer.destroy(arg_35_0)
+BulldozerPlayer.destroy = function (arg_35_0)
 	if arg_35_0._player_sync_data then
 		arg_35_0._player_sync_data:destroy()
 	end
@@ -530,20 +530,20 @@ function BulldozerPlayer.destroy(arg_35_0)
 	arg_35_0._destroyed = true
 end
 
-function BulldozerPlayer.best_aquired_power_level(arg_36_0)
+BulldozerPlayer.best_aquired_power_level = function (arg_36_0)
 	return BackendUtils.best_aquired_power_level()
 end
 
-function BulldozerPlayer.get_party(arg_37_0)
+BulldozerPlayer.get_party = function (arg_37_0)
 	local var_37_0 = Managers.party:get_status_from_unique_id(arg_37_0._unique_id)
 
 	return Managers.party:get_party(var_37_0.party_id)
 end
 
-function BulldozerPlayer.observed_unit(arg_38_0)
+BulldozerPlayer.observed_unit = function (arg_38_0)
 	return arg_38_0._observed_unit
 end
 
-function BulldozerPlayer.set_observed_unit(arg_39_0, arg_39_1)
+BulldozerPlayer.set_observed_unit = function (arg_39_0, arg_39_1)
 	arg_39_0._observed_unit = arg_39_1
 end

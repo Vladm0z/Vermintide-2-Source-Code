@@ -5,7 +5,7 @@ local var_0_1 = {
 	_defaultHttpsFile = "PlayFab.PlayFabHttps_LuaSec"
 }
 
-function var_0_1.SetHttp(arg_1_0)
+var_0_1.SetHttp = function (arg_1_0)
 	if arg_1_0 then
 		var_0_1._internalHttp = arg_1_0
 
@@ -19,7 +19,7 @@ function var_0_1.SetHttp(arg_1_0)
 	end
 end
 
-function var_0_1.MakePlayFabApiCall(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+var_0_1.MakePlayFabApiCall = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if var_0_1._internalHttp == nil then
 		var_0_1.SetHttp(nil)
 	end

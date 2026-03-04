@@ -5,7 +5,7 @@ local var_0_1 = true
 
 FriendsUIComponent = class(FriendsUIComponent)
 
-function FriendsUIComponent.init(arg_1_0, arg_1_1)
+FriendsUIComponent.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._render_settings = {
 		snap_pixel_positions = true
@@ -16,7 +16,7 @@ function FriendsUIComponent.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function FriendsUIComponent._create_ui_elements(arg_2_0)
+FriendsUIComponent._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_2_0 = var_0_0.widget_definitions
@@ -37,11 +37,11 @@ function FriendsUIComponent._create_ui_elements(arg_2_0)
 	arg_2_0._friends_button_widget = UIWidget.init(var_0_0.widget_definitions.friends_button)
 end
 
-function FriendsUIComponent.is_active(arg_3_0)
+FriendsUIComponent.is_active = function (arg_3_0)
 	return arg_3_0._active
 end
 
-function FriendsUIComponent.activate_friends_ui(arg_4_0)
+FriendsUIComponent.activate_friends_ui = function (arg_4_0)
 	if IS_XB1 and not Managers.account:friends_list_initiated() then
 		Managers.account:setup_friendslist()
 	end
@@ -53,11 +53,11 @@ function FriendsUIComponent.activate_friends_ui(arg_4_0)
 	arg_4_0._widgets_by_name.hotspot_area.content.disregard_exit = nil
 end
 
-function FriendsUIComponent.deactivate_friends_ui(arg_5_0)
+FriendsUIComponent.deactivate_friends_ui = function (arg_5_0)
 	arg_5_0._active = false
 end
 
-function FriendsUIComponent._refresh_friends_list(arg_6_0)
+FriendsUIComponent._refresh_friends_list = function (arg_6_0)
 	local var_6_0 = {}
 	local var_6_1 = arg_6_0._widgets_by_name
 
@@ -69,7 +69,7 @@ function FriendsUIComponent._refresh_friends_list(arg_6_0)
 	Managers.account:get_friends(var_6_2, callback(arg_6_0, "cb_refresh_friends_done"))
 end
 
-function FriendsUIComponent.join_lobby_data(arg_7_0)
+FriendsUIComponent.join_lobby_data = function (arg_7_0)
 	local var_7_0 = arg_7_0._join_lobby_data
 
 	arg_7_0._join_lobby_data = nil
@@ -79,7 +79,7 @@ end
 
 local var_0_2 = {}
 
-function FriendsUIComponent.cb_refresh_friends_done(arg_8_0, arg_8_1)
+FriendsUIComponent.cb_refresh_friends_done = function (arg_8_0, arg_8_1)
 	arg_8_1 = arg_8_1 or var_0_2
 
 	local var_8_0 = {}
@@ -118,7 +118,7 @@ function FriendsUIComponent.cb_refresh_friends_done(arg_8_0, arg_8_1)
 	arg_8_0:_populate_tab(var_8_5.offline_tab, var_8_2, false)
 end
 
-function FriendsUIComponent._button_pressed(arg_10_0, arg_10_1)
+FriendsUIComponent._button_pressed = function (arg_10_0, arg_10_1)
 	if arg_10_1.on_release then
 		arg_10_1.on_release = false
 
@@ -128,7 +128,7 @@ function FriendsUIComponent._button_pressed(arg_10_0, arg_10_1)
 	return false
 end
 
-function FriendsUIComponent.update(arg_11_0, arg_11_1, arg_11_2)
+FriendsUIComponent.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if var_0_1 then
 		var_0_1 = false
 
@@ -142,7 +142,7 @@ function FriendsUIComponent.update(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:_draw(arg_11_2, arg_11_1)
 end
 
-function FriendsUIComponent._update_invite_cooldown(arg_12_0, arg_12_1)
+FriendsUIComponent._update_invite_cooldown = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._invite_cooldown
 
 	for iter_12_0, iter_12_1 in pairs(var_12_0) do
@@ -156,11 +156,11 @@ function FriendsUIComponent._update_invite_cooldown(arg_12_0, arg_12_1)
 	end
 end
 
-function FriendsUIComponent._update_animations(arg_13_0, arg_13_1)
+FriendsUIComponent._update_animations = function (arg_13_0, arg_13_1)
 	arg_13_0:_update_refresh_animations(arg_13_1)
 end
 
-function FriendsUIComponent._update_refresh_animations(arg_14_0, arg_14_1)
+FriendsUIComponent._update_refresh_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._widgets_by_name.refresh_button
 	local var_14_1 = var_14_0.content
 
@@ -185,7 +185,7 @@ function FriendsUIComponent._update_refresh_animations(arg_14_0, arg_14_1)
 	end
 end
 
-function FriendsUIComponent._handle_input(arg_15_0, arg_15_1, arg_15_2)
+FriendsUIComponent._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._widgets_by_name
 	local var_15_1 = arg_15_0._active
 
@@ -231,7 +231,7 @@ function FriendsUIComponent._handle_input(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function FriendsUIComponent._update_active_tab(arg_16_0, arg_16_1, arg_16_2)
+FriendsUIComponent._update_active_tab = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._active_tab
 
 	if not var_16_0 then
@@ -252,7 +252,7 @@ function FriendsUIComponent._update_active_tab(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0:_handle_list_input(var_16_0)
 end
 
-function FriendsUIComponent._animate_refresh_button(arg_17_0, arg_17_1)
+FriendsUIComponent._animate_refresh_button = function (arg_17_0, arg_17_1)
 	arg_17_1.content.animate = true
 end
 
@@ -261,7 +261,7 @@ local var_0_3 = {
 	0
 }
 
-function FriendsUIComponent._update_list(arg_18_0, arg_18_1)
+FriendsUIComponent._update_list = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.style.list_style
 	local var_18_1, var_18_2 = arg_18_0:_get_mask_position_and_size(arg_18_1)
 	local var_18_3 = UISceneGraph.get_world_position(arg_18_0._ui_scenegraph, var_18_0.scenegraph_id)
@@ -322,7 +322,7 @@ function FriendsUIComponent._update_list(arg_18_0, arg_18_1)
 	end
 end
 
-function FriendsUIComponent._handle_list_input(arg_19_0, arg_19_1)
+FriendsUIComponent._handle_list_input = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.content.list_content
 	local var_19_1 = arg_19_1.style.list_style.num_draws
 
@@ -343,7 +343,7 @@ function FriendsUIComponent._handle_list_input(arg_19_0, arg_19_1)
 	end
 end
 
-function FriendsUIComponent._draw(arg_20_0, arg_20_1, arg_20_2)
+FriendsUIComponent._draw = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._ui_top_renderer
 	local var_20_1 = arg_20_0._ui_scenegraph
 
@@ -361,7 +361,7 @@ function FriendsUIComponent._draw(arg_20_0, arg_20_1, arg_20_2)
 	UIRenderer.end_pass(var_20_0)
 end
 
-function FriendsUIComponent._tab_pressed(arg_21_0, arg_21_1)
+FriendsUIComponent._tab_pressed = function (arg_21_0, arg_21_1)
 	if arg_21_0._active_tab == arg_21_1 then
 		arg_21_0:_deactivate_active_tab()
 	else
@@ -373,7 +373,7 @@ function FriendsUIComponent._tab_pressed(arg_21_0, arg_21_1)
 	end
 end
 
-function FriendsUIComponent._activate_tab(arg_22_0, arg_22_1)
+FriendsUIComponent._activate_tab = function (arg_22_0, arg_22_1)
 	arg_22_0._active_tab = arg_22_1
 
 	local var_22_0 = arg_22_1.scenegraph_id
@@ -398,7 +398,7 @@ function FriendsUIComponent._activate_tab(arg_22_0, arg_22_1)
 	end
 end
 
-function FriendsUIComponent._deactivate_active_tab(arg_23_0)
+FriendsUIComponent._deactivate_active_tab = function (arg_23_0)
 	local var_23_0 = arg_23_0._active_tab
 
 	arg_23_0._active_tab = nil
@@ -417,7 +417,7 @@ function FriendsUIComponent._deactivate_active_tab(arg_23_0)
 	var_23_0.style.hotspot.offset[2] = 0
 end
 
-function FriendsUIComponent._populate_tab(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+FriendsUIComponent._populate_tab = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_1.content
 	local var_24_1 = arg_24_1.style.list_style
 	local var_24_2 = var_24_0.list_content
@@ -467,7 +467,7 @@ function FriendsUIComponent._populate_tab(arg_24_0, arg_24_1, arg_24_2, arg_24_3
 	arg_24_0:_setup_tab_scrollbar(arg_24_1)
 end
 
-function FriendsUIComponent._setup_tab_scrollbar(arg_25_0, arg_25_1)
+FriendsUIComponent._setup_tab_scrollbar = function (arg_25_0, arg_25_1)
 	local var_25_0 = var_0_0.scenegraph_info.tabs_size
 	local var_25_1 = var_0_0.scenegraph_info.tabs_active_size[2] - var_25_0[2]
 	local var_25_2 = arg_25_1.style.list_style
@@ -503,7 +503,7 @@ local var_0_5 = {
 	0
 }
 
-function FriendsUIComponent._get_mask_position_and_size(arg_26_0, arg_26_1)
+FriendsUIComponent._get_mask_position_and_size = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_1.style.mask
 	local var_26_1 = var_26_0.size
 
@@ -520,7 +520,7 @@ function FriendsUIComponent._get_mask_position_and_size(arg_26_0, arg_26_1)
 	return var_0_5, var_0_4
 end
 
-function FriendsUIComponent._send_invite(arg_27_0, arg_27_1)
+FriendsUIComponent._send_invite = function (arg_27_0, arg_27_1)
 	if arg_27_0._invite_cooldown[arg_27_1.id] then
 		return
 	end
@@ -533,7 +533,7 @@ function FriendsUIComponent._send_invite(arg_27_0, arg_27_1)
 	arg_27_0._invite_cooldown[var_27_0] = 5
 end
 
-function FriendsUIComponent._open_player_profile(arg_28_0, arg_28_1)
+FriendsUIComponent._open_player_profile = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_1.id
 
 	if IS_PS4 then
@@ -543,7 +543,7 @@ function FriendsUIComponent._open_player_profile(arg_28_0, arg_28_1)
 	end
 end
 
-function FriendsUIComponent._join_player(arg_29_0, arg_29_1)
+FriendsUIComponent._join_player = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_1.playing_game_info
 	local var_29_1 = var_29_0.lobby
 	local var_29_2 = var_29_0.ip

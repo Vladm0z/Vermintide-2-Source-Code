@@ -535,7 +535,7 @@ local function var_0_4(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
 var_0_0.buff_function_templates = {
-	apply_vs_chaos_troll_regen = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	apply_vs_chaos_troll_regen = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = arg_4_1.template
 		local var_4_1 = ScriptUnit.extension(arg_4_0, "health_system")
 		local var_4_2 = var_4_1:get_max_health() - var_4_1:current_permanent_health()
@@ -569,7 +569,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	update_vs_chaos_troll_regen = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	update_vs_chaos_troll_regen = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if arg_5_2.t > arg_5_2.next_tick then
 			arg_5_2.next_tick = arg_5_2.t + arg_5_2.tick_rate
 
@@ -578,10 +578,10 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_vs_chaos_troll_regen = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	remove_vs_chaos_troll_regen = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		return
 	end,
-	update_vs_boss_mood = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	update_vs_boss_mood = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		if var_0_2(arg_7_0) then
 			local var_7_0 = arg_7_1.template
 			local var_7_1 = Managers.player:unit_owner(arg_7_0)
@@ -602,13 +602,13 @@ var_0_0.buff_function_templates = {
 			arg_7_2.previous_camera_state = var_7_4
 		end
 	end,
-	start_vs_gutter_runner_smoke_bomb_invisibility = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	start_vs_gutter_runner_smoke_bomb_invisibility = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		if var_0_2(arg_8_0) then
 			ScriptUnit.extension(arg_8_0, "status_system"):set_invisible(true, nil, arg_8_1)
 			Managers.state.camera:set_mood("gutter_runner_f", arg_8_1, true)
 		end
 	end,
-	end_vs_gutter_runner_smoke_bomb_invisibility = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	end_vs_gutter_runner_smoke_bomb_invisibility = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if var_0_2(arg_9_0) then
 			ScriptUnit.extension(arg_9_0, "first_person_system"):play_unit_sound_event("Play_versus_gutterrunner_vanish_fps_end", arg_9_0, 0)
 
@@ -631,7 +631,7 @@ var_0_0.buff_function_templates = {
 			Managers.state.camera:set_mood("gutter_runner_f", arg_9_1, false)
 		end
 	end,
-	apply_vs_warpfirethrower_long_distance_damage = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	apply_vs_warpfirethrower_long_distance_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		arg_10_1.armor_type = Unit.get_data(arg_10_0, "breed").armor_category or 1
 
 		local var_10_0 = ScriptUnit.has_extension(arg_10_0, "first_person_system")
@@ -649,7 +649,7 @@ var_0_0.buff_function_templates = {
 			arg_10_1.damage_source = var_10_2 and var_10_2.name or "dot_debuff"
 		end
 	end,
-	update_vs_warpfirethrower_long_distance_damage = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	update_vs_warpfirethrower_long_distance_damage = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 		local var_11_0 = arg_11_2.t
 		local var_11_1 = arg_11_1.template
 
@@ -680,14 +680,14 @@ var_0_0.buff_function_templates = {
 
 		return var_11_0 + var_11_1.time_between_dot_damages
 	end,
-	remove_vs_warpfirethrower_long_distance_damage = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	remove_vs_warpfirethrower_long_distance_damage = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		local var_12_0 = ScriptUnit.has_extension(arg_12_0, "first_person_system")
 
 		if var_12_0 then
 			var_12_0:stop_spawning_screen_particles(arg_12_1.warpfire_particle_id)
 		end
 	end,
-	apply_warpfirethrower_in_face_versus = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	apply_warpfirethrower_in_face_versus = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 		local var_13_0 = arg_13_1.template
 		local var_13_1 = ScriptUnit.has_extension(arg_13_0, "first_person_system")
 

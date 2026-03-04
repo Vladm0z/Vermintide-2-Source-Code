@@ -103,7 +103,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2)
 	return (not var_1_0.ahead_unit and 0 or arg_1_2.main_path_player_info[var_1_0.ahead_unit].travel_dist) >= arg_1_1 - arg_1_0
 end
 
-function var_0_1.server_start_function(arg_2_0, arg_2_1)
+var_0_1.server_start_function = function (arg_2_0, arg_2_1)
 	arg_2_1.seed = Managers.mechanism:get_level_seed("mutator")
 	arg_2_1.change_cooldown = 1
 	arg_2_1.spawn_delay = 0.25
@@ -111,7 +111,7 @@ function var_0_1.server_start_function(arg_2_0, arg_2_1)
 	arg_2_1.spawned_units_data = {}
 	arg_2_1.explosion_template_name = "generic_mutator_explosion"
 
-	function arg_2_1.cb_enemy_spawned_function(arg_3_0, arg_3_1, arg_3_2)
+	arg_2_1.cb_enemy_spawned_function = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = BLACKBOARDS[arg_3_0]
 
 		if not arg_3_1.special then
@@ -152,7 +152,7 @@ function var_0_1.server_start_function(arg_2_0, arg_2_1)
 	arg_2_1.template.populate_available_breeds(arg_2_0, arg_2_1)
 end
 
-function var_0_1.server_stop_function(arg_4_0, arg_4_1)
+var_0_1.server_stop_function = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.state.unit_spawner
 
 	if #arg_4_1.units > 0 and var_4_0 then
@@ -182,7 +182,7 @@ local function var_0_17(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_0
 end
 
-function var_0_1.spawn_lightning_strike_unit(arg_6_0)
+var_0_1.spawn_lightning_strike_unit = function (arg_6_0)
 	local var_6_0 = var_0_9.bolt_amount[arg_6_0.difficulty_rank] or 1
 	local var_6_1 = 0
 	local var_6_2 = Managers.state.side
@@ -232,11 +232,11 @@ function var_0_1.spawn_lightning_strike_unit(arg_6_0)
 	end
 end
 
-function var_0_1.server_players_left_safe_zone(arg_7_0, arg_7_1)
+var_0_1.server_players_left_safe_zone = function (arg_7_0, arg_7_1)
 	arg_7_1.has_left_safe_zone = true
 end
 
-function var_0_1.server_update_function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+var_0_1.server_update_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if not arg_8_1.has_left_safe_zone or global_is_inside_inn then
 		return
 	end
@@ -288,7 +288,7 @@ function var_0_1.server_update_function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	end
 end
 
-function var_0_1.modify_player_base_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+var_0_1.modify_player_base_damage = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = Managers.player:owner(arg_9_2)
 
 	if var_9_0 and var_9_0.bot_player then
@@ -298,7 +298,7 @@ function var_0_1.modify_player_base_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	end
 end
 
-function var_0_1.populate_available_breeds(arg_10_0, arg_10_1)
+var_0_1.populate_available_breeds = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.state.difficulty:get_difficulty()
 	local var_10_1 = CurrentConflictSettings.contained_breeds[var_10_0] or CurrentConflictSettings.contained_breeds[2]
 	local var_10_2 = arg_10_1.available_breeds
@@ -326,7 +326,7 @@ function var_0_1.populate_available_breeds(arg_10_0, arg_10_1)
 	table.merge_recursive(var_10_2.critter, CRITTER)
 end
 
-function var_0_1.cb_on_explode(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+var_0_1.cb_on_explode = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = ExplosionUtils.get_template(arg_11_2).explosion.radius
 	local var_11_1 = {}
 
@@ -348,7 +348,7 @@ function var_0_1.cb_on_explode(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	Managers.state.entity:system("audio_system"):play_2d_audio_event(var_0_10)
 end
 
-function var_0_1.get_overridden_breed(arg_12_0, arg_12_1, arg_12_2)
+var_0_1.get_overridden_breed = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = var_0_11[arg_12_2]
 
 	if var_12_0 then
@@ -452,7 +452,7 @@ local function var_0_23(arg_18_0)
 	return var_18_0
 end
 
-function var_0_1.spawn_new_breed(arg_19_0, arg_19_1, arg_19_2)
+var_0_1.spawn_new_breed = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = Managers.state.entity:system("ai_system"):nav_world()
 	local var_19_1 = arg_19_0.spawn_queue
 	local var_19_2 = BLACKBOARDS[arg_19_1]
@@ -495,7 +495,7 @@ function var_0_1.spawn_new_breed(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function var_0_1.change_ai(arg_20_0, arg_20_1)
+var_0_1.change_ai = function (arg_20_0, arg_20_1)
 	local var_20_0 = Managers.time:time("game") <= (Unit.get_data(arg_20_1, "can_change_at") or 0)
 	local var_20_1 = Unit.get_data(arg_20_1, "breed")
 	local var_20_2 = var_0_14[var_20_1.name]
@@ -543,7 +543,7 @@ function var_0_1.change_ai(arg_20_0, arg_20_1)
 	end
 end
 
-function var_0_1.server_player_hit_function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+var_0_1.server_player_hit_function = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	if arg_21_4[2] == "bolt_of_change" then
 		local var_21_0 = ScriptUnit.extension_input(arg_21_2, "dialogue_system")
 		local var_21_1 = FrameTable.alloc_table()

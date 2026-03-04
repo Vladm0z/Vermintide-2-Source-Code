@@ -2,7 +2,7 @@
 
 CareerAbilityGutterRunnerPounce = class(CareerAbilityGutterRunnerPounce, CareerAbilityDarkPactBase)
 
-function CareerAbilityGutterRunnerPounce._ability_available(arg_1_0)
+CareerAbilityGutterRunnerPounce._ability_available = function (arg_1_0)
 	local var_1_0 = arg_1_0._career_extension
 	local var_1_1 = arg_1_0._status_extension
 	local var_1_2 = var_1_0:get_state() == "vs_gutter_runner_smoke_bomb_invisible"

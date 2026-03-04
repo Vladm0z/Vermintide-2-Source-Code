@@ -762,13 +762,13 @@ CareerSettings.spectator = {
 		resource = "video/career_videos/bardin/dr_slayer"
 	},
 	item_slot_types_by_slot_name = {},
-	is_unlocked_function = function(arg_4_0, arg_4_1, arg_4_2)
+	is_unlocked_function = function (arg_4_0, arg_4_1, arg_4_2)
 		return false
 	end,
-	is_dlc_unlocked = function(arg_5_0)
+	is_dlc_unlocked = function (arg_5_0)
 		return false
 	end,
-	override_available_for_mechanism = function(arg_6_0)
+	override_available_for_mechanism = function (arg_6_0)
 		return false
 	end
 }
@@ -782,7 +782,7 @@ OverchargeData.vs_warpfire_thrower = {
 	overcharge_threshold = 39,
 	no_explosion = true,
 	time_until_overcharge_decreases = 0.5,
-	overcharge_depleted_func = function(arg_7_0, arg_7_1, arg_7_2)
+	overcharge_depleted_func = function (arg_7_0, arg_7_1, arg_7_2)
 		return
 	end,
 	overcharge_ui = {

@@ -40,14 +40,14 @@ DebugKeyHandler = DebugKeyHandler or {
 
 local var_0_4 = DebugKeyHandler
 
-function var_0_4.setup(arg_3_0, arg_3_1)
+var_0_4.setup = function (arg_3_0, arg_3_1)
 	var_0_4.gui = World.create_screen_gui(arg_3_0, "material", "materials/fonts/gw_fonts", "immediate")
 	var_0_4.enabled = true
 	var_0_4.input_manager = arg_3_1
 	var_0_4.current_y = 0
 end
 
-function var_0_4.set_enabled(arg_4_0)
+var_0_4.set_enabled = function (arg_4_0)
 	var_0_4.enabled = arg_4_0
 end
 
@@ -58,7 +58,7 @@ local var_0_5 = {
 	"left alt"
 }
 
-function var_0_4.key_pressed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+var_0_4.key_pressed = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not var_0_4.enabled or IS_LINUX then
 		return
 	end
@@ -108,7 +108,7 @@ function var_0_4.key_pressed(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return var_5_3 and var_5_0:get(arg_5_0)
 end
 
-function var_0_4.frame_clear()
+var_0_4.frame_clear = function ()
 	var_0_4.num_keys = 0
 
 	for iter_6_0, iter_6_1 in pairs(var_0_4.keys) do
@@ -124,7 +124,7 @@ local var_0_6 = 16
 local var_0_7 = "arial"
 local var_0_8 = "materials/fonts/" .. var_0_7
 
-function var_0_4.render()
+var_0_4.render = function ()
 	if not script_data.debug_key_handler_visible then
 		return
 	end

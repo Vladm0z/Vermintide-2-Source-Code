@@ -3,7 +3,7 @@
 InteractionDefinitions.cog_missing_cog_pickup = InteractionDefinitions.cog_missing_cog_pickup or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.cog_missing_cog_pickup.config.swap_to_3p = false
 
-function InteractionDefinitions.cog_missing_cog_pickup.client.can_interact(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = Managers.player
 	local var_1_1 = Managers.player:unit_owner(arg_1_0):stats_id()
 	local var_1_2 = var_1_0:statistics_db():get_persistent_stat(var_1_1, "cog_missing_cog")
@@ -13,7 +13,7 @@ function InteractionDefinitions.cog_missing_cog_pickup.client.can_interact(arg_1
 	return var_1_2 < 1 and var_1_3:is_dlc_unlocked(var_1_4)
 end
 
-function InteractionDefinitions.cog_missing_cog_pickup.client.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+InteractionDefinitions.cog_missing_cog_pickup.client.stop = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_3.start_time = nil
 
 	if arg_2_6 == InteractionResult.SUCCESS and not arg_2_3.is_husk then
@@ -33,6 +33,6 @@ function InteractionDefinitions.cog_missing_cog_pickup.client.stop(arg_2_0, arg_
 	Unit.flow_event(arg_2_2, var_2_3)
 end
 
-function InteractionDefinitions.cog_missing_cog_pickup.client.hud_description(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+InteractionDefinitions.cog_missing_cog_pickup.client.hud_description = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return Unit.get_data(arg_3_0, "interaction_data", "hud_description"), Unit.get_data(arg_3_0, "interaction_data", "hud_interaction_action")
 end

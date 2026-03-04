@@ -6,7 +6,7 @@ return {
 	description = "lightning_strike_mutator_desc",
 	spawn_rate = 11,
 	icon = "mutator_icon_heavens_lightning",
-	spawn_lightning_strike_unit = function(arg_1_0)
+	spawn_lightning_strike_unit = function (arg_1_0)
 		local var_1_0 = arg_1_0.side_manager
 		local var_1_1 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 		local var_1_2 = var_1_0:get_side_from_name("neutral").side_id
@@ -29,7 +29,7 @@ return {
 		arg_1_0.hit_played = false
 		arg_1_0.bots_alerted = false
 	end,
-	server_start_function = function(arg_2_0, arg_2_1)
+	server_start_function = function (arg_2_0, arg_2_1)
 		arg_2_1.last_spawn_time = nil
 		arg_2_1.spawn_rate = arg_2_1.template.spawn_rate
 		arg_2_1.max_spawns = arg_2_1.template.max_spawns
@@ -55,7 +55,7 @@ return {
 		arg_2_1._nav_cost_volume_ids = {}
 		arg_2_1._nav_cost_radius = 4
 	end,
-	server_stop_function = function(arg_3_0, arg_3_1)
+	server_stop_function = function (arg_3_0, arg_3_1)
 		arg_3_1._nav_cost_map_id = nil
 
 		if #arg_3_1.units > 0 then
@@ -68,7 +68,7 @@ return {
 			end
 		end
 	end,
-	server_update_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	server_update_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

@@ -4,13 +4,13 @@ local var_0_0 = script_data.testify and require("scripts/unit_extensions/camera/
 
 CameraStateObserver = class(CameraStateObserver, CameraState)
 
-function CameraStateObserver.init(arg_1_0, arg_1_1)
+CameraStateObserver.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "observer")
 
 	arg_1_0._game_settings = Managers.state.game_mode:settings()
 end
 
-function CameraStateObserver.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateObserver.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	arg_2_0._observed_unit = nil
 	arg_2_0._network_transmit = arg_2_4.network_transmit
 	arg_2_0._is_server = arg_2_4.network_transmit.is_server
@@ -32,18 +32,18 @@ function CameraStateObserver.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_
 	Managers.state.event:trigger("camera_teleported")
 end
 
-function CameraStateObserver.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateObserver.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	Managers.player:local_player():set_observed_unit(nil)
 	Managers.state.event:trigger("camera_teleported")
 end
 
-function CameraStateObserver.refresh_follow_unit(arg_4_0, arg_4_1, arg_4_2)
+CameraStateObserver.refresh_follow_unit = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_set_observed_unit(arg_4_1, arg_4_2)
 end
 
 local var_0_1 = math.pi / 2 - math.pi / 15
 
-function CameraStateObserver.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CameraStateObserver.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.camera_extension
 	local var_5_2 = var_5_1.external_state_change
@@ -105,7 +105,7 @@ function CameraStateObserver.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4,
 	end
 end
 
-function CameraStateObserver.follow_next_unit(arg_6_0, arg_6_1)
+CameraStateObserver.follow_next_unit = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.camera_extension.player
 	local var_6_1 = var_6_0:unique_id()
 	local var_6_2 = Managers.state.side:get_side_from_player_unique_id(var_6_1)
@@ -121,7 +121,7 @@ function CameraStateObserver.follow_next_unit(arg_6_0, arg_6_1)
 	return var_6_3, var_6_4
 end
 
-function CameraStateObserver._set_observed_unit(arg_7_0, arg_7_1, arg_7_2)
+CameraStateObserver._set_observed_unit = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._observed_unit = arg_7_1
 	arg_7_0._observed_node = arg_7_2 or arg_7_1 and (Unit.has_node(arg_7_1, arg_7_0._default_observed_node_name) and Unit.node(arg_7_1, arg_7_0._default_observed_node_name) or 0)
 

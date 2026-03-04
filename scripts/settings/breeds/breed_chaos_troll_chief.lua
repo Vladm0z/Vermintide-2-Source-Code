@@ -203,7 +203,7 @@ local var_0_5 = {
 			StatusEffectNames.burning_warpfire
 		})
 	},
-	custom_health_bar_name = function(arg_1_0, arg_1_1)
+	custom_health_bar_name = function (arg_1_0, arg_1_1)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "health_system")
 
 		if not var_1_0 then
@@ -379,7 +379,7 @@ local var_0_5 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		local var_2_0 = BLACKBOARDS[arg_2_0]
 
 		if not Unit.alive(arg_2_1) then
@@ -1173,7 +1173,7 @@ local var_0_7 = {
 				1,
 				2
 			}] = {
-				start = function(arg_3_0, arg_3_1, arg_3_2)
+				start = function (arg_3_0, arg_3_1, arg_3_2)
 					local var_3_0 = {}
 
 					arg_3_1.chunk_event_socket_handles = var_3_0
@@ -1293,7 +1293,7 @@ local var_0_7 = {
 
 					Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_3_34)
 				end,
-				update = function(arg_5_0, arg_5_1, arg_5_2)
+				update = function (arg_5_0, arg_5_1, arg_5_2)
 					local var_5_0 = 2
 					local var_5_1 = ScriptUnit.extension(arg_5_0, "health_system"):chunk_size()
 					local var_5_2 = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
@@ -1357,7 +1357,7 @@ local var_0_7 = {
 						end
 					end
 				end,
-				before_down_end = function(arg_7_0, arg_7_1)
+				before_down_end = function (arg_7_0, arg_7_1)
 					local var_7_0 = ScriptUnit.extension(arg_7_0, "health_system"):chunk_size()
 					local var_7_1 = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
 					local var_7_2 = #arg_7_1.chunk_event_socket_units
@@ -1382,7 +1382,7 @@ local var_0_7 = {
 						end
 					end
 				end,
-				finish = function(arg_8_0, arg_8_1, arg_8_2)
+				finish = function (arg_8_0, arg_8_1, arg_8_2)
 					local var_8_0 = arg_8_1.chunk_event_socket_handles
 
 					for iter_8_0 = 1, #var_8_0 do
@@ -1435,7 +1435,7 @@ local var_0_7 = {
 				2,
 				3
 			}] = {
-				condition_func = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				condition_func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 					if ScriptUnit.extension(arg_9_0, "buff_system"):get_buff_type("troll_chief_on_downed_wounded") then
 						arg_9_1.wizards_delay = nil
 
@@ -1450,7 +1450,7 @@ local var_0_7 = {
 
 					return false
 				end,
-				start = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				start = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 					local var_10_0 = Managers.state.difficulty:get_difficulty()
 					local var_10_1 = {
 						hardest = 4,
@@ -1473,7 +1473,7 @@ local var_0_7 = {
 					local var_10_5 = Managers.state.entity:system("buff_system")
 					local var_10_6 = {
 						far_off_despawn_immunity = true,
-						spawned_func = function(arg_11_0, arg_11_1, arg_11_2)
+						spawned_func = function (arg_11_0, arg_11_1, arg_11_2)
 							local var_11_0 = {
 								attacker_unit = arg_11_0
 							}
@@ -1496,7 +1496,7 @@ local var_0_7 = {
 
 					Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_dwarf_fest_boss_sorcerer_shield_spawn")
 				end,
-				finish = function(arg_12_0, arg_12_1)
+				finish = function (arg_12_0, arg_12_1)
 					arg_12_1.wizards_delay = nil
 				end
 			}

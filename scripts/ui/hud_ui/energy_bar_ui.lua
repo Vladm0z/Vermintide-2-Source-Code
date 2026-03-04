@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/hud_ui/energy_bar_ui_definitions")
 
 EnergyBarUI = class(EnergyBarUI)
 
-function EnergyBarUI.init(arg_1_0, arg_1_1, arg_1_2)
+EnergyBarUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.input_manager = arg_1_2.input_manager
@@ -16,7 +16,7 @@ function EnergyBarUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function EnergyBarUI._update_energy(arg_2_0, arg_2_1, arg_2_2)
+EnergyBarUI._update_energy = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_1.player_unit
 
 	if not Unit.alive(var_2_0) then
@@ -42,14 +42,14 @@ function EnergyBarUI._update_energy(arg_2_0, arg_2_1, arg_2_2)
 	return false
 end
 
-function EnergyBarUI.create_ui_elements(arg_3_0)
+EnergyBarUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_3_0.charge_bar = UIWidget.init(var_0_0.widget_definitions.charge_bar)
 end
 
-function EnergyBarUI.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+EnergyBarUI.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0:_update_energy(arg_4_3, arg_4_1)
 	local var_4_1 = Managers.twitch:is_activated()
 
@@ -83,7 +83,7 @@ local var_0_1 = {
 	}
 }
 
-function EnergyBarUI._set_charge_bar_fraction(arg_5_0, arg_5_1, arg_5_2)
+EnergyBarUI._set_charge_bar_fraction = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.charge_bar
 	local var_5_1 = var_5_0.style
 	local var_5_2 = var_5_0.content
@@ -118,15 +118,15 @@ function EnergyBarUI._set_charge_bar_fraction(arg_5_0, arg_5_1, arg_5_2)
 	var_5_4[4] = var_5_6[4]
 end
 
-function EnergyBarUI.destroy(arg_6_0)
+EnergyBarUI.destroy = function (arg_6_0)
 	return
 end
 
-function EnergyBarUI.set_alpha(arg_7_0, arg_7_1)
+EnergyBarUI.set_alpha = function (arg_7_0, arg_7_1)
 	arg_7_0.render_settings.alpha_multiplier = arg_7_1
 end
 
-function EnergyBarUI._apply_crosshair_position(arg_8_0, arg_8_1, arg_8_2)
+EnergyBarUI._apply_crosshair_position = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = "screen_bottom_pivot"
 	local var_8_1 = arg_8_0.ui_scenegraph[var_8_0].local_position
 

@@ -17,7 +17,7 @@ local function var_0_1(arg_1_0, ...)
 	printf("[PartyManager] " .. arg_1_0, ...)
 end
 
-function PartyManager.init(arg_2_0)
+PartyManager.init = function (arg_2_0)
 	arg_2_0._leader = nil
 	arg_2_0._hot_join_synced_peers = {}
 
@@ -32,7 +32,7 @@ function PartyManager.init(arg_2_0)
 	end
 end
 
-function PartyManager.destroy(arg_3_0)
+PartyManager.destroy = function (arg_3_0)
 	if arg_3_0._gui then
 		local var_3_0 = Application.debug_world()
 
@@ -42,7 +42,7 @@ function PartyManager.destroy(arg_3_0)
 	end
 end
 
-function PartyManager._free_lobby(arg_4_0)
+PartyManager._free_lobby = function (arg_4_0)
 	if arg_4_0._party_lobby_or_data ~= nil then
 		var_0_1("Party lobby has been freed")
 
@@ -54,7 +54,7 @@ function PartyManager._free_lobby(arg_4_0)
 	end
 end
 
-function PartyManager.reset()
+PartyManager.reset = function ()
 	var_0_1("reset")
 
 	if Managers.party then
@@ -64,7 +64,7 @@ function PartyManager.reset()
 	Managers.party = PartyManager:new()
 end
 
-function PartyManager.set_leader(arg_6_0, arg_6_1)
+PartyManager.set_leader = function (arg_6_0, arg_6_1)
 	if arg_6_1 == nil then
 		var_0_1("Cleared leader")
 	else
@@ -74,26 +74,26 @@ function PartyManager.set_leader(arg_6_0, arg_6_1)
 	arg_6_0._leader = arg_6_1
 end
 
-function PartyManager.leader(arg_7_0)
+PartyManager.leader = function (arg_7_0)
 	return arg_7_0._leader
 end
 
-function PartyManager.is_leader(arg_8_0, arg_8_1)
+PartyManager.is_leader = function (arg_8_0, arg_8_1)
 	return arg_8_1 == arg_8_0._leader
 end
 
-function PartyManager.has_party_lobby(arg_9_0)
+PartyManager.has_party_lobby = function (arg_9_0)
 	return arg_9_0._party_lobby_or_data ~= nil
 end
 
-function PartyManager.store_lobby(arg_10_0, arg_10_1)
+PartyManager.store_lobby = function (arg_10_0, arg_10_1)
 	var_0_1("Party lobby has been stored '%s'", arg_10_1)
 	arg_10_0:_free_lobby()
 
 	arg_10_0._party_lobby_or_data = arg_10_1
 end
 
-function PartyManager.steal_lobby(arg_11_0)
+PartyManager.steal_lobby = function (arg_11_0)
 	var_0_1("Party lobby has been stolen!")
 
 	local var_11_0 = arg_11_0._party_lobby_or_data
@@ -103,7 +103,7 @@ function PartyManager.steal_lobby(arg_11_0)
 	return var_11_0
 end
 
-function PartyManager.clear_parties(arg_12_0, arg_12_1)
+PartyManager.clear_parties = function (arg_12_0, arg_12_1)
 	var_0_1("Clear parties. sync_to_clients: %q", arg_12_1)
 
 	arg_12_0._player_statuses = {}
@@ -121,7 +121,7 @@ function PartyManager.clear_parties(arg_12_0, arg_12_1)
 	end
 end
 
-function PartyManager.generate_undecided_party(arg_13_0)
+PartyManager.generate_undecided_party = function (arg_13_0)
 	return {
 		party_id = 0,
 		name = "undecided",
@@ -132,7 +132,7 @@ function PartyManager.generate_undecided_party(arg_13_0)
 	}
 end
 
-function PartyManager.gather_party_members(arg_14_0, arg_14_1)
+PartyManager.gather_party_members = function (arg_14_0, arg_14_1)
 	local var_14_0 = {}
 	local var_14_1
 
@@ -158,7 +158,7 @@ function PartyManager.gather_party_members(arg_14_0, arg_14_1)
 	return var_14_0
 end
 
-function PartyManager.create_party(arg_15_0, arg_15_1)
+PartyManager.create_party = function (arg_15_0, arg_15_1)
 	var_0_1("Register party. party_id: %q | name: %q | num_slots: %q", arg_15_1.party_id, arg_15_1.name, arg_15_1.num_slots)
 
 	local var_15_0 = arg_15_1.num_slots
@@ -189,7 +189,7 @@ function PartyManager.create_party(arg_15_0, arg_15_1)
 	}
 end
 
-function PartyManager.max_party_members(arg_16_0, arg_16_1)
+PartyManager.max_party_members = function (arg_16_0, arg_16_1)
 	local var_16_0 = 0
 
 	for iter_16_0, iter_16_1 in pairs(arg_16_1) do
@@ -203,7 +203,7 @@ function PartyManager.max_party_members(arg_16_0, arg_16_1)
 	return var_16_0
 end
 
-function PartyManager.register_parties(arg_17_0, arg_17_1)
+PartyManager.register_parties = function (arg_17_0, arg_17_1)
 	var_0_1("Register parties")
 
 	for iter_17_0, iter_17_1 in pairs(arg_17_1) do
@@ -236,11 +236,11 @@ function PartyManager.register_parties(arg_17_0, arg_17_1)
 	arg_17_0._cleared = false
 end
 
-function PartyManager.cleared(arg_18_0)
+PartyManager.cleared = function (arg_18_0)
 	return arg_18_0._cleared
 end
 
-function PartyManager._create_player_status(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+PartyManager._create_player_status = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = PlayerUtils.unique_player_id(arg_19_1, arg_19_2)
 	local var_19_1 = arg_19_0._player_statuses
 	local var_19_2 = {
@@ -260,7 +260,7 @@ function PartyManager._create_player_status(arg_19_0, arg_19_1, arg_19_2, arg_19
 	return var_19_2
 end
 
-function PartyManager.register_player(arg_20_0, arg_20_1, arg_20_2)
+PartyManager.register_player = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._player_statuses[arg_20_2]
 
 	if not var_20_0 then
@@ -273,7 +273,7 @@ function PartyManager.register_player(arg_20_0, arg_20_1, arg_20_2)
 	var_20_0.player = arg_20_1
 end
 
-function PartyManager.set_selected_profile(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+PartyManager.set_selected_profile = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_0:get_player_status(arg_21_1, arg_21_2)
 
 	var_21_0.selected_profile_index = arg_21_3
@@ -282,29 +282,29 @@ function PartyManager.set_selected_profile(arg_21_0, arg_21_1, arg_21_2, arg_21_
 	var_21_0.career_index = arg_21_4
 end
 
-function PartyManager.cleanup_game_mode_data(arg_22_0)
+PartyManager.cleanup_game_mode_data = function (arg_22_0)
 	for iter_22_0, iter_22_1 in pairs(arg_22_0._player_statuses) do
 		iter_22_1.game_mode_data = {}
 	end
 end
 
-function PartyManager.register_rpcs(arg_23_0, arg_23_1)
+PartyManager.register_rpcs = function (arg_23_0, arg_23_1)
 	arg_23_0._network_event_delegate = arg_23_1
 
 	arg_23_1:register(arg_23_0, unpack(var_0_0))
 end
 
-function PartyManager.unregister_rpcs(arg_24_0)
+PartyManager.unregister_rpcs = function (arg_24_0)
 	arg_24_0._network_event_delegate:unregister(arg_24_0)
 
 	arg_24_0._network_event_delegate = nil
 end
 
-function PartyManager.update(arg_25_0, arg_25_1, arg_25_2)
+PartyManager.update = function (arg_25_0, arg_25_1, arg_25_2)
 	return
 end
 
-function PartyManager.get_local_player_party(arg_26_0)
+PartyManager.get_local_player_party = function (arg_26_0)
 	local var_26_0 = Managers.player:local_player()
 
 	if var_26_0 then
@@ -312,23 +312,23 @@ function PartyManager.get_local_player_party(arg_26_0)
 	end
 end
 
-function PartyManager.get_party(arg_27_0, arg_27_1)
+PartyManager.get_party = function (arg_27_0, arg_27_1)
 	return arg_27_0._parties[arg_27_1]
 end
 
-function PartyManager.parties(arg_28_0)
+PartyManager.parties = function (arg_28_0)
 	return arg_28_0._parties
 end
 
-function PartyManager.game_participating_parties(arg_29_0)
+PartyManager.game_participating_parties = function (arg_29_0)
 	return arg_29_0._game_participating_parties
 end
 
-function PartyManager.is_game_participating_party(arg_30_0, arg_30_1)
+PartyManager.is_game_participating_party = function (arg_30_0, arg_30_1)
 	return arg_30_0._game_participating_parties[arg_30_1] ~= nil
 end
 
-function PartyManager.get_party_composition(arg_31_0)
+PartyManager.get_party_composition = function (arg_31_0)
 	local var_31_0 = {}
 
 	for iter_31_0, iter_31_1 in ipairs(arg_31_0._parties) do
@@ -342,11 +342,11 @@ function PartyManager.get_party_composition(arg_31_0)
 	return var_31_0
 end
 
-function PartyManager._slot_empty_in_party(arg_32_0, arg_32_1, arg_32_2)
+PartyManager._slot_empty_in_party = function (arg_32_0, arg_32_1, arg_32_2)
 	return arg_32_0._parties[arg_32_1].slots[arg_32_2].peer_id == nil
 end
 
-function PartyManager.request_join_party(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+PartyManager.request_join_party = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
 	if arg_33_0._is_server then
 		local var_33_0 = arg_33_0._parties[arg_33_3]
 		local var_33_1 = true
@@ -402,17 +402,17 @@ function PartyManager.request_join_party(arg_33_0, arg_33_1, arg_33_2, arg_33_3,
 	end
 end
 
-function PartyManager.get_player_status(arg_34_0, arg_34_1, arg_34_2)
+PartyManager.get_player_status = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = PlayerUtils.unique_player_id(arg_34_1, arg_34_2)
 
 	return arg_34_0._player_statuses[var_34_0]
 end
 
-function PartyManager.get_status_from_unique_id(arg_35_0, arg_35_1)
+PartyManager.get_status_from_unique_id = function (arg_35_0, arg_35_1)
 	return arg_35_0._player_statuses[arg_35_1]
 end
 
-function PartyManager.get_party_from_player_id(arg_36_0, arg_36_1, arg_36_2)
+PartyManager.get_party_from_player_id = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = PlayerUtils.unique_player_id(arg_36_1, arg_36_2)
 	local var_36_1 = arg_36_0._player_statuses[var_36_0]
 
@@ -423,7 +423,7 @@ function PartyManager.get_party_from_player_id(arg_36_0, arg_36_1, arg_36_2)
 	end
 end
 
-function PartyManager.get_party_from_unique_id(arg_37_0, arg_37_1)
+PartyManager.get_party_from_unique_id = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._player_statuses[arg_37_1]
 
 	if var_37_0 then
@@ -433,7 +433,7 @@ function PartyManager.get_party_from_unique_id(arg_37_0, arg_37_1)
 	end
 end
 
-function PartyManager.get_party_from_name(arg_38_0, arg_38_1)
+PartyManager.get_party_from_name = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._parties
 
 	for iter_38_0 = 0, #var_38_0 do
@@ -471,19 +471,19 @@ function update_status_profile_index(arg_39_0)
 	arg_39_0.profile_id = var_39_3 and SPProfiles[var_39_3].display_name
 end
 
-function PartyManager.get_num_parties(arg_40_0)
+PartyManager.get_num_parties = function (arg_40_0)
 	return arg_40_0._num_parties
 end
 
-function PartyManager.get_num_game_participating_parties(arg_41_0)
+PartyManager.get_num_game_participating_parties = function (arg_41_0)
 	return arg_41_0._num_game_participating_parties
 end
 
-function PartyManager.is_game_participating(arg_42_0, arg_42_1)
+PartyManager.is_game_participating = function (arg_42_0, arg_42_1)
 	return arg_42_0._parties[arg_42_1].game_participating
 end
 
-function PartyManager.assign_peer_to_party(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+PartyManager.assign_peer_to_party = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
 	arg_43_5 = not not arg_43_5
 
 	local var_43_0 = PlayerUtils.unique_player_id(arg_43_1, arg_43_2)
@@ -561,7 +561,7 @@ function PartyManager.assign_peer_to_party(arg_43_0, arg_43_1, arg_43_2, arg_43_
 	return var_43_2
 end
 
-function PartyManager.remove_peer_from_party(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+PartyManager.remove_peer_from_party = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = arg_44_0:get_player_status(arg_44_1, arg_44_2)
 
 	if not var_44_0 then
@@ -602,7 +602,7 @@ end
 
 local var_0_2 = {}
 
-function PartyManager.get_players_in_party(arg_45_0, arg_45_1)
+PartyManager.get_players_in_party = function (arg_45_0, arg_45_1)
 	table.clear(var_0_2)
 
 	local var_45_0 = 0
@@ -617,7 +617,7 @@ function PartyManager.get_players_in_party(arg_45_0, arg_45_1)
 	return var_0_2, var_45_0
 end
 
-function PartyManager._find_slot_index(arg_46_0, arg_46_1)
+PartyManager._find_slot_index = function (arg_46_0, arg_46_1)
 	local var_46_0
 	local var_46_1 = arg_46_0.occupied_slots
 
@@ -632,7 +632,7 @@ function PartyManager._find_slot_index(arg_46_0, arg_46_1)
 	return var_46_0
 end
 
-function PartyManager._clear_slot_in_party(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+PartyManager._clear_slot_in_party = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	arg_47_1.slots[arg_47_2] = {}
 
 	local var_47_0 = PartyManager._find_slot_index(arg_47_1, arg_47_2)
@@ -656,19 +656,19 @@ function PartyManager._clear_slot_in_party(arg_47_0, arg_47_1, arg_47_2, arg_47_
 	end
 end
 
-function PartyManager.is_slot_empty(arg_48_0, arg_48_1, arg_48_2)
+PartyManager.is_slot_empty = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_1.slots
 
 	return var_48_0[arg_48_2] == nil or var_48_0[arg_48_2].peer_id == nil
 end
 
-function PartyManager.is_slot_bot(arg_49_0, arg_49_1, arg_49_2)
+PartyManager.is_slot_bot = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_1.slots[arg_49_2]
 
 	return var_49_0 and var_49_0.is_bot
 end
 
-function PartyManager.slot_peer_id(arg_50_0, arg_50_1, arg_50_2)
+PartyManager.slot_peer_id = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_1.slots[arg_50_2]
 
 	if var_50_0 then
@@ -678,7 +678,7 @@ function PartyManager.slot_peer_id(arg_50_0, arg_50_1, arg_50_2)
 	return nil, nil
 end
 
-function PartyManager.find_first_empty_slot_id(arg_51_0, arg_51_1)
+PartyManager.find_first_empty_slot_id = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_1.num_slots
 
 	for iter_51_0 = 1, var_51_0 do
@@ -690,7 +690,7 @@ function PartyManager.find_first_empty_slot_id(arg_51_0, arg_51_1)
 	ferror("No empty slot in party %s", arg_51_1.name)
 end
 
-function PartyManager.get_least_filled_party(arg_52_0, arg_52_1, arg_52_2)
+PartyManager.get_least_filled_party = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_0._parties
 
 	fassert(#var_52_0 > 1, "parties has not been initialized yet")
@@ -718,26 +718,26 @@ function PartyManager.get_least_filled_party(arg_52_0, arg_52_1, arg_52_2)
 	return var_52_0[var_52_1], var_52_1
 end
 
-function PartyManager.is_party_full(arg_53_0, arg_53_1)
+PartyManager.is_party_full = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0._parties[arg_53_1]
 
 	return var_53_0.num_open_slots + var_53_0.num_bots == 0
 end
 
-function PartyManager.is_player_in_party(arg_54_0, arg_54_1, arg_54_2)
+PartyManager.is_player_in_party = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_0._parties[arg_54_2]
 
 	return arg_54_2 == arg_54_0._player_statuses[arg_54_1].party_id
 end
 
-function PartyManager.get_last_added_bot_for_party(arg_55_0, arg_55_1)
+PartyManager.get_last_added_bot_for_party = function (arg_55_0, arg_55_1)
 	local var_55_0 = arg_55_0._parties[arg_55_1]
 	local var_55_1 = var_55_0.bot_add_order[var_55_0.num_bots]
 
 	return var_55_0.slots[var_55_1]
 end
 
-function PartyManager.hot_join_sync(arg_56_0, arg_56_1)
+PartyManager.hot_join_sync = function (arg_56_0, arg_56_1)
 	local var_56_0 = arg_56_0._parties
 	local var_56_1 = PEER_ID_TO_CHANNEL[arg_56_1]
 
@@ -756,7 +756,7 @@ function PartyManager.hot_join_sync(arg_56_0, arg_56_1)
 	end
 end
 
-function PartyManager._send_rpc_to_clients(arg_57_0, arg_57_1, ...)
+PartyManager._send_rpc_to_clients = function (arg_57_0, arg_57_1, ...)
 	local var_57_0 = RPC[arg_57_1]
 	local var_57_1 = arg_57_0._server_peer_id
 
@@ -769,7 +769,7 @@ function PartyManager._send_rpc_to_clients(arg_57_0, arg_57_1, ...)
 	end
 end
 
-function PartyManager.network_context_created(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+PartyManager.network_context_created = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	var_0_1("network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_58_2, arg_58_3)
 
 	arg_58_0._lobby = arg_58_1
@@ -778,11 +778,11 @@ function PartyManager.network_context_created(arg_58_0, arg_58_1, arg_58_2, arg_
 	arg_58_0._is_server = arg_58_2 == arg_58_3
 end
 
-function PartyManager.parties_by_name(arg_59_0)
+PartyManager.parties_by_name = function (arg_59_0)
 	return arg_59_0._party_by_name
 end
 
-function PartyManager.network_context_destroyed(arg_60_0)
+PartyManager.network_context_destroyed = function (arg_60_0)
 	var_0_1("network_context_created")
 
 	arg_60_0._lobby = nil
@@ -794,11 +794,11 @@ function PartyManager.network_context_destroyed(arg_60_0)
 	arg_60_0:clear_parties()
 end
 
-function PartyManager.server_peer_hot_join_synced(arg_61_0, arg_61_1)
+PartyManager.server_peer_hot_join_synced = function (arg_61_0, arg_61_1)
 	arg_61_0._hot_join_synced_peers[arg_61_1] = true
 end
 
-function PartyManager.server_peer_left_session(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+PartyManager.server_peer_left_session = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 	arg_62_0._hot_join_synced_peers[arg_62_1] = false
 
 	local var_62_0 = arg_62_0._parties
@@ -820,7 +820,7 @@ function PartyManager.server_peer_left_session(arg_62_0, arg_62_1, arg_62_2, arg
 	Managers.state.event:trigger("friend_party_peer_left", arg_62_1, arg_62_2, arg_62_3)
 end
 
-function PartyManager.rpc_request_join_party(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5)
+PartyManager.rpc_request_join_party = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5)
 	printf("Recieved join party request from %s - %s party_id(%s)", arg_63_2, arg_63_3, arg_63_4)
 
 	if arg_63_5 == NetworkConstants.INVALID_PARTY_SLOT_ID then
@@ -830,26 +830,26 @@ function PartyManager.rpc_request_join_party(arg_63_0, arg_63_1, arg_63_2, arg_6
 	arg_63_0:request_join_party(arg_63_2, arg_63_3, arg_63_4, arg_63_5)
 end
 
-function PartyManager.rpc_peer_assigned_to_party(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
+PartyManager.rpc_peer_assigned_to_party = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
 	var_0_1("rpc_peer_assigned_to_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q | slot_id: %q | is_bot: %q", arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
 	arg_64_0:assign_peer_to_party(arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6)
 end
 
-function PartyManager.rpc_remove_peer_from_party(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+PartyManager.rpc_remove_peer_from_party = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 	var_0_1("rpc_remove_peer_from_party. channel_id: %q | peer_id: %q | local_player_id: %q | party_id: %q", arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 	arg_65_0:remove_peer_from_party(arg_65_2, arg_65_3, arg_65_4)
 end
 
-function PartyManager.rpc_set_client_friend_party(arg_66_0, arg_66_1, arg_66_2)
+PartyManager.rpc_set_client_friend_party = function (arg_66_0, arg_66_1, arg_66_2)
 	arg_66_0:_client_set_friend_party(arg_66_2)
 end
 
-function PartyManager.rpc_reset_party_data(arg_67_0)
+PartyManager.rpc_reset_party_data = function (arg_67_0)
 	arg_67_0:clear_parties()
 	Managers.mechanism:setup_mechanism_parties()
 end
 
-function PartyManager._draw_debug(arg_68_0, arg_68_1)
+PartyManager._draw_debug = function (arg_68_0, arg_68_1)
 	local var_68_0 = "materials/fonts/arial"
 	local var_68_1 = "arial"
 	local var_68_2 = 20
@@ -1046,7 +1046,7 @@ function PartyManager._draw_debug(arg_68_0, arg_68_1)
 	end
 end
 
-function PartyManager.any_party_has_free_slots(arg_69_0, arg_69_1)
+PartyManager.any_party_has_free_slots = function (arg_69_0, arg_69_1)
 	arg_69_1 = arg_69_1 or 1
 
 	local var_69_0 = arg_69_0._parties
@@ -1062,7 +1062,7 @@ function PartyManager.any_party_has_free_slots(arg_69_0, arg_69_1)
 	return false
 end
 
-function PartyManager.server_init_friend_parties(arg_70_0, arg_70_1)
+PartyManager.server_init_friend_parties = function (arg_70_0, arg_70_1)
 	arg_70_0._is_hosting_vs_custom_game = true
 	arg_70_0._friend_parties = {}
 	arg_70_0._friend_party_lookup = {}
@@ -1083,7 +1083,7 @@ function PartyManager.server_init_friend_parties(arg_70_0, arg_70_1)
 	end
 end
 
-function PartyManager.server_clear_friend_parties(arg_71_0)
+PartyManager.server_clear_friend_parties = function (arg_71_0)
 	if arg_71_0._is_hosting_vs_custom_game then
 		arg_71_0._is_hosting_vs_custom_game = nil
 	end
@@ -1092,13 +1092,13 @@ function PartyManager.server_clear_friend_parties(arg_71_0)
 	table.clear(arg_71_0._friend_party_lookup)
 end
 
-function PartyManager.server_update_all_client_friend_parties(arg_72_0)
+PartyManager.server_update_all_client_friend_parties = function (arg_72_0)
 	for iter_72_0, iter_72_1 in pairs(arg_72_0._friend_parties) do
 		arg_72_0:_server_set_client_friend_party(iter_72_0)
 	end
 end
 
-function PartyManager.server_create_friend_party(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+PartyManager.server_create_friend_party = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 	if arg_73_1[1] ~= arg_73_2 then
 		for iter_73_0 = 1, #arg_73_1 do
 			if arg_73_1[iter_73_0] == arg_73_2 then
@@ -1125,7 +1125,7 @@ function PartyManager.server_create_friend_party(arg_73_0, arg_73_1, arg_73_2, a
 	arg_73_0:_server_set_client_friend_party(var_73_0)
 end
 
-function PartyManager.server_remove_friend_party_peer(arg_74_0, arg_74_1)
+PartyManager.server_remove_friend_party_peer = function (arg_74_0, arg_74_1)
 	local var_74_0 = arg_74_0._friend_party_lookup[arg_74_1]
 
 	arg_74_0._friend_party_lookup[arg_74_1] = nil
@@ -1159,7 +1159,7 @@ function PartyManager.server_remove_friend_party_peer(arg_74_0, arg_74_1)
 	arg_74_0:_server_set_client_friend_party(var_74_0)
 end
 
-function PartyManager.server_add_friend_party_peer(arg_75_0, arg_75_1, arg_75_2)
+PartyManager.server_add_friend_party_peer = function (arg_75_0, arg_75_1, arg_75_2)
 	local var_75_0 = arg_75_0._friend_parties[arg_75_1]
 
 	var_75_0.num_peers = var_75_0.num_peers + 1
@@ -1169,7 +1169,7 @@ function PartyManager.server_add_friend_party_peer(arg_75_0, arg_75_1, arg_75_2)
 	arg_75_0:_server_set_client_friend_party(arg_75_1)
 end
 
-function PartyManager.server_add_friend_party_peer_from_invitee(arg_76_0, arg_76_1, arg_76_2)
+PartyManager.server_add_friend_party_peer_from_invitee = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = arg_76_0._friend_party_lookup[arg_76_2]
 
 	if var_76_0 then
@@ -1177,7 +1177,7 @@ function PartyManager.server_add_friend_party_peer_from_invitee(arg_76_0, arg_76
 	end
 end
 
-function PartyManager.server_get_friend_party_from_peer(arg_77_0, arg_77_1)
+PartyManager.server_get_friend_party_from_peer = function (arg_77_0, arg_77_1)
 	local var_77_0 = arg_77_0:get_friend_party_id_from_peer(arg_77_1)
 
 	if var_77_0 then
@@ -1185,11 +1185,11 @@ function PartyManager.server_get_friend_party_from_peer(arg_77_0, arg_77_1)
 	end
 end
 
-function PartyManager.server_get_friend_party(arg_78_0, arg_78_1)
+PartyManager.server_get_friend_party = function (arg_78_0, arg_78_1)
 	return arg_78_0._friend_parties[arg_78_1]
 end
 
-function PartyManager.server_get_friend_parties_sorted(arg_79_0)
+PartyManager.server_get_friend_parties_sorted = function (arg_79_0)
 	local var_79_0 = {}
 	local var_79_1 = 1
 
@@ -1198,14 +1198,14 @@ function PartyManager.server_get_friend_parties_sorted(arg_79_0)
 		var_79_1 = var_79_1 + 1
 	end
 
-	table.sort(var_79_0, function(arg_80_0, arg_80_1)
+	table.sort(var_79_0, function (arg_80_0, arg_80_1)
 		return arg_80_0.num_peers > arg_80_1.num_peers
 	end)
 
 	return var_79_0
 end
 
-function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_81_2)
+PartyManager.server_has_room_for_friend_party = function (arg_81_0, arg_81_1, arg_81_2)
 	local var_81_0 = #arg_81_0:parties()
 	local var_81_1 = FrameTable.alloc_table()
 
@@ -1215,7 +1215,7 @@ function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_8
 
 	var_81_2[#var_81_2 + 1] = var_81_1
 
-	table.sort(var_81_2, function(arg_82_0, arg_82_1)
+	table.sort(var_81_2, function (arg_82_0, arg_82_1)
 		return arg_82_0.num_peers > arg_82_1.num_peers
 	end)
 
@@ -1253,7 +1253,7 @@ function PartyManager.server_has_room_for_friend_party(arg_81_0, arg_81_1, arg_8
 	return true
 end
 
-function PartyManager.can_kick_to_fill_server(arg_83_0, arg_83_1, arg_83_2)
+PartyManager.can_kick_to_fill_server = function (arg_83_0, arg_83_1, arg_83_2)
 	local var_83_0 = #arg_83_0:parties()
 	local var_83_1 = FrameTable.alloc_table()
 
@@ -1263,7 +1263,7 @@ function PartyManager.can_kick_to_fill_server(arg_83_0, arg_83_1, arg_83_2)
 
 	var_83_2[#var_83_2 + 1] = var_83_1
 
-	table.sort(var_83_2, function(arg_84_0, arg_84_1)
+	table.sort(var_83_2, function (arg_84_0, arg_84_1)
 		return arg_84_0.num_peers > arg_84_1.num_peers
 	end)
 
@@ -1311,7 +1311,7 @@ function PartyManager.can_kick_to_fill_server(arg_83_0, arg_83_1, arg_83_2)
 	return var_83_4
 end
 
-function PartyManager._server_generate_friend_party_id(arg_85_0)
+PartyManager._server_generate_friend_party_id = function (arg_85_0)
 	if not arg_85_0._num_friend_party_ids then
 		arg_85_0._num_friend_party_ids = 0
 	end
@@ -1321,7 +1321,7 @@ function PartyManager._server_generate_friend_party_id(arg_85_0)
 	return arg_85_0._num_friend_party_ids
 end
 
-function PartyManager._server_remove_friend_party(arg_86_0, arg_86_1)
+PartyManager._server_remove_friend_party = function (arg_86_0, arg_86_1)
 	local var_86_0 = arg_86_0._friend_parties[arg_86_1]
 
 	for iter_86_0, iter_86_1 in pairs(var_86_0.peers) do
@@ -1331,7 +1331,7 @@ function PartyManager._server_remove_friend_party(arg_86_0, arg_86_1)
 	arg_86_0._friend_parties[arg_86_1] = nil
 end
 
-function PartyManager._collect_peers_from_friend_party(arg_87_0, arg_87_1)
+PartyManager._collect_peers_from_friend_party = function (arg_87_0, arg_87_1)
 	assert(DEDICATED_SERVER or arg_87_0._is_hosting_vs_custom_game)
 
 	local var_87_0 = arg_87_0._friend_parties[arg_87_1]
@@ -1362,7 +1362,7 @@ function PartyManager._collect_peers_from_friend_party(arg_87_0, arg_87_1)
 	return var_87_2
 end
 
-function PartyManager.sync_friend_party_for_player(arg_88_0, arg_88_1)
+PartyManager.sync_friend_party_for_player = function (arg_88_0, arg_88_1)
 	assert(DEDICATED_SERVER or arg_88_0._is_hosting_vs_custom_game)
 
 	local var_88_0 = PEER_ID_TO_CHANNEL[arg_88_1]
@@ -1375,13 +1375,13 @@ function PartyManager.sync_friend_party_for_player(arg_88_0, arg_88_1)
 	end
 end
 
-function PartyManager._server_set_client_friend_party(arg_89_0, arg_89_1)
+PartyManager._server_set_client_friend_party = function (arg_89_0, arg_89_1)
 	local var_89_0 = arg_89_0:_collect_peers_from_friend_party(arg_89_1)
 
 	arg_89_0:_server_send_rpc_to_friend_party("rpc_set_client_friend_party", arg_89_1, var_89_0)
 end
 
-function PartyManager.server_get_friend_party_leaders(arg_90_0, arg_90_1)
+PartyManager.server_get_friend_party_leaders = function (arg_90_0, arg_90_1)
 	local var_90_0 = {}
 	local var_90_1 = Network.peer_id()
 
@@ -1398,7 +1398,7 @@ function PartyManager.server_get_friend_party_leaders(arg_90_0, arg_90_1)
 	return var_90_0
 end
 
-function PartyManager._server_send_rpc_to_friend_party(arg_91_0, arg_91_1, arg_91_2, ...)
+PartyManager._server_send_rpc_to_friend_party = function (arg_91_0, arg_91_1, arg_91_2, ...)
 	local var_91_0 = arg_91_0._friend_parties[arg_91_2]
 
 	if not var_91_0 then
@@ -1414,7 +1414,7 @@ function PartyManager._server_send_rpc_to_friend_party(arg_91_0, arg_91_1, arg_9
 	end
 end
 
-function PartyManager.sync_friend_party_ids(arg_92_0)
+PartyManager.sync_friend_party_ids = function (arg_92_0)
 	local var_92_0 = {}
 	local var_92_1 = {}
 	local var_92_2 = 0
@@ -1432,15 +1432,15 @@ function PartyManager.sync_friend_party_ids(arg_92_0)
 	end
 end
 
-function PartyManager.get_friend_party_id_from_peer(arg_93_0, arg_93_1)
+PartyManager.get_friend_party_id_from_peer = function (arg_93_0, arg_93_1)
 	return arg_93_0._friend_party_lookup[arg_93_1]
 end
 
-function PartyManager._client_set_friend_party(arg_94_0, arg_94_1)
+PartyManager._client_set_friend_party = function (arg_94_0, arg_94_1)
 	arg_94_0._client_friend_party = arg_94_1
 end
 
-function PartyManager.rpc_sync_friend_party_ids(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+PartyManager.rpc_sync_friend_party_ids = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 	for iter_95_0 = 1, #arg_95_2 do
 		arg_95_0._friend_party_lookup[arg_95_2[iter_95_0]] = arg_95_3[iter_95_0]
 	end
@@ -1452,10 +1452,10 @@ function PartyManager.rpc_sync_friend_party_ids(arg_95_0, arg_95_1, arg_95_2, ar
 	end
 end
 
-function PartyManager.client_get_friend_party(arg_96_0)
+PartyManager.client_get_friend_party = function (arg_96_0)
 	return arg_96_0._client_friend_party
 end
 
-function PartyManager.client_is_friend_party_leader(arg_97_0, arg_97_1)
+PartyManager.client_is_friend_party_leader = function (arg_97_0, arg_97_1)
 	return arg_97_0._client_friend_party and arg_97_0._client_friend_party[1] == arg_97_1
 end

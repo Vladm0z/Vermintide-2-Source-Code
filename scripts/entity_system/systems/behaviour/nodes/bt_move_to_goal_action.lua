@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMoveToGoalAction = class(BTMoveToGoalAction, BTNode)
 
-function BTMoveToGoalAction.init(arg_1_0, ...)
+BTMoveToGoalAction.init = function (arg_1_0, ...)
 	BTMoveToGoalAction.super.init(arg_1_0, ...)
 end
 
 BTMoveToGoalAction.name = "BTMoveToGoalAction"
 
-function BTMoveToGoalAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTMoveToGoalAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.time_to_next_evaluate = arg_2_3 + (arg_2_2.action.eval_time or 0.5)
 	arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
@@ -43,7 +43,7 @@ function BTMoveToGoalAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTMoveToGoalAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMoveToGoalAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_5 then
 		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	end
@@ -59,7 +59,7 @@ function BTMoveToGoalAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, a
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-function BTMoveToGoalAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMoveToGoalAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not arg_4_2.start_anim_done then
 		if not arg_4_2.start_anim_locked then
 			arg_4_0:start_move_animation(arg_4_1, arg_4_2)
@@ -128,7 +128,7 @@ function BTMoveToGoalAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running", var_4_6
 end
 
-function BTMoveToGoalAction.start_move_animation(arg_5_0, arg_5_1, arg_5_2)
+BTMoveToGoalAction.start_move_animation = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:toggle_start_move_animation_lock(arg_5_1, true, arg_5_2)
 
 	local var_5_0 = arg_5_2.breed
@@ -148,7 +148,7 @@ function BTMoveToGoalAction.start_move_animation(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_2.start_anim_locked = true
 end
 
-function BTMoveToGoalAction.start_move_rotation(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTMoveToGoalAction.start_move_rotation = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_2.move_animation_name == "move_start_fwd" or arg_6_2.skip_move_rotation then
 		arg_6_0:toggle_start_move_animation_lock(arg_6_1, false, arg_6_2)
 	else
@@ -166,7 +166,7 @@ function BTMoveToGoalAction.start_move_rotation(arg_6_0, arg_6_1, arg_6_2, arg_6
 	end
 end
 
-function BTMoveToGoalAction.toggle_start_move_animation_lock(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTMoveToGoalAction.toggle_start_move_animation_lock = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_3.locomotion_extension
 
 	if not var_7_0._engine_extension_id then

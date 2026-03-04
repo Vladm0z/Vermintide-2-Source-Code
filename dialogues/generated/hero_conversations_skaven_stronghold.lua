@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_skaven_stronghold.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_level_skaven_stronghold_story_nine_01",

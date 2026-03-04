@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowAdventureSettings = class(StartGameWindowAdventureSettings)
 StartGameWindowAdventureSettings.NAME = "StartGameWindowAdventureSettings"
 
-function StartGameWindowAdventureSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAdventureSettings.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdventureSettings")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -36,7 +36,7 @@ function StartGameWindowAdventureSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_update_difficulty_option()
 end
 
-function StartGameWindowAdventureSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowAdventureSettings.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -75,24 +75,24 @@ function StartGameWindowAdventureSettings.create_ui_elements(arg_2_0, arg_2_1, a
 	UIWidget.animate(var_2_5, var_2_6)
 end
 
-function StartGameWindowAdventureSettings.on_exit(arg_3_0, arg_3_1)
+StartGameWindowAdventureSettings.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdventureSettings")
 
 	arg_3_0.ui_animator = nil
 end
 
-function StartGameWindowAdventureSettings.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowAdventureSettings.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_difficulty_option()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowAdventureSettings.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowAdventureSettings.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function StartGameWindowAdventureSettings._update_animations(arg_6_0, arg_6_1)
+StartGameWindowAdventureSettings._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0:_update_game_options_hover_effect()
 
 	local var_6_0 = arg_6_0._ui_animations
@@ -120,7 +120,7 @@ function StartGameWindowAdventureSettings._update_animations(arg_6_0, arg_6_1)
 	end
 end
 
-function StartGameWindowAdventureSettings._is_button_released(arg_7_0, arg_7_1)
+StartGameWindowAdventureSettings._is_button_released = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -130,15 +130,15 @@ function StartGameWindowAdventureSettings._is_button_released(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowAdventureSettings._is_button_hover_enter(arg_8_0, arg_8_1)
+StartGameWindowAdventureSettings._is_button_hover_enter = function (arg_8_0, arg_8_1)
 	return arg_8_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowAdventureSettings._is_button_hover_exit(arg_9_0, arg_9_1)
+StartGameWindowAdventureSettings._is_button_hover_exit = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowAdventureSettings._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowAdventureSettings._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._widgets_by_name
 
 	if arg_10_0:_is_button_hover_enter(var_10_0.game_option_difficulty) or arg_10_0:_is_button_hover_enter(var_10_0.play_button) then
@@ -162,11 +162,11 @@ function StartGameWindowAdventureSettings._handle_input(arg_10_0, arg_10_1, arg_
 	end
 end
 
-function StartGameWindowAdventureSettings._play_sound(arg_11_0, arg_11_1)
+StartGameWindowAdventureSettings._play_sound = function (arg_11_0, arg_11_1)
 	arg_11_0.parent:play_sound(arg_11_1)
 end
 
-function StartGameWindowAdventureSettings._update_difficulty_option(arg_12_0)
+StartGameWindowAdventureSettings._update_difficulty_option = function (arg_12_0)
 	local var_12_0 = arg_12_0.parent:get_difficulty_option()
 
 	if var_12_0 ~= arg_12_0._difficulty_key then
@@ -185,7 +185,7 @@ function StartGameWindowAdventureSettings._update_difficulty_option(arg_12_0)
 	end
 end
 
-function StartGameWindowAdventureSettings._set_difficulty_option(arg_13_0, arg_13_1)
+StartGameWindowAdventureSettings._set_difficulty_option = function (arg_13_0, arg_13_1)
 	local var_13_0 = DifficultySettings[arg_13_1]
 	local var_13_1 = var_13_0 and var_13_0.display_name
 	local var_13_2 = var_13_0 and var_13_0.display_image
@@ -197,7 +197,7 @@ function StartGameWindowAdventureSettings._set_difficulty_option(arg_13_0, arg_1
 	var_13_4.game_option_difficulty.content.icon_frame = var_13_3
 end
 
-function StartGameWindowAdventureSettings.draw(arg_14_0, arg_14_1)
+StartGameWindowAdventureSettings.draw = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_scenegraph
 	local var_14_2 = arg_14_0.parent:window_input_service()
@@ -215,11 +215,11 @@ function StartGameWindowAdventureSettings.draw(arg_14_0, arg_14_1)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function StartGameWindowAdventureSettings._play_sound(arg_15_0, arg_15_1)
+StartGameWindowAdventureSettings._play_sound = function (arg_15_0, arg_15_1)
 	arg_15_0.parent:play_sound(arg_15_1)
 end
 
-function StartGameWindowAdventureSettings._update_game_options_hover_effect(arg_16_0)
+StartGameWindowAdventureSettings._update_game_options_hover_effect = function (arg_16_0)
 	local var_16_0 = arg_16_0._widgets_by_name.game_option_difficulty
 
 	if arg_16_0:_is_button_hover_enter(var_16_0) then
@@ -229,19 +229,19 @@ function StartGameWindowAdventureSettings._update_game_options_hover_effect(arg_
 	end
 end
 
-function StartGameWindowAdventureSettings._on_option_button_hover_enter(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+StartGameWindowAdventureSettings._on_option_button_hover_enter = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0:_create_style_animation_enter(arg_17_1, 255, "glow", arg_17_2, arg_17_3)
 	arg_17_0:_create_style_animation_enter(arg_17_1, 255, "icon_glow", arg_17_2, arg_17_3)
 	arg_17_0:_create_style_animation_exit(arg_17_1, 0, "button_hover_rect", arg_17_2, arg_17_3)
 end
 
-function StartGameWindowAdventureSettings._on_option_button_hover_exit(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+StartGameWindowAdventureSettings._on_option_button_hover_exit = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0:_create_style_animation_exit(arg_18_1, 0, "glow", arg_18_2, arg_18_3)
 	arg_18_0:_create_style_animation_exit(arg_18_1, 0, "icon_glow", arg_18_2, arg_18_3)
 	arg_18_0:_create_style_animation_enter(arg_18_1, 30, "button_hover_rect", arg_18_2, arg_18_3)
 end
 
-function StartGameWindowAdventureSettings._create_style_animation_enter(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+StartGameWindowAdventureSettings._create_style_animation_enter = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	local var_19_0 = arg_19_1.style[arg_19_3]
 
 	if not var_19_0 then
@@ -260,7 +260,7 @@ function StartGameWindowAdventureSettings._create_style_animation_enter(arg_19_0
 	end
 end
 
-function StartGameWindowAdventureSettings._create_style_animation_exit(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+StartGameWindowAdventureSettings._create_style_animation_exit = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_1.style[arg_20_3]
 
 	if not var_20_0 then
@@ -279,10 +279,10 @@ function StartGameWindowAdventureSettings._create_style_animation_exit(arg_20_0,
 	end
 end
 
-function StartGameWindowAdventureSettings._animate_pulse(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+StartGameWindowAdventureSettings._animate_pulse = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5))
 end
 
-function StartGameWindowAdventureSettings._animate_element_by_time(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+StartGameWindowAdventureSettings._animate_element_by_time = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, math.ease_out_quad))
 end

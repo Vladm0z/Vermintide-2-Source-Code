@@ -2,7 +2,7 @@
 
 ActionGeiser = class(ActionGeiser, ActionBase)
 
-function ActionGeiser.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionGeiser.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionGeiser.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
@@ -11,7 +11,7 @@ function ActionGeiser.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0._check_buffs = false
 end
 
-function ActionGeiser.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionGeiser.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionGeiser.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -46,7 +46,7 @@ function ActionGeiser.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2
 	end
 end
 
-function ActionGeiser.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionGeiser.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.current_action
 
 	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
@@ -66,7 +66,7 @@ function ActionGeiser.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_
 	end
 end
 
-function ActionGeiser.finish(arg_4_0, arg_4_1)
+ActionGeiser.finish = function (arg_4_0, arg_4_1)
 	if arg_4_0.state ~= "waiting_to_shoot" and arg_4_0.state ~= "shot" then
 		arg_4_0:_proc_spell_used(arg_4_0.owner_buff_extension)
 	end
@@ -80,7 +80,7 @@ function ActionGeiser.finish(arg_4_0, arg_4_1)
 	end
 end
 
-function ActionGeiser.fire(arg_5_0, arg_5_1)
+ActionGeiser.fire = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.owner_unit
 	local var_5_2 = arg_5_0.owner_player
@@ -236,7 +236,7 @@ end
 
 local var_0_0 = 1
 
-function ActionGeiser._update_damage(arg_6_0, arg_6_1)
+ActionGeiser._update_damage = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._damage_buffer
 	local var_6_1 = arg_6_0._damage_buffer_index
 	local var_6_2 = var_6_1 + var_0_0 - 1

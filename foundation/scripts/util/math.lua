@@ -17,7 +17,7 @@ var_0_0.inverse_sqrt_2 = 1 / var_0_1(2)
 var_0_0.degrees_to_radians = var_0_0.rad
 var_0_0.radians_to_degrees = var_0_0.deg
 
-function var_0_0.sign(arg_1_0)
+var_0_0.sign = function (arg_1_0)
 	if arg_1_0 > 0 then
 		return 1
 	elseif arg_1_0 < 0 then
@@ -27,7 +27,7 @@ function var_0_0.sign(arg_1_0)
 	end
 end
 
-function var_0_0.clamp(arg_2_0, arg_2_1, arg_2_2)
+var_0_0.clamp = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_2 < arg_2_0 then
 		return arg_2_2
 	elseif arg_2_0 < arg_2_1 then
@@ -37,7 +37,7 @@ function var_0_0.clamp(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function var_0_0.clamp01(arg_3_0)
+var_0_0.clamp01 = function (arg_3_0)
 	if arg_3_0 > 1 then
 		return 1
 	elseif arg_3_0 < 0 then
@@ -49,71 +49,71 @@ end
 
 local var_0_9 = var_0_0.clamp
 
-function var_0_0.normalize(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.normalize = function (arg_4_0, arg_4_1, arg_4_2)
 	return (arg_4_0 - arg_4_1) / (arg_4_2 - arg_4_1)
 end
 
-function var_0_0.lerp(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.lerp = function (arg_5_0, arg_5_1, arg_5_2)
 	return arg_5_0 * (1 - arg_5_2) + arg_5_1 * arg_5_2
 end
 
 local var_0_10 = var_0_0.lerp
 
-function var_0_0.lerp_clamped(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.lerp_clamped = function (arg_6_0, arg_6_1, arg_6_2)
 	return var_0_10(arg_6_0, arg_6_1, var_0_0.clamp01(arg_6_2))
 end
 
-function var_0_0.inv_lerp(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.inv_lerp = function (arg_7_0, arg_7_1, arg_7_2)
 	return (arg_7_2 - arg_7_0) / (arg_7_1 - arg_7_0)
 end
 
-function var_0_0.inv_lerp_clamped(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.inv_lerp_clamped = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2 = arg_8_0 < arg_8_1 and var_0_0.clamp(arg_8_2, arg_8_0, arg_8_1) or var_0_0.clamp(arg_8_2, arg_8_1, arg_8_0)
 
 	return var_0_0.inv_lerp(arg_8_0, arg_8_1, arg_8_2)
 end
 
-function var_0_0.remap(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+var_0_0.remap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	return (arg_9_4 - arg_9_0) / (arg_9_1 - arg_9_0) * (arg_9_3 - arg_9_2) + arg_9_2
 end
 
-function var_0_0.remap_clamped(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+var_0_0.remap_clamped = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	return var_0_0.clamp01((arg_10_4 - arg_10_0) / (arg_10_1 - arg_10_0)) * (arg_10_3 - arg_10_2) + arg_10_2
 end
 
-function var_0_0.radian_lerp(arg_11_0, arg_11_1, arg_11_2)
+var_0_0.radian_lerp = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = var_0_8 * 2
 
 	return arg_11_0 + arg_11_2 * (((arg_11_1 - arg_11_0) % var_11_0 + var_0_8) % var_11_0 - var_0_8)
 end
 
-function var_0_0.angle_lerp(arg_12_0, arg_12_1, arg_12_2)
+var_0_0.angle_lerp = function (arg_12_0, arg_12_1, arg_12_2)
 	return arg_12_0 + (((arg_12_1 - arg_12_0) % 360 + 540) % 360 - 180) * arg_12_2
 end
 
-function var_0_0.sirp(arg_13_0, arg_13_1, arg_13_2)
+var_0_0.sirp = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = 0.5 + 0.5 * var_0_2((1 + arg_13_2) * var_0_8)
 
 	return var_0_10(arg_13_0, arg_13_1, var_13_0)
 end
 
-function var_0_0.auto_lerp(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+var_0_0.auto_lerp = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = (arg_14_4 - arg_14_0) / (arg_14_1 - arg_14_0)
 
 	return var_0_0.clamp(var_0_10(arg_14_2, arg_14_3, var_14_0), arg_14_2, arg_14_3)
 end
 
-function var_0_0.round_with_precision(arg_15_0, arg_15_1)
+var_0_0.round_with_precision = function (arg_15_0, arg_15_1)
 	local var_15_0 = 10^(arg_15_1 or 0)
 
 	return var_0_0.floor(arg_15_0 * var_15_0 + 0.5) / var_15_0
 end
 
-function var_0_0.round(arg_16_0)
+var_0_0.round = function (arg_16_0)
 	return var_0_0.floor(arg_16_0 + 0.5)
 end
 
-function var_0_0.round_to_closest_multiple(arg_17_0, arg_17_1)
+var_0_0.round_to_closest_multiple = function (arg_17_0, arg_17_1)
 	arg_17_1 = arg_17_1 or 1
 
 	local var_17_0 = arg_17_0 % arg_17_1
@@ -125,7 +125,7 @@ function var_0_0.round_to_closest_multiple(arg_17_0, arg_17_1)
 	return arg_17_0 + arg_17_1 - var_17_0
 end
 
-function var_0_0.smoothstep(arg_18_0, arg_18_1, arg_18_2)
+var_0_0.smoothstep = function (arg_18_0, arg_18_1, arg_18_2)
 	fassert(arg_18_1 ~= arg_18_2, "Division by zero.")
 
 	local var_18_0 = var_0_9((arg_18_0 - arg_18_1) / (arg_18_2 - arg_18_1), 0, 1)
@@ -133,36 +133,36 @@ function var_0_0.smoothstep(arg_18_0, arg_18_1, arg_18_2)
 	return var_18_0 * var_18_0 * var_18_0 * (var_18_0 * (var_18_0 * 6 - 15) + 10)
 end
 
-function Math.random_range(arg_19_0, arg_19_1)
+Math.random_range = function (arg_19_0, arg_19_1)
 	return arg_19_0 + var_0_4() * (arg_19_1 - arg_19_0)
 end
 
-function var_0_0.next_random_range(arg_20_0, arg_20_1, arg_20_2)
+var_0_0.next_random_range = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0, var_20_1 = Math.next_random(arg_20_0)
 
 	return var_20_0, arg_20_1 + var_20_1 * (arg_20_2 - arg_20_1)
 end
 
-function var_0_0.point_is_inside_2d_box(arg_21_0, arg_21_1, arg_21_2)
+var_0_0.point_is_inside_2d_box = function (arg_21_0, arg_21_1, arg_21_2)
 	return arg_21_0[1] > arg_21_1[1] and arg_21_0[1] < arg_21_1[1] + arg_21_2[1] and arg_21_0[2] > arg_21_1[2] and arg_21_0[2] < arg_21_1[2] + arg_21_2[2]
 end
 
-function var_0_0.box_overlap_box(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+var_0_0.box_overlap_box = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	return arg_22_0[1] + arg_22_1[1] >= arg_22_2[1] and arg_22_2[1] + arg_22_3[1] >= arg_22_0[1] and arg_22_0[2] + arg_22_1[2] >= arg_22_2[2] and arg_22_2[2] + arg_22_3[2] >= arg_22_0[2]
 end
 
-function var_0_0.point_is_inside_aabb(arg_23_0, arg_23_1, arg_23_2)
+var_0_0.point_is_inside_aabb = function (arg_23_0, arg_23_1, arg_23_2)
 	return not (arg_23_0[1] < arg_23_1[1] - arg_23_2[1]) and not (arg_23_0[1] > arg_23_1[1] + arg_23_2[1]) and not (arg_23_0[2] < arg_23_1[2] - arg_23_2[2]) and not (arg_23_0[2] > arg_23_1[2] + arg_23_2[2]) and not (arg_23_0[3] < arg_23_1[3] - arg_23_2[3]) and not (arg_23_0[3] > arg_23_1[3] + arg_23_2[3])
 end
 
-function var_0_0.point_is_inside_box(arg_24_0, arg_24_1, arg_24_2)
+var_0_0.point_is_inside_box = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = Matrix4x4.inverse(arg_24_1)
 	local var_24_1 = Matrix4x4.transform(var_24_0, arg_24_0)
 
 	return var_0_0.point_is_inside_aabb(var_24_1, Vector3.zero(), arg_24_2)
 end
 
-function var_0_0.point_is_inside_oobb(arg_25_0, arg_25_1, arg_25_2)
+var_0_0.point_is_inside_oobb = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = Matrix4x4.inverse(arg_25_1)
 	local var_25_1 = Matrix4x4.transform(var_25_0, arg_25_0)
 
@@ -173,7 +173,7 @@ function var_0_0.point_is_inside_oobb(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function var_0_0.point_is_inside_2d_triangle(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+var_0_0.point_is_inside_2d_triangle = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_1 - arg_26_0
 	local var_26_1 = arg_26_2 - arg_26_0
 	local var_26_2 = arg_26_3 - arg_26_0
@@ -200,7 +200,7 @@ function var_0_0.point_is_inside_2d_triangle(arg_26_0, arg_26_1, arg_26_2, arg_2
 	end
 end
 
-function var_0_0.point_is_inside_view(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+var_0_0.point_is_inside_view = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = Quaternion.forward(arg_27_2)
 	local var_27_1 = Vector3.normalize(arg_27_0 - arg_27_1)
 	local var_27_2 = Vector3.dot(var_27_1, var_27_0)
@@ -234,7 +234,7 @@ function var_0_0.point_is_inside_view(arg_27_0, arg_27_1, arg_27_2, arg_27_3, ar
 	return false
 end
 
-function var_0_0.point_is_inside_cylinder(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+var_0_0.point_is_inside_cylinder = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_0[3]
 	local var_28_1 = arg_28_1[3]
 
@@ -251,7 +251,7 @@ function var_0_0.point_is_inside_cylinder(arg_28_0, arg_28_1, arg_28_2, arg_28_3
 	return arg_28_2 < var_28_6 and var_28_6 < arg_28_3^2
 end
 
-function var_0_0.cartesian_to_polar(arg_29_0, arg_29_1)
+var_0_0.cartesian_to_polar = function (arg_29_0, arg_29_1)
 	fassert(arg_29_0 ~= 0 and arg_29_1 ~= 0, "Can't convert a zero vector to polar coordinates")
 
 	local var_29_0 = var_0_1(arg_29_0 * arg_29_0 + arg_29_1 * arg_29_1)
@@ -266,7 +266,7 @@ function var_0_0.cartesian_to_polar(arg_29_0, arg_29_1)
 	return var_29_0, var_29_1
 end
 
-function var_0_0.circular_to_square_coordinates(arg_30_0)
+var_0_0.circular_to_square_coordinates = function (arg_30_0)
 	local var_30_0 = arg_30_0.x
 	local var_30_1 = arg_30_0.y
 	local var_30_2 = var_30_0 * var_30_0 - var_30_1 * var_30_1
@@ -277,17 +277,17 @@ function var_0_0.circular_to_square_coordinates(arg_30_0)
 	return Vector2(0.5 * (var_0_1(var_0_5(2 + var_30_4 + var_30_2, 0)) - var_0_1(var_0_5(2 - var_30_4 + var_30_2, 0))), 0.5 * (var_0_1(var_0_5(2 + var_30_5 - var_30_2, 0)) - var_0_1(var_0_5(2 - var_30_5 - var_30_2, 0))))
 end
 
-function var_0_0.polar_to_cartesian(arg_31_0, arg_31_1)
+var_0_0.polar_to_cartesian = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_1 * (var_0_8 / 180)
 
 	return arg_31_0 * var_0_2(var_31_0), arg_31_0 * var_0_3(var_31_0)
 end
 
-function var_0_0.catmullrom(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+var_0_0.catmullrom = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	return 0.5 * (2 * arg_32_2 + (-arg_32_1 + arg_32_3) * arg_32_0 + (2 * arg_32_1 - 5 * arg_32_2 + 4 * arg_32_3 - arg_32_4) * arg_32_0 * arg_32_0 + (-arg_32_1 + 3 * arg_32_2 - 3 * arg_32_3 + arg_32_4) * arg_32_0 * arg_32_0 * arg_32_0)
 end
 
-function var_0_0.closest_position(arg_33_0, arg_33_1, arg_33_2)
+var_0_0.closest_position = function (arg_33_0, arg_33_1, arg_33_2)
 	if Vector3.distance_squared(arg_33_0, arg_33_1) <= Vector3.distance_squared(arg_33_0, arg_33_2) then
 		return arg_33_1
 	else
@@ -295,13 +295,13 @@ function var_0_0.closest_position(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function var_0_0.dot2D(arg_34_0, arg_34_1)
+var_0_0.dot2D = function (arg_34_0, arg_34_1)
 	return arg_34_0.x * arg_34_1.x + arg_34_0.y * arg_34_1.y
 end
 
 Geometry = Geometry or {}
 
-function Geometry.ccw(arg_35_0, arg_35_1, arg_35_2)
+Geometry.ccw = function (arg_35_0, arg_35_1, arg_35_2)
 	return (arg_35_1.x - arg_35_0.x) * (arg_35_2.y - arg_35_0.y) > (arg_35_1.y - arg_35_0.y) * (arg_35_2.x - arg_35_0.x)
 end
 
@@ -312,7 +312,7 @@ end
 local var_0_12 = Geometry.ccw
 local var_0_13 = var_0_0.dot2D
 
-function Geometry.convex_hull(arg_37_0, arg_37_1)
+Geometry.convex_hull = function (arg_37_0, arg_37_1)
 	local var_37_0 = #arg_37_0
 
 	if var_37_0 == 0 then
@@ -352,7 +352,7 @@ function Geometry.convex_hull(arg_37_0, arg_37_1)
 	return arg_37_1, var_37_5
 end
 
-function Geometry.convex_hull_tracking(arg_38_0, arg_38_1, arg_38_2)
+Geometry.convex_hull_tracking = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = #arg_38_0
 
 	if var_38_0 == 0 then
@@ -394,7 +394,7 @@ function Geometry.convex_hull_tracking(arg_38_0, arg_38_1, arg_38_2)
 	return arg_38_1, var_38_5, arg_38_2
 end
 
-function Geometry.concave_hull(arg_39_0, arg_39_1)
+Geometry.concave_hull = function (arg_39_0, arg_39_1)
 	local var_39_0 = #arg_39_0
 
 	if var_39_0 == 0 then
@@ -435,7 +435,7 @@ function Geometry.concave_hull(arg_39_0, arg_39_1)
 	return arg_39_1, var_39_6, var_39_3
 end
 
-function Geometry.is_point_inside_triangle(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+Geometry.is_point_inside_triangle = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = arg_40_1 - arg_40_0
 	local var_40_1 = arg_40_2 - arg_40_0
 	local var_40_2 = arg_40_3 - arg_40_0
@@ -464,7 +464,7 @@ end
 
 local var_0_14 = Vector3 and Vector3.dot
 
-function Geometry.closest_point_on_line(arg_41_0, arg_41_1, arg_41_2)
+Geometry.closest_point_on_line = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0 - arg_41_1
 	local var_41_1 = arg_41_2 - arg_41_1
 	local var_41_2 = var_0_14(var_41_0, var_41_1)
@@ -484,7 +484,7 @@ end
 
 Geometry.closest_point_on_line = EngineOptimized.closest_point_on_line
 
-function Geometry.closest_point_on_polyline(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+Geometry.closest_point_on_polyline = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = Vector3.distance_squared
 	local var_42_1 = Geometry.closest_point_on_line
 
@@ -513,7 +513,7 @@ end
 
 Intersect = Intersect or {}
 
-function Intersect.ray_line(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+Intersect.ray_line = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0, var_43_1 = Intersect.line_line(arg_43_0, arg_43_0 + arg_43_1, arg_43_2, arg_43_3)
 
 	if var_43_0 == nil then
@@ -525,7 +525,7 @@ function Intersect.ray_line(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	end
 end
 
-function Intersect.ray_box(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+Intersect.ray_box = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	if Math.point_in_box(arg_44_0, arg_44_2, arg_44_3) then
 		return 0
 	end
@@ -539,7 +539,7 @@ function Intersect.ray_box(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	return var_44_0
 end
 
-function Intersect.line_line(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+Intersect.line_line = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = arg_45_1 - arg_45_0
 	local var_45_1 = arg_45_3 - arg_45_2
 	local var_45_2 = Vector3.dot(var_45_0, var_45_0)
@@ -560,7 +560,7 @@ function Intersect.line_line(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	return var_45_9, var_45_10
 end
 
-function Intersect.ray_segment(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+Intersect.ray_segment = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0, var_46_1 = Intersect.ray_line(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 
 	if var_46_0 == nil then
@@ -574,7 +574,7 @@ function Intersect.ray_segment(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	end
 end
 
-function Intersect.ray_circle(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+Intersect.ray_circle = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = arg_47_0 - arg_47_2
 	local var_47_1, var_47_2 = Vector3.to_elements(var_47_0)
 	local var_47_3, var_47_4 = Vector3.to_elements(arg_47_1)
@@ -603,7 +603,7 @@ function Intersect.ray_circle(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	return var_47_12, var_47_15, var_47_11, var_47_14
 end
 
-function var_0_0.ease_exp(arg_48_0)
+var_0_0.ease_exp = function (arg_48_0)
 	if arg_48_0 < 0.5 then
 		return 0.5 * 2^(20 * (arg_48_0 - 0.5))
 	end
@@ -611,19 +611,19 @@ function var_0_0.ease_exp(arg_48_0)
 	return 1 - 0.5 * 2^(20 * (0.5 - arg_48_0))
 end
 
-function var_0_0.ease_in_exp(arg_49_0)
+var_0_0.ease_in_exp = function (arg_49_0)
 	return 2^(10 * (arg_49_0 - 1))
 end
 
-function var_0_0.ease_out_exp(arg_50_0)
+var_0_0.ease_out_exp = function (arg_50_0)
 	return 1 - 2^(-10 * arg_50_0)
 end
 
-function var_0_0.ease_out_sine(arg_51_0)
+var_0_0.ease_out_sine = function (arg_51_0)
 	return var_0_0.sin(arg_51_0 * var_0_0.half_pi)
 end
 
-function var_0_0.easeCubic(arg_52_0)
+var_0_0.easeCubic = function (arg_52_0)
 	arg_52_0 = arg_52_0 * 2
 
 	if arg_52_0 < 1 then
@@ -635,51 +635,51 @@ function var_0_0.easeCubic(arg_52_0)
 	return 0.5 * arg_52_0 * arg_52_0 * arg_52_0 + 1
 end
 
-function var_0_0.linear(arg_53_0)
+var_0_0.linear = function (arg_53_0)
 	return arg_53_0
 end
 
-function var_0_0.linear_inv(arg_54_0)
+var_0_0.linear_inv = function (arg_54_0)
 	return arg_54_0
 end
 
-function var_0_0.easeInCubic(arg_55_0)
+var_0_0.easeInCubic = function (arg_55_0)
 	return arg_55_0 * arg_55_0 * arg_55_0
 end
 
-function var_0_0.easeOutCubic(arg_56_0)
+var_0_0.easeOutCubic = function (arg_56_0)
 	arg_56_0 = arg_56_0 - 1
 
 	return arg_56_0 * arg_56_0 * arg_56_0 + 1
 end
 
-function var_0_0.easeOutCubicInv(arg_57_0)
+var_0_0.easeOutCubicInv = function (arg_57_0)
 	return 1 - var_0_0.pow(1 - arg_57_0, 0.3333333333333333)
 end
 
-function var_0_0.ease_out_quad(arg_58_0)
+var_0_0.ease_out_quad = function (arg_58_0)
 	return -1 * arg_58_0 * (arg_58_0 - 2)
 end
 
-function var_0_0.ease_in_quart(arg_59_0)
+var_0_0.ease_in_quart = function (arg_59_0)
 	return arg_59_0 * arg_59_0 * arg_59_0 * arg_59_0
 end
 
-function var_0_0.ease_out_quart(arg_60_0)
+var_0_0.ease_out_quart = function (arg_60_0)
 	return 1 - var_0_0.pow(1 - arg_60_0, 4)
 end
 
-function var_0_0.ease_out_quart_inv(arg_61_0)
+var_0_0.ease_out_quart_inv = function (arg_61_0)
 	return var_0_0.pow(-arg_61_0 + 1, 0.25) + 1
 end
 
-function var_0_0.ease_in_out_quart(arg_62_0)
+var_0_0.ease_in_out_quart = function (arg_62_0)
 	return arg_62_0 < 0.5 and 8 * arg_62_0 * arg_62_0 * arg_62_0 * arg_62_0 or 1 - (-2 * arg_62_0 + 2)^4 / 2
 end
 
 local var_0_15 = var_0_0.easeCubic
 
-function var_0_0.ease_pulse(arg_63_0)
+var_0_0.ease_pulse = function (arg_63_0)
 	if arg_63_0 < 0.5 then
 		return var_0_15(2 * arg_63_0)
 	else
@@ -687,47 +687,47 @@ function var_0_0.ease_pulse(arg_63_0)
 	end
 end
 
-function var_0_0.ease_in_circ(arg_64_0)
+var_0_0.ease_in_circ = function (arg_64_0)
 	return 1 - var_0_0.sqrt(1 - arg_64_0^2)
 end
 
-function var_0_0.ease_out_circ(arg_65_0)
+var_0_0.ease_out_circ = function (arg_65_0)
 	return var_0_0.sqrt(1 - (arg_65_0 - 1)^2)
 end
 
-function var_0_0.ease_in_back(arg_66_0)
+var_0_0.ease_in_back = function (arg_66_0)
 	local var_66_0 = 1.70158
 
 	return (var_66_0 + 1) * arg_66_0 * arg_66_0 * arg_66_0 - var_66_0 * arg_66_0 * arg_66_0
 end
 
-function var_0_0.ease_out_back(arg_67_0)
+var_0_0.ease_out_back = function (arg_67_0)
 	c1 = 1.70158
 	c3 = c1 + 1
 
 	return 1 + c3 * (arg_67_0 - 1)^3 + c1 * (arg_67_0 - 1)^2
 end
 
-function var_0_0.ease_in_out_back(arg_68_0)
+var_0_0.ease_in_out_back = function (arg_68_0)
 	local var_68_0 = 1.70158
 	local var_68_1 = var_68_0 * 1.525
 
 	return arg_68_0 < 0.5 and (2 * arg_68_0)^2 * ((var_68_1 + 1) * 2 * arg_68_0 - var_68_1) / 2 or ((2 * arg_68_0 - 2)^2 * ((var_68_1 + 1) * (arg_68_0 * 2 - 2) + var_68_1) + 2) / 2
 end
 
-function var_0_0.easeOutQuint(arg_69_0)
+var_0_0.easeOutQuint = function (arg_69_0)
 	return 1 - (1 - arg_69_0)^5
 end
 
-function var_0_0.easeInQuint(arg_70_0)
+var_0_0.easeInQuint = function (arg_70_0)
 	return arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0
 end
 
-function var_0_0.bounce(arg_71_0)
+var_0_0.bounce = function (arg_71_0)
 	return var_0_0.abs(var_0_3(var_0_0.tau * (arg_71_0 + 1) * (arg_71_0 + 1)) * (1 - arg_71_0))
 end
 
-function var_0_0.ease_out_elastic(arg_72_0)
+var_0_0.ease_out_elastic = function (arg_72_0)
 	local var_72_0 = 0
 	local var_72_1 = 1
 
@@ -755,11 +755,11 @@ function var_0_0.ease_out_elastic(arg_72_0)
 	return var_72_1 * 2^(-10 * arg_72_0) * var_0_3((arg_72_0 * 1 - var_72_2) * (2 * var_0_0.pi) / var_72_0) + 1
 end
 
-function var_0_0.easeInOutCubic(arg_73_0)
+var_0_0.easeInOutCubic = function (arg_73_0)
 	return arg_73_0 < 0.5 and 4 * arg_73_0 * arg_73_0 * arg_73_0 or 1 - var_0_0.pow(-2 * arg_73_0 + 2, 3) / 2
 end
 
-function var_0_0.rand_utf8_string(arg_74_0, arg_74_1)
+var_0_0.rand_utf8_string = function (arg_74_0, arg_74_1)
 	fassert(arg_74_0 > 0, "String length passed to math.rand_string has to be greater than 0")
 
 	arg_74_1 = arg_74_1 or {
@@ -784,13 +784,13 @@ function var_0_0.rand_utf8_string(arg_74_0, arg_74_1)
 	return table.concat(var_74_0)
 end
 
-function var_0_0.uuid()
+var_0_0.uuid = function ()
 	local var_75_0 = var_0_4
 
 	return string.format("%08x-%04x-4%03x-%x%03x-%012x", var_75_0(0, 4294967295), var_75_0(0, 65535), var_75_0(0, 4095), var_75_0(0, 11), var_75_0(0, 4095), var_75_0(0, 281474976710655))
 end
 
-function var_0_0.get_uniformly_random_point_inside_sector(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+var_0_0.get_uniformly_random_point_inside_sector = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 	local var_76_0 = arg_76_0 * arg_76_0
 	local var_76_1 = arg_76_1 * arg_76_1
 	local var_76_2 = arg_76_2 + (arg_76_3 - arg_76_2) * var_0_4()
@@ -799,7 +799,7 @@ function var_0_0.get_uniformly_random_point_inside_sector(arg_76_0, arg_76_1, ar
 	return var_76_3 * var_0_3(var_76_2), var_76_3 * var_0_2(var_76_2)
 end
 
-function var_0_0.get_uniformly_random_point_inside_sector_seeded(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+var_0_0.get_uniformly_random_point_inside_sector_seeded = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 	local var_77_0 = arg_77_1 * arg_77_1
 	local var_77_1 = arg_77_2 * arg_77_2
 	local var_77_2
@@ -820,7 +820,7 @@ function var_0_0.get_uniformly_random_point_inside_sector_seeded(arg_77_0, arg_7
 	return arg_77_0, var_77_8, var_77_9
 end
 
-function var_0_0.get_random_point_inside_box_seeded(arg_78_0, arg_78_1, arg_78_2)
+var_0_0.get_random_point_inside_box_seeded = function (arg_78_0, arg_78_1, arg_78_2)
 	local var_78_0
 	local var_78_1
 	local var_78_2
@@ -847,27 +847,27 @@ function var_0_0.get_random_point_inside_box_seeded(arg_78_0, arg_78_1, arg_78_2
 	return arg_78_0, var_78_12
 end
 
-function var_0_0.random_seed()
+var_0_0.random_seed = function ()
 	return Math.random(2147483647)
 end
 
-function var_0_0.distance_2d(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+var_0_0.distance_2d = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 	return ((arg_80_2 - arg_80_0)^2 + (arg_80_3 - arg_80_1)^2)^0.5
 end
 
-function var_0_0.diststance_3d(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
+var_0_0.diststance_3d = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
 	return ((arg_81_3 - arg_81_0)^2 + (arg_81_4 - arg_81_1)^2 + (arg_81_5 - arg_81_2)^2)^0.5
 end
 
-function var_0_0.angle(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+var_0_0.angle = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 	return var_0_0.atan2(arg_82_3 - arg_82_1, arg_82_2 - arg_82_0)
 end
 
-function var_0_0.index_wrapper(arg_83_0, arg_83_1)
+var_0_0.index_wrapper = function (arg_83_0, arg_83_1)
 	return (arg_83_0 - 1) % arg_83_1 + 1
 end
 
-function var_0_0.wrap_index_between(arg_84_0, arg_84_1, arg_84_2)
+var_0_0.wrap_index_between = function (arg_84_0, arg_84_1, arg_84_2)
 	if arg_84_2 < arg_84_1 then
 		arg_84_1, arg_84_2 = arg_84_2, arg_84_1
 	end
@@ -877,17 +877,17 @@ function var_0_0.wrap_index_between(arg_84_0, arg_84_1, arg_84_2)
 	return arg_84_1 + (arg_84_0 - arg_84_1) % (var_84_0 + 1)
 end
 
-function var_0_0.stride_index(arg_85_0, arg_85_1, arg_85_2)
+var_0_0.stride_index = function (arg_85_0, arg_85_1, arg_85_2)
 	arg_85_2 = arg_85_2 or 1
 
 	return (arg_85_0 - 1) * arg_85_1 + 1 + (arg_85_2 - 1)
 end
 
-function var_0_0.value_inside_range(arg_86_0, arg_86_1, arg_86_2)
+var_0_0.value_inside_range = function (arg_86_0, arg_86_1, arg_86_2)
 	return arg_86_1 <= arg_86_0 and arg_86_0 <= arg_86_2
 end
 
-function var_0_0.quat_angle(arg_87_0, arg_87_1)
+var_0_0.quat_angle = function (arg_87_0, arg_87_1)
 	local var_87_0 = var_0_6(Quaternion.dot(arg_87_0, arg_87_1))
 	local var_87_1 = 0
 
@@ -936,7 +936,7 @@ local function var_0_17(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89
 			for iter_89_1 = iter_89_0, #var_89_6 do
 				local var_89_8 = var_89_5[var_89_6[iter_89_1]]
 
-				table.sort(var_89_8, function(arg_90_0, arg_90_1)
+				table.sort(var_89_8, function (arg_90_0, arg_90_1)
 					return var_89_7[arg_90_0] > var_89_7[arg_90_1]
 				end)
 			end
@@ -978,7 +978,7 @@ local function var_0_17(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89
 
 				table.remove(var_89_15, iter_89_0 + 1)
 			else
-				table.sort(var_89_17, function(arg_91_0, arg_91_1)
+				table.sort(var_89_17, function (arg_91_0, arg_91_1)
 					return var_89_16[arg_91_0] > var_89_16[arg_91_1]
 				end)
 
@@ -990,16 +990,16 @@ local function var_0_17(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89
 			end
 		end
 
-		table.sort(var_89_3, function(arg_92_0, arg_92_1)
+		table.sort(var_89_3, function (arg_92_0, arg_92_1)
 			return arg_89_2[arg_92_0] > arg_89_2[arg_92_1]
 		end)
-		table.sort(var_89_4, function(arg_93_0, arg_93_1)
+		table.sort(var_89_4, function (arg_93_0, arg_93_1)
 			return arg_89_5[arg_93_0] > arg_89_5[arg_93_1]
 		end)
 	end
 end
 
-function var_0_0.distributed_point_matching(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
+var_0_0.distributed_point_matching = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3)
 	local var_94_0 = var_0_0.min(#arg_94_0, #arg_94_1)
 
 	if var_94_0 <= 0 then

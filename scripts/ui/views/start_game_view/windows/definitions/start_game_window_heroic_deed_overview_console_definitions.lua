@@ -15,15 +15,15 @@ local var_0_6 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -33,13 +33,13 @@ local var_0_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -301,7 +301,7 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "texture",
 		texture_id = var_7_9,
 		style_id = var_7_9,
-		content_check_function = function(arg_8_0)
+		content_check_function = function (arg_8_0)
 			return arg_8_0.is_selected
 		end
 	}
@@ -328,7 +328,7 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "text",
 		text_id = var_7_10,
 		style_id = var_7_10,
-		content_change_function = function(arg_9_0, arg_9_1)
+		content_change_function = function (arg_9_0, arg_9_1)
 			if arg_9_0.is_selected then
 				arg_9_1.text_color = arg_9_1.selected_color
 			else
@@ -454,10 +454,10 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "texture",
 		style_id = var_7_24,
 		texture_id = var_7_24,
-		content_check_function = function(arg_10_0, arg_10_1)
+		content_check_function = function (arg_10_0, arg_10_1)
 			return arg_10_0[var_7_24]
 		end,
-		content_change_function = function(arg_11_0, arg_11_1)
+		content_change_function = function (arg_11_0, arg_11_1)
 			if arg_11_0.button_hotspot.disable_button then
 				arg_11_1.saturated = true
 			else
@@ -469,7 +469,7 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "texture",
 		texture_id = var_7_25,
 		style_id = var_7_25,
-		content_check_function = function(arg_12_0, arg_12_1)
+		content_check_function = function (arg_12_0, arg_12_1)
 			return arg_12_0[var_7_24]
 		end
 	}
@@ -528,10 +528,10 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "texture",
 		style_id = var_7_27,
 		texture_id = var_7_27,
-		content_check_function = function(arg_13_0, arg_13_1)
+		content_check_function = function (arg_13_0, arg_13_1)
 			return arg_13_0[var_7_27]
 		end,
-		content_change_function = function(arg_14_0, arg_14_1)
+		content_change_function = function (arg_14_0, arg_14_1)
 			if arg_14_0.button_hotspot.disable_button then
 				arg_14_1.saturated = true
 			else
@@ -562,7 +562,7 @@ local function var_0_8(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		pass_type = "texture",
 		style_id = var_7_28,
 		texture_id = var_7_28,
-		content_check_function = function(arg_15_0)
+		content_check_function = function (arg_15_0)
 			return arg_15_0.is_selected
 		end
 	}

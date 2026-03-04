@@ -5,6 +5,6 @@ local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windo
 StartGameWindowDeusPanel = class(StartGameWindowDeusPanel, StartGameWindowPanelConsole)
 StartGameWindowDeusPanel.NAME = "StartGameWindowDeusPanel"
 
-function StartGameWindowDeusPanel._create_ui_elements(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StartGameWindowDeusPanel._create_ui_elements = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return StartGameWindowDeusPanel.super._create_ui_elements(arg_1_0, var_0_0, arg_1_2, arg_1_3)
 end

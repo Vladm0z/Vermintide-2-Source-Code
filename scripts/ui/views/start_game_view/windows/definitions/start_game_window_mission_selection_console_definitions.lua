@@ -22,15 +22,15 @@ local var_0_10 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -38,16 +38,16 @@ local var_0_10 = {
 			name = "animate_in_window",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - var_5_0))
 				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + 200 * (1 - var_5_0)
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -57,15 +57,15 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 
 				arg_8_4.render_settings.alpha_multiplier = 1 - var_8_0
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -489,7 +489,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			style_id = "icon",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return not arg_11_0.parent.locked
 			end
 		},
@@ -497,7 +497,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			style_id = "icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return arg_12_0.button_hotspot.is_hover
 			end
 		},
@@ -515,7 +515,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return not arg_13_0.locked
 			end
 		},
@@ -523,7 +523,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			pass_type = "texture",
 			style_id = "icon_locked",
 			texture_id = "icon",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0.locked
 			end
 		},
@@ -531,7 +531,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0.locked
 			end
 		},
@@ -539,7 +539,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.locked
 			end
 		},
@@ -557,7 +557,7 @@ local function var_0_17(arg_10_0, arg_10_1)
 			pass_type = "texture",
 			style_id = "boss_icon",
 			texture_id = "boss_icon",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return arg_17_0.boss_level
 			end
 		}
@@ -1154,7 +1154,7 @@ local function var_0_20(arg_20_0, arg_20_1)
 					pass_type = "texture",
 					style_id = "glow_icon",
 					texture_id = "glow_icon",
-					content_check_function = function(arg_21_0, arg_21_1)
+					content_check_function = function (arg_21_0, arg_21_1)
 						return not arg_21_0.disable_glow
 					end
 				},
@@ -1162,7 +1162,7 @@ local function var_0_20(arg_20_0, arg_20_1)
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark",
-					content_check_function = function(arg_22_0, arg_22_1)
+					content_check_function = function (arg_22_0, arg_22_1)
 						return arg_22_0.amount >= arg_22_0.total_amount
 					end
 				}
@@ -1333,7 +1333,7 @@ local function var_0_21(arg_23_0, arg_23_1, arg_23_2)
 					style_id = "difficulty_text",
 					pass_type = "text",
 					text_id = "difficulty_text",
-					content_check_function = function(arg_24_0, arg_24_1)
+					content_check_function = function (arg_24_0, arg_24_1)
 						return arg_24_0.completed_difficulty_index < 4
 					end
 				},
@@ -1341,7 +1341,7 @@ local function var_0_21(arg_23_0, arg_23_1, arg_23_2)
 					style_id = "difficulty_text_completed",
 					pass_type = "text",
 					text_id = "difficulty_text",
-					content_check_function = function(arg_25_0, arg_25_1)
+					content_check_function = function (arg_25_0, arg_25_1)
 						return arg_25_0.completed_difficulty_index >= 4
 					end
 				},
@@ -1374,7 +1374,7 @@ local function var_0_21(arg_23_0, arg_23_1, arg_23_2)
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark",
-					content_check_function = function(arg_26_0, arg_26_1)
+					content_check_function = function (arg_26_0, arg_26_1)
 						return arg_26_0.completed_difficulty_index >= 4
 					end
 				}
@@ -1656,7 +1656,7 @@ function create_hero_widgets(arg_28_0)
 			content_id = var_28_24,
 			texture_id = var_28_27,
 			style_id = var_28_27,
-			content_check_function = function(arg_29_0)
+			content_check_function = function (arg_29_0)
 				return not arg_29_0.icon_disabled
 			end
 		}
@@ -1680,7 +1680,7 @@ function create_hero_widgets(arg_28_0)
 			content_id = var_28_24,
 			texture_id = var_28_29,
 			style_id = var_28_29,
-			content_check_function = function(arg_30_0)
+			content_check_function = function (arg_30_0)
 				return arg_30_0.icon_disabled
 			end
 		}

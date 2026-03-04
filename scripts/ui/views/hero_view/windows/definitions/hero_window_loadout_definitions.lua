@@ -240,7 +240,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						local var_3_0 = arg_3_0.button_hotspot
 
 						return not var_3_0.disable_button and (var_3_0.is_selected or var_3_0.is_hover)
@@ -250,7 +250,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return not arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -258,7 +258,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.button_hotspot.disable_button
 					end
 				},
@@ -270,7 +270,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						local var_6_0 = arg_6_0.button_hotspot.is_clicked
 
 						return not var_6_0 or var_6_0 == 0
@@ -279,7 +279,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.button_hotspot.disable_button
 					end
 				},
@@ -287,7 +287,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					texture_id = "bottom_edge",
 					style_id = "bottom_edge",
 					pass_type = "tiled_texture",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.use_bottom_edge
 					end
 				},
@@ -295,7 +295,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					texture_id = "edge_holder_left",
 					style_id = "edge_holder_left",
 					pass_type = "texture",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.use_bottom_edge
 					end
 				},
@@ -303,7 +303,7 @@ local function var_0_11(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 					texture_id = "edge_holder_right",
 					style_id = "edge_holder_right",
 					pass_type = "texture",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.use_bottom_edge
 					end
 				}
@@ -607,15 +607,15 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = var_12_0
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -625,15 +625,15 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 
 				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}

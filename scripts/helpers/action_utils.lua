@@ -12,14 +12,14 @@ script_data.no_critical_strikes = script_data.no_critical_strikes or Development
 script_data.always_critical_strikes = script_data.always_critical_strikes or Development.parameter("always_critical_strikes")
 script_data.alternating_critical_strikes = script_data.alternating_critical_strikes or Development.parameter("alternating_critical_strikes")
 
-function ActionUtils.get_power_level_percentage(arg_1_0)
+ActionUtils.get_power_level_percentage = function (arg_1_0)
 	local var_1_0 = MIN_POWER_LEVEL
 	local var_1_1 = MAX_POWER_LEVEL
 
 	return (arg_1_0 - var_1_0) / (var_1_1 - var_1_0)
 end
 
-function ActionUtils.get_max_targets(arg_2_0, arg_2_1)
+ActionUtils.get_max_targets = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.cleave_distribution or DefaultCleaveDistribution
 	local var_2_1 = Cleave.max - Cleave.min
 	local var_2_2 = arg_2_1 * var_2_0.attack
@@ -30,7 +30,7 @@ function ActionUtils.get_max_targets(arg_2_0, arg_2_1)
 	return var_2_3, var_2_5
 end
 
-function ActionUtils.get_target_armor(arg_3_0, arg_3_1, arg_3_2)
+ActionUtils.get_target_armor = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 	local var_3_1
 	local var_3_2
@@ -81,7 +81,7 @@ function ActionUtils.get_target_armor(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0, var_3_1, var_3_3, var_3_4
 end
 
-function ActionUtils.get_range_scalar_multiplier(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ActionUtils.get_range_scalar_multiplier = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_1.range_modifier_settings or arg_4_0.range_modifier_settings
 
 	if not var_4_0 then
@@ -124,7 +124,7 @@ function ActionUtils.get_range_scalar_multiplier(arg_4_0, arg_4_1, arg_4_2, arg_
 	end
 end
 
-function ActionUtils.get_armor_power_modifier(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+ActionUtils.get_armor_power_modifier = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	local var_5_0 = arg_5_2.armor_modifier or arg_5_1.armor_modifier or DefaultArmorPowerModifier
 	local var_5_1 = arg_5_2.armor_modifier_near or arg_5_1.armor_modifier_near
 	local var_5_2 = arg_5_2.armor_modifier_far or arg_5_1.armor_modifier_far
@@ -149,7 +149,7 @@ function ActionUtils.get_armor_power_modifier(arg_5_0, arg_5_1, arg_5_2, arg_5_3
 	return var_5_3
 end
 
-function ActionUtils.scale_power_levels(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+ActionUtils.scale_power_levels = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = math.clamp(arg_6_0, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
 
 	if Managers and Managers.state.game_mode:setting("cap_power_level") then
@@ -189,7 +189,7 @@ function ActionUtils.scale_power_levels(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return var_6_5
 end
 
-function ActionUtils.get_power_multiplier(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ActionUtils.get_power_multiplier = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.power_distribution or arg_7_1.power_distribution or DefaultPowerDistribution
 	local var_7_1 = arg_7_2.power_distribution_near or arg_7_1.power_distribution_near
 	local var_7_2 = arg_7_2.power_distribution_far or arg_7_1.power_distribution_far
@@ -209,13 +209,13 @@ function ActionUtils.get_power_multiplier(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return var_7_3
 end
 
-function ActionUtils.get_power_level(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+ActionUtils.get_power_level = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	local var_8_0 = ActionUtils.get_power_multiplier(arg_8_0, arg_8_2, arg_8_3, arg_8_5)
 
 	return ActionUtils.scale_power_levels(arg_8_1, arg_8_0, arg_8_6, arg_8_7) * var_8_0
 end
 
-function ActionUtils.get_power_level_for_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13)
+ActionUtils.get_power_level_for_target = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13)
 	local var_9_0 = arg_9_2.targets and arg_9_2.targets[arg_9_3] or arg_9_2.default_target
 	local var_9_1 = arg_9_4 and arg_9_2.critical_strike
 	local var_9_2
@@ -271,7 +271,7 @@ function ActionUtils.get_power_level_for_target(arg_9_0, arg_9_1, arg_9_2, arg_9
 	return var_9_17, var_9_18
 end
 
-function ActionUtils.apply_buffs_to_power_level(arg_10_0, arg_10_1)
+ActionUtils.apply_buffs_to_power_level = function (arg_10_0, arg_10_1)
 	local var_10_0 = ScriptUnit.has_extension(arg_10_0, "buff_system")
 
 	if not var_10_0 then
@@ -283,7 +283,7 @@ function ActionUtils.apply_buffs_to_power_level(arg_10_0, arg_10_1)
 	return arg_10_1
 end
 
-function ActionUtils.apply_buffs_to_power_level_on_hit(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ActionUtils.apply_buffs_to_power_level_on_hit = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if not Unit.alive(arg_11_0) then
 		return arg_11_1
 	end
@@ -358,7 +358,7 @@ function ActionUtils.apply_buffs_to_power_level_on_hit(arg_11_0, arg_11_1, arg_1
 	return arg_11_1
 end
 
-function ActionUtils.apply_buffs_to_armor_power_on_hit(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+ActionUtils.apply_buffs_to_armor_power_on_hit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if ALIVE[arg_12_0] then
 		local var_12_0 = ScriptUnit.has_extension(arg_12_0, "buff_system")
 
@@ -384,7 +384,7 @@ function ActionUtils.apply_buffs_to_armor_power_on_hit(arg_12_0, arg_12_1, arg_1
 	return arg_12_2
 end
 
-function ActionUtils.scale_charged_projectile_power_level(arg_13_0, arg_13_1, arg_13_2)
+ActionUtils.scale_charged_projectile_power_level = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_1.scale_power_level then
 		return math.max(arg_13_1.scale_power_level, arg_13_2) * arg_13_0
 	end
@@ -392,11 +392,11 @@ function ActionUtils.scale_charged_projectile_power_level(arg_13_0, arg_13_1, ar
 	return arg_13_0
 end
 
-function ActionUtils.scale_geiser_power_level(arg_14_0, arg_14_1)
+ActionUtils.scale_geiser_power_level = function (arg_14_0, arg_14_1)
 	return (0.5 + 0.5 * arg_14_1) * arg_14_0
 end
 
-function ActionUtils.get_melee_boost(arg_15_0, arg_15_1)
+ActionUtils.get_melee_boost = function (arg_15_0, arg_15_1)
 	local var_15_0 = ScriptUnit.has_extension(arg_15_0, "career_system")
 	local var_15_1 = false
 	local var_15_2 = 0
@@ -412,7 +412,7 @@ function ActionUtils.get_melee_boost(arg_15_0, arg_15_1)
 	return var_15_1, var_15_2
 end
 
-function ActionUtils.get_ranged_boost(arg_16_0)
+ActionUtils.get_ranged_boost = function (arg_16_0)
 	local var_16_0 = ScriptUnit.has_extension(arg_16_0, "career_system")
 	local var_16_1 = false
 	local var_16_2 = 0
@@ -424,7 +424,7 @@ function ActionUtils.get_ranged_boost(arg_16_0)
 	return var_16_1, var_16_2
 end
 
-function ActionUtils.spawn_player_projectile(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13, arg_17_14)
+ActionUtils.spawn_player_projectile = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13, arg_17_14)
 	arg_17_3 = arg_17_3 or 100
 
 	local var_17_0 = Managers.state.entity:system("projectile_system")
@@ -433,7 +433,7 @@ function ActionUtils.spawn_player_projectile(arg_17_0, arg_17_1, arg_17_2, arg_1
 	var_17_0:spawn_player_projectile(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, var_17_1, arg_17_11, arg_17_12, arg_17_13, arg_17_14)
 end
 
-function ActionUtils.spawn_pickup_projectile(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+ActionUtils.spawn_pickup_projectile = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
 	local var_18_0 = arg_18_4.projectile_info.pickup_name
 	local var_18_1 = NetworkLookup.husks[arg_18_2]
 	local var_18_2 = NetworkLookup.go_types[arg_18_3]
@@ -507,14 +507,14 @@ function ActionUtils.spawn_pickup_projectile(arg_18_0, arg_18_1, arg_18_2, arg_1
 	end
 end
 
-function ActionUtils.spawn_true_flight_projectile(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14)
+ActionUtils.spawn_true_flight_projectile = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14)
 	local var_19_0 = Managers.state.entity:system("projectile_system")
 	local var_19_1 = TrueFlightTemplatesLookup[arg_19_2]
 
 	var_19_0:spawn_true_flight_projectile(arg_19_0, arg_19_1, var_19_1, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13, arg_19_14)
 end
 
-function ActionUtils.get_action_time_scale(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+ActionUtils.get_action_time_scale = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_3 or arg_20_1.anim_time_scale or 1
 
 	if arg_20_0 and Unit.alive(arg_20_0) then
@@ -556,7 +556,7 @@ function ActionUtils.get_action_time_scale(arg_20_0, arg_20_1, arg_20_2, arg_20_
 	return var_20_0
 end
 
-function ActionUtils.init_action_buff_data(arg_21_0, arg_21_1, arg_21_2)
+ActionUtils.init_action_buff_data = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0.buff_start_times
 	local var_21_1 = arg_21_0.buff_end_times
 	local var_21_2 = arg_21_0.action_buffs_in_progress
@@ -576,7 +576,7 @@ end
 
 local var_0_3 = {}
 
-function ActionUtils.update_action_buff_data(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+ActionUtils.update_action_buff_data = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0.buff_start_times
 	local var_22_1 = arg_22_0.buff_end_times
 	local var_22_2 = arg_22_0.buff_identifiers
@@ -608,7 +608,7 @@ function ActionUtils.update_action_buff_data(arg_22_0, arg_22_1, arg_22_2, arg_2
 	end
 end
 
-function ActionUtils.remove_action_buff_data(arg_23_0, arg_23_1, arg_23_2)
+ActionUtils.remove_action_buff_data = function (arg_23_0, arg_23_1, arg_23_2)
 	if ALIVE[arg_23_2] then
 		local var_23_0 = arg_23_0.action_buffs_in_progress
 		local var_23_1 = ScriptUnit.has_extension(arg_23_2, "buff_system")
@@ -626,7 +626,7 @@ function ActionUtils.remove_action_buff_data(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function ActionUtils.start_charge_sound(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+ActionUtils.start_charge_sound = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_3.charge_sound_switch
 	local var_24_1 = arg_24_3.charge_sound_name
 	local var_24_2 = arg_24_3.charge_sound_parameter_name
@@ -654,7 +654,7 @@ function ActionUtils.start_charge_sound(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	return var_24_4, var_24_3
 end
 
-function ActionUtils.stop_charge_sound(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+ActionUtils.stop_charge_sound = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_3.charge_sound_stop_event
 
 	if not var_25_0 or not arg_25_2 then
@@ -668,7 +668,7 @@ function ActionUtils.stop_charge_sound(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	WwiseWorld.trigger_event(arg_25_0, var_25_0, arg_25_2)
 end
 
-function ActionUtils.play_husk_sound_event(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+ActionUtils.play_husk_sound_event = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if not arg_26_1 then
 		return
 	end
@@ -703,7 +703,7 @@ function ActionUtils.play_husk_sound_event(arg_26_0, arg_26_1, arg_26_2, arg_26_
 	end
 end
 
-function ActionUtils.get_critical_strike_chance(arg_27_0, arg_27_1, arg_27_2)
+ActionUtils.get_critical_strike_chance = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = ScriptUnit.extension(arg_27_0, "career_system")
 	local var_27_1 = ScriptUnit.extension(arg_27_0, "buff_system")
 	local var_27_2 = var_27_0:get_base_critical_strike_chance() + (arg_27_2 and arg_27_2.additional_critical_strike_chance or arg_27_1.additional_critical_strike_chance or 0)
@@ -726,7 +726,7 @@ end
 
 local var_0_4 = false
 
-function ActionUtils.is_critical_strike(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+ActionUtils.is_critical_strike = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = ScriptUnit.extension(arg_28_0, "buff_system")
 	local var_28_1 = ScriptUnit.has_extension(arg_28_0, "talent_system")
 	local var_28_2 = false
@@ -761,7 +761,7 @@ function ActionUtils.is_critical_strike(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	return var_28_2
 end
 
-function ActionUtils.pitch_from_rotation(arg_29_0)
+ActionUtils.pitch_from_rotation = function (arg_29_0)
 	local var_29_0 = Vector3.normalize(Quaternion.forward(arg_29_0))
 	local var_29_1 = Vector3.normalize(Vector3.flat(var_29_0))
 	local var_29_2 = Vector3.dot(var_29_0, var_29_1)
@@ -776,7 +776,7 @@ function ActionUtils.pitch_from_rotation(arg_29_0)
 	return var_29_4
 end
 
-function ActionUtils.redirect_shield_hit(arg_30_0, arg_30_1)
+ActionUtils.redirect_shield_hit = function (arg_30_0, arg_30_1)
 	local var_30_0 = var_0_0(arg_30_0, "shield_owner_unit")
 
 	if not HEALTH_ALIVE[var_30_0] then
@@ -788,7 +788,7 @@ function ActionUtils.redirect_shield_hit(arg_30_0, arg_30_1)
 	return var_30_0, var_30_1
 end
 
-function ActionUtils.resolve_action_selector(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+ActionUtils.resolve_action_selector = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	if not arg_31_0 then
 		return nil
 	end
@@ -814,7 +814,7 @@ function ActionUtils.resolve_action_selector(arg_31_0, arg_31_1, arg_31_2, arg_3
 	return WeaponUtils.get_weapon_template(arg_31_0.lookup_data.item_template_name).actions[var_31_2][var_31_3], var_31_2, var_31_3
 end
 
-function ActionUtils.get_push_damage_profile(arg_32_0)
+ActionUtils.get_push_damage_profile = function (arg_32_0)
 	if arg_32_0 then
 		return arg_32_0.damage_profile_inner, arg_32_0.damage_profile_outer
 	end
@@ -822,7 +822,7 @@ function ActionUtils.get_push_damage_profile(arg_32_0)
 	return nil, nil
 end
 
-function ActionUtils.get_damage_profile_name(arg_33_0, arg_33_1)
+ActionUtils.get_damage_profile_name = function (arg_33_0, arg_33_1)
 	if arg_33_0 then
 		arg_33_1 = arg_33_1 or arg_33_0.weapon_action_hand
 
@@ -851,7 +851,7 @@ function ActionUtils.get_damage_profile_name(arg_33_0, arg_33_1)
 	return nil, nil
 end
 
-function ActionUtils.get_damage_profile_performance_scores(arg_34_0)
+ActionUtils.get_damage_profile_performance_scores = function (arg_34_0)
 	local var_34_0 = {
 		0,
 		0,
@@ -876,7 +876,7 @@ function ActionUtils.get_damage_profile_performance_scores(arg_34_0)
 	return var_34_0
 end
 
-function ActionUtils.get_performance_scores_for_sub_action(arg_35_0)
+ActionUtils.get_performance_scores_for_sub_action = function (arg_35_0)
 	local var_35_0
 	local var_35_1, var_35_2 = ActionUtils.get_damage_profile_name(arg_35_0)
 
@@ -899,7 +899,7 @@ function ActionUtils.get_performance_scores_for_sub_action(arg_35_0)
 	return var_35_0
 end
 
-function ActionUtils.is_melee_start_sub_action(arg_36_0)
+ActionUtils.is_melee_start_sub_action = function (arg_36_0)
 	if not arg_36_0 then
 		return false
 	end
@@ -911,7 +911,7 @@ function ActionUtils.is_melee_start_sub_action(arg_36_0)
 	return arg_36_0.melee_start
 end
 
-function ActionUtils.is_backstab(arg_37_0, arg_37_1)
+ActionUtils.is_backstab = function (arg_37_0, arg_37_1)
 	local var_37_0 = POSITION_LOOKUP[arg_37_0]
 	local var_37_1 = POSITION_LOOKUP[arg_37_1]
 	local var_37_2 = Vector3.normalize(var_37_1 - var_37_0)

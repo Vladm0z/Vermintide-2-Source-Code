@@ -4,7 +4,7 @@ local var_0_0 = class(FindServerState)
 
 var_0_0.NAME = "FindServerState"
 
-function var_0_0.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+var_0_0.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	arg_1_0._state_machine = arg_1_1
 	arg_1_0._num_players = #arg_1_4
 	arg_1_0._network_options = arg_1_2
@@ -25,11 +25,11 @@ function var_0_0.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_
 	arg_1_0._soft_filters = arg_1_8.soft_filters or {}
 end
 
-function var_0_0.enter(arg_2_0)
+var_0_0.enter = function (arg_2_0)
 	return
 end
 
-function var_0_0.destroy(arg_3_0)
+var_0_0.destroy = function (arg_3_0)
 	if arg_3_0._finder ~= nil then
 		arg_3_0._finder:destroy()
 	end
@@ -37,7 +37,7 @@ function var_0_0.destroy(arg_3_0)
 	arg_3_0._finder = nil
 end
 
-function var_0_0.update(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._search_time = arg_4_0._search_time + arg_4_1
 
 	if arg_4_2 < arg_4_0._delay then
@@ -90,7 +90,7 @@ function var_0_0.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function var_0_0._pick_server(arg_5_0, arg_5_1)
+var_0_0._pick_server = function (arg_5_0, arg_5_1)
 	print("######### PICKING SERVER #########")
 
 	local var_5_0 = arg_5_0._state_machine
@@ -117,7 +117,7 @@ function var_0_0._pick_server(arg_5_0, arg_5_1)
 	return var_5_4
 end
 
-function var_0_0._trigger_search(arg_6_0, arg_6_1)
+var_0_0._trigger_search = function (arg_6_0, arg_6_1)
 	print("Attempting " .. arg_6_1 .. " search for game server")
 
 	local var_6_0 = Development.parameter("use_lan_backend") or rawget(_G, "Steam") == nil
@@ -156,13 +156,13 @@ local var_0_1 = class(ServerReserveState)
 
 var_0_1.NAME = "ServerReserveState"
 
-function var_0_1.init(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+var_0_1.init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
 	arg_7_0._network_options = arg_7_2
 	arg_7_0._peers_to_reserve = arg_7_4
 	arg_7_0._state_machine = arg_7_1
 end
 
-function var_0_1.enter(arg_8_0, arg_8_1)
+var_0_1.enter = function (arg_8_0, arg_8_1)
 	print("Attempt reserving slots on " .. arg_8_1.server_info.ip_port)
 
 	local var_8_0
@@ -172,7 +172,7 @@ function var_0_1.enter(arg_8_0, arg_8_1)
 	arg_8_0._state_machine._lobby = arg_8_0._lobby
 end
 
-function var_0_1.update(arg_9_0, arg_9_1)
+var_0_1.update = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._lobby
 
 	var_9_0:update(arg_9_1)
@@ -192,11 +192,11 @@ local var_0_2 = class(SuccessState)
 
 var_0_2.NAME = "SuccessState"
 
-function var_0_2.init(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+var_0_2.init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
 	arg_10_0._state_machine = arg_10_1
 end
 
-function var_0_2.enter(arg_11_0, arg_11_1, arg_11_2)
+var_0_2.enter = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._state_machine._result = "reserved"
 	arg_11_0._state_machine._lobby_data = arg_11_2
 end
@@ -205,13 +205,13 @@ local var_0_3 = class(FailState)
 
 var_0_3.NAME = "FailState"
 
-function var_0_3.init(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+var_0_3.init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
 	arg_12_1._result = "failed"
 end
 
 ServerPartyReserveStateMachine = class(ServerPartyReserveStateMachine, VisualStateMachine)
 
-function ServerPartyReserveStateMachine.init(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+ServerPartyReserveStateMachine.init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0
 	local var_13_1 = arg_13_1.config_file_name
 	local var_13_2 = arg_13_1.project_hash
@@ -238,7 +238,7 @@ function ServerPartyReserveStateMachine.init(arg_13_0, arg_13_1, arg_13_2, arg_1
 	arg_13_0:set_initial_state(var_0_0)
 end
 
-function ServerPartyReserveStateMachine.destroy(arg_14_0)
+ServerPartyReserveStateMachine.destroy = function (arg_14_0)
 	if arg_14_0._lobby then
 		arg_14_0._lobby:destroy()
 
@@ -248,7 +248,7 @@ function ServerPartyReserveStateMachine.destroy(arg_14_0)
 	arg_14_0.super.destroy(arg_14_0)
 end
 
-function ServerPartyReserveStateMachine.result(arg_15_0)
+ServerPartyReserveStateMachine.result = function (arg_15_0)
 	if arg_15_0._result == nil then
 		return
 	end

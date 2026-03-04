@@ -6,23 +6,23 @@ local var_0_0 = {
 	"EndZoneExtension"
 }
 
-function EndZoneSystem.init(arg_1_0, arg_1_1, arg_1_2)
+EndZoneSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	PropsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-function EndZoneSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+EndZoneSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	return PropsSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 end
 
-function EndZoneSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+EndZoneSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
 	PropsSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function EndZoneSystem.update(arg_4_0, arg_4_1, arg_4_2)
+EndZoneSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
 	PropsSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function EndZoneSystem.activate_end_zone_by_name(arg_5_0, arg_5_1)
+EndZoneSystem.activate_end_zone_by_name = function (arg_5_0, arg_5_1)
 	if not Managers.player.is_server then
 		return
 	end

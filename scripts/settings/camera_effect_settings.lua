@@ -1663,7 +1663,7 @@ CameraEffectSettings.shake.swing_impact_left_heavy = var_0_0
 CameraEffectSettings.shake.swing_impact_right_heavy = var_0_0
 CameraEffectSettings.transition_functions = CameraEffectSettings.transition_functions or {}
 
-function CameraEffectSettings.transition_functions.lerp(arg_2_0, arg_2_1, arg_2_2)
+CameraEffectSettings.transition_functions.lerp = function (arg_2_0, arg_2_1, arg_2_2)
 	return math.lerp(arg_2_0, arg_2_1, arg_2_2)
 end
 

@@ -62,7 +62,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 				end,
 				recoil_settings = {
@@ -102,7 +102,7 @@ local var_0_0 = {
 				anim_event = "attack_shoot",
 				ignore_shield_hit = true,
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -160,7 +160,7 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = false,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -191,13 +191,13 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_5_0)
+				unzoom_condition_function = function (arg_5_0)
 					return arg_5_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
 					if arg_6_2 and (arg_6_2:total_remaining_ammo() <= 0 or arg_6_2:is_reloading()) then
 						return false
 					end

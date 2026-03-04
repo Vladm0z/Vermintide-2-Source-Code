@@ -3,7 +3,7 @@
 VersusSurviveEventObjectiveExtension = class(VersusSurviveEventObjectiveExtension, BaseObjectiveExtension)
 VersusSurviveEventObjectiveExtension.NAME = "VersusSurviveEventObjectiveExtension"
 
-function VersusSurviveEventObjectiveExtension.init(arg_1_0, ...)
+VersusSurviveEventObjectiveExtension.init = function (arg_1_0, ...)
 	VersusSurviveEventObjectiveExtension.super.init(arg_1_0, ...)
 
 	arg_1_0._survive_time_done = 0
@@ -12,7 +12,7 @@ function VersusSurviveEventObjectiveExtension.init(arg_1_0, ...)
 	arg_1_0._percentage = 0
 end
 
-function VersusSurviveEventObjectiveExtension._set_objective_data(arg_2_0, arg_2_1)
+VersusSurviveEventObjectiveExtension._set_objective_data = function (arg_2_0, arg_2_1)
 	local var_2_0 = GameModeSettings.versus.objectives.survive_event
 
 	arg_2_0._num_sections = arg_2_1.num_sections or var_2_0.num_sections
@@ -25,15 +25,15 @@ function VersusSurviveEventObjectiveExtension._set_objective_data(arg_2_0, arg_2
 	arg_2_0._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event or var_2_0.on_section_progress_sound_event
 end
 
-function VersusSurviveEventObjectiveExtension._activate(arg_3_0)
+VersusSurviveEventObjectiveExtension._activate = function (arg_3_0)
 	arg_3_0._survive_time_done = Managers.time:time("game") + arg_3_0._time_for_completion
 end
 
-function VersusSurviveEventObjectiveExtension._deactivate(arg_4_0)
+VersusSurviveEventObjectiveExtension._deactivate = function (arg_4_0)
 	return
 end
 
-function VersusSurviveEventObjectiveExtension._server_update(arg_5_0, arg_5_1, arg_5_2)
+VersusSurviveEventObjectiveExtension._server_update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = math.clamp(arg_5_0._survive_time_done - arg_5_2, 0, arg_5_0._time_for_completion)
 
 	if var_5_0 ~= arg_5_0._remaining_survive_time then
@@ -49,15 +49,15 @@ function VersusSurviveEventObjectiveExtension._server_update(arg_5_0, arg_5_1, a
 	end
 end
 
-function VersusSurviveEventObjectiveExtension._client_update(arg_6_0, arg_6_1, arg_6_2)
+VersusSurviveEventObjectiveExtension._client_update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._percentage = arg_6_0:client_get_value()
 end
 
-function VersusSurviveEventObjectiveExtension.update_testify(arg_7_0, arg_7_1, arg_7_2)
+VersusSurviveEventObjectiveExtension.update_testify = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function VersusSurviveEventObjectiveExtension.get_percentage_done(arg_8_0)
+VersusSurviveEventObjectiveExtension.get_percentage_done = function (arg_8_0)
 	if arg_8_0._is_server then
 		local var_8_0 = 1 - arg_8_0._remaining_survive_time / arg_8_0._time_for_completion
 

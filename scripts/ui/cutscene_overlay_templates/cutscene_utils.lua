@@ -8,7 +8,7 @@ function _convert_string_timestamp_to_seconds(arg_1_0)
 	return var_1_0 * 60 + var_1_1 + var_1_2 * 0.01
 end
 
-function var_0_0.convert_string_timestamps_to_seconds(arg_2_0)
+var_0_0.convert_string_timestamps_to_seconds = function (arg_2_0)
 	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
 		for iter_2_2, iter_2_3 in ipairs(iter_2_1) do
 			local var_2_0 = iter_2_3.start_timestamp

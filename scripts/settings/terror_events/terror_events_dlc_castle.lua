@@ -56,7 +56,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("chaos_marauder") < 4 and var_0_1("chaos_fanatic") < 4
 			end
 		},
@@ -133,7 +133,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 240,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("chaos_warrior") < 1
 			end
 		},
@@ -155,7 +155,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_storm_vermin_commander") < 2
 			end
 		},
@@ -202,7 +202,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},
@@ -248,7 +248,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1("chaos_exalted_sorcerer_drachenfels") == 1
 			end
 		},
@@ -262,7 +262,7 @@ local var_0_7 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_1("chaos_exalted_sorcerer_drachenfels") < 1
 			end
 		},
@@ -302,7 +302,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},
@@ -333,7 +333,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_storm_vermin_commander") < 2
 			end
 		},

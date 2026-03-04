@@ -21,7 +21,7 @@ local var_0_4 = 4
 
 LevelEndViewBase = class(LevelEndViewBase)
 
-function LevelEndViewBase.init(arg_1_0, arg_1_1)
+LevelEndViewBase.init = function (arg_1_0, arg_1_1)
 	arg_1_0:setup_world(arg_1_1)
 	arg_1_0:setup_transition_data()
 
@@ -103,11 +103,11 @@ function LevelEndViewBase.init(arg_1_0, arg_1_1)
 	end
 end
 
-function LevelEndViewBase.state_machine_completed(arg_2_0)
+LevelEndViewBase.state_machine_completed = function (arg_2_0)
 	return arg_2_0._state_machine_complete
 end
 
-function LevelEndViewBase.setup_transition_data(arg_3_0)
+LevelEndViewBase.setup_transition_data = function (arg_3_0)
 	arg_3_0._transition_animations = {}
 	arg_3_0._transition_render_settings = {
 		alpha_multiplier = 0,
@@ -121,7 +121,7 @@ function LevelEndViewBase.setup_transition_data(arg_3_0)
 	arg_3_0._transition_ui_animator = UIAnimator:new(arg_3_0._transition_scenegraph_ui, var_0_0.transition_animations)
 end
 
-function LevelEndViewBase.trigger_transition(arg_4_0, arg_4_1)
+LevelEndViewBase.trigger_transition = function (arg_4_0, arg_4_1)
 	arg_4_0:_cleanup_transitions()
 
 	local var_4_0 = {
@@ -135,7 +135,7 @@ function LevelEndViewBase.trigger_transition(arg_4_0, arg_4_1)
 	arg_4_0._transition_animations[#arg_4_0._transition_animations + 1] = arg_4_0._transition_ui_animator:start_animation(var_4_2, var_4_1, var_0_0.transition_scenegraph_definition, var_4_0)
 end
 
-function LevelEndViewBase.transition_camera(arg_5_0, arg_5_1)
+LevelEndViewBase.transition_camera = function (arg_5_0, arg_5_1)
 	if not arg_5_1.camera_name then
 		return
 	end
@@ -164,7 +164,7 @@ function LevelEndViewBase.transition_camera(arg_5_0, arg_5_1)
 	arg_5_0:position_camera()
 end
 
-function LevelEndViewBase._cleanup_transitions(arg_6_0)
+LevelEndViewBase._cleanup_transitions = function (arg_6_0)
 	for iter_6_0, iter_6_1 in pairs(arg_6_0._transition_animations) do
 		arg_6_0._transition_ui_animator:stop_animation(iter_6_1)
 	end
@@ -172,7 +172,7 @@ function LevelEndViewBase._cleanup_transitions(arg_6_0)
 	table.clear(arg_6_0._transition_animations)
 end
 
-function LevelEndViewBase._update_transition_fade(arg_7_0, arg_7_1, arg_7_2)
+LevelEndViewBase._update_transition_fade = function (arg_7_0, arg_7_1, arg_7_2)
 	if table.is_empty(arg_7_0._transition_animations) then
 		return
 	end
@@ -181,7 +181,7 @@ function LevelEndViewBase._update_transition_fade(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_draw_transition_widgets(arg_7_1, arg_7_2)
 end
 
-function LevelEndViewBase._draw_transition_widgets(arg_8_0, arg_8_1, arg_8_2)
+LevelEndViewBase._draw_transition_widgets = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.ui_renderer
 	local var_8_1 = arg_8_0.ui_top_renderer
 	local var_8_2 = arg_8_0._transition_scenegraph_ui
@@ -198,7 +198,7 @@ function LevelEndViewBase._draw_transition_widgets(arg_8_0, arg_8_1, arg_8_2)
 	UIRenderer.end_pass(var_8_0)
 end
 
-function LevelEndViewBase._update_transition_animations(arg_9_0, arg_9_1, arg_9_2)
+LevelEndViewBase._update_transition_animations = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._transition_ui_animator
 
 	var_9_0:update(arg_9_1)
@@ -212,11 +212,11 @@ function LevelEndViewBase._update_transition_animations(arg_9_0, arg_9_1, arg_9_
 	end
 end
 
-function LevelEndViewBase.enable_chat(arg_10_0)
+LevelEndViewBase.enable_chat = function (arg_10_0)
 	return true
 end
 
-function LevelEndViewBase.start(arg_11_0)
+LevelEndViewBase.start = function (arg_11_0)
 	arg_11_0:_activate_viewport()
 
 	arg_11_0.waiting_to_start = nil
@@ -225,11 +225,11 @@ function LevelEndViewBase.start(arg_11_0)
 	arg_11_0:_proceed_to_next_auto_state(1, #arg_11_0._state_name_by_index)
 end
 
-function LevelEndViewBase.on_enter(arg_12_0)
+LevelEndViewBase.on_enter = function (arg_12_0)
 	arg_12_0._state_speed_mult = 1
 end
 
-function LevelEndViewBase.on_exit(arg_13_0)
+LevelEndViewBase.on_exit = function (arg_13_0)
 	if not arg_13_0._is_untrusted then
 		local var_13_0 = Managers.state.difficulty:get_difficulty()
 		local var_13_1 = LootChestData.chests_by_category[var_13_0].package_name
@@ -238,36 +238,36 @@ function LevelEndViewBase.on_exit(arg_13_0)
 	end
 end
 
-function LevelEndViewBase._vote_to_leave_game(arg_14_0)
+LevelEndViewBase._vote_to_leave_game = function (arg_14_0)
 	Managers.state.voting:vote(1)
 
 	arg_14_0._voted = true
 end
 
-function LevelEndViewBase.exit_to_game(arg_15_0)
+LevelEndViewBase.exit_to_game = function (arg_15_0)
 	arg_15_0._exit_timer = 2
 	arg_15_0._started_exit = true
 end
 
-function LevelEndViewBase.done(arg_16_0)
+LevelEndViewBase.done = function (arg_16_0)
 	return arg_16_0._wants_to_exit_to_game
 end
 
-function LevelEndViewBase.setup_pages(arg_17_0, arg_17_1, arg_17_2)
+LevelEndViewBase.setup_pages = function (arg_17_0, arg_17_1, arg_17_2)
 	return {}
 end
 
-function LevelEndViewBase.create_ui_elements(arg_18_0)
+LevelEndViewBase.create_ui_elements = function (arg_18_0)
 	return
 end
 
-function LevelEndViewBase._activate_viewport(arg_19_0)
+LevelEndViewBase._activate_viewport = function (arg_19_0)
 	local var_19_0, var_19_1 = arg_19_0:get_viewport_world()
 
 	ScriptWorld.activate_viewport(var_19_0, var_19_1)
 end
 
-function LevelEndViewBase.get_world_link_unit(arg_20_0)
+LevelEndViewBase.get_world_link_unit = function (arg_20_0)
 	local var_20_0 = "levels/end_screen/world"
 	local var_20_1 = arg_20_0:get_viewport_world()
 	local var_20_2 = ScriptWorld.level(var_20_1, var_20_0)
@@ -285,15 +285,15 @@ function LevelEndViewBase.get_world_link_unit(arg_20_0)
 	end
 end
 
-function LevelEndViewBase.get_viewport_world(arg_21_0)
+LevelEndViewBase.get_viewport_world = function (arg_21_0)
 	return arg_21_0._world, arg_21_0._world_viewport
 end
 
-function LevelEndViewBase.post_update(arg_22_0)
+LevelEndViewBase.post_update = function (arg_22_0)
 	return
 end
 
-function LevelEndViewBase.update(arg_23_0, arg_23_1, arg_23_2)
+LevelEndViewBase.update = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_0.suspended or arg_23_0.waiting_for_post_update_enter then
 		return
 	end
@@ -360,15 +360,15 @@ function LevelEndViewBase.update(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function LevelEndViewBase.skip_pressed(arg_24_0)
+LevelEndViewBase.skip_pressed = function (arg_24_0)
 	return arg_24_0._skip_pressed
 end
 
-function LevelEndViewBase.transitioning(arg_25_0)
+LevelEndViewBase.transitioning = function (arg_25_0)
 	return arg_25_0.exiting
 end
 
-function LevelEndViewBase.left_lobby(arg_26_0)
+LevelEndViewBase.left_lobby = function (arg_26_0)
 	arg_26_0._left_lobby = true
 	arg_26_0._lobby = nil
 
@@ -377,7 +377,7 @@ function LevelEndViewBase.left_lobby(arg_26_0)
 	end
 end
 
-function LevelEndViewBase.destroy(arg_27_0, arg_27_1)
+LevelEndViewBase.destroy = function (arg_27_0, arg_27_1)
 	arg_27_0.ui_animator = nil
 
 	arg_27_0:_cleanup_transitions()
@@ -404,11 +404,11 @@ function LevelEndViewBase.destroy(arg_27_0, arg_27_1)
 	end
 end
 
-function LevelEndViewBase.play_sound(arg_28_0, arg_28_1)
+LevelEndViewBase.play_sound = function (arg_28_0, arg_28_1)
 	WwiseWorld.trigger_event(arg_28_0.wwise_world, arg_28_1)
 end
 
-function LevelEndViewBase._is_button_pressed(arg_29_0, arg_29_1)
+LevelEndViewBase._is_button_pressed = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_1.content.button_hotspot
 
 	if var_29_0.on_release then
@@ -418,11 +418,11 @@ function LevelEndViewBase._is_button_pressed(arg_29_0, arg_29_1)
 	end
 end
 
-function LevelEndViewBase._is_button_hover_enter(arg_30_0, arg_30_1)
+LevelEndViewBase._is_button_hover_enter = function (arg_30_0, arg_30_1)
 	return arg_30_1.content.button_hotspot.on_hover_enter
 end
 
-function LevelEndViewBase._is_page_selector_pressed(arg_31_0)
+LevelEndViewBase._is_page_selector_pressed = function (arg_31_0)
 	local var_31_0 = arg_31_0._page_selector_widget.content
 	local var_31_1 = var_31_0.amount
 
@@ -436,7 +436,7 @@ function LevelEndViewBase._is_page_selector_pressed(arg_31_0)
 	end
 end
 
-function LevelEndViewBase._set_page_selector_selection(arg_32_0, arg_32_1)
+LevelEndViewBase._set_page_selector_selection = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._page_selector_widget.content
 	local var_32_1 = var_32_0.amount
 
@@ -447,7 +447,7 @@ function LevelEndViewBase._set_page_selector_selection(arg_32_0, arg_32_1)
 	end
 end
 
-function LevelEndViewBase._update_exit(arg_33_0, arg_33_1)
+LevelEndViewBase._update_exit = function (arg_33_0, arg_33_1)
 	arg_33_0._exit_timer = math.max(0, arg_33_0._exit_timer - arg_33_1)
 
 	if arg_33_0._exit_timer == 0 then
@@ -456,11 +456,11 @@ function LevelEndViewBase._update_exit(arg_33_0, arg_33_1)
 	end
 end
 
-function LevelEndViewBase.do_retry(arg_34_0)
+LevelEndViewBase.do_retry = function (arg_34_0)
 	return false
 end
 
-function LevelEndViewBase._get_level_up_rewards(arg_35_0)
+LevelEndViewBase._get_level_up_rewards = function (arg_35_0)
 	local var_35_0 = arg_35_0.context.rewards.end_of_level_rewards
 	local var_35_1 = {}
 
@@ -481,7 +481,7 @@ function LevelEndViewBase._get_level_up_rewards(arg_35_0)
 	return var_35_1
 end
 
-function LevelEndViewBase._get_versus_level_up_rewards(arg_36_0)
+LevelEndViewBase._get_versus_level_up_rewards = function (arg_36_0)
 	local var_36_0 = arg_36_0.context.rewards.end_of_level_rewards
 	local var_36_1 = {}
 
@@ -502,7 +502,7 @@ function LevelEndViewBase._get_versus_level_up_rewards(arg_36_0)
 	return var_36_1
 end
 
-function LevelEndViewBase._get_win_track_rewards(arg_37_0)
+LevelEndViewBase._get_win_track_rewards = function (arg_37_0)
 	local var_37_0 = arg_37_0.context.rewards.end_of_level_rewards
 	local var_37_1 = {
 		start_experience = arg_37_0.context.rewards.win_track_start_experience,
@@ -521,7 +521,7 @@ function LevelEndViewBase._get_win_track_rewards(arg_37_0)
 	return var_37_1
 end
 
-function LevelEndViewBase._get_deed_rewards(arg_38_0)
+LevelEndViewBase._get_deed_rewards = function (arg_38_0)
 	local var_38_0 = arg_38_0.context.rewards.end_of_level_rewards
 	local var_38_1 = {}
 
@@ -534,7 +534,7 @@ function LevelEndViewBase._get_deed_rewards(arg_38_0)
 	return var_38_1
 end
 
-function LevelEndViewBase._get_event_rewards(arg_39_0)
+LevelEndViewBase._get_event_rewards = function (arg_39_0)
 	local var_39_0 = arg_39_0.context.rewards.end_of_level_rewards
 	local var_39_1 = {}
 
@@ -547,7 +547,7 @@ function LevelEndViewBase._get_event_rewards(arg_39_0)
 	return var_39_1
 end
 
-function LevelEndViewBase._get_deus_rewards(arg_40_0)
+LevelEndViewBase._get_deus_rewards = function (arg_40_0)
 	local var_40_0 = arg_40_0.context.rewards.end_of_level_rewards
 	local var_40_1 = {}
 
@@ -560,7 +560,7 @@ function LevelEndViewBase._get_deus_rewards(arg_40_0)
 	return var_40_1
 end
 
-function LevelEndViewBase._get_keep_decoration_rewards(arg_41_0)
+LevelEndViewBase._get_keep_decoration_rewards = function (arg_41_0)
 	local var_41_0 = arg_41_0.context.rewards.end_of_level_rewards
 	local var_41_1 = {}
 
@@ -573,7 +573,7 @@ function LevelEndViewBase._get_keep_decoration_rewards(arg_41_0)
 	return var_41_1
 end
 
-function LevelEndViewBase._present_reward(arg_42_0, arg_42_1)
+LevelEndViewBase._present_reward = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0.reward_popup
 
 	if arg_42_0:displaying_reward_presentation() then
@@ -585,7 +585,7 @@ function LevelEndViewBase._present_reward(arg_42_0, arg_42_1)
 	end
 end
 
-function LevelEndViewBase._handle_queued_presentations(arg_43_0)
+LevelEndViewBase._handle_queued_presentations = function (arg_43_0)
 	if arg_43_0:_is_reward_presentation_complete() or #arg_43_0._reward_presentation_queue == 0 and not arg_43_0:displaying_reward_presentation() then
 		local var_43_0 = arg_43_0._reward_presentation_queue
 
@@ -599,19 +599,19 @@ function LevelEndViewBase._handle_queued_presentations(arg_43_0)
 	end
 end
 
-function LevelEndViewBase.displaying_reward_presentation(arg_44_0)
+LevelEndViewBase.displaying_reward_presentation = function (arg_44_0)
 	return arg_44_0.reward_popup:is_presentation_active()
 end
 
-function LevelEndViewBase._is_reward_presentation_complete(arg_45_0)
+LevelEndViewBase._is_reward_presentation_complete = function (arg_45_0)
 	return arg_45_0.reward_popup:is_presentation_complete()
 end
 
-function LevelEndViewBase.reward_presentation_done(arg_46_0)
+LevelEndViewBase.reward_presentation_done = function (arg_46_0)
 	return arg_46_0._reward_presentation_done
 end
 
-function LevelEndViewBase.present_level_up(arg_47_0, arg_47_1, arg_47_2)
+LevelEndViewBase.present_level_up = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = ProgressionUnlocks.get_level_unlocks(arg_47_2, arg_47_1)
 	local var_47_1 = arg_47_0.level_up_rewards[arg_47_2]
 	local var_47_2 = var_47_0 and #var_47_0 > 0
@@ -695,7 +695,7 @@ function LevelEndViewBase.present_level_up(arg_47_0, arg_47_1, arg_47_2)
 	end
 end
 
-function LevelEndViewBase.present_win_track_reward(arg_48_0, arg_48_1)
+LevelEndViewBase.present_win_track_reward = function (arg_48_0, arg_48_1)
 	local var_48_0 = Managers.backend:get_interface("items")
 	local var_48_1 = arg_48_0.win_track_rewards.item_rewards[arg_48_1]
 	local var_48_2 = {}
@@ -725,7 +725,7 @@ function LevelEndViewBase.present_win_track_reward(arg_48_0, arg_48_1)
 	arg_48_0:_present_reward(var_48_2)
 end
 
-function LevelEndViewBase.present_additional_rewards(arg_49_0)
+LevelEndViewBase.present_additional_rewards = function (arg_49_0)
 	local var_49_0 = arg_49_0.deed_rewards
 	local var_49_1 = #var_49_0
 	local var_49_2 = Managers.backend:get_interface("items")
@@ -876,7 +876,7 @@ function LevelEndViewBase.present_additional_rewards(arg_49_0)
 	end
 end
 
-function LevelEndViewBase.present_chest_rewards(arg_50_0)
+LevelEndViewBase.present_chest_rewards = function (arg_50_0)
 	local var_50_0 = arg_50_0.context.rewards.end_of_level_rewards
 	local var_50_1 = Managers.backend:get_interface("items")
 	local var_50_2 = var_50_0.chest
@@ -907,15 +907,15 @@ function LevelEndViewBase.present_chest_rewards(arg_50_0)
 	end
 end
 
-function LevelEndViewBase.wanted_menu_state(arg_51_0)
+LevelEndViewBase.wanted_menu_state = function (arg_51_0)
 	return arg_51_0._wanted_menu_state
 end
 
-function LevelEndViewBase.clear_wanted_menu_state(arg_52_0)
+LevelEndViewBase.clear_wanted_menu_state = function (arg_52_0)
 	arg_52_0._wanted_menu_state = nil
 end
 
-function LevelEndViewBase._request_state_change(arg_53_0, arg_53_1)
+LevelEndViewBase._request_state_change = function (arg_53_0, arg_53_1)
 	local var_53_0 = arg_53_0._machine
 
 	if not var_53_0 then
@@ -932,7 +932,7 @@ function LevelEndViewBase._request_state_change(arg_53_0, arg_53_1)
 	arg_53_0._new_state_name = arg_53_1
 end
 
-function LevelEndViewBase._handle_state_exit(arg_54_0)
+LevelEndViewBase._handle_state_exit = function (arg_54_0)
 	local var_54_0 = arg_54_0._machine
 
 	if not var_54_0 then
@@ -947,7 +947,7 @@ function LevelEndViewBase._handle_state_exit(arg_54_0)
 	end
 end
 
-function LevelEndViewBase._setup_state_machine(arg_55_0, arg_55_1, arg_55_2)
+LevelEndViewBase._setup_state_machine = function (arg_55_0, arg_55_1, arg_55_2)
 	if arg_55_0._machine then
 		arg_55_0._machine:destroy()
 
@@ -978,7 +978,7 @@ function LevelEndViewBase._setup_state_machine(arg_55_0, arg_55_1, arg_55_2)
 	arg_55_0:_show_object_set(var_55_0)
 end
 
-function LevelEndViewBase._handle_state_auto_change(arg_56_0)
+LevelEndViewBase._handle_state_auto_change = function (arg_56_0)
 	local var_56_0 = arg_56_0._machine
 
 	if not var_56_0 then
@@ -1018,7 +1018,7 @@ function LevelEndViewBase._handle_state_auto_change(arg_56_0)
 	end
 end
 
-function LevelEndViewBase._proceed_to_next_auto_state(arg_57_0, arg_57_1, arg_57_2)
+LevelEndViewBase._proceed_to_next_auto_state = function (arg_57_0, arg_57_1, arg_57_2)
 	local var_57_0 = arg_57_0._state_name_by_index[arg_57_1]
 
 	arg_57_0:_setup_state_machine(var_57_0, true)
@@ -1032,7 +1032,7 @@ function LevelEndViewBase._proceed_to_next_auto_state(arg_57_0, arg_57_1, arg_57
 	arg_57_0._next_auto_state_index = nil
 end
 
-function LevelEndViewBase.rpc_signal_end_of_level_done(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+LevelEndViewBase.rpc_signal_end_of_level_done = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	if arg_58_0.is_server then
 		local var_58_0 = arg_58_0._lobby:members():get_members()
 		local var_58_1 = Network.peer_id()
@@ -1051,7 +1051,7 @@ function LevelEndViewBase.rpc_signal_end_of_level_done(arg_58_0, arg_58_1, arg_5
 	arg_58_0:peer_signaled_done(arg_58_2, arg_58_3)
 end
 
-function LevelEndViewBase.signal_done(arg_59_0, arg_59_1)
+LevelEndViewBase.signal_done = function (arg_59_0, arg_59_1)
 	if arg_59_0._signaled_done then
 		return
 	end
@@ -1088,7 +1088,7 @@ function LevelEndViewBase.signal_done(arg_59_0, arg_59_1)
 	arg_59_0:peer_signaled_done(Network.peer_id(), arg_59_1)
 end
 
-function LevelEndViewBase.peer_signaled_done(arg_60_0, arg_60_1, arg_60_2)
+LevelEndViewBase.peer_signaled_done = function (arg_60_0, arg_60_1, arg_60_2)
 	if not arg_60_0._started_force_shutdown then
 		arg_60_0:start_force_shutdown()
 	end
@@ -1097,7 +1097,7 @@ function LevelEndViewBase.peer_signaled_done(arg_60_0, arg_60_1, arg_60_2)
 	arg_60_0._wants_reload[arg_60_1] = arg_60_2
 end
 
-function LevelEndViewBase.rpc_notify_lobby_joined(arg_61_0, arg_61_1)
+LevelEndViewBase.rpc_notify_lobby_joined = function (arg_61_0, arg_61_1)
 	if arg_61_0.is_server then
 		local var_61_0 = false
 		local var_61_1 = arg_61_0._lobby:members():get_members()
@@ -1116,21 +1116,21 @@ function LevelEndViewBase.rpc_notify_lobby_joined(arg_61_0, arg_61_1)
 	end
 end
 
-function LevelEndViewBase.start_force_shutdown(arg_62_0)
+LevelEndViewBase.start_force_shutdown = function (arg_62_0)
 	arg_62_0._started_force_shutdown = true
 	arg_62_0._force_shutdown_timer = 45
 	arg_62_0._force_shutdown_timer_start = arg_62_0._force_shutdown_timer
 end
 
-function LevelEndViewBase.get_force_shutdown_time(arg_63_0)
+LevelEndViewBase.get_force_shutdown_time = function (arg_63_0)
 	return arg_63_0._force_shutdown_timer, arg_63_0._force_shutdown_timer_start
 end
 
-function LevelEndViewBase.is_force_shutdown_active(arg_64_0)
+LevelEndViewBase.is_force_shutdown_active = function (arg_64_0)
 	return arg_64_0._started_force_shutdown
 end
 
-function LevelEndViewBase.update_force_shutdown(arg_65_0, arg_65_1)
+LevelEndViewBase.update_force_shutdown = function (arg_65_0, arg_65_1)
 	arg_65_0._force_shutdown_timer = math.max(0, arg_65_0._force_shutdown_timer - arg_65_1)
 
 	if arg_65_0._force_shutdown_timer == 0 and not arg_65_0._signaled_done then
@@ -1172,7 +1172,7 @@ local var_0_5 = {
 	octaves = 7
 }
 
-function LevelEndViewBase.setup_camera(arg_66_0)
+LevelEndViewBase.setup_camera = function (arg_66_0)
 	local var_66_0
 	local var_66_1
 	local var_66_2 = "levels/end_screen/world"
@@ -1202,7 +1202,7 @@ function LevelEndViewBase.setup_camera(arg_66_0)
 	arg_66_0:position_camera()
 end
 
-function LevelEndViewBase.add_camera_shake(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+LevelEndViewBase.add_camera_shake = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	local var_67_0 = {}
 	local var_67_1 = arg_67_0:get_camera_rotation()
 	local var_67_2 = arg_67_1 or var_0_5
@@ -1224,7 +1224,7 @@ function LevelEndViewBase.add_camera_shake(arg_67_0, arg_67_1, arg_67_2, arg_67_
 	}
 end
 
-function LevelEndViewBase._apply_shake_event(arg_68_0, arg_68_1, arg_68_2)
+LevelEndViewBase._apply_shake_event = function (arg_68_0, arg_68_1, arg_68_2)
 	local var_68_0 = arg_68_0._active_camera_shakes
 	local var_68_1 = arg_68_1.start_time
 	local var_68_2 = arg_68_1.end_time
@@ -1253,7 +1253,7 @@ function LevelEndViewBase._apply_shake_event(arg_68_0, arg_68_1, arg_68_2)
 	end
 end
 
-function LevelEndViewBase._calculate_perlin_value(arg_69_0, arg_69_1, arg_69_2)
+LevelEndViewBase._calculate_perlin_value = function (arg_69_0, arg_69_1, arg_69_2)
 	local var_69_0 = 0
 	local var_69_1 = arg_69_2.shake_settings
 	local var_69_2 = var_69_1.persistance
@@ -1272,7 +1272,7 @@ function LevelEndViewBase._calculate_perlin_value(arg_69_0, arg_69_1, arg_69_2)
 	return var_69_0 * var_69_6 * var_69_7
 end
 
-function LevelEndViewBase._interpolated_noise(arg_70_0, arg_70_1, arg_70_2)
+LevelEndViewBase._interpolated_noise = function (arg_70_0, arg_70_1, arg_70_2)
 	local var_70_0 = math.floor(arg_70_1)
 	local var_70_1 = arg_70_1 - var_70_0
 	local var_70_2 = arg_70_0:_smoothed_noise(var_70_0, arg_70_2)
@@ -1281,46 +1281,46 @@ function LevelEndViewBase._interpolated_noise(arg_70_0, arg_70_1, arg_70_2)
 	return math.lerp(var_70_2, var_70_3, var_70_1)
 end
 
-function LevelEndViewBase._smoothed_noise(arg_71_0, arg_71_1, arg_71_2)
+LevelEndViewBase._smoothed_noise = function (arg_71_0, arg_71_1, arg_71_2)
 	return arg_71_0:_noise(arg_71_1, arg_71_2) / 2 + arg_71_0:_noise(arg_71_1 - 1, arg_71_2) / 4 + arg_71_0:_noise(arg_71_1 + 1, arg_71_2) / 4
 end
 
-function LevelEndViewBase._noise(arg_72_0, arg_72_1, arg_72_2)
+LevelEndViewBase._noise = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0, var_72_1 = Math.next_random(arg_72_1 + arg_72_2.seed)
 	local var_72_2, var_72_3 = Math.next_random(var_72_0)
 
 	return var_72_3 * 2 - 1
 end
 
-function LevelEndViewBase.set_camera_position(arg_73_0, arg_73_1)
+LevelEndViewBase.set_camera_position = function (arg_73_0, arg_73_1)
 	local var_73_0, var_73_1 = arg_73_0:get_viewport_world()
 	local var_73_2 = ScriptViewport.camera(var_73_1)
 
 	return ScriptCamera.set_local_position(var_73_2, arg_73_1)
 end
 
-function LevelEndViewBase.set_camera_rotation(arg_74_0, arg_74_1)
+LevelEndViewBase.set_camera_rotation = function (arg_74_0, arg_74_1)
 	local var_74_0, var_74_1 = arg_74_0:get_viewport_world()
 	local var_74_2 = ScriptViewport.camera(var_74_1)
 
 	return ScriptCamera.set_local_rotation(var_74_2, arg_74_1)
 end
 
-function LevelEndViewBase.get_camera_position(arg_75_0)
+LevelEndViewBase.get_camera_position = function (arg_75_0)
 	local var_75_0, var_75_1 = arg_75_0:get_viewport_world()
 	local var_75_2 = ScriptViewport.camera(var_75_1)
 
 	return ScriptCamera.position(var_75_2)
 end
 
-function LevelEndViewBase.get_camera_rotation(arg_76_0)
+LevelEndViewBase.get_camera_rotation = function (arg_76_0)
 	local var_76_0, var_76_1 = arg_76_0:get_viewport_world()
 	local var_76_2 = ScriptViewport.camera(var_76_1)
 
 	return ScriptCamera.rotation(var_76_2)
 end
 
-function LevelEndViewBase.position_camera(arg_77_0, arg_77_1, arg_77_2)
+LevelEndViewBase.position_camera = function (arg_77_0, arg_77_1, arg_77_2)
 	local var_77_0, var_77_1 = arg_77_0:get_viewport_world()
 	local var_77_2 = ScriptViewport.camera(var_77_1)
 	local var_77_3 = arg_77_1 or arg_77_0._camera_pose:unbox()
@@ -1334,7 +1334,7 @@ function LevelEndViewBase.position_camera(arg_77_0, arg_77_1, arg_77_2)
 	end
 end
 
-function LevelEndViewBase.set_camera_zoom(arg_78_0, arg_78_1)
+LevelEndViewBase.set_camera_zoom = function (arg_78_0, arg_78_1)
 	local var_78_0 = arg_78_0._camera_pose:unbox()
 	local var_78_1 = Matrix4x4.translation(var_78_0)
 	local var_78_2 = Matrix4x4.rotation(var_78_0)
@@ -1344,7 +1344,7 @@ function LevelEndViewBase.set_camera_zoom(arg_78_0, arg_78_1)
 	arg_78_0:set_camera_position(var_78_4)
 end
 
-function LevelEndViewBase._setup_viewport_camera(arg_79_0)
+LevelEndViewBase._setup_viewport_camera = function (arg_79_0)
 	local var_79_0, var_79_1 = arg_79_0:get_viewport_world()
 	local var_79_2 = World.unit_by_name(var_79_0, "camera")
 	local var_79_3 = Unit.world_rotation(var_79_2, 0)
@@ -1355,7 +1355,7 @@ function LevelEndViewBase._setup_viewport_camera(arg_79_0)
 	ScriptCamera.set_local_position(var_79_5, var_79_4)
 end
 
-function LevelEndViewBase._push_mouse_cursor(arg_80_0)
+LevelEndViewBase._push_mouse_cursor = function (arg_80_0)
 	if not arg_80_0._cursor_visible then
 		ShowCursorStack.show("LevelEndViewBase")
 
@@ -1363,7 +1363,7 @@ function LevelEndViewBase._push_mouse_cursor(arg_80_0)
 	end
 end
 
-function LevelEndViewBase._pop_mouse_cursor(arg_81_0)
+LevelEndViewBase._pop_mouse_cursor = function (arg_81_0)
 	if arg_81_0._cursor_visible then
 		ShowCursorStack.hide("LevelEndViewBase")
 
@@ -1371,7 +1371,7 @@ function LevelEndViewBase._pop_mouse_cursor(arg_81_0)
 	end
 end
 
-function LevelEndViewBase.set_input_manager(arg_82_0, arg_82_1)
+LevelEndViewBase.set_input_manager = function (arg_82_0, arg_82_1)
 	arg_82_0.input_manager = arg_82_1
 
 	if arg_82_0.reward_popup then
@@ -1381,23 +1381,23 @@ function LevelEndViewBase.set_input_manager(arg_82_0, arg_82_1)
 	arg_82_0._machine:state():set_input_manager(arg_82_1)
 end
 
-function LevelEndViewBase.input_service(arg_83_0)
+LevelEndViewBase.input_service = function (arg_83_0)
 	return (arg_83_0:displaying_reward_presentation() or not table.is_empty(arg_83_0._transition_animations)) and FAKE_INPUT_SERVICE or arg_83_0.input_manager:get_service("end_of_level")
 end
 
-function LevelEndViewBase.menu_input_service(arg_84_0)
+LevelEndViewBase.menu_input_service = function (arg_84_0)
 	return arg_84_0.input_blocked and FAKE_INPUT_SERVICE or arg_84_0:input_service()
 end
 
-function LevelEndViewBase.set_input_blocked(arg_85_0, arg_85_1)
+LevelEndViewBase.set_input_blocked = function (arg_85_0, arg_85_1)
 	arg_85_0.input_blocked = arg_85_1
 end
 
-function LevelEndViewBase.input_enabled(arg_86_0)
+LevelEndViewBase.input_enabled = function (arg_86_0)
 	return true
 end
 
-function LevelEndViewBase.setup_world(arg_87_0, arg_87_1)
+LevelEndViewBase.setup_world = function (arg_87_0, arg_87_1)
 	local var_87_0, var_87_1 = arg_87_0:create_world(arg_87_1)
 	local var_87_2 = arg_87_0:spawn_level(arg_87_1, var_87_0)
 	local var_87_3 = arg_87_0:create_viewport(arg_87_1, var_87_0)
@@ -1419,7 +1419,7 @@ function LevelEndViewBase.setup_world(arg_87_0, arg_87_1)
 	arg_87_1.wwise_world = var_87_6
 end
 
-function LevelEndViewBase.destroy_world(arg_88_0)
+LevelEndViewBase.destroy_world = function (arg_88_0)
 	UIRenderer.destroy(arg_88_0.ui_renderer, arg_88_0._world)
 
 	arg_88_0.ui_renderer = nil
@@ -1434,7 +1434,7 @@ function LevelEndViewBase.destroy_world(arg_88_0)
 	arg_88_0._top_world = nil
 end
 
-function LevelEndViewBase.get_world_flags(arg_89_0)
+LevelEndViewBase.get_world_flags = function (arg_89_0)
 	local var_89_0 = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM,
@@ -1451,7 +1451,7 @@ function LevelEndViewBase.get_world_flags(arg_89_0)
 	return var_89_0
 end
 
-function LevelEndViewBase.create_world(arg_90_0, arg_90_1)
+LevelEndViewBase.create_world = function (arg_90_0, arg_90_1)
 	local var_90_0 = "end_screen"
 	local var_90_1 = "environment/ui_end_screen"
 	local var_90_2 = 2
@@ -1462,7 +1462,7 @@ function LevelEndViewBase.create_world(arg_90_0, arg_90_1)
 	return var_90_4, var_90_5
 end
 
-function LevelEndViewBase.create_viewport(arg_91_0, arg_91_1, arg_91_2)
+LevelEndViewBase.create_viewport = function (arg_91_0, arg_91_1, arg_91_2)
 	local var_91_0 = "end_screen_viewport"
 	local var_91_1 = "default"
 	local var_91_2 = 2
@@ -1470,7 +1470,7 @@ function LevelEndViewBase.create_viewport(arg_91_0, arg_91_1, arg_91_2)
 	return (ScriptWorld.create_viewport(arg_91_2, var_91_0, var_91_1, var_91_2))
 end
 
-function LevelEndViewBase.spawn_level(arg_92_0, arg_92_1, arg_92_2)
+LevelEndViewBase.spawn_level = function (arg_92_0, arg_92_1, arg_92_2)
 	local var_92_0 = "levels/end_screen/world"
 	local var_92_1 = {}
 	local var_92_2
@@ -1487,7 +1487,7 @@ function LevelEndViewBase.spawn_level(arg_92_0, arg_92_1, arg_92_2)
 	return var_92_7
 end
 
-function LevelEndViewBase._register_object_sets(arg_93_0, arg_93_1, arg_93_2)
+LevelEndViewBase._register_object_sets = function (arg_93_0, arg_93_1, arg_93_2)
 	local var_93_0 = {}
 	local var_93_1 = LevelResource.object_set_names(arg_93_2)
 
@@ -1503,7 +1503,7 @@ function LevelEndViewBase._register_object_sets(arg_93_0, arg_93_1, arg_93_2)
 	arg_93_0:_show_object_set(nil, arg_93_1)
 end
 
-function LevelEndViewBase._show_object_set(arg_94_0, arg_94_1, arg_94_2)
+LevelEndViewBase._show_object_set = function (arg_94_0, arg_94_1, arg_94_2)
 	local var_94_0 = arg_94_2 or arg_94_0._level
 	local var_94_1 = arg_94_0._object_sets
 	local var_94_2 = false
@@ -1555,7 +1555,7 @@ function LevelEndViewBase._show_object_set(arg_94_0, arg_94_1, arg_94_2)
 	end
 end
 
-function LevelEndViewBase.create_ui_renderer(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+LevelEndViewBase.create_ui_renderer = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 	local var_95_0 = {
 		"material",
 		"materials/ui/ui_1080p_hud_atlas_textures",
@@ -1593,10 +1593,10 @@ function LevelEndViewBase.create_ui_renderer(arg_95_0, arg_95_1, arg_95_2, arg_9
 	return var_95_2, var_95_3
 end
 
-function LevelEndViewBase.show_team(arg_96_0)
+LevelEndViewBase.show_team = function (arg_96_0)
 	return
 end
 
-function LevelEndViewBase.hide_team(arg_97_0)
+LevelEndViewBase.hide_team = function (arg_97_0)
 	return
 end

@@ -51,7 +51,7 @@ local function var_0_22(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return false
 end
 
-function DamageUtils.get_breed_damage_multiplier_type(arg_2_0, arg_2_1)
+DamageUtils.get_breed_damage_multiplier_type = function (arg_2_0, arg_2_1)
 	local var_2_0
 
 	if arg_2_0 and arg_2_0.hitzone_multiplier_types then
@@ -71,7 +71,7 @@ local function var_0_23(arg_3_0, arg_3_1)
 	end
 end
 
-function DamageUtils.get_boost_curve_multiplier(arg_4_0, arg_4_1)
+DamageUtils.get_boost_curve_multiplier = function (arg_4_0, arg_4_1)
 	local var_4_0 = (#arg_4_0 - 1) * arg_4_1
 	local var_4_1 = math.floor(var_4_0) + 1
 	local var_4_2 = var_4_0 - math.floor(var_4_0)
@@ -405,7 +405,7 @@ local function var_0_26(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return var_7_1
 end
 
-function DamageUtils.calculate_damage_tooltip(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15)
+DamageUtils.calculate_damage_tooltip = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15)
 	local var_8_0 = DamageOutput
 	local var_8_1 = false
 	local var_8_2 = false
@@ -416,7 +416,7 @@ function DamageUtils.calculate_damage_tooltip(arg_8_0, arg_8_1, arg_8_2, arg_8_3
 	return (DamageUtils.networkify_damage(var_8_5))
 end
 
-function DamageUtils.calculate_dot_buff_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+DamageUtils.calculate_dot_buff_damage = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	arg_9_2 = arg_9_2 or "full"
 
 	local var_9_0 = arg_9_4 or DefaultPowerLevel
@@ -436,7 +436,7 @@ function DamageUtils.calculate_dot_buff_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_
 	return DamageUtils.calculate_damage(DamageOutput, arg_9_0, arg_9_1, arg_9_2, var_9_0, var_9_4, var_9_5, var_9_1, var_9_2, var_9_6, var_9_7, arg_9_3)
 end
 
-function DamageUtils.calculate_damage(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11)
+DamageUtils.calculate_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, arg_10_11)
 	local var_10_0 = Managers.state.difficulty:get_difficulty_settings()
 	local var_10_1
 	local var_10_2
@@ -841,7 +841,7 @@ end
 
 local var_0_28 = {}
 
-function DamageUtils.calculate_stagger_player_tooltip(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10, arg_12_11, arg_12_12)
+DamageUtils.calculate_stagger_player_tooltip = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9, arg_12_10, arg_12_11, arg_12_12)
 	local var_12_0 = ImpactTypeOutput
 
 	arg_12_0 = arg_12_0 or var_0_28
@@ -856,7 +856,7 @@ function DamageUtils.calculate_stagger_player_tooltip(arg_12_0, arg_12_1, arg_12
 	return var_12_6, var_12_7, var_12_8, var_12_9, var_12_10
 end
 
-function DamageUtils.calculate_stagger_player(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
+DamageUtils.calculate_stagger_player = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
 	local var_13_0 = var_0_2[arg_13_1]
 	local var_13_1 = var_13_0.breed
 	local var_13_2 = Managers.state.difficulty:get_difficulty()
@@ -879,7 +879,7 @@ function DamageUtils.calculate_stagger_player(arg_13_0, arg_13_1, arg_13_2, arg_
 	return var_13_9, var_13_10, var_13_11, var_13_12, var_13_13
 end
 
-function DamageUtils.calculate_stagger(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+DamageUtils.calculate_stagger = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	local var_14_0 = var_0_2[arg_14_2]
 	local var_14_1 = var_14_0.breed
 	local var_14_2 = var_14_1.stagger_armor_category or var_14_1.armor_category or 1
@@ -944,11 +944,11 @@ function DamageUtils.calculate_stagger(arg_14_0, arg_14_1, arg_14_2, arg_14_3, a
 	return var_14_4, var_14_5
 end
 
-function DamageUtils.is_player_unit(arg_15_0)
+DamageUtils.is_player_unit = function (arg_15_0)
 	return Managers.player:is_player_unit(arg_15_0)
 end
 
-function DamageUtils.stagger_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
+DamageUtils.stagger_player = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
 	fassert(arg_16_4 > 0, "Tried to use invalid stagger type %q", arg_16_4)
 
 	local var_16_0 = Managers.state.difficulty:get_difficulty_settings().stagger_modifier
@@ -976,7 +976,7 @@ function DamageUtils.stagger_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_
 	end
 end
 
-function DamageUtils.hit_zone(arg_17_0, arg_17_1)
+DamageUtils.hit_zone = function (arg_17_0, arg_17_1)
 	local var_17_0 = AiUtils.unit_breed(arg_17_0)
 
 	if var_17_0 then
@@ -988,7 +988,7 @@ function DamageUtils.hit_zone(arg_17_0, arg_17_1)
 	end
 end
 
-function DamageUtils.aoe_hit_zone(arg_18_0, arg_18_1)
+DamageUtils.aoe_hit_zone = function (arg_18_0, arg_18_1)
 	local var_18_0 = AiUtils.unit_breed(arg_18_0)
 
 	if var_18_0 then
@@ -1001,7 +1001,7 @@ function DamageUtils.aoe_hit_zone(arg_18_0, arg_18_1)
 	end
 end
 
-function DamageUtils.draw_aoe_size(arg_19_0, arg_19_1)
+DamageUtils.draw_aoe_size = function (arg_19_0, arg_19_1)
 	local var_19_0, var_19_1 = DamageUtils.calculate_aoe_size(arg_19_0)
 	local var_19_2 = var_0_4[arg_19_0]
 	local var_19_3 = var_19_2 + Vector3(0, 0, math.max(var_19_1 - var_19_0 * 0.5, var_19_1 * 0.5))
@@ -1010,7 +1010,7 @@ function DamageUtils.draw_aoe_size(arg_19_0, arg_19_1)
 	QuickDrawer:capsule(var_19_4, var_19_3, var_19_0, Color(255, 255, 0, 255))
 end
 
-function DamageUtils.calculate_aoe_size(arg_20_0, arg_20_1)
+DamageUtils.calculate_aoe_size = function (arg_20_0, arg_20_1)
 	local var_20_0
 	local var_20_1
 
@@ -1032,7 +1032,7 @@ local var_0_29 = {}
 local var_0_30 = {}
 local var_0_31 = {}
 
-function DamageUtils.create_explosion(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12)
+DamageUtils.create_explosion = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12)
 	local var_21_0 = DamageUtils
 	local var_21_1 = arg_21_4.explosion
 	local var_21_2 = Managers.weave:get_active_wind()
@@ -1344,7 +1344,7 @@ function DamageUtils.create_explosion(arg_21_0, arg_21_1, arg_21_2, arg_21_3, ar
 		end
 
 		if var_21_77 > 0 then
-			table.sort(var_21_72, function(arg_22_0, arg_22_1)
+			table.sort(var_21_72, function (arg_22_0, arg_22_1)
 				local var_22_0 = var_0_18(arg_22_0)
 				local var_22_1 = var_0_18(arg_22_1)
 				local var_22_2 = var_0_4[var_22_0] or var_0_7(var_22_0, 0)
@@ -1506,7 +1506,7 @@ end
 
 local var_0_32 = {}
 
-function DamageUtils.create_taunt(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+DamageUtils.create_taunt = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_4.taunt
 	local var_23_1 = AiUtils.broadphase_query(arg_23_3, var_23_0.target_selection_range, var_0_32)
 	local var_23_2 = -math.huge
@@ -1563,7 +1563,7 @@ function DamageUtils.create_taunt(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23
 	return var_23_8
 end
 
-function DamageUtils.create_aoe(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+DamageUtils.create_aoe = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = arg_24_4.aoe
 	local var_24_1 = arg_24_5 or var_24_0.radius
 	local var_24_2 = arg_24_6 or var_24_0.duration
@@ -1624,7 +1624,7 @@ function DamageUtils.create_aoe(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4
 	return var_24_15
 end
 
-function DamageUtils.networkify_damage(arg_25_0)
+DamageUtils.networkify_damage = function (arg_25_0)
 	local var_25_0 = NetworkConstants.damage
 
 	arg_25_0 = math.clamp(arg_25_0, var_25_0.min, var_25_0.max)
@@ -1635,7 +1635,7 @@ function DamageUtils.networkify_damage(arg_25_0)
 	return math.floor(arg_25_0) + var_25_2
 end
 
-function DamageUtils.networkify_health(arg_26_0)
+DamageUtils.networkify_health = function (arg_26_0)
 	local var_26_0 = NetworkConstants.health
 
 	arg_26_0 = math.clamp(arg_26_0, var_26_0.min, var_26_0.max)
@@ -1646,7 +1646,7 @@ function DamageUtils.networkify_health(arg_26_0)
 	return math.floor(arg_26_0) + var_26_2
 end
 
-function DamageUtils.create_hit_zone_lookup(arg_27_0, arg_27_1)
+DamageUtils.create_hit_zone_lookup = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.hit_zones
 	local var_27_1 = {}
 	local var_27_2 = arg_27_1.name
@@ -1680,7 +1680,7 @@ function DamageUtils.create_hit_zone_lookup(arg_27_0, arg_27_1)
 	BreedHitZonesLookup[var_27_2] = var_27_1
 end
 
-function DamageUtils.vs_register_dark_pact_player_damage(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+DamageUtils.vs_register_dark_pact_player_damage = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
 	local var_28_0 = arg_28_4:owner(arg_28_0)
 	local var_28_1 = arg_28_4:owner(arg_28_1)
 
@@ -1695,7 +1695,7 @@ function DamageUtils.vs_register_dark_pact_player_damage(arg_28_0, arg_28_1, arg
 	end
 end
 
-function DamageUtils.add_damage_network(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_17, arg_29_18)
+DamageUtils.add_damage_network = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13, arg_29_14, arg_29_15, arg_29_16, arg_29_17, arg_29_18)
 	local var_29_0 = Managers.state.network
 
 	if not var_29_0:game() then
@@ -1799,7 +1799,7 @@ function DamageUtils.add_damage_network(arg_29_0, arg_29_1, arg_29_2, arg_29_3, 
 	return var_29_9
 end
 
-function DamageUtils.get_damage_type(arg_30_0, arg_30_1)
+DamageUtils.get_damage_type = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0.targets and arg_30_0.targets[arg_30_1] or arg_30_0.default_target
 	local var_30_1 = var_30_0.attack_template
 	local var_30_2 = DamageUtils.get_attack_template(var_30_1)
@@ -1807,7 +1807,7 @@ function DamageUtils.get_damage_type(arg_30_0, arg_30_1)
 	return var_30_0.damage_type or arg_30_0.damage_type or var_30_2.damage_type
 end
 
-function DamageUtils.add_damage_network_player(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13, arg_31_14, arg_31_15, arg_31_16)
+DamageUtils.add_damage_network_player = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13, arg_31_14, arg_31_15, arg_31_16)
 	if not Managers.state.network:game() then
 		return 0
 	end
@@ -1938,7 +1938,7 @@ local var_0_34 = {
 	"weakspot"
 }
 
-function DamageUtils.handle_hit_indication(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+DamageUtils.handle_hit_indication = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0 = ScriptUnit.has_extension(arg_32_0, "hud_system")
 
 	if var_32_0 and HEALTH_ALIVE[arg_32_1] and arg_32_0 ~= arg_32_1 then
@@ -1974,7 +1974,7 @@ function DamageUtils.handle_hit_indication(arg_32_0, arg_32_1, arg_32_2, arg_32_
 	end
 end
 
-function DamageUtils.get_item_buff_type(arg_33_0)
+DamageUtils.get_item_buff_type = function (arg_33_0)
 	local var_33_0 = rawget(ItemMasterList, arg_33_0)
 	local var_33_1 = var_33_0 and var_33_0.template or var_33_0.temporary_template
 	local var_33_2
@@ -1986,7 +1986,7 @@ function DamageUtils.get_item_buff_type(arg_33_0)
 	return var_33_2 or "n/a"
 end
 
-function DamageUtils.buff_on_attack(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
+DamageUtils.buff_on_attack = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
 	local var_34_0 = ScriptUnit.has_extension(arg_34_0, "buff_system")
 
 	if not var_34_0 then
@@ -2066,7 +2066,7 @@ local var_0_38 = {
 	life_tap = true
 }
 
-function DamageUtils.apply_buffs_to_damage(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
+DamageUtils.apply_buffs_to_damage = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8)
 	local var_35_0 = arg_35_0
 	local var_35_1 = Managers.state.network
 	local var_35_2 = ScriptUnit.has_extension(arg_35_2, "buff_system") or ScriptUnit.has_extension(arg_35_8, "buff_system")
@@ -2353,7 +2353,7 @@ function DamageUtils.apply_buffs_to_damage(arg_35_0, arg_35_1, arg_35_2, arg_35_
 	return var_35_0
 end
 
-function DamageUtils.apply_damage_to_overcharge(arg_36_0, arg_36_1)
+DamageUtils.apply_damage_to_overcharge = function (arg_36_0, arg_36_1)
 	local var_36_0 = ScriptUnit.has_extension(arg_36_0, "overcharge_system")
 
 	if var_36_0 then
@@ -2361,7 +2361,7 @@ function DamageUtils.apply_damage_to_overcharge(arg_36_0, arg_36_1)
 	end
 end
 
-function DamageUtils.assist_shield_network(arg_37_0, arg_37_1, arg_37_2)
+DamageUtils.assist_shield_network = function (arg_37_0, arg_37_1, arg_37_2)
 	assert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_37_0, "health_system"):shield(arg_37_2)
 	ScriptUnit.extension(arg_37_0, "status_system"):set_shielded(true)
@@ -2378,7 +2378,7 @@ end
 
 local var_0_39 = {}
 
-function DamageUtils.heal_network(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+DamageUtils.heal_network = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST, "Only server can heal")
 
 	local var_38_0 = ScriptUnit.has_extension(arg_38_0, "buff_system")
@@ -2444,7 +2444,7 @@ function DamageUtils.heal_network(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 	end
 end
 
-function DamageUtils.apply_buffs_to_heal(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+DamageUtils.apply_buffs_to_heal = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	local var_39_0 = false
 
 	arg_39_4[#arg_39_4 + 1] = arg_39_0
@@ -2481,7 +2481,7 @@ function DamageUtils.apply_buffs_to_heal(arg_39_0, arg_39_1, arg_39_2, arg_39_3,
 	return arg_39_2, var_39_0
 end
 
-function DamageUtils.debug_heal(arg_40_0, arg_40_1)
+DamageUtils.debug_heal = function (arg_40_0, arg_40_1)
 	if Managers.player.is_server then
 		DamageUtils.heal_network(arg_40_0, arg_40_0, arg_40_1, "debug")
 	else
@@ -2494,7 +2494,7 @@ function DamageUtils.debug_heal(arg_40_0, arg_40_1)
 	end
 end
 
-function DamageUtils.debug_deal_damage(arg_41_0, arg_41_1)
+DamageUtils.debug_deal_damage = function (arg_41_0, arg_41_1)
 	if not ALIVE[arg_41_0] then
 		return
 	end
@@ -2502,7 +2502,7 @@ function DamageUtils.debug_deal_damage(arg_41_0, arg_41_1)
 	DamageUtils.add_damage_network(arg_41_0, arg_41_0, arg_41_1, "torso", "undefined", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 end
 
-function DamageUtils.check_distance(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+DamageUtils.check_distance = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_1.breed
 	local var_42_1 = var_0_4[arg_42_2]
 	local var_42_2 = var_0_4[arg_42_3] or Unit.world_position(arg_42_3, 0)
@@ -2536,7 +2536,7 @@ function DamageUtils.check_distance(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	return false
 end
 
-function DamageUtils.check_infront(arg_43_0, arg_43_1)
+DamageUtils.check_infront = function (arg_43_0, arg_43_1)
 	local var_43_0 = var_0_4[arg_43_0]
 	local var_43_1 = var_0_4[arg_43_1] or Unit.world_position(arg_43_1, 0)
 
@@ -2566,7 +2566,7 @@ function DamageUtils.check_infront(arg_43_0, arg_43_1)
 	return false
 end
 
-function DamageUtils.check_block(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+DamageUtils.check_block = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	if arg_44_0 == arg_44_1 then
 		return false
 	end
@@ -2620,7 +2620,7 @@ function DamageUtils.check_block(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				local var_44_20 = var_44_18.is_player and not var_44_19 and var_44_5:breed_action() or var_44_18.action
 
 				if var_44_20 and var_44_20.no_block_stagger then
-					-- block empty
+					-- Nothing
 				elseif not var_44_18.stagger then
 					var_44_18.blocked = true
 				end
@@ -2633,7 +2633,7 @@ function DamageUtils.check_block(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	return false
 end
 
-function DamageUtils.check_ranged_block(arg_45_0, arg_45_1, arg_45_2)
+DamageUtils.check_ranged_block = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = ScriptUnit.extension(arg_45_1, "status_system")
 	local var_45_1 = var_45_0:is_blocking()
 	local var_45_2, var_45_3, var_45_4, var_45_5 = var_45_0:can_block(arg_45_0)
@@ -2688,7 +2688,7 @@ function DamageUtils.check_ranged_block(arg_45_0, arg_45_1, arg_45_2)
 	return false
 end
 
-function DamageUtils.camera_shake_by_distance(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+DamageUtils.camera_shake_by_distance = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
 	local var_46_0 = Managers.player:local_player()
 
 	if not var_46_0 then
@@ -2725,13 +2725,13 @@ local var_0_42 = 4
 local var_0_43 = {}
 local var_0_44 = {}
 
-function DamageUtils.is_enemy(arg_47_0, arg_47_1)
+DamageUtils.is_enemy = function (arg_47_0, arg_47_1)
 	local var_47_0 = Managers.state.side.side_by_unit[arg_47_0]
 
 	return var_47_0 and var_47_0.enemy_units_lookup[arg_47_1] ~= nil
 end
 
-function DamageUtils.is_ai(arg_48_0)
+DamageUtils.is_ai = function (arg_48_0)
 	local var_48_0 = AiUtils.unit_breed(arg_48_0)
 
 	if var_48_0 then
@@ -2739,11 +2739,11 @@ function DamageUtils.is_ai(arg_48_0)
 	end
 end
 
-function DamageUtils.is_character(arg_49_0)
+DamageUtils.is_character = function (arg_49_0)
 	return Unit.has_data(arg_49_0, "breed") or false
 end
 
-function DamageUtils.can_bots_damage(arg_50_0)
+DamageUtils.can_bots_damage = function (arg_50_0)
 	local var_50_0, var_50_1 = DamageUtils.is_character(arg_50_0)
 	local var_50_2 = Managers.state.network:level_object_id(arg_50_0)
 	local var_50_3 = ScriptUnit.extension(arg_50_0, "health_system")
@@ -2751,7 +2751,7 @@ function DamageUtils.can_bots_damage(arg_50_0)
 	return var_50_0 or var_50_2 or var_50_3.bots_can_do_damage
 end
 
-function DamageUtils.vs_dark_pact_can_damage(arg_51_0, arg_51_1)
+DamageUtils.vs_dark_pact_can_damage = function (arg_51_0, arg_51_1)
 	local var_51_0, var_51_1 = DamageUtils.is_character(arg_51_1)
 	local var_51_2 = Managers.state.network:level_object_id(arg_51_1)
 	local var_51_3 = ScriptUnit.has_extension(arg_51_1, "props_system")
@@ -2761,7 +2761,7 @@ function DamageUtils.vs_dark_pact_can_damage(arg_51_0, arg_51_1)
 	return var_51_0 or var_51_2 or var_51_5
 end
 
-function DamageUtils.allow_friendly_fire_ranged(arg_52_0, arg_52_1)
+DamageUtils.allow_friendly_fire_ranged = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.friendly_fire_ranged
 	local var_52_1, var_52_2, var_52_3 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "friendly_fire")
 
@@ -2776,11 +2776,11 @@ function DamageUtils.allow_friendly_fire_ranged(arg_52_0, arg_52_1)
 	return var_52_0 and arg_52_1 and not arg_52_1.bot_player
 end
 
-function DamageUtils.allow_friendly_fire_melee(arg_53_0, arg_53_1)
+DamageUtils.allow_friendly_fire_melee = function (arg_53_0, arg_53_1)
 	return arg_53_0.friendly_fire_melee and not arg_53_1.bot_player
 end
 
-function DamageUtils.damage_level_unit(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+DamageUtils.damage_level_unit = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
 	if var_0_5(arg_54_0, "no_damage_from_players") then
 		return
 	end
@@ -2817,7 +2817,7 @@ function DamageUtils.damage_level_unit(arg_54_0, arg_54_1, arg_54_2, arg_54_3, a
 	DamageUtils.add_damage_network(arg_54_0, arg_54_1, var_54_4, arg_54_2, var_54_5, nil, arg_54_8, arg_54_9, var_54_6, var_54_7, var_54_8, var_54_9, arg_54_5, var_54_10, nil, nil, nil, nil, arg_54_7)
 end
 
-function DamageUtils._projectile_hit_object(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13, arg_55_14, arg_55_15, arg_55_16, arg_55_17, arg_55_18, arg_55_19, arg_55_20, arg_55_21, arg_55_22, arg_55_23, arg_55_24, arg_55_25, arg_55_26, arg_55_27, arg_55_28, arg_55_29)
+DamageUtils._projectile_hit_object = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13, arg_55_14, arg_55_15, arg_55_16, arg_55_17, arg_55_18, arg_55_19, arg_55_20, arg_55_21, arg_55_22, arg_55_23, arg_55_24, arg_55_25, arg_55_26, arg_55_27, arg_55_28, arg_55_29)
 	local var_55_0 = var_0_43
 	local var_55_1 = var_0_44
 	local var_55_2 = Managers.state.entity:system("ai_system")
@@ -2905,7 +2905,7 @@ function DamageUtils._projectile_hit_object(arg_55_0, arg_55_1, arg_55_2, arg_55
 	return var_55_9
 end
 
-function DamageUtils._projectile_hit_character(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15, arg_56_16, arg_56_17, arg_56_18, arg_56_19, arg_56_20, arg_56_21, arg_56_22, arg_56_23, arg_56_24, arg_56_25, arg_56_26, arg_56_27, arg_56_28, arg_56_29)
+DamageUtils._projectile_hit_character = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15, arg_56_16, arg_56_17, arg_56_18, arg_56_19, arg_56_20, arg_56_21, arg_56_22, arg_56_23, arg_56_24, arg_56_25, arg_56_26, arg_56_27, arg_56_28, arg_56_29)
 	local var_56_0 = var_0_43
 	local var_56_1 = var_0_44
 	local var_56_2 = Managers.state.network
@@ -3136,7 +3136,7 @@ function DamageUtils._projectile_hit_character(arg_56_0, arg_56_1, arg_56_2, arg
 	return var_56_12, var_56_11, var_56_8, var_56_10
 end
 
-function DamageUtils.process_projectile_hit(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
+DamageUtils.process_projectile_hit = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
 	table.clear(var_0_43)
 	table.clear(var_0_44)
 
@@ -3290,7 +3290,7 @@ end
 
 local var_0_45 = {}
 
-function DamageUtils.get_modified_boost_curve(arg_58_0, arg_58_1)
+DamageUtils.get_modified_boost_curve = function (arg_58_0, arg_58_1)
 	table.clear(var_0_45)
 
 	for iter_58_0, iter_58_1 in ipairs(arg_58_0) do
@@ -3396,7 +3396,7 @@ local function var_0_48(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
 	end
 end
 
-function DamageUtils.stagger_ai(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7, arg_62_8, arg_62_9, arg_62_10, arg_62_11, arg_62_12, arg_62_13)
+DamageUtils.stagger_ai = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7, arg_62_8, arg_62_9, arg_62_10, arg_62_11, arg_62_12, arg_62_13)
 	local var_62_0 = EnvironmentalHazards[arg_62_11]
 
 	if not arg_62_1.always_stagger_ai and not DamageUtils.is_enemy(arg_62_12 or arg_62_5, arg_62_4) and (not var_62_0 or not var_62_0.enemy.can_stagger) then
@@ -3481,7 +3481,7 @@ local var_0_49 = {
 	charge_ability_hit = "on_charge_ability_hit"
 }
 
-function DamageUtils.server_apply_hit(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13, arg_63_14, arg_63_15, arg_63_16, arg_63_17, arg_63_18, arg_63_19, arg_63_20, arg_63_21)
+DamageUtils.server_apply_hit = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13, arg_63_14, arg_63_15, arg_63_16, arg_63_17, arg_63_18, arg_63_19, arg_63_20, arg_63_21)
 	arg_63_20 = arg_63_20 or arg_63_1
 
 	local var_63_0 = ScriptUnit.has_extension(arg_63_1, "buff_system")
@@ -3585,7 +3585,7 @@ local function var_0_50(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	return var_64_0, var_64_1
 end
 
-function DamageUtils.apply_dot(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11)
+DamageUtils.apply_dot = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11)
 	if arg_65_0 then
 		local var_65_0 = arg_65_0.targets and arg_65_0.targets[arg_65_1] or arg_65_0.default_target
 
@@ -3646,7 +3646,7 @@ function DamageUtils.apply_dot(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4,
 	return var_65_18
 end
 
-function DamageUtils.custom_calculate_damage(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9, arg_66_10, arg_66_11, arg_66_12, arg_66_13)
+DamageUtils.custom_calculate_damage = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4, arg_66_5, arg_66_6, arg_66_7, arg_66_8, arg_66_9, arg_66_10, arg_66_11, arg_66_12, arg_66_13)
 	local var_66_0 = arg_66_3.targets and arg_66_3.targets[arg_66_4] or arg_66_3.default_target
 	local var_66_1 = BoostCurves[var_66_0.boost_curve_type]
 	local var_66_2 = 1
@@ -3666,7 +3666,7 @@ function DamageUtils.custom_calculate_damage(arg_66_0, arg_66_1, arg_66_2, arg_6
 	return var_66_16 + var_66_17, var_66_16, var_66_17
 end
 
-function DamageUtils.calculate_stagger_multiplier(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+DamageUtils.calculate_stagger_multiplier = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	if arg_67_2 then
 		local var_67_0 = arg_67_2.min_stagger_damage_coefficient
 		local var_67_1 = arg_67_2.stagger_damage_multiplier
@@ -3735,13 +3735,13 @@ local var_0_52 = {
 	}
 }
 
-function DamageUtils.get_color_from_damage(arg_68_0)
+DamageUtils.get_color_from_damage = function (arg_68_0)
 	local var_68_0 = math.clamp(math.floor(math.remap(0, 30, 1, 7, arg_68_0)), 1, 7)
 
 	return var_0_52[var_68_0]
 end
 
-function DamageUtils.add_unit_floating_damage_numbers(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7)
+DamageUtils.add_unit_floating_damage_numbers = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5, arg_69_6, arg_69_7)
 	local var_69_0
 	local var_69_1 = var_0_51[arg_69_1]
 
@@ -3777,7 +3777,7 @@ function DamageUtils.add_unit_floating_damage_numbers(arg_69_0, arg_69_1, arg_69
 	Managers.state.event:trigger("add_damage_number", arg_69_2, var_69_5, arg_69_0, var_69_6, var_69_0, arg_69_3, arg_69_5, arg_69_7)
 end
 
-function DamageUtils.add_hit_reaction(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+DamageUtils.add_hit_reaction = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
 	if arg_70_2 or arg_70_4 or not arg_70_1 or arg_70_1.disable_local_hit_reactions or not var_0_13(arg_70_0) then
 		return
 	end
@@ -3806,7 +3806,7 @@ function DamageUtils.add_hit_reaction(arg_70_0, arg_70_1, arg_70_2, arg_70_3, ar
 	var_0_14(arg_70_0, var_70_0)
 end
 
-function DamageUtils.attacker_is_fire_bomb(arg_71_0)
+DamageUtils.attacker_is_fire_bomb = function (arg_71_0)
 	local var_71_0 = ScriptUnit.has_extension(arg_71_0, "area_damage_system")
 
 	if not var_71_0 then
@@ -3820,6 +3820,6 @@ function DamageUtils.attacker_is_fire_bomb(arg_71_0)
 	return true
 end
 
-function DamageUtils.get_attack_template(arg_72_0)
+DamageUtils.get_attack_template = function (arg_72_0)
 	return MechanismOverrides.get(AttackTemplates[arg_72_0])
 end

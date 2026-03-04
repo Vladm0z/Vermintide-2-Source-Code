@@ -94,7 +94,7 @@ local var_0_7 = {
 				style_id = "enumerator_bg",
 				texture_id = "enumerator_bg",
 				retained_mode = var_0_0,
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return Application.user_setting("numeric_ui")
 				end
 			},
@@ -103,7 +103,7 @@ local var_0_7 = {
 				pass_type = "text",
 				text_id = "help_text",
 				retained_mode = var_0_0,
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return arg_2_0.in_command_mode
 				end
 			},
@@ -112,7 +112,7 @@ local var_0_7 = {
 				style_id = "state_glow",
 				texture_id = "state_glow",
 				retained_mode = var_0_0,
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.show_glow
 				end
 			},
@@ -296,7 +296,7 @@ local var_0_8 = {
 				style_id = "icon_glow",
 				texture_id = "icon_glow",
 				retained_mode = var_0_0,
-				content_check_function = function(arg_4_0, arg_4_1)
+				content_check_function = function (arg_4_0, arg_4_1)
 					return arg_4_1.color[1] > 0
 				end
 			}
@@ -354,13 +354,13 @@ local var_0_11 = {
 			name = "spin_half_1",
 			delay = 0,
 			duration = 0.1,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				var_0_10(arg_8_2.content.materials, arg_8_2.content.retained_materials, arg_8_3 * 0.5)
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_2.content.state_icon = var_0_3[arg_9_3] or "icons_placeholder"
 			end
 		},
@@ -368,13 +368,13 @@ local var_0_11 = {
 			name = "spin_half_2",
 			delay = 0.1,
 			duration = 0.1,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				var_0_10(arg_11_2.content.materials, arg_11_2.content.retained_materials, arg_11_3 * 0.5 + 0.5)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				var_0_10(arg_12_2.content.materials, arg_12_2.content.retained_materials, 0)
 			end
 		}
@@ -384,18 +384,18 @@ local var_0_11 = {
 			name = "dissolve_icon",
 			delay = 0,
 			duration = 0.2,
-			init = function(arg_13_0, arg_13_1, arg_13_2)
+			init = function (arg_13_0, arg_13_1, arg_13_2)
 				local var_13_0 = arg_13_2.style.icon.color
 
 				var_13_0[1], var_13_0[2], var_13_0[3], var_13_0[4] = 0, 0, 0, 0
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				local var_14_0 = 255 * arg_14_3
 				local var_14_1 = arg_14_2.style.icon.color
 
 				var_14_1[1], var_14_1[2], var_14_1[3], var_14_1[4] = var_14_0, var_14_0, var_14_0, var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2)
 				return
 			end
 		}
@@ -405,13 +405,13 @@ local var_0_11 = {
 			name = "fade_in_skull_glow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function(arg_16_0, arg_16_1, arg_16_2)
+			init = function (arg_16_0, arg_16_1, arg_16_2)
 				arg_16_2.style.icon_glow.color[1] = 0
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				arg_17_2.style.icon_glow.color[1] = 255 * arg_17_3
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2)
 				return
 			end
 		}
@@ -421,13 +421,13 @@ local var_0_11 = {
 			name = "fade_out_skull_glow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function(arg_19_0, arg_19_1, arg_19_2)
+			init = function (arg_19_0, arg_19_1, arg_19_2)
 				arg_19_2.style.icon_glow.color[1] = 255
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				arg_20_2.style.icon_glow.color[1] = 255 - 255 * arg_20_3
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2)
 				return
 			end
 		}

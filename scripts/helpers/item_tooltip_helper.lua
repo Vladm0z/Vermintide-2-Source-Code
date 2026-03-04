@@ -3,37 +3,37 @@
 ItemTooltipHelper = ItemTooltipHelper or {}
 
 local var_0_0 = {
-	damage = function(arg_1_0)
+	damage = function (arg_1_0)
 		return string.format("%.2f", arg_1_0)
 	end,
-	max_targets = function(arg_2_0)
+	max_targets = function (arg_2_0)
 		if arg_2_0 == -1 then
 			return "inf."
 		end
 
 		return string.format("%.2f", math.round_with_precision(arg_2_0, 2))
 	end,
-	stagger_strength = function(arg_3_0)
+	stagger_strength = function (arg_3_0)
 		return string.format("%.2f", math.round_with_precision(arg_3_0, 2))
 	end,
-	crit = function(arg_4_0)
+	crit = function (arg_4_0)
 		return string.format("%.1f", math.round_with_precision(arg_4_0, 1) * 100) .. "%"
 	end,
-	time_between_damage = function(arg_5_0)
+	time_between_damage = function (arg_5_0)
 		return string.format("%.2f", math.round_with_precision(arg_5_0, 2))
 	end,
-	boost = function(arg_6_0)
+	boost = function (arg_6_0)
 		return string.format("%.2f", math.round_with_precision(arg_6_0, 2))
 	end,
-	push_angle = function(arg_7_0)
+	push_angle = function (arg_7_0)
 		return tostring(arg_7_0)
 	end,
-	push_strength = function(arg_8_0)
+	push_strength = function (arg_8_0)
 		return string.format("%.2f", math.round_with_precision(arg_8_0, 2))
 	end
 }
 
-function ItemTooltipHelper.format_return_string(arg_9_0, arg_9_1)
+ItemTooltipHelper.format_return_string = function (arg_9_0, arg_9_1)
 	local var_9_0 = var_0_0[arg_9_0]
 	local var_9_1 = ""
 
@@ -62,7 +62,7 @@ function ItemTooltipHelper.format_return_string(arg_9_0, arg_9_1)
 	return var_9_1
 end
 
-function ItemTooltipHelper.get_damage(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+ItemTooltipHelper.get_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	local var_10_0 = arg_10_1.name
 	local var_10_1 = "torso"
 	local var_10_2 = 1
@@ -78,7 +78,7 @@ function ItemTooltipHelper.get_damage(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ar
 	return (DamageUtils.calculate_damage_tooltip(arg_10_0, var_10_0, arg_10_5, var_10_1, arg_10_4, var_10_2, var_10_4, var_10_5, var_10_6, var_10_7, var_10_8, var_10_9, var_10_10, arg_10_6, arg_10_2, arg_10_3))
 end
 
-function ItemTooltipHelper.get_stagger_strength(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+ItemTooltipHelper.get_stagger_strength = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0
 	local var_11_1 = "torso"
 	local var_11_2 = false
@@ -92,7 +92,7 @@ function ItemTooltipHelper.get_stagger_strength(arg_11_0, arg_11_1, arg_11_2, ar
 	return var_11_8, var_11_9, var_11_10, var_11_11, var_11_12
 end
 
-function ItemTooltipHelper.get_next_action_names(arg_12_0, arg_12_1)
+ItemTooltipHelper.get_next_action_names = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.allowed_chain_actions
 	local var_12_1 = true
 
@@ -126,7 +126,7 @@ function ItemTooltipHelper.get_next_action_names(arg_12_0, arg_12_1)
 	return var_12_2, var_12_3, var_12_4
 end
 
-function ItemTooltipHelper.get_action(arg_13_0, arg_13_1, arg_13_2)
+ItemTooltipHelper.get_action = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = ScriptUnit.has_extension(arg_13_0, "career_system")
 	local var_13_1 = ScriptUnit.has_extension(arg_13_0, "buff_system")
 	local var_13_2 = arg_13_1.data
@@ -138,7 +138,7 @@ function ItemTooltipHelper.get_action(arg_13_0, arg_13_1, arg_13_2)
 	return var_13_4[var_13_6.action_name][var_13_6.sub_action_name]
 end
 
-function ItemTooltipHelper.get_chain_damages(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+ItemTooltipHelper.get_chain_damages = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = arg_14_1.impact_data
 	local var_14_1 = ScriptUnit.has_extension(arg_14_2, "career_system")
 	local var_14_2 = ScriptUnit.has_extension(arg_14_2, "buff_system")
@@ -200,7 +200,7 @@ function ItemTooltipHelper.get_chain_damages(arg_14_0, arg_14_1, arg_14_2, arg_1
 	end
 end
 
-function ItemTooltipHelper.get_chain_max_targets(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+ItemTooltipHelper.get_chain_max_targets = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_1.impact_data
 	local var_15_1 = ScriptUnit.has_extension(arg_15_2, "career_system")
 	local var_15_2 = ScriptUnit.has_extension(arg_15_2, "buff_system")
@@ -262,7 +262,7 @@ function ItemTooltipHelper.get_chain_max_targets(arg_15_0, arg_15_1, arg_15_2, a
 	end
 end
 
-function ItemTooltipHelper.get_chain_stagger_strengths(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+ItemTooltipHelper.get_chain_stagger_strengths = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_1.impact_data
 	local var_16_1 = ScriptUnit.has_extension(arg_16_2, "career_system")
 	local var_16_2 = ScriptUnit.has_extension(arg_16_2, "buff_system")
@@ -321,7 +321,7 @@ function ItemTooltipHelper.get_chain_stagger_strengths(arg_16_0, arg_16_1, arg_1
 	end
 end
 
-function ItemTooltipHelper.get_chain_critical_hit_chances(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+ItemTooltipHelper.get_chain_critical_hit_chances = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = arg_17_1.impact_data
 	local var_17_1 = var_17_0 and var_17_0.damage_profile or arg_17_1.damage_profile
 	local var_17_2 = var_17_0 and var_17_0.damage_profile_left or arg_17_1.damage_profile_left
@@ -348,7 +348,7 @@ local var_0_1 = {
 	flamethrower = true
 }
 
-function ItemTooltipHelper.get_time_between_damage(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+ItemTooltipHelper.get_time_between_damage = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_1.impact_data
 	local var_18_1 = var_18_0 and var_18_0.damage_profile or arg_18_1.damage_profile
 	local var_18_2 = var_18_0 and var_18_0.damage_profile_left or arg_18_1.damage_profile_left
@@ -382,7 +382,7 @@ function ItemTooltipHelper.get_time_between_damage(arg_18_0, arg_18_1, arg_18_2,
 	end
 end
 
-function ItemTooltipHelper.get_chain_boost_coefficients(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+ItemTooltipHelper.get_chain_boost_coefficients = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_1.impact_data
 	local var_19_1 = var_19_0 and var_19_0.damage_profile or arg_19_1.damage_profile
 	local var_19_2 = var_19_0 and var_19_0.damage_profile_left or arg_19_1.damage_profile_left
@@ -414,7 +414,7 @@ function ItemTooltipHelper.get_chain_boost_coefficients(arg_19_0, arg_19_1, arg_
 	end
 end
 
-function ItemTooltipHelper.get_chain_headshot_boost_coefficients(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+ItemTooltipHelper.get_chain_headshot_boost_coefficients = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = arg_20_1.impact_data
 	local var_20_1 = var_20_0 and var_20_0.damage_profile or arg_20_1.damage_profile
 	local var_20_2 = var_20_0 and var_20_0.damage_profile_left or arg_20_1.damage_profile_left
@@ -446,7 +446,7 @@ function ItemTooltipHelper.get_chain_headshot_boost_coefficients(arg_20_0, arg_2
 	end
 end
 
-function ItemTooltipHelper.get_push_angles(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+ItemTooltipHelper.get_push_angles = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_3.data
 	local var_21_1 = BackendUtils.get_item_template(var_21_0)
 	local var_21_2 = var_21_1.actions
@@ -481,7 +481,7 @@ function ItemTooltipHelper.get_push_angles(arg_21_0, arg_21_1, arg_21_2, arg_21_
 	end
 end
 
-function ItemTooltipHelper.get_push_strengths(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+ItemTooltipHelper.get_push_strengths = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = ScriptUnit.has_extension(arg_22_2, "career_system")
 	local var_22_1 = ScriptUnit.has_extension(arg_22_2, "buff_system")
 	local var_22_2 = var_22_0:get_career_power_level()
@@ -532,7 +532,7 @@ end
 
 local var_0_2 = {}
 
-function ItemTooltipHelper.parse_weapon_chain(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+ItemTooltipHelper.parse_weapon_chain = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_2.data
 	local var_23_1 = BackendUtils.get_item_template(var_23_0)
 	local var_23_2 = var_23_1.actions

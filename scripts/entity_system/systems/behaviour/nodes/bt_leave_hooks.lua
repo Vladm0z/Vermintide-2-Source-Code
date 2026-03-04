@@ -6,11 +6,11 @@ local var_0_0 = BTLeaveHooks
 local var_0_1 = Unit.alive
 local var_0_2 = ScriptUnit
 
-function var_0_0.reset_fling_skaven(arg_1_0, arg_1_1, arg_1_2)
+var_0_0.reset_fling_skaven = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_1.fling_skaven = false
 end
 
-function var_0_0.check_if_victim_was_grabbed(arg_2_0, arg_2_1, arg_2_2)
+var_0_0.check_if_victim_was_grabbed = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_1.victim_grabbed then
 		arg_2_1.has_grabbed_victim = true
 
@@ -28,34 +28,34 @@ function var_0_0.check_if_victim_was_grabbed(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function var_0_0.kill_unit(arg_3_0, arg_3_1, arg_3_2)
+var_0_0.kill_unit = function (arg_3_0, arg_3_1, arg_3_2)
 	if Unit.alive(arg_3_0) and HEALTH_ALIVE[arg_3_0] then
 		var_0_2.has_extension(arg_3_0, "health_system"):die("forced")
 	end
 end
 
-function var_0_0.unclamp_health(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.unclamp_health = function (arg_4_0, arg_4_1, arg_4_2)
 	var_0_2.has_extension(arg_4_0, "health_system"):set_min_health_percentage(nil)
 end
 
-function var_0_0.ring_summoning_ends(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.ring_summoning_ends = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_1.ring_summonings_finished = arg_5_1.ring_summonings_finished + 1
 	arg_5_1.ring_cooldown = arg_5_1.ring_total_cooldown
 end
 
-function var_0_0.charge_ends(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.charge_ends = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.charge_cooldown = arg_6_1.charge_total_cooldown
 end
 
-function var_0_0.teleport_ends(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.teleport_ends = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_1.teleport_cooldown = arg_7_1.teleport_total_cooldown
 end
 
-function var_0_0.summoning_ends(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.summoning_ends = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_1.is_summoning = false
 end
 
-function var_0_0.sorcerer_next_phase(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.sorcerer_next_phase = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.phase
 
 	if var_9_0 == "defensive_starts" then
@@ -67,26 +67,26 @@ function var_0_0.sorcerer_next_phase(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function var_0_0.sorcerer_setup_done(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.sorcerer_setup_done = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_1.mode = "offensive"
 	arg_10_1.setup_done = true
 	arg_10_1.phase_timer = arg_10_2 + 20
 end
 
-function var_0_0.sorcerer_evade(arg_11_0, arg_11_1, arg_11_2)
+var_0_0.sorcerer_evade = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_1.escape_teleport = false
 end
 
-function var_0_0.reset_stormfiend_charge(arg_12_0, arg_12_1, arg_12_2)
+var_0_0.reset_stormfiend_charge = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_1.weakspot_hits = nil
 	arg_12_1.weakspot_rage = nil
 end
 
-function var_0_0.stormfiend_boss_mount_leave(arg_13_0, arg_13_1, arg_13_2)
+var_0_0.stormfiend_boss_mount_leave = function (arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-function var_0_0.stormfiend_boss_rage_leave(arg_14_0, arg_14_1, arg_14_2)
+var_0_0.stormfiend_boss_rage_leave = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Managers.state.network:game()
 	local var_14_1 = Managers.state.unit_storage:go_id(arg_14_0)
 
@@ -108,7 +108,7 @@ function var_0_0.stormfiend_boss_rage_leave(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function var_0_0.stormfiend_boss_jump_down_leave(arg_15_0, arg_15_1, arg_15_2)
+var_0_0.stormfiend_boss_jump_down_leave = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_1.jump_down_intro = nil
 	arg_15_1.goal_destination = nil
 end
@@ -128,7 +128,7 @@ local function var_0_3(arg_16_0, arg_16_1, arg_16_2)
 	var_16_2.intro_timer = nil
 end
 
-function var_0_0.on_grey_seer_intro_leave(arg_17_0, arg_17_1, arg_17_2)
+var_0_0.on_grey_seer_intro_leave = function (arg_17_0, arg_17_1, arg_17_2)
 	if not arg_17_1.exit_last_action then
 		local var_17_0 = Managers.state.conflict
 		local var_17_1 = var_17_0.level_analysis.generic_ai_node_units.grey_seer_intro_stormfiend_spawn
@@ -165,7 +165,7 @@ function var_0_0.on_grey_seer_intro_leave(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function var_0_0.on_grey_seer_death_sequence_leave(arg_18_0, arg_18_1, arg_18_2)
+var_0_0.on_grey_seer_death_sequence_leave = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_1.current_phase = 6
 	var_0_2.extension(arg_18_1.unit, "health_system").is_invincible = false
 
@@ -173,7 +173,7 @@ function var_0_0.on_grey_seer_death_sequence_leave(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_1.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-function var_0_0.leave_attack_grabbed(arg_19_0, arg_19_1, arg_19_2)
+var_0_0.leave_attack_grabbed = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = HEALTH_ALIVE[arg_19_1.victim_grabbed]
 
 	if arg_19_1.stagger or not HEALTH_ALIVE[arg_19_0] or not var_19_0 then
@@ -190,7 +190,7 @@ function var_0_0.leave_attack_grabbed(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_1.override_target_unit = nil
 end
 
-function var_0_0.on_lord_intro_leave(arg_20_0, arg_20_1, arg_20_2)
+var_0_0.on_lord_intro_leave = function (arg_20_0, arg_20_1, arg_20_2)
 	if HEALTH_ALIVE[arg_20_0] and not arg_20_1.exit_last_action then
 		var_0_2.extension(arg_20_0, "health_system").is_invincible = false
 
@@ -209,7 +209,7 @@ function var_0_0.on_lord_intro_leave(arg_20_0, arg_20_1, arg_20_2)
 	arg_20_1.stagger_immune_time = arg_20_2 + 2
 end
 
-function var_0_0.on_lord_warlord_intro_leave(arg_21_0, arg_21_1, arg_21_2)
+var_0_0.on_lord_warlord_intro_leave = function (arg_21_0, arg_21_1, arg_21_2)
 	if HEALTH_ALIVE[arg_21_0] and not arg_21_1.exit_last_action then
 		var_0_2.extension(arg_21_0, "health_system").is_invincible = false
 
@@ -237,37 +237,37 @@ function var_0_0.on_lord_warlord_intro_leave(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function var_0_0.reset_keep_target(arg_22_0, arg_22_1, arg_22_2)
+var_0_0.reset_keep_target = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_1.keep_target = nil
 end
 
-function var_0_0.reset_chain_stagger(arg_23_0, arg_23_1, arg_23_2)
+var_0_0.reset_chain_stagger = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_1.num_chain_stagger = nil
 end
 
-function var_0_0.remove_invincibility(arg_24_0, arg_24_1, arg_24_2)
+var_0_0.remove_invincibility = function (arg_24_0, arg_24_1, arg_24_2)
 	var_0_2.extension(arg_24_0, "health_system").is_invincible = false
 end
 
-function var_0_0.mutator_sorcerer_activate_teleport(arg_25_0, arg_25_1, arg_25_2)
+var_0_0.mutator_sorcerer_activate_teleport = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_1.stagger then
 		arg_25_1.quick_teleport = true
 	end
 end
 
-function var_0_0.mutator_sorcerer_force_teleport(arg_26_0, arg_26_1, arg_26_2)
+var_0_0.mutator_sorcerer_force_teleport = function (arg_26_0, arg_26_1, arg_26_2)
 	arg_26_1.quick_teleport = true
 end
 
-function var_0_0.destroy_unit_leave_hook(arg_27_0, arg_27_1, arg_27_2)
+var_0_0.destroy_unit_leave_hook = function (arg_27_0, arg_27_1, arg_27_2)
 	Managers.state.conflict:destroy_unit(arg_27_0, arg_27_1, "debug")
 end
 
-function var_0_0.remove_goal_destination(arg_28_0, arg_28_1, arg_28_2)
+var_0_0.remove_goal_destination = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_1.goal_destination = nil
 end
 
-function var_0_0.bulwark_stagger_leave(arg_29_0, arg_29_1, arg_29_2)
+var_0_0.bulwark_stagger_leave = function (arg_29_0, arg_29_1, arg_29_2)
 	Managers.state.network:anim_event(arg_29_0, "stagger_finished")
 
 	if not arg_29_1.reset_after_stagger then
@@ -287,7 +287,7 @@ function var_0_0.bulwark_stagger_leave(arg_29_0, arg_29_1, arg_29_2)
 	var_0_2.extension(arg_29_0, "ai_shield_system"):set_is_blocking(true)
 end
 
-function var_0_0.bulwark_vortex_leave(arg_30_0, arg_30_1, arg_30_2)
+var_0_0.bulwark_vortex_leave = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_1.breed
 
 	arg_30_1.max_stagger_reached = nil
@@ -300,7 +300,7 @@ function var_0_0.bulwark_vortex_leave(arg_30_0, arg_30_1, arg_30_2)
 	arg_30_1.stagger_activated = false
 end
 
-function var_0_0.beastmen_standard_bearer_leave_move_and_plant_standard(arg_31_0, arg_31_1, arg_31_2)
+var_0_0.beastmen_standard_bearer_leave_move_and_plant_standard = function (arg_31_0, arg_31_1, arg_31_2)
 	arg_31_1.move_and_place_standard = nil
 	arg_31_1.stagger = nil
 	var_0_2.extension(arg_31_0, "health_system").is_invincible = false

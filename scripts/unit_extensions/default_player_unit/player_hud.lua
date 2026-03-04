@@ -6,7 +6,7 @@ local var_0_2 = "materials/fonts/" .. var_0_1
 
 PlayerHud = class(PlayerHud)
 
-function PlayerHud.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHud.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.gui = World.create_screen_gui(arg_1_0.world, "material", "materials/fonts/gw_fonts", "immediate")
 	arg_1_0.raycast_state = "waiting_to_raycast"
@@ -19,25 +19,25 @@ function PlayerHud.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:reset()
 end
 
-function PlayerHud.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerHud.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function PlayerHud.destroy(arg_3_0)
+PlayerHud.destroy = function (arg_3_0)
 	return
 end
 
-function PlayerHud.reset(arg_4_0)
+PlayerHud.reset = function (arg_4_0)
 	arg_4_0.outline_timers = {}
 end
 
 local var_0_3 = true
 
-function PlayerHud.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerHud.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-function PlayerHud.draw_player_names(arg_6_0, arg_6_1)
+PlayerHud.draw_player_names = function (arg_6_0, arg_6_1)
 	local var_6_0 = Managers.player:players()
 	local var_6_1 = "player_1"
 	local var_6_2 = ScriptWorld.viewport(arg_6_0.world, var_6_1)
@@ -74,22 +74,22 @@ function PlayerHud.draw_player_names(arg_6_0, arg_6_1)
 	end
 end
 
-function PlayerHud.set_current_location(arg_7_0, arg_7_1)
+PlayerHud.set_current_location = function (arg_7_0, arg_7_1)
 	arg_7_0.current_location = arg_7_1
 end
 
-function PlayerHud.block_current_location_ui(arg_8_0, arg_8_1)
+PlayerHud.block_current_location_ui = function (arg_8_0, arg_8_1)
 	arg_8_0.location_ui_blocked = arg_8_1
 end
 
-function PlayerHud.gdc_intro_active(arg_9_0, arg_9_1)
+PlayerHud.gdc_intro_active = function (arg_9_0, arg_9_1)
 	arg_9_0.show_gdc_intro = true
 end
 
-function PlayerHud.set_picked_up_ammo(arg_10_0, arg_10_1)
+PlayerHud.set_picked_up_ammo = function (arg_10_0, arg_10_1)
 	arg_10_0.picked_up_ammo = arg_10_1
 end
 
-function PlayerHud.get_picked_up_ammo(arg_11_0)
+PlayerHud.get_picked_up_ammo = function (arg_11_0)
 	return arg_11_0.picked_up_ammo
 end

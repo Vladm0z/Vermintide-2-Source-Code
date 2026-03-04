@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_ticking_bomb",
 	display_name = "display_name_mutator_ticking_bomb",
 	icon = "mutator_icon_ticking_bomb",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.buff_name = "mutator_ticking_bomb"
 		arg_1_1.movement_debuff_name = "ticking_bomb_decrease_movement"
 		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
@@ -18,7 +18,7 @@ return {
 			arg_1_1.template.server_players_left_safe_zone(arg_1_0, arg_1_1)
 		end
 	end,
-	server_players_left_safe_zone = function(arg_2_0, arg_2_1)
+	server_players_left_safe_zone = function (arg_2_0, arg_2_1)
 		arg_2_1.has_left_safe_zone = true
 
 		local var_2_0 = Managers.time:time("game")
@@ -30,7 +30,7 @@ return {
 
 		arg_2_1.apply_bomb_buff_at_t = var_2_0 + var_2_1
 	end,
-	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if not arg_3_1.has_left_safe_zone then
 			return
 		end

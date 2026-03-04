@@ -10,7 +10,7 @@ local var_0_3 = {
 	"rpc_versus_set_score"
 }
 
-function VersusWinConditions.init(arg_1_0, arg_1_1)
+VersusWinConditions.init = function (arg_1_0, arg_1_1)
 	arg_1_0._current_round = 0
 	arg_1_0._current_set = 0
 	arg_1_0._win_data = {}
@@ -23,7 +23,7 @@ function VersusWinConditions.init(arg_1_0, arg_1_1)
 	arg_1_0._early_win_data = {}
 end
 
-function VersusWinConditions._reset_set_score(arg_2_0, arg_2_1)
+VersusWinConditions._reset_set_score = function (arg_2_0, arg_2_1)
 	local var_2_0 = VersusObjectiveSettings[arg_2_1]
 
 	if var_2_0 then
@@ -56,7 +56,7 @@ function VersusWinConditions._reset_set_score(arg_2_0, arg_2_1)
 	end
 end
 
-function VersusWinConditions.hot_join_sync(arg_3_0, arg_3_1)
+VersusWinConditions.hot_join_sync = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._current_round
 	local var_3_1 = arg_3_0._current_set
 	local var_3_2 = PEER_ID_TO_CHANNEL[arg_3_1]
@@ -72,19 +72,19 @@ function VersusWinConditions.hot_join_sync(arg_3_0, arg_3_1)
 	end
 end
 
-function VersusWinConditions.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+VersusWinConditions.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_1:register(arg_4_0, unpack(var_0_3))
 
 	arg_4_0._network_event_delegate = arg_4_1
 end
 
-function VersusWinConditions.unregister_rpcs(arg_5_0)
+VersusWinConditions.unregister_rpcs = function (arg_5_0)
 	arg_5_0._network_event_delegate:unregister(arg_5_0)
 
 	arg_5_0._network_event_delegate = nil
 end
 
-function VersusWinConditions.setup_round(arg_6_0, arg_6_1)
+VersusWinConditions.setup_round = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.mechanism:get_objective_settings()
 
 	arg_6_0._round_timer = var_6_0.round_timer or 36000
@@ -131,7 +131,7 @@ function VersusWinConditions.setup_round(arg_6_0, arg_6_1)
 	Managers.state.event:register(arg_6_0, "obj_objective_section_completed", "on_objective_section_completed")
 end
 
-function VersusWinConditions.on_game_mode_data_created(arg_7_0, arg_7_1, arg_7_2)
+VersusWinConditions.on_game_mode_data_created = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._game_session = arg_7_1
 	arg_7_0._go_id = arg_7_2
 
@@ -140,17 +140,17 @@ function VersusWinConditions.on_game_mode_data_created(arg_7_0, arg_7_1, arg_7_2
 	end
 end
 
-function VersusWinConditions.round_ended(arg_8_0)
+VersusWinConditions.round_ended = function (arg_8_0)
 	return
 end
 
-function VersusWinConditions.on_game_mode_data_destroyed(arg_9_0)
+VersusWinConditions.on_game_mode_data_destroyed = function (arg_9_0)
 	arg_9_0._game_session = nil
 	arg_9_0._go_id = nil
 	arg_9_0._round_timer = nil
 end
 
-function VersusWinConditions.server_update(arg_10_0, arg_10_1, arg_10_2)
+VersusWinConditions.server_update = function (arg_10_0, arg_10_1, arg_10_2)
 	if script_data.testify then
 		arg_10_0:update_testify(arg_10_2, arg_10_1)
 	end
@@ -162,7 +162,7 @@ function VersusWinConditions.server_update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function VersusWinConditions._server_update_round_timer(arg_11_0, arg_11_1)
+VersusWinConditions._server_update_round_timer = function (arg_11_0, arg_11_1)
 	if not arg_11_0._round_started then
 		return
 	end
@@ -182,7 +182,7 @@ function VersusWinConditions._server_update_round_timer(arg_11_0, arg_11_1)
 	end
 end
 
-function VersusWinConditions.client_update(arg_12_0, arg_12_1, arg_12_2)
+VersusWinConditions.client_update = function (arg_12_0, arg_12_1, arg_12_2)
 	if script_data.testify then
 		arg_12_0:update_testify(arg_12_2, arg_12_1)
 	end
@@ -214,11 +214,11 @@ function VersusWinConditions.client_update(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function VersusWinConditions.is_heroes_close_to_win(arg_13_0)
+VersusWinConditions.is_heroes_close_to_win = function (arg_13_0)
 	return arg_13_0._close_to_winning
 end
 
-function VersusWinConditions.on_round_started(arg_14_0)
+VersusWinConditions.on_round_started = function (arg_14_0)
 	arg_14_0._round_started = true
 
 	if arg_14_0._is_server then
@@ -228,7 +228,7 @@ function VersusWinConditions.on_round_started(arg_14_0)
 	end
 end
 
-function VersusWinConditions.on_end_conditions_met(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+VersusWinConditions.on_end_conditions_met = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	arg_15_0._round_over = true
 
 	Managers.state.event:unregister("gm_event_round_started", arg_15_0)
@@ -263,7 +263,7 @@ function VersusWinConditions.on_end_conditions_met(arg_15_0, arg_15_1, arg_15_2,
 	end
 end
 
-function VersusWinConditions.current_set_data(arg_16_0, arg_16_1)
+VersusWinConditions.current_set_data = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._win_data[arg_16_1]
 
 	if not var_16_0 then
@@ -275,7 +275,7 @@ function VersusWinConditions.current_set_data(arg_16_0, arg_16_1)
 	return var_16_0[var_16_1], var_16_1
 end
 
-function VersusWinConditions.get_sets_data_for_party(arg_17_0, arg_17_1)
+VersusWinConditions.get_sets_data_for_party = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._win_data[arg_17_1]
 
 	if not var_17_0 then
@@ -285,11 +285,11 @@ function VersusWinConditions.get_sets_data_for_party(arg_17_0, arg_17_1)
 	return var_17_0
 end
 
-function VersusWinConditions.on_initial_peers_spawned(arg_18_0)
+VersusWinConditions.on_initial_peers_spawned = function (arg_18_0)
 	arg_18_0._objective_system = Managers.state.entity:system("objective_system")
 end
 
-function VersusWinConditions.on_objective_completed(arg_19_0, arg_19_1, arg_19_2)
+VersusWinConditions.on_objective_completed = function (arg_19_0, arg_19_1, arg_19_2)
 	Managers.state.achievement:trigger_event("register_objective_completed", arg_19_2, arg_19_0._hero_party_id, arg_19_1)
 
 	if not arg_19_0._is_server then
@@ -318,14 +318,14 @@ function VersusWinConditions.on_objective_completed(arg_19_0, arg_19_1, arg_19_2
 	end
 end
 
-function VersusWinConditions._get_current_objective_data(arg_20_0)
+VersusWinConditions._get_current_objective_data = function (arg_20_0)
 	local var_20_0 = Managers.state.game_mode:game_mode():get_current_objective_data()
 	local var_20_1, var_20_2 = next(var_20_0)
 
 	return var_20_2
 end
 
-function VersusWinConditions._get_next_objective_data(arg_21_0)
+VersusWinConditions._get_next_objective_data = function (arg_21_0)
 	local var_21_0 = Managers.state.game_mode:game_mode():get_next_objective_data()
 
 	if not var_21_0 then
@@ -337,7 +337,7 @@ function VersusWinConditions._get_next_objective_data(arg_21_0)
 	return var_21_2
 end
 
-function VersusWinConditions.on_objective_section_completed(arg_22_0, arg_22_1)
+VersusWinConditions.on_objective_section_completed = function (arg_22_0, arg_22_1)
 	if not arg_22_0._is_server then
 		return
 	end
@@ -357,7 +357,7 @@ function VersusWinConditions.on_objective_section_completed(arg_22_0, arg_22_1)
 	end
 end
 
-function VersusWinConditions._check_heroes_close_to_win_conditions_met(arg_23_0, arg_23_1, arg_23_2)
+VersusWinConditions._check_heroes_close_to_win_conditions_met = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0:_get_hero_early_win_data(false)
 	local var_23_1
 	local var_23_2
@@ -435,7 +435,7 @@ function VersusWinConditions._check_heroes_close_to_win_conditions_met(arg_23_0,
 	end
 end
 
-function VersusWinConditions._trigger_about_to_early_win_vo(arg_24_0)
+VersusWinConditions._trigger_about_to_early_win_vo = function (arg_24_0)
 	if Managers.state.game_mode:game_mode():is_about_to_end_game_early() then
 		return
 	end
@@ -452,7 +452,7 @@ function VersusWinConditions._trigger_about_to_early_win_vo(arg_24_0)
 	var_24_0:queue_mission_giver_event("vs_mg_about_to_early_loss", nil, "dark_pact")
 end
 
-function VersusWinConditions._has_nested_parent_objectives(arg_25_0, arg_25_1)
+VersusWinConditions._has_nested_parent_objectives = function (arg_25_0, arg_25_1)
 	if not arg_25_1.sub_objectives then
 		return false
 	end
@@ -463,7 +463,7 @@ function VersusWinConditions._has_nested_parent_objectives(arg_25_0, arg_25_1)
 	return var_25_2.sub_objectives, var_25_2.sub_objectives and var_25_0 or nil
 end
 
-function VersusWinConditions.rpc_versus_set_score(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+VersusWinConditions.rpc_versus_set_score = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
 	if arg_26_5 ~= 0 then
 		arg_26_0._current_set = arg_26_5
 	end
@@ -483,27 +483,27 @@ function VersusWinConditions.rpc_versus_set_score(arg_26_0, arg_26_1, arg_26_2, 
 	Presence.set_presence("score", PresenceHelper.get_game_score())
 end
 
-function VersusWinConditions.is_round_timer_started(arg_27_0)
+VersusWinConditions.is_round_timer_started = function (arg_27_0)
 	return arg_27_0._round_started
 end
 
-function VersusWinConditions.is_round_timer_over(arg_28_0)
+VersusWinConditions.is_round_timer_over = function (arg_28_0)
 	return arg_28_0._round_timer <= 0
 end
 
-function VersusWinConditions.is_round_almost_over(arg_29_0)
+VersusWinConditions.is_round_almost_over = function (arg_29_0)
 	return arg_29_0._round_timer <= arg_29_0._round_almost_over_time_breakpoint
 end
 
-function VersusWinConditions.heroes_close_to_safe_zone(arg_30_0)
+VersusWinConditions.heroes_close_to_safe_zone = function (arg_30_0)
 	return arg_30_0._heroes_close_to_safe_zone
 end
 
-function VersusWinConditions.round_timer(arg_31_0)
+VersusWinConditions.round_timer = function (arg_31_0)
 	return arg_31_0._round_timer
 end
 
-function VersusWinConditions._get_round_timer_formatted(arg_32_0)
+VersusWinConditions._get_round_timer_formatted = function (arg_32_0)
 	if not arg_32_0._round_timer then
 		return
 	end
@@ -522,7 +522,7 @@ function VersusWinConditions._get_round_timer_formatted(arg_32_0)
 	return string.format("%s:%s", var_32_0, var_32_1)
 end
 
-function VersusWinConditions.custom_game_round_timer(arg_33_0)
+VersusWinConditions.custom_game_round_timer = function (arg_33_0)
 	if arg_33_0:is_round_timer_started() then
 		local var_33_0 = arg_33_0:_get_round_timer_formatted()
 
@@ -534,15 +534,15 @@ function VersusWinConditions.custom_game_round_timer(arg_33_0)
 	end
 end
 
-function VersusWinConditions.is_final_round(arg_34_0)
+VersusWinConditions.is_final_round = function (arg_34_0)
 	return arg_34_0._final_round
 end
 
-function VersusWinConditions.get_current_round(arg_35_0)
+VersusWinConditions.get_current_round = function (arg_35_0)
 	return arg_35_0._current_round
 end
 
-function VersusWinConditions.add_time(arg_36_0, arg_36_1)
+VersusWinConditions.add_time = function (arg_36_0, arg_36_1)
 	arg_36_0._round_timer = arg_36_0._round_timer + arg_36_1
 
 	local var_36_0 = Network.game_session()
@@ -550,7 +550,7 @@ function VersusWinConditions.add_time(arg_36_0, arg_36_1)
 	GameSession.set_game_object_field(var_36_0, arg_36_0._go_id, "round_timer", arg_36_0._round_timer)
 end
 
-function VersusWinConditions.set_time(arg_37_0, arg_37_1)
+VersusWinConditions.set_time = function (arg_37_0, arg_37_1)
 	arg_37_0._round_timer = arg_37_1
 
 	local var_37_0 = Network.game_session()
@@ -558,7 +558,7 @@ function VersusWinConditions.set_time(arg_37_0, arg_37_1)
 	GameSession.set_game_object_field(var_37_0, arg_37_0._go_id, "round_timer", arg_37_0._round_timer)
 end
 
-function VersusWinConditions.add_score(arg_38_0, arg_38_1, arg_38_2)
+VersusWinConditions.add_score = function (arg_38_0, arg_38_1, arg_38_2)
 	if arg_38_0._is_server then
 		arg_38_0:_add_points_collected(arg_38_0._hero_party_id, arg_38_1)
 
@@ -570,11 +570,11 @@ function VersusWinConditions.add_score(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function VersusWinConditions.set_data(arg_39_0, arg_39_1)
+VersusWinConditions.set_data = function (arg_39_0, arg_39_1)
 	return arg_39_0._win_data[arg_39_1] or {}
 end
 
-function VersusWinConditions.play_score_sfx(arg_40_0, arg_40_1)
+VersusWinConditions.play_score_sfx = function (arg_40_0, arg_40_1)
 	local var_40_0 = "Play_hud_versus_score_points"
 
 	if arg_40_0._early_win_enabled then
@@ -639,7 +639,7 @@ function VersusWinConditions.play_score_sfx(arg_40_0, arg_40_1)
 	end
 end
 
-function VersusWinConditions._add_points_collected(arg_41_0, arg_41_1, arg_41_2)
+VersusWinConditions._add_points_collected = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0, var_41_1 = arg_41_0:current_set_data(arg_41_1)
 
 	if not var_41_0 then
@@ -654,7 +654,7 @@ function VersusWinConditions._add_points_collected(arg_41_0, arg_41_1, arg_41_2)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_versus_set_score", arg_41_1, var_41_0.claimed_points, var_41_1, var_41_2, var_41_3)
 end
 
-function VersusWinConditions.save_points_collected(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+VersusWinConditions.save_points_collected = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_0._win_data[arg_42_1]
 
 	if not var_42_0 then
@@ -664,7 +664,7 @@ function VersusWinConditions.save_points_collected(arg_42_0, arg_42_1, arg_42_2,
 	var_42_0[arg_42_2].claimed_points = arg_42_3
 end
 
-function VersusWinConditions.update_early_win_conditions(arg_43_0)
+VersusWinConditions.update_early_win_conditions = function (arg_43_0)
 	if not arg_43_0._early_win_enabled then
 		return
 	end
@@ -713,7 +713,7 @@ end
 
 local var_0_4 = 10
 
-function VersusWinConditions._get_hero_early_win_data(arg_44_0, arg_44_1)
+VersusWinConditions._get_hero_early_win_data = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._hero_party_id
 	local var_44_1 = arg_44_0.mechanism:get_current_set()
 	local var_44_2 = var_44_0 == 1 and 2 or 1
@@ -793,7 +793,7 @@ function VersusWinConditions._get_hero_early_win_data(arg_44_0, arg_44_1)
 	return arg_44_0._early_win_data
 end
 
-function VersusWinConditions.set_score(arg_45_0, arg_45_1)
+VersusWinConditions.set_score = function (arg_45_0, arg_45_1)
 	arg_45_0:current_set_data(arg_45_0._hero_party_id).claimed_points = arg_45_1
 
 	if arg_45_0._is_server then
@@ -805,13 +805,13 @@ function VersusWinConditions.set_score(arg_45_0, arg_45_1)
 	end
 end
 
-function VersusWinConditions.get_current_score(arg_46_0, arg_46_1)
+VersusWinConditions.get_current_score = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0:current_set_data(arg_46_1)
 
 	return var_46_0 and var_46_0.claimed_points or 0
 end
 
-function VersusWinConditions.get_total_score(arg_47_0, arg_47_1)
+VersusWinConditions.get_total_score = function (arg_47_0, arg_47_1)
 	local var_47_0 = 0
 	local var_47_1 = arg_47_0._win_data[arg_47_1]
 
@@ -826,7 +826,7 @@ function VersusWinConditions.get_total_score(arg_47_0, arg_47_1)
 	return var_47_0
 end
 
-function VersusWinConditions.get_total_scores(arg_48_0)
+VersusWinConditions.get_total_scores = function (arg_48_0)
 	local var_48_0 = arg_48_0._win_data
 	local var_48_1 = {}
 
@@ -837,7 +837,7 @@ function VersusWinConditions.get_total_scores(arg_48_0)
 	return var_48_1
 end
 
-function VersusWinConditions.get_match_results(arg_49_0)
+VersusWinConditions.get_match_results = function (arg_49_0)
 	local var_49_0
 	local var_49_1 = 0
 	local var_49_2 = Managers.party:get_num_game_participating_parties()
@@ -858,7 +858,7 @@ function VersusWinConditions.get_match_results(arg_49_0)
 	return var_49_0 == 1 and "party_one_won" or var_49_0 == 2 and "party_two_won" or "draw"
 end
 
-function VersusWinConditions.get_side_close_to_winning(arg_50_0)
+VersusWinConditions.get_side_close_to_winning = function (arg_50_0)
 	if arg_50_0._heroes_close_to_winning then
 		return "heroes"
 	end
@@ -874,14 +874,14 @@ function VersusWinConditions.get_side_close_to_winning(arg_50_0)
 	return nil
 end
 
-function VersusWinConditions.has_party_won_early(arg_51_0)
+VersusWinConditions.has_party_won_early = function (arg_51_0)
 	return arg_51_0.party_won_early ~= nil
 end
 
-function VersusWinConditions.update_testify(arg_52_0, arg_52_1, arg_52_2)
+VersusWinConditions.update_testify = function (arg_52_0, arg_52_1, arg_52_2)
 	Testify:poll_requests_through_handler(var_0_0, arg_52_0)
 end
 
-function VersusWinConditions.get_current_set(arg_53_0)
+VersusWinConditions.get_current_set = function (arg_53_0)
 	return arg_53_0._current_set
 end

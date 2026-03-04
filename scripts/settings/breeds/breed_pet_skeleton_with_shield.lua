@@ -159,7 +159,7 @@ local var_0_1 = {
 		40,
 		40
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if arg_1_4.stagger_type == 3 then
 			if arg_1_0 == 3 and arg_1_4.heavy_stagger_immune_time then
 				arg_1_0 = 0
@@ -800,7 +800,7 @@ local var_0_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			assert(ScriptUnit.has_extension(arg_2_0, "ai_shield_system"), "chaos_marauder_with_shield dont have ai_shield_user_extension")
 
 			if arg_2_1.shield_breaking_hit then
@@ -859,7 +859,7 @@ local var_0_3 = {
 
 			return var_2_1, var_2_2
 		end,
-		custom_exit_function = function(arg_3_0, arg_3_1, arg_3_2)
+		custom_exit_function = function (arg_3_0, arg_3_1, arg_3_2)
 			(ScriptUnit.has_extension(arg_3_0, "ai_shield_system") and ScriptUnit.extension(arg_3_0, "ai_shield_system")):set_is_blocking(true)
 		end,
 		stagger_anims = {

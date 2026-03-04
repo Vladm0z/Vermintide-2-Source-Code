@@ -2,21 +2,21 @@
 
 RatlingGunnerStateStanding = class(RatlingGunnerStateStanding, EnemyCharacterStateStanding)
 
-function RatlingGunnerStateStanding.init(arg_1_0, arg_1_1)
+RatlingGunnerStateStanding.init = function (arg_1_0, arg_1_1)
 	RatlingGunnerStateStanding.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
 	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-function RatlingGunnerStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+RatlingGunnerStateStanding.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	RatlingGunnerStateStanding.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
 	arg_2_0._left_wpn_particle_node_name = "g_ratlinggun"
 	arg_2_0._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
 end
 
-function RatlingGunnerStateStanding.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+RatlingGunnerStateStanding.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0:common_state_changes()
 
 	if var_3_0 then
@@ -35,7 +35,7 @@ function RatlingGunnerStateStanding.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	local var_3_3 = arg_3_0:common_movement(arg_3_5)
 end
 
-function RatlingGunnerStateStanding.debug_display_ammo(arg_4_0)
+RatlingGunnerStateStanding.debug_display_ammo = function (arg_4_0)
 	local var_4_0 = arg_4_0._unit
 	local var_4_1 = (BLACKBOARDS[var_4_0].attack_pattern_data or {}).current_ammo or arg_4_0._breed.max_ammo
 	local var_4_2 = RESOLUTION_LOOKUP.res_w

@@ -123,7 +123,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("chaos_fanatic") < 7 and var_0_1("chaos_raider") < 5 and var_0_1("chaos_marauder") < 8 and var_0_1("chaos_marauder_with_shield") < 6
 			end
 		},
@@ -179,7 +179,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("chaos_fanatic") < 6 and var_0_1("chaos_raider") < 6 and var_0_1("chaos_marauder") < 6 and var_0_1("chaos_marauder_with_shield") < 6
 			end
 		},
@@ -219,7 +219,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -237,7 +237,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -285,7 +285,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -324,7 +324,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -341,7 +341,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_1("chaos_fanatic") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -389,7 +389,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},
@@ -483,7 +483,7 @@ local var_0_6 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_1("chaos_berzerker") < 3 and var_0_1("chaos_raider") < 3 and var_0_1("chaos_marauder") < 3 and var_0_1("chaos_marauder_with_shield") < 2
 			end
 		},

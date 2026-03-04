@@ -29,7 +29,7 @@ if var_0_9 then
 	}
 end
 
-function var_0_2.wwise_load_bank(arg_1_0)
+var_0_2.wwise_load_bank = function (arg_1_0)
 	local var_1_0 = arg_1_0.Name or arg_1_0.name or ""
 
 	if var_1_0 == "" then
@@ -45,7 +45,7 @@ function var_0_2.wwise_load_bank(arg_1_0)
 	end
 end
 
-function var_0_2.wwise_unit_load_bank(arg_2_0)
+var_0_2.wwise_unit_load_bank = function (arg_2_0)
 	local var_2_0 = arg_2_0.Name or arg_2_0.name or ""
 	local var_2_1 = arg_2_0.Unit or arg_2_0.unit
 
@@ -66,7 +66,7 @@ function var_0_2.wwise_unit_load_bank(arg_2_0)
 	end
 end
 
-function var_0_2.wwise_unload_bank(arg_3_0)
+var_0_2.wwise_unload_bank = function (arg_3_0)
 	local var_3_0 = arg_3_0.Name or arg_3_0.name or ""
 
 	if var_3_0 == "" then
@@ -94,13 +94,13 @@ function var_0_2.wwise_unload_bank(arg_3_0)
 	end
 end
 
-function var_0_2.wwise_set_language(arg_4_0)
+var_0_2.wwise_set_language = function (arg_4_0)
 	local var_4_0 = arg_4_0.Name or arg_4_0.name or ""
 
 	var_0_9.set_language(var_4_0)
 end
 
-function var_0_2.wwise_set_listener_pose(arg_5_0)
+var_0_2.wwise_set_listener_pose = function (arg_5_0)
 	local var_5_0 = arg_5_0.Position or arg_5_0.position
 
 	if not var_5_0 then
@@ -115,7 +115,7 @@ function var_0_2.wwise_set_listener_pose(arg_5_0)
 	var_0_10.set_listener(var_5_4, var_5_1, var_5_3)
 end
 
-function var_0_2.wwise_move_listener_to_unit(arg_6_0)
+var_0_2.wwise_move_listener_to_unit = function (arg_6_0)
 	local var_6_0 = arg_6_0.Unit or arg_6_0.unit
 
 	if not var_6_0 then
@@ -135,7 +135,7 @@ function var_0_2.wwise_move_listener_to_unit(arg_6_0)
 	var_0_10.set_listener(var_6_4, var_6_1, var_6_3)
 end
 
-function var_0_2.wwise_trigger_event(arg_7_0)
+var_0_2.wwise_trigger_event = function (arg_7_0)
 	local var_7_0 = arg_7_0.Name or arg_7_0.name or ""
 	local var_7_1 = arg_7_0.Unit or arg_7_0.unit
 	local var_7_2 = arg_7_0.use_occlusion or false
@@ -211,7 +211,7 @@ local function var_0_12(arg_8_0, arg_8_1)
 	return var_8_1
 end
 
-function var_0_2.wwise_make_auto_source(arg_9_0)
+var_0_2.wwise_make_auto_source = function (arg_9_0)
 	local var_9_0 = var_0_12(arg_9_0, var_0_10.make_auto_source)
 
 	return {
@@ -220,7 +220,7 @@ function var_0_2.wwise_make_auto_source(arg_9_0)
 	}
 end
 
-function var_0_2.wwise_make_manual_source(arg_10_0)
+var_0_2.wwise_make_manual_source = function (arg_10_0)
 	local var_10_0 = var_0_12(arg_10_0, var_0_10.make_manual_source)
 
 	return {
@@ -229,35 +229,35 @@ function var_0_2.wwise_make_manual_source(arg_10_0)
 	}
 end
 
-function var_0_2.wwise_destroy_manual_source(arg_11_0)
+var_0_2.wwise_destroy_manual_source = function (arg_11_0)
 	local var_11_0 = arg_11_0.Source_Id or arg_11_0.source_id
 	local var_11_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
 	var_0_10.destroy_manual_source(var_11_1, var_11_0)
 end
 
-function var_0_2.wwise_stop_event(arg_12_0)
+var_0_2.wwise_stop_event = function (arg_12_0)
 	local var_12_0 = arg_12_0.Playing_Id or arg_12_0.playing_id
 	local var_12_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
 	var_0_10.stop_event(var_12_1, var_12_0)
 end
 
-function var_0_2.wwise_pause_event(arg_13_0)
+var_0_2.wwise_pause_event = function (arg_13_0)
 	local var_13_0 = arg_13_0.Playing_Id or arg_13_0.playing_id
 	local var_13_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
 	var_0_10.pause_event(var_13_1, var_13_0)
 end
 
-function var_0_2.wwise_resume_event(arg_14_0)
+var_0_2.wwise_resume_event = function (arg_14_0)
 	local var_14_0 = arg_14_0.Playing_Id or arg_14_0.playing_id
 	local var_14_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
 	var_0_10.resume_event(var_14_1, var_14_0)
 end
 
-function var_0_2.wwise_set_source_position(arg_15_0)
+var_0_2.wwise_set_source_position = function (arg_15_0)
 	local var_15_0 = arg_15_0.Source_Id or arg_15_0.source_id
 	local var_15_1 = arg_15_0.Position or arg_15_0.position
 	local var_15_2 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
@@ -265,7 +265,7 @@ function var_0_2.wwise_set_source_position(arg_15_0)
 	var_0_10.set_source_position(var_15_2, var_15_0, var_15_1)
 end
 
-function var_0_2.wwise_set_source_parameter(arg_16_0)
+var_0_2.wwise_set_source_parameter = function (arg_16_0)
 	local var_16_0 = arg_16_0.Source_Id or arg_16_0.source_id
 	local var_16_1 = arg_16_0.Parameter_Name or arg_16_0.parameter_name or ""
 	local var_16_2 = arg_16_0.Value or arg_16_0.value
@@ -274,7 +274,7 @@ function var_0_2.wwise_set_source_parameter(arg_16_0)
 	var_0_10.set_source_parameter(var_16_3, var_16_0, var_16_1, var_16_2)
 end
 
-function var_0_2.wwise_set_global_parameter(arg_17_0)
+var_0_2.wwise_set_global_parameter = function (arg_17_0)
 	local var_17_0 = arg_17_0.Parameter_Name or arg_17_0.parameter_name or ""
 	local var_17_1 = arg_17_0.Value or arg_17_0.value
 	local var_17_2 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
@@ -282,7 +282,7 @@ function var_0_2.wwise_set_global_parameter(arg_17_0)
 	var_0_10.set_global_parameter(var_17_2, var_17_0, var_17_1)
 end
 
-function var_0_2.wwise_set_state(arg_18_0)
+var_0_2.wwise_set_state = function (arg_18_0)
 	local var_18_0 = arg_18_0.Group or arg_18_0.group
 	local var_18_1 = arg_18_0.State or arg_18_0.state
 
@@ -293,7 +293,7 @@ function var_0_2.wwise_set_state(arg_18_0)
 	var_0_9.set_state(var_18_0, var_18_1)
 end
 
-function var_0_2.wwise_set_switch(arg_19_0)
+var_0_2.wwise_set_switch = function (arg_19_0)
 	local var_19_0 = arg_19_0.Group or arg_19_0.group
 	local var_19_1 = arg_19_0.State or arg_19_0.state
 
@@ -307,7 +307,7 @@ function var_0_2.wwise_set_switch(arg_19_0)
 	var_0_10.set_switch(var_19_3, var_19_0, var_19_1, var_19_2)
 end
 
-function var_0_2.wwise_post_trigger(arg_20_0)
+var_0_2.wwise_post_trigger = function (arg_20_0)
 	local var_20_0 = arg_20_0.Source_Id or arg_20_0.source_id
 	local var_20_1 = arg_20_0.Name or arg_20_0.name
 
@@ -318,7 +318,7 @@ function var_0_2.wwise_post_trigger(arg_20_0)
 	end
 end
 
-function var_0_2.wwise_has_source(arg_21_0)
+var_0_2.wwise_has_source = function (arg_21_0)
 	local var_21_0 = arg_21_0.Source_Id or arg_21_0.source_id
 	local var_21_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
@@ -335,7 +335,7 @@ function var_0_2.wwise_has_source(arg_21_0)
 	end
 end
 
-function var_0_2.wwise_is_playing(arg_22_0)
+var_0_2.wwise_is_playing = function (arg_22_0)
 	local var_22_0 = arg_22_0.Playing_Id or arg_22_0.playing_id
 	local var_22_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
@@ -352,7 +352,7 @@ function var_0_2.wwise_is_playing(arg_22_0)
 	end
 end
 
-function var_0_2.wwise_get_playing_elapsed(arg_23_0)
+var_0_2.wwise_get_playing_elapsed = function (arg_23_0)
 	local var_23_0 = arg_23_0.Playing_Id or arg_23_0.playing_id
 	local var_23_1 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 	local var_23_2 = (var_0_10.get_playing_elapsed(var_23_1, var_23_0) or 0) / 1000
@@ -363,7 +363,7 @@ function var_0_2.wwise_get_playing_elapsed(arg_23_0)
 	}
 end
 
-function var_0_2.wwise_add_soundscape_source(arg_24_0)
+var_0_2.wwise_add_soundscape_source = function (arg_24_0)
 	local var_24_0 = arg_24_0.Name or arg_24_0.name or ""
 	local var_24_1 = arg_24_0.Unit or arg_24_0.unit
 	local var_24_2 = arg_24_0.Shape or arg_24_0.shape
@@ -440,7 +440,7 @@ function var_0_2.wwise_add_soundscape_source(arg_24_0)
 	}
 end
 
-function var_0_2.wwise_remove_soundscape_source(arg_25_0)
+var_0_2.wwise_remove_soundscape_source = function (arg_25_0)
 	local var_25_0 = arg_25_0.SS_Source_Id or arg_25_0.ss_source_id
 
 	if not var_25_0 then
@@ -458,7 +458,7 @@ function var_0_2.wwise_remove_soundscape_source(arg_25_0)
 	var_0_10.remove_soundscape_source(var_25_1, var_25_0)
 end
 
-function var_0_2.wwise_set_obstruction_and_occlusion_for_soundscape_source(arg_26_0)
+var_0_2.wwise_set_obstruction_and_occlusion_for_soundscape_source = function (arg_26_0)
 	local var_26_0 = arg_26_0.SS_Source_Id or arg_26_0.ss_source_id
 	local var_26_1 = arg_26_0.Obstruction or arg_26_0.obstruction or 0
 	local var_26_2 = arg_26_0.Occlusion or arg_26_0.occlusion or 0
@@ -470,7 +470,7 @@ function var_0_2.wwise_set_obstruction_and_occlusion_for_soundscape_source(arg_2
 	end
 end
 
-function var_0_2.wwise_add_soundscape_render_unit(arg_27_0)
+var_0_2.wwise_add_soundscape_render_unit = function (arg_27_0)
 	local var_27_0 = arg_27_0.Unit or arg_27_0.unit
 
 	if var_27_0 then
@@ -478,7 +478,7 @@ function var_0_2.wwise_add_soundscape_render_unit(arg_27_0)
 	end
 end
 
-function var_0_2.wwise_set_environment(arg_28_0)
+var_0_2.wwise_set_environment = function (arg_28_0)
 	local var_28_0 = arg_28_0.Aux_Bus or arg_28_0.aux_bus
 	local var_28_1 = arg_28_0.Value or arg_28_0.value
 
@@ -489,7 +489,7 @@ function var_0_2.wwise_set_environment(arg_28_0)
 	end
 end
 
-function var_0_2.wwise_set_dry_environment(arg_29_0)
+var_0_2.wwise_set_dry_environment = function (arg_29_0)
 	local var_29_0 = arg_29_0.Value or arg_29_0.value
 
 	if var_29_0 then
@@ -499,13 +499,13 @@ function var_0_2.wwise_set_dry_environment(arg_29_0)
 	end
 end
 
-function var_0_2.wwise_reset_environment(arg_30_0)
+var_0_2.wwise_reset_environment = function (arg_30_0)
 	local var_30_0 = var_0_9.wwise_world(var_0_3.flow_callback_context_world())
 
 	var_0_10.reset_environment(var_30_0)
 end
 
-function var_0_2.wwise_set_source_environment(arg_31_0)
+var_0_2.wwise_set_source_environment = function (arg_31_0)
 	local var_31_0 = arg_31_0.Source_Id or arg_31_0.source_id
 	local var_31_1 = arg_31_0.Aux_Bus or arg_31_0.aux_bus
 	local var_31_2 = arg_31_0.Value or arg_31_0.value
@@ -517,7 +517,7 @@ function var_0_2.wwise_set_source_environment(arg_31_0)
 	end
 end
 
-function var_0_2.wwise_set_source_dry_environment(arg_32_0)
+var_0_2.wwise_set_source_dry_environment = function (arg_32_0)
 	local var_32_0 = arg_32_0.Source_Id or arg_32_0.source_id
 	local var_32_1 = arg_32_0.Value or arg_32_0.value
 
@@ -528,7 +528,7 @@ function var_0_2.wwise_set_source_dry_environment(arg_32_0)
 	end
 end
 
-function var_0_2.wwise_reset_source_environment(arg_33_0)
+var_0_2.wwise_reset_source_environment = function (arg_33_0)
 	local var_33_0 = arg_33_0.Source_Id or arg_33_0.source_id
 
 	if var_33_0 then
@@ -538,7 +538,7 @@ function var_0_2.wwise_reset_source_environment(arg_33_0)
 	end
 end
 
-function var_0_2.wwise_set_obstruction_and_occlusion(arg_34_0)
+var_0_2.wwise_set_obstruction_and_occlusion = function (arg_34_0)
 	local var_34_0 = arg_34_0.Source_Id or arg_34_0.source_id
 	local var_34_1 = var_0_11[arg_34_0.Listener or arg_34_0.listener]
 	local var_34_2 = arg_34_0.Obstruction or arg_34_0.obstruction or 0
@@ -553,13 +553,13 @@ end
 
 if not var_0_9 then
 	for iter_0_0, iter_0_1 in pairs(var_0_2) do
-		var_0_2[iter_0_0] = function(arg_35_0)
+		var_0_2[iter_0_0] = function (arg_35_0)
 			return
 		end
 	end
 end
 
-function var_0_2.dialogue_silence_unit(arg_36_0)
+var_0_2.dialogue_silence_unit = function (arg_36_0)
 	local var_36_0 = arg_36_0.Unit or arg_36_0.unit
 	local var_36_1 = arg_36_0.set_silenced or false
 

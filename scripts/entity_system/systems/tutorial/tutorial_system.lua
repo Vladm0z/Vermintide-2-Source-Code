@@ -37,7 +37,7 @@ local var_0_6 = {
 
 TutorialSystem = class(TutorialSystem, ExtensionSystemBase)
 
-function TutorialSystem.init(arg_4_0, arg_4_1, arg_4_2)
+TutorialSystem.init = function (arg_4_0, arg_4_1, arg_4_2)
 	TutorialSystem.super.init(arg_4_0, arg_4_1, arg_4_2, var_0_6)
 
 	arg_4_0.player_units = {}
@@ -64,7 +64,7 @@ function TutorialSystem.init(arg_4_0, arg_4_1, arg_4_2)
 	var_0_3 = false
 end
 
-function TutorialSystem.destroy(arg_5_0)
+TutorialSystem.destroy = function (arg_5_0)
 	Managers.state.event:unregister(arg_5_0, "tutorial_trigger")
 	arg_5_0.network_event_delegate:unregister(arg_5_0)
 	table.clear(arg_5_0)
@@ -72,7 +72,7 @@ end
 
 local var_0_7 = {}
 
-function TutorialSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+TutorialSystem.on_add_extension = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = {}
 
 	if arg_6_3 == "PlayerTutorialExtension" then
@@ -165,7 +165,7 @@ function TutorialSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg
 		var_6_0.network_synced = var_6_3
 		var_6_0.always_show = arg_6_4.always_show or Unit.get_data(arg_6_2, "always_show")
 
-		function var_6_0.set_always_show(arg_10_0, arg_10_1)
+		var_6_0.set_always_show = function (arg_10_0, arg_10_1)
 			arg_10_0.always_show = arg_10_1
 
 			if Managers.player.is_server and not var_6_2 and arg_10_0.network_synced then
@@ -188,7 +188,7 @@ function TutorialSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg
 	return var_6_0
 end
 
-function TutorialSystem.on_remove_extension(arg_11_0, arg_11_1, arg_11_2)
+TutorialSystem.on_remove_extension = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:_cleanup_extension(arg_11_1)
 
 	arg_11_0.frozen_unit_extension_data[arg_11_1] = nil
@@ -196,11 +196,11 @@ function TutorialSystem.on_remove_extension(arg_11_0, arg_11_1, arg_11_2)
 	ScriptUnit.remove_extension(arg_11_1, "tutorial_system")
 end
 
-function TutorialSystem.on_freeze_extension(arg_12_0, arg_12_1, arg_12_2)
+TutorialSystem.on_freeze_extension = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:freeze(arg_12_1, arg_12_2)
 end
 
-function TutorialSystem.freeze(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+TutorialSystem.freeze = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.frozen_unit_extension_data
 
 	if var_13_0[arg_13_1] then
@@ -215,7 +215,7 @@ function TutorialSystem.freeze(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	var_13_0[arg_13_1] = var_13_1
 end
 
-function TutorialSystem.unfreeze(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+TutorialSystem.unfreeze = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0.frozen_unit_extension_data[arg_14_1]
 
 	fassert(var_14_0, "Unit to unfreeze didn't have frozen extension")
@@ -236,7 +236,7 @@ function TutorialSystem.unfreeze(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function TutorialSystem._cleanup_extension(arg_15_0, arg_15_1)
+TutorialSystem._cleanup_extension = function (arg_15_0, arg_15_1)
 	if arg_15_0.health_extensions[arg_15_1] then
 		arg_15_0.health_extensions[arg_15_1] = nil
 
@@ -254,7 +254,7 @@ function TutorialSystem._cleanup_extension(arg_15_0, arg_15_1)
 	arg_15_0.unit_extension_data[arg_15_1] = nil
 end
 
-function TutorialSystem.physics_async_update(arg_16_0, arg_16_1, arg_16_2)
+TutorialSystem.physics_async_update = function (arg_16_0, arg_16_1, arg_16_2)
 	if script_data.tutorial_disabled then
 		return
 	end
@@ -339,7 +339,7 @@ function TutorialSystem.physics_async_update(arg_16_0, arg_16_1, arg_16_2)
 	var_0_3 = false
 end
 
-function TutorialSystem.iterate_tooltips(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+TutorialSystem.iterate_tooltips = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	local var_17_0 = TutorialTooltipTemplates
 	local var_17_1 = TutorialTooltipTemplates_n
 	local var_17_2 = Managers.state.entity:system("play_go_tutorial_system"):active()
@@ -354,7 +354,7 @@ function TutorialSystem.iterate_tooltips(arg_17_0, arg_17_1, arg_17_2, arg_17_3,
 			if var_17_2 and not var_17_5.allowed_in_tutorial then
 				break
 			elseif not var_17_2 and var_17_5.incompatible_in_game then
-				-- block empty
+				-- Nothing
 			elseif not var_17_4 and var_17_5.inn_only then
 				break
 			end
@@ -410,7 +410,7 @@ local function var_0_11(arg_18_0, arg_18_1)
 	return var_0_9(var_0_10, var_18_0) < var_0_9(var_0_10, var_18_1)
 end
 
-function TutorialSystem.prioritize_objective_tooltip(arg_19_0, arg_19_1, arg_19_2)
+TutorialSystem.prioritize_objective_tooltip = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_2 then
 		arg_19_0._objective_tooltip_prioritized_list = nil
 		arg_19_0._prioritized_objective_tooltip = nil
@@ -435,7 +435,7 @@ function TutorialSystem.prioritize_objective_tooltip(arg_19_0, arg_19_1, arg_19_
 	arg_19_0._prioritized_objective_tooltip = arg_19_1
 end
 
-function TutorialSystem.iterate_objective_tooltips(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+TutorialSystem.iterate_objective_tooltips = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_0._objective_tooltip_prioritized_list or TutorialObjectiveTooltipTemplates
 	local var_20_1 = TutorialObjectiveTooltipTemplates_n
 	local var_20_2 = arg_20_3.objective_tooltips
@@ -507,7 +507,7 @@ function TutorialSystem.iterate_objective_tooltips(arg_20_0, arg_20_1, arg_20_2,
 	end
 end
 
-function TutorialSystem.verify_info_slate(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+TutorialSystem.verify_info_slate = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_0.player_units[arg_21_2]
 	local var_21_1 = arg_21_0.world
 
@@ -518,7 +518,7 @@ function TutorialSystem.verify_info_slate(arg_21_0, arg_21_1, arg_21_2, arg_21_3
 	return arg_21_4.can_show(arg_21_1, arg_21_2, var_21_0.data, arg_21_3, var_21_1)
 end
 
-function TutorialSystem.iterate_info_slates(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+TutorialSystem.iterate_info_slates = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	if Application.user_setting("tutorials_enabled") then
 		local var_22_0 = TutorialInfoSlateTemplates
 		local var_22_1 = TutorialInfoSlateTemplates_n
@@ -548,7 +548,7 @@ function TutorialSystem.iterate_info_slates(arg_22_0, arg_22_1, arg_22_2, arg_22
 	end
 end
 
-function TutorialSystem.on_tutorial_trigger(arg_23_0, arg_23_1)
+TutorialSystem.on_tutorial_trigger = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._condition_context
 
 	if var_23_0:get("has_max_level_character") then
@@ -561,9 +561,9 @@ function TutorialSystem.on_tutorial_trigger(arg_23_0, arg_23_1)
 
 	for iter_23_0, iter_23_1 in pairs(HandbookSettings.popups) do
 		if var_23_1[iter_23_0] then
-			-- block empty
+			-- Nothing
 		elseif not table.find(iter_23_1.triggers, arg_23_1) then
-			-- block empty
+			-- Nothing
 		else
 			local var_23_2 = iter_23_1.conditions
 
@@ -580,7 +580,7 @@ function TutorialSystem.on_tutorial_trigger(arg_23_0, arg_23_1)
 			local var_23_4 = iter_23_1.custom_condition
 
 			if var_23_4 and not var_23_4(var_23_0) then
-				-- block empty
+				-- Nothing
 			else
 				Managers.state.event:trigger("ui_show_popup", iter_23_0, "handbook")
 
@@ -592,7 +592,7 @@ function TutorialSystem.on_tutorial_trigger(arg_23_0, arg_23_1)
 	end
 end
 
-function TutorialSystem.rpc_tutorial_message(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+TutorialSystem.rpc_tutorial_message = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = NetworkLookup.tutorials[arg_24_2]
 
 	if not var_24_0 then
@@ -609,7 +609,7 @@ function TutorialSystem.rpc_tutorial_message(arg_24_0, arg_24_1, arg_24_2, arg_2
 	end
 end
 
-function TutorialSystem.rpc_pacing_changed(arg_25_0, arg_25_1, arg_25_2)
+TutorialSystem.rpc_pacing_changed = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = NetworkLookup.pacing[arg_25_2]
 
 	arg_25_0.pacing = var_25_0
@@ -617,7 +617,7 @@ function TutorialSystem.rpc_pacing_changed(arg_25_0, arg_25_1, arg_25_2)
 	tutprintf("Changing pacing state to %s", var_25_0)
 end
 
-function TutorialSystem.rpc_objective_unit_set_active(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+TutorialSystem.rpc_objective_unit_set_active = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = Managers.state.network:game_object_or_level_unit(arg_26_2, arg_26_3)
 	local var_26_1 = ScriptUnit.has_extension(var_26_0, "tutorial_system")
 
@@ -626,13 +626,13 @@ function TutorialSystem.rpc_objective_unit_set_active(arg_26_0, arg_26_1, arg_26
 	end
 end
 
-function TutorialSystem.rpc_prioritize_objective_tooltip(arg_27_0, arg_27_1, arg_27_2)
+TutorialSystem.rpc_prioritize_objective_tooltip = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = NetworkLookup.objective_tooltips[arg_27_2]
 
 	arg_27_0:prioritize_objective_tooltip(var_27_0)
 end
 
-function TutorialSystem.rpc_objective_unit_set_always_show(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+TutorialSystem.rpc_objective_unit_set_always_show = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = Managers.state.network:game_object_or_level_unit(arg_28_2, arg_28_3)
 	local var_28_1 = ScriptUnit.has_extension(var_28_0, "tutorial_system")
 
@@ -641,11 +641,11 @@ function TutorialSystem.rpc_objective_unit_set_always_show(arg_28_0, arg_28_1, a
 	end
 end
 
-function TutorialSystem.flow_callback_show_health_bar(arg_29_0, arg_29_1, arg_29_2)
+TutorialSystem.flow_callback_show_health_bar = function (arg_29_0, arg_29_1, arg_29_2)
 	Managers.state.event:trigger("tutorial_event_show_health_bar", arg_29_1, arg_29_2)
 end
 
-function TutorialSystem.flow_callback_tutorial_message(arg_30_0, arg_30_1, arg_30_2)
+TutorialSystem.flow_callback_tutorial_message = function (arg_30_0, arg_30_1, arg_30_2)
 	if Managers.player.is_server then
 		local var_30_0 = NetworkLookup.tutorials[arg_30_1]
 		local var_30_1 = NetworkLookup.tutorials[arg_30_2]
@@ -654,7 +654,7 @@ function TutorialSystem.flow_callback_tutorial_message(arg_30_0, arg_30_1, arg_3
 	end
 end
 
-function TutorialSystem.hot_join_sync(arg_31_0, arg_31_1)
+TutorialSystem.hot_join_sync = function (arg_31_0, arg_31_1)
 	local var_31_0 = Managers.state.network
 	local var_31_1 = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
@@ -673,7 +673,7 @@ function TutorialSystem.hot_join_sync(arg_31_0, arg_31_1)
 	end
 end
 
-function TutorialSystem.update(arg_32_0, arg_32_1, arg_32_2)
+TutorialSystem.update = function (arg_32_0, arg_32_1, arg_32_2)
 	if script_data.tutorial_disabled then
 		return
 	end

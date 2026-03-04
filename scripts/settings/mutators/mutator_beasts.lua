@@ -4,7 +4,7 @@ return {
 	description = "weaves_beasts_mutator_desc",
 	display_name = "weaves_beasts_mutator_name",
 	icon = "mutator_icon_beast_totems",
-	server_level_object_killed_function = function(arg_1_0, arg_1_1, arg_1_2)
+	server_level_object_killed_function = function (arg_1_0, arg_1_1, arg_1_2)
 		if Unit.is_a(arg_1_2, arg_1_1.beacon_unit) then
 			for iter_1_0, iter_1_1 in pairs(arg_1_1.totems) do
 				if arg_1_2 == iter_1_1.unit then
@@ -17,7 +17,7 @@ return {
 			end
 		end
 	end,
-	increment_challenge_stat = function()
+	increment_challenge_stat = function ()
 		if ScorpionSeasonalSettings.current_season_id == 1 then
 			local var_2_0 = "season_1"
 			local var_2_1 = "weave_beasts_destroyed_totems"
@@ -30,7 +30,7 @@ return {
 			Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat_group", var_2_2, var_2_3)
 		end
 	end,
-	update_totems = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	update_totems = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		arg_3_1.update_timer = arg_3_1.update_timer + arg_3_2
 
 		if arg_3_1.update_timer > 1 then
@@ -107,7 +107,7 @@ return {
 			table.clear(arg_3_1.ai_units_inside)
 		end
 	end,
-	server_start_function = function(arg_4_0, arg_4_1)
+	server_start_function = function (arg_4_0, arg_4_1)
 		local var_4_0 = Managers.weave
 		local var_4_1 = var_4_0:get_active_objective_template()
 		local var_4_2 = Managers.state.difficulty:get_difficulty()
@@ -154,10 +154,10 @@ return {
 			arg_4_1.totems[#arg_4_1.totems + 1] = var_4_7
 		end
 	end,
-	server_players_left_safe_zone = function(arg_5_0, arg_5_1)
+	server_players_left_safe_zone = function (arg_5_0, arg_5_1)
 		arg_5_1.has_left_safe_zone = true
 	end,
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

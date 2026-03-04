@@ -332,7 +332,7 @@ for iter_0_13, iter_0_14 in pairs(Breeds) do
 	elseif iter_0_14.race == "critter" then
 		CRITTER[iter_0_14.name] = true
 	elseif iter_0_14.race == "dummy" then
-		-- block empty
+		-- Nothing
 	elseif iter_0_14.race then
 		error("Bad race type '" .. iter_0_14.race .. "' specified in breed .. '" .. iter_0_14.name .. "'.")
 	else

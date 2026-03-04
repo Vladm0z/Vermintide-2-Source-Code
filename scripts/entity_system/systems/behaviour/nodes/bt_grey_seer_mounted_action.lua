@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTGreySeerMountedAction = class(BTGreySeerMountedAction, BTNode)
 
-function BTGreySeerMountedAction.init(arg_1_0, ...)
+BTGreySeerMountedAction.init = function (arg_1_0, ...)
 	BTGreySeerMountedAction.super.init(arg_1_0, ...)
 end
 
 BTGreySeerMountedAction.name = "BTGreySeerMountedAction"
 
-function BTGreySeerMountedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTGreySeerMountedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_enabled(false)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
@@ -34,7 +34,7 @@ function BTGreySeerMountedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.current_hit_reaction_type = "mounted"
 end
 
-function BTGreySeerMountedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTGreySeerMountedAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	local var_3_0 = Managers.state.network
@@ -56,7 +56,7 @@ end
 
 local var_0_0 = Unit.alive
 
-function BTGreySeerMountedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTGreySeerMountedAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.mounted_data
 
 	if Unit.alive(var_4_0.mount_unit) and not var_4_0.knocked_off_mounted_timer and not arg_4_2.knocked_off_mount then

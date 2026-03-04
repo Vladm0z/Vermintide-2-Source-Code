@@ -14,7 +14,7 @@ local var_0_2 = {
 			name = "product_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				local var_1_0 = arg_1_3.product_widget
 				local var_1_1 = var_1_0.content
 				local var_1_2 = var_1_0.style
@@ -23,7 +23,7 @@ local var_0_2 = {
 				var_1_2.owned_icon.color[1] = 0
 				var_1_2.owned_icon_bg.color[1] = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 				local var_2_1 = arg_2_4.product_widget
 
@@ -35,7 +35,7 @@ local var_0_2 = {
 
 				var_2_1.offset[2] = var_2_2[2] / 2 + var_2_4 - var_2_4 * var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -43,10 +43,10 @@ local var_0_2 = {
 			name = "text_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_2.approved.alpha_multiplier = 0
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 				local var_5_1 = arg_5_2.approved
 				local var_5_2 = 25
@@ -54,7 +54,7 @@ local var_0_2 = {
 				var_5_1.offset[2] = -var_5_2 + var_5_2 * var_5_0
 				var_5_1.alpha_multiplier = arg_5_3
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		},
@@ -62,10 +62,10 @@ local var_0_2 = {
 			name = "stamp",
 			start_progress = 0.1,
 			end_progress = 0.6,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.ease_in_exp(math.ease_exp(arg_8_3))
 				local var_8_1 = 255 * arg_8_3
 				local var_8_2 = arg_8_4.product_widget
@@ -114,7 +114,7 @@ local var_0_2 = {
 					var_8_21[2] = var_8_20[2] - (var_8_16[2] * var_8_5 - var_8_19) * 0.5
 				end
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		},
@@ -122,7 +122,7 @@ local var_0_2 = {
 			name = "frame_glow",
 			start_progress = 0.4,
 			end_progress = 1.9,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				local var_10_0 = arg_10_2.approved.style.frame_write_mask
 				local var_10_1 = var_10_0.texture_size
 				local var_10_2 = var_10_0.offset
@@ -130,7 +130,7 @@ local var_0_2 = {
 				var_10_2[1] = -var_10_1[1]
 				var_10_2[2] = -var_10_1[2]
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 				local var_11_1 = arg_11_2.approved.style.frame_write_mask
 				local var_11_2 = var_11_1.texture_size
@@ -139,7 +139,7 @@ local var_0_2 = {
 				var_11_3[1] = -var_11_2[1] + var_11_2[1] * 2 * var_11_0
 				var_11_3[2] = -var_11_2[2] + var_11_2[2] * 2 * var_11_0
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		},
@@ -147,10 +147,10 @@ local var_0_2 = {
 			name = "fade_out",
 			start_progress = 1.8,
 			end_progress = 2.2,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = 1 - math.easeInCubic(arg_14_3)
 
 				arg_14_2.approved.alpha_multiplier = var_14_0
@@ -160,7 +160,7 @@ local var_0_2 = {
 				var_14_1.alpha_multiplier = var_14_0
 				var_14_1.style.owned_icon_bg.color[1] = 255 * math.ease_out_quad(1 - arg_14_3)
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		},
@@ -168,13 +168,13 @@ local var_0_2 = {
 			name = "blur_progress_out",
 			start_progress = 1.9,
 			end_progress = 2.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				arg_17_4.blur_progress = 1 - math.easeInCubic(arg_17_3)
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}
@@ -184,15 +184,15 @@ local var_0_2 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = math.easeOutCubic(arg_20_3)
 
 				arg_20_4.render_settings.alpha_multiplier = var_20_0
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end
 		}
@@ -692,7 +692,7 @@ local var_0_8 = {
 						style_id = "background",
 						pass_type = "texture",
 						texture_id = "background",
-						content_change_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+						content_change_function = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 							local var_22_0 = ((arg_22_1.progress or 0) + arg_22_3 * 0.5) % 1
 							local var_22_1 = math.smoothstep(var_22_0, 0, 1)
 
@@ -708,7 +708,7 @@ local var_0_8 = {
 						style_id = "glow",
 						pass_type = "texture",
 						texture_id = "glow",
-						content_change_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+						content_change_function = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 							local var_23_0 = ((arg_23_1.progress or 0) + arg_23_3 * 0.5) % 1
 							local var_23_1 = math.smoothstep(var_23_0, 0, 1)
 
@@ -959,7 +959,7 @@ local var_0_9 = "gui/1080p/single_textures/generic/transparent_placeholder_textu
 
 StoreItemPurchasePopup = class(StoreItemPurchasePopup)
 
-function StoreItemPurchasePopup.init(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+StoreItemPurchasePopup.init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	arg_24_0._product = arg_24_2
 	arg_24_0._ingame_ui = arg_24_1
 	arg_24_0._top_world = arg_24_1.top_world
@@ -982,7 +982,7 @@ function StoreItemPurchasePopup.init(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	arg_24_0:_change_state(arg_24_3 or "popup")
 end
 
-function StoreItemPurchasePopup._setup_renderers(arg_25_0)
+StoreItemPurchasePopup._setup_renderers = function (arg_25_0)
 	local var_25_0 = "store_purchase_ui_world"
 	local var_25_1 = 999
 
@@ -1005,7 +1005,7 @@ function StoreItemPurchasePopup._setup_renderers(arg_25_0)
 	arg_25_0._blur_purchase_ui_renderer = arg_25_0._ingame_ui:create_ui_renderer(arg_25_0._blur_purchase_ui_world, false, true)
 end
 
-function StoreItemPurchasePopup._destroy_renderers(arg_26_0)
+StoreItemPurchasePopup._destroy_renderers = function (arg_26_0)
 	UIRenderer.destroy(arg_26_0._purchase_ui_renderer, arg_26_0._purchase_ui_world)
 	ScriptWorld.destroy_viewport(arg_26_0._purchase_ui_world, arg_26_0._purchase_ui_world_viewport_name)
 	Managers.world:destroy_world(arg_26_0._purchase_ui_world)
@@ -1023,7 +1023,7 @@ function StoreItemPurchasePopup._destroy_renderers(arg_26_0)
 	arg_26_0._blur_purchase_ui_world_viewport_name = nil
 end
 
-function StoreItemPurchasePopup._create_gamepad_input_description(arg_27_0, arg_27_1)
+StoreItemPurchasePopup._create_gamepad_input_description = function (arg_27_0, arg_27_1)
 	local var_27_0 = {
 		{
 			input_action = "confirm",
@@ -1042,7 +1042,7 @@ function StoreItemPurchasePopup._create_gamepad_input_description(arg_27_0, arg_
 	arg_27_0._menu_input_description:set_input_description(nil)
 end
 
-function StoreItemPurchasePopup._change_state(arg_28_0, arg_28_1)
+StoreItemPurchasePopup._change_state = function (arg_28_0, arg_28_1)
 	if arg_28_0._state then
 		local var_28_0 = "_" .. arg_28_0._state .. "_on_exit"
 
@@ -1064,7 +1064,7 @@ function StoreItemPurchasePopup._change_state(arg_28_0, arg_28_1)
 	arg_28_0._state = arg_28_1
 end
 
-function StoreItemPurchasePopup._set_fullscreen_effect_enable_state(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+StoreItemPurchasePopup._set_fullscreen_effect_enable_state = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = World.get_data(arg_29_3, "shading_environment")
 
 	arg_29_2 = arg_29_2 or arg_29_1 and 1 or 0
@@ -1078,15 +1078,15 @@ function StoreItemPurchasePopup._set_fullscreen_effect_enable_state(arg_29_0, ar
 	arg_29_0._fullscreen_effect_enabled = arg_29_1
 end
 
-function StoreItemPurchasePopup.is_complete(arg_30_0)
+StoreItemPurchasePopup.is_complete = function (arg_30_0)
 	return arg_30_0._state == "exit"
 end
 
-function StoreItemPurchasePopup.is_aborted(arg_31_0)
+StoreItemPurchasePopup.is_aborted = function (arg_31_0)
 	return arg_31_0._state == "aborted"
 end
 
-function StoreItemPurchasePopup.destroy(arg_32_0)
+StoreItemPurchasePopup.destroy = function (arg_32_0)
 	if arg_32_0._blur_purchase_ui_world and arg_32_0._fullscreen_effect_enabled then
 		arg_32_0:_set_fullscreen_effect_enable_state(false, 0, arg_32_0._blur_purchase_ui_world)
 	end
@@ -1096,7 +1096,7 @@ function StoreItemPurchasePopup.destroy(arg_32_0)
 	arg_32_0._destroyed = true
 end
 
-function StoreItemPurchasePopup._create_ui_elements(arg_33_0, arg_33_1)
+StoreItemPurchasePopup._create_ui_elements = function (arg_33_0, arg_33_1)
 	arg_33_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_33_0 = {}
@@ -1133,7 +1133,7 @@ function StoreItemPurchasePopup._create_ui_elements(arg_33_0, arg_33_1)
 	arg_33_0._ui_animator = UIAnimator:new(arg_33_0._ui_scenegraph, var_0_2)
 end
 
-function StoreItemPurchasePopup._draw(arg_34_0, arg_34_1, arg_34_2)
+StoreItemPurchasePopup._draw = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._purchase_ui_renderer
 	local var_34_1 = arg_34_0._blur_purchase_ui_renderer
 	local var_34_2 = arg_34_0._ui_scenegraph
@@ -1201,7 +1201,7 @@ function StoreItemPurchasePopup._draw(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function StoreItemPurchasePopup.update(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+StoreItemPurchasePopup.update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	if not arg_35_0._menu_input_description then
 		arg_35_0:_create_gamepad_input_description(arg_35_1)
 	end
@@ -1228,7 +1228,7 @@ function StoreItemPurchasePopup.update(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	arg_35_0:_draw(arg_35_1, arg_35_2)
 end
 
-function StoreItemPurchasePopup._update_animations(arg_36_0, arg_36_1)
+StoreItemPurchasePopup._update_animations = function (arg_36_0, arg_36_1)
 	for iter_36_0, iter_36_1 in pairs(arg_36_0._ui_animations) do
 		UIAnimation.update(iter_36_1, arg_36_1)
 
@@ -1251,13 +1251,13 @@ function StoreItemPurchasePopup._update_animations(arg_36_0, arg_36_1)
 	end
 end
 
-function StoreItemPurchasePopup._is_button_hover_enter(arg_37_0, arg_37_1)
+StoreItemPurchasePopup._is_button_hover_enter = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_1.content
 
 	return (var_37_0.button_hotspot or var_37_0.hotspot).on_hover_enter
 end
 
-function StoreItemPurchasePopup._is_button_pressed(arg_38_0, arg_38_1)
+StoreItemPurchasePopup._is_button_pressed = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_1.content
 	local var_38_1 = var_38_0.button_hotspot or var_38_0.hotspot
 
@@ -1268,11 +1268,11 @@ function StoreItemPurchasePopup._is_button_pressed(arg_38_0, arg_38_1)
 	end
 end
 
-function StoreItemPurchasePopup._play_sound(arg_39_0, arg_39_1)
+StoreItemPurchasePopup._play_sound = function (arg_39_0, arg_39_1)
 	WwiseWorld.trigger_event(arg_39_0._wwise_world, arg_39_1)
 end
 
-function StoreItemPurchasePopup._destroy_product_widget(arg_40_0, arg_40_1, arg_40_2)
+StoreItemPurchasePopup._destroy_product_widget = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = arg_40_1.content.reference_name
 
 	if var_40_0 then
@@ -1287,13 +1287,13 @@ function StoreItemPurchasePopup._destroy_product_widget(arg_40_0, arg_40_1, arg_
 	end
 end
 
-function StoreItemPurchasePopup._create_material_instance(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+StoreItemPurchasePopup._create_material_instance = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	arg_41_0._cloned_materials_by_reference[arg_41_4] = arg_41_2
 
 	return Gui.clone_material_from_template(arg_41_1, arg_41_2, arg_41_3)
 end
 
-function StoreItemPurchasePopup._set_material_diffuse(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+StoreItemPurchasePopup._set_material_diffuse = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = Gui.material(arg_42_1, arg_42_2)
 
 	if var_42_0 then
@@ -1301,7 +1301,7 @@ function StoreItemPurchasePopup._set_material_diffuse(arg_42_0, arg_42_1, arg_42
 	end
 end
 
-function StoreItemPurchasePopup._load_texture_package(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+StoreItemPurchasePopup._load_texture_package = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = true
 	local var_43_1 = true
 
@@ -1310,7 +1310,7 @@ function StoreItemPurchasePopup._load_texture_package(arg_43_0, arg_43_1, arg_43
 	arg_43_0._loaded_package_names[arg_43_2] = arg_43_1
 end
 
-function StoreItemPurchasePopup._is_unique_reference_to_material(arg_44_0, arg_44_1)
+StoreItemPurchasePopup._is_unique_reference_to_material = function (arg_44_0, arg_44_1)
 	local var_44_0 = arg_44_0._cloned_materials_by_reference
 	local var_44_1 = var_44_0[arg_44_1]
 
@@ -1325,7 +1325,7 @@ function StoreItemPurchasePopup._is_unique_reference_to_material(arg_44_0, arg_4
 	return true
 end
 
-function StoreItemPurchasePopup._unload_texture_by_reference(arg_45_0, arg_45_1)
+StoreItemPurchasePopup._unload_texture_by_reference = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0._loaded_package_names
 	local var_45_1 = arg_45_0._cloned_materials_by_reference
 	local var_45_2 = var_45_0[arg_45_1]
@@ -1345,7 +1345,7 @@ function StoreItemPurchasePopup._unload_texture_by_reference(arg_45_0, arg_45_1)
 	var_45_1[arg_45_1] = nil
 end
 
-function StoreItemPurchasePopup._unload_all_textures(arg_46_0)
+StoreItemPurchasePopup._unload_all_textures = function (arg_46_0)
 	local var_46_0 = arg_46_0._loaded_package_names
 
 	for iter_46_0, iter_46_1 in pairs(var_46_0) do
@@ -1353,7 +1353,7 @@ function StoreItemPurchasePopup._unload_all_textures(arg_46_0)
 	end
 end
 
-function StoreItemPurchasePopup._calculate_discount_textures(arg_47_0, arg_47_1, arg_47_2)
+StoreItemPurchasePopup._calculate_discount_textures = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_1.content
 	local var_47_1 = arg_47_1.style.discont_number_icons
 	local var_47_2 = var_47_0.discont_number_icons
@@ -1402,7 +1402,7 @@ function StoreItemPurchasePopup._calculate_discount_textures(arg_47_0, arg_47_1,
 	var_47_0.discount = true
 end
 
-function StoreItemPurchasePopup._start_transition_animation(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+StoreItemPurchasePopup._start_transition_animation = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = {
 		wwise_world = arg_49_0._wwise_world,
 		render_settings = arg_49_0._render_settings,
@@ -1416,7 +1416,7 @@ function StoreItemPurchasePopup._start_transition_animation(arg_49_0, arg_49_1, 
 	return var_49_0
 end
 
-function StoreItemPurchasePopup._popup_on_enter(arg_50_0)
+StoreItemPurchasePopup._popup_on_enter = function (arg_50_0)
 	local var_50_0 = arg_50_0._product
 	local var_50_1 = var_50_0.product_item or var_50_0.item
 	local var_50_2 = var_50_1.data
@@ -1470,7 +1470,7 @@ function StoreItemPurchasePopup._popup_on_enter(arg_50_0)
 	arg_50_0:_start_transition_animation(var_50_16, var_50_16, arg_50_0._widgets_by_name)
 end
 
-function StoreItemPurchasePopup._create_popup_widget(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+StoreItemPurchasePopup._create_popup_widget = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	local var_51_0 = arg_51_0._product
 	local var_51_1 = var_51_0.product_id
 	local var_51_2 = var_51_0.product_item or var_51_0.item
@@ -1487,7 +1487,7 @@ function StoreItemPurchasePopup._create_popup_widget(arg_51_0, arg_51_1, arg_51_
 	return var_51_6
 end
 
-function StoreItemPurchasePopup._popup_update(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+StoreItemPurchasePopup._popup_update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	local var_52_0 = arg_52_1:get("toggle_menu", true)
 	local var_52_1 = arg_52_1:get("back_menu", true)
 	local var_52_2 = arg_52_1:get("confirm_press", true)
@@ -1513,14 +1513,14 @@ function StoreItemPurchasePopup._popup_update(arg_52_0, arg_52_1, arg_52_2, arg_
 	end
 end
 
-function StoreItemPurchasePopup._popup_on_exit(arg_53_0)
+StoreItemPurchasePopup._popup_on_exit = function (arg_53_0)
 	arg_53_0:_destroy_product_widget(arg_53_0._product_widget, arg_53_0._product)
 
 	arg_53_0._product_widget = nil
 	arg_53_0._blur_progress = nil
 end
 
-function StoreItemPurchasePopup._poll_result_on_enter(arg_54_0)
+StoreItemPurchasePopup._poll_result_on_enter = function (arg_54_0)
 	local var_54_0 = DLCSettings.store.currency_ui_settings
 	local var_54_1 = arg_54_0._product
 	local var_54_2 = var_54_1.product_item or var_54_1.item
@@ -1548,7 +1548,7 @@ function StoreItemPurchasePopup._poll_result_on_enter(arg_54_0)
 	Managers.backend:get_interface("peddler"):exchange_chips(var_54_3, var_54_6, var_54_9, var_54_10)
 end
 
-function StoreItemPurchasePopup._backend_result_callback(arg_55_0, arg_55_1, arg_55_2)
+StoreItemPurchasePopup._backend_result_callback = function (arg_55_0, arg_55_1, arg_55_2)
 	if arg_55_0._destroyed then
 		return
 	end
@@ -1573,7 +1573,7 @@ local var_0_10 = {
 	unique = "store_thumbnail_bg_unique"
 }
 
-function StoreItemPurchasePopup._populate_item_widget(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+StoreItemPurchasePopup._populate_item_widget = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	local var_56_0 = UISettings.item_rarity_textures
 	local var_56_1 = UISettings.item_type_store_icons
 	local var_56_2 = DLCSettings.store.currency_ui_settings
@@ -1710,7 +1710,7 @@ function StoreItemPurchasePopup._populate_item_widget(arg_56_0, arg_56_1, arg_56
 	end
 end
 
-function StoreItemPurchasePopup._set_product_price_text(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+StoreItemPurchasePopup._set_product_price_text = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = arg_58_1.content
 	local var_58_1 = arg_58_1.style
 	local var_58_2
@@ -1740,7 +1740,7 @@ function StoreItemPurchasePopup._set_product_price_text(arg_58_0, arg_58_1, arg_
 	var_58_6.offset[1] = var_58_6.default_offset[1] + var_58_8
 end
 
-function StoreItemPurchasePopup._approved_on_enter(arg_59_0)
+StoreItemPurchasePopup._approved_on_enter = function (arg_59_0)
 	arg_59_0._ui_animator = UIAnimator:new(arg_59_0._ui_scenegraph, var_0_2)
 
 	local var_59_0 = arg_59_0._product
@@ -1765,7 +1765,7 @@ function StoreItemPurchasePopup._approved_on_enter(arg_59_0)
 	arg_59_0._widgets_by_name.approved.content.visible = true
 end
 
-function StoreItemPurchasePopup._approved_update(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+StoreItemPurchasePopup._approved_update = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	local var_60_0 = arg_60_0._purchase_confirmation_anim_duration
 
 	if not var_60_0 then

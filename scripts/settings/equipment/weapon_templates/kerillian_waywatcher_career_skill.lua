@@ -25,7 +25,7 @@ local var_0_6 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "waywatcher_trueflight_ability_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -34,10 +34,10 @@ local var_0_6 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_3_0)
+				unzoom_condition_function = function (arg_3_0)
 					return arg_3_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -87,7 +87,7 @@ local var_0_6 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "waywatcher_trueflight_ability_hold",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -96,10 +96,10 @@ local var_0_6 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_6_0)
+				unzoom_condition_function = function (arg_6_0)
 					return arg_6_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -164,10 +164,10 @@ local var_0_6 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 0.28,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
-				unzoom_condition_function = function(arg_8_0)
+				unzoom_condition_function = function (arg_8_0)
 					return arg_8_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
@@ -202,10 +202,10 @@ local var_0_6 = {
 				anim_event = "waywatcher_trueflight_ability_cancel",
 				weapon_action_hand = "left",
 				total_time = 0.35,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
 					return arg_9_1 ~= "new_interupting_action"
 				end,
-				unzoom_condition_function = function(arg_10_0)
+				unzoom_condition_function = function (arg_10_0)
 					return arg_10_0 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

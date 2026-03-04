@@ -445,7 +445,7 @@ local var_0_13 = {
 				style_id = "background",
 				texture_id = "background",
 				pass_type = "texture",
-				content_change_function = function(arg_2_0, arg_2_1)
+				content_change_function = function (arg_2_0, arg_2_1)
 					arg_2_1.color[1] = arg_2_0.input.active and 255 or 127
 				end
 			},
@@ -473,7 +473,7 @@ local var_0_13 = {
 				pass_type = "texture",
 				style_id = "top_detail_glow",
 				texture_id = "top_detail_glow",
-				content_check_function = function(arg_3_0, arg_3_1)
+				content_check_function = function (arg_3_0, arg_3_1)
 					return arg_3_0.input.active
 				end
 			},
@@ -496,7 +496,7 @@ local var_0_13 = {
 				pass_type = "text",
 				text_id = "default_text",
 				content_id = "input",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.text == ""
 				end
 			},
@@ -505,7 +505,7 @@ local var_0_13 = {
 				pass_type = "text",
 				text_id = "text",
 				content_id = "input",
-				content_change_function = function(arg_5_0, arg_5_1)
+				content_change_function = function (arg_5_0, arg_5_1)
 					local var_5_0 = 0
 
 					if arg_5_0.active then
@@ -742,7 +742,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture_frame",
 					style_id = "empty_hover_frame",
 					texture_id = "empty_hover_frame",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.empty and arg_9_0.button_hotspot.is_hover or arg_9_0.is_gamepad_active and arg_9_0.empty and arg_9_0.is_selected
 					end
 				},
@@ -773,10 +773,10 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return not arg_10_0.empty and arg_10_0.button_hotspot.is_hover or arg_10_0.is_gamepad_active and not arg_10_0.empty and arg_10_0.is_selected
 					end,
-					content_change_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+					content_change_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 						local var_11_0 = arg_11_0.focused
 
 						arg_11_1.color[1] = var_11_0 and 150 + 105 * math.sin(Managers.time:time("ui") * 7.5) or 255
@@ -798,7 +798,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "player_avatar",
 					texture_id = "player_avatar",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.empty and arg_12_0.player_avatar
 					end
 				},
@@ -806,7 +806,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "host_texture",
 					texture_id = "host_texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return not arg_13_0.empty and arg_13_0.show_host
 					end
 				},
@@ -826,7 +826,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "insignia_main",
 					pass_type = "texture_uv",
 					content_id = "insignia_main",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return not arg_14_0.parent.empty
 					end
 				},
@@ -834,7 +834,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "insignia_addon",
 					pass_type = "texture_uv",
 					content_id = "insignia_addon",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return not arg_15_0.parent.empty and arg_15_0.uvs
 					end
 				},
@@ -846,7 +846,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 				{
 					style_id = "kick_button_background",
 					pass_type = "rect",
-					content_check_function = function(arg_16_0, arg_16_1)
+					content_check_function = function (arg_16_0, arg_16_1)
 						return arg_16_0.show_kick_button
 					end
 				},
@@ -854,7 +854,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					texture_id = "button_frame",
 					style_id = "kick_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return arg_17_0.show_kick_button
 					end
 				},
@@ -862,7 +862,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "kick_button_hotspot",
 					texture_id = "kick_button_texture",
-					content_check_function = function(arg_18_0, arg_18_1)
+					content_check_function = function (arg_18_0, arg_18_1)
 						return arg_18_0.show_kick_button
 					end
 				},
@@ -870,7 +870,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "kick_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "kick_button_hotspot",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.parent.show_kick_button and not arg_19_0.disable_button
 					end
 				},
@@ -878,7 +878,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "kick_tooltip_text",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.show_kick_button and arg_20_0.kick_button_hotspot.is_hover
 					end
 				},
@@ -886,7 +886,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "rect",
 					style_id = "chat_button_background",
 					texture_id = "chat_button_texture",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.show_chat_button
 					end
 				},
@@ -894,7 +894,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					texture_id = "button_frame",
 					style_id = "chat_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.show_chat_button
 					end
 				},
@@ -902,7 +902,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "chat_button_hotspot",
 					texture_id = "chat_button_texture",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.show_chat_button
 					end
 				},
@@ -910,7 +910,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "chat_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.show_chat_button and arg_24_0.chat_button_hotspot.is_selected
 					end
 				},
@@ -918,7 +918,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "chat_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "chat_button_hotspot",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.parent.show_chat_button and not arg_25_0.disable_button
 					end
 				},
@@ -926,7 +926,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_mute",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return arg_26_0.show_chat_button and not arg_26_0.chat_button_hotspot.is_selected and arg_26_0.chat_button_hotspot.is_hover
 					end
 				},
@@ -934,14 +934,14 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_unmute",
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.show_chat_button and arg_27_0.chat_button_hotspot.is_selected and arg_27_0.chat_button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "profile_button_background",
 					pass_type = "rect",
-					content_check_function = function(arg_28_0)
+					content_check_function = function (arg_28_0)
 						return arg_28_0.show_profile_button
 					end
 				},
@@ -949,7 +949,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					texture_id = "button_frame",
 					style_id = "profile_button_frame",
 					pass_type = "texture",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return arg_29_0.show_profile_button
 					end
 				},
@@ -957,7 +957,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					pass_type = "texture",
 					style_id = "profile_button_hotspot",
 					texture_id = "profile_button_texture",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return arg_30_0.show_profile_button
 					end
 				},
@@ -965,7 +965,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "profile_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "profile_button_hotspot",
-					content_check_function = function(arg_31_0)
+					content_check_function = function (arg_31_0)
 						return arg_31_0.parent.show_profile_button and not arg_31_0.disable_button
 					end
 				},
@@ -973,7 +973,7 @@ local function var_0_18(arg_8_0, arg_8_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "profile_tooltip_text",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.show_profile_button and arg_32_0.profile_button_hotspot.is_hover
 					end
 				}
@@ -1638,7 +1638,7 @@ local var_0_19 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				local var_33_0 = math.random() < 0.01
 
 				arg_33_3.ease = var_33_0 and math.ease_out_elastic or math.easeOutCubic
@@ -1649,14 +1649,14 @@ local var_0_19 = {
 				arg_33_0.team_1.position[1] = arg_33_1.team_1.position[1] - var_33_1
 				arg_33_0.team_2.position[1] = arg_33_1.team_2.position[1] + var_33_1
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = (1 - arg_34_4.ease(arg_34_3)) * arg_34_4.offset
 
 				arg_34_0.team_1.position[1] = arg_34_1.team_1.position[1] - var_34_0
 				arg_34_0.team_2.position[1] = arg_34_1.team_2.position[1] + var_34_0
 				arg_34_0.leave_game_button.position[1] = arg_34_1.leave_game_button.position[1] + var_34_0
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		}

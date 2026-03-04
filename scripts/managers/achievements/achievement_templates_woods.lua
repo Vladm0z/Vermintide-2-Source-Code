@@ -44,7 +44,7 @@ var_0_0.woods_javelin_melee = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_2_0, arg_2_1, arg_2_2)
+	progress = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = arg_2_0:get_persistent_stat(arg_2_1, "woods_javelin_melee_kills")
 
 		return {
@@ -52,10 +52,10 @@ var_0_0.woods_javelin_melee = {
 			500
 		}
 	end,
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "woods_javelin_melee_kills") >= 500
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = arg_4_4[var_0_14]
 		local var_4_1 = var_4_0[DamageDataIndex.SOURCE_ATTACKER_UNIT]
 		local var_4_2 = Managers.player:local_player().player_unit
@@ -94,10 +94,10 @@ var_0_0.woods_javelin_combo = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "woods_javelin_combo") > 0
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		local var_6_0 = arg_6_4[var_0_14]
 		local var_6_1 = var_6_0[DamageDataIndex.SOURCE_ATTACKER_UNIT]
 		local var_6_2 = Managers.player:local_player().player_unit
@@ -145,7 +145,7 @@ var_0_0.woods_wall_kill_grind = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_7_0, arg_7_1, arg_7_2)
+	progress = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = arg_7_0:get_persistent_stat(arg_7_1, "woods_wall_kill")
 
 		return {
@@ -153,10 +153,10 @@ var_0_0.woods_wall_kill_grind = {
 			500
 		}
 	end,
-	completed = function(arg_8_0, arg_8_1, arg_8_2)
+	completed = function (arg_8_0, arg_8_1, arg_8_2)
 		return arg_8_0:get_persistent_stat(arg_8_1, "woods_wall_kill") >= 500
 	end,
-	on_event = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		local var_9_0 = arg_9_4[var_0_14]
 		local var_9_1 = var_9_0[DamageDataIndex.ATTACKER]
 		local var_9_2 = Managers.player:local_player().player_unit
@@ -190,7 +190,7 @@ var_0_0.woods_lifted_kill = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_10_0, arg_10_1, arg_10_2)
+	progress = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = arg_10_0:get_persistent_stat(arg_10_1, "woods_lift_kills")
 
 		return {
@@ -198,10 +198,10 @@ var_0_0.woods_lifted_kill = {
 			250
 		}
 	end,
-	completed = function(arg_11_0, arg_11_1, arg_11_2)
+	completed = function (arg_11_0, arg_11_1, arg_11_2)
 		return arg_11_0:get_persistent_stat(arg_11_1, "woods_lift_kills") >= 250
 	end,
-	on_event = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -242,10 +242,10 @@ var_0_0.woods_triple_lift = {
 	events = {
 		"vortex_caught_unit"
 	},
-	completed = function(arg_13_0, arg_13_1, arg_13_2)
+	completed = function (arg_13_0, arg_13_1, arg_13_2)
 		return arg_13_0:get_persistent_stat(arg_13_1, "woods_triple_lift") > 0
 	end,
-	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -301,7 +301,7 @@ var_0_0.woods_heal_grind = {
 	events = {
 		"register_heal"
 	},
-	progress = function(arg_15_0, arg_15_1, arg_15_2)
+	progress = function (arg_15_0, arg_15_1, arg_15_2)
 		local var_15_0 = arg_15_0:get_persistent_stat(arg_15_1, "woods_amount_healed")
 
 		return {
@@ -309,10 +309,10 @@ var_0_0.woods_heal_grind = {
 			2000
 		}
 	end,
-	completed = function(arg_16_0, arg_16_1, arg_16_2)
+	completed = function (arg_16_0, arg_16_1, arg_16_2)
 		return arg_16_0:get_persistent_stat(arg_16_1, "woods_amount_healed") > 2000
 	end,
-	on_event = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	on_event = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		local var_17_0 = arg_17_4[1]
 		local var_17_1 = Managers.player:local_player().player_unit
 
@@ -355,7 +355,7 @@ var_0_0.woods_bleed_grind = {
 	events = {
 		"register_damage"
 	},
-	progress = function(arg_18_0, arg_18_1, arg_18_2)
+	progress = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = arg_18_0:get_persistent_stat(arg_18_1, "woods_bleed_tics")
 
 		return {
@@ -363,10 +363,10 @@ var_0_0.woods_bleed_grind = {
 			2000
 		}
 	end,
-	completed = function(arg_19_0, arg_19_1, arg_19_2)
+	completed = function (arg_19_0, arg_19_1, arg_19_2)
 		return arg_19_0:get_persistent_stat(arg_19_1, "woods_bleed_tics") > 2000
 	end,
-	on_event = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 		local var_20_0 = arg_20_4[var_0_18][DamageDataIndex.DAMAGE_TYPE]
 
 		if not var_20_0 or var_20_0 ~= "bleed" then
@@ -410,10 +410,10 @@ var_0_0.woods_chaos_pinata = {
 		"register_damage",
 		"register_kill"
 	},
-	completed = function(arg_21_0, arg_21_1, arg_21_2)
+	completed = function (arg_21_0, arg_21_1, arg_21_2)
 		return arg_21_0:get_persistent_stat(arg_21_1, "woods_chaos_pinata") > 0
 	end,
-	on_event = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	on_event = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -509,10 +509,10 @@ var_0_0.woods_ability_combo = {
 	events = {
 		"any_ability_used"
 	},
-	completed = function(arg_23_0, arg_23_1, arg_23_2)
+	completed = function (arg_23_0, arg_23_1, arg_23_2)
 		return arg_23_0:get_persistent_stat(arg_23_1, "woods_ability_combo") > 0
 	end,
-	on_event = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	on_event = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 		local var_24_0 = Managers.player:local_player().player_unit
 		local var_24_1 = ScriptUnit.has_extension(var_24_0, "career_system")
 
@@ -574,7 +574,7 @@ var_0_0.woods_wall_tank = {
 	events = {
 		"register_thorn_wall_damage"
 	},
-	progress = function(arg_25_0, arg_25_1, arg_25_2)
+	progress = function (arg_25_0, arg_25_1, arg_25_2)
 		local var_25_0 = arg_25_0:get_persistent_stat(arg_25_1, "woods_wall_hits_soaked")
 
 		return {
@@ -582,10 +582,10 @@ var_0_0.woods_wall_tank = {
 			1000
 		}
 	end,
-	completed = function(arg_26_0, arg_26_1, arg_26_2)
+	completed = function (arg_26_0, arg_26_1, arg_26_2)
 		return arg_26_0:get_persistent_stat(arg_26_1, "woods_wall_hits_soaked") > 1000
 	end,
-	on_event = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	on_event = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 		local var_27_0 = Managers.player:local_player().player_unit
 		local var_27_1 = ScriptUnit.has_extension(var_27_0, "career_system")
 
@@ -619,7 +619,7 @@ var_0_0.woods_wall_block_ratling = {
 	events = {
 		"register_thorn_wall_damage"
 	},
-	progress = function(arg_28_0, arg_28_1, arg_28_2)
+	progress = function (arg_28_0, arg_28_1, arg_28_2)
 		local var_28_0 = arg_28_0:get_persistent_stat(arg_28_1, "woods_ratling_shots_soaked")
 
 		return {
@@ -627,10 +627,10 @@ var_0_0.woods_wall_block_ratling = {
 			500
 		}
 	end,
-	completed = function(arg_29_0, arg_29_1, arg_29_2)
+	completed = function (arg_29_0, arg_29_1, arg_29_2)
 		return arg_29_0:get_persistent_stat(arg_29_1, "woods_ratling_shots_soaked") >= 500
 	end,
-	on_event = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	on_event = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 		local var_30_0 = Managers.player:local_player().player_unit
 		local var_30_1 = ScriptUnit.has_extension(var_30_0, "career_system")
 
@@ -659,10 +659,10 @@ var_0_0.woods_bleed_boss = {
 		"register_damage",
 		"register_kill"
 	},
-	completed = function(arg_31_0, arg_31_1, arg_31_2)
+	completed = function (arg_31_0, arg_31_1, arg_31_2)
 		return arg_31_0:get_persistent_stat(arg_31_1, "woods_bleed_boss") > 0
 	end,
-	on_event = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	on_event = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 		if arg_32_3 == "register_damage" then
 			local var_32_0 = arg_32_4[var_0_20]
 
@@ -753,10 +753,10 @@ var_0_0.woods_wall_kill_gutter = {
 	events = {
 		"register_damage"
 	},
-	completed = function(arg_33_0, arg_33_1, arg_33_2)
+	completed = function (arg_33_0, arg_33_1, arg_33_2)
 		return arg_33_0:get_persistent_stat(arg_33_1, "woods_wall_kill_gutter") > 0
 	end,
-	on_event = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	on_event = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -793,10 +793,10 @@ var_0_0.woods_wall_dual_save = {
 	events = {
 		"register_damage"
 	},
-	completed = function(arg_35_0, arg_35_1, arg_35_2)
+	completed = function (arg_35_0, arg_35_1, arg_35_2)
 		return arg_35_0:get_persistent_stat(arg_35_1, "woods_wall_dual_save") > 0
 	end,
-	on_event = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	on_event = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -872,7 +872,7 @@ var_0_0.woods_free_ability_grind = {
 	events = {
 		"free_cast_used"
 	},
-	progress = function(arg_37_0, arg_37_1, arg_37_2)
+	progress = function (arg_37_0, arg_37_1, arg_37_2)
 		local var_37_0 = arg_37_0:get_persistent_stat(arg_37_1, "woods_free_abilities_used")
 
 		return {
@@ -880,10 +880,10 @@ var_0_0.woods_free_ability_grind = {
 			50
 		}
 	end,
-	completed = function(arg_38_0, arg_38_1, arg_38_2)
+	completed = function (arg_38_0, arg_38_1, arg_38_2)
 		return arg_38_0:get_persistent_stat(arg_38_1, "woods_free_abilities_used") >= 50
 	end,
-	on_event = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	on_event = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 		local var_39_0 = arg_39_4[2]
 
 		if var_39_0 ~= Managers.player:local_player().player_unit then

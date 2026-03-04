@@ -13,7 +13,7 @@ end
 
 local var_0_1 = {}
 
-function PackSpawnerUtils.spawn_predefined_pack(arg_2_0, arg_2_1, arg_2_2)
+PackSpawnerUtils.spawn_predefined_pack = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = 0
 
 	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
@@ -52,7 +52,7 @@ function PackSpawnerUtils.spawn_predefined_pack(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_0, var_0_1
 end
 
-function PackSpawnerUtils.spawn_in_circle(arg_3_0, arg_3_1, arg_3_2)
+PackSpawnerUtils.spawn_in_circle = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = 5
 	local var_3_1 = arg_3_1
 	local var_3_2 = 0
@@ -123,7 +123,7 @@ function PackSpawnerUtils.spawn_in_circle(arg_3_0, arg_3_1, arg_3_2)
 	return 0, var_0_1
 end
 
-function PackSpawnerUtils.spawn_random_pack(arg_4_0, arg_4_1, arg_4_2)
+PackSpawnerUtils.spawn_random_pack = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0
 	local var_4_1 = var_4_0[1]
 	local var_4_2 = Math.random(var_4_0.amount[1], var_4_0.amount[2])
@@ -158,7 +158,7 @@ function PackSpawnerUtils.spawn_random_pack(arg_4_0, arg_4_1, arg_4_2)
 	return #var_0_1, var_0_1
 end
 
-function PackSpawnerUtils.modify_spawn_position(arg_5_0, arg_5_1)
+PackSpawnerUtils.modify_spawn_position = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_1[1] + arg_5_0[1]
 	local var_5_1 = arg_5_1[2] + arg_5_0[2]
 	local var_5_2 = Vector3(var_5_0, var_5_1, arg_5_1[3])
@@ -173,7 +173,7 @@ function PackSpawnerUtils.modify_spawn_position(arg_5_0, arg_5_1)
 	return false
 end
 
-function PackSpawnerUtils.check_unit_overlap(arg_6_0, arg_6_1, arg_6_2)
+PackSpawnerUtils.check_unit_overlap = function (arg_6_0, arg_6_1, arg_6_2)
 	if not next(arg_6_1) then
 		return false
 	else
@@ -189,7 +189,7 @@ function PackSpawnerUtils.check_unit_overlap(arg_6_0, arg_6_1, arg_6_2)
 	return false
 end
 
-function PackSpawnerUtils.random_predefined_pack_index()
+PackSpawnerUtils.random_predefined_pack_index = function ()
 	local var_7_0 = 1
 	local var_7_1 = math.random(0, BreedPacks[var_7_0].spawn_weight)
 

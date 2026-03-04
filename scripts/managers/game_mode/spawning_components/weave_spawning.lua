@@ -4,7 +4,7 @@ require("scripts/managers/game_mode/spawning_components/adventure_spawning")
 
 WeaveSpawning = class(WeaveSpawning, AdventureSpawning)
 
-function WeaveSpawning._get_spawn_position_close_to_server(arg_1_0)
+WeaveSpawning._get_spawn_position_close_to_server = function (arg_1_0)
 	local var_1_0 = arg_1_0._side.party.occupied_slots
 	local var_1_1 = Managers.player
 
@@ -20,7 +20,7 @@ function WeaveSpawning._get_spawn_position_close_to_server(arg_1_0)
 	end
 end
 
-function WeaveSpawning._find_spawn_point(arg_2_0, arg_2_1)
+WeaveSpawning._find_spawn_point = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_1.game_mode_data
 	local var_2_1 = arg_2_0:_get_spawn_position_close_to_server() or var_2_0.position:unbox()
 	local var_2_2 = var_2_0.rotation:unbox()

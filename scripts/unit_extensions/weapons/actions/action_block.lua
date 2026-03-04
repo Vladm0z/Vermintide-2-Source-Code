@@ -2,7 +2,7 @@
 
 ActionBlock = class(ActionBlock, ActionBase)
 
-function ActionBlock.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBlock.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	arg_1_0.world = arg_1_1
 	arg_1_0.owner_unit = arg_1_4
 	arg_1_0.first_person_unit = arg_1_6
@@ -15,7 +15,7 @@ function ActionBlock.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, 
 	arg_1_0._ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
 end
 
-function ActionBlock.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionBlock.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionBlock.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0.current_action = arg_2_1
@@ -43,7 +43,7 @@ function ActionBlock.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 	var_2_2.timed_block = arg_2_2 + 0.5
 end
 
-function ActionBlock.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionBlock.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0._status_extension
 
 	if var_3_0:has_blocked() then
@@ -54,7 +54,7 @@ function ActionBlock.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	end
 end
 
-function ActionBlock.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionBlock.finish = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = true
 	local var_4_1 = arg_4_2 and arg_4_2.new_action_settings
 
@@ -97,7 +97,7 @@ function ActionBlock.finish(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._blocked_flag = false
 end
 
-function ActionBlock.streak_available(arg_5_0, arg_5_1, arg_5_2)
+ActionBlock.streak_available = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2 and arg_5_2.relative_start_time
 	local var_5_1 = arg_5_2 and arg_5_2.relative_end_time
 

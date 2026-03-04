@@ -88,7 +88,7 @@ local var_0_1 = {
 	run_on_update = AiBreedSnippets.on_grey_seer_update,
 	run_on_death = AiBreedSnippets.on_grey_seer_death,
 	run_on_despawn = AiBreedSnippets.on_grey_seer_despawn,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if not arg_1_4.unit then
 			return arg_1_0, arg_1_1, arg_1_2
 		end
@@ -269,7 +269,7 @@ local var_0_1 = {
 		"kill_skaven_grey_seer_difficulty_rank",
 		"kill_skaven_grey_seer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -432,7 +432,7 @@ local var_0_2 = {
 	stagger = {
 		scale_animation_speeds = true,
 		stagger_animation_scale = 1.3,
-		custom_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = arg_3_3.stagger_anims[arg_3_1.stagger_type]
 			local var_3_1 = "idle_eat_warpstone"
 

@@ -11,17 +11,17 @@ local var_0_3 = {
 	loaded = 1
 }
 
-function BackendInterfaceCdnResourcesPlayFab.init(arg_1_0, arg_1_1)
+BackendInterfaceCdnResourcesPlayFab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._url_cache = {}
 	arg_1_0._localization_status = {}
 end
 
-function BackendInterfaceCdnResourcesPlayFab.ready(arg_2_0)
+BackendInterfaceCdnResourcesPlayFab.ready = function (arg_2_0)
 	return true
 end
 
-function BackendInterfaceCdnResourcesPlayFab.load_backend_localizations(arg_3_0, arg_3_1, arg_3_2)
+BackendInterfaceCdnResourcesPlayFab.load_backend_localizations = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = {}
 	local var_3_1 = {}
 
@@ -41,7 +41,7 @@ function BackendInterfaceCdnResourcesPlayFab.load_backend_localizations(arg_3_0,
 	arg_3_0:get_resource_urls(var_3_0, callback(arg_3_0, "_cb_localization_urls_loaded", var_3_1, arg_3_2))
 end
 
-function BackendInterfaceCdnResourcesPlayFab._cb_localization_urls_loaded(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BackendInterfaceCdnResourcesPlayFab._cb_localization_urls_loaded = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	for iter_4_0, iter_4_1 in pairs(arg_4_1) do
 		local var_4_0 = arg_4_3[iter_4_0]
 
@@ -57,7 +57,7 @@ function BackendInterfaceCdnResourcesPlayFab._cb_localization_urls_loaded(arg_4_
 	end
 end
 
-function BackendInterfaceCdnResourcesPlayFab._cb_localization_loaded(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+BackendInterfaceCdnResourcesPlayFab._cb_localization_loaded = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	if arg_5_3 then
 		local var_5_0, var_5_1 = pcall(var_0_0.decode, arg_5_6)
 
@@ -91,15 +91,15 @@ local function var_0_4(arg_6_0, arg_6_1)
 	return var_6_0
 end
 
-function BackendInterfaceCdnResourcesPlayFab.has_localization_loaded(arg_7_0, arg_7_1)
+BackendInterfaceCdnResourcesPlayFab.has_localization_loaded = function (arg_7_0, arg_7_1)
 	return arg_7_0._localization_status[arg_7_1] == var_0_3.loaded
 end
 
-function BackendInterfaceCdnResourcesPlayFab.has_localization_failed(arg_8_0, arg_8_1)
+BackendInterfaceCdnResourcesPlayFab.has_localization_failed = function (arg_8_0, arg_8_1)
 	return arg_8_0._localization_status[arg_8_1] == var_0_3.failed
 end
 
-function BackendInterfaceCdnResourcesPlayFab.get_resource_urls(arg_9_0, arg_9_1, arg_9_2)
+BackendInterfaceCdnResourcesPlayFab.get_resource_urls = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = {}
 	local var_9_1 = {}
 
@@ -125,7 +125,7 @@ function BackendInterfaceCdnResourcesPlayFab.get_resource_urls(arg_9_0, arg_9_1,
 	arg_9_0:_request_resource_urls(var_9_4, var_9_0, arg_9_2)
 end
 
-function BackendInterfaceCdnResourcesPlayFab._request_resource_urls(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BackendInterfaceCdnResourcesPlayFab._request_resource_urls = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = table.remove(arg_10_1)
 	local var_10_1 = {
 		FunctionName = "getResourceURL",
@@ -137,7 +137,7 @@ function BackendInterfaceCdnResourcesPlayFab._request_resource_urls(arg_10_0, ar
 	arg_10_0._backend_mirror:request_queue():enqueue(var_10_1, callback(arg_10_0, "_request_resource_urls_cb", arg_10_1, arg_10_2, arg_10_3), false)
 end
 
-function BackendInterfaceCdnResourcesPlayFab._request_resource_urls_cb(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BackendInterfaceCdnResourcesPlayFab._request_resource_urls_cb = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_4.FunctionResult
 
 	for iter_11_0, iter_11_1 in pairs(var_11_0) do
@@ -153,7 +153,7 @@ function BackendInterfaceCdnResourcesPlayFab._request_resource_urls_cb(arg_11_0,
 	end
 end
 
-function BackendInterfaceCdnResourcesPlayFab._add_url_to_cache(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BackendInterfaceCdnResourcesPlayFab._add_url_to_cache = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0
 
 	if arg_12_3 then
@@ -166,7 +166,7 @@ function BackendInterfaceCdnResourcesPlayFab._add_url_to_cache(arg_12_0, arg_12_
 	}
 end
 
-function BackendInterfaceCdnResourcesPlayFab._get_url_from_cache(arg_13_0, arg_13_1)
+BackendInterfaceCdnResourcesPlayFab._get_url_from_cache = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._url_cache
 	local var_13_1 = var_13_0[arg_13_1]
 

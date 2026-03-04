@@ -41,7 +41,7 @@ local var_0_3 = {
 
 DLCUtils.dofile_list("statistics_util")
 
-function var_0_2.generate_weapon_kill_stats_dlc(arg_1_0, arg_1_1, arg_1_2)
+var_0_2.generate_weapon_kill_stats_dlc = function (arg_1_0, arg_1_1, arg_1_2)
 	for iter_1_0, iter_1_1 in pairs(var_0_3) do
 		if table.contains(iter_1_1, arg_1_1) then
 			local var_1_0 = table.clone(arg_1_2)
@@ -111,7 +111,7 @@ local var_0_6 = {
 	}
 }
 
-function var_0_2.generate_level_complete_with_weapon_stats_dlc(arg_3_0, arg_3_1, arg_3_2)
+var_0_2.generate_level_complete_with_weapon_stats_dlc = function (arg_3_0, arg_3_1, arg_3_2)
 	for iter_3_0, iter_3_1 in pairs(var_0_5) do
 		if table.contains(iter_3_1, arg_3_1) then
 			for iter_3_2, iter_3_3 in pairs(var_0_6) do
@@ -155,7 +155,7 @@ local function var_0_7(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	end
 end
 
-function var_0_2.register_kill(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+var_0_2.register_kill = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0, "health_system")
 	local var_5_1 = var_5_0.last_damage_data
 
@@ -300,7 +300,7 @@ function var_0_2.register_kill(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function var_0_2.register_knockdown(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_2.register_knockdown = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = ScriptUnit.has_extension(arg_6_0, "health_system")
 	local var_6_1 = var_6_0.last_damage_data
 
@@ -355,7 +355,7 @@ function var_0_2.register_knockdown(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function var_0_2.check_save(arg_7_0, arg_7_1)
+var_0_2.check_save = function (arg_7_0, arg_7_1)
 	local var_7_0 = BLACKBOARDS[arg_7_1].target_unit
 	local var_7_1 = Managers.player
 
@@ -429,7 +429,7 @@ function var_0_2.check_save(arg_7_0, arg_7_1)
 	end
 end
 
-function var_0_2.register_pull_up(arg_8_0, arg_8_1, arg_8_2)
+var_0_2.register_pull_up = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.player
 	local var_8_1 = var_8_0:owner(arg_8_0)
 	local var_8_2 = var_8_0:owner(arg_8_1)
@@ -442,7 +442,7 @@ function var_0_2.register_pull_up(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function var_0_2.register_assisted_respawn(arg_9_0, arg_9_1, arg_9_2)
+var_0_2.register_assisted_respawn = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = Managers.player
 	local var_9_1 = var_9_0:owner(arg_9_0)
 	local var_9_2 = var_9_0:owner(arg_9_1)
@@ -455,7 +455,7 @@ function var_0_2.register_assisted_respawn(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function var_0_2.register_revive(arg_10_0, arg_10_1, arg_10_2)
+var_0_2.register_revive = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.player
 	local var_10_1 = var_10_0:owner(arg_10_0)
 
@@ -482,7 +482,7 @@ function var_0_2.register_revive(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function var_0_2.register_heal(arg_11_0, arg_11_1, arg_11_2)
+var_0_2.register_heal = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = Managers.player
 	local var_11_1 = var_11_0:owner(arg_11_0)
 	local var_11_2 = var_11_0:owner(arg_11_1)
@@ -499,7 +499,7 @@ function var_0_2.register_heal(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function var_0_2.register_damage(arg_12_0, arg_12_1, arg_12_2)
+var_0_2.register_damage = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1[DamageDataIndex.ATTACKER]
 	local var_12_1 = arg_12_1[DamageDataIndex.DAMAGE_SOURCE_NAME]
 	local var_12_2 = var_12_0
@@ -618,7 +618,7 @@ function var_0_2.register_damage(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function var_0_2.won_games(arg_13_0)
+var_0_2.won_games = function (arg_13_0)
 	local var_13_0 = Managers.player:local_player():stats_id()
 	local var_13_1 = 0
 
@@ -629,7 +629,7 @@ function var_0_2.won_games(arg_13_0)
 	return var_13_1
 end
 
-function var_0_2.register_collected_grimoires(arg_14_0, arg_14_1)
+var_0_2.register_collected_grimoires = function (arg_14_0, arg_14_1)
 	local var_14_0 = Managers.player:local_player():stats_id()
 
 	for iter_14_0 = 1, arg_14_0 do
@@ -647,7 +647,7 @@ function var_0_2.register_collected_grimoires(arg_14_0, arg_14_1)
 	end
 end
 
-function var_0_2.register_collected_tomes(arg_15_0, arg_15_1)
+var_0_2.register_collected_tomes = function (arg_15_0, arg_15_1)
 	local var_15_0 = Managers.player:local_player():stats_id()
 
 	for iter_15_0 = 1, arg_15_0 do
@@ -665,7 +665,7 @@ function var_0_2.register_collected_tomes(arg_15_0, arg_15_1)
 	end
 end
 
-function var_0_2.register_collected_dice(arg_16_0, arg_16_1)
+var_0_2.register_collected_dice = function (arg_16_0, arg_16_1)
 	local var_16_0 = Managers.player:local_player():stats_id()
 
 	for iter_16_0 = 1, arg_16_0 do
@@ -683,7 +683,7 @@ function var_0_2.register_collected_dice(arg_16_0, arg_16_1)
 	end
 end
 
-function var_0_2.register_complete_level(arg_17_0)
+var_0_2.register_complete_level = function (arg_17_0)
 	local var_17_0 = LevelHelper:current_level_settings().level_id
 
 	if not table.find(UnlockableLevels, var_17_0) then
@@ -781,13 +781,13 @@ function var_0_2.register_complete_level(arg_17_0)
 	end
 end
 
-function var_0_2.register_versus_game_won(arg_18_0, arg_18_1, arg_18_2)
+var_0_2.register_versus_game_won = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_1:stats_id()
 
 	arg_18_0:increment_stat(var_18_0, arg_18_2 and "vs_game_won" or "vs_game_lost")
 end
 
-function var_0_2.register_weave_complete(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+var_0_2.register_weave_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = arg_19_1:stats_id()
 	local var_19_1 = Managers.weave
 	local var_19_2 = var_19_1:get_weave_tier()
@@ -841,7 +841,7 @@ function var_0_2.register_weave_complete(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	end
 end
 
-function var_0_2._register_mutator_challenges(arg_20_0, arg_20_1, arg_20_2)
+var_0_2._register_mutator_challenges = function (arg_20_0, arg_20_1, arg_20_2)
 	if ScorpionSeasonalSettings.current_season_id == 1 or not IS_WINDOWS then
 		if arg_20_2 == "life" then
 			local var_20_0 = "weave_life_stepped_in_bush"
@@ -887,11 +887,11 @@ function var_0_2._register_mutator_challenges(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function var_0_2.register_journey_complete(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+var_0_2.register_journey_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	var_0_2._register_completed_journey_difficulty(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 end
 
-function var_0_2.register_complete_tutorial(arg_22_0)
+var_0_2.register_complete_tutorial = function (arg_22_0)
 	local var_22_0 = LevelHelper:current_level_settings()
 	local var_22_1 = Managers.player:local_player():stats_id()
 	local var_22_2 = var_22_0.level_id
@@ -899,7 +899,7 @@ function var_0_2.register_complete_tutorial(arg_22_0)
 	arg_22_0:increment_stat(var_22_1, "completed_levels", var_22_2)
 end
 
-function var_0_2.register_played_quickplay_level(arg_23_0, arg_23_1, arg_23_2)
+var_0_2.register_played_quickplay_level = function (arg_23_0, arg_23_1, arg_23_2)
 	if not table.find(UnlockableLevels, arg_23_2) then
 		return
 	end
@@ -908,7 +908,7 @@ function var_0_2.register_played_quickplay_level(arg_23_0, arg_23_1, arg_23_2)
 	var_0_2.register_last_played_level_id(arg_23_0, arg_23_1, arg_23_2)
 end
 
-function var_0_2.register_played_weekly_event_level(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+var_0_2.register_played_weekly_event_level = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if not table.find(UnlockableLevels, arg_24_2) then
 		return
 	end
@@ -922,7 +922,7 @@ function var_0_2.register_played_weekly_event_level(arg_24_0, arg_24_1, arg_24_2
 	arg_24_0:increment_stat(var_24_0, "completed_weekly_event_difficulty", var_24_1)
 end
 
-function var_0_2.register_last_played_level_id(arg_25_0, arg_25_1, arg_25_2)
+var_0_2.register_last_played_level_id = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = table.find(UnlockableLevels, arg_25_2)
 
 	if var_25_0 then
@@ -930,7 +930,7 @@ function var_0_2.register_last_played_level_id(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function var_0_2.get_game_progress(arg_26_0)
+var_0_2.get_game_progress = function (arg_26_0)
 	local var_26_0 = Managers.player:local_player():stats_id()
 	local var_26_1 = #MainGameLevels * 5
 	local var_26_2 = 0
@@ -949,7 +949,7 @@ function var_0_2.get_game_progress(arg_26_0)
 	return var_26_2 / var_26_1 * 100
 end
 
-function var_0_2._register_completed_level_difficulty(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+var_0_2._register_completed_level_difficulty = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = Managers.player:local_player()
 	local var_27_1 = var_27_0:stats_id()
 	local var_27_2 = LevelDifficultyDBNames[arg_27_1]
@@ -981,7 +981,7 @@ function var_0_2._register_completed_level_difficulty(arg_27_0, arg_27_1, arg_27
 	arg_27_0:increment_stat(var_27_1, "played_difficulty", arg_27_3)
 end
 
-function var_0_2._register_completed_journey_difficulty(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+var_0_2._register_completed_journey_difficulty = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_1:stats_id()
 	local var_28_1 = arg_28_1:profile_index()
 	local var_28_2 = SPProfilesAbbreviation[var_28_1]
@@ -1018,7 +1018,7 @@ function var_0_2._register_completed_journey_difficulty(arg_28_0, arg_28_1, arg_
 	end
 end
 
-function var_0_2.unlock_lorebook_page(arg_29_0, arg_29_1)
+var_0_2.unlock_lorebook_page = function (arg_29_0, arg_29_1)
 	local var_29_0 = Managers.player:local_player()
 
 	if var_29_0 then
@@ -1039,7 +1039,7 @@ local function var_0_8(arg_30_0, arg_30_1, arg_30_2)
 	return (string.format("survival_%s_%s_%s", arg_30_0, arg_30_1, arg_30_2))
 end
 
-function var_0_2.get_survival_stat(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+var_0_2.get_survival_stat = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	local var_31_0 = var_0_8(arg_31_1, arg_31_2, arg_31_3)
 	local var_31_1 = Managers.player:local_player()
 
@@ -1048,14 +1048,14 @@ function var_0_2.get_survival_stat(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_3
 	return (arg_31_0:get_persistent_stat(arg_31_4, var_31_0))
 end
 
-function var_0_2._set_survival_stat(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+var_0_2._set_survival_stat = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	local var_32_0 = var_0_8(arg_32_1, arg_32_2, arg_32_3)
 	local var_32_1 = Managers.player:local_player():stats_id()
 
 	arg_32_0:set_stat(var_32_1, var_32_0, arg_32_4)
 end
 
-function var_0_2.reset_mission_streak(arg_33_0, arg_33_1, arg_33_2)
+var_0_2.reset_mission_streak = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0:profile_index()
 	local var_33_1 = SPProfiles[var_33_0]
 	local var_33_2 = arg_33_0:career_index()
@@ -1085,14 +1085,14 @@ function var_0_2.reset_mission_streak(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function var_0_2._modify_survival_stat(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+var_0_2._modify_survival_stat = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	local var_34_0 = var_0_8(arg_34_1, arg_34_2, arg_34_3)
 	local var_34_1 = Managers.player:local_player():stats_id()
 
 	arg_34_0:modify_stat_by_amount(var_34_1, var_34_0, arg_34_4)
 end
 
-function var_0_2.register_complete_survival_level(arg_35_0)
+var_0_2.register_complete_survival_level = function (arg_35_0)
 	local var_35_0, var_35_1 = Managers.state.entity:system("mission_system"):get_missions()
 	local var_35_2 = var_35_0.survival_wave
 
@@ -1168,7 +1168,7 @@ function var_0_2.register_complete_survival_level(arg_35_0)
 	end
 end
 
-function var_0_2.register_disable(arg_36_0, arg_36_1, arg_36_2)
+var_0_2.register_disable = function (arg_36_0, arg_36_1, arg_36_2)
 	if Managers.mechanism:current_mechanism_name() == "versus" then
 		local var_36_0 = arg_36_0:stats_id()
 

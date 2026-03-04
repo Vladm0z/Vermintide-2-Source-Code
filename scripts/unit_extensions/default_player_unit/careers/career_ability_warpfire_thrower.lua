@@ -2,7 +2,7 @@
 
 CareerAbilityWarpfireThrower = class(CareerAbilityWarpfireThrower, CareerAbilityDarkPactBase)
 
-function CareerAbilityWarpfireThrower.ability_ready(arg_1_0)
+CareerAbilityWarpfireThrower.ability_ready = function (arg_1_0)
 	arg_1_0.super.ability_ready(arg_1_0)
 
 	local var_1_0 = arg_1_0._first_person_extension

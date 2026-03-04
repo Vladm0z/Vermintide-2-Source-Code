@@ -167,14 +167,14 @@ for iter_0_3, iter_0_4 in ipairs(UnlockableLevels) do
 end
 
 for iter_0_7, iter_0_8 in pairs(GameActs) do
-	table.sort(iter_0_8, function(arg_3_0, arg_3_1)
+	table.sort(iter_0_8, function (arg_3_0, arg_3_1)
 		return LevelSettings[arg_3_0].act_unlock_order < LevelSettings[arg_3_1].act_unlock_order
 	end)
 end
 
 LevelUnlockUtils = {}
 
-function LevelUnlockUtils.unlocked_level_difficulty_index(arg_4_0, arg_4_1, arg_4_2)
+LevelUnlockUtils.unlocked_level_difficulty_index = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0, var_4_1 = Managers.state.difficulty:get_default_difficulties()
 	local var_4_2 = table.find(var_4_0, var_4_1)
 	local var_4_3 = #var_4_0
@@ -183,7 +183,7 @@ function LevelUnlockUtils.unlocked_level_difficulty_index(arg_4_0, arg_4_1, arg_
 	return math.max(math.min(var_4_4 + 1, var_4_3), var_4_2)
 end
 
-function LevelUnlockUtils.completed_level_difficulty_index(arg_5_0, arg_5_1, arg_5_2)
+LevelUnlockUtils.completed_level_difficulty_index = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = LevelDifficultyDBNames[arg_5_2]
 
 	if var_5_0 then
@@ -193,15 +193,15 @@ function LevelUnlockUtils.completed_level_difficulty_index(arg_5_0, arg_5_1, arg
 	end
 end
 
-function LevelUnlockUtils.is_journey_disabled(arg_6_0)
+LevelUnlockUtils.is_journey_disabled = function (arg_6_0)
 	return (Managers.mechanism and Managers.mechanism:mechanism_setting_for_title("override_journeys") or var_0_0)[arg_6_0] == false
 end
 
-function LevelUnlockUtils.is_chaos_waste_god_disabled(arg_7_0)
+LevelUnlockUtils.is_chaos_waste_god_disabled = function (arg_7_0)
 	return (Managers.mechanism and Managers.mechanism:mechanism_setting_for_title("override_gods") or var_0_0)[arg_7_0] == false
 end
 
-function LevelUnlockUtils.unlocked_journeys(arg_8_0, arg_8_1)
+LevelUnlockUtils.unlocked_journeys = function (arg_8_0, arg_8_1)
 	local var_8_0 = {}
 
 	for iter_8_0 = 1, #AvailableJourneyOrder do
@@ -225,7 +225,7 @@ function LevelUnlockUtils.unlocked_journeys(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function LevelUnlockUtils.completed_journey_difficulty_index(arg_9_0, arg_9_1, arg_9_2)
+LevelUnlockUtils.completed_journey_difficulty_index = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = JourneyDifficultyDBNames[arg_9_2]
 
 	if var_9_0 then
@@ -235,7 +235,7 @@ function LevelUnlockUtils.completed_journey_difficulty_index(arg_9_0, arg_9_1, a
 	end
 end
 
-function LevelUnlockUtils.completed_hero_journey_difficulty_index(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+LevelUnlockUtils.completed_hero_journey_difficulty_index = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = JourneyDifficultyDBNames[arg_10_3]
 
 	if var_10_0 then
@@ -245,7 +245,7 @@ function LevelUnlockUtils.completed_hero_journey_difficulty_index(arg_10_0, arg_
 	end
 end
 
-function LevelUnlockUtils.completed_journey_dominant_god_difficulty_index(arg_11_0, arg_11_1, arg_11_2)
+LevelUnlockUtils.completed_journey_dominant_god_difficulty_index = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = JourneyDominantGodDifficultyDBNames[arg_11_2]
 
 	if var_11_0 then
@@ -255,7 +255,7 @@ function LevelUnlockUtils.completed_journey_dominant_god_difficulty_index(arg_11
 	end
 end
 
-function LevelUnlockUtils.highest_completed_difficulty_index_by_act(arg_12_0, arg_12_1, arg_12_2)
+LevelUnlockUtils.highest_completed_difficulty_index_by_act = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = GameActs[arg_12_2]
 
 	if not var_12_0 then
@@ -282,11 +282,11 @@ function LevelUnlockUtils.highest_completed_difficulty_index_by_act(arg_12_0, ar
 	return var_12_1
 end
 
-function LevelUnlockUtils.completed_adventure_difficulty(arg_13_0, arg_13_1)
+LevelUnlockUtils.completed_adventure_difficulty = function (arg_13_0, arg_13_1)
 	return 1
 end
 
-function LevelUnlockUtils.completed_main_game_difficulty(arg_14_0, arg_14_1)
+LevelUnlockUtils.completed_main_game_difficulty = function (arg_14_0, arg_14_1)
 	local var_14_0 = math.huge
 
 	for iter_14_0, iter_14_1 in ipairs(MainGameLevels) do
@@ -300,7 +300,7 @@ function LevelUnlockUtils.completed_main_game_difficulty(arg_14_0, arg_14_1)
 	return var_14_0
 end
 
-function LevelUnlockUtils.completed_dlc_difficulty(arg_15_0, arg_15_1, arg_15_2)
+LevelUnlockUtils.completed_dlc_difficulty = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0
 
 	for iter_15_0, iter_15_1 in pairs(AreaSettings) do
@@ -338,7 +338,7 @@ local function var_0_13(arg_16_0, arg_16_1)
 	return (var_16_1.sorting or 99) < (var_16_2.sorting or 99)
 end
 
-function LevelUnlockUtils.is_level_disabled(arg_17_0)
+LevelUnlockUtils.is_level_disabled = function (arg_17_0)
 	local var_17_0 = Managers.mechanism and Managers.mechanism:mechanism_setting_for_title("override_levels")
 
 	return var_17_0 and var_17_0[arg_17_0] == false
@@ -346,7 +346,7 @@ end
 
 local var_0_14 = {}
 
-function LevelUnlockUtils.get_required_completed_levels(arg_18_0, arg_18_1, arg_18_2)
+LevelUnlockUtils.get_required_completed_levels = function (arg_18_0, arg_18_1, arg_18_2)
 	table.clear(var_0_14)
 
 	local var_18_0 = LevelSettings[arg_18_2].required_acts
@@ -407,7 +407,7 @@ function LevelUnlockUtils.get_required_completed_levels(arg_18_0, arg_18_1, arg_
 	return var_0_14
 end
 
-function LevelUnlockUtils.current_weave(arg_19_0, arg_19_1, arg_19_2)
+LevelUnlockUtils.current_weave = function (arg_19_0, arg_19_1, arg_19_2)
 	if script_data.unlock_all_levels then
 		return WeaveSettings.templates_ordered[#WeaveSettings.templates_ordered].name
 	end
@@ -443,7 +443,7 @@ function LevelUnlockUtils.current_weave(arg_19_0, arg_19_1, arg_19_2)
 	return var_19_2[var_19_4].name
 end
 
-function LevelUnlockUtils.weave_disabled(arg_20_0)
+LevelUnlockUtils.weave_disabled = function (arg_20_0)
 	local var_20_0 = Managers.mechanism and Managers.mechanism:mechanism_setting_for_title("override_weaves") or var_0_0
 
 	if var_20_0.levels and var_20_0.levels[arg_20_0] ~= nil then
@@ -463,7 +463,7 @@ function LevelUnlockUtils.weave_disabled(arg_20_0)
 	return false
 end
 
-function LevelUnlockUtils.weave_unlocked(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+LevelUnlockUtils.weave_unlocked = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	if script_data.unlock_all_levels then
 		return true
 	end
@@ -506,7 +506,7 @@ function LevelUnlockUtils.weave_unlocked(arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 	return var_21_3 or var_21_4
 end
 
-function LevelUnlockUtils.level_unlocked(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+LevelUnlockUtils.level_unlocked = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	if script_data.unlock_all_levels then
 		return true
 	end
@@ -565,7 +565,7 @@ function LevelUnlockUtils.level_unlocked(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	return true
 end
 
-function LevelUnlockUtils.all_levels_completed(arg_23_0, arg_23_1)
+LevelUnlockUtils.all_levels_completed = function (arg_23_0, arg_23_1)
 	local var_23_0 = UnlockableLevelsByGameMode.adventure
 
 	for iter_23_0, iter_23_1 in ipairs(var_23_0) do
@@ -577,7 +577,7 @@ function LevelUnlockUtils.all_levels_completed(arg_23_0, arg_23_1)
 	return true
 end
 
-function LevelUnlockUtils.get_act_key_by_level(arg_24_0)
+LevelUnlockUtils.get_act_key_by_level = function (arg_24_0)
 	for iter_24_0, iter_24_1 in pairs(GameActs) do
 		for iter_24_2, iter_24_3 in ipairs(iter_24_1) do
 			if arg_24_0 == iter_24_3 then
@@ -587,7 +587,7 @@ function LevelUnlockUtils.get_act_key_by_level(arg_24_0)
 	end
 end
 
-function LevelUnlockUtils.act_unlocked(arg_25_0, arg_25_1, arg_25_2)
+LevelUnlockUtils.act_unlocked = function (arg_25_0, arg_25_1, arg_25_2)
 	assert(GameActs[arg_25_2] ~= nil, "Act %s does not exist.", arg_25_2)
 
 	local var_25_0 = GameActs[arg_25_2]
@@ -605,7 +605,7 @@ function LevelUnlockUtils.act_unlocked(arg_25_0, arg_25_1, arg_25_2)
 	return true
 end
 
-function LevelUnlockUtils.act_completed(arg_26_0, arg_26_1, arg_26_2)
+LevelUnlockUtils.act_completed = function (arg_26_0, arg_26_1, arg_26_2)
 	assert(GameActs[arg_26_2] ~= nil, "Act %s does not exist.", arg_26_2)
 
 	local var_26_0 = GameActs[arg_26_2]
@@ -621,7 +621,7 @@ function LevelUnlockUtils.act_completed(arg_26_0, arg_26_1, arg_26_2)
 	return true
 end
 
-function LevelUnlockUtils.num_acts_completed(arg_27_0, arg_27_1)
+LevelUnlockUtils.num_acts_completed = function (arg_27_0, arg_27_1)
 	local var_27_0 = 0
 
 	for iter_27_0, iter_27_1 in pairs(GameActs) do
@@ -633,7 +633,7 @@ function LevelUnlockUtils.num_acts_completed(arg_27_0, arg_27_1)
 	return var_27_0
 end
 
-function LevelUnlockUtils.all_dlc_levels_completed(arg_28_0, arg_28_1, arg_28_2)
+LevelUnlockUtils.all_dlc_levels_completed = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0
 
 	for iter_28_0, iter_28_1 in pairs(AreaSettings) do
@@ -659,7 +659,7 @@ function LevelUnlockUtils.all_dlc_levels_completed(arg_28_0, arg_28_1, arg_28_2)
 	return true
 end
 
-function LevelUnlockUtils.set_all_acts_incompleted()
+LevelUnlockUtils.set_all_acts_incompleted = function ()
 	local var_29_0 = Managers.player
 	local var_29_1 = var_29_0:statistics_db()
 	local var_29_2 = var_29_0:local_player():stats_id()
@@ -691,7 +691,7 @@ function LevelUnlockUtils.set_all_acts_incompleted()
 	Managers.backend:set_stats(var_29_7)
 end
 
-function LevelUnlockUtils.get_next_adventure_level(arg_30_0, arg_30_1)
+LevelUnlockUtils.get_next_adventure_level = function (arg_30_0, arg_30_1)
 	for iter_30_0 = AdventureActStartId, #GameActsOrder do
 		local var_30_0 = GameActsOrder[iter_30_0]
 
@@ -711,7 +711,7 @@ function LevelUnlockUtils.get_next_adventure_level(arg_30_0, arg_30_1)
 	return nil
 end
 
-function LevelUnlockUtils.debug_set_completed_game_difficulty(arg_31_0)
+LevelUnlockUtils.debug_set_completed_game_difficulty = function (arg_31_0)
 	local var_31_0 = Managers.player:statistics_db()
 	local var_31_1 = Managers.player:local_player():stats_id()
 
@@ -726,7 +726,7 @@ function LevelUnlockUtils.debug_set_completed_game_difficulty(arg_31_0)
 	Managers.backend:commit()
 end
 
-function LevelUnlockUtils.debug_set_completed_journey_difficulty(arg_32_0, arg_32_1)
+LevelUnlockUtils.debug_set_completed_journey_difficulty = function (arg_32_0, arg_32_1)
 	local var_32_0 = Managers.player:statistics_db()
 	local var_32_1 = Managers.player:local_player():stats_id()
 	local var_32_2 = JourneyDifficultyDBNames[arg_32_0]
@@ -740,7 +740,7 @@ function LevelUnlockUtils.debug_set_completed_journey_difficulty(arg_32_0, arg_3
 	Managers.backend:commit()
 end
 
-function LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(arg_33_0, arg_33_1, arg_33_2)
+LevelUnlockUtils.debug_set_completed_hero_journey_difficulty = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = Managers.player:statistics_db()
 	local var_33_1 = Managers.player:local_player():stats_id()
 	local var_33_2 = JourneyDifficultyDBNames[arg_33_1]
@@ -754,7 +754,7 @@ function LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(arg_33_0, 
 	Managers.backend:commit()
 end
 
-function LevelUnlockUtils.debug_unlock_act(arg_34_0)
+LevelUnlockUtils.debug_unlock_act = function (arg_34_0)
 	local var_34_0 = Managers.player
 	local var_34_1 = var_34_0:statistics_db()
 	local var_34_2 = var_34_0:local_player():stats_id()
@@ -794,7 +794,7 @@ function LevelUnlockUtils.debug_unlock_act(arg_34_0)
 	Managers.backend:commit()
 end
 
-function LevelUnlockUtils.debug_completed_act_levels(arg_35_0, arg_35_1)
+LevelUnlockUtils.debug_completed_act_levels = function (arg_35_0, arg_35_1)
 	local var_35_0 = Managers.player
 	local var_35_1 = var_35_0:statistics_db()
 	local var_35_2 = var_35_0:local_player():stats_id()
@@ -821,7 +821,7 @@ function LevelUnlockUtils.debug_completed_act_levels(arg_35_0, arg_35_1)
 	Managers.backend:commit()
 end
 
-function LevelUnlockUtils.debug_complete_level(arg_36_0)
+LevelUnlockUtils.debug_complete_level = function (arg_36_0)
 	local var_36_0 = Managers.player
 	local var_36_1 = var_36_0:statistics_db()
 	local var_36_2 = var_36_0:local_player():stats_id()

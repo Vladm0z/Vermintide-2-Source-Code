@@ -199,7 +199,7 @@ DLCUtils.require_list("behaviour_trees_precompiled")
 BehaviorTree = class(BehaviorTree)
 BehaviorTree.types = {}
 
-function BehaviorTree.init(arg_1_0, arg_1_1, arg_1_2)
+BehaviorTree.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._root = nil
 	arg_1_0._name = arg_1_2
 	arg_1_0._action_data = {}
@@ -207,15 +207,15 @@ function BehaviorTree.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:parse_lua_tree(arg_1_1)
 end
 
-function BehaviorTree.action_data(arg_2_0)
+BehaviorTree.action_data = function (arg_2_0)
 	return arg_2_0._action_data
 end
 
-function BehaviorTree.root(arg_3_0)
+BehaviorTree.root = function (arg_3_0)
 	return arg_3_0._root
 end
 
-function BehaviorTree.name(arg_4_0)
+BehaviorTree.name = function (arg_4_0)
 	return arg_4_0._name
 end
 
@@ -237,13 +237,13 @@ local function var_0_1(arg_5_0, arg_5_1)
 	end
 end
 
-function BehaviorTree.parse_lua_tree(arg_6_0, arg_6_1)
+BehaviorTree.parse_lua_tree = function (arg_6_0, arg_6_1)
 	arg_6_0._root = var_0_1(arg_6_1)
 
 	arg_6_0:parse_lua_node(arg_6_1, arg_6_0._root)
 end
 
-function BehaviorTree.parse_lua_node(arg_7_0, arg_7_1, arg_7_2)
+BehaviorTree.parse_lua_node = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = #arg_7_1
 
 	for iter_7_0 = 2, var_7_0 do

@@ -138,7 +138,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "divider",
 					pass_type = "rotated_texture",
 					texture_id = "divider_id",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						if arg_2_0.activated then
 							arg_2_1.color[1] = 0
 						else
@@ -155,7 +155,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 							arg_2_0.is_valid = var_2_1(var_2_0.data, var_2_2, arg_2_0, arg_2_1)
 						end
 					end,
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return not arg_1_2.individual_bg
 					end
 				},
@@ -163,7 +163,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "rotated_texture",
 					style_id = "fade",
 					texture_id = "fade_texture_id",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return arg_4_0.selected and arg_4_0.is_valid and not arg_1_2.individual_bg
 					end
 				},
@@ -171,7 +171,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "texture",
 					style_id = "icon_bg",
 					texture_id = "icon_bg_id",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return arg_1_2.individual_bg and arg_5_0.is_valid
 					end
 				},
@@ -179,7 +179,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "icon",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						if arg_6_0.activated then
 							arg_6_1.color[2] = arg_6_1.activated_color[2]
 							arg_6_1.color[3] = arg_6_1.activated_color[3]
@@ -201,7 +201,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "icon_shadow",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						if not arg_7_0.activated then
 							if arg_7_0.selected and arg_7_0.is_valid then
 								arg_7_1.color[1] = 255
@@ -215,7 +215,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "texture",
 					style_id = "icon_unavailable",
 					texture_id = "icon_unavailable_id",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return not arg_8_0.is_valid
 					end
 				},
@@ -223,7 +223,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "texture",
 					style_id = "icon_glow",
 					texture_id = "icon_glow_id",
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return arg_9_0.selected and not arg_9_0.activated
 					end
 				},
@@ -231,7 +231,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					pass_type = "texture",
 					style_id = "bg_top_right",
 					texture_id = "fade_bg",
-					content_check_function = function(arg_10_0, arg_10_1)
+					content_check_function = function (arg_10_0, arg_10_1)
 						return not arg_1_2.individual_bg
 					end
 				},
@@ -239,7 +239,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_id",
-					content_check_function = function(arg_11_0, arg_11_1)
+					content_check_function = function (arg_11_0, arg_11_1)
 						if arg_11_0.selected then
 							arg_11_1.text_color = arg_11_1.selected_color
 						else
@@ -253,7 +253,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text_id",
-					content_check_function = function(arg_12_0, arg_12_1)
+					content_check_function = function (arg_12_0, arg_12_1)
 						if arg_12_0.selected then
 							arg_12_1.text_color = arg_12_1.selected_color
 						else
@@ -483,7 +483,7 @@ local function var_0_4()
 					style_id = "bg_top_right",
 					texture_id = "fade_bg",
 					pass_type = "texture",
-					content_change_function = function(arg_14_0, arg_14_1)
+					content_change_function = function (arg_14_0, arg_14_1)
 						arg_14_1.texture_size[1] = arg_14_1.base_texture_size[1] * arg_14_0.size_multiplier
 						arg_14_1.texture_size[2] = arg_14_1.base_texture_size[2] * arg_14_0.size_multiplier
 					end
@@ -492,7 +492,7 @@ local function var_0_4()
 					style_id = "bg_top_left",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_15_0, arg_15_1)
+					content_change_function = function (arg_15_0, arg_15_1)
 						arg_15_1.texture_size[1] = arg_15_1.base_texture_size[1] * arg_15_0.size_multiplier
 						arg_15_1.texture_size[2] = arg_15_1.base_texture_size[2] * arg_15_0.size_multiplier
 					end
@@ -501,7 +501,7 @@ local function var_0_4()
 					style_id = "bg_bottom_right",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						arg_16_1.texture_size[1] = arg_16_1.base_texture_size[1] * arg_16_0.size_multiplier
 						arg_16_1.texture_size[2] = arg_16_1.base_texture_size[2] * arg_16_0.size_multiplier
 					end
@@ -510,7 +510,7 @@ local function var_0_4()
 					style_id = "bg_bottom_left",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_17_0, arg_17_1)
+					content_change_function = function (arg_17_0, arg_17_1)
 						arg_17_1.texture_size[1] = arg_17_1.base_texture_size[1] * arg_17_0.size_multiplier
 						arg_17_1.texture_size[2] = arg_17_1.base_texture_size[2] * arg_17_0.size_multiplier
 					end
@@ -519,7 +519,7 @@ local function var_0_4()
 					style_id = "bg_top_right_masked",
 					texture_id = "fade_bg",
 					pass_type = "texture",
-					content_change_function = function(arg_18_0, arg_18_1)
+					content_change_function = function (arg_18_0, arg_18_1)
 						arg_18_1.texture_size[1] = arg_18_1.base_texture_size[1] * arg_18_0.size_multiplier
 						arg_18_1.texture_size[2] = arg_18_1.base_texture_size[2] * arg_18_0.size_multiplier
 					end
@@ -528,7 +528,7 @@ local function var_0_4()
 					style_id = "bg_top_left_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_19_0, arg_19_1)
+					content_change_function = function (arg_19_0, arg_19_1)
 						arg_19_1.texture_size[1] = arg_19_1.base_texture_size[1] * arg_19_0.size_multiplier
 						arg_19_1.texture_size[2] = arg_19_1.base_texture_size[2] * arg_19_0.size_multiplier
 					end
@@ -537,7 +537,7 @@ local function var_0_4()
 					style_id = "bg_bottom_right_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_20_0, arg_20_1)
+					content_change_function = function (arg_20_0, arg_20_1)
 						arg_20_1.texture_size[1] = arg_20_1.base_texture_size[1] * arg_20_0.size_multiplier
 						arg_20_1.texture_size[2] = arg_20_1.base_texture_size[2] * arg_20_0.size_multiplier
 					end
@@ -546,7 +546,7 @@ local function var_0_4()
 					style_id = "bg_bottom_left_masked",
 					texture_id = "fade_bg",
 					pass_type = "rotated_texture",
-					content_change_function = function(arg_21_0, arg_21_1)
+					content_change_function = function (arg_21_0, arg_21_1)
 						arg_21_1.texture_size[1] = arg_21_1.base_texture_size[1] * arg_21_0.size_multiplier
 						arg_21_1.texture_size[2] = arg_21_1.base_texture_size[2] * arg_21_0.size_multiplier
 					end
@@ -555,7 +555,7 @@ local function var_0_4()
 					style_id = "circle",
 					texture_id = "circle_id",
 					pass_type = "texture",
-					content_change_function = function(arg_22_0, arg_22_1)
+					content_change_function = function (arg_22_0, arg_22_1)
 						arg_22_1.texture_size[1] = arg_22_1.base_texture_size[1] * arg_22_0.size_multiplier
 						arg_22_1.texture_size[2] = arg_22_1.base_texture_size[2] * arg_22_0.size_multiplier
 					end
@@ -1050,7 +1050,7 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 					style_id = "texture",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_check_function = function(arg_27_0, arg_27_1)
+					content_check_function = function (arg_27_0, arg_27_1)
 						local var_27_0 = Managers.player:player_from_peer_id(arg_27_0.peer_id)
 						local var_27_1 = var_27_0 and var_27_0.player_unit
 
@@ -1077,7 +1077,7 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 
 						return true
 					end,
-					content_change_function = function(arg_28_0, arg_28_1)
+					content_change_function = function (arg_28_0, arg_28_1)
 						local var_28_0 = Managers.player:player_from_peer_id(arg_28_0.peer_id)
 						local var_28_1 = var_28_0 and var_28_0.player_unit
 
@@ -1114,10 +1114,10 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 					style_id = "texture_glow",
 					texture_id = "icon_glow_id",
 					pass_type = "texture",
-					content_check_function = function(arg_29_0, arg_29_1)
+					content_check_function = function (arg_29_0, arg_29_1)
 						return arg_29_0.is_visible
 					end,
-					content_change_function = function(arg_30_0, arg_30_1)
+					content_change_function = function (arg_30_0, arg_30_1)
 						local var_30_0 = arg_30_0.offset
 						local var_30_1 = arg_30_0.distance_scale
 						local var_30_2 = arg_30_0.scale
@@ -1134,10 +1134,10 @@ local function var_0_8(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_
 					style_id = "texture_shadow",
 					texture_id = "icon_id",
 					pass_type = "texture",
-					content_check_function = function(arg_31_0, arg_31_1)
+					content_check_function = function (arg_31_0, arg_31_1)
 						return arg_31_0.is_visible
 					end,
-					content_change_function = function(arg_32_0, arg_32_1)
+					content_change_function = function (arg_32_0, arg_32_1)
 						local var_32_0 = arg_32_0.offset
 						local var_32_1 = arg_32_0.distance_scale
 						local var_32_2 = arg_32_0.scale

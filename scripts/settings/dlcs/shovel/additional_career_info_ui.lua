@@ -464,7 +464,7 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -472,7 +472,7 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						local var_3_0 = Managers.input:is_device_active("gamepad")
 
 						return arg_3_0.use_shadow and not var_3_0
@@ -482,7 +482,7 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "gamepad_text",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return (Managers.input:is_device_active("gamepad"))
 					end
 				},
@@ -490,7 +490,7 @@ local function var_0_9(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "gamepad_text_shadow",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						local var_5_0 = Managers.input:is_device_active("gamepad")
 
 						return arg_5_0.use_shadow and var_5_0

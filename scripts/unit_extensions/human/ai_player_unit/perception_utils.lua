@@ -10,7 +10,7 @@ local var_0_2 = POSITION_LOOKUP
 local var_0_3 = AI_UTILS
 local var_0_4 = ScriptUnit.extension
 
-function PerceptionUtils.troll_crouch_check(arg_1_0, arg_1_1, arg_1_2)
+PerceptionUtils.troll_crouch_check = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = World.get_data(arg_1_1.world, "physics_world")
 	local var_1_1 = 1.2
 	local var_1_2 = Unit.local_position(arg_1_0, 0)
@@ -27,7 +27,7 @@ function PerceptionUtils.troll_crouch_check(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_1.needs_to_crouch = arg_1_2 < arg_1_1.crouch_sticky_timer
 end
 
-function PerceptionUtils.perception_continuous_chaos_troll(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+PerceptionUtils.perception_continuous_chaos_troll = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	AiUtils.push_intersecting_players(arg_2_0, arg_2_0, arg_2_1.displaced_units, arg_2_2.displace_players_data, arg_2_3, arg_2_4)
 	PerceptionUtils.troll_crouch_check(arg_2_0, arg_2_1, arg_2_3)
 	AiUtils.update_aggro(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
@@ -35,7 +35,7 @@ function PerceptionUtils.perception_continuous_chaos_troll(arg_2_0, arg_2_1, arg
 	return true
 end
 
-function PerceptionUtils.perception_continuous_chaos_spawn(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PerceptionUtils.perception_continuous_chaos_spawn = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	AiUtils.update_aggro(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	arg_3_1.grabbed_time = arg_3_1.grabbed_time + arg_3_4
@@ -43,24 +43,24 @@ function PerceptionUtils.perception_continuous_chaos_spawn(arg_3_0, arg_3_1, arg
 	return true
 end
 
-function PerceptionUtils.perception_continuous_rat_ogre(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PerceptionUtils.perception_continuous_rat_ogre = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	AiUtils.update_aggro(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
 	return true
 end
 
-function PerceptionUtils.perception_continuous_keep_target(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+PerceptionUtils.perception_continuous_keep_target = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_1.target_unit
 	local var_5_1 = arg_5_1.side
 
 	return not var_0_0[var_5_0] or DamageUtils.is_player_unit(var_5_0) and not var_5_1.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[var_5_0]
 end
 
-function PerceptionUtils.perception_no_seeing(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PerceptionUtils.perception_no_seeing = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	return
 end
 
-function PerceptionUtils.perception_all_seeing(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+PerceptionUtils.perception_all_seeing = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_1.target_unit
 	local var_7_1, var_7_2 = arg_7_3(arg_7_0, arg_7_1, arg_7_2)
 
@@ -94,7 +94,7 @@ function PerceptionUtils.perception_all_seeing(arg_7_0, arg_7_1, arg_7_2, arg_7_
 	end
 end
 
-function PerceptionUtils.perception_all_seeing_boss(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+PerceptionUtils.perception_all_seeing_boss = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	PerceptionUtils.perception_all_seeing(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 
 	if arg_8_1.aggro_unit ~= arg_8_1.target_unit then
@@ -120,7 +120,7 @@ function PerceptionUtils.perception_all_seeing_boss(arg_8_0, arg_8_1, arg_8_2, a
 	end
 end
 
-function PerceptionUtils.perception_standard_bearer(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+PerceptionUtils.perception_standard_bearer = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if arg_9_1.spawn_category == "patrol" then
 		local var_9_0 = ScriptUnit.has_extension(arg_9_0, "ai_group_system")
 
@@ -158,7 +158,7 @@ function PerceptionUtils.perception_standard_bearer(arg_9_0, arg_9_1, arg_9_2, a
 	end
 end
 
-function PerceptionUtils.perception_tether_sorcerer(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+PerceptionUtils.perception_tether_sorcerer = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0, var_10_1 = arg_10_3(arg_10_0, arg_10_1, arg_10_2)
 
 	if var_10_0 ~= arg_10_1.target_unit then
@@ -168,7 +168,7 @@ function PerceptionUtils.perception_tether_sorcerer(arg_10_0, arg_10_1, arg_10_2
 	end
 end
 
-function PerceptionUtils.perception_pack_master(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+PerceptionUtils.perception_pack_master = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if arg_11_1.drag_target_unit then
 		return
 	end
@@ -202,7 +202,7 @@ function PerceptionUtils.perception_pack_master(arg_11_0, arg_11_1, arg_11_2, ar
 	end
 end
 
-function PerceptionUtils.perception_rat_ogre(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+PerceptionUtils.perception_rat_ogre = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if arg_12_1.keep_target then
 		return
 	end
@@ -280,7 +280,7 @@ function PerceptionUtils.perception_rat_ogre(arg_12_0, arg_12_1, arg_12_2, arg_1
 	end
 end
 
-function PerceptionUtils.perception_all_seeing_re_evaluate(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+PerceptionUtils.perception_all_seeing_re_evaluate = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_1.target_unit
 	local var_13_1 = var_0_0[var_13_0]
 	local var_13_2, var_13_3, var_13_4 = arg_13_3(arg_13_0, arg_13_1, arg_13_2, arg_13_4)
@@ -322,7 +322,7 @@ function PerceptionUtils.perception_all_seeing_re_evaluate(arg_13_0, arg_13_1, a
 	end
 end
 
-function PerceptionUtils.perception_regular(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+PerceptionUtils.perception_regular = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if arg_14_1.keep_target then
 		return false
 	end
@@ -367,7 +367,7 @@ function PerceptionUtils.perception_regular(arg_14_0, arg_14_1, arg_14_2, arg_14
 	end
 end
 
-function PerceptionUtils.keep_target_until_invalid(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PerceptionUtils.keep_target_until_invalid = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_1.target_unit
 	local var_15_1 = ScriptUnit.has_extension(var_15_0, "health_system")
 	local var_15_2 = ScriptUnit.has_extension(var_15_0, "status_system")
@@ -379,7 +379,7 @@ function PerceptionUtils.keep_target_until_invalid(arg_15_0, arg_15_1, arg_15_2,
 	return var_15_0
 end
 
-function PerceptionUtils.perception_regular_update_aggro(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+PerceptionUtils.perception_regular_update_aggro = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	AiUtils.update_aggro(arg_16_0, arg_16_1, arg_16_2, arg_16_4, arg_16_5)
 	PerceptionUtils.perception_regular(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 
@@ -414,7 +414,7 @@ end
 
 local var_0_5 = {}
 
-function PerceptionUtils.alert_enemies_within_range(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+PerceptionUtils.alert_enemies_within_range = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	if not arg_17_2 then
 		return
 	end
@@ -436,7 +436,7 @@ function PerceptionUtils.alert_enemies_within_range(arg_17_0, arg_17_1, arg_17_2
 	end
 end
 
-function PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_18_0, arg_18_1, arg_18_2)
+PerceptionUtils.pack_master_has_line_of_sight_for_attack = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = Unit.world_position(arg_18_1, Unit.node(arg_18_1, "j_spine"))
 	local var_18_1 = Unit.world_position(arg_18_2, Unit.node(arg_18_2, "j_neck"))
 	local var_18_2 = 0.15
@@ -462,7 +462,7 @@ function PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_18_0, arg_
 	return var_18_9
 end
 
-function PerceptionUtils.clear_target_unit(arg_19_0)
+PerceptionUtils.clear_target_unit = function (arg_19_0)
 	if arg_19_0.breed.special then
 		local var_19_0 = arg_19_0.group_blackboard.special_targets
 
@@ -482,7 +482,7 @@ local var_0_7 = {}
 local var_0_8 = {}
 local var_0_9 = 0
 
-function PerceptionUtils.special_opportunity(arg_20_0, arg_20_1)
+PerceptionUtils.special_opportunity = function (arg_20_0, arg_20_1)
 	var_0_9 = 0
 
 	local var_20_0 = arg_20_1.side

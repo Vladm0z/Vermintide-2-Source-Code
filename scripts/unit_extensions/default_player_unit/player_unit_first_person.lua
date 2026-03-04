@@ -17,7 +17,7 @@ local var_0_5 = {
 	lerp_speed = math.huge
 }
 
-function PlayerUnitFirstPerson.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitFirstPerson.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
@@ -125,11 +125,11 @@ function PlayerUnitFirstPerson.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Wwise.set_state("current_career", var_1_13)
 end
 
-function PlayerUnitFirstPerson.reset(arg_2_0)
+PlayerUnitFirstPerson.reset = function (arg_2_0)
 	return
 end
 
-function PlayerUnitFirstPerson.extensions_ready(arg_3_0)
+PlayerUnitFirstPerson.extensions_ready = function (arg_3_0)
 	local var_3_0 = arg_3_0.unit
 
 	arg_3_0.locomotion_extension = ScriptUnit.extension(var_3_0, "locomotion_system")
@@ -150,7 +150,7 @@ function PlayerUnitFirstPerson.extensions_ready(arg_3_0)
 	end
 end
 
-function PlayerUnitFirstPerson.destroy(arg_4_0)
+PlayerUnitFirstPerson.destroy = function (arg_4_0)
 	AttachmentUtils.unlink(arg_4_0.world, arg_4_0.first_person_attachment_unit)
 
 	local var_4_0 = Managers.state.unit_spawner
@@ -160,7 +160,7 @@ function PlayerUnitFirstPerson.destroy(arg_4_0)
 	Managers.state.event:unregister("on_game_options_changed", arg_4_0)
 end
 
-function PlayerUnitFirstPerson.set_state_machine(arg_5_0, arg_5_1)
+PlayerUnitFirstPerson.set_state_machine = function (arg_5_0, arg_5_1)
 	if arg_5_1 == arg_5_0._current_state_machine then
 		return
 	end
@@ -189,11 +189,11 @@ function PlayerUnitFirstPerson.set_state_machine(arg_5_0, arg_5_1)
 	arg_5_0._current_state_machine = arg_5_1
 end
 
-function PlayerUnitFirstPerson._set_game_options_dirty(arg_6_0)
+PlayerUnitFirstPerson._set_game_options_dirty = function (arg_6_0)
 	arg_6_0._game_options_dirty = true
 end
 
-function PlayerUnitFirstPerson.update_game_options(arg_7_0)
+PlayerUnitFirstPerson.update_game_options = function (arg_7_0)
 	if not arg_7_0._game_options_dirty then
 		return
 	end
@@ -261,7 +261,7 @@ end
 
 local var_0_6 = {}
 
-function PlayerUnitFirstPerson.check_for_jumps(arg_8_0, arg_8_1, arg_8_2)
+PlayerUnitFirstPerson.check_for_jumps = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = POSITION_LOOKUP[arg_8_1]
 	local var_8_1 = Managers.state.entity:system("nav_graph_system")
 	local var_8_2 = var_8_1.jumps_broadphase_max_dist
@@ -345,7 +345,7 @@ function PlayerUnitFirstPerson.check_for_jumps(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function PlayerUnitFirstPerson._reset_jump_indicator(arg_9_0)
+PlayerUnitFirstPerson._reset_jump_indicator = function (arg_9_0)
 	arg_9_0._valid_jump_id = nil
 	arg_9_0._valid_jump_data = nil
 
@@ -360,7 +360,7 @@ end
 
 local var_0_7 = {}
 
-function PlayerUnitFirstPerson._draw_smart_objects(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+PlayerUnitFirstPerson._draw_smart_objects = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if not arg_10_1 then
 		return
 	end
@@ -409,11 +409,11 @@ function PlayerUnitFirstPerson._draw_smart_objects(arg_10_0, arg_10_1, arg_10_2,
 	end
 end
 
-function PlayerUnitFirstPerson.get_valid_jump_id(arg_11_0)
+PlayerUnitFirstPerson.get_valid_jump_id = function (arg_11_0)
 	return arg_11_0._valid_jump_id, arg_11_0._valid_jump_data
 end
 
-function PlayerUnitFirstPerson.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+PlayerUnitFirstPerson.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if Managers.input:is_device_active("gamepad") then
 		arg_12_0:update_aim_assist_multiplier(arg_12_3)
 	end
@@ -448,7 +448,7 @@ function PlayerUnitFirstPerson.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, ar
 
 			arg_12_0._want_to_show_first_person_ammo = nil
 		elseif not var_12_1 and var_12_2 then
-			-- block empty
+			-- Nothing
 		elseif not var_12_1 and not var_12_2 then
 			arg_12_0.inventory_extension:show_first_person_inventory(false)
 
@@ -474,7 +474,7 @@ function PlayerUnitFirstPerson.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, ar
 	end
 end
 
-function PlayerUnitFirstPerson.update_aim_assist_multiplier(arg_13_0, arg_13_1)
+PlayerUnitFirstPerson.update_aim_assist_multiplier = function (arg_13_0, arg_13_1)
 	if arg_13_0._gamepad_auto_aim_enabled then
 		local var_13_0 = arg_13_0.inventory_extension
 		local var_13_1
@@ -532,11 +532,11 @@ function PlayerUnitFirstPerson.update_aim_assist_multiplier(arg_13_0, arg_13_1)
 	end
 end
 
-function PlayerUnitFirstPerson.increase_aim_assist_multiplier(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+PlayerUnitFirstPerson.increase_aim_assist_multiplier = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	arg_14_0.aim_assist_ramp_multiplier_timer, arg_14_0.aim_assist_ramp_multiplier = arg_14_3 or 2, math.min(arg_14_0.aim_assist_ramp_multiplier + arg_14_1, arg_14_2)
 end
 
-function PlayerUnitFirstPerson.reset_aim_assist_multiplier(arg_15_0)
+PlayerUnitFirstPerson.reset_aim_assist_multiplier = function (arg_15_0)
 	arg_15_0.aim_assist_ramp_multiplier = 0
 	arg_15_0.aim_assist_ramp_multiplier_timer = 0
 end
@@ -547,7 +547,7 @@ local function var_0_8(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	return -arg_16_2 * arg_16_0 * (arg_16_0 - 2) + arg_16_1
 end
 
-function PlayerUnitFirstPerson.update_player_height(arg_17_0, arg_17_1)
+PlayerUnitFirstPerson.update_player_height = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1 - arg_17_0.player_height_change_start_time
 
 	if var_17_0 < arg_17_0.player_height_time_to_change then
@@ -557,25 +557,25 @@ function PlayerUnitFirstPerson.update_player_height(arg_17_0, arg_17_1)
 	end
 end
 
-function PlayerUnitFirstPerson.set_rotation(arg_18_0, arg_18_1)
+PlayerUnitFirstPerson.set_rotation = function (arg_18_0, arg_18_1)
 	Unit.set_local_rotation(arg_18_0.first_person_unit, 0, arg_18_1)
 	Unit.set_local_rotation(arg_18_0.unit, 0, arg_18_1)
 	arg_18_0.look_rotation:store(arg_18_1)
 end
 
-function PlayerUnitFirstPerson.force_look_rotation(arg_19_0, arg_19_1, arg_19_2)
+PlayerUnitFirstPerson.force_look_rotation = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0.forced_look_rotation = QuaternionBox(arg_19_1)
 	arg_19_0.forced_lerp_timer = 0
 	arg_19_0.forced_total_lerp_time = arg_19_2
 end
 
-function PlayerUnitFirstPerson.stop_force_look_rotation(arg_20_0)
+PlayerUnitFirstPerson.stop_force_look_rotation = function (arg_20_0)
 	arg_20_0.forced_look_rotation = nil
 	arg_20_0.forced_lerp_timer = 0
 	arg_20_0.forced_lerp_time = nil
 end
 
-function PlayerUnitFirstPerson.update_rotation(arg_21_0, arg_21_1, arg_21_2)
+PlayerUnitFirstPerson.update_rotation = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0.first_person_unit
 	local var_21_1 = arg_21_0.smart_targeting_extension:get_targeting_data()
 
@@ -654,7 +654,7 @@ function PlayerUnitFirstPerson.update_rotation(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function PlayerUnitFirstPerson.tutorial_restrict_camera_rotation(arg_22_0, arg_22_1, arg_22_2)
+PlayerUnitFirstPerson.tutorial_restrict_camera_rotation = function (arg_22_0, arg_22_1, arg_22_2)
 	if arg_22_1 then
 		arg_22_0.restrict_rotation_angle = math.degrees_to_radians(arg_22_2)
 	else
@@ -662,7 +662,7 @@ function PlayerUnitFirstPerson.tutorial_restrict_camera_rotation(arg_22_0, arg_2
 	end
 end
 
-function PlayerUnitFirstPerson.calculate_look_rotation(arg_23_0, arg_23_1, arg_23_2)
+PlayerUnitFirstPerson.calculate_look_rotation = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = Quaternion.yaw(arg_23_1) - arg_23_2.x
 
 	if arg_23_0.restrict_rotation_angle then
@@ -676,7 +676,7 @@ function PlayerUnitFirstPerson.calculate_look_rotation(arg_23_0, arg_23_1, arg_2
 	return (Quaternion.multiply(var_23_2, var_23_3))
 end
 
-function PlayerUnitFirstPerson.calculate_aim_assisted_rotation(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+PlayerUnitFirstPerson.calculate_aim_assisted_rotation = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_2.unit
 	local var_24_1 = arg_24_2.target_position - arg_24_0:current_position()
 	local var_24_2 = Quaternion.look(var_24_1, Vector3.up())
@@ -692,19 +692,19 @@ function PlayerUnitFirstPerson.calculate_aim_assisted_rotation(arg_24_0, arg_24_
 	return (Quaternion.multiply(var_24_9, var_24_10))
 end
 
-function PlayerUnitFirstPerson.update_position(arg_25_0)
+PlayerUnitFirstPerson.update_position = function (arg_25_0)
 	local var_25_0 = Unit.local_position(arg_25_0.unit, 0) + Vector3(0, 0, arg_25_0.player_height_current)
 
 	Unit.set_local_position(arg_25_0.first_person_unit, 0, var_25_0)
 end
 
-function PlayerUnitFirstPerson.is_in_view(arg_26_0, arg_26_1)
+PlayerUnitFirstPerson.is_in_view = function (arg_26_0, arg_26_1)
 	local var_26_0 = Managers.player:owner(arg_26_0.unit).viewport_name
 
 	Managers.state.camera:is_in_view(var_26_0, arg_26_1)
 end
 
-function PlayerUnitFirstPerson.is_infront(arg_27_0, arg_27_1, arg_27_2)
+PlayerUnitFirstPerson.is_infront = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = Managers.player:owner(arg_27_0.unit).viewport_name
 	local var_27_1 = ScriptWorld.viewport(arg_27_0.world, var_27_0)
 	local var_27_2 = ScriptViewport.camera(var_27_1)
@@ -716,11 +716,11 @@ function PlayerUnitFirstPerson.is_infront(arg_27_0, arg_27_1, arg_27_2)
 	return Vector3.dot(var_27_6, var_27_5) > (arg_27_2 or 0)
 end
 
-function PlayerUnitFirstPerson.is_within_custom_view(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+PlayerUnitFirstPerson.is_within_custom_view = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	return math.point_is_inside_view(arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 end
 
-function PlayerUnitFirstPerson.is_within_default_view(arg_29_0, arg_29_1)
+PlayerUnitFirstPerson.is_within_default_view = function (arg_29_0, arg_29_1)
 	local var_29_0, var_29_1 = arg_29_0:camera_position_rotation()
 	local var_29_2 = CameraSettings.first_person._node.vertical_fov * math.pi / 180
 	local var_29_3 = var_29_2 * 1.7777777777777777
@@ -728,7 +728,7 @@ function PlayerUnitFirstPerson.is_within_default_view(arg_29_0, arg_29_1)
 	return math.point_is_inside_view(arg_29_1, var_29_0, var_29_1, var_29_2, var_29_3)
 end
 
-function PlayerUnitFirstPerson.apply_recoil(arg_30_0, arg_30_1)
+PlayerUnitFirstPerson.apply_recoil = function (arg_30_0, arg_30_1)
 	local var_30_0 = Managers.player:owner(arg_30_0.unit).viewport_name
 	local var_30_1 = ScriptWorld.viewport(arg_30_0.world, var_30_0)
 	local var_30_2 = ScriptViewport.camera(var_30_1)
@@ -752,15 +752,15 @@ function PlayerUnitFirstPerson.apply_recoil(arg_30_0, arg_30_1)
 	arg_30_0.look_rotation:store(var_30_8)
 end
 
-function PlayerUnitFirstPerson.get_first_person_unit(arg_31_0)
+PlayerUnitFirstPerson.get_first_person_unit = function (arg_31_0)
 	return arg_31_0.first_person_unit
 end
 
-function PlayerUnitFirstPerson.get_first_person_mesh_unit(arg_32_0)
+PlayerUnitFirstPerson.get_first_person_mesh_unit = function (arg_32_0)
 	return arg_32_0.first_person_attachment_unit
 end
 
-function PlayerUnitFirstPerson.set_look_delta(arg_33_0, arg_33_1)
+PlayerUnitFirstPerson.set_look_delta = function (arg_33_0, arg_33_1)
 	if not Vector3.is_valid(arg_33_1) then
 		print("HON-18240; set_look_delta called after PlayerUnitFirstPerson update")
 		print(Script.callstack())
@@ -771,29 +771,29 @@ function PlayerUnitFirstPerson.set_look_delta(arg_33_0, arg_33_1)
 	arg_33_0.has_look_delta = true
 end
 
-function PlayerUnitFirstPerson.set_weapon_sway_settings(arg_34_0, arg_34_1)
+PlayerUnitFirstPerson.set_weapon_sway_settings = function (arg_34_0, arg_34_1)
 	arg_34_0._weapon_sway_settings = arg_34_1
 end
 
-function PlayerUnitFirstPerson.play_animation_event(arg_35_0, arg_35_1)
+PlayerUnitFirstPerson.play_animation_event = function (arg_35_0, arg_35_1)
 	Unit.animation_event(arg_35_0.first_person_unit, arg_35_1)
 end
 
-function PlayerUnitFirstPerson.set_aim_constraint_target(arg_36_0, arg_36_1, arg_36_2)
+PlayerUnitFirstPerson.set_aim_constraint_target = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = Unit.animation_find_constraint_target(arg_36_0.first_person_unit, arg_36_1)
 
 	Unit.animation_set_constraint_target(arg_36_0.first_person_unit, var_36_0, arg_36_2)
 end
 
-function PlayerUnitFirstPerson.current_rotation(arg_37_0)
+PlayerUnitFirstPerson.current_rotation = function (arg_37_0)
 	return Unit.local_rotation(arg_37_0.first_person_unit, 0)
 end
 
-function PlayerUnitFirstPerson.current_position(arg_38_0)
+PlayerUnitFirstPerson.current_position = function (arg_38_0)
 	return Unit.local_position(arg_38_0.first_person_unit, 0)
 end
 
-function PlayerUnitFirstPerson.camera_position_rotation(arg_39_0)
+PlayerUnitFirstPerson.camera_position_rotation = function (arg_39_0)
 	local var_39_0 = Managers.player:owner(arg_39_0.unit).viewport_name
 	local var_39_1 = ScriptWorld.viewport(arg_39_0.world, var_39_0)
 	local var_39_2 = ScriptViewport.camera(var_39_1)
@@ -803,14 +803,14 @@ function PlayerUnitFirstPerson.camera_position_rotation(arg_39_0)
 	return var_39_3, var_39_4
 end
 
-function PlayerUnitFirstPerson.camera(arg_40_0)
+PlayerUnitFirstPerson.camera = function (arg_40_0)
 	local var_40_0 = Managers.player:owner(arg_40_0.unit).viewport_name
 	local var_40_1 = ScriptWorld.viewport(arg_40_0.world, var_40_0)
 
 	return ScriptViewport.camera(var_40_1)
 end
 
-function PlayerUnitFirstPerson.get_projectile_start_position_rotation(arg_41_0)
+PlayerUnitFirstPerson.get_projectile_start_position_rotation = function (arg_41_0)
 	local var_41_0
 
 	if arg_41_0:first_person_mode_active() then
@@ -828,7 +828,7 @@ function PlayerUnitFirstPerson.get_projectile_start_position_rotation(arg_41_0)
 	return var_41_0, var_41_4
 end
 
-function PlayerUnitFirstPerson.set_wanted_player_height(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+PlayerUnitFirstPerson.set_wanted_player_height = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	local var_42_0 = arg_42_0:_player_height_from_name(arg_42_1)
 	local var_42_1 = 3
 
@@ -844,11 +844,11 @@ function PlayerUnitFirstPerson.set_wanted_player_height(arg_42_0, arg_42_1, arg_
 	arg_42_0.player_height_change_start_time = arg_42_2
 end
 
-function PlayerUnitFirstPerson._player_height_from_name(arg_43_0, arg_43_1)
+PlayerUnitFirstPerson._player_height_from_name = function (arg_43_0, arg_43_1)
 	return arg_43_0.profile.first_person_heights[arg_43_1]
 end
 
-function PlayerUnitFirstPerson.toggle_visibility(arg_44_0, arg_44_1)
+PlayerUnitFirstPerson.toggle_visibility = function (arg_44_0, arg_44_1)
 	local var_44_0 = Managers.time:time("game")
 
 	if arg_44_0.toggle_visibility_timer then
@@ -862,7 +862,7 @@ function PlayerUnitFirstPerson.toggle_visibility(arg_44_0, arg_44_1)
 	end
 end
 
-function PlayerUnitFirstPerson.set_first_person_mode(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+PlayerUnitFirstPerson.set_first_person_mode = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	if not arg_45_0.debug_first_person_mode and (arg_45_2 or not Development.parameter("third_person_mode") or not Development.parameter("attract_mode")) then
 		if arg_45_0.first_person_mode ~= arg_45_1 then
 			arg_45_0.cosmetic_extension:show_third_person_mesh(not arg_45_1)
@@ -897,30 +897,30 @@ function PlayerUnitFirstPerson.set_first_person_mode(arg_45_0, arg_45_1, arg_45_
 	arg_45_0._show_first_person_units = arg_45_1
 end
 
-function PlayerUnitFirstPerson.show_third_person_units(arg_46_0, arg_46_1)
+PlayerUnitFirstPerson.show_third_person_units = function (arg_46_0, arg_46_1)
 	arg_46_0.inventory_extension:show_third_person_inventory(arg_46_1)
 	arg_46_0.attachment_extension:show_attachments(arg_46_1)
 	arg_46_0.cosmetic_extension:show_third_person_mesh(arg_46_1)
 end
 
-function PlayerUnitFirstPerson.first_person_mode_active(arg_47_0)
+PlayerUnitFirstPerson.first_person_mode_active = function (arg_47_0)
 	return arg_47_0.first_person_mode
 end
 
-function PlayerUnitFirstPerson.abort_toggle_visibility_timer(arg_48_0)
+PlayerUnitFirstPerson.abort_toggle_visibility_timer = function (arg_48_0)
 	arg_48_0.toggle_visibility_timer = nil
 end
 
-function PlayerUnitFirstPerson.first_person_units_visible(arg_49_0)
+PlayerUnitFirstPerson.first_person_units_visible = function (arg_49_0)
 	return arg_49_0._show_first_person_units
 end
 
-function PlayerUnitFirstPerson.abort_first_person_units_visibility_timer(arg_50_0)
+PlayerUnitFirstPerson.abort_first_person_units_visibility_timer = function (arg_50_0)
 	arg_50_0._first_person_units_visibility_timer = nil
 	arg_50_0._first_person_units_visibility_reason = nil
 end
 
-function PlayerUnitFirstPerson.toggle_first_person_units_visibility(arg_51_0, arg_51_1, arg_51_2)
+PlayerUnitFirstPerson.toggle_first_person_units_visibility = function (arg_51_0, arg_51_1, arg_51_2)
 	if arg_51_2 then
 		arg_51_0._first_person_units_visibility_timer = Managers.time:time("game") + arg_51_2
 		arg_51_0._first_person_units_visibility_reason = arg_51_1
@@ -941,7 +941,7 @@ function PlayerUnitFirstPerson.toggle_first_person_units_visibility(arg_51_0, ar
 	end
 end
 
-function PlayerUnitFirstPerson.tutorial_show_first_person_units(arg_52_0, arg_52_1)
+PlayerUnitFirstPerson.tutorial_show_first_person_units = function (arg_52_0, arg_52_1)
 	Unit.set_unit_visibility(arg_52_0.first_person_attachment_unit, arg_52_1)
 
 	arg_52_0.tutorial_first_person = not arg_52_1
@@ -953,7 +953,7 @@ function PlayerUnitFirstPerson.tutorial_show_first_person_units(arg_52_0, arg_52
 	end
 end
 
-function PlayerUnitFirstPerson.debug_set_first_person_mode(arg_53_0, arg_53_1, arg_53_2)
+PlayerUnitFirstPerson.debug_set_first_person_mode = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0.first_person_mode
 
 	if arg_53_1 then
@@ -970,7 +970,7 @@ function PlayerUnitFirstPerson.debug_set_first_person_mode(arg_53_0, arg_53_1, a
 	end
 end
 
-function PlayerUnitFirstPerson.hide_weapons(arg_54_0, arg_54_1, arg_54_2)
+PlayerUnitFirstPerson.hide_weapons = function (arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0.hide_weapon_reasons[arg_54_1] = true
 
 	if not table.is_empty(arg_54_0.hide_weapon_reasons) then
@@ -986,7 +986,7 @@ function PlayerUnitFirstPerson.hide_weapons(arg_54_0, arg_54_1, arg_54_2)
 	end
 end
 
-function PlayerUnitFirstPerson.unhide_weapons(arg_55_0, arg_55_1)
+PlayerUnitFirstPerson.unhide_weapons = function (arg_55_0, arg_55_1)
 	arg_55_0.hide_weapon_reasons[arg_55_1] = nil
 	arg_55_0.hide_weapon_lights_reasons[arg_55_1] = nil
 
@@ -999,7 +999,7 @@ function PlayerUnitFirstPerson.unhide_weapons(arg_55_0, arg_55_1)
 	end
 end
 
-function PlayerUnitFirstPerson.show_first_person_ammo(arg_56_0, arg_56_1)
+PlayerUnitFirstPerson.show_first_person_ammo = function (arg_56_0, arg_56_1)
 	if arg_56_0._show_first_person_units then
 		arg_56_0.inventory_extension:show_first_person_ammo(arg_56_1)
 	else
@@ -1007,7 +1007,7 @@ function PlayerUnitFirstPerson.show_first_person_ammo(arg_56_0, arg_56_1)
 	end
 end
 
-function PlayerUnitFirstPerson.animation_set_variable(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+PlayerUnitFirstPerson.animation_set_variable = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	local var_57_0 = arg_57_0.first_person_unit
 	local var_57_1 = arg_57_0._anim_var_id_lookup[arg_57_1]
 
@@ -1023,11 +1023,11 @@ function PlayerUnitFirstPerson.animation_set_variable(arg_57_0, arg_57_1, arg_57
 	end
 end
 
-function PlayerUnitFirstPerson.animation_event(arg_58_0, arg_58_1)
+PlayerUnitFirstPerson.animation_event = function (arg_58_0, arg_58_1)
 	Unit.animation_event(arg_58_0.first_person_unit, arg_58_1)
 end
 
-function PlayerUnitFirstPerson.create_screen_particles(arg_59_0, arg_59_1, arg_59_2, ...)
+PlayerUnitFirstPerson.create_screen_particles = function (arg_59_0, arg_59_1, arg_59_2, ...)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
@@ -1035,7 +1035,7 @@ function PlayerUnitFirstPerson.create_screen_particles(arg_59_0, arg_59_1, arg_5
 	return World.create_particles(arg_59_0.world, arg_59_1, arg_59_2 or Vector3.zero(), ...)
 end
 
-function PlayerUnitFirstPerson.stop_spawning_screen_particles(arg_60_0, arg_60_1)
+PlayerUnitFirstPerson.stop_spawning_screen_particles = function (arg_60_0, arg_60_1)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
@@ -1043,7 +1043,7 @@ function PlayerUnitFirstPerson.stop_spawning_screen_particles(arg_60_0, arg_60_1
 	World.stop_spawning_particles(arg_60_0.world, arg_60_1)
 end
 
-function PlayerUnitFirstPerson.destroy_screen_particles(arg_61_0, arg_61_1)
+PlayerUnitFirstPerson.destroy_screen_particles = function (arg_61_0, arg_61_1)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
@@ -1051,7 +1051,7 @@ function PlayerUnitFirstPerson.destroy_screen_particles(arg_61_0, arg_61_1)
 	World.destroy_particles(arg_61_0.world, arg_61_1)
 end
 
-function PlayerUnitFirstPerson.play_hud_sound_event(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+PlayerUnitFirstPerson.play_hud_sound_event = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 	if arg_62_3 then
 		arg_62_0:play_remote_hud_sound_event(arg_62_1)
 	end
@@ -1069,7 +1069,7 @@ function PlayerUnitFirstPerson.play_hud_sound_event(arg_62_0, arg_62_1, arg_62_2
 	end
 end
 
-function PlayerUnitFirstPerson.play_remote_hud_sound_event(arg_63_0, arg_63_1)
+PlayerUnitFirstPerson.play_remote_hud_sound_event = function (arg_63_0, arg_63_1)
 	if not LEVEL_EDITOR_TEST then
 		local var_63_0 = Managers.state.network
 		local var_63_1 = var_63_0.network_transmit
@@ -1085,7 +1085,7 @@ function PlayerUnitFirstPerson.play_remote_hud_sound_event(arg_63_0, arg_63_1)
 	end
 end
 
-function PlayerUnitFirstPerson.play_sound_event(arg_64_0, arg_64_1, arg_64_2)
+PlayerUnitFirstPerson.play_sound_event = function (arg_64_0, arg_64_1, arg_64_2)
 	local var_64_0 = arg_64_2 or arg_64_0:current_position()
 	local var_64_1, var_64_2 = WwiseUtils.make_position_auto_source(arg_64_0.world, var_64_0)
 
@@ -1093,7 +1093,7 @@ function PlayerUnitFirstPerson.play_sound_event(arg_64_0, arg_64_1, arg_64_2)
 	WwiseWorld.trigger_event(var_64_2, arg_64_1, var_64_1)
 end
 
-function PlayerUnitFirstPerson.play_unit_sound_event(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+PlayerUnitFirstPerson.play_unit_sound_event = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 	if arg_65_4 then
 		arg_65_0:play_remote_unit_sound_event(arg_65_1, arg_65_2, arg_65_3)
 	end
@@ -1104,7 +1104,7 @@ function PlayerUnitFirstPerson.play_unit_sound_event(arg_65_0, arg_65_1, arg_65_
 	WwiseWorld.trigger_event(var_65_1, arg_65_1, var_65_0)
 end
 
-function PlayerUnitFirstPerson.play_remote_unit_sound_event(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+PlayerUnitFirstPerson.play_remote_unit_sound_event = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 	local var_66_0 = NetworkLookup.sound_events[arg_66_1]
 	local var_66_1 = Managers.state.network
 
@@ -1121,17 +1121,17 @@ function PlayerUnitFirstPerson.play_remote_unit_sound_event(arg_66_0, arg_66_1, 
 	end
 end
 
-function PlayerUnitFirstPerson.play_camera_effect_sequence(arg_67_0, arg_67_1, arg_67_2)
+PlayerUnitFirstPerson.play_camera_effect_sequence = function (arg_67_0, arg_67_1, arg_67_2)
 	Managers.state.camera:camera_effect_sequence_event(arg_67_1, arg_67_2)
 end
 
-function PlayerUnitFirstPerson.set_aim_assist(arg_68_0, arg_68_1)
+PlayerUnitFirstPerson.set_aim_assist = function (arg_68_0, arg_68_1)
 	if arg_68_1 == "" then
 		arg_68_0.aim_assist_type = arg_68_1
 	end
 end
 
-function PlayerUnitFirstPerson.enable_rig_movement(arg_69_0)
+PlayerUnitFirstPerson.enable_rig_movement = function (arg_69_0)
 	if script_data.disable_aim_lead_rig_motion then
 		arg_69_0:disable_rig_movement()
 
@@ -1145,7 +1145,7 @@ function PlayerUnitFirstPerson.enable_rig_movement(arg_69_0)
 	end
 end
 
-function PlayerUnitFirstPerson.disable_rig_movement(arg_70_0)
+PlayerUnitFirstPerson.disable_rig_movement = function (arg_70_0)
 	if arg_70_0._rig_movement_enabled then
 		arg_70_0._rig_movement_enabled = false
 
@@ -1153,7 +1153,7 @@ function PlayerUnitFirstPerson.disable_rig_movement(arg_70_0)
 	end
 end
 
-function PlayerUnitFirstPerson.enable_rig_offset(arg_71_0)
+PlayerUnitFirstPerson.enable_rig_offset = function (arg_71_0)
 	if script_data.disable_aim_lead_rig_motion then
 		arg_71_0:disable_rig_offset()
 
@@ -1165,13 +1165,13 @@ function PlayerUnitFirstPerson.enable_rig_offset(arg_71_0)
 	end
 end
 
-function PlayerUnitFirstPerson.disable_rig_offset(arg_72_0)
+PlayerUnitFirstPerson.disable_rig_offset = function (arg_72_0)
 	if arg_72_0._rig_offset_enabled then
 		arg_72_0._rig_offset_enabled = false
 	end
 end
 
-function PlayerUnitFirstPerson.update_rig_movement(arg_73_0, arg_73_1)
+PlayerUnitFirstPerson.update_rig_movement = function (arg_73_0, arg_73_1)
 	if script_data.disable_aim_lead_rig_motion then
 		return
 	end
@@ -1274,11 +1274,11 @@ function PlayerUnitFirstPerson.update_rig_movement(arg_73_0, arg_73_1)
 	Unit.animation_set_constraint_target(arg_73_0.first_person_unit, arg_73_0._aim_target_index, var_73_42)
 end
 
-function PlayerUnitFirstPerson.change_state(arg_74_0, arg_74_1)
+PlayerUnitFirstPerson.change_state = function (arg_74_0, arg_74_1)
 	arg_74_0._state = arg_74_1
 end
 
-function PlayerUnitFirstPerson.play_camera_recoil(arg_75_0, arg_75_1, arg_75_2)
+PlayerUnitFirstPerson.play_camera_recoil = function (arg_75_0, arg_75_1, arg_75_2)
 	if arg_75_0._current_recoil_data then
 		Managers.state.camera:stop_weapon_recoil(arg_75_0._current_recoil_data)
 
@@ -1349,7 +1349,7 @@ function bi_clamp(arg_76_0, arg_76_1, arg_76_2)
 	end
 end
 
-function PlayerUnitFirstPerson._update_state_machine_variables(arg_77_0, arg_77_1, arg_77_2)
+PlayerUnitFirstPerson._update_state_machine_variables = function (arg_77_0, arg_77_1, arg_77_2)
 	local var_77_0 = arg_77_0._weapon_sway_settings or var_0_5
 	local var_77_1 = arg_77_0.input_extension
 	local var_77_2 = var_77_1:get("look_raw_controller") or Vector3(0, 0, 0)

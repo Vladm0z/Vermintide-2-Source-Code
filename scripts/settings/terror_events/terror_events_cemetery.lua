@@ -478,7 +478,7 @@ local var_0_2 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_0("chaos_marauder") < 3 and var_0_0("chaos_fanatic") < 3 and var_0_0("chaos_marauder_with_shield") < 2
 			end
 		},

@@ -243,7 +243,7 @@ end
 
 MenuInputDescriptionUI = class(MenuInputDescriptionUI)
 
-function MenuInputDescriptionUI.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+MenuInputDescriptionUI.init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
 	arg_5_0:clear_input_descriptions()
 
 	arg_5_0.input_service = arg_5_3
@@ -259,7 +259,7 @@ function MenuInputDescriptionUI.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	arg_5_0:create_ui_elements(arg_5_2, arg_5_4, arg_5_7)
 end
 
-function MenuInputDescriptionUI.create_ui_elements(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+MenuInputDescriptionUI.create_ui_elements = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0.console_input_description_widgets = var_0_5(arg_6_2 or 5)
 
 	if arg_6_3 then
@@ -273,13 +273,13 @@ function MenuInputDescriptionUI.create_ui_elements(arg_6_0, arg_6_1, arg_6_2, ar
 	UIRenderer.clear_scenegraph_queue(arg_6_1)
 end
 
-function MenuInputDescriptionUI._verify_input(arg_7_0)
+MenuInputDescriptionUI._verify_input = function (arg_7_0)
 	if Managers.input:get_most_recent_device() ~= arg_7_0._most_recent_device then
 		arg_7_0:set_input_description(arg_7_0.current_console_selection_data)
 	end
 end
 
-function MenuInputDescriptionUI.draw(arg_8_0, arg_8_1, arg_8_2)
+MenuInputDescriptionUI.draw = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_verify_input()
 
 	local var_8_0 = arg_8_0.ui_scenegraph
@@ -304,17 +304,17 @@ function MenuInputDescriptionUI.draw(arg_8_0, arg_8_1, arg_8_2)
 	UIRenderer.end_pass(var_8_2)
 end
 
-function MenuInputDescriptionUI.destroy(arg_9_0)
+MenuInputDescriptionUI.destroy = function (arg_9_0)
 	return
 end
 
-function MenuInputDescriptionUI.change_generic_actions(arg_10_0, arg_10_1)
+MenuInputDescriptionUI.change_generic_actions = function (arg_10_0, arg_10_1)
 	arg_10_0.generic_actions = arg_10_1
 
 	arg_10_0:set_input_description(arg_10_0.current_console_selection_data)
 end
 
-function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
+MenuInputDescriptionUI.setup_console_widget_selections = function (arg_11_0)
 	local var_11_0 = arg_11_0.steppers
 
 	return {
@@ -396,7 +396,7 @@ function MenuInputDescriptionUI.setup_console_widget_selections(arg_11_0)
 	}
 end
 
-function MenuInputDescriptionUI.set_input_description(arg_12_0, arg_12_1, arg_12_2)
+MenuInputDescriptionUI.set_input_description = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:clear_input_descriptions()
 
 	local var_12_0 = arg_12_2 or 1
@@ -494,11 +494,11 @@ function MenuInputDescriptionUI.set_input_description(arg_12_0, arg_12_1, arg_12
 	arg_12_0._most_recent_device = Managers.input:get_most_recent_device()
 end
 
-function MenuInputDescriptionUI.clear_input_descriptions(arg_13_0)
+MenuInputDescriptionUI.clear_input_descriptions = function (arg_13_0)
 	arg_13_0.number_of_descriptions_in_use = nil
 end
 
-function MenuInputDescriptionUI.get_gamepad_input_texture_data(arg_14_0, arg_14_1, arg_14_2)
+MenuInputDescriptionUI.get_gamepad_input_texture_data = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = PLATFORM
 
 	if IS_WINDOWS then
@@ -514,7 +514,7 @@ function MenuInputDescriptionUI.get_gamepad_input_texture_data(arg_14_0, arg_14_
 	end
 end
 
-function MenuInputDescriptionUI._align_inputs(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+MenuInputDescriptionUI._align_inputs = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_0.ui_scenegraph
 
 	arg_15_1 = arg_15_1 - arg_15_2

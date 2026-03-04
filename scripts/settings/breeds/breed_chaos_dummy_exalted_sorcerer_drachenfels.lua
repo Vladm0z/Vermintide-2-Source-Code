@@ -53,7 +53,7 @@ local var_0_1 = {
 		12,
 		15
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		return var_0_0.none, 0, 0
 	end,
 	debug_color = {

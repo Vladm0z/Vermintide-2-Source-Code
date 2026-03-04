@@ -3,7 +3,7 @@
 script_data.infinite_ammo = script_data.infinite_ammo or Development.parameter("infinite_ammo")
 GenericAmmoUserExtension = class(GenericAmmoUserExtension)
 
-function GenericAmmoUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericAmmoUserExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.owner_unit = arg_1_3.owner_unit
 	arg_1_0.item_name = arg_1_3.item_name
@@ -75,12 +75,12 @@ function GenericAmmoUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function GenericAmmoUserExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+GenericAmmoUserExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:apply_buffs()
 	arg_2_0:_update_anim_ammo()
 end
 
-function GenericAmmoUserExtension.apply_buffs(arg_3_0)
+GenericAmmoUserExtension.apply_buffs = function (arg_3_0)
 	if arg_3_0.slot_name == "slot_ranged" or arg_3_0.slot_name == "slot_career_skill_weapon" then
 		arg_3_0:_apply_buffs()
 	end
@@ -88,7 +88,7 @@ function GenericAmmoUserExtension.apply_buffs(arg_3_0)
 	arg_3_0:reset()
 end
 
-function GenericAmmoUserExtension._apply_buffs(arg_4_0)
+GenericAmmoUserExtension._apply_buffs = function (arg_4_0)
 	local var_4_0 = ScriptUnit.extension(arg_4_0.owner_unit, "buff_system")
 
 	arg_4_0.owner_buff_extension = var_4_0
@@ -97,7 +97,7 @@ function GenericAmmoUserExtension._apply_buffs(arg_4_0)
 	arg_4_0._start_ammo = math.round(arg_4_0._original_ammo_percent * arg_4_0._max_ammo)
 end
 
-function GenericAmmoUserExtension.refresh_buffs(arg_5_0)
+GenericAmmoUserExtension.refresh_buffs = function (arg_5_0)
 	local var_5_0 = arg_5_0:total_ammo_fraction()
 
 	arg_5_0:_apply_buffs()
@@ -112,11 +112,11 @@ function GenericAmmoUserExtension.refresh_buffs(arg_5_0)
 	end
 end
 
-function GenericAmmoUserExtension.destroy(arg_6_0)
+GenericAmmoUserExtension.destroy = function (arg_6_0)
 	return
 end
 
-function GenericAmmoUserExtension.reset(arg_7_0)
+GenericAmmoUserExtension.reset = function (arg_7_0)
 	local var_7_0 = arg_7_0._initialized and arg_7_0:total_remaining_ammo() == 0
 	local var_7_1 = arg_7_0._starting_loaded_ammo or arg_7_0._start_ammo
 
@@ -142,7 +142,7 @@ function GenericAmmoUserExtension.reset(arg_7_0)
 	arg_7_0._initialized = true
 end
 
-function GenericAmmoUserExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+GenericAmmoUserExtension.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = Managers.player:owner(arg_8_0.owner_unit)
 
 	if arg_8_0._queued_reload then
@@ -223,7 +223,7 @@ function GenericAmmoUserExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg
 	end
 end
 
-function GenericAmmoUserExtension._check_ammo(arg_9_0)
+GenericAmmoUserExtension._check_ammo = function (arg_9_0)
 	if arg_9_0._shots_fired > 0 then
 		arg_9_0._current_ammo = arg_9_0._current_ammo - arg_9_0._shots_fired
 		arg_9_0._shots_fired = 0
@@ -270,7 +270,7 @@ function GenericAmmoUserExtension._check_ammo(arg_9_0)
 	end
 end
 
-function GenericAmmoUserExtension.start_reload_animation(arg_10_0, arg_10_1)
+GenericAmmoUserExtension.start_reload_animation = function (arg_10_0, arg_10_1)
 	if arg_10_0.pickup_reload_event_1p then
 		local var_10_0 = arg_10_0.pickup_reload_event_1p
 
@@ -316,7 +316,7 @@ function GenericAmmoUserExtension.start_reload_animation(arg_10_0, arg_10_1)
 	end
 end
 
-function GenericAmmoUserExtension.remove_ammo(arg_11_0, arg_11_1)
+GenericAmmoUserExtension.remove_ammo = function (arg_11_0, arg_11_1)
 	if arg_11_0._available_ammo == 0 and arg_11_0._current_ammo == 0 then
 		return
 	end
@@ -324,7 +324,7 @@ function GenericAmmoUserExtension.remove_ammo(arg_11_0, arg_11_1)
 	arg_11_0._available_ammo = math.floor(math.clamp(arg_11_0._available_ammo - arg_11_1, 0, arg_11_0._max_ammo))
 end
 
-function GenericAmmoUserExtension.add_ammo(arg_12_0, arg_12_1)
+GenericAmmoUserExtension.add_ammo = function (arg_12_0, arg_12_1)
 	if arg_12_0._destroy_when_out_of_ammo then
 		return
 	end
@@ -369,7 +369,7 @@ function GenericAmmoUserExtension.add_ammo(arg_12_0, arg_12_1)
 	arg_12_0:_update_anim_ammo()
 end
 
-function GenericAmmoUserExtension.add_ammo_to_reserve(arg_13_0, arg_13_1)
+GenericAmmoUserExtension.add_ammo_to_reserve = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._available_ammo
 
 	if arg_13_0._ammo_immediately_available then
@@ -398,7 +398,7 @@ function GenericAmmoUserExtension.add_ammo_to_reserve(arg_13_0, arg_13_1)
 	arg_13_0:_update_anim_ammo()
 end
 
-function GenericAmmoUserExtension.use_ammo(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+GenericAmmoUserExtension.use_ammo = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0.owner_buff_extension
 	local var_14_1 = false
 
@@ -462,7 +462,7 @@ function GenericAmmoUserExtension.use_ammo(arg_14_0, arg_14_1, arg_14_2, arg_14_
 	end
 end
 
-function GenericAmmoUserExtension.start_reload(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+GenericAmmoUserExtension.start_reload = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	fassert(arg_15_0:can_reload(), "Tried to start reloading without being able to reload")
 	fassert(arg_15_0._next_reload_time == nil, "next_reload_time is nil")
 
@@ -482,7 +482,7 @@ function GenericAmmoUserExtension.start_reload(arg_15_0, arg_15_1, arg_15_2, arg
 	var_15_0:trigger_dialogue_event(var_15_2, var_15_1)
 end
 
-function GenericAmmoUserExtension.abort_reload(arg_16_0)
+GenericAmmoUserExtension.abort_reload = function (arg_16_0)
 	fassert(arg_16_0:is_reloading(), "Tried to abort reload while reloading")
 
 	arg_16_0._start_reloading = nil
@@ -495,27 +495,27 @@ function GenericAmmoUserExtension.abort_reload(arg_16_0)
 	end
 end
 
-function GenericAmmoUserExtension.ammo_count(arg_17_0)
+GenericAmmoUserExtension.ammo_count = function (arg_17_0)
 	return arg_17_0._current_ammo - arg_17_0._shots_fired
 end
 
-function GenericAmmoUserExtension.clip_size(arg_18_0)
+GenericAmmoUserExtension.clip_size = function (arg_18_0)
 	return arg_18_0._ammo_per_clip
 end
 
-function GenericAmmoUserExtension.clip_full(arg_19_0)
+GenericAmmoUserExtension.clip_full = function (arg_19_0)
 	return arg_19_0:ammo_count() == arg_19_0._ammo_per_clip
 end
 
-function GenericAmmoUserExtension.remaining_ammo(arg_20_0)
+GenericAmmoUserExtension.remaining_ammo = function (arg_20_0)
 	return arg_20_0._available_ammo
 end
 
-function GenericAmmoUserExtension.ammo_available_immediately(arg_21_0)
+GenericAmmoUserExtension.ammo_available_immediately = function (arg_21_0)
 	return arg_21_0._ammo_immediately_available
 end
 
-function GenericAmmoUserExtension.can_reload(arg_22_0)
+GenericAmmoUserExtension.can_reload = function (arg_22_0)
 	if arg_22_0:is_reloading() then
 		return false
 	end
@@ -531,69 +531,69 @@ function GenericAmmoUserExtension.can_reload(arg_22_0)
 	return arg_22_0._available_ammo > 0
 end
 
-function GenericAmmoUserExtension.total_remaining_ammo(arg_23_0)
+GenericAmmoUserExtension.total_remaining_ammo = function (arg_23_0)
 	return arg_23_0:remaining_ammo() + arg_23_0:ammo_count()
 end
 
-function GenericAmmoUserExtension.total_ammo_fraction(arg_24_0)
+GenericAmmoUserExtension.total_ammo_fraction = function (arg_24_0)
 	return (arg_24_0:remaining_ammo() + arg_24_0:ammo_count()) / arg_24_0:max_ammo()
 end
 
-function GenericAmmoUserExtension.max_ammo(arg_25_0)
+GenericAmmoUserExtension.max_ammo = function (arg_25_0)
 	return arg_25_0._max_ammo
 end
 
-function GenericAmmoUserExtension.current_ammo(arg_26_0)
+GenericAmmoUserExtension.current_ammo = function (arg_26_0)
 	return arg_26_0._current_ammo
 end
 
-function GenericAmmoUserExtension.is_reloading(arg_27_0)
+GenericAmmoUserExtension.is_reloading = function (arg_27_0)
 	return arg_27_0._next_reload_time ~= nil
 end
 
-function GenericAmmoUserExtension.full_ammo(arg_28_0)
+GenericAmmoUserExtension.full_ammo = function (arg_28_0)
 	return arg_28_0:remaining_ammo() + arg_28_0:ammo_count() == arg_28_0:max_ammo()
 end
 
-function GenericAmmoUserExtension.using_single_clip(arg_29_0)
+GenericAmmoUserExtension.using_single_clip = function (arg_29_0)
 	return arg_29_0._single_clip
 end
 
-function GenericAmmoUserExtension.reload_on_ammo_pickup(arg_30_0)
+GenericAmmoUserExtension.reload_on_ammo_pickup = function (arg_30_0)
 	return arg_30_0._reload_on_ammo_pickup
 end
 
-function GenericAmmoUserExtension.play_reload_anim_on_wield_reload(arg_31_0)
+GenericAmmoUserExtension.play_reload_anim_on_wield_reload = function (arg_31_0)
 	return arg_31_0._play_reload_anim_on_wield_reload
 end
 
-function GenericAmmoUserExtension.has_wield_reload_anim(arg_32_0)
+GenericAmmoUserExtension.has_wield_reload_anim = function (arg_32_0)
 	return arg_32_0._has_wield_reload_anim
 end
 
-function GenericAmmoUserExtension.ammo_type(arg_33_0)
+GenericAmmoUserExtension.ammo_type = function (arg_33_0)
 	return arg_33_0._ammo_type
 end
 
-function GenericAmmoUserExtension.infinite_ammo(arg_34_0)
+GenericAmmoUserExtension.infinite_ammo = function (arg_34_0)
 	return arg_34_0._infinite_ammo or script_data.infinite_ammo
 end
 
-function GenericAmmoUserExtension.ammo_kind(arg_35_0)
+GenericAmmoUserExtension.ammo_kind = function (arg_35_0)
 	return arg_35_0._ammo_kind
 end
 
-function GenericAmmoUserExtension.ammo_blocked(arg_36_0)
+GenericAmmoUserExtension.ammo_blocked = function (arg_36_0)
 	return arg_36_0._block_ammo_pickup
 end
 
-function GenericAmmoUserExtension.add_ammo_to_clip(arg_37_0, arg_37_1)
+GenericAmmoUserExtension.add_ammo_to_clip = function (arg_37_0, arg_37_1)
 	arg_37_0._current_ammo = arg_37_0._current_ammo + arg_37_1
 
 	arg_37_0:_update_anim_ammo()
 end
 
-function GenericAmmoUserExtension.instant_reload(arg_38_0, arg_38_1, arg_38_2)
+GenericAmmoUserExtension.instant_reload = function (arg_38_0, arg_38_1, arg_38_2)
 	if not arg_38_1 then
 		local var_38_0 = arg_38_0._ammo_per_clip - arg_38_0._current_ammo
 		local var_38_1 = math.min(var_38_0, arg_38_0._available_ammo)
@@ -629,7 +629,7 @@ function GenericAmmoUserExtension.instant_reload(arg_38_0, arg_38_1, arg_38_2)
 	arg_38_0:_update_anim_ammo()
 end
 
-function GenericAmmoUserExtension._update_anim_ammo(arg_39_0)
+GenericAmmoUserExtension._update_anim_ammo = function (arg_39_0)
 	if not arg_39_0._should_update_anim_ammo then
 		return
 	end

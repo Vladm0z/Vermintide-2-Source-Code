@@ -153,7 +153,7 @@ local var_0_14 = {
 HeroWindowBackgroundConsole = class(HeroWindowBackgroundConsole)
 HeroWindowBackgroundConsole.NAME = "HeroWindowBackgroundConsole"
 
-function HeroWindowBackgroundConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowBackgroundConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowBackgroundConsole")
 
 	arg_1_0.params = arg_1_1
@@ -188,7 +188,7 @@ function HeroWindowBackgroundConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "despawn_hero", "despawn_hero")
 end
 
-function HeroWindowBackgroundConsole._get_with_mechanism(arg_2_0, arg_2_1)
+HeroWindowBackgroundConsole._get_with_mechanism = function (arg_2_0, arg_2_1)
 	return arg_2_1[Managers.mechanism:current_mechanism_name()] or arg_2_1.default
 end
 
@@ -197,7 +197,7 @@ local var_0_15 = {
 	versus = "menu_versus"
 }
 
-function HeroWindowBackgroundConsole._create_viewport_definition(arg_3_0)
+HeroWindowBackgroundConsole._create_viewport_definition = function (arg_3_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
@@ -238,7 +238,7 @@ function HeroWindowBackgroundConsole._create_viewport_definition(arg_3_0)
 	}
 end
 
-function HeroWindowBackgroundConsole.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowBackgroundConsole.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._viewport_widget then
 		UIWidget.destroy(arg_4_0.ui_renderer, arg_4_0._viewport_widget)
 
@@ -298,7 +298,7 @@ function HeroWindowBackgroundConsole.create_ui_elements(arg_4_0, arg_4_1, arg_4_
 	end
 end
 
-function HeroWindowBackgroundConsole._setup_object_sets(arg_5_0)
+HeroWindowBackgroundConsole._setup_object_sets = function (arg_5_0)
 	local var_5_0 = arg_5_0._viewport_widget_definition.style.viewport.level_name
 	local var_5_1 = LevelResource.object_set_names(var_5_0)
 
@@ -309,7 +309,7 @@ function HeroWindowBackgroundConsole._setup_object_sets(arg_5_0)
 	end
 end
 
-function HeroWindowBackgroundConsole.on_exit(arg_6_0, arg_6_1)
+HeroWindowBackgroundConsole.on_exit = function (arg_6_0, arg_6_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowBackgroundConsole")
 
 	arg_6_0.ui_animator = nil
@@ -330,7 +330,7 @@ function HeroWindowBackgroundConsole.on_exit(arg_6_0, arg_6_1)
 	end
 end
 
-function HeroWindowBackgroundConsole.update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowBackgroundConsole.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if var_0_7 then
 		var_0_7 = false
 
@@ -354,7 +354,7 @@ function HeroWindowBackgroundConsole.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function HeroWindowBackgroundConsole._update_character_visibility(arg_8_0, arg_8_1)
+HeroWindowBackgroundConsole._update_character_visibility = function (arg_8_0, arg_8_1)
 	local var_8_0 = var_0_10[arg_8_1] or false
 	local var_8_1 = var_0_11[arg_8_1]
 	local var_8_2 = var_0_12[arg_8_1]
@@ -380,7 +380,7 @@ end
 
 local var_0_16 = {}
 
-function HeroWindowBackgroundConsole._update_level_events(arg_9_0, arg_9_1)
+HeroWindowBackgroundConsole._update_level_events = function (arg_9_0, arg_9_1)
 	local var_9_0 = var_0_9[arg_9_1] or var_0_16
 
 	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
@@ -388,7 +388,7 @@ function HeroWindowBackgroundConsole._update_level_events(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowBackgroundConsole._update_object_sets(arg_10_0, arg_10_1)
+HeroWindowBackgroundConsole._update_object_sets = function (arg_10_0, arg_10_1)
 	local var_10_0 = var_0_8[arg_10_1]
 
 	if var_10_0.keep_current_object_set then
@@ -402,7 +402,7 @@ function HeroWindowBackgroundConsole._update_object_sets(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowBackgroundConsole.post_update(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowBackgroundConsole.post_update = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0._viewport_widget_definition and not arg_11_0._viewport_widget then
 		arg_11_0._viewport_widget = UIWidget.init(arg_11_0._viewport_widget_definition)
 		arg_11_0._fadeout_loading_overlay = true
@@ -451,7 +451,7 @@ end
 
 local var_0_17 = -1
 
-function HeroWindowBackgroundConsole.respawn_hero(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowBackgroundConsole.respawn_hero = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_1 then
 		arg_13_0.hero_name = arg_13_1.hero_name
 		arg_13_0.career_index = arg_13_1.career_index
@@ -490,7 +490,7 @@ function HeroWindowBackgroundConsole.respawn_hero(arg_13_0, arg_13_1, arg_13_2)
 	var_13_0:respawn_hero_unit(arg_13_0.hero_name, arg_13_0.career_index, false, var_13_1, arg_13_0._camera_move_duration)
 end
 
-function HeroWindowBackgroundConsole.despawn_hero(arg_15_0)
+HeroWindowBackgroundConsole.despawn_hero = function (arg_15_0)
 	local var_15_0 = arg_15_0.world_previewer
 
 	if not var_15_0 then
@@ -500,7 +500,7 @@ function HeroWindowBackgroundConsole.despawn_hero(arg_15_0)
 	var_15_0:hide_character()
 end
 
-function HeroWindowBackgroundConsole._update_animations(arg_16_0, arg_16_1)
+HeroWindowBackgroundConsole._update_animations = function (arg_16_0, arg_16_1)
 	arg_16_0.ui_animator:update(arg_16_1)
 
 	local var_16_0 = arg_16_0._animations
@@ -517,7 +517,7 @@ function HeroWindowBackgroundConsole._update_animations(arg_16_0, arg_16_1)
 	local var_16_2 = arg_16_0._widgets_by_name
 end
 
-function HeroWindowBackgroundConsole._update_temporary_loadout_sync(arg_17_0)
+HeroWindowBackgroundConsole._update_temporary_loadout_sync = function (arg_17_0)
 	local var_17_0 = arg_17_0.parent.temporary_loadout_sync_id
 
 	if var_17_0 > 0 and var_17_0 ~= arg_17_0._temporary_loadout_sync_id then
@@ -527,7 +527,7 @@ function HeroWindowBackgroundConsole._update_temporary_loadout_sync(arg_17_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._update_character_pose_animation_sync(arg_18_0)
+HeroWindowBackgroundConsole._update_character_pose_animation_sync = function (arg_18_0)
 	local var_18_0 = arg_18_0.parent.character_pose_animation_sync_id
 
 	if var_18_0 > 0 and var_18_0 ~= arg_18_0._character_pose_animation_sync_id then
@@ -545,7 +545,7 @@ function HeroWindowBackgroundConsole._update_character_pose_animation_sync(arg_1
 	end
 end
 
-function HeroWindowBackgroundConsole._update_loadout_sync(arg_19_0)
+HeroWindowBackgroundConsole._update_loadout_sync = function (arg_19_0)
 	local var_19_0 = arg_19_0.parent.loadout_sync_id
 
 	if var_19_0 ~= arg_19_0._loadout_sync_id then
@@ -557,7 +557,7 @@ function HeroWindowBackgroundConsole._update_loadout_sync(arg_19_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._update_skin_sync(arg_20_0)
+HeroWindowBackgroundConsole._update_skin_sync = function (arg_20_0)
 	local var_20_0 = arg_20_0.parent.skin_sync_id
 
 	if var_20_0 ~= arg_20_0.skin_sync_id then
@@ -567,7 +567,7 @@ function HeroWindowBackgroundConsole._update_skin_sync(arg_20_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._update_wielded_slot(arg_21_0)
+HeroWindowBackgroundConsole._update_wielded_slot = function (arg_21_0)
 	local var_21_0 = arg_21_0.parent:get_selected_loadout_slot_index()
 
 	if var_21_0 ~= arg_21_0._selected_loadout_slot_index then
@@ -595,7 +595,7 @@ function HeroWindowBackgroundConsole._update_wielded_slot(arg_21_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._hero_affiliation(arg_22_0)
+HeroWindowBackgroundConsole._hero_affiliation = function (arg_22_0)
 	local var_22_0 = arg_22_0.hero_name
 	local var_22_1 = FindProfileIndex(var_22_0)
 	local var_22_2 = SPProfiles[var_22_1]
@@ -603,7 +603,7 @@ function HeroWindowBackgroundConsole._hero_affiliation(arg_22_0)
 	return var_22_2 and var_22_2.affiliation
 end
 
-function HeroWindowBackgroundConsole._populate_loadout(arg_23_0)
+HeroWindowBackgroundConsole._populate_loadout = function (arg_23_0)
 	local var_23_0 = arg_23_0.world_previewer
 	local var_23_1 = arg_23_0.hero_name
 	local var_23_2 = arg_23_0.career_index
@@ -689,7 +689,7 @@ function HeroWindowBackgroundConsole._populate_loadout(arg_23_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._populate_temporary_loadout(arg_24_0)
+HeroWindowBackgroundConsole._populate_temporary_loadout = function (arg_24_0)
 	local var_24_0 = arg_24_0.world_previewer
 	local var_24_1 = InventorySettings.slots_by_slot_index
 	local var_24_2 = arg_24_0.parent
@@ -724,7 +724,7 @@ function HeroWindowBackgroundConsole._populate_temporary_loadout(arg_24_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._is_button_pressed(arg_25_0, arg_25_1)
+HeroWindowBackgroundConsole._is_button_pressed = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1.content.button_hotspot
 
 	if var_25_0.on_release then
@@ -734,7 +734,7 @@ function HeroWindowBackgroundConsole._is_button_pressed(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroWindowBackgroundConsole._is_stepper_button_pressed(arg_26_0, arg_26_1)
+HeroWindowBackgroundConsole._is_stepper_button_pressed = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_1.content
 	local var_26_1 = var_26_0.button_hotspot_left
 	local var_26_2 = var_26_0.button_hotspot_right
@@ -750,20 +750,20 @@ function HeroWindowBackgroundConsole._is_stepper_button_pressed(arg_26_0, arg_26
 	end
 end
 
-function HeroWindowBackgroundConsole._handle_input(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowBackgroundConsole._handle_input = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_0._widgets_by_name.detailed
 
 	if arg_27_0._draw_character then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function HeroWindowBackgroundConsole._exit(arg_28_0, arg_28_1)
+HeroWindowBackgroundConsole._exit = function (arg_28_0, arg_28_1)
 	arg_28_0.exit = true
 	arg_28_0.exit_level_id = arg_28_1
 end
 
-function HeroWindowBackgroundConsole.draw(arg_29_0, arg_29_1)
+HeroWindowBackgroundConsole.draw = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0.ui_renderer
 	local var_29_1 = arg_29_0.ui_top_renderer
 	local var_29_2 = arg_29_0.ui_scenegraph
@@ -794,11 +794,11 @@ function HeroWindowBackgroundConsole.draw(arg_29_0, arg_29_1)
 	end
 end
 
-function HeroWindowBackgroundConsole._play_sound(arg_30_0, arg_30_1)
+HeroWindowBackgroundConsole._play_sound = function (arg_30_0, arg_30_1)
 	arg_30_0.parent:play_sound(arg_30_1)
 end
 
-function HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation(arg_31_0, arg_31_1)
+HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation = function (arg_31_0, arg_31_1)
 	if not arg_31_0._fadeout_loading_overlay then
 		return
 	end
@@ -825,7 +825,7 @@ function HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation(a
 	end
 end
 
-function HeroWindowBackgroundConsole._handle_statistics_pressed(arg_32_0)
+HeroWindowBackgroundConsole._handle_statistics_pressed = function (arg_32_0)
 	local var_32_0 = arg_32_0:_statistics_activate()
 
 	arg_32_0.params.hero_statistics_active = not var_32_0
@@ -837,11 +837,11 @@ function HeroWindowBackgroundConsole._handle_statistics_pressed(arg_32_0)
 	end
 end
 
-function HeroWindowBackgroundConsole._statistics_activate(arg_33_0)
+HeroWindowBackgroundConsole._statistics_activate = function (arg_33_0)
 	return arg_33_0._widgets_by_name.detailed.content.active
 end
 
-function HeroWindowBackgroundConsole._activate_statistics(arg_34_0)
+HeroWindowBackgroundConsole._activate_statistics = function (arg_34_0)
 	local var_34_0 = arg_34_0._widgets_by_name.detailed
 
 	var_34_0.content.active = true
@@ -858,7 +858,7 @@ function HeroWindowBackgroundConsole._activate_statistics(arg_34_0)
 	arg_34_0:_sync_statistics()
 end
 
-function HeroWindowBackgroundConsole._sync_statistics(arg_35_0)
+HeroWindowBackgroundConsole._sync_statistics = function (arg_35_0)
 	if not arg_35_0:_statistics_activate() then
 		return
 	end
@@ -869,7 +869,7 @@ function HeroWindowBackgroundConsole._sync_statistics(arg_35_0)
 	arg_35_0:_populate_statistics(var_35_1)
 end
 
-function HeroWindowBackgroundConsole._deactivate_statistics(arg_36_0)
+HeroWindowBackgroundConsole._deactivate_statistics = function (arg_36_0)
 	local var_36_0 = arg_36_0._widgets_by_name.detailed
 
 	var_36_0.content.active = false
@@ -878,7 +878,7 @@ function HeroWindowBackgroundConsole._deactivate_statistics(arg_36_0)
 	var_36_0.style.drop_down_arrow.angle = 0
 end
 
-function HeroWindowBackgroundConsole._update_statistics_widget(arg_37_0, arg_37_1, arg_37_2)
+HeroWindowBackgroundConsole._update_statistics_widget = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._widgets_by_name.detailed
 
 	if not var_37_0.content.active then
@@ -914,7 +914,7 @@ function HeroWindowBackgroundConsole._update_statistics_widget(arg_37_0, arg_37_
 	var_37_11[2] = -var_37_3[2] + var_37_9 * var_37_12
 end
 
-function HeroWindowBackgroundConsole._populate_statistics(arg_38_0, arg_38_1)
+HeroWindowBackgroundConsole._populate_statistics = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._widgets_by_name.detailed
 	local var_38_1 = var_38_0.content
 	local var_38_2 = var_38_0.style.list_style
@@ -948,7 +948,7 @@ function HeroWindowBackgroundConsole._populate_statistics(arg_38_0, arg_38_1)
 	arg_38_0:_setup_tab_scrollbar(var_38_0)
 end
 
-function HeroWindowBackgroundConsole._setup_tab_scrollbar(arg_39_0, arg_39_1)
+HeroWindowBackgroundConsole._setup_tab_scrollbar = function (arg_39_0, arg_39_1)
 	local var_39_0 = var_0_3.detailed_button.size
 	local var_39_1 = var_0_3.detailed_list.size
 	local var_39_2 = arg_39_1.style.list_style

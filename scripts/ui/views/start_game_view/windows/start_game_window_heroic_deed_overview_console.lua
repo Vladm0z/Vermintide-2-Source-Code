@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowHeroicDeedOverviewConsole = class(StartGameWindowHeroicDeedOverviewConsole)
 StartGameWindowHeroicDeedOverviewConsole.NAME = "StartGameWindowHeroicDeedOverviewConsole"
 
-function StartGameWindowHeroicDeedOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowHeroicDeedOverviewConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowHeroicDeedOverviewConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -44,7 +44,7 @@ function StartGameWindowHeroicDeedOverviewConsole.on_enter(arg_1_0, arg_1_1, arg
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowHeroicDeedOverviewConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -54,7 +54,7 @@ function StartGameWindowHeroicDeedOverviewConsole._start_transition_animation(ar
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowHeroicDeedOverviewConsole._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = {}
@@ -83,7 +83,7 @@ function StartGameWindowHeroicDeedOverviewConsole._create_ui_elements(arg_3_0, a
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole.on_exit(arg_4_0, arg_4_1)
+StartGameWindowHeroicDeedOverviewConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowHeroicDeedOverviewConsole")
 
 	arg_4_0._ui_animator = nil
@@ -95,11 +95,11 @@ function StartGameWindowHeroicDeedOverviewConsole.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole.set_focus(arg_5_0, arg_5_1)
+StartGameWindowHeroicDeedOverviewConsole.set_focus = function (arg_5_0, arg_5_1)
 	arg_5_0._is_focused = arg_5_1
 end
 
-function StartGameWindowHeroicDeedOverviewConsole.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowHeroicDeedOverviewConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_heroic_deed_selection()
 	arg_6_0:_update_can_play()
 	arg_6_0:_update_animations(arg_6_1)
@@ -107,11 +107,11 @@ function StartGameWindowHeroicDeedOverviewConsole.update(arg_6_0, arg_6_1, arg_6
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowHeroicDeedOverviewConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowHeroicDeedOverviewConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._present_heroic_deed(arg_8_0, arg_8_1)
+StartGameWindowHeroicDeedOverviewConsole._present_heroic_deed = function (arg_8_0, arg_8_1)
 	local var_8_0 = Managers.backend:get_interface("items")
 	local var_8_1 = arg_8_1 and var_8_0:get_item_masterlist_data(arg_8_1)
 	local var_8_2 = arg_8_0._widgets_by_name.heroic_deed_setting
@@ -120,7 +120,7 @@ function StartGameWindowHeroicDeedOverviewConsole._present_heroic_deed(arg_8_0, 
 	var_8_2.content.icon_texture = var_8_1 and var_8_1.inventory_icon or nil
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._update_heroic_deed_selection(arg_9_0)
+StartGameWindowHeroicDeedOverviewConsole._update_heroic_deed_selection = function (arg_9_0)
 	local var_9_0 = arg_9_0._parent:get_selected_heroic_deed_backend_id()
 
 	if var_9_0 ~= arg_9_0._selected_backend_id then
@@ -132,7 +132,7 @@ function StartGameWindowHeroicDeedOverviewConsole._update_heroic_deed_selection(
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._update_can_play(arg_10_0)
+StartGameWindowHeroicDeedOverviewConsole._update_can_play = function (arg_10_0)
 	local var_10_0 = arg_10_0:_can_play()
 
 	if arg_10_0._previous_can_play ~= var_10_0 then
@@ -151,11 +151,11 @@ function StartGameWindowHeroicDeedOverviewConsole._update_can_play(arg_10_0)
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._is_button_hover_enter(arg_11_0, arg_11_1)
+StartGameWindowHeroicDeedOverviewConsole._is_button_hover_enter = function (arg_11_0, arg_11_1)
 	return arg_11_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._is_button_pressed(arg_12_0, arg_12_1)
+StartGameWindowHeroicDeedOverviewConsole._is_button_pressed = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	if var_12_0.on_release then
@@ -165,7 +165,7 @@ function StartGameWindowHeroicDeedOverviewConsole._is_button_pressed(arg_12_0, a
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._handle_input(arg_13_0, arg_13_1, arg_13_2)
+StartGameWindowHeroicDeedOverviewConsole._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._parent
 	local var_13_1 = var_13_0:window_input_service()
 
@@ -212,7 +212,7 @@ function StartGameWindowHeroicDeedOverviewConsole._handle_input(arg_13_0, arg_13
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._can_play(arg_14_0)
+StartGameWindowHeroicDeedOverviewConsole._can_play = function (arg_14_0)
 	if not Managers.backend:get_interface("items"):get_item_from_id(arg_14_0._selected_backend_id) then
 		arg_14_0._selected_backend_id = nil
 	end
@@ -224,7 +224,7 @@ function StartGameWindowHeroicDeedOverviewConsole._can_play(arg_14_0)
 	return arg_14_0._selected_backend_id ~= nil
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._option_selected(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowHeroicDeedOverviewConsole._option_selected = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = var_0_4[arg_15_1]
 
 	if var_15_0 == "heroic_deed_setting" then
@@ -240,7 +240,7 @@ function StartGameWindowHeroicDeedOverviewConsole._option_selected(arg_15_0, arg
 	end
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._handle_new_selection(arg_16_0, arg_16_1)
+StartGameWindowHeroicDeedOverviewConsole._handle_new_selection = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._widgets_by_name
 	local var_16_1 = #var_0_4
 
@@ -260,7 +260,7 @@ function StartGameWindowHeroicDeedOverviewConsole._handle_new_selection(arg_16_0
 	arg_16_0._input_index = arg_16_1
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._update_animations(arg_17_0, arg_17_1)
+StartGameWindowHeroicDeedOverviewConsole._update_animations = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_animator
 
 	var_17_0:update(arg_17_1)
@@ -281,7 +281,7 @@ function StartGameWindowHeroicDeedOverviewConsole._update_animations(arg_17_0, a
 	UIWidgetUtils.animate_play_button(var_17_2.play_button, arg_17_1)
 end
 
-function StartGameWindowHeroicDeedOverviewConsole._draw(arg_18_0, arg_18_1)
+StartGameWindowHeroicDeedOverviewConsole._draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ui_top_renderer
 	local var_18_1 = arg_18_0._ui_scenegraph
 	local var_18_2 = arg_18_0._parent:window_input_service()

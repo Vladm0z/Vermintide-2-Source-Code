@@ -229,7 +229,7 @@ var_0_0.game_object_templates = {
 	}
 }
 var_0_0.game_object_initializers = {
-	thornsister_thorn_wall_unit = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	thornsister_thorn_wall_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = ScriptUnit.extension(arg_1_0, "area_damage_system")
 		local var_1_1 = var_1_0.aoe_dot_damage
 		local var_1_2 = var_1_0.aoe_init_damage
@@ -295,7 +295,7 @@ var_0_0.game_object_initializers = {
 			owner_unit_id = var_1_18
 		}
 	end,
-	vortex_unit = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	vortex_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = Unit.mover(arg_2_0)
 		local var_2_1 = ScriptUnit.has_extension(arg_2_0, "area_damage_system")
 		local var_2_2 = var_2_1._inner_decal_unit
@@ -347,7 +347,7 @@ var_0_0.game_object_initializers = {
 	end
 }
 var_0_0.game_object_extractors = {
-	thornsister_thorn_wall_unit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	thornsister_thorn_wall_unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage")
 		local var_3_1 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_init_damage")
 		local var_3_2 = GameSession.game_object_field(arg_3_0, arg_3_1, "aoe_dot_damage_interval")
@@ -445,7 +445,7 @@ var_0_0.game_object_extractors = {
 
 		return "thornsister_thorn_wall_unit", var_3_24
 	end,
-	vortex_unit = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	vortex_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = GameSession.game_object_field(arg_4_0, arg_4_1, "vortex_template_id")
 		local var_4_1 = NetworkLookup.vortex_templates[var_4_0]
 		local var_4_2 = GameSession.game_object_field(arg_4_0, arg_4_1, "inner_decal_unit_id")

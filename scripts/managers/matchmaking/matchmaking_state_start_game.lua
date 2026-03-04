@@ -3,7 +3,7 @@
 MatchmakingStateStartGame = class(MatchmakingStateStartGame)
 MatchmakingStateStartGame.NAME = "MatchmakingStateStartGame"
 
-function MatchmakingStateStartGame.init(arg_1_0, arg_1_1)
+MatchmakingStateStartGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_server = arg_1_1.network_server
 	arg_1_0._statistics_db = arg_1_1.statistics_db
@@ -11,7 +11,7 @@ function MatchmakingStateStartGame.init(arg_1_0, arg_1_1)
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 end
 
-function MatchmakingStateStartGame.on_enter(arg_2_0, arg_2_1)
+MatchmakingStateStartGame.on_enter = function (arg_2_0, arg_2_1)
 	arg_2_0.state_context = arg_2_1
 	arg_2_0.search_config = arg_2_1.search_config
 
@@ -27,7 +27,7 @@ ADDED_DLCS = {}
 
 local var_0_0 = {}
 
-function MatchmakingStateStartGame._verify_requirements(arg_3_0)
+MatchmakingStateStartGame._verify_requirements = function (arg_3_0)
 	table.clear(DLCS_TO_CHECK)
 	table.clear(ADDED_DLCS)
 
@@ -112,13 +112,13 @@ function MatchmakingStateStartGame._verify_requirements(arg_3_0)
 	end
 end
 
-function MatchmakingStateStartGame._initiate_start_game(arg_4_0)
+MatchmakingStateStartGame._initiate_start_game = function (arg_4_0)
 	arg_4_0:_setup_lobby_data()
 	arg_4_0._network_server:enter_post_game()
 	arg_4_0:_start_game()
 end
 
-function MatchmakingStateStartGame.update(arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStateStartGame.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._verifying_dlcs then
 		return arg_5_0:_handle_verify_dlcs()
 	end
@@ -126,7 +126,7 @@ function MatchmakingStateStartGame.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end
 
-function MatchmakingStateStartGame._setup_lobby_data(arg_6_0)
+MatchmakingStateStartGame._setup_lobby_data = function (arg_6_0)
 	local var_6_0
 	local var_6_1
 	local var_6_2
@@ -172,7 +172,7 @@ function MatchmakingStateStartGame._setup_lobby_data(arg_6_0)
 		if var_6_11 == "weave" then
 			local var_6_15 = table.shallow_copy(WeaveSettings.templates_ordered)
 
-			table.array_remove_if(var_6_15, function(arg_7_0)
+			table.array_remove_if(var_6_15, function (arg_7_0)
 				return LevelUnlockUtils.weave_disabled(arg_7_0.name)
 			end)
 
@@ -187,7 +187,7 @@ function MatchmakingStateStartGame._setup_lobby_data(arg_6_0)
 			local var_6_18 = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data
 			local var_6_19 = table.shallow_copy(var_6_17)
 
-			table.array_remove_if(var_6_19, function(arg_8_0)
+			table.array_remove_if(var_6_19, function (arg_8_0)
 				return LevelUnlockUtils.is_chaos_waste_god_disabled(var_6_18[arg_8_0].dominant_god)
 			end)
 
@@ -223,7 +223,7 @@ function MatchmakingStateStartGame._setup_lobby_data(arg_6_0)
 			if var_6_24 then
 				local var_6_25 = table.shallow_copy(var_6_24)
 
-				table.array_remove_if(var_6_25, function(arg_9_0)
+				table.array_remove_if(var_6_25, function (arg_9_0)
 					return LevelUnlockUtils.is_level_disabled(arg_9_0.name)
 				end)
 				table.dump(var_6_25, "filtered_level_keys")
@@ -365,13 +365,13 @@ function MatchmakingStateStartGame._setup_lobby_data(arg_6_0)
 	var_6_45:set_next_level(var_6_47, var_6_44, var_6_46, nil, nil, var_6_8, var_6_51, var_6_1, nil)
 end
 
-function MatchmakingStateStartGame.get_transition(arg_10_0)
+MatchmakingStateStartGame.get_transition = function (arg_10_0)
 	if arg_10_0.next_transition_state and arg_10_0.start_lobby_data then
 		return arg_10_0.next_transition_state, arg_10_0.start_lobby_data
 	end
 end
 
-function MatchmakingStateStartGame._send_rpc_clients(arg_11_0, arg_11_1, ...)
+MatchmakingStateStartGame._send_rpc_clients = function (arg_11_0, arg_11_1, ...)
 	if arg_11_0.state_context.clients_not_in_game_session then
 		local var_11_0 = Network.peer_id()
 		local var_11_1 = arg_11_0._lobby:members():get_members()
@@ -386,7 +386,7 @@ function MatchmakingStateStartGame._send_rpc_clients(arg_11_0, arg_11_1, ...)
 	end
 end
 
-function MatchmakingStateStartGame._start_game(arg_12_0)
+MatchmakingStateStartGame._start_game = function (arg_12_0)
 	arg_12_0:_capture_telemetry()
 	Managers.mechanism:network_handler():get_match_handler():send_rpc_down("rpc_matchmaking_join_game")
 
@@ -406,7 +406,7 @@ function MatchmakingStateStartGame._start_game(arg_12_0)
 	end
 end
 
-function MatchmakingStateStartGame._capture_telemetry(arg_13_0)
+MatchmakingStateStartGame._capture_telemetry = function (arg_13_0)
 	local var_13_0 = arg_13_0._lobby:members():get_members()
 	local var_13_1 = 0
 
@@ -423,7 +423,7 @@ function MatchmakingStateStartGame._capture_telemetry(arg_13_0)
 	Managers.telemetry_events:matchmaking_starting_game(var_13_2, var_13_3, arg_13_0.search_config)
 end
 
-function MatchmakingStateStartGame._handle_verify_dlcs(arg_14_0, arg_14_1, arg_14_2)
+MatchmakingStateStartGame._handle_verify_dlcs = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._verify_dlc_data
 	local var_14_1 = arg_14_0:_active_peers()
 
@@ -446,7 +446,7 @@ function MatchmakingStateStartGame._handle_verify_dlcs(arg_14_0, arg_14_1, arg_1
 	end
 end
 
-function MatchmakingStateStartGame._handle_results(arg_15_0, arg_15_1)
+MatchmakingStateStartGame._handle_results = function (arg_15_0, arg_15_1)
 	local var_15_0 = true
 	local var_15_1 = true
 	local var_15_2 = arg_15_1.votes_require_type
@@ -464,7 +464,7 @@ function MatchmakingStateStartGame._handle_results(arg_15_0, arg_15_1)
 	return var_15_0, var_15_1
 end
 
-function MatchmakingStateStartGame.rpc_matchmaking_verify_dlc_reply(arg_16_0, arg_16_1, arg_16_2)
+MatchmakingStateStartGame.rpc_matchmaking_verify_dlc_reply = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = CHANNEL_TO_PEER_ID[arg_16_1]
 
 	arg_16_0._verify_dlc_data.results[var_16_0] = arg_16_2
@@ -472,7 +472,7 @@ end
 
 local var_0_1 = {}
 
-function MatchmakingStateStartGame._update_voter_list_by_active_peers(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+MatchmakingStateStartGame._update_voter_list_by_active_peers = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	table.clear(var_0_1)
 
 	local var_17_0 = Managers.player:human_players()
@@ -506,7 +506,7 @@ end
 
 local var_0_2 = {}
 
-function MatchmakingStateStartGame._active_peers(arg_18_0)
+MatchmakingStateStartGame._active_peers = function (arg_18_0)
 	table.clear(var_0_2)
 
 	local var_18_0 = Managers.player:human_players()

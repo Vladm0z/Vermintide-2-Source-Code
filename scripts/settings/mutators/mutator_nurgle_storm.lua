@@ -4,7 +4,7 @@ return {
 	description = "description_nurgle_storm",
 	display_name = "display_name_nurgle_storm",
 	icon = "mutator_icon_nurgle_storm",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.spawn_nurgle_storm_at = Managers.time:time("game") + 30
 		arg_1_1.vortex_template_name = "nurgle_storm_mutator"
 		arg_1_1.vortex_template = VortexTemplates[arg_1_1.vortex_template_name]
@@ -16,7 +16,7 @@ return {
 		arg_1_1.unchecked_positions = {}
 		arg_1_1.astar = GwNavAStar.create()
 	end,
-	server_pre_update_function = function(arg_2_0, arg_2_1)
+	server_pre_update_function = function (arg_2_0, arg_2_1)
 		if Network.game_session() == nil or global_is_inside_inn then
 			return
 		end
@@ -90,7 +90,7 @@ return {
 			table.clear(arg_2_1.unchecked_positions)
 		end
 	end,
-	prepare_spawning_storm = function(arg_3_0, arg_3_1, arg_3_2)
+	prepare_spawning_storm = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = arg_3_0.vortex_template
 		local var_3_1 = 2
 		local var_3_2 = math.min(var_3_1 / var_3_0.full_inner_radius, 1)
@@ -128,19 +128,19 @@ return {
 		arg_3_0.spawn_nurgle_storm_at = var_3_12 + 5
 		arg_3_0.directed_wander_position_boxed = arg_3_2
 	end,
-	spawn_storm = function(arg_4_0)
+	spawn_storm = function (arg_4_0)
 		local var_4_0 = arg_4_0.vortex_template.breed_name
 		local var_4_1 = Breeds[var_4_0]
 		local var_4_2 = "vortex"
 		local var_4_3 = {
-			prepare_func = function(arg_5_0, arg_5_1)
+			prepare_func = function (arg_5_0, arg_5_1)
 				arg_5_1.ai_supplementary_system = {
 					vortex_template_name = arg_4_0.vortex_template_name,
 					inner_decal_unit = arg_4_0.summoning_vortex_inner_decal_unit,
 					outer_decal_unit = arg_4_0.summoning_vortex_outer_decal_unit
 				}
 			end,
-			spawned_func = function(arg_6_0, arg_6_1, arg_6_2)
+			spawned_func = function (arg_6_0, arg_6_1, arg_6_2)
 				arg_4_0.summoned_vortex_unit = arg_6_0
 				BLACKBOARDS[arg_6_0].directed_wander_position_boxed = arg_4_0.directed_wander_position_boxed
 			end
@@ -151,7 +151,7 @@ return {
 
 		arg_4_0.summoning_vortex_t = nil
 	end,
-	server_stop_function = function(arg_7_0, arg_7_1)
+	server_stop_function = function (arg_7_0, arg_7_1)
 		GwNavAStar.destroy(arg_7_1.astar)
 	end
 }

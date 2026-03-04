@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTErraticFollowAction = class(BTErraticFollowAction, BTNode)
 
-function BTErraticFollowAction.init(arg_1_0, ...)
+BTErraticFollowAction.init = function (arg_1_0, ...)
 	BTErraticFollowAction.super.init(arg_1_0, ...)
 end
 
@@ -12,7 +12,7 @@ BTErraticFollowAction.name = "BTErraticFollowAction"
 
 local var_0_0 = false
 
-function BTErraticFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTErraticFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -49,7 +49,7 @@ function BTErraticFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.boss_follow_next_line_of_sight_check_t = arg_2_3
 end
 
-function BTErraticFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTErraticFollowAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
@@ -84,11 +84,11 @@ function BTErraticFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	end
 end
 
-function BTErraticFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTErraticFollowAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.locomotion_extension
 
 	if arg_4_2.move_state == "jumping" then
-		-- block empty
+		-- Nothing
 	else
 		arg_4_0:follow(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
 	end
@@ -98,7 +98,7 @@ function BTErraticFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running", "evaluate"
 end
 
-function BTErraticFollowAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTErraticFollowAction._go_idle = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_2.move_state = "idle"
 
 	Managers.state.network:anim_event(arg_5_1, "idle")
@@ -108,19 +108,19 @@ function BTErraticFollowAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_3:set_wanted_rotation(var_5_0)
 end
 
-function BTErraticFollowAction._go_moving(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTErraticFollowAction._go_moving = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.move_state = "moving"
 
 	Managers.state.network:anim_event(arg_6_1, arg_6_3)
 end
 
-function BTErraticFollowAction._go_walking(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTErraticFollowAction._go_walking = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_2.move_state = "walking"
 
 	Managers.state.network:anim_event(arg_7_1, arg_7_3)
 end
 
-function BTErraticFollowAction.follow(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTErraticFollowAction.follow = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_4.navigation_extension
 
 	if var_8_0:number_failed_move_attempts() > 1 then
@@ -229,7 +229,7 @@ function BTErraticFollowAction.follow(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_
 	end
 end
 
-function BTErraticFollowAction.check_for_high_jump(arg_9_0, arg_9_1, arg_9_2)
+BTErraticFollowAction.check_for_high_jump = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = World.get_data(arg_9_2.world, "physics_world")
 	local var_9_1 = 1.2
 	local var_9_2 = POSITION_LOOKUP[arg_9_1]
@@ -242,7 +242,7 @@ function BTErraticFollowAction.check_for_high_jump(arg_9_0, arg_9_1, arg_9_2)
 	return (not var_9_6 or not var_9_7) and (not var_9_8 or not var_9_9)
 end
 
-function BTErraticFollowAction.check_dir(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTErraticFollowAction.check_dir = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = Quaternion.rotate(Quaternion(Vector3.up(), arg_10_5.ray_angle), arg_10_2)
 	local var_10_1 = arg_10_1 + var_10_0 * arg_10_5.ray_dist
 	local var_10_2, var_10_3 = GwNavQueries.raycast(arg_10_3, arg_10_1, var_10_1, arg_10_4)
@@ -278,7 +278,7 @@ function BTErraticFollowAction.check_dir(arg_10_0, arg_10_1, arg_10_2, arg_10_3,
 	end
 end
 
-function BTErraticFollowAction.debug_ray_casts(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+BTErraticFollowAction.debug_ray_casts = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	arg_11_0:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_left_anims)
 	arg_11_0:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_right_anims)
 	arg_11_0:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_fwd_anims)
@@ -288,7 +288,7 @@ function BTErraticFollowAction.debug_ray_casts(arg_11_0, arg_11_1, arg_11_2, arg
 	arg_11_0:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_only_fwd_right_anims)
 end
 
-function BTErraticFollowAction.investigate_jump(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BTErraticFollowAction.investigate_jump = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_3.navigation_extension
 	local var_12_1 = var_12_0._nav_bot
 	local var_12_2 = GwNavBot.get_path_current_node_index(var_12_1)
@@ -367,7 +367,7 @@ function BTErraticFollowAction.investigate_jump(arg_12_0, arg_12_1, arg_12_2, ar
 	return false
 end
 
-function BTErraticFollowAction.get_travel_dir(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTErraticFollowAction.get_travel_dir = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_2.navigation_extension._nav_bot
 	local var_13_1 = GwNavBot.get_path_current_node_index(var_13_0)
 	local var_13_2 = GwNavBot.get_path_nodes_count(var_13_0)
@@ -382,7 +382,7 @@ function BTErraticFollowAction.get_travel_dir(arg_13_0, arg_13_1, arg_13_2, arg_
 	return (Vector3.normalize(var_13_4 - arg_13_3))
 end
 
-function BTErraticFollowAction.anim_cb_move_jump_finished(arg_14_0, arg_14_1, arg_14_2)
+BTErraticFollowAction.anim_cb_move_jump_finished = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = POSITION_LOOKUP[arg_14_1]
 	local var_14_1 = arg_14_2.locomotion_extension
 	local var_14_2 = Quaternion.forward(Unit.local_rotation(arg_14_1, 0))

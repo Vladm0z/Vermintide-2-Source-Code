@@ -4,7 +4,7 @@ GearUtils = {}
 
 local var_0_0 = Unit.node
 
-function GearUtils.create_equipment(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10, arg_1_11)
+GearUtils.create_equipment = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10, arg_1_11)
 	local var_1_0
 	local var_1_1
 	local var_1_2
@@ -107,7 +107,7 @@ function GearUtils.create_equipment(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4,
 	}
 end
 
-function GearUtils.apply_material_settings(arg_2_0, arg_2_1)
+GearUtils.apply_material_settings = function (arg_2_0, arg_2_1)
 	local var_2_0 = MaterialSettingsTemplates[arg_2_1]
 
 	for iter_2_0, iter_2_1 in pairs(var_2_0) do
@@ -155,7 +155,7 @@ function GearUtils.apply_material_settings(arg_2_0, arg_2_1)
 	end
 end
 
-function GearUtils.spawn_inventory_unit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11)
+GearUtils.spawn_inventory_unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11)
 	local var_3_0 = arg_3_2.ammo_data
 	local var_3_1 = arg_3_5.name
 	local var_3_2 = arg_3_2[arg_3_1 .. "_hand_attachment_node_linking"]
@@ -279,7 +279,7 @@ function GearUtils.spawn_inventory_unit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	return var_3_13, var_3_6
 end
 
-function GearUtils._attach_ammo_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+GearUtils._attach_ammo_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = Managers.state.unit_spawner:spawn_local_unit(arg_4_1)
 	local var_4_1 = {}
 
@@ -288,12 +288,12 @@ function GearUtils._attach_ammo_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return var_4_0
 end
 
-function GearUtils.link(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+GearUtils.link = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	table.clear(arg_5_2)
 	GearUtils.link_units(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 end
 
-function GearUtils.link_units(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+GearUtils.link_units = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	for iter_6_0, iter_6_1 in ipairs(arg_6_1) do
 		local var_6_0 = iter_6_1.source
 		local var_6_1 = iter_6_1.target
@@ -311,7 +311,7 @@ function GearUtils.link_units(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
 end
 
-function GearUtils.unlink(arg_7_0, arg_7_1)
+GearUtils.unlink = function (arg_7_0, arg_7_1)
 	World.unlink_unit(arg_7_0, arg_7_1)
 
 	local var_7_0 = ScriptUnit.has_extension(arg_7_1, "weapon_system")
@@ -321,7 +321,7 @@ function GearUtils.unlink(arg_7_0, arg_7_1)
 	end
 end
 
-function GearUtils.restore_scene_graph(arg_8_0)
+GearUtils.restore_scene_graph = function (arg_8_0)
 	if arg_8_0 then
 		for iter_8_0, iter_8_1 in ipairs(arg_8_0) do
 			if iter_8_1.parent then
@@ -332,20 +332,20 @@ function GearUtils.restore_scene_graph(arg_8_0)
 	end
 end
 
-function GearUtils.destroy_wielded(arg_9_0, arg_9_1)
+GearUtils.destroy_wielded = function (arg_9_0, arg_9_1)
 	Unit.flow_event(arg_9_1, "lua_unwield")
 	GearUtils.unlink(arg_9_0, arg_9_1)
 	Managers.state.unit_spawner:mark_for_deletion(arg_9_1)
 end
 
-function GearUtils.get_ammo_extension(arg_10_0, arg_10_1)
+GearUtils.get_ammo_extension = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0 and ScriptUnit.has_extension(arg_10_0, "ammo_system")
 	local var_10_1 = arg_10_1 and ScriptUnit.has_extension(arg_10_1, "ammo_system")
 
 	return var_10_0 or var_10_1
 end
 
-function GearUtils.destroy_equipment(arg_11_0, arg_11_1)
+GearUtils.destroy_equipment = function (arg_11_0, arg_11_1)
 	local var_11_0 = Managers.state.unit_spawner
 
 	if arg_11_1.right_hand_wielded_unit_3p and Unit.alive(arg_11_1.right_hand_wielded_unit_3p) then
@@ -394,7 +394,7 @@ function GearUtils.destroy_equipment(arg_11_0, arg_11_1)
 	arg_11_1.left_hand_ammo_unit_1p = nil
 end
 
-function GearUtils.destroy_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+GearUtils.destroy_slot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_2.item_data
 	local var_12_1 = arg_12_2.id
 
@@ -459,7 +459,7 @@ end
 
 local var_0_1 = {}
 
-function GearUtils.hot_join_sync(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+GearUtils.hot_join_sync = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if Managers.state.unit_spawner:is_marked_for_deletion(arg_13_1) then
 		return
 	end
@@ -508,7 +508,7 @@ function GearUtils.hot_join_sync(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function GearUtils._setup_extension_init_data_type_impact(arg_14_0, arg_14_1)
+GearUtils._setup_extension_init_data_type_impact = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.explosive_settings
 
 	return {
@@ -525,7 +525,7 @@ function GearUtils._setup_extension_init_data_type_impact(arg_14_0, arg_14_1)
 	}
 end
 
-function GearUtils._setup_extension_init_data_type_dot(arg_15_0, arg_15_1)
+GearUtils._setup_extension_init_data_type_dot = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.dot_settings
 
 	return {
@@ -545,7 +545,7 @@ function GearUtils._setup_extension_init_data_type_dot(arg_15_0, arg_15_1)
 	}
 end
 
-function GearUtils.create_grenade_extension_init_data(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+GearUtils.create_grenade_extension_init_data = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = AiAnimUtils.position_network_scale(arg_16_3.position, true)
 	local var_16_1 = AiAnimUtils.rotation_network_scale(arg_16_3.rotation, true)
 	local var_16_2 = AiAnimUtils.velocity_network_scale(arg_16_3.velocity, true)
@@ -586,7 +586,7 @@ function GearUtils.create_grenade_extension_init_data(arg_16_0, arg_16_1, arg_16
 	return var_16_9
 end
 
-function GearUtils.get_property_and_trait_buffs(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+GearUtils.get_property_and_trait_buffs = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if Managers.state.game_mode:has_activated_mutator("whiterun") then
 		return arg_17_2
 	end
@@ -659,7 +659,7 @@ local function var_0_3(arg_19_0, arg_19_1)
 	return arg_19_0.link_node and var_0_0(arg_19_1, arg_19_0.link_node) or 0
 end
 
-function GearUtils.create_attached_particles(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+GearUtils.create_attached_particles = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	if not arg_20_0 or not arg_20_1 or not arg_20_2 then
 		return nil
 	end
@@ -693,7 +693,7 @@ function GearUtils.create_attached_particles(arg_20_0, arg_20_1, arg_20_2, arg_2
 	return var_20_2
 end
 
-function GearUtils.destroy_attached_particles(arg_21_0, arg_21_1)
+GearUtils.destroy_attached_particles = function (arg_21_0, arg_21_1)
 	if arg_21_1 and arg_21_0 then
 		local var_21_0 = arg_21_1.destroy_fx
 

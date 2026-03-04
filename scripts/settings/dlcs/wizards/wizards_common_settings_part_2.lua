@@ -100,7 +100,7 @@ var_0_0.unlock_settings_ps4 = {
 	}
 }
 var_0_0.game_object_initializers = {
-	vfx_scripted_projectile_unit = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	vfx_scripted_projectile_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = ScriptUnit.extension(arg_1_0, "projectile_locomotion_system")
 		local var_1_1 = var_1_0.angle
 		local var_1_2 = var_1_0.target_vector
@@ -134,7 +134,7 @@ var_0_0.game_object_initializers = {
 	end
 }
 var_0_0.game_object_extractors = {
-	vfx_scripted_projectile_unit = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	vfx_scripted_projectile_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = GameSession.game_object_field(arg_2_0, arg_2_1, "angle")
 		local var_2_1 = GameSession.game_object_field(arg_2_0, arg_2_1, "target_vector")
 		local var_2_2 = GameSession.game_object_field(arg_2_0, arg_2_1, "initial_position")
@@ -172,22 +172,22 @@ var_0_0.game_object_extractors = {
 }
 var_0_0.ai_group_templates = {
 	destructible_defenders = {
-		setup_group = function(arg_3_0, arg_3_1, arg_3_2)
+		setup_group = function (arg_3_0, arg_3_1, arg_3_2)
 			return
 		end,
-		init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			return
 		end,
-		update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			return
 		end,
-		destroy = function(arg_6_0, arg_6_1, arg_6_2)
+		destroy = function (arg_6_0, arg_6_1, arg_6_2)
 			return
 		end,
-		set_group_aggressive = function(arg_7_0, arg_7_1)
+		set_group_aggressive = function (arg_7_0, arg_7_1)
 			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_7_0, AIGroupTemplates.destructible_defenders.set_unit_aggressive, arg_7_1)
 		end,
-		set_unit_aggressive = function(arg_8_0, arg_8_1, arg_8_2)
+		set_unit_aggressive = function (arg_8_0, arg_8_1, arg_8_2)
 			if not ALIVE[arg_8_0] then
 				return
 			end
@@ -204,7 +204,7 @@ var_0_0.ai_group_templates = {
 		end
 	},
 	ethereal_skulls = {
-		try_spawn_group = function(arg_9_0, arg_9_1)
+		try_spawn_group = function (arg_9_0, arg_9_1)
 			local var_9_0 = AIGroupTemplates.ethereal_skulls
 			local var_9_1 = var_9_0.last_state
 
@@ -238,33 +238,33 @@ var_0_0.ai_group_templates = {
 				var_9_0.add_group_members(arg_9_0, arg_9_1, var_9_3, var_9_4, var_9_6)
 			end
 		end,
-		create_group = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		create_group = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			local var_10_0 = Managers.state.entity:system("ai_group_system"):generate_group_id()
 
 			arg_10_0.group_id = var_10_0
 
 			arg_10_0.add_group_members(arg_10_1, arg_10_2, var_10_0, arg_10_3, arg_10_3)
 		end,
-		init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 			return
 		end,
-		update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 			return
 		end,
-		destroy = function(arg_13_0, arg_13_1, arg_13_2)
+		destroy = function (arg_13_0, arg_13_1, arg_13_2)
 			return
 		end,
-		add_group_members = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		add_group_members = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 			local var_14_0 = Vector3(20.5, 76.7, 155.5)
 			local var_14_1 = {
 				sofia_unit_pos = Vector3Box(var_14_0),
 				target = arg_14_1,
-				prepare_func = function(arg_15_0, arg_15_1)
+				prepare_func = function (arg_15_0, arg_15_1)
 					local var_15_0 = false
 
 					arg_15_0.modify_extension_init_data(arg_15_0, var_15_0, arg_15_1)
 				end,
-				spawned_func = function(arg_16_0, arg_16_1, arg_16_2)
+				spawned_func = function (arg_16_0, arg_16_1, arg_16_2)
 					local var_16_0 = BLACKBOARDS[arg_16_0]
 
 					if var_16_0 then

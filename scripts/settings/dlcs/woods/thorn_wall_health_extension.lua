@@ -6,19 +6,19 @@ local var_0_0 = Unit.alive
 local var_0_1 = Unit.flow_event
 local var_0_2 = Unit.set_flow_variable
 
-function ThornWallHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ThornWallHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	ThornWallHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
-function ThornWallHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ThornWallHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return
 end
 
-function ThornWallHealthExtension.destroy(arg_3_0)
+ThornWallHealthExtension.destroy = function (arg_3_0)
 	ThornWallHealthExtension.super.destroy(arg_3_0)
 end
 
-function ThornWallHealthExtension.apply_client_predicted_damage(arg_4_0, arg_4_1)
+ThornWallHealthExtension.apply_client_predicted_damage = function (arg_4_0, arg_4_1)
 	return
 end
 
@@ -28,7 +28,7 @@ local var_0_3 = {
 	skaven_storm_vermin_warlord = true
 }
 
-function ThornWallHealthExtension.add_damage(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+ThornWallHealthExtension.add_damage = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = DamageUtils.is_enemy(arg_5_1, var_5_0)
 	local var_5_2 = 0

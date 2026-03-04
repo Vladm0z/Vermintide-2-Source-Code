@@ -18,7 +18,7 @@ local var_0_4 = {
 	stepper = 36
 }
 
-function StartGameWindowVersusCustomGameSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowVersusCustomGameSettings.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("Entered Substate StartGameWindowVersusCustomGameSettings")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -48,7 +48,7 @@ function StartGameWindowVersusCustomGameSettings.on_enter(arg_1_0, arg_1_1, arg_
 	Managers.state.event:register(arg_1_0, "event_reset_host_settings", "_reset_host_settings")
 end
 
-function StartGameWindowVersusCustomGameSettings._create_ui_elements(arg_2_0)
+StartGameWindowVersusCustomGameSettings._create_ui_elements = function (arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_top_renderer)
 
@@ -67,7 +67,7 @@ function StartGameWindowVersusCustomGameSettings._create_ui_elements(arg_2_0)
 	arg_2_0._ui_animations = {}
 end
 
-function StartGameWindowVersusCustomGameSettings._populate_settings(arg_3_0)
+StartGameWindowVersusCustomGameSettings._populate_settings = function (arg_3_0)
 	local var_3_0 = arg_3_0._is_server and arg_3_0._game_mechanism:is_hosting_versus_custom_game()
 	local var_3_1 = arg_3_0._custom_game_settings_handler:get_settings()
 	local var_3_2 = arg_3_0._settings_templates
@@ -110,7 +110,7 @@ function StartGameWindowVersusCustomGameSettings._populate_settings(arg_3_0)
 	arg_3_0._settings = var_3_1
 end
 
-function StartGameWindowVersusCustomGameSettings.on_exit(arg_4_0, arg_4_1)
+StartGameWindowVersusCustomGameSettings.on_exit = function (arg_4_0, arg_4_1)
 	print("Exited Substate StartGameWindowVersusCustomGameSettings")
 
 	arg_4_0._ui_animator = nil
@@ -119,7 +119,7 @@ function StartGameWindowVersusCustomGameSettings.on_exit(arg_4_0, arg_4_1)
 	Managers.state.event:unregister("event_reset_host_settings", arg_4_0)
 end
 
-function StartGameWindowVersusCustomGameSettings.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowVersusCustomGameSettings.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._ui_animator:update(arg_5_1)
 	arg_5_0:_update_animations(arg_5_1)
 	arg_5_0:_draw(arg_5_1, arg_5_2)
@@ -129,7 +129,7 @@ function StartGameWindowVersusCustomGameSettings.update(arg_5_0, arg_5_1, arg_5_
 	arg_5_0._is_loading = not Managers.mechanism:mechanism_try_call("get_all_reservation_handlers_by_owner", var_5_0) or not Managers.matchmaking:is_in_versus_custom_game_lobby()
 end
 
-function StartGameWindowVersusCustomGameSettings._update_animations(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowVersusCustomGameSettings._update_animations = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._animations
 	local var_6_1 = arg_6_0._ui_animator
 	local var_6_2 = arg_6_0._ui_animations
@@ -155,7 +155,7 @@ function StartGameWindowVersusCustomGameSettings._update_animations(arg_6_0, arg
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowVersusCustomGameSettings.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	if not arg_7_0._settings_initialized then
 		arg_7_0._settings_initialized = true
 
@@ -181,7 +181,7 @@ function StartGameWindowVersusCustomGameSettings.post_update(arg_7_0, arg_7_1, a
 	arg_7_0:_update_focus_overlay(arg_7_1, arg_7_2, var_7_0)
 end
 
-function StartGameWindowVersusCustomGameSettings._update_lobby_data(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowVersusCustomGameSettings._update_lobby_data = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._custom_settings_toggled then
 		local var_8_0 = arg_8_0._custom_game_settings_handler:get_packed_custom_settings()
 
@@ -193,7 +193,7 @@ function StartGameWindowVersusCustomGameSettings._update_lobby_data(arg_8_0, arg
 	arg_8_0._settings_is_dirty = false
 end
 
-function StartGameWindowVersusCustomGameSettings._draw(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowVersusCustomGameSettings._draw = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._ui_top_renderer
 	local var_9_1 = arg_9_0._ui_scenegraph
 	local var_9_2 = arg_9_0._parent:window_input_service()
@@ -216,7 +216,7 @@ function StartGameWindowVersusCustomGameSettings._draw(arg_9_0, arg_9_1, arg_9_2
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.on_setting_changed_cb(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowVersusCustomGameSettings.on_setting_changed_cb = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0._is_server and arg_10_0._game_mechanism:is_hosting_versus_custom_game() then
 		local var_10_0 = arg_10_0._settings_templates[arg_10_1]
 		local var_10_1 = var_10_0.values[arg_10_2]
@@ -228,7 +228,7 @@ function StartGameWindowVersusCustomGameSettings.on_setting_changed_cb(arg_10_0,
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._client_sync_settings(arg_11_0)
+StartGameWindowVersusCustomGameSettings._client_sync_settings = function (arg_11_0)
 	local var_11_0 = arg_11_0._custom_game_settings_handler:get_settings()
 	local var_11_1 = arg_11_0._settings_templates
 
@@ -250,7 +250,7 @@ function StartGameWindowVersusCustomGameSettings._client_sync_settings(arg_11_0)
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._setup_scrollbar(arg_12_0, arg_12_1)
+StartGameWindowVersusCustomGameSettings._setup_scrollbar = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1 - var_0_0.scenegraph_definition.container.size[2]
 
 	if var_12_0 > 0 then
@@ -265,7 +265,7 @@ function StartGameWindowVersusCustomGameSettings._setup_scrollbar(arg_12_0, arg_
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings.focus_custom_game_settings_input(arg_13_0, arg_13_1)
+StartGameWindowVersusCustomGameSettings.focus_custom_game_settings_input = function (arg_13_0, arg_13_1)
 	arg_13_0._input_focused = arg_13_1
 
 	arg_13_0._parent:pause_input(arg_13_1)
@@ -275,7 +275,7 @@ function StartGameWindowVersusCustomGameSettings.focus_custom_game_settings_inpu
 	arg_13_0._settings_is_dirty = true
 end
 
-function StartGameWindowVersusCustomGameSettings._reset_host_settings(arg_14_0, arg_14_1)
+StartGameWindowVersusCustomGameSettings._reset_host_settings = function (arg_14_0, arg_14_1)
 	if arg_14_1 then
 		local var_14_0 = arg_14_0._custom_game_settings_handler:get_settings()
 		local var_14_1 = arg_14_0._settings_templates
@@ -313,7 +313,7 @@ local function var_0_5(arg_15_0, arg_15_1)
 	return var_15_1
 end
 
-function StartGameWindowVersusCustomGameSettings._handle_gamepad_input(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowVersusCustomGameSettings._handle_gamepad_input = function (arg_16_0, arg_16_1, arg_16_2)
 	if not arg_16_0._settings_widgets then
 		return
 	end
@@ -451,7 +451,7 @@ function StartGameWindowVersusCustomGameSettings._handle_gamepad_input(arg_16_0,
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._handle_input(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowVersusCustomGameSettings._handle_input = function (arg_17_0, arg_17_1, arg_17_2)
 	if not arg_17_0._settings_widgets then
 		return
 	end
@@ -513,11 +513,11 @@ function StartGameWindowVersusCustomGameSettings._handle_input(arg_17_0, arg_17_
 	end
 end
 
-function StartGameWindowVersusCustomGameSettings._is_list_hovered(arg_18_0)
+StartGameWindowVersusCustomGameSettings._is_list_hovered = function (arg_18_0)
 	return arg_18_0._widgets_by_name.mask.content.hotspot.is_hover
 end
 
-function StartGameWindowVersusCustomGameSettings._update_focus_overlay(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+StartGameWindowVersusCustomGameSettings._update_focus_overlay = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if not arg_19_0._settings_widgets then
 		return
 	end

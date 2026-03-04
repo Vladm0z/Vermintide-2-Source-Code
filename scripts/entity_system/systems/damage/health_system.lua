@@ -50,7 +50,7 @@ local var_0_2 = {
 DLCUtils.require_list("health_extension_files")
 DLCUtils.append("health_extensions", var_0_2)
 
-function HealthSystem.init(arg_1_0, arg_1_1, arg_1_2)
+HealthSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	HealthSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -70,13 +70,13 @@ function HealthSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	}
 end
 
-function HealthSystem.destroy(arg_2_0)
+HealthSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 	fassert(next(HEALTH_ALIVE) == nil, "global HEALTH_ALIVE table has units that were not cleaned up. Should be empty")
 	table.clear(HEALTH_ALIVE)
 end
 
-function HealthSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+HealthSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = ScriptUnit.add_extension(arg_3_0.extension_init_context, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
 
 	HEALTH_ALIVE[arg_3_2] = true
@@ -93,7 +93,7 @@ function HealthSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	return var_3_0
 end
 
-function HealthSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+HealthSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	fassert(ScriptUnit.has_extension(arg_4_1, arg_4_0.NAME), "Trying to remove non-existing extension %q from unit %s", arg_4_2, arg_4_1)
 	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 
@@ -104,7 +104,7 @@ function HealthSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 	HEALTH_ALIVE[arg_4_1] = nil
 end
 
-function HealthSystem.freeze(arg_5_0, arg_5_1, arg_5_2)
+HealthSystem.freeze = function (arg_5_0, arg_5_1, arg_5_2)
 	fassert(arg_5_0.frozen_unit_extensions[arg_5_1] == nil, "Tried to freeze an already frozen unit.")
 
 	local var_5_0 = arg_5_0.unit_extensions[arg_5_1]
@@ -121,7 +121,7 @@ function HealthSystem.freeze(arg_5_0, arg_5_1, arg_5_2)
 	fassert(var_5_0.unit, "Should this extension have a unit member?")
 end
 
-function HealthSystem.unfreeze(arg_6_0, arg_6_1)
+HealthSystem.unfreeze = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.frozen_unit_extensions[arg_6_1]
 
 	fassert(var_6_0, "Unit to unfreeze didn't have frozen extension")
@@ -134,7 +134,7 @@ function HealthSystem.unfreeze(arg_6_0, arg_6_1)
 	end
 end
 
-function HealthSystem.hot_join_sync(arg_7_0, arg_7_1)
+HealthSystem.hot_join_sync = function (arg_7_0, arg_7_1)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0.unit_extensions) do
 		if iter_7_1.hot_join_sync then
 			iter_7_1:hot_join_sync(arg_7_1)
@@ -142,7 +142,7 @@ function HealthSystem.hot_join_sync(arg_7_0, arg_7_1)
 	end
 end
 
-function HealthSystem.update(arg_8_0, arg_8_1, arg_8_2)
+HealthSystem.update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.active_damage_buffer_index = 3 - arg_8_0.active_damage_buffer_index
 
 	local var_8_0 = arg_8_0.active_damage_buffer_index
@@ -165,7 +165,7 @@ function HealthSystem.update(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function HealthSystem._assist_shield(arg_9_0, arg_9_1, arg_9_2)
+HealthSystem._assist_shield = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.unit_extensions[arg_9_1]
 	local var_9_1 = ScriptUnit.extension(arg_9_1, "status_system")
 
@@ -173,7 +173,7 @@ function HealthSystem._assist_shield(arg_9_0, arg_9_1, arg_9_2)
 	var_9_1:set_shielded(true)
 end
 
-function HealthSystem.suicide(arg_10_0, arg_10_1)
+HealthSystem.suicide = function (arg_10_0, arg_10_1)
 	if not Unit.alive(arg_10_1) then
 		if not arg_10_1 then
 			print("Got suicide from deleted player unit")
@@ -187,7 +187,7 @@ function HealthSystem.suicide(arg_10_0, arg_10_1)
 	ScriptUnit.extension(arg_10_1, "health_system"):die("forced")
 end
 
-function HealthSystem.rent_recent_attacker(arg_11_0, arg_11_1, arg_11_2)
+HealthSystem.rent_recent_attacker = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._recent_attackers_free_list
 	local var_11_1
 	local var_11_2 = var_11_0[0]
@@ -204,12 +204,12 @@ function HealthSystem.rent_recent_attacker(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_1
 end
 
-function HealthSystem.refresh_recent_attacker(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+HealthSystem.refresh_recent_attacker = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_1.attacker_breed = arg_12_2
 	arg_12_1.t = arg_12_3
 end
 
-function HealthSystem.return_recent_attacker(arg_13_0, arg_13_1)
+HealthSystem.return_recent_attacker = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._recent_attackers_free_list
 	local var_13_1 = var_13_0[0] + 1
 
@@ -219,7 +219,7 @@ end
 
 local var_0_3 = {}
 
-function HealthSystem.update_debug(arg_14_0)
+HealthSystem.update_debug = function (arg_14_0)
 	if var_0_0.damage_debug then
 		for iter_14_0, iter_14_1 in pairs(arg_14_0.unit_extensions) do
 			if Managers.player:owner(iter_14_0) then
@@ -360,7 +360,7 @@ function HealthSystem.update_debug(arg_14_0)
 	end
 end
 
-function HealthSystem.rpc_add_damage(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13, arg_15_14, arg_15_15, arg_15_16, arg_15_17, arg_15_18, arg_15_19, arg_15_20, arg_15_21, arg_15_22)
+HealthSystem.rpc_add_damage = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13, arg_15_14, arg_15_15, arg_15_16, arg_15_17, arg_15_18, arg_15_19, arg_15_20, arg_15_21, arg_15_22)
 	fassert(not arg_15_0.is_server, "Tried sending rpc_add_damage to something other than client")
 
 	local var_15_0
@@ -429,7 +429,7 @@ function HealthSystem.rpc_add_damage(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg
 	end
 end
 
-function HealthSystem.rpc_add_damage_network(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13, arg_16_14, arg_16_15, arg_16_16, arg_16_17, arg_16_18, arg_16_19)
+HealthSystem.rpc_add_damage_network = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13, arg_16_14, arg_16_15, arg_16_16, arg_16_17, arg_16_18, arg_16_19)
 	fassert(arg_16_0.is_server, "Tried sending rpc_add_damage_network to something other than the server")
 
 	local var_16_0
@@ -473,7 +473,7 @@ function HealthSystem.rpc_add_damage_network(arg_16_0, arg_16_1, arg_16_2, arg_1
 	DamageUtils.add_damage_network(var_16_0, var_16_2, arg_16_7, var_16_5, var_16_6, arg_16_10, arg_16_11, var_16_7, var_16_9, var_16_10, var_16_11, var_16_8, arg_16_14, arg_16_15, arg_16_16, arg_16_17, arg_16_18, nil, arg_16_19)
 end
 
-function HealthSystem.rpc_damage_taken_overcharge(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+HealthSystem.rpc_damage_taken_overcharge = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_2)
 
 	if var_17_0 then
@@ -481,7 +481,7 @@ function HealthSystem.rpc_damage_taken_overcharge(arg_17_0, arg_17_1, arg_17_2, 
 	end
 end
 
-function HealthSystem.rpc_heal(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+HealthSystem.rpc_heal = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
 	local var_18_0
 	local var_18_1 = arg_18_0.unit_storage
 
@@ -530,13 +530,13 @@ function HealthSystem.rpc_heal(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4,
 	end
 end
 
-function HealthSystem.rpc_remove_assist_shield(arg_19_0, arg_19_1, arg_19_2)
+HealthSystem.rpc_remove_assist_shield = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.unit_storage:unit(arg_19_2)
 
 	arg_19_0.unit_extensions[var_19_0]:remove_assist_shield("blocked_damage")
 end
 
-function HealthSystem.rpc_request_heal(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+HealthSystem.rpc_request_heal = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	fassert(arg_20_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a heal from a client")
 
 	local var_20_0 = arg_20_0.unit_storage:unit(arg_20_2)
@@ -571,7 +571,7 @@ function HealthSystem.rpc_request_heal(arg_20_0, arg_20_1, arg_20_2, arg_20_3, a
 	end
 end
 
-function HealthSystem.rpc_request_convert_temp(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+HealthSystem.rpc_request_convert_temp = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	fassert(arg_21_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a health convert from a client")
 
 	local var_21_0 = arg_21_0.unit_storage:unit(arg_21_2)
@@ -583,13 +583,13 @@ function HealthSystem.rpc_request_convert_temp(arg_21_0, arg_21_1, arg_21_2, arg
 	arg_21_0.unit_extensions[var_21_0]:convert_to_temp(arg_21_3)
 end
 
-function HealthSystem.rpc_suicide(arg_22_0, arg_22_1, arg_22_2)
+HealthSystem.rpc_suicide = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0.unit_storage:unit(arg_22_2)
 
 	arg_22_0:suicide(var_22_0)
 end
 
-function HealthSystem.rpc_sync_damage_taken(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+HealthSystem.rpc_sync_damage_taken = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 	fassert(not arg_23_0.is_server, "rpc_sync_damage_taken was sent to server, only clients should receive this!")
 
 	local var_23_0
@@ -620,7 +620,7 @@ function HealthSystem.rpc_sync_damage_taken(arg_23_0, arg_23_1, arg_23_2, arg_23
 	end
 end
 
-function HealthSystem.rpc_take_falling_damage(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+HealthSystem.rpc_take_falling_damage = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 
 	if not var_24_0 or not Unit.alive(var_24_0) then
@@ -655,7 +655,7 @@ function HealthSystem.rpc_take_falling_damage(arg_24_0, arg_24_1, arg_24_2, arg_
 	end
 end
 
-function HealthSystem.rpc_request_knock_down(arg_25_0, arg_25_1, arg_25_2)
+HealthSystem.rpc_request_knock_down = function (arg_25_0, arg_25_1, arg_25_2)
 	fassert(arg_25_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a knock down from a client")
 
 	local var_25_0 = arg_25_0.unit_storage:unit(arg_25_2)
@@ -663,7 +663,7 @@ function HealthSystem.rpc_request_knock_down(arg_25_0, arg_25_1, arg_25_2)
 	ScriptUnit.extension(var_25_0, "health_system"):knock_down(var_25_0)
 end
 
-function HealthSystem.rpc_request_heal_wounds(arg_26_0, arg_26_1, arg_26_2)
+HealthSystem.rpc_request_heal_wounds = function (arg_26_0, arg_26_1, arg_26_2)
 	fassert(arg_26_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a wound heal from a client")
 
 	local var_26_0 = arg_26_0.unit_storage:unit(arg_26_2)
@@ -671,7 +671,7 @@ function HealthSystem.rpc_request_heal_wounds(arg_26_0, arg_26_1, arg_26_2)
 	StatusUtils.set_wounded_network(var_26_0, false, "healed")
 end
 
-function HealthSystem.rpc_request_revive(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HealthSystem.rpc_request_revive = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	fassert(arg_27_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a revive from a client")
 
 	local var_27_0 = arg_27_0.unit_storage:unit(arg_27_2)
@@ -692,7 +692,7 @@ function HealthSystem.rpc_request_revive(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	Managers.telemetry_events:player_revived(var_27_3, var_27_4, var_27_5)
 end
 
-function HealthSystem.rpc_request_insta_kill(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+HealthSystem.rpc_request_insta_kill = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	fassert(arg_28_0.is_server or LEVEL_EDITOR_TEST, "Trying to request a insta kill from a client")
 
 	local var_28_0 = arg_28_0.unit_storage:unit(arg_28_2)

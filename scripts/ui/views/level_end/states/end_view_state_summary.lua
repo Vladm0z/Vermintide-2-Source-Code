@@ -6,7 +6,7 @@ EndViewStateSummary = class(EndViewStateSummary)
 EndViewStateSummary.NAME = "EndViewStateSummary"
 EndViewStateSummary.CAN_SPEED_UP = true
 
-function EndViewStateSummary.on_enter(arg_1_0, arg_1_1)
+EndViewStateSummary.on_enter = function (arg_1_0, arg_1_1)
 	print("[EndViewState] Enter Substate EndViewStateSummary")
 
 	arg_1_0._params = arg_1_1
@@ -85,7 +85,7 @@ function EndViewStateSummary.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_play_sound("play_gui_mission_summary_appear")
 end
 
-function EndViewStateSummary.exit(arg_2_0, arg_2_1)
+EndViewStateSummary.exit = function (arg_2_0, arg_2_1)
 	arg_2_0._exit_started = true
 
 	arg_2_0:_start_transition_animation("on_enter", "transition_exit")
@@ -102,15 +102,15 @@ function EndViewStateSummary.exit(arg_2_0, arg_2_1)
 	end
 end
 
-function EndViewStateSummary.exit_done(arg_3_0)
+EndViewStateSummary.exit_done = function (arg_3_0)
 	return arg_3_0._exit_started and arg_3_0._animations.on_enter == nil
 end
 
-function EndViewStateSummary._get_definitions(arg_4_0)
+EndViewStateSummary._get_definitions = function (arg_4_0)
 	return local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
 end
 
-function EndViewStateSummary.create_ui_elements(arg_5_0, arg_5_1)
+EndViewStateSummary.create_ui_elements = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0:_get_definitions()
 	local var_5_1 = var_5_0.widgets
 	local var_5_2 = var_5_0.summary_entry_widgets
@@ -152,21 +152,21 @@ function EndViewStateSummary.create_ui_elements(arg_5_0, arg_5_1)
 	arg_5_0.ui_animator = UIAnimator:new(arg_5_0.ui_scenegraph, var_5_4)
 end
 
-function EndViewStateSummary._wanted_state(arg_6_0)
+EndViewStateSummary._wanted_state = function (arg_6_0)
 	return (arg_6_0.parent:wanted_menu_state())
 end
 
-function EndViewStateSummary.set_input_manager(arg_7_0, arg_7_1)
+EndViewStateSummary.set_input_manager = function (arg_7_0, arg_7_1)
 	arg_7_0.input_manager = arg_7_1
 end
 
-function EndViewStateSummary.on_exit(arg_8_0, arg_8_1)
+EndViewStateSummary.on_exit = function (arg_8_0, arg_8_1)
 	print("[EndViewState] Exit Substate EndViewStateSummary")
 
 	arg_8_0.ui_animator = nil
 end
 
-function EndViewStateSummary._update_transition_timer(arg_9_0, arg_9_1)
+EndViewStateSummary._update_transition_timer = function (arg_9_0, arg_9_1)
 	if not arg_9_0._transition_timer then
 		return
 	end
@@ -178,7 +178,7 @@ function EndViewStateSummary._update_transition_timer(arg_9_0, arg_9_1)
 	end
 end
 
-function EndViewStateSummary.update(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateSummary.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if var_0_0 then
 		arg_10_0:on_enter(arg_10_0._params)
 	end
@@ -218,11 +218,11 @@ function EndViewStateSummary.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function EndViewStateSummary.post_update(arg_11_0, arg_11_1, arg_11_2)
+EndViewStateSummary.post_update = function (arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-function EndViewStateSummary._update_animations(arg_12_0, arg_12_1)
+EndViewStateSummary._update_animations = function (arg_12_0, arg_12_1)
 	for iter_12_0, iter_12_1 in pairs(arg_12_0._ui_animations) do
 		UIAnimation.update(iter_12_1, arg_12_1)
 
@@ -260,11 +260,11 @@ function EndViewStateSummary._update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function EndViewStateSummary._handle_input(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateSummary._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._widgets_by_name
 end
 
-function EndViewStateSummary.draw(arg_14_0, arg_14_1, arg_14_2)
+EndViewStateSummary.draw = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_scenegraph
 	local var_14_2 = arg_14_0.render_settings
@@ -290,7 +290,7 @@ function EndViewStateSummary.draw(arg_14_0, arg_14_1, arg_14_2)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function EndViewStateSummary._start_transition_animation(arg_15_0, arg_15_1, arg_15_2)
+EndViewStateSummary._start_transition_animation = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = {
 		wwise_world = arg_15_0.wwise_world,
 		render_settings = arg_15_0.render_settings
@@ -301,7 +301,7 @@ function EndViewStateSummary._start_transition_animation(arg_15_0, arg_15_1, arg
 	arg_15_0._animations[arg_15_1] = var_15_2
 end
 
-function EndViewStateSummary._start_animation(arg_16_0, arg_16_1, arg_16_2)
+EndViewStateSummary._start_animation = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = {
 		wwise_world = arg_16_0.wwise_world,
 		render_settings = arg_16_0.render_settings
@@ -312,21 +312,21 @@ function EndViewStateSummary._start_animation(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._animations[arg_16_1] = var_16_2
 end
 
-function EndViewStateSummary._animate_element_by_time(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+EndViewStateSummary._animate_element_by_time = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, math.ease_out_quad))
 end
 
-function EndViewStateSummary._animate_element_by_catmullrom(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+EndViewStateSummary._animate_element_by_catmullrom = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8))
 end
 
-function EndViewStateSummary._initialize_entries(arg_19_0)
+EndViewStateSummary._initialize_entries = function (arg_19_0)
 	local var_19_0, var_19_1 = arg_19_0:_get_summary_entries(arg_19_0.game_won, arg_19_0.game_mode_key)
 
 	arg_19_0._summary_entries = var_19_0
 end
 
-function EndViewStateSummary._get_summary_entries(arg_20_0, arg_20_1, arg_20_2)
+EndViewStateSummary._get_summary_entries = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._context.rewards.mission_results
 	local var_20_1 = arg_20_0._entry_widgets
 	local var_20_2 = {}
@@ -379,7 +379,7 @@ function EndViewStateSummary._get_summary_entries(arg_20_0, arg_20_1, arg_20_2)
 	return var_20_2, var_20_4
 end
 
-function EndViewStateSummary._animate_summary_entries(arg_21_0, arg_21_1)
+EndViewStateSummary._animate_summary_entries = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._summary_entries
 
 	if not var_21_0 or var_21_0.complete then
@@ -423,11 +423,11 @@ function EndViewStateSummary._animate_summary_entries(arg_21_0, arg_21_1)
 	var_21_0.complete = var_21_4
 
 	if var_21_4 then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function EndViewStateSummary._get_essence_earned(arg_22_0)
+EndViewStateSummary._get_essence_earned = function (arg_22_0)
 	local var_22_0 = arg_22_0._context.rewards.end_of_level_rewards.essence
 
 	if not var_22_0 then
@@ -441,7 +441,7 @@ function EndViewStateSummary._get_essence_earned(arg_22_0)
 	return var_22_0[1].awarded
 end
 
-function EndViewStateSummary._setup_essence_presentation(arg_23_0)
+EndViewStateSummary._setup_essence_presentation = function (arg_23_0)
 	local var_23_0 = arg_23_0:_get_essence_earned()
 	local var_23_1 = Managers.unlock:is_dlc_unlocked("scorpion") and var_23_0 ~= nil
 	local var_23_2 = arg_23_0._widgets_by_name
@@ -482,7 +482,7 @@ function EndViewStateSummary._setup_essence_presentation(arg_23_0)
 	var_23_2.essence_total_text_max.content.visible = var_23_1 and not var_23_3
 end
 
-function EndViewStateSummary._get_total_experience_progress_data(arg_24_0, arg_24_1, arg_24_2)
+EndViewStateSummary._get_total_experience_progress_data = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0, var_24_1 = ExperienceSettings.get_level(arg_24_1)
 	local var_24_2, var_24_3 = ExperienceSettings.get_extra_level(arg_24_2)
 	local var_24_4 = arg_24_0._hero_name
@@ -525,7 +525,7 @@ function EndViewStateSummary._get_total_experience_progress_data(arg_24_0, arg_2
 	}
 end
 
-function EndViewStateSummary._animate_experience_bar(arg_25_0, arg_25_1, arg_25_2)
+EndViewStateSummary._animate_experience_bar = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._progress_data
 
 	if not var_25_0 or var_25_0.complete or arg_25_2 or arg_25_0.level_up_anim_id or arg_25_0._experience_presentation_completed then
@@ -581,7 +581,7 @@ function EndViewStateSummary._animate_experience_bar(arg_25_0, arg_25_1, arg_25_
 	end
 end
 
-function EndViewStateSummary._set_current_experience(arg_26_0, arg_26_1)
+EndViewStateSummary._set_current_experience = function (arg_26_0, arg_26_1)
 	local var_26_0, var_26_1 = ExperienceSettings.get_level(arg_26_1)
 	local var_26_2 = 0
 
@@ -619,15 +619,15 @@ function EndViewStateSummary._set_current_experience(arg_26_0, arg_26_1)
 	return var_26_0, var_26_2
 end
 
-function EndViewStateSummary.done(arg_27_0)
+EndViewStateSummary.done = function (arg_27_0)
 	return arg_27_0._experience_presentation_completed and arg_27_0._summary_entries.complete
 end
 
-function EndViewStateSummary._play_sound(arg_28_0, arg_28_1)
+EndViewStateSummary._play_sound = function (arg_28_0, arg_28_1)
 	arg_28_0.parent:play_sound(arg_28_1)
 end
 
-function EndViewStateSummary._set_player_count_presence(arg_29_0, arg_29_1)
+EndViewStateSummary._set_player_count_presence = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_1.players_session_score
 	local var_29_1 = 0
 

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_cowbell_arena.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nfl_shadow_curse_arena_a",
 		name = "nfl_shadow_curse_arena_a",

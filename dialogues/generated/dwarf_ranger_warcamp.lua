@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_warcamp.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "ecc_chaos_war_camp_challenge",
 		name = "ecc_chaos_war_camp_challenge",

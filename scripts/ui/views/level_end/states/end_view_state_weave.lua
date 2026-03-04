@@ -22,7 +22,7 @@ end
 EndViewStateWeave = class(EndViewStateWeave)
 EndViewStateWeave.NAME = "EndViewStateWeave"
 
-function EndViewStateWeave.on_enter(arg_2_0, arg_2_1)
+EndViewStateWeave.on_enter = function (arg_2_0, arg_2_1)
 	print("[PlayState] Enter Substate EndViewStateWeave")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -66,7 +66,7 @@ function EndViewStateWeave.on_enter(arg_2_0, arg_2_1)
 	arg_2_0.parent:_push_mouse_cursor()
 end
 
-function EndViewStateWeave.exit(arg_3_0, arg_3_1)
+EndViewStateWeave.exit = function (arg_3_0, arg_3_1)
 	arg_3_0._exit_started = true
 
 	arg_3_0:_start_transition_animation("on_enter", "transition_exit")
@@ -79,15 +79,15 @@ function EndViewStateWeave.exit(arg_3_0, arg_3_1)
 	arg_3_0:_play_sound("stop_gui_mission_summary_wom")
 end
 
-function EndViewStateWeave.exit_done(arg_4_0)
+EndViewStateWeave.exit_done = function (arg_4_0)
 	return arg_4_0._exit_started and arg_4_0._animations.on_enter == nil
 end
 
-function EndViewStateWeave.done(arg_5_0)
+EndViewStateWeave.done = function (arg_5_0)
 	return arg_5_0._screen_done or arg_5_0.parent:get_all_signaled_done()
 end
 
-function EndViewStateWeave.create_ui_elements(arg_6_0, arg_6_1)
+EndViewStateWeave.create_ui_elements = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_6_0 = {}
@@ -119,21 +119,21 @@ function EndViewStateWeave.create_ui_elements(arg_6_0, arg_6_1)
 	arg_6_0._menu_input_description:set_input_description(var_0_6.show_profile)
 end
 
-function EndViewStateWeave._wanted_state(arg_7_0)
+EndViewStateWeave._wanted_state = function (arg_7_0)
 	return (arg_7_0.parent:wanted_menu_state())
 end
 
-function EndViewStateWeave.set_input_manager(arg_8_0, arg_8_1)
+EndViewStateWeave.set_input_manager = function (arg_8_0, arg_8_1)
 	arg_8_0.input_manager = arg_8_1
 end
 
-function EndViewStateWeave.on_exit(arg_9_0, arg_9_1)
+EndViewStateWeave.on_exit = function (arg_9_0, arg_9_1)
 	print("[PlayState] Exit Substate EndViewStateWeave")
 
 	arg_9_0.ui_animator = nil
 end
 
-function EndViewStateWeave._update_transition_timer(arg_10_0, arg_10_1)
+EndViewStateWeave._update_transition_timer = function (arg_10_0, arg_10_1)
 	if not arg_10_0._transition_timer then
 		return
 	end
@@ -145,7 +145,7 @@ function EndViewStateWeave._update_transition_timer(arg_10_0, arg_10_1)
 	end
 end
 
-function EndViewStateWeave.update(arg_11_0, arg_11_1, arg_11_2)
+EndViewStateWeave.update = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.input_manager:get_service("end_of_level")
 
 	arg_11_0:draw(var_11_0, arg_11_1)
@@ -172,7 +172,7 @@ function EndViewStateWeave.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function EndViewStateWeave._update_ready(arg_12_0, arg_12_1, arg_12_2)
+EndViewStateWeave._update_ready = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent:is_force_shutdown_active()
 	local var_12_1 = arg_12_0._ready_timer_widget
 
@@ -190,7 +190,7 @@ function EndViewStateWeave._update_ready(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function EndViewStateWeave._handle_input(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateWeave._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	if UIUtils.is_button_hover_enter(arg_13_0._ready_button_widget) then
 		arg_13_0:_play_sound("play_gui_start_menu_button_hover")
 	end
@@ -208,7 +208,7 @@ function EndViewStateWeave._handle_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function EndViewStateWeave._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2)
+EndViewStateWeave._handle_gamepad_input = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Managers.input:get_service("end_of_level")
 
 	if var_14_0:get("confirm_press") then
@@ -255,7 +255,7 @@ function EndViewStateWeave._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function EndViewStateWeave._show_profile_by_peer_id(arg_15_0, arg_15_1)
+EndViewStateWeave._show_profile_by_peer_id = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.platform
 
 	if IS_WINDOWS and rawget(_G, "Steam") then
@@ -274,7 +274,7 @@ function EndViewStateWeave._show_profile_by_peer_id(arg_15_0, arg_15_1)
 	end
 end
 
-function EndViewStateWeave._update_animations(arg_16_0, arg_16_1)
+EndViewStateWeave._update_animations = function (arg_16_0, arg_16_1)
 	for iter_16_0, iter_16_1 in pairs(arg_16_0._ui_animations) do
 		UIAnimation.update(iter_16_1, arg_16_1)
 
@@ -317,7 +317,7 @@ function EndViewStateWeave._update_animations(arg_16_0, arg_16_1)
 	end
 end
 
-function EndViewStateWeave.draw(arg_17_0, arg_17_1, arg_17_2)
+EndViewStateWeave.draw = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.ui_renderer
 	local var_17_1 = arg_17_0.ui_top_renderer
 	local var_17_2 = arg_17_0.ui_scenegraph
@@ -336,7 +336,7 @@ function EndViewStateWeave.draw(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function EndViewStateWeave._start_transition_animation(arg_18_0, arg_18_1, arg_18_2)
+EndViewStateWeave._start_transition_animation = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = {
 		wwise_world = arg_18_0.wwise_world,
 		render_settings = arg_18_0.render_settings
@@ -347,7 +347,7 @@ function EndViewStateWeave._start_transition_animation(arg_18_0, arg_18_1, arg_1
 	arg_18_0._animations[arg_18_1] = var_18_2
 end
 
-function EndViewStateWeave._start_score_count_animation(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+EndViewStateWeave._start_score_count_animation = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = {}
 
 	arg_19_3.start_font_size = arg_19_3.widget.style.text.font_size
@@ -359,15 +359,15 @@ function EndViewStateWeave._start_score_count_animation(arg_19_0, arg_19_1, arg_
 	arg_19_0._animations[arg_19_1] = var_19_1
 end
 
-function EndViewStateWeave._animate_element_by_time(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+EndViewStateWeave._animate_element_by_time = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, math.ease_out_quad))
 end
 
-function EndViewStateWeave._animate_element_by_catmullrom(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+EndViewStateWeave._animate_element_by_catmullrom = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8))
 end
 
-function EndViewStateWeave._setup_team_results(arg_22_0, arg_22_1)
+EndViewStateWeave._setup_team_results = function (arg_22_0, arg_22_1)
 	local var_22_0 = {}
 
 	for iter_22_0 in pairs(arg_22_1) do
@@ -399,7 +399,7 @@ function EndViewStateWeave._setup_team_results(arg_22_0, arg_22_1)
 	arg_22_0:_move_profile_selector(1)
 end
 
-function EndViewStateWeave._move_profile_selector(arg_23_0, arg_23_1)
+EndViewStateWeave._move_profile_selector = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._player_count
 	local var_23_1 = arg_23_0._widgets_by_name.profile_selector
 	local var_23_2 = var_0_7 * (arg_23_1 - var_23_0 / 2 - 0.5)
@@ -427,7 +427,7 @@ function EndViewStateWeave._move_profile_selector(arg_23_0, arg_23_1)
 	end
 end
 
-function EndViewStateWeave._fill_portrait(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+EndViewStateWeave._fill_portrait = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	local var_24_0 = arg_24_0._player_count
 	local var_24_1 = var_0_7 * (arg_24_1 - var_24_0 / 2 - 0.5)
 	local var_24_2 = arg_24_2 or "default"
@@ -468,7 +468,7 @@ function EndViewStateWeave._fill_portrait(arg_24_0, arg_24_1, arg_24_2, arg_24_3
 	end
 end
 
-function EndViewStateWeave._setup_score_panel(arg_25_0)
+EndViewStateWeave._setup_score_panel = function (arg_25_0)
 	local var_25_0 = Managers.weave
 	local var_25_1 = arg_25_0.game_won
 	local var_25_2 = arg_25_0._completed_weave and WeaveSettings.templates[arg_25_0._completed_weave]
@@ -530,6 +530,6 @@ function EndViewStateWeave._setup_score_panel(arg_25_0)
 	end
 end
 
-function EndViewStateWeave._play_sound(arg_26_0, arg_26_1)
+EndViewStateWeave._play_sound = function (arg_26_0, arg_26_1)
 	arg_26_0.parent:play_sound(arg_26_1)
 end

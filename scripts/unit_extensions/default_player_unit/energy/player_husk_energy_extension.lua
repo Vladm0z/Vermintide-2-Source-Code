@@ -4,7 +4,7 @@ require("scripts/unit_extensions/default_player_unit/energy/energy_data")
 
 PlayerHuskEnergyExtension = class(PlayerHuskEnergyExtension)
 
-function PlayerHuskEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskEnergyExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.network_manager = Managers.state.network
 	arg_1_0.unit = arg_1_2
 
@@ -20,19 +20,19 @@ function PlayerHuskEnergyExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._previous_can_drain = arg_1_0:is_drainable()
 end
 
-function PlayerHuskEnergyExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerHuskEnergyExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function PlayerHuskEnergyExtension.reset(arg_3_0)
+PlayerHuskEnergyExtension.reset = function (arg_3_0)
 	return
 end
 
-function PlayerHuskEnergyExtension.destroy(arg_4_0)
+PlayerHuskEnergyExtension.destroy = function (arg_4_0)
 	return
 end
 
-function PlayerHuskEnergyExtension._update_game_object(arg_5_0)
+PlayerHuskEnergyExtension._update_game_object = function (arg_5_0)
 	local var_5_0 = arg_5_0.network_manager
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = var_5_0:game()
@@ -47,7 +47,7 @@ function PlayerHuskEnergyExtension._update_game_object(arg_5_0)
 	end
 end
 
-function PlayerHuskEnergyExtension._update_events(arg_6_0)
+PlayerHuskEnergyExtension._update_events = function (arg_6_0)
 	local var_6_0 = arg_6_0._previous_can_drain
 	local var_6_1 = arg_6_0:is_drainable()
 
@@ -62,20 +62,20 @@ function PlayerHuskEnergyExtension._update_events(arg_6_0)
 	arg_6_0._previous_can_drain = var_6_1
 end
 
-function PlayerHuskEnergyExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+PlayerHuskEnergyExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_0:_update_game_object()
 	arg_7_0:_update_events()
 end
 
-function PlayerHuskEnergyExtension.drain(arg_8_0)
+PlayerHuskEnergyExtension.drain = function (arg_8_0)
 	return
 end
 
-function PlayerHuskEnergyExtension.get_max(arg_9_0)
+PlayerHuskEnergyExtension.get_max = function (arg_9_0)
 	return arg_9_0._max_energy
 end
 
-function PlayerHuskEnergyExtension.is_drainable(arg_10_0)
+PlayerHuskEnergyExtension.is_drainable = function (arg_10_0)
 	local var_10_0 = arg_10_0:is_depleted()
 	local var_10_1 = arg_10_0:_is_on_depletion_cooldown()
 
@@ -86,23 +86,23 @@ function PlayerHuskEnergyExtension.is_drainable(arg_10_0)
 	return true
 end
 
-function PlayerHuskEnergyExtension.is_depleted(arg_11_0)
+PlayerHuskEnergyExtension.is_depleted = function (arg_11_0)
 	return arg_11_0._energy <= 0
 end
 
-function PlayerHuskEnergyExtension.get_fraction(arg_12_0)
+PlayerHuskEnergyExtension.get_fraction = function (arg_12_0)
 	return math.clamp(arg_12_0._energy / arg_12_0._max_energy, 0, 1)
 end
 
-function PlayerHuskEnergyExtension._is_recharging(arg_13_0)
+PlayerHuskEnergyExtension._is_recharging = function (arg_13_0)
 	return arg_13_0._recharge_delay_timer <= Managers.time:time("game")
 end
 
-function PlayerHuskEnergyExtension._is_on_depletion_cooldown(arg_14_0)
+PlayerHuskEnergyExtension._is_on_depletion_cooldown = function (arg_14_0)
 	return arg_14_0._depletion_cooldown_active
 end
 
-function PlayerHuskEnergyExtension._broadcast_equipment_flow_event(arg_15_0, arg_15_1)
+PlayerHuskEnergyExtension._broadcast_equipment_flow_event = function (arg_15_0, arg_15_1)
 	local var_15_0 = ScriptUnit.has_extension(arg_15_0.unit, "inventory_system")
 	local var_15_1 = var_15_0 and var_15_0:equipment()
 

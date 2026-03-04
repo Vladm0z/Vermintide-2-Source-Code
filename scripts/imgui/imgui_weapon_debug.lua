@@ -16,7 +16,7 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	Gui.text(arg_1_0, arg_1_1, var_0_3, arg_1_2, var_0_2, arg_1_3 + var_1_0, arg_1_4)
 end
 
-function ImguiWeaponDebug.init(arg_2_0)
+ImguiWeaponDebug.init = function (arg_2_0)
 	arg_2_0._draw_hit_box = false
 	arg_2_0._draw_chain_action_data = true
 	arg_2_0._display_current_action = true
@@ -73,7 +73,7 @@ function ImguiWeaponDebug.init(arg_2_0)
 	arg_2_0:_refresh_unit_list()
 end
 
-function ImguiWeaponDebug.update(arg_3_0)
+ImguiWeaponDebug.update = function (arg_3_0)
 	if var_0_0 then
 		arg_3_0:init()
 
@@ -114,11 +114,11 @@ function ImguiWeaponDebug.update(arg_3_0)
 	end
 end
 
-function ImguiWeaponDebug.is_persistent(arg_4_0)
+ImguiWeaponDebug.is_persistent = function (arg_4_0)
 	return arg_4_0._draw_chain_action_data or arg_4_0._draw_hit_box
 end
 
-function ImguiWeaponDebug.draw(arg_5_0)
+ImguiWeaponDebug.draw = function (arg_5_0)
 	local var_5_0 = Imgui.begin_window("Weapon Debug", "menu_bar")
 
 	if Imgui.begin_menu_bar() then
@@ -202,7 +202,7 @@ function ImguiWeaponDebug.draw(arg_5_0)
 	return var_5_0
 end
 
-function ImguiWeaponDebug._refresh_unit_list(arg_6_0)
+ImguiWeaponDebug._refresh_unit_list = function (arg_6_0)
 	arg_6_0._unit_names = {}
 	arg_6_0._units = {}
 	arg_6_0._selected_unit = -1
@@ -232,7 +232,7 @@ function ImguiWeaponDebug._refresh_unit_list(arg_6_0)
 	end
 end
 
-function ImguiWeaponDebug._initialize_unit(arg_7_0, arg_7_1)
+ImguiWeaponDebug._initialize_unit = function (arg_7_0, arg_7_1)
 	arg_7_0._current_unit = arg_7_1
 	arg_7_0._weapon_unit_left = nil
 	arg_7_0._weapon_unit_right = nil
@@ -377,7 +377,7 @@ function ImguiWeaponDebug._initialize_unit(arg_7_0, arg_7_1)
 	end
 end
 
-function ImguiWeaponDebug._draw_basic_info(arg_8_0)
+ImguiWeaponDebug._draw_basic_info = function (arg_8_0)
 	local var_8_0 = arg_8_0._combat_current_weapon
 	local var_8_1 = arg_8_0._combat_current_weapon_name or "-"
 
@@ -448,7 +448,7 @@ function ImguiWeaponDebug._draw_basic_info(arg_8_0)
 	end
 end
 
-function ImguiWeaponDebug._draw_damage_info(arg_9_0)
+ImguiWeaponDebug._draw_damage_info = function (arg_9_0)
 	Imgui.separator()
 	Imgui.text("Damage Information")
 
@@ -474,7 +474,7 @@ function ImguiWeaponDebug._draw_damage_info(arg_9_0)
 	end
 end
 
-function ImguiWeaponDebug._update_combat_settings(arg_10_0)
+ImguiWeaponDebug._update_combat_settings = function (arg_10_0)
 	arg_10_0._combat_use_current_power_level = Imgui.checkbox("Use Current Power Level", arg_10_0._combat_use_current_power_level)
 
 	if arg_10_0._combat_use_current_power_level then
@@ -503,7 +503,7 @@ function ImguiWeaponDebug._update_combat_settings(arg_10_0)
 	end
 end
 
-function ImguiWeaponDebug._draw_faction_combat_info(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+ImguiWeaponDebug._draw_faction_combat_info = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
 	local var_11_0 = 1
 	local var_11_1 = 8
 	local var_11_2 = string.format("%7s%6s", "%2d", "")
@@ -615,7 +615,7 @@ function ImguiWeaponDebug._draw_faction_combat_info(arg_11_0, arg_11_1, arg_11_2
 	end
 end
 
-function ImguiWeaponDebug._get_current_weapon(arg_12_0)
+ImguiWeaponDebug._get_current_weapon = function (arg_12_0)
 	if not arg_12_0._display_current_action then
 		for iter_12_0, iter_12_1 in pairs(arg_12_0._weapon_extensions) do
 			if iter_12_1 then
@@ -637,7 +637,7 @@ function ImguiWeaponDebug._get_current_weapon(arg_12_0)
 	return nil
 end
 
-function ImguiWeaponDebug._get_current_action(arg_13_0)
+ImguiWeaponDebug._get_current_action = function (arg_13_0)
 	if not arg_13_0._display_current_action then
 		local var_13_0 = arg_13_0._selected_action >= 0 and arg_13_0._action_list[arg_13_0._selected_action]
 		local var_13_1 = var_13_0 and arg_13_0._sub_action_list[var_13_0] or {}
@@ -660,7 +660,7 @@ function ImguiWeaponDebug._get_current_action(arg_13_0)
 	return nil
 end
 
-function ImguiWeaponDebug.debug_draw_chain_data(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+ImguiWeaponDebug.debug_draw_chain_data = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = Debug.gui
 	local var_14_1 = 150
 	local var_14_2 = 20
@@ -795,7 +795,7 @@ function ImguiWeaponDebug.debug_draw_chain_data(arg_14_0, arg_14_1, arg_14_2, ar
 	var_0_4(var_14_0, string.format("%.2f", arg_14_1), var_14_14, Vector3(var_14_59 + 5, var_14_60, 1), var_14_15)
 end
 
-function ImguiWeaponDebug.get_breed_health(arg_15_0, arg_15_1, arg_15_2)
+ImguiWeaponDebug.get_breed_health = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = 0
 	local var_15_1 = DifficultySettings[arg_15_1]
 
@@ -809,7 +809,7 @@ function ImguiWeaponDebug.get_breed_health(arg_15_0, arg_15_1, arg_15_2)
 	return var_15_0
 end
 
-function ImguiWeaponDebug.get_breed_stagger(arg_16_0, arg_16_1, arg_16_2)
+ImguiWeaponDebug.get_breed_stagger = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = 0
 	local var_16_1 = 0
 	local var_16_2 = 0
@@ -828,7 +828,7 @@ function ImguiWeaponDebug.get_breed_stagger(arg_16_0, arg_16_1, arg_16_2)
 	return var_16_0, var_16_1, var_16_2
 end
 
-function ImguiWeaponDebug.get_damage(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+ImguiWeaponDebug.get_damage = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 	local var_17_0 = arg_17_0._current_unit
 	local var_17_1 = arg_17_0._combat_current_weapon
 
@@ -863,7 +863,7 @@ function ImguiWeaponDebug.get_damage(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg
 	return 0
 end
 
-function ImguiWeaponDebug.get_ai_stagger(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
+ImguiWeaponDebug.get_ai_stagger = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8)
 	local var_18_0 = arg_18_0._current_unit
 	local var_18_1 = arg_18_0._combat_current_weapon
 
@@ -874,7 +874,7 @@ function ImguiWeaponDebug.get_ai_stagger(arg_18_0, arg_18_1, arg_18_2, arg_18_3,
 	return 0, 0, 0, 0, 0
 end
 
-function ImguiWeaponDebug._calculate_damage(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13)
+ImguiWeaponDebug._calculate_damage = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13)
 	local var_19_0 = arg_19_2.name
 	local var_19_1
 	local var_19_2 = 0
@@ -890,7 +890,7 @@ function ImguiWeaponDebug._calculate_damage(arg_19_0, arg_19_1, arg_19_2, arg_19
 	return (DamageUtils.networkify_damage(var_19_4))
 end
 
-function ImguiWeaponDebug._calculate_ai_stagger(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9, arg_20_10)
+ImguiWeaponDebug._calculate_ai_stagger = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9, arg_20_10)
 	local var_20_0 = false
 	local var_20_1 = arg_20_2.name
 	local var_20_2 = 0
@@ -899,7 +899,7 @@ function ImguiWeaponDebug._calculate_ai_stagger(arg_20_0, arg_20_1, arg_20_2, ar
 	return var_20_3, var_20_4, var_20_5, var_20_6, var_20_7
 end
 
-function ImguiWeaponDebug._get_damage_profile_for_action(arg_21_0, arg_21_1)
+ImguiWeaponDebug._get_damage_profile_for_action = function (arg_21_0, arg_21_1)
 	if arg_21_1 then
 		local var_21_0 = arg_21_1.weapon_action_hand
 
@@ -913,7 +913,7 @@ function ImguiWeaponDebug._get_damage_profile_for_action(arg_21_0, arg_21_1)
 	return nil, nil
 end
 
-function ImguiWeaponDebug._verify_crits(arg_22_0)
+ImguiWeaponDebug._verify_crits = function (arg_22_0)
 	print("STARTING TEST: verify_crits")
 
 	local var_22_0 = arg_22_0._current_unit
@@ -1015,7 +1015,7 @@ function ImguiWeaponDebug._verify_crits(arg_22_0)
 	print("Done!")
 end
 
-function ImguiWeaponDebug._dump_weapon_performance(arg_23_0)
+ImguiWeaponDebug._dump_weapon_performance = function (arg_23_0)
 	for iter_23_0 in pairs(Weapons) do
 		print(iter_23_0)
 
@@ -1057,7 +1057,7 @@ function ImguiWeaponDebug._dump_weapon_performance(arg_23_0)
 	end
 end
 
-function ImguiWeaponDebug._check_missing_unused_actions(arg_24_0)
+ImguiWeaponDebug._check_missing_unused_actions = function (arg_24_0)
 	local var_24_0 = {
 		weapon_reload = {
 			auto_reload_on_empty = true

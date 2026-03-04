@@ -15,10 +15,10 @@ return {
 	description = "description_mutator_geheimnisnacht_2021_hard_mode",
 	display_name = "display_name_mutator_geheimnisnacht_2021_hard_mode",
 	icon = "mutator_icon_geheimnisnacht_2021_difficulty",
-	server_ai_spawned_function = function(arg_1_0, arg_1_1, arg_1_2)
+	server_ai_spawned_function = function (arg_1_0, arg_1_1, arg_1_2)
 		arg_1_1.enemies_to_be_buffed[#arg_1_1.enemies_to_be_buffed + 1] = arg_1_2
 	end,
-	server_stop_function = function(arg_2_0, arg_2_1, arg_2_2)
+	server_stop_function = function (arg_2_0, arg_2_1, arg_2_2)
 		if not arg_2_2 then
 			Managers.telemetry_events:geheimnisnacht_hard_mode_toggled(false)
 		end
@@ -42,13 +42,13 @@ return {
 			end
 		end
 	end,
-	client_start_function = function(arg_3_0, arg_3_1)
+	client_start_function = function (arg_3_0, arg_3_1)
 		local var_3_0 = true
 		local var_3_1 = Localize("system_chat_geheimnisnacht_2021_hard_mode_on")
 
 		Managers.chat:add_local_system_message(1, var_3_1, var_3_0)
 	end,
-	client_stop_function = function(arg_4_0, arg_4_1, arg_4_2)
+	client_stop_function = function (arg_4_0, arg_4_1, arg_4_2)
 		if not arg_4_2 then
 			local var_4_0 = true
 			local var_4_1 = Localize("system_chat_geheimnisnacht_2021_hard_mode_off")
@@ -75,7 +75,7 @@ return {
 			end
 		end
 	end,
-	server_start_function = function(arg_5_0, arg_5_1)
+	server_start_function = function (arg_5_0, arg_5_1)
 		Managers.telemetry_events:geheimnisnacht_hard_mode_toggled(true)
 
 		local var_5_0 = Managers.state.side:get_side_from_name("heroes"):enemy_units()
@@ -100,7 +100,7 @@ return {
 			end
 		end
 	end,
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = arg_6_1.enemies_to_be_buffed
 
 		if table.size(var_6_0) == 0 then
@@ -119,7 +119,7 @@ return {
 			end
 		end
 	end,
-	post_ai_spawned_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	post_ai_spawned_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		local var_7_0 = arg_7_2.name
 		local var_7_1 = var_0_0[var_7_0]
 

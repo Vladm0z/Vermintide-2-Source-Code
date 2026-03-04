@@ -4,28 +4,28 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceLootPlayfab = class(BackendInterfaceLootPlayfab)
 
-function BackendInterfaceLootPlayfab.init(arg_1_0, arg_1_1)
+BackendInterfaceLootPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._last_id = 0
 	arg_1_0._loot_requests = {}
 	arg_1_0._reward_poll_id = false
 end
 
-function BackendInterfaceLootPlayfab.ready(arg_2_0)
+BackendInterfaceLootPlayfab.ready = function (arg_2_0)
 	return true
 end
 
-function BackendInterfaceLootPlayfab.update(arg_3_0, arg_3_1)
+BackendInterfaceLootPlayfab.update = function (arg_3_0, arg_3_1)
 	return
 end
 
-function BackendInterfaceLootPlayfab._new_id(arg_4_0)
+BackendInterfaceLootPlayfab._new_id = function (arg_4_0)
 	arg_4_0._last_id = arg_4_0._last_id + 1
 
 	return arg_4_0._last_id
 end
 
-function BackendInterfaceLootPlayfab.open_loot_chest(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BackendInterfaceLootPlayfab.open_loot_chest = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0:_new_id()
 	local var_5_1 = {
 		hero_name = arg_5_1,
@@ -45,7 +45,7 @@ function BackendInterfaceLootPlayfab.open_loot_chest(arg_5_0, arg_5_1, arg_5_2, 
 	return var_5_0
 end
 
-function BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb(arg_6_0, arg_6_1, arg_6_2)
+BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.FunctionResult
 	local var_6_1 = var_6_0.items
 	local var_6_2 = var_6_0.unlocked_weapon_skins
@@ -148,7 +148,7 @@ function BackendInterfaceLootPlayfab.loot_chest_rewards_request_cb(arg_6_0, arg_
 	arg_6_0._loot_requests[var_6_24] = var_6_11
 end
 
-function BackendInterfaceLootPlayfab.generate_end_of_level_loot(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15)
+BackendInterfaceLootPlayfab.generate_end_of_level_loot = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15)
 	local var_7_0 = arg_7_0:_new_id()
 	local var_7_1 = arg_7_0:_get_remote_player_network_ids_and_characters()
 
@@ -186,7 +186,7 @@ function BackendInterfaceLootPlayfab.generate_end_of_level_loot(arg_7_0, arg_7_1
 	return var_7_0
 end
 
-function BackendInterfaceLootPlayfab.end_of_level_loot_request_cb(arg_8_0, arg_8_1, arg_8_2)
+BackendInterfaceLootPlayfab.end_of_level_loot_request_cb = function (arg_8_0, arg_8_1, arg_8_2)
 	Managers.telemetry_events:end_of_game_rewards(arg_8_2.FunctionResult)
 
 	local var_8_0 = arg_8_2.FunctionResult
@@ -370,7 +370,7 @@ function BackendInterfaceLootPlayfab.end_of_level_loot_request_cb(arg_8_0, arg_8
 	arg_8_0._loot_requests[var_8_1] = var_8_22
 end
 
-function BackendInterfaceLootPlayfab._get_remote_player_network_ids_and_characters(arg_9_0)
+BackendInterfaceLootPlayfab._get_remote_player_network_ids_and_characters = function (arg_9_0)
 	local var_9_0 = {}
 
 	if IS_WINDOWS or IS_LINUX then
@@ -420,17 +420,17 @@ function BackendInterfaceLootPlayfab._get_remote_player_network_ids_and_characte
 	return var_9_0
 end
 
-function BackendInterfaceLootPlayfab.get_achievement_rewards(arg_10_0, arg_10_1)
+BackendInterfaceLootPlayfab.get_achievement_rewards = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._backend_mirror:get_achievement_rewards()
 
 	return var_10_0[arg_10_1] and var_10_0[arg_10_1][1]
 end
 
-function BackendInterfaceLootPlayfab.achievement_rewards_claimed(arg_11_0, arg_11_1)
+BackendInterfaceLootPlayfab.achievement_rewards_claimed = function (arg_11_0, arg_11_1)
 	return arg_11_0._backend_mirror:get_claimed_achievements()[arg_11_1]
 end
 
-function BackendInterfaceLootPlayfab.can_claim_achievement_rewards(arg_12_0, arg_12_1)
+BackendInterfaceLootPlayfab.can_claim_achievement_rewards = function (arg_12_0, arg_12_1)
 	if not arg_12_0._backend_mirror:get_claimed_achievements()[arg_12_1] then
 		return true
 	end
@@ -438,7 +438,7 @@ function BackendInterfaceLootPlayfab.can_claim_achievement_rewards(arg_12_0, arg
 	return false
 end
 
-function BackendInterfaceLootPlayfab.claim_achievement_rewards(arg_13_0, arg_13_1, arg_13_2)
+BackendInterfaceLootPlayfab.claim_achievement_rewards = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._reward_poll_id = true
 
 	local var_13_0 = {
@@ -454,7 +454,7 @@ function BackendInterfaceLootPlayfab.claim_achievement_rewards(arg_13_0, arg_13_
 	arg_13_0._backend_mirror:request_queue():enqueue(var_13_1, var_13_2, true)
 end
 
-function BackendInterfaceLootPlayfab.achievement_rewards_request_cb(arg_14_0, arg_14_1, arg_14_2)
+BackendInterfaceLootPlayfab.achievement_rewards_request_cb = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_2.FunctionResult
 	local var_14_1 = arg_14_1.id
 
@@ -586,7 +586,7 @@ function BackendInterfaceLootPlayfab.achievement_rewards_request_cb(arg_14_0, ar
 	Managers.backend:dirtify_interfaces()
 end
 
-function BackendInterfaceLootPlayfab.can_claim_all_achievement_rewards(arg_15_0, arg_15_1)
+BackendInterfaceLootPlayfab.can_claim_all_achievement_rewards = function (arg_15_0, arg_15_1)
 	local var_15_0 = {}
 	local var_15_1 = {}
 	local var_15_2 = arg_15_0._backend_mirror:get_claimed_achievements()
@@ -610,7 +610,7 @@ end
 
 local var_0_1 = 150
 
-function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	arg_16_0._reward_poll_id = true
 	arg_16_3 = arg_16_3 or 1
 	arg_16_4 = arg_16_4 or var_0_1
@@ -652,7 +652,7 @@ function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards(arg_16_0
 	arg_16_0._backend_mirror:request_queue():enqueue(var_16_7, var_16_8, true)
 end
 
-function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_cb = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 	print("[BackendInterfaceLootPlayfab]:claim_all_achievement_rewards_request_cb: Firing!")
 
 	local var_17_0 = arg_17_6.FunctionResult
@@ -812,11 +812,11 @@ function BackendInterfaceLootPlayfab.claim_multiple_achievement_rewards_request_
 	end
 end
 
-function BackendInterfaceLootPlayfab.polling_reward(arg_18_0)
+BackendInterfaceLootPlayfab.polling_reward = function (arg_18_0)
 	return arg_18_0._reward_poll_id
 end
 
-function BackendInterfaceLootPlayfab.is_loot_generated(arg_19_0, arg_19_1)
+BackendInterfaceLootPlayfab.is_loot_generated = function (arg_19_0, arg_19_1)
 	if arg_19_0._loot_requests[arg_19_1] then
 		return true
 	end
@@ -824,31 +824,31 @@ function BackendInterfaceLootPlayfab.is_loot_generated(arg_19_0, arg_19_1)
 	return false
 end
 
-function BackendInterfaceLootPlayfab.get_loot(arg_20_0, arg_20_1)
+BackendInterfaceLootPlayfab.get_loot = function (arg_20_0, arg_20_1)
 	return arg_20_0._loot_requests[arg_20_1]
 end
 
-function BackendInterfaceLootPlayfab.generate_reward_loot_id(arg_21_0)
+BackendInterfaceLootPlayfab.generate_reward_loot_id = function (arg_21_0)
 	return arg_21_0:_new_id()
 end
 
-function BackendInterfaceLootPlayfab.get_power_level_settings(arg_22_0)
+BackendInterfaceLootPlayfab.get_power_level_settings = function (arg_22_0)
 	return arg_22_0._backend_mirror:get_power_level_settings()
 end
 
-function BackendInterfaceLootPlayfab.debug_override_power_level_settings(arg_23_0, arg_23_1)
+BackendInterfaceLootPlayfab.debug_override_power_level_settings = function (arg_23_0, arg_23_1)
 	arg_23_0._backend_mirror:debug_override_power_level_settings(arg_23_1)
 end
 
-function BackendInterfaceLootPlayfab.get_rarity_tables(arg_24_0)
+BackendInterfaceLootPlayfab.get_rarity_tables = function (arg_24_0)
 	return arg_24_0._backend_mirror:get_rarity_tables()
 end
 
-function BackendInterfaceLootPlayfab.get_formatted_rarity_tables(arg_25_0)
+BackendInterfaceLootPlayfab.get_formatted_rarity_tables = function (arg_25_0)
 	return arg_25_0._backend_mirror:get_formatted_rarity_tables()
 end
 
-function BackendInterfaceLootPlayfab.get_highest_chest_level(arg_26_0, arg_26_1)
+BackendInterfaceLootPlayfab.get_highest_chest_level = function (arg_26_0, arg_26_1)
 	local var_26_0
 	local var_26_1 = cjson.decode(arg_26_0._backend_mirror:get_read_only_data("chest_inventory"))[arg_26_1]
 

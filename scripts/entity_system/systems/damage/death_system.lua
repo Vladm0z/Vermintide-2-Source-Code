@@ -10,7 +10,7 @@ local var_0_1 = {
 }
 local var_0_2 = BLACKBOARDS
 
-function DeathSystem.init(arg_1_0, arg_1_1, arg_1_2)
+DeathSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	DeathSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -29,11 +29,11 @@ function DeathSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._current_death_reaction_killing_blow = nil
 end
 
-function DeathSystem.destroy(arg_2_0)
+DeathSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function DeathSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+DeathSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = ScriptUnit.add_extension(arg_3_0.extension_init_context, arg_3_2, arg_3_3, arg_3_0.NAME, arg_3_4)
 
 	arg_3_0.unit_extensions[arg_3_2] = var_3_0
@@ -46,22 +46,22 @@ function DeathSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_
 	return var_3_0
 end
 
-function DeathSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DeathSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0.unit_extensions[arg_4_2].health_extension = ScriptUnit.extension(arg_4_2, "health_system")
 end
 
-function DeathSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+DeathSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.frozen_unit_extensions[arg_5_1] = nil
 
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
 end
 
-function DeathSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
+DeathSystem.on_freeze_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	ferror("Shouldn't get called, should run during death until unspawned/frozen.")
 end
 
-function DeathSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+DeathSystem._cleanup_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.unit_extensions[arg_7_1]
 
 	if var_7_0 == nil then
@@ -74,7 +74,7 @@ function DeathSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0.active_reactions[var_7_0.network_type][var_7_0.death_reaction_template][arg_7_1] = nil
 end
 
-function DeathSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+DeathSystem.freeze = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	fassert(arg_8_0.frozen_unit_extensions[arg_8_1] == nil, "Extension shouldn't be frozen on death")
 
 	local var_8_0 = arg_8_0.unit_extensions[arg_8_1]
@@ -87,7 +87,7 @@ function DeathSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0.frozen_unit_extensions[arg_8_1] = var_8_0
 end
 
-function DeathSystem.unfreeze(arg_9_0, arg_9_1, arg_9_2)
+DeathSystem.unfreeze = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.frozen_unit_extensions[arg_9_1]
 
 	fassert(var_9_0, "Unit to unfreeze didn't have frozen extension")
@@ -96,11 +96,11 @@ function DeathSystem.unfreeze(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0.unit_extensions[arg_9_1] = var_9_0
 end
 
-function DeathSystem.hot_join_sync(arg_10_0, arg_10_1)
+DeathSystem.hot_join_sync = function (arg_10_0, arg_10_1)
 	return
 end
 
-function DeathSystem.set_death_reaction_template(arg_11_0, arg_11_1, arg_11_2)
+DeathSystem.set_death_reaction_template = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.unit_extensions[arg_11_1]
 
 	var_11_0.death_reaction_template = arg_11_2
@@ -148,7 +148,7 @@ local function var_0_3(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_
 	end
 end
 
-function DeathSystem.update(arg_13_0, arg_13_1, arg_13_2)
+DeathSystem.update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_1.dt
 	local var_13_1 = DeathReactions
 	local var_13_2 = var_13_1.IS_DONE
@@ -185,7 +185,7 @@ local function var_0_4(arg_14_0)
 	return arg_14_0[DamageDataIndex.DAMAGE_TYPE] == "sync_health"
 end
 
-function DeathSystem.kill_unit(arg_15_0, arg_15_1, arg_15_2)
+DeathSystem.kill_unit = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._current_death_reaction_killing_blow = arg_15_2
 
 	local var_15_0 = arg_15_0.unit_extensions[arg_15_1]
@@ -237,7 +237,7 @@ function DeathSystem.kill_unit(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0.death_reactions_to_start[arg_15_1] = arg_15_2
 end
 
-function DeathSystem._create_dummy_killing_blow(arg_16_0, arg_16_1, arg_16_2)
+DeathSystem._create_dummy_killing_blow = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = FrameTable.alloc_table()
 	local var_16_1 = Unit.world_position(arg_16_1, 0)
 	local var_16_2 = var_16_1 and Vector3Aux.box(nil, var_16_1)
@@ -265,7 +265,7 @@ function DeathSystem._create_dummy_killing_blow(arg_16_0, arg_16_1, arg_16_2)
 	return var_16_0
 end
 
-function DeathSystem.forced_kill(arg_17_0, arg_17_1, arg_17_2)
+DeathSystem.forced_kill = function (arg_17_0, arg_17_1, arg_17_2)
 	fassert(Managers.player:is_player_unit(arg_17_1), "Tried to perform forced_kill on non-player unit, ONLY USE THIS FOR PLAYERS!")
 	fassert(arg_17_0.is_server, "Do not call forced_kill on clients. Death should always occur on the server first, so call it on the server and it will sync out to clients.")
 
@@ -279,7 +279,7 @@ function DeathSystem.forced_kill(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0.network_transmit:send_rpc_clients("rpc_forced_kill", var_17_1, var_17_2)
 end
 
-function DeathSystem.rpc_forced_kill(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+DeathSystem.rpc_forced_kill = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_0.unit_storage:unit(arg_18_2)
 	local var_18_1 = NetworkLookup.damage_types[arg_18_3]
 
@@ -294,7 +294,7 @@ function DeathSystem.rpc_forced_kill(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	end
 end
 
-function DeathSystem.get_dead(arg_19_0, arg_19_1)
+DeathSystem.get_dead = function (arg_19_0, arg_19_1)
 	local var_19_0 = 0
 	local var_19_1 = arg_19_0.active_reactions
 
@@ -310,7 +310,7 @@ function DeathSystem.get_dead(arg_19_0, arg_19_1)
 	return var_19_0
 end
 
-function DeathSystem.flow_get_killing_blow_attacker_unit(arg_20_0)
+DeathSystem.flow_get_killing_blow_attacker_unit = function (arg_20_0)
 	local var_20_0 = arg_20_0._current_death_reaction_killing_blow
 
 	return var_20_0 and var_20_0[DamageDataIndex.ATTACKER]

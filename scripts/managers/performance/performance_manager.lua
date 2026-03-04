@@ -2,7 +2,7 @@
 
 PerformanceManager = class(PerformanceManager)
 
-function PerformanceManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PerformanceManager.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._gui = arg_1_1
 	arg_1_0._is_server = arg_1_2
 	arg_1_0._tracked_ai_breeds = {
@@ -88,11 +88,11 @@ function PerformanceManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function PerformanceManager.update(arg_2_0, arg_2_1, arg_2_2)
+PerformanceManager.update = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function PerformanceManager.event_ai_unit_spawned(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PerformanceManager.event_ai_unit_spawned = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if not arg_3_0._tracked_ai_breeds[arg_3_2] then
 		return
 	end
@@ -108,7 +108,7 @@ function PerformanceManager.event_ai_unit_spawned(arg_3_0, arg_3_1, arg_3_2, arg
 	end
 end
 
-function PerformanceManager.event_ai_unit_activated(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+PerformanceManager.event_ai_unit_activated = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0._activated_per_breed[arg_4_2] = arg_4_0._activated_per_breed[arg_4_2] + 1
 
 	if not arg_4_0._tracked_ai_breeds[arg_4_2] then
@@ -122,7 +122,7 @@ function PerformanceManager.event_ai_unit_activated(arg_4_0, arg_4_1, arg_4_2, a
 	end
 end
 
-function PerformanceManager.event_ai_unit_deactivated(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PerformanceManager.event_ai_unit_deactivated = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0._activated_per_breed[arg_5_2] = arg_5_0._activated_per_breed[arg_5_2] - 1
 
 	if not arg_5_0._tracked_ai_breeds[arg_5_2] then
@@ -136,7 +136,7 @@ function PerformanceManager.event_ai_unit_deactivated(arg_5_0, arg_5_1, arg_5_2,
 	end
 end
 
-function PerformanceManager.event_ai_unit_despawned(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+PerformanceManager.event_ai_unit_despawned = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if not arg_6_0._tracked_ai_breeds[arg_6_2] then
 		return
 	end
@@ -152,19 +152,19 @@ function PerformanceManager.event_ai_unit_despawned(arg_6_0, arg_6_1, arg_6_2, a
 	end
 end
 
-function PerformanceManager.num_active_enemies(arg_7_0)
+PerformanceManager.num_active_enemies = function (arg_7_0)
 	return arg_7_0._num_ai_active
 end
 
-function PerformanceManager.num_active_enemies_of_breed(arg_8_0, arg_8_1)
+PerformanceManager.num_active_enemies_of_breed = function (arg_8_0, arg_8_1)
 	return arg_8_0._activated_per_breed[arg_8_1]
 end
 
-function PerformanceManager.activated_per_breed(arg_9_0)
+PerformanceManager.activated_per_breed = function (arg_9_0)
 	return arg_9_0._activated_per_breed
 end
 
-function PerformanceManager.destroy(arg_10_0)
+PerformanceManager.destroy = function (arg_10_0)
 	local var_10_0 = Managers.state.event
 
 	for iter_10_0, iter_10_1 in pairs(arg_10_0._events) do

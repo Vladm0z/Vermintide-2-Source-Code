@@ -15,16 +15,16 @@ local var_0_5 = {
 	[var_0_4] = "units/props/deus_idol/deus_taal_01"
 }
 
-function DeusArenaIdolExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DeusArenaIdolExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 end
 
-function DeusArenaIdolExtension.destroy(arg_2_0)
+DeusArenaIdolExtension.destroy = function (arg_2_0)
 	return
 end
 
-function DeusArenaIdolExtension.on_local_player_game_starts(arg_3_0)
+DeusArenaIdolExtension.on_local_player_game_starts = function (arg_3_0)
 	local var_3_0 = POSITION_LOOKUP[arg_3_0._unit]
 	local var_3_1 = Managers.player:local_player():profile_index()
 	local var_3_2 = var_0_5[var_3_1]

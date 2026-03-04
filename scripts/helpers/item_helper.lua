@@ -38,7 +38,7 @@ local var_0_2 = {
 	stagger = "item_compare_stagger"
 }
 
-function ItemHelper.get_template_by_item_name(arg_1_0)
+ItemHelper.get_template_by_item_name = function (arg_1_0)
 	local var_1_0 = ItemMasterList[arg_1_0]
 
 	fassert(var_1_0, "Requested template for item %s which does not exist.", arg_1_0)
@@ -64,7 +64,7 @@ function ItemHelper.get_template_by_item_name(arg_1_0)
 	return var_1_4
 end
 
-function ItemHelper.get_slot_type(arg_2_0)
+ItemHelper.get_slot_type = function (arg_2_0)
 	local var_2_0 = #InventorySettings.slots
 
 	for iter_2_0 = 1, var_2_0 do
@@ -78,7 +78,7 @@ function ItemHelper.get_slot_type(arg_2_0)
 	fassert(false, "no slot in InventorySettings.slots with name: ", arg_2_0)
 end
 
-function ItemHelper.mark_sign_in_reward_as_new(arg_3_0, arg_3_1)
+ItemHelper.mark_sign_in_reward_as_new = function (arg_3_0, arg_3_1)
 	local var_3_0 = PlayerData.new_sign_in_rewards or {}
 	local var_3_1 = var_3_0[arg_3_0]
 
@@ -93,7 +93,7 @@ function ItemHelper.mark_sign_in_reward_as_new(arg_3_0, arg_3_1)
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function ItemHelper.unmark_sign_in_reward_as_new(arg_4_0)
+ItemHelper.unmark_sign_in_reward_as_new = function (arg_4_0)
 	local var_4_0 = PlayerData.new_sign_in_rewards
 
 	fassert(var_4_0, "Tried to unmark sign-in reward as new but the save data wasn't found")
@@ -111,7 +111,7 @@ function ItemHelper.unmark_sign_in_reward_as_new(arg_4_0)
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function ItemHelper.has_new_sign_in_reward(arg_5_0)
+ItemHelper.has_new_sign_in_reward = function (arg_5_0)
 	if arg_5_0 then
 		return PlayerData.new_sign_in_rewards[arg_5_0] and true or false
 	else
@@ -119,7 +119,7 @@ function ItemHelper.has_new_sign_in_reward(arg_5_0)
 	end
 end
 
-function ItemHelper.mark_backend_id_as_new(arg_6_0, arg_6_1, arg_6_2)
+ItemHelper.mark_backend_id_as_new = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.backend:get_interface("items")
 	local var_6_1 = (arg_6_1 or var_6_0:get_item_from_id(arg_6_0)).data
 	local var_6_2 = var_6_1.slot_type
@@ -150,7 +150,7 @@ function ItemHelper.mark_backend_id_as_new(arg_6_0, arg_6_1, arg_6_2)
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function ItemHelper.unmark_backend_id_as_new(arg_7_0, arg_7_1)
+ItemHelper.unmark_backend_id_as_new = function (arg_7_0, arg_7_1)
 	local var_7_0 = PlayerData.new_item_ids
 	local var_7_1 = PlayerData.new_item_ids_by_career
 
@@ -175,17 +175,17 @@ function ItemHelper.unmark_backend_id_as_new(arg_7_0, arg_7_1)
 	end
 end
 
-function ItemHelper.get_new_backend_ids()
+ItemHelper.get_new_backend_ids = function ()
 	return PlayerData.new_item_ids
 end
 
-function ItemHelper.is_new_backend_id(arg_9_0)
+ItemHelper.is_new_backend_id = function (arg_9_0)
 	local var_9_0 = PlayerData.new_item_ids
 
 	return var_9_0 and var_9_0[arg_9_0]
 end
 
-function ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(arg_10_0, arg_10_1, arg_10_2)
+ItemHelper.has_new_backend_ids_by_career_name_and_slot_type = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = PlayerData.new_item_ids_by_career
 
 	for iter_10_0, iter_10_1 in pairs(var_10_0) do
@@ -217,7 +217,7 @@ function ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(arg_10_0, a
 	return false
 end
 
-function ItemHelper.has_new_backend_ids_by_slot_type(arg_11_0, arg_11_1)
+ItemHelper.has_new_backend_ids_by_slot_type = function (arg_11_0, arg_11_1)
 	local var_11_0 = PlayerData.new_item_ids_by_career
 
 	for iter_11_0, iter_11_1 in pairs(var_11_0) do
@@ -247,7 +247,7 @@ function ItemHelper.has_new_backend_ids_by_slot_type(arg_11_0, arg_11_1)
 	return false
 end
 
-function ItemHelper.has_new_backend_ids_by_career_name(arg_12_0, arg_12_1)
+ItemHelper.has_new_backend_ids_by_career_name = function (arg_12_0, arg_12_1)
 	local var_12_0 = PlayerData.new_item_ids_by_career
 
 	for iter_12_0, iter_12_1 in pairs(var_12_0) do
@@ -277,7 +277,7 @@ function ItemHelper.has_new_backend_ids_by_career_name(arg_12_0, arg_12_1)
 	return false
 end
 
-function ItemHelper.retrieve_weapon_item_statistics(arg_13_0, arg_13_1)
+ItemHelper.retrieve_weapon_item_statistics = function (arg_13_0, arg_13_1)
 	local var_13_0 = {}
 	local var_13_1 = {}
 	local var_13_2 = BackendUtils.get_item_template(arg_13_0, arg_13_1).compare_statistics
@@ -301,7 +301,7 @@ function ItemHelper.retrieve_weapon_item_statistics(arg_13_0, arg_13_1)
 	return var_13_1
 end
 
-function ItemHelper._retrieve_weapon_attack_data(arg_14_0, arg_14_1)
+ItemHelper._retrieve_weapon_attack_data = function (arg_14_0, arg_14_1)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0) do
 		local var_14_0 = var_0_2[iter_14_0]
 		local var_14_1 = arg_14_1[iter_14_0] or {}
@@ -315,11 +315,11 @@ function ItemHelper._retrieve_weapon_attack_data(arg_14_0, arg_14_1)
 	end
 end
 
-function ItemHelper.weapon_stat_order_by_type(arg_15_0)
+ItemHelper.weapon_stat_order_by_type = function (arg_15_0)
 	return var_0_1[arg_15_0]
 end
 
-function ItemHelper.on_inventory_item_added(arg_16_0)
+ItemHelper.on_inventory_item_added = function (arg_16_0)
 	if arg_16_0.data.slot_type == ItemType.LOOT_CHEST then
 		local var_16_0 = Managers.world
 
@@ -331,7 +331,7 @@ function ItemHelper.on_inventory_item_added(arg_16_0)
 	end
 end
 
-function ItemHelper.mark_backend_id_as_favorite(arg_17_0, arg_17_1, arg_17_2)
+ItemHelper.mark_backend_id_as_favorite = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_1 = arg_17_1 or Managers.backend:get_interface("items"):get_item_from_id(arg_17_0)
 
 	local var_17_0 = arg_17_1.data
@@ -369,7 +369,7 @@ function ItemHelper.mark_backend_id_as_favorite(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function ItemHelper.unmark_backend_id_as_favorite(arg_18_0, arg_18_1)
+ItemHelper.unmark_backend_id_as_favorite = function (arg_18_0, arg_18_1)
 	if not arg_18_1 then
 		local var_18_0 = Managers.backend:get_interface("items")
 
@@ -414,11 +414,11 @@ function ItemHelper.unmark_backend_id_as_favorite(arg_18_0, arg_18_1)
 	end
 end
 
-function ItemHelper.get_favorite_backend_ids()
+ItemHelper.get_favorite_backend_ids = function ()
 	return PlayerData.favorite_item_ids
 end
 
-function ItemHelper.is_favorite_backend_id(arg_20_0, arg_20_1)
+ItemHelper.is_favorite_backend_id = function (arg_20_0, arg_20_1)
 	arg_20_1 = arg_20_1 or Managers.backend:get_interface("items"):get_item_from_id(arg_20_0)
 
 	local var_20_0 = arg_20_1.data.slot_type
@@ -435,14 +435,14 @@ function ItemHelper.is_favorite_backend_id(arg_20_0, arg_20_1)
 	return var_20_2 and var_20_2[var_20_1]
 end
 
-function ItemHelper.is_equiped_backend_id(arg_21_0, arg_21_1)
+ItemHelper.is_equiped_backend_id = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.backend:get_interface("items"):equipped_by(arg_21_0)
 	local var_21_1 = #var_21_0
 
 	return var_21_1 > 0 and (not arg_21_1 or table.contains(var_21_0, arg_21_1)), var_21_0, var_21_1
 end
 
-function ItemHelper.get_equipped_slots(arg_22_0, arg_22_1)
+ItemHelper.get_equipped_slots = function (arg_22_0, arg_22_1)
 	local var_22_0 = {}
 	local var_22_1 = 0
 	local var_22_2 = Managers.backend:get_interface("items"):get_loadout()[arg_22_1]
@@ -459,7 +459,7 @@ function ItemHelper.get_equipped_slots(arg_22_0, arg_22_1)
 	return var_22_0, var_22_1
 end
 
-function ItemHelper.mark_keep_decoration_as_new(arg_23_0)
+ItemHelper.mark_keep_decoration_as_new = function (arg_23_0)
 	local var_23_0 = PlayerData.new_keep_decoration_ids or {}
 
 	var_23_0[arg_23_0] = true
@@ -468,17 +468,17 @@ function ItemHelper.mark_keep_decoration_as_new(arg_23_0)
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function ItemHelper.unmark_keep_decoration_as_new(arg_24_0)
+ItemHelper.unmark_keep_decoration_as_new = function (arg_24_0)
 	PlayerData.new_keep_decoration_ids[arg_24_0] = nil
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function ItemHelper.get_new_keep_decoration_ids()
+ItemHelper.get_new_keep_decoration_ids = function ()
 	return PlayerData.new_keep_decoration_ids
 end
 
-function ItemHelper.is_new_keep_decoration_id(arg_26_0)
+ItemHelper.is_new_keep_decoration_id = function (arg_26_0)
 	local var_26_0 = PlayerData.new_keep_decoration_ids
 
 	return var_26_0 and var_26_0[arg_26_0]
@@ -500,7 +500,7 @@ local var_0_4 = {
 	hat = true
 }
 
-function ItemHelper.create_tab_unseen_item_stars(arg_27_0)
+ItemHelper.create_tab_unseen_item_stars = function (arg_27_0)
 	local var_27_0 = StoreLayoutConfig.menu_options
 
 	for iter_27_0 = 1, #var_27_0 do
@@ -530,7 +530,7 @@ function ItemHelper.create_tab_unseen_item_stars(arg_27_0)
 	end
 end
 
-function ItemHelper.update_featured_unseen(arg_28_0, arg_28_1)
+ItemHelper.update_featured_unseen = function (arg_28_0, arg_28_1)
 	local var_28_0 = PlayerData.seen_shop_items
 
 	arg_28_1.featured = 0
@@ -542,7 +542,7 @@ function ItemHelper.update_featured_unseen(arg_28_0, arg_28_1)
 	end
 end
 
-function ItemHelper.set_shop_item_seen(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+ItemHelper.set_shop_item_seen = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = PlayerData.seen_shop_items
 
 	if not var_29_0[arg_29_0] then
@@ -560,7 +560,7 @@ function ItemHelper.set_shop_item_seen(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	end
 end
 
-function ItemHelper.set_all_shop_item_seen(arg_30_0)
+ItemHelper.set_all_shop_item_seen = function (arg_30_0)
 	local var_30_0 = Managers.backend:get_interface("peddler"):get_peddler_stock()
 	local var_30_1 = PlayerData.seen_shop_items
 
@@ -583,7 +583,7 @@ function ItemHelper.set_all_shop_item_seen(arg_30_0)
 	end
 end
 
-function ItemHelper.has_unseen_shop_items()
+ItemHelper.has_unseen_shop_items = function ()
 	local var_31_0 = Managers.backend:get_interface("peddler"):get_peddler_stock()
 	local var_31_1 = PlayerData.seen_shop_items
 
@@ -611,6 +611,6 @@ local var_0_5 = {
 	skin = true
 }
 
-function ItemHelper.is_fake_item(arg_32_0)
+ItemHelper.is_fake_item = function (arg_32_0)
 	return var_0_5[arg_32_0]
 end

@@ -3,7 +3,7 @@
 MatchmakingStateHostGame = class(MatchmakingStateHostGame)
 MatchmakingStateHostGame.NAME = "MatchmakingStateHostGame"
 
-function MatchmakingStateHostGame.init(arg_1_0, arg_1_1)
+MatchmakingStateHostGame.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._difficulty_manager = arg_1_1.difficulty
@@ -11,11 +11,11 @@ function MatchmakingStateHostGame.init(arg_1_0, arg_1_1)
 	arg_1_0._wwise_world = arg_1_1.wwise_world
 end
 
-function MatchmakingStateHostGame.destroy(arg_2_0)
+MatchmakingStateHostGame.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateHostGame.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateHostGame.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0.state_context = arg_3_1
 	arg_3_0.search_config = arg_3_1.search_config
 
@@ -52,7 +52,7 @@ function MatchmakingStateHostGame.on_enter(arg_3_0, arg_3_1)
 	end
 end
 
-function MatchmakingStateHostGame.set_debug_info(arg_4_0)
+MatchmakingStateHostGame.set_debug_info = function (arg_4_0)
 	local var_4_0 = arg_4_0.search_config
 	local var_4_1 = var_4_0.mission_id
 	local var_4_2 = var_4_0.difficulty
@@ -67,11 +67,11 @@ function MatchmakingStateHostGame.set_debug_info(arg_4_0)
 	Managers.matchmaking.debug.hero = var_4_6
 end
 
-function MatchmakingStateHostGame.on_exit(arg_5_0)
+MatchmakingStateHostGame.on_exit = function (arg_5_0)
 	return
 end
 
-function MatchmakingStateHostGame.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateHostGame.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._wait_to_start_game then
 		return MatchmakingStateWaitForCountdown, arg_6_0.state_context
 	elseif arg_6_0._skip_waystone then
@@ -81,7 +81,7 @@ function MatchmakingStateHostGame.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MatchmakingStateHostGame._start_hosting_game(arg_7_0)
+MatchmakingStateHostGame._start_hosting_game = function (arg_7_0)
 	local var_7_0 = arg_7_0.state_context
 	local var_7_1 = arg_7_0.search_config
 	local var_7_2 = var_7_1.mission_id
@@ -119,7 +119,7 @@ function MatchmakingStateHostGame._start_hosting_game(arg_7_0)
 	arg_7_0._skip_waystone = arg_7_0.search_config.skip_waystone
 
 	if arg_7_0._wait_to_start_game then
-		-- block empty
+		-- Nothing
 	elseif not arg_7_0._skip_waystone then
 		local var_7_12 = 1
 

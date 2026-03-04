@@ -12,7 +12,7 @@ local var_0_7 = "confirm_press"
 StartGameWindowDeusWeeklyEvent = class(StartGameWindowDeusWeeklyEvent)
 StartGameWindowDeusWeeklyEvent.NAME = "StartGameWindowDeusWeeklyEvent"
 
-function StartGameWindowDeusWeeklyEvent.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusWeeklyEvent.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowDeusWeeklyEvent")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -49,7 +49,7 @@ end
 
 local var_0_8 = {}
 
-function StartGameWindowDeusWeeklyEvent._fetch_event_data(arg_2_0)
+StartGameWindowDeusWeeklyEvent._fetch_event_data = function (arg_2_0)
 	local var_2_0 = Managers.backend:get_interface("live_events")
 	local var_2_1, var_2_2 = var_2_0:get_weekly_chaos_wastes_game_mode_data()
 	local var_2_3 = var_2_0:get_weekly_chaos_wastes_rewards_data() or var_0_8
@@ -85,7 +85,7 @@ function StartGameWindowDeusWeeklyEvent._fetch_event_data(arg_2_0)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._setup_curses(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+StartGameWindowDeusWeeklyEvent._setup_curses = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = "curse"
 	local var_3_1 = var_0_0.create_header("cw_weekly_expedition_modifier_negative", arg_3_3, var_3_0)
 	local var_3_2 = UIWidget.init(var_3_1)
@@ -133,7 +133,7 @@ function StartGameWindowDeusWeeklyEvent._setup_curses(arg_3_0, arg_3_1, arg_3_2,
 	return arg_3_3 - arg_3_2
 end
 
-function StartGameWindowDeusWeeklyEvent._setup_boons(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+StartGameWindowDeusWeeklyEvent._setup_boons = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = "boon"
 	local var_4_1 = var_0_0.create_header("cw_weekly_expedition_modifier_positive", arg_4_3, var_4_0)
 	local var_4_2 = UIWidget.init(var_4_1)
@@ -184,7 +184,7 @@ function StartGameWindowDeusWeeklyEvent._setup_boons(arg_4_0, arg_4_1, arg_4_2, 
 	return arg_4_3 - arg_4_2
 end
 
-function StartGameWindowDeusWeeklyEvent._setup_rewards(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+StartGameWindowDeusWeeklyEvent._setup_rewards = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0
 	local var_5_1 = var_0_0.create_header("cw_weekly_expedition_rewards_name", arg_5_3, var_5_0)
 	local var_5_2 = UIWidget.init(var_5_1)
@@ -224,7 +224,7 @@ function StartGameWindowDeusWeeklyEvent._setup_rewards(arg_5_0, arg_5_1, arg_5_2
 	return arg_5_3 - arg_5_2
 end
 
-function StartGameWindowDeusWeeklyEvent._evaluate_rewards(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowDeusWeeklyEvent._evaluate_rewards = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_1.rewards
 	local var_6_1 = arg_6_1.claimed
 	local var_6_2 = {
@@ -267,7 +267,7 @@ function StartGameWindowDeusWeeklyEvent._evaluate_rewards(arg_6_0, arg_6_1, arg_
 	return var_6_2
 end
 
-function StartGameWindowDeusWeeklyEvent._setup_debug_texts(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+StartGameWindowDeusWeeklyEvent._setup_debug_texts = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = "info_box_anchor"
 	local var_7_1 = {
 		font_size = 20,
@@ -312,7 +312,7 @@ function StartGameWindowDeusWeeklyEvent._setup_debug_texts(arg_7_0, arg_7_1, arg
 	return arg_7_3
 end
 
-function StartGameWindowDeusWeeklyEvent._start_transition_animation(arg_8_0, arg_8_1)
+StartGameWindowDeusWeeklyEvent._start_transition_animation = function (arg_8_0, arg_8_1)
 	local var_8_0 = {
 		render_settings = arg_8_0._render_settings
 	}
@@ -322,7 +322,7 @@ function StartGameWindowDeusWeeklyEvent._start_transition_animation(arg_8_0, arg
 	arg_8_0._animations[arg_8_1] = var_8_2
 end
 
-function StartGameWindowDeusWeeklyEvent._create_ui_elements(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowDeusWeeklyEvent._create_ui_elements = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_9_0._widgets, arg_9_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
@@ -341,7 +341,7 @@ function StartGameWindowDeusWeeklyEvent._create_ui_elements(arg_9_0, arg_9_1, ar
 	arg_9_0._widgets_by_name.difficulty_info.content.visible = false
 end
 
-function StartGameWindowDeusWeeklyEvent.on_exit(arg_10_0, arg_10_1)
+StartGameWindowDeusWeeklyEvent.on_exit = function (arg_10_0, arg_10_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowDeusWeeklyEvent")
 
 	arg_10_0._ui_animator = nil
@@ -355,11 +355,11 @@ function StartGameWindowDeusWeeklyEvent.on_exit(arg_10_0, arg_10_1)
 	arg_10_0._parent:set_difficulty_option(arg_10_0._current_difficulty)
 end
 
-function StartGameWindowDeusWeeklyEvent.set_focus(arg_11_0, arg_11_1)
+StartGameWindowDeusWeeklyEvent.set_focus = function (arg_11_0, arg_11_1)
 	arg_11_0._is_focused = arg_11_1
 end
 
-function StartGameWindowDeusWeeklyEvent.update(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowDeusWeeklyEvent.update = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:_update_can_play()
 	arg_12_0:_update_animations(arg_12_1)
 	arg_12_0:_update_time_left()
@@ -368,11 +368,11 @@ function StartGameWindowDeusWeeklyEvent.update(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:_draw(arg_12_1, arg_12_2)
 end
 
-function StartGameWindowDeusWeeklyEvent.post_update(arg_13_0, arg_13_1, arg_13_2)
+StartGameWindowDeusWeeklyEvent.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-function StartGameWindowDeusWeeklyEvent._handle_gamepad_activity(arg_14_0)
+StartGameWindowDeusWeeklyEvent._handle_gamepad_activity = function (arg_14_0)
 	local var_14_0 = arg_14_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -393,7 +393,7 @@ function StartGameWindowDeusWeeklyEvent._handle_gamepad_activity(arg_14_0)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._update_can_play(arg_15_0)
+StartGameWindowDeusWeeklyEvent._update_can_play = function (arg_15_0)
 	local var_15_0 = arg_15_0:_can_play()
 
 	arg_15_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not var_15_0
@@ -413,7 +413,7 @@ function StartGameWindowDeusWeeklyEvent._update_can_play(arg_15_0)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._handle_input(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowDeusWeeklyEvent._handle_input = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._parent
 	local var_16_1 = var_16_0:window_input_service()
 	local var_16_2 = Managers.input:is_device_active("mouse")
@@ -521,11 +521,11 @@ function StartGameWindowDeusWeeklyEvent._handle_input(arg_16_0, arg_16_1, arg_16
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._play_sound(arg_17_0, arg_17_1)
+StartGameWindowDeusWeeklyEvent._play_sound = function (arg_17_0, arg_17_1)
 	return arg_17_0._parent:play_sound(arg_17_1)
 end
 
-function StartGameWindowDeusWeeklyEvent._can_play(arg_18_0)
+StartGameWindowDeusWeeklyEvent._can_play = function (arg_18_0)
 	if not (arg_18_0._current_difficulty ~= nil and not arg_18_0._dlc_locked) then
 		return false
 	end
@@ -533,7 +533,7 @@ function StartGameWindowDeusWeeklyEvent._can_play(arg_18_0)
 	return arg_18_0._weekly_journey_name and not LevelUnlockUtils.is_journey_disabled(arg_18_0._weekly_journey_name)
 end
 
-function StartGameWindowDeusWeeklyEvent._set_info_window(arg_19_0, arg_19_1)
+StartGameWindowDeusWeeklyEvent._set_info_window = function (arg_19_0, arg_19_1)
 	local var_19_0 = DifficultySettings[arg_19_1]
 	local var_19_1 = var_19_0.description
 	local var_19_2 = var_19_0.max_chest_power_level
@@ -543,7 +543,7 @@ function StartGameWindowDeusWeeklyEvent._set_info_window(arg_19_0, arg_19_1)
 	var_19_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_19_2)
 end
 
-function StartGameWindowDeusWeeklyEvent._update_difficulty_option(arg_20_0, arg_20_1)
+StartGameWindowDeusWeeklyEvent._update_difficulty_option = function (arg_20_0, arg_20_1)
 	if arg_20_1 then
 		local var_20_0 = DifficultySettings[arg_20_1]
 		local var_20_1 = arg_20_0._widgets_by_name.difficulty_stepper
@@ -560,7 +560,7 @@ function StartGameWindowDeusWeeklyEvent._update_difficulty_option(arg_20_0, arg_
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._option_selected(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+StartGameWindowDeusWeeklyEvent._option_selected = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	if arg_21_1 == "difficulty_stepper" then
 		local var_21_0 = arg_21_0._current_difficulty
 		local var_21_1 = GameModeSettings.deus.difficulties
@@ -591,7 +591,7 @@ function StartGameWindowDeusWeeklyEvent._option_selected(arg_21_0, arg_21_1, arg
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._verify_selection_index(arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowDeusWeeklyEvent._verify_selection_index = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._input_index
 	local var_22_1 = #var_0_5
 
@@ -615,7 +615,7 @@ function StartGameWindowDeusWeeklyEvent._verify_selection_index(arg_22_0, arg_22
 	return var_22_0
 end
 
-function StartGameWindowDeusWeeklyEvent._gamepad_selector_input_func(arg_23_0, arg_23_1, arg_23_2)
+StartGameWindowDeusWeeklyEvent._gamepad_selector_input_func = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = Managers.input:is_device_active("mouse")
 
 	arg_23_1 = arg_23_0:_verify_selection_index(arg_23_1, arg_23_2)
@@ -633,7 +633,7 @@ function StartGameWindowDeusWeeklyEvent._gamepad_selector_input_func(arg_23_0, a
 	arg_23_0._input_index = arg_23_1
 end
 
-function StartGameWindowDeusWeeklyEvent._handle_new_selection(arg_24_0, arg_24_1, arg_24_2)
+StartGameWindowDeusWeeklyEvent._handle_new_selection = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = #var_0_5
 
 	arg_24_1 = math.clamp(arg_24_1, 1, var_24_0)
@@ -650,7 +650,7 @@ function StartGameWindowDeusWeeklyEvent._handle_new_selection(arg_24_0, arg_24_1
 	arg_24_0._input_index = arg_24_1
 end
 
-function StartGameWindowDeusWeeklyEvent._update_animations(arg_25_0, arg_25_1)
+StartGameWindowDeusWeeklyEvent._update_animations = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._ui_animator
 
 	var_25_0:update(arg_25_1)
@@ -670,7 +670,7 @@ function StartGameWindowDeusWeeklyEvent._update_animations(arg_25_0, arg_25_1)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._refresh_data(arg_26_0)
+StartGameWindowDeusWeeklyEvent._refresh_data = function (arg_26_0)
 	if arg_26_0._num_requests > 0 then
 		return
 	end
@@ -684,7 +684,7 @@ function StartGameWindowDeusWeeklyEvent._refresh_data(arg_26_0)
 	arg_26_0._num_requests = 2
 end
 
-function StartGameWindowDeusWeeklyEvent._refresh_data_cb(arg_27_0, arg_27_1)
+StartGameWindowDeusWeeklyEvent._refresh_data_cb = function (arg_27_0, arg_27_1)
 	arg_27_0._num_requests = arg_27_0._num_requests - 1
 
 	if arg_27_0._num_requests <= 0 then
@@ -692,7 +692,7 @@ function StartGameWindowDeusWeeklyEvent._refresh_data_cb(arg_27_0, arg_27_1)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._update_time_left(arg_28_0)
+StartGameWindowDeusWeeklyEvent._update_time_left = function (arg_28_0)
 	local var_28_0 = os.time(os.date("!*t"))
 	local var_28_1 = arg_28_0._refresh_time - var_28_0
 	local var_28_2 = arg_28_0._widgets_by_name.timer.content
@@ -717,13 +717,13 @@ function StartGameWindowDeusWeeklyEvent._update_time_left(arg_28_0)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._update_button_animations(arg_29_0, arg_29_1)
+StartGameWindowDeusWeeklyEvent._update_button_animations = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._widgets_by_name
 
 	UIWidgetUtils.animate_default_button(var_29_0.upsell_button, arg_29_1)
 end
 
-function StartGameWindowDeusWeeklyEvent._draw(arg_30_0, arg_30_1, arg_30_2)
+StartGameWindowDeusWeeklyEvent._draw = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._ui_top_renderer
 	local var_30_1 = arg_30_0._ui_scenegraph
 	local var_30_2 = arg_30_0._parent:window_input_service()
@@ -744,7 +744,7 @@ function StartGameWindowDeusWeeklyEvent._draw(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._update_difficulty_lock(arg_31_0)
+StartGameWindowDeusWeeklyEvent._update_difficulty_lock = function (arg_31_0)
 	local var_31_0 = arg_31_0._current_difficulty
 	local var_31_1 = arg_31_0._widgets_by_name.difficulty_info
 	local var_31_2 = arg_31_0._widgets_by_name.upsell_button
@@ -801,13 +801,13 @@ function StartGameWindowDeusWeeklyEvent._update_difficulty_lock(arg_31_0)
 	var_31_2.offset[2] = -math.floor(var_31_7) / 2 + 24
 end
 
-function StartGameWindowDeusWeeklyEvent._handle_difficulty_info(arg_32_0, arg_32_1)
+StartGameWindowDeusWeeklyEvent._handle_difficulty_info = function (arg_32_0, arg_32_1)
 	if arg_32_1 then
 		arg_32_0:_update_difficulty_lock()
 	end
 end
 
-function StartGameWindowDeusWeeklyEvent._calculate_difficulty_info_widget_size(arg_33_0, arg_33_1)
+StartGameWindowDeusWeeklyEvent._calculate_difficulty_info_widget_size = function (arg_33_0, arg_33_1)
 	local var_33_0 = 20
 	local var_33_1 = arg_33_1.style.difficulty_description
 	local var_33_2 = arg_33_1.content.difficulty_description
@@ -838,7 +838,7 @@ function StartGameWindowDeusWeeklyEvent._calculate_difficulty_info_widget_size(a
 	return var_33_6 + var_33_3 + var_33_9 + var_33_12 + 50
 end
 
-function StartGameWindowDeusWeeklyEvent._resize_difficulty_info(arg_34_0, arg_34_1, arg_34_2)
+StartGameWindowDeusWeeklyEvent._resize_difficulty_info = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._widgets_by_name.difficulty_info
 
 	var_34_0.content.should_resize = true
@@ -848,7 +848,7 @@ function StartGameWindowDeusWeeklyEvent._resize_difficulty_info(arg_34_0, arg_34
 	var_34_0.style.widget_hotspot.offset = arg_34_2
 end
 
-function StartGameWindowDeusWeeklyEvent._handle_difficulty_stepper_gamepad(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+StartGameWindowDeusWeeklyEvent._handle_difficulty_stepper_gamepad = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 	local var_35_0 = {}
 
 	if arg_35_2:get("move_left") and arg_35_1.content.is_selected then

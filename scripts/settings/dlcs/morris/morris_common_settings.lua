@@ -307,7 +307,7 @@ var_0_0.mechanism_settings = {
 		},
 		progress_loss_warning_message_data = {
 			message = "exit_warning",
-			is_allowed = function()
+			is_allowed = function ()
 				return Managers.mechanism:get_state() ~= "inn_deus"
 			end
 		},
@@ -371,7 +371,7 @@ var_0_0.unit_extension_templates = {
 	"scripts/settings/dlcs/morris/morris_unit_extension_templates"
 }
 var_0_0.game_object_initializers = {
-	deus_weapon_chest = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	deus_weapon_chest = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = ScriptUnit.extension(arg_2_0, "pickup_system")
 		local var_2_1 = var_2_0.pickup_name
 		local var_2_2 = var_2_0.has_physics
@@ -387,7 +387,7 @@ var_0_0.game_object_initializers = {
 			rotation = Unit.local_rotation(arg_2_0, 0)
 		}
 	end,
-	deus_cursed_chest = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	deus_cursed_chest = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		local var_3_0 = ScriptUnit.extension(arg_3_0, "pickup_system")
 		local var_3_1 = var_3_0.pickup_name
 		local var_3_2 = var_3_0.has_physics
@@ -403,7 +403,7 @@ var_0_0.game_object_initializers = {
 			rotation = Unit.local_rotation(arg_3_0, 0)
 		}
 	end,
-	buff_objective_unit = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	buff_objective_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = {}
 		local var_4_1 = ScriptUnit.extension(arg_4_0, "buff_system"):initial_buff_names()
 
@@ -421,7 +421,7 @@ var_0_0.game_object_initializers = {
 			network_buff_ids = var_4_0
 		}
 	end,
-	egg_of_tzeentch_unit = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	egg_of_tzeentch_unit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		local var_5_0 = {}
 		local var_5_1 = ScriptUnit.extension(arg_5_0, "buff_system"):initial_buff_names()
 
@@ -457,7 +457,7 @@ var_0_0.game_object_initializers = {
 			spawn_rate = var_5_5
 		}
 	end,
-	deus_relic = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	deus_relic = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = ScriptUnit.extension(arg_6_0, "projectile_locomotion_system")
 		local var_6_1 = var_6_0.network_position
 		local var_6_2 = var_6_0.network_rotation
@@ -483,7 +483,7 @@ var_0_0.game_object_initializers = {
 			spawn_type = NetworkLookup.pickup_spawn_types[var_6_8]
 		}
 	end,
-	buffed_timed_explosion_unit = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	buffed_timed_explosion_unit = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		local var_7_0 = ScriptUnit.extension(arg_7_0, "area_damage_system")
 		local var_7_1 = var_7_0.follow_unit
 		local var_7_2 = var_7_0.explosion_template_name
@@ -509,7 +509,7 @@ var_0_0.game_object_initializers = {
 	end
 }
 var_0_0.game_object_extractors = {
-	deus_weapon_chest = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	deus_weapon_chest = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		local var_8_0 = GameSession.game_object_field(arg_8_0, arg_8_1, "pickup_name")
 		local var_8_1 = GameSession.game_object_field(arg_8_0, arg_8_1, "has_physics")
 		local var_8_2 = GameSession.game_object_field(arg_8_0, arg_8_1, "spawn_type")
@@ -523,7 +523,7 @@ var_0_0.game_object_extractors = {
 
 		return "deus_weapon_chest", var_8_3
 	end,
-	deus_cursed_chest = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	deus_cursed_chest = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		local var_9_0 = GameSession.game_object_field(arg_9_0, arg_9_1, "pickup_name")
 		local var_9_1 = GameSession.game_object_field(arg_9_0, arg_9_1, "has_physics")
 		local var_9_2 = GameSession.game_object_field(arg_9_0, arg_9_1, "spawn_type")
@@ -537,7 +537,7 @@ var_0_0.game_object_extractors = {
 
 		return "deus_cursed_chest", var_9_3
 	end,
-	buff_objective_unit = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	buff_objective_unit = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		local var_10_0 = {}
 		local var_10_1 = GameSession.game_object_field(arg_10_0, arg_10_1, "network_buff_ids")
 
@@ -557,7 +557,7 @@ var_0_0.game_object_extractors = {
 
 		return "buff_objective_unit", var_10_3
 	end,
-	deus_relic = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	deus_relic = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_position")
 		local var_11_1 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_rotation")
 		local var_11_2 = GameSession.game_object_field(arg_11_0, arg_11_1, "network_velocity")
@@ -581,7 +581,7 @@ var_0_0.game_object_extractors = {
 
 		return "deus_relic", var_11_7
 	end,
-	egg_of_tzeentch_unit = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	egg_of_tzeentch_unit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		local var_12_0 = {}
 		local var_12_1 = GameSession.game_object_field(arg_12_0, arg_12_1, "network_buff_ids")
 
@@ -621,7 +621,7 @@ var_0_0.game_object_extractors = {
 
 		return "egg_of_tzeentch_unit", var_12_7
 	end,
-	buffed_timed_explosion_unit = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	buffed_timed_explosion_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 		local var_13_0 = GameSession.game_object_field(arg_13_0, arg_13_1, "follow_unit")
 		local var_13_1 = GameSession.game_object_field(arg_13_0, arg_13_1, "explosion_template_name")
 		local var_13_2 = {}

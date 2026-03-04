@@ -2,7 +2,7 @@
 
 ActionPushStagger = class(ActionPushStagger, ActionBase)
 
-function ActionPushStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionPushStagger.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionPushStagger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -18,7 +18,7 @@ function ActionPushStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 	arg_1_0._player_direction = Vector3Box()
 end
 
-function ActionPushStagger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionPushStagger.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionPushStagger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	arg_2_0.current_action = arg_2_1
@@ -112,7 +112,7 @@ local function var_0_1(arg_3_0)
 	end
 end
 
-function ActionPushStagger.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionPushStagger.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.weapon_system
@@ -315,7 +315,7 @@ function ActionPushStagger.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, a
 	end
 end
 
-function ActionPushStagger.finish(arg_5_0, arg_5_1)
+ActionPushStagger.finish = function (arg_5_0, arg_5_1)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0.owner_unit, "hud_system")
 
 	if var_5_0 then

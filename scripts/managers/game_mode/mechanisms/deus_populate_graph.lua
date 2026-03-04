@@ -224,7 +224,7 @@ local var_0_12 = {
 	ARENA = {}
 }
 local var_0_13 = {
-	lower_priority_of_already_used_levels_on_path = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	lower_priority_of_already_used_levels_on_path = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 		local function var_15_0(arg_16_0, arg_16_1)
 			if arg_15_1[arg_16_0].level == arg_16_1 then
 				return true
@@ -253,7 +253,7 @@ local var_0_13 = {
 	end
 }
 local var_0_14 = {
-	last_signature_level_is_specific_level = function(arg_17_0, arg_17_1, arg_17_2)
+	last_signature_level_is_specific_level = function (arg_17_0, arg_17_1, arg_17_2)
 		local var_17_0 = arg_17_0.config.SPECIFIC_SIGNATURE_LEVEL
 
 		fassert(var_17_0, "you need to specify a SPECIFIC_SIGNATURE_LEVEL when using LABEL_OVERRIDES.last_signature_level_is_specific_level")
@@ -291,7 +291,7 @@ local var_0_14 = {
 	end
 }
 local var_0_15 = {
-	prevent_modifier_on_curse_abundance_of_life = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	prevent_modifier_on_curse_abundance_of_life = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 		return arg_18_1[arg_18_2].curse ~= "curse_abundance_of_life" or not table.contains(arg_18_3, "increased_grenades") and not table.contains(arg_18_3, "increased_healing")
 	end
 }
@@ -379,7 +379,7 @@ local function var_0_22(arg_25_0, arg_25_1, arg_25_2)
 		local var_26_2 = {}
 
 		for iter_26_0 = 1, #var_26_1 do
-			var_26_2[iter_26_0] = function()
+			var_26_2[iter_26_0] = function ()
 				return var_0_19(arg_25_0, arg_25_1, var_26_1[iter_26_0])
 			end
 		end
@@ -389,10 +389,10 @@ local function var_0_22(arg_25_0, arg_25_1, arg_25_2)
 
 	return {
 		name = "connections " .. arg_25_2,
-		run = function()
+		run = function ()
 			return var_25_0()
 		end,
-		retry = function()
+		retry = function ()
 			return false
 		end
 	}
@@ -404,20 +404,20 @@ function var_0_19(arg_30_0, arg_30_1, arg_30_2)
 
 	return {
 		name = "node " .. arg_30_2,
-		run = function()
+		run = function ()
 			if var_30_0.level then
 				return var_0_17(arg_30_0, arg_30_1, arg_30_2)
 			end
 
 			local var_31_0 = {
-				function()
+				function ()
 					return var_0_20(arg_30_0, arg_30_1, arg_30_2)
 				end
 			}
 
 			return true, var_31_0
 		end,
-		retry = function()
+		retry = function ()
 			return false
 		end
 	}
@@ -470,7 +470,7 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 						local var_36_3 = var_0_18(arg_34_0, arg_34_1, arg_34_2, var_36_2)
 
 						if #var_36_3 == 0 then
-							-- block empty
+							-- Nothing
 						else
 							local var_36_4 = var_0_0(table.clone(var_36_3), arg_34_0.random_generator)
 
@@ -489,7 +489,7 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 		end
 
 		local var_36_5 = {
-			function()
+			function ()
 				return var_0_22(arg_34_0, arg_34_1, arg_34_2)
 			end
 		}
@@ -499,10 +499,10 @@ function var_0_20(arg_34_0, arg_34_1, arg_34_2)
 
 	return {
 		name = "level " .. arg_34_2,
-		run = function()
+		run = function ()
 			return var_34_6()
 		end,
-		retry = function()
+		retry = function ()
 			var_34_0.level = nil
 			var_34_0.path = nil
 
@@ -574,7 +574,7 @@ end
 local function var_0_26(arg_43_0, arg_43_1)
 	local var_43_0 = var_0_5(arg_43_1, "final")
 
-	table.sort(var_43_0, function(arg_44_0, arg_44_1)
+	table.sort(var_43_0, function (arg_44_0, arg_44_1)
 		return #arg_44_0 > #arg_44_1
 	end)
 

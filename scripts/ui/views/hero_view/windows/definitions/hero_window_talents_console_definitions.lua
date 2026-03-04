@@ -833,7 +833,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			texture_id = var_1_20,
 			style_id = var_1_20,
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0[var_1_16].is_selected
 			end
 		}
@@ -862,7 +862,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "text",
 			text_id = var_1_21,
 			style_id = var_1_21,
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				local var_3_0 = arg_3_0[var_1_16]
 
 				return not var_3_0.is_selected and not var_3_0.disabled
@@ -894,7 +894,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "text",
 			text_id = var_1_21,
 			style_id = var_1_22,
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				local var_4_0 = arg_4_0[var_1_16]
 
 				return var_4_0.is_selected and not var_4_0.disabled
@@ -925,7 +925,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "text",
 			text_id = var_1_21,
 			style_id = var_1_23,
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0[var_1_16].disabled
 			end
 		}
@@ -985,7 +985,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			texture_id = var_1_25,
 			style_id = var_1_25,
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				local var_6_0 = arg_6_0[var_1_16]
 
 				return var_6_0.is_hover or var_6_0.focused
@@ -1057,7 +1057,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		var_1_5[#var_1_5 + 1] = {
 			pass_type = "rect",
 			style_id = var_1_28,
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				local var_7_0 = arg_7_0[var_1_16]
 
 				return not var_7_0.disabled and not var_7_0.is_selected
@@ -1083,7 +1083,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		var_1_5[#var_1_5 + 1] = {
 			pass_type = "rect",
 			style_id = var_1_29,
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0[var_1_16].disabled
 			end
 		}
@@ -1130,7 +1130,7 @@ local function var_0_12(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "talent_tooltip",
 			content_id = var_1_16,
 			style_id = var_1_31,
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.talent and arg_9_0.is_hover
 			end
 		}
@@ -1377,17 +1377,17 @@ local var_0_17 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = var_12_0
 				arg_12_0.area_left.local_position[1] = arg_12_1.area_left.position[1] + -100 * (1 - var_12_0)
 				arg_12_0.area_right.local_position[1] = arg_12_1.area_right.position[1] + -100 * (1 - var_12_0)
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -1397,15 +1397,15 @@ local var_0_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 
 				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}

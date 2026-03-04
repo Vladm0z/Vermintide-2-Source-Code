@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/tutorial_tooltip_ui_definitions"
 
 TutorialTooltipUI = class(TutorialTooltipUI)
 
-function TutorialTooltipUI.init(arg_1_0, arg_1_1)
+TutorialTooltipUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.input_manager = arg_1_1.input_manager
 	arg_1_0.platform = PLATFORM
@@ -14,11 +14,11 @@ function TutorialTooltipUI.init(arg_1_0, arg_1_1)
 	arg_1_0:create_ui_elements()
 end
 
-function TutorialTooltipUI.destroy(arg_2_0)
+TutorialTooltipUI.destroy = function (arg_2_0)
 	return
 end
 
-function TutorialTooltipUI.create_ui_elements(arg_3_0)
+TutorialTooltipUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
@@ -29,7 +29,7 @@ function TutorialTooltipUI.create_ui_elements(arg_3_0)
 	end
 end
 
-function TutorialTooltipUI.button_texture_data_by_input_action(arg_4_0, arg_4_1, arg_4_2)
+TutorialTooltipUI.button_texture_data_by_input_action = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.input_manager
 	local var_4_1 = var_4_0:is_device_active("gamepad")
 	local var_4_2 = PLATFORM
@@ -47,7 +47,7 @@ function TutorialTooltipUI.button_texture_data_by_input_action(arg_4_0, arg_4_1,
 	end
 end
 
-function TutorialTooltipUI.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+TutorialTooltipUI.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if next(arg_5_0.tutorial_tooltip_animations) ~= nil then
 		arg_5_0:set_dirty()
 	end
@@ -187,7 +187,7 @@ function TutorialTooltipUI.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function TutorialTooltipUI.draw(arg_6_0, arg_6_1, arg_6_2)
+TutorialTooltipUI.draw = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.input_manager:get_service("Player")
@@ -202,7 +202,7 @@ function TutorialTooltipUI.draw(arg_6_0, arg_6_1, arg_6_2)
 	UIRenderer.end_pass(var_6_0)
 end
 
-function TutorialTooltipUI.set_dirty(arg_7_0)
+TutorialTooltipUI.set_dirty = function (arg_7_0)
 	arg_7_0.tutorial_tooltip_widget.element.dirty = true
 
 	local var_7_0 = arg_7_0.tutorial_tooltip_input_widgets
@@ -212,7 +212,7 @@ function TutorialTooltipUI.set_dirty(arg_7_0)
 	end
 end
 
-function TutorialTooltipUI.hide(arg_8_0)
+TutorialTooltipUI.hide = function (arg_8_0)
 	local var_8_0 = arg_8_0.ui_renderer
 
 	arg_8_0.active_tooltip_name = nil
@@ -230,15 +230,15 @@ end
 
 local var_0_1 = 0.1
 
-function TutorialTooltipUI.fade_in(arg_9_0)
+TutorialTooltipUI.fade_in = function (arg_9_0)
 	arg_9_0:_fade(0, 255, var_0_1)
 end
 
-function TutorialTooltipUI.fade_out(arg_10_0)
+TutorialTooltipUI.fade_out = function (arg_10_0)
 	arg_10_0:_fade(255, 0, var_0_1)
 end
 
-function TutorialTooltipUI._fade(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+TutorialTooltipUI._fade = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0.tutorial_tooltip_widget.style
 	local var_11_1 = var_11_0.background
 	local var_11_2 = var_11_0.description
@@ -262,7 +262,7 @@ function TutorialTooltipUI._fade(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-function TutorialTooltipUI.has_completed_fade(arg_12_0)
+TutorialTooltipUI.has_completed_fade = function (arg_12_0)
 	if next(arg_12_0.tutorial_tooltip_animations) ~= nil then
 		return false
 	end
@@ -270,7 +270,7 @@ function TutorialTooltipUI.has_completed_fade(arg_12_0)
 	return true
 end
 
-function TutorialTooltipUI.set_visible(arg_13_0, arg_13_1)
+TutorialTooltipUI.set_visible = function (arg_13_0, arg_13_1)
 	arg_13_0._is_visible = arg_13_1
 
 	local var_13_0 = arg_13_0.ui_renderer

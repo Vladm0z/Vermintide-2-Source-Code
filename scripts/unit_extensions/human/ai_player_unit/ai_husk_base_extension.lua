@@ -2,7 +2,7 @@
 
 AiHuskBaseExtension = class(AiHuskBaseExtension)
 
-function AiHuskBaseExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AiHuskBaseExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.is_husk = true
 	arg_1_0.unit = arg_1_2
 	arg_1_0.game = arg_1_3.game
@@ -38,7 +38,7 @@ function AiHuskBaseExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.attributes = nil
 end
 
-function AiHuskBaseExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+AiHuskBaseExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._side_id
 	local var_2_1 = Managers.state.side
 
@@ -63,11 +63,11 @@ function AiHuskBaseExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	Unit.flow_event(arg_2_2, "climate_type_set")
 end
 
-function AiHuskBaseExtension.freeze(arg_3_0)
+AiHuskBaseExtension.freeze = function (arg_3_0)
 	arg_3_0._side_id = nil
 end
 
-function AiHuskBaseExtension.unfreeze(arg_4_0, arg_4_1, arg_4_2)
+AiHuskBaseExtension.unfreeze = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_2[7].side_id
 
 	arg_4_0._side_id = var_4_0
@@ -85,29 +85,29 @@ function AiHuskBaseExtension.unfreeze(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function AiHuskBaseExtension.current_action_name(arg_5_0)
+AiHuskBaseExtension.current_action_name = function (arg_5_0)
 	local var_5_0 = arg_5_0.game
 	local var_5_1 = arg_5_0.go_id
 
 	return NetworkLookup.bt_action_names[GameSession.game_object_field(var_5_0, var_5_1, "bt_action_name")]
 end
 
-function AiHuskBaseExtension.breed(arg_6_0)
+AiHuskBaseExtension.breed = function (arg_6_0)
 	return arg_6_0._breed
 end
 
-function AiHuskBaseExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AiHuskBaseExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_0.broadphase_id and HEALTH_ALIVE[arg_7_1] then
 		Broadphase.move(arg_7_0.broadphase, arg_7_0.broadphase_id, POSITION_LOOKUP[arg_7_1])
 	end
 end
 
-function AiHuskBaseExtension.unit_removed_from_game(arg_8_0)
+AiHuskBaseExtension.unit_removed_from_game = function (arg_8_0)
 	Managers.state.side:remove_unit_from_side(arg_8_0.unit)
 
 	arg_8_0._side_id = nil
 end
 
-function AiHuskBaseExtension.destroy(arg_9_0, arg_9_1, arg_9_2)
+AiHuskBaseExtension.destroy = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end

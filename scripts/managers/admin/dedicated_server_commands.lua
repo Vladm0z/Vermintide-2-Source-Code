@@ -27,11 +27,11 @@ local function var_0_5(arg_3_0, arg_3_1, ...)
 	end
 end
 
-function DedicatedServerCommands.init(arg_4_0)
+DedicatedServerCommands.init = function (arg_4_0)
 	return
 end
 
-function DedicatedServerCommands.execute_command(arg_5_0, arg_5_1)
+DedicatedServerCommands.execute_command = function (arg_5_0, arg_5_1)
 	local var_5_0 = string.split_deprecated(arg_5_1, " ")
 
 	if #var_5_0 == 0 then
@@ -114,7 +114,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_commands",
 		max_args = 0,
-		func = function()
+		func = function ()
 			local var_6_0 = ""
 
 			for iter_6_0, iter_6_1 in pairs(var_0_1) do
@@ -129,7 +129,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "help <command>",
 		max_args = 1,
-		func = function(arg_7_0)
+		func = function (arg_7_0)
 			if not arg_7_0 then
 				local var_7_0 = ""
 
@@ -156,7 +156,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "start",
 		max_args = 0,
-		func = function()
+		func = function ()
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, string.format("Failed to start server - Match already started")
 			end
@@ -171,7 +171,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "stop",
 		max_args = 0,
-		func = function()
+		func = function ()
 			Application.quit()
 
 			return true, "Server stopped!"
@@ -182,7 +182,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "restart",
 		max_args = 0,
-		func = function()
+		func = function ()
 			local var_10_0 = Managers.mechanism:game_mechanism()
 
 			assert(DEDICATED_SERVER, "Mismanaged use of 'get_slot_reservation_handler'")
@@ -207,7 +207,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_party_size <party_id> <size>",
 		max_args = 2,
-		func = function(arg_11_0, arg_11_1)
+		func = function (arg_11_0, arg_11_1)
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to set party size - Ongoing match"
 			end
@@ -231,7 +231,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_level <level_key>",
 		max_args = 1,
-		func = function(arg_12_0)
+		func = function (arg_12_0)
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, string.format("Failed to set level - Match started")
 			end
@@ -256,7 +256,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_players",
 		max_args = 0,
-		func = function()
+		func = function ()
 			local var_13_0 = ""
 
 			if Managers.level_transition_handler:in_hub_level() then
@@ -287,7 +287,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "list_party <party_id>",
 		max_args = 1,
-		func = function(arg_14_0)
+		func = function (arg_14_0)
 			arg_14_0 = tonumber(arg_14_0)
 
 			if Managers.level_transition_handler:in_hub_level() then
@@ -336,7 +336,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "list_script_data",
 		max_args = 0,
-		func = function()
+		func = function ()
 			return true, table.dump_string(script_data)
 		end
 	},
@@ -345,7 +345,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_script_data <key> <value>",
 		max_args = 2,
-		func = function(arg_16_0, arg_16_1)
+		func = function (arg_16_0, arg_16_1)
 			script_data[arg_16_0] = arg_16_1
 
 			return true, "Script data changed!"
@@ -356,7 +356,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "disable_gamemode_end <bool>",
 		max_args = 1,
-		func = function(arg_17_0)
+		func = function (arg_17_0)
 			script_data.disable_gamemode_end = arg_17_0
 
 			return true, "Game mode end has changed"
@@ -367,7 +367,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_time <time>",
 		max_args = 1,
-		func = function(arg_18_0)
+		func = function (arg_18_0)
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to set time - Match not started")
 			end
@@ -382,7 +382,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "add_time <time>",
 		max_args = 1,
-		func = function(arg_19_0)
+		func = function (arg_19_0)
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to add time - Match not started")
 			end
@@ -397,7 +397,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "set_score <score>",
 		max_args = 1,
-		func = function(arg_20_0)
+		func = function (arg_20_0)
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to set time - Match not started")
 			end
@@ -412,7 +412,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "add_score <score>",
 		max_args = 1,
-		func = function(arg_21_0)
+		func = function (arg_21_0)
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, string.format("Failed to add time - Match not started")
 			end
@@ -427,7 +427,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "start_round",
 		max_args = 0,
-		func = function()
+		func = function ()
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to start round - Match not started"
 			end
@@ -442,7 +442,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "end_round",
 		max_args = 0,
-		func = function()
+		func = function ()
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to end round - Match not started"
 			end
@@ -458,7 +458,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "end_round",
 		max_args = 0,
-		func = function()
+		func = function ()
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to end match - Match not started"
 			end
@@ -474,7 +474,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "skip_to_set <set>",
 		max_args = 1,
-		func = function(arg_25_0)
+		func = function (arg_25_0)
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
 			if Managers.level_transition_handler:in_hub_level() then
@@ -499,7 +499,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "skip_picker",
 		max_args = 0,
-		func = function()
+		func = function ()
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
 			if not Managers.mechanism:game_mechanism() then
@@ -528,7 +528,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "skip_picker",
 		max_args = 0,
-		func = function()
+		func = function ()
 			do return false, "Failed to skip to set - only avaiable in DEBUG" end
 
 			if not Managers.mechanism:game_mechanism() then
@@ -557,7 +557,7 @@ var_0_1 = {
 		min_args = 0,
 		example = "quick_start",
 		max_args = 0,
-		func = function()
+		func = function ()
 			script_data.dev_quick_start = true
 
 			return true, "Quick start enabled. Bypassing mission select and round timers."
@@ -568,7 +568,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "say <message>",
 		max_args = 1024,
-		func = function(...)
+		func = function (...)
 			local var_29_0 = varargs.join(" ", ...)
 			local var_29_1 = Managers.chat
 
@@ -586,7 +586,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "say_party <party_id> <message>",
 		max_args = 1025,
-		func = function()
+		func = function ()
 			fassert("Not implemented")
 		end
 	},
@@ -595,7 +595,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "say_player <peer_id> <message>",
 		max_args = 1025,
-		func = function()
+		func = function ()
 			fassert("Not implemented")
 		end
 	},
@@ -604,7 +604,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "swap_players <peer_id> <peer_id>",
 		max_args = 2,
-		func = function(arg_32_0, arg_32_1)
+		func = function (arg_32_0, arg_32_1)
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to move players - Match started"
 			end
@@ -631,7 +631,7 @@ var_0_1 = {
 		min_args = 2,
 		example = "set_player_party <peer_id> <party_id>",
 		max_args = 2,
-		func = function(arg_33_0, arg_33_1)
+		func = function (arg_33_0, arg_33_1)
 			if Managers.mechanism:get_state() ~= "inn" then
 				return false, "Failed to move player - Match started"
 			end
@@ -661,7 +661,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "kill <peer_id>",
 		max_args = 1,
-		func = function(arg_34_0)
+		func = function (arg_34_0)
 			if Managers.level_transition_handler:in_hub_level() then
 				return false, "Failed to kill player - Match not started"
 			end
@@ -692,7 +692,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "ban <peer_id>/<ip>",
 		max_args = 1,
-		func = function(arg_35_0, arg_35_1)
+		func = function (arg_35_0, arg_35_1)
 			if Application.hex64_to_dec(arg_35_0) == nil then
 				return false, "Invalid peer id"
 			end
@@ -708,7 +708,7 @@ var_0_1 = {
 			local var_35_1 = Managers.ban_list
 
 			var_35_1:ban(arg_35_0, arg_35_0, var_35_0)
-			var_35_1:save(function(arg_36_0)
+			var_35_1:save(function (arg_36_0)
 				if arg_36_0 ~= nil then
 					cprintf("Ban list save failed (%s)", arg_36_0)
 				end
@@ -722,7 +722,7 @@ var_0_1 = {
 		min_args = 1,
 		example = "kick <peer_id>/<ip>",
 		max_args = 1,
-		func = function(arg_37_0)
+		func = function (arg_37_0)
 			if not PEER_ID_TO_CHANNEL[arg_37_0] then
 				return false, "Failed to kick player - Player not found"
 			end
@@ -736,7 +736,7 @@ var_0_1 = {
 		description = "spawns a horde",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
 			Managers.state.conflict:debug_spawn_horde()
 
 			return true, "Spawning horde"
@@ -746,7 +746,7 @@ var_0_1 = {
 		description = "lets pactsworn pick playable boss",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
 			cprint("[DEBUG] Triggered Playable boss")
 			Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
 
@@ -757,7 +757,7 @@ var_0_1 = {
 		description = "disables ai and bots",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
 			cprint("[DEBUG] disabling ai and bots")
 
 			script_data.ai_pacing_disabled = false
@@ -779,7 +779,7 @@ var_0_1 = {
 		description = "enables ai and bots",
 		min_args = 0,
 		max_args = 0,
-		func = function()
+		func = function ()
 			cprint("[DEBUG] enabling ai and bots")
 
 			script_data.ai_pacing_disabled = true
@@ -799,7 +799,7 @@ var_0_1 = {
 	}
 }
 var_0_2 = {
-	_num_players = function()
+	_num_players = function ()
 		local var_42_0 = script_data.dedicated_server_reservation_slots
 		local var_42_1 = string.split_deprecated(var_42_0, ",")
 		local var_42_2
@@ -819,7 +819,7 @@ var_0_2 = {
 
 		return string.format("%d/%d", var_42_2, var_42_3)
 	end,
-	_ping = function()
+	_ping = function ()
 		return "pong"
 	end
 }

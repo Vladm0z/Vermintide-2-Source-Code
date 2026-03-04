@@ -79,7 +79,7 @@ local var_0_1 = {
 	}
 }
 
-function MenuWorldPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+MenuWorldPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	MenuWorldPreviewer.super.init(arg_1_0, arg_1_1, arg_1_3, arg_1_4)
 
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -115,26 +115,26 @@ function MenuWorldPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._requested_unit_spawn_queue = {}
 end
 
-function MenuWorldPreviewer.set_default_position(arg_2_0, arg_2_1)
+MenuWorldPreviewer.set_default_position = function (arg_2_0, arg_2_1)
 	arg_2_0._camera_default_position = arg_2_1
 end
 
-function MenuWorldPreviewer.set_lookat_target(arg_3_0, arg_3_1)
+MenuWorldPreviewer.set_lookat_target = function (arg_3_0, arg_3_1)
 	arg_3_0._lookat_target = arg_3_1
 end
 
-function MenuWorldPreviewer.destroy(arg_4_0)
+MenuWorldPreviewer.destroy = function (arg_4_0)
 	MenuWorldPreviewer.super.destroy(arg_4_0)
 	Renderer.set_automatic_streaming(true)
 	GarbageLeakDetector.register_object(arg_4_0, "MenuWorldPreviewer")
 end
 
-function MenuWorldPreviewer.on_enter(arg_5_0, arg_5_1, arg_5_2)
+MenuWorldPreviewer.on_enter = function (arg_5_0, arg_5_1, arg_5_2)
 	MenuWorldPreviewer.super.on_enter(arg_5_0)
 	arg_5_0:setup_viewport(arg_5_1, arg_5_2)
 end
 
-function MenuWorldPreviewer.setup_viewport(arg_6_0, arg_6_1, arg_6_2)
+MenuWorldPreviewer.setup_viewport = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.viewport_widget = arg_6_1
 
 	local var_6_0 = arg_6_1.element.pass_data[1]
@@ -163,7 +163,7 @@ end
 
 local var_0_2 = {}
 
-function MenuWorldPreviewer.activate(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+MenuWorldPreviewer.activate = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if not arg_7_0._delayed_spawn then
 		return
 	end
@@ -188,11 +188,11 @@ function MenuWorldPreviewer.activate(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0._activated = arg_7_1
 end
 
-function MenuWorldPreviewer.trigger_level_event(arg_8_0, arg_8_1)
+MenuWorldPreviewer.trigger_level_event = function (arg_8_0, arg_8_1)
 	Level.trigger_event(arg_8_0.level, arg_8_1)
 end
 
-function MenuWorldPreviewer.show_level_units(arg_9_0, arg_9_1, arg_9_2)
+MenuWorldPreviewer.show_level_units = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.level
 
 	for iter_9_0, iter_9_1 in pairs(arg_9_1) do
@@ -210,16 +210,16 @@ function MenuWorldPreviewer.show_level_units(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function MenuWorldPreviewer.has_units_spawned(arg_10_0)
+MenuWorldPreviewer.has_units_spawned = function (arg_10_0)
 	return arg_10_0.character_unit ~= nil
 end
 
-function MenuWorldPreviewer.on_exit(arg_11_0)
+MenuWorldPreviewer.on_exit = function (arg_11_0)
 	MenuWorldPreviewer.super.on_exit(arg_11_0)
 	Renderer.set_automatic_streaming(true)
 end
 
-function MenuWorldPreviewer.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+MenuWorldPreviewer.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0._requested_unit_spawn_queue = arg_12_0._delayed_unit_spawn_queue or var_0_2
 
 	MenuWorldPreviewer.super.update(arg_12_0, arg_12_1, arg_12_2)
@@ -292,24 +292,24 @@ function MenuWorldPreviewer.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function MenuWorldPreviewer.post_update(arg_13_0, arg_13_1, arg_13_2)
+MenuWorldPreviewer.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:_handle_unit_spawn_request()
 	MenuWorldPreviewer.super.post_update(arg_13_0, arg_13_1, arg_13_2)
 end
 
-function MenuWorldPreviewer.force_stream_highest_mip_levels(arg_14_0)
+MenuWorldPreviewer.force_stream_highest_mip_levels = function (arg_14_0)
 	arg_14_0._use_highest_mip_levels = true
 end
 
-function MenuWorldPreviewer.force_hide_character(arg_15_0)
+MenuWorldPreviewer.force_hide_character = function (arg_15_0)
 	arg_15_0._force_hide_character = true
 end
 
-function MenuWorldPreviewer.force_unhide_character(arg_16_0)
+MenuWorldPreviewer.force_unhide_character = function (arg_16_0)
 	arg_16_0._force_hide_character = false
 end
 
-function MenuWorldPreviewer._update_units_visibility(arg_17_0, arg_17_1)
+MenuWorldPreviewer._update_units_visibility = function (arg_17_0, arg_17_1)
 	if arg_17_0._force_hide_character then
 		return
 	end
@@ -317,7 +317,7 @@ function MenuWorldPreviewer._update_units_visibility(arg_17_0, arg_17_1)
 	MenuWorldPreviewer.super._update_units_visibility(arg_17_0, arg_17_1)
 end
 
-function MenuWorldPreviewer._set_character_visibility(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+MenuWorldPreviewer._set_character_visibility = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	MenuWorldPreviewer.super._set_character_visibility(arg_18_0, arg_18_1)
 
 	if arg_18_3 then
@@ -350,7 +350,7 @@ function MenuWorldPreviewer._set_character_visibility(arg_18_0, arg_18_1, arg_18
 	end
 end
 
-function MenuWorldPreviewer._update_camera_animation_data(arg_19_0, arg_19_1, arg_19_2)
+MenuWorldPreviewer._update_camera_animation_data = function (arg_19_0, arg_19_1, arg_19_2)
 	for iter_19_0, iter_19_1 in pairs(arg_19_1) do
 		if iter_19_1.total_time then
 			local var_19_0 = iter_19_1.time
@@ -369,7 +369,7 @@ function MenuWorldPreviewer._update_camera_animation_data(arg_19_0, arg_19_1, ar
 	end
 end
 
-function MenuWorldPreviewer.set_camera_axis_offset(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+MenuWorldPreviewer.set_camera_axis_offset = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_0._camera_position_animation_data[arg_20_1]
 	local var_20_1 = arg_20_0._camera_default_position
 
@@ -381,11 +381,11 @@ function MenuWorldPreviewer.set_camera_axis_offset(arg_20_0, arg_20_1, arg_20_2,
 	var_20_0.value = var_20_0.from
 end
 
-function MenuWorldPreviewer.set_camera_gamepad_offset(arg_21_0, arg_21_1)
+MenuWorldPreviewer.set_camera_gamepad_offset = function (arg_21_0, arg_21_1)
 	arg_21_0._camera_gamepad_offset_data = arg_21_1
 end
 
-function MenuWorldPreviewer.set_camera_rotation_axis_offset(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+MenuWorldPreviewer.set_camera_rotation_axis_offset = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = arg_22_0._camera_rotation_animation_data[arg_22_1]
 
 	var_22_0.from = arg_22_3 and var_22_0.value or arg_22_2
@@ -396,7 +396,7 @@ function MenuWorldPreviewer.set_camera_rotation_axis_offset(arg_22_0, arg_22_1, 
 	var_22_0.value = var_22_0.from
 end
 
-function MenuWorldPreviewer.set_character_axis_offset(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+MenuWorldPreviewer.set_character_axis_offset = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_0._camera_character_position_animation_data[arg_23_1]
 
 	var_23_0.from = arg_23_3 and var_23_0.value or arg_23_2
@@ -409,7 +409,7 @@ end
 
 local var_0_3 = {}
 
-function MenuWorldPreviewer.handle_mouse_input(arg_24_0, arg_24_1, arg_24_2)
+MenuWorldPreviewer.handle_mouse_input = function (arg_24_0, arg_24_1, arg_24_2)
 	if arg_24_0.character_unit == nil then
 		return
 	end
@@ -451,7 +451,7 @@ function MenuWorldPreviewer.handle_mouse_input(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function MenuWorldPreviewer.handle_controller_input(arg_25_0, arg_25_1, arg_25_2)
+MenuWorldPreviewer.handle_controller_input = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0.character_unit == nil then
 		return
 	end
@@ -467,17 +467,17 @@ function MenuWorldPreviewer.handle_controller_input(arg_25_0, arg_25_1, arg_25_2
 	end
 end
 
-function MenuWorldPreviewer.start_character_rotation(arg_26_0, arg_26_1)
+MenuWorldPreviewer.start_character_rotation = function (arg_26_0, arg_26_1)
 	if arg_26_1 then
 		arg_26_0.rotation_direction = arg_26_1
 	end
 end
 
-function MenuWorldPreviewer.end_character_rotation(arg_27_0)
+MenuWorldPreviewer.end_character_rotation = function (arg_27_0)
 	print("end_character_rotation", arg_27_0.rotation_direction)
 end
 
-function MenuWorldPreviewer.request_spawn_hero_unit(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
+MenuWorldPreviewer.request_spawn_hero_unit = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
 	arg_28_0:clear_asynchronous_data()
 
 	arg_28_0._requested_hero_spawn_data = {
@@ -500,7 +500,7 @@ function MenuWorldPreviewer.request_spawn_hero_unit(arg_28_0, arg_28_1, arg_28_2
 	arg_28_0._draw_character = true
 end
 
-function MenuWorldPreviewer.request_spawn_unit(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+MenuWorldPreviewer.request_spawn_unit = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0._requested_unit_spawn_queue
 
 	var_29_0[#var_29_0 + 1] = {
@@ -515,7 +515,7 @@ function MenuWorldPreviewer.request_spawn_unit(arg_29_0, arg_29_1, arg_29_2, arg
 	end
 end
 
-function MenuWorldPreviewer._handle_hero_spawn_request(arg_30_0)
+MenuWorldPreviewer._handle_hero_spawn_request = function (arg_30_0)
 	if arg_30_0._requested_hero_spawn_data then
 		local var_30_0 = arg_30_0._requested_hero_spawn_data
 		local var_30_1 = var_30_0.frame_delay
@@ -538,7 +538,7 @@ function MenuWorldPreviewer._handle_hero_spawn_request(arg_30_0)
 	end
 end
 
-function MenuWorldPreviewer._handle_unit_spawn_request(arg_31_0)
+MenuWorldPreviewer._handle_unit_spawn_request = function (arg_31_0)
 	if #arg_31_0._requested_unit_spawn_queue < 1 then
 		return
 	end
@@ -554,7 +554,7 @@ function MenuWorldPreviewer._handle_unit_spawn_request(arg_31_0)
 	end
 end
 
-function MenuWorldPreviewer._load_hero_unit(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
+MenuWorldPreviewer._load_hero_unit = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
 	arg_32_0.camera_xy_angle_target = var_0_0
 
 	if not arg_32_0._delayed_spawn then
@@ -604,7 +604,7 @@ function MenuWorldPreviewer._load_hero_unit(arg_32_0, arg_32_1, arg_32_2, arg_32
 	}, arg_32_0:_load_packages(var_32_8)
 end
 
-function MenuWorldPreviewer._spawn_hero_unit(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+MenuWorldPreviewer._spawn_hero_unit = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	MenuWorldPreviewer.super._spawn_hero_unit(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 
 	if arg_33_0._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character then
@@ -612,19 +612,19 @@ function MenuWorldPreviewer._spawn_hero_unit(arg_33_0, arg_33_1, arg_33_2, arg_3
 	end
 end
 
-function MenuWorldPreviewer.respawn_hero_unit(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+MenuWorldPreviewer.respawn_hero_unit = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
 	local var_34_0 = true
 
 	arg_34_0:request_spawn_hero_unit(arg_34_1, arg_34_2, arg_34_3, arg_34_4, nil, arg_34_5, nil, var_34_0)
 end
 
-function MenuWorldPreviewer._spawn_item(arg_35_0, arg_35_1, arg_35_2)
+MenuWorldPreviewer._spawn_item = function (arg_35_0, arg_35_1, arg_35_2)
 	if MenuWorldPreviewer.super._spawn_item(arg_35_0, arg_35_1, arg_35_2) and (arg_35_0._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character) then
 		arg_35_0:_request_mip_streaming_for_unit(arg_35_0.character_unit)
 	end
 end
 
-function MenuWorldPreviewer._spawn_item_unit(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+MenuWorldPreviewer._spawn_item_unit = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
 	MenuWorldPreviewer.super._spawn_item_unit(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
 
 	if arg_36_0._use_highest_mip_levels or UISettings.wait_for_mip_streaming_items then
@@ -632,7 +632,7 @@ function MenuWorldPreviewer._spawn_item_unit(arg_36_0, arg_36_1, arg_36_2, arg_3
 	end
 end
 
-function MenuWorldPreviewer._spawn_unit(arg_37_0, arg_37_1, arg_37_2)
+MenuWorldPreviewer._spawn_unit = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = World.spawn_unit(arg_37_0.world, arg_37_1)
 
 	arg_37_0._units[#arg_37_0._units + 1] = var_37_0
@@ -647,13 +647,13 @@ function MenuWorldPreviewer._spawn_unit(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function MenuWorldPreviewer.set_unit_location(arg_38_0, arg_38_1, arg_38_2)
+MenuWorldPreviewer.set_unit_location = function (arg_38_0, arg_38_1, arg_38_2)
 	if arg_38_2 and arg_38_1 and Unit.alive(arg_38_1) then
 		Unit.set_local_position(arg_38_1, 0, Vector3Aux.unbox(arg_38_2))
 	end
 end
 
-function MenuWorldPreviewer._destroy_item_units_by_slot(arg_39_0, arg_39_1)
+MenuWorldPreviewer._destroy_item_units_by_slot = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0.world
 	local var_39_1 = arg_39_0._hidden_units
 	local var_39_2 = arg_39_0._requested_mip_streaming_units
@@ -706,7 +706,7 @@ function MenuWorldPreviewer._destroy_item_units_by_slot(arg_39_0, arg_39_1)
 	end
 end
 
-function MenuWorldPreviewer._reference_name(arg_40_0)
+MenuWorldPreviewer._reference_name = function (arg_40_0)
 	local var_40_0 = "MenuWorldPreviewer"
 
 	if arg_40_0.unique_id then
@@ -716,7 +716,7 @@ function MenuWorldPreviewer._reference_name(arg_40_0)
 	return var_40_0
 end
 
-function MenuWorldPreviewer.clear_units(arg_41_0, arg_41_1)
+MenuWorldPreviewer.clear_units = function (arg_41_0, arg_41_1)
 	MenuWorldPreviewer.super.clear_units(arg_41_0)
 
 	if arg_41_1 then
@@ -738,16 +738,16 @@ function MenuWorldPreviewer.clear_units(arg_41_0, arg_41_1)
 	arg_41_0._units = {}
 end
 
-function MenuWorldPreviewer.hide_character(arg_42_0)
+MenuWorldPreviewer.hide_character = function (arg_42_0)
 	arg_42_0._draw_character = false
 end
 
-function MenuWorldPreviewer.trigger_unit_flow_event(arg_43_0, arg_43_1, arg_43_2)
+MenuWorldPreviewer.trigger_unit_flow_event = function (arg_43_0, arg_43_1, arg_43_2)
 	if arg_43_1 and Unit.alive(arg_43_1) then
 		Unit.flow_event(arg_43_1, arg_43_2)
 	end
 end
 
-function MenuWorldPreviewer.trigger_level_flow_event(arg_44_0, arg_44_1)
+MenuWorldPreviewer.trigger_level_flow_event = function (arg_44_0, arg_44_1)
 	return Level.trigger_event(arg_44_0.level, arg_44_1)
 end

@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMutatorSorcererFollowAction = class(BTMutatorSorcererFollowAction, BTNode)
 
-function BTMutatorSorcererFollowAction.init(arg_1_0, ...)
+BTMutatorSorcererFollowAction.init = function (arg_1_0, ...)
 	BTMutatorSorcererFollowAction.super.init(arg_1_0, ...)
 end
 
 BTMutatorSorcererFollowAction.name = "BTMutatorSorcererFollowAction"
 
-function BTMutatorSorcererFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTMutatorSorcererFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -39,7 +39,7 @@ function BTMutatorSorcererFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	var_2_7:play_audio_unit_event(var_2_8, arg_2_1)
 end
 
-function BTMutatorSorcererFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMutatorSorcererFollowAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = Managers.state.entity:system("audio_system")
 	local var_3_1 = arg_3_2.action.stop_skulking_sound_event
 
@@ -71,7 +71,7 @@ function BTMutatorSorcererFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	arg_3_2.start_finished = nil
 end
 
-function BTMutatorSorcererFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMutatorSorcererFollowAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.target_unit
 	local var_4_1 = arg_4_2.action
 	local var_4_2 = arg_4_2.navigation_extension
@@ -144,7 +144,7 @@ function BTMutatorSorcererFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTMutatorSorcererFollowAction.check_infront(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTMutatorSorcererFollowAction.check_infront = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = Unit.world_position(arg_5_2, 0)
 	local var_5_1 = Unit.world_position(arg_5_1, 0)
 	local var_5_2 = Vector3.normalize(var_5_1 - var_5_0)
@@ -167,7 +167,7 @@ function BTMutatorSorcererFollowAction.check_infront(arg_5_0, arg_5_1, arg_5_2, 
 	return var_5_8, var_5_9
 end
 
-function BTMutatorSorcererFollowAction.handle_movement_speed_bonus(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTMutatorSorcererFollowAction.handle_movement_speed_bonus = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0
 	local var_6_1
 	local var_6_2
@@ -231,6 +231,6 @@ function BTMutatorSorcererFollowAction.handle_movement_speed_bonus(arg_6_0, arg_
 	end
 end
 
-function BTMutatorSorcererFollowAction.play_movement_sound(arg_7_0, arg_7_1, arg_7_2)
+BTMutatorSorcererFollowAction.play_movement_sound = function (arg_7_0, arg_7_1, arg_7_2)
 	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_7_2, arg_7_1)
 end

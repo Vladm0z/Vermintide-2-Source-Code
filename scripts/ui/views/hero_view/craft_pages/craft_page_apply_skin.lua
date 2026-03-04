@@ -14,7 +14,7 @@ local var_0_9 = 1
 CraftPageApplySkin = class(CraftPageApplySkin)
 CraftPageApplySkin.NAME = "CraftPageApplySkin"
 
-function CraftPageApplySkin.on_enter(arg_1_0, arg_1_1, arg_1_2)
+CraftPageApplySkin.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroWindowCraft] Enter Substate CraftPageApplySkin")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -72,7 +72,7 @@ function CraftPageApplySkin.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:setup_recipe_requirements()
 end
 
-function CraftPageApplySkin.setup_recipe_requirements(arg_2_0)
+CraftPageApplySkin.setup_recipe_requirements = function (arg_2_0)
 	local var_2_0 = arg_2_0._recipe_grid
 	local var_2_1 = arg_2_0.settings.name
 	local var_2_2 = var_0_1[var_2_1].ingredients
@@ -126,7 +126,7 @@ function CraftPageApplySkin.setup_recipe_requirements(arg_2_0)
 	arg_2_0._has_all_requirements = var_2_6
 end
 
-function CraftPageApplySkin.create_ui_elements(arg_3_0, arg_3_1)
+CraftPageApplySkin.create_ui_elements = function (arg_3_0, arg_3_1)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_3_0 = {}
@@ -150,7 +150,7 @@ function CraftPageApplySkin.create_ui_elements(arg_3_0, arg_3_1)
 	arg_3_0:_handle_craft_input_progress(0)
 end
 
-function CraftPageApplySkin._weapon_slot_updated(arg_4_0)
+CraftPageApplySkin._weapon_slot_updated = function (arg_4_0)
 	local var_4_0 = Managers.backend:get_interface("items")
 	local var_4_1 = arg_4_0._craft_item
 	local var_4_2 = var_4_1 and var_4_0:get_item_masterlist_data(var_4_1)
@@ -168,7 +168,7 @@ function CraftPageApplySkin._weapon_slot_updated(arg_4_0)
 	end
 end
 
-function CraftPageApplySkin.on_exit(arg_5_0, arg_5_1)
+CraftPageApplySkin.on_exit = function (arg_5_0, arg_5_1)
 	arg_5_0.parent.parent:set_craft_optional_item_filter(nil)
 	print("[HeroWindowCraft] Exit Substate CraftPageApplySkin")
 
@@ -179,7 +179,7 @@ function CraftPageApplySkin.on_exit(arg_5_0, arg_5_1)
 	end
 end
 
-function CraftPageApplySkin.update(arg_6_0, arg_6_1, arg_6_2)
+CraftPageApplySkin.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -192,11 +192,11 @@ function CraftPageApplySkin.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function CraftPageApplySkin.post_update(arg_7_0, arg_7_1, arg_7_2)
+CraftPageApplySkin.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function CraftPageApplySkin._update_animations(arg_8_0, arg_8_1)
+CraftPageApplySkin._update_animations = function (arg_8_0, arg_8_1)
 	arg_8_0.ui_animator:update(arg_8_1)
 
 	local var_8_0 = arg_8_0._animations
@@ -215,7 +215,7 @@ function CraftPageApplySkin._update_animations(arg_8_0, arg_8_1)
 	UIWidgetUtils.animate_default_button(var_8_2.craft_button, arg_8_1)
 end
 
-function CraftPageApplySkin._is_button_pressed(arg_9_0, arg_9_1)
+CraftPageApplySkin._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -225,13 +225,13 @@ function CraftPageApplySkin._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function CraftPageApplySkin._is_button_hovered(arg_10_0, arg_10_1)
+CraftPageApplySkin._is_button_hovered = function (arg_10_0, arg_10_1)
 	if arg_10_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function CraftPageApplySkin._is_button_held(arg_11_0, arg_11_1)
+CraftPageApplySkin._is_button_held = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.is_clicked then
@@ -239,7 +239,7 @@ function CraftPageApplySkin._is_button_held(arg_11_0, arg_11_1)
 	end
 end
 
-function CraftPageApplySkin._handle_input(arg_12_0, arg_12_1, arg_12_2)
+CraftPageApplySkin._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 
 	if var_12_0:waiting_for_craft() or arg_12_0._craft_result then
@@ -302,7 +302,7 @@ function CraftPageApplySkin._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function CraftPageApplySkin._handle_craft_input_progress(arg_13_0, arg_13_1)
+CraftPageApplySkin._handle_craft_input_progress = function (arg_13_0, arg_13_1)
 	local var_13_0
 
 	var_13_0 = arg_13_1 ~= 0
@@ -316,13 +316,13 @@ function CraftPageApplySkin._handle_craft_input_progress(arg_13_0, arg_13_1)
 	end
 end
 
-function CraftPageApplySkin.craft_result(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+CraftPageApplySkin.craft_result = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not arg_14_2 then
 		arg_14_0._craft_result = arg_14_1
 	end
 end
 
-function CraftPageApplySkin.reset(arg_15_0)
+CraftPageApplySkin.reset = function (arg_15_0)
 	local var_15_0 = arg_15_0._item_grid
 	local var_15_1 = arg_15_0._item_grid_2
 
@@ -332,7 +332,7 @@ function CraftPageApplySkin.reset(arg_15_0)
 	var_15_1:update_items_status()
 end
 
-function CraftPageApplySkin.on_craft_completed(arg_16_0)
+CraftPageApplySkin.on_craft_completed = function (arg_16_0)
 	local var_16_0 = arg_16_0._craft_result
 	local var_16_1 = arg_16_0._item_grid
 	local var_16_2 = arg_16_0._item_grid_2
@@ -370,7 +370,7 @@ function CraftPageApplySkin.on_craft_completed(arg_16_0)
 	end
 end
 
-function CraftPageApplySkin._update_craft_items(arg_17_0)
+CraftPageApplySkin._update_craft_items = function (arg_17_0)
 	local var_17_0 = arg_17_0.super_parent
 	local var_17_1 = arg_17_0._item_grid
 	local var_17_2 = arg_17_0._item_grid_2
@@ -448,7 +448,7 @@ function CraftPageApplySkin._update_craft_items(arg_17_0)
 	end
 end
 
-function CraftPageApplySkin._remove_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CraftPageApplySkin._remove_item = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0.super_parent:set_disabled_backend_id(arg_18_2, false)
 	arg_18_1:add_item_to_slot_index(1, nil)
 	arg_18_0:_set_craft_button_disabled(true)
@@ -458,7 +458,7 @@ function CraftPageApplySkin._remove_item(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	end
 end
 
-function CraftPageApplySkin._add_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+CraftPageApplySkin._add_item = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_1:clear_item_grid()
 
 	local var_19_0 = 1
@@ -476,16 +476,16 @@ function CraftPageApplySkin._add_item(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	end
 end
 
-function CraftPageApplySkin._set_craft_button_disabled(arg_20_0, arg_20_1)
+CraftPageApplySkin._set_craft_button_disabled = function (arg_20_0, arg_20_1)
 	arg_20_0._widgets_by_name.craft_button.content.button_hotspot.disable_button = arg_20_1
 end
 
-function CraftPageApplySkin._exit(arg_21_0, arg_21_1)
+CraftPageApplySkin._exit = function (arg_21_0, arg_21_1)
 	arg_21_0.exit = true
 	arg_21_0.exit_level_id = arg_21_1
 end
 
-function CraftPageApplySkin.draw(arg_22_0, arg_22_1)
+CraftPageApplySkin.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_top_renderer
 	local var_22_2 = arg_22_0.ui_scenegraph
@@ -500,10 +500,10 @@ function CraftPageApplySkin.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_1)
 end
 
-function CraftPageApplySkin._play_sound(arg_23_0, arg_23_1)
+CraftPageApplySkin._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.super_parent:play_sound(arg_23_1)
 end
 
-function CraftPageApplySkin._set_craft_button_text(arg_24_0, arg_24_1, arg_24_2)
+CraftPageApplySkin._set_craft_button_text = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._widgets_by_name.craft_button.content.button_text = arg_24_2 and Localize(arg_24_1) or arg_24_1
 end

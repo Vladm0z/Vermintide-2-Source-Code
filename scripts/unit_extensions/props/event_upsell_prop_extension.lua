@@ -2,7 +2,7 @@
 
 EventUpsellPropExtension = class(EventUpsellPropExtension)
 
-function EventUpsellPropExtension.init(arg_1_0, arg_1_1, arg_1_2)
+EventUpsellPropExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._has_active_event = false
 
@@ -10,11 +10,11 @@ function EventUpsellPropExtension.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_evaluate_highlight_status()
 end
 
-function EventUpsellPropExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+EventUpsellPropExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	return
 end
 
-function EventUpsellPropExtension._evaluate_highlight_status(arg_3_0)
+EventUpsellPropExtension._evaluate_highlight_status = function (arg_3_0)
 	local var_3_0 = false
 	local var_3_1 = Managers.backend:get_interface("live_events")
 
@@ -34,7 +34,7 @@ function EventUpsellPropExtension._evaluate_highlight_status(arg_3_0)
 	end
 end
 
-function EventUpsellPropExtension._set_highlight(arg_4_0, arg_4_1)
+EventUpsellPropExtension._set_highlight = function (arg_4_0, arg_4_1)
 	if arg_4_1 == true then
 		Unit.flow_event(arg_4_0._unit, "enable_vfx")
 

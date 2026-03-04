@@ -296,10 +296,10 @@ local var_0_4 = {
 		{
 			name = "fade_in",
 			duration = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				arg_3_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_3_3)
 			end,
 			on_complete = NOP
@@ -309,10 +309,10 @@ local var_0_4 = {
 		{
 			name = "fade_out",
 			duration = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				arg_5_4.render_settings.alpha_multiplier = 1
 			end,
 			on_complete = NOP
@@ -323,7 +323,7 @@ local var_0_4 = {
 			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				local var_6_0 = arg_6_3.theme_settings
 				local var_6_1 = var_6_0.curse_description_color
 				local var_6_2 = arg_6_2.style
@@ -346,7 +346,7 @@ local var_0_4 = {
 
 				var_6_3.body = string.format(Localize("gaze_information"), var_6_4)
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = arg_7_2.style
 
 				arg_7_3 = math.easeInCubic(arg_7_3)
@@ -363,10 +363,10 @@ local var_0_4 = {
 			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				arg_8_2.style.icon.color[1] = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				arg_9_3 = math.easeInCubic(arg_9_3)
 				arg_9_2.style.icon.color[1] = 255 * arg_9_3
 			end,
@@ -378,7 +378,7 @@ local var_0_4 = {
 			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				local var_10_0 = arg_10_3.theme_settings
 				local var_10_1 = var_10_0.curse_description_color
 				local var_10_2 = arg_10_2.style
@@ -401,7 +401,7 @@ local var_0_4 = {
 
 				var_10_3.body = string.format(Localize("gaze_information"), var_10_4)
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = arg_11_2.style
 
 				arg_11_3 = math.easeInCubic(arg_11_3)
@@ -418,10 +418,10 @@ local var_0_4 = {
 			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				arg_12_2.style.icon.color[1] = 0
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				arg_13_3 = math.easeInCubic(arg_13_3)
 				arg_13_2.style.icon.color[1] = 255 * arg_13_3
 			end,

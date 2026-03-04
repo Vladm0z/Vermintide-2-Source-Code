@@ -751,7 +751,7 @@ CareerSettings = {
 		is_unlocked_function = var_0_0,
 		is_dlc_unlocked = var_0_1,
 		override_available_for_mechanism = var_0_2,
-		talent_packages = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		talent_packages = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0 = ActivatedAbilitySettings.we_3[1].weapon_name
 			local var_4_1 = ItemMasterList[var_4_0]
 

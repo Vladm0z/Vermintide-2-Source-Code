@@ -7,7 +7,7 @@ SpawnZoneBaker = class(SpawnZoneBaker)
 local var_0_0 = InterestPointUnits
 local var_0_1 = 1.5
 
-function SpawnZoneBaker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+SpawnZoneBaker.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.world = arg_1_1
 	arg_1_0.nav_world = arg_1_2
 	arg_1_0.level_analyzer = arg_1_3
@@ -109,7 +109,7 @@ function SpawnZoneBaker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	end
 end
 
-function SpawnZoneBaker._random(arg_2_0, ...)
+SpawnZoneBaker._random = function (arg_2_0, ...)
 	local var_2_0, var_2_1 = Math.next_random(arg_2_0.seed, ...)
 
 	arg_2_0.seed = var_2_0
@@ -117,7 +117,7 @@ function SpawnZoneBaker._random(arg_2_0, ...)
 	return var_2_1
 end
 
-function SpawnZoneBaker._random_dice_roll(arg_3_0, arg_3_1, arg_3_2)
+SpawnZoneBaker._random_dice_roll = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0, var_3_1 = LoadedDice.roll_seeded(arg_3_1, arg_3_2, arg_3_0.seed)
 
 	arg_3_0.seed = var_3_0
@@ -125,14 +125,14 @@ function SpawnZoneBaker._random_dice_roll(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_1
 end
 
-function SpawnZoneBaker.set_seed(arg_4_0, arg_4_1)
+SpawnZoneBaker.set_seed = function (arg_4_0, arg_4_1)
 	fassert(arg_4_1 and type(arg_4_1) == "number", "Bad seed input!")
 
 	arg_4_0.seed = arg_4_1
 	arg_4_0._initial_seed = arg_4_1
 end
 
-function SpawnZoneBaker._random_interval(arg_5_0, arg_5_1)
+SpawnZoneBaker._random_interval = function (arg_5_0, arg_5_1)
 	if type(arg_5_1) == "table" then
 		return arg_5_0:_random(arg_5_1[1], arg_5_1[2])
 	else
@@ -143,7 +143,7 @@ end
 local var_0_2 = {}
 local var_0_3 = {}
 
-function SpawnZoneBaker._get_random_array_indices(arg_6_0, arg_6_1, arg_6_2)
+SpawnZoneBaker._get_random_array_indices = function (arg_6_0, arg_6_1, arg_6_2)
 	fassert(arg_6_2 <= arg_6_1, "Can't pick more elements than the size of the")
 	fassert(arg_6_1 < 128, "Don't use this for large arrays, since it will be inefficient. It creates large tables then.")
 
@@ -162,11 +162,11 @@ function SpawnZoneBaker._get_random_array_indices(arg_6_0, arg_6_1, arg_6_2)
 	return var_0_2
 end
 
-function SpawnZoneBaker.loaded_spawn_zones_available(arg_7_0)
+SpawnZoneBaker.loaded_spawn_zones_available = function (arg_7_0)
 	return arg_7_0.spawn_zones_available
 end
 
-function SpawnZoneBaker.create_cover_points(arg_8_0, arg_8_1, arg_8_2)
+SpawnZoneBaker.create_cover_points = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_1 then
 		print("No cover points found")
 
@@ -192,7 +192,7 @@ function SpawnZoneBaker.create_cover_points(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function SpawnZoneBaker.periodical(arg_9_0, arg_9_1, arg_9_2)
+SpawnZoneBaker.periodical = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0
 	local var_9_1
 
@@ -227,7 +227,7 @@ end
 local var_0_6 = {}
 local var_0_7 = {}
 
-function SpawnZoneBaker.generate_spawns(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+SpawnZoneBaker.generate_spawns = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	if not InterestPointUnitsLookup then
 		ConflictUtils.generate_spawn_point_lookup(arg_12_0.world)
 	end
@@ -507,7 +507,7 @@ function SpawnZoneBaker.generate_spawns(arg_12_0, arg_12_1, arg_12_2, arg_12_3, 
 	return var_12_8, var_12_9, var_12_10, var_12_11, var_12_12
 end
 
-function SpawnZoneBaker.inject_special_packs(arg_13_0, arg_13_1, arg_13_2)
+SpawnZoneBaker.inject_special_packs = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_2[1].pack_spawning_setting.roaming_set.breed_packs_peeks_overide_chance
 
 	if not var_13_0 then
@@ -569,7 +569,7 @@ function SpawnZoneBaker.inject_special_packs(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function SpawnZoneBaker.create_hi_data(arg_14_0, arg_14_1, arg_14_2)
+SpawnZoneBaker.create_hi_data = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0
 	local var_14_1 = BreedPacks[arg_14_2].zone_checks
 
@@ -613,7 +613,7 @@ function SpawnZoneBaker.create_hi_data(arg_14_0, arg_14_1, arg_14_2)
 	return var_14_0
 end
 
-function SpawnZoneBaker.populate_spawns_by_rats(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
+SpawnZoneBaker.populate_spawns_by_rats = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
 	local var_15_0 = #arg_15_7
 	local var_15_1 = 0
 	local var_15_2 = 0
@@ -655,7 +655,7 @@ function SpawnZoneBaker.populate_spawns_by_rats(arg_15_0, arg_15_1, arg_15_2, ar
 	end
 end
 
-function SpawnZoneBaker._generate_pack_members(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+SpawnZoneBaker._generate_pack_members = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = BreedPacksBySize[arg_16_1][arg_16_2]
 	local var_16_1 = var_16_0.prob
 	local var_16_2 = var_16_0.alias
@@ -696,7 +696,7 @@ end
 
 local var_0_8 = #var_0_0
 
-function SpawnZoneBaker.spawn_amount_rats(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+SpawnZoneBaker.spawn_amount_rats = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 	local var_17_0 = Vector3.normalize
 	local var_17_1 = var_0_0
 	local var_17_2 = InterestPointPickListIndexLookup
@@ -770,7 +770,7 @@ function SpawnZoneBaker.spawn_amount_rats(arg_17_0, arg_17_1, arg_17_2, arg_17_3
 	return var_17_8
 end
 
-function SpawnZoneBaker.get_zone_segment_from_travel_dist(arg_18_0, arg_18_1)
+SpawnZoneBaker.get_zone_segment_from_travel_dist = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.zones
 	local var_18_1 = arg_18_0.num_main_zones
 
@@ -787,7 +787,7 @@ function SpawnZoneBaker.get_zone_segment_from_travel_dist(arg_18_0, arg_18_1)
 	return var_18_1, var_18_0[var_18_1], arg_18_0.zone_convert[var_18_1]
 end
 
-function SpawnZoneBaker.draw_zones(arg_19_0, arg_19_1, arg_19_2)
+SpawnZoneBaker.draw_zones = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = false
 	local var_19_1 = true
 
@@ -884,7 +884,7 @@ function SpawnZoneBaker.draw_zones(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function SpawnZoneBaker.show_debug(arg_20_0, arg_20_1)
+SpawnZoneBaker.show_debug = function (arg_20_0, arg_20_1)
 	if arg_20_1 then
 		if not arg_20_0.graph then
 			arg_20_0:draw_pack_density_graph()
@@ -898,7 +898,7 @@ function SpawnZoneBaker.show_debug(arg_20_0, arg_20_1)
 	return true
 end
 
-function SpawnZoneBaker.execute_debug(arg_21_0)
+SpawnZoneBaker.execute_debug = function (arg_21_0)
 	QuickDrawerStay:reset()
 	Managers.state.conflict:respawn_level(script_data.debug_pacing_seed)
 
@@ -937,7 +937,7 @@ function print_zone_list(arg_22_0)
 	end
 end
 
-function SpawnZoneBaker.debug_print_hi_data(arg_23_0)
+SpawnZoneBaker.debug_print_hi_data = function (arg_23_0)
 	local var_23_0
 	local var_23_1 = arg_23_0.great_cycles
 
@@ -982,7 +982,7 @@ function SpawnZoneBaker.debug_print_hi_data(arg_23_0)
 	end
 end
 
-function SpawnZoneBaker.draw_pack_density_graph(arg_24_0)
+SpawnZoneBaker.draw_pack_density_graph = function (arg_24_0)
 	if not arg_24_0.graph then
 		arg_24_0.graph = Managers.state.debug.graph_drawer:create_graph("spawn density", {
 			"distance",
@@ -1115,7 +1115,7 @@ function SpawnZoneBaker.draw_pack_density_graph(arg_24_0)
 	arg_24_0.player_annotation = var_24_21
 end
 
-function SpawnZoneBaker.draw_player_in_density_graph(arg_25_0, arg_25_1)
+SpawnZoneBaker.draw_player_in_density_graph = function (arg_25_0, arg_25_1)
 	if arg_25_0.graph then
 		if not arg_25_0.player_annotation then
 			local var_25_0 = {
@@ -1135,14 +1135,14 @@ function SpawnZoneBaker.draw_player_in_density_graph(arg_25_0, arg_25_1)
 	end
 end
 
-function SpawnZoneBaker.draw_func1(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+SpawnZoneBaker.draw_func1 = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	local var_26_0 = arg_26_1.island and "ISLAND" or "MAIN"
 	local var_26_1 = string.format("%d %s: %d %s", arg_26_3, var_26_0, arg_26_2, arg_26_1.pack_spawning_setting.name or "?")
 
 	Gui.text(arg_26_0._gui, var_26_1, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_26_4 + 200, arg_26_5, 1000))
 end
 
-function SpawnZoneBaker._draw_zone(arg_27_0, arg_27_1, arg_27_2)
+SpawnZoneBaker._draw_zone = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = Vector3(0, 0, 1.5)
 	local var_27_1 = arg_27_1.nodes
 
@@ -1157,7 +1157,7 @@ end
 
 local var_0_9 = true
 
-function SpawnZoneBaker.draw_func2(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
+SpawnZoneBaker.draw_func2 = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6)
 	local var_28_0 = arg_28_0._breed_pack_legend
 	local var_28_1 = arg_28_1.hi_data
 	local var_28_2 = var_28_0[arg_28_1.pack_type] .. "(" .. var_28_1.id .. ")"
@@ -1212,7 +1212,7 @@ function SpawnZoneBaker.draw_func2(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_2
 	Gui.text(arg_28_0._gui, var_28_12, "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_28_4 + 200, arg_28_5, 1000), var_28_7)
 end
 
-function SpawnZoneBaker._draw_legend(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+SpawnZoneBaker._draw_legend = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	Gui.text(arg_29_0._gui, string.format("LEGEND OF PACK-TYPES"), "materials/fonts/arial", 14, "materials/fonts/arial", Vector3(arg_29_2, arg_29_3, 1000))
 
 	arg_29_3 = arg_29_3 - 30
@@ -1224,7 +1224,7 @@ function SpawnZoneBaker._draw_legend(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	end
 end
 
-function SpawnZoneBaker.draw_zone_info_on_screen(arg_30_0)
+SpawnZoneBaker.draw_zone_info_on_screen = function (arg_30_0)
 	if not arg_30_0._gui then
 		arg_30_0._gui = World.create_screen_gui(arg_30_0.world, "immediate")
 	end
@@ -1316,7 +1316,7 @@ function SpawnZoneBaker.draw_zone_info_on_screen(arg_30_0)
 	end
 end
 
-function SpawnZoneBaker._debug_draw_baker_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+SpawnZoneBaker._debug_draw_baker_data = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	if arg_31_2.count > arg_31_2.max_amount then
 		local var_31_0 = Colors.distinct_colors_lookup[arg_31_1.id] or Colors.distinct_colors_lookup[1]
 		local var_31_1 = Color(var_31_0[1], var_31_0[2], var_31_0[3])

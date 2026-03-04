@@ -9,7 +9,7 @@ local function var_0_0(arg_1_0, ...)
 	end
 end
 
-function VisualStateMachine.init(arg_2_0, arg_2_1, arg_2_2, ...)
+VisualStateMachine.init = function (arg_2_0, arg_2_1, arg_2_2, ...)
 	assert(type(arg_2_1) == "string", "state machine name must be specified and be a string")
 
 	arg_2_0._name = arg_2_1
@@ -45,7 +45,7 @@ function VisualStateMachine.init(arg_2_0, arg_2_1, arg_2_2, ...)
 	Managers.state_machine:_register_state_machine(arg_2_0)
 end
 
-function VisualStateMachine.destroy(arg_3_0)
+VisualStateMachine.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0._current_state
 
 	arg_3_0._current_state = nil
@@ -71,7 +71,7 @@ function VisualStateMachine.destroy(arg_3_0)
 	Managers.state_machine:_unregister_state_machine(arg_3_0)
 end
 
-function VisualStateMachine.add_transition(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+VisualStateMachine.add_transition = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_0._transitions
 
 	if var_4_0[arg_4_1] == nil then
@@ -85,7 +85,7 @@ function VisualStateMachine.add_transition(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	var_4_1[arg_4_2] = arg_4_3
 end
 
-function VisualStateMachine.remove_transition(arg_5_0, arg_5_1, arg_5_2)
+VisualStateMachine.remove_transition = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._transitions[arg_5_1]
 
 	if var_5_0 == nil then
@@ -95,11 +95,11 @@ function VisualStateMachine.remove_transition(arg_5_0, arg_5_1, arg_5_2)
 	var_5_0[arg_5_2] = nil
 end
 
-function VisualStateMachine.set_transitions(arg_6_0, arg_6_1, arg_6_2)
+VisualStateMachine.set_transitions = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._transitions[arg_6_1] = arg_6_2
 end
 
-function VisualStateMachine.set_initial_state(arg_7_0, arg_7_1, ...)
+VisualStateMachine.set_initial_state = function (arg_7_0, arg_7_1, ...)
 	assert(arg_7_0._current_state == nil, "it is not allowed to set initial state twice")
 
 	arg_7_0._current_state = arg_7_0:_enter_state(arg_7_1, {
@@ -107,7 +107,7 @@ function VisualStateMachine.set_initial_state(arg_7_0, arg_7_1, ...)
 	})
 end
 
-function VisualStateMachine.update(arg_8_0, arg_8_1, arg_8_2)
+VisualStateMachine.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._root_state_machine ~= arg_8_0 then
 		return
 	end
@@ -151,7 +151,7 @@ function VisualStateMachine.update(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function VisualStateMachine.event(arg_9_0, arg_9_1, ...)
+VisualStateMachine.event = function (arg_9_0, arg_9_1, ...)
 	local var_9_0 = arg_9_0._root_state_machine
 
 	var_9_0._pending_event = arg_9_1
@@ -160,7 +160,7 @@ function VisualStateMachine.event(arg_9_0, arg_9_1, ...)
 	}
 end
 
-function VisualStateMachine.state_report(arg_10_0)
+VisualStateMachine.state_report = function (arg_10_0)
 	local var_10_0 = ""
 	local var_10_1 = arg_10_0._state_machine_stack
 	local var_10_2 = arg_10_0.find_in_table(var_10_1, arg_10_0)
@@ -188,7 +188,7 @@ function VisualStateMachine.state_report(arg_10_0)
 	return var_10_0
 end
 
-function VisualStateMachine._transitions_from_state(arg_11_0)
+VisualStateMachine._transitions_from_state = function (arg_11_0)
 	if arg_11_0._current_state == nil then
 		return {}
 	end
@@ -202,7 +202,7 @@ function VisualStateMachine._transitions_from_state(arg_11_0)
 	return var_11_0
 end
 
-function VisualStateMachine._current_state_name(arg_12_0)
+VisualStateMachine._current_state_name = function (arg_12_0)
 	local var_12_0 = arg_12_0._name
 	local var_12_1 = "<no state>"
 
@@ -217,7 +217,7 @@ function VisualStateMachine._current_state_name(arg_12_0)
 	return var_12_0 .. ":" .. var_12_1
 end
 
-function VisualStateMachine._handle_event(arg_13_0, arg_13_1, arg_13_2)
+VisualStateMachine._handle_event = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._current_state
 
 	if var_13_0 ~= nil then
@@ -238,7 +238,7 @@ function VisualStateMachine._handle_event(arg_13_0, arg_13_1, arg_13_2)
 	return false
 end
 
-function VisualStateMachine._received_event(arg_14_0, arg_14_1, arg_14_2)
+VisualStateMachine._received_event = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._state_machine_stack
 
 	for iter_14_0 = #var_14_0, 1, -1 do
@@ -258,7 +258,7 @@ function VisualStateMachine._received_event(arg_14_0, arg_14_1, arg_14_2)
 	assert(false, var_14_2)
 end
 
-function VisualStateMachine.find_in_table(arg_15_0, arg_15_1)
+VisualStateMachine.find_in_table = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in ipairs(arg_15_0) do
 		if iter_15_1 == arg_15_1 then
 			return iter_15_0
@@ -266,7 +266,7 @@ function VisualStateMachine.find_in_table(arg_15_0, arg_15_1)
 	end
 end
 
-function VisualStateMachine._leave_state(arg_16_0)
+VisualStateMachine._leave_state = function (arg_16_0)
 	local var_16_0 = arg_16_0._state_machine_stack
 	local var_16_1 = arg_16_0.find_in_table(var_16_0, arg_16_0)
 
@@ -288,7 +288,7 @@ function VisualStateMachine._leave_state(arg_16_0)
 	end
 end
 
-function VisualStateMachine._enter_state(arg_17_0, arg_17_1, arg_17_2)
+VisualStateMachine._enter_state = function (arg_17_0, arg_17_1, arg_17_2)
 	assert(arg_17_0._current_state == nil, "entering a state twice is not allowed")
 	assert(type(arg_17_1.NAME) == "string", "States must have a class variable NAME set to a string value")
 

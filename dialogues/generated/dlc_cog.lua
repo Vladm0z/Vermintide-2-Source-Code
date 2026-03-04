@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dlc_cog.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "nfl_whisper_conversation_eight_01",

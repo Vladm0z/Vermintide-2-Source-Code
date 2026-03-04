@@ -13,7 +13,7 @@ local var_0_0 = {
 	normal = 1
 }
 
-function WeaveKillEnemiesExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveKillEnemiesExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveKillEnemiesExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._on_start_func = arg_1_3.on_start_func
@@ -85,15 +85,15 @@ function WeaveKillEnemiesExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function WeaveKillEnemiesExtension.initial_sync_data(arg_2_0, arg_2_1)
+WeaveKillEnemiesExtension.initial_sync_data = function (arg_2_0, arg_2_1)
 	arg_2_1.value = arg_2_0:get_percentage_done()
 end
 
-function WeaveKillEnemiesExtension._set_objective_data(arg_3_0, arg_3_1)
+WeaveKillEnemiesExtension._set_objective_data = function (arg_3_0, arg_3_1)
 	return
 end
 
-function WeaveKillEnemiesExtension._activate(arg_4_0)
+WeaveKillEnemiesExtension._activate = function (arg_4_0)
 	local var_4_0 = ScriptUnit.has_extension(arg_4_0._unit, "tutorial_system")
 
 	if var_4_0 then
@@ -101,19 +101,19 @@ function WeaveKillEnemiesExtension._activate(arg_4_0)
 	end
 end
 
-function WeaveKillEnemiesExtension._deactivate(arg_5_0)
+WeaveKillEnemiesExtension._deactivate = function (arg_5_0)
 	return
 end
 
-function WeaveKillEnemiesExtension._server_update(arg_6_0, arg_6_1, arg_6_2)
+WeaveKillEnemiesExtension._server_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function WeaveKillEnemiesExtension._client_update(arg_7_0, arg_7_1, arg_7_2)
+WeaveKillEnemiesExtension._client_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function WeaveKillEnemiesExtension.is_done(arg_8_0)
+WeaveKillEnemiesExtension.is_done = function (arg_8_0)
 	if arg_8_0._method == "score" then
 		return false
 	end
@@ -121,7 +121,7 @@ function WeaveKillEnemiesExtension.is_done(arg_8_0)
 	return arg_8_0._num_killed >= arg_8_0._kills_required
 end
 
-function WeaveKillEnemiesExtension.get_percentage_done(arg_9_0)
+WeaveKillEnemiesExtension.get_percentage_done = function (arg_9_0)
 	if arg_9_0._method == "score" then
 		return 0
 	end
@@ -133,7 +133,7 @@ function WeaveKillEnemiesExtension.get_percentage_done(arg_9_0)
 	return math.clamp(arg_9_0._num_killed / arg_9_0._kills_required, 0, 1)
 end
 
-function WeaveKillEnemiesExtension.on_ai_killed(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+WeaveKillEnemiesExtension.on_ai_killed = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_0._hit_zones_allowed
 
 	if var_10_0 and arg_10_4 then

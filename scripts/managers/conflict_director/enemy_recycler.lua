@@ -32,7 +32,7 @@ local function var_0_19(arg_1_0, arg_1_1)
 	return var_1_0
 end
 
-function EnemyRecycler.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+EnemyRecycler.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 	arg_2_0._seed = arg_2_8
 	arg_2_0.world = arg_2_1
 	arg_2_0.nav_world = arg_2_2
@@ -55,7 +55,7 @@ function EnemyRecycler.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5
 	arg_2_0:setup(arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 end
 
-function EnemyRecycler.debug_print_all_unspawned_packs(arg_3_0)
+EnemyRecycler.debug_print_all_unspawned_packs = function (arg_3_0)
 	local var_3_0 = arg_3_0.areas
 
 	for iter_3_0 = 1, #var_3_0 do
@@ -80,7 +80,7 @@ function EnemyRecycler.debug_print_all_unspawned_packs(arg_3_0)
 	end
 end
 
-function EnemyRecycler.get_replacement_breed(arg_4_0, arg_4_1)
+EnemyRecycler.get_replacement_breed = function (arg_4_0, arg_4_1)
 	local var_4_0
 
 	if type(arg_4_1) == "table" then
@@ -92,7 +92,7 @@ function EnemyRecycler.get_replacement_breed(arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-function EnemyRecycler.patch_override_breed(arg_5_0, arg_5_1, arg_5_2)
+EnemyRecycler.patch_override_breed = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.areas
 
 	for iter_5_0 = 1, #var_5_0 do
@@ -129,7 +129,7 @@ function EnemyRecycler.patch_override_breed(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function EnemyRecycler._random(arg_6_0, ...)
+EnemyRecycler._random = function (arg_6_0, ...)
 	local var_6_0, var_6_1 = Math.next_random(arg_6_0._seed, ...)
 
 	arg_6_0._seed = var_6_0
@@ -137,7 +137,7 @@ function EnemyRecycler._random(arg_6_0, ...)
 	return var_6_1
 end
 
-function EnemyRecycler._random_dice_roll(arg_7_0, arg_7_1, arg_7_2)
+EnemyRecycler._random_dice_roll = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0, var_7_1 = LoadedDice.roll_seeded(arg_7_1, arg_7_2, arg_7_0._seed)
 
 	arg_7_0._seed = var_7_0
@@ -145,13 +145,13 @@ function EnemyRecycler._random_dice_roll(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_1
 end
 
-function EnemyRecycler.set_seed(arg_8_0, arg_8_1)
+EnemyRecycler.set_seed = function (arg_8_0, arg_8_1)
 	fassert(arg_8_1 and type(arg_8_1) == "number", "Bad seed input!")
 
 	arg_8_0._seed = arg_8_1
 end
 
-function EnemyRecycler.setup_forbidden_zones(arg_9_0, arg_9_1)
+EnemyRecycler.setup_forbidden_zones = function (arg_9_0, arg_9_1)
 	arg_9_0.forbidden_zones = {}
 
 	local var_9_0 = arg_9_0.forbidden_zones
@@ -193,7 +193,7 @@ local function var_0_20(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	return true
 end
 
-function EnemyRecycler.add_critters(arg_11_0)
+EnemyRecycler.add_critters = function (arg_11_0)
 	local var_11_0 = Managers.state.game_mode:level_key()
 	local var_11_1 = LevelSettings[var_11_0].level_name
 
@@ -217,7 +217,7 @@ function EnemyRecycler.add_critters(arg_11_0)
 	end
 end
 
-function EnemyRecycler.boxify_waypoint_table(arg_12_0, arg_12_1)
+EnemyRecycler.boxify_waypoint_table = function (arg_12_0, arg_12_1)
 	local var_12_0 = {}
 
 	for iter_12_0 = 1, #arg_12_1 do
@@ -229,7 +229,7 @@ function EnemyRecycler.boxify_waypoint_table(arg_12_0, arg_12_1)
 	return var_12_0
 end
 
-function EnemyRecycler.draw_roaming_splines(arg_13_0)
+EnemyRecycler.draw_roaming_splines = function (arg_13_0)
 	local var_13_0 = Color(75, 200, 200)
 	local var_13_1 = Color(200, 75, 0)
 	local var_13_2 = QuickDrawerStay
@@ -254,7 +254,7 @@ end
 local var_0_21 = SizeOfInterestPoint
 local var_0_22 = 3
 
-function EnemyRecycler.inject_roaming_patrol(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+EnemyRecycler.inject_roaming_patrol = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = var_0_21[arg_14_4]
 
 	if var_14_0 < var_0_22 then
@@ -316,7 +316,7 @@ function EnemyRecycler.inject_roaming_patrol(arg_14_0, arg_14_1, arg_14_2, arg_1
 	return false
 end
 
-function EnemyRecycler.setup(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+EnemyRecycler.setup = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	arg_15_0.unique_area_id = 0
 
 	arg_15_0:reset_areas()
@@ -384,7 +384,7 @@ function EnemyRecycler.setup(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, a
 	end
 end
 
-function EnemyRecycler.reset_areas(arg_16_0)
+EnemyRecycler.reset_areas = function (arg_16_0)
 	local var_16_0 = arg_16_0.areas
 
 	for iter_16_0 = 1, #var_16_0 do
@@ -414,12 +414,12 @@ function EnemyRecycler.reset_areas(arg_16_0)
 	table.clear(arg_16_0.main_path_events)
 end
 
-function EnemyRecycler.update(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+EnemyRecycler.update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 	arg_17_0:_update_roaming_spawning(arg_17_1, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 	arg_17_0.ai_group_system:prepare_update_recycler(arg_17_3, arg_17_5, arg_17_6)
 end
 
-function EnemyRecycler.update_main_path_events(arg_18_0, arg_18_1)
+EnemyRecycler.update_main_path_events = function (arg_18_0, arg_18_1)
 	if not arg_18_0.current_main_path_event_id or script_data.ai_boss_spawning_disabled then
 		return
 	end
@@ -459,7 +459,7 @@ function EnemyRecycler.update_main_path_events(arg_18_0, arg_18_1)
 	end
 end
 
-function EnemyRecycler.spawn_interest_point(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+EnemyRecycler.spawn_interest_point = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	local var_19_0 = {
 		ai_interest_point_system = {
 			recycler = true,
@@ -476,7 +476,7 @@ function EnemyRecycler.spawn_interest_point(arg_19_0, arg_19_1, arg_19_2, arg_19
 	return var_19_2
 end
 
-function EnemyRecycler.add_breed(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+EnemyRecycler.add_breed = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	arg_20_0.unique_area_id = arg_20_0.unique_area_id + 1
 
 	local var_20_0 = {
@@ -501,7 +501,7 @@ function EnemyRecycler.add_breed(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_
 	}
 end
 
-function EnemyRecycler.breed_spawned_callback(arg_21_0, arg_21_1, arg_21_2)
+EnemyRecycler.breed_spawned_callback = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_2.dead_breed_data
 
 	BREED_DIE_LOOKUP[arg_21_0] = {
@@ -510,11 +510,11 @@ function EnemyRecycler.breed_spawned_callback(arg_21_0, arg_21_1, arg_21_2)
 	}
 end
 
-function EnemyRecycler.cleanup_dead_breed(arg_22_0, arg_22_1)
+EnemyRecycler.cleanup_dead_breed = function (arg_22_0, arg_22_1)
 	arg_22_1[var_0_3] = nil
 end
 
-function EnemyRecycler.activate_area(arg_23_0, arg_23_1, arg_23_2)
+EnemyRecycler.activate_area = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = 2
 	local var_23_1 = arg_23_1[var_0_8]
 	local var_23_2 = arg_23_1[var_0_10]
@@ -606,7 +606,7 @@ end
 
 local var_0_23 = 25
 
-function EnemyRecycler.deactivate_area(arg_24_0, arg_24_1)
+EnemyRecycler.deactivate_area = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_1[var_0_8]
 	local var_24_1 = arg_24_1[var_0_10]
 	local var_24_2 = BLACKBOARDS
@@ -770,7 +770,7 @@ end
 local var_0_24 = 20
 local var_0_25 = {}
 
-function EnemyRecycler._update_roaming_spawning(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+EnemyRecycler._update_roaming_spawning = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = 3
 	local var_25_1 = 4
 	local var_25_2 = 6
@@ -875,7 +875,7 @@ function EnemyRecycler._update_roaming_spawning(arg_25_0, arg_25_1, arg_25_2, ar
 	arg_25_0.visible = arg_25_0.visible + var_25_16
 end
 
-function EnemyRecycler.add_terror_event_in_area(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+EnemyRecycler.add_terror_event_in_area = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_0.group_manager:get_group_from_position(arg_27_1:unbox())
 
 	arg_27_0.areas[#arg_27_0.areas + 1] = {
@@ -891,7 +891,7 @@ function EnemyRecycler.add_terror_event_in_area(arg_27_0, arg_27_1, arg_27_2, ar
 	}
 end
 
-function EnemyRecycler.add_main_path_terror_event(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+EnemyRecycler.add_main_path_terror_event = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	print("Adding main path event:", arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 
 	local var_28_0 = arg_28_0.main_path_events
@@ -912,7 +912,7 @@ function EnemyRecycler.add_main_path_terror_event(arg_28_0, arg_28_1, arg_28_2, 
 		arg_28_0.current_main_path_event_id = 1
 		arg_28_0.current_main_path_event_activation_dist = var_28_2
 	else
-		table.sort(var_28_0, function(arg_29_0, arg_29_1)
+		table.sort(var_28_0, function (arg_29_0, arg_29_1)
 			return arg_29_0[1] < arg_29_1[1]
 		end)
 
@@ -922,7 +922,7 @@ function EnemyRecycler.add_main_path_terror_event(arg_28_0, arg_28_1, arg_28_2, 
 	end
 end
 
-function EnemyRecycler.setup_main_path_events(arg_30_0, arg_30_1)
+EnemyRecycler.setup_main_path_events = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0.main_path_events
 
 	if #var_30_0 <= 0 then
@@ -931,7 +931,7 @@ function EnemyRecycler.setup_main_path_events(arg_30_0, arg_30_1)
 		return
 	end
 
-	table.sort(var_30_0, function(arg_31_0, arg_31_1)
+	table.sort(var_30_0, function (arg_31_0, arg_31_1)
 		return arg_31_0[1] < arg_31_1[1]
 	end)
 
@@ -939,7 +939,7 @@ function EnemyRecycler.setup_main_path_events(arg_30_0, arg_30_1)
 	arg_30_0.current_main_path_event_activation_dist = var_30_0[1][1]
 end
 
-function EnemyRecycler.draw_main_path_events(arg_32_0, arg_32_1)
+EnemyRecycler.draw_main_path_events = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0.main_path_events
 
 	for iter_32_0 = 1, #var_32_0 do
@@ -951,7 +951,7 @@ function EnemyRecycler.draw_main_path_events(arg_32_0, arg_32_1)
 	end
 end
 
-function EnemyRecycler.draw_debug(arg_33_0, arg_33_1)
+EnemyRecycler.draw_debug = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0.shutdown_areas
 	local var_33_1 = Managers.state.debug:drawer({
 		mode = "immediate",
@@ -1039,7 +1039,7 @@ end
 
 local var_0_26 = 6
 
-function EnemyRecycler.far_off_despawn(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+EnemyRecycler.far_off_despawn = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	local var_34_0 = arg_34_0.far_off_index or 1
 	local var_34_1 = #arg_34_4
 	local var_34_2 = var_0_26

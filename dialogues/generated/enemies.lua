@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/enemies.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "ecb_gameplay_running_towards_players",
 		name = "ecb_gameplay_running_towards_players",

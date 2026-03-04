@@ -47,7 +47,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -100,7 +100,7 @@ local var_0_0 = {
 				charge_value = "zoomed_arrow_hit",
 				num_projectiles = 3,
 				hold_input = "action_two_hold",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -127,7 +127,7 @@ local var_0_0 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -177,7 +177,7 @@ local var_0_0 = {
 				aim_at_gaze_setting = "tobii_aim_at_gaze_repeating_crossbow_elf",
 				hold_input = "action_two_hold",
 				anim_event = "to_zoom",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -202,18 +202,18 @@ local var_0_0 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_7_0)
+				unzoom_condition_function = function (arg_7_0)
 					return arg_7_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_8_0, arg_8_1, arg_8_2)
+				condition_func = function (arg_8_0, arg_8_1, arg_8_2)
 					if arg_8_2 and (arg_8_2:total_remaining_ammo() <= 0 or arg_8_2:is_reloading()) then
 						return false
 					end

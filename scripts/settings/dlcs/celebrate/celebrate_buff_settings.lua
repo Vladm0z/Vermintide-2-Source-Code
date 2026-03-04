@@ -278,7 +278,7 @@ var_0_1.buff_templates = {
 	}
 }
 var_0_1.buff_function_templates = {
-	update_intoxication_level = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	update_intoxication_level = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		if not var_0_3(arg_4_0) or var_0_4(arg_4_0) then
 			return
 		end
@@ -470,7 +470,7 @@ var_0_1.buff_function_templates = {
 			var_4_31.seed = var_4_32.seed or Math.random(1, 100)
 			arg_4_1.shake_event_settings = var_4_31
 			arg_4_1.shake_functions = {
-				calculate_perlin_value_func = function(arg_5_0, arg_5_1)
+				calculate_perlin_value_func = function (arg_5_0, arg_5_1)
 					local var_5_0 = 0
 					local var_5_1 = arg_5_0.shake_event_settings.event
 					local var_5_2 = var_5_1.persistance
@@ -488,7 +488,7 @@ var_0_1.buff_function_templates = {
 
 					return var_5_0 * var_5_6 * var_5_7
 				end,
-				interpolated_noise_func = function(arg_6_0, arg_6_1)
+				interpolated_noise_func = function (arg_6_0, arg_6_1)
 					local var_6_0 = math.floor(arg_6_1)
 					local var_6_1 = arg_6_1 - var_6_0
 					local var_6_2 = arg_6_0.shake_functions.smoothed_noise_func(arg_6_0, var_6_0)
@@ -496,10 +496,10 @@ var_0_1.buff_function_templates = {
 
 					return math.lerp(var_6_2, var_6_3, var_6_1)
 				end,
-				smoothed_noise_func = function(arg_7_0, arg_7_1, arg_7_2)
+				smoothed_noise_func = function (arg_7_0, arg_7_1, arg_7_2)
 					return arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1) / 2 + arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1 - 1) / 4 + arg_7_0.shake_functions.noise_func(arg_7_0, arg_7_1 + 1) / 4
 				end,
-				noise_func = function(arg_8_0, arg_8_1)
+				noise_func = function (arg_8_0, arg_8_1)
 					local var_8_0, var_8_1 = Math.next_random(arg_8_1 + arg_8_0.shake_event_settings.seed)
 					local var_8_2, var_8_3 = Math.next_random(var_8_0)
 
@@ -537,7 +537,7 @@ var_0_1.buff_function_templates = {
 			WwiseWorld.set_global_parameter(var_4_43, "player_intoxication_level_2", var_4_42)
 		end
 	end,
-	remove_intoxication_base = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	remove_intoxication_base = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		local var_9_0 = Managers.world:wwise_world(arg_9_3)
 
 		WwiseWorld.set_global_parameter(var_9_0, "player_intoxication_level", 0)
@@ -549,7 +549,7 @@ var_0_1.buff_function_templates = {
 			arg_9_1.shake_id = nil
 		end
 	end,
-	check_celebrate_buff = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	check_celebrate_buff = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		if not var_0_3(arg_10_0) or var_0_4(arg_10_0) then
 			return
 		end
@@ -575,7 +575,7 @@ var_0_1.buff_function_templates = {
 			ScriptUnit.has_extension(arg_10_0, "first_person_system"):play_hud_sound_event(var_10_4)
 		end
 	end,
-	increase_intoxication_level = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	increase_intoxication_level = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 		if not var_0_3(arg_11_0) or var_0_4(arg_11_0) then
 			return
 		end
@@ -634,14 +634,14 @@ var_0_1.buff_function_templates = {
 			Managers.state.entity:system("buff_system"):rpc_add_group_buff(nil, var_11_10, 1)
 		end
 	end,
-	end_intoxication_effect = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	end_intoxication_effect = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 		local var_12_0 = ScriptUnit.extension(arg_12_0, "status_system")
 
 		if var_12_0:intoxication_level() > 0 then
 			var_12_0:invert_intoxication_level()
 		end
 	end,
-	remove_falling_down_effect = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	remove_falling_down_effect = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 		local var_13_0 = ScriptUnit.extension(arg_13_0, "status_system")
 
 		if var_13_0:intoxication_level() > 0 then
@@ -653,13 +653,13 @@ var_0_1.buff_function_templates = {
 
 		var_13_1.network_transmit:send_rpc_server("rpc_request_knock_down", var_13_2)
 	end,
-	add_buff = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+	add_buff = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 		local var_14_0 = ScriptUnit.extension(arg_14_0, "buff_system")
 		local var_14_1 = arg_14_1.template.buff_to_add
 
 		var_14_0:add_buff(var_14_1)
 	end,
-	hot_joined = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	hot_joined = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 		local var_15_0 = ScriptUnit.extension(arg_15_0, "status_system")
 
 		if var_15_0:intoxication_level() == 0 then

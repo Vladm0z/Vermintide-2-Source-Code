@@ -2,7 +2,7 @@
 
 ActionReload = class(ActionReload, ActionBase)
 
-function ActionReload.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionReload.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	arg_1_0.weapon_system = arg_1_8
 	arg_1_0.owner_unit = arg_1_4
 	arg_1_0.first_person_unit = arg_1_6
@@ -13,7 +13,7 @@ function ActionReload.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	arg_1_0.is_server = arg_1_3
 end
 
-function ActionReload.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionReload.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionReload.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -32,10 +32,10 @@ function ActionReload.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2
 	var_2_2:start_reload(var_2_4)
 end
 
-function ActionReload.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionReload.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-function ActionReload.finish(arg_4_0, arg_4_1)
+ActionReload.finish = function (arg_4_0, arg_4_1)
 	return
 end

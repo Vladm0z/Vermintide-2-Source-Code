@@ -9,7 +9,7 @@ local var_0_4 = var_0_0.create_career_icon
 StoreWindowItemDetails = class(StoreWindowItemDetails)
 StoreWindowItemDetails.NAME = "StoreWindowItemDetails"
 
-function StoreWindowItemDetails.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowItemDetails.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowItemDetails")
 
 	arg_1_0._params = arg_1_1
@@ -33,7 +33,7 @@ function StoreWindowItemDetails.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent:change_generic_actions("default")
 end
 
-function StoreWindowItemDetails._start_transition_animation(arg_2_0, arg_2_1)
+StoreWindowItemDetails._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -43,7 +43,7 @@ function StoreWindowItemDetails._start_transition_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StoreWindowItemDetails._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StoreWindowItemDetails._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -64,23 +64,23 @@ function StoreWindowItemDetails._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_3)
 end
 
-function StoreWindowItemDetails.on_exit(arg_4_0, arg_4_1)
+StoreWindowItemDetails.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate StoreWindowItemDetails")
 
 	arg_4_0._ui_animator = nil
 end
 
-function StoreWindowItemDetails.update(arg_5_0, arg_5_1, arg_5_2)
+StoreWindowItemDetails.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_sync_presentation_item()
 	arg_5_0:_update_animations(arg_5_1)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function StoreWindowItemDetails.post_update(arg_6_0, arg_6_1, arg_6_2)
+StoreWindowItemDetails.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 end
 
-function StoreWindowItemDetails._update_animations(arg_7_0, arg_7_1)
+StoreWindowItemDetails._update_animations = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_animations
 	local var_7_1 = arg_7_0._animations
 	local var_7_2 = arg_7_0._ui_animator
@@ -104,7 +104,7 @@ function StoreWindowItemDetails._update_animations(arg_7_0, arg_7_1)
 	end
 end
 
-function StoreWindowItemDetails._sync_presentation_item(arg_8_0)
+StoreWindowItemDetails._sync_presentation_item = function (arg_8_0)
 	local var_8_0 = arg_8_0._params.selected_product
 
 	if var_8_0 ~= arg_8_0._selected_product then
@@ -130,7 +130,7 @@ function StoreWindowItemDetails._sync_presentation_item(arg_8_0)
 	end
 end
 
-function StoreWindowItemDetails._present_dlc(arg_9_0, arg_9_1)
+StoreWindowItemDetails._present_dlc = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.name
 	local var_9_1 = arg_9_1.information_text
 	local var_9_2 = "dlc1_2_dlc_level_locked_tooltip"
@@ -140,7 +140,7 @@ function StoreWindowItemDetails._present_dlc(arg_9_0, arg_9_1)
 	arg_9_0:_set_description_text(Localize(var_9_1))
 end
 
-function StoreWindowItemDetails._present_item(arg_10_0, arg_10_1)
+StoreWindowItemDetails._present_item = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.data
 	local var_10_1 = var_10_0.key
 	local var_10_2 = var_10_0.rarity
@@ -175,7 +175,7 @@ function StoreWindowItemDetails._present_item(arg_10_0, arg_10_1)
 	arg_10_0:_set_item_icon(var_10_13)
 end
 
-function StoreWindowItemDetails._get_hero_wield_info_by_item(arg_11_0, arg_11_1)
+StoreWindowItemDetails._get_hero_wield_info_by_item = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.data.can_wield[1]
 
 	for iter_11_0, iter_11_1 in ipairs(SPProfiles) do
@@ -193,7 +193,7 @@ function StoreWindowItemDetails._get_hero_wield_info_by_item(arg_11_0, arg_11_1)
 	end
 end
 
-function StoreWindowItemDetails._setup_career_icons(arg_12_0, arg_12_1)
+StoreWindowItemDetails._setup_career_icons = function (arg_12_0, arg_12_1)
 	local var_12_0 = "career_icons"
 	local var_12_1 = var_0_4(var_12_0)
 	local var_12_2 = {}
@@ -226,15 +226,15 @@ function StoreWindowItemDetails._setup_career_icons(arg_12_0, arg_12_1)
 	arg_12_0._career_icon_widgets = var_12_2
 end
 
-function StoreWindowItemDetails._set_item_icon(arg_13_0, arg_13_1)
+StoreWindowItemDetails._set_item_icon = function (arg_13_0, arg_13_1)
 	arg_13_0._widgets_by_name.item_icon.content.texture_id = arg_13_1
 end
 
-function StoreWindowItemDetails._set_title_text_color(arg_14_0, arg_14_1)
+StoreWindowItemDetails._set_title_text_color = function (arg_14_0, arg_14_1)
 	arg_14_0._widgets_by_name.title_text.style.text.text_color = arg_14_1
 end
 
-function StoreWindowItemDetails._set_title_text(arg_15_0, arg_15_1)
+StoreWindowItemDetails._set_title_text = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._widgets_by_name.title_text
 
 	var_15_0.content.text = arg_15_1
@@ -250,11 +250,11 @@ function StoreWindowItemDetails._set_title_text(arg_15_0, arg_15_1)
 	var_15_6.description_text.size[2] = 250 - var_15_5
 end
 
-function StoreWindowItemDetails._set_hero_text(arg_16_0, arg_16_1)
+StoreWindowItemDetails._set_hero_text = function (arg_16_0, arg_16_1)
 	arg_16_0._widgets_by_name.hero_text.content.text = arg_16_1
 end
 
-function StoreWindowItemDetails._set_sub_title_text(arg_17_0, arg_17_1)
+StoreWindowItemDetails._set_sub_title_text = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._widgets_by_name.sub_title_text
 
 	var_17_0.content.text = arg_17_1
@@ -267,11 +267,11 @@ function StoreWindowItemDetails._set_sub_title_text(arg_17_0, arg_17_1)
 	arg_17_0._ui_scenegraph[var_17_4].size[1] = var_17_3 + 20
 end
 
-function StoreWindowItemDetails._set_description_text(arg_18_0, arg_18_1)
+StoreWindowItemDetails._set_description_text = function (arg_18_0, arg_18_1)
 	arg_18_0._widgets_by_name.description_text.content.text = arg_18_1
 end
 
-function StoreWindowItemDetails._is_button_pressed(arg_19_0, arg_19_1)
+StoreWindowItemDetails._is_button_pressed = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.content
 	local var_19_1 = var_19_0.button_hotspot or var_19_0.button_text
 
@@ -282,7 +282,7 @@ function StoreWindowItemDetails._is_button_pressed(arg_19_0, arg_19_1)
 	end
 end
 
-function StoreWindowItemDetails._is_stepper_button_pressed(arg_20_0, arg_20_1)
+StoreWindowItemDetails._is_stepper_button_pressed = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.content
 	local var_20_1 = var_20_0.button_hotspot_left
 	local var_20_2 = var_20_0.button_hotspot_right
@@ -298,25 +298,25 @@ function StoreWindowItemDetails._is_stepper_button_pressed(arg_20_0, arg_20_1)
 	end
 end
 
-function StoreWindowItemDetails._is_button_hover_enter(arg_21_0, arg_21_1)
+StoreWindowItemDetails._is_button_hover_enter = function (arg_21_0, arg_21_1)
 	return arg_21_1.content.button_hotspot.on_hover_enter
 end
 
-function StoreWindowItemDetails._is_button_hover_exit(arg_22_0, arg_22_1)
+StoreWindowItemDetails._is_button_hover_exit = function (arg_22_0, arg_22_1)
 	return arg_22_1.content.button_hotspot.on_hover_exit
 end
 
-function StoreWindowItemDetails._is_button_selected(arg_23_0, arg_23_1)
+StoreWindowItemDetails._is_button_selected = function (arg_23_0, arg_23_1)
 	return arg_23_1.content.button_hotspot.is_selected
 end
 
-function StoreWindowItemDetails._handle_input(arg_24_0, arg_24_1, arg_24_2)
+StoreWindowItemDetails._handle_input = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._parent
 	local var_24_1 = arg_24_0._widgets_by_name
 	local var_24_2 = arg_24_0._parent:window_input_service()
 end
 
-function StoreWindowItemDetails._draw(arg_25_0, arg_25_1)
+StoreWindowItemDetails._draw = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._ui_top_renderer
 	local var_25_1 = arg_25_0._ui_scenegraph
 	local var_25_2 = arg_25_0._parent:window_input_service()
@@ -338,11 +338,11 @@ function StoreWindowItemDetails._draw(arg_25_0, arg_25_1)
 	UIRenderer.end_pass(var_25_0)
 end
 
-function StoreWindowItemDetails._play_sound(arg_26_0, arg_26_1)
+StoreWindowItemDetails._play_sound = function (arg_26_0, arg_26_1)
 	arg_26_0._parent:play_sound(arg_26_1)
 end
 
-function StoreWindowItemDetails._handle_gamepad_activity(arg_27_0)
+StoreWindowItemDetails._handle_gamepad_activity = function (arg_27_0)
 	local var_27_0 = Managers.input:is_device_active("gamepad")
 	local var_27_1 = arg_27_0._gamepad_active_last_frame == nil
 

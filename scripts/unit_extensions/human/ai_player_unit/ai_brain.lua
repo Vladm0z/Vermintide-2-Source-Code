@@ -10,7 +10,7 @@ AIBrain = class(AIBrain)
 
 local var_0_0 = BLACKBOARDS
 
-function AIBrain.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+AIBrain.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._unit = arg_1_2
 	var_0_0[arg_1_2] = arg_1_3
 	arg_1_0._blackboard = arg_1_3
@@ -23,7 +23,7 @@ function AIBrain.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0:init_utility_actions(arg_1_3, arg_1_4)
 end
 
-function AIBrain.destroy(arg_2_0)
+AIBrain.destroy = function (arg_2_0)
 	if not Network.game_session() then
 		return
 	end
@@ -31,7 +31,7 @@ function AIBrain.destroy(arg_2_0)
 	arg_2_0:exit_last_action()
 end
 
-function AIBrain.unfreeze(arg_3_0, arg_3_1, arg_3_2)
+AIBrain.unfreeze = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_1.attacks_done = 0
 	arg_3_1.destination_dist = 0
 	arg_3_1.nav_target_dist_sq = 0
@@ -40,7 +40,7 @@ function AIBrain.unfreeze(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:init_utility_actions(arg_3_1, arg_3_1.breed)
 end
 
-function AIBrain.init_utility_actions(arg_4_0, arg_4_1, arg_4_2)
+AIBrain.init_utility_actions = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = {}
 	local var_4_1 = arg_4_0._bt:action_data()
 
@@ -64,17 +64,17 @@ function AIBrain.init_utility_actions(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_1.utility_actions = var_4_0
 end
 
-function AIBrain.load_brain(arg_5_0, arg_5_1)
+AIBrain.load_brain = function (arg_5_0, arg_5_1)
 	arg_5_0._bt = Managers.state.entity:system("ai_system"):behavior_tree(arg_5_1)
 
 	fassert(arg_5_0._bt, "Cannot find behavior tree '%s' specified for unit '%s'", arg_5_1, arg_5_0._unit)
 end
 
-function AIBrain.bt(arg_6_0)
+AIBrain.bt = function (arg_6_0)
 	return arg_6_0._bt
 end
 
-function AIBrain.exit_last_action(arg_7_0)
+AIBrain.exit_last_action = function (arg_7_0)
 	local var_7_0 = arg_7_0._blackboard
 
 	var_7_0.exit_last_action = true
@@ -85,6 +85,6 @@ function AIBrain.exit_last_action(arg_7_0)
 	var_7_1:set_running_child(arg_7_0._unit, var_7_0, var_7_2, nil, "aborted", true)
 end
 
-function AIBrain.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+AIBrain.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._bt:root():evaluate(arg_8_1, arg_8_0._blackboard, arg_8_2, arg_8_3)
 end

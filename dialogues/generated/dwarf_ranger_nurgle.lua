@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_nurgle.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_level_nurgle_bury_objective",

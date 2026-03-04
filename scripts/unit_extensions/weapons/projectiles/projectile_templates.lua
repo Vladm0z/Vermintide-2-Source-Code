@@ -89,7 +89,7 @@ end
 ProjectileTemplates.trajectory_templates = {
 	straight_target_traversal = {
 		unit = {
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 				local var_2_0 = arg_2_7.current_target
 				local var_2_1 = arg_2_7.position
 
@@ -97,7 +97,7 @@ ProjectileTemplates.trajectory_templates = {
 			end
 		},
 		husk = {
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 				local var_3_0 = arg_3_7.current_target
 				local var_3_1 = arg_3_7.position
 
@@ -107,7 +107,7 @@ ProjectileTemplates.trajectory_templates = {
 	},
 	right_spinning_target_traversal = {
 		unit = {
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 				local var_4_0 = 0.1
 				local var_4_1 = arg_4_7.current_target
 				local var_4_2 = arg_4_7.position
@@ -157,7 +157,7 @@ ProjectileTemplates.trajectory_templates = {
 	},
 	left_spinning_target_traversal = {
 		unit = {
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
 				local var_5_0 = 0.1
 				local var_5_1 = arg_5_7.current_target
 				local var_5_2 = arg_5_7.position
@@ -207,7 +207,7 @@ ProjectileTemplates.trajectory_templates = {
 	},
 	random_spinning_target_traversal = {
 		unit = {
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 				local var_6_0 = 0.1
 				local var_6_1 = arg_6_7.current_target
 				local var_6_2 = arg_6_7.position
@@ -268,7 +268,7 @@ ProjectileTemplates.trajectory_templates = {
 	},
 	magic_missile_traversal = {
 		unit = {
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
 				local var_7_0 = 0.075
 				local var_7_1 = arg_7_7.current_target
 				local var_7_2 = arg_7_7.position
@@ -309,18 +309,18 @@ ProjectileTemplates.trajectory_templates = {
 	},
 	straight_direction_traversal = {
 		unit = {
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 				return arg_8_4 * arg_8_0 * arg_8_6 + arg_8_7.position
 			end
 		},
 		husk = {
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 				return arg_9_4 * arg_9_0 * arg_9_6 + arg_9_7.position
 			end
 		}
 	},
 	throw_trajectory = {
-		prediction_function = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+		prediction_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 			local var_10_0 = 0
 			local var_10_1
 			local var_10_2 = 0.01
@@ -358,12 +358,12 @@ ProjectileTemplates.trajectory_templates = {
 			return var_10_1, var_10_4
 		end,
 		unit = {
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
 				return (WeaponHelper:position_on_trajectory(arg_11_3, arg_11_4, arg_11_0, arg_11_1, arg_11_2, arg_11_5, arg_11_6))
 			end
 		},
 		husk = {
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
 				return (WeaponHelper:position_on_trajectory(arg_12_3, arg_12_4, arg_12_0, arg_12_1, arg_12_2, arg_12_5, arg_12_6))
 			end
 		}
@@ -372,7 +372,7 @@ ProjectileTemplates.trajectory_templates = {
 ProjectileTemplates.impact_templates = {
 	explosion_impact = {
 		server = {
-			execute = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+			execute = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 				local var_13_0 = Vector3Box.unbox(arg_13_3[ProjectileImpactDataIndex.POSITION])
 				local var_13_1 = Managers.state.unit_storage:go_id(arg_13_2)
 
@@ -422,7 +422,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+			execute = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				Unit.set_unit_visibility(arg_14_2, false)
 				Unit.flow_event(arg_14_2, "lua_projectile_impact")
 
@@ -432,7 +432,7 @@ ProjectileTemplates.impact_templates = {
 	},
 	vs_globadier_impact = {
 		server = {
-			execute = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+			execute = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 				local var_15_0 = Vector3Box.unbox(arg_15_3[ProjectileImpactDataIndex.POSITION])
 
 				Unit.set_local_position(arg_15_2, 0, var_15_0)
@@ -490,7 +490,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+			execute = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
 				local var_16_0 = Vector3Box.unbox(arg_16_3[ProjectileImpactDataIndex.POSITION])
 
 				Unit.set_local_position(arg_16_2, 0, var_16_0)
@@ -512,7 +512,7 @@ ProjectileTemplates.impact_templates = {
 	},
 	direct_impact = {
 		server = {
-			execute = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+			execute = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
 				if not Unit.alive(arg_17_5) then
 					Managers.state.unit_spawner:mark_for_deletion(arg_17_2)
 
@@ -545,7 +545,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+			execute = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 				Unit.set_unit_visibility(arg_18_2, false)
 				Unit.flow_event(arg_18_2, "lua_projectile_impact")
 
@@ -555,7 +555,7 @@ ProjectileTemplates.impact_templates = {
 	},
 	no_owner_direct_impact = {
 		server = {
-			execute = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+			execute = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 				if arg_19_6 then
 					if arg_19_6.explosion then
 						local var_19_0 = BLACKBOARDS[arg_19_5]
@@ -582,7 +582,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+			execute = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 				Unit.set_unit_visibility(arg_20_2, false)
 				Unit.flow_event(arg_20_2, "lua_projectile_impact")
 
@@ -592,7 +592,7 @@ ProjectileTemplates.impact_templates = {
 	},
 	vfx_impact = {
 		server = {
-			execute = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+			execute = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 				Unit.set_unit_visibility(arg_21_2, false)
 				Unit.flow_event(arg_21_2, "lua_projectile_impact")
 
@@ -600,7 +600,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+			execute = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 				Unit.set_unit_visibility(arg_22_2, false)
 				Unit.flow_event(arg_22_2, "lua_projectile_impact")
 
@@ -612,7 +612,7 @@ ProjectileTemplates.impact_templates = {
 		owner_heal_amount = 2,
 		owner_heal_type = "heal_from_proc",
 		server = {
-			execute = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+			execute = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 				local var_23_0 = arg_23_3[ProjectileImpactDataIndex.UNIT]
 
 				if not HEALTH_ALIVE[var_23_0] then
@@ -663,7 +663,7 @@ ProjectileTemplates.impact_templates = {
 			end
 		},
 		client = {
-			execute = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+			execute = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 				local var_24_0 = arg_24_3[ProjectileImpactDataIndex.POSITION]:unbox()
 
 				World.create_particles(arg_24_0, "fx/necromancer_skeleton_hit", var_24_0)
@@ -675,14 +675,14 @@ ProjectileTemplates.impact_templates = {
 	}
 }
 
-function ProjectileTemplates.get_trajectory_template(arg_25_0, arg_25_1)
+ProjectileTemplates.get_trajectory_template = function (arg_25_0, arg_25_1)
 	local var_25_0 = ProjectileTemplates.trajectory_templates
 	local var_25_1 = arg_25_1 == true and "husk" or arg_25_1 == false and "unit"
 
 	return var_25_0[arg_25_0][var_25_1]
 end
 
-function ProjectileTemplates.get_impact_template(arg_26_0)
+ProjectileTemplates.get_impact_template = function (arg_26_0)
 	return ProjectileTemplates.impact_templates[arg_26_0]
 end
 

@@ -1,10 +1,10 @@
 -- chunkname: @scripts/entity_system/systems/objective/objective_system_testify.lua
 
 return {
-	versus_objective_add_time = function(arg_1_0, arg_1_1)
+	versus_objective_add_time = function (arg_1_0, arg_1_1)
 		Managers.mechanism:game_mechanism():win_conditions():add_time(arg_1_1)
 	end,
-	versus_current_objective_position = function(arg_2_0)
+	versus_current_objective_position = function (arg_2_0)
 		local var_2_0, var_2_1 = next(arg_2_0:active_leaf_objectives())
 
 		if not arg_2_0:extension_by_objective_name(var_2_1) then
@@ -25,19 +25,19 @@ return {
 
 		return var_2_2
 	end,
-	versus_complete_objectives = function(arg_3_0)
+	versus_complete_objectives = function (arg_3_0)
 		local var_3_0 = arg_3_0:active_objectives()
 
 		for iter_3_0, iter_3_1 in ipairs(var_3_0) do
 			arg_3_0:extension_by_objective_name(iter_3_1)._completed = true
 		end
 	end,
-	versus_objective_name = function(arg_4_0)
+	versus_objective_name = function (arg_4_0)
 		local var_4_0, var_4_1 = next(arg_4_0:active_objectives())
 
 		return arg_4_0:extension_by_objective_name(var_4_1):objective_name()
 	end,
-	versus_objective_type = function(arg_5_0)
+	versus_objective_type = function (arg_5_0)
 		local var_5_0, var_5_1 = next(arg_5_0:active_objectives())
 		local var_5_2 = arg_5_0:extension_by_objective_name(var_5_1)
 
@@ -65,7 +65,7 @@ return {
 
 		return "objective_not_supported"
 	end,
-	weave_spawn_essence_on_first_bot_position = function(arg_6_0)
+	weave_spawn_essence_on_first_bot_position = function (arg_6_0)
 		local var_6_0 = Managers.player:bots()[1].player_unit
 
 		if var_6_0 then
@@ -76,10 +76,10 @@ return {
 
 		Managers.weave:increase_bar_score(2)
 	end,
-	get_num_main_objectives = function(arg_7_0)
+	get_num_main_objectives = function (arg_7_0)
 		return arg_7_0:num_main_objectives()
 	end,
-	get_current_main_objective = function(arg_8_0)
+	get_current_main_objective = function (arg_8_0)
 		local var_8_0 = arg_8_0:current_objective_index()
 
 		if var_8_0 < arg_8_0:num_main_objectives() then
@@ -94,7 +94,7 @@ return {
 
 		return var_8_0
 	end,
-	wait_for_objectives_to_activate = function(arg_9_0)
+	wait_for_objectives_to_activate = function (arg_9_0)
 		return arg_9_0:is_active()
 	end
 }

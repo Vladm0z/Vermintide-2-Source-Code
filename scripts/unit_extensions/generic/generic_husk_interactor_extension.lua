@@ -2,7 +2,7 @@
 
 GenericHuskInteractorExtension = class(GenericHuskInteractorExtension)
 
-function GenericHuskInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericHuskInteractorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.state = "waiting_to_interact"
@@ -15,14 +15,14 @@ function GenericHuskInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	arg_1_0.is_server = Managers.player.is_server
 
-	function arg_1_0.interactable_unit_destroy_callback(arg_2_0)
+	arg_1_0.interactable_unit_destroy_callback = function (arg_2_0)
 		local var_2_0 = Managers.time:time("game")
 
 		arg_1_0:_stop_interaction(arg_2_0, var_2_0)
 	end
 end
 
-function GenericHuskInteractorExtension.game_object_unit_destroyed(arg_3_0)
+GenericHuskInteractorExtension.game_object_unit_destroyed = function (arg_3_0)
 	if Managers.state.network:game() and arg_3_0.is_server then
 		local var_3_0 = arg_3_0.interaction_context.interactable_unit
 
@@ -33,7 +33,7 @@ function GenericHuskInteractorExtension.game_object_unit_destroyed(arg_3_0)
 	end
 end
 
-function GenericHuskInteractorExtension.destroy(arg_4_0)
+GenericHuskInteractorExtension.destroy = function (arg_4_0)
 	local var_4_0 = arg_4_0.interaction_context.interactable_unit
 
 	if Unit.alive(var_4_0) then
@@ -41,7 +41,7 @@ function GenericHuskInteractorExtension.destroy(arg_4_0)
 	end
 end
 
-function GenericHuskInteractorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+GenericHuskInteractorExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.world
 	local var_5_1 = arg_5_0.interaction_context
 	local var_5_2 = var_5_1.interactable_unit
@@ -79,7 +79,7 @@ function GenericHuskInteractorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	end
 end
 
-function GenericHuskInteractorExtension._stop_interaction(arg_6_0, arg_6_1, arg_6_2)
+GenericHuskInteractorExtension._stop_interaction = function (arg_6_0, arg_6_1, arg_6_2)
 	Managers.state.unit_spawner:remove_destroy_listener(arg_6_1, "interactable_unit_for_husk")
 
 	local var_6_0 = arg_6_0.world
@@ -119,23 +119,23 @@ function GenericHuskInteractorExtension._stop_interaction(arg_6_0, arg_6_1, arg_
 	arg_6_0.state = "waiting_to_interact"
 end
 
-function GenericHuskInteractorExtension.is_interacting(arg_7_0)
+GenericHuskInteractorExtension.is_interacting = function (arg_7_0)
 	local var_7_0 = arg_7_0.interaction_context.interaction_type
 
 	return arg_7_0.state ~= "waiting_to_interact", var_7_0
 end
 
-function GenericHuskInteractorExtension.is_stopping(arg_8_0)
+GenericHuskInteractorExtension.is_stopping = function (arg_8_0)
 	return arg_8_0.state == "stopping_interaction"
 end
 
-function GenericHuskInteractorExtension.interactable_unit(arg_9_0)
+GenericHuskInteractorExtension.interactable_unit = function (arg_9_0)
 	assert(arg_9_0:is_interacting(), "Attempted to get interactable unit when interactor unit wasn't interacting.")
 
 	return arg_9_0.interaction_context.interactable_unit
 end
 
-function GenericHuskInteractorExtension.hot_join_sync(arg_10_0, arg_10_1)
+GenericHuskInteractorExtension.hot_join_sync = function (arg_10_0, arg_10_1)
 	if not arg_10_0:is_interacting() then
 		return
 	end
@@ -154,7 +154,7 @@ function GenericHuskInteractorExtension.hot_join_sync(arg_10_0, arg_10_1)
 	RPC.rpc_sync_interaction_state(var_10_10, var_10_9, var_10_2, var_10_3, var_10_4, var_10_7, var_10_8, var_10_5)
 end
 
-function GenericHuskInteractorExtension.set_interaction_context(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+GenericHuskInteractorExtension.set_interaction_context = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	InteractionHelper.printf("[GenericHuskInteractorExtension] set_interaction_context %s %s %s", arg_11_1, arg_11_2, tostring(arg_11_3))
 
 	arg_11_0.interaction_context.previous_state = arg_11_0.state
@@ -168,7 +168,7 @@ function GenericHuskInteractorExtension.set_interaction_context(arg_11_0, arg_11
 	ScriptUnit.extension(arg_11_3, "interactable_system"):set_is_being_interacted_with(arg_11_0.unit)
 end
 
-function GenericHuskInteractorExtension.interaction_approved(arg_12_0, arg_12_1, arg_12_2)
+GenericHuskInteractorExtension.interaction_approved = function (arg_12_0, arg_12_1, arg_12_2)
 	if not Unit.alive(arg_12_2) then
 		InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_approved interactable_unit no longer alive interaction_type:%s", arg_12_1)
 
@@ -194,7 +194,7 @@ function GenericHuskInteractorExtension.interaction_approved(arg_12_0, arg_12_1,
 	Managers.state.unit_spawner:add_destroy_listener(arg_12_2, "interactable_unit_for_husk", arg_12_0.interactable_unit_destroy_callback)
 end
 
-function GenericHuskInteractorExtension.interaction_completed(arg_13_0, arg_13_1)
+GenericHuskInteractorExtension.interaction_completed = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.state
 
 	InteractionHelper.printf("[GenericHuskInteractorExtension] interaction_completed during state %s with result %s", var_13_0, InteractionResult[arg_13_1])

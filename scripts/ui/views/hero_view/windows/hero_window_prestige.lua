@@ -10,7 +10,7 @@ local var_0_5 = false
 HeroWindowPrestige = class(HeroWindowPrestige)
 HeroWindowPrestige.NAME = "HeroWindowPrestige"
 
-function HeroWindowPrestige.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowPrestige.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowPrestige")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -45,13 +45,13 @@ function HeroWindowPrestige.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_prestige_reward()
 end
 
-function HeroWindowPrestige.on_exit(arg_2_0, arg_2_1)
+HeroWindowPrestige.on_exit = function (arg_2_0, arg_2_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowPrestige")
 
 	arg_2_0.ui_animator = nil
 end
 
-function HeroWindowPrestige.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowPrestige.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_3_0 = {}
@@ -91,7 +91,7 @@ function HeroWindowPrestige.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function HeroWindowPrestige._setup_prestige_reward(arg_4_0)
+HeroWindowPrestige._setup_prestige_reward = function (arg_4_0)
 	local var_4_0 = arg_4_0._widgets_by_name
 	local var_4_1 = arg_4_0.hero_name
 	local var_4_2 = ProgressionUnlocks.get_max_prestige_levels()
@@ -116,11 +116,11 @@ function HeroWindowPrestige._setup_prestige_reward(arg_4_0)
 		local var_4_10 = var_4_8.display_name
 
 		if var_4_9 == "hat" then
-			-- block empty
+			-- Nothing
 		elseif var_4_9 == "frame" then
 			var_4_5 = var_4_8.name
 		elseif var_4_9 == "skin" then
-			-- block empty
+			-- Nothing
 		end
 
 		arg_4_0:_set_prestige_reward_portrait_frame(var_4_5)
@@ -134,7 +134,7 @@ function HeroWindowPrestige._setup_prestige_reward(arg_4_0)
 	var_4_0.unable_description_text.content.visible = not var_4_11
 end
 
-function HeroWindowPrestige.update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowPrestige.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -146,11 +146,11 @@ function HeroWindowPrestige.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-function HeroWindowPrestige.post_update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowPrestige.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function HeroWindowPrestige._update_animations(arg_7_0, arg_7_1)
+HeroWindowPrestige._update_animations = function (arg_7_0, arg_7_1)
 	arg_7_0.ui_animator:update(arg_7_1)
 
 	local var_7_0 = arg_7_0._animations
@@ -165,7 +165,7 @@ function HeroWindowPrestige._update_animations(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowPrestige._is_button_pressed(arg_8_0, arg_8_1)
+HeroWindowPrestige._is_button_pressed = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content.button_hotspot
 
 	if var_8_0.on_pressed then
@@ -175,7 +175,7 @@ function HeroWindowPrestige._is_button_pressed(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowPrestige._is_button_released(arg_9_0, arg_9_1)
+HeroWindowPrestige._is_button_released = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content.button_hotspot
 
 	if var_9_0.on_release then
@@ -185,7 +185,7 @@ function HeroWindowPrestige._is_button_released(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowPrestige._is_stepper_button_pressed(arg_10_0, arg_10_1)
+HeroWindowPrestige._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content
 	local var_10_1 = var_10_0.button_hotspot_left
 	local var_10_2 = var_10_0.button_hotspot_right
@@ -201,7 +201,7 @@ function HeroWindowPrestige._is_stepper_button_pressed(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowPrestige._handle_input(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowPrestige._handle_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.parent
 	local var_11_1 = arg_11_0._widgets_by_name
 	local var_11_2 = Managers.backend:get_interface("hero_attributes")
@@ -254,7 +254,7 @@ function HeroWindowPrestige._handle_input(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function HeroWindowPrestige.draw(arg_12_0, arg_12_1)
+HeroWindowPrestige.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_top_renderer
 	local var_12_2 = arg_12_0.ui_scenegraph
@@ -285,11 +285,11 @@ function HeroWindowPrestige.draw(arg_12_0, arg_12_1)
 	end
 end
 
-function HeroWindowPrestige._play_sound(arg_13_0, arg_13_1)
+HeroWindowPrestige._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0.parent:play_sound(arg_13_1)
 end
 
-function HeroWindowPrestige._set_prestige_reward_portrait_frame(arg_14_0, arg_14_1)
+HeroWindowPrestige._set_prestige_reward_portrait_frame = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.career_index
 	local var_14_1 = arg_14_0.profile_index
 	local var_14_2 = SPProfiles[var_14_1].careers[var_14_0].portrait_image

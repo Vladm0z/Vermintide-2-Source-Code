@@ -29,7 +29,7 @@ local var_0_2 = {
 	bot_career = 1
 }
 
-function BackendInterfaceHeroAttributesPlayFab.init(arg_1_0, arg_1_1)
+BackendInterfaceHeroAttributesPlayFab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._attributes = {}
 	arg_1_0._attributes_to_save = {}
 	arg_1_0._backend_mirror = arg_1_1
@@ -39,11 +39,11 @@ function BackendInterfaceHeroAttributesPlayFab.init(arg_1_0, arg_1_1)
 	arg_1_0._initialized = true
 end
 
-function BackendInterfaceHeroAttributesPlayFab.make_dirty(arg_2_0)
+BackendInterfaceHeroAttributesPlayFab.make_dirty = function (arg_2_0)
 	arg_2_0._dirty = true
 end
 
-function BackendInterfaceHeroAttributesPlayFab._refresh(arg_3_0)
+BackendInterfaceHeroAttributesPlayFab._refresh = function (arg_3_0)
 	table.clear(arg_3_0._attributes)
 
 	local var_3_0 = arg_3_0._backend_mirror
@@ -72,15 +72,15 @@ function BackendInterfaceHeroAttributesPlayFab._refresh(arg_3_0)
 	arg_3_0._dirty = false
 end
 
-function BackendInterfaceHeroAttributesPlayFab.ready(arg_4_0)
+BackendInterfaceHeroAttributesPlayFab.ready = function (arg_4_0)
 	return arg_4_0._initialized
 end
 
-function BackendInterfaceHeroAttributesPlayFab.update(arg_5_0, arg_5_1)
+BackendInterfaceHeroAttributesPlayFab.update = function (arg_5_0, arg_5_1)
 	return
 end
 
-function BackendInterfaceHeroAttributesPlayFab.get(arg_6_0, arg_6_1, arg_6_2)
+BackendInterfaceHeroAttributesPlayFab.get = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._dirty then
 		arg_6_0:_refresh()
 	end
@@ -90,7 +90,7 @@ function BackendInterfaceHeroAttributesPlayFab.get(arg_6_0, arg_6_1, arg_6_2)
 	return arg_6_0._attributes[var_6_0]
 end
 
-function BackendInterfaceHeroAttributesPlayFab.set(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BackendInterfaceHeroAttributesPlayFab.set = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	fassert(arg_7_3 ~= nil, "Trying to set a hero attribute to nil, don't do this")
 
 	local var_7_0 = arg_7_0._backend_mirror

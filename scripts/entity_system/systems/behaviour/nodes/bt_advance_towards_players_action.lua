@@ -5,13 +5,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTAdvanceTowardsPlayersAction = class(BTAdvanceTowardsPlayersAction, BTNode)
 BTAdvanceTowardsPlayersAction.name = "BTAdvanceTowardsPlayersAction"
 
-function BTAdvanceTowardsPlayersAction.init(arg_1_0, ...)
+BTAdvanceTowardsPlayersAction.init = function (arg_1_0, ...)
 	BTAdvanceTowardsPlayersAction.super.init(arg_1_0, ...)
 end
 
 local var_0_0 = 1
 
-function BTAdvanceTowardsPlayersAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTAdvanceTowardsPlayersAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -54,7 +54,7 @@ function BTAdvanceTowardsPlayersAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTAdvanceTowardsPlayersAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTAdvanceTowardsPlayersAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 
 	local var_3_0 = arg_3_2.navigation_extension
@@ -74,7 +74,7 @@ function BTAdvanceTowardsPlayersAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	var_3_0:set_max_speed(var_3_2)
 end
 
-function BTAdvanceTowardsPlayersAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTAdvanceTowardsPlayersAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.navigation_extension
 	local var_4_1 = arg_4_2.breed
 	local var_4_2 = arg_4_2.action
@@ -142,7 +142,7 @@ function BTAdvanceTowardsPlayersAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-function BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = Vector3.copy(POSITION_LOOKUP[arg_5_1])
 	local var_5_1 = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_3.target_unit)
 	local var_5_2, var_5_3, var_5_4 = unpack(arg_5_4.attack_throw_offset)
@@ -181,11 +181,11 @@ function BTAdvanceTowardsPlayersAction._calculate_trajectory_to_target(arg_5_0, 
 	return var_5_15
 end
 
-function BTAdvanceTowardsPlayersAction.has_valid_target(arg_6_0, arg_6_1, arg_6_2)
+BTAdvanceTowardsPlayersAction.has_valid_target = function (arg_6_0, arg_6_1, arg_6_2)
 	return arg_6_2.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_6_1]
 end
 
-function BTAdvanceTowardsPlayersAction.want_to_throw(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTAdvanceTowardsPlayersAction.want_to_throw = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = arg_7_2.total_slots_count
 	local var_7_2 = arg_7_2.advance_towards_players
@@ -224,7 +224,7 @@ function BTAdvanceTowardsPlayersAction.want_to_throw(arg_7_0, arg_7_1, arg_7_2, 
 	return true
 end
 
-function BTAdvanceTowardsPlayersAction.can_throw(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTAdvanceTowardsPlayersAction.can_throw = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	if arg_8_2.action.ignore_LOS_check_after_first_throw and arg_8_2.has_thrown then
 		return true
 	end
@@ -238,7 +238,7 @@ function BTAdvanceTowardsPlayersAction.can_throw(arg_8_0, arg_8_1, arg_8_2, arg_
 	return not var_8_4
 end
 
-function BTAdvanceTowardsPlayersAction.get_new_goal(arg_9_0, arg_9_1, arg_9_2)
+BTAdvanceTowardsPlayersAction.get_new_goal = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action
 	local var_9_1 = var_9_0.keep_target_distance[1]
 	local var_9_2 = var_9_0.keep_target_distance[2]
@@ -262,13 +262,13 @@ function BTAdvanceTowardsPlayersAction.get_new_goal(arg_9_0, arg_9_1, arg_9_2)
 	return false
 end
 
-function BTAdvanceTowardsPlayersAction.start_idle_animation(arg_10_0, arg_10_1, arg_10_2)
+BTAdvanceTowardsPlayersAction.start_idle_animation = function (arg_10_0, arg_10_1, arg_10_2)
 	Managers.state.network:anim_event(arg_10_1, "idle")
 
 	arg_10_2.move_state = "idle"
 end
 
-function BTAdvanceTowardsPlayersAction.start_move_animation(arg_11_0, arg_11_1, arg_11_2)
+BTAdvanceTowardsPlayersAction.start_move_animation = function (arg_11_0, arg_11_1, arg_11_2)
 	Managers.state.network:anim_event(arg_11_1, "move_fwd")
 
 	arg_11_2.move_state = "moving"

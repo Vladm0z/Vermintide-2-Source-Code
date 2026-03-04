@@ -13,7 +13,7 @@ local var_0_0 = 100
 local var_0_1 = 8
 local var_0_2 = 1.5
 
-function BTConditions.can_activate.we_thornsister(arg_1_0)
+BTConditions.can_activate.we_thornsister = function (arg_1_0)
 	local var_1_0 = arg_1_0.unit
 	local var_1_1 = ScriptUnit.has_extension(var_1_0, "talent_system")
 	local var_1_2 = var_1_1 and var_1_1:has_talent("kerillian_thorn_sister_debuff_wall")

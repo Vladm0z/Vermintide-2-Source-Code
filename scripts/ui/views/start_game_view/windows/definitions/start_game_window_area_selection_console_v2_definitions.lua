@@ -13,15 +13,15 @@ local var_0_4 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -31,15 +31,15 @@ local var_0_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				arg_4_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_4.render_settings.alpha_multiplier = 1 - var_5_0
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -406,7 +406,7 @@ local function var_0_14()
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.locked
 			end
 		},
@@ -628,7 +628,7 @@ local function var_0_15(arg_9_0, arg_9_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.locked
 			end
 		},
@@ -836,7 +836,7 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "sigil",
 			style_id = "sigil",
 			pass_type = "texture",
-			content_check_function = function(arg_13_0, arg_13_1)
+			content_check_function = function (arg_13_0, arg_13_1)
 				return arg_13_0.completed
 			end
 		},
@@ -844,7 +844,7 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "sigil",
 			style_id = "sigil_shadow",
 			pass_type = "texture",
-			content_check_function = function(arg_14_0, arg_14_1)
+			content_check_function = function (arg_14_0, arg_14_1)
 				return arg_14_0.completed
 			end
 		},
@@ -852,7 +852,7 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "sigil_ribbon",
 			style_id = "sigil_ribbon",
 			pass_type = "texture",
-			content_check_function = function(arg_15_0, arg_15_1)
+			content_check_function = function (arg_15_0, arg_15_1)
 				return arg_15_0.completed
 			end
 		},
@@ -860,7 +860,7 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "sigil_ribbon",
 			style_id = "sigil_ribbon_shadow",
 			pass_type = "texture",
-			content_check_function = function(arg_16_0, arg_16_1)
+			content_check_function = function (arg_16_0, arg_16_1)
 				return arg_16_0.completed
 			end
 		},
@@ -868,7 +868,7 @@ local function var_0_17(arg_12_0, arg_12_1)
 			texture_id = "boss_icon",
 			style_id = "boss_icon",
 			pass_type = "texture",
-			content_check_function = function(arg_17_0, arg_17_1)
+			content_check_function = function (arg_17_0, arg_17_1)
 				return arg_17_0.boss_level
 			end
 		}
@@ -1055,7 +1055,7 @@ local function var_0_18()
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text",
-			content_change_function = function(arg_19_0, arg_19_1)
+			content_change_function = function (arg_19_0, arg_19_1)
 				arg_19_1.offset[1] = (arg_19_0.locked or arg_19_0.dlc) and 36 or 0
 			end
 		},
@@ -1063,7 +1063,7 @@ local function var_0_18()
 			style_id = "text_shadow",
 			pass_type = "text",
 			text_id = "text",
-			content_change_function = function(arg_20_0, arg_20_1)
+			content_change_function = function (arg_20_0, arg_20_1)
 				arg_20_1.offset[1] = (arg_20_0.locked or arg_20_0.dlc) and 36.9 or 0
 			end
 		},
@@ -1071,7 +1071,7 @@ local function var_0_18()
 			texture_id = "lock",
 			style_id = "lock",
 			pass_type = "texture",
-			content_check_function = function(arg_21_0, arg_21_1)
+			content_check_function = function (arg_21_0, arg_21_1)
 				return arg_21_0.locked and not arg_21_0.dlc
 			end
 		},
@@ -1079,7 +1079,7 @@ local function var_0_18()
 			texture_id = "lock_dlc",
 			style_id = "lock",
 			pass_type = "texture",
-			content_check_function = function(arg_22_0, arg_22_1)
+			content_check_function = function (arg_22_0, arg_22_1)
 				return arg_22_0.locked and arg_22_0.dlc_locked
 			end
 		}

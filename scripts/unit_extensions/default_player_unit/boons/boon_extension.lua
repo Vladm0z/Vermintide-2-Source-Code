@@ -2,11 +2,11 @@
 
 BoonExtension = class(BoonExtension)
 
-function BoonExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BoonExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._profile_index = arg_1_3.profile_index
 end
 
-function BoonExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
+BoonExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
 	if DamageUtils.is_in_inn then
 		return
 	end
@@ -22,6 +22,6 @@ function BoonExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BoonExtension.destroy(arg_3_0)
+BoonExtension.destroy = function (arg_3_0)
 	return
 end

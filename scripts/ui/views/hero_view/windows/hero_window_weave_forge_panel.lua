@@ -14,7 +14,7 @@ local var_0_6 = false
 HeroWindowWeaveForgePanel = class(HeroWindowWeaveForgePanel)
 HeroWindowWeaveForgePanel.NAME = "HeroWindowWeaveForgePanel"
 
-function HeroWindowWeaveForgePanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowWeaveForgePanel.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgePanel")
 
 	arg_1_0._params = arg_1_1
@@ -52,7 +52,7 @@ function HeroWindowWeaveForgePanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._hero_name = var_1_3
 end
 
-function HeroWindowWeaveForgePanel._start_transition_animation(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowWeaveForgePanel._start_transition_animation = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = {
 		wwise_world = arg_2_0._wwise_world,
 		render_settings = arg_2_0._render_settings
@@ -63,7 +63,7 @@ function HeroWindowWeaveForgePanel._start_transition_animation(arg_2_0, arg_2_1,
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowWeaveForgePanel._setup_definitions(arg_3_0)
+HeroWindowWeaveForgePanel._setup_definitions = function (arg_3_0)
 	if arg_3_0._parent:gamepad_style_active() then
 		var_0_0 = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_console_definitions")
 	else
@@ -77,7 +77,7 @@ function HeroWindowWeaveForgePanel._setup_definitions(arg_3_0)
 	var_0_5 = var_0_0.animation_definitions
 end
 
-function HeroWindowWeaveForgePanel.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowWeaveForgePanel.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_setup_definitions()
 
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
@@ -128,7 +128,7 @@ function HeroWindowWeaveForgePanel.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
 	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_top_renderer)
 end
 
-function HeroWindowWeaveForgePanel._setup_essence_tooltip(arg_5_0)
+HeroWindowWeaveForgePanel._setup_essence_tooltip = function (arg_5_0)
 	local var_5_0 = arg_5_0._top_widgets
 	local var_5_1 = arg_5_0._widgets_by_name
 	local var_5_2 = UIUtils.comma_value(0)
@@ -162,7 +162,7 @@ function HeroWindowWeaveForgePanel._setup_essence_tooltip(arg_5_0)
 	var_5_1.essence_tooltip = var_5_15
 end
 
-function HeroWindowWeaveForgePanel._set_essence_tooltip_amounts(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowWeaveForgePanel._set_essence_tooltip_amounts = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._widgets_by_name.essence_tooltip.content.tooltip
 	local var_6_1 = UIUtils.comma_value(arg_6_1)
 	local var_6_2 = UIUtils.comma_value(arg_6_2)
@@ -175,7 +175,7 @@ function HeroWindowWeaveForgePanel._set_essence_tooltip_amounts(arg_6_0, arg_6_1
 	var_6_0.input_highlight = var_6_3
 end
 
-function HeroWindowWeaveForgePanel.on_exit(arg_7_0, arg_7_1)
+HeroWindowWeaveForgePanel.on_exit = function (arg_7_0, arg_7_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgePanel")
 
 	arg_7_0._ui_animator = nil
@@ -186,11 +186,11 @@ function HeroWindowWeaveForgePanel.on_exit(arg_7_0, arg_7_1)
 	Level.trigger_event(var_7_1, "lua_keep_vom_magic_forge_on_exit")
 end
 
-function HeroWindowWeaveForgePanel._set_loadout_power(arg_8_0, arg_8_1)
+HeroWindowWeaveForgePanel._set_loadout_power = function (arg_8_0, arg_8_1)
 	arg_8_0._widgets_by_name.loadout_power_text.content.text = arg_8_1
 end
 
-function HeroWindowWeaveForgePanel._set_essence_amount(arg_9_0, arg_9_1)
+HeroWindowWeaveForgePanel._set_essence_amount = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._widgets_by_name
 	local var_9_1 = var_9_0.essence_text
 	local var_9_2 = var_9_0.essence_icon
@@ -210,7 +210,7 @@ function HeroWindowWeaveForgePanel._set_essence_amount(arg_9_0, arg_9_1)
 	return var_9_3
 end
 
-function HeroWindowWeaveForgePanel._sync_backend_loadout(arg_10_0)
+HeroWindowWeaveForgePanel._sync_backend_loadout = function (arg_10_0)
 	local var_10_0 = arg_10_0._career_name
 	local var_10_1 = Managers.backend:get_interface("weaves")
 	local var_10_2 = var_10_1:get_essence()
@@ -228,7 +228,7 @@ function HeroWindowWeaveForgePanel._sync_backend_loadout(arg_10_0)
 	arg_10_0:_set_loadout_power(var_10_6)
 end
 
-function HeroWindowWeaveForgePanel._is_button_pressed(arg_11_0, arg_11_1)
+HeroWindowWeaveForgePanel._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.on_release then
@@ -240,15 +240,15 @@ function HeroWindowWeaveForgePanel._is_button_pressed(arg_11_0, arg_11_1)
 	end
 end
 
-function HeroWindowWeaveForgePanel._handle_input(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowWeaveForgePanel._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-function HeroWindowWeaveForgePanel._play_sound(arg_13_0, arg_13_1)
+HeroWindowWeaveForgePanel._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-function HeroWindowWeaveForgePanel.update(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowWeaveForgePanel.update = function (arg_14_0, arg_14_1, arg_14_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -271,7 +271,7 @@ function HeroWindowWeaveForgePanel.update(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_draw(arg_14_1)
 end
 
-function HeroWindowWeaveForgePanel._sync_component_visibilty_by_layout(arg_15_0, arg_15_1)
+HeroWindowWeaveForgePanel._sync_component_visibilty_by_layout = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._ui_scenegraph
 	local var_15_1 = arg_15_0._widgets_by_name
 
@@ -300,11 +300,11 @@ function HeroWindowWeaveForgePanel._sync_component_visibilty_by_layout(arg_15_0,
 	arg_15_0:_set_background_wheel_visibility(var_15_4)
 end
 
-function HeroWindowWeaveForgePanel.post_update(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowWeaveForgePanel.post_update = function (arg_16_0, arg_16_1, arg_16_2)
 	return
 end
 
-function HeroWindowWeaveForgePanel._update_animations(arg_17_0, arg_17_1)
+HeroWindowWeaveForgePanel._update_animations = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._params.upgrading
 	local var_17_1 = arg_17_0._upgrading_anim_progress or 0
 	local var_17_2 = 3
@@ -344,7 +344,7 @@ function HeroWindowWeaveForgePanel._update_animations(arg_17_0, arg_17_1)
 	end
 end
 
-function HeroWindowWeaveForgePanel._draw(arg_18_0, arg_18_1)
+HeroWindowWeaveForgePanel._draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._parent
 	local var_18_1 = var_18_0:get_ui_renderer()
 	local var_18_2 = arg_18_0._ui_top_renderer
@@ -387,7 +387,7 @@ function HeroWindowWeaveForgePanel._draw(arg_18_0, arg_18_1)
 	UIRenderer.end_pass(var_18_2)
 end
 
-function HeroWindowWeaveForgePanel._set_background_bloom_intensity(arg_19_0, arg_19_1)
+HeroWindowWeaveForgePanel._set_background_bloom_intensity = function (arg_19_0, arg_19_1)
 	local var_19_0 = 1.39
 	local var_19_1 = 2 + 30 * arg_19_0._upgrading_anim_progress
 	local var_19_2 = var_19_0 + math.clamp(arg_19_1, 0, 1) * var_19_1
@@ -415,7 +415,7 @@ function HeroWindowWeaveForgePanel._set_background_bloom_intensity(arg_19_0, arg
 	end
 end
 
-function HeroWindowWeaveForgePanel._set_background_wheel_visibility(arg_20_0, arg_20_1)
+HeroWindowWeaveForgePanel._set_background_wheel_visibility = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._widgets_by_name
 	local var_20_1 = var_20_0.background_wheel_1
 	local var_20_2 = var_20_0.hdr_background_wheel_1
@@ -442,7 +442,7 @@ function HeroWindowWeaveForgePanel._set_background_wheel_visibility(arg_20_0, ar
 	arg_20_0._draw_background_wheel = arg_20_1
 end
 
-function HeroWindowWeaveForgePanel._update_background_animations(arg_21_0, arg_21_1)
+HeroWindowWeaveForgePanel._update_background_animations = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name
 
 	for iter_21_0 = 1, 2 do

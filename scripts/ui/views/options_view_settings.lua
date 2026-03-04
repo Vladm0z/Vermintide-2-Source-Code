@@ -533,7 +533,7 @@ local var_0_3 = {
 	{
 		setting_name = "sound_channel_configuration",
 		widget_type = "stepper",
-		value_set_function = function(arg_2_0, arg_2_1, arg_2_2)
+		value_set_function = function (arg_2_0, arg_2_1, arg_2_2)
 			Wwise.set_bus_config("ingame_mastering_channel", arg_2_2)
 		end,
 		options = {
@@ -569,10 +569,10 @@ local var_0_3 = {
 	{
 		setting_name = "subtitles_background_opacity",
 		widget_type = "slider",
-		value_set_function = function(arg_3_0, arg_3_1, arg_3_2)
+		value_set_function = function (arg_3_0, arg_3_1, arg_3_2)
 			var_0_1[1] = 2.55 * arg_3_2
 		end,
-		value_saved_function = function(arg_4_0, arg_4_1, arg_4_2)
+		value_saved_function = function (arg_4_0, arg_4_1, arg_4_2)
 			var_0_1[1] = 2.55 * arg_4_2
 		end,
 		options = {
@@ -584,12 +584,12 @@ local var_0_3 = {
 	{
 		setting_name = "subtitles_font_size",
 		widget_type = "slider",
-		value_set_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		value_set_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			arg_5_1.slider_image_text.font_size = arg_5_2
 
 			var_0_2(arg_5_0, arg_5_1, arg_5_3)
 		end,
-		value_saved_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		value_saved_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			arg_6_1.slider_image.color = var_0_1
 			arg_6_1.slider_image_text.font_size = arg_6_2
 
@@ -1302,21 +1302,21 @@ local function var_0_11(arg_11_0)
 
 			local var_11_3 = iter_11_1.widget_type
 
-			OptionsView[var_11_2] = function(arg_12_0, arg_12_1, arg_12_2)
+			OptionsView[var_11_2] = function (arg_12_0, arg_12_1, arg_12_2)
 				return var_0_8(arg_12_0, var_11_0, var_11_3, arg_12_1, arg_12_2, iter_11_1.value_set_function or NOP)
 			end
 
 			local var_11_4 = var_11_1 .. "_setup"
 
 			iter_11_1.setup = var_11_4
-			OptionsView[var_11_4] = function(arg_13_0)
+			OptionsView[var_11_4] = function (arg_13_0)
 				return var_0_9(arg_13_0, var_11_0, var_11_3, iter_11_1.options, iter_11_1)
 			end
 
 			local var_11_5 = var_11_1 .. "_saved_value"
 
 			iter_11_1.saved_value = var_11_5
-			OptionsView[var_11_5] = function(arg_14_0, arg_14_1)
+			OptionsView[var_11_5] = function (arg_14_0, arg_14_1)
 				return var_0_10(arg_14_0, var_11_0, var_11_3, arg_14_1, iter_11_1.value_saved_function or NOP)
 			end
 

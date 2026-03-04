@@ -10,13 +10,13 @@ AchievementTemplateHelper.rarity_index = {
 }
 AchievementTemplateHelper.PLACEHOLDER_ICON = "icons_placeholder"
 
-function AchievementTemplateHelper.check_level(arg_1_0, arg_1_1, arg_1_2)
+AchievementTemplateHelper.check_level = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_0:get_persistent_stat(arg_1_1, "completed_levels", arg_1_2)
 
 	return not (not var_1_0 or var_1_0 == 0)
 end
 
-function AchievementTemplateHelper.check_level_list(arg_2_0, arg_2_1, arg_2_2)
+AchievementTemplateHelper.check_level_list = function (arg_2_0, arg_2_1, arg_2_2)
 	assert(type(arg_2_2) == "table" and #arg_2_2 > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
 
 	for iter_2_0 = 1, #arg_2_2 do
@@ -31,7 +31,7 @@ function AchievementTemplateHelper.check_level_list(arg_2_0, arg_2_1, arg_2_2)
 	return true
 end
 
-function AchievementTemplateHelper.rpc_increment_stat(arg_3_0, arg_3_1)
+AchievementTemplateHelper.rpc_increment_stat = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.player:unit_owner(arg_3_0)
 
 	if var_3_0 and not var_3_0.bot_player then
@@ -43,7 +43,7 @@ function AchievementTemplateHelper.rpc_increment_stat(arg_3_0, arg_3_1)
 	end
 end
 
-function AchievementTemplateHelper.rpc_increment_stat_unique_id(arg_4_0, arg_4_1)
+AchievementTemplateHelper.rpc_increment_stat_unique_id = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.player:player_from_unique_id(arg_4_0)
 
 	if var_4_0 and not var_4_0.bot_player then
@@ -55,7 +55,7 @@ function AchievementTemplateHelper.rpc_increment_stat_unique_id(arg_4_0, arg_4_1
 	end
 end
 
-function AchievementTemplateHelper.rpc_modify_stat(arg_5_0, arg_5_1, arg_5_2)
+AchievementTemplateHelper.rpc_modify_stat = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.player:unit_owner(arg_5_0)
 
 	if var_5_0 and not var_5_0.bot_player then
@@ -67,7 +67,7 @@ function AchievementTemplateHelper.rpc_modify_stat(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AchievementTemplateHelper.check_level_difficulty(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+AchievementTemplateHelper.check_level_difficulty = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = Managers.state.difficulty
 
 	if not var_6_0 then
@@ -102,7 +102,7 @@ function AchievementTemplateHelper.check_level_difficulty(arg_6_0, arg_6_1, arg_
 	return arg_6_3 <= DifficultySettings[var_6_3].rank
 end
 
-function AchievementTemplateHelper.check_level_table_difficulty(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AchievementTemplateHelper.check_level_table_difficulty = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	assert(type(arg_7_2) == "table" and arg_7_2.level_id, "level_to_complete needs to be a table with a level_id field")
 
 	local var_7_0 = arg_7_2.level_id
@@ -110,7 +110,7 @@ function AchievementTemplateHelper.check_level_table_difficulty(arg_7_0, arg_7_1
 	return AchievementTemplateHelper.check_level_difficulty(arg_7_0, arg_7_1, var_7_0, arg_7_3, arg_7_4)
 end
 
-function AchievementTemplateHelper.check_level_list_difficulty(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+AchievementTemplateHelper.check_level_list_difficulty = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	assert(type(arg_8_2) == "table" and #arg_8_2 > 0, "levels_to_complete needs to be a list of levels with at least 1 element")
 
 	local var_8_0 = AchievementTemplateHelper.check_level_difficulty
@@ -126,7 +126,7 @@ function AchievementTemplateHelper.check_level_list_difficulty(arg_8_0, arg_8_1,
 	return true
 end
 
-function AchievementTemplateHelper.hero_level(arg_9_0)
+AchievementTemplateHelper.hero_level = function (arg_9_0)
 	local var_9_0 = ExperienceSettings.get_experience(arg_9_0)
 
 	return ExperienceSettings.get_level(var_9_0)
@@ -140,7 +140,7 @@ local var_0_0 = {
 	"trinket"
 }
 
-function AchievementTemplateHelper.equipped_items_of_rarity(arg_10_0, arg_10_1, arg_10_2)
+AchievementTemplateHelper.equipped_items_of_rarity = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = AchievementTemplateHelper.rarity_index[arg_10_2]
 
 	assert(var_10_0, "Invalid rarity %s", arg_10_2)
@@ -156,11 +156,11 @@ function AchievementTemplateHelper.equipped_items_of_rarity(arg_10_0, arg_10_1, 
 	return var_10_1
 end
 
-function AchievementTemplateHelper.add_stat_count_challenge(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+AchievementTemplateHelper.add_stat_count_challenge = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
 	arg_11_0[arg_11_1] = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_11_1 .. "_name",
-		desc = function()
+		desc = function ()
 			local var_12_0 = "achv_" .. arg_11_1 .. "_desc"
 
 			return string.format(Localize(var_12_0), arg_11_3)
@@ -169,14 +169,14 @@ function AchievementTemplateHelper.add_stat_count_challenge(arg_11_0, arg_11_1, 
 		required_dlc = arg_11_6,
 		ID_XB1 = arg_11_7,
 		ID_PS4 = arg_11_8,
-		completed = function(arg_13_0, arg_13_1)
+		completed = function (arg_13_0, arg_13_1)
 			if arg_11_4 then
 				return arg_13_0:get_persistent_stat(arg_13_1, arg_11_2, arg_11_4) >= arg_11_3
 			else
 				return arg_13_0:get_persistent_stat(arg_13_1, arg_11_2) >= arg_11_3
 			end
 		end,
-		progress = function(arg_14_0, arg_14_1)
+		progress = function (arg_14_0, arg_14_1)
 			if arg_11_4 then
 				local var_14_0 = arg_14_0:get_persistent_stat(arg_14_1, arg_11_2, arg_11_4)
 
@@ -196,7 +196,7 @@ function AchievementTemplateHelper.add_stat_count_challenge(arg_11_0, arg_11_1, 
 	}
 end
 
-function AchievementTemplateHelper.add_health_challenge(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+AchievementTemplateHelper.add_health_challenge = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 	arg_15_0[arg_15_1] = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_15_1 .. "_name",
@@ -205,18 +205,18 @@ function AchievementTemplateHelper.add_health_challenge(arg_15_0, arg_15_1, arg_
 		required_dlc = arg_15_5,
 		ID_XB1 = arg_15_6,
 		ID_PS4 = arg_15_7,
-		completed = function(arg_16_0, arg_16_1)
+		completed = function (arg_16_0, arg_16_1)
 			return arg_16_0:get_persistent_stat(arg_16_1, "min_health_completed", arg_15_2) >= arg_15_3
 		end
 	}
 end
 
-function AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
 	assert(type(arg_17_3) == "table", "breeds_to_kill needs to be a list of breeds")
 
 	arg_17_0[arg_17_1] = {
 		name = "achv_" .. arg_17_1 .. "_name",
-		desc = function()
+		desc = function ()
 			local var_18_0 = "achv_" .. arg_17_1 .. "_desc"
 
 			return string.format(Localize(var_18_0), arg_17_4)
@@ -226,7 +226,7 @@ function AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge(arg_17_
 		ID_XB1 = arg_17_8,
 		ID_PS4 = arg_17_9,
 		display_completion_ui = arg_17_7,
-		completed = function(arg_19_0, arg_19_1)
+		completed = function (arg_19_0, arg_19_1)
 			local var_19_0 = "weapon_kills_per_breed"
 			local var_19_1 = 0
 
@@ -238,7 +238,7 @@ function AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge(arg_17_
 
 			return var_19_1 >= arg_17_4
 		end,
-		progress = function(arg_20_0, arg_20_1)
+		progress = function (arg_20_0, arg_20_1)
 			local var_20_0 = "weapon_kills_per_breed"
 			local var_20_1 = 0
 
@@ -260,7 +260,7 @@ function AchievementTemplateHelper.add_weapon_kills_per_breeds_challenge(arg_17_
 	}
 end
 
-function AchievementTemplateHelper.add_career_mission_count_challenge(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10)
+AchievementTemplateHelper.add_career_mission_count_challenge = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10)
 	arg_21_0[arg_21_1 .. "_" .. arg_21_3] = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_21_1 .. "_" .. arg_21_3 .. "_name",
@@ -269,7 +269,7 @@ function AchievementTemplateHelper.add_career_mission_count_challenge(arg_21_0, 
 		required_dlc = arg_21_8,
 		ID_XB1 = arg_21_9,
 		ID_PS4 = arg_21_10,
-		completed = function(arg_22_0, arg_22_1)
+		completed = function (arg_22_0, arg_22_1)
 			local var_22_0 = 0
 
 			for iter_22_0 = 1, #arg_21_4 do
@@ -280,7 +280,7 @@ function AchievementTemplateHelper.add_career_mission_count_challenge(arg_21_0, 
 
 			return var_22_0 >= arg_21_5
 		end,
-		progress = function(arg_23_0, arg_23_1)
+		progress = function (arg_23_0, arg_23_1)
 			local var_23_0 = 0
 
 			for iter_23_0 = 1, #arg_21_4 do
@@ -301,7 +301,7 @@ function AchievementTemplateHelper.add_career_mission_count_challenge(arg_21_0, 
 	}
 end
 
-function AchievementTemplateHelper.add_multi_stat_count_challenge(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+AchievementTemplateHelper.add_multi_stat_count_challenge = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
 	arg_24_0[arg_24_1] = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_24_1 .. "_name",
@@ -310,7 +310,7 @@ function AchievementTemplateHelper.add_multi_stat_count_challenge(arg_24_0, arg_
 		required_dlc = arg_24_5,
 		ID_XB1 = arg_24_6,
 		ID_PS4 = arg_24_7,
-		completed = function(arg_25_0, arg_25_1)
+		completed = function (arg_25_0, arg_25_1)
 			local var_25_0 = 0
 			local var_25_1 = #arg_24_2
 
@@ -320,7 +320,7 @@ function AchievementTemplateHelper.add_multi_stat_count_challenge(arg_24_0, arg_
 
 			return var_25_0 >= arg_24_3
 		end,
-		progress = function(arg_26_0, arg_26_1)
+		progress = function (arg_26_0, arg_26_1)
 			local var_26_0 = 0
 			local var_26_1 = #arg_24_2
 
@@ -340,13 +340,13 @@ function AchievementTemplateHelper.add_multi_stat_count_challenge(arg_24_0, arg_
 	}
 end
 
-function AchievementTemplateHelper.add_weapon_kill_challenge(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
+AchievementTemplateHelper.add_weapon_kill_challenge = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
 	local var_27_0 = (arg_27_5 or "") .. "_kills_" .. arg_27_2
 
 	AchievementTemplateHelper.add_stat_count_challenge(arg_27_0, arg_27_1, var_27_0, arg_27_3, nil, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
 end
 
-function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
+AchievementTemplateHelper.add_weapon_levels_challenge = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
 	local var_28_0 = {}
 	local var_28_1 = arg_28_3 and #arg_28_3 or 0
 
@@ -367,7 +367,7 @@ function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_
 		required_dlc_extra = var_28_3.dlc_requirement,
 		ID_XB1 = arg_28_7,
 		ID_PS4 = arg_28_8,
-		completed = function(arg_29_0, arg_29_1)
+		completed = function (arg_29_0, arg_29_1)
 			for iter_29_0 = 1, var_28_1 do
 				if arg_29_0:get_persistent_stat(arg_29_1, var_28_0[iter_29_0]) < var_28_4 then
 					return false
@@ -376,7 +376,7 @@ function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_
 
 			return true
 		end,
-		progress = function(arg_30_0, arg_30_1)
+		progress = function (arg_30_0, arg_30_1)
 			local var_30_0 = 0
 
 			for iter_30_0 = 1, var_28_1 do
@@ -392,7 +392,7 @@ function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_
 				var_28_1
 			}
 		end,
-		requirements = function(arg_31_0, arg_31_1)
+		requirements = function (arg_31_0, arg_31_1)
 			local var_31_0 = {}
 
 			for iter_31_0 = 1, var_28_1 do
@@ -411,7 +411,7 @@ function AchievementTemplateHelper.add_weapon_levels_challenge(arg_28_0, arg_28_
 	}
 end
 
-function AchievementTemplateHelper.add_event_challenge(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+AchievementTemplateHelper.add_event_challenge = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0 = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_32_1 .. "_name",
@@ -419,14 +419,14 @@ function AchievementTemplateHelper.add_event_challenge(arg_32_0, arg_32_1, arg_3
 		required_dlc = arg_32_4,
 		ID_XB1 = arg_32_5,
 		ID_PS4 = arg_32_6,
-		completed = function(arg_33_0, arg_33_1)
+		completed = function (arg_33_0, arg_33_1)
 			return arg_33_0:get_persistent_stat(arg_33_1, arg_32_1) > 0
 		end
 	}
 	local var_32_1 = "achv_" .. arg_32_1 .. "_desc"
 
 	if arg_32_3 then
-		function var_32_0.desc()
+		var_32_0.desc = function ()
 			return string.format(Localize(var_32_1), unpack(arg_32_3))
 		end
 	else
@@ -436,7 +436,7 @@ function AchievementTemplateHelper.add_event_challenge(arg_32_0, arg_32_1, arg_3
 	arg_32_0[arg_32_1] = var_32_0
 end
 
-function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+AchievementTemplateHelper.add_levels_complete_challenge = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
 	local var_35_0 = arg_35_2 and #arg_35_2 or 0
 	local var_35_1 = DifficultyRankLookup[arg_35_3]
 	local var_35_2 = DifficultySettings[var_35_1]
@@ -448,7 +448,7 @@ function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_3
 		required_dlc_extra = var_35_2.dlc_requirement,
 		ID_XB1 = arg_35_6,
 		ID_PS4 = arg_35_7,
-		completed = function(arg_36_0, arg_36_1)
+		completed = function (arg_36_0, arg_36_1)
 			local var_36_0 = 0
 
 			for iter_36_0 = 1, var_35_0 do
@@ -462,7 +462,7 @@ function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_3
 	}
 
 	if var_35_0 > 1 then
-		function var_35_3.progress(arg_37_0, arg_37_1)
+		var_35_3.progress = function (arg_37_0, arg_37_1)
 			local var_37_0 = 0
 
 			for iter_37_0 = 1, var_35_0 do
@@ -477,7 +477,7 @@ function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_3
 			}
 		end
 
-		function var_35_3.requirements(arg_38_0, arg_38_1)
+		var_35_3.requirements = function (arg_38_0, arg_38_1)
 			local var_38_0 = {}
 
 			for iter_38_0 = 1, var_35_0 do
@@ -496,7 +496,7 @@ function AchievementTemplateHelper.add_levels_complete_challenge(arg_35_0, arg_3
 	arg_35_0[arg_35_1] = var_35_3
 end
 
-function AchievementTemplateHelper.add_levels_complete_per_hero_challenge(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
+AchievementTemplateHelper.add_levels_complete_per_hero_challenge = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
 	fassert(CareerSettings[arg_39_4] ~= nil, "No career with such name (%s)", arg_39_4)
 
 	local var_39_0 = arg_39_2 and #arg_39_2 or 0
@@ -510,13 +510,13 @@ function AchievementTemplateHelper.add_levels_complete_per_hero_challenge(arg_39
 		required_dlc_extra = var_39_2.dlc_requirement,
 		ID_XB1 = arg_39_8,
 		ID_PS4 = arg_39_9,
-		completed = function(arg_40_0, arg_40_1)
+		completed = function (arg_40_0, arg_40_1)
 			return AchievementTemplateHelper.check_level_list_difficulty(arg_40_0, arg_40_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
 		end
 	}
 
 	if var_39_0 > 1 then
-		function var_39_3.progress(arg_41_0, arg_41_1)
+		var_39_3.progress = function (arg_41_0, arg_41_1)
 			local var_41_0 = 0
 
 			for iter_41_0 = 1, var_39_0 do
@@ -533,7 +533,7 @@ function AchievementTemplateHelper.add_levels_complete_per_hero_challenge(arg_39
 			}
 		end
 
-		function var_39_3.requirements(arg_42_0, arg_42_1)
+		var_39_3.requirements = function (arg_42_0, arg_42_1)
 			local var_42_0 = {}
 
 			for iter_42_0 = 1, var_39_0 do
@@ -554,7 +554,7 @@ function AchievementTemplateHelper.add_levels_complete_per_hero_challenge(arg_39
 	arg_39_0[arg_39_1 .. "_" .. arg_39_4] = var_39_3
 end
 
-function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
+AchievementTemplateHelper.add_meta_challenge = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
 	arg_43_0[arg_43_1] = {
 		display_completion_ui = true,
 		name = "achv_" .. arg_43_1 .. "_name",
@@ -563,7 +563,7 @@ function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43
 		required_dlc = arg_43_4,
 		ID_XB1 = arg_43_5,
 		ID_PS4 = arg_43_6,
-		completed = function(arg_44_0, arg_44_1)
+		completed = function (arg_44_0, arg_44_1)
 			local var_44_0 = Managers.backend:get_interface("loot")
 
 			for iter_44_0 = 1, #arg_43_2 do
@@ -576,7 +576,7 @@ function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43
 
 			return true
 		end,
-		progress = function(arg_45_0, arg_45_1)
+		progress = function (arg_45_0, arg_45_1)
 			local var_45_0 = Managers.backend:get_interface("loot")
 			local var_45_1 = 0
 			local var_45_2 = #arg_43_2
@@ -594,7 +594,7 @@ function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43
 				var_45_2
 			}
 		end,
-		requirements = function(arg_46_0, arg_46_1)
+		requirements = function (arg_46_0, arg_46_1)
 			local var_46_0 = Managers.backend:get_interface("loot")
 			local var_46_1 = {}
 
@@ -614,7 +614,7 @@ function AchievementTemplateHelper.add_meta_challenge(arg_43_0, arg_43_1, arg_43
 	}
 end
 
-function AchievementTemplateHelper.add_console_achievements(arg_47_0, arg_47_1)
+AchievementTemplateHelper.add_console_achievements = function (arg_47_0, arg_47_1)
 	local var_47_0 = AchievementTemplates.achievements
 
 	for iter_47_0, iter_47_1 in pairs(arg_47_0) do

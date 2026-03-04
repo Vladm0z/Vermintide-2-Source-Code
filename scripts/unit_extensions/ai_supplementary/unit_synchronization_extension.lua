@@ -4,13 +4,13 @@ UnitSynchronizationExtension = class(UnitSynchronizationExtension)
 
 local var_0_0 = POSITION_LOOKUP
 
-function UnitSynchronizationExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+UnitSynchronizationExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
 end
 
-function UnitSynchronizationExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+UnitSynchronizationExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0.is_server then
 		arg_2_0:_server_sync_position_rotation(arg_2_3, arg_2_5)
 	else
@@ -18,7 +18,7 @@ function UnitSynchronizationExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	end
 end
 
-function UnitSynchronizationExtension._server_sync_position_rotation(arg_3_0, arg_3_1, arg_3_2)
+UnitSynchronizationExtension._server_sync_position_rotation = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.state.network:game()
 
 	if var_3_0 then
@@ -39,7 +39,7 @@ end
 
 local var_0_1 = 0.0001
 
-function UnitSynchronizationExtension._client_validate_position_rotation(arg_4_0, arg_4_1, arg_4_2)
+UnitSynchronizationExtension._client_validate_position_rotation = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = Managers.state.network:game()
 
 	if var_4_0 then

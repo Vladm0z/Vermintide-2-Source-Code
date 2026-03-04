@@ -17,15 +17,15 @@ local var_0_8 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_4.render_settings.alpha_multiplier = var_2_0
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -33,16 +33,16 @@ local var_0_8 = {
 			name = "animate_in_window",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 
 				arg_5_0.window.local_position[1] = arg_5_1.window.position[1] + math.floor(-100 * (1 - var_5_0))
 				arg_5_0.info_window.local_position[1] = arg_5_1.info_window.position[1] + math.floor(-80 * (1 - var_5_0))
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -52,13 +52,13 @@ local var_0_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				arg_8_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -646,7 +646,7 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		texture_id = var_10_14,
 		style_id = var_10_14,
-		content_check_function = function(arg_11_0)
+		content_check_function = function (arg_11_0)
 			return arg_11_0.is_selected
 		end
 	}
@@ -673,7 +673,7 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "text",
 		text_id = var_10_15,
 		style_id = var_10_15,
-		content_change_function = function(arg_12_0, arg_12_1)
+		content_change_function = function (arg_12_0, arg_12_1)
 			if arg_12_0.is_selected then
 				arg_12_1.text_color = arg_12_1.selected_color
 			else
@@ -727,10 +727,10 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		style_id = var_10_19,
 		texture_id = var_10_19,
-		content_check_function = function(arg_13_0, arg_13_1)
+		content_check_function = function (arg_13_0, arg_13_1)
 			return arg_13_0[var_10_19]
 		end,
-		content_change_function = function(arg_14_0, arg_14_1)
+		content_change_function = function (arg_14_0, arg_14_1)
 			if arg_14_0.locked then
 				arg_14_1.saturated = true
 			else
@@ -787,10 +787,10 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		style_id = var_10_22,
 		texture_id = var_10_22,
-		content_check_function = function(arg_15_0, arg_15_1)
+		content_check_function = function (arg_15_0, arg_15_1)
 			return arg_15_0[var_10_19]
 		end,
-		content_change_function = function(arg_16_0, arg_16_1)
+		content_change_function = function (arg_16_0, arg_16_1)
 			if arg_16_0.locked then
 				arg_16_1.saturated = true
 			else
@@ -822,7 +822,7 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		style_id = var_10_23,
 		texture_id = var_10_23,
-		content_check_function = function(arg_17_0)
+		content_check_function = function (arg_17_0)
 			return arg_17_0.is_selected
 		end
 	}
@@ -847,7 +847,7 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		style_id = "lock",
 		texture_id = "lock",
-		content_check_function = function(arg_18_0)
+		content_check_function = function (arg_18_0)
 			return arg_18_0.locked
 		end
 	}
@@ -855,7 +855,7 @@ local function var_0_20(arg_10_0, arg_10_1)
 		pass_type = "texture",
 		style_id = "lock_fade",
 		texture_id = "lock_fade",
-		content_check_function = function(arg_19_0)
+		content_check_function = function (arg_19_0)
 			return arg_19_0.locked
 		end
 	}
@@ -938,7 +938,7 @@ local function var_0_21(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return not arg_21_0.button_hotspot.disable_button and (arg_21_0.button_hotspot.is_hover or arg_21_0.button_hotspot.is_selected)
 					end
 				},
@@ -946,7 +946,7 @@ local function var_0_21(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return not arg_22_0.button_hotspot.disable_button and not arg_22_0.button_hotspot.is_hover and not arg_22_0.button_hotspot.is_selected
 					end
 				},
@@ -954,7 +954,7 @@ local function var_0_21(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.button_hotspot.disable_button
 					end
 				}
@@ -1067,7 +1067,7 @@ local function var_0_22(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 		pass_type = "texture",
 		style_id = "reward_hover",
 		texture_id = "reward_hover",
-		content_check_function = function(arg_25_0)
+		content_check_function = function (arg_25_0)
 			return arg_25_0.hotspot.is_hover and arg_25_0.item and arg_25_0.tooltip
 		end
 	}
@@ -1076,7 +1076,7 @@ local function var_0_22(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 		style_id = "tooltip",
 		pass_type = "item_tooltip",
 		text_id = "tooltip",
-		content_check_function = function(arg_26_0)
+		content_check_function = function (arg_26_0)
 			return arg_26_0.hotspot.is_hover and arg_26_0.item and arg_26_0.tooltip
 		end
 	}

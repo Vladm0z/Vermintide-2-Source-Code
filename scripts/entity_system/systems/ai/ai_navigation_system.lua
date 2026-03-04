@@ -10,7 +10,7 @@ local var_0_3 = {
 
 AINavigationSystem = class(AINavigationSystem, ExtensionSystemBase)
 
-function AINavigationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AINavigationSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	AINavigationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_3)
 
 	arg_1_0.unit_extension_data = {}
@@ -22,11 +22,11 @@ function AINavigationSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._nav_safe_callbacks = {}
 end
 
-function AINavigationSystem.destroy(arg_2_0)
+AINavigationSystem.destroy = function (arg_2_0)
 	AINavigationSystem.super.destroy(arg_2_0)
 end
 
-function AINavigationSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AINavigationSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = AINavigationSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	if arg_3_3 == "AINavigationExtension" then
@@ -36,14 +36,14 @@ function AINavigationSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	return var_3_0
 end
 
-function AINavigationSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+AINavigationSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.frozen_unit_extension_data[arg_4_1] = nil
 
 	arg_4_0:_cleanup_extension(arg_4_1, arg_4_2)
 	AINavigationSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function AINavigationSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
+AINavigationSystem.on_freeze_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.unit_extension_data[arg_5_1] or arg_5_0.delayed_units[arg_5_1]
 
 	fassert(var_5_0, "Unit was already frozen.")
@@ -57,7 +57,7 @@ function AINavigationSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 end
 
-function AINavigationSystem._cleanup_extension(arg_6_0, arg_6_1, arg_6_2)
+AINavigationSystem._cleanup_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.unit_extension_data[arg_6_1] = nil
 	arg_6_0.enabled_units[arg_6_1] = nil
 
@@ -68,7 +68,7 @@ function AINavigationSystem._cleanup_extension(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.delayed_units[arg_6_1] = nil
 end
 
-function AINavigationSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+AINavigationSystem.freeze = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.frozen_unit_extension_data
 
 	if var_7_0[arg_7_1] then
@@ -86,7 +86,7 @@ function AINavigationSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	var_7_1:freeze()
 end
 
-function AINavigationSystem.unfreeze(arg_8_0, arg_8_1)
+AINavigationSystem.unfreeze = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.frozen_unit_extension_data[arg_8_1]
 
 	fassert(var_8_0, "Unit to unfreeze didn't have frozen extension")
@@ -97,7 +97,7 @@ function AINavigationSystem.unfreeze(arg_8_0, arg_8_1)
 	var_8_0:unfreeze()
 end
 
-function AINavigationSystem.simulate_dummy_target(arg_9_0, arg_9_1)
+AINavigationSystem.simulate_dummy_target = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.player:local_player().player_unit
 
 	if not var_9_0 then
@@ -118,7 +118,7 @@ function AINavigationSystem.simulate_dummy_target(arg_9_0, arg_9_1)
 	end
 end
 
-function AINavigationSystem.update(arg_10_0, arg_10_1, arg_10_2)
+AINavigationSystem.update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.dt
 
 	arg_10_0:update_extension("PlayerBotNavigation", var_10_0, arg_10_1, arg_10_2)
@@ -144,23 +144,23 @@ function AINavigationSystem.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function AINavigationSystem.add_safe_navigation_callback(arg_11_0, arg_11_1)
+AINavigationSystem.add_safe_navigation_callback = function (arg_11_0, arg_11_1)
 	arg_11_0._nav_safe_callbacks[#arg_11_0._nav_safe_callbacks + 1] = arg_11_1
 end
 
-function AINavigationSystem.post_update(arg_12_0, arg_12_1, arg_12_2)
+AINavigationSystem.post_update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1.dt
 
 	arg_12_0:update_position()
 end
 
-function AINavigationSystem.add_navbot_to_release(arg_13_0, arg_13_1)
+AINavigationSystem.add_navbot_to_release = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.unit_extension_data[arg_13_1] or arg_13_0.delayed_units[arg_13_1]
 
 	arg_13_0.navbots_to_release[arg_13_1] = var_13_0
 end
 
-function AINavigationSystem.update_navbots_to_release(arg_14_0)
+AINavigationSystem.update_navbots_to_release = function (arg_14_0)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0.navbots_to_release) do
 		iter_14_1:release_bot()
 
@@ -175,7 +175,7 @@ function AINavigationSystem.update_navbots_to_release(arg_14_0)
 	end
 end
 
-function AINavigationSystem.update_enabled(arg_15_0)
+AINavigationSystem.update_enabled = function (arg_15_0)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0.unit_extension_data) do
 		local var_15_0 = iter_15_1._nav_bot ~= nil and iter_15_1._enabled
 
@@ -189,7 +189,7 @@ function AINavigationSystem.update_enabled(arg_15_0)
 	end
 end
 
-function AINavigationSystem.update_destination(arg_16_0, arg_16_1)
+AINavigationSystem.update_destination = function (arg_16_0, arg_16_1)
 	local var_16_0 = POSITION_LOOKUP
 	local var_16_1 = Vector3.distance_squared
 	local var_16_2 = Managers.state.conflict.navigation_group_manager
@@ -329,7 +329,7 @@ function AINavigationSystem.update_destination(arg_16_0, arg_16_1)
 	arg_16_0:update_delayed_units(arg_16_1)
 end
 
-function AINavigationSystem.update_delayed_units(arg_17_0, arg_17_1)
+AINavigationSystem.update_delayed_units = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.delayed_units
 	local var_17_1 = arg_17_0.delayed_unit
 
@@ -374,7 +374,7 @@ function AINavigationSystem.update_delayed_units(arg_17_0, arg_17_1)
 	end
 end
 
-function AINavigationSystem.setup_far_astar(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AINavigationSystem.setup_far_astar = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	if arg_18_4.far_path then
 		arg_18_4.far_path = nil
 		arg_18_4.current_far_path_index = nil
@@ -404,7 +404,7 @@ function AINavigationSystem.setup_far_astar(arg_18_0, arg_18_1, arg_18_2, arg_18
 	end
 end
 
-function AINavigationSystem.far_astar(arg_19_0, arg_19_1, arg_19_2)
+AINavigationSystem.far_astar = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0, var_19_1 = Managers.state.conflict.navigation_group_manager:a_star_cached_between_positions(arg_19_1, arg_19_2)
 
 	if not var_19_0 then
@@ -424,7 +424,7 @@ end
 
 local var_0_4 = 0.0001
 
-function AINavigationSystem.update_desired_velocity(arg_20_0, arg_20_1, arg_20_2)
+AINavigationSystem.update_desired_velocity = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = 0
 	local var_20_1 = arg_20_0.nav_world
 
@@ -501,7 +501,7 @@ function AINavigationSystem.update_desired_velocity(arg_20_0, arg_20_1, arg_20_2
 	end
 end
 
-function AINavigationSystem.update_next_smart_object(arg_21_0, arg_21_1, arg_21_2)
+AINavigationSystem.update_next_smart_object = function (arg_21_0, arg_21_1, arg_21_2)
 	for iter_21_0, iter_21_1 in pairs(arg_21_0.enabled_units) do
 		local var_21_0 = iter_21_1._blackboard.next_smart_object_data
 		local var_21_1 = GwNavSmartObjectInterval
@@ -542,19 +542,19 @@ function AINavigationSystem.update_next_smart_object(arg_21_0, arg_21_1, arg_21_
 	end
 end
 
-function AINavigationSystem.update_dispersion(arg_22_0, arg_22_1, arg_22_2)
+AINavigationSystem.update_dispersion = function (arg_22_0, arg_22_1, arg_22_2)
 	for iter_22_0, iter_22_1 in pairs(arg_22_0.enabled_units) do
 		local var_22_0 = GwNavBot.update_logic_for_crowd_dispersion(iter_22_1._nav_bot)
 
 		if var_22_0 == 1 then
-			-- block empty
+			-- Nothing
 		elseif var_22_0 == 2 then
-			-- block empty
+			-- Nothing
 		end
 	end
 end
 
-function AINavigationSystem.update_position(arg_23_0, arg_23_1, arg_23_2)
+AINavigationSystem.update_position = function (arg_23_0, arg_23_1, arg_23_2)
 	for iter_23_0, iter_23_1 in pairs(arg_23_0.enabled_units) do
 		if iter_23_1._nav_bot then
 			local var_23_0 = Unit.local_position(iter_23_1._unit, 0)
@@ -564,7 +564,7 @@ function AINavigationSystem.update_position(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function AINavigationSystem.update_debug_draw(arg_24_0, arg_24_1)
+AINavigationSystem.update_debug_draw = function (arg_24_0, arg_24_1)
 	local var_24_0 = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "AINavigationExtension"
@@ -623,7 +623,7 @@ function AINavigationSystem.update_debug_draw(arg_24_0, arg_24_1)
 	end
 end
 
-function AINavigationSystem._debug_draw_text(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+AINavigationSystem._debug_draw_text = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	Debug.text("AI NAVIGATION DEBUG")
 	Debug.text("  enabled = %s", tostring(arg_25_0.enabled_units[arg_25_1] ~= nil))
 	Debug.text("  using far-path = %s", arg_25_2.far_path and "YES" or "NO")
@@ -642,7 +642,7 @@ function AINavigationSystem._debug_draw_text(arg_25_0, arg_25_1, arg_25_2, arg_2
 	Debug.text("  wait_timer = %.1f", math.max(-1, arg_25_3._wait_timer - arg_25_4))
 end
 
-function AINavigationSystem._debug_draw_nav_path(arg_26_0, arg_26_1, arg_26_2)
+AINavigationSystem._debug_draw_nav_path = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_2._nav_bot
 
 	if var_26_0 == nil then
@@ -675,7 +675,7 @@ function AINavigationSystem._debug_draw_nav_path(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function AINavigationSystem._debug_draw_far_path(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AINavigationSystem._debug_draw_far_path = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = arg_27_3.far_path
 
 	if var_27_0 then
@@ -719,7 +719,7 @@ end
 
 NAVIGATION_RUNNING_IN_THREAD = false
 
-function AINavigationSystem.override_nav_funcs(arg_28_0)
+AINavigationSystem.override_nav_funcs = function (arg_28_0)
 	local var_28_0 = {
 		"GwNavWorld",
 		"GwNavBot",
@@ -739,7 +739,7 @@ function AINavigationSystem.override_nav_funcs(arg_28_0)
 
 		for iter_28_1, iter_28_2 in pairs(var_28_2) do
 			if iter_28_1 ~= "join_async_update" and iter_28_1 ~= "kick_async_update" then
-				var_28_2[iter_28_1] = function(...)
+				var_28_2[iter_28_1] = function (...)
 					fassert(not NAVIGATION_RUNNING_IN_THREAD, "%s.%s() function was run during navigation running on other thread", var_28_1, iter_28_1)
 
 					return iter_28_2(...)

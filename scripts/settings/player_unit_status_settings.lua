@@ -10,7 +10,7 @@ PlayerUnitStatusSettings.move_speed_reduction_on_hit_recover_time = 0.5
 PlayerUnitStatusSettings.poison_dot_time = 1
 PlayerUnitStatusSettings.poison_level_max = 5
 
-function PlayerUnitStatusSettings.poison_dot_function(arg_1_0)
+PlayerUnitStatusSettings.poison_dot_function = function (arg_1_0)
 	return arg_1_0 * arg_1_0 * 0.3
 end
 

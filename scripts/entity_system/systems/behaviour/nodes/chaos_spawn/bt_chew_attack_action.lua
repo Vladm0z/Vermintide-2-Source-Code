@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTChewAttackAction = class(BTChewAttackAction, BTNode)
 BTChewAttackAction.name = "BTChewAttackAction"
 
-function BTChewAttackAction.init(arg_1_0, ...)
+BTChewAttackAction.init = function (arg_1_0, ...)
 	BTChewAttackAction.super.init(arg_1_0, ...)
 end
 
-function BTChewAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTChewAttackAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.state.network
 
 	arg_2_2.action = arg_2_0._tree_node.action_data
@@ -37,7 +37,7 @@ function BTChewAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_2_1, "enemy_attack", DialogueSettings.discover_enemy_attack_distance, "attack_tag", "chaos_spawn_eating", "target_name", var_2_3)
 end
 
-function BTChewAttackAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTChewAttackAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	arg_3_2.is_chewing = false
@@ -62,7 +62,7 @@ end
 
 local var_0_0 = Unit.alive
 
-function BTChewAttackAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTChewAttackAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.victim_grabbed
 
 	if not var_4_0 or not HEALTH_ALIVE[var_4_0] then
@@ -80,7 +80,7 @@ function BTChewAttackAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTChewAttackAction.anim_cb_chew_attack(arg_5_0, arg_5_1, arg_5_2)
+BTChewAttackAction.anim_cb_chew_attack = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = AiUtils.damage_target(arg_5_2.victim_grabbed, arg_5_1, var_5_0, var_5_0.damage)
 

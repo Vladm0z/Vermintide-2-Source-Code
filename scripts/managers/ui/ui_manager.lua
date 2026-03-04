@@ -4,17 +4,17 @@ require("scripts/managers/ui/popup_settings")
 
 UIManager = class(UIManager)
 
-function UIManager.init(arg_1_0)
+UIManager.init = function (arg_1_0)
 	arg_1_0._ui_enabled = true
 end
 
-function UIManager.destroy(arg_2_0)
+UIManager.destroy = function (arg_2_0)
 	if arg_2_0._ingame_ui then
 		print("[UIManager] Warning: destroy_ingame_ui was not called before destroy")
 	end
 end
 
-function UIManager.create_ingame_ui(arg_3_0, arg_3_1, arg_3_2)
+UIManager.create_ingame_ui = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ingame_ui_context = arg_3_1
 	arg_3_0._loading_subtitle_gui = arg_3_2
 
@@ -27,11 +27,11 @@ function UIManager.create_ingame_ui(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_enabled = true
 end
 
-function UIManager.create_ui_renderer(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+UIManager.create_ui_renderer = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return arg_4_0._ingame_ui:create_ui_renderer(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 end
 
-function UIManager.destroy_ingame_ui(arg_5_0)
+UIManager.destroy_ingame_ui = function (arg_5_0)
 	local var_5_0 = arg_5_0._ingame_ui
 
 	if var_5_0 then
@@ -41,7 +41,7 @@ function UIManager.destroy_ingame_ui(arg_5_0)
 	end
 end
 
-function UIManager.reload_ingame_ui(arg_6_0, arg_6_1)
+UIManager.reload_ingame_ui = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ingame_ui
 
 	if not var_6_0 then
@@ -71,11 +71,11 @@ function UIManager.reload_ingame_ui(arg_6_0, arg_6_1)
 	end
 end
 
-function UIManager.temporary_get_ingame_ui_called_from_state_ingame_running(arg_7_0)
+UIManager.temporary_get_ingame_ui_called_from_state_ingame_running = function (arg_7_0)
 	return arg_7_0._ingame_ui
 end
 
-function UIManager.set_ingame_ui_enabled(arg_8_0, arg_8_1)
+UIManager.set_ingame_ui_enabled = function (arg_8_0, arg_8_1)
 	if arg_8_0._ui_enabled ~= arg_8_1 then
 		arg_8_0._ui_enabled = arg_8_1
 
@@ -89,7 +89,7 @@ function UIManager.set_ingame_ui_enabled(arg_8_0, arg_8_1)
 	end
 end
 
-function UIManager.update(arg_9_0)
+UIManager.update = function (arg_9_0)
 	if not arg_9_0._ui_enabled then
 		return
 	end
@@ -128,19 +128,19 @@ function UIManager.update(arg_9_0)
 	end
 end
 
-function UIManager.end_screen_active(arg_10_0)
+UIManager.end_screen_active = function (arg_10_0)
 	return arg_10_0._ingame_ui:end_screen_active()
 end
 
-function UIManager.end_screen_completed(arg_11_0)
+UIManager.end_screen_completed = function (arg_11_0)
 	return arg_11_0._ingame_ui:end_screen_completed()
 end
 
-function UIManager.activate_end_screen_ui(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+UIManager.activate_end_screen_ui = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0._ingame_ui:activate_end_screen_ui(arg_12_1, arg_12_2, arg_12_3)
 end
 
-function UIManager.post_update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+UIManager.post_update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0._ingame_ui
 
 	if var_13_0 then
@@ -148,7 +148,7 @@ function UIManager.post_update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function UIManager.post_render(arg_14_0)
+UIManager.post_render = function (arg_14_0)
 	local var_14_0 = arg_14_0._ingame_ui
 
 	if var_14_0 then
@@ -156,7 +156,7 @@ function UIManager.post_render(arg_14_0)
 	end
 end
 
-function UIManager.get_transition(arg_15_0)
+UIManager.get_transition = function (arg_15_0)
 	local var_15_0 = arg_15_0._ingame_ui
 
 	if var_15_0 then
@@ -164,11 +164,11 @@ function UIManager.get_transition(arg_15_0)
 	end
 end
 
-function UIManager.restart_game(arg_16_0)
+UIManager.restart_game = function (arg_16_0)
 	arg_16_0._ingame_ui.restart_game = true
 end
 
-function UIManager.is_in_view_state(arg_17_0, arg_17_1)
+UIManager.is_in_view_state = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ingame_ui
 
 	if var_17_0 then
@@ -176,19 +176,19 @@ function UIManager.is_in_view_state(arg_17_0, arg_17_1)
 	end
 end
 
-function UIManager.get_hud_component(arg_18_0, arg_18_1)
+UIManager.get_hud_component = function (arg_18_0, arg_18_1)
 	return arg_18_0._ingame_ui:get_hud_component(arg_18_1)
 end
 
-function UIManager.open_popup(arg_19_0, arg_19_1, ...)
+UIManager.open_popup = function (arg_19_0, arg_19_1, ...)
 	return arg_19_0._ingame_ui:open_popup(arg_19_1, ...)
 end
 
-function UIManager.close_popup(arg_20_0, arg_20_1)
+UIManager.close_popup = function (arg_20_0, arg_20_1)
 	return arg_20_0._ingame_ui:close_popup(arg_20_1)
 end
 
-function UIManager.get_active_popup(arg_21_0, arg_21_1)
+UIManager.get_active_popup = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._ingame_ui
 
 	if var_21_0 then
@@ -196,7 +196,7 @@ function UIManager.get_active_popup(arg_21_0, arg_21_1)
 	end
 end
 
-function UIManager.handle_new_ui_disclaimer(arg_22_0, arg_22_1, arg_22_2)
+UIManager.handle_new_ui_disclaimer = function (arg_22_0, arg_22_1, arg_22_2)
 	if Managers.input:is_device_active("gamepad") or IS_CONSOLE then
 		return
 	end
@@ -211,7 +211,7 @@ function UIManager.handle_new_ui_disclaimer(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function UIManager.handle_transition(arg_23_0, arg_23_1, arg_23_2)
+UIManager.handle_transition = function (arg_23_0, arg_23_1, arg_23_2)
 	fassert(arg_23_2, "params are a required argument")
 
 	local var_23_0 = arg_23_0._ingame_ui
@@ -225,6 +225,6 @@ function UIManager.handle_transition(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function UIManager.ingame_ui(arg_24_0)
+UIManager.ingame_ui = function (arg_24_0)
 	return arg_24_0._ingame_ui
 end

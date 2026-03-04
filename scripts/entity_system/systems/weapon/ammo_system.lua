@@ -10,7 +10,7 @@ local var_0_1 = {
 	"rpc_give_ammo_fraction_to_owner"
 }
 
-function AmmoSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AmmoSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	AmmoSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._world = arg_1_1.world
@@ -22,7 +22,7 @@ function AmmoSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit_extensions_by_owener = {}
 end
 
-function AmmoSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+AmmoSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = AmmoSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0._unit_extensions[arg_2_2] = var_2_0
@@ -40,7 +40,7 @@ function AmmoSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4
 	return var_2_0
 end
 
-function AmmoSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
+AmmoSystem.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._unit_extensions[arg_3_1]
 
 	arg_3_0._unit_extensions[arg_3_1] = nil
@@ -58,11 +58,11 @@ function AmmoSystem.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 	AmmoSystem.super.on_remove_extension(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function AmmoSystem.destroy(arg_4_0)
+AmmoSystem.destroy = function (arg_4_0)
 	arg_4_0._network_event_delegate:unregister(arg_4_0)
 end
 
-function AmmoSystem.give_ammo_fraction_to_owner(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+AmmoSystem.give_ammo_fraction_to_owner = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = Managers.player:owner(arg_5_1)
 
 	if var_5_0 then
@@ -100,7 +100,7 @@ function AmmoSystem.give_ammo_fraction_to_owner(arg_5_0, arg_5_1, arg_5_2, arg_5
 	end
 end
 
-function AmmoSystem.rpc_give_ammo_fraction_to_owner(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+AmmoSystem.rpc_give_ammo_fraction_to_owner = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = Managers.state.unit_storage:unit(arg_6_2)
 
 	arg_6_0:give_ammo_fraction_to_owner(var_6_0, arg_6_3, arg_6_4)

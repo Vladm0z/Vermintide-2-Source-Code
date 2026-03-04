@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hub_conversations_cowbell.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "nik_chaos_wastes_hub_cowbell_conversation_eight_a",

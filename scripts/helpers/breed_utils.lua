@@ -9,7 +9,7 @@ local var_0_0 = {
 	[6] = BreedCategory.SuperArmor
 }
 
-function BreedUtils.inject_breed_category_mask(arg_1_0)
+BreedUtils.inject_breed_category_mask = function (arg_1_0)
 	local var_1_0 = 0
 
 	if arg_1_0.special then

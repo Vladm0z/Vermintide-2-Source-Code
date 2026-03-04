@@ -4,7 +4,7 @@ require("scripts/level/environment/environment_handler")
 
 EnvironmentBlender = class(EnvironmentBlender)
 
-function EnvironmentBlender.init(arg_1_0, arg_1_1, arg_1_2)
+EnvironmentBlender.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.world = arg_1_1
 	arg_1_0.environment_handler = EnvironmentHandler:new()
 	arg_1_0.shading_settings = {}
@@ -30,7 +30,7 @@ function EnvironmentBlender.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_1:register(arg_1_0, "unregister_environment_volume", "event_unregister_environment_volume")
 end
 
-function EnvironmentBlender.event_register_environment_volume(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+EnvironmentBlender.event_register_environment_volume = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
 	local var_2_0 = {
 		always_inside = false,
 		level = LevelHelper:current_level(arg_2_0.world),
@@ -48,16 +48,16 @@ function EnvironmentBlender.event_register_environment_volume(arg_2_0, arg_2_1, 
 	arg_2_0.environment_handler:add_blend("EnvironmentBlendVolume", "volumes", arg_2_3, var_2_0, arg_2_9)
 end
 
-function EnvironmentBlender.event_unregister_environment_volume(arg_3_0, arg_3_1)
+EnvironmentBlender.event_unregister_environment_volume = function (arg_3_0, arg_3_1)
 	arg_3_0.environment_handler:remove_blend(arg_3_1)
 end
 
-function EnvironmentBlender.update(arg_4_0, arg_4_1, arg_4_2)
+EnvironmentBlender.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.environment_handler:update(arg_4_1, arg_4_2)
 	arg_4_0:update_shading_settings()
 end
 
-function EnvironmentBlender.update_shading_settings(arg_5_0)
+EnvironmentBlender.update_shading_settings = function (arg_5_0)
 	local var_5_0 = arg_5_0.environment_handler
 	local var_5_1 = var_5_0:weights("volumes")
 	local var_5_2 = arg_5_0.shading_settings
@@ -90,7 +90,7 @@ function EnvironmentBlender.update_shading_settings(arg_5_0)
 	end
 end
 
-function EnvironmentBlender.destroy(arg_6_0)
+EnvironmentBlender.destroy = function (arg_6_0)
 	arg_6_0.environment_handler:destroy()
 
 	arg_6_0.environment_handler = nil
@@ -123,11 +123,11 @@ local var_0_0 = {
 	}
 }
 
-function EnvironmentBlender.debug_color(arg_7_0)
+EnvironmentBlender.debug_color = function (arg_7_0)
 	return table.remove(var_0_0)
 end
 
-function EnvironmentBlender.debug_draw(arg_8_0, arg_8_1)
+EnvironmentBlender.debug_draw = function (arg_8_0, arg_8_1)
 	local var_8_0, var_8_1 = Gui.resolution()
 	local var_8_2 = var_8_0 * 0.01
 	local var_8_3 = var_8_1 * 0.95

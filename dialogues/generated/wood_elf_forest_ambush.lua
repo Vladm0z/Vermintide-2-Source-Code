@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_forest_ambush.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwe_forest_ambush_intro",

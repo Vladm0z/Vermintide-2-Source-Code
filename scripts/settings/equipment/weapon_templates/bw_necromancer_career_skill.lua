@@ -12,7 +12,7 @@ local var_0_0 = {
 				controlled_unit_template = "necromancer_pet_ability",
 				uninterruptible = true,
 				anim_event = "necro_ability_start",
-				chain_condition_func = function(arg_1_0, arg_1_1)
+				chain_condition_func = function (arg_1_0, arg_1_1)
 					return ScriptUnit.extension(arg_1_0, "career_system"):current_ability_cooldown() <= 0
 				end,
 				total_time = math.huge,
@@ -50,7 +50,7 @@ local var_0_0 = {
 						input = "action_two"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -63,12 +63,12 @@ local var_0_0 = {
 				kind = "dummy",
 				total_time = 0.51,
 				allowed_chain_actions = {},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
 				end,
-				finish_function = function(arg_4_0, arg_4_1)
+				finish_function = function (arg_4_0, arg_4_1)
 					local var_4_0 = ScriptUnit.extension(arg_4_0, "input_system")
 
 					var_4_0:clear_input_buffer()
@@ -84,7 +84,7 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "necro_ability_cancel",
 				total_time = 0.2,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

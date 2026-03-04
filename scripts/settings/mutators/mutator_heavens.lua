@@ -4,7 +4,7 @@ return {
 	description = "weaves_heavens_mutator_desc",
 	display_name = "weaves_heavens_mutator_name",
 	icon = "mutator_icon_heavens_lightning",
-	spawn_lightning_strike_unit = function(arg_1_0)
+	spawn_lightning_strike_unit = function (arg_1_0)
 		table.clear(arg_1_0.units)
 
 		for iter_1_0, iter_1_1 in pairs(Managers.player:players()) do
@@ -29,7 +29,7 @@ return {
 			arg_1_0.bots_alerted = false
 		end
 	end,
-	server_start_function = function(arg_2_0, arg_2_1)
+	server_start_function = function (arg_2_0, arg_2_1)
 		local var_2_0 = Managers.weave:get_wind_strength() or 1
 		local var_2_1 = Managers.weave:get_active_wind_settings()
 		local var_2_2 = Managers.state.difficulty:get_difficulty()
@@ -57,10 +57,10 @@ return {
 		arg_2_1._nav_cost_volume_ids = {}
 		arg_2_1._nav_cost_radius = var_2_1.radius[var_2_2][var_2_0]
 	end,
-	server_stop_function = function(arg_3_0, arg_3_1, arg_3_2)
+	server_stop_function = function (arg_3_0, arg_3_1, arg_3_2)
 		arg_3_1._nav_cost_map_id = nil
 	end,
-	server_ai_killed_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	server_ai_killed_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 		if ScorpionSeasonalSettings.current_season_id == 1 then
 			if arg_4_1.boss_lightning_challenge_counter > 0 and arg_4_1.boss_lightning_challenge[arg_4_2] then
 				local var_4_0 = "season_1"
@@ -80,7 +80,7 @@ return {
 			arg_4_1.boss_lightning_challenge_counter = 0
 		end
 	end,
-	server_ai_hit_by_player_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	server_ai_hit_by_player_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		if arg_5_1.boss_lightning_challenge_counter > 0 and arg_5_1.boss_lightning_challenge[arg_5_2] then
 			local var_5_0 = Managers.player:is_player_unit(arg_5_3)
 			local var_5_1 = arg_5_4[DamageDataIndex.DAMAGE_AMOUNT]
@@ -91,7 +91,7 @@ return {
 			end
 		end
 	end,
-	server_ai_spawned_function = function(arg_6_0, arg_6_1, arg_6_2)
+	server_ai_spawned_function = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = Managers.state.conflict:alive_bosses()
 
 		if var_6_0 and #var_6_0 > arg_6_1.boss_lightning_challenge_counter and BLACKBOARDS[arg_6_2].breed.boss then
@@ -99,10 +99,10 @@ return {
 			arg_6_1.boss_lightning_challenge_counter = arg_6_1.boss_lightning_challenge_counter + 1
 		end
 	end,
-	server_players_left_safe_zone = function(arg_7_0, arg_7_1)
+	server_players_left_safe_zone = function (arg_7_0, arg_7_1)
 		arg_7_1.has_left_safe_zone = true
 	end,
-	server_update_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	server_update_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

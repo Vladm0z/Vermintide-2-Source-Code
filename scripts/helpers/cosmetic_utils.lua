@@ -2,7 +2,7 @@
 
 CosmeticUtils = CosmeticUtils or {}
 
-function CosmeticUtils.color_tint_unit(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CosmeticUtils.color_tint_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = "mtr_outfit"
 
 	if arg_1_1 == "bright_wizard" then
@@ -25,7 +25,7 @@ function CosmeticUtils.color_tint_unit(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function CosmeticUtils.apply_material_settings(arg_2_0, arg_2_1)
+CosmeticUtils.apply_material_settings = function (arg_2_0, arg_2_1)
 	local var_2_0 = MaterialSettingsTemplates[arg_2_1]
 
 	for iter_2_0, iter_2_1 in pairs(var_2_0) do
@@ -100,15 +100,15 @@ local var_0_3 = {
 	slot_ranged = true
 }
 
-function CosmeticUtils.is_cosmetic_slot(arg_3_0)
+CosmeticUtils.is_cosmetic_slot = function (arg_3_0)
 	return var_0_0[arg_3_0] ~= nil
 end
 
-function CosmeticUtils.is_cosmetic_item(arg_4_0)
+CosmeticUtils.is_cosmetic_item = function (arg_4_0)
 	return var_0_1[arg_4_0] ~= nil
 end
 
-function CosmeticUtils.is_weapon_pose(arg_5_0)
+CosmeticUtils.is_weapon_pose = function (arg_5_0)
 	return arg_5_0.slot_type == "weapon_pose"
 end
 
@@ -123,7 +123,7 @@ local var_0_4 = {
 	}
 }
 
-function CosmeticUtils.generate_frame_template(arg_6_0)
+CosmeticUtils.generate_frame_template = function (arg_6_0)
 	local var_6_0 = var_0_4
 	local var_6_1 = string.format("resource_packages/store/item_icons/store_item_icon_%s", arg_6_0)
 
@@ -150,7 +150,7 @@ function CosmeticUtils.generate_frame_template(arg_6_0)
 	return var_6_0
 end
 
-function CosmeticUtils.get_cosmetic_name(arg_7_0, arg_7_1)
+CosmeticUtils.get_cosmetic_name = function (arg_7_0, arg_7_1)
 	local var_7_0
 
 	if arg_7_0 == "slot_frame" or arg_7_0 == "slot_skin" then
@@ -162,7 +162,7 @@ function CosmeticUtils.get_cosmetic_name(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function CosmeticUtils.get_weapon_skin_name(arg_8_0, arg_8_1)
+CosmeticUtils.get_weapon_skin_name = function (arg_8_0, arg_8_1)
 	local var_8_0
 
 	if CosmeticUtils.is_weapon_slot(arg_8_0) then
@@ -174,7 +174,7 @@ function CosmeticUtils.get_weapon_skin_name(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function CosmeticUtils.get_cosmetic_id(arg_9_0, arg_9_1)
+CosmeticUtils.get_cosmetic_id = function (arg_9_0, arg_9_1)
 	if arg_9_0 == "slot_frame" or arg_9_0 == "slot_skin" then
 		return NetworkLookup.cosmetics[arg_9_1 or "default"]
 	else
@@ -182,7 +182,7 @@ function CosmeticUtils.get_cosmetic_id(arg_9_0, arg_9_1)
 	end
 end
 
-function CosmeticUtils.get_weapon_pose_skin(arg_10_0)
+CosmeticUtils.get_weapon_pose_skin = function (arg_10_0)
 	local var_10_0
 	local var_10_1 = ItemMasterList[arg_10_0]
 	local var_10_2 = Managers.backend:get_interface("items")
@@ -197,7 +197,7 @@ function CosmeticUtils.get_weapon_pose_skin(arg_10_0)
 	return var_10_0
 end
 
-function CosmeticUtils.get_weapon_skin_id(arg_11_0, arg_11_1)
+CosmeticUtils.get_weapon_skin_id = function (arg_11_0, arg_11_1)
 	local var_11_0
 
 	if CosmeticUtils.is_weapon_slot(arg_11_0) then
@@ -222,7 +222,7 @@ function CosmeticUtils.get_weapon_skin_id(arg_11_0, arg_11_1)
 	return var_11_0
 end
 
-function CosmeticUtils.update_cosmetic_slot(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CosmeticUtils.update_cosmetic_slot = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if not var_0_3[arg_12_1] then
 		return
 	end
@@ -246,7 +246,7 @@ function CosmeticUtils.update_cosmetic_slot(arg_12_0, arg_12_1, arg_12_2, arg_12
 	end
 end
 
-function CosmeticUtils.get_cosmetic_slot(arg_13_0, arg_13_1)
+CosmeticUtils.get_cosmetic_slot = function (arg_13_0, arg_13_1)
 	if not var_0_3[arg_13_1] then
 		return nil
 	end
@@ -288,15 +288,15 @@ function CosmeticUtils.get_cosmetic_slot(arg_13_0, arg_13_1)
 	return nil
 end
 
-function CosmeticUtils.is_weapon_slot(arg_14_0)
+CosmeticUtils.is_weapon_slot = function (arg_14_0)
 	return arg_14_0 == "slot_melee" or arg_14_0 == "slot_ranged"
 end
 
-function CosmeticUtils.is_valid(arg_15_0)
+CosmeticUtils.is_valid = function (arg_15_0)
 	return arg_15_0 and arg_15_0.item_name
 end
 
-function CosmeticUtils.get_default_cosmetic_slot(arg_16_0, arg_16_1)
+CosmeticUtils.get_default_cosmetic_slot = function (arg_16_0, arg_16_1)
 	if not var_0_3[arg_16_1] then
 		return nil
 	end
@@ -333,7 +333,7 @@ function CosmeticUtils.get_default_cosmetic_slot(arg_16_0, arg_16_1)
 	return nil
 end
 
-function CosmeticUtils.sync_local_player_cosmetics(arg_17_0, arg_17_1, arg_17_2)
+CosmeticUtils.sync_local_player_cosmetics = function (arg_17_0, arg_17_1, arg_17_2)
 	if not arg_17_0 then
 		Application.warning("[CosmeticUtils.sync_local_player_cosmetics] Failed to sync cosmetics")
 

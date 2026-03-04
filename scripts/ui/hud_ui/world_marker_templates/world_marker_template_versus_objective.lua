@@ -23,7 +23,7 @@ var_0_0.screen_margins = {
 	right = 150
 }
 
-function var_0_0.create_widget_definition(arg_1_0)
+var_0_0.create_widget_definition = function (arg_1_0)
 	local var_1_0 = 0.5
 	local var_1_1 = 60 * var_1_0
 
@@ -49,7 +49,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_clamped
 					end
 				},
@@ -57,7 +57,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.is_clamped or arg_3_0.distance > 5
 					end
 				},
@@ -65,7 +65,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.is_clamped or arg_4_0.distance > 5
 					end
 				}
@@ -255,7 +255,7 @@ function var_0_0.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_0.on_enter(arg_5_0)
+var_0_0.on_enter = function (arg_5_0)
 	local var_5_0 = arg_5_0.content
 	local var_5_1 = Managers.state.entity:system("objective_system")
 
@@ -264,7 +264,7 @@ function var_0_0.on_enter(arg_5_0)
 	var_5_0.t = 0
 end
 
-function var_0_0.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+var_0_0.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_1.content
 	local var_6_1 = arg_6_1.style
 

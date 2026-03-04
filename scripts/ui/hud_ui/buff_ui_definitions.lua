@@ -113,7 +113,7 @@ local var_0_6 = {
 				style_id = "texture_icon",
 				texture_id = "texture_icon",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return arg_1_0.is_cooldown
 				end
 			},
@@ -122,7 +122,7 @@ local var_0_6 = {
 				texture_id = "icon_mask",
 				pass_type = "texture",
 				retained_mode = var_0_2,
-				content_change_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				content_change_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					arg_2_1.color[1] = 255 * (1 - arg_2_0.progress)
 				end
 			},
@@ -137,7 +137,7 @@ local var_0_6 = {
 				pass_type = "text",
 				text_id = "stack_count",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.stack_count > 1
 				end
 			},
@@ -146,7 +146,7 @@ local var_0_6 = {
 				pass_type = "text",
 				text_id = "stack_count",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.stack_count > 1
 				end
 			},
@@ -155,10 +155,10 @@ local var_0_6 = {
 				texture_id = "texture_cooldown",
 				pass_type = "gradient_mask_texture",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.is_cooldown
 				end,
-				content_change_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+				content_change_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 					arg_6_1.color[1] = 255 * (1 - arg_6_0.progress)
 				end
 			},
@@ -167,10 +167,10 @@ local var_0_6 = {
 				texture_id = "texture_duration",
 				pass_type = "gradient_mask_texture",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return not arg_7_0.is_cooldown
 				end,
-				content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				content_change_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 					arg_8_1.color[1] = 255 * (1 - arg_8_0.progress)
 				end
 			}

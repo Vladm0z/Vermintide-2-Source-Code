@@ -201,7 +201,7 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.proc_functions = {
-	markus_questing_knight_spread_temp_health = function(arg_1_0, arg_1_1, arg_1_2)
+	markus_questing_knight_spread_temp_health = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = arg_1_2[1]
 		local var_1_1 = arg_1_2[3]
 		local var_1_2 = var_1_0 == arg_1_0
@@ -239,7 +239,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	add_heal_percent_of_damage_taken_over_time_buff = function(arg_2_0, arg_2_1, arg_2_2)
+	add_heal_percent_of_damage_taken_over_time_buff = function (arg_2_0, arg_2_1, arg_2_2)
 		if Unit.alive(arg_2_0) then
 			local var_2_0 = arg_2_2[1]
 			local var_2_1 = arg_2_2[2]
@@ -263,7 +263,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	check_for_instantly_killing_crit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	check_for_instantly_killing_crit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if not Managers.player.is_server then
 			return
 		end
@@ -293,7 +293,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	markus_questing_knight_boss_kill_func = function(arg_4_0, arg_4_1, arg_4_2)
+	markus_questing_knight_boss_kill_func = function (arg_4_0, arg_4_1, arg_4_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -313,7 +313,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	markus_questing_knight_ability_kill_buff_func = function(arg_5_0, arg_5_1, arg_5_2)
+	markus_questing_knight_ability_kill_buff_func = function (arg_5_0, arg_5_1, arg_5_2)
 		if ALIVE[arg_5_0] then
 			local var_5_0 = arg_5_2[1]
 			local var_5_1 = var_5_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
@@ -330,7 +330,7 @@ var_0_0.proc_functions = {
 	end
 }
 var_0_0.buff_function_templates = {
-	update_markus_questing_knight_passive_aura = function(arg_6_0, arg_6_1, arg_6_2)
+	update_markus_questing_knight_passive_aura = function (arg_6_0, arg_6_1, arg_6_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -435,7 +435,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	refund_damage_taken = function(arg_7_0, arg_7_1, arg_7_2)
+	refund_damage_taken = function (arg_7_0, arg_7_1, arg_7_2)
 		if not Managers.state.network.is_server then
 			return
 		end

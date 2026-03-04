@@ -10,7 +10,7 @@ local var_0_5 = 800
 StoreWindowItemList = class(StoreWindowItemList)
 StoreWindowItemList.NAME = "StoreWindowItemList"
 
-function StoreWindowItemList.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowItemList.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowItemList")
 
 	arg_1_0._params = arg_1_1
@@ -34,7 +34,7 @@ function StoreWindowItemList.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent:change_generic_actions("default")
 end
 
-function StoreWindowItemList._start_transition_animation(arg_2_0, arg_2_1)
+StoreWindowItemList._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -47,7 +47,7 @@ function StoreWindowItemList._start_transition_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StoreWindowItemList._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StoreWindowItemList._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -72,7 +72,7 @@ function StoreWindowItemList._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._scrollbar_logic = ScrollBarLogic:new(var_3_3)
 end
 
-function StoreWindowItemList.on_exit(arg_4_0, arg_4_1, arg_4_2)
+StoreWindowItemList.on_exit = function (arg_4_0, arg_4_1, arg_4_2)
 	print("[HeroViewWindow] Exit Substate StoreWindowItemList")
 
 	arg_4_0._ui_animator = nil
@@ -80,7 +80,7 @@ function StoreWindowItemList.on_exit(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_destroy_product_widgets(arg_4_2)
 end
 
-function StoreWindowItemList.update(arg_5_0, arg_5_1, arg_5_2)
+StoreWindowItemList.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_gamepad_activity()
 
 	if arg_5_0:_sync_products_version() then
@@ -97,13 +97,13 @@ function StoreWindowItemList.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function StoreWindowItemList.post_update(arg_6_0, arg_6_1, arg_6_2)
+StoreWindowItemList.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	if arg_6_0._initialized then
 		arg_6_0:_handle_input(arg_6_1, arg_6_2)
 	end
 end
 
-function StoreWindowItemList._sync_products_version(arg_7_0)
+StoreWindowItemList._sync_products_version = function (arg_7_0)
 	local var_7_0 = arg_7_0._parent:products_version_id()
 
 	if var_7_0 ~= arg_7_0._products_version_id then
@@ -115,7 +115,7 @@ function StoreWindowItemList._sync_products_version(arg_7_0)
 	return false
 end
 
-function StoreWindowItemList._update_animations(arg_8_0, arg_8_1)
+StoreWindowItemList._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_animations
 	local var_8_1 = arg_8_0._animations
 	local var_8_2 = arg_8_0._ui_animator
@@ -143,11 +143,11 @@ function StoreWindowItemList._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function StoreWindowItemList._is_list_hovered(arg_9_0)
+StoreWindowItemList._is_list_hovered = function (arg_9_0)
 	return arg_9_0._widgets_by_name.list.content.list_hotspot.is_hover or false
 end
 
-function StoreWindowItemList._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StoreWindowItemList._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._parent
 	local var_10_1 = arg_10_0._widgets_by_name
 	local var_10_2 = arg_10_0._parent:window_input_service()
@@ -171,7 +171,7 @@ function StoreWindowItemList._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function StoreWindowItemList._draw(arg_11_0, arg_11_1)
+StoreWindowItemList._draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_top_renderer
 	local var_11_1 = arg_11_0._ui_scenegraph
 	local var_11_2 = arg_11_0._parent:window_input_service()
@@ -200,11 +200,11 @@ function StoreWindowItemList._draw(arg_11_0, arg_11_1)
 	UIRenderer.end_pass(var_11_0)
 end
 
-function StoreWindowItemList._play_sound(arg_12_0, arg_12_1)
+StoreWindowItemList._play_sound = function (arg_12_0, arg_12_1)
 	arg_12_0._parent:play_sound(arg_12_1)
 end
 
-function StoreWindowItemList._handle_gamepad_activity(arg_13_0)
+StoreWindowItemList._handle_gamepad_activity = function (arg_13_0)
 	local var_13_0 = Managers.input:is_device_active("mouse")
 	local var_13_1 = arg_13_0._gamepad_active_last_frame == nil
 
@@ -217,7 +217,7 @@ function StoreWindowItemList._handle_gamepad_activity(arg_13_0)
 	end
 end
 
-function StoreWindowItemList._list_index_pressed(arg_14_0)
+StoreWindowItemList._list_index_pressed = function (arg_14_0)
 	local var_14_0 = arg_14_0._list_widgets
 
 	if var_14_0 then
@@ -234,7 +234,7 @@ function StoreWindowItemList._list_index_pressed(arg_14_0)
 	end
 end
 
-function StoreWindowItemList._animate_list_entries(arg_15_0, arg_15_1)
+StoreWindowItemList._animate_list_entries = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._parent
 	local var_15_1 = arg_15_0:_is_list_hovered()
 
@@ -259,15 +259,15 @@ function StoreWindowItemList._animate_list_entries(arg_15_0, arg_15_1)
 	end
 end
 
-function StoreWindowItemList._get_items_by_filter(arg_16_0, arg_16_1)
+StoreWindowItemList._get_items_by_filter = function (arg_16_0, arg_16_1)
 	return (Managers.backend:get_interface("peddler"):get_filtered_items(arg_16_1))
 end
 
-function StoreWindowItemList._get_all_items(arg_17_0)
+StoreWindowItemList._get_all_items = function (arg_17_0)
 	return (Managers.backend:get_interface("peddler"):get_peddler_stock())
 end
 
-function StoreWindowItemList._update_item_list(arg_18_0)
+StoreWindowItemList._update_item_list = function (arg_18_0)
 	if arg_18_0._initialized then
 		local var_18_0 = arg_18_0._params.selected_product.item
 
@@ -457,7 +457,7 @@ local var_0_6 = {
 	unique = 6
 }
 
-function StoreWindowItemList._sort_peddler_items_by_type(arg_19_0, arg_19_1)
+StoreWindowItemList._sort_peddler_items_by_type = function (arg_19_0, arg_19_1)
 	local var_19_0 = {}
 
 	table.clear(var_19_0)
@@ -489,7 +489,7 @@ function StoreWindowItemList._sort_peddler_items_by_type(arg_19_0, arg_19_1)
 	return var_19_1
 end
 
-function StoreWindowItemList._sort_peddler_items_by_price(arg_21_0, arg_21_1)
+StoreWindowItemList._sort_peddler_items_by_price = function (arg_21_0, arg_21_1)
 	local function var_21_0(arg_22_0, arg_22_1)
 		return (arg_22_0.current_prices and arg_22_0.current_prices.SM or 0) > (arg_22_1.current_prices and arg_22_1.current_prices.SM or 0)
 	end
@@ -499,7 +499,7 @@ function StoreWindowItemList._sort_peddler_items_by_price(arg_21_0, arg_21_1)
 	return arg_21_1
 end
 
-function StoreWindowItemList._get_list_index_by_product_id(arg_23_0, arg_23_1)
+StoreWindowItemList._get_list_index_by_product_id = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._layout
 	local var_23_1 = 1
 
@@ -510,7 +510,7 @@ function StoreWindowItemList._get_list_index_by_product_id(arg_23_0, arg_23_1)
 	end
 end
 
-function StoreWindowItemList._on_list_index_selected(arg_24_0, arg_24_1, arg_24_2)
+StoreWindowItemList._on_list_index_selected = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._layout[arg_24_1]
 
 	arg_24_0._params.selected_product = var_24_0
@@ -570,7 +570,7 @@ function StoreWindowItemList._on_list_index_selected(arg_24_0, arg_24_1, arg_24_
 	end
 end
 
-function StoreWindowItemList._create_product_widgets(arg_25_0, arg_25_1)
+StoreWindowItemList._create_product_widgets = function (arg_25_0, arg_25_1)
 	local var_25_0 = {}
 	local var_25_1 = arg_25_0._parent
 	local var_25_2 = "item_root"
@@ -601,7 +601,7 @@ function StoreWindowItemList._create_product_widgets(arg_25_0, arg_25_1)
 	end
 end
 
-function StoreWindowItemList._destroy_product_widgets(arg_26_0, arg_26_1)
+StoreWindowItemList._destroy_product_widgets = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._parent
 	local var_26_1 = arg_26_0._layout
 	local var_26_2 = arg_26_0._list_widgets
@@ -615,7 +615,7 @@ function StoreWindowItemList._destroy_product_widgets(arg_26_0, arg_26_1)
 	end
 end
 
-function StoreWindowItemList._align_item_widgets(arg_27_0)
+StoreWindowItemList._align_item_widgets = function (arg_27_0)
 	local var_27_0 = 0
 	local var_27_1 = 0
 	local var_27_2 = 0
@@ -662,7 +662,7 @@ function StoreWindowItemList._align_item_widgets(arg_27_0)
 	arg_27_0._total_list_height = var_27_0
 end
 
-function StoreWindowItemList._handle_gamepad_grid_selection(arg_28_0, arg_28_1)
+StoreWindowItemList._handle_gamepad_grid_selection = function (arg_28_0, arg_28_1)
 	if not arg_28_0._selected_gamepad_grid_index then
 		return
 	end
@@ -704,7 +704,7 @@ function StoreWindowItemList._handle_gamepad_grid_selection(arg_28_0, arg_28_1)
 	end
 end
 
-function StoreWindowItemList._find_closest_neighbour(arg_29_0, arg_29_1, arg_29_2)
+StoreWindowItemList._find_closest_neighbour = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._list_widgets
 	local var_29_1 = var_29_0[arg_29_2]
 	local var_29_2 = var_29_1.content.size
@@ -730,7 +730,7 @@ function StoreWindowItemList._find_closest_neighbour(arg_29_0, arg_29_1, arg_29_
 	end
 end
 
-function StoreWindowItemList._initialize_scrollbar(arg_30_0)
+StoreWindowItemList._initialize_scrollbar = function (arg_30_0)
 	local var_30_0 = var_0_2.list_window.size
 	local var_30_1 = var_0_2.list_scrollbar.size
 	local var_30_2 = var_30_0[2]
@@ -744,7 +744,7 @@ function StoreWindowItemList._initialize_scrollbar(arg_30_0)
 	var_30_7:set_scroll_percentage(var_30_7._scroll_value or 0)
 end
 
-function StoreWindowItemList._update_scroll_position(arg_31_0)
+StoreWindowItemList._update_scroll_position = function (arg_31_0)
 	local var_31_0 = arg_31_0._scrollbar_logic:get_scrolled_length()
 
 	if var_31_0 ~= arg_31_0._scrolled_length then
@@ -753,7 +753,7 @@ function StoreWindowItemList._update_scroll_position(arg_31_0)
 	end
 end
 
-function StoreWindowItemList._update_visible_list_entries(arg_32_0)
+StoreWindowItemList._update_visible_list_entries = function (arg_32_0)
 	local var_32_0 = arg_32_0._scrollbar_logic
 
 	if not var_32_0:enabled() then
@@ -786,7 +786,7 @@ function StoreWindowItemList._update_visible_list_entries(arg_32_0)
 	end
 end
 
-function StoreWindowItemList._scroll_to_list_index(arg_33_0, arg_33_1)
+StoreWindowItemList._scroll_to_list_index = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._scrollbar_logic
 
 	if var_33_0:enabled() then
@@ -826,7 +826,7 @@ function StoreWindowItemList._scroll_to_list_index(arg_33_0, arg_33_1)
 	end
 end
 
-function StoreWindowItemList._get_scrollbar_percentage_by_index(arg_34_0, arg_34_1)
+StoreWindowItemList._get_scrollbar_percentage_by_index = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._scrollbar_logic
 
 	if var_34_0:enabled() then

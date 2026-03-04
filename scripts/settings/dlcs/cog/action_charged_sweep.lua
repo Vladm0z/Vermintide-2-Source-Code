@@ -2,7 +2,7 @@
 
 ActionChargedSweep = class(ActionChargedSweep, ActionSweep)
 
-function ActionChargedSweep.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionChargedSweep.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionChargedSweep.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	local var_1_0 = ScriptUnit.extension(arg_1_4, "overcharge_system")
@@ -16,7 +16,7 @@ function ActionChargedSweep.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 	arg_1_0.overcharge_extension = var_1_0
 end
 
-function ActionChargedSweep.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionChargedSweep.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 	arg_2_0._overcharge_type = nil
 	arg_2_0._consume_overcharge = false
@@ -49,15 +49,15 @@ function ActionChargedSweep.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2,
 	ActionChargedSweep.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 end
 
-function ActionChargedSweep.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionChargedSweep.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ActionChargedSweep.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 end
 
-function ActionChargedSweep.finish(arg_4_0, arg_4_1)
+ActionChargedSweep.finish = function (arg_4_0, arg_4_1)
 	ActionChargedSweep.super.finish(arg_4_0, arg_4_1)
 end
 
-function ActionChargedSweep.get_overcharge_level(arg_5_0, arg_5_1)
+ActionChargedSweep.get_overcharge_level = function (arg_5_0, arg_5_1)
 	local var_5_0 = 1
 	local var_5_1 = arg_5_0.overcharge_level_map
 
@@ -70,7 +70,7 @@ function ActionChargedSweep.get_overcharge_level(arg_5_0, arg_5_1)
 	return var_5_0
 end
 
-function ActionChargedSweep.get_discharge_effect(arg_6_0, arg_6_1, arg_6_2)
+ActionChargedSweep.get_discharge_effect = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = math.min(arg_6_2, arg_6_0.overcharge_map_size)
 	local var_6_1 = arg_6_1.discharge_effects
 
@@ -85,7 +85,7 @@ function ActionChargedSweep.get_discharge_effect(arg_6_0, arg_6_1, arg_6_2)
 	return nil
 end
 
-function ActionChargedSweep.apply_overcharge(arg_7_0, arg_7_1, arg_7_2)
+ActionChargedSweep.apply_overcharge = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1 then
 		local var_7_0 = arg_7_0.overcharge_extension
 		local var_7_1 = PlayerUnitStatusSettings.overcharge_values[arg_7_1]
@@ -98,7 +98,7 @@ function ActionChargedSweep.apply_overcharge(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function ActionChargedSweep._send_attack_hit(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, ...)
+ActionChargedSweep._send_attack_hit = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, ...)
 	local var_8_0 = false
 	local var_8_1
 
@@ -121,7 +121,7 @@ function ActionChargedSweep._send_attack_hit(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 	end
 end
 
-function ActionChargedSweep._apply_discharge_effect(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ActionChargedSweep._apply_discharge_effect = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if arg_9_1 then
 		local var_9_0 = arg_9_1.explosion_template_name
 
@@ -155,7 +155,7 @@ function ActionChargedSweep._apply_discharge_effect(arg_9_0, arg_9_1, arg_9_2, a
 	end
 end
 
-function ActionChargedSweep._get_damage_profile_name(arg_10_0, arg_10_1, arg_10_2)
+ActionChargedSweep._get_damage_profile_name = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._discharge_effect
 
 	if var_10_0 and var_10_0.damage_profile_name then

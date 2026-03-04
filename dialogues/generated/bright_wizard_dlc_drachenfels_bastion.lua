@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_drachenfels_bastion.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_bastion_intro_line_a",

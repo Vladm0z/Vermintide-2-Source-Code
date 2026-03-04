@@ -18,7 +18,7 @@ AreaSettings.scorpion = {
 	acts = {
 		"act_scorpion"
 	},
-	unlock_requirement_function = function(arg_1_0, arg_1_1)
+	unlock_requirement_function = function (arg_1_0, arg_1_1)
 		if script_data.unlock_all_levels then
 			return true
 		end
@@ -31,7 +31,7 @@ AreaSettings.scorpion = {
 
 		return true
 	end,
-	create_mission_background_widget = function()
+	create_mission_background_widget = function ()
 		return {
 			scenegraph_id = "dlc_background",
 			element = {

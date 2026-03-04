@@ -38,7 +38,7 @@ local var_0_2 = {
 	"PlayerUnitLocomotionExtension"
 }
 
-function LocomotionSystem.init(arg_1_0, arg_1_1, arg_1_2)
+LocomotionSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	LocomotionSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -84,7 +84,7 @@ function LocomotionSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	EngineOptimized.bone_lod_init(GameSettingsDevelopment.bone_lod_husks.lod_in_range_sq, GameSettingsDevelopment.bone_lod_husks.lod_out_range_sq, GameSettingsDevelopment.bone_lod_husks.lod_multiplier)
 end
 
-function LocomotionSystem.destroy(arg_2_0)
+LocomotionSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 	EngineOptimized.bone_lod_destroy()
 	EngineOptimizedExtensions.destroy_husk_extensions()
@@ -94,7 +94,7 @@ function LocomotionSystem.destroy(arg_2_0)
 	end
 end
 
-function LocomotionSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+LocomotionSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_3 == "AILocomotionExtension" then
 		local var_3_0 = network_manager:unit_game_object_id(selected_unit)
 		local var_3_1 = BLACKBOARDS[arg_3_2]
@@ -110,7 +110,7 @@ function LocomotionSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	end
 end
 
-function LocomotionSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+LocomotionSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = ScriptUnit.extension(arg_4_2, "locomotion_system")
 
 	if arg_4_3 == "AILocomotionExtensionC" or arg_4_3 == "AILocomotionExtension" or arg_4_3 == "AiHuskLocomotionExtension" then
@@ -123,16 +123,16 @@ function LocomotionSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function LocomotionSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+LocomotionSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 	LocomotionSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-function LocomotionSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
+LocomotionSystem.on_freeze_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function LocomotionSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+LocomotionSystem._cleanup_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2 == "AILocomotionExtensionC" or arg_7_2 == "AILocomotionExtension" or arg_7_2 == "AiHuskLocomotionExtension" then
 		local var_7_0 = arg_7_0.animation_lod_units[arg_7_1]
 
@@ -145,13 +145,13 @@ function LocomotionSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function LocomotionSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+LocomotionSystem.freeze = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	fassert(arg_8_2 == "AILocomotionExtensionC" or arg_8_2 == "AiHuskLocomotionExtension", "Unsupported freeze extension")
 	arg_8_0:_cleanup_extension(arg_8_1, arg_8_2)
 	ScriptUnit.extension(arg_8_1, "locomotion_system"):freeze(arg_8_3)
 end
 
-function LocomotionSystem.unfreeze(arg_9_0, arg_9_1, arg_9_2)
+LocomotionSystem.unfreeze = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = ScriptUnit.extension(arg_9_1, "locomotion_system")
 
 	var_9_0:unfreeze(arg_9_1)
@@ -162,20 +162,20 @@ function LocomotionSystem.unfreeze(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function LocomotionSystem.post_update(arg_10_0, arg_10_1, arg_10_2)
+LocomotionSystem.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.dt
 
 	arg_10_0:post_update_extension("PlayerUnitLocomotionExtension", var_10_0, arg_10_1, arg_10_2)
 	LocomotionSystem.super.post_update(arg_10_0, arg_10_1, arg_10_2)
 end
 
-function LocomotionSystem.update(arg_11_0, arg_11_1, arg_11_2)
+LocomotionSystem.update = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:update_extensions(arg_11_1, arg_11_2)
 	arg_11_0:update_animation_lods()
 	arg_11_0:update_actor_proximity_shapes()
 end
 
-function LocomotionSystem.update_extensions(arg_12_0, arg_12_1, arg_12_2)
+LocomotionSystem.update_extensions = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_1.dt
 
 	arg_12_0:update_extension("PlayerHuskLocomotionExtension", var_12_0, arg_12_1, arg_12_2)
@@ -200,11 +200,11 @@ function LocomotionSystem.update_extensions(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function LocomotionSystem.set_override_player(arg_13_0, arg_13_1)
+LocomotionSystem.set_override_player = function (arg_13_0, arg_13_1)
 	arg_13_0._override_player = arg_13_1
 end
 
-function LocomotionSystem.update_animation_lods(arg_14_0)
+LocomotionSystem.update_animation_lods = function (arg_14_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -216,7 +216,7 @@ function LocomotionSystem.update_animation_lods(arg_14_0)
 	EngineOptimized.bone_lod_update(arg_14_0.world, var_14_2)
 end
 
-function LocomotionSystem.update_actor_proximity_shapes(arg_15_0)
+LocomotionSystem.update_actor_proximity_shapes = function (arg_15_0)
 	local var_15_0 = POSITION_LOOKUP
 	local var_15_1 = Managers.player
 	local var_15_2 = World.get_data(arg_15_0.world, "physics_world")
@@ -250,7 +250,7 @@ function LocomotionSystem.update_actor_proximity_shapes(arg_15_0)
 	end
 end
 
-function LocomotionSystem.rpc_set_affected_by_gravity(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+LocomotionSystem.rpc_set_affected_by_gravity = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0.unit_storage:unit(arg_16_2)
 
 	if not var_16_0 then
@@ -264,7 +264,7 @@ end
 
 local var_0_3 = 9
 
-function LocomotionSystem.rpc_set_animation_driven_movement(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+LocomotionSystem.rpc_set_animation_driven_movement = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
 	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_2)
 
 	if not var_17_0 then
@@ -292,23 +292,23 @@ function LocomotionSystem.rpc_set_animation_driven_movement(arg_17_0, arg_17_1, 
 	end
 end
 
-function LocomotionSystem.rpc_set_animation_driven_script_movement(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+LocomotionSystem.rpc_set_animation_driven_script_movement = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	arg_18_0:rpc_set_animation_driven_movement(arg_18_1, arg_18_2, true, true, arg_18_5, false, arg_18_3, arg_18_4)
 end
 
-function LocomotionSystem.rpc_set_animation_driven(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+LocomotionSystem.rpc_set_animation_driven = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	arg_19_0:rpc_set_animation_driven_movement(arg_19_1, arg_19_2, true, false, arg_19_5, false, arg_19_3, arg_19_4)
 end
 
-function LocomotionSystem.rpc_set_script_driven(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+LocomotionSystem.rpc_set_script_driven = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_0:rpc_set_animation_driven_movement(arg_20_1, arg_20_2, false, true, arg_20_3, false)
 end
 
-function LocomotionSystem.rpc_set_linked_transport_driven(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+LocomotionSystem.rpc_set_linked_transport_driven = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	arg_21_0:rpc_set_animation_driven_movement(arg_21_1, arg_21_2, false, true, arg_21_3, true)
 end
 
-function LocomotionSystem.rpc_set_animation_translation_scale(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+LocomotionSystem.rpc_set_animation_translation_scale = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0.unit_storage:unit(arg_22_2)
 
 	if not var_22_0 then
@@ -326,7 +326,7 @@ function LocomotionSystem.rpc_set_animation_translation_scale(arg_22_0, arg_22_1
 	end
 end
 
-function LocomotionSystem.rpc_set_animation_rotation_scale(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+LocomotionSystem.rpc_set_animation_rotation_scale = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0.unit_storage:unit(arg_23_2)
 
 	if not var_23_0 then
@@ -338,7 +338,7 @@ function LocomotionSystem.rpc_set_animation_rotation_scale(arg_23_0, arg_23_1, a
 	ScriptUnit.extension(var_23_0, "locomotion_system"):set_animation_rotation_scale(arg_23_3)
 end
 
-function LocomotionSystem.rpc_disable_locomotion(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+LocomotionSystem.rpc_disable_locomotion = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 
 	if not var_24_0 then
@@ -359,7 +359,7 @@ function LocomotionSystem.rpc_disable_locomotion(arg_24_0, arg_24_1, arg_24_2, a
 	end
 end
 
-function LocomotionSystem.rpc_teleport_unit_to(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+LocomotionSystem.rpc_teleport_unit_to = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	local var_25_0 = arg_25_0.unit_storage:unit(arg_25_2)
 
 	if not var_25_0 then
@@ -377,7 +377,7 @@ function LocomotionSystem.rpc_teleport_unit_to(arg_25_0, arg_25_1, arg_25_2, arg
 	end
 end
 
-function LocomotionSystem.rpc_teleport_unit_with_yaw_rotation(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+LocomotionSystem.rpc_teleport_unit_with_yaw_rotation = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = arg_26_0.unit_storage:unit(arg_26_2)
 
 	if not var_26_0 then
@@ -391,7 +391,7 @@ function LocomotionSystem.rpc_teleport_unit_with_yaw_rotation(arg_26_0, arg_26_1
 	ScriptUnit.extension(var_26_0, "locomotion_system"):teleport_to(arg_26_3, var_26_1)
 end
 
-function LocomotionSystem.rpc_enable_linked_movement(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+LocomotionSystem.rpc_enable_linked_movement = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
 	local var_27_0 = arg_27_0.unit_storage:unit(arg_27_2)
 
 	if not var_27_0 then
@@ -407,7 +407,7 @@ function LocomotionSystem.rpc_enable_linked_movement(arg_27_0, arg_27_1, arg_27_
 	var_27_1:enable_linked_movement(var_27_3, arg_27_4, arg_27_5)
 end
 
-function LocomotionSystem.rpc_disable_linked_movement(arg_28_0, arg_28_1, arg_28_2)
+LocomotionSystem.rpc_disable_linked_movement = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.unit_storage:unit(arg_28_2)
 
 	if not var_28_0 then
@@ -419,7 +419,7 @@ function LocomotionSystem.rpc_disable_linked_movement(arg_28_0, arg_28_1, arg_28
 	ScriptUnit.extension(var_28_0, "locomotion_system"):disable_linked_movement()
 end
 
-function LocomotionSystem.rpc_add_external_velocity(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+LocomotionSystem.rpc_add_external_velocity = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0.unit_storage:unit(arg_29_2)
 
 	if not var_29_0 then
@@ -431,7 +431,7 @@ function LocomotionSystem.rpc_add_external_velocity(arg_29_0, arg_29_1, arg_29_2
 	ScriptUnit.extension(var_29_0, "locomotion_system"):add_external_velocity(arg_29_3)
 end
 
-function LocomotionSystem.rpc_add_external_velocity_with_upper_limit(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+LocomotionSystem.rpc_add_external_velocity_with_upper_limit = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = arg_30_0.unit_storage:unit(arg_30_2)
 
 	if not var_30_0 then
@@ -443,7 +443,7 @@ function LocomotionSystem.rpc_add_external_velocity_with_upper_limit(arg_30_0, a
 	ScriptUnit.extension(var_30_0, "locomotion_system"):add_external_velocity(arg_30_3, arg_30_4)
 end
 
-function LocomotionSystem.rpc_set_forced_velocity(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+LocomotionSystem.rpc_set_forced_velocity = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = arg_31_0.unit_storage:unit(arg_31_2)
 
 	if not var_31_0 then
@@ -455,7 +455,7 @@ function LocomotionSystem.rpc_set_forced_velocity(arg_31_0, arg_31_1, arg_31_2, 
 	ScriptUnit.extension(var_31_0, "locomotion_system"):set_forced_velocity(arg_31_3)
 end
 
-function LocomotionSystem.rpc_constrain_ai(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+LocomotionSystem.rpc_constrain_ai = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	local var_32_0 = arg_32_0.unit_storage:unit(arg_32_2)
 
 	if not var_32_0 then
@@ -470,7 +470,7 @@ function LocomotionSystem.rpc_constrain_ai(arg_32_0, arg_32_1, arg_32_2, arg_32_
 	ScriptUnit.extension(var_32_0, "locomotion_system"):set_constrained(arg_32_3, var_32_1, var_32_2)
 end
 
-function LocomotionSystem.rpc_set_on_moving_platform(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+LocomotionSystem.rpc_set_on_moving_platform = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	local var_33_0 = arg_33_0.unit_storage:unit(arg_33_2)
 
 	if not var_33_0 then
@@ -485,7 +485,7 @@ function LocomotionSystem.rpc_set_on_moving_platform(arg_33_0, arg_33_1, arg_33_
 	ScriptUnit.extension(var_33_0, "locomotion_system"):set_on_moving_platform(var_33_2)
 end
 
-function LocomotionSystem.rpc_hot_join_nail_to_wall_fix(arg_34_0, arg_34_1, arg_34_2)
+LocomotionSystem.rpc_hot_join_nail_to_wall_fix = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0.unit_storage:unit(arg_34_2)
 
 	if Unit.has_animation_state_machine(var_34_0) then

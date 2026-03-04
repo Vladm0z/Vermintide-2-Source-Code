@@ -6,12 +6,12 @@ local var_0_0 = Gui
 local var_0_1 = Imgui
 local var_0_2 = true
 
-function ImguiHintUI.init(arg_1_0)
+ImguiHintUI.init = function (arg_1_0)
 	arg_1_0._active = false
 	arg_1_0._first_launch = true
 end
 
-function ImguiHintUI.update(arg_2_0)
+ImguiHintUI.update = function (arg_2_0)
 	if var_0_2 then
 		arg_2_0:init()
 
@@ -19,23 +19,23 @@ function ImguiHintUI.update(arg_2_0)
 	end
 end
 
-function ImguiHintUI.on_show(arg_3_0)
+ImguiHintUI.on_show = function (arg_3_0)
 	arg_3_0._active = true
 end
 
-function ImguiHintUI.on_hide(arg_4_0)
+ImguiHintUI.on_hide = function (arg_4_0)
 	arg_4_0._active = false
 end
 
-function ImguiHintUI.draw(arg_5_0, arg_5_1)
+ImguiHintUI.draw = function (arg_5_0, arg_5_1)
 	return (arg_5_0:_do_main_window())
 end
 
-function ImguiHintUI.is_persistent(arg_6_0)
+ImguiHintUI.is_persistent = function (arg_6_0)
 	return true
 end
 
-function ImguiHintUI._do_main_window(arg_7_0)
+ImguiHintUI._do_main_window = function (arg_7_0)
 	if arg_7_0._first_launch then
 		local var_7_0, var_7_1 = Application.resolution()
 
@@ -54,7 +54,7 @@ function ImguiHintUI._do_main_window(arg_7_0)
 	return var_7_2
 end
 
-function ImguiHintUI._do_hint_buttons(arg_8_0)
+ImguiHintUI._do_hint_buttons = function (arg_8_0)
 	for iter_8_0, iter_8_1 in pairs(HintTemplates) do
 		if var_0_1.button(iter_8_0, 250, 25) then
 			Managers.state.event:trigger("ui_show_hint", iter_8_0)
@@ -72,7 +72,7 @@ local function var_0_4()
 	Managers.save:auto_save(SaveFileName, SaveData, var_0_3)
 end
 
-function ImguiHintUI._do_clear_saved_hints_button(arg_11_0)
+ImguiHintUI._do_clear_saved_hints_button = function (arg_11_0)
 	if var_0_1.button("Clear Saved Hints", 250, 35) then
 		var_0_4()
 	end

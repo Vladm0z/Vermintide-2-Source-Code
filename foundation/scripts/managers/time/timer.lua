@@ -2,7 +2,7 @@
 
 Timer = class(Timer)
 
-function Timer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+Timer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._t = arg_1_3 or 0
 	arg_1_0._dt = 0
 	arg_1_0._name = arg_1_1
@@ -13,7 +13,7 @@ function Timer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._children = {}
 end
 
-function Timer.update(arg_2_0, arg_2_1, arg_2_2)
+Timer.update = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._local_scale
 
 	arg_2_1 = math.max(arg_2_1 * var_2_0, 1e-06)
@@ -30,63 +30,63 @@ function Timer.update(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._global_scale = arg_2_2
 end
 
-function Timer.name(arg_3_0)
+Timer.name = function (arg_3_0)
 	return arg_3_0._name
 end
 
-function Timer.set_time(arg_4_0, arg_4_1)
+Timer.set_time = function (arg_4_0, arg_4_1)
 	arg_4_0._t = arg_4_1
 end
 
-function Timer.time(arg_5_0)
+Timer.time = function (arg_5_0)
 	return arg_5_0._t
 end
 
-function Timer.time_and_delta(arg_6_0)
+Timer.time_and_delta = function (arg_6_0)
 	return arg_6_0._t, arg_6_0._dt
 end
 
-function Timer.active(arg_7_0)
+Timer.active = function (arg_7_0)
 	return arg_7_0._active
 end
 
-function Timer.set_active(arg_8_0, arg_8_1)
+Timer.set_active = function (arg_8_0, arg_8_1)
 	arg_8_0._active = arg_8_1
 end
 
-function Timer.set_local_scale(arg_9_0, arg_9_1)
+Timer.set_local_scale = function (arg_9_0, arg_9_1)
 	arg_9_0._local_scale = arg_9_1
 end
 
-function Timer.local_scale(arg_10_0)
+Timer.local_scale = function (arg_10_0)
 	return arg_10_0._local_scale
 end
 
-function Timer.global_scale(arg_11_0)
+Timer.global_scale = function (arg_11_0)
 	return arg_11_0._global_scale
 end
 
-function Timer.add_child(arg_12_0, arg_12_1)
+Timer.add_child = function (arg_12_0, arg_12_1)
 	arg_12_0._children[arg_12_1:name()] = arg_12_1
 end
 
-function Timer.remove_child(arg_13_0, arg_13_1)
+Timer.remove_child = function (arg_13_0, arg_13_1)
 	arg_13_0._children[arg_13_1:name()] = nil
 end
 
-function Timer.children(arg_14_0)
+Timer.children = function (arg_14_0)
 	return arg_14_0._children
 end
 
-function Timer.parent(arg_15_0)
+Timer.parent = function (arg_15_0)
 	return arg_15_0._parent
 end
 
-function Timer.destroy(arg_16_0)
+Timer.destroy = function (arg_16_0)
 	arg_16_0._parent = nil
 	arg_16_0._children = nil
 end
 
-function Timer.delta_time(arg_17_0)
+Timer.delta_time = function (arg_17_0)
 	return arg_17_0._dt
 end

@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_gutter_runner_mayhem",
 	icon = "mutator_icon_specials_frequency",
 	display_name = "display_name_mutator_gutter_runner_mayhem",
-	update_conflict_settings = function(arg_1_0, arg_1_1)
+	update_conflict_settings = function (arg_1_0, arg_1_1)
 		CurrentSpecialsSettings.breeds = {
 			"skaven_gutter_runner"
 		}

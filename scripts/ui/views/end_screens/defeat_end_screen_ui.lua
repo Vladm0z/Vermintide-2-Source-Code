@@ -6,12 +6,12 @@ local var_0_0 = local_require("scripts/ui/views/end_screens/defeat_end_screen_ui
 
 DefeatEndScreenUI = class(DefeatEndScreenUI, BaseEndScreenUI)
 
-function DefeatEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DefeatEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	DefeatEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0, arg_1_4)
 	arg_1_0:_play_sound("play_gui_splash_defeat")
 end
 
-function DefeatEndScreenUI._start(arg_2_0)
+DefeatEndScreenUI._start = function (arg_2_0)
 	local var_2_0 = var_0_0.scenegraph_definition
 	local var_2_1 = {
 		draw_flags = arg_2_0._draw_flags,
@@ -21,7 +21,7 @@ function DefeatEndScreenUI._start(arg_2_0)
 	arg_2_0._defeat_anim_id = arg_2_0._ui_animator:start_animation("defeat", arg_2_0._widgets_by_name, var_2_0, var_2_1)
 end
 
-function DefeatEndScreenUI._update(arg_3_0, arg_3_1)
+DefeatEndScreenUI._update = function (arg_3_0, arg_3_1)
 	if arg_3_0._completed then
 		return
 	end

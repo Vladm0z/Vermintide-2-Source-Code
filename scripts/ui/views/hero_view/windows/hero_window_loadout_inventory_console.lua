@@ -56,7 +56,7 @@ end
 HeroWindowLoadoutInventoryConsole = class(HeroWindowLoadoutInventoryConsole)
 HeroWindowLoadoutInventoryConsole.NAME = "HeroWindowLoadoutInventoryConsole"
 
-function HeroWindowLoadoutInventoryConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowLoadoutInventoryConsole.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutInventoryConsole")
 
 	arg_2_0.params = arg_2_1
@@ -119,7 +119,7 @@ function HeroWindowLoadoutInventoryConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowLoadoutInventoryConsole._create_item_categories(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowLoadoutInventoryConsole._create_item_categories = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.career_index
 	local var_3_1 = arg_3_0.profile_index
 	local var_3_2 = SPProfiles[var_3_1].careers[var_3_0].item_slot_types_by_slot_name
@@ -155,7 +155,7 @@ function HeroWindowLoadoutInventoryConsole._create_item_categories(arg_3_0, arg_
 	return var_3_3
 end
 
-function HeroWindowLoadoutInventoryConsole._start_transition_animation(arg_4_0, arg_4_1)
+HeroWindowLoadoutInventoryConsole._start_transition_animation = function (arg_4_0, arg_4_1)
 	local var_4_0 = {
 		wwise_world = arg_4_0.wwise_world,
 		render_settings = arg_4_0.render_settings
@@ -166,7 +166,7 @@ function HeroWindowLoadoutInventoryConsole._start_transition_animation(arg_4_0, 
 	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-function HeroWindowLoadoutInventoryConsole.create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowLoadoutInventoryConsole.create_ui_elements = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_5_0 = {}
@@ -206,13 +206,13 @@ function HeroWindowLoadoutInventoryConsole.create_ui_elements(arg_5_0, arg_5_1, 
 	var_5_1.item_tooltip_compare.content.career_index = arg_5_0.params.career_index
 end
 
-function HeroWindowLoadoutInventoryConsole.set_focus(arg_6_0, arg_6_1)
+HeroWindowLoadoutInventoryConsole.set_focus = function (arg_6_0, arg_6_1)
 	arg_6_0._focused = arg_6_1
 	arg_6_0.render_settings.alpha_multiplier = arg_6_1 and 1 or 0.5
 	arg_6_0._widgets_by_name.item_tooltip.content.visible = arg_6_1
 end
 
-function HeroWindowLoadoutInventoryConsole.on_exit(arg_7_0, arg_7_1)
+HeroWindowLoadoutInventoryConsole.on_exit = function (arg_7_0, arg_7_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutInventoryConsole")
 
 	arg_7_0.ui_animator = nil
@@ -226,7 +226,7 @@ function HeroWindowLoadoutInventoryConsole.on_exit(arg_7_0, arg_7_1)
 	arg_7_0._menu_input_description = nil
 end
 
-function HeroWindowLoadoutInventoryConsole.update(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowLoadoutInventoryConsole.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -250,11 +250,11 @@ function HeroWindowLoadoutInventoryConsole.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:draw(arg_8_1)
 end
 
-function HeroWindowLoadoutInventoryConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowLoadoutInventoryConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function HeroWindowLoadoutInventoryConsole._update_input_description(arg_10_0)
+HeroWindowLoadoutInventoryConsole._update_input_description = function (arg_10_0)
 	local var_10_0 = arg_10_0.params
 	local var_10_1 = arg_10_0.params.hero_statistics_active
 
@@ -269,12 +269,12 @@ function HeroWindowLoadoutInventoryConsole._update_input_description(arg_10_0)
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._set_item_compare_enable_state(arg_11_0, arg_11_1)
+HeroWindowLoadoutInventoryConsole._set_item_compare_enable_state = function (arg_11_0, arg_11_1)
 	arg_11_0._widgets_by_name.item_tooltip_compare.content.visible = arg_11_1
 	arg_11_0._draw_item_compare = arg_11_1
 end
 
-function HeroWindowLoadoutInventoryConsole._update_equipped_item_tooltip(arg_12_0)
+HeroWindowLoadoutInventoryConsole._update_equipped_item_tooltip = function (arg_12_0)
 	local var_12_0 = arg_12_0._selected_loadout_slot_index
 	local var_12_1 = InventorySettings.slots_by_slot_index[var_12_0].name
 	local var_12_2 = Managers.backend:get_interface("items")
@@ -285,7 +285,7 @@ function HeroWindowLoadoutInventoryConsole._update_equipped_item_tooltip(arg_12_
 	arg_12_0._equipped_item = var_12_4
 end
 
-function HeroWindowLoadoutInventoryConsole._update_selected_item_tooltip(arg_13_0)
+HeroWindowLoadoutInventoryConsole._update_selected_item_tooltip = function (arg_13_0)
 	local var_13_0 = arg_13_0._item_grid:selected_item()
 	local var_13_1 = var_13_0 and var_13_0.backend_id
 
@@ -300,7 +300,7 @@ function HeroWindowLoadoutInventoryConsole._update_selected_item_tooltip(arg_13_
 	arg_13_0._selected_backend_id = var_13_1
 end
 
-function HeroWindowLoadoutInventoryConsole._update_animations(arg_14_0, arg_14_1)
+HeroWindowLoadoutInventoryConsole._update_animations = function (arg_14_0, arg_14_1)
 	arg_14_0.ui_animator:update(arg_14_1)
 
 	local var_14_0 = arg_14_0._animations
@@ -322,7 +322,7 @@ function HeroWindowLoadoutInventoryConsole._update_animations(arg_14_0, arg_14_1
 	UIWidgetUtils.animate_arrow_button(var_14_4, arg_14_1)
 end
 
-function HeroWindowLoadoutInventoryConsole._is_button_pressed(arg_15_0, arg_15_1)
+HeroWindowLoadoutInventoryConsole._is_button_pressed = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = var_15_0.button_hotspot or var_15_0.hotspot
 
@@ -333,7 +333,7 @@ function HeroWindowLoadoutInventoryConsole._is_button_pressed(arg_15_0, arg_15_1
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._is_button_hovered(arg_16_0, arg_16_1)
+HeroWindowLoadoutInventoryConsole._is_button_hovered = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.content
 
 	if (var_16_0.button_hotspot or var_16_0.hotspot).on_hover_enter then
@@ -341,7 +341,7 @@ function HeroWindowLoadoutInventoryConsole._is_button_hovered(arg_16_0, arg_16_1
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._handle_gamepad_input(arg_17_0, arg_17_1, arg_17_2)
+HeroWindowLoadoutInventoryConsole._handle_gamepad_input = function (arg_17_0, arg_17_1, arg_17_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -387,7 +387,7 @@ function HeroWindowLoadoutInventoryConsole._handle_gamepad_input(arg_17_0, arg_1
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._handle_input(arg_18_0, arg_18_1, arg_18_2)
+HeroWindowLoadoutInventoryConsole._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._widgets_by_name
 	local var_18_1 = arg_18_0.parent
 	local var_18_2 = arg_18_0._item_grid
@@ -428,7 +428,7 @@ function HeroWindowLoadoutInventoryConsole._handle_input(arg_18_0, arg_18_1, arg
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._update_page_info(arg_19_0)
+HeroWindowLoadoutInventoryConsole._update_page_info = function (arg_19_0)
 	local var_19_0, var_19_1 = arg_19_0._item_grid:get_page_info()
 
 	if var_19_0 ~= arg_19_0._current_page or var_19_1 ~= arg_19_0._total_pages then
@@ -446,7 +446,7 @@ function HeroWindowLoadoutInventoryConsole._update_page_info(arg_19_0)
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._update_selected_loadout_slot_index(arg_20_0)
+HeroWindowLoadoutInventoryConsole._update_selected_loadout_slot_index = function (arg_20_0)
 	local var_20_0 = arg_20_0.parent:get_selected_loadout_slot_index()
 	local var_20_1 = arg_20_0:_get_category_index_by_slot_index(var_20_0)
 
@@ -458,11 +458,11 @@ function HeroWindowLoadoutInventoryConsole._update_selected_loadout_slot_index(a
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._get_category_slot_index(arg_21_0, arg_21_1)
+HeroWindowLoadoutInventoryConsole._get_category_slot_index = function (arg_21_0, arg_21_1)
 	return arg_21_0._categories[arg_21_1].slot_index
 end
 
-function HeroWindowLoadoutInventoryConsole._get_category_index_by_slot_index(arg_22_0, arg_22_1)
+HeroWindowLoadoutInventoryConsole._get_category_index_by_slot_index = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._categories
 
 	for iter_22_0, iter_22_1 in ipairs(var_22_0) do
@@ -472,7 +472,7 @@ function HeroWindowLoadoutInventoryConsole._get_category_index_by_slot_index(arg
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._update_loadout_sync(arg_23_0)
+HeroWindowLoadoutInventoryConsole._update_loadout_sync = function (arg_23_0)
 	local var_23_0 = arg_23_0._item_grid
 	local var_23_1 = arg_23_0.parent.loadout_sync_id
 
@@ -484,12 +484,12 @@ function HeroWindowLoadoutInventoryConsole._update_loadout_sync(arg_23_0)
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._exit(arg_24_0, arg_24_1)
+HeroWindowLoadoutInventoryConsole._exit = function (arg_24_0, arg_24_1)
 	arg_24_0.exit = true
 	arg_24_0.exit_level_id = arg_24_1
 end
 
-function HeroWindowLoadoutInventoryConsole.draw(arg_25_0, arg_25_1)
+HeroWindowLoadoutInventoryConsole.draw = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0.ui_renderer
 	local var_25_1 = arg_25_0.ui_top_renderer
 	local var_25_2 = arg_25_0.ui_scenegraph
@@ -517,7 +517,7 @@ function HeroWindowLoadoutInventoryConsole.draw(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroWindowLoadoutInventoryConsole._input_service(arg_26_0)
+HeroWindowLoadoutInventoryConsole._input_service = function (arg_26_0)
 	local var_26_0 = arg_26_0.parent
 
 	if var_26_0:is_friends_list_active() then
@@ -527,11 +527,11 @@ function HeroWindowLoadoutInventoryConsole._input_service(arg_26_0)
 	return var_26_0:window_input_service()
 end
 
-function HeroWindowLoadoutInventoryConsole._play_sound(arg_27_0, arg_27_1)
+HeroWindowLoadoutInventoryConsole._play_sound = function (arg_27_0, arg_27_1)
 	arg_27_0.parent:play_sound(arg_27_1)
 end
 
-function HeroWindowLoadoutInventoryConsole._change_category_by_index(arg_28_0, arg_28_1)
+HeroWindowLoadoutInventoryConsole._change_category_by_index = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._categories[arg_28_1]
 
 	arg_28_0._strict_slot_name = var_28_0.slot_name
@@ -543,7 +543,7 @@ function HeroWindowLoadoutInventoryConsole._change_category_by_index(arg_28_0, a
 	return true
 end
 
-function HeroWindowLoadoutInventoryConsole._setup_input_buttons(arg_29_0)
+HeroWindowLoadoutInventoryConsole._setup_input_buttons = function (arg_29_0)
 	local var_29_0 = arg_29_0.parent:window_input_service()
 	local var_29_1 = UISettings.get_gamepad_input_texture_data(var_29_0, var_0_6, true)
 	local var_29_2 = UISettings.get_gamepad_input_texture_data(var_29_0, var_0_7, true)
@@ -571,7 +571,7 @@ function HeroWindowLoadoutInventoryConsole._setup_input_buttons(arg_29_0)
 	var_29_5.content.texture_id = var_29_2.texture
 end
 
-function HeroWindowLoadoutInventoryConsole._set_gamepad_input_buttons_visibility(arg_30_0, arg_30_1)
+HeroWindowLoadoutInventoryConsole._set_gamepad_input_buttons_visibility = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._widgets_by_name
 	local var_30_1 = var_30_0.input_icon_next
 	local var_30_2 = var_30_0.input_icon_previous
@@ -584,7 +584,7 @@ function HeroWindowLoadoutInventoryConsole._set_gamepad_input_buttons_visibility
 	var_30_4.content.visible = arg_30_1
 end
 
-function HeroWindowLoadoutInventoryConsole._handle_gamepad_activity(arg_31_0)
+HeroWindowLoadoutInventoryConsole._handle_gamepad_activity = function (arg_31_0)
 	local var_31_0 = Managers.input:is_device_active("mouse")
 	local var_31_1 = arg_31_0.gamepad_active_last_frame == nil
 

@@ -2,11 +2,11 @@
 
 BackendInterfaceProfileHash = class(BackendInterfaceProfileHash)
 
-function BackendInterfaceProfileHash.init(arg_1_0)
+BackendInterfaceProfileHash.init = function (arg_1_0)
 	return
 end
 
-function BackendInterfaceProfileHash.on_authenticated(arg_2_0)
+BackendInterfaceProfileHash.on_authenticated = function (arg_2_0)
 	local var_2_0 = Backend.get_hashed_profile_id()
 
 	if var_2_0 ~= SaveData.backend_profile_hash then

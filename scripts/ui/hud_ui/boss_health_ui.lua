@@ -27,7 +27,7 @@ BossHealthUI = class(BossHealthUI)
 BossHealthUI.MAX_NUM_FORCED_WIDGETS = 2
 BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS = 4
 
-function BossHealthUI.init(arg_1_0, arg_1_1, arg_1_2)
+BossHealthUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.input_manager = arg_1_2.input_manager
@@ -61,7 +61,7 @@ function BossHealthUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_6))
 end
 
-function BossHealthUI.destroy(arg_2_0)
+BossHealthUI.destroy = function (arg_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "boss_health_ui")
 
 	local var_2_0 = Managers.state.event
@@ -72,7 +72,7 @@ function BossHealthUI.destroy(arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 end
 
-function BossHealthUI.create_ui_elements(arg_3_0)
+BossHealthUI.create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0.ui_renderer)
 
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -96,7 +96,7 @@ function BossHealthUI.create_ui_elements(arg_3_0)
 	end
 end
 
-function BossHealthUI._get_or_create_forced_widget_name(arg_4_0, arg_4_1)
+BossHealthUI._get_or_create_forced_widget_name = function (arg_4_0, arg_4_1)
 	if arg_4_1 > BossHealthUI.MAX_NUM_FORCED_WIDGETS then
 		return nil
 	end
@@ -123,7 +123,7 @@ function BossHealthUI._get_or_create_forced_widget_name(arg_4_0, arg_4_1)
 	return var_4_1
 end
 
-function BossHealthUI._get_or_create_additional_widget_name(arg_5_0, arg_5_1)
+BossHealthUI._get_or_create_additional_widget_name = function (arg_5_0, arg_5_1)
 	if arg_5_1 > BossHealthUI.MAX_NUM_ADDITIONAL_WIDGETS then
 		return nil
 	end
@@ -150,7 +150,7 @@ function BossHealthUI._get_or_create_additional_widget_name(arg_5_0, arg_5_1)
 	return var_5_1
 end
 
-function BossHealthUI._set_portrait_and_title(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BossHealthUI._set_portrait_and_title = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.breed_name
 	local var_6_1 = var_0_3[var_6_0] or "icons_placeholder"
 	local var_6_2 = arg_6_0._widgets_by_name[arg_6_1.widget_name]
@@ -187,7 +187,7 @@ local var_0_8 = {
 	fallback_style = var_0_7
 }
 
-function BossHealthUI._generate_attributes(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BossHealthUI._generate_attributes = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_3.font_size
 	local var_7_1 = arg_7_2.content
 	local var_7_2 = 0
@@ -248,7 +248,7 @@ function BossHealthUI._generate_attributes(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 	return true
 end
 
-function BossHealthUI._update_enemy_portrait_name_and_attributes(arg_8_0, arg_8_1)
+BossHealthUI._update_enemy_portrait_name_and_attributes = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.unit
 	local var_8_1 = Managers.state.entity:system("ai_system"):get_attributes(var_8_0)
 	local var_8_2 = var_8_1.grudge_marked
@@ -320,7 +320,7 @@ local var_0_9 = {
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function BossHealthUI.update(arg_9_0, arg_9_1, arg_9_2)
+BossHealthUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if HudCustomizer.run(arg_9_0.ui_renderer, arg_9_0.ui_scenegraph, var_0_9) then
 		UISceneGraph.update_scenegraph(arg_9_0.ui_scenegraph)
 	end
@@ -334,13 +334,13 @@ function BossHealthUI.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BossHealthUI._update_proximity_boss(arg_10_0)
+BossHealthUI._update_proximity_boss = function (arg_10_0)
 	local var_10_0 = Managers.state.entity:system("proximity_system").closest_boss_unit
 
 	arg_10_0:_event_register_boss_unit(var_10_0, "proximity")
 end
 
-function BossHealthUI._update_name(arg_11_0, arg_11_1)
+BossHealthUI._update_name = function (arg_11_0, arg_11_1)
 	local var_11_0, var_11_1 = arg_11_0:_update_enemy_portrait_name_and_attributes(arg_11_1)
 	local var_11_2 = Breeds[arg_11_1.breed_name]
 
@@ -356,7 +356,7 @@ function BossHealthUI._update_name(arg_11_0, arg_11_1)
 	arg_11_0:_set_portrait_and_title(arg_11_1, var_11_1, var_11_0)
 end
 
-function BossHealthUI._is_forced(arg_12_0, arg_12_1)
+BossHealthUI._is_forced = function (arg_12_0, arg_12_1)
 	for iter_12_0, iter_12_1 in ipairs(arg_12_0._detected_boss_units) do
 		if iter_12_1.unit == arg_12_1 and iter_12_1.forced then
 			return true
@@ -364,23 +364,23 @@ function BossHealthUI._is_forced(arg_12_0, arg_12_1)
 	end
 end
 
-function BossHealthUI._has_forced(arg_13_0)
-	return table.find_func(arg_13_0._detected_boss_units, function(arg_14_0, arg_14_1)
+BossHealthUI._has_forced = function (arg_13_0)
+	return table.find_func(arg_13_0._detected_boss_units, function (arg_14_0, arg_14_1)
 		return arg_14_1.forced
 	end)
 end
 
 local var_0_10 = {}
 
-function BossHealthUI._num_healthbars(arg_15_0)
-	local var_15_0, var_15_1 = table.filter_array(arg_15_0._detected_boss_units, function(arg_16_0)
+BossHealthUI._num_healthbars = function (arg_15_0)
+	local var_15_0, var_15_1 = table.filter_array(arg_15_0._detected_boss_units, function (arg_16_0)
 		return arg_16_0.show_health_bar
 	end, var_0_10)
 
 	return var_15_1
 end
 
-function BossHealthUI._update_animations(arg_17_0, arg_17_1, arg_17_2)
+BossHealthUI._update_animations = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._animations
 
 	for iter_17_0, iter_17_1 in pairs(var_17_0) do
@@ -402,7 +402,7 @@ function BossHealthUI._update_animations(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function BossHealthUI._draw(arg_18_0, arg_18_1, arg_18_2)
+BossHealthUI._draw = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.ui_renderer
 	local var_18_1 = arg_18_0.ui_scenegraph
 	local var_18_2 = arg_18_0.input_manager:get_service("Player")
@@ -432,7 +432,7 @@ function BossHealthUI._draw(arg_18_0, arg_18_1, arg_18_2)
 	UIRenderer.end_pass(var_18_0)
 end
 
-function BossHealthUI._show_boss_health_bar(arg_19_0, arg_19_1)
+BossHealthUI._show_boss_health_bar = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.unit
 	local var_19_1
 	local var_19_2 = Unit.get_data(var_19_0, "breed")
@@ -466,11 +466,11 @@ function BossHealthUI._show_boss_health_bar(arg_19_0, arg_19_1)
 	return var_19_1
 end
 
-function BossHealthUI.on_spectator_target_changed(arg_20_0, arg_20_1)
+BossHealthUI.on_spectator_target_changed = function (arg_20_0, arg_20_1)
 	return
 end
 
-function BossHealthUI.on_force_add_boss_health_ui(arg_21_0, arg_21_1)
+BossHealthUI.on_force_add_boss_health_ui = function (arg_21_0, arg_21_1)
 	arg_21_0:_event_register_boss_unit(arg_21_1, "forced", true)
 	arg_21_0:_realign_forced_boss_widgets()
 
@@ -485,18 +485,18 @@ function BossHealthUI.on_force_add_boss_health_ui(arg_21_0, arg_21_1)
 	end
 end
 
-function BossHealthUI.rpc_add_forced_boss_health_ui(arg_22_0, arg_22_1, arg_22_2)
+BossHealthUI.rpc_add_forced_boss_health_ui = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = Managers.state.unit_storage:unit(arg_22_2)
 
 	arg_22_0:on_force_add_boss_health_ui(var_22_0)
 end
 
-function BossHealthUI._event_register_boss_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+BossHealthUI._event_register_boss_unit = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if not HEALTH_ALIVE[arg_23_1] then
 		return
 	end
 
-	local var_23_0, var_23_1 = table.find_func(arg_23_0._detected_boss_units, function(arg_24_0, arg_24_1)
+	local var_23_0, var_23_1 = table.find_func(arg_23_0._detected_boss_units, function (arg_24_0, arg_24_1)
 		return arg_24_1.unit == arg_23_1
 	end)
 
@@ -546,11 +546,11 @@ end
 
 local var_0_11 = {}
 
-function BossHealthUI._realign_forced_boss_widgets(arg_25_0, arg_25_1)
+BossHealthUI._realign_forced_boss_widgets = function (arg_25_0, arg_25_1)
 	table.clear(arg_25_0._forced_animations)
 
 	local var_25_0 = arg_25_1 and 0 or 0.3
-	local var_25_1, var_25_2 = table.filter_array(arg_25_0._detected_boss_units, function(arg_26_0)
+	local var_25_1, var_25_2 = table.filter_array(arg_25_0._detected_boss_units, function (arg_26_0)
 		return arg_26_0.forced
 	end, var_0_11)
 	local var_25_3 = math.min(var_25_2, BossHealthUI.MAX_NUM_FORCED_WIDGETS)
@@ -569,7 +569,7 @@ function BossHealthUI._realign_forced_boss_widgets(arg_25_0, arg_25_1)
 	end
 end
 
-function BossHealthUI._sync_boss_unit_health(arg_27_0, arg_27_1, arg_27_2)
+BossHealthUI._sync_boss_unit_health = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0:_update_alive_units()
 	local var_27_1, var_27_2, var_27_3 = arg_27_0:_update_prioritized_unit(arg_27_2)
 
@@ -667,7 +667,7 @@ function BossHealthUI._sync_boss_unit_health(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function BossHealthUI._update_alive_units(arg_28_0)
+BossHealthUI._update_alive_units = function (arg_28_0)
 	local var_28_0 = false
 	local var_28_1 = arg_28_0._detected_boss_units
 
@@ -686,7 +686,7 @@ end
 
 local var_0_12 = {}
 
-function BossHealthUI._update_prioritized_unit(arg_29_0, arg_29_1)
+BossHealthUI._update_prioritized_unit = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._detected_boss_units
 	local var_29_1 = false
 	local var_29_2
@@ -727,7 +727,7 @@ function BossHealthUI._update_prioritized_unit(arg_29_0, arg_29_1)
 		end
 	end
 
-	local var_29_10, var_29_11 = table.filter_array(var_29_0, function(arg_30_0)
+	local var_29_10, var_29_11 = table.filter_array(var_29_0, function (arg_30_0)
 		return not arg_30_0.prioritized and not arg_30_0.forced
 	end, var_0_12)
 	local var_29_12 = 0
@@ -752,7 +752,7 @@ function BossHealthUI._update_prioritized_unit(arg_29_0, arg_29_1)
 	end
 
 	local var_29_18 = false
-	local var_29_19, var_29_20 = table.filter_array(var_29_0, function(arg_31_0)
+	local var_29_19, var_29_20 = table.filter_array(var_29_0, function (arg_31_0)
 		return arg_31_0.forced
 	end, var_0_12)
 
@@ -771,7 +771,7 @@ function BossHealthUI._update_prioritized_unit(arg_29_0, arg_29_1)
 	return var_29_1, var_29_18, var_29_2
 end
 
-function BossHealthUI._preemptively_hide_widgets(arg_32_0)
+BossHealthUI._preemptively_hide_widgets = function (arg_32_0)
 	arg_32_0._widgets_by_name.prioritized_bar.content.visible = false
 
 	local var_32_0 = arg_32_0._additional_widget_names
@@ -791,7 +791,7 @@ function BossHealthUI._preemptively_hide_widgets(arg_32_0)
 	end
 end
 
-function BossHealthUI._set_bar_progress(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6)
+BossHealthUI._set_bar_progress = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6)
 	arg_33_2 = arg_33_2 or 0
 
 	local var_33_0 = arg_33_1.current_progress or 1
@@ -856,7 +856,7 @@ function BossHealthUI._set_bar_progress(arg_33_0, arg_33_1, arg_33_2, arg_33_3, 
 	arg_33_1.next_update_is_instant = nil
 end
 
-function BossHealthUI._set_healing_amount(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+BossHealthUI._set_healing_amount = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
 	local var_34_0 = arg_34_0._widgets_by_name[arg_34_1.widget_name]
 
 	if var_34_0 then
@@ -939,7 +939,7 @@ function BossHealthUI._set_healing_amount(arg_34_0, arg_34_1, arg_34_2, arg_34_3
 	end
 end
 
-function BossHealthUI._update_healing_bar(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+BossHealthUI._update_healing_bar = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	local var_35_0 = arg_35_1.current_raw_progress
 	local var_35_1 = arg_35_1.healing_start_progress
 
@@ -972,7 +972,7 @@ function BossHealthUI._update_healing_bar(arg_35_0, arg_35_1, arg_35_2, arg_35_3
 	end
 end
 
-function BossHealthUI._set_health_edge_texture_position_progress(arg_36_0, arg_36_1)
+BossHealthUI._set_health_edge_texture_position_progress = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1.healing_start_progress or arg_36_1.current_progress or 0
 	local var_36_1 = arg_36_0._widgets_by_name[arg_36_1.widget_name]
 
@@ -987,7 +987,7 @@ function BossHealthUI._set_health_edge_texture_position_progress(arg_36_0, arg_3
 	end
 end
 
-function BossHealthUI._update_healing_effect(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+BossHealthUI._update_healing_effect = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0 = 0
 
 	if arg_37_1.healing_effect_life_time then
@@ -1004,7 +1004,7 @@ function BossHealthUI._update_healing_effect(arg_37_0, arg_37_1, arg_37_2, arg_3
 	arg_37_0:_set_health_effect_alpha(arg_37_1, var_37_0)
 end
 
-function BossHealthUI._set_health_effect_alpha(arg_38_0, arg_38_1, arg_38_2)
+BossHealthUI._set_health_effect_alpha = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0._widgets_by_name[arg_38_1.widget_name]
 
 	if var_38_0 then
@@ -1012,7 +1012,7 @@ function BossHealthUI._set_health_effect_alpha(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function BossHealthUI.rpc_register_detected_boss(arg_39_0, arg_39_1, arg_39_2)
+BossHealthUI.rpc_register_detected_boss = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = Managers.state.unit_storage:unit(arg_39_2)
 
 	if ALIVE[var_39_0] then

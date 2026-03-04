@@ -16,7 +16,7 @@ local var_0_11 = var_0_0.generic_input_actions
 HeroWindowLoadoutSelectionConsole = class(HeroWindowLoadoutSelectionConsole)
 HeroWindowLoadoutSelectionConsole.NAME = "HeroWindowLoadoutSelectionConsole"
 
-function HeroWindowLoadoutSelectionConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowLoadoutSelectionConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutSelectionConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -64,7 +64,7 @@ function HeroWindowLoadoutSelectionConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-function HeroWindowLoadoutSelectionConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowLoadoutSelectionConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -74,7 +74,7 @@ function HeroWindowLoadoutSelectionConsole._start_transition_animation(arg_2_0, 
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowLoadoutSelectionConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowLoadoutSelectionConsole._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 
 	local var_3_0 = {}
@@ -141,7 +141,7 @@ function HeroWindowLoadoutSelectionConsole._create_ui_elements(arg_3_0, arg_3_1,
 	arg_3_0:_populate_loadout_buttons()
 end
 
-function HeroWindowLoadoutSelectionConsole._populate_loadout_buttons(arg_4_0)
+HeroWindowLoadoutSelectionConsole._populate_loadout_buttons = function (arg_4_0)
 	local var_4_0 = SPProfiles[arg_4_0._profile_index].careers[arg_4_0._career_index].name
 	local var_4_1 = Managers.backend:get_interface("items")
 	local var_4_2 = var_4_1:get_career_loadouts(var_4_0)
@@ -193,7 +193,7 @@ function HeroWindowLoadoutSelectionConsole._populate_loadout_buttons(arg_4_0)
 	arg_4_0._ui_scenegraph.button.offset[1] = -(var_0_7[1] + var_0_8) * (arg_4_0._num_loadouts - 1)
 end
 
-function HeroWindowLoadoutSelectionConsole.on_exit(arg_5_0, arg_5_1)
+HeroWindowLoadoutSelectionConsole.on_exit = function (arg_5_0, arg_5_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutSelectionConsole")
 
 	arg_5_0._ui_animator = nil
@@ -232,17 +232,17 @@ function HeroWindowLoadoutSelectionConsole.on_exit(arg_5_0, arg_5_1)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowLoadoutSelectionConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function HeroWindowLoadoutSelectionConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowLoadoutSelectionConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowLoadoutSelectionConsole._update_animations(arg_8_0, arg_8_1)
+HeroWindowLoadoutSelectionConsole._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_animations
 	local var_8_1 = arg_8_0._animations
 	local var_8_2 = arg_8_0._ui_animator
@@ -286,7 +286,7 @@ function HeroWindowLoadoutSelectionConsole._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_gamepad_activity(arg_9_0)
+HeroWindowLoadoutSelectionConsole._handle_gamepad_activity = function (arg_9_0)
 	local var_9_0 = Managers.input:is_device_active("gamepad")
 
 	if var_9_0 ~= arg_9_0._gamepad_active_last_frame then
@@ -296,7 +296,7 @@ function HeroWindowLoadoutSelectionConsole._handle_gamepad_activity(arg_9_0)
 	arg_9_0._gamepad_active_last_frame = var_9_0
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_input(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowLoadoutSelectionConsole._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_handle_gamepad_activity(arg_10_1, arg_10_2)
 
 	local var_10_0 = arg_10_0:_get_input_service()
@@ -308,11 +308,11 @@ function HeroWindowLoadoutSelectionConsole._handle_input(arg_10_0, arg_10_1, arg
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._get_input_service(arg_11_0)
+HeroWindowLoadoutSelectionConsole._get_input_service = function (arg_11_0)
 	return (arg_11_0._context_menu_active or arg_11_0._on_add_loadout_button) and Managers.input:get_service("hero_view") or arg_11_0._parent:window_input_service()
 end
 
-function HeroWindowLoadoutSelectionConsole._update_selection_frame(arg_12_0, arg_12_1)
+HeroWindowLoadoutSelectionConsole._update_selection_frame = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.loadout_index
 	local var_12_1 = arg_12_0._widgets_by_name.hover_loadout_frame
 
@@ -327,7 +327,7 @@ function HeroWindowLoadoutSelectionConsole._update_selection_frame(arg_12_0, arg
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._update_button_hover(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowLoadoutSelectionConsole._update_button_hover = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0:_update_selection_frame(arg_13_1)
 
 	if arg_13_2 > (arg_13_1.content.hover_enter_time or math.huge) and not arg_13_0._context_menu_active then
@@ -335,7 +335,7 @@ function HeroWindowLoadoutSelectionConsole._update_button_hover(arg_13_0, arg_13
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._reset_hover_frame(arg_14_0)
+HeroWindowLoadoutSelectionConsole._reset_hover_frame = function (arg_14_0)
 	local var_14_0 = arg_14_0._widgets_by_name.hover_loadout_frame
 
 	if arg_14_0._context_menu_active then
@@ -347,7 +347,7 @@ function HeroWindowLoadoutSelectionConsole._reset_hover_frame(arg_14_0)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_mouse_input(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+HeroWindowLoadoutSelectionConsole._handle_mouse_input = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0
 
 	arg_15_0:_reset_hover_frame()
@@ -391,7 +391,7 @@ function HeroWindowLoadoutSelectionConsole._handle_mouse_input(arg_15_0, arg_15_
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_gamepad_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+HeroWindowLoadoutSelectionConsole._handle_gamepad_input = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if arg_16_0._inside_context_menu then
 		arg_16_0:_handle_context_menu_gamepad_input(arg_16_1, arg_16_2, arg_16_3)
 	elseif arg_16_0._on_add_loadout_button then
@@ -469,7 +469,7 @@ function HeroWindowLoadoutSelectionConsole._handle_gamepad_input(arg_16_0, arg_1
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_add_loadout_gamepad_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+HeroWindowLoadoutSelectionConsole._handle_add_loadout_gamepad_input = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if arg_17_1:get("confirm") then
 		arg_17_0:_add_loadout()
 
@@ -504,7 +504,7 @@ function HeroWindowLoadoutSelectionConsole._handle_add_loadout_gamepad_input(arg
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._on_enter_add_loadout_gamepad(arg_18_0)
+HeroWindowLoadoutSelectionConsole._on_enter_add_loadout_gamepad = function (arg_18_0)
 	arg_18_0:_hide_context_menu()
 
 	arg_18_0._on_add_loadout_button = true
@@ -523,7 +523,7 @@ function HeroWindowLoadoutSelectionConsole._on_enter_add_loadout_gamepad(arg_18_
 	arg_18_0._parent:block_input()
 end
 
-function HeroWindowLoadoutSelectionConsole._enter_details_menu(arg_19_0)
+HeroWindowLoadoutSelectionConsole._enter_details_menu = function (arg_19_0)
 	arg_19_0._inside_context_menu = true
 
 	table.clear(arg_19_0._gamepad_grid_index)
@@ -531,7 +531,7 @@ function HeroWindowLoadoutSelectionConsole._enter_details_menu(arg_19_0)
 	arg_19_0._menu_input_description:change_generic_actions(var_0_11.details)
 end
 
-function HeroWindowLoadoutSelectionConsole._exit_details_menu(arg_20_0)
+HeroWindowLoadoutSelectionConsole._exit_details_menu = function (arg_20_0)
 	arg_20_0._inside_context_menu = nil
 
 	table.clear(arg_20_0._gamepad_grid_index)
@@ -547,7 +547,7 @@ function HeroWindowLoadoutSelectionConsole._exit_details_menu(arg_20_0)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = false
 	local var_21_1 = arg_21_0._gamepad_grid_index[1]
 	local var_21_2 = arg_21_0._gamepad_grid_index[2]
@@ -597,7 +597,7 @@ function HeroWindowLoadoutSelectionConsole._handle_context_menu_gamepad_input(ar
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_delete_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+HeroWindowLoadoutSelectionConsole._handle_delete_input = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	if arg_22_0._num_loadouts == 1 then
 		return
 	end
@@ -636,7 +636,7 @@ function HeroWindowLoadoutSelectionConsole._handle_delete_input(arg_22_0, arg_22
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_bot_checkbox_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+HeroWindowLoadoutSelectionConsole._handle_bot_checkbox_input = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	if InventorySettings.bot_loadout_allowed_game_modes[arg_23_0._game_mode_key] then
 		local var_23_0 = arg_23_0._widgets_by_name.bot_checkbox
 
@@ -651,7 +651,7 @@ function HeroWindowLoadoutSelectionConsole._handle_bot_checkbox_input(arg_23_0, 
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._save_bot_equipment(arg_24_0)
+HeroWindowLoadoutSelectionConsole._save_bot_equipment = function (arg_24_0)
 	local var_24_0 = arg_24_0._profile_index
 	local var_24_1 = arg_24_0._career_index
 	local var_24_2 = SPProfiles[var_24_0].careers[var_24_1].name
@@ -661,7 +661,7 @@ function HeroWindowLoadoutSelectionConsole._save_bot_equipment(arg_24_0)
 	Managers.backend:get_interface("items"):refresh_bot_loadouts()
 end
 
-function HeroWindowLoadoutSelectionConsole._update_gamepad_selections(arg_25_0, arg_25_1)
+HeroWindowLoadoutSelectionConsole._update_gamepad_selections = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1 and 0 or arg_25_0._gamepad_grid_index[1]
 	local var_25_1 = arg_25_1 and 0 or arg_25_0._gamepad_grid_index[2]
 
@@ -672,7 +672,7 @@ function HeroWindowLoadoutSelectionConsole._update_gamepad_selections(arg_25_0, 
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._handle_context_menu_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+HeroWindowLoadoutSelectionConsole._handle_context_menu_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_0._widgets_by_name.delete_button
 	local var_26_1 = arg_26_0._widgets_by_name.context_menu_hotspot
 
@@ -694,7 +694,7 @@ function HeroWindowLoadoutSelectionConsole._handle_context_menu_input(arg_26_0, 
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._delete_loadout(arg_27_0)
+HeroWindowLoadoutSelectionConsole._delete_loadout = function (arg_27_0)
 	local var_27_0 = SPProfiles[arg_27_0._profile_index].careers[arg_27_0._career_index].name
 	local var_27_1 = arg_27_0._context_menu_loadout_index == arg_27_0._selected_loadout_index
 
@@ -713,7 +713,7 @@ function HeroWindowLoadoutSelectionConsole._delete_loadout(arg_27_0)
 	arg_27_0:_play_sound("Play_gui_loadout_delete_finish")
 end
 
-function HeroWindowLoadoutSelectionConsole._hide_context_menu(arg_28_0)
+HeroWindowLoadoutSelectionConsole._hide_context_menu = function (arg_28_0)
 	arg_28_0._context_menu_active = false
 	arg_28_0._inside_context_menu = false
 	arg_28_0._on_add_loadout_button = false
@@ -725,7 +725,7 @@ function HeroWindowLoadoutSelectionConsole._hide_context_menu(arg_28_0)
 	arg_28_0._parent:unblock_input()
 end
 
-function HeroWindowLoadoutSelectionConsole._show_context_menu(arg_29_0, arg_29_1)
+HeroWindowLoadoutSelectionConsole._show_context_menu = function (arg_29_0, arg_29_1)
 	arg_29_0._context_menu_active = true
 	arg_29_0._on_add_loadout_button = false
 
@@ -780,7 +780,7 @@ end
 
 local var_0_12 = {}
 
-function HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout(arg_30_0, arg_30_1, arg_30_2)
+HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0._gamepad_loadout_grid = {}
 
 	local var_30_0 = arg_30_0._profile_index
@@ -917,7 +917,7 @@ function HeroWindowLoadoutSelectionConsole._populate_context_menu_loadout(arg_30
 	var_30_38.button_hotspot.disable_button = var_30_36
 end
 
-function HeroWindowLoadoutSelectionConsole._change_loadout(arg_31_0, arg_31_1)
+HeroWindowLoadoutSelectionConsole._change_loadout = function (arg_31_0, arg_31_1)
 	if arg_31_1 and arg_31_1 ~= arg_31_0._selected_loadout_index then
 		local var_31_0 = SPProfiles[arg_31_0._profile_index].careers[arg_31_0._career_index].name
 		local var_31_1 = Managers.backend:get_interface("items")
@@ -944,7 +944,7 @@ function HeroWindowLoadoutSelectionConsole._change_loadout(arg_31_0, arg_31_1)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._add_loadout(arg_32_0)
+HeroWindowLoadoutSelectionConsole._add_loadout = function (arg_32_0)
 	if #arg_32_0._loadout_button_widgets >= arg_32_0._num_loadouts + 1 then
 		local var_32_0 = SPProfiles[arg_32_0._profile_index].careers[arg_32_0._career_index].name
 
@@ -955,15 +955,15 @@ function HeroWindowLoadoutSelectionConsole._add_loadout(arg_32_0)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole.set_focus(arg_33_0, arg_33_1)
+HeroWindowLoadoutSelectionConsole.set_focus = function (arg_33_0, arg_33_1)
 	arg_33_0._focused = arg_33_1
 end
 
-function HeroWindowLoadoutSelectionConsole._exit(arg_34_0)
+HeroWindowLoadoutSelectionConsole._exit = function (arg_34_0)
 	arg_34_0.exit = true
 end
 
-function HeroWindowLoadoutSelectionConsole._draw(arg_35_0, arg_35_1)
+HeroWindowLoadoutSelectionConsole._draw = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._ui_renderer
 	local var_35_1 = arg_35_0._ui_top_renderer
 	local var_35_2 = arg_35_0._ui_scenegraph
@@ -999,6 +999,6 @@ function HeroWindowLoadoutSelectionConsole._draw(arg_35_0, arg_35_1)
 	end
 end
 
-function HeroWindowLoadoutSelectionConsole._play_sound(arg_36_0, arg_36_1)
+HeroWindowLoadoutSelectionConsole._play_sound = function (arg_36_0, arg_36_1)
 	arg_36_0._parent:play_sound(arg_36_1)
 end

@@ -26,7 +26,7 @@ local var_0_6 = 7
 local var_0_7 = 14
 local var_0_8 = 0.5
 
-function PlayerSoundEffectExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerSoundEffectExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -46,7 +46,7 @@ function PlayerSoundEffectExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._music_manager = Managers.music
 end
 
-function PlayerSoundEffectExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerSoundEffectExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 
 	if arg_2_0._first_person_extension then
@@ -54,7 +54,7 @@ function PlayerSoundEffectExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function PlayerSoundEffectExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PlayerSoundEffectExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_0._local_player then
 		return
 	end
@@ -66,11 +66,11 @@ function PlayerSoundEffectExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	arg_3_0:_update_specials_proximity(arg_3_3)
 end
 
-function PlayerSoundEffectExtension.destroy(arg_4_0)
+PlayerSoundEffectExtension.destroy = function (arg_4_0)
 	return
 end
 
-function PlayerSoundEffectExtension._update_recent_hits(arg_5_0, arg_5_1)
+PlayerSoundEffectExtension._update_recent_hits = function (arg_5_0, arg_5_1)
 	if arg_5_0._recent_hit_cooldown <= 0 then
 		return
 	end
@@ -82,7 +82,7 @@ function PlayerSoundEffectExtension._update_recent_hits(arg_5_0, arg_5_1)
 	end
 end
 
-function PlayerSoundEffectExtension._update_recent_kills(arg_6_0, arg_6_1)
+PlayerSoundEffectExtension._update_recent_kills = function (arg_6_0, arg_6_1)
 	if arg_6_0._recent_kill_cooldown <= 0 then
 		return
 	end
@@ -94,7 +94,7 @@ function PlayerSoundEffectExtension._update_recent_kills(arg_6_0, arg_6_1)
 	end
 end
 
-function PlayerSoundEffectExtension._update_aggro_ranges(arg_7_0, arg_7_1)
+PlayerSoundEffectExtension._update_aggro_ranges = function (arg_7_0, arg_7_1)
 	if not arg_7_0._aggro_unit then
 		local var_7_0 = arg_7_0._wwise_world
 
@@ -137,7 +137,7 @@ function PlayerSoundEffectExtension._update_aggro_ranges(arg_7_0, arg_7_1)
 	end
 end
 
-function PlayerSoundEffectExtension._set_hit_count(arg_8_0, arg_8_1)
+PlayerSoundEffectExtension._set_hit_count = function (arg_8_0, arg_8_1)
 	arg_8_0._num_recent_hits = arg_8_1
 
 	local var_8_0 = arg_8_0._wwise_world
@@ -145,7 +145,7 @@ function PlayerSoundEffectExtension._set_hit_count(arg_8_0, arg_8_1)
 	WwiseWorld.set_global_parameter(var_8_0, "combat_combo_hits", arg_8_1)
 end
 
-function PlayerSoundEffectExtension._set_kill_count(arg_9_0, arg_9_1)
+PlayerSoundEffectExtension._set_kill_count = function (arg_9_0, arg_9_1)
 	arg_9_0._num_recent_kills = arg_9_1
 
 	local var_9_0 = arg_9_0._wwise_world
@@ -153,7 +153,7 @@ function PlayerSoundEffectExtension._set_kill_count(arg_9_0, arg_9_1)
 	WwiseWorld.set_global_parameter(var_9_0, "combat_combo_kills", arg_9_1)
 end
 
-function PlayerSoundEffectExtension._update_camera_look_angle(arg_10_0)
+PlayerSoundEffectExtension._update_camera_look_angle = function (arg_10_0)
 	local var_10_0 = arg_10_0._unit
 	local var_10_1 = Managers.state.network
 	local var_10_2 = var_10_1:game()
@@ -170,7 +170,7 @@ end
 
 local var_0_9 = {}
 
-function PlayerSoundEffectExtension._update_specials_proximity(arg_11_0, arg_11_1)
+PlayerSoundEffectExtension._update_specials_proximity = function (arg_11_0, arg_11_1)
 	arg_11_0._broadphase_update_timer = arg_11_0._broadphase_update_timer - arg_11_1
 
 	if arg_11_0._broadphase_update_timer <= 0 then
@@ -207,7 +207,7 @@ function PlayerSoundEffectExtension._update_specials_proximity(arg_11_0, arg_11_
 	end
 end
 
-function PlayerSoundEffectExtension.add_hit(arg_12_0)
+PlayerSoundEffectExtension.add_hit = function (arg_12_0)
 	arg_12_0._recent_hit_cooldown = var_0_1
 
 	local var_12_0 = math.min(arg_12_0._num_recent_hits + 1, var_0_3)
@@ -215,7 +215,7 @@ function PlayerSoundEffectExtension.add_hit(arg_12_0)
 	arg_12_0:_set_hit_count(var_12_0)
 end
 
-function PlayerSoundEffectExtension.add_kill(arg_13_0)
+PlayerSoundEffectExtension.add_kill = function (arg_13_0)
 	arg_13_0._recent_kill_cooldown = var_0_2
 
 	local var_13_0 = math.min(arg_13_0._num_recent_kills + 1, var_0_4)
@@ -223,25 +223,25 @@ function PlayerSoundEffectExtension.add_kill(arg_13_0)
 	arg_13_0:_set_kill_count(var_13_0)
 end
 
-function PlayerSoundEffectExtension.dodge(arg_14_0)
+PlayerSoundEffectExtension.dodge = function (arg_14_0)
 	if arg_14_0._first_person_unit then
 		Unit.flow_event(arg_14_0._first_person_unit, "lua_dodge")
 	end
 end
 
-function PlayerSoundEffectExtension.dodged_attack(arg_15_0)
+PlayerSoundEffectExtension.dodged_attack = function (arg_15_0)
 	if arg_15_0._first_person_unit then
 		Unit.flow_event(arg_15_0._first_person_unit, "lua_dodged_attack")
 	end
 end
 
-function PlayerSoundEffectExtension.melee_kill(arg_16_0)
+PlayerSoundEffectExtension.melee_kill = function (arg_16_0)
 	if arg_16_0._first_person_unit then
 		Unit.flow_event(arg_16_0._first_person_unit, "lua_melee_kill")
 	end
 end
 
-function PlayerSoundEffectExtension.aggro_unit_changed(arg_17_0, arg_17_1, arg_17_2)
+PlayerSoundEffectExtension.aggro_unit_changed = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Unit.get_data(arg_17_1, "breed")
 
 	if not var_17_0 then
@@ -281,7 +281,7 @@ function PlayerSoundEffectExtension.aggro_unit_changed(arg_17_0, arg_17_1, arg_1
 	end
 end
 
-function PlayerSoundEffectExtension.get_music_aggro_state(arg_18_0)
+PlayerSoundEffectExtension.get_music_aggro_state = function (arg_18_0)
 	if arg_18_0._aggro_unit then
 		return "player"
 	end

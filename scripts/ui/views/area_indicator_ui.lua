@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/area_indicator_ui_definitions")
 
 AreaIndicatorUI = class(AreaIndicatorUI)
 
-function AreaIndicatorUI.init(arg_1_0, arg_1_1, arg_1_2)
+AreaIndicatorUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -17,18 +17,18 @@ function AreaIndicatorUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function AreaIndicatorUI.create_ui_elements(arg_2_0)
+AreaIndicatorUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0.area_text_box = UIWidget.init(var_0_0.widget_definitions.area_text_box)
 
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 end
 
-function AreaIndicatorUI.destroy(arg_3_0)
+AreaIndicatorUI.destroy = function (arg_3_0)
 	return
 end
 
-function AreaIndicatorUI.update(arg_4_0, arg_4_1)
+AreaIndicatorUI.update = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.player:local_player()
 	local var_4_1 = var_4_0 and var_4_0.player_unit
 
@@ -61,7 +61,7 @@ function AreaIndicatorUI.update(arg_4_0, arg_4_1)
 	arg_4_0:draw(arg_4_1)
 end
 
-function AreaIndicatorUI.update_animation(arg_5_0, arg_5_1, arg_5_2)
+AreaIndicatorUI.update_animation = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_1 then
 		UIAnimation.update(arg_5_1, arg_5_2)
 
@@ -73,7 +73,7 @@ function AreaIndicatorUI.update_animation(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AreaIndicatorUI.draw(arg_6_0, arg_6_1)
+AreaIndicatorUI.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.input_manager:get_service("ingame_menu")

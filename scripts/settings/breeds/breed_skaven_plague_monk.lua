@@ -610,7 +610,7 @@ local var_0_8 = {
 		moving_stagger_minimum_destination_distance = 3,
 		scale_animation_speeds = true,
 		moving_stagger_threshold = 3,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			local var_1_0 = arg_1_1.combo_attack_data
 
 			if var_1_0 and var_1_0.aborted then

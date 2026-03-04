@@ -6,7 +6,7 @@ local var_0_0 = 0.5
 
 AiHuskLocomotionExtension = class(AiHuskLocomotionExtension)
 
-function AiHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AiHuskLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._system_data = arg_1_3.system_data
 	arg_1_0._game = arg_1_3.game
@@ -80,15 +80,15 @@ function AiHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.is_network_driven = true
 end
 
-function AiHuskLocomotionExtension.destroy(arg_2_0)
+AiHuskLocomotionExtension.destroy = function (arg_2_0)
 	arg_2_0:_cleanup()
 end
 
-function AiHuskLocomotionExtension.freeze(arg_3_0)
+AiHuskLocomotionExtension.freeze = function (arg_3_0)
 	arg_3_0:_cleanup()
 end
 
-function AiHuskLocomotionExtension._cleanup(arg_4_0)
+AiHuskLocomotionExtension._cleanup = function (arg_4_0)
 	local var_4_0 = arg_4_0._unit
 
 	arg_4_0._system_data.all_update_units[var_4_0] = nil
@@ -102,7 +102,7 @@ function AiHuskLocomotionExtension._cleanup(arg_4_0)
 	end
 end
 
-function AiHuskLocomotionExtension.unfreeze(arg_5_0)
+AiHuskLocomotionExtension.unfreeze = function (arg_5_0)
 	local var_5_0 = arg_5_0._unit
 
 	Unit.set_animation_merge_options(var_5_0)
@@ -162,7 +162,7 @@ function AiHuskLocomotionExtension.unfreeze(arg_5_0)
 	arg_5_0.is_network_driven = true
 end
 
-function AiHuskLocomotionExtension.set_animation_translation_scale(arg_6_0, arg_6_1)
+AiHuskLocomotionExtension.set_animation_translation_scale = function (arg_6_0, arg_6_1)
 	arg_6_0._animation_translation_scale = Vector3Box(arg_6_1)
 
 	if arg_6_0._engine_extension_id then
@@ -170,7 +170,7 @@ function AiHuskLocomotionExtension.set_animation_translation_scale(arg_6_0, arg_
 	end
 end
 
-function AiHuskLocomotionExtension.set_animation_rotation_scale(arg_7_0, arg_7_1)
+AiHuskLocomotionExtension.set_animation_rotation_scale = function (arg_7_0, arg_7_1)
 	arg_7_0._animation_rotation_scale = arg_7_1
 
 	if arg_7_0._engine_extension_id then
@@ -178,7 +178,7 @@ function AiHuskLocomotionExtension.set_animation_rotation_scale(arg_7_0, arg_7_1
 	end
 end
 
-function AiHuskLocomotionExtension.set_affected_by_gravity(arg_8_0, arg_8_1)
+AiHuskLocomotionExtension.set_affected_by_gravity = function (arg_8_0, arg_8_1)
 	arg_8_0.is_affected_by_gravity = arg_8_1
 
 	if arg_8_0._engine_extension_id then
@@ -186,7 +186,7 @@ function AiHuskLocomotionExtension.set_affected_by_gravity(arg_8_0, arg_8_1)
 	end
 end
 
-function AiHuskLocomotionExtension.set_animation_driven(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+AiHuskLocomotionExtension.set_animation_driven = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if not arg_9_0._engine_extension_id then
 		return
 	end
@@ -218,11 +218,11 @@ function AiHuskLocomotionExtension.set_animation_driven(arg_9_0, arg_9_1, arg_9_
 	EngineOptimizedExtensions.ai_husk_locomotion_set_is_affected_by_gravity(arg_9_0._engine_extension_id, arg_9_2)
 end
 
-function AiHuskLocomotionExtension.set_mover_disable_reason(arg_10_0, arg_10_1, arg_10_2)
+AiHuskLocomotionExtension.set_mover_disable_reason = function (arg_10_0, arg_10_1, arg_10_2)
 	MoverHelper.set_disable_reason(arg_10_0._unit, arg_10_0._mover_state, arg_10_1, arg_10_2)
 end
 
-function AiHuskLocomotionExtension.set_constrained(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+AiHuskLocomotionExtension.set_constrained = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	if not arg_11_0._engine_extension_id then
 		return
 	end
@@ -237,7 +237,7 @@ function AiHuskLocomotionExtension.set_constrained(arg_11_0, arg_11_1, arg_11_2,
 	EngineOptimizedExtensions.ai_husk_locomotion_set_is_constrained(arg_11_0._engine_extension_id, arg_11_1, arg_11_2, arg_11_3)
 end
 
-function AiHuskLocomotionExtension.teleport_to(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+AiHuskLocomotionExtension.teleport_to = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	if not arg_12_0._engine_extension_id then
 		return
 	end
@@ -267,20 +267,20 @@ function AiHuskLocomotionExtension.teleport_to(arg_12_0, arg_12_1, arg_12_2, arg
 	EngineOptimizedExtensions.ai_husk_locomotion_teleport_to(arg_12_0._engine_extension_id, arg_12_1, arg_12_2, arg_12_3)
 end
 
-function AiHuskLocomotionExtension.set_collision_disabled(arg_13_0, arg_13_1, arg_13_2)
+AiHuskLocomotionExtension.set_collision_disabled = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._collision_state then
 		MoverHelper.set_collision_disable_reason(arg_13_0._unit, arg_13_0._collision_state, arg_13_1, arg_13_2)
 	end
 end
 
-function AiHuskLocomotionExtension.current_velocity(arg_14_0)
+AiHuskLocomotionExtension.current_velocity = function (arg_14_0)
 	return arg_14_0._velocity:unbox()
 end
 
-function AiHuskLocomotionExtension.traverse_logic(arg_15_0)
+AiHuskLocomotionExtension.traverse_logic = function (arg_15_0)
 	return arg_15_0._traverse_logic
 end
 
-function AiHuskLocomotionExtension.hot_join_sync(arg_16_0, arg_16_1)
+AiHuskLocomotionExtension.hot_join_sync = function (arg_16_0, arg_16_1)
 	assert(false, "ai is never husk on server")
 end

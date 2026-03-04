@@ -12,7 +12,7 @@ local var_0_2 = 2
 local var_0_3 = 20
 local var_0_4 = 10
 
-function PlayFabRequestQueue.init(arg_1_0)
+PlayFabRequestQueue.init = function (arg_1_0)
 	arg_1_0._queue = {}
 	arg_1_0._active_entry = nil
 	arg_1_0._id = 0
@@ -21,11 +21,11 @@ function PlayFabRequestQueue.init(arg_1_0)
 	arg_1_0._throttle_per_func = {}
 end
 
-function PlayFabRequestQueue.is_pending_request(arg_2_0)
+PlayFabRequestQueue.is_pending_request = function (arg_2_0)
 	return arg_2_0._active_entry or #arg_2_0._queue > 0
 end
 
-function PlayFabRequestQueue.enqueue(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PlayFabRequestQueue.enqueue = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0._id + 1
 	local var_3_1 = arg_3_1.FunctionParameter
 
@@ -57,7 +57,7 @@ function PlayFabRequestQueue.enqueue(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	return var_3_0
 end
 
-function PlayFabRequestQueue.enqueue_api_request(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PlayFabRequestQueue.enqueue_api_request = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0._id + 1
 	local var_4_1 = {
 		resends = 0,
@@ -78,7 +78,7 @@ function PlayFabRequestQueue.enqueue_api_request(arg_4_0, arg_4_1, arg_4_2, arg_
 	return var_4_0
 end
 
-function PlayFabRequestQueue._need_throttle(arg_5_0, arg_5_1, arg_5_2)
+PlayFabRequestQueue._need_throttle = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._throttle_per_func[arg_5_1] or {}
 	local var_5_1 = #var_5_0 + 1
 
@@ -92,7 +92,7 @@ function PlayFabRequestQueue._need_throttle(arg_5_0, arg_5_1, arg_5_2)
 	return false
 end
 
-function PlayFabRequestQueue._update_throttling(arg_6_0, arg_6_1, arg_6_2)
+PlayFabRequestQueue._update_throttling = function (arg_6_0, arg_6_1, arg_6_2)
 	for iter_6_0, iter_6_1 in pairs(arg_6_0._throttle_per_func) do
 		local var_6_0 = iter_6_1[1] or arg_6_1 + 1
 
@@ -116,7 +116,7 @@ function PlayFabRequestQueue._update_throttling(arg_6_0, arg_6_1, arg_6_2)
 	return true
 end
 
-function PlayFabRequestQueue.update(arg_7_0, arg_7_1, arg_7_2)
+PlayFabRequestQueue.update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._active_entry
 
 	if var_7_0 then
@@ -179,7 +179,7 @@ function PlayFabRequestQueue.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function PlayFabRequestQueue.eac_challenge_success_cb(arg_8_0, arg_8_1)
+PlayFabRequestQueue.eac_challenge_success_cb = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._active_entry
 	local var_8_1 = arg_8_1.FunctionResult
 	local var_8_2 = var_8_1.challenge
@@ -213,7 +213,7 @@ function PlayFabRequestQueue.eac_challenge_success_cb(arg_8_0, arg_8_1)
 	end
 end
 
-function PlayFabRequestQueue._challenge_response_received(arg_9_0, arg_9_1)
+PlayFabRequestQueue._challenge_response_received = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._active_entry
 
 	var_9_0.eac_challenge_success = true
@@ -229,7 +229,7 @@ function PlayFabRequestQueue._challenge_response_received(arg_9_0, arg_9_1)
 	arg_9_0:_send_request(var_9_0)
 end
 
-function PlayFabRequestQueue._send_request(arg_10_0, arg_10_1)
+PlayFabRequestQueue._send_request = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.api_function_name
 	local var_10_1 = arg_10_1.request
 	local var_10_2 = arg_10_1.success_callback
@@ -242,7 +242,7 @@ function PlayFabRequestQueue._send_request(arg_10_0, arg_10_1)
 	arg_10_0._current_api_call = var_10_1.FunctionName
 end
 
-function PlayFabRequestQueue.playfab_request_success_cb(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayFabRequestQueue.playfab_request_success_cb = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_0._current_api_call = nil
 
 	local var_11_0 = arg_11_0._active_entry
@@ -280,7 +280,7 @@ function PlayFabRequestQueue.playfab_request_success_cb(arg_11_0, arg_11_1, arg_
 	end
 end
 
-function PlayFabRequestQueue.playfab_request_error_cb(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+PlayFabRequestQueue.playfab_request_error_cb = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	arg_12_0._current_api_call = nil
 
 	local var_12_0 = arg_12_0._active_entry
@@ -301,7 +301,7 @@ function PlayFabRequestQueue.playfab_request_error_cb(arg_12_0, arg_12_1, arg_12
 	arg_12_1(arg_12_3, var_12_2)
 end
 
-function PlayFabRequestQueue._get_eac_response(arg_14_0, arg_14_1)
+PlayFabRequestQueue._get_eac_response = function (arg_14_0, arg_14_1)
 	local var_14_0 = 0
 	local var_14_1 = ""
 
@@ -329,6 +329,6 @@ function PlayFabRequestQueue._get_eac_response(arg_14_0, arg_14_1)
 	return var_14_2, var_14_3
 end
 
-function PlayFabRequestQueue.current_api_call(arg_15_0)
+PlayFabRequestQueue.current_api_call = function (arg_15_0)
 	return arg_15_0._current_api_call
 end

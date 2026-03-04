@@ -30,7 +30,7 @@ local var_0_1 = {
 	"BuffExtension"
 }
 
-function BuffSystem.init(arg_1_0, arg_1_1, arg_1_2)
+BuffSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	BuffSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -55,7 +55,7 @@ function BuffSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._activated_buff_units_during_update = {}
 end
 
-function BuffSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+BuffSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = BuffSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.unit_extension_data[arg_2_2] = var_2_0
@@ -63,7 +63,7 @@ function BuffSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4
 	return var_2_0
 end
 
-function BuffSystem.hot_join_sync(arg_3_0, arg_3_1)
+BuffSystem.hot_join_sync = function (arg_3_0, arg_3_1)
 	if arg_3_0.is_server then
 		local var_3_0 = #arg_3_0.player_group_buffs
 		local var_3_1 = arg_3_0.network_manager
@@ -95,7 +95,7 @@ function BuffSystem.hot_join_sync(arg_3_0, arg_3_1)
 	end
 end
 
-function BuffSystem._clean_up_server_controller_buffs(arg_4_0, arg_4_1)
+BuffSystem._clean_up_server_controller_buffs = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.server_controlled_buffs[arg_4_1]
 
 	if var_4_0 then
@@ -113,7 +113,7 @@ function BuffSystem._clean_up_server_controller_buffs(arg_4_0, arg_4_1)
 	end
 end
 
-function BuffSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+BuffSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.unit_extension_data[arg_5_1]
 
 	if var_5_0 then
@@ -128,11 +128,11 @@ function BuffSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 	BuffSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-function BuffSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
+BuffSystem.on_freeze_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:freeze(arg_6_1, arg_6_2)
 end
 
-function BuffSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BuffSystem.freeze = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.frozen_unit_extension_data
 
 	if var_7_0[arg_7_1] then
@@ -151,7 +151,7 @@ function BuffSystem.freeze(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	fassert(arg_7_0.active_buff_units[arg_7_1] == nil, "Unit had active buffs after freeze!")
 end
 
-function BuffSystem.unfreeze(arg_8_0, arg_8_1)
+BuffSystem.unfreeze = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.frozen_unit_extension_data[arg_8_1]
 
 	fassert(var_8_0, "Unit to unfreeze didn't have frozen extension")
@@ -164,7 +164,7 @@ end
 
 local var_0_2 = {}
 
-function BuffSystem.update(arg_9_0, arg_9_1, arg_9_2)
+BuffSystem.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if not script_data.buff_no_opt then
 		local var_9_0 = arg_9_1.dt
 		local var_9_1 = arg_9_0.active_buff_units
@@ -190,11 +190,11 @@ function BuffSystem.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BuffSystem.get_player_group_buffs(arg_10_0)
+BuffSystem.get_player_group_buffs = function (arg_10_0)
 	return arg_10_0.player_group_buffs
 end
 
-function BuffSystem.destroy(arg_11_0)
+BuffSystem.destroy = function (arg_11_0)
 	arg_11_0.network_event_delegate:unregister(arg_11_0)
 
 	arg_11_0.network_event_delegate = nil
@@ -202,7 +202,7 @@ function BuffSystem.destroy(arg_11_0)
 	arg_11_0.active_buff_units = nil
 end
 
-function BuffSystem._next_free_server_buff_id(arg_12_0)
+BuffSystem._next_free_server_buff_id = function (arg_12_0)
 	local var_12_0 = arg_12_0.free_server_buff_ids
 	local var_12_1 = #var_12_0
 	local var_12_2
@@ -237,7 +237,7 @@ end
 
 local var_0_3 = {}
 
-function BuffSystem._add_buff_helper_function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+BuffSystem._add_buff_helper_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = ScriptUnit.extension(arg_13_1, "buff_system")
 
 	var_0_3.attacker_unit = arg_13_3
@@ -272,7 +272,7 @@ function BuffSystem._add_buff_helper_function(arg_13_0, arg_13_1, arg_13_2, arg_
 	end
 end
 
-function BuffSystem.add_buff(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+BuffSystem.add_buff = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	if not ScriptUnit.has_extension(arg_14_1, "buff_system") then
 		return
 	end
@@ -308,7 +308,7 @@ function BuffSystem.add_buff(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, a
 	return var_14_0
 end
 
-function BuffSystem.remove_server_controlled_buff(arg_15_0, arg_15_1, arg_15_2)
+BuffSystem.remove_server_controlled_buff = function (arg_15_0, arg_15_1, arg_15_2)
 	fassert(arg_15_0.is_server, "[BuffSystem]: Only the server can explicitly remove server controlled buffs!")
 
 	local var_15_0 = 0
@@ -342,13 +342,13 @@ function BuffSystem.remove_server_controlled_buff(arg_15_0, arg_15_1, arg_15_2)
 	return var_15_0
 end
 
-function BuffSystem.has_server_controlled_buff(arg_16_0, arg_16_1, arg_16_2)
+BuffSystem.has_server_controlled_buff = function (arg_16_0, arg_16_1, arg_16_2)
 	fassert(arg_16_0.is_server, "[BuffSystem]: Only the server can explicitly can check server controlled buffs!")
 
 	return arg_16_0.server_controlled_buffs[arg_16_1] and arg_16_0.server_controlled_buffs[arg_16_1][arg_16_2]
 end
 
-function BuffSystem.add_volume_buff_multiplier(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+BuffSystem.add_volume_buff_multiplier = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	fassert(arg_17_0.is_server, "[BuffSystem] add_volume_buff_multiplier should only be called on server!")
 
 	local var_17_0 = Managers.player:unit_owner(arg_17_1)
@@ -364,7 +364,7 @@ function BuffSystem.add_volume_buff_multiplier(arg_17_0, arg_17_1, arg_17_2, arg
 	end
 end
 
-function BuffSystem.add_volume_buff(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+BuffSystem.add_volume_buff = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if not Unit.alive(arg_18_1) then
 		return
 	end
@@ -383,7 +383,7 @@ function BuffSystem.add_volume_buff(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	end
 end
 
-function BuffSystem.remove_volume_buff_multiplier(arg_19_0, arg_19_1, arg_19_2)
+BuffSystem.remove_volume_buff_multiplier = function (arg_19_0, arg_19_1, arg_19_2)
 	fassert(arg_19_0.is_server, "[BuffSystem] remove_volume_buff should only be called on server!")
 
 	local var_19_0 = Managers.player:unit_owner(arg_19_1)
@@ -399,7 +399,7 @@ function BuffSystem.remove_volume_buff_multiplier(arg_19_0, arg_19_1, arg_19_2)
 	end
 end
 
-function BuffSystem.remove_volume_buff(arg_20_0, arg_20_1, arg_20_2)
+BuffSystem.remove_volume_buff = function (arg_20_0, arg_20_1, arg_20_2)
 	if not Unit.alive(arg_20_1) then
 		return
 	end
@@ -412,7 +412,7 @@ function BuffSystem.remove_volume_buff(arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0.volume_buffs[arg_20_1][arg_20_2] = nil
 end
 
-function BuffSystem.rpc_add_buff(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+BuffSystem.rpc_add_buff = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 	if arg_21_0.is_server then
 		if arg_21_6 then
 			arg_21_0.network_manager.network_transmit:send_rpc_clients("rpc_add_buff", arg_21_2, arg_21_3, arg_21_4, 0, false)
@@ -432,7 +432,7 @@ function BuffSystem.rpc_add_buff(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_
 	end
 end
 
-function BuffSystem.rpc_remove_server_controlled_buff(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+BuffSystem.rpc_remove_server_controlled_buff = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0.unit_storage:unit(arg_22_2)
 
 	if Unit.alive(var_22_0) then
@@ -451,21 +451,21 @@ function BuffSystem.rpc_remove_server_controlled_buff(arg_22_0, arg_22_1, arg_22
 	end
 end
 
-function BuffSystem.rpc_add_volume_buff_multiplier(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+BuffSystem.rpc_add_volume_buff_multiplier = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_0.unit_storage:unit(arg_23_2)
 	local var_23_1 = NetworkLookup.buff_templates[arg_23_3]
 
 	arg_23_0:add_volume_buff(var_23_0, var_23_1, arg_23_4)
 end
 
-function BuffSystem.rpc_remove_volume_buff(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+BuffSystem.rpc_remove_volume_buff = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 	local var_24_1 = NetworkLookup.buff_templates[arg_24_3]
 
 	arg_24_0:remove_volume_buff(var_24_0, var_24_1)
 end
 
-function BuffSystem.rpc_add_group_buff(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+BuffSystem.rpc_add_group_buff = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	if arg_25_0.is_server then
 		arg_25_0.network_manager.network_transmit:send_rpc_clients("rpc_add_group_buff", arg_25_2, arg_25_3)
 	end
@@ -494,7 +494,7 @@ function BuffSystem.rpc_add_group_buff(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	end
 end
 
-function BuffSystem.rpc_remove_group_buff(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+BuffSystem.rpc_remove_group_buff = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = NetworkLookup.group_buff_templates[arg_26_2]
 	local var_26_1 = arg_26_0.player_group_buffs
 
@@ -530,7 +530,7 @@ function BuffSystem.rpc_remove_group_buff(arg_26_0, arg_26_1, arg_26_2, arg_26_3
 	end
 end
 
-function BuffSystem.rpc_buff_on_attack(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9)
+BuffSystem.rpc_buff_on_attack = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9)
 	local var_27_0 = arg_27_0.unit_storage:unit(arg_27_2)
 
 	if not Unit.alive(var_27_0) then
@@ -547,7 +547,7 @@ function BuffSystem.rpc_buff_on_attack(arg_27_0, arg_27_1, arg_27_2, arg_27_3, a
 	DamageUtils.buff_on_attack(var_27_0, var_27_1, var_27_2, arg_27_5, var_27_3, arg_27_7, var_27_6, var_27_4, nil, var_27_5)
 end
 
-function BuffSystem.rpc_proc_event(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+BuffSystem.rpc_proc_event = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = Managers.player:player(arg_28_2, arg_28_3)
 	local var_28_1 = NetworkLookup.proc_events[arg_28_4]
 	local var_28_2 = var_28_0.player_unit
@@ -558,7 +558,7 @@ function BuffSystem.rpc_proc_event(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_2
 	end
 end
 
-function BuffSystem.rpc_remove_gromril_armour(arg_29_0, arg_29_1, arg_29_2)
+BuffSystem.rpc_remove_gromril_armour = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0.unit_storage:unit(arg_29_2)
 
 	if not Unit.alive(var_29_0) then
@@ -576,7 +576,7 @@ function BuffSystem.rpc_remove_gromril_armour(arg_29_0, arg_29_1, arg_29_2)
 	var_29_1:trigger_procs("on_gromril_armour_removed")
 end
 
-function BuffSystem.set_buff_ext_active(arg_30_0, arg_30_1, arg_30_2)
+BuffSystem.set_buff_ext_active = function (arg_30_0, arg_30_1, arg_30_2)
 	if arg_30_2 then
 		if arg_30_0.in_update then
 			arg_30_0._activated_buff_units_during_update[arg_30_1] = arg_30_0.unit_extension_data[arg_30_1]
@@ -694,7 +694,7 @@ local var_0_19 = Script.new_array(var_0_15)
 local var_0_20 = Script.new_array(var_0_15)
 local var_0_21 = Script.new_map(var_0_15)
 
-function BuffSystem._pack_buff_params(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+BuffSystem._pack_buff_params = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	table.clear(var_0_19)
 	table.clear(var_0_20)
 
@@ -721,7 +721,7 @@ function BuffSystem._pack_buff_params(arg_39_0, arg_39_1, arg_39_2, arg_39_3, ar
 	return arg_39_2, arg_39_3
 end
 
-function BuffSystem._unpack_buff_params(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+BuffSystem._unpack_buff_params = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	table.clear(arg_40_1)
 
 	local var_40_0 = #arg_40_2
@@ -754,7 +754,7 @@ end
 
 local var_0_22 = 0
 
-function BuffSystem._prepare_sync(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+BuffSystem._prepare_sync = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	local var_41_0 = Managers.state.network:unit_game_object_id(arg_41_1)
 	local var_41_1 = NetworkLookup.buff_templates[arg_41_2]
 	local var_41_2 = BuffSyncTypeLookup[arg_41_3]
@@ -777,10 +777,10 @@ local function var_0_23(...)
 end
 
 local var_0_24 = {
-	[BuffSyncType.Local] = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
+	[BuffSyncType.Local] = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
 		return true
 	end,
-	[BuffSyncType.Client] = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
+	[BuffSyncType.Client] = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
 		if arg_44_6 == Network.peer_id() then
 			return true
 		end
@@ -789,7 +789,7 @@ local var_0_24 = {
 
 		Managers.state.network.network_transmit:send_rpc(var_44_3, arg_44_6, var_44_0, var_44_1, arg_44_4, var_44_2, var_44_4, var_44_5)
 	end,
-	[BuffSyncType.LocalAndServer] = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+	[BuffSyncType.LocalAndServer] = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
 		if arg_45_0.is_server then
 			return true
 		end
@@ -798,7 +798,7 @@ local var_0_24 = {
 
 		Managers.state.network.network_transmit:send_rpc_server(var_45_3, var_45_0, var_45_1, arg_45_4, var_45_2, var_45_4, var_45_5)
 	end,
-	[BuffSyncType.ClientAndServer] = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6)
+	[BuffSyncType.ClientAndServer] = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6)
 		if arg_46_0.is_server and arg_46_6 == Network.peer_id() then
 			return true
 		end
@@ -812,7 +812,7 @@ local var_0_24 = {
 			var_46_6:send_rpc_server(var_46_3, var_46_0, var_46_1, arg_46_4, var_46_2, var_46_4, var_46_5)
 		end
 	end,
-	[BuffSyncType.Server] = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6)
+	[BuffSyncType.Server] = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6)
 		if arg_47_0.is_server then
 			return true
 		end
@@ -821,7 +821,7 @@ local var_0_24 = {
 
 		Managers.state.network.network_transmit:send_rpc_server(var_47_3, var_47_0, var_47_1, arg_47_4, var_47_2, var_47_4, var_47_5)
 	end,
-	[BuffSyncType.All] = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5, arg_48_6)
+	[BuffSyncType.All] = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5, arg_48_6)
 		local var_48_0, var_48_1, var_48_2, var_48_3, var_48_4, var_48_5 = arg_48_0:_prepare_sync(arg_48_1, arg_48_2, arg_48_3, arg_48_5)
 		local var_48_6 = Managers.state.network.network_transmit
 
@@ -833,7 +833,7 @@ local var_0_24 = {
 	end
 }
 
-function BuffSystem.add_buff_synced(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
+BuffSystem.add_buff_synced = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
 	local var_49_0 = -1
 	local var_49_1
 	local var_49_2 = arg_49_0.unit_extension_data[arg_49_1]
@@ -866,7 +866,7 @@ function BuffSystem.add_buff_synced(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_
 	return var_49_0
 end
 
-function BuffSystem.remove_buff_synced(arg_50_0, arg_50_1, arg_50_2)
+BuffSystem.remove_buff_synced = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_0.unit_extension_data[arg_50_1]
 
 	if var_50_0 and arg_50_2 then
@@ -874,7 +874,7 @@ function BuffSystem.remove_buff_synced(arg_50_0, arg_50_1, arg_50_2)
 	end
 end
 
-function BuffSystem.rpc_add_buff_synced(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
+BuffSystem.rpc_add_buff_synced = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
 	local var_51_0 = arg_51_0.unit_storage:unit(arg_51_2)
 	local var_51_1 = arg_51_0.unit_extension_data[var_51_0]
 
@@ -923,7 +923,7 @@ function BuffSystem.rpc_add_buff_synced(arg_51_0, arg_51_1, arg_51_2, arg_51_3, 
 	end
 end
 
-function BuffSystem.rpc_add_buff_synced_relay(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+BuffSystem.rpc_add_buff_synced_relay = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
 	local var_52_0 = arg_52_0.unit_storage:unit(arg_52_2)
 	local var_52_1 = arg_52_0.unit_extension_data[var_52_0]
 
@@ -941,7 +941,7 @@ function BuffSystem.rpc_add_buff_synced_relay(arg_52_0, arg_52_1, arg_52_2, arg_
 	end
 end
 
-function BuffSystem.rpc_add_buff_synced_params(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5, arg_53_6, arg_53_7)
+BuffSystem.rpc_add_buff_synced_params = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5, arg_53_6, arg_53_7)
 	local var_53_0 = arg_53_0.unit_storage:unit(arg_53_2)
 	local var_53_1 = arg_53_0.unit_extension_data[var_53_0]
 
@@ -991,7 +991,7 @@ function BuffSystem.rpc_add_buff_synced_params(arg_53_0, arg_53_1, arg_53_2, arg
 	end
 end
 
-function BuffSystem.rpc_add_buff_synced_relay_params(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7)
+BuffSystem.rpc_add_buff_synced_relay_params = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7)
 	local var_54_0 = arg_54_0.unit_storage:unit(arg_54_2)
 	local var_54_1 = arg_54_0.unit_extension_data[var_54_0]
 
@@ -1010,7 +1010,7 @@ function BuffSystem.rpc_add_buff_synced_relay_params(arg_54_0, arg_54_1, arg_54_
 	end
 end
 
-function BuffSystem.rpc_add_buff_synced_response(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+BuffSystem.rpc_add_buff_synced_response = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = arg_55_0.unit_storage:unit(arg_55_2)
 	local var_55_1 = arg_55_0.unit_extension_data[var_55_0]
 
@@ -1027,7 +1027,7 @@ function BuffSystem.rpc_add_buff_synced_response(arg_55_0, arg_55_1, arg_55_2, a
 	end
 end
 
-function BuffSystem.rpc_remove_buff_synced(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+BuffSystem.rpc_remove_buff_synced = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = arg_56_0.unit_storage:unit(arg_56_2)
 	local var_56_1 = arg_56_0.unit_extension_data[var_56_0]
 
@@ -1046,7 +1046,7 @@ function BuffSystem.rpc_remove_buff_synced(arg_56_0, arg_56_1, arg_56_2, arg_56_
 	end
 end
 
-function BuffSystem._hot_join_sync_synced_buffs(arg_57_0, arg_57_1)
+BuffSystem._hot_join_sync_synced_buffs = function (arg_57_0, arg_57_1)
 	local var_57_0 = Managers.time:time("game")
 	local var_57_1 = Managers.state.network
 	local var_57_2 = var_57_1.network_transmit

@@ -10,7 +10,7 @@ local var_0_5 = "cycle_previous"
 StoreWindowPanel = class(StoreWindowPanel)
 StoreWindowPanel.NAME = "StoreWindowPanel"
 
-function StoreWindowPanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowPanel.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowPanel")
 
 	arg_1_0._params = arg_1_1
@@ -31,7 +31,7 @@ function StoreWindowPanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_input_buttons()
 end
 
-function StoreWindowPanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StoreWindowPanel._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._currency_types
 	local var_2_1 = arg_2_0._currency_ui_settings
 	local var_2_2 = {}
@@ -158,13 +158,13 @@ function StoreWindowPanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StoreWindowPanel.on_exit(arg_3_0, arg_3_1)
+StoreWindowPanel.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate StoreWindowPanel")
 
 	arg_3_0._ui_animator = nil
 end
 
-function StoreWindowPanel.update(arg_4_0, arg_4_1, arg_4_2)
+StoreWindowPanel.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_handle_gamepad_activity()
 	arg_4_0:_handle_back_button_visibility()
 	arg_4_0:_sync_player_wallet()
@@ -174,11 +174,11 @@ function StoreWindowPanel.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1)
 end
 
-function StoreWindowPanel.post_update(arg_5_0, arg_5_1, arg_5_2)
+StoreWindowPanel.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
 end
 
-function StoreWindowPanel._update_animations(arg_6_0, arg_6_1)
+StoreWindowPanel._update_animations = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_animations
 	local var_6_1 = arg_6_0._animations
 	local var_6_2 = arg_6_0._ui_animator
@@ -236,7 +236,7 @@ function StoreWindowPanel._update_animations(arg_6_0, arg_6_1)
 	arg_6_0:_update_panel_selection_animation(arg_6_1)
 end
 
-function StoreWindowPanel._is_stepper_button_pressed(arg_7_0, arg_7_1)
+StoreWindowPanel._is_stepper_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content
 	local var_7_1 = var_7_0.button_hotspot_left
 	local var_7_2 = var_7_0.button_hotspot_right
@@ -252,7 +252,7 @@ function StoreWindowPanel._is_stepper_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function StoreWindowPanel._handle_input(arg_8_0, arg_8_1, arg_8_2)
+StoreWindowPanel._handle_input = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._parent
 	local var_8_1 = arg_8_0._widgets_by_name
 	local var_8_2 = arg_8_0._parent:window_input_service()
@@ -313,7 +313,7 @@ function StoreWindowPanel._handle_input(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function StoreWindowPanel._on_panel_button_selected(arg_9_0, arg_9_1)
+StoreWindowPanel._on_panel_button_selected = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._parent
 	local var_9_1 = arg_9_0._title_button_widgets[arg_9_1].content.page_name
 	local var_9_2 = {
@@ -323,7 +323,7 @@ function StoreWindowPanel._on_panel_button_selected(arg_9_0, arg_9_1)
 	var_9_0:go_to_store_path(var_9_2)
 end
 
-function StoreWindowPanel._set_selected_option(arg_10_0, arg_10_1)
+StoreWindowPanel._set_selected_option = function (arg_10_0, arg_10_1)
 	arg_10_0:_start_panel_selection_animation(arg_10_0._selected_index, arg_10_1)
 
 	local var_10_0 = arg_10_0._title_button_widgets
@@ -333,7 +333,7 @@ function StoreWindowPanel._set_selected_option(arg_10_0, arg_10_1)
 	end
 end
 
-function StoreWindowPanel._update_selected_option(arg_11_0)
+StoreWindowPanel._update_selected_option = function (arg_11_0)
 	local var_11_0 = arg_11_0._parent:get_store_path()
 
 	if var_11_0 then
@@ -350,7 +350,7 @@ function StoreWindowPanel._update_selected_option(arg_11_0)
 	end
 end
 
-function StoreWindowPanel._draw(arg_12_0, arg_12_1)
+StoreWindowPanel._draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._ui_renderer
 	local var_12_1 = arg_12_0._ui_top_renderer
 	local var_12_2 = arg_12_0._ui_scenegraph
@@ -366,11 +366,11 @@ function StoreWindowPanel._draw(arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_1)
 end
 
-function StoreWindowPanel._play_sound(arg_13_0, arg_13_1)
+StoreWindowPanel._play_sound = function (arg_13_0, arg_13_1)
 	return arg_13_0._parent:play_sound(arg_13_1)
 end
 
-function StoreWindowPanel._setup_input_buttons(arg_14_0)
+StoreWindowPanel._setup_input_buttons = function (arg_14_0)
 	local var_14_0 = true
 	local var_14_1 = arg_14_0._parent:window_input_service(var_14_0)
 	local var_14_2 = UISettings.get_gamepad_input_texture_data(var_14_1, var_0_5, true)
@@ -399,7 +399,7 @@ function StoreWindowPanel._setup_input_buttons(arg_14_0)
 	var_14_6.content.texture_id = var_14_3.texture
 end
 
-function StoreWindowPanel._handle_back_button_visibility(arg_15_0)
+StoreWindowPanel._handle_back_button_visibility = function (arg_15_0)
 	if not arg_15_0.gamepad_active_last_frame then
 		local var_15_0 = arg_15_0._parent:close_on_exit()
 		local var_15_1 = arg_15_0._widgets_by_name.back_button
@@ -409,13 +409,13 @@ function StoreWindowPanel._handle_back_button_visibility(arg_15_0)
 	end
 end
 
-function StoreWindowPanel._reset_back_button(arg_16_0)
+StoreWindowPanel._reset_back_button = function (arg_16_0)
 	local var_16_0 = arg_16_0._widgets_by_name.back_button.content.button_hotspot
 
 	table.clear(var_16_0)
 end
 
-function StoreWindowPanel._handle_gamepad_activity(arg_17_0)
+StoreWindowPanel._handle_gamepad_activity = function (arg_17_0)
 	local var_17_0 = Managers.input:is_device_active("gamepad")
 	local var_17_1 = Managers.input:get_most_recent_device()
 	local var_17_2 = arg_17_0.gamepad_active_last_frame == nil or var_17_0 and var_17_1 ~= arg_17_0._most_recent_device
@@ -446,7 +446,7 @@ function StoreWindowPanel._handle_gamepad_activity(arg_17_0)
 	arg_17_0._most_recent_device = var_17_1
 end
 
-function StoreWindowPanel._set_text_button_size(arg_18_0, arg_18_1, arg_18_2)
+StoreWindowPanel._set_text_button_size = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._ui_scenegraph[arg_18_1.scenegraph_id].size[1] = arg_18_2
 
 	local var_18_0 = arg_18_1.style
@@ -463,7 +463,7 @@ function StoreWindowPanel._set_text_button_size(arg_18_0, arg_18_1, arg_18_2)
 	var_18_0.text_disabled.offset[1] = var_18_0.text_disabled.default_offset[1] + var_18_1
 end
 
-function StoreWindowPanel._get_text_width(arg_19_0, arg_19_1, arg_19_2)
+StoreWindowPanel._get_text_width = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_1.localize then
 		arg_19_2 = Localize(arg_19_2)
 	end
@@ -478,11 +478,11 @@ function StoreWindowPanel._get_text_width(arg_19_0, arg_19_1, arg_19_2)
 	return (UIRenderer.text_size(var_19_0, arg_19_2, var_19_1[1], var_19_2))
 end
 
-function StoreWindowPanel._set_text_button_horizontal_position(arg_20_0, arg_20_1, arg_20_2)
+StoreWindowPanel._set_text_button_horizontal_position = function (arg_20_0, arg_20_1, arg_20_2)
 	arg_20_1.offset[1] = arg_20_2
 end
 
-function StoreWindowPanel._animate_title_entry(arg_21_0, arg_21_1, arg_21_2)
+StoreWindowPanel._animate_title_entry = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_1.content
 	local var_21_1 = arg_21_1.style
 	local var_21_2 = var_21_0.button_hotspot
@@ -526,7 +526,7 @@ function StoreWindowPanel._animate_title_entry(arg_21_0, arg_21_1, arg_21_2)
 	var_21_2.selection_progress = var_21_13
 end
 
-function StoreWindowPanel._animate_back_button(arg_22_0, arg_22_1, arg_22_2)
+StoreWindowPanel._animate_back_button = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_1.content
 	local var_22_1 = arg_22_1.style
 	local var_22_2 = var_22_0.button_hotspot
@@ -558,7 +558,7 @@ function StoreWindowPanel._animate_back_button(arg_22_0, arg_22_1, arg_22_2)
 	var_22_2.selection_progress = var_22_13
 end
 
-function StoreWindowPanel._sync_wallet_matchmaking_location(arg_23_0)
+StoreWindowPanel._sync_wallet_matchmaking_location = function (arg_23_0)
 	local var_23_0 = Managers.matchmaking:is_game_matchmaking()
 
 	if var_23_0 ~= arg_23_0._is_game_matchmaking then
@@ -577,7 +577,7 @@ function StoreWindowPanel._sync_wallet_matchmaking_location(arg_23_0)
 	end
 end
 
-function StoreWindowPanel._sync_player_wallet(arg_24_0)
+StoreWindowPanel._sync_player_wallet = function (arg_24_0)
 	local var_24_0 = arg_24_0._currency_types
 	local var_24_1 = 0
 	local var_24_2 = false
@@ -627,7 +627,7 @@ function StoreWindowPanel._sync_player_wallet(arg_24_0)
 	end
 end
 
-function StoreWindowPanel._start_panel_selection_animation(arg_25_0, arg_25_1, arg_25_2)
+StoreWindowPanel._start_panel_selection_animation = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._widgets_by_name.entry_panel_selection
 	local var_25_1 = var_25_0.offset
 	local var_25_2 = var_25_0.content.size
@@ -649,7 +649,7 @@ function StoreWindowPanel._start_panel_selection_animation(arg_25_0, arg_25_1, a
 	var_25_3.start_width = var_25_5
 end
 
-function StoreWindowPanel._update_panel_selection_animation(arg_26_0, arg_26_1)
+StoreWindowPanel._update_panel_selection_animation = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._panel_selection_animation
 
 	if not var_26_0 then

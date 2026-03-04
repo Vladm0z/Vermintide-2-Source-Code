@@ -84,7 +84,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1() < 8
 			end
 		},
@@ -120,7 +120,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1() < 8
 			end
 		},
@@ -141,7 +141,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1() < 3
 			end
 		},
@@ -179,7 +179,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1() < 20
 			end
 		},
@@ -226,7 +226,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1() < 2
 			end
 		},
@@ -255,7 +255,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_1() < 10
 			end
 		},
@@ -349,7 +349,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_1() < 1
 			end
 		},
@@ -589,7 +589,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_1() < 4
 			end
 		},
@@ -605,7 +605,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_1() < 12
 			end
 		},
@@ -640,7 +640,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_10_0)
+			condition = function (arg_10_0)
 				return var_0_1() < 10
 			end
 		},
@@ -697,7 +697,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_11_0)
+			condition = function (arg_11_0)
 				return var_0_1() < 8
 			end
 		},
@@ -722,7 +722,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_12_0)
+			condition = function (arg_12_0)
 				return var_0_1() < 3
 			end
 		},
@@ -791,7 +791,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_13_0)
+			condition = function (arg_13_0)
 				return var_0_1() < 20
 			end
 		},
@@ -868,7 +868,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_14_0)
+			condition = function (arg_14_0)
 				return var_0_1() < 5
 			end
 		},
@@ -951,7 +951,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_15_0)
+			condition = function (arg_15_0)
 				return var_0_1() < 6
 			end
 		},
@@ -998,7 +998,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_16_0)
+			condition = function (arg_16_0)
 				return var_0_1() < 1
 			end
 		},
@@ -1109,7 +1109,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_17_0)
+			condition = function (arg_17_0)
 				return var_0_1() < 8
 			end
 		},
@@ -1168,7 +1168,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_18_0)
+			condition = function (arg_18_0)
 				return var_0_1() < 5
 			end
 		},
@@ -1262,7 +1262,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_19_0)
+			condition = function (arg_19_0)
 				return var_0_1() < 5
 			end
 		},
@@ -1283,7 +1283,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_20_0)
+			condition = function (arg_20_0)
 				return var_0_1() < 1
 			end
 		},
@@ -1351,7 +1351,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function(arg_21_0)
+			condition = function (arg_21_0)
 				return var_0_1() < 8
 			end
 		},
@@ -1406,7 +1406,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_22_0)
+			condition = function (arg_22_0)
 				return var_0_1() < 5
 			end
 		},
@@ -1499,7 +1499,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_23_0)
+			condition = function (arg_23_0)
 				return var_0_1() < 3
 			end
 		},
@@ -1624,7 +1624,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_24_0)
+			condition = function (arg_24_0)
 				return var_0_1() < 10
 			end
 		},
@@ -1649,7 +1649,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_25_0)
+			condition = function (arg_25_0)
 				return var_0_1() < 3
 			end
 		},
@@ -1736,7 +1736,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_26_0)
+			condition = function (arg_26_0)
 				return var_0_1() < 10
 			end
 		},
@@ -1775,7 +1775,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_27_0)
+			condition = function (arg_27_0)
 				return var_0_1() < 10
 			end
 		},
@@ -1800,7 +1800,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_28_0)
+			condition = function (arg_28_0)
 				return var_0_1() < 5
 			end
 		},
@@ -1881,7 +1881,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function(arg_29_0)
+			condition = function (arg_29_0)
 				return var_0_1() < 2
 			end
 		},
@@ -1986,7 +1986,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_30_0)
+			condition = function (arg_30_0)
 				return var_0_1() < 2
 			end
 		},
@@ -2049,7 +2049,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_31_0)
+			condition = function (arg_31_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2129,7 +2129,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_32_0)
+			condition = function (arg_32_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2188,7 +2188,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_33_0)
+			condition = function (arg_33_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2244,7 +2244,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_34_0)
+			condition = function (arg_34_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2336,7 +2336,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_35_0)
+			condition = function (arg_35_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2414,7 +2414,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_36_0)
+			condition = function (arg_36_0)
 				return var_0_1() < 6
 			end
 		},
@@ -2541,7 +2541,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_37_0)
+			condition = function (arg_37_0)
 				return var_0_1() < 10
 			end
 		},
@@ -2629,7 +2629,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 160,
-			condition = function(arg_38_0)
+			condition = function (arg_38_0)
 				return var_0_1() < 5
 			end
 		},
@@ -2655,7 +2655,7 @@ local var_0_5 = {
 		{
 			"continue_when",
 			duration = 300,
-			condition = function(arg_39_0)
+			condition = function (arg_39_0)
 				return var_0_1() < 1
 			end
 		},

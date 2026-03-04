@@ -6,7 +6,7 @@ CareerAbilityBarUI = class(CareerAbilityBarUI)
 
 local var_0_1 = true
 
-function CareerAbilityBarUI.init(arg_1_0, arg_1_1, arg_1_2)
+CareerAbilityBarUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._platform = PLATFORM
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
@@ -35,7 +35,7 @@ function CareerAbilityBarUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_update_game_options()
 end
 
-function CareerAbilityBarUI._get_ability_amount(arg_2_0, arg_2_1)
+CareerAbilityBarUI._get_ability_amount = function (arg_2_0, arg_2_1)
 	local var_2_0, var_2_1 = ScriptUnit.extension(arg_2_1, "career_system"):current_ability_cooldown()
 	local var_2_2 = 1 - var_2_0 / var_2_1
 	local var_2_3 = 0.25
@@ -45,18 +45,18 @@ function CareerAbilityBarUI._get_ability_amount(arg_2_0, arg_2_1)
 	return var_2_2, var_2_3, var_2_4, var_2_5
 end
 
-function CareerAbilityBarUI.on_spectator_target_changed(arg_3_0, arg_3_1)
+CareerAbilityBarUI.on_spectator_target_changed = function (arg_3_0, arg_3_1)
 	arg_3_0._spectated_player_unit = arg_3_1
 	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
 	arg_3_0._is_spectator = true
 end
 
-function CareerAbilityBarUI._set_player_extensions(arg_4_0, arg_4_1)
+CareerAbilityBarUI._set_player_extensions = function (arg_4_0, arg_4_1)
 	arg_4_0._inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
 	arg_4_0._initialize_ability_bar = true
 end
 
-function CareerAbilityBarUI._update_career_ability(arg_5_0, arg_5_1, arg_5_2)
+CareerAbilityBarUI._update_career_ability = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_1 then
 		return
 	end
@@ -91,7 +91,7 @@ function CareerAbilityBarUI._update_career_ability(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CareerAbilityBarUI._create_ui_elements(arg_6_0)
+CareerAbilityBarUI._create_ui_elements = function (arg_6_0)
 	UIRenderer.clear_scenegraph_queue(arg_6_0._ui_renderer)
 
 	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -102,7 +102,7 @@ function CareerAbilityBarUI._create_ui_elements(arg_6_0)
 	var_0_1 = false
 end
 
-function CareerAbilityBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+CareerAbilityBarUI.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if var_0_1 then
 		arg_7_0:_create_ui_elements()
 	end
@@ -161,7 +161,7 @@ local var_0_2 = {
 	}
 }
 
-function CareerAbilityBarUI._set_ability_bar_fraction(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+CareerAbilityBarUI._set_ability_bar_fraction = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0._ability_bar
 	local var_8_1 = var_8_0.style
 	local var_8_2 = var_8_0.content
@@ -217,18 +217,18 @@ function CareerAbilityBarUI._set_ability_bar_fraction(arg_8_0, arg_8_1, arg_8_2,
 	var_8_2.ability_bar_highlight.uvs[2][1] = (0.5 + var_8_18) % 1
 end
 
-function CareerAbilityBarUI.destroy(arg_9_0)
+CareerAbilityBarUI.destroy = function (arg_9_0)
 	local var_9_0 = Managers.state.event
 
 	var_9_0:unregister("on_spectator_target_changed", arg_9_0)
 	var_9_0:unregister("on_game_options_changed", arg_9_0)
 end
 
-function CareerAbilityBarUI.set_alpha(arg_10_0, arg_10_1)
+CareerAbilityBarUI.set_alpha = function (arg_10_0, arg_10_1)
 	arg_10_0._render_settings.alpha_multiplier = arg_10_1
 end
 
-function CareerAbilityBarUI._apply_crosshair_position(arg_11_0, arg_11_1, arg_11_2)
+CareerAbilityBarUI._apply_crosshair_position = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = "screen_bottom_pivot"
 	local var_11_1 = arg_11_0._ui_scenegraph[var_11_0].local_position
 
@@ -236,11 +236,11 @@ function CareerAbilityBarUI._apply_crosshair_position(arg_11_0, arg_11_1, arg_11
 	var_11_1[2] = arg_11_2
 end
 
-function CareerAbilityBarUI._set_game_options_dirty(arg_12_0)
+CareerAbilityBarUI._set_game_options_dirty = function (arg_12_0)
 	arg_12_0._game_options_dirty = true
 end
 
-function CareerAbilityBarUI._update_game_options(arg_13_0)
+CareerAbilityBarUI._update_game_options = function (arg_13_0)
 	if not arg_13_0._game_options_dirty then
 		return
 	end
@@ -250,7 +250,7 @@ function CareerAbilityBarUI._update_game_options(arg_13_0)
 	arg_13_0._game_options_dirty = false
 end
 
-function CareerAbilityBarUI._update_gamepad_input_button(arg_14_0)
+CareerAbilityBarUI._update_gamepad_input_button = function (arg_14_0)
 	local var_14_0 = Managers.input:get_service("Player")
 	local var_14_1 = "weapon_reload_input"
 	local var_14_2 = true

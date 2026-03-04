@@ -481,7 +481,7 @@ skip_widget = {
 				style_id = "input_text_2",
 				pass_type = "text",
 				text_id = "input_text_2",
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return not arg_1_0.input_icon
 				end
 			},
@@ -494,7 +494,7 @@ skip_widget = {
 				pass_type = "texture",
 				style_id = "input_icon",
 				texture_id = "input_icon",
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return arg_2_0.input_icon
 				end
 			},
@@ -502,21 +502,21 @@ skip_widget = {
 				pass_type = "gradient_mask_texture",
 				style_id = "input_icon_bar",
 				texture_id = "input_icon_bar",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return not arg_3_0.using_keyboard
 				end
 			},
 			{
 				style_id = "hold_bar",
 				pass_type = "rect",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.using_keyboard
 				end
 			},
 			{
 				style_id = "hold_bar_bg",
 				pass_type = "rect",
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.using_keyboard
 				end
 			}
@@ -666,7 +666,7 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "gamepad_navigation_icon",
 					texture_id = "gamepad_navigation_icon",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.gamepad_active
 					end
 				},
@@ -674,7 +674,7 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "gamepad_accept_icon",
 					texture_id = "gamepad_accept_icon",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.gamepad_active
 					end
 				},
@@ -682,7 +682,7 @@ local function var_0_9()
 					style_id = "gamepad_navigation_text",
 					pass_type = "text",
 					text_id = "gamepad_navigation_text",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.gamepad_active
 					end
 				},
@@ -690,7 +690,7 @@ local function var_0_9()
 					style_id = "gamepad_accept_text",
 					pass_type = "text",
 					text_id = "gamepad_accept_text",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.gamepad_active
 					end
 				}
@@ -910,7 +910,7 @@ local var_0_25 = "TitleLoadingUI"
 
 TitleLoadingUI = class(TitleLoadingUI)
 
-function TitleLoadingUI.init(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+TitleLoadingUI.init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	Framerate.set_low_power()
 
 	var_0_19 = var_0_18
@@ -960,17 +960,17 @@ function TitleLoadingUI.init(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function TitleLoadingUI.cb_cinematic_package_loaded(arg_13_0)
+TitleLoadingUI.cb_cinematic_package_loaded = function (arg_13_0)
 	arg_13_0._cinematic_package_loaded = true
 
 	arg_13_0:_setup_gui()
 end
 
-function TitleLoadingUI.is_loading_packages(arg_14_0)
+TitleLoadingUI.is_loading_packages = function (arg_14_0)
 	return arg_14_0._loading_packages
 end
 
-function TitleLoadingUI._setup_gui(arg_15_0)
+TitleLoadingUI._setup_gui = function (arg_15_0)
 	arg_15_0._ui_renderer = UIRenderer.create(arg_15_0._world, "material", "materials/ui/ui_1080p_title_screen", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_menu_atlas_textures", "material", var_0_19.video_name, "material", "materials/fonts/gw_fonts")
 
 	arg_15_0:_create_elements()
@@ -982,7 +982,7 @@ function TitleLoadingUI._setup_gui(arg_15_0)
 	end
 end
 
-function TitleLoadingUI._create_elements(arg_16_0)
+TitleLoadingUI._create_elements = function (arg_16_0)
 	arg_16_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_7)
 	arg_16_0._video_widget = UIWidget.init(UIWidgets.create_splash_video(var_0_19, var_0_25))
 	arg_16_0._skip_widget = UIWidget.init(skip_widget)
@@ -1065,7 +1065,7 @@ end
 
 DO_RELOAD = true
 
-function TitleLoadingUI.setup_gamma_menu(arg_17_0)
+TitleLoadingUI.setup_gamma_menu = function (arg_17_0)
 	local var_17_0 = arg_17_0._gamma_widgets_by_name.gamma_stepper
 	local var_17_1 = arg_17_0._gamma_widgets_by_name.gamma_adjuster
 	local var_17_2 = var_0_21.min
@@ -1082,7 +1082,7 @@ function TitleLoadingUI.setup_gamma_menu(arg_17_0)
 	var_17_1.content.value_text = string.format("%.1f", var_17_5)
 end
 
-function TitleLoadingUI.setup_sound_panning_menu(arg_18_0)
+TitleLoadingUI.setup_sound_panning_menu = function (arg_18_0)
 	local var_18_0 = arg_18_0._panning_widgets_by_name.stepper
 	local var_18_1 = var_0_22.min
 	local var_18_2 = var_0_22.max
@@ -1099,7 +1099,7 @@ function TitleLoadingUI.setup_sound_panning_menu(arg_18_0)
 	arg_18_0:_change_sound_panning_display_by_value(var_18_3)
 end
 
-function TitleLoadingUI.setup_sound_dynamic_range_menu(arg_19_0)
+TitleLoadingUI.setup_sound_dynamic_range_menu = function (arg_19_0)
 	local var_19_0 = arg_19_0._dynamic_range_widgets_by_name.stepper
 	local var_19_1 = var_0_23.min
 	local var_19_2 = var_0_23.max
@@ -1116,7 +1116,7 @@ function TitleLoadingUI.setup_sound_dynamic_range_menu(arg_19_0)
 	arg_19_0:_change_sound_dynamic_range_display_by_value(var_19_3)
 end
 
-function TitleLoadingUI.update(arg_20_0, arg_20_1, arg_20_2)
+TitleLoadingUI.update = function (arg_20_0, arg_20_1, arg_20_2)
 	if DO_RELOAD then
 		arg_20_0:_create_elements()
 	end
@@ -1202,7 +1202,7 @@ function TitleLoadingUI.update(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function TitleLoadingUI._change_sound_panning_display_by_value(arg_21_0, arg_21_1)
+TitleLoadingUI._change_sound_panning_display_by_value = function (arg_21_0, arg_21_1)
 	local var_21_0 = var_0_22.min
 	local var_21_1 = var_0_22.max
 	local var_21_2 = var_0_20(var_21_0, var_21_1, arg_21_1)
@@ -1221,7 +1221,7 @@ function TitleLoadingUI._change_sound_panning_display_by_value(arg_21_0, arg_21_
 	var_21_4.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. arg_21_1
 end
 
-function TitleLoadingUI._change_sound_dynamic_range_display_by_value(arg_22_0, arg_22_1)
+TitleLoadingUI._change_sound_dynamic_range_display_by_value = function (arg_22_0, arg_22_1)
 	local var_22_0 = var_0_23.min
 	local var_22_1 = var_0_23.max
 	local var_22_2 = var_0_20(var_22_0, var_22_1, arg_22_1)
@@ -1237,7 +1237,7 @@ function TitleLoadingUI._change_sound_dynamic_range_display_by_value(arg_22_0, a
 	var_22_6.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. arg_22_1 + 4
 end
 
-function TitleLoadingUI._update_continue_button(arg_23_0, arg_23_1, arg_23_2)
+TitleLoadingUI._update_continue_button = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0:_animate_button(arg_23_0._done_button, arg_23_2)
 
 	local var_23_0 = Managers.input:get_service("title_loading_ui")
@@ -1280,7 +1280,7 @@ function TitleLoadingUI._update_continue_button(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function TitleLoadingUI._animate_button(arg_24_0, arg_24_1, arg_24_2)
+TitleLoadingUI._animate_button = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.ui_renderer
 	local var_24_1 = arg_24_1.scenegraph_id
 	local var_24_2 = arg_24_1.content
@@ -1352,7 +1352,7 @@ function TitleLoadingUI._animate_button(arg_24_0, arg_24_1, arg_24_2)
 	Colors.lerp_color_tables(var_24_30, var_24_31, var_24_19, var_24_29)
 end
 
-function TitleLoadingUI._handle_stepper_input(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+TitleLoadingUI._handle_stepper_input = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	local var_25_0 = Managers.input:get_service("title_loading_ui")
 	local var_25_1 = arg_25_1.content
 	local var_25_2 = var_25_1.left_hotspot
@@ -1434,7 +1434,7 @@ function TitleLoadingUI._handle_stepper_input(arg_25_0, arg_25_1, arg_25_2, arg_
 	return var_25_18
 end
 
-function TitleLoadingUI._on_stepper_arrow_hover(arg_26_0, arg_26_1, arg_26_2)
+TitleLoadingUI._on_stepper_arrow_hover = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_1.animations
 	local var_26_1 = arg_26_1.style[arg_26_2]
 	local var_26_2 = var_26_1.color[1]
@@ -1451,7 +1451,7 @@ function TitleLoadingUI._on_stepper_arrow_hover(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function TitleLoadingUI._on_stepper_arrow_dehover(arg_27_0, arg_27_1, arg_27_2)
+TitleLoadingUI._on_stepper_arrow_dehover = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_1.animations
 	local var_27_1 = arg_27_1.style[arg_27_2]
 	local var_27_2 = var_27_1.color[1]
@@ -1468,7 +1468,7 @@ function TitleLoadingUI._on_stepper_arrow_dehover(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function TitleLoadingUI._on_stepper_arrow_pressed(arg_28_0, arg_28_1, arg_28_2)
+TitleLoadingUI._on_stepper_arrow_pressed = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_1.animations
 	local var_28_1 = arg_28_1.style[arg_28_2]
 	local var_28_2 = var_28_1.default_size
@@ -1489,15 +1489,15 @@ function TitleLoadingUI._on_stepper_arrow_pressed(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function TitleLoadingUI._animate_element_by_catmullrom(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8)
+TitleLoadingUI._animate_element_by_catmullrom = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8))
 end
 
-function TitleLoadingUI._animate_element_by_time(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
+TitleLoadingUI._animate_element_by_time = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, math.ease_out_quad))
 end
 
-function TitleLoadingUI._get_input_texture_data(arg_31_0, arg_31_1)
+TitleLoadingUI._get_input_texture_data = function (arg_31_0, arg_31_1)
 	local var_31_0 = Managers.input:get_service("title_loading_ui")
 
 	if (Managers.input:is_device_active("keyboard") or Managers.input:is_device_active("mouse")) and IS_WINDOWS then
@@ -1514,13 +1514,13 @@ function TitleLoadingUI._get_input_texture_data(arg_31_0, arg_31_1)
 	end
 end
 
-function TitleLoadingUI._get_input_gamepad_texture_data(arg_32_0, arg_32_1)
+TitleLoadingUI._get_input_gamepad_texture_data = function (arg_32_0, arg_32_1)
 	local var_32_0 = Managers.input:get_service("title_loading_ui")
 
 	return UISettings.get_gamepad_input_texture_data(var_32_0, arg_32_1, true)
 end
 
-function TitleLoadingUI._update_input_text(arg_33_0, arg_33_1)
+TitleLoadingUI._update_input_text = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._skip_widget.content
 	local var_33_1 = arg_33_0._skip_widget.style
 	local var_33_2 = arg_33_0._ui_scenegraph
@@ -1569,7 +1569,7 @@ end
 
 INPUTS_TO_REMOVE = {}
 
-function TitleLoadingUI._update_any_held(arg_34_0)
+TitleLoadingUI._update_any_held = function (arg_34_0)
 	local var_34_0 = false
 
 	for iter_34_0, iter_34_1 in pairs(arg_34_0._current_inputs) do
@@ -1614,7 +1614,7 @@ function TitleLoadingUI._update_any_held(arg_34_0)
 	return var_34_0
 end
 
-function TitleLoadingUI._update_input(arg_35_0, arg_35_1)
+TitleLoadingUI._update_input = function (arg_35_0, arg_35_1)
 	if arg_35_0._force_done then
 		arg_35_0:_handle_skip_fade(0)
 
@@ -1683,7 +1683,7 @@ function TitleLoadingUI._update_input(arg_35_0, arg_35_1)
 	arg_35_0._cancel_video = arg_35_0._cancel_video or var_35_2
 end
 
-function TitleLoadingUI._handle_skip_fade(arg_36_0, arg_36_1)
+TitleLoadingUI._handle_skip_fade = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._skip_widget.style
 
 	var_36_0.input_text_1.text_color[1] = arg_36_1
@@ -1694,7 +1694,7 @@ function TitleLoadingUI._handle_skip_fade(arg_36_0, arg_36_1)
 	var_36_0.hold_bar_bg.color[1] = arg_36_1
 end
 
-function TitleLoadingUI._render(arg_37_0, arg_37_1)
+TitleLoadingUI._render = function (arg_37_0, arg_37_1)
 	local var_37_0 = Managers.input
 	local var_37_1 = var_37_0:get_service("title_loading_ui")
 	local var_37_2 = var_37_0:is_device_active("gamepad")
@@ -1751,7 +1751,7 @@ function TitleLoadingUI._render(arg_37_0, arg_37_1)
 	end
 end
 
-function TitleLoadingUI._render_video(arg_38_0, arg_38_1)
+TitleLoadingUI._render_video = function (arg_38_0, arg_38_1)
 	if not arg_38_0._trailer then
 		return
 	end
@@ -1796,7 +1796,7 @@ function TitleLoadingUI._render_video(arg_38_0, arg_38_1)
 	end
 end
 
-function TitleLoadingUI.destroy(arg_39_0)
+TitleLoadingUI.destroy = function (arg_39_0)
 	arg_39_0:_stop_subtitles()
 
 	if arg_39_0._ui_renderer then
@@ -1818,11 +1818,11 @@ function TitleLoadingUI.destroy(arg_39_0)
 	end
 end
 
-function TitleLoadingUI.is_done(arg_40_0)
+TitleLoadingUI.is_done = function (arg_40_0)
 	return arg_40_0._startup_settings_done and (arg_40_0._force_done or arg_40_0._done)
 end
 
-function TitleLoadingUI.force_done(arg_41_0)
+TitleLoadingUI.force_done = function (arg_41_0)
 	arg_41_0._force_done = true
 	arg_41_0._cancel_timer = nil
 
@@ -1833,7 +1833,7 @@ function TitleLoadingUI.force_done(arg_41_0)
 	arg_41_0._skip_widget.style.input_icon_bar.gradient_threshold = 0
 end
 
-function TitleLoadingUI._start_subtitles_by_template(arg_42_0, arg_42_1)
+TitleLoadingUI._start_subtitles_by_template = function (arg_42_0, arg_42_1)
 	if not Application.user_setting("use_subtitles") then
 		return
 	end
@@ -1852,12 +1852,12 @@ function TitleLoadingUI._start_subtitles_by_template(arg_42_0, arg_42_1)
 	arg_42_0.cutscene_overlay_ui:start(arg_42_1)
 end
 
-function TitleLoadingUI._stop_subtitles(arg_43_0)
+TitleLoadingUI._stop_subtitles = function (arg_43_0)
 	if arg_43_0.cutscene_overlay_ui then
 		arg_43_0.cutscene_overlay_ui:destroy()
 	end
 end
 
-function TitleLoadingUI._has_active_subtitles(arg_44_0)
+TitleLoadingUI._has_active_subtitles = function (arg_44_0)
 	return arg_44_0.cutscene_overlay_ui ~= nil
 end

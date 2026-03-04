@@ -35,7 +35,7 @@ local var_0_4 = 15
 
 DLCUtils.append("area_damage_extension", var_0_2)
 
-function AreaDamageSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AreaDamageSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	AreaDamageSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -58,7 +58,7 @@ local var_0_5 = {
 	"LiquidAreaDamageExtension"
 }
 
-function AreaDamageSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+AreaDamageSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = AreaDamageSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	if table.contains(var_0_5, arg_2_3) then
@@ -94,11 +94,11 @@ function AreaDamageSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	return var_2_0
 end
 
-function AreaDamageSystem.has_source_attacker_unit_data(arg_3_0, arg_3_1)
+AreaDamageSystem.has_source_attacker_unit_data = function (arg_3_0, arg_3_1)
 	return arg_3_0._source_attacker_unit_data[arg_3_1]
 end
 
-function AreaDamageSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+AreaDamageSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = ScriptUnit.extension(arg_4_1, "area_damage_system")
 	local var_4_1 = arg_4_0.liquid_extension_indexes
 	local var_4_2 = var_4_1[var_4_0]
@@ -124,16 +124,16 @@ function AreaDamageSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 	AreaDamageSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function AreaDamageSystem.destroy(arg_5_0)
+AreaDamageSystem.destroy = function (arg_5_0)
 	arg_5_0.network_event_delegate:unregister(arg_5_0)
 end
 
-function AreaDamageSystem.update(arg_6_0, arg_6_1, arg_6_2)
+AreaDamageSystem.update = function (arg_6_0, arg_6_1, arg_6_2)
 	AreaDamageSystem.super.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_aoe_damage_buffer()
 end
 
-function AreaDamageSystem.create_explosion(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9)
+AreaDamageSystem.create_explosion = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9)
 	if not NetworkUtils.network_safe_position(arg_7_2) then
 		return false
 	end
@@ -173,7 +173,7 @@ function AreaDamageSystem.create_explosion(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 	end
 end
 
-function AreaDamageSystem.enable_area_damage(arg_8_0, arg_8_1, arg_8_2)
+AreaDamageSystem.enable_area_damage = function (arg_8_0, arg_8_1, arg_8_2)
 	fassert(arg_8_0.is_server, "You better call this on the server, or it's gonna craaash")
 	ScriptUnit.extension(arg_8_1, "area_damage_system"):enable_area_damage(arg_8_2)
 
@@ -182,7 +182,7 @@ function AreaDamageSystem.enable_area_damage(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.network_transmit:send_rpc_clients("rpc_enable_area_damage", var_8_0, arg_8_2)
 end
 
-function AreaDamageSystem.is_position_in_liquid(arg_9_0, arg_9_1, arg_9_2)
+AreaDamageSystem.is_position_in_liquid = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.liquid_extensions
 	local var_9_1 = arg_9_0.num_liquid_extensions
 	local var_9_2 = false
@@ -198,7 +198,7 @@ function AreaDamageSystem.is_position_in_liquid(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_2
 end
 
-function AreaDamageSystem._create_aoe_damage_buffer(arg_10_0)
+AreaDamageSystem._create_aoe_damage_buffer = function (arg_10_0)
 	local var_10_0 = var_0_3
 
 	arg_10_0._aoe_damage_ring_buffer = {
@@ -230,7 +230,7 @@ function AreaDamageSystem._create_aoe_damage_buffer(arg_10_0)
 	end
 end
 
-function AreaDamageSystem.add_aoe_damage_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18, arg_11_19, arg_11_20, arg_11_21)
+AreaDamageSystem.add_aoe_damage_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18, arg_11_19, arg_11_20, arg_11_21)
 	local var_11_0 = arg_11_0._aoe_damage_ring_buffer
 	local var_11_1 = var_11_0.buffer
 	local var_11_2 = var_11_0.read_index
@@ -278,7 +278,7 @@ function AreaDamageSystem.add_aoe_damage_target(arg_11_0, arg_11_1, arg_11_2, ar
 	var_11_0.write_index = var_11_3 % var_11_5 + 1
 end
 
-function AreaDamageSystem._update_aoe_damage_buffer(arg_12_0)
+AreaDamageSystem._update_aoe_damage_buffer = function (arg_12_0)
 	local var_12_0 = arg_12_0._aoe_damage_ring_buffer
 
 	if var_12_0.size == 0 then
@@ -302,7 +302,7 @@ function AreaDamageSystem._update_aoe_damage_buffer(arg_12_0)
 	var_12_0.read_index = var_12_2
 end
 
-function AreaDamageSystem._damage_unit(arg_13_0, arg_13_1)
+AreaDamageSystem._damage_unit = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1.hit_unit
 	local var_13_1 = arg_13_1.attacker_unit
 	local var_13_2 = arg_13_1.source_attacker_unit
@@ -434,7 +434,7 @@ function AreaDamageSystem._damage_unit(arg_13_0, arg_13_1)
 	end
 end
 
-function AreaDamageSystem.rpc_area_damage(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+AreaDamageSystem.rpc_area_damage = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0.unit_storage:unit(arg_14_2)
 
 	if var_14_0 then
@@ -443,7 +443,7 @@ function AreaDamageSystem.rpc_area_damage(arg_14_0, arg_14_1, arg_14_2, arg_14_3
 	end
 end
 
-function AreaDamageSystem.rpc_create_explosion(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11)
+AreaDamageSystem.rpc_create_explosion = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11)
 	if arg_15_0.is_server then
 		local var_15_0 = CHANNEL_TO_PEER_ID[arg_15_1]
 
@@ -467,13 +467,13 @@ function AreaDamageSystem.rpc_create_explosion(arg_15_0, arg_15_1, arg_15_2, arg
 	DamageUtils.create_explosion(arg_15_0.world, var_15_1, arg_15_4, arg_15_5, var_15_4, arg_15_7, var_15_5, arg_15_0.is_server, var_15_6, var_15_1, arg_15_9, arg_15_10, var_15_2)
 end
 
-function AreaDamageSystem.rpc_enable_area_damage(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+AreaDamageSystem.rpc_enable_area_damage = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = Managers.state.network:game_object_or_level_unit(arg_16_2, true)
 
 	ScriptUnit.extension(var_16_0, "area_damage_system"):enable(arg_16_3)
 end
 
-function AreaDamageSystem.rpc_create_liquid_damage_area(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+AreaDamageSystem.rpc_create_liquid_damage_area = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	fassert(arg_17_0.is_server, "Error! Only the server should create Liquid Damage Areas!")
 
 	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_2)
@@ -491,7 +491,7 @@ function AreaDamageSystem.rpc_create_liquid_damage_area(arg_17_0, arg_17_1, arg_
 	ScriptUnit.extension(var_17_4, "area_damage_system"):ready()
 end
 
-function AreaDamageSystem.rpc_add_liquid_damage_blob(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AreaDamageSystem.rpc_add_liquid_damage_blob = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0 = arg_18_0.unit_storage:unit(arg_18_2)
 
 	if var_18_0 then
@@ -499,7 +499,7 @@ function AreaDamageSystem.rpc_add_liquid_damage_blob(arg_18_0, arg_18_1, arg_18_
 	end
 end
 
-function AreaDamageSystem.rpc_update_liquid_damage_blob(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+AreaDamageSystem.rpc_update_liquid_damage_blob = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_0.unit_storage:unit(arg_19_2)
 
 	if not var_19_0 then
@@ -519,7 +519,7 @@ function AreaDamageSystem.rpc_update_liquid_damage_blob(arg_19_0, arg_19_1, arg_
 	end
 end
 
-function AreaDamageSystem.rpc_damage_wave_set_state(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+AreaDamageSystem.rpc_damage_wave_set_state = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_0.unit_storage:unit(arg_20_2)
 
 	if not var_20_0 then
@@ -541,7 +541,7 @@ function AreaDamageSystem.rpc_damage_wave_set_state(arg_20_0, arg_20_1, arg_20_2
 	end
 end
 
-function AreaDamageSystem._create_damage_wave(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+AreaDamageSystem._create_damage_wave = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	fassert(arg_21_0.is_server, "Error! Only the server should create Damage Waves!")
 
 	arg_21_4 = arg_21_4 or "units/hub_elements/empty"
@@ -558,7 +558,7 @@ function AreaDamageSystem._create_damage_wave(arg_21_0, arg_21_1, arg_21_2, arg_
 	return (ScriptUnit.extension(var_21_2, "area_damage_system"))
 end
 
-function AreaDamageSystem.rpc_create_damage_wave(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+AreaDamageSystem.rpc_create_damage_wave = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	fassert(arg_22_0.is_server, "Error! Only the server should create Damage Waves!")
 
 	local var_22_0 = "units/hub_elements/empty"
@@ -568,7 +568,7 @@ function AreaDamageSystem.rpc_create_damage_wave(arg_22_0, arg_22_1, arg_22_2, a
 	arg_22_0:_create_damage_wave(var_22_1, arg_22_3, var_22_2, var_22_0):launch_wave(nil, arg_22_4)
 end
 
-function AreaDamageSystem.rpc_create_thornsister_push_wave(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+AreaDamageSystem.rpc_create_thornsister_push_wave = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
 	fassert(arg_23_0.is_server, "Error! Only the server should create thornsister push waves!")
 
 	local var_23_0 = "units/hub_elements/empty"
@@ -590,7 +590,7 @@ function AreaDamageSystem.rpc_create_thornsister_push_wave(arg_23_0, arg_23_1, a
 	var_23_3:launch_wave(nil, arg_23_4, var_23_5)
 end
 
-function AreaDamageSystem.rpc_necromancer_create_curse_weave(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+AreaDamageSystem.rpc_necromancer_create_curse_weave = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 
 	if not var_24_0 then
@@ -648,7 +648,7 @@ function AreaDamageSystem.rpc_necromancer_create_curse_weave(arg_24_0, arg_24_1,
 	end
 end
 
-function AreaDamageSystem.rpc_necromancer_create_curse_area(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+AreaDamageSystem.rpc_necromancer_create_curse_area = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = arg_25_0.unit_storage:unit(arg_25_2)
 
 	if not var_25_0 then
@@ -671,7 +671,7 @@ function AreaDamageSystem.rpc_necromancer_create_curse_area(arg_25_0, arg_25_1, 
 	end
 end
 
-function AreaDamageSystem.rpc_add_damage_wave_fx(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+AreaDamageSystem.rpc_add_damage_wave_fx = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
 	local var_26_0 = arg_26_0.unit_storage:unit(arg_26_2)
 
 	if var_26_0 then
@@ -679,7 +679,7 @@ function AreaDamageSystem.rpc_add_damage_wave_fx(arg_26_0, arg_26_1, arg_26_2, a
 	end
 end
 
-function AreaDamageSystem.rpc_add_damage_blob_fx(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AreaDamageSystem.rpc_add_damage_blob_fx = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = arg_27_0.unit_storage:unit(arg_27_2)
 
 	if var_27_0 then
@@ -687,7 +687,7 @@ function AreaDamageSystem.rpc_add_damage_blob_fx(arg_27_0, arg_27_1, arg_27_2, a
 	end
 end
 
-function AreaDamageSystem.rpc_abort_damage_blob(arg_28_0, arg_28_1, arg_28_2)
+AreaDamageSystem.rpc_abort_damage_blob = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.unit_storage:unit(arg_28_2)
 
 	if var_28_0 then

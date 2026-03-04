@@ -9,13 +9,13 @@ local var_0_0 = 10
 local var_0_1 = 1
 local var_0_2 = 2
 
-function BTPackMasterGetHookAction.init(arg_1_0, ...)
+BTPackMasterGetHookAction.init = function (arg_1_0, ...)
 	BTPackMasterGetHookAction.super.init(arg_1_0, ...)
 
 	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
 end
 
-function BTPackMasterGetHookAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterGetHookAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	if not arg_2_2.best_cover then
 		arg_2_2.end_time = arg_2_3 + 10
 
@@ -27,7 +27,7 @@ function BTPackMasterGetHookAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.move_state = "moving"
 end
 
-function BTPackMasterGetHookAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterGetHookAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 == "done" then
 		AiUtils.show_polearm(arg_3_1, true)
 
@@ -39,7 +39,7 @@ function BTPackMasterGetHookAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	Managers.state.network:anim_event(arg_3_1, "move_fwd")
 end
 
-function BTPackMasterGetHookAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterGetHookAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = ConflictUtils.average_player_position()
 
 	if var_4_0 == nil then
@@ -79,7 +79,7 @@ function BTPackMasterGetHookAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	return "running"
 end
 
-function BTPackMasterGetHookAction.find_hidden_cover(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTPackMasterGetHookAction.find_hidden_cover = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_3.best_cover_score = -math.huge
 	arg_5_3.best_cover = nil
 

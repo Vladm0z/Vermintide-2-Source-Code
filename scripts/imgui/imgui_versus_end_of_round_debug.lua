@@ -6,7 +6,7 @@ local var_0_0 = Gui
 local var_0_1 = Imgui
 local var_0_2 = true
 
-function ImguiVersusEndOfRoundDebug.init(arg_1_0)
+ImguiVersusEndOfRoundDebug.init = function (arg_1_0)
 	arg_1_0._max_score = 0
 	arg_1_0._local_player_team_available_score = 0
 	arg_1_0._opponent_team_available_score = 0
@@ -26,7 +26,7 @@ function ImguiVersusEndOfRoundDebug.init(arg_1_0)
 	arg_1_0._score_to_add = 0
 end
 
-function ImguiVersusEndOfRoundDebug.update(arg_2_0)
+ImguiVersusEndOfRoundDebug.update = function (arg_2_0)
 	if var_0_2 then
 		arg_2_0:init()
 
@@ -34,23 +34,23 @@ function ImguiVersusEndOfRoundDebug.update(arg_2_0)
 	end
 end
 
-function ImguiVersusEndOfRoundDebug.on_show(arg_3_0)
+ImguiVersusEndOfRoundDebug.on_show = function (arg_3_0)
 	arg_3_0._active = true
 end
 
-function ImguiVersusEndOfRoundDebug.on_hide(arg_4_0)
+ImguiVersusEndOfRoundDebug.on_hide = function (arg_4_0)
 	arg_4_0._active = false
 end
 
-function ImguiVersusEndOfRoundDebug.draw(arg_5_0, arg_5_1)
+ImguiVersusEndOfRoundDebug.draw = function (arg_5_0, arg_5_1)
 	return (arg_5_0:_do_main_window())
 end
 
-function ImguiVersusEndOfRoundDebug.is_persistent(arg_6_0)
+ImguiVersusEndOfRoundDebug.is_persistent = function (arg_6_0)
 	return true
 end
 
-function ImguiVersusEndOfRoundDebug._do_main_window(arg_7_0)
+ImguiVersusEndOfRoundDebug._do_main_window = function (arg_7_0)
 	if arg_7_0._first_launch then
 		local var_7_0, var_7_1 = Application.resolution()
 
@@ -81,25 +81,25 @@ function ImguiVersusEndOfRoundDebug._do_main_window(arg_7_0)
 	return var_7_2
 end
 
-function ImguiVersusEndOfRoundDebug._get_win_conditions(arg_8_0)
+ImguiVersusEndOfRoundDebug._get_win_conditions = function (arg_8_0)
 	return (Managers.mechanism:game_mechanism():win_conditions())
 end
 
-function ImguiVersusEndOfRoundDebug._get_round_count(arg_9_0)
+ImguiVersusEndOfRoundDebug._get_round_count = function (arg_9_0)
 	return (arg_9_0:_get_win_conditions():get_current_round())
 end
 
-function ImguiVersusEndOfRoundDebug._get_current_set(arg_10_0)
+ImguiVersusEndOfRoundDebug._get_current_set = function (arg_10_0)
 	local var_10_0 = arg_10_0:_get_win_conditions():get_current_round()
 
 	return math.round(var_10_0 / 2)
 end
 
-function ImguiVersusEndOfRoundDebug._get_num_rounds(arg_11_0)
+ImguiVersusEndOfRoundDebug._get_num_rounds = function (arg_11_0)
 	return (Managers.mechanism:game_mechanism():num_sets())
 end
 
-function ImguiVersusEndOfRoundDebug._collect_data_for_preview(arg_12_0)
+ImguiVersusEndOfRoundDebug._collect_data_for_preview = function (arg_12_0)
 	local var_12_0 = arg_12_0:_get_win_conditions()
 	local var_12_1 = arg_12_0:_get_current_set()
 	local var_12_2 = arg_12_0:_get_round_count()
@@ -210,7 +210,7 @@ function ImguiVersusEndOfRoundDebug._collect_data_for_preview(arg_12_0)
 	arg_12_0._opponent_team_score_to_win = var_12_30
 end
 
-function ImguiVersusEndOfRoundDebug._do_preview(arg_13_0)
+ImguiVersusEndOfRoundDebug._do_preview = function (arg_13_0)
 	arg_13_0:_do_add_score()
 	var_0_1.dummy(2, 5)
 	arg_13_0:_do_end_round()
@@ -239,7 +239,7 @@ function ImguiVersusEndOfRoundDebug._do_preview(arg_13_0)
 	arg_13_0:_do_sets_data_preview()
 end
 
-function ImguiVersusEndOfRoundDebug._do_add_score(arg_14_0)
+ImguiVersusEndOfRoundDebug._do_add_score = function (arg_14_0)
 	script_data.disable_gamemode_end = var_0_1.checkbox("Disable Gamemode End", not not script_data.disable_gamemode_end)
 	arg_14_0._limit_score_to_round = var_0_1.checkbox("Limit the score that can be added to the max score for this round", arg_14_0._limit_score_to_round)
 	arg_14_0._score_to_add = var_0_1.input_int("Score", arg_14_0._score_to_add)
@@ -250,14 +250,14 @@ function ImguiVersusEndOfRoundDebug._do_add_score(arg_14_0)
 		end
 
 		if arg_14_0._limit_score_to_round then
-			-- block empty
+			-- Nothing
 		end
 
 		Managers.mechanism:game_mechanism():win_conditions():add_score(arg_14_0._score_to_add)
 	end
 end
 
-function ImguiVersusEndOfRoundDebug._do_end_round(arg_15_0)
+ImguiVersusEndOfRoundDebug._do_end_round = function (arg_15_0)
 	if var_0_1.button("End Round", 200, 20) then
 		if Managers.level_transition_handler:in_hub_level() then
 			printf("Failed to end round - Match not started")
@@ -276,7 +276,7 @@ function ImguiVersusEndOfRoundDebug._do_end_round(arg_15_0)
 	end
 end
 
-function ImguiVersusEndOfRoundDebug._do_sets_data_preview(arg_16_0)
+ImguiVersusEndOfRoundDebug._do_sets_data_preview = function (arg_16_0)
 	if var_0_1.tree_node("Local Player Sets Data", true) then
 		for iter_16_0, iter_16_1 in ipairs(arg_16_0._local_player_sets_data) do
 			if var_0_1.tree_node("Local Player Set " .. iter_16_0 .. " Data", false) then

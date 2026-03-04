@@ -72,7 +72,7 @@ if IS_WINDOWS then
 	BloodSettings.blood_decals.num_decals = var_0_0
 end
 
-function BloodSettings.get_hit_effect_for_race(arg_1_0, arg_1_1)
+BloodSettings.get_hit_effect_for_race = function (arg_1_0, arg_1_1)
 	if arg_1_0.hit_effects.enabled then
 		local var_1_0 = arg_1_0.hit_effects.first_person_per_race[arg_1_1]
 

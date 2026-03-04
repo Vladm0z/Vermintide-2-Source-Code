@@ -56,12 +56,12 @@ local function var_0_4()
 					texture_id = "ability_effect",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						arg_2_0.gamepad_active = Managers.input:is_device_active("gamepad")
 
 						return (not arg_2_0.on_cooldown or arg_2_0.usable) and not arg_2_0.hide_effect
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = Managers.player:local_player()
 						local var_3_1 = var_3_0 and var_3_0.player_unit
 
@@ -82,7 +82,7 @@ local function var_0_4()
 					style_id = "ability_effect_top",
 					texture_id = "ability_top_texture_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return (not arg_4_0.on_cooldown or arg_4_0.usable) and not arg_4_0.hide_effect
 					end
 				},
@@ -91,7 +91,7 @@ local function var_0_4()
 					style_id = "ability_effect_top",
 					texture_id = "lit_frame_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return (not arg_5_0.on_cooldown or arg_5_0.usable) and arg_5_0.lit_frame_id
 					end
 				},
@@ -100,7 +100,7 @@ local function var_0_4()
 					style_id = "activate_ability",
 					texture_id = "activate_ability_id",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return (not arg_6_0.on_cooldown or arg_6_0.always_show_activated_ability_input or arg_6_0.usable) and arg_6_0.activate_ability_id and arg_6_0.gamepad_active
 					end
 				},
@@ -109,7 +109,7 @@ local function var_0_4()
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return (not arg_7_0.on_cooldown or arg_7_0.always_show_activated_ability_input or arg_7_0.usable or arg_7_0.usable) and not arg_7_0.gamepad_active
 					end
 				},
@@ -118,7 +118,7 @@ local function var_0_4()
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return (not arg_8_0.on_cooldown or arg_8_0.always_show_activated_ability_input or arg_8_0.usable or arg_8_0.usable) and not arg_8_0.gamepad_active
 					end
 				},
@@ -127,7 +127,7 @@ local function var_0_4()
 					pass_type = "text",
 					text_id = "ability_cooldown",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return Application.user_setting("numeric_ui") and not arg_9_0.can_use_ability
 					end
 				},
@@ -136,7 +136,7 @@ local function var_0_4()
 					pass_type = "text",
 					text_id = "ability_cooldown",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return Application.user_setting("numeric_ui") and not arg_10_0.can_use_ability
 					end
 				}
@@ -304,7 +304,7 @@ local var_0_5 = {
 				style_id = "ability_effect",
 				texture_id = "ability_effect",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return arg_11_0.is_active
 				end
 			},
@@ -313,7 +313,7 @@ local var_0_5 = {
 				style_id = "ability_effect_top",
 				texture_id = "ability_top_texture_id",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return arg_12_0.is_active and not arg_12_0.hide_top_effect
 				end
 			}

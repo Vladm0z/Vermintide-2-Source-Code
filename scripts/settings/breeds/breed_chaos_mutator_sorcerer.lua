@@ -304,7 +304,7 @@ local var_0_1 = {
 		teleport_end_anim = "teleport_end",
 		teleport_effect_trail = "fx/chr_chaos_sorcerer_teleport_direction",
 		teleport_start_anim = "teleport_start",
-		teleport_pos_func = function(arg_1_0, arg_1_1)
+		teleport_pos_func = function (arg_1_0, arg_1_1)
 			local var_1_0 = Managers.state.conflict
 			local var_1_1 = math.max(var_1_0.main_path_info.ahead_travel_dist - 40, 0)
 
@@ -328,7 +328,7 @@ local var_0_1 = {
 			true,
 			true
 		},
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			local var_2_0
 
 			arg_2_1.stagger_ignore_anim_cb = true
@@ -342,7 +342,7 @@ local var_0_1 = {
 
 			return var_2_0, "idle"
 		end,
-		custom_exit_function = function(arg_3_0, arg_3_1, arg_3_2)
+		custom_exit_function = function (arg_3_0, arg_3_1, arg_3_2)
 			arg_3_1.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {

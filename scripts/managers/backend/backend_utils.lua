@@ -11,7 +11,7 @@ local var_0_0 = {
 	trinket = "icons_placeholder_trinket_01"
 }
 
-function BackendUtils.get_loadout_item_id(arg_1_0, arg_1_1, arg_1_2)
+BackendUtils.get_loadout_item_id = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = Managers.backend:get_loadout_interface_by_slot(arg_1_1)
 
 	if var_1_0 then
@@ -19,7 +19,7 @@ function BackendUtils.get_loadout_item_id(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function BackendUtils.set_loadout_item(arg_2_0, arg_2_1, arg_2_2)
+BackendUtils.set_loadout_item = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = Managers.backend:get_loadout_interface_by_slot(arg_2_2)
 
 	if var_2_0 then
@@ -27,7 +27,7 @@ function BackendUtils.set_loadout_item(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BackendUtils.get_loadout_item(arg_3_0, arg_3_1, arg_3_2)
+BackendUtils.get_loadout_item = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.backend:get_interface("items")
 	local var_3_1 = BackendUtils.get_loadout_item_id(arg_3_0, arg_3_1, arg_3_2)
 
@@ -45,7 +45,7 @@ function BackendUtils.get_loadout_item(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0:get_item_from_id(var_3_1)
 end
 
-function BackendUtils.try_set_loadout_item(arg_4_0, arg_4_1, arg_4_2)
+BackendUtils.try_set_loadout_item = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = Managers.backend:get_interface("items"):get_item_from_key(arg_4_2)
 
 	if var_4_0 then
@@ -59,7 +59,7 @@ function BackendUtils.try_set_loadout_item(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_0
 end
 
-function BackendUtils.get_item_from_masterlist(arg_5_0)
+BackendUtils.get_item_from_masterlist = function (arg_5_0)
 	local var_5_0 = Managers.backend:get_interface("items"):get_item_masterlist_data(arg_5_0)
 
 	if var_5_0 then
@@ -71,7 +71,7 @@ function BackendUtils.get_item_from_masterlist(arg_5_0)
 	end
 end
 
-function BackendUtils.get_hero_power_level_from_level(arg_6_0)
+BackendUtils.get_hero_power_level_from_level = function (arg_6_0)
 	local var_6_0 = PowerLevelFromLevelSettings
 	local var_6_1 = ExperienceSettings.get_experience(arg_6_0)
 	local var_6_2 = ExperienceSettings.get_level(var_6_1)
@@ -79,7 +79,7 @@ function BackendUtils.get_hero_power_level_from_level(arg_6_0)
 	return var_6_0.power_level_per_level * var_6_2
 end
 
-function BackendUtils.get_hero_power_level(arg_7_0)
+BackendUtils.get_hero_power_level = function (arg_7_0)
 	local var_7_0 = PowerLevelFromLevelSettings
 	local var_7_1 = ExperienceSettings.get_experience(arg_7_0)
 	local var_7_2 = ExperienceSettings.get_level(var_7_1)
@@ -87,7 +87,7 @@ function BackendUtils.get_hero_power_level(arg_7_0)
 	return var_7_0.power_level_per_level * var_7_2 + var_7_0.starting_power_level
 end
 
-function BackendUtils.get_average_item_power_level(arg_8_0)
+BackendUtils.get_average_item_power_level = function (arg_8_0)
 	local var_8_0 = Managers.backend:get_interface("items")
 	local var_8_1 = InventorySettings.equipment_slots
 	local var_8_2 = 5
@@ -110,7 +110,7 @@ function BackendUtils.get_average_item_power_level(arg_8_0)
 	return var_8_3 / var_8_2
 end
 
-function BackendUtils.get_total_power_level(arg_9_0, arg_9_1, arg_9_2)
+BackendUtils.get_total_power_level = function (arg_9_0, arg_9_1, arg_9_2)
 	if script_data.power_level_override then
 		return script_data.power_level_override
 	end
@@ -131,14 +131,14 @@ function BackendUtils.get_total_power_level(arg_9_0, arg_9_1, arg_9_2)
 	return Managers.backend:get_total_power_level(arg_9_0, arg_9_1, var_9_1)
 end
 
-function BackendUtils.get_item_template(arg_10_0, arg_10_1)
+BackendUtils.get_item_template = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.backend:get_interface("items")
 	local var_10_1 = arg_10_0.backend_id or arg_10_1
 
 	return (var_10_0:get_item_template(arg_10_0, var_10_1))
 end
 
-function BackendUtils.get_item_units(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BackendUtils.get_item_units = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0.left_hand_unit
 	local var_11_1 = arg_11_0.right_hand_unit
 	local var_11_2 = arg_11_0.ammo_unit
@@ -206,7 +206,7 @@ function BackendUtils.get_item_units(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-function BackendUtils.format_profile_hash(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BackendUtils.format_profile_hash = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if not arg_12_0 then
 		return "n/a"
 	end
@@ -226,7 +226,7 @@ function BackendUtils.format_profile_hash(arg_12_0, arg_12_1, arg_12_2, arg_12_3
 	return var_12_0
 end
 
-function BackendUtils.has_loot_chest()
+BackendUtils.has_loot_chest = function ()
 	local var_13_0 = Managers.backend:get_interface("items")
 	local var_13_1 = "slot_type == " .. ItemType.LOOT_CHEST
 
@@ -256,13 +256,13 @@ local var_0_1 = {
 	"bw_necromancer"
 }
 
-function BackendUtils.calculate_weave_score(arg_14_0, arg_14_1, arg_14_2)
+BackendUtils.calculate_weave_score = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = table.find(var_0_1, arg_14_2)
 
 	return (math.floor((arg_14_0 * 100000 + arg_14_1) * 100 + var_14_0 - 2147483648))
 end
 
-function BackendUtils.convert_weave_score(arg_15_0)
+BackendUtils.convert_weave_score = function (arg_15_0)
 	local var_15_0 = arg_15_0 + 2147483648
 	local var_15_1 = math.round((var_15_0 / 100 - math.floor(var_15_0 / 100)) * 100)
 	local var_15_2 = var_0_1[var_15_1]
@@ -272,7 +272,7 @@ function BackendUtils.convert_weave_score(arg_15_0)
 	return math.floor(var_15_3 / 100000), var_15_4, var_15_2
 end
 
-function BackendUtils.commit_load_time_data(arg_16_0)
+BackendUtils.commit_load_time_data = function (arg_16_0)
 	Managers.backend:get_interface("common"):commit_load_time_data(arg_16_0)
 end
 
@@ -304,7 +304,7 @@ CURRENCY_DESC_LOOKUP = {
 	VS = "achv_menu_vs_currency_reward_claimed"
 }
 
-function BackendUtils.get_fake_currency_item(arg_17_0, arg_17_1)
+BackendUtils.get_fake_currency_item = function (arg_17_0, arg_17_1)
 	local var_17_0 = var_0_2[arg_17_0]
 
 	fassert(var_17_0, "Unsupported currency code '%s'", arg_17_0)
@@ -327,7 +327,7 @@ function BackendUtils.get_fake_currency_item(arg_17_0, arg_17_1)
 	return table.clone(var_17_3), var_17_1, var_17_2
 end
 
-function BackendUtils.best_aquired_power_level()
+BackendUtils.best_aquired_power_level = function ()
 	local var_18_0 = Managers.backend:get_interface("items"):sum_best_power_levels()
 	local var_18_1 = ExperienceSettings.get_highest_character_level()
 

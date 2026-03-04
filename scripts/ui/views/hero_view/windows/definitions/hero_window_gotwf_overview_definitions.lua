@@ -825,7 +825,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		pass_type = "texture",
 		texture_id = var_1_4,
 		style_id = var_1_4,
-		content_check_function = function(arg_2_0)
+		content_check_function = function (arg_2_0)
 			return arg_2_0[var_1_4]
 		end
 	}
@@ -854,7 +854,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		pass_type = "texture",
 		texture_id = var_1_5,
 		style_id = var_1_5,
-		content_check_function = function(arg_3_0)
+		content_check_function = function (arg_3_0)
 			return arg_3_0[var_1_4]
 		end
 	}
@@ -883,7 +883,7 @@ local function var_0_16(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		pass_type = "texture",
 		texture_id = var_1_6,
 		style_id = var_1_6,
-		content_check_function = function(arg_4_0)
+		content_check_function = function (arg_4_0)
 			return arg_4_0[var_1_4]
 		end
 	}
@@ -958,7 +958,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.owned
 			end
 		},
@@ -966,7 +966,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.owned
 			end
 		},
@@ -974,7 +974,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 			style_id = "loading_icon",
 			pass_type = "rotated_texture",
 			texture_id = "loading_icon",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				local var_8_0 = true
 
 				for iter_8_0 = 1, var_5_13 do
@@ -987,7 +987,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 
 				return not var_8_0 and not arg_8_0.hidden and not arg_8_0.disable_loading_icon
 			end,
-			content_change_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			content_change_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				local var_9_0 = ((arg_9_1.progress or 0) + arg_9_3) % 1
 
 				arg_9_1.angle = math.pow(2, math.smoothstep(var_9_0, 0, 1)) * (math.pi * 2)
@@ -998,7 +998,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 			pass_type = "texture",
 			style_id = "package_icon",
 			texture_id = "package_icon",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.hidden
 			end
 		}
@@ -1198,7 +1198,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				pass_type = "texture",
 				texture_id = "background_" .. iter_5_1,
 				style_id = "background_" .. iter_5_1,
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return arg_11_0["background_" .. iter_5_1]
 				end
 			},
@@ -1221,7 +1221,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				pass_type = "texture_uv",
 				content_id = "painting_" .. iter_5_1,
 				style_id = "painting_" .. iter_5_1,
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return arg_12_0.texture_id
 				end
 			},
@@ -1229,7 +1229,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				pass_type = "texture_frame",
 				texture_id = "painting_frame",
 				style_id = "painting_frame_" .. iter_5_1,
-				content_check_function = function(arg_13_0)
+				content_check_function = function (arg_13_0)
 					return arg_13_0.painting
 				end
 			},
@@ -1237,7 +1237,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				pass_type = "texture",
 				texture_id = "icon_" .. iter_5_1,
 				style_id = "icon_" .. iter_5_1,
-				content_check_function = function(arg_14_0)
+				content_check_function = function (arg_14_0)
 					return arg_14_0["icon_" .. iter_5_1] and not arg_14_0.rendering_loading_icon
 				end
 			},
@@ -1245,7 +1245,7 @@ local function var_0_18(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 				pass_type = "texture",
 				texture_id = "type_tag_icon_" .. iter_5_1,
 				style_id = "type_tag_icon_" .. iter_5_1,
-				content_check_function = function(arg_15_0)
+				content_check_function = function (arg_15_0)
 					return arg_15_0["type_tag_icon_" .. iter_5_1] ~= nil
 				end
 			}
@@ -1559,7 +1559,7 @@ local function var_0_19(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 					texture_id = "arrow_hover",
 					style_id = "arrow_hover",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return arg_17_0.hotspot.is_hover
 					end
 				}
@@ -1664,7 +1664,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.draw_frame
 					end
 				},
@@ -1690,7 +1690,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.button_hotspot.disable_button
 					end
 				},
@@ -1698,7 +1698,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return not arg_21_0.skip_side_detail
 					end
 				},
@@ -1707,7 +1707,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return not arg_22_0.skip_side_detail
 					end
 				},
@@ -1715,7 +1715,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return not arg_23_0.button_hotspot.disable_button
 					end
 				},
@@ -1723,7 +1723,7 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.button_hotspot.disable_button
 					end
 				},
@@ -1746,10 +1746,10 @@ function create_claim_button_definition(arg_18_0, arg_18_1, arg_18_2, arg_18_3, 
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return (Managers.input:is_device_active("gamepad"))
 					end,
-					content_change_function = function(arg_26_0, arg_26_1)
+					content_change_function = function (arg_26_0, arg_26_1)
 						local var_26_0 = 2
 						local var_26_1, var_26_2 = Managers.time:time_and_delta("main")
 						local var_26_3 = arg_26_0.gamepad_selected
@@ -2304,15 +2304,15 @@ local var_0_30 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.7,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				arg_28_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				local var_29_0 = math.easeOutCubic(arg_29_3)
 
 				arg_29_4.render_settings.alpha_multiplier = var_29_0
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end
 		}
@@ -2322,15 +2322,15 @@ local var_0_30 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				arg_31_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				local var_32_0 = math.easeOutCubic(arg_32_3)
 
 				arg_32_4.render_settings.alpha_multiplier = 1 - var_32_0
 			end,
-			on_complete = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				return
 			end
 		}
@@ -2340,7 +2340,7 @@ local var_0_30 = {
 			name = "item_rotation",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				local var_34_0 = arg_34_3.item_widget
 				local var_34_1 = var_34_0.content
 				local var_34_2 = var_34_0.style
@@ -2363,7 +2363,7 @@ local var_0_30 = {
 				var_34_2["painting_" .. var_34_3].color[1] = 0
 				var_34_2["painting_frame_" .. var_34_3].color[1] = 0
 			end,
-			update = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 				local var_35_0 = math.easeOutCubic(arg_35_3)
 				local var_35_1 = arg_35_4.item_widget
 				local var_35_2 = var_35_1.content
@@ -2429,7 +2429,7 @@ local var_0_30 = {
 					end
 				end
 			end,
-			on_complete = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				local var_36_0 = arg_36_3.item_widget.style
 				local var_36_1 = arg_36_3.reward_index
 
@@ -2448,10 +2448,10 @@ local var_0_30 = {
 			name = "hide_item_list",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				arg_37_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 				local var_38_0 = math.easeOutCubic(arg_38_3)
 
 				arg_38_0.gotwf_window.local_position[2] = arg_38_1.gotwf_window.position[2] - 500 * var_38_0
@@ -2459,7 +2459,7 @@ local var_0_30 = {
 				arg_38_0.arrow_left.local_position[2] = arg_38_1.arrow_left.position[2] - 500 * var_38_0
 				arg_38_0.arrow_right.local_position[2] = arg_38_1.arrow_right.position[2] - 500 * var_38_0
 			end,
-			on_complete = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 				return
 			end
 		}
@@ -2469,10 +2469,10 @@ local var_0_30 = {
 			name = "show_item_list",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				arg_40_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 				local var_41_0 = math.easeOutCubic(arg_41_3)
 
 				arg_41_0.gotwf_window.local_position[2] = arg_41_1.gotwf_window.position[2] - 500 * (1 - var_41_0)
@@ -2480,7 +2480,7 @@ local var_0_30 = {
 				arg_41_0.arrow_left.local_position[2] = arg_41_1.arrow_left.position[2] - 500 * (1 - var_41_0)
 				arg_41_0.arrow_right.local_position[2] = arg_41_1.arrow_right.position[2] - 500 * (1 - var_41_0)
 			end,
-			on_complete = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 				return
 			end
 		}
@@ -2490,7 +2490,7 @@ local var_0_30 = {
 			name = "animate_in",
 			start_progress = 0 * var_0_29,
 			end_progress = 1 * var_0_29,
-			init = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				arg_43_0.lock_root.position[2] = arg_43_1.lock_root.position[2]
 				arg_43_2.lock_bg_left.content.visible = true
 				arg_43_2.lock_bg_right.content.visible = true
@@ -2614,12 +2614,12 @@ local var_0_30 = {
 				arg_43_2.bottom_mask.style.texture_id.color[1] = 0
 				arg_43_2.center_mask.style.texture_id.color[1] = 0
 			end,
-			update = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				local var_44_0 = math.easeOutCubic(arg_44_3)
 
 				arg_44_0.lock_root.position[2] = math.lerp(arg_44_1.lock_root.position[2], -355, var_44_0)
 			end,
-			on_complete = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 				return
 			end
 		},
@@ -2627,7 +2627,7 @@ local var_0_30 = {
 			name = "sticks_open",
 			start_progress = 0.5 * var_0_29,
 			end_progress = 1 * var_0_29,
-			init = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			init = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				local var_46_0 = arg_46_0.lock_stick_top_left.local_position
 				local var_46_1 = arg_46_1.lock_stick_top_left.position
 				local var_46_2 = arg_46_0.lock_stick_top_right.local_position
@@ -2684,7 +2684,7 @@ local var_0_30 = {
 				arg_46_2.lock_cogwheel_bg_left.style.texture_id.angle = 0
 				arg_46_2.lock_cogwheel_bg_right.style.texture_id.angle = 0
 			end,
-			update = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+			update = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 				local var_47_0 = math.easeCubic(arg_47_3)
 				local var_47_1 = 50
 				local var_47_2 = arg_47_0.lock_stick_top_left.local_position
@@ -2705,7 +2705,7 @@ local var_0_30 = {
 				var_47_8[1] = var_47_9[1] + var_47_1 * var_47_0
 				var_47_8[2] = var_47_9[2] - var_47_1 * var_47_0
 			end,
-			on_complete = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			on_complete = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 				return
 			end
 		},
@@ -2713,10 +2713,10 @@ local var_0_30 = {
 			name = "cover_open",
 			start_progress = 1.2 * var_0_29,
 			end_progress = 1.8 * var_0_29,
-			init = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			init = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 				return
 			end,
-			update = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			update = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 				local var_50_0 = 90
 				local var_50_1 = math.easeOutCubic(arg_50_3)
 				local var_50_2 = arg_50_0.lock_cover_top_left.local_position
@@ -2744,7 +2744,7 @@ local var_0_30 = {
 				var_50_11.style.texture_id.angle = var_50_10
 				var_50_12.style.texture_id.angle = var_50_10 + math.pi
 			end,
-			on_complete = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			on_complete = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 				return
 			end
 		},
@@ -2752,10 +2752,10 @@ local var_0_30 = {
 			name = "top_and_bottom_pillar_lock",
 			start_progress = 1.8 * var_0_29,
 			end_progress = 1.9 * var_0_29,
-			init = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+			init = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 				return
 			end,
-			update = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			update = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 				local var_53_0 = 28
 				local var_53_1 = math.ease_in_exp(arg_53_3)
 				local var_53_2 = arg_53_0.lock_pillar_top.local_position
@@ -2766,7 +2766,7 @@ local var_0_30 = {
 				var_53_2[2] = var_53_3[2] + var_53_0 * var_53_1
 				var_53_4[2] = var_53_5[2] - var_53_0 * var_53_1
 			end,
-			on_complete = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			on_complete = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 				return
 			end
 		},
@@ -2774,10 +2774,10 @@ local var_0_30 = {
 			name = "cogwheel_bg_spin",
 			start_progress = 2 * var_0_29,
 			end_progress = 2.4 * var_0_29,
-			init = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+			init = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 				return
 			end,
-			update = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+			update = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 				local var_56_0 = math.easeCubic(arg_56_3)
 				local var_56_1 = arg_56_2.lock_cogwheel_bg_left
 				local var_56_2 = arg_56_2.lock_cogwheel_bg_right
@@ -2786,7 +2786,7 @@ local var_0_30 = {
 				var_56_1.style.texture_id.angle = var_56_3
 				var_56_2.style.texture_id.angle = var_56_3
 			end,
-			on_complete = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			on_complete = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 				return
 			end
 		},
@@ -2794,10 +2794,10 @@ local var_0_30 = {
 			name = "cogwheel_spin",
 			start_progress = 2.5 * var_0_29,
 			end_progress = 3.5 * var_0_29,
-			init = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+			init = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 				return
 			end,
-			update = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+			update = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 				local var_59_0 = math.ease_exp(arg_59_3)
 				local var_59_1 = math.easeInCubic(arg_59_3)
 				local var_59_2 = arg_59_2.lock_slot_holder_left
@@ -2812,7 +2812,7 @@ local var_0_30 = {
 				var_59_4.style.texture_id.angle = var_59_7
 				var_59_5.style.texture_id.angle = var_59_7
 			end,
-			on_complete = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			on_complete = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 				return
 			end
 		},
@@ -2820,10 +2820,10 @@ local var_0_30 = {
 			name = "left_and_right_pillar_lock",
 			start_progress = 3.5 * var_0_29,
 			end_progress = 3.6 * var_0_29,
-			init = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+			init = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 				return
 			end,
-			update = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+			update = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 				local var_62_0 = 28
 				local var_62_1 = math.ease_in_exp(arg_62_3)
 				local var_62_2 = arg_62_0.lock_pillar_left.local_position
@@ -2834,7 +2834,7 @@ local var_0_30 = {
 				var_62_2[1] = var_62_3[1] - var_62_0 * var_62_1
 				var_62_4[1] = var_62_5[1] + var_62_0 * var_62_1
 			end,
-			on_complete = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			on_complete = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 				return
 			end
 		}
@@ -2844,10 +2844,10 @@ local var_0_30 = {
 			name = "sticks_open",
 			start_progress = 2.6,
 			end_progress = 3.1,
-			init = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+			init = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 				return
 			end,
-			update = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+			update = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 				local var_65_0 = math.easeCubic(1 - arg_65_3)
 				local var_65_1 = 50
 				local var_65_2 = arg_65_0.lock_stick_top_left.local_position
@@ -2868,7 +2868,7 @@ local var_0_30 = {
 				var_65_8[1] = var_65_9[1] + var_65_1 * var_65_0 - 50 * (1 - var_65_0)
 				var_65_8[2] = var_65_9[2] - var_65_1 * var_65_0 + 50 * (1 - var_65_0)
 			end,
-			on_complete = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+			on_complete = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 				return
 			end
 		},
@@ -2876,10 +2876,10 @@ local var_0_30 = {
 			name = "cover_open",
 			start_progress = 1.8,
 			end_progress = 2.4,
-			init = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+			init = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 				return
 			end,
-			update = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
+			update = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
 				local var_68_0 = 90
 				local var_68_1 = math.easeOutCubic(1 - arg_68_3)
 				local var_68_2 = arg_68_0.lock_cover_top_left.local_position
@@ -2907,7 +2907,7 @@ local var_0_30 = {
 				var_68_11.style.texture_id.angle = var_68_10
 				var_68_12.style.texture_id.angle = var_68_10 + math.pi
 			end,
-			on_complete = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+			on_complete = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 				return
 			end
 		},
@@ -2915,10 +2915,10 @@ local var_0_30 = {
 			name = "top_and_bottom_pillar_lock",
 			start_progress = 1.7,
 			end_progress = 1.8,
-			init = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+			init = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 				return
 			end,
-			update = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+			update = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 				local var_71_0 = 28
 				local var_71_1 = math.ease_in_exp(1 - arg_71_3)
 				local var_71_2 = arg_71_0.lock_pillar_top.local_position
@@ -2929,7 +2929,7 @@ local var_0_30 = {
 				var_71_2[2] = var_71_3[2] + var_71_0 * var_71_1
 				var_71_4[2] = var_71_5[2] - var_71_0 * var_71_1
 			end,
-			on_complete = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+			on_complete = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 				return
 			end
 		},
@@ -2937,10 +2937,10 @@ local var_0_30 = {
 			name = "cogwheel_bg_spin",
 			start_progress = 1.2,
 			end_progress = 1.6,
-			init = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+			init = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 				return
 			end,
-			update = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+			update = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 				local var_74_0 = math.easeCubic(1 - arg_74_3)
 				local var_74_1 = arg_74_2.lock_cogwheel_bg_left
 				local var_74_2 = arg_74_2.lock_cogwheel_bg_right
@@ -2949,7 +2949,7 @@ local var_0_30 = {
 				var_74_1.style.texture_id.angle = var_74_3
 				var_74_2.style.texture_id.angle = var_74_3
 			end,
-			on_complete = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+			on_complete = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 				return
 			end
 		},
@@ -2957,10 +2957,10 @@ local var_0_30 = {
 			name = "cogwheel_spin",
 			start_progress = 0.1,
 			end_progress = 1.1,
-			init = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+			init = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 				return
 			end,
-			update = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+			update = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 				local var_77_0 = math.ease_exp(1 - arg_77_3)
 				local var_77_1 = math.easeInCubic(1 - arg_77_3)
 				local var_77_2 = arg_77_2.lock_slot_holder_left
@@ -2975,7 +2975,7 @@ local var_0_30 = {
 				var_77_4.style.texture_id.angle = var_77_7
 				var_77_5.style.texture_id.angle = var_77_7
 			end,
-			on_complete = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+			on_complete = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 				return
 			end
 		},
@@ -2983,10 +2983,10 @@ local var_0_30 = {
 			name = "left_and_right_pillar_lock",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+			init = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 				return
 			end,
-			update = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+			update = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
 				local var_80_0 = 28
 				local var_80_1 = math.ease_in_exp(1 - arg_80_3)
 				local var_80_2 = arg_80_0.lock_pillar_left.local_position
@@ -2997,7 +2997,7 @@ local var_0_30 = {
 				var_80_2[1] = var_80_3[1] - var_80_0 * var_80_1
 				var_80_4[1] = var_80_5[1] + var_80_0 * var_80_1
 			end,
-			on_complete = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+			on_complete = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 				return
 			end
 		},
@@ -3005,10 +3005,10 @@ local var_0_30 = {
 			name = "finalize",
 			start_progress = 3,
 			end_progress = 3.5,
-			init = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+			init = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 				return
 			end,
-			update = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+			update = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 				arg_83_2.lock_bg_left.content.visible = false
 				arg_83_2.lock_bg_right.content.visible = false
 				arg_83_2.lock_block_left.content.visible = false
@@ -3050,7 +3050,7 @@ local var_0_30 = {
 
 				var_83_11[2] = var_83_12[2] - var_83_12[2] * var_83_2 * var_83_1
 			end,
-			on_complete = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3)
+			on_complete = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3)
 				return
 			end
 		}
@@ -3060,7 +3060,7 @@ local var_0_30 = {
 			name = "reveal",
 			start_progress = 0.5 * var_0_29,
 			end_progress = 1 * var_0_29,
-			init = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+			init = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 				arg_85_2.lock_bg_left.content.visible = false
 				arg_85_2.lock_bg_right.content.visible = false
 				arg_85_2.lock_pillar_left.content.visible = false
@@ -3121,7 +3121,7 @@ local var_0_30 = {
 				arg_85_0.frame_bottom.local_position[2] = 0
 				arg_85_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+			update = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
 				arg_86_2.frame_right.content.visible = true
 				arg_86_2.frame_bottom.content.visible = true
 				arg_86_2.frame_left.content.visible = true
@@ -3182,7 +3182,7 @@ local var_0_30 = {
 				arg_86_2.bottom_mask.style.texture_id.color[1] = arg_86_3 * 255
 				arg_86_2.center_mask.style.texture_id.color[1] = arg_86_3 * 255
 			end,
-			on_complete = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+			on_complete = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 				return
 			end
 		}
@@ -3192,7 +3192,7 @@ local var_0_30 = {
 			name = "reveal_instant",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+			init = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 				arg_88_0.lock_root.position[2] = -355
 				arg_88_2.lock_bg_left.content.visible = false
 				arg_88_2.lock_bg_right.content.visible = false
@@ -3262,7 +3262,7 @@ local var_0_30 = {
 				arg_88_0.frame_bottom.local_position[2] = 0
 				arg_88_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+			update = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
 				arg_89_2.frame_right.content.visible = true
 				arg_89_2.frame_bottom.content.visible = true
 				arg_89_2.frame_left.content.visible = true
@@ -3323,7 +3323,7 @@ local var_0_30 = {
 				arg_89_2.bottom_mask.style.texture_id.color[1] = arg_89_3 * 255
 				arg_89_2.center_mask.style.texture_id.color[1] = arg_89_3 * 255
 			end,
-			on_complete = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+			on_complete = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 				return
 			end
 		}
@@ -3333,7 +3333,7 @@ local var_0_30 = {
 			name = "hide_instant",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+			init = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 				arg_91_0.lock_root.position[2] = -355
 				arg_91_2.lock_bg_left.content.visible = false
 				arg_91_2.lock_bg_right.content.visible = false
@@ -3403,10 +3403,10 @@ local var_0_30 = {
 				arg_91_0.frame_bottom.local_position[2] = 0
 				arg_91_0.frame_bottom.local_position[3] = 0
 			end,
-			update = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+			update = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
 				return
 			end,
-			on_complete = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+			on_complete = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
 				return
 			end
 		}

@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTIdleAction = class(BTIdleAction, BTNode)
 
-function BTIdleAction.init(arg_1_0, ...)
+BTIdleAction.init = function (arg_1_0, ...)
 	BTIdleAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTIdleAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTIdleAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = Managers.state.network
 	local var_3_1 = "idle"
 	local var_3_2 = arg_3_0._tree_node.action_data
@@ -65,7 +65,7 @@ function BTIdleAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-function BTIdleAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.navigation_extension:set_enabled(true)
 end
 
@@ -82,7 +82,7 @@ local function var_0_1(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BTIdleAction._discovery_sound_when_close(arg_6_0, arg_6_1, arg_6_2)
+BTIdleAction._discovery_sound_when_close = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action and arg_6_2.action.sound_when_near_distance_sqr
 
 	if var_6_0 and not arg_6_2.sound_when_near_played then
@@ -104,7 +104,7 @@ end
 
 local var_0_2 = Unit.alive
 
-function BTIdleAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTIdleAction.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_2.target_unit
 	local var_7_1 = arg_7_2.action
 	local var_7_2 = var_7_1 and var_7_1.dont_face_target

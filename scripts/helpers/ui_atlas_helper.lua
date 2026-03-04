@@ -590,7 +590,7 @@ end
 
 UIAtlasHelper._ui_atlas_settings = var_0_14
 
-function UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_0)
+UIAtlasHelper.get_atlas_settings_by_texture_name = function (arg_1_0)
 	assert(arg_1_0, "[UIAtlasHelper] Trying to access atlas settings for a texture without a name")
 
 	if var_0_0[arg_1_0] then
@@ -602,7 +602,7 @@ function UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_0)
 	return var_0_14[arg_1_0]
 end
 
-function UIAtlasHelper.has_atlas_settings_by_texture_name(arg_2_0)
+UIAtlasHelper.has_atlas_settings_by_texture_name = function (arg_2_0)
 	if var_0_14[arg_2_0] then
 		return true
 	else
@@ -610,7 +610,7 @@ function UIAtlasHelper.has_atlas_settings_by_texture_name(arg_2_0)
 	end
 end
 
-function UIAtlasHelper.has_texture_by_name(arg_3_0)
+UIAtlasHelper.has_texture_by_name = function (arg_3_0)
 	if var_0_0[arg_3_0] or var_0_14[arg_3_0] then
 		return true
 	else
@@ -618,7 +618,7 @@ function UIAtlasHelper.has_texture_by_name(arg_3_0)
 	end
 end
 
-function UIAtlasHelper.add_standalone_texture_by_name(arg_4_0)
+UIAtlasHelper.add_standalone_texture_by_name = function (arg_4_0)
 	if var_0_0[arg_4_0] or var_0_14[arg_4_0] then
 		return
 	else
@@ -626,7 +626,7 @@ function UIAtlasHelper.add_standalone_texture_by_name(arg_4_0)
 	end
 end
 
-function UIAtlasHelper.get_insignia_texture_settings_from_level(arg_5_0)
+UIAtlasHelper.get_insignia_texture_settings_from_level = function (arg_5_0)
 	local var_5_0 = math.min(arg_5_0, ExperienceSettings.max_versus_level)
 	local var_5_1 = {
 		0.2,

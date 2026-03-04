@@ -2,7 +2,7 @@
 
 ProjectileHomingSkullLocomotionExtension = class(ProjectileHomingSkullLocomotionExtension)
 
-function ProjectileHomingSkullLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileHomingSkullLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._spawn_time = Managers.time:time("game")
 
 	local var_1_0 = BelakorBalancing.homing_skulls_min_speed_multiplier
@@ -42,7 +42,7 @@ local function var_0_1(arg_3_0)
 	return true
 end
 
-function ProjectileHomingSkullLocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ProjectileHomingSkullLocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0.moved = false
 
 	if arg_4_0.stopped then
@@ -113,14 +113,14 @@ function ProjectileHomingSkullLocomotionExtension.update(arg_4_0, arg_4_1, arg_4
 	arg_4_0.moved = true
 end
 
-function ProjectileHomingSkullLocomotionExtension.moved_this_frame(arg_5_0)
+ProjectileHomingSkullLocomotionExtension.moved_this_frame = function (arg_5_0)
 	return not arg_5_0.stopped and arg_5_0.moved
 end
 
-function ProjectileHomingSkullLocomotionExtension.destroy(arg_6_0)
+ProjectileHomingSkullLocomotionExtension.destroy = function (arg_6_0)
 	arg_6_0.stopped = true
 end
 
-function ProjectileHomingSkullLocomotionExtension.stop(arg_7_0)
+ProjectileHomingSkullLocomotionExtension.stop = function (arg_7_0)
 	arg_7_0.stopped = true
 end

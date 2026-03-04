@@ -11,13 +11,13 @@ local var_0_2 = table.merge(WorldMarkerTemplates[var_0_0] or {}, var_0_1)
 
 WorldMarkerTemplates[var_0_0] = var_0_2
 
-function var_0_2.on_enter(arg_1_0)
+var_0_2.on_enter = function (arg_1_0)
 	var_0_1.on_enter(arg_1_0)
 
 	arg_1_0.content.icon = "world_marker_versus_pactsworn_interact_spawning"
 end
 
-function var_0_2.update_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+var_0_2.update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_1.content
 	local var_2_1 = arg_2_1.style
 	local var_2_2 = var_2_1.icon

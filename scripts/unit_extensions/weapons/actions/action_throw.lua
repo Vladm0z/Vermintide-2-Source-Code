@@ -2,7 +2,7 @@
 
 ActionThrow = class(ActionThrow, ActionBase)
 
-function ActionThrow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionThrow.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionThrow.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -12,7 +12,7 @@ function ActionThrow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, 
 	arg_1_0.owner_inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
 end
 
-function ActionThrow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionThrow.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionThrow.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0.current_action = arg_2_1
@@ -20,7 +20,7 @@ function ActionThrow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.thrown = nil
 end
 
-function ActionThrow.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionThrow.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_0.thrown then
 		return
 	end
@@ -34,7 +34,7 @@ function ActionThrow.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	end
 end
 
-function ActionThrow._throw(arg_4_0)
+ActionThrow._throw = function (arg_4_0)
 	local var_4_0 = arg_4_0.owner_unit
 	local var_4_1 = arg_4_0.current_action
 	local var_4_2 = var_4_1.projectile_info
@@ -112,7 +112,7 @@ function ActionThrow._throw(arg_4_0)
 	end
 end
 
-function ActionThrow.finish(arg_5_0, arg_5_1)
+ActionThrow.finish = function (arg_5_0, arg_5_1)
 	if arg_5_1 == "stunned" or arg_5_1 == "interacting" and not arg_5_0.thrown then
 		arg_5_0:_throw()
 

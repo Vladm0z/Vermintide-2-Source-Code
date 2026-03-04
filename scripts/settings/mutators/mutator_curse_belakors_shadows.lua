@@ -16,7 +16,7 @@ return {
 	buff_params = {
 		external_optional_multiplier = -0.9
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		local var_1_0 = Managers.weave:get_wind_strength() or 1
 		local var_1_1 = Managers.weave:get_active_wind_settings()
 		local var_1_2 = Managers.state.difficulty:get_difficulty()
@@ -26,7 +26,7 @@ return {
 		arg_1_1.lantern_spawned = false
 		arg_1_1.light_radius = var_1_1 and var_1_1.light_radius[var_1_2][var_1_0]
 	end,
-	server_update_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	server_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_1.hero_side
 		local var_2_1 = var_2_0:enemy_units()
 		local var_2_2 = arg_2_1.template
@@ -100,11 +100,11 @@ return {
 			var_2_3[var_0_3[iter_2_5]] = nil
 		end
 	end,
-	client_start_function = function(arg_3_0, arg_3_1)
+	client_start_function = function (arg_3_0, arg_3_1)
 		arg_3_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 		arg_3_1.light_spawned = false
 	end,
-	client_player_respawned_function = function(arg_4_0, arg_4_1, arg_4_2)
+	client_player_respawned_function = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = Managers.player:local_player().player_unit
 
 		if arg_4_2 == var_4_0 then
@@ -118,7 +118,7 @@ return {
 			World.link_unit(arg_4_0.world, var_4_3, 0, var_4_0, 0)
 		end
 	end,
-	client_update_function = function(arg_5_0, arg_5_1)
+	client_update_function = function (arg_5_0, arg_5_1)
 		local var_5_0 = Managers.weave:get_wind_strength() or 1
 		local var_5_1 = Managers.weave:get_active_wind_settings()
 		local var_5_2 = Managers.state.difficulty:get_difficulty()

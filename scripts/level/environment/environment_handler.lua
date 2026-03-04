@@ -6,16 +6,16 @@ require("scripts/level/environment/environment_blend_volume")
 EnvironmentHandler = class(EnvironmentHandler)
 EnvironmentHandler.ID = EnvironmentHandler.ID or 0
 
-function EnvironmentHandler.init(arg_1_0)
+EnvironmentHandler.init = function (arg_1_0)
 	arg_1_0._blends = {}
 	arg_1_0._weights = {}
 end
 
-function EnvironmentHandler.add_blend_group(arg_2_0, arg_2_1)
+EnvironmentHandler.add_blend_group = function (arg_2_0, arg_2_1)
 	arg_2_0._blends[arg_2_1] = {}
 end
 
-function EnvironmentHandler.add_blend(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+EnvironmentHandler.add_blend = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0
 
 	if arg_3_5 then
@@ -34,14 +34,14 @@ function EnvironmentHandler.add_blend(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_
 		id = var_3_0
 	}
 
-	table.sort(var_3_2, function(arg_4_0, arg_4_1)
+	table.sort(var_3_2, function (arg_4_0, arg_4_1)
 		return arg_4_0.priority > arg_4_1.priority
 	end)
 
 	return var_3_0
 end
 
-function EnvironmentHandler.remove_blend(arg_5_0, arg_5_1)
+EnvironmentHandler.remove_blend = function (arg_5_0, arg_5_1)
 	for iter_5_0, iter_5_1 in pairs(arg_5_0._blends) do
 		for iter_5_2, iter_5_3 in pairs(iter_5_1) do
 			if iter_5_3.id == arg_5_1 then
@@ -56,12 +56,12 @@ function EnvironmentHandler.remove_blend(arg_5_0, arg_5_1)
 	end
 end
 
-function EnvironmentHandler.update(arg_6_0, arg_6_1, arg_6_2)
+EnvironmentHandler.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_blends(arg_6_1)
 	arg_6_0:_update_weights(arg_6_1)
 end
 
-function EnvironmentHandler._update_blends(arg_7_0, arg_7_1)
+EnvironmentHandler._update_blends = function (arg_7_0, arg_7_1)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._blends) do
 		for iter_7_2, iter_7_3 in ipairs(iter_7_1) do
 			iter_7_3.blend:update(arg_7_1)
@@ -69,7 +69,7 @@ function EnvironmentHandler._update_blends(arg_7_0, arg_7_1)
 	end
 end
 
-function EnvironmentHandler._update_weights(arg_8_0)
+EnvironmentHandler._update_weights = function (arg_8_0)
 	local var_8_0
 
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._blends) do
@@ -107,11 +107,11 @@ function EnvironmentHandler._update_weights(arg_8_0)
 	end
 end
 
-function EnvironmentHandler.weights(arg_9_0, arg_9_1)
+EnvironmentHandler.weights = function (arg_9_0, arg_9_1)
 	return arg_9_0._weights[arg_9_1]
 end
 
-function EnvironmentHandler.override_settings(arg_10_0)
+EnvironmentHandler.override_settings = function (arg_10_0)
 	local var_10_0 = 0
 	local var_10_1
 
@@ -129,7 +129,7 @@ function EnvironmentHandler.override_settings(arg_10_0)
 	return nil
 end
 
-function EnvironmentHandler.destroy(arg_11_0)
+EnvironmentHandler.destroy = function (arg_11_0)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._blends) do
 		for iter_11_2, iter_11_3 in ipairs(iter_11_1) do
 			iter_11_3.blend:destroy()

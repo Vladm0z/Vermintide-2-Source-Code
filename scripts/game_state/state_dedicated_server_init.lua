@@ -6,11 +6,11 @@ require("scripts/network/network_server")
 StateDedicatedServerInit = class(StateDedicatedServerInit)
 StateDedicatedServerInit.NAME = "StateDedicatedServerInit"
 
-function StateDedicatedServerInit.on_enter(arg_1_0, arg_1_1)
+StateDedicatedServerInit.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0:_init_network()
 end
 
-function StateDedicatedServerInit._init_network(arg_2_0)
+StateDedicatedServerInit._init_network = function (arg_2_0)
 	LobbySetup.setup_network_options()
 
 	local var_2_0 = PLATFORM
@@ -62,14 +62,14 @@ function StateDedicatedServerInit._init_network(arg_2_0)
 	Managers.ban_list = Managers.ban_list or BanListManager:new()
 end
 
-function StateDedicatedServerInit._load_save_data(arg_3_0)
+StateDedicatedServerInit._load_save_data = function (arg_3_0)
 	print("[StateDedicatedServerInit] SaveFileName", SaveFileName)
 	Managers.save:auto_load(SaveFileName, callback(arg_3_0, "cb_save_data_loaded"))
 
 	arg_3_0._save_data_loaded = false
 end
 
-function StateDedicatedServerInit.cb_save_data_loaded(arg_4_0, arg_4_1)
+StateDedicatedServerInit.cb_save_data_loaded = function (arg_4_0, arg_4_1)
 	if arg_4_1.error then
 		Application.warning("Load error %q", arg_4_1.error)
 	else
@@ -80,7 +80,7 @@ function StateDedicatedServerInit.cb_save_data_loaded(arg_4_0, arg_4_1)
 	GameSettingsDevelopment.trunk_path = Development.parameter("trunk_path")
 end
 
-function StateDedicatedServerInit.update(arg_5_0, arg_5_1, arg_5_2)
+StateDedicatedServerInit.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Managers.lobby:get_lobby("matchmaking_session_lobby")
 	local var_5_1 = var_5_0:update(arg_5_1, arg_5_2)
 	local var_5_2 = arg_5_0._state
@@ -123,6 +123,6 @@ function StateDedicatedServerInit.update(arg_5_0, arg_5_1, arg_5_2)
 	return nil
 end
 
-function StateDedicatedServerInit.on_exit(arg_6_0)
+StateDedicatedServerInit.on_exit = function (arg_6_0)
 	return
 end

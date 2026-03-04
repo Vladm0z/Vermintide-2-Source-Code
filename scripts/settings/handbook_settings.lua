@@ -193,7 +193,7 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function(arg_3_0)
+		custom_condition = function (arg_3_0)
 			return arg_3_0:get("player_level") >= 8
 		end
 	},
@@ -248,7 +248,7 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function(arg_4_0)
+		custom_condition = function (arg_4_0)
 			return arg_4_0:get("player_level") >= 15
 		end
 	},
@@ -656,14 +656,14 @@ HandbookSettings.pages = {
 		{
 			texture = "tutorial_hot_bar_01_console",
 			type = "image",
-			condition_func = function()
+			condition_func = function ()
 				return UIUtils.use_gamepad_hud_layout()
 			end
 		},
 		{
 			texture = "tutorial_hot_bar_01_pc",
 			type = "image",
-			condition_func = function()
+			condition_func = function ()
 				return not UIUtils.use_gamepad_hud_layout()
 			end
 		},

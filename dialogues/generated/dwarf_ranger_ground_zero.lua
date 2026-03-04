@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_ground_zero.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "ebh_level_ground_zero_lord_banter",
 		name = "ebh_level_ground_zero_lord_banter",

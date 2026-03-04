@@ -55,7 +55,7 @@ local var_0_4 = {
 				texture_id = "texture_id",
 				content_id = "ability_effect",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return arg_1_0.parent.can_use
 				end
 			},
@@ -65,7 +65,7 @@ local var_0_4 = {
 				texture_id = "texture_id",
 				content_id = "ability_effect_top",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return arg_2_0.parent.can_use
 				end
 			},
@@ -74,7 +74,7 @@ local var_0_4 = {
 				pass_type = "texture_uv",
 				content_id = "ability_effect",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.parent.can_use
 				end
 			},
@@ -83,7 +83,7 @@ local var_0_4 = {
 				pass_type = "texture_uv",
 				content_id = "ability_effect_top",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.parent.can_use
 				end
 			},
@@ -92,7 +92,7 @@ local var_0_4 = {
 				style_id = "ability_bar_highlight",
 				texture_id = "ability_bar_highlight",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return not arg_5_0.on_cooldown
 				end
 			},
@@ -101,7 +101,7 @@ local var_0_4 = {
 				pass_type = "text",
 				text_id = "input_text",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_6_0, arg_6_1)
+				content_check_function = function (arg_6_0, arg_6_1)
 					return not Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -110,7 +110,7 @@ local var_0_4 = {
 				pass_type = "text",
 				text_id = "input_text",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_7_0, arg_7_1)
+				content_check_function = function (arg_7_0, arg_7_1)
 					return not Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -119,7 +119,7 @@ local var_0_4 = {
 				pass_type = "text",
 				text_id = "input_text_gamepad",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_8_0, arg_8_1)
+				content_check_function = function (arg_8_0, arg_8_1)
 					return Managers.input:is_device_active("gamepad")
 				end
 			},
@@ -128,7 +128,7 @@ local var_0_4 = {
 				pass_type = "text",
 				text_id = "ability_cooldown",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return Application.user_setting("numeric_ui") and not arg_9_0.can_use_ability
 				end
 			},
@@ -137,7 +137,7 @@ local var_0_4 = {
 				pass_type = "text",
 				text_id = "ability_cooldown",
 				retained_mode = var_0_2,
-				content_check_function = function(arg_10_0)
+				content_check_function = function (arg_10_0)
 					return Application.user_setting("numeric_ui") and not arg_10_0.can_use_ability
 				end
 			}

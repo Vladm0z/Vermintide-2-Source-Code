@@ -42,7 +42,7 @@ GameModeSettings.versus.ping_mode = {
 	}
 }
 
-function GameModeSettings.versus.positive_reinforcement_check(arg_1_0, arg_1_1, arg_1_2)
+GameModeSettings.versus.positive_reinforcement_check = function (arg_1_0, arg_1_1, arg_1_2)
 	return arg_1_2.is_player or arg_1_2.boss or arg_1_2.special
 end
 
@@ -434,10 +434,10 @@ GameModeSettings.versus.initial_set_pre_start_duration = 45
 GameModeSettings.versus.side_settings = {
 	heroes = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
 				return false
 			end
 		},
@@ -445,18 +445,18 @@ GameModeSettings.versus.side_settings = {
 	},
 	dark_pact = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
 				return true
 			end
 		},
 		spawn_at_players_on_side = {
-			heroes = function()
+			heroes = function ()
 				return Managers.state.game_mode:is_round_started()
 			end,
-			dark_pact = function()
+			dark_pact = function ()
 				return true
 			end
 		},
@@ -480,10 +480,10 @@ GameModeSettings.versus.side_settings = {
 	},
 	spectators = {
 		observe_sides = {
-			heroes = function()
+			heroes = function ()
 				return true
 			end,
-			dark_pact = function()
+			dark_pact = function ()
 				return true
 			end
 		}

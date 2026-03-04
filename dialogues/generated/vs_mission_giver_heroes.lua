@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/vs_mission_giver_heroes.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nde_vs_about_to_early_loss_a",
 		name = "nde_vs_about_to_early_loss_a",

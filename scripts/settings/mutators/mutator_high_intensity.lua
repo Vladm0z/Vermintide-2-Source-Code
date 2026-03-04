@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_high_intensity",
 	icon = "mutator_icon_powerful_elites",
 	display_name = "display_name_mutator_high_intensity",
-	update_conflict_settings = function(arg_1_0, arg_1_1)
+	update_conflict_settings = function (arg_1_0, arg_1_1)
 		CurrentIntensitySettings.max_intensity = 200
 		CurrentIntensitySettings.decay_per_second = 10
 		CurrentIntensitySettings.decay_delay = 0.5

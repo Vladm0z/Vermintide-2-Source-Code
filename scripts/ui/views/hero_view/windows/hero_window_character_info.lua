@@ -11,7 +11,7 @@ local var_0_6 = 1
 HeroWindowCharacterInfo = class(HeroWindowCharacterInfo)
 HeroWindowCharacterInfo.NAME = "HeroWindowCharacterInfo"
 
-function HeroWindowCharacterInfo.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCharacterInfo.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCharacterInfo")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -41,7 +41,7 @@ function HeroWindowCharacterInfo.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function HeroWindowCharacterInfo.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowCharacterInfo.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_2_0 = {}
@@ -71,13 +71,13 @@ function HeroWindowCharacterInfo.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function HeroWindowCharacterInfo.on_exit(arg_3_0, arg_3_1)
+HeroWindowCharacterInfo.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCharacterInfo")
 
 	arg_3_0.ui_animator = nil
 end
 
-function HeroWindowCharacterInfo.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowCharacterInfo.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -89,11 +89,11 @@ function HeroWindowCharacterInfo.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HeroWindowCharacterInfo.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCharacterInfo.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function HeroWindowCharacterInfo._update_animations(arg_6_0, arg_6_1)
+HeroWindowCharacterInfo._update_animations = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_animations
 	local var_6_1 = arg_6_0._animations
 	local var_6_2 = arg_6_0.ui_animator
@@ -117,11 +117,11 @@ function HeroWindowCharacterInfo._update_animations(arg_6_0, arg_6_1)
 	end
 end
 
-function HeroWindowCharacterInfo.set_focus(arg_7_0, arg_7_1)
+HeroWindowCharacterInfo.set_focus = function (arg_7_0, arg_7_1)
 	arg_7_0._focused = arg_7_1
 end
 
-function HeroWindowCharacterInfo._update_loadout_sync(arg_8_0)
+HeroWindowCharacterInfo._update_loadout_sync = function (arg_8_0)
 	local var_8_0 = arg_8_0.parent.loadout_sync_id
 
 	if var_8_0 ~= arg_8_0._loadout_sync_id or arg_8_0:_has_hero_level_changed() then
@@ -132,7 +132,7 @@ function HeroWindowCharacterInfo._update_loadout_sync(arg_8_0)
 	end
 end
 
-function HeroWindowCharacterInfo._has_hero_level_changed(arg_9_0)
+HeroWindowCharacterInfo._has_hero_level_changed = function (arg_9_0)
 	local var_9_0 = ExperienceSettings.get_experience(arg_9_0.hero_name)
 
 	if ExperienceSettings.get_level(var_9_0) ~= arg_9_0._hero_level then
@@ -140,7 +140,7 @@ function HeroWindowCharacterInfo._has_hero_level_changed(arg_9_0)
 	end
 end
 
-function HeroWindowCharacterInfo._update_experience_presentation(arg_10_0)
+HeroWindowCharacterInfo._update_experience_presentation = function (arg_10_0)
 	local var_10_0 = arg_10_0._widgets_by_name
 	local var_10_1 = ExperienceSettings.get_experience(arg_10_0.hero_name)
 	local var_10_2, var_10_3 = ExperienceSettings.get_level(var_10_1)
@@ -165,7 +165,7 @@ function HeroWindowCharacterInfo._update_experience_presentation(arg_10_0)
 	arg_10_0._hero_level = var_10_2
 end
 
-function HeroWindowCharacterInfo._update_hero_portrait_frame(arg_11_0)
+HeroWindowCharacterInfo._update_hero_portrait_frame = function (arg_11_0)
 	local var_11_0 = arg_11_0.career_index
 	local var_11_1 = arg_11_0.profile_index
 	local var_11_2 = SPProfiles[var_11_1]
@@ -184,12 +184,12 @@ function HeroWindowCharacterInfo._update_hero_portrait_frame(arg_11_0)
 	arg_11_0._portrait_widget = arg_11_0:_create_portrait_frame_widget(var_11_9, var_11_4, var_11_8)
 end
 
-function HeroWindowCharacterInfo._exit(arg_12_0, arg_12_1)
+HeroWindowCharacterInfo._exit = function (arg_12_0, arg_12_1)
 	arg_12_0.exit = true
 	arg_12_0.exit_level_id = arg_12_1
 end
 
-function HeroWindowCharacterInfo.draw(arg_13_0, arg_13_1)
+HeroWindowCharacterInfo.draw = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.ui_renderer
 	local var_13_1 = arg_13_0.ui_top_renderer
 	local var_13_2 = arg_13_0.ui_scenegraph
@@ -212,11 +212,11 @@ function HeroWindowCharacterInfo.draw(arg_13_0, arg_13_1)
 	UIRenderer.end_pass(var_13_1)
 end
 
-function HeroWindowCharacterInfo._play_sound(arg_14_0, arg_14_1)
+HeroWindowCharacterInfo._play_sound = function (arg_14_0, arg_14_1)
 	arg_14_0.parent:play_sound(arg_14_1)
 end
 
-function HeroWindowCharacterInfo._create_portrait_frame_widget(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+HeroWindowCharacterInfo._create_portrait_frame_widget = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = UIWidgets.create_portrait_frame("portrait_root", arg_15_1, arg_15_3, 1, nil, arg_15_2)
 	local var_15_1 = UIWidget.init(var_15_0, arg_15_0.ui_top_renderer)
 
@@ -225,7 +225,7 @@ function HeroWindowCharacterInfo._create_portrait_frame_widget(arg_15_0, arg_15_
 	return var_15_1
 end
 
-function HeroWindowCharacterInfo._create_insignia_widget(arg_16_0)
+HeroWindowCharacterInfo._create_insignia_widget = function (arg_16_0)
 	local var_16_0 = Managers.player:local_player()
 	local var_16_1 = ExperienceSettings.get_versus_player_level(var_16_0)
 	local var_16_2 = UIWidgets.create_small_insignia("insignia", var_16_1)
@@ -233,7 +233,7 @@ function HeroWindowCharacterInfo._create_insignia_widget(arg_16_0)
 	arg_16_0._insignia_widget = UIWidget.init(var_16_2)
 end
 
-function HeroWindowCharacterInfo._get_portrait_frame(arg_17_0)
+HeroWindowCharacterInfo._get_portrait_frame = function (arg_17_0)
 	local var_17_0 = arg_17_0.profile_index
 	local var_17_1 = arg_17_0.career_index
 	local var_17_2 = arg_17_0.hero_name

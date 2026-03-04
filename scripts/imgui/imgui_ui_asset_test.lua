@@ -17,7 +17,7 @@ local var_0_3 = {
 	charm = true
 }
 
-function ImguiUIAssetCheck.init(arg_1_0)
+ImguiUIAssetCheck.init = function (arg_1_0)
 	arg_1_0._active = false
 	arg_1_0._first_launch = true
 	arg_1_0._missing_asset_items_list = {}
@@ -33,7 +33,7 @@ function ImguiUIAssetCheck.init(arg_1_0)
 	arg_1_0._show_melee = true
 end
 
-function ImguiUIAssetCheck.update(arg_2_0)
+ImguiUIAssetCheck.update = function (arg_2_0)
 	if var_0_2 then
 		arg_2_0:init()
 
@@ -41,15 +41,15 @@ function ImguiUIAssetCheck.update(arg_2_0)
 	end
 end
 
-function ImguiUIAssetCheck.on_show(arg_3_0)
+ImguiUIAssetCheck.on_show = function (arg_3_0)
 	arg_3_0._active = true
 end
 
-function ImguiUIAssetCheck.on_hide(arg_4_0)
+ImguiUIAssetCheck.on_hide = function (arg_4_0)
 	arg_4_0._active = false
 end
 
-function ImguiUIAssetCheck.draw(arg_5_0, arg_5_1)
+ImguiUIAssetCheck.draw = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0:_do_main_window()
 
 	arg_5_0:_do_preview_window()
@@ -57,11 +57,11 @@ function ImguiUIAssetCheck.draw(arg_5_0, arg_5_1)
 	return var_5_0
 end
 
-function ImguiUIAssetCheck.is_persistent(arg_6_0)
+ImguiUIAssetCheck.is_persistent = function (arg_6_0)
 	return true
 end
 
-function ImguiUIAssetCheck._do_main_window(arg_7_0)
+ImguiUIAssetCheck._do_main_window = function (arg_7_0)
 	if arg_7_0._first_launch then
 		local var_7_0, var_7_1 = Application.resolution()
 
@@ -84,7 +84,7 @@ function ImguiUIAssetCheck._do_main_window(arg_7_0)
 	return var_7_2
 end
 
-function ImguiUIAssetCheck._do_preview_window(arg_8_0)
+ImguiUIAssetCheck._do_preview_window = function (arg_8_0)
 	if arg_8_0._first_launch then
 		local var_8_0, var_8_1 = Application.resolution()
 
@@ -110,7 +110,7 @@ function ImguiUIAssetCheck._do_preview_window(arg_8_0)
 	var_0_1:end_window()
 end
 
-function ImguiUIAssetCheck._do_filter_settings(arg_9_0)
+ImguiUIAssetCheck._do_filter_settings = function (arg_9_0)
 	arg_9_0._show_test_items = var_0_1.checkbox("Show Test Items", arg_9_0._show_test_items)
 	arg_9_0._show_bundles = var_0_1.checkbox("Show Bundles", arg_9_0._show_bundles)
 	arg_9_0._show_frames = var_0_1.checkbox("show Frames", arg_9_0._show_frames)
@@ -134,7 +134,7 @@ function ImguiUIAssetCheck._do_filter_settings(arg_9_0)
 	var_0_1.dummy(2, 25)
 end
 
-function ImguiUIAssetCheck._do_asset_check(arg_10_0)
+ImguiUIAssetCheck._do_asset_check = function (arg_10_0)
 	table.clear(arg_10_0._missing_asset_items_list)
 
 	for iter_10_0, iter_10_1 in pairs(ItemMasterList) do
@@ -150,7 +150,7 @@ function ImguiUIAssetCheck._do_asset_check(arg_10_0)
 				if string.find(iter_10_0, "test") and arg_10_0._show_test_items then
 					arg_10_0._missing_asset_items_list[iter_10_0] = iter_10_1
 				elseif string.find(iter_10_0, "test") and not arg_10_0._show_test_items then
-					-- block empty
+					-- Nothing
 				else
 					arg_10_0._missing_asset_items_list[iter_10_0] = iter_10_1
 				end
@@ -159,11 +159,11 @@ function ImguiUIAssetCheck._do_asset_check(arg_10_0)
 	end
 end
 
-function ImguiUIAssetCheck._should_add_item(arg_11_0, arg_11_1)
+ImguiUIAssetCheck._should_add_item = function (arg_11_0, arg_11_1)
 	return
 end
 
-function ImguiUIAssetCheck._do_preview(arg_12_0)
+ImguiUIAssetCheck._do_preview = function (arg_12_0)
 	for iter_12_0, iter_12_1 in pairs(arg_12_0._missing_asset_items_list) do
 		var_0_1.text_colored(iter_12_0 .. " : ", 0, 186, 112, 255)
 		var_0_1.dummy(2, 4)

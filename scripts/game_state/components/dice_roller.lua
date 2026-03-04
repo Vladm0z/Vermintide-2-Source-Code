@@ -152,7 +152,7 @@ local var_0_6 = 0.03
 
 DiceRoller = class(DiceRoller)
 
-function DiceRoller.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DiceRoller.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.world = arg_1_1
 	arg_1_0.simulation_world = Managers.world:create_world("dice_simulation", nil, nil, nil, Application.DISABLE_APEX_CLOTH, Application.DISABLE_RENDERING, Application.DISABLE_SOUND)
 
@@ -205,13 +205,13 @@ function DiceRoller.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._glow_dice = {}
 end
 
-function DiceRoller.destroy(arg_2_0)
+DiceRoller.destroy = function (arg_2_0)
 	if not arg_2_0.post_cleanup_done then
 		arg_2_0:cleanup_post_roll()
 	end
 end
 
-function DiceRoller._request_from_backend(arg_3_0, arg_3_1)
+DiceRoller._request_from_backend = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.state.difficulty:get_difficulty()
 	local var_3_1 = arg_3_0.dice_keeper:get_dice()
 	local var_3_2 = arg_3_0.rewards:get_level_start()
@@ -221,7 +221,7 @@ function DiceRoller._request_from_backend(arg_3_0, arg_3_1)
 	Managers.backend:get_interface("items"):generate_item_server_loot(var_3_1, var_3_0, var_3_2, var_3_3, arg_3_1, var_3_4)
 end
 
-function DiceRoller.poll_for_backend_result(arg_4_0)
+DiceRoller.poll_for_backend_result = function (arg_4_0)
 	if arg_4_0._got_backend_result then
 		return true
 	end
@@ -241,23 +241,23 @@ function DiceRoller.poll_for_backend_result(arg_4_0)
 	return false
 end
 
-function DiceRoller.dice(arg_5_0)
+DiceRoller.dice = function (arg_5_0)
 	return arg_5_0.dice_keeper:get_dice()
 end
 
-function DiceRoller.successes(arg_6_0)
+DiceRoller.successes = function (arg_6_0)
 	fassert(arg_6_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	return arg_6_0._successes
 end
 
-function DiceRoller.reward_backend_id(arg_7_0)
+DiceRoller.reward_backend_id = function (arg_7_0)
 	fassert(arg_7_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	return arg_7_0._reward_backend_id
 end
 
-function DiceRoller.num_successes(arg_8_0)
+DiceRoller.num_successes = function (arg_8_0)
 	fassert(arg_8_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	local var_8_0 = 1
@@ -269,19 +269,19 @@ function DiceRoller.num_successes(arg_8_0)
 	return var_8_0
 end
 
-function DiceRoller.level_up_rewards(arg_9_0)
+DiceRoller.level_up_rewards = function (arg_9_0)
 	fassert(arg_9_0._got_backend_result, "Trying get level up rewards before response from backend")
 
 	return arg_9_0._level_rewards
 end
 
-function DiceRoller.win_list(arg_10_0)
+DiceRoller.win_list = function (arg_10_0)
 	fassert(arg_10_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	return arg_10_0._win_list
 end
 
-function DiceRoller.reward_item_key(arg_11_0)
+DiceRoller.reward_item_key = function (arg_11_0)
 	fassert(arg_11_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	local var_11_0 = arg_11_0:num_successes()
@@ -289,7 +289,7 @@ function DiceRoller.reward_item_key(arg_11_0)
 	return arg_11_0._win_list[var_11_0]
 end
 
-function DiceRoller.flow_callback_die_collision(arg_12_0, arg_12_1)
+DiceRoller.flow_callback_die_collision = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.touched_unit
 	local var_12_1 = arg_12_1.touching_unit
 	local var_12_2 = arg_12_1.impulse_force
@@ -303,15 +303,15 @@ function DiceRoller.flow_callback_die_collision(arg_12_0, arg_12_1)
 	end
 end
 
-function DiceRoller.is_rolling(arg_13_0)
+DiceRoller.is_rolling = function (arg_13_0)
 	return arg_13_0.rolling
 end
 
-function DiceRoller.is_completed(arg_14_0)
+DiceRoller.is_completed = function (arg_14_0)
 	return arg_14_0.rolling_finished
 end
 
-function DiceRoller.has_rerolls(arg_15_0)
+DiceRoller.has_rerolls = function (arg_15_0)
 	return arg_15_0.needs_rerolls
 end
 
@@ -331,7 +331,7 @@ local function var_0_8(arg_16_0, arg_16_1)
 	end
 end
 
-function DiceRoller._add_to_glow_list(arg_17_0, arg_17_1)
+DiceRoller._add_to_glow_list = function (arg_17_0, arg_17_1)
 	arg_17_0._glow_dice[#arg_17_0._glow_dice + 1] = {
 		time = 0,
 		unit = arg_17_1
@@ -340,7 +340,7 @@ function DiceRoller._add_to_glow_list(arg_17_0, arg_17_1)
 	WwiseWorld.trigger_event(arg_17_0.wwise_world, "hud_dice_game_glow")
 end
 
-function DiceRoller._update_glow(arg_18_0, arg_18_1)
+DiceRoller._update_glow = function (arg_18_0, arg_18_1)
 	local var_18_0 = Vector3(0.615, 0.208, 0.055)
 	local var_18_1 = 0.2
 
@@ -354,7 +354,7 @@ function DiceRoller._update_glow(arg_18_0, arg_18_1)
 	end
 end
 
-function DiceRoller._create_success_table(arg_19_0, arg_19_1)
+DiceRoller._create_success_table = function (arg_19_0, arg_19_1)
 	local var_19_0 = {}
 
 	arg_19_0.remaining_dice = arg_19_0.remaining_dice or table.clone(arg_19_0.dice_data)
@@ -381,7 +381,7 @@ function DiceRoller._create_success_table(arg_19_0, arg_19_1)
 	arg_19_0._success_table = var_19_0
 end
 
-function DiceRoller.roll_dices(arg_20_0)
+DiceRoller.roll_dices = function (arg_20_0)
 	fassert(arg_20_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	local var_20_0 = arg_20_0.world
@@ -414,7 +414,7 @@ function DiceRoller.roll_dices(arg_20_0)
 	return #var_20_1
 end
 
-function DiceRoller.simulate_dice_rolls(arg_21_0, arg_21_1)
+DiceRoller.simulate_dice_rolls = function (arg_21_0, arg_21_1)
 	fassert(arg_21_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	if not arg_21_0._success_table then
@@ -504,7 +504,7 @@ function DiceRoller.simulate_dice_rolls(arg_21_0, arg_21_1)
 	return var_21_17
 end
 
-function DiceRoller.run_simulation(arg_22_0, arg_22_1)
+DiceRoller.run_simulation = function (arg_22_0, arg_22_1)
 	fassert(arg_22_0._got_backend_result, "Trying to roll dice before response from backend")
 
 	local var_22_0 = arg_22_0.simulation_world
@@ -566,7 +566,7 @@ function DiceRoller.run_simulation(arg_22_0, arg_22_1)
 	return var_22_2
 end
 
-function DiceRoller.calculate_results(arg_23_0, arg_23_1)
+DiceRoller.calculate_results = function (arg_23_0, arg_23_1)
 	local var_23_0 = #arg_23_1
 
 	for iter_23_0 = 1, var_23_0 do
@@ -577,7 +577,7 @@ function DiceRoller.calculate_results(arg_23_0, arg_23_1)
 	end
 end
 
-function DiceRoller.get_dice_result(arg_24_0, arg_24_1, arg_24_2)
+DiceRoller.get_dice_result = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = Unit.world_pose(arg_24_1, 0)
 	local var_24_1 = Matrix4x4.up(var_24_0)
 	local var_24_2 = Matrix4x4.forward(var_24_0)
@@ -609,7 +609,7 @@ function DiceRoller.get_dice_result(arg_24_0, arg_24_1, arg_24_2)
 	return var_24_8
 end
 
-function DiceRoller.alter_rotations(arg_25_0, arg_25_1)
+DiceRoller.alter_rotations = function (arg_25_0, arg_25_1)
 	local var_25_0 = #arg_25_1
 
 	for iter_25_0 = 1, var_25_0 do
@@ -644,11 +644,11 @@ function DiceRoller.alter_rotations(arg_25_0, arg_25_1)
 	end
 end
 
-function DiceRoller.get_dice_results(arg_26_0)
+DiceRoller.get_dice_results = function (arg_26_0)
 	return arg_26_0.num_successes
 end
 
-function DiceRoller.update(arg_27_0, arg_27_1)
+DiceRoller.update = function (arg_27_0, arg_27_1)
 	if not arg_27_0.rolling then
 		return
 	end
@@ -713,7 +713,7 @@ function DiceRoller.update(arg_27_0, arg_27_1)
 	arg_27_0.roll_time = var_27_0
 end
 
-function DiceRoller.cleanup_post_roll(arg_28_0)
+DiceRoller.cleanup_post_roll = function (arg_28_0)
 	local var_28_0 = arg_28_0.dice_units
 	local var_28_1 = {}
 	local var_28_2 = 0

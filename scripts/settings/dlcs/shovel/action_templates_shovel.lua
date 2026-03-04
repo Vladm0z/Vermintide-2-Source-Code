@@ -7,7 +7,7 @@ ActionTemplates.action_career_bw_necromancer = {
 		kind = "instant_wield",
 		input_override = "action_career",
 		total_time = 0,
-		condition_func = function(arg_1_0, arg_1_1)
+		condition_func = function (arg_1_0, arg_1_1)
 			if ScriptUnit.extension(arg_1_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end
@@ -27,7 +27,7 @@ ActionTemplates.action_career_bw_necromancer = {
 
 			return var_1_0:can_use_activated_ability() and var_1_2.action_name == "action_career_bw_necromancer"
 		end,
-		enter_function = function(arg_2_0, arg_2_1)
+		enter_function = function (arg_2_0, arg_2_1)
 			local var_2_0 = ScriptUnit.has_extension(arg_2_0, "inventory_system")
 
 			if var_2_0 then

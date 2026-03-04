@@ -2,7 +2,7 @@
 
 ProximityMineExtension = class(ProximityMineExtension)
 
-function ProximityMineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProximityMineExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.arm_time = arg_1_3.arm_time or 0
 	arg_1_0.detonation_time = arg_1_3.detonation_time or 0
 	arg_1_0.range = arg_1_3.range or 1
@@ -21,15 +21,15 @@ function ProximityMineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:enable(true)
 end
 
-function ProximityMineExtension.destroy(arg_2_0)
+ProximityMineExtension.destroy = function (arg_2_0)
 	return
 end
 
-function ProximityMineExtension.enable(arg_3_0, arg_3_1)
+ProximityMineExtension.enable = function (arg_3_0, arg_3_1)
 	arg_3_0._arm_timer = arg_3_0.arm_time
 end
 
-function ProximityMineExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ProximityMineExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0._is_server or not HEALTH_ALIVE[arg_4_1] then
 		return
 	end
@@ -97,6 +97,6 @@ function ProximityMineExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	end
 end
 
-function ProximityMineExtension.hot_join_sync(arg_5_0, arg_5_1)
+ProximityMineExtension.hot_join_sync = function (arg_5_0, arg_5_1)
 	return
 end

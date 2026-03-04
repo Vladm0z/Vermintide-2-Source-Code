@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowDeusQuickplay = class(StartGameWindowDeusQuickplay)
 StartGameWindowDeusQuickplay.NAME = "StartGameWindowDeusQuickplay"
 
-function StartGameWindowDeusQuickplay.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusQuickplay.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowDeusQuickplay")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -47,7 +47,7 @@ function StartGameWindowDeusQuickplay.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowDeusQuickplay._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowDeusQuickplay._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -57,7 +57,7 @@ function StartGameWindowDeusQuickplay._start_transition_animation(arg_2_0, arg_2
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowDeusQuickplay._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowDeusQuickplay._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_3_0._widgets, arg_3_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
@@ -76,7 +76,7 @@ function StartGameWindowDeusQuickplay._create_ui_elements(arg_3_0, arg_3_1, arg_
 	arg_3_0._widgets_by_name.difficulty_info.content.visible = false
 end
 
-function StartGameWindowDeusQuickplay.on_exit(arg_4_0, arg_4_1)
+StartGameWindowDeusQuickplay.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowDeusQuickplay")
 
 	arg_4_0._ui_animator = nil
@@ -90,11 +90,11 @@ function StartGameWindowDeusQuickplay.on_exit(arg_4_0, arg_4_1)
 	arg_4_0._parent:set_difficulty_option(arg_4_0._current_difficulty)
 end
 
-function StartGameWindowDeusQuickplay.set_focus(arg_5_0, arg_5_1)
+StartGameWindowDeusQuickplay.set_focus = function (arg_5_0, arg_5_1)
 	arg_5_0._is_focused = arg_5_1
 end
 
-function StartGameWindowDeusQuickplay.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowDeusQuickplay.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_can_play()
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_handle_gamepad_activity()
@@ -102,11 +102,11 @@ function StartGameWindowDeusQuickplay.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowDeusQuickplay.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDeusQuickplay.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowDeusQuickplay._handle_gamepad_activity(arg_8_0)
+StartGameWindowDeusQuickplay._handle_gamepad_activity = function (arg_8_0)
 	local var_8_0 = arg_8_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -127,7 +127,7 @@ function StartGameWindowDeusQuickplay._handle_gamepad_activity(arg_8_0)
 	end
 end
 
-function StartGameWindowDeusQuickplay._update_can_play(arg_9_0)
+StartGameWindowDeusQuickplay._update_can_play = function (arg_9_0)
 	local var_9_0 = arg_9_0:_can_play()
 
 	arg_9_0._widgets_by_name.play_button.content.button_hotspot.disable_button = not var_9_0
@@ -147,7 +147,7 @@ function StartGameWindowDeusQuickplay._update_can_play(arg_9_0)
 	end
 end
 
-function StartGameWindowDeusQuickplay._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowDeusQuickplay._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._parent
 	local var_10_1 = var_10_0:window_input_service()
 	local var_10_2 = Managers.input:is_device_active("mouse")
@@ -259,15 +259,15 @@ function StartGameWindowDeusQuickplay._handle_input(arg_10_0, arg_10_1, arg_10_2
 	end
 end
 
-function StartGameWindowDeusQuickplay._play_sound(arg_11_0, arg_11_1)
+StartGameWindowDeusQuickplay._play_sound = function (arg_11_0, arg_11_1)
 	return arg_11_0._parent:play_sound(arg_11_1)
 end
 
-function StartGameWindowDeusQuickplay._can_play(arg_12_0)
+StartGameWindowDeusQuickplay._can_play = function (arg_12_0)
 	return arg_12_0._current_difficulty ~= nil and not arg_12_0._dlc_locked
 end
 
-function StartGameWindowDeusQuickplay._set_info_window(arg_13_0, arg_13_1)
+StartGameWindowDeusQuickplay._set_info_window = function (arg_13_0, arg_13_1)
 	local var_13_0 = DifficultySettings[arg_13_1]
 	local var_13_1 = var_13_0.description
 	local var_13_2 = var_13_0.max_chest_power_level
@@ -277,7 +277,7 @@ function StartGameWindowDeusQuickplay._set_info_window(arg_13_0, arg_13_1)
 	var_13_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_13_2)
 end
 
-function StartGameWindowDeusQuickplay._update_difficulty_option(arg_14_0, arg_14_1)
+StartGameWindowDeusQuickplay._update_difficulty_option = function (arg_14_0, arg_14_1)
 	if arg_14_1 then
 		local var_14_0 = DifficultySettings[arg_14_1]
 		local var_14_1 = arg_14_0._widgets_by_name.difficulty_stepper
@@ -294,7 +294,7 @@ function StartGameWindowDeusQuickplay._update_difficulty_option(arg_14_0, arg_14
 	end
 end
 
-function StartGameWindowDeusQuickplay._option_selected(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+StartGameWindowDeusQuickplay._option_selected = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	if arg_15_1 == "difficulty_stepper" then
 		local var_15_0 = arg_15_0._current_difficulty
 		local var_15_1 = GameModeSettings.deus.difficulties
@@ -327,7 +327,7 @@ function StartGameWindowDeusQuickplay._option_selected(arg_15_0, arg_15_1, arg_1
 	end
 end
 
-function StartGameWindowDeusQuickplay._verify_selection_index(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowDeusQuickplay._verify_selection_index = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._input_index
 	local var_16_1 = #var_0_4
 
@@ -351,7 +351,7 @@ function StartGameWindowDeusQuickplay._verify_selection_index(arg_16_0, arg_16_1
 	return var_16_0
 end
 
-function StartGameWindowDeusQuickplay._gamepad_selector_input_func(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowDeusQuickplay._gamepad_selector_input_func = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Managers.input:is_device_active("mouse")
 
 	arg_17_1 = arg_17_0:_verify_selection_index(arg_17_1, arg_17_2)
@@ -369,7 +369,7 @@ function StartGameWindowDeusQuickplay._gamepad_selector_input_func(arg_17_0, arg
 	arg_17_0._input_index = arg_17_1
 end
 
-function StartGameWindowDeusQuickplay._handle_new_selection(arg_18_0, arg_18_1, arg_18_2)
+StartGameWindowDeusQuickplay._handle_new_selection = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = #var_0_4
 
 	arg_18_1 = math.clamp(arg_18_1, 1, var_18_0)
@@ -386,7 +386,7 @@ function StartGameWindowDeusQuickplay._handle_new_selection(arg_18_0, arg_18_1, 
 	arg_18_0._input_index = arg_18_1
 end
 
-function StartGameWindowDeusQuickplay._update_animations(arg_19_0, arg_19_1)
+StartGameWindowDeusQuickplay._update_animations = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ui_animator
 
 	var_19_0:update(arg_19_1)
@@ -406,13 +406,13 @@ function StartGameWindowDeusQuickplay._update_animations(arg_19_0, arg_19_1)
 	end
 end
 
-function StartGameWindowDeusQuickplay._update_button_animations(arg_20_0, arg_20_1)
+StartGameWindowDeusQuickplay._update_button_animations = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._widgets_by_name
 
 	UIWidgetUtils.animate_default_button(var_20_0.upsell_button, arg_20_1)
 end
 
-function StartGameWindowDeusQuickplay._draw(arg_21_0, arg_21_1)
+StartGameWindowDeusQuickplay._draw = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._ui_top_renderer
 	local var_21_1 = arg_21_0._ui_scenegraph
 	local var_21_2 = arg_21_0._parent:window_input_service()
@@ -424,7 +424,7 @@ function StartGameWindowDeusQuickplay._draw(arg_21_0, arg_21_1)
 	UIRenderer.end_pass(var_21_0)
 end
 
-function StartGameWindowDeusQuickplay._update_difficulty_lock(arg_22_0)
+StartGameWindowDeusQuickplay._update_difficulty_lock = function (arg_22_0)
 	local var_22_0 = arg_22_0._current_difficulty
 	local var_22_1 = arg_22_0._widgets_by_name.difficulty_info
 	local var_22_2 = arg_22_0._widgets_by_name.upsell_button
@@ -481,13 +481,13 @@ function StartGameWindowDeusQuickplay._update_difficulty_lock(arg_22_0)
 	var_22_2.offset[2] = -math.floor(var_22_7) / 2 + 24
 end
 
-function StartGameWindowDeusQuickplay._handle_difficulty_info(arg_23_0, arg_23_1)
+StartGameWindowDeusQuickplay._handle_difficulty_info = function (arg_23_0, arg_23_1)
 	if arg_23_1 then
 		arg_23_0:_update_difficulty_lock()
 	end
 end
 
-function StartGameWindowDeusQuickplay._calculate_difficulty_info_widget_size(arg_24_0, arg_24_1)
+StartGameWindowDeusQuickplay._calculate_difficulty_info_widget_size = function (arg_24_0, arg_24_1)
 	local var_24_0 = 20
 	local var_24_1 = arg_24_1.style.difficulty_description
 	local var_24_2 = arg_24_1.content.difficulty_description
@@ -518,7 +518,7 @@ function StartGameWindowDeusQuickplay._calculate_difficulty_info_widget_size(arg
 	return var_24_6 + var_24_3 + var_24_9 + var_24_12 + 50
 end
 
-function StartGameWindowDeusQuickplay._resize_difficulty_info(arg_25_0, arg_25_1, arg_25_2)
+StartGameWindowDeusQuickplay._resize_difficulty_info = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._widgets_by_name.difficulty_info
 
 	var_25_0.content.should_resize = true
@@ -528,7 +528,7 @@ function StartGameWindowDeusQuickplay._resize_difficulty_info(arg_25_0, arg_25_1
 	var_25_0.style.widget_hotspot.offset = arg_25_2
 end
 
-function StartGameWindowDeusQuickplay._update_gamemode_info_text(arg_26_0, arg_26_1)
+StartGameWindowDeusQuickplay._update_gamemode_info_text = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0._widgets_by_name.quickplay_gamemode_info_box
 
 	if arg_26_1:get("trigger_cycle_next") and not var_26_0.content.is_showing_info then
@@ -554,7 +554,7 @@ function StartGameWindowDeusQuickplay._update_gamemode_info_text(arg_26_0, arg_2
 	end
 end
 
-function StartGameWindowDeusQuickplay._handle_difficulty_stepper_gamepad(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+StartGameWindowDeusQuickplay._handle_difficulty_stepper_gamepad = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = {}
 
 	if arg_27_2:get("move_left") and arg_27_1.content.is_selected then

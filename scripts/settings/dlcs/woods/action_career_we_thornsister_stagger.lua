@@ -2,7 +2,7 @@
 
 ActionCareerWEThornsisterStagger = class(ActionCareerWEThornsisterStagger, ActionBase)
 
-function ActionCareerWEThornsisterStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEThornsisterStagger.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWEThornsisterStagger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -11,7 +11,7 @@ function ActionCareerWEThornsisterStagger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	arg_1_0._network_transmit = Managers.state.network.network_transmit
 end
 
-function ActionCareerWEThornsisterStagger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEThornsisterStagger.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 
 	ActionCareerWEThornsisterStagger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
@@ -51,15 +51,15 @@ function ActionCareerWEThornsisterStagger.client_owner_start_action(arg_2_0, arg
 	end
 end
 
-function ActionCareerWEThornsisterStagger.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerWEThornsisterStagger.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-function ActionCareerWEThornsisterStagger.finish(arg_4_0, arg_4_1)
+ActionCareerWEThornsisterStagger.finish = function (arg_4_0, arg_4_1)
 	arg_4_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWEThornsisterStagger._play_vo(arg_5_0)
+ActionCareerWEThornsisterStagger._play_vo = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
 	local var_5_2 = FrameTable.alloc_table()

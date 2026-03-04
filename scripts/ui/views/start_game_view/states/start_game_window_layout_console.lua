@@ -85,7 +85,7 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_1_0)
+		can_add_function = function (arg_1_0)
 			return arg_1_0:is_in_mechanism("adventure")
 		end
 	},
@@ -107,7 +107,7 @@ local var_0_1 = {
 			background = 2,
 			additional_settings = 4
 		},
-		can_add_function = function(arg_2_0)
+		can_add_function = function (arg_2_0)
 			return arg_2_0:is_in_mechanism("adventure")
 		end
 	},
@@ -129,7 +129,7 @@ local var_0_1 = {
 			background = 2,
 			mutator_summary = 4
 		},
-		can_add_function = function(arg_3_0)
+		can_add_function = function (arg_3_0)
 			return arg_3_0:is_in_mechanism("adventure")
 		end
 	},
@@ -150,7 +150,7 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_4_0)
+		can_add_function = function (arg_4_0)
 			return arg_4_0:is_in_mechanism("adventure") and arg_4_0:can_use_streaming()
 		end
 	},
@@ -169,7 +169,7 @@ local var_0_1 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function(arg_5_0)
+		can_add_function = function (arg_5_0)
 			return arg_5_0:is_in_mechanism("adventure") and not IS_XB1
 		end
 	},
@@ -252,7 +252,7 @@ local var_0_2 = {
 			input_action = "right_stick_press",
 			priority = 4,
 			description_text = "input_description_level_preferences",
-			content_check_function = function()
+			content_check_function = function ()
 				return PLATFORM == "xb1" and DLCSettings.quick_play_preferences
 			end
 		},
@@ -260,7 +260,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -291,7 +291,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -340,7 +340,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -371,7 +371,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -391,7 +391,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -411,7 +411,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -437,7 +437,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 4,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		},
@@ -463,7 +463,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		},
@@ -483,7 +483,7 @@ local var_0_2 = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -935,7 +935,7 @@ local var_0_5 = {
 }
 local var_0_6 = {}
 
-DLCUtils.map("start_game_window_layout_console", function(arg_16_0)
+DLCUtils.map("start_game_window_layout_console", function (arg_16_0)
 	local var_16_0 = arg_16_0.windows
 
 	if var_16_0 then
@@ -986,7 +986,7 @@ DLCUtils.merge("start_game_save_data_table_map_console", var_0_6)
 
 local var_0_7 = math.huge
 
-table.sort(var_0_1, function(arg_17_0, arg_17_1)
+table.sort(var_0_1, function (arg_17_0, arg_17_1)
 	return (arg_17_0.panel_sorting or var_0_7) < (arg_17_1.panel_sorting or var_0_7)
 end)
 

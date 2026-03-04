@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAlertedAction = class(BTAlertedAction, BTNode)
 
-function BTAlertedAction.init(arg_1_0, ...)
+BTAlertedAction.init = function (arg_1_0, ...)
 	BTAlertedAction.super.init(arg_1_0, ...)
 end
 
 BTAlertedAction.name = "BTAlertedAction"
 
-function BTAlertedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTAlertedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -33,7 +33,7 @@ function BTAlertedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.move_state = "idle"
 end
 
-function BTAlertedAction.init_alerted(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTAlertedAction.init_alerted = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = Managers.state.network
 	local var_3_1 = var_3_0:unit_game_object_id(arg_3_1)
 
@@ -87,7 +87,7 @@ function BTAlertedAction.init_alerted(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return true
 end
 
-function BTAlertedAction.decide_deadline(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTAlertedAction.decide_deadline = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.target_unit
 	local var_4_1 = POSITION_LOOKUP[arg_4_1]
 	local var_4_2 = POSITION_LOOKUP[var_4_0]
@@ -110,7 +110,7 @@ function BTAlertedAction.decide_deadline(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_2.alerted_action.deadline = var_4_9 + arg_4_3
 end
 
-function BTAlertedAction.should_hesitate(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTAlertedAction.should_hesitate = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_3.no_hesitation then
 		arg_5_2.no_hesitation = true
 	elseif not arg_5_2.no_hestitation then
@@ -139,7 +139,7 @@ function BTAlertedAction.should_hesitate(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function BTAlertedAction.leave(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+BTAlertedAction.leave = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = Managers.state.network
 
 	if script_data.enable_alert_icon then
@@ -200,7 +200,7 @@ local function var_0_0(arg_7_0, arg_7_1)
 	end
 end
 
-function BTAlertedAction.check_if_should_start_moving(arg_8_0, arg_8_1, arg_8_2)
+BTAlertedAction.check_if_should_start_moving = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2.action
 	local var_8_1 = arg_8_2.target_unit
 	local var_8_2 = POSITION_LOOKUP[var_8_1]
@@ -244,7 +244,7 @@ function BTAlertedAction.check_if_should_start_moving(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function BTAlertedAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTAlertedAction.run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.action
 	local var_9_1 = arg_9_2.target_unit
 

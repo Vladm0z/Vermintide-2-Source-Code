@@ -83,7 +83,7 @@ function reconstruct_path(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function LuaAStar.a_star_plain(arg_10_0, arg_10_1, arg_10_2)
+LuaAStar.a_star_plain = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = {}
 	local var_10_1 = {
 		arg_10_1
@@ -134,11 +134,11 @@ function LuaAStar.a_star_plain(arg_10_0, arg_10_1, arg_10_2)
 	return nil
 end
 
-function LuaAStar.clear_cached_paths()
+LuaAStar.clear_cached_paths = function ()
 	var_0_0 = nil
 end
 
-function LuaAStar.a_star_cached(arg_12_0, arg_12_1, arg_12_2)
+LuaAStar.a_star_cached = function (arg_12_0, arg_12_1, arg_12_2)
 	if not var_0_0[arg_12_1] then
 		var_0_0[arg_12_1] = {}
 	elseif var_0_0[arg_12_1][arg_12_2] then

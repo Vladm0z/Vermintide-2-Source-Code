@@ -5,13 +5,13 @@ ActionCareerDREngineer = class(ActionCareerDREngineer, ActionMinigun)
 local var_0_0 = Unit.set_flow_variable
 local var_0_1 = Unit.flow_event
 
-function ActionCareerDREngineer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerDREngineer.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-function ActionCareerDREngineer.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerDREngineer.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCareerDREngineer.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	if arg_2_0._talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
@@ -27,7 +27,7 @@ function ActionCareerDREngineer.client_owner_start_action(arg_2_0, arg_2_1, arg_
 	Managers.state.achievement:trigger_event("crank_gun_fire_start", arg_2_0.owner_unit)
 end
 
-function ActionCareerDREngineer._update_attack_speed(arg_3_0, arg_3_1)
+ActionCareerDREngineer._update_attack_speed = function (arg_3_0, arg_3_1)
 	if not arg_3_0._calculated_attack_speed then
 		arg_3_0._attack_speed_mod = ActionUtils.get_action_time_scale(arg_3_0.owner_unit, arg_3_0.current_action)
 
@@ -37,18 +37,18 @@ function ActionCareerDREngineer._update_attack_speed(arg_3_0, arg_3_1)
 	ActionCareerDREngineer.super._update_attack_speed(arg_3_0, arg_3_1)
 end
 
-function ActionCareerDREngineer._shoot(arg_4_0, arg_4_1, arg_4_2)
+ActionCareerDREngineer._shoot = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_handle_infinite_stacks(arg_4_1, arg_4_2)
 	ActionCareerDREngineer.super._shoot(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function ActionCareerDREngineer._staggered_shot_done(arg_5_0, arg_5_1)
+ActionCareerDREngineer._staggered_shot_done = function (arg_5_0, arg_5_1)
 	ActionCareerDREngineer.super._staggered_shot_done(arg_5_0, arg_5_1)
 	Managers.state.achievement:trigger_event("crank_gun_fire", arg_5_0.owner_unit, 1)
 	var_0_1(arg_5_0.weapon_unit, "lua_finish_shooting")
 end
 
-function ActionCareerDREngineer.finish(arg_6_0, arg_6_1)
+ActionCareerDREngineer.finish = function (arg_6_0, arg_6_1)
 	ActionCareerDREngineer.super.finish(arg_6_0, arg_6_1)
 
 	local var_6_0 = arg_6_0._initial_rounds_per_second
@@ -61,7 +61,7 @@ end
 local var_0_2 = 1
 local var_0_3 = 2
 
-function ActionCareerDREngineer.fire_hitscan(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ActionCareerDREngineer.fire_hitscan = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = ActionCareerDREngineer.super.fire_hitscan(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_1 = var_7_0 and var_7_0[#var_7_0][var_0_2] or arg_7_1 + arg_7_2 * arg_7_3
 	local var_7_2 = (var_7_0 and var_7_0[#var_7_0][var_0_3] or arg_7_3) * 0.1
@@ -72,7 +72,7 @@ function ActionCareerDREngineer.fire_hitscan(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return var_7_0
 end
 
-function ActionCareerDREngineer._add_bullet_trail(arg_8_0, arg_8_1, arg_8_2)
+ActionCareerDREngineer._add_bullet_trail = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0.is_bot then
 		local var_8_0 = arg_8_0.weapon_unit
 
@@ -84,11 +84,11 @@ function ActionCareerDREngineer._add_bullet_trail(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function ActionCareerDREngineer.get_projectile_start_position_rotation(arg_9_0)
+ActionCareerDREngineer.get_projectile_start_position_rotation = function (arg_9_0)
 	return arg_9_0.first_person_extension:get_projectile_start_position_rotation()
 end
 
-function ActionCareerDREngineer._handle_infinite_stacks(arg_10_0, arg_10_1, arg_10_2)
+ActionCareerDREngineer._handle_infinite_stacks = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._talent_extension:has_talent("bardin_engineer_pump_buff_long") then
 		return
 	end

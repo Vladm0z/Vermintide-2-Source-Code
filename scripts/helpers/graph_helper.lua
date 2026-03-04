@@ -20,7 +20,7 @@ if var_0_2 == nil or var_0_0 == "release" then
 	end
 end
 
-function GraphHelper.create(arg_3_0, arg_3_1, arg_3_2)
+GraphHelper.create = function (arg_3_0, arg_3_1, arg_3_2)
 	if GraphHelper._known_graphs[arg_3_0] ~= nil then
 		return
 	end
@@ -54,27 +54,27 @@ function GraphHelper.create(arg_3_0, arg_3_1, arg_3_2)
 	var_0_1("graph", "show", arg_3_0)
 end
 
-function GraphHelper.show(arg_4_0)
+GraphHelper.show = function (arg_4_0)
 	var_0_1("graph", "show", arg_4_0)
 end
 
-function GraphHelper.hide(arg_5_0)
+GraphHelper.hide = function (arg_5_0)
 	var_0_1("graph", "hide", arg_5_0)
 end
 
-function GraphHelper.set_range(arg_6_0, arg_6_1, arg_6_2)
+GraphHelper.set_range = function (arg_6_0, arg_6_1, arg_6_2)
 	var_0_1("graph", "range", arg_6_0, tostring(arg_6_1), tostring(arg_6_2))
 end
 
-function GraphHelper.update_range(arg_7_0)
+GraphHelper.update_range = function (arg_7_0)
 	var_0_1("graph", "range", arg_7_0)
 end
 
-function GraphHelper.set_color(arg_8_0, arg_8_1)
+GraphHelper.set_color = function (arg_8_0, arg_8_1)
 	var_0_1("graph", "color", arg_8_1)
 end
 
-function GraphHelper.record_statistics(arg_9_0, arg_9_1)
+GraphHelper.record_statistics = function (arg_9_0, arg_9_1)
 	assert(GraphHelper._known_stats[arg_9_0] == type(arg_9_1))
 	var_0_2(arg_9_0, arg_9_1)
 end

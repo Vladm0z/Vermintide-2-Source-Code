@@ -603,7 +603,7 @@ local var_0_0 = 0.5
 
 ControllerFeaturesSettings = {
 	rumble = {
-		init = function(arg_1_0, arg_1_1)
+		init = function (arg_1_0, arg_1_1)
 			local var_1_0 = RumbleTemplates[arg_1_1.rumble_effect]
 
 			if var_1_0 then
@@ -617,7 +617,7 @@ ControllerFeaturesSettings = {
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_1_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_2_0, arg_2_1, arg_2_2)
+		update = function (arg_2_0, arg_2_1, arg_2_2)
 			arg_2_0._check_timer = arg_2_0._check_timer - arg_2_1
 
 			if arg_2_0._check_timer <= 0 then
@@ -634,7 +634,7 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_3_0, arg_3_1, arg_3_2)
+		destroy = function (arg_3_0, arg_3_1, arg_3_2)
 			for iter_3_0, iter_3_1 in pairs(arg_3_0.ids) do
 				if arg_3_0.controller.is_rumble_effect_playing(iter_3_0, iter_3_1) then
 					arg_3_0.controller.stop_rumble_effect(iter_3_0, iter_3_1)
@@ -643,7 +643,7 @@ ControllerFeaturesSettings = {
 		end
 	},
 	hit_rumble = {
-		init = function(arg_4_0, arg_4_1)
+		init = function (arg_4_0, arg_4_1)
 			local var_4_0 = arg_4_1.damage_amount
 			local var_4_1 = ScriptUnit.extension(arg_4_1.unit, "health_system"):get_max_health()
 			local var_4_2 = Managers.state.difficulty:get_difficulty_rank()
@@ -671,7 +671,7 @@ ControllerFeaturesSettings = {
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_4_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_5_0, arg_5_1, arg_5_2)
+		update = function (arg_5_0, arg_5_1, arg_5_2)
 			arg_5_0._check_timer = arg_5_0._check_timer - arg_5_1
 
 			if arg_5_0._check_timer <= 0 then
@@ -688,7 +688,7 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_6_0, arg_6_1, arg_6_2)
+		destroy = function (arg_6_0, arg_6_1, arg_6_2)
 			for iter_6_0, iter_6_1 in pairs(arg_6_0.ids) do
 				if arg_6_0.controller.is_rumble_effect_playing(iter_6_0, iter_6_1) then
 					arg_6_0.controller.stop_rumble_effect(iter_6_0, iter_6_1)
@@ -697,7 +697,7 @@ ControllerFeaturesSettings = {
 		end
 	},
 	camera_shake = {
-		init = function(arg_7_0, arg_7_1)
+		init = function (arg_7_0, arg_7_1)
 			local var_7_0 = arg_7_1.shake_settings
 			local var_7_1 = RumbleTemplates.camera_shake
 
@@ -727,7 +727,7 @@ ControllerFeaturesSettings = {
 				arg_7_0.ids[iter_7_1] = arg_7_0.controller.rumble_effect(iter_7_1, var_7_1.params)
 			end
 		end,
-		update = function(arg_8_0, arg_8_1, arg_8_2)
+		update = function (arg_8_0, arg_8_1, arg_8_2)
 			arg_8_0._check_timer = arg_8_0._check_timer - arg_8_1
 
 			if arg_8_0._check_timer <= 0 then
@@ -744,7 +744,7 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_9_0, arg_9_1, arg_9_2)
+		destroy = function (arg_9_0, arg_9_1, arg_9_2)
 			for iter_9_0, iter_9_1 in pairs(arg_9_0.ids) do
 				if arg_9_0.controller.is_rumble_effect_playing(iter_9_0, iter_9_1) then
 					arg_9_0.controller.stop_rumble_effect(iter_9_0, iter_9_1)
@@ -753,7 +753,7 @@ ControllerFeaturesSettings = {
 		end
 	},
 	persistent_rumble = {
-		init = function(arg_10_0, arg_10_1)
+		init = function (arg_10_0, arg_10_1)
 			local var_10_0 = table.clone(RumbleTemplates[arg_10_1.rumble_effect])
 			local var_10_1 = arg_10_1.sustain_function
 
@@ -775,7 +775,7 @@ ControllerFeaturesSettings = {
 				Application.warning(string.format("[ControllerFeaturesImplementation] No such rumble effect: %s", tostring(arg_10_1.rumble_effect)))
 			end
 		end,
-		update = function(arg_11_0, arg_11_1, arg_11_2)
+		update = function (arg_11_0, arg_11_1, arg_11_2)
 			arg_11_0.check_timer = arg_11_0.check_timer - arg_11_1
 
 			if arg_11_0.check_timer <= 0 then
@@ -796,7 +796,7 @@ ControllerFeaturesSettings = {
 				return false
 			end
 		end,
-		destroy = function(arg_12_0, arg_12_1, arg_12_2)
+		destroy = function (arg_12_0, arg_12_1, arg_12_2)
 			for iter_12_0, iter_12_1 in pairs(arg_12_0.ids) do
 				if arg_12_0.controller.is_rumble_effect_playing(iter_12_0, iter_12_1) then
 					arg_12_0.controller.stop_rumble_effect(iter_12_0, iter_12_1)

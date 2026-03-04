@@ -2,11 +2,11 @@
 
 PlayerCharacterStateInVortex = class(PlayerCharacterStateInVortex, PlayerCharacterState)
 
-function PlayerCharacterStateInVortex.init(arg_1_0, arg_1_1)
+PlayerCharacterStateInVortex.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "in_vortex")
 end
 
-function PlayerCharacterStateInVortex.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+PlayerCharacterStateInVortex.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0.game = Managers.state.network:game()
 
 	local var_2_0 = arg_2_0.unit_storage
@@ -67,7 +67,7 @@ function PlayerCharacterStateInVortex.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	CharacterStateHelper.play_animation_event_first_person(var_2_7, var_2_8)
 end
 
-function PlayerCharacterStateInVortex.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateInVortex.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.vortex_unit_go_id = nil
 	arg_3_0.vortex_full_inner_radius = nil
 
@@ -103,7 +103,7 @@ function PlayerCharacterStateInVortex.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	arg_3_0.vortex_owner_unit = nil
 end
 
-function PlayerCharacterStateInVortex.update_spin_velocity(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PlayerCharacterStateInVortex.update_spin_velocity = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0.game
 	local var_4_1 = GameSession.game_object_field(var_4_0, arg_4_3, "inner_radius_percentage")
 	local var_4_2 = arg_4_0.vortex_full_inner_radius * var_4_1 * 0.75
@@ -125,7 +125,7 @@ function PlayerCharacterStateInVortex.update_spin_velocity(arg_4_0, arg_4_1, arg
 	var_4_12:set_wanted_velocity(var_4_8)
 end
 
-function PlayerCharacterStateInVortex.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateInVortex.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.status_extension
 	local var_5_2 = arg_5_0.first_person_extension

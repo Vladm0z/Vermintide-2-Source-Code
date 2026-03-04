@@ -3,7 +3,7 @@
 WeaveDoomWheelExtension = class(WeaveDoomWheelExtension, BaseObjectiveExtension)
 WeaveDoomWheelExtension.NAME = "WeaveDoomWheelExtension"
 
-function WeaveDoomWheelExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveDoomWheelExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveDoomWheelExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._is_done = false
@@ -24,7 +24,7 @@ function WeaveDoomWheelExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Unit.set_data(arg_1_2, "terror_event_spawner_id", var_1_0)
 end
 
-function WeaveDoomWheelExtension.extensions_ready(arg_2_0)
+WeaveDoomWheelExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._objective_socket_extension = ScriptUnit.has_extension(arg_2_0._unit, "objective_socket_system")
 
 	if arg_2_0._objective_socket_extension then
@@ -33,23 +33,23 @@ function WeaveDoomWheelExtension.extensions_ready(arg_2_0)
 	end
 end
 
-function WeaveDoomWheelExtension.display_name(arg_3_0)
+WeaveDoomWheelExtension.display_name = function (arg_3_0)
 	return "objective_destroy_doom_wheels_name_single"
 end
 
-function WeaveDoomWheelExtension.initial_sync_data(arg_4_0, arg_4_1)
+WeaveDoomWheelExtension.initial_sync_data = function (arg_4_0, arg_4_1)
 	arg_4_1.value = arg_4_0:get_percentage_done()
 end
 
-function WeaveDoomWheelExtension._set_objective_data(arg_5_0, arg_5_1)
+WeaveDoomWheelExtension._set_objective_data = function (arg_5_0, arg_5_1)
 	return
 end
 
-function WeaveDoomWheelExtension._activate(arg_6_0)
+WeaveDoomWheelExtension._activate = function (arg_6_0)
 	return
 end
 
-function WeaveDoomWheelExtension.complete(arg_7_0, ...)
+WeaveDoomWheelExtension.complete = function (arg_7_0, ...)
 	if arg_7_0._on_fuze_complete_func then
 		arg_7_0._on_fuze_complete_func(arg_7_0._unit)
 	end
@@ -57,7 +57,7 @@ function WeaveDoomWheelExtension.complete(arg_7_0, ...)
 	WeaveDoomWheelExtension.super.complete(arg_7_0, ...)
 end
 
-function WeaveDoomWheelExtension._deactivate(arg_8_0)
+WeaveDoomWheelExtension._deactivate = function (arg_8_0)
 	Unit.flow_event(arg_8_0._unit, "force_destroy")
 
 	local var_8_0 = Unit.local_position(arg_8_0._unit, 0)
@@ -71,7 +71,7 @@ function WeaveDoomWheelExtension._deactivate(arg_8_0)
 	end
 end
 
-function WeaveDoomWheelExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveDoomWheelExtension._server_update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._objective_socket_extension.num_closed_sockets
 
 	if var_9_0 > arg_9_0._num_closed_sockets then
@@ -117,15 +117,15 @@ function WeaveDoomWheelExtension._server_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function WeaveDoomWheelExtension._client_update(arg_10_0, arg_10_1, arg_10_2)
+WeaveDoomWheelExtension._client_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function WeaveDoomWheelExtension.is_done(arg_11_0)
+WeaveDoomWheelExtension.is_done = function (arg_11_0)
 	return arg_11_0._is_done
 end
 
-function WeaveDoomWheelExtension.get_percentage_done(arg_12_0)
+WeaveDoomWheelExtension.get_percentage_done = function (arg_12_0)
 	if arg_12_0._num_sockets == 0 then
 		return 0
 	end

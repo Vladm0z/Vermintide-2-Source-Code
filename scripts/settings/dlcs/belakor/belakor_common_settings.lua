@@ -40,7 +40,7 @@ var_0_0.husk_lookup = {
 	"units/gameplay/belakor_crystal_socket_01"
 }
 var_0_0.game_object_initializers = {
-	orb_pickup_unit = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	orb_pickup_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = ScriptUnit.extension(arg_1_0, "pickup_system")
 		local var_1_1 = var_1_0.pickup_name
 		local var_1_2 = var_1_0.has_physics
@@ -59,7 +59,7 @@ var_0_0.game_object_initializers = {
 			flight_enabled = var_1_4 and true or false
 		}
 	end,
-	shadow_dagger_unit = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	shadow_dagger_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = ScriptUnit.extension(arg_2_0, "projectile_locomotion_system")
 		local var_2_1 = var_2_0.angle
 		local var_2_2 = var_2_0.speed
@@ -100,7 +100,7 @@ var_0_0.game_object_initializers = {
 			damage_source_id = NetworkLookup.damage_sources[var_2_17]
 		}
 	end,
-	shadow_skull_unit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	shadow_skull_unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		local var_3_0 = Unit.get_data(arg_3_0, "breed")
 		local var_3_1 = Managers.state.side.side_by_unit[arg_3_0].side_id
 		local var_3_2 = ScriptUnit.has_extension(arg_3_0, "health_system"):get_max_health()
@@ -116,7 +116,7 @@ var_0_0.game_object_initializers = {
 			side_id = var_3_1
 		}
 	end,
-	arena_belakor_big_statue_health = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	arena_belakor_big_statue_health = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = ScriptUnit.has_extension(arg_4_0, "health_system")
 
 		return {
@@ -127,7 +127,7 @@ var_0_0.game_object_initializers = {
 			health = var_4_0:get_max_health()
 		}
 	end,
-	deus_belakor_locus = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	deus_belakor_locus = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		return {
 			go_type = NetworkLookup.go_types.deus_belakor_locus,
 			husk_unit = NetworkLookup.husks[arg_5_1],
@@ -135,7 +135,7 @@ var_0_0.game_object_initializers = {
 			rotation = Unit.local_rotation(arg_5_0, 0)
 		}
 	end,
-	belakor_crystal = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	belakor_crystal = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = ScriptUnit.extension(arg_6_0, "pickup_system")
 		local var_6_1 = var_6_0.pickup_name
 		local var_6_2 = var_6_0.has_physics
@@ -152,7 +152,7 @@ var_0_0.game_object_initializers = {
 			spawn_type = NetworkLookup.pickup_spawn_types[var_6_3]
 		}
 	end,
-	belakor_crystal_throw = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	belakor_crystal_throw = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		local var_7_0 = ScriptUnit.extension(arg_7_0, "projectile_locomotion_system")
 		local var_7_1 = var_7_0.network_position
 		local var_7_2 = var_7_0.network_rotation
@@ -178,7 +178,7 @@ var_0_0.game_object_initializers = {
 			spawn_type = NetworkLookup.pickup_spawn_types[var_7_8]
 		}
 	end,
-	belakor_totem = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	belakor_totem = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 		local var_8_0 = Unit.get_data(arg_8_0, "breed")
 		local var_8_1 = Managers.state.side.side_by_unit[arg_8_0].side_id
 		local var_8_2 = ScriptUnit.has_extension(arg_8_0, "health_system")
@@ -194,7 +194,7 @@ var_0_0.game_object_initializers = {
 			side_id = var_8_1
 		}
 	end,
-	shadow_homing_skulls_spawner = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	shadow_homing_skulls_spawner = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		return {
 			go_type = NetworkLookup.go_types.shadow_homing_skulls_spawner,
 			husk_unit = NetworkLookup.husks[arg_9_1],
@@ -202,7 +202,7 @@ var_0_0.game_object_initializers = {
 			rotation = Unit.local_rotation(arg_9_0, 0)
 		}
 	end,
-	belakor_crystal_socket = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	belakor_crystal_socket = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 		return {
 			go_type = NetworkLookup.go_types.belakor_crystal_socket,
 			husk_unit = NetworkLookup.husks[arg_10_1],
@@ -212,7 +212,7 @@ var_0_0.game_object_initializers = {
 	end
 }
 var_0_0.game_object_extractors = {
-	orb_pickup_unit = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	orb_pickup_unit = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		local var_11_0 = GameSession.game_object_field(arg_11_0, arg_11_1, "pickup_name")
 		local var_11_1 = GameSession.game_object_field(arg_11_0, arg_11_1, "has_physics")
 		local var_11_2 = GameSession.game_object_field(arg_11_0, arg_11_1, "spawn_type")
@@ -230,7 +230,7 @@ var_0_0.game_object_extractors = {
 
 		return "orb_pickup_unit", var_11_5
 	end,
-	shadow_dagger_unit = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	shadow_dagger_unit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		local var_12_0 = GameSession.game_object_field(arg_12_0, arg_12_1, "angle")
 		local var_12_1 = GameSession.game_object_field(arg_12_0, arg_12_1, "speed")
 		local var_12_2 = GameSession.game_object_field(arg_12_0, arg_12_1, "gravity_settings")
@@ -276,7 +276,7 @@ var_0_0.game_object_extractors = {
 
 		return "shadow_dagger_unit", var_12_16
 	end,
-	shadow_skull_unit = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	shadow_skull_unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 		local var_13_0 = GameSession.game_object_field(arg_13_0, arg_13_1, "breed_name")
 		local var_13_1 = GameSession.game_object_field(arg_13_0, arg_13_1, "side_id")
 		local var_13_2 = GameSession.game_object_field(arg_13_0, arg_13_1, "health")
@@ -321,7 +321,7 @@ var_0_0.game_object_extractors = {
 
 		return var_13_4.unit_template, var_13_5
 	end,
-	arena_belakor_big_statue_health = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	arena_belakor_big_statue_health = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		local var_14_0 = GameSession.game_object_field(arg_14_0, arg_14_1, "health")
 		local var_14_1 = "arena_belakor_big_statue_health"
 		local var_14_2 = {
@@ -340,7 +340,7 @@ var_0_0.game_object_extractors = {
 
 		return var_14_1, var_14_2
 	end,
-	deus_belakor_locus = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	deus_belakor_locus = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 		local var_15_0 = "deus_belakor_locus"
 		local var_15_1 = AllPickups.deus_02
 		local var_15_2 = {}
@@ -349,7 +349,7 @@ var_0_0.game_object_extractors = {
 
 		return var_15_0, var_15_2
 	end,
-	belakor_crystal = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	belakor_crystal = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		local var_16_0 = GameSession.game_object_field(arg_16_0, arg_16_1, "pickup_name")
 		local var_16_1 = GameSession.game_object_field(arg_16_0, arg_16_1, "has_physics")
 		local var_16_2 = GameSession.game_object_field(arg_16_0, arg_16_1, "spawn_type")
@@ -363,7 +363,7 @@ var_0_0.game_object_extractors = {
 
 		return "belakor_crystal", var_16_3
 	end,
-	belakor_crystal_throw = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	belakor_crystal_throw = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		local var_17_0 = GameSession.game_object_field(arg_17_0, arg_17_1, "network_position")
 		local var_17_1 = GameSession.game_object_field(arg_17_0, arg_17_1, "network_rotation")
 		local var_17_2 = GameSession.game_object_field(arg_17_0, arg_17_1, "network_velocity")
@@ -387,7 +387,7 @@ var_0_0.game_object_extractors = {
 
 		return "belakor_crystal_throw", var_17_7
 	end,
-	belakor_totem = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	belakor_totem = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 		local var_18_0 = GameSession.game_object_field(arg_18_0, arg_18_1, "breed_name")
 		local var_18_1 = GameSession.game_object_field(arg_18_0, arg_18_1, "side_id")
 		local var_18_2 = GameSession.game_object_field(arg_18_0, arg_18_1, "health")
@@ -425,12 +425,12 @@ var_0_0.game_object_extractors = {
 
 		return var_18_4.unit_template, var_18_5
 	end,
-	shadow_homing_skulls_spawner = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+	shadow_homing_skulls_spawner = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 		local var_19_0 = {}
 
 		return "shadow_homing_skulls_spawner", var_19_0
 	end,
-	belakor_crystal_socket = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	belakor_crystal_socket = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 		local var_20_0 = {}
 
 		return "belakor_crystal_socket", var_20_0
@@ -630,25 +630,25 @@ var_0_0.dialogue_event_data_lookup = {
 }
 var_0_0.ai_group_templates = {
 	deus_belakor_locus_cultists = {
-		setup_group = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		setup_group = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 			arg_21_2.idle = true
 		end,
-		init = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+		init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 			return
 		end,
-		update = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+		update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 			return
 		end,
-		destroy = function(arg_24_0, arg_24_1, arg_24_2)
+		destroy = function (arg_24_0, arg_24_1, arg_24_2)
 			Managers.state.event:trigger("deus_belakor_locus_cultists_killed", arg_24_2.id)
 		end,
-		wake_up_group = function(arg_25_0, arg_25_1)
+		wake_up_group = function (arg_25_0, arg_25_1)
 			arg_25_0.idle = false
 
 			Managers.state.event:trigger("deus_belakor_locus_cultists_aggroed", arg_25_0.id)
 			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_25_0, AIGroupTemplates.deus_belakor_locus_cultists.wake_up_unit, arg_25_1)
 		end,
-		wake_up_unit = function(arg_26_0, arg_26_1, arg_26_2)
+		wake_up_unit = function (arg_26_0, arg_26_1, arg_26_2)
 			Managers.state.network:anim_event(arg_26_0, "idle")
 
 			local var_26_0 = ScriptUnit.extension(arg_26_0, "ai_system")

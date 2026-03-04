@@ -3,7 +3,7 @@
 LevelHelper = LevelHelper or {}
 LevelHelper.INGAME_WORLD_NAME = "level_world"
 
-function LevelHelper.current_level_settings(arg_1_0)
+LevelHelper.current_level_settings = function (arg_1_0)
 	if Managers.state.game_mode then
 		local var_1_0 = Managers.state.game_mode:level_key()
 
@@ -13,13 +13,13 @@ function LevelHelper.current_level_settings(arg_1_0)
 	return nil
 end
 
-function LevelHelper.current_level(arg_2_0, arg_2_1)
+LevelHelper.current_level = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0:current_level_settings()
 
 	return (ScriptWorld.level(arg_2_1, var_2_0.level_name))
 end
 
-function LevelHelper.get_environment_variation_id(arg_3_0, arg_3_1)
+LevelHelper.get_environment_variation_id = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.backend:get_title_data("environment_variations")
 
 	if not var_3_0 then
@@ -72,40 +72,40 @@ function LevelHelper.get_environment_variation_id(arg_3_0, arg_3_1)
 	return 0
 end
 
-function LevelHelper.get_random_variation_id(arg_4_0, arg_4_1)
+LevelHelper.get_random_variation_id = function (arg_4_0, arg_4_1)
 	local var_4_0 = rawget(LevelSettings, arg_4_1)
 	local var_4_1 = var_4_0 and var_4_0.environment_variations
 
 	return var_4_1 and math.random(0, #var_4_1) or 0
 end
 
-function LevelHelper.flow_event(arg_5_0, arg_5_1, arg_5_2)
+LevelHelper.flow_event = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0:current_level_settings()
 	local var_5_1 = ScriptWorld.level(arg_5_1, var_5_0.level_name)
 
 	Level.trigger_event(var_5_1, arg_5_2)
 end
 
-function LevelHelper.set_flow_parameter(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+LevelHelper.set_flow_parameter = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0:current_level_settings()
 	local var_6_1 = ScriptWorld.level(arg_6_1, var_6_0.level_name)
 
 	Level.set_flow_variable(var_6_1, arg_6_2, arg_6_3)
 end
 
-function LevelHelper.unit_index(arg_7_0, arg_7_1, arg_7_2)
+LevelHelper.unit_index = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0:current_level(arg_7_1)
 
 	return Level.unit_index(var_7_0, arg_7_2)
 end
 
-function LevelHelper.unit_by_index(arg_8_0, arg_8_1, arg_8_2)
+LevelHelper.unit_by_index = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0:current_level(arg_8_1)
 
 	return Level.unit_by_index(var_8_0, arg_8_2)
 end
 
-function LevelHelper.find_dialogue_unit(arg_9_0, arg_9_1, arg_9_2)
+LevelHelper.find_dialogue_unit = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = LevelHelper:current_level(arg_9_1)
 	local var_9_1 = Level.units(var_9_0)
 	local var_9_2
@@ -121,13 +121,13 @@ function LevelHelper.find_dialogue_unit(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_2
 end
 
-function LevelHelper.get_base_level(arg_10_0, arg_10_1)
+LevelHelper.get_base_level = function (arg_10_0, arg_10_1)
 	local var_10_0 = LevelSettings[arg_10_1]
 
 	return var_10_0 and var_10_0.base_level_name or arg_10_1
 end
 
-function LevelHelper.get_small_level_image(arg_11_0, arg_11_1)
+LevelHelper.get_small_level_image = function (arg_11_0, arg_11_1)
 	local var_11_0 = LevelSettings[arg_11_1].small_level_image or arg_11_1 .. "_small_image"
 
 	if not UIAtlasHelper.has_texture_by_name(var_11_0) then
@@ -137,6 +137,6 @@ function LevelHelper.get_small_level_image(arg_11_0, arg_11_1)
 	return var_11_0
 end
 
-function LevelHelper.should_load_enemies(arg_12_0, arg_12_1)
+LevelHelper.should_load_enemies = function (arg_12_0, arg_12_1)
 	return not LevelSettings[arg_12_1].preload_no_enemies
 end

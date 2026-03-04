@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormVerminPushAction = class(BTStormVerminPushAction, BTNode)
 
-function BTStormVerminPushAction.init(arg_1_0, ...)
+BTStormVerminPushAction.init = function (arg_1_0, ...)
 	BTStormVerminPushAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTStormVerminPushAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTStormVerminPushAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -57,7 +57,7 @@ function BTStormVerminPushAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	AiUtils.add_attack_intensity(var_3_3, var_3_0, arg_3_2)
 end
 
-function BTStormVerminPushAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTStormVerminPushAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.navigation_extension:set_enabled(true)
 
 	arg_4_2.active_node = nil
@@ -69,7 +69,7 @@ function BTStormVerminPushAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	arg_4_2.attack_token = nil
 end
 
-function BTStormVerminPushAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTStormVerminPushAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.attack_aborted then
 		Managers.state.network:anim_event(arg_5_1, "idle")
 
@@ -83,7 +83,7 @@ function BTStormVerminPushAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	end
 end
 
-function BTStormVerminPushAction.attack(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTStormVerminPushAction.attack = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_4.locomotion_extension
 	local var_6_1 = arg_6_4.attacking_target
 
@@ -94,7 +94,7 @@ function BTStormVerminPushAction.attack(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_
 	end
 end
 
-function BTStormVerminPushAction.anim_cb_stormvermin_push(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTStormVerminPushAction.anim_cb_stormvermin_push = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if not DamageUtils.check_distance(arg_7_2.action, arg_7_2, arg_7_1, arg_7_3) or not DamageUtils.check_infront(arg_7_1, arg_7_3) then
 		return
 	end
@@ -114,6 +114,6 @@ function BTStormVerminPushAction.anim_cb_stormvermin_push(arg_7_0, arg_7_1, arg_
 	end
 end
 
-function BTStormVerminPushAction.anim_cb_attack_finished(arg_8_0, arg_8_1, arg_8_2)
+BTStormVerminPushAction.anim_cb_attack_finished = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.attack_finished = true
 end

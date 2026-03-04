@@ -10,7 +10,7 @@ BetaOverlay = class(BetaOverlay)
 
 local var_0_2 = true
 
-function BetaOverlay.init(arg_1_0, arg_1_1)
+BetaOverlay.init = function (arg_1_0, arg_1_1)
 	var_0_2 = true
 
 	local var_1_0 = Managers.world:world("top_ingame_view")
@@ -32,7 +32,7 @@ function BetaOverlay.init(arg_1_0, arg_1_1)
 	print("beta overlay got watermark:", arg_1_0._watermark, arg_1_0._label, arg_1_0._disclaimer)
 end
 
-function BetaOverlay._destroy_gui(arg_2_0)
+BetaOverlay._destroy_gui = function (arg_2_0)
 	if not arg_2_0._gui then
 		return
 	end
@@ -42,11 +42,11 @@ function BetaOverlay._destroy_gui(arg_2_0)
 	arg_2_0._gui = nil
 end
 
-function BetaOverlay.destroy(arg_3_0)
+BetaOverlay.destroy = function (arg_3_0)
 	return arg_3_0:_destroy_gui()
 end
 
-function BetaOverlay._render_qr(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+BetaOverlay._render_qr = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
 	local var_4_0 = arg_4_0._gui
 	local var_4_1 = arg_4_0._data
 	local var_4_2 = #var_4_1
@@ -79,7 +79,7 @@ function BetaOverlay._render_qr(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg
 	end
 end
 
-function BetaOverlay._render_watermark(arg_5_0, arg_5_1, arg_5_2)
+BetaOverlay._render_watermark = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._gui
 	local var_5_1 = arg_5_0._label
 	local var_5_2 = "materials/fonts/gw_head"
@@ -94,7 +94,7 @@ function BetaOverlay._render_watermark(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function BetaOverlay._render_disclaimer(arg_6_0, arg_6_1, arg_6_2)
+BetaOverlay._render_disclaimer = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._gui
 	local var_6_1 = arg_6_0._disclaimer
 	local var_6_2 = "materials/fonts/gw_head"
@@ -109,7 +109,7 @@ function BetaOverlay._render_disclaimer(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BetaOverlay._generate_qr(arg_7_0)
+BetaOverlay._generate_qr = function (arg_7_0)
 	local var_7_0 = string.format("%16s:%8s:%12s:%08x", HAS_STEAM and Steam.user_id() or "", script_data.settings.content_revision or "", script_data.build_identifier or "", os.time()):gsub(" ", "0")
 	local var_7_1, var_7_2 = dofile("scripts/ui/qr/qrencode").qrcode(var_7_0)
 
@@ -121,17 +121,17 @@ function BetaOverlay._generate_qr(arg_7_0)
 end
 
 local var_0_3 = {
-	default = function(arg_8_0)
+	default = function (arg_8_0)
 		arg_8_0:_create_gui()
 	end,
-	mechanism = function(arg_9_0)
+	mechanism = function (arg_9_0)
 		if arg_9_0._mechanism_key == arg_9_0._watermark_condition then
 			arg_9_0:_create_gui()
 		end
 	end
 }
 
-function BetaOverlay._create_gui(arg_10_0)
+BetaOverlay._create_gui = function (arg_10_0)
 	arg_10_0._gui = World.create_screen_gui(arg_10_0._world)
 
 	local var_10_0 = arg_10_0._screen_width
@@ -158,7 +158,7 @@ function BetaOverlay._create_gui(arg_10_0)
 	end
 end
 
-function BetaOverlay._reload(arg_11_0)
+BetaOverlay._reload = function (arg_11_0)
 	arg_11_0._mechanism_key = Managers.mechanism:current_mechanism_name()
 
 	arg_11_0:_destroy_gui()
@@ -177,11 +177,11 @@ function BetaOverlay._reload(arg_11_0)
 	end
 end
 
-function BetaOverlay.refresh(arg_12_0)
+BetaOverlay.refresh = function (arg_12_0)
 	arg_12_0:_reload()
 end
 
-function BetaOverlay.update(arg_13_0)
+BetaOverlay.update = function (arg_13_0)
 	local var_13_0 = arg_13_0._mechanism_key ~= Managers.mechanism:current_mechanism_name()
 	local var_13_1, var_13_2 = var_0_1.resolution()
 

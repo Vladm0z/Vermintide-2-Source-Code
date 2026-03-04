@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/skip_input_ui_definitions")
 
 SkipInputUI = class(SkipInputUI)
 
-function SkipInputUI.init(arg_1_0, arg_1_1, arg_1_2)
+SkipInputUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._context = arg_1_2
@@ -18,7 +18,7 @@ function SkipInputUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function SkipInputUI._create_ui_elements(arg_2_0)
+SkipInputUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_2_0 = arg_2_0._ui_renderer
@@ -28,16 +28,16 @@ function SkipInputUI._create_ui_elements(arg_2_0)
 	arg_2_0._skip_widget = UIWidget.init(var_2_2)
 end
 
-function SkipInputUI.destroy(arg_3_0)
+SkipInputUI.destroy = function (arg_3_0)
 	return
 end
 
-function SkipInputUI.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+SkipInputUI.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0:_update_input(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0:_draw(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 end
 
-function SkipInputUI._update_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+SkipInputUI._update_input = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0._render_settings.internal_alpha_multiplier
 
 	if arg_5_0._active then
@@ -51,11 +51,11 @@ function SkipInputUI._update_input(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	arg_5_0._render_settings.internal_alpha_multiplier = var_5_0
 end
 
-function SkipInputUI.skip(arg_6_0)
+SkipInputUI.skip = function (arg_6_0)
 	arg_6_0._skip = true
 end
 
-function SkipInputUI.skipped(arg_7_0)
+SkipInputUI.skipped = function (arg_7_0)
 	local var_7_0 = arg_7_0._skip
 
 	arg_7_0._skip = false
@@ -63,7 +63,7 @@ function SkipInputUI.skipped(arg_7_0)
 	return var_7_0
 end
 
-function SkipInputUI._draw(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+SkipInputUI._draw = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0._parent
 	local var_8_1 = arg_8_0._ui_renderer
 	local var_8_2 = arg_8_0._ui_scenegraph

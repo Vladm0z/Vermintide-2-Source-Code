@@ -49,13 +49,13 @@ var_0_1.shovel_sac_vent = {
 	required_career = "bw_necromancer",
 	icon = "assistive_sacrifice",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_sac_vent_desc"), var_0_29)
 	end,
 	events = {
 		"sacrifice_skeleton"
 	},
-	progress = function(arg_2_0, arg_2_1, arg_2_2)
+	progress = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = arg_2_0:get_persistent_stat(arg_2_1, "shovel_sac_vent")
 
 		return {
@@ -63,10 +63,10 @@ var_0_1.shovel_sac_vent = {
 			var_0_29
 		}
 	end,
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "shovel_sac_vent") >= var_0_29
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		if global_is_inside_inn then
 			return
 		end
@@ -101,16 +101,16 @@ var_0_1.shovel_sac_low = {
 	required_career = "bw_necromancer",
 	icon = "easy_come_easy_go",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_sac_low_desc"), var_0_30, var_0_31 * 100)
 	end,
 	events = {
 		"sacrifice_skeleton"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "shovel_sac_low") >= 1
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		if global_is_inside_inn then
 			return
 		end
@@ -150,16 +150,16 @@ var_0_1.shovel_fast_generate = {
 	required_career = "bw_necromancer",
 	icon = "unlimited_power",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_fast_generate_desc"), var_0_32, var_0_33)
 	end,
 	events = {
 		"overcharge_gained"
 	},
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
+	completed = function (arg_9_0, arg_9_1, arg_9_2)
 		return arg_9_0:get_persistent_stat(arg_9_1, "shovel_fast_generate") >= 1
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		if global_is_inside_inn then
 			return
 		end
@@ -224,13 +224,13 @@ var_0_1.shovel_command_elite = {
 	required_career = "bw_necromancer",
 	icon = "dead_reckoning",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_command_elite_desc"), var_0_34)
 	end,
 	events = {
 		"command_attack_unit"
 	},
-	progress = function(arg_12_0, arg_12_1, arg_12_2)
+	progress = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = arg_12_0:get_persistent_stat(arg_12_1, "shovel_command_elite")
 
 		return {
@@ -238,10 +238,10 @@ var_0_1.shovel_command_elite = {
 			var_0_34
 		}
 	end,
-	completed = function(arg_13_0, arg_13_1, arg_13_2)
+	completed = function (arg_13_0, arg_13_1, arg_13_2)
 		return arg_13_0:get_persistent_stat(arg_13_1, "shovel_command_elite") >= var_0_34
 	end,
-	on_event = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 		local var_14_0 = arg_14_4[1]
 		local var_14_1 = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_14_0)
 		local var_14_2 = Managers.player:local_player()
@@ -279,16 +279,16 @@ var_0_1.shovel_skeleton_attack_big = {
 	required_career = "bw_necromancer",
 	icon = "sally_forth",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_skeleton_attack_big_desc"), var_0_36)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function(arg_16_0, arg_16_1, arg_16_2)
+	completed = function (arg_16_0, arg_16_1, arg_16_2)
 		return arg_16_0:get_persistent_stat(arg_16_1, "shovel_skeleton_attack_big") >= 1
 	end,
-	on_event = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	on_event = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -354,16 +354,16 @@ var_0_1.shovel_skeleton_defend = {
 	required_career = "bw_necromancer",
 	icon = "wall_of_bone",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_skeleton_defend_desc"), var_0_37, var_0_38)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function(arg_19_0, arg_19_1, arg_19_2)
+	completed = function (arg_19_0, arg_19_1, arg_19_2)
 		return arg_19_0:get_persistent_stat(arg_19_1, "shovel_skeleton_defend") >= 1
 	end,
-	on_event = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -443,16 +443,16 @@ var_0_1.shovel_many_skeletons = {
 	required_career = "bw_necromancer",
 	icon = "deaths_company",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_many_skeletons_desc"), var_0_39)
 	end,
 	events = {
 		"on_controlled_unit_added"
 	},
-	completed = function(arg_22_0, arg_22_1, arg_22_2)
+	completed = function (arg_22_0, arg_22_1, arg_22_2)
 		return arg_22_0:get_persistent_stat(arg_22_1, "shovel_many_skeletons") >= 1
 	end,
-	on_event = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	on_event = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 		local var_23_0 = arg_23_4[2]
 		local var_23_1 = Managers.player:local_player()
 		local var_23_2 = var_23_1 and var_23_1.player_unit
@@ -475,13 +475,13 @@ var_0_1.shovel_melee_balefire = {
 	required_career = "bw_necromancer",
 	icon = "flames_forever",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_melee_balefire_desc"), var_0_40)
 	end,
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_25_0, arg_25_1, arg_25_2)
+	progress = function (arg_25_0, arg_25_1, arg_25_2)
 		local var_25_0 = arg_25_0:get_persistent_stat(arg_25_1, "shovel_melee_balefire")
 
 		return {
@@ -489,10 +489,10 @@ var_0_1.shovel_melee_balefire = {
 			var_0_40
 		}
 	end,
-	completed = function(arg_26_0, arg_26_1, arg_26_2)
+	completed = function (arg_26_0, arg_26_1, arg_26_2)
 		return arg_26_0:get_persistent_stat(arg_26_1, "shovel_melee_balefire") >= var_0_40
 	end,
-	on_event = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	on_event = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 		local var_27_0 = Managers.player:local_player()
 		local var_27_1 = var_27_0 and var_27_0.player_unit
 		local var_27_2 = arg_27_4[var_0_17]
@@ -534,16 +534,16 @@ var_0_1.shovel_fast_staff_attack = {
 	required_career = "bw_necromancer",
 	icon = "mistress_of_the_stave",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_fast_staff_attack_desc"), var_0_41)
 	end,
 	events = {
 		"register_ai_stagger"
 	},
-	completed = function(arg_29_0, arg_29_1, arg_29_2)
+	completed = function (arg_29_0, arg_29_1, arg_29_2)
 		return arg_29_0:get_persistent_stat(arg_29_1, "shovel_fast_staff_attack") >= 1
 	end,
-	on_event = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	on_event = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 		local var_30_0 = arg_30_4[1]
 		local var_30_1 = BLACKBOARDS[var_30_0]
 
@@ -614,16 +614,16 @@ var_0_1.shovel_staff_balefire = {
 	required_career = "bw_necromancer",
 	icon = "still_fiery_darlings",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_staff_balefire_desc"), var_0_42)
 	end,
 	events = {
 		"on_dot_applied"
 	},
-	completed = function(arg_32_0, arg_32_1, arg_32_2)
+	completed = function (arg_32_0, arg_32_1, arg_32_2)
 		return arg_32_0:get_persistent_stat(arg_32_1, "shovel_staff_balefire") >= var_0_42
 	end,
-	on_event = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	on_event = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -670,13 +670,13 @@ var_0_1.shovel_big_suck = {
 	required_career = "bw_necromancer",
 	icon = "drained",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_big_suck_desc"), var_0_43)
 	end,
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_35_0, arg_35_1, arg_35_2)
+	progress = function (arg_35_0, arg_35_1, arg_35_2)
 		local var_35_0 = arg_35_0:get_persistent_stat(arg_35_1, "shovel_big_suck")
 
 		return {
@@ -684,10 +684,10 @@ var_0_1.shovel_big_suck = {
 			var_0_43
 		}
 	end,
-	completed = function(arg_36_0, arg_36_1, arg_36_2)
+	completed = function (arg_36_0, arg_36_1, arg_36_2)
 		return arg_36_0:get_persistent_stat(arg_36_1, "shovel_big_suck") >= var_0_43
 	end,
-	on_event = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	on_event = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 		local var_37_0 = Managers.player:local_player()
 		local var_37_1 = var_37_0 and var_37_0.player_unit
 		local var_37_2 = arg_37_4[var_0_17]
@@ -733,16 +733,16 @@ var_0_1.shovel_big_cleave = {
 	required_career = "bw_necromancer",
 	icon = "reaping_time",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_big_cleave_desc"), var_0_44, var_0_45)
 	end,
 	events = {
 		"on_hit"
 	},
-	completed = function(arg_39_0, arg_39_1, arg_39_2)
+	completed = function (arg_39_0, arg_39_1, arg_39_2)
 		return arg_39_0:get_persistent_stat(arg_39_1, "shovel_big_cleave") >= var_0_45
 	end,
-	on_event = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+	on_event = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 		if arg_40_4[9] ~= "bw_ghost_scythe" then
 			return
 		end
@@ -773,13 +773,13 @@ var_0_1.shovel_headshot_scythe = {
 	required_career = "bw_necromancer",
 	icon = "ripe_harvest",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_headshot_scythe_desc"), var_0_46)
 	end,
 	events = {
 		"on_hit"
 	},
-	progress = function(arg_42_0, arg_42_1, arg_42_2)
+	progress = function (arg_42_0, arg_42_1, arg_42_2)
 		local var_42_0 = arg_42_0:get_persistent_stat(arg_42_1, "shovel_headshot_scythe")
 
 		return {
@@ -787,10 +787,10 @@ var_0_1.shovel_headshot_scythe = {
 			var_0_46
 		}
 	end,
-	completed = function(arg_43_0, arg_43_1, arg_43_2)
+	completed = function (arg_43_0, arg_43_1, arg_43_2)
 		return arg_43_0:get_persistent_stat(arg_43_1, "shovel_headshot_scythe") >= var_0_46
 	end,
-	on_event = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+	on_event = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 		if arg_44_4[9] ~= "bw_ghost_scythe" then
 			return
 		end
@@ -835,10 +835,10 @@ var_0_1.shovel_staff_gandalf = {
 		"on_hit",
 		"necromancer_staff_gandalf_delayed_check"
 	},
-	completed = function(arg_46_0, arg_46_1, arg_46_2)
+	completed = function (arg_46_0, arg_46_1, arg_46_2)
 		return arg_46_0:get_persistent_stat(arg_46_1, "shovel_staff_gandalf") >= 1
 	end,
-	on_event = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+	on_event = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 		local var_47_0 = Managers.time:time("game")
 
 		if arg_47_3 == "register_kill" then
@@ -920,13 +920,13 @@ var_0_1.shovel_skeleton_balefire = {
 	required_career = "bw_necromancer",
 	icon = "unrestful_bonefire",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_skeleton_balefire_desc"), var_0_50)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	progress = function(arg_49_0, arg_49_1, arg_49_2)
+	progress = function (arg_49_0, arg_49_1, arg_49_2)
 		local var_49_0 = arg_49_0:get_persistent_stat(arg_49_1, "shovel_skeleton_balefire")
 
 		return {
@@ -934,10 +934,10 @@ var_0_1.shovel_skeleton_balefire = {
 			var_0_50
 		}
 	end,
-	completed = function(arg_50_0, arg_50_1, arg_50_2)
+	completed = function (arg_50_0, arg_50_1, arg_50_2)
 		return arg_50_0:get_persistent_stat(arg_50_1, "shovel_skeleton_balefire") >= var_0_50
 	end,
-	on_event = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+	on_event = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1003,7 +1003,7 @@ var_0_1.shovel_keep_skeletons_alive = {
 	required_career = "bw_necromancer",
 	icon = "the_soul_of_the_party",
 	required_dlc = "shovel",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_keep_skeletons_alive_desc"), var_0_55)
 	end,
 	events = {
@@ -1012,10 +1012,10 @@ var_0_1.shovel_keep_skeletons_alive = {
 		"on_round_started",
 		"register_completed_level"
 	},
-	completed = function(arg_55_0, arg_55_1, arg_55_2)
+	completed = function (arg_55_0, arg_55_1, arg_55_2)
 		return arg_55_0:get_persistent_stat(arg_55_1, "shovel_keep_skeletons_alive") >= 1
 	end,
-	on_event = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+	on_event = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 		local var_56_0 = Managers.player:local_player()
 		local var_56_1 = var_56_0 and var_56_0.player_unit
 

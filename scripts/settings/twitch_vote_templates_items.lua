@@ -143,10 +143,10 @@ TwitchVoteTemplates.twitch_give_first_aid_kit = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_5_0, arg_5_1)
+	on_success = function (arg_5_0, arg_5_1)
 		local var_5_0 = SPProfiles[arg_5_1].display_name
 		local var_5_1 = Managers.player:human_and_bot_players()
 
@@ -178,10 +178,10 @@ TwitchVoteTemplates.twitch_give_healing_draught = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_7_0, arg_7_1)
+	on_success = function (arg_7_0, arg_7_1)
 		local var_7_0 = SPProfiles[arg_7_1].display_name
 		local var_7_1 = Managers.player:human_and_bot_players()
 
@@ -213,10 +213,10 @@ TwitchVoteTemplates.twitch_give_damage_boost_potion = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_9_0, arg_9_1)
+	on_success = function (arg_9_0, arg_9_1)
 		local var_9_0 = SPProfiles[arg_9_1].display_name
 		local var_9_1 = Managers.player:human_and_bot_players()
 
@@ -248,10 +248,10 @@ TwitchVoteTemplates.twitch_give_speed_boost_potion = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_11_0, arg_11_1)
+	on_success = function (arg_11_0, arg_11_1)
 		local var_11_0 = SPProfiles[arg_11_1].display_name
 		local var_11_1 = Managers.player:human_and_bot_players()
 
@@ -283,10 +283,10 @@ TwitchVoteTemplates.twitch_give_cooldown_reduction_potion = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_13_0, arg_13_1)
+	on_success = function (arg_13_0, arg_13_1)
 		local var_13_0 = SPProfiles[arg_13_1].display_name
 		local var_13_1 = Managers.player:human_and_bot_players()
 
@@ -318,10 +318,10 @@ TwitchVoteTemplates.twitch_give_frag_grenade_t1 = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_15_0, arg_15_1)
+	on_success = function (arg_15_0, arg_15_1)
 		local var_15_0 = SPProfiles[arg_15_1].display_name
 		local var_15_1 = Managers.player:human_and_bot_players()
 
@@ -353,10 +353,10 @@ TwitchVoteTemplates.twitch_give_fire_grenade_t1 = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_0.disable_giving_items and not var_0_0.disable_positive_votes
 	end,
-	on_success = function(arg_17_0, arg_17_1)
+	on_success = function (arg_17_0, arg_17_1)
 		local var_17_0 = SPProfiles[arg_17_1].display_name
 		local var_17_1 = Managers.player:human_and_bot_players()
 

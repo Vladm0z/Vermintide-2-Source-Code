@@ -2,7 +2,7 @@
 
 LootCratesPreviewer = class(LootCratesPreviewer)
 
-function LootCratesPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+LootCratesPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0.background_world = arg_1_5
 	arg_1_0.background_viewport = arg_1_6
 	arg_1_0.spawn_positions = arg_1_3
@@ -22,11 +22,11 @@ function LootCratesPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 	arg_1_0._item_key_by_unit = var_1_0
 end
 
-function LootCratesPreviewer.destroy(arg_2_0)
+LootCratesPreviewer.destroy = function (arg_2_0)
 	arg_2_0:_destroy_units()
 end
 
-function LootCratesPreviewer._destroy_units(arg_3_0)
+LootCratesPreviewer._destroy_units = function (arg_3_0)
 	local var_3_0 = arg_3_0.background_world
 	local var_3_1 = arg_3_0._spawned_units
 
@@ -39,17 +39,17 @@ function LootCratesPreviewer._destroy_units(arg_3_0)
 	arg_3_0.units_spawned = nil
 end
 
-function LootCratesPreviewer.update(arg_4_0, arg_4_1, arg_4_2)
+LootCratesPreviewer.update = function (arg_4_0, arg_4_1, arg_4_2)
 	return
 end
 
-function LootCratesPreviewer.post_update(arg_5_0, arg_5_1, arg_5_2)
+LootCratesPreviewer.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._entry_animation_complete then
 		arg_5_0:_animate_entry_positions(arg_5_1, arg_5_2)
 	end
 end
 
-function LootCratesPreviewer._animate_entry_positions(arg_6_0, arg_6_1, arg_6_2)
+LootCratesPreviewer._animate_entry_positions = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.spawn_positions
 	local var_6_1 = arg_6_0.end_positions
 	local var_6_2 = 1
@@ -79,43 +79,43 @@ function LootCratesPreviewer._animate_entry_positions(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._entry_progress = var_6_4
 end
 
-function LootCratesPreviewer._trigger_unit_flow_event(arg_7_0, arg_7_1, arg_7_2)
+LootCratesPreviewer._trigger_unit_flow_event = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1 and Unit.alive(arg_7_1) then
 		Unit.flow_event(arg_7_1, arg_7_2)
 	end
 end
 
-function LootCratesPreviewer._get_world(arg_8_0)
+LootCratesPreviewer._get_world = function (arg_8_0)
 	return arg_8_0.background_world, arg_8_0.background_viewport
 end
 
-function LootCratesPreviewer._get_camera_position(arg_9_0)
+LootCratesPreviewer._get_camera_position = function (arg_9_0)
 	local var_9_0 = arg_9_0.background_viewport
 	local var_9_1 = ScriptViewport.camera(var_9_0)
 
 	return ScriptCamera.position(var_9_1)
 end
 
-function LootCratesPreviewer._get_camera_rotation(arg_10_0)
+LootCratesPreviewer._get_camera_rotation = function (arg_10_0)
 	local var_10_0 = arg_10_0.background_viewport
 	local var_10_1 = ScriptViewport.camera(var_10_0)
 
 	return ScriptCamera.rotation(var_10_1)
 end
 
-function LootCratesPreviewer.get_units(arg_11_0)
+LootCratesPreviewer.get_units = function (arg_11_0)
 	return arg_11_0._spawned_units
 end
 
-function LootCratesPreviewer.has_units(arg_12_0)
+LootCratesPreviewer.has_units = function (arg_12_0)
 	return arg_12_0._spawned_units and #arg_12_0._spawned_units > 0
 end
 
-function LootCratesPreviewer.get_item_key_by_unit(arg_13_0, arg_13_1)
+LootCratesPreviewer.get_item_key_by_unit = function (arg_13_0, arg_13_1)
 	return arg_13_0._item_key_by_unit[arg_13_1]
 end
 
-function LootCratesPreviewer.delete_unit(arg_14_0, arg_14_1)
+LootCratesPreviewer.delete_unit = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.background_world
 	local var_14_1 = arg_14_0._spawned_units
 
@@ -129,7 +129,7 @@ function LootCratesPreviewer.delete_unit(arg_14_0, arg_14_1)
 	end
 end
 
-function LootCratesPreviewer.spawn_units(arg_15_0, arg_15_1)
+LootCratesPreviewer.spawn_units = function (arg_15_0, arg_15_1)
 	local var_15_0 = {}
 	local var_15_1 = arg_15_0.spawn_positions
 
@@ -192,7 +192,7 @@ function LootCratesPreviewer.spawn_units(arg_15_0, arg_15_1)
 	return var_15_0
 end
 
-function LootCratesPreviewer._enable_units_visibility(arg_16_0)
+LootCratesPreviewer._enable_units_visibility = function (arg_16_0)
 	local var_16_0 = arg_16_0._spawned_units
 
 	for iter_16_0, iter_16_1 in ipairs(var_16_0) do

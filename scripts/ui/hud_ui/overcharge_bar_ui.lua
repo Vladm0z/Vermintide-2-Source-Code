@@ -31,7 +31,7 @@ local var_0_2 = {
 }
 local var_0_3 = 0.5
 
-function OverchargeBarUI.init(arg_1_0, arg_1_1, arg_1_2)
+OverchargeBarUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.platform = PLATFORM
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
@@ -66,18 +66,18 @@ local function var_0_4(arg_2_0)
 	return var_2_1, var_2_2, 0.8, var_2_3
 end
 
-function OverchargeBarUI.on_spectator_target_changed(arg_3_0, arg_3_1)
+OverchargeBarUI.on_spectator_target_changed = function (arg_3_0, arg_3_1)
 	arg_3_0._spectated_player_unit = arg_3_1
 	arg_3_0._spectated_player = Managers.player:owner(arg_3_1)
 	arg_3_0._is_spectator = true
 end
 
-function OverchargeBarUI._set_player_extensions(arg_4_0, arg_4_1)
+OverchargeBarUI._set_player_extensions = function (arg_4_0, arg_4_1)
 	arg_4_0.inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
 	arg_4_0.initialize_charge_bar = true
 end
 
-function OverchargeBarUI._update_overcharge(arg_5_0, arg_5_1, arg_5_2)
+OverchargeBarUI._update_overcharge = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_1 then
 		return
 	end
@@ -138,7 +138,7 @@ function OverchargeBarUI._update_overcharge(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function OverchargeBarUI.create_ui_elements(arg_6_0)
+OverchargeBarUI.create_ui_elements = function (arg_6_0)
 	UIRenderer.clear_scenegraph_queue(arg_6_0.ui_renderer)
 
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
@@ -164,7 +164,7 @@ local var_0_5 = {
 	drag_scenegraph_id = "charge_bar"
 }
 
-function OverchargeBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+OverchargeBarUI.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager
@@ -195,7 +195,7 @@ function OverchargeBarUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function OverchargeBarUI.update_bar_size(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+OverchargeBarUI.update_bar_size = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._side:name() == "dark_pact" and var_0_0.DEFAULT_DARK_PACT_BAR_SIZE[1] or var_0_0.DEFAULT_BAR_SIZE[1]
 	local var_8_1 = math.remap(0, 40, 0, var_8_0, arg_8_1)
 	local var_8_2 = arg_8_0.charge_bar
@@ -226,7 +226,7 @@ function OverchargeBarUI.update_bar_size(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0.ui_scenegraph.charge_bar.size[1] = var_8_1
 end
 
-function OverchargeBarUI.set_charge_bar_fraction(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+OverchargeBarUI.set_charge_bar_fraction = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_0.charge_bar
 	local var_9_1 = var_9_0.style
 	local var_9_2 = var_9_0.content
@@ -274,15 +274,15 @@ function OverchargeBarUI.set_charge_bar_fraction(arg_9_0, arg_9_1, arg_9_2, arg_
 	var_9_5[4] = var_9_4[4]
 end
 
-function OverchargeBarUI.destroy(arg_10_0)
+OverchargeBarUI.destroy = function (arg_10_0)
 	Managers.state.event:unregister("on_spectator_target_changed", arg_10_0)
 end
 
-function OverchargeBarUI.set_alpha(arg_11_0, arg_11_1)
+OverchargeBarUI.set_alpha = function (arg_11_0, arg_11_1)
 	arg_11_0.render_settings.alpha_multiplier = arg_11_1
 end
 
-function OverchargeBarUI._apply_crosshair_position(arg_12_0, arg_12_1, arg_12_2)
+OverchargeBarUI._apply_crosshair_position = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = "screen_bottom_pivot"
 	local var_12_1 = arg_12_0.ui_scenegraph[var_12_0].local_position
 

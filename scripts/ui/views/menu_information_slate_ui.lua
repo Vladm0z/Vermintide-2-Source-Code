@@ -18,7 +18,7 @@ if IS_CONSOLE then
 	var_0_9 = "information_" .. PLATFORM .. ".json"
 end
 
-function MenuInformationSlateUI.init(arg_1_0, arg_1_1, arg_1_2)
+MenuInformationSlateUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_renderer = arg_1_1
 	arg_1_0._input_service = arg_1_2
 	arg_1_0._render_settings = {
@@ -36,7 +36,7 @@ function MenuInformationSlateUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_fetch_backend_information()
 end
 
-function MenuInformationSlateUI._start_animation(arg_2_0, arg_2_1)
+MenuInformationSlateUI._start_animation = function (arg_2_0, arg_2_1)
 	if not arg_2_0._information_available then
 		return
 	end
@@ -57,7 +57,7 @@ function MenuInformationSlateUI._start_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_3
 end
 
-function MenuInformationSlateUI.show(arg_3_0)
+MenuInformationSlateUI.show = function (arg_3_0)
 	if arg_3_0._information_data and #arg_3_0._information_data > 1 then
 		arg_3_0:_start_animation("animate_switch_panel_in")
 	end
@@ -65,7 +65,7 @@ function MenuInformationSlateUI.show(arg_3_0)
 	arg_3_0:_start_animation("animate_in")
 end
 
-function MenuInformationSlateUI.hide(arg_4_0)
+MenuInformationSlateUI.hide = function (arg_4_0)
 	if arg_4_0._information_data and #arg_4_0._information_data > 1 then
 		arg_4_0:_start_animation("animate_switch_panel_out")
 	end
@@ -75,7 +75,7 @@ function MenuInformationSlateUI.hide(arg_4_0)
 	arg_4_0._expanded = false
 end
 
-function MenuInformationSlateUI._create_ui_elements(arg_5_0)
+MenuInformationSlateUI._create_ui_elements = function (arg_5_0)
 	arg_5_0:_reset()
 
 	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
@@ -86,7 +86,7 @@ function MenuInformationSlateUI._create_ui_elements(arg_5_0)
 	arg_5_0._expanded = false
 end
 
-function MenuInformationSlateUI._reset(arg_6_0)
+MenuInformationSlateUI._reset = function (arg_6_0)
 	for iter_6_0, iter_6_1 in pairs(arg_6_0._animations) do
 		arg_6_0._ui_animator:stop_animation(iter_6_1)
 	end
@@ -109,7 +109,7 @@ function MenuInformationSlateUI._reset(arg_6_0)
 	arg_6_0._body_widgets = {}
 end
 
-function MenuInformationSlateUI._fetch_backend_information(arg_7_0)
+MenuInformationSlateUI._fetch_backend_information = function (arg_7_0)
 	if IS_CONSOLE then
 		arg_7_0:_fetch_cdn_data(var_0_8 .. "/" .. var_0_9, callback(arg_7_0, "_parse_cdn_data"))
 	else
@@ -147,7 +147,7 @@ local function var_0_10(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	arg_8_4(var_8_0)
 end
 
-function MenuInformationSlateUI._fetch_cdn_data(arg_9_0, arg_9_1, arg_9_2)
+MenuInformationSlateUI._fetch_cdn_data = function (arg_9_0, arg_9_1, arg_9_2)
 	if rawget(_G, "Http") then
 		local var_9_0 = Http.get_uri(var_0_7, 80, arg_9_1)
 
@@ -196,7 +196,7 @@ function MenuInformationSlateUI._fetch_cdn_data(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function MenuInformationSlateUI._parse_cdn_data(arg_10_0, arg_10_1)
+MenuInformationSlateUI._parse_cdn_data = function (arg_10_0, arg_10_1)
 	if not arg_10_1.success then
 		Application.warning("[MenuInformationSlateUI] " .. arg_10_1.message)
 
@@ -223,7 +223,7 @@ function MenuInformationSlateUI._parse_cdn_data(arg_10_0, arg_10_1)
 	end
 end
 
-function MenuInformationSlateUI._create_switch_panel(arg_11_0)
+MenuInformationSlateUI._create_switch_panel = function (arg_11_0)
 	arg_11_0._ui_scenegraph.panel.local_position[2] = var_0_1.panel.position[2] - 50
 
 	local var_11_0 = var_0_5(arg_11_0._information_data)
@@ -234,7 +234,7 @@ function MenuInformationSlateUI._create_switch_panel(arg_11_0)
 	arg_11_0._widgets_by_name.switch_panel = var_11_1
 end
 
-function MenuInformationSlateUI._parse_information_data(arg_12_0, arg_12_1)
+MenuInformationSlateUI._parse_information_data = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.alert_name
 	local var_12_1 = arg_12_1.alert_color
 	local var_12_2 = arg_12_1.header
@@ -284,7 +284,7 @@ function MenuInformationSlateUI._parse_information_data(arg_12_0, arg_12_1)
 	arg_12_0._information_available = true
 end
 
-function MenuInformationSlateUI._parse_text_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+MenuInformationSlateUI._parse_text_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = var_0_4.text
 	local var_13_1 = var_13_0.spacing
 	local var_13_2 = table.clone(var_13_0.default_text_style)
@@ -442,7 +442,7 @@ function MenuInformationSlateUI._parse_text_data(arg_13_0, arg_13_1, arg_13_2, a
 	return arg_13_3
 end
 
-function MenuInformationSlateUI._parse_image_data(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+MenuInformationSlateUI._parse_image_data = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = var_0_4.image
 	local var_14_1 = arg_14_1.image_name
 	local var_14_2 = arg_14_1.image_size
@@ -472,7 +472,7 @@ function MenuInformationSlateUI._parse_image_data(arg_14_0, arg_14_1, arg_14_2, 
 	return arg_14_3 - var_14_5 - var_14_0.spacing
 end
 
-function MenuInformationSlateUI._setup_backend_image_material(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+MenuInformationSlateUI._setup_backend_image_material = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_3 or arg_16_1
 	local var_16_1 = "MenuInformationSlateUI_" .. var_16_0
 	local var_16_2 = arg_16_2 and "template_diffuse_masked" or "template_diffuse"
@@ -496,13 +496,13 @@ function MenuInformationSlateUI._setup_backend_image_material(arg_16_0, arg_16_1
 	end
 end
 
-function MenuInformationSlateUI._create_material_instance(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+MenuInformationSlateUI._create_material_instance = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_0._cloned_materials_by_reference[arg_17_3] = arg_17_1
 
 	return Gui.clone_material_from_template(arg_17_0._ui_renderer.gui, arg_17_1, arg_17_2)
 end
 
-function MenuInformationSlateUI._cb_on_backend_url_loaded(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+MenuInformationSlateUI._cb_on_backend_url_loaded = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0 = arg_18_5[arg_18_1]
 
 	if not var_18_0 then
@@ -525,7 +525,7 @@ function MenuInformationSlateUI._cb_on_backend_url_loaded(arg_18_0, arg_18_1, ar
 	Managers.url_loader:load_resource(arg_18_2, var_18_0, var_18_4, arg_18_1)
 end
 
-function MenuInformationSlateUI._cb_on_backend_image_loaded(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+MenuInformationSlateUI._cb_on_backend_image_loaded = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	if not arg_19_0._cloned_materials_by_reference[arg_19_2] then
 		return
 	end
@@ -548,7 +548,7 @@ function MenuInformationSlateUI._cb_on_backend_image_loaded(arg_19_0, arg_19_1, 
 	end
 end
 
-function MenuInformationSlateUI._set_material_diffuse_by_resource(arg_20_0, arg_20_1, arg_20_2)
+MenuInformationSlateUI._set_material_diffuse_by_resource = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Gui.material(arg_20_0._ui_renderer.gui, arg_20_1)
 
 	if var_20_0 then
@@ -556,7 +556,7 @@ function MenuInformationSlateUI._set_material_diffuse_by_resource(arg_20_0, arg_
 	end
 end
 
-function MenuInformationSlateUI._update_input(arg_21_0, arg_21_1, arg_21_2)
+MenuInformationSlateUI._update_input = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = IS_CONSOLE and arg_21_0._input_service:get("start_press") or arg_21_0._input_service:get("special_1_press")
 
 	var_21_0 = var_21_0 or UIUtils.is_button_pressed(arg_21_0._widgets_by_name.more_information, "hotspot")
@@ -622,7 +622,7 @@ function MenuInformationSlateUI._update_input(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function MenuInformationSlateUI._populate_info_slate(arg_22_0)
+MenuInformationSlateUI._populate_info_slate = function (arg_22_0)
 	local var_22_0 = arg_22_0._information_data[arg_22_0._current_information_data_index]
 
 	arg_22_0:_reset()
@@ -639,7 +639,7 @@ function MenuInformationSlateUI._populate_info_slate(arg_22_0)
 	arg_22_0:_play_sound("play_gui_info_slate_tab_changed")
 end
 
-function MenuInformationSlateUI._update_animations(arg_23_0, arg_23_1, arg_23_2)
+MenuInformationSlateUI._update_animations = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._ui_animations
 	local var_23_1 = arg_23_0._animations
 	local var_23_2 = arg_23_0._ui_animator
@@ -663,7 +663,7 @@ function MenuInformationSlateUI._update_animations(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function MenuInformationSlateUI.update(arg_24_0, arg_24_1, arg_24_2)
+MenuInformationSlateUI.update = function (arg_24_0, arg_24_1, arg_24_2)
 	if not arg_24_0._information_available then
 		return
 	end
@@ -673,7 +673,7 @@ function MenuInformationSlateUI.update(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0:_draw(arg_24_1, arg_24_2)
 end
 
-function MenuInformationSlateUI._draw(arg_25_0, arg_25_1, arg_25_2)
+MenuInformationSlateUI._draw = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._ui_renderer
 	local var_25_1 = arg_25_0._ui_scenegraph
 	local var_25_2 = arg_25_0._input_service
@@ -724,11 +724,11 @@ function MenuInformationSlateUI._draw(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function MenuInformationSlateUI.destroy(arg_26_0)
+MenuInformationSlateUI.destroy = function (arg_26_0)
 	arg_26_0:_reset_cloned_materials()
 end
 
-function MenuInformationSlateUI._is_unique_reference_to_material(arg_27_0, arg_27_1)
+MenuInformationSlateUI._is_unique_reference_to_material = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._cloned_materials_by_reference
 	local var_27_1 = var_27_0[arg_27_1]
 
@@ -743,7 +743,7 @@ function MenuInformationSlateUI._is_unique_reference_to_material(arg_27_0, arg_2
 	return true
 end
 
-function MenuInformationSlateUI._set_material_diffuse_by_path(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+MenuInformationSlateUI._set_material_diffuse_by_path = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = Gui.material(arg_28_1, arg_28_2)
 
 	if var_28_0 then
@@ -751,7 +751,7 @@ function MenuInformationSlateUI._set_material_diffuse_by_path(arg_28_0, arg_28_1
 	end
 end
 
-function MenuInformationSlateUI._reset_cloned_materials(arg_29_0)
+MenuInformationSlateUI._reset_cloned_materials = function (arg_29_0)
 	local var_29_0 = arg_29_0._ui_renderer.gui
 	local var_29_1 = arg_29_0._material_references_to_unload
 	local var_29_2 = arg_29_0._cloned_materials_by_reference
@@ -771,6 +771,6 @@ function MenuInformationSlateUI._reset_cloned_materials(arg_29_0)
 	end
 end
 
-function MenuInformationSlateUI._play_sound(arg_30_0, arg_30_1)
+MenuInformationSlateUI._play_sound = function (arg_30_0, arg_30_1)
 	return Managers.music:trigger_event(arg_30_1)
 end

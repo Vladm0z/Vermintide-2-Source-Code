@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatAlertedAction = class(BTLootRatAlertedAction, BTNode)
 
-function BTLootRatAlertedAction.init(arg_1_0, ...)
+BTLootRatAlertedAction.init = function (arg_1_0, ...)
 	BTLootRatAlertedAction.super.init(arg_1_0, ...)
 end
 
 BTLootRatAlertedAction.name = "BTLootRatAlertedAction"
 
-function BTLootRatAlertedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTLootRatAlertedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.move_animation_name = nil
 	arg_2_2.anim_cb_rotation_start = false
@@ -24,7 +24,7 @@ function BTLootRatAlertedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-function BTLootRatAlertedAction.init_alerted(arg_3_0, arg_3_1, arg_3_2)
+BTLootRatAlertedAction.init_alerted = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.state.network
 	local var_3_1 = var_3_0:unit_game_object_id(arg_3_1)
 
@@ -52,7 +52,7 @@ function BTLootRatAlertedAction.init_alerted(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function BTLootRatAlertedAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTLootRatAlertedAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if script_data.enable_alert_icon then
 		local var_4_0 = "detect"
 
@@ -76,7 +76,7 @@ function BTLootRatAlertedAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	arg_4_2.spawn_to_running = true
 end
 
-function BTLootRatAlertedAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTLootRatAlertedAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.confirmed_player_sighting then
 		return "done"
 	end

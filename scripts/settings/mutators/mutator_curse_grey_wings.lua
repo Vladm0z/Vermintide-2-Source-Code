@@ -29,14 +29,14 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_grey_wings"
 	},
-	server_start_function = function(arg_3_0, arg_3_1)
+	server_start_function = function (arg_3_0, arg_3_1)
 		arg_3_1.conflict_director = Managers.state.conflict
 		arg_3_1.seed = Managers.mechanism:get_level_seed("mutator")
 	end,
-	server_players_left_safe_zone = function(arg_4_0, arg_4_1)
+	server_players_left_safe_zone = function (arg_4_0, arg_4_1)
 		arg_4_1.started = true
 	end,
-	server_pre_update_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	server_pre_update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
@@ -101,7 +101,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	server_player_hit_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		return
 	end
 }

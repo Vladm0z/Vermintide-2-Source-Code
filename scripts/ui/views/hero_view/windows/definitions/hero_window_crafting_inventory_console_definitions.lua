@@ -395,7 +395,7 @@ local function var_0_5(arg_1_0)
 					style_id = "bg_texture",
 					texture_id = "bg_texture",
 					pass_type = "texture",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.color = arg_2_0.hotspot.disable_button and arg_2_1.disabled_color or arg_2_1.base_color
 					end
 				},
@@ -413,7 +413,7 @@ local function var_0_5(arg_1_0)
 					style_id = "glow",
 					texture_id = "glow",
 					pass_type = "texture_frame",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = arg_3_0.parent
 						local var_3_1 = var_3_0:filter_selected()
 						local var_3_2 = var_3_0:filter_active()
@@ -431,7 +431,7 @@ local function var_0_5(arg_1_0)
 					style_id = "search_placeholder",
 					pass_type = "text",
 					text_id = "search_placeholder",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.search_query == "" and not arg_4_0.input_active and not arg_4_0.hotspot.disable_button
 					end
 				},
@@ -439,7 +439,7 @@ local function var_0_5(arg_1_0)
 					style_id = "disabled_text",
 					pass_type = "text",
 					text_id = "disabled_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.hotspot.disable_button
 					end
 				},
@@ -447,10 +447,10 @@ local function var_0_5(arg_1_0)
 					style_id = "search_query",
 					pass_type = "text",
 					text_id = "search_query",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return not arg_6_0.hotspot.disable_button
 					end,
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						if not arg_7_0.input_active then
 							arg_7_1.caret_color[1] = 0
 						else
@@ -462,10 +462,10 @@ local function var_0_5(arg_1_0)
 					style_id = "search_filters_hotspot",
 					pass_type = "hotspot",
 					content_id = "search_filters_hotspot",
-					content_check_function = function()
+					content_check_function = function ()
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function(arg_9_0, arg_9_1)
+					content_change_function = function (arg_9_0, arg_9_1)
 						local var_9_0 = arg_9_0.parent.parent:filter_active()
 
 						if var_9_0 ~= arg_9_0.filter_active then
@@ -493,7 +493,7 @@ local function var_0_5(arg_1_0)
 					style_id = "search_filters_bg",
 					texture_id = "search_filters_bg",
 					pass_type = "texture",
-					content_change_function = function(arg_10_0, arg_10_1)
+					content_change_function = function (arg_10_0, arg_10_1)
 						arg_10_1.color = arg_10_0.search_filters_hotspot.disable_button and arg_10_1.disabled_color or arg_10_1.base_color
 					end
 				},
@@ -501,7 +501,7 @@ local function var_0_5(arg_1_0)
 					style_id = "search_filters_icon",
 					texture_id = "search_filters_icon",
 					pass_type = "texture",
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
 						arg_11_1.color = arg_11_0.search_filters_hotspot.disable_button and arg_11_1.disabled_color or arg_11_1.base_color
 					end
 				},
@@ -509,7 +509,7 @@ local function var_0_5(arg_1_0)
 					style_id = "search_filters_glow",
 					texture_id = "search_filters_glow",
 					pass_type = "texture",
-					content_change_function = function(arg_12_0, arg_12_1)
+					content_change_function = function (arg_12_0, arg_12_1)
 						if not Managers.input:is_device_active("gamepad") then
 							return
 						end
@@ -530,10 +530,10 @@ local function var_0_5(arg_1_0)
 					style_id = "clear_icon",
 					texture_id = "clear_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.search_query ~= "" and not arg_13_0.hotspot.disable_button
 					end,
-					content_change_function = function(arg_14_0, arg_14_1)
+					content_change_function = function (arg_14_0, arg_14_1)
 						local var_14_0 = arg_14_0.clear_hotspot
 						local var_14_1 = var_14_0.is_hover
 
@@ -941,7 +941,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 					style_id = "reset_filter_hotspot",
 					pass_type = "hotspot",
 					content_id = "reset_filter_hotspot",
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						if arg_16_0.on_pressed then
 							local var_16_0 = arg_16_0.parent
 							local var_16_1 = var_16_0.query
@@ -962,7 +962,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 					texture_id = "reset_filter_bg",
 					style_id = "reset_filter_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -970,7 +970,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 					texture_id = "reset_filter_fg",
 					style_id = "reset_filter_fg",
 					pass_type = "texture",
-					content_check_function = function(arg_18_0, arg_18_1)
+					content_check_function = function (arg_18_0, arg_18_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -1262,7 +1262,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 			pass_type = "hotspot",
 			content_id = var_15_25 .. "_hotspot",
 			style_id = var_15_25 .. "_hotspot",
-			content_change_function = function(arg_19_0, arg_19_1)
+			content_change_function = function (arg_19_0, arg_19_1)
 				if arg_19_0.on_pressed or arg_19_0.on_double_click or arg_19_0.gamepad_pressed then
 					local var_19_0 = arg_19_0.parent.query.sort
 					local var_19_1 = var_19_0[var_15_25]
@@ -1283,7 +1283,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 			pass_type = "text",
 			text_id = var_15_25 .. "_text",
 			style_id = var_15_25 .. "_text",
-			content_change_function = function(arg_20_0, arg_20_1)
+			content_change_function = function (arg_20_0, arg_20_1)
 				local var_20_0 = Managers.input:is_device_active("gamepad")
 				local var_20_1 = arg_20_0.current_gamepad_index
 				local var_20_2 = var_20_1[1]
@@ -1306,7 +1306,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		var_15_5[#var_15_5 + 1] = {
 			pass_type = "rounded_background",
 			style_id = var_15_25 .. "_background",
-			content_change_function = function(arg_21_0, arg_21_1)
+			content_change_function = function (arg_21_0, arg_21_1)
 				local var_21_0 = arg_21_0[var_15_25 .. "_hotspot"]
 
 				arg_21_1.color[1] = arg_21_0.query.sort[var_15_25] and 255 or 128
@@ -1315,28 +1315,28 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		var_15_5[#var_15_5 + 1] = {
 			pass_type = "triangle",
 			style_id = var_15_25 .. "_arrow_up",
-			content_check_function = function(arg_22_0, arg_22_1)
+			content_check_function = function (arg_22_0, arg_22_1)
 				return arg_22_0.query.sort[var_15_25] == "ascending"
 			end
 		}
 		var_15_5[#var_15_5 + 1] = {
 			pass_type = "triangle",
 			style_id = var_15_25 .. "_arrow_down",
-			content_check_function = function(arg_23_0, arg_23_1)
+			content_check_function = function (arg_23_0, arg_23_1)
 				return arg_23_0.query.sort[var_15_25] == "descending"
 			end
 		}
 		var_15_5[#var_15_5 + 1] = {
 			pass_type = "triangle",
 			style_id = var_15_25 .. "_small_arrow_up",
-			content_check_function = function(arg_24_0, arg_24_1)
+			content_check_function = function (arg_24_0, arg_24_1)
 				return not arg_24_0.query.sort[var_15_25]
 			end
 		}
 		var_15_5[#var_15_5 + 1] = {
 			pass_type = "triangle",
 			style_id = var_15_25 .. "_small_arrow_down",
-			content_check_function = function(arg_25_0, arg_25_1)
+			content_check_function = function (arg_25_0, arg_25_1)
 				return not arg_25_0.query.sort[var_15_25]
 			end
 		}
@@ -1546,7 +1546,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 			pass_type = "hotspot",
 			content_id = var_15_38.name .. "_hotspot",
 			style_id = var_15_38.name .. "_hotspot",
-			content_change_function = function(arg_27_0, arg_27_1)
+			content_change_function = function (arg_27_0, arg_27_1)
 				if arg_27_0.on_pressed or arg_27_0.on_double_click or arg_27_0.gamepad_pressed then
 					if not arg_27_0.parent.query.filter[var_15_38.name] then
 						arg_27_0.parent.query.filter[var_15_38.name] = true
@@ -1579,7 +1579,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 			pass_type = "rect_text",
 			text_id = var_15_38.name,
 			style_id = var_15_38.name,
-			content_change_function = function(arg_28_0, arg_28_1)
+			content_change_function = function (arg_28_0, arg_28_1)
 				local var_28_0 = Managers.input:is_device_active("gamepad")
 				local var_28_1 = arg_28_0.current_gamepad_index
 				local var_28_2 = var_28_1[1]
@@ -1677,7 +1677,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		pass_type = "hotspot",
 		scenegraph_id = "new_checkbox",
 		content_id = "checkbox_hotspot",
-		content_change_function = function(arg_29_0, arg_29_1)
+		content_change_function = function (arg_29_0, arg_29_1)
 			if arg_29_0.on_pressed or arg_29_0.on_double_click or arg_29_0.gamepad_pressed then
 				local var_29_0 = not arg_29_0.parent.query.only_new
 
@@ -1691,7 +1691,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		pass_type = "text",
 		text_id = "checkbox_text",
 		scenegraph_id = "new_checkbox",
-		content_change_function = function(arg_30_0, arg_30_1)
+		content_change_function = function (arg_30_0, arg_30_1)
 			local var_30_0 = Managers.input:is_device_active("gamepad")
 			local var_30_1 = arg_30_0.current_gamepad_index
 			local var_30_2 = var_30_1[1]
@@ -1708,7 +1708,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		scenegraph_id = "new_checkbox",
 		texture_id = "checkbox_marker",
 		pass_type = "texture",
-		content_check_function = function(arg_31_0, arg_31_1)
+		content_check_function = function (arg_31_0, arg_31_1)
 			return arg_31_0.query.only_new
 		end
 	}
@@ -1717,7 +1717,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2)
 		texture_id = "checkbox_frame",
 		pass_type = "texture_frame",
 		style_id = "checkbox_frame",
-		content_change_function = function(arg_32_0, arg_32_1)
+		content_change_function = function (arg_32_0, arg_32_1)
 			local var_32_0 = Managers.input:is_device_active("gamepad")
 			local var_32_1 = arg_32_0.current_gamepad_index
 			local var_32_2 = var_32_1[1]
@@ -1857,16 +1857,16 @@ local var_0_10 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				arg_33_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 				local var_34_0 = math.easeOutCubic(arg_34_3)
 
 				arg_34_4.render_settings.alpha_multiplier = var_34_0
 				arg_34_0.area_left.local_position[1] = arg_34_1.area_left.position[1] + -100 * (1 - var_34_0)
 			end,
-			on_complete = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end
 		}
@@ -1876,15 +1876,15 @@ local var_0_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 				arg_36_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 				local var_37_0 = math.easeOutCubic(arg_37_3)
 
 				arg_37_4.render_settings.alpha_multiplier = 1 - var_37_0
 			end,
-			on_complete = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end
 		}

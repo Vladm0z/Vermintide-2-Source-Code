@@ -740,7 +740,7 @@ local function var_0_21(arg_1_0, arg_1_1)
 			style_id = "power_text",
 			pass_type = "text",
 			text_id = "power_text",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return not arg_2_0.locked
 			end
 		},
@@ -748,7 +748,7 @@ local function var_0_21(arg_1_0, arg_1_1)
 			style_id = "power_text_shadow",
 			pass_type = "text",
 			text_id = "power_text",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return not arg_3_0.locked
 			end
 		},
@@ -771,7 +771,7 @@ local function var_0_21(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "lock_texture",
 			texture_id = "lock_texture",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.locked
 			end
 		},
@@ -779,7 +779,7 @@ local function var_0_21(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "equipped_frame_texture",
 			texture_id = "equipped_frame_texture",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.equipped
 			end
 		},
@@ -787,12 +787,12 @@ local function var_0_21(arg_1_0, arg_1_1)
 			style_id = "new_frame",
 			texture_id = "new_frame",
 			pass_type = "texture_frame",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				local var_6_0 = arg_6_0.backend_id
 
 				return var_6_0 and ItemHelper.is_new_backend_id(var_6_0)
 			end,
-			content_change_function = function(arg_7_0, arg_7_1)
+			content_change_function = function (arg_7_0, arg_7_1)
 				local var_7_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 				arg_7_1.color[1] = 55 + var_7_0 * 200
@@ -2714,14 +2714,14 @@ local var_0_36 = {
 			name = "fade_in_text_panel",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				local var_17_0 = arg_17_2.upgrade_bg
 				local var_17_1 = arg_17_2.upgrade_text
 
 				var_17_0.alpha_multiplier = 0
 				var_17_1.alpha_multiplier = 0
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 				local var_18_1 = arg_18_2.upgrade_bg
 				local var_18_2 = arg_18_2.upgrade_text
@@ -2729,7 +2729,7 @@ local var_0_36 = {
 				var_18_1.alpha_multiplier = var_18_0
 				var_18_2.alpha_multiplier = var_18_0
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		},
@@ -2737,10 +2737,10 @@ local var_0_36 = {
 			name = "fade_out_text_panel",
 			start_progress = 1,
 			end_progress = 2,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = math.easeInCubic(1 - arg_21_3)
 				local var_21_1 = arg_21_2.upgrade_bg
 				local var_21_2 = arg_21_2.upgrade_text
@@ -2748,7 +2748,7 @@ local var_0_36 = {
 				var_21_1.alpha_multiplier = var_21_0
 				var_21_2.alpha_multiplier = var_21_0
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		},
@@ -2756,15 +2756,15 @@ local var_0_36 = {
 			name = "font_offset",
 			start_progress = 0,
 			end_progress = 2,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				local var_24_0 = math.easeOutCubic(arg_24_3)
 
 				arg_24_2.upgrade_text.offset[2] = -40 + 50 * var_24_0
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end
 		},
@@ -2772,7 +2772,7 @@ local var_0_36 = {
 			name = "font_panel_size_increase",
 			start_progress = 0,
 			end_progress = 4,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				local var_26_0 = arg_26_2.upgrade_bg.scenegraph_id
 				local var_26_1 = arg_26_1[var_26_0].size
 				local var_26_2 = arg_26_0[var_26_0].size
@@ -2780,7 +2780,7 @@ local var_0_36 = {
 				var_26_2[1] = var_26_1[1]
 				var_26_2[2] = var_26_1[2]
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = math.easeOutCubic(arg_27_3)
 				local var_27_1 = arg_27_2.upgrade_bg.scenegraph_id
 				local var_27_2 = arg_27_1[var_27_1].size
@@ -2789,7 +2789,7 @@ local var_0_36 = {
 				var_27_3[1] = var_27_2[1] + 200 * (1 - var_27_0)
 				var_27_3[2] = var_27_2[2] + 200 * (1 - var_27_0)
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		},
@@ -2797,15 +2797,15 @@ local var_0_36 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_2.upgrade_effect.alpha_multiplier = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeOutCubic(arg_30_3)
 
 				arg_30_2.upgrade_effect.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		},
@@ -2813,15 +2813,15 @@ local var_0_36 = {
 			name = "fade_out",
 			start_progress = 0.75,
 			end_progress = 1.5,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = math.easeInCubic(arg_33_3)
 
 				arg_33_2.upgrade_effect.alpha_multiplier = math.max(1 - var_33_0, 0.01)
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		},
@@ -2829,14 +2829,14 @@ local var_0_36 = {
 			name = "size_in",
 			start_progress = 0,
 			end_progress = 2,
-			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				local var_35_0 = arg_35_2.upgrade_effect.scenegraph_id
 				local var_35_1 = arg_35_1[var_35_0]
 				local var_35_2 = arg_35_0[var_35_0]
 				local var_35_3 = var_35_1.size
 				local var_35_4 = var_35_2.size
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 				local var_36_0 = math.easeOutCubic(arg_36_3)
 				local var_36_1 = arg_36_2.upgrade_effect.scenegraph_id
 				local var_36_2 = arg_36_1[var_36_1]
@@ -2845,7 +2845,7 @@ local var_0_36 = {
 
 				var_36_3.size[2] = var_36_4[2] + var_36_4[2] * 10 * var_36_0
 			end,
-			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end
 		},
@@ -2853,7 +2853,7 @@ local var_0_36 = {
 			name = "intensity_out",
 			start_progress = 1,
 			end_progress = 1.5,
-			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				local var_38_0 = arg_38_3.parent:hdr_renderer().gui
 				local var_38_1 = arg_38_2.upgrade_effect.content.texture_id
 				local var_38_2 = Gui.material(var_38_0, var_38_1)
@@ -2861,7 +2861,7 @@ local var_0_36 = {
 
 				Material.set_scalar(var_38_2, "intensity", var_38_3)
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 				local var_39_0 = math.easeOutCubic(1 - arg_39_3)
 				local var_39_1 = arg_39_4.parent:hdr_renderer().gui
 				local var_39_2 = arg_39_2.upgrade_effect.content.texture_id
@@ -2872,7 +2872,7 @@ local var_0_36 = {
 
 				Material.set_scalar(var_39_3, "intensity", var_39_6)
 			end,
-			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end
 		}
@@ -2882,15 +2882,15 @@ local var_0_36 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				arg_41_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				local var_42_0 = math.easeOutCubic(arg_42_3)
 
 				arg_42_4.render_settings.alpha_multiplier = var_42_0
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end
 		}
@@ -2900,15 +2900,15 @@ local var_0_36 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				arg_44_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 				local var_45_0 = math.easeOutCubic(arg_45_3)
 
 				arg_45_4.render_settings.alpha_multiplier = 1 - var_45_0
 			end,
-			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				return
 			end
 		}

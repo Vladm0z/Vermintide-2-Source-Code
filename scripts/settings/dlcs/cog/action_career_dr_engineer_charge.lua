@@ -2,7 +2,7 @@
 
 ActionCareerDREngineerCharge = class(ActionCareerDREngineerCharge, ActionBase)
 
-function ActionCareerDREngineerCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineerCharge.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerDREngineerCharge.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
@@ -14,7 +14,7 @@ function ActionCareerDREngineerCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0._buff_to_add = "bardin_engineer_pump_buff"
 end
 
-function ActionCareerDREngineerCharge.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionCareerDREngineerCharge.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionCareerDREngineerCharge.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0.ability_charge_timer = -arg_2_1.initial_charge_delay
@@ -22,7 +22,7 @@ function ActionCareerDREngineerCharge.client_owner_start_action(arg_2_0, arg_2_1
 	arg_2_0:start_audio_loop()
 end
 
-function ActionCareerDREngineerCharge.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerDREngineerCharge.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.buff_extension
 	local var_3_1 = arg_3_0.current_action.ability_charge_interval
 	local var_3_2 = arg_3_0.ability_charge_timer + arg_3_1
@@ -61,11 +61,11 @@ function ActionCareerDREngineerCharge.client_owner_post_update(arg_3_0, arg_3_1,
 	arg_3_0.ability_charge_timer = var_3_2
 end
 
-function ActionCareerDREngineerCharge.finish(arg_4_0, arg_4_1)
+ActionCareerDREngineerCharge.finish = function (arg_4_0, arg_4_1)
 	return
 end
 
-function ActionCareerDREngineerCharge.start_audio_loop(arg_5_0)
+ActionCareerDREngineerCharge.start_audio_loop = function (arg_5_0)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = var_5_0.charge_sound_name
 	local var_5_2 = var_5_0.charge_sound_stop_event

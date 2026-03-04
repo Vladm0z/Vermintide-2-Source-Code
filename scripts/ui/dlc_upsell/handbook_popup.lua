@@ -9,7 +9,7 @@ local var_0_3 = var_0_1.achievement_window_size[2]
 
 HandbookPopup = class(HandbookPopup, CommonPopup)
 
-function HandbookPopup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HandbookPopup.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	HandbookPopup.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._input_manager = arg_1_1.input_manager
@@ -28,12 +28,12 @@ function HandbookPopup.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._has_widget_been_closed = false
 end
 
-function HandbookPopup.destroy(arg_2_0)
+HandbookPopup.destroy = function (arg_2_0)
 	HandbookPopup.super.destroy(arg_2_0)
 	arg_2_0._handbook_logic:delete()
 end
 
-function HandbookPopup.create_ui_elements(arg_3_0)
+HandbookPopup.create_ui_elements = function (arg_3_0)
 	HandbookPopup.super.create_ui_elements(arg_3_0)
 
 	local var_3_0 = {
@@ -45,27 +45,27 @@ function HandbookPopup.create_ui_elements(arg_3_0)
 	arg_3_0._handbook_logic = HandbookLogic:new(var_3_0, var_0_0)
 end
 
-function HandbookPopup.show(arg_4_0)
+HandbookPopup.show = function (arg_4_0)
 	HandbookPopup.super.show(arg_4_0)
 	arg_4_0:_start_transition_animation("on_enter")
 	arg_4_0:play_sound("Play_gui_handbook_popup")
 	arg_4_0:set_fullscreen_effect_enable_state(true)
 end
 
-function HandbookPopup.hide(arg_5_0)
+HandbookPopup.hide = function (arg_5_0)
 	arg_5_0:set_fullscreen_effect_enable_state(false)
 
 	arg_5_0._exit_anim_id = arg_5_0:_start_transition_animation("on_exit")
 end
 
-function HandbookPopup._start_transition_animation(arg_6_0, arg_6_1)
+HandbookPopup._start_transition_animation = function (arg_6_0, arg_6_1)
 	return arg_6_0._ui_animator:start_animation(arg_6_1, nil, var_0_1.scenegraph_definition, {
 		wwise_world = arg_6_0._wwise_world,
 		render_settings = arg_6_0._render_settings
 	})
 end
 
-function HandbookPopup._update_animations(arg_7_0, arg_7_1)
+HandbookPopup._update_animations = function (arg_7_0, arg_7_1)
 	HandbookPopup.super._update_animations(arg_7_0, arg_7_1)
 
 	if arg_7_0._exit_anim_id and arg_7_0._ui_animator:is_animation_completed(arg_7_0._exit_anim_id) then
@@ -77,7 +77,7 @@ function HandbookPopup._update_animations(arg_7_0, arg_7_1)
 	UIWidgetUtils.animate_default_button(var_7_0, arg_7_1)
 end
 
-function HandbookPopup._handle_input(arg_8_0, arg_8_1)
+HandbookPopup._handle_input = function (arg_8_0, arg_8_1)
 	if arg_8_0._has_widget_been_closed then
 		return
 	end
@@ -132,7 +132,7 @@ function HandbookPopup._handle_input(arg_8_0, arg_8_1)
 	end
 end
 
-function HandbookPopup._go_to_page(arg_9_0, arg_9_1)
+HandbookPopup._go_to_page = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._active_pages[arg_9_1]
 	local var_9_1 = HandbookSettings.pages[var_9_0]
 
@@ -154,7 +154,7 @@ function HandbookPopup._go_to_page(arg_9_0, arg_9_1)
 	arg_9_0:_update_page_info()
 end
 
-function HandbookPopup._update_page_info(arg_10_0)
+HandbookPopup._update_page_info = function (arg_10_0)
 	local var_10_0 = arg_10_0._widgets_by_name
 	local var_10_1 = arg_10_0._current_page
 	local var_10_2 = arg_10_0._total_pages
@@ -180,11 +180,11 @@ function HandbookPopup._update_page_info(arg_10_0)
 	arg_10_0._menu_input_description:set_input_description(var_10_3 and var_0_2.has_pages or nil)
 end
 
-function HandbookPopup.should_show(arg_11_0)
+HandbookPopup.should_show = function (arg_11_0)
 	return arg_11_0._ui_context.is_in_inn and not Managers.popup:has_popup() and not arg_11_0._is_visible and not Managers.unlock:is_waiting_for_gift_popup_ui()
 end
 
-function HandbookPopup.update(arg_12_0, arg_12_1)
+HandbookPopup.update = function (arg_12_0, arg_12_1)
 	HandbookPopup.super.update(arg_12_0, arg_12_1)
 
 	if arg_12_0:should_show() and not arg_12_0._has_widget_been_closed then
@@ -193,7 +193,7 @@ function HandbookPopup.update(arg_12_0, arg_12_1)
 	end
 end
 
-function HandbookPopup._setup_scrollbar(arg_13_0, arg_13_1, arg_13_2)
+HandbookPopup._setup_scrollbar = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._widgets_by_name.achievement_scrollbar
 	local var_13_1 = var_13_0.scenegraph_id
 	local var_13_2 = arg_13_0._ui_scenegraph[var_13_1].size[2]
@@ -209,7 +209,7 @@ function HandbookPopup._setup_scrollbar(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._widgets_by_name.achievement_window.content.scroll_amount = var_13_5
 end
 
-function HandbookPopup._set_scrollbar_value(arg_14_0, arg_14_1)
+HandbookPopup._set_scrollbar_value = function (arg_14_0, arg_14_1)
 	if arg_14_1 then
 		local var_14_0 = arg_14_0._widgets_by_name
 
@@ -223,7 +223,7 @@ function HandbookPopup._set_scrollbar_value(arg_14_0, arg_14_1)
 	end
 end
 
-function HandbookPopup._update_mouse_scroll_input(arg_15_0)
+HandbookPopup._update_mouse_scroll_input = function (arg_15_0)
 	local var_15_0 = true
 
 	if var_15_0 then
@@ -252,7 +252,7 @@ function HandbookPopup._update_mouse_scroll_input(arg_15_0)
 	end
 end
 
-function HandbookPopup._set_gamepad_input_buttons_visibility(arg_16_0, arg_16_1)
+HandbookPopup._set_gamepad_input_buttons_visibility = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._widgets_by_name
 	local var_16_1 = arg_16_0._total_pages > 1
 

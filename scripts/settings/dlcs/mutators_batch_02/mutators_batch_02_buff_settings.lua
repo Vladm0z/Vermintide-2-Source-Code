@@ -77,7 +77,7 @@ local function var_0_3(arg_2_0)
 end
 
 var_0_0.buff_function_templates = {
-	apply_bloodlust = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	apply_bloodlust = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if var_0_3(arg_3_0) or not var_0_2(arg_3_0) then
 			return
 		end
@@ -89,7 +89,7 @@ var_0_0.buff_function_templates = {
 			arg_3_1.effect_id = ScriptUnit.extension(arg_3_0, "first_person_system"):create_screen_particles("fx/screenspace_mutator_bloodlust_02")
 		end
 	end,
-	remove_bloodlust = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	remove_bloodlust = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		if var_0_3(arg_4_0) or not var_0_2(arg_4_0) then
 			return
 		end
@@ -98,14 +98,14 @@ var_0_0.buff_function_templates = {
 			ScriptUnit.extension(arg_4_0, "first_person_system"):stop_spawning_screen_particles(arg_4_1.effect_id)
 		end
 	end,
-	apply_bloodlust_debuff = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	apply_bloodlust_debuff = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if not Managers.state.network.is_server then
 			return
 		end
 
 		arg_5_1.next_damage_tick_t = arg_5_2.t + arg_5_1.template.damage_frequency
 	end,
-	update_bloodlust_debuff = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	update_bloodlust_debuff = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -127,7 +127,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_bloodlust_debuff = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	remove_bloodlust_debuff = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		return
 	end
 }

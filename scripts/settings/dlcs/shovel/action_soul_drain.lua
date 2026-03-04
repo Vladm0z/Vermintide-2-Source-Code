@@ -2,7 +2,7 @@
 
 ActionSoulDrain = class(ActionSoulDrain, ActionCareerTrueFlightAim)
 
-function ActionSoulDrain.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionSoulDrain.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionSoulDrain.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
@@ -22,7 +22,7 @@ function ActionSoulDrain.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1
 	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-function ActionSoulDrain.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionSoulDrain.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionSoulDrain.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -81,7 +81,7 @@ function ActionSoulDrain.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, ar
 	arg_2_0:_start_charge_sound()
 end
 
-function ActionSoulDrain._start_charge_sound(arg_3_0)
+ActionSoulDrain._start_charge_sound = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.owner_unit
 	local var_3_2 = arg_3_0.owner_player
@@ -99,7 +99,7 @@ function ActionSoulDrain._start_charge_sound(arg_3_0)
 	ActionUtils.play_husk_sound_event(var_3_5, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-function ActionSoulDrain._stop_charge_sound(arg_4_0)
+ActionSoulDrain._stop_charge_sound = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.owner_player
@@ -120,7 +120,7 @@ end
 local var_0_0 = 1
 local var_0_1 = 4
 
-function ActionSoulDrain.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionSoulDrain.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	ActionSoulDrain.super.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 
 	local var_5_0 = arg_5_0.owner_unit
@@ -311,7 +311,7 @@ function ActionSoulDrain.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg
 	end
 end
 
-function ActionSoulDrain._stop_fx(arg_6_0)
+ActionSoulDrain._stop_fx = function (arg_6_0)
 	local var_6_0 = arg_6_0.world
 
 	if arg_6_0.beam_end_effect_id then
@@ -335,7 +335,7 @@ function ActionSoulDrain._stop_fx(arg_6_0)
 	arg_6_0:_stop_charge_sound()
 end
 
-function ActionSoulDrain._stop_client_vfx(arg_7_0)
+ActionSoulDrain._stop_client_vfx = function (arg_7_0)
 	if Managers.state.network:game() then
 		local var_7_0 = arg_7_0.unit_id
 
@@ -351,7 +351,7 @@ function ActionSoulDrain._stop_client_vfx(arg_7_0)
 	end
 end
 
-function ActionSoulDrain.finish(arg_8_0, arg_8_1)
+ActionSoulDrain.finish = function (arg_8_0, arg_8_1)
 	ActionSoulDrain.super.finish(arg_8_0, arg_8_1)
 	arg_8_0:_stop_client_vfx()
 	arg_8_0:_stop_fx()
@@ -362,7 +362,7 @@ function ActionSoulDrain.finish(arg_8_0, arg_8_1)
 	}
 end
 
-function ActionSoulDrain.destroy(arg_9_0)
+ActionSoulDrain.destroy = function (arg_9_0)
 	arg_9_0:_stop_client_vfx()
 	arg_9_0:_stop_fx()
 end

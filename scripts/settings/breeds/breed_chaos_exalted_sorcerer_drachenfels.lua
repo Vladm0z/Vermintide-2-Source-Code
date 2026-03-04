@@ -93,7 +93,7 @@ local var_0_2 = {
 		var_0_1 * 8
 	},
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if arg_1_4.stagger_count >= var_0_0.heavy then
 			arg_1_0 = var_0_0.none
 			arg_1_4.stagger_ignore_anim_cb = true
@@ -235,7 +235,7 @@ local var_0_2 = {
 		"kill_chaos_exalted_sorcerer_difficulty_rank",
 		"kill_chaos_exalted_sorcerer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -672,7 +672,7 @@ local var_0_9 = {
 		teleport_end_effect = "fx/drachenfels_boss_teleport_enter",
 		face_player_when_teleporting = true,
 		teleport_start_anim = "teleport_start",
-		teleport_pos_func = function(arg_3_0, arg_3_1)
+		teleport_pos_func = function (arg_3_0, arg_3_1)
 			local var_3_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_POSITIONS
 			local var_3_1 = Vector3.zero()
 			local var_3_2 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center[1]
@@ -706,7 +706,7 @@ local var_0_9 = {
 		force_teleport = true,
 		teleport_effect_trail = "fx/chr_chaos_sorcerer_teleport_direction",
 		action_weight = 10,
-		teleport_pos_func = function(arg_4_0, arg_4_1)
+		teleport_pos_func = function (arg_4_0, arg_4_1)
 			local var_4_0 = arg_4_1.nav_world
 			local var_4_1 = POSITION_LOOKUP[arg_4_0]
 			local var_4_2 = POSITION_LOOKUP[arg_4_1.target_unit]
@@ -1751,7 +1751,7 @@ local var_0_9 = {
 						start_time = 1.9333333333333333
 					}
 				},
-				hit_player_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+				hit_player_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 					if arg_5_5 then
 						arg_5_1.has_dealt_damage = true
 					end
@@ -2039,10 +2039,10 @@ local var_0_9 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_6_0)
+		init_spell_func = function (arg_6_0)
 			arg_6_0.current_spell = arg_6_0.magic_missile_ground_data
 		end,
-		get_throw_position_func = function(arg_7_0, arg_7_1, arg_7_2)
+		get_throw_position_func = function (arg_7_0, arg_7_1, arg_7_2)
 			local var_7_0 = ScriptUnit.has_extension(arg_7_0, "ai_inventory_system").inventory_item_units[1]
 			local var_7_1 = Unit.world_position(var_7_0, Unit.node(var_7_0, "g_scythe"))
 			local var_7_2 = Vector3.normalize(arg_7_2 - var_7_1)
@@ -2075,7 +2075,7 @@ local var_0_9 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_8_0)
+		init_spell_func = function (arg_8_0)
 			arg_8_0.current_spell = arg_8_0.seeking_bomb_missile_data
 		end,
 		ignore_staggers = {
@@ -2136,7 +2136,7 @@ local var_0_9 = {
 			true,
 			true
 		},
-		teleport_pos_func = function(arg_9_0, arg_9_1)
+		teleport_pos_func = function (arg_9_0, arg_9_1)
 			local var_9_0 = ConflictUtils.get_random_spawner_with_id("sorcerer_boss_drachenfels", arg_9_1.defensive_spawner)
 
 			arg_9_1.defensive_spawner = var_9_0
@@ -2174,7 +2174,7 @@ local var_0_9 = {
 			true,
 			true
 		},
-		teleport_start_function = function(arg_10_0, arg_10_1)
+		teleport_start_function = function (arg_10_0, arg_10_1)
 			LevelHelper:flow_event(arg_10_1.world, "cs_boss_death")
 			LocomotionUtils.set_animation_driven_movement(arg_10_0, true)
 		end
@@ -2426,7 +2426,7 @@ local var_0_9 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		custom_enter_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 			arg_11_1.stagger_ignore_anim_cb = true
 
 			return arg_11_3.stagger_anims[arg_11_1.stagger_type], "idle"

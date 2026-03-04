@@ -17,7 +17,7 @@ local function var_0_3(arg_2_0, arg_2_1)
 	return var_2_0, arg_2_1[var_2_1]
 end
 
-function TimedSpawnerExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+TimedSpawnerExtension.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._is_server = arg_3_1.is_server
 	arg_3_0._world = arg_3_1.world
 	arg_3_0._unit = arg_3_2
@@ -39,11 +39,11 @@ function TimedSpawnerExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._spawn_amount = 0
 end
 
-function TimedSpawnerExtension.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+TimedSpawnerExtension.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2)
 	return
 end
 
-function TimedSpawnerExtension.destroy(arg_5_0)
+TimedSpawnerExtension.destroy = function (arg_5_0)
 	if arg_5_0.network_event_delegate then
 		arg_5_0.network_event_delegate:unregister(arg_5_0)
 
@@ -51,14 +51,14 @@ function TimedSpawnerExtension.destroy(arg_5_0)
 	end
 end
 
-function TimedSpawnerExtension._can_spawn(arg_6_0, arg_6_1)
+TimedSpawnerExtension._can_spawn = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._spawn_amount >= arg_6_0._max_spawn_amount
 	local var_6_1 = arg_6_1 >= arg_6_0._timer
 
 	return not var_6_0 and var_6_1
 end
 
-function TimedSpawnerExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+TimedSpawnerExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	if not arg_7_0._is_server then
 		return
 	end
@@ -84,7 +84,7 @@ function TimedSpawnerExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_
 	end
 end
 
-function TimedSpawnerExtension._spawn_breed(arg_8_0)
+TimedSpawnerExtension._spawn_breed = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 	local var_8_1 = POSITION_LOOKUP[var_8_0]
 	local var_8_2 = var_8_1 and var_0_2(arg_8_0._nav_world, var_8_1)
@@ -112,7 +112,7 @@ function TimedSpawnerExtension._spawn_breed(arg_8_0)
 	Managers.state.event:trigger("spawned_timed_breed", var_8_0)
 end
 
-function TimedSpawnerExtension.rpc_on_timed_spawn(arg_9_0, arg_9_1, arg_9_2)
+TimedSpawnerExtension.rpc_on_timed_spawn = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._unit_storage:unit(arg_9_2)
 
 	if var_9_0 ~= arg_9_0._unit then
@@ -122,14 +122,14 @@ function TimedSpawnerExtension.rpc_on_timed_spawn(arg_9_0, arg_9_1, arg_9_2)
 	Unit.flow_event(var_9_0, "on_timed_spawn")
 end
 
-function TimedSpawnerExtension.get_spawn_rate(arg_10_0)
+TimedSpawnerExtension.get_spawn_rate = function (arg_10_0)
 	return arg_10_0._spawn_rate
 end
 
-function TimedSpawnerExtension.get_spawnable_breeds(arg_11_0)
+TimedSpawnerExtension.get_spawnable_breeds = function (arg_11_0)
 	return arg_11_0._spawnable_breeds
 end
 
-function TimedSpawnerExtension.get_max_spawn_amount(arg_12_0)
+TimedSpawnerExtension.get_max_spawn_amount = function (arg_12_0)
 	return arg_12_0._max_spawn_amount
 end

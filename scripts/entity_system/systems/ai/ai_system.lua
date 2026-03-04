@@ -46,7 +46,7 @@ local var_0_13 = {
 
 AttributeDefinition = {
 	grudge_marked = {
-		name_index = function(arg_1_0, arg_1_1)
+		name_index = function (arg_1_0, arg_1_1)
 			if arg_1_1 then
 				Unit.flow_event(arg_1_0, "enable_grudge")
 				print("New enhanced breed spawned")
@@ -57,7 +57,7 @@ AttributeDefinition = {
 	},
 	breed_enhancements = {},
 	training_dummy = {
-		armor = function(arg_2_0, arg_2_1)
+		armor = function (arg_2_0, arg_2_1)
 			local var_2_0 = arg_2_1
 
 			Unit.set_visibility(arg_2_0, "vg_armor", var_2_0)
@@ -79,7 +79,7 @@ for iter_0_0, iter_0_1 in pairs(BreedEnhancements) do
 	end
 end
 
-function AISystem.init(arg_3_0, arg_3_1, arg_3_2)
+AISystem.init = function (arg_3_0, arg_3_1, arg_3_2)
 	AISystem.super.init(arg_3_0, arg_3_1, arg_3_2, var_0_13)
 
 	local var_3_0 = {}
@@ -213,11 +213,11 @@ function AISystem.init(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function AISystem.get_nav_cost_maps_data(arg_4_0)
+AISystem.get_nav_cost_maps_data = function (arg_4_0)
 	return arg_4_0._nav_cost_maps_data, var_0_10
 end
 
-function AISystem.create_nav_cost_map(arg_5_0, arg_5_1, arg_5_2)
+AISystem.create_nav_cost_map = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._nav_cost_map_id_data
 	local var_5_1 = var_5_0.current_id
 	local var_5_2 = var_5_0.ids
@@ -245,7 +245,7 @@ function AISystem.create_nav_cost_map(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_1
 end
 
-function AISystem.destroy_nav_cost_map(arg_6_0, arg_6_1)
+AISystem.destroy_nav_cost_map = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._nav_cost_map_id_data
 	local var_6_1 = var_6_0.size
 	local var_6_2 = var_6_0.ids
@@ -264,7 +264,7 @@ function AISystem.destroy_nav_cost_map(arg_6_0, arg_6_1)
 	arg_6_0._should_recompute_nav_cost_maps = true
 end
 
-function AISystem.add_nav_cost_map_box_volume(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+AISystem.add_nav_cost_map_box_volume = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0._nav_cost_map_volume_id_data
 	local var_7_1 = var_7_0.current_id
 	local var_7_2 = var_7_0.ids
@@ -296,7 +296,7 @@ function AISystem.add_nav_cost_map_box_volume(arg_7_0, arg_7_1, arg_7_2, arg_7_3
 	return var_7_1
 end
 
-function AISystem.add_nav_cost_map_sphere_volume(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+AISystem.add_nav_cost_map_sphere_volume = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._nav_cost_map_volume_id_data
 	local var_8_1 = var_8_0.current_id
 	local var_8_2 = var_8_0.ids
@@ -328,7 +328,7 @@ function AISystem.add_nav_cost_map_sphere_volume(arg_8_0, arg_8_1, arg_8_2, arg_
 	return var_8_1
 end
 
-function AISystem.set_nav_cost_map_volume_transform(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+AISystem.set_nav_cost_map_volume_transform = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0._nav_cost_map_volume_id_data.ids
 
 	fassert(var_9_0[arg_9_1], "Error! Trying to Set Transform for Unknown Nav Cost Map Volume!")
@@ -347,7 +347,7 @@ function AISystem.set_nav_cost_map_volume_transform(arg_9_0, arg_9_1, arg_9_2, a
 	arg_9_0._should_recompute_nav_cost_maps = true
 end
 
-function AISystem.set_nav_cost_map_volume_scale(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+AISystem.set_nav_cost_map_volume_scale = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0._nav_cost_map_volume_id_data.ids
 
 	fassert(var_10_0[arg_10_1], "Error! Trying to Set Scale for Unknown Nav Cost Map Volume!")
@@ -366,7 +366,7 @@ function AISystem.set_nav_cost_map_volume_scale(arg_10_0, arg_10_1, arg_10_2, ar
 	arg_10_0._should_recompute_nav_cost_maps = true
 end
 
-function AISystem.remove_nav_cost_map_volume(arg_11_0, arg_11_1, arg_11_2)
+AISystem.remove_nav_cost_map_volume = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._nav_cost_map_volume_id_data
 	local var_11_1 = var_11_0.size
 	local var_11_2 = var_11_0.ids
@@ -390,7 +390,7 @@ function AISystem.remove_nav_cost_map_volume(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._should_recompute_nav_cost_maps = true
 end
 
-function AISystem._recompute_nav_cost_maps(arg_12_0)
+AISystem._recompute_nav_cost_maps = function (arg_12_0)
 	local var_12_0 = arg_12_0._nav_cost_maps_data
 
 	for iter_12_0 = 1, var_0_10 do
@@ -406,7 +406,7 @@ function AISystem._recompute_nav_cost_maps(arg_12_0)
 	end
 end
 
-function AISystem._initialize_client_traverse_logic(arg_13_0, arg_13_1)
+AISystem._initialize_client_traverse_logic = function (arg_13_0, arg_13_1)
 	local var_13_0 = {
 		bot_poison_wind = 1,
 		bot_ratling_gun_fire = 1,
@@ -432,7 +432,7 @@ function AISystem._initialize_client_traverse_logic(arg_13_0, arg_13_1)
 	GwNavTraverseLogic.set_navtag_layer_cost_table(arg_13_0._traverse_logic, var_13_1)
 end
 
-function AISystem.destroy(arg_14_0)
+AISystem.destroy = function (arg_14_0)
 	AISystem.super.destroy(arg_14_0)
 
 	if arg_14_0.ai_debugger then
@@ -479,7 +479,7 @@ function AISystem.destroy(arg_14_0)
 	end
 end
 
-function AISystem.on_add_extension(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AISystem.on_add_extension = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = AISystem.super.on_add_extension(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 
 	arg_15_0.unit_extension_data[arg_15_2] = var_15_0
@@ -523,7 +523,7 @@ function AISystem.on_add_extension(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_1
 	return var_15_0
 end
 
-function AISystem.use_perception_continuous(arg_16_0, arg_16_1, arg_16_2)
+AISystem.use_perception_continuous = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.ai_units_alive[arg_16_1]
 
 	if arg_16_2 then
@@ -535,7 +535,7 @@ function AISystem.use_perception_continuous(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function AISystem.set_default_blackboard_values(arg_17_0, arg_17_1, arg_17_2)
+AISystem.set_default_blackboard_values = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_2.destination_dist = 0
 	arg_17_2.current_health_percent = 1
 	arg_17_2.have_slot = 0
@@ -557,7 +557,7 @@ function AISystem.set_default_blackboard_values(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_2.unique_id = UNIT_UNIQUE_IDS
 end
 
-function AISystem.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
+AISystem.on_remove_extension = function (arg_18_0, arg_18_1, arg_18_2)
 	(arg_18_0.unit_extension_data[arg_18_1] or arg_18_0.frozen_unit_extension_data[arg_18_1]):unit_removed_from_game()
 	arg_18_0:_cleanup_extension(arg_18_1, arg_18_2)
 
@@ -566,7 +566,7 @@ function AISystem.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
 	AISystem.super.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
 end
 
-function AISystem.on_freeze_extension(arg_19_0, arg_19_1, arg_19_2)
+AISystem.on_freeze_extension = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.unit_extension_data[arg_19_1]
 
 	fassert(var_19_0, "Unit was already frozen.")
@@ -576,7 +576,7 @@ function AISystem.on_freeze_extension(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_cleanup_extension(arg_19_1, arg_19_2)
 end
 
-function AISystem._cleanup_extension(arg_20_0, arg_20_1, arg_20_2)
+AISystem._cleanup_extension = function (arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0.unit_extension_data[arg_20_1] == nil then
 		return
 	end
@@ -638,7 +638,7 @@ function AISystem._cleanup_extension(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function AISystem.freeze(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+AISystem.freeze = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0.frozen_unit_extension_data
 	local var_21_1 = var_21_0[arg_21_1]
 
@@ -668,7 +668,7 @@ function AISystem.freeze(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	var_21_3:unit_removed_from_game()
 end
 
-function AISystem.unfreeze(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+AISystem.unfreeze = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = arg_22_0.frozen_unit_extension_data[arg_22_1]
 
 	fassert(var_22_0, "Unit to unfreeze didn't have frozen extension")
@@ -719,11 +719,11 @@ function AISystem.unfreeze(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	end
 end
 
-function AISystem.register_prioritized_perception_unit_update(arg_23_0, arg_23_1, arg_23_2)
+AISystem.register_prioritized_perception_unit_update = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0.ai_units_perception_prioritized[arg_23_1] = arg_23_2
 end
 
-function AISystem.update(arg_24_0, arg_24_1, arg_24_2)
+AISystem.update = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_1.dt
 
 	if not var_0_8 then
@@ -760,14 +760,14 @@ function AISystem.update(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function AISystem.physics_async_update(arg_25_0, arg_25_1, arg_25_2)
+AISystem.physics_async_update = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.dt
 
 	arg_25_0:update_ai_blackboards_prioritized(arg_25_2, var_25_0)
 	arg_25_0:update_ai_blackboards(arg_25_2, var_25_0)
 end
 
-function AISystem.update_alive(arg_26_0)
+AISystem.update_alive = function (arg_26_0)
 	for iter_26_0, iter_26_1 in pairs(arg_26_0.ai_units_alive) do
 		if not (iter_26_1._health_extension == nil or HEALTH_ALIVE[iter_26_0]) then
 			arg_26_0.ai_units_alive[iter_26_0] = nil
@@ -778,7 +778,7 @@ function AISystem.update_alive(arg_26_0)
 	end
 end
 
-function AISystem._update_taunt(arg_27_0, arg_27_1, arg_27_2)
+AISystem._update_taunt = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_2.taunt_end_time
 	local var_27_1 = arg_27_2.taunt_unit
 
@@ -790,7 +790,7 @@ function AISystem._update_taunt(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function AISystem.update_perception(arg_28_0, arg_28_1, arg_28_2)
+AISystem.update_perception = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = PerceptionUtils
 	local var_28_1 = arg_28_0.ai_units_perception
 
@@ -847,7 +847,7 @@ function AISystem.update_perception(arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0.current_perception_unit = var_28_10
 end
 
-function AISystem.update_brains(arg_29_0, arg_29_1, arg_29_2)
+AISystem.update_brains = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = 0
 	local var_29_1 = 0
 
@@ -885,7 +885,7 @@ function AISystem.update_brains(arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0.number_special_aggored_enemies = var_29_1
 end
 
-function AISystem.update_game_objects(arg_30_0)
+AISystem.update_game_objects = function (arg_30_0)
 	local var_30_0 = Managers.state.network:game()
 	local var_30_1 = NetworkLookup.bt_action_names
 	local var_30_2 = GameSession.set_game_object_field
@@ -904,7 +904,7 @@ function AISystem.update_game_objects(arg_30_0)
 	end
 end
 
-function AISystem.update_broadphase(arg_31_0)
+AISystem.update_broadphase = function (arg_31_0)
 	local var_31_0 = var_0_1
 	local var_31_1 = arg_31_0.broadphase
 
@@ -917,7 +917,7 @@ function AISystem.update_broadphase(arg_31_0)
 	end
 end
 
-function AISystem.update_debug_unit(arg_32_0, arg_32_1)
+AISystem.update_debug_unit = function (arg_32_0, arg_32_1)
 	local var_32_0 = var_0_0.debug_unit
 
 	if not ALIVE[var_32_0] then
@@ -953,7 +953,7 @@ function AISystem.update_debug_unit(arg_32_0, arg_32_1)
 	var_32_4.debug_class.update(var_32_0, var_32_2, arg_32_1)
 end
 
-function AISystem.update_debug_draw(arg_33_0, arg_33_1)
+AISystem.update_debug_draw = function (arg_33_0, arg_33_1)
 	if var_0_0.debug_behaviour_trees then
 		for iter_33_0, iter_33_1 in pairs(arg_33_0.ai_units_alive) do
 			iter_33_1._brain:debug_draw_behaviours()
@@ -1288,7 +1288,7 @@ end
 
 local var_0_16 = IS_WINDOWS and 40 or 20
 
-function AISystem.update_ai_blackboards_prioritized(arg_35_0, arg_35_1, arg_35_2)
+AISystem.update_ai_blackboards_prioritized = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0.ai_blackboard_updates
 	local var_35_1 = #var_35_0
 	local var_35_2 = arg_35_0.ai_blackboard_prioritized_updates
@@ -1330,7 +1330,7 @@ end
 
 local var_0_17 = 2
 
-function AISystem.update_ai_blackboards(arg_36_0, arg_36_1, arg_36_2)
+AISystem.update_ai_blackboards = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0.ai_blackboard_updates
 	local var_36_1 = #var_36_0
 	local var_36_2 = arg_36_0.ai_blackboard_prioritized_updates
@@ -1365,19 +1365,19 @@ function AISystem.update_ai_blackboards(arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0.ai_update_index = var_36_6
 end
 
-function AISystem.nav_world(arg_37_0)
+AISystem.nav_world = function (arg_37_0)
 	return arg_37_0._nav_world
 end
 
-function AISystem.client_traverse_logic(arg_38_0)
+AISystem.client_traverse_logic = function (arg_38_0)
 	return arg_38_0._traverse_logic
 end
 
-function AISystem.get_tri_on_navmesh(arg_39_0, arg_39_1)
+AISystem.get_tri_on_navmesh = function (arg_39_0, arg_39_1)
 	return GwNavQueries.triangle_from_position(arg_39_0._nav_world, arg_39_1, 30, 30)
 end
 
-function AISystem.set_allowed_layer(arg_40_0, arg_40_1, arg_40_2)
+AISystem.set_allowed_layer = function (arg_40_0, arg_40_1, arg_40_2)
 	if arg_40_0.is_server then
 		local var_40_0 = Managers.state.entity
 		local var_40_1 = arg_40_0._nav_world
@@ -1424,7 +1424,7 @@ function AISystem.set_allowed_layer(arg_40_0, arg_40_1, arg_40_2)
 	end
 end
 
-function AISystem.alert_enemies_within_range(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+AISystem.alert_enemies_within_range = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	if not NetworkUtils.network_safe_position(arg_41_2) then
 		Application.warning("Trying to alert enemies outside of safe network position")
 
@@ -1440,25 +1440,25 @@ function AISystem.alert_enemies_within_range(arg_41_0, arg_41_1, arg_41_2, arg_4
 	end
 end
 
-function AISystem.rpc_alert_enemies_within_range(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+AISystem.rpc_alert_enemies_within_range = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 	local var_42_0 = Managers.state.unit_storage:unit(arg_42_2)
 
 	arg_42_0:alert_enemies_within_range(var_42_0, arg_42_3, arg_42_4)
 end
 
-function AISystem.rpc_set_ward_state(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+AISystem.rpc_set_ward_state = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = Managers.state.unit_storage:unit(arg_43_2)
 
 	AiUtils.stormvermin_champion_set_ward_state(var_43_0, arg_43_3, false)
 end
 
-function AISystem.rpc_set_hit_reaction_template(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+AISystem.rpc_set_hit_reaction_template = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = Managers.state.unit_storage:unit(arg_44_2)
 
 	ScriptUnit.extension(var_44_0, "hit_reaction_system"):set_hit_effect_template_id(arg_44_3)
 end
 
-function AISystem.rpc_change_tentacle_state(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+AISystem.rpc_change_tentacle_state = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
 	local var_45_0 = Managers.state.unit_storage:unit(arg_45_2)
 	local var_45_1 = Managers.state.unit_storage:unit(arg_45_3)
 	local var_45_2 = NetworkLookup.tentacle_template[arg_45_4]
@@ -1470,7 +1470,7 @@ function AISystem.rpc_change_tentacle_state(arg_45_0, arg_45_1, arg_45_2, arg_45
 	end
 end
 
-function AISystem.rpc_sync_tentacle_path(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+AISystem.rpc_sync_tentacle_path = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = Managers.state.unit_storage:unit(arg_46_2)
 	local var_46_1 = ScriptUnit.has_extension(var_46_0, "ai_supplementary_system")
 
@@ -1479,7 +1479,7 @@ function AISystem.rpc_sync_tentacle_path(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	end
 end
 
-function AISystem.rpc_set_corruptor_beam_state(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+AISystem.rpc_set_corruptor_beam_state = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 	local var_47_0 = Managers.state.unit_storage:unit(arg_47_2)
 	local var_47_1 = Managers.state.unit_storage:unit(arg_47_4)
 	local var_47_2 = ScriptUnit.has_extension(var_47_0, "ai_beam_effect_system")
@@ -1489,7 +1489,7 @@ function AISystem.rpc_set_corruptor_beam_state(arg_47_0, arg_47_1, arg_47_2, arg
 	end
 end
 
-function AISystem.rpc_set_allowed_nav_layer(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+AISystem.rpc_set_allowed_nav_layer = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = LAYER_ID_MAPPING[arg_48_2]
 
 	NAV_TAG_VOLUME_LAYER_COST_AI[var_48_0] = arg_48_3 and 1 or 0
@@ -1502,7 +1502,7 @@ function AISystem.rpc_set_allowed_nav_layer(arg_48_0, arg_48_1, arg_48_2, arg_48
 	end
 end
 
-function AISystem.rpc_check_trigger_backstab_sfx(arg_49_0, arg_49_1, arg_49_2)
+AISystem.rpc_check_trigger_backstab_sfx = function (arg_49_0, arg_49_1, arg_49_2)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -1548,7 +1548,7 @@ function write_attribute(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 	end
 end
 
-function AISystem.set_attribute(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
+AISystem.set_attribute = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
 	local var_51_0 = arg_51_0.unit_extension_data[arg_51_1]
 
 	write_attribute(var_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
@@ -1571,13 +1571,13 @@ function AISystem.set_attribute(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4
 	end
 end
 
-function AISystem.get_attributes(arg_52_0, arg_52_1)
+AISystem.get_attributes = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.unit_extension_data[arg_52_1]
 
 	return var_52_0 and var_52_0.attributes or var_0_7
 end
 
-function AISystem.rpc_set_attribute_bool(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+AISystem.rpc_set_attribute_bool = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 	print("rpc_set_attribute_bool", arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 
 	local var_53_0 = Managers.state.unit_storage:unit(arg_53_2)
@@ -1588,7 +1588,7 @@ function AISystem.rpc_set_attribute_bool(arg_53_0, arg_53_1, arg_53_2, arg_53_3,
 	write_attribute(var_53_1, var_53_0, var_53_2, var_53_3, arg_53_5)
 end
 
-function AISystem.rpc_set_attribute_int(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+AISystem.rpc_set_attribute_int = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 	print("rpc_set_attribute_int", arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 
 	local var_54_0 = Managers.state.unit_storage:unit(arg_54_2)
@@ -1599,7 +1599,7 @@ function AISystem.rpc_set_attribute_int(arg_54_0, arg_54_1, arg_54_2, arg_54_3, 
 	write_attribute(var_54_1, var_54_0, var_54_2, var_54_3, arg_54_5)
 end
 
-function AISystem.rpc_remove_attribute(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+AISystem.rpc_remove_attribute = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	print("rpc_remove_attribute", arg_55_2, arg_55_3, arg_55_4, nil)
 
 	local var_55_0 = Managers.state.unit_storage:unit(arg_55_2)
@@ -1610,7 +1610,7 @@ function AISystem.rpc_remove_attribute(arg_55_0, arg_55_1, arg_55_2, arg_55_3, a
 	write_attribute(var_55_1, var_55_0, var_55_2, var_55_3, nil)
 end
 
-function AISystem.hot_join_sync(arg_56_0, arg_56_1)
+AISystem.hot_join_sync = function (arg_56_0, arg_56_1)
 	local var_56_0 = #LAYER_ID_MAPPING
 
 	for iter_56_0 = NavTagVolumeStartLayer, var_56_0 do
@@ -1649,7 +1649,7 @@ function AISystem.hot_join_sync(arg_56_0, arg_56_1)
 	end
 end
 
-function AISystem.create_all_trees(arg_57_0)
+AISystem.create_all_trees = function (arg_57_0)
 	var_0_8 = true
 
 	for iter_57_0, iter_57_1 in pairs(BreedBehaviors) do
@@ -1665,10 +1665,10 @@ function AISystem.create_all_trees(arg_57_0)
 	end
 end
 
-function AISystem.behavior_tree(arg_58_0, arg_58_1)
+AISystem.behavior_tree = function (arg_58_0, arg_58_1)
 	return arg_58_0._behavior_trees[arg_58_1]
 end
 
-function AISystem.register_unit_for_destruction(arg_59_0, arg_59_1)
+AISystem.register_unit_for_destruction = function (arg_59_0, arg_59_1)
 	arg_59_0._units_to_destroy[arg_59_1] = arg_59_1
 end

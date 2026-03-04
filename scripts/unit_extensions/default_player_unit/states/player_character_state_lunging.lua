@@ -4,14 +4,14 @@ local var_0_0 = POSITION_LOOKUP
 
 PlayerCharacterStateLunging = class(PlayerCharacterStateLunging, PlayerCharacterState)
 
-function PlayerCharacterStateLunging.init(arg_1_0, arg_1_1)
+PlayerCharacterStateLunging.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "lunging")
 
 	arg_1_0._direction = Vector3Box()
 	arg_1_0._last_position = Vector3Box()
 end
 
-function PlayerCharacterStateLunging._on_enter_animation(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PlayerCharacterStateLunging._on_enter_animation = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_3 then
 		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	else
@@ -23,7 +23,7 @@ function PlayerCharacterStateLunging._on_enter_animation(arg_2_0, arg_2_1, arg_2
 	CharacterStateHelper.play_animation_event_first_person(var_2_0, arg_2_5 or arg_2_2)
 end
 
-function PlayerCharacterStateLunging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateLunging.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	table.clear(arg_3_0.temp_params)
 
 	local var_3_0 = arg_3_0.input_extension
@@ -110,7 +110,7 @@ function PlayerCharacterStateLunging.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	end
 end
 
-function PlayerCharacterStateLunging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateLunging.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0._lunge_data
 	local var_4_1 = var_4_0.first_person_animation_end_event
 
@@ -166,7 +166,7 @@ function PlayerCharacterStateLunging.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3,
 	arg_4_0.first_person_extension:enable_rig_movement()
 end
 
-function PlayerCharacterStateLunging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateLunging.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_1)
 	local var_5_2 = arg_5_0.input_extension
@@ -305,7 +305,7 @@ function PlayerCharacterStateLunging.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, 
 	arg_5_0._last_position:store(var_0_0[arg_5_1])
 end
 
-function PlayerCharacterStateLunging._update_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+PlayerCharacterStateLunging._update_movement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0
 
 	if arg_6_0._falling then
@@ -317,7 +317,7 @@ function PlayerCharacterStateLunging._update_movement(arg_6_0, arg_6_1, arg_6_2,
 	return var_6_0
 end
 
-function PlayerCharacterStateLunging._check_ledge_hang(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+PlayerCharacterStateLunging._check_ledge_hang = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = var_0_0[arg_7_1]
 	local var_7_1 = var_7_0 + arg_7_4 * arg_7_5 * arg_7_2
 	local var_7_2 = Vector3.length(var_7_1 - var_7_0)
@@ -342,7 +342,7 @@ function PlayerCharacterStateLunging._check_ledge_hang(arg_7_0, arg_7_1, arg_7_2
 	return false
 end
 
-function PlayerCharacterStateLunging._move_on_ground(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+PlayerCharacterStateLunging._move_on_ground = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_0.locomotion_extension
 	local var_8_1 = arg_8_0.first_person_extension
 	local var_8_2 = arg_8_4.duration
@@ -383,7 +383,7 @@ function PlayerCharacterStateLunging._move_on_ground(arg_8_0, arg_8_1, arg_8_2, 
 	return var_8_3 < var_8_2 and "continue" or "stop"
 end
 
-function PlayerCharacterStateLunging._move_in_air(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+PlayerCharacterStateLunging._move_in_air = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0.locomotion_extension
 	local var_9_1 = arg_9_0.first_person_extension
 	local var_9_2 = arg_9_4.duration
@@ -419,7 +419,7 @@ function PlayerCharacterStateLunging._move_in_air(arg_9_0, arg_9_1, arg_9_2, arg
 	return var_9_3 < var_9_2 and "continue" or "stop"
 end
 
-function PlayerCharacterStateLunging._parse_attack_data(arg_10_0, arg_10_1)
+PlayerCharacterStateLunging._parse_attack_data = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.career_extension:get_career_power_level() * arg_10_1.power_level_multiplier
 	local var_10_1 = math.clamp(var_10_0, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
 	local var_10_2 = arg_10_1.damage_profile or "default"
@@ -430,7 +430,7 @@ function PlayerCharacterStateLunging._parse_attack_data(arg_10_0, arg_10_1)
 	return var_10_3, var_10_1, var_10_5, arg_10_1.ignore_shield
 end
 
-function PlayerCharacterStateLunging._calculate_hit_mass(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+PlayerCharacterStateLunging._calculate_hit_mass = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = Managers.state.side:is_enemy(arg_11_5, arg_11_3)
 
 	if arg_11_4 and var_11_0 and HEALTH_ALIVE[arg_11_3] then
@@ -450,7 +450,7 @@ function PlayerCharacterStateLunging._calculate_hit_mass(arg_11_0, arg_11_1, arg
 	return arg_11_1
 end
 
-function PlayerCharacterStateLunging._update_damage(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+PlayerCharacterStateLunging._update_damage = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_4.depth_padding
 	local var_12_1 = 0.5 * arg_12_4.width
 	local var_12_2 = 0.5 * arg_12_4.height
@@ -562,7 +562,7 @@ end
 
 local var_0_1 = {}
 
-function PlayerCharacterStateLunging._do_blast(arg_13_0, arg_13_1, arg_13_2)
+PlayerCharacterStateLunging._do_blast = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._hit = true
 
 	local var_13_0 = arg_13_0._lunge_data.damage

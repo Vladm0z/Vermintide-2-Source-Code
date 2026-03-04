@@ -63,7 +63,7 @@ local var_0_1 = {
 	}
 }
 
-function AccountManager.init(arg_2_0)
+AccountManager.init = function (arg_2_0)
 	arg_2_0._user_id = nil
 	arg_2_0._controller_id = nil
 	arg_2_0._achievements = nil
@@ -87,23 +87,23 @@ function AccountManager.init(arg_2_0)
 	arg_2_0._country_code = string.lower(var_2_0.GEO_ISO2)
 end
 
-function AccountManager.set_achievement_unlocked(arg_3_0, arg_3_1)
+AccountManager.set_achievement_unlocked = function (arg_3_0, arg_3_1)
 	arg_3_0._unlocked_achievements[arg_3_1] = true
 end
 
-function AccountManager.get_unlocked_achievement_list(arg_4_0)
+AccountManager.get_unlocked_achievement_list = function (arg_4_0)
 	return arg_4_0._unlocked_achievements
 end
 
-function AccountManager.set_offline_achievement_progress(arg_5_0, arg_5_1, arg_5_2)
+AccountManager.set_offline_achievement_progress = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._offline_achievement_progress[arg_5_1] = arg_5_2
 end
 
-function AccountManager.offline_achievement_progress(arg_6_0, arg_6_1)
+AccountManager.offline_achievement_progress = function (arg_6_0, arg_6_1)
 	return arg_6_0._offline_achievement_progress[arg_6_1]
 end
 
-function AccountManager._set_user_id(arg_7_0, arg_7_1, arg_7_2)
+AccountManager._set_user_id = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._user_id = arg_7_1
 	arg_7_0._user_info = XboxLive.user_info(arg_7_1)
 	arg_7_0._player_session_id = Application.guid()
@@ -116,7 +116,7 @@ function AccountManager._set_user_id(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._suspend_callback_id = XboxCallbacks.register_suspending_callback(callback(arg_7_0, "cb_is_suspending"))
 end
 
-function AccountManager.cb_is_suspending(arg_8_0, ...)
+AccountManager.cb_is_suspending = function (arg_8_0, ...)
 	print("############################ SUSPENDING")
 
 	arg_8_0._has_suspended = true
@@ -134,41 +134,41 @@ function AccountManager.cb_is_suspending(arg_8_0, ...)
 	end
 end
 
-function AccountManager.set_presence(arg_9_0, arg_9_1)
+AccountManager.set_presence = function (arg_9_0, arg_9_1)
 	arg_9_0._presence:set_presence(arg_9_1)
 end
 
-function AccountManager.set_leaderboard(arg_10_0, arg_10_1, arg_10_2)
+AccountManager.set_leaderboard = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0._user_id then
 		arg_10_0._leaderboards:set_leaderboard(arg_10_0._user_info.xbox_user_id, arg_10_0._player_session_id, arg_10_1, arg_10_2)
 	end
 end
 
-function AccountManager.get_leaderboard(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+AccountManager.get_leaderboard = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if arg_11_0._user_id then
 		arg_11_0._leaderboards:get_leaderboard(arg_11_0._user_id, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	end
 end
 
-function AccountManager.set_round_id(arg_12_0, arg_12_1)
+AccountManager.set_round_id = function (arg_12_0, arg_12_1)
 	arg_12_0._current_round_id = arg_12_1 or Application.guid()
 end
 
-function AccountManager.round_id(arg_13_0)
+AccountManager.round_id = function (arg_13_0)
 	return arg_13_0._current_round_id
 end
 
-function AccountManager.my_gamertag(arg_14_0)
+AccountManager.my_gamertag = function (arg_14_0)
 	local var_14_0 = arg_14_0._user_info.xbox_user_id
 
 	return arg_14_0._gamertags[var_14_0]
 end
 
-function AccountManager.gamertag_from_xuid(arg_15_0, arg_15_1)
+AccountManager.gamertag_from_xuid = function (arg_15_0, arg_15_1)
 	return arg_15_0._gamertags[arg_15_1]
 end
 
-function AccountManager.has_privilege(arg_16_0, arg_16_1)
+AccountManager.has_privilege = function (arg_16_0, arg_16_1)
 	if arg_16_0._user_id then
 		return arg_16_0._xbox_privileges:has_privilege(arg_16_0._user_id, arg_16_1)
 	else
@@ -176,71 +176,71 @@ function AccountManager.has_privilege(arg_16_0, arg_16_1)
 	end
 end
 
-function AccountManager.is_privileges_initialized(arg_17_0)
+AccountManager.is_privileges_initialized = function (arg_17_0)
 	return arg_17_0._xbox_privileges:is_initialized()
 end
 
-function AccountManager.has_privilege_error(arg_18_0)
+AccountManager.has_privilege_error = function (arg_18_0)
 	arg_18_0._xbox_privileges:has_error()
 end
 
-function AccountManager.get_privilege_async(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+AccountManager.get_privilege_async = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_0._xbox_privileges:get_privilege_async(arg_19_0._user_id, arg_19_1, arg_19_2, arg_19_3)
 end
 
-function AccountManager.active_controller(arg_20_0, arg_20_1)
+AccountManager.active_controller = function (arg_20_0, arg_20_1)
 	return arg_20_0._active_controller
 end
 
-function AccountManager.is_controller_disconnected(arg_21_0)
+AccountManager.is_controller_disconnected = function (arg_21_0)
 	return arg_21_0._popup_id
 end
 
-function AccountManager.user_detached(arg_22_0)
+AccountManager.user_detached = function (arg_22_0)
 	return arg_22_0._user_detached
 end
 
-function AccountManager.xbox_user_id(arg_23_0)
+AccountManager.xbox_user_id = function (arg_23_0)
 	return arg_23_0._user_info.xbox_user_id
 end
 
-function AccountManager.account_id(arg_24_0)
+AccountManager.account_id = function (arg_24_0)
 	return arg_24_0._user_info.xbox_user_id
 end
 
-function AccountManager.backend_user_id(arg_25_0)
+AccountManager.backend_user_id = function (arg_25_0)
 	return arg_25_0._backend_user_id
 end
 
-function AccountManager.player_session_id(arg_26_0)
+AccountManager.player_session_id = function (arg_26_0)
 	return arg_26_0._player_session_id
 end
 
-function AccountManager.user_id(arg_27_0)
+AccountManager.user_id = function (arg_27_0)
 	return arg_27_0._user_id
 end
 
-function AccountManager.storage_id(arg_28_0)
+AccountManager.storage_id = function (arg_28_0)
 	return arg_28_0._storage_id
 end
 
-function AccountManager.is_guest(arg_29_0)
+AccountManager.is_guest = function (arg_29_0)
 	return arg_29_0._user_info and arg_29_0._user_info.guest
 end
 
-function AccountManager.is_online(arg_30_0)
+AccountManager.is_online = function (arg_30_0)
 	return not arg_30_0._offline_mode and XboxLive.online_state() == XboxOne.ONLINE
 end
 
-function AccountManager.offline_mode(arg_31_0)
+AccountManager.offline_mode = function (arg_31_0)
 	return arg_31_0._offline_mode
 end
 
-function AccountManager.set_offline_mode(arg_32_0, arg_32_1)
+AccountManager.set_offline_mode = function (arg_32_0, arg_32_1)
 	arg_32_0._offline_mode = arg_32_1
 end
 
-function AccountManager.update(arg_33_0, arg_33_1)
+AccountManager.update = function (arg_33_0, arg_33_1)
 	if arg_33_0._initiated then
 		local var_33_0 = arg_33_0._user_id
 
@@ -270,11 +270,11 @@ function AccountManager.update(arg_33_0, arg_33_1)
 	arg_33_0._user_cache_changed = XboxLive.user_cache_changed()
 end
 
-function AccountManager.has_popup(arg_34_0)
+AccountManager.has_popup = function (arg_34_0)
 	return arg_34_0._popup_id or arg_34_0._signout_popup_id or arg_34_0._privilege_popup_id or arg_34_0._xbox_live_connection_lost_popup_id or arg_34_0._not_connected_to_xbox_live_popup_id
 end
 
-function AccountManager.cancel_all_popups(arg_35_0)
+AccountManager.cancel_all_popups = function (arg_35_0)
 	arg_35_0._popup_id = nil
 	arg_35_0._signout_popup_id = nil
 	arg_35_0._privilege_popup_id = nil
@@ -282,7 +282,7 @@ function AccountManager.cancel_all_popups(arg_35_0)
 	arg_35_0._not_connected_to_xbox_live_popup_id = nil
 end
 
-function AccountManager._check_trigger_popups(arg_36_0)
+AccountManager._check_trigger_popups = function (arg_36_0)
 	if not arg_36_0._retrigger_popups_check then
 		return
 	end
@@ -313,11 +313,11 @@ function AccountManager._check_trigger_popups(arg_36_0)
 	arg_36_0._retrigger_popups_check = false
 end
 
-function AccountManager.check_popup_retrigger(arg_37_0)
+AccountManager.check_popup_retrigger = function (arg_37_0)
 	arg_37_0._retrigger_popups_check = true
 end
 
-function AccountManager._process_popup_handle(arg_38_0, arg_38_1)
+AccountManager._process_popup_handle = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0[arg_38_1]
 
 	if not var_38_0 then
@@ -333,7 +333,7 @@ function AccountManager._process_popup_handle(arg_38_0, arg_38_1)
 	end
 end
 
-function AccountManager.setup_friendslist(arg_39_0)
+AccountManager.setup_friendslist = function (arg_39_0)
 	if rawget(_G, "LobbyInternal") and LobbyInternal.client then
 		local var_39_0 = {
 			Social.last_social_events()
@@ -356,7 +356,7 @@ function AccountManager.setup_friendslist(arg_39_0)
 	end
 end
 
-function AccountManager._update_social_manager(arg_40_0, arg_40_1, arg_40_2)
+AccountManager._update_social_manager = function (arg_40_0, arg_40_1, arg_40_2)
 	if arg_40_0._added_local_user_to_graph then
 		local var_40_0 = {
 			Social.last_social_events()
@@ -371,20 +371,20 @@ function AccountManager._update_social_manager(arg_40_0, arg_40_1, arg_40_2)
 		end
 
 		if table.contains(var_40_0, SocialEventType.PRESENCE_CHANGED) then
-			-- block empty
+			-- Nothing
 		end
 	end
 end
 
-function AccountManager.friends_list_initiated(arg_41_0)
+AccountManager.friends_list_initiated = function (arg_41_0)
 	return arg_41_0._added_local_user_to_graph
 end
 
-function AccountManager.user_cache_changed(arg_42_0)
+AccountManager.user_cache_changed = function (arg_42_0)
 	return arg_42_0._user_cache_changed
 end
 
-function AccountManager._update_sessions(arg_43_0, arg_43_1)
+AccountManager._update_sessions = function (arg_43_0, arg_43_1)
 	if Network.xboxlive_client_exists() then
 		arg_43_0._smartmatch_cleaner:update(arg_43_1)
 	else
@@ -411,7 +411,7 @@ function AccountManager._update_sessions(arg_43_0, arg_43_1)
 	end
 end
 
-function AccountManager._verify_user_integrity(arg_44_0)
+AccountManager._verify_user_integrity = function (arg_44_0)
 	if arg_44_0._offline_mode == nil or arg_44_0._offline_mode or arg_44_0._signout_popup_id then
 		return
 	end
@@ -426,7 +426,7 @@ local var_0_2 = {
 	xb1_keyboard = true
 }
 
-function AccountManager._verify_user_profile(arg_45_0)
+AccountManager._verify_user_profile = function (arg_45_0)
 	if arg_45_0._popup_id or arg_45_0._signout_popup_id then
 		return
 	end
@@ -452,7 +452,7 @@ function AccountManager._verify_user_profile(arg_45_0)
 		local var_45_11 = string.format(Localize("controller_pairing"), var_45_10)
 
 		if Managers.matchmaking then
-			-- block empty
+			-- Nothing
 		end
 
 		arg_45_0:_verify_user_in_cache()
@@ -460,7 +460,7 @@ function AccountManager._verify_user_profile(arg_45_0)
 	end
 end
 
-function AccountManager._verify_privileges(arg_46_0)
+AccountManager._verify_privileges = function (arg_46_0)
 	if not XboxLive.user_info_changed() or arg_46_0._privilege_popup_id or arg_46_0:offline_mode() then
 		return
 	end
@@ -470,7 +470,7 @@ function AccountManager._verify_privileges(arg_46_0)
 	end
 end
 
-function AccountManager._user_id_in_cache(arg_47_0, arg_47_1)
+AccountManager._user_id_in_cache = function (arg_47_0, arg_47_1)
 	local var_47_0 = {
 		XboxLive.users()
 	}
@@ -484,7 +484,7 @@ function AccountManager._user_id_in_cache(arg_47_0, arg_47_1)
 	return false
 end
 
-function AccountManager._verify_user_in_cache(arg_48_0)
+AccountManager._verify_user_in_cache = function (arg_48_0)
 	local var_48_0 = {
 		XboxLive.users()
 	}
@@ -500,7 +500,7 @@ function AccountManager._verify_user_in_cache(arg_48_0)
 	arg_48_0._user_detached = true
 end
 
-function AccountManager.user_exists(arg_49_0, arg_49_1)
+AccountManager.user_exists = function (arg_49_0, arg_49_1)
 	local var_49_0 = {
 		XboxLive.users()
 	}
@@ -514,7 +514,7 @@ function AccountManager.user_exists(arg_49_0, arg_49_1)
 	return false
 end
 
-function AccountManager._update_bandwidth_query(arg_50_0, arg_50_1)
+AccountManager._update_bandwidth_query = function (arg_50_0, arg_50_1)
 	if GameSettingsDevelopment.bandwidth_queries_enabled then
 		if arg_50_0._query_bandwidth_timer <= 0 then
 			arg_50_0:query_bandwidth()
@@ -524,24 +524,24 @@ function AccountManager._update_bandwidth_query(arg_50_0, arg_50_1)
 	end
 end
 
-function AccountManager.cb_privileges_updated(arg_51_0, arg_51_1)
+AccountManager.cb_privileges_updated = function (arg_51_0, arg_51_1)
 	if not arg_51_0:has_privilege(UserPrivilege.MULTIPLAYER_SESSIONS) then
 		arg_51_0._privilege_popup_id = Managers.popup:queue_popup(Localize("popup_xbox_live_gold_error"), Localize("popup_xbox_live_gold_error_header"), "restart_network", Localize("menu_ok"))
 	end
 end
 
-function AccountManager._check_session(arg_52_0)
+AccountManager._check_session = function (arg_52_0)
 	if Network.fatal_error() and not arg_52_0._fatal_error and (not Managers.invite or not Managers.invite:has_invitation()) and (not Managers.matchmaking or not Managers.matchmaking:is_joining_friend()) and not arg_52_0:leaving_game() then
 		arg_52_0._xbox_live_connection_lost_popup_id = Managers.popup:queue_popup(Localize("xboxlive_connection_lost"), Localize("xboxlive_connection_lost_header"), "restart_network", Localize("menu_restart"))
 		arg_52_0._fatal_error = true
 	end
 end
 
-function AccountManager.has_fatal_error(arg_53_0)
+AccountManager.has_fatal_error = function (arg_53_0)
 	return arg_53_0._fatal_error or Network.fatal_error()
 end
 
-function AccountManager._create_popup(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+AccountManager._create_popup = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
 	Managers.input:set_all_gamepads_available()
 	assert(arg_54_1, "[AccountManager] No error was passed to popup handler")
 
@@ -575,17 +575,17 @@ local function var_0_3(arg_55_0)
 	arg_55_0:_create_popup(var_55_3, "wrong_profile_header", "verify_profile", "menu_retry", "restart_network", "menu_return_to_title_screen", "show_profile_picker", "menu_select_profile", true)
 end
 
-function AccountManager.force_exit_to_title_screen(arg_56_0)
+AccountManager.force_exit_to_title_screen = function (arg_56_0)
 	arg_56_0._should_teardown_xboxlive = true
 
 	arg_56_0:initiate_leave_game()
 end
 
-function AccountManager._handle_popup_result(arg_57_0, arg_57_1)
+AccountManager._handle_popup_result = function (arg_57_0, arg_57_1)
 	if arg_57_1 == "verify_profile" then
 		arg_57_0:verify_profile()
 	elseif arg_57_1 == "acknowledged" then
-		-- block empty
+		-- Nothing
 	elseif arg_57_1 == "restart_network" then
 		arg_57_0._should_teardown_xboxlive = true
 
@@ -620,23 +620,23 @@ function AccountManager._handle_popup_result(arg_57_0, arg_57_1)
 	end
 end
 
-function AccountManager.restarting(arg_58_0)
+AccountManager.restarting = function (arg_58_0)
 	return arg_58_0._restarting
 end
 
-function AccountManager.should_teardown_xboxlive(arg_59_0)
+AccountManager.should_teardown_xboxlive = function (arg_59_0)
 	return arg_59_0._should_teardown_xboxlive
 end
 
-function AccountManager.set_should_teardown_xboxlive(arg_60_0)
+AccountManager.set_should_teardown_xboxlive = function (arg_60_0)
 	arg_60_0._should_teardown_xboxlive = true
 end
 
-function AccountManager.teardown_xboxlive(arg_61_0)
+AccountManager.teardown_xboxlive = function (arg_61_0)
 	arg_61_0._teardown_xboxlive = true
 end
 
-function AccountManager.update_popup_status(arg_62_0)
+AccountManager.update_popup_status = function (arg_62_0)
 	if not arg_62_0._popup_id then
 		return
 	end
@@ -646,7 +646,7 @@ function AccountManager.update_popup_status(arg_62_0)
 	end
 end
 
-function AccountManager.verify_profile(arg_63_0)
+AccountManager.verify_profile = function (arg_63_0)
 	if not arg_63_0._initiated then
 		return
 	end
@@ -672,14 +672,14 @@ function AccountManager.verify_profile(arg_63_0)
 		arg_63_0:_verify_user_in_cache()
 
 		if Managers.matchmaking then
-			-- block empty
+			-- Nothing
 		end
 	else
 		var_0_3(arg_63_0)
 	end
 end
 
-function AccountManager.cb_profile_signed_out(arg_64_0)
+AccountManager.cb_profile_signed_out = function (arg_64_0)
 	local var_64_0 = Managers.input:get_most_recent_device()
 	local var_64_1 = XboxLive.user_info(var_64_0.user_id())
 
@@ -697,7 +697,7 @@ function AccountManager.cb_profile_signed_out(arg_64_0)
 	end
 end
 
-function AccountManager.sign_in(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+AccountManager.sign_in = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 	if not arg_65_1 then
 		local var_65_0 = arg_65_0:_controller_index(arg_65_2)
 
@@ -713,7 +713,7 @@ function AccountManager.sign_in(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 	return true
 end
 
-function AccountManager._controller_index(arg_66_0, arg_66_1)
+AccountManager._controller_index = function (arg_66_0, arg_66_1)
 	if arg_66_1 then
 		local var_66_0 = arg_66_1.name()
 
@@ -723,7 +723,7 @@ function AccountManager._controller_index(arg_66_0, arg_66_1)
 	end
 end
 
-function AccountManager._hard_sign_in(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+AccountManager._hard_sign_in = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	var_0_0("Hard-sign in", arg_67_1)
 	Crashify.print_property("xb1_user_id", arg_67_1)
 	arg_67_0:_set_user_id(arg_67_1, arg_67_2)
@@ -731,19 +731,19 @@ function AccountManager._hard_sign_in(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 	arg_67_0:_on_user_signed_in()
 end
 
-function AccountManager.set_xsts_token(arg_68_0, arg_68_1)
+AccountManager.set_xsts_token = function (arg_68_0, arg_68_1)
 	arg_68_0._xsts_token = arg_68_1
 end
 
-function AccountManager.get_xsts_token(arg_69_0)
+AccountManager.get_xsts_token = function (arg_69_0)
 	return arg_69_0._xsts_token
 end
 
-function AccountManager._unmap_other_controllers(arg_70_0)
+AccountManager._unmap_other_controllers = function (arg_70_0)
 	Managers.input:set_exclusive_gamepad(arg_70_0._active_controller)
 end
 
-function AccountManager._on_user_signed_in(arg_71_0)
+AccountManager._on_user_signed_in = function (arg_71_0)
 	local var_71_0 = arg_71_0._user_id
 
 	arg_71_0._xbox_privileges:reset()
@@ -752,7 +752,7 @@ function AccountManager._on_user_signed_in(arg_71_0)
 	arg_71_0._initiated = true
 end
 
-function AccountManager.get_user_profiles(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+AccountManager.get_user_profiles = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 	if XboxLive.online_state() == XboxOne.ONLINE then
 		local var_72_0 = Xbone.get_user_profiles(arg_72_1, arg_72_2, #arg_72_2)
 		local var_72_1 = ScriptUserProfileToken:new(var_72_0)
@@ -770,7 +770,7 @@ function AccountManager.get_user_profiles(arg_72_0, arg_72_1, arg_72_2, arg_72_3
 	end
 end
 
-function AccountManager.cb_user_profiles(arg_73_0, arg_73_1)
+AccountManager.cb_user_profiles = function (arg_73_0, arg_73_1)
 	if not arg_73_1.error then
 		for iter_73_0, iter_73_1 in pairs(arg_73_1.user_profiles) do
 			arg_73_0._gamertags[iter_73_0] = iter_73_1
@@ -785,7 +785,7 @@ function AccountManager.cb_user_profiles(arg_73_0, arg_73_1)
 	arg_73_0._my_user_profile_cb = nil
 end
 
-function AccountManager._handle_storage_token(arg_74_0)
+AccountManager._handle_storage_token = function (arg_74_0)
 	arg_74_0._storage_token:update()
 
 	if arg_74_0._storage_token:done() then
@@ -797,7 +797,7 @@ function AccountManager._handle_storage_token(arg_74_0)
 	end
 end
 
-function AccountManager.get_storage_space(arg_75_0, arg_75_1)
+AccountManager.get_storage_space = function (arg_75_0, arg_75_1)
 	if not arg_75_0._storage_id then
 		local var_75_0 = XboxConnectedStorage.get_storage_space(arg_75_0._user_id)
 
@@ -808,7 +808,7 @@ function AccountManager.get_storage_space(arg_75_0, arg_75_1)
 	end
 end
 
-function AccountManager._storage_acquired(arg_76_0, arg_76_1)
+AccountManager._storage_acquired = function (arg_76_0, arg_76_1)
 	if arg_76_1.error then
 		Application.error("[AccountManager] There was an error in the get_storage_space operation: " .. arg_76_1.error)
 		arg_76_0:close_storage()
@@ -821,15 +821,15 @@ function AccountManager._storage_acquired(arg_76_0, arg_76_1)
 	arg_76_0._get_storage_done_callback = nil
 end
 
-function AccountManager.add_session_to_cleanup(arg_77_0, arg_77_1)
+AccountManager.add_session_to_cleanup = function (arg_77_0, arg_77_1)
 	arg_77_0._smartmatch_cleaner:add_session(arg_77_1)
 end
 
-function AccountManager.all_sessions_cleaned_up(arg_78_0)
+AccountManager.all_sessions_cleaned_up = function (arg_78_0)
 	return arg_78_0._smartmatch_cleaner:ready()
 end
 
-function AccountManager.initiate_leave_game(arg_79_0)
+AccountManager.initiate_leave_game = function (arg_79_0)
 	arg_79_0._leave_game = true
 
 	if arg_79_0:is_online() then
@@ -837,11 +837,11 @@ function AccountManager.initiate_leave_game(arg_79_0)
 	end
 end
 
-function AccountManager.leaving_game(arg_80_0)
+AccountManager.leaving_game = function (arg_80_0)
 	return arg_80_0._leave_game
 end
 
-function AccountManager.reset(arg_81_0)
+AccountManager.reset = function (arg_81_0)
 	if Network.xboxlive_client_exists() and arg_81_0._user_id and arg_81_0._added_local_user_to_graph then
 		Social.remove_local_user_from_graph(arg_81_0._user_id)
 	end
@@ -886,7 +886,7 @@ function AccountManager.reset(arg_81_0)
 	end
 end
 
-function AccountManager.destroy(arg_82_0)
+AccountManager.destroy = function (arg_82_0)
 	arg_82_0:close_storage()
 	arg_82_0._presence:destroy()
 	arg_82_0._xbox_marketplace:destroy()
@@ -896,7 +896,7 @@ function AccountManager.destroy(arg_82_0)
 	end
 end
 
-function AccountManager.close_storage(arg_83_0)
+AccountManager.close_storage = function (arg_83_0)
 	print("closing storage")
 
 	if arg_83_0._storage_id then
@@ -910,17 +910,17 @@ function AccountManager.close_storage(arg_83_0)
 	arg_83_0._storage_token = nil
 end
 
-function AccountManager.set_controller_disconnected(arg_84_0, arg_84_1)
+AccountManager.set_controller_disconnected = function (arg_84_0, arg_84_1)
 	arg_84_0._controller_disconnected = arg_84_1
 end
 
-function AccountManager.controller_disconnected(arg_85_0)
+AccountManager.controller_disconnected = function (arg_85_0)
 	return arg_85_0._controller_disconnected
 end
 
 local var_0_4 = {}
 
-function AccountManager.get_friends(arg_86_0, arg_86_1, arg_86_2)
+AccountManager.get_friends = function (arg_86_0, arg_86_1, arg_86_2)
 	table.clear(var_0_4)
 
 	if arg_86_0._added_local_user_to_graph and arg_86_0._social_graph_loaded then
@@ -975,7 +975,7 @@ function AccountManager.get_friends(arg_86_0, arg_86_1, arg_86_2)
 	arg_86_2(var_0_4)
 end
 
-function AccountManager.send_session_invitation(arg_87_0, arg_87_1, arg_87_2)
+AccountManager.send_session_invitation = function (arg_87_0, arg_87_1, arg_87_2)
 	local var_87_0 = {
 		arg_87_1
 	}
@@ -983,16 +983,16 @@ function AccountManager.send_session_invitation(arg_87_0, arg_87_1, arg_87_2)
 	arg_87_2:invite_friends_list(var_87_0)
 end
 
-function AccountManager.set_current_lobby(arg_88_0, arg_88_1)
+AccountManager.set_current_lobby = function (arg_88_0, arg_88_1)
 	return
 end
 
-function AccountManager.reset_bandwidth_query(arg_89_0)
+AccountManager.reset_bandwidth_query = function (arg_89_0)
 	arg_89_0._bandwidth_query_fails = 0
 	arg_89_0._query_bandwidth_timer = AccountManager.QUERY_BANDWIDTH_TIMER
 end
 
-function AccountManager.query_bandwidth(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+AccountManager.query_bandwidth = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	if arg_90_0._querying_bandwidth or not Network.xboxlive_client_exists() or Managers.voice_chat and Managers.voice_chat:bandwidth_disabled() or not GameSettingsDevelopment.bandwidth_queries_enabled then
 		return
 	end
@@ -1014,7 +1014,7 @@ function AccountManager.query_bandwidth(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	end
 end
 
-function AccountManager.cb_bandwidth_query(arg_91_0, arg_91_1)
+AccountManager.cb_bandwidth_query = function (arg_91_0, arg_91_1)
 	if arg_91_1.error then
 		Application.warning("[AccountManager:query_bandwidth] FAILED! reason: " .. arg_91_1.error)
 
@@ -1039,13 +1039,13 @@ function AccountManager.cb_bandwidth_query(arg_91_0, arg_91_1)
 	arg_91_0._querying_bandwidth = nil
 end
 
-function AccountManager.show_player_profile(arg_92_0, arg_92_1)
+AccountManager.show_player_profile = function (arg_92_0, arg_92_1)
 	if not arg_92_0._user_detached then
 		XboxLive.show_gamercard(arg_92_0._user_id, arg_92_1)
 	end
 end
 
-function AccountManager.get_product_details(arg_93_0, arg_93_1, arg_93_2)
+AccountManager.get_product_details = function (arg_93_0, arg_93_1, arg_93_2)
 	if not arg_93_0._user_id or arg_93_0._offline_mode or arg_93_0._user_detached then
 		arg_93_2({
 			error = "Can't fetch marketplace information while being offline"
@@ -1057,32 +1057,32 @@ function AccountManager.get_product_details(arg_93_0, arg_93_1, arg_93_2)
 	arg_93_0._xbox_marketplace:get_product_details(arg_93_0._user_id, arg_93_1, arg_93_2)
 end
 
-function AccountManager.console_type(arg_94_0)
+AccountManager.console_type = function (arg_94_0)
 	local var_94_0 = XboxOne.console_type()
 
 	return (var_0_1[var_94_0] or var_0_1[XboxOne.CONSOLE_TYPE_UNKNOWN]).console_type_name
 end
 
-function AccountManager.should_throttle(arg_95_0)
+AccountManager.should_throttle = function (arg_95_0)
 	local var_95_0 = XboxOne.console_type()
 
 	return (var_0_1[var_95_0] or var_0_1[XboxOne.CONSOLE_TYPE_UNKNOWN]).should_throttle
 end
 
-function AccountManager.console_type_setting(arg_96_0, arg_96_1)
+AccountManager.console_type_setting = function (arg_96_0, arg_96_1)
 	local var_96_0 = XboxOne.console_type()
 
 	return (var_0_1[var_96_0] or var_0_1[XboxOne.CONSOLE_TYPE_UNKNOWN])[arg_96_1]
 end
 
-function AccountManager.has_session(arg_97_0)
+AccountManager.has_session = function (arg_97_0)
 	return true
 end
 
-function AccountManager.region(arg_98_0)
+AccountManager.region = function (arg_98_0)
 	return arg_98_0._country_code
 end
 
-function AccountManager.update_presence(arg_99_0)
+AccountManager.update_presence = function (arg_99_0)
 	return
 end

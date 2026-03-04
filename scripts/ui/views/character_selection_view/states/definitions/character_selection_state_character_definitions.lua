@@ -713,7 +713,7 @@ local var_0_12 = {
 				style_id = "icon",
 				texture_id = "icon",
 				pass_type = "texture",
-				content_change_function = function(arg_1_0, arg_1_1)
+				content_change_function = function (arg_1_0, arg_1_1)
 					local var_1_0 = arg_1_0.is_hover and 255 or 184
 
 					arg_1_1.color[1] = math.ceil(arg_1_1.color[1] + 0.1 * (var_1_0 - arg_1_1.color[1]))
@@ -756,7 +756,7 @@ local function var_0_13(arg_2_0, arg_2_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						arg_3_1.text_color = arg_3_0.locked and arg_3_1.locked_text_color or arg_3_1.default_text_color
 					end
 				},
@@ -764,7 +764,7 @@ local function var_0_13(arg_2_0, arg_2_1)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.use_shadow
 					end
 				}
@@ -958,12 +958,12 @@ local var_0_19 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.render_settings.main_alpha_multiplier = 0
 				arg_5_3.render_settings.info_alpha_multiplier = 0
 				arg_5_3.render_settings.bot_selection_window_multiplier = 0
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = math.easeOutCubic(arg_6_3)
 
 				arg_6_4.render_settings.main_alpha_multiplier = var_6_0
@@ -972,7 +972,7 @@ local var_0_19 = {
 				arg_6_0.left_side_root.local_position[1] = arg_6_1.left_side_root.position[1] + -100 * (1 - var_6_0)
 				arg_6_0.right_side_root.local_position[1] = arg_6_1.right_side_root.position[1] + 100 * (1 - var_6_0)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		}
@@ -982,12 +982,12 @@ local var_0_19 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				arg_8_3.render_settings.main_alpha_multiplier = 1
 				arg_8_3.render_settings.info_alpha_multiplier = 1
 				arg_8_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				local var_9_0 = math.easeOutCubic(arg_9_3)
 
 				arg_9_4.render_settings.main_alpha_multiplier = 1 - var_9_0
@@ -996,7 +996,7 @@ local var_0_19 = {
 				arg_9_0.left_side_root.local_position[1] = arg_9_1.left_side_root.position[1] + -100 * var_9_0
 				arg_9_0.right_side_root.local_position[1] = arg_9_1.right_side_root.position[1] + 100 * var_9_0
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		}
@@ -1006,18 +1006,18 @@ local var_0_19 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.info_alpha_multiplier = 0
 				arg_11_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.bot_selection_alpha_multiplier = var_12_0
 				arg_12_4.render_settings.info_alpha_multiplier = 0
 				arg_12_0.left_side_root.local_position[1] = arg_12_1.left_side_root.position[1] + -100 * (1 - var_12_0)
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -1027,18 +1027,18 @@ local var_0_19 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.info_alpha_multiplier = 0
 				arg_14_3.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeOutCubic(arg_15_3)
 
 				arg_15_4.render_settings.info_alpha_multiplier = var_15_0
 				arg_15_4.render_settings.bot_selection_alpha_multiplier = 0
 				arg_15_0.left_side_root.local_position[1] = arg_15_1.left_side_root.position[1] + -100 * (1 - var_15_0)
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}

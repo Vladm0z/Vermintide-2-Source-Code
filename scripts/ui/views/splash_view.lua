@@ -297,7 +297,7 @@ function create_xbox_beta_widget(arg_1_0)
 					style_id = "foreground",
 					scenegraph_id = "foreground",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.foreground.disable_foreground ~= true
 					end
 				},
@@ -307,7 +307,7 @@ function create_xbox_beta_widget(arg_1_0)
 					pass_type = "texture",
 					content_id = "texture_content",
 					scenegraph_id = arg_1_0.scenegraph_id,
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.material_name
 					end
 				},
@@ -317,10 +317,10 @@ function create_xbox_beta_widget(arg_1_0)
 					texture_id = "material_name",
 					content_id = "input_texture_content",
 					scenegraph_id = arg_1_0.input_scenegraph_id,
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.material_name
 					end,
-					content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 						arg_5_0.timer = (arg_5_0.timer or 0) + arg_5_3
 
 						local var_5_0 = 192 + 63 * math.sin(arg_5_0.timer * 4)
@@ -410,10 +410,10 @@ local function var_0_1(arg_6_0)
 					pass_type = "text",
 					text_id = "continue",
 					scenegraph_id = "screen",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.ready
 					end,
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						local var_8_0 = IS_CONSOLE or Managers.input:is_device_active("gamepad")
 						local var_8_1, var_8_2 = Managers.time:time_and_delta("main")
 
@@ -747,7 +747,7 @@ local var_0_7 = "SplashView"
 
 SplashView = class(SplashView)
 
-function SplashView.init(arg_9_0, arg_9_1, arg_9_2)
+SplashView.init = function (arg_9_0, arg_9_1, arg_9_2)
 	if IS_PS4 then
 		PS4.hide_splash_screen()
 	end
@@ -779,7 +779,7 @@ function SplashView.init(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_next_splash(true)
 end
 
-function SplashView._next_splash(arg_10_0, arg_10_1)
+SplashView._next_splash = function (arg_10_0, arg_10_1)
 	if not arg_10_1 and IS_CONSOLE and not arg_10_0._allow_console_skip then
 		arg_10_0._update_func = "_wait_for_allow_console_skip"
 		arg_10_0._video_complete = true
@@ -802,7 +802,7 @@ function SplashView._next_splash(arg_10_0, arg_10_1)
 	end
 end
 
-function SplashView._update_video(arg_11_0, arg_11_1, arg_11_2)
+SplashView._update_video = function (arg_11_0, arg_11_1, arg_11_2)
 	if not arg_11_0.ui_renderer.video_players[var_0_7] then
 		UIRenderer.create_video_player(arg_11_0.ui_renderer, var_0_7, arg_11_0._world, arg_11_0._current_splash_data.video_name, false)
 		Managers.transition:fade_out(0.5, nil)
@@ -829,7 +829,7 @@ function SplashView._update_video(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function SplashView._update_texture(arg_12_0, arg_12_1, arg_12_2)
+SplashView._update_texture = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0, var_12_1 = Gui.resolution()
 	local var_12_2 = arg_12_0._current_splash_data.timer
 	local var_12_3 = arg_12_0._current_splash_data.texts
@@ -858,7 +858,7 @@ function SplashView._update_texture(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function SplashView._update_disclaimer(arg_13_0, arg_13_1, arg_13_2)
+SplashView._update_disclaimer = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0, var_13_1 = Gui.resolution()
 	local var_13_2 = arg_13_0._current_splash_data.timer
 	local var_13_3 = arg_13_0._current_splash_data.texts
@@ -903,7 +903,7 @@ function SplashView._update_disclaimer(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function SplashView._update_beta_end(arg_14_0, arg_14_1, arg_14_2)
+SplashView._update_beta_end = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0, var_14_1 = Gui.resolution()
 	local var_14_2 = arg_14_0._current_splash_data.timer
 	local var_14_3 = arg_14_0._current_splash_data.texts
@@ -947,20 +947,20 @@ function SplashView._update_beta_end(arg_14_0, arg_14_1, arg_14_2)
 end
 
 if IS_CONSOLE then
-	function SplashView._wait_for_allow_console_skip(arg_15_0)
+	SplashView._wait_for_allow_console_skip = function (arg_15_0)
 		if arg_15_0._allow_console_skip then
 			arg_15_0:_next_splash()
 		end
 	end
 end
 
-function SplashView.set_index(arg_16_0, arg_16_1)
+SplashView.set_index = function (arg_16_0, arg_16_1)
 	arg_16_0._current_index = arg_16_1
 
 	arg_16_0:_next_splash()
 end
 
-function SplashView._create_ui_elements(arg_17_0)
+SplashView._create_ui_elements = function (arg_17_0)
 	arg_17_0._splash_widgets = {}
 	arg_17_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_17_0.dead_space_filler = UIWidget.init(var_0_2)
@@ -986,7 +986,7 @@ function SplashView._create_ui_elements(arg_17_0)
 	UIRenderer.clear_scenegraph_queue(arg_17_0.ui_renderer)
 end
 
-function SplashView.update(arg_18_0, arg_18_1)
+SplashView.update = function (arg_18_0, arg_18_1)
 	if IS_WINDOWS and arg_18_0._fram_skip_hack < 1 then
 		arg_18_0._fram_skip_hack = arg_18_0._fram_skip_hack + 1
 
@@ -1030,11 +1030,11 @@ function SplashView.update(arg_18_0, arg_18_1)
 end
 
 if IS_CONSOLE then
-	function SplashView.allow_console_skip(arg_19_0)
+	SplashView.allow_console_skip = function (arg_19_0)
 		arg_19_0._allow_console_skip = true
 	end
 
-	function SplashView._get_console_input(arg_20_0)
+	SplashView._get_console_input = function (arg_20_0)
 		if not arg_20_0._allow_console_skip then
 			return
 		end
@@ -1056,19 +1056,19 @@ if IS_CONSOLE then
 	end
 end
 
-function SplashView.render(arg_21_0)
+SplashView.render = function (arg_21_0)
 	return
 end
 
-function SplashView.video_complete(arg_22_0)
+SplashView.video_complete = function (arg_22_0)
 	return arg_22_0._video_complete
 end
 
-function SplashView.destroy(arg_23_0)
+SplashView.destroy = function (arg_23_0)
 	Managers.music:stop_all_sounds()
 	UIRenderer.destroy(arg_23_0.ui_renderer, arg_23_0._world)
 end
 
-function SplashView.is_completed(arg_24_0)
+SplashView.is_completed = function (arg_24_0)
 	return arg_24_0._current_splash_data == nil
 end

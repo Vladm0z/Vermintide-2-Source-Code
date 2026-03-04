@@ -79,21 +79,21 @@ local var_0_50
 AIGroupTemplates = AIGroupTemplates or {}
 AIGroupTemplates.spline_patrol = {
 	in_patrol = true,
-	pre_unit_init = function(arg_2_0, arg_2_1)
+	pre_unit_init = function (arg_2_0, arg_2_1)
 		var_0_1[arg_2_0].ignore_interest_points = true
 	end,
-	init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		var_0_20(arg_3_1, arg_3_2, arg_3_0, arg_3_3)
 		var_0_29(arg_3_1, arg_3_2, nil)
 	end,
-	destroy = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	destroy = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		local var_4_0 = arg_4_2.nav_data
 
 		GwNavTagLayerCostTable.destroy(var_4_0.navtag_layer_cost_table)
 		GwNavCostMap.destroy_tag_cost_table(var_4_0.nav_cost_map_cost_table)
 		GwNavTraverseLogic.destroy(var_4_0.traverse_logic)
 	end,
-	update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		var_0_22(arg_5_2)
 		var_0_40(arg_5_2, arg_5_1, arg_5_3, arg_5_4)
 
@@ -104,7 +104,7 @@ AIGroupTemplates.spline_patrol = {
 		local var_5_0 = arg_5_2.state
 
 		if var_5_0 == "find_path_entry" then
-			-- block empty
+			-- Nothing
 		elseif var_5_0 == "forming" then
 			var_0_34(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 			var_0_33(arg_5_2, arg_5_4)
@@ -126,13 +126,13 @@ AIGroupTemplates.spline_patrol = {
 			var_0_19(arg_5_2, arg_5_3)
 			var_0_47(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		elseif var_5_0 == "in_combat" then
-			-- block empty
+			-- Nothing
 		end
 	end,
-	setup_group = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	setup_group = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		arg_6_2.target_units = {}
 	end,
-	BT_debug = function(arg_7_0)
+	BT_debug = function (arg_7_0)
 		return {
 			"GROUP_SYSTEM:",
 			tostring(arg_7_0.template),

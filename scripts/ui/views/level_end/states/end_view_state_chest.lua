@@ -21,7 +21,7 @@ EndViewStateChest = class(EndViewStateChest)
 EndViewStateChest.NAME = "EndViewStateChest"
 EndViewStateChest.CAN_SPEED_UP = true
 
-function EndViewStateChest.on_enter(arg_1_0, arg_1_1)
+EndViewStateChest.on_enter = function (arg_1_0, arg_1_1)
 	print("[PlayState] Enter Substate EndViewStateChest")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -107,18 +107,18 @@ function EndViewStateChest.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_play_sound("play_gui_mission_summary_chest_uppgrade_amb_begin")
 end
 
-function EndViewStateChest.exit(arg_2_0, arg_2_1)
+EndViewStateChest.exit = function (arg_2_0, arg_2_1)
 	arg_2_0._exit_started = true
 
 	arg_2_0:_start_transition_animation("on_enter", "transition_exit")
 	arg_2_0:_play_sound("play_gui_mission_summary_chest_uppgrade_amb_end")
 end
 
-function EndViewStateChest.exit_done(arg_3_0)
+EndViewStateChest.exit_done = function (arg_3_0)
 	return arg_3_0._exit_started and arg_3_0._animations.on_enter == nil
 end
 
-function EndViewStateChest.create_ui_elements(arg_4_0, arg_4_1)
+EndViewStateChest.create_ui_elements = function (arg_4_0, arg_4_1)
 	var_0_6 = false
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
@@ -164,7 +164,7 @@ function EndViewStateChest.create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0:_initialize_score_topics()
 end
 
-function EndViewStateChest._initialize_score_topics(arg_5_0)
+EndViewStateChest._initialize_score_topics = function (arg_5_0)
 	local var_5_0 = arg_5_0._score_widgets
 	local var_5_1 = UISettings.chest_upgrade_score_topics[arg_5_0.game_mode_key] or UISettings.chest_upgrade_score_topics.default
 
@@ -192,21 +192,21 @@ function EndViewStateChest._initialize_score_topics(arg_5_0)
 	end
 end
 
-function EndViewStateChest._wanted_state(arg_6_0)
+EndViewStateChest._wanted_state = function (arg_6_0)
 	return (arg_6_0.parent:wanted_menu_state())
 end
 
-function EndViewStateChest.set_input_manager(arg_7_0, arg_7_1)
+EndViewStateChest.set_input_manager = function (arg_7_0, arg_7_1)
 	arg_7_0.input_manager = arg_7_1
 end
 
-function EndViewStateChest.on_exit(arg_8_0, arg_8_1)
+EndViewStateChest.on_exit = function (arg_8_0, arg_8_1)
 	print("[PlayState] Exit Substate EndViewStateChest")
 
 	arg_8_0.ui_animator = nil
 end
 
-function EndViewStateChest._update_transition_timer(arg_9_0, arg_9_1)
+EndViewStateChest._update_transition_timer = function (arg_9_0, arg_9_1)
 	if not arg_9_0._transition_timer then
 		return
 	end
@@ -227,7 +227,7 @@ function EndViewStateChest._update_transition_timer(arg_9_0, arg_9_1)
 	table.clear(var_9_0)
 end
 
-function EndViewStateChest.update(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateChest.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -359,11 +359,11 @@ function EndViewStateChest.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function EndViewStateChest.post_update(arg_11_0, arg_11_1, arg_11_2)
+EndViewStateChest.post_update = function (arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-function EndViewStateChest._update_animations(arg_12_0, arg_12_1)
+EndViewStateChest._update_animations = function (arg_12_0, arg_12_1)
 	for iter_12_0, iter_12_1 in pairs(arg_12_0._ui_animations) do
 		UIAnimation.update(iter_12_1, arg_12_1)
 
@@ -390,11 +390,11 @@ function EndViewStateChest._update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function EndViewStateChest._handle_input(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateChest._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._widgets_by_name
 end
 
-function EndViewStateChest.draw(arg_14_0, arg_14_1, arg_14_2)
+EndViewStateChest.draw = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_top_renderer
 	local var_14_2 = arg_14_0.ui_scenegraph
@@ -436,7 +436,7 @@ function EndViewStateChest.draw(arg_14_0, arg_14_1, arg_14_2)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function EndViewStateChest._start_transition_animation(arg_15_0, arg_15_1, arg_15_2)
+EndViewStateChest._start_transition_animation = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = {
 		wwise_world = arg_15_0.wwise_world,
 		render_settings = arg_15_0.render_settings
@@ -447,19 +447,19 @@ function EndViewStateChest._start_transition_animation(arg_15_0, arg_15_1, arg_1
 	arg_15_0._animations[arg_15_1] = var_15_2
 end
 
-function EndViewStateChest._animate_element_by_time(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+EndViewStateChest._animate_element_by_time = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, math.ease_out_quad))
 end
 
-function EndViewStateChest._animate_element_by_catmullrom(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+EndViewStateChest._animate_element_by_catmullrom = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8))
 end
 
-function EndViewStateChest.done(arg_18_0)
+EndViewStateChest.done = function (arg_18_0)
 	return arg_18_0._score_entry_presentation_done
 end
 
-function EndViewStateChest._set_entry_text_progress(arg_19_0, arg_19_1)
+EndViewStateChest._set_entry_text_progress = function (arg_19_0, arg_19_1)
 	local var_19_0 = 1 - arg_19_1
 	local var_19_1 = (-4 * (arg_19_1 - 0.5) * (arg_19_1 - 0.5) + 1) * 0.5
 	local var_19_2 = var_0_3.score_entry_texture
@@ -474,7 +474,7 @@ function EndViewStateChest._set_entry_text_progress(arg_19_0, arg_19_1)
 	var_19_5.style.texture_id.color[1] = var_19_3
 end
 
-function EndViewStateChest._display_chest_by_settings_index(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+EndViewStateChest._display_chest_by_settings_index = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_0.chest_settings[arg_20_1]
 	local var_20_1 = var_20_0.unit_name
 	local var_20_2 = var_20_0.display_name
@@ -505,7 +505,7 @@ function EndViewStateChest._display_chest_by_settings_index(arg_20_0, arg_20_1, 
 	})
 end
 
-function EndViewStateChest._spawn_chest_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+EndViewStateChest._spawn_chest_unit = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	if arg_21_0._current_chest_unit_name then
 		arg_21_0._current_chest_enter_time = arg_21_3 + 0.5
 
@@ -538,7 +538,7 @@ function EndViewStateChest._spawn_chest_unit(arg_21_0, arg_21_1, arg_21_2, arg_2
 	return var_21_2
 end
 
-function EndViewStateChest._update_current_chest_enter(arg_22_0, arg_22_1, arg_22_2)
+EndViewStateChest._update_current_chest_enter = function (arg_22_0, arg_22_1, arg_22_2)
 	if not arg_22_0._current_chest_enter_time then
 		return
 	end
@@ -555,17 +555,17 @@ function EndViewStateChest._update_current_chest_enter(arg_22_0, arg_22_1, arg_2
 	end
 end
 
-function EndViewStateChest._trigger_unit_flow_event(arg_23_0, arg_23_1, arg_23_2)
+EndViewStateChest._trigger_unit_flow_event = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_1 and Unit.alive(arg_23_1) then
 		Unit.flow_event(arg_23_1, arg_23_2)
 	end
 end
 
-function EndViewStateChest._get_viewport_world(arg_24_0)
+EndViewStateChest._get_viewport_world = function (arg_24_0)
 	return arg_24_0.parent:get_viewport_world()
 end
 
-function EndViewStateChest._start_presentation(arg_25_0, arg_25_1)
+EndViewStateChest._start_presentation = function (arg_25_0, arg_25_1)
 	local var_25_0 = true
 	local var_25_1 = 1
 
@@ -599,7 +599,7 @@ function EndViewStateChest._start_presentation(arg_25_0, arg_25_1)
 	end
 end
 
-function EndViewStateChest._add_score(arg_26_0, arg_26_1)
+EndViewStateChest._add_score = function (arg_26_0, arg_26_1)
 	if arg_26_1.score == 0 then
 		return
 	end
@@ -636,7 +636,7 @@ function EndViewStateChest._add_score(arg_26_0, arg_26_1)
 	end
 end
 
-function EndViewStateChest._animate_score_entries(arg_27_0, arg_27_1)
+EndViewStateChest._animate_score_entries = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._score_entries
 
 	if not var_27_0 or var_27_0.complete then
@@ -670,7 +670,7 @@ function EndViewStateChest._animate_score_entries(arg_27_0, arg_27_1)
 	end
 end
 
-function EndViewStateChest._display_next_score_entry(arg_28_0)
+EndViewStateChest._display_next_score_entry = function (arg_28_0)
 	local var_28_0 = arg_28_0._score_entries
 
 	arg_28_0._current_entry_display_index = (arg_28_0._current_entry_display_index or 0) + 1
@@ -682,7 +682,7 @@ function EndViewStateChest._display_next_score_entry(arg_28_0)
 	arg_28_0._entry_duration = 0
 end
 
-function EndViewStateChest._start_entry_animation(arg_29_0, arg_29_1)
+EndViewStateChest._start_entry_animation = function (arg_29_0, arg_29_1)
 	local var_29_0 = {
 		wwise_world = arg_29_0.wwise_world,
 		render_settings = arg_29_0.render_settings
@@ -693,7 +693,7 @@ function EndViewStateChest._start_entry_animation(arg_29_0, arg_29_1)
 	arg_29_0._animations[arg_29_1] = var_29_2
 end
 
-function EndViewStateChest._animate_score_progress(arg_30_0, arg_30_1, arg_30_2)
+EndViewStateChest._animate_score_progress = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._entry_duration
 	local var_30_1 = arg_30_0._current_chest_enter_time
 
@@ -786,7 +786,7 @@ function EndViewStateChest._animate_score_progress(arg_30_0, arg_30_1, arg_30_2)
 	arg_30_0:_set_presentation_progress(var_30_25)
 end
 
-function EndViewStateChest._get_chest_settings_by_total_score(arg_31_0, arg_31_1)
+EndViewStateChest._get_chest_settings_by_total_score = function (arg_31_0, arg_31_1)
 	for iter_31_0, iter_31_1 in ipairs(arg_31_0.chest_settings) do
 		if arg_31_1 < iter_31_1.total_score then
 			return iter_31_1, iter_31_0
@@ -794,7 +794,7 @@ function EndViewStateChest._get_chest_settings_by_total_score(arg_31_0, arg_31_1
 	end
 end
 
-function EndViewStateChest._set_presentation_progress(arg_32_0, arg_32_1, arg_32_2)
+EndViewStateChest._set_presentation_progress = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0._widgets_by_name.score_bar
 	local var_32_1 = var_32_0.content.texture_id
 	local var_32_2 = var_32_0.style.texture_id
@@ -809,7 +809,7 @@ function EndViewStateChest._set_presentation_progress(arg_32_0, arg_32_1, arg_32
 	end
 end
 
-function EndViewStateChest._update_chest_zoom_wait_time(arg_33_0, arg_33_1, arg_33_2)
+EndViewStateChest._update_chest_zoom_wait_time = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._chest_zoom_wait_duration
 
 	if not var_33_0 then
@@ -826,7 +826,7 @@ function EndViewStateChest._update_chest_zoom_wait_time(arg_33_0, arg_33_1, arg_
 	end
 end
 
-function EndViewStateChest._update_chest_zoom_time(arg_34_0, arg_34_1, arg_34_2)
+EndViewStateChest._update_chest_zoom_time = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._chest_zoom_duration
 
 	if not var_34_0 then
@@ -847,7 +847,7 @@ function EndViewStateChest._update_chest_zoom_time(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function EndViewStateChest._update_chest_bonus_time(arg_35_0, arg_35_1, arg_35_2)
+EndViewStateChest._update_chest_bonus_time = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._chest_bonus_duration
 
 	if not var_35_0 then
@@ -864,7 +864,7 @@ function EndViewStateChest._update_chest_bonus_time(arg_35_0, arg_35_1, arg_35_2
 	end
 end
 
-function EndViewStateChest._update_chest_exit_time(arg_36_0, arg_36_1, arg_36_2)
+EndViewStateChest._update_chest_exit_time = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._chest_wait_exit_duration
 
 	if not var_36_0 then
@@ -883,7 +883,7 @@ function EndViewStateChest._update_chest_exit_time(arg_36_0, arg_36_1, arg_36_2)
 	end
 end
 
-function EndViewStateChest._set_bar_alpha_by_progress(arg_37_0, arg_37_1)
+EndViewStateChest._set_bar_alpha_by_progress = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._widgets_by_name
 	local var_37_1 = var_37_0.bar_bg
 	local var_37_2 = var_37_0.score_bar
@@ -894,6 +894,6 @@ function EndViewStateChest._set_bar_alpha_by_progress(arg_37_0, arg_37_1)
 	var_37_3.alpha_multiplier = arg_37_1
 end
 
-function EndViewStateChest._play_sound(arg_38_0, arg_38_1)
+EndViewStateChest._play_sound = function (arg_38_0, arg_38_1)
 	arg_38_0.parent:play_sound(arg_38_1)
 end

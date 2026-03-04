@@ -10,11 +10,11 @@ local var_0_0 = {
 
 ImguiRenderCaps = class(ImguiRenderCaps)
 
-function ImguiRenderCaps.init(arg_1_0)
+ImguiRenderCaps.init = function (arg_1_0)
 	return
 end
 
-function ImguiRenderCaps.update(arg_2_0)
+ImguiRenderCaps.update = function (arg_2_0)
 	return
 end
 
@@ -24,7 +24,7 @@ local function var_0_1(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function ImguiRenderCaps.draw(arg_4_0)
+ImguiRenderCaps.draw = function (arg_4_0)
 	local var_4_0 = Imgui.begin_window("Render Caps", "menu_bar")
 
 	if Imgui.begin_menu_bar() then
@@ -107,6 +107,6 @@ function ImguiRenderCaps.draw(arg_4_0)
 	return var_4_0
 end
 
-function ImguiRenderCaps.is_persistent(arg_5_0)
+ImguiRenderCaps.is_persistent = function (arg_5_0)
 	return false
 end

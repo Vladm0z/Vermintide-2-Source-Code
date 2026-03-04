@@ -42,7 +42,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, arg_2_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (arg_2_0, arg_2_1)
 	local var_2_0 = Managers.time:time("game")
 	local var_2_1 = arg_2_1.breed
 
@@ -218,7 +218,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 		arg_2_1.arena_pose_boxed = Matrix4x4Box(Matrix4x4.from_quaternion_position(var_2_21, var_2_20))
 		arg_2_1.arena_half_extents = Vector3Box(12, 12, 1)
 
-		function arg_2_1.valid_teleport_pos_func(arg_3_0, arg_3_1)
+		arg_2_1.valid_teleport_pos_func = function (arg_3_0, arg_3_1)
 			local var_3_0 = arg_3_1.arena_pose_boxed:unbox()
 			local var_3_1 = arg_3_1.arena_half_extents:unbox()
 
@@ -227,7 +227,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn(arg_2_0, ar
 	else
 		arg_2_1.phase = "offensive"
 
-		function arg_2_1.valid_teleport_pos_func(arg_4_0, arg_4_1)
+		arg_2_1.valid_teleport_pos_func = function (arg_4_0, arg_4_1)
 			return true
 		end
 
@@ -257,7 +257,7 @@ end
 
 local var_0_1 = false
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	var_0_0(arg_5_0, arg_5_1, arg_5_2, 10)
 
 	if not arg_5_1.in_boss_arena then
@@ -390,7 +390,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update(arg_5_0, a
 	end
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_death(arg_6_0, arg_6_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_death = function (arg_6_0, arg_6_1)
 	local var_6_0 = Managers.state.conflict
 
 	var_6_0:remove_unit_from_bosses(arg_6_0)
@@ -427,7 +427,7 @@ function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_death(arg_6_0, ar
 	AiBreedSnippets.drop_loot(4, Vector3(14.959, 383.806, 31.202), true)
 end
 
-function AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_despawn(arg_7_0, arg_7_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_despawn = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.state.conflict
 
 	var_7_0:remove_unit_from_bosses(arg_7_0)

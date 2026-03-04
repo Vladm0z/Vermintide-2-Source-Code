@@ -77,7 +77,7 @@ local var_0_4 = {
 	normal = 1
 }
 
-function ScriptBackend.init(arg_1_0)
+ScriptBackend.init = function (arg_1_0)
 	local var_1_0 = GameSettingsDevelopment.backend_settings.title_id
 	local var_1_1 = GameSettingsDevelopment.backend_settings.environment
 
@@ -110,7 +110,7 @@ local function var_0_5(arg_2_0, arg_2_1)
 	end
 end
 
-function ScriptBackend.update(arg_3_0)
+ScriptBackend.update = function (arg_3_0)
 	if arg_3_0._commit_current_id then
 		arg_3_0:_check_current_commit()
 	end
@@ -118,7 +118,7 @@ function ScriptBackend.update(arg_3_0)
 	return (Backend.update())
 end
 
-function ScriptBackend._update_state(arg_4_0)
+ScriptBackend._update_state = function (arg_4_0)
 	local var_4_0 = Backend.state()
 	local var_4_1 = var_0_1[arg_4_0._state]
 
@@ -162,11 +162,11 @@ function ScriptBackend._update_state(arg_4_0)
 	return var_4_2
 end
 
-function ScriptBackend.update_state(arg_5_0)
+ScriptBackend.update_state = function (arg_5_0)
 	return arg_5_0:_update_state()
 end
 
-function ScriptBackend.update_signin(arg_6_0)
+ScriptBackend.update_signin = function (arg_6_0)
 	local var_6_0 = arg_6_0:_update_state()
 
 	if var_6_0 then
@@ -193,11 +193,11 @@ function ScriptBackend.update_signin(arg_6_0)
 	return var_6_2
 end
 
-function ScriptBackend.authenticated(arg_7_0)
+ScriptBackend.authenticated = function (arg_7_0)
 	return Backend.state() == Backend.CONNECTION_ENTITIES_LOADED
 end
 
-function ScriptBackend._refresh_stats(arg_8_0)
+ScriptBackend._refresh_stats = function (arg_8_0)
 	if arg_8_0._dirty_stats or not arg_8_0._stats then
 		local var_8_0 = BackendStats.get_stats(arg_8_0._backend)
 		local var_8_1 = {}
@@ -212,13 +212,13 @@ function ScriptBackend._refresh_stats(arg_8_0)
 	end
 end
 
-function ScriptBackend.get_stats(arg_9_0)
+ScriptBackend.get_stats = function (arg_9_0)
 	arg_9_0:_refresh_stats()
 
 	return arg_9_0._nice_stats
 end
 
-function ScriptBackend.set_stats(arg_10_0, arg_10_1)
+ScriptBackend.set_stats = function (arg_10_0, arg_10_1)
 	arg_10_0:_refresh_stats()
 
 	local var_10_0 = table.clone(arg_10_1)
@@ -246,7 +246,7 @@ function ScriptBackend.set_stats(arg_10_0, arg_10_1)
 	arg_10_0._dirty_stats = true
 end
 
-function ScriptBackend.check_for_errors(arg_11_0)
+ScriptBackend.check_for_errors = function (arg_11_0)
 	local var_11_0 = Backend.get_error()
 	local var_11_1 = BackendSession.get_error()
 	local var_11_2
@@ -261,13 +261,13 @@ function ScriptBackend.check_for_errors(arg_11_0)
 	return var_11_0 or var_11_1 or var_11_2
 end
 
-function ScriptBackend._new_id(arg_12_0)
+ScriptBackend._new_id = function (arg_12_0)
 	arg_12_0._last_id = arg_12_0._last_id + 1
 
 	return arg_12_0._last_id
 end
 
-function ScriptBackend._check_current_commit(arg_13_0)
+ScriptBackend._check_current_commit = function (arg_13_0)
 	local var_13_0 = arg_13_0:commit_status(arg_13_0._commit_current_id)
 
 	if var_13_0 ~= Backend.COMMIT_WAITING then
@@ -288,7 +288,7 @@ function ScriptBackend._check_current_commit(arg_13_0)
 	end
 end
 
-function ScriptBackend._commit_internal(arg_14_0, arg_14_1)
+ScriptBackend._commit_internal = function (arg_14_0, arg_14_1)
 	local var_14_0, var_14_1 = Backend.commit()
 	local var_14_2 = arg_14_1 or arg_14_0:_new_id()
 	local var_14_3 = {
@@ -305,7 +305,7 @@ function ScriptBackend._commit_internal(arg_14_0, arg_14_1)
 	return var_14_2
 end
 
-function ScriptBackend._queue_commit(arg_15_0)
+ScriptBackend._queue_commit = function (arg_15_0)
 	if not arg_15_0._commit_queue_id then
 		arg_15_0._commit_queue_id = arg_15_0:_new_id()
 	end
@@ -313,7 +313,7 @@ function ScriptBackend._queue_commit(arg_15_0)
 	return arg_15_0._commit_queue_id
 end
 
-function ScriptBackend.commit(arg_16_0, arg_16_1)
+ScriptBackend.commit = function (arg_16_0, arg_16_1)
 	print("Trying to commit", arg_16_1, arg_16_0._commit_current_id, arg_16_0._commit_queue_id)
 
 	if arg_16_0._commit_current_id then
@@ -329,7 +329,7 @@ function ScriptBackend.commit(arg_16_0, arg_16_1)
 	end
 end
 
-function ScriptBackend.commit_status(arg_17_0, arg_17_1)
+ScriptBackend.commit_status = function (arg_17_0, arg_17_1)
 	fassert(arg_17_1, "Querying status for commit_id %s", tostring(arg_17_1))
 
 	if arg_17_1 == arg_17_0._commit_queue_id then
@@ -367,25 +367,25 @@ function ScriptBackend.commit_status(arg_17_0, arg_17_1)
 	end
 end
 
-function ScriptBackend.destroy(arg_18_0)
+ScriptBackend.destroy = function (arg_18_0)
 	print("[Backend] ScriptBackend destroy")
 	Backend.destroy()
 end
 
-function ScriptBackend.backend_object(arg_19_0)
+ScriptBackend.backend_object = function (arg_19_0)
 	error("no backend object in lua anymore")
 
 	return arg_19_0._backend
 end
 
-function ScriptBackend.refresh_log_level(arg_20_0)
+ScriptBackend.refresh_log_level = function (arg_20_0)
 	local var_20_0 = script_data.backend_logging_level or "verbose"
 	local var_20_1 = var_0_4[var_20_0]
 
 	Backend.set_log_level(var_20_1)
 end
 
-function ScriptBackend.wait_for_shutdown(arg_21_0, arg_21_1)
+ScriptBackend.wait_for_shutdown = function (arg_21_0, arg_21_1)
 	local var_21_0 = os.time() + arg_21_1
 
 	while Backend.active_requests() > 0 or arg_21_0._commit_queue_id do
@@ -406,7 +406,7 @@ function ScriptBackend.wait_for_shutdown(arg_21_0, arg_21_1)
 	Backend.disconnect()
 
 	while not arg_21_0:update() and Backend.active_requests() > 0 and var_21_0 > os.time() do
-		-- block empty
+		-- Nothing
 	end
 
 	if var_21_0 < os.time() then

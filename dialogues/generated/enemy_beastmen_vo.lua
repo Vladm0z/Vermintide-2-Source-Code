@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/enemy_beastmen_vo.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "ebb_a_gameplay_running_towards_players",

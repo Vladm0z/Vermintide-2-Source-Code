@@ -5,16 +5,16 @@ StartGameWindowHostVersusAdditionalSettings.NAME = "StartGameWindowHostVersusAdd
 
 local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_host_versus_additional_settings_definitions")
 
-function StartGameWindowHostVersusAdditionalSettings.create_ui_elements(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StartGameWindowHostVersusAdditionalSettings.create_ui_elements = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	StartGameWindowHostVersusAdditionalSettings.super.create_ui_elements(arg_1_0, var_0_0, arg_1_2, arg_1_3)
 end
 
-function StartGameWindowHostVersusAdditionalSettings._set_additional_options_enabled_state(arg_2_0, arg_2_1)
+StartGameWindowHostVersusAdditionalSettings._set_additional_options_enabled_state = function (arg_2_0, arg_2_1)
 	arg_2_0._widgets_by_name.private_button.content.button_hotspot.disable_button = not arg_2_1
 	arg_2_0._additional_option_enabled = arg_2_1
 end
 
-function StartGameWindowHostVersusAdditionalSettings._handle_input(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowHostVersusAdditionalSettings._handle_input = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.parent
 	local var_3_1 = var_3_0:window_input_service()
 
@@ -49,7 +49,7 @@ function StartGameWindowHostVersusAdditionalSettings._handle_input(arg_3_0, arg_
 	end
 end
 
-function StartGameWindowHostVersusAdditionalSettings._update_additional_options(arg_4_0)
+StartGameWindowHostVersusAdditionalSettings._update_additional_options = function (arg_4_0)
 	local var_4_0 = arg_4_0.parent:is_private_option_enabled()
 	local var_4_1 = arg_4_0._network_lobby:members():get_member_count() == 1
 

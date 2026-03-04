@@ -18,11 +18,11 @@ local var_0_12 = stingray.GwNavTagVolume
 local var_0_13 = stingray.GwNavBoxObstacle
 local var_0_14 = {}
 
-function var_0_1.get_navboxstacle(arg_1_0)
+var_0_1.get_navboxstacle = function (arg_1_0)
 	return var_0_14[arg_1_0]
 end
 
-function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
+var_0_1.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.unit = arg_2_2
 	arg_2_0.navworld = arg_2_1
 
@@ -45,21 +45,21 @@ function var_0_1.init(arg_2_0, arg_2_1, arg_2_2)
 	var_0_14[arg_2_0.unit] = arg_2_0
 end
 
-function var_0_1.set_does_trigger_tagvolume(arg_3_0, arg_3_1)
+var_0_1.set_does_trigger_tagvolume = function (arg_3_0, arg_3_1)
 	var_0_13.set_does_trigger_tagvolume(arg_3_0.nav_boxobstacle, arg_3_1)
 end
 
-function var_0_1.set_rotation_mode_around_yaw(arg_4_0, arg_4_1)
+var_0_1.set_rotation_mode_around_yaw = function (arg_4_0, arg_4_1)
 	var_0_13.set_rotation_mode_around_yaw_only(arg_4_0.nav_boxobstacle, arg_4_1)
 end
 
-function var_0_1.set_next_update_config(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+var_0_1.set_next_update_config = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	var_0_13.set_transform(arg_5_0.nav_boxobstacle, arg_5_1)
 	var_0_13.set_linear_velocity(arg_5_0.nav_boxobstacle, arg_5_2)
 	var_0_13.set_angular_velocity(arg_5_0.nav_boxobstacle, arg_5_3)
 end
 
-function var_0_1.update(arg_6_0, arg_6_1)
+var_0_1.update = function (arg_6_0, arg_6_1)
 	local var_6_0 = var_0_10.local_pose(arg_6_0.unit, 1)
 	local var_6_1 = var_0_6.translation(var_6_0)
 	local var_6_2 = (var_6_1 - arg_6_0.lastpos:unbox()) / arg_6_1
@@ -82,7 +82,7 @@ function var_0_1.update(arg_6_0, arg_6_1)
 	arg_6_0.last_rotation:store(var_6_3)
 end
 
-function var_0_1.shutdown(arg_7_0)
+var_0_1.shutdown = function (arg_7_0)
 	arg_7_0.navworld:remove_boxobstacle(arg_7_0.unit)
 	var_0_13.destroy(arg_7_0.nav_boxobstacle)
 
@@ -90,11 +90,11 @@ function var_0_1.shutdown(arg_7_0)
 	var_0_14[arg_7_0.unit] = nil
 end
 
-function var_0_1.add_to_world(arg_8_0)
+var_0_1.add_to_world = function (arg_8_0)
 	var_0_13.add_to_world(arg_8_0.nav_boxobstacle)
 end
 
-function var_0_1.remove_from_world(arg_9_0)
+var_0_1.remove_from_world = function (arg_9_0)
 	var_0_13.remove_from_world(arg_9_0.nav_boxobstacle)
 end
 

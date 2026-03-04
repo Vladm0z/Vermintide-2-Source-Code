@@ -620,7 +620,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						local var_2_0 = arg_2_0.button_hotspot
 
 						return not var_2_0.disable_button and (var_2_0.is_selected or var_2_0.is_hover)
@@ -630,7 +630,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -638,7 +638,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -650,7 +650,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						local var_5_0 = arg_5_0.button_hotspot.is_clicked
 
 						return not var_5_0 or var_5_0 == 0
@@ -659,7 +659,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -667,7 +667,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					texture_id = "bottom_edge",
 					style_id = "bottom_edge",
 					pass_type = "tiled_texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.use_bottom_edge
 					end
 				},
@@ -675,7 +675,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					texture_id = "edge_holder_left",
 					style_id = "edge_holder_left",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.use_bottom_edge
 					end
 				},
@@ -683,7 +683,7 @@ local function var_0_17(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 					texture_id = "edge_holder_right",
 					style_id = "edge_holder_right",
 					pass_type = "texture",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.use_bottom_edge
 					end
 				}
@@ -1206,7 +1206,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "texture",
 			texture_id = var_10_20,
 			style_id = var_10_20,
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return arg_11_0[var_10_16].is_selected
 			end
 		}
@@ -1238,7 +1238,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "text",
 			text_id = var_10_21,
 			style_id = var_10_21,
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				local var_12_0 = arg_12_0[var_10_16]
 
 				return not var_12_0.is_selected and not var_12_0.disabled
@@ -1270,7 +1270,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "text",
 			text_id = var_10_21,
 			style_id = var_10_22,
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				local var_13_0 = arg_13_0[var_10_16]
 
 				return var_13_0.is_selected and not var_13_0.disabled
@@ -1301,7 +1301,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "text",
 			text_id = var_10_21,
 			style_id = var_10_23,
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0[var_10_16].disabled
 			end
 		}
@@ -1361,7 +1361,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "texture",
 			texture_id = var_10_25,
 			style_id = var_10_25,
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0[var_10_16].is_hover
 			end
 		}
@@ -1431,7 +1431,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 		var_10_5[#var_10_5 + 1] = {
 			pass_type = "rect",
 			style_id = var_10_28,
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				local var_16_0 = arg_16_0[var_10_16]
 
 				return not var_16_0.disabled and not var_16_0.is_selected
@@ -1457,7 +1457,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 		var_10_5[#var_10_5 + 1] = {
 			pass_type = "rect",
 			style_id = var_10_29,
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return arg_17_0[var_10_16].disabled
 			end
 		}
@@ -1504,7 +1504,7 @@ local function var_0_18(arg_10_0, arg_10_1, arg_10_2)
 			pass_type = "talent_tooltip",
 			content_id = var_10_16,
 			style_id = var_10_31,
-			content_check_function = function(arg_18_0)
+			content_check_function = function (arg_18_0)
 				return arg_18_0.talent and arg_18_0.is_hover
 			end
 		}
@@ -1733,7 +1733,7 @@ local function var_0_21(arg_21_0, arg_21_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return not arg_22_0.button_hotspot.is_hover
 					end
 				},
@@ -1741,7 +1741,7 @@ local function var_0_21(arg_21_0, arg_21_1)
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.button_hotspot.is_hover
 					end
 				},
@@ -1754,7 +1754,7 @@ local function var_0_21(arg_21_0, arg_21_1)
 					style_id = "tooltip",
 					additional_option_id = "tooltip_data",
 					pass_type = "additional_option_tooltip",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.button_hotspot.is_hover
 					end
 				}
@@ -1905,15 +1905,15 @@ local var_0_24 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				arg_25_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				local var_26_0 = math.easeOutCubic(arg_26_3)
 
 				arg_26_4.render_settings.alpha_multiplier = var_26_0
 			end,
-			on_complete = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end
 		}
@@ -1923,15 +1923,15 @@ local var_0_24 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				arg_28_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				local var_29_0 = math.easeOutCubic(arg_29_3)
 
 				arg_29_4.render_settings.alpha_multiplier = 1 - var_29_0
 			end,
-			on_complete = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				return
 			end
 		}

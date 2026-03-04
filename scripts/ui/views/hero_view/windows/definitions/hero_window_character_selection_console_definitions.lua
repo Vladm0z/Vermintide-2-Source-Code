@@ -304,7 +304,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.locked
 					end
 				},
@@ -312,7 +312,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.taken and not arg_3_0.locked
 					end
 				},
@@ -320,7 +320,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					texture_id = "bot_frame",
 					style_id = "bot_frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.bot_selected
 					end
 				},
@@ -328,7 +328,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					texture_id = "bot_texture",
 					style_id = "bot_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.bot_selected
 					end
 				},
@@ -336,7 +336,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					style_id = "bot_text",
 					pass_type = "text",
 					text_id = "bot_priority",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.bot_priority
 					end
 				},
@@ -349,14 +349,14 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "frame_premium",
 					texture_id = "frame_premium",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.is_premium
 					end
 				},
 				{
 					style_id = "overlay",
 					pass_type = "rect",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						local var_8_0 = arg_8_0.button_hotspot
 
 						return not var_8_0.is_hover and not var_8_0.is_selected and not arg_8_0.locked
@@ -365,7 +365,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						if arg_9_0.dlc_name then
 							local var_9_0 = arg_9_0.button_hotspot
 
@@ -378,7 +378,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 				{
 					style_id = "overlay_dlc_selected",
 					pass_type = "rect",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						local var_10_0 = arg_10_0.button_hotspot
 
 						return arg_10_0.dlc_name and (var_10_0.is_hover or var_10_0.is_selected) and arg_10_0.locked
@@ -388,7 +388,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.button_hotspot.is_selected
 					end
 				},
@@ -396,7 +396,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "currently_selected_frame",
 					texture_id = "currently_selected_frame",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.button_hotspot.is_selected and arg_12_0.is_currently_selected_character
 					end
 				}
@@ -677,7 +677,7 @@ local function var_0_9(arg_13_0, arg_13_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return not arg_14_0.selected
 					end
 				},
@@ -685,7 +685,7 @@ local function var_0_9(arg_13_0, arg_13_1)
 					texture_id = "icon_selected",
 					style_id = "icon_selected",
 					pass_type = "texture",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.selected
 					end
 				},
@@ -785,7 +785,7 @@ local var_0_11 = {
 				style_id = "icon",
 				texture_id = "icon",
 				pass_type = "texture",
-				content_change_function = function(arg_16_0, arg_16_1)
+				content_change_function = function (arg_16_0, arg_16_1)
 					local var_16_0 = arg_16_0.is_hover and 255 or 184
 
 					arg_16_1.color[1] = math.ceil(arg_16_1.color[1] + 0.1 * (var_16_0 - arg_16_1.color[1]))
@@ -910,16 +910,16 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				arg_17_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 
 				arg_18_4.render_settings.alpha_multiplier = var_18_0
 				arg_18_0.left_side_root.local_position[1] = arg_18_1.left_side_root.position[1] + -100 * (1 - var_18_0)
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		}
@@ -929,16 +929,16 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				arg_20_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = math.easeOutCubic(arg_21_3)
 
 				arg_21_4.render_settings.alpha_multiplier = 1 - var_21_0
 				arg_21_0.left_side_root.local_position[1] = arg_21_1.left_side_root.position[1] + -100 * var_21_0
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		}

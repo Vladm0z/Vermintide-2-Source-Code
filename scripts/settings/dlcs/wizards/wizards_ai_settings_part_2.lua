@@ -50,7 +50,7 @@ var_0_0.ethereal_skull_settings = {
 		4,
 		4
 	},
-	speed_multiplier_curve_func = function(arg_1_0)
+	speed_multiplier_curve_func = function (arg_1_0)
 		return -(1 / (math.min(arg_1_0 + 2, 4) / 4)) + 2
 	end
 }

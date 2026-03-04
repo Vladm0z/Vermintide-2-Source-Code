@@ -24,7 +24,7 @@ local var_0_6 = {
 	area_damage = "Area Damage"
 }
 
-function DarkPactSelectionUI.init(arg_1_0, arg_1_1, arg_1_2)
+DarkPactSelectionUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	DarkPactSelectionUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._player = arg_1_2.player
@@ -59,7 +59,7 @@ function DarkPactSelectionUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "versus_received_selectable_careers_response", "event_versus_received_selectable_careers_response")
 end
 
-function DarkPactSelectionUI.event_add_respawn_counter_event(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+DarkPactSelectionUI.event_add_respawn_counter_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	if arg_2_0._player == arg_2_1 then
 		if arg_2_4 then
 			arg_2_0:_show()
@@ -69,7 +69,7 @@ function DarkPactSelectionUI.event_add_respawn_counter_event(arg_2_0, arg_2_1, a
 	end
 end
 
-function DarkPactSelectionUI.destroy(arg_3_0)
+DarkPactSelectionUI.destroy = function (arg_3_0)
 	Managers.state.event:unregister("add_respawn_counter_event", arg_3_0)
 	Managers.state.event:unregister("set_new_enemy_role", arg_3_0)
 	Managers.state.event:unregister("versus_received_selectable_careers_response", arg_3_0)
@@ -77,7 +77,7 @@ function DarkPactSelectionUI.destroy(arg_3_0)
 	DarkPactSelectionUI.super.destroy(arg_3_0)
 end
 
-function DarkPactSelectionUI._capture_input(arg_4_0)
+DarkPactSelectionUI._capture_input = function (arg_4_0)
 	if arg_4_0._input_captured then
 		return
 	end
@@ -88,7 +88,7 @@ function DarkPactSelectionUI._capture_input(arg_4_0)
 	arg_4_0._input_captured = true
 end
 
-function DarkPactSelectionUI._release_input(arg_5_0)
+DarkPactSelectionUI._release_input = function (arg_5_0)
 	if not arg_5_0._input_captured then
 		return
 	end
@@ -112,7 +112,7 @@ function DarkPactSelectionUI._release_input(arg_5_0)
 	arg_5_0._input_captured = false
 end
 
-function DarkPactSelectionUI._update_occupied_by_role(arg_6_0, arg_6_1)
+DarkPactSelectionUI._update_occupied_by_role = function (arg_6_0, arg_6_1)
 	if not arg_6_0._game_mode.get_num_occupied_profile_enemy_role then
 		return
 	end
@@ -136,18 +136,18 @@ function DarkPactSelectionUI._update_occupied_by_role(arg_6_0, arg_6_1)
 	var_6_2.style[var_6_6].text_color = var_6_5
 end
 
-function DarkPactSelectionUI._play_anim(arg_7_0, arg_7_1, arg_7_2)
+DarkPactSelectionUI._play_anim = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._ui_animator:stop_animation(arg_7_0._current_anim_id)
 
 	arg_7_0._current_anim_id = arg_7_0._ui_animator:start_animation(arg_7_1, arg_7_0._widgets_by_name, arg_7_0._definitions.scenegraph_definition, arg_7_0, arg_7_2)
 end
 
-function DarkPactSelectionUI._set_button(arg_8_0, arg_8_1, arg_8_2)
+DarkPactSelectionUI._set_button = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_1.style.profile_texture.saturated = not arg_8_2
 	arg_8_1.content.hotspot.disabled = not arg_8_2
 end
 
-function DarkPactSelectionUI._can_switch_profile(arg_9_0)
+DarkPactSelectionUI._can_switch_profile = function (arg_9_0)
 	local var_9_0 = arg_9_0._peer_id
 	local var_9_1 = arg_9_0._local_player_id
 
@@ -168,7 +168,7 @@ function DarkPactSelectionUI._can_switch_profile(arg_9_0)
 	return false
 end
 
-function DarkPactSelectionUI._show(arg_10_0, arg_10_1)
+DarkPactSelectionUI._show = function (arg_10_0, arg_10_1)
 	if arg_10_0._is_visible == true then
 		return
 	end
@@ -179,7 +179,7 @@ function DarkPactSelectionUI._show(arg_10_0, arg_10_1)
 	WwiseWorld.trigger_event(arg_10_0._wwise_world, "Play_versus_pactsworn_select_start")
 end
 
-function DarkPactSelectionUI._hide(arg_11_0, arg_11_1)
+DarkPactSelectionUI._hide = function (arg_11_0, arg_11_1)
 	if arg_11_0._is_visible == false then
 		return
 	end
@@ -198,7 +198,7 @@ function DarkPactSelectionUI._hide(arg_11_0, arg_11_1)
 	WwiseWorld.trigger_event(arg_11_0._wwise_world, "Stop_versus_pactsworn_select_start")
 end
 
-function DarkPactSelectionUI.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+DarkPactSelectionUI.update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if arg_12_0._requesting_careers then
 		return
 	end
@@ -277,7 +277,7 @@ function DarkPactSelectionUI.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function DarkPactSelectionUI._handle_mouse_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+DarkPactSelectionUI._handle_mouse_input = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = false
 	local var_13_1 = arg_13_0._peer_id
 	local var_13_2 = arg_13_0._local_player_id
@@ -315,7 +315,7 @@ function DarkPactSelectionUI._handle_mouse_input(arg_13_0, arg_13_1, arg_13_2, a
 	arg_13_3:set_input_blocked("previous_observer_target", var_13_0, "DarkPactSelectionUI")
 end
 
-function DarkPactSelectionUI._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+DarkPactSelectionUI._handle_gamepad_input = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if arg_14_3:get("move_right") then
 		local var_14_0 = math.min(arg_14_0._selected_index + 1, #arg_14_0._selector_widgets)
 
@@ -333,7 +333,7 @@ function DarkPactSelectionUI._handle_gamepad_input(arg_14_0, arg_14_1, arg_14_2,
 	end
 end
 
-function DarkPactSelectionUI._select(arg_15_0, arg_15_1)
+DarkPactSelectionUI._select = function (arg_15_0, arg_15_1)
 	arg_15_0:_deselect()
 
 	arg_15_0._selected_index = arg_15_1
@@ -349,7 +349,7 @@ function DarkPactSelectionUI._select(arg_15_0, arg_15_1)
 	arg_15_0:_set_enemy_pick_info_text(var_15_1)
 end
 
-function DarkPactSelectionUI._deselect(arg_16_0)
+DarkPactSelectionUI._deselect = function (arg_16_0)
 	local var_16_0 = arg_16_0._selector_widgets
 
 	for iter_16_0, iter_16_1 in pairs(var_16_0) do
@@ -359,7 +359,7 @@ function DarkPactSelectionUI._deselect(arg_16_0)
 	arg_16_0._selected_index = 0
 end
 
-function DarkPactSelectionUI._confirm_choice(arg_17_0, arg_17_1, arg_17_2)
+DarkPactSelectionUI._confirm_choice = function (arg_17_0, arg_17_1, arg_17_2)
 	arg_17_1 = math.clamp(arg_17_1, 1, #arg_17_0._selector_widgets)
 
 	local var_17_0 = arg_17_0._peer_id
@@ -376,11 +376,11 @@ function DarkPactSelectionUI._confirm_choice(arg_17_0, arg_17_1, arg_17_2)
 	arg_17_0._pending_profile = var_17_3
 end
 
-function DarkPactSelectionUI.post_update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+DarkPactSelectionUI.post_update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0:_draw(arg_18_1, arg_18_0:input_service())
 end
 
-function DarkPactSelectionUI._draw(arg_19_0, arg_19_1, arg_19_2)
+DarkPactSelectionUI._draw = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0.super._draw(arg_19_0, arg_19_1, arg_19_2)
 	UIRenderer.begin_pass(arg_19_0._ui_renderer, arg_19_0._ui_scenegraph, arg_19_2, arg_19_1, nil, {})
 
@@ -391,38 +391,38 @@ function DarkPactSelectionUI._draw(arg_19_0, arg_19_1, arg_19_2)
 	UIRenderer.end_pass(arg_19_0._ui_renderer)
 end
 
-function DarkPactSelectionUI.event_set_new_enemy_role(arg_20_0)
+DarkPactSelectionUI.event_set_new_enemy_role = function (arg_20_0)
 	return
 end
 
-function DarkPactSelectionUI._set_enemy_role_text(arg_21_0, arg_21_1)
+DarkPactSelectionUI._set_enemy_role_text = function (arg_21_0, arg_21_1)
 	arg_21_0._widgets_by_name.chrome.content.category_text = string.format(Localize("vs_profile_selection_reason_unavailable"))
 end
 
-function DarkPactSelectionUI._set_enemy_pick_text(arg_22_0, arg_22_1)
+DarkPactSelectionUI._set_enemy_pick_text = function (arg_22_0, arg_22_1)
 	arg_22_0._widgets_by_name.chrome.content.pick_text = Utf8.upper(Localize(arg_22_1))
 end
 
-function DarkPactSelectionUI._set_enemy_pick_info_text(arg_23_0, arg_23_1)
+DarkPactSelectionUI._set_enemy_pick_info_text = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._widgets_by_name.info_text
 	local var_23_1 = CareerSettings[arg_23_1].description
 
 	var_23_0.content.text = Localize(var_23_1)
 end
 
-function DarkPactSelectionUI._create_ui_elements(arg_24_0)
+DarkPactSelectionUI._create_ui_elements = function (arg_24_0)
 	arg_24_0.super._create_ui_elements(arg_24_0)
 
 	arg_24_0._selector_widgets = {}
 end
 
-function DarkPactSelectionUI._request_careers(arg_25_0)
+DarkPactSelectionUI._request_careers = function (arg_25_0)
 	arg_25_0._requesting_careers = true
 
 	Managers.state.game_mode:game_mode():request_selectable_dark_pact_careers()
 end
 
-function DarkPactSelectionUI.event_versus_received_selectable_careers_response(arg_26_0, arg_26_1, arg_26_2)
+DarkPactSelectionUI.event_versus_received_selectable_careers_response = function (arg_26_0, arg_26_1, arg_26_2)
 	arg_26_0._requesting_careers = false
 
 	arg_26_0:_create_selection_widgets(arg_26_1, arg_26_2)
@@ -440,7 +440,7 @@ function DarkPactSelectionUI.event_versus_received_selectable_careers_response(a
 	arg_26_0._is_visible = true
 end
 
-function DarkPactSelectionUI._create_selection_widgets(arg_27_0, arg_27_1, arg_27_2)
+DarkPactSelectionUI._create_selection_widgets = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = math.floor(#arg_27_2 / 2)
 	local var_27_1 = var_0_4 + 10
 	local var_27_2 = -(var_27_0 * var_27_1)
@@ -475,11 +475,11 @@ function DarkPactSelectionUI._create_selection_widgets(arg_27_0, arg_27_1, arg_2
 	arg_27_0._selector_widgets = var_27_5
 end
 
-function DarkPactSelectionUI.input_service(arg_28_0)
+DarkPactSelectionUI.input_service = function (arg_28_0)
 	return arg_28_0._input_manager:get_service(arg_28_0._input_service_name)
 end
 
-function DarkPactSelectionUI._get_current_selected_career_name(arg_29_0)
+DarkPactSelectionUI._get_current_selected_career_name = function (arg_29_0)
 	if not Managers then
 		return "not_assigned"
 	end
@@ -508,7 +508,7 @@ function DarkPactSelectionUI._get_current_selected_career_name(arg_29_0)
 	return SPProfiles[var_29_2].careers[var_29_1].display_name
 end
 
-function DarkPactSelectionUI._set_overlay_size(arg_30_0)
+DarkPactSelectionUI._set_overlay_size = function (arg_30_0)
 	local var_30_0 = RESOLUTION_LOOKUP.res_w
 	local var_30_1 = RESOLUTION_LOOKUP.res_h
 	local var_30_2 = RESOLUTION_LOOKUP.inv_scale

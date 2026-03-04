@@ -8,7 +8,7 @@ INTERACT_RAY_DISTANCE = 2.5
 
 local var_0_0 = {}
 
-function GenericUnitInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericUnitInteractorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = arg_1_1.dice_keeper
 	local var_1_2 = arg_1_1.statistics_db
@@ -35,26 +35,26 @@ function GenericUnitInteractorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.units_in_range = {}
 	arg_1_0.units_in_range_back_buffer = {}
 
-	function arg_1_0.interactable_unit_destroy_callback(arg_2_0)
+	arg_1_0.interactable_unit_destroy_callback = function (arg_2_0)
 		local var_2_0 = Managers.time:time("game")
 
 		arg_1_0:_stop_interaction(arg_2_0, var_2_0)
 	end
 end
 
-function GenericUnitInteractorExtension.extensions_ready(arg_3_0)
+GenericUnitInteractorExtension.extensions_ready = function (arg_3_0)
 	arg_3_0.status_extension = ScriptUnit.extension(arg_3_0.unit, "status_system")
 	arg_3_0.health_extension = ScriptUnit.extension(arg_3_0.unit, "health_system")
 	arg_3_0.buff_extension = ScriptUnit.extension(arg_3_0.unit, "buff_system")
 end
 
-function GenericUnitInteractorExtension.set_exclusive_interaction_unit(arg_4_0, arg_4_1)
+GenericUnitInteractorExtension.set_exclusive_interaction_unit = function (arg_4_0, arg_4_1)
 	fassert(arg_4_0.is_bot, "Trying to set exclusive interaction unit as player.")
 
 	arg_4_0.exclusive_interaction_unit = arg_4_1
 end
 
-function GenericUnitInteractorExtension.destroy(arg_5_0)
+GenericUnitInteractorExtension.destroy = function (arg_5_0)
 	arg_5_0:abort_interaction()
 
 	local var_5_0 = arg_5_0.interaction_context.interactable_unit
@@ -87,7 +87,7 @@ local var_0_1 = {
 	life_drain = true
 }
 
-function GenericUnitInteractorExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+GenericUnitInteractorExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.world
 
 	table.clear(var_0_0)
@@ -331,7 +331,7 @@ function GenericUnitInteractorExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	end
 end
 
-function GenericUnitInteractorExtension._check_if_interactable_in_chest(arg_7_0, arg_7_1, arg_7_2)
+GenericUnitInteractorExtension._check_if_interactable_in_chest = function (arg_7_0, arg_7_1, arg_7_2)
 	if var_0_0[arg_7_1] then
 		return true
 	end
@@ -359,7 +359,7 @@ function GenericUnitInteractorExtension._check_if_interactable_in_chest(arg_7_0,
 	return false
 end
 
-function GenericUnitInteractorExtension._claculate_interaction_distance_score(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+GenericUnitInteractorExtension._claculate_interaction_distance_score = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = Unit.world_position(arg_8_1, 0)
 	local var_8_1 = INTERACT_RAY_DISTANCE
 	local var_8_2 = Vector3.distance_squared(var_8_0, arg_8_2) / (var_8_1 * var_8_1)
@@ -369,14 +369,14 @@ function GenericUnitInteractorExtension._claculate_interaction_distance_score(ar
 	return var_8_2 * (Vector3.length(var_8_4) / (arg_8_3 * 2))
 end
 
-function GenericUnitInteractorExtension._get_player_camera(arg_9_0)
+GenericUnitInteractorExtension._get_player_camera = function (arg_9_0)
 	local var_9_0 = Managers.player:owner(arg_9_0.unit).viewport_name
 	local var_9_1 = ScriptWorld.viewport(arg_9_0.world, var_9_0)
 
 	return (ScriptViewport.camera(var_9_1))
 end
 
-function GenericUnitInteractorExtension._stop_interaction(arg_10_0, arg_10_1, arg_10_2)
+GenericUnitInteractorExtension._stop_interaction = function (arg_10_0, arg_10_1, arg_10_2)
 	Managers.state.unit_spawner:remove_destroy_listener(arg_10_1, "interactable_unit")
 
 	local var_10_0 = arg_10_0.world
@@ -418,29 +418,29 @@ function GenericUnitInteractorExtension._stop_interaction(arg_10_0, arg_10_1, ar
 	arg_10_0.state = "waiting_to_interact"
 end
 
-function GenericUnitInteractorExtension.is_interacting(arg_11_0)
+GenericUnitInteractorExtension.is_interacting = function (arg_11_0)
 	local var_11_0 = arg_11_0.interaction_context.interaction_type
 
 	return arg_11_0.state ~= "waiting_to_interact", var_11_0
 end
 
-function GenericUnitInteractorExtension.is_stopping(arg_12_0)
+GenericUnitInteractorExtension.is_stopping = function (arg_12_0)
 	return arg_12_0.state == "stopping_interaction"
 end
 
-function GenericUnitInteractorExtension.is_waiting_for_interaction_approval(arg_13_0)
+GenericUnitInteractorExtension.is_waiting_for_interaction_approval = function (arg_13_0)
 	return arg_13_0.state == "waiting_for_confirmation"
 end
 
-function GenericUnitInteractorExtension.is_aborting_interaction(arg_14_0)
+GenericUnitInteractorExtension.is_aborting_interaction = function (arg_14_0)
 	return arg_14_0.state == "waiting_for_abort"
 end
 
-function GenericUnitInteractorExtension.is_looking_at_interactable(arg_15_0)
+GenericUnitInteractorExtension.is_looking_at_interactable = function (arg_15_0)
 	return arg_15_0.interaction_context.interactable_unit ~= nil
 end
 
-function GenericUnitInteractorExtension.in_range(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+GenericUnitInteractorExtension.in_range = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_0.interaction_context
 	local var_16_1 = arg_16_1 or var_16_0.interactable_unit
 
@@ -455,11 +455,11 @@ function GenericUnitInteractorExtension.in_range(arg_16_0, arg_16_1, arg_16_2, a
 	end
 end
 
-function GenericUnitInteractorExtension.enable_interactions(arg_17_0, arg_17_1)
+GenericUnitInteractorExtension.enable_interactions = function (arg_17_0, arg_17_1)
 	arg_17_0._interactions_enabled = arg_17_1
 end
 
-function GenericUnitInteractorExtension.can_interact(arg_18_0, arg_18_1, arg_18_2)
+GenericUnitInteractorExtension.can_interact = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.interaction_context
 	local var_18_1 = arg_18_1 or var_18_0.interactable_unit
 
@@ -515,14 +515,14 @@ function GenericUnitInteractorExtension.can_interact(arg_18_0, arg_18_1, arg_18_
 	return true, nil, arg_18_2, var_18_1
 end
 
-function GenericUnitInteractorExtension.interaction_config(arg_19_0)
+GenericUnitInteractorExtension.interaction_config = function (arg_19_0)
 	local var_19_0 = arg_19_0.interaction_context.interaction_type
 	local var_19_1 = InteractionDefinitions[var_19_0]
 
 	return var_19_1 and (var_19_1.config or var_19_1.get_config()) or nil
 end
 
-function GenericUnitInteractorExtension.interaction_description(arg_20_0, arg_20_1)
+GenericUnitInteractorExtension.interaction_description = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.interaction_context
 	local var_20_1 = var_20_0.interactable_unit
 	local var_20_2 = var_20_0.data
@@ -533,25 +533,25 @@ function GenericUnitInteractorExtension.interaction_description(arg_20_0, arg_20
 	return var_20_4.client.hud_description(var_20_1, var_20_2, var_20_5, arg_20_1, arg_20_0.unit)
 end
 
-function GenericUnitInteractorExtension.interaction_hold_input(arg_21_0)
+GenericUnitInteractorExtension.interaction_hold_input = function (arg_21_0)
 	return arg_21_0.interaction_context.hold_input
 end
 
-function GenericUnitInteractorExtension.is_interacting_with_local_only_interact(arg_22_0)
+GenericUnitInteractorExtension.is_interacting_with_local_only_interact = function (arg_22_0)
 	return arg_22_0.interaction_context.local_only
 end
 
-function GenericUnitInteractorExtension.interaction_camera_node(arg_23_0)
+GenericUnitInteractorExtension.interaction_camera_node = function (arg_23_0)
 	local var_23_0 = arg_23_0.interaction_context.interaction_type
 
 	return InteractionDefinitions[var_23_0].client.camera_node(arg_23_0.unit, arg_23_0.interaction_context.interactable_unit)
 end
 
-function GenericUnitInteractorExtension.interactable_unit(arg_24_0)
+GenericUnitInteractorExtension.interactable_unit = function (arg_24_0)
 	return arg_24_0.interaction_context.interactable_unit
 end
 
-function GenericUnitInteractorExtension.get_progress(arg_25_0, arg_25_1)
+GenericUnitInteractorExtension.get_progress = function (arg_25_0, arg_25_1)
 	fassert(arg_25_0:is_interacting(), "Attempted to get interaction progress when interactor unit wasn't interacting.")
 
 	local var_25_0 = arg_25_0.interaction_context
@@ -563,7 +563,7 @@ function GenericUnitInteractorExtension.get_progress(arg_25_0, arg_25_1)
 	return var_25_3.client.get_progress(var_25_1, var_25_4, arg_25_1)
 end
 
-function GenericUnitInteractorExtension.start_interaction(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+GenericUnitInteractorExtension.start_interaction = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = arg_26_0.interaction_context
 
 	arg_26_2 = arg_26_2 or var_26_0.interactable_unit
@@ -600,7 +600,7 @@ function GenericUnitInteractorExtension.start_interaction(arg_26_0, arg_26_1, ar
 	InteractionHelper:request(arg_26_3, var_26_1, arg_26_2, arg_26_0.is_server, var_26_3)
 end
 
-function GenericUnitInteractorExtension.abort_interaction(arg_27_0)
+GenericUnitInteractorExtension.abort_interaction = function (arg_27_0)
 	if arg_27_0:is_interacting() and arg_27_0.state ~= "waiting_for_abort" then
 		arg_27_0.state = "waiting_for_abort"
 
@@ -609,7 +609,7 @@ function GenericUnitInteractorExtension.abort_interaction(arg_27_0)
 	end
 end
 
-function GenericUnitInteractorExtension.interaction_approved(arg_28_0, arg_28_1, arg_28_2)
+GenericUnitInteractorExtension.interaction_approved = function (arg_28_0, arg_28_1, arg_28_2)
 	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_approved during state %s type=%s on %s", arg_28_0.state, arg_28_1, tostring(arg_28_2))
 	fassert(arg_28_1 == arg_28_0.interaction_context.interaction_type, "Got wrong type of interaction approved")
 	fassert(arg_28_2 == arg_28_0.interaction_context.interactable_unit, "Got wrong interactable approved")
@@ -622,7 +622,7 @@ function GenericUnitInteractorExtension.interaction_approved(arg_28_0, arg_28_1,
 	arg_28_0.state = "starting_interaction"
 end
 
-function GenericUnitInteractorExtension.interaction_denied(arg_29_0)
+GenericUnitInteractorExtension.interaction_denied = function (arg_29_0)
 	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_denied")
 
 	local var_29_0 = arg_29_0.state
@@ -632,7 +632,7 @@ function GenericUnitInteractorExtension.interaction_denied(arg_29_0)
 	arg_29_0.state = "waiting_to_interact"
 end
 
-function GenericUnitInteractorExtension.interaction_completed(arg_30_0, arg_30_1)
+GenericUnitInteractorExtension.interaction_completed = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0.state
 
 	InteractionHelper.printf("[GenericUnitInteractorExtension] interaction_completed during state %s with result %s", var_30_0, InteractionResult[arg_30_1])
@@ -646,7 +646,7 @@ function GenericUnitInteractorExtension.interaction_completed(arg_30_0, arg_30_1
 	arg_30_0:_stop_interaction(var_30_1, var_30_2)
 end
 
-function GenericUnitInteractorExtension.hot_join_sync(arg_31_0, arg_31_1)
+GenericUnitInteractorExtension.hot_join_sync = function (arg_31_0, arg_31_1)
 	if not arg_31_0:is_interacting() then
 		return
 	end
@@ -670,7 +670,7 @@ function GenericUnitInteractorExtension.hot_join_sync(arg_31_0, arg_31_1)
 	RPC.rpc_sync_interaction_state(var_31_10, var_31_9, var_31_2, var_31_3, var_31_4, var_31_7, var_31_8, var_31_5)
 end
 
-function GenericUnitInteractorExtension.allow_movement_during_interaction(arg_32_0)
+GenericUnitInteractorExtension.allow_movement_during_interaction = function (arg_32_0)
 	local var_32_0 = arg_32_0.interaction_context.interactable_unit
 
 	return Unit.alive(var_32_0) and (Unit.get_data(var_32_0, "interaction_data", "allow_movement") or arg_32_0:interaction_config().allow_movement)

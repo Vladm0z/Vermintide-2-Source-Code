@@ -15,7 +15,7 @@ local var_0_2 = {
 	"resource_packages/videos/vermintide_2_versus_trailer"
 }
 
-function CinematicsView.init(arg_1_0, arg_1_1)
+CinematicsView.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._ingame_ui = arg_1_1.ingame_ui
@@ -36,7 +36,7 @@ function CinematicsView.init(arg_1_0, arg_1_1)
 	arg_1_0:_reset()
 end
 
-function CinematicsView._packages_loaded(arg_2_0)
+CinematicsView._packages_loaded = function (arg_2_0)
 	local var_2_0 = Managers.package
 
 	for iter_2_0, iter_2_1 in ipairs(var_0_2) do
@@ -48,7 +48,7 @@ function CinematicsView._packages_loaded(arg_2_0)
 	return true
 end
 
-function CinematicsView._load_packages(arg_3_0)
+CinematicsView._load_packages = function (arg_3_0)
 	local var_3_0 = Managers.package
 
 	for iter_3_0, iter_3_1 in ipairs(var_0_2) do
@@ -58,7 +58,7 @@ function CinematicsView._load_packages(arg_3_0)
 	end
 end
 
-function CinematicsView._unload_packages(arg_4_0)
+CinematicsView._unload_packages = function (arg_4_0)
 	local var_4_0 = Managers.package
 
 	for iter_4_0, iter_4_1 in ipairs(var_0_2) do
@@ -68,14 +68,14 @@ function CinematicsView._unload_packages(arg_4_0)
 	end
 end
 
-function CinematicsView._reset(arg_5_0)
+CinematicsView._reset = function (arg_5_0)
 	arg_5_0._current_video_content = nil
 	arg_5_0._current_category_index = 1
 	arg_5_0._current_gamepad_selection_index = 1
 	arg_5_0._exiting = false
 end
 
-function CinematicsView._create_ui_elements(arg_6_0)
+CinematicsView._create_ui_elements = function (arg_6_0)
 	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_6_0 = {}
@@ -156,7 +156,7 @@ function CinematicsView._create_ui_elements(arg_6_0)
 	arg_6_0._menu_input_description:set_input_description(nil)
 end
 
-function CinematicsView._create_scrollbar(arg_7_0)
+CinematicsView._create_scrollbar = function (arg_7_0)
 	local var_7_0 = #arg_7_0._cinematics_widgets[arg_7_0._current_category_index]
 	local var_7_1 = var_0_0.create_scrollbar(var_7_0)
 
@@ -169,7 +169,7 @@ function CinematicsView._create_scrollbar(arg_7_0)
 	arg_7_0._scroll_area_size = math.max(var_7_3 - var_7_4, 0)
 end
 
-function CinematicsView._destroy_video_players(arg_8_0)
+CinematicsView._destroy_video_players = function (arg_8_0)
 	if not arg_8_0._cinematics_widgets then
 		return
 	end
@@ -191,31 +191,31 @@ function CinematicsView._destroy_video_players(arg_8_0)
 	end
 end
 
-function CinematicsView.input_service(arg_9_0)
+CinematicsView.input_service = function (arg_9_0)
 	return arg_9_0._input_manager:get_service("cinematics_view")
 end
 
-function CinematicsView.on_enter(arg_10_0)
+CinematicsView.on_enter = function (arg_10_0)
 	arg_10_0._input_manager:capture_input(ALL_INPUT_METHODS, 1, "cinematics_view", "CinematicsView")
 	arg_10_0:_load_packages()
 	arg_10_0:_show_loading_icon()
 end
 
-function CinematicsView._reset_button_states(arg_11_0)
+CinematicsView._reset_button_states = function (arg_11_0)
 	for iter_11_0, iter_11_1 in ipairs(arg_11_0._button_widgets) do
 		UIWidgetUtils.reset_layout_button(iter_11_1)
 	end
 end
 
-function CinematicsView._show_loading_icon(arg_12_0)
+CinematicsView._show_loading_icon = function (arg_12_0)
 	Managers.transition:show_loading_icon(false)
 end
 
-function CinematicsView._hide_loading_icon(arg_13_0)
+CinematicsView._hide_loading_icon = function (arg_13_0)
 	Managers.transition:hide_loading_icon()
 end
 
-function CinematicsView._create_video_renderer(arg_14_0)
+CinematicsView._create_video_renderer = function (arg_14_0)
 	local var_14_0 = {
 		"material",
 		"materials/ui/ui_1080p_menu_atlas_textures",
@@ -247,17 +247,17 @@ function CinematicsView._create_video_renderer(arg_14_0)
 	arg_14_0._ui_video_renderer = UIRenderer.create(var_14_3, unpack(var_14_0))
 end
 
-function CinematicsView._destroy_video_renderer(arg_15_0)
+CinematicsView._destroy_video_renderer = function (arg_15_0)
 	local var_15_0 = arg_15_0._ui_top_renderer.world
 
 	UIRenderer.destroy(arg_15_0._ui_video_renderer, var_15_0)
 end
 
-function CinematicsView.initialized(arg_16_0)
+CinematicsView.initialized = function (arg_16_0)
 	return arg_16_0._initialized
 end
 
-function CinematicsView._init_view(arg_17_0)
+CinematicsView._init_view = function (arg_17_0)
 	arg_17_0:_create_video_renderer()
 	arg_17_0:_create_ui_elements()
 	arg_17_0:_create_scrollbar()
@@ -269,7 +269,7 @@ function CinematicsView._init_view(arg_17_0)
 	arg_17_0._initialized = true
 end
 
-function CinematicsView._start_animation(arg_18_0, arg_18_1, arg_18_2)
+CinematicsView._start_animation = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._render_settings = arg_18_0._render_settings or {
 		alpha_multiplier = 0,
 		snap_pixel_positions = false
@@ -283,7 +283,7 @@ function CinematicsView._start_animation(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0._animation_callbacks[arg_18_1] = arg_18_2
 end
 
-function CinematicsView._enable_viewport(arg_19_0, arg_19_1)
+CinematicsView._enable_viewport = function (arg_19_0, arg_19_1)
 	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		local var_19_0 = "inventory_preview"
 		local var_19_1 = "inventory_preview_viewport"
@@ -304,7 +304,7 @@ function CinematicsView._enable_viewport(arg_19_0, arg_19_1)
 	end
 end
 
-function CinematicsView._create_skip_widget(arg_20_0)
+CinematicsView._create_skip_widget = function (arg_20_0)
 	local var_20_0 = {
 		ui_renderer = arg_20_0._ui_top_renderer
 	}
@@ -312,7 +312,7 @@ function CinematicsView._create_skip_widget(arg_20_0)
 	arg_20_0._skip_input_ui = SkipInputUI:new(arg_20_0, var_20_0)
 end
 
-function CinematicsView.on_exit(arg_21_0)
+CinematicsView.on_exit = function (arg_21_0)
 	arg_21_0._input_manager:release_input(ALL_INPUT_METHODS, 1, "cinematics_view", "CinematicsView")
 	arg_21_0:deactivate_video()
 	arg_21_0:_destroy_video_players()
@@ -323,7 +323,7 @@ function CinematicsView.on_exit(arg_21_0)
 	arg_21_0._initialized = false
 end
 
-function CinematicsView.do_exit(arg_22_0, arg_22_1)
+CinematicsView.do_exit = function (arg_22_0, arg_22_1)
 	arg_22_0:_start_animation("on_exit", callback(arg_22_0, "exit", arg_22_1))
 
 	arg_22_0._exiting = true
@@ -331,7 +331,7 @@ function CinematicsView.do_exit(arg_22_0, arg_22_1)
 	Managers.music:trigger_event(IS_WINDOWS and "Play_console_menu_back" or "Play_console_menu_select")
 end
 
-function CinematicsView.update(arg_23_0, arg_23_1, arg_23_2)
+CinematicsView.update = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_0._packages_loaded() then
 		if arg_23_0:initialized() then
 			arg_23_0:_update_input(arg_23_1, arg_23_2)
@@ -344,13 +344,13 @@ function CinematicsView.update(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function CinematicsView.current_gamepad_selection(arg_24_0)
+CinematicsView.current_gamepad_selection = function (arg_24_0)
 	return arg_24_0._current_gamepad_selection_index
 end
 
 local var_0_3 = {}
 
-function CinematicsView._update_input(arg_25_0, arg_25_1, arg_25_2)
+CinematicsView._update_input = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_0._exiting then
 		return
 	end
@@ -385,7 +385,7 @@ function CinematicsView._update_input(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function CinematicsView._update_animations(arg_26_0, arg_26_1, arg_26_2)
+CinematicsView._update_animations = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._ui_animations
 
 	for iter_26_0, iter_26_1 in pairs(var_26_0) do
@@ -422,7 +422,7 @@ function CinematicsView._update_animations(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function CinematicsView._update_scrollbar(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+CinematicsView._update_scrollbar = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = arg_27_0._widgets_by_name.video_area.content.hotspot
 	local var_27_1 = arg_27_0._scrollbar_widget
 	local var_27_2 = var_27_1.content
@@ -509,7 +509,7 @@ function CinematicsView._update_scrollbar(arg_27_0, arg_27_1, arg_27_2, arg_27_3
 	var_27_6.offset[2] = var_27_36 * (var_27_35 - var_27_6.area_size[2]) * -1
 end
 
-function CinematicsView._update_video(arg_28_0)
+CinematicsView._update_video = function (arg_28_0)
 	local var_28_0 = arg_28_0._current_video_content
 
 	if var_28_0 then
@@ -522,7 +522,7 @@ function CinematicsView._update_video(arg_28_0)
 	end
 end
 
-function CinematicsView.deactivate_video(arg_29_0)
+CinematicsView.deactivate_video = function (arg_29_0)
 	if arg_29_0._current_video_content then
 		arg_29_0:_reset_sound()
 		arg_29_0:_enable_viewport(true)
@@ -554,7 +554,7 @@ function CinematicsView.deactivate_video(arg_29_0)
 	Managers.chat:set_chat_enabled(true)
 end
 
-function CinematicsView._play_sound(arg_30_0, arg_30_1)
+CinematicsView._play_sound = function (arg_30_0, arg_30_1)
 	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		local var_30_0 = IS_CONSOLE and "title_screen_world" or "level_world"
 		local var_30_1 = Managers.world:world(var_30_0)
@@ -566,7 +566,7 @@ function CinematicsView._play_sound(arg_30_0, arg_30_1)
 	end
 end
 
-function CinematicsView._start_video_sound(arg_31_0, arg_31_1, arg_31_2)
+CinematicsView._start_video_sound = function (arg_31_0, arg_31_1, arg_31_2)
 	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		arg_31_0:_play_sound("play_gui_amb_hero_screen_loop_end")
 		arg_31_0:_play_sound("Play_hud_start_cinematic")
@@ -583,7 +583,7 @@ function CinematicsView._start_video_sound(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function CinematicsView._reset_sound(arg_32_0)
+CinematicsView._reset_sound = function (arg_32_0)
 	local var_32_0 = arg_32_0._current_video_content.video_data.sound_stop
 
 	if var_32_0 then
@@ -597,7 +597,7 @@ function CinematicsView._reset_sound(arg_32_0)
 	end
 end
 
-function CinematicsView.activate_video(arg_33_0, arg_33_1, arg_33_2)
+CinematicsView.activate_video = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_0._exiting then
 		return
 	end
@@ -633,7 +633,7 @@ function CinematicsView.activate_video(arg_33_0, arg_33_1, arg_33_2)
 	Managers.chat:set_chat_enabled(false)
 end
 
-function CinematicsView._setup_subtitles(arg_34_0, arg_34_1)
+CinematicsView._setup_subtitles = function (arg_34_0, arg_34_1)
 	arg_34_0._cutscene_overlay_ui = nil
 
 	if arg_34_1 then
@@ -647,11 +647,11 @@ function CinematicsView._setup_subtitles(arg_34_0, arg_34_1)
 	end
 end
 
-function CinematicsView.is_video_active(arg_35_0, arg_35_1)
+CinematicsView.is_video_active = function (arg_35_0, arg_35_1)
 	return arg_35_1 == (arg_35_0._current_video_content or var_0_3).video_player_reference
 end
 
-function CinematicsView._draw(arg_36_0, arg_36_1, arg_36_2)
+CinematicsView._draw = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0:input_service()
 	local var_36_1 = arg_36_0._ui_top_renderer
 	local var_36_2 = arg_36_0._ui_renderer

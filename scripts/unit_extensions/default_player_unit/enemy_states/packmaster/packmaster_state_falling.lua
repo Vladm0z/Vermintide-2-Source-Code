@@ -2,13 +2,13 @@
 
 PackmasterStateFalling = class(PackmasterStateFalling, EnemyCharacterStateFalling)
 
-function PackmasterStateFalling.init(arg_1_0, arg_1_1)
+PackmasterStateFalling.init = function (arg_1_0, arg_1_1)
 	PackmasterStateFalling.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._grab_ability_id = arg_1_0._career_extension:ability_id("grab")
 end
 
-function PackmasterStateFalling.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PackmasterStateFalling.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0._csm
 
 	if arg_2_0._career_extension:ability_was_triggered(arg_2_0._grab_ability_id) then

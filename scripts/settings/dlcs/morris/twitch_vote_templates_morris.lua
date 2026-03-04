@@ -15,10 +15,10 @@ local var_0_1 = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return Managers.state.game_mode:game_mode_key() == "map_deus"
 	end,
-	on_success = function(arg_3_0, arg_3_1, arg_3_2)
+	on_success = function (arg_3_0, arg_3_1, arg_3_2)
 		if arg_3_0 then
 			local var_3_0 = arg_3_2.level_name
 

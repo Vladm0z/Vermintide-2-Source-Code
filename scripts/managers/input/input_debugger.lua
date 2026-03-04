@@ -9,7 +9,7 @@ script_data.input_debug_device_state = script_data.input_debug_device_state or D
 script_data.input_debug_filters = script_data.input_debug_filters or Development.parameter("input_debug_filters")
 InputDebugger = InputDebugger or {}
 
-function InputDebugger.setup(arg_1_0, arg_1_1, arg_1_2)
+InputDebugger.setup = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.input_device_data = {}
 	arg_1_0.gui = World.create_screen_gui(arg_1_1, "material", "materials/fonts/gw_fonts", "immediate")
 	arg_1_0.num_updated_devices = 0
@@ -21,21 +21,21 @@ function InputDebugger.setup(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.world = arg_1_1
 end
 
-function InputDebugger.clear(arg_2_0)
+InputDebugger.clear = function (arg_2_0)
 	arg_2_0.world = nil
 	arg_2_0.gui = nil
 	arg_2_0.input_manager = nil
 end
 
-function InputDebugger.pre_update_device(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+InputDebugger.pre_update_device = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if script_data.input_debug_device_state then
-		-- block empty
+		-- Nothing
 	end
 end
 
 local var_0_4 = 100
 
-function InputDebugger.post_update_device(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+InputDebugger.post_update_device = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if not arg_4_0.input_manager then
 		return
 	end
@@ -125,7 +125,7 @@ local function var_0_5(arg_5_0, arg_5_1, arg_5_2)
 	Gui.text(InputDebugger.gui, arg_5_0, var_0_2, var_0_0, var_0_1, arg_5_1, arg_5_2)
 end
 
-function InputDebugger.debug_input_filters(arg_6_0)
+InputDebugger.debug_input_filters = function (arg_6_0)
 	local var_6_0 = Color(128, 128, 255)
 	local var_6_1 = Color(128, 255, 128)
 	local var_6_2 = 0
@@ -150,7 +150,7 @@ function InputDebugger.debug_input_filters(arg_6_0)
 	end
 end
 
-function InputDebugger.update_input_service_data(arg_7_0, arg_7_1, arg_7_2)
+InputDebugger.update_input_service_data = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Color(128, 128, 192)
 	local var_7_1 = Color(255, 255, 255)
 	local var_7_2 = Color(192, 192, 64)
@@ -248,7 +248,7 @@ function InputDebugger.update_input_service_data(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_10, var_7_8
 end
 
-function InputDebugger.update_selected_device(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+InputDebugger.update_selected_device = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = Color(128, 128, 192)
 	local var_8_1 = Color(255, 255, 255)
 	local var_8_2 = Color(192, 192, 64)
@@ -318,11 +318,11 @@ function InputDebugger.update_selected_device(arg_8_0, arg_8_1, arg_8_2, arg_8_3
 			end
 		end
 	elseif var_8_8 == "axis" then
-		-- block empty
+		-- Nothing
 	end
 end
 
-function InputDebugger.update_input_modify_type(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+InputDebugger.update_input_modify_type = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = Color(128, 128, 192)
 	local var_9_1 = Color(255, 255, 255)
 	local var_9_2 = Color(192, 192, 64)
@@ -370,7 +370,7 @@ function InputDebugger.update_input_modify_type(arg_9_0, arg_9_1, arg_9_2, arg_9
 	return arg_9_3
 end
 
-function InputDebugger.update_selected_keymap_edit(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+InputDebugger.update_selected_keymap_edit = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = Color(128, 128, 192)
 	local var_10_1 = Color(255, 255, 255)
 	local var_10_2 = Color(192, 192, 64)
@@ -640,7 +640,7 @@ function InputDebugger.update_selected_keymap_edit(arg_10_0, arg_10_1, arg_10_2,
 	end
 end
 
-function InputDebugger.update_selected_filter_edit(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+InputDebugger.update_selected_filter_edit = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = Color(128, 128, 192)
 	local var_11_1 = Color(255, 255, 255)
 	local var_11_2 = Color(192, 192, 64)
@@ -874,7 +874,7 @@ function InputDebugger.update_selected_filter_edit(arg_11_0, arg_11_1, arg_11_2,
 	end
 end
 
-function InputDebugger.finalize_update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+InputDebugger.finalize_update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if not arg_12_0.input_manager then
 		return
 	end
@@ -926,7 +926,7 @@ function InputDebugger.finalize_update(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	end
 end
 
-function InputDebugger.handle_edit_debug_keys(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+InputDebugger.handle_edit_debug_keys = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = arg_13_0.current_selection
 
 	if arg_13_1:get("enter_key") then

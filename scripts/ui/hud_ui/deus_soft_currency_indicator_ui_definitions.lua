@@ -52,7 +52,7 @@ local function var_0_5()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return Managers.mechanism:get_state() ~= "map_deus"
 					end
 				},
@@ -389,12 +389,12 @@ local var_0_6 = {
 		{
 			name = "count",
 			duration = 1.2,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				arg_3_2.content.coin_delta = string.format("%+d", arg_3_3.coin_delta)
 				arg_3_3.delta_dir = math.sign(arg_3_3.coin_delta)
 				arg_3_2.style.coin_delta.text_color[2] = arg_3_3.delta_dir <= 0 and 255 or 200
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				local var_4_0 = 1 - (1 - arg_4_3)^2
 				local var_4_1 = math.lerp(arg_4_4.from_coin_count or 0, arg_4_4.to_coin_count or 100, var_4_0)
 
@@ -405,17 +405,17 @@ local var_0_6 = {
 		{
 			name = "delta",
 			duration = 2,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.delta_dir = math.sign(arg_5_3.coin_delta)
 				arg_5_2.content.coin_delta = string.format("%+d", arg_5_3.coin_delta)
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = arg_6_2.style.coin_delta
 
 				var_6_0.offset[2] = var_6_0.base_offset[2] + arg_6_4.delta_dir * (arg_6_3 - 0.5) * 40
 				var_6_0.text_color[1] = math.clamp(255 * (1 - arg_6_3) / 0.8, 0, 255)
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_2.style.coin_delta.text_color[1] = 0
 			end
 		},
@@ -423,11 +423,11 @@ local var_0_6 = {
 			name = "grow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				arg_8_3.icon_size_x = arg_8_2.style.coin_icon.texture_size[1]
 				arg_8_3.icon_size_y = arg_8_2.style.coin_icon.texture_size[2]
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				local var_9_0 = 1 + 0.5 * (1 - (1 - arg_9_3) * (1 - arg_9_3))
 				local var_9_1 = arg_9_2.style
 				local var_9_2 = var_9_1.coin_count
@@ -450,11 +450,11 @@ local var_0_6 = {
 			name = "shrink",
 			delay = 0.4,
 			duration = 0.4,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				arg_10_3.icon_size_x = arg_10_2.style.coin_icon.texture_size[1]
 				arg_10_3.icon_size_y = arg_10_2.style.coin_icon.texture_size[2]
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = 1 + 0.5 * (1 - arg_11_3 * arg_11_3)
 				local var_11_1 = arg_11_2.style
 				local var_11_2 = var_11_1.coin_count
@@ -477,10 +477,10 @@ local var_0_6 = {
 			name = "background_glow",
 			delay = 0,
 			duration = 0.8,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				local var_13_0 = 4 * arg_13_3 * (1 - arg_13_3)
 
 				arg_13_2.style.background_glow.color[1] = 96 * var_13_0
@@ -491,10 +491,10 @@ local var_0_6 = {
 			name = "glow",
 			delay = 0.3,
 			duration = 0.4,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = 4 * arg_15_3 * (1 - arg_15_3)
 
 				arg_15_2.style.coin_icon_highlight.color[1] = 0
@@ -506,16 +506,16 @@ local var_0_6 = {
 			name = "reflection",
 			delay = 0.5,
 			duration = 0.5,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = arg_17_2.style.coin_icon_fx
 
 				var_17_0.offset[1] = var_17_0.base_offset[1] + (2 * arg_17_3 - 1) * var_17_0.texture_size[1]
 				var_17_0.color[1] = 255
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				arg_18_2.style.coin_icon_fx.color[1] = 0
 			end
 		}

@@ -6,7 +6,7 @@ PlayerBotInput = class(PlayerBotInput)
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerBotInput.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerBotInput.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.move = {
 		x = 0,
@@ -50,7 +50,7 @@ function PlayerBotInput.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._game = Managers.state.network:game()
 end
 
-function PlayerBotInput.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerBotInput.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = ScriptUnit.extension
 
 	arg_2_0._navigation_extension = var_2_0(arg_2_2, "ai_navigation_system")
@@ -61,28 +61,28 @@ function PlayerBotInput.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-function PlayerBotInput.destroy(arg_3_0)
+PlayerBotInput.destroy = function (arg_3_0)
 	return
 end
 
-function PlayerBotInput.reset(arg_4_0)
+PlayerBotInput.reset = function (arg_4_0)
 	return
 end
 
-function PlayerBotInput.pre_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerBotInput.pre_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = var_0_0[arg_5_1]
 	local var_5_1, var_5_2 = GwNavQueries.triangle_from_position(arg_5_0._nav_world, var_5_0, 1.1, 0.5)
 
 	arg_5_0._position_on_navmesh = var_5_1 and Vector3(var_5_0.x, var_5_0.y, var_5_2) or var_5_0
 end
 
-function PlayerBotInput.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PlayerBotInput.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	table.clear(arg_6_0._input)
 	arg_6_0:_update_movement(arg_6_3, arg_6_5)
 	arg_6_0:_update_actions()
 end
 
-function PlayerBotInput._update_actions(arg_7_0)
+PlayerBotInput._update_actions = function (arg_7_0)
 	local var_7_0 = arg_7_0._input
 
 	if arg_7_0._fire_hold then
@@ -224,7 +224,7 @@ function PlayerBotInput._update_actions(arg_7_0)
 	end
 end
 
-function PlayerBotInput._update_debug_text(arg_8_0, arg_8_1, arg_8_2)
+PlayerBotInput._update_debug_text = function (arg_8_0, arg_8_1, arg_8_2)
 	if script_data.debug_unit ~= arg_8_1 or not script_data.ai_bots_input_debug then
 		return
 	end
@@ -232,15 +232,15 @@ function PlayerBotInput._update_debug_text(arg_8_0, arg_8_1, arg_8_2)
 	table.dump(arg_8_2, nil, nil, Debug.text)
 end
 
-function PlayerBotInput.set_aim_position(arg_9_0, arg_9_1)
+PlayerBotInput.set_aim_position = function (arg_9_0, arg_9_1)
 	arg_9_0._aim_target:store(arg_9_1)
 end
 
-function PlayerBotInput.set_aim_rotation(arg_10_0, arg_10_1)
+PlayerBotInput.set_aim_rotation = function (arg_10_0, arg_10_1)
 	arg_10_0._aim_rotation:store(arg_10_1)
 end
 
-function PlayerBotInput.set_aiming(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayerBotInput.set_aiming = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_0._aiming = arg_11_1
 	arg_11_0._aim_with_rotation = arg_11_3 and arg_11_1 or false
 
@@ -251,67 +251,67 @@ function PlayerBotInput.set_aiming(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	end
 end
 
-function PlayerBotInput.set_look_at_player(arg_12_0, arg_12_1, arg_12_2)
+PlayerBotInput.set_look_at_player = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._look_at_player = arg_12_1
 	arg_12_0._look_at_player_rotation_allowed = not not arg_12_2
 end
 
-function PlayerBotInput.defend(arg_13_0)
+PlayerBotInput.defend = function (arg_13_0)
 	arg_13_0._defend = true
 end
 
-function PlayerBotInput.activate_ability(arg_14_0)
+PlayerBotInput.activate_ability = function (arg_14_0)
 	arg_14_0._activate_ability = true
 	arg_14_0._cancel_held_ability = false
 end
 
-function PlayerBotInput.cancel_ability(arg_15_0)
+PlayerBotInput.cancel_ability = function (arg_15_0)
 	arg_15_0._cancel_held_ability = true
 	arg_15_0._activate_ability = false
 	arg_15_0._activate_ability_held = false
 end
 
-function PlayerBotInput.release_ability_hold(arg_16_0)
+PlayerBotInput.release_ability_hold = function (arg_16_0)
 	arg_16_0._activate_ability_held = true
 end
 
-function PlayerBotInput.melee_push(arg_17_0)
+PlayerBotInput.melee_push = function (arg_17_0)
 	arg_17_0._melee_push = true
 end
 
-function PlayerBotInput.hold_attack(arg_18_0)
+PlayerBotInput.hold_attack = function (arg_18_0)
 	arg_18_0._hold_attack = true
 end
 
-function PlayerBotInput.tap_attack(arg_19_0)
+PlayerBotInput.tap_attack = function (arg_19_0)
 	arg_19_0._tap_attack = true
 end
 
-function PlayerBotInput.charge_shot(arg_20_0)
+PlayerBotInput.charge_shot = function (arg_20_0)
 	arg_20_0._charge_shot = true
 end
 
-function PlayerBotInput.fire(arg_21_0)
+PlayerBotInput.fire = function (arg_21_0)
 	arg_21_0._fire = true
 end
 
-function PlayerBotInput.fire_hold(arg_22_0)
+PlayerBotInput.fire_hold = function (arg_22_0)
 	arg_22_0._fire_hold = true
 end
 
-function PlayerBotInput.interact(arg_23_0)
+PlayerBotInput.interact = function (arg_23_0)
 	arg_23_0._interact = true
 end
 
-function PlayerBotInput.weapon_reload(arg_24_0)
+PlayerBotInput.weapon_reload = function (arg_24_0)
 	arg_24_0._weapon_reload = true
 end
 
-function PlayerBotInput.dodge(arg_25_0)
+PlayerBotInput.dodge = function (arg_25_0)
 	arg_25_0._dodge = true
 end
 
-function PlayerBotInput.wield(arg_26_0, arg_26_1)
+PlayerBotInput.wield = function (arg_26_0, arg_26_1)
 	arg_26_0._slot_to_wield = arg_26_1
 end
 
@@ -321,7 +321,7 @@ local var_0_3 = 0.010000000000000002
 local var_0_4 = 99.995
 local var_0_5 = 5e-05
 
-function PlayerBotInput._update_wanted_rotation_for_attract_mode(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+PlayerBotInput._update_wanted_rotation_for_attract_mode = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 	local var_27_0
 	local var_27_1 = arg_27_0._navigation_extension
 	local var_27_2 = arg_27_0._position_on_navmesh
@@ -375,7 +375,7 @@ function PlayerBotInput._update_wanted_rotation_for_attract_mode(arg_27_0, arg_2
 	return var_27_4, var_27_0
 end
 
-function PlayerBotInput.set_bot_in_attract_mode_focus(arg_28_0, arg_28_1)
+PlayerBotInput.set_bot_in_attract_mode_focus = function (arg_28_0, arg_28_1)
 	arg_28_0._bot_in_attract_mode_focus = arg_28_1
 end
 
@@ -384,7 +384,7 @@ local var_0_7 = var_0_6 + 0.3
 local var_0_8 = var_0_6^2
 local var_0_9 = var_0_7^2
 
-function PlayerBotInput._obstacle_check(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+PlayerBotInput._obstacle_check = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	local var_29_0 = World.get_data(arg_29_0._world, "physics_world")
 	local var_29_1 = "filter_ai_line_of_sight_check"
 	local var_29_2 = 0.25
@@ -423,7 +423,7 @@ function PlayerBotInput._obstacle_check(arg_29_0, arg_29_1, arg_29_2, arg_29_3, 
 	return var_29_21, var_29_24
 end
 
-function PlayerBotInput._update_movement(arg_30_0, arg_30_1, arg_30_2)
+PlayerBotInput._update_movement = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0.unit
 	local var_30_1 = arg_30_0._navigation_extension
 	local var_30_2 = var_30_1:current_goal()
@@ -582,11 +582,11 @@ function PlayerBotInput._update_movement(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function PlayerBotInput.is_input_blocked(arg_32_0)
+PlayerBotInput.is_input_blocked = function (arg_32_0)
 	return false
 end
 
-function PlayerBotInput.get(arg_33_0, arg_33_1)
+PlayerBotInput.get = function (arg_33_0, arg_33_1)
 	if arg_33_1 == "look" then
 		return Vector3(arg_33_0.look.x, arg_33_0.look.y, 0)
 	elseif arg_33_1 == "move_controller" then
@@ -596,102 +596,102 @@ function PlayerBotInput.get(arg_33_0, arg_33_1)
 	end
 end
 
-function PlayerBotInput.set_enabled(arg_34_0, arg_34_1)
+PlayerBotInput.set_enabled = function (arg_34_0, arg_34_1)
 	return
 end
 
-function PlayerBotInput.get_buffer(arg_35_0, arg_35_1)
+PlayerBotInput.get_buffer = function (arg_35_0, arg_35_1)
 	return
 end
 
-function PlayerBotInput.add_buffer(arg_36_0, arg_36_1)
+PlayerBotInput.add_buffer = function (arg_36_0, arg_36_1)
 	return
 end
 
-function PlayerBotInput.reset_input_buffer(arg_37_0, arg_37_1)
+PlayerBotInput.reset_input_buffer = function (arg_37_0, arg_37_1)
 	return
 end
 
-function PlayerBotInput.clear_input_buffer(arg_38_0, arg_38_1)
+PlayerBotInput.clear_input_buffer = function (arg_38_0, arg_38_1)
 	return
 end
 
-function PlayerBotInput.reset_wield_switch_buffer(arg_39_0)
+PlayerBotInput.reset_wield_switch_buffer = function (arg_39_0)
 	return
 end
 
-function PlayerBotInput.set_last_scroll_value(arg_40_0)
+PlayerBotInput.set_last_scroll_value = function (arg_40_0)
 	return
 end
 
-function PlayerBotInput.get_last_scroll_value(arg_41_0)
+PlayerBotInput.get_last_scroll_value = function (arg_41_0)
 	return
 end
 
-function PlayerBotInput.set_input_key_scale(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+PlayerBotInput.set_input_key_scale = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 	return
 end
 
-function PlayerBotInput.move(arg_43_0, arg_43_1)
+PlayerBotInput.move = function (arg_43_0, arg_43_1)
 	arg_43_0.move.x = arg_43_1.x
 	arg_43_0.move.y = arg_43_1.y
 end
 
-function PlayerBotInput.look(arg_44_0, arg_44_1)
+PlayerBotInput.look = function (arg_44_0, arg_44_1)
 	arg_44_0.look.x = arg_44_1.x
 	arg_44_0.look.y = arg_44_1.y
 end
 
-function PlayerBotInput.move_forward(arg_45_0)
+PlayerBotInput.move_forward = function (arg_45_0)
 	arg_45_0.move.x = 0
 	arg_45_0.move.y = 1
 end
 
-function PlayerBotInput.rotate_right(arg_46_0)
+PlayerBotInput.rotate_right = function (arg_46_0)
 	arg_46_0.look.x = 0.1
 	arg_46_0.look.y = 0
 end
 
-function PlayerBotInput.not_moving(arg_47_0)
+PlayerBotInput.not_moving = function (arg_47_0)
 	return arg_47_0.move.x == 0 and arg_47_0.move.y == 0
 end
 
-function PlayerBotInput.move_towards(arg_48_0, arg_48_1)
+PlayerBotInput.move_towards = function (arg_48_0, arg_48_1)
 	arg_48_0.target_position = arg_48_1 and Vector3Box(arg_48_1) or nil
 end
 
-function PlayerBotInput.get_wield_cooldown(arg_49_0)
+PlayerBotInput.get_wield_cooldown = function (arg_49_0)
 	return false
 end
 
-function PlayerBotInput.add_wield_cooldown(arg_50_0, arg_50_1)
+PlayerBotInput.add_wield_cooldown = function (arg_50_0, arg_50_1)
 	return
 end
 
-function PlayerBotInput.released_input(arg_51_0, arg_51_1)
+PlayerBotInput.released_input = function (arg_51_0, arg_51_1)
 	return not arg_51_0._input[arg_51_1]
 end
 
-function PlayerBotInput.released_softbutton_input(arg_52_0, arg_52_1, arg_52_2)
+PlayerBotInput.released_softbutton_input = function (arg_52_0, arg_52_1, arg_52_2)
 	return not arg_52_0._input[arg_52_1]
 end
 
-function PlayerBotInput.add_stun_buffer(arg_53_0, arg_53_1)
+PlayerBotInput.add_stun_buffer = function (arg_53_0, arg_53_1)
 	return
 end
 
-function PlayerBotInput.reset_release_input(arg_54_0)
+PlayerBotInput.reset_release_input = function (arg_54_0)
 	return true
 end
 
-function PlayerBotInput.reset_release_input_with_delay(arg_55_0)
+PlayerBotInput.reset_release_input_with_delay = function (arg_55_0)
 	return true
 end
 
-function PlayerBotInput.force_release_input(arg_56_0)
+PlayerBotInput.force_release_input = function (arg_56_0)
 	return true
 end
 
-function PlayerBotInput.avoiding_aoe_threat(arg_57_0)
+PlayerBotInput.avoiding_aoe_threat = function (arg_57_0)
 	return arg_57_0._avoiding_aoe_threat
 end

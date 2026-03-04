@@ -13,7 +13,7 @@ local var_0_1 = {
 	"PlayerHuskWeaveLoadoutExtension"
 }
 
-function WeaveLoadoutSystem.init(arg_1_0, arg_1_1, arg_1_2)
+WeaveLoadoutSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	WeaveLoadoutSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -23,13 +23,13 @@ function WeaveLoadoutSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_0:register(arg_1_0, unpack(var_0_0))
 end
 
-function WeaveLoadoutSystem.destroy(arg_2_0)
+WeaveLoadoutSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0.network_event_delegate = nil
 end
 
-function WeaveLoadoutSystem.rpc_add_weave_buffs(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+WeaveLoadoutSystem.rpc_add_weave_buffs = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if arg_3_0.is_server then
 		local var_3_0 = CHANNEL_TO_PEER_ID[arg_3_1]
 

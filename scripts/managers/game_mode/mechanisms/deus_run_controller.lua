@@ -206,12 +206,12 @@ local function var_0_9(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return var_4_0, var_4_3
 end
 
-function DeusRunController.init(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+DeusRunController.init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
 	arg_5_0._run_state = DeusRunState:new(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
 	arg_5_0._network_handler = arg_5_3
 end
 
-function DeusRunController.network_context_created(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusRunController.network_context_created = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	arg_6_0._run_state:network_context_created(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 
 	arg_6_0._network_handler = arg_6_5
@@ -221,14 +221,14 @@ function DeusRunController.network_context_created(arg_6_0, arg_6_1, arg_6_2, ar
 	arg_6_0._run_state:set_host_migration_count(var_6_0)
 end
 
-function DeusRunController.register_rpcs(arg_7_0, arg_7_1)
+DeusRunController.register_rpcs = function (arg_7_0, arg_7_1)
 	arg_7_0._network_event_delegate = arg_7_1
 
 	arg_7_1:register(arg_7_0, unpack(var_0_0))
 	arg_7_0._run_state:register_rpcs(arg_7_1)
 end
 
-function DeusRunController.unregister_rpcs(arg_8_0)
+DeusRunController.unregister_rpcs = function (arg_8_0)
 	if arg_8_0._network_event_delegate then
 		arg_8_0._network_event_delegate:unregister(arg_8_0)
 	end
@@ -238,38 +238,38 @@ function DeusRunController.unregister_rpcs(arg_8_0)
 	arg_8_0._run_state:unregister_rpcs()
 end
 
-function DeusRunController.full_sync(arg_9_0)
+DeusRunController.full_sync = function (arg_9_0)
 	arg_9_0._run_state:full_sync()
 end
 
-function DeusRunController.is_server(arg_10_0)
+DeusRunController.is_server = function (arg_10_0)
 	return arg_10_0._run_state:is_server()
 end
 
-function DeusRunController.get_server_peer_id(arg_11_0)
+DeusRunController.get_server_peer_id = function (arg_11_0)
 	return arg_11_0._run_state:server_peer_id()
 end
 
-function DeusRunController.get_own_peer_id(arg_12_0)
+DeusRunController.get_own_peer_id = function (arg_12_0)
 	return arg_12_0._run_state:own_peer_id()
 end
 
-function DeusRunController.destroy(arg_13_0)
+DeusRunController.destroy = function (arg_13_0)
 	arg_13_0:unregister_rpcs()
 	arg_13_0._run_state:destroy()
 
 	arg_13_0._destroyed = true
 end
 
-function DeusRunController.get_run_ended(arg_14_0)
+DeusRunController.get_run_ended = function (arg_14_0)
 	return arg_14_0._run_state:get_run_ended()
 end
 
-function DeusRunController.handle_run_ended(arg_15_0)
+DeusRunController.handle_run_ended = function (arg_15_0)
 	arg_15_0._run_state:set_run_ended(true)
 end
 
-function DeusRunController.setup_run(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+DeusRunController.setup_run = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 	arg_16_0._run_state:set_run_seed(arg_16_1)
 	arg_16_0._run_state:set_run_difficulty(arg_16_2)
 	arg_16_0._run_state:set_journey_name(arg_16_3)
@@ -337,15 +337,15 @@ function DeusRunController.setup_run(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg
 	var_0_7(sprintf("starting <%s> with seed <%s> on difficulty <%s> and dominant god <%s> with belakor <%s>", arg_16_3, arg_16_1, arg_16_2, arg_16_4, arg_16_7))
 end
 
-function DeusRunController.is_weekly_event_packages_loaded(arg_17_0)
+DeusRunController.is_weekly_event_packages_loaded = function (arg_17_0)
 	return arg_17_0._run_state:is_weekly_event_packages_loaded()
 end
 
-function DeusRunController.get_state_revision(arg_18_0)
+DeusRunController.get_state_revision = function (arg_18_0)
 	return arg_18_0._run_state:get_revision()
 end
 
-function DeusRunController.rpc_deus_set_initial_soft_currency(arg_19_0, arg_19_1, arg_19_2)
+DeusRunController.rpc_deus_set_initial_soft_currency = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = CHANNEL_TO_PEER_ID[arg_19_1]
 
 	if not arg_19_0._run_state:get_peer_initialized(var_19_0) then
@@ -380,7 +380,7 @@ function DeusRunController.rpc_deus_set_initial_soft_currency(arg_19_0, arg_19_1
 	end
 end
 
-function DeusRunController.rpc_deus_set_initial_setup(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+DeusRunController.rpc_deus_set_initial_setup = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_0 = CHANNEL_TO_PEER_ID[arg_20_1]
 
 	if not arg_20_0._run_state:get_profile_initialized(var_20_0, var_0_1, arg_20_2, arg_20_3) then
@@ -398,7 +398,7 @@ function DeusRunController.rpc_deus_set_initial_setup(arg_20_0, arg_20_1, arg_20
 	end
 end
 
-function DeusRunController.rpc_deus_grant_end_of_level_power_ups(arg_21_0, arg_21_1, arg_21_2)
+DeusRunController.rpc_deus_grant_end_of_level_power_ups = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0:_get_graph_data()[arg_21_2]
 	local var_21_1 = var_21_0.grant_random_power_up_count
 	local var_21_2 = var_21_0.terror_event_power_up_rarity
@@ -424,7 +424,7 @@ function DeusRunController.rpc_deus_grant_end_of_level_power_ups(arg_21_0, arg_2
 	RPC.rpc_deus_add_power_ups(var_21_18, var_21_16, var_21_19)
 end
 
-function DeusRunController.profile_changed(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+DeusRunController.profile_changed = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	if arg_22_0._run_state:get_own_peer_id() ~= arg_22_1 then
 		return
 	end
@@ -456,7 +456,7 @@ function DeusRunController.profile_changed(arg_22_0, arg_22_1, arg_22_2, arg_22_
 	end
 end
 
-function DeusRunController._add_initial_power_ups(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+DeusRunController._add_initial_power_ups = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = {}
 
 	for iter_23_0 = 1, #arg_23_5 do
@@ -481,40 +481,40 @@ function DeusRunController._add_initial_power_ups(arg_23_0, arg_23_1, arg_23_2, 
 	arg_23_0._run_state:set_player_power_ups(arg_23_1, arg_23_2, arg_23_3, arg_23_4, var_23_6)
 end
 
-function DeusRunController._add_initial_weapons_to_loadout(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+DeusRunController._add_initial_weapons_to_loadout = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	arg_24_0._run_state:set_player_loadout(arg_24_1, arg_24_2, arg_24_3, arg_24_4, "slot_melee", arg_24_5)
 	arg_24_0._run_state:set_player_loadout(arg_24_1, arg_24_2, arg_24_3, arg_24_4, "slot_ranged", arg_24_6)
 end
 
-function DeusRunController.get_run_id(arg_25_0)
+DeusRunController.get_run_id = function (arg_25_0)
 	return arg_25_0._run_state:get_run_id()
 end
 
-function DeusRunController.get_run_seed(arg_26_0)
+DeusRunController.get_run_seed = function (arg_26_0)
 	return arg_26_0._run_state:get_run_seed()
 end
 
-function DeusRunController.get_run_difficulty(arg_27_0)
+DeusRunController.get_run_difficulty = function (arg_27_0)
 	return arg_27_0._run_state:get_run_difficulty()
 end
 
-function DeusRunController.get_journey_name(arg_28_0)
+DeusRunController.get_journey_name = function (arg_28_0)
 	return arg_28_0._run_state:get_journey_name()
 end
 
-function DeusRunController.get_dominant_god(arg_29_0)
+DeusRunController.get_dominant_god = function (arg_29_0)
 	return arg_29_0._run_state:get_dominant_god()
 end
 
-function DeusRunController.get_event_boons(arg_30_0)
+DeusRunController.get_event_boons = function (arg_30_0)
 	return arg_30_0._run_state:get_event_boons()
 end
 
-function DeusRunController.get_event_mutators(arg_31_0)
+DeusRunController.get_event_mutators = function (arg_31_0)
 	return arg_31_0._run_state:get_event_mutators()
 end
 
-function DeusRunController.handle_level_won(arg_32_0)
+DeusRunController.handle_level_won = function (arg_32_0)
 	arg_32_0:_blessings_handle_level_won()
 
 	local var_32_0 = arg_32_0._run_state:get_completed_level_count() + 1
@@ -541,7 +541,7 @@ function DeusRunController.handle_level_won(arg_32_0)
 	end
 end
 
-function DeusRunController.handle_map_exited(arg_33_0)
+DeusRunController.handle_map_exited = function (arg_33_0)
 	if arg_33_0._run_state:get_arena_belakor_node() then
 		local var_33_0 = arg_33_0._network_handler:get_peers()
 
@@ -553,11 +553,11 @@ function DeusRunController.handle_map_exited(arg_33_0)
 	end
 end
 
-function DeusRunController.get_belakor_enabled(arg_34_0)
+DeusRunController.get_belakor_enabled = function (arg_34_0)
 	return arg_34_0._run_state:get_belakor_enabled()
 end
 
-function DeusRunController.has_completed_current_node(arg_35_0)
+DeusRunController.has_completed_current_node = function (arg_35_0)
 	local var_35_0 = arg_35_0._run_state:get_current_node_key()
 
 	if var_35_0 == "start" then
@@ -569,7 +569,7 @@ function DeusRunController.has_completed_current_node(arg_35_0)
 	end
 end
 
-function DeusRunController.handle_shrine_entered(arg_36_0, arg_36_1)
+DeusRunController.handle_shrine_entered = function (arg_36_0, arg_36_1)
 	arg_36_0._run_state:set_current_node_key(arg_36_1)
 
 	local var_36_0 = arg_36_0._run_state:get_traversed_nodes()
@@ -581,11 +581,11 @@ function DeusRunController.handle_shrine_entered(arg_36_0, arg_36_1)
 	arg_36_0._run_state:set_traversed_nodes(var_36_2)
 end
 
-function DeusRunController.get_traversed_nodes(arg_37_0)
+DeusRunController.get_traversed_nodes = function (arg_37_0)
 	return arg_37_0._run_state:get_traversed_nodes() or {}
 end
 
-function DeusRunController.get_unreachable_nodes(arg_38_0)
+DeusRunController.get_unreachable_nodes = function (arg_38_0)
 	local var_38_0 = arg_38_0:get_current_node_key()
 	local var_38_1 = {
 		[var_38_0] = true
@@ -621,7 +621,7 @@ function DeusRunController.get_unreachable_nodes(arg_38_0)
 	return var_38_5
 end
 
-function DeusRunController.get_visited_nodes(arg_40_0)
+DeusRunController.get_visited_nodes = function (arg_40_0)
 	local var_40_0 = arg_40_0:get_traversed_nodes()
 	local var_40_1 = arg_40_0:get_current_node_key()
 	local var_40_2 = true
@@ -634,11 +634,11 @@ function DeusRunController.get_visited_nodes(arg_40_0)
 	return var_40_3
 end
 
-function DeusRunController.get_completed_level_count(arg_41_0)
+DeusRunController.get_completed_level_count = function (arg_41_0)
 	return arg_41_0._run_state:get_completed_level_count()
 end
 
-function DeusRunController.get_map_visibility(arg_42_0)
+DeusRunController.get_map_visibility = function (arg_42_0)
 	local var_42_0 = arg_42_0:_get_graph_data()
 	local var_42_1 = arg_42_0._run_state:get_current_node_key()
 	local var_42_2 = arg_42_0._run_state:get_traversed_nodes() or {}
@@ -695,7 +695,7 @@ function DeusRunController.get_map_visibility(arg_42_0)
 	return var_42_3
 end
 
-function DeusRunController.get_end_of_level_rewards_arguments(arg_45_0, arg_45_1, arg_45_2)
+DeusRunController.get_end_of_level_rewards_arguments = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._run_state:get_completed_level_count()
 	local var_45_1 = arg_45_0._run_state:get_own_peer_id()
 	local var_45_2 = arg_45_0._run_state:get_player_soft_currency(var_45_1, var_0_1)
@@ -721,7 +721,7 @@ function DeusRunController.get_end_of_level_rewards_arguments(arg_45_0, arg_45_1
 	}
 end
 
-function DeusRunController.get_mission_results(arg_46_0)
+DeusRunController.get_mission_results = function (arg_46_0)
 	local var_46_0 = {}
 	local var_46_1 = arg_46_0._run_state:get_own_peer_id()
 
@@ -741,7 +741,7 @@ function DeusRunController.get_mission_results(arg_46_0)
 	return var_46_0
 end
 
-function DeusRunController.record_cursed_chest_purified(arg_47_0)
+DeusRunController.record_cursed_chest_purified = function (arg_47_0)
 	local var_47_0 = arg_47_0._network_handler:get_peers()
 
 	for iter_47_0, iter_47_1 in ipairs(var_47_0) do
@@ -751,7 +751,7 @@ function DeusRunController.record_cursed_chest_purified(arg_47_0)
 	end
 end
 
-function DeusRunController.save_persisted_score(arg_48_0, arg_48_1, arg_48_2)
+DeusRunController.save_persisted_score = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0, var_48_1 = PlayerUtils.split_unique_player_id(arg_48_2)
 	local var_48_2 = {}
 
@@ -766,7 +766,7 @@ function DeusRunController.save_persisted_score(arg_48_0, arg_48_1, arg_48_2)
 	arg_48_0._run_state:set_persisted_score(var_48_0, var_48_1, var_48_2)
 end
 
-function DeusRunController.restore_persisted_score(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+DeusRunController.restore_persisted_score = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = PlayerUtils.unique_player_id(arg_49_2, arg_49_3)
 	local var_49_1 = arg_49_0._run_state:get_persisted_score(arg_49_2, arg_49_3)
 
@@ -780,38 +780,38 @@ function DeusRunController.restore_persisted_score(arg_49_0, arg_49_1, arg_49_2,
 	end
 end
 
-function DeusRunController.save_scoreboard(arg_50_0, arg_50_1)
+DeusRunController.save_scoreboard = function (arg_50_0, arg_50_1)
 	arg_50_0._run_state:set_scoreboard(arg_50_1)
 end
 
-function DeusRunController.get_scoreboard(arg_51_0)
+DeusRunController.get_scoreboard = function (arg_51_0)
 	return arg_51_0._run_state:get_scoreboard()
 end
 
-function DeusRunController.get_own_peer_id(arg_52_0)
+DeusRunController.get_own_peer_id = function (arg_52_0)
 	return arg_52_0._run_state:get_own_peer_id()
 end
 
-function DeusRunController.get_server_peer_id(arg_53_0)
+DeusRunController.get_server_peer_id = function (arg_53_0)
 	return arg_53_0._run_state:get_server_peer_id()
 end
 
-function DeusRunController.get_own_initial_talents(arg_54_0)
+DeusRunController.get_own_initial_talents = function (arg_54_0)
 	return arg_54_0._run_state:get_own_initial_talents()
 end
 
-function DeusRunController.get_peers(arg_55_0)
+DeusRunController.get_peers = function (arg_55_0)
 	return arg_55_0._network_handler:get_peers()
 end
 
-function DeusRunController.set_own_player_avatar_info(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+DeusRunController.set_own_player_avatar_info = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	arg_56_0._run_state:set_own_player_level(arg_56_1)
 	arg_56_0._run_state:set_own_versus_player_level(arg_56_4)
 	arg_56_0._run_state:set_own_player_frame(arg_56_3)
 	arg_56_0._run_state:set_own_player_name(arg_56_2)
 end
 
-function DeusRunController.get_own_loadout(arg_57_0)
+DeusRunController.get_own_loadout = function (arg_57_0)
 	if arg_57_0._destroyed then
 		local var_57_0 = arg_57_0._run_state:get_own_peer_id()
 		local var_57_1, var_57_2 = arg_57_0._run_state:get_player_profile(var_57_0, var_0_1)
@@ -830,7 +830,7 @@ function DeusRunController.get_own_loadout(arg_57_0)
 	end
 end
 
-function DeusRunController.get_own_loadout_serialized(arg_58_0)
+DeusRunController.get_own_loadout_serialized = function (arg_58_0)
 	local var_58_0 = arg_58_0._run_state:get_own_peer_id()
 	local var_58_1, var_58_2 = arg_58_0._run_state:get_player_profile(var_58_0, var_0_1)
 	local var_58_3 = arg_58_0._run_state:get_player_loadout(var_58_0, var_0_1, var_58_1, var_58_2, "slot_melee")
@@ -839,7 +839,7 @@ function DeusRunController.get_own_loadout_serialized(arg_58_0)
 	return var_58_3, var_58_4
 end
 
-function DeusRunController.get_loadout(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+DeusRunController.get_loadout = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 	local var_59_0 = arg_59_0._run_state:get_player_loadout(arg_59_1, arg_59_2, arg_59_3, arg_59_4, "slot_melee")
 	local var_59_1 = arg_59_0._run_state:get_player_loadout(arg_59_1, arg_59_2, arg_59_3, arg_59_4, "slot_ranged")
 	local var_59_2 = var_59_0 and DeusWeaponGeneration.deserialize_weapon(var_59_0)
@@ -848,7 +848,7 @@ function DeusRunController.get_loadout(arg_59_0, arg_59_1, arg_59_2, arg_59_3, a
 	return var_59_2, var_59_3
 end
 
-function DeusRunController.save_loadout(arg_60_0, arg_60_1, arg_60_2)
+DeusRunController.save_loadout = function (arg_60_0, arg_60_1, arg_60_2)
 	local var_60_0 = arg_60_0._run_state:get_own_peer_id()
 	local var_60_1, var_60_2 = arg_60_0._run_state:get_player_profile(var_60_0, var_0_1)
 	local var_60_3 = DeusWeaponGeneration.serialize_weapon(arg_60_1)
@@ -863,14 +863,14 @@ function DeusRunController.save_loadout(arg_60_0, arg_60_1, arg_60_2)
 	end
 end
 
-function DeusRunController.rpc_deus_save_loadout(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+DeusRunController.rpc_deus_save_loadout = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	local var_61_0 = CHANNEL_TO_PEER_ID[arg_61_1]
 	local var_61_1, var_61_2 = arg_61_0._run_state:get_player_profile(var_61_0, var_0_1)
 
 	arg_61_0._run_state:set_player_loadout(var_61_0, var_0_1, var_61_1, var_61_2, arg_61_2, arg_61_3)
 end
 
-function DeusRunController.on_soft_currency_picked_up(arg_62_0, arg_62_1, arg_62_2)
+DeusRunController.on_soft_currency_picked_up = function (arg_62_0, arg_62_1, arg_62_2)
 	local var_62_0 = arg_62_0._run_state:get_own_peer_id()
 
 	arg_62_0:_add_soft_currency_to_peer(var_62_0, arg_62_1)
@@ -891,17 +891,17 @@ function DeusRunController.on_soft_currency_picked_up(arg_62_0, arg_62_1, arg_62
 	end
 end
 
-function DeusRunController.get_player_soft_currency(arg_63_0, arg_63_1)
+DeusRunController.get_player_soft_currency = function (arg_63_0, arg_63_1)
 	return arg_63_0._run_state:get_player_soft_currency(arg_63_1, var_0_1)
 end
 
-function DeusRunController.rpc_deus_soft_currency_picked_up(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+DeusRunController.rpc_deus_soft_currency_picked_up = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	local var_64_0 = CHANNEL_TO_PEER_ID[arg_64_1]
 
 	arg_64_0:_add_soft_currency_to_peer(var_64_0, arg_64_2)
 end
 
-function DeusRunController._add_soft_currency_to_peer(arg_65_0, arg_65_1, arg_65_2)
+DeusRunController._add_soft_currency_to_peer = function (arg_65_0, arg_65_1, arg_65_2)
 	local var_65_0 = arg_65_0._run_state:get_coin_chests_collected(arg_65_1) + 1
 
 	arg_65_0._run_state:set_coin_chests_collected(arg_65_1, var_65_0)
@@ -912,11 +912,11 @@ function DeusRunController._add_soft_currency_to_peer(arg_65_0, arg_65_1, arg_65
 	arg_65_0:_add_coin_tracking_entry(arg_65_1, var_0_1, arg_65_2, "add coins")
 end
 
-function DeusRunController.grant_soft_currency(arg_66_0, arg_66_1, arg_66_2)
+DeusRunController.grant_soft_currency = function (arg_66_0, arg_66_1, arg_66_2)
 	arg_66_0:_add_soft_currency_to_peer(arg_66_1, arg_66_2)
 end
 
-function DeusRunController.get_shop_heal_data(arg_67_0)
+DeusRunController.get_shop_heal_data = function (arg_67_0)
 	local var_67_0 = arg_67_0._run_state:get_own_peer_id()
 	local var_67_1, var_67_2 = arg_67_0._run_state:get_player_profile(var_67_0, var_0_1)
 	local var_67_3 = arg_67_0._run_state:get_player_health_percentage(var_67_0, var_0_1, var_67_1, var_67_2)
@@ -929,7 +929,7 @@ function DeusRunController.get_shop_heal_data(arg_67_0)
 	return var_67_7, var_67_9
 end
 
-function DeusRunController.shop_buy_health(arg_68_0)
+DeusRunController.shop_buy_health = function (arg_68_0)
 	local var_68_0 = arg_68_0._run_state:get_own_peer_id()
 
 	if arg_68_0:_try_buy_health(var_68_0) and not arg_68_0._run_state:is_server() then
@@ -940,7 +940,7 @@ function DeusRunController.shop_buy_health(arg_68_0)
 	end
 end
 
-function DeusRunController.shop_buy_blessing(arg_69_0, arg_69_1)
+DeusRunController.shop_buy_blessing = function (arg_69_0, arg_69_1)
 	if arg_69_0:_try_buy_blessing(arg_69_0._run_state:get_own_peer_id(), arg_69_1) and not arg_69_0._run_state:is_server() then
 		local var_69_0 = arg_69_0._run_state:get_server_peer_id()
 		local var_69_1 = PEER_ID_TO_CHANNEL[var_69_0]
@@ -949,7 +949,7 @@ function DeusRunController.shop_buy_blessing(arg_69_0, arg_69_1)
 	end
 end
 
-function DeusRunController.shop_buy_power_up(arg_70_0, arg_70_1, arg_70_2)
+DeusRunController.shop_buy_power_up = function (arg_70_0, arg_70_1, arg_70_2)
 	local var_70_0 = arg_70_0:_try_buy_power_up(arg_70_0._run_state:get_own_peer_id(), arg_70_1, arg_70_2)
 
 	if var_70_0 and not arg_70_0._run_state:is_server() then
@@ -966,7 +966,7 @@ function DeusRunController.shop_buy_power_up(arg_70_0, arg_70_1, arg_70_2)
 	end
 end
 
-function DeusRunController._try_buy_health(arg_71_0, arg_71_1)
+DeusRunController._try_buy_health = function (arg_71_0, arg_71_1)
 	local var_71_0, var_71_1 = arg_71_0._run_state:get_player_profile(arg_71_1, var_0_1)
 	local var_71_2 = arg_71_0._run_state:get_player_health_percentage(arg_71_1, var_0_1, var_71_0, var_71_1)
 	local var_71_3 = arg_71_0._run_state:get_player_soft_currency(arg_71_1, var_0_1)
@@ -990,7 +990,7 @@ function DeusRunController._try_buy_health(arg_71_0, arg_71_1)
 	return false
 end
 
-function DeusRunController.rpc_deus_shop_heal_player(arg_72_0, arg_72_1)
+DeusRunController.rpc_deus_shop_heal_player = function (arg_72_0, arg_72_1)
 	local var_72_0 = CHANNEL_TO_PEER_ID[arg_72_1]
 
 	if not arg_72_0:_try_buy_health(var_72_0) then
@@ -1003,7 +1003,7 @@ function DeusRunController.rpc_deus_shop_heal_player(arg_72_0, arg_72_1)
 	end
 end
 
-function DeusRunController.rpc_deus_shop_blessing_selected(arg_73_0, arg_73_1, arg_73_2)
+DeusRunController.rpc_deus_shop_blessing_selected = function (arg_73_0, arg_73_1, arg_73_2)
 	local var_73_0 = CHANNEL_TO_PEER_ID[arg_73_1]
 
 	if not arg_73_0:_try_buy_blessing(var_73_0, arg_73_2) then
@@ -1015,7 +1015,7 @@ function DeusRunController.rpc_deus_shop_blessing_selected(arg_73_0, arg_73_1, a
 	end
 end
 
-function DeusRunController.rpc_deus_shop_power_up_bought(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4, arg_74_5)
+DeusRunController.rpc_deus_shop_power_up_bought = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4, arg_74_5)
 	local var_74_0 = CHANNEL_TO_PEER_ID[arg_74_1]
 
 	arg_74_5 = arg_74_5 / var_0_2
@@ -1035,21 +1035,21 @@ function DeusRunController.rpc_deus_shop_power_up_bought(arg_74_0, arg_74_1, arg
 	end
 end
 
-function DeusRunController.get_player_power_ups(arg_75_0, arg_75_1, arg_75_2)
+DeusRunController.get_player_power_ups = function (arg_75_0, arg_75_1, arg_75_2)
 	local var_75_0, var_75_1 = arg_75_0._run_state:get_player_profile(arg_75_1, arg_75_2)
 
 	return (arg_75_0._run_state:get_player_power_ups(arg_75_1, arg_75_2, var_75_0, var_75_1))
 end
 
-function DeusRunController.get_power_ups(arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
+DeusRunController.get_power_ups = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
 	return (arg_76_0._run_state:get_player_power_ups(arg_76_1, arg_76_2, arg_76_3, arg_76_4))
 end
 
-function DeusRunController.get_party_power_ups(arg_77_0)
+DeusRunController.get_party_power_ups = function (arg_77_0)
 	return (arg_77_0._run_state:get_party_power_ups())
 end
 
-function DeusRunController.generate_random_power_ups(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+DeusRunController.generate_random_power_ups = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 	arg_78_3 = arg_78_3 or "0"
 
 	local var_78_0 = arg_78_0._run_state:get_own_peer_id()
@@ -1068,12 +1068,12 @@ function DeusRunController.generate_random_power_ups(arg_78_0, arg_78_1, arg_78_
 end
 
 local function var_0_10(arg_79_0, arg_79_1)
-	return table.find_func(arg_79_0.rewards, function(arg_80_0, arg_80_1)
+	return table.find_func(arg_79_0.rewards, function (arg_80_0, arg_80_1)
 		return arg_80_1.name == arg_79_1.name and arg_80_1.rarity == arg_79_1.rarity
 	end)
 end
 
-function DeusRunController.add_power_ups(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+DeusRunController.add_power_ups = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 	if #arg_81_1 == 0 then
 		return
 	end
@@ -1138,7 +1138,7 @@ function DeusRunController.add_power_ups(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 	end
 end
 
-function DeusRunController.remove_power_ups(arg_82_0, arg_82_1, arg_82_2)
+DeusRunController.remove_power_ups = function (arg_82_0, arg_82_1, arg_82_2)
 	fassert(arg_82_2, "[DeusRunController:remove_power_ups] Invalid local_player_id")
 
 	local var_82_0 = arg_82_0._run_state:get_own_peer_id()
@@ -1197,7 +1197,7 @@ function DeusRunController.remove_power_ups(arg_82_0, arg_82_1, arg_82_2)
 	end
 end
 
-function DeusRunController._check_set_completed(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+DeusRunController._check_set_completed = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 	local var_83_0 = DeusPowerUpSetLookup[arg_83_1.rarity] and DeusPowerUpSetLookup[arg_83_1.rarity][arg_83_1.name]
 
 	if not var_83_0 then
@@ -1223,7 +1223,7 @@ function DeusRunController._check_set_completed(arg_83_0, arg_83_1, arg_83_2, ar
 			end
 
 			if var_83_2 == (var_83_1.num_required_pieces or #var_83_1.pieces) then
-				local var_83_4 = table.select_array(var_83_1.rewards, function(arg_84_0, arg_84_1)
+				local var_83_4 = table.select_array(var_83_1.rewards, function (arg_84_0, arg_84_1)
 					if not arg_83_0:has_power_up_by_name(arg_83_3, arg_84_1.name, arg_84_1.rarity) then
 						return DeusPowerUpUtils.generate_specific_power_up(arg_84_1.name, arg_84_1.rarity)
 					end
@@ -1237,7 +1237,7 @@ function DeusRunController._check_set_completed(arg_83_0, arg_83_1, arg_83_2, ar
 	end
 end
 
-function DeusRunController.try_grant_end_of_level_deus_power_ups(arg_85_0)
+DeusRunController.try_grant_end_of_level_deus_power_ups = function (arg_85_0)
 	local var_85_0 = arg_85_0:get_current_node_key()
 	local var_85_1 = arg_85_0:_get_graph_data()[var_85_0]
 	local var_85_2 = var_85_1.grant_random_power_up_count
@@ -1301,17 +1301,17 @@ function DeusRunController.try_grant_end_of_level_deus_power_ups(arg_85_0)
 	end
 end
 
-function DeusRunController.get_arena_belakor_node(arg_86_0)
+DeusRunController.get_arena_belakor_node = function (arg_86_0)
 	return arg_86_0._run_state:get_arena_belakor_node()
 end
 
-function DeusRunController.has_own_seen_arena_belakor_node(arg_87_0)
+DeusRunController.has_own_seen_arena_belakor_node = function (arg_87_0)
 	local var_87_0 = arg_87_0._run_state:get_own_peer_id()
 
 	return arg_87_0._run_state:get_seen_arena_belakor_node(var_87_0)
 end
 
-function DeusRunController.rpc_deus_add_power_ups(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+DeusRunController.rpc_deus_add_power_ups = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 	local var_88_0 = CHANNEL_TO_PEER_ID[arg_88_1]
 	local var_88_1 = DeusPowerUpUtils.encoded_string_to_power_ups(arg_88_2)
 	local var_88_2, var_88_3 = arg_88_0._run_state:get_player_profile(var_88_0, var_0_1)
@@ -1342,7 +1342,7 @@ function DeusRunController.rpc_deus_add_power_ups(arg_88_0, arg_88_1, arg_88_2, 
 	end
 end
 
-function DeusRunController.rpc_deus_remove_power_up(arg_89_0, arg_89_1, arg_89_2)
+DeusRunController.rpc_deus_remove_power_up = function (arg_89_0, arg_89_1, arg_89_2)
 	local var_89_0 = CHANNEL_TO_PEER_ID[arg_89_1]
 	local var_89_1, var_89_2 = arg_89_0._run_state:get_player_profile(var_89_0, var_0_1)
 	local var_89_3 = arg_89_0._run_state:get_player_power_ups(var_89_0, var_0_1, var_89_1, var_89_2)
@@ -1386,21 +1386,21 @@ function DeusRunController.rpc_deus_remove_power_up(arg_89_0, arg_89_1, arg_89_2
 	arg_89_0._run_state:set_player_power_ups(var_89_0, var_0_1, var_89_1, var_89_2, var_89_6)
 end
 
-function DeusRunController.get_blessings(arg_90_0)
+DeusRunController.get_blessings = function (arg_90_0)
 	return arg_90_0._run_state:get_blessings()
 end
 
-function DeusRunController.get_blessings_with_buyer(arg_91_0)
+DeusRunController.get_blessings_with_buyer = function (arg_91_0)
 	return arg_91_0._run_state:get_blessings_with_buyer()
 end
 
-function DeusRunController.has_blessing(arg_92_0, arg_92_1)
+DeusRunController.has_blessing = function (arg_92_0, arg_92_1)
 	local var_92_0 = arg_92_0._run_state:get_blessings()
 
 	return table.contains(var_92_0, arg_92_1)
 end
 
-function DeusRunController.generate_random_blessing_name(arg_93_0)
+DeusRunController.generate_random_blessing_name = function (arg_93_0)
 	local var_93_0
 	local var_93_1 = {}
 	local var_93_2 = arg_93_0._run_state:get_current_node_key()
@@ -1423,7 +1423,7 @@ function DeusRunController.generate_random_blessing_name(arg_93_0)
 	return var_93_0
 end
 
-function DeusRunController.remove_blessing(arg_94_0, arg_94_1)
+DeusRunController.remove_blessing = function (arg_94_0, arg_94_1)
 	local var_94_0 = arg_94_0._run_state:get_blessings_with_buyer()
 	local var_94_1 = true
 	local var_94_2 = table.clone(var_94_0, var_94_1)
@@ -1437,7 +1437,7 @@ function DeusRunController.remove_blessing(arg_94_0, arg_94_1)
 	arg_94_0._run_state:set_blessings_with_buyer(var_94_2)
 end
 
-function DeusRunController.has_power_up(arg_95_0, arg_95_1, arg_95_2)
+DeusRunController.has_power_up = function (arg_95_0, arg_95_1, arg_95_2)
 	local var_95_0, var_95_1 = arg_95_0._run_state:get_player_profile(arg_95_1, var_0_1)
 	local var_95_2 = arg_95_0._run_state:get_player_power_ups(arg_95_1, var_0_1, var_95_0, var_95_1)
 
@@ -1450,7 +1450,7 @@ function DeusRunController.has_power_up(arg_95_0, arg_95_1, arg_95_2)
 	return false
 end
 
-function DeusRunController.has_power_up_by_name(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+DeusRunController.has_power_up_by_name = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 	local var_96_0, var_96_1 = arg_96_0._run_state:get_player_profile(arg_96_1, var_0_1)
 	local var_96_2 = arg_96_0._run_state:get_player_power_ups(arg_96_1, var_0_1, var_96_0, var_96_1)
 
@@ -1465,7 +1465,7 @@ function DeusRunController.has_power_up_by_name(arg_96_0, arg_96_1, arg_96_2, ar
 	return false
 end
 
-function DeusRunController.reached_max_power_ups(arg_97_0, arg_97_1, arg_97_2)
+DeusRunController.reached_max_power_ups = function (arg_97_0, arg_97_1, arg_97_2)
 	local var_97_0, var_97_1 = arg_97_0._run_state:get_player_profile(arg_97_1, var_0_1)
 	local var_97_2 = arg_97_0._run_state:get_player_power_ups(arg_97_1, var_0_1, var_97_0, var_97_1)
 	local var_97_3 = DeusPowerUpTemplates[arg_97_2].max_amount
@@ -1484,7 +1484,7 @@ function DeusRunController.reached_max_power_ups(arg_97_0, arg_97_1, arg_97_2)
 	return false
 end
 
-function DeusRunController._blessings_handle_level_won(arg_98_0)
+DeusRunController._blessings_handle_level_won = function (arg_98_0)
 	local var_98_0 = arg_98_0._run_state:get_blessings_with_buyer()
 	local var_98_1 = {}
 
@@ -1510,7 +1510,7 @@ function DeusRunController._blessings_handle_level_won(arg_98_0)
 	arg_98_0._run_state:set_blessings_with_buyer(var_98_1)
 end
 
-function DeusRunController._try_buy_blessing(arg_99_0, arg_99_1, arg_99_2)
+DeusRunController._try_buy_blessing = function (arg_99_0, arg_99_1, arg_99_2)
 	local var_99_0 = DeusBlessingSettings[arg_99_2]
 
 	fassert(var_99_0, "No blessing with the name [%s] was found, check the blessings settings", arg_99_2)
@@ -1641,7 +1641,7 @@ function DeusRunController._try_buy_blessing(arg_99_0, arg_99_1, arg_99_2)
 	return true
 end
 
-function DeusRunController._try_buy_power_up(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
+DeusRunController._try_buy_power_up = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 	if arg_102_0:has_power_up(arg_102_1, arg_102_2.client_id) then
 		return false
 	end
@@ -1681,7 +1681,7 @@ function DeusRunController._try_buy_power_up(arg_102_0, arg_102_1, arg_102_2, ar
 	return true
 end
 
-function DeusRunController.grant_party_power_up(arg_103_0, arg_103_1, arg_103_2)
+DeusRunController.grant_party_power_up = function (arg_103_0, arg_103_1, arg_103_2)
 	if not arg_103_0._run_state:is_server() then
 		ferror("DeusRunController:grant_party_power_up is designed to only be called on the server")
 	end
@@ -1698,89 +1698,89 @@ function DeusRunController.grant_party_power_up(arg_103_0, arg_103_1, arg_103_2)
 	return var_103_0
 end
 
-function DeusRunController.get_player_profile(arg_104_0, arg_104_1, arg_104_2)
+DeusRunController.get_player_profile = function (arg_104_0, arg_104_1, arg_104_2)
 	local var_104_0, var_104_1 = arg_104_0._run_state:get_player_profile(arg_104_1, arg_104_2)
 
 	return var_104_0, var_104_1
 end
 
-function DeusRunController.get_player_level(arg_105_0, arg_105_1)
+DeusRunController.get_player_level = function (arg_105_0, arg_105_1)
 	return arg_105_0._run_state:get_player_level(arg_105_1)
 end
 
-function DeusRunController.get_versus_player_level(arg_106_0, arg_106_1)
+DeusRunController.get_versus_player_level = function (arg_106_0, arg_106_1)
 	return arg_106_0._run_state:get_versus_player_level(arg_106_1)
 end
 
-function DeusRunController.get_player_name(arg_107_0, arg_107_1)
+DeusRunController.get_player_name = function (arg_107_0, arg_107_1)
 	return arg_107_0._run_state:get_player_name(arg_107_1)
 end
 
-function DeusRunController.get_player_frame(arg_108_0, arg_108_1)
+DeusRunController.get_player_frame = function (arg_108_0, arg_108_1)
 	return arg_108_0._run_state:get_player_frame(arg_108_1)
 end
 
-function DeusRunController.get_player_health_state(arg_109_0, arg_109_1, arg_109_2)
+DeusRunController.get_player_health_state = function (arg_109_0, arg_109_1, arg_109_2)
 	local var_109_0, var_109_1 = arg_109_0._run_state:get_player_profile(arg_109_1, arg_109_2)
 
 	return arg_109_0._run_state:get_player_health_state(arg_109_1, arg_109_2, var_109_0, var_109_1)
 end
 
-function DeusRunController.get_player_health_percentage(arg_110_0, arg_110_1, arg_110_2)
+DeusRunController.get_player_health_percentage = function (arg_110_0, arg_110_1, arg_110_2)
 	local var_110_0, var_110_1 = arg_110_0._run_state:get_player_profile(arg_110_1, arg_110_2)
 
 	return arg_110_0._run_state:get_player_health_percentage(arg_110_1, arg_110_2, var_110_0, var_110_1)
 end
 
-function DeusRunController.get_player_melee_ammo(arg_111_0, arg_111_1, arg_111_2)
+DeusRunController.get_player_melee_ammo = function (arg_111_0, arg_111_1, arg_111_2)
 	local var_111_0, var_111_1 = arg_111_0._run_state:get_player_profile(arg_111_1, arg_111_2)
 
 	return arg_111_0._run_state:get_player_melee_ammo(arg_111_1, arg_111_2, var_111_0, var_111_1)
 end
 
-function DeusRunController.get_player_ranged_ammo(arg_112_0, arg_112_1, arg_112_2)
+DeusRunController.get_player_ranged_ammo = function (arg_112_0, arg_112_1, arg_112_2)
 	local var_112_0, var_112_1 = arg_112_0._run_state:get_player_profile(arg_112_1, arg_112_2)
 
 	return arg_112_0._run_state:get_player_ranged_ammo(arg_112_1, arg_112_2, var_112_0, var_112_1)
 end
 
-function DeusRunController.get_player_health_percentage(arg_113_0, arg_113_1, arg_113_2)
+DeusRunController.get_player_health_percentage = function (arg_113_0, arg_113_1, arg_113_2)
 	local var_113_0, var_113_1 = arg_113_0._run_state:get_player_profile(arg_113_1, arg_113_2)
 
 	return arg_113_0._run_state:get_player_health_percentage(arg_113_1, arg_113_2, var_113_0, var_113_1)
 end
 
-function DeusRunController.get_player_consumable_healthkit_slot(arg_114_0, arg_114_1, arg_114_2)
+DeusRunController.get_player_consumable_healthkit_slot = function (arg_114_0, arg_114_1, arg_114_2)
 	local var_114_0, var_114_1 = arg_114_0._run_state:get_player_profile(arg_114_1, arg_114_2)
 
 	return arg_114_0._run_state:get_player_consumable_healthkit_slot(arg_114_1, arg_114_2, var_114_0, var_114_1)
 end
 
-function DeusRunController.get_player_consumable_potion_slot(arg_115_0, arg_115_1, arg_115_2)
+DeusRunController.get_player_consumable_potion_slot = function (arg_115_0, arg_115_1, arg_115_2)
 	local var_115_0, var_115_1 = arg_115_0._run_state:get_player_profile(arg_115_1, arg_115_2)
 
 	return arg_115_0._run_state:get_player_consumable_potion_slot(arg_115_1, arg_115_2, var_115_0, var_115_1)
 end
 
-function DeusRunController.get_player_additional_items(arg_116_0, arg_116_1, arg_116_2)
+DeusRunController.get_player_additional_items = function (arg_116_0, arg_116_1, arg_116_2)
 	local var_116_0, var_116_1 = arg_116_0._run_state:get_player_profile(arg_116_1, arg_116_2)
 
 	return arg_116_0._run_state:get_player_additional_items(arg_116_1, arg_116_2, var_116_0, var_116_1)
 end
 
-function DeusRunController.get_player_consumable_grenade_slot(arg_117_0, arg_117_1, arg_117_2)
+DeusRunController.get_player_consumable_grenade_slot = function (arg_117_0, arg_117_1, arg_117_2)
 	local var_117_0, var_117_1 = arg_117_0._run_state:get_player_profile(arg_117_1, arg_117_2)
 
 	return arg_117_0._run_state:get_player_consumable_grenade_slot(arg_117_1, arg_117_2, var_117_0, var_117_1)
 end
 
-function DeusRunController.get_player_persistent_buffs(arg_118_0, arg_118_1, arg_118_2)
+DeusRunController.get_player_persistent_buffs = function (arg_118_0, arg_118_1, arg_118_2)
 	local var_118_0, var_118_1 = arg_118_0._run_state:get_player_profile(arg_118_1, arg_118_2)
 
 	return arg_118_0._run_state:get_player_persistent_buffs(arg_118_1, arg_118_2, var_118_0, var_118_1)
 end
 
-function DeusRunController.restore_game_mode_data(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+DeusRunController.restore_game_mode_data = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
 	local var_119_0 = {}
 
 	if not arg_119_0._run_state:get_player_spawned_once(arg_119_1, arg_119_2, arg_119_3, arg_119_4) then
@@ -1822,7 +1822,7 @@ function DeusRunController.restore_game_mode_data(arg_119_0, arg_119_1, arg_119_
 	return var_119_0
 end
 
-function DeusRunController.save_game_mode_data(arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4, arg_120_5)
+DeusRunController.save_game_mode_data = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4, arg_120_5)
 	if arg_120_0._destroyed then
 		return
 	end
@@ -1918,7 +1918,7 @@ function DeusRunController.save_game_mode_data(arg_120_0, arg_120_1, arg_120_2, 
 	end
 end
 
-function DeusRunController.save_persistent_buffs(arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5)
+DeusRunController.save_persistent_buffs = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5)
 	if arg_121_0._destroyed then
 		return
 	end
@@ -1941,11 +1941,11 @@ function DeusRunController.save_persistent_buffs(arg_121_0, arg_121_1, arg_121_2
 	end
 end
 
-function DeusRunController.get_graph_data(arg_122_0)
+DeusRunController.get_graph_data = function (arg_122_0)
 	return arg_122_0:_get_graph_data()
 end
 
-function DeusRunController._get_graph_data(arg_123_0)
+DeusRunController._get_graph_data = function (arg_123_0)
 	local var_123_0 = arg_123_0._run_state:get_arena_belakor_node()
 
 	if var_123_0 and not arg_123_0._swapped_arena_belakor_node then
@@ -1968,33 +1968,33 @@ function DeusRunController._get_graph_data(arg_123_0)
 	return arg_123_0._path_graph
 end
 
-function DeusRunController.set_current_node_key(arg_124_0, arg_124_1)
+DeusRunController.set_current_node_key = function (arg_124_0, arg_124_1)
 	arg_124_0._run_state:set_current_node_key(arg_124_1)
 end
 
-function DeusRunController.get_current_node_key(arg_125_0)
+DeusRunController.get_current_node_key = function (arg_125_0)
 	return arg_125_0._run_state:get_current_node_key()
 end
 
-function DeusRunController.get_coins_spent(arg_126_0)
+DeusRunController.get_coins_spent = function (arg_126_0)
 	return arg_126_0._run_state:get_coins_spent()
 end
 
-function DeusRunController.get_cursed_chests_purified(arg_127_0, arg_127_1)
+DeusRunController.get_cursed_chests_purified = function (arg_127_0, arg_127_1)
 	return arg_127_0._run_state:get_cursed_chests_purified(arg_127_1)
 end
 
-function DeusRunController.get_current_node(arg_128_0)
+DeusRunController.get_current_node = function (arg_128_0)
 	local var_128_0 = arg_128_0:get_current_node_key()
 
 	return arg_128_0:_get_graph_data()[var_128_0]
 end
 
-function DeusRunController.get_node(arg_129_0, arg_129_1)
+DeusRunController.get_node = function (arg_129_0, arg_129_1)
 	return arg_129_0:_get_graph_data()[arg_129_1]
 end
 
-function DeusRunController.can_spawn_belakor_locus(arg_130_0)
+DeusRunController.can_spawn_belakor_locus = function (arg_130_0)
 	local var_130_0 = arg_130_0:_get_graph_data()[arg_130_0._run_state:get_current_node_key()]
 
 	if var_130_0.base_level == "arena_belakor" then
@@ -2008,7 +2008,7 @@ function DeusRunController.can_spawn_belakor_locus(arg_130_0)
 	return var_130_0.possible_arena_belakor_nodes ~= nil
 end
 
-function DeusRunController.unlock_arena_belakor(arg_131_0)
+DeusRunController.unlock_arena_belakor = function (arg_131_0)
 	if not arg_131_0._run_state:is_server() then
 		ferror("DeusRunController:unlock_arena_belakor is designed to only be called on the server")
 	end
@@ -2025,7 +2025,7 @@ function DeusRunController.unlock_arena_belakor(arg_131_0)
 	end
 end
 
-function DeusRunController.get_weapon_pool(arg_132_0)
+DeusRunController.get_weapon_pool = function (arg_132_0)
 	local var_132_0 = arg_132_0:get_base_weapon_pool()
 	local var_132_1 = table.clone(var_132_0)
 	local var_132_2 = arg_132_0._run_state:get_own_weapon_pool_excludes()
@@ -2067,7 +2067,7 @@ function DeusRunController.get_weapon_pool(arg_132_0)
 	return var_132_1
 end
 
-function DeusRunController.get_slot_chances(arg_133_0)
+DeusRunController.get_slot_chances = function (arg_133_0)
 	local var_133_0 = DeusSlotChance.melee
 	local var_133_1 = DeusSlotChance.ranged
 	local var_133_2 = DeusSlotChance.slot_chance_multiplier
@@ -2087,11 +2087,11 @@ function DeusRunController.get_slot_chances(arg_133_0)
 	return var_133_0, var_133_1
 end
 
-function DeusRunController.get_own_weapon_pool_excludes(arg_134_0)
+DeusRunController.get_own_weapon_pool_excludes = function (arg_134_0)
 	return arg_134_0._run_state:get_own_weapon_pool_excludes()
 end
 
-function DeusRunController.get_base_weapon_pool(arg_135_0)
+DeusRunController.get_base_weapon_pool = function (arg_135_0)
 	local var_135_0 = arg_135_0._run_state:get_own_peer_id()
 	local var_135_1, var_135_2 = arg_135_0._run_state:get_player_profile(var_135_0, var_0_1)
 	local var_135_3 = SPProfiles[var_135_1].careers[var_135_2].name
@@ -2112,7 +2112,7 @@ function DeusRunController.get_base_weapon_pool(arg_135_0)
 	return var_135_4.base_weapon_pool
 end
 
-function DeusRunController.purchase_chest(arg_136_0, arg_136_1, arg_136_2, arg_136_3)
+DeusRunController.purchase_chest = function (arg_136_0, arg_136_1, arg_136_2, arg_136_3)
 	local var_136_0 = arg_136_0._run_state:get_own_peer_id()
 	local var_136_1 = arg_136_0._run_state:get_player_soft_currency(var_136_0, var_0_1)
 
@@ -2141,11 +2141,11 @@ function DeusRunController.purchase_chest(arg_136_0, arg_136_1, arg_136_2, arg_1
 	return true
 end
 
-function DeusRunController.remove_weapon_from_pool(arg_137_0, arg_137_1, arg_137_2)
+DeusRunController.remove_weapon_from_pool = function (arg_137_0, arg_137_1, arg_137_2)
 	arg_137_0:_remove_weapon_from_pool(arg_137_1, arg_137_2)
 end
 
-function DeusRunController._remove_weapon_from_pool(arg_138_0, arg_138_1, arg_138_2)
+DeusRunController._remove_weapon_from_pool = function (arg_138_0, arg_138_1, arg_138_2)
 	local var_138_0 = arg_138_0._run_state:get_own_weapon_pool_excludes()
 	local var_138_1 = DeusWeapons[arg_138_2].base_item
 	local var_138_2 = RarityUtils.get_lower_rarities(arg_138_1)
@@ -2160,7 +2160,7 @@ function DeusRunController._remove_weapon_from_pool(arg_138_0, arg_138_1, arg_13
 	arg_138_0._run_state:set_own_weapon_pool_excludes(var_138_0)
 end
 
-function DeusRunController.rpc_deus_chest_unlocked(arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
+DeusRunController.rpc_deus_chest_unlocked = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
 	local var_139_0 = CHANNEL_TO_PEER_ID[arg_139_1]
 	local var_139_1 = NetworkLookup.rarities[arg_139_3]
 	local var_139_2 = NetworkLookup.deus_chest_types[arg_139_4]
@@ -2180,7 +2180,7 @@ function DeusRunController.rpc_deus_chest_unlocked(arg_139_0, arg_139_1, arg_139
 	arg_139_0:_add_coin_tracking_entry(var_139_0, var_0_1, -arg_139_2, var_139_4)
 end
 
-function DeusRunController._record_chest_purchased_for_tracking(arg_140_0, arg_140_1, arg_140_2)
+DeusRunController._record_chest_purchased_for_tracking = function (arg_140_0, arg_140_1, arg_140_2)
 	if arg_140_2 == DEUS_CHEST_TYPES.power_up then
 		local var_140_0 = arg_140_0._run_state:get_power_up_chests_used() + 1
 
@@ -2213,15 +2213,15 @@ function DeusRunController._record_chest_purchased_for_tracking(arg_140_0, arg_1
 	end
 end
 
-function DeusRunController.set_twitch_level_vote(arg_141_0, arg_141_1)
+DeusRunController.set_twitch_level_vote = function (arg_141_0, arg_141_1)
 	arg_141_0._run_state:set_twitch_level_vote(arg_141_1)
 end
 
-function DeusRunController.get_twitch_level_vote(arg_142_0)
+DeusRunController.get_twitch_level_vote = function (arg_142_0)
 	return arg_142_0._run_state:get_twitch_level_vote()
 end
 
-function DeusRunController.request_standard_twitch_level_vote(arg_143_0, arg_143_1)
+DeusRunController.request_standard_twitch_level_vote = function (arg_143_0, arg_143_1)
 	local var_143_0 = arg_143_0:get_graph_data()
 	local var_143_1 = arg_143_0:get_current_node().next
 	local var_143_2 = var_143_0[var_143_1[1]]
@@ -2235,11 +2235,11 @@ function DeusRunController.request_standard_twitch_level_vote(arg_143_0, arg_143
 	arg_143_1:register_vote(var_143_5, "standard_vote", nil, var_143_4, true)
 end
 
-function DeusRunController.map_finished_voting(arg_144_0)
+DeusRunController.map_finished_voting = function (arg_144_0)
 	arg_144_0._run_state:set_twitch_level_vote(nil)
 end
 
-function DeusRunController._add_coin_tracking_entry(arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
+DeusRunController._add_coin_tracking_entry = function (arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
 	local var_145_0 = arg_145_0._run_state
 
 	if not var_145_0:is_server() then
@@ -2262,15 +2262,15 @@ function DeusRunController._add_coin_tracking_entry(arg_145_0, arg_145_1, arg_14
 	end
 end
 
-function DeusRunController.handle_level_start(arg_146_0)
+DeusRunController.handle_level_start = function (arg_146_0)
 	arg_146_0._level_start_time = os.time()
 end
 
-function DeusRunController.handle_start_next_round(arg_147_0)
+DeusRunController.handle_start_next_round = function (arg_147_0)
 	arg_147_0._deus_weapon_chest_distribution = nil
 end
 
-function DeusRunController.get_deus_weapon_chest_type(arg_148_0)
+DeusRunController.get_deus_weapon_chest_type = function (arg_148_0)
 	local var_148_0 = arg_148_0._deus_weapon_chest_distribution
 
 	if not var_148_0 or #var_148_0 == 0 then
@@ -2304,7 +2304,7 @@ function DeusRunController.get_deus_weapon_chest_type(arg_148_0)
 	return var_148_7
 end
 
-function DeusRunController.get_level_ended_tracking_data(arg_149_0, arg_149_1, arg_149_2, arg_149_3)
+DeusRunController.get_level_ended_tracking_data = function (arg_149_0, arg_149_1, arg_149_2, arg_149_3)
 	local var_149_0 = arg_149_0._level_start_time
 
 	fassert(var_149_0, " DeusRunController:handle_level_start was never called")
@@ -2338,7 +2338,7 @@ function DeusRunController.get_level_ended_tracking_data(arg_149_0, arg_149_1, a
 	}
 end
 
-function DeusRunController.get_level_started_tracking_data(arg_150_0, arg_150_1, arg_150_2)
+DeusRunController.get_level_started_tracking_data = function (arg_150_0, arg_150_1, arg_150_2)
 	local var_150_0 = arg_150_0._run_state
 	local var_150_1 = var_150_0:get_current_node_key()
 	local var_150_2 = arg_150_0:_get_graph_data()[var_150_1]
@@ -2361,7 +2361,7 @@ function DeusRunController.get_level_started_tracking_data(arg_150_0, arg_150_1,
 	}
 end
 
-function DeusRunController.get_run_tracking_data(arg_151_0, arg_151_1)
+DeusRunController.get_run_tracking_data = function (arg_151_0, arg_151_1)
 	local var_151_0 = arg_151_0._run_start_time
 
 	fassert(var_151_0, " DeusRunController:setup_run was never called")

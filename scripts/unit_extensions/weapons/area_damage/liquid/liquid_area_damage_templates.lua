@@ -193,7 +193,7 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function(arg_1_0, arg_1_1, arg_1_2)
+		hit_player_function = function (arg_1_0, arg_1_1, arg_1_2)
 			if Unit.alive(arg_1_2) then
 				local var_1_0 = BLACKBOARDS[arg_1_2]
 
@@ -502,7 +502,7 @@ LiquidAreaDamageTemplates.templates = {
 				2.8
 			}
 		},
-		hit_player_function = function(arg_2_0, arg_2_1, arg_2_2)
+		hit_player_function = function (arg_2_0, arg_2_1, arg_2_2)
 			if Unit.alive(arg_2_2) then
 				local var_2_0 = BLACKBOARDS[arg_2_2]
 
@@ -607,7 +607,7 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function(arg_3_0, arg_3_1)
+		hit_player_function = function (arg_3_0, arg_3_1)
 			local var_3_0 = {
 				"nurgle_bathed_all",
 				"nurgle_bathed_all_cata"
@@ -749,7 +749,7 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function(arg_4_0, arg_4_1, arg_4_2)
+		hit_player_function = function (arg_4_0, arg_4_1, arg_4_2)
 			if Unit.alive(arg_4_2) then
 				BLACKBOARDS[arg_4_2].has_dealt_burn_damage = true
 			end
@@ -1099,23 +1099,23 @@ LiquidAreaDamageTemplates.templates.troll_chief_vomit.fx_name_filled = "fx/wpnfx
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near = table.clone(LiquidAreaDamageTemplates.templates.bile_troll_vomit_near)
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near.fx_name_filled = "fx/wpnfx_troll_chief_vomit_impact_01"
 
-function LiquidAreaDamageTemplates.pour_spread(arg_5_0)
+LiquidAreaDamageTemplates.pour_spread = function (arg_5_0)
 	return 1
 end
 
-function LiquidAreaDamageTemplates.default_spread(arg_6_0)
+LiquidAreaDamageTemplates.default_spread = function (arg_6_0)
 	return math.max((1 - arg_6_0 / math.pi)^2 - 0.45, 0)
 end
 
-function LiquidAreaDamageTemplates.forward_spread(arg_7_0)
+LiquidAreaDamageTemplates.forward_spread = function (arg_7_0)
 	return math.max(1 - arg_7_0 / (math.pi * 0.25), 0)
 end
 
-function LiquidAreaDamageTemplates.flamethrower_spread(arg_8_0)
+LiquidAreaDamageTemplates.flamethrower_spread = function (arg_8_0)
 	return math.max((1 - arg_8_0 / math.pi)^2, 0)
 end
 
-function LiquidAreaDamageTemplates.bile_troll_vomit_init(arg_9_0, arg_9_1)
+LiquidAreaDamageTemplates.bile_troll_vomit_init = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._source_attacker_unit
 
 	if HEALTH_ALIVE[var_9_0] then
@@ -1133,7 +1133,7 @@ function LiquidAreaDamageTemplates.bile_troll_vomit_init(arg_9_0, arg_9_1)
 	end
 end
 
-function LiquidAreaDamageTemplates.vs_bile_troll_vomit_init(arg_10_0, arg_10_1)
+LiquidAreaDamageTemplates.vs_bile_troll_vomit_init = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._source_attacker_unit
 
 	if HEALTH_ALIVE[var_10_0] then
@@ -1178,7 +1178,7 @@ function LiquidAreaDamageTemplates.vs_bile_troll_vomit_init(arg_10_0, arg_10_1)
 	end
 end
 
-function LiquidAreaDamageTemplates.nurgle_noxious_init(arg_11_0, arg_11_1)
+LiquidAreaDamageTemplates.nurgle_noxious_init = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._source_attacker_unit
 
 	if HEALTH_ALIVE[var_11_0] then
@@ -1206,7 +1206,7 @@ function LiquidAreaDamageTemplates.nurgle_noxious_init(arg_11_0, arg_11_1)
 	end
 end
 
-function LiquidAreaDamageTemplates.bile_troll_vomit_update(arg_12_0, arg_12_1, arg_12_2)
+LiquidAreaDamageTemplates.bile_troll_vomit_update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._vomit_unit
 	local var_12_1 = arg_12_0._source_attacker_unit
 	local var_12_2 = HEALTH_ALIVE[var_12_1]
@@ -1225,7 +1225,7 @@ function LiquidAreaDamageTemplates.bile_troll_vomit_update(arg_12_0, arg_12_1, a
 	end
 end
 
-function LiquidAreaDamageTemplates.vs_bile_troll_vomit_update(arg_13_0, arg_13_1, arg_13_2)
+LiquidAreaDamageTemplates.vs_bile_troll_vomit_update = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._vomit_unit
 	local var_13_1 = arg_13_0._source_attacker_unit
 	local var_13_2 = HEALTH_ALIVE[var_13_1]
@@ -1246,10 +1246,10 @@ function LiquidAreaDamageTemplates.vs_bile_troll_vomit_update(arg_13_0, arg_13_1
 	end
 end
 
-function LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition(arg_14_0)
+LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition = function (arg_14_0)
 	return not ScriptUnit.has_extension(arg_14_0, "buff_system"):has_buff_type("troll_bile_face")
 end
 
-function LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition(arg_15_0)
+LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition = function (arg_15_0)
 	return not ScriptUnit.has_extension(arg_15_0, "buff_system"):has_buff_type("stormfiend_warpfire_face")
 end

@@ -13,7 +13,7 @@ local var_0_1 = {
 	"PlayerUnitCosmeticExtension"
 }
 
-function CosmeticSystem.init(arg_1_0, arg_1_1, arg_1_2)
+CosmeticSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	table.dump(arg_1_1, "entity_system_creation_context")
 	CosmeticSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
@@ -25,19 +25,19 @@ function CosmeticSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._emote_states = {}
 end
 
-function CosmeticSystem.destroy(arg_2_0)
+CosmeticSystem.destroy = function (arg_2_0)
 	arg_2_0._network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0._network_event_delegate = nil
 end
 
-function CosmeticSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CosmeticSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_4.is_server = arg_3_0.is_server
 
 	return CosmeticSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
-function CosmeticSystem.get_equipped_frame(arg_4_0, arg_4_1)
+CosmeticSystem.get_equipped_frame = function (arg_4_0, arg_4_1)
 	local var_4_0 = "default"
 
 	if Unit.alive(arg_4_1) then
@@ -47,7 +47,7 @@ function CosmeticSystem.get_equipped_frame(arg_4_0, arg_4_1)
 	return var_4_0
 end
 
-function CosmeticSystem.set_equipped_frame(arg_5_0, arg_5_1, arg_5_2)
+CosmeticSystem.set_equipped_frame = function (arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.extension(arg_5_1, "cosmetic_system"):set_equipped_frame(arg_5_2)
 
 	local var_5_0 = arg_5_0.unit_storage:go_id(arg_5_1)
@@ -60,7 +60,7 @@ function CosmeticSystem.set_equipped_frame(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CosmeticSystem.rpc_set_equipped_frame(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+CosmeticSystem.rpc_set_equipped_frame = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0.is_server then
 		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
 
@@ -75,7 +75,7 @@ function CosmeticSystem.rpc_set_equipped_frame(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	end
 end
 
-function CosmeticSystem.rpc_server_request_emote(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+CosmeticSystem.rpc_server_request_emote = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	fassert(arg_7_0.is_server, "Error! Only the server should process emote requests.")
 
 	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_2)
@@ -96,7 +96,7 @@ function CosmeticSystem.rpc_server_request_emote(arg_7_0, arg_7_1, arg_7_2, arg_
 	end
 end
 
-function CosmeticSystem.rpc_server_cancel_emote(arg_8_0, arg_8_1, arg_8_2)
+CosmeticSystem.rpc_server_cancel_emote = function (arg_8_0, arg_8_1, arg_8_2)
 	fassert(arg_8_0.is_server, "Error! Only the server should cancel emotes.")
 
 	local var_8_0 = arg_8_0.unit_storage:unit(arg_8_2)
@@ -112,7 +112,7 @@ function CosmeticSystem.rpc_server_cancel_emote(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._emote_states[arg_8_2] = nil
 end
 
-function CosmeticSystem.hot_join_sync(arg_9_0, arg_9_1)
+CosmeticSystem.hot_join_sync = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.network_transmit
 	local var_9_1 = arg_9_0.unit_storage
 

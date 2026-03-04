@@ -71,12 +71,12 @@ local var_0_3 = "player"
 
 StatisticsDatabase = class(StatisticsDatabase)
 
-function StatisticsDatabase.init(arg_4_0)
+StatisticsDatabase.init = function (arg_4_0)
 	arg_4_0.statistics = {}
 	arg_4_0.local_statistics = {}
 end
 
-function StatisticsDatabase.destroy(arg_5_0)
+StatisticsDatabase.destroy = function (arg_5_0)
 	local var_5_0 = next(arg_5_0.statistics)
 
 	fassert(var_5_0 == nil, "Destroying stats manager without properly cleaning up first. Stat id %s not unregistered.", tostring(var_5_0))
@@ -91,19 +91,19 @@ local var_0_4 = {
 	"rpc_increment_stat_party"
 }
 
-function StatisticsDatabase.register_network_event_delegate(arg_6_0, arg_6_1)
+StatisticsDatabase.register_network_event_delegate = function (arg_6_0, arg_6_1)
 	arg_6_0.network_event_delegate = arg_6_1
 
 	arg_6_1:register(arg_6_0, unpack(var_0_4))
 end
 
-function StatisticsDatabase.unregister_network_event_delegate(arg_7_0)
+StatisticsDatabase.unregister_network_event_delegate = function (arg_7_0)
 	arg_7_0.network_event_delegate:unregister(arg_7_0)
 
 	arg_7_0.network_event_delegate = nil
 end
 
-function StatisticsDatabase._init_backend_stat(arg_8_0, arg_8_1, arg_8_2)
+StatisticsDatabase._init_backend_stat = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0
 
 	if arg_8_1.name then
@@ -130,7 +130,7 @@ function StatisticsDatabase._init_backend_stat(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_0
 end
 
-function StatisticsDatabase._init_stat(arg_9_0, arg_9_1, arg_9_2)
+StatisticsDatabase._init_stat = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = table.clone(arg_9_1)
 
 	var_9_0.default_value = var_9_0.value
@@ -143,7 +143,7 @@ function StatisticsDatabase._init_stat(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_0
 end
 
-function StatisticsDatabase.register(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+StatisticsDatabase.register = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	var_0_2("StatisticsDatabase: Registering id=%s as %s", tostring(arg_10_1), arg_10_2)
 	assert(arg_10_0.statistics[arg_10_1] == nil, "There were statistics for %s already.", tostring(arg_10_1))
 
@@ -157,7 +157,7 @@ function StatisticsDatabase.register(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_0.statistics[arg_10_1] = var_10_1 or {}
 end
 
-function StatisticsDatabase.unregister(arg_11_0, arg_11_1)
+StatisticsDatabase.unregister = function (arg_11_0, arg_11_1)
 	var_0_2("StatisticsDatabase: Unregistering id=%s", tostring(arg_11_1))
 
 	local var_11_0 = Managers.state.event
@@ -169,7 +169,7 @@ function StatisticsDatabase.unregister(arg_11_0, arg_11_1)
 	arg_11_0.statistics[arg_11_1] = nil
 end
 
-function StatisticsDatabase.is_registered(arg_12_0, arg_12_1)
+StatisticsDatabase.is_registered = function (arg_12_0, arg_12_1)
 	return arg_12_0.statistics[arg_12_1]
 end
 
@@ -267,7 +267,7 @@ local function var_0_10(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17
 	arg_17_3[arg_17_4] = nil
 end
 
-function StatisticsDatabase.hot_join_sync(arg_18_0, arg_18_1)
+StatisticsDatabase.hot_join_sync = function (arg_18_0, arg_18_1)
 	for iter_18_0, iter_18_1 in pairs(arg_18_0.statistics) do
 		local var_18_0 = Managers.player:player_from_stats_id(iter_18_0)
 
@@ -275,7 +275,7 @@ function StatisticsDatabase.hot_join_sync(arg_18_0, arg_18_1)
 	end
 end
 
-function StatisticsDatabase._create_stat(arg_19_0, arg_19_1, arg_19_2, ...)
+StatisticsDatabase._create_stat = function (arg_19_0, arg_19_1, arg_19_2, ...)
 	local var_19_0 = arg_19_1
 	local var_19_1 = StatisticsDefinitions[var_0_3]
 
@@ -306,7 +306,7 @@ function StatisticsDatabase._create_stat(arg_19_0, arg_19_1, arg_19_2, ...)
 	return var_19_6
 end
 
-function StatisticsDatabase._get_or_create_stat(arg_20_0, arg_20_1, arg_20_2, ...)
+StatisticsDatabase._get_or_create_stat = function (arg_20_0, arg_20_1, arg_20_2, ...)
 	local var_20_0 = arg_20_0.statistics[arg_20_1]
 	local var_20_1 = var_20_0
 	local var_20_2 = select("#", ...) - (arg_20_2 or 0)
@@ -338,7 +338,7 @@ local function var_0_11(arg_21_0)
 	end
 end
 
-function StatisticsDatabase.reset_session_stats(arg_22_0)
+StatisticsDatabase.reset_session_stats = function (arg_22_0)
 	var_0_2("StatisticsDatabase: Resetting all session stats")
 
 	for iter_22_0, iter_22_1 in pairs(arg_22_0.statistics) do
@@ -362,7 +362,7 @@ local function var_0_12(arg_23_0, arg_23_1)
 	end
 end
 
-function StatisticsDatabase.generate_backend_stats(arg_24_0, arg_24_1, arg_24_2)
+StatisticsDatabase.generate_backend_stats = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.statistics[arg_24_1]
 
 	assert(table.is_empty(arg_24_2), "Got non-empty table")
@@ -371,7 +371,7 @@ function StatisticsDatabase.generate_backend_stats(arg_24_0, arg_24_1, arg_24_2)
 	return arg_24_2
 end
 
-function StatisticsDatabase.increment_stat(arg_25_0, arg_25_1, ...)
+StatisticsDatabase.increment_stat = function (arg_25_0, arg_25_1, ...)
 	local var_25_0 = arg_25_0:_get_or_create_stat(arg_25_1, 0, ...)
 
 	var_25_0.value = var_25_0.value + 1
@@ -390,7 +390,7 @@ function StatisticsDatabase.increment_stat(arg_25_0, arg_25_1, ...)
 	var_0_2("StatisticsDatabase: Incremented stat %s for id=%s to %f", var_25_0.name, tostring(arg_25_1), var_25_0.value)
 end
 
-function StatisticsDatabase.decrement_stat(arg_26_0, arg_26_1, ...)
+StatisticsDatabase.decrement_stat = function (arg_26_0, arg_26_1, ...)
 	local var_26_0 = arg_26_0:_get_or_create_stat(arg_26_1, 0, ...)
 
 	var_26_0.value = var_26_0.value - 1
@@ -403,7 +403,7 @@ function StatisticsDatabase.decrement_stat(arg_26_0, arg_26_1, ...)
 	var_0_2("StatisticsDatabase: Decremented stat %s for id=%s to %f", var_26_0.name, tostring(arg_26_1), var_26_0.value)
 end
 
-function StatisticsDatabase.increment_stat_and_sync_to_clients(arg_27_0, arg_27_1)
+StatisticsDatabase.increment_stat_and_sync_to_clients = function (arg_27_0, arg_27_1)
 	local var_27_0 = Managers.player:local_player()
 
 	if var_27_0 then
@@ -418,7 +418,7 @@ function StatisticsDatabase.increment_stat_and_sync_to_clients(arg_27_0, arg_27_
 	var_27_2.network_transmit:send_rpc_clients("rpc_increment_stat", var_27_3)
 end
 
-function StatisticsDatabase.modify_stat_by_amount(arg_28_0, arg_28_1, ...)
+StatisticsDatabase.modify_stat_by_amount = function (arg_28_0, arg_28_1, ...)
 	local var_28_0, var_28_1 = arg_28_0:_get_or_create_stat(arg_28_1, 1, ...)
 	local var_28_2 = select(var_28_1 + 1, ...)
 	local var_28_3 = var_28_0.value
@@ -439,7 +439,7 @@ function StatisticsDatabase.modify_stat_by_amount(arg_28_0, arg_28_1, ...)
 	var_0_2("StatisticsDatabase: Modified stat %s for id=%s from %f to %f", var_28_0.name, tostring(arg_28_1), var_28_3, var_28_3 + var_28_2)
 end
 
-function StatisticsDatabase.get_persistent_array_stat(arg_29_0, arg_29_1, ...)
+StatisticsDatabase.get_persistent_array_stat = function (arg_29_0, arg_29_1, ...)
 	local var_29_0, var_29_1 = arg_29_0:_get_or_create_stat(arg_29_1, 1, ...)
 	local var_29_2 = select(var_29_1 + 1, ...)
 
@@ -450,7 +450,7 @@ function StatisticsDatabase.get_persistent_array_stat(arg_29_0, arg_29_1, ...)
 	return false
 end
 
-function StatisticsDatabase.set_array_stat(arg_30_0, arg_30_1, ...)
+StatisticsDatabase.set_array_stat = function (arg_30_0, arg_30_1, ...)
 	local var_30_0, var_30_1 = arg_30_0:_get_or_create_stat(arg_30_1, 2, ...)
 	local var_30_2 = select(var_30_1 + 1, ...)
 	local var_30_3 = select(var_30_1 + 2, ...)
@@ -464,7 +464,7 @@ function StatisticsDatabase.set_array_stat(arg_30_0, arg_30_1, ...)
 	var_0_2("StatisticsDatabase: Set array stat %s[%s] for id=%s to %s", var_30_0.name, tostring(var_30_2), tostring(arg_30_1), tostring(var_30_3))
 end
 
-function StatisticsDatabase.set_stat(arg_31_0, arg_31_1, ...)
+StatisticsDatabase.set_stat = function (arg_31_0, arg_31_1, ...)
 	local var_31_0, var_31_1 = arg_31_0:_get_or_create_stat(arg_31_1, 1, ...)
 	local var_31_2 = select(var_31_1 + 1, ...)
 
@@ -473,7 +473,7 @@ function StatisticsDatabase.set_stat(arg_31_0, arg_31_1, ...)
 	var_31_0.persistent_value = var_31_2
 end
 
-function StatisticsDatabase.set_non_persistent_stat(arg_32_0, arg_32_1, ...)
+StatisticsDatabase.set_non_persistent_stat = function (arg_32_0, arg_32_1, ...)
 	local var_32_0, var_32_1 = arg_32_0:_get_or_create_stat(arg_32_1, 1, ...)
 	local var_32_2 = select(var_32_1 + 1, ...)
 
@@ -481,7 +481,7 @@ function StatisticsDatabase.set_non_persistent_stat(arg_32_0, arg_32_1, ...)
 	var_32_0.value = var_32_2
 end
 
-function StatisticsDatabase._get_stat(arg_33_0, arg_33_1, ...)
+StatisticsDatabase._get_stat = function (arg_33_0, arg_33_1, ...)
 	local var_33_0 = select("#", ...)
 
 	for iter_33_0 = 1, var_33_0 do
@@ -495,19 +495,19 @@ function StatisticsDatabase._get_stat(arg_33_0, arg_33_1, ...)
 	return arg_33_1
 end
 
-function StatisticsDatabase.get_stat(arg_34_0, arg_34_1, ...)
+StatisticsDatabase.get_stat = function (arg_34_0, arg_34_1, ...)
 	local var_34_0 = arg_34_0:_get_or_create_stat(arg_34_1, 0, ...)
 
 	return var_34_0 and var_34_0.value or 0
 end
 
-function StatisticsDatabase.has_stat(arg_35_0, ...)
+StatisticsDatabase.has_stat = function (arg_35_0, ...)
 	local var_35_0 = StatisticsDefinitions[var_0_3]
 
 	return not not arg_35_0:_get_stat(var_35_0, ...)
 end
 
-function StatisticsDatabase.get_persistent_stat(arg_36_0, arg_36_1, ...)
+StatisticsDatabase.get_persistent_stat = function (arg_36_0, arg_36_1, ...)
 	local var_36_0 = arg_36_0.statistics[arg_36_1]
 	local var_36_1 = arg_36_0:_get_stat(var_36_0, ...)
 
@@ -530,7 +530,7 @@ function StatisticsDatabase.get_persistent_stat(arg_36_0, arg_36_1, ...)
 	return nil
 end
 
-function StatisticsDatabase.sync_stats_to_server(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+StatisticsDatabase.sync_stats_to_server = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	local var_37_0 = arg_37_0.statistics[arg_37_1]
 
 	var_0_10(arg_37_4, arg_37_2, arg_37_3, {}, 1, var_37_0)
@@ -554,7 +554,7 @@ local function var_0_13(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function StatisticsDatabase.debug_draw(arg_39_0)
+StatisticsDatabase.debug_draw = function (arg_39_0)
 	if not script_data.statistics_debug then
 		return
 	end
@@ -568,7 +568,7 @@ function StatisticsDatabase.debug_draw(arg_39_0)
 	end
 end
 
-function StatisticsDatabase.rpc_increment_stat(arg_40_0, arg_40_1, arg_40_2)
+StatisticsDatabase.rpc_increment_stat = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = NetworkLookup.statistics[arg_40_2]
 	local var_40_1 = Managers.player:local_player()
 
@@ -581,7 +581,7 @@ function StatisticsDatabase.rpc_increment_stat(arg_40_0, arg_40_1, arg_40_2)
 	arg_40_0:increment_stat(var_40_2, var_40_0)
 end
 
-function StatisticsDatabase.rpc_increment_stat_group(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+StatisticsDatabase.rpc_increment_stat_group = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	local var_41_0 = NetworkLookup.statistics_group_name[arg_41_2]
 	local var_41_1 = NetworkLookup.statistics[arg_41_3]
 	local var_41_2 = Managers.player:local_player()
@@ -595,7 +595,7 @@ function StatisticsDatabase.rpc_increment_stat_group(arg_41_0, arg_41_1, arg_41_
 	arg_41_0:increment_stat(var_41_3, var_41_0, var_41_1)
 end
 
-function StatisticsDatabase.rpc_increment_stat_party(arg_42_0, arg_42_1, arg_42_2)
+StatisticsDatabase.rpc_increment_stat_party = function (arg_42_0, arg_42_1, arg_42_2)
 	if Managers.state.network.is_server then
 		local var_42_0 = Managers.state.network.network_transmit
 		local var_42_1 = CHANNEL_TO_PEER_ID[arg_42_1]
@@ -615,7 +615,7 @@ function StatisticsDatabase.rpc_increment_stat_party(arg_42_0, arg_42_1, arg_42_
 	arg_42_0:increment_stat(var_42_3, var_42_4)
 end
 
-function StatisticsDatabase.rpc_set_local_player_stat(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+StatisticsDatabase.rpc_set_local_player_stat = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	local var_43_0 = NetworkLookup.statistics[arg_43_2]
 	local var_43_1 = Managers.player:local_player()
 
@@ -630,7 +630,7 @@ function StatisticsDatabase.rpc_set_local_player_stat(arg_43_0, arg_43_1, arg_43
 	end
 end
 
-function StatisticsDatabase.rpc_sync_statistics_number(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
+StatisticsDatabase.rpc_sync_statistics_number = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6)
 	local var_44_0 = Managers.player:player(arg_44_2, arg_44_3):stats_id()
 	local var_44_1 = var_0_6(arg_44_4)
 	local var_44_2 = arg_44_0:_get_or_create_stat(var_44_0, 0, unpack(var_44_1))
@@ -647,7 +647,7 @@ function StatisticsDatabase.rpc_sync_statistics_number(arg_44_0, arg_44_1, arg_4
 	end
 end
 
-function StatisticsDatabase.rpc_modify_stat(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+StatisticsDatabase.rpc_modify_stat = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = NetworkLookup.statistics[arg_45_2]
 	local var_45_1 = Managers.player:local_player()
 
@@ -660,19 +660,19 @@ function StatisticsDatabase.rpc_modify_stat(arg_45_0, arg_45_1, arg_45_2, arg_45
 	arg_45_0:modify_stat_by_amount(var_45_2, var_45_0, arg_45_3)
 end
 
-function StatisticsDatabase.get_all_stats(arg_46_0, arg_46_1)
+StatisticsDatabase.get_all_stats = function (arg_46_0, arg_46_1)
 	return arg_46_0.statistics[arg_46_1]
 end
 
-function StatisticsDatabase.get_local_stat(arg_47_0, arg_47_1)
+StatisticsDatabase.get_local_stat = function (arg_47_0, arg_47_1)
 	return arg_47_0.local_statistics[arg_47_1]
 end
 
-function StatisticsDatabase.set_local_stat(arg_48_0, arg_48_1, arg_48_2)
+StatisticsDatabase.set_local_stat = function (arg_48_0, arg_48_1, arg_48_2)
 	arg_48_0.local_statistics[arg_48_1] = arg_48_2
 end
 
-function StatisticsDatabase.increment_local_stat(arg_49_0, arg_49_1)
+StatisticsDatabase.increment_local_stat = function (arg_49_0, arg_49_1)
 	if not arg_49_0.local_statistics[arg_49_1] then
 		arg_49_0.local_statistics[arg_49_1] = 0
 	end
@@ -698,7 +698,7 @@ local function var_0_14(arg_50_0)
 	end
 end
 
-function StatisticsDatabase.apply_persistant_stats(arg_51_0)
+StatisticsDatabase.apply_persistant_stats = function (arg_51_0)
 	var_0_2("StatisticsDatabase: Applying all session stats")
 
 	for iter_51_0, iter_51_1 in pairs(arg_51_0.statistics) do
@@ -728,7 +728,7 @@ local function var_0_15(arg_52_0)
 	end
 end
 
-function StatisticsDatabase.reset_persistant_stats(arg_53_0)
+StatisticsDatabase.reset_persistant_stats = function (arg_53_0)
 	var_0_2("StatisticsDatabase: Reseting all session stats")
 
 	for iter_53_0, iter_53_1 in pairs(arg_53_0.statistics) do

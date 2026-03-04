@@ -9,10 +9,10 @@ local var_0_3 = 22
 local var_0_4 = 10
 local var_0_5 = 20
 
-function DebugListPicker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DebugListPicker.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.pick_list = arg_1_1
 	arg_1_0.save_data_name = arg_1_2
-	arg_1_0._item_validation_func = arg_1_3 or function()
+	arg_1_0._item_validation_func = arg_1_3 or function ()
 		return true
 	end
 	arg_1_0.column_index, arg_1_0.row_index = 1, 1
@@ -29,11 +29,11 @@ function DebugListPicker.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.max_cols_seen = 3
 end
 
-function DebugListPicker.destroy(arg_3_0)
+DebugListPicker.destroy = function (arg_3_0)
 	return
 end
 
-function DebugListPicker.setup(arg_4_0)
+DebugListPicker.setup = function (arg_4_0)
 	local var_4_0 = SaveData[arg_4_0.save_data_name]
 
 	var_4_0 = type(var_4_0) == "table" and var_4_0 or {
@@ -90,7 +90,7 @@ function DebugListPicker.setup(arg_4_0)
 	arg_4_0.max_rows = var_4_6 + 1
 end
 
-function DebugListPicker.activate(arg_5_0)
+DebugListPicker.activate = function (arg_5_0)
 	arg_5_0.active = not arg_5_0.active
 
 	DebugScreen.set_blocked(arg_5_0.active)
@@ -116,18 +116,18 @@ function DebugListPicker.activate(arg_5_0)
 	end
 end
 
-function DebugListPicker.current_item(arg_6_0)
+DebugListPicker.current_item = function (arg_6_0)
 	return arg_6_0.item
 end
 
-function DebugListPicker.current_item_name(arg_7_0)
+DebugListPicker.current_item_name = function (arg_7_0)
 	return arg_7_0.item[1]
 end
 
-function DebugListPicker._sort_column(arg_8_0, arg_8_1)
+DebugListPicker._sort_column = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._item_validation_func
 
-	table.sort(arg_8_1, function(arg_9_0, arg_9_1)
+	table.sort(arg_8_1, function (arg_9_0, arg_9_1)
 		local var_9_0 = not not var_8_0(arg_9_0[1])
 
 		if var_9_0 == not not var_8_0(arg_9_1[1]) then
@@ -140,7 +140,7 @@ function DebugListPicker._sort_column(arg_8_0, arg_8_1)
 	end)
 end
 
-function DebugListPicker.update(arg_10_0, arg_10_1, arg_10_2)
+DebugListPicker.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0.active then
 		return
 	end
@@ -238,7 +238,7 @@ function DebugListPicker.update(arg_10_0, arg_10_1, arg_10_2)
 		arg_10_0:_sort_column(var_10_7)
 
 		if var_10_5 and arg_10_0.item and arg_10_0._last_selected_item and arg_10_0.item ~= arg_10_0._last_selected_item then
-			local var_10_27 = table.find_func(var_10_7, function(arg_11_0, arg_11_1)
+			local var_10_27 = table.find_func(var_10_7, function (arg_11_0, arg_11_1)
 				return type(arg_11_1) == "table" and arg_11_1[1] == arg_10_0._last_selected_item[1]
 			end)
 

@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowMission = class(StartGameWindowMission)
 StartGameWindowMission.NAME = "StartGameWindowMission"
 
-function StartGameWindowMission.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowMission.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMission")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -31,7 +31,7 @@ function StartGameWindowMission.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StartGameWindowMission.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowMission.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -60,19 +60,19 @@ function StartGameWindowMission.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StartGameWindowMission.on_exit(arg_3_0, arg_3_1)
+StartGameWindowMission.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMission")
 end
 
-function StartGameWindowMission.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowMission.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowMission.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowMission.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function StartGameWindowMission.draw(arg_6_0, arg_6_1)
+StartGameWindowMission.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.parent:window_input_service()

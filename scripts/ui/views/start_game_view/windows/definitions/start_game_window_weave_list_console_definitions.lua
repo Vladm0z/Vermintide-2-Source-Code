@@ -463,10 +463,10 @@ local function var_0_19(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				style_id = "new_frame",
 				texture_id = "new_frame",
 				pass_type = "texture_frame",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.new
 				end,
-				content_change_function = function(arg_4_0, arg_4_1)
+				content_change_function = function (arg_4_0, arg_4_1)
 					local var_4_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 					arg_4_1.color[1] = 55 + var_4_0 * 200
@@ -476,7 +476,7 @@ local function var_0_19(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				pass_type = "texture",
 				style_id = "lock_texture",
 				texture_id = "lock_texture",
-				content_check_function = function(arg_5_0)
+				content_check_function = function (arg_5_0)
 					return arg_5_0.locked
 				end
 			},
@@ -484,7 +484,7 @@ local function var_0_19(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				pass_type = "texture",
 				style_id = "equipped_texture",
 				texture_id = "equipped_texture",
-				content_check_function = function(arg_6_0)
+				content_check_function = function (arg_6_0)
 					return arg_6_0.equipped
 				end
 			},
@@ -492,7 +492,7 @@ local function var_0_19(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				pass_type = "texture",
 				style_id = "new_texture",
 				texture_id = "new_texture",
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return arg_7_0.new
 				end
 			}
@@ -1055,15 +1055,15 @@ local var_0_26 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_2.background_fade.alpha_multiplier = 0
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				local var_10_0 = math.easeInCubic(arg_10_3)
 
 				arg_10_2.background_fade.alpha_multiplier = var_10_0
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				return
 			end
 		},
@@ -1071,17 +1071,17 @@ local var_0_26 = {
 			name = "fade_in_2",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				arg_12_3.render_settings.alpha_multiplier = 0
 				arg_12_0.list_window.position[1] = arg_12_1.list_window.position[1]
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				local var_13_0 = math.easeInCubic(arg_13_3)
 
 				arg_13_4.render_settings.alpha_multiplier = var_13_0
 				arg_13_0.list_window.position[1] = arg_13_1.list_window.position[1] + (1 - var_13_0) * 30
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end
 		}
@@ -1091,15 +1091,15 @@ local var_0_26 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				arg_15_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				local var_16_0 = math.easeOutCubic(arg_16_3)
 
 				arg_16_4.render_settings.alpha_multiplier = 1 - var_16_0
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end
 		}

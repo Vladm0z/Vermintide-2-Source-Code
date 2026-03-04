@@ -8,7 +8,7 @@ ChallengeManager = class(ChallengeManager)
 
 local var_0_0 = 255
 
-function ChallengeManager.init(arg_1_0, arg_1_1, arg_1_2)
+ChallengeManager.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._statistics_db = arg_1_1
 	arg_1_0._is_server = arg_1_2
 	arg_1_0._all_challenges = {}
@@ -26,7 +26,7 @@ function ChallengeManager.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function ChallengeManager.destroy(arg_2_0)
+ChallengeManager.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0._all_challenges
 
 	for iter_2_0 = 1, #var_2_0 do
@@ -38,7 +38,7 @@ function ChallengeManager.destroy(arg_2_0)
 	arg_2_0:unregister_rpcs()
 end
 
-function ChallengeManager.on_round_start(arg_3_0, arg_3_1, arg_3_2)
+ChallengeManager.on_round_start = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:register_rpcs(arg_3_1)
 
 	local var_3_0 = arg_3_0._all_challenges
@@ -48,7 +48,7 @@ function ChallengeManager.on_round_start(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function ChallengeManager.on_round_end(arg_4_0)
+ChallengeManager.on_round_end = function (arg_4_0)
 	if not arg_4_0._is_server then
 		local var_4_0 = arg_4_0._all_challenges
 
@@ -68,7 +68,7 @@ function ChallengeManager.on_round_end(arg_4_0)
 	arg_4_0:unregister_rpcs()
 end
 
-function ChallengeManager.update(arg_5_0, arg_5_1, arg_5_2)
+ChallengeManager.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._all_challenges
 
 	for iter_5_0 = #var_5_0, 1, -1 do
@@ -105,7 +105,7 @@ function ChallengeManager.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function ChallengeManager.add_challenge(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ChallengeManager.add_challenge = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	if arg_6_0._is_server then
 		local var_6_0 = arg_6_0:reserve_free_unique_id()
 		local var_6_1 = InGameChallenge:new(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_0._is_server, arg_6_6, var_6_0, arg_6_7)
@@ -125,13 +125,13 @@ function ChallengeManager.add_challenge(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_
 	end
 end
 
-function ChallengeManager.remove_challenge(arg_7_0, arg_7_1)
+ChallengeManager.remove_challenge = function (arg_7_0, arg_7_1)
 	if arg_7_0._is_server and arg_7_1 then
 		arg_7_1:cancel()
 	end
 end
 
-function ChallengeManager.get_challenge_from_unique_id(arg_8_0, arg_8_1)
+ChallengeManager.get_challenge_from_unique_id = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._all_challenges
 
 	for iter_8_0 = 1, #var_8_0 do
@@ -145,7 +145,7 @@ end
 
 local var_0_1 = {}
 
-function ChallengeManager.remove_filtered_challenges(arg_9_0, arg_9_1, arg_9_2)
+ChallengeManager.remove_filtered_challenges = function (arg_9_0, arg_9_1, arg_9_2)
 	table.clear(var_0_1)
 
 	local var_9_0 = arg_9_0._all_challenges
@@ -185,11 +185,11 @@ function ChallengeManager.remove_filtered_challenges(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function ChallengeManager.get_all_challenges(arg_10_0)
+ChallengeManager.get_all_challenges = function (arg_10_0)
 	return arg_10_0._all_challenges
 end
 
-function ChallengeManager.get_challenges_filtered(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ChallengeManager.get_challenges_filtered = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	fassert(arg_11_1, "Missing mandatory table (array) argument 'results'")
 
 	local var_11_0 = arg_11_0._all_challenges
@@ -210,11 +210,11 @@ function ChallengeManager.get_challenges_filtered(arg_11_0, arg_11_1, arg_11_2, 
 	return arg_11_1, var_11_1
 end
 
-function ChallengeManager.get_all_completed_challenges(arg_12_0)
+ChallengeManager.get_all_completed_challenges = function (arg_12_0)
 	return arg_12_0._completed_challenges
 end
 
-function ChallengeManager.get_completed_challenges_filtered(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ChallengeManager.get_completed_challenges_filtered = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	fassert(arg_13_1, "Missing mandatory table (array) argument 'results'")
 
 	local var_13_0 = arg_13_0._completed_challenges
@@ -235,7 +235,7 @@ function ChallengeManager.get_completed_challenges_filtered(arg_13_0, arg_13_1, 
 	return arg_13_1, var_13_1
 end
 
-function ChallengeManager.on_player_joined_party(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+ChallengeManager.on_player_joined_party = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = PlayerUtils.unique_player_id(arg_14_1, arg_14_2)
 	local var_14_1 = arg_14_0._all_challenges
 
@@ -248,7 +248,7 @@ function ChallengeManager.on_player_joined_party(arg_14_0, arg_14_1, arg_14_2, a
 	end
 end
 
-function ChallengeManager.on_player_left_party(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+ChallengeManager.on_player_left_party = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = PlayerUtils.unique_player_id(arg_15_1, arg_15_2)
 	local var_15_1 = arg_15_0._all_challenges
 
@@ -261,7 +261,7 @@ function ChallengeManager.on_player_left_party(arg_15_0, arg_15_1, arg_15_2, arg
 	end
 end
 
-function ChallengeManager.profile_changed(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ChallengeManager.profile_changed = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = PlayerUtils.unique_player_id(arg_16_1, arg_16_2)
 	local var_16_1 = SPProfiles[arg_16_3].affiliation
 	local var_16_2 = arg_16_0._all_challenges
@@ -277,17 +277,17 @@ function ChallengeManager.profile_changed(arg_16_0, arg_16_1, arg_16_2, arg_16_3
 	end
 end
 
-function ChallengeManager.on_bot_added(arg_17_0, arg_17_1)
+ChallengeManager.on_bot_added = function (arg_17_0, arg_17_1)
 	arg_17_0:player_entered_game_session(arg_17_1:network_id(), arg_17_1:local_player_id())
 end
 
-function ChallengeManager.on_bot_removed(arg_18_0, arg_18_1)
+ChallengeManager.on_bot_removed = function (arg_18_0, arg_18_1)
 	arg_18_0:player_left_game_session(arg_18_1:network_id(), arg_18_1:local_player_id())
 end
 
 local var_0_2 = 5
 
-function ChallengeManager.reserve_free_unique_id(arg_19_0)
+ChallengeManager.reserve_free_unique_id = function (arg_19_0)
 	local var_19_0 = arg_19_0._free_ids
 	local var_19_1 = #var_19_0
 
@@ -304,7 +304,7 @@ function ChallengeManager.reserve_free_unique_id(arg_19_0)
 	return var_19_2
 end
 
-function ChallengeManager._cleanup_orphanated_challenge_ids(arg_20_0, arg_20_1)
+ChallengeManager._cleanup_orphanated_challenge_ids = function (arg_20_0, arg_20_1)
 	local var_20_0 = {}
 	local var_20_1 = 0
 	local var_20_2 = arg_20_0._all_challenges
@@ -320,7 +320,7 @@ function ChallengeManager._cleanup_orphanated_challenge_ids(arg_20_0, arg_20_1)
 
 	if var_20_1 > 0 then
 		if arg_20_1 < var_20_1 then
-			table.sort(var_20_0, function(arg_21_0, arg_21_1)
+			table.sort(var_20_0, function (arg_21_0, arg_21_1)
 				return arg_21_0.paused_t < arg_21_1.paused_t
 			end)
 		end
@@ -339,7 +339,7 @@ function ChallengeManager._cleanup_orphanated_challenge_ids(arg_20_0, arg_20_1)
 	return 0
 end
 
-function ChallengeManager._cancel_challenge_instant(arg_22_0, arg_22_1)
+ChallengeManager._cancel_challenge_instant = function (arg_22_0, arg_22_1)
 	arg_22_1:cancel()
 
 	local var_22_0 = arg_22_1:get_unique_id()
@@ -360,7 +360,7 @@ local var_0_3 = {
 	"rpc_server_hot_join_sync_ingame_challenge"
 }
 
-function ChallengeManager.register_rpcs(arg_23_0, arg_23_1)
+ChallengeManager.register_rpcs = function (arg_23_0, arg_23_1)
 	if not arg_23_0._network_event_delegate then
 		arg_23_0._network_event_delegate = arg_23_1
 
@@ -368,7 +368,7 @@ function ChallengeManager.register_rpcs(arg_23_0, arg_23_1)
 	end
 end
 
-function ChallengeManager.unregister_rpcs(arg_24_0)
+ChallengeManager.unregister_rpcs = function (arg_24_0)
 	if arg_24_0._network_event_delegate then
 		arg_24_0._network_event_delegate:unregister(arg_24_0)
 
@@ -376,7 +376,7 @@ function ChallengeManager.unregister_rpcs(arg_24_0)
 	end
 end
 
-function ChallengeManager.hot_join_sync(arg_25_0, arg_25_1)
+ChallengeManager.hot_join_sync = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._all_challenges
 
 	for iter_25_0 = 1, #var_25_0 do
@@ -399,7 +399,7 @@ function ChallengeManager.hot_join_sync(arg_25_0, arg_25_1)
 	end
 end
 
-function ChallengeManager.rpc_server_add_ingame_challenge(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
+ChallengeManager.rpc_server_add_ingame_challenge = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8, arg_26_9)
 	local var_26_0 = NetworkLookup.challenges[arg_26_3]
 	local var_26_1 = NetworkLookup.challenge_categories[arg_26_5]
 	local var_26_2 = NetworkLookup.challenge_rewards[arg_26_6]
@@ -410,7 +410,7 @@ function ChallengeManager.rpc_server_add_ingame_challenge(arg_26_0, arg_26_1, ar
 	table.insert(arg_26_0._all_challenges, var_26_4)
 end
 
-function ChallengeManager.rpc_server_remove_ingame_challenge(arg_27_0, arg_27_1, arg_27_2)
+ChallengeManager.rpc_server_remove_ingame_challenge = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0:get_challenge_from_unique_id(arg_27_2)
 
 	if var_27_0 then
@@ -423,7 +423,7 @@ function ChallengeManager.rpc_server_remove_ingame_challenge(arg_27_0, arg_27_1,
 	end
 end
 
-function ChallengeManager.rpc_server_update_ingame_challenge(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+ChallengeManager.rpc_server_update_ingame_challenge = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_0:get_challenge_from_unique_id(arg_28_2)
 
 	if var_28_0 then
@@ -431,7 +431,7 @@ function ChallengeManager.rpc_server_update_ingame_challenge(arg_28_0, arg_28_1,
 	end
 end
 
-function ChallengeManager.rpc_server_hot_join_sync_ingame_challenge(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12)
+ChallengeManager.rpc_server_hot_join_sync_ingame_challenge = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12)
 	local var_29_0 = NetworkLookup.challenges[arg_29_3]
 	local var_29_1 = NetworkLookup.challenge_categories[arg_29_5]
 	local var_29_2 = NetworkLookup.challenge_rewards[arg_29_6]

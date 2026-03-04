@@ -2,7 +2,7 @@
 
 BuffAreaExtension = class(BuffAreaExtension)
 
-function BuffAreaExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BuffAreaExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0._unit_spawner = Managers.state.unit_spawner
@@ -50,11 +50,11 @@ function BuffAreaExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function BuffAreaExtension.game_object_initialized(arg_2_0, arg_2_1, arg_2_2)
+BuffAreaExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._is_owner = GameSession.game_object_owned(Managers.state.network:game(), arg_2_2)
 end
 
-function BuffAreaExtension.destroy(arg_3_0)
+BuffAreaExtension.destroy = function (arg_3_0)
 	if arg_3_0._is_server and Unit.alive(arg_3_0._los_blocker_unit) then
 		arg_3_0._unit_spawner:mark_for_deletion(arg_3_0._los_blocker_unit)
 
@@ -76,7 +76,7 @@ function BuffAreaExtension.destroy(arg_3_0)
 	arg_3_0:_destroy_particles()
 end
 
-function BuffAreaExtension._cleanup_inside_units(arg_4_0)
+BuffAreaExtension._cleanup_inside_units = function (arg_4_0)
 	local var_4_0 = arg_4_0._buff_area_system:inside_by_area(arg_4_0)
 	local var_4_1 = var_4_0.by_position
 
@@ -91,7 +91,7 @@ function BuffAreaExtension._cleanup_inside_units(arg_4_0)
 	end
 end
 
-function BuffAreaExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BuffAreaExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_0._particle_state and arg_5_0._particle_state.update_fx then
 		BuffUtils.update_attached_particles(arg_5_0._world, arg_5_0._particle_state, arg_5_5)
 	end
@@ -117,7 +117,7 @@ function BuffAreaExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, a
 	arg_5_0:_check_players(var_5_0, var_5_1)
 end
 
-function BuffAreaExtension._check_ai(arg_6_0, arg_6_1, arg_6_2)
+BuffAreaExtension._check_ai = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.source_unit or arg_6_0.owner_unit
 	local var_6_1 = arg_6_0._buff_area_system:inside_by_area(arg_6_0).by_broadphase
 	local var_6_2 = arg_6_0._buff_allies
@@ -144,7 +144,7 @@ function BuffAreaExtension._check_ai(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BuffAreaExtension._check_players(arg_7_0, arg_7_1)
+BuffAreaExtension._check_players = function (arg_7_0, arg_7_1)
 	local var_7_0 = FrameTable.alloc_table()
 
 	if arg_7_0._buff_self then
@@ -184,7 +184,7 @@ function BuffAreaExtension._check_players(arg_7_0, arg_7_1)
 	end
 end
 
-function BuffAreaExtension._update_by_position(arg_8_0, arg_8_1)
+BuffAreaExtension._update_by_position = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._buff_area_system:inside_by_area(arg_8_0).by_position
 	local var_8_1 = false
 	local var_8_2 = POSITION_LOOKUP[arg_8_1]
@@ -204,15 +204,15 @@ function BuffAreaExtension._update_by_position(arg_8_0, arg_8_1)
 	return var_8_1
 end
 
-function BuffAreaExtension.set_unit_position(arg_9_0, arg_9_1)
+BuffAreaExtension.set_unit_position = function (arg_9_0, arg_9_1)
 	Unit.set_local_position(arg_9_0._unit, 0, arg_9_1)
 end
 
-function BuffAreaExtension.set_duration(arg_10_0, arg_10_1)
+BuffAreaExtension.set_duration = function (arg_10_0, arg_10_1)
 	arg_10_0._end_t = Managers.time:time("game") + arg_10_1
 end
 
-function BuffAreaExtension._leave_func(arg_11_0, arg_11_1)
+BuffAreaExtension._leave_func = function (arg_11_0, arg_11_1)
 	if not arg_11_0._unlimited then
 		local var_11_0 = Managers.state.entity:system("buff_system")
 		local var_11_1 = arg_11_0._buff_area_system:inside_by_area(arg_11_0).buff_ids
@@ -232,7 +232,7 @@ function BuffAreaExtension._leave_func(arg_11_0, arg_11_1)
 	end
 end
 
-function BuffAreaExtension._enter_func(arg_12_0, arg_12_1)
+BuffAreaExtension._enter_func = function (arg_12_0, arg_12_1)
 	local var_12_0 = Managers.state.entity:system("buff_system")
 	local var_12_1 = arg_12_0.template
 	local var_12_2 = var_12_1.buff_area_buff
@@ -258,7 +258,7 @@ function BuffAreaExtension._enter_func(arg_12_0, arg_12_1)
 	arg_12_0._buff_area_system:inside_by_area(arg_12_0).buff_ids[arg_12_1] = var_12_0:add_buff_synced(arg_12_1, var_12_2, var_12_3, var_12_4, var_12_7)
 end
 
-function BuffAreaExtension._remove_unit(arg_13_0)
+BuffAreaExtension._remove_unit = function (arg_13_0)
 	if ALIVE[arg_13_0._unit] then
 		arg_13_0._unit_spawner:mark_for_deletion(arg_13_0._unit)
 
@@ -266,7 +266,7 @@ function BuffAreaExtension._remove_unit(arg_13_0)
 	end
 end
 
-function BuffAreaExtension._spawn_los_blocker(arg_14_0)
+BuffAreaExtension._spawn_los_blocker = function (arg_14_0)
 	local var_14_0 = Unit.world_position(arg_14_0._unit, 0)
 	local var_14_1 = arg_14_0.radius
 	local var_14_2 = "units/gameplay/line_of_sight_blocker/hemisphere_los_blocker"
@@ -278,7 +278,7 @@ function BuffAreaExtension._spawn_los_blocker(arg_14_0)
 	arg_14_0._los_blocker_unit = var_14_4
 end
 
-function BuffAreaExtension._set_inside(arg_15_0, arg_15_1, arg_15_2)
+BuffAreaExtension._set_inside = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_1[arg_15_2] or {}
 
 	arg_15_1[arg_15_2] = var_15_0
@@ -292,7 +292,7 @@ function BuffAreaExtension._set_inside(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function BuffAreaExtension._set_not_inside(arg_16_0, arg_16_1, arg_16_2)
+BuffAreaExtension._set_not_inside = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_1[arg_16_2]
 
 	if var_16_0 and var_16_0[arg_16_0] then
@@ -306,7 +306,7 @@ function BuffAreaExtension._set_not_inside(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function BuffAreaExtension._spawn_particles(arg_17_0)
+BuffAreaExtension._spawn_particles = function (arg_17_0)
 	local var_17_0 = arg_17_0.template.buff_area_particles
 
 	if not var_17_0 then
@@ -318,7 +318,7 @@ function BuffAreaExtension._spawn_particles(arg_17_0)
 	arg_17_0._particle_state = BuffUtils.create_attached_particles(arg_17_0._world, var_17_0, arg_17_0._unit, var_17_1, arg_17_0.source_unit, arg_17_0._end_t)
 end
 
-function BuffAreaExtension._destroy_particles(arg_18_0)
+BuffAreaExtension._destroy_particles = function (arg_18_0)
 	local var_18_0 = arg_18_0._particle_state
 
 	if not var_18_0 then
@@ -328,26 +328,26 @@ function BuffAreaExtension._destroy_particles(arg_18_0)
 	BuffUtils.destroy_attached_particles(arg_18_0._world, var_18_0)
 end
 
-function BuffAreaExtension._play_unit_audio(arg_19_0)
+BuffAreaExtension._play_unit_audio = function (arg_19_0)
 	arg_19_0._unit_source_id = WwiseWorld.make_manual_source(arg_19_0._wwise_world, POSITION_LOOKUP[arg_19_0._unit])
 
 	WwiseWorld.trigger_event(arg_19_0._wwise_world, arg_19_0._area_start_sfx, arg_19_0._unit_source_id)
 end
 
-function BuffAreaExtension._stop_unit_audio(arg_20_0)
+BuffAreaExtension._stop_unit_audio = function (arg_20_0)
 	if arg_20_0._unit_source_id then
 		WwiseWorld.trigger_event(arg_20_0._wwise_world, arg_20_0._area_end_sfx, true, arg_20_0._unit_source_id)
 		WwiseWorld.destroy_manual_source(arg_20_0._wwise_world, arg_20_0._unit_source_id)
 	end
 end
 
-function BuffAreaExtension.play_enter_buff_zone_sfx(arg_21_0)
+BuffAreaExtension.play_enter_buff_zone_sfx = function (arg_21_0)
 	arg_21_0._inside_zone_audio_id = WwiseUtils.make_unit_auto_source(arg_21_0._world, arg_21_0._unit)
 
 	WwiseWorld.trigger_event(arg_21_0._wwise_world, arg_21_0._enter_area_sfx, true, arg_21_0._inside_zone_audio_id)
 end
 
-function BuffAreaExtension.play_leave_buff_zone_sfx(arg_22_0)
+BuffAreaExtension.play_leave_buff_zone_sfx = function (arg_22_0)
 	if arg_22_0._inside_zone_audio_id then
 		WwiseWorld.trigger_event(arg_22_0._wwise_world, arg_22_0._leave_area_sfx, true, arg_22_0._inside_zone_audio_id)
 

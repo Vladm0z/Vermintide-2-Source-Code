@@ -5,7 +5,7 @@ script_data.debug_area_damage = script_data.debug_area_damage or Development.par
 
 local var_0_0 = 0.5
 
-function AreaDamageExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AreaDamageExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.aoe_dot_damage = arg_1_3.aoe_dot_damage or Unit.get_data(arg_1_2, "aoe_dot_damage")
@@ -57,7 +57,7 @@ function AreaDamageExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-function AreaDamageExtension.destroy(arg_2_0)
+AreaDamageExtension.destroy = function (arg_2_0)
 	Unit.flow_event(arg_2_0.unit, "lua_projectile_end")
 
 	if not arg_2_0.area_damage_started then
@@ -113,7 +113,7 @@ function AreaDamageExtension.destroy(arg_2_0)
 	end
 end
 
-function AreaDamageExtension.enable_area_damage(arg_3_0, arg_3_1)
+AreaDamageExtension.enable_area_damage = function (arg_3_0, arg_3_1)
 	if arg_3_1 then
 		arg_3_0.enabled = true
 
@@ -152,7 +152,7 @@ function AreaDamageExtension.enable_area_damage(arg_3_0, arg_3_1)
 	end
 end
 
-function AreaDamageExtension.start_area_damage(arg_4_0)
+AreaDamageExtension.start_area_damage = function (arg_4_0)
 	arg_4_0.area_damage_started = true
 
 	local var_4_0 = AreaDamageTemplates.get_template(arg_4_0.area_damage_template)
@@ -283,7 +283,7 @@ function AreaDamageExtension.start_area_damage(arg_4_0)
 	end
 end
 
-function AreaDamageExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+AreaDamageExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_0:_update_damage_buffer()
 
 	if not arg_5_0.area_damage_started then
@@ -324,7 +324,7 @@ end
 
 local var_0_1 = 1
 
-function AreaDamageExtension._update_damage_buffer(arg_6_0)
+AreaDamageExtension._update_damage_buffer = function (arg_6_0)
 	if not arg_6_0.is_server then
 		return
 	end
@@ -369,7 +369,7 @@ function AreaDamageExtension._update_damage_buffer(arg_6_0)
 	end
 end
 
-function AreaDamageExtension._add_to_damage_buffer(arg_7_0, arg_7_1)
+AreaDamageExtension._add_to_damage_buffer = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._damage_buffer
 	local var_7_1 = #arg_7_0._damage_buffer
 	local var_7_2 = #arg_7_1
@@ -379,6 +379,6 @@ function AreaDamageExtension._add_to_damage_buffer(arg_7_0, arg_7_1)
 	end
 end
 
-function AreaDamageExtension.hot_join_sync(arg_8_0, arg_8_1)
+AreaDamageExtension.hot_join_sync = function (arg_8_0, arg_8_1)
 	return
 end

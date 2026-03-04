@@ -42,7 +42,7 @@ local function var_0_3()
 	end
 end
 
-function EacManager.init(arg_3_0)
+EacManager.init = function (arg_3_0)
 	local var_3_0, var_3_1 = var_0_3()
 
 	if var_3_0 then
@@ -63,7 +63,7 @@ function EacManager.init(arg_3_0)
 	arg_3_0._indicator_offset = 0
 end
 
-function EacManager.challenge_response(arg_4_0, arg_4_1)
+EacManager.challenge_response = function (arg_4_0, arg_4_1)
 	if arg_4_0._eac_supported then
 		if USE_EOS then
 			return EOS_EAC.challenge_response(arg_4_1)
@@ -75,7 +75,7 @@ function EacManager.challenge_response(arg_4_0, arg_4_1)
 	return nil
 end
 
-function EacManager.is_trusted(arg_5_0)
+EacManager.is_trusted = function (arg_5_0)
 	if arg_5_0._eac_supported then
 		if USE_EOS then
 			if EOS_EAC.has_eac_server() then
@@ -91,7 +91,7 @@ function EacManager.is_trusted(arg_5_0)
 	return false
 end
 
-function EacManager.before_join(arg_6_0, arg_6_1)
+EacManager.before_join = function (arg_6_0, arg_6_1)
 	assert(arg_6_0._local_role == nil, "Method called in incompatible state")
 	assert(arg_6_1 == "client_server" or arg_6_1 == "peer_to_peer", "Invalid network_model argument")
 
@@ -107,7 +107,7 @@ function EacManager.before_join(arg_6_0, arg_6_1)
 	end
 end
 
-function EacManager.after_leave(arg_7_0)
+EacManager.after_leave = function (arg_7_0)
 	assert(arg_7_0._local_role == "client", "Method called in incompatible state")
 
 	if arg_7_0._eac_supported then
@@ -132,7 +132,7 @@ function EacManager.after_leave(arg_7_0)
 	arg_7_0._host_peer_id = nil
 end
 
-function EacManager.set_host(arg_8_0, arg_8_1)
+EacManager.set_host = function (arg_8_0, arg_8_1)
 	assert(arg_8_0._local_role == "client", "Method called in incompatible state")
 	assert(arg_8_0._host_peer_id == nil, "Host was already set and cannot be changed")
 
@@ -169,7 +169,7 @@ function EacManager.set_host(arg_8_0, arg_8_1)
 	end
 end
 
-function EacManager.check_host(arg_9_0)
+EacManager.check_host = function (arg_9_0)
 	assert(arg_9_0._local_role == "client", "Method called in incompatible state")
 	assert(arg_9_0._host_peer_id, "Cannot check the host before it has been set.")
 
@@ -192,7 +192,7 @@ function EacManager.check_host(arg_9_0)
 	return var_9_0, var_9_1
 end
 
-function EacManager._check_peer(arg_10_0, arg_10_1)
+EacManager._check_peer = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._peer_data[arg_10_1]
 
 	if var_10_0.untrusted then
@@ -214,7 +214,7 @@ function EacManager._check_peer(arg_10_0, arg_10_1)
 	return false, true
 end
 
-function EacManager._check_states_compatible(arg_11_0, arg_11_1, arg_11_2)
+EacManager._check_states_compatible = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_1 == var_0_0.banned or arg_11_2 == var_0_0.banned then
 		return true, false
 	end
@@ -228,7 +228,7 @@ function EacManager._check_states_compatible(arg_11_0, arg_11_1, arg_11_2)
 	return true, var_11_0
 end
 
-function EacManager.is_initialized(arg_12_0)
+EacManager.is_initialized = function (arg_12_0)
 	if arg_12_0._eac_supported then
 		if USE_EOS then
 			return arg_12_0._eos_auth_complete, arg_12_0._eos_auth_error
@@ -248,7 +248,7 @@ function EacManager.is_initialized(arg_12_0)
 	return true, nil
 end
 
-function EacManager.server_create(arg_13_0, arg_13_1)
+EacManager.server_create = function (arg_13_0, arg_13_1)
 	assert(arg_13_0._local_role == nil, "Method called in incompatible state")
 	assert(arg_13_1 ~= nil, "Must provide a server_name")
 
@@ -269,7 +269,7 @@ function EacManager.server_create(arg_13_0, arg_13_1)
 	var_0_2("Created EACServer with name %q", arg_13_1)
 end
 
-function EacManager.server_destroy(arg_14_0)
+EacManager.server_destroy = function (arg_14_0)
 	assert(arg_14_0._local_role == "server", "Method called in incompatible state")
 
 	arg_14_0._local_role = nil
@@ -289,7 +289,7 @@ function EacManager.server_destroy(arg_14_0)
 	table.clear(arg_14_0._peer_data)
 end
 
-function EacManager.server_add_peer(arg_15_0, arg_15_1)
+EacManager.server_add_peer = function (arg_15_0, arg_15_1)
 	assert(arg_15_0._local_role == "server", "Method called in incompatible state")
 	fassert(not arg_15_0._peer_data[arg_15_1], "Peer %q was already added", arg_15_1)
 	var_0_2("Adding peer %s", arg_15_1)
@@ -316,7 +316,7 @@ function EacManager.server_add_peer(arg_15_0, arg_15_1)
 	end
 end
 
-function EacManager.server_remove_peer(arg_16_0, arg_16_1)
+EacManager.server_remove_peer = function (arg_16_0, arg_16_1)
 	assert(arg_16_0._local_role == "server", "Method called in incompatible state")
 	fassert(arg_16_0._peer_data[arg_16_1], "Peer %q was already removed", arg_16_1)
 	var_0_2("Removing peer %s", arg_16_1)
@@ -336,7 +336,7 @@ function EacManager.server_remove_peer(arg_16_0, arg_16_1)
 	arg_16_0._peer_data[arg_16_1] = nil
 end
 
-function EacManager.server_check_peer(arg_17_0, arg_17_1)
+EacManager.server_check_peer = function (arg_17_0, arg_17_1)
 	if arg_17_1 == Network.peer_id() then
 		return true, true
 	end
@@ -361,7 +361,7 @@ function EacManager.server_check_peer(arg_17_0, arg_17_1)
 	return var_17_0, var_17_1
 end
 
-function EacManager.update(arg_18_0, arg_18_1, arg_18_2)
+EacManager.update = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0._eac_server then
 		EACServer.update(arg_18_0._eac_server)
 	end
@@ -374,19 +374,19 @@ function EacManager.update(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function EacManager.register_network_event_delegate(arg_19_0, arg_19_1)
+EacManager.register_network_event_delegate = function (arg_19_0, arg_19_1)
 	arg_19_1:register(arg_19_0, "rpc_eac_handshake_request", "rpc_eac_handshake_reply")
 
 	arg_19_0._network_event_delegate = arg_19_1
 end
 
-function EacManager.unregister_network_event_delegate(arg_20_0)
+EacManager.unregister_network_event_delegate = function (arg_20_0)
 	arg_20_0._network_event_delegate:unregister(arg_20_0)
 
 	arg_20_0._network_event_delegate = nil
 end
 
-function EacManager._initiate_handshake(arg_21_0, arg_21_1)
+EacManager._initiate_handshake = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._peer_data[arg_21_1]
 
 	RPC.rpc_eac_handshake_request(var_21_0.channel_id)
@@ -395,13 +395,13 @@ function EacManager._initiate_handshake(arg_21_0, arg_21_1)
 	var_21_0.untrusted = false
 end
 
-function EacManager.rpc_eac_handshake_request(arg_22_0, arg_22_1)
+EacManager.rpc_eac_handshake_request = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._user_id
 
 	RPC.rpc_eac_handshake_reply(arg_22_1, var_22_0)
 end
 
-function EacManager.rpc_eac_handshake_reply(arg_23_0, arg_23_1, arg_23_2)
+EacManager.rpc_eac_handshake_reply = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = CHANNEL_TO_PEER_ID[arg_23_1]
 	local var_23_1 = arg_23_0._peer_data[var_23_0]
 
@@ -437,7 +437,7 @@ function EacManager.rpc_eac_handshake_reply(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function EacManager._pump_eos_actions(arg_24_0)
+EacManager._pump_eos_actions = function (arg_24_0)
 	while EOS_EAC.has_eac_action() do
 		local var_24_0 = EOS_EAC.next_eac_action()
 		local var_24_1 = table.find(EOS_EAC_ACCCA, var_24_0.action) or "?"
@@ -460,17 +460,17 @@ function EacManager._pump_eos_actions(arg_24_0)
 end
 
 local var_0_4 = {
-	init = function(arg_25_0)
+	init = function (arg_25_0)
 		return "retrieve_ticket"
 	end,
-	retrieve_ticket = function(arg_26_0, arg_26_1)
+	retrieve_ticket = function (arg_26_0, arg_26_1)
 		var_0_2("Retrieving Steam auth session ticket...")
 
 		arg_26_0._steam_ticket_job = Steam.retrieve_auth_session_ticket("epiconlineservices")
 
 		return "poll_ticket"
 	end,
-	poll_ticket = function(arg_27_0)
+	poll_ticket = function (arg_27_0)
 		local var_27_0 = Steam.poll_auth_session_ticket(arg_27_0._steam_ticket_job)
 
 		if var_27_0 then
@@ -480,7 +480,7 @@ local var_0_4 = {
 			return "start_authenticate"
 		end
 	end,
-	start_authenticate = function(arg_28_0)
+	start_authenticate = function (arg_28_0)
 		var_0_2("Authenticating with Steam as an identity provider...")
 		EOS_EAC.authenticate_with_steam(arg_28_0._auth_session_ticket)
 
@@ -488,7 +488,7 @@ local var_0_4 = {
 
 		return "poll_authenticate"
 	end,
-	poll_authenticate = function(arg_29_0)
+	poll_authenticate = function (arg_29_0)
 		local var_29_0, var_29_1 = EOS_EAC.poll_authenticate_status()
 
 		if var_29_0 == "in_flight" then
@@ -508,7 +508,7 @@ local var_0_4 = {
 
 		return "poll_valid"
 	end,
-	poll_valid = function(arg_30_0)
+	poll_valid = function (arg_30_0)
 		if EOS_EAC.poll_authenticate_status() == "expired" then
 			var_0_2("Refreshing user id ...")
 
@@ -517,7 +517,7 @@ local var_0_4 = {
 	end
 }
 
-function EacManager._handle_eos(arg_31_0, arg_31_1)
+EacManager._handle_eos = function (arg_31_0, arg_31_1)
 	if not USE_EOS or not arg_31_0._eac_supported then
 		return
 	end
@@ -560,7 +560,7 @@ else
 	var_0_5.required_game_file_not_found = true
 end
 
-function EacManager._handle_violations(arg_32_0)
+EacManager._handle_violations = function (arg_32_0)
 	if arg_32_0._eac_violation_type then
 		return
 	end
@@ -604,7 +604,7 @@ function EacManager._handle_violations(arg_32_0)
 	end
 end
 
-function EacManager._handle_popups(arg_33_0)
+EacManager._handle_popups = function (arg_33_0)
 	local var_33_0 = Managers.popup
 
 	if arg_33_0._popup_id ~= nil and var_33_0:query_result(arg_33_0._popup_id) == "quit" then
@@ -629,7 +629,7 @@ function EacManager._handle_popups(arg_33_0)
 	arg_33_0._suppress_popup = true
 end
 
-function EacManager.draw_panel(arg_34_0, arg_34_1, arg_34_2)
+EacManager.draw_panel = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._eac_violation_message
 
 	if not var_34_0 or arg_34_0._suppress_panel then
@@ -671,6 +671,6 @@ function EacManager.draw_panel(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function EacManager.eac_ready_locally(arg_35_0)
+EacManager.eac_ready_locally = function (arg_35_0)
 	return not not arg_35_0._local_role
 end

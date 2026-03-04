@@ -10,7 +10,7 @@ WeaveTutorialPopupUI = class(WeaveTutorialPopupUI)
 
 local var_0_5 = 40
 
-function WeaveTutorialPopupUI.init(arg_1_0, arg_1_1)
+WeaveTutorialPopupUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -32,14 +32,14 @@ function WeaveTutorialPopupUI.init(arg_1_0, arg_1_1)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-function WeaveTutorialPopupUI._setup_input(arg_2_0)
+WeaveTutorialPopupUI._setup_input = function (arg_2_0)
 	arg_2_0.input_manager:create_input_service("weave_tutorial", "IngameMenuKeymaps", "IngameMenuFilters")
 	arg_2_0.input_manager:map_device_to_service("weave_tutorial", "keyboard")
 	arg_2_0.input_manager:map_device_to_service("weave_tutorial", "mouse")
 	arg_2_0.input_manager:map_device_to_service("weave_tutorial", "gamepad")
 end
 
-function WeaveTutorialPopupUI._create_ui_elements(arg_3_0)
+WeaveTutorialPopupUI._create_ui_elements = function (arg_3_0)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = var_0_0.widget_definitions
@@ -75,7 +75,7 @@ function WeaveTutorialPopupUI._create_ui_elements(arg_3_0)
 	arg_3_0.ui_animator = UIAnimator:new(arg_3_0.ui_scenegraph, var_0_3)
 end
 
-function WeaveTutorialPopupUI.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
+WeaveTutorialPopupUI.show = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
 	if arg_4_0.is_visible then
 		print("WeaveTutorialPopupUI is already visible")
 
@@ -93,7 +93,7 @@ function WeaveTutorialPopupUI.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 	arg_4_0:_acquire_input()
 end
 
-function WeaveTutorialPopupUI.show_custom_popup(arg_5_0, arg_5_1)
+WeaveTutorialPopupUI.show_custom_popup = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_1.custom_popup
 
 	arg_5_0._custom_popup = rawget(_G, var_5_0):new(arg_5_0.ui_context, arg_5_0)
@@ -102,7 +102,7 @@ function WeaveTutorialPopupUI.show_custom_popup(arg_5_0, arg_5_1)
 	arg_5_0:_acquire_input()
 end
 
-function WeaveTutorialPopupUI.hide(arg_6_0)
+WeaveTutorialPopupUI.hide = function (arg_6_0)
 	if not arg_6_0.is_visible then
 		return
 	end
@@ -113,7 +113,7 @@ function WeaveTutorialPopupUI.hide(arg_6_0)
 	arg_6_0:_destroy_custom_popup()
 end
 
-function WeaveTutorialPopupUI._destroy_custom_popup(arg_7_0)
+WeaveTutorialPopupUI._destroy_custom_popup = function (arg_7_0)
 	if arg_7_0._custom_popup then
 		arg_7_0._custom_popup:destroy()
 
@@ -121,7 +121,7 @@ function WeaveTutorialPopupUI._destroy_custom_popup(arg_7_0)
 	end
 end
 
-function WeaveTutorialPopupUI.destroy(arg_8_0)
+WeaveTutorialPopupUI.destroy = function (arg_8_0)
 	arg_8_0:hide()
 
 	arg_8_0.widgets = nil
@@ -134,7 +134,7 @@ function WeaveTutorialPopupUI.destroy(arg_8_0)
 	arg_8_0.ui_animator = nil
 end
 
-function WeaveTutorialPopupUI.update(arg_9_0, arg_9_1)
+WeaveTutorialPopupUI.update = function (arg_9_0, arg_9_1)
 	if not arg_9_0.is_visible then
 		return
 	end
@@ -162,7 +162,7 @@ function WeaveTutorialPopupUI.update(arg_9_0, arg_9_1)
 	end
 end
 
-function WeaveTutorialPopupUI._update_animations(arg_10_0, arg_10_1)
+WeaveTutorialPopupUI._update_animations = function (arg_10_0, arg_10_1)
 	arg_10_0.ui_animator:update(arg_10_1)
 
 	local var_10_0 = arg_10_0._animations
@@ -180,7 +180,7 @@ function WeaveTutorialPopupUI._update_animations(arg_10_0, arg_10_1)
 	UIWidgetUtils.animate_default_button(arg_10_0.button_2, arg_10_1)
 end
 
-function WeaveTutorialPopupUI._draw(arg_11_0, arg_11_1, arg_11_2)
+WeaveTutorialPopupUI._draw = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0._custom_popup then
 		return
 	end
@@ -204,7 +204,7 @@ function WeaveTutorialPopupUI._draw(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function WeaveTutorialPopupUI.populate_message(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+WeaveTutorialPopupUI.populate_message = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_0.title_text.content
 
 	var_12_0.text = arg_12_1 or ""
@@ -237,7 +237,7 @@ function WeaveTutorialPopupUI.populate_message(arg_12_0, arg_12_1, arg_12_2, arg
 	end
 end
 
-function WeaveTutorialPopupUI.resize_to_fit(arg_13_0)
+WeaveTutorialPopupUI.resize_to_fit = function (arg_13_0)
 	local var_13_0 = arg_13_0.ui_top_renderer
 	local var_13_1 = arg_13_0.ui_scenegraph
 	local var_13_2 = var_13_1.sub_title
@@ -293,7 +293,7 @@ function WeaveTutorialPopupUI.resize_to_fit(arg_13_0)
 	end
 end
 
-function WeaveTutorialPopupUI.calculate_base_window_height(arg_14_0)
+WeaveTutorialPopupUI.calculate_base_window_height = function (arg_14_0)
 	local var_14_0 = arg_14_0.title_start_y - arg_14_0.sub_title_start_y
 	local var_14_1 = arg_14_0.title_text.content.visible and 0 or var_14_0
 	local var_14_2 = arg_14_0.sub_title_start_y - arg_14_0.body_start_y
@@ -304,7 +304,7 @@ function WeaveTutorialPopupUI.calculate_base_window_height(arg_14_0)
 	return arg_14_0.button_height - arg_14_0.body_start_y - var_14_1 + 50
 end
 
-function WeaveTutorialPopupUI.draw_body(arg_15_0, arg_15_1)
+WeaveTutorialPopupUI.draw_body = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.body_text
 	local var_15_1 = arg_15_0.body_text_divider
 	local var_15_2 = var_15_0.offset
@@ -332,7 +332,7 @@ function WeaveTutorialPopupUI.draw_body(arg_15_0, arg_15_1)
 	end
 end
 
-function WeaveTutorialPopupUI.start_transition_animation(arg_16_0, arg_16_1, arg_16_2)
+WeaveTutorialPopupUI.start_transition_animation = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = {
 		wwise_world = arg_16_0.wwise_world,
 		render_settings = arg_16_0.render_settings,
@@ -346,7 +346,7 @@ function WeaveTutorialPopupUI.start_transition_animation(arg_16_0, arg_16_1, arg
 	arg_16_0._animations[arg_16_1] = var_16_2
 end
 
-function WeaveTutorialPopupUI._acquire_input(arg_17_0)
+WeaveTutorialPopupUI._acquire_input = function (arg_17_0)
 	arg_17_0.input_manager:capture_input({
 		"keyboard",
 		"gamepad",
@@ -355,7 +355,7 @@ function WeaveTutorialPopupUI._acquire_input(arg_17_0)
 	ShowCursorStack.show("WeaveTutorialPopupUI")
 end
 
-function WeaveTutorialPopupUI._release_input(arg_18_0)
+WeaveTutorialPopupUI._release_input = function (arg_18_0)
 	arg_18_0.input_manager:release_input({
 		"keyboard",
 		"gamepad",

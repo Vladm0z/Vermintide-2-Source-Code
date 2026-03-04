@@ -22,7 +22,7 @@ var_0_1.scale_settings = {
 	min_scale = 0.25
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	return {
 		scenegraph_id = arg_1_0,
 		offset = {
@@ -128,11 +128,11 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_2_0)
+var_0_1.on_enter = function (arg_2_0)
 	arg_2_0.content.progress = 0
 end
 
-function var_0_1.update_function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+var_0_1.update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_1.content
 	local var_3_1 = arg_3_1.style
 	local var_3_2 = var_3_1.icon

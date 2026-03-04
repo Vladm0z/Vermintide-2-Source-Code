@@ -7,7 +7,7 @@ local var_0_1 = Unit.local_position
 local var_0_2 = Unit.alive
 local var_0_3 = ScriptUnit
 
-function var_0_0.crouch_on_enter(arg_1_0, arg_1_1, arg_1_2)
+var_0_0.crouch_on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	if arg_1_1.is_upright then
 		Managers.state.network:anim_event(arg_1_0, "to_crouch")
 
@@ -15,7 +15,7 @@ function var_0_0.crouch_on_enter(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function var_0_0.upright_on_enter(arg_2_0, arg_2_1, arg_2_2)
+var_0_0.upright_on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	if not arg_2_1.is_upright then
 		Managers.state.network:anim_event(arg_2_0, "to_upright")
 
@@ -23,7 +23,7 @@ function var_0_0.upright_on_enter(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function var_0_0.drop_items(arg_3_0, arg_3_1, arg_3_2)
+var_0_0.drop_items = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = var_0_3.extension(arg_3_0, "ai_inventory_system")
 	local var_3_1 = var_3_0.inventory_item_definitions
 	local var_3_2 = "death"
@@ -41,7 +41,7 @@ function var_0_0.drop_items(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function var_0_0.crouch_or_upright_on_enter(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.crouch_or_upright_on_enter = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_1.needs_to_crouch == nil then
 		PerceptionUtils.troll_crouch_check(arg_4_0, arg_4_1, arg_4_2)
 	end
@@ -53,11 +53,11 @@ function var_0_0.crouch_or_upright_on_enter(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function var_0_0.rage_on_enter(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.rage_on_enter = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_1.next_rage_time = arg_5_2 + 7
 end
 
-function var_0_0.attack_grabbed_smash(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.attack_grabbed_smash = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_2(arg_6_1.victim_grabbed) then
 		StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_6_1.victim_grabbed, "beating_with")
 
@@ -73,19 +73,19 @@ function var_0_0.attack_grabbed_smash(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function var_0_0.on_warlord_dual_wield(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.on_warlord_dual_wield = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_1.inventory_item_set ~= 2 then
 		arg_7_1.switching_weapons = 2
 	end
 end
 
-function var_0_0.on_warlord_halberd(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.on_warlord_halberd = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_1.inventory_item_set ~= 1 then
 		arg_8_1.switching_weapons = 1
 	end
 end
 
-function var_0_0.on_warlord_disable_blocking(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.on_warlord_disable_blocking = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = var_0_3.has_extension(arg_9_0, "ai_shield_system")
 
 	if var_9_0 then
@@ -94,7 +94,7 @@ function var_0_0.on_warlord_disable_blocking(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function var_0_0.on_grey_seer_intro_enter(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.on_grey_seer_intro_enter = function (arg_10_0, arg_10_1, arg_10_2)
 	var_0_3.extension(arg_10_0, "health_system").is_invincible = true
 
 	local var_10_0 = Managers.state.network.network_transmit
@@ -108,7 +108,7 @@ function var_0_0.on_grey_seer_intro_enter(arg_10_0, arg_10_1, arg_10_2)
 	var_10_2:trigger_networked_dialogue_event("egs_intro", var_10_3)
 end
 
-function var_0_0.grey_seer_death_sequence_teleport(arg_11_0, arg_11_1, arg_11_2)
+var_0_0.grey_seer_death_sequence_teleport = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_1.current_death_sequence_index or 1
 	local var_11_1 = arg_11_1.death_sequence_positions[var_11_0]
 
@@ -119,7 +119,7 @@ function var_0_0.grey_seer_death_sequence_teleport(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function var_0_0.grey_seer_call_stormfiend_enter(arg_12_0, arg_12_1, arg_12_2)
+var_0_0.grey_seer_call_stormfiend_enter = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = var_0_3.extension_input(arg_12_0, "dialogue_system")
 	local var_12_1 = arg_12_1.mounted_data
 	local var_12_2 = BLACKBOARDS[var_12_1.mount_unit]
@@ -151,7 +151,7 @@ function var_0_0.grey_seer_call_stormfiend_enter(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_1.quick_teleport_exit_pos = Vector3Box(var_12_9)
 end
 
-function var_0_0.stormfiend_boss_charge_enter(arg_13_0, arg_13_1, arg_13_2)
+var_0_0.stormfiend_boss_charge_enter = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0
 	local var_13_1 = 0
 	local var_13_2 = POSITION_LOOKUP[arg_13_0] + Vector3.up()
@@ -177,11 +177,11 @@ function var_0_0.stormfiend_boss_charge_enter(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function var_0_0.to_combat(arg_14_0, arg_14_1, arg_14_2)
+var_0_0.to_combat = function (arg_14_0, arg_14_1, arg_14_2)
 	AiUtils.enter_combat(arg_14_0, arg_14_1)
 end
 
-function var_0_0.on_chaos_exalted_champion_intro_enter(arg_15_0, arg_15_1, arg_15_2)
+var_0_0.on_chaos_exalted_champion_intro_enter = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.chaos_exalted_intro_move_to
 
 	if var_15_0 then
@@ -197,7 +197,7 @@ function var_0_0.on_chaos_exalted_champion_intro_enter(arg_15_0, arg_15_1, arg_1
 	end
 end
 
-function var_0_0.on_chaos_exalted_sorcerer_intro_enter(arg_16_0, arg_16_1, arg_16_2)
+var_0_0.on_chaos_exalted_sorcerer_intro_enter = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_intro
 
 	if var_16_0 then
@@ -223,7 +223,7 @@ function var_0_0.on_chaos_exalted_sorcerer_intro_enter(arg_16_0, arg_16_1, arg_1
 	var_16_4:trigger_networked_dialogue_event("ebh_intro", var_16_5)
 end
 
-function var_0_0.on_skaven_warlord_intro_enter(arg_17_0, arg_17_1, arg_17_2)
+var_0_0.on_skaven_warlord_intro_enter = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.skaven_warlord_intro_move_to
 
 	if var_17_0 then
@@ -239,17 +239,17 @@ function var_0_0.on_skaven_warlord_intro_enter(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function var_0_0.sorcerer_dummy_idle(arg_18_0, arg_18_1, arg_18_2)
+var_0_0.sorcerer_dummy_idle = function (arg_18_0, arg_18_1, arg_18_2)
 	Managers.state.network:anim_event(arg_18_0, "to_plague_wave")
 
 	var_0_3.extension(arg_18_0, "health_system").is_invincible = true
 end
 
-function var_0_0.corruptor_enter(arg_19_0, arg_19_1, arg_19_2)
+var_0_0.corruptor_enter = function (arg_19_0, arg_19_1, arg_19_2)
 	Managers.state.network:anim_event(arg_19_0, "to_corruptor")
 end
 
-function var_0_0.grey_seer_stagger_enter(arg_20_0, arg_20_1, arg_20_2)
+var_0_0.grey_seer_stagger_enter = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_1.damage_wave_extension
 
 	if var_20_0 then
@@ -292,7 +292,7 @@ local function var_0_4(arg_21_0, arg_21_1, arg_21_2)
 	return var_21_0
 end
 
-function var_0_0.sorcerer_begin_defensive_mode(arg_22_0, arg_22_1, arg_22_2)
+var_0_0.sorcerer_begin_defensive_mode = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = {
 		stay_still = true,
 		end_time = math.huge
@@ -314,11 +314,11 @@ function var_0_0.sorcerer_begin_defensive_mode(arg_22_0, arg_22_1, arg_22_2)
 	var_22_2:trigger_networked_dialogue_event("ebh_summon", var_22_3)
 end
 
-function var_0_0.dont_face_target_while_summoning(arg_23_0, arg_23_1, arg_23_2)
+var_0_0.dont_face_target_while_summoning = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_1.face_target_while_summoning = false
 end
 
-function var_0_0.sorcerer_re_enter_defensive_mode(arg_24_0, arg_24_1, arg_24_2)
+var_0_0.sorcerer_re_enter_defensive_mode = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = {
 		stay_still = true,
 		end_time = math.huge
@@ -340,7 +340,7 @@ function var_0_0.sorcerer_re_enter_defensive_mode(arg_24_0, arg_24_1, arg_24_2)
 	var_24_3:trigger_networked_dialogue_event("ebh_summon", var_24_4)
 end
 
-function var_0_0.target_furthest_player_in_sight(arg_25_0, arg_25_1, arg_25_2)
+var_0_0.target_furthest_player_in_sight = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
 	local var_25_1 = arg_25_1.physics_world or World.get_data(arg_25_1.world, "physics_world")
 	local var_25_2 = POSITION_LOOKUP[arg_25_0]
@@ -360,7 +360,7 @@ function var_0_0.target_furthest_player_in_sight(arg_25_0, arg_25_1, arg_25_2)
 	arg_25_1.target_unit = var_25_3 or arg_25_1.target_unit
 end
 
-function var_0_0.sorcerer_spawn_horde(arg_26_0, arg_26_1, arg_26_2)
+var_0_0.sorcerer_spawn_horde = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = {
 		stay_still = true,
 		end_time = math.huge
@@ -371,14 +371,14 @@ function var_0_0.sorcerer_spawn_horde(arg_26_0, arg_26_1, arg_26_2)
 	arg_26_1.spawning_allies = var_26_0
 end
 
-function var_0_0.sorcerer_defensive_seeking_bomb(arg_27_0, arg_27_1, arg_27_2)
+var_0_0.sorcerer_defensive_seeking_bomb = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = var_0_3.extension_input(arg_27_0, "dialogue_system")
 	local var_27_1 = FrameTable.alloc_table()
 
 	var_27_0:trigger_networked_dialogue_event("ebh_insect_spell", var_27_1)
 end
 
-function var_0_0.teleport_to_center(arg_28_0, arg_28_1, arg_28_2)
+var_0_0.teleport_to_center = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_center[1]
 	local var_28_1 = var_0_1(var_28_0, 0)
 
@@ -391,19 +391,19 @@ function var_0_0.teleport_to_center(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function var_0_0.quick_teleport(arg_29_0, arg_29_1, arg_29_2)
+var_0_0.quick_teleport = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_1.quick_teleport = true
 end
 
-function var_0_0.summoning_starts(arg_30_0, arg_30_1, arg_30_2)
+var_0_0.summoning_starts = function (arg_30_0, arg_30_1, arg_30_2)
 	arg_30_1.is_summoning = true
 end
 
-function var_0_0.wave_summoning_starts(arg_31_0, arg_31_1, arg_31_2)
+var_0_0.wave_summoning_starts = function (arg_31_0, arg_31_1, arg_31_2)
 	arg_31_1.is_summoning = true
 end
 
-function var_0_0.block_stagger_start(arg_32_0, arg_32_1, arg_32_2)
+var_0_0.block_stagger_start = function (arg_32_0, arg_32_1, arg_32_2)
 	if arg_32_1.mode == "defensive" then
 		if arg_32_1.health_extension:current_health_percent() < arg_32_1.teleport_health_percent then
 			arg_32_1.teleport_health_percent = arg_32_1.health_extension:current_health_percent() - 0.05
@@ -431,7 +431,7 @@ function var_0_0.block_stagger_start(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function var_0_0.sorcerer_evade(arg_33_0, arg_33_1, arg_33_2)
+var_0_0.sorcerer_evade = function (arg_33_0, arg_33_1, arg_33_2)
 	arg_33_1.quick_teleport = true
 
 	local var_33_0 = Managers.state.difficulty:get_difficulty()
@@ -451,7 +451,7 @@ function var_0_0.sorcerer_evade(arg_33_0, arg_33_1, arg_33_2)
 	var_33_8:trigger_networked_dialogue_event("ebh_taunt", var_33_9)
 end
 
-function var_0_0.warlord_defensive_on_enter(arg_34_0, arg_34_1, arg_34_2)
+var_0_0.warlord_defensive_on_enter = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_1.spawn_allies_positions
 	local var_34_1 = POSITION_LOOKUP[arg_34_0]
 	local var_34_2 = 0
@@ -473,23 +473,23 @@ function var_0_0.warlord_defensive_on_enter(arg_34_0, arg_34_1, arg_34_2)
 	arg_34_1.override_spawn_allies_call_position = Vector3Box(var_34_3)
 end
 
-function var_0_0.keep_target(arg_35_0, arg_35_1, arg_35_2)
+var_0_0.keep_target = function (arg_35_0, arg_35_1, arg_35_2)
 	arg_35_1.keep_target = true
 end
 
-function var_0_0.add_invincibility(arg_36_0, arg_36_1, arg_36_2)
+var_0_0.add_invincibility = function (arg_36_0, arg_36_1, arg_36_2)
 	var_0_3.extension(arg_36_0, "health_system").is_invincible = true
 end
 
-function var_0_0.remove_invincibility(arg_37_0, arg_37_1, arg_37_2)
+var_0_0.remove_invincibility = function (arg_37_0, arg_37_1, arg_37_2)
 	var_0_3.extension(arg_37_0, "health_system").is_invincible = false
 end
 
-function var_0_0.activate_slot_system(arg_38_0, arg_38_1, arg_38_2)
+var_0_0.activate_slot_system = function (arg_38_0, arg_38_1, arg_38_2)
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_38_0, true)
 end
 
-function var_0_0.troll_chief_on_downed(arg_39_0, arg_39_1, arg_39_2)
+var_0_0.troll_chief_on_downed = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = {
 		stay_still = true,
 		end_time = math.huge

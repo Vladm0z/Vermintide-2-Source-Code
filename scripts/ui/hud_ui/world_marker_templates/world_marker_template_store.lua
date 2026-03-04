@@ -25,7 +25,7 @@ var_0_1.scale_settings = {
 	min_scale = 0.5
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	local var_1_0 = 1
 
 	return {
@@ -46,7 +46,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "star",
 					texture_id = "star",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.show_star
 					end
 				},
@@ -54,7 +54,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_3_0, arg_3_1)
+					content_check_function = function (arg_3_0, arg_3_1)
 						return arg_3_1.color[1] > 0
 					end
 				}
@@ -137,7 +137,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_4_0)
+var_0_1.on_enter = function (arg_4_0)
 	arg_4_0.content.progress = 1
 end
 
@@ -164,7 +164,7 @@ local function var_0_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return var_5_0, var_5_1, var_5_2, var_5_3
 end
 
-function var_0_1.update_function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+var_0_1.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_1.content
 	local var_6_1 = arg_6_1.style
 	local var_6_2 = var_6_1.icon

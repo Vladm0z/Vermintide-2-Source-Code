@@ -28,7 +28,7 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_grimnir.display_name,
 	description = DeusBlessingSettings.blessing_of_grimnir.description,
 	icon = DeusBlessingSettings.blessing_of_grimnir.icon,
-	server_start_function = function(arg_2_0, arg_2_1, arg_2_2)
+	server_start_function = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Managers.state.conflict
 
 		if not var_2_0.enemy_recycler then
@@ -62,7 +62,7 @@ return {
 
 		var_2_0.enemy_recycler:add_main_path_terror_event(var_2_5, var_2_11, 45, var_2_6)
 	end,
-	server_update_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if arg_3_1.unit_to_mark and Managers.state.network:game_object_or_level_id(arg_3_1.unit_to_mark) then
 			local var_3_0 = arg_3_1.unit_to_mark
 
@@ -89,7 +89,7 @@ return {
 			end
 		end
 	end,
-	server_ai_spawned_function = function(arg_4_0, arg_4_1, arg_4_2)
+	server_ai_spawned_function = function (arg_4_0, arg_4_1, arg_4_2)
 		if arg_4_1.boss_spawned then
 			return
 		end
@@ -99,7 +99,7 @@ return {
 			arg_4_1.unit_to_mark = arg_4_2
 		end
 	end,
-	server_ai_killed_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if arg_5_2 == arg_5_1.marked_unit then
 			var_0_3(var_0_1)
 

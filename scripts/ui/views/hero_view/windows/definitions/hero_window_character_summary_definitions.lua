@@ -452,7 +452,7 @@ local function var_0_5(arg_1_0)
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return not arg_2_0.parent.locked
 			end
 		},
@@ -470,7 +470,7 @@ local function var_0_5(arg_1_0)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return not arg_3_0.locked
 			end
 		},
@@ -478,7 +478,7 @@ local function var_0_5(arg_1_0)
 			pass_type = "texture",
 			style_id = "selected_frame",
 			texture_id = "selected_frame",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.selected
 			end
 		},
@@ -486,7 +486,7 @@ local function var_0_5(arg_1_0)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.locked
 			end
 		},
@@ -494,7 +494,7 @@ local function var_0_5(arg_1_0)
 			style_id = "level_text",
 			pass_type = "text",
 			text_id = "level_text",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.locked
 			end
 		},
@@ -502,7 +502,7 @@ local function var_0_5(arg_1_0)
 			style_id = "level_text_shadow",
 			pass_type = "text",
 			text_id = "level_text",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.locked
 			end
 		},
@@ -520,7 +520,7 @@ local function var_0_5(arg_1_0)
 			style_id = "talent",
 			talent_id = "talent",
 			pass_type = "talent_tooltip",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.talent and arg_8_0.button_hotspot.is_hover
 			end
 		}
@@ -1674,7 +1674,7 @@ local function var_0_12(arg_15_0)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.locked
 					end
 				},
@@ -1682,7 +1682,7 @@ local function var_0_12(arg_15_0)
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.taken and not arg_17_0.locked
 					end
 				},
@@ -1694,7 +1694,7 @@ local function var_0_12(arg_15_0)
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						local var_18_0 = arg_18_0.button_hotspot
 
 						return arg_18_0.locked
@@ -2040,16 +2040,16 @@ local var_0_20 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				arg_20_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = math.easeOutCubic(arg_21_3)
 
 				arg_21_4.render_settings.alpha_multiplier = var_21_0
 				arg_21_0.item_list_window.local_position[1] = arg_21_1.item_list_window.position[1] + math.floor(100 * (1 - var_21_0))
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		}

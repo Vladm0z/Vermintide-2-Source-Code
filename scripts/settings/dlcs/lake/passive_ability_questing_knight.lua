@@ -268,7 +268,7 @@ for iter_0_0, iter_0_1 in pairs(DLCSettings) do
 	end
 end
 
-function PassiveAbilityQuestingKnight.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PassiveAbilityQuestingKnight.init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0._owner_unit = arg_4_2
 	arg_4_0._player = arg_4_3.player
 	arg_4_0._is_server = arg_4_1.is_server
@@ -282,7 +282,7 @@ function PassiveAbilityQuestingKnight.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-function PassiveAbilityQuestingKnight.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+PassiveAbilityQuestingKnight.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._is_server then
 		return
 	end
@@ -307,7 +307,7 @@ function PassiveAbilityQuestingKnight.extensions_ready(arg_5_0, arg_5_1, arg_5_2
 	arg_5_0:_register_events()
 end
 
-function PassiveAbilityQuestingKnight._create_quests(arg_6_0)
+PassiveAbilityQuestingKnight._create_quests = function (arg_6_0)
 	if not arg_6_0._talent_extension:initial_talent_synced() then
 		arg_6_0:_delay_quest_creation()
 
@@ -345,7 +345,7 @@ function PassiveAbilityQuestingKnight._create_quests(arg_6_0)
 	end
 end
 
-function PassiveAbilityQuestingKnight._generate_quest_pool(arg_7_0)
+PassiveAbilityQuestingKnight._generate_quest_pool = function (arg_7_0)
 	local var_7_0 = table.clone(arg_7_0:_get_possible_challenges())
 
 	table.shuffle(var_7_0, arg_7_0._quest_seed)
@@ -353,7 +353,7 @@ function PassiveAbilityQuestingKnight._generate_quest_pool(arg_7_0)
 	return var_7_0
 end
 
-function PassiveAbilityQuestingKnight._get_possible_challenges(arg_8_0)
+PassiveAbilityQuestingKnight._get_possible_challenges = function (arg_8_0)
 	local var_8_0 = Managers.state.game_mode:game_mode_key()
 	local var_8_1 = (var_0_5[var_8_0] or var_0_5.default).possible_challenges
 
@@ -372,7 +372,7 @@ function PassiveAbilityQuestingKnight._get_possible_challenges(arg_8_0)
 	return var_8_2
 end
 
-function PassiveAbilityQuestingKnight._get_side_quest_challenge(arg_9_0)
+PassiveAbilityQuestingKnight._get_side_quest_challenge = function (arg_9_0)
 	local var_9_0 = Managers.state.game_mode:game_mode_key()
 	local var_9_1 = (var_0_5[var_9_0] or var_0_5.default).side_quest_challenge
 
@@ -381,13 +381,13 @@ function PassiveAbilityQuestingKnight._get_side_quest_challenge(arg_9_0)
 	return var_9_1
 end
 
-function PassiveAbilityQuestingKnight._always_reset_quest_pool(arg_10_0)
+PassiveAbilityQuestingKnight._always_reset_quest_pool = function (arg_10_0)
 	local var_10_0 = Managers.state.game_mode:game_mode_key()
 
 	return (var_0_5[var_10_0] or var_0_5.default).always_reset_quest_pool or false
 end
 
-function PassiveAbilityQuestingKnight._start_quest_from_pool(arg_11_0, arg_11_1, arg_11_2)
+PassiveAbilityQuestingKnight._start_quest_from_pool = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = Managers.venture.challenge
 	local var_11_1 = arg_11_0._difficulty_rank
 	local var_11_2 = #arg_11_1
@@ -413,11 +413,11 @@ function PassiveAbilityQuestingKnight._start_quest_from_pool(arg_11_0, arg_11_1,
 	end
 end
 
-function PassiveAbilityQuestingKnight._delay_quest_creation(arg_12_0)
+PassiveAbilityQuestingKnight._delay_quest_creation = function (arg_12_0)
 	Managers.state.event:register(arg_12_0, "on_initial_talents_synced", "on_initial_talents_synced")
 end
 
-function PassiveAbilityQuestingKnight.on_initial_talents_synced(arg_13_0, arg_13_1)
+PassiveAbilityQuestingKnight.on_initial_talents_synced = function (arg_13_0, arg_13_1)
 	if arg_13_0._talent_extension == arg_13_1 then
 		if not arg_13_0._is_server or arg_13_0._is_hub_level then
 			return
@@ -428,23 +428,23 @@ function PassiveAbilityQuestingKnight.on_initial_talents_synced(arg_13_0, arg_13
 	end
 end
 
-function PassiveAbilityQuestingKnight.destroy(arg_14_0)
+PassiveAbilityQuestingKnight.destroy = function (arg_14_0)
 	arg_14_0:_unregister_events()
 end
 
-function PassiveAbilityQuestingKnight._register_events(arg_15_0)
+PassiveAbilityQuestingKnight._register_events = function (arg_15_0)
 	if Managers.mechanism:current_mechanism_name() == "versus" then
 		Managers.state.event:register(arg_15_0, "on_talents_changed", "on_talents_changed")
 	end
 end
 
-function PassiveAbilityQuestingKnight.on_talents_changed(arg_16_0, arg_16_1, arg_16_2)
+PassiveAbilityQuestingKnight.on_talents_changed = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_0._talent_extension == arg_16_2 then
 		arg_16_0:_create_quests()
 	end
 end
 
-function PassiveAbilityQuestingKnight._unregister_events(arg_17_0)
+PassiveAbilityQuestingKnight._unregister_events = function (arg_17_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("on_talents_changed", arg_17_0)
 		Managers.state.event:unregister("on_initial_talents_synced", arg_17_0)

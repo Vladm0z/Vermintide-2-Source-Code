@@ -2,7 +2,7 @@
 
 HeroPreviewer = class(HeroPreviewer)
 
-function HeroPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HeroPreviewer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.profile_synchronizer = arg_1_1.profile_synchronizer
 	arg_1_0.character_unit = nil
 	arg_1_0.mesh_unit = nil
@@ -34,7 +34,7 @@ function HeroPreviewer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._equipment_units[InventorySettings.slots_by_name.slot_ranged.slot_index] = {}
 end
 
-function HeroPreviewer.activate(arg_2_0, arg_2_1, arg_2_2)
+HeroPreviewer.activate = function (arg_2_0, arg_2_1, arg_2_2)
 	if not arg_2_0._delayed_spawn then
 		return
 	end
@@ -52,7 +52,7 @@ function HeroPreviewer.activate(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._activated = arg_2_1
 end
 
-function HeroPreviewer.destroy(arg_3_0)
+HeroPreviewer.destroy = function (arg_3_0)
 	arg_3_0._session_id = arg_3_0._session_id + 1
 
 	GarbageLeakDetector.register_object(arg_3_0, "HeroPreviewer")
@@ -60,7 +60,7 @@ end
 
 local var_0_0 = {}
 
-function HeroPreviewer.on_enter(arg_4_0, arg_4_1)
+HeroPreviewer.on_enter = function (arg_4_0, arg_4_1)
 	table.clear(arg_4_0._requested_mip_streaming_units)
 	table.clear(arg_4_0._hidden_units)
 
@@ -75,11 +75,11 @@ function HeroPreviewer.on_enter(arg_4_0, arg_4_1)
 	end
 end
 
-function HeroPreviewer.prepare_exit(arg_5_0)
+HeroPreviewer.prepare_exit = function (arg_5_0)
 	arg_5_0:clear_units()
 end
 
-function HeroPreviewer.on_exit(arg_6_0)
+HeroPreviewer.on_exit = function (arg_6_0)
 	arg_6_0:_unload_all_packages()
 
 	arg_6_0._hero_loading_package_data = nil
@@ -91,11 +91,11 @@ function HeroPreviewer.on_exit(arg_6_0)
 	arg_6_0._session_id = arg_6_0._session_id + 1
 end
 
-function HeroPreviewer.update(arg_7_0, arg_7_1, arg_7_2)
+HeroPreviewer.update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroPreviewer.post_update(arg_8_0, arg_8_1, arg_8_2)
+HeroPreviewer.post_update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_units_visibility(arg_8_1)
 	arg_8_0:_update_lerped_location(arg_8_2)
 	arg_8_0:_handle_hero_spawn_request()
@@ -104,7 +104,7 @@ function HeroPreviewer.post_update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_delayed_material_changes()
 end
 
-function HeroPreviewer._update_lerped_location(arg_9_0, arg_9_1)
+HeroPreviewer._update_lerped_location = function (arg_9_0, arg_9_1)
 	if not arg_9_0._character_destination_location then
 		return
 	end
@@ -128,7 +128,7 @@ function HeroPreviewer._update_lerped_location(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroPreviewer._update_unit_mip_streaming(arg_10_0)
+HeroPreviewer._update_unit_mip_streaming = function (arg_10_0)
 	local var_10_0 = true
 	local var_10_1 = 0
 	local var_10_2 = arg_10_0._requested_mip_streaming_units
@@ -150,7 +150,7 @@ function HeroPreviewer._update_unit_mip_streaming(arg_10_0)
 	end
 end
 
-function HeroPreviewer._update_delayed_material_changes(arg_11_0)
+HeroPreviewer._update_delayed_material_changes = function (arg_11_0)
 	if not arg_11_0._activated then
 		return
 	end
@@ -186,7 +186,7 @@ function HeroPreviewer._update_delayed_material_changes(arg_11_0)
 	arg_11_0._delayed_material_changes[var_11_0] = nil
 end
 
-function HeroPreviewer._request_mip_streaming_for_unit(arg_12_0, arg_12_1)
+HeroPreviewer._request_mip_streaming_for_unit = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._requested_mip_streaming_units
 
 	var_12_0[arg_12_1] = true
@@ -198,7 +198,7 @@ function HeroPreviewer._request_mip_streaming_for_unit(arg_12_0, arg_12_1)
 	end
 end
 
-function HeroPreviewer._update_units_visibility(arg_13_0, arg_13_1)
+HeroPreviewer._update_units_visibility = function (arg_13_0, arg_13_1)
 	if not arg_13_0._activated then
 		return
 	end
@@ -276,11 +276,11 @@ function HeroPreviewer._update_units_visibility(arg_13_0, arg_13_1)
 	arg_13_0._loading_done = true
 end
 
-function HeroPreviewer.loading_done(arg_14_0)
+HeroPreviewer.loading_done = function (arg_14_0)
 	return arg_14_0._loading_done
 end
 
-function HeroPreviewer._set_character_visibility(arg_15_0, arg_15_1)
+HeroPreviewer._set_character_visibility = function (arg_15_0, arg_15_1)
 	arg_15_0._draw_character = arg_15_1
 
 	if arg_15_0.character_unit_hidden_after_spawn then
@@ -390,11 +390,11 @@ function HeroPreviewer._set_character_visibility(arg_15_0, arg_15_1)
 	end
 end
 
-function HeroPreviewer.character_visible(arg_16_0)
+HeroPreviewer.character_visible = function (arg_16_0)
 	return arg_16_0.character_unit_visible and Unit.alive(arg_16_0.character_unit)
 end
 
-function HeroPreviewer.play_character_animation(arg_17_0, arg_17_1, arg_17_2)
+HeroPreviewer.play_character_animation = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.character_unit
 
 	if var_17_0 == nil then
@@ -408,12 +408,12 @@ function HeroPreviewer.play_character_animation(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function HeroPreviewer.clear_asynchronous_data(arg_18_0)
+HeroPreviewer.clear_asynchronous_data = function (arg_18_0)
 	arg_18_0._delayed_pose_animation = false
 	arg_18_0._pose_animation_event = nil
 end
 
-function HeroPreviewer.request_spawn_hero_unit(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+HeroPreviewer.request_spawn_hero_unit = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	arg_19_0:clear_asynchronous_data()
 
 	arg_19_0._requested_hero_spawn_data = {
@@ -432,7 +432,7 @@ function HeroPreviewer.request_spawn_hero_unit(arg_19_0, arg_19_1, arg_19_2, arg
 	arg_19_0:clear_units()
 end
 
-function HeroPreviewer._handle_hero_spawn_request(arg_20_0)
+HeroPreviewer._handle_hero_spawn_request = function (arg_20_0)
 	if arg_20_0._requested_hero_spawn_data then
 		local var_20_0 = arg_20_0._requested_hero_spawn_data
 		local var_20_1 = var_20_0.frame_delay
@@ -453,7 +453,7 @@ function HeroPreviewer._handle_hero_spawn_request(arg_20_0)
 	end
 end
 
-function HeroPreviewer._load_hero_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+HeroPreviewer._load_hero_unit = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 	arg_21_0:_unload_all_packages()
 
 	arg_21_0._current_profile_name = arg_21_6 and arg_21_6.name or arg_21_1
@@ -485,7 +485,7 @@ function HeroPreviewer._load_hero_unit(arg_21_0, arg_21_1, arg_21_2, arg_21_3, a
 	}, arg_21_0:_load_packages(var_21_6)
 end
 
-function HeroPreviewer._poll_hero_package_loading(arg_22_0)
+HeroPreviewer._poll_hero_package_loading = function (arg_22_0)
 	local var_22_0 = arg_22_0._hero_loading_package_data
 
 	if not var_22_0 or var_22_0.loaded then
@@ -528,7 +528,7 @@ function HeroPreviewer._poll_hero_package_loading(arg_22_0)
 	end
 end
 
-function HeroPreviewer._spawn_hero_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+HeroPreviewer._spawn_hero_unit = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0.world
 	local var_23_1 = arg_23_1.third_person
 	local var_23_2 = arg_23_1.third_person_attachment.unit
@@ -605,23 +605,23 @@ function HeroPreviewer._spawn_hero_unit(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	end
 end
 
-function HeroPreviewer.respawn_hero_unit(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+HeroPreviewer.respawn_hero_unit = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	arg_24_0:request_spawn_hero_unit(arg_24_1, arg_24_2, arg_24_3, nil, nil)
 end
 
-function HeroPreviewer.get_equipped_item_info(arg_25_0, arg_25_1)
+HeroPreviewer.get_equipped_item_info = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_1.type
 
 	return arg_25_0._item_info_by_slot[var_25_0]
 end
 
-function HeroPreviewer.spawn_all_props(arg_26_0, arg_26_1)
+HeroPreviewer.spawn_all_props = function (arg_26_0, arg_26_1)
 	for iter_26_0, iter_26_1 in pairs(arg_26_1) do
 		arg_26_0:spawn_prop(iter_26_1)
 	end
 end
 
-function HeroPreviewer.spawn_prop(arg_27_0, arg_27_1)
+HeroPreviewer.spawn_prop = function (arg_27_0, arg_27_1)
 	arg_27_0._props_data[#arg_27_0._props_data + 1] = {
 		visible = false,
 		loaded = false,
@@ -631,7 +631,7 @@ function HeroPreviewer.spawn_prop(arg_27_0, arg_27_1)
 	arg_27_0:_load_packages(arg_27_1.package_names)
 end
 
-function HeroPreviewer.equip_item(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+HeroPreviewer.equip_item = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_0.character_unit_skin_data
 
 	if var_28_0 and var_28_0.always_hide_attachment_slots then
@@ -766,7 +766,7 @@ function HeroPreviewer.equip_item(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28
 	end
 end
 
-function HeroPreviewer._poll_item_package_loading(arg_29_0)
+HeroPreviewer._poll_item_package_loading = function (arg_29_0)
 	local var_29_0 = arg_29_0.character_unit
 
 	if not Unit.alive(var_29_0) then
@@ -837,7 +837,7 @@ function HeroPreviewer._poll_item_package_loading(arg_29_0)
 	end
 end
 
-function HeroPreviewer._is_all_items_loaded(arg_30_0)
+HeroPreviewer._is_all_items_loaded = function (arg_30_0)
 	local var_30_0 = arg_30_0._item_info_by_slot
 	local var_30_1 = true
 
@@ -852,7 +852,7 @@ function HeroPreviewer._is_all_items_loaded(arg_30_0)
 	return var_30_1
 end
 
-function HeroPreviewer._spawn_prop(arg_31_0, arg_31_1)
+HeroPreviewer._spawn_prop = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_1.settings
 	local var_31_1 = arg_31_0.world
 	local var_31_2 = World.spawn_unit(var_31_1, var_31_0.unit_name)
@@ -871,7 +871,7 @@ function HeroPreviewer._spawn_prop(arg_31_0, arg_31_1)
 	Unit.set_unit_visibility(var_31_2, false)
 end
 
-function HeroPreviewer._spawn_item(arg_32_0, arg_32_1, arg_32_2)
+HeroPreviewer._spawn_item = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0.world
 	local var_32_1 = arg_32_0.character_unit
 	local var_32_2 = arg_32_0.mesh_unit
@@ -964,7 +964,7 @@ local function var_0_1(arg_33_0, arg_33_1, arg_33_2)
 	return arg_33_1 and arg_33_1[arg_33_2] or arg_33_0
 end
 
-function HeroPreviewer.reset_pose_animation(arg_34_0)
+HeroPreviewer.reset_pose_animation = function (arg_34_0)
 	if not arg_34_0._pose_animation_event then
 		return
 	end
@@ -987,7 +987,7 @@ function HeroPreviewer.reset_pose_animation(arg_34_0)
 	arg_34_0._pose_animation_event = nil
 end
 
-function HeroPreviewer.set_pose_animation(arg_35_0, arg_35_1, arg_35_2)
+HeroPreviewer.set_pose_animation = function (arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0._pose_animation_event = arg_35_1
 
 	if arg_35_2 then
@@ -1011,7 +1011,7 @@ function HeroPreviewer.set_pose_animation(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function HeroPreviewer.trigger_pose_animation(arg_36_0)
+HeroPreviewer.trigger_pose_animation = function (arg_36_0)
 	local var_36_0 = arg_36_0._pose_animation_event
 	local var_36_1 = arg_36_0.character_unit
 
@@ -1024,7 +1024,7 @@ function HeroPreviewer.trigger_pose_animation(arg_36_0)
 	arg_36_0._delayed_pose_animation = false
 end
 
-function HeroPreviewer._spawn_item_unit(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7)
+HeroPreviewer._spawn_item_unit = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7)
 	local var_37_0 = arg_37_0.world
 	local var_37_1 = arg_37_0.character_unit
 	local var_37_2 = arg_37_0:character_visible()
@@ -1082,7 +1082,7 @@ function HeroPreviewer._spawn_item_unit(arg_37_0, arg_37_1, arg_37_2, arg_37_3, 
 	end
 end
 
-function HeroPreviewer._destroy_item_units_by_slot(arg_38_0, arg_38_1)
+HeroPreviewer._destroy_item_units_by_slot = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0.world
 	local var_38_1 = arg_38_0._hidden_units
 	local var_38_2 = arg_38_0._requested_mip_streaming_units
@@ -1135,7 +1135,7 @@ function HeroPreviewer._destroy_item_units_by_slot(arg_38_0, arg_38_1)
 	end
 end
 
-function HeroPreviewer.wield_weapon_slot(arg_39_0, arg_39_1)
+HeroPreviewer.wield_weapon_slot = function (arg_39_0, arg_39_1)
 	arg_39_0._wielded_slot_type = arg_39_1
 
 	local var_39_0 = arg_39_0._item_info_by_slot.melee
@@ -1159,21 +1159,21 @@ function HeroPreviewer.wield_weapon_slot(arg_39_0, arg_39_1)
 	end
 end
 
-function HeroPreviewer.set_wielded_weapon_slot(arg_40_0, arg_40_1)
+HeroPreviewer.set_wielded_weapon_slot = function (arg_40_0, arg_40_1)
 	arg_40_0._wielded_slot_type = arg_40_1
 end
 
-function HeroPreviewer.item_name_by_slot_type(arg_41_0, arg_41_1)
+HeroPreviewer.item_name_by_slot_type = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._item_info_by_slot[arg_41_1]
 
 	return var_41_0 and var_41_0.name
 end
 
-function HeroPreviewer.wielded_slot_type(arg_42_0)
+HeroPreviewer.wielded_slot_type = function (arg_42_0)
 	return arg_42_0._wielded_slot_type
 end
 
-function HeroPreviewer._reference_name(arg_43_0)
+HeroPreviewer._reference_name = function (arg_43_0)
 	local var_43_0 = "HeroPreviewer"
 
 	if arg_43_0.unique_id then
@@ -1183,7 +1183,7 @@ function HeroPreviewer._reference_name(arg_43_0)
 	return var_43_0
 end
 
-function HeroPreviewer._trigger_equip_events(arg_44_0)
+HeroPreviewer._trigger_equip_events = function (arg_44_0)
 	if not Unit.alive(arg_44_0.mesh_unit) then
 		return
 	end
@@ -1200,7 +1200,7 @@ function HeroPreviewer._trigger_equip_events(arg_44_0)
 	end
 end
 
-function HeroPreviewer._load_packages(arg_45_0, arg_45_1)
+HeroPreviewer._load_packages = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0:_reference_name()
 	local var_45_1 = Managers.package
 
@@ -1209,13 +1209,13 @@ function HeroPreviewer._load_packages(arg_45_0, arg_45_1)
 	end
 end
 
-function HeroPreviewer._unload_all_packages(arg_46_0)
+HeroPreviewer._unload_all_packages = function (arg_46_0)
 	arg_46_0:_unload_hero_packages()
 	arg_46_0:_unload_all_items()
 	arg_46_0:_unload_all_prop_packages()
 end
 
-function HeroPreviewer._unload_all_prop_packages(arg_47_0)
+HeroPreviewer._unload_all_prop_packages = function (arg_47_0)
 	local var_47_0 = arg_47_0._props_data
 
 	for iter_47_0, iter_47_1 in pairs(var_47_0) do
@@ -1225,7 +1225,7 @@ function HeroPreviewer._unload_all_prop_packages(arg_47_0)
 	end
 end
 
-function HeroPreviewer._unload_hero_packages(arg_48_0)
+HeroPreviewer._unload_hero_packages = function (arg_48_0)
 	local var_48_0 = arg_48_0._hero_loading_package_data
 
 	if not var_48_0 then
@@ -1245,7 +1245,7 @@ function HeroPreviewer._unload_hero_packages(arg_48_0)
 	arg_48_0._hero_loading_package_data = nil
 end
 
-function HeroPreviewer._unload_all_items(arg_49_0)
+HeroPreviewer._unload_all_items = function (arg_49_0)
 	local var_49_0 = arg_49_0._item_info_by_slot
 
 	for iter_49_0, iter_49_1 in pairs(var_49_0) do
@@ -1253,7 +1253,7 @@ function HeroPreviewer._unload_all_items(arg_49_0)
 	end
 end
 
-function HeroPreviewer._unload_prop_packages(arg_50_0, arg_50_1)
+HeroPreviewer._unload_prop_packages = function (arg_50_0, arg_50_1)
 	local var_50_0 = Managers.package
 	local var_50_1 = arg_50_0:_reference_name()
 
@@ -1264,7 +1264,7 @@ function HeroPreviewer._unload_prop_packages(arg_50_0, arg_50_1)
 	end
 end
 
-function HeroPreviewer._unload_item_packages_by_slot(arg_51_0, arg_51_1)
+HeroPreviewer._unload_item_packages_by_slot = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0._item_info_by_slot
 
 	if var_51_0[arg_51_1] then
@@ -1282,7 +1282,7 @@ function HeroPreviewer._unload_item_packages_by_slot(arg_51_0, arg_51_1)
 	end
 end
 
-function HeroPreviewer.clear_units(arg_52_0)
+HeroPreviewer.clear_units = function (arg_52_0)
 	table.clear(arg_52_0._requested_mip_streaming_units)
 
 	local var_52_0 = arg_52_0.world
@@ -1328,7 +1328,7 @@ function HeroPreviewer.clear_units(arg_52_0)
 	end
 end
 
-function HeroPreviewer.set_hero_location(arg_53_0, arg_53_1)
+HeroPreviewer.set_hero_location = function (arg_53_0, arg_53_1)
 	if arg_53_1 then
 		arg_53_0.character_location = arg_53_1
 
@@ -1340,13 +1340,13 @@ function HeroPreviewer.set_hero_location(arg_53_0, arg_53_1)
 	end
 end
 
-function HeroPreviewer.set_hero_location_lerped(arg_54_0, arg_54_1, arg_54_2)
+HeroPreviewer.set_hero_location_lerped = function (arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0._character_destination_location = arg_54_1
 	arg_54_0._lerp_time = arg_54_2
 	arg_54_0._lerp_end_time = Managers.time:time("game") + arg_54_2
 end
 
-function HeroPreviewer.set_hero_rotation(arg_55_0, arg_55_1)
+HeroPreviewer.set_hero_rotation = function (arg_55_0, arg_55_1)
 	if arg_55_1 then
 		arg_55_0.character_rotation = arg_55_1
 
@@ -1360,16 +1360,16 @@ function HeroPreviewer.set_hero_rotation(arg_55_0, arg_55_1)
 	end
 end
 
-function HeroPreviewer.set_hero_look_target(arg_56_0, arg_56_1)
+HeroPreviewer.set_hero_look_target = function (arg_56_0, arg_56_1)
 	if arg_56_1 then
 		arg_56_0.character_look_target = arg_56_1
 	end
 end
 
-function HeroPreviewer.get_character_unit(arg_57_0)
+HeroPreviewer.get_character_unit = function (arg_57_0)
 	return Unit.alive(arg_57_0.character_unit) and arg_57_0.character_unit or nil
 end
 
-function HeroPreviewer.current_profile_name(arg_58_0)
+HeroPreviewer.current_profile_name = function (arg_58_0)
 	return arg_58_0._current_profile_name
 end

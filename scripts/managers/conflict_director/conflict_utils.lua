@@ -19,7 +19,7 @@ local function var_0_4(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	return var_1_1 and var_1_1[arg_1_1] or arg_1_0[arg_1_1]
 end
 
-function var_0_0.random_interval(arg_2_0)
+var_0_0.random_interval = function (arg_2_0)
 	if type(arg_2_0) == "table" then
 		return var_0_2(arg_2_0[1], arg_2_0[2])
 	else
@@ -35,7 +35,7 @@ local var_0_7 = {
 	false
 }
 
-function var_0_0.cluster_positions(arg_3_0, arg_3_1)
+var_0_0.cluster_positions = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		arg_3_0[1]
 	}
@@ -103,7 +103,7 @@ local var_0_9 = {
 	6
 }
 
-function var_0_0.cluster_weight_and_loneliness(arg_4_0, arg_4_1)
+var_0_0.cluster_weight_and_loneliness = function (arg_4_0, arg_4_1)
 	local var_4_0 = Vector3.distance_squared
 
 	arg_4_1 = arg_4_1 * arg_4_1
@@ -170,7 +170,7 @@ function var_0_0.cluster_weight_and_loneliness(arg_4_0, arg_4_1)
 	return var_4_13, var_4_15, var_4_16, var_0_8
 end
 
-function var_0_0.average_player_position()
+var_0_0.average_player_position = function ()
 	local var_5_0 = 0
 	local var_5_1 = Vector3.zero()
 	local var_5_2 = Managers.player:human_and_bot_players()
@@ -194,7 +194,7 @@ end
 local var_0_10 = {}
 local var_0_11 = {}
 
-function var_0_0.hidden_cover_points(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+var_0_0.hidden_cover_points = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
 
 	arg_6_2 = arg_6_2 * arg_6_2
@@ -242,7 +242,7 @@ function var_0_0.hidden_cover_points(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4
 	return var_6_8, var_0_11
 end
 
-function var_0_0.debug_is_cover_point_hidden()
+var_0_0.debug_is_cover_point_hidden = function ()
 	local var_7_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
 	local var_7_1 = Broadphase.query(var_7_0, PLAYER_POSITIONS[1], 20, var_0_10)
 	local var_7_2 = Colors.get("red")
@@ -266,7 +266,7 @@ function var_0_0.debug_is_cover_point_hidden()
 	end
 end
 
-function var_0_0.is_cover_point_hidden(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+var_0_0.is_cover_point_hidden = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = Vector3.normalize
 	local var_8_1 = Quaternion.forward
 	local var_8_2 = Unit.local_rotation
@@ -300,7 +300,7 @@ function var_0_0.is_cover_point_hidden(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	end
 end
 
-function var_0_0.get_random_spawner_with_id(arg_9_0, arg_9_1)
+var_0_0.get_random_spawner_with_id = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.state.entity:system("spawner_system")._id_lookup[arg_9_0]
 
 	if var_9_0 then
@@ -317,7 +317,7 @@ function var_0_0.get_random_spawner_with_id(arg_9_0, arg_9_1)
 	end
 end
 
-function var_0_0.get_random_hidden_spawner(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.get_random_hidden_spawner = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.state.entity:system("spawner_system")
 	local var_10_1 = Broadphase.query(var_10_0.hidden_spawners_broadphase, arg_10_0, arg_10_1, var_0_10)
 
@@ -334,7 +334,7 @@ function var_0_0.get_random_hidden_spawner(arg_10_0, arg_10_1, arg_10_2)
 	return var_0_10[var_10_2]
 end
 
-function var_0_0.get_biggest_cluster(arg_11_0)
+var_0_0.get_biggest_cluster = function (arg_11_0)
 	local var_11_0 = 1
 
 	for iter_11_0 = 2, #arg_11_0 do
@@ -352,7 +352,7 @@ function var_0_0.get_biggest_cluster(arg_11_0)
 	return var_11_0
 end
 
-function var_0_0.filter_positions(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+var_0_0.filter_positions = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = {}
 
 	arg_12_4 = arg_12_4 * arg_12_4
@@ -373,7 +373,7 @@ function var_0_0.filter_positions(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12
 	return var_12_0
 end
 
-function var_0_0.filter_horde_spawners(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+var_0_0.filter_horde_spawners = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = {}
 	local var_13_1 = {}
 
@@ -401,7 +401,7 @@ function var_0_0.filter_horde_spawners(arg_13_0, arg_13_1, arg_13_2, arg_13_3, a
 	return var_13_0, var_13_1
 end
 
-function var_0_0.filter_horde_spawners_strictly(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+var_0_0.filter_horde_spawners_strictly = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = {}
 	local var_14_1 = {}
 
@@ -436,7 +436,7 @@ function var_0_0.filter_horde_spawners_strictly(arg_14_0, arg_14_1, arg_14_2, ar
 	return var_14_0, var_14_1
 end
 
-function var_0_0.get_hidden_pos(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
+var_0_0.get_hidden_pos = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12)
 	local var_15_0 = Vector3(0, 0, 1)
 	local var_15_1 = arg_15_8 * 0.5
 	local var_15_2 = not World.umbra_available(arg_15_0)
@@ -470,11 +470,11 @@ function var_0_0.get_hidden_pos(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4
 	end
 end
 
-function var_0_0.is_position_inside_no_spawn_volume(arg_16_0, arg_16_1, arg_16_2)
+var_0_0.is_position_inside_no_spawn_volume = function (arg_16_0, arg_16_1, arg_16_2)
 	return NavTagVolumeUtils.inside_level_volume_layer(arg_16_0, arg_16_1, arg_16_2, "NO_SPAWN") or NavTagVolumeUtils.inside_level_volume_layer(arg_16_0, arg_16_1, arg_16_2, "NO_BOTS_NO_SPAWN")
 end
 
-function var_0_0.find_center_tri(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+var_0_0.find_center_tri = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0, var_17_1, var_17_2, var_17_3, var_17_4 = GwNavQueries.triangle_from_position(arg_17_0, arg_17_1, arg_17_2 or 30, arg_17_3 or 30)
 
 	if var_17_0 then
@@ -484,7 +484,7 @@ function var_0_0.find_center_tri(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	end
 end
 
-function var_0_0.find_center_tri_with_fallback(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+var_0_0.find_center_tri_with_fallback = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_2, arg_18_3 = arg_18_2 or 30, arg_18_3 or 30
 
 	local var_18_0, var_18_1, var_18_2, var_18_3, var_18_4 = GwNavQueries.triangle_from_position(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
@@ -525,7 +525,7 @@ function var_0_0.find_center_tri_with_fallback(arg_18_0, arg_18_1, arg_18_2, arg
 	return nil
 end
 
-function var_0_0.simulate_dummy_target(arg_19_0, arg_19_1, arg_19_2)
+var_0_0.simulate_dummy_target = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = 15
 	local var_19_1 = Vector3(var_19_0, 0, 1)
 	local var_19_2 = arg_19_2 / 3 % (math.pi * 2)
@@ -541,7 +541,7 @@ function var_0_0.simulate_dummy_target(arg_19_0, arg_19_1, arg_19_2)
 	return var_19_3
 end
 
-function var_0_0.test_cake_slice(arg_20_0, arg_20_1, arg_20_2)
+var_0_0.test_cake_slice = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(arg_20_2 % 20 / 20 * 360)), Vector3(0, 20, 0))
 
 	QuickDrawer:line(arg_20_1 + Vector3(0, 0, 1), arg_20_1 + var_20_0 + Vector3(0, 0, 1), Color(0, 255, 175))
@@ -555,7 +555,7 @@ function var_0_0.test_cake_slice(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function var_0_0.get_spawn_pos_on_cake_slice(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9)
+var_0_0.get_spawn_pos_on_cake_slice = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9)
 	local var_21_0 = math.atan2(arg_21_4.x, arg_21_4.y)
 	local var_21_1 = arg_21_5 * 0.5
 	local var_21_2 = var_21_0 - var_21_1
@@ -578,7 +578,7 @@ function var_0_0.get_spawn_pos_on_cake_slice(arg_21_0, arg_21_1, arg_21_2, arg_2
 	return false
 end
 
-function var_0_0.get_spawn_pos_on_circle(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
+var_0_0.get_spawn_pos_on_circle = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
 	local var_22_0
 	local var_22_1
 	local var_22_2
@@ -596,7 +596,7 @@ function var_0_0.get_spawn_pos_on_circle(arg_22_0, arg_22_1, arg_22_2, arg_22_3,
 	return false
 end
 
-function var_0_0.get_pos_towards_goal(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+var_0_0.get_pos_towards_goal = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
 	arg_23_4 = arg_23_4 or 1
 
 	for iter_23_0 = 1, arg_23_4 do
@@ -632,7 +632,7 @@ function var_0_0.get_pos_towards_goal(arg_23_0, arg_23_1, arg_23_2, arg_23_3, ar
 	return false
 end
 
-function var_0_0.get_furthest_pos_from_pos_on_circle(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+var_0_0.get_furthest_pos_from_pos_on_circle = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = {}
 
 	for iter_24_0 = 1, arg_24_4 do
@@ -669,7 +669,7 @@ function var_0_0.get_furthest_pos_from_pos_on_circle(arg_24_0, arg_24_1, arg_24_
 	return false
 end
 
-function var_0_0.get_spawn_pos_on_circle_with_func(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+var_0_0.get_spawn_pos_on_circle_with_func = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
 	for iter_25_0 = 1, arg_25_4 do
 		local var_25_0 = Vector3(arg_25_2 + (math.random() - 0.5) * arg_25_3, 0, 1)
 		local var_25_1 = arg_25_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_25_0)
@@ -683,7 +683,7 @@ function var_0_0.get_spawn_pos_on_circle_with_func(arg_25_0, arg_25_1, arg_25_2,
 	return false
 end
 
-function var_0_0.get_spawn_pos_on_circle_with_func_range(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
+var_0_0.get_spawn_pos_on_circle_with_func_range = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
 	for iter_26_0 = 1, arg_26_4 do
 		local var_26_0 = Vector3(math.lerp(arg_26_2, arg_26_3, math.random()), 0, 1)
 		local var_26_1 = arg_26_1 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_26_0)
@@ -697,7 +697,7 @@ function var_0_0.get_spawn_pos_on_circle_with_func_range(arg_26_0, arg_26_1, arg
 	return false
 end
 
-function var_0_0.draw_stack_of_balls(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+var_0_0.draw_stack_of_balls = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 1), 0.4, Color(arg_27_1, arg_27_2, arg_27_3, arg_27_4))
 	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 1.5), 0.3, Color(arg_27_1, arg_27_2 * 0.75, arg_27_3 * 0.75, arg_27_4 * 0.75))
 	QuickDrawer:sphere(arg_27_0 + Vector3(0, 0, 2), 0.2, Color(arg_27_1, arg_27_2 * 0.5, arg_27_3 * 0.5, arg_27_4 * 0.5))
@@ -706,7 +706,7 @@ end
 
 local var_0_12 = {}
 
-function var_0_0.get_teleporter_portals()
+var_0_0.get_teleporter_portals = function ()
 	local var_28_0 = Managers.state.game_mode:level_key()
 	local var_28_1 = LevelSettings[var_28_0].level_name
 	local var_28_2 = var_0_12[var_28_1]
@@ -738,7 +738,7 @@ function var_0_0.get_teleporter_portals()
 	return var_28_3
 end
 
-function var_0_0.interest_point_outside_nav_mesh(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+var_0_0.interest_point_outside_nav_mesh = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = InterestPointUnitsLookup[arg_29_1]
 
 	for iter_29_0 = 1, #var_29_0 do
@@ -752,7 +752,7 @@ function var_0_0.interest_point_outside_nav_mesh(arg_29_0, arg_29_1, arg_29_2, a
 	end
 end
 
-function var_0_0.generate_spawn_point_lookup(arg_30_0)
+var_0_0.generate_spawn_point_lookup = function (arg_30_0)
 	local var_30_0 = InterestPointUnits
 	local var_30_1 = {}
 	local var_30_2 = Vector3(0, 0, -1000)
@@ -788,7 +788,7 @@ function var_0_0.generate_spawn_point_lookup(arg_30_0)
 	InterestPointUnitsLookup = var_30_1
 end
 
-function var_0_0.display_number_of_breeds(arg_31_0, arg_31_1, arg_31_2)
+var_0_0.display_number_of_breeds = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0 .. tostring(arg_31_1) .. ", "
 
 	for iter_31_0, iter_31_1 in pairs(arg_31_2) do
@@ -802,7 +802,7 @@ end
 
 local var_0_13 = {}
 
-function var_0_0.display_number_of_breeds_in_segment(arg_32_0, arg_32_1, arg_32_2)
+var_0_0.display_number_of_breeds_in_segment = function (arg_32_0, arg_32_1, arg_32_2)
 	table.clear(var_0_13)
 
 	local var_32_0 = arg_32_0 .. ", "
@@ -830,7 +830,7 @@ function var_0_0.display_number_of_breeds_in_segment(arg_32_0, arg_32_1, arg_32_
 	return var_32_0
 end
 
-function var_0_0.show_where_ai_is(arg_33_0)
+var_0_0.show_where_ai_is = function (arg_33_0)
 	local var_33_0 = POSITION_LOOKUP
 	local var_33_1 = Vector3(0, 0, 40)
 
@@ -843,7 +843,7 @@ function var_0_0.show_where_ai_is(arg_33_0)
 	end
 end
 
-function var_0_0.make_roaming_spawns(arg_34_0, arg_34_1)
+var_0_0.make_roaming_spawns = function (arg_34_0, arg_34_1)
 	local var_34_0 = {}
 
 	if LEVEL_EDITOR_TEST then
@@ -996,7 +996,7 @@ local function var_0_17(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function var_0_0.add_breeds_from_event(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+var_0_0.add_breeds_from_event = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
 	for iter_39_0 = 1, #arg_39_1 do
 		repeat
 			local var_39_0 = arg_39_1[iter_39_0]
@@ -1256,7 +1256,7 @@ local function var_0_22(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	end
 end
 
-function var_0_0.find_conflict_director_breeds(arg_45_0, arg_45_1, arg_45_2)
+var_0_0.find_conflict_director_breeds = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = DifficultySettings[arg_45_1].fallback_difficulty
 
 	if not arg_45_0.boss.disabled then
@@ -1278,7 +1278,7 @@ function var_0_0.find_conflict_director_breeds(arg_45_0, arg_45_1, arg_45_2)
 	return arg_45_2
 end
 
-function var_0_0.patch_settings_with_difficulty(arg_46_0, arg_46_1, arg_46_2)
+var_0_0.patch_settings_with_difficulty = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = arg_46_0.difficulty_overrides
 	local var_46_1 = var_46_0 and (var_46_0[arg_46_1] or var_46_0[arg_46_2])
 
@@ -1297,7 +1297,7 @@ function var_0_0.patch_settings_with_difficulty(arg_46_0, arg_46_1, arg_46_2)
 	end
 end
 
-function var_0_0.patch_terror_events_with_weaves(arg_47_0, arg_47_1, arg_47_2)
+var_0_0.patch_terror_events_with_weaves = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_1.name
 	local var_47_1 = WeaveSettings.templates[var_47_0].objectives
 	local var_47_2 = TerrorEventBlueprints.weaves
@@ -1337,7 +1337,7 @@ function var_0_0.patch_terror_events_with_weaves(arg_47_0, arg_47_1, arg_47_2)
 	end
 end
 
-function var_0_0.generate_conflict_director_locked_functions(arg_48_0)
+var_0_0.generate_conflict_director_locked_functions = function (arg_48_0)
 	local var_48_0 = {}
 
 	for iter_48_0, iter_48_1 in pairs(ConflictDirectorLockedFunctions) do
@@ -1349,7 +1349,7 @@ function var_0_0.generate_conflict_director_locked_functions(arg_48_0)
 	return var_48_0
 end
 
-function var_0_0.teleport_ai_unit(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+var_0_0.teleport_ai_unit = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	if arg_49_1 then
 		if ALIVE[arg_49_0] then
 			local var_49_0 = BLACKBOARDS[arg_49_0]
@@ -1382,14 +1382,14 @@ function var_0_0.teleport_ai_unit(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	end
 end
 
-function var_0_0.look_at_position_flat(arg_50_0, arg_50_1)
+var_0_0.look_at_position_flat = function (arg_50_0, arg_50_1)
 	local var_50_0 = Vector3.flat(arg_50_1 - arg_50_0)
 	local var_50_1 = Vector3.normalize(var_50_0)
 
 	return (var_0_3(var_50_1, Vector3.up()))
 end
 
-function var_0_0.get_closest_position(arg_51_0, arg_51_1)
+var_0_0.get_closest_position = function (arg_51_0, arg_51_1)
 	local var_51_0 = math.huge
 	local var_51_1
 
@@ -1406,7 +1406,7 @@ function var_0_0.get_closest_position(arg_51_0, arg_51_1)
 	return var_51_1, var_51_0
 end
 
-function var_0_0.override_extension_init_data(arg_52_0, arg_52_1)
+var_0_0.override_extension_init_data = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_1.extension_init_data
 
 	if var_52_0 then
@@ -1426,7 +1426,7 @@ local function var_0_23(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	return not var_53_3 or var_53_8 == arg_53_1
 end
 
-function var_0_0.raise_dead(arg_54_0, arg_54_1, arg_54_2)
+var_0_0.raise_dead = function (arg_54_0, arg_54_1, arg_54_2)
 	if arg_54_0 then
 		arg_54_1 = arg_54_1 or 10
 
@@ -1489,7 +1489,7 @@ function var_0_0.raise_dead(arg_54_0, arg_54_1, arg_54_2)
 	end
 end
 
-function var_0_0.command_ai_to_move(arg_55_0, arg_55_1, arg_55_2)
+var_0_0.command_ai_to_move = function (arg_55_0, arg_55_1, arg_55_2)
 	if arg_55_2 then
 		local var_55_0 = Managers.state.entity:system("ai_group_system"):get_ai_group(arg_55_0.resurrected_group_id)
 
@@ -1527,7 +1527,7 @@ function var_0_0.command_ai_to_move(arg_55_0, arg_55_1, arg_55_2)
 	end
 end
 
-function var_0_0.find_positions_around_position(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15)
+var_0_0.find_positions_around_position = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14, arg_56_15)
 	arg_56_7 = arg_56_7 or 1
 
 	local function var_56_0(arg_57_0)
@@ -1625,7 +1625,7 @@ local function var_0_24(arg_59_0, arg_59_1, arg_59_2)
 	return not var_59_0
 end
 
-function var_0_0.find_visible_positions_in_sphere_around_player(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9, arg_60_10, arg_60_11, arg_60_12, arg_60_13)
+var_0_0.find_visible_positions_in_sphere_around_player = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9, arg_60_10, arg_60_11, arg_60_12, arg_60_13)
 	arg_60_11 = arg_60_11 or 0
 
 	local var_60_0 = math.pow(arg_60_12, 2)

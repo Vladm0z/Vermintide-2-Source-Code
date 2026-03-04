@@ -2,7 +2,7 @@
 
 TrainingDummyHealthExtension = class(TrainingDummyHealthExtension, GenericHealthExtension)
 
-function TrainingDummyHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TrainingDummyHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
 	arg_1_0.system_data = arg_1_1.system_data
@@ -21,38 +21,38 @@ function TrainingDummyHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._side_name = "neutral"
 end
 
-function TrainingDummyHealthExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+TrainingDummyHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = Managers.state.side
 	local var_2_1 = var_2_0:get_side_from_name(arg_2_0._side_name).side_id
 
 	var_2_0:add_unit_to_side(arg_2_0.unit, var_2_1)
 end
 
-function TrainingDummyHealthExtension.freeze(arg_3_0)
+TrainingDummyHealthExtension.freeze = function (arg_3_0)
 	arg_3_0:set_dead()
 end
 
-function TrainingDummyHealthExtension.unfreeze(arg_4_0)
+TrainingDummyHealthExtension.unfreeze = function (arg_4_0)
 	arg_4_0:reset()
 end
 
-function TrainingDummyHealthExtension.reset(arg_5_0)
+TrainingDummyHealthExtension.reset = function (arg_5_0)
 	return
 end
 
-function TrainingDummyHealthExtension.hot_join_sync(arg_6_0, arg_6_1)
+TrainingDummyHealthExtension.hot_join_sync = function (arg_6_0, arg_6_1)
 	return
 end
 
-function TrainingDummyHealthExtension.is_alive(arg_7_0)
+TrainingDummyHealthExtension.is_alive = function (arg_7_0)
 	return true
 end
 
-function TrainingDummyHealthExtension.apply_client_predicted_damage(arg_8_0, arg_8_1)
+TrainingDummyHealthExtension.apply_client_predicted_damage = function (arg_8_0, arg_8_1)
 	return
 end
 
-function TrainingDummyHealthExtension.add_damage(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15, arg_9_16, arg_9_17)
+TrainingDummyHealthExtension.add_damage = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13, arg_9_14, arg_9_15, arg_9_16, arg_9_17)
 	local var_9_0 = arg_9_0.unit
 	local var_9_1 = Managers.state.network
 	local var_9_2, var_9_3 = var_9_1:game_object_or_level_id(var_9_0)
@@ -92,29 +92,29 @@ function TrainingDummyHealthExtension.add_damage(arg_9_0, arg_9_1, arg_9_2, arg_
 	end
 end
 
-function TrainingDummyHealthExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+TrainingDummyHealthExtension.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_3 > arg_10_0._next_regen_tick and arg_10_0.damage > 0 then
 		arg_10_0._next_regen_tick = math.huge
 		arg_10_0.damage = 0
 	end
 end
 
-function TrainingDummyHealthExtension.set_max_health(arg_11_0, arg_11_1, arg_11_2)
+TrainingDummyHealthExtension.set_max_health = function (arg_11_0, arg_11_1, arg_11_2)
 	return arg_11_0.health
 end
 
-function TrainingDummyHealthExtension.set_current_damage(arg_12_0, arg_12_1)
+TrainingDummyHealthExtension.set_current_damage = function (arg_12_0, arg_12_1)
 	return
 end
 
-function TrainingDummyHealthExtension.die(arg_13_0, arg_13_1)
+TrainingDummyHealthExtension.die = function (arg_13_0, arg_13_1)
 	return
 end
 
-function TrainingDummyHealthExtension.set_dead(arg_14_0)
+TrainingDummyHealthExtension.set_dead = function (arg_14_0)
 	return
 end
 
-function TrainingDummyHealthExtension.recently_damaged(arg_15_0)
+TrainingDummyHealthExtension.recently_damaged = function (arg_15_0)
 	return arg_15_0._recent_damage_type, arg_15_0._recent_hit_react_type
 end

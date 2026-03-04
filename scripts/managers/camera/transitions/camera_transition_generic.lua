@@ -4,14 +4,14 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionGeneric = class(CameraTransitionGeneric, CameraTransitionBase)
 
-function CameraTransitionGeneric.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+CameraTransitionGeneric.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	CameraTransitionBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 
 	arg_1_0._transition_func = arg_1_5.transition_func
 	arg_1_0._parameter = arg_1_5.parameter
 end
 
-function CameraTransitionGeneric.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CameraTransitionGeneric.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	CameraTransitionBase.update(arg_2_0, arg_2_1, arg_2_3)
 
 	local var_2_0 = arg_2_0._node_2[arg_2_0._parameter](arg_2_0._node_2)

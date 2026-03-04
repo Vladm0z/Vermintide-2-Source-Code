@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterFollowAction = class(BTPackMasterFollowAction, BTNode)
 
-function BTPackMasterFollowAction.init(arg_1_0, ...)
+BTPackMasterFollowAction.init = function (arg_1_0, ...)
 	BTPackMasterFollowAction.super.init(arg_1_0, ...)
 
 	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
@@ -12,7 +12,7 @@ end
 
 BTPackMasterFollowAction.name = "BTPackMasterFollowAction"
 
-function BTPackMasterFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterFollowAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -31,7 +31,7 @@ function BTPackMasterFollowAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.physics_world = arg_2_2.physics_world or World.get_data(arg_2_2.world, "physics_world")
 end
 
-function BTPackMasterFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterFollowAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 	arg_3_2.start_anim_locked = nil
 	arg_3_2.anim_cb_rotation_start = nil
@@ -43,7 +43,7 @@ function BTPackMasterFollowAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	end
 end
 
-function BTPackMasterFollowAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterFollowAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.target_unit
 
 	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, var_4_0) then

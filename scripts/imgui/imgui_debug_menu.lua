@@ -10,7 +10,7 @@ local function var_0_1(arg_2_0, arg_2_1)
 	return arg_2_0.name < arg_2_1.name
 end
 
-function ImguiDebugMenu.init(arg_3_0)
+ImguiDebugMenu.init = function (arg_3_0)
 	arg_3_0._needle = ""
 
 	local var_3_0 = require("scripts/utils/debug_screen_config").settings
@@ -38,7 +38,7 @@ function ImguiDebugMenu.init(arg_3_0)
 	arg_3_0._options = {}
 end
 
-function ImguiDebugMenu.update(arg_4_0)
+ImguiDebugMenu.update = function (arg_4_0)
 	return
 end
 
@@ -49,11 +49,11 @@ local function var_0_4(arg_5_0, arg_5_1)
 	return var_0_2(var_0_3(arg_5_0), var_0_3(arg_5_1))
 end
 
-function ImguiDebugMenu._find_needle(arg_6_0, arg_6_1, arg_6_2)
+ImguiDebugMenu._find_needle = function (arg_6_0, arg_6_1, arg_6_2)
 	return var_0_4(arg_6_1.setting_name, arg_6_2) or var_0_4(arg_6_1.description, arg_6_2) or var_0_4(arg_6_1.category, arg_6_2)
 end
 
-function ImguiDebugMenu._find_needle_list(arg_7_0, arg_7_1, arg_7_2)
+ImguiDebugMenu._find_needle_list = function (arg_7_0, arg_7_1, arg_7_2)
 	for iter_7_0 = 1, #arg_7_1 do
 		if arg_7_0:_find_needle(arg_7_1[iter_7_0], arg_7_2) then
 			return true
@@ -63,7 +63,7 @@ function ImguiDebugMenu._find_needle_list(arg_7_0, arg_7_1, arg_7_2)
 	return false
 end
 
-function ImguiDebugMenu.draw(arg_8_0)
+ImguiDebugMenu.draw = function (arg_8_0)
 	local var_8_0 = Imgui.begin_window("DebugMenu")
 	local var_8_1 = Imgui.input_text("Search", arg_8_0._needle)
 
@@ -104,7 +104,7 @@ function ImguiDebugMenu.draw(arg_8_0)
 	return var_8_0
 end
 
-function ImguiDebugMenu._set_setting(arg_9_0, arg_9_1, arg_9_2)
+ImguiDebugMenu._set_setting = function (arg_9_0, arg_9_1, arg_9_2)
 	Development.set_setting(arg_9_1, arg_9_2)
 
 	script_data[arg_9_1] = arg_9_2
@@ -112,7 +112,7 @@ function ImguiDebugMenu._set_setting(arg_9_0, arg_9_1, arg_9_2)
 	Development.clear_param_cache(arg_9_1)
 end
 
-function ImguiDebugMenu._show_debug_setting(arg_10_0, arg_10_1)
+ImguiDebugMenu._show_debug_setting = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.setting_name
 
 	Imgui.text(var_10_0)
@@ -211,6 +211,6 @@ function ImguiDebugMenu._show_debug_setting(arg_10_0, arg_10_1)
 	end
 end
 
-function ImguiDebugMenu.is_persistent(arg_11_0)
+ImguiDebugMenu.is_persistent = function (arg_11_0)
 	return false
 end

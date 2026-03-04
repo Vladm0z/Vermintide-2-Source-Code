@@ -584,7 +584,7 @@ var_0_2.buff_templates = {
 				update_func = "raise_dead_update",
 				apply_buff_func = "on_raise_dead_start",
 				update_start_delay = 0.2,
-				apply_condition = function(arg_8_0, arg_8_1, arg_8_2)
+				apply_condition = function (arg_8_0, arg_8_1, arg_8_2)
 					return var_0_12(arg_8_2.source_attacker_unit)
 				end,
 				area_radius = var_0_3
@@ -595,7 +595,7 @@ var_0_2.buff_templates = {
 				buff_area = true,
 				area_unit_name = "units/hub_elements/empty",
 				buff_enemies = true,
-				apply_condition = function(arg_9_0, arg_9_1, arg_9_2)
+				apply_condition = function (arg_9_0, arg_9_1, arg_9_2)
 					local var_9_0 = ScriptUnit.has_extension(arg_9_2.source_attacker_unit, "talent_system")
 
 					return var_9_0 and var_9_0:has_talent("sienna_necromancer_6_2_2")
@@ -633,7 +633,7 @@ var_0_2.buff_templates = {
 				name = "raise_dead_ability_stagger",
 				update_func = "necromancer_ability_stagger_update",
 				update_frequency = 0.75,
-				apply_condition = function(arg_10_0, arg_10_1, arg_10_2)
+				apply_condition = function (arg_10_0, arg_10_1, arg_10_2)
 					return Managers.state.network.is_server
 				end
 			},
@@ -675,7 +675,7 @@ var_0_2.buff_templates = {
 	}
 }
 var_0_2.proc_functions = {
-	sienna_necromancer_5_1_on_kill = function(arg_11_0, arg_11_1, arg_11_2)
+	sienna_necromancer_5_1_on_kill = function (arg_11_0, arg_11_1, arg_11_2)
 		if not ALIVE[arg_11_0] then
 			return
 		end
@@ -690,7 +690,7 @@ var_0_2.proc_functions = {
 			ScriptUnit.extension(arg_11_0, "career_system"):reduce_activated_ability_cooldown_percent(var_11_0)
 		end
 	end,
-	sienna_necromancer_add_recast_ready = function(arg_12_0, arg_12_1, arg_12_2)
+	sienna_necromancer_add_recast_ready = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = arg_12_2[2]
 
 		if ScriptUnit.extension(arg_12_0, "career_system"):current_ability_cooldown(var_12_0) == 0 then
@@ -703,7 +703,7 @@ var_0_2.proc_functions = {
 			var_12_4._needs_target = arg_12_1.template.needs_target
 		end
 	end,
-	necromancer_trigger_recast = function(arg_13_0, arg_13_1, arg_13_2)
+	necromancer_trigger_recast = function (arg_13_0, arg_13_1, arg_13_2)
 		local var_13_0 = arg_13_2[2]
 		local var_13_1 = ScriptUnit.extension(arg_13_0, "career_system")
 		local var_13_2 = var_13_1:current_ability_cooldown(var_13_0)
@@ -720,7 +720,7 @@ var_0_2.proc_functions = {
 
 		return true
 	end,
-	necromancer_apply_cursed_blood = function(arg_14_0, arg_14_1, arg_14_2)
+	necromancer_apply_cursed_blood = function (arg_14_0, arg_14_1, arg_14_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -746,7 +746,7 @@ var_0_2.proc_functions = {
 
 		var_0_6(var_14_4, arg_14_0, var_14_0)
 	end,
-	sienna_necromancer_career_skill_damage_proc = function(arg_15_0, arg_15_1, arg_15_2)
+	sienna_necromancer_career_skill_damage_proc = function (arg_15_0, arg_15_1, arg_15_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -780,7 +780,7 @@ var_0_2.proc_functions = {
 			DamageUtils.add_damage_network_player(var_15_6, nil, var_15_5, var_15_0, var_15_1, "torso", POSITION_LOOKUP[var_15_0], Vector3.up(), "undefined")
 		end
 	end,
-	sienna_necromancer_add_buff_to_pet = function(arg_16_0, arg_16_1, arg_16_2)
+	sienna_necromancer_add_buff_to_pet = function (arg_16_0, arg_16_1, arg_16_2)
 		local var_16_0 = arg_16_2[1]
 		local var_16_1 = arg_16_1.template.buff_to_add
 		local var_16_2 = ScriptUnit.extension(var_16_0, "buff_system")
@@ -791,7 +791,7 @@ var_0_2.proc_functions = {
 
 		var_16_2:add_buff(var_16_1, var_0_5)
 	end,
-	sienna_necromancer_low_hp_kill_on_hit = function(arg_17_0, arg_17_1, arg_17_2)
+	sienna_necromancer_low_hp_kill_on_hit = function (arg_17_0, arg_17_1, arg_17_2)
 		local var_17_0 = arg_17_1.template
 
 		if var_17_0.health_threshold < ScriptUnit.extension(arg_17_0, "health_system"):current_health_percent() then
@@ -844,7 +844,7 @@ var_0_2.proc_functions = {
 
 		return true
 	end,
-	on_pet_damage_dealt = function(arg_19_0, arg_19_1, arg_19_2)
+	on_pet_damage_dealt = function (arg_19_0, arg_19_1, arg_19_2)
 		local var_19_0 = arg_19_2[1]
 
 		if arg_19_0 == var_19_0 then
@@ -867,7 +867,7 @@ var_0_2.proc_functions = {
 
 		Managers.state.entity:system("audio_system"):play_audio_unit_event(var_19_3, var_19_0, var_19_4)
 	end,
-	add_pet_charge = function(arg_20_0, arg_20_1, arg_20_2)
+	add_pet_charge = function (arg_20_0, arg_20_1, arg_20_2)
 		local var_20_0 = arg_20_1.source_attacker_unit
 
 		if not ALIVE[arg_20_0] then
@@ -880,7 +880,7 @@ var_0_2.proc_functions = {
 
 		ScriptUnit.extension(var_20_0, "career_system"):get_passive_ability_by_name("bw_necromancer"):add_pet_charge(arg_20_0)
 	end,
-	sienna_necromancer_5_3_free_charge = function(arg_21_0, arg_21_1, arg_21_2)
+	sienna_necromancer_5_3_free_charge = function (arg_21_0, arg_21_1, arg_21_2)
 		local var_21_0 = arg_21_2[1]
 
 		if HEALTH_ALIVE[var_21_0] then
@@ -891,7 +891,7 @@ var_0_2.proc_functions = {
 
 		ScriptUnit.extension(arg_21_0, "buff_system"):add_buff(var_21_1)
 	end,
-	sienna_necromancer_on_kill_harvest = function(arg_22_0, arg_22_1, arg_22_2)
+	sienna_necromancer_on_kill_harvest = function (arg_22_0, arg_22_1, arg_22_2)
 		local var_22_0 = arg_22_2[3]
 		local var_22_1 = ScriptUnit.has_extension(var_22_0, "buff_system")
 
@@ -903,7 +903,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	thank_you_skeletal_add = function(arg_23_0, arg_23_1, arg_23_2)
+	thank_you_skeletal_add = function (arg_23_0, arg_23_1, arg_23_2)
 		if ScriptUnit.extension(arg_23_0, "ai_commander_system"):get_controlled_units_count() >= arg_23_1.template.skeleton_count then
 			local var_23_0 = ScriptUnit.extension(arg_23_0, "buff_system")
 			local var_23_1 = arg_23_1.template.buff_to_add
@@ -911,7 +911,7 @@ var_0_2.proc_functions = {
 			var_23_0:add_buff(var_23_1)
 		end
 	end,
-	thank_you_skeletal_remove = function(arg_24_0, arg_24_1, arg_24_2)
+	thank_you_skeletal_remove = function (arg_24_0, arg_24_1, arg_24_2)
 		if ScriptUnit.extension(arg_24_0, "ai_commander_system"):get_controlled_units_count() <= arg_24_1.template.skeleton_count - 1 then
 			local var_24_0 = ScriptUnit.extension(arg_24_0, "buff_system")
 			local var_24_1 = arg_24_1.template.buff_to_remove
@@ -922,7 +922,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	trapped_souls_overcharge_lost = function(arg_25_0, arg_25_1, arg_25_2)
+	trapped_souls_overcharge_lost = function (arg_25_0, arg_25_1, arg_25_2)
 		local var_25_0 = arg_25_2[1]
 		local var_25_1 = arg_25_2[2]
 
@@ -939,21 +939,21 @@ var_0_2.proc_functions = {
 			var_0_7(arg_25_0, var_25_5)
 		end
 	end,
-	sienna_necromancer_empowered_overcharge_kill = function(arg_26_0, arg_26_1, arg_26_2)
+	sienna_necromancer_empowered_overcharge_kill = function (arg_26_0, arg_26_1, arg_26_2)
 		local var_26_0 = arg_26_1.template.percent_overcharge
 		local var_26_1 = ScriptUnit.extension(arg_26_0, "overcharge_system")
 		local var_26_2 = var_26_1:get_max_value()
 
 		var_26_1:remove_charge(var_26_2 * var_26_0)
 	end,
-	remove_necromancer_creeping_curse_always_blocking = function(arg_27_0, arg_27_1, arg_27_2)
+	remove_necromancer_creeping_curse_always_blocking = function (arg_27_0, arg_27_1, arg_27_2)
 		local var_27_0 = ScriptUnit.extension(arg_27_0, "status_system")
 		local var_27_1 = not Managers.state.network.is_server
 
 		var_27_0:set_override_blocking(nil, var_27_1)
 		ScriptUnit.extension(arg_27_0, "buff_system"):remove_buff(arg_27_1.id)
 	end,
-	remove_buff_stack_on_proc = function(arg_28_0, arg_28_1, arg_28_2)
+	remove_buff_stack_on_proc = function (arg_28_0, arg_28_1, arg_28_2)
 		local var_28_0 = ScriptUnit.extension(arg_28_0, "buff_system")
 		local var_28_1 = arg_28_1.template.buff_to_add
 		local var_28_2 = var_28_0:get_stacking_buff(var_28_1)
@@ -966,17 +966,17 @@ var_0_2.proc_functions = {
 			var_28_0:remove_buff(arg_28_1.id)
 		end
 	end,
-	necromancer_on_death_damage = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+	necromancer_on_death_damage = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 		var_0_9(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 
 		return true
 	end,
-	delayed_health_damage = function(arg_30_0, arg_30_1, arg_30_2)
+	delayed_health_damage = function (arg_30_0, arg_30_1, arg_30_2)
 		var_0_10(arg_30_0, arg_30_1, arg_30_2)
 
 		return true
 	end,
-	necromancer_ability_register_stagger = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	necromancer_ability_register_stagger = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 		if not ALIVE[arg_31_0] then
 			return
 		end
@@ -992,7 +992,7 @@ var_0_2.proc_functions = {
 			var_31_0:add_buff("raise_dead_ability_stagger", var_0_5)
 		end
 	end,
-	necromancer_ability_unregister_stagger = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	necromancer_ability_unregister_stagger = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 		if not ALIVE[arg_32_0] then
 			return
 		end
@@ -1009,7 +1009,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	necromancer_crit_burst = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	necromancer_crit_burst = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 		if not arg_33_2[arg_33_4.is_critical_strike] then
 			return
 		end
@@ -1075,7 +1075,7 @@ var_0_2.proc_functions = {
 			end
 		end
 	end,
-	spawn_ripped_soul = function(arg_34_0, arg_34_1, arg_34_2)
+	spawn_ripped_soul = function (arg_34_0, arg_34_1, arg_34_2)
 		if arg_34_2[1][2] == "execute" then
 			return
 		end
@@ -1094,7 +1094,7 @@ var_0_2.proc_functions = {
 
 		Managers.state.entity:system("orb_system"):spawn_orb(var_34_2, var_34_3, var_34_1, var_34_4, var_34_5)
 	end,
-	execute_man_sized_enemy = function(arg_35_0, arg_35_1, arg_35_2)
+	execute_man_sized_enemy = function (arg_35_0, arg_35_1, arg_35_2)
 		local var_35_0 = arg_35_2[1]
 		local var_35_1 = ALIVE[var_35_0] and Unit.get_data(var_35_0, "breed")
 
@@ -1110,7 +1110,7 @@ var_0_2.proc_functions = {
 
 		return true
 	end,
-	cursed_vigor_proc = function(arg_36_0, arg_36_1, arg_36_2)
+	cursed_vigor_proc = function (arg_36_0, arg_36_1, arg_36_2)
 		if arg_36_0 == arg_36_2[1] then
 			ProcFunctions.add_buff_local(arg_36_0, arg_36_1, arg_36_2)
 		end
@@ -1124,7 +1124,7 @@ local function var_0_13(arg_37_0)
 end
 
 var_0_2.buff_function_templates = {
-	sienna_necromancer_perk_1_func = function(arg_38_0, arg_38_1, arg_38_2)
+	sienna_necromancer_perk_1_func = function (arg_38_0, arg_38_1, arg_38_2)
 		local var_38_0 = arg_38_0
 
 		if ALIVE[var_38_0] and Managers.player.is_server then
@@ -1152,7 +1152,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	necromancer_update_knockdown_damage_immunity = function(arg_39_0, arg_39_1, arg_39_2)
+	necromancer_update_knockdown_damage_immunity = function (arg_39_0, arg_39_1, arg_39_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1218,7 +1218,7 @@ var_0_2.buff_function_templates = {
 			until true
 		end
 	end,
-	necromancer_knockdown_damage_immunity_remove_all = function(arg_40_0, arg_40_1, arg_40_2)
+	necromancer_knockdown_damage_immunity_remove_all = function (arg_40_0, arg_40_1, arg_40_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1239,7 +1239,7 @@ var_0_2.buff_function_templates = {
 
 		arg_40_1.knocked_down_players = nil
 	end,
-	necromancer_remove_orb_buffs = function(arg_41_0, arg_41_1, arg_41_2)
+	necromancer_remove_orb_buffs = function (arg_41_0, arg_41_1, arg_41_2)
 		local var_41_0 = ScriptUnit.has_extension(arg_41_0, "buff_system")
 
 		if var_41_0 then
@@ -1264,7 +1264,7 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	sienna_necromancer_expire_spawned_pet = function(arg_42_0, arg_42_1, arg_42_2)
+	sienna_necromancer_expire_spawned_pet = function (arg_42_0, arg_42_1, arg_42_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1273,7 +1273,7 @@ var_0_2.buff_function_templates = {
 			AiUtils.kill_unit(arg_42_0)
 		end
 	end,
-	sienna_necromancer_on_hit_apply = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+	sienna_necromancer_on_hit_apply = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 		if not arg_43_1.fx_id then
 			local var_43_0 = World.create_particles(arg_43_3, arg_43_1.template.particle_fx, POSITION_LOOKUP[arg_43_0])
 
@@ -1290,12 +1290,12 @@ var_0_2.buff_function_templates = {
 			end
 		end
 	end,
-	setup_delayed_damage = function(arg_44_0, arg_44_1, arg_44_2)
+	setup_delayed_damage = function (arg_44_0, arg_44_1, arg_44_2)
 		local var_44_0 = arg_44_1.attacker_unit
 
 		arg_44_1.source_spread_position = Vector3Box(POSITION_LOOKUP[var_44_0])
 	end,
-	career_skill_health_reduction = function(arg_45_0, arg_45_1, arg_45_2)
+	career_skill_health_reduction = function (arg_45_0, arg_45_1, arg_45_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1323,11 +1323,11 @@ var_0_2.buff_function_templates = {
 			DamageUtils.add_damage_network(arg_45_0, var_45_0, var_45_4, "torso", "buff", nil, Vector3(0, 0, 0), "career_ability", nil, var_45_0, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end,
-	delayed_health_damage = function(arg_46_0, arg_46_1, arg_46_2)
+	delayed_health_damage = function (arg_46_0, arg_46_1, arg_46_2)
 		var_0_10(arg_46_0, arg_46_1, arg_46_2)
 		ScriptUnit.extension(arg_46_0, "buff_system"):remove_buff(arg_46_1.id)
 	end,
-	remove_and_apply_cursed_blood = function(arg_47_0, arg_47_1, arg_47_2)
+	remove_and_apply_cursed_blood = function (arg_47_0, arg_47_1, arg_47_2)
 		local var_47_0 = arg_47_1.source_attacker_unit
 		local var_47_1 = arg_47_1.source_spread_position:unbox()
 		local var_47_2 = DamageProfileTemplates.sienna_necromancer_blood_explosion
@@ -1363,7 +1363,7 @@ var_0_2.buff_function_templates = {
 		AiUtils.stagger(arg_47_0, var_47_19, var_47_0, var_47_8, var_47_20, var_47_21, var_47_22, var_47_23, var_47_24, var_47_25, var_47_26)
 		ScriptUnit.extension(arg_47_0, "buff_system"):remove_buff(arg_47_1.id)
 	end,
-	spawn_pet = function(arg_48_0, arg_48_1, arg_48_2)
+	spawn_pet = function (arg_48_0, arg_48_1, arg_48_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1378,7 +1378,7 @@ var_0_2.buff_function_templates = {
 
 		ScriptUnit.extension(arg_48_0, "career_system"):get_passive_ability_by_name("bw_necromancer"):consume_pet_charge(arg_48_1.id)
 	end,
-	pet_ping_explosion = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+	pet_ping_explosion = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1398,26 +1398,26 @@ var_0_2.buff_function_templates = {
 			AiUtils.kill_unit(arg_49_0)
 		end
 	end,
-	necromancer_5_3_setup = function(arg_50_0, arg_50_1, arg_50_2)
+	necromancer_5_3_setup = function (arg_50_0, arg_50_1, arg_50_2)
 		arg_50_1.total_overcharge_lost = 0
 	end,
-	necromancer_cursed_area_buff = function(arg_51_0, arg_51_1, arg_51_2)
+	necromancer_cursed_area_buff = function (arg_51_0, arg_51_1, arg_51_2)
 		if not ALIVE[arg_51_0] then
 			return false
 		end
 
 		if var_0_12(arg_51_0) and not var_0_13(arg_51_0) then
-			-- block empty
+			-- Nothing
 		end
 	end,
-	necromancer_cursed_area_buff_remove = function(arg_52_0, arg_52_1, arg_52_2)
+	necromancer_cursed_area_buff_remove = function (arg_52_0, arg_52_1, arg_52_2)
 		local var_52_0 = arg_52_0
 
 		if var_0_12(var_52_0) and not var_0_13(var_52_0) then
-			-- block empty
+			-- Nothing
 		end
 	end,
-	apply_necromancer_creeping_curse_always_blocking = function(arg_53_0, arg_53_1, arg_53_2)
+	apply_necromancer_creeping_curse_always_blocking = function (arg_53_0, arg_53_1, arg_53_2)
 		if arg_53_0 == arg_53_2.attacker_unit then
 			local var_53_0 = ScriptUnit.extension(arg_53_0, "status_system")
 			local var_53_1 = not Managers.state.network.is_server
@@ -1426,7 +1426,7 @@ var_0_2.buff_function_templates = {
 			var_53_0:remove_all_fatigue()
 		end
 	end,
-	necromancer_apply_num_buffs = function(arg_54_0, arg_54_1, arg_54_2)
+	necromancer_apply_num_buffs = function (arg_54_0, arg_54_1, arg_54_2)
 		local var_54_0 = arg_54_1.template
 		local var_54_1 = var_54_0.hit_soak_num
 		local var_54_2 = var_54_0.buff_to_add
@@ -1436,21 +1436,21 @@ var_0_2.buff_function_templates = {
 			var_54_3:add_buff(var_54_2)
 		end
 	end,
-	apply_ai_attack_speed = function(arg_55_0, arg_55_1, arg_55_2)
+	apply_ai_attack_speed = function (arg_55_0, arg_55_1, arg_55_2)
 		local var_55_0 = arg_55_1.template.value
 		local var_55_1 = Unit.animation_find_variable(arg_55_0, "attack_speed")
 		local var_55_2 = Unit.animation_get_variable(arg_55_0, var_55_1)
 
 		Unit.animation_set_variable(arg_55_0, var_55_1, var_55_2 + var_55_0)
 	end,
-	remove_ai_attack_speed = function(arg_56_0, arg_56_1, arg_56_2)
+	remove_ai_attack_speed = function (arg_56_0, arg_56_1, arg_56_2)
 		local var_56_0 = arg_56_1.template.value
 		local var_56_1 = Unit.animation_find_variable(arg_56_0, "attack_speed")
 		local var_56_2 = Unit.animation_get_variable(arg_56_0, var_56_1)
 
 		Unit.animation_set_variable(arg_56_0, var_56_1, var_56_2 - var_56_0)
 	end,
-	update_anim_movespeed = function(arg_57_0, arg_57_1, arg_57_2)
+	update_anim_movespeed = function (arg_57_0, arg_57_1, arg_57_2)
 		local var_57_0 = POSITION_LOOKUP[arg_57_0]
 
 		arg_57_1.last_pos = arg_57_1.last_pos or Vector3Box(var_57_0)
@@ -1474,12 +1474,12 @@ var_0_2.buff_function_templates = {
 
 		return arg_57_1._next_update_t + 0.25
 	end,
-	on_raise_dead_start = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+	on_raise_dead_start = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 		local var_58_0 = arg_58_1.source_attacker_unit
 
 		ScriptUnit.extension(var_58_0, "career_system"):get_passive_ability_by_name("bw_necromancer"):kill_pets()
 	end,
-	raise_dead_update = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+	raise_dead_update = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 		if arg_59_1._spawning_done then
 			arg_59_1._grace_timer = arg_59_1._grace_timer or arg_59_2.time_into_buff + 0.5
 
@@ -1512,7 +1512,7 @@ var_0_2.buff_function_templates = {
 
 		return Managers.time:time("game") + (arg_59_1.template.update_frequency + math.random() * 0.2 - 0.1)
 	end,
-	raise_dead_apply = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+	raise_dead_apply = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 		arg_61_1.skulls = {}
 		arg_61_1.num_skulls = 0
 
@@ -1567,7 +1567,7 @@ var_0_2.buff_function_templates = {
 			Unit.set_scalar_for_material(var_61_23, "projector", "enable_fade", 1)
 		end
 	end,
-	raise_dead_remove = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+	raise_dead_remove = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 		if var_0_12(arg_62_1.source_attacker_unit) and ALIVE[arg_62_0] then
 			Managers.state.unit_spawner:mark_for_deletion(arg_62_0)
 		end
@@ -1596,7 +1596,7 @@ var_0_2.buff_function_templates = {
 			World.destroy_unit(arg_62_3, iter_62_1)
 		end
 	end,
-	raise_dead_visual_update = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+	raise_dead_visual_update = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 		local var_63_0 = arg_63_1.template
 		local var_63_1 = var_63_0.delay
 		local var_63_2 = arg_63_2.time_into_buff
@@ -1665,7 +1665,7 @@ var_0_2.buff_function_templates = {
 			Unit.set_local_rotation(iter_63_1, 0, var_63_18)
 		end
 	end,
-	necromancer_ability_stagger_update = function(arg_64_0, arg_64_1, arg_64_2)
+	necromancer_ability_stagger_update = function (arg_64_0, arg_64_1, arg_64_2)
 		local var_64_0 = arg_64_2.attacker_unit
 		local var_64_1 = arg_64_2.source_attacker_unit
 
@@ -1687,7 +1687,7 @@ var_0_2.buff_function_templates = {
 
 		AiUtils.stagger(arg_64_0, var_64_5, var_64_1, var_64_4, var_64_6, var_64_7, var_64_8, var_64_9, var_64_10, var_64_11, var_64_12)
 	end,
-	necromancer_ability_stagger_hands = function(arg_65_0, arg_65_1, arg_65_2)
+	necromancer_ability_stagger_hands = function (arg_65_0, arg_65_1, arg_65_2)
 		local var_65_0 = arg_65_2.attacker_unit
 		local var_65_1 = POSITION_LOOKUP[arg_65_0]
 		local var_65_2 = POSITION_LOOKUP[var_65_0] - var_65_1

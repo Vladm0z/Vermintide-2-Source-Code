@@ -4,13 +4,13 @@ PlayerCharacterStateGrabbedByCorruptor = class(PlayerCharacterStateGrabbedByCorr
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerCharacterStateGrabbedByCorruptor.init(arg_1_0, arg_1_1)
+PlayerCharacterStateGrabbedByCorruptor.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "grabbed_by_corruptor")
 
 	arg_1_0.next_hanging_damage_time = 0
 end
 
-function PlayerCharacterStateGrabbedByCorruptor.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateGrabbedByCorruptor.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.inventory_extension
 	local var_2_1 = arg_2_0.career_extension
 
@@ -48,7 +48,7 @@ function PlayerCharacterStateGrabbedByCorruptor.on_enter(arg_2_0, arg_2_1, arg_2
 	CharacterStateHelper.show_inventory_3p(arg_2_1, false, true, Managers.player.is_server, arg_2_0.inventory_extension)
 end
 
-function PlayerCharacterStateGrabbedByCorruptor.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateGrabbedByCorruptor.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = arg_3_0.first_person_extension
 	local var_3_1 = arg_3_0.status_extension
 	local var_3_2 = arg_3_0.locomotion_extension
@@ -81,7 +81,7 @@ end
 
 PlayerCharacterStateGrabbedByCorruptor.states = {
 	chaos_corruptor_grabbed = {
-		enter = function(arg_4_0, arg_4_1)
+		enter = function (arg_4_0, arg_4_1)
 			local var_4_0 = ScriptUnit.extension(arg_4_1, "locomotion_system")
 			local var_4_1 = arg_4_0.status_extension.corruptor_unit
 
@@ -95,7 +95,7 @@ PlayerCharacterStateGrabbedByCorruptor.states = {
 				var_4_0:enable_rotation_towards_velocity(true, Quaternion.look(var_4_4), 1)
 			end
 		end,
-		run = function(arg_5_0, arg_5_1)
+		run = function (arg_5_0, arg_5_1)
 			local var_5_0 = arg_5_0.status_extension.corruptor_unit
 
 			if Unit.alive(var_5_0) then
@@ -112,10 +112,10 @@ PlayerCharacterStateGrabbedByCorruptor.states = {
 		end
 	},
 	chaos_corruptor_dragging = {
-		enter = function(arg_6_0, arg_6_1)
+		enter = function (arg_6_0, arg_6_1)
 			return
 		end,
-		run = function(arg_7_0, arg_7_1)
+		run = function (arg_7_0, arg_7_1)
 			local var_7_0 = arg_7_0.status_extension.corruptor_unit
 
 			if Unit.alive(var_7_0) then
@@ -139,10 +139,10 @@ PlayerCharacterStateGrabbedByCorruptor.states = {
 		end
 	},
 	chaos_corruptor_released = {
-		run = function(arg_8_0, arg_8_1)
+		run = function (arg_8_0, arg_8_1)
 			return
 		end,
-		enter = function(arg_9_0, arg_9_1)
+		enter = function (arg_9_0, arg_9_1)
 			arg_9_0.locomotion_extension:enable_script_driven_movement()
 
 			local var_9_0 = arg_9_0.status_extension
@@ -178,7 +178,7 @@ PlayerCharacterStateGrabbedByCorruptor.states = {
 	}
 }
 
-function PlayerCharacterStateGrabbedByCorruptor.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+PlayerCharacterStateGrabbedByCorruptor.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_0.csm
 	local var_10_1 = arg_10_0.unit
 	local var_10_2 = arg_10_0.input_extension

@@ -59,7 +59,7 @@ local function var_0_29(arg_3_0)
 	return var_3_1
 end
 
-function PlayerBotBase.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+PlayerBotBase.init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_1.world
 
 	arg_4_0._world = var_4_0
@@ -189,7 +189,7 @@ function PlayerBotBase.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	}
 end
 
-function PlayerBotBase.ranged_attack_started(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PlayerBotBase.ranged_attack_started = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._blackboard
 
 	if arg_5_3 == "ratling_gun_fire" then
@@ -197,7 +197,7 @@ function PlayerBotBase.ranged_attack_started(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function PlayerBotBase.ranged_attack_ended(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+PlayerBotBase.ranged_attack_ended = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._blackboard
 
 	if arg_6_3 == "ratling_gun_fire" then
@@ -205,13 +205,13 @@ function PlayerBotBase.ranged_attack_ended(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function PlayerBotBase.hit_by_projectile(arg_7_0, arg_7_1)
+PlayerBotBase.hit_by_projectile = function (arg_7_0, arg_7_1)
 	arg_7_0._blackboard.hit_by_projectile[arg_7_1] = arg_7_0._t
 end
 
 local var_0_30 = 5
 
-function PlayerBotBase.set_stay_near_player(arg_8_0, arg_8_1, arg_8_2)
+PlayerBotBase.set_stay_near_player = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_1 then
 		arg_8_0._stay_near_player_range = arg_8_2 or var_0_30
 	else
@@ -221,11 +221,11 @@ function PlayerBotBase.set_stay_near_player(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._stay_near_player = arg_8_1
 end
 
-function PlayerBotBase.should_stay_near_player(arg_9_0)
+PlayerBotBase.should_stay_near_player = function (arg_9_0)
 	return arg_9_0._stay_near_player, arg_9_0._stay_near_player_range
 end
 
-function PlayerBotBase.set_seen_by_player(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PlayerBotBase.set_seen_by_player = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0._seen_by_players
 
 	if arg_10_1 then
@@ -235,7 +235,7 @@ function PlayerBotBase.set_seen_by_player(arg_10_0, arg_10_1, arg_10_2, arg_10_3
 	end
 end
 
-function PlayerBotBase.extensions_ready(arg_11_0, arg_11_1, arg_11_2)
+PlayerBotBase.extensions_ready = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._blackboard
 	local var_11_1 = ScriptUnit.extension(arg_11_2, "input_system")
 	local var_11_2 = ScriptUnit.extension(arg_11_2, "inventory_system")
@@ -273,23 +273,23 @@ function PlayerBotBase.extensions_ready(arg_11_0, arg_11_1, arg_11_2)
 	var_11_0.side = Managers.state.side.side_by_unit[arg_11_2]
 end
 
-function PlayerBotBase._init_brain(arg_12_0)
+PlayerBotBase._init_brain = function (arg_12_0)
 	arg_12_0._brain = AIBrain:new(arg_12_0._world, arg_12_0._unit, arg_12_0._blackboard, arg_12_0._bot_profile, arg_12_0._bot_profile.behavior)
 end
 
-function PlayerBotBase.brain(arg_13_0)
+PlayerBotBase.brain = function (arg_13_0)
 	return arg_13_0._brain
 end
 
-function PlayerBotBase.profile(arg_14_0)
+PlayerBotBase.profile = function (arg_14_0)
 	return arg_14_0._bot_profile
 end
 
-function PlayerBotBase.blackboard(arg_15_0)
+PlayerBotBase.blackboard = function (arg_15_0)
 	return arg_15_0._blackboard
 end
 
-function PlayerBotBase.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+PlayerBotBase.update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	arg_16_0._t = arg_16_5
 
 	local var_16_0 = arg_16_0._status_extension
@@ -325,7 +325,7 @@ function PlayerBotBase.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, 
 	end
 end
 
-function PlayerBotBase._update_blackboard(arg_17_0, arg_17_1, arg_17_2)
+PlayerBotBase._update_blackboard = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._blackboard
 	local var_17_1 = arg_17_0._status_extension
 	local var_17_2 = arg_17_0._locomotion_extension
@@ -356,7 +356,7 @@ function PlayerBotBase._update_blackboard(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function PlayerBotBase._update_target_enemy(arg_18_0, arg_18_1, arg_18_2)
+PlayerBotBase._update_target_enemy = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = POSITION_LOOKUP[arg_18_0._unit]
 
 	arg_18_0:_update_slot_target(arg_18_1, arg_18_2, var_18_0)
@@ -402,7 +402,7 @@ end
 
 local var_0_31 = {}
 
-function PlayerBotBase._update_proximity_target(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+PlayerBotBase._update_proximity_target = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = arg_19_0._blackboard
 
 	if arg_19_2 > arg_19_0._proximity_target_update_timer then
@@ -491,7 +491,7 @@ end
 
 local var_0_32 = math.sin(math.pi * 0.25)
 
-function PlayerBotBase._target_valid(arg_20_0, arg_20_1, arg_20_2)
+PlayerBotBase._target_valid = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = var_0_1[arg_20_1]
 
 	if not var_20_0 or var_20_0.breed.not_bot_target then
@@ -511,7 +511,7 @@ function PlayerBotBase._target_valid(arg_20_0, arg_20_1, arg_20_2)
 	return true
 end
 
-function PlayerBotBase._update_slot_target(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+PlayerBotBase._update_slot_target = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0._blackboard
 	local var_21_1 = arg_21_0._unit
 	local var_21_2 = var_21_0.target_unit
@@ -567,7 +567,7 @@ end
 local var_0_33 = -1
 local var_0_34 = table.keys(SlotTypeSettings)
 
-function PlayerBotBase._get_closest_target_in_slot(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PlayerBotBase._get_closest_target_in_slot = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = Managers.state.entity:system("ai_slot_system")
 	local var_22_1
 	local var_22_2 = math.huge
@@ -603,7 +603,7 @@ function PlayerBotBase._get_closest_target_in_slot(arg_22_0, arg_22_1, arg_22_2,
 	return var_22_1, var_22_2
 end
 
-function PlayerBotBase._alter_target_position(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+PlayerBotBase._alter_target_position = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0
 	local var_23_1
 
@@ -652,7 +652,7 @@ function PlayerBotBase._alter_target_position(arg_23_0, arg_23_1, arg_23_2, arg_
 	end
 end
 
-function PlayerBotBase._find_target_position_on_nav_mesh(arg_24_0, arg_24_1, arg_24_2)
+PlayerBotBase._find_target_position_on_nav_mesh = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = 0.5
 	local var_24_1 = 0.5
 	local var_24_2, var_24_3 = GwNavQueries.triangle_from_position(arg_24_1, arg_24_2, var_24_0, var_24_1)
@@ -671,7 +671,7 @@ function PlayerBotBase._find_target_position_on_nav_mesh(arg_24_0, arg_24_1, arg
 	end
 end
 
-function PlayerBotBase._update_target_ally(arg_25_0, arg_25_1, arg_25_2)
+PlayerBotBase._update_target_ally = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0._unit
 	local var_25_1 = arg_25_0._blackboard
 	local var_25_2 = arg_25_0._bot_profile
@@ -726,7 +726,7 @@ end
 local var_0_35 = math.degrees_to_radians(30)
 local var_0_36 = 3.5
 
-function PlayerBotBase._player_needs_attention(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+PlayerBotBase._player_needs_attention = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
 	local var_26_0 = arg_26_0._seen_by_players[arg_26_2]
 	local var_26_1 = arg_26_4:equipment().wielded_slot
 	local var_26_2 = arg_26_4:get_slot_data(var_26_1)
@@ -800,7 +800,7 @@ function PlayerBotBase._player_needs_attention(arg_26_0, arg_26_1, arg_26_2, arg
 	end
 end
 
-function PlayerBotBase._calculate_healing_item_utility(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+PlayerBotBase._calculate_healing_item_utility = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	if arg_27_3 then
 		return 1 - (arg_27_2 and arg_27_1 - 0.5 or arg_27_1)
 	else
@@ -808,7 +808,7 @@ function PlayerBotBase._calculate_healing_item_utility(arg_27_0, arg_27_1, arg_2
 	end
 end
 
-function PlayerBotBase._select_ally_by_utility(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+PlayerBotBase._select_ally_by_utility = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = POSITION_LOOKUP[arg_28_1]
 	local var_28_1
 	local var_28_2 = math.huge
@@ -968,7 +968,7 @@ function PlayerBotBase._select_ally_by_utility(arg_28_0, arg_28_1, arg_28_2, arg
 	return var_28_1, var_28_3, var_28_4, var_28_5
 end
 
-function PlayerBotBase.within_aid_range(arg_29_0, arg_29_1)
+PlayerBotBase.within_aid_range = function (arg_29_0, arg_29_1)
 	if arg_29_1.target_ally_needs_aid then
 		local var_29_0 = POSITION_LOOKUP[arg_29_0._unit]
 		local var_29_1 = POSITION_LOOKUP[arg_29_1.target_ally_unit]
@@ -981,7 +981,7 @@ function PlayerBotBase.within_aid_range(arg_29_0, arg_29_1)
 	return false
 end
 
-function PlayerBotBase._update_liquid_escape(arg_30_0)
+PlayerBotBase._update_liquid_escape = function (arg_30_0)
 	local var_30_0 = arg_30_0._unit
 	local var_30_1 = arg_30_0._blackboard
 	local var_30_2 = arg_30_0._status_extension
@@ -1031,7 +1031,7 @@ function PlayerBotBase._update_liquid_escape(arg_30_0)
 	end
 end
 
-function PlayerBotBase._should_re_evaluate_vortex_escape(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+PlayerBotBase._should_re_evaluate_vortex_escape = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	local var_31_0 = false
 	local var_31_1
 
@@ -1051,7 +1051,7 @@ function PlayerBotBase._should_re_evaluate_vortex_escape(arg_31_0, arg_31_1, arg
 	return var_31_0, var_31_1
 end
 
-function PlayerBotBase._find_vortex_escape_destination(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+PlayerBotBase._find_vortex_escape_destination = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0
 	local var_32_1
 	local var_32_2 = arg_32_0._vortex_escape_directions
@@ -1079,7 +1079,7 @@ function PlayerBotBase._find_vortex_escape_destination(arg_32_0, arg_32_1, arg_3
 	return var_32_1, var_32_0, arg_32_5
 end
 
-function PlayerBotBase._update_vortex_escape(arg_33_0)
+PlayerBotBase._update_vortex_escape = function (arg_33_0)
 	local var_33_0 = arg_33_0._unit
 	local var_33_1 = arg_33_0._blackboard
 	local var_33_2 = POSITION_LOOKUP[var_33_0]
@@ -1140,7 +1140,7 @@ function PlayerBotBase._update_vortex_escape(arg_33_0)
 	end
 end
 
-function PlayerBotBase._update_attack_request(arg_34_0, arg_34_1)
+PlayerBotBase._update_attack_request = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._blackboard
 	local var_34_1 = AiUtils.get_bot_weapon_extension(var_34_0)
 
@@ -1149,7 +1149,7 @@ function PlayerBotBase._update_attack_request(arg_34_0, arg_34_1)
 	end
 end
 
-function PlayerBotBase._update_pickups(arg_35_0, arg_35_1, arg_35_2)
+PlayerBotBase._update_pickups = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._unit
 	local var_35_1 = arg_35_0._blackboard
 
@@ -1168,7 +1168,7 @@ end
 
 local var_0_37 = {}
 
-function PlayerBotBase._update_interactables(arg_36_0, arg_36_1, arg_36_2)
+PlayerBotBase._update_interactables = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._blackboard
 
 	if arg_36_2 > arg_36_0._interactable_timer then
@@ -1223,7 +1223,7 @@ end
 
 local var_0_38 = {}
 
-function PlayerBotBase._find_cover(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+PlayerBotBase._find_cover = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	local var_37_0 = Vector3.zero()
 
 	for iter_37_0, iter_37_1 in pairs(arg_37_1) do
@@ -1263,7 +1263,7 @@ local function var_0_40(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	end
 end
 
-function PlayerBotBase._in_line_of_fire(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+PlayerBotBase._in_line_of_fire = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	local var_39_0 = false
 	local var_39_1 = false
 	local var_39_2 = 2.5
@@ -1303,7 +1303,7 @@ function to_hash(arg_40_0)
 	return arg_40_0.x + arg_40_0.y * 10000 + arg_40_0.z * 0.0001
 end
 
-function PlayerBotBase.cb_cover_point_path_result(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+PlayerBotBase.cb_cover_point_path_result = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	if not arg_41_2 then
 		local var_41_0 = arg_41_0._blackboard.taking_cover
 
@@ -1313,7 +1313,7 @@ function PlayerBotBase.cb_cover_point_path_result(arg_41_0, arg_41_1, arg_41_2, 
 	end
 end
 
-function PlayerBotBase._update_cover(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
+PlayerBotBase._update_cover = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
 	local var_42_0
 	local var_42_1, var_42_2 = arg_42_0:_in_line_of_fire(arg_42_1, arg_42_2, arg_42_4.threats, arg_42_4.active_threats)
 	local var_42_3 = Managers.state.entity:system("ai_bot_group_system")
@@ -1384,7 +1384,7 @@ function PlayerBotBase._update_cover(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg
 	return var_42_0
 end
 
-function PlayerBotBase.new_destination_distance_check(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+PlayerBotBase.new_destination_distance_check = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	local var_43_0 = arg_43_3 - arg_43_2
 	local var_43_1 = math.abs(var_43_0.z) > var_0_15 or Vector3.length_squared(Vector3.flat(var_43_0)) > var_0_13
 
@@ -1403,7 +1403,7 @@ end
 local var_0_41 = 15
 local var_0_42 = 2
 
-function PlayerBotBase._update_movement_target(arg_44_0, arg_44_1, arg_44_2)
+PlayerBotBase._update_movement_target = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._unit
 	local var_44_1 = POSITION_LOOKUP[var_44_0]
 	local var_44_2 = arg_44_0._blackboard
@@ -1635,7 +1635,7 @@ local var_0_43 = {
 	QuaternionBox(Quaternion(Vector3.up(), math.pi))
 }
 
-function PlayerBotBase._find_pickup_position_on_navmesh(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+PlayerBotBase._find_pickup_position_on_navmesh = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 	local var_45_0 = 1.5
 	local var_45_1 = 2.2
 	local var_45_2 = 0.1
@@ -1713,7 +1713,7 @@ function PlayerBotBase._find_pickup_position_on_navmesh(arg_45_0, arg_45_1, arg_
 	end
 end
 
-function PlayerBotBase._find_position_on_navmesh(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+PlayerBotBase._find_position_on_navmesh = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
 	local var_46_0, var_46_1 = GwNavQueries.triangle_from_position(arg_46_1, arg_46_3, arg_46_4, arg_46_5)
 
 	if var_46_0 then
@@ -1730,11 +1730,11 @@ function PlayerBotBase._find_position_on_navmesh(arg_46_0, arg_46_1, arg_46_2, a
 	end
 end
 
-function PlayerBotBase.unit_removed_from_game(arg_47_0)
+PlayerBotBase.unit_removed_from_game = function (arg_47_0)
 	return
 end
 
-function PlayerBotBase.destroy(arg_48_0)
+PlayerBotBase.destroy = function (arg_48_0)
 	arg_48_0._brain:destroy()
 
 	if arg_48_0._blackboard.taking_cover.cover_unit then
@@ -1742,7 +1742,7 @@ function PlayerBotBase.destroy(arg_48_0)
 	end
 end
 
-function PlayerBotBase._debug_draw_update(arg_49_0, arg_49_1)
+PlayerBotBase._debug_draw_update = function (arg_49_0, arg_49_1)
 	if script_data.debug_behaviour_trees then
 		arg_49_0._brain:debug_draw_behaviours()
 	end
@@ -1778,12 +1778,12 @@ function PlayerBotBase._debug_draw_update(arg_49_0, arg_49_1)
 	arg_49_0._brain:debug_draw_current_behavior()
 end
 
-function PlayerBotBase.clear_failed_paths(arg_50_0)
+PlayerBotBase.clear_failed_paths = function (arg_50_0)
 	table.clear(arg_50_0._attempted_ally_paths)
 	table.clear(arg_50_0._attempted_enemy_paths)
 end
 
-function PlayerBotBase.cb_enemy_path_result(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+PlayerBotBase.cb_enemy_path_result = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
 	if arg_51_4 then
 		return
 	end
@@ -1815,7 +1815,7 @@ function PlayerBotBase.cb_enemy_path_result(arg_51_0, arg_51_1, arg_51_2, arg_51
 	end
 end
 
-function PlayerBotBase._enemy_path_allowed(arg_52_0, arg_52_1)
+PlayerBotBase._enemy_path_allowed = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0._attempted_enemy_paths[arg_52_1]
 	local var_52_1 = POSITION_LOOKUP[arg_52_1]
 
@@ -1826,7 +1826,7 @@ function PlayerBotBase._enemy_path_allowed(arg_52_0, arg_52_1)
 	return true
 end
 
-function PlayerBotBase.cb_health_pickup_path_result(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+PlayerBotBase.cb_health_pickup_path_result = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 	if arg_53_4 then
 		return
 	end
@@ -1836,7 +1836,7 @@ function PlayerBotBase.cb_health_pickup_path_result(arg_53_0, arg_53_1, arg_53_2
 	end
 end
 
-function PlayerBotBase.cb_mule_pickup_path_result(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+PlayerBotBase.cb_mule_pickup_path_result = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
 	if arg_54_4 then
 		return
 	end
@@ -1846,7 +1846,7 @@ function PlayerBotBase.cb_mule_pickup_path_result(arg_54_0, arg_54_1, arg_54_2, 
 	end
 end
 
-function PlayerBotBase.cb_ally_path_result(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+PlayerBotBase.cb_ally_path_result = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
 	local var_55_0 = arg_55_0._attempted_ally_paths
 	local var_55_1 = var_55_0[arg_55_1]
 
@@ -1883,7 +1883,7 @@ local var_0_45 = 225
 local var_0_46 = 3
 local var_0_47 = 12
 
-function PlayerBotBase._ally_path_allowed(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+PlayerBotBase._ally_path_allowed = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = arg_56_0._attempted_ally_paths[arg_56_2]
 
 	if var_56_0 and var_56_0.failed then
@@ -1948,7 +1948,7 @@ local function var_0_48(arg_57_0)
 	return var_57_2, var_57_0, var_57_3, var_57_1
 end
 
-function PlayerBotBase._update_weapon_metadata(arg_58_0, arg_58_1)
+PlayerBotBase._update_weapon_metadata = function (arg_58_0, arg_58_1)
 	local var_58_0 = arg_58_1 and arg_58_1.attack_meta_data
 
 	if var_58_0 and not arg_58_1._precalculated_metadata then
@@ -2051,7 +2051,7 @@ function PlayerBotBase._update_weapon_metadata(arg_58_0, arg_58_1)
 	end
 end
 
-function PlayerBotBase._update_weapon_loadout_data(arg_59_0, arg_59_1)
+PlayerBotBase._update_weapon_loadout_data = function (arg_59_0, arg_59_1)
 	local var_59_0 = arg_59_0._blackboard
 	local var_59_1 = var_59_0.inventory_extension
 	local var_59_2 = var_59_1:recently_acquired("slot_melee")
@@ -2078,7 +2078,7 @@ function PlayerBotBase._update_weapon_loadout_data(arg_59_0, arg_59_1)
 	end
 end
 
-function PlayerBotBase._update_best_weapon(arg_60_0)
+PlayerBotBase._update_best_weapon = function (arg_60_0)
 	local var_60_0 = arg_60_0._blackboard
 
 	if not var_60_0.double_weapons then
@@ -2106,7 +2106,7 @@ function PlayerBotBase._update_best_weapon(arg_60_0)
 	var_60_0.weapon_scores = var_60_2
 end
 
-function PlayerBotBase._update_reload(arg_61_0)
+PlayerBotBase._update_reload = function (arg_61_0)
 	local var_61_0 = arg_61_0._blackboard
 	local var_61_1 = var_61_0.inventory_extension
 	local var_61_2 = var_61_1:get_slot_data("slot_ranged")

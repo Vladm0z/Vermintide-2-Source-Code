@@ -8,7 +8,7 @@ local var_0_0 = BTChaosSorcererSkulkApproachAction
 local var_0_1 = Unit.alive
 local var_0_2 = POSITION_LOOKUP
 
-function var_0_0.init(arg_1_0, ...)
+var_0_0.init = function (arg_1_0, ...)
 	var_0_0.super.init(arg_1_0, ...)
 
 	arg_1_0.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
@@ -16,7 +16,7 @@ end
 
 var_0_0.name = "BTChaosSorcererSkulkApproachAction"
 
-function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_0.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.breed
 	local var_2_2 = arg_2_2.skulk_data or {}
@@ -75,7 +75,7 @@ end
 
 local var_0_3 = math.pi / 4
 
-function var_0_0.initialize_vortex_data(arg_3_0, arg_3_1, arg_3_2)
+var_0_0.initialize_vortex_data = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = VortexTemplates[arg_3_2]
 	local var_3_1 = var_3_0.full_inner_radius
 	local var_3_2 = Vector3.forward() * var_3_1
@@ -99,7 +99,7 @@ function var_0_0.initialize_vortex_data(arg_3_0, arg_3_1, arg_3_2)
 	}
 end
 
-function var_0_0.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+var_0_0.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_2.skulk_data
 	local var_4_1 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 	local var_4_2 = arg_4_2.navigation_extension
@@ -118,7 +118,7 @@ function var_0_0.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.action = nil
 end
 
-function var_0_0.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+var_0_0.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.navigation_extension
 	local var_5_1 = var_5_0:is_following_path()
 	local var_5_2 = var_5_0:number_failed_move_attempts()
@@ -185,7 +185,7 @@ function var_0_0.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function var_0_0.at_goal(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.at_goal = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.move_pos
 
 	if not var_6_0 then
@@ -199,19 +199,19 @@ function var_0_0.at_goal(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function var_0_0.move_to(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+var_0_0.move_to = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_3.navigation_extension:move_to(arg_7_1)
 
 	arg_7_3.move_pos = Vector3Box(arg_7_1)
 end
 
-function var_0_0.idle(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.idle = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:anim_event(arg_8_1, arg_8_2, "idle")
 
 	arg_8_2.move_state = "idle"
 end
 
-function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.start_move_animation = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action.move_animation
 
 	arg_9_0:anim_event(arg_9_1, arg_9_2, var_9_0)
@@ -219,7 +219,7 @@ function var_0_0.start_move_animation(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_2.move_state = "moving"
 end
 
-function var_0_0.anim_event(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+var_0_0.anim_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_2.skulk_data
 
 	if var_10_0.animation_state ~= arg_10_3 then
@@ -231,7 +231,7 @@ end
 
 local var_0_4 = 15
 
-function var_0_0.get_skulk_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+var_0_0.get_skulk_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.action
 	local var_11_1 = arg_11_2.nav_world
 	local var_11_2 = arg_11_2.skulk_data
@@ -282,7 +282,7 @@ function var_0_0.get_skulk_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	var_11_2.direction = var_11_2.direction * -1
 end
 
-function var_0_0.debug_show_skulk_circle(arg_12_0, arg_12_1, arg_12_2)
+var_0_0.debug_show_skulk_circle = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.skulk_data
 	local var_12_1 = arg_12_2.target_unit
 	local var_12_2 = var_0_2[var_12_1]
@@ -294,11 +294,11 @@ function var_0_0.debug_show_skulk_circle(arg_12_0, arg_12_1, arg_12_2)
 	var_12_0.radius = arg_12_2.target_dist
 end
 
-function var_0_0.update_dummie(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+var_0_0.update_dummie = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return false
 end
 
-function var_0_0._update_vortex_search(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+var_0_0._update_vortex_search = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if arg_14_3 > arg_14_4.spawn_timer then
 		local var_14_0 = arg_14_4.vortex_units
 		local var_14_1 = #var_14_0
@@ -357,7 +357,7 @@ function var_0_0._update_vortex_search(arg_14_0, arg_14_1, arg_14_2, arg_14_3, a
 	end
 end
 
-function var_0_0._get_vortex_cast_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+var_0_0._get_vortex_cast_position = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_1.action
 	local var_15_1 = FrameTable.alloc_table()
 	local var_15_2 = arg_15_1.target_dist
@@ -392,7 +392,7 @@ local var_0_7 = 1.5
 local var_0_8 = false
 local var_0_9 = false
 
-function var_0_0.update_portal_search(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+var_0_0.update_portal_search = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	if arg_16_2.target_unit and not var_0_1(arg_16_2.portal_unit) then
 		if arg_16_4.portal_search_active then
 			local var_16_0 = var_0_2[arg_16_2.target_unit]
@@ -419,7 +419,7 @@ function var_0_0.update_portal_search(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 	end
 end
 
-function var_0_0.get_portal_location_list(arg_17_0, arg_17_1)
+var_0_0.get_portal_location_list = function (arg_17_0, arg_17_1)
 	if math.random() <= arg_17_0.chance_to_look_for_wall_spawn then
 		if var_0_0.prepare_wall_search(arg_17_0, arg_17_1) then
 			arg_17_0.placement = "wall"
@@ -439,7 +439,7 @@ function var_0_0.get_portal_location_list(arg_17_0, arg_17_1)
 	return true
 end
 
-function var_0_0.prepare_wall_search(arg_18_0, arg_18_1)
+var_0_0.prepare_wall_search = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.state.conflict.level_analysis.cover_points_broadphase
 	local var_18_1 = 30
 	local var_18_2 = arg_18_0.cover_units
@@ -488,7 +488,7 @@ local function var_0_10(arg_19_0, arg_19_1, arg_19_2)
 	return arg_19_0 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_19_0)
 end
 
-function var_0_0.evaluate_floor(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+var_0_0.evaluate_floor = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = var_0_10(arg_20_2, var_0_6, 10)
 	local var_20_1
 	local var_20_2
@@ -549,7 +549,7 @@ end
 
 local var_0_11 = 25
 
-function var_0_0.evaluate_wall(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+var_0_0.evaluate_wall = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_0.cover_point_index
 	local var_21_1 = arg_21_0.num_cover_points
 	local var_21_2 = var_21_0 + arg_21_3
@@ -602,7 +602,7 @@ function var_0_0.evaluate_wall(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	arg_21_0.cover_point_index = var_21_0
 end
 
-function var_0_0.try_next_portal_location(arg_22_0, arg_22_1, arg_22_2)
+var_0_0.try_next_portal_location = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0.placement
 	local var_22_1, var_22_2 = GwNavQueries.triangle_from_position(arg_22_1, arg_22_2, 3, 3)
 

@@ -382,7 +382,7 @@ local function var_0_10(arg_2_0, arg_2_1, arg_2_2)
 		pass_type = "texture",
 		style_id = "plus_horizontal",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_3_0, arg_3_1)
+		content_check_function = function (arg_3_0, arg_3_1)
 			return arg_2_2 and arg_2_2 == "boon"
 		end
 	}
@@ -390,7 +390,7 @@ local function var_0_10(arg_2_0, arg_2_1, arg_2_2)
 		pass_type = "texture",
 		style_id = "plus_vertical",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_4_0, arg_4_1)
+		content_check_function = function (arg_4_0, arg_4_1)
 			return arg_2_2 and arg_2_2 == "boon"
 		end
 	}
@@ -398,7 +398,7 @@ local function var_0_10(arg_2_0, arg_2_1, arg_2_2)
 		pass_type = "texture",
 		style_id = "minus",
 		texture_id = "masked_rect",
-		content_check_function = function(arg_5_0, arg_5_1)
+		content_check_function = function (arg_5_0, arg_5_1)
 			return arg_2_2 and arg_2_2 == "curse"
 		end
 	}
@@ -616,7 +616,7 @@ local function var_0_12(arg_7_0, arg_7_1)
 		pass_type = "texture",
 		style_id = "checkmark",
 		texture_id = "checkmark",
-		content_check_function = function(arg_8_0)
+		content_check_function = function (arg_8_0)
 			return arg_8_0.collected
 		end
 	}
@@ -629,7 +629,7 @@ local function var_0_12(arg_7_0, arg_7_1)
 		style_id = "num_rewards",
 		pass_type = "text",
 		text_id = "num_rewards_text",
-		content_check_function = function(arg_9_0)
+		content_check_function = function (arg_9_0)
 			return arg_9_0.num_rewards > 1
 		end
 	}
@@ -637,7 +637,7 @@ local function var_0_12(arg_7_0, arg_7_1)
 		style_id = "num_rewards_shadow",
 		pass_type = "text",
 		text_id = "num_rewards_text",
-		content_check_function = function(arg_10_0)
+		content_check_function = function (arg_10_0)
 			return arg_10_0.num_rewards > 1
 		end
 	}
@@ -814,15 +814,15 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = var_12_0
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -832,13 +832,13 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				arg_15_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}
@@ -848,10 +848,10 @@ local var_0_15 = {
 			name = "gamemode_swap_text_fade_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 
 				arg_18_2.style.game_mode_text.text_color[1] = 255 * (1 - var_18_0)
@@ -861,7 +861,7 @@ local var_0_15 = {
 					arg_18_2.style.note_text.text_color[1] = 255 * (1 - var_18_0)
 				end
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		},
@@ -869,10 +869,10 @@ local var_0_15 = {
 			name = "gamemode_swap_text_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				if arg_21_2.content.is_showing_info then
 					arg_21_2.content.game_mode_text = Localize("expedition_info")
 					arg_21_2.content.show_note = true
@@ -888,7 +888,7 @@ local var_0_15 = {
 					arg_21_2.style.note_text.text_color[1] = 255 * math.easeOutCubic(arg_21_3)
 				end
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		}
@@ -898,13 +898,13 @@ local var_0_15 = {
 			name = "right_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				arg_24_4.right_key.color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				arg_25_2.content.right_arrow_pressed = false
 			end
 		}
@@ -914,13 +914,13 @@ local var_0_15 = {
 			name = "left_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				arg_27_4.left_key.color[1] = 255 * (1 - math.easeOutCubic(arg_27_3))
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				arg_28_2.content.left_arrow_pressed = false
 			end
 		}
@@ -930,7 +930,7 @@ local var_0_15 = {
 			name = "difficulty_info_enter",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_2.difficulty_info.content.visible = true
 
 				local var_29_0 = arg_29_2.difficulty_info.style
@@ -941,7 +941,7 @@ local var_0_15 = {
 				var_29_0.highest_obtainable_level.text_color[1] = 0
 				var_29_0.difficulty_separator.color[1] = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeOutCubic(arg_30_3)
 				local var_30_1 = arg_30_2.difficulty_info
 				local var_30_2 = arg_30_2.difficulty_info.style
@@ -969,7 +969,7 @@ local var_0_15 = {
 					var_30_2.dlc_lock_text.text_color[1] = var_30_5
 				end
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		}
@@ -978,13 +978,13 @@ local var_0_15 = {
 local var_0_16 = {
 	{
 		widget_name = "difficulty_stepper",
-		enter_requirements = function(arg_32_0)
+		enter_requirements = function (arg_32_0)
 			return true
 		end,
-		on_enter = function(arg_33_0, arg_33_1, arg_33_2)
+		on_enter = function (arg_33_0, arg_33_1, arg_33_2)
 			arg_33_0._widgets_by_name.difficulty_stepper.content.is_selected = true
 		end,
-		update = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+		update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 			local var_34_0 = arg_34_0._widgets_by_name.difficulty_stepper
 			local var_34_1 = {
 				difficulty_info = arg_34_0._widgets_by_name.difficulty_info,
@@ -1032,7 +1032,7 @@ local var_0_16 = {
 
 			arg_34_0:_update_difficulty_lock()
 		end,
-		on_exit = function(arg_35_0, arg_35_1, arg_35_2)
+		on_exit = function (arg_35_0, arg_35_1, arg_35_2)
 			arg_35_0._widgets_by_name.difficulty_stepper.content.is_selected = false
 
 			local var_35_0 = arg_35_0._widgets_by_name.upsell_button
@@ -1049,18 +1049,18 @@ local var_0_16 = {
 	},
 	{
 		widget_name = "play_button",
-		enter_requirements = function(arg_36_0)
+		enter_requirements = function (arg_36_0)
 			return not Managers.input:is_device_active("gamepad")
 		end,
-		on_enter = function(arg_37_0, arg_37_1, arg_37_2)
+		on_enter = function (arg_37_0, arg_37_1, arg_37_2)
 			arg_37_0._widgets_by_name.play_button.content.is_selected = true
 		end,
-		update = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+		update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 			if arg_38_1:get("confirm_press") or arg_38_1:get("skip_press") then
 				arg_38_0:_option_selected("play_button", nil, arg_38_3)
 			end
 		end,
-		on_exit = function(arg_39_0, arg_39_1, arg_39_2)
+		on_exit = function (arg_39_0, arg_39_1, arg_39_2)
 			arg_39_0._widgets_by_name.play_button.content.is_selected = false
 		end
 	}

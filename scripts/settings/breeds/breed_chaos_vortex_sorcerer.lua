@@ -193,7 +193,7 @@ local var_0_0 = {
 			StatusEffectNames.poisoned
 		})
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -273,7 +273,7 @@ local var_0_1 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			arg_2_1.stagger_ignore_anim_cb = true
 
 			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"

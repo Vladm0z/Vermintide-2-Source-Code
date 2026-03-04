@@ -17,7 +17,7 @@ local var_0_6 = {
 
 LevelEndViewVersus = class(LevelEndViewVersus, LevelEndViewBase)
 
-function LevelEndViewVersus._setup_pages_victory(arg_1_0, arg_1_1)
+LevelEndViewVersus._setup_pages_victory = function (arg_1_0, arg_1_1)
 	if not arg_1_0._is_untrusted then
 		return {
 			EndViewStateScoreVS = 2,
@@ -31,7 +31,7 @@ function LevelEndViewVersus._setup_pages_victory(arg_1_0, arg_1_1)
 	end
 end
 
-function LevelEndViewVersus._setup_pages_defeat(arg_2_0, arg_2_1)
+LevelEndViewVersus._setup_pages_defeat = function (arg_2_0, arg_2_1)
 	if not arg_2_0._is_untrusted then
 		return {
 			EndViewStateScoreVS = 2,
@@ -61,7 +61,7 @@ local var_0_9 = 1
 local var_0_10 = 4
 local var_0_11 = 5
 
-function LevelEndViewVersus.init(arg_3_0, arg_3_1)
+LevelEndViewVersus.init = function (arg_3_0, arg_3_1)
 	arg_3_0._team_heroes = {}
 	arg_3_0._team_previewer = nil
 	arg_3_0._peers_with_score = {}
@@ -77,7 +77,7 @@ function LevelEndViewVersus.init(arg_3_0, arg_3_1)
 	Managers.transition:force_fade_in()
 end
 
-function LevelEndViewVersus._calculate_awards(arg_4_0)
+LevelEndViewVersus._calculate_awards = function (arg_4_0)
 	local var_4_0 = {}
 	local var_4_1 = arg_4_0.context.players_session_score
 
@@ -148,7 +148,7 @@ function LevelEndViewVersus._calculate_awards(arg_4_0)
 	table.dump(var_4_9, "SCORES", 2)
 end
 
-function LevelEndViewVersus._save_award_stats(arg_7_0)
+LevelEndViewVersus._save_award_stats = function (arg_7_0)
 	local var_7_0 = Managers.backend:get_interface("statistics")
 	local var_7_1 = var_7_0:get_stats()
 	local var_7_2 = StatisticsDatabase:new()
@@ -179,7 +179,7 @@ function LevelEndViewVersus._save_award_stats(arg_7_0)
 	Managers.backend:commit()
 end
 
-function LevelEndViewVersus._calculate_mvp(arg_8_0, arg_8_1, arg_8_2)
+LevelEndViewVersus._calculate_mvp = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = {}
 	local var_8_1 = 1
 	local var_8_2 = 0
@@ -286,20 +286,20 @@ function LevelEndViewVersus._calculate_mvp(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._random_seed = tonumber(var_8_16, 16) + var_8_17
 end
 
-function LevelEndViewVersus.set_input_description(arg_10_0, arg_10_1)
+LevelEndViewVersus.set_input_description = function (arg_10_0, arg_10_1)
 	local var_10_0 = var_0_0.generic_input_actions[arg_10_1]
 
 	arg_10_0._menu_input_description:set_input_description(var_10_0)
 end
 
-function LevelEndViewVersus._setup_pages_untrusted(arg_11_0)
+LevelEndViewVersus._setup_pages_untrusted = function (arg_11_0)
 	return {
 		EndViewStateScoreVS = 2,
 		EndViewStateParadingVS = 1
 	}
 end
 
-function LevelEndViewVersus.start(arg_12_0)
+LevelEndViewVersus.start = function (arg_12_0)
 	print("[LevelEndView] Started LevelEndViewVersus")
 	LevelEndViewVersus.super.start(arg_12_0)
 
@@ -308,7 +308,7 @@ function LevelEndViewVersus.start(arg_12_0)
 	arg_12_0._playing_music = nil
 end
 
-function LevelEndViewVersus.create_ui_renderer(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+LevelEndViewVersus.create_ui_renderer = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = {
 		"material",
 		"materials/ui/ui_1080p_carousel_atlas",
@@ -350,7 +350,7 @@ function LevelEndViewVersus.create_ui_renderer(arg_13_0, arg_13_1, arg_13_2, arg
 	return var_13_2, var_13_3
 end
 
-function LevelEndViewVersus.update(arg_14_0, arg_14_1, arg_14_2)
+LevelEndViewVersus.update = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0:_handle_input(arg_14_1, arg_14_2)
 
 	LevelEndViewVersus.super.update(arg_14_0, var_14_0, arg_14_2)
@@ -363,7 +363,7 @@ function LevelEndViewVersus.update(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_draw(var_14_0, arg_14_2)
 end
 
-function LevelEndViewVersus._update_fade(arg_15_0, arg_15_1, arg_15_2)
+LevelEndViewVersus._update_fade = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_0._fade_out_triggered then
 		return
 	end
@@ -377,7 +377,7 @@ function LevelEndViewVersus._update_fade(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function LevelEndViewVersus._update_award_presentation(arg_16_0, arg_16_1, arg_16_2)
+LevelEndViewVersus._update_award_presentation = function (arg_16_0, arg_16_1, arg_16_2)
 	if not arg_16_0._fade_out_triggered then
 		return
 	end
@@ -457,7 +457,7 @@ function LevelEndViewVersus._update_award_presentation(arg_16_0, arg_16_1, arg_1
 	end
 end
 
-function LevelEndViewVersus._trigger_end_camera(arg_17_0)
+LevelEndViewVersus._trigger_end_camera = function (arg_17_0)
 	local var_17_0 = arg_17_0._target_camera_pose:unbox()
 
 	Matrix4x4.set_translation(var_17_0, Matrix4x4.translation(var_17_0) + Matrix4x4.forward(var_17_0) * 2)
@@ -484,7 +484,7 @@ function LevelEndViewVersus._trigger_end_camera(arg_17_0)
 	arg_17_0:play_sound("Play_vs_hud_eom_parading_team")
 end
 
-function LevelEndViewVersus._start_award_presentation(arg_18_0)
+LevelEndViewVersus._start_award_presentation = function (arg_18_0)
 	arg_18_0._current_hero = arg_18_0._current_hero or #arg_18_0._hero_previewers
 
 	local var_18_0 = arg_18_0._hero_previewers[arg_18_0._current_hero]
@@ -573,7 +573,7 @@ function LevelEndViewVersus._start_award_presentation(arg_18_0)
 	Managers.transition:fade_out(2)
 end
 
-function LevelEndViewVersus._handle_input(arg_19_0, arg_19_1, arg_19_2)
+LevelEndViewVersus._handle_input = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.input_manager:get_service("end_of_level")
 
 	if var_19_0:get("confirm_hold") then
@@ -597,11 +597,11 @@ function LevelEndViewVersus._handle_input(arg_19_0, arg_19_1, arg_19_2)
 	return arg_19_1
 end
 
-function LevelEndViewVersus.parading_done(arg_20_0, arg_20_1, arg_20_2)
+LevelEndViewVersus.parading_done = function (arg_20_0, arg_20_1, arg_20_2)
 	return arg_20_0._parading_done
 end
 
-function LevelEndViewVersus._update_camera_zoom(arg_21_0, arg_21_1, arg_21_2)
+LevelEndViewVersus._update_camera_zoom = function (arg_21_0, arg_21_1, arg_21_2)
 	if not arg_21_0._fade_out_triggered then
 		return
 	end
@@ -632,7 +632,7 @@ function LevelEndViewVersus._update_camera_zoom(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function LevelEndViewVersus._start_music(arg_22_0)
+LevelEndViewVersus._start_music = function (arg_22_0)
 	if arg_22_0._playing_music then
 		return
 	end
@@ -642,7 +642,7 @@ function LevelEndViewVersus._start_music(arg_22_0)
 	arg_22_0._playing_music = true
 end
 
-function LevelEndViewVersus._update_animations(arg_23_0, arg_23_1, arg_23_2)
+LevelEndViewVersus._update_animations = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._ui_animator
 
 	var_23_0:update(arg_23_1)
@@ -658,7 +658,7 @@ function LevelEndViewVersus._update_animations(arg_23_0, arg_23_1, arg_23_2)
 	UIWidgetUtils.animate_default_button(var_23_1, arg_23_1)
 end
 
-function LevelEndViewVersus._draw(arg_24_0, arg_24_1, arg_24_2)
+LevelEndViewVersus._draw = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.ui_renderer
 	local var_24_1 = arg_24_0._ui_scenegraph
 	local var_24_2 = Managers.input:is_device_active("gamepad")
@@ -677,26 +677,26 @@ function LevelEndViewVersus._draw(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function LevelEndViewVersus.set_input_description(arg_25_0, arg_25_1)
+LevelEndViewVersus.set_input_description = function (arg_25_0, arg_25_1)
 	arg_25_0._menu_input_description:set_input_description(var_0_0.generic_input_actions[arg_25_1])
 end
 
-function LevelEndViewVersus.destroy(arg_26_0, arg_26_1)
+LevelEndViewVersus.destroy = function (arg_26_0, arg_26_1)
 	LevelEndViewVersus.super.destroy(arg_26_0, arg_26_1)
 	Managers.state.event:unregister("set_flow_object_set_enabled", arg_26_0)
 
 	arg_26_0._ui_scenegraph = nil
 end
 
-function LevelEndViewVersus.do_retry(arg_27_0)
+LevelEndViewVersus.do_retry = function (arg_27_0)
 	return false
 end
 
-function LevelEndViewVersus.active_input_service(arg_28_0)
+LevelEndViewVersus.active_input_service = function (arg_28_0)
 	return arg_28_0.input_blocked and FAKE_INPUT_SERVICE or arg_28_0:input_service()
 end
 
-function LevelEndViewVersus.setup_pages(arg_29_0, arg_29_1, arg_29_2)
+LevelEndViewVersus.setup_pages = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0
 
 	if arg_29_0._is_untrusted then
@@ -710,7 +710,7 @@ function LevelEndViewVersus.setup_pages(arg_29_0, arg_29_1, arg_29_2)
 	return var_29_0
 end
 
-function LevelEndViewVersus.setup_camera(arg_30_0)
+LevelEndViewVersus.setup_camera = function (arg_30_0)
 	local var_30_0 = Matrix4x4Box(Matrix4x4.identity())
 	local var_30_1 = "levels/carousel_podium/world"
 	local var_30_2 = LevelResource.unit_indices(var_30_1, "units/hub_elements/cutscene_camera/cutscene_camera")
@@ -739,7 +739,7 @@ function LevelEndViewVersus.setup_camera(arg_30_0)
 	arg_30_0:position_camera(arg_30_0._target_camera_pose:unbox())
 end
 
-function LevelEndViewVersus._destroy_team_previewer(arg_31_0)
+LevelEndViewVersus._destroy_team_previewer = function (arg_31_0)
 	if arg_31_0._team_previewer then
 		arg_31_0._team_previewer:on_exit()
 
@@ -747,7 +747,7 @@ function LevelEndViewVersus._destroy_team_previewer(arg_31_0)
 	end
 end
 
-function LevelEndViewVersus._update_team_previewer(arg_32_0, arg_32_1, arg_32_2)
+LevelEndViewVersus._update_team_previewer = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0._team_previewer
 
 	if var_32_0 then
@@ -756,7 +756,7 @@ function LevelEndViewVersus._update_team_previewer(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function LevelEndViewVersus.create_ui_elements(arg_33_0)
+LevelEndViewVersus.create_ui_elements = function (arg_33_0)
 	arg_33_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_33_0._ui_animator = UIAnimator:new(arg_33_0._ui_scenegraph, var_0_3)
 	arg_33_0._widgets, arg_33_0._widgets_by_name = UIUtils.create_widgets(var_0_1, {}, {})
@@ -769,7 +769,7 @@ function LevelEndViewVersus.create_ui_elements(arg_33_0)
 	UIRenderer.clear_scenegraph_queue(arg_33_0.ui_renderer)
 end
 
-function LevelEndViewVersus.hide_team(arg_34_0)
+LevelEndViewVersus.hide_team = function (arg_34_0)
 	if arg_34_0._team_previewer then
 		arg_34_0:_destroy_team_previewer()
 	end
@@ -785,7 +785,7 @@ function LevelEndViewVersus.hide_team(arg_34_0)
 	arg_34_0:_start_animation("hide_awards", arg_34_0._award_widgets)
 end
 
-function LevelEndViewVersus.show_team(arg_35_0)
+LevelEndViewVersus.show_team = function (arg_35_0)
 	if arg_35_0._team_previewer then
 		arg_35_0:_destroy_team_previewer()
 	end
@@ -797,7 +797,7 @@ function LevelEndViewVersus.show_team(arg_35_0)
 	arg_35_0:_setup_team_previewer(var_35_0)
 end
 
-function LevelEndViewVersus._start_animation(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+LevelEndViewVersus._start_animation = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = {
 		render_settings = arg_36_0.render_settings,
 		data = arg_36_3
@@ -807,7 +807,7 @@ function LevelEndViewVersus._start_animation(arg_36_0, arg_36_1, arg_36_2, arg_3
 	arg_36_0._ui_animations[var_36_1] = true
 end
 
-function LevelEndViewVersus._setup_team_heroes(arg_37_0)
+LevelEndViewVersus._setup_team_heroes = function (arg_37_0)
 	local var_37_0 = 0
 	local var_37_1 = arg_37_0.context.party_composition[PlayerUtils.unique_player_id(Network.peer_id(), 1)]
 	local var_37_2 = arg_37_0.context.players_session_score
@@ -836,7 +836,7 @@ end
 
 local var_0_12 = {}
 
-function LevelEndViewVersus.get_hero_from_score(arg_38_0, arg_38_1, arg_38_2)
+LevelEndViewVersus.get_hero_from_score = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_1.profile_index
 	local var_38_1 = arg_38_1.career_index
 	local var_38_2 = SPProfiles[var_38_0].careers[var_38_1]
@@ -906,7 +906,7 @@ function LevelEndViewVersus.get_hero_from_score(arg_38_0, arg_38_1, arg_38_2)
 	}
 end
 
-function LevelEndViewVersus._gather_hero_locations(arg_39_0, arg_39_1)
+LevelEndViewVersus._gather_hero_locations = function (arg_39_0, arg_39_1)
 	local var_39_0 = {}
 	local var_39_1 = {}
 	local var_39_2 = "levels/carousel_podium/world"
@@ -938,7 +938,7 @@ function LevelEndViewVersus._gather_hero_locations(arg_39_0, arg_39_1)
 	return var_39_1
 end
 
-function LevelEndViewVersus._setup_team_previewer(arg_40_0, arg_40_1)
+LevelEndViewVersus._setup_team_previewer = function (arg_40_0, arg_40_1)
 	if arg_40_0._team_previewer then
 		return
 	end
@@ -963,7 +963,7 @@ function LevelEndViewVersus._setup_team_previewer(arg_40_0, arg_40_1)
 	end
 end
 
-function LevelEndViewVersus._create_ceremony_award_widgets(arg_41_0, arg_41_1, arg_41_2)
+LevelEndViewVersus._create_ceremony_award_widgets = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0, var_41_1 = arg_41_0:get_viewport_world()
 	local var_41_2 = ScriptViewport.camera(var_41_1)
 	local var_41_3 = arg_41_0.context.party_composition
@@ -1026,7 +1026,7 @@ function LevelEndViewVersus._create_ceremony_award_widgets(arg_41_0, arg_41_1, a
 	end
 end
 
-function LevelEndViewVersus.create_world(arg_42_0, arg_42_1)
+LevelEndViewVersus.create_world = function (arg_42_0, arg_42_1)
 	local var_42_0 = "end_screen"
 	local var_42_1 = "environment/ui_store_preview"
 	local var_42_2 = 2
@@ -1040,7 +1040,7 @@ function LevelEndViewVersus.create_world(arg_42_0, arg_42_1)
 	return var_42_4, var_42_5
 end
 
-function LevelEndViewVersus.spawn_level(arg_43_0, arg_43_1, arg_43_2)
+LevelEndViewVersus.spawn_level = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = "levels/carousel_podium/world"
 	local var_43_1 = {}
 	local var_43_2
@@ -1058,18 +1058,18 @@ function LevelEndViewVersus.spawn_level(arg_43_0, arg_43_1, arg_43_2)
 	return var_43_7
 end
 
-function LevelEndViewVersus.event_show_flow_object_set(arg_44_0, arg_44_1, arg_44_2)
+LevelEndViewVersus.event_show_flow_object_set = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = "flow_" .. arg_44_1
 
 	arg_44_0:_show_object_set(var_44_0, arg_44_2)
 end
 
-function LevelEndViewVersus.exit_to_game(arg_45_0)
+LevelEndViewVersus.exit_to_game = function (arg_45_0)
 	LevelEndViewVersus.super.exit_to_game(arg_45_0)
 	arg_45_0:play_sound(arg_45_0._stop_music_event)
 end
 
-function LevelEndViewVersus.activate_back_to_keep_button(arg_46_0)
+LevelEndViewVersus.activate_back_to_keep_button = function (arg_46_0)
 	local var_46_0 = arg_46_0._machine
 	local var_46_1 = arg_46_0._machine:state()
 

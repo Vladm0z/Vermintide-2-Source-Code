@@ -2,7 +2,7 @@
 
 EntitySystemBag = class()
 
-function EntitySystemBag.init(arg_1_0)
+EntitySystemBag.init = function (arg_1_0)
 	arg_1_0.systems = {}
 	arg_1_0.num_systems = 0
 	arg_1_0.systems_update = {}
@@ -12,7 +12,7 @@ function EntitySystemBag.init(arg_1_0)
 	arg_1_0.systems_physics_async_update = {}
 end
 
-function EntitySystemBag.destroy(arg_2_0)
+EntitySystemBag.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0.systems
 
 	for iter_2_0 = 1, #var_2_0 do
@@ -30,7 +30,7 @@ function EntitySystemBag.destroy(arg_2_0)
 	arg_2_0.systems_physics_async_update = nil
 end
 
-function EntitySystemBag.add_system(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+EntitySystemBag.add_system = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0.systems[#arg_3_0.systems + 1] = arg_3_1
 
 	if arg_3_1.update then
@@ -62,7 +62,7 @@ local var_0_0 = {
 	unsafe_entity_update = "systems_unsafe_entity_update"
 }
 
-function EntitySystemBag.update(arg_4_0, arg_4_1, arg_4_2)
+EntitySystemBag.update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0[var_0_0[arg_4_2]]
 	local var_4_1 = arg_4_1.t
 
@@ -73,7 +73,7 @@ function EntitySystemBag.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function EntitySystemBag.hot_join_sync(arg_5_0, arg_5_1)
+EntitySystemBag.hot_join_sync = function (arg_5_0, arg_5_1)
 	for iter_5_0, iter_5_1 in ipairs(arg_5_0.systems) do
 		if iter_5_1.hot_join_sync then
 			iter_5_1:hot_join_sync(arg_5_1)

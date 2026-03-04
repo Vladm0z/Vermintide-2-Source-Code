@@ -4,7 +4,7 @@ ChaosTrollHuskHealthExtension = class(ChaosTrollHuskHealthExtension, GenericHeal
 
 local var_0_0 = AiUtils.set_material_property
 
-function ChaosTrollHuskHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, ...)
+ChaosTrollHuskHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, ...)
 	ChaosTrollHuskHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, ...)
 
 	arg_1_0._regen_time = Managers.time:time("game") + 1
@@ -28,7 +28,7 @@ function ChaosTrollHuskHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, ...)
 	end
 end
 
-function ChaosTrollHuskHealthExtension.set_max_health(arg_2_0, arg_2_1, arg_2_2)
+ChaosTrollHuskHealthExtension.set_max_health = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_2 then
 		arg_2_1 = DamageUtils.networkify_health(arg_2_1)
 		arg_2_0.current_max_health = arg_2_1
@@ -41,7 +41,7 @@ function ChaosTrollHuskHealthExtension.set_max_health(arg_2_0, arg_2_1, arg_2_2)
 	return arg_2_1
 end
 
-function ChaosTrollHuskHealthExtension._setup_initial_health_variables(arg_3_0, arg_3_1, arg_3_2)
+ChaosTrollHuskHealthExtension._setup_initial_health_variables = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._breed
 	local var_3_1 = BreedActions[var_3_0.name].downed
 
@@ -54,13 +54,13 @@ function ChaosTrollHuskHealthExtension._setup_initial_health_variables(arg_3_0, 
 	arg_3_0.go_down_health = arg_3_0:respawn_thresholds(arg_3_1, arg_3_1)
 end
 
-function ChaosTrollHuskHealthExtension.current_max_health_percent(arg_4_0)
+ChaosTrollHuskHealthExtension.current_max_health_percent = function (arg_4_0)
 	return arg_4_0.health / arg_4_0.current_max_health
 end
 
 local var_0_1 = 0.0001
 
-function ChaosTrollHuskHealthExtension.respawn_thresholds(arg_5_0, arg_5_1, arg_5_2)
+ChaosTrollHuskHealthExtension.respawn_thresholds = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.action
 	local var_5_1 = arg_5_1 or arg_5_0.current_max_health
 	local var_5_2 = arg_5_2 or arg_5_0.health
@@ -88,7 +88,7 @@ function ChaosTrollHuskHealthExtension.respawn_thresholds(arg_5_0, arg_5_1, arg_
 	return var_5_3, var_5_4, var_5_3 / var_5_1, var_5_4 / var_5_1, var_5_5
 end
 
-function ChaosTrollHuskHealthExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+ChaosTrollHuskHealthExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_0.state == "dead" then
 		return
 	end
@@ -117,11 +117,11 @@ function ChaosTrollHuskHealthExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	end
 end
 
-function ChaosTrollHuskHealthExtension.apply_client_predicted_damage(arg_7_0, arg_7_1)
+ChaosTrollHuskHealthExtension.apply_client_predicted_damage = function (arg_7_0, arg_7_1)
 	return
 end
 
-function ChaosTrollHuskHealthExtension.add_damage(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15, arg_8_16, arg_8_17)
+ChaosTrollHuskHealthExtension.add_damage = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15, arg_8_16, arg_8_17)
 	local var_8_0 = arg_8_0.unit
 	local var_8_1 = arg_8_0:_add_to_damage_history_buffer(var_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11, arg_8_12, arg_8_13, arg_8_14, arg_8_15, arg_8_17)
 
@@ -135,13 +135,13 @@ function ChaosTrollHuskHealthExtension.add_damage(arg_8_0, arg_8_1, arg_8_2, arg
 	DamageUtils.handle_hit_indication(arg_8_1, var_8_0, arg_8_2, arg_8_3, arg_8_12)
 end
 
-function ChaosTrollHuskHealthExtension.add_heal(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ChaosTrollHuskHealthExtension.add_heal = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0.unit
 
 	arg_9_0:_add_to_damage_history_buffer(var_9_0, arg_9_1, -arg_9_2, nil, "heal", nil, nil, arg_9_3, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 end
 
-function ChaosTrollHuskHealthExtension.sync_damage_taken(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ChaosTrollHuskHealthExtension.sync_damage_taken = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_2 then
 		if not arg_10_0._has_got_initial_setup then
 			arg_10_0:set_max_health(arg_10_1, true)
@@ -181,7 +181,7 @@ function ChaosTrollHuskHealthExtension.sync_damage_taken(arg_10_0, arg_10_1, arg
 	end
 end
 
-function ChaosTrollHuskHealthExtension.rpc_sync_current_max_health(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ChaosTrollHuskHealthExtension.rpc_sync_current_max_health = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	if (arg_11_0.game_object_id or Managers.state.unit_storage:go_id(arg_11_0.unit)) ~= arg_11_2 then
 		return
 	end
@@ -189,7 +189,7 @@ function ChaosTrollHuskHealthExtension.rpc_sync_current_max_health(arg_11_0, arg
 	arg_11_0.current_max_health = DamageUtils.networkify_health(arg_11_3)
 end
 
-function ChaosTrollHuskHealthExtension.destroy(arg_12_0)
+ChaosTrollHuskHealthExtension.destroy = function (arg_12_0)
 	ChaosTrollHuskHealthExtension.super:destroy()
 	arg_12_0.network_event_delegate:unregister(arg_12_0)
 end

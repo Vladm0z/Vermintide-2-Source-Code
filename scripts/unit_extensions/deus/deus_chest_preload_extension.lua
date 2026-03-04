@@ -14,7 +14,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 	return WeaponUtils.get_weapon_packages(var_1_3, var_1_4, false, arg_1_1)
 end
 
-function DeusChestPreloadExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+DeusChestPreloadExtension.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = ScriptUnit.has_extension(arg_2_2, "pickup_system")
 
 	fassert(var_2_0, "DeusChestPreloadExtension requires unit to also have DeusChestExtension")
@@ -23,13 +23,13 @@ function DeusChestPreloadExtension.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._weapon_preload_packages = {}
 end
 
-function DeusChestPreloadExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+DeusChestPreloadExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 	fassert(arg_3_0._deus_run_controller, "deus pickup unit can only be used in a deus run")
 end
 
-function DeusChestPreloadExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+DeusChestPreloadExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._go_id or Managers.state.unit_storage:go_id(arg_4_1)
 	local var_4_1 = arg_4_0._deus_run_controller
 	local var_4_2 = var_4_1:get_own_peer_id()
@@ -57,15 +57,15 @@ function DeusChestPreloadExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	end
 end
 
-function DeusChestPreloadExtension.get_weapon_preload_packages(arg_5_0)
+DeusChestPreloadExtension.get_weapon_preload_packages = function (arg_5_0)
 	return arg_5_0._weapon_preload_packages
 end
 
-function DeusChestPreloadExtension.get_chest_type(arg_6_0)
+DeusChestPreloadExtension.get_chest_type = function (arg_6_0)
 	return arg_6_0._chest_type
 end
 
-function DeusChestPreloadExtension._generate_stored_weapon_packages(arg_7_0, arg_7_1)
+DeusChestPreloadExtension._generate_stored_weapon_packages = function (arg_7_0, arg_7_1)
 	table.clear(arg_7_0._weapon_preload_packages)
 
 	local var_7_0 = arg_7_0._pickup_extension:get_stored_purchase()
@@ -74,7 +74,7 @@ function DeusChestPreloadExtension._generate_stored_weapon_packages(arg_7_0, arg
 	table.append(arg_7_0._weapon_preload_packages, var_7_1)
 end
 
-function DeusChestPreloadExtension._generate_upgraded_weapon_packages(arg_8_0)
+DeusChestPreloadExtension._generate_upgraded_weapon_packages = function (arg_8_0)
 	local var_8_0 = arg_8_0._deus_run_controller
 	local var_8_1 = var_8_0:get_own_peer_id()
 	local var_8_2, var_8_3 = var_8_0:get_player_profile(var_8_1, var_0_0)
@@ -104,7 +104,7 @@ function DeusChestPreloadExtension._generate_upgraded_weapon_packages(arg_8_0)
 	end
 end
 
-function DeusChestPreloadExtension._generate_upgraded_weapon(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+DeusChestPreloadExtension._generate_upgraded_weapon = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_0._deus_run_controller
 	local var_9_1 = var_9_0:get_current_node()
 	local var_9_2 = var_9_1.run_progress
@@ -114,7 +114,7 @@ function DeusChestPreloadExtension._generate_upgraded_weapon(arg_9_0, arg_9_1, a
 	return (DeusWeaponGeneration.upgrade_item(arg_9_1, var_9_3, var_9_2, arg_9_2, var_9_4))
 end
 
-function DeusChestPreloadExtension._get_server_chest_type(arg_10_0, arg_10_1)
+DeusChestPreloadExtension._get_server_chest_type = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.state.network:game()
 	local var_10_1 = Managers.state.unit_storage:go_id(arg_10_1)
 

@@ -15,7 +15,7 @@ local var_0_4 = UISettings.breed_textures
 
 PositiveReinforcementUI = class(PositiveReinforcementUI)
 
-function PositiveReinforcementUI.init(arg_1_0, arg_1_1, arg_1_2)
+PositiveReinforcementUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.input_manager = arg_1_2.input_manager
@@ -38,7 +38,7 @@ function PositiveReinforcementUI.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_0:register(arg_1_0, "add_coop_feedback_kill", "event_add_positive_enforcement_kill")
 end
 
-function PositiveReinforcementUI.destroy(arg_2_0)
+PositiveReinforcementUI.destroy = function (arg_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "positive_reinforcement_ui")
 
 	local var_2_0 = Managers.state.event
@@ -47,7 +47,7 @@ function PositiveReinforcementUI.destroy(arg_2_0)
 	var_2_0:unregister("add_coop_feedback_kill", arg_2_0)
 end
 
-function PositiveReinforcementUI.create_ui_elements(arg_3_0)
+PositiveReinforcementUI.create_ui_elements = function (arg_3_0)
 	local var_3_0 = Managers.state.game_mode:game_mode_key()
 	local var_3_1 = GameModeSettings[var_3_0].hud_ui_settings
 	local var_3_2 = var_0_0.scenegraph_definition
@@ -73,7 +73,7 @@ function PositiveReinforcementUI.create_ui_elements(arg_3_0)
 	end
 end
 
-function PositiveReinforcementUI.remove_event(arg_4_0, arg_4_1)
+PositiveReinforcementUI.remove_event = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._positive_enforcement_events
 	local var_4_1 = table.remove(var_4_0, arg_4_1)
 	local var_4_2 = var_4_1.widget
@@ -107,7 +107,7 @@ local function var_0_5(arg_5_0, arg_5_1)
 	end
 end
 
-function PositiveReinforcementUI.add_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, ...)
+PositiveReinforcementUI.add_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, ...)
 	if not script_data.disable_reinforcement_ui then
 		local var_6_0 = arg_6_0._positive_enforcement_events
 		local var_6_1 = arg_6_1 .. arg_6_4
@@ -191,7 +191,7 @@ local var_0_6 = {
 	112
 }
 
-function PositiveReinforcementUI._assign_portrait_texture(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PositiveReinforcementUI._assign_portrait_texture = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_1.style[arg_7_2]
 
 	if not arg_7_3 then
@@ -223,7 +223,7 @@ function PositiveReinforcementUI._assign_portrait_texture(arg_7_0, arg_7_1, arg_
 	var_7_3.size = var_7_1
 end
 
-function PositiveReinforcementUI.event_add_positive_enforcement(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+PositiveReinforcementUI.event_add_positive_enforcement = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	if not var_0_2[arg_8_3] then
 		return
 	end
@@ -254,7 +254,7 @@ function PositiveReinforcementUI.event_add_positive_enforcement(arg_8_0, arg_8_1
 	arg_8_0:add_event(arg_8_1, arg_8_2, var_0_3.default, arg_8_3, var_8_10, var_8_11)
 end
 
-function PositiveReinforcementUI.event_add_positive_enforcement_kill(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+PositiveReinforcementUI.event_add_positive_enforcement_kill = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = var_0_4[arg_9_4]
 	local var_9_1 = var_0_4[arg_9_5]
 
@@ -265,7 +265,7 @@ function PositiveReinforcementUI.event_add_positive_enforcement_kill(arg_9_0, ar
 	arg_9_0:add_event(arg_9_1, arg_9_2, var_0_3.kill, arg_9_3, var_9_0, var_9_1)
 end
 
-function PositiveReinforcementUI.event_add_positive_enforcement_player_knocked_down_or_killed(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+PositiveReinforcementUI.event_add_positive_enforcement_player_knocked_down_or_killed = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = var_0_4[arg_10_5]
 
 	if not var_0_2[arg_10_3] or not var_10_0 then
@@ -281,15 +281,15 @@ function PositiveReinforcementUI.event_add_positive_enforcement_player_knocked_d
 	arg_10_0:add_event(arg_10_1, arg_10_2, var_0_3.kill, arg_10_3, var_10_0, var_10_1)
 end
 
-function PositiveReinforcementUI.event_add_lorebook_page_pickup(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+PositiveReinforcementUI.event_add_lorebook_page_pickup = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	arg_11_0:add_event(arg_11_1, arg_11_2, var_0_3.personal, arg_11_3, arg_11_4)
 end
 
-function PositiveReinforcementUI.event_add_interaction_warning(arg_12_0, arg_12_1, arg_12_2)
+PositiveReinforcementUI.event_add_interaction_warning = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:add_event(arg_12_1, true, var_0_3.kill, "interaction_warning", Localize(arg_12_2))
 end
 
-function PositiveReinforcementUI._get_hero_portrait(arg_13_0, arg_13_1, arg_13_2)
+PositiveReinforcementUI._get_hero_portrait = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = RESOLUTION_LOOKUP.scale
 	local var_13_1 = SPProfiles[arg_13_1]
 	local var_13_2 = var_13_1.careers[arg_13_2]
@@ -306,7 +306,7 @@ local var_0_7 = {
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function PositiveReinforcementUI.update(arg_14_0, arg_14_1, arg_14_2)
+PositiveReinforcementUI.update = function (arg_14_0, arg_14_1, arg_14_2)
 	HudCustomizer.run(arg_14_0.ui_renderer, arg_14_0.ui_scenegraph, var_0_7)
 
 	local var_14_0 = arg_14_0.ui_renderer

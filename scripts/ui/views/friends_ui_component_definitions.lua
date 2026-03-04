@@ -209,7 +209,7 @@ local function var_0_10(arg_1_0, arg_1_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function(arg_2_0)
+				content_check_function = function (arg_2_0)
 					return not arg_2_0.button_hotspot.is_hover
 				end
 			},
@@ -217,7 +217,7 @@ local function var_0_10(arg_1_0, arg_1_1)
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return arg_3_0.button_hotspot.is_hover
 				end
 			},
@@ -225,7 +225,7 @@ local function var_0_10(arg_1_0, arg_1_1)
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return arg_4_0.button_hotspot.is_hover
 				end
 			}
@@ -413,7 +413,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "text",
 				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return not arg_7_0.active and not arg_7_0.button_hotspot.is_hover
 				end
 			},
@@ -421,7 +421,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "text_hover",
 				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return arg_8_0.active or arg_8_0.button_hotspot.is_hover
 				end
 			},
@@ -434,7 +434,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "scrollbar",
 				pass_type = "scrollbar_hotspot",
 				content_id = "scrollbar",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return arg_9_0.active
 				end
 			},
@@ -442,7 +442,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "scrollbar",
 				pass_type = "scrollbar",
 				content_id = "scrollbar",
-				content_check_function = function(arg_10_0)
+				content_check_function = function (arg_10_0)
 					return arg_10_0.active
 				end
 			},
@@ -450,7 +450,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_texture",
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return arg_11_0.active
 				end
 			},
@@ -458,7 +458,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "list_style",
 				pass_type = "list_pass",
 				content_id = "list_content",
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return arg_12_0.active
 				end,
 				passes = {
@@ -471,7 +471,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button",
 						pass_type = "hotspot",
 						content_id = "invite_button",
-						content_check_function = function(arg_13_0)
+						content_check_function = function (arg_13_0)
 							return arg_13_0.allow_invite
 						end
 					},
@@ -480,7 +480,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button",
 						pass_type = "texture",
 						content_id = "invite_button",
-						content_check_function = function(arg_14_0)
+						content_check_function = function (arg_14_0)
 							return arg_14_0.allow_invite and not arg_14_0.is_hover
 						end
 					},
@@ -489,7 +489,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button_hover",
 						pass_type = "texture",
 						content_id = "invite_button",
-						content_check_function = function(arg_15_0)
+						content_check_function = function (arg_15_0)
 							return arg_15_0.allow_invite and arg_15_0.is_hover
 						end
 					},
@@ -497,7 +497,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button",
 						pass_type = "hotspot",
 						content_id = "profile_button",
-						content_check_function = function(arg_16_0)
+						content_check_function = function (arg_16_0)
 							return arg_16_0.allow_profile
 						end
 					},
@@ -506,7 +506,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button",
 						pass_type = "texture",
 						content_id = "profile_button",
-						content_check_function = function(arg_17_0)
+						content_check_function = function (arg_17_0)
 							return arg_17_0.allow_profile and not arg_17_0.is_hover
 						end
 					},
@@ -515,7 +515,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button_hover",
 						pass_type = "texture",
 						content_id = "profile_button",
-						content_check_function = function(arg_18_0)
+						content_check_function = function (arg_18_0)
 							return arg_18_0.allow_profile and arg_18_0.is_hover
 						end
 					},
@@ -523,7 +523,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button",
 						pass_type = "hotspot",
 						content_id = "join_button",
-						content_check_function = function(arg_19_0)
+						content_check_function = function (arg_19_0)
 							return arg_19_0.allow_join
 						end
 					},
@@ -532,7 +532,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button",
 						pass_type = "texture",
 						content_id = "join_button",
-						content_check_function = function(arg_20_0)
+						content_check_function = function (arg_20_0)
 							return arg_20_0.allow_join and not arg_20_0.is_hover
 						end
 					},
@@ -541,7 +541,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button_hover",
 						pass_type = "texture",
 						content_id = "join_button",
-						content_check_function = function(arg_21_0)
+						content_check_function = function (arg_21_0)
 							return arg_21_0.allow_join and arg_21_0.is_hover
 						end
 					}
@@ -741,7 +741,7 @@ local function var_0_12(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				var_6_0[1] - 10,
 				5
 			},
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return not arg_22_0.edge_tab or not arg_22_0.active
 			end
 		}
@@ -897,7 +897,7 @@ local function var_0_13(arg_23_0, arg_23_1)
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function(arg_24_0)
+				content_check_function = function (arg_24_0)
 					return not arg_24_0.is_hover
 				end
 			},
@@ -905,7 +905,7 @@ local function var_0_13(arg_23_0, arg_23_1)
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function(arg_25_0)
+				content_check_function = function (arg_25_0)
 					return arg_25_0.is_hover
 				end
 			}
@@ -970,7 +970,7 @@ local function var_0_14(arg_26_0, arg_26_1)
 				pass_type = "rotated_texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function(arg_27_0)
+				content_check_function = function (arg_27_0)
 					return not arg_27_0.is_hover
 				end
 			},
@@ -978,7 +978,7 @@ local function var_0_14(arg_26_0, arg_26_1)
 				pass_type = "rotated_texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function(arg_28_0)
+				content_check_function = function (arg_28_0)
 					return arg_28_0.is_hover
 				end
 			}

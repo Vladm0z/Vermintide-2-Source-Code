@@ -5,7 +5,7 @@ ActionBookCharge = class(ActionBookCharge, ActionMeleeStart)
 local var_0_0 = Unit.set_flow_variable
 local var_0_1 = Unit.flow_event
 
-function ActionBookCharge.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBookCharge.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionBookCharge.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
@@ -35,7 +35,7 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	return var_2_0
 end
 
-function ActionBookCharge.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionBookCharge.client_owner_start_action = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ActionBookCharge.super.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	arg_3_0.charge = arg_3_0.weapon_extension:get_custom_data("charge")
@@ -50,7 +50,7 @@ function ActionBookCharge.client_owner_start_action(arg_3_0, arg_3_1, arg_3_2, a
 	arg_3_0:_update_visual_charge(arg_3_0.charge)
 end
 
-function ActionBookCharge.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+ActionBookCharge.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	ActionBookCharge.super.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 
 	if arg_4_2 < arg_4_0.start_time + arg_4_0.initial_charge_delay then
@@ -69,7 +69,7 @@ function ActionBookCharge.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, ar
 	arg_4_0:_update_visual_charge(arg_4_0.charge)
 end
 
-function ActionBookCharge._update_visual_charge(arg_5_0, arg_5_1)
+ActionBookCharge._update_visual_charge = function (arg_5_0, arg_5_1)
 	if arg_5_0._right_hand_unit then
 		local var_5_0 = math.clamp(arg_5_1, 0, 1)
 
@@ -90,7 +90,7 @@ function ActionBookCharge._update_visual_charge(arg_5_0, arg_5_1)
 	end
 end
 
-function ActionBookCharge.finish(arg_6_0, arg_6_1)
+ActionBookCharge.finish = function (arg_6_0, arg_6_1)
 	ActionChangeMode.super.finish(arg_6_0, arg_6_1)
 
 	if arg_6_0.charge < 1 then

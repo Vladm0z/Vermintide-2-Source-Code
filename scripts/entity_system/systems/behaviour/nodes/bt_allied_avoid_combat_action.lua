@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAlliedAvoidCombatAction = class(BTAlliedAvoidCombatAction, BTNode)
 
-function BTAlliedAvoidCombatAction.init(arg_1_0, ...)
+BTAlliedAvoidCombatAction.init = function (arg_1_0, ...)
 	BTAlliedAvoidCombatAction.super.init(arg_1_0, ...)
 end
 
 BTAlliedAvoidCombatAction.name = "BTAlliedAvoidCombatAction"
 
-function BTAlliedAvoidCombatAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTAlliedAvoidCombatAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.target_status_extension = ScriptUnit.extension(arg_2_2.player_controller_unit, "status_system")
 
@@ -23,7 +23,7 @@ function BTAlliedAvoidCombatAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
 end
 
-function BTAlliedAvoidCombatAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTAlliedAvoidCombatAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
@@ -38,7 +38,7 @@ function BTAlliedAvoidCombatAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg
 	arg_3_2.wanted_flee_pos = nil
 end
 
-function BTAlliedAvoidCombatAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTAlliedAvoidCombatAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.locomotion_extension
 
 	arg_4_0:flee(arg_4_1, arg_4_3, arg_4_4, arg_4_2, var_4_0)
@@ -46,7 +46,7 @@ function BTAlliedAvoidCombatAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	return "running", "evaluate"
 end
 
-function BTAlliedAvoidCombatAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTAlliedAvoidCombatAction._go_idle = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_2.move_state = "idle"
 
 	local var_5_0 = arg_5_2.action
@@ -55,13 +55,13 @@ function BTAlliedAvoidCombatAction._go_idle(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	Unit.set_unit_visibility(arg_5_1, false)
 end
 
-function BTAlliedAvoidCombatAction._go_moving(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTAlliedAvoidCombatAction._go_moving = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.move_state = "moving"
 
 	Managers.state.network:anim_event(arg_6_1, arg_6_3.move_anim)
 end
 
-function BTAlliedAvoidCombatAction.flee(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTAlliedAvoidCombatAction.flee = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_4.action
 	local var_7_1 = arg_7_4.navigation_extension
 
@@ -85,7 +85,7 @@ function BTAlliedAvoidCombatAction.flee(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_
 	arg_7_4.target_is_in_combat = var_7_5 and var_7_5 > 0
 end
 
-function BTAlliedAvoidCombatAction._move_to_flee_location(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTAlliedAvoidCombatAction._move_to_flee_location = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_2.navigation_extension
 	local var_8_1 = arg_8_2.wanted_flee_pos:unbox()
 

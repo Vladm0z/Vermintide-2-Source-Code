@@ -9,7 +9,7 @@ local var_0_1 = 1
 local var_0_2 = 2
 local var_0_3 = script_data
 
-function BTPackMasterDragAction.init(arg_1_0, ...)
+BTPackMasterDragAction.init = function (arg_1_0, ...)
 	BTPackMasterDragAction.super.init(arg_1_0, ...)
 
 	arg_1_0.navigation_group_manager = Managers.state.conflict.navigation_group_manager
@@ -17,7 +17,7 @@ end
 
 BTPackMasterDragAction.name = "BTPackMasterDragAction"
 
-function BTPackMasterDragAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterDragAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -55,7 +55,7 @@ function BTPackMasterDragAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTPackMasterDragAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterDragAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.drag_check_radius = nil
 	arg_3_2.drag_check_index = nil
 	arg_3_2.drag_check_time = nil
@@ -100,7 +100,7 @@ end
 
 local var_0_5 = math.pi / 9
 
-function BTPackMasterDragAction.find_hoist_pos(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTPackMasterDragAction.find_hoist_pos = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = POSITION_LOOKUP[arg_5_2]
 	local var_5_1 = POSITION_LOOKUP[arg_5_3.drag_target_unit]
 	local var_5_2 = Vector3.normalize(var_5_0 - var_5_1) * 2.26
@@ -135,7 +135,7 @@ function BTPackMasterDragAction.find_hoist_pos(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	return var_5_3
 end
 
-function BTPackMasterDragAction.can_hoist(arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterDragAction.can_hoist = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action.safe_hoist_max_height_differance
 	local var_6_1 = POSITION_LOOKUP[arg_6_1]
 	local var_6_2 = POSITION_LOOKUP[arg_6_2.drag_target_unit]
@@ -143,7 +143,7 @@ function BTPackMasterDragAction.can_hoist(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_0 >= math.abs(var_6_2.z - var_6_1.z)
 end
 
-function BTPackMasterDragAction.safe_to_hoist(arg_7_0, arg_7_1, arg_7_2)
+BTPackMasterDragAction.safe_to_hoist = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = POSITION_LOOKUP[arg_7_1]
 	local var_7_1 = Vector3.distance_squared
 	local var_7_2 = arg_7_2.side
@@ -164,7 +164,7 @@ function BTPackMasterDragAction.safe_to_hoist(arg_7_0, arg_7_1, arg_7_2)
 	return true
 end
 
-function BTPackMasterDragAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTPackMasterDragAction.run = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = arg_8_2.drag_target_unit
 
 	if not Unit.alive(var_8_0) then
@@ -266,7 +266,7 @@ function BTPackMasterDragAction.run(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	return "running"
 end
 
-function BTPackMasterDragAction.find_destinations(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTPackMasterDragAction.find_destinations = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = POSITION_LOOKUP[arg_9_1]
 	local var_9_1 = false
 	local var_9_2 = false
@@ -327,7 +327,7 @@ local function var_0_6(arg_11_0, arg_11_1)
 	return arg_11_0[var_0_2] > arg_11_1[var_0_2]
 end
 
-function BTPackMasterDragAction.find_valid_covers(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTPackMasterDragAction.find_valid_covers = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = Unit.local_position
 	local var_12_1 = Vector3.distance_squared
 	local var_12_2 = Vector3.distance
@@ -387,7 +387,7 @@ function BTPackMasterDragAction.find_valid_covers(arg_12_0, arg_12_1, arg_12_2, 
 	end
 end
 
-function BTPackMasterDragAction.find_valid_interest_points(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTPackMasterDragAction.find_valid_interest_points = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = {}
 	local var_13_1 = 19
 	local var_13_2 = 5
@@ -433,7 +433,7 @@ function BTPackMasterDragAction.find_valid_interest_points(arg_13_0, arg_13_1, a
 	return var_13_9 > 1
 end
 
-function BTPackMasterDragAction.find_nav_group_neighbour(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+BTPackMasterDragAction.find_nav_group_neighbour = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = arg_14_1.packmaster_destinations
 	local var_14_1 = Managers.state.conflict.navigation_group_manager:get_group_from_position(arg_14_2)
 
@@ -496,7 +496,7 @@ function BTPackMasterDragAction.find_nav_group_neighbour(arg_14_0, arg_14_1, arg
 	return var_14_3 > 1
 end
 
-function BTPackMasterDragAction.find_escape_destination(arg_15_0, arg_15_1, arg_15_2)
+BTPackMasterDragAction.find_escape_destination = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_2.last_path_direction:unbox()
 	local var_15_1 = POSITION_LOOKUP[arg_15_1] + Vector3(0, 0, 0.5)
 	local var_15_2 = false
@@ -542,7 +542,7 @@ function BTPackMasterDragAction.find_escape_destination(arg_15_0, arg_15_1, arg_
 	return var_15_2, var_15_3
 end
 
-function BTPackMasterDragAction.setup_destination_test(arg_16_0, arg_16_1, arg_16_2)
+BTPackMasterDragAction.setup_destination_test = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_2.destination_test_index = 0
 	arg_16_2.test_destinations = true
 	arg_16_2.test_next_destination = true
@@ -556,7 +556,7 @@ function BTPackMasterDragAction.setup_destination_test(arg_16_0, arg_16_1, arg_1
 	arg_16_2.last_path_direction = Vector3Box(var_16_0)
 end
 
-function BTPackMasterDragAction.test_destinations(arg_17_0, arg_17_1, arg_17_2)
+BTPackMasterDragAction.test_destinations = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_2.destination_test_astar
 	local var_17_1 = arg_17_2.nav_world
 	local var_17_2 = arg_17_2.packmaster_destinations

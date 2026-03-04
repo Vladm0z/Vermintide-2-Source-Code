@@ -4,7 +4,7 @@ require("scripts/settings/difficulty_settings")
 
 DifficultyManager = class(DifficultyManager)
 
-function DifficultyManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DifficultyManager.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.world = arg_1_1
 	arg_1_0.is_server = arg_1_2
 	arg_1_0.network_event_delegate = arg_1_3
@@ -18,7 +18,7 @@ function DifficultyManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.difficulty_tweak = 0
 end
 
-function DifficultyManager.set_difficulty(arg_2_0, arg_2_1, arg_2_2)
+DifficultyManager.set_difficulty = function (arg_2_0, arg_2_1, arg_2_2)
 	fassert(arg_2_2 and arg_2_2 >= -10 and arg_2_2 <= 10, "tweak must be a number from -10 to 10")
 
 	if arg_2_1 == "versus_base" then
@@ -52,23 +52,23 @@ function DifficultyManager.set_difficulty(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function DifficultyManager.get_default_difficulties(arg_3_0)
+DifficultyManager.get_default_difficulties = function (arg_3_0)
 	return DefaultDifficulties, DefaultStartingDifficulty
 end
 
-function DifficultyManager.get_difficulty(arg_4_0)
+DifficultyManager.get_difficulty = function (arg_4_0)
 	return arg_4_0.difficulty, arg_4_0.difficulty_tweak
 end
 
-function DifficultyManager.get_difficulty_rank(arg_5_0)
+DifficultyManager.get_difficulty_rank = function (arg_5_0)
 	return arg_5_0.difficulty_rank, arg_5_0.difficulty_tweak
 end
 
-function DifficultyManager.get_difficulty_settings(arg_6_0)
+DifficultyManager.get_difficulty_settings = function (arg_6_0)
 	return arg_6_0.difficulty_setting
 end
 
-function DifficultyManager.get_difficulty_value_from_table(arg_7_0, arg_7_1)
+DifficultyManager.get_difficulty_value_from_table = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.difficulty
 	local var_7_1 = arg_7_1[var_7_0]
 
@@ -79,22 +79,22 @@ function DifficultyManager.get_difficulty_value_from_table(arg_7_0, arg_7_1)
 	return arg_7_1[DifficultySettings[var_7_0].fallback_difficulty]
 end
 
-function DifficultyManager.get_difficulty_index(arg_8_0)
+DifficultyManager.get_difficulty_index = function (arg_8_0)
 	return table.index_of(DefaultDifficulties, arg_8_0.difficulty)
 end
 
-function DifficultyManager.hot_join_sync(arg_9_0, arg_9_1)
+DifficultyManager.hot_join_sync = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.state.network.network_transmit
 	local var_9_1 = NetworkLookup.difficulties[arg_9_0.difficulty]
 
 	var_9_0:send_rpc("rpc_set_difficulty", arg_9_1, var_9_1, arg_9_0.difficulty_tweak, true)
 end
 
-function DifficultyManager.destroy(arg_10_0)
+DifficultyManager.destroy = function (arg_10_0)
 	arg_10_0.network_event_delegate:unregister(arg_10_0)
 end
 
-function DifficultyManager.rpc_set_difficulty(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+DifficultyManager.rpc_set_difficulty = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = NetworkLookup.difficulties[arg_11_2]
 
 	arg_11_0:set_difficulty(var_11_0, arg_11_3)
@@ -106,7 +106,7 @@ end
 
 local var_0_0 = {}
 
-function DifficultyManager.players_below_required_power_level(arg_12_0, arg_12_1)
+DifficultyManager.players_below_required_power_level = function (arg_12_0, arg_12_1)
 	table.clear(var_0_0)
 
 	local var_12_0 = DifficultySettings[arg_12_0].required_power_level
@@ -122,7 +122,7 @@ end
 
 local var_0_1 = {}
 
-function DifficultyManager.players_locked_difficulty_rank(arg_13_0, arg_13_1)
+DifficultyManager.players_locked_difficulty_rank = function (arg_13_0, arg_13_1)
 	table.clear(var_0_1)
 
 	local var_13_0 = DifficultySettings[arg_13_0]

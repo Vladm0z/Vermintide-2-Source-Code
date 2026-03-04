@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowAdventure = class(StartGameWindowAdventure)
 StartGameWindowAdventure.NAME = "StartGameWindowAdventure"
 
-function StartGameWindowAdventure.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAdventure.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAdventure")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -31,7 +31,7 @@ function StartGameWindowAdventure.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_play_button_enabled(true)
 end
 
-function StartGameWindowAdventure.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowAdventure.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -60,21 +60,21 @@ function StartGameWindowAdventure.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StartGameWindowAdventure.on_exit(arg_3_0, arg_3_1)
+StartGameWindowAdventure.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAdventure")
 
 	arg_3_0.ui_animator = nil
 end
 
-function StartGameWindowAdventure.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowAdventure.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowAdventure.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowAdventure.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function StartGameWindowAdventure.draw(arg_6_0, arg_6_1)
+StartGameWindowAdventure.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.parent:window_input_service()

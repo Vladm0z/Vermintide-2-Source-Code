@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/winds_intro_metal.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_gold_weave_conversation_three_01",

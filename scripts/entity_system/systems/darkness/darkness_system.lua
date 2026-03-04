@@ -16,7 +16,7 @@ local var_0_1 = {
 DarknessSystem.DARKNESS_THRESHOLD = 0.025
 DarknessSystem.TOTAL_DARKNESS_TRESHOLD = 0.0125
 
-function DarknessSystem.init(arg_1_0, arg_1_1, arg_1_2)
+DarknessSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	DarknessSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._light_source_data = {}
@@ -53,25 +53,25 @@ function DarknessSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._network_event_delegate:register(arg_1_0, unpack(var_0_1))
 end
 
-function DarknessSystem.set_global_darkness(arg_2_0, arg_2_1)
+DarknessSystem.set_global_darkness = function (arg_2_0, arg_2_1)
 	arg_2_0._global_darkness = arg_2_1
 end
 
-function DarknessSystem.set_player_light_intensity(arg_3_0, arg_3_1)
+DarknessSystem.set_player_light_intensity = function (arg_3_0, arg_3_1)
 	arg_3_0._player_light_intensity = arg_3_1
 end
 
-function DarknessSystem.set_level(arg_4_0, arg_4_1)
+DarknessSystem.set_level = function (arg_4_0, arg_4_1)
 	arg_4_0._level = arg_4_1
 end
 
-function DarknessSystem.destroy(arg_5_0)
+DarknessSystem.destroy = function (arg_5_0)
 	arg_5_0._environment_handler = nil
 
 	arg_5_0._network_event_delegate:unregister(arg_5_0)
 end
 
-function DarknessSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+DarknessSystem.on_add_extension = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_3 == "ShadowFlareExtension" then
 		return DarknessSystem.super.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	end
@@ -93,7 +93,7 @@ function DarknessSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg
 	return var_6_1
 end
 
-function DarknessSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
+DarknessSystem.on_remove_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	DarknessSystem.super.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
 
 	if arg_7_2 == "LightSourceExtension" then
@@ -104,7 +104,7 @@ function DarknessSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DarknessSystem.update(arg_8_0, arg_8_1, arg_8_2)
+DarknessSystem.update = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_1.dt
 
 	if arg_8_0._darkness_volumes or arg_8_0._global_darkness then
@@ -116,7 +116,7 @@ function DarknessSystem.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_shadow_flare_extensions(var_8_0, arg_8_2)
 end
 
-function DarknessSystem._update_light_sources(arg_9_0, arg_9_1, arg_9_2)
+DarknessSystem._update_light_sources = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
@@ -131,7 +131,7 @@ local function var_0_5(arg_10_0)
 	return (1 - arg_10_0 / var_0_3)^2 / 15
 end
 
-function DarknessSystem._update_player_unit_darkness(arg_11_0, arg_11_1, arg_11_2)
+DarknessSystem._update_player_unit_darkness = function (arg_11_0, arg_11_1, arg_11_2)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._player_unit_darkness_data) do
 		local var_11_0 = (POSITION_LOOKUP[iter_11_0] or Unit.world_position(iter_11_0, 0)) + Vector3(0, 0, 1)
 		local var_11_1 = arg_11_0:is_in_darkness_volume(var_11_0)
@@ -163,7 +163,7 @@ end
 
 local var_0_6 = 0
 
-function DarknessSystem._update_darkness_fx(arg_12_0, arg_12_1, arg_12_2)
+DarknessSystem._update_darkness_fx = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.player:local_player(1)
 
 	if var_12_0 then
@@ -224,7 +224,7 @@ function DarknessSystem._update_darkness_fx(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function DarknessSystem.is_in_darkness_volume(arg_13_0, arg_13_1)
+DarknessSystem.is_in_darkness_volume = function (arg_13_0, arg_13_1)
 	if arg_13_0._global_darkness then
 		return true
 	end
@@ -247,7 +247,7 @@ function DarknessSystem.is_in_darkness_volume(arg_13_0, arg_13_1)
 	return false
 end
 
-function DarknessSystem.calculate_light_value(arg_14_0, arg_14_1, arg_14_2)
+DarknessSystem.calculate_light_value = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = 0
 
 	for iter_14_0, iter_14_1 in pairs(arg_14_0._light_source_data) do
@@ -278,7 +278,7 @@ function DarknessSystem.calculate_light_value(arg_14_0, arg_14_1, arg_14_2)
 	return var_14_0
 end
 
-function DarknessSystem.is_in_darkness(arg_15_0, arg_15_1, arg_15_2)
+DarknessSystem.is_in_darkness = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0:is_in_darkness_volume(arg_15_1) then
 		return false
 	end
@@ -288,7 +288,7 @@ function DarknessSystem.is_in_darkness(arg_15_0, arg_15_1, arg_15_2)
 	return arg_15_0:calculate_light_value(arg_15_1, var_15_0.PLAYER_UNITS) < (arg_15_2 or DarknessSystem.DARKNESS_THRESHOLD)
 end
 
-function DarknessSystem._update_shadow_flare_extensions(arg_16_0, arg_16_1, arg_16_2)
+DarknessSystem._update_shadow_flare_extensions = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = Managers.state.entity:get_entities("ShadowFlareExtension")
 
 	for iter_16_0, iter_16_1 in pairs(var_16_0) do
@@ -296,7 +296,7 @@ function DarknessSystem._update_shadow_flare_extensions(arg_16_0, arg_16_1, arg_
 	end
 end
 
-function DarknessSystem.remove_mutator_torches(arg_17_0)
+DarknessSystem.remove_mutator_torches = function (arg_17_0)
 	local var_17_0 = Managers.player:local_player().player_unit
 	local var_17_1 = arg_17_0._light_source_data
 
@@ -332,11 +332,11 @@ function DarknessSystem.remove_mutator_torches(arg_17_0)
 	end
 end
 
-function DarknessSystem.shadow_flares_on_ground(arg_18_0)
+DarknessSystem.shadow_flares_on_ground = function (arg_18_0)
 	return Managers.state.entity:get_entities("ShadowFlareExtension")
 end
 
-function DarknessSystem.rpc_shadow_flare_done(arg_19_0, arg_19_1, arg_19_2)
+DarknessSystem.rpc_shadow_flare_done = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0.is_server then
 		local var_19_0 = Managers.state.network
 		local var_19_1 = CHANNEL_TO_PEER_ID[arg_19_1]

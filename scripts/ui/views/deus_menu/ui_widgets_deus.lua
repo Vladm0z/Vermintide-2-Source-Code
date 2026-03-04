@@ -24,7 +24,7 @@ local function var_0_3(arg_1_0)
 	return 195 + 60 * math.sin(5 * Managers.time:time("ui"))
 end
 
-function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return {
 		element = {
 			passes = {
@@ -39,7 +39,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "host_icon",
 					texture_id = "host_icon",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.is_host
 					end
 				},
@@ -60,7 +60,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					texture_id = "texture_id",
 					pass_type = "gradient_mask_texture",
 					content_id = "hp_bar",
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						local var_4_0 = arg_4_0.bar_value
 
 						arg_4_1.size[1] = var_0_0[1] * var_4_0
@@ -72,7 +72,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.display_portrait_icon
 					end
 				},
@@ -105,7 +105,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.connecting
 					end
 				},
@@ -114,7 +114,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						local var_7_0 = arg_7_0.ammo_percentage
 
 						return var_7_0 and var_7_0 > 0 and var_7_0 <= 0.33
@@ -125,7 +125,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator_empty",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						local var_8_0 = arg_8_0.ammo_percentage
 
 						return var_8_0 and var_8_0 <= 0
@@ -136,7 +136,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "healthkit_slot",
 					texture_id = "healthkit_slot",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.healthkit_slot
 					end
 				},
@@ -157,7 +157,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "potion_slot",
 					texture_id = "potion_slot",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.potion_slot
 					end
 				},
@@ -178,7 +178,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "grenade_slot",
 					texture_id = "grenade_slot",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.grenade_slot
 					end
 				},
@@ -199,7 +199,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 					style_id = "token_icon",
 					texture_id = "token_icon",
 					retained_mode = arg_2_3,
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.token_icon and arg_12_0.show_token_icon
 					end
 				}
@@ -627,7 +627,7 @@ function UIWidgets.create_deus_player_status_portrait(arg_2_0, arg_2_1, arg_2_2,
 	}
 end
 
-function UIWidgets.deus_create_player_portraits_frame(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+UIWidgets.deus_create_player_portraits_frame = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_3
 	local var_13_1 = arg_13_0
 	local var_13_2 = {
@@ -738,7 +738,7 @@ function UIWidgets.deus_create_player_portraits_frame(arg_13_0, arg_13_1, arg_13
 	return var_13_2
 end
 
-function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+UIWidgets.create_info_box = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 	local var_14_0 = {
 		0,
 		130 - arg_14_2[2] / 2,
@@ -840,7 +840,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.icon
 					end
 				},
@@ -848,7 +848,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.icon
 					end
 				},
@@ -856,7 +856,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.title_text
 					end
 				},
@@ -864,7 +864,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.title_text
 					end
 				},
@@ -872,7 +872,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "sub_title_text",
 					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.sub_title_text
 					end
 				},
@@ -880,7 +880,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "sub_title_text_shadow",
 					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.sub_title_text
 					end
 				},
@@ -888,7 +888,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "info_text",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.info_text
 					end
 				},
@@ -896,7 +896,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 					style_id = "info_text_shadow",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.info_text
 					end
 				}
@@ -934,7 +934,7 @@ function UIWidgets.create_info_box(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_1
 	}
 end
 
-function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10)
+UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10)
 	arg_23_10 = arg_23_10 or {
 		340,
 		100
@@ -1107,14 +1107,14 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture_frame",
 					style_id = "top_frame",
 					texture_id = "top_frame",
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.top_text
 					end
 				},
 				{
 					style_id = "top_frame_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.top_text
 					end
 				},
@@ -1122,7 +1122,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "top_text",
 					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return arg_26_0.top_text
 					end
 				},
@@ -1130,7 +1130,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "top_text_shadow",
 					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.top_text
 					end
 				},
@@ -1138,7 +1138,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture_frame",
 					style_id = "title_frame",
 					texture_id = "title_frame",
-					content_check_function = function(arg_28_0)
+					content_check_function = function (arg_28_0)
 						return arg_28_0.icon
 					end
 				},
@@ -1150,7 +1150,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return arg_29_0.icon
 					end
 				},
@@ -1158,7 +1158,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture_frame",
 					style_id = "icon_frame",
 					texture_id = "icon_frame",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return arg_30_0.icon
 					end
 				},
@@ -1166,7 +1166,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_31_0)
+					content_check_function = function (arg_31_0)
 						return arg_31_0.title_text
 					end
 				},
@@ -1174,7 +1174,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.title_text
 					end
 				},
@@ -1182,7 +1182,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture",
 					style_id = "title_glow",
 					texture_id = "title_glow",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						return arg_33_0.title_text
 					end
 				},
@@ -1190,7 +1190,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "texture_frame",
 					style_id = "bottom_frame",
 					texture_id = "bottom_frame",
-					content_check_function = function(arg_34_0)
+					content_check_function = function (arg_34_0)
 						return arg_34_0.info_text
 					end
 				},
@@ -1198,7 +1198,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "info_text",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function(arg_35_0)
+					content_check_function = function (arg_35_0)
 						return arg_35_0.info_text
 					end
 				},
@@ -1206,7 +1206,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					style_id = "info_text_shadow",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function(arg_36_0)
+					content_check_function = function (arg_36_0)
 						return arg_36_0.info_text
 					end
 				},
@@ -1214,7 +1214,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 					pass_type = "tiled_texture",
 					style_id = "bottom_background",
 					texture_id = "bottom_background",
-					content_check_function = function(arg_37_0)
+					content_check_function = function (arg_37_0)
 						return arg_37_0.info_text
 					end
 				}
@@ -1312,7 +1312,7 @@ function UIWidgets.create_framed_info_box(arg_23_0, arg_23_1, arg_23_2, arg_23_3
 	}
 end
 
-function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10, arg_38_11, arg_38_12, arg_38_13, arg_38_14)
+UIWidgets.create_icon_info_box = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10, arg_38_11, arg_38_12, arg_38_13, arg_38_14)
 	local var_38_0 = {
 		arg_38_10,
 		arg_38_5[2]
@@ -1409,14 +1409,14 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_39_0, arg_39_1)
+			content_check_function = function (arg_39_0, arg_39_1)
 				return not arg_39_0.hotspot.is_hover
 			end
 		},
 		{
 			style_id = "icon_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_40_0)
+			content_check_function = function (arg_40_0)
 				return not arg_40_0.is_rectangular_icon and not arg_38_13
 			end
 		},
@@ -1424,7 +1424,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			pass_type = "texture",
 			style_id = "icon_bg",
 			texture_id = "rect_masked",
-			content_check_function = function(arg_41_0)
+			content_check_function = function (arg_41_0)
 				return not arg_41_0.is_rectangular_icon and arg_38_13
 			end
 		},
@@ -1437,7 +1437,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_42_0)
+			content_check_function = function (arg_42_0)
 				return not arg_42_0.hide_text
 			end
 		},
@@ -1445,7 +1445,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			style_id = "title_text_shadow",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_43_0)
+			content_check_function = function (arg_43_0)
 				return not arg_43_0.hide_text
 			end
 		},
@@ -1453,7 +1453,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_44_0)
+			content_check_function = function (arg_44_0)
 				return not arg_44_0.hide_text
 			end
 		},
@@ -1461,7 +1461,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 			style_id = "sub_text_shadow",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_45_0)
+			content_check_function = function (arg_45_0)
 				return not arg_45_0.hide_text
 			end
 		}
@@ -1516,7 +1516,7 @@ function UIWidgets.create_icon_info_box(arg_38_0, arg_38_1, arg_38_2, arg_38_3, 
 	}
 end
 
-function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_46_2)
+UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = {
 		-12.5,
 		0,
@@ -1551,7 +1551,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					style_id = "left_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_hover",
-					content_check_function = function(arg_47_0)
+					content_check_function = function (arg_47_0)
 						return arg_47_0.parent.left_arrow_hotspot.is_hover
 					end
 				},
@@ -1559,7 +1559,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					style_id = "left_arrow_gamepad_highlight",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_gamepad_highlight",
-					content_check_function = function(arg_48_0)
+					content_check_function = function (arg_48_0)
 						return arg_48_0.parent.left_arrow_pressed
 					end
 				},
@@ -1567,7 +1567,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					style_id = "left_arrow_clicked",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_clicked",
-					content_check_function = function(arg_49_0)
+					content_check_function = function (arg_49_0)
 						return arg_49_0.parent.left_arrow_hotspot.is_clicked == 0
 					end
 				},
@@ -1585,7 +1585,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					pass_type = "texture",
 					style_id = "right_arrow_hover",
 					texture_id = "right_arrow_hover",
-					content_check_function = function(arg_50_0)
+					content_check_function = function (arg_50_0)
 						return arg_50_0.right_arrow_hotspot.is_hover
 					end
 				},
@@ -1593,7 +1593,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					pass_type = "texture",
 					style_id = "right_arrow_gamepad_highlight",
 					texture_id = "right_arrow_gamepad_highlight",
-					content_check_function = function(arg_51_0)
+					content_check_function = function (arg_51_0)
 						return arg_51_0.right_arrow_pressed
 					end
 				},
@@ -1601,7 +1601,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					pass_type = "texture",
 					style_id = "right_arrow_clicked",
 					texture_id = "right_arrow_clicked",
-					content_check_function = function(arg_52_0)
+					content_check_function = function (arg_52_0)
 						return arg_52_0.right_arrow_hotspot.is_clicked == 0
 					end
 				},
@@ -1629,10 +1629,10 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 					style_id = "selected_difficulty_text_selected",
 					texture_id = "selected_difficulty_text_selected",
 					pass_type = "texture",
-					content_check_function = function(arg_53_0)
+					content_check_function = function (arg_53_0)
 						return arg_53_0.right_arrow_hotspot.is_hover or arg_53_0.left_arrow_hotspot.is_hover or not Managers.input:is_device_active("mouse") and arg_53_0.is_selected
 					end,
-					content_change_function = function(arg_54_0, arg_54_1)
+					content_change_function = function (arg_54_0, arg_54_1)
 						arg_54_1.color[1] = var_0_3(not Managers.input:is_device_active("mouse"))
 					end
 				},
@@ -2042,7 +2042,7 @@ function UIWidgets.create_start_game_difficulty_stepper(arg_46_0, arg_46_1, arg_
 	}
 end
 
-function UIWidgets.create_deus_panel_with_outer_frame(arg_55_0, arg_55_1)
+UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
 	local var_55_0 = UIFrameSettings.border_tiled
 	local var_55_1 = var_55_0.texture_sizes.corner
 	local var_55_2 = {
@@ -2118,7 +2118,7 @@ function UIWidgets.create_deus_panel_with_outer_frame(arg_55_0, arg_55_1)
 	}
 end
 
-function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	local var_56_0 = "background_tiled_morris"
 	local var_56_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_56_0)
 	local var_56_2 = var_56_1.size
@@ -2156,7 +2156,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_57_0)
+					content_check_function = function (arg_57_0)
 						local var_57_0 = arg_57_0.button_hotspot.is_clicked
 
 						return not var_57_0 or var_57_0 == 0
@@ -2165,7 +2165,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_58_0)
+					content_check_function = function (arg_58_0)
 						return arg_58_0.button_hotspot.disable_button
 					end
 				},
@@ -2173,7 +2173,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_59_0)
+					content_check_function = function (arg_59_0)
 						return not arg_59_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -2181,7 +2181,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_60_0)
+					content_check_function = function (arg_60_0)
 						return not arg_60_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -2189,7 +2189,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_61_0)
+					content_check_function = function (arg_61_0)
 						return arg_61_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -2197,7 +2197,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_62_0)
+					content_check_function = function (arg_62_0)
 						return arg_62_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -2205,10 +2205,10 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_63_0)
+					content_check_function = function (arg_63_0)
 						return not arg_63_0.parent.button_hotspot.disable_button
 					end,
-					content_change_function = function(arg_64_0, arg_64_1)
+					content_change_function = function (arg_64_0, arg_64_1)
 						arg_64_1.color[1] = var_0_3(arg_64_0.parent.is_selected)
 					end
 				},
@@ -2216,10 +2216,10 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_65_0)
+					content_check_function = function (arg_65_0)
 						return not arg_65_0.parent.button_hotspot.disable_button
 					end,
-					content_change_function = function(arg_66_0, arg_66_1)
+					content_change_function = function (arg_66_0, arg_66_1)
 						arg_66_1.color[1] = var_0_3(arg_66_0.parent.is_selected)
 					end
 				},
@@ -2227,7 +2227,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_67_0)
+					content_check_function = function (arg_67_0)
 						return not arg_67_0.button_hotspot.disable_button
 					end
 				},
@@ -2235,7 +2235,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_68_0)
+					content_check_function = function (arg_68_0)
 						return arg_68_0.button_hotspot.disable_button
 					end
 				},
@@ -2263,7 +2263,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function(arg_69_0)
+					content_check_function = function (arg_69_0)
 						local var_69_0 = arg_69_0.button_hotspot
 
 						return not var_69_0.disable_button and (var_69_0.is_hover or arg_69_0.is_selected)
@@ -2273,7 +2273,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					texture_id = "effect",
 					style_id = "effect_active",
 					pass_type = "texture",
-					content_check_function = function(arg_70_0)
+					content_check_function = function (arg_70_0)
 						local var_70_0 = arg_70_0.button_hotspot
 
 						return not var_70_0.disable_button and not var_70_0.is_hover
@@ -2283,7 +2283,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_71_0)
+					content_check_function = function (arg_71_0)
 						local var_71_0 = arg_71_0.button_hotspot
 
 						return not var_71_0.disable_button and (var_71_0.is_hover or arg_71_0.is_selected)
@@ -2293,7 +2293,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					texture_id = "hover_glow",
 					style_id = "hover_glow_active",
 					pass_type = "texture",
-					content_check_function = function(arg_72_0)
+					content_check_function = function (arg_72_0)
 						local var_72_0 = arg_72_0.button_hotspot
 
 						return not var_72_0.disable_button and not var_72_0.is_hover
@@ -2303,7 +2303,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function(arg_73_0)
+					content_check_function = function (arg_73_0)
 						local var_73_0 = arg_73_0.button_hotspot
 
 						return not var_73_0.disable_button and var_73_0.is_hover
@@ -2777,7 +2777,7 @@ function UIWidgets.create_start_game_deus_play_button(arg_56_0, arg_56_1, arg_56
 	}
 end
 
-function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 	local var_74_0 = "button_bg_01"
 	local var_74_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_74_0)
 	local var_74_2 = "menu_frame_01_morris"
@@ -2802,7 +2802,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_75_0)
+					content_check_function = function (arg_75_0)
 						return arg_75_0.draw_frame
 					end
 				},
@@ -2828,7 +2828,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_76_0)
+					content_check_function = function (arg_76_0)
 						return arg_76_0.button_hotspot.disable_button
 					end
 				},
@@ -2846,7 +2846,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_77_0)
+					content_check_function = function (arg_77_0)
 						local var_77_0 = arg_77_0.parent.button_hotspot
 
 						return not var_77_0.disable_button and var_77_0.is_hover
@@ -2856,7 +2856,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_78_0)
+					content_check_function = function (arg_78_0)
 						local var_78_0 = arg_78_0.parent.button_hotspot
 
 						return not var_78_0.disable_button and var_78_0.is_hover
@@ -2866,7 +2866,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_79_0)
+					content_check_function = function (arg_79_0)
 						return not arg_79_0.button_hotspot.disable_button
 					end
 				},
@@ -2874,7 +2874,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_80_0)
+					content_check_function = function (arg_80_0)
 						return arg_80_0.button_hotspot.disable_button
 					end
 				},
@@ -3172,7 +3172,7 @@ function UIWidgets.create_deus_default_button(arg_74_0, arg_74_1, arg_74_2, arg_
 	}
 end
 
-function UIWidgets.create_start_game_deus_journey_stepper(arg_81_0)
+UIWidgets.create_start_game_deus_journey_stepper = function (arg_81_0)
 	return {
 		scenegraph_id = arg_81_0,
 		offset = {
@@ -3202,7 +3202,7 @@ function UIWidgets.create_start_game_deus_journey_stepper(arg_81_0)
 	}
 end
 
-function UIWidgets.create_start_game_deus_gamemode_info_box(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5)
+UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5)
 	local var_82_0 = arg_82_4 and 0 or 255
 	local var_82_1 = arg_82_4 and arg_82_1[2] / 2 or arg_82_1[2]
 	local var_82_2 = arg_82_4 and arg_82_1[2] / 2 or 0
@@ -3249,7 +3249,7 @@ function UIWidgets.create_start_game_deus_gamemode_info_box(arg_82_0, arg_82_1, 
 					style_id = "note_text",
 					pass_type = "text",
 					text_id = "note_text",
-					content_check_function = function(arg_83_0)
+					content_check_function = function (arg_83_0)
 						return arg_83_0.show_note and not arg_82_5
 					end
 				},
@@ -3257,7 +3257,7 @@ function UIWidgets.create_start_game_deus_gamemode_info_box(arg_82_0, arg_82_1, 
 					style_id = "press_key_text",
 					pass_type = "text",
 					text_id = "press_key_text",
-					content_check_function = function(arg_84_0)
+					content_check_function = function (arg_84_0)
 						return not arg_84_0.show_note and not arg_82_5
 					end
 				}
@@ -3465,7 +3465,7 @@ function UIWidgets.create_start_game_deus_gamemode_info_box(arg_82_0, arg_82_1, 
 	}
 end
 
-function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5)
+UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5)
 	local var_85_0 = arg_85_4 or {
 		width = 72,
 		spacing_x = 40
@@ -3483,7 +3483,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			style_id = "hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function(arg_86_0)
+			content_check_function = function (arg_86_0)
 				return not arg_86_0.parent.locked
 			end
 		},
@@ -3491,7 +3491,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			style_id = "level_icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function(arg_87_0)
+			content_check_function = function (arg_87_0)
 				return arg_87_0.button_hotspot.is_hover or arg_87_0.gamepad_selected
 			end
 		},
@@ -3499,12 +3499,12 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			style_id = "icon_glow",
 			texture_id = "icon_glow",
 			pass_type = "texture",
-			content_check_function = function(arg_88_0)
+			content_check_function = function (arg_88_0)
 				local var_88_0 = Managers.input:is_device_active("mouse")
 
 				return (arg_88_0.button_hotspot.is_hover or arg_88_0.gamepad_selected and not var_88_0) and not arg_88_0.button_hotspot.is_selected
 			end,
-			content_change_function = function(arg_89_0, arg_89_1)
+			content_change_function = function (arg_89_0, arg_89_1)
 				arg_89_1.color[1] = var_0_3(arg_89_0.gamepad_selected)
 			end
 		},
@@ -3512,7 +3512,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "level_icon",
 			texture_id = "level_icon",
-			content_check_function = function(arg_90_0, arg_90_1)
+			content_check_function = function (arg_90_0, arg_90_1)
 				return not arg_90_0.locked
 			end
 		},
@@ -3520,7 +3520,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "level_icon_locked",
 			texture_id = "level_icon",
-			content_check_function = function(arg_91_0)
+			content_check_function = function (arg_91_0)
 				return arg_91_0.locked
 			end
 		},
@@ -3528,7 +3528,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function(arg_92_0)
+			content_check_function = function (arg_92_0)
 				return arg_92_0.locked
 			end
 		},
@@ -3536,7 +3536,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function(arg_93_0)
+			content_check_function = function (arg_93_0)
 				return arg_93_0.locked
 			end
 		},
@@ -3544,7 +3544,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function(arg_94_0)
+			content_check_function = function (arg_94_0)
 				return arg_94_0.draw_path and not arg_94_0.draw_path_fill
 			end
 		},
@@ -3552,7 +3552,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function(arg_95_0)
+			content_check_function = function (arg_95_0)
 				return arg_95_0.draw_path and arg_95_0.draw_path_fill and not arg_95_0.locked
 			end
 		},
@@ -3560,7 +3560,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "theme_icon",
 			texture_id = "theme_icon",
-			content_check_function = function(arg_96_0)
+			content_check_function = function (arg_96_0)
 				return arg_96_0.theme_icon ~= nil
 			end
 		},
@@ -3568,7 +3568,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "rotated_texture",
 			style_id = "level_icon_mask",
 			texture_id = "level_icon_mask",
-			content_check_function = function(arg_97_0)
+			content_check_function = function (arg_97_0)
 				return true
 			end
 		},
@@ -3576,7 +3576,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "level_icon_frame",
 			texture_id = "level_icon_frame",
-			content_check_function = function(arg_98_0, arg_98_1)
+			content_check_function = function (arg_98_0, arg_98_1)
 				return not arg_98_0.locked
 			end
 		},
@@ -3589,7 +3589,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			pass_type = "texture",
 			style_id = "name_frame",
 			texture_id = "name_frame",
-			content_check_function = function(arg_99_0, arg_99_1)
+			content_check_function = function (arg_99_0, arg_99_1)
 				if Managers.input:is_device_active("gamepad") then
 					return arg_99_0.gamepad_selected
 				else
@@ -3601,7 +3601,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 			style_id = "journey_name",
 			pass_type = "text",
 			text_id = "journey_name_text",
-			content_check_function = function(arg_100_0, arg_100_1)
+			content_check_function = function (arg_100_0, arg_100_1)
 				if Managers.input:is_device_active("gamepad") then
 					return arg_100_0.gamepad_selected
 				else
@@ -3947,7 +3947,7 @@ function UIWidgets.create_expedition_widget_func(arg_85_0, arg_85_1, arg_85_2, a
 	return var_85_3
 end
 
-function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101_1)
+UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_101_1)
 	local var_101_0 = UIFrameSettings.border_tiled
 	local var_101_1 = var_101_0.texture_sizes.corner
 	local var_101_2 = {
@@ -3962,7 +3962,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "background",
 					texture_id = "background",
 					pass_type = "tiled_texture",
-					content_change_function = function(arg_102_0, arg_102_1)
+					content_change_function = function (arg_102_0, arg_102_1)
 						local var_102_0 = {
 							0 + arg_102_0.resize_offset[1],
 							0 + arg_102_0.resize_offset[2],
@@ -3979,7 +3979,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "border",
 					texture_id = "border",
 					pass_type = "texture_frame",
-					content_change_function = function(arg_103_0, arg_103_1)
+					content_change_function = function (arg_103_0, arg_103_1)
 						local var_103_0 = {
 							-var_101_2[1] + arg_103_0.resize_offset[1],
 							-var_101_2[2] + arg_103_0.resize_offset[2],
@@ -4000,7 +4000,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "difficulty_description",
 					pass_type = "text",
 					text_id = "difficulty_description",
-					content_change_function = function(arg_104_0, arg_104_1)
+					content_change_function = function (arg_104_0, arg_104_1)
 						local var_104_0 = {
 							25 + arg_104_0.resize_offset[1],
 							160 - arg_104_0.resize_offset[2],
@@ -4017,7 +4017,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "highest_obtainable_level",
 					pass_type = "text",
 					text_id = "highest_obtainable_level",
-					content_change_function = function(arg_105_0, arg_105_1)
+					content_change_function = function (arg_105_0, arg_105_1)
 						local var_105_0 = {
 							25 + arg_105_0.resize_offset[1],
 							140 - arg_105_0.difficulty_description_text_size - arg_105_0.resize_offset[2],
@@ -4033,7 +4033,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "difficulty_separator",
 					texture_id = "difficulty_separator",
 					pass_type = "texture",
-					content_change_function = function(arg_106_0, arg_106_1)
+					content_change_function = function (arg_106_0, arg_106_1)
 						local var_106_0 = {
 							arg_101_1[1] / 4 + arg_106_0.resize_offset[1],
 							120 - arg_106_0.difficulty_description_text_size - arg_106_0.resize_offset[2],
@@ -4054,10 +4054,10 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "difficulty_lock_text",
 					pass_type = "text",
 					text_id = "difficulty_lock_text",
-					content_check_function = function(arg_107_0)
+					content_check_function = function (arg_107_0)
 						return arg_107_0.should_show_diff_lock_text
 					end,
-					content_change_function = function(arg_108_0, arg_108_1)
+					content_change_function = function (arg_108_0, arg_108_1)
 						local var_108_0 = {
 							7.5 + arg_108_0.resize_offset[1],
 							-arg_108_0.difficulty_description_text_size - arg_108_0.resize_offset[2] + 90,
@@ -4073,10 +4073,10 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 					style_id = "dlc_lock_text",
 					pass_type = "text",
 					text_id = "dlc_lock_text",
-					content_check_function = function(arg_109_0)
+					content_check_function = function (arg_109_0)
 						return arg_109_0.should_show_dlc_lock
 					end,
-					content_change_function = function(arg_110_0, arg_110_1)
+					content_change_function = function (arg_110_0, arg_110_1)
 						local var_110_0 = {
 							2.5 + arg_110_0.resize_offset[1],
 							-arg_110_0.difficulty_description_text_size - arg_110_0.resize_offset[2] + 70 - arg_110_0.difficulty_lock_text_height,
@@ -4285,7 +4285,7 @@ function UIWidgets.create_start_game_deus_difficulty_info_box(arg_101_0, arg_101
 	}
 end
 
-function UIWidgets.create_ability_charges_widget(arg_111_0, arg_111_1, arg_111_2)
+UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_111_2)
 	local var_111_0 = arg_111_1 or {
 		20,
 		20
@@ -4303,7 +4303,7 @@ function UIWidgets.create_ability_charges_widget(arg_111_0, arg_111_1, arg_111_2
 					pass_type = "texture",
 					style_id = "ability_charge_active",
 					texture_id = "ability_charge_active",
-					content_check_function = function(arg_112_0, arg_112_1)
+					content_check_function = function (arg_112_0, arg_112_1)
 						return arg_112_0.ready
 					end
 				}
@@ -4346,7 +4346,7 @@ function UIWidgets.create_ability_charges_widget(arg_111_0, arg_111_1, arg_111_2
 	}
 end
 
-function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
+UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 	local var_113_0 = true
 
 	if arg_113_2 then
@@ -4360,7 +4360,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "shrine_bg",
 					style_id = "shrine_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_114_0)
+					content_check_function = function (arg_114_0)
 						return not arg_114_0.extend_left
 					end
 				},
@@ -4368,7 +4368,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "shrine_bg",
 					style_id = "shrine_bg_left",
 					pass_type = "texture",
-					content_check_function = function(arg_115_0)
+					content_check_function = function (arg_115_0)
 						return arg_115_0.extend_left
 					end
 				},
@@ -4376,7 +4376,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "shrine_bg_frame_left",
 					pass_type = "texture_uv",
 					content_id = "shrine_bg_frame_left",
-					content_check_function = function(arg_116_0)
+					content_check_function = function (arg_116_0)
 						return not arg_116_0.parent.extend_left
 					end
 				},
@@ -4384,7 +4384,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "shrine_bg_frame_right",
 					pass_type = "texture_uv",
 					content_id = "shrine_bg_frame_right",
-					content_check_function = function(arg_117_0)
+					content_check_function = function (arg_117_0)
 						return arg_117_0.parent.extend_left
 					end
 				},
@@ -4392,7 +4392,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "icon",
 					style_id = "round_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_118_0)
+					content_check_function = function (arg_118_0)
 						return arg_118_0.icon and not arg_118_0.is_rectangular_icon
 					end
 				},
@@ -4400,7 +4400,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "round_icon_bg",
 					style_id = "round_icon_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_119_0)
+					content_check_function = function (arg_119_0)
 						return arg_119_0.icon and not arg_119_0.is_rectangular_icon and false
 					end
 				},
@@ -4408,14 +4408,14 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "icon",
 					style_id = "rectangular_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_120_0)
+					content_check_function = function (arg_120_0)
 						return arg_120_0.icon and arg_120_0.is_rectangular_icon
 					end
 				},
 				{
 					style_id = "rectangular_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_121_0)
+					content_check_function = function (arg_121_0)
 						return arg_121_0.icon and not arg_121_0.is_rectangular_icon
 					end
 				},
@@ -4423,7 +4423,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					texture_id = "rectangular_icon_bg",
 					style_id = "rectangular_icon_bg",
 					pass_type = "texture",
-					content_check_function = function(arg_122_0)
+					content_check_function = function (arg_122_0)
 						return true
 					end
 				},
@@ -4431,7 +4431,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_123_0)
+					content_check_function = function (arg_123_0)
 						return not arg_123_0.extend_left
 					end
 				},
@@ -4439,7 +4439,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_124_0)
+					content_check_function = function (arg_124_0)
 						return not arg_124_0.extend_left
 					end
 				},
@@ -4447,7 +4447,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "rarity_text",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function(arg_125_0)
+					content_check_function = function (arg_125_0)
 						return not arg_125_0.extend_left
 					end
 				},
@@ -4455,7 +4455,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "rarity_text_shadow",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function(arg_126_0)
+					content_check_function = function (arg_126_0)
 						return not arg_126_0.extend_left
 					end
 				},
@@ -4463,7 +4463,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "description_text",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function(arg_127_0)
+					content_check_function = function (arg_127_0)
 						return not arg_127_0.extend_left
 					end
 				},
@@ -4471,7 +4471,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "description_text_shadow",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function(arg_128_0)
+					content_check_function = function (arg_128_0)
 						return not arg_128_0.extend_left
 					end
 				},
@@ -4479,7 +4479,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "title_text_left",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_129_0)
+					content_check_function = function (arg_129_0)
 						return arg_129_0.extend_left
 					end
 				},
@@ -4487,7 +4487,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "title_text_shadow_left",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_130_0)
+					content_check_function = function (arg_130_0)
 						return arg_130_0.extend_left
 					end
 				},
@@ -4495,7 +4495,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "rarity_text_left",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function(arg_131_0)
+					content_check_function = function (arg_131_0)
 						return arg_131_0.extend_left
 					end
 				},
@@ -4503,7 +4503,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "rarity_text_shadow_left",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function(arg_132_0)
+					content_check_function = function (arg_132_0)
 						return arg_132_0.extend_left
 					end
 				},
@@ -4511,7 +4511,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "description_text_left",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function(arg_133_0)
+					content_check_function = function (arg_133_0)
 						return arg_133_0.extend_left
 					end
 				},
@@ -4519,7 +4519,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "description_text_shadow_left",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function(arg_134_0)
+					content_check_function = function (arg_134_0)
 						return arg_134_0.extend_left
 					end
 				},
@@ -4527,7 +4527,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "set_progression",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function(arg_135_0)
+					content_check_function = function (arg_135_0)
 						return arg_135_0.is_part_of_set and not arg_135_0.extend_left
 					end
 				},
@@ -4535,7 +4535,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "set_progression_left",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function(arg_136_0)
+					content_check_function = function (arg_136_0)
 						return arg_136_0.is_part_of_set and arg_136_0.extend_left
 					end
 				},
@@ -4543,10 +4543,10 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "remove_tooltip_left",
 					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function(arg_137_0)
+					content_check_function = function (arg_137_0)
 						return not arg_137_0.locked and arg_137_0.extend_left and arg_113_3
 					end,
-					content_change_function = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3)
+					content_change_function = function (arg_138_0, arg_138_1, arg_138_2, arg_138_3)
 						local var_138_0 = Localize(arg_138_0.remove_tooltip_key)
 						local var_138_1 = arg_138_0.input_service_name
 						local var_138_2 = "$KEY;%s__%s:"
@@ -4562,10 +4562,10 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "remove_tooltip",
 					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function(arg_139_0)
+					content_check_function = function (arg_139_0)
 						return not arg_139_0.locked and not arg_139_0.extend_left and arg_113_3
 					end,
-					content_change_function = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3)
+					content_change_function = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3)
 						local var_140_0 = Localize(arg_140_0.remove_tooltip_key)
 						local var_140_1 = arg_140_0.input_service_name
 						local var_140_2 = "$KEY;%s__%s:"
@@ -4581,7 +4581,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "locked_left",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function(arg_141_0)
+					content_check_function = function (arg_141_0)
 						return arg_141_0.locked and arg_141_0.extend_left and arg_113_3
 					end
 				},
@@ -4589,7 +4589,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "locked_left_shadow",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function(arg_142_0)
+					content_check_function = function (arg_142_0)
 						return arg_142_0.locked and arg_142_0.extend_left and arg_113_3
 					end
 				},
@@ -4597,7 +4597,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "locked",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function(arg_143_0)
+					content_check_function = function (arg_143_0)
 						return arg_143_0.locked and not arg_143_0.extend_left and arg_113_3
 					end
 				},
@@ -4605,7 +4605,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					style_id = "locked_shadow",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function(arg_144_0)
+					content_check_function = function (arg_144_0)
 						return arg_144_0.locked and not arg_144_0.extend_left and arg_113_3
 					end
 				},
@@ -4613,7 +4613,7 @@ function UIWidgets.create_power_up(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 					pass_type = "texture",
 					style_id = "remove_frame",
 					texture_id = "remove_frame",
-					content_check_function = function(arg_145_0, arg_145_1)
+					content_check_function = function (arg_145_0, arg_145_1)
 						return arg_145_0.input_made and not arg_145_0.locked and arg_113_3
 					end
 				}

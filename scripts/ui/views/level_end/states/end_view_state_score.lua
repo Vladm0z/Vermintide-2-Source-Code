@@ -13,7 +13,7 @@ local var_0_8 = false
 EndViewStateScore = class(EndViewStateScore)
 EndViewStateScore.NAME = "EndViewStateScore"
 
-function EndViewStateScore.on_enter(arg_1_0, arg_1_1)
+EndViewStateScore.on_enter = function (arg_1_0, arg_1_1)
 	print("[PlayState] Enter Substate EndViewStateScore")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -55,17 +55,17 @@ function EndViewStateScore.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_play_sound("play_gui_mission_summary_team_summary_enter")
 end
 
-function EndViewStateScore.exit(arg_2_0, arg_2_1)
+EndViewStateScore.exit = function (arg_2_0, arg_2_1)
 	arg_2_0._exit_started = true
 
 	arg_2_0:_start_transition_animation("on_enter", "transition_exit")
 end
 
-function EndViewStateScore.exit_done(arg_3_0)
+EndViewStateScore.exit_done = function (arg_3_0)
 	return arg_3_0._exit_started and arg_3_0._animations.on_enter == nil
 end
 
-function EndViewStateScore.create_ui_elements(arg_4_0, arg_4_1)
+EndViewStateScore.create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_5)
 	arg_4_0._widgets, arg_4_0._widgets_by_name = UIUtils.create_widgets(var_0_1)
 	arg_4_0._hero_widgets = {
@@ -88,7 +88,7 @@ function EndViewStateScore.create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0:_create_gamepad_elements()
 end
 
-function EndViewStateScore._create_gamepad_elements(arg_5_0)
+EndViewStateScore._create_gamepad_elements = function (arg_5_0)
 	local var_5_0 = UIFrameSettings.frame_outer_glow_01
 	local var_5_1 = "player_panel_1"
 	local var_5_2 = arg_5_0.ui_scenegraph[var_5_1].size
@@ -116,25 +116,25 @@ function EndViewStateScore._create_gamepad_elements(arg_5_0)
 	arg_5_0._current_gamepad_selection = 1
 end
 
-function EndViewStateScore._wanted_state(arg_6_0)
+EndViewStateScore._wanted_state = function (arg_6_0)
 	return (arg_6_0.parent:wanted_menu_state())
 end
 
-function EndViewStateScore.set_input_manager(arg_7_0, arg_7_1)
+EndViewStateScore.set_input_manager = function (arg_7_0, arg_7_1)
 	arg_7_0.input_manager = arg_7_1
 end
 
-function EndViewStateScore.on_exit(arg_8_0, arg_8_1)
+EndViewStateScore.on_exit = function (arg_8_0, arg_8_1)
 	print("[PlayState] Exit Substate EndViewStateScore")
 
 	arg_8_0.ui_animator = nil
 end
 
-function EndViewStateScore.done(arg_9_0)
+EndViewStateScore.done = function (arg_9_0)
 	return false
 end
 
-function EndViewStateScore._update_transition_timer(arg_10_0, arg_10_1)
+EndViewStateScore._update_transition_timer = function (arg_10_0, arg_10_1)
 	if not arg_10_0._transition_timer then
 		return
 	end
@@ -146,7 +146,7 @@ function EndViewStateScore._update_transition_timer(arg_10_0, arg_10_1)
 	end
 end
 
-function EndViewStateScore.update(arg_11_0, arg_11_1, arg_11_2)
+EndViewStateScore.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -180,11 +180,11 @@ function EndViewStateScore.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function EndViewStateScore.post_update(arg_12_0, arg_12_1, arg_12_2)
+EndViewStateScore.post_update = function (arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-function EndViewStateScore._update_gamepad_input(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateScore._update_gamepad_input = function (arg_13_0, arg_13_1, arg_13_2)
 	if not Managers.input:is_device_active("gamepad") or not arg_13_0.parent:input_enabled() then
 		return
 	end
@@ -219,7 +219,7 @@ function EndViewStateScore._update_gamepad_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function EndViewStateScore.show_gamercard(arg_14_0, arg_14_1)
+EndViewStateScore.show_gamercard = function (arg_14_0, arg_14_1)
 	if arg_14_1 then
 		if IS_WINDOWS and rawget(_G, "Steam") then
 			local var_14_0 = Steam.id_hex_to_dec(arg_14_1)
@@ -240,7 +240,7 @@ function EndViewStateScore.show_gamercard(arg_14_0, arg_14_1)
 	end
 end
 
-function EndViewStateScore._update_animations(arg_15_0, arg_15_1)
+EndViewStateScore._update_animations = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0._ui_animations) do
 		UIAnimation.update(iter_15_1, arg_15_1)
 
@@ -261,7 +261,7 @@ function EndViewStateScore._update_animations(arg_15_0, arg_15_1)
 	end
 end
 
-function EndViewStateScore._update_entry_hover(arg_16_0)
+EndViewStateScore._update_entry_hover = function (arg_16_0)
 	local var_16_0
 	local var_16_1 = arg_16_0._widgets_by_name.scores_topics.content
 	local var_16_2 = var_16_1.num_rows
@@ -284,7 +284,7 @@ function EndViewStateScore._update_entry_hover(arg_16_0)
 	end
 end
 
-function EndViewStateScore._set_entry_hover_index(arg_17_0, arg_17_1)
+EndViewStateScore._set_entry_hover_index = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._widgets_by_name
 	local var_17_1 = arg_17_0._score_widgets
 
@@ -295,13 +295,13 @@ function EndViewStateScore._set_entry_hover_index(arg_17_0, arg_17_1)
 	var_17_0.scores_topics.content.hover_index = arg_17_1
 end
 
-function EndViewStateScore._handle_input(arg_18_0, arg_18_1, arg_18_2)
+EndViewStateScore._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
 	if Development.parameter("tobii_button") then
 		arg_18_0:_handle_tobii_button(arg_18_1)
 	end
 end
 
-function EndViewStateScore._handle_tobii_button(arg_19_0, arg_19_1)
+EndViewStateScore._handle_tobii_button = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._widgets_by_name.tobii_button
 
 	UIWidgetUtils.animate_default_button(var_19_0, arg_19_1)
@@ -319,7 +319,7 @@ function EndViewStateScore._handle_tobii_button(arg_19_0, arg_19_1)
 	end
 end
 
-function EndViewStateScore._is_button_pressed(arg_20_0, arg_20_1)
+EndViewStateScore._is_button_pressed = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.content.button_hotspot
 
 	if var_20_0.on_release then
@@ -329,11 +329,11 @@ function EndViewStateScore._is_button_pressed(arg_20_0, arg_20_1)
 	end
 end
 
-function EndViewStateScore._is_button_hover_enter(arg_21_0, arg_21_1)
+EndViewStateScore._is_button_hover_enter = function (arg_21_0, arg_21_1)
 	return arg_21_1.content.button_hotspot.on_hover_enter
 end
 
-function EndViewStateScore.draw(arg_22_0, arg_22_1, arg_22_2)
+EndViewStateScore.draw = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_scenegraph
 	local var_22_2 = arg_22_0.render_settings
@@ -360,7 +360,7 @@ function EndViewStateScore.draw(arg_22_0, arg_22_1, arg_22_2)
 	UIRenderer.end_pass(var_22_0)
 end
 
-function EndViewStateScore._start_transition_animation(arg_23_0, arg_23_1, arg_23_2)
+EndViewStateScore._start_transition_animation = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = {
 		wwise_world = arg_23_0.wwise_world,
 		render_settings = arg_23_0.render_settings,
@@ -372,15 +372,15 @@ function EndViewStateScore._start_transition_animation(arg_23_0, arg_23_1, arg_2
 	arg_23_0._animations[arg_23_1] = var_23_2
 end
 
-function EndViewStateScore._animate_element_by_time(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+EndViewStateScore._animate_element_by_time = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, math.ease_out_quad))
 end
 
-function EndViewStateScore._animate_element_by_catmullrom(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
+EndViewStateScore._animate_element_by_catmullrom = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8))
 end
 
-function EndViewStateScore._transform_player_session_score(arg_26_0, arg_26_1)
+EndViewStateScore._transform_player_session_score = function (arg_26_0, arg_26_1)
 	local var_26_0 = {
 		group_scores = {}
 	}
@@ -411,7 +411,7 @@ function EndViewStateScore._transform_player_session_score(arg_26_0, arg_26_1)
 	return var_26_0
 end
 
-function EndViewStateScore._group_scores_by_player_and_topic(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+EndViewStateScore._group_scores_by_player_and_topic = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	for iter_27_0, iter_27_1 in pairs(arg_27_2.group_scores) do
 		if not arg_27_1[iter_27_0] then
 			arg_27_1[iter_27_0] = {}
@@ -446,7 +446,7 @@ function EndViewStateScore._group_scores_by_player_and_topic(arg_27_0, arg_27_1,
 	end
 end
 
-function EndViewStateScore._setup_player_scores(arg_28_0, arg_28_1)
+EndViewStateScore._setup_player_scores = function (arg_28_0, arg_28_1)
 	local var_28_0 = {}
 	local var_28_1 = {}
 	local var_28_2 = 1
@@ -491,7 +491,7 @@ function EndViewStateScore._setup_player_scores(arg_28_0, arg_28_1)
 	arg_28_0:_setup_score_panel(var_28_0, var_28_1)
 end
 
-function EndViewStateScore._setup_level_widget(arg_29_0)
+EndViewStateScore._setup_level_widget = function (arg_29_0)
 	local var_29_0 = arg_29_0._widgets_by_name.level.content
 	local var_29_1 = arg_29_0._context.level_key
 	local var_29_2 = LevelSettings[var_29_1]
@@ -517,7 +517,7 @@ local var_0_10 = {
 	"scoreboard_topic_04"
 }
 
-function EndViewStateScore._set_topic_data(arg_30_0, arg_30_1, arg_30_2)
+EndViewStateScore._set_topic_data = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._score_widgets[arg_30_2]
 	local var_30_1 = var_30_0.content
 	local var_30_2 = var_30_0.style
@@ -536,7 +536,7 @@ function EndViewStateScore._set_topic_data(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function EndViewStateScore._setup_score_panel(arg_31_0, arg_31_1, arg_31_2)
+EndViewStateScore._setup_score_panel = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = 30
 	local var_31_1 = 22
 	local var_31_2 = 1
@@ -607,7 +607,7 @@ function EndViewStateScore._setup_score_panel(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function EndViewStateScore._set_score_topic_by_row(arg_32_0, arg_32_1, arg_32_2)
+EndViewStateScore._set_score_topic_by_row = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0._widgets_by_name.scores_topics.content
 	local var_32_1 = "_" .. arg_32_1
 	local var_32_2 = "score_text" .. var_32_1
@@ -618,7 +618,7 @@ function EndViewStateScore._set_score_topic_by_row(arg_32_0, arg_32_1, arg_32_2)
 	var_32_3.has_background = arg_32_1 % 2 == 0
 end
 
-function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_2)
+EndViewStateScore._setup_hero_score_tooltip = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_1.content.tooltip
 	local var_33_1 = arg_33_1.style.tooltip
 	local var_33_2 = var_33_1.text_styles
@@ -685,11 +685,11 @@ function EndViewStateScore._setup_hero_score_tooltip(arg_33_0, arg_33_1, arg_33_
 	end
 end
 
-function EndViewStateScore._player_score_data_by_stats_id(arg_34_0, arg_34_1)
+EndViewStateScore._player_score_data_by_stats_id = function (arg_34_0, arg_34_1)
 	return arg_34_0._players_list[arg_34_1]
 end
 
-function EndViewStateScore._get_player_position_in_score_table(arg_35_0, arg_35_1, arg_35_2)
+EndViewStateScore._get_player_position_in_score_table = function (arg_35_0, arg_35_1, arg_35_2)
 	for iter_35_0, iter_35_1 in ipairs(arg_35_2.scores) do
 		if iter_35_1.stats_id == arg_35_1 then
 			return iter_35_0
@@ -697,7 +697,7 @@ function EndViewStateScore._get_player_position_in_score_table(arg_35_0, arg_35_
 	end
 end
 
-function EndViewStateScore._start_hero_score_animation(arg_36_0, arg_36_1)
+EndViewStateScore._start_hero_score_animation = function (arg_36_0, arg_36_1)
 	local var_36_0 = {
 		wwise_world = arg_36_0.wwise_world
 	}
@@ -705,6 +705,6 @@ function EndViewStateScore._start_hero_score_animation(arg_36_0, arg_36_1)
 	return arg_36_0.ui_animator:start_animation(arg_36_1, arg_36_0._hero_widgets, var_0_5, var_36_0)
 end
 
-function EndViewStateScore._play_sound(arg_37_0, arg_37_1)
+EndViewStateScore._play_sound = function (arg_37_0, arg_37_1)
 	arg_37_0.parent:play_sound(arg_37_1)
 end

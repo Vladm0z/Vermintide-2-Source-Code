@@ -2,7 +2,7 @@
 
 CosmeticsUtils = {}
 
-function CosmeticsUtils.retrieve_skin_packages(arg_1_0, arg_1_1)
+CosmeticsUtils.retrieve_skin_packages = function (arg_1_0, arg_1_1)
 	local var_1_0 = Cosmetics[arg_1_0]
 
 	if not var_1_0 then
@@ -36,7 +36,7 @@ function CosmeticsUtils.retrieve_skin_packages(arg_1_0, arg_1_1)
 	return var_1_1
 end
 
-function CosmeticsUtils.retrieve_skin_packages_for_preview(arg_2_0)
+CosmeticsUtils.retrieve_skin_packages_for_preview = function (arg_2_0)
 	local var_2_0 = Cosmetics[arg_2_0]
 
 	if not var_2_0 then
@@ -57,7 +57,7 @@ function CosmeticsUtils.retrieve_skin_packages_for_preview(arg_2_0)
 	return var_2_1
 end
 
-function CosmeticsUtils.get_third_person_mesh_unit(arg_3_0)
+CosmeticsUtils.get_third_person_mesh_unit = function (arg_3_0)
 	if not ALIVE[arg_3_0] then
 		return nil
 	end
@@ -69,7 +69,7 @@ end
 
 local var_0_0 = Unit.flow_event
 
-function CosmeticsUtils.flow_event_mesh_3p(arg_4_0, arg_4_1)
+CosmeticsUtils.flow_event_mesh_3p = function (arg_4_0, arg_4_1)
 	local var_4_0 = CosmeticsUtils.get_third_person_mesh_unit(arg_4_0)
 
 	if var_4_0 then

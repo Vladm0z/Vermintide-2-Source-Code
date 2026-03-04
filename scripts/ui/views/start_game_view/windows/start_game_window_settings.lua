@@ -9,7 +9,7 @@ local var_0_4 = var_0_0.animation_definitions
 StartGameWindowSettings = class(StartGameWindowSettings)
 StartGameWindowSettings.NAME = "StartGameWindowSettings"
 
-function StartGameWindowSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowSettings.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowSettings")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -38,7 +38,7 @@ function StartGameWindowSettings.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_update_difficulty_option()
 end
 
-function StartGameWindowSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowSettings.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_3)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -96,7 +96,7 @@ function StartGameWindowSettings.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	UIWidget.animate(var_2_10, var_2_11)
 end
 
-function StartGameWindowSettings._set_additional_options_enabled_state(arg_3_0, arg_3_1)
+StartGameWindowSettings._set_additional_options_enabled_state = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._widgets_by_name
 
 	var_3_0.additional_option.content.button_hotspot.disable_button = not arg_3_1
@@ -106,13 +106,13 @@ function StartGameWindowSettings._set_additional_options_enabled_state(arg_3_0, 
 	arg_3_0._additional_option_enabled = arg_3_1
 end
 
-function StartGameWindowSettings.on_exit(arg_4_0, arg_4_1)
+StartGameWindowSettings.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowSettings")
 
 	arg_4_0.ui_animator = nil
 end
 
-function StartGameWindowSettings.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowSettings.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_mission_selection()
 
 	if arg_5_0._additional_option_enabled then
@@ -124,11 +124,11 @@ function StartGameWindowSettings.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
 end
 
-function StartGameWindowSettings.post_update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowSettings.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function StartGameWindowSettings._update_animations(arg_7_0, arg_7_1)
+StartGameWindowSettings._update_animations = function (arg_7_0, arg_7_1)
 	arg_7_0:_update_game_options_hover_effect()
 
 	local var_7_0 = arg_7_0._ui_animations
@@ -156,7 +156,7 @@ function StartGameWindowSettings._update_animations(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowSettings._is_button_released(arg_8_0, arg_8_1)
+StartGameWindowSettings._is_button_released = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content.button_hotspot
 
 	if var_8_0.on_release then
@@ -166,15 +166,15 @@ function StartGameWindowSettings._is_button_released(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowSettings._is_button_hover_enter(arg_9_0, arg_9_1)
+StartGameWindowSettings._is_button_hover_enter = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowSettings._is_button_hover_exit(arg_10_0, arg_10_1)
+StartGameWindowSettings._is_button_hover_exit = function (arg_10_0, arg_10_1)
 	return arg_10_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowSettings._is_other_option_button_selected(arg_11_0, arg_11_1, arg_11_2)
+StartGameWindowSettings._is_other_option_button_selected = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0:_is_button_released(arg_11_1) then
 		local var_11_0 = not arg_11_2
 
@@ -190,7 +190,7 @@ function StartGameWindowSettings._is_other_option_button_selected(arg_11_0, arg_
 	return nil
 end
 
-function StartGameWindowSettings._handle_input(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowSettings._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 	local var_12_1 = arg_12_0._widgets_by_name
 
@@ -249,11 +249,11 @@ function StartGameWindowSettings._handle_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function StartGameWindowSettings._play_sound(arg_13_0, arg_13_1)
+StartGameWindowSettings._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0.parent:play_sound(arg_13_1)
 end
 
-function StartGameWindowSettings._update_game_options_hover_effect(arg_14_0)
+StartGameWindowSettings._update_game_options_hover_effect = function (arg_14_0)
 	local var_14_0 = arg_14_0._widgets_by_name
 	local var_14_1 = "game_option_"
 
@@ -268,7 +268,7 @@ function StartGameWindowSettings._update_game_options_hover_effect(arg_14_0)
 	end
 end
 
-function StartGameWindowSettings._on_option_button_hover_enter(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowSettings._on_option_button_hover_enter = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._widgets_by_name["game_option_" .. arg_15_1]
 
 	arg_15_0:_create_style_animation_enter(var_15_0, 255, "glow", arg_15_1, arg_15_2)
@@ -276,7 +276,7 @@ function StartGameWindowSettings._on_option_button_hover_enter(arg_15_0, arg_15_
 	arg_15_0:_create_style_animation_exit(var_15_0, 0, "button_hover_rect", arg_15_1, arg_15_2)
 end
 
-function StartGameWindowSettings._on_option_button_hover_exit(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowSettings._on_option_button_hover_exit = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._widgets_by_name["game_option_" .. arg_16_1]
 
 	arg_16_0:_create_style_animation_exit(var_16_0, 0, "glow", arg_16_1, arg_16_2)
@@ -284,7 +284,7 @@ function StartGameWindowSettings._on_option_button_hover_exit(arg_16_0, arg_16_1
 	arg_16_0:_create_style_animation_enter(var_16_0, 30, "button_hover_rect", arg_16_1, arg_16_2)
 end
 
-function StartGameWindowSettings._update_additional_options(arg_17_0)
+StartGameWindowSettings._update_additional_options = function (arg_17_0)
 	local var_17_0 = arg_17_0.parent
 	local var_17_1 = var_17_0:is_private_option_enabled()
 	local var_17_2 = var_17_0:is_always_host_option_enabled()
@@ -329,7 +329,7 @@ function StartGameWindowSettings._update_additional_options(arg_17_0)
 	end
 end
 
-function StartGameWindowSettings._update_difficulty_option(arg_18_0)
+StartGameWindowSettings._update_difficulty_option = function (arg_18_0)
 	local var_18_0 = arg_18_0.parent:get_difficulty_option()
 
 	if not var_18_0 or var_18_0 ~= arg_18_0._difficulty_key then
@@ -352,7 +352,7 @@ function StartGameWindowSettings._update_difficulty_option(arg_18_0)
 	end
 end
 
-function StartGameWindowSettings._set_difficulty_option(arg_19_0, arg_19_1)
+StartGameWindowSettings._set_difficulty_option = function (arg_19_0, arg_19_1)
 	local var_19_0 = DifficultySettings[arg_19_1]
 	local var_19_1 = var_19_0 and var_19_0.display_name
 	local var_19_2 = var_19_0 and var_19_0.display_image
@@ -364,7 +364,7 @@ function StartGameWindowSettings._set_difficulty_option(arg_19_0, arg_19_1)
 	var_19_4.game_option_2.content.icon_frame = var_19_3
 end
 
-function StartGameWindowSettings._update_mission_selection(arg_20_0)
+StartGameWindowSettings._update_mission_selection = function (arg_20_0)
 	local var_20_0 = arg_20_0.parent:get_selected_level_id()
 
 	if not var_20_0 or var_20_0 ~= arg_20_0._selected_level_id then
@@ -376,7 +376,7 @@ function StartGameWindowSettings._update_mission_selection(arg_20_0)
 	arg_20_0._widgets_by_name.game_option_2.content.button_hotspot.disable_button = var_20_0 == nil
 end
 
-function StartGameWindowSettings._set_selected_level(arg_21_0, arg_21_1)
+StartGameWindowSettings._set_selected_level = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name.game_option_1
 	local var_21_1 = "n/a"
 
@@ -403,7 +403,7 @@ function StartGameWindowSettings._set_selected_level(arg_21_0, arg_21_1)
 	var_21_0.content.option_text = var_21_1
 end
 
-function StartGameWindowSettings.draw(arg_22_0, arg_22_1)
+StartGameWindowSettings.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_scenegraph
 	local var_22_2 = arg_22_0.parent:window_input_service()
@@ -429,7 +429,7 @@ function StartGameWindowSettings.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_0)
 end
 
-function StartGameWindowSettings._create_style_animation_enter(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+StartGameWindowSettings._create_style_animation_enter = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = arg_23_1.style[arg_23_3]
 
 	if not var_23_0 then
@@ -450,7 +450,7 @@ function StartGameWindowSettings._create_style_animation_enter(arg_23_0, arg_23_
 	end
 end
 
-function StartGameWindowSettings._create_style_animation_exit(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+StartGameWindowSettings._create_style_animation_exit = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_1.style[arg_24_3]
 
 	if not var_24_0 then
@@ -471,10 +471,10 @@ function StartGameWindowSettings._create_style_animation_exit(arg_24_0, arg_24_1
 	end
 end
 
-function StartGameWindowSettings._animate_pulse(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+StartGameWindowSettings._animate_pulse = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5))
 end
 
-function StartGameWindowSettings._animate_element_by_time(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+StartGameWindowSettings._animate_element_by_time = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, math.ease_out_quad))
 end

@@ -6,7 +6,7 @@ BTComboAttackAction = class(BTComboAttackAction, BTNode)
 
 local var_0_0 = 20
 
-function BTComboAttackAction.init(arg_1_0, ...)
+BTComboAttackAction.init = function (arg_1_0, ...)
 	BTComboAttackAction.super.init(arg_1_0, ...)
 
 	arg_1_0.last_attack_time = 0
@@ -15,7 +15,7 @@ end
 
 BTComboAttackAction.name = "BTComboAttackAction"
 
-function BTComboAttackAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTComboAttackAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -144,7 +144,7 @@ local function var_0_1(arg_3_0, arg_3_1)
 	end
 end
 
-function BTComboAttackAction._start_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTComboAttackAction._start_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_0.last_attack_time = arg_4_3
 
 	local var_4_0 = arg_4_4.combo_attacks[arg_4_5]
@@ -218,7 +218,7 @@ function BTComboAttackAction._start_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-function BTComboAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTComboAttackAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_2.move_state ~= "idle" then
 		Managers.state.network:anim_event(arg_5_1, "idle")
 
@@ -266,7 +266,7 @@ function BTComboAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, 
 	arg_5_2.navigation_extension:set_max_speed(arg_5_2.breed.run_speed)
 end
 
-function BTComboAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTComboAttackAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.combo_attack_data
 	local var_6_1 = var_6_0.attacking_target
 
@@ -336,7 +336,7 @@ function BTComboAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return "running"
 end
 
-function BTComboAttackAction._follow(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTComboAttackAction._follow = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_4.breed
 	local var_7_1 = arg_7_4.combo_attack_data.attacking_target
 	local var_7_2 = (var_7_0.weapon_reach or 2)^2
@@ -372,7 +372,7 @@ function BTComboAttackAction._follow(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4
 	arg_7_4.navigation_extension:set_max_speed(var_7_5)
 end
 
-function BTComboAttackAction.attack_success(arg_8_0, arg_8_1, arg_8_2)
+BTComboAttackAction.attack_success = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_2.breed.use_backstab_vo and arg_8_2.backstab_attack_trigger then
 		Managers.state.entity:system("dialogue_system"):trigger_backstab_hit(arg_8_2.target_unit, arg_8_1)
 
@@ -382,7 +382,7 @@ function BTComboAttackAction.attack_success(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.combo_attack_data.successful_hit = true
 end
 
-function BTComboAttackAction._update_rotation_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTComboAttackAction._update_rotation_target = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_3.target_status_extension
 	local var_9_1 = var_9_0 and (var_9_0:get_is_dodging() or var_9_0:is_invisible())
 	local var_9_2
@@ -408,7 +408,7 @@ function BTComboAttackAction._update_rotation_target(arg_9_0, arg_9_1, arg_9_2, 
 	arg_9_4.rotation_target:store(var_9_3)
 end
 
-function BTComboAttackAction._set_target_position(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTComboAttackAction._set_target_position = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_1.target_locomotion_extension
 
 	arg_10_2.last_target_position:store(arg_10_3)
@@ -417,7 +417,7 @@ function BTComboAttackAction._set_target_position(arg_10_0, arg_10_1, arg_10_2, 
 	arg_10_2.last_target_position_time = arg_10_4
 end
 
-function BTComboAttackAction._update_rotation_target_lerped(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+BTComboAttackAction._update_rotation_target_lerped = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	arg_11_0:_update_rotation_target(arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 
 	local var_11_0 = arg_11_1 - arg_11_4.attack_start_time
@@ -443,13 +443,13 @@ function BTComboAttackAction._update_rotation_target_lerped(arg_11_0, arg_11_1, 
 	arg_11_3.locomotion_extension:set_rotation_speed(var_11_6)
 end
 
-function BTComboAttackAction.attack_cooldown(arg_12_0, arg_12_1, arg_12_2)
+BTComboAttackAction.attack_cooldown = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.time:time("game")
 
 	arg_12_2.is_in_attack_cooldown, arg_12_2.attack_cooldown_at = arg_12_0:get_attack_cooldown_finished_at(arg_12_1, arg_12_2, var_12_0)
 end
 
-function BTComboAttackAction._push_non_targets(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9)
+BTComboAttackAction._push_non_targets = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9)
 	local var_13_0 = arg_13_7^2
 	local var_13_1 = Managers.state.side.side_by_unit[arg_13_1].ENEMY_PLAYER_AND_BOT_UNITS
 
@@ -473,7 +473,7 @@ function BTComboAttackAction._push_non_targets(arg_13_0, arg_13_1, arg_13_2, arg
 	end
 end
 
-function BTComboAttackAction.stagger_override(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10)
+BTComboAttackAction.stagger_override = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10)
 	local var_14_0 = arg_14_2.combo_attack_data
 	local var_14_1 = arg_14_2.action.combo_attacks[var_14_0.current_attack_name]
 
@@ -484,7 +484,7 @@ function BTComboAttackAction.stagger_override(arg_14_0, arg_14_1, arg_14_2, arg_
 	end
 end
 
-function BTComboAttackAction.anim_cb_frenzy_damage(arg_15_0, arg_15_1, arg_15_2)
+BTComboAttackAction.anim_cb_frenzy_damage = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_2.action
 	local var_15_1 = arg_15_2.combo_attack_data
 	local var_15_2 = var_15_1.attacking_target
@@ -533,7 +533,7 @@ function BTComboAttackAction.anim_cb_frenzy_damage(arg_15_0, arg_15_1, arg_15_2)
 	AiUtils.damage_target(var_15_2, arg_15_1, var_15_0, var_15_8)
 end
 
-function BTComboAttackAction.get_attack_cooldown_finished_at(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+BTComboAttackAction.get_attack_cooldown_finished_at = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_2.combo_attack_data.attacking_target
 
 	if not Unit.alive(var_16_0) then
@@ -564,7 +564,7 @@ function BTComboAttackAction.get_attack_cooldown_finished_at(arg_16_0, arg_16_1,
 	return true, var_16_5 + arg_16_3
 end
 
-function BTComboAttackAction.anim_cb_attack_vce(arg_17_0, arg_17_1, arg_17_2)
+BTComboAttackAction.anim_cb_attack_vce = function (arg_17_0, arg_17_1, arg_17_2)
 	if Managers.state.network:game() then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_17_2, arg_17_2.target_unit, arg_17_1, false, false)
 	end

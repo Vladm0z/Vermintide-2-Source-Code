@@ -20,7 +20,7 @@ return {
 	start_damage_sound_event = "Play_mutator_leash_loop",
 	damage_sound_global_parameter = "leash_distance",
 	center_effect_name = "fx/leash_beam_center_01",
-	calculate_center_position = function(arg_1_0)
+	calculate_center_position = function (arg_1_0)
 		local var_1_0 = 0
 		local var_1_1 = Vector3.zero()
 		local var_1_2 = arg_1_0.hero_side.PLAYER_UNITS
@@ -41,11 +41,11 @@ return {
 
 		return var_1_1, var_1_0
 	end,
-	server_start_function = function(arg_2_0, arg_2_1)
+	server_start_function = function (arg_2_0, arg_2_1)
 		arg_2_1.player_damage_data = {}
 		arg_2_1.hero_side = Managers.state.side:get_side_from_name("heroes")
 	end,
-	server_update_function = function(arg_3_0, arg_3_1)
+	server_update_function = function (arg_3_0, arg_3_1)
 		local var_3_0 = Managers.time:time("game")
 		local var_3_1 = arg_3_1.template
 		local var_3_2 = var_3_1.calculate_center_position(arg_3_1)
@@ -107,7 +107,7 @@ return {
 			end
 		end
 	end,
-	client_start_function = function(arg_4_0, arg_4_1)
+	client_start_function = function (arg_4_0, arg_4_1)
 		local var_4_0 = arg_4_1.template.beam_effect_name
 		local var_4_1 = arg_4_0.world
 		local var_4_2 = Managers.player
@@ -123,7 +123,7 @@ return {
 		arg_4_1.playing_sounds = {}
 		arg_4_1.hero_side = var_4_3
 	end,
-	client_update_function = function(arg_5_0, arg_5_1)
+	client_update_function = function (arg_5_0, arg_5_1)
 		local var_5_0 = arg_5_0.world
 		local var_5_1 = arg_5_1.wwise_world
 		local var_5_2 = arg_5_1.template
@@ -270,7 +270,7 @@ return {
 			end
 		end
 	end,
-	client_stop_function = function(arg_6_0, arg_6_1)
+	client_stop_function = function (arg_6_0, arg_6_1)
 		local var_6_0 = arg_6_0.world
 		local var_6_1 = arg_6_1.wwise_world
 		local var_6_2 = arg_6_1.template

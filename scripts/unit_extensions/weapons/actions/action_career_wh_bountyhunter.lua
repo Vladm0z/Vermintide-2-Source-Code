@@ -2,7 +2,7 @@
 
 ActionCareerWHBountyhunter = class(ActionCareerWHBountyhunter, ActionBountyHunterHandgun)
 
-function ActionCareerWHBountyhunter.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWHBountyhunter.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWHBountyhunter.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -10,7 +10,7 @@ function ActionCareerWHBountyhunter.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg
 	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-function ActionCareerWHBountyhunter.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWHBountyhunter.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 
 	local var_2_0 = arg_2_0.talent_extension
@@ -35,7 +35,7 @@ function ActionCareerWHBountyhunter.client_owner_start_action(arg_2_0, arg_2_1, 
 	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerWHBountyhunter.client_owner_post_update(arg_3_0, arg_3_1, ...)
+ActionCareerWHBountyhunter.client_owner_post_update = function (arg_3_0, arg_3_1, ...)
 	if arg_3_0.start_activated_ability_cooldown_t then
 		arg_3_0.start_activated_ability_cooldown_t = arg_3_0.start_activated_ability_cooldown_t - arg_3_1
 
@@ -51,7 +51,7 @@ function ActionCareerWHBountyhunter.client_owner_post_update(arg_3_0, arg_3_1, .
 	ActionCareerWHBountyhunter.super.client_owner_post_update(arg_3_0, arg_3_1, ...)
 end
 
-function ActionCareerWHBountyhunter.finish(arg_4_0, arg_4_1)
+ActionCareerWHBountyhunter.finish = function (arg_4_0, arg_4_1)
 	ActionCareerWHBountyhunter.super.finish(arg_4_0, arg_4_1)
 
 	local var_4_0 = arg_4_0.talent_extension
@@ -74,7 +74,7 @@ function ActionCareerWHBountyhunter.finish(arg_4_0, arg_4_1)
 	arg_4_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWHBountyhunter._play_vo(arg_5_0)
+ActionCareerWHBountyhunter._play_vo = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
 	local var_5_2 = FrameTable.alloc_table()

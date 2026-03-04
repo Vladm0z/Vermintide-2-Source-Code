@@ -6,7 +6,7 @@ CareerExtension = class(CareerExtension)
 
 local var_0_0 = 1
 
-function CareerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.is_server = Managers.player.is_server
@@ -96,7 +96,7 @@ function CareerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	DamageUtils.create_hit_zone_lookup(arg_1_2, arg_1_0._breed)
 end
 
-function CareerExtension.ability_id(arg_2_0, arg_2_1)
+CareerExtension.ability_id = function (arg_2_0, arg_2_1)
 	for iter_2_0, iter_2_1 in ipairs(arg_2_0._abilities) do
 		if iter_2_1.name == arg_2_1 then
 			return iter_2_0
@@ -106,19 +106,19 @@ function CareerExtension.ability_id(arg_2_0, arg_2_1)
 	return nil
 end
 
-function CareerExtension.ability_was_triggered(arg_3_0, arg_3_1)
+CareerExtension.ability_was_triggered = function (arg_3_0, arg_3_1)
 	return arg_3_0._abilities[arg_3_1].activated_ability:was_triggered()
 end
 
-function CareerExtension.ability_by_id(arg_4_0, arg_4_1)
+CareerExtension.ability_by_id = function (arg_4_0, arg_4_1)
 	return arg_4_0._abilities[arg_4_1].activated_ability
 end
 
-function CareerExtension.ability_name_by_id(arg_5_0, arg_5_1)
+CareerExtension.ability_name_by_id = function (arg_5_0, arg_5_1)
 	return arg_5_0._abilities[arg_5_1].name
 end
 
-function CareerExtension.ability_by_name(arg_6_0, arg_6_1)
+CareerExtension.ability_by_name = function (arg_6_0, arg_6_1)
 	for iter_6_0 = 1, #arg_6_0._abilities do
 		local var_6_0 = arg_6_0._abilities[iter_6_0]
 
@@ -128,13 +128,13 @@ function CareerExtension.ability_by_name(arg_6_0, arg_6_1)
 	end
 end
 
-function CareerExtension._is_husk(arg_7_0)
+CareerExtension._is_husk = function (arg_7_0)
 	local var_7_0 = arg_7_0.player
 
 	return not var_7_0.local_player and (not arg_7_0.is_server or not var_7_0.bot_player)
 end
 
-function CareerExtension.extensions_ready(arg_8_0, arg_8_1, arg_8_2)
+CareerExtension.extensions_ready = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = ScriptUnit.extension(arg_8_2, "buff_system")
 	local var_8_1 = CareerUtils.get_passive_ability_by_career(arg_8_0._career_data)
 	local var_8_2 = var_8_1.buffs
@@ -191,7 +191,7 @@ function CareerExtension.extensions_ready(arg_8_0, arg_8_1, arg_8_2)
 	Managers.state.event:register(arg_8_0, "gm_event_round_started", "on_round_started")
 end
 
-function CareerExtension.game_object_initialized(arg_9_0, arg_9_1, arg_9_2)
+CareerExtension.game_object_initialized = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._passive_abilities
 
 	for iter_9_0 = 1, arg_9_0._num_passive_abilities do
@@ -203,7 +203,7 @@ function CareerExtension.game_object_initialized(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function CareerExtension.force_trigger_active_ability(arg_10_0)
+CareerExtension.force_trigger_active_ability = function (arg_10_0)
 	local var_10_0 = arg_10_0.player
 	local var_10_1 = arg_10_0._abilities
 
@@ -218,7 +218,7 @@ function CareerExtension.force_trigger_active_ability(arg_10_0)
 	end
 end
 
-function CareerExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+CareerExtension.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0._abilities
 	local var_11_1 = arg_11_0:_cooldown_charge_ready(1)
 
@@ -261,7 +261,7 @@ function CareerExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4
 	end
 end
 
-function CareerExtension.stop_ability(arg_12_0, arg_12_1, arg_12_2)
+CareerExtension.stop_ability = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.is_server
 	local var_12_1 = arg_12_0.player
 
@@ -276,7 +276,7 @@ function CareerExtension.stop_ability(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function CareerExtension._update_game_object_field(arg_13_0, arg_13_1)
+CareerExtension._update_game_object_field = function (arg_13_0, arg_13_1)
 	if (not arg_13_0.is_server or not arg_13_0.player.bot_player) and not arg_13_0.player.local_player then
 		return
 	end
@@ -298,7 +298,7 @@ function CareerExtension._update_game_object_field(arg_13_0, arg_13_1)
 	end
 end
 
-function CareerExtension.destroy(arg_14_0)
+CareerExtension.destroy = function (arg_14_0)
 	local var_14_0 = arg_14_0._passive_abilities
 
 	for iter_14_0 = 1, arg_14_0._num_passive_abilities do
@@ -316,13 +316,13 @@ function CareerExtension.destroy(arg_14_0)
 	end
 end
 
-function CareerExtension.get_activated_ability_data(arg_15_0, arg_15_1)
+CareerExtension.get_activated_ability_data = function (arg_15_0, arg_15_1)
 	arg_15_1 = arg_15_1 or 1
 
 	return arg_15_0._career_data.activated_ability[arg_15_1]
 end
 
-function CareerExtension.start_activated_ability_cooldown(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+CareerExtension.start_activated_ability_cooldown = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	arg_16_1 = arg_16_1 or 1
 
 	local var_16_0 = arg_16_0._abilities[arg_16_1]
@@ -412,7 +412,7 @@ function CareerExtension.start_activated_ability_cooldown(arg_16_0, arg_16_1, ar
 	var_16_0.cooldown_anim_started = false
 end
 
-function CareerExtension.reduce_activated_ability_cooldown_percent(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+CareerExtension.reduce_activated_ability_cooldown_percent = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_2 = arg_17_2 or 1
 
 	local var_17_0 = arg_17_0._abilities[arg_17_2]
@@ -420,7 +420,7 @@ function CareerExtension.reduce_activated_ability_cooldown_percent(arg_17_0, arg
 	arg_17_0:reduce_activated_ability_cooldown(var_17_0.max_cooldown * arg_17_1, arg_17_2, arg_17_3)
 end
 
-function CareerExtension.reduce_activated_ability_cooldown(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+CareerExtension.reduce_activated_ability_cooldown = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_2 = arg_18_2 or 1
 
 	local var_18_0 = arg_18_0._abilities[arg_18_2]
@@ -459,7 +459,7 @@ function CareerExtension.reduce_activated_ability_cooldown(arg_18_0, arg_18_1, a
 	end
 end
 
-function CareerExtension.increase_activated_ability_cooldown(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+CareerExtension.increase_activated_ability_cooldown = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	arg_19_2 = arg_19_2 or 1
 
 	local var_19_0 = arg_19_0._abilities[arg_19_2]
@@ -492,7 +492,7 @@ function CareerExtension.increase_activated_ability_cooldown(arg_19_0, arg_19_1,
 	end
 end
 
-function CareerExtension.modify_max_cooldown(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+CareerExtension.modify_max_cooldown = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	arg_20_1 = arg_20_1 or 1
 	arg_20_2 = arg_20_2 or 0
 	arg_20_3 = arg_20_3 or 1
@@ -511,7 +511,7 @@ function CareerExtension.modify_max_cooldown(arg_20_0, arg_20_1, arg_20_2, arg_2
 	end
 end
 
-function CareerExtension.uses_cooldown(arg_21_0, arg_21_1)
+CareerExtension.uses_cooldown = function (arg_21_0, arg_21_1)
 	arg_21_1 = arg_21_1 or 1
 
 	local var_21_0 = arg_21_0._abilities[arg_21_1].max_cooldown
@@ -519,21 +519,21 @@ function CareerExtension.uses_cooldown(arg_21_0, arg_21_1)
 	return var_21_0 and var_21_0 > 0
 end
 
-function CareerExtension.set_activated_ability_cooldown_paused(arg_22_0, arg_22_1)
+CareerExtension.set_activated_ability_cooldown_paused = function (arg_22_0, arg_22_1)
 	arg_22_1 = arg_22_1 or 1
 	arg_22_0._abilities[arg_22_1].cooldown_paused = true
 end
 
-function CareerExtension.set_activated_ability_cooldown_unpaused(arg_23_0, arg_23_1)
+CareerExtension.set_activated_ability_cooldown_unpaused = function (arg_23_0, arg_23_1)
 	arg_23_1 = arg_23_1 or 1
 	arg_23_0._abilities[arg_23_1].cooldown_paused = false
 end
 
-function CareerExtension.abilities_always_usable(arg_24_0)
+CareerExtension.abilities_always_usable = function (arg_24_0)
 	return arg_24_0._abilities_always_usable
 end
 
-function CareerExtension.set_abilities_always_usable(arg_25_0, arg_25_1, arg_25_2)
+CareerExtension.set_abilities_always_usable = function (arg_25_0, arg_25_1, arg_25_2)
 	if arg_25_1 then
 		arg_25_0._abilities_always_usable_reasons[arg_25_2] = arg_25_1
 	else
@@ -543,25 +543,25 @@ function CareerExtension.set_abilities_always_usable(arg_25_0, arg_25_1, arg_25_
 	arg_25_0._abilities_always_usable = next(arg_25_0._abilities_always_usable_reasons) ~= nil
 end
 
-function CareerExtension.has_abilities_always_usable_reason(arg_26_0, arg_26_1)
+CareerExtension.has_abilities_always_usable_reason = function (arg_26_0, arg_26_1)
 	return arg_26_0._abilities_always_usable_reasons[arg_26_1] ~= nil
 end
 
-function CareerExtension.modify_extra_ability_uses(arg_27_0, arg_27_1)
+CareerExtension.modify_extra_ability_uses = function (arg_27_0, arg_27_1)
 	arg_27_0._extra_ability_uses = math.max(arg_27_0._extra_ability_uses + arg_27_1, 0)
 
 	arg_27_0:set_abilities_always_usable(arg_27_0._extra_ability_uses > 0, "extra_ability_uses")
 end
 
-function CareerExtension.get_extra_ability_uses(arg_28_0)
+CareerExtension.get_extra_ability_uses = function (arg_28_0)
 	return arg_28_0._extra_ability_uses, arg_28_0._extra_ability_uses_max
 end
 
-function CareerExtension.get_extra_ability_charge(arg_29_0)
+CareerExtension.get_extra_ability_charge = function (arg_29_0)
 	return arg_29_0._extra_ability_use_charge, arg_29_0._extra_ability_use_required_charge
 end
 
-function CareerExtension.modify_extra_ability_charge(arg_30_0, arg_30_1)
+CareerExtension.modify_extra_ability_charge = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._extra_ability_use_charge
 
 	if arg_30_0._extra_ability_uses >= arg_30_0._extra_ability_uses_max then
@@ -579,11 +579,11 @@ function CareerExtension.modify_extra_ability_charge(arg_30_0, arg_30_1)
 	arg_30_0._extra_ability_use_charge = var_30_0
 end
 
-function CareerExtension.update_extra_ability_charge(arg_31_0, arg_31_1)
+CareerExtension.update_extra_ability_charge = function (arg_31_0, arg_31_1)
 	arg_31_0._extra_ability_use_required_charge = arg_31_1
 end
 
-function CareerExtension.setup_extra_ability_uses(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+CareerExtension.setup_extra_ability_uses = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	arg_32_0._extra_ability_use_charge = math.min(arg_32_1, arg_32_2)
 	arg_32_0._extra_ability_use_required_charge = arg_32_2
 	arg_32_0._extra_ability_uses = math.min(arg_32_3, arg_32_4)
@@ -594,7 +594,7 @@ function CareerExtension.setup_extra_ability_uses(arg_32_0, arg_32_1, arg_32_2, 
 	end
 end
 
-function CareerExtension.update_extra_ability_uses_max(arg_33_0, arg_33_1)
+CareerExtension.update_extra_ability_uses_max = function (arg_33_0, arg_33_1)
 	arg_33_0._extra_ability_uses = math.min(arg_33_0._extra_ability_uses, arg_33_1)
 	arg_33_0._extra_ability_uses_max = arg_33_1
 
@@ -603,7 +603,7 @@ function CareerExtension.update_extra_ability_uses_max(arg_33_0, arg_33_1)
 	end
 end
 
-function CareerExtension.reset_cooldown(arg_34_0, arg_34_1)
+CareerExtension.reset_cooldown = function (arg_34_0, arg_34_1)
 	arg_34_1 = arg_34_1 or 1
 
 	local var_34_0 = arg_34_0._abilities[arg_34_1]
@@ -614,7 +614,7 @@ function CareerExtension.reset_cooldown(arg_34_0, arg_34_1)
 	end
 end
 
-function CareerExtension.can_use_activated_ability(arg_35_0, arg_35_1)
+CareerExtension.can_use_activated_ability = function (arg_35_0, arg_35_1)
 	if not Managers.state.network:game() then
 		return false
 	end
@@ -627,11 +627,11 @@ function CareerExtension.can_use_activated_ability(arg_35_0, arg_35_1)
 	return (arg_35_0:_cooldown_charge_ready(arg_35_1) or var_35_1 >= var_35_0.cost or arg_35_0._abilities_always_usable) and not var_35_0.cooldown_paused
 end
 
-function CareerExtension._cooldown_charge_ready(arg_36_0, arg_36_1)
+CareerExtension._cooldown_charge_ready = function (arg_36_0, arg_36_1)
 	return arg_36_0:current_ability_cooldown(arg_36_1) == 0
 end
 
-function CareerExtension.current_ability_cooldown(arg_37_0, arg_37_1)
+CareerExtension.current_ability_cooldown = function (arg_37_0, arg_37_1)
 	arg_37_1 = arg_37_1 or 1
 
 	local var_37_0 = arg_37_0._abilities[arg_37_1]
@@ -654,7 +654,7 @@ function CareerExtension.current_ability_cooldown(arg_37_0, arg_37_1)
 	return var_37_1[var_37_2], var_37_0.max_cooldown > 0 and var_37_0.max_cooldown or 1
 end
 
-function CareerExtension._add_cooldown_charge(arg_38_0, arg_38_1)
+CareerExtension._add_cooldown_charge = function (arg_38_0, arg_38_1)
 	arg_38_1 = arg_38_1 or 1
 
 	local var_38_0 = arg_38_0._abilities[arg_38_1].cooldowns
@@ -662,7 +662,7 @@ function CareerExtension._add_cooldown_charge(arg_38_0, arg_38_1)
 	table.insert(var_38_0, 0)
 end
 
-function CareerExtension._remove_cooldown_charge(arg_39_0, arg_39_1)
+CareerExtension._remove_cooldown_charge = function (arg_39_0, arg_39_1)
 	arg_39_1 = arg_39_1 or 1
 
 	local var_39_0 = arg_39_0._abilities[arg_39_1].cooldowns
@@ -670,7 +670,7 @@ function CareerExtension._remove_cooldown_charge(arg_39_0, arg_39_1)
 	table.remove(var_39_0, 1)
 end
 
-function CareerExtension._currently_decaying_cooldown(arg_40_0, arg_40_1)
+CareerExtension._currently_decaying_cooldown = function (arg_40_0, arg_40_1)
 	arg_40_1 = arg_40_1 or 1
 
 	local var_40_0 = arg_40_0._abilities[arg_40_1].cooldowns
@@ -684,13 +684,13 @@ function CareerExtension._currently_decaying_cooldown(arg_40_0, arg_40_1)
 	return 1
 end
 
-function CareerExtension.get_number_of_ability_cooldowns(arg_41_0, arg_41_1)
+CareerExtension.get_number_of_ability_cooldowns = function (arg_41_0, arg_41_1)
 	arg_41_1 = arg_41_1 or 1
 
 	return #arg_41_0._abilities[arg_41_1].cooldowns or 1
 end
 
-function CareerExtension.num_charges_ready(arg_42_0, arg_42_1)
+CareerExtension.num_charges_ready = function (arg_42_0, arg_42_1)
 	arg_42_1 = arg_42_1 or 1
 
 	local var_42_0 = arg_42_0._abilities[arg_42_1].cooldowns
@@ -708,7 +708,7 @@ function CareerExtension.num_charges_ready(arg_42_0, arg_42_1)
 	return var_42_2, var_42_1
 end
 
-function CareerExtension.current_ability_cooldown_percentage(arg_43_0, arg_43_1)
+CareerExtension.current_ability_cooldown_percentage = function (arg_43_0, arg_43_1)
 	if arg_43_0:_is_husk() then
 		local var_43_0 = Managers.state.network
 		local var_43_1 = var_43_0 and var_43_0:game()
@@ -729,35 +729,35 @@ function CareerExtension.current_ability_cooldown_percentage(arg_43_0, arg_43_1)
 	end
 end
 
-function CareerExtension.get_max_ability_cooldown(arg_44_0, arg_44_1)
+CareerExtension.get_max_ability_cooldown = function (arg_44_0, arg_44_1)
 	arg_44_1 = arg_44_1 or 1
 
 	return arg_44_0._abilities[arg_44_1].max_cooldown
 end
 
-function CareerExtension.current_ability_paused(arg_45_0, arg_45_1)
+CareerExtension.current_ability_paused = function (arg_45_0, arg_45_1)
 	arg_45_1 = arg_45_1 or 1
 
 	return arg_45_0._abilities[arg_45_1].cooldown_paused
 end
 
-function CareerExtension.profile_index(arg_46_0)
+CareerExtension.profile_index = function (arg_46_0)
 	return arg_46_0._profile_index
 end
 
-function CareerExtension.career_index(arg_47_0)
+CareerExtension.career_index = function (arg_47_0)
 	return arg_47_0._career_index
 end
 
-function CareerExtension.career_name(arg_48_0)
+CareerExtension.career_name = function (arg_48_0)
 	return arg_48_0._career_name
 end
 
-function CareerExtension.career_settings(arg_49_0)
+CareerExtension.career_settings = function (arg_49_0)
 	return arg_49_0._career_data
 end
 
-function CareerExtension.career_skill_weapon_name(arg_50_0, arg_50_1, arg_50_2)
+CareerExtension.career_skill_weapon_name = function (arg_50_0, arg_50_1, arg_50_2)
 	arg_50_1 = arg_50_1 or 1
 
 	local var_50_0 = arg_50_0._abilities[arg_50_1]
@@ -773,11 +773,11 @@ function CareerExtension.career_skill_weapon_name(arg_50_0, arg_50_1, arg_50_2)
 	return var_50_0.weapon_name
 end
 
-function CareerExtension.get_base_critical_strike_chance(arg_51_0)
+CareerExtension.get_base_critical_strike_chance = function (arg_51_0)
 	return arg_51_0._career_data.attributes.base_critical_strike_chance or 0
 end
 
-function CareerExtension.has_melee_boost(arg_52_0)
+CareerExtension.has_melee_boost = function (arg_52_0)
 	local var_52_0 = arg_52_0._buff_extension:has_buff_perk("shade_melee_boost")
 	local var_52_1 = false
 	local var_52_2 = var_52_0 and 4 or var_52_1 and 1 or 0
@@ -785,7 +785,7 @@ function CareerExtension.has_melee_boost(arg_52_0)
 	return var_52_0 or var_52_1, var_52_2
 end
 
-function CareerExtension.has_ranged_boost(arg_53_0)
+CareerExtension.has_ranged_boost = function (arg_53_0)
 	local var_53_0 = arg_53_0._buff_extension
 	local var_53_1 = var_53_0:has_buff_type("markus_huntsman_activated_ability") or var_53_0:has_buff_type("markus_huntsman_activated_ability_duration")
 	local var_53_2 = var_53_0:has_buff_type("bardin_ranger_activated_ability_buff")
@@ -794,7 +794,7 @@ function CareerExtension.has_ranged_boost(arg_53_0)
 	return var_53_1 or var_53_2, var_53_3
 end
 
-function CareerExtension.get_career_power_level(arg_54_0)
+CareerExtension.get_career_power_level = function (arg_54_0)
 	local var_54_0 = arg_54_0.player
 	local var_54_1 = arg_54_0._career_name
 	local var_54_2 = arg_54_0._profile_name
@@ -835,23 +835,23 @@ function CareerExtension.get_career_power_level(arg_54_0)
 	return (math.clamp(var_54_3, MIN_POWER_LEVEL, MAX_POWER_LEVEL))
 end
 
-function CareerExtension.set_state(arg_55_0, arg_55_1)
+CareerExtension.set_state = function (arg_55_0, arg_55_1)
 	arg_55_0._state = arg_55_1
 end
 
-function CareerExtension.get_state(arg_56_0)
+CareerExtension.get_state = function (arg_56_0)
 	return arg_56_0._state or "default"
 end
 
-function CareerExtension.get_breed(arg_57_0)
+CareerExtension.get_breed = function (arg_57_0)
 	return arg_57_0._breed
 end
 
-function CareerExtension.ability_amount(arg_58_0)
+CareerExtension.ability_amount = function (arg_58_0)
 	return arg_58_0._num_abilities
 end
 
-function CareerExtension._run_ability_ready_feedback(arg_59_0, arg_59_1, arg_59_2)
+CareerExtension._run_ability_ready_feedback = function (arg_59_0, arg_59_1, arg_59_2)
 	local var_59_0 = arg_59_0._abilities[arg_59_1]
 
 	if var_59_0 and var_59_0.activated_ability and var_59_0.activated_ability.ability_ready then
@@ -869,7 +869,7 @@ function CareerExtension._run_ability_ready_feedback(arg_59_0, arg_59_1, arg_59_
 	end
 end
 
-function CareerExtension.check_cooldown_anim(arg_60_0, arg_60_1)
+CareerExtension.check_cooldown_anim = function (arg_60_0, arg_60_1)
 	local var_60_0 = arg_60_0._abilities[arg_60_1]
 
 	if not var_60_0.cooldown_anim_started and var_60_0.cooldown_anim_time and arg_60_0:current_ability_cooldown(arg_60_1) - var_60_0.cooldown_anim_time < 0 then
@@ -879,11 +879,11 @@ function CareerExtension.check_cooldown_anim(arg_60_0, arg_60_1)
 	end
 end
 
-function CareerExtension.should_reload_career_weapon(arg_61_0)
+CareerExtension.should_reload_career_weapon = function (arg_61_0)
 	return arg_61_0._career_data.should_reload_career_weapon
 end
 
-function CareerExtension.set_career_game_object_id(arg_62_0, arg_62_1)
+CareerExtension.set_career_game_object_id = function (arg_62_0, arg_62_1)
 	local var_62_0 = arg_62_0._passive_abilities
 
 	for iter_62_0 = 1, arg_62_0._num_passive_abilities do
@@ -895,16 +895,16 @@ function CareerExtension.set_career_game_object_id(arg_62_0, arg_62_1)
 	end
 end
 
-function CareerExtension.get_passive_ability(arg_63_0, arg_63_1)
+CareerExtension.get_passive_ability = function (arg_63_0, arg_63_1)
 	local var_63_0 = arg_63_0._passive_abilities
 
 	return var_63_0 and var_63_0[arg_63_1 or 1]
 end
 
-function CareerExtension.get_passive_ability_by_name(arg_64_0, arg_64_1)
+CareerExtension.get_passive_ability_by_name = function (arg_64_0, arg_64_1)
 	return arg_64_0._passive_abilities_by_name[arg_64_1]
 end
 
-function CareerExtension.on_round_started(arg_65_0)
+CareerExtension.on_round_started = function (arg_65_0)
 	arg_65_0:set_activated_ability_cooldown_unpaused()
 end

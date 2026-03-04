@@ -2,7 +2,7 @@
 
 PlayerProjectileImpactUnitExtension = class(PlayerProjectileImpactUnitExtension, ProjectileBaseImpactUnitExtension)
 
-function PlayerProjectileImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerProjectileImpactUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	PlayerProjectileImpactUnitExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0.network_manager = Managers.state.network
@@ -53,11 +53,11 @@ function PlayerProjectileImpactUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg
 	arg_1_0._friendly_fire_grace_period = Managers.time:time("game") + (var_1_8.friendly_fire_grace_period or 0)
 end
 
-function PlayerProjectileImpactUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PlayerProjectileImpactUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 end
 
-function PlayerProjectileImpactUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PlayerProjectileImpactUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	PlayerProjectileImpactUnitExtension.super.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	local var_3_0 = arg_3_0.impact_type
@@ -89,7 +89,7 @@ local var_0_0 = 1
 local var_0_1 = 3
 local var_0_2 = 4
 
-function PlayerProjectileImpactUnitExtension.update_raycast(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerProjectileImpactUnitExtension.update_raycast = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0.locomotion_extension
 
 	if not var_4_0:moved_this_frame() then
@@ -113,7 +113,7 @@ function PlayerProjectileImpactUnitExtension.update_raycast(arg_4_0, arg_4_1, ar
 	arg_4_0:_do_raycast(arg_4_1, var_4_1, var_4_2, var_4_3, var_4_4, arg_4_5)
 end
 
-function PlayerProjectileImpactUnitExtension._do_raycast(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+PlayerProjectileImpactUnitExtension._do_raycast = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	local var_5_0 = arg_5_3 - arg_5_2
 	local var_5_1 = Vector3.length(var_5_0)
 	local var_5_2 = Vector3.normalize(var_5_0)
@@ -154,7 +154,7 @@ function PlayerProjectileImpactUnitExtension._do_raycast(arg_5_0, arg_5_1, arg_5
 	end
 end
 
-function PlayerProjectileImpactUnitExtension.update_sphere_sweep(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+PlayerProjectileImpactUnitExtension.update_sphere_sweep = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	local var_6_0 = arg_6_0.locomotion_extension
 
 	if not var_6_0:moved_this_frame() then
@@ -200,7 +200,7 @@ function PlayerProjectileImpactUnitExtension.update_sphere_sweep(arg_6_0, arg_6_
 	end
 end
 
-function PlayerProjectileImpactUnitExtension._valid_target(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+PlayerProjectileImpactUnitExtension._valid_target = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_1 == arg_7_2 or arg_7_3 == arg_7_2 or Unit.is_frozen(arg_7_2) then
 		return false
 	end

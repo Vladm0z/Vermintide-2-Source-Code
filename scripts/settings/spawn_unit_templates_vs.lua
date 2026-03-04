@@ -2,7 +2,7 @@
 
 local var_0_0 = {
 	troll_puke = {
-		spawn_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		spawn_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			arg_1_2 = QuaternionBox(arg_1_2)
 			arg_1_1 = Vector3Box(arg_1_1)
 
@@ -25,7 +25,7 @@ local var_0_0 = {
 		end
 	},
 	vortex = {
-		spawn_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		spawn_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = BLACKBOARDS[arg_3_0]
 
 			if not var_3_0 then
@@ -87,7 +87,7 @@ local var_0_0 = {
 		end
 	},
 	vortex_dummy_missile = {
-		spawn_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		spawn_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0 = BLACKBOARDS[arg_4_0]
 
 			if not var_4_0 then

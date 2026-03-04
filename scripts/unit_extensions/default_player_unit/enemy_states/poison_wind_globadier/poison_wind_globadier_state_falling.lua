@@ -2,13 +2,13 @@
 
 PoisonWindGlobadierStateFalling = class(PoisonWindGlobadierStateFalling, EnemyCharacterStateFalling)
 
-function PoisonWindGlobadierStateFalling.init(arg_1_0, arg_1_1)
+PoisonWindGlobadierStateFalling.init = function (arg_1_0, arg_1_1)
 	PoisonWindGlobadierStateFalling.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._gas_ability_id = arg_1_0._career_extension:ability_id("gas")
 end
 
-function PoisonWindGlobadierStateFalling.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PoisonWindGlobadierStateFalling.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0._csm
 	local var_2_1 = arg_2_0._career_extension
 	local var_2_2 = arg_2_0._ghost_mode_extension:is_in_ghost_mode()

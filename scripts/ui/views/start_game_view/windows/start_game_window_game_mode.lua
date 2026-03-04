@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowGameMode = class(StartGameWindowGameMode)
 StartGameWindowGameMode.NAME = "StartGameWindowGameMode"
 
-function StartGameWindowGameMode.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowGameMode.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowGameMode")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -34,7 +34,7 @@ function StartGameWindowGameMode.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StartGameWindowGameMode.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowGameMode.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -102,24 +102,24 @@ function StartGameWindowGameMode.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StartGameWindowGameMode.on_exit(arg_3_0, arg_3_1)
+StartGameWindowGameMode.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowGameMode")
 
 	arg_3_0.ui_animator = nil
 end
 
-function StartGameWindowGameMode.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowGameMode.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_selected_option()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_handle_input(arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowGameMode.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowGameMode.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function StartGameWindowGameMode._update_animations(arg_6_0, arg_6_1)
+StartGameWindowGameMode._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0:_update_game_options_hover_effect(arg_6_1)
 
 	local var_6_0 = arg_6_0._ui_animations
@@ -147,7 +147,7 @@ function StartGameWindowGameMode._update_animations(arg_6_0, arg_6_1)
 	end
 end
 
-function StartGameWindowGameMode._is_button_pressed(arg_7_0, arg_7_1)
+StartGameWindowGameMode._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -157,15 +157,15 @@ function StartGameWindowGameMode._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function StartGameWindowGameMode._is_button_hover_enter(arg_8_0, arg_8_1)
+StartGameWindowGameMode._is_button_hover_enter = function (arg_8_0, arg_8_1)
 	return arg_8_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowGameMode._is_button_selected(arg_9_0, arg_9_1)
+StartGameWindowGameMode._is_button_selected = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.is_selected
 end
 
-function StartGameWindowGameMode._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowGameMode._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._game_mode_widgets
 
 	for iter_10_0 = 1, #var_10_0 do
@@ -187,7 +187,7 @@ function StartGameWindowGameMode._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function StartGameWindowGameMode._update_game_options_hover_effect(arg_11_0, arg_11_1)
+StartGameWindowGameMode._update_game_options_hover_effect = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._game_mode_widgets
 
 	for iter_11_0 = 1, #var_11_0 do
@@ -209,7 +209,7 @@ function StartGameWindowGameMode._update_game_options_hover_effect(arg_11_0, arg
 	UIWidgetUtils.animate_default_button(var_11_2, arg_11_1)
 end
 
-function StartGameWindowGameMode._set_selected_option(arg_12_0, arg_12_1)
+StartGameWindowGameMode._set_selected_option = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._game_mode_widgets
 
 	for iter_12_0 = 1, #var_12_0 do
@@ -222,7 +222,7 @@ function StartGameWindowGameMode._set_selected_option(arg_12_0, arg_12_1)
 	arg_12_0._selected_layout_name = arg_12_1
 end
 
-function StartGameWindowGameMode._update_selected_option(arg_13_0)
+StartGameWindowGameMode._update_selected_option = function (arg_13_0)
 	local var_13_0 = arg_13_0.parent:get_selected_layout_name()
 
 	if var_13_0 ~= arg_13_0._selected_layout_name then
@@ -230,7 +230,7 @@ function StartGameWindowGameMode._update_selected_option(arg_13_0)
 	end
 end
 
-function StartGameWindowGameMode.draw(arg_14_0, arg_14_1)
+StartGameWindowGameMode.draw = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.ui_renderer
 	local var_14_1 = arg_14_0.ui_scenegraph
 	local var_14_2 = arg_14_0.parent:window_input_service()
@@ -254,6 +254,6 @@ function StartGameWindowGameMode.draw(arg_14_0, arg_14_1)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function StartGameWindowGameMode._play_sound(arg_15_0, arg_15_1)
+StartGameWindowGameMode._play_sound = function (arg_15_0, arg_15_1)
 	arg_15_0.parent:play_sound(arg_15_1)
 end

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_dwarf_fest.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pbw_dal_conversation_group_one_crystal_b",
 		name = "pbw_dal_conversation_group_one_crystal_b",

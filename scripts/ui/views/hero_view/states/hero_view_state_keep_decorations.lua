@@ -18,7 +18,7 @@ local var_0_11 = 1
 HeroViewStateKeepDecorations = class(HeroViewStateKeepDecorations)
 HeroViewStateKeepDecorations.NAME = "HeroViewStateKeepDecorations"
 
-function HeroViewStateKeepDecorations.on_enter(arg_1_0, arg_1_1)
+HeroViewStateKeepDecorations.on_enter = function (arg_1_0, arg_1_1)
 	print("[HeroViewState] Enter Substate HeroViewStateKeepDecorations")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -158,7 +158,7 @@ function HeroViewStateKeepDecorations.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function HeroViewStateKeepDecorations._disable_list_widgets(arg_2_0)
+HeroViewStateKeepDecorations._disable_list_widgets = function (arg_2_0)
 	local var_2_0 = arg_2_0._widgets_by_name
 
 	var_2_0.list_mask.content.visible = false
@@ -168,7 +168,7 @@ function HeroViewStateKeepDecorations._disable_list_widgets(arg_2_0)
 	var_2_0.list_detail_bottom.content.visible = false
 end
 
-function HeroViewStateKeepDecorations._initialize_simple_decoration_preview(arg_3_0)
+HeroViewStateKeepDecorations._initialize_simple_decoration_preview = function (arg_3_0)
 	local var_3_0 = arg_3_0._interactable_unit
 	local var_3_1 = Unit.get_data(var_3_0, "interaction_data", "hud_text_line_1")
 	local var_3_2 = Unit.get_data(var_3_0, "interaction_data", "hud_text_line_2")
@@ -185,7 +185,7 @@ function HeroViewStateKeepDecorations._initialize_simple_decoration_preview(arg_
 	arg_3_0:_set_info_texts(var_3_4, var_3_5)
 end
 
-function HeroViewStateKeepDecorations.on_exit(arg_4_0, arg_4_1)
+HeroViewStateKeepDecorations.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewState] Exit Substate HeroViewStateKeepDecorations")
 
 	arg_4_0.ui_animator = nil
@@ -227,7 +227,7 @@ function HeroViewStateKeepDecorations.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function HeroViewStateKeepDecorations._create_ui_elements(arg_5_0, arg_5_1)
+HeroViewStateKeepDecorations._create_ui_elements = function (arg_5_0, arg_5_1)
 	arg_5_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_5_0 = {}
@@ -254,22 +254,22 @@ function HeroViewStateKeepDecorations._create_ui_elements(arg_5_0, arg_5_1)
 	arg_5_0._scrollbar_logic = ScrollBarLogic:new(var_5_3)
 end
 
-function HeroViewStateKeepDecorations._set_color_alpha_intensity(arg_6_0, arg_6_1, arg_6_2)
+HeroViewStateKeepDecorations._set_color_alpha_intensity = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_set_color_values(arg_6_1, arg_6_1[1] * arg_6_2)
 end
 
-function HeroViewStateKeepDecorations._set_color_intensity(arg_7_0, arg_7_1, arg_7_2)
+HeroViewStateKeepDecorations._set_color_intensity = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_set_color_values(arg_7_1, nil, arg_7_1[2] * arg_7_2, arg_7_1[3] * arg_7_2, arg_7_1[4] * arg_7_2)
 end
 
-function HeroViewStateKeepDecorations._set_color_values(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+HeroViewStateKeepDecorations._set_color_values = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	arg_8_1[1] = arg_8_2 or arg_8_1[1]
 	arg_8_1[2] = arg_8_3 or arg_8_1[2]
 	arg_8_1[3] = arg_8_4 or arg_8_1[3]
 	arg_8_1[4] = arg_8_5 or arg_8_1[4]
 end
 
-function HeroViewStateKeepDecorations.transitioning(arg_9_0)
+HeroViewStateKeepDecorations.transitioning = function (arg_9_0)
 	if arg_9_0.exiting then
 		return true
 	else
@@ -277,19 +277,19 @@ function HeroViewStateKeepDecorations.transitioning(arg_9_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._wanted_state(arg_10_0)
+HeroViewStateKeepDecorations._wanted_state = function (arg_10_0)
 	return (arg_10_0.parent:wanted_state())
 end
 
-function HeroViewStateKeepDecorations.wanted_menu_state(arg_11_0)
+HeroViewStateKeepDecorations.wanted_menu_state = function (arg_11_0)
 	return arg_11_0._wanted_menu_state
 end
 
-function HeroViewStateKeepDecorations.clear_wanted_menu_state(arg_12_0)
+HeroViewStateKeepDecorations.clear_wanted_menu_state = function (arg_12_0)
 	arg_12_0._wanted_menu_state = nil
 end
 
-function HeroViewStateKeepDecorations._update_transition_timer(arg_13_0, arg_13_1)
+HeroViewStateKeepDecorations._update_transition_timer = function (arg_13_0, arg_13_1)
 	if not arg_13_0._transition_timer then
 		return
 	end
@@ -301,15 +301,15 @@ function HeroViewStateKeepDecorations._update_transition_timer(arg_13_0, arg_13_
 	end
 end
 
-function HeroViewStateKeepDecorations.input_service(arg_14_0)
+HeroViewStateKeepDecorations.input_service = function (arg_14_0)
 	return arg_14_0.parent:input_service()
 end
 
-function HeroViewStateKeepDecorations._is_list_hovered(arg_15_0)
+HeroViewStateKeepDecorations._is_list_hovered = function (arg_15_0)
 	return arg_15_0._widgets_by_name.list_mask.content.hotspot.is_hover or false
 end
 
-function HeroViewStateKeepDecorations.update(arg_16_0, arg_16_1, arg_16_2)
+HeroViewStateKeepDecorations.update = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0:_handle_gamepad_activity()
 
 	if var_0_8 then
@@ -351,7 +351,7 @@ function HeroViewStateKeepDecorations.update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function HeroViewStateKeepDecorations._update_client_paintings(arg_17_0, arg_17_1)
+HeroViewStateKeepDecorations._update_client_paintings = function (arg_17_0, arg_17_1)
 	if not Unit.alive(arg_17_0._interactable_unit) or not arg_17_0._keep_decoration_extension or not arg_17_0._keep_decoration_extension.get_selected_decoration then
 		return
 	end
@@ -369,18 +369,18 @@ function HeroViewStateKeepDecorations._update_client_paintings(arg_17_0, arg_17_
 	end
 end
 
-function HeroViewStateKeepDecorations._has_active_level_vote(arg_18_0)
+HeroViewStateKeepDecorations._has_active_level_vote = function (arg_18_0)
 	local var_18_0 = arg_18_0._voting_manager
 
 	return var_18_0:vote_in_progress() and var_18_0:is_mission_vote() and not var_18_0:has_voted(Network.peer_id())
 end
 
-function HeroViewStateKeepDecorations.post_update(arg_19_0, arg_19_1, arg_19_2)
+HeroViewStateKeepDecorations.post_update = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0.ui_animator:update(arg_19_1)
 	arg_19_0:_update_animations(arg_19_1)
 end
 
-function HeroViewStateKeepDecorations._update_animations(arg_20_0, arg_20_1)
+HeroViewStateKeepDecorations._update_animations = function (arg_20_0, arg_20_1)
 	for iter_20_0, iter_20_1 in pairs(arg_20_0._ui_animations) do
 		UIAnimation.update(iter_20_1, arg_20_1)
 
@@ -408,25 +408,25 @@ function HeroViewStateKeepDecorations._update_animations(arg_20_0, arg_20_1)
 	UIWidgetUtils.animate_default_button(var_20_4, arg_20_1)
 end
 
-function HeroViewStateKeepDecorations._is_button_hover_enter(arg_21_0, arg_21_1)
+HeroViewStateKeepDecorations._is_button_hover_enter = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.content
 
 	return (var_21_0.button_hotspot or var_21_0.hotspot).on_hover_enter
 end
 
-function HeroViewStateKeepDecorations._is_button_hover_exit(arg_22_0, arg_22_1)
+HeroViewStateKeepDecorations._is_button_hover_exit = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_1.content
 
 	return (var_22_0.button_hotspot or var_22_0.hotspot).on_hover_exit
 end
 
-function HeroViewStateKeepDecorations._is_button_hover(arg_23_0, arg_23_1)
+HeroViewStateKeepDecorations._is_button_hover = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_1.content
 
 	return (var_23_0.button_hotspot or var_23_0.hotspot).is_hover
 end
 
-function HeroViewStateKeepDecorations._handle_input(arg_24_0, arg_24_1, arg_24_2)
+HeroViewStateKeepDecorations._handle_input = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._input_blocked and FAKE_INPUT_SERVICE or arg_24_0:input_service()
 	local var_24_1 = Managers.input:is_device_active("mouse")
 	local var_24_2 = var_24_0:get("toggle_menu")
@@ -508,7 +508,7 @@ function HeroViewStateKeepDecorations._handle_input(arg_24_0, arg_24_1, arg_24_2
 	end
 end
 
-function HeroViewStateKeepDecorations._verify_decoration_selection(arg_25_0)
+HeroViewStateKeepDecorations._verify_decoration_selection = function (arg_25_0)
 	local var_25_0 = ScriptUnit.extension(arg_25_0._interactable_unit, "keep_decoration_system")
 	local var_25_1 = var_25_0:get_selected_decoration()
 
@@ -533,13 +533,13 @@ function HeroViewStateKeepDecorations._verify_decoration_selection(arg_25_0)
 	end
 end
 
-function HeroViewStateKeepDecorations.close_menu(arg_26_0, arg_26_1)
+HeroViewStateKeepDecorations.close_menu = function (arg_26_0, arg_26_1)
 	arg_26_1 = true
 
 	arg_26_0.parent:close_menu(nil, arg_26_1)
 end
 
-function HeroViewStateKeepDecorations.draw(arg_27_0, arg_27_1, arg_27_2)
+HeroViewStateKeepDecorations.draw = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0:_update_visible_list_entries()
 
 	local var_27_0 = arg_27_0._ui_renderer
@@ -590,7 +590,7 @@ function HeroViewStateKeepDecorations.draw(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function HeroViewStateKeepDecorations._is_button_pressed(arg_28_0, arg_28_1)
+HeroViewStateKeepDecorations._is_button_pressed = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_1.content
 	local var_28_1 = var_28_0.button_hotspot or var_28_0.hotspot
 
@@ -601,11 +601,11 @@ function HeroViewStateKeepDecorations._is_button_pressed(arg_28_0, arg_28_1)
 	end
 end
 
-function HeroViewStateKeepDecorations._play_sound(arg_29_0, arg_29_1)
+HeroViewStateKeepDecorations._play_sound = function (arg_29_0, arg_29_1)
 	arg_29_0.parent:play_sound(arg_29_1)
 end
 
-function HeroViewStateKeepDecorations._start_transition_animation(arg_30_0, arg_30_1, arg_30_2)
+HeroViewStateKeepDecorations._start_transition_animation = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = {
 		wwise_world = arg_30_0._wwise_world,
 		render_settings = arg_30_0._render_settings
@@ -616,7 +616,7 @@ function HeroViewStateKeepDecorations._start_transition_animation(arg_30_0, arg_
 	arg_30_0._animations[arg_30_1] = var_30_2
 end
 
-function HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state(arg_31_0, arg_31_1)
+HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._ui_renderer.world
 	local var_31_1 = World.get_data(var_31_0, "shading_environment")
 
@@ -629,19 +629,19 @@ function HeroViewStateKeepDecorations.set_fullscreen_effect_enable_state(arg_31_
 	arg_31_0._fullscreen_effect_enabled = arg_31_1
 end
 
-function HeroViewStateKeepDecorations.block_input(arg_32_0)
+HeroViewStateKeepDecorations.block_input = function (arg_32_0)
 	arg_32_0._input_blocked = true
 end
 
-function HeroViewStateKeepDecorations.unblock_input(arg_33_0)
+HeroViewStateKeepDecorations.unblock_input = function (arg_33_0)
 	arg_33_0._input_blocked = false
 end
 
-function HeroViewStateKeepDecorations.input_blocked(arg_34_0)
+HeroViewStateKeepDecorations.input_blocked = function (arg_34_0)
 	return arg_34_0._input_blocked
 end
 
-function HeroViewStateKeepDecorations._set_info_by_decoration_key(arg_35_0, arg_35_1, arg_35_2)
+HeroViewStateKeepDecorations._set_info_by_decoration_key = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._main_table[arg_35_1]
 	local var_35_1 = var_35_0.display_name
 	local var_35_2 = var_35_0.description
@@ -659,7 +659,7 @@ function HeroViewStateKeepDecorations._set_info_by_decoration_key(arg_35_0, arg_
 	end
 end
 
-function HeroViewStateKeepDecorations._update_sound_trigger_delay(arg_36_0, arg_36_1)
+HeroViewStateKeepDecorations._update_sound_trigger_delay = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0._sound_event_delay
 
 	if not var_36_0 then
@@ -688,7 +688,7 @@ function HeroViewStateKeepDecorations._update_sound_trigger_delay(arg_36_0, arg_
 	end
 end
 
-function HeroViewStateKeepDecorations._update_confirm_button(arg_37_0)
+HeroViewStateKeepDecorations._update_confirm_button = function (arg_37_0)
 	local var_37_0 = arg_37_0._selected_equipped_decoration == true
 	local var_37_1 = arg_37_0._widgets_by_name.confirm_button
 
@@ -699,7 +699,7 @@ function HeroViewStateKeepDecorations._update_confirm_button(arg_37_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._on_list_index_selected(arg_38_0, arg_38_1, arg_38_2)
+HeroViewStateKeepDecorations._on_list_index_selected = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0._interactable_unit
 	local var_38_1 = ScriptUnit.extension(var_38_0, "keep_decoration_system")
 	local var_38_2 = var_38_1:get_selected_decoration()
@@ -772,7 +772,7 @@ function HeroViewStateKeepDecorations._on_list_index_selected(arg_38_0, arg_38_1
 	end
 end
 
-function HeroViewStateKeepDecorations._update_scrollbar_progress_animation(arg_39_0, arg_39_1, arg_39_2)
+HeroViewStateKeepDecorations._update_scrollbar_progress_animation = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0._chest_zoom_in_duration
 
 	if not var_39_0 then
@@ -795,7 +795,7 @@ function HeroViewStateKeepDecorations._update_scrollbar_progress_animation(arg_3
 	end
 end
 
-function HeroViewStateKeepDecorations._set_info_texts(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+HeroViewStateKeepDecorations._set_info_texts = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = arg_40_0:_set_selected_title(arg_40_1)
 	local var_40_1 = arg_40_0:_set_selected_description(arg_40_2)
 	local var_40_2 = arg_40_3 and arg_40_0:_set_selected_artist(arg_40_3) or 0
@@ -811,7 +811,7 @@ function HeroViewStateKeepDecorations._set_info_texts(arg_40_0, arg_40_1, arg_40
 	var_40_3.description_text.size[2] = var_40_6
 end
 
-function HeroViewStateKeepDecorations._set_selected_title(arg_41_0, arg_41_1)
+HeroViewStateKeepDecorations._set_selected_title = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._widgets_by_name.title_text
 
 	var_41_0.content.text = arg_41_1
@@ -823,7 +823,7 @@ function HeroViewStateKeepDecorations._set_selected_title(arg_41_0, arg_41_1)
 	return (UIUtils.get_text_height(arg_41_0._ui_renderer, var_41_3, var_41_2, arg_41_1))
 end
 
-function HeroViewStateKeepDecorations._set_selected_description(arg_42_0, arg_42_1)
+HeroViewStateKeepDecorations._set_selected_description = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._widgets_by_name.description_text
 
 	var_42_0.content.text = arg_42_1
@@ -835,7 +835,7 @@ function HeroViewStateKeepDecorations._set_selected_description(arg_42_0, arg_42
 	return (UIUtils.get_text_height(arg_42_0._ui_renderer, var_42_3, var_42_2, arg_42_1))
 end
 
-function HeroViewStateKeepDecorations._set_selected_artist(arg_43_0, arg_43_1)
+HeroViewStateKeepDecorations._set_selected_artist = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._widgets_by_name.artist_text
 
 	var_43_0.content.text = arg_43_1
@@ -847,7 +847,7 @@ function HeroViewStateKeepDecorations._set_selected_artist(arg_43_0, arg_43_1)
 	return (UIUtils.get_text_height(arg_43_0._ui_renderer, var_43_3, var_43_2, arg_43_1))
 end
 
-function HeroViewStateKeepDecorations._update_equipped_widget(arg_44_0)
+HeroViewStateKeepDecorations._update_equipped_widget = function (arg_44_0)
 	local var_44_0 = arg_44_0._interactable_unit
 	local var_44_1 = ScriptUnit.extension(var_44_0, "keep_decoration_system"):get_selected_decoration()
 	local var_44_2 = arg_44_0._decoration_system
@@ -860,7 +860,7 @@ function HeroViewStateKeepDecorations._update_equipped_widget(arg_44_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._align_list_widgets(arg_45_0)
+HeroViewStateKeepDecorations._align_list_widgets = function (arg_45_0)
 	local var_45_0 = 0
 	local var_45_1 = arg_45_0._list_widgets
 	local var_45_2 = arg_45_0._dummy_list_widgets
@@ -893,7 +893,7 @@ function HeroViewStateKeepDecorations._align_list_widgets(arg_45_0)
 	arg_45_0._total_list_height = var_45_0
 end
 
-function HeroViewStateKeepDecorations._handle_gamepad_list_selection(arg_46_0, arg_46_1)
+HeroViewStateKeepDecorations._handle_gamepad_list_selection = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._selected_list_index
 
 	if not var_46_0 then
@@ -920,7 +920,7 @@ function HeroViewStateKeepDecorations._handle_gamepad_list_selection(arg_46_0, a
 	end
 end
 
-function HeroViewStateKeepDecorations._find_closest_neighbour(arg_47_0, arg_47_1, arg_47_2)
+HeroViewStateKeepDecorations._find_closest_neighbour = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._list_widgets
 	local var_47_1 = var_47_0[arg_47_2]
 	local var_47_2 = var_47_1.content.size
@@ -946,7 +946,7 @@ function HeroViewStateKeepDecorations._find_closest_neighbour(arg_47_0, arg_47_1
 	end
 end
 
-function HeroViewStateKeepDecorations._initialize_scrollbar(arg_48_0)
+HeroViewStateKeepDecorations._initialize_scrollbar = function (arg_48_0)
 	local var_48_0 = var_0_2.list_window.size
 	local var_48_1 = var_0_2.list_scrollbar.size
 	local var_48_2 = var_48_0[2]
@@ -960,7 +960,7 @@ function HeroViewStateKeepDecorations._initialize_scrollbar(arg_48_0)
 	var_48_7:set_scroll_percentage(0)
 end
 
-function HeroViewStateKeepDecorations._update_scroll_position(arg_49_0)
+HeroViewStateKeepDecorations._update_scroll_position = function (arg_49_0)
 	local var_49_0 = arg_49_0._scrollbar_logic:get_scrolled_length()
 
 	if var_49_0 ~= arg_49_0._scrolled_length then
@@ -969,7 +969,7 @@ function HeroViewStateKeepDecorations._update_scroll_position(arg_49_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._update_visible_list_entries(arg_50_0)
+HeroViewStateKeepDecorations._update_visible_list_entries = function (arg_50_0)
 	local var_50_0 = arg_50_0._scrollbar_logic
 
 	if not var_50_0:enabled() then
@@ -1002,7 +1002,7 @@ function HeroViewStateKeepDecorations._update_visible_list_entries(arg_50_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index(arg_51_0, arg_51_1)
+HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0._scrollbar_logic
 
 	if var_51_0:enabled() then
@@ -1042,7 +1042,7 @@ function HeroViewStateKeepDecorations._get_scrollbar_percentage_by_index(arg_51_
 	return 0
 end
 
-function HeroViewStateKeepDecorations._list_index_pressed(arg_52_0)
+HeroViewStateKeepDecorations._list_index_pressed = function (arg_52_0)
 	local var_52_0 = arg_52_0._list_widgets
 
 	if var_52_0 then
@@ -1059,7 +1059,7 @@ function HeroViewStateKeepDecorations._list_index_pressed(arg_52_0)
 	end
 end
 
-function HeroViewStateKeepDecorations._setup_decorations_list(arg_53_0)
+HeroViewStateKeepDecorations._setup_decorations_list = function (arg_53_0)
 	local var_53_0 = arg_53_0._keep_decoration_backend_interface
 	local var_53_1 = var_53_0 and var_53_0:get_unlocked_keep_decorations() or {}
 	local var_53_2 = {}
@@ -1096,7 +1096,7 @@ function HeroViewStateKeepDecorations._setup_decorations_list(arg_53_0)
 		end
 	end
 
-	table.sort(var_53_2, function(arg_54_0, arg_54_1)
+	table.sort(var_53_2, function (arg_54_0, arg_54_1)
 		local var_54_0 = arg_54_0.content
 		local var_54_1 = arg_54_1.content
 
@@ -1138,7 +1138,7 @@ function HeroViewStateKeepDecorations._setup_decorations_list(arg_53_0)
 	arg_53_0:_update_equipped_widget()
 end
 
-function HeroViewStateKeepDecorations._animate_list_entries(arg_55_0, arg_55_1, arg_55_2)
+HeroViewStateKeepDecorations._animate_list_entries = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = arg_55_0._list_widgets
 
 	if not var_55_0 then
@@ -1150,7 +1150,7 @@ function HeroViewStateKeepDecorations._animate_list_entries(arg_55_0, arg_55_1, 
 	end
 end
 
-function HeroViewStateKeepDecorations._animate_list_widget(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+HeroViewStateKeepDecorations._animate_list_widget = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	local var_56_0 = arg_56_1.offset
 	local var_56_1 = arg_56_1.content
 	local var_56_2 = arg_56_1.style
@@ -1236,7 +1236,7 @@ function HeroViewStateKeepDecorations._animate_list_widget(arg_56_0, arg_56_1, a
 	var_56_3.selection_progress = var_56_12
 end
 
-function HeroViewStateKeepDecorations._handle_gamepad_activity(arg_57_0)
+HeroViewStateKeepDecorations._handle_gamepad_activity = function (arg_57_0)
 	local var_57_0 = Managers.input:is_device_active("mouse")
 	local var_57_1 = arg_57_0._gamepad_active_last_frame == nil
 

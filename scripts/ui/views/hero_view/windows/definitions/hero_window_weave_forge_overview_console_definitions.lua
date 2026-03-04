@@ -1475,7 +1475,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 						"weave_progression_slot_titles",
 						"athanor_upgrade_tooltip"
 					},
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.tooltip and arg_4_0.tooltip_hotspot.is_hover
 					end
 				},
@@ -1483,7 +1483,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "price_icon",
 					texture_id = "price_icon",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.button_hotspot.disable_button
 					end
 				},
@@ -1491,7 +1491,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "price_icon_disabled",
 					texture_id = "price_icon",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -1499,10 +1499,10 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.upgrading
 					end,
-					content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+					content_change_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 						local var_8_0 = ((arg_8_1.progress or 0) + arg_8_3) % 1
 
 						arg_8_1.angle = math.pow(2, math.smoothstep(var_8_0, 0, 1)) * (math.pi * 2)
@@ -1513,7 +1513,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return not arg_9_0.button_hotspot.disable_button and not arg_9_0.upgrading
 					end
 				},
@@ -1521,7 +1521,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "icon_disabled",
 					texture_id = "icon",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.button_hotspot.disable_button and not arg_10_0.upgrading
 					end
 				},
@@ -1539,7 +1539,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.highlighted
 					end
 				},
@@ -1552,7 +1552,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "disabled_rect",
 					texture_id = "overlay",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.button_hotspot.disable_button
 					end
 				},
@@ -1560,7 +1560,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return not arg_13_0.button_hotspot.disable_button
 					end
 				},
@@ -1568,7 +1568,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.button_hotspot.disable_button
 					end
 				},
@@ -1581,7 +1581,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "button_icon",
 					texture_id = "button_icon",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.button_hotspot.disable_button
 					end
 				},
@@ -1589,7 +1589,7 @@ local function var_0_27(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "button_icon_glow",
 					texture_id = "button_icon_glow",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return not arg_16_0.button_hotspot.disable_button
 					end
 				}
@@ -2043,7 +2043,7 @@ local var_0_33 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				local var_17_0 = arg_17_2.upgrade_bg
 				local var_17_1 = arg_17_2.skull_circle
 				local var_17_2 = arg_17_2.upgrade_text
@@ -2054,7 +2054,7 @@ local var_0_33 = {
 				var_17_2.alpha_multiplier = 0
 				var_17_3.alpha_multiplier = 0
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = math.easeOutCubic(arg_18_3)
 				local var_18_1 = arg_18_2.upgrade_bg
 				local var_18_2 = arg_18_2.skull_circle
@@ -2066,7 +2066,7 @@ local var_0_33 = {
 				var_18_4.alpha_multiplier = var_18_0
 				var_18_3.alpha_multiplier = 0.02 * var_18_0
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		},
@@ -2074,10 +2074,10 @@ local var_0_33 = {
 			name = "fade_out",
 			start_progress = 1,
 			end_progress = 2,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = math.easeInCubic(1 - arg_21_3)
 				local var_21_1 = arg_21_2.upgrade_bg
 				local var_21_2 = arg_21_2.skull_circle
@@ -2086,7 +2086,7 @@ local var_0_33 = {
 				var_21_1.alpha_multiplier = var_21_0
 				var_21_3.alpha_multiplier = var_21_0
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		},
@@ -2094,15 +2094,15 @@ local var_0_33 = {
 			name = "font_size_increase",
 			start_progress = 0,
 			end_progress = 2,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				local var_24_0 = math.easeOutCubic(arg_24_3)
 
 				arg_24_2.upgrade_text.offset[2] = -40 + 50 * var_24_0
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end
 		},
@@ -2110,7 +2110,7 @@ local var_0_33 = {
 			name = "dissolve_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				local var_26_0 = arg_26_3.parent:hdr_renderer().gui
 				local var_26_1 = arg_26_2.skull_circle_shade
 				local var_26_2 = arg_26_2.skull_circle
@@ -2123,7 +2123,7 @@ local var_0_33 = {
 				Material.set_scalar(var_26_5, "progress", var_26_7)
 				Material.set_scalar(var_26_6, "progress", var_26_7)
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = math.easeInCubic(arg_27_3)
 				local var_27_1 = arg_27_4.parent:hdr_renderer().gui
 				local var_27_2 = arg_27_2.upgrade_bg
@@ -2139,7 +2139,7 @@ local var_0_33 = {
 				Material.set_scalar(var_27_9, "progress", arg_27_3)
 				Material.set_scalar(var_27_10, "progress", arg_27_3)
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		},
@@ -2147,7 +2147,7 @@ local var_0_33 = {
 			name = "intensity",
 			start_progress = 0.5,
 			end_progress = 2,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				local var_29_0 = arg_29_3.parent:hdr_renderer().gui
 				local var_29_1 = arg_29_2.skull_circle.content.texture_id
 				local var_29_2 = Gui.material(var_29_0, var_29_1)
@@ -2155,7 +2155,7 @@ local var_0_33 = {
 
 				Material.set_scalar(var_29_2, "intensity", var_29_3)
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeInCubic(arg_30_3)
 				local var_30_1 = arg_30_4.parent:hdr_renderer().gui
 				local var_30_2 = arg_30_2.skull_circle.content.texture_id
@@ -2166,7 +2166,7 @@ local var_0_33 = {
 
 				Material.set_scalar(var_30_3, "intensity", var_30_6)
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		},
@@ -2174,10 +2174,10 @@ local var_0_33 = {
 			name = "dissolve_out",
 			start_progress = 1,
 			end_progress = 2.5,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = math.easeInCubic(1 - arg_33_3)
 				local var_33_1 = arg_33_4.parent:hdr_renderer().gui
 				local var_33_2 = arg_33_2.skull_circle_shade
@@ -2192,7 +2192,7 @@ local var_0_33 = {
 
 				var_33_2.alpha_multiplier = 0.02 * var_33_0
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		},
@@ -2200,7 +2200,7 @@ local var_0_33 = {
 			name = "size_increase",
 			start_progress = 0,
 			end_progress = 4,
-			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				local var_35_0 = arg_35_2.upgrade_bg
 				local var_35_1 = arg_35_2.skull_circle
 				local var_35_2 = arg_35_2.skull_circle_shade
@@ -2227,7 +2227,7 @@ local var_0_33 = {
 				var_35_15[1] = var_35_9[1]
 				var_35_15[2] = var_35_9[2]
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 				local var_36_0 = math.easeOutCubic(arg_36_3)
 				local var_36_1 = arg_36_2.upgrade_bg
 				local var_36_2 = arg_36_2.skull_circle
@@ -2257,7 +2257,7 @@ local var_0_33 = {
 				var_36_16[1] = var_36_10[1] + 200 * (1 - var_36_0)
 				var_36_16[2] = var_36_10[2] + 200 * (1 - var_36_0)
 			end,
-			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end
 		}
@@ -2267,15 +2267,15 @@ local var_0_33 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				arg_38_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 				local var_39_0 = math.easeOutCubic(arg_39_3)
 
 				arg_39_4.render_settings.alpha_multiplier = var_39_0
 			end,
-			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end
 		}
@@ -2285,15 +2285,15 @@ local var_0_33 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				arg_41_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				local var_42_0 = math.easeOutCubic(arg_42_3)
 
 				arg_42_4.render_settings.alpha_multiplier = 1 - var_42_0
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end
 		}

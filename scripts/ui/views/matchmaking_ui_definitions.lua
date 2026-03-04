@@ -503,7 +503,7 @@ local function var_0_13(arg_1_0, arg_1_1)
 			style_id = "orb",
 			pass_type = "texture_uv",
 			content_id = "orb",
-			content_change_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			content_change_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				local var_2_0 = arg_2_0.parent
 				local var_2_1 = var_2_0.size
 				local var_2_2 = var_2_0.progress
@@ -532,7 +532,7 @@ local function var_0_13(arg_1_0, arg_1_1)
 		{
 			style_id = "timeline",
 			pass_type = "rect",
-			content_change_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			content_change_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				local var_3_0 = arg_3_0.size
 				local var_3_1 = arg_3_0.progress
 				local var_3_2 = arg_3_1.offset
@@ -546,7 +546,7 @@ local function var_0_13(arg_1_0, arg_1_1)
 			style_id = "trail",
 			texture_id = "trail",
 			pass_type = "texture",
-			content_change_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			content_change_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				local var_4_0 = arg_4_0.size
 				local var_4_1 = arg_4_0.progress
 				local var_4_2 = arg_4_1.texture_size
@@ -571,7 +571,7 @@ local function var_0_13(arg_1_0, arg_1_1)
 			style_id = "globe",
 			texture_id = "globe",
 			pass_type = "texture",
-			content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			content_change_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				local var_5_0 = arg_5_0.progress
 				local var_5_1 = math.min(var_5_0, 1)
 
@@ -832,10 +832,10 @@ local function var_0_14(arg_6_0, arg_6_1)
 					style_id = "texture_id",
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.is_connecting or arg_7_0.is_connected
 					end,
-					content_change_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+					content_change_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 						local var_8_0 = arg_8_1.color
 
 						if arg_8_0.is_connecting then

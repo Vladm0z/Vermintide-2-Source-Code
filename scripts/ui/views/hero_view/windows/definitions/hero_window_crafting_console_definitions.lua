@@ -570,7 +570,7 @@ local var_0_18 = {
 			input_action = "refresh",
 			priority = 5,
 			description_text = "lb_search",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS
 			end
 		},
@@ -752,15 +752,15 @@ local var_0_20 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				arg_2_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				local var_3_0 = math.easeOutCubic(arg_3_3)
 
 				arg_3_4.render_settings.alpha_multiplier = var_3_0
 			end,
-			on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end
 		}
@@ -770,15 +770,15 @@ local var_0_20 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				local var_6_0 = math.easeOutCubic(arg_6_3)
 
 				arg_6_4.render_settings.alpha_multiplier = 1 - var_6_0
 			end,
-			on_complete = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				return
 			end
 		}
@@ -788,7 +788,7 @@ local var_0_20 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				local var_8_0 = arg_8_2.craft_lock_top_left
 				local var_8_1 = arg_8_2.craft_lock_top_right
 				local var_8_2 = math.pi / 2
@@ -856,10 +856,10 @@ local var_0_20 = {
 					var_8_12
 				}
 			end,
-			update = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 				return
 			end,
-			on_complete = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				return
 			end
 		}
@@ -869,7 +869,7 @@ local var_0_20 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				local var_11_0 = arg_11_2.craft_lock_top_left
 				local var_11_1 = arg_11_2.craft_lock_top_right
 				local var_11_2 = math.pi / 2
@@ -937,10 +937,10 @@ local var_0_20 = {
 					var_11_12
 				}
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				return
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		},
@@ -948,13 +948,13 @@ local var_0_20 = {
 			name = "shadow",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				arg_15_2.craft_lock_shadow.style.texture_id.color[1] = 200 * arg_15_3
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		},
@@ -962,10 +962,10 @@ local var_0_20 = {
 			name = "top",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				return
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = arg_18_2.craft_lock_top_left
 				local var_18_1 = arg_18_2.craft_lock_top_right
 				local var_18_2 = math.pi / 2
@@ -975,7 +975,7 @@ local var_0_20 = {
 				var_18_0.style.texture_id.angle = var_18_2 - var_18_2 * var_18_4
 				var_18_1.style.texture_id.angle = -var_18_2 + var_18_2 * var_18_4
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		},
@@ -983,10 +983,10 @@ local var_0_20 = {
 			name = "top_effect",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = arg_21_2.craft_lock_top_effect
 				local var_21_1 = var_21_0.style.texture_id
 				local var_21_2 = var_21_0.offset
@@ -1000,7 +1000,7 @@ local var_0_20 = {
 				var_21_1.texture_size[1] = var_21_3 * arg_21_3
 				var_21_1.texture_size[2] = var_21_4 * arg_21_3
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		},
@@ -1008,10 +1008,10 @@ local var_0_20 = {
 			name = "bottom",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				local var_24_0 = arg_24_2.craft_lock_bottom_left
 				local var_24_1 = arg_24_2.craft_lock_bottom_right
 				local var_24_2 = math.catmullrom(arg_24_3, -7.4, 0, 1, 0.7)
@@ -1020,7 +1020,7 @@ local var_0_20 = {
 				var_24_0.offset[2] = -var_24_3 + var_24_2 * var_24_3
 				var_24_1.offset[2] = -var_24_3 + var_24_2 * var_24_3
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end
 		},
@@ -1028,10 +1028,10 @@ local var_0_20 = {
 			name = "bottom_effect_left",
 			start_progress = 0.7,
 			end_progress = 1.1,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = arg_27_2.craft_effect_bottom_left
 				local var_27_1 = var_27_0.style.texture_id
 				local var_27_2 = var_27_0.offset
@@ -1054,7 +1054,7 @@ local var_0_20 = {
 				var_27_2[1] = var_27_8
 				var_27_2[2] = var_27_8 * 0.5
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		},
@@ -1062,10 +1062,10 @@ local var_0_20 = {
 			name = "bottom_effect_right",
 			start_progress = 0.7,
 			end_progress = 1.1,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = arg_30_2.craft_effect_bottom_right
 				local var_30_1 = var_30_0.style.texture_id
 				local var_30_2 = var_30_0.offset
@@ -1088,7 +1088,7 @@ local var_0_20 = {
 				var_30_2[1] = -var_30_8
 				var_30_2[2] = var_30_8 * 0.5
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		},
@@ -1096,10 +1096,10 @@ local var_0_20 = {
 			name = "eyes",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = arg_33_2.craft_lock_eye_left
 				local var_33_1 = arg_33_2.craft_lock_eye_right
 				local var_33_2 = var_33_0.style.texture_id
@@ -1117,7 +1117,7 @@ local var_0_20 = {
 				var_33_3.texture_size[1] = var_33_5 * arg_33_3
 				var_33_3.texture_size[2] = var_33_6 * arg_33_3
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		}
@@ -1127,10 +1127,10 @@ local var_0_20 = {
 			name = "eyes",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 				return
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 				local var_36_0 = arg_36_2.craft_lock_eye_left
 				local var_36_1 = arg_36_2.craft_lock_eye_right
 				local var_36_2 = var_36_0.style.texture_id
@@ -1151,7 +1151,7 @@ local var_0_20 = {
 				var_36_3.texture_size[1] = var_36_5 * arg_36_3
 				var_36_3.texture_size[2] = var_36_6 * arg_36_3
 			end,
-			on_complete = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end
 		},
@@ -1159,13 +1159,13 @@ local var_0_20 = {
 			name = "shadow",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 				return
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 				arg_39_2.craft_lock_shadow.style.texture_id.color[1] = 200 - 200 * arg_39_3
 			end,
-			on_complete = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end
 		},
@@ -1173,10 +1173,10 @@ local var_0_20 = {
 			name = "top",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 				return
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				arg_42_3 = 1 - arg_42_3
 
 				local var_42_0 = arg_42_2.craft_lock_top_left
@@ -1186,7 +1186,7 @@ local var_0_20 = {
 				var_42_0.style.texture_id.angle = var_42_2 - var_42_2 * arg_42_3
 				var_42_1.style.texture_id.angle = -var_42_2 + var_42_2 * arg_42_3
 			end,
-			on_complete = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				return
 			end
 		},
@@ -1194,10 +1194,10 @@ local var_0_20 = {
 			name = "bottom",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 				return
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 				arg_45_3 = 1 - arg_45_3
 
 				local var_45_0 = arg_45_2.craft_lock_bottom_left
@@ -1207,7 +1207,7 @@ local var_0_20 = {
 				var_45_0.offset[2] = -var_45_2 + arg_45_3 * var_45_2
 				var_45_1.offset[2] = -var_45_2 + arg_45_3 * var_45_2
 			end,
-			on_complete = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				return
 			end
 		}

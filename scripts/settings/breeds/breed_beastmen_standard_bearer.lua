@@ -301,7 +301,7 @@ local var_0_0 = {
 		j_lefthand = 0.2,
 		j_rightforearm = 0.2
 	},
-	additional_breed_packages_to_load = function(arg_1_0)
+	additional_breed_packages_to_load = function (arg_1_0)
 		local var_1_0 = BreedTweaks.standard_bearer_spawn_list[arg_1_0]
 		local var_1_1 = {}
 
@@ -710,7 +710,7 @@ local var_0_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_elite
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			local var_2_0 = arg_2_1.charge_stagger
 			local var_2_1
 			local var_2_2

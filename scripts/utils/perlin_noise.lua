@@ -2,7 +2,7 @@
 
 PerlinNoise = class(PerlinNoise)
 
-function PerlinNoise.init(arg_1_0, arg_1_1)
+PerlinNoise.init = function (arg_1_0, arg_1_1)
 	arg_1_0._n = 256
 	arg_1_0._permutations = {}
 	arg_1_0._gradients = {}
@@ -91,7 +91,7 @@ local var_0_0 = {
 	}
 }
 
-function PerlinNoise.draw_height(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PerlinNoise.draw_height = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = Managers.state.debug:drawer({
 		mode = "lel",
 		name = "perlin noise"
@@ -108,7 +108,7 @@ function PerlinNoise.draw_height(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ar
 	var_2_0:sphere(Vector3(arg_2_2, arg_2_3, arg_2_4 + 0.5), arg_2_5 or 0.35, Color(var_2_3[1], var_2_3[2], var_2_3[3]))
 end
 
-function PerlinNoise.filter_list_using_noise(arg_3_0, arg_3_1, arg_3_2)
+PerlinNoise.filter_list_using_noise = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0, var_3_1, var_3_2 = Script.temp_count()
 	local var_3_3 = 0
 	local var_3_4 = 0
@@ -145,7 +145,7 @@ function PerlinNoise.filter_list_using_noise(arg_3_0, arg_3_1, arg_3_2)
 	return arg_3_1
 end
 
-function PerlinNoise.normalize(arg_4_0, arg_4_1, arg_4_2)
+PerlinNoise.normalize = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0
 	local var_4_1 = math.sqrt(arg_4_1 * arg_4_1 + arg_4_2 * arg_4_2)
 
@@ -157,7 +157,7 @@ function PerlinNoise.normalize(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_1, arg_4_2
 end
 
-function PerlinNoise.setup(arg_5_0)
+PerlinNoise.setup = function (arg_5_0)
 	for iter_5_0 = 1, arg_5_0._n do
 		arg_5_0._permutations[iter_5_0] = iter_5_0
 		arg_5_0._gradients[iter_5_0] = {
@@ -201,7 +201,7 @@ function PerlinNoise.setup(arg_5_0)
 	end
 end
 
-function PerlinNoise.get_height(arg_6_0, arg_6_1, arg_6_2)
+PerlinNoise.get_height = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_1
 	local var_6_1 = arg_6_2
 	local var_6_2 = arg_6_1 + 4096
@@ -258,15 +258,15 @@ function PerlinNoise.get_height(arg_6_0, arg_6_1, arg_6_2)
 	return (math.lerp(var_6_33, var_6_34, var_6_19))
 end
 
-function PerlinNoise.at2(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PerlinNoise.at2 = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return arg_7_1[1] * arg_7_2 + arg_7_1[2] * arg_7_3
 end
 
-function PerlinNoise.getSCurve(arg_8_0, arg_8_1)
+PerlinNoise.getSCurve = function (arg_8_0, arg_8_1)
 	return 6 * arg_8_1^5 - 15 * arg_8_1^4 + 10 * arg_8_1^3
 end
 
-function PerlinNoise.simulate_points(arg_9_0)
+PerlinNoise.simulate_points = function (arg_9_0)
 	local var_9_0 = Managers.state.debug:drawer({
 		mode = "lel",
 		name = "perlin noise"

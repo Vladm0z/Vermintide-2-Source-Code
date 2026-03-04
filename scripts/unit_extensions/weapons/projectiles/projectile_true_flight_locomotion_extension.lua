@@ -4,7 +4,7 @@ require("scripts/unit_extensions/weapons/projectiles/true_flight_utility")
 
 ProjectileTrueFlightLocomotionExtension = class(ProjectileTrueFlightLocomotionExtension)
 
-function ProjectileTrueFlightLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileTrueFlightLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = arg_1_3.gravity_settings or "default"
 	local var_1_2 = arg_1_3.initial_position
@@ -67,7 +67,7 @@ function ProjectileTrueFlightLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2,
 	arg_1_0._valid_target_dot = var_1_4.valid_target_dot or 0.75
 	arg_1_0._retarget_broadphase_offset = var_1_4.retarget_broadphase_offset or 10
 	arg_1_0._dont_target_patrols = var_1_4.dont_target_patrols
-	arg_1_0._lerp_modifier_func = var_1_4.lerp_modifier_func or function(arg_2_0)
+	arg_1_0._lerp_modifier_func = var_1_4.lerp_modifier_func or function (arg_2_0)
 		return arg_2_0 < 5 and 1 or 5 / arg_2_0
 	end
 	arg_1_0.target_players = var_1_4.target_players
@@ -126,7 +126,7 @@ local function var_0_1(arg_4_0)
 	return true
 end
 
-function ProjectileTrueFlightLocomotionExtension._do_forced_impact(arg_5_0, arg_5_1, arg_5_2)
+ProjectileTrueFlightLocomotionExtension._do_forced_impact = function (arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.extension(arg_5_1, "projectile_system"):force_impact(arg_5_1, Unit.local_position(arg_5_1, 0))
 
 	local var_5_0 = arg_5_0.network_manager
@@ -135,7 +135,7 @@ function ProjectileTrueFlightLocomotionExtension._do_forced_impact(arg_5_0, arg_
 	var_5_0.network_transmit:send_rpc_clients("rpc_generic_impact_projectile_force_impact", var_5_1, arg_5_2)
 end
 
-function ProjectileTrueFlightLocomotionExtension.bounce(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+ProjectileTrueFlightLocomotionExtension.bounce = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Vector3.normalize(Vector3.reflect(arg_6_2, arg_6_3))
 	local var_6_1 = arg_6_1 - arg_6_2 * 0.25 + arg_6_3 * 0.1
 	local var_6_2 = Quaternion.look(var_6_0)
@@ -151,7 +151,7 @@ function ProjectileTrueFlightLocomotionExtension.bounce(arg_6_0, arg_6_1, arg_6_
 	arg_6_0:_unit_set_position_rotation(arg_6_0.unit, var_6_1, var_6_2)
 end
 
-function ProjectileTrueFlightLocomotionExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+ProjectileTrueFlightLocomotionExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_0.dt = arg_7_5 - arg_7_0.t
 	arg_7_0.t = arg_7_5
 	arg_7_0.moved = false
@@ -250,7 +250,7 @@ function ProjectileTrueFlightLocomotionExtension.update(arg_7_0, arg_7_1, arg_7_
 	arg_7_0.moved = true
 end
 
-function ProjectileTrueFlightLocomotionExtension._check_target_valid(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+ProjectileTrueFlightLocomotionExtension._check_target_valid = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = false
 	local var_8_1 = false
 
@@ -273,7 +273,7 @@ function ProjectileTrueFlightLocomotionExtension._check_target_valid(arg_8_0, ar
 	return var_8_1, var_8_0
 end
 
-function ProjectileTrueFlightLocomotionExtension.set_projectile_state(arg_9_0, arg_9_1)
+ProjectileTrueFlightLocomotionExtension.set_projectile_state = function (arg_9_0, arg_9_1)
 	if arg_9_1 ~= arg_9_0.projectile_state_id then
 		local var_9_0 = not arg_9_0.is_husk
 		local var_9_1 = arg_9_0.unit
@@ -293,7 +293,7 @@ function ProjectileTrueFlightLocomotionExtension.set_projectile_state(arg_9_0, a
 	end
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_towards_slow_bomb_target(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ProjectileTrueFlightLocomotionExtension.update_towards_slow_bomb_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0.target_unit
 	local var_10_1 = arg_10_0.unit
 	local var_10_2 = arg_10_0.current_direction:unbox()
@@ -330,7 +330,7 @@ function ProjectileTrueFlightLocomotionExtension.update_towards_slow_bomb_target
 	return arg_10_1 + Quaternion.forward(var_10_18) * var_10_14 * arg_10_3
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_towards_strike_missile_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ProjectileTrueFlightLocomotionExtension.update_towards_strike_missile_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0.target_unit
 	local var_11_1 = arg_11_0.current_direction:unbox()
 	local var_11_2 = TrueFlightTemplates[arg_11_0.true_flight_template_name]
@@ -396,7 +396,7 @@ function ProjectileTrueFlightLocomotionExtension.update_towards_strike_missile_t
 	return arg_11_1 + Quaternion.forward(var_11_21) * var_11_17 * arg_11_3
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_towards_position_target(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+ProjectileTrueFlightLocomotionExtension.update_towards_position_target = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0.current_direction:unbox()
 	local var_12_1 = TrueFlightTemplates[arg_12_0.true_flight_template_name].speed_multiplier
 	local var_12_2 = arg_12_0.position_target:unbox()
@@ -414,7 +414,7 @@ function ProjectileTrueFlightLocomotionExtension.update_towards_position_target(
 	return arg_12_1 + Quaternion.forward(var_12_12) * (arg_12_0.speed * var_12_1) * arg_12_3
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_towards_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ProjectileTrueFlightLocomotionExtension.update_towards_target = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.target_unit
 	local var_13_1 = arg_13_0.current_direction:unbox()
 	local var_13_2 = TrueFlightTemplates[arg_13_0.true_flight_template_name]
@@ -446,7 +446,7 @@ function ProjectileTrueFlightLocomotionExtension.update_towards_target(arg_13_0,
 	return var_13_16
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_seeking_target(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+ProjectileTrueFlightLocomotionExtension.update_seeking_target = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = TrueFlightTemplates[arg_14_0.true_flight_template_name]
 	local var_14_1 = var_14_0.speed_multiplier
 	local var_14_2 = arg_14_0.dt
@@ -463,7 +463,7 @@ function ProjectileTrueFlightLocomotionExtension.update_seeking_target(arg_14_0,
 	return var_14_10, var_14_11
 end
 
-function ProjectileTrueFlightLocomotionExtension.find_new_target(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+ProjectileTrueFlightLocomotionExtension.find_new_target = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	if arg_15_3 > arg_15_0.raycast_timer then
 		arg_15_0.raycast_timer = arg_15_3 + arg_15_2.time_between_raycasts
 
@@ -471,7 +471,7 @@ function ProjectileTrueFlightLocomotionExtension.find_new_target(arg_15_0, arg_1
 	end
 end
 
-function ProjectileTrueFlightLocomotionExtension.find_player_target(arg_16_0, arg_16_1, arg_16_2)
+ProjectileTrueFlightLocomotionExtension.find_player_target = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0
 	local var_16_1 = arg_16_0.side
 
@@ -498,7 +498,7 @@ end
 
 local var_0_2 = {}
 
-function ProjectileTrueFlightLocomotionExtension.find_broadphase_target(arg_17_0, arg_17_1, arg_17_2)
+ProjectileTrueFlightLocomotionExtension.find_broadphase_target = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = TrueFlightTemplates[arg_17_0.true_flight_template_name].broadphase_radius
 	local var_17_1 = arg_17_0.target_broadphase_categories
 
@@ -533,7 +533,7 @@ function ProjectileTrueFlightLocomotionExtension.find_broadphase_target(arg_17_0
 	return nil
 end
 
-function ProjectileTrueFlightLocomotionExtension.find_closest_highest_value_target(arg_18_0, arg_18_1, arg_18_2)
+ProjectileTrueFlightLocomotionExtension.find_closest_highest_value_target = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = TrueFlightTemplates[arg_18_0.true_flight_template_name]
 	local var_18_1 = var_18_0.broadphase_radius
 	local var_18_2 = arg_18_0.target_broadphase_categories
@@ -579,15 +579,15 @@ function ProjectileTrueFlightLocomotionExtension.find_closest_highest_value_targ
 	return nil
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_always(arg_19_0, arg_19_1, arg_19_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_always = function (arg_19_0, arg_19_1, arg_19_2)
 	return true
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_never(arg_20_0, arg_20_1, arg_20_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_never = function (arg_20_0, arg_20_1, arg_20_2)
 	return false
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_only_dot_check(arg_21_0, arg_21_1, arg_21_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_only_dot_check = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = Unit.has_node(arg_21_1, "c_spine") and Unit.node(arg_21_1, "c_spine") or 0
 	local var_21_1 = Unit.world_position(arg_21_1, var_21_0)
 	local var_21_2 = arg_21_0.current_direction:unbox()
@@ -601,7 +601,7 @@ function ProjectileTrueFlightLocomotionExtension.legitimate_only_dot_check(arg_2
 	end
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_target(arg_22_0, arg_22_1, arg_22_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_target = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = var_0_0(arg_22_1, "c_head")
 	local var_22_1 = arg_22_0.current_direction:unbox()
 	local var_22_2 = var_22_0 - arg_22_2
@@ -640,7 +640,7 @@ function ProjectileTrueFlightLocomotionExtension.legitimate_target(arg_22_0, arg
 	return false
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_target_keep_target(arg_23_0, arg_23_1, arg_23_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_target_keep_target = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = var_0_0(arg_23_1, "c_head")
 	local var_23_1 = arg_23_0.current_direction:unbox()
 	local var_23_2 = var_23_0 - arg_23_2
@@ -677,7 +677,7 @@ function ProjectileTrueFlightLocomotionExtension.legitimate_target_keep_target(a
 	return false
 end
 
-function ProjectileTrueFlightLocomotionExtension.legitimate_player_target(arg_24_0, arg_24_1, arg_24_2)
+ProjectileTrueFlightLocomotionExtension.legitimate_player_target = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.target_node
 	local var_24_1 = Unit.has_node(arg_24_1, var_24_0) and Unit.node(arg_24_1, var_24_0) or 0
 	local var_24_2 = Unit.world_position(arg_24_1, var_24_1)
@@ -718,7 +718,7 @@ function ProjectileTrueFlightLocomotionExtension.legitimate_player_target(arg_24
 	return false
 end
 
-function ProjectileTrueFlightLocomotionExtension._unit_set_position_rotation(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+ProjectileTrueFlightLocomotionExtension._unit_set_position_rotation = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	if arg_25_0.true_flight_template.update_unit_position then
 		arg_25_0.true_flight_template.update_unit_position(arg_25_1, arg_25_2, arg_25_3, arg_25_0._custom_data, arg_25_0)
 	else
@@ -727,19 +727,19 @@ function ProjectileTrueFlightLocomotionExtension._unit_set_position_rotation(arg
 	end
 end
 
-function ProjectileTrueFlightLocomotionExtension.moved_this_frame(arg_26_0)
+ProjectileTrueFlightLocomotionExtension.moved_this_frame = function (arg_26_0)
 	return arg_26_0.moved
 end
 
-function ProjectileTrueFlightLocomotionExtension.current_velocity(arg_27_0)
+ProjectileTrueFlightLocomotionExtension.current_velocity = function (arg_27_0)
 	return arg_27_0.velocity:unbox()
 end
 
-function ProjectileTrueFlightLocomotionExtension.current_position(arg_28_0)
+ProjectileTrueFlightLocomotionExtension.current_position = function (arg_28_0)
 	return arg_28_0._current_position:unbox()
 end
 
-function ProjectileTrueFlightLocomotionExtension.destroy(arg_29_0)
+ProjectileTrueFlightLocomotionExtension.destroy = function (arg_29_0)
 	if arg_29_0.true_flight_template.create_bot_threat then
 		local var_29_0 = HEALTH_ALIVE[arg_29_0.owner_unit] and BLACKBOARDS[arg_29_0.owner_unit]
 
@@ -751,12 +751,12 @@ function ProjectileTrueFlightLocomotionExtension.destroy(arg_29_0)
 	arg_29_0.hit_units = nil
 end
 
-function ProjectileTrueFlightLocomotionExtension.notify_hit_enemy(arg_30_0, arg_30_1)
+ProjectileTrueFlightLocomotionExtension.notify_hit_enemy = function (arg_30_0, arg_30_1)
 	arg_30_0.hit_units[arg_30_1] = true
 	arg_30_0.raycast_timer = 0
 end
 
-function ProjectileTrueFlightLocomotionExtension.update_bot_threat(arg_31_0, arg_31_1, arg_31_2)
+ProjectileTrueFlightLocomotionExtension.update_bot_threat = function (arg_31_0, arg_31_1, arg_31_2)
 	if arg_31_2 < arg_31_0.true_flight_template.bot_threat_at_distance then
 		local var_31_0 = HEALTH_ALIVE[arg_31_0.owner_unit] and BLACKBOARDS[arg_31_0.owner_unit]
 
@@ -767,7 +767,7 @@ function ProjectileTrueFlightLocomotionExtension.update_bot_threat(arg_31_0, arg
 	end
 end
 
-function ProjectileTrueFlightLocomotionExtension.stop(arg_32_0)
+ProjectileTrueFlightLocomotionExtension.stop = function (arg_32_0)
 	if arg_32_0.true_flight_template.update_after_impact then
 		return
 	end

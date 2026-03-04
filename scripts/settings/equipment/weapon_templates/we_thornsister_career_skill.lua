@@ -13,7 +13,7 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_start",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -48,7 +48,7 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					arg_2_1:clear_input_buffer()
 					arg_2_1:reset_release_input()
 					arg_2_3:change_synced_state("targeting", true)
@@ -61,7 +61,7 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_flip",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -97,7 +97,7 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					arg_4_1:clear_input_buffer()
 
 					return arg_4_1:reset_release_input()
@@ -109,7 +109,7 @@ local var_0_4 = {
 				weapon_action_hand = "left",
 				uninterruptible = true,
 				anim_event = "thorn_ability_flip_back",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -145,7 +145,7 @@ local var_0_4 = {
 						input = "action_one"
 					}
 				},
-				enter_function = function(arg_6_0, arg_6_1)
+				enter_function = function (arg_6_0, arg_6_1)
 					arg_6_1:clear_input_buffer()
 
 					return arg_6_1:reset_release_input()
@@ -159,11 +159,11 @@ local var_0_4 = {
 				anim_event = "thorn_ability_cancel",
 				weapon_action_hand = "left",
 				total_time = 0.21,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				enter_function = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+				enter_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 					arg_8_1:clear_input_buffer()
 					arg_8_1:reset_release_input()
 					arg_8_3:change_synced_state(nil, true)
@@ -178,7 +178,7 @@ local var_0_4 = {
 					{
 						sub_action = "thorn_wall",
 						action = "spells",
-						condition = function(arg_9_0, arg_9_1, arg_9_2)
+						condition = function (arg_9_0, arg_9_1, arg_9_2)
 							return arg_9_2 and arg_9_2:get_mode()
 						end
 					}
@@ -197,11 +197,11 @@ local var_0_4 = {
 				uninterruptible = true,
 				anim_event = "thorn_ability_cast",
 				total_time = 0.75,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
-				enter_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+				enter_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 					arg_11_1:clear_input_buffer()
 					arg_11_1:reset_release_input()
 					arg_11_3:change_synced_state(nil, true)
@@ -274,7 +274,7 @@ end
 
 var_0_4.synced_states = {
 	targeting = {
-		enter = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		enter = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 			if not arg_13_4 then
 				return
 			end
@@ -284,7 +284,7 @@ var_0_4.synced_states = {
 			arg_13_3.delay = 0.1
 			arg_13_3.spawned = false
 		end,
-		update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
 			if not arg_14_4 then
 				return
 			end
@@ -315,7 +315,7 @@ var_0_4.synced_states = {
 				arg_14_3.particle_ids[var_14_2] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", var_14_0, var_14_2, "destroy")
 			end
 		end,
-		leave = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+		leave = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
 			if not arg_15_4 then
 				return
 			end

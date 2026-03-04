@@ -5,7 +5,7 @@ PackmasterStateDragging = class(PackmasterStateDragging, EnemyCharacterState)
 local var_0_0 = true
 local var_0_1 = 6
 
-function PackmasterStateDragging.init(arg_1_0, arg_1_1)
+PackmasterStateDragging.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_dragging")
 
 	local var_1_0 = arg_1_1
@@ -16,7 +16,7 @@ function PackmasterStateDragging.init(arg_1_0, arg_1_1)
 	arg_1_0._hoist_ability_id = arg_1_0._career_extension:ability_id("hoist")
 end
 
-function PackmasterStateDragging.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateDragging.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0._unit
 	local var_2_1 = arg_2_0._input_extension
 	local var_2_2 = arg_2_0._first_person_extension
@@ -95,7 +95,7 @@ function PackmasterStateDragging.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 	arg_2_0._unhook_on_exit = true
 end
 
-function PackmasterStateDragging.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PackmasterStateDragging.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_0._csm
 	local var_3_1 = arg_3_0._world
 	local var_3_2 = arg_3_0._unit
@@ -294,7 +294,7 @@ function PackmasterStateDragging.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	arg_3_0:update_damage(var_3_2, var_3_4, arg_3_5)
 end
 
-function PackmasterStateDragging._get_current_drag_speed(arg_4_0, arg_4_1)
+PackmasterStateDragging._get_current_drag_speed = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.breed.initial_drag_movement_speed
 	local var_4_1 = arg_4_0.breed.initial_drag_movement_speed_duration
 	local var_4_2 = arg_4_0.breed.drag_movement_speed
@@ -310,7 +310,7 @@ function PackmasterStateDragging._get_current_drag_speed(arg_4_0, arg_4_1)
 	return var_4_4
 end
 
-function PackmasterStateDragging.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+PackmasterStateDragging.on_exit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	if arg_5_0._unhook_on_exit then
 		arg_5_0:_release_dragged_target()
 	end
@@ -334,7 +334,7 @@ function PackmasterStateDragging.on_exit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	end
 end
 
-function PackmasterStateDragging._release_dragged_target(arg_6_0)
+PackmasterStateDragging._release_dragged_target = function (arg_6_0)
 	local var_6_0 = arg_6_0._status_extension
 	local var_6_1 = arg_6_0._first_person_extension
 
@@ -354,7 +354,7 @@ function PackmasterStateDragging._release_dragged_target(arg_6_0)
 	end
 end
 
-function PackmasterStateDragging.update_damage(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PackmasterStateDragging.update_damage = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if arg_7_3 > arg_7_0._next_damage_pulse_time then
 		local var_7_0 = arg_7_0.breed
 		local var_7_1 = var_7_0.dragging_damage_amount
@@ -370,7 +370,7 @@ end
 
 local var_0_2 = 0.05
 
-function PackmasterStateDragging._get_packmaster_drag_animation(arg_8_0)
+PackmasterStateDragging._get_packmaster_drag_animation = function (arg_8_0)
 	local var_8_0 = arg_8_0._locomotion_extension
 
 	if Vector3.length(var_8_0:current_velocity()) < var_0_2 then

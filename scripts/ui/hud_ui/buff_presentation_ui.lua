@@ -6,7 +6,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 
 BuffPresentationUI = class(BuffPresentationUI)
 
-function BuffPresentationUI.init(arg_1_0, arg_1_1, arg_1_2)
+BuffPresentationUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -19,7 +19,7 @@ function BuffPresentationUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function BuffPresentationUI.create_ui_elements(arg_2_0)
+BuffPresentationUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_2_0.presentation_widget = UIWidget.init(var_0_0.widget_definitions.presentation_widget)
 	arg_2_0.ui_animator = UIAnimator:new(arg_2_0.ui_scenegraph, var_0_1)
@@ -31,7 +31,7 @@ function BuffPresentationUI.create_ui_elements(arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 end
 
-function BuffPresentationUI.destroy(arg_3_0)
+BuffPresentationUI.destroy = function (arg_3_0)
 	arg_3_0.ui_animator = nil
 end
 
@@ -42,7 +42,7 @@ local var_0_3 = {
 	drag_scenegraph_id = "presentation_widget_dragger"
 }
 
-function BuffPresentationUI.update(arg_4_0, arg_4_1)
+BuffPresentationUI.update = function (arg_4_0, arg_4_1)
 	if HudCustomizer.run(arg_4_0.ui_renderer, arg_4_0.ui_scenegraph, var_0_3) then
 		UISceneGraph.update_scenegraph(arg_4_0.ui_scenegraph)
 	end
@@ -56,7 +56,7 @@ function BuffPresentationUI.update(arg_4_0, arg_4_1)
 	end
 end
 
-function BuffPresentationUI.update_animations(arg_5_0, arg_5_1)
+BuffPresentationUI.update_animations = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._animations
 	local var_5_1 = arg_5_0.ui_animator
 
@@ -71,7 +71,7 @@ function BuffPresentationUI.update_animations(arg_5_0, arg_5_1)
 	end
 end
 
-function BuffPresentationUI.draw(arg_6_0, arg_6_1)
+BuffPresentationUI.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.input_manager:get_service("ingame_menu")
@@ -81,7 +81,7 @@ function BuffPresentationUI.draw(arg_6_0, arg_6_1)
 	UIRenderer.end_pass(var_6_0)
 end
 
-function BuffPresentationUI._clear_animations(arg_7_0)
+BuffPresentationUI._clear_animations = function (arg_7_0)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._animations) do
 		arg_7_0.ui_animator:stop_animation(iter_7_1)
 	end
@@ -89,7 +89,7 @@ function BuffPresentationUI._clear_animations(arg_7_0)
 	table.clear(arg_7_0._animations)
 end
 
-function BuffPresentationUI._start_animation(arg_8_0, arg_8_1, arg_8_2)
+BuffPresentationUI._start_animation = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = {
 		wwise_world = arg_8_0.wwise_world
 	}
@@ -98,7 +98,7 @@ function BuffPresentationUI._start_animation(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._animations[arg_8_1] = var_8_1
 end
 
-function BuffPresentationUI._sync_buffs(arg_9_0)
+BuffPresentationUI._sync_buffs = function (arg_9_0)
 	local var_9_0 = Development.parameter("debug_player_buffs")
 	local var_9_1 = Managers.time:time("game")
 	local var_9_2 = Managers.player:local_player(1).player_unit
@@ -165,7 +165,7 @@ function BuffPresentationUI._sync_buffs(arg_9_0)
 	end
 end
 
-function BuffPresentationUI._add_buff(arg_10_0, arg_10_1)
+BuffPresentationUI._add_buff = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._added_buff_presentations
 	local var_10_1 = arg_10_1.template
 	local var_10_2 = var_10_1.name
@@ -179,7 +179,7 @@ function BuffPresentationUI._add_buff(arg_10_0, arg_10_1)
 	arg_10_0._added_buff_presentations[#arg_10_0._added_buff_presentations + 1] = var_10_1
 end
 
-function BuffPresentationUI._remove_buff(arg_11_0, arg_11_1)
+BuffPresentationUI._remove_buff = function (arg_11_0, arg_11_1)
 	local var_11_0
 
 	for iter_11_0, iter_11_1 in ipairs(arg_11_0._added_buff_presentations) do
@@ -195,7 +195,7 @@ function BuffPresentationUI._remove_buff(arg_11_0, arg_11_1)
 	end
 end
 
-function BuffPresentationUI._next_buff(arg_12_0, arg_12_1)
+BuffPresentationUI._next_buff = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._added_buff_presentations
 
 	if not arg_12_0._active_buff_name or arg_12_0._active_buff_name and not arg_12_0._animations.presentation then
@@ -217,7 +217,7 @@ function BuffPresentationUI._next_buff(arg_12_0, arg_12_1)
 	end
 end
 
-function BuffPresentationUI._set_buff_to_present(arg_13_0, arg_13_1)
+BuffPresentationUI._set_buff_to_present = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.presentation_widget
 	local var_13_1 = arg_13_1.icon or "icons_placeholder"
 

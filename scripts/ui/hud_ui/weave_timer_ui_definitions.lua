@@ -120,7 +120,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_id",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.texture_size[1] = var_0_3[1] - arg_2_0.parent.progress * var_0_3[1]
 						arg_2_0.uvs[1][1] = arg_2_0.parent.progress
 						arg_2_0.uvs[2][1] = 1
@@ -131,7 +131,7 @@ local function var_0_8(arg_1_0, arg_1_1)
 					style_id = "progress_bar_tip",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_tip",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						arg_3_1.offset[1] = arg_3_0.parent.progress * var_0_3[1]
 					end
 				},
@@ -145,10 +145,10 @@ local function var_0_8(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					texture_id = "outer_frame_id",
 					style_id = "outer_frame",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.progress > 0.9
 					end,
-					content_change_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 						if arg_5_0.progress >= 0.9 then
 							local var_5_0 = 192 + math.sin(arg_5_0.timer) * 64
 
@@ -440,10 +440,10 @@ local function var_0_9(arg_6_0, arg_6_1)
 					style_id = "background",
 					texture_id = "background_id",
 					pass_type = "texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.progress >= arg_7_0.progress_cutoff
 					end,
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						if arg_8_0.progress >= arg_8_0.progress_cutoff then
 							local var_8_0 = Managers.time:time("game")
 							local var_8_1 = arg_8_0.progress < 1 and math.cos(var_8_0 * math.pi * 2) or 1

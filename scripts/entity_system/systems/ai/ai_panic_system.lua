@@ -9,7 +9,7 @@ local var_0_0 = {
 
 AIPanicSystem = class(AIPanicSystem, ExtensionSystemBase)
 
-function AIPanicSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AIPanicSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_0)
@@ -28,13 +28,13 @@ function AIPanicSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.current_panic_unit_index = 1
 end
 
-function AIPanicSystem.destroy(arg_2_0)
+AIPanicSystem.destroy = function (arg_2_0)
 	return
 end
 
 local var_0_1 = {}
 
-function AIPanicSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AIPanicSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = {}
 
 	ScriptUnit.set_extension(arg_3_2, "ai_panic_system", var_3_0, var_0_1)
@@ -60,7 +60,7 @@ function AIPanicSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	return var_3_0
 end
 
-function AIPanicSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+AIPanicSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.unit_extension_data[arg_4_1]
 
 	if arg_4_2 == "AIPanicExtension" then
@@ -102,11 +102,11 @@ function AIPanicSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 end
 
-function AIPanicSystem.hot_join_sync(arg_5_0, arg_5_1, arg_5_2)
+AIPanicSystem.hot_join_sync = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function AIPanicSystem.activate_fear(arg_6_0, arg_6_1)
+AIPanicSystem.activate_fear = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.unit_extension_data[arg_6_1]
 	local var_6_1 = POSITION_LOOKUP[arg_6_1]
 	local var_6_2 = var_6_0.fear_radius
@@ -115,7 +115,7 @@ function AIPanicSystem.activate_fear(arg_6_0, arg_6_1)
 	var_6_0.active = true
 end
 
-function AIPanicSystem.register_panic_zone(arg_7_0, arg_7_1, arg_7_2)
+AIPanicSystem.register_panic_zone = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = {
 		position = Vector3Box(arg_7_1),
 		radius_squared = arg_7_2 * arg_7_2,
@@ -128,7 +128,7 @@ function AIPanicSystem.register_panic_zone(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_0
 end
 
-function AIPanicSystem.deregister_panic_zone(arg_8_0, arg_8_1)
+AIPanicSystem.deregister_panic_zone = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.panic_zones
 	local var_8_1 = #var_8_0
 
@@ -144,11 +144,11 @@ function AIPanicSystem.deregister_panic_zone(arg_8_0, arg_8_1)
 	assert("trying to deregister_panic_zone which hasnt been registered: %q", deregister_panic_zone)
 end
 
-function AIPanicSystem.set_panic_zone_position(arg_9_0, arg_9_1, arg_9_2)
+AIPanicSystem.set_panic_zone_position = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_1.position:store(arg_9_2)
 end
 
-function AIPanicSystem.inside_panic_zone(arg_10_0, arg_10_1)
+AIPanicSystem.inside_panic_zone = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.panic_zones
 	local var_10_1 = #var_10_0
 
@@ -168,7 +168,7 @@ end
 
 local var_0_2 = 1
 
-function AIPanicSystem.update_fear_units(arg_11_0)
+AIPanicSystem.update_fear_units = function (arg_11_0)
 	local var_11_0 = arg_11_0.fear_units
 	local var_11_1 = #var_11_0
 
@@ -200,7 +200,7 @@ end
 
 local var_0_3 = 1
 
-function AIPanicSystem.update_panic_units(arg_12_0)
+AIPanicSystem.update_panic_units = function (arg_12_0)
 	local var_12_0 = arg_12_0.panic_units
 	local var_12_1 = #var_12_0
 
@@ -222,7 +222,7 @@ function AIPanicSystem.update_panic_units(arg_12_0)
 	arg_12_0.current_panic_unit_index = var_12_3 + 1
 end
 
-function AIPanicSystem.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+AIPanicSystem.update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_0:update_fear_units()
 	arg_13_0:update_panic_units()
 
@@ -231,7 +231,7 @@ function AIPanicSystem.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	end
 end
 
-function AIPanicSystem.debug_draw_panic_zones(arg_14_0)
+AIPanicSystem.debug_draw_panic_zones = function (arg_14_0)
 	local var_14_0 = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "AIPanicSystem"

@@ -13,7 +13,7 @@ local var_0_0 = {
 	empire_soldier = QuaternionBox(255, 220, 20, 60)
 }
 
-function PlayerBot.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+PlayerBot.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
 	arg_1_0.player_name = arg_1_2
 	arg_1_0.bot_profile = PlayerBots[arg_1_3]
 	arg_1_0._profile_index = arg_1_5
@@ -38,53 +38,53 @@ function PlayerBot.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, ar
 	arg_1_0._spawn_state = "despawned"
 end
 
-function PlayerBot.profile_index(arg_2_0)
+PlayerBot.profile_index = function (arg_2_0)
 	return arg_2_0._profile_index
 end
 
-function PlayerBot.career_index(arg_3_0)
+PlayerBot.career_index = function (arg_3_0)
 	return arg_3_0._career_index
 end
 
-function PlayerBot.stats_id(arg_4_0)
+PlayerBot.stats_id = function (arg_4_0)
 	return arg_4_0._unique_id
 end
 
-function PlayerBot.ui_id(arg_5_0)
+PlayerBot.ui_id = function (arg_5_0)
 	return arg_5_0._ui_id
 end
 
-function PlayerBot.local_player_id(arg_6_0)
+PlayerBot.local_player_id = function (arg_6_0)
 	return arg_6_0._local_player_id
 end
 
-function PlayerBot.unique_id(arg_7_0)
+PlayerBot.unique_id = function (arg_7_0)
 	return arg_7_0._unique_id
 end
 
-function PlayerBot.platform_id(arg_8_0)
+PlayerBot.platform_id = function (arg_8_0)
 	ferror("Not implemented")
 end
 
-function PlayerBot.type(arg_9_0)
+PlayerBot.type = function (arg_9_0)
 	return "PlayerBot"
 end
 
-function PlayerBot.is_player_controlled(arg_10_0)
+PlayerBot.is_player_controlled = function (arg_10_0)
 	return false
 end
 
-function PlayerBot.set_player_unit(arg_11_0, arg_11_1)
+PlayerBot.set_player_unit = function (arg_11_0, arg_11_1)
 	arg_11_0.player_unit = arg_11_1
 end
 
-function PlayerBot.profile_display_name(arg_12_0)
+PlayerBot.profile_display_name = function (arg_12_0)
 	local var_12_0 = SPProfiles[arg_12_0._profile_index]
 
 	return var_12_0 and var_12_0.display_name
 end
 
-function PlayerBot.despawn(arg_13_0)
+PlayerBot.despawn = function (arg_13_0)
 	arg_13_0:_set_spawn_state("despawned")
 
 	local var_13_0 = arg_13_0.player_unit
@@ -97,15 +97,15 @@ function PlayerBot.despawn(arg_13_0)
 	end
 end
 
-function PlayerBot.name(arg_14_0)
+PlayerBot.name = function (arg_14_0)
 	return arg_14_0.character_name
 end
 
-function PlayerBot.telemetry_id(arg_15_0)
+PlayerBot.telemetry_id = function (arg_15_0)
 	return arg_15_0._telemetry_id
 end
 
-function PlayerBot.spawn(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12)
+PlayerBot.spawn = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12)
 	local var_16_0 = arg_16_0._profile_index
 	local var_16_1 = SPProfiles[var_16_0]
 	local var_16_2 = arg_16_0:career_index()
@@ -297,7 +297,7 @@ function PlayerBot.spawn(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_1
 	return var_16_32
 end
 
-function PlayerBot.create_game_object(arg_17_0)
+PlayerBot.create_game_object = function (arg_17_0)
 	local var_17_0 = {
 		ping = 0,
 		player_controlled = false,
@@ -313,7 +313,7 @@ function PlayerBot.create_game_object(arg_17_0)
 	arg_17_0:create_sync_data()
 end
 
-function PlayerBot.destroy(arg_18_0)
+PlayerBot.destroy = function (arg_18_0)
 	if arg_18_0.is_server and arg_18_0.game_object_id then
 		Managers.state.network:destroy_game_object(arg_18_0.game_object_id)
 	end

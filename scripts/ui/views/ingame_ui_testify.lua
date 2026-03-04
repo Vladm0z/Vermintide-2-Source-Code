@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/views/ingame_ui_testify.lua
 
 return {
-	transition_with_fade = function(arg_1_0, arg_1_1)
+	transition_with_fade = function (arg_1_0, arg_1_1)
 		arg_1_0:transition_with_fade(arg_1_1.transition, arg_1_1.transition_params)
 	end,
-	wait_for_active_view = function(arg_2_0, arg_2_1)
+	wait_for_active_view = function (arg_2_0, arg_2_1)
 		if arg_2_0.current_view ~= arg_2_1 then
 			return Testify.RETRY
 		end
 	end,
-	versus_select_random_available_hero = function(arg_3_0)
+	versus_select_random_available_hero = function (arg_3_0)
 		fassert(arg_3_0.current_view == "versus_party_char_selection_view", "TODO")
 
 		local var_3_0 = arg_3_0.views[arg_3_0.current_view]

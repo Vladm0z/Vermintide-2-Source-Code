@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/witch_hunter_bless.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pwh_wp_activate_ability",
 		name = "pwh_wp_activate_ability",

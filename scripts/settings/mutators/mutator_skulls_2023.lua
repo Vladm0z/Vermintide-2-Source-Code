@@ -16,7 +16,7 @@ return {
 	dialogue_settings = {
 		"dialogues/generated/npc_dlc_event_skulls"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		local var_1_0 = Managers.state.entity:system("pickup_system")
 		local var_1_1 = {}
 		local var_1_2 = false
@@ -43,7 +43,7 @@ return {
 		arg_1_1.num_skulls_picked = 0
 		arg_1_1.mission_giver_unit = Managers.state.entity:system("surrounding_aware_system"):request_global_listener("inn_keeper", "player")
 
-		function arg_1_1.on_skull_picked_up()
+		arg_1_1.on_skull_picked_up = function ()
 			arg_1_1.num_skulls_picked = arg_1_1.num_skulls_picked + 1
 
 			if arg_1_1.num_skulls_picked >= var_0_1 then
@@ -62,7 +62,7 @@ return {
 
 		Managers.state.event:register(arg_1_1, "register_skulls_2023_pickup", "on_skull_picked_up")
 	end,
-	server_stop_function = function(arg_3_0, arg_3_1)
+	server_stop_function = function (arg_3_0, arg_3_1)
 		if arg_3_1.pickup_units then
 			for iter_3_0 in pairs(arg_3_1.pickup_units) do
 				if Unit.alive(iter_3_0) then

@@ -49,16 +49,16 @@ var_0_4.termite3_collectible_challenge = {
 	name = "achv_termite3_collectible_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_collectibles",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite3_collectible_challenge_desc"), var_0_15)
 	end,
 	events = {
 		"termite3_collectible_challenge"
 	},
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		return arg_2_0:get_persistent_stat(arg_2_1, "termite3_collectible_challenge") >= 1
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		arg_3_0:increment_stat(arg_3_1, "termite3_collectible_challenge")
 	end
 }
@@ -70,10 +70,10 @@ var_0_4.termite3_searchlight_challenge = {
 	events = {
 		"termite3_searchlight_challenge"
 	},
-	completed = function(arg_4_0, arg_4_1, arg_4_2)
+	completed = function (arg_4_0, arg_4_1, arg_4_2)
 		return arg_4_0:get_persistent_stat(arg_4_1, "termite3_searchlight_challenge") >= 1
 	end,
-	on_event = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	on_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		arg_5_0:increment_stat(arg_5_1, "termite3_searchlight_challenge")
 	end
 }
@@ -84,16 +84,16 @@ var_0_4.termite3_generator_challenge = {
 	name = "achv_termite3_generator_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_generator",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite3_generator_challenge_desc"), var_0_16)
 	end,
 	events = {
 		"termite3_generator_challenge"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		return arg_7_0:get_persistent_stat(arg_7_1, "termite3_generator_challenge") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		arg_8_0:increment_stat(arg_8_1, "termite3_generator_challenge")
 	end
 }
@@ -104,16 +104,16 @@ var_0_4.termite3_portal_challenge = {
 	name = "achv_termite3_portal_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_termite3_portal_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite3_portal_challenge_desc"), var_0_17)
 	end,
 	events = {
 		"termite3_portal_challenge"
 	},
-	completed = function(arg_10_0, arg_10_1, arg_10_2)
+	completed = function (arg_10_0, arg_10_1, arg_10_2)
 		return arg_10_0:get_persistent_stat(arg_10_1, "termite3_portal_challenge") >= 1
 	end,
-	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	on_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		arg_11_0:increment_stat(arg_11_1, "termite3_portal_challenge")
 	end
 }

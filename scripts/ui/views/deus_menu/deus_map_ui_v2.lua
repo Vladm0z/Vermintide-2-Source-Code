@@ -8,7 +8,7 @@ local var_0_0 = 1
 local var_0_1 = local_require("scripts/ui/views/deus_menu/deus_map_ui_definitions_v2")
 local var_0_2 = var_0_1.allow_boon_removal
 
-function DeusMapUI.init(arg_1_0, arg_1_1)
+DeusMapUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0._context = arg_1_1
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._render_content = false
@@ -20,7 +20,7 @@ function DeusMapUI.init(arg_1_0, arg_1_1)
 	Managers.state.event:register(arg_1_0, "ingame_player_list_enabled", "event_ingame_player_list_enabled")
 end
 
-function DeusMapUI.event_ingame_player_list_enabled(arg_2_0, arg_2_1, arg_2_2)
+DeusMapUI.event_ingame_player_list_enabled = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._widgets_by_name.console_cursor.content
 
 	if arg_2_1 then
@@ -36,7 +36,7 @@ function DeusMapUI.event_ingame_player_list_enabled(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function DeusMapUI._create_ui_elements(arg_3_0)
+DeusMapUI._create_ui_elements = function (arg_3_0)
 	local var_3_0 = var_0_1.scenegraph_definition
 	local var_3_1 = UISceneGraph.init_scenegraph(var_3_0)
 
@@ -130,19 +130,19 @@ function DeusMapUI._create_ui_elements(arg_3_0)
 	arg_3_0:_update_power_ups()
 end
 
-function DeusMapUI.on_enter(arg_4_0, arg_4_1)
+DeusMapUI.on_enter = function (arg_4_0, arg_4_1)
 	arg_4_0._input_service = arg_4_1
 end
 
-function DeusMapUI.on_exit(arg_5_0)
+DeusMapUI.on_exit = function (arg_5_0)
 	return
 end
 
-function DeusMapUI._play_sound(arg_6_0, arg_6_1)
+DeusMapUI._play_sound = function (arg_6_0, arg_6_1)
 	WwiseWorld.trigger_event(arg_6_0._wwise_world, arg_6_1)
 end
 
-function DeusMapUI.update(arg_7_0, arg_7_1, arg_7_2)
+DeusMapUI.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if RESOLUTION_LOOKUP.modified then
 		arg_7_0:_on_resolution_changed()
 	end
@@ -155,7 +155,7 @@ function DeusMapUI.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-function DeusMapUI._update_input_helper_text(arg_8_0)
+DeusMapUI._update_input_helper_text = function (arg_8_0)
 	local var_8_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 	local var_8_1 = arg_8_0._widgets_by_name
 	local var_8_2 = var_8_1.portrait_input_helper_text
@@ -169,7 +169,7 @@ function DeusMapUI._update_input_helper_text(arg_8_0)
 	var_8_4.content.visible = arg_8_0._portrait_mode
 end
 
-function DeusMapUI._handle_owned_power_up_input(arg_9_0, arg_9_1, arg_9_2)
+DeusMapUI._handle_owned_power_up_input = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._ui_scenegraph
 	local var_9_1 = arg_9_0._input_service
 	local var_9_2 = arg_9_0._power_up_widgets
@@ -281,7 +281,7 @@ function DeusMapUI._handle_owned_power_up_input(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._current_power_up_name = var_9_4
 end
 
-function DeusMapUI._populate_power_up(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+DeusMapUI._populate_power_up = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if not arg_10_1 then
 		arg_10_3.content.visible = false
 
@@ -343,7 +343,7 @@ end
 
 local var_0_3 = {}
 
-function DeusMapUI._update_power_ups(arg_11_0)
+DeusMapUI._update_power_ups = function (arg_11_0)
 	local var_11_0 = arg_11_0._deus_run_controller
 	local var_11_1 = var_11_0:get_own_peer_id()
 	local var_11_2, var_11_3 = var_11_0:get_player_profile(var_11_1, var_0_0)
@@ -375,7 +375,7 @@ function DeusMapUI._update_power_ups(arg_11_0)
 
 				local var_11_15 = RaritySettings
 
-				table.sort(var_11_8, function(arg_12_0, arg_12_1)
+				table.sort(var_11_8, function (arg_12_0, arg_12_1)
 					local var_12_0 = var_11_15[arg_12_0.rarity].order
 					local var_12_1 = var_11_15[arg_12_1.rarity].order
 
@@ -461,7 +461,7 @@ function DeusMapUI._update_power_ups(arg_11_0)
 	end
 end
 
-function DeusMapUI._handle_mode_input(arg_13_0, arg_13_1, arg_13_2)
+DeusMapUI._handle_mode_input = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._input_service:get("cycle_next_raw") then
 		if not arg_13_0._ui_animator:is_animation_completed(arg_13_0._anim_id) then
 			arg_13_0._ui_animator:stop_animation(arg_13_0._anim_id)
@@ -472,7 +472,7 @@ function DeusMapUI._handle_mode_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function DeusMapUI._update_animations(arg_14_0, arg_14_1, arg_14_2)
+DeusMapUI._update_animations = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._ui_animator:update(arg_14_1)
 
 	local var_14_0 = arg_14_0._anim_data
@@ -501,7 +501,7 @@ function DeusMapUI._update_animations(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function DeusMapUI._draw(arg_15_0, arg_15_1, arg_15_2)
+DeusMapUI._draw = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._input_service
 	local var_15_1 = arg_15_0._ui_renderer
 	local var_15_2 = arg_15_0._ui_scenegraph
@@ -531,7 +531,7 @@ function DeusMapUI._draw(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function DeusMapUI._draw_boons(arg_16_0, arg_16_1, arg_16_2)
+DeusMapUI._draw_boons = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._ui_scenegraph
 	local var_16_1 = arg_16_0._ui_renderer
 	local var_16_2 = "own_power_up_anchor"
@@ -560,7 +560,7 @@ function DeusMapUI._draw_boons(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function DeusMapUI.enable_hover_text(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13)
+DeusMapUI.enable_hover_text = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13)
 	local var_17_0 = UIInverseScaleVectorToResolution(arg_17_1)
 	local var_17_1 = arg_17_0._ui_scenegraph.node_info_pivot.position
 
@@ -641,7 +641,7 @@ function DeusMapUI.enable_hover_text(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg
 	var_17_3.frame_settings_name = arg_17_10 and "menu_frame_12_gold" or "menu_frame_12"
 end
 
-function DeusMapUI._update_portrait_frame(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+DeusMapUI._update_portrait_frame = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = UIWidgets.deus_create_player_portraits_frame("player_" .. arg_18_3 .. "_portrait", arg_18_1, arg_18_2, false)
 	local var_18_1 = UIWidget.init(var_18_0)
 
@@ -649,7 +649,7 @@ function DeusMapUI._update_portrait_frame(arg_18_0, arg_18_1, arg_18_2, arg_18_3
 	arg_18_0._widgets_by_name["player_portrait_frame_" .. arg_18_3] = var_18_1
 end
 
-function DeusMapUI._update_insignia(arg_19_0, arg_19_1, arg_19_2)
+DeusMapUI._update_insignia = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = UIWidgets.create_small_insignia("player_" .. arg_19_2 .. "_insignia", arg_19_1)
 	local var_19_1 = UIWidget.init(var_19_0)
 
@@ -657,7 +657,7 @@ function DeusMapUI._update_insignia(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._widgets_by_name["player_insignia_" .. arg_19_2] = var_19_1
 end
 
-function DeusMapUI.update_player_data(arg_20_0, arg_20_1)
+DeusMapUI.update_player_data = function (arg_20_0, arg_20_1)
 	arg_20_0._player_data = arg_20_1
 
 	local var_20_0 = arg_20_0._widgets_by_name
@@ -726,18 +726,18 @@ function DeusMapUI.update_player_data(arg_20_0, arg_20_1)
 	end
 end
 
-function DeusMapUI.set_journey_name(arg_21_0, arg_21_1)
+DeusMapUI.set_journey_name = function (arg_21_0, arg_21_1)
 	arg_21_0._widgets_by_name.top_info.content.journey_name_label = arg_21_1 .. "_name"
 end
 
-function DeusMapUI.set_general_info(arg_22_0, arg_22_1, arg_22_2)
+DeusMapUI.set_general_info = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._widgets_by_name.general_info
 
 	var_22_0.content.title = arg_22_1
 	var_22_0.content.description = arg_22_2
 end
 
-function DeusMapUI._on_resolution_changed(arg_23_0)
+DeusMapUI._on_resolution_changed = function (arg_23_0)
 	local var_23_0 = arg_23_0._player_data
 
 	if var_23_0 then
@@ -745,7 +745,7 @@ function DeusMapUI._on_resolution_changed(arg_23_0)
 	end
 end
 
-function DeusMapUI.update_timer(arg_24_0, arg_24_1, arg_24_2)
+DeusMapUI.update_timer = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._widgets_by_name.general_info
 
 	if arg_24_2 then
@@ -757,39 +757,39 @@ function DeusMapUI.update_timer(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function DeusMapUI.hide_timer(arg_25_0)
+DeusMapUI.hide_timer = function (arg_25_0)
 	arg_25_0._widgets_by_name.general_info.content.time = ""
 end
 
-function DeusMapUI.disable_hover_text(arg_26_0)
+DeusMapUI.disable_hover_text = function (arg_26_0)
 	arg_26_0._widgets_by_name.node_info.content.visible = false
 end
 
-function DeusMapUI.set_alpha_multiplier(arg_27_0, arg_27_1)
+DeusMapUI.set_alpha_multiplier = function (arg_27_0, arg_27_1)
 	arg_27_0._anim_data.alpha_multiplier = arg_27_1
 end
 
-function DeusMapUI.show_full_screen_rect(arg_28_0)
+DeusMapUI.show_full_screen_rect = function (arg_28_0)
 	return arg_28_0:set_full_screen_rect_visibility(true)
 end
 
-function DeusMapUI.hide_full_screen_rect(arg_29_0)
+DeusMapUI.hide_full_screen_rect = function (arg_29_0)
 	return arg_29_0:set_full_screen_rect_visibility(false)
 end
 
-function DeusMapUI.set_full_screen_rect_visibility(arg_30_0, arg_30_1)
+DeusMapUI.set_full_screen_rect_visibility = function (arg_30_0, arg_30_1)
 	arg_30_0._render_full_screen_rect = arg_30_1
 end
 
-function DeusMapUI.show_content(arg_31_0)
+DeusMapUI.show_content = function (arg_31_0)
 	arg_31_0:_set_content_visibility(true)
 end
 
-function DeusMapUI.hide_content(arg_32_0)
+DeusMapUI.hide_content = function (arg_32_0)
 	arg_32_0:_set_content_visibility(false)
 end
 
-function DeusMapUI._set_content_visibility(arg_33_0, arg_33_1)
+DeusMapUI._set_content_visibility = function (arg_33_0, arg_33_1)
 	arg_33_0._render_content = arg_33_1
 
 	local var_33_0 = arg_33_0._ui_renderer
@@ -799,7 +799,7 @@ function DeusMapUI._set_content_visibility(arg_33_0, arg_33_1)
 	end
 end
 
-function DeusMapUI.fade_out(arg_34_0, arg_34_1)
+DeusMapUI.fade_out = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._anim_data
 
 	var_34_0.source_alpha_multiplier = var_34_0.alpha_multiplier
@@ -809,7 +809,7 @@ function DeusMapUI.fade_out(arg_34_0, arg_34_1)
 	var_34_0.alpha_multiplier_animation_end_time = nil
 end
 
-function DeusMapUI.fade_in(arg_35_0, arg_35_1)
+DeusMapUI.fade_in = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._anim_data
 
 	var_35_0.source_alpha_multiplier = var_35_0.alpha_multiplier
@@ -819,6 +819,6 @@ function DeusMapUI.fade_in(arg_35_0, arg_35_1)
 	var_35_0.alpha_multiplier_animation_end_time = nil
 end
 
-function DeusMapUI.destroy(arg_36_0)
+DeusMapUI.destroy = function (arg_36_0)
 	Managers.state.event:unregister("ingame_player_list_enabled", arg_36_0)
 end

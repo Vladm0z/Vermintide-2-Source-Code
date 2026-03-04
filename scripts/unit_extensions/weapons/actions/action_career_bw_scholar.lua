@@ -2,7 +2,7 @@
 
 ActionCareerBWScholar = class(ActionCareerBWScholar, ActionTrueFlightBow)
 
-function ActionCareerBWScholar.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWScholar.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerBWScholar.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -11,7 +11,7 @@ function ActionCareerBWScholar.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4,
 	arg_1_0.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
 end
 
-function ActionCareerBWScholar.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerBWScholar.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCareerBWScholar.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	local var_2_0 = arg_2_0.talent_extension
@@ -47,11 +47,11 @@ function ActionCareerBWScholar.client_owner_start_action(arg_2_0, arg_2_1, arg_2
 	arg_2_0.inventory_extension:check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerBWScholar.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerBWScholar.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	ActionCareerBWScholar.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
-function ActionCareerBWScholar.finish(arg_4_0, arg_4_1)
+ActionCareerBWScholar.finish = function (arg_4_0, arg_4_1)
 	if arg_4_0.state == "waiting_to_shoot" then
 		arg_4_0:fire(arg_4_0.current_action, false)
 
@@ -64,7 +64,7 @@ function ActionCareerBWScholar.finish(arg_4_0, arg_4_1)
 	arg_4_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerBWScholar._play_vo(arg_5_0)
+ActionCareerBWScholar._play_vo = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
 	local var_5_2 = FrameTable.alloc_table()

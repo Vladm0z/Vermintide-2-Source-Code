@@ -33,11 +33,11 @@ local var_0_27 = stingray.GwNavGraph
 local var_0_28 = stingray.GwNavTraversal
 local var_0_29 = {}
 
-function var_0_1.get_navbot(arg_1_0)
+var_0_1.get_navbot = function (arg_1_0)
 	return var_0_29[arg_1_0]
 end
 
-function var_0_1.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_1.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0.navworld = arg_2_1
 	arg_2_0.unit = arg_2_2
 	arg_2_0.config = arg_2_3
@@ -64,23 +64,23 @@ function var_0_1.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_1:add_bot(arg_2_0)
 end
 
-function var_0_1.set_use_avoidance(arg_3_0, arg_3_1)
+var_0_1.set_use_avoidance = function (arg_3_0, arg_3_1)
 	var_0_19.set_use_avoidance(arg_3_0.gwnavbot, arg_3_1)
 end
 
-function var_0_1.set_navtag_layer_cost_table(arg_4_0, arg_4_1)
+var_0_1.set_navtag_layer_cost_table = function (arg_4_0, arg_4_1)
 	var_0_19.set_navtag_layer_cost_table(arg_4_0.gwnavbot, arg_4_1)
 end
 
-function var_0_1.set_use_channel(arg_5_0, arg_5_1)
+var_0_1.set_use_channel = function (arg_5_0, arg_5_1)
 	var_0_19.set_use_channel(arg_5_0.gwnavbot, arg_5_1)
 end
 
-function var_0_1.get_target_group(arg_6_0)
+var_0_1.get_target_group = function (arg_6_0)
 	return arg_6_0.config.target_group
 end
 
-function var_0_1.set_destination(arg_7_0, arg_7_1)
+var_0_1.set_destination = function (arg_7_0, arg_7_1)
 	if arg_7_1 == arg_7_0.destination:unbox() then
 		arg_7_0:on_recompute_path_to_similar_destination_for_crowd_dispersion()
 	else
@@ -93,15 +93,15 @@ function var_0_1.set_destination(arg_7_0, arg_7_1)
 	arg_7_0.has_destination = true
 end
 
-function var_0_1.set_route(arg_8_0, arg_8_1)
+var_0_1.set_route = function (arg_8_0, arg_8_1)
 	arg_8_0.route = arg_8_1
 end
 
-function var_0_1.velocity(arg_9_0)
+var_0_1.velocity = function (arg_9_0)
 	return var_0_19.velocity(arg_9_0.gwnavbot)
 end
 
-function var_0_1.output_velocity(arg_10_0)
+var_0_1.output_velocity = function (arg_10_0)
 	if not arg_10_0:has_arrived() then
 		return var_0_19.output_velocity(arg_10_0.gwnavbot)
 	else
@@ -109,7 +109,7 @@ function var_0_1.output_velocity(arg_10_0)
 	end
 end
 
-function var_0_1.set_layer_cost_multiplier(arg_11_0, arg_11_1, arg_11_2)
+var_0_1.set_layer_cost_multiplier = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = var_0_19.navtag_layer_cost_table(arg_11_0.gwnavbot)
 
 	if var_11_0 ~= nil then
@@ -117,7 +117,7 @@ function var_0_1.set_layer_cost_multiplier(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function var_0_1.allow_layer(arg_12_0, arg_12_1)
+var_0_1.allow_layer = function (arg_12_0, arg_12_1)
 	local var_12_0 = var_0_19.navtag_layer_cost_table(arg_12_0.gwnavbot)
 
 	if var_12_0 ~= nil then
@@ -125,7 +125,7 @@ function var_0_1.allow_layer(arg_12_0, arg_12_1)
 	end
 end
 
-function var_0_1.forbid_layer(arg_13_0, arg_13_1)
+var_0_1.forbid_layer = function (arg_13_0, arg_13_1)
 	local var_13_0 = var_0_19.navtag_layer_cost_table(arg_13_0.gwnavbot)
 
 	if var_13_0 ~= nil then
@@ -133,53 +133,53 @@ function var_0_1.forbid_layer(arg_13_0, arg_13_1)
 	end
 end
 
-function var_0_1.repath(arg_14_0)
+var_0_1.repath = function (arg_14_0)
 	arg_14_0:set_destination(arg_14_0.route[arg_14_0.target_route_vertex + 1]:unbox())
 end
 
-function var_0_1.force_repath(arg_15_0)
+var_0_1.force_repath = function (arg_15_0)
 	if arg_15_0.has_destination == true and arg_15_0.is_smartobject_driven == false then
 		arg_15_0:repath()
 	end
 end
 
-function var_0_1.set_avoidance_computer_config(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+var_0_1.set_avoidance_computer_config = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	var_0_19.set_avoidance_computer_configuration(arg_16_0.gwnavbot, arg_16_1, arg_16_2, arg_16_3)
 end
 
-function var_0_1.set_avoidance_collider_collector_config(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+var_0_1.set_avoidance_collider_collector_config = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	var_0_19.set_avoidance_collider_collector_configuration(arg_17_0.gwnavbot, arg_17_1, arg_17_2, arg_17_3)
 end
 
-function var_0_1.set_avoidance_behavior(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+var_0_1.set_avoidance_behavior = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 	var_0_19.set_avoidance_behavior(arg_18_0.gwnavbot, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 end
 
-function var_0_1.set_channel_config(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+var_0_1.set_channel_config = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	var_0_19.set_channel_computer_configuration(arg_19_0.gwnavbot, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 end
 
-function var_0_1.set_spline_trajectory_config(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+var_0_1.set_spline_trajectory_config = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	var_0_19.set_spline_trajectory_configuration(arg_20_0.gwnavbot, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 end
 
-function var_0_1.set_propagation_box(arg_21_0, arg_21_1)
+var_0_1.set_propagation_box = function (arg_21_0, arg_21_1)
 	var_0_19.set_propagation_box(arg_21_0.gwnavbot, arg_21_1)
 end
 
-function var_0_1.set_outside_navmesh_distance(arg_22_0, arg_22_1, arg_22_2)
+var_0_1.set_outside_navmesh_distance = function (arg_22_0, arg_22_1, arg_22_2)
 	var_0_19.set_outside_navmesh_distance(arg_22_0.gwnavbot, arg_22_1, arg_22_2)
 end
 
-function var_0_1.visual_debug_draw_line(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+var_0_1.visual_debug_draw_line = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 	return
 end
 
-function var_0_1.get_remaining_distance_from_progress_to_end_of_path(arg_24_0)
+var_0_1.get_remaining_distance_from_progress_to_end_of_path = function (arg_24_0)
 	return var_0_19.get_remaining_distance_from_progress_to_end_of_path(arg_24_0.gwnavbot)
 end
 
-function var_0_1.shutdown(arg_25_0)
+var_0_1.shutdown = function (arg_25_0)
 	arg_25_0.navworld:remove_bot(arg_25_0)
 	var_0_20.destroy(arg_25_0.interval)
 	var_0_19.destroy(arg_25_0.gwnavbot)
@@ -191,7 +191,7 @@ function var_0_1.shutdown(arg_25_0)
 	var_0_29[arg_25_0.unit] = nil
 end
 
-function var_0_1.update_crowd_dispersion(arg_26_0)
+var_0_1.update_crowd_dispersion = function (arg_26_0)
 	local var_26_0 = var_0_19.update_logic_for_crowd_dispersion(arg_26_0.gwnavbot)
 
 	if var_26_0 == 1 then
@@ -204,19 +204,19 @@ function var_0_1.update_crowd_dispersion(arg_26_0)
 	end
 end
 
-function var_0_1.on_recompute_path_to_similar_destination_for_crowd_dispersion(arg_27_0)
+var_0_1.on_recompute_path_to_similar_destination_for_crowd_dispersion = function (arg_27_0)
 	var_0_19.on_recompute_path_to_similar_destination_for_crowd_dispersion(arg_27_0.gwnavbot)
 end
 
-function var_0_1.on_compute_path_to_brand_new_destination_for_crowd_dispersion(arg_28_0)
+var_0_1.on_compute_path_to_brand_new_destination_for_crowd_dispersion = function (arg_28_0)
 	var_0_19.on_compute_path_to_brand_new_destination_for_crowd_dispersion(arg_28_0.gwnavbot)
 end
 
-function var_0_1.next_route_index(arg_29_0)
+var_0_1.next_route_index = function (arg_29_0)
 	arg_29_0.target_route_vertex = math.max((arg_29_0.target_route_vertex + 1) % (table.getn(arg_29_0.route) + 1), 1)
 end
 
-function var_0_1.update_route(arg_30_0)
+var_0_1.update_route = function (arg_30_0)
 	local var_30_0 = table.getn(arg_30_0.route)
 
 	if var_30_0 == 0 then
@@ -243,11 +243,11 @@ function var_0_1.update_route(arg_30_0)
 	end
 end
 
-function var_0_1.has_arrived(arg_31_0)
+var_0_1.has_arrived = function (arg_31_0)
 	return var_0_4.distance(arg_31_0:get_position(), arg_31_0.destination:unbox()) < arg_31_0.arrival_distance
 end
 
-function var_0_1.visual_debug_next_smartobject(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+var_0_1.visual_debug_next_smartobject = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	arg_32_0:visual_debug_draw_line("next_smart_object", "stingray", arg_32_1, arg_32_3, var_0_14(0, 255, 0, 0), true)
 
 	if arg_32_2 == true then
@@ -263,7 +263,7 @@ function var_0_1.visual_debug_next_smartobject(arg_32_0, arg_32_1, arg_32_2, arg
 	end
 end
 
-function var_0_1.update_next_smartobject(arg_33_0)
+var_0_1.update_next_smartobject = function (arg_33_0)
 	if var_0_19.current_or_next_smartobject_interval(arg_33_0.gwnavbot, arg_33_0.interval, arg_33_0.next_smartobject_max_distance) == false then
 		return
 	end
@@ -275,7 +275,7 @@ function var_0_1.update_next_smartobject(arg_33_0)
 	arg_33_0.follower:handle_next_smartobject(arg_33_0:get_position(), arg_33_0.interval, var_33_0, var_33_1, var_33_2, var_33_3)
 end
 
-function var_0_1.verbose_smartobject_management(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
+var_0_1.verbose_smartobject_management = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6)
 	if arg_34_3 == true then
 		local var_34_0 = arg_34_0.follower:get_smartobject_type(arg_34_2)
 
@@ -295,7 +295,7 @@ function var_0_1.verbose_smartobject_management(arg_34_0, arg_34_1, arg_34_2, ar
 	end
 end
 
-function var_0_1.update(arg_35_0, arg_35_1)
+var_0_1.update = function (arg_35_0, arg_35_1)
 	arg_35_0:update_next_smartobject()
 	arg_35_0:update_crowd_dispersion()
 	arg_35_0:update_route()
@@ -315,11 +315,11 @@ function var_0_1.update(arg_35_0, arg_35_1)
 	var_0_19.update_position(arg_35_0.gwnavbot, arg_35_0:get_position(), arg_35_1)
 end
 
-function var_0_1.get_position(arg_36_0)
+var_0_1.get_position = function (arg_36_0)
 	return var_0_12.local_position(arg_36_0.unit, 1)
 end
 
-function var_0_1.debug_draw(arg_37_0, arg_37_1)
+var_0_1.debug_draw = function (arg_37_0, arg_37_1)
 	if arg_37_1 == nil then
 		return
 	end
@@ -332,7 +332,7 @@ function var_0_1.debug_draw(arg_37_0, arg_37_1)
 	var_0_15.add_line(arg_37_1, var_0_14(255, 255, 0, 0), var_37_1, var_37_1 + var_0_6.z(var_37_0))
 end
 
-function var_0_1.compute_height_on_navmesh(arg_38_0, arg_38_1)
+var_0_1.compute_height_on_navmesh = function (arg_38_0, arg_38_1)
 	local var_38_0, var_38_1, var_38_2, var_38_3 = var_0_21.triangle_from_position(arg_38_0.navworld.gwnavworld, arg_38_1)
 
 	if var_38_0 ~= nil then
@@ -342,7 +342,7 @@ function var_0_1.compute_height_on_navmesh(arg_38_0, arg_38_1)
 	return arg_38_1
 end
 
-function var_0_1.update_pose(arg_39_0, arg_39_1, arg_39_2)
+var_0_1.update_pose = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = var_0_12.local_pose(arg_39_0.unit, 1)
 
 	if var_0_4.length(arg_39_1) ~= 0 then
@@ -354,7 +354,7 @@ function var_0_1.update_pose(arg_39_0, arg_39_1, arg_39_2)
 	var_0_12.set_local_pose(arg_39_0.unit, 1, var_39_0)
 end
 
-function var_0_1.move_unit(arg_40_0, arg_40_1)
+var_0_1.move_unit = function (arg_40_0, arg_40_1)
 	if arg_40_0.is_smartobject_driven == false then
 		local var_40_0 = var_0_19.output_velocity(arg_40_0.gwnavbot)
 
@@ -366,7 +366,7 @@ function var_0_1.move_unit(arg_40_0, arg_40_1)
 	var_0_19.update_position(arg_40_0.gwnavbot, arg_40_0:get_position(), arg_40_1)
 end
 
-function var_0_1.animation_wanted_delta(arg_41_0)
+var_0_1.animation_wanted_delta = function (arg_41_0)
 	if var_0_12.has_animation_state_machine(arg_41_0.unit) and var_0_12.animation_root_mode(arg_41_0.unit) == "ignore" then
 		return var_0_4.length(var_0_6.translation(var_0_12.animation_wanted_root_pose(arg_41_0.unit)) - var_0_12.local_position(arg_41_0.unit, 1))
 	end
@@ -374,7 +374,7 @@ function var_0_1.animation_wanted_delta(arg_41_0)
 	return nil
 end
 
-function var_0_1.move_unit_with_mover(arg_42_0, arg_42_1, arg_42_2)
+var_0_1.move_unit_with_mover = function (arg_42_0, arg_42_1, arg_42_2)
 	if arg_42_0.is_smartobject_driven == false then
 		local var_42_0 = var_0_12.mover(arg_42_0.unit)
 

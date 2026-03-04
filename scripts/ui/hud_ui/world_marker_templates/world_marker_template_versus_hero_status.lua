@@ -30,7 +30,7 @@ var_0_1.screen_margins = {
 	right = 150
 }
 
-function var_0_1.create_widget_definition(arg_2_0)
+var_0_1.create_widget_definition = function (arg_2_0)
 	local var_2_0 = {
 		80,
 		10
@@ -63,7 +63,7 @@ function var_0_1.create_widget_definition(arg_2_0)
 					pass_type = "rect",
 					style_id = "streak_health_bar",
 					texture_id = "rect",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.streak_damage_percent > 0
 					end
 				},
@@ -257,11 +257,11 @@ function var_0_1.create_widget_definition(arg_2_0)
 	}
 end
 
-function var_0_1.on_enter(arg_4_0)
+var_0_1.on_enter = function (arg_4_0)
 	arg_4_0.content.spawn_progress_timer = 0
 end
 
-function var_0_1.update_function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+var_0_1.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_2.unit
 
 	if not Unit.alive(var_5_0) then
@@ -376,7 +376,7 @@ function var_0_1.update_function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, ar
 	return not var_5_9
 end
 
-function var_0_1.check_widget_visible(arg_6_0, arg_6_1, arg_6_2)
+var_0_1.check_widget_visible = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0.style.frame.texture_size
 
 	if arg_6_2 and arg_6_2 > var_6_0[1] * 0.5 then

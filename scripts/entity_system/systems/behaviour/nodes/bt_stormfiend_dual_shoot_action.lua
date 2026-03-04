@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormfiendDualShootAction = class(BTStormfiendDualShootAction, BTNode)
 
-function BTStormfiendDualShootAction.init(arg_1_0, ...)
+BTStormfiendDualShootAction.init = function (arg_1_0, ...)
 	BTStormfiendDualShootAction.super.init(arg_1_0, ...)
 end
 
@@ -14,7 +14,7 @@ local var_0_0 = 0.4
 local var_0_1 = 10
 local var_0_2 = Unit.alive
 
-function BTStormfiendDualShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTStormfiendDualShootAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.world
 
@@ -45,7 +45,7 @@ function BTStormfiendDualShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	AiUtils.add_attack_intensity(var_2_2, var_2_0, arg_2_2)
 end
 
-function BTStormfiendDualShootAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTStormfiendDualShootAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 
 	arg_3_2.action = nil
@@ -63,7 +63,7 @@ function BTStormfiendDualShootAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	arg_3_2.shoot_sfx_id = nil
 end
 
-function BTStormfiendDualShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTStormfiendDualShootAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.attack_aborted or not var_0_2(arg_4_2.target_unit) then
 		return "failed"
 	end
@@ -85,7 +85,7 @@ function BTStormfiendDualShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg
 		local var_4_3 = arg_4_2.weapon_setup
 
 		if arg_4_3 < var_4_2.start_firing_t then
-			-- block empty
+			-- Nothing
 		elseif not var_4_2.firing_initiated then
 			arg_4_0:initiate_firing(arg_4_2, arg_4_3)
 		elseif arg_4_3 < var_4_2.stop_firing_t then
@@ -127,7 +127,7 @@ function BTStormfiendDualShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg
 	end
 end
 
-function BTStormfiendDualShootAction.create_firewall(arg_5_0, arg_5_1, arg_5_2)
+BTStormfiendDualShootAction.create_firewall = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.firewall_start_position:unbox()
 	local var_5_1 = arg_5_2.direction:unbox()
 	local var_5_2 = {
@@ -143,7 +143,7 @@ function BTStormfiendDualShootAction.create_firewall(arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.extension(var_5_4, "area_damage_system"):ready()
 end
 
-function BTStormfiendDualShootAction.shoot_hit_check(arg_6_0, arg_6_1, arg_6_2)
+BTStormfiendDualShootAction.shoot_hit_check = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = arg_6_2.shoot_data
 	local var_6_2 = var_6_1.attack_arm
@@ -198,7 +198,7 @@ function BTStormfiendDualShootAction.shoot_hit_check(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function BTStormfiendDualShootAction._stop_beam_sfx(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTStormfiendDualShootAction._stop_beam_sfx = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = arg_7_3.attack_arm
 	local var_7_2 = var_7_0.muzzle_nodes[var_7_1]
@@ -207,7 +207,7 @@ function BTStormfiendDualShootAction._stop_beam_sfx(arg_7_0, arg_7_1, arg_7_2, a
 	Managers.state.entity:system("audio_system"):play_audio_unit_event(var_7_3, arg_7_1, var_7_2)
 end
 
-function BTStormfiendDualShootAction._fire_from_position_direction(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTStormfiendDualShootAction._fire_from_position_direction = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_2.action
 	local var_8_1 = Unit.node(arg_8_1, arg_8_5)
 	local var_8_2 = Unit.world_position(arg_8_1, var_8_1)
@@ -227,7 +227,7 @@ function BTStormfiendDualShootAction._fire_from_position_direction(arg_8_0, arg_
 	return var_8_2 - Vector3.normalize(var_8_7) * 1.25, var_8_7
 end
 
-function BTStormfiendDualShootAction._update_ratling_gun(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTStormfiendDualShootAction._update_ratling_gun = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_2.shoot_data
 	local var_9_1 = arg_9_3 - var_9_0.start_firing_t
 	local var_9_2 = math.clamp(var_9_1 / var_9_0.firing_duration * var_9_0.max_fire_rate_at_percentage_modifier, 0, 1)
@@ -251,7 +251,7 @@ end
 
 local var_0_3 = math.pi * 2
 
-function BTStormfiendDualShootAction._shoot_ratling_gun(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTStormfiendDualShootAction._shoot_ratling_gun = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_2.action
 	local var_10_1 = arg_10_2.shoot_data
 	local var_10_2 = var_10_0.light_weight_projectile_template_name
@@ -281,7 +281,7 @@ function BTStormfiendDualShootAction._shoot_ratling_gun(arg_10_0, arg_10_1, arg_
 	var_10_17:create_light_weight_projectile(arg_10_2.breed.name, arg_10_1, var_10_4, var_10_12, var_10_3.projectile_speed, nil, nil, var_10_3.projectile_max_range, var_10_13, var_10_16, var_10_3.light_weight_projectile_effect, var_10_18)
 end
 
-function BTStormfiendDualShootAction.initiate_firing(arg_11_0, arg_11_1, arg_11_2)
+BTStormfiendDualShootAction.initiate_firing = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_1.action
 	local var_11_1 = arg_11_1.shoot_data
 

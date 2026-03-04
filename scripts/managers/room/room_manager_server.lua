@@ -4,17 +4,17 @@ require("scripts/managers/room/room_handler")
 
 RoomManagerServer = class(RoomManagerServer)
 
-function RoomManagerServer.init(arg_1_0, arg_1_1)
+RoomManagerServer.init = function (arg_1_0, arg_1_1)
 	arg_1_0._peer_rooms = {}
 	arg_1_0._room_order = {}
 	arg_1_0._room_handler = RoomHandler:new(arg_1_1)
 end
 
-function RoomManagerServer.setup_level_anchor_points(arg_2_0, arg_2_1)
+RoomManagerServer.setup_level_anchor_points = function (arg_2_0, arg_2_1)
 	arg_2_0._room_handler:setup_level_anchor_points(arg_2_1)
 end
 
-function RoomManagerServer.create_room(arg_3_0, arg_3_1, arg_3_2)
+RoomManagerServer.create_room = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.state.spawn._profile_synchronizer:profile_by_peer(arg_3_1, arg_3_2)
 	local var_3_1 = SPProfiles[var_3_0].room_profile
 	local var_3_2 = arg_3_0._room_handler:create_room(var_3_1)
@@ -28,15 +28,15 @@ function RoomManagerServer.create_room(arg_3_0, arg_3_1, arg_3_2)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_inn_room_created", arg_3_1, var_3_2, var_3_0)
 end
 
-function RoomManagerServer.get_spawn_point_by_peer(arg_4_0, arg_4_1)
+RoomManagerServer.get_spawn_point_by_peer = function (arg_4_0, arg_4_1)
 	return arg_4_0._peer_rooms[arg_4_1].room_id
 end
 
-function RoomManagerServer.has_room(arg_5_0, arg_5_1)
+RoomManagerServer.has_room = function (arg_5_0, arg_5_1)
 	return arg_5_0._peer_rooms[arg_5_1] and true or false
 end
 
-function RoomManagerServer.destroy_room(arg_6_0, arg_6_1, arg_6_2)
+RoomManagerServer.destroy_room = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._peer_rooms[arg_6_1].room_id
 
 	if arg_6_2 and arg_6_2 == true or arg_6_2 == nil then
@@ -51,7 +51,7 @@ function RoomManagerServer.destroy_room(arg_6_0, arg_6_1, arg_6_2)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_inn_room_destroyed", arg_6_1)
 end
 
-function RoomManagerServer.move_players_from_room(arg_7_0, arg_7_1)
+RoomManagerServer.move_players_from_room = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._room_handler:room_from_id(arg_7_1).level
 	local var_7_1 = Managers.state.network
 	local var_7_2 = Managers.state.spawn.spawn_points
@@ -92,7 +92,7 @@ function RoomManagerServer.move_players_from_room(arg_7_0, arg_7_1)
 	end
 end
 
-function RoomManagerServer.hot_join_sync(arg_8_0, arg_8_1)
+RoomManagerServer.hot_join_sync = function (arg_8_0, arg_8_1)
 	local var_8_0 = PEER_ID_TO_CHANNEL[arg_8_1]
 
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._peer_rooms) do
@@ -103,7 +103,7 @@ function RoomManagerServer.hot_join_sync(arg_8_0, arg_8_1)
 	end
 end
 
-function RoomManagerServer.destroy(arg_9_0)
+RoomManagerServer.destroy = function (arg_9_0)
 	arg_9_0._room_handler:destroy()
 
 	arg_9_0._room_handler = nil

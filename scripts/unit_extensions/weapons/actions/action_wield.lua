@@ -2,7 +2,7 @@
 
 ActionWield = class(ActionWield, ActionBase)
 
-function ActionWield.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionWield.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionWield.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.input_extension = ScriptUnit.extension(arg_1_4, "input_system")
@@ -10,7 +10,7 @@ function ActionWield.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, 
 	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-function ActionWield.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ActionWield.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	ActionWield.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 	local var_2_0 = arg_2_0.inventory_extension
@@ -49,11 +49,11 @@ function ActionWield.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	var_2_0:wield(arg_2_0.new_slot)
 end
 
-function ActionWield.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionWield.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return
 end
 
-function ActionWield.finish(arg_4_0, arg_4_1)
+ActionWield.finish = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.status_extension
 
 	if var_4_0:is_zooming() then

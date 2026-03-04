@@ -2,11 +2,11 @@
 
 require("foundation/scripts/util/class")
 
-function table.is_empty(arg_1_0)
+table.is_empty = function (arg_1_0)
 	return next(arg_1_0) == nil
 end
 
-function table.size(arg_2_0)
+table.size = function (arg_2_0)
 	local var_2_0 = 0
 
 	for iter_2_0 in pairs(arg_2_0) do
@@ -17,18 +17,18 @@ function table.size(arg_2_0)
 end
 
 if pcall(require, "table.new") then
-	function Script.new_array(arg_3_0)
+	Script.new_array = function (arg_3_0)
 		return table.new(arg_3_0, 0)
 	end
 
-	function Script.new_map(arg_4_0)
+	Script.new_map = function (arg_4_0)
 		return table.new(0, arg_4_0)
 	end
 
 	Script.new_table = table.new
 end
 
-function table.clone(arg_5_0, arg_5_1)
+table.clone = function (arg_5_0, arg_5_1)
 	local var_5_0 = {}
 
 	if not arg_5_1 then
@@ -48,7 +48,7 @@ function table.clone(arg_5_0, arg_5_1)
 	return var_5_0
 end
 
-function table.shallow_copy(arg_6_0, arg_6_1, arg_6_2)
+table.shallow_copy = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2 or {}
 
 	if not arg_6_1 then
@@ -64,7 +64,7 @@ function table.shallow_copy(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_0
 end
 
-function table.copy_array(arg_7_0, arg_7_1, arg_7_2)
+table.copy_array = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2 or {}
 
 	if not arg_7_1 then
@@ -80,7 +80,7 @@ function table.copy_array(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_0
 end
 
-function table.crop(arg_8_0, arg_8_1)
+table.crop = function (arg_8_0, arg_8_1)
 	local var_8_0 = {}
 	local var_8_1 = 0
 
@@ -92,7 +92,7 @@ function table.crop(arg_8_0, arg_8_1)
 	return var_8_0, var_8_1
 end
 
-function table.compare(arg_9_0, arg_9_1, arg_9_2)
+table.compare = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_2 = arg_9_2 or {}
 
 	for iter_9_0, iter_9_1 in pairs(arg_9_0) do
@@ -108,7 +108,7 @@ function table.compare(arg_9_0, arg_9_1, arg_9_2)
 	return true
 end
 
-function table.recursive_compare(arg_10_0, arg_10_1)
+table.recursive_compare = function (arg_10_0, arg_10_1)
 	local var_10_0 = true
 
 	for iter_10_0, iter_10_1 in pairs(arg_10_0) do
@@ -138,7 +138,7 @@ function table.recursive_compare(arg_10_0, arg_10_1)
 	return var_10_0
 end
 
-function table.create_copy(arg_11_0, arg_11_1)
+table.create_copy = function (arg_11_0, arg_11_1)
 	if not arg_11_0 then
 		return table.clone(arg_11_1)
 	else
@@ -164,7 +164,7 @@ function table.create_copy(arg_11_0, arg_11_1)
 	end
 end
 
-function table.clone_instance(arg_12_0)
+table.clone_instance = function (arg_12_0)
 	local var_12_0 = table.clone(arg_12_0)
 
 	setmetatable(var_12_0, getmetatable(arg_12_0))
@@ -172,7 +172,7 @@ function table.clone_instance(arg_12_0)
 	return var_12_0
 end
 
-function table.merge(arg_13_0, arg_13_1)
+table.merge = function (arg_13_0, arg_13_1)
 	for iter_13_0, iter_13_1 in pairs(arg_13_1) do
 		arg_13_0[iter_13_0] = iter_13_1
 	end
@@ -180,7 +180,7 @@ function table.merge(arg_13_0, arg_13_1)
 	return arg_13_0
 end
 
-function table.merge_recursive(arg_14_0, arg_14_1)
+table.merge_recursive = function (arg_14_0, arg_14_1)
 	for iter_14_0, iter_14_1 in pairs(arg_14_1) do
 		local var_14_0 = type(iter_14_1) == "table"
 
@@ -194,7 +194,7 @@ function table.merge_recursive(arg_14_0, arg_14_1)
 	end
 end
 
-function table.merge_varargs(arg_15_0, arg_15_1, ...)
+table.merge_varargs = function (arg_15_0, arg_15_1, ...)
 	local var_15_0 = {
 		unpack(arg_15_0, 1, arg_15_1)
 	}
@@ -207,13 +207,13 @@ function table.merge_varargs(arg_15_0, arg_15_1, ...)
 	return var_15_0, arg_15_1 + var_15_1
 end
 
-function table.pack(...)
+table.pack = function (...)
 	return {
 		...
 	}, select("#", ...)
 end
 
-function table.append_recursive(arg_17_0, arg_17_1)
+table.append_recursive = function (arg_17_0, arg_17_1)
 	for iter_17_0, iter_17_1 in pairs(arg_17_1) do
 		local var_17_0 = type(iter_17_1) == "table"
 
@@ -229,7 +229,7 @@ function table.append_recursive(arg_17_0, arg_17_1)
 	end
 end
 
-function table.append(arg_18_0, arg_18_1)
+table.append = function (arg_18_0, arg_18_1)
 	local var_18_0 = #arg_18_0
 
 	for iter_18_0 = 1, #arg_18_1 do
@@ -240,7 +240,7 @@ function table.append(arg_18_0, arg_18_1)
 	return arg_18_0
 end
 
-function table.append_unique(arg_19_0, arg_19_1)
+table.append_unique = function (arg_19_0, arg_19_1)
 	local var_19_0 = #arg_19_0
 
 	for iter_19_0 = 1, #arg_19_1 do
@@ -251,7 +251,7 @@ function table.append_unique(arg_19_0, arg_19_1)
 	end
 end
 
-function table.append_non_indexed(arg_20_0, arg_20_1)
+table.append_non_indexed = function (arg_20_0, arg_20_1)
 	local var_20_0 = #arg_20_0
 
 	for iter_20_0, iter_20_1 in pairs(arg_20_1) do
@@ -262,7 +262,7 @@ function table.append_non_indexed(arg_20_0, arg_20_1)
 	return arg_20_0
 end
 
-function table.contains(arg_21_0, arg_21_1)
+table.contains = function (arg_21_0, arg_21_1)
 	for iter_21_0, iter_21_1 in pairs(arg_21_0) do
 		if iter_21_1 == arg_21_1 then
 			return true
@@ -272,7 +272,7 @@ function table.contains(arg_21_0, arg_21_1)
 	return false
 end
 
-function table.find(arg_22_0, arg_22_1)
+table.find = function (arg_22_0, arg_22_1)
 	for iter_22_0, iter_22_1 in pairs(arg_22_0) do
 		if iter_22_1 == arg_22_1 then
 			return iter_22_0
@@ -282,7 +282,7 @@ function table.find(arg_22_0, arg_22_1)
 	return nil
 end
 
-function table.find_by_key(arg_23_0, arg_23_1, arg_23_2)
+table.find_by_key = function (arg_23_0, arg_23_1, arg_23_2)
 	for iter_23_0, iter_23_1 in pairs(arg_23_0) do
 		if iter_23_1[arg_23_1] == arg_23_2 then
 			return iter_23_0, iter_23_1
@@ -292,7 +292,7 @@ function table.find_by_key(arg_23_0, arg_23_1, arg_23_2)
 	return nil
 end
 
-function table.index_of(arg_24_0, arg_24_1, arg_24_2)
+table.index_of = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_2 = arg_24_2 or 1
 
 	for iter_24_0 = arg_24_2, #arg_24_0 do
@@ -304,7 +304,7 @@ function table.index_of(arg_24_0, arg_24_1, arg_24_2)
 	return -1
 end
 
-function table.slice(arg_25_0, arg_25_1, arg_25_2)
+table.slice = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = math.min(arg_25_1 + arg_25_2 - 1, #arg_25_0)
 	local var_25_1 = {}
 
@@ -315,7 +315,7 @@ function table.slice(arg_25_0, arg_25_1, arg_25_2)
 	return var_25_1
 end
 
-function table.sorted(arg_26_0, arg_26_1, arg_26_2)
+table.sorted = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_2 and FrameTable.alloc_table() or {}
 
 	for iter_26_0, iter_26_1 in pairs(arg_26_0) do
@@ -323,7 +323,7 @@ function table.sorted(arg_26_0, arg_26_1, arg_26_2)
 	end
 
 	if arg_26_1 then
-		table.sort(var_26_0, function(arg_27_0, arg_27_1)
+		table.sort(var_26_0, function (arg_27_0, arg_27_1)
 			return arg_26_1(arg_26_0, arg_27_0, arg_27_1)
 		end)
 	else
@@ -332,7 +332,7 @@ function table.sorted(arg_26_0, arg_26_1, arg_26_2)
 
 	local var_26_1 = 0
 
-	return function()
+	return function ()
 		var_26_1 = var_26_1 + 1
 
 		if var_26_0[var_26_1] then
@@ -341,7 +341,7 @@ function table.sorted(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function table.reverse(arg_29_0)
+table.reverse = function (arg_29_0)
 	local var_29_0 = #arg_29_0
 
 	for iter_29_0 = 1, math.floor(var_29_0 / 2) do
@@ -352,14 +352,14 @@ end
 if pcall(require, "table.clear") then
 	table.clear = require("table.clear")
 else
-	function table.clear(arg_30_0)
+	table.clear = function (arg_30_0)
 		for iter_30_0 in pairs(arg_30_0) do
 			arg_30_0[iter_30_0] = nil
 		end
 	end
 end
 
-function table.clear_array(arg_31_0, arg_31_1)
+table.clear_array = function (arg_31_0, arg_31_1)
 	for iter_31_0 = 1, arg_31_1 or #arg_31_0 do
 		arg_31_0[iter_31_0] = nil
 	end
@@ -403,7 +403,7 @@ local function var_0_0(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	end
 end
 
-function table.dump(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+table.dump = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	arg_33_3 = arg_33_3 or print
 
 	if arg_33_1 then
@@ -475,7 +475,7 @@ function table_dump_string(arg_37_0, arg_37_1)
 	return var_37_0 .. "\n" .. string.rep("\t", arg_37_1 - 1) .. "}"
 end
 
-function table.dump_string(arg_38_0, arg_38_1)
+table.dump_string = function (arg_38_0, arg_38_1)
 	if is_array(arg_38_0) then
 		return array_dump_string(arg_38_0, arg_38_1 or 1)
 	else
@@ -485,7 +485,7 @@ end
 
 local var_0_1 = {}
 
-function table.minidump(arg_39_0, arg_39_1)
+table.minidump = function (arg_39_0, arg_39_1)
 	local var_39_0 = var_0_1
 	local var_39_1 = 1
 
@@ -511,7 +511,7 @@ function table.minidump(arg_39_0, arg_39_1)
 	return var_39_2
 end
 
-function table.shuffle(arg_40_0, arg_40_1)
+table.shuffle = function (arg_40_0, arg_40_1)
 	if arg_40_1 then
 		for iter_40_0 = #arg_40_0, 2, -1 do
 			local var_40_0
@@ -531,7 +531,7 @@ function table.shuffle(arg_40_0, arg_40_1)
 	return arg_40_1
 end
 
-function table.max(arg_41_0)
+table.max = function (arg_41_0)
 	local var_41_0, var_41_1 = next(arg_41_0)
 
 	for iter_41_0, iter_41_1 in pairs(arg_41_0) do
@@ -543,7 +543,7 @@ function table.max(arg_41_0)
 	return var_41_0, var_41_1
 end
 
-function table.max_func(arg_42_0, arg_42_1)
+table.max_func = function (arg_42_0, arg_42_1)
 	local var_42_0, var_42_1 = next(arg_42_0)
 
 	for iter_42_0, iter_42_1 in pairs(arg_42_0) do
@@ -555,7 +555,7 @@ function table.max_func(arg_42_0, arg_42_1)
 	return var_42_0, var_42_1
 end
 
-function table.min(arg_43_0)
+table.min = function (arg_43_0)
 	local var_43_0, var_43_1 = next(arg_43_0)
 
 	for iter_43_0, iter_43_1 in pairs(arg_43_0) do
@@ -567,7 +567,7 @@ function table.min(arg_43_0)
 	return var_43_0, var_43_1
 end
 
-function table.for_each(arg_44_0, arg_44_1)
+table.for_each = function (arg_44_0, arg_44_1)
 	for iter_44_0, iter_44_1 in pairs(arg_44_0) do
 		arg_44_0[iter_44_0] = arg_44_1(iter_44_1)
 	end
@@ -650,11 +650,11 @@ function var_0_3(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	return var_47_0
 end
 
-function table.tostring(arg_48_0, arg_48_1, arg_48_2)
+table.tostring = function (arg_48_0, arg_48_1, arg_48_2)
 	return table.concat(var_0_3(arg_48_0, 1, arg_48_1 or 1, arg_48_2))
 end
 
-function table.set(arg_49_0, arg_49_1)
+table.set = function (arg_49_0, arg_49_1)
 	arg_49_1 = arg_49_1 or {}
 
 	for iter_49_0, iter_49_1 in ipairs(arg_49_0) do
@@ -664,7 +664,7 @@ function table.set(arg_49_0, arg_49_1)
 	return arg_49_1
 end
 
-function table.mirror_table(arg_50_0, arg_50_1)
+table.mirror_table = function (arg_50_0, arg_50_1)
 	assert(arg_50_0 ~= arg_50_1)
 
 	local var_50_0 = arg_50_1 or {}
@@ -677,7 +677,7 @@ function table.mirror_table(arg_50_0, arg_50_1)
 	return var_50_0
 end
 
-function table.mirror_array(arg_51_0, arg_51_1)
+table.mirror_array = function (arg_51_0, arg_51_1)
 	assert(arg_51_0 ~= arg_51_1)
 
 	local var_51_0 = arg_51_1 or {}
@@ -690,7 +690,7 @@ function table.mirror_array(arg_51_0, arg_51_1)
 	return var_51_0
 end
 
-function table.mirror_array_inplace(arg_52_0)
+table.mirror_array_inplace = function (arg_52_0)
 	for iter_52_0, iter_52_1 in ipairs(arg_52_0) do
 		arg_52_0[iter_52_1] = iter_52_0
 	end
@@ -698,7 +698,7 @@ function table.mirror_array_inplace(arg_52_0)
 	return arg_52_0
 end
 
-function table.keys(arg_53_0, arg_53_1, arg_53_2)
+table.keys = function (arg_53_0, arg_53_1, arg_53_2)
 	arg_53_1 = arg_53_1 or {}
 
 	local var_53_0 = arg_53_2 or 0
@@ -711,7 +711,7 @@ function table.keys(arg_53_0, arg_53_1, arg_53_2)
 	return arg_53_1, var_53_0
 end
 
-function table.split_unordered(arg_54_0)
+table.split_unordered = function (arg_54_0)
 	local var_54_0 = {}
 	local var_54_1 = {}
 	local var_54_2 = true
@@ -729,7 +729,7 @@ function table.split_unordered(arg_54_0)
 	return var_54_0, var_54_1
 end
 
-function table.keys_if(arg_55_0, arg_55_1, arg_55_2)
+table.keys_if = function (arg_55_0, arg_55_1, arg_55_2)
 	arg_55_1 = arg_55_1 or {}
 
 	local var_55_0 = 0
@@ -744,7 +744,7 @@ function table.keys_if(arg_55_0, arg_55_1, arg_55_2)
 	return arg_55_1, var_55_0
 end
 
-function table.values(arg_56_0, arg_56_1)
+table.values = function (arg_56_0, arg_56_1)
 	arg_56_1 = arg_56_1 or {}
 
 	local var_56_0 = 0
@@ -757,7 +757,7 @@ function table.values(arg_56_0, arg_56_1)
 	return arg_56_1, var_56_0
 end
 
-function table.append_varargs(arg_57_0, ...)
+table.append_varargs = function (arg_57_0, ...)
 	local var_57_0 = select("#", ...)
 	local var_57_1 = #arg_57_0
 
@@ -768,13 +768,13 @@ function table.append_varargs(arg_57_0, ...)
 	return arg_57_0
 end
 
-function table.array_to_table(arg_58_0, arg_58_1, arg_58_2)
+table.array_to_table = function (arg_58_0, arg_58_1, arg_58_2)
 	for iter_58_0 = 1, arg_58_1, 2 do
 		arg_58_2[arg_58_0[iter_58_0]] = arg_58_0[iter_58_0 + 1]
 	end
 end
 
-function table.table_to_array(arg_59_0, arg_59_1)
+table.table_to_array = function (arg_59_0, arg_59_1)
 	assert(#arg_59_1 == 0)
 
 	local var_59_0 = 0
@@ -788,12 +788,12 @@ function table.table_to_array(arg_59_0, arg_59_1)
 	return var_59_0
 end
 
-function table.add_meta_logging(arg_60_0, arg_60_1, arg_60_2)
+table.add_meta_logging = function (arg_60_0, arg_60_1, arg_60_2)
 	local var_60_0 = arg_60_0 or {}
 
 	if arg_60_1 then
 		local var_60_1 = {
-			__index = function(arg_61_0, arg_61_1)
+			__index = function (arg_61_0, arg_61_1)
 				local var_61_0 = rawget(var_60_0, arg_61_1)
 
 				print("meta getting", arg_60_2, arg_61_1, var_61_0)
@@ -804,7 +804,7 @@ function table.add_meta_logging(arg_60_0, arg_60_1, arg_60_2)
 
 		setmetatable(var_60_1, var_60_1)
 
-		function var_60_1.__newindex(arg_62_0, arg_62_1, arg_62_2)
+		var_60_1.__newindex = function (arg_62_0, arg_62_1, arg_62_2)
 			print("meta setting", arg_60_2, arg_62_1, arg_62_2)
 			rawset(var_60_0, arg_62_1, arg_62_2)
 		end
@@ -829,7 +829,7 @@ function ripairs(arg_64_0)
 	return var_0_5, arg_64_0, #arg_64_0 + 1
 end
 
-function table.swap_delete(arg_65_0, arg_65_1)
+table.swap_delete = function (arg_65_0, arg_65_1)
 	local var_65_0 = #arg_65_0
 	local var_65_1 = arg_65_0[arg_65_1]
 
@@ -839,7 +839,7 @@ function table.swap_delete(arg_65_0, arg_65_1)
 	return var_65_1
 end
 
-function table.array_remove_if(arg_66_0, arg_66_1)
+table.array_remove_if = function (arg_66_0, arg_66_1)
 	local var_66_0 = 1
 	local var_66_1
 
@@ -854,7 +854,7 @@ function table.array_remove_if(arg_66_0, arg_66_1)
 	end
 end
 
-function table.remove_if(arg_67_0, arg_67_1)
+table.remove_if = function (arg_67_0, arg_67_1)
 	for iter_67_0, iter_67_1 in pairs(arg_67_0) do
 		if arg_67_1(iter_67_0, iter_67_1) then
 			arg_67_0[iter_67_0] = nil
@@ -862,11 +862,11 @@ function table.remove_if(arg_67_0, arg_67_1)
 	end
 end
 
-;({}).__index = function(arg_68_0, arg_68_1)
+;({}).__index = function (arg_68_0, arg_68_1)
 	return error("Don't know `" .. tostring(arg_68_1) .. "` for enum.")
 end
 
-function table.enum(...)
+table.enum = function (...)
 	local var_69_0 = {}
 
 	for iter_69_0 = 1, select("#", ...) do
@@ -878,7 +878,7 @@ function table.enum(...)
 	return var_69_0
 end
 
-function table.ordered_enum(...)
+table.ordered_enum = function (...)
 	local var_70_0 = {}
 
 	for iter_70_0 = 1, select("#", ...) do
@@ -891,7 +891,7 @@ function table.ordered_enum(...)
 	return var_70_0
 end
 
-function table.enum_safe(...)
+table.enum_safe = function (...)
 	local var_71_0 = {}
 
 	for iter_71_0 = 1, select("#", ...) do
@@ -903,7 +903,7 @@ function table.enum_safe(...)
 	return var_71_0
 end
 
-function table.map(arg_72_0, arg_72_1)
+table.map = function (arg_72_0, arg_72_1)
 	local var_72_0 = {}
 
 	for iter_72_0, iter_72_1 in pairs(arg_72_0) do
@@ -913,7 +913,7 @@ function table.map(arg_72_0, arg_72_1)
 	return var_72_0
 end
 
-function table.filter(arg_73_0, arg_73_1, arg_73_2)
+table.filter = function (arg_73_0, arg_73_1, arg_73_2)
 	arg_73_2 = arg_73_2 or {}
 
 	for iter_73_0, iter_73_1 in pairs(arg_73_0) do
@@ -925,7 +925,7 @@ function table.filter(arg_73_0, arg_73_1, arg_73_2)
 	return arg_73_2
 end
 
-function table.filter_to_array(arg_74_0, arg_74_1, arg_74_2)
+table.filter_to_array = function (arg_74_0, arg_74_1, arg_74_2)
 	arg_74_2 = arg_74_2 or {}
 
 	local var_74_0 = 0
@@ -940,7 +940,7 @@ function table.filter_to_array(arg_74_0, arg_74_1, arg_74_2)
 	return arg_74_2, var_74_0
 end
 
-function table.filter_array(arg_75_0, arg_75_1, arg_75_2)
+table.filter_array = function (arg_75_0, arg_75_1, arg_75_2)
 	arg_75_2 = arg_75_2 or {}
 
 	local var_75_0 = 0
@@ -957,15 +957,15 @@ function table.filter_array(arg_75_0, arg_75_1, arg_75_2)
 	return arg_75_2, var_75_0
 end
 
-function table.get_value_or_last(arg_76_0, arg_76_1)
+table.get_value_or_last = function (arg_76_0, arg_76_1)
 	return arg_76_0[arg_76_1] or arg_76_0[#arg_76_0]
 end
 
-function table.autovivified(arg_77_0)
+table.autovivified = function (arg_77_0)
 	arg_77_0 = arg_77_0 or TNEW
 
 	return setmetatable({}, {
-		__index = function(arg_78_0, arg_78_1)
+		__index = function (arg_78_0, arg_78_1)
 			local var_78_0 = arg_77_0(arg_78_1)
 
 			arg_78_0[arg_78_1] = var_78_0
@@ -975,7 +975,7 @@ function table.autovivified(arg_77_0)
 	})
 end
 
-function table.every(arg_79_0, arg_79_1)
+table.every = function (arg_79_0, arg_79_1)
 	for iter_79_0, iter_79_1 in pairs(arg_79_0) do
 		if not arg_79_1(iter_79_0, iter_79_1) then
 			return false
@@ -985,7 +985,7 @@ function table.every(arg_79_0, arg_79_1)
 	return true
 end
 
-function table.find_func(arg_80_0, arg_80_1)
+table.find_func = function (arg_80_0, arg_80_1)
 	for iter_80_0, iter_80_1 in pairs(arg_80_0) do
 		if arg_80_1(iter_80_0, iter_80_1) then
 			return iter_80_0, iter_80_1
@@ -993,7 +993,7 @@ function table.find_func(arg_80_0, arg_80_1)
 	end
 end
 
-function table.find_func_array(arg_81_0, arg_81_1)
+table.find_func_array = function (arg_81_0, arg_81_1)
 	for iter_81_0 = 1, #arg_81_0 do
 		local var_81_0 = arg_81_0[iter_81_0]
 
@@ -1003,13 +1003,13 @@ function table.find_func_array(arg_81_0, arg_81_1)
 	end
 end
 
-function table.random(arg_82_0)
+table.random = function (arg_82_0)
 	return arg_82_0[math.random(1, #arg_82_0)]
 end
 
-function table.recursive_readonlytable(arg_83_0)
+table.recursive_readonlytable = function (arg_83_0)
 	setmetatable(arg_83_0, {
-		__newindex = function(arg_84_0, arg_84_1, arg_84_2)
+		__newindex = function (arg_84_0, arg_84_1, arg_84_2)
 			error("Trying to modify read only table.")
 		end
 	})
@@ -1021,7 +1021,7 @@ function table.recursive_readonlytable(arg_83_0)
 	end
 end
 
-function table.flat(arg_85_0, arg_85_1, arg_85_2)
+table.flat = function (arg_85_0, arg_85_1, arg_85_2)
 	arg_85_1 = arg_85_1 or 1
 	arg_85_2 = (arg_85_2 or 0) + 1
 
@@ -1038,7 +1038,7 @@ function table.flat(arg_85_0, arg_85_1, arg_85_2)
 	return var_85_0
 end
 
-function table.make_strict(arg_86_0, arg_86_1, arg_86_2)
+table.make_strict = function (arg_86_0, arg_86_1, arg_86_2)
 	assert(getmetatable(arg_86_0) == nil, "Cannot call make_strict on a table with a metatable")
 
 	arg_86_2 = arg_86_2 or "strict table"
@@ -1046,14 +1046,14 @@ function table.make_strict(arg_86_0, arg_86_1, arg_86_2)
 
 	return setmetatable(arg_86_0, {
 		__class_name = arg_86_2,
-		__index = function(arg_87_0, arg_87_1)
+		__index = function (arg_87_0, arg_87_1)
 			if arg_86_1[arg_87_1] == nil then
 				ferror("Reading from key %q not in interface <%s>", arg_87_1, arg_86_2)
 			end
 
 			return nil
 		end,
-		__newindex = function(arg_88_0, arg_88_1, arg_88_2)
+		__newindex = function (arg_88_0, arg_88_1, arg_88_2)
 			if arg_86_1[arg_88_1] == nil then
 				ferror("Writing to key %q not in interface <%s>", arg_88_1, arg_86_2)
 			end
@@ -1063,7 +1063,7 @@ function table.make_strict(arg_86_0, arg_86_1, arg_86_2)
 	})
 end
 
-function table.select_array(arg_89_0, arg_89_1)
+table.select_array = function (arg_89_0, arg_89_1)
 	local var_89_0 = {}
 
 	for iter_89_0 = 1, #arg_89_0 do
@@ -1073,7 +1073,7 @@ function table.select_array(arg_89_0, arg_89_1)
 	return var_89_0
 end
 
-function table.select_map(arg_90_0, arg_90_1)
+table.select_map = function (arg_90_0, arg_90_1)
 	local var_90_0 = {}
 
 	for iter_90_0, iter_90_1 in pairs(arg_90_0) do
@@ -1083,7 +1083,7 @@ function table.select_map(arg_90_0, arg_90_1)
 	return var_90_0
 end
 
-function table.array_to_map(arg_91_0, arg_91_1)
+table.array_to_map = function (arg_91_0, arg_91_1)
 	local var_91_0 = {}
 
 	for iter_91_0, iter_91_1 in pairs(arg_91_0) do
@@ -1095,7 +1095,7 @@ function table.array_to_map(arg_91_0, arg_91_1)
 	return var_91_0
 end
 
-function table.map_to_array(arg_92_0, arg_92_1)
+table.map_to_array = function (arg_92_0, arg_92_1)
 	local var_92_0 = {}
 	local var_92_1 = 0
 
@@ -1111,7 +1111,7 @@ function table.map_to_array(arg_92_0, arg_92_1)
 	return var_92_0
 end
 
-function table.remove_empty_values(arg_93_0)
+table.remove_empty_values = function (arg_93_0)
 	if table.is_empty(arg_93_0) then
 		return nil
 	end
@@ -1174,11 +1174,11 @@ local function var_0_7(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 	end
 end
 
-function table.sort_span(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+table.sort_span = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 	var_0_7(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
 end
 
-function table.array_average(arg_97_0, arg_97_1, arg_97_2)
+table.array_average = function (arg_97_0, arg_97_1, arg_97_2)
 	if arg_97_2 then
 		local var_97_0 = math.index_wrapper((arg_97_0.index or 0) + 1, arg_97_1)
 
@@ -1202,7 +1202,7 @@ function table.array_average(arg_97_0, arg_97_1, arg_97_2)
 	return var_97_2 / var_97_1, var_97_3, var_97_4
 end
 
-function table.convert_lookup(arg_98_0, arg_98_1)
+table.convert_lookup = function (arg_98_0, arg_98_1)
 	for iter_98_0 = 1, #arg_98_0 do
 		arg_98_0[iter_98_0] = arg_98_1[arg_98_0[iter_98_0]]
 	end
@@ -1210,7 +1210,7 @@ function table.convert_lookup(arg_98_0, arg_98_1)
 	return arg_98_0
 end
 
-function table.enum_lookup(...)
+table.enum_lookup = function (...)
 	local var_99_0 = {
 		...
 	}
@@ -1219,13 +1219,13 @@ function table.enum_lookup(...)
 	return table.ordered_enum(unpack(var_99_1)), var_99_1
 end
 
-function table.insert_unique(arg_100_0, arg_100_1, arg_100_2)
+table.insert_unique = function (arg_100_0, arg_100_1, arg_100_2)
 	if not table.find(arg_100_0, arg_100_1) and (not arg_100_2 or not table.insert(arg_100_0, arg_100_2, arg_100_1)) then
 		local var_100_0 = table.insert(arg_100_0, arg_100_1)
 	end
 end
 
-function table.remove_array_value(arg_101_0, arg_101_1)
+table.remove_array_value = function (arg_101_0, arg_101_1)
 	local var_101_0 = 1
 	local var_101_1 = 1
 	local var_101_2 = #arg_101_0
@@ -1244,7 +1244,7 @@ function table.remove_array_value(arg_101_0, arg_101_1)
 	return arg_101_0
 end
 
-function table.fill(arg_102_0, arg_102_1, arg_102_2)
+table.fill = function (arg_102_0, arg_102_1, arg_102_2)
 	for iter_102_0 = 1, arg_102_1 do
 		arg_102_0[iter_102_0] = arg_102_2
 	end
@@ -1252,7 +1252,7 @@ function table.fill(arg_102_0, arg_102_1, arg_102_2)
 	return arg_102_0
 end
 
-function table.count_if(arg_103_0, arg_103_1)
+table.count_if = function (arg_103_0, arg_103_1)
 	local var_103_0 = 0
 
 	for iter_103_0, iter_103_1 in pairs(arg_103_0) do
@@ -1264,7 +1264,7 @@ function table.count_if(arg_103_0, arg_103_1)
 	return var_103_0
 end
 
-function table.shallow_equal(arg_104_0, arg_104_1)
+table.shallow_equal = function (arg_104_0, arg_104_1)
 	for iter_104_0, iter_104_1 in pairs(arg_104_0) do
 		if arg_104_0[iter_104_0] ~= arg_104_1[iter_104_0] then
 			return false
@@ -1280,7 +1280,7 @@ function table.shallow_equal(arg_104_0, arg_104_1)
 	return true
 end
 
-function table.safe_get(arg_105_0, ...)
+table.safe_get = function (arg_105_0, ...)
 	local var_105_0 = arg_105_0
 
 	for iter_105_0 = 1, select("#", ...) do

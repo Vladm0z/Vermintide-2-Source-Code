@@ -24,7 +24,7 @@ local var_0_0 = {
 			ranged = true,
 			hat = true
 		},
-		item_sort_func = function(arg_1_0, arg_1_1)
+		item_sort_func = function (arg_1_0, arg_1_1)
 			local var_1_0 = arg_1_0.data
 			local var_1_1 = arg_1_1.data
 			local var_1_2 = arg_1_0.power_level or math.huge
@@ -85,7 +85,7 @@ local var_0_0 = {
 				return true
 			end
 		end,
-		input_func = function(arg_2_0, arg_2_1)
+		input_func = function (arg_2_0, arg_2_1)
 			local var_2_0
 
 			if Managers.input:is_device_active("gamepad") then
@@ -161,7 +161,7 @@ local var_0_0 = {
 				name = "crafting_material_scrap"
 			}
 		},
-		item_sort_func = function(arg_3_0, arg_3_1)
+		item_sort_func = function (arg_3_0, arg_3_1)
 			local var_3_0 = arg_3_0.data
 			local var_3_1 = arg_3_1.data
 			local var_3_2 = Localize(var_3_0.item_type)
@@ -213,7 +213,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_4_0, arg_4_1)
+		item_sort_func = function (arg_4_0, arg_4_1)
 			local var_4_0 = arg_4_0.data
 			local var_4_1 = arg_4_1.data
 			local var_4_2 = Localize(var_4_0.item_type)
@@ -265,7 +265,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_5_0, arg_5_1)
+		item_sort_func = function (arg_5_0, arg_5_1)
 			local var_5_0 = arg_5_0.data
 			local var_5_1 = arg_5_1.data
 			local var_5_2 = Localize(var_5_0.item_type)
@@ -317,7 +317,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_6_0, arg_6_1)
+		item_sort_func = function (arg_6_0, arg_6_1)
 			local var_6_0 = arg_6_0.data
 			local var_6_1 = arg_6_1.data
 			local var_6_2 = arg_6_0.power_level or 0
@@ -386,7 +386,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_7_0, arg_7_1)
+		item_sort_func = function (arg_7_0, arg_7_1)
 			local var_7_0 = arg_7_0.data
 			local var_7_1 = arg_7_1.data
 			local var_7_2 = arg_7_0.power_level or 0
@@ -451,7 +451,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_8_0, arg_8_1)
+		item_sort_func = function (arg_8_0, arg_8_1)
 			local var_8_0 = arg_8_0.data
 			local var_8_1 = arg_8_1.data
 			local var_8_2 = arg_8_0.power_level or 0
@@ -537,7 +537,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_9_0, arg_9_1)
+		item_sort_func = function (arg_9_0, arg_9_1)
 			local var_9_0 = arg_9_0.data
 			local var_9_1 = arg_9_1.data
 			local var_9_2 = arg_9_0.power_level or 0
@@ -591,7 +591,7 @@ local var_0_0 = {
 		description_text = "description_crafting_recipe_apply_weapon_skin",
 		display_icon_console = "console_crafting_recipe_icon_apply",
 		ingredients = {},
-		item_sort_func = function(arg_10_0, arg_10_1)
+		item_sort_func = function (arg_10_0, arg_10_1)
 			local var_10_0 = arg_10_0.data
 			local var_10_1 = arg_10_1.data
 			local var_10_2 = arg_10_0.power_level or 0
@@ -660,7 +660,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_11_0, arg_11_1)
+		item_sort_func = function (arg_11_0, arg_11_1)
 			local var_11_0 = arg_11_0.data
 			local var_11_1 = arg_11_1.data
 			local var_11_2 = arg_11_0.power_level or 0
@@ -729,7 +729,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_12_0, arg_12_1)
+		item_sort_func = function (arg_12_0, arg_12_1)
 			local var_12_0 = arg_12_0.data
 			local var_12_1 = arg_12_1.data
 			local var_12_2 = arg_12_0.power_level or 0
@@ -798,7 +798,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_13_0, arg_13_1)
+		item_sort_func = function (arg_13_0, arg_13_1)
 			local var_13_0 = arg_13_0.data
 			local var_13_1 = arg_13_1.data
 			local var_13_2 = arg_13_0.power_level or 0
@@ -863,7 +863,7 @@ local var_0_0 = {
 				}
 			}
 		},
-		item_sort_func = function(arg_14_0, arg_14_1)
+		item_sort_func = function (arg_14_0, arg_14_1)
 			local var_14_0 = arg_14_0.data
 			local var_14_1 = arg_14_1.data
 			local var_14_2 = arg_14_0.power_level or 0
@@ -932,7 +932,7 @@ local var_0_0 = {
 				name = "crafting_material_dust_1"
 			}
 		},
-		item_sort_func = function(arg_15_0, arg_15_1)
+		item_sort_func = function (arg_15_0, arg_15_1)
 			local var_15_0, var_15_1 = UIUtils.get_ui_information_from_item(arg_15_0)
 			local var_15_2, var_15_3 = UIUtils.get_ui_information_from_item(arg_15_1)
 
@@ -966,7 +966,7 @@ local var_0_0 = {
 				name = "crafting_material_dust_2"
 			}
 		},
-		item_sort_func = function(arg_16_0, arg_16_1)
+		item_sort_func = function (arg_16_0, arg_16_1)
 			local var_16_0, var_16_1 = UIUtils.get_ui_information_from_item(arg_16_0)
 			local var_16_2, var_16_3 = UIUtils.get_ui_information_from_item(arg_16_1)
 

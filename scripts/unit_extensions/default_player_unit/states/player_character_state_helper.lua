@@ -4,7 +4,7 @@ CharacterStateHelper = CharacterStateHelper or {}
 
 local var_0_0 = CharacterStateHelper
 
-function var_0_0.get_movement_input(arg_1_0)
+var_0_0.get_movement_input = function (arg_1_0)
 	local var_1_0 = arg_1_0:get("move") or Vector3(0, 0, 0)
 	local var_1_1 = arg_1_0:get("move_controller") or Vector3(0, 0, 0)
 	local var_1_2
@@ -18,7 +18,7 @@ function var_0_0.get_movement_input(arg_1_0)
 	return var_1_2
 end
 
-function var_0_0.get_square_movement_input(arg_2_0)
+var_0_0.get_square_movement_input = function (arg_2_0)
 	local var_2_0 = arg_2_0:get("move") or Vector3(0, 0, 0)
 	local var_2_1 = arg_2_0:get("move_controller") or Vector3(0, 0, 0)
 	local var_2_2
@@ -32,7 +32,7 @@ function var_0_0.get_square_movement_input(arg_2_0)
 	return var_2_2
 end
 
-function var_0_0.get_look_input(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+var_0_0.get_look_input = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_1.unit
 	local var_3_1
 
@@ -80,7 +80,7 @@ function var_0_0.get_look_input(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return var_3_9
 end
 
-function var_0_0.apply_motion_controls(arg_4_0, arg_4_1)
+var_0_0.apply_motion_controls = function (arg_4_0, arg_4_1)
 	if MotionControlSettings.use_motion_controls then
 		if MotionControlSettings.motion_disable_right_stick_vertical then
 			arg_4_0.y = 0
@@ -106,7 +106,7 @@ function var_0_0.apply_motion_controls(arg_4_0, arg_4_1)
 	return arg_4_0
 end
 
-function var_0_0.update_dodge_lock(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.update_dodge_lock = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_2:dodge_locked() and not arg_5_1:get("dodge_hold") then
 		arg_5_2:set_dodge_locked(false)
 	end
@@ -118,7 +118,7 @@ local var_0_1 = {
 	move_back_pressed = Vector3Box(-Vector3.forward())
 }
 
-function var_0_0.check_to_start_dodge(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_0.check_to_start_dodge = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_2:dodge_locked() or not arg_6_2:can_dodge(arg_6_3) then
 		return false
 	end
@@ -190,7 +190,7 @@ function var_0_0.check_to_start_dodge(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return var_6_3, var_6_4
 end
 
-function var_0_0.move_on_ground(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+var_0_0.move_on_ground = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = arg_7_0:current_rotation()
 	local var_7_1 = Quaternion.look(Vector3.flat(Quaternion.forward(var_7_0)), Vector3.up())
 	local var_7_2 = Quaternion.rotate(var_7_1, arg_7_3)
@@ -206,7 +206,7 @@ function var_0_0.move_on_ground(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg
 	arg_7_2:set_wanted_velocity(var_7_2 * arg_7_4)
 end
 
-function var_0_0.packmaster_move_on_ground(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
+var_0_0.packmaster_move_on_ground = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
 	local var_8_0 = arg_8_1:current_rotation()
 	local var_8_1 = Quaternion.look(Vector3.flat(Quaternion.forward(var_8_0)), Vector3.up())
 	local var_8_2 = Quaternion.rotate(var_8_1, arg_8_4)
@@ -251,7 +251,7 @@ function var_0_0.packmaster_move_on_ground(arg_8_0, arg_8_1, arg_8_2, arg_8_3, a
 	arg_8_3:set_wanted_velocity(var_8_2 * arg_8_5)
 end
 
-function var_0_0.update_soft_collision_movement(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+var_0_0.update_soft_collision_movement = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_3)
 	local var_9_1 = Vector3(0, 0, 0)
 	local var_9_2 = POSITION_LOOKUP[arg_9_3]
@@ -314,7 +314,7 @@ function var_0_0.update_soft_collision_movement(arg_9_0, arg_9_1, arg_9_2, arg_9
 	return arg_9_5
 end
 
-function var_0_0.do_common_state_transitions(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.do_common_state_transitions = function (arg_10_0, arg_10_1, arg_10_2)
 	if var_0_0.is_dead(arg_10_0) then
 		arg_10_1:change_state("dead")
 
@@ -423,7 +423,7 @@ function var_0_0.do_common_state_transitions(arg_10_0, arg_10_1, arg_10_2)
 	return false
 end
 
-function var_0_0.is_colliding_with_gameplay_collision_box(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+var_0_0.is_colliding_with_gameplay_collision_box = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = World.get_data(arg_11_0, "physics_world")
 	local var_11_1 = arg_11_3 and arg_11_3.position or POSITION_LOOKUP[arg_11_1]
 	local var_11_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_11_1)
@@ -448,7 +448,7 @@ function var_0_0.is_colliding_with_gameplay_collision_box(arg_11_0, arg_11_1, ar
 	return var_11_13, var_11_14
 end
 
-function var_0_0.move_in_air(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+var_0_0.move_in_air = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	local var_12_0 = var_0_0.get_movement_input(arg_12_1)
 	local var_12_1 = 0
 
@@ -483,7 +483,7 @@ function var_0_0.move_in_air(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, a
 	arg_12_2:set_wanted_velocity(var_12_10 * var_12_9)
 end
 
-function var_0_0.move_in_air_pactsworn(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+var_0_0.move_in_air_pactsworn = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 	local var_13_0 = var_0_0.get_movement_input(arg_13_1)
 	local var_13_1 = 0
 	local var_13_2 = Unit.get_data(arg_13_4, "breed")
@@ -526,7 +526,7 @@ function var_0_0.move_in_air_pactsworn(arg_13_0, arg_13_1, arg_13_2, arg_13_3, a
 	arg_13_2:set_wanted_velocity(var_13_13 * var_13_12)
 end
 
-function var_0_0.looking_up(arg_14_0, arg_14_1)
+var_0_0.looking_up = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0:get_first_person_unit()
 	local var_14_1 = Unit.world_rotation(var_14_0, 0)
 	local var_14_2 = Quaternion.forward(var_14_1)
@@ -535,7 +535,7 @@ function var_0_0.looking_up(arg_14_0, arg_14_1)
 	return arg_14_1 < Vector3.dot(var_14_3, Vector3.up()) and true or false
 end
 
-function var_0_0.looking_down(arg_15_0, arg_15_1)
+var_0_0.looking_down = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0:get_first_person_unit()
 	local var_15_1 = Unit.world_rotation(var_15_0, 0)
 	local var_15_2 = Quaternion.forward(var_15_1)
@@ -544,7 +544,7 @@ function var_0_0.looking_down(arg_15_0, arg_15_1)
 	return arg_15_1 > Vector3.dot(var_15_3, Vector3.up()) and true or false
 end
 
-function var_0_0.look(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+var_0_0.look = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 	local var_16_0 = Managers.state.camera
 	local var_16_1 = arg_16_5 or var_16_0:has_viewport(arg_16_1) and var_16_0:fov(arg_16_1) / 0.785 or 1
 	local var_16_2 = arg_16_0.unit
@@ -559,7 +559,7 @@ function var_0_0.look(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5
 	arg_16_2:set_look_delta(var_16_5)
 end
 
-function var_0_0.look_limited_rotation_freedom(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+var_0_0.look_limited_rotation_freedom = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
 	local var_17_0 = Managers.state.camera
 	local var_17_1 = arg_17_9 or var_17_0:has_viewport(arg_17_1) and Managers.state.camera:fov(arg_17_1) / 0.785 or 1
 	local var_17_2 = false
@@ -599,7 +599,7 @@ function var_0_0.look_limited_rotation_freedom(arg_17_0, arg_17_1, arg_17_2, arg
 	arg_17_2:set_look_delta(var_17_3)
 end
 
-function var_0_0.lerp_player_rotation_radian(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+var_0_0.lerp_player_rotation_radian = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0
 
 	if arg_18_1 >= 0 and arg_18_0 >= 0 or arg_18_1 <= 0 and arg_18_0 <= 0 then
@@ -635,7 +635,7 @@ function var_0_0.lerp_player_rotation_radian(arg_18_0, arg_18_1, arg_18_2, arg_1
 	return var_18_0
 end
 
-function var_0_0.lerp_player_pitch_rotation(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+var_0_0.lerp_player_pitch_rotation = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = Unit.local_rotation(arg_19_3, 0)
 	local var_19_1 = math.lerp(arg_19_0, 0, arg_19_2)
 	local var_19_2 = Quaternion.yaw(var_19_0)
@@ -650,7 +650,7 @@ function var_0_0.lerp_player_pitch_rotation(arg_19_0, arg_19_1, arg_19_2, arg_19
 	Unit.set_local_rotation(arg_19_3, 0, var_19_8)
 end
 
-function var_0_0.lerp_player_yaw_rotation(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+var_0_0.lerp_player_yaw_rotation = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_3:get_first_person_unit()
 	local var_20_1 = Unit.local_rotation(var_20_0, 0)
 	local var_20_2 = var_0_0.lerp_player_rotation_radian(arg_20_0, arg_20_1, arg_20_2, arg_20_4)
@@ -666,7 +666,7 @@ function var_0_0.lerp_player_yaw_rotation(arg_20_0, arg_20_1, arg_20_2, arg_20_3
 	Unit.set_local_rotation(arg_20_5, 0, var_20_9)
 end
 
-function var_0_0.time_in_ladder_move_animation(arg_21_0, arg_21_1)
+var_0_0.time_in_ladder_move_animation = function (arg_21_0, arg_21_1)
 	local var_21_0 = Unit.world_position(arg_21_0, 0)
 	local var_21_1 = Vector3.z(var_21_0) - arg_21_1
 	local var_21_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_21_0)
@@ -674,7 +674,7 @@ function var_0_0.time_in_ladder_move_animation(arg_21_0, arg_21_1)
 	return var_21_1 % var_21_2.ladder.whole_movement_animation_distance / var_21_2.ladder.whole_movement_animation_distance * var_21_2.ladder.movement_animation_length
 end
 
-function var_0_0.show_inventory_3p(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+var_0_0.show_inventory_3p = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = Managers.state.network
 	local var_22_1 = var_22_0:unit_game_object_id(arg_22_0)
 
@@ -693,7 +693,7 @@ function var_0_0.show_inventory_3p(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_2
 	end
 end
 
-function var_0_0.set_is_on_ladder(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+var_0_0.set_is_on_ladder = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = Managers.state.network
 	local var_23_1 = var_23_0:unit_game_object_id(arg_23_1)
 	local var_23_2, var_23_3 = var_23_0:game_object_or_level_id(arg_23_0)
@@ -708,7 +708,7 @@ function var_0_0.set_is_on_ladder(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23
 	end
 end
 
-function var_0_0.set_is_on_ledge(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+var_0_0.set_is_on_ledge = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = Managers.state.network
 	local var_24_1 = var_24_0:unit_game_object_id(arg_24_1)
 	local var_24_2, var_24_3 = var_24_0:game_object_or_level_id(arg_24_0)
@@ -721,7 +721,7 @@ function var_0_0.set_is_on_ledge(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_
 	end
 end
 
-function var_0_0.get_buffered_input(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+var_0_0.get_buffered_input = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0
 	local var_25_1
 
@@ -745,7 +745,7 @@ function var_0_0.get_buffered_input(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_
 	return var_25_0, var_25_1
 end
 
-function var_0_0._check_cooldown(arg_26_0, arg_26_1, arg_26_2)
+var_0_0._check_cooldown = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = false
 
 	if arg_26_0 then
@@ -757,7 +757,7 @@ function var_0_0._check_cooldown(arg_26_0, arg_26_1, arg_26_2)
 	return var_26_0
 end
 
-function var_0_0.wield_input(arg_27_0, arg_27_1, arg_27_2)
+var_0_0.wield_input = function (arg_27_0, arg_27_1, arg_27_2)
 	if arg_27_2 ~= "action_wield" then
 		return nil
 	end
@@ -855,7 +855,7 @@ end
 
 local var_0_2 = {}
 
-function var_0_0.get_item_data_and_weapon_extensions(arg_28_0)
+var_0_0.get_item_data_and_weapon_extensions = function (arg_28_0)
 	local var_28_0 = arg_28_0:equipment()
 	local var_28_1 = var_28_0.wielded
 
@@ -883,7 +883,7 @@ function var_0_0.get_item_data_and_weapon_extensions(arg_28_0)
 	return var_28_1, var_28_4, var_28_5
 end
 
-function var_0_0.get_current_action_data(arg_29_0, arg_29_1)
+var_0_0.get_current_action_data = function (arg_29_0, arg_29_1)
 	local var_29_0
 	local var_29_1
 	local var_29_2
@@ -911,7 +911,7 @@ function var_0_0.get_current_action_data(arg_29_0, arg_29_1)
 	return var_29_0, var_29_1, var_29_2
 end
 
-function var_0_0._check_chain_action(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
+var_0_0._check_chain_action = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8)
 	local var_30_0
 	local var_30_1
 	local var_30_2
@@ -1016,7 +1016,7 @@ function var_0_0._check_chain_action(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg
 					if var_30_12 and arg_30_1.input == "action_one_release" then
 						var_30_4 = "action_one_hold"
 					elseif var_30_21 and arg_30_1.input == "action_wield" then
-						-- block empty
+						-- Nothing
 					end
 
 					return true, var_30_24, var_30_25, arg_30_0, var_30_30, var_30_31, var_30_4
@@ -1035,7 +1035,7 @@ local var_0_3 = {
 	input = "action_career"
 }
 
-function var_0_0._get_chain_action_data(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+var_0_0._get_chain_action_data = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
 	local var_31_0
 	local var_31_1
 	local var_31_2
@@ -1160,7 +1160,7 @@ local function var_0_4(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_
 	end
 end
 
-function var_0_0.validate_action(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
+var_0_0.validate_action = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
 	return var_0_4(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9)
 end
 
@@ -1170,7 +1170,7 @@ local var_0_5 = {
 }
 local var_0_6 = {}
 
-function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+var_0_0.update_weapon_actions = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
 	local var_34_0, var_34_1, var_34_2 = var_0_0.get_item_data_and_weapon_extensions(arg_34_3)
 
 	table.clear(var_0_6)
@@ -1412,7 +1412,7 @@ function var_0_0.update_weapon_actions(arg_34_0, arg_34_1, arg_34_2, arg_34_3, a
 	end
 end
 
-function var_0_0.stop_weapon_actions(arg_35_0, arg_35_1)
+var_0_0.stop_weapon_actions = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0:equipment()
 	local var_35_1 = var_35_0.right_hand_wielded_unit
 	local var_35_2 = var_35_0.left_hand_wielded_unit
@@ -1428,11 +1428,11 @@ function var_0_0.stop_weapon_actions(arg_35_0, arg_35_1)
 	end
 end
 
-function var_0_0.stop_career_abilities(arg_36_0, arg_36_1)
+var_0_0.stop_career_abilities = function (arg_36_0, arg_36_1)
 	arg_36_0:stop_ability(arg_36_1)
 end
 
-function var_0_0.check_crouch(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+var_0_0.check_crouch = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = arg_37_2:is_crouching()
 	local var_37_1 = var_37_0
 	local var_37_2 = arg_37_1:get("crouch")
@@ -1461,14 +1461,14 @@ function var_0_0.check_crouch(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, 
 	return var_37_0
 end
 
-function var_0_0.can_uncrouch(arg_38_0)
+var_0_0.can_uncrouch = function (arg_38_0)
 	local var_38_0 = Unit.mover(arg_38_0)
 	local var_38_1 = Mover.position(var_38_0)
 
 	return Unit.mover_fits_at(arg_38_0, "standing", var_38_1)
 end
 
-function var_0_0.crouch(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+var_0_0.crouch = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	var_0_0.play_animation_event(arg_39_0, "to_crouch")
 	var_0_0.play_animation_event_first_person(arg_39_2, "to_crouch")
 	var_0_0.set_animation_var_first_person(arg_39_2, "is_crouched", 1)
@@ -1478,7 +1478,7 @@ function var_0_0.crouch(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	ScriptUnit.extension(arg_39_0, "buff_system"):trigger_procs("on_crouch")
 end
 
-function var_0_0.uncrouch(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+var_0_0.uncrouch = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	var_0_0.play_animation_event(arg_40_0, "to_uncrouch")
 	var_0_0.play_animation_event_first_person(arg_40_2, "to_uncrouch")
 	var_0_0.set_animation_var_first_person(arg_40_2, "is_crouched", 0)
@@ -1490,7 +1490,7 @@ end
 local var_0_7 = 0.05
 local var_0_8 = 2.1
 
-function var_0_0.get_move_animation(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+var_0_0.get_move_animation = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	local var_41_0 = var_0_0.get_movement_input(arg_41_1)
 	local var_41_1 = "move_fwd"
 	local var_41_2 = "move_bwd"
@@ -1529,124 +1529,124 @@ function var_0_0.get_move_animation(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	return var_41_1, var_41_3 and var_41_1 or "walk_fwd"
 end
 
-function var_0_0.is_colliding_down(arg_42_0)
+var_0_0.is_colliding_down = function (arg_42_0)
 	local var_42_0 = Unit.mover(arg_42_0)
 
 	return Mover.collides_down(var_42_0)
 end
 
-function var_0_0.is_colliding_sides(arg_43_0)
+var_0_0.is_colliding_sides = function (arg_43_0)
 	local var_43_0 = Unit.mover(arg_43_0)
 
 	return Mover.collides_sides(var_43_0)
 end
 
-function var_0_0.has_move_input(arg_44_0)
+var_0_0.has_move_input = function (arg_44_0)
 	local var_44_0 = var_0_0.get_movement_input(arg_44_0)
 
 	return Vector3.length(var_44_0) > 0
 end
 
-function var_0_0.is_moving(arg_45_0)
+var_0_0.is_moving = function (arg_45_0)
 	local var_45_0 = arg_45_0:current_velocity()
 
 	return Vector3.length_squared(var_45_0) > 0.001
 end
 
-function var_0_0.is_moving_backwards(arg_46_0, arg_46_1)
+var_0_0.is_moving_backwards = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_1:current_rotation()
 	local var_46_1 = Vector3.flat(arg_46_0:current_velocity())
 
 	return Vector3.dot(var_46_1, var_46_0) < -0.1
 end
 
-function var_0_0.is_knocked_down(arg_47_0)
+var_0_0.is_knocked_down = function (arg_47_0)
 	return arg_47_0:is_knocked_down()
 end
 
-function var_0_0.is_staggered(arg_48_0)
+var_0_0.is_staggered = function (arg_48_0)
 	return arg_48_0:is_staggered()
 end
 
-function var_0_0.is_pounced_down(arg_49_0)
+var_0_0.is_pounced_down = function (arg_49_0)
 	return arg_49_0:is_pounced_down()
 end
 
-function var_0_0.is_catapulted(arg_50_0)
+var_0_0.is_catapulted = function (arg_50_0)
 	local var_50_0, var_50_1 = arg_50_0:is_catapulted()
 
 	return var_50_0, var_50_1
 end
 
-function var_0_0.is_grabbed_by_pack_master(arg_51_0)
+var_0_0.is_grabbed_by_pack_master = function (arg_51_0)
 	return arg_51_0:is_grabbed_by_pack_master()
 end
 
-function var_0_0.is_grabbed_by_tentacle(arg_52_0)
+var_0_0.is_grabbed_by_tentacle = function (arg_52_0)
 	return arg_52_0.grabbed_by_tentacle
 end
 
-function var_0_0.is_in_vortex(arg_53_0)
+var_0_0.is_in_vortex = function (arg_53_0)
 	return arg_53_0.in_vortex
 end
 
-function var_0_0.is_overcharge_exploding(arg_54_0)
+var_0_0.is_overcharge_exploding = function (arg_54_0)
 	return arg_54_0:is_overcharge_exploding()
 end
 
-function var_0_0.pack_master_status(arg_55_0)
+var_0_0.pack_master_status = function (arg_55_0)
 	return arg_55_0.pack_master_status
 end
 
-function var_0_0.corruptor_status(arg_56_0)
+var_0_0.corruptor_status = function (arg_56_0)
 	return arg_56_0.corruptor_status
 end
 
-function var_0_0.grabbed_by_tentacle_status(arg_57_0)
+var_0_0.grabbed_by_tentacle_status = function (arg_57_0)
 	return arg_57_0.grabbed_by_tentacle_status
 end
 
-function var_0_0.grabbed_by_chaos_spawn_status(arg_58_0)
+var_0_0.grabbed_by_chaos_spawn_status = function (arg_58_0)
 	return arg_58_0.grabbed_by_chaos_spawn_status, arg_58_0.grabbed_by_chaos_spawn_status_count
 end
 
-function var_0_0.is_waiting_for_assisted_respawn(arg_59_0)
+var_0_0.is_waiting_for_assisted_respawn = function (arg_59_0)
 	return arg_59_0:is_ready_for_assisted_respawn()
 end
 
-function var_0_0.is_assisted_respawning(arg_60_0)
+var_0_0.is_assisted_respawning = function (arg_60_0)
 	return arg_60_0:is_assisted_respawning()
 end
 
-function var_0_0.is_pushed(arg_61_0)
+var_0_0.is_pushed = function (arg_61_0)
 	return arg_61_0:is_pushed()
 end
 
-function var_0_0.is_charged(arg_62_0)
+var_0_0.is_charged = function (arg_62_0)
 	return arg_62_0:is_charged()
 end
 
-function var_0_0.is_block_broken(arg_63_0)
+var_0_0.is_block_broken = function (arg_63_0)
 	return arg_63_0:is_block_broken()
 end
 
-function var_0_0.is_dead(arg_64_0)
+var_0_0.is_dead = function (arg_64_0)
 	return arg_64_0:is_dead()
 end
 
-function var_0_0.is_using_transport(arg_65_0)
+var_0_0.is_using_transport = function (arg_65_0)
 	return arg_65_0:is_using_transport()
 end
 
-function var_0_0.is_zooming(arg_66_0)
+var_0_0.is_zooming = function (arg_66_0)
 	return arg_66_0:is_zooming()
 end
 
-function var_0_0.is_crouching(arg_67_0)
+var_0_0.is_crouching = function (arg_67_0)
 	return arg_67_0:is_crouching()
 end
 
-function var_0_0.is_starting_interaction(arg_68_0, arg_68_1)
+var_0_0.is_starting_interaction = function (arg_68_0, arg_68_1)
 	local var_68_0, var_68_1, var_68_2, var_68_3 = arg_68_1:can_interact()
 
 	if GameSettingsDevelopment.disabled_interactions[var_68_2] then
@@ -1658,15 +1658,15 @@ function var_0_0.is_starting_interaction(arg_68_0, arg_68_1)
 	return var_68_0 and var_68_2 ~= "heal" and var_68_2 ~= "give_item" and arg_68_0:get(var_68_4, true)
 end
 
-function var_0_0.is_interacting(arg_69_0)
+var_0_0.is_interacting = function (arg_69_0)
 	return arg_69_0:is_interacting()
 end
 
-function var_0_0.is_waiting_for_interaction_approval(arg_70_0)
+var_0_0.is_waiting_for_interaction_approval = function (arg_70_0)
 	return arg_70_0:is_waiting_for_interaction_approval()
 end
 
-function var_0_0.interact(arg_71_0, arg_71_1)
+var_0_0.interact = function (arg_71_0, arg_71_1)
 	if arg_71_1:interaction_config().hold then
 		local var_71_0 = arg_71_1:interaction_hold_input()
 
@@ -1680,7 +1680,7 @@ function var_0_0.interact(arg_71_0, arg_71_1)
 	return true
 end
 
-function var_0_0.will_be_ledge_hanging(arg_72_0, arg_72_1, arg_72_2)
+var_0_0.will_be_ledge_hanging = function (arg_72_0, arg_72_1, arg_72_2)
 	if not script_data.ledge_hanging_turned_off then
 		local var_72_0 = arg_72_2.collision_filter or "filter_ledge_collision"
 		local var_72_1, var_72_2 = var_0_0.is_raycasting_to_gameplay_collision_box(arg_72_0, arg_72_1, var_72_0, arg_72_2)
@@ -1702,7 +1702,7 @@ end
 
 local var_0_9 = 4
 
-function var_0_0.is_raycasting_to_gameplay_collision_box(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+var_0_0.is_raycasting_to_gameplay_collision_box = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 	local var_73_0 = World.get_data(arg_73_0, "physics_world")
 	local var_73_1 = arg_73_3 and arg_73_3.ray_position or POSITION_LOOKUP[arg_73_1]
 	local var_73_2 = PlayerUnitMovementSettings.get_movement_settings_table(arg_73_1)
@@ -1755,7 +1755,7 @@ function var_0_0.is_raycasting_to_gameplay_collision_box(arg_73_0, arg_73_1, arg
 	return var_73_7, var_73_8
 end
 
-function var_0_0.is_ledge_hanging(arg_74_0, arg_74_1, arg_74_2)
+var_0_0.is_ledge_hanging = function (arg_74_0, arg_74_1, arg_74_2)
 	if not script_data.ledge_hanging_turned_off then
 		local var_74_0, var_74_1 = var_0_0.is_colliding_with_gameplay_collision_box(arg_74_0, arg_74_1, "filter_ledge_collision", arg_74_2)
 
@@ -1774,11 +1774,11 @@ function var_0_0.is_ledge_hanging(arg_74_0, arg_74_1, arg_74_2)
 	return false
 end
 
-function var_0_0.recently_left_ladder(arg_75_0, arg_75_1)
+var_0_0.recently_left_ladder = function (arg_75_0, arg_75_1)
 	return arg_75_0:has_recently_left_ladder(arg_75_1)
 end
 
-function var_0_0.change_camera_state(arg_76_0, arg_76_1, arg_76_2)
+var_0_0.change_camera_state = function (arg_76_0, arg_76_1, arg_76_2)
 	if arg_76_0.bot_player then
 		return
 	end
@@ -1790,7 +1790,7 @@ function var_0_0.change_camera_state(arg_76_0, arg_76_1, arg_76_2)
 	Managers.state.entity:system("camera_system"):external_state_change(arg_76_0, arg_76_1, arg_76_2)
 end
 
-function var_0_0.change_camera_state_delayed(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+var_0_0.change_camera_state_delayed = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 	if arg_77_0.bot_player then
 		return
 	end
@@ -1802,27 +1802,27 @@ function var_0_0.change_camera_state_delayed(arg_77_0, arg_77_1, arg_77_2, arg_7
 	Managers.state.entity:system("camera_system"):external_state_change_delayed(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 end
 
-function var_0_0.play_animation_event(arg_78_0, arg_78_1)
+var_0_0.play_animation_event = function (arg_78_0, arg_78_1)
 	Managers.state.network:anim_event(arg_78_0, arg_78_1)
 end
 
-function var_0_0.play_animation_event_first_person(arg_79_0, arg_79_1)
+var_0_0.play_animation_event_first_person = function (arg_79_0, arg_79_1)
 	arg_79_0:animation_event(arg_79_1)
 end
 
-function var_0_0.set_animation_var_first_person(arg_80_0, arg_80_1, arg_80_2)
+var_0_0.set_animation_var_first_person = function (arg_80_0, arg_80_1, arg_80_2)
 	arg_80_0:animation_set_variable(arg_80_1, arg_80_2)
 end
 
-function var_0_0.play_animation_event_with_variable_float(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+var_0_0.play_animation_event_with_variable_float = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 	Managers.state.network:anim_event_with_variable_float(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 end
 
-function var_0_0.set_animation_variable_float(arg_82_0, arg_82_1, arg_82_2)
+var_0_0.set_animation_variable_float = function (arg_82_0, arg_82_1, arg_82_2)
 	Managers.state.network:anim_set_variable_float(arg_82_0, arg_82_1, arg_82_2)
 end
 
-function var_0_0.is_enemy_character(arg_83_0)
+var_0_0.is_enemy_character = function (arg_83_0)
 	local var_83_0 = Managers.state.side.side_by_unit[arg_83_0]
 
 	if var_83_0 and var_83_0:name() == "dark_pact" then
@@ -1832,7 +1832,7 @@ function var_0_0.is_enemy_character(arg_83_0)
 	return false
 end
 
-function var_0_0.is_viable_stab_target(arg_84_0, arg_84_1, arg_84_2)
+var_0_0.is_viable_stab_target = function (arg_84_0, arg_84_1, arg_84_2)
 	if arg_84_2:disabled_by_other(arg_84_0) then
 		return false
 	end
@@ -1847,7 +1847,7 @@ function var_0_0.is_viable_stab_target(arg_84_0, arg_84_1, arg_84_2)
 	return true
 end
 
-function var_0_0.ghost_mode(arg_85_0, arg_85_1)
+var_0_0.ghost_mode = function (arg_85_0, arg_85_1)
 	if not arg_85_0:is_in_ghost_mode() then
 		if arg_85_1:get("ghost_mode_enter") and arg_85_0:allowed_to_enter() then
 			arg_85_0:try_enter_ghost_mode()
@@ -1865,7 +1865,7 @@ function var_0_0.ghost_mode(arg_85_0, arg_85_1)
 	end
 end
 
-function var_0_0.handle_bot_ledge_hanging_failsafe(arg_86_0, arg_86_1)
+var_0_0.handle_bot_ledge_hanging_failsafe = function (arg_86_0, arg_86_1)
 	if arg_86_1 and ALIVE[arg_86_0] then
 		local var_86_0 = BLACKBOARDS[arg_86_0]
 		local var_86_1 = var_86_0.locomotion_extension

@@ -4,7 +4,7 @@ PactswornUtils = {}
 
 local var_0_0 = 1
 
-function PactswornUtils.get_hoist_position(arg_1_0, arg_1_1, arg_1_2)
+PactswornUtils.get_hoist_position = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = POSITION_LOOKUP[arg_1_1]
 	local var_1_1 = POSITION_LOOKUP[arg_1_2]
 	local var_1_2, var_1_3 = Vector3.direction_length(var_1_0 - var_1_1)

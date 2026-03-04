@@ -10,10 +10,10 @@ local var_0_0 = {
 	"StoreWorldMarkerExtension"
 }
 
-function WorldMarkerSystem.init(arg_1_0, arg_1_1, arg_1_2)
+WorldMarkerSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 end
 
-function WorldMarkerSystem.destroy(arg_2_0)
+WorldMarkerSystem.destroy = function (arg_2_0)
 	return
 end

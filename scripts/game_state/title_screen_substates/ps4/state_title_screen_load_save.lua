@@ -3,7 +3,7 @@
 StateTitleScreenLoadSave = class(StateTitleScreenLoadSave)
 StateTitleScreenLoadSave.NAME = "StateTitleScreenLoadSave"
 
-function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenLoadSave.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenLoadSave")
 
 	arg_1_0._params = arg_1_1
@@ -13,8 +13,8 @@ function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._state = "fetch_dlcs"
 	arg_1_0._network_event_meta_table = {}
 
-	function arg_1_0._network_event_meta_table.__index(arg_2_0, arg_2_1)
-		return function()
+	arg_1_0._network_event_meta_table.__index = function (arg_2_0, arg_2_1)
+		return function ()
 			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", arg_2_1)
 		end
 	end
@@ -32,11 +32,11 @@ function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_setup_input()
 end
 
-function StateTitleScreenLoadSave._setup_input(arg_4_0)
+StateTitleScreenLoadSave._setup_input = function (arg_4_0)
 	arg_4_0.input_manager = Managers.input
 end
 
-function StateTitleScreenLoadSave.update(arg_5_0, arg_5_1, arg_5_2)
+StateTitleScreenLoadSave.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._title_start_ui
 
 	var_5_0:update(arg_5_1, arg_5_2)
@@ -66,13 +66,13 @@ function StateTitleScreenLoadSave.update(arg_5_0, arg_5_1, arg_5_2)
 	return arg_5_0:_next_state()
 end
 
-function StateTitleScreenLoadSave._update_network(arg_6_0, arg_6_1, arg_6_2)
+StateTitleScreenLoadSave._update_network = function (arg_6_0, arg_6_1, arg_6_2)
 	if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() then
 		Network.update(arg_6_1, setmetatable({}, arg_6_0._network_event_meta_table))
 	end
 end
 
-function StateTitleScreenLoadSave._fetch_dlcs(arg_7_0)
+StateTitleScreenLoadSave._fetch_dlcs = function (arg_7_0)
 	if not PS4DLC.is_initialized() then
 		PS4DLC.initialize()
 	end
@@ -82,7 +82,7 @@ function StateTitleScreenLoadSave._fetch_dlcs(arg_7_0)
 	arg_7_0._state = "update_fetch_dlcs"
 end
 
-function StateTitleScreenLoadSave._update_fetch_dlcs(arg_8_0)
+StateTitleScreenLoadSave._update_fetch_dlcs = function (arg_8_0)
 	if PS4DLC.has_fetched_dlcs() then
 		if StateTitleScreenLoadSave.DELETE_SAVE then
 			arg_8_0._state = "delete_save"
@@ -93,13 +93,13 @@ function StateTitleScreenLoadSave._update_fetch_dlcs(arg_8_0)
 	end
 end
 
-function StateTitleScreenLoadSave._load_save(arg_9_0)
+StateTitleScreenLoadSave._load_save = function (arg_9_0)
 	arg_9_0._state = "waiting_for_load"
 
 	Managers.save:auto_load(SaveFileName, callback(arg_9_0, "cb_load_done"))
 end
 
-function StateTitleScreenLoadSave.cb_load_done(arg_10_0, arg_10_1)
+StateTitleScreenLoadSave.cb_load_done = function (arg_10_0, arg_10_1)
 	print("######################## DATA LOADED ########################")
 
 	if arg_10_1.error and arg_10_1.error ~= "NOT_FOUND" then
@@ -132,7 +132,7 @@ function StateTitleScreenLoadSave.cb_load_done(arg_10_0, arg_10_1)
 	end
 end
 
-function StateTitleScreenLoadSave._check_popup(arg_11_0)
+StateTitleScreenLoadSave._check_popup = function (arg_11_0)
 	local var_11_0 = Managers.popup:query_result(arg_11_0._popup_id)
 
 	if var_11_0 == "retry_load" then
@@ -156,20 +156,20 @@ function StateTitleScreenLoadSave._check_popup(arg_11_0)
 	end
 end
 
-function StateTitleScreenLoadSave._create_save(arg_12_0)
+StateTitleScreenLoadSave._create_save = function (arg_12_0)
 	SaveData = table.clone(DefaultSaveData)
 
 	arg_12_0:_do_save()
 end
 
-function StateTitleScreenLoadSave._do_save(arg_13_0)
+StateTitleScreenLoadSave._do_save = function (arg_13_0)
 	ensure_user_id_in_save_data(SaveData)
 	Managers.save:auto_save(SaveFileName, SaveData, callback(arg_13_0, "cb_save_done"))
 
 	arg_13_0._state = "waiting_for_save"
 end
 
-function StateTitleScreenLoadSave.cb_save_done(arg_14_0, arg_14_1)
+StateTitleScreenLoadSave.cb_save_done = function (arg_14_0, arg_14_1)
 	print("######################## DATA SAVED ########################")
 
 	if arg_14_1.error then
@@ -185,13 +185,13 @@ function StateTitleScreenLoadSave.cb_save_done(arg_14_0, arg_14_1)
 	end
 end
 
-function StateTitleScreenLoadSave._delete_save(arg_15_0)
+StateTitleScreenLoadSave._delete_save = function (arg_15_0)
 	arg_15_0._state = "waiting_for_delete"
 
 	Managers.save:delete_save(SaveFileName, callback(arg_15_0, "cb_delete_done"))
 end
 
-function StateTitleScreenLoadSave.cb_delete_done(arg_16_0, arg_16_1)
+StateTitleScreenLoadSave.cb_delete_done = function (arg_16_0, arg_16_1)
 	print("######################## SAVE DELETED ########################")
 
 	if arg_16_1.error then
@@ -204,17 +204,17 @@ function StateTitleScreenLoadSave.cb_delete_done(arg_16_0, arg_16_1)
 	end
 end
 
-function StateTitleScreenLoadSave._show_error_dialog(arg_17_0, arg_17_1)
+StateTitleScreenLoadSave._show_error_dialog = function (arg_17_0, arg_17_1)
 	arg_17_0._state = "waiting_for_error_dialog"
 
 	Managers.system_dialog:open_error_dialog(arg_17_1, callback(arg_17_0, "cb_error_dialog_done"))
 end
 
-function StateTitleScreenLoadSave.cb_error_dialog_done(arg_18_0)
+StateTitleScreenLoadSave.cb_error_dialog_done = function (arg_18_0)
 	arg_18_0:_close_menu()
 end
 
-function StateTitleScreenLoadSave._close_menu(arg_19_0)
+StateTitleScreenLoadSave._close_menu = function (arg_19_0)
 	arg_19_0.parent:show_menu(false)
 	arg_19_0._title_start_ui:set_start_pressed(false)
 
@@ -224,7 +224,7 @@ function StateTitleScreenLoadSave._close_menu(arg_19_0)
 	Managers.transition:hide_loading_icon()
 end
 
-function StateTitleScreenLoadSave._next_state(arg_20_0)
+StateTitleScreenLoadSave._next_state = function (arg_20_0)
 	if not Managers.popup:has_popup() and not arg_20_0._popup_id then
 		if script_data.honduras_demo and not arg_20_0._title_start_ui:is_ready() then
 			return
@@ -234,7 +234,7 @@ function StateTitleScreenLoadSave._next_state(arg_20_0)
 	end
 end
 
-function StateTitleScreenLoadSave.on_exit(arg_21_0)
+StateTitleScreenLoadSave.on_exit = function (arg_21_0)
 	arg_21_0._title_start_ui:set_information_text("")
 
 	arg_21_0._popup_id = nil

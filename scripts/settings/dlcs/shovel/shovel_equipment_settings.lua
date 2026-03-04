@@ -147,12 +147,12 @@ var_0_0.projectiles = {
 			forward_offset = 0,
 			blend_time = 0.35,
 			use_anim_rotation = false,
-			blend_func = function(arg_1_0)
+			blend_func = function (arg_1_0)
 				return arg_1_0 < 0.5 and 0 or math.easeOutCubic((arg_1_0 - 0.5) * 2)
 			end
 		},
 		external_events = {
-			detonate = function(arg_2_0)
+			detonate = function (arg_2_0)
 				if arg_2_0._life_time <= 0 then
 					return
 				end
@@ -186,7 +186,7 @@ var_0_0.explosion_templates = {
 			alert_enemies = true,
 			damage_profile = "sienna_necromancer_blood_explosion",
 			effect_name = "fx/wpnfx_skull_explosion_big_3p",
-			server_hit_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			server_hit_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 				if not ALIVE[arg_3_0] then
 					return
 				end

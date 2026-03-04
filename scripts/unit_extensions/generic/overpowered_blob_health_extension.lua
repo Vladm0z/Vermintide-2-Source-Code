@@ -2,7 +2,7 @@
 
 OverpoweredBlobHealthExtension = class(OverpoweredBlobHealthExtension, GenericHealthExtension)
 
-function OverpoweredBlobHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+OverpoweredBlobHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 	OverpoweredBlobHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 
 	arg_1_0.target_unit = arg_1_3.target_unit
@@ -10,7 +10,7 @@ function OverpoweredBlobHealthExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3,
 	arg_1_0.bots_can_do_damage = true
 end
 
-function OverpoweredBlobHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+OverpoweredBlobHealthExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = ScriptUnit.has_extension(arg_2_0.target_unit, "status_system")
 
 	if not var_2_0 or not var_2_0.overpowered or arg_2_3 > arg_2_0.death_time then
@@ -18,7 +18,7 @@ function OverpoweredBlobHealthExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	end
 end
 
-function OverpoweredBlobHealthExtension.destroy(arg_3_0)
+OverpoweredBlobHealthExtension.destroy = function (arg_3_0)
 	if not Unit.alive(arg_3_0.target_unit) then
 		return
 	end

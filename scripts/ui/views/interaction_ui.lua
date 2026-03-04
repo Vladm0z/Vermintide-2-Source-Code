@@ -153,7 +153,7 @@ local var_0_1 = {
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_1_0)
+					content_check_function = function (arg_1_0)
 						return arg_1_0.text ~= ""
 					end
 				},
@@ -161,7 +161,7 @@ local var_0_1 = {
 					style_id = "button_text_shadow",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.text ~= ""
 					end
 				},
@@ -169,7 +169,7 @@ local var_0_1 = {
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.text and arg_3_0.text ~= ""
 					end
 				},
@@ -177,7 +177,7 @@ local var_0_1 = {
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.text and arg_4_0.text ~= ""
 					end
 				},
@@ -185,7 +185,7 @@ local var_0_1 = {
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.title_text
 					end
 				},
@@ -193,7 +193,7 @@ local var_0_1 = {
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.title_text
 					end
 				},
@@ -201,7 +201,7 @@ local var_0_1 = {
 					style_id = "hotkey_text",
 					pass_type = "text",
 					text_id = "hotkey_text",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.has_hotkey and not arg_7_0.gamepad_active
 					end
 				},
@@ -209,7 +209,7 @@ local var_0_1 = {
 					style_id = "hotkey_text_shadow",
 					pass_type = "text",
 					text_id = "hotkey_text",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.has_hotkey and not arg_8_0.gamepad_active
 					end
 				}
@@ -428,7 +428,7 @@ local var_0_1 = {
 					style_id = "bar",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "bar",
-					dynamic_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+					dynamic_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 						local var_9_0 = arg_9_0.bar_value
 						local var_9_1 = arg_9_1.uv_start_pixels
 						local var_9_2 = arg_9_1.uv_scale_pixels
@@ -528,7 +528,7 @@ local function var_0_4(arg_10_0, arg_10_1)
 	return false
 end
 
-function InteractionUI.init(arg_11_0, arg_11_1, arg_11_2)
+InteractionUI.init = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._parent = arg_11_1
 	arg_11_0.ui_renderer = arg_11_2.ui_renderer
 	arg_11_0.input_manager = arg_11_2.input_manager
@@ -549,7 +549,7 @@ function InteractionUI.init(arg_11_0, arg_11_1, arg_11_2)
 	}
 end
 
-function InteractionUI.create_ui_elements(arg_12_0)
+InteractionUI.create_ui_elements = function (arg_12_0)
 	UIRenderer.clear_scenegraph_queue(arg_12_0.ui_renderer)
 
 	arg_12_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
@@ -564,7 +564,7 @@ function InteractionUI.create_ui_elements(arg_12_0)
 	end
 end
 
-function InteractionUI.destroy(arg_13_0)
+InteractionUI.destroy = function (arg_13_0)
 	GarbageLeakDetector.register_object(arg_13_0, "interaction_gui")
 
 	for iter_13_0, iter_13_1 in pairs(arg_13_0._components) do
@@ -572,7 +572,7 @@ function InteractionUI.destroy(arg_13_0)
 	end
 end
 
-function InteractionUI.button_texture_data_by_input_action(arg_14_0, arg_14_1)
+InteractionUI.button_texture_data_by_input_action = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.input_manager
 	local var_14_1 = var_14_0:get_service("Player")
 	local var_14_2 = var_14_0:is_device_active("gamepad")
@@ -580,7 +580,7 @@ function InteractionUI.button_texture_data_by_input_action(arg_14_0, arg_14_1)
 	return UISettings.get_gamepad_input_texture_data(var_14_1, arg_14_1, var_14_2)
 end
 
-function InteractionUI._animate_in_progress_bar(arg_15_0)
+InteractionUI._animate_in_progress_bar = function (arg_15_0)
 	local var_15_0 = arg_15_0.interaction_bar_widget.content
 	local var_15_1 = arg_15_0.interaction_bar_widget.style
 	local var_15_2 = UISettings.interaction.bar.fade_in
@@ -589,7 +589,7 @@ function InteractionUI._animate_in_progress_bar(arg_15_0)
 	arg_15_0.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, var_15_1.bar.color, 1, 0, 255, var_15_2, math.easeInCubic)
 end
 
-function InteractionUI._animate_out_progress_bar(arg_16_0)
+InteractionUI._animate_out_progress_bar = function (arg_16_0)
 	local var_16_0 = UISettings.interaction.bar.fade_out
 	local var_16_1 = arg_16_0.interaction_bar_widget.style
 
@@ -597,7 +597,7 @@ function InteractionUI._animate_out_progress_bar(arg_16_0)
 	arg_16_0.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, var_16_1.bar.color, 1, var_16_1.bar.color[1], 0, var_16_0, math.easeInCubic)
 end
 
-function InteractionUI._handle_interaction_progress(arg_17_0, arg_17_1)
+InteractionUI._handle_interaction_progress = function (arg_17_0, arg_17_1)
 	if arg_17_1 and arg_17_1 ~= 0 then
 		local var_17_0 = arg_17_0.interaction_bar_widget.content
 		local var_17_1 = arg_17_0.interaction_bar_widget.style
@@ -632,7 +632,7 @@ local var_0_7 = {
 	0
 }
 
-function InteractionUI.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+InteractionUI.update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if var_0_6 then
 		arg_18_0:create_ui_elements()
 	end
@@ -776,7 +776,7 @@ function InteractionUI.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	var_18_1.pivot.local_position = var_0_7
 end
 
-function InteractionUI._update_interaction_widget_size(arg_19_0, arg_19_1, arg_19_2)
+InteractionUI._update_interaction_widget_size = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.interaction_widget
 
 	var_19_0.content.has_hotkey = arg_19_1
@@ -792,7 +792,7 @@ function InteractionUI._update_interaction_widget_size(arg_19_0, arg_19_1, arg_1
 	end
 end
 
-function InteractionUI._get_interaction_text(arg_20_0, arg_20_1, arg_20_2)
+InteractionUI._get_interaction_text = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = ScriptUnit.extension(arg_20_1, "interactor_system")
 	local var_20_1 = var_20_0:interactable_unit()
 	local var_20_2
@@ -836,7 +836,7 @@ function InteractionUI._get_interaction_text(arg_20_0, arg_20_1, arg_20_2)
 	return var_20_2, var_20_3, var_20_4, var_20_9, var_20_6, var_20_5, var_20_7
 end
 
-function InteractionUI._get_wielded_interaction_text(arg_21_0, arg_21_1)
+InteractionUI._get_wielded_interaction_text = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0:_get_wielded_item_data(arg_21_1)
 
 	if not var_21_0 then
@@ -890,11 +890,11 @@ function InteractionUI._get_wielded_interaction_text(arg_21_0, arg_21_1)
 	return var_21_1, var_21_2, var_21_3, var_21_4, var_21_5
 end
 
-function InteractionUI._get_wielded_item_data(arg_22_0, arg_22_1)
+InteractionUI._get_wielded_item_data = function (arg_22_0, arg_22_1)
 	return ScriptUnit.extension(arg_22_1, "inventory_system"):equipment().wielded
 end
 
-function InteractionUI._assign_button_info(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+InteractionUI._assign_button_info = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_0.ui_renderer
 	local var_23_1 = arg_23_0.ui_scenegraph
 	local var_23_2 = arg_23_0.interaction_widget.style
@@ -960,7 +960,7 @@ function InteractionUI._assign_button_info(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	var_23_6[4] = var_23_7[4]
 end
 
-function InteractionUI.external_interact_ui_description(arg_24_0, arg_24_1)
+InteractionUI.external_interact_ui_description = function (arg_24_0, arg_24_1)
 	local var_24_0 = ScriptUnit.extension(arg_24_1, "overcharge_system")
 
 	if var_24_0:is_above_critical_limit() and not var_24_0:are_you_exploding() then

@@ -28,13 +28,13 @@ local var_0_5 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("chaos_exalted_sorcerer") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("chaos_exalted_sorcerer") < 1
 			end
 		},

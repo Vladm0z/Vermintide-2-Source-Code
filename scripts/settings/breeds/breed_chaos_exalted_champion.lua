@@ -299,7 +299,7 @@ local var_0_2 = {
 		bot_poison_wind = 1.5,
 		fire_grenade = 10
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = Managers.time:time("game")
 
 		if arg_1_4.stagger_immune_time and var_1_0 < arg_1_4.stagger_immune_time then
@@ -314,7 +314,7 @@ local var_0_2 = {
 		"kill_chaos_exalted_champion_difficulty_rank",
 		"kill_chaos_exalted_champion_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -986,7 +986,7 @@ local var_0_5 = {
 						offset_up = 0
 					}
 				},
-				hit_ai_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				hit_ai_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 					local var_3_0 = {
 						"exalted_champion_charge_chaos_warrior",
 						"exalted_champion_charge_chaos_warrior_cata"
@@ -1043,7 +1043,7 @@ local var_0_5 = {
 		attack_anim = "attack_pounce"
 	},
 	stagger = {
-		custom_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0 = arg_4_1.action.stagger_anims[arg_4_1.stagger_type]
 
 			if arg_4_1.stagger_type == var_0_0.explosion then

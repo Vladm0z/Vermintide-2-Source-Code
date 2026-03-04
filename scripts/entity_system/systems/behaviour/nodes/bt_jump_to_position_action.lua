@@ -12,13 +12,13 @@ end
 
 BTJumpToPositionAction = class(BTJumpToPositionAction, BTNode)
 
-function BTJumpToPositionAction.init(arg_2_0, ...)
+BTJumpToPositionAction.init = function (arg_2_0, ...)
 	BTJumpToPositionAction.super.init(arg_2_0, ...)
 end
 
 BTJumpToPositionAction.name = "BTJumpToPositionAction"
 
-function BTJumpToPositionAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTJumpToPositionAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 
 	Managers.state.debug:drawer({
@@ -43,7 +43,7 @@ function BTJumpToPositionAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.jump_state = "moving_to_ledge"
 end
 
-function BTJumpToPositionAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTJumpToPositionAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.jump_spline_ground = nil
 	arg_4_2.jump_spline_ledge = nil
 	arg_4_2.jump_entrance_pos = nil
@@ -68,7 +68,7 @@ function BTJumpToPositionAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
 end
 
-function BTJumpToPositionAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTJumpToPositionAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.navigation_extension
 	local var_5_1 = arg_5_2.locomotion_extension
 	local var_5_2 = POSITION_LOOKUP[arg_5_1]

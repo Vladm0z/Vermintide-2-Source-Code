@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTransformAction = class(BTTransformAction, BTNode)
 
-function BTTransformAction.init(arg_1_0, ...)
+BTTransformAction.init = function (arg_1_0, ...)
 	BTTransformAction.super.init(arg_1_0, ...)
 end
 
 BTTransformAction.name = "BTTransformAction"
 
-function BTTransformAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTransformAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.active_node = BTTransformAction
 
@@ -31,13 +31,13 @@ function BTTransformAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 end
 
-function BTTransformAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTransformAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_2.has_transformed then
 		arg_3_0:transform(arg_3_1, arg_3_2)
 	end
 end
 
-function BTTransformAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTransformAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.transform_anim_finished and not arg_4_2.has_transformed then
 		arg_4_0:transform(arg_4_1, arg_4_2)
 
@@ -47,16 +47,16 @@ function BTTransformAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTTransformAction.anim_cb_transform_finished(arg_5_0, arg_5_1, arg_5_2)
+BTTransformAction.anim_cb_transform_finished = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_2.transform_anim_finished = true
 end
 
-function BTTransformAction.transform(arg_6_0, arg_6_1, arg_6_2)
+BTTransformAction.transform = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = var_6_0.transfer_health_percentage
 	local var_6_2 = {
 		original_hp_percentage = ScriptUnit.extension(arg_6_1, "health_system"):current_health_percent(),
-		spawned_func = function(arg_7_0, arg_7_1, arg_7_2)
+		spawned_func = function (arg_7_0, arg_7_1, arg_7_2)
 			if var_6_1 then
 				local var_7_0 = arg_7_2.original_hp_percentage
 				local var_7_1 = ScriptUnit.extension(arg_7_0, "health_system")

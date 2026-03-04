@@ -315,7 +315,7 @@ local function var_0_6(arg_1_0)
 						style_id = "background",
 						texture_id = "background",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_2_0)
+						content_check_function = function (arg_2_0)
 							return arg_2_0.has_data
 						end
 					},
@@ -324,7 +324,7 @@ local function var_0_6(arg_1_0)
 						style_id = "background_lit",
 						texture_id = "background_lit",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_3_0)
+						content_check_function = function (arg_3_0)
 							return arg_3_0.has_data
 						end
 					},
@@ -333,7 +333,7 @@ local function var_0_6(arg_1_0)
 						style_id = "default_icon",
 						texture_id = "default_icon",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_4_0)
+						content_check_function = function (arg_4_0)
 							return not arg_4_0.has_data
 						end
 					},
@@ -342,7 +342,7 @@ local function var_0_6(arg_1_0)
 						style_id = "icon",
 						texture_id = "icon",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_5_0)
+						content_check_function = function (arg_5_0)
 							return arg_5_0.has_data
 						end
 					},
@@ -351,7 +351,7 @@ local function var_0_6(arg_1_0)
 						style_id = "icon_lit",
 						texture_id = "icon_lit",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_6_0)
+						content_check_function = function (arg_6_0)
 							return arg_6_0.has_data
 						end
 					},
@@ -360,7 +360,7 @@ local function var_0_6(arg_1_0)
 						style_id = "stance_bar_fg",
 						texture_id = "stance_bar_fg",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_7_0)
+						content_check_function = function (arg_7_0)
 							return arg_7_0.stance_bar.active
 						end
 					},
@@ -369,7 +369,7 @@ local function var_0_6(arg_1_0)
 						style_id = "stance_bar_lit",
 						texture_id = "stance_bar_lit",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_8_0)
+						content_check_function = function (arg_8_0)
 							return arg_8_0.stance_bar.active
 						end
 					},
@@ -378,7 +378,7 @@ local function var_0_6(arg_1_0)
 						style_id = "stance_bar_glow",
 						texture_id = "stance_bar_glow",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_9_0)
+						content_check_function = function (arg_9_0)
 							return arg_9_0.stance_bar.active
 						end
 					},
@@ -386,10 +386,10 @@ local function var_0_6(arg_1_0)
 						style_id = "stance_bar",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "stance_bar",
-						content_check_function = function(arg_10_0)
+						content_check_function = function (arg_10_0)
 							return arg_10_0.active
 						end,
-						dynamic_function = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+						dynamic_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 							local var_11_0 = arg_11_0.bar_value
 							local var_11_1 = arg_11_1.uv_start_pixels
 							local var_11_2 = arg_11_1.uv_scale_pixels
@@ -410,7 +410,7 @@ local function var_0_6(arg_1_0)
 						pass_type = "text",
 						text_id = "ammo_text_1",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_12_0)
+						content_check_function = function (arg_12_0)
 							return not arg_12_0.stance_bar.active and arg_12_0.has_data
 						end
 					},
@@ -419,7 +419,7 @@ local function var_0_6(arg_1_0)
 						pass_type = "text",
 						text_id = "ammo_text_2",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_13_0)
+						content_check_function = function (arg_13_0)
 							return not arg_13_0.stance_bar.active and arg_13_0.has_data
 						end
 					},
@@ -428,7 +428,7 @@ local function var_0_6(arg_1_0)
 						style_id = "ammo_divider",
 						texture_id = "ammo_divider",
 						retained_mode = var_0_0,
-						content_check_function = function(arg_14_0)
+						content_check_function = function (arg_14_0)
 							return not arg_14_0.stance_bar.active and arg_14_0.has_data and arg_14_0.ammo_text_1 ~= "" and arg_14_0.ammo_text_2 ~= ""
 						end
 					}

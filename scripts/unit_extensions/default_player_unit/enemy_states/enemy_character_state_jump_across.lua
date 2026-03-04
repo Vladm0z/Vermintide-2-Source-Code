@@ -10,11 +10,11 @@ local function var_0_0(arg_1_0)
 	end
 end
 
-function EnemyCharacterStateJumpAcross.init(arg_2_0, arg_2_1)
+EnemyCharacterStateJumpAcross.init = function (arg_2_0, arg_2_1)
 	EnemyCharacterStateJumpAcross.super.init(arg_2_0, arg_2_1, "jump_across")
 end
 
-function EnemyCharacterStateJumpAcross.setup_transition(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+EnemyCharacterStateJumpAcross.setup_transition = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0.smart_object_data = arg_3_2
 
 	local var_3_0 = POSITION_LOOKUP[arg_3_1]
@@ -28,7 +28,7 @@ function EnemyCharacterStateJumpAcross.setup_transition(arg_3_0, arg_3_1, arg_3_
 	arg_3_0.jump_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(arg_3_4 - var_3_0)))
 end
 
-function EnemyCharacterStateJumpAcross.do_the_transition(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+EnemyCharacterStateJumpAcross.do_the_transition = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_0._sub_state == "moving_to_to_entrance" then
 		local var_4_0 = arg_4_0._entrance_pos:unbox()
 		local var_4_1 = arg_4_0._exit_pos:unbox()

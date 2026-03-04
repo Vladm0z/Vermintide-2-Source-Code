@@ -2,7 +2,7 @@
 
 ActionDamageTarget = class(ActionDamageTarget, ActionBase)
 
-function ActionDamageTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionDamageTarget.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionDamageTarget.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.owner_unit = arg_1_4
@@ -23,7 +23,7 @@ function ActionDamageTarget.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 	arg_1_0.unit_id = arg_1_0.network_manager.unit_storage:go_id(arg_1_4)
 end
 
-function ActionDamageTarget.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionDamageTarget.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionDamageTarget.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	if not arg_2_3 or not arg_2_3.target then
@@ -66,7 +66,7 @@ function ActionDamageTarget.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2,
 	end
 end
 
-function ActionDamageTarget._apply_damage_step(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionDamageTarget._apply_damage_step = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_3.damage_profile
 	local var_3_1 = arg_3_3.overcharge_amount
 	local var_3_2 = Unit.get_data(arg_3_1, "breed")
@@ -116,7 +116,7 @@ function ActionDamageTarget._apply_damage_step(arg_3_0, arg_3_1, arg_3_2, arg_3_
 	end
 end
 
-function ActionDamageTarget.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionDamageTarget.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0._target_unit
 
 	if var_4_0 and not HEALTH_ALIVE[var_4_0] then
@@ -190,7 +190,7 @@ function ActionDamageTarget.client_owner_post_update(arg_4_0, arg_4_1, arg_4_2, 
 	end
 end
 
-function ActionDamageTarget._start_forced_action(arg_5_0, arg_5_1)
+ActionDamageTarget._start_forced_action = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.current_action.force_action_on_complete
 
 	if not var_5_0 then
@@ -207,7 +207,7 @@ function ActionDamageTarget._start_forced_action(arg_5_0, arg_5_1)
 	var_5_4:start_action(var_5_1, var_5_2, var_5_6, arg_5_1, var_5_3)
 end
 
-function ActionDamageTarget.finish(arg_6_0, arg_6_1)
+ActionDamageTarget.finish = function (arg_6_0, arg_6_1)
 	ActionDamageTarget.super.finish(arg_6_0, arg_6_1)
 
 	if not arg_6_0.is_bot then
@@ -220,6 +220,6 @@ function ActionDamageTarget.finish(arg_6_0, arg_6_1)
 	arg_6_0.weapon_system:stop_soul_rip(arg_6_0.owner_unit, true)
 end
 
-function ActionDamageTarget.destroy(arg_7_0)
+ActionDamageTarget.destroy = function (arg_7_0)
 	return
 end

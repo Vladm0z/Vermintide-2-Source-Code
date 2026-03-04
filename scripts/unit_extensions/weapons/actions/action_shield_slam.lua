@@ -4,7 +4,7 @@ ActionShieldSlam = class(ActionShieldSlam, ActionBase)
 
 local var_0_0 = POSITION_LOOKUP
 
-function ActionShieldSlam.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionShieldSlam.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionShieldSlam.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -19,7 +19,7 @@ function ActionShieldSlam.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_
 	arg_1_0.target_hit_unit_positions = {}
 end
 
-function ActionShieldSlam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionShieldSlam.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionShieldSlam.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	arg_2_0.current_action = arg_2_1
@@ -96,7 +96,7 @@ function ActionShieldSlam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, a
 			local var_2_26 = Actor.unit(var_2_25)
 
 			if not var_2_20 and var_2_23:is_ally(var_2_0, var_2_26) then
-				-- block empty
+				-- Nothing
 			else
 				local var_2_27 = Unit.get_data(var_2_26, "breed")
 
@@ -150,7 +150,7 @@ function ActionShieldSlam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, a
 	arg_2_0._num_targets_hit = 0
 end
 
-function ActionShieldSlam.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionShieldSlam.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.owner_unit
 
@@ -169,7 +169,7 @@ function ActionShieldSlam.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, ar
 	end
 end
 
-function ActionShieldSlam._hit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionShieldSlam._hit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = Managers.state.network
 	local var_4_1 = World.get_data(arg_4_1, "physics_world")
 	local var_4_2 = var_4_0:unit_game_object_id(arg_4_3)
@@ -406,7 +406,7 @@ function ActionShieldSlam._hit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	arg_4_0.state = "hit"
 end
 
-function ActionShieldSlam.finish(arg_5_0, arg_5_1)
+ActionShieldSlam.finish = function (arg_5_0, arg_5_1)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0.owner_unit, "hud_system")
 
 	if var_5_0 then
@@ -436,7 +436,7 @@ function ActionShieldSlam.finish(arg_5_0, arg_5_1)
 	end
 end
 
-function ActionShieldSlam._is_infront_player(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ActionShieldSlam._is_infront_player = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = Vector3.normalize(arg_6_3 - arg_6_1)
 
 	if Vector3.dot(var_6_0, arg_6_2) > (arg_6_4 or 0.35) then
@@ -444,7 +444,7 @@ function ActionShieldSlam._is_infront_player(arg_6_0, arg_6_1, arg_6_2, arg_6_3,
 	end
 end
 
-function ActionShieldSlam.destroy(arg_7_0)
+ActionShieldSlam.destroy = function (arg_7_0)
 	if arg_7_0.critical_strike_particle_id then
 		World.destroy_particles(arg_7_0.world, arg_7_0.critical_strike_particle_id)
 

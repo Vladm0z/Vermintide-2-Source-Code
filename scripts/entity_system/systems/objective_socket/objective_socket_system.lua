@@ -11,7 +11,7 @@ local var_0_1 = {
 	"ObjectiveSocketUnitExtension"
 }
 
-function ObjectiveSocketSystem.init(arg_1_0, arg_1_1, arg_1_2)
+ObjectiveSocketSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ObjectiveSocketSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -22,7 +22,7 @@ function ObjectiveSocketSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.network_manager = Managers.state.network
 	arg_1_0.socket_extensions = {}
 
-	function arg_1_0.objective_entered_zone_server(arg_2_0, arg_2_1)
+	arg_1_0.objective_entered_zone_server = function (arg_2_0, arg_2_1)
 		local var_2_0, var_2_1 = arg_2_0:pick_socket(arg_2_1)
 
 		if not var_2_0 then
@@ -52,7 +52,7 @@ function ObjectiveSocketSystem.init(arg_1_0, arg_1_1, arg_1_2)
 		end
 	end
 
-	function arg_1_0.objective_entered_zone_client(arg_3_0, arg_3_1, arg_3_2)
+	arg_1_0.objective_entered_zone_client = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = arg_3_0:socket_from_id(arg_3_1)
 
 		fassert(var_3_0.open == true, "Socket was already occupied.")
@@ -86,7 +86,7 @@ function ObjectiveSocketSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function ObjectiveSocketSystem.destroy(arg_4_0)
+ObjectiveSocketSystem.destroy = function (arg_4_0)
 	arg_4_0.network_event_delegate:unregister(arg_4_0)
 
 	arg_4_0.network_event_delegate = nil
@@ -94,7 +94,7 @@ function ObjectiveSocketSystem.destroy(arg_4_0)
 	arg_4_0.socket_extensions = nil
 end
 
-function ObjectiveSocketSystem.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ObjectiveSocketSystem.on_add_extension = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = ObjectiveSocketSystem.super.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_0.is_server)
 
 	if arg_5_0.is_server then
@@ -111,13 +111,13 @@ function ObjectiveSocketSystem.on_add_extension(arg_5_0, arg_5_1, arg_5_2, arg_5
 	return var_5_0
 end
 
-function ObjectiveSocketSystem.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+ObjectiveSocketSystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	ObjectiveSocketSystem.super.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
 
 	arg_6_0.socket_extensions[arg_6_1] = nil
 end
 
-function ObjectiveSocketSystem.hot_join_sync(arg_7_0, arg_7_1)
+ObjectiveSocketSystem.hot_join_sync = function (arg_7_0, arg_7_1)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0.socket_extensions) do
 		local var_7_0 = iter_7_1.sockets
 		local var_7_1 = iter_7_1.num_sockets
@@ -133,7 +133,7 @@ function ObjectiveSocketSystem.hot_join_sync(arg_7_0, arg_7_1)
 	end
 end
 
-function ObjectiveSocketSystem.rpc_objective_entered_socket_zone(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ObjectiveSocketSystem.rpc_objective_entered_socket_zone = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	fassert(not arg_8_0.is_server, "Should only be called on the client")
 
 	local var_8_0 = arg_8_0.network_manager:game_object_or_level_unit(arg_8_2, arg_8_4)
@@ -145,6 +145,6 @@ function ObjectiveSocketSystem.rpc_objective_entered_socket_zone(arg_8_0, arg_8_
 	ScriptUnit.extension(var_8_0, "objective_socket_system"):objective_entered_zone_client(arg_8_3)
 end
 
-function ObjectiveSocketSystem.get_owner_of_unit_that_occupied_socket(arg_9_0, arg_9_1, arg_9_2)
+ObjectiveSocketSystem.get_owner_of_unit_that_occupied_socket = function (arg_9_0, arg_9_1, arg_9_2)
 	return arg_9_0.socket_extensions[arg_9_1].owner_of_unit_that_occupied_socket[arg_9_2]
 end

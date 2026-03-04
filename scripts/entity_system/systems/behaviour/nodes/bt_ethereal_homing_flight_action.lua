@@ -4,17 +4,17 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTEtherealHomingFlightAction = class(BTEtherealHomingFlightAction, BTNode)
 
-function BTEtherealHomingFlightAction.init(arg_1_0, ...)
+BTEtherealHomingFlightAction.init = function (arg_1_0, ...)
 	BTEtherealHomingFlightAction.super.init(arg_1_0, ...)
 end
 
 BTEtherealHomingFlightAction.name = "BTEtherealHomingFlightAction"
 
-function BTEtherealHomingFlightAction.enter(arg_2_0)
+BTEtherealHomingFlightAction.enter = function (arg_2_0)
 	arg_2_0._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-function BTEtherealHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTEtherealHomingFlightAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.homing_target_unit
 
 	if var_3_0 then
@@ -24,7 +24,7 @@ function BTEtherealHomingFlightAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	end
 end
 
-function BTEtherealHomingFlightAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTEtherealHomingFlightAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_2.bot_target_delay then
 		arg_4_2.bot_target_delay = arg_4_3 + 6
 	elseif arg_4_3 > arg_4_2.bot_target_delay and not arg_4_2.is_target then

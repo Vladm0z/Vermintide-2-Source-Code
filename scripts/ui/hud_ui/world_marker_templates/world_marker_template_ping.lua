@@ -32,7 +32,7 @@ local var_0_3 = {
 	"world_marker_icon_response_3"
 }
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	local var_1_0 = 25
 
 	return {
@@ -52,7 +52,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_1",
 					texture_id = "world_marker_icon_response_1",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.world_marker_response_1.show
 					end
 				},
@@ -60,7 +60,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_2",
 					texture_id = "world_marker_icon_response_2",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.world_marker_response_2.show
 					end
 				},
@@ -68,7 +68,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_3",
 					texture_id = "world_marker_icon_response_3",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.world_marker_response_3.show
 					end
 				},
@@ -81,7 +81,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.is_clamped
 					end
 				},
@@ -89,7 +89,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return Managers.mechanism:current_mechanism_name() ~= "versus"
 					end
 				},
@@ -372,7 +372,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_7_0)
+var_0_1.on_enter = function (arg_7_0)
 	local var_7_0 = arg_7_0.content
 
 	var_7_0.spawn_progress_timer = 0
@@ -419,7 +419,7 @@ local function var_0_5(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_0, var_9_0 ~= 1
 end
 
-function var_0_1.update_function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+var_0_1.update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_1.content
 	local var_10_1 = arg_10_1.style
 	local var_10_2 = var_10_0.is_inside_frustum

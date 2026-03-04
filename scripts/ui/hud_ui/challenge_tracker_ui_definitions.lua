@@ -438,7 +438,7 @@ local var_0_11 = {
 			name = "ease_in",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				local var_3_0 = arg_3_2.offset
 
 				arg_3_3.src = {
@@ -459,14 +459,14 @@ local var_0_11 = {
 
 				Material.set_scalar(var_3_3, "angle", (var_3_2.start_anim_progress - 0.5) * math.pi * 2)
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				local var_4_0 = math.easeOutCubic(arg_4_3)
 
 				arg_4_2.content.alpha_multiplier = var_4_0
 				arg_4_2.offset[1] = math.floor(math.lerp(arg_4_4.src[1], arg_4_4.dst[1], var_4_0))
 				arg_4_2.offset[2] = math.floor(math.lerp(arg_4_4.src[2], arg_4_4.dst[2], var_4_0))
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				arg_5_3.view:_play_sound("Play_hud_grail_knight_quest_start")
 			end
 		}
@@ -475,7 +475,7 @@ local var_0_11 = {
 		{
 			name = "update circle",
 			duration = 0.2,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				local var_6_0 = arg_6_2.content
 				local var_6_1 = var_6_0.progress
 				local var_6_2 = var_6_0.max_progress
@@ -484,7 +484,7 @@ local var_0_11 = {
 				var_6_0.end_anim_progress = var_6_1 / var_6_2
 				var_6_0.progress_text = tostring(var_6_2 - var_6_1)
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = arg_7_2.content
 				local var_7_1 = var_0_4 and arg_7_4.ui_renderer.gui_retained or arg_7_4.ui_renderer.gui
 				local var_7_2 = Gui.material(var_7_1, arg_7_2.content.progress_id)
@@ -500,7 +500,7 @@ local var_0_11 = {
 					var_7_0.last_milestone = math.floor(var_7_4 * 4)
 				end
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				local var_8_0 = arg_8_2.content
 
 				var_8_0.start_anim_progress = var_8_0.end_anim_progress
@@ -512,10 +512,10 @@ local var_0_11 = {
 			name = "fade and play sound",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				arg_9_3.view:_play_sound("Play_hud_grail_knight_quest_finish")
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				arg_10_2.content.alpha_multiplier = 1 - arg_10_3
 			end,
 			on_complete = NOP
@@ -526,7 +526,7 @@ local var_0_11 = {
 			duration = 0.1,
 			init = NOP,
 			update = NOP,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				local var_11_0 = arg_11_2.content.challenge
 				local var_11_1 = var_11_0:get_reward().sound
 
@@ -543,13 +543,13 @@ local var_0_11 = {
 			name = "fade",
 			delay = 0.5,
 			duration = 1,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				arg_13_2.content.alpha_multiplier = 1 - arg_13_3
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				local var_14_0 = arg_14_2.content.challenge
 
 				arg_14_3.view:_cb_on_done(arg_14_2, var_14_0)

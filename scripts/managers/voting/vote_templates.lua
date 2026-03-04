@@ -18,7 +18,7 @@ VoteTemplates = {
 				vote = 2
 			}
 		},
-		on_complete = function(arg_1_0, arg_1_1)
+		on_complete = function (arg_1_0, arg_1_1)
 			local var_1_0 = Managers.level_transition_handler
 
 			if arg_1_0 == 1 then
@@ -34,10 +34,10 @@ VoteTemplates = {
 				var_1_0:promote_next_level_data()
 			end
 		end,
-		pack_sync_data = function(arg_2_0)
+		pack_sync_data = function (arg_2_0)
 			return {}
 		end,
-		extract_sync_data = function(arg_3_0)
+		extract_sync_data = function (arg_3_0)
 			return {}
 		end
 	},
@@ -54,15 +54,15 @@ VoteTemplates = {
 				vote = 1
 			}
 		},
-		on_complete = function(arg_4_0, arg_4_1)
+		on_complete = function (arg_4_0, arg_4_1)
 			local var_4_0 = Managers.mechanism:game_mechanism():get_hub_level_key()
 
 			Managers.state.game_mode:start_specific_level(var_4_0, 0)
 		end,
-		pack_sync_data = function(arg_5_0)
+		pack_sync_data = function (arg_5_0)
 			return {}
 		end,
-		extract_sync_data = function(arg_6_0)
+		extract_sync_data = function (arg_6_0)
 			return {}
 		end
 	},
@@ -87,7 +87,7 @@ VoteTemplates = {
 				vote = 3
 			}
 		},
-		on_complete = function(arg_7_0, arg_7_1)
+		on_complete = function (arg_7_0, arg_7_1)
 			local var_7_0 = Managers.level_transition_handler
 			local var_7_1 = Managers.mechanism:generate_level_seed()
 
@@ -103,10 +103,10 @@ VoteTemplates = {
 				Managers.state.event:trigger("checkpoint_vote_cancelled")
 			end
 		end,
-		pack_sync_data = function(arg_8_0)
+		pack_sync_data = function (arg_8_0)
 			return {}
 		end,
-		extract_sync_data = function(arg_9_0)
+		extract_sync_data = function (arg_9_0)
 			return {}
 		end
 	},
@@ -135,18 +135,18 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_complete = function(arg_10_0, arg_10_1, arg_10_2)
+		on_complete = function (arg_10_0, arg_10_1, arg_10_2)
 			if arg_10_0 == 1 then
 				arg_10_1.network_server:kick_peer(arg_10_2.kick_peer_id)
 			end
 		end,
-		pack_sync_data = function(arg_11_0)
+		pack_sync_data = function (arg_11_0)
 			return {
 				arg_11_0.voter_peer_id,
 				arg_11_0.kick_peer_id
 			}
 		end,
-		extract_sync_data = function(arg_12_0)
+		extract_sync_data = function (arg_12_0)
 			local var_12_0 = arg_12_0[1]
 			local var_12_1 = arg_12_0[2]
 
@@ -155,19 +155,19 @@ VoteTemplates = {
 				kick_peer_id = var_12_1
 			}
 		end,
-		modify_title_text = function(arg_13_0, arg_13_1)
+		modify_title_text = function (arg_13_0, arg_13_1)
 			local var_13_0 = Managers.player:player_from_peer_id(arg_13_1.kick_peer_id)
 			local var_13_1 = var_13_0 and var_13_0:name() or "n/a"
 
 			return sprintf("%s\n%s", arg_13_0, tostring(var_13_1))
 		end,
-		initial_vote_func = function(arg_14_0)
+		initial_vote_func = function (arg_14_0)
 			return {
 				[arg_14_0.voter_peer_id] = 1,
 				[arg_14_0.kick_peer_id] = 2
 			}
 		end,
-		can_start_vote = function(arg_15_0)
+		can_start_vote = function (arg_15_0)
 			if arg_15_0 and Managers.player:player_from_peer_id(arg_15_0.kick_peer_id) then
 				return true
 			end
@@ -197,18 +197,18 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_complete = function(arg_16_0, arg_16_1, arg_16_2)
+		on_complete = function (arg_16_0, arg_16_1, arg_16_2)
 			if arg_16_0 == 1 then
 				arg_16_1.network_server:kick_peer(arg_16_2.kick_peer_id)
 			end
 		end,
-		pack_sync_data = function(arg_17_0)
+		pack_sync_data = function (arg_17_0)
 			return {
 				arg_17_0.voter_peer_id,
 				arg_17_0.kick_peer_id
 			}
 		end,
-		extract_sync_data = function(arg_18_0)
+		extract_sync_data = function (arg_18_0)
 			local var_18_0 = arg_18_0[1]
 			local var_18_1 = arg_18_0[2]
 
@@ -217,7 +217,7 @@ VoteTemplates = {
 				kick_peer_id = var_18_1
 			}
 		end,
-		modify_title_text = function(arg_19_0, arg_19_1)
+		modify_title_text = function (arg_19_0, arg_19_1)
 			local var_19_0 = Managers.player:player_from_peer_id(arg_19_1.kick_peer_id):name()
 
 			return sprintf("%s\n%s", arg_19_0, tostring(var_19_0))
@@ -246,20 +246,20 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_complete = function(arg_20_0, arg_20_1, arg_20_2)
+		on_complete = function (arg_20_0, arg_20_1, arg_20_2)
 			if arg_20_0 == 1 then
 				local var_20_0 = arg_20_2.level_key
 
 				Managers.state.game_mode:start_specific_level(var_20_0)
 			end
 		end,
-		pack_sync_data = function(arg_21_0)
+		pack_sync_data = function (arg_21_0)
 			return {
 				arg_21_0.voter_peer_id,
 				NetworkLookup.mission_ids[arg_21_0.level_key]
 			}
 		end,
-		extract_sync_data = function(arg_22_0)
+		extract_sync_data = function (arg_22_0)
 			local var_22_0 = arg_22_0[1]
 			local var_22_1 = NetworkLookup.mission_ids[tonumber(arg_22_0[2])]
 
@@ -283,7 +283,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_23_0)
+		requirement_failed_message_func = function (arg_23_0)
 			local var_23_0 = Localize("vote_requirement_failed")
 			local var_23_1 = Managers.player
 
@@ -311,10 +311,10 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_start = function(arg_24_0, arg_24_1)
+		on_start = function (arg_24_0, arg_24_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_25_0, arg_25_1, arg_25_2)
+		on_complete = function (arg_25_0, arg_25_1, arg_25_2)
 			if arg_25_0 == 1 then
 				local var_25_0 = arg_25_2.mission_id
 				local var_25_1 = arg_25_2.difficulty
@@ -348,7 +348,7 @@ VoteTemplates = {
 				Managers.matchmaking:find_game(var_25_10)
 			end
 		end,
-		pack_sync_data = function(arg_26_0)
+		pack_sync_data = function (arg_26_0)
 			local var_26_0 = arg_26_0.mission_id or "n/a"
 			local var_26_1 = arg_26_0.act_key or "n/a"
 			local var_26_2 = arg_26_0.difficulty
@@ -373,7 +373,7 @@ VoteTemplates = {
 				NetworkLookup.mechanisms[var_26_9]
 			}
 		end,
-		extract_sync_data = function(arg_27_0)
+		extract_sync_data = function (arg_27_0)
 			local var_27_0 = arg_27_0[1]
 			local var_27_1 = arg_27_0[2]
 			local var_27_2 = arg_27_0[3]
@@ -413,7 +413,7 @@ VoteTemplates = {
 				mechanism = var_27_14
 			}
 		end,
-		initial_vote_func = function(arg_28_0)
+		initial_vote_func = function (arg_28_0)
 			return {
 				[arg_28_0.voter_peer_id] = 1
 			}
@@ -433,7 +433,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_29_0)
+		requirement_failed_message_func = function (arg_29_0)
 			local var_29_0 = Localize("vote_requirement_failed")
 			local var_29_1 = Managers.player
 
@@ -461,10 +461,10 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_start = function(arg_30_0, arg_30_1)
+		on_start = function (arg_30_0, arg_30_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_31_0, arg_31_1, arg_31_2)
+		on_complete = function (arg_31_0, arg_31_1, arg_31_2)
 			if arg_31_0 == 1 then
 				local var_31_0 = arg_31_2.mission_id
 				local var_31_1 = arg_31_2.difficulty
@@ -494,7 +494,7 @@ VoteTemplates = {
 				Managers.deed:reset()
 			end
 		end,
-		pack_sync_data = function(arg_32_0)
+		pack_sync_data = function (arg_32_0)
 			local var_32_0 = arg_32_0.item_name
 			local var_32_1 = arg_32_0.mission_id
 			local var_32_2 = arg_32_0.difficulty
@@ -509,7 +509,7 @@ VoteTemplates = {
 				NetworkLookup.mechanisms[var_32_4]
 			}
 		end,
-		extract_sync_data = function(arg_33_0)
+		extract_sync_data = function (arg_33_0)
 			local var_33_0 = arg_33_0[1]
 			local var_33_1 = arg_33_0[2]
 			local var_33_2 = arg_33_0[3]
@@ -533,7 +533,7 @@ VoteTemplates = {
 				mechanism = NetworkLookup.mechanisms[var_33_4]
 			}
 		end,
-		initial_vote_func = function(arg_34_0)
+		initial_vote_func = function (arg_34_0)
 			return {
 				[arg_34_0.voter_peer_id] = 1
 			}
@@ -553,7 +553,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_35_0)
+		requirement_failed_message_func = function (arg_35_0)
 			local var_35_0 = Localize("vote_requirement_failed")
 			local var_35_1 = Managers.player
 
@@ -581,10 +581,10 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_start = function(arg_36_0, arg_36_1)
+		on_start = function (arg_36_0, arg_36_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_37_0, arg_37_1, arg_37_2)
+		on_complete = function (arg_37_0, arg_37_1, arg_37_2)
 			if arg_37_0 == 1 then
 				local var_37_0 = arg_37_2.mission_id
 				local var_37_1 = arg_37_2.difficulty
@@ -617,7 +617,7 @@ VoteTemplates = {
 				var_37_9:set_game_mode_event_data(var_37_8)
 			end
 		end,
-		pack_sync_data = function(arg_38_0)
+		pack_sync_data = function (arg_38_0)
 			local var_38_0 = arg_38_0.mission_id or "n/a"
 			local var_38_1 = arg_38_0.difficulty
 			local var_38_2 = arg_38_0.event_data.mutators
@@ -639,7 +639,7 @@ VoteTemplates = {
 
 			return var_38_5
 		end,
-		extract_sync_data = function(arg_39_0)
+		extract_sync_data = function (arg_39_0)
 			local var_39_0 = arg_39_0[1]
 			local var_39_1 = arg_39_0[2]
 			local var_39_2 = arg_39_0[3]
@@ -672,7 +672,7 @@ VoteTemplates = {
 				mechanism = var_39_8
 			}
 		end,
-		initial_vote_func = function(arg_40_0)
+		initial_vote_func = function (arg_40_0)
 			return {
 				[arg_40_0.voter_peer_id] = 1
 			}
@@ -692,7 +692,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_41_0)
+		requirement_failed_message_func = function (arg_41_0)
 			local var_41_0 = Localize("vote_weave_requirement_failed")
 			local var_41_1 = Managers.player
 
@@ -720,7 +720,7 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		can_start_vote = function(arg_42_0)
+		can_start_vote = function (arg_42_0)
 			if not Managers.player.is_server then
 				return true
 			end
@@ -747,10 +747,10 @@ VoteTemplates = {
 				return true
 			end
 		end,
-		on_start = function(arg_43_0, arg_43_1)
+		on_start = function (arg_43_0, arg_43_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_44_0, arg_44_1, arg_44_2)
+		on_complete = function (arg_44_0, arg_44_1, arg_44_2)
 			if arg_44_0 == 1 then
 				local var_44_0 = arg_44_2.mission_id
 				local var_44_1 = arg_44_2.objective_index
@@ -777,7 +777,7 @@ VoteTemplates = {
 				Managers.matchmaking:find_game(var_44_8)
 			end
 		end,
-		pack_sync_data = function(arg_45_0)
+		pack_sync_data = function (arg_45_0)
 			local var_45_0 = arg_45_0.mission_id
 			local var_45_1 = arg_45_0.objective_index
 			local var_45_2 = arg_45_0.private_game
@@ -792,7 +792,7 @@ VoteTemplates = {
 				NetworkLookup.matchmaking_types[var_45_4]
 			}
 		end,
-		extract_sync_data = function(arg_46_0)
+		extract_sync_data = function (arg_46_0)
 			local var_46_0 = arg_46_0[1]
 			local var_46_1 = NetworkLookup.mission_ids[var_46_0]
 			local var_46_2 = arg_46_0[2]
@@ -812,7 +812,7 @@ VoteTemplates = {
 				mechanism = var_46_6
 			}
 		end,
-		initial_vote_func = function(arg_47_0)
+		initial_vote_func = function (arg_47_0)
 			return {
 				[arg_47_0.voter_peer_id] = 1
 			}
@@ -846,10 +846,10 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		on_start = function(arg_48_0, arg_48_1)
+		on_start = function (arg_48_0, arg_48_1)
 			return
 		end,
-		on_complete = function(arg_49_0, arg_49_1, arg_49_2)
+		on_complete = function (arg_49_0, arg_49_1, arg_49_2)
 			if arg_49_0 == 1 then
 				local var_49_0 = arg_49_2.mission_id
 				local var_49_1 = arg_49_2.objective_index
@@ -873,7 +873,7 @@ VoteTemplates = {
 				Managers.matchmaking:weave_vote_result(false)
 			end
 		end,
-		pack_sync_data = function(arg_50_0)
+		pack_sync_data = function (arg_50_0)
 			local var_50_0 = arg_50_0.mission_id
 			local var_50_1 = arg_50_0.objective_index
 			local var_50_2 = arg_50_0.mechanism
@@ -884,7 +884,7 @@ VoteTemplates = {
 				NetworkLookup.mechanisms[var_50_2]
 			}
 		end,
-		extract_sync_data = function(arg_51_0)
+		extract_sync_data = function (arg_51_0)
 			local var_51_0 = arg_51_0[1]
 			local var_51_1 = NetworkLookup.weave_names[var_51_0]
 			local var_51_2 = arg_51_0[2]
@@ -900,7 +900,7 @@ VoteTemplates = {
 				mechanism = var_51_5
 			}
 		end,
-		initial_vote_func = function(arg_52_0)
+		initial_vote_func = function (arg_52_0)
 			return {}
 		end
 	},
@@ -918,7 +918,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_53_0)
+		requirement_failed_message_func = function (arg_53_0)
 			local var_53_0 = Localize("vote_weave_requirement_failed")
 			local var_53_1 = Managers.player
 
@@ -946,7 +946,7 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		can_start_vote = function(arg_54_0)
+		can_start_vote = function (arg_54_0)
 			if not Managers.player.is_server then
 				return true
 			end
@@ -973,10 +973,10 @@ VoteTemplates = {
 				return true
 			end
 		end,
-		on_start = function(arg_55_0, arg_55_1)
+		on_start = function (arg_55_0, arg_55_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_56_0, arg_56_1, arg_56_2)
+		on_complete = function (arg_56_0, arg_56_1, arg_56_2)
 			if arg_56_0 == 1 then
 				local var_56_0 = arg_56_2.difficulty
 				local var_56_1 = arg_56_2.always_host
@@ -998,7 +998,7 @@ VoteTemplates = {
 				Managers.matchmaking:find_game(var_56_5)
 			end
 		end,
-		pack_sync_data = function(arg_57_0)
+		pack_sync_data = function (arg_57_0)
 			local var_57_0 = arg_57_0.difficulty
 			local var_57_1 = arg_57_0.mechanism
 			local var_57_2 = arg_57_0.matchmaking_type
@@ -1009,7 +1009,7 @@ VoteTemplates = {
 				NetworkLookup.matchmaking_types[var_57_2]
 			}
 		end,
-		extract_sync_data = function(arg_58_0)
+		extract_sync_data = function (arg_58_0)
 			local var_58_0 = arg_58_0[1]
 			local var_58_1 = NetworkLookup.difficulties[var_58_0]
 			local var_58_2 = arg_58_0[2]
@@ -1027,7 +1027,7 @@ VoteTemplates = {
 				mechanism = var_58_3
 			}
 		end,
-		initial_vote_func = function(arg_59_0)
+		initial_vote_func = function (arg_59_0)
 			return {
 				[arg_59_0.voter_peer_id] = 1
 			}
@@ -1048,7 +1048,7 @@ VoteTemplates = {
 		min_required_voters = 1,
 		gamepad_input_desc = "default_voting",
 		timeout_vote_option = 2,
-		requirement_failed_message_func = function(arg_60_0)
+		requirement_failed_message_func = function (arg_60_0)
 			local var_60_0 = Localize("vote_requirement_failed")
 			local var_60_1 = Managers.player
 
@@ -1076,7 +1076,7 @@ VoteTemplates = {
 				input = "ingame_vote_no"
 			}
 		},
-		can_start_vote = function(arg_61_0)
+		can_start_vote = function (arg_61_0)
 			local var_61_0 = true
 
 			if Managers.player.is_server then
@@ -1095,10 +1095,10 @@ VoteTemplates = {
 
 			return var_61_0
 		end,
-		on_start = function(arg_62_0, arg_62_1)
+		on_start = function (arg_62_0, arg_62_1)
 			Managers.matchmaking:cancel_matchmaking()
 		end,
-		on_complete = function(arg_63_0, arg_63_1, arg_63_2)
+		on_complete = function (arg_63_0, arg_63_1, arg_63_2)
 			if arg_63_0 == 1 then
 				local var_63_0 = arg_63_2.level_key
 				local var_63_1 = Managers.level_transition_handler
@@ -1107,7 +1107,7 @@ VoteTemplates = {
 				var_63_1:promote_next_level_data()
 			end
 		end,
-		pack_sync_data = function(arg_64_0)
+		pack_sync_data = function (arg_64_0)
 			local var_64_0 = arg_64_0.level_key
 			local var_64_1 = arg_64_0.mechanism
 
@@ -1116,7 +1116,7 @@ VoteTemplates = {
 				NetworkLookup.mechanism_keys[var_64_1]
 			}
 		end,
-		extract_sync_data = function(arg_65_0)
+		extract_sync_data = function (arg_65_0)
 			local var_65_0 = arg_65_0[1]
 			local var_65_1 = arg_65_0[2]
 
@@ -1126,7 +1126,7 @@ VoteTemplates = {
 				mechanism = NetworkLookup.mechanism_keys[var_65_1]
 			}
 		end,
-		initial_vote_func = function(arg_66_0)
+		initial_vote_func = function (arg_66_0)
 			return {
 				[arg_66_0.voter_peer_id] = 1
 			}

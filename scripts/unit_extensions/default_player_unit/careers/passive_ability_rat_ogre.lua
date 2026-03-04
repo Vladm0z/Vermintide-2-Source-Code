@@ -7,7 +7,7 @@ local var_0_0 = {
 	"rpc_stop_leap"
 }
 
-function PassiveAbilityRatOgre.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityRatOgre.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = arg_1_1.is_server
 	arg_1_0._is_remote_player = arg_1_3.player and arg_1_3.player.remote
@@ -22,13 +22,13 @@ function PassiveAbilityRatOgre.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._anim_value = 0
 end
 
-function PassiveAbilityRatOgre.register_rpcs(arg_2_0, arg_2_1)
+PassiveAbilityRatOgre.register_rpcs = function (arg_2_0, arg_2_1)
 	arg_2_0._network_event_delegate = arg_2_1
 
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 end
 
-function PassiveAbilityRatOgre.unregister_rpcs(arg_3_0)
+PassiveAbilityRatOgre.unregister_rpcs = function (arg_3_0)
 	if arg_3_0._network_event_delegate then
 		arg_3_0._network_event_delegate:unregister(arg_3_0)
 
@@ -36,7 +36,7 @@ function PassiveAbilityRatOgre.unregister_rpcs(arg_3_0)
 	end
 end
 
-function PassiveAbilityRatOgre.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+PassiveAbilityRatOgre.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._career_extension = ScriptUnit.extension(arg_4_2, "career_system")
 
 	if not arg_4_0._is_remote_player then
@@ -44,11 +44,11 @@ function PassiveAbilityRatOgre.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function PassiveAbilityRatOgre.destroy(arg_5_0)
+PassiveAbilityRatOgre.destroy = function (arg_5_0)
 	arg_5_0:unregister_rpcs()
 end
 
-function PassiveAbilityRatOgre.rpc_start_leap(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+PassiveAbilityRatOgre.rpc_start_leap = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if Managers.state.unit_storage:unit(arg_6_2) ~= arg_6_0._unit then
 		return
 	end
@@ -66,7 +66,7 @@ function PassiveAbilityRatOgre.rpc_start_leap(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	end
 end
 
-function PassiveAbilityRatOgre.rpc_stop_leap(arg_7_0, arg_7_1, arg_7_2)
+PassiveAbilityRatOgre.rpc_stop_leap = function (arg_7_0, arg_7_1, arg_7_2)
 	if Managers.state.unit_storage:unit(arg_7_2) ~= arg_7_0._unit then
 		return
 	end
@@ -84,7 +84,7 @@ function PassiveAbilityRatOgre.rpc_stop_leap(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function PassiveAbilityRatOgre.start_leap(arg_8_0, arg_8_1, arg_8_2)
+PassiveAbilityRatOgre.start_leap = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.state.unit_storage:go_id(arg_8_0._unit)
 
 	if not arg_8_0._is_server and not arg_8_0._is_remote_player then
@@ -98,7 +98,7 @@ function PassiveAbilityRatOgre.start_leap(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function PassiveAbilityRatOgre.set_leap_data(arg_9_0, arg_9_1, arg_9_2)
+PassiveAbilityRatOgre.set_leap_data = function (arg_9_0, arg_9_1, arg_9_2)
 	if not DEDICATED_SERVER then
 		Vector3Box.store(arg_9_0._jump_from_pos, arg_9_1)
 		Vector3Box.store(arg_9_0._jump_to_pos, arg_9_2)
@@ -115,7 +115,7 @@ function PassiveAbilityRatOgre.set_leap_data(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function PassiveAbilityRatOgre.stop_leap(arg_10_0)
+PassiveAbilityRatOgre.stop_leap = function (arg_10_0)
 	local var_10_0 = Managers.state.unit_storage:go_id(arg_10_0._unit)
 
 	if not var_10_0 then
@@ -133,7 +133,7 @@ function PassiveAbilityRatOgre.stop_leap(arg_10_0)
 	end
 end
 
-function PassiveAbilityRatOgre.stop(arg_11_0)
+PassiveAbilityRatOgre.stop = function (arg_11_0)
 	arg_11_0._update_anim_variables = false
 
 	local var_11_0 = arg_11_0._unit
@@ -157,7 +157,7 @@ function PassiveAbilityRatOgre.stop(arg_11_0)
 	end
 end
 
-function PassiveAbilityRatOgre.update(arg_12_0, arg_12_1, arg_12_2)
+PassiveAbilityRatOgre.update = function (arg_12_0, arg_12_1, arg_12_2)
 	if arg_12_0._update_anim_variables then
 		local var_12_0 = arg_12_0._unit
 

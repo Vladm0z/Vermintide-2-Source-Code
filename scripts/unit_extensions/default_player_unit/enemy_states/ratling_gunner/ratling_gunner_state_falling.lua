@@ -2,14 +2,14 @@
 
 RatlingGunnerStateFalling = class(RatlingGunnerStateFalling, EnemyCharacterStateFalling)
 
-function RatlingGunnerStateFalling.init(arg_1_0, arg_1_1)
+RatlingGunnerStateFalling.init = function (arg_1_0, arg_1_1)
 	RatlingGunnerStateFalling.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
 	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-function RatlingGunnerStateFalling.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+RatlingGunnerStateFalling.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0._csm
 	local var_2_1 = arg_2_0._career_extension
 

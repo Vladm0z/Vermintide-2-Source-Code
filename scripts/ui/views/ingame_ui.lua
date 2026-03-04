@@ -30,7 +30,7 @@ require("scripts/ui/text_popup/text_popup_ui")
 require("scripts/ui/weave_tutorial/weave_ui_onboarding_tutorial")
 require("scripts/ui/dlc_upsell/common_popup_handler")
 require("scripts/ui/hint_ui/hint_ui_handler")
-DLCUtils.map_list("ui_views", function(arg_1_0)
+DLCUtils.map_list("ui_views", function (arg_1_0)
 	local var_1_0 = arg_1_0.file
 
 	if var_1_0 then
@@ -52,7 +52,7 @@ local var_0_4 = script_data.testify and require("scripts/ui/views/ingame_ui_test
 
 IngameUI = class(IngameUI)
 
-function IngameUI.init(arg_2_0, arg_2_1)
+IngameUI.init = function (arg_2_0, arg_2_1)
 	printf("[IngameUI] init")
 
 	arg_2_0.unlock_manager = Managers.unlock
@@ -134,16 +134,16 @@ function IngameUI.init(arg_2_0, arg_2_1)
 	arg_2_0.ingame_ui_context = arg_2_1
 end
 
-function IngameUI.create_ui_renderer(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+IngameUI.create_ui_renderer = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return var_0_2.ui_renderer_function(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 end
 
-function IngameUI.setup_views(arg_4_0, arg_4_1)
+IngameUI.setup_views = function (arg_4_0, arg_4_1)
 	arg_4_0.views = var_0_2.views_function(arg_4_1)
 	arg_4_0.hotkey_mapping = var_0_2.hotkey_mapping
 end
 
-function IngameUI.setup_specific_view(arg_5_0, arg_5_1, arg_5_2)
+IngameUI.setup_specific_view = function (arg_5_0, arg_5_1, arg_5_2)
 	printf("[IngameUI] setup_specific_view %s", arg_5_2)
 
 	local var_5_0 = rawget(_G, arg_5_2)
@@ -156,7 +156,7 @@ function IngameUI.setup_specific_view(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.views[arg_5_1] = var_5_0:new(arg_5_0.ingame_ui_context)
 end
 
-function IngameUI.is_local_player_ready_for_game(arg_6_0)
+IngameUI.is_local_player_ready_for_game = function (arg_6_0)
 	if arg_6_0.is_in_inn then
 		local var_6_0 = Managers.player:local_player()
 		local var_6_1 = var_6_0 and var_6_0.player_unit
@@ -167,7 +167,7 @@ function IngameUI.is_local_player_ready_for_game(arg_6_0)
 	end
 end
 
-function IngameUI.can_view_lobby_browser(arg_7_0)
+IngameUI.can_view_lobby_browser = function (arg_7_0)
 	local var_7_0 = arg_7_0.is_server
 	local var_7_1 = Managers.matchmaking:is_game_matchmaking()
 
@@ -176,7 +176,7 @@ end
 
 script_data.lorebook_enabled = script_data.lorebook_enabled or Development.parameter("lorebook_enabled")
 
-function IngameUI.is_lorebook_enabled(arg_8_0)
+IngameUI.is_lorebook_enabled = function (arg_8_0)
 	if not script_data.lorebook_enabled then
 		return false
 	end
@@ -184,19 +184,19 @@ function IngameUI.is_lorebook_enabled(arg_8_0)
 	return true
 end
 
-function IngameUI.register_rpcs(arg_9_0, arg_9_1)
+IngameUI.register_rpcs = function (arg_9_0, arg_9_1)
 	arg_9_0.network_event_delegate = arg_9_1
 
 	arg_9_1:register(arg_9_0, unpack(var_0_0))
 end
 
-function IngameUI.unregister_rpcs(arg_10_0)
+IngameUI.unregister_rpcs = function (arg_10_0)
 	arg_10_0.network_event_delegate:unregister(arg_10_0)
 
 	arg_10_0.network_event_delegate = nil
 end
 
-function IngameUI.is_in_view_state(arg_11_0, arg_11_1)
+IngameUI.is_in_view_state = function (arg_11_0, arg_11_1)
 	if not arg_11_0.current_view then
 		return false
 	end
@@ -211,7 +211,7 @@ function IngameUI.is_in_view_state(arg_11_0, arg_11_1)
 	return var_11_1.NAME == arg_11_1
 end
 
-function IngameUI.destroy(arg_12_0)
+IngameUI.destroy = function (arg_12_0)
 	arg_12_0:unregister_rpcs()
 	Managers.chat:set_profile_synchronizer(nil)
 	Managers.chat:set_wwise_world(nil)
@@ -220,7 +220,7 @@ function IngameUI.destroy(arg_12_0)
 	local var_12_0 = arg_12_0.current_view
 
 	if not arg_12_0.menu_active and var_12_0 then
-		-- block empty
+		-- Nothing
 	end
 
 	if var_12_0 then
@@ -297,7 +297,7 @@ function IngameUI.destroy(arg_12_0)
 	printf("[IngameUI] destroy")
 end
 
-function IngameUI.weaves_requirements_fulfilled(arg_13_0)
+IngameUI.weaves_requirements_fulfilled = function (arg_13_0)
 	if Managers.mechanism:current_mechanism_name() ~= "adventure" then
 		return false
 	end
@@ -341,7 +341,7 @@ function IngameUI.weaves_requirements_fulfilled(arg_13_0)
 	return true
 end
 
-function IngameUI._handle_versus_matchmaking(arg_14_0)
+IngameUI._handle_versus_matchmaking = function (arg_14_0)
 	local var_14_0 = Managers.matchmaking
 
 	if not var_14_0:is_matchmaking_versus() then
@@ -357,7 +357,7 @@ function IngameUI._handle_versus_matchmaking(arg_14_0)
 	return false
 end
 
-function IngameUI.not_in_modded(arg_15_0)
+IngameUI.not_in_modded = function (arg_15_0)
 	return not script_data["eac-untrusted"]
 end
 
@@ -365,7 +365,7 @@ local var_0_5 = {
 	"hotkey_map"
 }
 
-function IngameUI.handle_menu_hotkeys(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+IngameUI.handle_menu_hotkeys = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	if not arg_16_3 then
 		return
 	end
@@ -476,7 +476,7 @@ function IngameUI.handle_menu_hotkeys(arg_16_0, arg_16_1, arg_16_2, arg_16_3, ar
 	end
 end
 
-function IngameUI.event_dlc_status_changed(arg_17_0)
+IngameUI.event_dlc_status_changed = function (arg_17_0)
 	if arg_17_0.current_view == "map_view" then
 		arg_17_0:handle_transition("exit_menu")
 	end
@@ -484,11 +484,11 @@ function IngameUI.event_dlc_status_changed(arg_17_0)
 	arg_17_0:setup_specific_view("map_view", "ConsoleMapView")
 end
 
-function IngameUI.update_loading_subtitle_gui(arg_18_0, arg_18_1, arg_18_2)
+IngameUI.update_loading_subtitle_gui = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_1:update(arg_18_0.ui_top_renderer, arg_18_2)
 end
 
-function IngameUI.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+IngameUI.update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	arg_19_0._disable_ingame_ui = arg_19_3
 
 	arg_19_0:_update_fade_transition()
@@ -646,17 +646,17 @@ function IngameUI.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	end
 end
 
-function IngameUI.disable_ingame_ui(arg_20_0)
+IngameUI.disable_ingame_ui = function (arg_20_0)
 	return arg_20_0._disable_ingame_ui
 end
 
-function IngameUI._holly_dlc_intro_closed(arg_21_0)
+IngameUI._holly_dlc_intro_closed = function (arg_21_0)
 	PlayerData.viewed_dialogues.dlc_holly = true
 
 	Managers.save:auto_save(SaveFileName, SaveData)
 end
 
-function IngameUI.post_update(arg_22_0, arg_22_1, arg_22_2)
+IngameUI.post_update = function (arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0:_post_handle_transition()
 
 	local var_22_0 = arg_22_0.current_view
@@ -672,11 +672,11 @@ function IngameUI.post_update(arg_22_0, arg_22_1, arg_22_2)
 	arg_22_0.ingame_hud:post_update(arg_22_1, arg_22_2)
 end
 
-function IngameUI.cutscene_active(arg_23_0)
+IngameUI.cutscene_active = function (arg_23_0)
 	return arg_23_0.cutscene_system.active_camera ~= nil
 end
 
-function IngameUI._survey_update(arg_24_0, arg_24_1)
+IngameUI._survey_update = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0.views.telemetry_survey
 
 	var_24_0:update(arg_24_1)
@@ -688,7 +688,7 @@ function IngameUI._survey_update(arg_24_0, arg_24_1)
 	end
 end
 
-function IngameUI._handle_resolution_changes(arg_25_0)
+IngameUI._handle_resolution_changes = function (arg_25_0)
 	local var_25_0 = RESOLUTION_LOOKUP.res_w
 	local var_25_1 = RESOLUTION_LOOKUP.res_h
 
@@ -697,7 +697,7 @@ function IngameUI._handle_resolution_changes(arg_25_0)
 	end
 end
 
-function IngameUI._update_menu_blocking_information(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+IngameUI._update_menu_blocking_information = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0, var_26_1, var_26_2 = arg_26_0:_menu_blocking_information(arg_26_3, arg_26_4)
 
 	Managers.chat:update(arg_26_1, arg_26_2, var_26_0, var_26_1, var_26_2)
@@ -709,7 +709,7 @@ function IngameUI._update_menu_blocking_information(arg_26_0, arg_26_1, arg_26_2
 	end
 end
 
-function IngameUI._menu_blocking_information(arg_27_0, arg_27_1, arg_27_2)
+IngameUI._menu_blocking_information = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0.ingame_hud
 	local var_27_1 = var_27_0:component("IngamePlayerListUI") or var_27_0:component("VersusTabUI")
 	local var_27_2 = var_27_1 and var_27_1:is_focused()
@@ -762,7 +762,7 @@ function IngameUI._menu_blocking_information(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function IngameUI._render_debug_ui(arg_28_0, arg_28_1, arg_28_2)
+IngameUI._render_debug_ui = function (arg_28_0, arg_28_1, arg_28_2)
 	if not script_data.disable_debug_draw then
 		local var_28_0 = script_data.disable_colorize_unlocalized_strings
 
@@ -780,7 +780,7 @@ function IngameUI._render_debug_ui(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function IngameUI.show_info(arg_29_0)
+IngameUI.show_info = function (arg_29_0)
 	local var_29_0 = Managers.state.entity:system("mission_system")
 	local var_29_1 = var_29_0:get_level_end_mission_data("grimoire_hidden_mission")
 	local var_29_2 = var_29_0:get_level_end_mission_data("tome_bonus_mission")
@@ -790,13 +790,13 @@ function IngameUI.show_info(arg_29_0)
 	local var_29_7 = arg_29_0:_show_text(var_29_2 and var_29_2.current_amount or "", var_29_6)
 end
 
-function IngameUI._show_text(arg_30_0, arg_30_1, arg_30_2)
+IngameUI._show_text = function (arg_30_0, arg_30_1, arg_30_2)
 	Gui.text(arg_30_0.ui_renderer.gui, "text", "materials/fonts/gw_head", 20, "gw_head", arg_30_2, Color(0, 255, 0))
 
 	return Vector3(arg_30_2[1], arg_30_2[2] - 30, arg_30_2[3])
 end
 
-function IngameUI._update_system_message_cooldown(arg_31_0, arg_31_1)
+IngameUI._update_system_message_cooldown = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0.system_message_delay
 
 	if var_31_0 then
@@ -806,7 +806,7 @@ function IngameUI._update_system_message_cooldown(arg_31_0, arg_31_1)
 	end
 end
 
-function IngameUI.add_local_system_message(arg_32_0, arg_32_1)
+IngameUI.add_local_system_message = function (arg_32_0, arg_32_1)
 	if not arg_32_0.system_message_delay or arg_32_0.last_sent_system_message ~= arg_32_1 then
 		local var_32_0 = true
 		local var_32_1 = Localize(arg_32_1)
@@ -824,7 +824,7 @@ function IngameUI.add_local_system_message(arg_32_0, arg_32_1)
 	end
 end
 
-function IngameUI.is_transition_allowed(arg_33_0, arg_33_1)
+IngameUI.is_transition_allowed = function (arg_33_0, arg_33_1)
 	local var_33_0
 	local var_33_1 = true
 
@@ -845,7 +845,7 @@ function IngameUI.is_transition_allowed(arg_33_0, arg_33_1)
 	return var_33_1
 end
 
-function IngameUI._post_handle_transition(arg_34_0)
+IngameUI._post_handle_transition = function (arg_34_0)
 	if not arg_34_0.new_transition then
 		return
 	end
@@ -874,7 +874,7 @@ function IngameUI._post_handle_transition(arg_34_0)
 	arg_34_0.new_transition = nil
 end
 
-function IngameUI.handle_transition(arg_35_0, arg_35_1, arg_35_2)
+IngameUI.handle_transition = function (arg_35_0, arg_35_1, arg_35_2)
 	fassert(var_0_3[arg_35_1], "Missing transition to %s", arg_35_1)
 
 	local var_35_0 = arg_35_0.blocked_transitions
@@ -931,7 +931,7 @@ function IngameUI.handle_transition(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function IngameUI.transition_with_fade(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+IngameUI.transition_with_fade = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 	local var_36_0 = arg_36_0.blocked_transitions
 
 	if var_36_0 and var_36_0[arg_36_1] then
@@ -953,7 +953,7 @@ function IngameUI.transition_with_fade(arg_36_0, arg_36_1, arg_36_2, arg_36_3, a
 	Managers.transition:fade_in(arg_36_3 or 10)
 end
 
-function IngameUI._update_fade_transition(arg_37_0)
+IngameUI._update_fade_transition = function (arg_37_0)
 	local var_37_0 = arg_37_0._transition_fade_data
 
 	if not var_37_0 then
@@ -974,11 +974,11 @@ function IngameUI._update_fade_transition(arg_37_0)
 	end
 end
 
-function IngameUI.pending_transition(arg_38_0)
+IngameUI.pending_transition = function (arg_38_0)
 	return arg_38_0._transition_fade_data ~= nil or arg_38_0.new_transition_old_view ~= nil
 end
 
-function IngameUI.get_transition(arg_39_0)
+IngameUI.get_transition = function (arg_39_0)
 	if arg_39_0.leave_game then
 		if Managers.play_go:installed() then
 			return "leave_game"
@@ -1002,7 +1002,7 @@ function IngameUI.get_transition(arg_39_0)
 	end
 end
 
-function IngameUI.suspend_active_view(arg_40_0)
+IngameUI.suspend_active_view = function (arg_40_0)
 	local var_40_0 = arg_40_0.current_view
 
 	if var_40_0 and var_40_0 ~= "exit_menu" and arg_40_0.views[var_40_0] then
@@ -1010,11 +1010,11 @@ function IngameUI.suspend_active_view(arg_40_0)
 	end
 end
 
-function IngameUI.activate_end_screen_ui(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+IngameUI.activate_end_screen_ui = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	arg_41_0.end_screen:on_enter(arg_41_1, arg_41_2, arg_41_3)
 end
 
-function IngameUI.deactivate_end_screen_ui(arg_42_0)
+IngameUI.deactivate_end_screen_ui = function (arg_42_0)
 	local var_42_0 = arg_42_0.end_screen
 
 	if var_42_0.is_active then
@@ -1022,25 +1022,25 @@ function IngameUI.deactivate_end_screen_ui(arg_42_0)
 	end
 end
 
-function IngameUI.end_screen_active(arg_43_0)
+IngameUI.end_screen_active = function (arg_43_0)
 	local var_43_0 = arg_43_0.end_screen
 
 	return var_43_0 and var_43_0.is_active
 end
 
-function IngameUI.end_screen_completed(arg_44_0)
+IngameUI.end_screen_completed = function (arg_44_0)
 	local var_44_0 = arg_44_0.end_screen
 
 	return var_44_0 and var_44_0.is_complete
 end
 
-function IngameUI.end_screen_fade_in_complete(arg_45_0)
+IngameUI.end_screen_fade_in_complete = function (arg_45_0)
 	local var_45_0 = arg_45_0.end_screen
 
 	return var_45_0 and var_45_0:fade_in_complete()
 end
 
-function IngameUI.update_map_enable_state(arg_46_0)
+IngameUI.update_map_enable_state = function (arg_46_0)
 	if arg_46_0.is_in_inn then
 		local var_46_0 = arg_46_0.views.map_view
 
@@ -1057,7 +1057,7 @@ function IngameUI.update_map_enable_state(arg_46_0)
 	end
 end
 
-function IngameUI.play_sound(arg_47_0, arg_47_1)
+IngameUI.play_sound = function (arg_47_0, arg_47_1)
 	WwiseWorld.trigger_event(arg_47_0.wwise_world, arg_47_1)
 end
 
@@ -1068,7 +1068,7 @@ local var_0_9 = Colors.color_definitions.white
 local var_0_10 = Colors.color_definitions.black
 local var_0_11 = Colors.color_definitions.red
 
-function IngameUI._render_version_info(arg_48_0)
+IngameUI._render_version_info = function (arg_48_0)
 	local var_48_0 = arg_48_0.ui_top_renderer
 	local var_48_1 = 1920
 	local var_48_2 = 1080
@@ -1106,7 +1106,7 @@ function IngameUI._render_version_info(arg_48_0)
 	UIRenderer.draw_text(var_48_0, var_48_7, var_0_7, var_48_3, var_0_6, Vector3(unpack(var_0_8)), var_0_10)
 end
 
-function IngameUI._render_fps(arg_49_0, arg_49_1)
+IngameUI._render_fps = function (arg_49_0, arg_49_1)
 	arg_49_0._fpses = arg_49_0._fpses or {}
 
 	local var_49_0 = arg_49_0.ui_top_renderer
@@ -1200,7 +1200,7 @@ function IngameUI._render_fps(arg_49_0, arg_49_1)
 	end
 end
 
-function IngameUI.open_popup(arg_50_0, arg_50_1, ...)
+IngameUI.open_popup = function (arg_50_0, arg_50_1, ...)
 	local var_50_0 = arg_50_0.popups_by_name
 
 	fassert(var_50_0[arg_50_1] == nil, "Trying to open a popup %q that is already active", arg_50_1)
@@ -1214,7 +1214,7 @@ function IngameUI.open_popup(arg_50_0, arg_50_1, ...)
 	}
 end
 
-function IngameUI.close_popup(arg_51_0, arg_51_1)
+IngameUI.close_popup = function (arg_51_0, arg_51_1)
 	local var_51_0 = arg_51_0.popups_by_name
 	local var_51_1 = var_51_0[arg_51_1]
 
@@ -1228,13 +1228,13 @@ function IngameUI.close_popup(arg_51_0, arg_51_1)
 	var_51_0[arg_51_1] = nil
 end
 
-function IngameUI.get_active_popup(arg_52_0, arg_52_1)
+IngameUI.get_active_popup = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0.popups_by_name[arg_52_1]
 
 	return var_52_0 and var_52_0.popup
 end
 
-function IngameUI.respawn(arg_53_0)
+IngameUI.respawn = function (arg_53_0)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -1250,7 +1250,7 @@ function IngameUI.respawn(arg_53_0)
 	arg_53_0._respawning = true
 end
 
-function IngameUI._update_respawning(arg_54_0)
+IngameUI._update_respawning = function (arg_54_0)
 	if arg_54_0._profile_requester:result() ~= nil then
 		return true
 	end
@@ -1258,12 +1258,12 @@ function IngameUI._update_respawning(arg_54_0)
 	return false
 end
 
-function IngameUI._cancel_popup(arg_55_0)
+IngameUI._cancel_popup = function (arg_55_0)
 	if arg_55_0.popup_id then
 		Managers.popup:cancel_popup(arg_55_0.popup_id)
 	end
 end
 
-function IngameUI.get_hud_component(arg_56_0, arg_56_1)
+IngameUI.get_hud_component = function (arg_56_0, arg_56_1)
 	return arg_56_0.ingame_hud:get_hud_component(arg_56_1)
 end

@@ -2,7 +2,7 @@
 
 PlayerCharacterStateLeaping = class(PlayerCharacterStateLeaping, PlayerCharacterState)
 
-function PlayerCharacterStateLeaping.init(arg_1_0, arg_1_1)
+PlayerCharacterStateLeaping.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "leaping")
 
 	arg_1_0._direction = Vector3Box()
@@ -10,7 +10,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerCharacterStateLeaping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateLeaping.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0.temp_params)
 
 	local var_2_0 = arg_2_0.player
@@ -52,7 +52,7 @@ function PlayerCharacterStateLeaping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	arg_2_0._last_slam_vertical_distance = 0
 end
 
-function PlayerCharacterStateLeaping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateLeaping.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0:_reset_speed_and_gravity(arg_3_1)
 
 	if arg_3_6 == "walking" or arg_3_6 == "standing" then
@@ -79,7 +79,7 @@ function PlayerCharacterStateLeaping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	end
 end
 
-function PlayerCharacterStateLeaping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateLeaping.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.input_extension
 	local var_4_2 = arg_4_0.status_extension
@@ -174,7 +174,7 @@ function PlayerCharacterStateLeaping.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, 
 	CharacterStateHelper.update_weapon_actions(arg_4_5, arg_4_1, var_4_1, var_4_5, var_4_6)
 end
 
-function PlayerCharacterStateLeaping._update_distance_travelled(arg_5_0)
+PlayerCharacterStateLeaping._update_distance_travelled = function (arg_5_0)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = arg_5_0._leap_data
 	local var_5_2 = var_0_0[var_5_0]
@@ -193,7 +193,7 @@ local function var_0_1(arg_6_0, arg_6_1, arg_6_2)
 	return (math.clamp(arg_6_2, arg_6_0, arg_6_1) - arg_6_0) / (arg_6_1 - arg_6_0)
 end
 
-function PlayerCharacterStateLeaping.leap(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PlayerCharacterStateLeaping.leap = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.locomotion_extension
 	local var_7_1 = var_0_0[arg_7_1]
 	local var_7_2 = arg_7_0._leap_data.starting_pos:unbox()
@@ -321,7 +321,7 @@ function PlayerCharacterStateLeaping.leap(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return false
 end
 
-function PlayerCharacterStateLeaping.teleleap(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+PlayerCharacterStateLeaping.teleleap = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0.locomotion_extension
 	local var_8_1 = var_0_0[arg_8_1]
 	local var_8_2 = arg_8_0._leap_data.starting_pos:unbox()
@@ -409,7 +409,7 @@ function PlayerCharacterStateLeaping.teleleap(arg_8_0, arg_8_1, arg_8_2, arg_8_3
 	return false
 end
 
-function PlayerCharacterStateLeaping._teleport_to_with_collision(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+PlayerCharacterStateLeaping._teleport_to_with_collision = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0.locomotion_extension
 	local var_9_1 = arg_9_0._physics_world
 	local var_9_2 = 1
@@ -428,7 +428,7 @@ function PlayerCharacterStateLeaping._teleport_to_with_collision(arg_9_0, arg_9_
 	return var_9_5
 end
 
-function PlayerCharacterStateLeaping._update_movement(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PlayerCharacterStateLeaping._update_movement = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_0._leap_done then
 		return arg_10_0._leap_done, arg_10_0._final_position:unbox()
 	end
@@ -453,7 +453,7 @@ function PlayerCharacterStateLeaping._update_movement(arg_10_0, arg_10_1, arg_10
 	return arg_10_0._leap_done, var_10_3
 end
 
-function PlayerCharacterStateLeaping._reset_speed_and_gravity(arg_11_0, arg_11_1)
+PlayerCharacterStateLeaping._reset_speed_and_gravity = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.locomotion_extension
 
 	PlayerUnitMovementSettings.get_movement_settings_table(arg_11_1).gravity_acceleration = PlayerUnitMovementSettings.gravity_acceleration
@@ -464,7 +464,7 @@ function PlayerCharacterStateLeaping._reset_speed_and_gravity(arg_11_0, arg_11_1
 	var_11_0:set_external_velocity_enabled(true)
 end
 
-function PlayerCharacterStateLeaping._finish(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+PlayerCharacterStateLeaping._finish = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_0.locomotion_extension
 	local var_12_1 = arg_12_0.first_person_extension
 	local var_12_2 = arg_12_0._leap_data
@@ -501,7 +501,7 @@ function PlayerCharacterStateLeaping._finish(arg_12_0, arg_12_1, arg_12_2, arg_1
 	arg_12_0._leap_done = true
 end
 
-function PlayerCharacterStateLeaping._start_leap(arg_13_0, arg_13_1, arg_13_2)
+PlayerCharacterStateLeaping._start_leap = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.locomotion_extension
 	local var_13_1 = arg_13_0.first_person_extension
 	local var_13_2 = arg_13_0._leap_data

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/weather_vo.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_wv_afternoon_rain",

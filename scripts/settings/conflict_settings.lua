@@ -5069,7 +5069,7 @@ DefaultConflictFactionSetWeights = {
 	beastmen = 8
 }
 ConflictDirectorLockedFunctions = {
-	beastmen = function(arg_1_0)
+	beastmen = function (arg_1_0)
 		if DEDICATED_SERVER then
 			return false
 		end

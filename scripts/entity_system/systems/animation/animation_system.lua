@@ -30,7 +30,7 @@ local var_0_1 = {
 }
 local var_0_2 = {}
 
-function AnimationSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AnimationSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	AnimationSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_2)
 	Managers.state.event:register(arg_1_0, "animation_callback", "animation_callback")
 
@@ -47,11 +47,11 @@ function AnimationSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._animation_safe_callbacks = arg_1_0._animation_safe_callbacks_buffer_1
 end
 
-function AnimationSystem.destroy(arg_2_0)
+AnimationSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function AnimationSystem.animation_callback(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+AnimationSystem.animation_callback = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0
 
 	if arg_3_0.is_server then
@@ -69,12 +69,12 @@ function AnimationSystem.animation_callback(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function AnimationSystem.update(arg_4_0, arg_4_1, arg_4_2)
+AnimationSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:update_anim_variables(arg_4_2)
 	arg_4_0:_update_networked_anim_variables(arg_4_1.dt, arg_4_2)
 end
 
-function AnimationSystem.update_anim_variables(arg_5_0, arg_5_1)
+AnimationSystem.update_anim_variables = function (arg_5_0, arg_5_1)
 	local var_5_0 = var_0_0
 	local var_5_1 = Vector3.length
 	local var_5_2 = Unit.alive
@@ -114,7 +114,7 @@ function AnimationSystem.update_anim_variables(arg_5_0, arg_5_1)
 	end
 end
 
-function AnimationSystem.anim_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+AnimationSystem.anim_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if not arg_6_3 and Managers.state.network:game() then
 		local var_6_0 = arg_6_0.unit_storage:go_id(arg_6_1)
 
@@ -134,7 +134,7 @@ function AnimationSystem.anim_event(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	return Unit.animation_event(arg_6_1, arg_6_2)
 end
 
-function AnimationSystem.anim_event_with_variable_float(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+AnimationSystem.anim_event_with_variable_float = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	if not arg_7_5 and Managers.state.network:game() then
 		local var_7_0 = arg_7_0.unit_storage:go_id(arg_7_1)
 
@@ -159,12 +159,12 @@ function AnimationSystem.anim_event_with_variable_float(arg_7_0, arg_7_1, arg_7_
 end
 
 if LEVEL_EDITOR_TEST then
-	function AnimationSystem.anim_event(arg_8_0, arg_8_1, arg_8_2)
+	AnimationSystem.anim_event = function (arg_8_0, arg_8_1, arg_8_2)
 		arg_8_0:_init_networked_variables(arg_8_1, arg_8_2)
 		Unit.animation_event(arg_8_1, arg_8_2)
 	end
 
-	function AnimationSystem.anim_event_with_variable_float(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	AnimationSystem.anim_event_with_variable_float = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		arg_9_0:_init_networked_variables(arg_9_1, arg_9_2)
 
 		local var_9_0 = Unit.animation_find_variable(arg_9_1, arg_9_3)
@@ -174,7 +174,7 @@ if LEVEL_EDITOR_TEST then
 	end
 end
 
-function AnimationSystem._init_networked_variables(arg_10_0, arg_10_1, arg_10_2)
+AnimationSystem._init_networked_variables = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_remove_networked_variables(arg_10_1)
 
 	if not NetworkedAnimationVariableTemplatesLookup[arg_10_2] then
@@ -230,7 +230,7 @@ function AnimationSystem._init_networked_variables(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function AnimationSystem._remove_networked_variables(arg_11_0, arg_11_1)
+AnimationSystem._remove_networked_variables = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._networked_animation_variables[arg_11_1]
 
 	if var_11_0 then
@@ -248,7 +248,7 @@ function AnimationSystem._remove_networked_variables(arg_11_0, arg_11_1)
 	end
 end
 
-function AnimationSystem._update_networked_anim_variables(arg_12_0, arg_12_1, arg_12_2)
+AnimationSystem._update_networked_anim_variables = function (arg_12_0, arg_12_1, arg_12_2)
 	for iter_12_0, iter_12_1 in pairs(arg_12_0._networked_animation_variables) do
 		if not ALIVE[iter_12_0] or not Unit.has_animation_state_machine(iter_12_0) then
 			arg_12_0:_remove_networked_variables(iter_12_0)
@@ -265,7 +265,7 @@ function AnimationSystem._update_networked_anim_variables(arg_12_0, arg_12_1, ar
 	end
 end
 
-function AnimationSystem.rpc_sync_anim_state(arg_13_0, arg_13_1, arg_13_2, ...)
+AnimationSystem.rpc_sync_anim_state = function (arg_13_0, arg_13_1, arg_13_2, ...)
 	local var_13_0 = arg_13_0.unit_storage:unit(arg_13_2)
 
 	Unit.animation_set_state(var_13_0, ...)
@@ -284,7 +284,7 @@ AnimationSystem.rpc_sync_anim_state_10 = AnimationSystem.rpc_sync_anim_state
 AnimationSystem.rpc_sync_anim_state_11 = AnimationSystem.rpc_sync_anim_state
 AnimationSystem.rpc_sync_anim_state_12 = AnimationSystem.rpc_sync_anim_state
 
-function AnimationSystem.rpc_anim_event_variable_float(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+AnimationSystem.rpc_anim_event_variable_float = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_0.unit_storage:unit(arg_14_3)
 
 	if not var_14_0 or not Unit.alive(var_14_0) then
@@ -308,7 +308,7 @@ function AnimationSystem.rpc_anim_event_variable_float(arg_14_0, arg_14_1, arg_1
 	end
 end
 
-function AnimationSystem.rpc_anim_set_variable_float(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AnimationSystem.rpc_anim_set_variable_float = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_0.unit_storage:unit(arg_15_2)
 
 	if not var_15_0 or not Unit.alive(var_15_0) then
@@ -329,7 +329,7 @@ function AnimationSystem.rpc_anim_set_variable_float(arg_15_0, arg_15_1, arg_15_
 	end
 end
 
-function AnimationSystem.rpc_anim_set_variable_int(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+AnimationSystem.rpc_anim_set_variable_int = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_0.unit_storage:unit(arg_16_2)
 
 	if not var_16_0 or not Unit.alive(var_16_0) then
@@ -350,7 +350,7 @@ function AnimationSystem.rpc_anim_set_variable_int(arg_16_0, arg_16_1, arg_16_2,
 	end
 end
 
-function AnimationSystem.rpc_anim_event(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+AnimationSystem.rpc_anim_event = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0.unit_storage:unit(arg_17_3)
 
 	if not var_17_0 or not Unit.alive(var_17_0) then
@@ -371,7 +371,7 @@ function AnimationSystem.rpc_anim_event(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	end
 end
 
-function AnimationSystem.rpc_link_unit(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AnimationSystem.rpc_link_unit = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0 = arg_18_0.unit_storage:unit(arg_18_2)
 	local var_18_1 = arg_18_0.unit_storage:unit(arg_18_4)
 	local var_18_2 = Unit.world(var_18_1)
@@ -379,13 +379,13 @@ function AnimationSystem.rpc_link_unit(arg_18_0, arg_18_1, arg_18_2, arg_18_3, a
 	World.link_unit(var_18_2, var_18_0, arg_18_3, var_18_1, arg_18_5)
 end
 
-function AnimationSystem.rpc_anim_set_variable_by_distance(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+AnimationSystem.rpc_anim_set_variable_by_distance = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	local var_19_0 = arg_19_0.unit_storage:unit(arg_19_2)
 
 	arg_19_0:_set_variable_by_distance(var_19_0, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 end
 
-function AnimationSystem._set_variable_by_distance(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+AnimationSystem._set_variable_by_distance = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_3 - var_0_0[arg_20_1]
 
 	if arg_20_5 then
@@ -417,14 +417,14 @@ function AnimationSystem._set_variable_by_distance(arg_20_0, arg_20_1, arg_20_2,
 	end
 end
 
-function AnimationSystem.rpc_anim_set_variable_by_time(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+AnimationSystem.rpc_anim_set_variable_by_time = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	local var_21_0 = arg_21_0.unit_storage:unit(arg_21_2)
 	local var_21_1 = arg_21_4 * 0.00390625
 
 	arg_21_0:_set_variable_by_time(var_21_0, arg_21_3, var_21_1, arg_21_5)
 end
 
-function AnimationSystem._set_variable_by_time(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+AnimationSystem._set_variable_by_time = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = arg_22_0.anim_variable_update_list[arg_22_1]
 	local var_22_1 = Managers.time:time("game")
 
@@ -444,7 +444,7 @@ function AnimationSystem._set_variable_by_time(arg_22_0, arg_22_1, arg_22_2, arg
 	end
 end
 
-function AnimationSystem.rpc_update_anim_variable_done(arg_23_0, arg_23_1, arg_23_2)
+AnimationSystem.rpc_update_anim_variable_done = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0.unit_storage:unit(arg_23_2)
 
 	if arg_23_0.anim_variable_update_list[var_23_0] then
@@ -452,7 +452,7 @@ function AnimationSystem.rpc_update_anim_variable_done(arg_23_0, arg_23_1, arg_2
 	end
 end
 
-function AnimationSystem.set_update_anim_variable_done(arg_24_0, arg_24_1)
+AnimationSystem.set_update_anim_variable_done = function (arg_24_0, arg_24_1)
 	local var_24_0 = Managers.state.network:unit_game_object_id(arg_24_1)
 
 	arg_24_0.network_transmit:send_rpc_clients("rpc_update_anim_variable_done", var_24_0)
@@ -460,14 +460,14 @@ function AnimationSystem.set_update_anim_variable_done(arg_24_0, arg_24_1)
 	arg_24_0.anim_variable_update_list[arg_24_1] = nil
 end
 
-function AnimationSystem.start_anim_variable_update_by_distance(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+AnimationSystem.start_anim_variable_update_by_distance = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	local var_25_0 = Managers.state.network:unit_game_object_id(arg_25_1)
 
 	arg_25_0.network_transmit:send_rpc_clients("rpc_anim_set_variable_by_distance", var_25_0, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 	arg_25_0:_set_variable_by_distance(arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
 end
 
-function AnimationSystem.start_anim_variable_update_by_time(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+AnimationSystem.start_anim_variable_update_by_time = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = math.clamp(arg_26_3 * 256, 0, 65535)
 	local var_26_1 = Managers.state.network:unit_game_object_id(arg_26_1)
 
@@ -475,11 +475,11 @@ function AnimationSystem.start_anim_variable_update_by_time(arg_26_0, arg_26_1, 
 	arg_26_0:_set_variable_by_time(arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 end
 
-function AnimationSystem.add_safe_animation_callback(arg_27_0, arg_27_1)
+AnimationSystem.add_safe_animation_callback = function (arg_27_0, arg_27_1)
 	arg_27_0._animation_safe_callbacks[#arg_27_0._animation_safe_callbacks + 1] = arg_27_1
 end
 
-function AnimationSystem.run_safe_animation_callbacks(arg_28_0)
+AnimationSystem.run_safe_animation_callbacks = function (arg_28_0)
 	local var_28_0 = arg_28_0._animation_safe_callbacks
 
 	arg_28_0._animation_safe_callbacks = arg_28_0._animation_safe_callbacks == arg_28_0._animation_safe_callbacks_buffer_1 and arg_28_0._animation_safe_callbacks_buffer_2 or arg_28_0._animation_safe_callbacks_buffer_1

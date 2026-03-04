@@ -2,7 +2,7 @@
 
 CurlToken = class(CurlToken)
 
-function CurlToken.init(arg_1_0, arg_1_1)
+CurlToken.init = function (arg_1_0, arg_1_1)
 	arg_1_0._token = arg_1_1
 	arg_1_0._info = {}
 
@@ -12,21 +12,21 @@ function CurlToken.init(arg_1_0, arg_1_1)
 	end
 end
 
-function CurlToken.info(arg_2_0)
+CurlToken.info = function (arg_2_0)
 	return arg_2_0._info
 end
 
-function CurlToken.update(arg_3_0)
+CurlToken.update = function (arg_3_0)
 	if arg_3_0._token then
 		arg_3_0._info = Curl.progress(arg_3_0._token)
 	end
 end
 
-function CurlToken.done(arg_4_0)
+CurlToken.done = function (arg_4_0)
 	return arg_4_0._info.done
 end
 
-function CurlToken.close(arg_5_0)
+CurlToken.close = function (arg_5_0)
 	if arg_5_0._token then
 		Curl.close(arg_5_0._token)
 	end

@@ -12,17 +12,17 @@ end
 BTSelector_pet_skeleton_with_shield = class(BTSelector_pet_skeleton_with_shield, BTNode)
 BTSelector_pet_skeleton_with_shield.name = "BTSelector_pet_skeleton_with_shield"
 
-function BTSelector_pet_skeleton_with_shield.init(arg_2_0, ...)
+BTSelector_pet_skeleton_with_shield.init = function (arg_2_0, ...)
 	BTSelector_pet_skeleton_with_shield.super.init(arg_2_0, ...)
 
 	arg_2_0._children = {}
 end
 
-function BTSelector_pet_skeleton_with_shield.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_pet_skeleton_with_shield.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
 end
 
-function BTSelector_pet_skeleton_with_shield.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_pet_skeleton_with_shield.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = var_0_1.start
 	local var_4_1 = var_0_1.stop
 	local var_4_2 = arg_4_0:current_running_child(arg_4_2)
@@ -253,6 +253,6 @@ function BTSelector_pet_skeleton_with_shield.run(arg_4_0, arg_4_1, arg_4_2, arg_
 	end
 end
 
-function BTSelector_pet_skeleton_with_shield.add_child(arg_5_0, arg_5_1)
+BTSelector_pet_skeleton_with_shield.add_child = function (arg_5_0, arg_5_1)
 	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
 end

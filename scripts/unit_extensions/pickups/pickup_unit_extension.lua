@@ -2,7 +2,7 @@
 
 PickupUnitExtension = class(PickupUnitExtension)
 
-function PickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PickupUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 
@@ -51,7 +51,7 @@ function PickupUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function PickupUnitExtension.extensions_ready(arg_2_0)
+PickupUnitExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = AllPickups[arg_2_0.pickup_name]
 	local var_2_1 = arg_2_0.unit
 	local var_2_2 = ScriptUnit.has_extension(var_2_1, "outline_system")
@@ -78,11 +78,11 @@ function PickupUnitExtension.extensions_ready(arg_2_0)
 	end
 end
 
-function PickupUnitExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PickupUnitExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	return
 end
 
-function PickupUnitExtension.hide(arg_4_0)
+PickupUnitExtension.hide = function (arg_4_0)
 	local var_4_0 = arg_4_0.unit
 
 	arg_4_0.hidden = true
@@ -92,11 +92,11 @@ function PickupUnitExtension.hide(arg_4_0)
 	Unit.flow_event(var_4_0, "lua_hidden")
 end
 
-function PickupUnitExtension.get_pickup_settings(arg_5_0)
+PickupUnitExtension.get_pickup_settings = function (arg_5_0)
 	return AllPickups[arg_5_0.pickup_name]
 end
 
-function PickupUnitExtension.destroy(arg_6_0)
+PickupUnitExtension.destroy = function (arg_6_0)
 	local var_6_0 = Managers.state.entity:system("pickup_system")
 
 	if var_6_0 and arg_6_0.spawn_index then
@@ -110,15 +110,15 @@ function PickupUnitExtension.destroy(arg_6_0)
 	end
 end
 
-function PickupUnitExtension.get_dropped_by_breed(arg_7_0)
+PickupUnitExtension.get_dropped_by_breed = function (arg_7_0)
 	return arg_7_0.dropped_by_breed
 end
 
-function PickupUnitExtension.can_interact(arg_8_0)
+PickupUnitExtension.can_interact = function (arg_8_0)
 	return not (Managers.time:time("game") <= arg_8_0._can_interact_time)
 end
 
-function PickupUnitExtension.set_physics_enabled(arg_9_0, arg_9_1)
+PickupUnitExtension.set_physics_enabled = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.unit
 
 	if Unit.find_actor(var_9_0, "pickup") then

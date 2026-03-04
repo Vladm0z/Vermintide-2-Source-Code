@@ -9,7 +9,7 @@ DLCUtils.dofile("hud_component_list_path")
 
 IngameHud = class(IngameHud)
 
-function IngameHud.init(arg_1_0, arg_1_1, arg_1_2)
+IngameHud.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._peer_id = Network.peer_id()
 	arg_1_0._player = Managers.player:local_player()
@@ -18,7 +18,7 @@ function IngameHud.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_components()
 end
 
-function IngameHud._setup_components(arg_2_0)
+IngameHud._setup_components = function (arg_2_0)
 	arg_2_0._currently_visible_components = {}
 	arg_2_0._current_group_name = nil
 
@@ -48,12 +48,12 @@ function IngameHud._setup_components(arg_2_0)
 	Managers.state.event:register(arg_2_0, "player_party_changed", "event_player_party_changed")
 end
 
-function IngameHud.reset_components(arg_3_0)
+IngameHud.reset_components = function (arg_3_0)
 	arg_3_0:destroy()
 	arg_3_0:_setup_components()
 end
 
-function IngameHud.event_player_party_changed(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+IngameHud.event_player_party_changed = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not arg_4_2 then
 		return
 	end
@@ -61,7 +61,7 @@ function IngameHud.event_player_party_changed(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	arg_4_0:reset_components()
 end
 
-function IngameHud._setup_component_definitions(arg_5_0, arg_5_1)
+IngameHud._setup_component_definitions = function (arg_5_0, arg_5_1)
 	local var_5_0 = local_require(arg_5_1)
 	local var_5_1 = table.clone(var_5_0.components)
 	local var_5_2 = var_5_0.visibility_groups
@@ -147,7 +147,7 @@ function IngameHud._setup_component_definitions(arg_5_0, arg_5_1)
 	}
 end
 
-function IngameHud._compile_component_list(arg_7_0, arg_7_1, arg_7_2)
+IngameHud._compile_component_list = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = {}
 	local var_7_1 = {}
 	local var_7_2 = {}
@@ -170,7 +170,7 @@ function IngameHud._compile_component_list(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._components_array_id_lookup = var_7_3
 end
 
-function IngameHud._add_component(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+IngameHud._add_component = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_1[arg_8_5]
 
 	fassert(var_8_0, "No definition found for component (%s)", arg_8_5)
@@ -197,7 +197,7 @@ function IngameHud._add_component(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, a
 	end
 end
 
-function IngameHud._remove_component(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+IngameHud._remove_component = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_2[arg_9_5]
 
 	if not var_9_0 then
@@ -231,7 +231,7 @@ function IngameHud._remove_component(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 	arg_9_4[var_9_0] = nil
 end
 
-function IngameHud.remove_components(arg_10_0, arg_10_1)
+IngameHud.remove_components = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._component_list
 	local var_10_1 = arg_10_0._components
 	local var_10_2 = arg_10_0._components_array
@@ -245,11 +245,11 @@ function IngameHud.remove_components(arg_10_0, arg_10_1)
 	end
 end
 
-function IngameHud.component(arg_11_0, arg_11_1)
+IngameHud.component = function (arg_11_0, arg_11_1)
 	return arg_11_0._components[arg_11_1]
 end
 
-function IngameHud._update_components_post_visibility(arg_12_0)
+IngameHud._update_components_post_visibility = function (arg_12_0)
 	if arg_12_0._update_post_visibility then
 		local var_12_0 = arg_12_0._definitions.visibility_groups_lookup[arg_12_0._current_group_name]
 		local var_12_1 = arg_12_0._components_array
@@ -269,7 +269,7 @@ function IngameHud._update_components_post_visibility(arg_12_0)
 	end
 end
 
-function IngameHud._update_components_visibility(arg_13_0)
+IngameHud._update_components_visibility = function (arg_13_0)
 	local var_13_0 = arg_13_0._definitions.visibility_groups
 	local var_13_1 = #var_13_0
 	local var_13_2 = script_data.debug_hud_visibility_group
@@ -318,11 +318,11 @@ function IngameHud._update_components_visibility(arg_13_0)
 	end
 end
 
-function IngameHud.get_hud_component(arg_14_0, arg_14_1)
+IngameHud.get_hud_component = function (arg_14_0, arg_14_1)
 	return arg_14_0._components[arg_14_1]
 end
 
-function IngameHud._update_hud_scale(arg_15_0)
+IngameHud._update_hud_scale = function (arg_15_0)
 	if not arg_15_0._resolution_modified then
 		arg_15_0._resolution_modified = RESOLUTION_LOOKUP.modified
 	end
@@ -335,7 +335,7 @@ function IngameHud._update_hud_scale(arg_15_0)
 	end
 end
 
-function IngameHud._apply_hud_scale(arg_16_0)
+IngameHud._apply_hud_scale = function (arg_16_0)
 	arg_16_0:_update_hud_scale()
 
 	local var_16_0 = arg_16_0._scale_modified
@@ -346,7 +346,7 @@ function IngameHud._apply_hud_scale(arg_16_0)
 	UPDATE_RESOLUTION_LOOKUP(var_16_2, var_16_3)
 end
 
-function IngameHud._abort_hud_scale(arg_17_0)
+IngameHud._abort_hud_scale = function (arg_17_0)
 	local var_17_0 = arg_17_0._scale_modified
 	local var_17_1 = arg_17_0._resolution_modified
 	local var_17_2 = var_17_0 or var_17_1
@@ -354,7 +354,7 @@ function IngameHud._abort_hud_scale(arg_17_0)
 	UPDATE_RESOLUTION_LOOKUP(var_17_2)
 end
 
-function IngameHud.update(arg_18_0, arg_18_1, arg_18_2)
+IngameHud.update = function (arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0:_reset_hud_frame_variables()
 	arg_18_0:_update_components_visibility()
 
@@ -393,7 +393,7 @@ function IngameHud.update(arg_18_0, arg_18_1, arg_18_2)
 	HudCustomizer.reset_button(arg_18_0._ingame_ui_context.ui_renderer)
 end
 
-function IngameHud.post_update(arg_19_0, arg_19_1, arg_19_2)
+IngameHud.post_update = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_reset_hud_frame_variables()
 	arg_19_0:_update_components_post_visibility()
 
@@ -426,7 +426,7 @@ function IngameHud.post_update(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._resolution_modified = false
 end
 
-function IngameHud.destroy(arg_20_0)
+IngameHud.destroy = function (arg_20_0)
 	Managers.state.event:unregister("player_party_changed", arg_20_0)
 
 	local var_20_0 = arg_20_0._components_array
@@ -441,11 +441,11 @@ function IngameHud.destroy(arg_20_0)
 	arg_20_0._components_array = nil
 end
 
-function IngameHud.parent(arg_21_0)
+IngameHud.parent = function (arg_21_0)
 	return arg_21_0._parent
 end
 
-function IngameHud.input_service(arg_22_0)
+IngameHud.input_service = function (arg_22_0)
 	return false
 end
 
@@ -459,21 +459,21 @@ local function var_0_0(arg_23_0)
 	return ScriptUnit.extension(var_23_0, "status_system"):is_ready_for_assisted_respawn()
 end
 
-function IngameHud.is_in_inn(arg_24_0)
+IngameHud.is_in_inn = function (arg_24_0)
 	return arg_24_0._ingame_ui_context.is_in_inn
 end
 
-function IngameHud._reset_hud_frame_variables(arg_25_0)
+IngameHud._reset_hud_frame_variables = function (arg_25_0)
 	arg_25_0._crosshair_position_x = false
 	arg_25_0._crosshair_position_y = false
 	arg_25_0._is_own_player_dead = var_0_0(arg_25_0._player)
 end
 
-function IngameHud.is_own_player_dead(arg_26_0)
+IngameHud.is_own_player_dead = function (arg_26_0)
 	return arg_26_0._is_own_player_dead
 end
 
-function IngameHud.get_crosshair_position(arg_27_0)
+IngameHud.get_crosshair_position = function (arg_27_0)
 	if not arg_27_0._crosshair_position_x or not arg_27_0._crosshair_position_y then
 		local var_27_0 = RESOLUTION_LOOKUP.inv_scale
 		local var_27_1 = RESOLUTION_LOOKUP.res_w * 0.5 * var_27_0
@@ -508,11 +508,11 @@ function IngameHud.get_crosshair_position(arg_27_0)
 	return arg_27_0._crosshair_position_x, arg_27_0._crosshair_position_y
 end
 
-function IngameHud.enable_clean_ui(arg_28_0, arg_28_1)
+IngameHud.enable_clean_ui = function (arg_28_0, arg_28_1)
 	arg_28_0._tobii_clean_ui_is_enabled = arg_28_1
 end
 
-function IngameHud._update_clean_ui(arg_29_0, arg_29_1, arg_29_2)
+IngameHud._update_clean_ui = function (arg_29_0, arg_29_1, arg_29_2)
 	if not arg_29_0._clean_ui then
 		return
 	end

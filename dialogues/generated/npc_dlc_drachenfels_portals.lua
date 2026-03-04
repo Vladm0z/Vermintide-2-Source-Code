@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/npc_dlc_drachenfels_portals.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "ngkd_portals_daemon_challenge",
 		name = "ngkd_portals_daemon_challenge",

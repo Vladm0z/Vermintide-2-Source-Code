@@ -63,7 +63,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_1_0, arg_1_1)
+			enter_function = function (arg_1_0, arg_1_1)
 				arg_1_1:clear_input_buffer()
 
 				return arg_1_1:reset_release_input()
@@ -104,7 +104,7 @@ var_0_0.actions = {
 			hold_input = "action_two_hold",
 			anim_event = "attack_shoot",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 				return arg_2_1 ~= "new_interupting_action"
 			end,
 			allowed_chain_actions = {
@@ -136,7 +136,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_3_0, arg_3_1)
+			enter_function = function (arg_3_0, arg_3_1)
 				arg_3_1:clear_input_buffer()
 
 				return arg_3_1:reset_release_input()
@@ -177,7 +177,7 @@ var_0_0.actions = {
 			hold_input = "action_two_hold",
 			anim_event = "attack_shoot",
 			total_time = 0.5,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action"
 			end,
 			allowed_chain_actions = {
@@ -209,7 +209,7 @@ var_0_0.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function(arg_5_0, arg_5_1)
+			enter_function = function (arg_5_0, arg_5_1)
 				arg_5_1:clear_input_buffer()
 
 				return arg_5_1:reset_release_input()
@@ -226,7 +226,7 @@ var_0_0.actions = {
 			},
 			alert_sound_range_fire = var_0_2,
 			alert_sound_range_hit = var_0_3,
-			chain_condition_func = function(arg_6_0, arg_6_1)
+			chain_condition_func = function (arg_6_0, arg_6_1)
 				return ScriptUnit.extension(arg_6_0, "buff_system"):has_buff_type("we_timed_charged_shot")
 			end,
 			recoil_settings = {
@@ -261,7 +261,7 @@ var_0_0.actions = {
 			anim_event = "draw_bow",
 			allow_hold_toggle = true,
 			reload_when_out_of_ammo = true,
-			anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+			anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 				return arg_7_1 ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
@@ -313,13 +313,13 @@ var_0_0.actions = {
 				"zoom_in_trueflight",
 				"zoom_in"
 			},
-			zoom_condition_function = function()
+			zoom_condition_function = function ()
 				return true
 			end,
-			unzoom_condition_function = function(arg_9_0)
+			unzoom_condition_function = function (arg_9_0)
 				return arg_9_0 ~= "new_interupting_action"
 			end,
-			condition_func = function(arg_10_0, arg_10_1, arg_10_2)
+			condition_func = function (arg_10_0, arg_10_1, arg_10_2)
 				if arg_10_2 and (arg_10_2:total_remaining_ammo() <= 0 or arg_10_2:is_reloading()) then
 					return false
 				end

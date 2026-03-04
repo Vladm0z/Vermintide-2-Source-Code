@@ -2,11 +2,11 @@
 
 PlayerCharacterStateOverpowered = class(PlayerCharacterStateOverpowered, PlayerCharacterState)
 
-function PlayerCharacterStateOverpowered.init(arg_1_0, arg_1_1)
+PlayerCharacterStateOverpowered.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "overpowered")
 end
 
-function PlayerCharacterStateOverpowered.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateOverpowered.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "overpowered")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "overpowered")
 
@@ -36,7 +36,7 @@ function PlayerCharacterStateOverpowered.on_enter(arg_2_0, arg_2_1, arg_2_2, arg
 	CharacterStateHelper.show_inventory_3p(arg_2_1, false, true, Managers.player.is_server, arg_2_0.inventory_extension)
 end
 
-function PlayerCharacterStateOverpowered.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateOverpowered.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = Managers.player:owner(arg_3_1)
 	local var_3_1 = var_3_0 and not var_3_0:is_player_controlled()
 
@@ -65,7 +65,7 @@ function PlayerCharacterStateOverpowered.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_
 	arg_3_0.status_extension:set_overpowered(false)
 end
 
-function PlayerCharacterStateOverpowered.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateOverpowered.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.input_extension

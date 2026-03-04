@@ -7,7 +7,7 @@ local var_0_0 = false
 EndViewStateScoreVSTabSummary = class(EndViewStateScoreVSTabSummary)
 EndViewStateScoreVSTabSummary.NAME = "EndViewStateScoreVSTabSummary"
 
-function EndViewStateScoreVSTabSummary.on_enter(arg_1_0, arg_1_1)
+EndViewStateScoreVSTabSummary.on_enter = function (arg_1_0, arg_1_1)
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabSummary")
 
 	arg_1_0._params = arg_1_1
@@ -31,7 +31,7 @@ function EndViewStateScoreVSTabSummary.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._params.parent:show_team()
 end
 
-function EndViewStateScoreVSTabSummary._calculate_awards(arg_2_0)
+EndViewStateScoreVSTabSummary._calculate_awards = function (arg_2_0)
 	arg_2_0._awards = {}
 
 	local var_2_0 = arg_2_0._context.players_session_score
@@ -67,7 +67,7 @@ function EndViewStateScoreVSTabSummary._calculate_awards(arg_2_0)
 	local var_2_6
 
 	if not (#var_2_5 > 1) then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_2_7 = Network.peer_id()
@@ -96,7 +96,7 @@ function EndViewStateScoreVSTabSummary._calculate_awards(arg_2_0)
 	table.dump(arg_2_0._awards, "AWARDS", 2)
 end
 
-function EndViewStateScoreVSTabSummary.on_exit(arg_3_0, arg_3_1)
+EndViewStateScoreVSTabSummary.on_exit = function (arg_3_0, arg_3_1)
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabSummary")
 
 	arg_3_0._ui_scenegraph = nil
@@ -107,7 +107,7 @@ function EndViewStateScoreVSTabSummary.on_exit(arg_3_0, arg_3_1)
 	arg_3_0._params.parent:hide_team()
 end
 
-function EndViewStateScoreVSTabSummary.create_ui_elements(arg_4_0, arg_4_1)
+EndViewStateScoreVSTabSummary.create_ui_elements = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0:_get_definitions()
 	local var_4_1 = var_4_0.widget_definitions
 	local var_4_2 = var_4_0.summary_entry_widgets
@@ -124,11 +124,11 @@ function EndViewStateScoreVSTabSummary.create_ui_elements(arg_4_0, arg_4_1)
 	arg_4_0._ui_animator = UIAnimator:new(arg_4_0._ui_scenegraph, var_4_4)
 end
 
-function EndViewStateScoreVSTabSummary._get_definitions(arg_5_0)
+EndViewStateScoreVSTabSummary._get_definitions = function (arg_5_0)
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_summary_definitions")
 end
 
-function EndViewStateScoreVSTabSummary.update(arg_6_0, arg_6_1, arg_6_2)
+EndViewStateScoreVSTabSummary.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_0 then
 		arg_6_0:on_enter(arg_6_0._params)
 	end
@@ -140,11 +140,11 @@ function EndViewStateScoreVSTabSummary.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1)
 end
 
-function EndViewStateScoreVSTabSummary.post_update(arg_7_0, arg_7_1, arg_7_2)
+EndViewStateScoreVSTabSummary.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function EndViewStateScoreVSTabSummary._update_animations(arg_8_0, arg_8_1)
+EndViewStateScoreVSTabSummary._update_animations = function (arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in pairs(arg_8_0._ui_animations) do
 		UIAnimation.update(iter_8_1, arg_8_1)
 
@@ -165,7 +165,7 @@ function EndViewStateScoreVSTabSummary._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function EndViewStateScoreVSTabSummary.draw(arg_9_0, arg_9_1, arg_9_2)
+EndViewStateScoreVSTabSummary.draw = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.ui_renderer
 	local var_9_1 = arg_9_0._ui_scenegraph
 	local var_9_2 = arg_9_0.render_settings
@@ -179,7 +179,7 @@ function EndViewStateScoreVSTabSummary.draw(arg_9_0, arg_9_1, arg_9_2)
 	UIRenderer.end_pass(var_9_0)
 end
 
-function EndViewStateScoreVSTabSummary._start_transition_animation(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateScoreVSTabSummary._start_transition_animation = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = {
 		render_settings = arg_10_0.render_settings
 	}

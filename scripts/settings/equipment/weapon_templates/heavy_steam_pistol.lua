@@ -25,7 +25,7 @@ local var_0_0 = {
 				can_abort_reload = false,
 				reload_time = 0.1,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -76,7 +76,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 
 					return arg_2_1:reset_release_input()
@@ -136,7 +136,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -234,7 +234,7 @@ local var_0_0 = {
 						input = "action_two_hold"
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					arg_4_1:clear_input_buffer()
 					Managers.state.achievement:trigger_event("steam_alt_fire", arg_4_0)
 
@@ -270,7 +270,7 @@ local var_0_0 = {
 				hold_input = "action_two_hold",
 				can_abort_reload = false,
 				allow_hold_toggle = true,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -307,14 +307,14 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				condition_func = function(arg_6_0, arg_6_1, arg_6_2)
+				condition_func = function (arg_6_0, arg_6_1, arg_6_2)
 					if arg_6_2 and arg_6_2:total_remaining_ammo() <= 0 then
 						return false
 					end
 
 					return true
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return false
 				end
 			}
@@ -400,7 +400,7 @@ var_0_0.attack_meta_data = {
 		min_radius = math.pi / 72,
 		max_radius = math.pi / 16
 	},
-	hold_fire_condition = function(arg_8_0, arg_8_1)
+	hold_fire_condition = function (arg_8_0, arg_8_1)
 		if arg_8_1 then
 			local var_8_0 = arg_8_1.inventory_extension
 			local var_8_1, var_8_2, var_8_3 = CharacterStateHelper.get_item_data_and_weapon_extensions(var_8_0)

@@ -20,7 +20,7 @@ local var_0_2 = {
 	}
 }
 
-function LootObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
+LootObjectiveUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -42,7 +42,7 @@ end
 
 local var_0_3 = true
 
-function LootObjectiveUI.create_ui_elements(arg_2_0)
+LootObjectiveUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_2_0 = {}
@@ -74,7 +74,7 @@ function LootObjectiveUI.create_ui_elements(arg_2_0)
 	arg_2_0:_sync_missions(true)
 end
 
-function LootObjectiveUI.destroy(arg_3_0)
+LootObjectiveUI.destroy = function (arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "loot_objective_ui")
 end
 
@@ -85,7 +85,7 @@ local var_0_4 = {
 	drag_scenegraph_id = "background"
 }
 
-function LootObjectiveUI.update(arg_4_0, arg_4_1, arg_4_2)
+LootObjectiveUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_3 then
 		arg_4_0:create_ui_elements()
 	end
@@ -99,7 +99,7 @@ function LootObjectiveUI.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function LootObjectiveUI._sync_missions(arg_5_0, arg_5_1)
+LootObjectiveUI._sync_missions = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._settings_data
 
 	for iter_5_0, iter_5_1 in pairs(var_5_0) do
@@ -125,17 +125,17 @@ function LootObjectiveUI._sync_missions(arg_5_0, arg_5_1)
 	end
 end
 
-function LootObjectiveUI._assign_amount_to_widget(arg_6_0, arg_6_1, arg_6_2)
+LootObjectiveUI._assign_amount_to_widget = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.content.draw_count = arg_6_2
 end
 
-function LootObjectiveUI._get_item_amount_by_mission_name(arg_7_0, arg_7_1)
+LootObjectiveUI._get_item_amount_by_mission_name = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._mission_system:get_level_end_mission_data(arg_7_1)
 
 	return var_7_0 and var_7_0.current_amount
 end
 
-function LootObjectiveUI._add_presentation_event(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+LootObjectiveUI._add_presentation_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._event_queue
 	local var_8_1 = #var_8_0
 
@@ -146,7 +146,7 @@ function LootObjectiveUI._add_presentation_event(arg_8_0, arg_8_1, arg_8_2, arg_
 	}
 end
 
-function LootObjectiveUI._update_active_presentation(arg_9_0, arg_9_1, arg_9_2)
+LootObjectiveUI._update_active_presentation = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._event_queue
 
 	if #var_9_0 == 0 then
@@ -180,7 +180,7 @@ function LootObjectiveUI._update_active_presentation(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_2
 end
 
-function LootObjectiveUI._animate_in(arg_10_0, arg_10_1, arg_10_2)
+LootObjectiveUI._animate_in = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._animations
 	local var_10_1 = 1
 	local var_10_2 = 0
@@ -233,7 +233,7 @@ function LootObjectiveUI._animate_in(arg_10_0, arg_10_1, arg_10_2)
 	return var_10_5
 end
 
-function LootObjectiveUI._animate_out(arg_11_0, arg_11_1)
+LootObjectiveUI._animate_out = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._animations
 	local var_11_1 = 1
 	local var_11_2 = 0
@@ -271,7 +271,7 @@ function LootObjectiveUI._animate_out(arg_11_0, arg_11_1)
 	return var_11_5
 end
 
-function LootObjectiveUI._update_animations(arg_12_0, arg_12_1)
+LootObjectiveUI._update_animations = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._animations
 
 	for iter_12_0, iter_12_1 in pairs(var_12_0) do
@@ -283,7 +283,7 @@ function LootObjectiveUI._update_animations(arg_12_0, arg_12_1)
 	end
 end
 
-function LootObjectiveUI.draw(arg_13_0, arg_13_1)
+LootObjectiveUI.draw = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.ui_renderer
 	local var_13_1 = arg_13_0.ui_scenegraph
 	local var_13_2 = arg_13_0.input_manager:get_service("ingame_menu")

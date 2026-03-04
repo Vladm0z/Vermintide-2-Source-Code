@@ -57,7 +57,7 @@ ObjectiveLists.bell_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_2_0, arg_2_1)
+			almost_done = function (arg_2_0, arg_2_1)
 				local var_2_0 = arg_2_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_2_0):get_percentage_done() > 0.75 then
@@ -105,7 +105,7 @@ ObjectiveLists.bell_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function(arg_3_0, arg_3_1)
+			almost_done = function (arg_3_0, arg_3_1)
 				local var_3_0 = arg_3_0.num_sockets
 				local var_3_1 = arg_3_1[1]
 
@@ -162,7 +162,7 @@ ObjectiveLists.bell_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_4_0, arg_4_1)
+			almost_done = function (arg_4_0, arg_4_1)
 				local var_4_0 = arg_4_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_4_0):get_percentage_done() > 0.8 then
@@ -208,7 +208,7 @@ ObjectiveLists.bell_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function(arg_5_0, arg_5_1)
+			almost_done = function (arg_5_0, arg_5_1)
 				local var_5_0 = Managers.state.entity:system("objective_system")
 
 				if var_5_0:num_current_sub_objectives() - var_5_0:num_current_completed_sub_objectives() <= 3 then
@@ -350,7 +350,7 @@ ObjectiveLists.military_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_6_0, arg_6_1)
+			almost_done = function (arg_6_0, arg_6_1)
 				local var_6_0 = arg_6_0.num_sockets
 				local var_6_1 = arg_6_1[1]
 
@@ -457,7 +457,7 @@ ObjectiveLists.military_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_7_0, arg_7_1)
+			almost_done = function (arg_7_0, arg_7_1)
 				local var_7_0 = arg_7_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_7_0):get_percentage_done() > 0.75 then
@@ -584,7 +584,7 @@ ObjectiveLists.military_pvp_set_3 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_8_0, arg_8_1)
+			almost_done = function (arg_8_0, arg_8_1)
 				local var_8_0 = arg_8_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_8_0):get_percentage_done() > 0.75 then
@@ -623,7 +623,7 @@ ObjectiveLists.military_pvp_set_3 = {
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function(arg_9_0, arg_9_1)
+			almost_done = function (arg_9_0, arg_9_1)
 				local var_9_0 = Managers.state.entity:system("objective_system")
 
 				if var_9_0:num_current_sub_objectives() - var_9_0:num_current_completed_sub_objectives() <= 1 then
@@ -704,7 +704,7 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_10_0, arg_10_1)
+			almost_done = function (arg_10_0, arg_10_1)
 				local var_10_0 = Managers.state.entity:system("objective_system")
 
 				if var_10_0:num_current_sub_objectives() - var_10_0:num_current_completed_sub_objectives() <= 1 then
@@ -802,7 +802,7 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			num_sockets = 1,
 			objective_type = var_0_0.objective_socket,
 			score_per_socket = var_0_8,
-			almost_done = function(arg_11_0, arg_11_1)
+			almost_done = function (arg_11_0, arg_11_1)
 				local var_11_0 = arg_11_0.num_sockets
 				local var_11_1 = arg_11_1[1]
 
@@ -860,7 +860,7 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_12_0, arg_12_1)
+			almost_done = function (arg_12_0, arg_12_1)
 				local var_12_0 = arg_12_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_12_0):get_percentage_done() > 0.75 then
@@ -909,7 +909,7 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			description = "level_objective_description_farmlands_16",
 			play_arrive_vo = true,
 			objective_type = var_0_0.objective_interact,
-			almost_done = function(arg_13_0, arg_13_1)
+			almost_done = function (arg_13_0, arg_13_1)
 				local var_13_0 = Managers.state.entity:system("objective_system")
 
 				if var_13_0:num_current_sub_objectives() - var_13_0:num_current_completed_sub_objectives() <= 1 then
@@ -948,7 +948,7 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 		sub_objective_container_prisoners_02 = {
 			description = "level_objective_description_farmlands_17",
 			objective_type = var_0_0.objective_interact,
-			almost_done = function(arg_14_0, arg_14_1)
+			almost_done = function (arg_14_0, arg_14_1)
 				local var_14_0 = Managers.state.entity:system("objective_system")
 
 				if var_14_0:num_current_sub_objectives() - var_14_0:num_current_completed_sub_objectives() <= 1 then
@@ -980,7 +980,7 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function(arg_15_0, arg_15_1)
+			almost_done = function (arg_15_0, arg_15_1)
 				local var_15_0 = Managers.state.entity:system("objective_system")
 
 				if var_15_0:num_current_sub_objectives() - var_15_0:num_current_completed_sub_objectives() <= 1 then
@@ -1063,7 +1063,7 @@ ObjectiveLists.fort_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_16_0, arg_16_1)
+			almost_done = function (arg_16_0, arg_16_1)
 				local var_16_0 = arg_16_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_16_0):get_percentage_done() > 0.75 then
@@ -1101,7 +1101,7 @@ ObjectiveLists.fort_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function(arg_17_0, arg_17_1)
+			almost_done = function (arg_17_0, arg_17_1)
 				local var_17_0 = arg_17_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_17_0):get_percentage_done() > 0.8 then
@@ -1196,7 +1196,7 @@ ObjectiveLists.fort_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_18_0, arg_18_1)
+			almost_done = function (arg_18_0, arg_18_1)
 				local var_18_0 = Managers.state.entity:system("objective_system")
 
 				if var_18_0:num_current_sub_objectives() - var_18_0:num_current_completed_sub_objectives() <= 1 then
@@ -1230,7 +1230,7 @@ ObjectiveLists.fort_pvp_set_2 = {
 			play_arrive_vo = true,
 			objective_type = var_0_0.objective_payload,
 			score_per_section = var_0_5,
-			almost_done = function(arg_19_0, arg_19_1)
+			almost_done = function (arg_19_0, arg_19_1)
 				local var_19_0 = arg_19_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_19_0):get_percentage_done() > 0.8 then
@@ -1295,7 +1295,7 @@ ObjectiveLists.fort_pvp_set_3 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_20_0, arg_20_1)
+			almost_done = function (arg_20_0, arg_20_1)
 				local var_20_0 = Managers.state.entity:system("objective_system")
 
 				if var_20_0:num_current_sub_objectives() - var_20_0:num_current_completed_sub_objectives() <= 1 then
@@ -1467,7 +1467,7 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_21_0, arg_21_1)
+			almost_done = function (arg_21_0, arg_21_1)
 				local var_21_0 = Managers.state.entity:system("objective_system")
 
 				if var_21_0:num_current_sub_objectives() - var_21_0:num_current_completed_sub_objectives() <= 1 then
@@ -1534,7 +1534,7 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			vo_context_on_complete = {
 				objective_part = 2
 			},
-			almost_done = function(arg_22_0, arg_22_1)
+			almost_done = function (arg_22_0, arg_22_1)
 				local var_22_0 = arg_22_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_22_0):get_percentage_done() > 0.8 then
@@ -1603,7 +1603,7 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_23_0, arg_23_1)
+			almost_done = function (arg_23_0, arg_23_1)
 				local var_23_0 = Managers.state.entity:system("objective_system")
 
 				if var_23_0:num_current_sub_objectives() - var_23_0:num_current_completed_sub_objectives() <= 1 then
@@ -1655,7 +1655,7 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "three"
 			},
-			almost_done = function(arg_24_0, arg_24_1)
+			almost_done = function (arg_24_0, arg_24_1)
 				local var_24_0 = Managers.state.entity:system("objective_system")
 
 				if var_24_0:num_current_sub_objectives() - var_24_0:num_current_completed_sub_objectives() <= 1 then
@@ -1694,7 +1694,7 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function(arg_25_0, arg_25_1)
+			almost_done = function (arg_25_0, arg_25_1)
 				local var_25_0 = Managers.state.entity:system("objective_system")
 
 				if var_25_0:num_current_sub_objectives() - var_25_0:num_current_completed_sub_objectives() <= 1 then
@@ -1814,7 +1814,7 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function(arg_26_0, arg_26_1)
+			almost_done = function (arg_26_0, arg_26_1)
 				local var_26_0 = Managers.state.entity:system("objective_system")
 
 				if var_26_0:num_current_sub_objectives() - var_26_0:num_current_completed_sub_objectives() <= 1 then
@@ -1889,7 +1889,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_27_0, arg_27_1)
+			almost_done = function (arg_27_0, arg_27_1)
 				local var_27_0 = arg_27_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_27_0):get_percentage_done() > 0.75 then
@@ -2027,7 +2027,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function(arg_28_0, arg_28_1)
+			almost_done = function (arg_28_0, arg_28_1)
 				local var_28_0 = arg_28_1[1]
 
 				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_28_0):get_percentage_done() > 0.8 then
@@ -2066,7 +2066,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function(arg_29_0, arg_29_1)
+			almost_done = function (arg_29_0, arg_29_1)
 				local var_29_0 = Managers.state.entity:system("objective_system")
 
 				if var_29_0:num_current_sub_objectives() - var_29_0:num_current_completed_sub_objectives() <= 1 then
@@ -2218,7 +2218,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			vo_context_on_complete = {
 				objective_part = 3
 			},
-			almost_done = function(arg_30_0, arg_30_1)
+			almost_done = function (arg_30_0, arg_30_1)
 				local var_30_0 = Managers.state.entity:system("objective_system")
 
 				if var_30_0:num_current_sub_objectives() - var_30_0:num_current_completed_sub_objectives() <= 1 then
@@ -2358,12 +2358,12 @@ ObjectiveLists.weave_3 = {
 		kill_enemies = {},
 		capture_point_004 = {
 			is_scored = true,
-			on_start_func = function(arg_31_0)
+			on_start_func = function (arg_31_0)
 				local var_31_0 = Unit.get_data(arg_31_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event", var_31_0)
 			end,
-			on_complete_func = function(arg_32_0)
+			on_complete_func = function (arg_32_0)
 				local var_32_0 = Unit.get_data(arg_32_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_3_event", var_32_0)
@@ -2371,12 +2371,12 @@ ObjectiveLists.weave_3 = {
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function(arg_33_0)
+			on_start_func = function (arg_33_0)
 				local var_33_0 = Unit.get_data(arg_33_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_33_0)
 			end,
-			on_complete_func = function(arg_34_0)
+			on_complete_func = function (arg_34_0)
 				local var_34_0 = Unit.get_data(arg_34_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_small", var_34_0)
@@ -2384,12 +2384,12 @@ ObjectiveLists.weave_3 = {
 		},
 		capture_point_005 = {
 			is_scored = true,
-			on_start_func = function(arg_35_0)
+			on_start_func = function (arg_35_0)
 				local var_35_0 = Unit.get_data(arg_35_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large", var_35_0)
 			end,
-			on_complete_func = function(arg_36_0)
+			on_complete_func = function (arg_36_0)
 				local var_36_0 = Unit.get_data(arg_36_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large", var_36_0)
@@ -2408,12 +2408,12 @@ ObjectiveLists.weave_5 = {
 		capture_point_003 = {
 			is_scored = true,
 			sort_index = 3,
-			on_start_func = function(arg_37_0)
+			on_start_func = function (arg_37_0)
 				local var_37_0 = Unit.get_data(arg_37_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event", var_37_0)
 			end,
-			on_complete_func = function(arg_38_0)
+			on_complete_func = function (arg_38_0)
 				local var_38_0 = Unit.get_data(arg_38_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_3_event", var_38_0)
@@ -2422,12 +2422,12 @@ ObjectiveLists.weave_5 = {
 		capture_point_001 = {
 			is_scored = true,
 			sort_index = 1,
-			on_start_func = function(arg_39_0)
+			on_start_func = function (arg_39_0)
 				local var_39_0 = Unit.get_data(arg_39_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_39_0)
 			end,
-			on_complete_func = function(arg_40_0)
+			on_complete_func = function (arg_40_0)
 				local var_40_0 = Unit.get_data(arg_40_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_small", var_40_0)
@@ -2436,12 +2436,12 @@ ObjectiveLists.weave_5 = {
 		capture_point_002 = {
 			is_scored = true,
 			sort_index = 2,
-			on_start_func = function(arg_41_0)
+			on_start_func = function (arg_41_0)
 				local var_41_0 = Unit.get_data(arg_41_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large", var_41_0)
 			end,
-			on_complete_func = function(arg_42_0)
+			on_complete_func = function (arg_42_0)
 				local var_42_0 = Unit.get_data(arg_42_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large", var_42_0)
@@ -2460,7 +2460,7 @@ ObjectiveLists.weave_7 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_43_0)
+			on_socket_start_func = function (arg_43_0)
 				local var_43_0 = Unit.get_data(arg_43_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", var_43_0)
@@ -2468,7 +2468,7 @@ ObjectiveLists.weave_7 = {
 		},
 		weave_limited_item_track_spawner_002 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_44_0)
+			on_first_pickup_func = function (arg_44_0)
 				local var_44_0 = Unit.get_data(arg_44_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_44_0)
@@ -2480,7 +2480,7 @@ ObjectiveLists.weave_7 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_45_0)
+			on_socket_start_func = function (arg_45_0)
 				local var_45_0 = Unit.get_data(arg_45_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur", var_45_0)
@@ -2488,7 +2488,7 @@ ObjectiveLists.weave_7 = {
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_46_0)
+			on_first_pickup_func = function (arg_46_0)
 				local var_46_0 = Unit.get_data(arg_46_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn_nodelay", var_46_0)
@@ -2506,12 +2506,12 @@ ObjectiveLists.weave_9 = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function(arg_47_0)
+			on_start_func = function (arg_47_0)
 				local var_47_0 = Unit.get_data(arg_47_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_chaos", var_47_0)
 			end,
-			on_complete_func = function(arg_48_0)
+			on_complete_func = function (arg_48_0)
 				local var_48_0 = Unit.get_data(arg_48_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_chaos", var_48_0)
@@ -2519,12 +2519,12 @@ ObjectiveLists.weave_9 = {
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function(arg_49_0)
+			on_start_func = function (arg_49_0)
 				local var_49_0 = Unit.get_data(arg_49_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", var_49_0)
 			end,
-			on_complete_func = function(arg_50_0)
+			on_complete_func = function (arg_50_0)
 				local var_50_0 = Unit.get_data(arg_50_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", var_50_0)
@@ -2532,12 +2532,12 @@ ObjectiveLists.weave_9 = {
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function(arg_51_0)
+			on_start_func = function (arg_51_0)
 				local var_51_0 = Unit.get_data(arg_51_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_event_beastmen", var_51_0)
 			end,
-			on_complete_func = function(arg_52_0)
+			on_complete_func = function (arg_52_0)
 				local var_52_0 = Unit.get_data(arg_52_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_event_beastmen", var_52_0)
@@ -2585,12 +2585,12 @@ ObjectiveLists.weave_14 = {
 		kill_enemies = {},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function(arg_53_0)
+			on_start_func = function (arg_53_0)
 				local var_53_0 = Unit.get_data(arg_53_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event", var_53_0)
 			end,
-			on_complete_func = function(arg_54_0)
+			on_complete_func = function (arg_54_0)
 				local var_54_0 = Unit.get_data(arg_54_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_3_event", var_54_0)
@@ -2598,12 +2598,12 @@ ObjectiveLists.weave_14 = {
 		},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function(arg_55_0)
+			on_start_func = function (arg_55_0)
 				local var_55_0 = Unit.get_data(arg_55_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_55_0)
 			end,
-			on_complete_func = function(arg_56_0)
+			on_complete_func = function (arg_56_0)
 				local var_56_0 = Unit.get_data(arg_56_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_small", var_56_0)
@@ -2611,12 +2611,12 @@ ObjectiveLists.weave_14 = {
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function(arg_57_0)
+			on_start_func = function (arg_57_0)
 				local var_57_0 = Unit.get_data(arg_57_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large", var_57_0)
 			end,
-			on_complete_func = function(arg_58_0)
+			on_complete_func = function (arg_58_0)
 				local var_58_0 = Unit.get_data(arg_58_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large", var_58_0)
@@ -2635,7 +2635,7 @@ ObjectiveLists.weave_16 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_59_0)
+			on_socket_start_func = function (arg_59_0)
 				local var_59_0 = Unit.get_data(arg_59_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", var_59_0)
@@ -2644,7 +2644,7 @@ ObjectiveLists.weave_16 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_60_0)
+			on_socket_start_func = function (arg_60_0)
 				local var_60_0 = Unit.get_data(arg_60_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", var_60_0)
@@ -2652,7 +2652,7 @@ ObjectiveLists.weave_16 = {
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_61_0)
+			on_first_pickup_func = function (arg_61_0)
 				local var_61_0 = Unit.get_data(arg_61_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_medium", var_61_0)
@@ -2660,7 +2660,7 @@ ObjectiveLists.weave_16 = {
 		},
 		weave_limited_item_track_spawner_007 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_62_0)
+			on_first_pickup_func = function (arg_62_0)
 				local var_62_0 = Unit.get_data(arg_62_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_specials_raid", var_62_0)
@@ -2678,7 +2678,7 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_001 = {
 			is_scored = true,
-			on_start_func = function(arg_63_0)
+			on_start_func = function (arg_63_0)
 				local var_63_0 = Unit.get_data(arg_63_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_specials_raid", var_63_0)
@@ -2686,7 +2686,7 @@ ObjectiveLists.weave_18 = {
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_64_0)
+			on_first_pickup_func = function (arg_64_0)
 				local var_64_0 = Unit.get_data(arg_64_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", var_64_0)
@@ -2697,7 +2697,7 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_002 = {
 			is_scored = true,
-			on_start_func = function(arg_65_0)
+			on_start_func = function (arg_65_0)
 				local var_65_0 = Unit.get_data(arg_65_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_event_beastmen", var_65_0)
@@ -2705,7 +2705,7 @@ ObjectiveLists.weave_18 = {
 		},
 		weave_limited_item_track_spawner_007 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_66_0)
+			on_first_pickup_func = function (arg_66_0)
 				local var_66_0 = Unit.get_data(arg_66_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", var_66_0)
@@ -2716,7 +2716,7 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_67_0)
+			on_first_pickup_func = function (arg_67_0)
 				local var_67_0 = Unit.get_data(arg_67_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_67_0)
@@ -2737,12 +2737,12 @@ ObjectiveLists.weave_20 = {
 		kill_enemies = {},
 		capture_point_006 = {
 			is_scored = true,
-			on_start_func = function(arg_68_0)
+			on_start_func = function (arg_68_0)
 				local var_68_0 = Unit.get_data(arg_68_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", var_68_0)
 			end,
-			on_complete_func = function(arg_69_0)
+			on_complete_func = function (arg_69_0)
 				local var_69_0 = Unit.get_data(arg_69_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", var_69_0)
@@ -2750,12 +2750,12 @@ ObjectiveLists.weave_20 = {
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function(arg_70_0)
+			on_start_func = function (arg_70_0)
 				local var_70_0 = Unit.get_data(arg_70_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_2_event", var_70_0)
 			end,
-			on_complete_func = function(arg_71_0)
+			on_complete_func = function (arg_71_0)
 				local var_71_0 = Unit.get_data(arg_71_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_2_event", var_71_0)
@@ -2763,12 +2763,12 @@ ObjectiveLists.weave_20 = {
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function(arg_72_0)
+			on_start_func = function (arg_72_0)
 				local var_72_0 = Unit.get_data(arg_72_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_event_beastmen", var_72_0)
 			end,
-			on_complete_func = function(arg_73_0)
+			on_complete_func = function (arg_73_0)
 				local var_73_0 = Unit.get_data(arg_73_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_event_beastmen", var_73_0)
@@ -2851,7 +2851,7 @@ ObjectiveLists.weave_24 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_74_0)
+			on_socket_start_func = function (arg_74_0)
 				local var_74_0 = Unit.get_data(arg_74_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", var_74_0)
@@ -2859,7 +2859,7 @@ ObjectiveLists.weave_24 = {
 		},
 		weave_limited_item_track_spawner_009 = {
 			template_name = "magic_barrel_spawner",
-			on_first_pickup_func = function(arg_75_0)
+			on_first_pickup_func = function (arg_75_0)
 				local var_75_0 = Unit.get_data(arg_75_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event", var_75_0)
@@ -2872,12 +2872,12 @@ ObjectiveLists.weave_25 = {
 		kill_enemies = {},
 		capture_point_007 = {
 			is_scored = true,
-			on_start_func = function(arg_76_0)
+			on_start_func = function (arg_76_0)
 				local var_76_0 = Unit.get_data(arg_76_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_medium", var_76_0)
 			end,
-			on_complete_func = function(arg_77_0)
+			on_complete_func = function (arg_77_0)
 				local var_77_0 = Unit.get_data(arg_77_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_medium", var_77_0)
@@ -2885,12 +2885,12 @@ ObjectiveLists.weave_25 = {
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function(arg_78_0)
+			on_start_func = function (arg_78_0)
 				local var_78_0 = Unit.get_data(arg_78_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event", var_78_0)
 			end,
-			on_complete_func = function(arg_79_0)
+			on_complete_func = function (arg_79_0)
 				local var_79_0 = Unit.get_data(arg_79_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_3_event", var_79_0)
@@ -2898,12 +2898,12 @@ ObjectiveLists.weave_25 = {
 		},
 		capture_point_005 = {
 			is_scored = true,
-			on_start_func = function(arg_80_0)
+			on_start_func = function (arg_80_0)
 				local var_80_0 = Unit.get_data(arg_80_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_2_event", var_80_0)
 			end,
-			on_complete_func = function(arg_81_0)
+			on_complete_func = function (arg_81_0)
 				local var_81_0 = Unit.get_data(arg_81_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_2_event", var_81_0)
@@ -2921,7 +2921,7 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_007 = {
 			is_scored = true,
-			on_start_func = function(arg_82_0)
+			on_start_func = function (arg_82_0)
 				local var_82_0 = Unit.get_data(arg_82_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_82_0)
@@ -2929,7 +2929,7 @@ ObjectiveLists.weave_27 = {
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_83_0)
+			on_first_pickup_func = function (arg_83_0)
 				local var_83_0 = Unit.get_data(arg_83_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", var_83_0)
@@ -2940,7 +2940,7 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_003 = {
 			is_scored = true,
-			on_start_func = function(arg_84_0)
+			on_start_func = function (arg_84_0)
 				local var_84_0 = Unit.get_data(arg_84_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", var_84_0)
@@ -2948,7 +2948,7 @@ ObjectiveLists.weave_27 = {
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_85_0)
+			on_first_pickup_func = function (arg_85_0)
 				local var_85_0 = Unit.get_data(arg_85_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", var_85_0)
@@ -2959,7 +2959,7 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_004 = {
 			is_scored = true,
-			on_start_func = function(arg_86_0)
+			on_start_func = function (arg_86_0)
 				local var_86_0 = Unit.get_data(arg_86_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_specials_raid", var_86_0)
@@ -2967,7 +2967,7 @@ ObjectiveLists.weave_27 = {
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_87_0)
+			on_first_pickup_func = function (arg_87_0)
 				local var_87_0 = Unit.get_data(arg_87_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_event_beastmen", var_87_0)
@@ -2992,7 +2992,7 @@ ObjectiveLists.weave_28 = {
 		},
 		weave_target_spawner_016 = {
 			is_scored = true,
-			on_complete_func = function(arg_88_0)
+			on_complete_func = function (arg_88_0)
 				local var_88_0 = Unit.get_data(arg_88_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_skaven", var_88_0)
@@ -3012,7 +3012,7 @@ ObjectiveLists.weave_28 = {
 		},
 		weave_target_spawner_043 = {
 			is_scored = true,
-			on_complete_func = function(arg_89_0)
+			on_complete_func = function (arg_89_0)
 				local var_89_0 = Unit.get_data(arg_89_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_skaven", var_89_0)
@@ -3026,7 +3026,7 @@ ObjectiveLists.weave_29 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_90_0)
+			on_socket_start_func = function (arg_90_0)
 				local var_90_0 = Unit.get_data(arg_90_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", var_90_0)
@@ -3035,7 +3035,7 @@ ObjectiveLists.weave_29 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_91_0)
+			on_socket_start_func = function (arg_91_0)
 				local var_91_0 = Unit.get_data(arg_91_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", var_91_0)
@@ -3043,7 +3043,7 @@ ObjectiveLists.weave_29 = {
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_92_0)
+			on_first_pickup_func = function (arg_92_0)
 				local var_92_0 = Unit.get_data(arg_92_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_92_0)
@@ -3051,7 +3051,7 @@ ObjectiveLists.weave_29 = {
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_93_0)
+			on_first_pickup_func = function (arg_93_0)
 				local var_93_0 = Unit.get_data(arg_93_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_specials_raid", var_93_0)
@@ -3064,7 +3064,7 @@ ObjectiveLists.weave_30 = {
 		kill_enemies = {},
 		weave_target_spawner_004 = {
 			is_scored = true,
-			on_complete_func = function(arg_94_0)
+			on_complete_func = function (arg_94_0)
 				local var_94_0 = Unit.get_data(arg_94_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre_nodelay", var_94_0)
@@ -3072,7 +3072,7 @@ ObjectiveLists.weave_30 = {
 		},
 		weave_target_spawner_006 = {
 			is_scored = true,
-			on_complete_func = function(arg_95_0)
+			on_complete_func = function (arg_95_0)
 				local var_95_0 = Unit.get_data(arg_95_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_95_0)
@@ -3080,7 +3080,7 @@ ObjectiveLists.weave_30 = {
 		},
 		weave_target_spawner_028 = {
 			is_scored = true,
-			on_complete_func = function(arg_96_0)
+			on_complete_func = function (arg_96_0)
 				local var_96_0 = Unit.get_data(arg_96_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", var_96_0)
@@ -3088,7 +3088,7 @@ ObjectiveLists.weave_30 = {
 		},
 		weave_target_spawner_024 = {
 			is_scored = true,
-			on_complete_func = function(arg_97_0)
+			on_complete_func = function (arg_97_0)
 				local var_97_0 = Unit.get_data(arg_97_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_event_beastmen", var_97_0)
@@ -3096,7 +3096,7 @@ ObjectiveLists.weave_30 = {
 		},
 		weave_target_spawner_035 = {
 			is_scored = true,
-			on_complete_func = function(arg_98_0)
+			on_complete_func = function (arg_98_0)
 				local var_98_0 = Unit.get_data(arg_98_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend_nodelay", var_98_0)
@@ -3143,7 +3143,7 @@ ObjectiveLists.weave_33 = {
 		kill_enemies = {},
 		weave_target_spawner_001 = {
 			is_scored = true,
-			on_complete_func = function(arg_99_0)
+			on_complete_func = function (arg_99_0)
 				local var_99_0 = Unit.get_data(arg_99_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_99_0)
@@ -3151,7 +3151,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_005 = {
 			is_scored = true,
-			on_complete_func = function(arg_100_0)
+			on_complete_func = function (arg_100_0)
 				local var_100_0 = Unit.get_data(arg_100_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_100_0)
@@ -3159,7 +3159,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_009 = {
 			is_scored = true,
-			on_complete_func = function(arg_101_0)
+			on_complete_func = function (arg_101_0)
 				local var_101_0 = Unit.get_data(arg_101_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_101_0)
@@ -3167,7 +3167,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_013 = {
 			is_scored = true,
-			on_complete_func = function(arg_102_0)
+			on_complete_func = function (arg_102_0)
 				local var_102_0 = Unit.get_data(arg_102_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_102_0)
@@ -3175,7 +3175,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_011 = {
 			is_scored = true,
-			on_complete_func = function(arg_103_0)
+			on_complete_func = function (arg_103_0)
 				local var_103_0 = Unit.get_data(arg_103_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_103_0)
@@ -3183,7 +3183,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_012 = {
 			is_scored = true,
-			on_complete_func = function(arg_104_0)
+			on_complete_func = function (arg_104_0)
 				local var_104_0 = Unit.get_data(arg_104_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_104_0)
@@ -3191,7 +3191,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_022 = {
 			is_scored = true,
-			on_complete_func = function(arg_105_0)
+			on_complete_func = function (arg_105_0)
 				local var_105_0 = Unit.get_data(arg_105_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_105_0)
@@ -3199,7 +3199,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_028 = {
 			is_scored = true,
-			on_complete_func = function(arg_106_0)
+			on_complete_func = function (arg_106_0)
 				local var_106_0 = Unit.get_data(arg_106_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_106_0)
@@ -3207,7 +3207,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_016 = {
 			is_scored = true,
-			on_complete_func = function(arg_107_0)
+			on_complete_func = function (arg_107_0)
 				local var_107_0 = Unit.get_data(arg_107_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_107_0)
@@ -3215,7 +3215,7 @@ ObjectiveLists.weave_33 = {
 		},
 		weave_target_spawner_015 = {
 			is_scored = true,
-			on_complete_func = function(arg_108_0)
+			on_complete_func = function (arg_108_0)
 				local var_108_0 = Unit.get_data(arg_108_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_special_mixed", var_108_0)
@@ -3228,12 +3228,12 @@ ObjectiveLists.weave_34 = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function(arg_109_0)
+			on_start_func = function (arg_109_0)
 				local var_109_0 = Unit.get_data(arg_109_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_3_event_no_chaos", var_109_0)
 			end,
-			on_complete_func = function(arg_110_0)
+			on_complete_func = function (arg_110_0)
 				local var_110_0 = Unit.get_data(arg_110_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_3_event_no_chaos", var_110_0)
@@ -3241,12 +3241,12 @@ ObjectiveLists.weave_34 = {
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function(arg_111_0)
+			on_start_func = function (arg_111_0)
 				local var_111_0 = Unit.get_data(arg_111_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_specials_raid", var_111_0)
 			end,
-			on_complete_func = function(arg_112_0)
+			on_complete_func = function (arg_112_0)
 				local var_112_0 = Unit.get_data(arg_112_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_specials_raid", var_112_0)
@@ -3254,12 +3254,12 @@ ObjectiveLists.weave_34 = {
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function(arg_113_0)
+			on_start_func = function (arg_113_0)
 				local var_113_0 = Unit.get_data(arg_113_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", var_113_0)
 			end,
-			on_complete_func = function(arg_114_0)
+			on_complete_func = function (arg_114_0)
 				local var_114_0 = Unit.get_data(arg_114_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", var_114_0)
@@ -3267,12 +3267,12 @@ ObjectiveLists.weave_34 = {
 		},
 		capture_point_004 = {
 			is_scored = true,
-			on_start_func = function(arg_115_0)
+			on_start_func = function (arg_115_0)
 				local var_115_0 = Unit.get_data(arg_115_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_medium_no_chaos", var_115_0)
 			end,
-			on_complete_func = function(arg_116_0)
+			on_complete_func = function (arg_116_0)
 				local var_116_0 = Unit.get_data(arg_116_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_medium_no_chaos", var_116_0)
@@ -3280,12 +3280,12 @@ ObjectiveLists.weave_34 = {
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function(arg_117_0)
+			on_start_func = function (arg_117_0)
 				local var_117_0 = Unit.get_data(arg_117_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small_no_chaos", var_117_0)
 			end,
-			on_complete_func = function(arg_118_0)
+			on_complete_func = function (arg_118_0)
 				local var_118_0 = Unit.get_data(arg_118_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_small_no_chaos", var_118_0)
@@ -3299,7 +3299,7 @@ ObjectiveLists.weave_35 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_119_0)
+			on_socket_start_func = function (arg_119_0)
 				local var_119_0 = Unit.get_data(arg_119_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", var_119_0)
@@ -3307,7 +3307,7 @@ ObjectiveLists.weave_35 = {
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_120_0)
+			on_first_pickup_func = function (arg_120_0)
 				local var_120_0 = Unit.get_data(arg_120_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("objective_event_beastmen", var_120_0)
@@ -3380,7 +3380,7 @@ ObjectiveLists.weave_37 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_121_0)
+			on_socket_start_func = function (arg_121_0)
 				local var_121_0 = Unit.get_data(arg_121_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", var_121_0)
@@ -3389,7 +3389,7 @@ ObjectiveLists.weave_37 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_122_0)
+			on_socket_start_func = function (arg_122_0)
 				local var_122_0 = Unit.get_data(arg_122_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", var_122_0)
@@ -3397,7 +3397,7 @@ ObjectiveLists.weave_37 = {
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_123_0)
+			on_first_pickup_func = function (arg_123_0)
 				local var_123_0 = Unit.get_data(arg_123_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_medium", var_123_0)
@@ -3405,7 +3405,7 @@ ObjectiveLists.weave_37 = {
 		},
 		weave_limited_item_track_spawner_002 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function(arg_124_0)
+			on_first_pickup_func = function (arg_124_0)
 				local var_124_0 = Unit.get_data(arg_124_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_2_event", var_124_0)
@@ -3419,12 +3419,12 @@ ObjectiveLists.weave_38 = {
 		capture_point_001 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function(arg_125_0)
+			on_start_func = function (arg_125_0)
 				local var_125_0 = Unit.get_data(arg_125_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_chaos", var_125_0)
 			end,
-			on_complete_func = function(arg_126_0)
+			on_complete_func = function (arg_126_0)
 				local var_126_0 = Unit.get_data(arg_126_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_chaos", var_126_0)
@@ -3433,12 +3433,12 @@ ObjectiveLists.weave_38 = {
 		capture_point_002 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function(arg_127_0)
+			on_start_func = function (arg_127_0)
 				local var_127_0 = Unit.get_data(arg_127_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_2_event", var_127_0)
 			end,
-			on_complete_func = function(arg_128_0)
+			on_complete_func = function (arg_128_0)
 				local var_128_0 = Unit.get_data(arg_128_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_2_event", var_128_0)
@@ -3447,12 +3447,12 @@ ObjectiveLists.weave_38 = {
 		capture_point_003_skaven = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function(arg_129_0)
+			on_start_func = function (arg_129_0)
 				local var_129_0 = Unit.get_data(arg_129_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", var_129_0)
 			end,
-			on_complete_func = function(arg_130_0)
+			on_complete_func = function (arg_130_0)
 				local var_130_0 = Unit.get_data(arg_130_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", var_130_0)
@@ -3461,12 +3461,12 @@ ObjectiveLists.weave_38 = {
 		capture_point_006_skaven = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function(arg_131_0)
+			on_start_func = function (arg_131_0)
 				local var_131_0 = Unit.get_data(arg_131_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", var_131_0)
 			end,
-			on_complete_func = function(arg_132_0)
+			on_complete_func = function (arg_132_0)
 				local var_132_0 = Unit.get_data(arg_132_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", var_132_0)
@@ -3475,12 +3475,12 @@ ObjectiveLists.weave_38 = {
 		capture_point_007 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function(arg_133_0)
+			on_start_func = function (arg_133_0)
 				local var_133_0 = Unit.get_data(arg_133_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large", var_133_0)
 			end,
-			on_complete_func = function(arg_134_0)
+			on_complete_func = function (arg_134_0)
 				local var_134_0 = Unit.get_data(arg_134_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_large", var_134_0)
@@ -3509,12 +3509,12 @@ ObjectiveLists.weave_woods_3_cps = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function(arg_135_0)
+			on_start_func = function (arg_135_0)
 				local var_135_0 = Unit.get_data(arg_135_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_135_0)
 			end,
-			on_complete_func = function(arg_136_0)
+			on_complete_func = function (arg_136_0)
 				local var_136_0 = Unit.get_data(arg_136_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_small", var_136_0)
@@ -3522,12 +3522,12 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		capture_point_007 = {
 			is_scored = true,
-			on_start_func = function(arg_137_0)
+			on_start_func = function (arg_137_0)
 				local var_137_0 = Unit.get_data(arg_137_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_medium", var_137_0)
 			end,
-			on_complete_func = function(arg_138_0)
+			on_complete_func = function (arg_138_0)
 				local var_138_0 = Unit.get_data(arg_138_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_1_event_medium", var_138_0)
@@ -3535,12 +3535,12 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function(arg_139_0)
+			on_start_func = function (arg_139_0)
 				local var_139_0 = Unit.get_data(arg_139_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_2_event", var_139_0)
 			end,
-			on_complete_func = function(arg_140_0)
+			on_complete_func = function (arg_140_0)
 				local var_140_0 = Unit.get_data(arg_140_0, "terror_event_spawner_id")
 
 				Managers.weave:stop_terror_event("capture_point_2_event", var_140_0)
@@ -3553,7 +3553,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_007 = {
 			is_scored = true,
-			on_start_func = function(arg_141_0)
+			on_start_func = function (arg_141_0)
 				local var_141_0 = Unit.get_data(arg_141_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_141_0)
@@ -3561,7 +3561,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		weave_explosive_barrel_socket_004 = {
 			is_scored = true,
-			on_start_func = function(arg_142_0)
+			on_start_func = function (arg_142_0)
 				local var_142_0 = Unit.get_data(arg_142_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", var_142_0)
@@ -3569,7 +3569,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		weave_explosive_barrel_socket_003 = {
 			is_scored = true,
-			on_start_func = function(arg_143_0)
+			on_start_func = function (arg_143_0)
 				local var_143_0 = Unit.get_data(arg_143_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_troll", var_143_0)
@@ -3577,7 +3577,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_144_0)
+			on_first_pickup_func = function (arg_144_0)
 				local var_144_0 = Unit.get_data(arg_144_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", var_144_0)
@@ -3585,7 +3585,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_145_0)
+			on_first_pickup_func = function (arg_145_0)
 				local var_145_0 = Unit.get_data(arg_145_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", var_145_0)
@@ -3593,7 +3593,7 @@ ObjectiveLists.weave_woods_3_cps = {
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function(arg_146_0)
+			on_first_pickup_func = function (arg_146_0)
 				local var_146_0 = Unit.get_data(arg_146_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_chaos", var_146_0)
@@ -3607,7 +3607,7 @@ ObjectiveLists["weave_27 - Copy"] = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_147_0)
+			on_socket_start_func = function (arg_147_0)
 				local var_147_0 = Unit.get_data(arg_147_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_147_0)
@@ -3616,7 +3616,7 @@ ObjectiveLists["weave_27 - Copy"] = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function(arg_148_0)
+			on_socket_start_func = function (arg_148_0)
 				local var_148_0 = Unit.get_data(arg_148_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_small", var_148_0)
@@ -3624,7 +3624,7 @@ ObjectiveLists["weave_27 - Copy"] = {
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_pickup_func = function(arg_149_0)
+			on_pickup_func = function (arg_149_0)
 				local var_149_0 = Unit.get_data(arg_149_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_4_event", var_149_0)
@@ -3632,7 +3632,7 @@ ObjectiveLists["weave_27 - Copy"] = {
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "explosive_barrel_spawner",
-			on_pickup_func = function(arg_150_0)
+			on_pickup_func = function (arg_150_0)
 				local var_150_0 = Unit.get_data(arg_150_0, "terror_event_spawner_id")
 
 				Managers.weave:start_terror_event("capture_point_1_event_large", var_150_0)

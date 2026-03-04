@@ -2,7 +2,7 @@
 
 ProjectileExtrapolatedHuskLocomotionExtension = class(ProjectileExtrapolatedHuskLocomotionExtension)
 
-function ProjectileExtrapolatedHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectileExtrapolatedHuskLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._spawn_time = Managers.time:time("game")
 	arg_1_0._last_lerp_position = Vector3Box(Unit.local_position(arg_1_2, 0))
 	arg_1_0._last_lerp_position_offset = Vector3Box()
@@ -14,7 +14,7 @@ local var_0_0 = 0.01
 local var_0_1 = var_0_0 * var_0_0
 local var_0_2 = 0.1
 
-function ProjectileExtrapolatedHuskLocomotionExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ProjectileExtrapolatedHuskLocomotionExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0._stopped then
 		return
 	end
@@ -61,10 +61,10 @@ function ProjectileExtrapolatedHuskLocomotionExtension.update(arg_2_0, arg_2_1, 
 	end
 end
 
-function ProjectileExtrapolatedHuskLocomotionExtension.destroy(arg_3_0)
+ProjectileExtrapolatedHuskLocomotionExtension.destroy = function (arg_3_0)
 	return
 end
 
-function ProjectileExtrapolatedHuskLocomotionExtension.stop(arg_4_0)
+ProjectileExtrapolatedHuskLocomotionExtension.stop = function (arg_4_0)
 	arg_4_0._stopped = true
 end

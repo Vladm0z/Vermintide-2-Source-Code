@@ -17,7 +17,7 @@ local var_0_8 = "confirm_press"
 StartGameWindowMissionSelectionConsole = class(StartGameWindowMissionSelectionConsole)
 StartGameWindowMissionSelectionConsole.NAME = "StartGameWindowMissionSelectionConsole"
 
-function StartGameWindowMissionSelectionConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowMissionSelectionConsole.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowMissionSelectionConsole")
 
 	arg_2_0._parent = arg_2_1.parent
@@ -43,7 +43,7 @@ function StartGameWindowMissionSelectionConsole.on_enter(arg_2_0, arg_2_1, arg_2
 	arg_2_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowMissionSelectionConsole._start_transition_animation(arg_3_0, arg_3_1)
+StartGameWindowMissionSelectionConsole._start_transition_animation = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		render_settings = arg_3_0._render_settings
 	}
@@ -53,7 +53,7 @@ function StartGameWindowMissionSelectionConsole._start_transition_animation(arg_
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-function StartGameWindowMissionSelectionConsole._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowMissionSelectionConsole._create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = UISceneGraph.init_scenegraph(var_0_5)
 
 	arg_4_0._ui_scenegraph = var_4_0
@@ -76,7 +76,7 @@ function StartGameWindowMissionSelectionConsole._create_ui_elements(arg_4_0, arg
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._setup_levels_by_area(arg_5_0, arg_5_1)
+StartGameWindowMissionSelectionConsole._setup_levels_by_area = function (arg_5_0, arg_5_1)
 	local var_5_0 = AreaSettings[arg_5_1]
 	local var_5_1 = var_5_0.acts
 
@@ -87,7 +87,7 @@ function StartGameWindowMissionSelectionConsole._setup_levels_by_area(arg_5_0, a
 	arg_5_0:_update_level_option()
 end
 
-function StartGameWindowMissionSelectionConsole._setup_level_acts(arg_6_0, arg_6_1)
+StartGameWindowMissionSelectionConsole._setup_level_acts = function (arg_6_0, arg_6_1)
 	local var_6_0 = {}
 	local var_6_1 = 0
 
@@ -116,7 +116,7 @@ function StartGameWindowMissionSelectionConsole._setup_level_acts(arg_6_0, arg_6
 	arg_6_0._levels_by_act = var_6_0
 end
 
-function StartGameWindowMissionSelectionConsole._verify_act(arg_7_0, arg_7_1)
+StartGameWindowMissionSelectionConsole._verify_act = function (arg_7_0, arg_7_1)
 	if not arg_7_1 then
 		return false
 	end
@@ -130,7 +130,7 @@ function StartGameWindowMissionSelectionConsole._verify_act(arg_7_0, arg_7_1)
 	return false
 end
 
-function StartGameWindowMissionSelectionConsole._present_act_levels(arg_8_0, arg_8_1)
+StartGameWindowMissionSelectionConsole._present_act_levels = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._node_widgets
 	local var_8_1 = arg_8_0._statistics_db
 	local var_8_2 = arg_8_0._stats_id
@@ -219,7 +219,7 @@ function StartGameWindowMissionSelectionConsole._present_act_levels(arg_8_0, arg
 	arg_8_0._active_act_widgets = var_8_4
 end
 
-function StartGameWindowMissionSelectionConsole._select_level(arg_9_0, arg_9_1)
+StartGameWindowMissionSelectionConsole._select_level = function (arg_9_0, arg_9_1)
 	local var_9_0 = LevelUnlockUtils.get_required_completed_levels(arg_9_0._statistics_db, arg_9_0._stats_id, arg_9_1)
 	local var_9_1 = arg_9_0._active_node_widgets
 
@@ -240,7 +240,7 @@ function StartGameWindowMissionSelectionConsole._select_level(arg_9_0, arg_9_1)
 	arg_9_0:_set_presentation_info(arg_9_1)
 end
 
-function StartGameWindowMissionSelectionConsole._set_presentation_info(arg_10_0, arg_10_1)
+StartGameWindowMissionSelectionConsole._set_presentation_info = function (arg_10_0, arg_10_1)
 	local var_10_0 = ""
 	local var_10_1 = ""
 	local var_10_2 = "map_frame_00"
@@ -288,7 +288,7 @@ function StartGameWindowMissionSelectionConsole._set_presentation_info(arg_10_0,
 	var_10_5.locked_text.content.text = var_10_4
 end
 
-function StartGameWindowMissionSelectionConsole._setup_mission_data(arg_11_0, arg_11_1)
+StartGameWindowMissionSelectionConsole._setup_mission_data = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.loot_objectives
 	local var_11_1 = arg_11_0._widgets_by_name
 	local var_11_2 = not not var_11_0
@@ -363,7 +363,7 @@ end
 
 local var_0_9 = {}
 
-function StartGameWindowMissionSelectionConsole._sync_completed_difficulty(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+StartGameWindowMissionSelectionConsole._sync_completed_difficulty = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_3.level_id
 	local var_12_1 = LevelUnlockUtils.completed_level_difficulty_index(arg_12_0._statistics_db, arg_12_0._stats_id, var_12_0)
 
@@ -405,7 +405,7 @@ function StartGameWindowMissionSelectionConsole._sync_completed_difficulty(arg_1
 	arg_12_0._loot_object_widgets.difficulty = var_12_8
 end
 
-function StartGameWindowMissionSelectionConsole._calculate_paint_scrap_amount(arg_13_0, arg_13_1)
+StartGameWindowMissionSelectionConsole._calculate_paint_scrap_amount = function (arg_13_0, arg_13_1)
 	if not GameModeSettings[arg_13_1.game_mode or "adventure"].has_art_scraps then
 		return 0
 	end
@@ -431,7 +431,7 @@ end
 
 local var_0_10 = {}
 
-function StartGameWindowMissionSelectionConsole._sync_hero_completion(arg_14_0, arg_14_1)
+StartGameWindowMissionSelectionConsole._sync_hero_completion = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_1.level_id
 	local var_14_1 = arg_14_0._widgets_by_name.hero_tabs
 	local var_14_2 = var_14_1.content
@@ -468,7 +468,7 @@ function StartGameWindowMissionSelectionConsole._sync_hero_completion(arg_14_0, 
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._profile_difficulty_index_completed(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowMissionSelectionConsole._profile_difficulty_index_completed = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._statistics_db
 	local var_15_1 = arg_15_0._stats_id
 	local var_15_2 = arg_15_1.careers
@@ -490,7 +490,7 @@ function StartGameWindowMissionSelectionConsole._profile_difficulty_index_comple
 	return var_15_4, var_15_3
 end
 
-function StartGameWindowMissionSelectionConsole._sync_missions(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowMissionSelectionConsole._sync_missions = function (arg_16_0, arg_16_1, arg_16_2)
 	if not arg_16_1 then
 		return
 	end
@@ -525,7 +525,7 @@ function StartGameWindowMissionSelectionConsole._sync_missions(arg_16_0, arg_16_
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._setup_grid_navigation(arg_17_0)
+StartGameWindowMissionSelectionConsole._setup_grid_navigation = function (arg_17_0)
 	local var_17_0 = {}
 	local var_17_1 = arg_17_0._levels_by_act
 
@@ -549,7 +549,7 @@ function StartGameWindowMissionSelectionConsole._setup_grid_navigation(arg_17_0)
 	arg_17_0._current_column = var_17_4
 end
 
-function StartGameWindowMissionSelectionConsole._find_level_location_in_grid(arg_18_0, arg_18_1)
+StartGameWindowMissionSelectionConsole._find_level_location_in_grid = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._navigation_grid
 	local var_18_1 = 0
 
@@ -588,7 +588,7 @@ function StartGameWindowMissionSelectionConsole._find_level_location_in_grid(arg
 	end
 
 	if not IS_XB1 then
-		-- block empty
+		-- Nothing
 	end
 
 	if not var_18_2 or not var_18_3 then
@@ -609,7 +609,7 @@ function StartGameWindowMissionSelectionConsole._find_level_location_in_grid(arg
 	return var_18_2, var_18_3
 end
 
-function StartGameWindowMissionSelectionConsole.on_exit(arg_19_0, arg_19_1)
+StartGameWindowMissionSelectionConsole.on_exit = function (arg_19_0, arg_19_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowMissionSelectionConsole")
 
 	arg_19_0._ui_animator = nil
@@ -617,17 +617,17 @@ function StartGameWindowMissionSelectionConsole.on_exit(arg_19_0, arg_19_1)
 	arg_19_0._parent:set_input_description(nil)
 end
 
-function StartGameWindowMissionSelectionConsole.update(arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowMissionSelectionConsole.update = function (arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0:_update_animations(arg_20_1)
 	arg_20_0:_handle_input(arg_20_1, arg_20_2)
 	arg_20_0:_draw(arg_20_1)
 end
 
-function StartGameWindowMissionSelectionConsole.post_update(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowMissionSelectionConsole.post_update = function (arg_21_0, arg_21_1, arg_21_2)
 	return
 end
 
-function StartGameWindowMissionSelectionConsole._update_animations(arg_22_0, arg_22_1)
+StartGameWindowMissionSelectionConsole._update_animations = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._ui_animator
 
 	var_22_0:update(arg_22_1)
@@ -651,7 +651,7 @@ function StartGameWindowMissionSelectionConsole._update_animations(arg_22_0, arg
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._update_level_option(arg_23_0)
+StartGameWindowMissionSelectionConsole._update_level_option = function (arg_23_0)
 	local var_23_0 = arg_23_0._parent:get_selected_level_id()
 
 	if var_23_0 ~= arg_23_0._selected_level_id or not var_23_0 then
@@ -665,7 +665,7 @@ function StartGameWindowMissionSelectionConsole._update_level_option(arg_23_0)
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._is_level_presented(arg_24_0, arg_24_1)
+StartGameWindowMissionSelectionConsole._is_level_presented = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._active_node_widgets
 
 	if var_24_0 then
@@ -679,14 +679,14 @@ function StartGameWindowMissionSelectionConsole._is_level_presented(arg_24_0, ar
 	return false
 end
 
-function StartGameWindowMissionSelectionConsole._get_first_level_id(arg_25_0)
+StartGameWindowMissionSelectionConsole._get_first_level_id = function (arg_25_0)
 	local var_25_0 = arg_25_0._parent:get_selected_area_name()
 	local var_25_1 = AreaSettings[var_25_0].acts[1]
 
 	return arg_25_0._levels_by_act[var_25_1][1].level_id
 end
 
-function StartGameWindowMissionSelectionConsole._update_selection_from_grid(arg_26_0)
+StartGameWindowMissionSelectionConsole._update_selection_from_grid = function (arg_26_0)
 	local var_26_0 = arg_26_0._current_row
 	local var_26_1 = arg_26_0._current_column
 	local var_26_2 = arg_26_0._navigation_grid[var_26_0][var_26_1]
@@ -696,7 +696,7 @@ function StartGameWindowMissionSelectionConsole._update_selection_from_grid(arg_
 	arg_26_0:_play_sound("play_gui_lobby_button_02_mission_act_click")
 end
 
-function StartGameWindowMissionSelectionConsole._update_grid_row(arg_27_0, arg_27_1)
+StartGameWindowMissionSelectionConsole._update_grid_row = function (arg_27_0, arg_27_1)
 	local var_27_0 = #arg_27_0._navigation_grid
 
 	arg_27_0._current_row = math.clamp(arg_27_1, 1, var_27_0)
@@ -705,7 +705,7 @@ function StartGameWindowMissionSelectionConsole._update_grid_row(arg_27_0, arg_2
 	arg_27_0:_update_selection_from_grid()
 end
 
-function StartGameWindowMissionSelectionConsole._update_grid_column(arg_28_0, arg_28_1)
+StartGameWindowMissionSelectionConsole._update_grid_column = function (arg_28_0, arg_28_1)
 	local var_28_0 = #arg_28_0._navigation_grid[arg_28_0._current_row]
 
 	arg_28_0._current_column = math.clamp(arg_28_1, 1, var_28_0)
@@ -713,7 +713,7 @@ function StartGameWindowMissionSelectionConsole._update_grid_column(arg_28_0, ar
 	arg_28_0:_update_selection_from_grid()
 end
 
-function StartGameWindowMissionSelectionConsole._update_grid_navigation(arg_29_0, arg_29_1, arg_29_2)
+StartGameWindowMissionSelectionConsole._update_grid_navigation = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0:_find_row(arg_29_1)
 
 	if var_29_0 ~= arg_29_0._current_row then
@@ -727,7 +727,7 @@ function StartGameWindowMissionSelectionConsole._update_grid_navigation(arg_29_0
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._find_row(arg_30_0, arg_30_1)
+StartGameWindowMissionSelectionConsole._find_row = function (arg_30_0, arg_30_1)
 	if arg_30_1 == 0 then
 		return arg_30_0._current_row
 	end
@@ -757,7 +757,7 @@ function StartGameWindowMissionSelectionConsole._find_row(arg_30_0, arg_30_1)
 	return var_30_0
 end
 
-function StartGameWindowMissionSelectionConsole._find_column(arg_31_0, arg_31_1)
+StartGameWindowMissionSelectionConsole._find_column = function (arg_31_0, arg_31_1)
 	if arg_31_1 == 0 then
 		return arg_31_0._current_column
 	end
@@ -787,14 +787,14 @@ function StartGameWindowMissionSelectionConsole._find_column(arg_31_0, arg_31_1)
 	return var_31_0
 end
 
-function StartGameWindowMissionSelectionConsole._level_is_unlocked(arg_32_0, arg_32_1)
+StartGameWindowMissionSelectionConsole._level_is_unlocked = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._statistics_db
 	local var_32_1 = arg_32_0._stats_id
 
 	return LevelUnlockUtils.level_unlocked(var_32_0, var_32_1, arg_32_1)
 end
 
-function StartGameWindowMissionSelectionConsole._handle_input(arg_33_0, arg_33_1, arg_33_2)
+StartGameWindowMissionSelectionConsole._handle_input = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._parent
 	local var_33_1 = var_33_0:window_input_service()
 	local var_33_2 = Managers.input:is_device_active("mouse")
@@ -845,7 +845,7 @@ function StartGameWindowMissionSelectionConsole._handle_input(arg_33_0, arg_33_1
 	end
 end
 
-function StartGameWindowMissionSelectionConsole._draw(arg_34_0, arg_34_1)
+StartGameWindowMissionSelectionConsole._draw = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._ui_top_renderer
 	local var_34_1 = arg_34_0._ui_scenegraph
 	local var_34_2 = arg_34_0._parent:window_input_service()
@@ -869,11 +869,11 @@ function StartGameWindowMissionSelectionConsole._draw(arg_34_0, arg_34_1)
 	UIRenderer.end_pass(var_34_0)
 end
 
-function StartGameWindowMissionSelectionConsole._play_sound(arg_35_0, arg_35_1)
+StartGameWindowMissionSelectionConsole._play_sound = function (arg_35_0, arg_35_1)
 	arg_35_0._parent:play_sound(arg_35_1)
 end
 
-function StartGameWindowMissionSelectionConsole._animate_node_widget(arg_36_0, arg_36_1, arg_36_2)
+StartGameWindowMissionSelectionConsole._animate_node_widget = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_1.content
 	local var_36_1 = var_36_0.button_hotspot
 	local var_36_2 = var_36_1.is_selected

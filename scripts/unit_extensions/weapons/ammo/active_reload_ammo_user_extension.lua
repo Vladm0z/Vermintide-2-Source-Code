@@ -3,7 +3,7 @@
 script_data.infinite_ammo = script_data.infinite_ammo or Development.parameter("infinite_ammo")
 ActiveReloadAmmoUserExtension = class(ActiveReloadAmmoUserExtension)
 
-function ActiveReloadAmmoUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ActiveReloadAmmoUserExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.owner_unit = arg_1_3.owner_unit
 
@@ -28,21 +28,21 @@ function ActiveReloadAmmoUserExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:reset()
 end
 
-function ActiveReloadAmmoUserExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+ActiveReloadAmmoUserExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	return
 end
 
-function ActiveReloadAmmoUserExtension.destroy(arg_3_0)
+ActiveReloadAmmoUserExtension.destroy = function (arg_3_0)
 	return
 end
 
-function ActiveReloadAmmoUserExtension.reset(arg_4_0)
+ActiveReloadAmmoUserExtension.reset = function (arg_4_0)
 	arg_4_0.current_ammo = arg_4_0.ammo_per_clip
 	arg_4_0.available_ammo = arg_4_0.start_ammo - arg_4_0.current_ammo
 	arg_4_0.shots_fired = 0
 end
 
-function ActiveReloadAmmoUserExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActiveReloadAmmoUserExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_0.shots_fired > 0 then
 		arg_5_0.current_ammo = arg_5_0.current_ammo - arg_5_0.shots_fired
 		arg_5_0.shots_fired = 0
@@ -114,7 +114,7 @@ end
 local var_0_0 = 0.2
 local var_0_1 = 0.3
 
-function ActiveReloadAmmoUserExtension._update_active_reload(arg_6_0, arg_6_1, arg_6_2)
+ActiveReloadAmmoUserExtension._update_active_reload = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0.input_extension:get("weapon_reload") then
 		return
 	end
@@ -136,7 +136,7 @@ function ActiveReloadAmmoUserExtension._update_active_reload(arg_6_0, arg_6_1, a
 	end
 end
 
-function ActiveReloadAmmoUserExtension._debug_draw(arg_7_0, arg_7_1, arg_7_2)
+ActiveReloadAmmoUserExtension._debug_draw = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._gui
 	local var_7_1, var_7_2 = Gui.resolution()
 	local var_7_3 = Vector3(var_7_1 * 0.5, var_7_2 * 0.4, 100)
@@ -169,7 +169,7 @@ end
 
 local var_0_2 = 0.6
 
-function ActiveReloadAmmoUserExtension._setup_indicator_area(arg_8_0)
+ActiveReloadAmmoUserExtension._setup_indicator_area = function (arg_8_0)
 	assert(arg_8_0.next_reload_time)
 
 	local var_8_0 = arg_8_0:reload_start_time()
@@ -177,23 +177,23 @@ function ActiveReloadAmmoUserExtension._setup_indicator_area(arg_8_0)
 	arg_8_0.event_start = arg_8_0.reload_time * var_0_2
 end
 
-function ActiveReloadAmmoUserExtension.reload_start_time(arg_9_0)
+ActiveReloadAmmoUserExtension.reload_start_time = function (arg_9_0)
 	assert(arg_9_0.next_reload_time)
 
 	return arg_9_0.next_reload_time - arg_9_0.reload_time
 end
 
-function ActiveReloadAmmoUserExtension.add_ammo(arg_10_0, arg_10_1)
+ActiveReloadAmmoUserExtension.add_ammo = function (arg_10_0, arg_10_1)
 	arg_10_0.available_ammo = math.min(arg_10_0.available_ammo + arg_10_1, arg_10_0.max_ammo - (arg_10_0.current_ammo - arg_10_0.shots_fired))
 end
 
-function ActiveReloadAmmoUserExtension.use_ammo(arg_11_0, arg_11_1)
+ActiveReloadAmmoUserExtension.use_ammo = function (arg_11_0, arg_11_1)
 	arg_11_0.shots_fired = arg_11_0.shots_fired + arg_11_1
 
 	assert(arg_11_0:ammo_count() >= 0)
 end
 
-function ActiveReloadAmmoUserExtension.start_reload(arg_12_0, arg_12_1)
+ActiveReloadAmmoUserExtension.start_reload = function (arg_12_0, arg_12_1)
 	assert(arg_12_0:can_reload())
 	assert(arg_12_0.next_reload_time == nil)
 
@@ -201,26 +201,26 @@ function ActiveReloadAmmoUserExtension.start_reload(arg_12_0, arg_12_1)
 	arg_12_0.next_reload_time = 0
 end
 
-function ActiveReloadAmmoUserExtension.abort_reload(arg_13_0)
+ActiveReloadAmmoUserExtension.abort_reload = function (arg_13_0)
 	assert(arg_13_0:is_reloading())
 
 	arg_13_0.start_reloading = nil
 	arg_13_0.next_reload_time = nil
 end
 
-function ActiveReloadAmmoUserExtension.ammo_count(arg_14_0)
+ActiveReloadAmmoUserExtension.ammo_count = function (arg_14_0)
 	return arg_14_0.current_ammo - arg_14_0.shots_fired
 end
 
-function ActiveReloadAmmoUserExtension.clip_size(arg_15_0)
+ActiveReloadAmmoUserExtension.clip_size = function (arg_15_0)
 	return arg_15_0.ammo_per_clip
 end
 
-function ActiveReloadAmmoUserExtension.remaining_ammo(arg_16_0)
+ActiveReloadAmmoUserExtension.remaining_ammo = function (arg_16_0)
 	return arg_16_0.available_ammo
 end
 
-function ActiveReloadAmmoUserExtension.can_reload(arg_17_0)
+ActiveReloadAmmoUserExtension.can_reload = function (arg_17_0)
 	if arg_17_0:is_reloading() then
 		return false
 	end
@@ -236,6 +236,6 @@ function ActiveReloadAmmoUserExtension.can_reload(arg_17_0)
 	return arg_17_0.available_ammo > 0
 end
 
-function ActiveReloadAmmoUserExtension.is_reloading(arg_18_0)
+ActiveReloadAmmoUserExtension.is_reloading = function (arg_18_0)
 	return arg_18_0.next_reload_time ~= nil
 end

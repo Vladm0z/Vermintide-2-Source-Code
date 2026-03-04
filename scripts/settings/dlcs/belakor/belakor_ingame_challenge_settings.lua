@@ -21,7 +21,7 @@ var_0_0.ingame_challenge_rewards = {
 	}
 }
 var_0_0.ingame_challenge_reward_types = {
-	deus_power_up = function(arg_1_0, arg_1_1, arg_1_2)
+	deus_power_up = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Managers.mechanism:game_mechanism():get_deus_run_controller()
 
 		if not var_1_0 then
@@ -51,7 +51,7 @@ var_0_0.ingame_challenge_rewards_description = {
 	deus_power_up_quest_test_reward_01 = "deus_power_up_quest_test_reward_01"
 }
 var_0_0.ingame_challenge_validation_functions = {
-	deus_power_up = function(arg_2_0)
+	deus_power_up = function (arg_2_0)
 		fassert(arg_2_0.granted_power_up_name and arg_2_0.granted_power_up_rarity, "power_up challenges must set a power_up that is granting the challenge", arg_2_0.reward_id)
 		fassert(DeusPowerUps[arg_2_0.granted_power_up_rarity], "reward power_up %s not valid: power_up rarity %s not found in power_ups list", arg_2_0.reward_id, arg_2_0.granted_power_up_rarity)
 		fassert(DeusPowerUps[arg_2_0.granted_power_up_rarity][arg_2_0.granted_power_up_name], "reward power_up %s not valid: granted_power_up %s with rarity %s not found in power_ups list", arg_2_0.reward_id, arg_2_0.granted_power_up_name, arg_2_0.granted_power_up_rarity)

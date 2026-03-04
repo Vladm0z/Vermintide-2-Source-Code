@@ -6,7 +6,7 @@ local var_0_0 = script_data.testify and require("scripts/unit_extensions/generic
 
 EndZoneExtension = class(EndZoneExtension)
 
-function EndZoneExtension.init(arg_1_0, arg_1_1, arg_1_2)
+EndZoneExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._extension_init_context = arg_1_1
@@ -57,15 +57,15 @@ function EndZoneExtension.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function EndZoneExtension.extensions_ready(arg_2_0)
+EndZoneExtension.extensions_ready = function (arg_2_0)
 	Managers.state.event:register(arg_2_0, "activate_waystone_portal", "activate_waystone_portal")
 end
 
-function EndZoneExtension.destroy(arg_3_0)
+EndZoneExtension.destroy = function (arg_3_0)
 	Managers.state.event:unregister("activate_waystone_portal", arg_3_0)
 end
 
-function EndZoneExtension.activate_waystone_portal(arg_4_0, arg_4_1)
+EndZoneExtension.activate_waystone_portal = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._unit
 	local var_4_1 = Unit.get_data(var_4_0, "waystone_type")
 
@@ -78,7 +78,7 @@ function EndZoneExtension.activate_waystone_portal(arg_4_0, arg_4_1)
 	Unit.flow_event(var_4_0, var_4_2)
 end
 
-function EndZoneExtension.rpc_activate_end_zone(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+EndZoneExtension.rpc_activate_end_zone = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	if arg_5_2 ~= arg_5_0._waystone_type then
 		return
 	end
@@ -110,7 +110,7 @@ function EndZoneExtension.rpc_activate_end_zone(arg_5_0, arg_5_1, arg_5_2, arg_5
 	arg_5_0._activated = arg_5_3
 end
 
-function EndZoneExtension._trigger_vo(arg_6_0, arg_6_1, arg_6_2)
+EndZoneExtension._trigger_vo = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = EndZoneSettings.ingame_vo[arg_6_1]
 
 	if var_6_0 then
@@ -130,11 +130,11 @@ function EndZoneExtension._trigger_vo(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function EndZoneExtension.activated(arg_7_0)
+EndZoneExtension.activated = function (arg_7_0)
 	return arg_7_0._activated
 end
 
-function EndZoneExtension._set_light_intensity(arg_8_0, arg_8_1)
+EndZoneExtension._set_light_intensity = function (arg_8_0, arg_8_1)
 	local var_8_0 = Unit.num_lights(arg_8_0._unit)
 
 	for iter_8_0 = 0, var_8_0 - 1 do
@@ -144,31 +144,31 @@ function EndZoneExtension._set_light_intensity(arg_8_0, arg_8_1)
 	end
 end
 
-function EndZoneExtension.end_time(arg_9_0)
+EndZoneExtension.end_time = function (arg_9_0)
 	return arg_9_0._game_start_time or EndZoneSettings.end_zone_timer
 end
 
-function EndZoneExtension.end_time_left(arg_10_0)
+EndZoneExtension.end_time_left = function (arg_10_0)
 	return arg_10_0._state_data.end_zone_timer or arg_10_0:end_time()
 end
 
-function EndZoneExtension.end_zone_long_timer_settings(arg_11_0)
+EndZoneExtension.end_zone_long_timer_settings = function (arg_11_0)
 	return EndZoneSettings.end_zone_long_timer_settings
 end
 
-function EndZoneExtension.end_zone_hidden_long_timer(arg_12_0)
+EndZoneExtension.end_zone_hidden_long_timer = function (arg_12_0)
 	return EndZoneSettings.end_zone_long_timer_settings.hidden_timer
 end
 
-function EndZoneExtension.end_zone_visible_long_timer(arg_13_0)
+EndZoneExtension.end_zone_visible_long_timer = function (arg_13_0)
 	return EndZoneSettings.end_zone_long_timer_settings.visible_timer
 end
 
-function EndZoneExtension.end_long_time_left(arg_14_0)
+EndZoneExtension.end_long_time_left = function (arg_14_0)
 	return arg_14_0._state_data.end_zone_long_timer or arg_14_0:end_long_time()
 end
 
-function EndZoneExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+EndZoneExtension.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	arg_15_0:_reset_distances()
 	arg_15_0:_check_proximity()
 	arg_15_0:_update_state(arg_15_3, arg_15_5)
@@ -178,11 +178,11 @@ function EndZoneExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_
 	end
 end
 
-function EndZoneExtension.activation_allowed(arg_16_0, arg_16_1)
+EndZoneExtension.activation_allowed = function (arg_16_0, arg_16_1)
 	arg_16_0._activation_allowed = arg_16_1
 end
 
-function EndZoneExtension._activate(arg_17_0, arg_17_1)
+EndZoneExtension._activate = function (arg_17_0, arg_17_1)
 	if not arg_17_0._is_server then
 		return
 	end
@@ -221,7 +221,7 @@ function EndZoneExtension._activate(arg_17_0, arg_17_1)
 	arg_17_0._activated = arg_17_1
 end
 
-function EndZoneExtension._get_wind_name(arg_18_0)
+EndZoneExtension._get_wind_name = function (arg_18_0)
 	local var_18_0
 	local var_18_1 = Managers.weave:get_next_weave()
 
@@ -232,7 +232,7 @@ function EndZoneExtension._get_wind_name(arg_18_0)
 	return var_18_0
 end
 
-function EndZoneExtension._activate_volume(arg_19_0)
+EndZoneExtension._activate_volume = function (arg_19_0)
 	arg_19_0:_deactivate_volume(arg_19_0._current_volume_id)
 
 	local var_19_0 = Unit.get_data(arg_19_0._unit, "shading_environment")
@@ -255,7 +255,7 @@ function EndZoneExtension._activate_volume(arg_19_0)
 	end
 end
 
-function EndZoneExtension._deactivate_volume(arg_20_0)
+EndZoneExtension._deactivate_volume = function (arg_20_0)
 	if arg_20_0._current_volume_id then
 		Managers.state.event:trigger("unregister_environment_volume", arg_20_0._current_volume_id)
 
@@ -269,13 +269,13 @@ function EndZoneExtension._deactivate_volume(arg_20_0)
 	end
 end
 
-function EndZoneExtension._reset_distances(arg_21_0)
+EndZoneExtension._reset_distances = function (arg_21_0)
 	arg_21_0._closest_player = math.huge
 
 	table.clear(arg_21_0._player_distances)
 end
 
-function EndZoneExtension._check_proximity(arg_22_0)
+EndZoneExtension._check_proximity = function (arg_22_0)
 	local var_22_0 = Unit.local_position(arg_22_0._unit, 0)
 	local var_22_1
 	local var_22_2
@@ -304,7 +304,7 @@ function EndZoneExtension._check_proximity(arg_22_0)
 	end
 end
 
-function EndZoneExtension._update_state(arg_23_0, arg_23_1, arg_23_2)
+EndZoneExtension._update_state = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_0._is_server then
 		if arg_23_0._activation_allowed then
 			local var_23_0 = Managers.state.game_mode:evaluate_end_zone_activation_conditions()
@@ -324,7 +324,7 @@ function EndZoneExtension._update_state(arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0[arg_23_0._state](arg_23_0, arg_23_1, arg_23_2, arg_23_0._state_data)
 end
 
-function EndZoneExtension.hot_join_sync(arg_24_0, arg_24_1)
+EndZoneExtension.hot_join_sync = function (arg_24_0, arg_24_1)
 	if arg_24_0._activated then
 		local var_24_0 = arg_24_0:_get_wind_name() or "none"
 		local var_24_1 = NetworkLookup.weave_winds[var_24_0]
@@ -334,7 +334,7 @@ function EndZoneExtension.hot_join_sync(arg_24_0, arg_24_1)
 	end
 end
 
-function EndZoneExtension.destroy(arg_25_0)
+EndZoneExtension.destroy = function (arg_25_0)
 	Managers.state.network.network_transmit.network_event_delegate:unregister(arg_25_0)
 
 	if arg_25_0._nav_tag_volume_id then
@@ -342,7 +342,7 @@ function EndZoneExtension.destroy(arg_25_0)
 	end
 end
 
-function EndZoneExtension._idle(arg_26_0, arg_26_1, arg_26_2)
+EndZoneExtension._idle = function (arg_26_0, arg_26_1, arg_26_2)
 	if not arg_26_0._activated then
 		return
 	end
@@ -361,7 +361,7 @@ function EndZoneExtension._idle(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function EndZoneExtension._open(arg_27_0, arg_27_1, arg_27_2)
+EndZoneExtension._open = function (arg_27_0, arg_27_1, arg_27_2)
 	if arg_27_0._activated and (arg_27_0._always_activated or arg_27_0._closest_player <= EndZoneSettings.activate_size^2) then
 		local var_27_0 = EndZoneSettings.animation_time or 0.5
 
@@ -386,7 +386,7 @@ function EndZoneExtension._open(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function EndZoneExtension._close(arg_28_0, arg_28_1, arg_28_2)
+EndZoneExtension._close = function (arg_28_0, arg_28_1, arg_28_2)
 	if arg_28_0._activated and (arg_28_0._always_activated or arg_28_0._closest_player <= EndZoneSettings.activate_size^2) then
 		arg_28_0._state = "_open"
 
@@ -412,7 +412,7 @@ function EndZoneExtension._close(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function EndZoneExtension._check_end_mission_all_inside(arg_29_0, arg_29_1, arg_29_2)
+EndZoneExtension._check_end_mission_all_inside = function (arg_29_0, arg_29_1, arg_29_2)
 	if arg_29_0._is_start_waystone and not arg_29_0:_all_players_joined() then
 		arg_29_0._state_data.end_zone_timer = arg_29_0:end_time()
 
@@ -430,7 +430,7 @@ function EndZoneExtension._check_end_mission_all_inside(arg_29_0, arg_29_1, arg_
 	end
 end
 
-function EndZoneExtension._check_end_mission_any_inside(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+EndZoneExtension._check_end_mission_any_inside = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	if Managers.state.game_mode:game_mode_key() == "weave" or arg_30_2 or arg_30_0._is_start_waystone then
 		return
 	end
@@ -498,7 +498,7 @@ function EndZoneExtension._check_end_mission_any_inside(arg_30_0, arg_30_1, arg_
 	end
 end
 
-function EndZoneExtension._end_mission_check(arg_31_0, arg_31_1, arg_31_2)
+EndZoneExtension._end_mission_check = function (arg_31_0, arg_31_1, arg_31_2)
 	if arg_31_0._activated and (arg_31_0._always_activated or arg_31_0._closest_player <= EndZoneSettings.activate_size^2) then
 		local var_31_0
 		local var_31_1 = false
@@ -574,7 +574,7 @@ function EndZoneExtension._end_mission_check(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function EndZoneExtension._all_players_joined(arg_32_0)
+EndZoneExtension._all_players_joined = function (arg_32_0)
 	if arg_32_0._disable_check_joining_players then
 		return true
 	end

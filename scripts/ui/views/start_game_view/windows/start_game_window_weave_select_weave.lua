@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 StartGameWindowWeaveSelectWeave = class(StartGameWindowWeaveSelectWeave)
 StartGameWindowWeaveSelectWeave.NAME = "StartGameWindowWeaveSelectWeave"
 
-function StartGameWindowWeaveSelectWeave.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowWeaveSelectWeave.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveSelectWeave")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -31,7 +31,7 @@ function StartGameWindowWeaveSelectWeave.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function StartGameWindowWeaveSelectWeave._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowWeaveSelectWeave._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0._ui_scenegraph = var_2_0
@@ -68,21 +68,21 @@ function StartGameWindowWeaveSelectWeave._create_ui_elements(arg_2_0, arg_2_1, a
 	end
 end
 
-function StartGameWindowWeaveSelectWeave.on_exit(arg_3_0, arg_3_1)
+StartGameWindowWeaveSelectWeave.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveSelectWeave")
 
 	arg_3_0._ui_animator = nil
 end
 
-function StartGameWindowWeaveSelectWeave._is_button_hover_enter(arg_4_0, arg_4_1)
+StartGameWindowWeaveSelectWeave._is_button_hover_enter = function (arg_4_0, arg_4_1)
 	return arg_4_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowWeaveSelectWeave._is_button_hover_exit(arg_5_0, arg_5_1)
+StartGameWindowWeaveSelectWeave._is_button_hover_exit = function (arg_5_0, arg_5_1)
 	return arg_5_1.content.button_hotspot.on_hover_exit
 end
 
-function StartGameWindowWeaveSelectWeave._update_game_options_hover_effect(arg_6_0)
+StartGameWindowWeaveSelectWeave._update_game_options_hover_effect = function (arg_6_0)
 	local var_6_0 = arg_6_0._widgets_by_name.overlay_button
 
 	if arg_6_0:_is_button_hover_enter(var_6_0) then
@@ -92,17 +92,17 @@ function StartGameWindowWeaveSelectWeave._update_game_options_hover_effect(arg_6
 	end
 end
 
-function StartGameWindowWeaveSelectWeave._on_option_button_hover_enter(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+StartGameWindowWeaveSelectWeave._on_option_button_hover_enter = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:_create_style_animation_enter(arg_7_1, 255, "glow", arg_7_2, arg_7_3)
 	arg_7_0:_create_style_animation_exit(arg_7_1, 0, "button_hover_rect", arg_7_2, arg_7_3)
 end
 
-function StartGameWindowWeaveSelectWeave._on_option_button_hover_exit(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+StartGameWindowWeaveSelectWeave._on_option_button_hover_exit = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0:_create_style_animation_exit(arg_8_1, 0, "glow", arg_8_2, arg_8_3)
 	arg_8_0:_create_style_animation_enter(arg_8_1, 30, "button_hover_rect", arg_8_2, arg_8_3)
 end
 
-function StartGameWindowWeaveSelectWeave._create_style_animation_enter(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+StartGameWindowWeaveSelectWeave._create_style_animation_enter = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_1.style[arg_9_3]
 
 	if not var_9_0 then
@@ -121,15 +121,15 @@ function StartGameWindowWeaveSelectWeave._create_style_animation_enter(arg_9_0, 
 	end
 end
 
-function StartGameWindowWeaveSelectWeave._animate_pulse(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+StartGameWindowWeaveSelectWeave._animate_pulse = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5))
 end
 
-function StartGameWindowWeaveSelectWeave._animate_element_by_time(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+StartGameWindowWeaveSelectWeave._animate_element_by_time = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, math.ease_out_quad))
 end
 
-function StartGameWindowWeaveSelectWeave._create_style_animation_exit(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+StartGameWindowWeaveSelectWeave._create_style_animation_exit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_1.style[arg_12_3]
 
 	if not var_12_0 then
@@ -148,17 +148,17 @@ function StartGameWindowWeaveSelectWeave._create_style_animation_exit(arg_12_0, 
 	end
 end
 
-function StartGameWindowWeaveSelectWeave._play_sound(arg_13_0, arg_13_1)
+StartGameWindowWeaveSelectWeave._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0._parent:play_sound(arg_13_1)
 end
 
-function StartGameWindowWeaveSelectWeave.update(arg_14_0, arg_14_1, arg_14_2)
+StartGameWindowWeaveSelectWeave.update = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:_update_animations(arg_14_1, arg_14_2)
 	arg_14_0:_update_input(arg_14_1, arg_14_2)
 	arg_14_0:_draw(arg_14_1)
 end
 
-function StartGameWindowWeaveSelectWeave._update_animations(arg_15_0, arg_15_1)
+StartGameWindowWeaveSelectWeave._update_animations = function (arg_15_0, arg_15_1)
 	arg_15_0:_update_game_options_hover_effect()
 
 	local var_15_0 = arg_15_0._ui_animations or {}
@@ -174,7 +174,7 @@ function StartGameWindowWeaveSelectWeave._update_animations(arg_15_0, arg_15_1)
 	arg_15_0._ui_animator:update(arg_15_1)
 end
 
-function StartGameWindowWeaveSelectWeave._update_input(arg_16_0, arg_16_1, arg_16_2)
+StartGameWindowWeaveSelectWeave._update_input = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._widgets_by_name.overlay_button
 	local var_16_1 = var_16_0.content.button_hotspot
 
@@ -187,11 +187,11 @@ function StartGameWindowWeaveSelectWeave._update_input(arg_16_0, arg_16_1, arg_1
 	end
 end
 
-function StartGameWindowWeaveSelectWeave.post_update(arg_17_0, arg_17_1, arg_17_2)
+StartGameWindowWeaveSelectWeave.post_update = function (arg_17_0, arg_17_1, arg_17_2)
 	return
 end
 
-function StartGameWindowWeaveSelectWeave._draw(arg_18_0, arg_18_1)
+StartGameWindowWeaveSelectWeave._draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ui_renderer
 	local var_18_1 = arg_18_0._ui_scenegraph
 	local var_18_2 = arg_18_0._parent:window_input_service()

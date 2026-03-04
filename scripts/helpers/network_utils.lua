@@ -17,7 +17,7 @@ end
 script_data.matchmaking_debug = true
 NetworkUtils = {}
 
-function NetworkUtils.network_safe_position(arg_3_0)
+NetworkUtils.network_safe_position = function (arg_3_0)
 	local var_3_0 = NetworkConstants.position.min
 	local var_3_1 = NetworkConstants.position.max
 	local var_3_2 = arg_3_0.x
@@ -30,7 +30,7 @@ function NetworkUtils.network_safe_position(arg_3_0)
 	return var_3_5 and var_3_6 and var_3_7
 end
 
-function NetworkUtils.get_network_safe_damage_hotjoin_sync(arg_4_0)
+NetworkUtils.get_network_safe_damage_hotjoin_sync = function (arg_4_0)
 	local var_4_0 = NetworkConstants.damage_hotjoin_sync.min
 	local var_4_1 = NetworkConstants.damage_hotjoin_sync.max
 
@@ -39,7 +39,7 @@ function NetworkUtils.get_network_safe_damage_hotjoin_sync(arg_4_0)
 	return arg_4_0
 end
 
-function NetworkUtils.network_clamp_position(arg_5_0)
+NetworkUtils.network_clamp_position = function (arg_5_0)
 	local var_5_0 = NetworkConstants.position
 	local var_5_1 = var_5_0.min
 	local var_5_2 = var_5_0.max
@@ -47,7 +47,7 @@ function NetworkUtils.network_clamp_position(arg_5_0)
 	return Vector3.clamp(arg_5_0, var_5_1, var_5_2)
 end
 
-function NetworkUtils.announce_chat_peer_joined(arg_6_0, arg_6_1)
+NetworkUtils.announce_chat_peer_joined = function (arg_6_0, arg_6_1)
 	local var_6_0 = PlayerUtils.player_name(arg_6_0, arg_6_1)
 	local var_6_1 = string.format(Localize("system_chat_player_joined_the_game"), var_6_0)
 	local var_6_2 = true
@@ -60,7 +60,7 @@ local var_0_0 = table.set({
 	"MatchmakingStateJoinGame"
 })
 
-function NetworkUtils.announce_chat_peer_left(arg_7_0, arg_7_1)
+NetworkUtils.announce_chat_peer_left = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.matchmaking
 	local var_7_1 = var_7_0 and var_7_0:state()
 	local var_7_2 = var_7_1 and var_7_1.NAME
@@ -78,7 +78,7 @@ end
 
 local var_0_1 = {}
 
-function NetworkUtils.split_ip_port(arg_8_0)
+NetworkUtils.split_ip_port = function (arg_8_0)
 	local var_8_0, var_8_1 = string.split(arg_8_0, ":", var_0_1)
 
 	if var_8_0 and var_8_1 >= 2 then
@@ -88,7 +88,7 @@ function NetworkUtils.split_ip_port(arg_8_0)
 	return nil, nil
 end
 
-function NetworkUtils.net_pack_flexmatch_ticket(arg_9_0)
+NetworkUtils.net_pack_flexmatch_ticket = function (arg_9_0)
 	local var_9_0 = 500
 	local var_9_1 = #arg_9_0
 	local var_9_2 = math.ceil(var_9_1 / var_9_0)
@@ -105,6 +105,6 @@ function NetworkUtils.net_pack_flexmatch_ticket(arg_9_0)
 	return var_9_4
 end
 
-function NetworkUtils.unnet_pack_flexmatch_ticket(arg_10_0)
+NetworkUtils.unnet_pack_flexmatch_ticket = function (arg_10_0)
 	return table.concat(arg_10_0)
 end

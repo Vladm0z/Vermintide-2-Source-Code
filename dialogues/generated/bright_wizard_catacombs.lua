@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_catacombs.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_catacombs_intro_a",

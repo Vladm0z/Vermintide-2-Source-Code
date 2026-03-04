@@ -103,7 +103,7 @@ end
 
 DeusBelakorTotemExtension = class(DeusBelakorTotemExtension)
 
-function DeusBelakorTotemExtension.init(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+DeusBelakorTotemExtension.init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0._unit = arg_8_2
 	arg_8_0.spawn_count = 0
 	arg_8_0._is_server = Managers.player.is_server
@@ -119,7 +119,7 @@ function DeusBelakorTotemExtension.init(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	arg_8_0._dead = false
 end
 
-function DeusBelakorTotemExtension.game_object_initialized(arg_9_0, arg_9_1, arg_9_2)
+DeusBelakorTotemExtension.game_object_initialized = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._current_state = var_0_0.COOLDOWN_FROM_SPAWN
 
 	local var_9_0 = Managers.mechanism:get_level_seed()
@@ -127,11 +127,11 @@ function DeusBelakorTotemExtension.game_object_initialized(arg_9_0, arg_9_1, arg
 	arg_9_0._seed = HashUtils.fnv32_hash(arg_9_2 .. "_" .. var_9_0)
 end
 
-function DeusBelakorTotemExtension.extensions_ready(arg_10_0, arg_10_1, arg_10_2)
+DeusBelakorTotemExtension.extensions_ready = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._health_ext = ScriptUnit.extension(arg_10_2, "health_system")
 end
 
-function DeusBelakorTotemExtension.destroy(arg_11_0)
+DeusBelakorTotemExtension.destroy = function (arg_11_0)
 	if ALIVE[arg_11_0._decal_unit] then
 		Unit.flow_event(arg_11_0._decal_unit, "despawned")
 		arg_11_0._network_transmit:send_rpc_clients("rpc_flow_event", arg_11_0._decal_unit_go_id, NetworkLookup.flow_events.despawned)
@@ -141,11 +141,11 @@ function DeusBelakorTotemExtension.destroy(arg_11_0)
 	end
 end
 
-function DeusBelakorTotemExtension.is_despawned(arg_12_0)
+DeusBelakorTotemExtension.is_despawned = function (arg_12_0)
 	return arg_12_0._current_state == var_0_0.DESPAWNED
 end
 
-function DeusBelakorTotemExtension.update(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+DeusBelakorTotemExtension.update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	if not HEALTH_ALIVE[arg_13_1] then
 		if not arg_13_0._dead then
 			Managers.state.achievement:trigger_event("register_totem_state_change", arg_13_0._unit, false)

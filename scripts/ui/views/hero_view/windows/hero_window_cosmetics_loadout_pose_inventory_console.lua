@@ -59,7 +59,7 @@ end
 HeroWindowCosmeticsLoadoutPoseInventoryConsole = class(HeroWindowCosmeticsLoadoutPoseInventoryConsole)
 HeroWindowCosmeticsLoadoutPoseInventoryConsole.NAME = "HeroWindowCosmeticsLoadoutPoseInventoryConsole"
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_enter(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCosmeticsLoadoutPoseInventoryConsole")
 
 	arg_2_0._params = arg_2_1
@@ -122,7 +122,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_enter(arg_2_0, arg_2_
 	arg_2_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._show_equipped_weapon_pose(arg_3_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._show_equipped_weapon_pose = function (arg_3_0)
 	local var_3_0 = Managers.backend:get_interface("items")
 	local var_3_1 = var_3_0:get_loadout_item_id(arg_3_0._career_name, "slot_pose")
 
@@ -153,7 +153,7 @@ end
 
 local var_0_12 = {}
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._start_transition_animation(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._start_transition_animation = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = {
 		wwise_world = arg_4_0.wwise_world,
 		render_settings = arg_4_0._render_settings
@@ -164,7 +164,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._start_transition_animat
 	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.create_ui_elements(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.create_ui_elements = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_5_0 = {}
@@ -206,7 +206,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole.create_ui_elements(arg_5
 	var_5_1.item_tooltip_compare.content.career_index = arg_5_0._params.career_index
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._input_service(arg_6_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._input_service = function (arg_6_0)
 	local var_6_0 = arg_6_0._parent
 
 	if var_6_0:is_friends_list_active() then
@@ -216,13 +216,13 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._input_service(arg_6_0)
 	return var_6_0:window_input_service()
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.set_focus(arg_7_0, arg_7_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.set_focus = function (arg_7_0, arg_7_1)
 	arg_7_0._focused = arg_7_1
 	arg_7_0._render_settings.alpha_multiplier = arg_7_1 and 1 or 0.5
 	arg_7_0._widgets_by_name.item_tooltip.content.visible = arg_7_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_exit(arg_8_0, arg_8_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_exit = function (arg_8_0, arg_8_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCosmeticsLoadoutPoseInventoryConsole")
 
 	arg_8_0.ui_animator = nil
@@ -239,7 +239,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole.on_exit(arg_8_0, arg_8_1
 	arg_8_0._parent:clear_temporary_loadout()
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.update(arg_9_0, arg_9_1, arg_9_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if var_0_8 then
 		var_0_8 = false
 
@@ -265,11 +265,11 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole.update(arg_9_0, arg_9_1,
 	arg_9_0:draw(arg_9_1)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.post_update(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_illusions(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_illusions = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._illusion_widgets
 
 	if table.is_empty(var_11_0) then
@@ -313,7 +313,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_illusions(arg_11
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_remove_button_state(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_remove_button_state = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.backend:get_interface("items")
 	local var_12_1 = BackendUtils.get_loadout_item_id(arg_12_0._career_name, "slot_pose")
 	local var_12_2 = var_12_1 and var_12_0:get_item_from_id(var_12_1)
@@ -323,7 +323,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_remove_button_st
 	UIUtils.enable_button(var_12_4, not var_12_3 or var_12_3 ~= "default_weapon_pose_01")
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._apply_illusion(arg_13_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._apply_illusion = function (arg_13_0)
 	local var_13_0 = arg_13_0._illusion_widgets[arg_13_0._selected_skin_index].content
 
 	if not var_13_0.locked then
@@ -355,7 +355,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._apply_illusion(arg_13_0
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_input_description(arg_14_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_input_description = function (arg_14_0)
 	local var_14_0 = "default"
 
 	if arg_14_0._selected_blueprint_name then
@@ -369,12 +369,12 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_input_descriptio
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_item_compare_enable_state(arg_15_0, arg_15_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_item_compare_enable_state = function (arg_15_0, arg_15_1)
 	arg_15_0._widgets_by_name.item_tooltip_compare.content.visible = arg_15_1
 	arg_15_0._draw_item_compare = arg_15_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_equipped_item_tooltip(arg_16_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_equipped_item_tooltip = function (arg_16_0)
 	local var_16_0 = arg_16_0._selected_cosmetic_slot_index
 	local var_16_1 = InventorySettings.slots_by_cosmetic_index[var_16_0].name
 	local var_16_2 = Managers.backend:get_interface("items")
@@ -384,7 +384,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_equipped_item_to
 	arg_16_0._widgets_by_name.item_tooltip_compare.content.item = var_16_4
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_item_tooltip(arg_17_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_item_tooltip = function (arg_17_0)
 	local var_17_0 = arg_17_0._item_grid:selected_item()
 	local var_17_1 = var_17_0 and var_17_0.backend_id
 
@@ -395,7 +395,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_item_to
 	arg_17_0._selected_backend_id = var_17_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_animations(arg_18_0, arg_18_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_animations = function (arg_18_0, arg_18_1)
 	arg_18_0.ui_animator:update(arg_18_1)
 
 	local var_18_0 = arg_18_0._animations
@@ -423,7 +423,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_animations(arg_1
 	UIWidgetUtils.animate_default_button(var_18_2.button_remove, arg_18_1)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_input(arg_19_0, arg_19_1, arg_19_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_input = function (arg_19_0, arg_19_1, arg_19_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -546,11 +546,11 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_input(ar
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._toggle_gamepad_illusion_buttons(arg_20_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._toggle_gamepad_illusion_buttons = function (arg_20_0)
 	arg_20_0._gamepad_illusion_buttons_active = not arg_20_0._gamepad_illusion_buttons_active
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_input(arg_21_0, arg_21_1, arg_21_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_input = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._widgets_by_name
 	local var_21_1 = arg_21_0._parent
 	local var_21_2 = arg_21_0._item_grid
@@ -638,7 +638,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_input(arg_21_0, 
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._equip_default(arg_22_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._equip_default = function (arg_22_0)
 	arg_22_0:_play_sound("play_gui_equipment_equip_hero")
 
 	local var_22_0 = Managers.backend:get_interface("items"):get_item_from_key("default_weapon_pose_01")
@@ -648,7 +648,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._equip_default(arg_22_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_loadout_item(arg_23_0, arg_23_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_loadout_item = function (arg_23_0, arg_23_1)
 	arg_23_0._parent:_set_loadout_item(arg_23_1)
 
 	local var_23_0 = arg_23_1.data
@@ -657,7 +657,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_loadout_item(arg_23
 	CosmeticUtils.update_cosmetic_slot(var_23_1, "slot_pose", var_23_0.name)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._select_illusion_by_key(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._select_illusion_by_key = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if not arg_24_1 then
 		return
 	end
@@ -673,7 +673,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._select_illusion_by_key(
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._on_illusion_index_pressed(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._on_illusion_index_pressed = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_0._illusion_widgets[arg_25_1].content
 	local var_25_1 = var_25_0.skin_key
 
@@ -734,7 +734,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._on_illusion_index_press
 	arg_25_0:_play_sound("play_gui_equipment_equip")
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._enable_apply_illusion_button(arg_26_0, arg_26_1, arg_26_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._enable_apply_illusion_button = function (arg_26_0, arg_26_1, arg_26_2)
 	if script_data["eac-untrusted"] then
 		arg_26_1 = false
 	end
@@ -745,7 +745,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._enable_apply_illusion_b
 	var_26_0.content.button_hotspot.disable_button = not arg_26_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._get_item(arg_27_0, arg_27_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._get_item = function (arg_27_0, arg_27_1)
 	arg_27_0._item_backend_id = arg_27_1
 
 	return Managers.backend:get_interface("items"):get_item_from_id(arg_27_1)
@@ -762,12 +762,12 @@ local function var_0_13(arg_28_0, arg_28_1)
 	return (var_28_1[var_28_4] or 0) > (var_28_1[var_28_5] or 0)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._clear_illusion_widgets(arg_29_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._clear_illusion_widgets = function (arg_29_0)
 	table.clear(arg_29_0._illusion_base_widgets)
 	table.clear(arg_29_0._illusion_widgets)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions(arg_30_0, arg_30_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions = function (arg_30_0, arg_30_1)
 	local var_30_0 = {}
 	local var_30_1 = arg_30_0._widgets_by_name
 
@@ -894,7 +894,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_illusions(arg_30_
 	arg_30_0:_start_transition_animation("animate_illusion_widgets")
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._back(arg_31_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._back = function (arg_31_0)
 	local var_31_0 = var_0_2[arg_31_0._current_category_index]
 	local var_31_1 = var_31_0.name
 	local var_31_2 = var_31_0.display_name
@@ -918,7 +918,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._back(arg_31_0)
 	arg_31_0._item_grid:mark_equipped_items(false)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_item_filter(arg_32_0, arg_32_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_item_filter = function (arg_32_0, arg_32_1)
 	arg_32_0._item_grid:change_item_filter(arg_32_1, true)
 	arg_32_0:_play_sound("play_gui_equipment_inventory_next_click")
 	arg_32_0:_start_transition_animation("on_enter")
@@ -933,7 +933,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_item_filter(arg_
 	arg_32_0._item_grid:mark_equipped_items(true)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_page_info(arg_33_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_page_info = function (arg_33_0)
 	local var_33_0, var_33_1 = arg_33_0._item_grid:get_page_info()
 
 	if var_33_0 ~= arg_33_0._current_page or var_33_1 ~= arg_33_0._total_pages then
@@ -951,7 +951,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_page_info(arg_33
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_cosmetic_slot_index(arg_34_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_cosmetic_slot_index = function (arg_34_0)
 	local var_34_0 = arg_34_0._parent:get_selected_cosmetic_slot_index()
 
 	if var_34_0 ~= arg_34_0._selected_cosmetic_slot_index then
@@ -961,7 +961,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_selected_cosmeti
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_loadout_sync(arg_35_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_loadout_sync = function (arg_35_0)
 	local var_35_0 = arg_35_0._item_grid
 	local var_35_1 = arg_35_0._parent.loadout_sync_id
 
@@ -973,12 +973,12 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._update_loadout_sync(arg
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._exit(arg_36_0, arg_36_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._exit = function (arg_36_0, arg_36_1)
 	arg_36_0.exit = true
 	arg_36_0.exit_level_id = arg_36_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole.draw(arg_37_0, arg_37_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole.draw = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0._ui_renderer
 	local var_37_1 = arg_37_0._ui_top_renderer
 	local var_37_2 = arg_37_0.ui_scenegraph
@@ -1024,11 +1024,11 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole.draw(arg_37_0, arg_37_1)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._play_sound(arg_38_0, arg_38_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._play_sound = function (arg_38_0, arg_38_1)
 	arg_38_0._parent:play_sound(arg_38_1)
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_category_by_index(arg_39_0, arg_39_1, arg_39_2)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_category_by_index = function (arg_39_0, arg_39_1, arg_39_2)
 	if arg_39_2 then
 		arg_39_1 = arg_39_0._current_category_index or 1
 	end
@@ -1048,7 +1048,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._change_category_by_inde
 	return true
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_input_buttons(arg_40_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_input_buttons = function (arg_40_0)
 	local var_40_0 = arg_40_0._parent:window_input_service()
 	local var_40_1 = UISettings.get_gamepad_input_texture_data(var_40_0, var_0_9, true)
 	local var_40_2 = UISettings.get_gamepad_input_texture_data(var_40_0, var_0_10, true)
@@ -1076,7 +1076,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._setup_input_buttons(arg
 	var_40_5.content.texture_id = var_40_2.texture
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_gamepad_input_buttons_visibility(arg_41_0, arg_41_1)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_gamepad_input_buttons_visibility = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._widgets_by_name
 	local var_41_1 = var_41_0.input_icon_next
 	local var_41_2 = var_41_0.input_icon_previous
@@ -1089,7 +1089,7 @@ function HeroWindowCosmeticsLoadoutPoseInventoryConsole._set_gamepad_input_butto
 	var_41_4.content.visible = arg_41_1
 end
 
-function HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_activity(arg_42_0)
+HeroWindowCosmeticsLoadoutPoseInventoryConsole._handle_gamepad_activity = function (arg_42_0)
 	local var_42_0 = Managers.input:is_device_active("mouse")
 	local var_42_1 = arg_42_0.gamepad_active_last_frame == nil
 

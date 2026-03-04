@@ -2,7 +2,7 @@
 
 DebugGutterRunner = DebugGutterRunner or {}
 
-function DebugGutterRunner.update(arg_1_0, arg_1_1, arg_1_2)
+DebugGutterRunner.update = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.breed
 	local var_1_1 = arg_1_1.target_unit and Unit.get_data(arg_1_1.target_unit, "unit_name") or "nil"
 	local var_1_2 = arg_1_1.jump_data and arg_1_1.jump_data.target_unit or "-"
@@ -42,7 +42,7 @@ local var_0_1 = "arial"
 local var_0_2 = "materials/fonts/" .. var_0_1
 local var_0_3 = 17
 
-function DebugGutterRunner.debug_hud_print(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+DebugGutterRunner.debug_hud_print = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Debug.gui
 	local var_2_1 = 220 - arg_2_2 * var_0_3
 	local var_2_2 = Vector3(20, var_2_1, 100)
@@ -68,7 +68,7 @@ function DebugGutterRunner.debug_hud_print(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	Gui.text(var_2_0, arg_2_1, var_0_2, var_0_0, var_0_1, var_2_6, var_2_4)
 end
 
-function DebugGutterRunner.debug_hud_background(arg_3_0)
+DebugGutterRunner.debug_hud_background = function (arg_3_0)
 	local var_3_0 = Debug.gui
 	local var_3_1 = 300
 	local var_3_2 = arg_3_0 * var_0_3 + 30

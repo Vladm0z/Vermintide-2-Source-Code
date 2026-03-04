@@ -2,7 +2,7 @@
 
 ActionCareerWEWaywatcherPiercing = class(ActionCareerWEWaywatcherPiercing, ActionBow)
 
-function ActionCareerWEWaywatcherPiercing.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEWaywatcherPiercing.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerWEWaywatcherPiercing.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -10,19 +10,19 @@ function ActionCareerWEWaywatcherPiercing.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	arg_1_0.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-function ActionCareerWEWaywatcherPiercing.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEWaywatcherPiercing.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCareerWEWaywatcherPiercing.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_0:_play_vo()
 	arg_2_0.career_extension:start_activated_ability_cooldown()
 	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerWEWaywatcherPiercing.finish(arg_3_0, arg_3_1)
+ActionCareerWEWaywatcherPiercing.finish = function (arg_3_0, arg_3_1)
 	ActionCareerWEWaywatcherPiercing.super.finish(arg_3_0, arg_3_1)
 	arg_3_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWEWaywatcherPiercing._play_vo(arg_4_0)
+ActionCareerWEWaywatcherPiercing._play_vo = function (arg_4_0)
 	local var_4_0 = arg_4_0.owner_unit
 	local var_4_1 = ScriptUnit.extension_input(var_4_0, "dialogue_system")
 	local var_4_2 = FrameTable.alloc_table()
@@ -30,7 +30,7 @@ function ActionCareerWEWaywatcherPiercing._play_vo(arg_4_0)
 	var_4_1:trigger_networked_dialogue_event("activate_ability", var_4_2)
 end
 
-function ActionCareerWEWaywatcherPiercing._restore_ammo(arg_5_0)
+ActionCareerWEWaywatcherPiercing._restore_ammo = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = "slot_ranged"
 	local var_5_2 = ScriptUnit.extension(var_5_0, "inventory_system"):get_slot_data(var_5_1)

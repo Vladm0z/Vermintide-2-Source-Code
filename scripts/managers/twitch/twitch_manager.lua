@@ -25,7 +25,7 @@ local var_0_5 = {
 
 TwitchManager = class(TwitchManager)
 
-function TwitchManager.init(arg_2_0)
+TwitchManager.init = function (arg_2_0)
 	arg_2_0._address = "irc.chat.twitch.tv"
 	arg_2_0._port = 6667
 	arg_2_0._votes = {}
@@ -76,15 +76,15 @@ local var_0_6 = {
 	cataclysm_2 = true
 }
 
-function TwitchManager.game_mode_supported(arg_3_0, arg_3_1, arg_3_2)
+TwitchManager.game_mode_supported = function (arg_3_0, arg_3_1, arg_3_2)
 	return not not TwitchSettings.supported_game_modes[PLATFORM][arg_3_1] or not not var_0_6[arg_3_2]
 end
 
-function TwitchManager.stream_type(arg_4_0)
+TwitchManager.stream_type = function (arg_4_0)
 	return "twitch"
 end
 
-function TwitchManager._load_sound_bank(arg_5_0)
+TwitchManager._load_sound_bank = function (arg_5_0)
 	if not arg_5_0._sound_bank_loaded then
 		local var_5_0 = "resource_packages/ingame_sounds_twitch_mode"
 
@@ -95,7 +95,7 @@ function TwitchManager._load_sound_bank(arg_5_0)
 	end
 end
 
-function TwitchManager._unload_sound_bank(arg_6_0)
+TwitchManager._unload_sound_bank = function (arg_6_0)
 	if arg_6_0._sound_bank_loaded then
 		local var_6_0 = "resource_packages/ingame_sounds_twitch_mode"
 
@@ -106,7 +106,7 @@ function TwitchManager._unload_sound_bank(arg_6_0)
 	end
 end
 
-function TwitchManager.connect(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+TwitchManager.connect = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	fassert(arg_7_1, "[TwitchManager] You need to provide a user name to connect")
 
 	local var_7_0 = "https://api.twitch.tv/helix/users?login=" .. arg_7_1
@@ -151,7 +151,7 @@ function TwitchManager.connect(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	}, var_7_1)
 end
 
-function TwitchManager.cb_on_user_info_received(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+TwitchManager.cb_on_user_info_received = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	arg_8_0:_show_result_info(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 
 	if arg_8_1 then
@@ -224,7 +224,7 @@ function TwitchManager.cb_on_user_info_received(arg_8_0, arg_8_1, arg_8_2, arg_8
 	end
 end
 
-function TwitchManager.cb_request_twitch_access_token(arg_9_0, arg_9_1)
+TwitchManager.cb_request_twitch_access_token = function (arg_9_0, arg_9_1)
 	arg_9_0._num_retries = arg_9_0._num_retries + 1
 
 	if arg_9_1 then
@@ -243,7 +243,7 @@ function TwitchManager.cb_request_twitch_access_token(arg_9_0, arg_9_1)
 	end
 end
 
-function TwitchManager.cb_on_user_streams_received(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+TwitchManager.cb_on_user_streams_received = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	arg_10_0:_show_result_info(arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 
 	if arg_10_1 then
@@ -284,7 +284,7 @@ function TwitchManager.cb_on_user_streams_received(arg_10_0, arg_10_1, arg_10_2,
 	arg_10_0._connection_failure_callback = nil
 end
 
-function TwitchManager.cb_on_notify_connected(arg_11_0, arg_11_1)
+TwitchManager.cb_on_notify_connected = function (arg_11_0, arg_11_1)
 	arg_11_0._connected = arg_11_1
 	arg_11_0._connecting = false
 
@@ -316,7 +316,7 @@ function TwitchManager.cb_on_notify_connected(arg_11_0, arg_11_1)
 	end
 end
 
-function TwitchManager._show_result_info(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+TwitchManager._show_result_info = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	if not DEBUG_TWITCH then
 		return
 	end
@@ -335,29 +335,29 @@ function TwitchManager._show_result_info(arg_12_0, arg_12_1, arg_12_2, arg_12_3,
 	end
 end
 
-function TwitchManager.is_connected(arg_13_0)
+TwitchManager.is_connected = function (arg_13_0)
 	return arg_13_0._connected
 end
 
-function TwitchManager.is_connecting(arg_14_0)
+TwitchManager.is_connecting = function (arg_14_0)
 	return arg_14_0._connecting
 end
 
-function TwitchManager.user_name(arg_15_0)
+TwitchManager.user_name = function (arg_15_0)
 	return arg_15_0._twitch_user_name
 end
 
-function TwitchManager.cb_game_session_disconnect(arg_16_0)
+TwitchManager.cb_game_session_disconnect = function (arg_16_0)
 	return
 end
 
-function TwitchManager.cb_connection_error_callback(arg_17_0, arg_17_1)
+TwitchManager.cb_connection_error_callback = function (arg_17_0, arg_17_1)
 	if not arg_17_0._error_popup_id then
 		arg_17_0._error_popup_id = Managers.popup:queue_popup(arg_17_1, Localize("popup_header_error_twitch"), "ok", Localize("popup_choice_ok"))
 	end
 end
 
-function TwitchManager.add_game_object_id(arg_18_0, arg_18_1)
+TwitchManager.add_game_object_id = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.state.network and Managers.state.network:game()
 
 	if var_18_0 then
@@ -370,7 +370,7 @@ function TwitchManager.add_game_object_id(arg_18_0, arg_18_1)
 	end
 end
 
-function TwitchManager.remove_game_object_id(arg_19_0, arg_19_1)
+TwitchManager.remove_game_object_id = function (arg_19_0, arg_19_1)
 	if Managers.state.network and Managers.state.network:game() then
 		local var_19_0 = arg_19_0._vote_key_to_go_id[arg_19_1]
 
@@ -381,7 +381,7 @@ function TwitchManager.remove_game_object_id(arg_19_0, arg_19_1)
 	end
 end
 
-function TwitchManager._update_game_object(arg_20_0, arg_20_1, arg_20_2)
+TwitchManager._update_game_object = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Managers.state.network and Managers.state.network:game()
 
 	if var_20_0 then
@@ -394,7 +394,7 @@ function TwitchManager._update_game_object(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function TwitchManager._register_networked_vote(arg_21_0, arg_21_1)
+TwitchManager._register_networked_vote = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.state.network and Managers.state.network:game()
 
 	fassert(var_21_0, "[TwitchManager] You need to have an active game session to be able to register votes")
@@ -438,7 +438,7 @@ function TwitchManager._register_networked_vote(arg_21_0, arg_21_1)
 	end
 end
 
-function TwitchManager.register_vote(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+TwitchManager.register_vote = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	local var_22_0 = Managers.state.network
 
 	fassert(arg_22_0._connected, "[TwitchManager] You need to be connected to be able to trigger twitch votes")
@@ -496,7 +496,7 @@ function TwitchManager.register_vote(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg
 	return var_22_3
 end
 
-function TwitchManager.unregister_vote(arg_23_0, arg_23_1)
+TwitchManager.unregister_vote = function (arg_23_0, arg_23_1)
 	local var_23_0 = Managers.state.network
 	local var_23_1 = var_23_0 and var_23_0.is_server
 
@@ -533,7 +533,7 @@ function TwitchManager.unregister_vote(arg_23_0, arg_23_1)
 	end
 end
 
-function TwitchManager._activate_next_vote(arg_24_0)
+TwitchManager._activate_next_vote = function (arg_24_0)
 	arg_24_0._current_vote = arg_24_0._votes[1]
 
 	if arg_24_0._current_vote then
@@ -568,11 +568,11 @@ function TwitchManager._activate_next_vote(arg_24_0)
 	end
 end
 
-function TwitchManager.get_vote_data(arg_25_0, arg_25_1)
+TwitchManager.get_vote_data = function (arg_25_0, arg_25_1)
 	return arg_25_0._votes_lookup_table[arg_25_1]
 end
 
-function TwitchManager.on_client_message_received(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+TwitchManager.on_client_message_received = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	if string.find(arg_26_4, "@") then
 		return
 	end
@@ -605,11 +605,11 @@ function TwitchManager.on_client_message_received(arg_26_0, arg_26_1, arg_26_2, 
 	end
 end
 
-function TwitchManager.rpc_update_twitch_vote(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+TwitchManager.rpc_update_twitch_vote = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 	arg_27_0[NetworkLookup.twitch_rpc_types[arg_27_2]](arg_27_0, arg_27_1, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 end
 
-function TwitchManager.rpc_add_client_twitch_vote(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+TwitchManager.rpc_add_client_twitch_vote = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
 	local var_28_0 = arg_28_0._votes_lookup_table[arg_28_2]
 
 	if not var_28_0 then
@@ -640,7 +640,7 @@ function TwitchManager.rpc_add_client_twitch_vote(arg_28_0, arg_28_1, arg_28_2, 
 	arg_28_0:_update_game_object(arg_28_2, var_28_0)
 end
 
-function TwitchManager.rpc_finish_twitch_vote(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+TwitchManager.rpc_finish_twitch_vote = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	local var_29_0 = Managers.state.network and Managers.state.network.is_server
 	local var_29_1 = NetworkLookup.twitch_vote_templates[arg_29_5]
 
@@ -678,11 +678,11 @@ function TwitchManager.rpc_finish_twitch_vote(arg_29_0, arg_29_1, arg_29_2, arg_
 	end
 end
 
-function TwitchManager.rpc_disconnected_from_twitch(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
+TwitchManager.rpc_disconnected_from_twitch = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
 	arg_30_0._loading_popup_message = "twitch_connection_failed"
 end
 
-function TwitchManager.get_twitch_popup_message(arg_31_0)
+TwitchManager.get_twitch_popup_message = function (arg_31_0)
 	local var_31_0 = arg_31_0._loading_popup_message
 
 	arg_31_0._loading_popup_message = nil
@@ -690,7 +690,7 @@ function TwitchManager.get_twitch_popup_message(arg_31_0)
 	return var_31_0
 end
 
-function TwitchManager.on_message_received(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+TwitchManager.on_message_received = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
 	if string.find(arg_32_4, "@") then
 		return
 	end
@@ -732,7 +732,7 @@ function TwitchManager.on_message_received(arg_32_0, arg_32_1, arg_32_2, arg_32_
 	arg_32_0:_update_game_object(arg_32_1, var_32_0)
 end
 
-function TwitchManager.disconnect(arg_33_0)
+TwitchManager.disconnect = function (arg_33_0)
 	if arg_33_0._connected then
 		Managers.irc:force_disconnect()
 
@@ -747,7 +747,7 @@ function TwitchManager.disconnect(arg_33_0)
 	arg_33_0._connecting = false
 end
 
-function TwitchManager.update(arg_34_0, arg_34_1, arg_34_2)
+TwitchManager.update = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0:_handle_disconnect_popup()
 	arg_34_0:_handle_popup()
 	arg_34_0:_validate_data(arg_34_1, arg_34_2)
@@ -761,7 +761,7 @@ function TwitchManager.update(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function TwitchManager._handle_popup(arg_35_0)
+TwitchManager._handle_popup = function (arg_35_0)
 	if arg_35_0._popup_id then
 		local var_35_0 = Managers.popup:query_result(arg_35_0._popup_id)
 
@@ -779,7 +779,7 @@ function TwitchManager._handle_popup(arg_35_0)
 	end
 end
 
-function TwitchManager._handle_disconnect_popup(arg_36_0)
+TwitchManager._handle_disconnect_popup = function (arg_36_0)
 	if arg_36_0._error_popup_id then
 		local var_36_0 = Managers.popup:query_result(arg_36_0._error_popup_id)
 
@@ -793,7 +793,7 @@ function TwitchManager._handle_disconnect_popup(arg_36_0)
 	end
 end
 
-function TwitchManager._update_vote_data(arg_37_0, arg_37_1, arg_37_2)
+TwitchManager._update_vote_data = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = Managers.state.network
 
 	if var_37_0 and var_37_0.is_server then
@@ -837,7 +837,7 @@ function TwitchManager._update_vote_data(arg_37_0, arg_37_1, arg_37_2)
 	end
 end
 
-function TwitchManager._handle_results(arg_38_0, arg_38_1)
+TwitchManager._handle_results = function (arg_38_0, arg_38_1)
 	local var_38_0 = Managers.level_transition_handler.enemy_package_loader
 	local var_38_1 = Managers.state.network.is_server
 	local var_38_2 = -1
@@ -902,7 +902,7 @@ function TwitchManager._handle_results(arg_38_0, arg_38_1)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_update_twitch_vote", NetworkLookup.twitch_rpc_types.rpc_finish_twitch_vote, arg_38_1.vote_key, var_38_14, var_38_3, NetworkLookup.twitch_vote_templates[var_38_12])
 end
 
-function TwitchManager._valid_player_index(arg_39_0, arg_39_1)
+TwitchManager._valid_player_index = function (arg_39_0, arg_39_1)
 	local var_39_0 = Managers.player:human_and_bot_players()
 
 	for iter_39_0, iter_39_1 in pairs(var_39_0) do
@@ -914,7 +914,7 @@ function TwitchManager._valid_player_index(arg_39_0, arg_39_1)
 	return false
 end
 
-function TwitchManager._validate_data(arg_40_0, arg_40_1, arg_40_2)
+TwitchManager._validate_data = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = arg_40_0._current_vote
 
 	if var_40_0 then
@@ -926,15 +926,15 @@ function TwitchManager._validate_data(arg_40_0, arg_40_1, arg_40_2)
 	end
 end
 
-function TwitchManager.is_activated(arg_41_0)
+TwitchManager.is_activated = function (arg_41_0)
 	return arg_41_0._activated
 end
 
-function TwitchManager.reset(arg_42_0)
+TwitchManager.reset = function (arg_42_0)
 	arg_42_0:destroy()
 end
 
-function TwitchManager.destroy(arg_43_0)
+TwitchManager.destroy = function (arg_43_0)
 	if Managers.state and Managers.state.event then
 		Managers.state.event:trigger("reset_vote_ui")
 	end
@@ -942,7 +942,7 @@ function TwitchManager.destroy(arg_43_0)
 	arg_43_0:disconnect()
 end
 
-function TwitchManager.activate_twitch_game_mode(arg_44_0, arg_44_1, arg_44_2)
+TwitchManager.activate_twitch_game_mode = function (arg_44_0, arg_44_1, arg_44_2)
 	if Development.parameter("twitch_debug_voting") then
 		arg_44_0._connected = true
 	end
@@ -989,7 +989,7 @@ function TwitchManager.activate_twitch_game_mode(arg_44_0, arg_44_1, arg_44_2)
 	end
 end
 
-function TwitchManager.debug_activate_twitch_game_mode(arg_45_0)
+TwitchManager.debug_activate_twitch_game_mode = function (arg_45_0)
 	if Development.parameter("twitch_debug_voting") then
 		Managers.state.event:trigger("activate_twitch_game_mode")
 		Managers.telemetry_events:twitch_mode_activated()
@@ -1005,7 +1005,7 @@ function TwitchManager.debug_activate_twitch_game_mode(arg_45_0)
 	end
 end
 
-function TwitchManager.deactivate_twitch_game_mode(arg_46_0)
+TwitchManager.deactivate_twitch_game_mode = function (arg_46_0)
 	if arg_46_0._current_vote then
 		arg_46_0:unregister_vote(arg_46_0._current_vote.vote_key)
 	end
@@ -1027,7 +1027,7 @@ function TwitchManager.deactivate_twitch_game_mode(arg_46_0)
 	arg_46_0:_unload_sound_bank()
 end
 
-function TwitchManager._update_twitch_game_mode(arg_47_0, arg_47_1, arg_47_2)
+TwitchManager._update_twitch_game_mode = function (arg_47_0, arg_47_1, arg_47_2)
 	if not arg_47_0._twitch_game_mode or not arg_47_0._connected then
 		return
 	end
@@ -1047,7 +1047,7 @@ local var_0_7 = {
 	"default_vote_e_str"
 }
 
-function TwitchManager._update_debug_voting(arg_48_0, arg_48_1)
+TwitchManager._update_debug_voting = function (arg_48_0, arg_48_1)
 	arg_48_0._debug_vote_timer = arg_48_0._debug_vote_timer - arg_48_1
 
 	if arg_48_0._debug_vote_timer > 0 then
@@ -1097,7 +1097,7 @@ end
 
 TwitchGameMode = class(TwitchGameMode)
 
-function TwitchGameMode.init(arg_49_0, arg_49_1)
+TwitchGameMode.init = function (arg_49_0, arg_49_1)
 	arg_49_0._timer = TwitchSettings.initial_downtime
 	arg_49_0._funds = TwitchSettings.starting_funds
 	arg_49_0._parent = arg_49_1
@@ -1107,7 +1107,7 @@ function TwitchGameMode.init(arg_49_0, arg_49_1)
 	Debug.text("Activating Twitch Game Mode")
 end
 
-function TwitchGameMode.update(arg_50_0, arg_50_1, arg_50_2)
+TwitchGameMode.update = function (arg_50_0, arg_50_1, arg_50_2)
 	arg_50_0._timer = arg_50_0._timer - arg_50_1
 
 	if arg_50_0._timer > 0 then
@@ -1119,7 +1119,7 @@ function TwitchGameMode.update(arg_50_0, arg_50_1, arg_50_2)
 	end
 end
 
-function TwitchGameMode._update_used_votes(arg_51_0)
+TwitchGameMode._update_used_votes = function (arg_51_0)
 	local var_51_0 = arg_51_0._used_vote_templates
 
 	for iter_51_0, iter_51_1 in pairs(var_51_0) do
@@ -1133,7 +1133,7 @@ function TwitchGameMode._update_used_votes(arg_51_0)
 	arg_51_0:_clear_used_votes()
 end
 
-function TwitchGameMode._clear_used_votes(arg_52_0, arg_52_1)
+TwitchGameMode._clear_used_votes = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0._used_vote_templates
 	local var_52_1 = arg_52_0:_get_game_mode_whitelist()
 	local var_52_2 = var_52_1 and #var_52_1 or #TwitchVoteTemplatesLookup
@@ -1143,7 +1143,7 @@ function TwitchGameMode._clear_used_votes(arg_52_0, arg_52_1)
 	end
 end
 
-function TwitchGameMode._check_breed_package_loading(arg_53_0, arg_53_1, arg_53_2)
+TwitchGameMode._check_breed_package_loading = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_1.breed_name
 
 	if not var_53_0 then
@@ -1239,13 +1239,13 @@ function TwitchGameMode._check_breed_package_loading(arg_53_0, arg_53_1, arg_53_
 	return var_53_10
 end
 
-function TwitchGameMode._get_game_mode_whitelist(arg_54_0)
+TwitchGameMode._get_game_mode_whitelist = function (arg_54_0)
 	local var_54_0 = Managers.state.game_mode:game_mode_key()
 
 	return TwitchVoteWhitelists[var_54_0]
 end
 
-function TwitchGameMode._in_whitelist(arg_55_0, arg_55_1)
+TwitchGameMode._in_whitelist = function (arg_55_0, arg_55_1)
 	local var_55_0 = arg_55_0:_get_game_mode_whitelist()
 
 	if var_55_0 == nil then
@@ -1255,7 +1255,7 @@ function TwitchGameMode._in_whitelist(arg_55_0, arg_55_1)
 	end
 end
 
-function TwitchGameMode._get_next_vote(arg_56_0)
+TwitchGameMode._get_next_vote = function (arg_56_0)
 	arg_56_0:_update_used_votes()
 
 	local var_56_0 = arg_56_0._funds
@@ -1341,7 +1341,7 @@ function TwitchGameMode._get_next_vote(arg_56_0)
 	end
 end
 
-function TwitchGameMode._next_multiple_choice_vote(arg_57_0, arg_57_1)
+TwitchGameMode._next_multiple_choice_vote = function (arg_57_0, arg_57_1)
 	local var_57_0 = {}
 
 	for iter_57_0 = 1, 5 do
@@ -1353,7 +1353,7 @@ function TwitchGameMode._next_multiple_choice_vote(arg_57_0, arg_57_1)
 	return "multiple_choice", var_57_0, var_57_1
 end
 
-function TwitchGameMode._next_standard_vote(arg_58_0, arg_58_1)
+TwitchGameMode._next_standard_vote = function (arg_58_0, arg_58_1)
 	local var_58_0 = arg_58_0._used_vote_templates
 	local var_58_1 = arg_58_1.name
 	local var_58_2 = arg_58_1.cost
@@ -1399,7 +1399,7 @@ function TwitchGameMode._next_standard_vote(arg_58_0, arg_58_1)
 	return "standard_vote", var_58_11, nil
 end
 
-function TwitchGameMode._trigger_new_vote(arg_59_0)
+TwitchGameMode._trigger_new_vote = function (arg_59_0)
 	local var_59_0, var_59_1, var_59_2 = arg_59_0:_get_next_vote()
 	local var_59_3 = Application.user_setting("twitch_vote_time") or TwitchSettings.default_vote_time
 
@@ -1412,7 +1412,7 @@ function TwitchGameMode._trigger_new_vote(arg_59_0)
 	arg_59_0._timer = (Application.user_setting("twitch_time_between_votes") or TwitchSettings.default_downtime) + var_59_3
 end
 
-function TwitchGameMode.cb_on_vote_complete(arg_60_0, arg_60_1)
+TwitchGameMode.cb_on_vote_complete = function (arg_60_0, arg_60_1)
 	Managers.telemetry_events:twitch_poll_completed(arg_60_1)
 
 	local var_60_0 = TwitchVoteTemplates[arg_60_1.winning_template_name]
@@ -1422,7 +1422,7 @@ function TwitchGameMode.cb_on_vote_complete(arg_60_0, arg_60_1)
 	arg_60_0._vote_keys[arg_60_1.vote_key] = nil
 end
 
-function TwitchGameMode.destroy(arg_61_0)
+TwitchGameMode.destroy = function (arg_61_0)
 	var_0_4("Destroying Twitch Game mode")
 
 	for iter_61_0, iter_61_1 in pairs(arg_61_0._vote_keys) do

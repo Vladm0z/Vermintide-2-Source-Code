@@ -2,7 +2,7 @@
 
 ActionCareerESQuestingKnight = class(ActionCareerESQuestingKnight, ActionSweep)
 
-function ActionCareerESQuestingKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerESQuestingKnight.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerESQuestingKnight.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -11,7 +11,7 @@ function ActionCareerESQuestingKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-function ActionCareerESQuestingKnight.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerESQuestingKnight.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	arg_2_5 = arg_2_5 or {}
 
 	ActionCareerESQuestingKnight.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
@@ -27,7 +27,7 @@ function ActionCareerESQuestingKnight.client_owner_start_action(arg_2_0, arg_2_1
 	arg_2_0._cooldown_started = arg_2_3 and arg_2_3.cooldown_started or false
 end
 
-function ActionCareerESQuestingKnight.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerESQuestingKnight.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	ActionCareerESQuestingKnight.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 
 	if not arg_3_0._hit_fx_triggered and arg_3_0._started_damage_window then
@@ -49,7 +49,7 @@ function ActionCareerESQuestingKnight.client_owner_post_update(arg_3_0, arg_3_1,
 	end
 end
 
-function ActionCareerESQuestingKnight.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionCareerESQuestingKnight.finish = function (arg_4_0, arg_4_1, arg_4_2)
 	ActionCareerESQuestingKnight.super.finish(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.inventory_extension:stop_weapon_fx("career_action", true)
 
@@ -73,7 +73,7 @@ function ActionCareerESQuestingKnight.finish(arg_4_0, arg_4_1, arg_4_2)
 	}
 end
 
-function ActionCareerESQuestingKnight._play_vo(arg_5_0)
+ActionCareerESQuestingKnight._play_vo = function (arg_5_0)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = ScriptUnit.extension_input(var_5_0, "dialogue_system")
 	local var_5_2 = FrameTable.alloc_table()
@@ -81,6 +81,6 @@ function ActionCareerESQuestingKnight._play_vo(arg_5_0)
 	var_5_1:trigger_networked_dialogue_event("activate_ability", var_5_2)
 end
 
-function ActionCareerESQuestingKnight._play_vfx(arg_6_0)
+ActionCareerESQuestingKnight._play_vfx = function (arg_6_0)
 	arg_6_0.inventory_extension:start_weapon_fx("career_action", true)
 end

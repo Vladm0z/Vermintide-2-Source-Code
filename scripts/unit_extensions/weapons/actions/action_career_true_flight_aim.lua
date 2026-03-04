@@ -2,13 +2,13 @@
 
 ActionCareerTrueFlightAim = class(ActionCareerTrueFlightAim, ActionTrueFlightBowAim)
 
-function ActionCareerTrueFlightAim.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerTrueFlightAim.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerTrueFlightAim.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
 end
 
-function ActionCareerTrueFlightAim.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerTrueFlightAim.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionCareerTrueFlightAim.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	arg_2_0.not_wield_previous = arg_2_1.not_wield_previous
@@ -23,7 +23,7 @@ function ActionCareerTrueFlightAim.client_owner_start_action(arg_2_0, arg_2_1, a
 	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerTrueFlightAim.finish(arg_3_0, arg_3_1)
+ActionCareerTrueFlightAim.finish = function (arg_3_0, arg_3_1)
 	local var_3_0 = ActionCareerTrueFlightAim.super.finish(arg_3_0, arg_3_1)
 
 	if arg_3_1 ~= "new_interupting_action" then

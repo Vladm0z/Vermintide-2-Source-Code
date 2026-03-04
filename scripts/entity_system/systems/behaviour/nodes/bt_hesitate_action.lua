@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTHesitateAction = class(BTHesitateAction, BTNode)
 
-function BTHesitateAction.init(arg_1_0, ...)
+BTHesitateAction.init = function (arg_1_0, ...)
 	BTHesitateAction.super.init(arg_1_0, ...)
 end
 
@@ -25,7 +25,7 @@ local var_0_6 = math.sin(math.pi / 3)
 local var_0_7 = false
 local var_0_8 = 1
 
-function BTHesitateAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTHesitateAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -61,7 +61,7 @@ function BTHesitateAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.spawn_to_running = nil
 end
 
-function BTHesitateAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTHesitateAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_5 then
 		arg_3_2.locomotion_extension:use_lerp_rotation(true)
 		LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
@@ -93,11 +93,11 @@ end
 
 local var_0_9 = {}
 
-function BTHesitateAction.anim_cb_hesitate_finished(arg_4_0, arg_4_1, arg_4_2)
+BTHesitateAction.anim_cb_hesitate_finished = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_2.hesitate_finished = true
 end
 
-function BTHesitateAction.set_unit_wall_hesitation(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTHesitateAction.set_unit_wall_hesitation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.hesitate_wall_position and arg_5_2.hesitate_wall_position:unbox()
 
 	if var_5_0 and hesitate_wall_rotation then
@@ -113,7 +113,7 @@ function BTHesitateAction.set_unit_wall_hesitation(arg_5_0, arg_5_1, arg_5_2, ar
 	end
 end
 
-function BTHesitateAction.wall_check(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTHesitateAction.wall_check = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = World.get_data(arg_6_2.world, "physics_world")
 	local var_6_1 = arg_6_3 + Vector3(0, 0, 1)
 	local var_6_2 = 1.5
@@ -150,7 +150,7 @@ function BTHesitateAction.wall_check(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4
 	end
 end
 
-function BTHesitateAction.calculate_outnumber_multiplier(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+BTHesitateAction.calculate_outnumber_multiplier = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = Vector3.distance_squared(arg_7_6, arg_7_5)
 	local var_7_1 = var_0_1 / math.max(var_7_0 - var_0_2, 1) * arg_7_4 + arg_7_4
 	local var_7_2
@@ -207,7 +207,7 @@ function BTHesitateAction.calculate_outnumber_multiplier(arg_7_0, arg_7_1, arg_7
 	return var_7_2, var_7_1
 end
 
-function BTHesitateAction.start_move_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTHesitateAction.start_move_animation = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_2.action
 	local var_8_1 = arg_8_2.target_unit
 
@@ -242,7 +242,7 @@ function BTHesitateAction.start_move_animation(arg_8_0, arg_8_1, arg_8_2, arg_8_
 	arg_8_2.hesitate_fwd = var_8_4
 end
 
-function BTHesitateAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTHesitateAction.run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = script_data.ai_hesitation_debug
 	local var_9_1 = arg_9_2.action
 
@@ -354,7 +354,7 @@ BTHesitationVariations = {
 	}
 }
 
-function BTHesitateAction._select_new_hesitate_anim(arg_10_0, arg_10_1, arg_10_2)
+BTHesitateAction._select_new_hesitate_anim = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0
 
 	if not arg_10_2.do_wall_check then

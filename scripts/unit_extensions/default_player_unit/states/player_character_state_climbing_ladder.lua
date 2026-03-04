@@ -2,7 +2,7 @@
 
 PlayerCharacterStateClimbingLadder = class(PlayerCharacterStateClimbingLadder, PlayerCharacterState)
 
-function PlayerCharacterStateClimbingLadder.init(arg_1_0, arg_1_1)
+PlayerCharacterStateClimbingLadder.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "climbing_ladder")
 
 	local var_1_0 = arg_1_1
@@ -11,7 +11,7 @@ function PlayerCharacterStateClimbingLadder.init(arg_1_0, arg_1_1)
 	arg_1_0.lerp_start_position = Vector3Box()
 end
 
-function PlayerCharacterStateClimbingLadder.on_enter_animation_event(arg_2_0)
+PlayerCharacterStateClimbingLadder.on_enter_animation_event = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 	local var_2_1 = PlayerUnitMovementSettings.get_movement_settings_table(var_2_0)
 	local var_2_2 = POSITION_LOOKUP[var_2_0]
@@ -30,7 +30,7 @@ function PlayerCharacterStateClimbingLadder.on_enter_animation_event(arg_2_0)
 	arg_2_0.first_person_extension:play_animation_event("climb_enter_ladder")
 end
 
-function PlayerCharacterStateClimbingLadder.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateClimbingLadder.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_0.input_extension
 	local var_3_2 = arg_3_0.first_person_extension
@@ -73,7 +73,7 @@ function PlayerCharacterStateClimbingLadder.on_enter(arg_3_0, arg_3_1, arg_3_2, 
 	var_3_5:set_mover_filter_property("ladder", true)
 end
 
-function PlayerCharacterStateClimbingLadder.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateClimbingLadder.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = arg_4_0.locomotion_extension
 
 	if arg_4_6 and arg_4_6 ~= "leaving_ladder_top" then
@@ -104,7 +104,7 @@ function PlayerCharacterStateClimbingLadder.on_exit(arg_4_0, arg_4_1, arg_4_2, a
 	var_4_0:set_mover_filter_property("ladder", false)
 end
 
-function PlayerCharacterStateClimbingLadder.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateClimbingLadder.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.input_extension
@@ -204,7 +204,7 @@ function PlayerCharacterStateClimbingLadder.update(arg_5_0, arg_5_1, arg_5_2, ar
 	end
 end
 
-function PlayerCharacterStateClimbingLadder._move_on_ladder(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+PlayerCharacterStateClimbingLadder._move_on_ladder = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	local var_6_0 = CharacterStateHelper.get_square_movement_input(arg_6_3)
 	local var_6_1 = Vector3.x(var_6_0)
 	local var_6_2 = Vector3.y(var_6_0)
@@ -262,7 +262,7 @@ function PlayerCharacterStateClimbingLadder._move_on_ladder(arg_6_0, arg_6_1, ar
 	arg_6_4:set_wanted_velocity(var_6_13 * arg_6_6 + arg_6_7 * Quaternion.forward(arg_6_2) * 4)
 end
 
-function PlayerCharacterStateClimbingLadder.on_ladder_animation(arg_7_0)
+PlayerCharacterStateClimbingLadder.on_ladder_animation = function (arg_7_0)
 	local var_7_0 = arg_7_0.unit
 	local var_7_1 = PlayerUnitMovementSettings.get_movement_settings_table(var_7_0)
 

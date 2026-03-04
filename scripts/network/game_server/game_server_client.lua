@@ -10,7 +10,7 @@ local function var_0_0(arg_1_0, ...)
 	printf("[GameServerLobbyClient]: %s", var_1_0)
 end
 
-function GameServerLobbyClient.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+GameServerLobbyClient.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	var_0_0("Joining lobby on address %s", arg_2_2.server_info.ip_port)
 
 	arg_2_0._game_server_info = arg_2_2.server_info
@@ -35,11 +35,11 @@ function GameServerLobbyClient.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_0.is_host = false
 end
 
-function GameServerLobbyClient.lobby_host(arg_3_0)
+GameServerLobbyClient.lobby_host = function (arg_3_0)
 	return GameServerInternal.lobby_host(arg_3_0._game_server_lobby)
 end
 
-function GameServerLobbyClient.destroy(arg_4_0)
+GameServerLobbyClient.destroy = function (arg_4_0)
 	var_0_0("Destroying Game Server Client, leaving server...")
 
 	local var_4_0 = GameServerInternal.lobby_host(arg_4_0._game_server_lobby)
@@ -68,7 +68,7 @@ function GameServerLobbyClient.destroy(arg_4_0)
 	GarbageLeakDetector.register_object(arg_4_0, "Game Server Client")
 end
 
-function GameServerLobbyClient.update(arg_5_0, arg_5_1)
+GameServerLobbyClient.update = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._game_server_lobby
 	local var_5_1 = var_5_0:state()
 	local var_5_2 = arg_5_0._state
@@ -127,17 +127,17 @@ function GameServerLobbyClient.update(arg_5_0, arg_5_1)
 	end
 end
 
-function GameServerLobbyClient.claim_reserved(arg_6_0)
+GameServerLobbyClient.claim_reserved = function (arg_6_0)
 	GameServerInternal.claim_reserved(arg_6_0._game_server_lobby)
 end
 
-function GameServerLobbyClient.advertise_playing(arg_7_0)
+GameServerLobbyClient.advertise_playing = function (arg_7_0)
 	Presence.advertise_playing(arg_7_0._game_server_info.ip_port)
 
 	arg_7_0._advertising_playing = true
 end
 
-function GameServerLobbyClient.stop_advertise_playing(arg_8_0, arg_8_1)
+GameServerLobbyClient.stop_advertise_playing = function (arg_8_0, arg_8_1)
 	if not arg_8_0._advertising_playing then
 		return
 	end
@@ -147,58 +147,58 @@ function GameServerLobbyClient.stop_advertise_playing(arg_8_0, arg_8_1)
 	arg_8_0._advertising_playing = false
 end
 
-function GameServerLobbyClient.state(arg_9_0)
+GameServerLobbyClient.state = function (arg_9_0)
 	return arg_9_0._state
 end
 
-function GameServerLobbyClient.members(arg_10_0)
+GameServerLobbyClient.members = function (arg_10_0)
 	return arg_10_0._members
 end
 
-function GameServerLobbyClient.invite_target(arg_11_0)
+GameServerLobbyClient.invite_target = function (arg_11_0)
 	return arg_11_0._game_server_info.ip_port
 end
 
-function GameServerLobbyClient.is_dedicated_server(arg_12_0)
+GameServerLobbyClient.is_dedicated_server = function (arg_12_0)
 	return true
 end
 
-function GameServerLobbyClient.lobby_host(arg_13_0)
+GameServerLobbyClient.lobby_host = function (arg_13_0)
 	return GameServerInternal.lobby_host(arg_13_0._game_server_lobby)
 end
 
-function GameServerLobbyClient.lobby_data(arg_14_0, arg_14_1)
+GameServerLobbyClient.lobby_data = function (arg_14_0, arg_14_1)
 	return arg_14_0._game_server_lobby:data(arg_14_1)
 end
 
-function GameServerLobbyClient.get_stored_lobby_data(arg_15_0)
+GameServerLobbyClient.get_stored_lobby_data = function (arg_15_0)
 	return arg_15_0._game_server_lobby_data
 end
 
-function GameServerLobbyClient.ip_address(arg_16_0)
+GameServerLobbyClient.ip_address = function (arg_16_0)
 	return arg_16_0._game_server_info.ip_port
 end
 
-function GameServerLobbyClient.is_joined(arg_17_0)
+GameServerLobbyClient.is_joined = function (arg_17_0)
 	return arg_17_0._state == "joined"
 end
 
-function GameServerLobbyClient.failed(arg_18_0)
+GameServerLobbyClient.failed = function (arg_18_0)
 	return arg_18_0._state == "failed"
 end
 
-function GameServerLobbyClient.id(arg_19_0)
+GameServerLobbyClient.id = function (arg_19_0)
 	return GameServerInternal.lobby_id and GameServerInternal.lobby_id(arg_19_0._game_server_lobby) or "no_id"
 end
 
-function GameServerLobbyClient.request_data(arg_20_0)
+GameServerLobbyClient.request_data = function (arg_20_0)
 	arg_20_0._game_server_lobby:request_data()
 end
 
-function GameServerLobbyClient.attempting_reconnect(arg_21_0)
+GameServerLobbyClient.attempting_reconnect = function (arg_21_0)
 	return false
 end
 
-function GameServerLobbyClient.lost_connection_to_lobby(arg_22_0)
+GameServerLobbyClient.lost_connection_to_lobby = function (arg_22_0)
 	return false
 end

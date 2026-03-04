@@ -2,7 +2,7 @@
 
 CareerAbilityESKnight = class(CareerAbilityESKnight)
 
-function CareerAbilityESKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityESKnight.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._wwise_world = Managers.world:wwise_world(arg_1_0._world)
@@ -19,7 +19,7 @@ function CareerAbilityESKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._decal_unit_name = "units/decals/decal_arrow"
 	arg_1_0._fov_lerp_time = 0
 	arg_1_0._lunge_events = {
-		start = function(arg_2_0)
+		start = function (arg_2_0)
 			local var_2_0 = arg_2_0.first_person_extension
 			local var_2_1 = arg_2_0.unit
 
@@ -28,7 +28,7 @@ function CareerAbilityESKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			var_2_0:play_remote_unit_sound_event("Play_career_ability_kruber_charge_enter", var_2_1, 0)
 			var_2_0:play_remote_unit_sound_event("Play_career_ability_kruber_charge_forward", var_2_1, 0)
 		end,
-		impact = function(arg_3_0)
+		impact = function (arg_3_0)
 			local var_3_0 = arg_3_0.first_person_extension
 			local var_3_1 = arg_3_0._first_person_unit
 			local var_3_2 = arg_3_0.unit
@@ -40,7 +40,7 @@ function CareerAbilityESKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			var_3_0:play_hud_sound_event("Play_career_ability_kruber_charge_hit_player")
 			var_3_0:play_remote_unit_sound_event("Play_career_ability_kruber_charge_hit_player", var_3_2, 0)
 		end,
-		finished = function(arg_4_0)
+		finished = function (arg_4_0)
 			local var_4_0 = arg_4_0.first_person_extension
 			local var_4_1 = arg_4_0.unit
 
@@ -50,7 +50,7 @@ function CareerAbilityESKnight.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 end
 
-function CareerAbilityESKnight.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+CareerAbilityESKnight.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._first_person_extension = ScriptUnit.has_extension(arg_5_2, "first_person_system")
 	arg_5_0._status_extension = ScriptUnit.extension(arg_5_2, "status_system")
 	arg_5_0._career_extension = ScriptUnit.extension(arg_5_2, "career_system")
@@ -62,11 +62,11 @@ function CareerAbilityESKnight.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CareerAbilityESKnight.destroy(arg_6_0)
+CareerAbilityESKnight.destroy = function (arg_6_0)
 	return
 end
 
-function CareerAbilityESKnight.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CareerAbilityESKnight.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	if not arg_7_0:_ability_available() then
 		return
 	end
@@ -108,20 +108,20 @@ function CareerAbilityESKnight.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_
 	end
 end
 
-function CareerAbilityESKnight.stop(arg_8_0, arg_8_1)
+CareerAbilityESKnight.stop = function (arg_8_0, arg_8_1)
 	if arg_8_1 ~= "pushed" and arg_8_1 ~= "stunned" and arg_8_0._is_priming then
 		arg_8_0:_stop_priming()
 	end
 end
 
-function CareerAbilityESKnight._ability_available(arg_9_0)
+CareerAbilityESKnight._ability_available = function (arg_9_0)
 	local var_9_0 = arg_9_0._career_extension
 	local var_9_1 = arg_9_0._status_extension
 
 	return var_9_0:can_use_activated_ability() and not var_9_1:is_disabled()
 end
 
-function CareerAbilityESKnight._start_priming(arg_10_0)
+CareerAbilityESKnight._start_priming = function (arg_10_0)
 	if arg_10_0._local_player then
 		local var_10_0 = arg_10_0._decal_unit_name
 
@@ -143,7 +143,7 @@ function CareerAbilityESKnight._start_priming(arg_10_0)
 	arg_10_0._is_priming = true
 end
 
-function CareerAbilityESKnight._update_priming(arg_11_0, arg_11_1)
+CareerAbilityESKnight._update_priming = function (arg_11_0, arg_11_1)
 	if arg_11_0._decal_unit then
 		local var_11_0 = arg_11_0._first_person_extension
 		local var_11_1 = Unit.local_position(arg_11_0._owner_unit, 0)
@@ -166,7 +166,7 @@ function CareerAbilityESKnight._update_priming(arg_11_0, arg_11_1)
 	end
 end
 
-function CareerAbilityESKnight._stop_priming(arg_12_0)
+CareerAbilityESKnight._stop_priming = function (arg_12_0)
 	if arg_12_0._decal_unit then
 		Managers.state.unit_spawner:mark_for_deletion(arg_12_0._decal_unit)
 	end
@@ -191,7 +191,7 @@ function CareerAbilityESKnight._stop_priming(arg_12_0)
 	arg_12_0._is_priming = false
 end
 
-function CareerAbilityESKnight._run_ability(arg_13_0)
+CareerAbilityESKnight._run_ability = function (arg_13_0)
 	arg_13_0:_stop_priming()
 
 	local var_13_0 = arg_13_0._owner_unit
@@ -244,7 +244,7 @@ function CareerAbilityESKnight._run_ability(arg_13_0)
 		initial_speed = 20,
 		animation_event = "foot_knight_ability_charge_start",
 		lunge_events = arg_13_0._lunge_events,
-		speed_function = function(arg_14_0, arg_14_1)
+		speed_function = function (arg_14_0, arg_14_1)
 			local var_14_0 = 0.25
 			local var_14_1 = arg_14_0 - var_13_12 - var_13_13
 			local var_14_2 = arg_14_1 - var_13_12 - var_13_13 - var_14_0
@@ -336,7 +336,7 @@ function CareerAbilityESKnight._run_ability(arg_13_0)
 	arg_13_0:_play_vo()
 end
 
-function CareerAbilityESKnight._play_vo(arg_15_0)
+CareerAbilityESKnight._play_vo = function (arg_15_0)
 	local var_15_0 = arg_15_0._owner_unit
 	local var_15_1 = ScriptUnit.extension_input(var_15_0, "dialogue_system")
 	local var_15_2 = FrameTable.alloc_table()

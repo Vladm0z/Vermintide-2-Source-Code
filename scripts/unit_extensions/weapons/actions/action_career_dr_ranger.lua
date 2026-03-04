@@ -2,7 +2,7 @@
 
 ActionCareerDRRanger = class(ActionCareerDRRanger, ActionBase)
 
-function ActionCareerDRRanger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDRRanger.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerDRRanger.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -11,7 +11,7 @@ function ActionCareerDRRanger.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, 
 	arg_1_0.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
 end
 
-function ActionCareerDRRanger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionCareerDRRanger.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionCareerDRRanger.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -28,7 +28,7 @@ function ActionCareerDRRanger.client_owner_start_action(arg_2_0, arg_2_1, arg_2_
 	ScriptUnit.extension(arg_2_0.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
 end
 
-function ActionCareerDRRanger._create_smoke_screen(arg_3_0)
+ActionCareerDRRanger._create_smoke_screen = function (arg_3_0)
 	local var_3_0 = arg_3_0.owner_unit
 	local var_3_1 = Managers.state.network.network_transmit
 	local var_3_2 = ScriptUnit.extension(var_3_0, "status_system")
@@ -57,7 +57,7 @@ function ActionCareerDRRanger._create_smoke_screen(arg_3_0)
 	})
 end
 
-function ActionCareerDRRanger._play_vo(arg_4_0)
+ActionCareerDRRanger._play_vo = function (arg_4_0)
 	local var_4_0 = arg_4_0.owner_unit
 	local var_4_1 = ScriptUnit.extension_input(var_4_0, "dialogue_system")
 	local var_4_2 = FrameTable.alloc_table()
@@ -65,7 +65,7 @@ function ActionCareerDRRanger._play_vo(arg_4_0)
 	var_4_1:trigger_networked_dialogue_event("activate_ability", var_4_2)
 end
 
-function ActionCareerDRRanger.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionCareerDRRanger.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_0.thrown then
 		return
 	end
@@ -77,7 +77,7 @@ function ActionCareerDRRanger.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2
 	end
 end
 
-function ActionCareerDRRanger._stagger_explosion(arg_6_0)
+ActionCareerDRRanger._stagger_explosion = function (arg_6_0)
 	local var_6_0 = arg_6_0.owner_unit
 	local var_6_1 = arg_6_0.world
 	local var_6_2 = arg_6_0.is_server
@@ -103,7 +103,7 @@ function ActionCareerDRRanger._stagger_explosion(arg_6_0)
 	DamageUtils.create_explosion(var_6_1, var_6_0, var_6_11, var_6_12, var_6_7, var_6_8, var_6_9, var_6_2, var_6_10, var_6_0, arg_6_0.power_level, false, var_6_0)
 end
 
-function ActionCareerDRRanger._throw(arg_7_0)
+ActionCareerDRRanger._throw = function (arg_7_0)
 	arg_7_0:_create_smoke_screen()
 	arg_7_0:_stagger_explosion()
 	arg_7_0:_play_vo()
@@ -111,7 +111,7 @@ function ActionCareerDRRanger._throw(arg_7_0)
 	arg_7_0.thrown = true
 end
 
-function ActionCareerDRRanger.finish(arg_8_0, arg_8_1)
+ActionCareerDRRanger.finish = function (arg_8_0, arg_8_1)
 	ActionCareerDRRanger.super.finish(arg_8_0, arg_8_1)
 
 	if not arg_8_0.thrown then

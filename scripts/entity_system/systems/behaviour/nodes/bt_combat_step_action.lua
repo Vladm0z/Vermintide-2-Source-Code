@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatStepAction = class(BTCombatStepAction, BTNode)
 
-function BTCombatStepAction.init(arg_1_0, ...)
+BTCombatStepAction.init = function (arg_1_0, ...)
 	BTCombatStepAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTCombatStepAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTCombatStepAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 	arg_3_2.active_node = BTCombatStepAction
 	arg_3_2.start_finished = nil
@@ -66,7 +66,7 @@ function BTCombatStepAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTCombatStepAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCombatStepAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.start_finished = nil
 	arg_4_2.start_started_since = nil
 
@@ -93,7 +93,7 @@ function BTCombatStepAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, a
 	end
 end
 
-function BTCombatStepAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTCombatStepAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.start_finished or arg_5_3 - arg_5_2.start_started_since > 10 then
 		return "done"
 	end
@@ -101,7 +101,7 @@ function BTCombatStepAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTCombatStepAction.anim_cb_combat_step_stop(arg_6_0, arg_6_1, arg_6_2)
+BTCombatStepAction.anim_cb_combat_step_stop = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.navigation_extension
 
 	if var_6_0:is_following_path() then
@@ -111,7 +111,7 @@ function BTCombatStepAction.anim_cb_combat_step_stop(arg_6_0, arg_6_1, arg_6_2)
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_6_1, false)
 end
 
-function BTCombatStepAction._get_animation(arg_7_0, arg_7_1, arg_7_2)
+BTCombatStepAction._get_animation = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Quaternion.right(arg_7_1)
 	local var_7_1 = Vector3.dot(var_7_0, arg_7_2)
 	local var_7_2 = math.abs(var_7_1)

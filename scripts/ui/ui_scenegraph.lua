@@ -47,7 +47,7 @@ end
 
 local var_0_11 = {
 	__class_name = "scenegraph",
-	__newindex = function(arg_4_0, arg_4_1, arg_4_2)
+	__newindex = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = string.format("[UIScenegraph] Cannot add field %q to %s", arg_4_1, arg_4_0)
 
 		print(var_4_0)
@@ -153,7 +153,7 @@ local function var_0_13(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function var_0_0.init_scenegraph(arg_7_0)
+var_0_0.init_scenegraph = function (arg_7_0)
 	local var_7_0 = {}
 
 	for iter_7_0, iter_7_1 in pairs(arg_7_0) do
@@ -203,7 +203,7 @@ local function var_0_14(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	end
 end
 
-function var_0_0.update_scenegraph(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.update_scenegraph = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = var_0_3.res_w
 	local var_9_1 = var_0_3.res_h
 	local var_9_2 = var_0_3.scale
@@ -296,19 +296,19 @@ function var_0_0.update_scenegraph(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function var_0_0.get_size(arg_10_0, arg_10_1)
+var_0_0.get_size = function (arg_10_0, arg_10_1)
 	return arg_10_0[arg_10_1].size
 end
 
-function var_0_0.get_world_position(arg_11_0, arg_11_1)
+var_0_0.get_world_position = function (arg_11_0, arg_11_1)
 	return arg_11_0[arg_11_1].world_position
 end
 
-function var_0_0.get_local_position(arg_12_0, arg_12_1)
+var_0_0.get_local_position = function (arg_12_0, arg_12_1)
 	return arg_12_0[arg_12_1].local_position
 end
 
-function var_0_0.get_size_scaled(arg_13_0, arg_13_1, arg_13_2)
+var_0_0.get_size_scaled = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0[arg_13_1]
 	local var_13_1 = var_13_0.size
 
@@ -366,7 +366,7 @@ function var_0_0.get_size_scaled(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function var_0_0.set_local_position(arg_14_0, arg_14_1, arg_14_2)
+var_0_0.set_local_position = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0[arg_14_1].local_position
 
 	var_14_0[1] = arg_14_2[1]
@@ -423,6 +423,6 @@ local function var_0_16(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	end
 end
 
-function var_0_0.debug_render_scenegraph(arg_17_0, arg_17_1, arg_17_2)
+var_0_0.debug_render_scenegraph = function (arg_17_0, arg_17_1, arg_17_2)
 	return var_0_16(arg_17_0, arg_17_1, #arg_17_1, arg_17_2 or 1)
 end

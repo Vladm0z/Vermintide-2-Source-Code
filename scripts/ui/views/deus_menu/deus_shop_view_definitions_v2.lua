@@ -954,7 +954,7 @@ local function var_0_19(arg_2_0)
 					style_id = "name_text",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.visible
 					end
 				},
@@ -962,7 +962,7 @@ local function var_0_19(arg_2_0)
 					style_id = "name_text_shadow",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.visible
 					end
 				},
@@ -970,7 +970,7 @@ local function var_0_19(arg_2_0)
 					style_id = "coins_text",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.visible
 					end
 				},
@@ -978,7 +978,7 @@ local function var_0_19(arg_2_0)
 					style_id = "coins_text_shadow",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.visible
 					end
 				},
@@ -986,7 +986,7 @@ local function var_0_19(arg_2_0)
 					pass_type = "texture",
 					style_id = "coins_icon",
 					texture_id = "coins_icon",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.visible
 					end
 				}
@@ -1333,7 +1333,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			pass_type = "texture",
 			style_id = "loading_frame",
 			texture_id = "loading_frame",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return not arg_9_0.is_bought and not arg_9_0.button_hotspot.disable_button
 			end
 		},
@@ -1341,7 +1341,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			pass_type = "texture",
 			style_id = "icon_discount_frame",
 			texture_id = "icon_discount_frame",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.has_discount
 			end
 		},
@@ -1359,7 +1359,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return arg_11_0.is_bought or not arg_11_0.button_hotspot.disable_button
 			end
 		},
@@ -1367,7 +1367,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return arg_12_0.button_hotspot.disable_button and not arg_12_0.is_bought
 			end
 		},
@@ -1375,7 +1375,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "sub_text_disabled",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return arg_13_0.button_hotspot.disable_button and not arg_13_0.is_bought
 			end
 		},
@@ -1383,7 +1383,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0.is_bought or not arg_14_0.button_hotspot.disable_button
 			end
 		},
@@ -1396,7 +1396,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0.button_hotspot.disable_button and not arg_15_0.is_bought
 			end
 		},
@@ -1404,7 +1404,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.is_bought or not arg_16_0.button_hotspot.disable_button
 			end
 		},
@@ -1427,7 +1427,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				return not arg_17_0.button_hotspot.disable_button and not arg_17_0.is_bought
 			end
 		},
@@ -1435,7 +1435,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_18_0)
+			content_check_function = function (arg_18_0)
 				return arg_18_0.button_hotspot.disable_button and not arg_18_0.is_bought
 			end
 		},
@@ -1443,7 +1443,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "price_text_shadow",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_19_0)
+			content_check_function = function (arg_19_0)
 				return not arg_19_0.is_bought
 			end
 		},
@@ -1451,7 +1451,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_20_0)
+			content_check_function = function (arg_20_0)
 				return not arg_20_0.is_bought
 			end
 		},
@@ -1459,7 +1459,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "current_value_title_text",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_21_0)
+			content_check_function = function (arg_21_0)
 				return not arg_21_0.is_bought and arg_21_0.current_value_text and arg_21_0.max_value_text
 			end
 		},
@@ -1467,7 +1467,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "current_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return not arg_22_0.is_bought and arg_22_0.current_value_text and arg_22_0.max_value_text
 			end
 		},
@@ -1475,7 +1475,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "current_value_text",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_23_0)
+			content_check_function = function (arg_23_0)
 				return not arg_23_0.is_bought and arg_23_0.current_value_text and arg_23_0.max_value_text
 			end
 		},
@@ -1483,7 +1483,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "current_value_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function(arg_24_0)
+			content_check_function = function (arg_24_0)
 				return not arg_24_0.is_bought and arg_24_0.current_value_text and arg_24_0.max_value_text
 			end
 		},
@@ -1491,7 +1491,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "max_value_title_text",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_25_0)
+			content_check_function = function (arg_25_0)
 				return not arg_25_0.is_bought and arg_25_0.current_value_text and arg_25_0.max_value_text
 			end
 		},
@@ -1499,7 +1499,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "max_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function(arg_26_0)
+			content_check_function = function (arg_26_0)
 				return not arg_26_0.is_bought and arg_26_0.current_value_text and arg_26_0.max_value_text
 			end
 		},
@@ -1507,7 +1507,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "max_value_text",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_27_0)
+			content_check_function = function (arg_27_0)
 				return not arg_27_0.is_bought and arg_27_0.current_value_text and arg_27_0.max_value_text
 			end
 		},
@@ -1515,7 +1515,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "max_value_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function(arg_28_0)
+			content_check_function = function (arg_28_0)
 				return not arg_28_0.is_bought and arg_28_0.current_value_text and arg_28_0.max_value_text
 			end
 		},
@@ -1523,7 +1523,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "unlocked_text",
 			pass_type = "text",
 			text_id = "unlocked_text",
-			content_check_function = function(arg_29_0)
+			content_check_function = function (arg_29_0)
 				return arg_29_0.is_bought
 			end
 		},
@@ -1536,7 +1536,7 @@ local function var_0_20(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			style_id = "set_progression",
 			pass_type = "text",
 			text_id = "set_progression",
-			content_check_function = function(arg_30_0)
+			content_check_function = function (arg_30_0)
 				return arg_30_0.is_part_of_set
 			end
 		}
@@ -2142,7 +2142,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			pass_type = "texture",
 			style_id = "loading_frame",
 			texture_id = "loading_frame",
-			content_check_function = function(arg_32_0)
+			content_check_function = function (arg_32_0)
 				return not arg_32_0.is_bought and not arg_32_0.button_hotspot.disable_button
 			end
 		},
@@ -2160,7 +2160,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function(arg_33_0)
+			content_check_function = function (arg_33_0)
 				return arg_33_0.is_bought or not arg_33_0.button_hotspot.disable_button
 			end
 		},
@@ -2168,7 +2168,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function(arg_34_0)
+			content_check_function = function (arg_34_0)
 				return arg_34_0.button_hotspot.disable_button and not arg_34_0.is_bought
 			end
 		},
@@ -2176,7 +2176,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "sub_text_disabled",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_35_0)
+			content_check_function = function (arg_35_0)
 				return arg_35_0.button_hotspot.disable_button and not arg_35_0.is_bought
 			end
 		},
@@ -2184,7 +2184,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function(arg_36_0)
+			content_check_function = function (arg_36_0)
 				return arg_36_0.is_bought or not arg_36_0.button_hotspot.disable_button
 			end
 		},
@@ -2197,7 +2197,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "shared_text",
 			pass_type = "text",
 			text_id = "shared_text",
-			content_check_function = function(arg_37_0)
+			content_check_function = function (arg_37_0)
 				return not arg_37_0.is_bought
 			end
 		},
@@ -2205,7 +2205,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "shared_text_shadow",
 			pass_type = "text",
 			text_id = "shared_text",
-			content_check_function = function(arg_38_0)
+			content_check_function = function (arg_38_0)
 				return not arg_38_0.is_bought
 			end
 		},
@@ -2213,7 +2213,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_39_0)
+			content_check_function = function (arg_39_0)
 				return arg_39_0.button_hotspot.disable_button and not arg_39_0.is_bought
 			end
 		},
@@ -2221,7 +2221,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function(arg_40_0)
+			content_check_function = function (arg_40_0)
 				return arg_40_0.is_bought or not arg_40_0.button_hotspot.disable_button
 			end
 		},
@@ -2234,7 +2234,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_41_0)
+			content_check_function = function (arg_41_0)
 				return not arg_41_0.button_hotspot.disable_button and not arg_41_0.is_bought
 			end
 		},
@@ -2242,7 +2242,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_42_0)
+			content_check_function = function (arg_42_0)
 				return arg_42_0.button_hotspot.disable_button and not arg_42_0.is_bought
 			end
 		},
@@ -2250,7 +2250,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "price_text_shadow",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function(arg_43_0)
+			content_check_function = function (arg_43_0)
 				return not arg_43_0.is_bought
 			end
 		},
@@ -2258,7 +2258,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function(arg_44_0)
+			content_check_function = function (arg_44_0)
 				return not arg_44_0.is_bought
 			end
 		},
@@ -2266,7 +2266,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "bought_by_text",
 			pass_type = "text",
 			text_id = "bought_by_text",
-			content_check_function = function(arg_45_0)
+			content_check_function = function (arg_45_0)
 				return arg_45_0.is_bought
 			end
 		},
@@ -2274,7 +2274,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "bought_by_text_shadow",
 			pass_type = "text",
 			text_id = "bought_by_text",
-			content_check_function = function(arg_46_0)
+			content_check_function = function (arg_46_0)
 				return arg_46_0.is_bought
 			end
 		},
@@ -2282,7 +2282,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "player_name_text",
 			pass_type = "text",
 			text_id = "player_name_text",
-			content_check_function = function(arg_47_0)
+			content_check_function = function (arg_47_0)
 				return arg_47_0.is_bought
 			end
 		},
@@ -2290,7 +2290,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			style_id = "player_name_text_shadow",
 			pass_type = "text",
 			text_id = "player_name_text",
-			content_check_function = function(arg_48_0)
+			content_check_function = function (arg_48_0)
 				return arg_48_0.is_bought
 			end
 		},
@@ -2298,7 +2298,7 @@ local function var_0_21(arg_31_0, arg_31_1, arg_31_2)
 			pass_type = "texture",
 			style_id = "character_portrait",
 			texture_id = "character_portrait",
-			content_check_function = function(arg_49_0)
+			content_check_function = function (arg_49_0)
 				return arg_49_0.is_bought
 			end
 		},
@@ -2603,7 +2603,7 @@ local function var_0_22(arg_50_0, arg_50_1)
 					pass_type = "texture",
 					style_id = "token_icon_1",
 					texture_id = "token_icon_1",
-					content_check_function = function(arg_51_0)
+					content_check_function = function (arg_51_0)
 						return arg_51_0.token_icon_1
 					end
 				},
@@ -2611,7 +2611,7 @@ local function var_0_22(arg_50_0, arg_50_1)
 					pass_type = "texture",
 					style_id = "token_icon_2",
 					texture_id = "token_icon_2",
-					content_check_function = function(arg_52_0)
+					content_check_function = function (arg_52_0)
 						return arg_52_0.token_icon_2
 					end
 				},
@@ -2619,7 +2619,7 @@ local function var_0_22(arg_50_0, arg_50_1)
 					pass_type = "texture",
 					style_id = "token_icon_3",
 					texture_id = "token_icon_3",
-					content_check_function = function(arg_53_0)
+					content_check_function = function (arg_53_0)
 						return arg_53_0.token_icon_3
 					end
 				},
@@ -2627,7 +2627,7 @@ local function var_0_22(arg_50_0, arg_50_1)
 					pass_type = "texture",
 					style_id = "token_icon_4",
 					texture_id = "token_icon_4",
-					content_check_function = function(arg_54_0)
+					content_check_function = function (arg_54_0)
 						return arg_54_0.token_icon_4
 					end
 				}
@@ -2700,7 +2700,7 @@ local function var_0_23(arg_55_0)
 					pass_type = "text",
 					text_id = "text",
 					retained_mode = false,
-					content_check_function = function(arg_56_0)
+					content_check_function = function (arg_56_0)
 						return arg_56_0.text
 					end
 				}
@@ -3065,7 +3065,7 @@ local function var_0_45(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 			texture_id = var_57_6,
 			style_id = var_57_6,
 			retained_mode = var_57_0,
-			content_check_function = function(arg_58_0)
+			content_check_function = function (arg_58_0)
 				return arg_58_0.is_bought
 			end
 		}
@@ -3097,7 +3097,7 @@ local function var_0_45(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 		text_id = var_57_13,
 		style_id = var_57_13,
 		retained_mode = var_57_0,
-		content_check_function = function(arg_59_0)
+		content_check_function = function (arg_59_0)
 			return arg_59_0.is_bought
 		end
 	}
@@ -3125,10 +3125,10 @@ local var_0_46 = {
 			name = "flash_icon",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			init = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 				arg_60_2.content.has_buying_animation_played = true
 			end,
-			update = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
+			update = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
 				local var_61_0 = arg_61_2.style
 				local var_61_1 = 60 * math.sin(10 * Managers.time:time("ui"))
 
@@ -3136,7 +3136,7 @@ local var_0_46 = {
 				var_61_0.icon.color[3] = 152 - var_61_1
 				var_61_0.icon.color[4] = 152 - var_61_1
 			end,
-			on_complete = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+			on_complete = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 				local var_62_0 = arg_62_2.style
 
 				var_62_0.icon.color[2] = 255
@@ -3150,10 +3150,10 @@ local var_0_46 = {
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			init = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 				return
 			end,
-			update = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
+			update = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
 				local var_64_0 = math.easeOutCubic(arg_64_3)
 
 				arg_64_4.options_background_mask_left_start_pos = arg_64_4.options_background_mask_left_start_pos or arg_64_0.options_background_mask_left.local_position[1]
@@ -3163,7 +3163,7 @@ local var_0_46 = {
 				arg_64_0.own_power_up_anchor.local_position[1] = math.lerp(arg_64_0.own_power_up_anchor.local_position[1], arg_64_1.own_power_up_anchor.position[1] - 400, var_64_0)
 				arg_64_0.scrollbar_anchor.local_position[1] = math.lerp(arg_64_0.scrollbar_anchor.local_position[1], arg_64_1.scrollbar_anchor.position[1] - 400, var_64_0)
 			end,
-			on_complete = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+			on_complete = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 				arg_65_3.options_background_mask_left_start_pos = nil
 				arg_65_3.options_background_left_start_pos = nil
 			end
@@ -3172,10 +3172,10 @@ local var_0_46 = {
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+			init = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 				return
 			end,
-			update = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4)
+			update = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4)
 				local var_67_0 = math.easeOutCubic(arg_67_3)
 
 				for iter_67_0 = 2, 4 do
@@ -3184,7 +3184,7 @@ local var_0_46 = {
 					arg_67_0[var_67_1].local_position[1] = math.lerp(arg_67_0[var_67_1].local_position[1], arg_67_1[var_67_1].position[1] + 400, var_67_0)
 				end
 			end,
-			on_complete = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+			on_complete = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 				return
 			end
 		}
@@ -3194,10 +3194,10 @@ local var_0_46 = {
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+			init = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 				return
 			end,
-			update = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+			update = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
 				local var_70_0 = math.easeOutCubic(arg_70_3)
 
 				for iter_70_0 = 2, 4 do
@@ -3206,7 +3206,7 @@ local var_0_46 = {
 					arg_70_0[var_70_1].local_position[1] = math.lerp(arg_70_0[var_70_1].local_position[1], arg_70_1[var_70_1].position[1], var_70_0)
 				end
 			end,
-			on_complete = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+			on_complete = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 				return
 			end
 		},
@@ -3214,10 +3214,10 @@ local var_0_46 = {
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+			init = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 				return
 			end,
-			update = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
+			update = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				local var_73_0 = math.easeOutCubic(arg_73_3)
 
 				arg_73_0.options_background_mask_left.local_position[1] = math.lerp(arg_73_0.options_background_mask_left.local_position[1], arg_73_1.options_background_mask_left.position[1], var_73_0)
@@ -3225,7 +3225,7 @@ local var_0_46 = {
 				arg_73_0.own_power_up_anchor.local_position[1] = math.lerp(arg_73_0.own_power_up_anchor.local_position[1], arg_73_1.own_power_up_anchor.position[1], var_73_0)
 				arg_73_0.scrollbar_anchor.local_position[1] = math.lerp(arg_73_0.scrollbar_anchor.local_position[1], arg_73_1.scrollbar_anchor.position[1], var_73_0)
 			end,
-			on_complete = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+			on_complete = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 				return
 			end
 		}
@@ -3239,12 +3239,12 @@ local var_0_47 = {
 	interaction_successful = false
 }
 local var_0_48 = {
-	start = function(arg_75_0, arg_75_1)
+	start = function (arg_75_0, arg_75_1)
 		arg_75_0.done_time = arg_75_1 + arg_75_0.purchase_duration
 		arg_75_0.interaction_started = true
 		arg_75_0.interaction_successful = false
 	end,
-	update = function(arg_76_0, arg_76_1)
+	update = function (arg_76_0, arg_76_1)
 		local var_76_0 = math.max(arg_76_0.done_time - arg_76_1, 0)
 
 		arg_76_0.progress = 1 - math.min(var_76_0 / arg_76_0.purchase_duration, 1)
@@ -3257,14 +3257,14 @@ local var_0_48 = {
 
 		return false
 	end,
-	successful = function(arg_77_0)
+	successful = function (arg_77_0)
 		if arg_77_0.interaction_successful then
 			arg_77_0.done_time = nil
 			arg_77_0.interaction_started = false
 			arg_77_0.interaction_ongoing = false
 		end
 	end,
-	abort = function(arg_78_0)
+	abort = function (arg_78_0)
 		arg_78_0.done_time = nil
 		arg_78_0.interaction_started = false
 		arg_78_0.interaction_ongoing = false

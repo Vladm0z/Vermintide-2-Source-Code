@@ -209,7 +209,7 @@ local var_0_0 = {
 		bot_poison_wind = 2,
 		fire_grenade = 10
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then

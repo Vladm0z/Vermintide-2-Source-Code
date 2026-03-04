@@ -6,11 +6,11 @@ local var_0_0 = Vector3.distance_squared
 local var_0_1 = Geometry
 local var_0_2 = Vector3.distance
 
-function MainPathUtils.total_path_dist()
+MainPathUtils.total_path_dist = function ()
 	return EngineOptimized.main_path_total_length()
 end
 
-function MainPathUtils.closest_pos_at_main_path(arg_2_0, arg_2_1, arg_2_2)
+MainPathUtils.closest_pos_at_main_path = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0
 	local var_2_1
 
@@ -24,7 +24,7 @@ function MainPathUtils.closest_pos_at_main_path(arg_2_0, arg_2_1, arg_2_2)
 	return EngineOptimized.closest_pos_at_main_path(arg_2_1, var_2_0, var_2_1)
 end
 
-function MainPathUtils.closest_pos_at_main_path_lua(arg_3_0, arg_3_1, arg_3_2)
+MainPathUtils.closest_pos_at_main_path_lua = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = math.huge
 	local var_3_1
 	local var_3_2
@@ -85,7 +85,7 @@ function MainPathUtils.closest_pos_at_main_path_lua(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_3, var_3_5, var_3_6, var_3_23, var_3_1, var_3_2
 end
 
-function MainPathUtils.collapse_main_paths(arg_4_0)
+MainPathUtils.collapse_main_paths = function (arg_4_0)
 	local var_4_0 = {}
 	local var_4_1 = {}
 	local var_4_2 = {}
@@ -122,11 +122,11 @@ function MainPathUtils.collapse_main_paths(arg_4_0)
 	return var_4_0, var_4_1, var_4_4, var_4_2, var_4_3
 end
 
-function MainPathUtils.point_on_mainpath(arg_5_0, arg_5_1)
+MainPathUtils.point_on_mainpath = function (arg_5_0, arg_5_1)
 	return EngineOptimized.point_on_mainpath(arg_5_1)
 end
 
-function MainPathUtils.point_on_mainpath_lua(arg_6_0, arg_6_1)
+MainPathUtils.point_on_mainpath_lua = function (arg_6_0, arg_6_1)
 	if arg_6_1 < 0 then
 		return arg_6_0[1].nodes[1]:unbox(), 1
 	end
@@ -153,7 +153,7 @@ function MainPathUtils.point_on_mainpath_lua(arg_6_0, arg_6_1)
 	return var_6_7[#var_6_7]:unbox(), var_6_6
 end
 
-function MainPathUtils.zone_segment_on_mainpath(arg_7_0, arg_7_1)
+MainPathUtils.zone_segment_on_mainpath = function (arg_7_0, arg_7_1)
 	local var_7_0, var_7_1, var_7_2 = MainPathUtils.closest_pos_at_main_path(arg_7_0, arg_7_1)
 
 	return (math.floor((var_7_1 + 5) / 10))
@@ -196,7 +196,7 @@ local var_0_3 = {
 }
 local var_0_4 = #var_0_3
 
-function MainPathUtils.closest_pos_at_collapsed_main_path(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+MainPathUtils.closest_pos_at_collapsed_main_path = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	arg_9_4 = arg_9_4 or 1
 
 	local var_9_0 = #arg_9_0
@@ -259,7 +259,7 @@ function MainPathUtils.closest_pos_at_collapsed_main_path(arg_9_0, arg_9_1, arg_
 	return var_9_4, var_9_18, var_9_16, var_9_5
 end
 
-function MainPathUtils.resolve_node_in_door(arg_10_0, arg_10_1, arg_10_2)
+MainPathUtils.resolve_node_in_door = function (arg_10_0, arg_10_1, arg_10_2)
 	if ScriptUnit.has_extension(arg_10_2, "nav_graph_system") == nil then
 		return arg_10_1
 	end
@@ -296,7 +296,7 @@ end
 
 local var_0_5 = 1.5
 
-function MainPathUtils.node_list_from_main_paths(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+MainPathUtils.node_list_from_main_paths = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = {}
 	local var_11_1 = {}
 	local var_11_2 = {}
@@ -385,7 +385,7 @@ function MainPathUtils.node_list_from_main_paths(arg_11_0, arg_11_1, arg_11_2, a
 	return var_11_0, var_11_1, var_11_2, var_11_3
 end
 
-function MainPathUtils.closest_node_in_node_list(arg_12_0, arg_12_1)
+MainPathUtils.closest_node_in_node_list = function (arg_12_0, arg_12_1)
 	local var_12_0 = math.huge
 	local var_12_1
 
@@ -402,7 +402,7 @@ function MainPathUtils.closest_node_in_node_list(arg_12_0, arg_12_1)
 	return var_12_1
 end
 
-function MainPathUtils.ray_along_node_list(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+MainPathUtils.ray_along_node_list = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_3 == -1 and 1 or #arg_13_1
 	local var_13_1 = 0
 
@@ -435,7 +435,7 @@ function MainPathUtils.ray_along_node_list(arg_13_0, arg_13_1, arg_13_2, arg_13_
 	end
 end
 
-function MainPathUtils.find_equidistant_points_in_node_list(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+MainPathUtils.find_equidistant_points_in_node_list = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = arg_14_1
 	local var_14_1 = 1
 	local var_14_2 = 0
@@ -473,7 +473,7 @@ function MainPathUtils.find_equidistant_points_in_node_list(arg_14_0, arg_14_1, 
 	end
 end
 
-function MainPathUtils.get_main_path_point_between_players(arg_15_0, arg_15_1, arg_15_2)
+MainPathUtils.get_main_path_point_between_players = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0
 	local var_15_1
 	local var_15_2

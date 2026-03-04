@@ -35,7 +35,7 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_skulls_of_fury"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.seed = Managers.mechanism:get_level_seed("mutator")
 		arg_1_1.unit_extension_template = "buffed_timed_explosion_unit"
 		arg_1_1.extension_init_data = {
@@ -49,7 +49,7 @@ return {
 			}
 		}
 	end,
-	server_ai_killed_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	server_ai_killed_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = 1
 		local var_2_1
 
@@ -77,7 +77,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	server_player_hit_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if arg_3_4[2] == "skulls_of_fury" then
 			local var_3_0 = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
 			local var_3_1 = FrameTable.alloc_table()

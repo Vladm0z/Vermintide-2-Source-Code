@@ -77,7 +77,7 @@ local var_0_1 = {
 			inventory = 3,
 			crafting = 2
 		},
-		can_add_function = function(arg_1_0)
+		can_add_function = function (arg_1_0)
 			return arg_1_0 ~= "versus" and arg_1_0 ~= "inn_vs"
 		end
 	},

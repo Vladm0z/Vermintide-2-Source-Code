@@ -10,7 +10,7 @@ BIG_SOUND_REMAINGING_TIME = 10
 
 local var_0_3 = false
 
-function WeaveTimerUI.init(arg_1_0, arg_1_1, arg_1_2)
+WeaveTimerUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui_context = arg_1_2
@@ -22,11 +22,11 @@ function WeaveTimerUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function WeaveTimerUI.destroy(arg_2_0)
+WeaveTimerUI.destroy = function (arg_2_0)
 	return
 end
 
-function WeaveTimerUI._create_ui_elements(arg_3_0)
+WeaveTimerUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_3_0._render_settings = arg_3_0._render_settings or {}
 	arg_3_0._widgets = {}
@@ -40,16 +40,16 @@ function WeaveTimerUI._create_ui_elements(arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 end
 
-function WeaveTimerUI.update(arg_4_0, arg_4_1, arg_4_2)
+WeaveTimerUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_timer(arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1, arg_4_2)
 end
 
-function WeaveTimerUI._play_sound(arg_5_0, arg_5_1)
+WeaveTimerUI._play_sound = function (arg_5_0, arg_5_1)
 	WwiseWorld.trigger_event(arg_5_0._wwise_world, arg_5_1)
 end
 
-function WeaveTimerUI._update_timer(arg_6_0, arg_6_1, arg_6_2)
+WeaveTimerUI._update_timer = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.weave
 
 	if var_6_0:get_active_weave() then
@@ -87,7 +87,7 @@ function WeaveTimerUI._update_timer(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function WeaveTimerUI._update_bar(arg_7_0, arg_7_1, arg_7_2)
+WeaveTimerUI._update_bar = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = Managers.weave
 
 	if var_7_0:get_active_weave() then
@@ -101,7 +101,7 @@ function WeaveTimerUI._update_bar(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function WeaveTimerUI._draw(arg_8_0, arg_8_1, arg_8_2)
+WeaveTimerUI._draw = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._ui_renderer
 	local var_8_1 = arg_8_0._ui_scenegraph
 	local var_8_2 = arg_8_0._render_settings

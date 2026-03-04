@@ -9,7 +9,7 @@ local var_0_1 = 2
 
 PeerStates.Connecting = {
 	approved_for_joining = false,
-	on_enter = function(arg_1_0, arg_1_1)
+	on_enter = function (arg_1_0, arg_1_1)
 		Network.write_dump_tag(string.format("%s connecting", arg_1_0.peer_id))
 		arg_1_0.server.network_transmit:send_rpc("rpc_notify_connected", arg_1_0.peer_id)
 
@@ -17,7 +17,7 @@ PeerStates.Connecting = {
 		arg_1_0.resend_timer = var_0_1
 		arg_1_0.resend_post_game_timer = var_0_1
 	end,
-	rpc_notify_lobby_joined = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	rpc_notify_lobby_joined = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		arg_2_0.num_players = 1
 		arg_2_0.has_received_rpc_notify_lobby_joined = true
 		arg_2_0.clan_tag = arg_2_4
@@ -37,21 +37,21 @@ PeerStates.Connecting = {
 			arg_2_0.has_eac = true
 		end
 	end,
-	rpc_post_game_notified = function(arg_3_0, arg_3_1)
+	rpc_post_game_notified = function (arg_3_0, arg_3_1)
 		arg_3_0._has_been_notfied_of_post_game_state = true
 		arg_3_0._in_post_game = arg_3_1
 	end,
-	rpc_level_loaded = function(arg_4_0, arg_4_1)
+	rpc_level_loaded = function (arg_4_0, arg_4_1)
 		arg_4_0.loaded_level = NetworkLookup.level_keys[arg_4_1]
 	end,
-	rpc_provide_slot_reservation_info = function(arg_5_0, arg_5_1, arg_5_2)
+	rpc_provide_slot_reservation_info = function (arg_5_0, arg_5_1, arg_5_2)
 		arg_5_0.server:get_match_handler():register_pending_peer(arg_5_0.peer_id, arg_5_2)
 
 		local var_5_0 = Managers.mechanism
 
 		;(var_5_0:get_slot_reservation_handler(arg_5_0.server.my_peer_id, var_0_0.pending_custom_game) or var_5_0:get_slot_reservation_handler(arg_5_0.server.my_peer_id, var_0_0.session)):connecting_slot_reservation_info_received(arg_5_0.peer_id, arg_5_1, arg_5_2)
 	end,
-	update = function(arg_6_0, arg_6_1)
+	update = function (arg_6_0, arg_6_1)
 		local var_6_0 = Managers.ban_list
 
 		if var_6_0 ~= nil and var_6_0:is_banned(arg_6_0.peer_id) then
@@ -193,14 +193,14 @@ PeerStates.Connecting = {
 			end
 		end
 	end,
-	rpc_level_load_started = function(arg_7_0, arg_7_1)
+	rpc_level_load_started = function (arg_7_0, arg_7_1)
 		if not arg_7_0.has_hot_join_synced_party_and_profile then
 			arg_7_0.server:hot_join_sync_party_and_profiles(arg_7_0.peer_id)
 
 			arg_7_0.has_hot_join_synced_party_and_profile = true
 		end
 	end,
-	on_exit = function(arg_8_0, arg_8_1)
+	on_exit = function (arg_8_0, arg_8_1)
 		arg_8_0._has_been_notfied_of_post_game_state = nil
 		arg_8_0.has_received_rpc_notify_lobby_joined = nil
 		arg_8_0._in_post_game = nil
@@ -208,7 +208,7 @@ PeerStates.Connecting = {
 }
 PeerStates.Loading = {
 	approved_for_joining = true,
-	on_enter = function(arg_9_0, arg_9_1)
+	on_enter = function (arg_9_0, arg_9_1)
 		local var_9_0 = arg_9_0.peer_id
 
 		Network.write_dump_tag(string.format("%s loading", var_9_0))
@@ -218,19 +218,19 @@ PeerStates.Loading = {
 
 		Managers.level_transition_handler.transient_package_loader:hot_join_sync(var_9_0)
 	end,
-	rpc_is_ingame = function(arg_10_0)
+	rpc_is_ingame = function (arg_10_0)
 		print("[PSM] Got rpc_is_ingame in PeerStates.Loading, is that ok?")
 
 		arg_10_0.is_ingame = true
 	end,
-	rpc_level_load_started = function(arg_11_0, arg_11_1)
+	rpc_level_load_started = function (arg_11_0, arg_11_1)
 		if not arg_11_0.has_hot_join_synced_party_and_profile then
 			arg_11_0.server:hot_join_sync_party_and_profiles(arg_11_0.peer_id)
 
 			arg_11_0.has_hot_join_synced_party_and_profile = true
 		end
 	end,
-	rpc_level_loaded = function(arg_12_0, arg_12_1)
+	rpc_level_loaded = function (arg_12_0, arg_12_1)
 		arg_12_0.loaded_level = NetworkLookup.level_keys[arg_12_1]
 
 		local var_12_0 = Managers.level_transition_handler.enemy_package_loader:load_sync_done_for_peer(arg_12_0.peer_id)
@@ -243,10 +243,10 @@ PeerStates.Loading = {
 			printf("Peer %s has loaded the level but we wait because: Enemies loaded (%s), Pickups loaded (%s), General packages loaded: (%s)", arg_12_0.peer_id, var_12_0, var_12_1, var_12_2)
 		end
 	end,
-	rpc_provide_slot_reservation_info = function(arg_13_0, arg_13_1, arg_13_2)
+	rpc_provide_slot_reservation_info = function (arg_13_0, arg_13_1, arg_13_2)
 		Managers.mechanism:get_slot_reservation_handler(arg_13_0.server.my_peer_id, var_0_0.session):connecting_slot_reservation_info_received(arg_13_0.peer_id, arg_13_1, arg_13_2)
 	end,
-	update = function(arg_14_0, arg_14_1)
+	update = function (arg_14_0, arg_14_1)
 		if arg_14_0.is_remote then
 			local var_14_0 = Managers.mechanism
 
@@ -280,13 +280,13 @@ PeerStates.Loading = {
 			end
 		end
 	end,
-	on_exit = function(arg_15_0, arg_15_1)
+	on_exit = function (arg_15_0, arg_15_1)
 		return
 	end
 }
 PeerStates.LoadingProfilePackages = {
 	approved_for_joining = true,
-	on_enter = function(arg_16_0, arg_16_1)
+	on_enter = function (arg_16_0, arg_16_1)
 		Network.write_dump_tag(string.format("%s loading profile packages", arg_16_0.peer_id))
 
 		local var_16_0 = arg_16_0.server.profile_synchronizer
@@ -313,16 +313,16 @@ PeerStates.LoadingProfilePackages = {
 
 			arg_16_0.wanted_profile_index, arg_16_0.wanted_career_index = var_16_0:get_first_free_profile(var_16_10)
 		elseif var_16_9 then
-			-- block empty
+			-- Nothing
 		else
 			arg_16_0.wanted_profile_index = var_16_5
 			arg_16_0.wanted_career_index = var_16_6
 		end
 	end,
-	rpc_is_ingame = function(arg_17_0)
+	rpc_is_ingame = function (arg_17_0)
 		arg_17_0.is_ingame = true
 	end,
-	update = function(arg_18_0, arg_18_1)
+	update = function (arg_18_0, arg_18_1)
 		local var_18_0 = arg_18_0.server
 
 		if var_18_0.profile_synchronizer:all_synced() then
@@ -331,7 +331,7 @@ PeerStates.LoadingProfilePackages = {
 			return PeerStates.WaitingForEnterGame
 		end
 	end,
-	on_exit = function(arg_19_0, arg_19_1)
+	on_exit = function (arg_19_0, arg_19_1)
 		return
 	end
 }
@@ -342,13 +342,13 @@ end
 
 PeerStates.WaitingForEnterGame = {
 	approved_for_joining = true,
-	on_enter = function(arg_21_0, arg_21_1)
+	on_enter = function (arg_21_0, arg_21_1)
 		Network.write_dump_tag(string.format("%s waiting for enter game", arg_21_0.peer_id))
 	end,
-	rpc_is_ingame = function(arg_22_0)
+	rpc_is_ingame = function (arg_22_0)
 		arg_22_0.is_ingame = true
 	end,
-	update = function(arg_23_0, arg_23_1)
+	update = function (arg_23_0, arg_23_1)
 		local var_23_0 = arg_23_0.server
 
 		if arg_23_0.is_ingame and var_23_0.game_network_manager and var_23_0.game_network_manager:game_session_host() then
@@ -377,16 +377,16 @@ PeerStates.WaitingForEnterGame = {
 			arg_23_0:change_state(PeerStates.WaitingForGameObjectSync)
 		end
 	end,
-	on_exit = function(arg_24_0, arg_24_1)
+	on_exit = function (arg_24_0, arg_24_1)
 		return
 	end
 }
 PeerStates.WaitingForGameObjectSync = {
 	approved_for_joining = true,
-	on_enter = function(arg_25_0, arg_25_1)
+	on_enter = function (arg_25_0, arg_25_1)
 		Network.write_dump_tag(string.format("%s waiting for game object sync", arg_25_0.peer_id))
 	end,
-	update = function(arg_26_0, arg_26_1)
+	update = function (arg_26_0, arg_26_1)
 		local var_26_0 = arg_26_0.peer_id
 
 		if arg_26_0.server:has_peer_synced_game_objects(var_26_0) then
@@ -429,16 +429,16 @@ PeerStates.WaitingForGameObjectSync = {
 			return PeerStates.WaitingForPlayers
 		end
 	end,
-	on_exit = function(arg_27_0, arg_27_1)
+	on_exit = function (arg_27_0, arg_27_1)
 		return
 	end
 }
 PeerStates.WaitingForPlayers = {
 	approved_for_joining = true,
-	on_enter = function(arg_28_0, arg_28_1)
+	on_enter = function (arg_28_0, arg_28_1)
 		Network.write_dump_tag(string.format("%s waiting for players", arg_28_0.peer_id))
 	end,
-	update = function(arg_29_0, arg_29_1)
+	update = function (arg_29_0, arg_29_1)
 		local var_29_0 = Managers.state.entity:system("cutscene_system")
 
 		if not var_29_0.cutscene_started then
@@ -449,47 +449,47 @@ PeerStates.WaitingForPlayers = {
 			return PeerStates.InGame
 		end
 	end,
-	on_exit = function(arg_30_0, arg_30_1)
+	on_exit = function (arg_30_0, arg_30_1)
 		return
 	end
 }
 PeerStates.InGame = {
 	approved_for_joining = true,
-	on_enter = function(arg_31_0, arg_31_1)
+	on_enter = function (arg_31_0, arg_31_1)
 		Managers.account:update_presence()
 		Network.write_dump_tag(string.format("%s in game", arg_31_0.peer_id))
 	end,
-	respawn_player = function(arg_32_0)
+	respawn_player = function (arg_32_0)
 		assert(arg_32_0.despawned_player, "[PeerStates] - Trying to respawn player without having despawned the player.")
 
 		arg_32_0.respawn_player = true
 	end,
-	despawned_player = function(arg_33_0)
+	despawned_player = function (arg_33_0)
 		arg_33_0.despawned_player = true
 	end,
-	update = function(arg_34_0, arg_34_1)
+	update = function (arg_34_0, arg_34_1)
 		return
 	end,
-	on_exit = function(arg_35_0, arg_35_1)
+	on_exit = function (arg_35_0, arg_35_1)
 		arg_35_0.despawned_player = nil
 		arg_35_0.respawn_player = nil
 	end
 }
 PeerStates.InPostGame = {
 	approved_for_joining = true,
-	on_enter = function(arg_36_0, arg_36_1)
+	on_enter = function (arg_36_0, arg_36_1)
 		Network.write_dump_tag(string.format("%s in post game", arg_36_0.peer_id))
 	end,
-	update = function(arg_37_0, arg_37_1)
+	update = function (arg_37_0, arg_37_1)
 		return
 	end,
-	on_exit = function(arg_38_0, arg_38_1)
+	on_exit = function (arg_38_0, arg_38_1)
 		return
 	end
 }
 PeerStates.Disconnecting = {
 	approved_for_joining = false,
-	on_enter = function(arg_39_0, arg_39_1)
+	on_enter = function (arg_39_0, arg_39_1)
 		printf("[PSM] Disconnecting peer %s", arg_39_0.peer_id)
 		Network.write_dump_tag(string.format("%s disconnecting", arg_39_0.peer_id))
 
@@ -548,16 +548,16 @@ PeerStates.Disconnecting = {
 		Managers.party:server_peer_left_session(var_39_2, arg_39_1.approved_for_joining, arg_39_1.state_name)
 		var_39_0:set_peer_synced_game_objects(var_39_2, false)
 	end,
-	update = function(arg_40_0, arg_40_1)
+	update = function (arg_40_0, arg_40_1)
 		return PeerStates.Disconnected
 	end,
-	on_exit = function(arg_41_0, arg_41_1)
+	on_exit = function (arg_41_0, arg_41_1)
 		return
 	end
 }
 PeerStates.Disconnected = {
 	approved_for_joining = false,
-	on_enter = function(arg_42_0, arg_42_1)
+	on_enter = function (arg_42_0, arg_42_1)
 		Network.write_dump_tag(string.format("%s disconnected", arg_42_0.peer_id))
 
 		local var_42_0 = arg_42_0.peer_id
@@ -572,10 +572,10 @@ PeerStates.Disconnected = {
 		var_42_1:peer_disconnected(var_42_0)
 		var_42_1:close_channel(var_42_0)
 	end,
-	update = function(arg_43_0, arg_43_1)
+	update = function (arg_43_0, arg_43_1)
 		return
 	end,
-	on_exit = function(arg_44_0, arg_44_1)
+	on_exit = function (arg_44_0, arg_44_1)
 		Network.write_dump_tag(string.format("%s leaving disconnected", arg_44_0.peer_id))
 	end
 }
@@ -584,7 +584,7 @@ for iter_0_0, iter_0_1 in pairs(PeerStates) do
 	iter_0_1.state_name = iter_0_0
 
 	setmetatable(iter_0_1, {
-		__tostring = function()
+		__tostring = function ()
 			return iter_0_0
 		end
 	})

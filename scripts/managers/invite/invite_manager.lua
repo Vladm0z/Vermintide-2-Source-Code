@@ -4,19 +4,19 @@ InviteManager = class(InviteManager)
 
 local var_0_0 = 1
 
-function InviteManager.init(arg_1_0)
+InviteManager.init = function (arg_1_0)
 	arg_1_0.lobby_data = nil
 	arg_1_0._pending_lobby_data = {}
 	arg_1_0.is_steam = rawget(_G, "Steam") and rawget(_G, "Friends") and true or false
 	arg_1_0._refresh_timer = var_0_0
 end
 
-function InviteManager.update(arg_2_0, arg_2_1, arg_2_2)
+InviteManager.update = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_update_pending_lobby_data(arg_2_1, arg_2_2)
 	arg_2_0:_poll_invite(arg_2_1, arg_2_2)
 end
 
-function InviteManager._poll_invite(arg_3_0, arg_3_1, arg_3_2)
+InviteManager._poll_invite = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0.is_steam then
 		local var_3_0, var_3_1, var_3_2, var_3_3 = Friends.next_invite()
 
@@ -36,7 +36,7 @@ function InviteManager._poll_invite(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function InviteManager._handle_invitation(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+InviteManager._handle_invitation = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = Development.parameter("use_lan_backend") and arg_4_1 ~= Friends.NO_INVITE
 
 	assert(not var_4_0, "You cannot use Steam invites in combination with LAN backend.")
@@ -62,7 +62,7 @@ function InviteManager._handle_invitation(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 	end
 end
 
-function InviteManager._update_pending_lobby_data(arg_5_0, arg_5_1, arg_5_2)
+InviteManager._update_pending_lobby_data = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._pending_lobby_data.lobby_id then
 		return
 	end
@@ -79,7 +79,7 @@ function InviteManager._update_pending_lobby_data(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function InviteManager.has_invitation(arg_6_0)
+InviteManager.has_invitation = function (arg_6_0)
 	if arg_6_0.lobby_data == nil then
 		local var_6_0, var_6_1 = Managers.time:time_and_delta("main")
 
@@ -89,7 +89,7 @@ function InviteManager.has_invitation(arg_6_0)
 	return arg_6_0.lobby_data ~= nil
 end
 
-function InviteManager.get_invited_lobby_data(arg_7_0)
+InviteManager.get_invited_lobby_data = function (arg_7_0)
 	local var_7_0 = arg_7_0.lobby_data
 
 	arg_7_0.lobby_data = nil
@@ -97,21 +97,21 @@ function InviteManager.get_invited_lobby_data(arg_7_0)
 	return var_7_0
 end
 
-function InviteManager.set_invited_lobby_data(arg_8_0, arg_8_1)
+InviteManager.set_invited_lobby_data = function (arg_8_0, arg_8_1)
 	local var_8_0 = LobbyInternal.get_lobby_data_from_id(arg_8_1)
 
 	var_8_0.id = arg_8_1
 	arg_8_0.lobby_data = var_8_0
 end
 
-function InviteManager.clear_invites(arg_9_0)
+InviteManager.clear_invites = function (arg_9_0)
 	return
 end
 
-function InviteManager.invites_handled(arg_10_0)
+InviteManager.invites_handled = function (arg_10_0)
 	return true
 end
 
-function InviteManager.get_invite_error(arg_11_0)
+InviteManager.get_invite_error = function (arg_11_0)
 	return
 end

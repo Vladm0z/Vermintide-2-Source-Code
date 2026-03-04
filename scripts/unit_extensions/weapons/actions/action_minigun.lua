@@ -13,7 +13,7 @@ local var_0_7 = 10
 local var_0_8 = Unit.set_flow_variable
 local var_0_9 = Unit.flow_event
 
-function ActionMinigun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionMinigun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionMinigun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
@@ -28,7 +28,7 @@ function ActionMinigun.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 	arg_1_0._num_extra_shots = 0
 end
 
-function ActionMinigun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionMinigun.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0._time_to_shoot
 
 	ActionMinigun.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
@@ -67,7 +67,7 @@ function ActionMinigun.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_
 	arg_2_0:_play_vo()
 end
 
-function ActionMinigun._update_attack_speed(arg_3_0, arg_3_1)
+ActionMinigun._update_attack_speed = function (arg_3_0, arg_3_1)
 	if not arg_3_0._calculated_attack_speed then
 		arg_3_0._attack_speed_mod = ActionUtils.get_action_time_scale(arg_3_0.owner_unit, arg_3_0.current_action)
 
@@ -77,7 +77,7 @@ function ActionMinigun._update_attack_speed(arg_3_0, arg_3_1)
 	end
 end
 
-function ActionMinigun._waiting_to_shoot(arg_4_0, arg_4_1, arg_4_2)
+ActionMinigun._waiting_to_shoot = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_update_animation_speed(arg_4_0._current_rps)
 
 	if arg_4_0._check_near_wall then
@@ -91,7 +91,7 @@ function ActionMinigun._waiting_to_shoot(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ActionMinigun.get_projectile_start_position_rotation(arg_5_0)
+ActionMinigun.get_projectile_start_position_rotation = function (arg_5_0)
 	local var_5_0 = Unit.node(arg_5_0.weapon_unit, "a_barrel")
 	local var_5_1 = Unit.world_rotation(arg_5_0.weapon_unit, var_5_0)
 	local var_5_2 = Quaternion.forward(var_5_1)
@@ -114,7 +114,7 @@ function ActionMinigun.get_projectile_start_position_rotation(arg_5_0)
 	return var_5_4, var_5_13
 end
 
-function ActionMinigun._shoot(arg_6_0, arg_6_1, arg_6_2)
+ActionMinigun._shoot = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_attack_speed(arg_6_2)
 	arg_6_0:_update_bot_avoidance(arg_6_2)
 
@@ -154,7 +154,7 @@ function ActionMinigun._shoot(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._first_shot = false
 end
 
-function ActionMinigun._shooting(arg_7_0, arg_7_1, arg_7_2)
+ActionMinigun._shooting = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._num_projectiles_per_shot
 	local var_7_1 = arg_7_0._num_projectiles_spawned
 	local var_7_2 = var_7_0 - var_7_1
@@ -170,7 +170,7 @@ function ActionMinigun._shooting(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function ActionMinigun._staggered_shot_done(arg_8_0, arg_8_1)
+ActionMinigun._staggered_shot_done = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.current_action
 	local var_8_1 = arg_8_0.first_person_extension
 
@@ -191,11 +191,11 @@ function ActionMinigun._staggered_shot_done(arg_8_0, arg_8_1)
 	end
 end
 
-function ActionMinigun._finished_shooting(arg_9_0, arg_9_1)
+ActionMinigun._finished_shooting = function (arg_9_0, arg_9_1)
 	arg_9_0.weapon_extension:stop_action("action_complete")
 end
 
-function ActionMinigun.finish(arg_10_0, arg_10_1)
+ActionMinigun.finish = function (arg_10_0, arg_10_1)
 	if arg_10_0._near_wall then
 		arg_10_0.first_person_extension:animation_set_variable("disable_shooting", 0)
 		CharacterStateHelper.play_animation_event_first_person(arg_10_0.first_person_extension, "near_wall_updated")
@@ -210,15 +210,15 @@ function ActionMinigun.finish(arg_10_0, arg_10_1)
 	arg_10_0.weapon_extension:set_custom_data("windup", var_10_2)
 end
 
-function ActionMinigun.proc_extra_shot(arg_11_0, arg_11_1)
+ActionMinigun.proc_extra_shot = function (arg_11_0, arg_11_1)
 	return false
 end
 
-function ActionMinigun.gen_num_shots(arg_12_0)
+ActionMinigun.gen_num_shots = function (arg_12_0)
 	return 1, 1
 end
 
-function ActionMinigun.apply_shot_cost(arg_13_0, arg_13_1)
+ActionMinigun.apply_shot_cost = function (arg_13_0, arg_13_1)
 	if not arg_13_0._use_ability_as_ammo then
 		return ActionMinigun.super.apply_shot_cost(arg_13_0, arg_13_1)
 	end
@@ -246,11 +246,11 @@ function ActionMinigun.apply_shot_cost(arg_13_0, arg_13_1)
 	end
 end
 
-function ActionMinigun._should_consume_ammo(arg_14_0, arg_14_1)
+ActionMinigun._should_consume_ammo = function (arg_14_0, arg_14_1)
 	return arg_14_1 > arg_14_0._free_ammo_t
 end
 
-function ActionMinigun._has_ammo(arg_15_0)
+ActionMinigun._has_ammo = function (arg_15_0)
 	if arg_15_0._use_ability_as_ammo then
 		local var_15_0, var_15_1 = arg_15_0.career_extension:current_ability_cooldown(1)
 
@@ -260,7 +260,7 @@ function ActionMinigun._has_ammo(arg_15_0)
 	end
 end
 
-function ActionMinigun._play_vo(arg_16_0)
+ActionMinigun._play_vo = function (arg_16_0)
 	local var_16_0 = arg_16_0.owner_unit
 	local var_16_1 = ScriptUnit.extension_input(var_16_0, "dialogue_system")
 	local var_16_2 = FrameTable.alloc_table()
@@ -268,11 +268,11 @@ function ActionMinigun._play_vo(arg_16_0)
 	var_16_1:trigger_networked_dialogue_event("activate_ability", var_16_2)
 end
 
-function ActionMinigun._play_vfx(arg_17_0)
+ActionMinigun._play_vfx = function (arg_17_0)
 	return
 end
 
-function ActionMinigun._update_animation_speed(arg_18_0, arg_18_1)
+ActionMinigun._update_animation_speed = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._base_anim_speed * arg_18_1
 	local var_18_1 = math.clamp(var_18_0, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
 
@@ -283,7 +283,7 @@ function ActionMinigun._update_animation_speed(arg_18_0, arg_18_1)
 	end
 end
 
-function ActionMinigun._update_bot_avoidance(arg_19_0, arg_19_1)
+ActionMinigun._update_bot_avoidance = function (arg_19_0, arg_19_1)
 	if not arg_19_0.is_bot and arg_19_1 > arg_19_0._last_avoidance_t + var_0_1 then
 		arg_19_0._last_avoidance_t = arg_19_1
 
@@ -298,7 +298,7 @@ function ActionMinigun._update_bot_avoidance(arg_19_0, arg_19_1)
 	end
 end
 
-function ActionMinigun._fake_activate_ability(arg_20_0, arg_20_1)
+ActionMinigun._fake_activate_ability = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.buff_extension
 
 	if var_20_0 then
@@ -333,7 +333,7 @@ function ActionMinigun._fake_activate_ability(arg_20_0, arg_20_1)
 	end
 end
 
-function ActionMinigun._update_near_wall(arg_21_0)
+ActionMinigun._update_near_wall = function (arg_21_0)
 	local var_21_0 = arg_21_0.first_person_extension
 	local var_21_1 = var_21_0:current_position()
 	local var_21_2 = var_21_0:current_rotation()
@@ -352,7 +352,7 @@ function ActionMinigun._update_near_wall(arg_21_0)
 	end
 end
 
-function ActionMinigun._buffed_shot_cost(arg_22_0)
+ActionMinigun._buffed_shot_cost = function (arg_22_0)
 	local var_22_0 = arg_22_0.buff_extension
 
 	if var_22_0 then

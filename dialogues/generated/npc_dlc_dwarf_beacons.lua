@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/npc_dlc_dwarf_beacons.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nde_dwarf_beacons_beacon_gas_a",
 		name = "nde_dwarf_beacons_beacon_gas_a",

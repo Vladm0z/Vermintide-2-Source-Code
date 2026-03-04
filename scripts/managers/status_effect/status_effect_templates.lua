@@ -10,7 +10,7 @@ end
 
 local var_0_1 = {
 	default_timed_duration = 7,
-	on_applied = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	on_applied = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = {}
 		local var_2_1 = arg_2_2.link_object
 		local var_2_2 = var_2_1 and Unit.has_node(arg_2_0, var_2_1) and Unit.node(arg_2_0, var_2_1) or 0
@@ -93,7 +93,7 @@ local var_0_1 = {
 
 		return var_2_0
 	end,
-	on_increment = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_increment = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if not arg_3_4 then
 			return
 		end
@@ -116,7 +116,7 @@ local var_0_1 = {
 			arg_3_4.death = true
 		end
 	end,
-	on_removed = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_removed = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		if not arg_4_4 then
 			return
 		end
@@ -201,7 +201,7 @@ StatusEffectTemplates.burning.particle_by_category = {
 StatusEffectTemplates.burning_death_critical = table.clone(StatusEffectTemplates.burning)
 StatusEffectTemplates.burning_death_critical.default_timed_duration = 2
 
-function StatusEffectTemplates.burning_death_critical.on_applied(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+StatusEffectTemplates.burning_death_critical.on_applied = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = StatusEffectTemplates.burning.on_applied(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 
 	UNIT_FLOW_EVENT(arg_5_0, "burn_death_critical")
@@ -209,7 +209,7 @@ function StatusEffectTemplates.burning_death_critical.on_applied(arg_5_0, arg_5_
 	return var_5_0
 end
 
-function StatusEffectTemplates.burning_death_critical.on_decrement(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+StatusEffectTemplates.burning_death_critical.on_decrement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_4.burning_death_decremented then
 		return
 	end

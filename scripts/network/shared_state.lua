@@ -326,7 +326,7 @@ local function var_0_17(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15
 	end
 end
 
-function SharedState.init(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+SharedState.init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 	arg_16_0._original_context = arg_16_1
 	arg_16_0._context = tostring(HashUtils.fnv32_hash(arg_16_1))
 	arg_16_0._spec = arg_16_2
@@ -360,7 +360,7 @@ function SharedState.init(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_
 	arg_16_0:_init_immediate_initializations()
 end
 
-function SharedState.register_callback(arg_17_0, arg_17_1, arg_17_2, arg_17_3, ...)
+SharedState.register_callback = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, ...)
 	local var_17_0 = arg_17_0._callbacks[arg_17_1]
 
 	fassert(var_17_0, "Invalid callback type %s", arg_17_1)
@@ -386,7 +386,7 @@ function SharedState.register_callback(arg_17_0, arg_17_1, arg_17_2, arg_17_3, .
 	}
 end
 
-function SharedState.unregister_callback(arg_18_0, arg_18_1, arg_18_2)
+SharedState.unregister_callback = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._callbacks[arg_18_2]
 
 	if not var_18_0 then
@@ -396,7 +396,7 @@ function SharedState.unregister_callback(arg_18_0, arg_18_1, arg_18_2)
 	var_18_0[arg_18_1] = nil
 end
 
-function SharedState.network_context_created(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+SharedState.network_context_created = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	arg_19_0._peer_id = arg_19_3
 	arg_19_0._server_peer_id = arg_19_2
 	arg_19_0._is_server = arg_19_4
@@ -410,7 +410,7 @@ function SharedState.network_context_created(arg_19_0, arg_19_1, arg_19_2, arg_1
 	end
 end
 
-function SharedState.register_rpcs(arg_20_0, arg_20_1)
+SharedState.register_rpcs = function (arg_20_0, arg_20_1)
 	if arg_20_0._network_event_delegate then
 		arg_20_0._network_event_delegate:unregister(arg_20_0)
 	end
@@ -420,11 +420,11 @@ function SharedState.register_rpcs(arg_20_0, arg_20_1)
 	arg_20_1:register(arg_20_0, unpack(var_0_0))
 end
 
-function SharedState.get_revision(arg_21_0)
+SharedState.get_revision = function (arg_21_0)
 	return arg_21_0._revision
 end
 
-function SharedState.clear_peer_data(arg_22_0, arg_22_1)
+SharedState.clear_peer_data = function (arg_22_0, arg_22_1)
 	if arg_22_0:_is_destroyed() then
 		return
 	end
@@ -445,7 +445,7 @@ function SharedState.clear_peer_data(arg_22_0, arg_22_1)
 	arg_22_0._server_full_sync_complete_mapping[arg_22_1] = nil
 end
 
-function SharedState.full_sync(arg_23_0)
+SharedState.full_sync = function (arg_23_0)
 	if arg_23_0:_is_destroyed() then
 		return
 	end
@@ -473,7 +473,7 @@ function SharedState.full_sync(arg_23_0)
 	end
 end
 
-function SharedState.unregister_rpcs(arg_24_0)
+SharedState.unregister_rpcs = function (arg_24_0)
 	if arg_24_0._network_event_delegate then
 		arg_24_0._network_event_delegate:unregister(arg_24_0)
 	end
@@ -481,7 +481,7 @@ function SharedState.unregister_rpcs(arg_24_0)
 	arg_24_0._network_event_delegate = nil
 end
 
-function SharedState.destroy(arg_25_0)
+SharedState.destroy = function (arg_25_0)
 	arg_25_0:unregister_rpcs()
 
 	arg_25_0._peer_state = nil
@@ -494,7 +494,7 @@ function SharedState.destroy(arg_25_0)
 	end
 end
 
-function SharedState.is_peer_fully_synced(arg_26_0, arg_26_1)
+SharedState.is_peer_fully_synced = function (arg_26_0, arg_26_1)
 	if arg_26_0._is_server then
 		if not arg_26_0._network_server then
 			return false
@@ -510,11 +510,11 @@ function SharedState.is_peer_fully_synced(arg_26_0, arg_26_1)
 	end
 end
 
-function SharedState.get_key(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
+SharedState.get_key = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 	return var_0_9(arg_27_0._key_cache, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6)
 end
 
-function SharedState.set_peer(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+SharedState.set_peer = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	if arg_28_0:_is_destroyed() then
 		return
 	end
@@ -558,7 +558,7 @@ function SharedState.set_peer(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	arg_28_0:_increment_revision()
 end
 
-function SharedState.start_atomic_set_server(arg_29_0, arg_29_1)
+SharedState.start_atomic_set_server = function (arg_29_0, arg_29_1)
 	fassert(not arg_29_0._current_start_atomic_set_server, "start_atomic_set_server(%s) called before calling end_atomic_set_server(%s)", arg_29_1, arg_29_0._current_start_atomic_set_server)
 
 	arg_29_0._current_start_atomic_set_server = arg_29_1
@@ -582,7 +582,7 @@ function SharedState.start_atomic_set_server(arg_29_0, arg_29_1)
 	end
 end
 
-function SharedState.end_atomic_set_server(arg_30_0, arg_30_1)
+SharedState.end_atomic_set_server = function (arg_30_0, arg_30_1)
 	fassert(arg_30_0._current_start_atomic_set_server == arg_30_1, "mismatched end_atomic_set_server(%s) and start_atomic_set_server(%s)", arg_30_1, arg_30_0._current_start_atomic_set_server)
 
 	if arg_30_0._is_server then
@@ -606,7 +606,7 @@ function SharedState.end_atomic_set_server(arg_30_0, arg_30_1)
 	arg_30_0._current_start_atomic_set_server = nil
 end
 
-function SharedState.set_server(arg_31_0, arg_31_1, arg_31_2)
+SharedState.set_server = function (arg_31_0, arg_31_1, arg_31_2)
 	if arg_31_0:_is_destroyed() then
 		return
 	end
@@ -644,11 +644,11 @@ function SharedState.set_server(arg_31_0, arg_31_1, arg_31_2)
 	arg_31_0:_increment_revision()
 end
 
-function SharedState.set_own(arg_32_0, arg_32_1, arg_32_2)
+SharedState.set_own = function (arg_32_0, arg_32_1, arg_32_2)
 	arg_32_0:set_peer(arg_32_0._peer_id, arg_32_1, arg_32_2)
 end
 
-function SharedState.get_peer(arg_33_0, arg_33_1, arg_33_2)
+SharedState.get_peer = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_0:_is_destroyed() then
 		return arg_33_0._spec.peer[arg_33_2.key_type].default_value
 	end
@@ -656,11 +656,11 @@ function SharedState.get_peer(arg_33_0, arg_33_1, arg_33_2)
 	return var_0_4(arg_33_0._peer_state, arg_33_1, arg_33_2.key_type, arg_33_2.peer_id, arg_33_2.local_player_id, arg_33_2.profile_index, arg_33_2.career_index, arg_33_2.party_id) or arg_33_0._spec.peer[arg_33_2.key_type].default_value
 end
 
-function SharedState.get_own(arg_34_0, arg_34_1)
+SharedState.get_own = function (arg_34_0, arg_34_1)
 	return arg_34_0:get_peer(arg_34_0._peer_id, arg_34_1)
 end
 
-function SharedState.get_server(arg_35_0, arg_35_1)
+SharedState.get_server = function (arg_35_0, arg_35_1)
 	if arg_35_0:_is_destroyed() then
 		return arg_35_0._spec.server[arg_35_1.key_type].default_value
 	end
@@ -668,7 +668,7 @@ function SharedState.get_server(arg_35_0, arg_35_1)
 	return var_0_6(arg_35_0._server_state, arg_35_1.key_type, arg_35_1.peer_id, arg_35_1.local_player_id, arg_35_1.profile_index, arg_35_1.career_index, arg_35_1.party_id) or arg_35_0._spec.server[arg_35_1.key_type].default_value
 end
 
-function SharedState.rpc_shared_state_request_sync(arg_36_0, arg_36_1, arg_36_2)
+SharedState.rpc_shared_state_request_sync = function (arg_36_0, arg_36_1, arg_36_2)
 	if arg_36_0:_is_destroyed() then
 		return nil
 	end
@@ -716,7 +716,7 @@ function SharedState.rpc_shared_state_request_sync(arg_36_0, arg_36_1, arg_36_2)
 	end
 end
 
-function SharedState.rpc_shared_state_full_sync_complete(arg_37_0, arg_37_1, arg_37_2)
+SharedState.rpc_shared_state_full_sync_complete = function (arg_37_0, arg_37_1, arg_37_2)
 	if arg_37_0:_is_destroyed() then
 		return
 	end
@@ -734,7 +734,7 @@ function SharedState.rpc_shared_state_full_sync_complete(arg_37_0, arg_37_1, arg
 	end
 end
 
-function SharedState.rpc_shared_state_set_int(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10)
+SharedState.rpc_shared_state_set_int = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10)
 	if arg_38_0:_is_destroyed() then
 		return
 	end
@@ -746,7 +746,7 @@ function SharedState.rpc_shared_state_set_int(arg_38_0, arg_38_1, arg_38_2, arg_
 	arg_38_0:_set_rpc(arg_38_1, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10)
 end
 
-function SharedState.rpc_shared_state_set_string(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9, arg_39_10, arg_39_11)
+SharedState.rpc_shared_state_set_string = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9, arg_39_10, arg_39_11)
 	if arg_39_0:_is_destroyed() then
 		return
 	end
@@ -774,7 +774,7 @@ function SharedState.rpc_shared_state_set_string(arg_39_0, arg_39_1, arg_39_2, a
 	end
 end
 
-function SharedState.rpc_shared_state_set_bool(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6, arg_40_7, arg_40_8, arg_40_9, arg_40_10)
+SharedState.rpc_shared_state_set_bool = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6, arg_40_7, arg_40_8, arg_40_9, arg_40_10)
 	if arg_40_0:_is_destroyed() then
 		return
 	end
@@ -786,7 +786,7 @@ function SharedState.rpc_shared_state_set_bool(arg_40_0, arg_40_1, arg_40_2, arg
 	arg_40_0:_set_rpc(arg_40_1, arg_40_3, arg_40_4, arg_40_5, arg_40_6, arg_40_7, arg_40_8, arg_40_9, arg_40_10)
 end
 
-function SharedState.rpc_shared_state_set_server_int(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
+SharedState.rpc_shared_state_set_server_int = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
 	if arg_41_0:_is_destroyed() then
 		return
 	end
@@ -798,7 +798,7 @@ function SharedState.rpc_shared_state_set_server_int(arg_41_0, arg_41_1, arg_41_
 	arg_41_0:_set_server_rpc(arg_41_1, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
 end
 
-function SharedState.rpc_shared_state_set_server_string(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6, arg_42_7, arg_42_8, arg_42_9, arg_42_10)
+SharedState.rpc_shared_state_set_server_string = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6, arg_42_7, arg_42_8, arg_42_9, arg_42_10)
 	if arg_42_0:_is_destroyed() then
 		return
 	end
@@ -826,7 +826,7 @@ function SharedState.rpc_shared_state_set_server_string(arg_42_0, arg_42_1, arg_
 	end
 end
 
-function SharedState.rpc_shared_state_set_server_bool(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
+SharedState.rpc_shared_state_set_server_bool = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
 	if arg_43_0:_is_destroyed() then
 		return
 	end
@@ -838,7 +838,7 @@ function SharedState.rpc_shared_state_set_server_bool(arg_43_0, arg_43_1, arg_43
 	arg_43_0:_set_server_rpc(arg_43_1, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
 end
 
-function SharedState.rpc_shared_state_client_left(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+SharedState.rpc_shared_state_client_left = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	if arg_44_0:_is_destroyed() then
 		return
 	end
@@ -859,7 +859,7 @@ function SharedState.rpc_shared_state_client_left(arg_44_0, arg_44_1, arg_44_2, 
 	end
 end
 
-function SharedState._set_rpc(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
+SharedState._set_rpc = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
 	local var_45_0 = arg_45_0._key_type_lookup[arg_45_3]
 	local var_45_1 = arg_45_0._spec.peer[var_45_0]
 	local var_45_2 = var_45_1.decode
@@ -898,7 +898,7 @@ function SharedState._set_rpc(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, 
 	end
 end
 
-function SharedState._set_server_rpc(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8)
+SharedState._set_server_rpc = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8)
 	local var_46_0 = arg_46_0._atomic_set_server_cache
 
 	if var_46_0 then
@@ -937,7 +937,7 @@ function SharedState._set_server_rpc(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg
 	end
 end
 
-function SharedState._send_all(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+SharedState._send_all = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	for iter_47_0, iter_47_1 in pairs(arg_47_3) do
 		for iter_47_2, iter_47_3 in pairs(iter_47_1) do
 			for iter_47_4, iter_47_5 in pairs(iter_47_3) do
@@ -956,7 +956,7 @@ function SharedState._send_all(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	end
 end
 
-function SharedState._clear_peer_id_data(arg_48_0, arg_48_1)
+SharedState._clear_peer_id_data = function (arg_48_0, arg_48_1)
 	for iter_48_0, iter_48_1 in pairs(arg_48_0._spec.server) do
 		if iter_48_1.clear_when_peer_id_leaves then
 			local var_48_0 = arg_48_0._server_state[iter_48_0]
@@ -984,17 +984,17 @@ function SharedState._clear_peer_id_data(arg_48_0, arg_48_1)
 	arg_48_0:_increment_revision()
 end
 
-function SharedState.has_peer_state(arg_49_0, arg_49_1, arg_49_2)
+SharedState.has_peer_state = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._peer_state[arg_49_1]
 
 	return var_49_0 and var_49_0[arg_49_2]
 end
 
-function SharedState._is_destroyed(arg_50_0)
+SharedState._is_destroyed = function (arg_50_0)
 	return arg_50_0._server_state == nil
 end
 
-function SharedState._increment_revision(arg_51_0)
+SharedState._increment_revision = function (arg_51_0)
 	local var_51_0 = arg_51_0._revision
 
 	arg_51_0._revision = arg_51_0._revision + 1
@@ -1006,7 +1006,7 @@ function SharedState._increment_revision(arg_51_0)
 	end
 end
 
-function SharedState.rpc_shared_state_start_atomic_set_server(arg_52_0, arg_52_1)
+SharedState.rpc_shared_state_start_atomic_set_server = function (arg_52_0, arg_52_1)
 	if arg_52_0:_is_destroyed() then
 		return
 	end
@@ -1018,7 +1018,7 @@ function SharedState.rpc_shared_state_start_atomic_set_server(arg_52_0, arg_52_1
 	arg_52_0._atomic_set_server_cache = {}
 end
 
-function SharedState.rpc_shared_state_end_atomic_set_server(arg_53_0, arg_53_1)
+SharedState.rpc_shared_state_end_atomic_set_server = function (arg_53_0, arg_53_1)
 	if arg_53_0:_is_destroyed() then
 		return
 	end
@@ -1065,7 +1065,7 @@ local function var_0_18(arg_54_0)
 	end
 end
 
-function SharedState.validate_spec(arg_55_0)
+SharedState.validate_spec = function (arg_55_0)
 	fassert(arg_55_0, "spec invalid, nil")
 	fassert(arg_55_0.peer, "spec invalid, missing peer spec")
 	fassert(arg_55_0.server, "spec invalid, missing server spec")
@@ -1073,7 +1073,7 @@ function SharedState.validate_spec(arg_55_0)
 	var_0_18(arg_55_0.server)
 end
 
-function SharedState._init_immediate_initializations(arg_56_0)
+SharedState._init_immediate_initializations = function (arg_56_0)
 	local var_56_0 = arg_56_0._spec.peer
 	local var_56_1 = arg_56_0._spec.server
 	local var_56_2 = arg_56_0._is_server

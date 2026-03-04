@@ -6,7 +6,7 @@ script_data = script_data or {}
 Development = Development or {}
 Development.application_parameter = {}
 
-function Development.init_application_parameters(arg_1_0, arg_1_1)
+Development.init_application_parameters = function (arg_1_0, arg_1_1)
 	print("Development.init_application_parameters")
 
 	Development.application_parameter = {}

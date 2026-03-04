@@ -29,7 +29,7 @@ local function var_0_5(...)
 	end
 end
 
-function AIInterestPointSystem.init(arg_2_0, arg_2_1, arg_2_2)
+AIInterestPointSystem.init = function (arg_2_0, arg_2_1, arg_2_2)
 	AIInterestPointSystem.super.init(arg_2_0, arg_2_1, arg_2_2, var_0_3)
 
 	arg_2_0.wwise_world = Managers.world:wwise_world(arg_2_0.world)
@@ -38,13 +38,13 @@ function AIInterestPointSystem.init(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.network_transmit = arg_2_1.network_transmit
 	arg_2_0.system_api = arg_2_1.system_api
 	arg_2_0.system_api[arg_2_2] = {
-		start_async_claim_request = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		start_async_claim_request = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 			return arg_2_0:api_start_async_claim_request(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		end,
-		get_claim = function(arg_4_0)
+		get_claim = function (arg_4_0)
 			return arg_2_0:api_get_claim(arg_4_0)
 		end,
-		release_claim = function(arg_5_0)
+		release_claim = function (arg_5_0)
 			return arg_2_0:api_release_claim(arg_5_0)
 		end
 	}
@@ -101,7 +101,7 @@ function AIInterestPointSystem.init(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.current_obsolete_request = nil
 end
 
-function AIInterestPointSystem._random(arg_6_0, ...)
+AIInterestPointSystem._random = function (arg_6_0, ...)
 	local var_6_0, var_6_1 = Math.next_random(arg_6_0._seed, ...)
 
 	arg_6_0._seed = var_6_0
@@ -109,13 +109,13 @@ function AIInterestPointSystem._random(arg_6_0, ...)
 	return var_6_1
 end
 
-function AIInterestPointSystem.set_seed(arg_7_0, arg_7_1)
+AIInterestPointSystem.set_seed = function (arg_7_0, arg_7_1)
 	fassert(arg_7_1 and type(arg_7_1) == "number", "Bad seed input!")
 
 	arg_7_0._seed = arg_7_1
 end
 
-function AIInterestPointSystem.destroy(arg_8_0)
+AIInterestPointSystem.destroy = function (arg_8_0)
 	local var_8_0 = table.clear
 
 	arg_8_0.system_api[arg_8_0.name] = nil
@@ -145,7 +145,7 @@ end
 
 local var_0_6 = {}
 
-function AIInterestPointSystem.on_add_extension(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+AIInterestPointSystem.on_add_extension = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = {}
 	local var_9_1, var_9_2 = arg_9_0.network_manager:game_object_or_level_id(arg_9_2)
 
@@ -275,7 +275,7 @@ function AIInterestPointSystem.on_add_extension(arg_9_0, arg_9_1, arg_9_2, arg_9
 	return var_9_0
 end
 
-function AIInterestPointSystem.on_remove_extension(arg_10_0, arg_10_1, arg_10_2)
+AIInterestPointSystem.on_remove_extension = function (arg_10_0, arg_10_1, arg_10_2)
 	ScriptUnit.remove_extension(arg_10_1, arg_10_0.NAME)
 
 	local var_10_0 = arg_10_0.interest_points[arg_10_1]
@@ -309,7 +309,7 @@ function AIInterestPointSystem.on_remove_extension(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function AIInterestPointSystem.update(arg_11_0, arg_11_1, arg_11_2)
+AIInterestPointSystem.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0.is_server then
 		arg_11_0:debug_draw(arg_11_2, arg_11_1.dt)
 		arg_11_0:spawn_interest_points()
@@ -328,7 +328,7 @@ function AIInterestPointSystem.update(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function AIInterestPointSystem.breed_spawned_callback(arg_12_0, arg_12_1, arg_12_2)
+AIInterestPointSystem.breed_spawned_callback = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.dead_breed_data
 
 	BREED_DIE_LOOKUP[arg_12_0] = {
@@ -337,14 +337,14 @@ function AIInterestPointSystem.breed_spawned_callback(arg_12_0, arg_12_1, arg_12
 	}
 end
 
-function AIInterestPointSystem.cleanup_dead_breed(arg_13_0, arg_13_1)
+AIInterestPointSystem.cleanup_dead_breed = function (arg_13_0, arg_13_1)
 	arg_13_1[1] = false
 end
 
 local var_0_7 = {}
 local var_0_8 = 0
 
-function AIInterestPointSystem.spawn_interest_points(arg_14_0)
+AIInterestPointSystem.spawn_interest_points = function (arg_14_0)
 	local var_14_0 = Managers.state.conflict
 	local var_14_1 = 8
 	local var_14_2 = arg_14_0.interest_points_to_spawn
@@ -398,7 +398,7 @@ function AIInterestPointSystem.spawn_interest_points(arg_14_0)
 	var_0_8 = 0
 end
 
-function AIInterestPointSystem.release_obsolete_requests(arg_15_0, arg_15_1)
+AIInterestPointSystem.release_obsolete_requests = function (arg_15_0, arg_15_1)
 	if arg_15_0.requests[arg_15_0.current_obsolete_request] == nil then
 		arg_15_0.current_obsolete_request = nil
 	end
@@ -445,7 +445,7 @@ local function var_0_9(arg_16_0, arg_16_1, arg_16_2)
 	return var_16_0, var_16_1
 end
 
-function AIInterestPointSystem._update_astar_result(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+AIInterestPointSystem._update_astar_result = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	arg_17_0.processing_astar = false
 	arg_17_0.processing_best_point = nil
 	arg_17_0.processing_best_ip_unit = nil
@@ -531,7 +531,7 @@ end
 
 local var_0_12 = 15
 
-function AIInterestPointSystem._start_astar_query(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8)
+AIInterestPointSystem._start_astar_query = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8)
 	GwNavAStar.start_with_propagation_box(arg_19_1, arg_19_4, arg_19_2, arg_19_3, var_0_12, arg_19_5)
 
 	arg_19_0.processing_astar = true
@@ -572,7 +572,7 @@ local function var_0_13(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20
 	end
 end
 
-function AIInterestPointSystem.resolve_requests(arg_21_0)
+AIInterestPointSystem.resolve_requests = function (arg_21_0)
 	if next(arg_21_0.interest_points_to_spawn) ~= nil then
 		return
 	end
@@ -628,7 +628,7 @@ function AIInterestPointSystem.resolve_requests(arg_21_0)
 	end
 end
 
-function AIInterestPointSystem.debug_draw(arg_22_0, arg_22_1, arg_22_2)
+AIInterestPointSystem.debug_draw = function (arg_22_0, arg_22_1, arg_22_2)
 	if not var_0_2.ai_interest_point_debug then
 		return
 	end
@@ -681,7 +681,7 @@ function AIInterestPointSystem.debug_draw(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function AIInterestPointSystem.api_start_async_claim_request(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+AIInterestPointSystem.api_start_async_claim_request = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	arg_23_0.last_request_index = arg_23_0.last_request_index + 1
 
 	local var_23_0 = arg_23_0.last_request_index
@@ -702,13 +702,13 @@ function AIInterestPointSystem.api_start_async_claim_request(arg_23_0, arg_23_1,
 	return var_23_0
 end
 
-function AIInterestPointSystem.api_get_claim(arg_24_0, arg_24_1)
+AIInterestPointSystem.api_get_claim = function (arg_24_0, arg_24_1)
 	fassert(arg_24_1, "Tried to get claim with no request_id")
 
 	return arg_24_0.requests[arg_24_1]
 end
 
-function AIInterestPointSystem.api_release_claim(arg_25_0, arg_25_1)
+AIInterestPointSystem.api_release_claim = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0.requests[arg_25_1]
 
 	assert(var_25_0)
@@ -755,7 +755,7 @@ function AIInterestPointSystem.api_release_claim(arg_25_0, arg_25_1)
 	arg_25_0.requests[arg_25_1] = nil
 end
 
-function AIInterestPointSystem.rpc_interest_point_chatter_update(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+AIInterestPointSystem.rpc_interest_point_chatter_update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = arg_26_0.network_manager:game_object_or_level_unit(arg_26_2, arg_26_3)
 
 	if var_26_0 == nil then
@@ -823,6 +823,6 @@ function AIInterestPointSystem.rpc_interest_point_chatter_update(arg_26_0, arg_2
 	var_26_1.percent_claimed = arg_26_4
 end
 
-function AIInterestPointSystem.set_breed_override_lookup(arg_27_0, arg_27_1)
+AIInterestPointSystem.set_breed_override_lookup = function (arg_27_0, arg_27_1)
 	arg_27_0._breed_override_lookup = arg_27_1
 end

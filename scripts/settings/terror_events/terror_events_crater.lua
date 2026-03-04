@@ -72,7 +72,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("beastmen_gor") < 1 and var_0_3("beastmen_ungor") < 1
 			end
 		},
@@ -101,7 +101,7 @@ local var_0_7 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("beastmen_bestigor") < 1
 			end
 		},
@@ -227,7 +227,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 55,
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("beastmen_gor") < 4 and var_0_3("beastmen_ungor") < 4
 			end
 		},
@@ -265,7 +265,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_2() < 8
 			end
 		},
@@ -289,7 +289,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
 			end
 		},
@@ -327,7 +327,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_2() < 6
 			end
 		},
@@ -351,7 +351,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
 			end
 		},
@@ -389,7 +389,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function(arg_8_0)
+			condition = function (arg_8_0)
 				return var_0_2() < 5
 			end
 		},
@@ -413,7 +413,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_9_0)
+			condition = function (arg_9_0)
 				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
 			end
 		},
@@ -451,7 +451,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function(arg_10_0)
+			condition = function (arg_10_0)
 				return var_0_2() < 8
 			end
 		},
@@ -479,7 +479,7 @@ local var_0_7 = {
 		{
 			"continue_when",
 			duration = 180,
-			condition = function(arg_11_0)
+			condition = function (arg_11_0)
 				return var_0_4() < 1 and var_0_1("beastmen_gor") < 5 and var_0_1("beastmen_ungor") < 5
 			end
 		},
@@ -514,13 +514,13 @@ local var_0_7 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_12_0)
+			condition = function (arg_12_0)
 				return var_0_1("beastmen_minotaur") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_13_0)
+			condition = function (arg_13_0)
 				return var_0_1("beastmen_minotaur") < 1
 			end
 		}

@@ -13,7 +13,7 @@ local var_0_0 = {
 	"LocalPlayerVolumeExtension"
 }
 
-function VolumeSystem.init(arg_1_0, arg_1_1, arg_1_2)
+VolumeSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	VolumeSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0._volume_system = EngineOptimizedExtensions.volume_init_system(arg_1_0._volume_system, VolumeSystemSettings.updates_per_frame)
@@ -22,7 +22,7 @@ function VolumeSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unit_dead_cbs = {}
 end
 
-function VolumeSystem.destroy(arg_2_0)
+VolumeSystem.destroy = function (arg_2_0)
 	VolumeSystem.super.destroy(arg_2_0)
 	EngineOptimizedExtensions.volume_destroy_system(arg_2_0._volume_system)
 
@@ -33,7 +33,7 @@ end
 
 local var_0_1 = {}
 
-function VolumeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+VolumeSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	fassert(arg_3_0.is_server or arg_3_3 == "LocalPlayerVolumeExtension", "Only LocalPlayerVolumeExtension is allowed on clients!")
 	EngineOptimizedExtensions.volume_on_add_extension(arg_3_0._volume_system, arg_3_2, arg_3_3)
 	ScriptUnit.set_extension(arg_3_2, arg_3_0.name, var_0_1)
@@ -41,24 +41,24 @@ function VolumeSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	return var_0_1
 end
 
-function VolumeSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+VolumeSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_cleanup_extension(arg_4_1, arg_4_2)
 end
 
-function VolumeSystem.on_freeze_extension(arg_5_0, arg_5_1, arg_5_2)
+VolumeSystem.on_freeze_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 end
 
-function VolumeSystem.freeze(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+VolumeSystem.freeze = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
 end
 
-function VolumeSystem.unfreeze(arg_7_0, arg_7_1, arg_7_2)
+VolumeSystem.unfreeze = function (arg_7_0, arg_7_1, arg_7_2)
 	EngineOptimizedExtensions.volume_on_add_extension(arg_7_0._volume_system, arg_7_1, arg_7_2)
 	ScriptUnit.set_extension(arg_7_1, arg_7_0.name, var_0_1)
 end
 
-function VolumeSystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
+VolumeSystem._cleanup_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	if ScriptUnit.has_extension(arg_8_1, "volume_system") == nil then
 		return
 	end
@@ -75,11 +75,11 @@ function VolumeSystem._cleanup_extension(arg_8_0, arg_8_1, arg_8_2)
 	ScriptUnit.remove_extension(arg_8_1, arg_8_0.name)
 end
 
-function VolumeSystem.update(arg_9_0, arg_9_1, arg_9_2)
+VolumeSystem.update = function (arg_9_0, arg_9_1, arg_9_2)
 	EngineOptimizedExtensions.volume_update(arg_9_0._volume_system, arg_9_2, arg_9_1.dt)
 end
 
-function VolumeSystem.register_volume(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+VolumeSystem.register_volume = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = LevelHelper:current_level(arg_10_0.world)
 
 	fassert(Level.has_volume(var_10_0, arg_10_1), "No volume named %q exists in current level", arg_10_1)
@@ -135,7 +135,7 @@ function VolumeSystem.register_volume(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-function VolumeSystem.unregister_volume(arg_11_0, arg_11_1)
+VolumeSystem.unregister_volume = function (arg_11_0, arg_11_1)
 	local var_11_0 = LevelHelper:current_level(arg_11_0.world)
 
 	fassert(Level.has_volume(var_11_0, arg_11_1), "No volume named %q exists in current level", arg_11_1)
@@ -145,7 +145,7 @@ function VolumeSystem.unregister_volume(arg_11_0, arg_11_1)
 	end
 end
 
-function VolumeSystem.ai_ready(arg_12_0)
+VolumeSystem.ai_ready = function (arg_12_0)
 	arg_12_0.nav_tag_volume_handler = Managers.state.conflict.nav_tag_volume_handler
 
 	local var_12_0 = arg_12_0.nav_tag_volumes_to_create
@@ -159,7 +159,7 @@ function VolumeSystem.ai_ready(arg_12_0)
 	arg_12_0.nav_tag_volumes_to_create = nil
 end
 
-function VolumeSystem.create_nav_tag_volume_from_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+VolumeSystem.create_nav_tag_volume_from_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if LevelHelper:current_level_settings().no_bots_allowed then
 		return
 	end
@@ -172,17 +172,17 @@ function VolumeSystem.create_nav_tag_volume_from_data(arg_13_0, arg_13_1, arg_13
 	return var_13_1
 end
 
-function VolumeSystem.get_volume_mapping_from_lookup_id(arg_14_0, arg_14_1)
+VolumeSystem.get_volume_mapping_from_lookup_id = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.nav_tag_volume_handler
 
 	return arg_14_0.nav_tag_volume_handler:get_mapping_from_lookup_id(arg_14_1)
 end
 
-function VolumeSystem.destroy_nav_tag_volume(arg_15_0, arg_15_1)
+VolumeSystem.destroy_nav_tag_volume = function (arg_15_0, arg_15_1)
 	arg_15_0.nav_tag_volume_handler:destroy_nav_tag_volume(arg_15_1)
 end
 
-function VolumeSystem.create_nav_tag_volume(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+VolumeSystem.create_nav_tag_volume = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if LevelHelper:current_level_settings().no_bots_allowed then
 		return
 	end
@@ -213,11 +213,11 @@ function VolumeSystem.create_nav_tag_volume(arg_16_0, arg_16_1, arg_16_2, arg_16
 	end
 end
 
-function VolumeSystem.volume_has_units_inside(arg_17_0, arg_17_1)
+VolumeSystem.volume_has_units_inside = function (arg_17_0, arg_17_1)
 	return EngineOptimizedExtensions.volume_has_any_units_inside(arg_17_0._volume_system, arg_17_1)
 end
 
-function VolumeSystem.any_alive_human_players_inside(arg_18_0, arg_18_1)
+VolumeSystem.any_alive_human_players_inside = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
 
 	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
@@ -231,7 +231,7 @@ function VolumeSystem.any_alive_human_players_inside(arg_18_0, arg_18_1)
 	return false
 end
 
-function VolumeSystem.all_alive_human_players_inside(arg_19_0, arg_19_1)
+VolumeSystem.all_alive_human_players_inside = function (arg_19_0, arg_19_1)
 	local var_19_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
 	local var_19_1 = 0
 	local var_19_2 = {}
@@ -252,7 +252,7 @@ function VolumeSystem.all_alive_human_players_inside(arg_19_0, arg_19_1)
 	return false
 end
 
-function VolumeSystem.all_alive_or_respawned_human_players_inside(arg_20_0, arg_20_1)
+VolumeSystem.all_alive_or_respawned_human_players_inside = function (arg_20_0, arg_20_1)
 	local var_20_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
 	local var_20_1 = 0
 	local var_20_2 = {}
@@ -273,7 +273,7 @@ function VolumeSystem.all_alive_or_respawned_human_players_inside(arg_20_0, arg_
 	return false
 end
 
-function VolumeSystem.all_human_players_inside_disabled(arg_21_0, arg_21_1)
+VolumeSystem.all_human_players_inside_disabled = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.player:human_players()
 	local var_21_1 = 0
 	local var_21_2 = {}
@@ -299,14 +299,14 @@ function VolumeSystem.all_human_players_inside_disabled(arg_21_0, arg_21_1)
 	return false
 end
 
-function VolumeSystem.player_inside(arg_22_0, arg_22_1, arg_22_2)
+VolumeSystem.player_inside = function (arg_22_0, arg_22_1, arg_22_2)
 	return EngineOptimizedExtensions.volume_has_all_units_inside(arg_22_0._volume_system, arg_22_1, arg_22_2)
 end
 
-function VolumeSystem.register_track_unit_dead(arg_23_0, arg_23_1, arg_23_2)
+VolumeSystem.register_track_unit_dead = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._unit_dead_cbs[arg_23_1] = arg_23_2
 end
 
-function VolumeSystem.unregister_track_unit_dead(arg_24_0, arg_24_1, arg_24_2)
+VolumeSystem.unregister_track_unit_dead = function (arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._unit_dead_cbs[arg_24_1] = nil
 end

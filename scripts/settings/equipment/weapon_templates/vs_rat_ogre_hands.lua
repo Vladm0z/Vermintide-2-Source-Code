@@ -92,10 +92,10 @@ var_0_5.actions = {
 			kind = "melee_start",
 			uninterruptible = true,
 			anim_event = "attack_ogre_slam_charge",
-			anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 				return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 			end,
-			condition_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			condition_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				local var_2_0 = ScriptUnit.has_extension(arg_2_0, "ghost_mode_system"):is_in_ghost_mode()
 				local var_2_1 = ScriptUnit.has_extension(arg_2_0, "career_system"):get_activated_ability_data(1)
 
@@ -150,7 +150,7 @@ var_0_5.actions = {
 			kind = "melee_start",
 			uninterruptible = true,
 			anim_event = "attack_ogre_slam_charge",
-			anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 				return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 			end,
 			total_time = math.huge,
@@ -213,7 +213,7 @@ var_0_5.actions = {
 			uninterruptible = true,
 			anim_event = "attack_swing_right",
 			total_time = 2.17,
-			anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 				return arg_4_1 ~= "new_interupting_action" and arg_4_1 ~= "action_complete"
 			end,
 			buff_data = var_0_6.light_attack,
@@ -259,7 +259,7 @@ var_0_5.actions = {
 			uninterruptible = true,
 			anim_event = "attack_swing_left",
 			total_time = 2.17,
-			anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+			anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 				return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
 			end,
 			buff_data = var_0_6.light_attack,
@@ -307,7 +307,7 @@ var_0_5.actions = {
 			anim_event = "attack_slam",
 			height_mod = 5,
 			total_time = 1.33,
-			anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+			anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 				return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
 			end,
 			anim_time_scale = var_0_4 * 1.15,
@@ -322,7 +322,7 @@ var_0_5.actions = {
 			knockback_data = var_0_7.slam,
 			buff_data = var_0_6.heavy_attack,
 			allowed_chain_actions = {},
-			enter_function = function(arg_7_0, arg_7_1)
+			enter_function = function (arg_7_0, arg_7_1)
 				return arg_7_1:reset_release_input()
 			end
 		}

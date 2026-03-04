@@ -2,7 +2,7 @@
 
 IngameViewLayoutLogic = class(IngameViewLayoutLogic)
 
-function IngameViewLayoutLogic.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+IngameViewLayoutLogic.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._menu_layouts = arg_1_3
 	arg_1_0._full_access_layout = arg_1_4
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -14,7 +14,7 @@ function IngameViewLayoutLogic.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.layout_list = var_1_0 and arg_1_3.in_menu or arg_1_3.in_game
 end
 
-function IngameViewLayoutLogic.setup_button_layout(arg_2_0, arg_2_1)
+IngameViewLayoutLogic.setup_button_layout = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.active_button_data
 
 	if var_2_0 then
@@ -59,7 +59,7 @@ function IngameViewLayoutLogic.setup_button_layout(arg_2_0, arg_2_1)
 	end
 end
 
-function IngameViewLayoutLogic._update_menu_options(arg_3_0)
+IngameViewLayoutLogic._update_menu_options = function (arg_3_0)
 	if script_data.pause_menu_full_access then
 		if not arg_3_0.pause_menu_full_access then
 			arg_3_0.pause_menu_full_access = true
@@ -99,7 +99,7 @@ function IngameViewLayoutLogic._update_menu_options(arg_3_0)
 	end
 end
 
-function IngameViewLayoutLogic._update_menu_options_enabled_states(arg_4_0)
+IngameViewLayoutLogic._update_menu_options_enabled_states = function (arg_4_0)
 	local var_4_0 = arg_4_0.active_button_data
 
 	if var_4_0 then
@@ -133,7 +133,7 @@ function IngameViewLayoutLogic._update_menu_options_enabled_states(arg_4_0)
 	end
 end
 
-function IngameViewLayoutLogic.execute_layout_option(arg_5_0, arg_5_1)
+IngameViewLayoutLogic.execute_layout_option = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.active_button_data
 	local var_5_1 = arg_5_0.ingame_ui
 	local var_5_2 = var_5_0[arg_5_1]
@@ -172,15 +172,15 @@ function IngameViewLayoutLogic.execute_layout_option(arg_5_0, arg_5_1)
 	end
 end
 
-function IngameViewLayoutLogic.update(arg_6_0)
+IngameViewLayoutLogic.update = function (arg_6_0)
 	arg_6_0:_update_menu_options()
 	arg_6_0:_update_menu_options_enabled_states()
 end
 
-function IngameViewLayoutLogic.layout_data(arg_7_0)
+IngameViewLayoutLogic.layout_data = function (arg_7_0)
 	return arg_7_0.active_button_data
 end
 
-function IngameViewLayoutLogic.destroy(arg_8_0)
+IngameViewLayoutLogic.destroy = function (arg_8_0)
 	return
 end

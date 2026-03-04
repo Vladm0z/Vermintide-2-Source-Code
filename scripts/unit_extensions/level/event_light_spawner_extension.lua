@@ -4,7 +4,7 @@ EventLightSpawnerExtension = class(EventLightSpawnerExtension)
 
 local var_0_0 = 1
 
-function EventLightSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+EventLightSpawnerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
@@ -37,7 +37,7 @@ function EventLightSpawnerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function EventLightSpawnerExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+EventLightSpawnerExtension.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if not arg_2_0.is_server then
 		return
 	end
@@ -75,7 +75,7 @@ function EventLightSpawnerExtension.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, a
 	end
 end
 
-function EventLightSpawnerExtension._update_units(arg_3_0, arg_3_1, arg_3_2)
+EventLightSpawnerExtension._update_units = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._units
 
 	for iter_3_0, iter_3_1 in pairs(var_3_0) do
@@ -167,7 +167,7 @@ function EventLightSpawnerExtension._update_units(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function EventLightSpawnerExtension._update_spawn_pool(arg_4_0, arg_4_1)
+EventLightSpawnerExtension._update_spawn_pool = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._spawn_pool
 
 	if var_4_0[arg_4_0._spawn_pool_spawn_index] then
@@ -189,12 +189,12 @@ function EventLightSpawnerExtension._update_spawn_pool(arg_4_0, arg_4_1)
 	end
 end
 
-function EventLightSpawnerExtension._add_to_spawn_pool(arg_5_0, arg_5_1)
+EventLightSpawnerExtension._add_to_spawn_pool = function (arg_5_0, arg_5_1)
 	arg_5_0._spawn_pool[arg_5_0._spawn_pool_add_index] = arg_5_1
 	arg_5_0._spawn_pool_add_index = arg_5_0._spawn_pool_add_index + 1
 end
 
-function EventLightSpawnerExtension._activate(arg_6_0)
+EventLightSpawnerExtension._activate = function (arg_6_0)
 	arg_6_0._active = true
 
 	local var_6_0 = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
@@ -204,7 +204,7 @@ function EventLightSpawnerExtension._activate(arg_6_0)
 	end
 end
 
-function EventLightSpawnerExtension._deactivate(arg_7_0)
+EventLightSpawnerExtension._deactivate = function (arg_7_0)
 	arg_7_0._active = false
 
 	local var_7_0 = arg_7_0._units
@@ -221,7 +221,7 @@ function EventLightSpawnerExtension._deactivate(arg_7_0)
 	end
 end
 
-function EventLightSpawnerExtension._explode_spirit(arg_8_0, arg_8_1)
+EventLightSpawnerExtension._explode_spirit = function (arg_8_0, arg_8_1)
 	local var_8_0 = Unit.local_position(arg_8_1, 0)
 	local var_8_1 = Unit.world_rotation(arg_8_1, 0)
 
@@ -230,7 +230,7 @@ function EventLightSpawnerExtension._explode_spirit(arg_8_0, arg_8_1)
 	Managers.state.unit_spawner:mark_for_deletion(arg_8_1)
 end
 
-function EventLightSpawnerExtension._sync_light_units(arg_9_0)
+EventLightSpawnerExtension._sync_light_units = function (arg_9_0)
 	if not arg_9_0.is_server then
 		return
 	end

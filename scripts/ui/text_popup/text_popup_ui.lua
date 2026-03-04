@@ -7,7 +7,7 @@ local var_0_3 = var_0_1.text_entry.size[2]
 
 TextPopupUI = class(TextPopupUI)
 
-function TextPopupUI.init(arg_1_0, arg_1_1)
+TextPopupUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._input_manager = arg_1_1.input_manager
 	arg_1_0._render_settings = {
@@ -24,14 +24,14 @@ function TextPopupUI.init(arg_1_0, arg_1_1)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-function TextPopupUI._setup_input(arg_2_0)
+TextPopupUI._setup_input = function (arg_2_0)
 	arg_2_0._input_manager:create_input_service("Text", "IngameMenuKeymaps", "IngameMenuFilters")
 	arg_2_0._input_manager:map_device_to_service("Text", "keyboard")
 	arg_2_0._input_manager:map_device_to_service("Text", "mouse")
 	arg_2_0._input_manager:map_device_to_service("Text", "gamepad")
 end
 
-function TextPopupUI._create_ui_elements(arg_3_0)
+TextPopupUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = var_0_0.widget_definitions
@@ -53,7 +53,7 @@ function TextPopupUI._create_ui_elements(arg_3_0)
 	end
 end
 
-function TextPopupUI.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+TextPopupUI.show = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_0._draw_widgets and arg_4_0.is_visible then
 		print("TextPopupUI is already visible")
 
@@ -80,7 +80,7 @@ function TextPopupUI.show(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	}, 1, "Text", "TextPopupUI")
 end
 
-function TextPopupUI.hide(arg_5_0)
+TextPopupUI.hide = function (arg_5_0)
 	if not arg_5_0._draw_widgets and not arg_5_0.is_visible then
 		return
 	end
@@ -102,7 +102,7 @@ function TextPopupUI.hide(arg_5_0)
 	end
 end
 
-function TextPopupUI.update(arg_6_0, arg_6_1)
+TextPopupUI.update = function (arg_6_0, arg_6_1)
 	if not arg_6_0.is_visible or not arg_6_0._draw_widgets then
 		return
 	end
@@ -118,15 +118,15 @@ function TextPopupUI.update(arg_6_0, arg_6_1)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function TextPopupUI.post_update(arg_7_0, arg_7_1)
+TextPopupUI.post_update = function (arg_7_0, arg_7_1)
 	return
 end
 
-function TextPopupUI.post_render(arg_8_0)
+TextPopupUI.post_render = function (arg_8_0)
 	return
 end
 
-function TextPopupUI._update_scroll_height(arg_9_0, arg_9_1)
+TextPopupUI._update_scroll_height = function (arg_9_0, arg_9_1)
 	local var_9_0 = UIUtils.get_text_height(arg_9_0._ui_top_renderer, var_0_0.scenegraph_definition.text_entry.size, var_0_0.scroll_text_style, arg_9_0._widgets_by_name.overlay_text.content.text)
 
 	arg_9_0._total_scroll_height = math.max(var_9_0 - var_0_3, 0)
@@ -134,7 +134,7 @@ function TextPopupUI._update_scroll_height(arg_9_0, arg_9_1)
 	arg_9_0:_setup_scrollbar(var_9_0, arg_9_1)
 end
 
-function TextPopupUI._setup_scrollbar(arg_10_0, arg_10_1, arg_10_2)
+TextPopupUI._setup_scrollbar = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._widgets_by_name.scrollbar
 	local var_10_1 = var_10_0.scenegraph_id
 	local var_10_2 = arg_10_0._ui_scenegraph[var_10_1].size[2]
@@ -150,7 +150,7 @@ function TextPopupUI._setup_scrollbar(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._widgets_by_name.scroll_content.content.scroll_amount = var_10_5
 end
 
-function TextPopupUI._update_mouse_scroll_input(arg_11_0)
+TextPopupUI._update_mouse_scroll_input = function (arg_11_0)
 	local var_11_0 = arg_11_0._widgets_by_name
 	local var_11_1 = var_11_0.scrollbar
 	local var_11_2 = var_11_0.scroll_content
@@ -175,7 +175,7 @@ function TextPopupUI._update_mouse_scroll_input(arg_11_0)
 	end
 end
 
-function TextPopupUI._update_gamepad_scroll_input(arg_12_0)
+TextPopupUI._update_gamepad_scroll_input = function (arg_12_0)
 	if not Managers.input:is_device_active("gamepad") then
 		return
 	end
@@ -191,7 +191,7 @@ function TextPopupUI._update_gamepad_scroll_input(arg_12_0)
 	var_12_1.scroll_add = var_12_1.scroll_amount * var_12_0.y * -1 * 0.1
 end
 
-function TextPopupUI._set_scrollbar_value(arg_13_0, arg_13_1)
+TextPopupUI._set_scrollbar_value = function (arg_13_0, arg_13_1)
 	if arg_13_1 then
 		local var_13_0 = arg_13_0._widgets_by_name
 
@@ -207,7 +207,7 @@ function TextPopupUI._set_scrollbar_value(arg_13_0, arg_13_1)
 	end
 end
 
-function TextPopupUI._draw(arg_14_0, arg_14_1)
+TextPopupUI._draw = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ui_top_renderer
 	local var_14_1 = arg_14_0._ui_scenegraph
 	local var_14_2 = arg_14_0._input_manager:get_service("Text")
@@ -231,7 +231,7 @@ function TextPopupUI._draw(arg_14_0, arg_14_1)
 	end
 end
 
-function TextPopupUI._button_clicked(arg_15_0, arg_15_1)
+TextPopupUI._button_clicked = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._buttons[arg_15_1].content.button_hotspot.on_release
 
 	var_15_0 = Managers.input:is_device_active("gamepad") and arg_15_1 == "ok_button" and arg_15_0._input_manager:get_service("Text"):get("confirm") or var_15_0
@@ -243,7 +243,7 @@ function TextPopupUI._button_clicked(arg_15_0, arg_15_1)
 	return var_15_0
 end
 
-function TextPopupUI._animate_button(arg_16_0, arg_16_1, arg_16_2)
+TextPopupUI._animate_button = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_1.content
 	local var_16_1 = arg_16_1.style
 	local var_16_2 = var_16_0.button_hotspot
@@ -301,7 +301,7 @@ function TextPopupUI._animate_button(arg_16_0, arg_16_1, arg_16_2)
 	Colors.lerp_color_tables(var_16_18, var_16_19, var_16_11, var_16_17)
 end
 
-function TextPopupUI.destroy(arg_17_0)
+TextPopupUI.destroy = function (arg_17_0)
 	arg_17_0._draw_widgets = false
 	arg_17_0.is_visible = false
 	arg_17_0._widgets = nil

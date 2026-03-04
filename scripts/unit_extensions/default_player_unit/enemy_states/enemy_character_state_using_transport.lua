@@ -2,13 +2,13 @@
 
 EnemyCharacterStateUsingTransport = class(EnemyCharacterStateUsingTransport, EnemyCharacterState)
 
-function EnemyCharacterStateUsingTransport.init(arg_1_0, arg_1_1)
+EnemyCharacterStateUsingTransport.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "using_transport")
 
 	local var_1_0 = arg_1_1
 end
 
-function EnemyCharacterStateUsingTransport.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateUsingTransport.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0._first_person_extension
 
 	table.clear(arg_2_0._temp_params)
@@ -16,11 +16,11 @@ function EnemyCharacterStateUsingTransport.on_enter(arg_2_0, arg_2_1, arg_2_2, a
 	CharacterStateHelper.play_animation_event_first_person(var_2_0, "idle")
 end
 
-function EnemyCharacterStateUsingTransport.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+EnemyCharacterStateUsingTransport.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	return
 end
 
-function EnemyCharacterStateUsingTransport.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+EnemyCharacterStateUsingTransport.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = arg_4_0._unit
 	local var_4_2 = arg_4_0._input_extension

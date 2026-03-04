@@ -36,7 +36,7 @@ local function var_0_8(arg_4_0, ...)
 	end
 end
 
-function ImguiUITool.init(arg_5_0)
+ImguiUITool.init = function (arg_5_0)
 	arg_5_0._active = false
 	arg_5_0._draw_ruler = false
 	arg_5_0._draw_canvas = false
@@ -76,7 +76,7 @@ end
 
 local var_0_9 = true
 
-function ImguiUITool.update(arg_6_0)
+ImguiUITool.update = function (arg_6_0)
 	if var_0_9 then
 		arg_6_0:init()
 		arg_6_0:on_hide()
@@ -162,7 +162,7 @@ local function var_0_13(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	var_0_0.rect(arg_8_0, Vector3(arg_8_1[1] + arg_8_2[1] - arg_8_3, arg_8_1[2] + arg_8_3, arg_8_1[3]), Vector2(arg_8_3, var_8_1), arg_8_4)
 end
 
-function ImguiUITool.draw_border(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ImguiUITool.draw_border = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0:get_gui()
 
 	if not var_9_0 or not arg_9_0._highlight_textures then
@@ -174,7 +174,7 @@ function ImguiUITool.draw_border(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	return var_0_13(var_9_0, arg_9_1, arg_9_2, var_0_11, arg_9_3)
 end
 
-function ImguiUITool.draw_label(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ImguiUITool.draw_label = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0:get_gui()
 
 	if not var_10_0 or not arg_10_0._highlight_textures then
@@ -184,7 +184,7 @@ function ImguiUITool.draw_label(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	var_0_0.text(var_10_0, arg_10_1, "materials/fonts/arial", 16, nil, arg_10_2 + Vector2(var_0_11 + 2, var_0_11 + 2), arg_10_3)
 end
 
-function ImguiUITool.texture(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ImguiUITool.texture = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	if not var_0_8(arg_11_0._search, arg_11_1, arg_11_2) then
 		return
 	end
@@ -219,7 +219,7 @@ function ImguiUITool.texture(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, a
 	arg_11_0:draw_border(Vector3(arg_11_3[1], arg_11_3[2], 999), Vector2(arg_11_4[1], arg_11_4[2]), var_11_3)
 end
 
-function ImguiUITool.text(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+ImguiUITool.text = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
 	if not var_0_8(arg_12_0._search, arg_12_2, arg_12_3) then
 		return
 	end
@@ -247,7 +247,7 @@ function ImguiUITool.text(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_
 	arg_12_0:draw_border(Vector3(arg_12_5[1], arg_12_5[2], 999), Vector2(var_12_3[1], var_12_3[2]), Color(var_12_4 and 200 or 30, 0, 100, 255))
 end
 
-function ImguiUITool.node(arg_13_0, arg_13_1, arg_13_2)
+ImguiUITool.node = function (arg_13_0, arg_13_1, arg_13_2)
 	if not var_0_8(arg_13_0._search, arg_13_1.name or "n/a", arg_13_2) then
 		return
 	end
@@ -284,7 +284,7 @@ function ImguiUITool.node(arg_13_0, arg_13_1, arg_13_2)
 	return var_13_5
 end
 
-function ImguiUITool.scenegraph(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ImguiUITool.scenegraph = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if arg_14_2 or arg_14_3 then
 		return
 	end
@@ -304,8 +304,8 @@ function ImguiUITool.scenegraph(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function ImguiUITool.on_show(arg_15_0)
-	Debug.hook(UIRenderer, "script_draw_bitmap", function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+ImguiUITool.on_show = function (arg_15_0)
+	Debug.hook(UIRenderer, "script_draw_bitmap", function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
 			arg_15_0:texture("bitmap", arg_16_3, arg_16_4, arg_16_5, arg_16_6)
 		end
@@ -316,7 +316,7 @@ function ImguiUITool.on_show(arg_15_0)
 
 		return arg_16_0(arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
 	end)
-	Debug.hook(UIRenderer, "script_draw_bitmap_uv", function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
+	Debug.hook(UIRenderer, "script_draw_bitmap_uv", function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
 			arg_15_0:texture("bitmap_uv", arg_17_3, arg_17_5, arg_17_6, arg_17_7)
 		end
@@ -327,7 +327,7 @@ function ImguiUITool.on_show(arg_15_0)
 
 		return arg_17_0(arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10)
 	end)
-	Debug.hook(UIRenderer, "draw_rect", function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+	Debug.hook(UIRenderer, "draw_rect", function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
 			arg_15_0:texture("rect", "n/a", UIScaleVectorToResolution(arg_18_2), UIScaleVectorToResolution(arg_18_3), arg_18_4)
 		end
@@ -338,7 +338,7 @@ function ImguiUITool.on_show(arg_15_0)
 
 		return arg_18_0(arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	end)
-	Debug.hook(UIRenderer, "draw_rounded_rect", function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+	Debug.hook(UIRenderer, "draw_rounded_rect", function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
 			arg_15_0:texture("rounded_rect", "n/a", UIScaleVectorToResolution(arg_19_2), UIScaleVectorToResolution(arg_19_3), arg_19_5)
 		end
@@ -349,7 +349,7 @@ function ImguiUITool.on_show(arg_15_0)
 
 		return arg_19_0(arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	end)
-	Debug.hook(UIRenderer, "draw_text", function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+	Debug.hook(UIRenderer, "draw_text", function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 		if arg_15_0._active and arg_15_0._selected_tab == "Render objects" then
 			arg_15_0:text(arg_20_1, arg_20_2, arg_20_3, arg_20_4, UIScaleVectorToResolution(arg_20_6), arg_20_7)
 		end
@@ -360,7 +360,7 @@ function ImguiUITool.on_show(arg_15_0)
 
 		return arg_20_0(arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
 	end)
-	Debug.hook(UISceneGraph, "update_scenegraph", function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	Debug.hook(UISceneGraph, "update_scenegraph", function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 		if arg_15_0._active and arg_15_0._selected_tab == "Scenegraph" then
 			arg_15_0:scenegraph(arg_21_1, arg_21_2, arg_21_3)
 		end
@@ -371,7 +371,7 @@ function ImguiUITool.on_show(arg_15_0)
 	arg_15_0._active = true
 end
 
-function ImguiUITool.on_hide(arg_22_0)
+ImguiUITool.on_hide = function (arg_22_0)
 	Debug.unhook(UIRenderer, "script_draw_bitmap", true)
 	Debug.unhook(UIRenderer, "script_draw_bitmap_uv", true)
 	Debug.unhook(UIRenderer, "draw_rect", true)
@@ -380,7 +380,7 @@ function ImguiUITool.on_hide(arg_22_0)
 	arg_22_0._active = false
 end
 
-function ImguiUITool.get_gui(arg_23_0)
+ImguiUITool.get_gui = function (arg_23_0)
 	if arg_23_0._gui then
 		return arg_23_0._gui
 	end
@@ -398,7 +398,7 @@ function ImguiUITool.get_gui(arg_23_0)
 	arg_23_0._gui = World.create_screen_gui(var_23_0, "immediate")
 end
 
-function ImguiUITool._set_columns(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+ImguiUITool._set_columns = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	var_0_1.columns(arg_24_1, not not arg_24_2)
 
 	if not arg_24_3 then
@@ -416,7 +416,7 @@ function ImguiUITool._set_columns(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	end
 end
 
-function ImguiUITool.do_render_objects(arg_25_0)
+ImguiUITool.do_render_objects = function (arg_25_0)
 	arg_25_0:_set_columns(6, true)
 	var_0_1.text("Type")
 	var_0_1.next_column()
@@ -464,7 +464,7 @@ function ImguiUITool.do_render_objects(arg_25_0)
 	arg_25_0:_set_columns(1)
 end
 
-function ImguiUITool.do_scenegraph(arg_26_0)
+ImguiUITool.do_scenegraph = function (arg_26_0)
 	arg_26_0:_set_columns(6, true)
 	var_0_1.text("File")
 	var_0_1.next_column()
@@ -514,7 +514,7 @@ local function var_0_17(arg_30_0, arg_30_1, arg_30_2)
 	var_0_1.same_line()
 
 	if var_0_1.small_button("^##ASC_" .. arg_30_2) then
-		table.sort(arg_30_0, function(arg_31_0, arg_31_1)
+		table.sort(arg_30_0, function (arg_31_0, arg_31_1)
 			return arg_30_1(arg_31_0) < arg_30_1(arg_31_1)
 		end)
 		printf("[ImguiUITool] Sorted by %s in ASC order", arg_30_2)
@@ -523,14 +523,14 @@ local function var_0_17(arg_30_0, arg_30_1, arg_30_2)
 	var_0_1.same_line()
 
 	if var_0_1.small_button("v##DESC_" .. arg_30_2) then
-		table.sort(arg_30_0, function(arg_32_0, arg_32_1)
+		table.sort(arg_30_0, function (arg_32_0, arg_32_1)
 			return arg_30_1(arg_32_0) > arg_30_1(arg_32_1)
 		end)
 		printf("[ImguiUITool] Sorted by %s in DESC order", arg_30_2)
 	end
 end
 
-function ImguiUITool.do_asset_browser(arg_33_0)
+ImguiUITool.do_asset_browser = function (arg_33_0)
 	local var_33_0 = arg_33_0._texture_registry
 
 	if not var_33_0 then
@@ -566,7 +566,7 @@ function ImguiUITool.do_asset_browser(arg_33_0)
 	elseif Mouse.button(Mouse.button_index("middle")) > 0.5 then
 		arg_33_0._scroll_hold_pos = arg_33_0._scroll_hold_pos or Vector3Box(Vector3Aux.unbox(var_33_2))
 		arg_33_0._asset_browser_offset = arg_33_0._asset_browser_offset + (Vector3Aux.unbox(var_33_2)[2] - arg_33_0._scroll_hold_pos:unbox()[2])
-		arg_33_0._asset_browser_offset = math.clamp(arg_33_0._asset_browser_offset, var_33_1[2] * (-math.ceil(#table.select_array(var_33_0, function(arg_34_0, arg_34_1)
+		arg_33_0._asset_browser_offset = math.clamp(arg_33_0._asset_browser_offset, var_33_1[2] * (-math.ceil(#table.select_array(var_33_0, function (arg_34_0, arg_34_1)
 			return var_0_8(var_33_6, arg_34_1.texture_name, arg_34_1.material_name)
 		end) / var_33_5) - 1) + var_33_4, var_33_1[2])
 	elseif arg_33_0._scroll_hold_pos then
@@ -672,13 +672,13 @@ function ImguiUITool.do_asset_browser(arg_33_0)
 	arg_33_0:_set_columns(1)
 end
 
-function ImguiUITool._setting_checkbox(arg_35_0, arg_35_1, arg_35_2)
+ImguiUITool._setting_checkbox = function (arg_35_0, arg_35_1, arg_35_2)
 	if var_0_8(arg_35_0._search, arg_35_2) then
 		arg_35_0[arg_35_1] = var_0_1.checkbox(arg_35_2, arg_35_0[arg_35_1] or false)
 	end
 end
 
-function ImguiUITool._setting_color(arg_36_0, arg_36_1, arg_36_2)
+ImguiUITool._setting_color = function (arg_36_0, arg_36_1, arg_36_2)
 	if var_0_8(arg_36_0._search, arg_36_2) then
 		local var_36_0 = arg_36_0[arg_36_1] or {
 			255,
@@ -693,7 +693,7 @@ function ImguiUITool._setting_color(arg_36_0, arg_36_1, arg_36_2)
 	end
 end
 
-function ImguiUITool.do_settings(arg_37_0)
+ImguiUITool.do_settings = function (arg_37_0)
 	var_0_1.text("Settings")
 	var_0_1.separator()
 	arg_37_0:_setting_checkbox("_draw_ruler", "Draw ruler crosshair")
@@ -708,7 +708,7 @@ end
 
 local var_0_18 = "UITOOL(1)                    General Tools Manual                    UITOOL(1)\n \nNAME\n\tUI Tool - a suite of utilities to make UI development a wee bit easier\n \nINTRODUCTION\n\tThe UI tool is a collection of disjoint utilities that facilitate examining\n\tvarious UI systems at run time. It is comprised of the following tools:\n\t\tSome common elements.\n\t\tA render object inspector.\n\t\tA scenegraph inspector.\n\t\tAn atlas texture browser.\n\nCOMMON ELEMENTS\n\tThese elements are shared between all tools.\n \n\tThe current cursor position is shown both in screen and canvas coordinates.\n\tMeasurements can be taken by dragging with the RIGHT mouse button.\n \n\tThe search bar can be used to apply filters on any tab, including this one\n\t(try it!). All searches are CASE SENSITIVE and accept Lua string patterns.\n \nRENDER OBJECT INSPECTOR\n\tRender objects are pseudo-objects constructed when Lua code sends draw\n\trequests to the engine. That is to say that there's a 1-to-1 correspondence\n\tbetween render objects and calls to Gui.bitmap, Gui.rect, etc.\n\tRender objects are disposed of once they have been processed by the Gui.\n\tIt is currently not possible to inspect render objects that exist inside a\n\tGui object that was created in retained mode.\n \n\tRender objects are color coded according to the following table:\n\t\tred         Bitmaps\n\t\tpurple      Bitmap UV\n\t\tgreen       Rect\n\t\tblue        Text\n\t\n\tOther types of render objects are not supported at this time.\n \nSCENEGRAPH INSPECTOR\n\tThe scenegraph is a structure to help layout UI elements on the screen.\n\tInternally it is stored as a forest where every node is associated to a\n\tquad region on the screen.\n\tThis tool can be useful to identify the internal name of a UI.\n \nATLAS TEXTURE BROWSER\n\tTextures are packed into atlas to reduce the overhead of loading many\n\tsmall textures from disk to the GPU. For example, it would not be cost\n\teffective applying texture block compression methods on tiny textures, but\n\tby packing them together a reduction in total size can be achieved.\n \n\tThis tool provides a quick way of searching and visualizing all such\n\tatlased textures that are available to the UI systems. Results can be\n\tsorted by texture name, material name or area size with the little ^ and v\n\tbuttons on the header row.\n\tHolding right-click over a texture preview will render it at native size\n\tand scroll the listing results to that point.\n \n\tNOTE: The ruler is disabled while this mode is active.\n"
 
-function ImguiUITool.do_help(arg_38_0)
+ImguiUITool.do_help = function (arg_38_0)
 	local var_38_0 = arg_38_0._search
 	local var_38_1 = string.find
 	local var_38_2 = string.sub
@@ -737,7 +737,7 @@ function ImguiUITool.do_help(arg_38_0)
 	end
 end
 
-function ImguiUITool.draw(arg_39_0)
+ImguiUITool.draw = function (arg_39_0)
 	local var_39_0, var_39_1 = var_0_1.begin_window("UI Inspector", "menu_bar")
 
 	if not var_39_1 then
@@ -808,6 +808,6 @@ function ImguiUITool.draw(arg_39_0)
 	return var_39_0
 end
 
-function ImguiUITool.is_persistent(arg_40_0)
+ImguiUITool.is_persistent = function (arg_40_0)
 	return true
 end

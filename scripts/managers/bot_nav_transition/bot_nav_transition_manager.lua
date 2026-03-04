@@ -36,7 +36,7 @@ BotNavTransitionManager.NAV_COST_MAP_LAYERS = {
 	troll_bile = 30
 }
 
-function BotNavTransitionManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+BotNavTransitionManager.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
 	arg_2_0._world = arg_2_1
 	arg_2_0._physics_world = arg_2_2
 	arg_2_0._nav_world = arg_2_3
@@ -74,15 +74,15 @@ function BotNavTransitionManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_
 	end
 end
 
-function BotNavTransitionManager.traverse_logic(arg_3_0)
+BotNavTransitionManager.traverse_logic = function (arg_3_0)
 	return arg_3_0._traverse_logic
 end
 
-function BotNavTransitionManager.update(arg_4_0, arg_4_1, arg_4_2)
+BotNavTransitionManager.update = function (arg_4_0, arg_4_1, arg_4_2)
 	return
 end
 
-function BotNavTransitionManager.clear_transitions(arg_5_0)
+BotNavTransitionManager.clear_transitions = function (arg_5_0)
 	local var_5_0 = arg_5_0._bot_nav_transitions
 
 	for iter_5_0, iter_5_1 in pairs(var_5_0) do
@@ -90,7 +90,7 @@ function BotNavTransitionManager.clear_transitions(arg_5_0)
 	end
 end
 
-function BotNavTransitionManager.destroy(arg_6_0)
+BotNavTransitionManager.destroy = function (arg_6_0)
 	arg_6_0._network_event_delegate:unregister(arg_6_0)
 	GwNavTagLayerCostTable.destroy(arg_6_0._navtag_layer_cost_table)
 	GwNavCostMap.destroy_tag_cost_table(arg_6_0._nav_cost_map_cost_table)
@@ -98,7 +98,7 @@ function BotNavTransitionManager.destroy(arg_6_0)
 	GwNavTraverseLogic.destroy(arg_6_0._layerless_traverse_logic)
 end
 
-function BotNavTransitionManager._find_matching_layer(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BotNavTransitionManager._find_matching_layer = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_2 - arg_7_1
 	local var_7_1 = Vector3.length(Vector3.flat(var_7_0))
 	local var_7_2 = var_7_0.z
@@ -129,7 +129,7 @@ function BotNavTransitionManager._find_matching_layer(arg_7_0, arg_7_1, arg_7_2,
 	end
 end
 
-function BotNavTransitionManager._destroy_transition(arg_8_0, arg_8_1, arg_8_2)
+BotNavTransitionManager._destroy_transition = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_1[arg_8_2]
 
 	arg_8_1[arg_8_2] = nil
@@ -141,11 +141,11 @@ function BotNavTransitionManager._destroy_transition(arg_8_0, arg_8_1, arg_8_2)
 	World.destroy_unit(arg_8_0._world, var_8_0.unit)
 end
 
-function BotNavTransitionManager.rpc_create_bot_nav_transition(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BotNavTransitionManager.rpc_create_bot_nav_transition = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	arg_9_0:create_transition(arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 end
 
-function BotNavTransitionManager.create_transition(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+BotNavTransitionManager.create_transition = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	if not arg_10_0._is_server then
 		Managers.state.network.network_transmit:send_rpc_server("rpc_create_bot_nav_transition", arg_10_1, arg_10_2, arg_10_3, arg_10_4 or false)
 
@@ -256,14 +256,14 @@ function BotNavTransitionManager.create_transition(arg_10_0, arg_10_1, arg_10_2,
 	return true, var_10_21
 end
 
-function BotNavTransitionManager.unregister_transition(arg_11_0, arg_11_1)
+BotNavTransitionManager.unregister_transition = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._bot_nav_transition_lookup[arg_11_1]
 
 	fassert(var_11_0, "No transition index found for unit %s.", arg_11_1)
 	arg_11_0:_destroy_transition(arg_11_0._bot_nav_transitions, var_11_0)
 end
 
-function BotNavTransitionManager.transition_data(arg_12_0, arg_12_1)
+BotNavTransitionManager.transition_data = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._ladder_transitions[arg_12_1]
 
 	if var_12_0 then
@@ -276,7 +276,7 @@ function BotNavTransitionManager.transition_data(arg_12_0, arg_12_1)
 	end
 end
 
-function BotNavTransitionManager.register_ladder(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BotNavTransitionManager.register_ladder = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = {}
 	local var_13_1
 	local var_13_2 = arg_13_2 or 0
@@ -369,7 +369,7 @@ function BotNavTransitionManager.register_ladder(arg_13_0, arg_13_1, arg_13_2, a
 	end
 
 	if var_13_0.failed then
-		-- block empty
+		-- Nothing
 	else
 		local var_13_36 = arg_13_0._ladder_smart_object_index + 1
 		local var_13_37 = 1.5
@@ -400,13 +400,13 @@ function BotNavTransitionManager.register_ladder(arg_13_0, arg_13_1, arg_13_2, a
 	return var_13_1
 end
 
-function BotNavTransitionManager.get_ladder_coordinates(arg_14_0, arg_14_1)
+BotNavTransitionManager.get_ladder_coordinates = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ladder_transitions[arg_14_1]
 
 	return var_14_0.from:unbox(), var_14_0.to:unbox(), var_14_0.failed
 end
 
-function BotNavTransitionManager.debug_refresh_ladders(arg_15_0)
+BotNavTransitionManager.debug_refresh_ladders = function (arg_15_0)
 	print("[BotNavTransitionManager] Refreshing ladders...")
 
 	local var_15_0 = {}
@@ -426,7 +426,7 @@ function BotNavTransitionManager.debug_refresh_ladders(arg_15_0)
 	end
 end
 
-function BotNavTransitionManager.clear_ladder_transitions(arg_16_0)
+BotNavTransitionManager.clear_ladder_transitions = function (arg_16_0)
 	local var_16_0 = arg_16_0._ladder_transitions
 
 	for iter_16_0, iter_16_1 in pairs(var_16_0) do
@@ -434,7 +434,7 @@ function BotNavTransitionManager.clear_ladder_transitions(arg_16_0)
 	end
 end
 
-function BotNavTransitionManager.unregister_ladder(arg_17_0, arg_17_1)
+BotNavTransitionManager.unregister_ladder = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ladder_transitions[arg_17_1]
 	local var_17_1 = var_17_0.graph
 
@@ -447,7 +447,7 @@ function BotNavTransitionManager.unregister_ladder(arg_17_0, arg_17_1)
 	arg_17_0._ladder_transitions[arg_17_1] = nil
 end
 
-function BotNavTransitionManager.allow_layer(arg_18_0, arg_18_1, arg_18_2)
+BotNavTransitionManager.allow_layer = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = LAYER_ID_MAPPING[arg_18_1]
 
 	if arg_18_2 then
@@ -457,7 +457,7 @@ function BotNavTransitionManager.allow_layer(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function BotNavTransitionManager.set_layer_cost(arg_19_0, arg_19_1, arg_19_2)
+BotNavTransitionManager.set_layer_cost = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = LAYER_ID_MAPPING[arg_19_1]
 
 	GwNavTagLayerCostTable.set_layer_cost_multiplier(arg_19_0._navtag_layer_cost_table, var_19_0, arg_19_2)

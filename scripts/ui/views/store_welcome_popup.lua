@@ -25,16 +25,16 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				name = "fade_in",
 				start_progress = 0,
 				end_progress = 0.5,
-				init = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					arg_2_3.render_settings.alpha_multiplier = 0
 				end,
-				update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 					local var_3_0 = math.easeOutCubic(arg_3_3)
 
 					arg_3_4.render_settings.alpha_multiplier = var_3_0
 					arg_3_0.window.position[2] = arg_3_1.window.position[2] + 100 * (1 - var_3_0)
 				end,
-				on_complete = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+				on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					return
 				end
 			}
@@ -548,7 +548,7 @@ local var_0_2 = 800
 
 StoreWelcomePopup = class(StoreWelcomePopup)
 
-function StoreWelcomePopup.init(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+StoreWelcomePopup.init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	arg_6_0._ingame_ui = arg_6_1
 	arg_6_0._top_world = arg_6_1.top_world
 	arg_6_0._render_settings = {
@@ -588,7 +588,7 @@ function StoreWelcomePopup.init(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg
 	arg_6_0:_start_transition_animation("on_enter", "on_enter")
 end
 
-function StoreWelcomePopup._setup_renderers(arg_7_0)
+StoreWelcomePopup._setup_renderers = function (arg_7_0)
 	local var_7_0 = "store_welcome_ui_world"
 	local var_7_1 = 999
 
@@ -611,7 +611,7 @@ function StoreWelcomePopup._setup_renderers(arg_7_0)
 	arg_7_0._blur_welcome_ui_renderer = arg_7_0._ingame_ui:create_ui_renderer(arg_7_0._blur_welcome_ui_world, false, true)
 end
 
-function StoreWelcomePopup._destroy_renderers(arg_8_0)
+StoreWelcomePopup._destroy_renderers = function (arg_8_0)
 	UIRenderer.destroy(arg_8_0._welcome_ui_renderer, arg_8_0._welcome_ui_world)
 	ScriptWorld.destroy_viewport(arg_8_0._welcome_ui_world, arg_8_0._welcome_ui_world_viewport_name)
 	Managers.world:destroy_world(arg_8_0._welcome_ui_world)
@@ -629,7 +629,7 @@ function StoreWelcomePopup._destroy_renderers(arg_8_0)
 	arg_8_0._blur_welcome_ui_world_viewport_name = nil
 end
 
-function StoreWelcomePopup._start_transition_animation(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+StoreWelcomePopup._start_transition_animation = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = {
 		wwise_world = arg_9_0._wwise_world,
 		render_settings = arg_9_0._render_settings
@@ -642,11 +642,11 @@ function StoreWelcomePopup._start_transition_animation(arg_9_0, arg_9_1, arg_9_2
 	return var_9_0
 end
 
-function StoreWelcomePopup.completed(arg_10_0)
+StoreWelcomePopup.completed = function (arg_10_0)
 	return arg_10_0._done
 end
 
-function StoreWelcomePopup._create_gamepad_input_description(arg_11_0, arg_11_1)
+StoreWelcomePopup._create_gamepad_input_description = function (arg_11_0, arg_11_1)
 	local var_11_0 = {
 		{
 			input_action = "confirm",
@@ -660,7 +660,7 @@ function StoreWelcomePopup._create_gamepad_input_description(arg_11_0, arg_11_1)
 	arg_11_0._menu_input_description:set_input_description(nil)
 end
 
-function StoreWelcomePopup._set_fullscreen_effect_enable_state(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+StoreWelcomePopup._set_fullscreen_effect_enable_state = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = World.get_data(arg_12_3, "shading_environment")
 
 	arg_12_2 = arg_12_2 or arg_12_1 and 1 or 0
@@ -674,11 +674,11 @@ function StoreWelcomePopup._set_fullscreen_effect_enable_state(arg_12_0, arg_12_
 	arg_12_0._fullscreen_effect_enabled = arg_12_1
 end
 
-function StoreWelcomePopup.is_complete(arg_13_0)
+StoreWelcomePopup.is_complete = function (arg_13_0)
 	return arg_13_0._state == "exit"
 end
 
-function StoreWelcomePopup.destroy(arg_14_0)
+StoreWelcomePopup.destroy = function (arg_14_0)
 	if arg_14_0._blur_welcome_ui_world and arg_14_0._fullscreen_effect_enabled then
 		arg_14_0:_set_fullscreen_effect_enable_state(false, 0, arg_14_0._blur_welcome_ui_world)
 	end
@@ -686,7 +686,7 @@ function StoreWelcomePopup.destroy(arg_14_0)
 	arg_14_0:_destroy_renderers()
 end
 
-function StoreWelcomePopup._create_ui_elements(arg_15_0, arg_15_1)
+StoreWelcomePopup._create_ui_elements = function (arg_15_0, arg_15_1)
 	arg_15_0._ui_scenegraph = UISceneGraph.init_scenegraph(arg_15_0._scenegraph_definition)
 
 	local var_15_0 = {}
@@ -709,7 +709,7 @@ function StoreWelcomePopup._create_ui_elements(arg_15_0, arg_15_1)
 	arg_15_0._ui_animator = UIAnimator:new(arg_15_0._ui_scenegraph, arg_15_0._animation_definitions)
 end
 
-function StoreWelcomePopup._draw(arg_16_0, arg_16_1, arg_16_2)
+StoreWelcomePopup._draw = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._welcome_ui_renderer
 	local var_16_1 = arg_16_0._blur_welcome_ui_renderer
 	local var_16_2 = arg_16_0._ui_scenegraph
@@ -756,7 +756,7 @@ function StoreWelcomePopup._draw(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function StoreWelcomePopup._handle_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+StoreWelcomePopup._handle_input = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = Managers.input:is_device_active("gamepad") and arg_17_1:get("confirm", true)
 	local var_17_1 = arg_17_0._widgets_by_name.window_button
 
@@ -773,7 +773,7 @@ function StoreWelcomePopup._handle_input(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	end
 end
 
-function StoreWelcomePopup.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+StoreWelcomePopup.update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if not arg_18_0._menu_input_description then
 		arg_18_0:_create_gamepad_input_description(arg_18_1)
 	end
@@ -801,7 +801,7 @@ function StoreWelcomePopup.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	arg_18_0:_draw(arg_18_1, arg_18_2)
 end
 
-function StoreWelcomePopup._update_animations(arg_19_0, arg_19_1)
+StoreWelcomePopup._update_animations = function (arg_19_0, arg_19_1)
 	for iter_19_0, iter_19_1 in pairs(arg_19_0._ui_animations) do
 		UIAnimation.update(iter_19_1, arg_19_1)
 
@@ -824,13 +824,13 @@ function StoreWelcomePopup._update_animations(arg_19_0, arg_19_1)
 	end
 end
 
-function StoreWelcomePopup._is_button_hover_enter(arg_20_0, arg_20_1)
+StoreWelcomePopup._is_button_hover_enter = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.content
 
 	return (var_20_0.button_hotspot or var_20_0.hotspot).on_hover_enter
 end
 
-function StoreWelcomePopup._is_button_pressed(arg_21_0, arg_21_1)
+StoreWelcomePopup._is_button_pressed = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.content
 	local var_21_1 = var_21_0.button_hotspot or var_21_0.hotspot
 
@@ -841,11 +841,11 @@ function StoreWelcomePopup._is_button_pressed(arg_21_0, arg_21_1)
 	end
 end
 
-function StoreWelcomePopup._play_sound(arg_22_0, arg_22_1)
+StoreWelcomePopup._play_sound = function (arg_22_0, arg_22_1)
 	WwiseWorld.trigger_event(arg_22_0._wwise_world, arg_22_1)
 end
 
-function StoreWelcomePopup._setup_list_widgets(arg_23_0, arg_23_1)
+StoreWelcomePopup._setup_list_widgets = function (arg_23_0, arg_23_1)
 	local var_23_0 = {}
 	local var_23_1 = "list_root"
 	local var_23_2 = true
@@ -889,7 +889,7 @@ function StoreWelcomePopup._setup_list_widgets(arg_23_0, arg_23_1)
 	arg_23_0:_align_dlc_widgets()
 end
 
-function StoreWelcomePopup._populate_text_widget(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+StoreWelcomePopup._populate_text_widget = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_1.content
 	local var_24_1 = arg_24_1.style
 	local var_24_2 = arg_24_2.text
@@ -920,7 +920,7 @@ function StoreWelcomePopup._populate_text_widget(arg_24_0, arg_24_1, arg_24_2, a
 	var_24_0.text = var_24_2
 end
 
-function StoreWelcomePopup._populate_currency_title_widget(arg_25_0, arg_25_1, arg_25_2)
+StoreWelcomePopup._populate_currency_title_widget = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.content
 	local var_25_1 = arg_25_1.style
 	local var_25_2 = var_25_1.text.size
@@ -949,7 +949,7 @@ function StoreWelcomePopup._populate_currency_title_widget(arg_25_0, arg_25_1, a
 	var_25_0.text2 = var_25_7
 end
 
-function StoreWelcomePopup._populate_currency_entry_widget(arg_26_0, arg_26_1, arg_26_2)
+StoreWelcomePopup._populate_currency_entry_widget = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_1.content
 	local var_26_1 = arg_26_1.style
 	local var_26_2 = var_26_1.text.size
@@ -970,7 +970,7 @@ function StoreWelcomePopup._populate_currency_entry_widget(arg_26_0, arg_26_1, a
 	var_26_0.text2 = UIUtils.comma_value(var_26_7)
 end
 
-function StoreWelcomePopup._align_dlc_widgets(arg_27_0)
+StoreWelcomePopup._align_dlc_widgets = function (arg_27_0)
 	local var_27_0 = 0
 	local var_27_1 = 0
 	local var_27_2 = 0
@@ -1019,7 +1019,7 @@ function StoreWelcomePopup._align_dlc_widgets(arg_27_0)
 	arg_27_0._total_list_height = var_27_0
 end
 
-function StoreWelcomePopup._initialize_scrollbar(arg_28_0)
+StoreWelcomePopup._initialize_scrollbar = function (arg_28_0)
 	local var_28_0 = arg_28_0._widgets_by_name.list_scrollbar
 
 	arg_28_0._scrollbar_logic = ScrollBarLogic:new(var_28_0)
@@ -1039,7 +1039,7 @@ function StoreWelcomePopup._initialize_scrollbar(arg_28_0)
 	var_28_0.content.visible = var_28_3 < var_28_4
 end
 
-function StoreWelcomePopup._update_scroll_position(arg_29_0)
+StoreWelcomePopup._update_scroll_position = function (arg_29_0)
 	local var_29_0 = arg_29_0._scrollbar_logic:get_scrolled_length()
 
 	if var_29_0 ~= arg_29_0._scrolled_length then
@@ -1048,7 +1048,7 @@ function StoreWelcomePopup._update_scroll_position(arg_29_0)
 	end
 end
 
-function StoreWelcomePopup._update_visible_list_entries(arg_30_0)
+StoreWelcomePopup._update_visible_list_entries = function (arg_30_0)
 	local var_30_0 = arg_30_0._scrollbar_logic
 
 	if not var_30_0:enabled() then
@@ -1081,7 +1081,7 @@ function StoreWelcomePopup._update_visible_list_entries(arg_30_0)
 	end
 end
 
-function StoreWelcomePopup._set_total_amount(arg_31_0, arg_31_1)
+StoreWelcomePopup._set_total_amount = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._widgets_by_name
 	local var_31_1 = var_31_0.currency_icon
 	local var_31_2 = var_31_0.currency_text

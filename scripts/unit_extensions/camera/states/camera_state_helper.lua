@@ -2,7 +2,7 @@
 
 CameraStateHelper = CameraStateHelper or {}
 
-function CameraStateHelper.set_local_pose(arg_1_0, arg_1_1, arg_1_2)
+CameraStateHelper.set_local_pose = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = Unit.local_pose(arg_1_1, arg_1_2)
 	local var_1_1 = arg_1_2
 
@@ -23,7 +23,7 @@ end
 
 local var_0_0 = math.pi / 2 - math.pi / 15
 
-function CameraStateHelper.set_camera_rotation(arg_2_0, arg_2_1)
+CameraStateHelper.set_camera_rotation = function (arg_2_0, arg_2_1)
 	local var_2_0 = Managers.input
 	local var_2_1 = Managers.state.camera
 	local var_2_2 = var_2_0:get_service("Player")
@@ -48,7 +48,7 @@ function CameraStateHelper.set_camera_rotation(arg_2_0, arg_2_1)
 	return Vector3.length_squared(var_2_4) > 0
 end
 
-function CameraStateHelper.set_follow_camera_position(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CameraStateHelper.set_follow_camera_position = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_2 then
 		arg_3_1 = arg_3_1 + arg_3_2
 	end
@@ -70,7 +70,7 @@ function CameraStateHelper.set_follow_camera_position(arg_3_0, arg_3_1, arg_3_2,
 	Unit.set_local_position(arg_3_0, 0, var_3_0)
 end
 
-function CameraStateHelper.set_camera_rotation_observe_static(arg_4_0, arg_4_1)
+CameraStateHelper.set_camera_rotation_observe_static = function (arg_4_0, arg_4_1)
 	local var_4_0 = Unit.local_rotation(arg_4_1, 0)
 	local var_4_1 = Quaternion.look(Quaternion.forward(var_4_0), Vector3.up())
 	local var_4_2 = Quaternion.right(var_4_1)
@@ -80,11 +80,11 @@ function CameraStateHelper.set_camera_rotation_observe_static(arg_4_0, arg_4_1)
 	Unit.set_local_rotation(arg_4_0, 0, var_4_4)
 end
 
-function CameraStateHelper.get_valid_unit_to_observe(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+CameraStateHelper.get_valid_unit_to_observe = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = FrameTable.alloc_table()
 	local var_5_1 = table.values(Managers.player:human_and_bot_players())
 
-	table.sort(var_5_1, function(arg_6_0, arg_6_1)
+	table.sort(var_5_1, function (arg_6_0, arg_6_1)
 		local var_6_0 = arg_6_0:network_id()
 		local var_6_1 = arg_6_1:network_id()
 

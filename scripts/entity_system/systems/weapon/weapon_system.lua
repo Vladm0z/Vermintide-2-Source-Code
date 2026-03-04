@@ -37,7 +37,7 @@ local var_0_1 = {
 	"SingleWeaponUnitExtension"
 }
 
-function WeaponSystem.init(arg_1_0, arg_1_1, arg_1_2)
+WeaponSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	WeaponSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -58,7 +58,7 @@ function WeaponSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._chained_projectiles = {}
 end
 
-function WeaponSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WeaponSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_4.weapon_system = arg_2_0
 
 	local var_2_0 = WeaponSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
@@ -68,7 +68,7 @@ function WeaponSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2
 	return var_2_0
 end
 
-function WeaponSystem.rpc_alert_enemy(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+WeaponSystem.rpc_alert_enemy = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0.unit_storage:unit(arg_3_2)
 
 	if not HEALTH_ALIVE[var_3_0] then
@@ -143,7 +143,7 @@ end
 
 local var_0_3 = {}
 
-function WeaponSystem.send_rpc_attack_hit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, ...)
+WeaponSystem.send_rpc_attack_hit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, ...)
 	table.clear(var_0_3)
 
 	local var_4_0 = select("#", ...)
@@ -199,7 +199,7 @@ end
 
 local var_0_4 = BLACKBOARDS
 
-function WeaponSystem.rpc_attack_hit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17, arg_5_18, arg_5_19, arg_5_20, arg_5_21)
+WeaponSystem.rpc_attack_hit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17, arg_5_18, arg_5_19, arg_5_20, arg_5_21)
 	local var_5_0 = arg_5_0.unit_storage:unit(arg_5_4)
 	local var_5_1 = arg_5_0.network_manager:game_object_or_level_unit(arg_5_3, arg_5_19)
 
@@ -283,7 +283,7 @@ function WeaponSystem.rpc_attack_hit(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	DamageUtils.server_apply_hit(var_5_27, var_5_1, var_5_0, var_5_6 or "full", arg_5_6, arg_5_7, var_5_13, var_5_2, arg_5_9, var_5_15, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_16, var_5_23, arg_5_18, arg_5_20, arg_5_21, nil, var_5_22)
 end
 
-function WeaponSystem.destroy(arg_6_0)
+WeaponSystem.destroy = function (arg_6_0)
 	local var_6_0 = arg_6_0.world
 
 	for iter_6_0, iter_6_1 in pairs(arg_6_0._beam_particle_effects) do
@@ -296,7 +296,7 @@ function WeaponSystem.destroy(arg_6_0)
 	arg_6_0.network_event_delegate:unregister(arg_6_0)
 end
 
-function WeaponSystem.update(arg_7_0, arg_7_1, arg_7_2)
+WeaponSystem.update = function (arg_7_0, arg_7_1, arg_7_2)
 	WeaponSystem.super.update(arg_7_0, arg_7_1, arg_7_2)
 
 	arg_7_0.t = arg_7_2
@@ -311,7 +311,7 @@ end
 local var_0_5 = 1
 local var_0_6 = 4
 
-function WeaponSystem.update_synced_beam_particle_effects(arg_8_0)
+WeaponSystem.update_synced_beam_particle_effects = function (arg_8_0)
 	local var_8_0 = arg_8_0.game
 	local var_8_1 = arg_8_0.network_manager
 	local var_8_2 = World.get_data(arg_8_0.world, "physics_world")
@@ -406,7 +406,7 @@ local function var_0_7(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg
 	return false, arg_9_3
 end
 
-function WeaponSystem.update_synced_geiser_particle_effects(arg_10_0, arg_10_1, arg_10_2)
+WeaponSystem.update_synced_geiser_particle_effects = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.game
 	local var_10_1 = arg_10_0.network_manager
 	local var_10_2 = arg_10_0.world
@@ -451,7 +451,7 @@ function WeaponSystem.update_synced_geiser_particle_effects(arg_10_0, arg_10_1, 
 	end
 end
 
-function WeaponSystem.update_synced_flamethrower_particle_effects(arg_11_0)
+WeaponSystem.update_synced_flamethrower_particle_effects = function (arg_11_0)
 	local var_11_0 = arg_11_0.network_manager
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._flamethrower_particle_effects) do
@@ -472,7 +472,7 @@ function WeaponSystem.update_synced_flamethrower_particle_effects(arg_11_0)
 	end
 end
 
-function WeaponSystem.rpc_ai_weapon_shoot_start(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+WeaponSystem.rpc_ai_weapon_shoot_start = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = Managers.state.unit_storage:unit(arg_12_2)
 
 	if not var_12_0 then
@@ -487,7 +487,7 @@ function WeaponSystem.rpc_ai_weapon_shoot_start(arg_12_0, arg_12_1, arg_12_2, ar
 	ScriptUnit.extension(var_12_4, "weapon_system"):shoot_start(var_12_0, arg_12_3 / 100)
 end
 
-function WeaponSystem.rpc_ai_weapon_shoot(arg_13_0, arg_13_1, arg_13_2)
+WeaponSystem.rpc_ai_weapon_shoot = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.state.unit_storage:unit(arg_13_2)
 
 	if not var_13_0 then
@@ -502,7 +502,7 @@ function WeaponSystem.rpc_ai_weapon_shoot(arg_13_0, arg_13_1, arg_13_2)
 	ScriptUnit.extension(var_13_4, "weapon_system"):shoot(var_13_0)
 end
 
-function WeaponSystem.rpc_ai_weapon_shoot_end(arg_14_0, arg_14_1, arg_14_2)
+WeaponSystem.rpc_ai_weapon_shoot_end = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = Managers.state.unit_storage:unit(arg_14_2)
 
 	if not var_14_0 then
@@ -517,7 +517,7 @@ function WeaponSystem.rpc_ai_weapon_shoot_end(arg_14_0, arg_14_1, arg_14_2)
 	ScriptUnit.extension(var_14_4, "weapon_system"):shoot_end(var_14_0)
 end
 
-function WeaponSystem.rpc_change_single_weapon_state(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+WeaponSystem.rpc_change_single_weapon_state = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = Managers.state.unit_storage:unit(arg_15_2)
 
 	if not var_15_0 then
@@ -531,7 +531,7 @@ function WeaponSystem.rpc_change_single_weapon_state(arg_15_0, arg_15_1, arg_15_
 	arg_15_0:change_single_weapon_state(var_15_0, var_15_1, var_15_3, var_15_2)
 end
 
-function WeaponSystem.change_single_weapon_state(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+WeaponSystem.change_single_weapon_state = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = var_0_4[arg_16_1]
 
 	if var_16_0 then
@@ -552,7 +552,7 @@ function WeaponSystem.change_single_weapon_state(arg_16_0, arg_16_1, arg_16_2, a
 	end
 end
 
-function WeaponSystem.rpc_change_synced_weapon_state(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+WeaponSystem.rpc_change_synced_weapon_state = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = Managers.state.unit_storage:unit(arg_17_2)
 
 	if not var_17_0 then
@@ -582,7 +582,7 @@ function WeaponSystem.rpc_change_synced_weapon_state(arg_17_0, arg_17_1, arg_17_
 	end
 end
 
-function WeaponSystem.get_synced_weapon_state(arg_18_0, arg_18_1)
+WeaponSystem.get_synced_weapon_state = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0:_first_wielded_weapon_unit(arg_18_1)
 
 	if not var_18_0 then
@@ -598,13 +598,13 @@ function WeaponSystem.get_synced_weapon_state(arg_18_0, arg_18_1)
 	return var_18_1:current_synced_state()
 end
 
-function WeaponSystem._first_wielded_weapon_unit(arg_19_0, arg_19_1)
+WeaponSystem._first_wielded_weapon_unit = function (arg_19_0, arg_19_1)
 	local var_19_0 = ScriptUnit.extension(arg_19_1, "inventory_system"):equipment()
 
 	return var_19_0.left_hand_wielded_unit or var_19_0.right_hand_wielded_unit or var_19_0.left_hand_wielded_unit_3p or var_19_0.right_hand_wielded_unit_3p
 end
 
-function WeaponSystem.rpc_start_beam(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+WeaponSystem.rpc_start_beam = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	if not LEVEL_EDITOR_TEST then
 		local var_20_0 = arg_20_0.unit_storage:unit(arg_20_2)
 		local var_20_1 = NetworkLookup.effects[arg_20_3]
@@ -631,7 +631,7 @@ function WeaponSystem.rpc_start_beam(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg
 	end
 end
 
-function WeaponSystem.rpc_end_beam(arg_21_0, arg_21_1, arg_21_2)
+WeaponSystem.rpc_end_beam = function (arg_21_0, arg_21_1, arg_21_2)
 	if not LEVEL_EDITOR_TEST then
 		local var_21_0 = arg_21_0.world
 		local var_21_1 = arg_21_0.unit_storage:unit(arg_21_2)
@@ -652,7 +652,7 @@ function WeaponSystem.rpc_end_beam(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function WeaponSystem.rpc_start_geiser(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+WeaponSystem.rpc_start_geiser = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
 	if not LEVEL_EDITOR_TEST then
 		local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
 
@@ -698,7 +698,7 @@ function WeaponSystem.rpc_start_geiser(arg_22_0, arg_22_1, arg_22_2, arg_22_3, a
 	end
 end
 
-function WeaponSystem.rpc_end_geiser(arg_23_0, arg_23_1, arg_23_2)
+WeaponSystem.rpc_end_geiser = function (arg_23_0, arg_23_1, arg_23_2)
 	if not LEVEL_EDITOR_TEST then
 		local var_23_0 = arg_23_0.world
 		local var_23_1 = arg_23_0._geiser_particle_effects[arg_23_2]
@@ -717,7 +717,7 @@ function WeaponSystem.rpc_end_geiser(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function WeaponSystem.rpc_start_flamethrower(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+WeaponSystem.rpc_start_flamethrower = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if not LEVEL_EDITOR_TEST then
 		local var_24_0 = arg_24_0.unit_storage:unit(arg_24_2)
 		local var_24_1 = NetworkLookup.effects[arg_24_3]
@@ -750,7 +750,7 @@ function WeaponSystem.rpc_start_flamethrower(arg_24_0, arg_24_1, arg_24_2, arg_2
 	end
 end
 
-function WeaponSystem.rpc_end_flamethrower(arg_25_0, arg_25_1, arg_25_2)
+WeaponSystem.rpc_end_flamethrower = function (arg_25_0, arg_25_1, arg_25_2)
 	if not LEVEL_EDITOR_TEST then
 		local var_25_0 = arg_25_0.world
 		local var_25_1 = arg_25_0.unit_storage:unit(arg_25_2)
@@ -770,7 +770,7 @@ function WeaponSystem.rpc_end_flamethrower(arg_25_0, arg_25_1, arg_25_2)
 	end
 end
 
-function WeaponSystem.rpc_summon_vortex(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+WeaponSystem.rpc_summon_vortex = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	if not LEVEL_EDITOR_TEST then
 		local var_26_0 = arg_26_0.unit_storage:unit(arg_26_2)
 		local var_26_1 = arg_26_0.unit_storage:unit(arg_26_3)
@@ -792,7 +792,7 @@ function WeaponSystem.rpc_summon_vortex(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	end
 end
 
-function WeaponSystem._summon_vortex(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+WeaponSystem._summon_vortex = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = "units/weapons/enemy/wpn_chaos_plague_vortex/wpn_chaos_plague_vortex"
 	local var_27_1 = "spirit_storm"
 	local var_27_2 = Managers.state.side.side_by_unit[arg_27_3].side_id
@@ -809,7 +809,7 @@ function WeaponSystem._summon_vortex(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	Managers.state.unit_spawner:spawn_network_unit(var_27_0, var_27_3, var_27_4, arg_27_1, Quaternion.identity())
 end
 
-function WeaponSystem.rpc_set_stormfiend_beam(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+WeaponSystem.rpc_set_stormfiend_beam = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_0.unit_storage:unit(arg_28_2)
 
 	if ALIVE[var_28_0] then
@@ -823,7 +823,7 @@ function WeaponSystem.rpc_set_stormfiend_beam(arg_28_0, arg_28_1, arg_28_2, arg_
 	end
 end
 
-function WeaponSystem.rpc_weapon_blood(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+WeaponSystem.rpc_weapon_blood = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0.unit_storage:unit(arg_29_2)
 
 	if not Unit.alive(var_29_0) then
@@ -839,7 +839,7 @@ function WeaponSystem.rpc_weapon_blood(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	end
 end
 
-function WeaponSystem.rpc_play_fx(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+WeaponSystem.rpc_play_fx = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = arg_30_0.world
 	local var_30_1 = World.create_particles
 	local var_30_2 = NetworkLookup.effects
@@ -873,7 +873,7 @@ function WeaponSystem.rpc_play_fx(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30
 	end
 end
 
-function WeaponSystem.hot_join_sync(arg_31_0, arg_31_1)
+WeaponSystem.hot_join_sync = function (arg_31_0, arg_31_1)
 	local var_31_0 = PEER_ID_TO_CHANNEL[arg_31_1]
 
 	for iter_31_0, iter_31_1 in pairs(arg_31_0._beam_particle_effects) do
@@ -896,7 +896,7 @@ function WeaponSystem.hot_join_sync(arg_31_0, arg_31_1)
 	end
 end
 
-function WeaponSystem.start_soul_rip(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+WeaponSystem.start_soul_rip = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
 	local var_32_0 = arg_32_0.world
 
 	if arg_32_0._soul_rip_particle_effects[arg_32_1] then
@@ -955,7 +955,7 @@ function WeaponSystem.start_soul_rip(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg
 	end
 end
 
-function WeaponSystem.update_synced_soul_rip_particle_effects(arg_33_0)
+WeaponSystem.update_synced_soul_rip_particle_effects = function (arg_33_0)
 	for iter_33_0, iter_33_1 in pairs(arg_33_0._soul_rip_particle_effects) do
 		if not ALIVE[iter_33_0] or not ALIVE[iter_33_1.target_unit] then
 			arg_33_0:cleanup_soul_rip(iter_33_0)
@@ -983,7 +983,7 @@ function WeaponSystem.update_synced_soul_rip_particle_effects(arg_33_0)
 	end
 end
 
-function WeaponSystem.stop_soul_rip(arg_34_0, arg_34_1, arg_34_2)
+WeaponSystem.stop_soul_rip = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0._soul_rip_particle_effects[arg_34_1]
 
 	if var_34_0 then
@@ -999,7 +999,7 @@ function WeaponSystem.stop_soul_rip(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function WeaponSystem.cleanup_soul_rip(arg_35_0, arg_35_1)
+WeaponSystem.cleanup_soul_rip = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._soul_rip_particle_effects[arg_35_1]
 
 	if var_35_0 then
@@ -1016,7 +1016,7 @@ function WeaponSystem.cleanup_soul_rip(arg_35_0, arg_35_1)
 	end
 end
 
-function WeaponSystem.soul_rip_burst(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
+WeaponSystem.soul_rip_burst = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6)
 	local var_36_0 = arg_36_0.world
 	local var_36_1 = arg_36_0.unit_storage:go_id(arg_36_1)
 	local var_36_2 = Unit.world_position(arg_36_2, arg_36_3)
@@ -1074,7 +1074,7 @@ function WeaponSystem.soul_rip_burst(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg
 	end
 end
 
-function WeaponSystem.rpc_start_soul_rip(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+WeaponSystem.rpc_start_soul_rip = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
 	local var_37_0 = arg_37_0.unit_storage:unit(arg_37_2)
 	local var_37_1 = arg_37_0.unit_storage:unit(arg_37_3)
 
@@ -1091,7 +1091,7 @@ function WeaponSystem.rpc_start_soul_rip(arg_37_0, arg_37_1, arg_37_2, arg_37_3,
 	end
 end
 
-function WeaponSystem.rpc_stop_soul_rip(arg_38_0, arg_38_1, arg_38_2)
+WeaponSystem.rpc_stop_soul_rip = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_0.unit_storage:unit(arg_38_2)
 
 	arg_38_0:stop_soul_rip(var_38_0, false)
@@ -1103,7 +1103,7 @@ function WeaponSystem.rpc_stop_soul_rip(arg_38_0, arg_38_1, arg_38_2)
 	end
 end
 
-function WeaponSystem.rpc_soul_rip_burst(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
+WeaponSystem.rpc_soul_rip_burst = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6)
 	local var_39_0 = arg_39_0.unit_storage:unit(arg_39_3)
 	local var_39_1 = arg_39_0.unit_storage:unit(arg_39_2)
 
@@ -1122,7 +1122,7 @@ function WeaponSystem.rpc_soul_rip_burst(arg_39_0, arg_39_1, arg_39_2, arg_39_3,
 	end
 end
 
-function WeaponSystem._update_chained_projectiles(arg_40_0, arg_40_1)
+WeaponSystem._update_chained_projectiles = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._chained_projectiles
 	local var_40_1 = Managers.state.entity:system("ai_system").broadphase
 
@@ -1143,13 +1143,13 @@ function WeaponSystem._update_chained_projectiles(arg_40_0, arg_40_1)
 	end
 end
 
-function WeaponSystem.is_chained_projectile_active(arg_41_0, arg_41_1)
+WeaponSystem.is_chained_projectile_active = function (arg_41_0, arg_41_1)
 	return not not arg_41_0._chained_projectiles[arg_41_1]
 end
 
 local var_0_8 = {}
 
-function WeaponSystem._select_next_chained_projectile_target(arg_42_0, arg_42_1, arg_42_2)
+WeaponSystem._select_next_chained_projectile_target = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_1.settings
 	local var_42_1 = arg_42_1.hit_units
 	local var_42_2 = arg_42_1.last_chain_pos:unbox()
@@ -1186,7 +1186,7 @@ function WeaponSystem._select_next_chained_projectile_target(arg_42_0, arg_42_1,
 	return false
 end
 
-function WeaponSystem._play_chained_projectile_fx(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+WeaponSystem._play_chained_projectile_fx = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
 	local var_43_0 = NetworkLookup.effects[arg_43_1]
 	local var_43_1 = {
 		arg_43_3,
@@ -1205,7 +1205,7 @@ function WeaponSystem._play_chained_projectile_fx(arg_43_0, arg_43_1, arg_43_2, 
 	end
 end
 
-function WeaponSystem.try_fire_chained_projectile(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6, arg_44_7, arg_44_8, arg_44_9, arg_44_10, arg_44_11)
+WeaponSystem.try_fire_chained_projectile = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4, arg_44_5, arg_44_6, arg_44_7, arg_44_8, arg_44_9, arg_44_10, arg_44_11)
 	local var_44_0 = {
 		chain_count = 0,
 		settings = arg_44_1,
@@ -1241,7 +1241,7 @@ function WeaponSystem.try_fire_chained_projectile(arg_44_0, arg_44_1, arg_44_2, 
 	Managers.state.achievement:trigger_event("chained_projectile_fired", var_44_0, arg_44_7)
 end
 
-function WeaponSystem._apply_chained_projectile_damage(arg_45_0, arg_45_1)
+WeaponSystem._apply_chained_projectile_damage = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_1.settings
 	local var_45_1 = arg_45_1.chain_count + 1
 	local var_45_2 = arg_45_1.next_target_unit

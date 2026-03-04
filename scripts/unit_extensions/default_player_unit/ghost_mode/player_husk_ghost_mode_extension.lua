@@ -2,7 +2,7 @@
 
 PlayerHuskGhostModeExtension = class(PlayerHuskGhostModeExtension)
 
-function PlayerHuskGhostModeExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskGhostModeExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._world = arg_1_1.world
 	arg_1_0._network_transmit = arg_1_1.network_transmit
@@ -12,24 +12,24 @@ function PlayerHuskGhostModeExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._is_husk = true
 end
 
-function PlayerHuskGhostModeExtension.extensions_ready(arg_2_0)
+PlayerHuskGhostModeExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._inventory_extension = ScriptUnit.extension(arg_2_0._unit, "inventory_system")
 	arg_2_0._breed = Unit.get_data(arg_2_0._unit, "breed")
 end
 
-function PlayerHuskGhostModeExtension.destroy(arg_3_0)
+PlayerHuskGhostModeExtension.destroy = function (arg_3_0)
 	arg_3_0:_clear_world_marker()
 end
 
-function PlayerHuskGhostModeExtension.is_in_ghost_mode(arg_4_0)
+PlayerHuskGhostModeExtension.is_in_ghost_mode = function (arg_4_0)
 	return arg_4_0._ghost_mode_active
 end
 
-function PlayerHuskGhostModeExtension.is_husk(arg_5_0)
+PlayerHuskGhostModeExtension.is_husk = function (arg_5_0)
 	return arg_5_0._is_husk
 end
 
-function PlayerHuskGhostModeExtension._in_same_side_as_local_player(arg_6_0)
+PlayerHuskGhostModeExtension._in_same_side_as_local_player = function (arg_6_0)
 	if DEDICATED_SERVER then
 		return false
 	end
@@ -46,7 +46,7 @@ function PlayerHuskGhostModeExtension._in_same_side_as_local_player(arg_6_0)
 	return Managers.state.side.side_by_unit[arg_6_0._unit] == var_6_4
 end
 
-function PlayerHuskGhostModeExtension._is_spectator(arg_7_0)
+PlayerHuskGhostModeExtension._is_spectator = function (arg_7_0)
 	if DEDICATED_SERVER then
 		return false
 	end
@@ -67,7 +67,7 @@ function PlayerHuskGhostModeExtension._is_spectator(arg_7_0)
 	return arg_7_0._is_spectator_cached
 end
 
-function PlayerHuskGhostModeExtension.husk_enter_ghost_mode(arg_8_0)
+PlayerHuskGhostModeExtension.husk_enter_ghost_mode = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 
 	arg_8_0._ghost_mode_active = true
@@ -103,7 +103,7 @@ function PlayerHuskGhostModeExtension.husk_enter_ghost_mode(arg_8_0)
 	Managers.state.entity:system("dialogue_context_system"):set_context_value(arg_8_0._unit, "is_in_ghost_mode", true)
 end
 
-function PlayerHuskGhostModeExtension._add_world_marker(arg_9_0)
+PlayerHuskGhostModeExtension._add_world_marker = function (arg_9_0)
 	arg_9_0:_clear_world_marker()
 
 	local var_9_0 = callback(arg_9_0, "cb_world_marker_spawned", arg_9_0._unit)
@@ -111,7 +111,7 @@ function PlayerHuskGhostModeExtension._add_world_marker(arg_9_0)
 	Managers.state.event:trigger("add_world_marker_unit", "versus_pactsworn_ghostmode", arg_9_0._unit, var_9_0)
 end
 
-function PlayerHuskGhostModeExtension._clear_world_marker(arg_10_0)
+PlayerHuskGhostModeExtension._clear_world_marker = function (arg_10_0)
 	if arg_10_0._marker_id then
 		Managers.state.event:trigger("remove_world_marker", arg_10_0._marker_id)
 
@@ -119,7 +119,7 @@ function PlayerHuskGhostModeExtension._clear_world_marker(arg_10_0)
 	end
 end
 
-function PlayerHuskGhostModeExtension.cb_world_marker_spawned(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PlayerHuskGhostModeExtension.cb_world_marker_spawned = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = Managers.player:owner(arg_11_1)
 	local var_11_1 = var_11_0 and var_11_0:profile_index()
 	local var_11_2 = SPProfiles[var_11_1]
@@ -141,7 +141,7 @@ function PlayerHuskGhostModeExtension.cb_world_marker_spawned(arg_11_0, arg_11_1
 	arg_11_0._marker_id = arg_11_2
 end
 
-function PlayerHuskGhostModeExtension.husk_leave_ghost_mode(arg_12_0)
+PlayerHuskGhostModeExtension.husk_leave_ghost_mode = function (arg_12_0)
 	arg_12_0._ghost_mode_active = false
 	arg_12_0._has_left_once = true
 
@@ -184,6 +184,6 @@ function PlayerHuskGhostModeExtension.husk_leave_ghost_mode(arg_12_0)
 	Managers.state.entity:system("dialogue_context_system"):set_context_value(var_12_0, "is_in_ghost_mode", false)
 end
 
-function PlayerHuskGhostModeExtension.set_safe_spot(arg_13_0, arg_13_1)
+PlayerHuskGhostModeExtension.set_safe_spot = function (arg_13_0, arg_13_1)
 	arg_13_0._safe_spot = arg_13_1
 end

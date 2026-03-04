@@ -13,7 +13,7 @@ local var_0_1 = {
 	"rpc_ability_activated"
 }
 
-function CareerSystem.init(arg_1_0, arg_1_1, arg_1_2)
+CareerSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	CareerSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0.unit_extensions = {}
@@ -29,13 +29,13 @@ function CareerSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.player_manager = Managers.player
 end
 
-function CareerSystem.destroy(arg_2_0)
+CareerSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0.network_event_delegate = nil
 end
 
-function CareerSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CareerSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = CareerSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	arg_3_0.unit_extensions[arg_3_2] = var_3_0
@@ -43,13 +43,13 @@ function CareerSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	return var_3_0
 end
 
-function CareerSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+CareerSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.unit_extensions[arg_4_1] = nil
 
 	CareerSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function CareerSystem.server_reduce_activated_ability_cooldown(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+CareerSystem.server_reduce_activated_ability_cooldown = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not arg_5_1 then
 		return
 	end
@@ -71,7 +71,7 @@ function CareerSystem.server_reduce_activated_ability_cooldown(arg_5_0, arg_5_1,
 	end
 end
 
-function CareerSystem.rpc_server_reduce_activated_ability_cooldown(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+CareerSystem.rpc_server_reduce_activated_ability_cooldown = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0.network_transmit
 
 	if arg_6_0.is_server then
@@ -93,7 +93,7 @@ function CareerSystem.rpc_server_reduce_activated_ability_cooldown(arg_6_0, arg_
 	end
 end
 
-function CareerSystem.rpc_reduce_activated_ability_cooldown(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CareerSystem.rpc_reduce_activated_ability_cooldown = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_2)
 	local var_7_1 = arg_7_0.unit_extensions[var_7_0]
 
@@ -102,7 +102,7 @@ function CareerSystem.rpc_reduce_activated_ability_cooldown(arg_7_0, arg_7_1, ar
 	end
 end
 
-function CareerSystem.rpc_server_reduce_activated_ability_cooldown_percent(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+CareerSystem.rpc_server_reduce_activated_ability_cooldown_percent = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_0.network_transmit
 
 	if arg_8_0.is_server then
@@ -120,7 +120,7 @@ function CareerSystem.rpc_server_reduce_activated_ability_cooldown_percent(arg_8
 	end
 end
 
-function CareerSystem.rpc_reduce_activated_ability_cooldown_percent(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+CareerSystem.rpc_reduce_activated_ability_cooldown_percent = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_0.unit_storage:unit(arg_9_2)
 	local var_9_1 = arg_9_0.unit_extensions[var_9_0]
 
@@ -129,7 +129,7 @@ function CareerSystem.rpc_reduce_activated_ability_cooldown_percent(arg_9_0, arg
 	end
 end
 
-function CareerSystem.rpc_ability_activated(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+CareerSystem.rpc_ability_activated = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_0.unit_storage:unit(arg_10_2)
 	local var_10_1 = Managers.player:players_at_peer(Network.peer_id())
 

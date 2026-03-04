@@ -219,10 +219,10 @@ local var_0_3 = {
 					style_id = "hp_bar",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar",
-					content_check_function = function(arg_1_0)
+					content_check_function = function (arg_1_0)
 						return arg_1_0.draw_health_bar
 					end,
-					dynamic_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+					dynamic_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 						local var_2_0 = arg_2_0.bar_value
 						local var_2_1 = arg_2_0.is_wounded
 						local var_2_2 = 1 - var_2_0
@@ -259,7 +259,7 @@ local var_0_3 = {
 					style_id = "hp_bar_grimoire_debuff",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar_grimoire_debuff",
-					dynamic_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+					dynamic_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 						local var_3_0 = arg_3_0.bar_value
 						local var_3_1 = 0
 						local var_3_2 = arg_3_1.color
@@ -290,7 +290,7 @@ local var_0_3 = {
 					style_id = "hp_bar_shield",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar_shield",
-					dynamic_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+					dynamic_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 						local var_4_0 = arg_4_0.bar_value_position
 						local var_4_1 = arg_4_0.bar_value_offset
 						local var_4_2 = arg_4_0.bar_value_size
@@ -327,7 +327,7 @@ local var_0_3 = {
 					pass_type = "centered_texture_amount",
 					style_id = "hp_bar_divider",
 					texture_id = "hp_bar_divider",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return arg_5_1.texture_amount > 0
 					end
 				},
@@ -337,7 +337,7 @@ local var_0_3 = {
 					texture_id = "hp_bar_grimoire_icon",
 					content_id = "hp_bar_grimoire_icon",
 					retained_mode = var_0_0,
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return arg_6_0.active
 					end
 				},
@@ -347,7 +347,7 @@ local var_0_3 = {
 					texture_id = "hp_bar_max_health_divider",
 					content_id = "hp_bar_max_health_divider",
 					retained_mode = var_0_0,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return arg_7_0.active
 					end
 				}

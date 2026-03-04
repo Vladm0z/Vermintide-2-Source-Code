@@ -2,29 +2,29 @@
 
 SteamManager = class(SteamManager)
 
-function SteamManager.init(arg_1_0)
+SteamManager.init = function (arg_1_0)
 	arg_1_0._overlay_active = false
 end
 
-function SteamManager.destroy(arg_2_0)
+SteamManager.destroy = function (arg_2_0)
 	return
 end
 
-function SteamManager.update(arg_3_0, arg_3_1, arg_3_2)
+SteamManager.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if HAS_STEAM then
 		Steam.run_callbacks(arg_3_0)
 	end
 end
 
-function SteamManager.on_overlay_activated(arg_4_0, arg_4_1)
+SteamManager.on_overlay_activated = function (arg_4_0, arg_4_1)
 	arg_4_0._overlay_active = arg_4_1
 end
 
-function SteamManager.is_overlay_active(arg_5_0)
+SteamManager.is_overlay_active = function (arg_5_0)
 	return arg_5_0._overlay_active
 end
 
-function SteamManager.on_inventory_result(arg_6_0, arg_6_1, arg_6_2)
+SteamManager.on_inventory_result = function (arg_6_0, arg_6_1, arg_6_2)
 	print("[SteamManager] on_inventory_result, result=", arg_6_2, "handle=", arg_6_1)
 
 	if arg_6_2 == 1 then
@@ -70,7 +70,7 @@ function SteamManager.on_inventory_result(arg_6_0, arg_6_1, arg_6_2)
 	SteamInventory.destroy_result(arg_6_1)
 end
 
-function SteamManager.on_price_result(arg_7_0, arg_7_1, arg_7_2)
+SteamManager.on_price_result = function (arg_7_0, arg_7_1, arg_7_2)
 	print("[SteamManager] on_price_result", arg_7_1, arg_7_2)
 
 	if arg_7_0._refresh_item_prices_callback then
@@ -88,7 +88,7 @@ function SteamManager.on_price_result(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function SteamManager.on_start_purchase(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+SteamManager.on_start_purchase = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	print("[SteamManager] on_start_purchase result=", arg_8_1, "order_id=", arg_8_2, ", transaction_id=", arg_8_3)
 
 	if arg_8_1 ~= 1 then
@@ -99,12 +99,12 @@ function SteamManager.on_start_purchase(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	end
 end
 
-function SteamManager.request_user_inventory(arg_9_0, arg_9_1)
+SteamManager.request_user_inventory = function (arg_9_0, arg_9_1)
 	arg_9_0._request_user_inventory_callback = arg_9_1
 	arg_9_0._request_user_inventory_handle = SteamInventory.get_all_items()
 end
 
-function SteamManager.request_item_prices(arg_10_0, arg_10_1)
+SteamManager.request_item_prices = function (arg_10_0, arg_10_1)
 	print("[SteamManager] request_item_prices")
 	SteamInventory.request_prices()
 
@@ -112,7 +112,7 @@ function SteamManager.request_item_prices(arg_10_0, arg_10_1)
 	arg_10_0._last_result = nil
 end
 
-function SteamManager.request_purchase_item(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+SteamManager.request_purchase_item = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = SteamitemdefidToMasterList[arg_11_1]
 
 	printf("[SteamManager] request_purchase_item(steam_itemdefid=%s %q, amount=%s)", arg_11_1, var_11_0 or "n/a", arg_11_2)

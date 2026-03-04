@@ -4,7 +4,7 @@ require("scripts/unit_extensions/world_markers/world_marker_extension")
 
 StoreWorldMarkerExtension = class(StoreWorldMarkerExtension, WorldMarkerExtension)
 
-function StoreWorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StoreWorldMarkerExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	StoreWorldMarkerExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._marker_type = "store"
@@ -16,15 +16,15 @@ function StoreWorldMarkerExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Managers.state.event:register(arg_1_0, "set_all_shop_item_seen", "event_set_all_shop_item_seen")
 end
 
-function StoreWorldMarkerExtension._destroy(arg_2_0)
+StoreWorldMarkerExtension._destroy = function (arg_2_0)
 	Managers.state.event:unregister("set_all_shop_item_seen", arg_2_0)
 end
 
-function StoreWorldMarkerExtension.event_set_all_shop_item_seen(arg_3_0)
+StoreWorldMarkerExtension.event_set_all_shop_item_seen = function (arg_3_0)
 	arg_3_0._unseen_shop_items = false
 end
 
-function StoreWorldMarkerExtension._extensions_ready(arg_4_0)
+StoreWorldMarkerExtension._extensions_ready = function (arg_4_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -35,7 +35,7 @@ function StoreWorldMarkerExtension._extensions_ready(arg_4_0)
 	arg_4_0._initialized = true
 end
 
-function StoreWorldMarkerExtension._add_marker(arg_5_0, arg_5_1)
+StoreWorldMarkerExtension._add_marker = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._unit
 	local var_5_1 = arg_5_0._add_event_name
 	local var_5_2 = arg_5_0._event_manager
@@ -44,7 +44,7 @@ function StoreWorldMarkerExtension._add_marker(arg_5_0, arg_5_1)
 	var_5_2:trigger(var_5_1, var_5_3, var_5_0, arg_5_1)
 end
 
-function StoreWorldMarkerExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+StoreWorldMarkerExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if not arg_6_0._initialized then
 		return
 	end

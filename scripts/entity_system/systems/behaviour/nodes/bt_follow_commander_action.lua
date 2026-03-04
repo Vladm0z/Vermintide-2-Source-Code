@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFollowCommanderAction = class(BTFollowCommanderAction, BTNode)
 
-function BTFollowCommanderAction.init(arg_1_0, ...)
+BTFollowCommanderAction.init = function (arg_1_0, ...)
 	BTFollowCommanderAction.super.init(arg_1_0, ...)
 end
 
 BTFollowCommanderAction.name = "BTFollowCommanderAction"
 
-function BTFollowCommanderAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTFollowCommanderAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.5
 	arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
@@ -40,7 +40,7 @@ function BTFollowCommanderAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.speed_animation_variable = arg_2_2.speed_animation_variable or Unit.animation_has_variable(arg_2_1, "move_speed") and Unit.animation_find_variable(arg_2_1, "move_speed")
 end
 
-function BTFollowCommanderAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTFollowCommanderAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if not arg_3_5 then
 		arg_3_0:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
 	end
@@ -66,7 +66,7 @@ function BTFollowCommanderAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	end
 end
 
-function BTFollowCommanderAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTFollowCommanderAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.navigation_extension
 
 	if arg_4_2.commander_extension:follow_node_pending(arg_4_2) then
@@ -139,7 +139,7 @@ function BTFollowCommanderAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	return "running", var_4_11
 end
 
-function BTFollowCommanderAction.start_move_animation(arg_5_0, arg_5_1, arg_5_2)
+BTFollowCommanderAction.start_move_animation = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:toggle_start_move_animation_lock(arg_5_1, true, arg_5_2)
 
 	local var_5_0 = arg_5_2.breed
@@ -159,7 +159,7 @@ function BTFollowCommanderAction.start_move_animation(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_2.start_anim_locked = true
 end
 
-function BTFollowCommanderAction.start_move_rotation(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTFollowCommanderAction.start_move_rotation = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_2.move_animation_name == "move_start_fwd" or arg_6_2.skip_move_rotation then
 		arg_6_0:toggle_start_move_animation_lock(arg_6_1, false, arg_6_2)
 	else
@@ -177,7 +177,7 @@ function BTFollowCommanderAction.start_move_rotation(arg_6_0, arg_6_1, arg_6_2, 
 	end
 end
 
-function BTFollowCommanderAction.toggle_start_move_animation_lock(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTFollowCommanderAction.toggle_start_move_animation_lock = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_3.locomotion_extension
 
 	if not var_7_0._engine_extension_id then

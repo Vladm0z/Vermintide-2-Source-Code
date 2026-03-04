@@ -10,11 +10,11 @@ local var_0_1 = {
 	[var_0_0.DELETE] = "DELETE"
 }
 
-function ScriptWebApiPsn.init(arg_1_0)
+ScriptWebApiPsn.init = function (arg_1_0)
 	arg_1_0._requests = {}
 end
 
-function ScriptWebApiPsn.destroy(arg_2_0)
+ScriptWebApiPsn.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0._requests
 
 	for iter_2_0 = #var_2_0, 1, -1 do
@@ -26,7 +26,7 @@ function ScriptWebApiPsn.destroy(arg_2_0)
 	arg_2_0._requests = nil
 end
 
-function ScriptWebApiPsn.update(arg_3_0, arg_3_1)
+ScriptWebApiPsn.update = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._requests
 
 	for iter_3_0 = #var_3_0, 1, -1 do
@@ -41,7 +41,7 @@ function ScriptWebApiPsn.update(arg_3_0, arg_3_1)
 	end
 end
 
-function ScriptWebApiPsn._handle_request_response(arg_4_0, arg_4_1, arg_4_2)
+ScriptWebApiPsn._handle_request_response = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._requests[arg_4_1]
 	local var_4_1 = var_4_0.id
 	local var_4_2 = var_4_0.response_callback
@@ -71,7 +71,7 @@ function ScriptWebApiPsn._handle_request_response(arg_4_0, arg_4_1, arg_4_2)
 	table.remove(arg_4_0._requests, arg_4_1)
 end
 
-function ScriptWebApiPsn.send_request(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+ScriptWebApiPsn.send_request = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
 	if arg_5_1 == nil then
 		return
 	end
@@ -86,7 +86,7 @@ function ScriptWebApiPsn.send_request(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_
 	}
 end
 
-function ScriptWebApiPsn.send_request_create_session(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+ScriptWebApiPsn.send_request_create_session = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 	local var_6_0 = var_0_0.send_request_create_session(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 
 	arg_6_0._requests[#arg_6_0._requests + 1] = {
@@ -96,7 +96,7 @@ function ScriptWebApiPsn.send_request_create_session(arg_6_0, arg_6_1, arg_6_2, 
 	}
 end
 
-function ScriptWebApiPsn.send_request_session_invitation(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ScriptWebApiPsn.send_request_session_invitation = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = var_0_0.send_request_session_invitation(arg_7_1, arg_7_2, arg_7_3)
 
 	arg_7_0._requests[#arg_7_0._requests + 1] = {

@@ -4,7 +4,7 @@ require("scripts/managers/admin/script_rcon_server")
 
 AdminManager = class(AdminManager)
 
-function AdminManager.init(arg_1_0)
+AdminManager.init = function (arg_1_0)
 	if DEDICATED_SERVER then
 		local var_1_0 = script_data.window_title
 
@@ -34,7 +34,7 @@ function AdminManager.init(arg_1_0)
 	end
 end
 
-function AdminManager.destroy(arg_2_0)
+AdminManager.destroy = function (arg_2_0)
 	if arg_2_0._rcon_server ~= nil then
 		arg_2_0._rcon_server:destroy()
 	end
@@ -44,12 +44,12 @@ function AdminManager.destroy(arg_2_0)
 	end
 end
 
-function AdminManager.update(arg_3_0, arg_3_1)
+AdminManager.update = function (arg_3_0, arg_3_1)
 	if arg_3_0._rcon_server ~= nil then
 		arg_3_0._rcon_server:update(arg_3_1)
 	end
 end
 
-function AdminManager.execute_command(arg_4_0, arg_4_1)
+AdminManager.execute_command = function (arg_4_0, arg_4_1)
 	arg_4_0._dedicated_server_commands:execute_command(arg_4_1)
 end

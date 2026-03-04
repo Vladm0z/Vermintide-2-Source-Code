@@ -1,7 +1,7 @@
 -- chunkname: @foundation/scripts/managers/free_flight/free_flight_manager_testify.lua
 
 return {
-	move_free_flight_camera = function(arg_1_0, arg_1_1)
+	move_free_flight_camera = function (arg_1_0, arg_1_1)
 		local var_1_0 = MainPathUtils.point_on_mainpath(nil, arg_1_1.position)
 		local var_1_1 = stingray.Quaternion.from_euler_angles_xyz(arg_1_1.rotation.x, arg_1_1.rotation.y, arg_1_1.rotation.z)
 

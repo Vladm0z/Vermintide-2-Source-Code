@@ -2,13 +2,13 @@
 
 EnemyCharacterStateStanding = class(EnemyCharacterStateStanding, EnemyCharacterState)
 
-function EnemyCharacterStateStanding.init(arg_1_0, arg_1_1)
+EnemyCharacterStateStanding.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "standing")
 
 	arg_1_0.wherabouts_extension = ScriptUnit.extension(arg_1_0._unit, "whereabouts_system")
 end
 
-function EnemyCharacterStateStanding.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateStanding.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0._unit
 	local var_2_1 = arg_2_0._input_extension
 
@@ -48,7 +48,7 @@ local var_0_0 = {}
 local var_0_1 = {}
 local var_0_2 = {}
 
-function EnemyCharacterStateStanding.teleport(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+EnemyCharacterStateStanding.teleport = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._player.viewport_name
 	local var_3_1 = ScriptWorld.viewport(arg_3_0._world, var_3_0)
 	local var_3_2 = ScriptViewport.camera(var_3_1)
@@ -145,7 +145,7 @@ function EnemyCharacterStateStanding.teleport(arg_3_0, arg_3_1, arg_3_2, arg_3_3
 	end
 end
 
-function EnemyCharacterStateStanding.common_state_changes(arg_4_0)
+EnemyCharacterStateStanding.common_state_changes = function (arg_4_0)
 	arg_4_0:handle_disabled_ghost_mode()
 
 	local var_4_0 = arg_4_0._csm
@@ -190,7 +190,7 @@ function EnemyCharacterStateStanding.common_state_changes(arg_4_0)
 	return false
 end
 
-function EnemyCharacterStateStanding.common_movement(arg_5_0, arg_5_1)
+EnemyCharacterStateStanding.common_movement = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._csm
 	local var_5_1 = arg_5_0._unit
 	local var_5_2 = arg_5_0._first_person_extension
@@ -297,7 +297,7 @@ function EnemyCharacterStateStanding.common_movement(arg_5_0, arg_5_1)
 	return false
 end
 
-function EnemyCharacterStateStanding.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateStanding.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0:common_state_changes() then
 		return
 	end

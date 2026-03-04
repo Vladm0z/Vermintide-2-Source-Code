@@ -140,7 +140,7 @@ local function var_0_5()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.progress > 0
 					end
 				},
@@ -148,10 +148,10 @@ local function var_0_5()
 					style_id = "progress_1",
 					pass_type = "texture_uv",
 					content_id = "progress_1",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.parent.progress > 0
 					end,
-					content_change_function = function(arg_4_0, arg_4_1)
+					content_change_function = function (arg_4_0, arg_4_1)
 						arg_4_0.uvs = {
 							{
 								0,
@@ -169,10 +169,10 @@ local function var_0_5()
 					style_id = "progress_2",
 					pass_type = "texture_uv",
 					content_id = "progress_2",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.parent.progress > 0
 					end,
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						arg_6_0.uvs = {
 							{
 								0,
@@ -190,10 +190,10 @@ local function var_0_5()
 					style_id = "progress_3",
 					pass_type = "texture_uv",
 					content_id = "progress_3",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.parent.progress > 0
 					end,
-					content_change_function = function(arg_8_0, arg_8_1)
+					content_change_function = function (arg_8_0, arg_8_1)
 						arg_8_0.uvs = {
 							{
 								0,
@@ -330,7 +330,7 @@ local function var_0_6()
 					style_id = "background",
 					texture_id = "background",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.progress > 0
 					end
 				},
@@ -339,7 +339,7 @@ local function var_0_6()
 					style_id = "ring",
 					texture_id = "ring",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.progress > 0
 					end
 				}
@@ -671,7 +671,7 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "ability_effect",
 					texture_id = "ability_effect",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.ready
 					end
 				},
@@ -679,7 +679,7 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "ability_effect_top",
 					texture_id = "ability_effect_top",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return arg_16_0.ready
 					end
 				},
@@ -687,7 +687,7 @@ local function var_0_9()
 					pass_type = "texture",
 					style_id = "ability_effect_halo",
 					texture_id = "ability_effect_halo",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.ready
 					end
 				},
@@ -932,7 +932,7 @@ end
 local var_0_11 = {
 	packmaster_reload = {
 		definition = var_0_7(),
-		update_function = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+		update_function = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 			local var_19_0, var_19_1 = arg_19_3:current_ability_cooldown(arg_19_4)
 			local var_19_2 = arg_19_3:uses_cooldown(arg_19_4)
 			local var_19_3 = arg_19_3:ability_by_id(arg_19_4)
@@ -964,7 +964,7 @@ local var_0_11 = {
 	},
 	ratling_gunner_reload = {
 		definition = var_0_7(),
-		update_function = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
+		update_function = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
 			if arg_20_6 then
 				return
 			end
@@ -996,7 +996,7 @@ local var_0_11 = {
 	},
 	reload = {
 		definition = var_0_7(),
-		update_function = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+		update_function = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 			if arg_21_6 then
 				return
 			end
@@ -1059,7 +1059,7 @@ local var_0_11 = {
 	},
 	priming = {
 		definition = var_0_5(),
-		update_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+		update_function = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 			if arg_22_6 then
 				return
 			end
@@ -1087,7 +1087,7 @@ local var_0_11 = {
 	},
 	recharge = {
 		definition = var_0_6(),
-		update_function = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+		update_function = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 			if arg_23_6 then
 				return
 			end
@@ -1119,7 +1119,7 @@ local var_0_11 = {
 	},
 	throw_charge = {
 		definition = var_0_6(),
-		update_function = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+		update_function = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 			if arg_24_6 then
 				return
 			end
@@ -1152,13 +1152,13 @@ local var_0_11 = {
 	},
 	ammo = {
 		definition = var_0_10(),
-		update_function = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
+		update_function = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6)
 			UIRenderer.draw_widget(arg_25_2, arg_25_5)
 		end
 	},
 	duration = {
 		definition = var_0_8(),
-		update_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+		update_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
 			if not arg_26_3:get_activated_ability_data(arg_26_4).duration_progress then
 				local var_26_0 = 0
 			end
@@ -1193,7 +1193,7 @@ local var_0_11 = {
 	},
 	ability = {
 		definition = var_0_9(),
-		update_function = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
+		update_function = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8)
 			if arg_27_6 then
 				return
 			end
@@ -1241,7 +1241,7 @@ local function var_0_12()
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon",
 					pass_type = "texture",
-					content_change_function = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+					content_change_function = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 						if arg_29_0.texture_icon == "icons_placeholder" and arg_29_0.settings then
 							arg_29_0.texture_icon = arg_29_0.settings.icon
 						end
@@ -1251,7 +1251,7 @@ local function var_0_12()
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					content_check_function = function(arg_30_0)
+					content_check_function = function (arg_30_0)
 						return arg_30_0.is_cooldown
 					end
 				},
@@ -1259,7 +1259,7 @@ local function var_0_12()
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
 					pass_type = "texture",
-					content_change_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+					content_change_function = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 						arg_31_1.color[1] = 255 * (1 - arg_31_0.progress)
 					end
 				},
@@ -1272,10 +1272,10 @@ local function var_0_12()
 					style_id = "texture_cooldown",
 					texture_id = "texture_cooldown",
 					pass_type = "gradient_mask_texture",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.is_cooldown
 					end,
-					content_change_function = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+					content_change_function = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 						arg_33_1.color[1] = 255 * (1 - arg_33_0.progress)
 					end
 				},
@@ -1283,7 +1283,7 @@ local function var_0_12()
 					style_id = "input",
 					pass_type = "text",
 					text_id = "input",
-					content_change_function = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+					content_change_function = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 						if not arg_34_0.settings then
 							return
 						end

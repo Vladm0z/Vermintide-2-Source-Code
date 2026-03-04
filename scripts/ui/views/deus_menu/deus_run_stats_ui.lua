@@ -8,7 +8,7 @@ local var_0_4 = var_0_0.allow_boon_removal
 
 DeusRunStatsUi = class(DeusRunStatsUi)
 
-function DeusRunStatsUi.init(arg_1_0, arg_1_1, arg_1_2)
+DeusRunStatsUi.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._wwise_world = arg_1_1.wwise_world
@@ -32,7 +32,7 @@ function DeusRunStatsUi.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "present_rewards", "show_info_message")
 end
 
-function DeusRunStatsUi.show_info_message(arg_2_0, arg_2_1)
+DeusRunStatsUi.show_info_message = function (arg_2_0, arg_2_1)
 	for iter_2_0 = 1, #arg_2_1 do
 		local var_2_0 = arg_2_1[iter_2_0]
 
@@ -44,7 +44,7 @@ function DeusRunStatsUi.show_info_message(arg_2_0, arg_2_1)
 	end
 end
 
-function DeusRunStatsUi._start_animation(arg_3_0, arg_3_1, arg_3_2)
+DeusRunStatsUi._start_animation = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = {}
 	local var_3_1 = arg_3_0._reminder_widgets_by_name.reminder_text
 
@@ -55,7 +55,7 @@ function DeusRunStatsUi._start_animation(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._animations[arg_3_1] = var_3_2
 end
 
-function DeusRunStatsUi._create_ui_elements(arg_4_0)
+DeusRunStatsUi._create_ui_elements = function (arg_4_0)
 	arg_4_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
 
 	local var_4_0 = {}
@@ -113,7 +113,7 @@ function DeusRunStatsUi._create_ui_elements(arg_4_0)
 	arg_4_0._menu_input_description:set_input_description(nil)
 end
 
-function DeusRunStatsUi.update(arg_5_0, arg_5_1, arg_5_2)
+DeusRunStatsUi.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_animations(arg_5_1, arg_5_2)
 	arg_5_0:_handle_gamepad_input(arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
@@ -121,7 +121,7 @@ function DeusRunStatsUi.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw_reminder(arg_5_1, arg_5_2)
 end
 
-function DeusRunStatsUi._update_animations(arg_6_0, arg_6_1, arg_6_2)
+DeusRunStatsUi._update_animations = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -150,7 +150,7 @@ function DeusRunStatsUi._update_animations(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function DeusRunStatsUi.lock(arg_7_0, arg_7_1, arg_7_2)
+DeusRunStatsUi.lock = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._locked
 
 	arg_7_0._locked = arg_7_1
@@ -174,11 +174,11 @@ function DeusRunStatsUi.lock(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DeusRunStatsUi.locked(arg_8_0)
+DeusRunStatsUi.locked = function (arg_8_0)
 	return arg_8_0._locked
 end
 
-function DeusRunStatsUi.set_active(arg_9_0, arg_9_1)
+DeusRunStatsUi.set_active = function (arg_9_0, arg_9_1)
 	if arg_9_1 ~= arg_9_0._active then
 		Managers.state.event:trigger("ingame_player_list_enabled", arg_9_1)
 	end
@@ -186,11 +186,11 @@ function DeusRunStatsUi.set_active(arg_9_0, arg_9_1)
 	arg_9_0._active = arg_9_1
 end
 
-function DeusRunStatsUi.active(arg_10_0)
+DeusRunStatsUi.active = function (arg_10_0)
 	return arg_10_0._active
 end
 
-function DeusRunStatsUi._handle_input(arg_11_0, arg_11_1, arg_11_2)
+DeusRunStatsUi._handle_input = function (arg_11_0, arg_11_1, arg_11_2)
 	if not arg_11_0._active then
 		return
 	end
@@ -302,7 +302,7 @@ end
 
 local var_0_5 = {}
 
-function DeusRunStatsUi._handle_gamepad_input(arg_12_0, arg_12_1, arg_12_2)
+DeusRunStatsUi._handle_gamepad_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._gamepad_active
 	local var_12_1 = Managers.input:is_device_active("gamepad")
 
@@ -347,7 +347,7 @@ function DeusRunStatsUi._handle_gamepad_input(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function DeusRunStatsUi._populate_power_up(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+DeusRunStatsUi._populate_power_up = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	if not arg_13_1 then
 		arg_13_3.content.visible = false
 
@@ -407,7 +407,7 @@ function DeusRunStatsUi._populate_power_up(arg_13_0, arg_13_1, arg_13_2, arg_13_
 	var_13_1.is_part_of_set = var_13_9
 end
 
-function DeusRunStatsUi._draw_reminder(arg_14_0, arg_14_1, arg_14_2)
+DeusRunStatsUi._draw_reminder = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_0._active or table.size(arg_14_0._animations) == 0 then
 		return
 	end
@@ -430,7 +430,7 @@ function DeusRunStatsUi._draw_reminder(arg_14_0, arg_14_1, arg_14_2)
 	UIRenderer.end_pass(var_14_0)
 end
 
-function DeusRunStatsUi._draw(arg_15_0, arg_15_1, arg_15_2)
+DeusRunStatsUi._draw = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0._active then
 		return
 	end
@@ -510,26 +510,26 @@ function DeusRunStatsUi._draw(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function DeusRunStatsUi._play_sound(arg_16_0, arg_16_1)
+DeusRunStatsUi._play_sound = function (arg_16_0, arg_16_1)
 	WwiseWorld.trigger_event(arg_16_0._wwise_world, arg_16_1)
 end
 
-function DeusRunStatsUi.destroy(arg_17_0)
+DeusRunStatsUi.destroy = function (arg_17_0)
 	arg_17_0:lock(false)
 end
 
-function DeusRunStatsUi.update_dynamic_values(arg_18_0, arg_18_1)
+DeusRunStatsUi.update_dynamic_values = function (arg_18_0, arg_18_1)
 	arg_18_0:_update_blessings(arg_18_1.blessings)
 	arg_18_0:_update_power_ups(arg_18_1.party_power_ups, arg_18_1.power_ups, arg_18_1.profile_index, arg_18_1.career_index)
 
 	arg_18_0._force_update_power_ups = false
 end
 
-function DeusRunStatsUi.force_update_power_ups(arg_19_0)
+DeusRunStatsUi.force_update_power_ups = function (arg_19_0)
 	return arg_19_0._force_update_power_ups
 end
 
-function DeusRunStatsUi._update_blessings(arg_20_0, arg_20_1)
+DeusRunStatsUi._update_blessings = function (arg_20_0, arg_20_1)
 	local var_20_0 = #arg_20_1 > 0
 
 	arg_20_0._widgets_by_name.no_blessings_text.content.text = var_20_0 and "" or Localize("no_active_blessings_text")
@@ -566,7 +566,7 @@ function DeusRunStatsUi._update_blessings(arg_20_0, arg_20_1)
 	arg_20_0._blessing_widgets = var_20_2
 end
 
-function DeusRunStatsUi._update_power_ups(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+DeusRunStatsUi._update_power_ups = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = #arg_21_2 > 0 or #arg_21_1 > 0
 	local var_21_1 = {}
 
@@ -586,7 +586,7 @@ function DeusRunStatsUi._update_power_ups(arg_21_0, arg_21_1, arg_21_2, arg_21_3
 
 		local var_21_7 = RaritySettings
 
-		table.sort(arg_21_2, function(arg_22_0, arg_22_1)
+		table.sort(arg_21_2, function (arg_22_0, arg_22_1)
 			local var_22_0 = var_21_7[arg_22_0.rarity].order
 			local var_22_1 = var_21_7[arg_22_1.rarity].order
 
@@ -686,7 +686,7 @@ function DeusRunStatsUi._update_power_ups(arg_21_0, arg_21_1, arg_21_2, arg_21_3
 	arg_21_0._party_power_ups = arg_21_1
 end
 
-function DeusRunStatsUi.set_loadout(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+DeusRunStatsUi.set_loadout = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	arg_23_0._equipment_widgets_by_name.weapon_melee.content.item = arg_23_1
 	arg_23_0._equipment_widgets_by_name.weapon_ranged.content.item = arg_23_2
 
@@ -724,7 +724,7 @@ function DeusRunStatsUi.set_loadout(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_
 	var_23_2.content.visible = var_23_8 ~= nil
 end
 
-function DeusRunStatsUi._create_player_portrait(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+DeusRunStatsUi._create_player_portrait = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = UIWidgets.create_portrait_frame("player_portrait", arg_24_1, arg_24_3, 1, nil, arg_24_2)
 	local var_24_1 = UIWidget.init(var_24_0, arg_24_0._ui_top_renderer)
 
@@ -733,6 +733,6 @@ function DeusRunStatsUi._create_player_portrait(arg_24_0, arg_24_1, arg_24_2, ar
 	arg_24_0._widgets_by_name.player_portrait = var_24_1
 end
 
-function DeusRunStatsUi._set_widget_text(arg_25_0, arg_25_1, arg_25_2)
+DeusRunStatsUi._set_widget_text = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0._widgets_by_name[arg_25_1].content.text = arg_25_2
 end

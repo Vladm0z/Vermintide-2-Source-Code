@@ -113,7 +113,7 @@ local var_0_5 = {
 	news_ticker_mask_widget = UIWidgets.create_simple_texture("mask_rect", "news_ticker_mask")
 }
 
-function IngameNewsTickerUI.init(arg_1_0, arg_1_1, arg_1_2)
+IngameNewsTickerUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.input_manager = arg_1_2.input_manager
@@ -128,7 +128,7 @@ function IngameNewsTickerUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:refresh_message()
 end
 
-function IngameNewsTickerUI.create_ui_elements(arg_2_0)
+IngameNewsTickerUI.create_ui_elements = function (arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0.ui_renderer)
 
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
@@ -148,11 +148,11 @@ function IngameNewsTickerUI.create_ui_elements(arg_2_0)
 	var_2_1.horizontal_alignment = "left"
 end
 
-function IngameNewsTickerUI.destroy(arg_3_0)
+IngameNewsTickerUI.destroy = function (arg_3_0)
 	GarbageLeakDetector.register_object(arg_3_0, "ingame_news_ticker_ui")
 end
 
-function IngameNewsTickerUI.refresh_message(arg_4_0)
+IngameNewsTickerUI.refresh_message = function (arg_4_0)
 	arg_4_0.refreshing_message = true
 	arg_4_0.news_ticker_started = nil
 
@@ -161,7 +161,7 @@ end
 
 local var_0_6 = true
 
-function IngameNewsTickerUI.update(arg_5_0, arg_5_1, arg_5_2)
+IngameNewsTickerUI.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_6 then
 		arg_5_0:create_ui_elements()
 
@@ -210,7 +210,7 @@ function IngameNewsTickerUI.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function IngameNewsTickerUI.handle_delay(arg_6_0, arg_6_1)
+IngameNewsTickerUI.handle_delay = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.delay
 
 	if var_6_0 then
@@ -222,7 +222,7 @@ function IngameNewsTickerUI.handle_delay(arg_6_0, arg_6_1)
 	end
 end
 
-function IngameNewsTickerUI.handle_message_refresh_delay(arg_7_0, arg_7_1)
+IngameNewsTickerUI.handle_message_refresh_delay = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.message_refresh_delay
 
 	if var_7_0 then
@@ -234,7 +234,7 @@ function IngameNewsTickerUI.handle_message_refresh_delay(arg_7_0, arg_7_1)
 	end
 end
 
-function IngameNewsTickerUI.draw(arg_8_0, arg_8_1, arg_8_2)
+IngameNewsTickerUI.draw = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.ui_renderer
 	local var_8_1 = arg_8_0.ui_scenegraph
 	local var_8_2 = arg_8_0.input_manager
@@ -249,7 +249,7 @@ function IngameNewsTickerUI.draw(arg_8_0, arg_8_1, arg_8_2)
 	UIRenderer.end_pass(var_8_0)
 end
 
-function IngameNewsTickerUI.setup_news_ticker(arg_9_0, arg_9_1)
+IngameNewsTickerUI.setup_news_ticker = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.news_ticker_text_widget
 	local var_9_1 = arg_9_0.news_ticker_text_shadow_widget
 	local var_9_2 = var_9_0.content

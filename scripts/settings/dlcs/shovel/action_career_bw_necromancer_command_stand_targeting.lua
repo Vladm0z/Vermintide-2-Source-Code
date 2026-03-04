@@ -11,7 +11,7 @@ local var_0_5 = 0.9
 
 ActionCareerBwNecromancerCommandStandTargetingUtility = {}
 
-function ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_3 or {}
 	local var_1_1 = math.min(arg_1_2, CareerConstants.bw_necromancer.pets_per_rank)
 
@@ -91,7 +91,7 @@ end
 
 ActionCareerBwNecromancerCommandStandTargeting = class(ActionCareerBwNecromancerCommandStandTargeting, ActionBase)
 
-function ActionCareerBwNecromancerCommandStandTargeting.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionCareerBwNecromancerCommandStandTargeting.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 	ActionCareerBwNecromancerCommandStandTargeting.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 
 	arg_2_0._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
@@ -105,14 +105,14 @@ function ActionCareerBwNecromancerCommandStandTargeting.init(arg_2_0, arg_2_1, a
 	arg_2_0._fp_rotation = QuaternionBox()
 	arg_2_0._decal_diameter_id = World.find_particles_variable(arg_2_0._world, var_0_0, "diameter")
 
-	function arg_2_0._nav_callback()
+	arg_2_0._nav_callback = function ()
 		local var_3_0 = Managers.time:time("game")
 
 		arg_2_0:_update_targeting(var_3_0)
 	end
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_action = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_5 = arg_4_5 or {}
 
 	ActionCareerBwNecromancerCommandStandTargeting.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
@@ -128,11 +128,11 @@ function ActionCareerBwNecromancerCommandStandTargeting.client_owner_start_actio
 	arg_4_0._ai_navigation_system:add_safe_navigation_callback(arg_4_0._nav_callback)
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionCareerBwNecromancerCommandStandTargeting.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_0._ai_navigation_system:add_safe_navigation_callback(arg_5_0._nav_callback)
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting._update_targeting(arg_6_0, arg_6_1)
+ActionCareerBwNecromancerCommandStandTargeting._update_targeting = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0:_update_spawn_positions()
 	local var_6_1 = #var_6_0
 	local var_6_2 = arg_6_0._world
@@ -164,11 +164,11 @@ function ActionCareerBwNecromancerCommandStandTargeting._update_targeting(arg_6_
 	end
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting._update_spawn_positions(arg_7_0)
+ActionCareerBwNecromancerCommandStandTargeting._update_spawn_positions = function (arg_7_0)
 	local var_7_0 = arg_7_0._commander_extension
 	local var_7_1 = table.keys(var_7_0:get_controlled_units())
 
-	table.array_remove_if(var_7_1, function(arg_8_0)
+	table.array_remove_if(var_7_1, function (arg_8_0)
 		return Unit.get_data(arg_8_0, "breed").name == "pet_skeleton_armored" and var_7_0:command_state(arg_8_0) ~= CommandStates.Following
 	end)
 
@@ -194,7 +194,7 @@ function ActionCareerBwNecromancerCommandStandTargeting._update_spawn_positions(
 	return arg_7_0._spawn_positions
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting._get_projectile_position(arg_9_0)
+ActionCareerBwNecromancerCommandStandTargeting._get_projectile_position = function (arg_9_0)
 	local var_9_0 = arg_9_0._world
 	local var_9_1 = World.get_data(var_9_0, "physics_world")
 	local var_9_2 = "filter_adept_teleport"
@@ -223,7 +223,7 @@ function ActionCareerBwNecromancerCommandStandTargeting._get_projectile_position
 	return var_9_7, var_9_8
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting._get_first_person_position_direction(arg_10_0)
+ActionCareerBwNecromancerCommandStandTargeting._get_first_person_position_direction = function (arg_10_0)
 	local var_10_0 = arg_10_0._first_person_extension
 	local var_10_1 = var_10_0:current_position()
 	local var_10_2 = var_10_0:current_rotation()
@@ -239,7 +239,7 @@ function ActionCareerBwNecromancerCommandStandTargeting._get_first_person_positi
 	return var_10_1, var_10_10
 end
 
-function ActionCareerBwNecromancerCommandStandTargeting.finish(arg_11_0, arg_11_1)
+ActionCareerBwNecromancerCommandStandTargeting.finish = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._world
 	local var_11_1 = arg_11_0._spawn_decal_ids
 

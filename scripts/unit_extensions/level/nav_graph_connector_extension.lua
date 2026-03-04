@@ -4,7 +4,7 @@ local var_0_0 = require("scripts/settings/ledges")
 
 NavGraphConnectorExtension = class(NavGraphConnectorExtension)
 
-function NavGraphConnectorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+NavGraphConnectorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.nav_world = arg_1_3.nav_world or Managers.state.entity:system("ai_system"):nav_world()
@@ -29,7 +29,7 @@ end
 local var_0_1 = {}
 local var_0_2 = 0
 
-function NavGraphConnectorExtension.init_nav_graphs(arg_2_0, arg_2_1)
+NavGraphConnectorExtension.init_nav_graphs = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0.unit
 	local var_2_1 = arg_2_0.world
 	local var_2_2 = arg_2_0.nav_world
@@ -77,11 +77,11 @@ function NavGraphConnectorExtension.init_nav_graphs(arg_2_0, arg_2_1)
 	end
 end
 
-function NavGraphConnectorExtension.extensions_ready(arg_3_0)
+NavGraphConnectorExtension.extensions_ready = function (arg_3_0)
 	return
 end
 
-function NavGraphConnectorExtension.destroy(arg_4_0)
+NavGraphConnectorExtension.destroy = function (arg_4_0)
 	for iter_4_0 = 1, #arg_4_0.navgraphs do
 		local var_4_0 = arg_4_0.navgraphs[iter_4_0]
 
@@ -89,6 +89,6 @@ function NavGraphConnectorExtension.destroy(arg_4_0)
 	end
 end
 
-function NavGraphConnectorExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+NavGraphConnectorExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end

@@ -18,7 +18,7 @@ local var_0_1 = {
 				uninterruptible = true,
 				aim_obstructed_by_walls = true,
 				charge_sound_name = "Play_weapon_ability_pyromancer_skull_spawn",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -27,7 +27,7 @@ local var_0_1 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
 				allowed_chain_actions = {
@@ -89,7 +89,7 @@ local var_0_1 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
@@ -98,7 +98,7 @@ local var_0_1 = {
 					"zoom_in_trueflight",
 					"zoom_in"
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -125,7 +125,7 @@ local var_0_1 = {
 				anim_end_event = "ability_finished",
 				anim_event = "scholar_burning_head_ability_cancel",
 				total_time = 0.65,
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

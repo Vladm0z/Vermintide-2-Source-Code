@@ -22,7 +22,7 @@ local var_0_16 = pairs
 local var_0_17 = Application.make_hash
 local var_0_18 = false
 
-function ImguiFlamegraph.init(arg_1_0)
+ImguiFlamegraph.init = function (arg_1_0)
 	arg_1_0._recording = false
 	arg_1_0._rendering = false
 	arg_1_0._invert = false
@@ -32,7 +32,7 @@ function ImguiFlamegraph.init(arg_1_0)
 	arg_1_0:reset_zoom()
 end
 
-function ImguiFlamegraph.do_cell(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+ImguiFlamegraph.do_cell = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
 	local var_2_0 = var_0_4(var_0_14(var_0_15(var_0_11(var_0_17(arg_2_3), 1, 2), 16) / 256, 0.4, 0.5))
 	local var_2_1 = arg_2_0._search
 	local var_2_2 = var_2_1 ~= "" and var_0_9(arg_2_3, var_2_1) and var_0_4(255, 255, 255) or var_0_4(64, 64, 64)
@@ -69,7 +69,7 @@ function ImguiFlamegraph.do_cell(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ar
 	end
 end
 
-function ImguiFlamegraph.update(arg_3_0)
+ImguiFlamegraph.update = function (arg_3_0)
 	if arg_3_0._rendering then
 		var_0_18 = true
 
@@ -92,11 +92,11 @@ function ImguiFlamegraph.update(arg_3_0)
 	end
 end
 
-function ImguiFlamegraph.is_persistent(arg_4_0)
+ImguiFlamegraph.is_persistent = function (arg_4_0)
 	return false
 end
 
-function ImguiFlamegraph.clear_data(arg_5_0)
+ImguiFlamegraph.clear_data = function (arg_5_0)
 	ImguiFlamegraph._root = {
 		[false] = 0
 	}
@@ -104,12 +104,12 @@ function ImguiFlamegraph.clear_data(arg_5_0)
 	arg_5_0:reset_zoom()
 end
 
-function ImguiFlamegraph.reset_zoom(arg_6_0)
+ImguiFlamegraph.reset_zoom = function (arg_6_0)
 	arg_6_0._draw_name = "@root"
 	arg_6_0._draw_node = ImguiFlamegraph._root
 end
 
-function ImguiFlamegraph.profile_cb(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ImguiFlamegraph.profile_cb = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if var_0_18 then
 		return
 	end
@@ -141,7 +141,7 @@ function ImguiFlamegraph.profile_cb(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	end
 end
 
-function ImguiFlamegraph.toggle_recording(arg_8_0, arg_8_1)
+ImguiFlamegraph.toggle_recording = function (arg_8_0, arg_8_1)
 	if arg_8_1 == nil then
 		arg_8_1 = not arg_8_0._recording
 	end
@@ -157,7 +157,7 @@ function ImguiFlamegraph.toggle_recording(arg_8_0, arg_8_1)
 	end
 end
 
-function ImguiFlamegraph.toggle_rendering(arg_9_0, arg_9_1)
+ImguiFlamegraph.toggle_rendering = function (arg_9_0, arg_9_1)
 	if arg_9_1 == nil then
 		arg_9_1 = not arg_9_0._rendering
 	end
@@ -167,7 +167,7 @@ end
 
 local var_0_19 = "Flamegraph help\n---------------\nUses LuaJIT's in-built statistical profiler.\nIt needs to run for a while to capture nested calls.\nFlamegraph rendering is excluded from samples.\nIt's still recommendable to disable it while recording.\n\nLeft-click on a segment to focus on it.\nRight-click anywhere to reset the view.\n"
 
-function ImguiFlamegraph.draw(arg_10_0)
+ImguiFlamegraph.draw = function (arg_10_0)
 	local var_10_0 = Imgui.begin_window("Flamegraph")
 	local var_10_1 = Imgui.checkbox("Recording", arg_10_0._recording)
 

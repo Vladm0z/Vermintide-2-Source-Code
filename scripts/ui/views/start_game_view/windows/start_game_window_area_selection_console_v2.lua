@@ -10,7 +10,7 @@ local var_0_5 = true
 StartGameWindowAreaSelectionConsoleV2 = class(StartGameWindowAreaSelectionConsoleV2)
 StartGameWindowAreaSelectionConsoleV2.NAME = "StartGameWindowAreaSelectionConsoleV2"
 
-function StartGameWindowAreaSelectionConsoleV2.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAreaSelectionConsoleV2.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowAreaSelectionConsoleV2")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -47,7 +47,7 @@ function StartGameWindowAreaSelectionConsoleV2.on_enter(arg_1_0, arg_1_1, arg_1_
 	arg_1_0:_update_area_option()
 end
 
-function StartGameWindowAreaSelectionConsoleV2.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowAreaSelectionConsoleV2.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_3)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -96,7 +96,7 @@ function StartGameWindowAreaSelectionConsoleV2.create_ui_elements(arg_2_0, arg_2
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._setup_area_widgets(arg_3_0)
+StartGameWindowAreaSelectionConsoleV2._setup_area_widgets = function (arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = var_0_0.grid_settings[1] * var_0_0.grid_settings[2]
 
@@ -197,7 +197,7 @@ function StartGameWindowAreaSelectionConsoleV2._setup_area_widgets(arg_3_0)
 	}
 end
 
-function StartGameWindowAreaSelectionConsoleV2._create_random_desc(arg_5_0)
+StartGameWindowAreaSelectionConsoleV2._create_random_desc = function (arg_5_0)
 	local var_5_0 = 1 + Math.random(5)
 	local var_5_1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla in nulla eu rutrum. "
 	local var_5_2 = ""
@@ -209,7 +209,7 @@ function StartGameWindowAreaSelectionConsoleV2._create_random_desc(arg_5_0)
 	return var_5_2
 end
 
-function StartGameWindowAreaSelectionConsoleV2._select_area_by_name(arg_6_0, arg_6_1)
+StartGameWindowAreaSelectionConsoleV2._select_area_by_name = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._selection_grid
 	local var_6_1 = " "
 	local var_6_2 = arg_6_0._selected_grid_index
@@ -241,7 +241,7 @@ function StartGameWindowAreaSelectionConsoleV2._select_area_by_name(arg_6_0, arg
 	arg_6_0._area_unavailable = arg_6_1 == nil
 end
 
-function StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = ""
 	local var_7_1 = ""
 	local var_7_2 = ""
@@ -364,7 +364,7 @@ function StartGameWindowAreaSelectionConsoleV2._set_area_presentation_info(arg_7
 	arg_7_0:_play_sound(var_7_27)
 end
 
-function StartGameWindowAreaSelectionConsoleV2.on_exit(arg_8_0, arg_8_1)
+StartGameWindowAreaSelectionConsoleV2.on_exit = function (arg_8_0, arg_8_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowAreaSelectionConsoleV2")
 
 	arg_8_0.ui_animator = nil
@@ -377,16 +377,16 @@ function StartGameWindowAreaSelectionConsoleV2.on_exit(arg_8_0, arg_8_1)
 	arg_8_0:_play_sound("Stop_hud_menu_area_music")
 end
 
-function StartGameWindowAreaSelectionConsoleV2.update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowAreaSelectionConsoleV2.update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_update_animations(arg_9_1)
 	arg_9_0:_handle_input(arg_9_1, arg_9_2)
 end
 
-function StartGameWindowAreaSelectionConsoleV2.post_update(arg_10_0, arg_10_1, arg_10_2)
+StartGameWindowAreaSelectionConsoleV2.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:draw(arg_10_1)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._update_animations(arg_11_0, arg_11_1)
+StartGameWindowAreaSelectionConsoleV2._update_animations = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ui_animator
 
 	var_11_0:update(arg_11_1)
@@ -429,7 +429,7 @@ function StartGameWindowAreaSelectionConsoleV2._update_animations(arg_11_0, arg_
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._is_button_pressed(arg_12_0, arg_12_1)
+StartGameWindowAreaSelectionConsoleV2._is_button_pressed = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	if var_12_0.on_release then
@@ -439,13 +439,13 @@ function StartGameWindowAreaSelectionConsoleV2._is_button_pressed(arg_12_0, arg_
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._is_button_hovered(arg_13_0, arg_13_1)
+StartGameWindowAreaSelectionConsoleV2._is_button_hovered = function (arg_13_0, arg_13_1)
 	if arg_13_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._update_area_option(arg_14_0)
+StartGameWindowAreaSelectionConsoleV2._update_area_option = function (arg_14_0)
 	local var_14_0 = arg_14_0.parent:get_selected_area_name()
 
 	if var_14_0 ~= arg_14_0._selected_area_name then
@@ -453,7 +453,7 @@ function StartGameWindowAreaSelectionConsoleV2._update_area_option(arg_14_0)
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._handle_input(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowAreaSelectionConsoleV2._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0.parent:window_input_service()
 	local var_15_1 = arg_15_0._active_area_widgets
 	local var_15_2 = arg_15_0._selection_grid
@@ -531,7 +531,7 @@ function StartGameWindowAreaSelectionConsoleV2._handle_input(arg_15_0, arg_15_1,
 	end
 end
 
-function StartGameWindowAreaSelectionConsoleV2._on_select_button_pressed(arg_16_0)
+StartGameWindowAreaSelectionConsoleV2._on_select_button_pressed = function (arg_16_0)
 	local var_16_0 = arg_16_0._selected_area_name
 	local var_16_1 = AreaSettings[var_16_0]
 	local var_16_2 = true
@@ -567,7 +567,7 @@ function StartGameWindowAreaSelectionConsoleV2._on_select_button_pressed(arg_16_
 	arg_16_0:_play_sound("Play_hud_menu_area_start")
 end
 
-function StartGameWindowAreaSelectionConsoleV2.draw(arg_17_0, arg_17_1)
+StartGameWindowAreaSelectionConsoleV2.draw = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.ui_top_renderer
 	local var_17_1 = arg_17_0.ui_scenegraph
 	local var_17_2 = arg_17_0.parent:window_input_service()
@@ -617,11 +617,11 @@ function StartGameWindowAreaSelectionConsoleV2.draw(arg_17_0, arg_17_1)
 	UIRenderer.end_pass(var_17_0)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._play_sound(arg_18_0, arg_18_1)
+StartGameWindowAreaSelectionConsoleV2._play_sound = function (arg_18_0, arg_18_1)
 	arg_18_0.parent:play_sound(arg_18_1)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._assign_video_player(arg_19_0, arg_19_1, arg_19_2)
+StartGameWindowAreaSelectionConsoleV2._assign_video_player = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_destroy_video_widget()
 
 	local var_19_0 = "video"
@@ -643,7 +643,7 @@ function StartGameWindowAreaSelectionConsoleV2._assign_video_player(arg_19_0, ar
 	arg_19_0._ui_animations.fade_in = UIAnimation.init(UIAnimation.function_by_time, var_19_4, 1, 255, 0, 0.5, math.easeInCubic)
 end
 
-function StartGameWindowAreaSelectionConsoleV2._destroy_video_widget(arg_20_0)
+StartGameWindowAreaSelectionConsoleV2._destroy_video_widget = function (arg_20_0)
 	local var_20_0 = arg_20_0._video_widget
 
 	if var_20_0 then
@@ -659,7 +659,7 @@ function StartGameWindowAreaSelectionConsoleV2._destroy_video_widget(arg_20_0)
 	arg_20_0._video_created = nil
 end
 
-function StartGameWindowAreaSelectionConsoleV2._animate_area_widget(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowAreaSelectionConsoleV2._animate_area_widget = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_1.content
 	local var_21_1 = arg_21_1.style
 	local var_21_2 = var_21_0.button_hotspot
@@ -698,7 +698,7 @@ function StartGameWindowAreaSelectionConsoleV2._animate_area_widget(arg_21_0, ar
 	var_21_2.selection_progress = var_21_8
 end
 
-function StartGameWindowAreaSelectionConsoleV2._show_storepage(arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowAreaSelectionConsoleV2._show_storepage = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = PLATFORM
 
 	if IS_WINDOWS and rawget(_G, "Steam") then

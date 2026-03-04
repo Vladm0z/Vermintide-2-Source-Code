@@ -63,7 +63,7 @@ local var_0_1 = {
 	},
 	max_health = BreedTweaks.max_health.exalted_sorcerer,
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if not arg_1_4.unit then
 			return arg_1_0, arg_1_1, arg_1_2
 		end
@@ -209,7 +209,7 @@ local var_0_1 = {
 		"kill_chaos_exalted_sorcerer_difficulty_rank",
 		"kill_chaos_exalted_sorcerer_scorpion_hardest"
 	},
-	custom_death_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		if not Unit.alive(arg_2_1) then
 			return
 		end
@@ -310,14 +310,14 @@ local var_0_5 = {
 			true
 		},
 		num_waves = var_0_3,
-		spawn_rot_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		spawn_rot_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = Unit.local_rotation(arg_3_2, 0)
 			local var_3_1 = arg_3_1.random_flower_angles and arg_3_1.random_flower_angles[arg_3_1.wave_counter] or var_0_4 * arg_3_1.wave_counter
 			local var_3_2 = Quaternion(Vector3.up(), var_3_1)
 
 			return (Quaternion.multiply(var_3_0, var_3_2))
 		end,
-		sequence_init_func = function(arg_4_0, arg_4_1)
+		sequence_init_func = function (arg_4_0, arg_4_1)
 			local var_4_0 = {}
 			local var_4_1 = math.random()
 
@@ -346,14 +346,14 @@ local var_0_5 = {
 			true,
 			true
 		},
-		spawn_rot_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		spawn_rot_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			local var_5_0 = Unit.local_rotation(arg_5_0, 0)
 			local var_5_1 = (arg_5_3 - 2) * 0.3
 			local var_5_2 = Quaternion(Vector3.up(), var_5_1)
 
 			return (Quaternion.multiply(var_5_0, var_5_2))
 		end,
-		goal_pos_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		goal_pos_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 			local var_6_0, var_6_1 = GwNavQueries.raycast(arg_6_1.nav_world, arg_6_4, arg_6_5)
 
 			if var_6_1 then
@@ -384,10 +384,10 @@ local var_0_5 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_7_0)
+		init_spell_func = function (arg_7_0)
 			arg_7_0.current_spell = arg_7_0.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function(arg_8_0, arg_8_1, arg_8_2)
+		get_throw_position_func = function (arg_8_0, arg_8_1, arg_8_2)
 			local var_8_0 = ScriptUnit.has_extension(arg_8_0, "ai_inventory_system").inventory_item_units[1]
 			local var_8_1 = Unit.world_position(var_8_0, Unit.node(var_8_0, "j_skull_2_parent"))
 			local var_8_2 = Vector3.normalize(arg_8_2 - var_8_1)
@@ -458,10 +458,10 @@ local var_0_5 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_9_0)
+		init_spell_func = function (arg_9_0)
 			arg_9_0.current_spell = arg_9_0.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function(arg_10_0, arg_10_1, arg_10_2)
+		get_throw_position_func = function (arg_10_0, arg_10_1, arg_10_2)
 			local var_10_0 = ScriptUnit.has_extension(arg_10_0, "ai_inventory_system").inventory_item_units[1]
 			local var_10_1 = Unit.world_position(var_10_0, Unit.node(var_10_0, "j_skull_2_parent"))
 			local var_10_2 = Vector3.normalize(arg_10_2 - var_10_1)
@@ -493,7 +493,7 @@ local var_0_5 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function(arg_11_0)
+		init_spell_func = function (arg_11_0)
 			arg_11_0.current_spell = arg_11_0.seeking_bomb_missile_data
 		end,
 		ignore_staggers = {
@@ -550,7 +550,7 @@ local var_0_5 = {
 			true,
 			true
 		},
-		teleport_pos_func = function(arg_12_0, arg_12_1)
+		teleport_pos_func = function (arg_12_0, arg_12_1)
 			local var_12_0 = ConflictUtils.get_random_spawner_with_id("sorcerer_boss", arg_12_1.defensive_spawner)
 
 			arg_12_1.defensive_spawner = var_12_0
@@ -635,7 +635,7 @@ local var_0_5 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		custom_enter_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			arg_13_1.stagger_ignore_anim_cb = true
 
 			return arg_13_3.stagger_anims[arg_13_1.stagger_type], "idle"

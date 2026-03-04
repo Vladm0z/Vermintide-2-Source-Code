@@ -15,23 +15,23 @@ local var_0_7 = stingray.Vector3Box
 local var_0_8 = stingray.Matrix4x4
 local var_0_9 = {}
 
-function GwNavFlowCallbacks.create_navworld(arg_1_0)
+GwNavFlowCallbacks.create_navworld = function (arg_1_0)
 	var_0_1(var_0_5.world(arg_1_0.unit), var_0_5.level(arg_1_0.unit))
 end
 
-function GwNavFlowCallbacks.destroy_navworld(arg_2_0)
+GwNavFlowCallbacks.destroy_navworld = function (arg_2_0)
 	var_0_1.get_navworld(var_0_5.level(arg_2_0.unit)):shutdown()
 end
 
-function GwNavFlowCallbacks.update_navworld(arg_3_0)
+GwNavFlowCallbacks.update_navworld = function (arg_3_0)
 	var_0_1.get_navworld(var_0_5.level(arg_3_0.unit)):update(arg_3_0.delta_time)
 end
 
-function GwNavFlowCallbacks.add_navmesh(arg_4_0)
+GwNavFlowCallbacks.add_navmesh = function (arg_4_0)
 	var_0_1.get_navworld(var_0_5.level(arg_4_0.unit)):add_navdata(arg_4_0.name)
 end
 
-function GwNavFlowCallbacks.create_navbot(arg_5_0)
+GwNavFlowCallbacks.create_navbot = function (arg_5_0)
 	local var_5_0 = var_0_1.get_navworld(var_0_5.level(arg_5_0.unit))
 
 	if arg_5_0.bot_configuration ~= nil then
@@ -41,7 +41,7 @@ function GwNavFlowCallbacks.create_navbot(arg_5_0)
 	end
 end
 
-function GwNavFlowCallbacks.destroy_navbot(arg_6_0)
+GwNavFlowCallbacks.destroy_navbot = function (arg_6_0)
 	local var_6_0 = var_0_2.get_navbot(arg_6_0.unit)
 
 	if var_6_0 then
@@ -49,7 +49,7 @@ function GwNavFlowCallbacks.destroy_navbot(arg_6_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_velocity(arg_7_0)
+GwNavFlowCallbacks.navbot_velocity = function (arg_7_0)
 	local var_7_0 = var_0_2.get_navbot(arg_7_0.unit)
 
 	if var_7_0 then
@@ -61,7 +61,7 @@ function GwNavFlowCallbacks.navbot_velocity(arg_7_0)
 	return arg_7_0
 end
 
-function GwNavFlowCallbacks.navbot_output_velocity(arg_8_0)
+GwNavFlowCallbacks.navbot_output_velocity = function (arg_8_0)
 	local var_8_0 = var_0_2.get_navbot(arg_8_0.unit)
 
 	if var_8_0 then
@@ -73,7 +73,7 @@ function GwNavFlowCallbacks.navbot_output_velocity(arg_8_0)
 	return arg_8_0
 end
 
-function GwNavFlowCallbacks.navbot_local_output_velocity(arg_9_0)
+GwNavFlowCallbacks.navbot_local_output_velocity = function (arg_9_0)
 	local var_9_0 = var_0_2.get_navbot(arg_9_0.unit)
 
 	if var_9_0 then
@@ -85,7 +85,7 @@ function GwNavFlowCallbacks.navbot_local_output_velocity(arg_9_0)
 	return arg_9_0
 end
 
-function GwNavFlowCallbacks.navbot_destination(arg_10_0)
+GwNavFlowCallbacks.navbot_destination = function (arg_10_0)
 	local var_10_0 = var_0_2.get_navbot(arg_10_0.unit)
 
 	if var_10_0 then
@@ -97,7 +97,7 @@ function GwNavFlowCallbacks.navbot_destination(arg_10_0)
 	return arg_10_0
 end
 
-function GwNavFlowCallbacks.set_navbot_destination(arg_11_0)
+GwNavFlowCallbacks.set_navbot_destination = function (arg_11_0)
 	local var_11_0 = var_0_2.get_navbot(arg_11_0.unit)
 
 	if var_11_0 then
@@ -105,7 +105,7 @@ function GwNavFlowCallbacks.set_navbot_destination(arg_11_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_move_unit(arg_12_0)
+GwNavFlowCallbacks.navbot_move_unit = function (arg_12_0)
 	local var_12_0 = var_0_2.get_navbot(arg_12_0.unit)
 
 	if var_12_0 then
@@ -113,7 +113,7 @@ function GwNavFlowCallbacks.navbot_move_unit(arg_12_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_move_unit_with_mover(arg_13_0)
+GwNavFlowCallbacks.navbot_move_unit_with_mover = function (arg_13_0)
 	local var_13_0 = var_0_2.get_navbot(arg_13_0.unit)
 
 	if var_13_0 then
@@ -121,7 +121,7 @@ function GwNavFlowCallbacks.navbot_move_unit_with_mover(arg_13_0)
 	end
 end
 
-function GwNavFlowCallbacks.set_navbot_route(arg_14_0)
+GwNavFlowCallbacks.set_navbot_route = function (arg_14_0)
 	local var_14_0 = var_0_9[arg_14_0.id]
 
 	if var_14_0 then
@@ -133,7 +133,7 @@ function GwNavFlowCallbacks.set_navbot_route(arg_14_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_set_layer_cost_multiplier(arg_15_0)
+GwNavFlowCallbacks.navbot_set_layer_cost_multiplier = function (arg_15_0)
 	local var_15_0 = var_0_2.get_navbot(arg_15_0.unit)
 
 	if var_15_0 then
@@ -141,7 +141,7 @@ function GwNavFlowCallbacks.navbot_set_layer_cost_multiplier(arg_15_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_allow_layer(arg_16_0)
+GwNavFlowCallbacks.navbot_allow_layer = function (arg_16_0)
 	local var_16_0 = var_0_2.get_navbot(arg_16_0.unit)
 
 	if var_16_0 then
@@ -149,7 +149,7 @@ function GwNavFlowCallbacks.navbot_allow_layer(arg_16_0)
 	end
 end
 
-function GwNavFlowCallbacks.navbot_forbid_layer(arg_17_0)
+GwNavFlowCallbacks.navbot_forbid_layer = function (arg_17_0)
 	local var_17_0 = var_0_2.get_navbot(arg_17_0.unit)
 
 	if var_17_0 then
@@ -157,14 +157,14 @@ function GwNavFlowCallbacks.navbot_forbid_layer(arg_17_0)
 	end
 end
 
-function GwNavFlowCallbacks.create_route(arg_18_0)
+GwNavFlowCallbacks.create_route = function (arg_18_0)
 	arg_18_0.route_id = tostring(#var_0_9 + 1)
 	var_0_9[arg_18_0.route_id] = var_0_0()
 
 	return arg_18_0
 end
 
-function GwNavFlowCallbacks.add_position_to_route(arg_19_0)
+GwNavFlowCallbacks.add_position_to_route = function (arg_19_0)
 	local var_19_0 = var_0_9[arg_19_0.route_id]
 
 	if var_19_0 then
@@ -172,11 +172,11 @@ function GwNavFlowCallbacks.add_position_to_route(arg_19_0)
 	end
 end
 
-function GwNavFlowCallbacks.navboxobstacle_create(arg_20_0)
+GwNavFlowCallbacks.navboxobstacle_create = function (arg_20_0)
 	var_0_1.get_navworld(var_0_5.level(arg_20_0.world_unit)):add_boxobstacle(arg_20_0.obstacle_unit)
 end
 
-function GwNavFlowCallbacks.navboxobstacle_destroy(arg_21_0)
+GwNavFlowCallbacks.navboxobstacle_destroy = function (arg_21_0)
 	local var_21_0 = var_0_3.get_navboxstacle(arg_21_0.obstacle_unit)
 
 	if var_21_0 then
@@ -184,11 +184,11 @@ function GwNavFlowCallbacks.navboxobstacle_destroy(arg_21_0)
 	end
 end
 
-function GwNavFlowCallbacks.cylinderobstacle_create(arg_22_0)
+GwNavFlowCallbacks.cylinderobstacle_create = function (arg_22_0)
 	var_0_1.get_navworld(var_0_5.level(arg_22_0.world_unit)):add_cylinderobstacle(arg_22_0.obstacle_unit)
 end
 
-function GwNavFlowCallbacks.cylinderobstacle_destroy(arg_23_0)
+GwNavFlowCallbacks.cylinderobstacle_destroy = function (arg_23_0)
 	local var_23_0 = var_0_4.get_navcylinderostacle(arg_23_0.obstacle_unit)
 
 	if var_23_0 then

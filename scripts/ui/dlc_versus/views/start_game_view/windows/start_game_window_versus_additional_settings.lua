@@ -5,11 +5,11 @@ StartGameWindowVersusAdditionalSettings.NAME = "StartGameWindowVersusAdditionalS
 
 local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_additional_settings_definitions")
 
-function StartGameWindowVersusAdditionalSettings.create_ui_elements(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StartGameWindowVersusAdditionalSettings.create_ui_elements = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	StartGameWindowVersusAdditionalSettings.super.create_ui_elements(arg_1_0, var_0_0, arg_1_2, arg_1_3)
 end
 
-function StartGameWindowVersusAdditionalSettings._set_additional_options_enabled_state(arg_2_0, arg_2_1)
+StartGameWindowVersusAdditionalSettings._set_additional_options_enabled_state = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0._widgets_by_name
 
 	var_2_0.dedicated_servers_win_checkbox.content.button_hotspot.disable_button = not arg_2_1
@@ -18,7 +18,7 @@ function StartGameWindowVersusAdditionalSettings._set_additional_options_enabled
 	arg_2_0._additional_option_enabled = arg_2_1
 end
 
-function StartGameWindowVersusAdditionalSettings._handle_input(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowVersusAdditionalSettings._handle_input = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.parent
 	local var_3_1 = var_3_0:window_input_service()
 
@@ -70,7 +70,7 @@ function StartGameWindowVersusAdditionalSettings._handle_input(arg_3_0, arg_3_1,
 	end
 end
 
-function StartGameWindowVersusAdditionalSettings._update_additional_options(arg_4_0)
+StartGameWindowVersusAdditionalSettings._update_additional_options = function (arg_4_0)
 	local var_4_0 = arg_4_0.parent
 	local var_4_1 = var_4_0:using_player_hosted_search()
 	local var_4_2, var_4_3 = var_4_0:using_dedicated_servers_search()

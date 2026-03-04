@@ -44,7 +44,7 @@ local var_0_34 = stingray.GwNavGraph
 local var_0_35 = stingray.GwNavTraversal
 local var_0_36 = stingray.GwNavGeneration
 
-function var_0_1.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+var_0_1.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.camera = arg_1_1
 	arg_1_0.unit = arg_1_2
 	arg_1_0.nav_world = arg_1_3
@@ -57,7 +57,7 @@ function var_0_1.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function var_0_1.update(arg_2_0, arg_2_1)
+var_0_1.update = function (arg_2_0, arg_2_1)
 	local var_2_0 = {}
 
 	if var_0_15.platform() == "win32" or var_0_15.platform() == "macosx" then

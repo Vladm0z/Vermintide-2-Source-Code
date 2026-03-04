@@ -11,7 +11,7 @@ local var_0_0 = type
 local function var_0_1(arg_1_0)
 	return setmetatable({}, {
 		__mode = "kv",
-		__index = function(arg_2_0, arg_2_1)
+		__index = function (arg_2_0, arg_2_1)
 			local var_2_0 = var_0_0(arg_2_1)
 
 			if var_2_0 == "function" then
@@ -67,7 +67,7 @@ end
 local function var_0_3(arg_4_0)
 	local var_4_0 = {}
 
-	arg_4_0(function(arg_5_0)
+	arg_4_0(function (arg_5_0)
 		var_4_0[#var_4_0 + 1] = arg_5_0
 	end)
 
@@ -76,7 +76,7 @@ end
 
 ImguiWeaponEditor = class(ImguiWeaponEditor)
 
-function ImguiWeaponEditor.init(arg_6_0)
+ImguiWeaponEditor.init = function (arg_6_0)
 	arg_6_0._persistent = false
 	arg_6_0._tabs = {
 		BoostCurves = BoostCurves,
@@ -88,7 +88,7 @@ function ImguiWeaponEditor.init(arg_6_0)
 	}
 	arg_6_0._table_metadata = setmetatable({}, {
 		__mode = "k",
-		__index = function(arg_7_0, arg_7_1)
+		__index = function (arg_7_0, arg_7_1)
 			local var_7_0 = table.keys(arg_7_1)
 
 			table.sort(var_7_0)
@@ -108,7 +108,7 @@ function ImguiWeaponEditor.init(arg_6_0)
 	arg_6_0:checkpoint()
 end
 
-function ImguiWeaponEditor._defered_init(arg_8_0)
+ImguiWeaponEditor._defered_init = function (arg_8_0)
 	if arg_8_0._defered_init_done then
 		return
 	end
@@ -142,7 +142,7 @@ function ImguiWeaponEditor._defered_init(arg_8_0)
 		},
 		damage_profile = table.keys(AttackTemplates),
 		damage_type = NetworkLookup.damage_types,
-		display_unit = var_0_3(function(arg_9_0)
+		display_unit = var_0_3(function (arg_9_0)
 			for iter_9_0, iter_9_1 in pairs(WeaponSkins.skins) do
 				if iter_9_1.data and iter_9_1.data.display_unit then
 					arg_9_0(iter_9_1.data.display_unit)
@@ -206,7 +206,7 @@ function ImguiWeaponEditor._defered_init(arg_8_0)
 	arg_8_0._defered_init_done = true
 end
 
-function ImguiWeaponEditor.checkpoint(arg_10_0)
+ImguiWeaponEditor.checkpoint = function (arg_10_0)
 	arg_10_0._tabs0 = {
 		BoostCurves = var_0_1(BoostCurves),
 		DamageProfileTemplates = var_0_1(DamageProfileTemplates),
@@ -216,15 +216,15 @@ function ImguiWeaponEditor.checkpoint(arg_10_0)
 	}
 end
 
-function ImguiWeaponEditor.is_persistent(arg_11_0)
+ImguiWeaponEditor.is_persistent = function (arg_11_0)
 	return arg_11_0._persistent
 end
 
-function ImguiWeaponEditor.update(arg_12_0)
+ImguiWeaponEditor.update = function (arg_12_0)
 	arg_12_0:_defered_init()
 end
 
-function ImguiWeaponEditor.edit_table(arg_13_0, arg_13_1)
+ImguiWeaponEditor.edit_table = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._table_metadata[arg_13_1]
 
 	for iter_13_0 = 1, #var_13_0.keys do
@@ -280,14 +280,14 @@ function ImguiWeaponEditor.edit_table(arg_13_0, arg_13_1)
 	end
 end
 
-function ImguiWeaponEditor._apply_to_existing_items(arg_14_0)
+ImguiWeaponEditor._apply_to_existing_items = function (arg_14_0)
 	for iter_14_0, iter_14_1 in pairs(Managers.backend:get_interface("items")._modified_templates) do
 		printf("[ImguiWeaponEditor] Updating %s (%s)", iter_14_0, iter_14_1.name)
 		table.merge(iter_14_1, WeaponUtils.get_weapon_template(iter_14_1.name))
 	end
 end
 
-function ImguiWeaponEditor.draw(arg_15_0, arg_15_1)
+ImguiWeaponEditor.draw = function (arg_15_0, arg_15_1)
 	local var_15_0 = Imgui.begin_window("Weapon Editor", "menu_bar")
 
 	arg_15_0._persistent = Imgui.checkbox("Persistent window", arg_15_0._persistent)

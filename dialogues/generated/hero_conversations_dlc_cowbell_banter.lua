@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_cowbell_banter.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_shadow_curse_conversation_eight",

@@ -5027,7 +5027,7 @@ DamageProfileTemplates.ratling_gunner_backdrop = {
 	}
 }
 
-DLCUtils.map_list("damage_profile_template_files_names", function(arg_2_0)
+DLCUtils.map_list("damage_profile_template_files_names", function (arg_2_0)
 	table.merge(DamageProfileTemplates, local_require(arg_2_0))
 end)
 

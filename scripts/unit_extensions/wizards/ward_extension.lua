@@ -21,7 +21,7 @@ local var_0_12 = {
 	"rpc_client_ward_hot_join_sync"
 }
 
-function WardExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WardExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._player_broadphase = Managers.state.entity:system("proximity_system").player_units_broadphase
 	arg_1_0._network_transmit = arg_1_1.network_transmit
 	arg_1_0._network_event_delegate = arg_1_1.network_transmit.network_event_delegate
@@ -42,7 +42,7 @@ function WardExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	Managers.state.event:register(arg_1_0, "player_party_changed", "player_party_changed")
 end
 
-function WardExtension.destroy(arg_2_0)
+WardExtension.destroy = function (arg_2_0)
 	if var_0_11 ~= var_0_11.aggressive then
 		arg_2_0:set_defenders_aggressive()
 	end
@@ -53,7 +53,7 @@ function WardExtension.destroy(arg_2_0)
 	Managers.state.event:unregister("player_party_changed", arg_2_0)
 end
 
-function WardExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+WardExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_0._spawned then
 		arg_3_0:toggle_health_bar_by_proximity(arg_3_1)
 	end
@@ -76,7 +76,7 @@ end
 
 local var_0_13 = {}
 
-function WardExtension.get_closest_player(arg_4_0, arg_4_1)
+WardExtension.get_closest_player = function (arg_4_0, arg_4_1)
 	local var_4_0 = Broadphase.query(arg_4_0._player_broadphase, arg_4_1, var_0_4, var_0_13)
 
 	if var_4_0 == 0 then
@@ -106,7 +106,7 @@ function WardExtension.get_closest_player(arg_4_0, arg_4_1)
 	return var_4_2
 end
 
-function WardExtension.update_state(arg_5_0, arg_5_1, arg_5_2)
+WardExtension.update_state = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_1 then
 		return
 	end
@@ -128,7 +128,7 @@ function WardExtension.update_state(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._state = var_0_11.idle
 end
 
-function WardExtension.set_defenders_aggressive(arg_6_0, arg_6_1)
+WardExtension.set_defenders_aggressive = function (arg_6_0, arg_6_1)
 	local var_6_0 = Managers.state.entity:system("ai_group_system"):get_ai_group(arg_6_0._defender_group_id)
 
 	if var_6_0 then
@@ -136,7 +136,7 @@ function WardExtension.set_defenders_aggressive(arg_6_0, arg_6_1)
 	end
 end
 
-function WardExtension.spawn_defenders(arg_7_0, arg_7_1)
+WardExtension.spawn_defenders = function (arg_7_0, arg_7_1)
 	arg_7_0._spawned = true
 
 	if not arg_7_0._is_server then
@@ -149,7 +149,7 @@ function WardExtension.spawn_defenders(arg_7_0, arg_7_1)
 	local var_7_0 = {
 		behavior = var_0_7,
 		ward_pos = arg_7_0._ward_pos,
-		spawned_func = function(arg_8_0, arg_8_1, arg_8_2)
+		spawned_func = function (arg_8_0, arg_8_1, arg_8_2)
 			local var_8_0 = BLACKBOARDS[arg_8_0]
 
 			var_8_0.defend = true
@@ -168,7 +168,7 @@ function WardExtension.spawn_defenders(arg_7_0, arg_7_1)
 	end
 end
 
-function WardExtension.toggle_health_bar_by_proximity(arg_9_0, arg_9_1)
+WardExtension.toggle_health_bar_by_proximity = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._local_player_unit_unit
 
 	if not var_9_0 then
@@ -200,12 +200,12 @@ function WardExtension.toggle_health_bar_by_proximity(arg_9_0, arg_9_1)
 	end
 end
 
-function WardExtension.player_party_changed(arg_10_0)
+WardExtension.player_party_changed = function (arg_10_0)
 	if arg_10_0._is_server and arg_10_0._spawned then
 		arg_10_0._network_transmit:send_rpc_clients("rpc_client_ward_hot_join_sync", arg_10_0._spawned)
 	end
 end
 
-function WardExtension.rpc_client_ward_hot_join_sync(arg_11_0, arg_11_1)
+WardExtension.rpc_client_ward_hot_join_sync = function (arg_11_0, arg_11_1)
 	arg_11_0._spawned = arg_11_1
 end

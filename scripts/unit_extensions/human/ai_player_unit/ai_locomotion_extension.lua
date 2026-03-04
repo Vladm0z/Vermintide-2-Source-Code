@@ -9,7 +9,7 @@ local var_0_3 = 0.5
 
 AILocomotionExtension = class(AILocomotionExtension)
 
-function AILocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AILocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._system_data = arg_1_3.system_data
 	arg_1_0._unit = arg_1_2
 	arg_1_0.breed = arg_1_3.breed
@@ -55,18 +55,18 @@ function AILocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0:set_movement_type("snap_to_navmesh")
 end
 
-function AILocomotionExtension.destroy(arg_2_0)
+AILocomotionExtension.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0._system_data
 	local var_2_1 = arg_2_0._unit
 
 	var_2_0.destroy_units[var_2_1] = arg_2_0
 end
 
-function AILocomotionExtension.ready(arg_3_0, arg_3_1, arg_3_2)
+AILocomotionExtension.ready = function (arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-function AILocomotionExtension.hot_join_sync(arg_4_0, arg_4_1)
+AILocomotionExtension.hot_join_sync = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._unit
 
 	if FROZEN[var_4_0] then
@@ -87,7 +87,7 @@ function AILocomotionExtension.hot_join_sync(arg_4_0, arg_4_1)
 	end
 end
 
-function AILocomotionExtension.set_mover_displacement(arg_5_0, arg_5_1, arg_5_2)
+AILocomotionExtension.set_mover_displacement = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_1 then
 		local var_5_0 = Unit.mover(arg_5_0._unit)
 
@@ -103,7 +103,7 @@ function AILocomotionExtension.set_mover_displacement(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AILocomotionExtension.teleport_to(arg_6_0, arg_6_1, arg_6_2)
+AILocomotionExtension.teleport_to = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._unit
 
 	Unit.set_local_position(var_6_0, 0, arg_6_1)
@@ -128,7 +128,7 @@ local var_0_5 = "update_animation_driven"
 local var_0_6 = "update_script_driven"
 local var_0_7 = "update_linked_transport"
 
-function AILocomotionExtension.set_animation_driven(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AILocomotionExtension.set_animation_driven = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	arg_7_2 = arg_7_2 or false
 
 	local var_7_0 = arg_7_0._unit
@@ -205,34 +205,34 @@ function AILocomotionExtension.set_animation_driven(arg_7_0, arg_7_1, arg_7_2, a
 	end
 end
 
-function AILocomotionExtension.set_animation_translation_scale(arg_8_0, arg_8_1)
+AILocomotionExtension.set_animation_translation_scale = function (arg_8_0, arg_8_1)
 	arg_8_0._animation_translation_scale_box:store(arg_8_1)
 end
 
-function AILocomotionExtension.set_animation_rotation_scale(arg_9_0, arg_9_1)
+AILocomotionExtension.set_animation_rotation_scale = function (arg_9_0, arg_9_1)
 	arg_9_0._animation_rotation_scale = arg_9_1
 end
 
-function AILocomotionExtension.set_wanted_velocity_flat(arg_10_0, arg_10_1)
+AILocomotionExtension.set_wanted_velocity_flat = function (arg_10_0, arg_10_1)
 	arg_10_1.z = arg_10_0._velocity.z
 	arg_10_0._wanted_velocity = arg_10_1
 end
 
-function AILocomotionExtension.set_wanted_velocity(arg_11_0, arg_11_1)
+AILocomotionExtension.set_wanted_velocity = function (arg_11_0, arg_11_1)
 	arg_11_0._wanted_velocity = arg_11_1
 
 	arg_11_0._velocity:store(arg_11_1)
 end
 
-function AILocomotionExtension.set_wanted_rotation(arg_12_0, arg_12_1)
+AILocomotionExtension.set_wanted_rotation = function (arg_12_0, arg_12_1)
 	arg_12_0._wanted_rotation = arg_12_1
 end
 
-function AILocomotionExtension.use_lerp_rotation(arg_13_0, arg_13_1)
+AILocomotionExtension.use_lerp_rotation = function (arg_13_0, arg_13_1)
 	arg_13_0._lerp_rotation = arg_13_1
 end
 
-function AILocomotionExtension.set_rotation_speed(arg_14_0, arg_14_1)
+AILocomotionExtension.set_rotation_speed = function (arg_14_0, arg_14_1)
 	if arg_14_1 == nil then
 		arg_14_0._rotation_speed = var_0_1
 	else
@@ -240,7 +240,7 @@ function AILocomotionExtension.set_rotation_speed(arg_14_0, arg_14_1)
 	end
 end
 
-function AILocomotionExtension.set_rotation_speed_modifier(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+AILocomotionExtension.set_rotation_speed_modifier = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	arg_15_0._system_data.rotation_speed_modifier_update_units[arg_15_0._unit] = arg_15_0
 	arg_15_0._rotation_speed_modifier = arg_15_1
 	arg_15_0._rotation_speed_modifier_lerp_start_value = arg_15_1
@@ -248,7 +248,7 @@ function AILocomotionExtension.set_rotation_speed_modifier(arg_15_0, arg_15_1, a
 	arg_15_0._rotation_speed_modifier_lerp_end_time = arg_15_3 + arg_15_2
 end
 
-function AILocomotionExtension.set_affected_by_gravity(arg_16_0, arg_16_1)
+AILocomotionExtension.set_affected_by_gravity = function (arg_16_0, arg_16_1)
 	arg_16_0._affected_by_gravity = arg_16_1
 
 	if arg_16_1 and arg_16_0._system_data.snap_to_navmesh_update_units[arg_16_0._unit] == nil then
@@ -258,25 +258,25 @@ function AILocomotionExtension.set_affected_by_gravity(arg_16_0, arg_16_1)
 	end
 end
 
-function AILocomotionExtension.set_gravity(arg_17_0, arg_17_1)
+AILocomotionExtension.set_gravity = function (arg_17_0, arg_17_1)
 	arg_17_0._gravity = arg_17_1 or var_0_2
 end
 
-function AILocomotionExtension.set_mover_disable_reason(arg_18_0, arg_18_1, arg_18_2)
+AILocomotionExtension.set_mover_disable_reason = function (arg_18_0, arg_18_1, arg_18_2)
 	MoverHelper.set_disable_reason(arg_18_0._unit, arg_18_0._mover_state, arg_18_1, arg_18_2)
 end
 
-function AILocomotionExtension.set_check_falling(arg_19_0, arg_19_1)
+AILocomotionExtension.set_check_falling = function (arg_19_0, arg_19_1)
 	arg_19_0._check_falling = arg_19_1
 end
 
-function AILocomotionExtension.set_collision_disabled(arg_20_0, arg_20_1, arg_20_2)
+AILocomotionExtension.set_collision_disabled = function (arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0._collision_state then
 		MoverHelper.set_collision_disable_reason(arg_20_0._unit, arg_20_0._collision_state, arg_20_1, arg_20_2)
 	end
 end
 
-function AILocomotionExtension.set_movement_type(arg_21_0, arg_21_1, arg_21_2)
+AILocomotionExtension.set_movement_type = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_1 == arg_21_0.movement_type then
 		return
 	end
@@ -358,7 +358,7 @@ function AILocomotionExtension.set_movement_type(arg_21_0, arg_21_1, arg_21_2)
 	end
 end
 
-function AILocomotionExtension.set_disabled(arg_22_0)
+AILocomotionExtension.set_disabled = function (arg_22_0)
 	assert(not arg_22_0._disabled, "ai_locomotion_extension disabled extension several times.")
 
 	arg_22_0._system_data.destroy_units[unit] = arg_22_0
@@ -368,26 +368,26 @@ function AILocomotionExtension.set_disabled(arg_22_0)
 	arg_22_0._disabled = true
 end
 
-function AILocomotionExtension.current_velocity(arg_23_0)
+AILocomotionExtension.current_velocity = function (arg_23_0)
 	return arg_23_0._velocity:unbox()
 end
 
-function AILocomotionExtension.is_falling(arg_24_0)
+AILocomotionExtension.is_falling = function (arg_24_0)
 	return arg_24_0._is_falling
 end
 
-function AILocomotionExtension.get_rotation_speed(arg_25_0)
+AILocomotionExtension.get_rotation_speed = function (arg_25_0)
 	return arg_25_0._rotation_speed
 end
 
-function AILocomotionExtension.get_rotation_speed_modifier(arg_26_0)
+AILocomotionExtension.get_rotation_speed_modifier = function (arg_26_0)
 	return arg_26_0._rotation_speed_modifier
 end
 
-function AILocomotionExtension.get_animation_rotation_scale(arg_27_0)
+AILocomotionExtension.get_animation_rotation_scale = function (arg_27_0)
 	return arg_27_0._animation_rotation_scale
 end
 
-function AILocomotionExtension.get_animation_translation_scale(arg_28_0)
+AILocomotionExtension.get_animation_translation_scale = function (arg_28_0)
 	return arg_28_0._animation_translation_scale_box:unbox()
 end

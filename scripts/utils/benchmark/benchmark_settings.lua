@@ -109,7 +109,7 @@ for iter_0_0, iter_0_1 in pairs(var_0_4) do
 	end
 end
 
-function BenchmarkSettings.demo_mode_overrides()
+BenchmarkSettings.demo_mode_overrides = function ()
 	if var_0_3 then
 		print("Entering demo mode")
 

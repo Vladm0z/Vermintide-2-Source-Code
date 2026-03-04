@@ -11,7 +11,7 @@ local var_0_6 = "cosmetics_selection"
 HeroWindowCosmeticsLoadoutConsole = class(HeroWindowCosmeticsLoadoutConsole)
 HeroWindowCosmeticsLoadoutConsole.NAME = "HeroWindowCosmeticsLoadoutConsole"
 
-function HeroWindowCosmeticsLoadoutConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCosmeticsLoadoutConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCosmeticsLoadoutConsole")
 
 	arg_1_0.params = arg_1_1
@@ -43,7 +43,7 @@ function HeroWindowCosmeticsLoadoutConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowCosmeticsLoadoutConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowCosmeticsLoadoutConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings
@@ -54,7 +54,7 @@ function HeroWindowCosmeticsLoadoutConsole._start_transition_animation(arg_2_0, 
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowCosmeticsLoadoutConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowCosmeticsLoadoutConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -103,7 +103,7 @@ function HeroWindowCosmeticsLoadoutConsole.create_ui_elements(arg_3_0, arg_3_1, 
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowCosmeticsLoadoutConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCosmeticsLoadoutConsole")
 
 	arg_4_0.ui_animator = nil
@@ -113,7 +113,7 @@ function HeroWindowCosmeticsLoadoutConsole.on_exit(arg_4_0, arg_4_1)
 	arg_4_0._menu_input_description = nil
 end
 
-function HeroWindowCosmeticsLoadoutConsole._input_service(arg_5_0)
+HeroWindowCosmeticsLoadoutConsole._input_service = function (arg_5_0)
 	local var_5_0 = arg_5_0.parent
 
 	if var_5_0:is_friends_list_active() then
@@ -123,7 +123,7 @@ function HeroWindowCosmeticsLoadoutConsole._input_service(arg_5_0)
 	return var_5_0:window_input_service()
 end
 
-function HeroWindowCosmeticsLoadoutConsole.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowCosmeticsLoadoutConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -139,11 +139,11 @@ function HeroWindowCosmeticsLoadoutConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function HeroWindowCosmeticsLoadoutConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowCosmeticsLoadoutConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function HeroWindowCosmeticsLoadoutConsole._update_input_description(arg_8_0)
+HeroWindowCosmeticsLoadoutConsole._update_input_description = function (arg_8_0)
 	local var_8_0 = arg_8_0.params
 	local var_8_1 = arg_8_0.params.hero_statistics_active
 
@@ -158,7 +158,7 @@ function HeroWindowCosmeticsLoadoutConsole._update_input_description(arg_8_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._update_animations(arg_9_0, arg_9_1)
+HeroWindowCosmeticsLoadoutConsole._update_animations = function (arg_9_0, arg_9_1)
 	arg_9_0.ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._animations
@@ -175,7 +175,7 @@ function HeroWindowCosmeticsLoadoutConsole._update_animations(arg_9_0, arg_9_1)
 	local var_9_2 = arg_9_0._widgets_by_name
 end
 
-function HeroWindowCosmeticsLoadoutConsole._is_button_pressed(arg_10_0, arg_10_1)
+HeroWindowCosmeticsLoadoutConsole._is_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -185,7 +185,7 @@ function HeroWindowCosmeticsLoadoutConsole._is_button_pressed(arg_10_0, arg_10_1
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._handle_gamepad_input(arg_11_0, arg_11_1, arg_11_2)
+HeroWindowCosmeticsLoadoutConsole._handle_gamepad_input = function (arg_11_0, arg_11_1, arg_11_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -228,7 +228,7 @@ function HeroWindowCosmeticsLoadoutConsole._handle_gamepad_input(arg_11_0, arg_1
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._handle_input(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowCosmeticsLoadoutConsole._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.parent
 	local var_12_1 = arg_12_0:_is_equipment_slot_hovered()
 
@@ -247,7 +247,7 @@ function HeroWindowCosmeticsLoadoutConsole._handle_input(arg_12_0, arg_12_1, arg
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._update_selected_cosmetic_slot_index(arg_13_0)
+HeroWindowCosmeticsLoadoutConsole._update_selected_cosmetic_slot_index = function (arg_13_0)
 	local var_13_0 = arg_13_0.parent:get_selected_cosmetic_slot_index()
 
 	if var_13_0 ~= arg_13_0._selected_cosmetic_slot_index then
@@ -257,7 +257,7 @@ function HeroWindowCosmeticsLoadoutConsole._update_selected_cosmetic_slot_index(
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._update_loadout_sync(arg_14_0)
+HeroWindowCosmeticsLoadoutConsole._update_loadout_sync = function (arg_14_0)
 	local var_14_0 = arg_14_0.parent.loadout_sync_id
 
 	if var_14_0 ~= arg_14_0._loadout_sync_id then
@@ -267,12 +267,12 @@ function HeroWindowCosmeticsLoadoutConsole._update_loadout_sync(arg_14_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._exit(arg_15_0, arg_15_1)
+HeroWindowCosmeticsLoadoutConsole._exit = function (arg_15_0, arg_15_1)
 	arg_15_0.exit = true
 	arg_15_0.exit_level_id = arg_15_1
 end
 
-function HeroWindowCosmeticsLoadoutConsole.draw(arg_16_0, arg_16_1)
+HeroWindowCosmeticsLoadoutConsole.draw = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.ui_renderer
 	local var_16_1 = arg_16_0.ui_top_renderer
 	local var_16_2 = arg_16_0.ui_scenegraph
@@ -300,11 +300,11 @@ function HeroWindowCosmeticsLoadoutConsole.draw(arg_16_0, arg_16_1)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._play_sound(arg_17_0, arg_17_1)
+HeroWindowCosmeticsLoadoutConsole._play_sound = function (arg_17_0, arg_17_1)
 	arg_17_0.parent:play_sound(arg_17_1)
 end
 
-function HeroWindowCosmeticsLoadoutConsole._setup_slot_icons(arg_18_0)
+HeroWindowCosmeticsLoadoutConsole._setup_slot_icons = function (arg_18_0)
 	local var_18_0 = InventorySettings.slots_by_cosmetic_index
 
 	for iter_18_0, iter_18_1 in pairs(var_18_0) do
@@ -324,7 +324,7 @@ function HeroWindowCosmeticsLoadoutConsole._setup_slot_icons(arg_18_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._populate_loadout(arg_19_0)
+HeroWindowCosmeticsLoadoutConsole._populate_loadout = function (arg_19_0)
 	local var_19_0 = arg_19_0.hero_name
 	local var_19_1 = InventorySettings.slots_by_cosmetic_index
 	local var_19_2 = arg_19_0.career_index
@@ -344,7 +344,7 @@ function HeroWindowCosmeticsLoadoutConsole._populate_loadout(arg_19_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._equip_item_presentation(arg_20_0, arg_20_1, arg_20_2)
+HeroWindowCosmeticsLoadoutConsole._equip_item_presentation = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_1.data.slot_type
 	local var_20_1 = arg_20_2.slot_index
 	local var_20_2 = arg_20_2.cosmetic_index
@@ -381,7 +381,7 @@ function HeroWindowCosmeticsLoadoutConsole._equip_item_presentation(arg_20_0, ar
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._clear_item_slot(arg_21_0, arg_21_1)
+HeroWindowCosmeticsLoadoutConsole._clear_item_slot = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.type
 	local var_21_1 = arg_21_1.slot_index
 	local var_21_2 = arg_21_1.ui_slot_index
@@ -403,7 +403,7 @@ function HeroWindowCosmeticsLoadoutConsole._clear_item_slot(arg_21_0, arg_21_1)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_right_clicked(arg_22_0)
+HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_right_clicked = function (arg_22_0)
 	local var_22_0 = arg_22_0._widgets_by_name.loadout_grid.content
 	local var_22_1 = var_22_0.rows
 	local var_22_2 = var_22_0.columns
@@ -419,7 +419,7 @@ function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_right_clicked(arg_
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_pressed(arg_23_0)
+HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_pressed = function (arg_23_0)
 	local var_23_0 = arg_23_0._widgets_by_name.loadout_grid.content
 	local var_23_1 = var_23_0.rows
 	local var_23_2 = var_23_0.columns
@@ -435,7 +435,7 @@ function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_pressed(arg_23_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered(arg_24_0)
+HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered = function (arg_24_0)
 	local var_24_0 = arg_24_0._widgets_by_name.loadout_grid.content
 	local var_24_1 = var_24_0.rows
 	local var_24_2 = var_24_0.columns
@@ -451,7 +451,7 @@ function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered(arg_24_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._set_equipment_slot_selected(arg_25_0, arg_25_1)
+HeroWindowCosmeticsLoadoutConsole._set_equipment_slot_selected = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._widgets_by_name.loadout_grid.content
 	local var_25_1 = var_25_0.rows
 	local var_25_2 = var_25_0.columns
@@ -467,7 +467,7 @@ function HeroWindowCosmeticsLoadoutConsole._set_equipment_slot_selected(arg_25_0
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._enable_selection_highlight(arg_26_0)
+HeroWindowCosmeticsLoadoutConsole._enable_selection_highlight = function (arg_26_0)
 	local var_26_0 = arg_26_0._widgets_by_name.loadout_grid.content
 	local var_26_1 = var_26_0.rows
 	local var_26_2 = var_26_0.columns
@@ -482,7 +482,7 @@ function HeroWindowCosmeticsLoadoutConsole._enable_selection_highlight(arg_26_0)
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._disable_selection_highlight(arg_27_0)
+HeroWindowCosmeticsLoadoutConsole._disable_selection_highlight = function (arg_27_0)
 	local var_27_0 = arg_27_0._widgets_by_name.loadout_grid.content
 	local var_27_1 = var_27_0.rows
 	local var_27_2 = var_27_0.columns
@@ -496,7 +496,7 @@ function HeroWindowCosmeticsLoadoutConsole._disable_selection_highlight(arg_27_0
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered_by_type(arg_28_0, arg_28_1)
+HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered_by_type = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._widgets_by_name.loadout_grid.content
 	local var_28_1 = var_28_0.rows
 	local var_28_2 = var_28_0.columns
@@ -515,7 +515,7 @@ function HeroWindowCosmeticsLoadoutConsole._is_equipment_slot_hovered_by_type(ar
 	end
 end
 
-function HeroWindowCosmeticsLoadoutConsole._highlight_equipment_slot_by_type(arg_29_0, arg_29_1)
+HeroWindowCosmeticsLoadoutConsole._highlight_equipment_slot_by_type = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0._widgets_by_name.loadout_grid
 	local var_29_1 = var_29_0.content
 	local var_29_2 = var_29_0.style

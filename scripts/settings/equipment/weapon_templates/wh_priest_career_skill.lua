@@ -15,7 +15,7 @@ local var_0_0 = {
 				target_cone_angle = 50,
 				hold_input = "action_career_hold",
 				anim_event = "bless_start",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -69,7 +69,7 @@ local var_0_0 = {
 				target_sticky_time = 0.2,
 				target_cone_angle = 50,
 				uninterruptible = true,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -121,7 +121,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bless_self",
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -132,7 +132,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bless_other",
 				total_time = 0.9,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -145,7 +145,7 @@ local var_0_0 = {
 					{
 						sub_action = "other_target",
 						action = "spells",
-						condition = function(arg_5_0, arg_5_1, arg_5_2)
+						condition = function (arg_5_0, arg_5_1, arg_5_2)
 							return arg_5_2 and arg_5_2:get_mode()
 						end
 					}
@@ -163,7 +163,7 @@ local var_0_0 = {
 					{
 						sub_action = "other_target",
 						action = "spells",
-						condition = function(arg_6_0, arg_6_1, arg_6_2)
+						condition = function (arg_6_0, arg_6_1, arg_6_2)
 							return arg_6_2 and arg_6_2:get_mode()
 						end
 					}
@@ -180,7 +180,7 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "bless_cancel",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -195,7 +195,7 @@ local var_0_0 = {
 				can_abort_reload = false,
 				hold_input = "action_inspect_hold",
 				anim_event = "inspect_start",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -207,7 +207,7 @@ local var_0_0 = {
 						input = "action_inspect_release"
 					}
 				},
-				finish_function = function(arg_9_0, arg_9_1)
+				finish_function = function (arg_9_0, arg_9_1)
 					local var_9_0 = ScriptUnit.has_extension(arg_9_0, "first_person_system")
 
 					if var_9_0 then
@@ -237,7 +237,7 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "inspect_end",
 				total_time = 0.7,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

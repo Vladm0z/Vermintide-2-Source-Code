@@ -33,7 +33,7 @@ end
 
 local var_0_4 = {
 	initializers = {
-		player_unit = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		player_unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			local var_3_0 = ScriptUnit.extension(arg_3_0, "input_system").player
 			local var_3_1 = Unit.mover(arg_3_0)
 			local var_3_2 = var_3_0:profile_index()
@@ -101,7 +101,7 @@ local var_0_4 = {
 				network_buff_ids = var_3_19
 			}
 		end,
-		player_bot_unit = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		player_bot_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0 = Managers.player:owner(arg_4_0)
 			local var_4_1 = Unit.mover(arg_4_0)
 			local var_4_2 = var_4_0:profile_index()
@@ -149,7 +149,7 @@ local var_0_4 = {
 				career_id = var_4_9
 			}
 		end,
-		ai_unit = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		ai_unit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			local var_5_0 = Unit.mover(arg_5_0)
 			local var_5_1 = Unit.get_data(arg_5_0, "breed")
 			local var_5_2, var_5_3 = ScriptUnit.extension(arg_5_0, "ai_system"):size_variation()
@@ -171,7 +171,7 @@ local var_0_4 = {
 				ai_group_id = var_5_5 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_training_dummy_bob = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		ai_unit_training_dummy_bob = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 			local var_6_0 = Unit.mover(arg_6_0)
 			local var_6_1 = Unit.get_data(arg_6_0, "breed")
 			local var_6_2, var_6_3 = ScriptUnit.extension(arg_6_0, "ai_system"):size_variation()
@@ -211,7 +211,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_6_13]
 			}
 		end,
-		ai_unit_beastmen_bestigor = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		ai_unit_beastmen_bestigor = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 			local var_7_0 = Unit.mover(arg_7_0)
 			local var_7_1 = Unit.get_data(arg_7_0, "breed")
 			local var_7_2, var_7_3 = ScriptUnit.extension(arg_7_0, "ai_system"):size_variation()
@@ -235,7 +235,7 @@ local var_0_4 = {
 				ai_group_id = var_7_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_beastmen_minotaur = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		ai_unit_beastmen_minotaur = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 			local var_8_0 = Unit.mover(arg_8_0)
 			local var_8_1 = Unit.get_data(arg_8_0, "breed")
 			local var_8_2, var_8_3 = ScriptUnit.extension(arg_8_0, "ai_system"):size_variation()
@@ -260,7 +260,7 @@ local var_0_4 = {
 				ai_group_id = var_8_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_grey_seer = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		ai_unit_grey_seer = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 			local var_9_0 = Unit.mover(arg_9_0)
 			local var_9_1 = Unit.get_data(arg_9_0, "breed")
 			local var_9_2, var_9_3 = ScriptUnit.extension(arg_9_0, "ai_system"):size_variation()
@@ -283,7 +283,7 @@ local var_0_4 = {
 				ai_group_id = var_9_5 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_tentacle = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		ai_unit_tentacle = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 			local var_10_0 = Unit.mover(arg_10_0)
 			local var_10_1 = Unit.get_data(arg_10_0, "breed")
 			local var_10_2, var_10_3 = ScriptUnit.extension(arg_10_0, "ai_system"):size_variation()
@@ -310,7 +310,7 @@ local var_0_4 = {
 				ai_group_id = var_10_7 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_vortex = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		ai_unit_vortex = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 			local var_11_0 = Unit.mover(arg_11_0)
 			local var_11_1 = Unit.get_data(arg_11_0, "breed")
 			local var_11_2 = ScriptUnit.extension(arg_11_0, "ai_system")
@@ -359,7 +359,7 @@ local var_0_4 = {
 				side_id = var_11_12
 			}
 		end,
-		ai_unit_plague_wave_spawner = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		ai_unit_plague_wave_spawner = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 			local var_12_0 = Unit.get_data(arg_12_0, "breed")
 			local var_12_1 = ScriptUnit.extension(arg_12_0, "ai_system")
 			local var_12_2 = Managers.state.side.side_by_unit[arg_12_0].side_id
@@ -374,7 +374,7 @@ local var_0_4 = {
 				side_id = var_12_2
 			}
 		end,
-		ai_unit_tentacle_portal = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		ai_unit_tentacle_portal = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			local var_13_0 = Managers.state.side.side_by_unit[arg_13_0].side_id
 
 			return {
@@ -386,7 +386,7 @@ local var_0_4 = {
 				side_id = var_13_0
 			}
 		end,
-		ai_unit_with_inventory = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+		ai_unit_with_inventory = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 			local var_14_0 = Unit.mover(arg_14_0)
 			local var_14_1 = Unit.get_data(arg_14_0, "breed")
 			local var_14_2, var_14_3 = ScriptUnit.extension(arg_14_0, "ai_system"):size_variation()
@@ -410,7 +410,7 @@ local var_0_4 = {
 				ai_group_id = var_14_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_with_inventory_and_shield = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		ai_unit_with_inventory_and_shield = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 			local var_15_0 = Unit.mover(arg_15_0)
 			local var_15_1 = Unit.get_data(arg_15_0, "breed")
 			local var_15_2, var_15_3 = ScriptUnit.extension(arg_15_0, "ai_system"):size_variation()
@@ -436,7 +436,7 @@ local var_0_4 = {
 				ai_group_id = var_15_7 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_storm_vermin_warlord = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+		ai_unit_storm_vermin_warlord = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 			local var_16_0 = Unit.mover(arg_16_0)
 			local var_16_1 = Unit.get_data(arg_16_0, "breed")
 			local var_16_2, var_16_3 = ScriptUnit.extension(arg_16_0, "ai_system"):size_variation()
@@ -466,7 +466,7 @@ local var_0_4 = {
 				ai_group_id = var_16_9 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_chaos_troll = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+		ai_unit_chaos_troll = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 			local var_17_0 = Unit.mover(arg_17_0)
 			local var_17_1 = Unit.get_data(arg_17_0, "breed")
 			local var_17_2, var_17_3 = ScriptUnit.extension(arg_17_0, "ai_system"):size_variation()
@@ -490,7 +490,7 @@ local var_0_4 = {
 				ai_group_id = var_17_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_lord_with_inventory = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+		ai_lord_with_inventory = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 			local var_18_0 = Unit.mover(arg_18_0)
 			local var_18_1 = Unit.get_data(arg_18_0, "breed")
 			local var_18_2, var_18_3 = ScriptUnit.extension(arg_18_0, "ai_system"):size_variation()
@@ -515,7 +515,7 @@ local var_0_4 = {
 				ai_group_id = var_18_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_pack_master = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+		ai_unit_pack_master = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 			local var_19_0 = Unit.mover(arg_19_0)
 			local var_19_1 = Unit.get_data(arg_19_0, "breed")
 			local var_19_2, var_19_3 = ScriptUnit.extension(arg_19_0, "ai_system"):size_variation()
@@ -538,7 +538,7 @@ local var_0_4 = {
 				side_id = var_19_5
 			}
 		end,
-		ai_unit_ratling_gunner = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+		ai_unit_ratling_gunner = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 			local var_20_0 = Unit.mover(arg_20_0)
 			local var_20_1 = Unit.get_data(arg_20_0, "breed")
 			local var_20_2, var_20_3 = ScriptUnit.extension(arg_20_0, "ai_system"):size_variation()
@@ -563,7 +563,7 @@ local var_0_4 = {
 				ai_group_id = var_20_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_warpfire_thrower = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		ai_unit_warpfire_thrower = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 			local var_21_0 = Unit.mover(arg_21_0)
 			local var_21_1 = Unit.get_data(arg_21_0, "breed")
 			local var_21_2, var_21_3 = ScriptUnit.extension(arg_21_0, "ai_system"):size_variation()
@@ -588,7 +588,7 @@ local var_0_4 = {
 				ai_group_id = var_21_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_stormfiend = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+		ai_unit_stormfiend = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 			local var_22_0 = Unit.mover(arg_22_0)
 			local var_22_1 = Unit.get_data(arg_22_0, "breed")
 			local var_22_2, var_22_3 = ScriptUnit.extension(arg_22_0, "ai_system"):size_variation()
@@ -614,7 +614,7 @@ local var_0_4 = {
 				ai_group_id = var_22_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		ai_unit_stormfiend_boss = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+		ai_unit_stormfiend_boss = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 			local var_23_0 = Unit.mover(arg_23_0)
 			local var_23_1 = Unit.get_data(arg_23_0, "breed")
 			local var_23_2, var_23_3 = ScriptUnit.extension(arg_23_0, "ai_system"):size_variation()
@@ -641,7 +641,7 @@ local var_0_4 = {
 				ai_group_id = var_23_6 or AIGroupSystem.invalid_group_uid
 			}
 		end,
-		player_projectile_unit = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+		player_projectile_unit = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 			local var_24_0 = ScriptUnit.extension(arg_24_0, "projectile_locomotion_system")
 			local var_24_1 = var_24_0.angle
 			local var_24_2 = var_24_0.target_vector
@@ -682,7 +682,7 @@ local var_0_4 = {
 				power_level = var_24_16
 			}
 		end,
-		sticky_projectile_unit = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+		sticky_projectile_unit = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 			local var_25_0 = ScriptUnit.extension(arg_25_0, "projectile_locomotion_system")
 			local var_25_1 = var_25_0.target_vector
 			local var_25_2 = var_25_0.initial_position_boxed:unbox()
@@ -721,7 +721,7 @@ local var_0_4 = {
 				charge_level = var_25_15
 			}
 		end,
-		player_projectile_physic_unit = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+		player_projectile_physic_unit = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 			local var_26_0 = ScriptUnit.extension(arg_26_0, "projectile_locomotion_system")
 			local var_26_1 = var_26_0.owner_unit
 			local var_26_2 = var_26_0.network_position
@@ -753,7 +753,7 @@ local var_0_4 = {
 				scale = var_26_15
 			}
 		end,
-		prop_projectile_unit = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+		prop_projectile_unit = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 			local var_27_0 = ScriptUnit.extension(arg_27_0, "projectile_locomotion_system")
 			local var_27_1 = var_27_0.network_position
 			local var_27_2 = var_27_0.network_rotation
@@ -772,7 +772,7 @@ local var_0_4 = {
 				debug_pos = Unit.local_position(arg_27_0, 0)
 			}
 		end,
-		pickup_projectile_unit = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+		pickup_projectile_unit = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 			local var_28_0 = ScriptUnit.extension(arg_28_0, "projectile_locomotion_system")
 			local var_28_1 = var_28_0.network_position
 			local var_28_2 = var_28_0.network_rotation
@@ -798,7 +798,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_28_8]
 			}
 		end,
-		limited_owned_pickup_projectile_unit = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+		limited_owned_pickup_projectile_unit = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 			local var_29_0 = ScriptUnit.extension(arg_29_0, "projectile_locomotion_system")
 			local var_29_1 = var_29_0.network_position
 			local var_29_2 = var_29_0.network_rotation
@@ -828,7 +828,7 @@ local var_0_4 = {
 				spawn_limit = var_29_10
 			}
 		end,
-		life_time_pickup_projectile_unit = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+		life_time_pickup_projectile_unit = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 			local var_30_0 = ScriptUnit.extension(arg_30_0, "projectile_locomotion_system")
 			local var_30_1 = var_30_0.network_position
 			local var_30_2 = var_30_0.network_rotation
@@ -854,7 +854,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_30_8]
 			}
 		end,
-		pickup_training_dummy_unit = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+		pickup_training_dummy_unit = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 			local var_31_0 = ScriptUnit.extension(arg_31_0, "projectile_locomotion_system")
 			local var_31_1 = var_31_0.network_position
 			local var_31_2 = var_31_0.network_rotation
@@ -880,7 +880,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_31_8]
 			}
 		end,
-		versus_volume_objective_unit = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+		versus_volume_objective_unit = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 			local var_32_0 = ScriptUnit.extension(arg_32_0, "objective_system"):objective_name()
 
 			return {
@@ -892,7 +892,7 @@ local var_0_4 = {
 				objective_name = NetworkLookup.objective_names[var_32_0]
 			}
 		end,
-		versus_capture_point_objective_unit = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+		versus_capture_point_objective_unit = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 			local var_33_0 = ScriptUnit.extension(arg_33_0, "objective_system")
 			local var_33_1 = var_33_0:objective_name()
 
@@ -906,7 +906,7 @@ local var_0_4 = {
 				timer = var_33_0._timer
 			}
 		end,
-		versus_mission_objective_unit = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+		versus_mission_objective_unit = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 			local var_34_0 = ScriptUnit.extension(arg_34_0, "objective_system"):objective_name()
 
 			return {
@@ -918,7 +918,7 @@ local var_0_4 = {
 				objective_name = NetworkLookup.objective_names[var_34_0]
 			}
 		end,
-		weave_capture_point_unit = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+		weave_capture_point_unit = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
 			local var_35_0 = ScriptUnit.extension(arg_35_0, "objective_system")
 			local var_35_1 = var_35_0:objective_name()
 
@@ -932,7 +932,7 @@ local var_0_4 = {
 				timer = var_35_0._timer
 			}
 		end,
-		weave_target_unit = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+		weave_target_unit = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 			local var_36_0 = ScriptUnit.extension(arg_36_0, "objective_system")
 			local var_36_1 = ScriptUnit.extension(arg_36_0, "health_system"):current_health()
 			local var_36_2 = var_36_0:objective_name()
@@ -949,7 +949,7 @@ local var_0_4 = {
 				allow_ranged_damage = var_36_3.ranged
 			}
 		end,
-		weave_interaction_unit = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+		weave_interaction_unit = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 			local var_37_0 = ScriptUnit.extension(arg_37_0, "objective_system")
 			local var_37_1 = var_37_0:objective_name()
 
@@ -963,7 +963,7 @@ local var_0_4 = {
 				duration = var_37_0._duration
 			}
 		end,
-		weave_doom_wheel_unit = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+		weave_doom_wheel_unit = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
 			local var_38_0 = ScriptUnit.extension(arg_38_0, "objective_system"):objective_name()
 
 			return {
@@ -974,10 +974,10 @@ local var_0_4 = {
 				objective_name = NetworkLookup.objective_names[var_38_0]
 			}
 		end,
-		pickup_torch_unit_init = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+		pickup_torch_unit_init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 			return
 		end,
-		weave_kill_enemies_unit = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+		weave_kill_enemies_unit = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 			local var_40_0 = ScriptUnit.extension(arg_40_0, "objective_system")
 			local var_40_1 = var_40_0:objective_name()
 
@@ -990,7 +990,7 @@ local var_0_4 = {
 				amount = var_40_0._kills_required
 			}
 		end,
-		pickup_torch_unit_init = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+		pickup_torch_unit_init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 			local var_41_0 = ScriptUnit.extension(arg_41_0, "projectile_locomotion_system")
 			local var_41_1 = var_41_0.network_position
 			local var_41_2 = var_41_0.network_rotation
@@ -1016,7 +1016,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_41_8]
 			}
 		end,
-		pickup_torch_unit = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+		pickup_torch_unit = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
 			local var_42_0 = ScriptUnit.extension(arg_42_0, "projectile_locomotion_system")
 			local var_42_1 = var_42_0.network_position
 			local var_42_2 = var_42_0.network_rotation
@@ -1042,7 +1042,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_42_8]
 			}
 		end,
-		pickup_projectile_unit_limited = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+		pickup_projectile_unit_limited = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 			local var_43_0 = ScriptUnit.extension(arg_43_0, "projectile_locomotion_system")
 			local var_43_1 = var_43_0.network_position
 			local var_43_2 = var_43_0.network_rotation
@@ -1077,7 +1077,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_43_9]
 			}
 		end,
-		explosive_pickup_projectile_unit = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+		explosive_pickup_projectile_unit = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 			local var_44_0 = ScriptUnit.extension(arg_44_0, "projectile_locomotion_system")
 			local var_44_1 = var_44_0.network_position
 			local var_44_2 = var_44_0.network_rotation
@@ -1123,7 +1123,7 @@ local var_0_4 = {
 				always_show = var_44_14
 			}
 		end,
-		explosive_pickup_projectile_unit_limited = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+		explosive_pickup_projectile_unit_limited = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 			local var_45_0 = ScriptUnit.extension(arg_45_0, "projectile_locomotion_system")
 			local var_45_1 = var_45_0.network_position
 			local var_45_2 = var_45_0.network_rotation
@@ -1176,7 +1176,7 @@ local var_0_4 = {
 				always_show = var_45_17
 			}
 		end,
-		true_flight_projectile_unit = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+		true_flight_projectile_unit = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 			local var_46_0 = ScriptUnit.extension(arg_46_0, "projectile_locomotion_system")
 			local var_46_1 = var_46_0.true_flight_template_name
 			local var_46_2 = var_46_0.angle
@@ -1228,7 +1228,7 @@ local var_0_4 = {
 				power_level = var_46_20
 			}
 		end,
-		ai_true_flight_projectile_unit = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+		ai_true_flight_projectile_unit = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 			local var_47_0 = ScriptUnit.extension(arg_47_0, "projectile_locomotion_system")
 			local var_47_1 = var_47_0.true_flight_template_name
 			local var_47_2 = var_47_0.angle
@@ -1270,7 +1270,7 @@ local var_0_4 = {
 				owner_unit = Managers.state.network:unit_game_object_id(var_47_8)
 			}
 		end,
-		ai_true_flight_projectile_unit_without_raycast = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+		ai_true_flight_projectile_unit_without_raycast = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 			local var_48_0 = ScriptUnit.extension(arg_48_0, "projectile_locomotion_system")
 			local var_48_1 = var_48_0.true_flight_template_name
 			local var_48_2 = var_48_0.angle
@@ -1307,7 +1307,7 @@ local var_0_4 = {
 				owner_unit = Managers.state.network:unit_game_object_id(var_48_8)
 			}
 		end,
-		aoe_projectile_unit = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+		aoe_projectile_unit = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 			local var_49_0 = ScriptUnit.extension(arg_49_0, "projectile_locomotion_system")
 			local var_49_1 = var_49_0.angle
 			local var_49_2 = var_49_0.speed
@@ -1361,7 +1361,7 @@ local var_0_4 = {
 				damage_source_id = NetworkLookup.damage_sources[var_49_13]
 			}
 		end,
-		aoe_projectile_unit_fixed_impact = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+		aoe_projectile_unit_fixed_impact = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 			local var_50_0 = ScriptUnit.extension(arg_50_0, "projectile_locomotion_system")
 			local var_50_1 = var_50_0.angle
 			local var_50_2 = var_50_0.speed
@@ -1426,7 +1426,7 @@ local var_0_4 = {
 				damage_source_id = NetworkLookup.damage_sources[var_50_18]
 			}
 		end,
-		projectile_unit = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+		projectile_unit = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 			local var_51_0 = ScriptUnit.extension(arg_51_0, "projectile_system")
 			local var_51_1 = var_51_0.angle
 			local var_51_2 = var_51_0.speed
@@ -1449,7 +1449,7 @@ local var_0_4 = {
 				owner_unit = var_51_8:unit_game_object_id(var_51_7)
 			}
 		end,
-		damage_wave_unit = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+		damage_wave_unit = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 			local var_52_0 = ScriptUnit.extension(arg_52_0, "area_damage_system")
 			local var_52_1 = var_52_0.damage_wave_template_name
 			local var_52_2 = var_52_0.source_unit
@@ -1465,7 +1465,7 @@ local var_0_4 = {
 				source_unit = var_52_3:unit_game_object_id(var_52_2)
 			}
 		end,
-		damage_blob_unit = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+		damage_blob_unit = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 			local var_53_0 = ScriptUnit.extension(arg_53_0, "area_damage_system")
 			local var_53_1 = var_53_0.damage_blob_template_name
 			local var_53_2 = var_53_0._source_unit
@@ -1480,7 +1480,7 @@ local var_0_4 = {
 				source_unit = var_53_3:unit_game_object_id(var_53_2)
 			}
 		end,
-		liquid_aoe_unit = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+		liquid_aoe_unit = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 			local var_54_0 = ScriptUnit.extension(arg_54_0, "area_damage_system")
 			local var_54_1 = var_54_0._liquid_area_damage_template
 			local var_54_2 = var_54_0._source_attacker_unit
@@ -1495,7 +1495,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_54_0, 0)
 			}
 		end,
-		lure_unit = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+		lure_unit = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 			return {
 				go_type = NetworkLookup.go_types.lure_unit,
 				husk_unit = NetworkLookup.husks[arg_55_1],
@@ -1503,7 +1503,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_55_0, 0)
 			}
 		end,
-		aoe_unit = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+		aoe_unit = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 			local var_56_0 = ScriptUnit.extension(arg_56_0, "area_damage_system")
 			local var_56_1 = var_56_0.aoe_dot_damage
 			local var_56_2 = var_56_0.aoe_init_damage
@@ -1567,7 +1567,7 @@ local var_0_4 = {
 				source_attacker_unit_id = var_56_15
 			}
 		end,
-		thorn_bush_unit = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+		thorn_bush_unit = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 			local var_57_0 = ScriptUnit.extension(arg_57_0, "area_damage_system")
 			local var_57_1 = var_57_0.aoe_dot_damage
 			local var_57_2 = var_57_0.aoe_init_damage
@@ -1630,7 +1630,7 @@ local var_0_4 = {
 				slow_modifier = var_57_16
 			}
 		end,
-		shadow_flare_light = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+		shadow_flare_light = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 			local var_58_0 = ScriptUnit.extension(arg_58_0, "darkness_system")
 			local var_58_1 = var_58_0.glow_time
 			local var_58_2 = var_58_0.owner_unit_id
@@ -1643,7 +1643,7 @@ local var_0_4 = {
 				position = Unit.local_position(arg_58_0, 0)
 			}
 		end,
-		timed_explosion_unit = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
+		timed_explosion_unit = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 			local var_59_0 = ScriptUnit.extension(arg_59_0, "area_damage_system")
 			local var_59_1 = var_59_0.follow_unit
 			local var_59_2 = var_59_0.explosion_template_name
@@ -1658,7 +1658,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_59_0, 0)
 			}
 		end,
-		pickup_unit = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+		pickup_unit = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 			local var_60_0 = ScriptUnit.extension(arg_60_0, "pickup_system")
 			local var_60_1 = var_60_0.pickup_name
 			local var_60_2 = var_60_0.has_physics
@@ -1676,7 +1676,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_60_0, 0)
 			}
 		end,
-		limited_owned_pickup_unit = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+		limited_owned_pickup_unit = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 			local var_61_0 = ScriptUnit.extension(arg_61_0, "pickup_system")
 			local var_61_1 = var_61_0.pickup_name
 			local var_61_2 = var_61_0.has_physics
@@ -1698,7 +1698,7 @@ local var_0_4 = {
 				material_settings_id = NetworkLookup.material_settings_templates[var_61_6]
 			}
 		end,
-		life_time_pickup_unit = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+		life_time_pickup_unit = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 			local var_62_0 = ScriptUnit.extension(arg_62_0, "projectile_locomotion_system")
 			local var_62_1 = var_62_0.network_position
 			local var_62_2 = var_62_0.network_rotation
@@ -1724,7 +1724,7 @@ local var_0_4 = {
 				spawn_type = NetworkLookup.pickup_spawn_types[var_62_8]
 			}
 		end,
-		objective_pickup_unit = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+		objective_pickup_unit = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 			local var_63_0 = ScriptUnit.extension(arg_63_0, "pickup_system")
 			local var_63_1 = var_63_0.pickup_name
 			local var_63_2 = var_63_0.has_physics
@@ -1743,13 +1743,13 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_63_0, 0)
 			}
 		end,
-		prop_unit = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+		prop_unit = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 			return {
 				go_type = NetworkLookup.go_types.prop_unit,
 				husk_unit = NetworkLookup.husks[arg_64_1]
 			}
 		end,
-		positioned_prop_unit = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
+		positioned_prop_unit = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 			return {
 				go_type = NetworkLookup.go_types.positioned_prop_unit,
 				husk_unit = NetworkLookup.husks[arg_65_1],
@@ -1757,7 +1757,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_65_0, 0)
 			}
 		end,
-		positioned_blob_unit = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+		positioned_blob_unit = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
 			return {
 				go_type = NetworkLookup.go_types.positioned_blob_unit,
 				husk_unit = NetworkLookup.husks[arg_66_1],
@@ -1765,7 +1765,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_66_0, 0)
 			}
 		end,
-		destructible_objective_unit = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+		destructible_objective_unit = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 			local var_67_0 = ScriptUnit.has_extension(arg_67_0, "health_system")
 
 			return {
@@ -1776,14 +1776,14 @@ local var_0_4 = {
 				health = var_67_0:get_max_health()
 			}
 		end,
-		objective_unit = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+		objective_unit = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 			return {
 				go_type = NetworkLookup.go_types.objective_unit,
 				husk_unit = NetworkLookup.husks[arg_68_1],
 				position = Unit.local_position(arg_68_0, 0)
 			}
 		end,
-		standard_unit = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+		standard_unit = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 			local var_69_0 = ScriptUnit.has_extension(arg_69_0, "health_system")
 			local var_69_1 = ScriptUnit.extension(arg_69_0, "ai_supplementary_system")
 			local var_69_2 = ScriptUnit.extension(arg_69_0, "ping_system")
@@ -1798,7 +1798,7 @@ local var_0_4 = {
 				always_pingable = var_69_2.always_pingable
 			}
 		end,
-		overpowering_blob_unit = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+		overpowering_blob_unit = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 			local var_70_0 = ScriptUnit.has_extension(arg_70_0, "health_system")
 
 			return {
@@ -1807,7 +1807,7 @@ local var_0_4 = {
 				health = var_70_0:get_max_health()
 			}
 		end,
-		network_synched_dummy_unit = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+		network_synched_dummy_unit = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 			local var_71_0 = Unit.local_scale(arg_71_0, 0)
 
 			return {
@@ -1818,7 +1818,7 @@ local var_0_4 = {
 				uniform_scale = var_71_0.x
 			}
 		end,
-		position_synched_dummy_unit = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+		position_synched_dummy_unit = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
 			return {
 				go_type = NetworkLookup.go_types.position_synched_dummy_unit,
 				husk_unit = NetworkLookup.husks[arg_72_1],
@@ -1826,7 +1826,7 @@ local var_0_4 = {
 				position = Unit.local_position(arg_72_0, 0)
 			}
 		end,
-		buff_aoe_unit = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+		buff_aoe_unit = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 			local var_73_0 = ScriptUnit.extension(arg_73_0, "buff_area_system")
 			local var_73_1 = var_73_0.owner_unit
 			local var_73_2 = var_73_0.source_unit
@@ -1858,14 +1858,14 @@ local var_0_4 = {
 				side_id = var_73_0.side_id
 			}
 		end,
-		buff_unit = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+		buff_unit = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 			return {
 				go_type = NetworkLookup.go_types.buff_unit,
 				husk_unit = NetworkLookup.husks[arg_74_1],
 				position = Unit.local_position(arg_74_0, 0)
 			}
 		end,
-		thrown_weapon_unit = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+		thrown_weapon_unit = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 			return {
 				go_type = NetworkLookup.go_types.thrown_weapon_unit,
 				husk_unit = NetworkLookup.husks[arg_75_1],
@@ -1873,12 +1873,12 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_75_0, 0)
 			}
 		end,
-		interest_point_level_unit = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+		interest_point_level_unit = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 			return {
 				go_type = NetworkLookup.go_types.interest_point_level_unit
 			}
 		end,
-		interest_point_unit = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3)
+		interest_point_unit = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3)
 			return {
 				go_type = NetworkLookup.go_types.interest_point_unit,
 				husk_unit = NetworkLookup.husks[arg_77_1],
@@ -1886,7 +1886,7 @@ local var_0_4 = {
 				rotation = Unit.local_rotation(arg_77_0, 0)
 			}
 		end,
-		sync_unit = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+		sync_unit = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 			local var_78_0 = ScriptUnit.extension(arg_78_0, "game_object_system")
 
 			return {
@@ -1894,7 +1894,7 @@ local var_0_4 = {
 				sync_name = NetworkLookup.sync_names[var_78_0.sync_name]
 			}
 		end,
-		rotating_hazard = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+		rotating_hazard = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 			local var_79_0 = ScriptUnit.extension(arg_79_0, "props_system")
 
 			return {
@@ -1906,7 +1906,7 @@ local var_0_4 = {
 				state = var_79_0._state
 			}
 		end,
-		dialogue_node = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+		dialogue_node = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
 			local var_80_0 = ScriptUnit.extension(arg_80_0, "dialogue_system").dialogue_profile
 			local var_80_1 = Managers.state.side.side_by_unit[arg_80_0]
 			local var_80_2 = var_80_1 and var_80_1.side_id
@@ -1918,7 +1918,7 @@ local var_0_4 = {
 				side_id = var_80_2 and var_80_2 > 0 and var_80_2 or nil
 			}
 		end,
-		explosive_barrel_socket = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3)
+		explosive_barrel_socket = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3)
 			return {
 				position = Unit.local_position(arg_81_0, 0),
 				rotation = Unit.local_rotation(arg_81_0, 0),
@@ -1928,7 +1928,7 @@ local var_0_4 = {
 		end
 	},
 	extractors = {
-		player_unit = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4)
+		player_unit = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4)
 			local var_82_0 = GameSession.game_object_field(arg_82_0, arg_82_1, "wounds")
 			local var_82_1 = GameSession.game_object_field(arg_82_0, arg_82_1, "profile_id")
 			local var_82_2 = GameSession.game_object_field(arg_82_0, arg_82_1, "career_id")
@@ -2097,7 +2097,7 @@ local var_0_4 = {
 
 			return var_82_7.unit_template_name or "player_unit_3rd", var_82_33
 		end,
-		player_bot_unit = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+		player_bot_unit = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 			local var_83_0 = GameSession.game_object_field(arg_83_0, arg_83_1, "wounds")
 			local var_83_1 = GameSession.game_object_field(arg_83_0, arg_83_1, "profile_id")
 			local var_83_2 = GameSession.game_object_field(arg_83_0, arg_83_1, "career_id")
@@ -2252,7 +2252,7 @@ local var_0_4 = {
 
 			return "player_bot_unit", var_83_28
 		end,
-		ai_unit = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4)
+		ai_unit = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4)
 			local var_84_0, var_84_1, var_84_2 = var_0_2(arg_84_3, arg_84_0, arg_84_1)
 			local var_84_3 = GameSession.game_object_field(arg_84_0, arg_84_1, "health")
 			local var_84_4 = {
@@ -2293,7 +2293,7 @@ local var_0_4 = {
 
 			return var_84_0.unit_template, var_84_4
 		end,
-		ai_unit_training_dummy_bob = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+		ai_unit_training_dummy_bob = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 			local var_85_0, var_85_1, var_85_2 = var_0_2(arg_85_3, arg_85_0, arg_85_1)
 			local var_85_3 = GameSession.game_object_field(arg_85_0, arg_85_1, "health")
 			local var_85_4 = GameSession.game_object_field(arg_85_0, arg_85_1, "network_position")
@@ -2348,7 +2348,7 @@ local var_0_4 = {
 
 			return "ai_unit_training_dummy_bob", var_85_11
 		end,
-		ai_unit_beastmen_bestigor = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+		ai_unit_beastmen_bestigor = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
 			local var_86_0, var_86_1, var_86_2 = var_0_2(arg_86_3, arg_86_0, arg_86_1)
 			local var_86_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_86_0, arg_86_1, "inventory_configuration")]
 			local var_86_4 = GameSession.game_object_field(arg_86_0, arg_86_1, "health")
@@ -2394,7 +2394,7 @@ local var_0_4 = {
 
 			return var_86_0.unit_template, var_86_5
 		end,
-		ai_unit_beastmen_minotaur = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
+		ai_unit_beastmen_minotaur = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
 			local var_87_0, var_87_1, var_87_2 = var_0_2(arg_87_3, arg_87_0, arg_87_1)
 			local var_87_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_87_0, arg_87_1, "inventory_configuration")]
 			local var_87_4 = GameSession.game_object_field(arg_87_0, arg_87_1, "health")
@@ -2440,7 +2440,7 @@ local var_0_4 = {
 
 			return var_87_0.unit_template, var_87_5
 		end,
-		ai_unit_grey_seer = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
+		ai_unit_grey_seer = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4)
 			local var_88_0, var_88_1, var_88_2 = var_0_2(arg_88_3, arg_88_0, arg_88_1)
 			local var_88_3 = GameSession.game_object_field(arg_88_0, arg_88_1, "health")
 			local var_88_4 = {
@@ -2481,7 +2481,7 @@ local var_0_4 = {
 
 			return var_88_0.unit_template, var_88_4
 		end,
-		ai_unit_tentacle = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+		ai_unit_tentacle = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
 			local var_89_0, var_89_1, var_89_2 = var_0_2(arg_89_3, arg_89_0, arg_89_1)
 			local var_89_3 = GameSession.game_object_field(arg_89_0, arg_89_1, "portal_unit_id")
 			local var_89_4 = Managers.state.unit_storage:unit(var_89_3)
@@ -2519,7 +2519,7 @@ local var_0_4 = {
 
 			return var_89_0.unit_template, var_89_7
 		end,
-		ai_unit_vortex = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4)
+		ai_unit_vortex = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4)
 			local var_90_0, var_90_1, var_90_2 = var_0_2(arg_90_3, arg_90_0, arg_90_1)
 			local var_90_3 = GameSession.game_object_field(arg_90_0, arg_90_1, "vortex_template_id")
 			local var_90_4 = NetworkLookup.vortex_templates[var_90_3]
@@ -2550,7 +2550,7 @@ local var_0_4 = {
 
 			return var_90_0.unit_template, var_90_11
 		end,
-		ai_unit_plague_wave_spawner = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
+		ai_unit_plague_wave_spawner = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
 			local var_91_0, var_91_1, var_91_2 = var_0_2(arg_91_3, arg_91_0, arg_91_1)
 			local var_91_3 = {
 				ai_system = {
@@ -2562,7 +2562,7 @@ local var_0_4 = {
 
 			return var_91_0.unit_template, var_91_3
 		end,
-		ai_unit_tentacle_portal = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+		ai_unit_tentacle_portal = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
 			local var_92_0 = "ai_unit_tentacle_portal"
 			local var_92_1 = GameSession.game_object_field(arg_92_0, arg_92_1, "health")
 			local var_92_2 = {
@@ -2577,7 +2577,7 @@ local var_0_4 = {
 
 			return var_92_0, var_92_2
 		end,
-		ai_unit_with_inventory = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4)
+		ai_unit_with_inventory = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4)
 			local var_93_0, var_93_1, var_93_2 = var_0_2(arg_93_3, arg_93_0, arg_93_1)
 			local var_93_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_93_0, arg_93_1, "inventory_configuration")]
 			local var_93_4 = GameSession.game_object_field(arg_93_0, arg_93_1, "health")
@@ -2630,7 +2630,7 @@ local var_0_4 = {
 
 			return var_93_0.unit_template, var_93_5
 		end,
-		ai_unit_with_inventory_and_shield = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+		ai_unit_with_inventory_and_shield = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 			local var_94_0, var_94_1, var_94_2 = var_0_2(arg_94_3, arg_94_0, arg_94_1)
 			local var_94_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_94_0, arg_94_1, "inventory_configuration")]
 			local var_94_4 = GameSession.game_object_field(arg_94_0, arg_94_1, "health")
@@ -2683,7 +2683,7 @@ local var_0_4 = {
 
 			return var_94_0.unit_template, var_94_6
 		end,
-		ai_unit_storm_vermin_warlord = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
+		ai_unit_storm_vermin_warlord = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
 			local var_95_0, var_95_1, var_95_2 = var_0_2(arg_95_3, arg_95_0, arg_95_1)
 			local var_95_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_95_0, arg_95_1, "inventory_configuration")]
 			local var_95_4 = GameSession.game_object_field(arg_95_0, arg_95_1, "health")
@@ -2733,7 +2733,7 @@ local var_0_4 = {
 
 			return var_95_0.unit_template, var_95_7
 		end,
-		ai_unit_chaos_troll = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
+		ai_unit_chaos_troll = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
 			local var_96_0, var_96_1 = var_0_2(arg_96_3, arg_96_0, arg_96_1)
 			local var_96_2 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_96_0, arg_96_1, "inventory_configuration")]
 			local var_96_3 = GameSession.game_object_field(arg_96_0, arg_96_1, "side_id")
@@ -2788,7 +2788,7 @@ local var_0_4 = {
 
 			return var_96_0.unit_template, var_96_5
 		end,
-		ai_lord_with_inventory = function(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
+		ai_lord_with_inventory = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
 			local var_97_0 = GameSession.game_object_field(arg_97_0, arg_97_1, "side_id")
 			local var_97_1 = GameSession.game_object_field(arg_97_0, arg_97_1, "breed_name")
 			local var_97_2 = NetworkLookup.breeds[var_97_1]
@@ -2843,7 +2843,7 @@ local var_0_4 = {
 
 			return var_97_3.unit_template, var_97_6
 		end,
-		ai_unit_pack_master = function(arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4)
+		ai_unit_pack_master = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4)
 			local var_98_0, var_98_1, var_98_2 = var_0_2(arg_98_3, arg_98_0, arg_98_1)
 			local var_98_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_98_0, arg_98_1, "inventory_configuration")]
 			local var_98_4 = GameSession.game_object_field(arg_98_0, arg_98_1, "health")
@@ -2892,7 +2892,7 @@ local var_0_4 = {
 
 			return var_98_0.unit_template, var_98_5
 		end,
-		ai_unit_ratling_gunner = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
+		ai_unit_ratling_gunner = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
 			local var_99_0, var_99_1, var_99_2 = var_0_2(arg_99_3, arg_99_0, arg_99_1)
 			local var_99_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_99_0, arg_99_1, "inventory_configuration")]
 			local var_99_4 = GameSession.game_object_field(arg_99_0, arg_99_1, "health")
@@ -2941,7 +2941,7 @@ local var_0_4 = {
 
 			return var_99_0.unit_template, var_99_5
 		end,
-		ai_unit_warpfire_thrower = function(arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
+		ai_unit_warpfire_thrower = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
 			local var_100_0, var_100_1, var_100_2 = var_0_2(arg_100_3, arg_100_0, arg_100_1)
 			local var_100_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_100_0, arg_100_1, "inventory_configuration")]
 			local var_100_4 = GameSession.game_object_field(arg_100_0, arg_100_1, "health")
@@ -2989,7 +2989,7 @@ local var_0_4 = {
 
 			return var_100_0.unit_template, var_100_5
 		end,
-		ai_unit_stormfiend = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4)
+		ai_unit_stormfiend = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4)
 			local var_101_0, var_101_1, var_101_2 = var_0_2(arg_101_3, arg_101_0, arg_101_1)
 			local var_101_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_101_0, arg_101_1, "inventory_configuration")]
 			local var_101_4 = GameSession.game_object_field(arg_101_0, arg_101_1, "health")
@@ -3038,7 +3038,7 @@ local var_0_4 = {
 
 			return var_101_0.unit_template, var_101_5
 		end,
-		ai_unit_stormfiend_boss = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4)
+		ai_unit_stormfiend_boss = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4)
 			local var_102_0, var_102_1, var_102_2 = var_0_2(arg_102_3, arg_102_0, arg_102_1)
 			local var_102_3 = NetworkLookup.ai_inventory[GameSession.game_object_field(arg_102_0, arg_102_1, "inventory_configuration")]
 			local var_102_4 = GameSession.game_object_field(arg_102_0, arg_102_1, "health")
@@ -3087,7 +3087,7 @@ local var_0_4 = {
 
 			return var_102_0.unit_template, var_102_5
 		end,
-		player_projectile_unit = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
+		player_projectile_unit = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
 			local var_103_0 = GameSession.game_object_field(arg_103_0, arg_103_1, "angle")
 			local var_103_1 = GameSession.game_object_field(arg_103_0, arg_103_1, "target_vector")
 			local var_103_2 = GameSession.game_object_field(arg_103_0, arg_103_1, "initial_position")
@@ -3139,7 +3139,7 @@ local var_0_4 = {
 
 			return WeaponUtils.get_weapon_template(var_103_16).actions[var_103_17][var_103_18].projectile_info.projectile_unit_template_name or "player_projectile_unit", var_103_21
 		end,
-		sticky_projectile_unit = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4)
+		sticky_projectile_unit = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4)
 			local var_104_0 = GameSession.game_object_field(arg_104_0, arg_104_1, "target_vector")
 			local var_104_1 = GameSession.game_object_field(arg_104_0, arg_104_1, "initial_position")
 			local var_104_2 = GameSession.game_object_field(arg_104_0, arg_104_1, "speed")
@@ -3190,7 +3190,7 @@ local var_0_4 = {
 
 			return WeaponUtils.get_weapon_template(var_104_14).actions[var_104_15][var_104_16].projectile_info.projectile_unit_template_name or "player_projectile_unit", var_104_20
 		end,
-		prop_projectile_unit = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+		prop_projectile_unit = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
 			local var_105_0 = GameSession.game_object_field(arg_105_0, arg_105_1, "network_position")
 			local var_105_1 = GameSession.game_object_field(arg_105_0, arg_105_1, "network_rotation")
 			local var_105_2 = GameSession.game_object_field(arg_105_0, arg_105_1, "network_velocity")
@@ -3206,7 +3206,7 @@ local var_0_4 = {
 
 			return "prop_projectile_unit", var_105_4
 		end,
-		pickup_projectile_unit = function(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
+		pickup_projectile_unit = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
 			local var_106_0 = GameSession.game_object_field(arg_106_0, arg_106_1, "network_position")
 			local var_106_1 = GameSession.game_object_field(arg_106_0, arg_106_1, "network_rotation")
 			local var_106_2 = GameSession.game_object_field(arg_106_0, arg_106_1, "network_velocity")
@@ -3230,7 +3230,7 @@ local var_0_4 = {
 
 			return "pickup_projectile_unit", var_106_7
 		end,
-		limited_owned_pickup_projectile_unit = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4)
+		limited_owned_pickup_projectile_unit = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4)
 			local var_107_0 = GameSession.game_object_field(arg_107_0, arg_107_1, "network_position")
 			local var_107_1 = GameSession.game_object_field(arg_107_0, arg_107_1, "network_rotation")
 			local var_107_2 = GameSession.game_object_field(arg_107_0, arg_107_1, "network_velocity")
@@ -3258,7 +3258,7 @@ local var_0_4 = {
 
 			return "limited_owned_pickup_projectile_unit", var_107_9
 		end,
-		life_time_pickup_projectile_unit = function(arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4)
+		life_time_pickup_projectile_unit = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4)
 			local var_108_0 = GameSession.game_object_field(arg_108_0, arg_108_1, "network_position")
 			local var_108_1 = GameSession.game_object_field(arg_108_0, arg_108_1, "network_rotation")
 			local var_108_2 = GameSession.game_object_field(arg_108_0, arg_108_1, "network_velocity")
@@ -3282,7 +3282,7 @@ local var_0_4 = {
 
 			return "life_time_pickup_projectile_unit", var_108_7
 		end,
-		pickup_training_dummy_unit = function(arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
+		pickup_training_dummy_unit = function (arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
 			local var_109_0 = GameSession.game_object_field(arg_109_0, arg_109_1, "network_position")
 			local var_109_1 = GameSession.game_object_field(arg_109_0, arg_109_1, "network_rotation")
 			local var_109_2 = GameSession.game_object_field(arg_109_0, arg_109_1, "network_velocity")
@@ -3312,7 +3312,7 @@ local var_0_4 = {
 
 			return "pickup_training_dummy_unit", var_109_7
 		end,
-		versus_volume_objective_unit = function(arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
+		versus_volume_objective_unit = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
 			local var_110_0 = GameSession.game_object_field(arg_110_0, arg_110_1, "objective_name")
 			local var_110_1 = GameSession.game_object_field(arg_110_0, arg_110_1, "scale")
 			local var_110_2 = {
@@ -3324,7 +3324,7 @@ local var_0_4 = {
 
 			return "versus_volume_objective_unit", var_110_2
 		end,
-		versus_capture_point_objective_unit = function(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
+		versus_capture_point_objective_unit = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
 			local var_111_0 = GameSession.game_object_field(arg_111_0, arg_111_1, "objective_name")
 			local var_111_1 = GameSession.game_object_field(arg_111_0, arg_111_1, "scale")
 			local var_111_2 = GameSession.game_object_field(arg_111_0, arg_111_1, "timer")
@@ -3338,7 +3338,7 @@ local var_0_4 = {
 
 			return "versus_capture_point_objective_unit", var_111_3
 		end,
-		versus_mission_objective_unit = function(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
+		versus_mission_objective_unit = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
 			local var_112_0 = GameSession.game_object_field(arg_112_0, arg_112_1, "objective_name")
 			local var_112_1 = GameSession.game_object_field(arg_112_0, arg_112_1, "scale")
 			local var_112_2 = {
@@ -3350,7 +3350,7 @@ local var_0_4 = {
 
 			return "versus_mission_objective_unit", var_112_2
 		end,
-		weave_capture_point_unit = function(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
+		weave_capture_point_unit = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4)
 			local var_113_0 = GameSession.game_object_field(arg_113_0, arg_113_1, "objective_name")
 			local var_113_1 = GameSession.game_object_field(arg_113_0, arg_113_1, "timer")
 			local var_113_2 = GameSession.game_object_field(arg_113_0, arg_113_1, "scale")
@@ -3364,7 +3364,7 @@ local var_0_4 = {
 
 			return "weave_capture_point_unit", var_113_3
 		end,
-		weave_target_unit = function(arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
+		weave_target_unit = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
 			local var_114_0 = GameSession.game_object_field(arg_114_0, arg_114_1, "objective_name")
 			local var_114_1 = GameSession.game_object_field(arg_114_0, arg_114_1, "health")
 			local var_114_2 = {
@@ -3383,7 +3383,7 @@ local var_0_4 = {
 
 			return "weave_target_unit", var_114_3
 		end,
-		weave_interaction_unit = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4)
+		weave_interaction_unit = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4)
 			local var_115_0 = GameSession.game_object_field(arg_115_0, arg_115_1, "objective_name")
 			local var_115_1 = GameSession.game_object_field(arg_115_0, arg_115_1, "num_times_to_complete")
 			local var_115_2 = GameSession.game_object_field(arg_115_0, arg_115_1, "duration")
@@ -3397,7 +3397,7 @@ local var_0_4 = {
 
 			return "weave_interaction_unit", var_115_3
 		end,
-		weave_doom_wheel_unit = function(arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
+		weave_doom_wheel_unit = function (arg_116_0, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
 			local var_116_0 = GameSession.game_object_field(arg_116_0, arg_116_1, "objective_name")
 			local var_116_1 = {
 				objective_system = {
@@ -3407,7 +3407,7 @@ local var_0_4 = {
 
 			return "weave_doom_wheel", var_116_1
 		end,
-		weave_kill_enemies_unit = function(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4)
+		weave_kill_enemies_unit = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4)
 			local var_117_0 = GameSession.game_object_field(arg_117_0, arg_117_1, "objective_name")
 			local var_117_1 = GameSession.game_object_field(arg_117_0, arg_117_1, "amount")
 			local var_117_2 = {
@@ -3419,7 +3419,7 @@ local var_0_4 = {
 
 			return "weave_kill_enemies_unit", var_117_2
 		end,
-		pickup_torch_unit_init = function(arg_118_0, arg_118_1, arg_118_2, arg_118_3, arg_118_4)
+		pickup_torch_unit_init = function (arg_118_0, arg_118_1, arg_118_2, arg_118_3, arg_118_4)
 			local var_118_0 = GameSession.game_object_field(arg_118_0, arg_118_1, "network_position")
 			local var_118_1 = GameSession.game_object_field(arg_118_0, arg_118_1, "network_rotation")
 			local var_118_2 = GameSession.game_object_field(arg_118_0, arg_118_1, "network_velocity")
@@ -3443,7 +3443,7 @@ local var_0_4 = {
 
 			return "pickup_torch_unit", var_118_7
 		end,
-		pickup_torch_unit = function(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+		pickup_torch_unit = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
 			local var_119_0 = GameSession.game_object_field(arg_119_0, arg_119_1, "network_position")
 			local var_119_1 = GameSession.game_object_field(arg_119_0, arg_119_1, "network_rotation")
 			local var_119_2 = GameSession.game_object_field(arg_119_0, arg_119_1, "network_velocity")
@@ -3467,7 +3467,7 @@ local var_0_4 = {
 
 			return "pickup_torch_unit", var_119_7
 		end,
-		pickup_projectile_unit_limited = function(arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4)
+		pickup_projectile_unit_limited = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4)
 			local var_120_0 = GameSession.game_object_field(arg_120_0, arg_120_1, "network_position")
 			local var_120_1 = GameSession.game_object_field(arg_120_0, arg_120_1, "network_rotation")
 			local var_120_2 = GameSession.game_object_field(arg_120_0, arg_120_1, "network_velocity")
@@ -3501,7 +3501,7 @@ local var_0_4 = {
 
 			return "pickup_projectile_unit_limited", var_120_12
 		end,
-		explosive_pickup_projectile_unit = function(arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4)
+		explosive_pickup_projectile_unit = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4)
 			local var_121_0 = GameSession.game_object_field(arg_121_0, arg_121_1, "network_position")
 			local var_121_1 = GameSession.game_object_field(arg_121_0, arg_121_1, "network_rotation")
 			local var_121_2 = GameSession.game_object_field(arg_121_0, arg_121_1, "network_velocity")
@@ -3552,7 +3552,7 @@ local var_0_4 = {
 
 			return "explosive_pickup_projectile_unit", var_121_13
 		end,
-		explosive_pickup_projectile_unit_limited = function(arg_122_0, arg_122_1, arg_122_2, arg_122_3, arg_122_4)
+		explosive_pickup_projectile_unit_limited = function (arg_122_0, arg_122_1, arg_122_2, arg_122_3, arg_122_4)
 			local var_122_0 = GameSession.game_object_field(arg_122_0, arg_122_1, "network_position")
 			local var_122_1 = GameSession.game_object_field(arg_122_0, arg_122_1, "network_rotation")
 			local var_122_2 = GameSession.game_object_field(arg_122_0, arg_122_1, "network_velocity")
@@ -3609,7 +3609,7 @@ local var_0_4 = {
 
 			return "explosive_pickup_projectile_unit_limited", var_122_18
 		end,
-		true_flight_projectile_unit = function(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4)
+		true_flight_projectile_unit = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4)
 			local var_123_0 = GameSession.game_object_field(arg_123_0, arg_123_1, "angle")
 			local var_123_1 = GameSession.game_object_field(arg_123_0, arg_123_1, "target_vector")
 			local var_123_2 = GameSession.game_object_field(arg_123_0, arg_123_1, "initial_position")
@@ -3672,7 +3672,7 @@ local var_0_4 = {
 
 			return "true_flight_projectile_unit", var_123_24
 		end,
-		ai_true_flight_projectile_unit = function(arg_124_0, arg_124_1, arg_124_2, arg_124_3, arg_124_4)
+		ai_true_flight_projectile_unit = function (arg_124_0, arg_124_1, arg_124_2, arg_124_3, arg_124_4)
 			local var_124_0 = GameSession.game_object_field(arg_124_0, arg_124_1, "owner_unit")
 			local var_124_1 = GameSession.game_object_field(arg_124_0, arg_124_1, "angle")
 			local var_124_2 = GameSession.game_object_field(arg_124_0, arg_124_1, "target_vector")
@@ -3719,7 +3719,7 @@ local var_0_4 = {
 
 			return "ai_true_flight_projectile_unit", var_124_15, var_124_14
 		end,
-		ai_true_flight_projectile_unit_without_raycast = function(arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4)
+		ai_true_flight_projectile_unit_without_raycast = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4)
 			local var_125_0 = GameSession.game_object_field(arg_125_0, arg_125_1, "owner_unit")
 			local var_125_1 = GameSession.game_object_field(arg_125_0, arg_125_1, "angle")
 			local var_125_2 = GameSession.game_object_field(arg_125_0, arg_125_1, "target_vector")
@@ -3758,7 +3758,7 @@ local var_0_4 = {
 
 			return "ai_true_flight_projectile_unit_without_raycast", var_125_12
 		end,
-		aoe_projectile_unit = function(arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4)
+		aoe_projectile_unit = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4)
 			local var_126_0 = GameSession.game_object_field(arg_126_0, arg_126_1, "angle")
 			local var_126_1 = GameSession.game_object_field(arg_126_0, arg_126_1, "speed")
 			local var_126_2 = GameSession.game_object_field(arg_126_0, arg_126_1, "gravity_settings")
@@ -3821,7 +3821,7 @@ local var_0_4 = {
 
 			return "aoe_projectile_unit", var_126_24
 		end,
-		aoe_projectile_unit_fixed_impact = function(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
+		aoe_projectile_unit_fixed_impact = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
 			local var_127_0 = GameSession.game_object_field(arg_127_0, arg_127_1, "angle")
 			local var_127_1 = GameSession.game_object_field(arg_127_0, arg_127_1, "speed")
 			local var_127_2 = GameSession.game_object_field(arg_127_0, arg_127_1, "gravity_settings")
@@ -3896,7 +3896,7 @@ local var_0_4 = {
 
 			return "aoe_projectile_unit_fixed_impact", var_127_30
 		end,
-		projectile_unit = function(arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4)
+		projectile_unit = function (arg_128_0, arg_128_1, arg_128_2, arg_128_3, arg_128_4)
 			local var_128_0 = GameSession.game_object_field(arg_128_0, arg_128_1, "angle")
 			local var_128_1 = GameSession.game_object_field(arg_128_0, arg_128_1, "speed")
 			local var_128_2 = GameSession.game_object_field(arg_128_0, arg_128_1, "target_vector")
@@ -3919,7 +3919,7 @@ local var_0_4 = {
 
 			return "projectile_unit", var_128_7
 		end,
-		damage_wave_unit = function(arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4)
+		damage_wave_unit = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4)
 			local var_129_0 = GameSession.game_object_field(arg_129_0, arg_129_1, "damage_wave_template_name")
 			local var_129_1 = GameSession.game_object_field(arg_129_0, arg_129_1, "source_unit")
 			local var_129_2 = {
@@ -3931,7 +3931,7 @@ local var_0_4 = {
 
 			return "damage_wave_unit", var_129_2
 		end,
-		damage_blob_unit = function(arg_130_0, arg_130_1, arg_130_2, arg_130_3, arg_130_4)
+		damage_blob_unit = function (arg_130_0, arg_130_1, arg_130_2, arg_130_3, arg_130_4)
 			local var_130_0 = GameSession.game_object_field(arg_130_0, arg_130_1, "damage_blob_template_name")
 			local var_130_1 = GameSession.game_object_field(arg_130_0, arg_130_1, "source_unit")
 			local var_130_2 = {
@@ -3943,7 +3943,7 @@ local var_0_4 = {
 
 			return "damage_blob_unit", var_130_2
 		end,
-		liquid_aoe_unit = function(arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4)
+		liquid_aoe_unit = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4)
 			local var_131_0 = GameSession.game_object_field(arg_131_0, arg_131_1, "liquid_area_damage_template")
 			local var_131_1 = GameSession.game_object_field(arg_131_0, arg_131_1, "source_unit")
 			local var_131_2 = {
@@ -3955,7 +3955,7 @@ local var_0_4 = {
 
 			return "liquid_aoe_unit", var_131_2
 		end,
-		lure_unit = function(arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4)
+		lure_unit = function (arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4)
 			local var_132_0 = "lure_unit"
 			local var_132_1 = {
 				health_system = {
@@ -3968,7 +3968,7 @@ local var_0_4 = {
 
 			return var_132_0, var_132_1
 		end,
-		aoe_unit = function(arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4)
+		aoe_unit = function (arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4)
 			local var_133_0 = GameSession.game_object_field(arg_133_0, arg_133_1, "aoe_dot_damage")
 			local var_133_1 = GameSession.game_object_field(arg_133_0, arg_133_1, "aoe_init_damage")
 			local var_133_2 = GameSession.game_object_field(arg_133_0, arg_133_1, "aoe_dot_damage_interval")
@@ -4049,7 +4049,7 @@ local var_0_4 = {
 
 			return "aoe_unit", var_133_21
 		end,
-		thorn_bush_unit = function(arg_134_0, arg_134_1, arg_134_2, arg_134_3, arg_134_4)
+		thorn_bush_unit = function (arg_134_0, arg_134_1, arg_134_2, arg_134_3, arg_134_4)
 			local var_134_0 = GameSession.game_object_field(arg_134_0, arg_134_1, "aoe_dot_damage")
 			local var_134_1 = GameSession.game_object_field(arg_134_0, arg_134_1, "aoe_init_damage")
 			local var_134_2 = GameSession.game_object_field(arg_134_0, arg_134_1, "aoe_dot_damage_interval")
@@ -4130,7 +4130,7 @@ local var_0_4 = {
 
 			return "thorn_bush_unit", var_134_22
 		end,
-		shadow_flare_light = function(arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4)
+		shadow_flare_light = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4)
 			local var_135_0 = GameSession.game_object_field(arg_135_0, arg_135_1, "glow_time")
 			local var_135_1 = GameSession.game_object_field(arg_135_0, arg_135_1, "owner_unit_id")
 			local var_135_2 = {
@@ -4142,7 +4142,7 @@ local var_0_4 = {
 
 			return "shadow_flare_light", var_135_2
 		end,
-		timed_explosion_unit = function(arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
+		timed_explosion_unit = function (arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
 			local var_136_0 = GameSession.game_object_field(arg_136_0, arg_136_1, "follow_unit")
 			local var_136_1 = GameSession.game_object_field(arg_136_0, arg_136_1, "explosion_template_name")
 			local var_136_2 = {
@@ -4154,7 +4154,7 @@ local var_0_4 = {
 
 			return "timed_explosion_unit", var_136_2
 		end,
-		pickup_unit = function(arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4)
+		pickup_unit = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4)
 			local var_137_0 = GameSession.game_object_field(arg_137_0, arg_137_1, "pickup_name")
 			local var_137_1 = GameSession.game_object_field(arg_137_0, arg_137_1, "has_physics")
 			local var_137_2 = GameSession.game_object_field(arg_137_0, arg_137_1, "spawn_type")
@@ -4170,7 +4170,7 @@ local var_0_4 = {
 
 			return "pickup_unit", var_137_4
 		end,
-		limited_owned_pickup_unit = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3, arg_138_4)
+		limited_owned_pickup_unit = function (arg_138_0, arg_138_1, arg_138_2, arg_138_3, arg_138_4)
 			local var_138_0 = GameSession.game_object_field(arg_138_0, arg_138_1, "pickup_name")
 			local var_138_1 = GameSession.game_object_field(arg_138_0, arg_138_1, "has_physics")
 			local var_138_2 = GameSession.game_object_field(arg_138_0, arg_138_1, "spawn_type")
@@ -4190,7 +4190,7 @@ local var_0_4 = {
 
 			return "limited_owned_pickup_unit", var_138_6
 		end,
-		life_time_pickup_unit = function(arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
+		life_time_pickup_unit = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
 			local var_139_0 = GameSession.game_object_field(arg_139_0, arg_139_1, "pickup_name")
 			local var_139_1 = GameSession.game_object_field(arg_139_0, arg_139_1, "has_physics")
 			local var_139_2 = GameSession.game_object_field(arg_139_0, arg_139_1, "spawn_type")
@@ -4204,7 +4204,7 @@ local var_0_4 = {
 
 			return "life_time_pickup_unit", var_139_3
 		end,
-		objective_pickup_unit = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
+		objective_pickup_unit = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
 			local var_140_0 = GameSession.game_object_field(arg_140_0, arg_140_1, "pickup_name")
 			local var_140_1 = GameSession.game_object_field(arg_140_0, arg_140_1, "has_physics")
 			local var_140_2 = GameSession.game_object_field(arg_140_0, arg_140_1, "spawn_type")
@@ -4222,19 +4222,19 @@ local var_0_4 = {
 
 			return "objective_pickup_unit", var_140_4
 		end,
-		prop_unit = function(arg_141_0, arg_141_1, arg_141_2, arg_141_3, arg_141_4)
+		prop_unit = function (arg_141_0, arg_141_1, arg_141_2, arg_141_3, arg_141_4)
 			local var_141_0 = "prop_unit"
 			local var_141_1
 
 			return var_141_0, var_141_1
 		end,
-		positioned_prop_unit = function(arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4)
+		positioned_prop_unit = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4)
 			local var_142_0 = "positioned_prop_unit"
 			local var_142_1
 
 			return var_142_0, var_142_1
 		end,
-		positioned_blob_unit = function(arg_143_0, arg_143_1, arg_143_2, arg_143_3, arg_143_4)
+		positioned_blob_unit = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3, arg_143_4)
 			local var_143_0 = "nurgle_liquid_blob_dynamic"
 			local var_143_1 = {
 				props_system = {
@@ -4257,7 +4257,7 @@ local var_0_4 = {
 
 			return var_143_0, var_143_1
 		end,
-		destructible_objective_unit = function(arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4)
+		destructible_objective_unit = function (arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4)
 			local var_144_0 = GameSession.game_object_field(arg_144_0, arg_144_1, "health")
 			local var_144_1 = "destructible_objective_unit"
 			local var_144_2 = {
@@ -4276,13 +4276,13 @@ local var_0_4 = {
 
 			return var_144_1, var_144_2
 		end,
-		objective_unit = function(arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
+		objective_unit = function (arg_145_0, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
 			local var_145_0 = "objective_unit"
 			local var_145_1
 
 			return var_145_0, var_145_1
 		end,
-		standard_unit = function(arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4)
+		standard_unit = function (arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4)
 			local var_146_0 = GameSession.game_object_field(arg_146_0, arg_146_1, "health")
 			local var_146_1 = "standard_unit"
 			local var_146_2 = GameSession.game_object_field(arg_146_0, arg_146_1, "standard_template_id")
@@ -4305,7 +4305,7 @@ local var_0_4 = {
 
 			return var_146_1, var_146_4
 		end,
-		overpowering_blob_unit = function(arg_147_0, arg_147_1, arg_147_2, arg_147_3, arg_147_4)
+		overpowering_blob_unit = function (arg_147_0, arg_147_1, arg_147_2, arg_147_3, arg_147_4)
 			local var_147_0 = GameSession.game_object_field(arg_147_0, arg_147_1, "health")
 			local var_147_1 = "overpowering_blob_unit"
 			local var_147_2 = {
@@ -4320,19 +4320,19 @@ local var_0_4 = {
 
 			return var_147_1, var_147_2
 		end,
-		network_synched_dummy_unit = function(arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
+		network_synched_dummy_unit = function (arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
 			local var_148_0 = "network_synched_dummy_unit"
 			local var_148_1
 
 			return var_148_0, var_148_1
 		end,
-		position_synched_dummy_unit = function(arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4)
+		position_synched_dummy_unit = function (arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4)
 			local var_149_0 = "position_synched_dummy_unit"
 			local var_149_1
 
 			return var_149_0, var_149_1
 		end,
-		buff_aoe_unit = function(arg_150_0, arg_150_1, arg_150_2, arg_150_3, arg_150_4)
+		buff_aoe_unit = function (arg_150_0, arg_150_1, arg_150_2, arg_150_3, arg_150_4)
 			local var_150_0 = GameSession.game_object_field(arg_150_0, arg_150_1, "life_time")
 			local var_150_1 = GameSession.game_object_field(arg_150_0, arg_150_1, "radius")
 			local var_150_2 = GameSession.game_object_field(arg_150_0, arg_150_1, "owner_unit_id")
@@ -4366,7 +4366,7 @@ local var_0_4 = {
 
 			return "buff_aoe_unit", var_150_9
 		end,
-		buff_unit = function(arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
+		buff_unit = function (arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
 			local var_151_0 = {
 				buff_system = {
 					is_husk = true
@@ -4375,34 +4375,34 @@ local var_0_4 = {
 
 			return "buff_unit", var_151_0
 		end,
-		ai_unit_dummy_sorcerer = function(arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4)
+		ai_unit_dummy_sorcerer = function (arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4)
 			local var_152_0 = "ai_unit_dummy_sorcerer"
 			local var_152_1
 
 			return var_152_0, var_152_1
 		end,
-		thrown_weapon_unit = function(arg_153_0, arg_153_1, arg_153_2, arg_153_3, arg_153_4)
+		thrown_weapon_unit = function (arg_153_0, arg_153_1, arg_153_2, arg_153_3, arg_153_4)
 			local var_153_0 = "thrown_weapon_unit"
 			local var_153_1
 
 			return var_153_0, var_153_1
 		end,
-		interest_point_level_unit = function(arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
+		interest_point_level_unit = function (arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
 			local var_154_0 = "interest_point_level"
 			local var_154_1
 
 			return var_154_0, var_154_1
 		end,
-		interest_point_unit = function(arg_155_0, arg_155_1, arg_155_2, arg_155_3, arg_155_4)
+		interest_point_unit = function (arg_155_0, arg_155_1, arg_155_2, arg_155_3, arg_155_4)
 			local var_155_0 = "interest_point"
 			local var_155_1
 
 			return var_155_0, var_155_1
 		end,
-		sync_unit = function(arg_156_0, arg_156_1, arg_156_2, arg_156_3, arg_156_4)
+		sync_unit = function (arg_156_0, arg_156_1, arg_156_2, arg_156_3, arg_156_4)
 			error("We don't use this path for this kind of game object")
 		end,
-		rotating_hazard = function(arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4)
+		rotating_hazard = function (arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4)
 			local var_157_0 = "rotating_hazard"
 			local var_157_1 = GameSession.game_object_field(arg_157_0, arg_157_1, "start_network_time")
 			local var_157_2 = GameSession.game_object_field(arg_157_0, arg_157_1, "state")
@@ -4415,7 +4415,7 @@ local var_0_4 = {
 
 			return var_157_0, var_157_3
 		end,
-		dialogue_node = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
+		dialogue_node = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
 			local var_158_0 = GameSession.game_object_field(arg_158_0, arg_158_1, "dialogue_profile")
 			local var_158_1 = GameSession.game_object_field(arg_158_0, arg_158_1, "side_id")
 
@@ -4432,13 +4432,13 @@ local var_0_4 = {
 
 			return "dialogue_node", var_158_2
 		end,
-		explosive_barrel_socket = function(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+		explosive_barrel_socket = function (arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
 			local var_159_0 = {}
 
 			return "explosive_barrel_socket", var_159_0
 		end
 	},
-	unit_from_gameobject_creator_func = function(arg_160_0, arg_160_1, arg_160_2, arg_160_3)
+	unit_from_gameobject_creator_func = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3)
 		local var_160_0
 
 		if arg_160_3.is_level_unit then
@@ -4498,7 +4498,7 @@ DLCUtils.merge("game_object_extractors", var_0_4.extractors)
 
 local var_0_5 = var_0_4.initializers
 
-function var_0_5.ai_true_flight_killable_projectile_unit(arg_161_0, arg_161_1, arg_161_2, arg_161_3)
+var_0_5.ai_true_flight_killable_projectile_unit = function (arg_161_0, arg_161_1, arg_161_2, arg_161_3)
 	local var_161_0 = var_0_5.ai_true_flight_projectile_unit(arg_161_0, arg_161_1, arg_161_2, arg_161_3)
 
 	var_161_0.health = ScriptUnit.has_extension(arg_161_0, "health_system"):get_max_health()
@@ -4509,7 +4509,7 @@ end
 
 local var_0_6 = var_0_4.extractors
 
-function var_0_6.ai_true_flight_killable_projectile_unit(arg_162_0, arg_162_1, arg_162_2, arg_162_3, arg_162_4)
+var_0_6.ai_true_flight_killable_projectile_unit = function (arg_162_0, arg_162_1, arg_162_2, arg_162_3, arg_162_4)
 	local var_162_0, var_162_1, var_162_2 = var_0_6.ai_true_flight_projectile_unit(arg_162_0, arg_162_1, arg_162_2, arg_162_3, arg_162_4)
 	local var_162_3 = TrueFlightTemplates[var_162_2]
 	local var_162_4 = GameSession.game_object_field(arg_162_0, arg_162_1, "health")

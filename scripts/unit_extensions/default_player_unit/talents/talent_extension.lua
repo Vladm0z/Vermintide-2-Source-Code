@@ -2,7 +2,7 @@
 
 TalentExtension = class(TalentExtension)
 
-function TalentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+TalentExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.is_server = Managers.player.is_server
@@ -12,7 +12,7 @@ function TalentExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.talent_career_skill_index = 1
 end
 
-function TalentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+TalentExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = ScriptUnit.extension(arg_2_2, "career_system")
 	local var_2_1 = ScriptUnit.extension(arg_2_2, "inventory_system")
 
@@ -36,13 +36,13 @@ function TalentExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_check_resync()
 end
 
-function TalentExtension.game_object_initialized(arg_3_0, arg_3_1, arg_3_2)
+TalentExtension.game_object_initialized = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0:get_talent_ids()
 
 	arg_3_0:_send_rpc_sync_talents(var_3_0)
 end
 
-function TalentExtension.talents_changed(arg_4_0)
+TalentExtension.talents_changed = function (arg_4_0)
 	local var_4_0 = arg_4_0:get_talent_ids()
 
 	arg_4_0:_check_talent_package_dendencies(var_4_0)
@@ -58,7 +58,7 @@ function TalentExtension.talents_changed(arg_4_0)
 	arg_4_0:_broadcast_talents_changed(false)
 end
 
-function TalentExtension._send_rpc_sync_talents(arg_5_0, arg_5_1)
+TalentExtension._send_rpc_sync_talents = function (arg_5_0, arg_5_1)
 	local var_5_0 = Managers.state.network.network_transmit
 	local var_5_1 = Managers.state.unit_storage:go_id(arg_5_0._unit)
 
@@ -71,7 +71,7 @@ function TalentExtension._send_rpc_sync_talents(arg_5_0, arg_5_1)
 	end
 end
 
-function TalentExtension.apply_buffs_from_talents(arg_6_0, arg_6_1)
+TalentExtension.apply_buffs_from_talents = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._hero_name
 	local var_6_1 = arg_6_0.buff_extension
 	local var_6_2 = arg_6_0.player
@@ -161,7 +161,7 @@ function TalentExtension.apply_buffs_from_talents(arg_6_0, arg_6_1)
 	end
 end
 
-function TalentExtension._update_talent_weapon_index(arg_7_0, arg_7_1)
+TalentExtension._update_talent_weapon_index = function (arg_7_0, arg_7_1)
 	local var_7_0 = not Managers.state.game_mode:has_activated_mutator("whiterun")
 	local var_7_1 = arg_7_0.talent_career_weapon_index
 
@@ -192,15 +192,15 @@ function TalentExtension._update_talent_weapon_index(arg_7_0, arg_7_1)
 	end
 end
 
-function TalentExtension.get_talent_career_skill_index(arg_8_0)
+TalentExtension.get_talent_career_skill_index = function (arg_8_0)
 	return arg_8_0.talent_career_skill_index
 end
 
-function TalentExtension.get_talent_career_weapon_index(arg_9_0)
+TalentExtension.get_talent_career_weapon_index = function (arg_9_0)
 	return arg_9_0.talent_career_weapon_index
 end
 
-function TalentExtension._clear_buffs_from_talents(arg_10_0)
+TalentExtension._clear_buffs_from_talents = function (arg_10_0)
 	local var_10_0 = arg_10_0.buff_extension
 	local var_10_1 = arg_10_0._talent_buff_ids
 	local var_10_2 = #var_10_1
@@ -214,7 +214,7 @@ function TalentExtension._clear_buffs_from_talents(arg_10_0)
 	table.clear(arg_10_0._talent_buff_ids)
 end
 
-function TalentExtension.has_talent(arg_11_0, arg_11_1)
+TalentExtension.has_talent = function (arg_11_0, arg_11_1)
 	if Managers.state.game_mode:has_activated_mutator("whiterun") then
 		return false
 	end
@@ -241,7 +241,7 @@ function TalentExtension.has_talent(arg_11_0, arg_11_1)
 	return false
 end
 
-function TalentExtension.get_talent_ids(arg_12_0)
+TalentExtension.get_talent_ids = function (arg_12_0)
 	local var_12_0 = Managers.backend:get_talents_interface()
 	local var_12_1 = arg_12_0._career_name
 	local var_12_2 = arg_12_0.player.bot_player
@@ -249,7 +249,7 @@ function TalentExtension.get_talent_ids(arg_12_0)
 	return (var_12_0:get_talent_ids(var_12_1, nil, var_12_2))
 end
 
-function TalentExtension.has_talent_perk(arg_13_0, arg_13_1)
+TalentExtension.has_talent_perk = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._hero_name
 
 	if arg_13_0._hero_affiliation == "tutorial" then
@@ -278,7 +278,7 @@ function TalentExtension.has_talent_perk(arg_13_0, arg_13_1)
 	end
 end
 
-function TalentExtension.get_talent_names(arg_14_0)
+TalentExtension.get_talent_names = function (arg_14_0)
 	local var_14_0 = arg_14_0:get_talent_ids()
 	local var_14_1 = {}
 	local var_14_2 = arg_14_0._hero_name
@@ -292,7 +292,7 @@ function TalentExtension.get_talent_names(arg_14_0)
 	return var_14_1
 end
 
-function TalentExtension._broadcast_talents_changed(arg_15_0)
+TalentExtension._broadcast_talents_changed = function (arg_15_0)
 	local var_15_0 = Managers.state.event
 
 	if var_15_0 then
@@ -300,15 +300,15 @@ function TalentExtension._broadcast_talents_changed(arg_15_0)
 	end
 end
 
-function TalentExtension.destroy(arg_16_0)
+TalentExtension.destroy = function (arg_16_0)
 	return
 end
 
-function TalentExtension.initial_talent_synced(arg_17_0)
+TalentExtension.initial_talent_synced = function (arg_17_0)
 	return true
 end
 
-function TalentExtension._check_talent_package_dendencies(arg_18_0, arg_18_1, arg_18_2)
+TalentExtension._check_talent_package_dendencies = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = {}
 	local var_18_1 = 0
 	local var_18_2 = arg_18_0._hero_name
@@ -343,7 +343,7 @@ function TalentExtension._check_talent_package_dendencies(arg_18_0, arg_18_1, ar
 	end
 end
 
-function TalentExtension._check_resync(arg_19_0)
+TalentExtension._check_resync = function (arg_19_0)
 	if not arg_19_0._needs_loadout_resync then
 		return
 	end

@@ -7,7 +7,7 @@ ActionTemplates.action_career_es_4 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function(arg_1_0, arg_1_1)
+		condition_func = function (arg_1_0, arg_1_1)
 			if ScriptUnit.extension(arg_1_0, "buff_system"):has_buff_perk("disable_career_ability") then
 				return false
 			end

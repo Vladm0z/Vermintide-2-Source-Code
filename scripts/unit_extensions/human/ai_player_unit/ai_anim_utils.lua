@@ -4,7 +4,7 @@ AiAnimUtils = AiAnimUtils or {}
 
 local var_0_0 = POSITION_LOOKUP
 
-function AiAnimUtils.get_animation_rotation_scale(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AiAnimUtils.get_animation_rotation_scale = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = var_0_0[arg_1_0]
 	local var_1_1 = Unit.local_rotation(arg_1_0, 0)
 	local var_1_2 = Quaternion.forward(var_1_1, 0)
@@ -27,7 +27,7 @@ local function var_0_1(arg_2_0)
 	end
 end
 
-function AiAnimUtils.get_start_move_animation(arg_3_0, arg_3_1, arg_3_2)
+AiAnimUtils.get_start_move_animation = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 	local var_3_1 = var_0_0[arg_3_0]
 	local var_3_2 = Vector3.normalize(Vector3.flat(arg_3_1 - var_3_1))
@@ -47,7 +47,7 @@ function AiAnimUtils.get_start_move_animation(arg_3_0, arg_3_1, arg_3_2)
 	return (var_0_1(var_3_0))
 end
 
-function AiAnimUtils.set_idle_animation_merge(arg_4_0, arg_4_1)
+AiAnimUtils.set_idle_animation_merge = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.breed.animation_merge_options
 	local var_4_1 = var_4_0 and var_4_0.idle_animation_merge_options
 
@@ -56,7 +56,7 @@ function AiAnimUtils.set_idle_animation_merge(arg_4_0, arg_4_1)
 	end
 end
 
-function AiAnimUtils.set_move_animation_merge(arg_5_0, arg_5_1)
+AiAnimUtils.set_move_animation_merge = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_1.breed.animation_merge_options
 	local var_5_1 = var_5_0 and var_5_0.move_animation_merge_options
 
@@ -65,7 +65,7 @@ function AiAnimUtils.set_move_animation_merge(arg_5_0, arg_5_1)
 	end
 end
 
-function AiAnimUtils.set_walk_animation_merge(arg_6_0, arg_6_1)
+AiAnimUtils.set_walk_animation_merge = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.breed.animation_merge_options
 	local var_6_1 = var_6_0 and var_6_0.walk_animation_merge_options
 
@@ -74,7 +74,7 @@ function AiAnimUtils.set_walk_animation_merge(arg_6_0, arg_6_1)
 	end
 end
 
-function AiAnimUtils.set_interest_point_animation_merge(arg_7_0, arg_7_1)
+AiAnimUtils.set_interest_point_animation_merge = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.breed.animation_merge_options
 	local var_7_1 = var_7_0 and var_7_0.interest_point_animation_merge_options
 
@@ -83,11 +83,11 @@ function AiAnimUtils.set_interest_point_animation_merge(arg_7_0, arg_7_1)
 	end
 end
 
-function AiAnimUtils.reset_animation_merge(arg_8_0)
+AiAnimUtils.reset_animation_merge = function (arg_8_0)
 	Unit.set_animation_merge_options(arg_8_0)
 end
 
-function AiAnimUtils._animation_merge_debug(arg_9_0, arg_9_1)
+AiAnimUtils._animation_merge_debug = function (arg_9_0, arg_9_1)
 	local var_9_0 = "animation_merge"
 
 	Managers.state.debug_text:clear_unit_text(arg_9_0, var_9_0)
@@ -106,7 +106,7 @@ end
 local var_0_2 = 10
 local var_0_3 = 0.1
 
-function AiAnimUtils.velocity_network_scale(arg_10_0, arg_10_1)
+AiAnimUtils.velocity_network_scale = function (arg_10_0, arg_10_1)
 	if arg_10_1 then
 		arg_10_0 = arg_10_0 * var_0_2
 
@@ -123,7 +123,7 @@ end
 local var_0_4 = 100
 local var_0_5 = 0.01
 
-function AiAnimUtils.position_network_scale(arg_11_0, arg_11_1)
+AiAnimUtils.position_network_scale = function (arg_11_0, arg_11_1)
 	if arg_11_1 then
 		arg_11_0 = arg_11_0 * var_0_4
 
@@ -140,7 +140,7 @@ end
 local var_0_6 = 100
 local var_0_7 = 0.01
 
-function AiAnimUtils.rotation_network_scale(arg_12_0, arg_12_1)
+AiAnimUtils.rotation_network_scale = function (arg_12_0, arg_12_1)
 	if arg_12_1 then
 		local var_12_0, var_12_1, var_12_2, var_12_3 = Quaternion.to_elements(arg_12_0)
 
@@ -155,7 +155,7 @@ function AiAnimUtils.rotation_network_scale(arg_12_0, arg_12_1)
 	end
 end
 
-function AiAnimUtils.cycle_anims(arg_13_0, arg_13_1, arg_13_2)
+AiAnimUtils.cycle_anims = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = #arg_13_1
 	local var_13_1 = arg_13_0[arg_13_2] % var_13_0 + 1
 	local var_13_2 = arg_13_1[var_13_1]

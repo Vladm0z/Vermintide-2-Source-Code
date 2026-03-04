@@ -10,7 +10,7 @@ local var_0_4 = Vector3.dot
 local var_0_5 = "normal"
 local var_0_6 = 1
 
-function AIEnemySlotExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AIEnemySlotExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.target = nil
 	arg_1_0.target_position = Vector3Box()
@@ -21,7 +21,7 @@ function AIEnemySlotExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.gathering = Managers.state.conflict.gathering
 end
 
-function AIEnemySlotExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+AIEnemySlotExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = BLACKBOARDS[arg_2_2].breed
 
 	arg_2_0.breed = var_2_0
@@ -38,7 +38,7 @@ function AIEnemySlotExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._navigation_ext = ScriptUnit.extension(arg_2_2, "ai_navigation_system")
 end
 
-function AIEnemySlotExtension.cleanup_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+AIEnemySlotExtension.cleanup_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0:_detach_from_slot()
 	arg_3_0:_detach_from_ai_slot("cleanup_extension")
 
@@ -52,7 +52,7 @@ function AIEnemySlotExtension.cleanup_extension(arg_3_0, arg_3_1, arg_3_2, arg_3
 	end
 end
 
-function AIEnemySlotExtension._improve_slot_position(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+AIEnemySlotExtension._improve_slot_position = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if not ALIVE[arg_4_1] then
 		return
 	end
@@ -96,7 +96,7 @@ function AIEnemySlotExtension._improve_slot_position(arg_4_0, arg_4_1, arg_4_2, 
 	end
 end
 
-function AIEnemySlotExtension._improve_ai_slot_position(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+AIEnemySlotExtension._improve_ai_slot_position = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = Unit.local_position(arg_5_1, 0)
 	local var_5_1
 
@@ -128,17 +128,17 @@ function AIEnemySlotExtension._improve_ai_slot_position(arg_5_0, arg_5_1, arg_5_
 	end
 end
 
-function AIEnemySlotExtension.freeze(arg_6_0, arg_6_1)
+AIEnemySlotExtension.freeze = function (arg_6_0, arg_6_1)
 	arg_6_0:_detach_from_slot()
 	arg_6_0:_detach_from_ai_slot("freeze")
 end
 
-function AIEnemySlotExtension.unfreeze(arg_7_0, arg_7_1)
+AIEnemySlotExtension.unfreeze = function (arg_7_0, arg_7_1)
 	arg_7_0.target = nil
 	arg_7_0.improve_wait_slot_position_t = 0
 end
 
-function AIEnemySlotExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+AIEnemySlotExtension.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	local var_8_0 = BLACKBOARDS[arg_8_1]
 	local var_8_1 = var_8_0.target_unit
 
@@ -202,13 +202,13 @@ function AIEnemySlotExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4
 	end
 end
 
-function AIEnemySlotExtension.ai_has_slot(arg_9_0, arg_9_1)
+AIEnemySlotExtension.ai_has_slot = function (arg_9_0, arg_9_1)
 	local var_9_0 = BLACKBOARDS[arg_9_1]
 
 	return var_9_0.breed.infighting.crowded_slots >= var_9_0.lean_dogpile
 end
 
-function AIEnemySlotExtension.on_unit_blocked_attack(arg_10_0, arg_10_1, arg_10_2)
+AIEnemySlotExtension.on_unit_blocked_attack = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0.waiting_on_slot then
 		return
 	end
@@ -230,7 +230,7 @@ function AIEnemySlotExtension.on_unit_blocked_attack(arg_10_0, arg_10_1, arg_10_
 	end
 end
 
-function AIEnemySlotExtension.ai_unit_staggered(arg_11_0, arg_11_1, arg_11_2)
+AIEnemySlotExtension.ai_unit_staggered = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0.waiting_on_slot then
 		return
 	end
@@ -252,7 +252,7 @@ function AIEnemySlotExtension.ai_unit_staggered(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function AIEnemySlotExtension._detach_from_slot(arg_12_0)
+AIEnemySlotExtension._detach_from_slot = function (arg_12_0)
 	local var_12_0 = arg_12_0.slot or arg_12_0.waiting_on_slot
 	local var_12_1 = arg_12_0.waiting_on_slot
 	local var_12_2 = var_12_0 and var_12_0.owner_extension
@@ -265,7 +265,7 @@ function AIEnemySlotExtension._detach_from_slot(arg_12_0)
 	arg_12_0.slot = nil
 end
 
-function AIEnemySlotExtension._detach_from_ai_slot(arg_13_0, arg_13_1)
+AIEnemySlotExtension._detach_from_ai_slot = function (arg_13_0, arg_13_1)
 	local var_13_0
 
 	if USE_ENGINE_SLOID_SYSTEM then
@@ -293,7 +293,7 @@ function AIEnemySlotExtension._detach_from_ai_slot(arg_13_0, arg_13_1)
 	arg_13_0:on_ai_slot_lost(var_13_0)
 end
 
-function AIEnemySlotExtension._update_target(arg_14_0, arg_14_1)
+AIEnemySlotExtension._update_target = function (arg_14_0, arg_14_1)
 	if arg_14_0.slot and arg_14_0.slot.target_unit ~= arg_14_1 then
 		arg_14_0:_detach_from_slot()
 	end
@@ -315,26 +315,26 @@ function AIEnemySlotExtension._update_target(arg_14_0, arg_14_1)
 	arg_14_0.target_position:store(var_14_0)
 end
 
-function AIEnemySlotExtension._update_ai_target(arg_15_0, arg_15_1)
+AIEnemySlotExtension._update_ai_target = function (arg_15_0, arg_15_1)
 	if arg_15_0.gathering_ball.target_unit ~= arg_15_1 then
 		arg_15_0:_detach_from_ai_slot("new_target_unit")
 	end
 end
 
-function AIEnemySlotExtension._engine_update_ai_target(arg_16_0, arg_16_1)
+AIEnemySlotExtension._engine_update_ai_target = function (arg_16_0, arg_16_1)
 	if arg_16_0.target_unit ~= arg_16_1 then
 		arg_16_0:_detach_from_ai_slot("new_target_unit")
 	end
 end
 
-function AIEnemySlotExtension.on_slot_lost(arg_17_0)
+AIEnemySlotExtension.on_slot_lost = function (arg_17_0)
 	local var_17_0 = arg_17_0.slot
 
 	arg_17_0.waiting_on_slot = nil
 	arg_17_0.slot = nil
 end
 
-function AIEnemySlotExtension.on_slot_gained(arg_18_0, arg_18_1, arg_18_2)
+AIEnemySlotExtension.on_slot_gained = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.waiting_on_slot
 	local var_18_1 = arg_18_0.slot
 
@@ -350,7 +350,7 @@ function AIEnemySlotExtension.on_slot_gained(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0.slot = arg_18_2
 end
 
-function AIEnemySlotExtension.on_entered_slot_queue(arg_19_0, arg_19_1, arg_19_2)
+AIEnemySlotExtension.on_entered_slot_queue = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.waiting_on_slot
 	local var_19_1 = arg_19_0.slot
 
@@ -366,15 +366,15 @@ function AIEnemySlotExtension.on_entered_slot_queue(arg_19_0, arg_19_1, arg_19_2
 	arg_19_0.slot = nil
 end
 
-function AIEnemySlotExtension.get_current_slot(arg_20_0)
+AIEnemySlotExtension.get_current_slot = function (arg_20_0)
 	return arg_20_0.slot or arg_20_0.waiting_on_slot, arg_20_0.waiting_on_slot ~= nil
 end
 
-function AIEnemySlotExtension.get_preferred_slot_type(arg_21_0)
+AIEnemySlotExtension.get_preferred_slot_type = function (arg_21_0)
 	return arg_21_0.use_slot_type or var_0_5
 end
 
-function AIEnemySlotExtension.on_ai_slot_gained(arg_22_0, arg_22_1, arg_22_2)
+AIEnemySlotExtension.on_ai_slot_gained = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = BLACKBOARDS[arg_22_1]
 
 	var_22_0.lean_dogpile = var_22_0.lean_dogpile + 1
@@ -407,7 +407,7 @@ function AIEnemySlotExtension.on_ai_slot_gained(arg_22_0, arg_22_1, arg_22_2)
 	end
 end
 
-function AIEnemySlotExtension.on_ai_slot_lost(arg_23_0, arg_23_1)
+AIEnemySlotExtension.on_ai_slot_lost = function (arg_23_0, arg_23_1)
 	if USE_ENGINE_SLOID_SYSTEM then
 		local var_23_0 = Managers.state.conflict.dogpiled_attackers_on_unit[arg_23_1]
 
@@ -437,7 +437,7 @@ function AIEnemySlotExtension.on_ai_slot_lost(arg_23_0, arg_23_1)
 	end
 end
 
-function AIEnemySlotExtension.free_slot(arg_24_0, arg_24_1)
+AIEnemySlotExtension.free_slot = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0.unit
 	local var_24_1 = BLACKBOARDS[var_24_0]
 

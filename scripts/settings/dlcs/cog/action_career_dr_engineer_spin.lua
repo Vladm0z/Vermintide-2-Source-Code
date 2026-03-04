@@ -2,13 +2,13 @@
 
 ActionCareerDREngineerSpin = class(ActionCareerDREngineerSpin, ActionMinigunSpin)
 
-function ActionCareerDREngineerSpin.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineerSpin.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionCareerDREngineerSpin.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
 end
 
-function ActionCareerDREngineerSpin.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionCareerDREngineerSpin.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionCareerDREngineerSpin.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0._override_visual_spinup = arg_2_1.override_visual_spinup
@@ -26,13 +26,13 @@ function ActionCareerDREngineerSpin.client_owner_start_action(arg_2_0, arg_2_1, 
 	end
 end
 
-function ActionCareerDREngineerSpin.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerDREngineerSpin.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	ActionCareerDREngineerSpin.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 
 	arg_3_0._last_update_t = arg_3_2
 end
 
-function ActionCareerDREngineerSpin.finish(arg_4_0, arg_4_1)
+ActionCareerDREngineerSpin.finish = function (arg_4_0, arg_4_1)
 	ActionCareerDREngineerSpin.super.finish(arg_4_0, arg_4_1)
 
 	local var_4_0 = arg_4_0.weapon_extension:get_custom_data("windup")

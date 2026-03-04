@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotInteractAction = class(BTBotInteractAction, BTNode)
 
-function BTBotInteractAction.init(arg_1_0, ...)
+BTBotInteractAction.init = function (arg_1_0, ...)
 	BTBotInteractAction.super.init(arg_1_0, ...)
 end
 
@@ -12,7 +12,7 @@ BTBotInteractAction.name = "BTBotInteractAction"
 
 local var_0_0 = Unit.alive
 
-function BTBotInteractAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotInteractAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.interaction_unit
 
 	arg_2_2.current_interaction_unit = var_2_0
@@ -32,7 +32,7 @@ function BTBotInteractAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	var_2_2:set_aiming(true, var_2_3)
 end
 
-function BTBotInteractAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotInteractAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.interact = false
 
 	arg_3_2.interaction_extension:set_exclusive_interaction_unit(nil)
@@ -41,7 +41,7 @@ function BTBotInteractAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	arg_3_2.current_interaction_unit = nil
 end
 
-function BTBotInteractAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotInteractAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.current_interaction_unit
 
 	if not var_0_0(var_4_0) or var_4_0 ~= arg_4_2.interaction_unit and arg_4_2.interaction_unit then

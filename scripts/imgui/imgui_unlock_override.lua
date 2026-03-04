@@ -2,11 +2,11 @@
 
 ImguiUnlockOverride = class(ImguiUnlockOverride)
 
-function ImguiUnlockOverride.init(arg_1_0)
+ImguiUnlockOverride.init = function (arg_1_0)
 	return
 end
 
-function ImguiUnlockOverride.update(arg_2_0)
+ImguiUnlockOverride.update = function (arg_2_0)
 	return
 end
 
@@ -18,10 +18,10 @@ local function var_0_1(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function ImguiUnlockOverride.draw(arg_4_0)
+ImguiUnlockOverride.draw = function (arg_4_0)
 	return
 end
 
-function ImguiUnlockOverride.is_persistent(arg_5_0)
+ImguiUnlockOverride.is_persistent = function (arg_5_0)
 	return false
 end

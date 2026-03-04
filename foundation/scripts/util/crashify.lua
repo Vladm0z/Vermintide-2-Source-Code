@@ -1,7 +1,7 @@
 -- chunkname: @foundation/scripts/util/crashify.lua
 
 return {
-	print_property = function(arg_1_0, arg_1_1)
+	print_property = function (arg_1_0, arg_1_1)
 		if arg_1_0 == nil then
 			Application.warning("[Crashify] Property key can't be nil")
 
@@ -23,7 +23,7 @@ return {
 
 		print(var_1_1)
 	end,
-	print_breadcrumb = function(arg_2_0)
+	print_breadcrumb = function (arg_2_0)
 		if arg_2_0 == nil then
 			Application.warning("[Crashify] Breadcrumb can't be nil")
 
@@ -34,7 +34,7 @@ return {
 
 		print(var_2_0)
 	end,
-	print_exception = function(arg_3_0, arg_3_1, ...)
+	print_exception = function (arg_3_0, arg_3_1, ...)
 		Application.set_exit_code(1, "silent_limited")
 
 		if arg_3_0 == nil then

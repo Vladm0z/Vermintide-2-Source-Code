@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_dlc_drachenfels_castle.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_castle_intro_line_a",

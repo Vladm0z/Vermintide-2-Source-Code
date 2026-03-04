@@ -2,7 +2,7 @@
 
 ActionBeam = class(ActionBeam, ActionBase)
 
-function ActionBeam.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBeam.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionBeam.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -15,7 +15,7 @@ function ActionBeam.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, a
 	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-function ActionBeam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionBeam.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionBeam.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -92,7 +92,7 @@ function ActionBeam.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	arg_2_0:_start_charge_sound()
 end
 
-function ActionBeam._start_charge_sound(arg_3_0)
+ActionBeam._start_charge_sound = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.owner_unit
 	local var_3_2 = arg_3_0.owner_player
@@ -110,7 +110,7 @@ function ActionBeam._start_charge_sound(arg_3_0)
 	ActionUtils.play_husk_sound_event(var_3_5, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-function ActionBeam._stop_charge_sound(arg_4_0)
+ActionBeam._stop_charge_sound = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.owner_player
@@ -131,7 +131,7 @@ end
 local var_0_0 = 1
 local var_0_1 = 4
 
-function ActionBeam.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionBeam.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = arg_5_0.current_action
 	local var_5_2 = arg_5_0.is_server
@@ -307,7 +307,7 @@ function ActionBeam.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3,
 	end
 end
 
-function ActionBeam._stop_fx(arg_6_0)
+ActionBeam._stop_fx = function (arg_6_0)
 	local var_6_0 = arg_6_0.world
 
 	if arg_6_0.beam_end_effect_id then
@@ -331,7 +331,7 @@ function ActionBeam._stop_fx(arg_6_0)
 	arg_6_0:_stop_charge_sound()
 end
 
-function ActionBeam._stop_client_vfx(arg_7_0)
+ActionBeam._stop_client_vfx = function (arg_7_0)
 	if Managers.state.network:game() then
 		local var_7_0 = arg_7_0.unit_id
 
@@ -347,7 +347,7 @@ function ActionBeam._stop_client_vfx(arg_7_0)
 	end
 end
 
-function ActionBeam.finish(arg_8_0, arg_8_1)
+ActionBeam.finish = function (arg_8_0, arg_8_1)
 	if arg_8_0.do_zoom then
 		arg_8_0.status_extension:set_zooming(false)
 	end
@@ -361,7 +361,7 @@ function ActionBeam.finish(arg_8_0, arg_8_1)
 	}
 end
 
-function ActionBeam.destroy(arg_9_0)
+ActionBeam.destroy = function (arg_9_0)
 	arg_9_0:_stop_client_vfx()
 	arg_9_0:_stop_fx()
 end

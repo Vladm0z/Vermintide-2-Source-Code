@@ -410,17 +410,17 @@ local var_0_5 = {
 			{
 				style_id = "info_hotspot",
 				pass_type = "rect",
-				content_check_function = function(arg_1_0)
+				content_check_function = function (arg_1_0)
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function(arg_2_0, arg_2_1)
+				content_change_function = function (arg_2_0, arg_2_1)
 					arg_2_1.color = arg_2_0.info_hotspot.is_hover and arg_2_1.selected_color or arg_2_1.base_color
 				end
 			},
 			{
 				style_id = "info_icon",
 				pass_type = "rect",
-				content_check_function = function(arg_3_0)
+				content_check_function = function (arg_3_0)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
@@ -428,10 +428,10 @@ local var_0_5 = {
 				style_id = "info_icon_text",
 				pass_type = "text",
 				text_id = "info_icon_text",
-				content_check_function = function(arg_4_0)
+				content_check_function = function (arg_4_0)
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function(arg_5_0, arg_5_1)
+				content_change_function = function (arg_5_0, arg_5_1)
 					arg_5_1.text_color = arg_5_0.info_hotspot.is_hover and arg_5_1.selected_color or arg_5_1.base_color
 				end
 			},
@@ -443,17 +443,17 @@ local var_0_5 = {
 			{
 				style_id = "enlarge_hotspot",
 				pass_type = "rect",
-				content_check_function = function(arg_6_0)
+				content_check_function = function (arg_6_0)
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function(arg_7_0, arg_7_1)
+				content_change_function = function (arg_7_0, arg_7_1)
 					arg_7_1.color = arg_7_0.enlarge_hotspot.is_hover and arg_7_1.selected_color or arg_7_1.base_color
 				end
 			},
 			{
 				style_id = "enlarge_icon",
 				pass_type = "rect",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
@@ -465,17 +465,17 @@ local var_0_5 = {
 			{
 				style_id = "filter_hotspot",
 				pass_type = "rect",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function(arg_10_0, arg_10_1)
+				content_change_function = function (arg_10_0, arg_10_1)
 					arg_10_1.color = arg_10_0.filter_hotspot.is_hover and arg_10_1.selected_color or arg_10_1.base_color
 				end
 			},
 			{
 				style_id = "filter_icon",
 				pass_type = "triangle",
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
@@ -487,17 +487,17 @@ local var_0_5 = {
 			{
 				style_id = "target_hotspot",
 				pass_type = "rect",
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function(arg_13_0, arg_13_1)
+				content_change_function = function (arg_13_0, arg_13_1)
 					arg_13_1.color = arg_13_0.target_hotspot.is_hover and arg_13_1.selected_color or arg_13_1.base_color
 				end
 			},
 			{
 				style_id = "target_icon",
 				pass_type = "triangle",
-				content_check_function = function(arg_14_0)
+				content_check_function = function (arg_14_0)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
@@ -508,14 +508,14 @@ local var_0_5 = {
 			{
 				style_id = "background_header",
 				pass_type = "rect",
-				content_check_function = function(arg_15_0, arg_15_1)
+				content_check_function = function (arg_15_0, arg_15_1)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
 			{
 				style_id = "background_header_front",
 				pass_type = "rect",
-				content_check_function = function(arg_16_0, arg_16_1)
+				content_check_function = function (arg_16_0, arg_16_1)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			},
@@ -533,7 +533,7 @@ local var_0_5 = {
 				style_id = "header_text",
 				pass_type = "text",
 				text_id = "header_field",
-				content_check_function = function(arg_17_0, arg_17_1)
+				content_check_function = function (arg_17_0, arg_17_1)
 					return GameSettingsDevelopment.use_global_chat
 				end
 			}
@@ -937,7 +937,7 @@ local var_0_7 = {
 			{
 				style_id = "scrollbar",
 				pass_type = "local_offset",
-				offset_function = function(arg_18_0, arg_18_1, arg_18_2)
+				offset_function = function (arg_18_0, arg_18_1, arg_18_2)
 					local var_18_0 = UISceneGraph.get_local_position(arg_18_0, arg_18_1.scenegraph_id)
 					local var_18_1 = arg_18_2.scroll_bar_height
 					local var_18_2 = var_18_1 / 2
@@ -971,7 +971,7 @@ local var_0_7 = {
 			{
 				style_id = "background_hotspot",
 				pass_type = "held",
-				held_function = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				held_function = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 					local var_19_0 = UIInverseScaleVectorToResolution(arg_19_3:get("cursor"))
 					local var_19_1 = arg_19_1.scenegraph_id
 					local var_19_2 = UISceneGraph.get_world_position(arg_19_0, var_19_1)
@@ -1064,7 +1064,7 @@ local function var_0_8(arg_20_0, arg_20_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function(arg_21_0)
+				content_check_function = function (arg_21_0)
 					return not arg_21_0.button_hotspot.is_hover
 				end
 			},
@@ -1072,7 +1072,7 @@ local function var_0_8(arg_20_0, arg_20_1)
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function(arg_22_0)
+				content_check_function = function (arg_22_0)
 					return arg_22_0.button_hotspot.is_hover
 				end
 			},
@@ -1080,7 +1080,7 @@ local function var_0_8(arg_20_0, arg_20_1)
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function(arg_23_0)
+				content_check_function = function (arg_23_0)
 					return arg_23_0.button_hotspot.is_hover
 				end
 			},
@@ -1194,7 +1194,7 @@ function create_additional_chat_tooltip(arg_24_0, arg_24_1, arg_24_2, arg_24_3, 
 					content_passes = arg_24_2 or {
 						"additional_option_info"
 					},
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.tooltip and arg_25_0.button_hotspot.is_hover and GameSettingsDevelopment.use_global_chat
 					end
 				}

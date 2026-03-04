@@ -10,14 +10,14 @@ StatisticsTemplates.multikill = {
 		kills_to_get = 1,
 		time_window = 10
 	},
-	init = function()
+	init = function ()
 		return {
 			kills_total_last = 0,
 			kill_times_n = 0,
 			kill_times = {}
 		}
 	end,
-	update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = arg_2_1.multikill
 		local var_2_1 = var_2_0.kills_total_last
 		local var_2_2 = arg_2_2.statistics_db:get_stat(arg_2_1.statistics_id, "kills_total")

@@ -2,7 +2,7 @@
 
 UTF8Utils = UTF8Utils or {}
 
-function UTF8Utils.string_length(arg_1_0)
+UTF8Utils.string_length = function (arg_1_0)
 	local var_1_0 = #arg_1_0
 	local var_1_1 = 1
 	local var_1_2 = 0
@@ -18,7 +18,7 @@ function UTF8Utils.string_length(arg_1_0)
 	return var_1_2
 end
 
-function UTF8Utils.sub_string(arg_2_0, arg_2_1, arg_2_2)
+UTF8Utils.sub_string = function (arg_2_0, arg_2_1, arg_2_2)
 	if arg_2_2 <= 0 or arg_2_0 == "" then
 		return ""
 	end

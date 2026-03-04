@@ -4,7 +4,7 @@ require("scripts/unit_extensions/weapons/projectiles/true_flight_templates")
 
 ActionTrueFlightBow = class(ActionTrueFlightBow, ActionBase)
 
-function ActionTrueFlightBow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionTrueFlightBow.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionTrueFlightBow.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -16,7 +16,7 @@ function ActionTrueFlightBow.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 	arg_1_0.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
 end
 
-function ActionTrueFlightBow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionTrueFlightBow.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionTrueFlightBow.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 
 	arg_2_0.current_action = arg_2_1
@@ -74,7 +74,7 @@ function ActionTrueFlightBow.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2
 	arg_2_0._is_critical_strike = var_2_2
 end
 
-function ActionTrueFlightBow.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionTrueFlightBow.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.current_action
 
 	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
@@ -108,7 +108,7 @@ function ActionTrueFlightBow.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2,
 	end
 end
 
-function ActionTrueFlightBow.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionTrueFlightBow.finish = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = ScriptUnit.extension(arg_4_0.owner_unit, "status_system")
 
 	if not arg_4_2 or arg_4_2.new_action ~= "action_two" or arg_4_2.new_sub_action ~= "default" then
@@ -116,7 +116,7 @@ function ActionTrueFlightBow.finish(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function ActionTrueFlightBow.fire(arg_5_0, arg_5_1)
+ActionTrueFlightBow.fire = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.owner_unit
 	local var_5_1 = arg_5_1.speed
 	local var_5_2, var_5_3 = arg_5_0.first_person_extension:get_projectile_start_position_rotation()

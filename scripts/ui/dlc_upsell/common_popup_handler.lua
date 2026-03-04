@@ -8,7 +8,7 @@ require("scripts/ui/active_event/active_event_popup")
 
 CommonPopupHandler = class(CommonPopupHandler)
 
-function CommonPopupHandler.init(arg_1_0, arg_1_1)
+CommonPopupHandler.init = function (arg_1_0, arg_1_1)
 	arg_1_0._context = arg_1_1
 	arg_1_0._popups = {}
 	arg_1_0._n_popups = 0
@@ -18,7 +18,7 @@ function CommonPopupHandler.init(arg_1_0, arg_1_1)
 	Managers.state.event:register(arg_1_0, "ui_show_popup", "ui_show_popup")
 end
 
-function CommonPopupHandler.destroy(arg_2_0)
+CommonPopupHandler.destroy = function (arg_2_0)
 	Managers.state.event:unregister("ui_show_popup", arg_2_0)
 
 	for iter_2_0 = 1, arg_2_0._n_popups do
@@ -32,7 +32,7 @@ function CommonPopupHandler.destroy(arg_2_0)
 	end
 end
 
-function CommonPopupHandler.update(arg_3_0, arg_3_1, arg_3_2)
+CommonPopupHandler.update = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0._popups[arg_3_0._n_popups]
 
 	if not var_3_0 then
@@ -57,7 +57,7 @@ function CommonPopupHandler.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function CommonPopupHandler.queue_popup(arg_4_0, arg_4_1)
+CommonPopupHandler.queue_popup = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._n_popups
 	local var_4_1 = arg_4_0._popups
 	local var_4_2 = var_4_0 + 1
@@ -83,7 +83,7 @@ function CommonPopupHandler.queue_popup(arg_4_0, arg_4_1)
 	return var_4_3
 end
 
-function CommonPopupHandler.ui_show_popup(arg_5_0, arg_5_1, arg_5_2)
+CommonPopupHandler.ui_show_popup = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = CommonPopupSettings[arg_5_1]
 
 	if not var_5_0 then
@@ -99,12 +99,12 @@ function CommonPopupHandler.ui_show_popup(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function CommonPopupHandler.new_popup(arg_6_0, arg_6_1, arg_6_2)
+CommonPopupHandler.new_popup = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = rawget(_G, arg_6_2.class_name):new(arg_6_0._context, arg_6_1, arg_6_2)
 
 	arg_6_0:queue_popup(var_6_0)
 end
 
-function CommonPopupHandler._is_menu_active(arg_7_0)
+CommonPopupHandler._is_menu_active = function (arg_7_0)
 	return arg_7_0._context.ingame_ui.menu_active or arg_7_0._context.ingame_ui.current_view or arg_7_0._context.ingame_ui._transition_fade_data
 end

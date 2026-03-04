@@ -10,7 +10,7 @@ require("scripts/ui/dlc_upsell/common_popup_settings")
 
 UnlockManager = class(UnlockManager)
 
-function UnlockManager.init(arg_1_0)
+UnlockManager.init = function (arg_1_0)
 	arg_1_0:_init_unlocks()
 
 	if IS_WINDOWS then
@@ -43,11 +43,11 @@ function UnlockManager.init(arg_1_0)
 	arg_1_0._reward_queue_id = 0
 end
 
-function UnlockManager.enable_update_unlocks(arg_2_0, arg_2_1)
+UnlockManager.enable_update_unlocks = function (arg_2_0, arg_2_1)
 	arg_2_0._update_unlocks = arg_2_1
 end
 
-function UnlockManager._init_unlocks(arg_3_0)
+UnlockManager._init_unlocks = function (arg_3_0)
 	local var_3_0 = {}
 	local var_3_1 = {}
 
@@ -77,7 +77,7 @@ end
 
 local var_0_0 = {}
 
-function UnlockManager.update(arg_4_0, arg_4_1, arg_4_2)
+UnlockManager.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if IS_XB1 then
 		if arg_4_0._update_unlocks then
 			arg_4_0._dlc_status_changed = nil
@@ -112,7 +112,7 @@ function UnlockManager.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function UnlockManager._handle_popups(arg_5_0)
+UnlockManager._handle_popups = function (arg_5_0)
 	table.clear(var_0_0)
 
 	for iter_5_0, iter_5_1 in ipairs(arg_5_0._popup_ids) do
@@ -134,7 +134,7 @@ function UnlockManager._handle_popups(arg_5_0)
 	end
 end
 
-function UnlockManager._handle_popup_results(arg_6_0, arg_6_1)
+UnlockManager._handle_popup_results = function (arg_6_0, arg_6_1)
 	if arg_6_1 == "restart_game" then
 		if IS_WINDOWS then
 			Managers.ui:restart_game()
@@ -146,7 +146,7 @@ function UnlockManager._handle_popup_results(arg_6_0, arg_6_1)
 	end
 end
 
-function UnlockManager._check_ps4_dlc_status(arg_7_0)
+UnlockManager._check_ps4_dlc_status = function (arg_7_0)
 	if arg_7_0._state ~= "done" then
 		return
 	end
@@ -193,12 +193,12 @@ function UnlockManager._check_ps4_dlc_status(arg_7_0)
 	end
 end
 
-function UnlockManager._reinitialize_backend_dlc(arg_8_0)
+UnlockManager._reinitialize_backend_dlc = function (arg_8_0)
 	arg_8_0._state = "query_unlocked"
 	arg_8_0._query_unlocked_index = 0
 end
 
-function UnlockManager._check_licenses(arg_9_0)
+UnlockManager._check_licenses = function (arg_9_0)
 	Application.warning("[UnlockManager] Checking DLC licenses")
 
 	local var_9_0 = ""
@@ -253,11 +253,11 @@ function UnlockManager._check_licenses(arg_9_0)
 	end
 end
 
-function UnlockManager.dlc_status_changed(arg_10_0)
+UnlockManager.dlc_status_changed = function (arg_10_0)
 	return arg_10_0._dlc_status_changed
 end
 
-function UnlockManager._update_console_backend_unlocks(arg_11_0)
+UnlockManager._update_console_backend_unlocks = function (arg_11_0)
 	if arg_11_0._state == "query_unlocked" then
 		local var_11_0 = Managers.backend
 
@@ -382,7 +382,7 @@ function UnlockManager._update_console_backend_unlocks(arg_11_0)
 	end
 end
 
-function UnlockManager.cb_reward_claimed(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+UnlockManager.cb_reward_claimed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	if not arg_12_2 then
 		arg_12_1:remove_backend_reward_id()
 	elseif arg_12_3 and arg_12_4 then
@@ -390,7 +390,7 @@ function UnlockManager.cb_reward_claimed(arg_12_0, arg_12_1, arg_12_2, arg_12_3,
 	end
 end
 
-function UnlockManager.cb_reward_removed(arg_13_0, arg_13_1, arg_13_2)
+UnlockManager.cb_reward_removed = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_2 then
 		arg_13_1:remove_backend_reward_id()
 	end
@@ -407,10 +407,10 @@ local var_0_1 = {
 	keep_decoration_painting = 7
 }
 
-function UnlockManager._add_reward(arg_14_0, arg_14_1, arg_14_2)
+UnlockManager._add_reward = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = UISettings.item_rarity_order
 
-	table.sort(arg_14_1, function(arg_15_0, arg_15_1)
+	table.sort(arg_14_1, function (arg_15_0, arg_15_1)
 		local var_15_0 = var_14_0[arg_15_0.rarity or arg_15_0.data.rarity] or -1
 		local var_15_1 = var_14_0[arg_15_1.rarity or arg_15_1.data.rarity] or -1
 
@@ -449,7 +449,7 @@ function UnlockManager._add_reward(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function UnlockManager.poll_rewards(arg_16_0)
+UnlockManager.poll_rewards = function (arg_16_0)
 	if #arg_16_0._reward_queue <= arg_16_0._reward_queue_id then
 		return
 	end
@@ -459,7 +459,7 @@ function UnlockManager.poll_rewards(arg_16_0)
 	return arg_16_0._reward_queue[arg_16_0._reward_queue_id]
 end
 
-function UnlockManager.get_unlocked_dlcs(arg_17_0)
+UnlockManager.get_unlocked_dlcs = function (arg_17_0)
 	local var_17_0 = arg_17_0._unlocks
 	local var_17_1 = {}
 
@@ -472,7 +472,7 @@ function UnlockManager.get_unlocked_dlcs(arg_17_0)
 	return var_17_1
 end
 
-function UnlockManager.get_installed_dlcs(arg_18_0)
+UnlockManager.get_installed_dlcs = function (arg_18_0)
 	local var_18_0 = arg_18_0._unlocks
 	local var_18_1 = {}
 
@@ -485,19 +485,19 @@ function UnlockManager.get_installed_dlcs(arg_18_0)
 	return var_18_1
 end
 
-function UnlockManager.get_dlcs(arg_19_0)
+UnlockManager.get_dlcs = function (arg_19_0)
 	return arg_19_0._unlocks
 end
 
-function UnlockManager.get_dlc(arg_20_0, arg_20_1)
+UnlockManager.get_dlc = function (arg_20_0, arg_20_1)
 	return arg_20_0._unlocks[arg_20_1]
 end
 
-function UnlockManager.dlc_requires_restart(arg_21_0, arg_21_1)
+UnlockManager.dlc_requires_restart = function (arg_21_0, arg_21_1)
 	return arg_21_0._unlocks[arg_21_1]:requires_restart()
 end
 
-function UnlockManager.is_dlc_unlocked(arg_22_0, arg_22_1)
+UnlockManager.is_dlc_unlocked = function (arg_22_0, arg_22_1)
 	if script_data.all_dlcs_unlocked then
 		return true
 	end
@@ -517,7 +517,7 @@ function UnlockManager.is_dlc_unlocked(arg_22_0, arg_22_1)
 	return var_22_0 and var_22_0:unlocked()
 end
 
-function UnlockManager.is_dlc_cosmetic(arg_23_0, arg_23_1)
+UnlockManager.is_dlc_cosmetic = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._unlocks[arg_23_1]
 
 	if not IS_WINDOWS and not IS_LINUX and not var_23_0 then
@@ -529,11 +529,11 @@ function UnlockManager.is_dlc_cosmetic(arg_23_0, arg_23_1)
 	return var_23_0 and var_23_0:is_cosmetic()
 end
 
-function UnlockManager.dlc_exists(arg_24_0, arg_24_1)
+UnlockManager.dlc_exists = function (arg_24_0, arg_24_1)
 	return arg_24_0._unlocks[arg_24_1] ~= nil
 end
 
-function UnlockManager.dlc_id(arg_25_0, arg_25_1)
+UnlockManager.dlc_id = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._unlocks[arg_25_1]
 
 	fassert(var_25_0, "No such unlock %q", arg_25_1 or "nil")
@@ -541,7 +541,7 @@ function UnlockManager.dlc_id(arg_25_0, arg_25_1)
 	return var_25_0:id()
 end
 
-function UnlockManager.dlc_name_from_id(arg_26_0, arg_26_1)
+UnlockManager.dlc_name_from_id = function (arg_26_0, arg_26_1)
 	for iter_26_0, iter_26_1 in pairs(arg_26_0._unlocks) do
 		if iter_26_1:id() == arg_26_1 then
 			return iter_26_0
@@ -549,7 +549,7 @@ function UnlockManager.dlc_name_from_id(arg_26_0, arg_26_1)
 	end
 end
 
-function UnlockManager.open_dlc_page(arg_27_0, arg_27_1)
+UnlockManager.open_dlc_page = function (arg_27_0, arg_27_1)
 	if IS_WINDOWS and HAS_STEAM then
 		local var_27_0 = StoreDlcSettingsByName[arg_27_1]
 		local var_27_1 = var_27_0 and var_27_0.store_page_url
@@ -572,7 +572,7 @@ function UnlockManager.open_dlc_page(arg_27_0, arg_27_1)
 	end
 end
 
-function UnlockManager.ps4_dlc_product_label(arg_28_0, arg_28_1)
+UnlockManager.ps4_dlc_product_label = function (arg_28_0, arg_28_1)
 	assert(IS_PS4, "Only call this function on a PS4")
 
 	local var_28_0 = arg_28_0._unlocks[arg_28_1]
@@ -582,7 +582,7 @@ function UnlockManager.ps4_dlc_product_label(arg_28_0, arg_28_1)
 	return var_28_0:product_label()
 end
 
-function UnlockManager.debug_add_console_dlc_reward(arg_29_0, arg_29_1)
+UnlockManager.debug_add_console_dlc_reward = function (arg_29_0, arg_29_1)
 	local var_29_0
 	local var_29_1
 
@@ -620,7 +620,7 @@ function UnlockManager.debug_add_console_dlc_reward(arg_29_0, arg_29_1)
 	arg_29_0._state = "claiming_reward"
 end
 
-function UnlockManager.debug_remove_console_dlc_reward(arg_31_0, arg_31_1)
+UnlockManager.debug_remove_console_dlc_reward = function (arg_31_0, arg_31_1)
 	local var_31_0
 	local var_31_1
 
@@ -657,7 +657,7 @@ function UnlockManager.debug_remove_console_dlc_reward(arg_31_0, arg_31_1)
 	arg_31_0._state = "removing_reward"
 end
 
-function UnlockManager._update_backend_unlocks(arg_33_0, arg_33_1)
+UnlockManager._update_backend_unlocks = function (arg_33_0, arg_33_1)
 	if arg_33_0._state == "handle_reminder_popup" then
 		if not arg_33_0._handled_reminders_popups then
 			local var_33_0 = SaveData.new_dlcs_unlocks or {}
@@ -817,7 +817,7 @@ function UnlockManager._update_backend_unlocks(arg_33_0, arg_33_1)
 	end
 end
 
-function UnlockManager._handle_unseen_rewards(arg_34_0)
+UnlockManager._handle_unseen_rewards = function (arg_34_0)
 	local var_34_0 = Managers.backend:get_interface("items")
 	local var_34_1 = var_34_0:get_unseen_item_rewards()
 
@@ -910,7 +910,7 @@ function UnlockManager._handle_unseen_rewards(arg_34_0)
 	end
 end
 
-function UnlockManager.set_excluded_dlcs(arg_35_0, arg_35_1)
+UnlockManager.set_excluded_dlcs = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._excluded_dlcs
 
 	table.clear(var_35_0)
@@ -924,7 +924,7 @@ function UnlockManager.set_excluded_dlcs(arg_35_0, arg_35_1)
 	end
 end
 
-function UnlockManager._has_new_dlc(arg_36_0)
+UnlockManager._has_new_dlc = function (arg_36_0)
 	if SaveData.new_dlcs_unlocks then
 		for iter_36_0, iter_36_1 in pairs(SaveData.new_dlcs_unlocks) do
 			if iter_36_1 == true then
@@ -938,6 +938,6 @@ function UnlockManager._has_new_dlc(arg_36_0)
 	return false
 end
 
-function UnlockManager.is_waiting_for_gift_popup_ui(arg_37_0)
+UnlockManager.is_waiting_for_gift_popup_ui = function (arg_37_0)
 	return arg_37_0._state == "wait_for_rewards"
 end

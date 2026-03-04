@@ -3,7 +3,7 @@
 StateTitleScreenLoadSave = class(StateTitleScreenLoadSave)
 StateTitleScreenLoadSave.NAME = "StateTitleScreenLoadSave"
 
-function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
+StateTitleScreenLoadSave.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateTitleScreenLoadSave")
 
 	arg_1_0._params = arg_1_1
@@ -13,8 +13,8 @@ function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._state = "get_user_profile"
 	arg_1_0._network_event_meta_table = {}
 
-	function arg_1_0._network_event_meta_table.__index(arg_2_0, arg_2_1)
-		return function()
+	arg_1_0._network_event_meta_table.__index = function (arg_2_0, arg_2_1)
+		return function ()
 			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", arg_2_1)
 		end
 	end
@@ -28,11 +28,11 @@ function StateTitleScreenLoadSave.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_setup_input()
 end
 
-function StateTitleScreenLoadSave._setup_input(arg_4_0)
+StateTitleScreenLoadSave._setup_input = function (arg_4_0)
 	arg_4_0.input_manager = Managers.input
 end
 
-function StateTitleScreenLoadSave.update(arg_5_0, arg_5_1, arg_5_2)
+StateTitleScreenLoadSave.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0._title_start_ui
 
 	var_5_0:update(arg_5_1, arg_5_2)
@@ -71,13 +71,13 @@ function StateTitleScreenLoadSave.update(arg_5_0, arg_5_1, arg_5_2)
 	return arg_5_0:_next_state()
 end
 
-function StateTitleScreenLoadSave._update_network(arg_6_0, arg_6_1, arg_6_2)
+StateTitleScreenLoadSave._update_network = function (arg_6_0, arg_6_1, arg_6_2)
 	if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() then
 		Network.update(arg_6_1, setmetatable({}, arg_6_0._network_event_meta_table))
 	end
 end
 
-function StateTitleScreenLoadSave._check_guest(arg_7_0)
+StateTitleScreenLoadSave._check_guest = function (arg_7_0)
 	if Managers.account:is_guest() then
 		arg_7_0._popup_id = Managers.popup:queue_popup(Localize("popup_is_guest"), Localize("popup_is_guest_header"), "verified_guest", Localize("menu_ok"))
 		arg_7_0._state = "check_popup"
@@ -86,7 +86,7 @@ function StateTitleScreenLoadSave._check_guest(arg_7_0)
 	end
 end
 
-function StateTitleScreenLoadSave._get_user_profile(arg_8_0)
+StateTitleScreenLoadSave._get_user_profile = function (arg_8_0)
 	arg_8_0._state = "waiting_for_profile"
 
 	local var_8_0 = Managers.account:user_id()
@@ -97,7 +97,7 @@ function StateTitleScreenLoadSave._get_user_profile(arg_8_0)
 	}, callback(arg_8_0, "cb_profile_acquired"))
 end
 
-function StateTitleScreenLoadSave.cb_profile_acquired(arg_9_0, arg_9_1)
+StateTitleScreenLoadSave.cb_profile_acquired = function (arg_9_0, arg_9_1)
 	if arg_9_1.error then
 		arg_9_0._popup_id = Managers.popup:queue_popup(Localize("popup_xboxlive_profile_acquire_error"), Localize("popup_xboxlive_profile_acquire_error_header"), "profile_error", Localize("menu_ok"))
 		arg_9_0._state = "check_popup"
@@ -108,20 +108,20 @@ function StateTitleScreenLoadSave.cb_profile_acquired(arg_9_0, arg_9_1)
 	end
 end
 
-function StateTitleScreenLoadSave._enumerate_dlc(arg_10_0)
+StateTitleScreenLoadSave._enumerate_dlc = function (arg_10_0)
 	XboxDLC.initialize()
 	XboxDLC.enumerate_dlc()
 
 	arg_10_0._state = "acquire_storage"
 end
 
-function StateTitleScreenLoadSave._get_storage_space(arg_11_0)
+StateTitleScreenLoadSave._get_storage_space = function (arg_11_0)
 	arg_11_0._state = "waiting_for_storage"
 
 	Managers.account:get_storage_space(callback(arg_11_0, "cb_storage_acquired"))
 end
 
-function StateTitleScreenLoadSave.cb_storage_acquired(arg_12_0, arg_12_1)
+StateTitleScreenLoadSave.cb_storage_acquired = function (arg_12_0, arg_12_1)
 	if arg_12_1.error then
 		arg_12_0._popup_id = Managers.popup:queue_popup(Localize("popup_storage_could_not_be_acquired"), Localize("popup_storage_could_not_be_acquired_header"), "storage_error", Localize("menu_ok"))
 		arg_12_0._state = "check_popup"
@@ -130,13 +130,13 @@ function StateTitleScreenLoadSave.cb_storage_acquired(arg_12_0, arg_12_1)
 	end
 end
 
-function StateTitleScreenLoadSave._query_storage_spaces(arg_13_0)
+StateTitleScreenLoadSave._query_storage_spaces = function (arg_13_0)
 	arg_13_0._state = "waiting_for_query"
 
 	Managers.save:query_storage_spaces(callback(arg_13_0, "cb_query_done"))
 end
 
-function StateTitleScreenLoadSave.cb_query_done(arg_14_0, arg_14_1)
+StateTitleScreenLoadSave.cb_query_done = function (arg_14_0, arg_14_1)
 	print("######################## QUERY ########################")
 
 	if arg_14_1.error then
@@ -158,7 +158,7 @@ function StateTitleScreenLoadSave.cb_query_done(arg_14_0, arg_14_1)
 	end
 end
 
-function StateTitleScreenLoadSave._save_data_contains(arg_15_0, arg_15_1, arg_15_2)
+StateTitleScreenLoadSave._save_data_contains = function (arg_15_0, arg_15_1, arg_15_2)
 	for iter_15_0, iter_15_1 in ipairs(arg_15_1) do
 		if iter_15_1.name == arg_15_2 and iter_15_1.total_size > 0 then
 			return true
@@ -166,13 +166,13 @@ function StateTitleScreenLoadSave._save_data_contains(arg_15_0, arg_15_1, arg_15
 	end
 end
 
-function StateTitleScreenLoadSave._load_save(arg_16_0)
+StateTitleScreenLoadSave._load_save = function (arg_16_0)
 	arg_16_0._state = "waiting_for_load"
 
 	Managers.save:auto_load(SaveFileName, callback(arg_16_0, "cb_load_done"))
 end
 
-function StateTitleScreenLoadSave.cb_load_done(arg_17_0, arg_17_1)
+StateTitleScreenLoadSave.cb_load_done = function (arg_17_0, arg_17_1)
 	print("######################## DATA LOADED ########################")
 
 	if arg_17_1.error then
@@ -197,7 +197,7 @@ function StateTitleScreenLoadSave.cb_load_done(arg_17_0, arg_17_1)
 	end
 end
 
-function StateTitleScreenLoadSave._check_popup(arg_18_0)
+StateTitleScreenLoadSave._check_popup = function (arg_18_0)
 	local var_18_0 = Managers.popup:query_result(arg_18_0._popup_id)
 
 	if var_18_0 == "retry_load" then
@@ -238,20 +238,20 @@ function StateTitleScreenLoadSave._check_popup(arg_18_0)
 	end
 end
 
-function StateTitleScreenLoadSave._create_save(arg_19_0)
+StateTitleScreenLoadSave._create_save = function (arg_19_0)
 	SaveData = table.clone(DefaultSaveData)
 
 	arg_19_0:_do_save()
 end
 
-function StateTitleScreenLoadSave._do_save(arg_20_0)
+StateTitleScreenLoadSave._do_save = function (arg_20_0)
 	ensure_user_id_in_save_data(SaveData)
 	Managers.save:auto_save(SaveFileName, SaveData, callback(arg_20_0, "cb_save_done"))
 
 	arg_20_0._state = "waiting_for_save"
 end
 
-function StateTitleScreenLoadSave.cb_save_done(arg_21_0, arg_21_1)
+StateTitleScreenLoadSave.cb_save_done = function (arg_21_0, arg_21_1)
 	print("######################## DATA SAVED ########################")
 
 	if arg_21_1.error then
@@ -272,13 +272,13 @@ function StateTitleScreenLoadSave.cb_save_done(arg_21_0, arg_21_1)
 	end
 end
 
-function StateTitleScreenLoadSave._delete_save(arg_22_0)
+StateTitleScreenLoadSave._delete_save = function (arg_22_0)
 	arg_22_0._state = "waiting_for_delete"
 
 	Managers.save:delete_save(SaveFileName, callback(arg_22_0, "cb_delete_done"))
 end
 
-function StateTitleScreenLoadSave.cb_delete_done(arg_23_0, arg_23_1)
+StateTitleScreenLoadSave.cb_delete_done = function (arg_23_0, arg_23_1)
 	print("######################## SAVE DELETED ########################")
 
 	if arg_23_1.error then
@@ -289,7 +289,7 @@ function StateTitleScreenLoadSave.cb_delete_done(arg_23_0, arg_23_1)
 	end
 end
 
-function StateTitleScreenLoadSave._close_menu(arg_24_0)
+StateTitleScreenLoadSave._close_menu = function (arg_24_0)
 	arg_24_0.parent:show_menu(false)
 	arg_24_0._title_start_ui:set_start_pressed(false)
 
@@ -300,7 +300,7 @@ function StateTitleScreenLoadSave._close_menu(arg_24_0)
 	Managers.transition:hide_loading_icon()
 end
 
-function StateTitleScreenLoadSave._next_state(arg_25_0)
+StateTitleScreenLoadSave._next_state = function (arg_25_0)
 	if not Managers.popup:has_popup() and not arg_25_0._popup_id then
 		if script_data.honduras_demo and not arg_25_0._title_start_ui:is_ready() then
 			return
@@ -310,7 +310,7 @@ function StateTitleScreenLoadSave._next_state(arg_25_0)
 	end
 end
 
-function StateTitleScreenLoadSave.on_exit(arg_26_0)
+StateTitleScreenLoadSave.on_exit = function (arg_26_0)
 	arg_26_0._title_start_ui:set_information_text("")
 
 	arg_26_0._popup_id = nil

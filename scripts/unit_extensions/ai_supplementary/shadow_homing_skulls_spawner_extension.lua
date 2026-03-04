@@ -24,7 +24,7 @@ local function var_0_8(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	local var_1_4 = POSITION_LOOKUP[arg_1_0]
 	local var_1_5 = {
-		prepare_func = function(arg_2_0, arg_2_1)
+		prepare_func = function (arg_2_0, arg_2_1)
 			local var_2_0 = false
 
 			arg_2_0.modify_extension_init_data(arg_2_0, var_2_0, arg_2_1)
@@ -76,7 +76,7 @@ local var_0_12 = {
 	SPAWNING_SKULL = "SPAWNING_SKULL"
 }
 
-function ShadowHomingSkullsSpawnerExtension.init(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+ShadowHomingSkullsSpawnerExtension.init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.world
 
 	arg_6_0.world = var_6_0
@@ -88,15 +88,15 @@ function ShadowHomingSkullsSpawnerExtension.init(arg_6_0, arg_6_1, arg_6_2, arg_
 	arg_6_0._state = var_0_12.INITIAL
 end
 
-function ShadowHomingSkullsSpawnerExtension.destroy(arg_7_0)
+ShadowHomingSkullsSpawnerExtension.destroy = function (arg_7_0)
 	return
 end
 
-function ShadowHomingSkullsSpawnerExtension.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
+ShadowHomingSkullsSpawnerExtension.on_remove_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-function ShadowHomingSkullsSpawnerExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ShadowHomingSkullsSpawnerExtension.update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	if arg_9_0._done then
 		return
 	end

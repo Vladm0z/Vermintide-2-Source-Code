@@ -17,7 +17,7 @@ local var_0_1 = {
 	"ProjectileLinearSphereSweepImpactUnitExtension"
 }
 
-function ProjectileImpactSystem.init(arg_1_0, arg_1_1, arg_1_2)
+ProjectileImpactSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ProjectileImpactSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -29,7 +29,7 @@ function ProjectileImpactSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.network_transmit = Managers.state.network.network_transmit
 end
 
-function ProjectileImpactSystem.destroy(arg_2_0)
+ProjectileImpactSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
 	arg_2_0.network_event_delegate = nil

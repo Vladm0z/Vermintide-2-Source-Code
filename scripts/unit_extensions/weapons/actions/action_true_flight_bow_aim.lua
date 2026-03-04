@@ -20,7 +20,7 @@ local var_0_11 = 2
 local var_0_12 = 3
 local var_0_13 = 4
 
-function ActionTrueFlightBowAim.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionTrueFlightBowAim.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionTrueFlightBowAim.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_0.weapon_unit, "spread_system") then
@@ -32,7 +32,7 @@ function ActionTrueFlightBowAim.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 	arg_1_0._weapon_extension = ScriptUnit.extension(arg_1_0.weapon_unit, "weapon_system")
 end
 
-function ActionTrueFlightBowAim.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ActionTrueFlightBowAim.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	ActionTrueFlightBowAim.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 	arg_2_0._marked_target = {}
@@ -82,7 +82,7 @@ function ActionTrueFlightBowAim.client_owner_start_action(arg_2_0, arg_2_1, arg_
 	end
 end
 
-function ActionTrueFlightBowAim._start_charge_sound(arg_3_0)
+ActionTrueFlightBowAim._start_charge_sound = function (arg_3_0)
 	local var_3_0 = arg_3_0.current_action
 	local var_3_1 = arg_3_0.owner_unit
 	local var_3_2 = arg_3_0.owner_player
@@ -100,7 +100,7 @@ function ActionTrueFlightBowAim._start_charge_sound(arg_3_0)
 	ActionUtils.play_husk_sound_event(var_3_5, var_3_0.charge_sound_husk_name, var_3_1, var_3_3)
 end
 
-function ActionTrueFlightBowAim._stop_charge_sound(arg_4_0)
+ActionTrueFlightBowAim._stop_charge_sound = function (arg_4_0)
 	local var_4_0 = arg_4_0.current_action
 	local var_4_1 = arg_4_0.owner_unit
 	local var_4_2 = arg_4_0.owner_player
@@ -126,7 +126,7 @@ end
 
 local var_0_15 = {}
 
-function ActionTrueFlightBowAim.client_owner_post_update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ActionTrueFlightBowAim.client_owner_post_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_0.current_action
 	local var_6_1 = arg_6_0.owner_unit
 	local var_6_2 = arg_6_0.time_to_shoot
@@ -345,7 +345,7 @@ function ActionTrueFlightBowAim.client_owner_post_update(arg_6_0, arg_6_1, arg_6
 	arg_6_0.aim_sticky_timer = arg_6_0.aim_sticky_timer + arg_6_1
 end
 
-function ActionTrueFlightBowAim._get_visible_targets(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ActionTrueFlightBowAim._get_visible_targets = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_0.first_person_extension
 	local var_7_1 = 50
 	local var_7_2 = math.pi * 0.2
@@ -391,7 +391,7 @@ function ActionTrueFlightBowAim._get_visible_targets(arg_7_0, arg_7_1, arg_7_2, 
 	return var_7_7
 end
 
-function ActionTrueFlightBowAim.finish(arg_8_0, arg_8_1, arg_8_2)
+ActionTrueFlightBowAim.finish = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.current_action
 	local var_8_1 = arg_8_0.owner_unit
 	local var_8_2 = var_8_0.unzoom_condition_function
@@ -434,7 +434,7 @@ function ActionTrueFlightBowAim.finish(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_5
 end
 
-function ActionTrueFlightBowAim._mark_target(arg_9_0, arg_9_1)
+ActionTrueFlightBowAim._mark_target = function (arg_9_0, arg_9_1)
 	if arg_9_0.is_bot then
 		return
 	end

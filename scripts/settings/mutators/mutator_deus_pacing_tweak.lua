@@ -227,7 +227,7 @@ local function var_0_5(arg_1_0, arg_1_1)
 end
 
 local var_0_6 = {
-	apply_travel_dist_to_sequence_with_peaks_and_events = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	apply_travel_dist_to_sequence_with_peaks_and_events = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		local var_2_0 = table.clone(arg_2_0)
 		local var_2_1 = arg_2_1 / (#arg_2_0 + 1)
 		local var_2_2 = 0
@@ -334,7 +334,7 @@ local var_0_6 = {
 
 		return var_2_0, var_2_8
 	end,
-	tweak_zones_with_sequence = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	tweak_zones_with_sequence = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 		local var_4_0 = 1
 
 		for iter_4_0, iter_4_1 in ipairs(arg_4_5) do
@@ -378,7 +378,7 @@ local var_0_6 = {
 
 return {
 	hide_from_player_ui = true,
-	tweak_zones = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	tweak_zones = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 		local var_5_0 = Managers.mechanism:game_mechanism()
 		local var_5_1 = var_5_0.get_deus_run_controller and var_5_0:get_deus_run_controller()
 
@@ -456,7 +456,7 @@ return {
 
 		var_5_10:set_peaks(var_5_24)
 	end,
-	server_start_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_start_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not arg_6_1.event then
 			return
 		end
@@ -495,7 +495,7 @@ return {
 			var_6_0.enemy_recycler:add_main_path_terror_event(var_6_11[1], var_6_17, var_0_1, var_6_12, var_6_18)
 		end
 	end,
-	server_update_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	server_update_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		if not arg_7_1.peak_delayer_data then
 			return
 		end

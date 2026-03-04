@@ -15,7 +15,7 @@ var_0_1.position_offset = {
 var_0_1.check_line_of_sight = true
 var_0_1.screen_clamp = false
 
-function var_0_1.create_widget_definition(arg_1_0)
+var_0_1.create_widget_definition = function (arg_1_0)
 	return {
 		scenegraph_id = arg_1_0,
 		offset = {
@@ -32,7 +32,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 				{
 					style_id = "progress_foreground",
 					pass_type = "rect",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.texture_size[1] = arg_2_0.progress * arg_2_1.max_width
 					end
 				},
@@ -40,7 +40,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.text
 					end
 				},
@@ -48,7 +48,7 @@ function var_0_1.create_widget_definition(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.text
 					end
 				}
@@ -140,6 +140,6 @@ function var_0_1.create_widget_definition(arg_1_0)
 	}
 end
 
-function var_0_1.on_enter(arg_5_0)
+var_0_1.on_enter = function (arg_5_0)
 	arg_5_0.content.progress = 1
 end

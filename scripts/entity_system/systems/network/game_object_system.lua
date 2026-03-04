@@ -6,7 +6,7 @@ local var_0_0 = {
 
 GameObjectSystem = class(GameObjectSystem, ExtensionSystemBase)
 
-function GameObjectSystem.init(arg_1_0, arg_1_1, arg_1_2)
+GameObjectSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_1.entity_manager:register_system(arg_1_0, arg_1_2, var_0_0)
 
 	arg_1_0.is_server = arg_1_1.is_server
@@ -18,13 +18,13 @@ function GameObjectSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.units_to_sync = {}
 end
 
-function GameObjectSystem.destroy(arg_2_0)
+GameObjectSystem.destroy = function (arg_2_0)
 	return
 end
 
 local var_0_1 = {}
 
-function GameObjectSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+GameObjectSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = {}
 
 	if arg_3_3 == "GameObjectExtension" then
@@ -59,7 +59,7 @@ function GameObjectSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	return var_3_0
 end
 
-function GameObjectSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+GameObjectSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_3 == "GameObjectExtension" then
 		local var_4_0 = arg_4_0.unit_extension_data[arg_4_2]
 
@@ -86,7 +86,7 @@ function GameObjectSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function GameObjectSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+GameObjectSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.unit_extension_data[arg_5_1]
 
 	if not var_5_0.ignored then
@@ -111,7 +111,7 @@ function GameObjectSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
 end
 
-function GameObjectSystem.game_object_created(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+GameObjectSystem.game_object_created = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Managers.state.network:game()
 	local var_6_1 = GameSession.game_object_field(var_6_0, arg_6_1, "sync_name")
 	local var_6_2 = NetworkLookup.sync_names[var_6_1]
@@ -132,10 +132,10 @@ function GameObjectSystem.game_object_created(arg_6_0, arg_6_1, arg_6_2, arg_6_3
 	fassert(not var_6_5.ignored, "Client got game_object_created for unit %s with sync_name %s that should be ignored...", var_6_3, var_6_2)
 end
 
-function GameObjectSystem.update(arg_7_0, arg_7_1, arg_7_2)
+GameObjectSystem.update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function GameObjectSystem.hot_join_sync(arg_8_0, arg_8_1)
+GameObjectSystem.hot_join_sync = function (arg_8_0, arg_8_1)
 	return
 end

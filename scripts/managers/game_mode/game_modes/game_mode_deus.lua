@@ -22,7 +22,7 @@ end
 
 GameModeDeus = class(GameModeDeus, GameModeBase)
 
-function GameModeDeus.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+GameModeDeus.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
 	GameModeDeus.super.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	fassert(arg_2_8, "game mode settings can not be nil")
 	fassert(arg_2_8.deus_run_controller, "game mode settings must provide a deus run controller")
@@ -52,7 +52,7 @@ function GameModeDeus.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5,
 	arg_2_0._local_player_spawned = false
 end
 
-function GameModeDeus.on_round_end(arg_3_0)
+GameModeDeus.on_round_end = function (arg_3_0)
 	local var_3_0 = Managers.state.entity:system("volume_system")
 	local var_3_1 = LevelHelper:current_level(arg_3_0._world)
 	local var_3_2 = Level.has_volume(var_3_1, var_0_2)
@@ -62,7 +62,7 @@ function GameModeDeus.on_round_end(arg_3_0)
 	end
 end
 
-function GameModeDeus.destroy(arg_4_0)
+GameModeDeus.destroy = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 then
@@ -71,39 +71,39 @@ function GameModeDeus.destroy(arg_4_0)
 	end
 end
 
-function GameModeDeus.cleanup_game_mode_units(arg_5_0)
+GameModeDeus.cleanup_game_mode_units = function (arg_5_0)
 	local var_5_0 = false
 
 	arg_5_0:_clear_bots(var_5_0)
 end
 
-function GameModeDeus.register_rpcs(arg_6_0, arg_6_1, arg_6_2)
+GameModeDeus.register_rpcs = function (arg_6_0, arg_6_1, arg_6_2)
 	GameModeDeus.super.register_rpcs(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._deus_spawning:register_rpcs(arg_6_1, arg_6_2)
 end
 
-function GameModeDeus.unregister_rpcs(arg_7_0)
+GameModeDeus.unregister_rpcs = function (arg_7_0)
 	arg_7_0._deus_spawning:unregister_rpcs()
 	GameModeDeus.super.unregister_rpcs(arg_7_0)
 end
 
-function GameModeDeus.event_local_player_spawned(arg_8_0, arg_8_1)
+GameModeDeus.event_local_player_spawned = function (arg_8_0, arg_8_1)
 	arg_8_0._local_player_spawned = true
 	arg_8_0._is_initial_spawn = arg_8_1
 end
 
-function GameModeDeus.update(arg_9_0, arg_9_1, arg_9_2)
+GameModeDeus.update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._deus_spawning:update(arg_9_1, arg_9_2)
 end
 
-function GameModeDeus.server_update(arg_10_0, arg_10_1, arg_10_2)
+GameModeDeus.server_update = function (arg_10_0, arg_10_1, arg_10_2)
 	GameModeDeus.super.server_update(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_handle_bots(arg_10_1, arg_10_2)
 	arg_10_0._deus_spawning:server_update(arg_10_1, arg_10_2)
 	arg_10_0:_update_morris_music_intensity()
 end
 
-function GameModeDeus.evaluate_end_conditions(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+GameModeDeus.evaluate_end_conditions = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if script_data.disable_gamemode_end then
 		return false
 	end
@@ -175,7 +175,7 @@ function GameModeDeus.evaluate_end_conditions(arg_11_0, arg_11_1, arg_11_2, arg_
 	return false
 end
 
-function GameModeDeus.gm_event_end_conditions_met(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+GameModeDeus.gm_event_end_conditions_met = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_0._deus_run_controller
 	local var_12_1 = Managers.player
 
@@ -198,25 +198,25 @@ function GameModeDeus.gm_event_end_conditions_met(arg_12_0, arg_12_1, arg_12_2, 
 	end
 end
 
-function GameModeDeus.player_entered_game_session(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+GameModeDeus.player_entered_game_session = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	GameModeDeus.super.player_entered_game_session(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	arg_13_0._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_13_1, arg_13_2)
 	arg_13_0._deus_spawning:add_delayed_client(arg_13_1, arg_13_2)
 	arg_13_0._deus_run_controller:restore_persisted_score(arg_13_0._statistics_db, arg_13_1, arg_13_2)
 end
 
-function GameModeDeus.player_left_game_session(arg_14_0, arg_14_1, arg_14_2)
+GameModeDeus.player_left_game_session = function (arg_14_0, arg_14_1, arg_14_2)
 	GameModeDeus.super.player_left_game_session(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._deus_spawning:remove_delayed_client(arg_14_1, arg_14_2)
 end
 
-function GameModeDeus.event_statistics_database_unregister_player(arg_15_0, arg_15_1)
+GameModeDeus.event_statistics_database_unregister_player = function (arg_15_0, arg_15_1)
 	if arg_15_0._is_server then
 		arg_15_0._deus_run_controller:save_persisted_score(arg_15_0._statistics_db, arg_15_1)
 	end
 end
 
-function GameModeDeus.remove_bot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+GameModeDeus.remove_bot = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	arg_16_4 = arg_16_4 or false
 
 	if #arg_16_0._bot_players > 0 then
@@ -233,7 +233,7 @@ function GameModeDeus.remove_bot(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_
 	end
 end
 
-function GameModeDeus.get_end_screen_config(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+GameModeDeus.get_end_screen_config = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if Managers.mechanism:is_final_round() or arg_17_2 then
 		local var_17_0 = arg_17_0._statistics_db
 		local var_17_1 = arg_17_0._deus_run_controller:get_journey_name()
@@ -273,13 +273,13 @@ function GameModeDeus.get_end_screen_config(arg_17_0, arg_17_1, arg_17_2, arg_17
 	end
 end
 
-function GameModeDeus.ended(arg_18_0, arg_18_1)
+GameModeDeus.ended = function (arg_18_0, arg_18_1)
 	if not arg_18_0._network_server:are_all_peers_ingame() then
 		arg_18_0._network_server:disconnect_joining_peers()
 	end
 end
 
-function GameModeDeus.local_player_ready_to_start(arg_19_0, arg_19_1)
+GameModeDeus.local_player_ready_to_start = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.peer_id
 	local var_19_1 = arg_19_1:local_player_id()
 	local var_19_2, var_19_3 = arg_19_0._deus_run_controller:get_player_profile(var_19_0, var_0_0)
@@ -297,7 +297,7 @@ function GameModeDeus.local_player_ready_to_start(arg_19_0, arg_19_1)
 	return false
 end
 
-function GameModeDeus.local_player_game_starts(arg_20_0, arg_20_1, arg_20_2)
+GameModeDeus.local_player_game_starts = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._deus_run_controller
 	local var_20_1 = arg_20_0._world
 	local var_20_2 = LevelHelper:current_level(var_20_1)
@@ -314,7 +314,7 @@ function GameModeDeus.local_player_game_starts(arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0._is_server and var_20_5 and var_20_4 == DEUS_THEME_TYPES.BELAKOR then
 		Managers.state.entity:system("volume_system"):register_volume(var_0_2, "trigger_volume", {
 			sub_type = "players_inside",
-			on_triggered = function()
+			on_triggered = function ()
 				if arg_20_0._enter_vo_has_triggered then
 					return
 				end
@@ -364,64 +364,64 @@ function GameModeDeus.local_player_game_starts(arg_20_0, arg_20_1, arg_20_2)
 	Managers.state.event:trigger("local_player_game_starts")
 end
 
-function GameModeDeus.disable_player_spawning(arg_22_0)
+GameModeDeus.disable_player_spawning = function (arg_22_0)
 	arg_22_0._deus_spawning:set_spawning_disabled(true)
 end
 
-function GameModeDeus.enable_player_spawning(arg_23_0, arg_23_1, arg_23_2)
+GameModeDeus.enable_player_spawning = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0._deus_spawning:set_spawning_disabled(false)
 	arg_23_0._deus_spawning:force_update_spawn_positions(arg_23_1, arg_23_2)
 end
 
-function GameModeDeus.teleport_despawned_players(arg_24_0, arg_24_1)
+GameModeDeus.teleport_despawned_players = function (arg_24_0, arg_24_1)
 	arg_24_0._deus_spawning:teleport_despawned_players(arg_24_1)
 end
 
-function GameModeDeus.flow_callback_add_spawn_point(arg_25_0, arg_25_1)
+GameModeDeus.flow_callback_add_spawn_point = function (arg_25_0, arg_25_1)
 	arg_25_0._deus_spawning:add_spawn_point(arg_25_1)
 end
 
-function GameModeDeus.set_override_respawn_group(arg_26_0, arg_26_1, arg_26_2)
+GameModeDeus.set_override_respawn_group = function (arg_26_0, arg_26_1, arg_26_2)
 	arg_26_0._deus_spawning:set_override_respawn_group(arg_26_1, arg_26_2)
 end
 
-function GameModeDeus.set_respawn_group_enabled(arg_27_0, arg_27_1, arg_27_2)
+GameModeDeus.set_respawn_group_enabled = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0._deus_spawning:set_respawn_group_enabled(arg_27_1, arg_27_2)
 end
 
-function GameModeDeus.set_respawn_gate_enabled(arg_28_0, arg_28_1, arg_28_2)
+GameModeDeus.set_respawn_gate_enabled = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0._deus_spawning:set_respawn_gate_enabled(arg_28_1, arg_28_2)
 end
 
-function GameModeDeus.respawn_unit_spawned(arg_29_0, arg_29_1)
+GameModeDeus.respawn_unit_spawned = function (arg_29_0, arg_29_1)
 	arg_29_0._deus_spawning:respawn_unit_spawned(arg_29_1)
 end
 
-function GameModeDeus.get_respawn_handler(arg_30_0)
+GameModeDeus.get_respawn_handler = function (arg_30_0)
 	return arg_30_0._deus_spawning:get_respawn_handler()
 end
 
-function GameModeDeus.respawn_gate_unit_spawned(arg_31_0, arg_31_1)
+GameModeDeus.respawn_gate_unit_spawned = function (arg_31_0, arg_31_1)
 	arg_31_0._deus_spawning:respawn_gate_unit_spawned(arg_31_1)
 end
 
-function GameModeDeus.set_respawning_enabled(arg_32_0, arg_32_1)
+GameModeDeus.set_respawning_enabled = function (arg_32_0, arg_32_1)
 	arg_32_0._deus_spawning:set_respawning_enabled(arg_32_1)
 end
 
-function GameModeDeus.remove_respawn_units_due_to_crossroads(arg_33_0, arg_33_1, arg_33_2)
+GameModeDeus.remove_respawn_units_due_to_crossroads = function (arg_33_0, arg_33_1, arg_33_2)
 	arg_33_0._deus_spawning:remove_respawn_units_due_to_crossroads(arg_33_1, arg_33_2)
 end
 
-function GameModeDeus.recalc_respawner_dist_due_to_crossroads(arg_34_0)
+GameModeDeus.recalc_respawner_dist_due_to_crossroads = function (arg_34_0)
 	arg_34_0._deus_spawning:recalc_respawner_dist_due_to_crossroads()
 end
 
-function GameModeDeus.profile_changed(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+GameModeDeus.profile_changed = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	arg_35_0._deus_spawning:profile_changed(arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 end
 
-function GameModeDeus.force_respawn(arg_36_0, arg_36_1, arg_36_2)
+GameModeDeus.force_respawn = function (arg_36_0, arg_36_1, arg_36_2)
 	if Managers.party:get_player_status(arg_36_1, arg_36_2).party_id == 0 then
 		local var_36_0 = 1
 
@@ -431,11 +431,11 @@ function GameModeDeus.force_respawn(arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0._deus_spawning:force_respawn(arg_36_1, arg_36_2)
 end
 
-function GameModeDeus.force_respawn_dead_players(arg_37_0)
+GameModeDeus.force_respawn_dead_players = function (arg_37_0)
 	arg_37_0._deus_spawning:force_respawn_dead_players()
 end
 
-function GameModeDeus._get_first_available_bot_profile(arg_38_0)
+GameModeDeus._get_first_available_bot_profile = function (arg_38_0)
 	local var_38_0 = arg_38_0._available_profiles
 	local var_38_1 = arg_38_0._profile_synchronizer
 	local var_38_2 = {}
@@ -451,7 +451,7 @@ function GameModeDeus._get_first_available_bot_profile(arg_38_0)
 
 	local var_38_5 = arg_38_0._bot_profile_id_to_priority_id
 
-	table.sort(var_38_2, function(arg_39_0, arg_39_1)
+	table.sort(var_38_2, function (arg_39_0, arg_39_1)
 		return (var_38_5[arg_39_0] or math.huge) < (var_38_5[arg_39_1] or math.huge)
 	end)
 
@@ -477,7 +477,7 @@ function GameModeDeus._get_first_available_bot_profile(arg_38_0)
 	return var_38_6, var_38_11
 end
 
-function GameModeDeus._setup_bot_spawn_priority_lookup(arg_40_0)
+GameModeDeus._setup_bot_spawn_priority_lookup = function (arg_40_0)
 	local var_40_0 = PlayerData.bot_spawn_priority
 	local var_40_1 = #var_40_0
 
@@ -500,7 +500,7 @@ function GameModeDeus._setup_bot_spawn_priority_lookup(arg_40_0)
 	end
 end
 
-function GameModeDeus._handle_bots(arg_41_0, arg_41_1, arg_41_2)
+GameModeDeus._handle_bots = function (arg_41_0, arg_41_1, arg_41_2)
 	if not (Managers.state.network ~= nil and not Managers.state.network.game_session_shutdown) then
 		return
 	end
@@ -544,7 +544,7 @@ function GameModeDeus._handle_bots(arg_41_0, arg_41_1, arg_41_2)
 	end
 end
 
-function GameModeDeus._add_bot(arg_42_0)
+GameModeDeus._add_bot = function (arg_42_0)
 	local var_42_0 = arg_42_0._bot_players
 	local var_42_1 = 1
 	local var_42_2 = Managers.party:get_party(var_42_1)
@@ -564,7 +564,7 @@ function GameModeDeus._add_bot(arg_42_0)
 	arg_42_0._deus_run_controller:restore_persisted_score(arg_42_0._statistics_db, var_42_6, var_42_7)
 end
 
-function GameModeDeus._remove_bot(arg_43_0, arg_43_1, arg_43_2)
+GameModeDeus._remove_bot = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_1:network_id()
 	local var_43_1 = arg_43_1:local_player_id()
 
@@ -585,7 +585,7 @@ function GameModeDeus._remove_bot(arg_43_0, arg_43_1, arg_43_2)
 	var_43_2[var_43_4] = nil
 end
 
-function GameModeDeus._remove_bot_by_profile(arg_44_0, arg_44_1, arg_44_2)
+GameModeDeus._remove_bot_by_profile = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._bot_players
 	local var_44_1
 	local var_44_2 = #var_44_0
@@ -612,7 +612,7 @@ function GameModeDeus._remove_bot_by_profile(arg_44_0, arg_44_1, arg_44_2)
 	return var_44_4, var_44_3
 end
 
-function GameModeDeus._clear_bots(arg_45_0, arg_45_1)
+GameModeDeus._clear_bots = function (arg_45_0, arg_45_1)
 	local var_45_0 = arg_45_0._bot_players
 
 	for iter_45_0 = #var_45_0, 1, -1 do
@@ -620,15 +620,15 @@ function GameModeDeus._clear_bots(arg_45_0, arg_45_1)
 	end
 end
 
-function GameModeDeus.get_active_respawn_units(arg_46_0)
+GameModeDeus.get_active_respawn_units = function (arg_46_0)
 	return arg_46_0._deus_spawning:get_active_respawn_units()
 end
 
-function GameModeDeus.get_available_and_active_respawn_units(arg_47_0)
+GameModeDeus.get_available_and_active_respawn_units = function (arg_47_0)
 	return arg_47_0._deus_spawning:get_available_and_active_respawn_units()
 end
 
-function GameModeDeus.get_player_wounds(arg_48_0, arg_48_1)
+GameModeDeus.get_player_wounds = function (arg_48_0, arg_48_1)
 	if Managers.state.game_mode:has_activated_mutator("instant_death") then
 		return 1
 	end
@@ -636,7 +636,7 @@ function GameModeDeus.get_player_wounds(arg_48_0, arg_48_1)
 	return Managers.state.difficulty:get_difficulty_settings().wounds
 end
 
-function GameModeDeus.mutators(arg_49_0)
+GameModeDeus.mutators = function (arg_49_0)
 	local var_49_0 = table.shallow_copy(arg_49_0._mutators)
 
 	arg_49_0:append_live_event_mutators(var_49_0)
@@ -658,7 +658,7 @@ function GameModeDeus.mutators(arg_49_0)
 	return var_49_0
 end
 
-function GameModeDeus.on_picked_up_soft_currency(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+GameModeDeus.on_picked_up_soft_currency = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 	local var_50_0 = arg_50_0._deus_run_controller
 	local var_50_1
 	local var_50_2
@@ -712,11 +712,11 @@ function GameModeDeus.on_picked_up_soft_currency(arg_50_0, arg_50_1, arg_50_2, a
 	end
 end
 
-function GameModeDeus.get_boss_loot_pickup(arg_51_0)
+GameModeDeus.get_boss_loot_pickup = function (arg_51_0)
 	return "deus_soft_currency"
 end
 
-function GameModeDeus._get_coins_amount_and_type(arg_52_0, arg_52_1)
+GameModeDeus._get_coins_amount_and_type = function (arg_52_0, arg_52_1)
 	local var_52_0 = ScriptUnit.has_extension(arg_52_1, "pickup_system")
 
 	if not var_52_0 then
@@ -745,7 +745,7 @@ function GameModeDeus._get_coins_amount_and_type(arg_52_0, arg_52_1)
 	return math.round(var_52_12), var_52_13
 end
 
-function GameModeDeus.players_left_safe_zone(arg_53_0)
+GameModeDeus.players_left_safe_zone = function (arg_53_0)
 	local var_53_0 = Managers.mechanism:game_mechanism()
 
 	if (var_53_0 and var_53_0:get_current_node_theme()) == DEUS_THEME_TYPES.BELAKOR then
@@ -763,7 +763,7 @@ function GameModeDeus.players_left_safe_zone(arg_53_0)
 	end
 end
 
-function GameModeDeus._update_morris_music_intensity(arg_54_0)
+GameModeDeus._update_morris_music_intensity = function (arg_54_0)
 	local var_54_0 = Managers.state.conflict.pacing.total_intensity
 	local var_54_1 = Managers.state.entity:system("audio_system")
 	local var_54_2 = NetworkLookup.global_parameter_names.morris_music_intensity

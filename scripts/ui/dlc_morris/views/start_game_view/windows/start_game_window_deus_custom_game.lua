@@ -12,7 +12,7 @@ StartGameWindowDeusCustomGame.NAME = "StartGameWindowDeusCustomGame"
 
 local var_0_6 = "refresh_press"
 
-function StartGameWindowDeusCustomGame.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusCustomGame.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowDeusCustomGame")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -55,7 +55,7 @@ function StartGameWindowDeusCustomGame.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "_update_additional_curse_frame", "_update_additional_curse_frame")
 end
 
-function StartGameWindowDeusCustomGame._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowDeusCustomGame._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -69,7 +69,7 @@ local function var_0_7(arg_3_0, arg_3_1)
 	return arg_3_0.remaining_time - (arg_3_1 - arg_3_0.time_of_update) < 0
 end
 
-function StartGameWindowDeusCustomGame._create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowDeusCustomGame._create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = UISceneGraph.init_scenegraph(var_0_1)
 
 	arg_4_0._ui_scenegraph = var_4_0
@@ -96,7 +96,7 @@ function StartGameWindowDeusCustomGame._create_ui_elements(arg_4_0, arg_4_1, arg
 	arg_4_0:_refresh_journey_cycle()
 end
 
-function StartGameWindowDeusCustomGame.on_exit(arg_5_0, arg_5_1)
+StartGameWindowDeusCustomGame.on_exit = function (arg_5_0, arg_5_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowDeusCustomGame")
 
 	arg_5_0._ui_animator = nil
@@ -111,15 +111,15 @@ function StartGameWindowDeusCustomGame.on_exit(arg_5_0, arg_5_1)
 	Managers.state.event:unregister("_update_additional_curse_frame", arg_5_0)
 end
 
-function StartGameWindowDeusCustomGame.set_focus(arg_6_0, arg_6_1)
+StartGameWindowDeusCustomGame.set_focus = function (arg_6_0, arg_6_1)
 	arg_6_0._is_focused = arg_6_1
 end
 
-function StartGameWindowDeusCustomGame.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDeusCustomGame.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowDeusCustomGame._can_play(arg_8_0)
+StartGameWindowDeusCustomGame._can_play = function (arg_8_0)
 	local var_8_0 = arg_8_0._parent:get_selected_level_id()
 
 	if not (var_8_0 ~= nil and not arg_8_0._dlc_locked) then
@@ -135,7 +135,7 @@ function StartGameWindowDeusCustomGame._can_play(arg_8_0)
 	return not LevelUnlockUtils.is_chaos_waste_god_disabled(var_8_1)
 end
 
-function StartGameWindowDeusCustomGame._update_can_play(arg_9_0)
+StartGameWindowDeusCustomGame._update_can_play = function (arg_9_0)
 	local var_9_0 = arg_9_0:_can_play()
 
 	arg_9_0._selection_widgets_by_name.play_button.content.button_hotspot.disable_button = not var_9_0
@@ -155,7 +155,7 @@ function StartGameWindowDeusCustomGame._update_can_play(arg_9_0)
 	end
 end
 
-function StartGameWindowDeusCustomGame._gather_unlocked_journeys(arg_10_0)
+StartGameWindowDeusCustomGame._gather_unlocked_journeys = function (arg_10_0)
 	local var_10_0 = {}
 
 	for iter_10_0, iter_10_1 in ipairs(LevelUnlockUtils.unlocked_journeys(arg_10_0._statistics_db, arg_10_0._stats_id)) do
@@ -173,7 +173,7 @@ function StartGameWindowDeusCustomGame._gather_unlocked_journeys(arg_10_0)
 	arg_10_0._unlocked_journeys = var_10_0
 end
 
-function StartGameWindowDeusCustomGame._setup_journey_widgets(arg_11_0)
+StartGameWindowDeusCustomGame._setup_journey_widgets = function (arg_11_0)
 	local var_11_0 = arg_11_0._node_widgets
 	local var_11_1 = arg_11_0._statistics_db
 	local var_11_2 = arg_11_0._stats_id
@@ -221,7 +221,7 @@ function StartGameWindowDeusCustomGame._setup_journey_widgets(arg_11_0)
 	arg_11_0._expedition_widgets = var_11_4
 end
 
-function StartGameWindowDeusCustomGame._set_info_window(arg_12_0, arg_12_1)
+StartGameWindowDeusCustomGame._set_info_window = function (arg_12_0, arg_12_1)
 	local var_12_0 = DifficultySettings[arg_12_1]
 	local var_12_1 = var_12_0.description
 	local var_12_2 = var_12_0.max_chest_power_level
@@ -231,7 +231,7 @@ function StartGameWindowDeusCustomGame._set_info_window(arg_12_0, arg_12_1)
 	var_12_3.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(var_12_2)
 end
 
-function StartGameWindowDeusCustomGame._update_difficulty_option(arg_13_0, arg_13_1)
+StartGameWindowDeusCustomGame._update_difficulty_option = function (arg_13_0, arg_13_1)
 	if arg_13_1 then
 		local var_13_0 = DifficultySettings[arg_13_1]
 		local var_13_1 = arg_13_0._selection_widgets_by_name.difficulty_stepper
@@ -248,7 +248,7 @@ function StartGameWindowDeusCustomGame._update_difficulty_option(arg_13_0, arg_1
 	end
 end
 
-function StartGameWindowDeusCustomGame._option_selected(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+StartGameWindowDeusCustomGame._option_selected = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0._parent
 	local var_14_1 = var_14_0:get_custom_game_settings(arg_14_0._mechanism_name) or var_14_0:get_custom_game_settings("adventure")
 
@@ -279,7 +279,7 @@ function StartGameWindowDeusCustomGame._option_selected(arg_14_0, arg_14_1, arg_
 	end
 end
 
-function StartGameWindowDeusCustomGame._update_modifiers(arg_15_0, arg_15_1)
+StartGameWindowDeusCustomGame._update_modifiers = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._journey_cycle
 
 	if not var_15_0 or var_0_7(var_15_0, arg_15_1) then
@@ -287,7 +287,7 @@ function StartGameWindowDeusCustomGame._update_modifiers(arg_15_0, arg_15_1)
 	end
 end
 
-function StartGameWindowDeusCustomGame._update_modifier_timer(arg_16_0, arg_16_1)
+StartGameWindowDeusCustomGame._update_modifier_timer = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._journey_cycle
 	local var_16_1 = var_16_0.remaining_time - (arg_16_1 - var_16_0.time_of_update)
 
@@ -313,13 +313,13 @@ function StartGameWindowDeusCustomGame._update_modifier_timer(arg_16_0, arg_16_1
 	end
 end
 
-function StartGameWindowDeusCustomGame._refresh_journey_cycle(arg_17_0)
+StartGameWindowDeusCustomGame._refresh_journey_cycle = function (arg_17_0)
 	arg_17_0._journey_cycle = arg_17_0._backend_deus:get_journey_cycle()
 
 	arg_17_0:_update_journey_god_icons()
 end
 
-function StartGameWindowDeusCustomGame._update_additional_curse_frame(arg_18_0, arg_18_1)
+StartGameWindowDeusCustomGame._update_additional_curse_frame = function (arg_18_0, arg_18_1)
 	for iter_18_0, iter_18_1 in ipairs(arg_18_0._expedition_widgets) do
 		local var_18_0 = iter_18_1.content
 
@@ -327,7 +327,7 @@ function StartGameWindowDeusCustomGame._update_additional_curse_frame(arg_18_0, 
 	end
 end
 
-function StartGameWindowDeusCustomGame._update_journey_god_icons(arg_19_0)
+StartGameWindowDeusCustomGame._update_journey_god_icons = function (arg_19_0)
 	local var_19_0 = arg_19_0._journey_cycle
 
 	for iter_19_0, iter_19_1 in ipairs(arg_19_0._expedition_widgets) do
@@ -338,7 +338,7 @@ function StartGameWindowDeusCustomGame._update_journey_god_icons(arg_19_0)
 	end
 end
 
-function StartGameWindowDeusCustomGame.update(arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowDeusCustomGame.update = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Managers.time:time("main")
 
 	arg_20_0:_update_modifiers(var_20_0)
@@ -353,7 +353,7 @@ function StartGameWindowDeusCustomGame.update(arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0:_draw(arg_20_1)
 end
 
-function StartGameWindowDeusCustomGame._verify_selection_index(arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowDeusCustomGame._verify_selection_index = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._input_index
 	local var_21_1 = #var_0_5
 
@@ -377,7 +377,7 @@ function StartGameWindowDeusCustomGame._verify_selection_index(arg_21_0, arg_21_
 	return var_21_0
 end
 
-function StartGameWindowDeusCustomGame._gamepad_selector_input_func(arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowDeusCustomGame._gamepad_selector_input_func = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = Managers.input:is_device_active("mouse")
 
 	arg_22_1 = arg_22_0:_verify_selection_index(arg_22_1, arg_22_2)
@@ -395,7 +395,7 @@ function StartGameWindowDeusCustomGame._gamepad_selector_input_func(arg_22_0, ar
 	arg_22_0._input_index = arg_22_1
 end
 
-function StartGameWindowDeusCustomGame._update_animations(arg_23_0, arg_23_1, arg_23_2)
+StartGameWindowDeusCustomGame._update_animations = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._ui_animator
 
 	var_23_0:update(arg_23_1)
@@ -420,7 +420,7 @@ function StartGameWindowDeusCustomGame._update_animations(arg_23_0, arg_23_1, ar
 	end
 end
 
-function StartGameWindowDeusCustomGame._draw(arg_24_0, arg_24_1)
+StartGameWindowDeusCustomGame._draw = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._ui_top_renderer
 	local var_24_1 = arg_24_0._ui_scenegraph
 	local var_24_2 = arg_24_0._parent:window_input_service()
@@ -456,7 +456,7 @@ function StartGameWindowDeusCustomGame._draw(arg_24_0, arg_24_1)
 	UIRenderer.end_pass(var_24_0)
 end
 
-function StartGameWindowDeusCustomGame._animate_expedition_widget(arg_25_0, arg_25_1, arg_25_2)
+StartGameWindowDeusCustomGame._animate_expedition_widget = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.content.button_hotspot
 	local var_25_1 = var_25_0.is_selected
 	local var_25_2 = var_25_0.selected_progress or 0
@@ -472,7 +472,7 @@ function StartGameWindowDeusCustomGame._animate_expedition_widget(arg_25_0, arg_
 	var_25_0.selected_progress = var_25_2
 end
 
-function StartGameWindowDeusCustomGame._handle_input(arg_26_0, arg_26_1, arg_26_2)
+StartGameWindowDeusCustomGame._handle_input = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0._parent
 	local var_26_1 = var_26_0:window_input_service()
 
@@ -595,19 +595,19 @@ function StartGameWindowDeusCustomGame._handle_input(arg_26_0, arg_26_1, arg_26_
 	end
 end
 
-function StartGameWindowDeusCustomGame.handle_expedition_input(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+StartGameWindowDeusCustomGame.handle_expedition_input = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	return
 end
 
-function StartGameWindowDeusCustomGame.handle_difficulty_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+StartGameWindowDeusCustomGame.handle_difficulty_input = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	return
 end
 
-function StartGameWindowDeusCustomGame._play_sound(arg_29_0, arg_29_1)
+StartGameWindowDeusCustomGame._play_sound = function (arg_29_0, arg_29_1)
 	arg_29_0._parent:play_sound(arg_29_1)
 end
 
-function StartGameWindowDeusCustomGame._update_expedition_option(arg_30_0)
+StartGameWindowDeusCustomGame._update_expedition_option = function (arg_30_0)
 	local var_30_0 = arg_30_0._parent:get_selected_level_id()
 
 	if not var_30_0 then
@@ -631,7 +631,7 @@ function StartGameWindowDeusCustomGame._update_expedition_option(arg_30_0)
 	end
 end
 
-function StartGameWindowDeusCustomGame._handle_gamepad_activity(arg_31_0)
+StartGameWindowDeusCustomGame._handle_gamepad_activity = function (arg_31_0)
 	local var_31_0 = arg_31_0.gamepad_active_last_frame == nil
 
 	if not Managers.input:is_device_active("mouse") then
@@ -652,7 +652,7 @@ function StartGameWindowDeusCustomGame._handle_gamepad_activity(arg_31_0)
 	end
 end
 
-function StartGameWindowDeusCustomGame._update_gamemode_info_text(arg_32_0, arg_32_1)
+StartGameWindowDeusCustomGame._update_gamemode_info_text = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._widgets_by_name.custom_gamemode_info_box
 
 	if arg_32_1:get("trigger_cycle_next") and not var_32_0.content.is_showing_info then
@@ -678,7 +678,7 @@ function StartGameWindowDeusCustomGame._update_gamemode_info_text(arg_32_0, arg_
 	end
 end
 
-function StartGameWindowDeusCustomGame._update_difficulty_lock(arg_33_0)
+StartGameWindowDeusCustomGame._update_difficulty_lock = function (arg_33_0)
 	local var_33_0 = arg_33_0._current_difficulty
 	local var_33_1 = arg_33_0._widgets_by_name.difficulty_info
 	local var_33_2 = arg_33_0._widgets_by_name.upsell_button
@@ -735,7 +735,7 @@ function StartGameWindowDeusCustomGame._update_difficulty_lock(arg_33_0)
 	var_33_2.offset[2] = -math.floor(var_33_7) / 2 + 24
 end
 
-function StartGameWindowDeusCustomGame._calculate_difficulty_info_widget_size(arg_34_0, arg_34_1)
+StartGameWindowDeusCustomGame._calculate_difficulty_info_widget_size = function (arg_34_0, arg_34_1)
 	local var_34_0 = 20
 	local var_34_1 = arg_34_1.style.difficulty_description
 	local var_34_2 = arg_34_1.content.difficulty_description
@@ -766,7 +766,7 @@ function StartGameWindowDeusCustomGame._calculate_difficulty_info_widget_size(ar
 	return var_34_6 + var_34_3 + var_34_9 + var_34_12 + 50
 end
 
-function StartGameWindowDeusCustomGame._resize_difficulty_info(arg_35_0, arg_35_1, arg_35_2)
+StartGameWindowDeusCustomGame._resize_difficulty_info = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0._widgets_by_name.difficulty_info
 
 	var_35_0.content.should_resize = true

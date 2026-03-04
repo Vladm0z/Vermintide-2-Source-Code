@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTChargePositionAction = class(BTChargePositionAction, BTNode)
 
-function BTChargePositionAction.init(arg_1_0, ...)
+BTChargePositionAction.init = function (arg_1_0, ...)
 	BTChargePositionAction.super.init(arg_1_0, ...)
 end
 
@@ -20,7 +20,7 @@ local function var_0_1(arg_2_0)
 	end
 end
 
-function BTChargePositionAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTChargePositionAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -70,7 +70,7 @@ function BTChargePositionAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTChargePositionAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTChargePositionAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.attack_token = false
 
 	if HEALTH_ALIVE[arg_4_1] then
@@ -130,7 +130,7 @@ function BTChargePositionAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_4_1, true)
 end
 
-function BTChargePositionAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTChargePositionAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_2.attack_aborted then
 		return "done"
 	end
@@ -167,11 +167,11 @@ function BTChargePositionAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running", var_5_3
 end
 
-function BTChargePositionAction._start_starting(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTChargePositionAction._start_starting = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.charge_state = "starting"
 end
 
-function BTChargePositionAction._start_charging(arg_7_0, arg_7_1, arg_7_2)
+BTChargePositionAction._start_charging = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = Managers.time:time("game")
 	local var_7_2 = var_0_1(var_7_0.charge_animation)
@@ -187,7 +187,7 @@ function BTChargePositionAction._start_charging(arg_7_0, arg_7_1, arg_7_2)
 	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_7_1, "incoming_attack", DialogueSettings.special_proximity_distance_heard, "enemy_tag", arg_7_2.breed.name)
 end
 
-function BTChargePositionAction._start_approaching(arg_8_0, arg_8_1, arg_8_2)
+BTChargePositionAction._start_approaching = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2.action
 
 	arg_8_2.charge_state = "approaching"
@@ -203,7 +203,7 @@ function BTChargePositionAction._start_approaching(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.move_state = "moving"
 end
 
-function BTChargePositionAction._start_impact(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+BTChargePositionAction._start_impact = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	local var_9_0 = arg_9_2.action
 
 	arg_9_2.charge_state = "impact"
@@ -235,7 +235,7 @@ function BTChargePositionAction._start_impact(arg_9_0, arg_9_1, arg_9_2, arg_9_3
 	arg_9_2.charge_position = nil
 end
 
-function BTChargePositionAction._pause_charge(arg_10_0, arg_10_1, arg_10_2)
+BTChargePositionAction._pause_charge = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_2.navigation_extension:set_enabled(false)
 
 	local var_10_0 = var_0_1(arg_10_2.action.cancel_animation)
@@ -247,13 +247,13 @@ function BTChargePositionAction._pause_charge(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_2.locomotion_extension:set_rotation_speed(nil)
 end
 
-function BTChargePositionAction._cancel_charge(arg_11_0, arg_11_1, arg_11_2)
+BTChargePositionAction._cancel_charge = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:_pause_charge(arg_11_1, arg_11_2)
 
 	arg_11_2.charge_position = nil
 end
 
-function BTChargePositionAction._check_unit_and_wall_collision(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTChargePositionAction._check_unit_and_wall_collision = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_2.action
 	local var_12_1 = arg_12_0:_check_overlap(arg_12_1, arg_12_2, var_12_0)
 
@@ -268,7 +268,7 @@ end
 
 local var_0_2 = {}
 
-function BTChargePositionAction._check_overlap(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTChargePositionAction._check_overlap = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if arg_13_2.is_illusion then
 		return false, false
 	end
@@ -332,11 +332,11 @@ function BTChargePositionAction._check_overlap(arg_13_0, arg_13_1, arg_13_2, arg
 	return var_13_3[arg_13_2.target_unit]
 end
 
-function BTChargePositionAction._charged_at_player(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+BTChargePositionAction._charged_at_player = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	return
 end
 
-function BTChargePositionAction._push_player(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTChargePositionAction._push_player = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = POSITION_LOOKUP[arg_15_2] - POSITION_LOOKUP[arg_15_1]
 	local var_15_1 = arg_15_4.dodge_past_push_speed * Vector3.normalize(var_15_0)
 
@@ -344,7 +344,7 @@ function BTChargePositionAction._push_player(arg_15_0, arg_15_1, arg_15_2, arg_1
 	StatusUtils.set_catapulted_network(arg_15_2, true, var_15_1)
 end
 
-function BTChargePositionAction._hit_player(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTChargePositionAction._hit_player = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = ScriptUnit.has_extension(arg_16_3, "status_system")
 	local var_16_1 = DamageUtils.check_block(arg_16_1, arg_16_3, arg_16_4.fatigue_type)
 	local var_16_2 = DamageUtils.check_ranged_block(arg_16_1, arg_16_3, arg_16_4.shield_blocked_fatigue_type or "ogre_shove")
@@ -364,7 +364,7 @@ function BTChargePositionAction._hit_player(arg_16_0, arg_16_1, arg_16_2, arg_16
 	return var_16_1
 end
 
-function BTChargePositionAction._hit_ai(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+BTChargePositionAction._hit_ai = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
 	local var_17_0 = arg_17_3.push_ai
 	local var_17_1 = BLACKBOARDS[arg_17_2]
 	local var_17_2 = var_17_1.breed and var_17_1.breed.name
@@ -413,7 +413,7 @@ function BTChargePositionAction._hit_ai(arg_17_0, arg_17_1, arg_17_2, arg_17_3, 
 	AiUtils.alert_nearby_friends_of_enemy(arg_17_1, arg_17_4.group_blackboard.broadphase, arg_17_2)
 end
 
-function BTChargePositionAction._check_wall_collision(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+BTChargePositionAction._check_wall_collision = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_2.action.wall_collision_check_range
 	local var_18_1 = 1
 	local var_18_2 = 1
@@ -461,7 +461,7 @@ function BTChargePositionAction._check_wall_collision(arg_18_0, arg_18_1, arg_18
 	return not GwNavQueries.raycango(var_18_3, var_18_15, var_18_16, var_18_17)
 end
 
-function BTChargePositionAction._is_at_edge(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTChargePositionAction._is_at_edge = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = World.get_data(arg_19_2.world, "physics_world")
 	local var_19_1 = arg_19_3 + Vector3(0, 0, 1)
 	local var_19_2 = 4
@@ -481,7 +481,7 @@ function BTChargePositionAction._is_at_edge(arg_19_0, arg_19_1, arg_19_2, arg_19
 	end
 end
 
-function BTChargePositionAction._check_smartobjects(arg_20_0, arg_20_1, arg_20_2)
+BTChargePositionAction._check_smartobjects = function (arg_20_0, arg_20_1, arg_20_2)
 	if BTConditions.at_smartobject(arg_20_2) then
 		if BTConditions.at_door_smartobject(arg_20_2) then
 			local var_20_0 = arg_20_2.next_smart_object_data.smart_object_data.unit
@@ -495,14 +495,14 @@ function BTChargePositionAction._check_smartobjects(arg_20_0, arg_20_1, arg_20_2
 	end
 end
 
-function BTChargePositionAction._run_starting(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTChargePositionAction._run_starting = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_2.requested_charge_position:unbox()
 	local var_21_1 = LocomotionUtils.look_at_position_flat(arg_21_1, var_21_0)
 
 	arg_21_2.locomotion_extension:set_wanted_rotation(var_21_1)
 end
 
-function BTChargePositionAction._run_approaching(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+BTChargePositionAction._run_approaching = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = arg_22_2.navigation_extension
 
 	if arg_22_2.no_path_found then
@@ -576,7 +576,7 @@ function BTChargePositionAction._run_approaching(arg_22_0, arg_22_1, arg_22_2, a
 	end
 end
 
-function BTChargePositionAction._run_charging(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+BTChargePositionAction._run_charging = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	if arg_23_2.requested_charge_position ~= arg_23_2.charge_position then
 		arg_23_0:_pause_charge(arg_23_1, arg_23_2)
 
@@ -661,7 +661,7 @@ function BTChargePositionAction._run_charging(arg_23_0, arg_23_1, arg_23_2, arg_
 	end
 end
 
-function BTChargePositionAction._run_impact(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+BTChargePositionAction._run_impact = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_2.hit_target and arg_24_2.action.hit_target_slow_down_speed or arg_24_2.action.slow_down_speed
 
 	arg_24_0:_slow_down(arg_24_1, arg_24_2, var_24_0, arg_24_3, arg_24_4)
@@ -671,7 +671,7 @@ function BTChargePositionAction._run_impact(arg_24_0, arg_24_1, arg_24_2, arg_24
 	end
 end
 
-function BTChargePositionAction._run_cancel(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+BTChargePositionAction._run_cancel = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	local var_25_0 = arg_25_2.action.cancel_slow_down_speed
 
 	arg_25_0:_slow_down(arg_25_1, arg_25_2, var_25_0, arg_25_3, arg_25_4)
@@ -681,7 +681,7 @@ function BTChargePositionAction._run_cancel(arg_25_0, arg_25_1, arg_25_2, arg_25
 	end
 end
 
-function BTChargePositionAction._slow_down(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+BTChargePositionAction._slow_down = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	local var_26_0 = arg_26_2.locomotion_extension
 	local var_26_1 = var_26_0:current_velocity()
 	local var_26_2 = Vector3.zero()
@@ -691,7 +691,7 @@ function BTChargePositionAction._slow_down(arg_26_0, arg_26_1, arg_26_2, arg_26_
 	var_26_0:set_wanted_velocity(var_26_4)
 end
 
-function BTChargePositionAction._update_animation_movement_speed(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+BTChargePositionAction._update_animation_movement_speed = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_2.locomotion_extension:current_velocity()
 	local var_27_1 = Vector3.length(var_27_0)
 	local var_27_2 = Unit.animation_find_variable(arg_27_1, "move_speed")
@@ -699,7 +699,7 @@ function BTChargePositionAction._update_animation_movement_speed(arg_27_0, arg_2
 	Unit.animation_set_variable(arg_27_1, var_27_2, var_27_1)
 end
 
-function BTChargePositionAction._get_turn_slowdown_percentage(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+BTChargePositionAction._get_turn_slowdown_percentage = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_2.action
 	local var_28_1 = Unit.local_rotation(arg_28_1, 0)
 	local var_28_2 = Quaternion.forward(var_28_1)
@@ -715,20 +715,20 @@ function BTChargePositionAction._get_turn_slowdown_percentage(arg_28_0, arg_28_1
 	return 1 - math.min((var_28_4 - var_28_5) / var_28_6, 1) * var_28_0.max_slowdown_percentage
 end
 
-function BTChargePositionAction.anim_cb_charge_start_finished(arg_29_0, arg_29_1, arg_29_2)
+BTChargePositionAction.anim_cb_charge_start_finished = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0:_start_charging(arg_29_1, arg_29_2)
 end
 
-function BTChargePositionAction.anim_cb_charge_charging_finished(arg_30_0, arg_30_1, arg_30_2)
+BTChargePositionAction.anim_cb_charge_charging_finished = function (arg_30_0, arg_30_1, arg_30_2)
 	if arg_30_2.charge_state == "charging" then
 		arg_30_0:_start_impact(arg_30_1, arg_30_2)
 	end
 end
 
-function BTChargePositionAction.anim_cb_disable_charge_collision(arg_31_0, arg_31_1, arg_31_2)
+BTChargePositionAction.anim_cb_disable_charge_collision = function (arg_31_0, arg_31_1, arg_31_2)
 	arg_31_2.anim_cb_disable_charge_collision = true
 end
 
-function BTChargePositionAction.anim_cb_attack_finished(arg_32_0, arg_32_1, arg_32_2)
+BTChargePositionAction.anim_cb_attack_finished = function (arg_32_0, arg_32_1, arg_32_2)
 	arg_32_2.anim_cb_attack_finished = true
 end

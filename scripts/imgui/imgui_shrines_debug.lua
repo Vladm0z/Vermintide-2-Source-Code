@@ -4,11 +4,11 @@ ImguiShrinesDebug = class(ImguiShrinesDebug)
 
 local var_0_0 = true
 
-function ImguiShrinesDebug.init(arg_1_0)
+ImguiShrinesDebug.init = function (arg_1_0)
 	return
 end
 
-function ImguiShrinesDebug.update(arg_2_0)
+ImguiShrinesDebug.update = function (arg_2_0)
 	if var_0_0 then
 		arg_2_0:init()
 
@@ -16,11 +16,11 @@ function ImguiShrinesDebug.update(arg_2_0)
 	end
 end
 
-function ImguiShrinesDebug.is_persistent(arg_3_0)
+ImguiShrinesDebug.is_persistent = function (arg_3_0)
 	return true
 end
 
-function ImguiShrinesDebug.draw(arg_4_0, arg_4_1)
+ImguiShrinesDebug.draw = function (arg_4_0, arg_4_1)
 	if not Managers.state or not Managers.state.game_mode or Managers.state.game_mode:game_mode_key() ~= "deus" then
 		local var_4_0 = Imgui.begin_window("Shrines Debug", "always_auto_resize")
 
@@ -38,7 +38,7 @@ function ImguiShrinesDebug.draw(arg_4_0, arg_4_1)
 	return var_4_1
 end
 
-function ImguiShrinesDebug._shrine_types(arg_5_0)
+ImguiShrinesDebug._shrine_types = function (arg_5_0)
 	local var_5_0 = table.values(DEUS_CHEST_TYPES)
 
 	table.insert(var_5_0, "deus_cursed_chest")
@@ -46,19 +46,19 @@ function ImguiShrinesDebug._shrine_types(arg_5_0)
 	return var_5_0
 end
 
-function ImguiShrinesDebug._cursed_chest_challenges(arg_6_0)
+ImguiShrinesDebug._cursed_chest_challenges = function (arg_6_0)
 	local var_6_0 = {
 		"default"
 	}
 
-	table.append(var_6_0, table.keys_if(GenericTerrorEvents, nil, function(arg_7_0)
+	table.append(var_6_0, table.keys_if(GenericTerrorEvents, nil, function (arg_7_0)
 		return string.sub(arg_7_0, 1, string.len("cursed_chest_challenge")) == "cursed_chest_challenge"
 	end))
 
 	return var_6_0
 end
 
-function ImguiShrinesDebug._update_controls(arg_8_0)
+ImguiShrinesDebug._update_controls = function (arg_8_0)
 	local var_8_0 = arg_8_0:_shrine_types()
 	local var_8_1 = table.index_of(var_8_0, arg_8_0._selected_shrine_type or next(DEUS_CHEST_TYPES))
 
@@ -88,7 +88,7 @@ function ImguiShrinesDebug._update_controls(arg_8_0)
 		local var_8_6 = Managers.state.entity:system("pickup_system")
 
 		if arg_8_0._selected_shrine_type == "deus_cursed_chest" then
-			var_8_6:debug_spawn_pickup("deus_cursed_chest", var_8_5, function(arg_9_0)
+			var_8_6:debug_spawn_pickup("deus_cursed_chest", var_8_5, function (arg_9_0)
 				local var_9_0 = arg_8_0._selected_cursed_challenge == "default" and "cursed_chest_prototype" or arg_8_0._selected_cursed_challenge
 
 				Unit.set_data(arg_9_0, "debug_override_terror_event", var_9_0)

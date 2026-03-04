@@ -86,7 +86,7 @@ local var_0_1 = {
 			game_mode = 1,
 			adventure = 2
 		},
-		can_add_function = function(arg_1_0)
+		can_add_function = function (arg_1_0)
 			return arg_1_0:is_in_mechanism("adventure")
 		end
 	},
@@ -105,7 +105,7 @@ local var_0_1 = {
 			game_mode = 1,
 			mission = 2
 		},
-		can_add_function = function(arg_2_0)
+		can_add_function = function (arg_2_0)
 			return arg_2_0:is_in_mechanism("adventure")
 		end
 	},
@@ -124,7 +124,7 @@ local var_0_1 = {
 			game_mode = 1,
 			mutator_list = 3
 		},
-		can_add_function = function(arg_3_0)
+		can_add_function = function (arg_3_0)
 			return arg_3_0:is_in_mechanism("adventure")
 		end
 	},
@@ -143,7 +143,7 @@ local var_0_1 = {
 			game_mode = 1,
 			twitch_game_settings = 3
 		},
-		can_add_function = function(arg_4_0)
+		can_add_function = function (arg_4_0)
 			return arg_4_0:is_in_mechanism("adventure") and arg_4_0:can_use_streaming()
 		end
 	},
@@ -158,7 +158,7 @@ local var_0_1 = {
 		windows = {
 			lobby_browser = 1
 		},
-		can_add_function = function(arg_5_0)
+		can_add_function = function (arg_5_0)
 			return arg_5_0:is_in_mechanism("adventure")
 		end
 	},
@@ -263,7 +263,7 @@ local var_0_4 = {
 }
 local var_0_5 = {}
 
-DLCUtils.map("start_game_window_layout", function(arg_6_0)
+DLCUtils.map("start_game_window_layout", function (arg_6_0)
 	local var_6_0 = arg_6_0.windows
 
 	if var_6_0 then
@@ -319,7 +319,7 @@ DLCUtils.merge("start_game_save_data_table_map", var_0_5)
 
 local var_0_6 = math.huge
 
-table.sort(var_0_1, function(arg_7_0, arg_7_1)
+table.sort(var_0_1, function (arg_7_0, arg_7_1)
 	return (arg_7_0.panel_sorting or var_0_6) < (arg_7_1.panel_sorting or var_0_6)
 end)
 

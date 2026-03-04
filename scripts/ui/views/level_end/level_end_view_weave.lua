@@ -15,7 +15,7 @@ local var_0_7 = script_data.testify and require("scripts/ui/views/level_end/leve
 
 LevelEndViewWeave = class(LevelEndViewWeave, LevelEndViewBase)
 
-function LevelEndViewWeave.init(arg_1_0, arg_1_1)
+LevelEndViewWeave.init = function (arg_1_0, arg_1_1)
 	arg_1_0._team_heroes = {}
 	arg_1_0._team_previewer = nil
 	arg_1_0._peers_with_score = {}
@@ -23,7 +23,7 @@ function LevelEndViewWeave.init(arg_1_0, arg_1_1)
 	LevelEndViewWeave.super.init(arg_1_0, arg_1_1)
 end
 
-function LevelEndViewWeave.start(arg_2_0)
+LevelEndViewWeave.start = function (arg_2_0)
 	LevelEndViewWeave.super.start(arg_2_0)
 
 	arg_2_0._playing_music = nil
@@ -31,13 +31,13 @@ function LevelEndViewWeave.start(arg_2_0)
 	arg_2_0._stop_music_event = arg_2_0.game_won and "Stop_won_music" or "Stop_lost_music"
 end
 
-function LevelEndViewWeave.destroy(arg_3_0)
+LevelEndViewWeave.destroy = function (arg_3_0)
 	LevelEndViewWeave.super.destroy(arg_3_0)
 	arg_3_0:_destroy_team_previewer()
 	Managers.state.event:unregister("trigger_hero_pose", arg_3_0)
 end
 
-function LevelEndViewWeave.setup_pages(arg_4_0, arg_4_1, arg_4_2)
+LevelEndViewWeave.setup_pages = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0
 
 	if arg_4_0._is_untrusted then
@@ -51,26 +51,26 @@ function LevelEndViewWeave.setup_pages(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_0
 end
 
-function LevelEndViewWeave._setup_pages_untrusted(arg_5_0)
+LevelEndViewWeave._setup_pages_untrusted = function (arg_5_0)
 	return {
 		EndViewStateWeave = 1
 	}
 end
 
-function LevelEndViewWeave._setup_pages_victory(arg_6_0, arg_6_1)
+LevelEndViewWeave._setup_pages_victory = function (arg_6_0, arg_6_1)
 	return {
 		EndViewStateSummary = 2,
 		EndViewStateWeave = 1
 	}
 end
 
-function LevelEndViewWeave._setup_pages_defeat(arg_7_0, arg_7_1)
+LevelEndViewWeave._setup_pages_defeat = function (arg_7_0, arg_7_1)
 	return {
 		EndViewStateSummary = 1
 	}
 end
 
-function LevelEndViewWeave.create_ui_elements(arg_8_0)
+LevelEndViewWeave.create_ui_elements = function (arg_8_0)
 	if arg_8_0._team_previewer then
 		arg_8_0:_destroy_team_previewer()
 	end
@@ -83,7 +83,7 @@ function LevelEndViewWeave.create_ui_elements(arg_8_0)
 	end
 end
 
-function LevelEndViewWeave.update(arg_9_0, arg_9_1, arg_9_2)
+LevelEndViewWeave.update = function (arg_9_0, arg_9_1, arg_9_2)
 	LevelEndViewWeave.super.update(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_update_team_previewer(arg_9_1, arg_9_2)
 	arg_9_0:_update_camera_look_up(arg_9_1, arg_9_2)
@@ -99,25 +99,25 @@ function LevelEndViewWeave.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function LevelEndViewWeave.event_trigger_hero_pose(arg_10_0, arg_10_1)
+LevelEndViewWeave.event_trigger_hero_pose = function (arg_10_0, arg_10_1)
 	arg_10_0._team_previewer:trigger_hero_pose(arg_10_1)
 end
 
-function LevelEndViewWeave.set_input_description(arg_11_0, arg_11_1)
+LevelEndViewWeave.set_input_description = function (arg_11_0, arg_11_1)
 	local var_11_0 = var_0_0.generic_input_actions[arg_11_1]
 
 	arg_11_0._menu_input_description:set_input_description(var_11_0)
 end
 
-function LevelEndViewWeave.destroy(arg_12_0)
+LevelEndViewWeave.destroy = function (arg_12_0)
 	LevelEndViewWeave.super.destroy(arg_12_0)
 end
 
-function LevelEndViewWeave.active_input_service(arg_13_0)
+LevelEndViewWeave.active_input_service = function (arg_13_0)
 	return arg_13_0.input_blocked and FAKE_INPUT_SERVICE or arg_13_0:input_service()
 end
 
-function LevelEndViewWeave._retry_level(arg_14_0)
+LevelEndViewWeave._retry_level = function (arg_14_0)
 	if arg_14_0.is_server then
 		arg_14_0:signal_done(true)
 	else
@@ -125,7 +125,7 @@ function LevelEndViewWeave._retry_level(arg_14_0)
 	end
 end
 
-function LevelEndViewWeave.do_retry(arg_15_0)
+LevelEndViewWeave.do_retry = function (arg_15_0)
 	if not GameSettingsDevelopment.allow_retry_weave then
 		return false
 	end
@@ -146,7 +146,7 @@ function LevelEndViewWeave.do_retry(arg_15_0)
 	end
 end
 
-function LevelEndViewWeave._setup_weave_data(arg_16_0)
+LevelEndViewWeave._setup_weave_data = function (arg_16_0)
 	local var_16_0 = Managers.weave
 	local var_16_1 = 1
 	local var_16_2 = var_16_0:get_active_weave()
@@ -238,7 +238,7 @@ local var_0_13 = {
 	}
 }
 
-function LevelEndViewWeave._destroy_team_previewer(arg_17_0)
+LevelEndViewWeave._destroy_team_previewer = function (arg_17_0)
 	if arg_17_0._team_previewer then
 		arg_17_0._team_previewer:on_exit()
 
@@ -246,7 +246,7 @@ function LevelEndViewWeave._destroy_team_previewer(arg_17_0)
 	end
 end
 
-function LevelEndViewWeave._update_team_previewer(arg_18_0, arg_18_1, arg_18_2)
+LevelEndViewWeave._update_team_previewer = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0._team_previewer
 
 	if var_18_0 then
@@ -255,7 +255,7 @@ function LevelEndViewWeave._update_team_previewer(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function LevelEndViewWeave._setup_team_previewer(arg_19_0, arg_19_1)
+LevelEndViewWeave._setup_team_previewer = function (arg_19_0, arg_19_1)
 	if arg_19_0._team_previewer then
 		return
 	end
@@ -270,7 +270,7 @@ function LevelEndViewWeave._setup_team_previewer(arg_19_0, arg_19_1)
 	arg_19_0._team_previewer:setup_team(var_19_2, var_0_13[arg_19_1])
 end
 
-function LevelEndViewWeave._setup_team_heroes(arg_20_0, arg_20_1, arg_20_2)
+LevelEndViewWeave._setup_team_heroes = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = {}
 
 	for iter_20_0 in pairs(arg_20_1) do
@@ -297,7 +297,7 @@ function LevelEndViewWeave._setup_team_heroes(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function LevelEndViewWeave.get_hero_from_score(arg_21_0, arg_21_1)
+LevelEndViewWeave.get_hero_from_score = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.profile_index
 	local var_21_1 = arg_21_1.career_index
 	local var_21_2 = SPProfiles[var_21_0].careers[var_21_1]
@@ -341,7 +341,7 @@ end
 
 local var_0_14 = "levels/end_screen_victory/world"
 
-function LevelEndViewWeave.setup_camera(arg_22_0)
+LevelEndViewWeave.setup_camera = function (arg_22_0)
 	local var_22_0
 	local var_22_1 = LevelResource.unit_indices(var_0_14, "units/hub_elements/cutscene_camera/cutscene_camera")
 
@@ -367,7 +367,7 @@ function LevelEndViewWeave.setup_camera(arg_22_0)
 	arg_22_0:position_camera(nil, 45)
 end
 
-function LevelEndViewWeave.start_camera_look_up(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+LevelEndViewWeave.start_camera_look_up = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	arg_23_0._camera_look_up_time = -arg_23_1
 	arg_23_0._camera_look_up_duration = arg_23_2
 	arg_23_0._camera_look_up_degrees = arg_23_3
@@ -381,7 +381,7 @@ function LevelEndViewWeave.start_camera_look_up(arg_23_0, arg_23_1, arg_23_2, ar
 	end
 end
 
-function LevelEndViewWeave._update_camera_look_up(arg_24_0, arg_24_1, arg_24_2)
+LevelEndViewWeave._update_camera_look_up = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._camera_look_up_time
 
 	if not var_24_0 then
@@ -410,7 +410,7 @@ function LevelEndViewWeave._update_camera_look_up(arg_24_0, arg_24_1, arg_24_2)
 	end
 end
 
-function LevelEndViewWeave.spawn_level(arg_25_0, arg_25_1, arg_25_2)
+LevelEndViewWeave.spawn_level = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = {}
 	local var_25_1
 	local var_25_2
@@ -426,14 +426,14 @@ function LevelEndViewWeave.spawn_level(arg_25_0, arg_25_1, arg_25_2)
 	return var_25_6
 end
 
-function LevelEndViewWeave.exit_to_game(arg_26_0)
+LevelEndViewWeave.exit_to_game = function (arg_26_0)
 	arg_26_0:play_sound(arg_26_0._stop_music_event)
 
 	arg_26_0._exit_timer = 0.5
 	arg_26_0._started_exit = true
 end
 
-function LevelEndViewWeave.update_force_shutdown(arg_27_0, arg_27_1)
+LevelEndViewWeave.update_force_shutdown = function (arg_27_0, arg_27_1)
 	arg_27_0._force_shutdown_timer = math.max(0, arg_27_0._force_shutdown_timer - arg_27_1)
 
 	if arg_27_0._force_shutdown_timer == 0 and not arg_27_0._signaled_done then
@@ -468,6 +468,6 @@ function LevelEndViewWeave.update_force_shutdown(arg_27_0, arg_27_1)
 	end
 end
 
-function LevelEndViewWeave.get_all_signaled_done(arg_28_0)
+LevelEndViewWeave.get_all_signaled_done = function (arg_28_0)
 	return arg_28_0._all_signaled_done
 end

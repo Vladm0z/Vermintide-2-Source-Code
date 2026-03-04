@@ -59,7 +59,7 @@ local var_0_23 = {
 					}
 				},
 				condition_func = var_0_21,
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -82,7 +82,7 @@ local var_0_23 = {
 				hold_input = "action_one_hold",
 				anim_event = "attack_charge",
 				charge_sound_husk_stop_event = "Stop_player_engineer_engine_loop_husk",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -120,7 +120,7 @@ local var_0_23 = {
 					}
 				},
 				condition_func = var_0_21,
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
@@ -135,7 +135,7 @@ local var_0_23 = {
 				conditional_actions = {
 					{
 						sub_action = "armor_pierce_fire",
-						condition = function(arg_6_0, arg_6_1)
+						condition = function (arg_6_0, arg_6_1)
 							return arg_6_0 and arg_6_0:has_talent("bardin_engineer_armor_piercing_ability")
 						end
 					}
@@ -210,7 +210,7 @@ local var_0_23 = {
 						start_time = var_0_3
 					}
 				},
-				enter_function = function(arg_7_0, arg_7_1)
+				enter_function = function (arg_7_0, arg_7_1)
 					arg_7_1:clear_input_buffer()
 
 					return arg_7_1:reset_release_input()
@@ -251,7 +251,7 @@ local var_0_23 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_charge_loop",
 				charge_sound_name = "Play_player_engineer_engine_charge",
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -290,7 +290,7 @@ local var_0_23 = {
 				},
 				condition_func = var_0_21,
 				chain_condition_func = var_0_21,
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					arg_9_1:clear_input_buffer()
 
 					return arg_9_1:reset_release_input()
@@ -305,7 +305,7 @@ local var_0_23 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_charge_end",
 				windup_speed = 0.2,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -344,7 +344,7 @@ local var_0_23 = {
 				},
 				condition_func = var_0_21,
 				chain_condition_func = var_0_21,
-				enter_function = function(arg_11_0, arg_11_1)
+				enter_function = function (arg_11_0, arg_11_1)
 					arg_11_1:clear_input_buffer()
 
 					return arg_11_1:reset_release_input()
@@ -366,7 +366,7 @@ local var_0_23 = {
 				uninterruptible = true,
 				anim_event = "cooldown_start",
 				charge_sound_name = "Play_player_engineer_steam_loop",
-				anim_end_event_condition_func = function(arg_12_0, arg_12_1)
+				anim_end_event_condition_func = function (arg_12_0, arg_12_1)
 					return arg_12_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -379,12 +379,12 @@ local var_0_23 = {
 						input = "action_wield"
 					}
 				},
-				condition_func = function(arg_13_0, arg_13_1)
+				condition_func = function (arg_13_0, arg_13_1)
 					local var_13_0 = ScriptUnit.has_extension(arg_13_0, "career_system")
 
 					return not ScriptUnit.has_extension(arg_13_0, "buff_system"):has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
 				end,
-				chain_condition_func = function(arg_14_0, arg_14_1)
+				chain_condition_func = function (arg_14_0, arg_14_1)
 					local var_14_0 = ScriptUnit.has_extension(arg_14_0, "career_system")
 
 					return not ScriptUnit.has_extension(arg_14_0, "buff_system"):has_buff_type("bardin_engineer_pump_max_exhaustion_buff")
@@ -426,7 +426,7 @@ var_0_23.attack_meta_data = {
 		min_radius = math.pi / 72,
 		max_radius = math.pi / 16
 	},
-	hold_fire_condition = function(arg_15_0, arg_15_1)
+	hold_fire_condition = function (arg_15_0, arg_15_1)
 		return true
 	end,
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Shielded, BreedCategory.Boss, BreedCategory.Berserker, BreedCategory.Special)
@@ -483,7 +483,7 @@ var_0_23.custom_data = {
 	windup_loss_per_second = (var_0_5 - var_0_4) / var_0_6
 }
 
-function var_0_23.update(arg_16_0, arg_16_1, arg_16_2)
+var_0_23.update = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0:get_custom_data("windup") - arg_16_0:get_custom_data("windup_loss_per_second") * arg_16_1
 
 	arg_16_0:set_custom_data("windup", var_16_0)

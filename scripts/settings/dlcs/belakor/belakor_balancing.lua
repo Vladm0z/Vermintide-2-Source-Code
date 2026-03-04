@@ -59,7 +59,7 @@ BelakorBalancing = {
 		120,
 		120
 	},
-	spawn_crystal_func = function(arg_1_0)
+	spawn_crystal_func = function (arg_1_0)
 		local var_1_0 = Managers.state.entity:system("pickup_system")
 		local var_1_1 = true
 		local var_1_2 = Quaternion.identity()
@@ -77,7 +77,7 @@ BelakorBalancing = {
 	homing_skulls_max_pitch = math.pi * 0.25,
 	homing_skulls_pitch_delta = math.pi * 0.05,
 	homing_skulls_yaw_delta = 2 * math.pi / 10,
-	homing_skulls_speed_multiplier_curve_func = function(arg_2_0)
+	homing_skulls_speed_multiplier_curve_func = function (arg_2_0)
 		return -(1 / (math.min(arg_2_0 + 2, 4) / 4)) + 2
 	end
 }

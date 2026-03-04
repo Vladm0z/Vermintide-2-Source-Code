@@ -10,7 +10,7 @@ local var_0_6 = 5
 
 TwitchVoteUI = class(TwitchVoteUI)
 
-function TwitchVoteUI.init(arg_1_0, arg_1_1, arg_1_2)
+TwitchVoteUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui = arg_1_2.ingame_ui
@@ -37,7 +37,7 @@ function TwitchVoteUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "reset_vote_ui", "event_reset_vote_ui")
 end
 
-function TwitchVoteUI.event_add_vote_ui(arg_2_0, arg_2_1)
+TwitchVoteUI.event_add_vote_ui = function (arg_2_0, arg_2_1)
 	local var_2_0 = Managers.twitch:get_vote_data(arg_2_1)
 
 	if not var_2_0 then
@@ -51,7 +51,7 @@ function TwitchVoteUI.event_add_vote_ui(arg_2_0, arg_2_1)
 	end
 end
 
-function TwitchVoteUI.event_finish_vote_ui(arg_3_0, arg_3_1, arg_3_2)
+TwitchVoteUI.event_finish_vote_ui = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.twitch:get_vote_data(arg_3_1)
 
 	if not var_3_0 then
@@ -79,7 +79,7 @@ function TwitchVoteUI.event_finish_vote_ui(arg_3_0, arg_3_1, arg_3_2)
 	Application.error("[TwitchVoteUI] event_finish_vote_ui")
 end
 
-function TwitchVoteUI.event_reset_vote_ui(arg_4_0, arg_4_1)
+TwitchVoteUI.event_reset_vote_ui = function (arg_4_0, arg_4_1)
 	if arg_4_1 then
 		if arg_4_0._active_vote and arg_4_0._active_vote.vote_key == arg_4_1 then
 			arg_4_0._active_vote = nil
@@ -105,7 +105,7 @@ function TwitchVoteUI.event_reset_vote_ui(arg_4_0, arg_4_1)
 	end
 end
 
-function TwitchVoteUI.start_standard_vote(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+TwitchVoteUI.start_standard_vote = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = TwitchVoteTemplates[arg_5_1]
 
 	fassert(var_5_0, "[TwitchVoteUI] Could not find any vote template for %s", arg_5_1)
@@ -131,7 +131,7 @@ function TwitchVoteUI.start_standard_vote(arg_5_0, arg_5_1, arg_5_2, arg_5_3, ar
 	arg_5_0:show_ui("standard_vote")
 end
 
-function TwitchVoteUI.start_multiple_choice_vote(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+TwitchVoteUI.start_multiple_choice_vote = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = TwitchVoteTemplates[arg_6_1]
 
 	fassert(var_6_0, "[TwitchVoteUI] Could not find any vote template for %s", arg_6_1)
@@ -156,11 +156,11 @@ function TwitchVoteUI.start_multiple_choice_vote(arg_6_0, arg_6_1, arg_6_2, arg_
 	arg_6_0:show_ui("multiple_choice_vote")
 end
 
-function TwitchVoteUI.set_visible(arg_7_0, arg_7_1)
+TwitchVoteUI.set_visible = function (arg_7_0, arg_7_1)
 	arg_7_0._visible = arg_7_1
 end
 
-function TwitchVoteUI._create_elements(arg_8_0)
+TwitchVoteUI._create_elements = function (arg_8_0)
 	local var_8_0 = var_0_0.scenegraph_definition
 
 	arg_8_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_8_0)
@@ -185,7 +185,7 @@ local var_0_7 = {
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function TwitchVoteUI.update(arg_9_0, arg_9_1, arg_9_2)
+TwitchVoteUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	HudCustomizer.run(arg_9_0._ui_renderer, arg_9_0._ui_scenegraph, var_0_7)
 
 	if not arg_9_0.active then
@@ -213,7 +213,7 @@ function TwitchVoteUI.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function TwitchVoteUI._update_transition(arg_10_0, arg_10_1)
+TwitchVoteUI._update_transition = function (arg_10_0, arg_10_1)
 	if arg_10_0._fade_out then
 		local var_10_0 = 1
 		local var_10_1 = arg_10_0._render_settings
@@ -250,7 +250,7 @@ function TwitchVoteUI._update_transition(arg_10_0, arg_10_1)
 	end
 end
 
-function TwitchVoteUI.show_ui(arg_11_0, arg_11_1)
+TwitchVoteUI.show_ui = function (arg_11_0, arg_11_1)
 	arg_11_0._next_ui = arg_11_1
 
 	if arg_11_0._ui then
@@ -260,11 +260,11 @@ function TwitchVoteUI.show_ui(arg_11_0, arg_11_1)
 	end
 end
 
-function TwitchVoteUI.hide_ui(arg_12_0)
+TwitchVoteUI.hide_ui = function (arg_12_0)
 	arg_12_0._fade_out = true
 end
 
-function TwitchVoteUI._show_next_ui(arg_13_0)
+TwitchVoteUI._show_next_ui = function (arg_13_0)
 	local var_13_0 = arg_13_0._next_ui
 
 	if var_13_0 == "multiple_choice_vote" then
@@ -282,7 +282,7 @@ function TwitchVoteUI._show_next_ui(arg_13_0)
 	arg_13_0._next_ui = nil
 end
 
-function TwitchVoteUI._create_vote_icon(arg_14_0, arg_14_1)
+TwitchVoteUI._create_vote_icon = function (arg_14_0, arg_14_1)
 	if arg_14_0._ui_animations.animate_in or table.size(arg_14_0._widgets) >= 50 or not arg_14_0._vote_widget then
 		return
 	end
@@ -314,11 +314,11 @@ function TwitchVoteUI._create_vote_icon(arg_14_0, arg_14_1)
 	arg_14_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_14_0)
 end
 
-function TwitchVoteUI.cb_destroy_vote_icon(arg_15_0, arg_15_1)
+TwitchVoteUI.cb_destroy_vote_icon = function (arg_15_0, arg_15_1)
 	arg_15_0._widgets[arg_15_1] = nil
 end
 
-function TwitchVoteUI._update_active_vote(arg_16_0, arg_16_1, arg_16_2)
+TwitchVoteUI._update_active_vote = function (arg_16_0, arg_16_1, arg_16_2)
 	if not arg_16_0._active_vote or arg_16_0._active_vote.completed then
 		return
 	end
@@ -421,7 +421,7 @@ function TwitchVoteUI._update_active_vote(arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._vote_activated = var_16_1.activated
 end
 
-function TwitchVoteUI._draw(arg_17_0, arg_17_1, arg_17_2)
+TwitchVoteUI._draw = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._ui_renderer
 	local var_17_1 = arg_17_0._ui_scenegraph
 	local var_17_2 = arg_17_0._input_manager:get_service("ingame_menu")
@@ -438,13 +438,13 @@ function TwitchVoteUI._draw(arg_17_0, arg_17_1, arg_17_2)
 	UIRenderer.end_pass(var_17_0)
 end
 
-function TwitchVoteUI.destroy(arg_18_0)
+TwitchVoteUI.destroy = function (arg_18_0)
 	Managers.state.event:unregister("add_vote_ui", arg_18_0)
 	Managers.state.event:unregister("finish_vote_ui", arg_18_0)
 	Managers.state.event:unregister("reset_vote_ui", arg_18_0)
 end
 
-function TwitchVoteUI._show_multiple_choice_vote(arg_19_0)
+TwitchVoteUI._show_multiple_choice_vote = function (arg_19_0)
 	local var_19_0 = arg_19_0._active_vote
 
 	if not var_19_0 then
@@ -504,7 +504,7 @@ function TwitchVoteUI._show_multiple_choice_vote(arg_19_0)
 	arg_19_0:_play_multiple_vote_start()
 end
 
-function TwitchVoteUI._update_multiple_votes_ui(arg_20_0, arg_20_1)
+TwitchVoteUI._update_multiple_votes_ui = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._active_vote
 
 	if not var_20_0 then
@@ -546,7 +546,7 @@ function TwitchVoteUI._update_multiple_votes_ui(arg_20_0, arg_20_1)
 	arg_20_0:_play_timer_sfx(var_20_13)
 end
 
-function TwitchVoteUI._show_multiple_choice_result(arg_21_0)
+TwitchVoteUI._show_multiple_choice_result = function (arg_21_0)
 	arg_21_0._fade_out = false
 
 	local var_21_0 = arg_21_0._vote_result
@@ -605,7 +605,7 @@ function TwitchVoteUI._show_multiple_choice_result(arg_21_0)
 	arg_21_0._result_timer = var_0_5
 end
 
-function TwitchVoteUI._update_result(arg_22_0, arg_22_1)
+TwitchVoteUI._update_result = function (arg_22_0, arg_22_1)
 	arg_22_0._result_timer = arg_22_0._result_timer - arg_22_1
 
 	if arg_22_0._result_timer > 0 then
@@ -615,7 +615,7 @@ function TwitchVoteUI._update_result(arg_22_0, arg_22_1)
 	arg_22_0:hide_ui()
 end
 
-function TwitchVoteUI._show_standard_vote(arg_23_0)
+TwitchVoteUI._show_standard_vote = function (arg_23_0)
 	local var_23_0 = arg_23_0._active_vote
 
 	if not var_23_0 then
@@ -651,7 +651,7 @@ function TwitchVoteUI._show_standard_vote(arg_23_0)
 	arg_23_0:_play_standard_vote_start()
 end
 
-function TwitchVoteUI._update_standard_vote(arg_24_0)
+TwitchVoteUI._update_standard_vote = function (arg_24_0)
 	local var_24_0 = arg_24_0._active_vote
 
 	if not var_24_0 then
@@ -686,7 +686,7 @@ function TwitchVoteUI._update_standard_vote(arg_24_0)
 	arg_24_0._widgets.result_bar_b_eyes.content.visible = var_24_5 <= var_24_6
 end
 
-function TwitchVoteUI._show_standard_vote_result(arg_25_0)
+TwitchVoteUI._show_standard_vote_result = function (arg_25_0)
 	arg_25_0._fade_out = false
 
 	local var_25_0 = arg_25_0._vote_result
@@ -741,7 +741,7 @@ function TwitchVoteUI._show_standard_vote_result(arg_25_0)
 	end
 end
 
-function TwitchVoteUI._sorted_player_list(arg_26_0)
+TwitchVoteUI._sorted_player_list = function (arg_26_0)
 	local var_26_0 = Managers.player:human_and_bot_players()
 	local var_26_1 = {}
 
@@ -760,7 +760,7 @@ function TwitchVoteUI._sorted_player_list(arg_26_0)
 	return var_26_1
 end
 
-function TwitchVoteUI._play_winning_sfx(arg_28_0, arg_28_1)
+TwitchVoteUI._play_winning_sfx = function (arg_28_0, arg_28_1)
 	if arg_28_1 == nil then
 		return
 	end
@@ -772,7 +772,7 @@ function TwitchVoteUI._play_winning_sfx(arg_28_0, arg_28_1)
 	end
 end
 
-function TwitchVoteUI._play_timer_sfx(arg_29_0, arg_29_1)
+TwitchVoteUI._play_timer_sfx = function (arg_29_0, arg_29_1)
 	if arg_29_1 <= var_0_6 and arg_29_1 ~= arg_29_0._last_played_countdown_sfx then
 		WwiseWorld.trigger_event(arg_29_0.wwise_world, "Play_twitch_count")
 
@@ -780,10 +780,10 @@ function TwitchVoteUI._play_timer_sfx(arg_29_0, arg_29_1)
 	end
 end
 
-function TwitchVoteUI._play_multiple_vote_start(arg_30_0)
+TwitchVoteUI._play_multiple_vote_start = function (arg_30_0)
 	WwiseWorld.trigger_event(arg_30_0.wwise_world, "Play_twitch_vote_multiple_start")
 end
 
-function TwitchVoteUI._play_standard_vote_start(arg_31_0)
+TwitchVoteUI._play_standard_vote_start = function (arg_31_0)
 	WwiseWorld.trigger_event(arg_31_0.wwise_world, "Play_twitch_vote_standard_buff_start")
 end

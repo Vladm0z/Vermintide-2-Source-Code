@@ -71,7 +71,7 @@ var_0_1.buff_templates = {
 	}
 }
 var_0_1.proc_functions = {
-	add_debuff_on_drakefire_hit = function(arg_1_0, arg_1_1, arg_1_2)
+	add_debuff_on_drakefire_hit = function (arg_1_0, arg_1_1, arg_1_2)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -89,7 +89,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	bardin_engineer_piston_power_add = function(arg_2_0, arg_2_1, arg_2_2)
+	bardin_engineer_piston_power_add = function (arg_2_0, arg_2_1, arg_2_2)
 		if ALIVE[arg_2_0] then
 			if arg_2_2[2] ~= "heavy_attack" then
 				return
@@ -114,7 +114,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	bardin_engineer_piston_power_sound = function(arg_3_0, arg_3_1, arg_3_2)
+	bardin_engineer_piston_power_sound = function (arg_3_0, arg_3_1, arg_3_2)
 		if ALIVE[arg_3_0] then
 			local var_3_0 = arg_3_2[1].charge_value
 
@@ -123,7 +123,7 @@ var_0_1.proc_functions = {
 			end
 		end
 	end,
-	bardin_engineer_power_on_next_range = function(arg_4_0, arg_4_1, arg_4_2)
+	bardin_engineer_power_on_next_range = function (arg_4_0, arg_4_1, arg_4_2)
 		if ALIVE[arg_4_0] then
 			local var_4_0 = arg_4_2[1]
 
@@ -138,7 +138,7 @@ var_0_1.proc_functions = {
 	end
 }
 var_0_1.buff_function_templates = {
-	bardin_engineer_animation_slow_down_add = function(arg_5_0, arg_5_1, arg_5_2)
+	bardin_engineer_animation_slow_down_add = function (arg_5_0, arg_5_1, arg_5_2)
 		if ALIVE[arg_5_0] then
 			local var_5_0 = ScriptUnit.has_extension(arg_5_0, "first_person_system")
 
@@ -160,7 +160,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	bardin_engineer_animation_slow_down_remove = function(arg_6_0, arg_6_1, arg_6_2)
+	bardin_engineer_animation_slow_down_remove = function (arg_6_0, arg_6_1, arg_6_2)
 		if ALIVE[arg_6_0] then
 			local var_6_0 = ScriptUnit.has_extension(arg_6_0, "first_person_system")
 
@@ -169,7 +169,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	bardin_engineer_piston_power_add_apply = function(arg_7_0, arg_7_1, arg_7_2)
+	bardin_engineer_piston_power_add_apply = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = arg_7_0
 
 		if ALIVE[var_7_0] then
@@ -178,7 +178,7 @@ var_0_1.buff_function_templates = {
 			ScriptUnit.extension(var_7_0, "buff_system"):add_buff(var_7_1)
 		end
 	end,
-	bardin_engineer_bomb_grant = function(arg_8_0, arg_8_1, arg_8_2)
+	bardin_engineer_bomb_grant = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = Managers.state.network.network_transmit
 		local var_8_1 = ScriptUnit.extension(arg_8_0, "inventory_system")
 		local var_8_2 = Managers.time:time("game")
@@ -251,7 +251,7 @@ var_0_1.buff_function_templates = {
 			end
 		end
 	end,
-	bardin_engineer_overclock_damage = function(arg_9_0, arg_9_1, arg_9_2)
+	bardin_engineer_overclock_damage = function (arg_9_0, arg_9_1, arg_9_2)
 		local var_9_0 = ScriptUnit.has_extension(arg_9_0, "career_system")
 
 		if var_9_0 then

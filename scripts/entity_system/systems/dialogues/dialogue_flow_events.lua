@@ -2,13 +2,13 @@
 
 DialogueSystemFlow = class(DialogueSystemFlow)
 
-function DialogueSystemFlow.init(arg_1_0, arg_1_1, arg_1_2)
+DialogueSystemFlow.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._current_sound_event_subtitles = {}
 	arg_1_0._hud_system = arg_1_2
 	arg_1_0._wwise_world = arg_1_1
 end
 
-function DialogueSystemFlow.trigger_sound_event_with_subtitles(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+DialogueSystemFlow.trigger_sound_event_with_subtitles = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = {
 		subtitle_event = arg_2_2,
 		speaker_name = arg_2_3,
@@ -25,7 +25,7 @@ function DialogueSystemFlow.trigger_sound_event_with_subtitles(arg_2_0, arg_2_1,
 	arg_2_0._current_sound_event_subtitles[#arg_2_0._current_sound_event_subtitles + 1] = var_2_0
 end
 
-function DialogueSystemFlow.update_sound_event_subtitles(arg_3_0)
+DialogueSystemFlow.update_sound_event_subtitles = function (arg_3_0)
 	if table.is_empty(arg_3_0._current_sound_event_subtitles) then
 		return
 	end

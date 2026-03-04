@@ -6,7 +6,7 @@ local var_0_0 = Unit.local_position
 local var_0_1 = Unit.set_local_rotation
 local var_0_2 = Quaternion.look
 
-function LocomotionUtils.follow_target(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LocomotionUtils.follow_target = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	if not Unit.alive(arg_1_1.target_unit) then
 		return
 	end
@@ -41,7 +41,7 @@ function LocomotionUtils.follow_target(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function LocomotionUtils.follow_target_ogre(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+LocomotionUtils.follow_target_ogre = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_1.target_unit
 
 	if not Unit.alive(var_2_0) then
@@ -159,7 +159,7 @@ local var_0_3 = {
 	ROTATION_LERP_LOOK_AT = 20
 }
 
-function LocomotionUtils.update_combat_rotation(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+LocomotionUtils.update_combat_rotation = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = var_0_0(arg_3_0, 0)
 	local var_3_1 = Unit.local_rotation(arg_3_0, 0)
 	local var_3_2 = Unit.local_position(arg_3_1.target_unit, 0)
@@ -170,7 +170,7 @@ function LocomotionUtils.update_combat_rotation(arg_3_0, arg_3_1, arg_3_2, arg_3
 	var_0_1(arg_3_0, 0, var_3_5)
 end
 
-function LocomotionUtils.look_at_target_rotation(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+LocomotionUtils.look_at_target_rotation = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = var_0_0(arg_4_0, 0)
 	local var_4_1 = Unit.local_rotation(arg_4_0, 0)
 	local var_4_2 = Unit.local_position(arg_4_1.target_unit, 0)
@@ -180,7 +180,7 @@ function LocomotionUtils.look_at_target_rotation(arg_4_0, arg_4_1, arg_4_2, arg_
 	return (Quaternion.lerp(var_4_1, var_4_3, var_4_4))
 end
 
-function LocomotionUtils.look_at_target_rotation_flat(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+LocomotionUtils.look_at_target_rotation_flat = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = var_0_0(arg_5_0, 0)
 	local var_5_1 = Unit.local_rotation(arg_5_0, 0)
 	local var_5_2 = Unit.local_position(arg_5_1.target_unit, 0) - var_5_0
@@ -193,7 +193,7 @@ function LocomotionUtils.look_at_target_rotation_flat(arg_5_0, arg_5_1, arg_5_2,
 	return (Quaternion.lerp(var_5_1, var_5_3, var_5_4))
 end
 
-function LocomotionUtils.rotation_towards_unit(arg_6_0, arg_6_1)
+LocomotionUtils.rotation_towards_unit = function (arg_6_0, arg_6_1)
 	local var_6_0 = var_0_0(arg_6_0, 0)
 	local var_6_1 = var_0_0(arg_6_1, 0)
 	local var_6_2 = Vector3.normalize(var_6_1 - var_6_0)
@@ -201,7 +201,7 @@ function LocomotionUtils.rotation_towards_unit(arg_6_0, arg_6_1)
 	return (var_0_2(var_6_2))
 end
 
-function LocomotionUtils.rotation_towards_unit_flat(arg_7_0, arg_7_1)
+LocomotionUtils.rotation_towards_unit_flat = function (arg_7_0, arg_7_1)
 	local var_7_0 = var_0_0(arg_7_0, 0)
 	local var_7_1 = var_0_0(arg_7_1, 0) - var_7_0
 
@@ -212,14 +212,14 @@ function LocomotionUtils.rotation_towards_unit_flat(arg_7_0, arg_7_1)
 	return (var_0_2(var_7_2))
 end
 
-function LocomotionUtils.look_at_position(arg_8_0, arg_8_1)
+LocomotionUtils.look_at_position = function (arg_8_0, arg_8_1)
 	local var_8_0 = var_0_0(arg_8_0, 0)
 	local var_8_1 = Vector3.normalize(arg_8_1 - var_8_0)
 
 	return (var_0_2(var_8_1, Vector3.up()))
 end
 
-function LocomotionUtils.look_at_position_flat(arg_9_0, arg_9_1)
+LocomotionUtils.look_at_position_flat = function (arg_9_0, arg_9_1)
 	local var_9_0 = var_0_0(arg_9_0, 0)
 	local var_9_1 = Vector3.flat(arg_9_1 - var_9_0)
 	local var_9_2 = Vector3.normalize(var_9_1)
@@ -227,7 +227,7 @@ function LocomotionUtils.look_at_position_flat(arg_9_0, arg_9_1)
 	return (var_0_2(var_9_2, Vector3.up()))
 end
 
-function LocomotionUtils.get_attack_anim(arg_10_0, arg_10_1, arg_10_2)
+LocomotionUtils.get_attack_anim = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_2 then
 		local var_10_0 = arg_10_1.target_unit
 		local var_10_1 = Unit.local_position(var_10_0, 0)
@@ -254,7 +254,7 @@ function LocomotionUtils.get_attack_anim(arg_10_0, arg_10_1, arg_10_2)
 	return nil, false
 end
 
-function LocomotionUtils.get_start_anim(arg_11_0, arg_11_1, arg_11_2)
+LocomotionUtils.get_start_anim = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 then
 		local var_11_0 = arg_11_1.target_unit
 		local var_11_1 = Unit.local_position(var_11_0, 0)
@@ -277,7 +277,7 @@ function LocomotionUtils.get_start_anim(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function LocomotionUtils.constrain_on_clients(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+LocomotionUtils.constrain_on_clients = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = Managers.state.network
 
 	if var_12_0:game() then
@@ -294,11 +294,11 @@ function LocomotionUtils.constrain_on_clients(arg_12_0, arg_12_1, arg_12_2, arg_
 	end
 end
 
-function LocomotionUtils.set_animation_driven_movement(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LocomotionUtils.set_animation_driven_movement = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	ScriptUnit.extension(arg_13_0, "locomotion_system"):set_animation_driven(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 end
 
-function LocomotionUtils.set_animation_translation_scale(arg_14_0, arg_14_1)
+LocomotionUtils.set_animation_translation_scale = function (arg_14_0, arg_14_1)
 	local var_14_0 = ScriptUnit.extension(arg_14_0, "locomotion_system")
 	local var_14_1 = var_14_0:get_animation_translation_scale()
 
@@ -319,7 +319,7 @@ function LocomotionUtils.set_animation_translation_scale(arg_14_0, arg_14_1)
 	end
 end
 
-function LocomotionUtils.set_animation_rotation_scale(arg_15_0, arg_15_1)
+LocomotionUtils.set_animation_rotation_scale = function (arg_15_0, arg_15_1)
 	local var_15_0 = ScriptUnit.extension(arg_15_0, "locomotion_system")
 
 	if var_15_0:get_animation_rotation_scale() ~= arg_15_1 then
@@ -335,7 +335,7 @@ function LocomotionUtils.set_animation_rotation_scale(arg_15_0, arg_15_1)
 	end
 end
 
-function LocomotionUtils.update_local_animation_driven_movement(arg_16_0, arg_16_1)
+LocomotionUtils.update_local_animation_driven_movement = function (arg_16_0, arg_16_1)
 	local var_16_0 = Unit.animation_wanted_root_pose(arg_16_0)
 	local var_16_1 = Matrix4x4.translation(var_16_0)
 
@@ -346,7 +346,7 @@ function LocomotionUtils.update_local_animation_driven_movement(arg_16_0, arg_16
 	Unit.set_local_rotation(arg_16_0, 0, var_16_2)
 end
 
-function LocomotionUtils.update_local_animation_driven_movement_with_parent(arg_17_0, arg_17_1, arg_17_2)
+LocomotionUtils.update_local_animation_driven_movement_with_parent = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_2.master_unit
 
 	if not var_17_0 or not Unit.alive(var_17_0) then
@@ -363,7 +363,7 @@ function LocomotionUtils.update_local_animation_driven_movement_with_parent(arg_
 	Unit.set_local_rotation(arg_17_0, 0, var_17_3)
 end
 
-function LocomotionUtils.update_local_animation_driven_movement_with_mover(arg_18_0, arg_18_1)
+LocomotionUtils.update_local_animation_driven_movement_with_mover = function (arg_18_0, arg_18_1)
 	local var_18_0 = Unit.animation_wanted_root_pose(arg_18_0)
 	local var_18_1 = Matrix4x4.translation(var_18_0) - POSITION_LOOKUP[arg_18_0]
 	local var_18_2 = Unit.mover(arg_18_0)
@@ -379,7 +379,7 @@ function LocomotionUtils.update_local_animation_driven_movement_with_mover(arg_1
 	Unit.set_local_rotation(arg_18_0, 0, var_18_4)
 end
 
-function LocomotionUtils.update_local_animation_driven_movement_plus_mover(arg_19_0, arg_19_1)
+LocomotionUtils.update_local_animation_driven_movement_plus_mover = function (arg_19_0, arg_19_1)
 	local var_19_0 = Unit.mover(arg_19_0)
 	local var_19_1 = Unit.animation_wanted_root_pose(arg_19_0)
 	local var_19_2 = Matrix4x4.translation(var_19_1)
@@ -393,7 +393,7 @@ function LocomotionUtils.update_local_animation_driven_movement_plus_mover(arg_1
 	Unit.set_local_rotation(arg_19_0, 0, var_19_4)
 end
 
-function LocomotionUtils.update_local_animation_driven_movement_with_min_z(arg_20_0, arg_20_1, arg_20_2)
+LocomotionUtils.update_local_animation_driven_movement_with_min_z = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = Unit.animation_wanted_root_pose(arg_20_0)
 	local var_20_1 = Matrix4x4.translation(var_20_0)
 
@@ -408,7 +408,7 @@ function LocomotionUtils.update_local_animation_driven_movement_with_min_z(arg_2
 	Unit.set_local_rotation(arg_20_0, 0, var_20_2)
 end
 
-function LocomotionUtils.new_random_goal(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+LocomotionUtils.new_random_goal = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
 	local var_21_0 = arg_21_7 or 30
 	local var_21_1 = arg_21_8 or 30
 	local var_21_2 = 0
@@ -434,7 +434,7 @@ function LocomotionUtils.new_random_goal(arg_21_0, arg_21_1, arg_21_2, arg_21_3,
 	end
 end
 
-function LocomotionUtils.new_random_goal_uniformly_distributed(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+LocomotionUtils.new_random_goal_uniformly_distributed = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
 	arg_22_7 = arg_22_7 or 30
 	arg_22_8 = arg_22_8 or 30
 
@@ -463,7 +463,7 @@ function LocomotionUtils.new_random_goal_uniformly_distributed(arg_22_0, arg_22_
 	end
 end
 
-function LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_outside_on_last(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_outside_on_last = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
 	local var_23_0 = arg_23_7 or 30
 	local var_23_1 = arg_23_8 or 30
 	local var_23_2 = arg_23_9 or 3
@@ -501,7 +501,7 @@ function LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_
 	end
 end
 
-function LocomotionUtils.new_random_goal_in_front_of_unit(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9)
+LocomotionUtils.new_random_goal_in_front_of_unit = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9)
 	local var_24_0
 
 	var_24_0 = arg_24_8 or 30
@@ -564,7 +564,7 @@ function LocomotionUtils.new_random_goal_in_front_of_unit(arg_24_0, arg_24_1, ar
 	return nil
 end
 
-function LocomotionUtils.new_goal_in_transport(arg_25_0, arg_25_1, arg_25_2)
+LocomotionUtils.new_goal_in_transport = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = 0
 	local var_25_1 = ScriptUnit.extension(arg_25_2, "status_system"):get_inside_transport_unit()
 
@@ -582,7 +582,7 @@ function LocomotionUtils.new_goal_in_transport(arg_25_0, arg_25_1, arg_25_2)
 	return nil
 end
 
-function LocomotionUtils.outside_goal(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
+LocomotionUtils.outside_goal = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
 	local var_26_0 = 0
 	local var_26_1 = Vector3.flat(arg_26_1 - arg_26_2)
 
@@ -619,7 +619,7 @@ local var_0_6 = 4
 local var_0_7 = 8
 local var_0_8 = 3
 
-function LocomotionUtils.pick_visible_outside_goal(arg_27_0)
+LocomotionUtils.pick_visible_outside_goal = function (arg_27_0)
 	local var_27_0 = arg_27_0.max_tries or var_0_4
 	local var_27_1 = arg_27_0.min_angle or var_0_5
 	local var_27_2 = arg_27_0.min_angle_step or var_0_6
@@ -710,7 +710,7 @@ function LocomotionUtils.pick_visible_outside_goal(arg_27_0)
 	end
 end
 
-function LocomotionUtils.test_pos(arg_28_0, arg_28_1)
+LocomotionUtils.test_pos = function (arg_28_0, arg_28_1)
 	local var_28_0 = 0
 	local var_28_1 = 0
 
@@ -732,7 +732,7 @@ function LocomotionUtils.test_pos(arg_28_0, arg_28_1)
 	Debug.text("Points ok %.2f fail: %d", var_28_1 / (var_28_1 + var_28_0), var_28_0)
 end
 
-function LocomotionUtils.get_close_pos_on_mesh(arg_29_0, arg_29_1, arg_29_2)
+LocomotionUtils.get_close_pos_on_mesh = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = {}
 	local var_29_1, var_29_2, var_29_3, var_29_4, var_29_5 = GwNavQueries.triangle_from_position(arg_29_0, arg_29_1, 30, 30)
 
@@ -771,7 +771,7 @@ function LocomotionUtils.get_close_pos_on_mesh(arg_29_0, arg_29_1, arg_29_2)
 	return nil, var_29_0
 end
 
-function LocomotionUtils.get_close_pos_below_on_mesh(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+LocomotionUtils.get_close_pos_below_on_mesh = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	arg_30_3 = arg_30_3 or 1
 	arg_30_4 = arg_30_4 or 8
 
@@ -824,7 +824,7 @@ local var_0_9 = {
 	-0.707
 }
 
-function LocomotionUtils.mesh_positions_closest_to_outside_pos(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+LocomotionUtils.mesh_positions_closest_to_outside_pos = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	local var_31_0 = #var_0_9
 
 	for iter_31_0 = 1, var_31_0, 2 do
@@ -839,7 +839,7 @@ function LocomotionUtils.mesh_positions_closest_to_outside_pos(arg_31_0, arg_31_
 	return #arg_31_3 > 0
 end
 
-function LocomotionUtils.closest_mesh_positions_outward(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+LocomotionUtils.closest_mesh_positions_outward = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = 3
 	local var_32_1 = math.ceil(arg_32_2 / var_32_0)
 	local var_32_2 = #var_0_9
@@ -861,7 +861,7 @@ function LocomotionUtils.closest_mesh_positions_outward(arg_32_0, arg_32_1, arg_
 	end
 end
 
-function LocomotionUtils.pos_on_mesh(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+LocomotionUtils.pos_on_mesh = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	arg_33_2 = arg_33_2 or 30
 	arg_33_3 = arg_33_3 or 30
 
@@ -872,7 +872,7 @@ function LocomotionUtils.pos_on_mesh(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	end
 end
 
-function LocomotionUtils.ray_can_go_on_mesh(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+LocomotionUtils.ray_can_go_on_mesh = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
 	local var_34_0 = LocomotionUtils.pos_on_mesh(arg_34_0, arg_34_1, arg_34_4, arg_34_5)
 	local var_34_1 = var_34_0 and LocomotionUtils.pos_on_mesh(arg_34_0, arg_34_2, arg_34_4, arg_34_5)
 	local var_34_2
@@ -886,7 +886,7 @@ function LocomotionUtils.ray_can_go_on_mesh(arg_34_0, arg_34_1, arg_34_2, arg_34
 	return var_34_2, var_34_0, var_34_1
 end
 
-function LocomotionUtils.raycast_on_navmesh(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
+LocomotionUtils.raycast_on_navmesh = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
 	local var_35_0 = LocomotionUtils.pos_on_mesh(arg_35_0, arg_35_1, arg_35_4, arg_35_5)
 	local var_35_1 = var_35_0 and (not arg_35_6 and arg_35_2 or LocomotionUtils.pos_on_mesh(arg_35_0, arg_35_2, arg_35_4, arg_35_5))
 	local var_35_2
@@ -905,7 +905,7 @@ end
 
 local var_0_10 = 0.9
 
-function LocomotionUtils.is_on_flat_ground_raycast(arg_36_0, arg_36_1)
+LocomotionUtils.is_on_flat_ground_raycast = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1 + Vector3.up() * 0.1
 	local var_36_1, var_36_2, var_36_3, var_36_4 = PhysicsWorld.immediate_raycast(arg_36_0, var_36_0, Vector3.down(), 0.15, "closest", "collision_filter", "filter_ai_mover")
 	local var_36_5
@@ -924,7 +924,7 @@ local var_0_14 = 0.3
 local var_0_15 = 1.3
 local var_0_16 = 0.4
 
-function LocomotionUtils.navmesh_movement_check(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+LocomotionUtils.navmesh_movement_check = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
 	local var_37_0 = Vector3.length_squared(arg_37_1) > var_0_11
 	local var_37_1 = var_37_0 and Vector3.normalize(arg_37_1) or Vector3.zero()
 	local var_37_2 = arg_37_0 + var_37_1 * var_0_14
@@ -955,7 +955,7 @@ local var_0_18 = 2
 local var_0_19 = 3
 local var_0_20 = 4
 
-function LocomotionUtils.clear_los(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+LocomotionUtils.clear_los = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 	local var_38_0 = arg_38_2 - arg_38_1
 	local var_38_1 = Vector3.length(var_38_0)
 	local var_38_2, var_38_3 = PhysicsWorld.immediate_raycast(arg_38_0, arg_38_1, var_38_0, var_38_1, "all", "collision_filter", "filter_ai_mover")
@@ -974,7 +974,7 @@ function LocomotionUtils.clear_los(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_3
 	return true
 end
 
-function LocomotionUtils.target_in_los(arg_39_0, arg_39_1)
+LocomotionUtils.target_in_los = function (arg_39_0, arg_39_1)
 	if not Unit.alive(arg_39_1.target_unit) then
 		return
 	end
@@ -1004,7 +1004,7 @@ function LocomotionUtils.target_in_los(arg_39_0, arg_39_1)
 	return true
 end
 
-function LocomotionUtils.enable_linked_movement(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+LocomotionUtils.enable_linked_movement = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	if Managers.player:owner(arg_40_1).remote then
 		local var_40_0 = Managers.state.unit_storage
 		local var_40_1 = var_40_0:go_id(arg_40_1)
@@ -1021,7 +1021,7 @@ function LocomotionUtils.enable_linked_movement(arg_40_0, arg_40_1, arg_40_2, ar
 	end
 end
 
-function LocomotionUtils.disable_linked_movement(arg_41_0)
+LocomotionUtils.disable_linked_movement = function (arg_41_0)
 	local var_41_0 = Managers.player:owner(arg_41_0)
 
 	if var_41_0 and var_41_0.remote then
@@ -1038,13 +1038,13 @@ function LocomotionUtils.disable_linked_movement(arg_41_0)
 	end
 end
 
-function LocomotionUtils.calculate_wanted_lerp_velocity(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+LocomotionUtils.calculate_wanted_lerp_velocity = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	local var_42_0 = math.min(1, (arg_42_6 - arg_42_3) / (arg_42_4 - arg_42_3))
 	local var_42_1 = Vector3.lerp(arg_42_1, arg_42_2, var_42_0)
 	local var_42_2 = Vector3.distance(arg_42_0, var_42_1) / arg_42_5
 end
 
-function LocomotionUtils.in_crosshairs_dodge(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
+LocomotionUtils.in_crosshairs_dodge = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
 	arg_43_5 = arg_43_5 or 0
 	arg_43_6 = arg_43_6 or math.huge
 
@@ -1112,7 +1112,7 @@ function LocomotionUtils.in_crosshairs_dodge(arg_43_0, arg_43_1, arg_43_2, arg_4
 	end
 end
 
-function LocomotionUtils.separate_mover_fallbacks(arg_44_0, arg_44_1)
+LocomotionUtils.separate_mover_fallbacks = function (arg_44_0, arg_44_1)
 	local var_44_0, var_44_1, var_44_2, var_44_3 = Mover.separate(arg_44_0, arg_44_1)
 
 	if var_44_0 and var_44_3 then
@@ -1122,7 +1122,7 @@ function LocomotionUtils.separate_mover_fallbacks(arg_44_0, arg_44_1)
 	return var_44_0 and var_44_3 or not var_44_0
 end
 
-function LocomotionUtils.on_alerted_dodge(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+LocomotionUtils.on_alerted_dodge = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	local var_45_0 = Unit.world_position(arg_45_0, Unit.node(arg_45_0, "j_neck"))
 	local var_45_1
 	local var_45_2
@@ -1145,7 +1145,7 @@ function LocomotionUtils.on_alerted_dodge(arg_45_0, arg_45_1, arg_45_2, arg_45_3
 	return var_45_6 - var_45_7 * Vector3.length(var_45_6), var_45_7
 end
 
-function LocomotionUtils.get_vortex_spin_velocity(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+LocomotionUtils.get_vortex_spin_velocity = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
 	local var_46_0 = 0.0001
 	local var_46_1 = arg_46_0 - arg_46_1
 	local var_46_2 = Vector3.flat(var_46_1)
@@ -1174,7 +1174,7 @@ local function var_0_21(...)
 	end
 end
 
-function LocomotionUtils.check_start_turning(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+LocomotionUtils.check_start_turning = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = arg_48_3.action.start_anims_name
 	local var_48_1 = arg_48_3.breed
 
@@ -1240,7 +1240,7 @@ function LocomotionUtils.check_start_turning(arg_48_0, arg_48_1, arg_48_2, arg_4
 	arg_48_3.anim_cb_move = nil
 end
 
-function LocomotionUtils.update_leaning(arg_49_0, arg_49_1, arg_49_2)
+LocomotionUtils.update_leaning = function (arg_49_0, arg_49_1, arg_49_2)
 	if not arg_49_1.enabled_animation_movement_system then
 		local var_49_0 = Managers.state.unit_storage:go_id(arg_49_0)
 
@@ -1254,7 +1254,7 @@ function LocomotionUtils.update_leaning(arg_49_0, arg_49_1, arg_49_2)
 	arg_49_1.lean_target_position_boxed:store(arg_49_2)
 end
 
-function LocomotionUtils.update_turning(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+LocomotionUtils.update_turning = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	local var_50_0 = arg_50_3.locomotion_extension
 	local var_50_1 = arg_50_3.navigation_extension
 	local var_50_2 = POSITION_LOOKUP[arg_50_0]
@@ -1281,7 +1281,7 @@ function LocomotionUtils.update_turning(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	end
 end
 
-function LocomotionUtils.reset_turning(arg_51_0, arg_51_1)
+LocomotionUtils.reset_turning = function (arg_51_0, arg_51_1)
 	arg_51_1.is_turning = false
 
 	LocomotionUtils.set_animation_driven_movement(arg_51_0, false)

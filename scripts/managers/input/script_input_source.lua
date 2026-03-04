@@ -4,13 +4,13 @@ require("scripts/settings/script_input_settings")
 
 ScriptInputSource = class(ScriptInputSource, InputSource)
 
-function ScriptInputSource.init(arg_1_0, arg_1_1, arg_1_2)
+ScriptInputSource.init = function (arg_1_0, arg_1_1, arg_1_2)
 	ScriptInputSource.super.init(arg_1_0, arg_1_1, arg_1_2)
 
 	arg_1_0._active = false
 end
 
-function ScriptInputSource.start(arg_2_0, arg_2_1, arg_2_2)
+ScriptInputSource.start = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._input_settings = arg_2_1
 	arg_2_0._input_settings_copy = table.clone(arg_2_1)
 	arg_2_0._input = {}
@@ -19,13 +19,13 @@ function ScriptInputSource.start(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._loop = arg_2_2
 end
 
-function ScriptInputSource.clear(arg_3_0)
+ScriptInputSource.clear = function (arg_3_0)
 	ScriptInputSource.super.clear(arg_3_0)
 
 	arg_3_0._active = false
 end
 
-function ScriptInputSource.get(arg_4_0, arg_4_1)
+ScriptInputSource.get = function (arg_4_0, arg_4_1)
 	fassert(arg_4_0.mapping_table, "Trying to access unmapped input source.")
 
 	local var_4_0 = arg_4_0.mapping_table[arg_4_1]
@@ -40,13 +40,13 @@ function ScriptInputSource.get(arg_4_0, arg_4_1)
 	return arg_4_0._active and arg_4_0._input[arg_4_1] or ScriptInputSource.super.get(arg_4_0, arg_4_1)
 end
 
-function ScriptInputSource.update(arg_5_0, arg_5_1, arg_5_2)
+ScriptInputSource.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._active then
 		arg_5_0:_update_input(arg_5_1, arg_5_2)
 	end
 end
 
-function ScriptInputSource._update_input(arg_6_0, arg_6_1, arg_6_2)
+ScriptInputSource._update_input = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = {}
 
 	for iter_6_0 = #arg_6_0._input_settings_copy, 1, -1 do

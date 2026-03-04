@@ -50,10 +50,10 @@ var_0_3.dwarf_valaya_emote = {
 	events = {
 		"dwarf_valaya_emote"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "dwarf_valaya_emote") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		if not arg_2_4[1] then
 			arg_2_2.end_t = nil
 
@@ -115,10 +115,10 @@ var_0_3.dwarf_rune = {
 	events = {
 		"dwarf_rune"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "dwarf_rune") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		arg_4_0:increment_stat(arg_4_1, "dwarf_rune")
 	end
 }
@@ -131,10 +131,10 @@ var_0_3.dwarf_barrel_carry = {
 		"objective_entered_socket_zone",
 		"dwarf_barrel_carry"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "dwarf_barrel_carry") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		local var_6_0 = Managers.state.game_mode:level_key()
 
 		if not var_6_0 or var_6_0 ~= "dlc_dwarf_interior" then
@@ -164,10 +164,10 @@ var_0_3.dwarf_bells = {
 	events = {
 		"dwarf_bells"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		return arg_7_0:get_persistent_stat(arg_7_1, "dwarf_bells") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		arg_8_0:increment_stat(arg_8_1, "dwarf_bells")
 	end
 }
@@ -178,16 +178,16 @@ var_0_3.dwarf_pressure = {
 	name = "achv_dwarf_pressure_name",
 	display_completion_ui = true,
 	icon = "achievement_dwarf_pressure",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_dwarf_pressure_desc"), var_0_14)
 	end,
 	events = {
 		"dwarf_pressure"
 	},
-	completed = function(arg_10_0, arg_10_1, arg_10_2)
+	completed = function (arg_10_0, arg_10_1, arg_10_2)
 		return arg_10_0:get_persistent_stat(arg_10_1, "dwarf_pressure") >= 1
 	end,
-	on_event = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	on_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 		if arg_11_2.failed then
 			return
 		end

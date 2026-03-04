@@ -273,7 +273,7 @@ end
 
 local var_0_35 = #var_0_33
 
-function AIPlayerSlotExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AIPlayerSlotExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.all_slots = {}
 
@@ -321,7 +321,7 @@ function AIPlayerSlotExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.belongs_to_player = true
 end
 
-function AIPlayerSlotExtension._create_target_slots(arg_2_0, arg_2_1, arg_2_2)
+AIPlayerSlotExtension._create_target_slots = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0.all_slots
 
 	for iter_2_0, iter_2_1 in pairs(var_2_0) do
@@ -353,7 +353,7 @@ function AIPlayerSlotExtension._create_target_slots(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function AIPlayerSlotExtension._update_assigned_player(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+AIPlayerSlotExtension._update_assigned_player = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if arg_3_0.unit ~= arg_3_2 then
 		return
 	end
@@ -375,7 +375,7 @@ function AIPlayerSlotExtension._update_assigned_player(arg_3_0, arg_3_1, arg_3_2
 	end
 end
 
-function AIPlayerSlotExtension.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+AIPlayerSlotExtension.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._status_ext = ScriptUnit.has_extension(arg_4_2, "status_system")
 	arg_4_0._locomotion_ext = ScriptUnit.has_extension(arg_4_2, "locomotion_system")
 end
@@ -422,7 +422,7 @@ local function var_0_36(arg_5_0)
 	end
 end
 
-function AIPlayerSlotExtension.cleanup_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+AIPlayerSlotExtension.cleanup_extension = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	if arg_6_0.slots then
 		local var_6_0 = arg_6_0.slots
 
@@ -448,7 +448,7 @@ function AIPlayerSlotExtension.cleanup_extension(arg_6_0, arg_6_1, arg_6_2, arg_
 	end
 end
 
-function AIPlayerSlotExtension.update_total_slots_count(arg_7_0, arg_7_1)
+AIPlayerSlotExtension.update_total_slots_count = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.all_slots
 	local var_7_1 = 0
 	local var_7_2 = 0
@@ -482,7 +482,7 @@ function AIPlayerSlotExtension.update_total_slots_count(arg_7_0, arg_7_1)
 	return var_7_1, var_7_2
 end
 
-function AIPlayerSlotExtension.update_disabled_slots_count(arg_8_0, arg_8_1)
+AIPlayerSlotExtension.update_disabled_slots_count = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.all_slots
 
 	for iter_8_0 = 1, var_0_35 do
@@ -501,7 +501,7 @@ function AIPlayerSlotExtension.update_disabled_slots_count(arg_8_0, arg_8_1)
 	end
 end
 
-function AIPlayerSlotExtension.update_slot_sound(arg_9_0, arg_9_1)
+AIPlayerSlotExtension.update_slot_sound = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.unit
 	local var_9_1 = arg_9_0.all_slots
 	local var_9_2 = arg_9_0._is_server_player
@@ -1021,7 +1021,7 @@ local function var_0_58(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26
 	return var_26_0, var_26_1
 end
 
-function AIPlayerSlotExtension.update_target_slots(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AIPlayerSlotExtension.update_target_slots = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0
 	local var_27_1
 	local var_27_2
@@ -1104,7 +1104,7 @@ function AIPlayerSlotExtension.update_target_slots(arg_27_0, arg_27_1, arg_27_2,
 	return false
 end
 
-function AIPlayerSlotExtension._set_slot_absolute_position(arg_28_0, arg_28_1, arg_28_2)
+AIPlayerSlotExtension._set_slot_absolute_position = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.position:unbox()
 	local var_28_1 = var_0_5(var_0_7(arg_28_2 - var_28_0))
 
@@ -1113,7 +1113,7 @@ function AIPlayerSlotExtension._set_slot_absolute_position(arg_28_0, arg_28_1, a
 	var_0_40(arg_28_1, var_28_0)
 end
 
-function AIPlayerSlotExtension._update_target_slots_status(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+AIPlayerSlotExtension._update_target_slots_status = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	local var_29_0 = arg_29_0.all_slots
 
 	for iter_29_0 = 1, var_0_35 do
@@ -1144,7 +1144,7 @@ function AIPlayerSlotExtension._update_target_slots_status(arg_29_0, arg_29_1, a
 	end
 end
 
-function AIPlayerSlotExtension._update_target_slots_positions(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9)
+AIPlayerSlotExtension._update_target_slots_positions = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9)
 	if arg_30_5 then
 		arg_30_0:_update_target_slots_positions_on_ladder(arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_6, arg_30_7, arg_30_8)
 
@@ -1194,7 +1194,7 @@ function AIPlayerSlotExtension._update_target_slots_positions(arg_30_0, arg_30_1
 	var_0_54(var_30_2)
 end
 
-function AIPlayerSlotExtension._update_slot_position(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8)
+AIPlayerSlotExtension._update_slot_position = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8)
 	local var_31_0 = arg_31_0._locomotion_ext
 	local var_31_1 = arg_31_0.position:unbox()
 	local var_31_2
@@ -1223,7 +1223,7 @@ end
 
 local var_0_59 = 24
 
-function AIPlayerSlotExtension._update_anchor_slot_position(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
+AIPlayerSlotExtension._update_anchor_slot_position = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
 	local var_32_0 = arg_32_0._locomotion_ext
 	local var_32_1 = arg_32_0.position:unbox()
 	local var_32_2 = arg_32_1.ai_unit
@@ -1269,7 +1269,7 @@ function AIPlayerSlotExtension._update_anchor_slot_position(arg_32_0, arg_32_1, 
 	end
 end
 
-function AIPlayerSlotExtension._update_target_slots_positions_on_ladder(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7)
+AIPlayerSlotExtension._update_target_slots_positions_on_ladder = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7)
 	local var_33_0 = arg_33_0.all_slots
 
 	for iter_33_0, iter_33_1 in pairs(var_33_0) do
@@ -1473,7 +1473,7 @@ local function var_0_65(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	end
 end
 
-function AIPlayerSlotExtension.debug_draw(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+AIPlayerSlotExtension.debug_draw = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 	local var_35_0 = Vector3.up() * 0.1
 	local var_35_1 = arg_35_0.all_slots
 
@@ -1586,7 +1586,7 @@ function AIPlayerSlotExtension.debug_draw(arg_35_0, arg_35_1, arg_35_2, arg_35_3
 					local var_35_39 = var_35_12
 
 					if var_35_38 == var_0_11.CHECK_MIDDLE then
-						-- block empty
+						-- Nothing
 					else
 						local var_35_40 = var_0_13[var_35_38]
 
@@ -1694,7 +1694,7 @@ end
 
 TEST_SLOT = 0
 
-function AIPlayerSlotExtension._get_best_slot(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+AIPlayerSlotExtension._get_best_slot = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 	local var_41_0 = Unit.local_position(arg_41_1, 0)
 	local var_41_1 = arg_41_0.position:unbox()
 	local var_41_2 = arg_41_0.all_slots[arg_41_2]
@@ -1712,9 +1712,9 @@ function AIPlayerSlotExtension._get_best_slot(arg_41_0, arg_41_1, arg_41_2, arg_
 		local var_41_8 = var_41_3[iter_41_0]
 
 		if var_41_8.disabled then
-			-- block empty
+			-- Nothing
 		elseif (arg_41_3 or var_41_5) and var_0_67(var_41_8, var_41_0, var_41_1) then
-			-- block empty
+			-- Nothing
 		else
 			local var_41_9 = var_41_8.ai_unit
 			local var_41_10 = var_41_8.original_absolute_position:unbox()
@@ -1745,7 +1745,7 @@ function AIPlayerSlotExtension._get_best_slot(arg_41_0, arg_41_1, arg_41_2, arg_
 	return var_41_6
 end
 
-function AIPlayerSlotExtension._get_best_slot_to_wait_on(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+AIPlayerSlotExtension._get_best_slot_to_wait_on = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	local var_42_0 = Unit.local_position(arg_42_1, 0)
 	local var_42_1 = arg_42_0.position:unbox()
 	local var_42_2 = arg_42_0.all_slots
@@ -1771,7 +1771,7 @@ function AIPlayerSlotExtension._get_best_slot_to_wait_on(arg_42_0, arg_42_1, arg
 			local var_42_13, var_42_14 = var_0_65(var_42_10, arg_42_5, 0, arg_42_6)
 
 			if not var_42_13 then
-				-- block empty
+				-- Nothing
 			else
 				local var_42_15 = var_0_2(var_42_13, var_42_0) + var_42_11 * var_42_11 * var_0_31 + var_42_14 + var_42_12
 
@@ -1786,7 +1786,7 @@ function AIPlayerSlotExtension._get_best_slot_to_wait_on(arg_42_0, arg_42_1, arg
 	return var_42_6
 end
 
-function AIPlayerSlotExtension._update_slot(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+AIPlayerSlotExtension._update_slot = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	var_0_51(arg_43_1)
 
 	local var_43_0 = Unit.local_position(arg_43_2, 0)
@@ -1799,7 +1799,7 @@ function AIPlayerSlotExtension._update_slot(arg_43_0, arg_43_1, arg_43_2, arg_43
 	end
 end
 
-function AIPlayerSlotExtension._assign_slot(arg_44_0, arg_44_1, arg_44_2)
+AIPlayerSlotExtension._assign_slot = function (arg_44_0, arg_44_1, arg_44_2)
 	if arg_44_1.ai_unit_slot_extension == arg_44_2 then
 		return
 	end
@@ -1823,7 +1823,7 @@ function AIPlayerSlotExtension._assign_slot(arg_44_0, arg_44_1, arg_44_2)
 	var_0_54(var_44_1)
 end
 
-function AIPlayerSlotExtension.request_best_slot(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+AIPlayerSlotExtension.request_best_slot = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
 	local var_45_0 = false
 	local var_45_1 = arg_45_1:get_preferred_slot_type()
 	local var_45_2 = arg_45_1.unit
@@ -1874,7 +1874,7 @@ function AIPlayerSlotExtension.request_best_slot(arg_45_0, arg_45_1, arg_45_2, a
 	return var_45_3, var_45_0
 end
 
-function AIPlayerSlotExtension.get_destination(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5)
+AIPlayerSlotExtension.get_destination = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5)
 	local var_46_0
 
 	if not arg_46_3 then
@@ -1913,7 +1913,7 @@ function AIPlayerSlotExtension.get_destination(arg_46_0, arg_46_1, arg_46_2, arg
 	return var_46_0
 end
 
-function AIPlayerSlotExtension.free_slot(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+AIPlayerSlotExtension.free_slot = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	arg_47_1:on_slot_lost()
 
 	if arg_47_3 then

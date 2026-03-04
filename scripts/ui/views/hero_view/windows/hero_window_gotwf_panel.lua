@@ -8,7 +8,7 @@ local var_0_3 = var_0_0.animation_definitions
 HeroWindowGotwfPanel = class(HeroWindowGotwfPanel)
 HeroWindowGotwfPanel.NAME = "HeroWindowGotwfPanel"
 
-function HeroWindowGotwfPanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowGotwfPanel.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfPanel")
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -24,7 +24,7 @@ function HeroWindowGotwfPanel.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements(arg_1_1, arg_1_2)
 end
 
-function HeroWindowGotwfPanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowGotwfPanel._create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_2_0 = {}
@@ -45,23 +45,23 @@ function HeroWindowGotwfPanel._create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_3)
 end
 
-function HeroWindowGotwfPanel.on_exit(arg_3_0, arg_3_1)
+HeroWindowGotwfPanel.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfPanel")
 
 	arg_3_0._ui_animator = nil
 end
 
-function HeroWindowGotwfPanel.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowGotwfPanel.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_handle_gamepad_activity()
 	arg_4_0:_update_animations(arg_4_1)
 	arg_4_0:_draw(arg_4_1)
 end
 
-function HeroWindowGotwfPanel.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowGotwfPanel.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_input(arg_5_1, arg_5_2)
 end
 
-function HeroWindowGotwfPanel._update_animations(arg_6_0, arg_6_1)
+HeroWindowGotwfPanel._update_animations = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_animations
 	local var_6_1 = arg_6_0._animations
 	local var_6_2 = arg_6_0._ui_animator
@@ -87,7 +87,7 @@ function HeroWindowGotwfPanel._update_animations(arg_6_0, arg_6_1)
 	arg_6_0:_animate_button(arg_6_0._widgets_by_name.close_button, arg_6_1)
 end
 
-function HeroWindowGotwfPanel._handle_input(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowGotwfPanel._handle_input = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._parent
 	local var_7_1 = arg_7_0._widgets_by_name
 	local var_7_2 = arg_7_0._parent:window_input_service()
@@ -98,7 +98,7 @@ function HeroWindowGotwfPanel._handle_input(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function HeroWindowGotwfPanel._draw(arg_8_0, arg_8_1)
+HeroWindowGotwfPanel._draw = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_renderer
 	local var_8_1 = arg_8_0._ui_scenegraph
 	local var_8_2 = arg_8_0._parent:window_input_service()
@@ -112,7 +112,7 @@ function HeroWindowGotwfPanel._draw(arg_8_0, arg_8_1)
 	UIRenderer.end_pass(var_8_0)
 end
 
-function HeroWindowGotwfPanel._handle_gamepad_activity(arg_9_0)
+HeroWindowGotwfPanel._handle_gamepad_activity = function (arg_9_0)
 	local var_9_0 = Managers.input:is_device_active("gamepad")
 	local var_9_1 = arg_9_0._gamepad_active_last_frame == nil
 
@@ -127,7 +127,7 @@ function HeroWindowGotwfPanel._handle_gamepad_activity(arg_9_0)
 	end
 end
 
-function HeroWindowGotwfPanel._animate_button(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowGotwfPanel._animate_button = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.content
 	local var_10_1 = arg_10_1.style
 	local var_10_2 = var_10_0.button_hotspot

@@ -2,13 +2,13 @@
 
 ActionSpiritStorm = class(ActionSpiritStorm, ActionBase)
 
-function ActionSpiritStorm.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionSpiritStorm.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionSpiritStorm.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
 end
 
-function ActionSpiritStorm.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionSpiritStorm.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionSpiritStorm.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -22,7 +22,7 @@ function ActionSpiritStorm.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, 
 	arg_2_0.is_critical_strike = ActionUtils.is_critical_strike(var_2_0, arg_2_1)
 end
 
-function ActionSpiritStorm.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionSpiritStorm.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.current_action
 
 	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0.time_to_shoot then
@@ -42,7 +42,7 @@ function ActionSpiritStorm.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, a
 	end
 end
 
-function ActionSpiritStorm.finish(arg_4_0, arg_4_1)
+ActionSpiritStorm.finish = function (arg_4_0, arg_4_1)
 	if arg_4_0.state ~= "waiting_to_shoot" and arg_4_0.state ~= "shot" then
 		arg_4_0:_proc_spell_used(arg_4_0.owner_buff_extension)
 	end
@@ -56,7 +56,7 @@ function ActionSpiritStorm.finish(arg_4_0, arg_4_1)
 	end
 end
 
-function ActionSpiritStorm.fire(arg_5_0, arg_5_1)
+ActionSpiritStorm.fire = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.current_action
 	local var_5_1 = arg_5_0.owner_unit
 	local var_5_2 = arg_5_0.target

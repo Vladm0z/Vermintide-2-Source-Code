@@ -6,7 +6,7 @@ local var_0_2 = "materials/fonts/" .. var_0_0
 
 Debug = Debug or {}
 
-function Debug.setup(arg_1_0, arg_1_1)
+Debug.setup = function (arg_1_0, arg_1_1)
 	Debug.active = BUILD ~= "release"
 	Debug.world = arg_1_0
 	Debug.world_name = arg_1_1
@@ -27,7 +27,7 @@ Debug.font = var_0_0
 Debug.font_mtrl = var_0_2
 Debug.font_size = 26
 
-function Debug.create_line_object(arg_2_0)
+Debug.create_line_object = function (arg_2_0)
 	local var_2_0 = false
 
 	Debug.line_objects[arg_2_0] = World.create_line_object(Debug.world, var_2_0)
@@ -35,7 +35,7 @@ function Debug.create_line_object(arg_2_0)
 	return Debug.line_objects[arg_2_0]
 end
 
-function Debug.test_popup()
+Debug.test_popup = function ()
 	local var_3_0 = Localize("popup_debug_header")
 	local var_3_1 = Localize("popup_debug_message") .. "\nhost_name"
 
@@ -44,7 +44,7 @@ function Debug.test_popup()
 	Managers.popup:activate_timer(Debug.popup_id, 120, "cancel")
 end
 
-function Debug.update(arg_4_0, arg_4_1)
+Debug.update = function (arg_4_0, arg_4_1)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -64,7 +64,7 @@ function Debug.update(arg_4_0, arg_4_1)
 	local var_4_6 = #Debug.debug_texts
 
 	if var_4_6 > 100 then
-		-- block empty
+		-- Nothing
 	end
 
 	local var_4_7 = Gui.FormatDirectives + Gui.MultiColor
@@ -137,13 +137,13 @@ function Debug.update(arg_4_0, arg_4_1)
 	end
 end
 
-function Debug.cond_text(arg_5_0, ...)
+Debug.cond_text = function (arg_5_0, ...)
 	if arg_5_0 then
 		Debug.text(...)
 	end
 end
 
-function Debug.text(...)
+Debug.text = function (...)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -155,7 +155,7 @@ function Debug.text(...)
 	table.insert(Debug.debug_texts, var_6_0)
 end
 
-function Debug.colored_text(arg_7_0, ...)
+Debug.colored_text = function (arg_7_0, ...)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -207,7 +207,7 @@ local var_0_4 = {
 	}
 }
 
-function Debug.update_world_texts()
+Debug.update_world_texts = function ()
 	if not Managers.state.debug_text then
 		return
 	end
@@ -243,7 +243,7 @@ function Debug.update_world_texts()
 	end
 end
 
-function Debug.update_world_sticky_texts()
+Debug.update_world_sticky_texts = function ()
 	if not Managers.state.debug_text then
 		return
 	end
@@ -277,7 +277,7 @@ function Debug.update_world_sticky_texts()
 	end
 end
 
-function Debug.world_text(arg_10_0, arg_10_1, arg_10_2)
+Debug.world_text = function (arg_10_0, arg_10_1, arg_10_2)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -307,7 +307,7 @@ function Debug.world_text(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function Debug.world_sticky_text(arg_11_0, arg_11_1, arg_11_2)
+Debug.world_sticky_text = function (arg_11_0, arg_11_1, arg_11_2)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -346,12 +346,12 @@ function Debug.world_sticky_text(arg_11_0, arg_11_1, arg_11_2)
 	Debug.world_sticky_index = var_11_1
 end
 
-function Debug.reset_sticky_world_texts()
+Debug.reset_sticky_world_texts = function ()
 	Debug.num_world_sticky_texts = 0
 	Debug.world_sticky_index = 0
 end
 
-function Debug.sticky_text(...)
+Debug.sticky_text = function (...)
 	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -369,7 +369,7 @@ function Debug.sticky_text(...)
 	})
 end
 
-function Debug.drawer(arg_14_0, arg_14_1)
+Debug.drawer = function (arg_14_0, arg_14_1)
 	arg_14_0 = arg_14_0 or "default"
 
 	local var_14_0 = Debug.line_objects[arg_14_0] or Debug.create_line_object(arg_14_0)
@@ -377,7 +377,7 @@ function Debug.drawer(arg_14_0, arg_14_1)
 	return DebugDrawer:new(var_14_0, to_boolean(not arg_14_1))
 end
 
-function Debug.draw_text(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+Debug.draw_text = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = Debug.gui
 	local var_15_1 = arg_15_2 or var_0_1
 	local var_15_2 = Vector3(arg_15_1.x, RESOLUTION_LOOKUP.res_h - arg_15_1.y - var_15_1, arg_15_1.z)
@@ -385,7 +385,7 @@ function Debug.draw_text(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	Gui.text(var_15_0, arg_15_0, var_0_2, arg_15_2 or var_0_1, var_0_0, var_15_2, arg_15_3 or Color(120, 220, 0), "shadow")
 end
 
-function Debug.draw_rect(arg_16_0, arg_16_1, arg_16_2)
+Debug.draw_rect = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = Debug.gui
 	local var_16_1 = Vector3(arg_16_0.x, RESOLUTION_LOOKUP.res_h - arg_16_0.y, arg_16_0.z)
 	local var_16_2 = Vector3(arg_16_1.x, -arg_16_1.y, arg_16_1.z)
@@ -393,7 +393,7 @@ function Debug.draw_rect(arg_16_0, arg_16_1, arg_16_2)
 	Gui.rect(var_16_0, var_16_1, var_16_2, arg_16_2)
 end
 
-function Debug.teardown()
+Debug.teardown = function ()
 	Debug.active = false
 
 	local var_17_0 = Debug.world
@@ -405,7 +405,7 @@ function Debug.teardown()
 	table.clear(Debug.line_objects)
 end
 
-function Debug.animation_log_specific_profile(arg_18_0, arg_18_1)
+Debug.animation_log_specific_profile = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.player:players()
 
 	for iter_18_0, iter_18_1 in pairs(var_18_0) do
@@ -424,7 +424,7 @@ function Debug.animation_log_specific_profile(arg_18_0, arg_18_1)
 	end
 end
 
-function Debug.spawn_hero(arg_19_0)
+Debug.spawn_hero = function (arg_19_0)
 	local var_19_0 = Managers.state.spawn.hero_spawner_handler
 	local var_19_1 = Network.peer_id()
 	local var_19_2 = Managers.player:player_from_peer_id(var_19_1)
@@ -432,7 +432,7 @@ function Debug.spawn_hero(arg_19_0)
 	var_19_0:spawn_hero_request(var_19_2, arg_19_0)
 end
 
-function Debug.load_level(arg_20_0, arg_20_1, arg_20_2)
+Debug.load_level = function (arg_20_0, arg_20_1, arg_20_2)
 	Managers.mechanism:debug_load_level(arg_20_0, arg_20_1)
 
 	if arg_20_2 ~= nil then
@@ -444,7 +444,7 @@ function Debug.load_level(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function Debug.level_loaded(arg_21_0)
+Debug.level_loaded = function (arg_21_0)
 	if not Managers.state then
 		return false
 	end
@@ -470,7 +470,7 @@ function Debug.level_loaded(arg_21_0)
 	return true
 end
 
-function Debug.visualize_level_unit(arg_22_0)
+Debug.visualize_level_unit = function (arg_22_0)
 	local var_22_0 = Managers.state.networked_flow_state._level
 
 	if not var_22_0 then
@@ -492,7 +492,7 @@ function Debug.visualize_level_unit(arg_22_0)
 	end
 end
 
-function Debug.aim_position()
+Debug.aim_position = function ()
 	local var_23_0 = Managers.player:local_player(1)
 	local var_23_1 = var_23_0.player_unit
 	local var_23_2 = Managers.state.camera:camera_position(var_23_0.viewport_name)
@@ -517,7 +517,7 @@ function Debug.aim_position()
 	end
 end
 
-function Debug.test_spawn_unit(arg_24_0, arg_24_1)
+Debug.test_spawn_unit = function (arg_24_0, arg_24_1)
 	arg_24_0 = arg_24_0 or "wood_elf"
 	arg_24_1 = arg_24_1 or 1
 
@@ -563,7 +563,7 @@ function Debug.test_spawn_unit(arg_24_0, arg_24_1)
 	Debug.test_unit = var_24_15
 end
 
-function Debug.test_despawn_unit(arg_25_0, arg_25_1)
+Debug.test_despawn_unit = function (arg_25_0, arg_25_1)
 	local var_25_0 = Managers.state.spawn.world
 	local var_25_1 = Debug.test_unit
 
@@ -600,7 +600,7 @@ function Debug.test_despawn_unit(arg_25_0, arg_25_1)
 	end
 end
 
-function Debug.create_jira_issue()
+Debug.create_jira_issue = function ()
 	local var_26_0, var_26_1 = pcall(require, "core/plugins/reporter")
 
 	if var_26_0 then
@@ -610,7 +610,7 @@ end
 
 Debug._hook_data = Debug._hook_data or {}
 
-function Debug.hook(arg_27_0, arg_27_1, arg_27_2)
+Debug.hook = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = Debug._hook_data[arg_27_0]
 
 	if not var_27_0 then
@@ -627,12 +627,12 @@ function Debug.hook(arg_27_0, arg_27_1, arg_27_2)
 		assert(var_27_1)
 	end
 
-	rawset(arg_27_0, arg_27_1, function(...)
+	rawset(arg_27_0, arg_27_1, function (...)
 		return arg_27_2(var_27_1, ...)
 	end)
 end
 
-function Debug.unhook(arg_29_0, arg_29_1, arg_29_2)
+Debug.unhook = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = Debug._hook_data[arg_29_0]
 
 	if not var_29_0 then

@@ -11,10 +11,10 @@ local function var_0_0(arg_1_0, arg_1_1)
 end
 
 InputFilters.virtual_axis = {
-	init = function(arg_2_0)
+	init = function (arg_2_0)
 		return table.clone(arg_2_0)
 	end,
-	update = function(arg_3_0, arg_3_1)
+	update = function (arg_3_0, arg_3_1)
 		local var_3_0 = arg_3_0.input_mappings
 		local var_3_1 = arg_3_1:get(var_3_0.right)
 		local var_3_2 = arg_3_1:get(var_3_0.left)
@@ -67,10 +67,10 @@ InputFilters.virtual_axis = {
 	}
 }
 InputFilters.scale_vector3 = {
-	init = function(arg_4_0)
+	init = function (arg_4_0)
 		return table.clone(arg_4_0)
 	end,
-	update = function(arg_5_0, arg_5_1)
+	update = function (arg_5_0, arg_5_1)
 		local var_5_0 = arg_5_1:get(arg_5_0.input_mapping)
 
 		var_0_0(var_5_0, arg_5_0.input_threshold or 0)
@@ -85,10 +85,10 @@ InputFilters.scale_vector3 = {
 	}
 }
 InputFilters.scale_vector3_xy = {
-	init = function(arg_6_0)
+	init = function (arg_6_0)
 		return table.clone(arg_6_0)
 	end,
-	update = function(arg_7_0, arg_7_1)
+	update = function (arg_7_0, arg_7_1)
 		local var_7_0 = arg_7_1:get(arg_7_0.input_mapping)
 
 		var_0_0(var_7_0, arg_7_0.input_threshold or 0)
@@ -111,7 +111,7 @@ InputFilters.scale_vector3_xy = {
 	}
 }
 InputFilters.scale_vector3_xy_accelerated_x = {
-	init = function(arg_8_0)
+	init = function (arg_8_0)
 		local var_8_0 = table.clone(arg_8_0)
 
 		var_8_0.input_x = 0
@@ -121,7 +121,7 @@ InputFilters.scale_vector3_xy_accelerated_x = {
 
 		return var_8_0
 	end,
-	update = function(arg_9_0, arg_9_1)
+	update = function (arg_9_0, arg_9_1)
 		local var_9_0 = arg_9_1:get(arg_9_0.input_mapping)
 
 		var_0_0(var_9_0, arg_9_0.input_threshold or 0)
@@ -208,7 +208,7 @@ InputFilters.scale_vector3_xy_accelerated_x = {
 	}
 }
 InputFilters.scale_vector3_xy_accelerated_x_inverted = {
-	init = function(arg_10_0)
+	init = function (arg_10_0)
 		local var_10_0 = table.clone(arg_10_0)
 
 		var_10_0.input_x = 0
@@ -218,7 +218,7 @@ InputFilters.scale_vector3_xy_accelerated_x_inverted = {
 
 		return var_10_0
 	end,
-	update = function(arg_11_0, arg_11_1)
+	update = function (arg_11_0, arg_11_1)
 		local var_11_0 = arg_11_1:get(arg_11_0.input_mapping)
 
 		var_0_0(var_11_0, arg_11_0.input_threshold or 0)
@@ -278,10 +278,10 @@ InputFilters.scale_vector3_xy_accelerated_x_inverted = {
 	}
 }
 InputFilters.scale_vector3_invert_y = {
-	init = function(arg_12_0)
+	init = function (arg_12_0)
 		return table.clone(arg_12_0)
 	end,
-	update = function(arg_13_0, arg_13_1)
+	update = function (arg_13_0, arg_13_1)
 		local var_13_0 = Vector3(Vector3.to_elements(arg_13_1:get(arg_13_0.input_mapping)))
 
 		var_0_0(var_13_0, arg_13_0.input_threshold or 0)
@@ -298,7 +298,7 @@ InputFilters.scale_vector3_invert_y = {
 	}
 }
 InputFilters.gamepad_cursor = {
-	init = function(arg_14_0)
+	init = function (arg_14_0)
 		local var_14_0 = table.clone(arg_14_0)
 		local var_14_1 = RESOLUTION_LOOKUP.res_w
 		local var_14_2 = RESOLUTION_LOOKUP.res_h
@@ -321,7 +321,7 @@ InputFilters.gamepad_cursor = {
 
 		return var_14_0
 	end,
-	update = function(arg_15_0, arg_15_1)
+	update = function (arg_15_0, arg_15_1)
 		if GLOBAL_FRAME_INDEX > arg_15_0.frame_index and not arg_15_1:is_blocked() then
 			local var_15_0 = Managers.input
 
@@ -392,10 +392,10 @@ InputFilters.gamepad_cursor = {
 	}
 }
 InputFilters.threshhold = {
-	init = function(arg_16_0)
+	init = function (arg_16_0)
 		return table.clone(arg_16_0)
 	end,
-	update = function(arg_17_0, arg_17_1)
+	update = function (arg_17_0, arg_17_1)
 		if arg_17_1:get(arg_17_0.input_mapping) >= arg_17_0.threshhold then
 			return false
 		else
@@ -404,7 +404,7 @@ InputFilters.threshhold = {
 	end
 }
 InputFilters.move_filter = {
-	init = function(arg_18_0)
+	init = function (arg_18_0)
 		local var_18_0 = table.clone(arg_18_0)
 		local var_18_1 = Vector3(unpack(arg_18_0.axis))
 		local var_18_2 = Vector3.normalize(var_18_1)
@@ -413,7 +413,7 @@ InputFilters.move_filter = {
 
 		return var_18_0
 	end,
-	update = function(arg_19_0, arg_19_1)
+	update = function (arg_19_0, arg_19_1)
 		for iter_19_0, iter_19_1 in pairs(arg_19_0.input_mappings) do
 			if arg_19_1:get(iter_19_1) then
 				return true
@@ -442,7 +442,7 @@ InputFilters.move_filter = {
 	end
 }
 InputFilters.move_filter_continuous = {
-	init = function(arg_20_0)
+	init = function (arg_20_0)
 		local var_20_0 = table.clone(arg_20_0)
 		local var_20_1 = Vector3(unpack(arg_20_0.axis))
 		local var_20_2 = Vector3.normalize(var_20_1)
@@ -453,7 +453,7 @@ InputFilters.move_filter_continuous = {
 
 		return var_20_0
 	end,
-	update = function(arg_21_0, arg_21_1)
+	update = function (arg_21_0, arg_21_1)
 		local var_21_0 = Managers.time:mean_dt()
 
 		arg_21_0.cooldown = math.max(arg_21_0.cooldown - var_21_0, 0)
@@ -500,10 +500,10 @@ InputFilters.move_filter_continuous = {
 	end
 }
 InputFilters["or"] = {
-	init = function(arg_22_0)
+	init = function (arg_22_0)
 		return table.clone(arg_22_0)
 	end,
-	update = function(arg_23_0, arg_23_1)
+	update = function (arg_23_0, arg_23_1)
 		for iter_23_0, iter_23_1 in pairs(arg_23_0.input_mappings) do
 			if arg_23_1:get(iter_23_1) then
 				return true
@@ -512,10 +512,10 @@ InputFilters["or"] = {
 	end
 }
 InputFilters["and"] = {
-	init = function(arg_24_0)
+	init = function (arg_24_0)
 		return table.clone(arg_24_0)
 	end,
-	update = function(arg_25_0, arg_25_1)
+	update = function (arg_25_0, arg_25_1)
 		local var_25_0
 
 		for iter_25_0, iter_25_1 in pairs(arg_25_0.input_mappings) do
@@ -530,10 +530,10 @@ InputFilters["and"] = {
 	end
 }
 InputFilters.multiple_and = {
-	init = function(arg_26_0)
+	init = function (arg_26_0)
 		return table.clone(arg_26_0)
 	end,
-	update = function(arg_27_0, arg_27_1)
+	update = function (arg_27_0, arg_27_1)
 		for iter_27_0, iter_27_1 in ipairs(arg_27_0.input_mappings) do
 			local var_27_0
 
@@ -554,10 +554,10 @@ InputFilters.multiple_and = {
 	end
 }
 InputFilters.sub = {
-	init = function(arg_28_0)
+	init = function (arg_28_0)
 		return table.clone(arg_28_0)
 	end,
-	update = function(arg_29_0, arg_29_1)
+	update = function (arg_29_0, arg_29_1)
 		local var_29_0 = 0
 		local var_29_1
 
@@ -576,7 +576,7 @@ InputFilters.sub = {
 	end
 }
 InputFilters.delayed_and = {
-	init = function(arg_30_0)
+	init = function (arg_30_0)
 		local var_30_0 = table.clone(arg_30_0)
 
 		var_30_0.timer = 0
@@ -584,7 +584,7 @@ InputFilters.delayed_and = {
 
 		return var_30_0
 	end,
-	update = function(arg_31_0, arg_31_1)
+	update = function (arg_31_0, arg_31_1)
 		local var_31_0
 		local var_31_1
 
@@ -629,10 +629,10 @@ InputFilters.delayed_and = {
 	end
 }
 InputFilters.exclusive_and = {
-	init = function(arg_32_0)
+	init = function (arg_32_0)
 		return table.clone(arg_32_0)
 	end,
-	update = function(arg_33_0, arg_33_1)
+	update = function (arg_33_0, arg_33_1)
 		local var_33_0
 
 		for iter_33_0, iter_33_1 in pairs(arg_33_0.input_mappings) do
@@ -655,7 +655,7 @@ InputFilters.exclusive_and = {
 	end
 }
 InputFilters.axis_check = {
-	init = function(arg_34_0)
+	init = function (arg_34_0)
 		local var_34_0 = table.clone(arg_34_0)
 		local var_34_1 = var_34_0.axis
 
@@ -663,7 +663,7 @@ InputFilters.axis_check = {
 
 		return var_34_0
 	end,
-	update = function(arg_35_0, arg_35_1)
+	update = function (arg_35_0, arg_35_1)
 		local var_35_0 = arg_35_0.axis_requirement
 		local var_35_1 = arg_35_1:get(arg_35_0.input_mapping)
 
@@ -675,10 +675,10 @@ InputFilters.axis_check = {
 	end
 }
 InputFilters["not"] = {
-	init = function(arg_36_0)
+	init = function (arg_36_0)
 		return table.clone(arg_36_0)
 	end,
-	update = function(arg_37_0, arg_37_1)
+	update = function (arg_37_0, arg_37_1)
 		for iter_37_0, iter_37_1 in pairs(arg_37_0.input_mappings) do
 			if not arg_37_1:get(iter_37_1) then
 				return true

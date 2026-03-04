@@ -7,11 +7,11 @@ BTTrollDownedAction.name = "BTTrollDownedAction"
 
 local var_0_0 = script_data
 
-function BTTrollDownedAction.init(arg_1_0, ...)
+BTTrollDownedAction.init = function (arg_1_0, ...)
 	BTTrollDownedAction.super.init(arg_1_0, ...)
 end
 
-function BTTrollDownedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTrollDownedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 
 	arg_2_2.action = var_2_0
@@ -48,7 +48,7 @@ function BTTrollDownedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTTrollDownedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTrollDownedAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	BTStaggerAction.clean_blackboard(nil, arg_3_2)
 	arg_3_2.navigation_extension:set_enabled(true)
 
@@ -65,7 +65,7 @@ function BTTrollDownedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	end
 end
 
-function BTTrollDownedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTrollDownedAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.action
 	local var_4_1 = ScriptUnit.extension(arg_4_1, "health_system")
 
@@ -122,11 +122,11 @@ function BTTrollDownedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTTrollDownedAction.trigger_dialogue_event(arg_5_0, arg_5_1, arg_5_2)
+BTTrollDownedAction.trigger_dialogue_event = function (arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.extension_input(arg_5_1, "dialogue_system"):trigger_networked_dialogue_event(arg_5_2)
 end
 
-function BTTrollDownedAction.effects_on_downed(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTTrollDownedAction.effects_on_downed = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_2.action.puke_on_downed then
 		local var_6_0 = Unit.local_position(arg_6_1, 0)
 		local var_6_1 = Managers.state.entity:system("ai_system"):nav_world()
@@ -151,7 +151,7 @@ function BTTrollDownedAction.effects_on_downed(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	end
 end
 
-function BTTrollDownedAction.rage(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTTrollDownedAction.rage = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_2.anim_cb_roar_begin = false
 
 	local var_7_0 = arg_7_2.action

@@ -35,7 +35,7 @@ local var_0_27 = var_0_17
 HeroViewStateAchievements = class(HeroViewStateAchievements)
 HeroViewStateAchievements.NAME = "HeroViewStateAchievements"
 
-function HeroViewStateAchievements.on_enter(arg_1_0, arg_1_1)
+HeroViewStateAchievements.on_enter = function (arg_1_0, arg_1_1)
 	print("[HeroViewState] Enter Substate HeroViewStateAchievements")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -144,7 +144,7 @@ function HeroViewStateAchievements.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_create_filter_input_service()
 end
 
-function HeroViewStateAchievements._create_filter_input_service(arg_2_0)
+HeroViewStateAchievements._create_filter_input_service = function (arg_2_0)
 	local var_2_0 = Managers.input
 
 	var_2_0:create_input_service("achievement_filter", "IngameMenuKeymaps", "IngameMenuFilters", {
@@ -153,11 +153,11 @@ function HeroViewStateAchievements._create_filter_input_service(arg_2_0)
 	var_2_0:map_device_to_service("achievement_filter", "gamepad")
 end
 
-function HeroViewStateAchievements.get_filter_input_service(arg_3_0)
+HeroViewStateAchievements.get_filter_input_service = function (arg_3_0)
 	return Managers.input:get_service("achievement_filter")
 end
 
-function HeroViewStateAchievements._update_buttons_new_status(arg_4_0)
+HeroViewStateAchievements._update_buttons_new_status = function (arg_4_0)
 	local var_4_0 = arg_4_0:_get_layout("quest")
 
 	arg_4_0._widgets_by_name.quests_button.content.new = arg_4_0:_has_any_unclaimed_completed_challenge_in_category(var_4_0)
@@ -167,7 +167,7 @@ function HeroViewStateAchievements._update_buttons_new_status(arg_4_0)
 	arg_4_0._widgets_by_name.achievements_button.content.new = arg_4_0:_has_any_unclaimed_completed_challenge_in_category(var_4_1)
 end
 
-function HeroViewStateAchievements._update_summary_quest_timers(arg_5_0, arg_5_1)
+HeroViewStateAchievements._update_summary_quest_timers = function (arg_5_0, arg_5_1)
 	local var_5_0 = "quest"
 	local var_5_1 = arg_5_0:_get_layout(var_5_0).categories
 	local var_5_2 = "summary_quest_bar_timer_"
@@ -233,7 +233,7 @@ function HeroViewStateAchievements._update_summary_quest_timers(arg_5_0, arg_5_1
 	end
 end
 
-function HeroViewStateAchievements.create_ui_elements(arg_6_0, arg_6_1)
+HeroViewStateAchievements.create_ui_elements = function (arg_6_0, arg_6_1)
 	local var_6_0 = var_0_0.create_category_tab_widgets_func()
 
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_10)
@@ -300,7 +300,7 @@ local function var_0_28(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return arg_7_2, arg_7_3, arg_7_4
 end
 
-function HeroViewStateAchievements._setup_achievement_progress_overview(arg_8_0)
+HeroViewStateAchievements._setup_achievement_progress_overview = function (arg_8_0)
 	local var_8_0 = arg_8_0._achievement_manager
 	local var_8_1 = {}
 	local var_8_2 = var_8_0:outline()
@@ -319,7 +319,7 @@ function HeroViewStateAchievements._setup_achievement_progress_overview(arg_8_0)
 	arg_8_0:_set_summary_achievement_categories_progress(var_8_1)
 end
 
-function HeroViewStateAchievements._handle_layout_buttons_hovered(arg_9_0)
+HeroViewStateAchievements._handle_layout_buttons_hovered = function (arg_9_0)
 	local var_9_0 = arg_9_0._widgets_by_name
 	local var_9_1 = arg_9_0._summary_widgets_by_name
 	local var_9_2 = var_9_0.exit_button
@@ -371,7 +371,7 @@ function HeroViewStateAchievements._handle_layout_buttons_hovered(arg_9_0)
 	end
 end
 
-function HeroViewStateAchievements._on_layout_button_pressed(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+HeroViewStateAchievements._on_layout_button_pressed = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_0._widgets_by_name
 	local var_10_1 = var_10_0.quests_button
 	local var_10_2 = var_10_0.summary_button
@@ -443,13 +443,13 @@ function HeroViewStateAchievements._on_layout_button_pressed(arg_10_0, arg_10_1,
 	arg_10_0._achievement_layout_type = arg_10_3
 end
 
-function HeroViewStateAchievements._reset_tabs(arg_11_0)
+HeroViewStateAchievements._reset_tabs = function (arg_11_0)
 	for iter_11_0, iter_11_1 in ipairs(arg_11_0._category_tab_widgets) do
 		arg_11_0:_reset_tab(iter_11_1)
 	end
 end
 
-function HeroViewStateAchievements._setup_layout(arg_12_0, arg_12_1)
+HeroViewStateAchievements._setup_layout = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._category_tab_widgets
 	local var_12_1 = #var_12_0
 	local var_12_2 = arg_12_0:_get_layout(arg_12_1).categories
@@ -465,7 +465,7 @@ function HeroViewStateAchievements._setup_layout(arg_12_0, arg_12_1)
 	arg_12_0._achievement_layout_type = arg_12_1
 end
 
-function HeroViewStateAchievements._setup_tab_widget(arg_13_0, arg_13_1, arg_13_2)
+HeroViewStateAchievements._setup_tab_widget = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_2 then
 		local var_13_0 = arg_13_2.name
 		local var_13_1 = Localize(var_13_0)
@@ -492,7 +492,7 @@ function HeroViewStateAchievements._setup_tab_widget(arg_13_0, arg_13_1, arg_13_
 	end
 end
 
-function HeroViewStateAchievements._get_layout(arg_14_0, arg_14_1)
+HeroViewStateAchievements._get_layout = function (arg_14_0, arg_14_1)
 	if arg_14_1 == "achievements" then
 		return arg_14_0._achievement_manager:outline()
 	elseif arg_14_1 == "quest" then
@@ -510,7 +510,7 @@ function HeroViewStateAchievements._get_layout(arg_14_0, arg_14_1)
 	end
 end
 
-function HeroViewStateAchievements._reset_tab(arg_15_0, arg_15_1)
+HeroViewStateAchievements._reset_tab = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = arg_15_1.style
 	local var_15_2 = arg_15_1.style.list_style
@@ -562,7 +562,7 @@ local function var_0_29(arg_16_0, arg_16_1)
 	return false
 end
 
-function HeroViewStateAchievements._has_any_unclaimed_completed_challenge_in_category(arg_17_0, arg_17_1)
+HeroViewStateAchievements._has_any_unclaimed_completed_challenge_in_category = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.type
 	local var_17_1
 
@@ -577,7 +577,7 @@ function HeroViewStateAchievements._has_any_unclaimed_completed_challenge_in_cat
 	return var_0_29(var_17_1, arg_17_1)
 end
 
-function HeroViewStateAchievements._populate_tab(arg_18_0, arg_18_1, arg_18_2)
+HeroViewStateAchievements._populate_tab = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_1.content
 	local var_18_1 = arg_18_1.style.list_style
 	local var_18_2 = var_18_0.list_content
@@ -597,7 +597,7 @@ function HeroViewStateAchievements._populate_tab(arg_18_0, arg_18_1, arg_18_2)
 	var_18_1.num_draws = var_18_4
 end
 
-function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+HeroViewStateAchievements._create_entries = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = arg_19_0._quest_manager
 	local var_19_1 = arg_19_0._achievement_manager
 
@@ -632,17 +632,17 @@ function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2,
 		local var_19_12 = var_19_3:get_data_by_id(var_19_11)
 
 		if var_19_7 ~= nil and not SearchUtils.simple_search(var_19_7, var_19_12.name) and not SearchUtils.simple_search(var_19_7, var_19_12.desc) then
-			-- block empty
+			-- Nothing
 		else
 			local var_19_13 = (var_19_12.completed or script_data.set_all_challenges_claimable) and not script_data["eac-untrusted"]
 
 			if var_19_6.completed ~= nil and var_19_6.completed == not var_19_13 then
-				-- block empty
+				-- Nothing
 			else
 				local var_19_14 = var_19_12.claimed
 
 				if var_19_6.claimed ~= nil and var_19_6.claimed == not var_19_14 then
-					-- block empty
+					-- Nothing
 				else
 					local var_19_15 = true
 					local var_19_16 = Localize("dlc_not_owned") .. ":"
@@ -674,7 +674,7 @@ function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2,
 					end
 
 					if var_19_6.locked ~= nil and var_19_6.locked == var_19_15 then
-						-- block empty
+						-- Nothing
 					else
 						table.clear(var_19_8)
 
@@ -862,7 +862,7 @@ function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2,
 	end
 
 	if #var_19_10 > 1 then
-		table.sort(var_19_10, function(arg_20_0, arg_20_1)
+		table.sort(var_19_10, function (arg_20_0, arg_20_1)
 			local var_20_0 = arg_20_0.content
 			local var_20_1 = arg_20_1.content
 
@@ -889,7 +889,7 @@ function HeroViewStateAchievements._create_entries(arg_19_0, arg_19_1, arg_19_2,
 	end
 end
 
-function HeroViewStateAchievements._show_empty_entries_warning(arg_21_0)
+HeroViewStateAchievements._show_empty_entries_warning = function (arg_21_0)
 	local var_21_0 = arg_21_0._additional_type_widgets_by_name
 	local var_21_1 = var_21_0.overlay
 	local var_21_2 = var_21_0.overlay_text
@@ -900,7 +900,7 @@ function HeroViewStateAchievements._show_empty_entries_warning(arg_21_0)
 	var_21_2.content.visible = true
 end
 
-function HeroViewStateAchievements._hide_empty_entries_warning(arg_22_0)
+HeroViewStateAchievements._hide_empty_entries_warning = function (arg_22_0)
 	local var_22_0 = arg_22_0._additional_type_widgets_by_name
 	local var_22_1 = var_22_0.overlay
 	local var_22_2 = var_22_0.overlay_text
@@ -911,7 +911,7 @@ function HeroViewStateAchievements._hide_empty_entries_warning(arg_22_0)
 	var_22_2.content.visible = false
 end
 
-function HeroViewStateAchievements._set_widget_bar_progress(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+HeroViewStateAchievements._set_widget_bar_progress = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_1.content
 	local var_23_1 = arg_23_1.style.progress_bar
 	local var_23_2 = var_23_1.default_size
@@ -928,7 +928,7 @@ function HeroViewStateAchievements._set_widget_bar_progress(arg_23_0, arg_23_1, 
 	end
 end
 
-function HeroViewStateAchievements._set_requirements(arg_24_0, arg_24_1, arg_24_2)
+HeroViewStateAchievements._set_requirements = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_1.content
 	local var_24_1 = arg_24_1.style
 	local var_24_2 = var_0_23
@@ -970,7 +970,7 @@ function HeroViewStateAchievements._set_requirements(arg_24_0, arg_24_1, arg_24_
 	return var_24_2 + var_24_3 * var_0_23
 end
 
-function HeroViewStateAchievements._set_achievement_expand_height(arg_25_0, arg_25_1, arg_25_2)
+HeroViewStateAchievements._set_achievement_expand_height = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.content
 	local var_25_1 = arg_25_1.style
 
@@ -979,7 +979,7 @@ function HeroViewStateAchievements._set_achievement_expand_height(arg_25_0, arg_
 	var_25_1.expand_background_edge.offset[2] = -arg_25_2
 end
 
-function HeroViewStateAchievements._update_achievements_scroll_height(arg_26_0, arg_26_1)
+HeroViewStateAchievements._update_achievements_scroll_height = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0:_get_achievement_entries_height()
 
 	arg_26_0.total_scroll_height = math.max(var_26_0 - var_0_25, 0)
@@ -988,7 +988,7 @@ function HeroViewStateAchievements._update_achievements_scroll_height(arg_26_0, 
 	arg_26_0:_align_achievement_entries()
 end
 
-function HeroViewStateAchievements._update_categories_scroll_height(arg_27_0, arg_27_1)
+HeroViewStateAchievements._update_categories_scroll_height = function (arg_27_0, arg_27_1)
 	local var_27_0 = var_0_10.category_window_mask.size
 	local var_27_1 = var_0_10.category_scrollbar.size
 	local var_27_2 = arg_27_0._category_scrollbar
@@ -1009,7 +1009,7 @@ function HeroViewStateAchievements._update_categories_scroll_height(arg_27_0, ar
 	end
 end
 
-function HeroViewStateAchievements._get_achievement_entries_height(arg_28_0, arg_28_1)
+HeroViewStateAchievements._get_achievement_entries_height = function (arg_28_0, arg_28_1)
 	arg_28_1 = arg_28_1 or 1
 
 	local var_28_0 = 0
@@ -1039,7 +1039,7 @@ function HeroViewStateAchievements._get_achievement_entries_height(arg_28_0, arg
 	return var_28_0 + var_28_4
 end
 
-function HeroViewStateAchievements._get_category_entries_height(arg_29_0)
+HeroViewStateAchievements._get_category_entries_height = function (arg_29_0)
 	local var_29_0 = #arg_29_0._category_tab_widgets
 	local var_29_1 = var_0_16.tab_size
 	local var_29_2 = var_0_16.tab_list_entry_spacing
@@ -1047,7 +1047,7 @@ function HeroViewStateAchievements._get_category_entries_height(arg_29_0)
 	return math.max(var_29_1[2] * var_29_0 + var_29_2 * (var_29_0 - 1), 0) + arg_29_0:_get_active_tabs_height()
 end
 
-function HeroViewStateAchievements._get_active_tabs_height(arg_30_0)
+HeroViewStateAchievements._get_active_tabs_height = function (arg_30_0)
 	local var_30_0 = arg_30_0._active_tab
 	local var_30_1 = var_30_0 and var_30_0.style.list_style.num_draws or 0
 	local var_30_2 = var_0_16.tab_list_entry_size
@@ -1056,7 +1056,7 @@ function HeroViewStateAchievements._get_active_tabs_height(arg_30_0)
 	return (math.max(var_30_2[2] * var_30_1 + var_30_3 * (var_30_1 - 1), 0))
 end
 
-function HeroViewStateAchievements._get_active_category_height(arg_31_0)
+HeroViewStateAchievements._get_active_category_height = function (arg_31_0)
 	local var_31_0 = (arg_31_0._active_tab_index or 1) - 1
 	local var_31_1 = var_0_16.tab_size
 	local var_31_2 = var_0_16.tab_list_entry_spacing
@@ -1066,7 +1066,7 @@ function HeroViewStateAchievements._get_active_category_height(arg_31_0)
 	return var_31_3, var_31_1[2] + var_31_2 + var_31_4
 end
 
-function HeroViewStateAchievements._setup_scrollbar(arg_32_0, arg_32_1, arg_32_2)
+HeroViewStateAchievements._setup_scrollbar = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = arg_32_0._widgets_by_name.achievement_scrollbar
 	local var_32_1 = var_32_0.scenegraph_id
 	local var_32_2 = arg_32_0.ui_scenegraph[var_32_1].size[2]
@@ -1082,7 +1082,7 @@ function HeroViewStateAchievements._setup_scrollbar(arg_32_0, arg_32_1, arg_32_2
 	arg_32_0._widgets_by_name.achievement_window.content.scroll_amount = var_32_5
 end
 
-function HeroViewStateAchievements._update_mouse_scroll_input(arg_33_0)
+HeroViewStateAchievements._update_mouse_scroll_input = function (arg_33_0)
 	local var_33_0 = true
 
 	if var_33_0 then
@@ -1111,7 +1111,7 @@ function HeroViewStateAchievements._update_mouse_scroll_input(arg_33_0)
 	end
 end
 
-function HeroViewStateAchievements._set_scrollbar_value(arg_34_0, arg_34_1)
+HeroViewStateAchievements._set_scrollbar_value = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0.scroll_value
 
 	if arg_34_1 then
@@ -1126,7 +1126,7 @@ function HeroViewStateAchievements._set_scrollbar_value(arg_34_0, arg_34_1)
 	end
 end
 
-function HeroViewStateAchievements._update_achievement_read_index(arg_35_0, arg_35_1)
+HeroViewStateAchievements._update_achievement_read_index = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._achievement_widgets
 	local var_35_1 = #var_35_0
 	local var_35_2 = var_35_1 - var_0_26
@@ -1159,7 +1159,7 @@ function HeroViewStateAchievements._update_achievement_read_index(arg_35_0, arg_
 	arg_35_0.ui_scenegraph.achievement_root.position[2] = math.floor(var_35_3)
 end
 
-function HeroViewStateAchievements._update_category_scroll_position(arg_36_0)
+HeroViewStateAchievements._update_category_scroll_position = function (arg_36_0)
 	local var_36_0 = arg_36_0._category_scrollbar:get_scrolled_length()
 
 	if var_36_0 ~= arg_36_0._category_scrolled_length then
@@ -1168,7 +1168,7 @@ function HeroViewStateAchievements._update_category_scroll_position(arg_36_0)
 	end
 end
 
-function HeroViewStateAchievements._on_achievement_pressed(arg_37_0, arg_37_1)
+HeroViewStateAchievements._on_achievement_pressed = function (arg_37_0, arg_37_1)
 	if arg_37_0._claim_all then
 		return
 	end
@@ -1229,7 +1229,7 @@ function HeroViewStateAchievements._on_achievement_pressed(arg_37_0, arg_37_1)
 	end
 end
 
-function HeroViewStateAchievements._claim_reward(arg_38_0, arg_38_1)
+HeroViewStateAchievements._claim_reward = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_1.content.id
 	local var_38_1
 	local var_38_2
@@ -1256,7 +1256,7 @@ function HeroViewStateAchievements._claim_reward(arg_38_0, arg_38_1)
 	end
 end
 
-function HeroViewStateAchievements._claim_multiple_rewards(arg_39_0, arg_39_1)
+HeroViewStateAchievements._claim_multiple_rewards = function (arg_39_0, arg_39_1)
 	local var_39_0
 	local var_39_1
 	local var_39_2 = {}
@@ -1281,7 +1281,7 @@ function HeroViewStateAchievements._claim_multiple_rewards(arg_39_0, arg_39_1)
 	arg_39_0._quest_rewards_fail_reason = var_39_1
 end
 
-function HeroViewStateAchievements._claim_quest_reward(arg_40_0, arg_40_1)
+HeroViewStateAchievements._claim_quest_reward = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._quest_manager
 	local var_40_1, var_40_2 = var_40_0:can_claim_quest_rewards(arg_40_1)
 
@@ -1296,7 +1296,7 @@ function HeroViewStateAchievements._claim_quest_reward(arg_40_0, arg_40_1)
 	return var_40_3, var_40_4
 end
 
-function HeroViewStateAchievements._claim_multiple_quest_rewards(arg_41_0, arg_41_1)
+HeroViewStateAchievements._claim_multiple_quest_rewards = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._quest_manager
 	local var_41_1, var_41_2, var_41_3 = var_41_0:can_claim_multiple_quest_rewards(arg_41_1)
 
@@ -1311,7 +1311,7 @@ function HeroViewStateAchievements._claim_multiple_quest_rewards(arg_41_0, arg_4
 	return var_41_4, var_41_5
 end
 
-function HeroViewStateAchievements._claim_achievement_reward(arg_42_0, arg_42_1)
+HeroViewStateAchievements._claim_achievement_reward = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._achievement_manager
 	local var_42_1, var_42_2 = var_42_0:can_claim_achievement_rewards(arg_42_1)
 
@@ -1324,7 +1324,7 @@ function HeroViewStateAchievements._claim_achievement_reward(arg_42_0, arg_42_1)
 	return (var_42_0:claim_reward(arg_42_1))
 end
 
-function HeroViewStateAchievements._claim_multiple_achievement_rewards(arg_43_0, arg_43_1)
+HeroViewStateAchievements._claim_multiple_achievement_rewards = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._achievement_manager
 	local var_43_1, var_43_2, var_43_3 = var_43_0:can_claim_all_achievement_rewards(arg_43_1)
 
@@ -1345,11 +1345,11 @@ function HeroViewStateAchievements._claim_multiple_achievement_rewards(arg_43_0,
 	end
 end
 
-function HeroViewStateAchievements._is_polling(arg_44_0)
+HeroViewStateAchievements._is_polling = function (arg_44_0)
 	return arg_44_0._reward_poll_id or arg_44_0._quest_refresh_poll_id or arg_44_0._reward_poll_claim_all_id
 end
 
-function HeroViewStateAchievements._poll_quest_refresh(arg_45_0, arg_45_1)
+HeroViewStateAchievements._poll_quest_refresh = function (arg_45_0, arg_45_1)
 	if not arg_45_0._quest_refresh_poll_id then
 		return
 	end
@@ -1366,7 +1366,7 @@ function HeroViewStateAchievements._poll_quest_refresh(arg_45_0, arg_45_1)
 	end
 end
 
-function HeroViewStateAchievements._poll_rewards(arg_46_0, arg_46_1)
+HeroViewStateAchievements._poll_rewards = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._reward_poll_id
 
 	if not var_46_0 then
@@ -1392,7 +1392,7 @@ function HeroViewStateAchievements._poll_rewards(arg_46_0, arg_46_1)
 	end
 end
 
-function HeroViewStateAchievements._poll_all_rewards(arg_47_0, arg_47_1)
+HeroViewStateAchievements._poll_all_rewards = function (arg_47_0, arg_47_1)
 	local var_47_0 = arg_47_0._reward_poll_claim_all_id
 
 	if not var_47_0 then
@@ -1422,7 +1422,7 @@ function HeroViewStateAchievements._poll_all_rewards(arg_47_0, arg_47_1)
 	end
 end
 
-function HeroViewStateAchievements._on_reward_claimed(arg_48_0, arg_48_1, arg_48_2)
+HeroViewStateAchievements._on_reward_claimed = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0._reward_claim_widget
 	local var_48_1 = var_48_0.content
 	local var_48_2 = var_48_0.style
@@ -1452,7 +1452,7 @@ function HeroViewStateAchievements._on_reward_claimed(arg_48_0, arg_48_1, arg_48
 	arg_48_0:_handle_claim_all_challenges()
 end
 
-function HeroViewStateAchievements._on_all_rewards_claimed(arg_49_0, arg_49_1, arg_49_2)
+HeroViewStateAchievements._on_all_rewards_claimed = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._claimable_challenge_widgets
 
 	for iter_49_0 = 1, #var_49_0 do
@@ -1484,7 +1484,7 @@ function HeroViewStateAchievements._on_all_rewards_claimed(arg_49_0, arg_49_1, a
 	arg_49_0:_update_buttons_new_status()
 end
 
-function HeroViewStateAchievements._update_new_status_for_current_tab(arg_50_0)
+HeroViewStateAchievements._update_new_status_for_current_tab = function (arg_50_0)
 	if arg_50_0._achievement_layout_type == "achievements" then
 		local var_50_0 = {}
 
@@ -1522,7 +1522,7 @@ function HeroViewStateAchievements._update_new_status_for_current_tab(arg_50_0)
 	end
 end
 
-function HeroViewStateAchievements._setup_reward_presentation(arg_52_0, arg_52_1, arg_52_2)
+HeroViewStateAchievements._setup_reward_presentation = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = Managers.backend
 	local var_52_1 = var_52_0:get_interface("items")
 	local var_52_2
@@ -1636,7 +1636,7 @@ function HeroViewStateAchievements._setup_reward_presentation(arg_52_0, arg_52_1
 	end
 end
 
-function HeroViewStateAchievements._align_achievement_entries(arg_53_0)
+HeroViewStateAchievements._align_achievement_entries = function (arg_53_0)
 	local var_53_0 = 0
 	local var_53_1 = arg_53_0._achievement_widgets
 
@@ -1654,7 +1654,7 @@ function HeroViewStateAchievements._align_achievement_entries(arg_53_0)
 	end
 end
 
-function HeroViewStateAchievements._setup_achievement_entries_animations(arg_54_0)
+HeroViewStateAchievements._setup_achievement_entries_animations = function (arg_54_0)
 	local var_54_0 = arg_54_0._achievement_draw_index
 
 	if not var_54_0 then
@@ -1679,7 +1679,7 @@ function HeroViewStateAchievements._setup_achievement_entries_animations(arg_54_
 	end
 end
 
-function HeroViewStateAchievements.transitioning(arg_55_0)
+HeroViewStateAchievements.transitioning = function (arg_55_0)
 	if arg_55_0.exiting then
 		return true
 	else
@@ -1687,19 +1687,19 @@ function HeroViewStateAchievements.transitioning(arg_55_0)
 	end
 end
 
-function HeroViewStateAchievements._wanted_state(arg_56_0)
+HeroViewStateAchievements._wanted_state = function (arg_56_0)
 	return (arg_56_0.parent:wanted_state())
 end
 
-function HeroViewStateAchievements.wanted_menu_state(arg_57_0)
+HeroViewStateAchievements.wanted_menu_state = function (arg_57_0)
 	return arg_57_0._wanted_menu_state
 end
 
-function HeroViewStateAchievements.clear_wanted_menu_state(arg_58_0)
+HeroViewStateAchievements.clear_wanted_menu_state = function (arg_58_0)
 	arg_58_0._wanted_menu_state = nil
 end
 
-function HeroViewStateAchievements.on_exit(arg_59_0, arg_59_1)
+HeroViewStateAchievements.on_exit = function (arg_59_0, arg_59_1)
 	print("[HeroViewState] Exit Substate HeroViewStateAchievements")
 
 	arg_59_0.ui_animator = nil
@@ -1724,7 +1724,7 @@ function HeroViewStateAchievements.on_exit(arg_59_0, arg_59_1)
 	Managers.input:disable_gamepad_cursor()
 end
 
-function HeroViewStateAchievements._update_transition_timer(arg_60_0, arg_60_1)
+HeroViewStateAchievements._update_transition_timer = function (arg_60_0, arg_60_1)
 	if not arg_60_0._transition_timer then
 		return
 	end
@@ -1736,11 +1736,11 @@ function HeroViewStateAchievements._update_transition_timer(arg_60_0, arg_60_1)
 	end
 end
 
-function HeroViewStateAchievements.input_service(arg_61_0)
+HeroViewStateAchievements.input_service = function (arg_61_0)
 	return arg_61_0.parent:input_service()
 end
 
-function HeroViewStateAchievements.update(arg_62_0, arg_62_1, arg_62_2)
+HeroViewStateAchievements.update = function (arg_62_0, arg_62_1, arg_62_2)
 	local var_62_0 = arg_62_0._input_blocked and FAKE_INPUT_SERVICE or arg_62_0:input_service()
 
 	if arg_62_0.reward_popup then
@@ -1787,18 +1787,18 @@ function HeroViewStateAchievements.update(arg_62_0, arg_62_1, arg_62_2)
 	end
 end
 
-function HeroViewStateAchievements._has_active_level_vote(arg_63_0)
+HeroViewStateAchievements._has_active_level_vote = function (arg_63_0)
 	local var_63_0 = arg_63_0.voting_manager
 
 	return var_63_0:vote_in_progress() and var_63_0:is_mission_vote() and not var_63_0:has_voted(Network.peer_id())
 end
 
-function HeroViewStateAchievements.post_update(arg_64_0, arg_64_1, arg_64_2)
+HeroViewStateAchievements.post_update = function (arg_64_0, arg_64_1, arg_64_2)
 	arg_64_0.ui_animator:update(arg_64_1)
 	arg_64_0:_update_animations(arg_64_1)
 end
 
-function HeroViewStateAchievements._update_animations(arg_65_0, arg_65_1)
+HeroViewStateAchievements._update_animations = function (arg_65_0, arg_65_1)
 	for iter_65_0, iter_65_1 in pairs(arg_65_0._ui_animations) do
 		UIAnimation.update(iter_65_1, arg_65_1)
 
@@ -1846,13 +1846,13 @@ function HeroViewStateAchievements._update_animations(arg_65_0, arg_65_1)
 	end
 end
 
-function HeroViewStateAchievements._set_button_force_hover(arg_66_0, arg_66_1, arg_66_2)
+HeroViewStateAchievements._set_button_force_hover = function (arg_66_0, arg_66_1, arg_66_2)
 	local var_66_0 = arg_66_1.content
 
 	;(var_66_0.button_hotspot or var_66_0.hotspot).force_hover = arg_66_2
 end
 
-function HeroViewStateAchievements._handle_gamepad_filter_input(arg_67_0, arg_67_1, arg_67_2)
+HeroViewStateAchievements._handle_gamepad_filter_input = function (arg_67_0, arg_67_1, arg_67_2)
 	if not arg_67_0._gamepad_filter_active then
 		return false
 	end
@@ -1909,7 +1909,7 @@ function HeroViewStateAchievements._handle_gamepad_filter_input(arg_67_0, arg_67
 	return true
 end
 
-function HeroViewStateAchievements._enable_gamepad_filters(arg_68_0, arg_68_1)
+HeroViewStateAchievements._enable_gamepad_filters = function (arg_68_0, arg_68_1)
 	arg_68_0._gamepad_filter_active = arg_68_1
 	arg_68_0._gamepad_filer_selection_index = 1
 	arg_68_0._search_widgets_by_name.filters.content.visible = arg_68_1
@@ -1921,7 +1921,7 @@ function HeroViewStateAchievements._enable_gamepad_filters(arg_68_0, arg_68_1)
 	end
 end
 
-function HeroViewStateAchievements._handle_input(arg_69_0, arg_69_1, arg_69_2)
+HeroViewStateAchievements._handle_input = function (arg_69_0, arg_69_1, arg_69_2)
 	if arg_69_0:_handle_gamepad_filter_input(arg_69_1, arg_69_2) then
 		return
 	end
@@ -2106,7 +2106,7 @@ function HeroViewStateAchievements._handle_input(arg_69_0, arg_69_1, arg_69_2)
 	end
 end
 
-function HeroViewStateAchievements._on_tab_list_pressed(arg_70_0, arg_70_1, arg_70_2)
+HeroViewStateAchievements._on_tab_list_pressed = function (arg_70_0, arg_70_1, arg_70_2)
 	local var_70_0 = arg_70_0._active_tab_index
 	local var_70_1 = arg_70_0._achievement_layout_type
 	local var_70_2 = arg_70_0:_get_layout(var_70_1).categories[var_70_0].categories[arg_70_1]
@@ -2122,7 +2122,7 @@ function HeroViewStateAchievements._on_tab_list_pressed(arg_70_0, arg_70_1, arg_
 	end
 end
 
-function HeroViewStateAchievements._tab_pressed(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+HeroViewStateAchievements._tab_pressed = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 	if arg_71_0._active_tab and arg_71_0._active_tab ~= arg_71_1 then
 		arg_71_0:_deactivate_active_tab()
 	end
@@ -2130,7 +2130,7 @@ function HeroViewStateAchievements._tab_pressed(arg_71_0, arg_71_1, arg_71_2, ar
 	arg_71_0:_activate_tab(arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 end
 
-function HeroViewStateAchievements._activate_tab(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
+HeroViewStateAchievements._activate_tab = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
 	arg_72_0._active_tab = arg_72_1
 	arg_72_0._active_tab_index = arg_72_2
 
@@ -2207,7 +2207,7 @@ function HeroViewStateAchievements._activate_tab(arg_72_0, arg_72_1, arg_72_2, a
 	arg_72_0:_update_categories_scroll_height()
 end
 
-function HeroViewStateAchievements._deactivate_active_tab(arg_73_0)
+HeroViewStateAchievements._deactivate_active_tab = function (arg_73_0)
 	local var_73_0 = arg_73_0._active_tab
 
 	if not var_73_0 then
@@ -2231,7 +2231,7 @@ function HeroViewStateAchievements._deactivate_active_tab(arg_73_0)
 	arg_73_0:_update_categories_scroll_height()
 end
 
-function HeroViewStateAchievements.close_menu(arg_74_0, arg_74_1)
+HeroViewStateAchievements.close_menu = function (arg_74_0, arg_74_1)
 	if not arg_74_1 then
 		arg_74_0:play_sound("Play_gui_achivements_menu_close")
 	end
@@ -2241,7 +2241,7 @@ function HeroViewStateAchievements.close_menu(arg_74_0, arg_74_1)
 	arg_74_0.parent:close_menu(nil, arg_74_1)
 end
 
-function HeroViewStateAchievements.draw(arg_75_0, arg_75_1, arg_75_2)
+HeroViewStateAchievements.draw = function (arg_75_0, arg_75_1, arg_75_2)
 	local var_75_0 = arg_75_0.ui_renderer
 	local var_75_1 = arg_75_0.ui_top_renderer
 	local var_75_2 = arg_75_0.ui_scenegraph
@@ -2393,11 +2393,11 @@ function HeroViewStateAchievements.draw(arg_75_0, arg_75_1, arg_75_2)
 	end
 end
 
-function HeroViewStateAchievements.play_sound(arg_76_0, arg_76_1)
+HeroViewStateAchievements.play_sound = function (arg_76_0, arg_76_1)
 	arg_76_0.parent:play_sound(arg_76_1)
 end
 
-function HeroViewStateAchievements._start_transition_animation(arg_77_0, arg_77_1, arg_77_2)
+HeroViewStateAchievements._start_transition_animation = function (arg_77_0, arg_77_1, arg_77_2)
 	local var_77_0 = {
 		wwise_world = arg_77_0.wwise_world,
 		render_settings = arg_77_0.render_settings
@@ -2408,7 +2408,7 @@ function HeroViewStateAchievements._start_transition_animation(arg_77_0, arg_77_
 	arg_77_0._animations[arg_77_1] = var_77_2
 end
 
-function HeroViewStateAchievements.set_fullscreen_effect_enable_state(arg_78_0, arg_78_1)
+HeroViewStateAchievements.set_fullscreen_effect_enable_state = function (arg_78_0, arg_78_1)
 	local var_78_0 = arg_78_0.ui_renderer.world
 	local var_78_1 = World.get_data(var_78_0, "shading_environment")
 
@@ -2421,19 +2421,19 @@ function HeroViewStateAchievements.set_fullscreen_effect_enable_state(arg_78_0, 
 	arg_78_0._fullscreen_effect_enabled = arg_78_1
 end
 
-function HeroViewStateAchievements.block_input(arg_79_0)
+HeroViewStateAchievements.block_input = function (arg_79_0)
 	arg_79_0._input_blocked = true
 end
 
-function HeroViewStateAchievements.unblock_input(arg_80_0)
+HeroViewStateAchievements.unblock_input = function (arg_80_0)
 	arg_80_0._input_blocked = false
 end
 
-function HeroViewStateAchievements.input_blocked(arg_81_0)
+HeroViewStateAchievements.input_blocked = function (arg_81_0)
 	return arg_81_0._input_blocked
 end
 
-function HeroViewStateAchievements._set_summary_achievement_categories_progress(arg_82_0, arg_82_1)
+HeroViewStateAchievements._set_summary_achievement_categories_progress = function (arg_82_0, arg_82_1)
 	local var_82_0 = arg_82_0._summary_widgets_by_name
 	local var_82_1 = "summary_achievement_bar_"
 
@@ -2460,7 +2460,7 @@ function HeroViewStateAchievements._set_summary_achievement_categories_progress(
 	end
 end
 
-function HeroViewStateAchievements._present_reward(arg_83_0, arg_83_1)
+HeroViewStateAchievements._present_reward = function (arg_83_0, arg_83_1)
 	local var_83_0 = arg_83_0.reward_popup
 
 	if arg_83_0:_displaying_reward_presentation() then
@@ -2476,7 +2476,7 @@ function HeroViewStateAchievements._present_reward(arg_83_0, arg_83_1)
 	end
 end
 
-function HeroViewStateAchievements._handle_queued_presentations(arg_84_0)
+HeroViewStateAchievements._handle_queued_presentations = function (arg_84_0)
 	if arg_84_0:_is_reward_presentation_complete() or #arg_84_0._reward_presentation_queue == 0 and not arg_84_0:_displaying_reward_presentation() then
 		local var_84_0 = arg_84_0._reward_presentation_queue
 
@@ -2492,19 +2492,19 @@ function HeroViewStateAchievements._handle_queued_presentations(arg_84_0)
 	end
 end
 
-function HeroViewStateAchievements._displaying_reward_presentation(arg_85_0)
+HeroViewStateAchievements._displaying_reward_presentation = function (arg_85_0)
 	return arg_85_0.reward_popup:is_presentation_active()
 end
 
-function HeroViewStateAchievements._is_reward_presentation_complete(arg_86_0)
+HeroViewStateAchievements._is_reward_presentation_complete = function (arg_86_0)
 	return arg_86_0.reward_popup:is_presentation_complete()
 end
 
-function HeroViewStateAchievements._reward_presentation_done(arg_87_0)
+HeroViewStateAchievements._reward_presentation_done = function (arg_87_0)
 	return not arg_87_0._reward_presentation_active
 end
 
-function HeroViewStateAchievements._setup_quest_summary_progress(arg_88_0)
+HeroViewStateAchievements._setup_quest_summary_progress = function (arg_88_0)
 	local var_88_0 = "quest"
 	local var_88_1 = arg_88_0:_get_layout(var_88_0).categories
 	local var_88_2 = arg_88_0._quest_manager
@@ -2608,7 +2608,7 @@ function HeroViewStateAchievements._setup_quest_summary_progress(arg_88_0)
 	var_88_5.summary_quest_book.content.disabled = not var_88_12
 end
 
-function HeroViewStateAchievements._animate_window_button(arg_89_0, arg_89_1, arg_89_2)
+HeroViewStateAchievements._animate_window_button = function (arg_89_0, arg_89_1, arg_89_2)
 	local var_89_0 = arg_89_1.content
 	local var_89_1 = arg_89_1.style
 	local var_89_2 = var_89_0.button_hotspot
@@ -2665,7 +2665,7 @@ function HeroViewStateAchievements._animate_window_button(arg_89_0, arg_89_1, ar
 	var_89_2.selection_progress = var_89_9
 end
 
-function HeroViewStateAchievements._set_uvs_scale_progress(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+HeroViewStateAchievements._set_uvs_scale_progress = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	local var_90_0 = arg_90_0.ui_scenegraph[arg_90_1].size
 	local var_90_1 = 10
 	local var_90_2 = var_90_1 / var_90_0[1] * arg_90_3
@@ -2677,12 +2677,12 @@ function HeroViewStateAchievements._set_uvs_scale_progress(arg_90_0, arg_90_1, a
 	arg_90_2[2][2] = 1 - var_90_2
 end
 
-function HeroViewStateAchievements._handle_input_desc(arg_91_0)
+HeroViewStateAchievements._handle_input_desc = function (arg_91_0)
 	local var_91_0 = arg_91_0._search_widgets_by_name.filters.content.query
 	local var_91_1
 
 	if arg_91_0._achievement_layout_type == "summary" or arg_91_0._gamepad_filter_active then
-		-- block empty
+		-- Nothing
 	else
 		var_91_1 = not table.is_empty(var_91_0) and "filter_available" or "filter_unavailable"
 	end
@@ -2694,7 +2694,7 @@ function HeroViewStateAchievements._handle_input_desc(arg_91_0)
 	end
 end
 
-function HeroViewStateAchievements._handle_search_input(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+HeroViewStateAchievements._handle_search_input = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 	local var_92_0 = arg_92_0._search_widgets_by_name.input.content
 	local var_92_1 = arg_92_0._search_widgets_by_name.filters.content
 
@@ -2812,7 +2812,7 @@ function HeroViewStateAchievements._handle_search_input(arg_92_0, arg_92_1, arg_
 	return var_92_1.visible
 end
 
-function HeroViewStateAchievements._do_search(arg_93_0, arg_93_1)
+HeroViewStateAchievements._do_search = function (arg_93_0, arg_93_1)
 	arg_93_0._search_query = arg_93_1
 	arg_93_0._search_widgets_by_name.input.content.search_query = arg_93_1
 
@@ -2836,7 +2836,7 @@ function HeroViewStateAchievements._do_search(arg_93_0, arg_93_1)
 	arg_93_0:play_sound("Play_hud_select")
 end
 
-function HeroViewStateAchievements._set_input_blocked(arg_94_0, arg_94_1)
+HeroViewStateAchievements._set_input_blocked = function (arg_94_0, arg_94_1)
 	local var_94_0 = Managers.input
 
 	if arg_94_1 then
@@ -2855,7 +2855,7 @@ function HeroViewStateAchievements._set_input_blocked(arg_94_0, arg_94_1)
 	arg_94_0.parent:set_input_blocked(arg_94_1)
 end
 
-function HeroViewStateAchievements._handle_claim_all_challenges(arg_95_0)
+HeroViewStateAchievements._handle_claim_all_challenges = function (arg_95_0)
 	local var_95_0 = arg_95_0._achievement_layout_type
 	local var_95_1 = arg_95_0._active_tab_index
 	local var_95_2 = arg_95_0._active_list_index
@@ -2897,7 +2897,7 @@ function HeroViewStateAchievements._handle_claim_all_challenges(arg_95_0)
 	end
 end
 
-function HeroViewStateAchievements._animate_claim_button(arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
+HeroViewStateAchievements._animate_claim_button = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
 	if not arg_96_1.content.visible then
 		return
 	end
@@ -2913,7 +2913,7 @@ function HeroViewStateAchievements._animate_claim_button(arg_96_0, arg_96_1, arg
 		local var_96_4 = 200 * arg_96_3
 
 		if var_96_0[2] >= 10 then
-			-- block empty
+			-- Nothing
 		else
 			var_96_0[2] = var_96_0[2] + var_96_4
 		end
@@ -2938,7 +2938,7 @@ function HeroViewStateAchievements._animate_claim_button(arg_96_0, arg_96_1, arg
 	end
 end
 
-function HeroViewStateAchievements._handle_gamepad_activity(arg_97_0)
+HeroViewStateAchievements._handle_gamepad_activity = function (arg_97_0)
 	local var_97_0 = Managers.input:is_device_active("gamepad")
 
 	if arg_97_0._gamepad_active_last_frame ~= var_97_0 then

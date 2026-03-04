@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_skittergate.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_level_skittergate_BOOM_01",

@@ -16,7 +16,7 @@ local var_0_8 = var_0_4[2]
 HeroViewStateHandbook = class(HeroViewStateHandbook)
 HeroViewStateHandbook.NAME = "HeroViewStateHandbook"
 
-function HeroViewStateHandbook.on_enter(arg_1_0, arg_1_1)
+HeroViewStateHandbook.on_enter = function (arg_1_0, arg_1_1)
 	print("[HeroViewState] Enter Substate HeroViewStateHandbook")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -53,13 +53,13 @@ function HeroViewStateHandbook.on_enter(arg_1_0, arg_1_1)
 	end
 end
 
-function HeroViewStateHandbook.on_exit(arg_2_0, arg_2_1)
+HeroViewStateHandbook.on_exit = function (arg_2_0, arg_2_1)
 	print("[HeroViewState] Exit Substate HeroViewStateHandbook")
 	arg_2_0._handbook_logic:delete()
 	Managers.input:disable_gamepad_cursor()
 end
 
-function HeroViewStateHandbook._create_ui_elements(arg_3_0)
+HeroViewStateHandbook._create_ui_elements = function (arg_3_0)
 	local var_3_0 = #HandbookSettings.outline
 	local var_3_1 = var_0_0.create_category_tab_widgets_func(var_3_0)
 
@@ -97,13 +97,13 @@ function HeroViewStateHandbook._create_ui_elements(arg_3_0)
 	arg_3_0:_activate_tab(var_3_3, 1, 1, true)
 end
 
-function HeroViewStateHandbook._reset_tabs(arg_4_0)
+HeroViewStateHandbook._reset_tabs = function (arg_4_0)
 	for iter_4_0, iter_4_1 in ipairs(arg_4_0._category_tab_widgets) do
 		arg_4_0:_reset_tab(iter_4_1)
 	end
 end
 
-function HeroViewStateHandbook._setup_layout(arg_5_0)
+HeroViewStateHandbook._setup_layout = function (arg_5_0)
 	local var_5_0 = arg_5_0._category_tab_widgets
 	local var_5_1 = #var_5_0
 	local var_5_2 = HandbookSettings.outline
@@ -121,7 +121,7 @@ function HeroViewStateHandbook._setup_layout(arg_5_0)
 	end
 end
 
-function HeroViewStateHandbook._setup_tab_widget(arg_6_0, arg_6_1, arg_6_2)
+HeroViewStateHandbook._setup_tab_widget = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.children
 	local var_6_1 = arg_6_1.content
 
@@ -159,7 +159,7 @@ function HeroViewStateHandbook._setup_tab_widget(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.content.visible = true
 end
 
-function HeroViewStateHandbook._reset_tab(arg_7_0, arg_7_1)
+HeroViewStateHandbook._reset_tab = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content
 	local var_7_1 = arg_7_1.style.list_style
 
@@ -178,7 +178,7 @@ function HeroViewStateHandbook._reset_tab(arg_7_0, arg_7_1)
 	arg_7_1.alpha_fade_multipler = 5
 end
 
-function HeroViewStateHandbook._update_categories_scroll_height(arg_8_0, arg_8_1)
+HeroViewStateHandbook._update_categories_scroll_height = function (arg_8_0, arg_8_1)
 	local var_8_0 = var_0_2.category_window_mask.size
 	local var_8_1 = var_0_2.category_scrollbar.size
 	local var_8_2 = arg_8_0._category_scrollbar
@@ -195,7 +195,7 @@ function HeroViewStateHandbook._update_categories_scroll_height(arg_8_0, arg_8_1
 	end
 end
 
-function HeroViewStateHandbook._get_category_entries_height(arg_9_0)
+HeroViewStateHandbook._get_category_entries_height = function (arg_9_0)
 	local var_9_0 = #arg_9_0._category_tab_widgets
 	local var_9_1 = var_0_5.tab_size
 	local var_9_2 = var_0_5.tab_list_entry_spacing
@@ -203,7 +203,7 @@ function HeroViewStateHandbook._get_category_entries_height(arg_9_0)
 	return math.max(var_9_1[2] * var_9_0 + var_9_2 * (var_9_0 - 1), 0) + arg_9_0:_get_active_tabs_height()
 end
 
-function HeroViewStateHandbook._get_active_tabs_height(arg_10_0)
+HeroViewStateHandbook._get_active_tabs_height = function (arg_10_0)
 	local var_10_0 = arg_10_0._active_tab
 	local var_10_1 = var_10_0 and var_10_0.style.list_style.num_draws or 0
 	local var_10_2 = var_0_5.tab_list_entry_size
@@ -212,7 +212,7 @@ function HeroViewStateHandbook._get_active_tabs_height(arg_10_0)
 	return (math.max(var_10_2[2] * var_10_1 + var_10_3 * (var_10_1 - 1), 0))
 end
 
-function HeroViewStateHandbook._get_active_category_height(arg_11_0)
+HeroViewStateHandbook._get_active_category_height = function (arg_11_0)
 	local var_11_0 = (arg_11_0._active_tab_index or 1) - 1
 	local var_11_1 = var_0_5.tab_size
 	local var_11_2 = var_0_5.tab_list_entry_spacing
@@ -222,7 +222,7 @@ function HeroViewStateHandbook._get_active_category_height(arg_11_0)
 	return var_11_3, var_11_1[2] + var_11_2 + var_11_4
 end
 
-function HeroViewStateHandbook._setup_scrollbar(arg_12_0, arg_12_1, arg_12_2)
+HeroViewStateHandbook._setup_scrollbar = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._widgets_by_name.achievement_scrollbar
 	local var_12_1 = var_12_0.scenegraph_id
 	local var_12_2 = arg_12_0._ui_scenegraph[var_12_1].size[2]
@@ -238,7 +238,7 @@ function HeroViewStateHandbook._setup_scrollbar(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._widgets_by_name.achievement_window.content.scroll_amount = var_12_5
 end
 
-function HeroViewStateHandbook._update_mouse_scroll_input(arg_13_0)
+HeroViewStateHandbook._update_mouse_scroll_input = function (arg_13_0)
 	local var_13_0 = true
 
 	if var_13_0 then
@@ -267,7 +267,7 @@ function HeroViewStateHandbook._update_mouse_scroll_input(arg_13_0)
 	end
 end
 
-function HeroViewStateHandbook._set_scrollbar_value(arg_14_0, arg_14_1)
+HeroViewStateHandbook._set_scrollbar_value = function (arg_14_0, arg_14_1)
 	if arg_14_1 then
 		local var_14_0 = arg_14_0._widgets_by_name
 
@@ -281,11 +281,11 @@ function HeroViewStateHandbook._set_scrollbar_value(arg_14_0, arg_14_1)
 	end
 end
 
-function HeroViewStateHandbook._update_achievement_read_index(arg_15_0, arg_15_1)
+HeroViewStateHandbook._update_achievement_read_index = function (arg_15_0, arg_15_1)
 	return
 end
 
-function HeroViewStateHandbook._update_category_scroll_position(arg_16_0)
+HeroViewStateHandbook._update_category_scroll_position = function (arg_16_0)
 	local var_16_0 = arg_16_0._category_scrollbar:get_scrolled_length()
 
 	if var_16_0 ~= arg_16_0._category_scrolled_length then
@@ -294,7 +294,7 @@ function HeroViewStateHandbook._update_category_scroll_position(arg_16_0)
 	end
 end
 
-function HeroViewStateHandbook._setup_achievement_entries_animations(arg_17_0)
+HeroViewStateHandbook._setup_achievement_entries_animations = function (arg_17_0)
 	local var_17_0 = 0.05
 	local var_17_1 = 0
 	local var_17_2 = 4
@@ -308,11 +308,11 @@ function HeroViewStateHandbook._setup_achievement_entries_animations(arg_17_0)
 	end
 end
 
-function HeroViewStateHandbook.transitioning(arg_18_0)
+HeroViewStateHandbook.transitioning = function (arg_18_0)
 	return not not arg_18_0._exiting
 end
 
-function HeroViewStateHandbook._update_transition_timer(arg_19_0, arg_19_1)
+HeroViewStateHandbook._update_transition_timer = function (arg_19_0, arg_19_1)
 	if not arg_19_0._transition_timer then
 		return
 	end
@@ -324,11 +324,11 @@ function HeroViewStateHandbook._update_transition_timer(arg_19_0, arg_19_1)
 	end
 end
 
-function HeroViewStateHandbook.input_service(arg_20_0)
+HeroViewStateHandbook.input_service = function (arg_20_0)
 	return arg_20_0.parent:input_service()
 end
 
-function HeroViewStateHandbook.update(arg_21_0, arg_21_1, arg_21_2)
+HeroViewStateHandbook.update = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._input_blocked and FAKE_INPUT_SERVICE or arg_21_0:input_service()
 	local var_21_1 = Managers.input:is_device_active("gamepad")
 
@@ -369,13 +369,13 @@ function HeroViewStateHandbook.update(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0:draw(var_21_0, var_21_1, arg_21_1)
 end
 
-function HeroViewStateHandbook._has_active_level_vote(arg_22_0)
+HeroViewStateHandbook._has_active_level_vote = function (arg_22_0)
 	local var_22_0 = arg_22_0._voting_manager
 
 	return var_22_0:vote_in_progress() and var_22_0:is_mission_vote() and not var_22_0:has_voted(Network.peer_id())
 end
 
-function HeroViewStateHandbook._handle_input(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+HeroViewStateHandbook._handle_input = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
 	local var_23_0 = arg_23_0._widgets_by_name
 	local var_23_1 = var_23_0.exit_button
 	local var_23_2 = arg_23_1:get("toggle_menu")
@@ -468,7 +468,7 @@ function HeroViewStateHandbook._handle_input(arg_23_0, arg_23_1, arg_23_2, arg_2
 	end
 end
 
-function HeroViewStateHandbook._go_to_page(arg_24_0, arg_24_1)
+HeroViewStateHandbook._go_to_page = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._active_pages[arg_24_1]
 	local var_24_1 = HandbookSettings.pages[var_24_0]
 
@@ -491,7 +491,7 @@ function HeroViewStateHandbook._go_to_page(arg_24_0, arg_24_1)
 	arg_24_0:_update_page_info()
 end
 
-function HeroViewStateHandbook._on_tab_list_pressed(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+HeroViewStateHandbook._on_tab_list_pressed = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	if arg_25_1 == arg_25_0._active_list_index then
 		return
 	end
@@ -527,7 +527,7 @@ function HeroViewStateHandbook._on_tab_list_pressed(arg_25_0, arg_25_1, arg_25_2
 	end
 end
 
-function HeroViewStateHandbook._tab_pressed(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+HeroViewStateHandbook._tab_pressed = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = arg_26_0._active_tab == arg_26_1
 
 	arg_26_0:_deactivate_active_tab()
@@ -537,7 +537,7 @@ function HeroViewStateHandbook._tab_pressed(arg_26_0, arg_26_1, arg_26_2, arg_26
 	end
 end
 
-function HeroViewStateHandbook._activate_tab(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+HeroViewStateHandbook._activate_tab = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	arg_27_0._active_tab = arg_27_1
 	arg_27_0._active_tab_index = arg_27_2
 
@@ -581,7 +581,7 @@ function HeroViewStateHandbook._activate_tab(arg_27_0, arg_27_1, arg_27_2, arg_2
 	arg_27_0:_update_categories_scroll_height()
 end
 
-function HeroViewStateHandbook._deactivate_active_tab(arg_28_0)
+HeroViewStateHandbook._deactivate_active_tab = function (arg_28_0)
 	local var_28_0 = arg_28_0._active_tab
 
 	if not var_28_0 then
@@ -603,7 +603,7 @@ function HeroViewStateHandbook._deactivate_active_tab(arg_28_0)
 	var_28_1.button_hotspot.is_selected = false
 end
 
-function HeroViewStateHandbook.close_menu(arg_29_0, arg_29_1)
+HeroViewStateHandbook.close_menu = function (arg_29_0, arg_29_1)
 	if not arg_29_1 then
 		arg_29_0:play_sound("Play_gui_achivements_menu_close")
 	end
@@ -615,7 +615,7 @@ function HeroViewStateHandbook.close_menu(arg_29_0, arg_29_1)
 	arg_29_0.parent:close_menu(nil, arg_29_1, var_29_0)
 end
 
-function HeroViewStateHandbook._update_page_info(arg_30_0)
+HeroViewStateHandbook._update_page_info = function (arg_30_0)
 	local var_30_0 = arg_30_0._widgets_by_name
 	local var_30_1 = arg_30_0._current_page
 	local var_30_2 = arg_30_0._total_pages
@@ -641,7 +641,7 @@ function HeroViewStateHandbook._update_page_info(arg_30_0)
 	arg_30_0._menu_input_description:set_input_description(var_30_3 and var_0_6.has_pages or nil)
 end
 
-function HeroViewStateHandbook._set_gamepad_input_buttons_visibility(arg_31_0, arg_31_1)
+HeroViewStateHandbook._set_gamepad_input_buttons_visibility = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._widgets_by_name
 	local var_31_1 = arg_31_0._total_pages > 1
 
@@ -658,7 +658,7 @@ function HeroViewStateHandbook._set_gamepad_input_buttons_visibility(arg_31_0, a
 	var_31_5.content.visible = arg_31_1
 end
 
-function HeroViewStateHandbook.draw(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+HeroViewStateHandbook.draw = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = arg_32_0._ui_renderer
 	local var_32_1 = arg_32_0._ui_top_renderer
 	local var_32_2 = arg_32_0._ui_scenegraph
@@ -762,11 +762,11 @@ function HeroViewStateHandbook.draw(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	end
 end
 
-function HeroViewStateHandbook.play_sound(arg_33_0, arg_33_1)
+HeroViewStateHandbook.play_sound = function (arg_33_0, arg_33_1)
 	arg_33_0.parent:play_sound(arg_33_1)
 end
 
-function HeroViewStateHandbook._start_transition_animation(arg_34_0, arg_34_1, arg_34_2)
+HeroViewStateHandbook._start_transition_animation = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = {
 		wwise_world = arg_34_0._ingame_ui_context.wwise_world,
 		render_settings = arg_34_0._render_settings
@@ -776,14 +776,14 @@ function HeroViewStateHandbook._start_transition_animation(arg_34_0, arg_34_1, a
 	arg_34_0._ui_animator:start_animation(arg_34_2, var_34_1, var_0_2, var_34_0)
 end
 
-function HeroViewStateHandbook.block_input(arg_35_0)
+HeroViewStateHandbook.block_input = function (arg_35_0)
 	arg_35_0._input_blocked = true
 end
 
-function HeroViewStateHandbook.unblock_input(arg_36_0)
+HeroViewStateHandbook.unblock_input = function (arg_36_0)
 	arg_36_0._input_blocked = false
 end
 
-function HeroViewStateHandbook.input_blocked(arg_37_0)
+HeroViewStateHandbook.input_blocked = function (arg_37_0)
 	return arg_37_0._input_blocked
 end

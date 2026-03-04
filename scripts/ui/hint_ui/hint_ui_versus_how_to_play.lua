@@ -4,7 +4,7 @@ require("scripts/ui/hint_ui/hint_ui")
 
 HintUIVersusHowToPlay = class(HintUIVersusHowToPlay, HintUI)
 
-function HintUIVersusHowToPlay.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HintUIVersusHowToPlay.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	HintUIVersusHowToPlay.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._shown = false
@@ -12,7 +12,7 @@ function HintUIVersusHowToPlay.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._gamepad_active = Managers.input:is_device_active("gamepad")
 end
 
-function HintUIVersusHowToPlay.create_ui_elements(arg_2_0)
+HintUIVersusHowToPlay.create_ui_elements = function (arg_2_0)
 	local var_2_0 = arg_2_0._hint_settings.data
 
 	var_2_0.definitions.widget_definitions.hint_widgets = UIWidgets.create_versus_gameplay_hint_widget("hint_anchor", var_2_0)
@@ -20,7 +20,7 @@ function HintUIVersusHowToPlay.create_ui_elements(arg_2_0)
 	HintUIVersusHowToPlay.super.create_ui_elements(arg_2_0)
 end
 
-function HintUIVersusHowToPlay.update(arg_3_0, arg_3_1, arg_3_2)
+HintUIVersusHowToPlay.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_0._shown then
 		return
 	end
@@ -70,12 +70,12 @@ function HintUIVersusHowToPlay.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function HintUIVersusHowToPlay.show(arg_4_0)
+HintUIVersusHowToPlay.show = function (arg_4_0)
 	HintUIVersusHowToPlay.super.show(arg_4_0)
 	arg_4_0:_set_hint_widget_size()
 end
 
-function HintUIVersusHowToPlay._set_hint_widget_size(arg_5_0)
+HintUIVersusHowToPlay._set_hint_widget_size = function (arg_5_0)
 	local var_5_0 = arg_5_0._widgets_by_name.hint_widgets
 	local var_5_1 = var_5_0.content
 	local var_5_2 = var_5_0.style
@@ -104,7 +104,7 @@ function HintUIVersusHowToPlay._set_hint_widget_size(arg_5_0)
 	var_5_0.offset[2] = -(var_5_8 / 2)
 end
 
-function HintUIVersusHowToPlay._update_input(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+HintUIVersusHowToPlay._update_input = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if not arg_6_3.input_action then
 		return
 	end
@@ -125,7 +125,7 @@ function HintUIVersusHowToPlay._update_input(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	end
 end
 
-function HintUIVersusHowToPlay.hide(arg_7_0)
+HintUIVersusHowToPlay.hide = function (arg_7_0)
 	arg_7_0._shown = true
 	arg_7_0._has_widget_been_closed = true
 	arg_7_0._exit_anim_id = nil

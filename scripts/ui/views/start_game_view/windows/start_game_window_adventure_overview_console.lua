@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowAdventureOverviewConsole = class(StartGameWindowAdventureOverviewConsole)
 StartGameWindowAdventureOverviewConsole.NAME = "StartGameWindowAdventureOverviewConsole"
 
-function StartGameWindowAdventureOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowAdventureOverviewConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowAdventureOverviewConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -46,7 +46,7 @@ function StartGameWindowAdventureOverviewConsole.on_enter(arg_1_0, arg_1_1, arg_
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowAdventureOverviewConsole._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowAdventureOverviewConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -56,7 +56,7 @@ function StartGameWindowAdventureOverviewConsole._start_transition_animation(arg
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowAdventureOverviewConsole._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowAdventureOverviewConsole._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_3_0 = {}
@@ -85,7 +85,7 @@ function StartGameWindowAdventureOverviewConsole._create_ui_elements(arg_3_0, ar
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole.on_exit(arg_4_0, arg_4_1)
+StartGameWindowAdventureOverviewConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowAdventureOverviewConsole")
 
 	arg_4_0._ui_animator = nil
@@ -97,22 +97,22 @@ function StartGameWindowAdventureOverviewConsole.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole.set_focus(arg_5_0, arg_5_1)
+StartGameWindowAdventureOverviewConsole.set_focus = function (arg_5_0, arg_5_1)
 	arg_5_0._is_focused = arg_5_1
 end
 
-function StartGameWindowAdventureOverviewConsole.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowAdventureOverviewConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_update_can_play()
 	arg_6_0:_update_animations(arg_6_1)
 	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowAdventureOverviewConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowAdventureOverviewConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowAdventureOverviewConsole._update_can_play(arg_8_0)
+StartGameWindowAdventureOverviewConsole._update_can_play = function (arg_8_0)
 	local var_8_0 = arg_8_0:_can_play()
 
 	if arg_8_0._previous_can_play ~= var_8_0 then
@@ -131,11 +131,11 @@ function StartGameWindowAdventureOverviewConsole._update_can_play(arg_8_0)
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole._is_button_hover_enter(arg_9_0, arg_9_1)
+StartGameWindowAdventureOverviewConsole._is_button_hover_enter = function (arg_9_0, arg_9_1)
 	return arg_9_1.content.button_hotspot.on_hover_enter
 end
 
-function StartGameWindowAdventureOverviewConsole._is_button_pressed(arg_10_0, arg_10_1)
+StartGameWindowAdventureOverviewConsole._is_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -145,7 +145,7 @@ function StartGameWindowAdventureOverviewConsole._is_button_pressed(arg_10_0, ar
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole._handle_input(arg_11_0, arg_11_1, arg_11_2)
+StartGameWindowAdventureOverviewConsole._handle_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._parent
 	local var_11_1 = var_11_0:window_input_service()
 
@@ -200,15 +200,15 @@ function StartGameWindowAdventureOverviewConsole._handle_input(arg_11_0, arg_11_
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole._play_sound(arg_12_0, arg_12_1)
+StartGameWindowAdventureOverviewConsole._play_sound = function (arg_12_0, arg_12_1)
 	arg_12_0._parent:play_sound(arg_12_1)
 end
 
-function StartGameWindowAdventureOverviewConsole._can_play(arg_13_0)
+StartGameWindowAdventureOverviewConsole._can_play = function (arg_13_0)
 	return arg_13_0._parent:get_difficulty_option() ~= nil
 end
 
-function StartGameWindowAdventureOverviewConsole._update_difficulty_option(arg_14_0)
+StartGameWindowAdventureOverviewConsole._update_difficulty_option = function (arg_14_0)
 	local var_14_0 = arg_14_0._parent:get_difficulty_option()
 
 	if var_14_0 then
@@ -227,7 +227,7 @@ function StartGameWindowAdventureOverviewConsole._update_difficulty_option(arg_1
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole._option_selected(arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowAdventureOverviewConsole._option_selected = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = var_0_4[arg_15_1]
 
 	if var_15_0 == "difficulty_setting" then
@@ -243,7 +243,7 @@ function StartGameWindowAdventureOverviewConsole._option_selected(arg_15_0, arg_
 	end
 end
 
-function StartGameWindowAdventureOverviewConsole._handle_new_selection(arg_16_0, arg_16_1)
+StartGameWindowAdventureOverviewConsole._handle_new_selection = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._widgets_by_name
 	local var_16_1 = #var_0_4
 
@@ -263,7 +263,7 @@ function StartGameWindowAdventureOverviewConsole._handle_new_selection(arg_16_0,
 	arg_16_0._input_index = arg_16_1
 end
 
-function StartGameWindowAdventureOverviewConsole._update_animations(arg_17_0, arg_17_1)
+StartGameWindowAdventureOverviewConsole._update_animations = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ui_animator
 
 	var_17_0:update(arg_17_1)
@@ -284,7 +284,7 @@ function StartGameWindowAdventureOverviewConsole._update_animations(arg_17_0, ar
 	UIWidgetUtils.animate_play_button(var_17_2.play_button, arg_17_1)
 end
 
-function StartGameWindowAdventureOverviewConsole._draw(arg_18_0, arg_18_1)
+StartGameWindowAdventureOverviewConsole._draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ui_top_renderer
 	local var_18_1 = arg_18_0._ui_scenegraph
 	local var_18_2 = arg_18_0._parent:window_input_service()

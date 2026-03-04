@@ -11,7 +11,7 @@ local var_0_1 = {
 	"rpc_register_kill"
 }
 
-function StatisticsSystem.init(arg_1_0, arg_1_1, arg_1_2)
+StatisticsSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	StatisticsSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 
 	arg_1_0.unit_extension_data = {}
@@ -25,13 +25,13 @@ function StatisticsSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function StatisticsSystem.destroy(arg_2_0)
+StatisticsSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
 local var_0_2 = {}
 
-function StatisticsSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+StatisticsSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_4.template
 	local var_3_1 = arg_3_4.statistics_id
 
@@ -57,13 +57,13 @@ function StatisticsSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, a
 	return var_3_2
 end
 
-function StatisticsSystem.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+StatisticsSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.unit_extension_data[arg_4_1] = nil
 
 	ScriptUnit.remove_extension(arg_4_1, arg_4_0.NAME)
 end
 
-function StatisticsSystem.update(arg_5_0, arg_5_1, arg_5_2)
+StatisticsSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_1.statistics_db
 	local var_5_1 = StatisticsTemplateCategories
 	local var_5_2 = StatisticsTemplates
@@ -79,13 +79,13 @@ function StatisticsSystem.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function StatisticsSystem.hot_join_sync(arg_6_0, arg_6_1)
+StatisticsSystem.hot_join_sync = function (arg_6_0, arg_6_1)
 	return
 end
 
 local var_0_3 = {}
 
-function StatisticsSystem.rpc_register_kill(arg_7_0, arg_7_1, arg_7_2)
+StatisticsSystem.rpc_register_kill = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_2)
 
 	table.clear(var_0_3)

@@ -2,7 +2,7 @@
 
 FreeFlight = class(FreeFlight)
 
-function FreeFlight.init(arg_1_0, arg_1_1, arg_1_2)
+FreeFlight.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.camera = arg_1_1
 	arg_1_0.unit = arg_1_2
 	arg_1_0.translation_speed = 0.2
@@ -14,7 +14,7 @@ function FreeFlight.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function FreeFlight.update(arg_2_0, arg_2_1)
+FreeFlight.update = function (arg_2_0, arg_2_1)
 	local var_2_0 = {}
 
 	if IS_WINDOWS then

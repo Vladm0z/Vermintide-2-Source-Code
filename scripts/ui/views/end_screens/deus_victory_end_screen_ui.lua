@@ -13,7 +13,7 @@ local var_0_1 = {
 
 DeusVictoryEndScreenUI = class(DeusVictoryEndScreenUI, BaseEndScreenUI)
 
-function DeusVictoryEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DeusVictoryEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	DeusVictoryEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0)
 	fassert(arg_1_3.journey_name, "No journey_name set in screen_context")
 
@@ -33,7 +33,7 @@ function DeusVictoryEndScreenUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._state = var_0_1.WAITING_TO_START
 end
 
-function DeusVictoryEndScreenUI._destroy(arg_2_0)
+DeusVictoryEndScreenUI._destroy = function (arg_2_0)
 	if arg_2_0._journey_presentation_ui then
 		arg_2_0._journey_presentation_ui:destroy()
 
@@ -41,7 +41,7 @@ function DeusVictoryEndScreenUI._destroy(arg_2_0)
 	end
 end
 
-function DeusVictoryEndScreenUI._start(arg_3_0)
+DeusVictoryEndScreenUI._start = function (arg_3_0)
 	local var_3_0 = var_0_0.scenegraph_definition
 	local var_3_1 = {
 		draw_flags = arg_3_0._draw_flags,
@@ -57,7 +57,7 @@ function DeusVictoryEndScreenUI._start(arg_3_0)
 	end
 end
 
-function DeusVictoryEndScreenUI._update(arg_4_0, arg_4_1)
+DeusVictoryEndScreenUI._update = function (arg_4_0, arg_4_1)
 	if arg_4_0._completed then
 		return
 	end

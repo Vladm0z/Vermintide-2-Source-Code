@@ -74,7 +74,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	end
 end
 
-function OrbSystem.init(arg_2_0, arg_2_1, ...)
+OrbSystem.init = function (arg_2_0, arg_2_1, ...)
 	OrbSystem.super.init(arg_2_0, arg_2_1, ...)
 
 	local var_2_0 = arg_2_1.network_event_delegate
@@ -86,7 +86,7 @@ function OrbSystem.init(arg_2_0, arg_2_1, ...)
 	arg_2_0._is_server = arg_2_1.is_server
 end
 
-function OrbSystem.rpc_spawn_orb(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+OrbSystem.rpc_spawn_orb = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = Managers.state.entity:system("ai_system"):nav_world()
 
 	if not var_3_0 then
@@ -105,7 +105,7 @@ function OrbSystem.rpc_spawn_orb(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ar
 	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_3_3)
 end
 
-function OrbSystem.spawn_orb(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
+OrbSystem.spawn_orb = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7)
 	local var_5_0 = Managers.state.entity:system("ai_system"):nav_world()
 
 	if not var_5_0 then
@@ -130,6 +130,6 @@ function OrbSystem.spawn_orb(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_
 	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_5_3)
 end
 
-function OrbSystem.destroy(arg_7_0)
+OrbSystem.destroy = function (arg_7_0)
 	arg_7_0.network_event_delegate:unregister(arg_7_0)
 end

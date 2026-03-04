@@ -13,7 +13,7 @@ GameNetworkManager = class(GameNetworkManager)
 local var_0_2 = 10
 local var_0_3 = 1
 
-function GameNetworkManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+GameNetworkManager.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	print("GameNetworkManager:init... creating game session")
 
 	local var_2_0 = Network.create_game_session()
@@ -69,21 +69,21 @@ function GameNetworkManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_4:register(arg_2_0, "rpc_play_particle_effect_no_rotation", "rpc_play_particle_effect", "rpc_play_particle_effect_with_variable", "rpc_play_particle_effect_spline", "rpc_gm_event_end_conditions_met", "rpc_gm_event_round_started", "rpc_gm_event_initial_peers_spawned", "rpc_surface_mtr_fx", "rpc_surface_mtr_fx_lvl_unit", "rpc_skinned_surface_mtr_fx", "rpc_play_melee_hit_effects", "game_object_created", "game_session_disconnect", "game_object_destroyed", "rpc_enemy_is_alerted", "rpc_assist", "rpc_coop_feedback", "rpc_ladder_shake", "rpc_request_spawn_template_unit", "rpc_flow_event")
 end
 
-function GameNetworkManager.lobby(arg_3_0)
+GameNetworkManager.lobby = function (arg_3_0)
 	return arg_3_0._lobby
 end
 
-function GameNetworkManager.session_id(arg_4_0)
+GameNetworkManager.session_id = function (arg_4_0)
 	return arg_4_0._session_id
 end
 
-function GameNetworkManager.ping_by_peer(arg_5_0, arg_5_1)
+GameNetworkManager.ping_by_peer = function (arg_5_0, arg_5_1)
 	fassert(arg_5_0.is_server, "tried to fetch ping by peer id as a client")
 
 	return arg_5_0._lobby:ping_by_peer(arg_5_1)
 end
 
-function GameNetworkManager.set_small_network_packets(arg_6_0, arg_6_1)
+GameNetworkManager.set_small_network_packets = function (arg_6_0, arg_6_1)
 	if arg_6_1 then
 		Network.limit_mtu(576)
 	else
@@ -91,11 +91,11 @@ function GameNetworkManager.set_small_network_packets(arg_6_0, arg_6_1)
 	end
 end
 
-function GameNetworkManager.set_entity_system(arg_7_0, arg_7_1)
+GameNetworkManager.set_entity_system = function (arg_7_0, arg_7_1)
 	arg_7_0.entity_system = arg_7_1
 end
 
-function GameNetworkManager.post_init(arg_8_0, arg_8_1)
+GameNetworkManager.post_init = function (arg_8_0, arg_8_1)
 	arg_8_0.profile_synchronizer = arg_8_1.profile_synchronizer
 	arg_8_0.game_mode = arg_8_1.game_mode
 	arg_8_0.networked_flow_state = arg_8_1.networked_flow_state
@@ -125,15 +125,15 @@ function GameNetworkManager.post_init(arg_8_0, arg_8_1)
 	arg_8_0._leaving_game = false
 end
 
-function GameNetworkManager.set_unit_storage(arg_9_0, arg_9_1)
+GameNetworkManager.set_unit_storage = function (arg_9_0, arg_9_1)
 	arg_9_0.unit_storage = arg_9_1
 end
 
-function GameNetworkManager.set_unit_spawner(arg_10_0, arg_10_1)
+GameNetworkManager.set_unit_spawner = function (arg_10_0, arg_10_1)
 	arg_10_0.unit_spawner = arg_10_1
 end
 
-function GameNetworkManager.in_game_session(arg_11_0)
+GameNetworkManager.in_game_session = function (arg_11_0)
 	local var_11_0 = arg_11_0.game_session
 
 	if var_11_0 and GameSession.in_session(var_11_0) then
@@ -143,7 +143,7 @@ function GameNetworkManager.in_game_session(arg_11_0)
 	end
 end
 
-function GameNetworkManager.update_receive(arg_12_0, arg_12_1)
+GameNetworkManager.update_receive = function (arg_12_0, arg_12_1)
 	Network.update_receive(arg_12_1, arg_12_0._event_delegate.event_table)
 
 	local var_12_0 = arg_12_0.game_session
@@ -170,11 +170,11 @@ function GameNetworkManager.update_receive(arg_12_0, arg_12_1)
 	end
 end
 
-function GameNetworkManager.update_transmit(arg_13_0, arg_13_1)
+GameNetworkManager.update_transmit = function (arg_13_0, arg_13_1)
 	Network.update_transmit()
 end
 
-function GameNetworkManager.update(arg_14_0, arg_14_1)
+GameNetworkManager.update = function (arg_14_0, arg_14_1)
 	if arg_14_0.is_server and arg_14_0:in_game_session() then
 		local var_14_0 = arg_14_0._lobby
 		local var_14_1 = arg_14_0.game_session
@@ -213,11 +213,11 @@ function GameNetworkManager.update(arg_14_0, arg_14_1)
 	end
 end
 
-function GameNetworkManager.network_time(arg_15_0)
+GameNetworkManager.network_time = function (arg_15_0)
 	return arg_15_0.network_clock:time()
 end
 
-function GameNetworkManager._shutdown_server(arg_16_0)
+GameNetworkManager._shutdown_server = function (arg_16_0)
 	var_0_1("Shutting down game session host.")
 	arg_16_0:game_session_disconnect()
 	GameSession.shutdown_game_session_host(arg_16_0.game_session)
@@ -230,14 +230,14 @@ function GameNetworkManager._shutdown_server(arg_16_0)
 	arg_16_0._left_game = true
 end
 
-function GameNetworkManager.force_disconnect_from_session(arg_17_0)
+GameNetworkManager.force_disconnect_from_session = function (arg_17_0)
 	var_0_1("Forcing disconnect_from_host()")
 	GameSession.disconnect_from_host(arg_17_0.game_session)
 end
 
 local var_0_4 = 2
 
-function GameNetworkManager.leave_game(arg_18_0, arg_18_1)
+GameNetworkManager.leave_game = function (arg_18_0, arg_18_1)
 	var_0_1("Leaving game...")
 
 	arg_18_0._leaving_game = true
@@ -263,15 +263,15 @@ function GameNetworkManager.leave_game(arg_18_0, arg_18_1)
 	end
 end
 
-function GameNetworkManager.has_left_game(arg_19_0)
+GameNetworkManager.has_left_game = function (arg_19_0)
 	return arg_19_0._left_game
 end
 
-function GameNetworkManager.is_leaving_game(arg_20_0)
+GameNetworkManager.is_leaving_game = function (arg_20_0)
 	return arg_20_0._leaving_game
 end
 
-function GameNetworkManager.destroy(arg_21_0)
+GameNetworkManager.destroy = function (arg_21_0)
 	for iter_21_0, iter_21_1 in pairs(arg_21_0._object_synchronizing_clients) do
 		arg_21_0.network_transmit:remove_peer_ignore(iter_21_0)
 	end
@@ -300,11 +300,11 @@ function GameNetworkManager.destroy(arg_21_0)
 	end
 end
 
-function GameNetworkManager.game(arg_22_0)
+GameNetworkManager.game = function (arg_22_0)
 	return arg_22_0.game_session
 end
 
-function GameNetworkManager.game_object_or_level_unit(arg_23_0, arg_23_1, arg_23_2)
+GameNetworkManager.game_object_or_level_unit = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_2 then
 		local var_23_0 = LevelHelper:current_level(arg_23_0._world)
 
@@ -314,7 +314,7 @@ function GameNetworkManager.game_object_or_level_unit(arg_23_0, arg_23_1, arg_23
 	end
 end
 
-function GameNetworkManager.game_object_or_level_id(arg_24_0, arg_24_1)
+GameNetworkManager.game_object_or_level_id = function (arg_24_0, arg_24_1)
 	if not Unit.alive(arg_24_1) then
 		return nil, false
 	end
@@ -333,13 +333,13 @@ function GameNetworkManager.game_object_or_level_id(arg_24_0, arg_24_1)
 	end
 end
 
-function GameNetworkManager.level_object_id(arg_25_0, arg_25_1)
+GameNetworkManager.level_object_id = function (arg_25_0, arg_25_1)
 	local var_25_0 = LevelHelper:current_level(arg_25_0._world)
 
 	return Level.unit_index(var_25_0, arg_25_1)
 end
 
-function GameNetworkManager.unit_game_object_id(arg_26_0, arg_26_1)
+GameNetworkManager.unit_game_object_id = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_0.unit_storage:go_id(arg_26_1)
 
 	if var_26_0 then
@@ -347,11 +347,11 @@ function GameNetworkManager.unit_game_object_id(arg_26_0, arg_26_1)
 	end
 end
 
-function GameNetworkManager.game_object_template(arg_27_0, arg_27_1)
+GameNetworkManager.game_object_template = function (arg_27_0, arg_27_1)
 	return var_0_0[arg_27_1]
 end
 
-function GameNetworkManager.request_profile(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+GameNetworkManager.request_profile = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	if arg_28_0.network_server then
 		arg_28_0.network_server:request_profile(arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	end
@@ -361,7 +361,7 @@ function GameNetworkManager.request_profile(arg_28_0, arg_28_1, arg_28_2, arg_28
 	end
 end
 
-function GameNetworkManager.create_game_object(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+GameNetworkManager.create_game_object = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = GameSession.create_game_object(arg_29_0.game_session, arg_29_1, arg_29_2)
 
 	arg_29_0._game_object_types[var_29_0] = arg_29_1
@@ -372,7 +372,7 @@ function GameNetworkManager.create_game_object(arg_29_0, arg_29_1, arg_29_2, arg
 	return var_29_0
 end
 
-function GameNetworkManager.create_player_game_object(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+GameNetworkManager.create_player_game_object = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	fassert(arg_30_0.is_server, "create_player_game_object: FAIL")
 
 	local var_30_0 = GameSession.create_game_object(arg_30_0.game_session, arg_30_1, arg_30_2)
@@ -385,7 +385,7 @@ function GameNetworkManager.create_player_game_object(arg_30_0, arg_30_1, arg_30
 	return var_30_0
 end
 
-function GameNetworkManager.cb_spawn_point_game_object_created(arg_31_0, arg_31_1, arg_31_2)
+GameNetworkManager.cb_spawn_point_game_object_created = function (arg_31_0, arg_31_1, arg_31_2)
 	Managers.state.event:trigger("event_create_client_spawnpoint", arg_31_1)
 
 	if script_data.spawn_debug then
@@ -393,7 +393,7 @@ function GameNetworkManager.cb_spawn_point_game_object_created(arg_31_0, arg_31_
 	end
 end
 
-function GameNetworkManager.game_object_created_player(arg_32_0, arg_32_1, arg_32_2)
+GameNetworkManager.game_object_created_player = function (arg_32_0, arg_32_1, arg_32_2)
 	assert(not arg_32_0.is_server, "game_object_created_player: FAIL")
 
 	local var_32_0 = GameSession.game_object_field(arg_32_0.game_session, arg_32_1, "network_id")
@@ -430,7 +430,7 @@ function GameNetworkManager.game_object_created_player(arg_32_0, arg_32_1, arg_3
 	end
 end
 
-function GameNetworkManager.game_object_destroyed_player(arg_33_0, arg_33_1, arg_33_2)
+GameNetworkManager.game_object_destroyed_player = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = GameSession.game_object_field(arg_33_0.game_session, arg_33_1, "network_id")
 	local var_33_1 = GameSession.game_object_field(arg_33_0.game_session, arg_33_1, "local_player_id")
 
@@ -447,7 +447,7 @@ function GameNetworkManager.game_object_destroyed_player(arg_33_0, arg_33_1, arg
 	end
 end
 
-function GameNetworkManager.game_object_created_player_unit_health(arg_34_0, arg_34_1, arg_34_2)
+GameNetworkManager.game_object_created_player_unit_health = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = arg_34_0:_health_extension(arg_34_1)
 
 	if var_34_0 == nil then
@@ -457,7 +457,7 @@ function GameNetworkManager.game_object_created_player_unit_health(arg_34_0, arg
 	var_34_0:set_health_game_object_id(arg_34_1)
 end
 
-function GameNetworkManager.game_object_destroyed_player_unit_health(arg_35_0, arg_35_1, arg_35_2)
+GameNetworkManager.game_object_destroyed_player_unit_health = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = arg_35_0:_health_extension(arg_35_1)
 
 	if var_35_0 == nil then
@@ -467,7 +467,7 @@ function GameNetworkManager.game_object_destroyed_player_unit_health(arg_35_0, a
 	var_35_0:set_health_game_object_id(nil)
 end
 
-function GameNetworkManager.game_object_created_dark_pact_horde_ability(arg_36_0, arg_36_1, arg_36_2)
+GameNetworkManager.game_object_created_dark_pact_horde_ability = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = GameSession.game_object_field(arg_36_0.game_session, arg_36_1, "unit_game_object_id")
 	local var_36_1 = arg_36_0.unit_storage:unit(var_36_0)
 
@@ -484,7 +484,7 @@ function GameNetworkManager.game_object_created_dark_pact_horde_ability(arg_36_0
 	var_36_2:set_ability_game_object_id(arg_36_1)
 end
 
-function GameNetworkManager.game_object_destroyed_dark_pact_horde_ability(arg_37_0, arg_37_1, arg_37_2)
+GameNetworkManager.game_object_destroyed_dark_pact_horde_ability = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = GameSession.game_object_field(arg_37_0.game_session, arg_37_1, "unit_game_object_id")
 	local var_37_1 = arg_37_0.unit_storage:unit(var_37_0)
 
@@ -501,7 +501,7 @@ function GameNetworkManager.game_object_destroyed_dark_pact_horde_ability(arg_37
 	var_37_2:set_ability_game_object_id(nil)
 end
 
-function GameNetworkManager.game_object_created_player_sync_data(arg_38_0, arg_38_1, arg_38_2)
+GameNetworkManager.game_object_created_player_sync_data = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = GameSession.game_object_field(arg_38_0.game_session, arg_38_1, "network_id")
 	local var_38_1 = GameSession.game_object_field(arg_38_0.game_session, arg_38_1, "local_player_id")
 
@@ -514,7 +514,7 @@ function GameNetworkManager.game_object_created_player_sync_data(arg_38_0, arg_3
 	end
 end
 
-function GameNetworkManager.game_object_destroyed_player_sync_data(arg_39_0, arg_39_1, arg_39_2)
+GameNetworkManager.game_object_destroyed_player_sync_data = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = GameSession.game_object_field(arg_39_0.game_session, arg_39_1, "network_id")
 	local var_39_1 = GameSession.game_object_field(arg_39_0.game_session, arg_39_1, "local_player_id")
 	local var_39_2 = arg_39_0.player_manager:player(var_39_0, var_39_1)
@@ -524,7 +524,7 @@ function GameNetworkManager.game_object_destroyed_player_sync_data(arg_39_0, arg
 	end
 end
 
-function GameNetworkManager._health_extension(arg_40_0, arg_40_1)
+GameNetworkManager._health_extension = function (arg_40_0, arg_40_1)
 	local var_40_0 = GameSession.game_object_field(arg_40_0.game_session, arg_40_1, "unit_game_object_id")
 	local var_40_1 = arg_40_0.unit_storage:unit(var_40_0)
 
@@ -535,7 +535,7 @@ function GameNetworkManager._health_extension(arg_40_0, arg_40_1)
 	return (ScriptUnit.extension(var_40_1, "health_system"))
 end
 
-function GameNetworkManager._career_extension(arg_41_0, arg_41_1)
+GameNetworkManager._career_extension = function (arg_41_0, arg_41_1)
 	local var_41_0 = GameSession.game_object_field(arg_41_0.game_session, arg_41_1, "unit_game_object_id")
 	local var_41_1 = arg_41_0.unit_storage:unit(var_41_0)
 
@@ -546,7 +546,7 @@ function GameNetworkManager._career_extension(arg_41_0, arg_41_1)
 	return (ScriptUnit.extension(var_41_1, "career_system"))
 end
 
-function GameNetworkManager.game_object_created(arg_42_0, arg_42_1, arg_42_2)
+GameNetworkManager.game_object_created = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = GameSession.game_object_field(arg_42_0.game_session, arg_42_1, "go_type")
 	local var_42_1 = NetworkLookup.go_types[var_42_0]
 	local var_42_2 = var_0_0[var_42_1]
@@ -569,15 +569,15 @@ function GameNetworkManager.game_object_created(arg_42_0, arg_42_1, arg_42_2)
 	var_42_6(arg_42_0, arg_42_1, arg_42_2, var_42_2)
 end
 
-function GameNetworkManager.game_object_created_network_unit(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+GameNetworkManager.game_object_created_network_unit = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	return arg_44_0.unit_spawner:spawn_unit_from_game_object(arg_44_1, arg_44_2, arg_44_3)
 end
 
-function GameNetworkManager.game_object_created_music_states(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+GameNetworkManager.game_object_created_music_states = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	Managers.music:game_object_created(arg_45_1, arg_45_2, arg_45_3)
 end
 
-function GameNetworkManager.game_object_created_keep_decoration(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+GameNetworkManager.game_object_created_keep_decoration = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	local var_46_0 = GameSession.game_object_field(arg_46_0.game_session, arg_46_1, "level_unit_index")
 	local var_46_1 = LevelHelper:current_level(arg_46_0._world)
 	local var_46_2 = Level.unit_by_index(var_46_1, var_46_0)
@@ -585,7 +585,7 @@ function GameNetworkManager.game_object_created_keep_decoration(arg_46_0, arg_46
 	ScriptUnit.extension(var_46_2, "keep_decoration_system"):on_game_object_created(arg_46_1)
 end
 
-function GameNetworkManager.game_object_destroyed_keep_decoration(arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+GameNetworkManager.game_object_destroyed_keep_decoration = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
 	local var_47_0 = GameSession.game_object_field(arg_47_0.game_session, arg_47_1, "level_unit_index")
 	local var_47_1 = LevelHelper:current_level(arg_47_0._world)
 	local var_47_2 = Level.unit_by_index(var_47_1, var_47_0)
@@ -593,7 +593,7 @@ function GameNetworkManager.game_object_destroyed_keep_decoration(arg_47_0, arg_
 	ScriptUnit.extension(var_47_2, "keep_decoration_system"):on_game_object_destroyed()
 end
 
-function GameNetworkManager.game_object_created_progress_timer(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+GameNetworkManager.game_object_created_progress_timer = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = GameSession.game_object_field(arg_48_0.game_session, arg_48_1, "level_unit_index")
 	local var_48_1 = LevelHelper:current_level(arg_48_0._world)
 	local var_48_2 = Level.unit_by_index(var_48_1, var_48_0)
@@ -601,7 +601,7 @@ function GameNetworkManager.game_object_created_progress_timer(arg_48_0, arg_48_
 	ScriptUnit.extension(var_48_2, "progress_system"):on_game_object_created(arg_48_1)
 end
 
-function GameNetworkManager.game_object_destroyed_progress_timer(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+GameNetworkManager.game_object_destroyed_progress_timer = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	local var_49_0 = GameSession.game_object_field(arg_49_0.game_session, arg_49_1, "level_unit_index")
 	local var_49_1 = LevelHelper:current_level(arg_49_0._world)
 	local var_49_2 = Level.unit_by_index(var_49_1, var_49_0)
@@ -609,39 +609,39 @@ function GameNetworkManager.game_object_destroyed_progress_timer(arg_49_0, arg_4
 	ScriptUnit.extension(var_49_2, "progress_system"):on_game_object_destroyed()
 end
 
-function GameNetworkManager.game_object_created_game_mode_data(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+GameNetworkManager.game_object_created_game_mode_data = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	Managers.state.game_mode:on_game_mode_data_created(arg_50_0.game_session, arg_50_1)
 end
 
-function GameNetworkManager.game_object_destroyed_game_mode_data(arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+GameNetworkManager.game_object_destroyed_game_mode_data = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
 	Managers.state.game_mode:on_game_mode_data_destroyed()
 end
 
-function GameNetworkManager.game_object_created_weave(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+GameNetworkManager.game_object_created_weave = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	Managers.weave:game_object_created(arg_52_1)
 end
 
-function GameNetworkManager.game_object_destroyed_weave(arg_53_0, arg_53_1)
+GameNetworkManager.game_object_destroyed_weave = function (arg_53_0, arg_53_1)
 	Managers.weave:game_object_destroyed(arg_53_1)
 end
 
-function GameNetworkManager.game_object_created_objective(arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+GameNetworkManager.game_object_created_objective = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
 	Managers.state.entity:system("objective_system"):game_object_created(arg_54_0.game_session, arg_54_1)
 end
 
-function GameNetworkManager.game_object_destroyed_objective(arg_55_0, arg_55_1)
+GameNetworkManager.game_object_destroyed_objective = function (arg_55_0, arg_55_1)
 	Managers.state.entity:system("objective_system"):game_object_destroyed(arg_55_0.game_session, arg_55_1)
 end
 
-function GameNetworkManager.game_object_created_horde_surge(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+GameNetworkManager.game_object_created_horde_surge = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	Managers.state.game_mode:game_mode()._horde_surge_handler._game_object_id = arg_56_1
 end
 
-function GameNetworkManager.game_object_destroyed_horde_surge(arg_57_0, arg_57_1)
+GameNetworkManager.game_object_destroyed_horde_surge = function (arg_57_0, arg_57_1)
 	Managers.state.game_mode:game_mode()._horde_surge_handler._game_object_id = nil
 end
 
-function GameNetworkManager.destroy_game_object(arg_58_0, arg_58_1)
+GameNetworkManager.destroy_game_object = function (arg_58_0, arg_58_1)
 	var_0_1("destroying game object with go_id=%d", arg_58_1)
 
 	arg_58_0._game_object_disconnect_callbacks[arg_58_1] = nil
@@ -649,7 +649,7 @@ function GameNetworkManager.destroy_game_object(arg_58_0, arg_58_1)
 	GameSession.destroy_game_object(arg_58_0.game_session, arg_58_1)
 end
 
-function GameNetworkManager.game_object_destroyed(arg_59_0, arg_59_1, arg_59_2)
+GameNetworkManager.game_object_destroyed = function (arg_59_0, arg_59_1, arg_59_2)
 	local var_59_0 = GameSession.game_object_field(arg_59_0.game_session, arg_59_1, "go_type")
 	local var_59_1 = NetworkLookup.go_types[var_59_0]
 	local var_59_2 = var_0_0[var_59_1]
@@ -662,7 +662,7 @@ function GameNetworkManager.game_object_destroyed(arg_59_0, arg_59_1, arg_59_2)
 	var_0_1("game object was destroyed id=%d with type=%s, object_destroy_func=%s, owned by peer=%s", arg_59_1, var_59_1, var_59_3, arg_59_2)
 end
 
-function GameNetworkManager.game_object_created_player_unit(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+GameNetworkManager.game_object_created_player_unit = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	if arg_60_0.is_server then
 		arg_60_0.network_server:peer_spawned_player(arg_60_2)
 	end
@@ -673,7 +673,7 @@ function GameNetworkManager.game_object_created_player_unit(arg_60_0, arg_60_1, 
 	Managers.state.event:trigger("new_player_unit", var_60_1, var_60_0, var_60_1:unique_id())
 end
 
-function GameNetworkManager.game_object_destroyed_player_unit(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+GameNetworkManager.game_object_destroyed_player_unit = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	local var_61_0 = arg_61_0.unit_storage:unit(arg_61_1)
 
 	if arg_61_0.is_server then
@@ -700,24 +700,24 @@ function GameNetworkManager.game_object_destroyed_player_unit(arg_61_0, arg_61_1
 	end
 end
 
-function GameNetworkManager.game_object_destroyed_network_unit(arg_62_0, arg_62_1, arg_62_2, arg_62_3)
+GameNetworkManager.game_object_destroyed_network_unit = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3)
 	arg_62_0.unit_spawner:destroy_game_object_unit(arg_62_1, arg_62_2, arg_62_3)
 end
 
-function GameNetworkManager.game_object_destroyed_music_states(arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+GameNetworkManager.game_object_destroyed_music_states = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
 	var_0_1("MUSIC object destroyed")
 	Managers.music:game_object_destroyed(arg_63_1, arg_63_2, arg_63_3)
 end
 
-function GameNetworkManager.game_object_migrated_away(arg_64_0, arg_64_1, arg_64_2)
+GameNetworkManager.game_object_migrated_away = function (arg_64_0, arg_64_1, arg_64_2)
 	assert(false, "Not implemented.")
 end
 
-function GameNetworkManager.game_object_migrated_to_me(arg_65_0, arg_65_1, arg_65_2)
+GameNetworkManager.game_object_migrated_to_me = function (arg_65_0, arg_65_1, arg_65_2)
 	assert(false, "Not implemented.")
 end
 
-function GameNetworkManager.game_session_disconnect(arg_66_0, arg_66_1)
+GameNetworkManager.game_session_disconnect = function (arg_66_0, arg_66_1)
 	var_0_1("Engine called game_session_disconnect callback")
 
 	arg_66_0._game_session_disconnect = true
@@ -729,23 +729,23 @@ function GameNetworkManager.game_session_disconnect(arg_66_0, arg_66_1)
 	arg_66_0.unit_spawner.game_session = nil
 end
 
-function GameNetworkManager.game_session_disconnect_music_states(arg_67_0, arg_67_1)
+GameNetworkManager.game_session_disconnect_music_states = function (arg_67_0, arg_67_1)
 	Managers.music:client_game_session_disconnect_music_states(arg_67_1)
 end
 
-function GameNetworkManager.game_object_destroyed_do_nothing(arg_68_0)
+GameNetworkManager.game_object_destroyed_do_nothing = function (arg_68_0)
 	return
 end
 
-function GameNetworkManager.game_object_created_sync_unit(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+GameNetworkManager.game_object_created_sync_unit = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 	Managers.state.entity:system("game_object_system"):game_object_created(arg_69_1, arg_69_2, arg_69_3)
 end
 
-function GameNetworkManager.game_object_destroyed_sync_unit(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+GameNetworkManager.game_object_destroyed_sync_unit = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 	return
 end
 
-function GameNetworkManager.game_object_created_payload(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+GameNetworkManager.game_object_created_payload = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 	local var_71_0 = GameSession.game_object_field(arg_71_0.game_session, arg_71_1, "level_unit_index")
 	local var_71_1 = LevelHelper:current_level(arg_71_0._world)
 	local var_71_2 = Level.unit_by_index(var_71_1, var_71_0)
@@ -753,19 +753,19 @@ function GameNetworkManager.game_object_created_payload(arg_71_0, arg_71_1, arg_
 	ScriptUnit.extension(var_71_2, "payload_system"):set_game_object_id(arg_71_1)
 end
 
-function GameNetworkManager.game_object_destroyed_payload(arg_72_0, arg_72_1)
+GameNetworkManager.game_object_destroyed_payload = function (arg_72_0, arg_72_1)
 	return
 end
 
-function GameNetworkManager.game_object_created_twitch_vote(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+GameNetworkManager.game_object_created_twitch_vote = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 	Managers.twitch:add_game_object_id(arg_73_1)
 end
 
-function GameNetworkManager.game_object_destroyed_twitch_vote(arg_74_0, arg_74_1)
+GameNetworkManager.game_object_destroyed_twitch_vote = function (arg_74_0, arg_74_1)
 	Managers.twitch:remove_game_object_id(arg_74_1)
 end
 
-function GameNetworkManager.game_object_created_career_data(arg_75_0, arg_75_1, arg_75_2)
+GameNetworkManager.game_object_created_career_data = function (arg_75_0, arg_75_1, arg_75_2)
 	local var_75_0 = arg_75_0:_career_extension(arg_75_1)
 
 	if var_75_0 == nil then
@@ -775,7 +775,7 @@ function GameNetworkManager.game_object_created_career_data(arg_75_0, arg_75_1, 
 	var_75_0:set_career_game_object_id(arg_75_1)
 end
 
-function GameNetworkManager.game_object_destroyed_career_data(arg_76_0, arg_76_1, arg_76_2)
+GameNetworkManager.game_object_destroyed_career_data = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = arg_76_0:_career_extension(arg_76_1)
 
 	if var_76_0 == nil then
@@ -785,7 +785,7 @@ function GameNetworkManager.game_object_destroyed_career_data(arg_76_0, arg_76_1
 	var_76_0:set_career_game_object_id(nil)
 end
 
-function GameNetworkManager.remove_peer(arg_77_0, arg_77_1)
+GameNetworkManager.remove_peer = function (arg_77_0, arg_77_1)
 	if arg_77_0._object_synchronizing_clients[arg_77_1] then
 		arg_77_0._object_synchronizing_clients[arg_77_1] = nil
 
@@ -803,13 +803,13 @@ function GameNetworkManager.remove_peer(arg_77_0, arg_77_1)
 	end
 end
 
-function GameNetworkManager.set_peer_synchronizing(arg_78_0, arg_78_1)
+GameNetworkManager.set_peer_synchronizing = function (arg_78_0, arg_78_1)
 	arg_78_0._object_synchronizing_clients[arg_78_1] = true
 
 	arg_78_0.network_transmit:add_peer_ignore(arg_78_1)
 end
 
-function GameNetworkManager.hot_join_sync(arg_79_0, arg_79_1)
+GameNetworkManager.hot_join_sync = function (arg_79_0, arg_79_1)
 	if Managers.state.debug then
 		Managers.state.debug:hot_join_sync(arg_79_1)
 	end
@@ -857,7 +857,7 @@ function GameNetworkManager.hot_join_sync(arg_79_0, arg_79_1)
 	arg_79_0.network_transmit:remove_peer_ignore(arg_79_1)
 end
 
-function GameNetworkManager.rpc_play_particle_effect(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7)
+GameNetworkManager.rpc_play_particle_effect = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7)
 	if arg_80_0.is_server then
 		arg_80_0.network_transmit:send_rpc_clients("rpc_play_particle_effect", arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7)
 	end
@@ -868,7 +868,7 @@ function GameNetworkManager.rpc_play_particle_effect(arg_80_0, arg_80_1, arg_80_
 	Managers.state.event:trigger("event_play_particle_effect", var_80_1, var_80_0, arg_80_4, arg_80_5, arg_80_6, arg_80_7)
 end
 
-function GameNetworkManager.rpc_play_particle_effect_no_rotation(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6)
+GameNetworkManager.rpc_play_particle_effect_no_rotation = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6)
 	if arg_81_0.is_server then
 		arg_81_0.network_transmit:send_rpc_clients("rpc_play_particle_effect_no_rotation", arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6)
 	end
@@ -879,7 +879,7 @@ function GameNetworkManager.rpc_play_particle_effect_no_rotation(arg_81_0, arg_8
 	Managers.state.event:trigger("event_play_particle_effect", var_81_1, var_81_0, arg_81_4, arg_81_5, Quaternion.identity(), arg_81_6)
 end
 
-function GameNetworkManager.rpc_play_particle_effect_with_variable(arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6)
+GameNetworkManager.rpc_play_particle_effect_with_variable = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6)
 	if arg_82_0.is_server then
 		arg_82_0.network_transmit:send_rpc_clients("rpc_play_particle_effect_with_variable", arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6)
 	end
@@ -892,7 +892,7 @@ function GameNetworkManager.rpc_play_particle_effect_with_variable(arg_82_0, arg
 	World.set_particles_variable(var_82_1, var_82_3, var_82_2, arg_82_6)
 end
 
-function GameNetworkManager.rpc_play_particle_effect_spline(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+GameNetworkManager.rpc_play_particle_effect_spline = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 	if arg_83_0.is_server then
 		arg_83_0.network_transmit:send_rpc_clients("rpc_play_particle_effect_spline", arg_83_2, arg_83_3, arg_83_4)
 	end
@@ -906,7 +906,7 @@ function GameNetworkManager.rpc_play_particle_effect_spline(arg_83_0, arg_83_1, 
 	end
 end
 
-function GameNetworkManager._pack_percentages_completed_arrays(arg_84_0, arg_84_1)
+GameNetworkManager._pack_percentages_completed_arrays = function (arg_84_0, arg_84_1)
 	local var_84_0 = {}
 	local var_84_1 = {}
 	local var_84_2 = {}
@@ -928,7 +928,7 @@ function GameNetworkManager._pack_percentages_completed_arrays(arg_84_0, arg_84_
 	return var_84_0, var_84_1, var_84_2
 end
 
-function GameNetworkManager._unpack_percentages_completed_arrays(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+GameNetworkManager._unpack_percentages_completed_arrays = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 	local var_85_0 = {}
 	local var_85_1 = Managers.player
 
@@ -946,14 +946,14 @@ function GameNetworkManager._unpack_percentages_completed_arrays(arg_85_0, arg_8
 	return var_85_0
 end
 
-function GameNetworkManager.gm_event_end_conditions_met(arg_86_0, arg_86_1, arg_86_2, arg_86_3)
+GameNetworkManager.gm_event_end_conditions_met = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3)
 	local var_86_0, var_86_1, var_86_2 = arg_86_0:_pack_percentages_completed_arrays(arg_86_3)
 	local var_86_3 = NetworkLookup.game_end_reasons[arg_86_1]
 
 	arg_86_0.network_transmit:send_rpc_clients("rpc_gm_event_end_conditions_met", var_86_3, arg_86_2, var_86_0, var_86_1, var_86_2)
 end
 
-function GameNetworkManager.rpc_gm_event_end_conditions_met(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6)
+GameNetworkManager.rpc_gm_event_end_conditions_met = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6)
 	if not arg_87_0.is_server then
 		local var_87_0 = arg_87_0:_unpack_percentages_completed_arrays(arg_87_4, arg_87_5, arg_87_6)
 		local var_87_1 = NetworkLookup.game_end_reasons[arg_87_2]
@@ -963,25 +963,25 @@ function GameNetworkManager.rpc_gm_event_end_conditions_met(arg_87_0, arg_87_1, 
 	end
 end
 
-function GameNetworkManager.gm_event_round_started(arg_88_0)
+GameNetworkManager.gm_event_round_started = function (arg_88_0)
 	local var_88_0 = 0
 
 	arg_88_0.network_transmit:send_rpc_clients("rpc_gm_event_round_started", var_88_0)
 end
 
-function GameNetworkManager.rpc_gm_event_round_started(arg_89_0, arg_89_1, arg_89_2)
+GameNetworkManager.rpc_gm_event_round_started = function (arg_89_0, arg_89_1, arg_89_2)
 	Managers.state.game_mode:trigger_event("round_started", arg_89_2)
 end
 
-function GameNetworkManager.gm_event_initial_peers_spawned(arg_90_0)
+GameNetworkManager.gm_event_initial_peers_spawned = function (arg_90_0)
 	arg_90_0.network_transmit:send_rpc_clients("rpc_gm_event_initial_peers_spawned")
 end
 
-function GameNetworkManager.rpc_gm_event_initial_peers_spawned(arg_91_0, arg_91_1)
+GameNetworkManager.rpc_gm_event_initial_peers_spawned = function (arg_91_0, arg_91_1)
 	Managers.state.game_mode:trigger_event("initial_peers_spawned")
 end
 
-function GameNetworkManager.rpc_play_melee_hit_effects(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
+GameNetworkManager.rpc_play_melee_hit_effects = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
 	local var_92_0 = arg_92_0.unit_storage:unit(arg_92_5)
 
 	if not Unit.alive(var_92_0) then
@@ -1000,14 +1000,14 @@ function GameNetworkManager.rpc_play_melee_hit_effects(arg_92_0, arg_92_1, arg_9
 	EffectHelper.play_melee_hit_effects(var_92_2, arg_92_0._world, arg_92_3, var_92_3, true, var_92_0)
 end
 
-function GameNetworkManager.rpc_request_spawn_template_unit(arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7)
+GameNetworkManager.rpc_request_spawn_template_unit = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7)
 	local var_93_0 = arg_93_0.unit_storage:unit(arg_93_5)
 	local var_93_1 = NetworkLookup.spawn_unit_templates[arg_93_2]
 
 	SpawnUnitTemplates[var_93_1].spawn_func(var_93_0, arg_93_3, arg_93_4, arg_93_6)
 end
 
-function GameNetworkManager.rpc_surface_mtr_fx(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4, arg_94_5, arg_94_6, arg_94_7)
+GameNetworkManager.rpc_surface_mtr_fx = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4, arg_94_5, arg_94_6, arg_94_7)
 	local var_94_0 = arg_94_0.unit_storage:unit(arg_94_3)
 
 	if not Unit.alive(var_94_0) then
@@ -1031,7 +1031,7 @@ function GameNetworkManager.rpc_surface_mtr_fx(arg_94_0, arg_94_1, arg_94_2, arg
 	EffectHelper.play_surface_material_effects(var_94_3, arg_94_0._world, var_94_0, arg_94_4, arg_94_5, arg_94_6, nil, true, nil, var_94_2)
 end
 
-function GameNetworkManager.rpc_surface_mtr_fx_lvl_unit(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7)
+GameNetworkManager.rpc_surface_mtr_fx_lvl_unit = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7)
 	local var_95_0 = LevelHelper:current_level(arg_95_0._world)
 	local var_95_1 = Level.unit_by_index(var_95_0, arg_95_3)
 
@@ -1056,7 +1056,7 @@ function GameNetworkManager.rpc_surface_mtr_fx_lvl_unit(arg_95_0, arg_95_1, arg_
 	EffectHelper.play_surface_material_effects(var_95_4, arg_95_0._world, var_95_1, arg_95_4, arg_95_5, arg_95_6, nil, true, nil, var_95_3)
 end
 
-function GameNetworkManager.rpc_skinned_surface_mtr_fx(arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5)
+GameNetworkManager.rpc_skinned_surface_mtr_fx = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5)
 	if arg_96_0.is_server then
 		local var_96_0 = CHANNEL_TO_PEER_ID[arg_96_1]
 
@@ -1068,11 +1068,11 @@ function GameNetworkManager.rpc_skinned_surface_mtr_fx(arg_96_0, arg_96_1, arg_9
 	EffectHelper.play_skinned_surface_material_effects(var_96_1, arg_96_0._world, nil, arg_96_3, arg_96_4, arg_96_5, true)
 end
 
-function GameNetworkManager.game_session_host(arg_97_0)
+GameNetworkManager.game_session_host = function (arg_97_0)
 	return arg_97_0.game_session and (arg_97_0._game_session_host or GameSession.game_session_host(arg_97_0.game_session))
 end
 
-function GameNetworkManager.rpc_enemy_is_alerted(arg_98_0, arg_98_1, arg_98_2, arg_98_3)
+GameNetworkManager.rpc_enemy_is_alerted = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3)
 	local var_98_0 = arg_98_0.unit_storage:unit(arg_98_2)
 	local var_98_1 = "detect"
 
@@ -1092,13 +1092,13 @@ function GameNetworkManager.rpc_enemy_is_alerted(arg_98_0, arg_98_1, arg_98_2, a
 	end
 end
 
-function GameNetworkManager.rpc_ladder_shake(arg_99_0, arg_99_1, arg_99_2)
+GameNetworkManager.rpc_ladder_shake = function (arg_99_0, arg_99_1, arg_99_2)
 	local var_99_0 = Level.unit_by_index(LevelHelper:current_level(arg_99_0._world), arg_99_2)
 
 	ScriptUnit.extension(var_99_0, "ladder_system"):shake()
 end
 
-function GameNetworkManager.rpc_assist(arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4, arg_100_5, arg_100_6, arg_100_7)
+GameNetworkManager.rpc_assist = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4, arg_100_5, arg_100_6, arg_100_7)
 	local var_100_0 = Managers.player
 	local var_100_1 = var_100_0:player(arg_100_2, arg_100_3)
 	local var_100_2 = var_100_0:player(arg_100_4, arg_100_5)
@@ -1138,7 +1138,7 @@ function GameNetworkManager.rpc_assist(arg_100_0, arg_100_1, arg_100_2, arg_100_
 	end
 end
 
-function GameNetworkManager.rpc_coop_feedback(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6)
+GameNetworkManager.rpc_coop_feedback = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6)
 	if arg_101_0.is_server then
 		local var_101_0 = CHANNEL_TO_PEER_ID[arg_101_1]
 
@@ -1176,7 +1176,7 @@ function GameNetworkManager.rpc_coop_feedback(arg_101_0, arg_101_1, arg_101_2, a
 	Managers.state.event:trigger("add_coop_feedback", var_101_3:stats_id() .. var_101_4:stats_id(), var_101_5, var_101_1, var_101_3, var_101_4)
 end
 
-function GameNetworkManager.rpc_flow_event(arg_102_0, arg_102_1, arg_102_2, arg_102_3)
+GameNetworkManager.rpc_flow_event = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3)
 	local var_102_0 = arg_102_0.unit_storage:unit(arg_102_2)
 
 	if not var_102_0 then
@@ -1196,15 +1196,15 @@ function GameNetworkManager.rpc_flow_event(arg_102_0, arg_102_1, arg_102_2, arg_
 	Unit.flow_event(var_102_0, var_102_2)
 end
 
-function GameNetworkManager.anim_event(arg_103_0, arg_103_1, arg_103_2)
+GameNetworkManager.anim_event = function (arg_103_0, arg_103_1, arg_103_2)
 	return Managers.state.entity:system("animation_system"):anim_event(arg_103_1, arg_103_2)
 end
 
-function GameNetworkManager.anim_event_with_variable_float(arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4)
+GameNetworkManager.anim_event_with_variable_float = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3, arg_104_4)
 	Managers.state.entity:system("animation_system"):anim_event_with_variable_float(arg_104_1, arg_104_2, arg_104_3, arg_104_4)
 end
 
-function GameNetworkManager.anim_set_variable_float(arg_105_0, arg_105_1, arg_105_2, arg_105_3)
+GameNetworkManager.anim_set_variable_float = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3)
 	local var_105_0 = arg_105_0.unit_storage:go_id(arg_105_1)
 
 	fassert(var_105_0, "Unit storage does not have a game object id for %q", arg_105_1)

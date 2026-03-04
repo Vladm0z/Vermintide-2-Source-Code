@@ -6,7 +6,7 @@ local var_0_0 = 30
 local var_0_1 = 3
 local var_0_2 = Unit.alive
 
-function DoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DoorExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.unit = arg_1_2
@@ -45,11 +45,11 @@ function DoorExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.num_attackers = 0
 end
 
-function DoorExtension.extensions_ready(arg_2_0)
+DoorExtension.extensions_ready = function (arg_2_0)
 	arg_2_0.health_extension = ScriptUnit.extension(arg_2_0.unit, "health_system")
 end
 
-function DoorExtension.update_nav_graphs(arg_3_0)
+DoorExtension.update_nav_graphs = function (arg_3_0)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = Managers.state.entity:system("nav_graph_system")
 
@@ -60,13 +60,13 @@ function DoorExtension.update_nav_graphs(arg_3_0)
 	end
 end
 
-function DoorExtension.animation_played(arg_4_0, arg_4_1, arg_4_2)
+DoorExtension.animation_played = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_1 / var_0_0 / arg_4_2
 
 	arg_4_0.animation_stop_time = Managers.time:time("game") + var_4_0
 end
 
-function DoorExtension.update_nav_obstacles(arg_5_0)
+DoorExtension.update_nav_obstacles = function (arg_5_0)
 	local var_5_0 = arg_5_0.unit
 	local var_5_1 = arg_5_0.current_state
 	local var_5_2 = arg_5_0.state_to_nav_obstacle_map
@@ -98,7 +98,7 @@ function DoorExtension.update_nav_obstacles(arg_5_0)
 	arg_5_0.frames_since_obstacle_update = 0
 end
 
-function DoorExtension.interacted_with(arg_6_0, arg_6_1)
+DoorExtension.interacted_with = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = arg_6_0.current_state
 	local var_6_2
@@ -119,7 +119,7 @@ function DoorExtension.interacted_with(arg_6_0, arg_6_1)
 	arg_6_0:set_door_state(var_6_2)
 end
 
-function DoorExtension.set_door_state(arg_7_0, arg_7_1)
+DoorExtension.set_door_state = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.current_state
 
 	if var_7_0 == arg_7_1 then
@@ -140,11 +140,11 @@ function DoorExtension.set_door_state(arg_7_0, arg_7_1)
 	arg_7_0.current_state = arg_7_1
 end
 
-function DoorExtension.get_current_state(arg_8_0)
+DoorExtension.get_current_state = function (arg_8_0)
 	return arg_8_0.current_state
 end
 
-function DoorExtension._get_animation_flow_event(arg_9_0, arg_9_1, arg_9_2)
+DoorExtension._get_animation_flow_event = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.animation_flow_events[arg_9_1][arg_9_2]
 
 	fassert(var_9_0, "Door animation event from %s to %s unavailable", arg_9_1, arg_9_2)
@@ -152,7 +152,7 @@ function DoorExtension._get_animation_flow_event(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_0
 end
 
-function DoorExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+DoorExtension.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = arg_10_0.frames_since_obstacle_update
 
 	if var_10_0 then
@@ -193,7 +193,7 @@ function DoorExtension.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, 
 	end
 end
 
-function DoorExtension.register_breed_failed_leaving_smart_object(arg_11_0, arg_11_1)
+DoorExtension.register_breed_failed_leaving_smart_object = function (arg_11_0, arg_11_1)
 	if arg_11_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
@@ -201,7 +201,7 @@ function DoorExtension.register_breed_failed_leaving_smart_object(arg_11_0, arg_
 	arg_11_0.breeds_failed_leaving_smart_object[arg_11_1] = true
 end
 
-function DoorExtension.handle_breeds_failed_leaving_smart_object(arg_12_0)
+DoorExtension.handle_breeds_failed_leaving_smart_object = function (arg_12_0)
 	if arg_12_0.breeds_failed_leaving_smart_object == nil then
 		return
 	end
@@ -219,7 +219,7 @@ function DoorExtension.handle_breeds_failed_leaving_smart_object(arg_12_0)
 	arg_12_0.breeds_failed_leaving_smart_object = {}
 end
 
-function DoorExtension.hot_join_sync(arg_13_0, arg_13_1)
+DoorExtension.hot_join_sync = function (arg_13_0, arg_13_1)
 	local var_13_0 = LevelHelper:current_level(arg_13_0.world)
 	local var_13_1 = Level.unit_index(var_13_0, arg_13_0.unit)
 
@@ -232,7 +232,7 @@ function DoorExtension.hot_join_sync(arg_13_0, arg_13_1)
 	end
 end
 
-function DoorExtension.destroy(arg_14_0)
+DoorExtension.destroy = function (arg_14_0)
 	arg_14_0:destroy_box_obstacles()
 
 	arg_14_0.unit = nil
@@ -241,7 +241,7 @@ function DoorExtension.destroy(arg_14_0)
 	arg_14_0.breeds_failed_leaving_smart_object = nil
 end
 
-function DoorExtension.destroy_box_obstacles(arg_15_0)
+DoorExtension.destroy_box_obstacles = function (arg_15_0)
 	if arg_15_0.state_to_nav_obstacle_map then
 		for iter_15_0, iter_15_1 in pairs(arg_15_0.state_to_nav_obstacle_map) do
 			GwNavBoxObstacle.destroy(iter_15_1)
@@ -253,10 +253,10 @@ function DoorExtension.destroy_box_obstacles(arg_15_0)
 	arg_15_0.frames_since_obstacle_update = 0
 end
 
-function DoorExtension.is_open(arg_16_0)
+DoorExtension.is_open = function (arg_16_0)
 	return arg_16_0.current_state ~= "closed"
 end
 
-function DoorExtension.is_opening(arg_17_0)
+DoorExtension.is_opening = function (arg_17_0)
 	return arg_17_0.current_state ~= "closed" and (arg_17_0.animation_stop_time or arg_17_0.frames_since_obstacle_update)
 end

@@ -3,31 +3,31 @@
 CraftingManager = class(CraftingManager)
 CraftingManager.NAME = "CraftingManager"
 
-function CraftingManager.init(arg_1_0)
+CraftingManager.init = function (arg_1_0)
 	arg_1_0._crafting_interface = Managers.backend:get_interface("crafting")
 end
 
-function CraftingManager.update(arg_2_0, arg_2_1)
+CraftingManager.update = function (arg_2_0, arg_2_1)
 	return
 end
 
-function CraftingManager.get_recipes(arg_3_0)
+CraftingManager.get_recipes = function (arg_3_0)
 	return arg_3_0._crafting_interface:get_recipes()
 end
 
-function CraftingManager.get_recipes_lookup(arg_4_0)
+CraftingManager.get_recipes_lookup = function (arg_4_0)
 	return arg_4_0._crafting_interface:get_recipes_lookup()
 end
 
-function CraftingManager.are_recipes_dirty(arg_5_0)
+CraftingManager.are_recipes_dirty = function (arg_5_0)
 	return (arg_5_0._crafting_interface:are_recipes_dirty())
 end
 
-function CraftingManager.destroy(arg_6_0)
+CraftingManager.destroy = function (arg_6_0)
 	return
 end
 
-function CraftingManager.craft(arg_7_0, arg_7_1, arg_7_2)
+CraftingManager.craft = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._crafting_interface
 	local var_7_1 = {}
 
@@ -59,7 +59,7 @@ function CraftingManager.craft(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_6
 end
 
-function CraftingManager.debug_set_crafted_items_stat(arg_8_0, arg_8_1)
+CraftingManager.debug_set_crafted_items_stat = function (arg_8_0, arg_8_1)
 	local var_8_0 = Managers.player
 	local var_8_1 = var_8_0:local_player():stats_id()
 
@@ -68,7 +68,7 @@ function CraftingManager.debug_set_crafted_items_stat(arg_8_0, arg_8_1)
 	print("Number of crafted items set to", arg_8_1)
 end
 
-function CraftingManager.debug_set_salvaged_items_stat(arg_9_0, arg_9_1)
+CraftingManager.debug_set_salvaged_items_stat = function (arg_9_0, arg_9_1)
 	local var_9_0 = Managers.player
 	local var_9_1 = var_9_0:local_player():stats_id()
 

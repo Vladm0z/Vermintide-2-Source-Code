@@ -166,7 +166,7 @@ local function var_0_12()
 					texture_id = "character_portrait",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.color = arg_2_0.dim_portraits and Colors.get_color_table_with_alpha("dim_gray", 255) or Colors.get_color_table_with_alpha("white", 255)
 					end
 				},
@@ -181,7 +181,7 @@ local function var_0_12()
 					style_id = "host_icon",
 					texture_id = "host_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.is_host
 					end
 				},
@@ -344,10 +344,10 @@ local function var_0_13()
 					texture_id = "portrait_icon",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.display_portrait_icon
 					end,
-					content_change_function = function(arg_6_0, arg_6_1)
+					content_change_function = function (arg_6_0, arg_6_1)
 						arg_6_1.staturated = arg_6_0.state == "countdown"
 					end
 				},
@@ -380,7 +380,7 @@ local function var_0_13()
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.connecting
 					end
 				},
@@ -389,7 +389,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "respawn_countdown_text",
 					retained_mode = false,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.state == "countdown" or arg_8_0.state == "fadeout"
 					end
 				}
@@ -585,7 +585,7 @@ local function var_0_15()
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0, arg_11_1)
+					content_check_function = function (arg_11_0, arg_11_1)
 						return not arg_11_0.has_shield
 					end
 				},
@@ -594,10 +594,10 @@ local function var_0_15()
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.hp_bar.draw_health_bar
 					end,
-					content_change_function = function(arg_13_0, arg_13_1)
+					content_change_function = function (arg_13_0, arg_13_1)
 						local var_13_0 = arg_13_0.hp_bar.internal_bar_value
 						local var_13_1 = arg_13_0.actual_active_percentage or 1
 						local var_13_2 = math.max(var_13_0, var_13_1)
@@ -611,7 +611,7 @@ local function var_0_15()
 					texture_id = "texture_id",
 					content_id = "hp_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.draw_health_bar
 					end
 				},
@@ -621,7 +621,7 @@ local function var_0_15()
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return arg_15_0.draw_health_bar
 					end
 				},
@@ -630,7 +630,7 @@ local function var_0_15()
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						local var_16_0 = arg_16_0.parent
 						local var_16_1 = var_16_0.hp_bar.internal_bar_value
 						local var_16_2 = var_16_0.actual_active_percentage or 1
@@ -650,7 +650,7 @@ local function var_0_15()
 					style_id = "hp_bar",
 					texture_id = "hp_bar_mask",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.hp_bar.draw_health_bar
 					end
 				},
@@ -659,7 +659,7 @@ local function var_0_15()
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.display_portrait_icon
 					end
 				}

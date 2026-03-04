@@ -96,7 +96,7 @@ local var_0_6 = {
 
 DamageIndicatorGui = class(DamageIndicatorGui)
 
-function DamageIndicatorGui.init(arg_1_0, arg_1_1, arg_1_2)
+DamageIndicatorGui.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.input_manager = arg_1_2.input_manager
@@ -107,7 +107,7 @@ function DamageIndicatorGui.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.peer_id = arg_1_2.peer_id
 end
 
-function DamageIndicatorGui.create_ui_elements(arg_2_0)
+DamageIndicatorGui.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 	arg_2_0.indicator_widgets = {}
 	arg_2_0.indicator_positions = {}
@@ -120,11 +120,11 @@ function DamageIndicatorGui.create_ui_elements(arg_2_0)
 	arg_2_0.num_active_indicators = 0
 end
 
-function DamageIndicatorGui.destroy(arg_3_0)
+DamageIndicatorGui.destroy = function (arg_3_0)
 	return
 end
 
-function DamageIndicatorGui.update(arg_4_0, arg_4_1)
+DamageIndicatorGui.update = function (arg_4_0, arg_4_1)
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end

@@ -2,17 +2,17 @@
 
 PlayerUtils = {}
 
-function PlayerUtils.unique_player_id(arg_1_0, arg_1_1)
+PlayerUtils.unique_player_id = function (arg_1_0, arg_1_1)
 	return arg_1_0 .. ":" .. arg_1_1
 end
 
-function PlayerUtils.split_unique_player_id(arg_2_0)
+PlayerUtils.split_unique_player_id = function (arg_2_0)
 	local var_2_0, var_2_1 = string.match(arg_2_0, "^([^:]+):(.*)$")
 
 	return var_2_0, tonumber(var_2_1)
 end
 
-function PlayerUtils.get_random_alive_hero()
+PlayerUtils.get_random_alive_hero = function ()
 	local var_3_0 = (Managers.state.side:get_side_from_name("heroes") or Managers.state.side:sides()[1]).PLAYER_AND_BOT_UNITS
 	local var_3_1 = {}
 	local var_3_2 = 0
@@ -33,7 +33,7 @@ function PlayerUtils.get_random_alive_hero()
 	return nil
 end
 
-function PlayerUtils.get_career_override(arg_4_0)
+PlayerUtils.get_career_override = function (arg_4_0)
 	local var_4_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 
 	if not var_4_0 then
@@ -49,7 +49,7 @@ function PlayerUtils.get_career_override(arg_4_0)
 	return true
 end
 
-function PlayerUtils.get_enabled_career_index_by_profile(arg_5_0)
+PlayerUtils.get_enabled_career_index_by_profile = function (arg_5_0)
 	local var_5_0 = SPProfiles[arg_5_0].careers
 
 	for iter_5_0 = 1, #var_5_0 do
@@ -59,7 +59,7 @@ function PlayerUtils.get_enabled_career_index_by_profile(arg_5_0)
 	end
 end
 
-function PlayerUtils.get_random_enabled_career_index_by_profile(arg_6_0)
+PlayerUtils.get_random_enabled_career_index_by_profile = function (arg_6_0)
 	local var_6_0 = table.shallow_copy(SPProfiles[arg_6_0].careers)
 	local var_6_1
 
@@ -76,7 +76,7 @@ function PlayerUtils.get_random_enabled_career_index_by_profile(arg_6_0)
 	return var_6_1
 end
 
-function PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile(arg_7_0)
+PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile = function (arg_7_0)
 	local var_7_0 = table.shallow_copy(SPProfiles[arg_7_0].careers)
 
 	table.shuffle(var_7_0)
@@ -90,7 +90,7 @@ function PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile(arg_7_0)
 	end
 end
 
-function PlayerUtils.get_talent_overrides_by_career(arg_8_0)
+PlayerUtils.get_talent_overrides_by_career = function (arg_8_0)
 	local var_8_0 = Managers.mechanism:mechanism_setting_for_title("override_career_talents")
 
 	if not var_8_0 then
@@ -100,7 +100,7 @@ function PlayerUtils.get_talent_overrides_by_career(arg_8_0)
 	return var_8_0[arg_8_0]
 end
 
-function PlayerUtils.broadphase_query(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+PlayerUtils.broadphase_query = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	fassert(arg_9_2, "No result_table given to PlayerUtils.broadphase_query")
 
 	local var_9_0 = Managers.state.entity:system("proximity_system").player_units_broadphase
@@ -108,11 +108,11 @@ function PlayerUtils.broadphase_query(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	return (Broadphase.query(var_9_0, arg_9_0, arg_9_1, arg_9_2, arg_9_3))
 end
 
-function PlayerUtils.peer_id_compare(arg_10_0, arg_10_1)
+PlayerUtils.peer_id_compare = function (arg_10_0, arg_10_1)
 	return arg_10_0 <= arg_10_1
 end
 
-function PlayerUtils.player_name(arg_11_0, arg_11_1)
+PlayerUtils.player_name = function (arg_11_0, arg_11_1)
 	if not arg_11_0 then
 		return "Peer #nil"
 	end

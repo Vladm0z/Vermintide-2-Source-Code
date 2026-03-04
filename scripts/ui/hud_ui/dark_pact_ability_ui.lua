@@ -7,7 +7,7 @@ local var_0_3 = var_0_0.profile_ability_templates
 
 DarkPactAbilityUI = class(DarkPactAbilityUI)
 
-function DarkPactAbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
+DarkPactAbilityUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._ingame_ui = arg_1_2.ingame_ui
@@ -35,7 +35,7 @@ function DarkPactAbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_1:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-function DarkPactAbilityUI._create_ui_elements(arg_2_0)
+DarkPactAbilityUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_2_0 = {}
@@ -57,7 +57,7 @@ function DarkPactAbilityUI._create_ui_elements(arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-function DarkPactAbilityUI._setup_activated_ability(arg_3_0)
+DarkPactAbilityUI._setup_activated_ability = function (arg_3_0)
 	local var_3_0, var_3_1 = arg_3_0:_get_player_unit()
 
 	if not var_3_1 then
@@ -76,7 +76,7 @@ function DarkPactAbilityUI._setup_activated_ability(arg_3_0)
 	arg_3_0._initialized = true
 end
 
-function DarkPactAbilityUI._get_extension(arg_4_0, arg_4_1)
+DarkPactAbilityUI._get_extension = function (arg_4_0, arg_4_1)
 	local var_4_0, var_4_1 = arg_4_0:_get_player_unit()
 
 	if var_4_1 and Unit.alive(var_4_1) then
@@ -84,7 +84,7 @@ function DarkPactAbilityUI._get_extension(arg_4_0, arg_4_1)
 	end
 end
 
-function DarkPactAbilityUI._update_abilities(arg_5_0, arg_5_1, arg_5_2)
+DarkPactAbilityUI._update_abilities = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0:_get_extension("career_system")
 	local var_5_1 = arg_5_0:_get_extension("versus_horde_ability_system")
 	local var_5_2 = var_5_0 and var_5_0:career_name()
@@ -105,7 +105,7 @@ function DarkPactAbilityUI._update_abilities(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_handle_career_abilities(arg_5_1, arg_5_2, var_5_2, var_5_0, var_5_1, var_5_3, var_5_7)
 end
 
-function DarkPactAbilityUI.destroy(arg_6_0)
+DarkPactAbilityUI.destroy = function (arg_6_0)
 	local var_6_0 = Managers.state.event
 
 	var_6_0:unregister("input_changed", arg_6_0)
@@ -119,13 +119,13 @@ function DarkPactAbilityUI.destroy(arg_6_0)
 	print("[DarkPactAbilityUI] - Destroy")
 end
 
-function DarkPactAbilityUI.set_visible(arg_7_0, arg_7_1)
+DarkPactAbilityUI.set_visible = function (arg_7_0, arg_7_1)
 	arg_7_0._is_visible = arg_7_1
 
 	arg_7_0:_set_elements_visible(arg_7_1)
 end
 
-function DarkPactAbilityUI._set_elements_visible(arg_8_0, arg_8_1)
+DarkPactAbilityUI._set_elements_visible = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_renderer
 
 	for iter_8_0, iter_8_1 in ipairs(arg_8_0._widgets) do
@@ -145,11 +145,11 @@ function DarkPactAbilityUI._set_elements_visible(arg_8_0, arg_8_1)
 	arg_8_0:set_dirty()
 end
 
-function DarkPactAbilityUI._handle_gamepad(arg_9_0)
+DarkPactAbilityUI._handle_gamepad = function (arg_9_0)
 	return true
 end
 
-function DarkPactAbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
+DarkPactAbilityUI.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._is_visible then
 		return
 	end
@@ -168,13 +168,13 @@ function DarkPactAbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:draw(arg_10_1, arg_10_2)
 end
 
-function DarkPactAbilityUI._handle_resolution_modified(arg_11_0)
+DarkPactAbilityUI._handle_resolution_modified = function (arg_11_0)
 	if RESOLUTION_LOOKUP.modified then
 		arg_11_0:_on_resolution_modified()
 	end
 end
 
-function DarkPactAbilityUI._on_resolution_modified(arg_12_0)
+DarkPactAbilityUI._on_resolution_modified = function (arg_12_0)
 	for iter_12_0, iter_12_1 in ipairs(arg_12_0._widgets) do
 		arg_12_0:_set_widget_dirty(iter_12_1)
 	end
@@ -182,7 +182,7 @@ function DarkPactAbilityUI._on_resolution_modified(arg_12_0)
 	arg_12_0:set_dirty()
 end
 
-function DarkPactAbilityUI.draw(arg_13_0, arg_13_1, arg_13_2)
+DarkPactAbilityUI.draw = function (arg_13_0, arg_13_1, arg_13_2)
 	if not arg_13_0._is_visible then
 		return
 	end
@@ -227,19 +227,19 @@ function DarkPactAbilityUI.draw(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._dirty = false
 end
 
-function DarkPactAbilityUI.set_dirty(arg_14_0)
+DarkPactAbilityUI.set_dirty = function (arg_14_0)
 	arg_14_0._dirty = true
 end
 
-function DarkPactAbilityUI._set_widget_dirty(arg_15_0, arg_15_1)
+DarkPactAbilityUI._set_widget_dirty = function (arg_15_0, arg_15_1)
 	arg_15_1.element.dirty = true
 end
 
-function DarkPactAbilityUI._play_sound(arg_16_0, arg_16_1)
+DarkPactAbilityUI._play_sound = function (arg_16_0, arg_16_1)
 	WwiseWorld.trigger_event(arg_16_0._wwise_world, arg_16_1)
 end
 
-function DarkPactAbilityUI.event_input_changed(arg_17_0)
+DarkPactAbilityUI.event_input_changed = function (arg_17_0)
 	local var_17_0 = "action_career"
 	local var_17_1 = arg_17_0._ability_widgets
 
@@ -255,7 +255,7 @@ function DarkPactAbilityUI.event_input_changed(arg_17_0)
 	arg_17_0:set_dirty()
 end
 
-function DarkPactAbilityUI._set_input(arg_18_0, arg_18_1, arg_18_2)
+DarkPactAbilityUI._set_input = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0, var_18_1, var_18_2 = arg_18_0:_get_input_texture_data(arg_18_2)
 	local var_18_3 = 100
 	local var_18_4 = arg_18_1.style.input_text
@@ -266,7 +266,7 @@ function DarkPactAbilityUI._set_input(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_1.content.input_action = arg_18_2
 end
 
-function DarkPactAbilityUI._get_input_texture_data(arg_19_0, arg_19_1)
+DarkPactAbilityUI._get_input_texture_data = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._input_manager
 	local var_19_1 = var_19_0:get_service("Player")
 	local var_19_2 = var_19_0:is_device_active("gamepad")
@@ -313,7 +313,7 @@ function DarkPactAbilityUI._get_input_texture_data(arg_19_0, arg_19_1)
 	return nil, var_19_10
 end
 
-function DarkPactAbilityUI._update_ability_animations(arg_20_0, arg_20_1, arg_20_2)
+DarkPactAbilityUI._update_ability_animations = function (arg_20_0, arg_20_1, arg_20_2)
 	if not arg_20_0._is_visible then
 		return false
 	end
@@ -329,7 +329,7 @@ function DarkPactAbilityUI._update_ability_animations(arg_20_0, arg_20_1, arg_20
 	return true
 end
 
-function DarkPactAbilityUI.set_alpha(arg_21_0, arg_21_1)
+DarkPactAbilityUI.set_alpha = function (arg_21_0, arg_21_1)
 	for iter_21_0, iter_21_1 in pairs(arg_21_0._widgets) do
 		arg_21_0:_set_widget_dirty(iter_21_1)
 	end
@@ -339,7 +339,7 @@ function DarkPactAbilityUI.set_alpha(arg_21_0, arg_21_1)
 	arg_21_0:set_dirty()
 end
 
-function DarkPactAbilityUI._get_player_unit(arg_22_0)
+DarkPactAbilityUI._get_player_unit = function (arg_22_0)
 	if arg_22_0._is_spectator then
 		return arg_22_0._spectated_player, arg_22_0._spectated_player_unit
 	end
@@ -353,7 +353,7 @@ function DarkPactAbilityUI._get_player_unit(arg_22_0)
 	return arg_22_0._player, arg_22_0._player.player_unit
 end
 
-function DarkPactAbilityUI.on_spectator_target_changed(arg_23_0, arg_23_1)
+DarkPactAbilityUI.on_spectator_target_changed = function (arg_23_0, arg_23_1)
 	arg_23_0._spectated_player_unit = arg_23_1
 	arg_23_0._spectated_player = Managers.player:owner(arg_23_1)
 	arg_23_0._is_spectator = true
@@ -365,7 +365,7 @@ function DarkPactAbilityUI.on_spectator_target_changed(arg_23_0, arg_23_1)
 	end
 end
 
-function DarkPactAbilityUI.event_on_dark_pact_ammo_changed(arg_24_0, arg_24_1, arg_24_2)
+DarkPactAbilityUI.event_on_dark_pact_ammo_changed = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._ability_hud_widgets_by_name and arg_24_0._ability_hud_widgets_by_name[2]
 
 	if not var_24_0 then
@@ -413,7 +413,7 @@ function DarkPactAbilityUI.event_on_dark_pact_ammo_changed(arg_24_0, arg_24_1, a
 	end
 end
 
-function DarkPactAbilityUI._handle_career_abilities(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
+DarkPactAbilityUI._handle_career_abilities = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
 	local var_25_0, var_25_1 = arg_25_0:_get_player_unit()
 	local var_25_2 = var_25_0:profile_index()
 	local var_25_3 = var_25_0:career_index()

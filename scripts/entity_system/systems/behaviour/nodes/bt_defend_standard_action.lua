@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDefendStandardAction = class(BTDefendStandardAction, BTNode)
 
-function BTDefendStandardAction.init(arg_1_0, ...)
+BTDefendStandardAction.init = function (arg_1_0, ...)
 	BTDefendStandardAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTDefendStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTDefendStandardAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 	arg_3_2.active_node = BTDefendStandardAction
 
@@ -36,7 +36,7 @@ function BTDefendStandardAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.moving_to_defend_standard = true
 end
 
-function BTDefendStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTDefendStandardAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
 	local var_4_1 = arg_4_2.navigation_extension
 
@@ -55,7 +55,7 @@ function BTDefendStandardAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	arg_4_2.move_state = "idle"
 end
 
-function BTDefendStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTDefendStandardAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if not HEALTH_ALIVE[arg_5_2.standard_unit] then
 		return "done"
 	end
@@ -104,7 +104,7 @@ function BTDefendStandardAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTDefendStandardAction._adjust_defend_position(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+BTDefendStandardAction._adjust_defend_position = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 	local var_6_0 = POSITION_LOOKUP[arg_6_3]
 	local var_6_1 = arg_6_5 + Vector3.normalize(var_6_0 - arg_6_5) * Math.random_range(1, 1.5)
 	local var_6_2 = arg_6_2.nav_world
@@ -140,7 +140,7 @@ function BTDefendStandardAction._adjust_defend_position(arg_6_0, arg_6_1, arg_6_
 	end
 end
 
-function BTDefendStandardAction._enable_navigation(arg_7_0, arg_7_1, arg_7_2)
+BTDefendStandardAction._enable_navigation = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_2 then
 		arg_7_1.navigation_extension:set_enabled(true)
 	else
@@ -149,13 +149,13 @@ function BTDefendStandardAction._enable_navigation(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function BTDefendStandardAction._calculate_walk_animation(arg_8_0, arg_8_1)
+BTDefendStandardAction._calculate_walk_animation = function (arg_8_0, arg_8_1)
 	local var_8_0
 
 	return arg_8_1 == "right" and "move_right_walk" or arg_8_1 == "left" and "move_left_walk" or arg_8_1 == "forward" and "move_fwd_walk" or "move_bwd_walk"
 end
 
-function BTDefendStandardAction._calculate_walk_dir(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTDefendStandardAction._calculate_walk_dir = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = Vector3.dot(arg_9_1, arg_9_3)
 	local var_9_1 = Vector3.dot(arg_9_2, arg_9_3)
 	local var_9_2 = math.abs(var_9_0)

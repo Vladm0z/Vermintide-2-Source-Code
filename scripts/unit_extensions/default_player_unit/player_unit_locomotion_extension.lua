@@ -9,7 +9,7 @@ local var_0_0 = POSITION_LOOKUP
 local var_0_1 = 99.9999
 local var_0_2 = 0.15
 
-function PlayerUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = Managers.player.is_server
 	arg_1_0.player = arg_1_3.player
@@ -85,7 +85,7 @@ function PlayerUnitLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.third_person_idle_fullbody_animation_control = ThirdPersonIdleFullbodyAnimationControl:new(arg_1_2)
 end
 
-function PlayerUnitLocomotionExtension.set_mover_filter_property(arg_2_0, arg_2_1, arg_2_2)
+PlayerUnitLocomotionExtension.set_mover_filter_property = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._mover_modes
 
 	fassert(arg_2_2 ~= nil, "Trying to set mover filter property nil")
@@ -102,7 +102,7 @@ end
 
 local var_0_3 = 1
 
-function PlayerUnitLocomotionExtension.move_to_non_intersecting_position(arg_3_0)
+PlayerUnitLocomotionExtension.move_to_non_intersecting_position = function (arg_3_0)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = Unit.mover(var_3_0)
 	local var_3_2, var_3_3, var_3_4, var_3_5 = Mover.separate(var_3_1, var_0_3)
@@ -113,7 +113,7 @@ function PlayerUnitLocomotionExtension.move_to_non_intersecting_position(arg_3_0
 	end
 end
 
-function PlayerUnitLocomotionExtension.destroy(arg_4_0)
+PlayerUnitLocomotionExtension.destroy = function (arg_4_0)
 	if arg_4_0.is_server then
 		GwNavCostMap.destroy_tag_cost_table(arg_4_0._nav_cost_map_cost_table)
 		GwNavTraverseLogic.destroy(arg_4_0._nav_traverse_logic)
@@ -126,7 +126,7 @@ function PlayerUnitLocomotionExtension.destroy(arg_4_0)
 	var_4_1.all_update_units[var_4_0] = nil
 end
 
-function PlayerUnitLocomotionExtension.set_on_moving_platform(arg_5_0, arg_5_1, arg_5_2)
+PlayerUnitLocomotionExtension.set_on_moving_platform = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0
 
 	if arg_5_1 then
@@ -149,11 +149,11 @@ function PlayerUnitLocomotionExtension.set_on_moving_platform(arg_5_0, arg_5_1, 
 	arg_5_0:sync_network_position(var_5_1, var_5_2)
 end
 
-function PlayerUnitLocomotionExtension.get_moving_platform(arg_6_0)
+PlayerUnitLocomotionExtension.get_moving_platform = function (arg_6_0)
 	return arg_6_0._platform_unit, arg_6_0._platform_extension, arg_6_0._soft_platform
 end
 
-function PlayerUnitLocomotionExtension.hot_join_sync(arg_7_0, arg_7_1)
+PlayerUnitLocomotionExtension.hot_join_sync = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.unit
 	local var_7_1 = Managers.state.network:unit_game_object_id(var_7_0)
 	local var_7_2 = PEER_ID_TO_CHANNEL[arg_7_1]
@@ -161,7 +161,7 @@ function PlayerUnitLocomotionExtension.hot_join_sync(arg_7_0, arg_7_1)
 	RPC.rpc_sync_anim_state_3(var_7_2, var_7_1, Unit.animation_get_state(var_7_0))
 end
 
-function PlayerUnitLocomotionExtension._initialize_sample_velocities(arg_8_0)
+PlayerUnitLocomotionExtension._initialize_sample_velocities = function (arg_8_0)
 	arg_8_0._sample_velocity_index = 0
 	arg_8_0._sample_velocity_time = Managers.time:time("game")
 	arg_8_0._average_velocity = Vector3Box(0, 0, 0)
@@ -190,7 +190,7 @@ function PlayerUnitLocomotionExtension._initialize_sample_velocities(arg_8_0)
 	}
 end
 
-function PlayerUnitLocomotionExtension._stop(arg_9_0, arg_9_1)
+PlayerUnitLocomotionExtension._stop = function (arg_9_0, arg_9_1)
 	local var_9_0 = Vector3.zero()
 
 	arg_9_0.velocity_current:store(var_9_0)
@@ -205,28 +205,28 @@ function PlayerUnitLocomotionExtension._stop(arg_9_0, arg_9_1)
 	end
 end
 
-function PlayerUnitLocomotionExtension.average_velocity(arg_10_0)
+PlayerUnitLocomotionExtension.average_velocity = function (arg_10_0)
 	return arg_10_0._average_velocity:unbox()
 end
 
-function PlayerUnitLocomotionExtension.small_sample_size_average_velocity(arg_11_0)
+PlayerUnitLocomotionExtension.small_sample_size_average_velocity = function (arg_11_0)
 	return arg_11_0._small_sample_size_average_velocity:unbox()
 end
 
-function PlayerUnitLocomotionExtension.extensions_ready(arg_12_0, arg_12_1, arg_12_2)
+PlayerUnitLocomotionExtension.extensions_ready = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0.first_person_extension = ScriptUnit.extension(arg_12_0.unit, "first_person_system")
 	arg_12_0.status_extension = ScriptUnit.extension(arg_12_0.unit, "status_system")
 
 	arg_12_0.third_person_idle_fullbody_animation_control:extensions_ready(arg_12_1, arg_12_2)
 end
 
-function PlayerUnitLocomotionExtension.last_position_on_navmesh(arg_13_0)
+PlayerUnitLocomotionExtension.last_position_on_navmesh = function (arg_13_0)
 	assert(arg_13_0.is_server, "last position on nav mesh is only saved on server")
 
 	return arg_13_0._latest_position_on_navmesh:unbox()
 end
 
-function PlayerUnitLocomotionExtension.reset(arg_14_0)
+PlayerUnitLocomotionExtension.reset = function (arg_14_0)
 	arg_14_0.state = "script_driven"
 	arg_14_0.velocity_wanted = Vector3Box(0, 0, 0)
 	arg_14_0.allow_jump = false
@@ -238,7 +238,7 @@ function PlayerUnitLocomotionExtension.reset(arg_14_0)
 	arg_14_0.speed_multiplier_duration = nil
 end
 
-function PlayerUnitLocomotionExtension.set_disabled(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PlayerUnitLocomotionExtension.set_disabled = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	arg_15_0.disabled = arg_15_1
 	arg_15_0.run_func = arg_15_2
 	arg_15_0.master_unit = arg_15_3
@@ -270,15 +270,15 @@ function PlayerUnitLocomotionExtension.set_disabled(arg_15_0, arg_15_1, arg_15_2
 	end
 end
 
-function PlayerUnitLocomotionExtension.set_mover_disable_reason(arg_16_0, arg_16_1, arg_16_2)
+PlayerUnitLocomotionExtension.set_mover_disable_reason = function (arg_16_0, arg_16_1, arg_16_2)
 	MoverHelper.set_disable_reason(arg_16_0.unit, arg_16_0.mover_state, arg_16_1, arg_16_2)
 end
 
-function PlayerUnitLocomotionExtension.set_active_mover(arg_17_0, arg_17_1)
+PlayerUnitLocomotionExtension.set_active_mover = function (arg_17_0, arg_17_1)
 	MoverHelper.set_active_mover(arg_17_0.unit, arg_17_0.mover_state, arg_17_1)
 end
 
-function PlayerUnitLocomotionExtension.post_update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+PlayerUnitLocomotionExtension.post_update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
 	local var_18_0 = arg_18_0.on_ground and Vector3.length(arg_18_0.velocity_current:unbox()) or 0
 	local var_18_1 = arg_18_0.anim_move_speed
 	local var_18_2 = math.abs(var_18_1 - var_18_0)
@@ -330,7 +330,7 @@ function PlayerUnitLocomotionExtension.post_update(arg_18_0, arg_18_1, arg_18_2,
 	end
 end
 
-function PlayerUnitLocomotionExtension.moving_on_slope(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+PlayerUnitLocomotionExtension.moving_on_slope = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	if arg_19_0.is_bot then
 		arg_19_0.allow_jump = true
 
@@ -361,7 +361,7 @@ end
 
 local var_0_4 = {}
 
-function PlayerUnitLocomotionExtension.update_script_driven_movement(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+PlayerUnitLocomotionExtension.update_script_driven_movement = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if arg_20_0._script_movement_time_scale then
 		arg_20_2 = arg_20_2 * arg_20_0._script_movement_time_scale
 		arg_20_0._script_movement_time_scale = nil
@@ -396,7 +396,7 @@ function PlayerUnitLocomotionExtension.update_script_driven_movement(arg_20_0, a
 		local var_20_8 = Vector3.dot(var_20_4, var_20_2)
 
 		if var_20_7 < var_20_8 then
-			-- block empty
+			-- Nothing
 		elseif var_20_8 > 0 then
 			var_20_2 = var_20_2 - var_20_4 * var_20_8 + var_20_6
 		else
@@ -547,7 +547,7 @@ function PlayerUnitLocomotionExtension.update_script_driven_movement(arg_20_0, a
 	arg_20_0.velocity_current:store(var_20_53)
 end
 
-function PlayerUnitLocomotionExtension.update_animation_driven_movement(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+PlayerUnitLocomotionExtension.update_animation_driven_movement = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = Unit.animation_wanted_root_pose(arg_21_1)
 	local var_21_1 = Matrix4x4.translation(var_21_0)
 	local var_21_2 = var_0_0[arg_21_1]
@@ -584,15 +584,15 @@ function PlayerUnitLocomotionExtension.update_animation_driven_movement(arg_21_0
 	arg_21_0.velocity_current:store(var_21_10)
 end
 
-function PlayerUnitLocomotionExtension.set_animation_translation_scale(arg_22_0, arg_22_1)
+PlayerUnitLocomotionExtension.set_animation_translation_scale = function (arg_22_0, arg_22_1)
 	arg_22_0.animation_translation_scale:store(arg_22_1)
 end
 
-function PlayerUnitLocomotionExtension.get_animation_translation_scale(arg_23_0)
+PlayerUnitLocomotionExtension.get_animation_translation_scale = function (arg_23_0)
 	return arg_23_0.animation_translation_scale:unbox()
 end
 
-function PlayerUnitLocomotionExtension.update_animation_driven_movement_no_mover(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+PlayerUnitLocomotionExtension.update_animation_driven_movement_no_mover = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = Unit.animation_wanted_root_pose(arg_24_1)
 	local var_24_1 = Matrix4x4.translation(var_24_0)
 	local var_24_2 = var_0_0[arg_24_1]
@@ -605,7 +605,7 @@ function PlayerUnitLocomotionExtension.update_animation_driven_movement_no_mover
 	arg_24_0.velocity_current:store(var_24_5)
 end
 
-function PlayerUnitLocomotionExtension.update_animation_driven_movement_with_rotation_no_mover(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+PlayerUnitLocomotionExtension.update_animation_driven_movement_with_rotation_no_mover = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	arg_25_0:update_animation_driven_movement_no_mover(arg_25_1, arg_25_2, arg_25_3)
 
 	local var_25_0 = Unit.animation_wanted_root_pose(arg_25_1)
@@ -614,7 +614,7 @@ function PlayerUnitLocomotionExtension.update_animation_driven_movement_with_rot
 	Unit.set_local_rotation(arg_25_1, 0, var_25_1)
 end
 
-function PlayerUnitLocomotionExtension.update_animation_driven_movement_entrance_and_exit_no_mover(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+PlayerUnitLocomotionExtension.update_animation_driven_movement_entrance_and_exit_no_mover = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	arg_26_0:update_animation_driven_movement_no_mover(arg_26_1, arg_26_2, arg_26_3)
 
 	local var_26_0 = arg_26_0._climb_exit:unbox()
@@ -625,7 +625,7 @@ function PlayerUnitLocomotionExtension.update_animation_driven_movement_entrance
 	Unit.set_local_rotation(arg_26_1, 0, var_26_3)
 end
 
-function PlayerUnitLocomotionExtension.update_script_driven_ladder_transition_movement(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+PlayerUnitLocomotionExtension.update_script_driven_ladder_transition_movement = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = Unit.animation_wanted_root_pose(arg_27_1)
 	local var_27_1, var_27_2 = Matrix4x4.translation(var_27_0), var_0_0[arg_27_1]
 	local var_27_3 = Unit.mover(arg_27_1)
@@ -645,7 +645,7 @@ function PlayerUnitLocomotionExtension.update_script_driven_ladder_transition_mo
 	arg_27_0.old_error:store(var_27_6)
 end
 
-function PlayerUnitLocomotionExtension.update_linked_movement(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+PlayerUnitLocomotionExtension.update_linked_movement = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = arg_28_0.link_data
 	local var_28_1 = var_28_0.unit
 	local var_28_2 = var_28_0.node
@@ -660,7 +660,7 @@ function PlayerUnitLocomotionExtension.update_linked_movement(arg_28_0, arg_28_1
 	arg_28_0.velocity_current:store(var_28_5)
 end
 
-function PlayerUnitLocomotionExtension.update_script_driven_no_mover_movement(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+PlayerUnitLocomotionExtension.update_script_driven_no_mover_movement = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = arg_29_0.velocity_wanted:unbox()
 	local var_29_1 = var_0_0[arg_29_1] + var_29_0 * arg_29_2
 
@@ -669,7 +669,7 @@ function PlayerUnitLocomotionExtension.update_script_driven_no_mover_movement(ar
 	arg_29_0.velocity_current:store(var_29_0)
 end
 
-function PlayerUnitLocomotionExtension.update_wanted_position_movement(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+PlayerUnitLocomotionExtension.update_wanted_position_movement = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = var_0_0[arg_30_1]
 	local var_30_1 = arg_30_0.wanted_position:unbox() - var_30_0
 	local var_30_2 = arg_30_0.velocity_current:unbox()
@@ -687,11 +687,11 @@ function PlayerUnitLocomotionExtension.update_wanted_position_movement(arg_30_0,
 	Unit.set_local_position(arg_30_1, 0, var_30_6)
 end
 
-function PlayerUnitLocomotionExtension.set_disable_rotation_update(arg_31_0)
+PlayerUnitLocomotionExtension.set_disable_rotation_update = function (arg_31_0)
 	arg_31_0.disable_rotation_update = true
 end
 
-function PlayerUnitLocomotionExtension.set_stood_still_target_rotation(arg_32_0, arg_32_1)
+PlayerUnitLocomotionExtension.set_stood_still_target_rotation = function (arg_32_0, arg_32_1)
 	arg_32_0.target_rotation:store(arg_32_1)
 
 	local var_32_0 = Vector3.flat(Quaternion.forward(arg_32_1))
@@ -700,7 +700,7 @@ function PlayerUnitLocomotionExtension.set_stood_still_target_rotation(arg_32_0,
 	Unit.set_local_rotation(arg_32_0.unit, 0, var_32_1)
 end
 
-function PlayerUnitLocomotionExtension.is_stood_still(arg_33_0)
+PlayerUnitLocomotionExtension.is_stood_still = function (arg_33_0)
 	local var_33_0 = arg_33_0.first_person_extension:current_rotation()
 	local var_33_1 = Vector3.flat(Quaternion.forward(var_33_0))
 	local var_33_2 = arg_33_0.velocity_current:unbox()
@@ -710,7 +710,7 @@ function PlayerUnitLocomotionExtension.is_stood_still(arg_33_0)
 	return Vector3.dot(var_33_2, var_33_1) == 0
 end
 
-function PlayerUnitLocomotionExtension.sync_network_rotation(arg_34_0, arg_34_1, arg_34_2)
+PlayerUnitLocomotionExtension.sync_network_rotation = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = Unit.local_rotation(arg_34_0.unit, 0)
 	local var_34_1 = Quaternion.yaw(var_34_0)
 	local var_34_2 = Quaternion.pitch(var_34_0)
@@ -719,7 +719,7 @@ function PlayerUnitLocomotionExtension.sync_network_rotation(arg_34_0, arg_34_1,
 	GameSession.set_game_object_field(arg_34_1, arg_34_2, "pitch", var_34_2)
 end
 
-function PlayerUnitLocomotionExtension.sync_network_position(arg_35_0, arg_35_1, arg_35_2)
+PlayerUnitLocomotionExtension.sync_network_position = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = Unit.local_position(arg_35_0.unit, 0)
 
 	if arg_35_0._platform_unit then
@@ -733,7 +733,7 @@ function PlayerUnitLocomotionExtension.sync_network_position(arg_35_0, arg_35_1,
 	GameSession.set_game_object_field(arg_35_1, arg_35_2, "position", Vector3.clamp(var_35_0, var_35_2, var_35_3))
 end
 
-function PlayerUnitLocomotionExtension.sync_network_velocity(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+PlayerUnitLocomotionExtension.sync_network_velocity = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 	local var_36_0 = arg_36_0.velocity_network:unbox()
 	local var_36_1 = NetworkConstants.velocity.min
 	local var_36_2 = NetworkConstants.velocity.max
@@ -742,25 +742,25 @@ function PlayerUnitLocomotionExtension.sync_network_velocity(arg_36_0, arg_36_1,
 	GameSession.set_game_object_field(arg_36_1, arg_36_2, "average_velocity", Vector3.clamp(arg_36_0._average_velocity:unbox(), var_36_1, var_36_2))
 end
 
-function PlayerUnitLocomotionExtension.set_wanted_velocity(arg_37_0, arg_37_1)
+PlayerUnitLocomotionExtension.set_wanted_velocity = function (arg_37_0, arg_37_1)
 	if not arg_37_0.disabled and (arg_37_0.state == "script_driven" or arg_37_0.state == "script_driven_ladder" or arg_37_0.state == "script_driven_no_mover" or arg_37_0.state == "script_driven_ladder_transition_movement") then
 		arg_37_0.velocity_wanted:store(arg_37_1)
 	end
 end
 
-function PlayerUnitLocomotionExtension.set_script_movement_time_scale(arg_38_0, arg_38_1)
+PlayerUnitLocomotionExtension.set_script_movement_time_scale = function (arg_38_0, arg_38_1)
 	arg_38_0._script_movement_time_scale = arg_38_1
 end
 
-function PlayerUnitLocomotionExtension.set_script_driven_gravity_scale(arg_39_0, arg_39_1)
+PlayerUnitLocomotionExtension.set_script_driven_gravity_scale = function (arg_39_0, arg_39_1)
 	arg_39_0._script_driven_gravity_scale = arg_39_1
 end
 
-function PlayerUnitLocomotionExtension.get_script_driven_gravity_scale(arg_40_0, arg_40_1)
+PlayerUnitLocomotionExtension.get_script_driven_gravity_scale = function (arg_40_0, arg_40_1)
 	return arg_40_0._script_driven_gravity_scale
 end
 
-function PlayerUnitLocomotionExtension.add_external_velocity(arg_41_0, arg_41_1, arg_41_2)
+PlayerUnitLocomotionExtension.add_external_velocity = function (arg_41_0, arg_41_1, arg_41_2)
 	if not arg_41_0._external_velocity_enabled then
 		return
 	end
@@ -777,7 +777,7 @@ function PlayerUnitLocomotionExtension.add_external_velocity(arg_41_0, arg_41_1,
 	arg_41_0.external_velocity:store(var_41_3)
 end
 
-function PlayerUnitLocomotionExtension.set_forced_velocity(arg_42_0, arg_42_1)
+PlayerUnitLocomotionExtension.set_forced_velocity = function (arg_42_0, arg_42_1)
 	if not arg_42_0.disabled and (arg_42_0.state == "script_driven" or arg_42_0.state == "script_driven_ladder") then
 		if arg_42_1 then
 			arg_42_0._velocity_forced:store(arg_42_0._velocity_forced:unbox() + arg_42_1)
@@ -791,7 +791,7 @@ function PlayerUnitLocomotionExtension.set_forced_velocity(arg_42_0, arg_42_1)
 	end
 end
 
-function PlayerUnitLocomotionExtension.set_external_velocity_enabled(arg_43_0, arg_43_1)
+PlayerUnitLocomotionExtension.set_external_velocity_enabled = function (arg_43_0, arg_43_1)
 	arg_43_0._external_velocity_enabled = arg_43_1
 
 	if arg_43_0.external_velocity and not arg_43_1 then
@@ -799,37 +799,37 @@ function PlayerUnitLocomotionExtension.set_external_velocity_enabled(arg_43_0, a
 	end
 end
 
-function PlayerUnitLocomotionExtension.set_maximum_upwards_velocity(arg_44_0, arg_44_1)
+PlayerUnitLocomotionExtension.set_maximum_upwards_velocity = function (arg_44_0, arg_44_1)
 	arg_44_0.maximum_upward_velocity = arg_44_1
 end
 
-function PlayerUnitLocomotionExtension.reset_maximum_upwards_velocity(arg_45_0)
+PlayerUnitLocomotionExtension.reset_maximum_upwards_velocity = function (arg_45_0)
 	arg_45_0.maximum_upward_velocity = 0
 end
 
-function PlayerUnitLocomotionExtension.set_speed_multiplier(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+PlayerUnitLocomotionExtension.set_speed_multiplier = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 	arg_46_0.speed_multiplier = arg_46_1
 	arg_46_0.speed_multiplier_start_time = arg_46_2
 	arg_46_0.speed_multiplier_duration = arg_46_3
 end
 
-function PlayerUnitLocomotionExtension.current_speed_multiplier(arg_47_0)
+PlayerUnitLocomotionExtension.current_speed_multiplier = function (arg_47_0)
 	return arg_47_0.speed_multiplier
 end
 
-function PlayerUnitLocomotionExtension.jump_allowed(arg_48_0)
+PlayerUnitLocomotionExtension.jump_allowed = function (arg_48_0)
 	return arg_48_0.allow_jump
 end
 
-function PlayerUnitLocomotionExtension.current_velocity(arg_49_0)
+PlayerUnitLocomotionExtension.current_velocity = function (arg_49_0)
 	return arg_49_0.velocity_current and arg_49_0.velocity_current:unbox()
 end
 
-function PlayerUnitLocomotionExtension.current_rotation(arg_50_0)
+PlayerUnitLocomotionExtension.current_rotation = function (arg_50_0)
 	return arg_50_0.first_person_extension:current_rotation()
 end
 
-function PlayerUnitLocomotionExtension.current_relative_velocity(arg_51_0)
+PlayerUnitLocomotionExtension.current_relative_velocity = function (arg_51_0)
 	local var_51_0 = arg_51_0.first_person_extension
 	local var_51_1 = arg_51_0.velocity_current:unbox()
 	local var_51_2 = var_51_0:current_rotation()
@@ -838,7 +838,7 @@ function PlayerUnitLocomotionExtension.current_relative_velocity(arg_51_0)
 	return (Quaternion.rotate(var_51_3, var_51_1))
 end
 
-function PlayerUnitLocomotionExtension.current_relative_velocity_3p(arg_52_0)
+PlayerUnitLocomotionExtension.current_relative_velocity_3p = function (arg_52_0)
 	local var_52_0 = arg_52_0.unit
 	local var_52_1 = arg_52_0.velocity_current:unbox()
 	local var_52_2 = Unit.local_rotation(var_52_0, 0)
@@ -847,7 +847,7 @@ function PlayerUnitLocomotionExtension.current_relative_velocity_3p(arg_52_0)
 	return (Quaternion.rotate(var_52_3, var_52_1))
 end
 
-function PlayerUnitLocomotionExtension.enable_linked_movement(arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+PlayerUnitLocomotionExtension.enable_linked_movement = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
 	arg_53_0.state = "linked_movement"
 	arg_53_0.link_data = {
 		unit = arg_53_1,
@@ -871,7 +871,7 @@ function PlayerUnitLocomotionExtension.enable_linked_movement(arg_53_0, arg_53_1
 	end
 end
 
-function PlayerUnitLocomotionExtension.disable_linked_movement(arg_54_0)
+PlayerUnitLocomotionExtension.disable_linked_movement = function (arg_54_0)
 	local var_54_0 = arg_54_0.unit
 	local var_54_1 = Managers.state.network:game()
 	local var_54_2 = Managers.state.unit_storage:go_id(var_54_0)
@@ -881,28 +881,28 @@ function PlayerUnitLocomotionExtension.disable_linked_movement(arg_54_0)
 	end
 end
 
-function PlayerUnitLocomotionExtension.enable_animation_driven_movement(arg_55_0, arg_55_1)
+PlayerUnitLocomotionExtension.enable_animation_driven_movement = function (arg_55_0, arg_55_1)
 	arg_55_0.ignore_gravity = arg_55_1
 	arg_55_0.state = "animation_driven"
 end
 
-function PlayerUnitLocomotionExtension.enable_animation_driven_movement_entrance_and_exit_no_mover(arg_56_0, arg_56_1, arg_56_2)
+PlayerUnitLocomotionExtension.enable_animation_driven_movement_entrance_and_exit_no_mover = function (arg_56_0, arg_56_1, arg_56_2)
 	arg_56_0._climb_entrance = Vector3Box(arg_56_1)
 	arg_56_0._climb_exit = Vector3Box(arg_56_2)
 	arg_56_0.state = "animation_driven_entrance_and_exit_no_mover"
 end
 
-function PlayerUnitLocomotionExtension.enable_animation_driven_movement_with_rotation_no_mover(arg_57_0)
+PlayerUnitLocomotionExtension.enable_animation_driven_movement_with_rotation_no_mover = function (arg_57_0)
 	arg_57_0.state = "animation_driven_with_rotation_no_mover"
 end
 
-function PlayerUnitLocomotionExtension.enable_script_driven_movement(arg_58_0)
+PlayerUnitLocomotionExtension.enable_script_driven_movement = function (arg_58_0)
 	arg_58_0._dirty_forced_velocity = false
 	arg_58_0._script_movement_time_scale = nil
 	arg_58_0.state = "script_driven"
 end
 
-function PlayerUnitLocomotionExtension.enable_script_driven_ladder_movement(arg_59_0)
+PlayerUnitLocomotionExtension.enable_script_driven_ladder_movement = function (arg_59_0)
 	arg_59_0._dirty_forced_velocity = false
 	arg_59_0._script_movement_time_scale = nil
 	arg_59_0.state = "script_driven_ladder"
@@ -910,58 +910,58 @@ function PlayerUnitLocomotionExtension.enable_script_driven_ladder_movement(arg_
 	arg_59_0:set_wanted_velocity(Vector3.zero())
 end
 
-function PlayerUnitLocomotionExtension.enable_script_driven_ladder_transition_movement(arg_60_0)
+PlayerUnitLocomotionExtension.enable_script_driven_ladder_transition_movement = function (arg_60_0)
 	arg_60_0.state = "script_driven_ladder_transition_movement"
 	arg_60_0.old_error = Vector3Box(0, 0, 0)
 end
 
-function PlayerUnitLocomotionExtension.enable_script_driven_no_mover_movement(arg_61_0)
+PlayerUnitLocomotionExtension.enable_script_driven_no_mover_movement = function (arg_61_0)
 	arg_61_0.state = "script_driven_no_mover"
 end
 
-function PlayerUnitLocomotionExtension.enable_wanted_position_movement(arg_62_0, arg_62_1, arg_62_2)
+PlayerUnitLocomotionExtension.enable_wanted_position_movement = function (arg_62_0, arg_62_1, arg_62_2)
 	arg_62_0:_stop(false)
 
 	arg_62_0.state = "wanted_position_mover"
 end
 
-function PlayerUnitLocomotionExtension.is_animation_driven(arg_63_0)
+PlayerUnitLocomotionExtension.is_animation_driven = function (arg_63_0)
 	return arg_63_0.state == "animation_driven"
 end
 
-function PlayerUnitLocomotionExtension.is_linked_movement(arg_64_0)
+PlayerUnitLocomotionExtension.is_linked_movement = function (arg_64_0)
 	return arg_64_0.state == "linked_movement"
 end
 
-function PlayerUnitLocomotionExtension.is_script_driven_ladder(arg_65_0)
+PlayerUnitLocomotionExtension.is_script_driven_ladder = function (arg_65_0)
 	return arg_65_0.state == "script_driven_ladder"
 end
 
-function PlayerUnitLocomotionExtension.is_script_driven_ladder_transition(arg_66_0)
+PlayerUnitLocomotionExtension.is_script_driven_ladder_transition = function (arg_66_0)
 	return arg_66_0.state == "script_driven_ladder_transition_movement"
 end
 
-function PlayerUnitLocomotionExtension.get_link_data(arg_67_0)
+PlayerUnitLocomotionExtension.get_link_data = function (arg_67_0)
 	return arg_67_0.link_data
 end
 
-function PlayerUnitLocomotionExtension.is_colliding_down(arg_68_0)
+PlayerUnitLocomotionExtension.is_colliding_down = function (arg_68_0)
 	return arg_68_0.collides_down
 end
 
-function PlayerUnitLocomotionExtension.force_on_ground(arg_69_0, arg_69_1)
+PlayerUnitLocomotionExtension.force_on_ground = function (arg_69_0, arg_69_1)
 	arg_69_0.on_ground = arg_69_1
 end
 
-function PlayerUnitLocomotionExtension.is_on_ground(arg_70_0)
+PlayerUnitLocomotionExtension.is_on_ground = function (arg_70_0)
 	return arg_70_0.on_ground
 end
 
-function PlayerUnitLocomotionExtension.set_wanted_pos(arg_71_0, arg_71_1)
+PlayerUnitLocomotionExtension.set_wanted_pos = function (arg_71_0, arg_71_1)
 	arg_71_0.wanted_position:store(arg_71_1)
 end
 
-function PlayerUnitLocomotionExtension.teleport_to(arg_72_0, arg_72_1, arg_72_2)
+PlayerUnitLocomotionExtension.teleport_to = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = arg_72_0.unit
 	local var_72_1 = Unit.mover(var_72_0)
 
@@ -981,7 +981,7 @@ function PlayerUnitLocomotionExtension.teleport_to(arg_72_0, arg_72_1, arg_72_2)
 	arg_72_0.status_extension:set_falling_height()
 end
 
-function PlayerUnitLocomotionExtension.enable_rotation_towards_velocity(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+PlayerUnitLocomotionExtension.enable_rotation_towards_velocity = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 	arg_73_0.rotate_along_direction = arg_73_1
 
 	if arg_73_1 then
@@ -1000,13 +1000,13 @@ function PlayerUnitLocomotionExtension.enable_rotation_towards_velocity(arg_73_0
 	end
 end
 
-function PlayerUnitLocomotionExtension.enable_drag(arg_74_0, arg_74_1)
+PlayerUnitLocomotionExtension.enable_drag = function (arg_74_0, arg_74_1)
 	arg_74_0.use_drag = arg_74_1
 end
 
 local var_0_5 = 6
 
-function PlayerUnitLocomotionExtension.apply_no_clip_filter(arg_75_0, arg_75_1, arg_75_2)
+PlayerUnitLocomotionExtension.apply_no_clip_filter = function (arg_75_0, arg_75_1, arg_75_2)
 	for iter_75_0 = 1, var_0_5 do
 		if arg_75_1[iter_75_0] then
 			if not arg_75_0._no_clip_filter[iter_75_0] then
@@ -1020,7 +1020,7 @@ function PlayerUnitLocomotionExtension.apply_no_clip_filter(arg_75_0, arg_75_1, 
 	end
 end
 
-function PlayerUnitLocomotionExtension.remove_no_clip_filter(arg_76_0, arg_76_1)
+PlayerUnitLocomotionExtension.remove_no_clip_filter = function (arg_76_0, arg_76_1)
 	local var_76_0 = arg_76_0._no_clip_filter
 
 	for iter_76_0 = 1, var_0_5 do

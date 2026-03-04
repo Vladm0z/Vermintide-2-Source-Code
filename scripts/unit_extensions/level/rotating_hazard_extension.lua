@@ -42,10 +42,10 @@ local var_0_5 = {
 			angle_offset = var_0_0
 		}
 	},
-	init_func = function()
+	init_func = function ()
 		return
 	end,
-	update_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	update_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
 		if arg_2_4 == true then
 			return
 		end
@@ -145,7 +145,7 @@ local var_0_5 = {
 	end
 }
 
-function RotatingHazardExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+RotatingHazardExtension.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = var_0_5
 
 	arg_3_0._settings = var_3_0
@@ -175,7 +175,7 @@ function RotatingHazardExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function RotatingHazardExtension.hot_join_sync(arg_4_0, arg_4_1)
+RotatingHazardExtension.hot_join_sync = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.state.network
 	local var_4_1, var_4_2 = var_4_0:game_object_or_level_id(arg_4_0._unit)
 
@@ -184,7 +184,7 @@ function RotatingHazardExtension.hot_join_sync(arg_4_0, arg_4_1)
 	end
 end
 
-function RotatingHazardExtension.network_sync(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+RotatingHazardExtension.network_sync = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	arg_5_0._start_t = arg_5_1
 	arg_5_0._pause_t = arg_5_2
 	arg_5_0._state = arg_5_3
@@ -205,11 +205,11 @@ function RotatingHazardExtension.network_sync(arg_5_0, arg_5_1, arg_5_2, arg_5_3
 	end
 end
 
-function RotatingHazardExtension.destroy(arg_6_0)
+RotatingHazardExtension.destroy = function (arg_6_0)
 	return
 end
 
-function RotatingHazardExtension.start(arg_7_0, arg_7_1)
+RotatingHazardExtension.start = function (arg_7_0, arg_7_1)
 	if arg_7_0._is_server and (arg_7_0._state ~= var_0_2 or arg_7_1) then
 		arg_7_0._state = var_0_2
 		arg_7_0._is_activating = nil
@@ -233,7 +233,7 @@ function RotatingHazardExtension.start(arg_7_0, arg_7_1)
 	end
 end
 
-function RotatingHazardExtension._update_random_settings_from_seed(arg_8_0, arg_8_1)
+RotatingHazardExtension._update_random_settings_from_seed = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1
 	local var_8_1
 	local var_8_2 = arg_8_0._settings
@@ -274,7 +274,7 @@ function RotatingHazardExtension._update_random_settings_from_seed(arg_8_0, arg_
 	end
 end
 
-function RotatingHazardExtension.pause(arg_9_0)
+RotatingHazardExtension.pause = function (arg_9_0)
 	if arg_9_0._is_server and arg_9_0._state == var_0_2 then
 		arg_9_0._state = var_0_3
 		arg_9_0._is_activating = nil
@@ -287,7 +287,7 @@ function RotatingHazardExtension.pause(arg_9_0)
 	end
 end
 
-function RotatingHazardExtension.stop(arg_10_0)
+RotatingHazardExtension.stop = function (arg_10_0)
 	if arg_10_0._is_server and arg_10_0._state ~= var_0_4 then
 		if arg_10_0._state == var_0_2 then
 			arg_10_0._pause_t = Managers.state.network:network_time()
@@ -303,7 +303,7 @@ function RotatingHazardExtension.stop(arg_10_0)
 	end
 end
 
-function RotatingHazardExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+RotatingHazardExtension.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0._state
 
 	if var_11_0 == var_0_4 then
@@ -349,7 +349,7 @@ end
 
 local var_0_6 = {}
 
-function RotatingHazardExtension._update_damage(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+RotatingHazardExtension._update_damage = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = arg_12_2.last_update_t or arg_12_5
 	local var_12_1 = arg_12_1.angle_offset
 	local var_12_2 = (arg_12_5 - var_12_0) * arg_12_0._rotation_speed_rad

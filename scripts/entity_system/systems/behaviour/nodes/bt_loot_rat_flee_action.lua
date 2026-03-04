@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatFleeAction = class(BTLootRatFleeAction, BTNode)
 
-function BTLootRatFleeAction.init(arg_1_0, ...)
+BTLootRatFleeAction.init = function (arg_1_0, ...)
 	BTLootRatFleeAction.super.init(arg_1_0, ...)
 end
 
@@ -14,7 +14,7 @@ local var_0_0 = 2
 local var_0_1 = 400
 local var_0_2 = 14
 
-function BTLootRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTLootRatFleeAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.is_fleeing = true
 	arg_2_2.check_escaped_players_time = arg_2_3 + var_0_0
@@ -53,7 +53,7 @@ function BTLootRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0:enter_state_moving_to_level_end(arg_2_1, arg_2_2)
 end
 
-function BTLootRatFleeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTLootRatFleeAction.run = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_2.spawn_to_running then
 		arg_3_2.spawn_to_running = nil
 		arg_3_2.start_anim_done = true
@@ -87,7 +87,7 @@ function BTLootRatFleeAction.run(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return "running"
 end
 
-function BTLootRatFleeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTLootRatFleeAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_2.flee_astar_data
 
 	if not GwNavAStar.processing_finished(var_4_0.astar) then
@@ -108,7 +108,7 @@ function BTLootRatFleeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 	arg_4_2.movement_inited = nil
 end
 
-function BTLootRatFleeAction.enter_state_moving_to_level_end(arg_5_0, arg_5_1, arg_5_2)
+BTLootRatFleeAction.enter_state_moving_to_level_end = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:set_state(arg_5_2, "moving_to_level_end")
 
 	local var_5_0 = POSITION_LOOKUP[arg_5_1]
@@ -125,7 +125,7 @@ function BTLootRatFleeAction.enter_state_moving_to_level_end(arg_5_0, arg_5_1, a
 	arg_5_0:move_to_main_path_node(arg_5_2, var_5_3)
 end
 
-function BTLootRatFleeAction.update_state_moving_to_level_end(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTLootRatFleeAction.update_state_moving_to_level_end = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_2.flee_astar_data
 
 	if var_6_0.doing_astar then
@@ -188,7 +188,7 @@ function BTLootRatFleeAction.update_state_moving_to_level_end(arg_6_0, arg_6_1, 
 	end
 end
 
-function BTLootRatFleeAction.move_to_main_path_node(arg_7_0, arg_7_1, arg_7_2)
+BTLootRatFleeAction.move_to_main_path_node = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1.flee_node_data
 	local var_7_1 = var_7_0.nodes[var_7_0.direction][arg_7_2]
 
@@ -197,7 +197,7 @@ function BTLootRatFleeAction.move_to_main_path_node(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_1.navigation_extension:move_to(var_7_1:unbox())
 end
 
-function BTLootRatFleeAction.do_astar_to_between_main_path_nodes(arg_8_0, arg_8_1, arg_8_2)
+BTLootRatFleeAction.do_astar_to_between_main_path_nodes = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_1.flee_node_data
 	local var_8_1 = var_8_0.nodes[var_8_0.direction]
 	local var_8_2 = var_8_1[arg_8_2]:unbox()
@@ -209,7 +209,7 @@ function BTLootRatFleeAction.do_astar_to_between_main_path_nodes(arg_8_0, arg_8_
 	GwNavAStar.start_with_propagation_box(var_8_4.astar, arg_8_1.nav_world, var_8_2, var_8_3, var_0_2, var_8_4.traverse_logic)
 end
 
-function BTLootRatFleeAction.has_escaped_players(arg_9_0, arg_9_1, arg_9_2)
+BTLootRatFleeAction.has_escaped_players = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action.escaped_players_distance_sq
 	local var_9_1 = POSITION_LOOKUP[arg_9_1]
 	local var_9_2 = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
@@ -226,15 +226,15 @@ function BTLootRatFleeAction.has_escaped_players(arg_9_0, arg_9_1, arg_9_2)
 	return true
 end
 
-function BTLootRatFleeAction.despawn(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTLootRatFleeAction.despawn = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	Managers.state.conflict:destroy_unit(arg_10_1, arg_10_2, arg_10_3)
 end
 
-function BTLootRatFleeAction.set_state(arg_11_0, arg_11_1, arg_11_2)
+BTLootRatFleeAction.set_state = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_1.flee_state = arg_11_2
 end
 
-function BTLootRatFleeAction.toggle_start_move_animation_lock(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTLootRatFleeAction.toggle_start_move_animation_lock = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_3.locomotion_extension
 
 	if arg_12_2 then
@@ -247,7 +247,7 @@ function BTLootRatFleeAction.toggle_start_move_animation_lock(arg_12_0, arg_12_1
 	end
 end
 
-function BTLootRatFleeAction.debug_draw_path_nodes(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+BTLootRatFleeAction.debug_draw_path_nodes = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
 	for iter_13_0 = 1, #arg_13_2 do
 		local var_13_0 = arg_13_2[iter_13_0]
 		local var_13_1 = var_13_0:unbox()

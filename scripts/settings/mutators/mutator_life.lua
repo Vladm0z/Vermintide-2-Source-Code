@@ -4,7 +4,7 @@ return {
 	description = "weaves_life_mutator_desc",
 	display_name = "weaves_life_mutator_name",
 	icon = "mutator_icon_life_thorns",
-	add_to_spawn_queue = function(arg_1_0, arg_1_1, arg_1_2)
+	add_to_spawn_queue = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Vector3Box()
 		local var_1_1 = QuaternionBox()
 
@@ -16,7 +16,7 @@ return {
 			rotation = var_1_1
 		}
 	end,
-	spawn_bush = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	spawn_bush = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = "units/weave/life/life_thorn_bushes_mutator"
 
 		if not Managers.state.network or not Managers.state.network:game() then
@@ -33,7 +33,7 @@ return {
 			arg_2_1.audio_system:play_audio_unit_event("Play_winds_life_gameplay_thorn_grow", var_2_1)
 		end
 	end,
-	server_ai_hit_by_player_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	server_ai_hit_by_player_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		if Unit.get_data(arg_3_2, "breed").boss then
 			local var_3_0 = arg_3_1.network_manager:unit_game_object_id(arg_3_2)
 
@@ -53,13 +53,13 @@ return {
 			end
 		end
 	end,
-	server_ai_killed_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	server_ai_killed_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = Unit.local_position(arg_4_2, 0)
 		local var_4_1 = Unit.local_rotation(arg_4_2, 0)
 
 		arg_4_1.template.add_to_spawn_queue(arg_4_1, var_4_0, var_4_1)
 	end,
-	server_start_function = function(arg_5_0, arg_5_1)
+	server_start_function = function (arg_5_0, arg_5_1)
 		local var_5_0 = WindSettings.life
 		local var_5_1 = Managers.state.difficulty:get_difficulty()
 		local var_5_2 = Managers.weave:get_wind_strength()
@@ -92,7 +92,7 @@ return {
 			}
 		}
 	end,
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		for iter_6_0, iter_6_1 in pairs(arg_6_1.boss_drop_timers) do
 			iter_6_1.timer = iter_6_1.timer + arg_6_2
 		end

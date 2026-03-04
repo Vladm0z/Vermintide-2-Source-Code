@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 BTChaosSorcererChargeAction = class(BTChaosSorcererChargeAction, BTNode)
 
-function BTChaosSorcererChargeAction.init(arg_1_0, ...)
+BTChaosSorcererChargeAction.init = function (arg_1_0, ...)
 	BTChaosSorcererChargeAction.super.init(arg_1_0, ...)
 end
 
@@ -20,7 +20,7 @@ local function var_0_1(arg_2_0)
 	end
 end
 
-function BTChaosSorcererChargeAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTChaosSorcererChargeAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -72,7 +72,7 @@ function BTChaosSorcererChargeAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTChaosSorcererChargeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTChaosSorcererChargeAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if arg_4_2.move_state ~= "idle" and HEALTH_ALIVE[arg_4_1] then
 		if not arg_4_2.blocked then
 			Managers.state.network:anim_event(arg_4_1, "idle")
@@ -137,7 +137,7 @@ function BTChaosSorcererChargeAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, a
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_4_1, true)
 end
 
-function BTChaosSorcererChargeAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTChaosSorcererChargeAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_2.charge_target_unit
 
 	if not Unit.alive(var_5_0) then
@@ -191,7 +191,7 @@ function BTChaosSorcererChargeAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	return "running", var_5_4
 end
 
-function BTChaosSorcererChargeAction._start_charging(arg_6_0, arg_6_1, arg_6_2)
+BTChaosSorcererChargeAction._start_charging = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = Managers.time:time("game")
 
@@ -203,7 +203,7 @@ function BTChaosSorcererChargeAction._start_charging(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.charge_started_at_t = var_6_1
 end
 
-function BTChaosSorcererChargeAction._start_lunge(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTChaosSorcererChargeAction._start_lunge = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_2.charge_state = "lunge"
 	arg_7_2.time_to_impact = arg_7_5 + 0.25
 
@@ -225,12 +225,12 @@ function BTChaosSorcererChargeAction._start_lunge(arg_7_0, arg_7_1, arg_7_2, arg
 	arg_7_2.current_lunge_velocity_scale = var_7_5
 end
 
-function BTChaosSorcererChargeAction._start_impact(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+BTChaosSorcererChargeAction._start_impact = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	arg_8_2.charge_state = "impact"
 	arg_8_2.hit_target = arg_8_3
 end
 
-function BTChaosSorcererChargeAction._start_align_to_target(arg_9_0, arg_9_1, arg_9_2)
+BTChaosSorcererChargeAction._start_align_to_target = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action
 
 	if not var_9_0.align_to_target_animation then
@@ -264,7 +264,7 @@ function BTChaosSorcererChargeAction._start_align_to_target(arg_9_0, arg_9_1, ar
 	arg_9_2.locomotion_extension:use_lerp_rotation(true)
 end
 
-function BTChaosSorcererChargeAction._cancel_charge(arg_10_0, arg_10_1, arg_10_2)
+BTChaosSorcererChargeAction._cancel_charge = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_2.navigation_extension:set_enabled(false)
 
 	local var_10_0 = arg_10_2.action.cancel_animation
@@ -274,7 +274,7 @@ function BTChaosSorcererChargeAction._cancel_charge(arg_10_0, arg_10_1, arg_10_2
 	arg_10_2.locomotion_extension:set_rotation_speed(nil)
 end
 
-function BTChaosSorcererChargeAction._check_lunge(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTChaosSorcererChargeAction._check_lunge = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_2.action
 
 	arg_11_0:_check_overlap(arg_11_1, arg_11_2, var_11_0)
@@ -286,7 +286,7 @@ end
 
 local var_0_2 = {}
 
-function BTChaosSorcererChargeAction._check_overlap(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTChaosSorcererChargeAction._check_overlap = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = Managers.time:time("game")
 	local var_12_1 = arg_12_3.radius
 	local var_12_2 = arg_12_3.hit_radius
@@ -344,7 +344,7 @@ function BTChaosSorcererChargeAction._check_overlap(arg_12_0, arg_12_1, arg_12_2
 	return var_12_8, var_12_9
 end
 
-function BTChaosSorcererChargeAction._charged_at_player(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+BTChaosSorcererChargeAction._charged_at_player = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	if arg_13_4.catapult_player then
 		local var_13_0 = POSITION_LOOKUP[arg_13_2] - POSITION_LOOKUP[arg_13_1]
 		local var_13_1 = arg_13_3.locomotion_extension:current_velocity()
@@ -357,7 +357,7 @@ function BTChaosSorcererChargeAction._charged_at_player(arg_13_0, arg_13_1, arg_
 	end
 end
 
-function BTChaosSorcererChargeAction._push_player(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+BTChaosSorcererChargeAction._push_player = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	local var_14_0 = POSITION_LOOKUP[arg_14_2] - POSITION_LOOKUP[arg_14_1]
 	local var_14_1 = arg_14_4.dodge_past_push_speed * Vector3.normalize(var_14_0)
 
@@ -375,7 +375,7 @@ function BTChaosSorcererChargeAction._push_player(arg_14_0, arg_14_1, arg_14_2, 
 	end
 end
 
-function BTChaosSorcererChargeAction._hit_player(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTChaosSorcererChargeAction._hit_player = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	local var_15_0 = arg_15_3 == arg_15_2.charge_target_unit
 	local var_15_1 = ScriptUnit.has_extension(arg_15_3, "status_system")
 
@@ -392,7 +392,7 @@ function BTChaosSorcererChargeAction._hit_player(arg_15_0, arg_15_1, arg_15_2, a
 	return false
 end
 
-function BTChaosSorcererChargeAction._hit_ai(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+BTChaosSorcererChargeAction._hit_ai = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	local var_16_0 = arg_16_3.push_ai
 	local var_16_1 = BLACKBOARDS[arg_16_2]
 
@@ -418,14 +418,14 @@ function BTChaosSorcererChargeAction._hit_ai(arg_16_0, arg_16_1, arg_16_2, arg_1
 	AiUtils.damage_target(arg_16_2, arg_16_1, arg_16_3, arg_16_3.damage)
 end
 
-function BTChaosSorcererChargeAction._run_starting(arg_17_0, arg_17_1, arg_17_2)
+BTChaosSorcererChargeAction._run_starting = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = LocomotionUtils.rotation_towards_unit_flat(arg_17_1, arg_17_2.charge_target_unit)
 
 	arg_17_2.locomotion_extension:set_wanted_rotation(var_17_0)
 	arg_17_2.charge_target_position:store(POSITION_LOOKUP[arg_17_2.charge_target_unit])
 end
 
-function BTChaosSorcererChargeAction._run_charging(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTChaosSorcererChargeAction._run_charging = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_2.action
 	local var_18_1 = arg_18_2.charge_target_position:unbox()
 	local var_18_2 = arg_18_2.locomotion_extension
@@ -466,7 +466,7 @@ function BTChaosSorcererChargeAction._run_charging(arg_18_0, arg_18_1, arg_18_2,
 	return false
 end
 
-function BTChaosSorcererChargeAction._run_lunge(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+BTChaosSorcererChargeAction._run_lunge = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 	local var_19_0 = arg_19_2.locomotion_extension
 	local var_19_1
 
@@ -484,7 +484,7 @@ function BTChaosSorcererChargeAction._run_lunge(arg_19_0, arg_19_1, arg_19_2, ar
 	arg_19_0:_slow_down(arg_19_1, arg_19_2, var_19_4, arg_19_4, arg_19_5)
 end
 
-function BTChaosSorcererChargeAction._run_impact(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BTChaosSorcererChargeAction._run_impact = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if arg_20_2.hit_target then
 		local var_20_0 = LocomotionUtils.rotation_towards_unit_flat(arg_20_1, arg_20_2.charge_target_unit)
 
@@ -498,13 +498,13 @@ function BTChaosSorcererChargeAction._run_impact(arg_20_0, arg_20_1, arg_20_2, a
 	arg_20_0:_slow_down(arg_20_1, arg_20_2, var_20_1, arg_20_3, arg_20_4)
 end
 
-function BTChaosSorcererChargeAction._run_cancel(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+BTChaosSorcererChargeAction._run_cancel = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_2.action.cancel_slow_down_speed
 
 	arg_21_0:_slow_down(arg_21_1, arg_21_2, var_21_0, arg_21_3, arg_21_4)
 end
 
-function BTChaosSorcererChargeAction._pick_distance_identifier(arg_22_0, arg_22_1, arg_22_2)
+BTChaosSorcererChargeAction._pick_distance_identifier = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0
 	local var_22_1
 	local var_22_2 = 0
@@ -525,7 +525,7 @@ function BTChaosSorcererChargeAction._pick_distance_identifier(arg_22_0, arg_22_
 	return var_22_0
 end
 
-function BTChaosSorcererChargeAction._slow_down(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+BTChaosSorcererChargeAction._slow_down = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = arg_23_2.locomotion_extension
 	local var_23_1 = var_23_0:current_velocity()
 	local var_23_2 = Vector3.zero()
@@ -535,7 +535,7 @@ function BTChaosSorcererChargeAction._slow_down(arg_23_0, arg_23_1, arg_23_2, ar
 	var_23_0:set_wanted_velocity(var_23_4)
 end
 
-function BTChaosSorcererChargeAction._get_turn_slowdown_percentage(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+BTChaosSorcererChargeAction._get_turn_slowdown_percentage = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_2.action
 	local var_24_1 = Unit.local_rotation(arg_24_1, 0)
 	local var_24_2 = Quaternion.forward(var_24_1)
@@ -551,7 +551,7 @@ function BTChaosSorcererChargeAction._get_turn_slowdown_percentage(arg_24_0, arg
 	return 1 - math.min((var_24_4 - var_24_5) / var_24_6, 1) * var_24_0.max_slowdown_percentage
 end
 
-function BTChaosSorcererChargeAction.anim_cb_start_finished(arg_25_0, arg_25_1, arg_25_2)
+BTChaosSorcererChargeAction.anim_cb_start_finished = function (arg_25_0, arg_25_1, arg_25_2)
 	arg_25_0:_start_charging(arg_25_1, arg_25_2)
 
 	if Managers.state.network:game() then
@@ -565,20 +565,20 @@ function BTChaosSorcererChargeAction.anim_cb_start_finished(arg_25_0, arg_25_1, 
 	end
 end
 
-function BTChaosSorcererChargeAction.anim_cb_charge_charging_finished(arg_26_0, arg_26_1, arg_26_2)
+BTChaosSorcererChargeAction.anim_cb_charge_charging_finished = function (arg_26_0, arg_26_1, arg_26_2)
 	if arg_26_2.charge_state == "charging" then
 		arg_26_0:_start_impact(arg_26_1, arg_26_2)
 	end
 end
 
-function BTChaosSorcererChargeAction.anim_cb_charge_impact_finished(arg_27_0, arg_27_1, arg_27_2)
+BTChaosSorcererChargeAction.anim_cb_charge_impact_finished = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0:_start_align_to_target(arg_27_1, arg_27_2)
 end
 
-function BTChaosSorcererChargeAction.anim_cb_attack_finished(arg_28_0, arg_28_1, arg_28_2)
+BTChaosSorcererChargeAction.anim_cb_attack_finished = function (arg_28_0, arg_28_1, arg_28_2)
 	return
 end
 
-function BTChaosSorcererChargeAction.anim_cb_disable_charge_collision(arg_29_0, arg_29_1, arg_29_2)
+BTChaosSorcererChargeAction.anim_cb_disable_charge_collision = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_2.anim_cb_disable_charge_collision = true
 end

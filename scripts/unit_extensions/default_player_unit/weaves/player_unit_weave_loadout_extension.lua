@@ -2,14 +2,14 @@
 
 PlayerUnitWeaveLoadoutExtension = class(PlayerUnitWeaveLoadoutExtension)
 
-function PlayerUnitWeaveLoadoutExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitWeaveLoadoutExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = arg_1_1.is_server
 	arg_1_0._buffs = {}
 	arg_1_0._synced_buff_params = nil
 end
 
-function PlayerUnitWeaveLoadoutExtension.destroy(arg_2_0)
+PlayerUnitWeaveLoadoutExtension.destroy = function (arg_2_0)
 	arg_2_0._unit = nil
 	arg_2_0._buffs = nil
 	arg_2_0._synced_buff_params = nil
@@ -17,7 +17,7 @@ function PlayerUnitWeaveLoadoutExtension.destroy(arg_2_0)
 	arg_2_0._career_extension = nil
 end
 
-function PlayerUnitWeaveLoadoutExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+PlayerUnitWeaveLoadoutExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
 	arg_3_0._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
 
@@ -35,11 +35,11 @@ function PlayerUnitWeaveLoadoutExtension.extensions_ready(arg_3_0, arg_3_1, arg_
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension.game_object_initialized(arg_4_0, arg_4_1, arg_4_2)
+PlayerUnitWeaveLoadoutExtension.game_object_initialized = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_sync_buffs(arg_4_2)
 end
 
-function PlayerUnitWeaveLoadoutExtension.hot_join_sync(arg_5_0, arg_5_1)
+PlayerUnitWeaveLoadoutExtension.hot_join_sync = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._synced_buff_params
 
 	if var_5_0 then
@@ -50,11 +50,11 @@ function PlayerUnitWeaveLoadoutExtension.hot_join_sync(arg_5_0, arg_5_1)
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension._is_in_weave(arg_6_0)
+PlayerUnitWeaveLoadoutExtension._is_in_weave = function (arg_6_0)
 	return Managers.mechanism:game_mechanism():get_state() == "weave"
 end
 
-function PlayerUnitWeaveLoadoutExtension._get_weave_buffs(arg_7_0)
+PlayerUnitWeaveLoadoutExtension._get_weave_buffs = function (arg_7_0)
 	local var_7_0 = {
 		client = {},
 		server = {},
@@ -94,7 +94,7 @@ function PlayerUnitWeaveLoadoutExtension._get_weave_buffs(arg_7_0)
 	return var_7_0
 end
 
-function PlayerUnitWeaveLoadoutExtension._apply_buffs(arg_8_0, arg_8_1)
+PlayerUnitWeaveLoadoutExtension._apply_buffs = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._buff_extension
 
 	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
@@ -113,7 +113,7 @@ function PlayerUnitWeaveLoadoutExtension._apply_buffs(arg_8_0, arg_8_1)
 	end
 end
 
-function PlayerUnitWeaveLoadoutExtension._sync_buffs(arg_9_0, arg_9_1)
+PlayerUnitWeaveLoadoutExtension._sync_buffs = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._buffs
 
 	if table.size(var_9_0) == 0 then

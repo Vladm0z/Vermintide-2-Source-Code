@@ -20,7 +20,7 @@ local var_0_1 = {
 	[1] = 0.25
 }
 
-function VersusDarkPactCareerDelegator.init(arg_1_0)
+VersusDarkPactCareerDelegator.init = function (arg_1_0)
 	arg_1_0._playable_boss_can_be_picked = false
 	arg_1_0._picks_per_career = {}
 	arg_1_0._picks_per_player = {}
@@ -37,7 +37,7 @@ function VersusDarkPactCareerDelegator.init(arg_1_0)
 	arg_1_0:_initialize_custom_settings()
 end
 
-function VersusDarkPactCareerDelegator._override_available_profiles(arg_2_0, arg_2_1)
+VersusDarkPactCareerDelegator._override_available_profiles = function (arg_2_0, arg_2_1)
 	local var_2_0 = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 
 	if not arg_2_0._bosses then
@@ -61,13 +61,13 @@ function VersusDarkPactCareerDelegator._override_available_profiles(arg_2_0, arg
 	end
 end
 
-function VersusDarkPactCareerDelegator.destroy(arg_3_0)
+VersusDarkPactCareerDelegator.destroy = function (arg_3_0)
 	Managers.state.event:unregister("on_player_left_party", arg_3_0)
 	Managers.state.event:unregister("player_profile_assigned", arg_3_0)
 	Managers.state.event:unregister("player_unit_relinquished", arg_3_0)
 end
 
-function VersusDarkPactCareerDelegator._roll_career_options(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+VersusDarkPactCareerDelegator._roll_career_options = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = {}
 	local var_4_1 = FrameTable.alloc_table()
 
@@ -112,7 +112,7 @@ function VersusDarkPactCareerDelegator._roll_career_options(arg_4_0, arg_4_1, ar
 	return var_4_0
 end
 
-function VersusDarkPactCareerDelegator.request_careers(arg_5_0, arg_5_1)
+VersusDarkPactCareerDelegator.request_careers = function (arg_5_0, arg_5_1)
 	printf("[DELEGATOR] requested careers, peer_id: %s", arg_5_1)
 	arg_5_0:_release_career_for_player(arg_5_1)
 
@@ -149,7 +149,7 @@ function VersusDarkPactCareerDelegator.request_careers(arg_5_0, arg_5_1)
 	return var_5_2, "all"
 end
 
-function VersusDarkPactCareerDelegator.set_playable_boss_can_be_picked(arg_6_0, arg_6_1)
+VersusDarkPactCareerDelegator.set_playable_boss_can_be_picked = function (arg_6_0, arg_6_1)
 	if arg_6_0._custom_setting_no_bosses or #arg_6_0._bosses == 0 then
 		return
 	end
@@ -169,11 +169,11 @@ function VersusDarkPactCareerDelegator.set_playable_boss_can_be_picked(arg_6_0, 
 	end
 end
 
-function VersusDarkPactCareerDelegator.get_playable_boss_can_be_picked(arg_7_0)
+VersusDarkPactCareerDelegator.get_playable_boss_can_be_picked = function (arg_7_0)
 	return arg_7_0._playable_boss_can_be_picked
 end
 
-function VersusDarkPactCareerDelegator.on_player_profile_assigned(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+VersusDarkPactCareerDelegator.on_player_profile_assigned = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = SPProfiles[arg_8_3].careers[arg_8_4].name
 	local var_8_1 = Managers.state.game_mode:game_mode():settings()
 
@@ -188,13 +188,13 @@ function VersusDarkPactCareerDelegator.on_player_profile_assigned(arg_8_0, arg_8
 	arg_8_0:_career_picked(arg_8_1, var_8_0)
 end
 
-function VersusDarkPactCareerDelegator.on_player_left_party(arg_9_0, arg_9_1)
+VersusDarkPactCareerDelegator.on_player_left_party = function (arg_9_0, arg_9_1)
 	arg_9_0:_release_career_for_player(arg_9_1)
 
 	arg_9_0._picks_per_player[arg_9_1] = nil
 end
 
-function VersusDarkPactCareerDelegator._career_picked(arg_10_0, arg_10_1, arg_10_2)
+VersusDarkPactCareerDelegator._career_picked = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_picking_telemetry(arg_10_1, arg_10_2)
 	arg_10_0:_release_career_for_player(arg_10_1)
 
@@ -219,7 +219,7 @@ function VersusDarkPactCareerDelegator._career_picked(arg_10_0, arg_10_1, arg_10
 	arg_10_0:_register_player_career(arg_10_1, arg_10_2)
 end
 
-function VersusDarkPactCareerDelegator._release_career_for_player(arg_11_0, arg_11_1)
+VersusDarkPactCareerDelegator._release_career_for_player = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._picks_per_player[arg_11_1]
 
 	if var_11_0 then
@@ -235,11 +235,11 @@ function VersusDarkPactCareerDelegator._release_career_for_player(arg_11_0, arg_
 	end
 end
 
-function VersusDarkPactCareerDelegator.update(arg_12_0)
+VersusDarkPactCareerDelegator.update = function (arg_12_0)
 	return
 end
 
-function VersusDarkPactCareerDelegator._picking_telemetry(arg_13_0, arg_13_1, arg_13_2)
+VersusDarkPactCareerDelegator._picking_telemetry = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.state.game_mode:game_mode():settings()
 
 	if not table.contains(var_13_0.dark_pact_profile_order, arg_13_2) and not table.contains(GameModeSettings.versus.dark_pact_boss_profiles, arg_13_2) then
@@ -264,7 +264,7 @@ function VersusDarkPactCareerDelegator._picking_telemetry(arg_13_0, arg_13_1, ar
 	Managers.telemetry_events:versus_pactsworn_picking(var_13_3, var_13_1, var_13_2, arg_13_2, var_13_4, var_13_5, var_13_6)
 end
 
-function VersusDarkPactCareerDelegator._weight_by_repetition(arg_14_0, arg_14_1, arg_14_2)
+VersusDarkPactCareerDelegator._weight_by_repetition = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0._last_picked_by_player[arg_14_1]
 
 	if not var_14_0 then
@@ -280,7 +280,7 @@ function VersusDarkPactCareerDelegator._weight_by_repetition(arg_14_0, arg_14_1,
 	return 1
 end
 
-function VersusDarkPactCareerDelegator._register_player_career(arg_15_0, arg_15_1, arg_15_2)
+VersusDarkPactCareerDelegator._register_player_career = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._last_picked_by_player[arg_15_1] or {}
 
 	arg_15_0._last_picked_by_player[arg_15_1] = var_15_0
@@ -292,7 +292,7 @@ function VersusDarkPactCareerDelegator._register_player_career(arg_15_0, arg_15_
 	end
 end
 
-function VersusDarkPactCareerDelegator._initialize_custom_settings(arg_16_0)
+VersusDarkPactCareerDelegator._initialize_custom_settings = function (arg_16_0)
 	local var_16_0, var_16_1, var_16_2 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "num_pactsworn_picking_options")
 
 	if not var_16_2 then

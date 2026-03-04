@@ -7,7 +7,7 @@ script_data.debug_material_effects = script_data.debug_material_effects or Devel
 EffectHelper = EffectHelper or {}
 EffectHelper.temporary_material_drawer_mapping = {}
 
-function EffectHelper.play_surface_material_effects(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+EffectHelper.play_surface_material_effects = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
 	local var_1_0 = MaterialEffectMappingsUtility.get(arg_1_0)
 	local var_1_1 = EffectHelper.query_material_surface(arg_1_2, arg_1_3, arg_1_5)
 	local var_1_2
@@ -182,7 +182,7 @@ function EffectHelper.play_surface_material_effects(arg_1_0, arg_1_1, arg_1_2, a
 	end
 end
 
-function EffectHelper.play_skinned_surface_material_effects(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9, arg_2_10, arg_2_11, arg_2_12)
+EffectHelper.play_skinned_surface_material_effects = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9, arg_2_10, arg_2_11, arg_2_12)
 	local var_2_0 = MaterialEffectMappingsUtility.get(arg_2_0)
 
 	if not var_2_0 then
@@ -281,7 +281,7 @@ function EffectHelper.play_skinned_surface_material_effects(arg_2_0, arg_2_1, ar
 	end
 end
 
-function EffectHelper.player_critical_hit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+EffectHelper.player_critical_hit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if not HEALTH_ALIVE[arg_3_3] then
 		return
 	end
@@ -309,7 +309,7 @@ function EffectHelper.player_critical_hit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ar
 	WwiseUtils.trigger_position_event(arg_3_0, var_3_2, arg_3_4)
 end
 
-function EffectHelper.player_melee_hit_particles(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+EffectHelper.player_melee_hit_particles = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = Quaternion.look(arg_4_3)
 
 	World.create_particles(arg_4_0, arg_4_1, arg_4_2, var_4_0)
@@ -319,13 +319,13 @@ function EffectHelper.player_melee_hit_particles(arg_4_0, arg_4_1, arg_4_2, arg_
 	end
 end
 
-function EffectHelper.player_ranged_block_hit_particles(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+EffectHelper.player_ranged_block_hit_particles = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = Quaternion.look(arg_5_3)
 
 	World.create_particles(arg_5_0, arg_5_1, arg_5_2, var_5_0)
 end
 
-function EffectHelper.play_melee_hit_effects(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EffectHelper.play_melee_hit_effects = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0, var_6_1 = WwiseUtils.make_position_auto_source(arg_6_1, arg_6_2)
 	local var_6_2 = Managers.player:owner(arg_6_5)
 
@@ -351,7 +351,7 @@ end
 local var_0_0 = table.enum_safe("burn", "burn_sniper", "burn_shotgun", "burn_carbine", "burn_machinegun", "burninating", "bleed", "burning_tank", "heavy_burning_tank", "light_burning_linesman", "burning_linesman", "burning_smiter", "burning_stab_fencer", "warpfire_ground", "vs_bw_skullstaff_fireball", "vs_bw_skullstaff_beam", "vs_bw_skullstaff_geiser", "vs_bw_skullstaff_spear", "vs_bw_skullstaff_flamethrower")
 local var_0_1 = table.enum_safe("projectile", "instant_projectile", "heavy_instant_projectile")
 
-function EffectHelper.vs_play_hit_sound(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+EffectHelper.vs_play_hit_sound = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = Managers.player:owner(arg_7_1)
 	local var_7_1 = var_7_0.remote or var_7_0.bot_player or false
 	local var_7_2
@@ -371,7 +371,7 @@ local var_0_2 = {
 	vs_poison_wind_globadier = "Play_player_hit_globadier_gas"
 }
 
-function EffectHelper.play_local_damage_taken_sound(arg_8_0, arg_8_1, arg_8_2)
+EffectHelper.play_local_damage_taken_sound = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = var_0_2[arg_8_2]
 
 	if not var_8_0 then
@@ -385,7 +385,7 @@ function EffectHelper.play_local_damage_taken_sound(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function EffectHelper.play_melee_hit_effects_enemy(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+EffectHelper.play_melee_hit_effects_enemy = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0, var_9_1 = WwiseUtils.make_unit_auto_source(arg_9_2, arg_9_3)
 
 	WwiseWorld.set_switch(var_9_1, "husk", tostring(arg_9_5 or false), var_9_0)
@@ -393,7 +393,7 @@ function EffectHelper.play_melee_hit_effects_enemy(arg_9_0, arg_9_1, arg_9_2, ar
 	WwiseWorld.trigger_event(var_9_1, arg_9_0, var_9_0)
 end
 
-function EffectHelper.remote_play_surface_material_effects(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+EffectHelper.remote_play_surface_material_effects = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
 	local var_10_0 = Managers.state.network
 	local var_10_1 = LevelHelper:current_level(arg_10_1)
 	local var_10_2 = Level.unit_index(var_10_1, arg_10_2)
@@ -425,7 +425,7 @@ function EffectHelper.remote_play_surface_material_effects(arg_10_0, arg_10_1, a
 	end
 end
 
-function EffectHelper.remote_play_skinned_surface_material_effects(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9)
+EffectHelper.remote_play_skinned_surface_material_effects = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9)
 	local var_11_0 = Managers.state.network
 	local var_11_1 = NetworkLookup.surface_material_effects[arg_11_0]
 
@@ -440,7 +440,7 @@ function EffectHelper.remote_play_skinned_surface_material_effects(arg_11_0, arg
 	end
 end
 
-function EffectHelper.create_surface_material_drawer_mapping(arg_12_0)
+EffectHelper.create_surface_material_drawer_mapping = function (arg_12_0)
 	local var_12_0 = MaterialEffectMappingsUtility.get(arg_12_0).decal.material_drawer_mapping
 
 	for iter_12_0, iter_12_1 in ipairs(MaterialEffectSettings.material_contexts.surface_material) do
@@ -463,7 +463,7 @@ function EffectHelper.create_surface_material_drawer_mapping(arg_12_0)
 	return EffectHelper.temporary_material_drawer_mapping
 end
 
-function EffectHelper.flow_cb_play_surface_material_effect(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
+EffectHelper.flow_cb_play_surface_material_effect = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
 	local var_13_0 = arg_13_7 or 0.6
 	local var_13_1 = -arg_13_4
 	local var_13_2 = arg_13_2 + arg_13_4 * var_13_0
@@ -484,7 +484,7 @@ function EffectHelper.flow_cb_play_surface_material_effect(arg_13_0, arg_13_1, a
 	end
 end
 
-function EffectHelper.flow_cb_play_footstep_surface_material_effects(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+EffectHelper.flow_cb_play_footstep_surface_material_effects = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = ScriptUnit.has_extension(arg_14_1, "ghost_mode_system")
 
 	if var_14_0 and var_14_0:is_husk() and var_14_0:is_in_ghost_mode() then
@@ -555,7 +555,7 @@ local var_0_3 = {
 }
 local var_0_4 = {}
 
-function EffectHelper.query_material_surface(arg_15_0, arg_15_1, arg_15_2)
+EffectHelper.query_material_surface = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_2 * MaterialEffectSettings.material_query_depth
 	local var_15_1 = arg_15_1 + var_15_0 / 2
 	local var_15_2 = arg_15_1 - var_15_0 / 2

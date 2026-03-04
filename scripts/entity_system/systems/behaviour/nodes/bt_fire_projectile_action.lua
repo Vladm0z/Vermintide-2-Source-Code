@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFireProjectileAction = class(BTFireProjectileAction, BTNode)
 
-function BTFireProjectileAction.init(arg_1_0, ...)
+BTFireProjectileAction.init = function (arg_1_0, ...)
 	BTFireProjectileAction.super.init(arg_1_0, ...)
 end
 
@@ -21,7 +21,7 @@ end
 BTFireProjectileAction = class(BTFireProjectileAction, BTNode)
 BTFireProjectileAction.name = "BTFireProjectileAction"
 
-function BTFireProjectileAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTFireProjectileAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -51,7 +51,7 @@ function BTFireProjectileAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	var_3_1:trigger_networked_dialogue_event(arg_3_2.action.leader_fire_volley_dialogue_event, var_3_2)
 end
 
-function BTFireProjectileAction._check_for_volley_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTFireProjectileAction._check_for_volley_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_1.target_unit
 	local var_4_1 = {}
 
@@ -119,7 +119,7 @@ function BTFireProjectileAction._check_for_volley_attack(arg_4_0, arg_4_1, arg_4
 	end
 end
 
-function BTFireProjectileAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTFireProjectileAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
 	local var_5_1 = arg_5_2.navigation_extension
 
@@ -145,7 +145,7 @@ function BTFireProjectileAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_5_1, true)
 end
 
-function BTFireProjectileAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTFireProjectileAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_2.attacking_target
 
 	if not Unit.alive(var_6_0) then
@@ -215,7 +215,7 @@ function BTFireProjectileAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	return "running"
 end
 
-function BTFireProjectileAction._fire_from_position_direction(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTFireProjectileAction._fire_from_position_direction = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0
 	local var_7_1 = arg_7_1.attacking_target
 
@@ -255,7 +255,7 @@ end
 local var_0_1 = math.pi
 local var_0_2 = var_0_1 * 2
 
-function BTFireProjectileAction._fire_projectile(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTFireProjectileAction._fire_projectile = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_2.action
 	local var_8_1 = var_8_0.projectile_speed
 	local var_8_2 = var_8_0.projectile_gravity

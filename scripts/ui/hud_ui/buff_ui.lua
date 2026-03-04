@@ -31,7 +31,7 @@ end
 
 BuffUI = class(BuffUI)
 
-function BuffUI.init(arg_4_0, arg_4_1, arg_4_2)
+BuffUI.init = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._ui_renderer = arg_4_2.ui_renderer
 	arg_4_0._player = arg_4_2.player
 	arg_4_0._is_spectator = false
@@ -46,11 +46,11 @@ function BuffUI.init(arg_4_0, arg_4_1, arg_4_2)
 	Managers.state.event:register(arg_4_0, "on_game_options_changed", "on_game_options_changed")
 end
 
-function BuffUI._set_widget_dirty(arg_5_0, arg_5_1)
+BuffUI._set_widget_dirty = function (arg_5_0, arg_5_1)
 	arg_5_1.element.dirty = true
 end
 
-function BuffUI.on_game_options_changed(arg_6_0)
+BuffUI.on_game_options_changed = function (arg_6_0)
 	local var_6_0 = arg_6_0._insignia_visibility
 	local var_6_1 = Application.user_setting("toggle_versus_level_in_all_game_modes")
 	local var_6_2 = Managers.mechanism:current_mechanism_name() == "versus" or var_6_1
@@ -67,7 +67,7 @@ function BuffUI.on_game_options_changed(arg_6_0)
 	end
 end
 
-function BuffUI._create_ui_elements(arg_7_0)
+BuffUI._create_ui_elements = function (arg_7_0)
 	arg_7_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_7_0 = {}
@@ -89,7 +89,7 @@ function BuffUI._create_ui_elements(arg_7_0)
 	arg_7_0:on_game_options_changed()
 end
 
-function BuffUI.on_spectator_target_changed(arg_8_0, arg_8_1)
+BuffUI.on_spectator_target_changed = function (arg_8_0, arg_8_1)
 	arg_8_0._spectated_player_unit = arg_8_1
 	arg_8_0._is_spectator = true
 
@@ -100,7 +100,7 @@ function BuffUI.on_spectator_target_changed(arg_8_0, arg_8_1)
 	arg_8_0._current_career_index = ScriptUnit.extension(arg_8_1, "career_system"):career_index()
 end
 
-function BuffUI._sync_buffs(arg_9_0)
+BuffUI._sync_buffs = function (arg_9_0)
 	local var_9_0 = arg_9_0._active_buff_widgets
 	local var_9_1 = false
 
@@ -205,7 +205,7 @@ local var_0_11 = {
 	0
 }
 
-function BuffUI._add_buff(arg_10_0, arg_10_1, arg_10_2)
+BuffUI._add_buff = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.template
 	local var_10_1 = arg_10_1.start_time
 	local var_10_2 = var_0_9(arg_10_1)
@@ -260,7 +260,7 @@ function BuffUI._add_buff(arg_10_0, arg_10_1, arg_10_2)
 	return true
 end
 
-function BuffUI._remove_buff(arg_11_0, arg_11_1)
+BuffUI._remove_buff = function (arg_11_0, arg_11_1)
 	local var_11_0 = table.remove(arg_11_0._active_buff_widgets, arg_11_1)
 	local var_11_1 = arg_11_0._unused_buff_widgets
 
@@ -270,13 +270,13 @@ function BuffUI._remove_buff(arg_11_0, arg_11_1)
 	UIRenderer.set_element_visible(arg_11_0._ui_renderer, var_11_0.element, false)
 end
 
-function BuffUI.destroy(arg_12_0)
+BuffUI.destroy = function (arg_12_0)
 	arg_12_0:set_visible(false)
 	Managers.state.event:unregister("on_spectator_target_changed", arg_12_0)
 	Managers.state.event:unregister("on_game_options_changed", arg_12_0)
 end
 
-function BuffUI.set_visible(arg_13_0, arg_13_1)
+BuffUI.set_visible = function (arg_13_0, arg_13_1)
 	arg_13_0._is_visible = arg_13_1
 
 	local var_13_0 = arg_13_0._ui_renderer
@@ -298,7 +298,7 @@ local var_0_12 = {
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-function BuffUI.update(arg_14_0, arg_14_1, arg_14_2)
+BuffUI.update = function (arg_14_0, arg_14_1, arg_14_2)
 	if HudCustomizer.run(arg_14_0._ui_renderer, arg_14_0._ui_scenegraph, var_0_12) then
 		UIUtils.mark_dirty(arg_14_0._active_buff_widgets)
 
@@ -316,7 +316,7 @@ function BuffUI.update(arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0:draw(arg_14_1)
 end
 
-function BuffUI.draw(arg_15_0, arg_15_1)
+BuffUI.draw = function (arg_15_0, arg_15_1)
 	if not arg_15_0._is_visible or not arg_15_0._dirty then
 		return
 	end
@@ -336,7 +336,7 @@ function BuffUI.draw(arg_15_0, arg_15_1)
 	arg_15_0._dirty = false
 end
 
-function BuffUI.set_panel_alpha(arg_16_0, arg_16_1)
+BuffUI.set_panel_alpha = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._render_settings
 
 	if var_16_0.alpha_multiplier ~= arg_16_1 then

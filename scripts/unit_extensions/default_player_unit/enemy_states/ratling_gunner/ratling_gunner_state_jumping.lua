@@ -2,14 +2,14 @@
 
 RatlingGunnerStateJumping = class(RatlingGunnerStateJumping, EnemyCharacterStateJumping)
 
-function RatlingGunnerStateJumping.init(arg_1_0, arg_1_1)
+RatlingGunnerStateJumping.init = function (arg_1_0, arg_1_1)
 	RatlingGunnerStateJumping.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._fire_ability_id = arg_1_0._career_extension:ability_id("fire")
 	arg_1_0._reload_ability_id = arg_1_0._career_extension:ability_id("reload")
 end
 
-function RatlingGunnerStateJumping.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+RatlingGunnerStateJumping.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0:common_state_changes()
 
 	if var_2_0 then
@@ -27,7 +27,7 @@ function RatlingGunnerStateJumping.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 	local var_2_4 = arg_2_0:common_movement(var_2_3, arg_2_3, arg_2_1)
 end
 
-function RatlingGunnerStateJumping.debug_display_ammo(arg_3_0)
+RatlingGunnerStateJumping.debug_display_ammo = function (arg_3_0)
 	local var_3_0 = arg_3_0._unit
 	local var_3_1 = (BLACKBOARDS[var_3_0].attack_pattern_data or {}).current_ammo or arg_3_0._breed.max_ammo
 	local var_3_2 = RESOLUTION_LOOKUP.res_w

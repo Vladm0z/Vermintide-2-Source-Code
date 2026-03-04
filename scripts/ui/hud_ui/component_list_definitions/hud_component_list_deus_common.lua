@@ -37,7 +37,7 @@ local var_0_1 = {
 	{
 		name = "deus_run_stats",
 		order = 7,
-		validation_function = function(arg_1_0)
+		validation_function = function (arg_1_0)
 			local var_1_0 = arg_1_0:component("DeusRunStatsView")
 
 			return var_1_0 and var_1_0:is_ui_active()

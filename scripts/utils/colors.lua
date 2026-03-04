@@ -1596,7 +1596,7 @@ if not Colors.distinct_colors_lookup then
 	}
 end
 
-function Colors.get_categorical_color(arg_1_0)
+Colors.get_categorical_color = function (arg_1_0)
 	local var_1_0 = arg_1_0 * 1.61803398875 % 1
 
 	return {
@@ -1605,19 +1605,19 @@ function Colors.get_categorical_color(arg_1_0)
 	}
 end
 
-function Colors.get(arg_2_0)
+Colors.get = function (arg_2_0)
 	local var_2_0 = Colors.color_definitions[arg_2_0]
 
 	return Color(var_2_0[1], var_2_0[2], var_2_0[3], var_2_0[4])
 end
 
-function Colors.get_color_with_alpha(arg_3_0, arg_3_1)
+Colors.get_color_with_alpha = function (arg_3_0, arg_3_1)
 	local var_3_0 = Colors.color_definitions[arg_3_0]
 
 	return Color(arg_3_1, var_3_0[2], var_3_0[3], var_3_0[4])
 end
 
-function Colors.get_table(arg_4_0)
+Colors.get_table = function (arg_4_0)
 	local var_4_0 = Colors.color_definitions[arg_4_0]
 
 	return {
@@ -1628,7 +1628,7 @@ function Colors.get_table(arg_4_0)
 	}
 end
 
-function Colors.get_table_rgba(arg_5_0)
+Colors.get_table_rgba = function (arg_5_0)
 	local var_5_0 = Colors.color_definitions[arg_5_0]
 
 	return {
@@ -1639,7 +1639,7 @@ function Colors.get_table_rgba(arg_5_0)
 	}
 end
 
-function Colors.get_color_table_with_alpha(arg_6_0, arg_6_1)
+Colors.get_color_table_with_alpha = function (arg_6_0, arg_6_1)
 	local var_6_0 = Colors.color_definitions[arg_6_0]
 
 	return {
@@ -1650,33 +1650,33 @@ function Colors.get_color_table_with_alpha(arg_6_0, arg_6_1)
 	}
 end
 
-function Colors.get_indexed(arg_7_0)
+Colors.get_indexed = function (arg_7_0)
 	local var_7_0 = Colors.indexed_colors[arg_7_0]
 
 	return Color(var_7_0[1], var_7_0[2], var_7_0[3], var_7_0[4])
 end
 
-function Colors.copy_to(arg_8_0, arg_8_1)
+Colors.copy_to = function (arg_8_0, arg_8_1)
 	arg_8_0[1] = arg_8_1[1]
 	arg_8_0[2] = arg_8_1[2]
 	arg_8_0[3] = arg_8_1[3]
 	arg_8_0[4] = arg_8_1[4]
 end
 
-function Colors.copy_no_alpha_to(arg_9_0, arg_9_1)
+Colors.copy_no_alpha_to = function (arg_9_0, arg_9_1)
 	arg_9_0[2] = arg_9_1[2]
 	arg_9_0[3] = arg_9_1[3]
 	arg_9_0[4] = arg_9_1[4]
 end
 
-function Colors.set(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+Colors.set = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_0[1] = arg_10_1
 	arg_10_0[2] = arg_10_2
 	arg_10_0[3] = arg_10_3
 	arg_10_0[4] = arg_10_4
 end
 
-function Colors.lerp_color_tables(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+Colors.lerp_color_tables = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	arg_11_3 = arg_11_3 or {}
 
 	local var_11_0 = 1 - arg_11_2
@@ -1689,7 +1689,7 @@ function Colors.lerp_color_tables(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	return arg_11_3
 end
 
-function Colors.from_hex(arg_12_0)
+Colors.from_hex = function (arg_12_0)
 	local var_12_0, var_12_1, var_12_2 = string.match(arg_12_0, "^#?(%x%x)(%x%x)(%x%x)$")
 
 	return tonumber(var_12_0, 16), tonumber(var_12_1, 16), tonumber(var_12_2, 16)
@@ -1713,7 +1713,7 @@ local function var_0_3(arg_13_0, arg_13_1, arg_13_2)
 	return arg_13_0
 end
 
-function Colors.hsl2rgb(arg_14_0, arg_14_1, arg_14_2)
+Colors.hsl2rgb = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0
 	local var_14_1
 	local var_14_2
@@ -1736,15 +1736,15 @@ end
 
 local var_0_4 = 0.7
 
-function Colors.darker(arg_15_0, arg_15_1)
+Colors.darker = function (arg_15_0, arg_15_1)
 	arg_15_1 = var_0_4^(arg_15_1 or 1)
 	arg_15_0[2], arg_15_0[3], arg_15_0[4] = arg_15_0[2] * arg_15_1, arg_15_0[3] * arg_15_1, arg_15_0[4] * arg_15_1
 end
 
-function Colors.brighter(arg_16_0, arg_16_1)
+Colors.brighter = function (arg_16_0, arg_16_1)
 	return Colors.darker(arg_16_0, -arg_16_1)
 end
 
-function Colors.luminance(arg_17_0)
+Colors.luminance = function (arg_17_0)
 	return 0.2126 * arg_17_0[2] + 0.7152 * arg_17_0[3] + 0.0722 * arg_17_0[4]
 end

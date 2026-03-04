@@ -12,7 +12,7 @@ local var_0_1 = {
 	"PayloadGizmoExtension"
 }
 
-function PayloadSystem.init(arg_1_0, arg_1_1, arg_1_2)
+PayloadSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	PayloadSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -25,11 +25,11 @@ function PayloadSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._payload_gizmos = {}
 end
 
-function PayloadSystem.destroy(arg_2_0)
+PayloadSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function PayloadSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
+PayloadSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, ...)
 	local var_3_0 = arg_3_0._payload_gizmos
 	local var_3_1
 
@@ -54,7 +54,7 @@ function PayloadSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	return var_3_1
 end
 
-function PayloadSystem.init_payloads(arg_4_0)
+PayloadSystem.init_payloads = function (arg_4_0)
 	local var_4_0 = arg_4_0._payloads
 	local var_4_1 = #var_4_0
 	local var_4_2 = arg_4_0._payload_gizmos
@@ -69,13 +69,13 @@ function PayloadSystem.init_payloads(arg_4_0)
 	end
 end
 
-function PayloadSystem.rpc_payload_flow_event(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PayloadSystem.rpc_payload_flow_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = LevelHelper:current_level(arg_5_0.world)
 	local var_5_1 = Level.unit_by_index(var_5_0, arg_5_2)
 
 	ScriptUnit.extension(var_5_1, "payload_system"):payload_flow_event(arg_5_3)
 end
 
-function PayloadSystem.hot_join_sync(arg_6_0)
+PayloadSystem.hot_join_sync = function (arg_6_0)
 	return
 end

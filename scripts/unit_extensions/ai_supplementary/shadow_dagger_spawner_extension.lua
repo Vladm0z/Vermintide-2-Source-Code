@@ -79,7 +79,7 @@ local function var_0_16(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	return not PhysicsWorld.linear_sphere_sweep(arg_2_2, arg_2_0, arg_2_1, var_2_3, var_2_6, "collision_filter", arg_2_3, "report_initial_overlap")
 end
 
-function ShadowDaggerSpawnerExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+ShadowDaggerSpawnerExtension.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_1.world
 
 	arg_3_0.world = var_3_0
@@ -89,15 +89,15 @@ function ShadowDaggerSpawnerExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._limitted_spawner = arg_3_3.limitted_spawner
 end
 
-function ShadowDaggerSpawnerExtension.destroy(arg_4_0)
+ShadowDaggerSpawnerExtension.destroy = function (arg_4_0)
 	return
 end
 
-function ShadowDaggerSpawnerExtension.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+ShadowDaggerSpawnerExtension.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function ShadowDaggerSpawnerExtension.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ShadowDaggerSpawnerExtension.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0._done then
 		return
 	end

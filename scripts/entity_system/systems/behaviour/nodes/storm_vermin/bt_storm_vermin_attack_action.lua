@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormVerminAttackAction = class(BTStormVerminAttackAction, BTNode)
 
-function BTStormVerminAttackAction.init(arg_1_0, ...)
+BTStormVerminAttackAction.init = function (arg_1_0, ...)
 	BTStormVerminAttackAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_0(arg_2_0)
 	end
 end
 
-function BTStormVerminAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTStormVerminAttackAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -98,7 +98,7 @@ function BTStormVerminAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTStormVerminAttackAction._init_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTStormVerminAttackAction._init_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.action
 
 	arg_4_2.move_state = "attacking"
@@ -157,7 +157,7 @@ function BTStormVerminAttackAction._init_attack(arg_4_0, arg_4_1, arg_4_2, arg_4
 	end
 end
 
-function BTStormVerminAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTStormVerminAttackAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_2.navigation_extension:set_enabled(true)
 
 	arg_5_2.active_node = nil
@@ -193,7 +193,7 @@ function BTStormVerminAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg
 	arg_5_2.action = nil
 end
 
-function BTStormVerminAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTStormVerminAttackAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	arg_6_0:update_reset_attack(arg_6_1, arg_6_3, arg_6_4, arg_6_2)
 
 	if arg_6_2.attack_aborted then
@@ -258,7 +258,7 @@ function BTStormVerminAttackAction.run(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6
 	return "running"
 end
 
-function BTStormVerminAttackAction._create_bot_threat(arg_7_0, arg_7_1, arg_7_2)
+BTStormVerminAttackAction._create_bot_threat = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.action
 	local var_7_1 = var_7_0.bot_threat_duration
 
@@ -278,19 +278,19 @@ function BTStormVerminAttackAction._create_bot_threat(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function BTStormVerminAttackAction.anim_cb_attack_vce(arg_8_0, arg_8_1, arg_8_2)
+BTStormVerminAttackAction.anim_cb_attack_vce = function (arg_8_0, arg_8_1, arg_8_2)
 	if Managers.state.network:game() and arg_8_2.target_unit_status_extension then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_8_2, arg_8_2.target_unit, arg_8_1, false, false)
 	end
 end
 
-function BTStormVerminAttackAction.anim_cb_attack_vce_long(arg_9_0, arg_9_1, arg_9_2)
+BTStormVerminAttackAction.anim_cb_attack_vce_long = function (arg_9_0, arg_9_1, arg_9_2)
 	if Managers.state.network:game() and arg_9_2.target_unit_status_extension then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_9_2, arg_9_2.target_unit, arg_9_1, false, true)
 	end
 end
 
-function BTStormVerminAttackAction.update_reset_attack(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTStormVerminAttackAction.update_reset_attack = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_4.action
 	local var_10_1 = arg_10_4.reset_attack
 	local var_10_2 = arg_10_4.reset_attack_delay
@@ -318,7 +318,7 @@ function BTStormVerminAttackAction.update_reset_attack(arg_10_0, arg_10_1, arg_1
 	end
 end
 
-function BTStormVerminAttackAction.attack(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTStormVerminAttackAction.attack = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = ScriptUnit.extension(arg_11_1, "locomotion_system")
 	local var_11_1 = arg_11_4.target_unit_status_extension
 
@@ -340,7 +340,7 @@ local var_0_1 = {
 	name = "BTStormVerminAttackAction"
 }
 
-function BTStormVerminAttackAction.anim_cb_damage(arg_12_0, arg_12_1, arg_12_2)
+BTStormVerminAttackAction.anim_cb_damage = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_2.action
 
 	arg_12_2.past_damage_in_attack = true
@@ -427,11 +427,11 @@ function BTStormVerminAttackAction.anim_cb_damage(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function BTStormVerminAttackAction.anim_cb_attack_finished(arg_13_0, arg_13_1, arg_13_2)
+BTStormVerminAttackAction.anim_cb_attack_finished = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_2.attack_finished = true
 end
 
-function BTStormVerminAttackAction._calculate_cylinder_collision(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+BTStormVerminAttackAction._calculate_cylinder_collision = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_1.radius
 	local var_14_1 = arg_14_1.height
 	local var_14_2 = arg_14_1.offset_up
@@ -448,7 +448,7 @@ function BTStormVerminAttackAction._calculate_cylinder_collision(arg_14_0, arg_1
 	return var_14_10, var_14_6, var_14_11
 end
 
-function BTStormVerminAttackAction._calculate_oobb_collision(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BTStormVerminAttackAction._calculate_oobb_collision = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_1.range
 	local var_15_1 = arg_15_1.height
 	local var_15_2 = arg_15_1.width
@@ -463,13 +463,13 @@ function BTStormVerminAttackAction._calculate_oobb_collision(arg_15_0, arg_15_1,
 	return arg_15_2 + var_15_8 + var_15_9, arg_15_3, var_15_7
 end
 
-function BTStormVerminAttackAction.tag_catapult_enemy(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTStormVerminAttackAction.tag_catapult_enemy = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	arg_16_1.catapult_list = arg_16_1.catapult_list or {}
 	arg_16_1.catapult_list[arg_16_3] = arg_16_4
 	arg_16_1.catapult_hit = true
 end
 
-function BTStormVerminAttackAction.catapult_enemies(arg_17_0, arg_17_1)
+BTStormVerminAttackAction.catapult_enemies = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.catapult_list
 
 	if var_17_0 then
@@ -488,13 +488,13 @@ function BTStormVerminAttackAction.catapult_enemies(arg_17_0, arg_17_1)
 	arg_17_1.catapult_hit = false
 end
 
-function BTStormVerminAttackAction.catapult_enemy(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTStormVerminAttackAction.catapult_enemy = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	if not arg_18_2.catapult then
 		return
 	end
 
 	if arg_18_4 then
-		-- block empty
+		-- Nothing
 	else
 		AiUtils.damage_target(arg_18_3, arg_18_0, arg_18_2, arg_18_2.damage)
 	end

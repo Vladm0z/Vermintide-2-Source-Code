@@ -58,7 +58,7 @@ local var_0_12 = false
 HeroWindowCraftingListConsole = class(HeroWindowCraftingListConsole)
 HeroWindowCraftingListConsole.NAME = "HeroWindowCraftingListConsole"
 
-function HeroWindowCraftingListConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowCraftingListConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowCraftingListConsole")
 
 	arg_1_0._params = arg_1_1
@@ -111,7 +111,7 @@ function HeroWindowCraftingListConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowCraftingListConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowCraftingListConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings,
@@ -123,7 +123,7 @@ function HeroWindowCraftingListConsole._start_transition_animation(arg_2_0, arg_
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowCraftingListConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowCraftingListConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_6)
 
 	local var_3_0 = {}
@@ -169,7 +169,7 @@ function HeroWindowCraftingListConsole.create_ui_elements(arg_3_0, arg_3_1, arg_
 	arg_3_0._menu_input_description:set_input_description(nil)
 end
 
-function HeroWindowCraftingListConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowCraftingListConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowCraftingListConsole")
 
 	arg_4_0.ui_animator = nil
@@ -179,7 +179,7 @@ function HeroWindowCraftingListConsole.on_exit(arg_4_0, arg_4_1)
 	arg_4_0._menu_input_description = nil
 end
 
-function HeroWindowCraftingListConsole._input_service(arg_5_0)
+HeroWindowCraftingListConsole._input_service = function (arg_5_0)
 	local var_5_0 = arg_5_0.parent
 
 	if var_5_0:is_friends_list_active() then
@@ -189,7 +189,7 @@ function HeroWindowCraftingListConsole._input_service(arg_5_0)
 	return var_5_0:window_input_service()
 end
 
-function HeroWindowCraftingListConsole.update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowCraftingListConsole.update = function (arg_6_0, arg_6_1, arg_6_2)
 	if var_0_12 then
 		var_0_12 = false
 
@@ -200,11 +200,11 @@ function HeroWindowCraftingListConsole.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function HeroWindowCraftingListConsole.post_update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowCraftingListConsole.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_handle_input(arg_7_1, arg_7_2)
 end
 
-function HeroWindowCraftingListConsole._update_animations(arg_8_0, arg_8_1)
+HeroWindowCraftingListConsole._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_animations
 	local var_8_1 = arg_8_0._animations
 	local var_8_2 = arg_8_0.ui_animator
@@ -238,7 +238,7 @@ function HeroWindowCraftingListConsole._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._is_button_pressed(arg_9_0, arg_9_1)
+HeroWindowCraftingListConsole._is_button_pressed = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1.content
 	local var_9_1 = var_9_0.button_hotspot or var_9_0.button_text
 
@@ -249,7 +249,7 @@ function HeroWindowCraftingListConsole._is_button_pressed(arg_9_0, arg_9_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._is_stepper_button_pressed(arg_10_0, arg_10_1)
+HeroWindowCraftingListConsole._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content
 	local var_10_1 = var_10_0.button_hotspot_left
 	local var_10_2 = var_10_0.button_hotspot_right
@@ -265,23 +265,23 @@ function HeroWindowCraftingListConsole._is_stepper_button_pressed(arg_10_0, arg_
 	end
 end
 
-function HeroWindowCraftingListConsole._is_button_hover_enter(arg_11_0, arg_11_1)
+HeroWindowCraftingListConsole._is_button_hover_enter = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	return var_11_0.on_hover_enter and not var_11_0.is_selected
 end
 
-function HeroWindowCraftingListConsole._is_button_hover_exit(arg_12_0, arg_12_1)
+HeroWindowCraftingListConsole._is_button_hover_exit = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_1.content.button_hotspot
 
 	return var_12_0.on_hover_exit and not var_12_0.is_selected
 end
 
-function HeroWindowCraftingListConsole._is_button_selected(arg_13_0, arg_13_1)
+HeroWindowCraftingListConsole._is_button_selected = function (arg_13_0, arg_13_1)
 	return arg_13_1.content.button_hotspot.is_selected
 end
 
-function HeroWindowCraftingListConsole._handle_input(arg_14_0, arg_14_1, arg_14_2)
+HeroWindowCraftingListConsole._handle_input = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_0.parent
 	local var_14_1 = arg_14_0._widgets_by_name
 	local var_14_2 = arg_14_0:_input_service()
@@ -318,13 +318,13 @@ function HeroWindowCraftingListConsole._handle_input(arg_14_0, arg_14_1, arg_14_
 	end
 end
 
-function HeroWindowCraftingListConsole._open_recipe_page(arg_15_0, arg_15_1)
+HeroWindowCraftingListConsole._open_recipe_page = function (arg_15_0, arg_15_1)
 	arg_15_0._params.recipe_index = arg_15_1
 
 	arg_15_0.parent:set_layout_by_name("crafting_recipe")
 end
 
-function HeroWindowCraftingListConsole._selected_button_index(arg_16_0)
+HeroWindowCraftingListConsole._selected_button_index = function (arg_16_0)
 	local var_16_0 = arg_16_0._title_button_widgets
 
 	for iter_16_0, iter_16_1 in ipairs(var_16_0) do
@@ -334,7 +334,7 @@ function HeroWindowCraftingListConsole._selected_button_index(arg_16_0)
 	end
 end
 
-function HeroWindowCraftingListConsole._on_button_selected(arg_17_0, arg_17_1, arg_17_2)
+HeroWindowCraftingListConsole._on_button_selected = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._title_button_widgets
 
 	for iter_17_0, iter_17_1 in ipairs(var_17_0) do
@@ -357,7 +357,7 @@ function HeroWindowCraftingListConsole._on_button_selected(arg_17_0, arg_17_1, a
 	end
 end
 
-function HeroWindowCraftingListConsole.draw(arg_18_0, arg_18_1)
+HeroWindowCraftingListConsole.draw = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.ui_renderer
 	local var_18_1 = arg_18_0.ui_top_renderer
 	local var_18_2 = arg_18_0.ui_scenegraph
@@ -381,11 +381,11 @@ function HeroWindowCraftingListConsole.draw(arg_18_0, arg_18_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._play_sound(arg_19_0, arg_19_1)
+HeroWindowCraftingListConsole._play_sound = function (arg_19_0, arg_19_1)
 	arg_19_0.parent:play_sound(arg_19_1)
 end
 
-function HeroWindowCraftingListConsole._populate_buttons(arg_20_0, arg_20_1)
+HeroWindowCraftingListConsole._populate_buttons = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0._title_button_widgets
 
 	for iter_20_0, iter_20_1 in ipairs(var_20_0) do
@@ -403,7 +403,7 @@ function HeroWindowCraftingListConsole._populate_buttons(arg_20_0, arg_20_1)
 	end
 end
 
-function HeroWindowCraftingListConsole._set_alignment_progress(arg_21_0, arg_21_1)
+HeroWindowCraftingListConsole._set_alignment_progress = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._title_button_widgets
 	local var_21_1 = #var_0_9
 	local var_21_2 = 100
@@ -434,7 +434,7 @@ function HeroWindowCraftingListConsole._set_alignment_progress(arg_21_0, arg_21_
 	end
 end
 
-function HeroWindowCraftingListConsole._setup_text_button_size(arg_22_0, arg_22_1)
+HeroWindowCraftingListConsole._setup_text_button_size = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_1.scenegraph_id
 	local var_22_1 = arg_22_1.content
 	local var_22_2 = arg_22_1.style.text
@@ -458,11 +458,11 @@ function HeroWindowCraftingListConsole._setup_text_button_size(arg_22_0, arg_22_
 	return var_22_8
 end
 
-function HeroWindowCraftingListConsole._set_text_button_horizontal_position(arg_23_0, arg_23_1, arg_23_2)
+HeroWindowCraftingListConsole._set_text_button_horizontal_position = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0.ui_scenegraph[arg_23_1.scenegraph_id].local_position[1] = arg_23_2
 end
 
-function HeroWindowCraftingListConsole._animate_entry(arg_24_0, arg_24_1, arg_24_2)
+HeroWindowCraftingListConsole._animate_entry = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_1.content
 	local var_24_1 = arg_24_1.style
 	local var_24_2 = var_24_0.button_hotspot

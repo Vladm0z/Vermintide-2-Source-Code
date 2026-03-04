@@ -62,7 +62,7 @@ local var_0_7 = {
 	ring = Localize("inventory_screen_ring_title")
 }
 
-function VersusInventoryGrid._create_item_categories(arg_2_0)
+VersusInventoryGrid._create_item_categories = function (arg_2_0)
 	local var_2_0 = arg_2_0.career_index
 	local var_2_1 = arg_2_0.profile_index
 	local var_2_2 = SPProfiles[var_2_1].careers[var_2_0].item_slot_types_by_slot_name
@@ -131,7 +131,7 @@ function VersusInventoryGrid._create_item_categories(arg_2_0)
 	return var_2_3
 end
 
-function VersusInventoryGrid.on_enter(arg_3_0, arg_3_1, arg_3_2)
+VersusInventoryGrid.on_enter = function (arg_3_0, arg_3_1, arg_3_2)
 	print("[HeroViewWindow] Enter Substate VersusInventoryGrid")
 
 	arg_3_0.parent = arg_3_1.parent
@@ -188,7 +188,7 @@ function VersusInventoryGrid.on_enter(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._job_done = false
 end
 
-function VersusInventoryGrid.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+VersusInventoryGrid.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_4_0 = {}
@@ -219,7 +219,7 @@ function VersusInventoryGrid.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_setup_tab_widget()
 end
 
-function VersusInventoryGrid._setup_tab_widget(arg_5_0)
+VersusInventoryGrid._setup_tab_widget = function (arg_5_0)
 	local var_5_0 = SPProfiles[arg_5_0.profile_index].careers[arg_5_0.career_index].item_slot_types_by_slot_name
 	local var_5_1 = {}
 	local var_5_2 = {}
@@ -277,7 +277,7 @@ function VersusInventoryGrid._setup_tab_widget(arg_5_0)
 	var_5_6[#var_5_6 + 1] = var_5_10
 end
 
-function VersusInventoryGrid.on_exit(arg_7_0, arg_7_1)
+VersusInventoryGrid.on_exit = function (arg_7_0, arg_7_1)
 	print("[HeroViewWindow] Exit Substate VersusInventoryGrid")
 
 	arg_7_0.ui_animator = nil
@@ -287,7 +287,7 @@ function VersusInventoryGrid.on_exit(arg_7_0, arg_7_1)
 	arg_7_0._item_grid = nil
 end
 
-function VersusInventoryGrid.update(arg_8_0, arg_8_1, arg_8_2)
+VersusInventoryGrid.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -303,11 +303,11 @@ function VersusInventoryGrid.update(arg_8_0, arg_8_1, arg_8_2)
 	return arg_8_0._job_done
 end
 
-function VersusInventoryGrid.post_update(arg_9_0, arg_9_1, arg_9_2)
+VersusInventoryGrid.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function VersusInventoryGrid._update_animations(arg_10_0, arg_10_1)
+VersusInventoryGrid._update_animations = function (arg_10_0, arg_10_1)
 	arg_10_0.ui_animator:update(arg_10_1)
 
 	local var_10_0 = arg_10_0._animations
@@ -324,7 +324,7 @@ function VersusInventoryGrid._update_animations(arg_10_0, arg_10_1)
 	local var_10_2 = arg_10_0._widgets_by_name
 end
 
-function VersusInventoryGrid._is_button_pressed(arg_11_0, arg_11_1)
+VersusInventoryGrid._is_button_pressed = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_1.content.button_hotspot
 
 	if var_11_0.on_release then
@@ -334,13 +334,13 @@ function VersusInventoryGrid._is_button_pressed(arg_11_0, arg_11_1)
 	end
 end
 
-function VersusInventoryGrid._is_button_hovered(arg_12_0, arg_12_1)
+VersusInventoryGrid._is_button_hovered = function (arg_12_0, arg_12_1)
 	if arg_12_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function VersusInventoryGrid._handle_input(arg_13_0, arg_13_1, arg_13_2)
+VersusInventoryGrid._handle_input = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._widgets_by_name
 	local var_13_1 = arg_13_0.parent
 	local var_13_2 = arg_13_0._item_grid
@@ -402,7 +402,7 @@ function VersusInventoryGrid._handle_input(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function VersusInventoryGrid._update_page_info(arg_14_0)
+VersusInventoryGrid._update_page_info = function (arg_14_0)
 	local var_14_0, var_14_1 = arg_14_0._item_grid:get_page_info()
 
 	if var_14_0 ~= arg_14_0._current_page or var_14_1 ~= arg_14_0._total_pages then
@@ -420,11 +420,11 @@ function VersusInventoryGrid._update_page_info(arg_14_0)
 	end
 end
 
-function VersusInventoryGrid._get_actual_loadout_category_index(arg_15_0, arg_15_1)
+VersusInventoryGrid._get_actual_loadout_category_index = function (arg_15_0, arg_15_1)
 	return arg_15_0._career_category_settings_index_lookup[arg_15_1]
 end
 
-function VersusInventoryGrid._update_selected_loadout_slot_index(arg_16_0)
+VersusInventoryGrid._update_selected_loadout_slot_index = function (arg_16_0)
 	local var_16_0 = arg_16_0.parent:get_selected_loadout_slot_index()
 	local var_16_1 = arg_16_0._career_category_settings_index_lookup[var_16_0]
 
@@ -436,7 +436,7 @@ function VersusInventoryGrid._update_selected_loadout_slot_index(arg_16_0)
 	end
 end
 
-function VersusInventoryGrid._update_loadout_sync(arg_17_0)
+VersusInventoryGrid._update_loadout_sync = function (arg_17_0)
 	local var_17_0 = arg_17_0._item_grid
 	local var_17_1 = arg_17_0.parent.loadout_sync_id
 
@@ -447,12 +447,12 @@ function VersusInventoryGrid._update_loadout_sync(arg_17_0)
 	end
 end
 
-function VersusInventoryGrid._exit(arg_18_0, arg_18_1)
+VersusInventoryGrid._exit = function (arg_18_0, arg_18_1)
 	arg_18_0.exit = true
 	arg_18_0.exit_level_id = arg_18_1
 end
 
-function VersusInventoryGrid.draw(arg_19_0, arg_19_1)
+VersusInventoryGrid.draw = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.ui_top_renderer
 	local var_19_1 = arg_19_0.ui_scenegraph
 	local var_19_2 = arg_19_0.parent:window_input_service()
@@ -474,11 +474,11 @@ function VersusInventoryGrid.draw(arg_19_0, arg_19_1)
 	UIRenderer.end_pass(var_19_0)
 end
 
-function VersusInventoryGrid._play_sound(arg_20_0, arg_20_1)
+VersusInventoryGrid._play_sound = function (arg_20_0, arg_20_1)
 	arg_20_0.parent:play_sound(arg_20_1)
 end
 
-function VersusInventoryGrid._change_category_by_index(arg_21_0, arg_21_1, arg_21_2)
+VersusInventoryGrid._change_category_by_index = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._career_category_settings_index_lookup[arg_21_1]
 
 	if arg_21_2 then
@@ -502,7 +502,7 @@ function VersusInventoryGrid._change_category_by_index(arg_21_0, arg_21_1, arg_2
 	return true
 end
 
-function VersusInventoryGrid._get_slot_by_type(arg_22_0, arg_22_1)
+VersusInventoryGrid._get_slot_by_type = function (arg_22_0, arg_22_1)
 	local var_22_0 = InventorySettings.slots_by_slot_index
 
 	for iter_22_0, iter_22_1 in pairs(var_22_0) do
@@ -512,7 +512,7 @@ function VersusInventoryGrid._get_slot_by_type(arg_22_0, arg_22_1)
 	end
 end
 
-function VersusInventoryGrid._set_loadout_item(arg_23_0, arg_23_1, arg_23_2)
+VersusInventoryGrid._set_loadout_item = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0.profile_index
 	local var_23_1 = arg_23_0.career_index
 	local var_23_2 = SPProfiles[var_23_0].careers[var_23_1]

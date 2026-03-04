@@ -11,7 +11,7 @@ local var_0_2
 NecromancerPositionModes, var_0_2 = table.enum_lookup("Absolute", "Relative")
 PassiveAbilityNecromancerCharges = class(PassiveAbilityNecromancerCharges)
 
-function PassiveAbilityNecromancerCharges.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityNecromancerCharges.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._player = arg_1_3.player
 	arg_1_0._is_local = arg_1_3.player.local_player
 	arg_1_0._owner_unit = arg_1_2
@@ -40,7 +40,7 @@ function PassiveAbilityNecromancerCharges.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	arg_1_0._achv_staff_gandalf_data = {}
 end
 
-function PassiveAbilityNecromancerCharges.warm_up_skeletons(arg_2_0, arg_2_1)
+PassiveAbilityNecromancerCharges.warm_up_skeletons = function (arg_2_0, arg_2_1)
 	print("Necromancer - Warm up skeletons:")
 
 	local var_2_0 = Managers.level_transition_handler.enemy_package_loader
@@ -54,7 +54,7 @@ function PassiveAbilityNecromancerCharges.warm_up_skeletons(arg_2_0, arg_2_1)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+PassiveAbilityNecromancerCharges.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._buff_system = Managers.state.entity:system("buff_system")
 	arg_3_0._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
 	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
@@ -79,7 +79,7 @@ function PassiveAbilityNecromancerCharges.extensions_ready(arg_3_0, arg_3_1, arg
 	arg_3_0._start_update_t = Managers.time:time("game") + 3
 end
 
-function PassiveAbilityNecromancerCharges._on_talents_changed(arg_4_0, arg_4_1, arg_4_2)
+PassiveAbilityNecromancerCharges._on_talents_changed = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_1 ~= arg_4_0._owner_unit then
 		return
 	end
@@ -115,17 +115,17 @@ function PassiveAbilityNecromancerCharges._on_talents_changed(arg_4_0, arg_4_1, 
 	arg_4_0._force_respawn_pets = true
 end
 
-function PassiveAbilityNecromancerCharges._register_events(arg_5_0)
+PassiveAbilityNecromancerCharges._register_events = function (arg_5_0)
 	Managers.state.event:register(arg_5_0, "on_talents_changed", "_on_talents_changed")
 end
 
-function PassiveAbilityNecromancerCharges._unregister_events(arg_6_0)
+PassiveAbilityNecromancerCharges._unregister_events = function (arg_6_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("on_talents_changed", arg_6_0)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.destroy(arg_7_0)
+PassiveAbilityNecromancerCharges.destroy = function (arg_7_0)
 	arg_7_0._network_event_delegate:unregister(arg_7_0)
 	arg_7_0:_unregister_events()
 
@@ -142,7 +142,7 @@ function PassiveAbilityNecromancerCharges.destroy(arg_7_0)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.update(arg_8_0, arg_8_1, arg_8_2)
+PassiveAbilityNecromancerCharges.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_2 < arg_8_0._start_update_t then
 		return
 	end
@@ -167,7 +167,7 @@ for iter_0_0 = 1, var_0_5 do
 	var_0_3[#var_0_3 + 1] = var_0_8
 end
 
-function PassiveAbilityNecromancerCharges.spawn_army_pet(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+PassiveAbilityNecromancerCharges.spawn_army_pet = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0._army_definition
 	local var_9_1 = "necromancer_pet_charges"
 	local var_9_2 = var_9_0[arg_9_1]
@@ -193,7 +193,7 @@ function PassiveAbilityNecromancerCharges.spawn_army_pet(arg_9_0, arg_9_1, arg_9
 	return var_9_4
 end
 
-function PassiveAbilityNecromancerCharges.spawn_pet(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+PassiveAbilityNecromancerCharges.spawn_pet = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if arg_10_0._pets_forbidden_in_level then
 		return
 	end
@@ -216,13 +216,13 @@ function PassiveAbilityNecromancerCharges.spawn_pet(arg_10_0, arg_10_1, arg_10_2
 	end
 end
 
-function PassiveAbilityNecromancerCharges.spawn_pets(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+PassiveAbilityNecromancerCharges.spawn_pets = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	for iter_11_0 = 1, arg_11_1 do
 		arg_11_0:spawn_pet(arg_11_2, arg_11_3)
 	end
 end
 
-function PassiveAbilityNecromancerCharges._queue_pet(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+PassiveAbilityNecromancerCharges._queue_pet = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	if arg_12_0:is_invalid_spawn_position(arg_12_2) then
 		arg_12_2 = Vector3.zero()
 		arg_12_3 = NecromancerPositionModes.Relative
@@ -236,11 +236,11 @@ function PassiveAbilityNecromancerCharges._queue_pet(arg_12_0, arg_12_1, arg_12_
 	}
 end
 
-function PassiveAbilityNecromancerCharges.store_buff_unit(arg_13_0, arg_13_1)
+PassiveAbilityNecromancerCharges.store_buff_unit = function (arg_13_0, arg_13_1)
 	arg_13_0._buff_unit = arg_13_1
 end
 
-function PassiveAbilityNecromancerCharges.is_ready(arg_14_0)
+PassiveAbilityNecromancerCharges.is_ready = function (arg_14_0)
 	if not ALIVE[arg_14_0._buff_unit] then
 		return true
 	end
@@ -248,7 +248,7 @@ function PassiveAbilityNecromancerCharges.is_ready(arg_14_0)
 	return not ScriptUnit.extension(arg_14_0._buff_unit, "buff_system"):has_buff_type("raise_dead_ability")
 end
 
-function PassiveAbilityNecromancerCharges.rpc_necromancer_passive_spawn_pet(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+PassiveAbilityNecromancerCharges.rpc_necromancer_passive_spawn_pet = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	assert(arg_15_0._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_passive_spawn_pet' is a server only function.")
 
 	if CHANNEL_TO_PEER_ID[arg_15_1] ~= arg_15_0._player.peer_id then
@@ -262,7 +262,7 @@ function PassiveAbilityNecromancerCharges.rpc_necromancer_passive_spawn_pet(arg_
 	arg_15_0:_queue_pet(var_15_0, arg_15_4, var_15_2, var_15_1)
 end
 
-function PassiveAbilityNecromancerCharges.kill_pets(arg_16_0, arg_16_1)
+PassiveAbilityNecromancerCharges.kill_pets = function (arg_16_0, arg_16_1)
 	if not arg_16_0._is_server then
 		arg_16_0._network_transmit:send_rpc_server("rpc_necromancer_passive_kill_pets")
 
@@ -281,7 +281,7 @@ function PassiveAbilityNecromancerCharges.kill_pets(arg_16_0, arg_16_1)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.rpc_necromancer_passive_kill_pets(arg_17_0, arg_17_1)
+PassiveAbilityNecromancerCharges.rpc_necromancer_passive_kill_pets = function (arg_17_0, arg_17_1)
 	assert(arg_17_0._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_passive_kill_pets' is a server only function.")
 
 	local var_17_0 = CHANNEL_TO_PEER_ID[arg_17_1]
@@ -293,7 +293,7 @@ function PassiveAbilityNecromancerCharges.rpc_necromancer_passive_kill_pets(arg_
 	arg_17_0:kill_pets(var_17_0)
 end
 
-function PassiveAbilityNecromancerCharges.rpc_necromancer_respawn_all_pets(arg_18_0, arg_18_1)
+PassiveAbilityNecromancerCharges.rpc_necromancer_respawn_all_pets = function (arg_18_0, arg_18_1)
 	assert(arg_18_0._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_respawn_pets' is a server only function.")
 
 	if CHANNEL_TO_PEER_ID[arg_18_1] ~= arg_18_0._player.peer_id then
@@ -305,7 +305,7 @@ function PassiveAbilityNecromancerCharges.rpc_necromancer_respawn_all_pets(arg_1
 	end
 end
 
-function PassiveAbilityNecromancerCharges._update_pets_server(arg_19_0)
+PassiveAbilityNecromancerCharges._update_pets_server = function (arg_19_0)
 	if arg_19_0._pets_forbidden_in_level then
 		return
 	end
@@ -319,15 +319,15 @@ function PassiveAbilityNecromancerCharges._update_pets_server(arg_19_0)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.invalid_spawn_position(arg_20_0)
+PassiveAbilityNecromancerCharges.invalid_spawn_position = function (arg_20_0)
 	return Vector3(0, 0, -500)
 end
 
-function PassiveAbilityNecromancerCharges.is_invalid_spawn_position(arg_21_0, arg_21_1)
+PassiveAbilityNecromancerCharges.is_invalid_spawn_position = function (arg_21_0, arg_21_1)
 	return not arg_21_1 or arg_21_1[3] < -400
 end
 
-function PassiveAbilityNecromancerCharges._spawn_pet_server(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PassiveAbilityNecromancerCharges._spawn_pet_server = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = arg_22_0._commander_extension
 	local var_22_1 = arg_22_0._buff_extension
 	local var_22_2 = arg_22_0._owner_unit
@@ -339,7 +339,7 @@ function PassiveAbilityNecromancerCharges._spawn_pet_server(arg_22_0, arg_22_1, 
 		ignore_event_counter = true,
 		ignore_breed_limits = true,
 		side_id = var_22_3,
-		spawned_func = function(arg_23_0, arg_23_1, arg_23_2)
+		spawned_func = function (arg_23_0, arg_23_1, arg_23_2)
 			if ALIVE[var_22_2] then
 				arg_22_0._spawned_pets[arg_23_0] = arg_22_4
 				var_22_5[arg_23_2] = nil
@@ -416,7 +416,7 @@ function PassiveAbilityNecromancerCharges._spawn_pet_server(arg_22_0, arg_22_1, 
 	return true
 end
 
-function PassiveAbilityNecromancerCharges._kill_all_pets_server(arg_24_0, arg_24_1)
+PassiveAbilityNecromancerCharges._kill_all_pets_server = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._queued_pets
 
 	for iter_24_0, iter_24_1 in pairs(var_24_0) do
@@ -447,7 +447,7 @@ function PassiveAbilityNecromancerCharges._kill_all_pets_server(arg_24_0, arg_24
 	arg_24_0:_remove_pet_charges()
 end
 
-function PassiveAbilityNecromancerCharges.resummon_pet(arg_25_0, arg_25_1)
+PassiveAbilityNecromancerCharges.resummon_pet = function (arg_25_0, arg_25_1)
 	local var_25_0 = (ScriptUnit.extension(arg_25_0._owner_unit, "ai_commander_system"):get_controlled_units() or EMPTY_TABLE)[arg_25_1].template
 	local var_25_1 = var_25_0 and var_25_0.name or arg_25_0._spawned_pets[arg_25_1]
 
@@ -467,7 +467,7 @@ end
 
 local var_0_9 = {}
 
-function PassiveAbilityNecromancerCharges._gather_resummon_data(arg_26_0, arg_26_1, arg_26_2)
+PassiveAbilityNecromancerCharges._gather_resummon_data = function (arg_26_0, arg_26_1, arg_26_2)
 	if not arg_26_0._is_server then
 		return
 	end
@@ -482,7 +482,7 @@ function PassiveAbilityNecromancerCharges._gather_resummon_data(arg_26_0, arg_26
 	}
 end
 
-function PassiveAbilityNecromancerCharges._extract_resummon_data(arg_27_0, arg_27_1, arg_27_2)
+PassiveAbilityNecromancerCharges._extract_resummon_data = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_0._resummon_spawn_data[arg_27_2]
 
 	if not var_27_0 then
@@ -504,13 +504,13 @@ function PassiveAbilityNecromancerCharges._extract_resummon_data(arg_27_0, arg_2
 	end
 end
 
-function PassiveAbilityNecromancerCharges._remove_unit(arg_28_0, arg_28_1)
+PassiveAbilityNecromancerCharges._remove_unit = function (arg_28_0, arg_28_1)
 	arg_28_0._spawned_pets[arg_28_1] = nil
 
 	arg_28_0._commander_extension:remove_controlled_unit(arg_28_1)
 end
 
-function PassiveAbilityNecromancerCharges.add_pet_charge(arg_29_0, arg_29_1, arg_29_2)
+PassiveAbilityNecromancerCharges.add_pet_charge = function (arg_29_0, arg_29_1, arg_29_2)
 	assert(arg_29_0._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
 	Managers.state.event:unregister_referenced("on_ai_unit_destroyed", arg_29_1, arg_29_0)
 
@@ -530,7 +530,7 @@ function PassiveAbilityNecromancerCharges.add_pet_charge(arg_29_0, arg_29_1, arg
 	arg_29_0._pet_respawn_buffs[var_29_1] = true
 end
 
-function PassiveAbilityNecromancerCharges.consume_pet_charge(arg_30_0, arg_30_1)
+PassiveAbilityNecromancerCharges.consume_pet_charge = function (arg_30_0, arg_30_1)
 	assert(arg_30_0._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
 
 	arg_30_0._pet_respawn_buffs[arg_30_1] = nil
@@ -539,7 +539,7 @@ function PassiveAbilityNecromancerCharges.consume_pet_charge(arg_30_0, arg_30_1)
 	arg_30_0:spawn_pets(1, "necromancer_pet_charges")
 end
 
-function PassiveAbilityNecromancerCharges._remove_pet_charges(arg_31_0)
+PassiveAbilityNecromancerCharges._remove_pet_charges = function (arg_31_0)
 	assert(arg_31_0._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
 
 	local var_31_0 = arg_31_0._owner_unit
@@ -552,7 +552,7 @@ function PassiveAbilityNecromancerCharges._remove_pet_charges(arg_31_0)
 	end
 end
 
-function PassiveAbilityNecromancerCharges._update_spawning(arg_32_0, arg_32_1)
+PassiveAbilityNecromancerCharges._update_spawning = function (arg_32_0, arg_32_1)
 	if arg_32_0._cutscene_system:is_active() then
 		return
 	end
@@ -577,17 +577,17 @@ function PassiveAbilityNecromancerCharges._update_spawning(arg_32_0, arg_32_1)
 	end
 end
 
-function PassiveAbilityNecromancerCharges._update_achievements(arg_33_0, arg_33_1)
+PassiveAbilityNecromancerCharges._update_achievements = function (arg_33_0, arg_33_1)
 	if arg_33_0._is_local then
 		arg_33_0:_achievement_staff_gandalf_update(arg_33_1)
 	end
 end
 
-function PassiveAbilityNecromancerCharges.achievement_staff_gandalf_trigger(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+PassiveAbilityNecromancerCharges.achievement_staff_gandalf_trigger = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	arg_34_0._achv_staff_gandalf_data[arg_34_1] = arg_34_2 + arg_34_3
 end
 
-function PassiveAbilityNecromancerCharges._achievement_staff_gandalf_update(arg_35_0, arg_35_1)
+PassiveAbilityNecromancerCharges._achievement_staff_gandalf_update = function (arg_35_0, arg_35_1)
 	for iter_35_0, iter_35_1 in pairs(arg_35_0._achv_staff_gandalf_data) do
 		if iter_35_1 < arg_35_1 then
 			arg_35_0._achv_staff_gandalf_data[iter_35_0] = nil

@@ -8,7 +8,7 @@ local var_0_2 = 0.1
 local var_0_3 = 50
 local var_0_4 = 1
 
-function UICleanUI.create(arg_1_0, arg_1_1)
+UICleanUI.create = function (arg_1_0, arg_1_1)
 	return {
 		off_window_clock = 0,
 		was_enabled = false,
@@ -58,7 +58,7 @@ local function var_0_7(arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_0 > arg_4_2[1] and arg_4_0 < arg_4_2[3] and arg_4_1 > arg_4_2[2] and arg_4_1 < arg_4_2[4]
 end
 
-function UICleanUI.update(arg_5_0, arg_5_1)
+UICleanUI.update = function (arg_5_0, arg_5_1)
 	local var_5_0 = false
 	local var_5_1 = arg_5_0.peer_id
 	local var_5_2 = Managers.player:player_from_peer_id(var_5_1)
@@ -195,7 +195,7 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function(arg_6_0)
+							get_widget_function = function (arg_6_0)
 								return (arg_6_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
@@ -211,19 +211,19 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function(arg_7_0)
+							get_widget_function = function (arg_7_0)
 								return (arg_7_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_8_0)
+							get_widget_function = function (arg_8_0)
 								return (arg_8_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_9_0)
+							get_widget_function = function (arg_9_0)
 								return (arg_9_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
 							end
 						}
@@ -235,14 +235,14 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function(arg_10_0)
+							get_widget_function = function (arg_10_0)
 								return (arg_10_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function(arg_11_0)
+							get_widget_function = function (arg_11_0)
 								return (arg_11_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
@@ -263,7 +263,7 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function(arg_12_0)
+							get_widget_function = function (arg_12_0)
 								return (arg_12_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
@@ -303,21 +303,21 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 						{
 							alpha = -1,
 							set_alpha_function = "set_equipment_alpha",
-							get_widget_function = function(arg_13_0)
+							get_widget_function = function (arg_13_0)
 								return (arg_13_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_health_alpha",
-							get_widget_function = function(arg_14_0)
+							get_widget_function = function (arg_14_0)
 								return (arg_14_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_ability_alpha",
-							get_widget_function = function(arg_15_0)
+							get_widget_function = function (arg_15_0)
 								return (arg_15_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
@@ -332,19 +332,19 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 					widgets = {
 						{
 							alpha = 1,
-							get_widget_function = function(arg_16_0)
+							get_widget_function = function (arg_16_0)
 								return (arg_16_0.hud:component("UnitFramesHandler"):get_unit_widget(2))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_17_0)
+							get_widget_function = function (arg_17_0)
 								return (arg_17_0.hud:component("UnitFramesHandler"):get_unit_widget(3))
 							end
 						},
 						{
 							alpha = -1,
-							get_widget_function = function(arg_18_0)
+							get_widget_function = function (arg_18_0)
 								return (arg_18_0.hud:component("UnitFramesHandler"):get_unit_widget(4))
 							end
 						}
@@ -356,14 +356,14 @@ function UICleanUI.update(arg_5_0, arg_5_1)
 						{
 							alpha = -1,
 							set_alpha_function = "set_default_alpha",
-							get_widget_function = function(arg_19_0)
+							get_widget_function = function (arg_19_0)
 								return (arg_19_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},
 						{
 							alpha = -1,
 							set_alpha_function = "set_portrait_alpha",
-							get_widget_function = function(arg_20_0)
+							get_widget_function = function (arg_20_0)
 								return (arg_20_0.hud:component("UnitFramesHandler"):get_unit_widget(1))
 							end
 						},

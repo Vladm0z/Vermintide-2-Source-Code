@@ -56,13 +56,13 @@ var_0_4.divine_nautical_miles_challenge = {
 	events = {
 		"divine_nautical_miles_challenge"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "divine_nautical_miles_challenge") >= var_0_17
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		arg_2_0:modify_stat_by_amount(arg_2_1, "divine_nautical_miles_challenge", var_0_18)
 	end,
-	progress = function(arg_3_0, arg_3_1, arg_3_2)
+	progress = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = arg_3_0:get_persistent_stat(arg_3_1, "divine_nautical_miles_challenge")
 		local var_3_1 = math.floor(var_3_0 * 0.539957) * 0.001
 
@@ -71,7 +71,7 @@ var_0_4.divine_nautical_miles_challenge = {
 			var_0_16
 		}
 	end,
-	progress_text_format_func = function(arg_4_0, arg_4_1)
+	progress_text_format_func = function (arg_4_0, arg_4_1)
 		return string.format("%.1f / %d", arg_4_0, arg_4_1)
 	end
 }
@@ -85,7 +85,7 @@ var_0_4.divine_anchor_challenge = {
 	display_completion_ui = true,
 	always_run = true,
 	icon = "achv_divine_anchor_challenge_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_divine_anchor_challenge_desc"), var_0_20)
 	end,
 	events = {
@@ -93,10 +93,10 @@ var_0_4.divine_anchor_challenge = {
 		"divine_anchor_destroyed",
 		"divine_anchor_challenge_completed"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "divine_anchor_challenge") >= 1
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		if not Managers.state.network or not Managers.state.network.is_server then
 			return
 		end
@@ -134,16 +134,16 @@ var_0_4.divine_sink_ships_challenge = {
 	name = "achv_divine_sink_ships_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_divine_sink_ships_challenge_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_divine_sink_ships_challenge_desc"), var_0_22)
 	end,
 	events = {
 		"divine_sink_ships_challenge"
 	},
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
+	completed = function (arg_9_0, arg_9_1, arg_9_2)
 		return arg_9_0:get_persistent_stat(arg_9_1, "divine_sink_ships_challenge") >= 1
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		local var_10_0 = Managers.time:time("game")
 
 		if arg_10_4[1] then
@@ -159,16 +159,16 @@ var_0_4.divine_cannon_challenge = {
 	name = "achv_divine_cannon_challenge_name",
 	display_completion_ui = true,
 	icon = "achv_divine_cannon_challenge_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_divine_cannon_challenge_desc"))
 	end,
 	events = {
 		"divine_cannon_challenge"
 	},
-	completed = function(arg_12_0, arg_12_1, arg_12_2)
+	completed = function (arg_12_0, arg_12_1, arg_12_2)
 		return arg_12_0:get_persistent_stat(arg_12_1, "divine_cannon_challenge") >= 1
 	end,
-	on_event = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	on_event = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 		arg_13_0:increment_stat(arg_13_1, "divine_cannon_challenge")
 	end
 }
@@ -177,16 +177,16 @@ var_0_4.divine_chaos_warrior_challenge = {
 	display_completion_ui = true,
 	always_run = true,
 	icon = "achv_divine_chaos_warrior_challenge_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_divine_chaos_warrior_challenge_desc"))
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function(arg_15_0, arg_15_1, arg_15_2)
+	completed = function (arg_15_0, arg_15_1, arg_15_2)
 		return arg_15_0:get_persistent_stat(arg_15_1, "divine_chaos_warrior_challenge") >= 1
 	end,
-	on_event = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		if arg_16_4[9] ~= "sawblade_instant_kill" then
 			return
 		end

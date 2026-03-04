@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBlockedAction = class(BTBlockedAction, BTNode)
 
-function BTBlockedAction.init(arg_1_0, ...)
+BTBlockedAction.init = function (arg_1_0, ...)
 	BTBlockedAction.super.init(arg_1_0, ...)
 end
 
 BTBlockedAction.name = "BTBlockedAction"
 
-function BTBlockedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBlockedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_enabled(false)
 
 	local var_2_0 = arg_2_0._tree_node.action_data
@@ -49,7 +49,7 @@ function BTBlockedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTBlockedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBlockedAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.blocked = nil
 	arg_3_2.anim_cb_blocked_cooldown = nil
 	arg_3_2.stagger_hit_wall = nil
@@ -80,7 +80,7 @@ function BTBlockedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_
 	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, true)
 end
 
-function BTBlockedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBlockedAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.locomotion_extension
 
 	if var_4_0.movement_type ~= "constrained_by_mover" and not arg_4_2.stagger_hit_wall then

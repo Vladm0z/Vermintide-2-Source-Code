@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDefensiveIdleAction = class(BTDefensiveIdleAction, BTNode)
 
-function BTDefensiveIdleAction.init(arg_1_0, ...)
+BTDefensiveIdleAction.init = function (arg_1_0, ...)
 	BTDefensiveIdleAction.super.init(arg_1_0, ...)
 end
 
 BTDefensiveIdleAction.name = "BTDefensiveIdleAction"
 
-function BTDefensiveIdleAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTDefensiveIdleAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Managers.state.network
 	local var_2_1 = arg_2_0._tree_node.action_data
 
@@ -33,11 +33,11 @@ function BTDefensiveIdleAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.idle_end_time = arg_2_3 + var_2_1.duration
 end
 
-function BTDefensiveIdleAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTDefensiveIdleAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTDefensiveIdleAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTDefensiveIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_3 > arg_4_2.idle_end_time then
 		return "done"
 	end

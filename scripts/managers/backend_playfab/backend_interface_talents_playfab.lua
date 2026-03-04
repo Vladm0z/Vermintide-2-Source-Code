@@ -2,7 +2,7 @@
 
 BackendInterfaceTalentsPlayfab = class(BackendInterfaceTalentsPlayfab)
 
-function BackendInterfaceTalentsPlayfab.init(arg_1_0, arg_1_1)
+BackendInterfaceTalentsPlayfab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._talents = {}
 	arg_1_0._default_loadouts_talents = {}
@@ -14,7 +14,7 @@ function BackendInterfaceTalentsPlayfab.init(arg_1_0, arg_1_1)
 	arg_1_0:_refresh()
 end
 
-function BackendInterfaceTalentsPlayfab._refresh(arg_2_0)
+BackendInterfaceTalentsPlayfab._refresh = function (arg_2_0)
 	if not DEDICATED_SERVER then
 		arg_2_0:_refresh_default_loadouts_talents()
 		arg_2_0:_refresh_career_loadouts_talents()
@@ -28,7 +28,7 @@ function BackendInterfaceTalentsPlayfab._refresh(arg_2_0)
 	end
 end
 
-function BackendInterfaceTalentsPlayfab._refresh_talents(arg_3_0)
+BackendInterfaceTalentsPlayfab._refresh_talents = function (arg_3_0)
 	local var_3_0 = arg_3_0._talents
 	local var_3_1 = arg_3_0._backend_mirror
 
@@ -55,7 +55,7 @@ end
 
 local var_0_0 = {}
 
-function BackendInterfaceTalentsPlayfab.refresh_bot_talents(arg_4_0)
+BackendInterfaceTalentsPlayfab.refresh_bot_talents = function (arg_4_0)
 	arg_4_0._bot_talents = table.clone(arg_4_0._talents)
 
 	local var_4_0 = arg_4_0._bot_talents
@@ -89,7 +89,7 @@ function BackendInterfaceTalentsPlayfab.refresh_bot_talents(arg_4_0)
 	print("[BackendInterfaceItemPlayfab] Refreshing bot loadout")
 end
 
-function BackendInterfaceTalentsPlayfab._refresh_default_loadouts_talents(arg_5_0)
+BackendInterfaceTalentsPlayfab._refresh_default_loadouts_talents = function (arg_5_0)
 	local var_5_0 = arg_5_0._default_loadouts_talents
 	local var_5_1 = arg_5_0._backend_mirror
 	local var_5_2 = true
@@ -136,7 +136,7 @@ function BackendInterfaceTalentsPlayfab._refresh_default_loadouts_talents(arg_5_
 	arg_5_0._dirty = false
 end
 
-function BackendInterfaceTalentsPlayfab._refresh_career_loadouts_talents(arg_6_0)
+BackendInterfaceTalentsPlayfab._refresh_career_loadouts_talents = function (arg_6_0)
 	local var_6_0 = arg_6_0._career_loadouts_talents
 	local var_6_1 = arg_6_0._backend_mirror
 	local var_6_2 = true
@@ -185,7 +185,7 @@ function BackendInterfaceTalentsPlayfab._refresh_career_loadouts_talents(arg_6_0
 	arg_6_0._dirty = false
 end
 
-function BackendInterfaceTalentsPlayfab._setup_default_overrides(arg_7_0)
+BackendInterfaceTalentsPlayfab._setup_default_overrides = function (arg_7_0)
 	local var_7_0 = Managers.mechanism:current_mechanism_name()
 	local var_7_1 = PlayerData.loadout_selection and PlayerData.loadout_selection[var_7_0] or {}
 
@@ -210,13 +210,13 @@ function BackendInterfaceTalentsPlayfab._setup_default_overrides(arg_7_0)
 	end
 end
 
-function BackendInterfaceTalentsPlayfab.set_default_override(arg_8_0, arg_8_1, arg_8_2)
+BackendInterfaceTalentsPlayfab.set_default_override = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._default_loadouts_talents[arg_8_1]
 
 	arg_8_0._default_talents_overrides[arg_8_1] = var_8_0 and var_8_0[arg_8_2]
 end
 
-function BackendInterfaceTalentsPlayfab._validate_talents(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BackendInterfaceTalentsPlayfab._validate_talents = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = PROFILES_BY_CAREER_NAMES[arg_9_1]
 
 	if not var_9_0 then
@@ -250,19 +250,19 @@ function BackendInterfaceTalentsPlayfab._validate_talents(arg_9_0, arg_9_1, arg_
 	end
 end
 
-function BackendInterfaceTalentsPlayfab.ready(arg_10_0)
+BackendInterfaceTalentsPlayfab.ready = function (arg_10_0)
 	return true
 end
 
-function BackendInterfaceTalentsPlayfab.update(arg_11_0, arg_11_1)
+BackendInterfaceTalentsPlayfab.update = function (arg_11_0, arg_11_1)
 	return
 end
 
-function BackendInterfaceTalentsPlayfab.make_dirty(arg_12_0)
+BackendInterfaceTalentsPlayfab.make_dirty = function (arg_12_0)
 	arg_12_0._dirty = true
 end
 
-function BackendInterfaceTalentsPlayfab.get_talent_ids(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BackendInterfaceTalentsPlayfab.get_talent_ids = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = CareerSettings[arg_13_1]
 	local var_13_1 = var_13_0.profile_name
 	local var_13_2 = var_13_0.talent_tree_index
@@ -295,7 +295,7 @@ function BackendInterfaceTalentsPlayfab.get_talent_ids(arg_13_0, arg_13_1, arg_1
 	return var_13_4
 end
 
-function BackendInterfaceTalentsPlayfab.get_talent_tree(arg_14_0, arg_14_1)
+BackendInterfaceTalentsPlayfab.get_talent_tree = function (arg_14_0, arg_14_1)
 	local var_14_0 = CareerSettings[arg_14_1]
 	local var_14_1 = var_14_0.profile_name
 	local var_14_2 = var_14_0.talent_tree_index
@@ -303,7 +303,7 @@ function BackendInterfaceTalentsPlayfab.get_talent_tree(arg_14_0, arg_14_1)
 	return var_14_2 and TalentTrees[var_14_1][var_14_2]
 end
 
-function BackendInterfaceTalentsPlayfab.set_talents(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BackendInterfaceTalentsPlayfab.set_talents = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = ""
 
 	for iter_15_0 = 1, #arg_15_2 do
@@ -321,7 +321,7 @@ function BackendInterfaceTalentsPlayfab.set_talents(arg_15_0, arg_15_1, arg_15_2
 	arg_15_0._dirty = true
 end
 
-function BackendInterfaceTalentsPlayfab.get_talents(arg_16_0, arg_16_1)
+BackendInterfaceTalentsPlayfab.get_talents = function (arg_16_0, arg_16_1)
 	if arg_16_0._dirty then
 		arg_16_0:_refresh()
 	end
@@ -335,7 +335,7 @@ function BackendInterfaceTalentsPlayfab.get_talents(arg_16_0, arg_16_1)
 	return var_16_0[arg_16_1]
 end
 
-function BackendInterfaceTalentsPlayfab.get_bot_talents(arg_17_0, arg_17_1)
+BackendInterfaceTalentsPlayfab.get_bot_talents = function (arg_17_0, arg_17_1)
 	if arg_17_0._dirty then
 		arg_17_0:_refresh()
 	end
@@ -343,7 +343,7 @@ function BackendInterfaceTalentsPlayfab.get_bot_talents(arg_17_0, arg_17_1)
 	return arg_17_0._bot_talents[arg_17_1]
 end
 
-function BackendInterfaceTalentsPlayfab.get_default_talents(arg_18_0, arg_18_1)
+BackendInterfaceTalentsPlayfab.get_default_talents = function (arg_18_0, arg_18_1)
 	if arg_18_0._dirty then
 		arg_18_0:_refresh()
 	end
@@ -351,7 +351,7 @@ function BackendInterfaceTalentsPlayfab.get_default_talents(arg_18_0, arg_18_1)
 	return arg_18_0._default_loadouts_talents[arg_18_1]
 end
 
-function BackendInterfaceTalentsPlayfab.get_career_talents(arg_19_0, arg_19_1)
+BackendInterfaceTalentsPlayfab.get_career_talents = function (arg_19_0, arg_19_1)
 	if arg_19_0._dirty then
 		arg_19_0:_refresh()
 	end
@@ -359,7 +359,7 @@ function BackendInterfaceTalentsPlayfab.get_career_talents(arg_19_0, arg_19_1)
 	return arg_19_0._career_loadouts_talents[arg_19_1]
 end
 
-function BackendInterfaceTalentsPlayfab.get_career_talent_ids(arg_20_0, arg_20_1, arg_20_2)
+BackendInterfaceTalentsPlayfab.get_career_talent_ids = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = CareerSettings[arg_20_1]
 	local var_20_1 = var_20_0.profile_name
 	local var_20_2 = var_20_0.talent_tree_index

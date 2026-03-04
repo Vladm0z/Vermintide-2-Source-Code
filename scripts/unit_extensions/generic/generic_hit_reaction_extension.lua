@@ -129,7 +129,7 @@ end
 
 local var_0_12 = DamageUtils.is_player_unit
 
-function GenericHitReactionExtension.init(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+GenericHitReactionExtension.init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0.world = arg_9_1.world
 	arg_9_0.is_husk = arg_9_3.is_husk
 	arg_9_0.unit = arg_9_2
@@ -146,11 +146,11 @@ function GenericHitReactionExtension.init(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	arg_9_0.hit_effect_template = arg_9_3.hit_effect_template
 end
 
-function GenericHitReactionExtension.set_hit_effect_template_id(arg_10_0, arg_10_1)
+GenericHitReactionExtension.set_hit_effect_template_id = function (arg_10_0, arg_10_1)
 	arg_10_0.hit_effect_template = arg_10_1
 end
 
-function GenericHitReactionExtension.extensions_ready(arg_11_0, arg_11_1, arg_11_2)
+GenericHitReactionExtension.extensions_ready = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0.health_extension = ScriptUnit.extension(arg_11_2, "health_system")
 
 	fassert(arg_11_0.health_extension)
@@ -162,17 +162,17 @@ function GenericHitReactionExtension.extensions_ready(arg_11_0, arg_11_1, arg_11
 	arg_11_0._breed = BLACKBOARDS[arg_11_2] and BLACKBOARDS[arg_11_2].breed or nil
 end
 
-function GenericHitReactionExtension.destroy(arg_12_0)
+GenericHitReactionExtension.destroy = function (arg_12_0)
 	return
 end
 
-function GenericHitReactionExtension.unfreeze(arg_13_0)
+GenericHitReactionExtension.unfreeze = function (arg_13_0)
 	arg_13_0._delayed_animation = nil
 	arg_13_0._delayed_flow = nil
 	arg_13_0._delayed_push = nil
 end
 
-function GenericHitReactionExtension.reset(arg_14_0)
+GenericHitReactionExtension.reset = function (arg_14_0)
 	return
 end
 
@@ -183,7 +183,7 @@ local var_0_16 = {}
 local var_0_17 = {}
 local var_0_18 = {}
 
-function GenericHitReactionExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+GenericHitReactionExtension.update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if arg_15_0._delayed_flow then
 		var_0_8(arg_15_0._delayed_flow, var_0_11, arg_15_1)
 
@@ -299,7 +299,7 @@ function GenericHitReactionExtension.update(arg_15_0, arg_15_1, arg_15_2, arg_15
 	end
 end
 
-function GenericHitReactionExtension._resolve_effects(arg_16_0, arg_16_1, arg_16_2)
+GenericHitReactionExtension._resolve_effects = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.hit_effect_template
 	local var_16_1 = var_0_0[var_16_0]
 
@@ -321,7 +321,7 @@ function GenericHitReactionExtension._resolve_effects(arg_16_0, arg_16_1, arg_16
 	return arg_16_2, var_16_2
 end
 
-function GenericHitReactionExtension._can_wall_nail(arg_17_0, arg_17_1)
+GenericHitReactionExtension._can_wall_nail = function (arg_17_0, arg_17_1)
 	if arg_17_1.disable_wall_nail then
 		return false
 	end
@@ -353,11 +353,11 @@ function GenericHitReactionExtension._can_wall_nail(arg_17_0, arg_17_1)
 	return true
 end
 
-function GenericHitReactionExtension.set_death_sound_event_id(arg_18_0, arg_18_1)
+GenericHitReactionExtension.set_death_sound_event_id = function (arg_18_0, arg_18_1)
 	arg_18_0._death_sound_event_id = arg_18_1
 end
 
-function GenericHitReactionExtension.death_sound_event_id(arg_19_0)
+GenericHitReactionExtension.death_sound_event_id = function (arg_19_0)
 	return arg_19_0._death_sound_event_id
 end
 
@@ -367,7 +367,7 @@ local var_0_19 = {
 	torso = true
 }
 
-function GenericHitReactionExtension._check_for_diagonal_dismemberment(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+GenericHitReactionExtension._check_for_diagonal_dismemberment = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	if not Unit.actor(arg_20_1, arg_20_2) then
 		return nil, false
 	end
@@ -405,7 +405,7 @@ local var_0_20 = {
 	de = true
 }
 
-function GenericHitReactionExtension._is_dismembering_allowed(arg_21_0, arg_21_1)
+GenericHitReactionExtension._is_dismembering_allowed = function (arg_21_0, arg_21_1)
 	if IS_CONSOLE then
 		if not arg_21_1.is_critical_strike or not Managers.account:console_type_setting("allow_dismemberment") then
 			return false
@@ -464,7 +464,7 @@ local var_0_21 = {
 local var_0_22 = {}
 local var_0_23 = {}
 
-function GenericHitReactionExtension._execute_effect(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+GenericHitReactionExtension._execute_effect = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	local var_22_0 = arg_22_0.world
 	local var_22_1 = Unit.get_data(arg_22_1, "breed")
 	local var_22_2 = arg_22_3[DamageDataIndex.ATTACKER]
@@ -728,7 +728,7 @@ function GenericHitReactionExtension._execute_effect(arg_22_0, arg_22_1, arg_22_
 	end
 end
 
-function GenericHitReactionExtension._do_push(arg_23_0, arg_23_1, arg_23_2)
+GenericHitReactionExtension._do_push = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0._delayed_push
 	local var_23_1 = var_23_0.push_parameters
 	local var_23_2 = var_23_0.hit_direction_table

@@ -7,7 +7,7 @@ local var_0_3 = var_0_0.animation_definitions
 
 KillConfirmationUI = class(KillConfirmationUI)
 
-function KillConfirmationUI.init(arg_1_0, arg_1_1, arg_1_2)
+KillConfirmationUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._input_manager = arg_1_2.input_manager
@@ -31,7 +31,7 @@ function KillConfirmationUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "add_player_knock_confirmation", "event_add_player_knock_confirmation")
 end
 
-function KillConfirmationUI.destroy(arg_2_0)
+KillConfirmationUI.destroy = function (arg_2_0)
 	GarbageLeakDetector.register_object(arg_2_0, "kill_confiramtion")
 
 	local var_2_0 = Managers.state.event
@@ -42,14 +42,14 @@ function KillConfirmationUI.destroy(arg_2_0)
 	arg_2_0.ui_animator = nil
 end
 
-function KillConfirmationUI._create_ui_elements(arg_3_0)
+KillConfirmationUI._create_ui_elements = function (arg_3_0)
 	UIRenderer.clear_scenegraph_queue(arg_3_0._ui_renderer)
 
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_3_0._kill_confirm_widget = UIWidget.init(var_0_1)
 end
 
-function KillConfirmationUI.update(arg_4_0, arg_4_1, arg_4_2)
+KillConfirmationUI.update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._animations
 	local var_4_1 = arg_4_0._ui_animator
 
@@ -68,7 +68,7 @@ function KillConfirmationUI.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_draw(arg_4_1)
 end
 
-function KillConfirmationUI._draw(arg_5_0, arg_5_1)
+KillConfirmationUI._draw = function (arg_5_0, arg_5_1)
 	if not arg_5_0._has_active_kill_confirm then
 		return
 	end
@@ -83,7 +83,7 @@ function KillConfirmationUI._draw(arg_5_0, arg_5_1)
 	UIRenderer.end_pass(var_5_0)
 end
 
-function KillConfirmationUI._get_badge(arg_6_0, arg_6_1)
+KillConfirmationUI._get_badge = function (arg_6_0, arg_6_1)
 	local var_6_0 = NetworkLookup.badges[arg_6_1]
 	local var_6_1 = BadgeDefinitions[var_6_0]
 
@@ -92,7 +92,7 @@ function KillConfirmationUI._get_badge(arg_6_0, arg_6_1)
 	return var_6_1
 end
 
-function KillConfirmationUI.event_add_player_kill_confirmation(arg_7_0, arg_7_1, arg_7_2)
+KillConfirmationUI.event_add_player_kill_confirmation = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1 == "dark_pact" and NetworkLookup.badges.kill_hero or NetworkLookup.badges.kill_pactsworn
 	local var_7_1 = arg_7_0:_get_badge(var_7_0)
 
@@ -101,7 +101,7 @@ function KillConfirmationUI.event_add_player_kill_confirmation(arg_7_0, arg_7_1,
 	arg_7_0:add_badge(arg_7_0._local_unique_id .. "_" .. var_7_0, var_7_1)
 end
 
-function KillConfirmationUI.event_add_player_knock_confirmation(arg_8_0, arg_8_1, arg_8_2)
+KillConfirmationUI.event_add_player_knock_confirmation = function (arg_8_0, arg_8_1, arg_8_2)
 	if not Managers.state.side:is_enemy_by_player(arg_8_1, arg_8_2) then
 		return
 	end
@@ -114,7 +114,7 @@ function KillConfirmationUI.event_add_player_knock_confirmation(arg_8_0, arg_8_1
 	arg_8_0:add_badge(arg_8_0._local_unique_id .. "_" .. var_8_0, var_8_1)
 end
 
-function KillConfirmationUI._add_to_queue(arg_9_0, arg_9_1, arg_9_2)
+KillConfirmationUI._add_to_queue = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._badges_queue
 
 	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
@@ -132,7 +132,7 @@ function KillConfirmationUI._add_to_queue(arg_9_0, arg_9_1, arg_9_2)
 	}
 end
 
-function KillConfirmationUI.add_badge(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+KillConfirmationUI.add_badge = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_3 = arg_10_3 == nil and true or arg_10_3
 	arg_10_4 = arg_10_4 == nil and 1 or arg_10_4
 
@@ -165,7 +165,7 @@ function KillConfirmationUI.add_badge(arg_10_0, arg_10_1, arg_10_2, arg_10_3, ar
 	arg_10_0:_start_animation("on_enter", 1, var_10_0)
 end
 
-function KillConfirmationUI._start_animation(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+KillConfirmationUI._start_animation = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = {
 		wwise_world = arg_11_0._wwise_world,
 		render_settings = arg_11_0._render_settings,
@@ -179,12 +179,12 @@ function KillConfirmationUI._start_animation(arg_11_0, arg_11_1, arg_11_2, arg_1
 	}
 end
 
-function KillConfirmationUI._remove_active_badge(arg_12_0, arg_12_1)
+KillConfirmationUI._remove_active_badge = function (arg_12_0, arg_12_1)
 	arg_12_0._animations[arg_12_1] = nil
 	arg_12_0._has_active_kill_confirm = false
 end
 
-function KillConfirmationUI._add_badge_from_queue(arg_13_0)
+KillConfirmationUI._add_badge_from_queue = function (arg_13_0)
 	if arg_13_0._has_active_kill_confirm then
 		return
 	end
@@ -201,6 +201,6 @@ function KillConfirmationUI._add_badge_from_queue(arg_13_0)
 	arg_13_0:add_badge(var_13_2, var_13_1, false, var_13_0.amount)
 end
 
-function KillConfirmationUI._play_sound(arg_14_0, arg_14_1)
+KillConfirmationUI._play_sound = function (arg_14_0, arg_14_1)
 	return WwiseWorld.trigger_event(arg_14_0._wwise_world, arg_14_1)
 end

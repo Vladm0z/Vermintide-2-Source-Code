@@ -16,7 +16,7 @@ local function var_0_3(arg_1_0, arg_1_1)
 		["7"] = "111",
 		["4"] = "100"
 	}
-	local var_1_2 = string.gsub(var_1_0, "(.)", function(arg_2_0)
+	local var_1_2 = string.gsub(var_1_0, "(.)", function (arg_2_0)
 		return var_1_1[arg_2_0]
 	end)
 	local var_1_3 = string.gsub(var_1_2, "^0*(.*)$", "%1")
@@ -544,7 +544,7 @@ local function var_0_11(arg_8_0)
 	local var_8_0 = ""
 	local var_8_1
 
-	string.gsub(arg_8_0, "..?.?", function(arg_9_0)
+	string.gsub(arg_8_0, "..?.?", function (arg_9_0)
 		var_8_1 = tonumber(arg_9_0)
 
 		if #arg_9_0 == 3 then
@@ -565,7 +565,7 @@ local function var_0_12(arg_10_0)
 	local var_10_2
 	local var_10_3
 
-	string.gsub(arg_10_0, "..?", function(arg_11_0)
+	string.gsub(arg_10_0, "..?", function (arg_11_0)
 		if #arg_11_0 == 2 then
 			var_10_2 = var_0_10[string.byte(string.sub(arg_11_0, 1, 1))]
 			var_10_3 = var_0_10[string.byte(string.sub(arg_11_0, 2, 2))]
@@ -583,7 +583,7 @@ end
 local function var_0_13(arg_12_0)
 	local var_12_0 = {}
 
-	string.gsub(arg_12_0, ".", function(arg_13_0)
+	string.gsub(arg_12_0, ".", function (arg_13_0)
 		var_12_0[#var_12_0 + 1] = var_0_3(string.byte(arg_13_0), 8)
 	end)
 
@@ -1437,7 +1437,7 @@ local var_0_18 = {
 
 local function var_0_19(arg_16_0)
 	local var_16_0 = {}
-	local var_16_1 = string.gsub(arg_16_0, "(........)", function(arg_17_0)
+	local var_16_1 = string.gsub(arg_16_0, "(........)", function (arg_17_0)
 		var_16_0[#var_16_0 + 1] = tonumber(arg_17_0, 2)
 	end)
 
@@ -4359,7 +4359,7 @@ local function var_0_36(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = false
 
 	if arg_29_0 == -1 then
-		-- block empty
+		-- Nothing
 	elseif arg_29_0 == 0 then
 		if math.fmod(arg_29_1 + arg_29_2, 2) == 0 then
 			var_29_0 = true
@@ -4479,7 +4479,7 @@ local function var_0_38(arg_31_0, arg_31_1, arg_31_2)
 	local var_31_8 = 0
 	local var_31_9, var_31_10 = var_31_0, var_31_0
 
-	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function(arg_32_0)
+	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function (arg_32_0)
 		var_31_8 = var_31_8 + 1
 		var_31_3, var_31_9, var_31_10, var_31_7 = var_0_37(arg_31_0, var_31_9, var_31_10, var_31_7, arg_32_0, arg_31_2)
 

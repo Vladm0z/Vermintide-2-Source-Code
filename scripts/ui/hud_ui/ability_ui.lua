@@ -5,7 +5,7 @@ local var_0_1 = var_0_0.scenegraph_definition
 
 AbilityUI = class(AbilityUI)
 
-function AbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
+AbilityUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._input_manager = arg_1_2.input_manager
 	arg_1_0._player = arg_1_2.player
@@ -27,7 +27,7 @@ function AbilityUI.init(arg_1_0, arg_1_1, arg_1_2)
 	var_1_0:register(arg_1_0, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-function AbilityUI._create_ui_elements(arg_2_0)
+AbilityUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0._widgets, arg_2_0._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
 
@@ -35,7 +35,7 @@ function AbilityUI._create_ui_elements(arg_2_0)
 	arg_2_0:event_input_changed()
 end
 
-function AbilityUI._get_player_unit(arg_3_0)
+AbilityUI._get_player_unit = function (arg_3_0)
 	if arg_3_0._is_spectator then
 		return arg_3_0._spectated_player, arg_3_0._spectated_player_unit
 	end
@@ -45,7 +45,7 @@ function AbilityUI._get_player_unit(arg_3_0)
 	return var_3_0, var_3_0.player_unit
 end
 
-function AbilityUI._update_ability_widget(arg_4_0, arg_4_1, arg_4_2)
+AbilityUI._update_ability_widget = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0, var_4_1 = arg_4_0:_get_player_unit()
 
 	if not var_4_1 then
@@ -132,7 +132,7 @@ function AbilityUI._update_ability_widget(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function AbilityUI.destroy(arg_5_0)
+AbilityUI.destroy = function (arg_5_0)
 	local var_5_0 = Managers.state.event
 
 	var_5_0:unregister("input_changed", arg_5_0)
@@ -141,13 +141,13 @@ function AbilityUI.destroy(arg_5_0)
 	print("[AbilityUI] - Destroy")
 end
 
-function AbilityUI.set_visible(arg_6_0, arg_6_1)
+AbilityUI.set_visible = function (arg_6_0, arg_6_1)
 	arg_6_0._is_visible = arg_6_1
 
 	arg_6_0:_set_elements_visible(arg_6_1)
 end
 
-function AbilityUI._set_elements_visible(arg_7_0, arg_7_1)
+AbilityUI._set_elements_visible = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_renderer
 
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._widgets) do
@@ -158,7 +158,7 @@ function AbilityUI._set_elements_visible(arg_7_0, arg_7_1)
 	arg_7_0._dirty = true
 end
 
-function AbilityUI._smudge(arg_8_0)
+AbilityUI._smudge = function (arg_8_0)
 	UIUtils.mark_dirty(arg_8_0._widgets)
 
 	if arg_8_0._ability_charge_widgets and not table.is_empty(arg_8_0._ability_charge_widgets) then
@@ -168,7 +168,7 @@ function AbilityUI._smudge(arg_8_0)
 	arg_8_0._dirty = true
 end
 
-function AbilityUI._handle_gamepad(arg_9_0)
+AbilityUI._handle_gamepad = function (arg_9_0)
 	local var_9_0 = Managers.input:is_device_active("gamepad")
 	local var_9_1 = (UISettings.use_gamepad_hud_layout ~= "auto" or not var_9_0) and UISettings.use_gamepad_hud_layout ~= "always" and not IS_CONSOLE
 
@@ -187,7 +187,7 @@ local var_0_2 = {
 	registry_key = "player_status"
 }
 
-function AbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
+AbilityUI.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._is_visible then
 		return
 	end
@@ -222,7 +222,7 @@ function AbilityUI.update(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:draw(arg_10_1, arg_10_2)
 end
 
-function AbilityUI.draw(arg_11_0, arg_11_1, arg_11_2)
+AbilityUI.draw = function (arg_11_0, arg_11_1, arg_11_2)
 	if not arg_11_0._is_visible or not arg_11_0._dirty then
 		return
 	end
@@ -241,13 +241,13 @@ function AbilityUI.draw(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._dirty = false
 end
 
-function AbilityUI.set_alpha(arg_12_0, arg_12_1)
+AbilityUI.set_alpha = function (arg_12_0, arg_12_1)
 	arg_12_0._render_settings.alpha_multiplier = arg_12_1
 
 	arg_12_0:_smudge()
 end
 
-function AbilityUI._get_input_texture_data(arg_13_0, arg_13_1)
+AbilityUI._get_input_texture_data = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._input_manager
 	local var_13_1 = var_13_0:get_service("Player")
 	local var_13_2 = var_13_0:is_device_active("gamepad")
@@ -255,7 +255,7 @@ function AbilityUI._get_input_texture_data(arg_13_0, arg_13_1)
 	return UISettings.get_gamepad_input_texture_data(var_13_1, arg_13_1, var_13_2)
 end
 
-function AbilityUI.event_input_changed(arg_14_0)
+AbilityUI.event_input_changed = function (arg_14_0)
 	local var_14_0 = Managers.input:is_device_active("gamepad")
 	local var_14_1 = #InventorySettings.slots
 	local var_14_2 = var_14_0 and "ability" or "action_career"
@@ -280,7 +280,7 @@ function AbilityUI.event_input_changed(arg_14_0)
 	arg_14_0:_smudge()
 end
 
-function AbilityUI.on_spectator_target_changed(arg_15_0, arg_15_1)
+AbilityUI.on_spectator_target_changed = function (arg_15_0, arg_15_1)
 	arg_15_0._spectated_player_unit = arg_15_1
 	arg_15_0._spectated_player = Managers.player:owner(arg_15_1)
 	arg_15_0._is_spectator = true
@@ -290,7 +290,7 @@ function AbilityUI.on_spectator_target_changed(arg_15_0, arg_15_1)
 	arg_15_0:set_visible(var_15_0)
 end
 
-function AbilityUI._update_numeric_ui_ability_cooldown(arg_16_0)
+AbilityUI._update_numeric_ui_ability_cooldown = function (arg_16_0)
 	local var_16_0 = Managers.player:local_player()
 
 	if not var_16_0 then
@@ -325,7 +325,7 @@ function AbilityUI._update_numeric_ui_ability_cooldown(arg_16_0)
 	arg_16_0:_smudge()
 end
 
-function AbilityUI._update_ability_charges_widgets(arg_17_0, arg_17_1, arg_17_2)
+AbilityUI._update_ability_charges_widgets = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = false
 	local var_17_1, var_17_2 = arg_17_0:_get_player_unit()
 

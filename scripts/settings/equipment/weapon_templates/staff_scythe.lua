@@ -14,7 +14,7 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge_left",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -65,7 +65,7 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					return arg_2_1:reset_release_input()
 				end
 			},
@@ -74,7 +74,7 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_one_hold",
 				anim_event = "attack_swing_charge_right",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -125,7 +125,7 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_4_0, arg_4_1)
+				enter_function = function (arg_4_0, arg_4_1)
 					return arg_4_1:reset_release_input()
 				end
 			},
@@ -133,7 +133,7 @@ local var_0_6 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_left_diagonal",
-				anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -188,7 +188,7 @@ local var_0_6 = {
 				kind = "melee_start",
 				anim_end_event = "attack_finished",
 				anim_event = "attack_swing_charge_right",
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action" and arg_6_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -264,7 +264,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_left_diagonal",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action" and arg_7_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -443,7 +443,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_up_right",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action" and arg_8_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -622,7 +622,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_left",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_9_0, arg_9_1)
+				anim_end_event_condition_func = function (arg_9_0, arg_9_1)
 					return arg_9_1 ~= "new_interupting_action" and arg_9_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -801,7 +801,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_right",
 				height_mod = 10,
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_10_0, arg_10_1)
+				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
 					return arg_10_1 ~= "new_interupting_action" and arg_10_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -978,7 +978,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_11_0, arg_11_1)
+				anim_end_event_condition_func = function (arg_11_0, arg_11_1)
 					return arg_11_1 ~= "new_interupting_action" and arg_11_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1029,7 +1029,7 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_12_0, arg_12_1)
+				enter_function = function (arg_12_0, arg_12_1)
 					return arg_12_1:reset_release_input()
 				end,
 				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
@@ -1129,7 +1129,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_right",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_13_0, arg_13_1)
+				anim_end_event_condition_func = function (arg_13_0, arg_13_1)
 					return arg_13_1 ~= "new_interupting_action" and arg_13_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1180,7 +1180,7 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_14_0, arg_14_1)
+				enter_function = function (arg_14_0, arg_14_1)
 					return arg_14_1:reset_release_input()
 				end,
 				critical_strike = {},
@@ -1280,7 +1280,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_15_0, arg_15_1)
+				anim_end_event_condition_func = function (arg_15_0, arg_15_1)
 					return arg_15_1 ~= "new_interupting_action" and arg_15_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1331,7 +1331,7 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_16_0, arg_16_1)
+				enter_function = function (arg_16_0, arg_16_1)
 					return arg_16_1:reset_release_input()
 				end,
 				critical_strike = {}
@@ -1358,7 +1358,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_heavy_left_diagonal",
 				height_mod = 10,
 				total_time = 2.25,
-				anim_end_event_condition_func = function(arg_17_0, arg_17_1)
+				anim_end_event_condition_func = function (arg_17_0, arg_17_1)
 					return arg_17_1 ~= "new_interupting_action" and arg_17_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1409,7 +1409,7 @@ local var_0_6 = {
 						input = "action_three"
 					}
 				},
-				enter_function = function(arg_18_0, arg_18_1)
+				enter_function = function (arg_18_0, arg_18_1)
 					return arg_18_1:reset_release_input()
 				end,
 				critical_strike = {},
@@ -1521,7 +1521,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_left_diagonal_last",
 				hit_stop_anim = "attack_hit_alt_effect",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_19_0, arg_19_1)
+				anim_end_event_condition_func = function (arg_19_0, arg_19_1)
 					return arg_19_1 ~= "new_interupting_action" and arg_19_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -1694,7 +1694,7 @@ local var_0_6 = {
 				anim_event = "attack_swing_up_right",
 				hit_stop_anim = "attack_hit_alt_effect",
 				total_time = 2.5,
-				anim_end_event_condition_func = function(arg_20_0, arg_20_1)
+				anim_end_event_condition_func = function (arg_20_0, arg_20_1)
 					return arg_20_1 ~= "new_interupting_action" and arg_20_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -1858,7 +1858,7 @@ local var_0_6 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_21_0, arg_21_1)
+				anim_end_event_condition_func = function (arg_21_0, arg_21_1)
 					return arg_21_1 ~= "new_interupting_action" and arg_21_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -1918,7 +1918,7 @@ local var_0_6 = {
 					}
 				},
 				push_radius = var_0_0,
-				chain_condition_func = function(arg_22_0, arg_22_1)
+				chain_condition_func = function (arg_22_0, arg_22_1)
 					return not ScriptUnit.extension(arg_22_0, "status_system"):fatigued()
 				end
 			}
@@ -1931,11 +1931,11 @@ local var_0_6 = {
 				kind = "block",
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_23_0, arg_23_1)
+				anim_end_event_condition_func = function (arg_23_0, arg_23_1)
 					return arg_23_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_24_0, arg_24_1, arg_24_2)
+				enter_function = function (arg_24_0, arg_24_1, arg_24_2)
 					return arg_24_1:reset_release_input_with_delay(arg_24_2)
 				end,
 				buff_data = {
@@ -1985,7 +1985,7 @@ local var_0_6 = {
 				kind = "melee_start",
 				attack_hold_input = "action_three_hold",
 				anim_event = "special_action",
-				anim_end_event_condition_func = function(arg_25_0, arg_25_1)
+				anim_end_event_condition_func = function (arg_25_0, arg_25_1)
 					return arg_25_1 ~= "new_interupting_action" and arg_25_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -2023,17 +2023,17 @@ local var_0_6 = {
 						auto_chain = true
 					}
 				},
-				enter_function = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+				enter_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 					return arg_26_1:reset_release_input()
 				end,
-				condition_func = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+				condition_func = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					if arg_27_3 then
 						return arg_27_3:get_custom_data("scythe_state") == var_0_3
 					end
 
 					return false
 				end,
-				chain_condition_func = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+				chain_condition_func = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 					if arg_28_3 then
 						return arg_28_3:get_custom_data("scythe_state") == var_0_3
 					end
@@ -2066,7 +2066,7 @@ local var_0_6 = {
 				uninterruptible = true,
 				anim_event = "special_action_02",
 				total_time = 0.8,
-				anim_end_event_condition_func = function(arg_29_0, arg_29_1)
+				anim_end_event_condition_func = function (arg_29_0, arg_29_1)
 					return arg_29_1 ~= "new_interupting_action" and arg_29_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_1 * 1,
@@ -2131,14 +2131,14 @@ local var_0_6 = {
 						input = "action_wield"
 					}
 				},
-				finish_function = function(arg_30_0, arg_30_1, arg_30_2)
+				finish_function = function (arg_30_0, arg_30_1, arg_30_2)
 					if arg_30_2 then
 						arg_30_2:set_custom_data("activation_t", Managers.time:time("game"))
 						arg_30_2:set_custom_data("scythe_state", var_0_2)
 						Unit.flow_event(arg_30_2.unit, "close")
 					end
 				end,
-				enter_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+				enter_function = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 					return
 				end
 			}
@@ -2146,7 +2146,7 @@ local var_0_6 = {
 		action_inspect = ActionTemplates.action_inspect,
 		action_wield = ActionTemplates.wield
 	},
-	update = function(arg_32_0, arg_32_1, arg_32_2)
+	update = function (arg_32_0, arg_32_1, arg_32_2)
 		if not arg_32_0 then
 			return
 		end
@@ -2157,7 +2157,7 @@ local var_0_6 = {
 			arg_32_0:trigger_anim_event(var_0_5)
 		end
 	end,
-	on_wield = function(arg_33_0, arg_33_1)
+	on_wield = function (arg_33_0, arg_33_1)
 		if not arg_33_0 then
 			return
 		end

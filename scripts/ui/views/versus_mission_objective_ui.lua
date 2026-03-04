@@ -17,7 +17,7 @@ local var_0_10 = {
 
 VersusMissionObjectiveUI = class(VersusMissionObjectiveUI)
 
-function VersusMissionObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
+VersusMissionObjectiveUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = Managers.state.game_mode:game_mode()
 
 	arg_1_0._active = Managers.state.game_mode:game_mode_key() == "versus" and not var_1_0:in_training_mode()
@@ -70,15 +70,15 @@ function VersusMissionObjectiveUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._round_has_started = var_1_5
 end
 
-function VersusMissionObjectiveUI._register_rpcs(arg_2_0)
+VersusMissionObjectiveUI._register_rpcs = function (arg_2_0)
 	arg_2_0._ingame_ui_context.network_event_delegate:register(arg_2_0, unpack(var_0_10))
 end
 
-function VersusMissionObjectiveUI._unregister_rpcs(arg_3_0)
+VersusMissionObjectiveUI._unregister_rpcs = function (arg_3_0)
 	arg_3_0._ingame_ui_context.network_event_delegate:unregister(arg_3_0)
 end
 
-function VersusMissionObjectiveUI._is_dark_pact(arg_4_0)
+VersusMissionObjectiveUI._is_dark_pact = function (arg_4_0)
 	local var_4_0 = arg_4_0:_get_local_player_party_id()
 	local var_4_1 = Managers.party:get_party(var_4_0)
 	local var_4_2 = Managers.state.side.side_by_party[var_4_1]
@@ -86,7 +86,7 @@ function VersusMissionObjectiveUI._is_dark_pact(arg_4_0)
 	return var_4_2 and var_4_2:name() == "dark_pact"
 end
 
-function VersusMissionObjectiveUI._start_transition_animation(arg_5_0, arg_5_1, arg_5_2)
+VersusMissionObjectiveUI._start_transition_animation = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = {
 		wwise_world = arg_5_0._wwise_world,
 		render_settings = arg_5_0._render_settings
@@ -97,7 +97,7 @@ function VersusMissionObjectiveUI._start_transition_animation(arg_5_0, arg_5_1, 
 	arg_5_0._animations[arg_5_1] = var_5_2
 end
 
-function VersusMissionObjectiveUI._create_ui_elements(arg_6_0)
+VersusMissionObjectiveUI._create_ui_elements = function (arg_6_0)
 	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	local var_6_0 = {}
@@ -122,14 +122,14 @@ function VersusMissionObjectiveUI._create_ui_elements(arg_6_0)
 	arg_6_0._ui_animator = UIAnimator:new(arg_6_0._ui_scenegraph, var_0_2)
 end
 
-function VersusMissionObjectiveUI.destroy(arg_7_0)
+VersusMissionObjectiveUI.destroy = function (arg_7_0)
 	arg_7_0:_unregister_rpcs()
 	arg_7_0:_unregister_events()
 
 	arg_7_0._ui_animator = nil
 end
 
-function VersusMissionObjectiveUI.update(arg_8_0, arg_8_1, arg_8_2)
+VersusMissionObjectiveUI.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if var_0_9 then
 		arg_8_0:_create_ui_elements()
 	end
@@ -143,7 +143,7 @@ function VersusMissionObjectiveUI.update(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function VersusMissionObjectiveUI._update_objectives(arg_9_0, arg_9_1, arg_9_2)
+VersusMissionObjectiveUI._update_objectives = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0._objective_system:is_active() then
 		return
 	end
@@ -192,7 +192,7 @@ function VersusMissionObjectiveUI._update_objectives(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_update_objective_progress()
 end
 
-function VersusMissionObjectiveUI._set_active_scoring_side_color(arg_10_0, arg_10_1)
+VersusMissionObjectiveUI._set_active_scoring_side_color = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1 and Colors.get_color_table_with_alpha("local_player_team_lighter", 255) or Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 	local var_10_1 = arg_10_0._widgets_by_name.objective
 
@@ -201,14 +201,14 @@ function VersusMissionObjectiveUI._set_active_scoring_side_color(arg_10_0, arg_1
 	var_10_1.style.objective_icon.color = var_10_0
 end
 
-function VersusMissionObjectiveUI._update_current_objective(arg_11_0)
+VersusMissionObjectiveUI._update_current_objective = function (arg_11_0)
 	local var_11_0 = arg_11_0._widgets_by_name.objective
 	local var_11_1 = arg_11_0._objective_system:current_objective_icon()
 
 	var_11_0.content.objective_icon = var_11_1
 end
 
-function VersusMissionObjectiveUI._update_objective_status(arg_12_0, arg_12_1)
+VersusMissionObjectiveUI._update_objective_status = function (arg_12_0, arg_12_1)
 	if arg_12_0._objectives_widgets then
 		for iter_12_0 = 1, #arg_12_0._objectives_widgets do
 			local var_12_0 = iter_12_0 == arg_12_1
@@ -226,18 +226,18 @@ function VersusMissionObjectiveUI._update_objective_status(arg_12_0, arg_12_1)
 	end
 end
 
-function VersusMissionObjectiveUI._set_round_text(arg_13_0)
+VersusMissionObjectiveUI._set_round_text = function (arg_13_0)
 	local var_13_0 = arg_13_0._widgets_by_name.round_text.content
 	local var_13_1 = arg_13_0:_get_round_count()
 
 	var_13_0.text = string.format("Round: %d", var_13_1)
 end
 
-function VersusMissionObjectiveUI._get_round_count(arg_14_0)
+VersusMissionObjectiveUI._get_round_count = function (arg_14_0)
 	return (Managers.mechanism:game_mechanism():win_conditions():get_current_round())
 end
 
-function VersusMissionObjectiveUI._update_score(arg_15_0)
+VersusMissionObjectiveUI._update_score = function (arg_15_0)
 	local var_15_0 = arg_15_0:_get_local_player_party_id()
 	local var_15_1 = arg_15_0:_get_opponent_party_id()
 	local var_15_2 = arg_15_0._widgets_by_name.objective
@@ -246,13 +246,13 @@ function VersusMissionObjectiveUI._update_score(arg_15_0)
 	var_15_2.content.team_2_score = arg_15_0._win_conditions:get_total_score(var_15_1)
 end
 
-function VersusMissionObjectiveUI._get_party_side_name(arg_16_0, arg_16_1)
+VersusMissionObjectiveUI._get_party_side_name = function (arg_16_0, arg_16_1)
 	local var_16_0 = Managers.party:get_party(arg_16_1)
 
 	return (Managers.state.side.side_by_party[var_16_0]:name())
 end
 
-function VersusMissionObjectiveUI._get_local_player_party_id(arg_17_0)
+VersusMissionObjectiveUI._get_local_player_party_id = function (arg_17_0)
 	local var_17_0 = Network.peer_id()
 	local var_17_1 = Managers.party
 	local var_17_2 = 1
@@ -260,11 +260,11 @@ function VersusMissionObjectiveUI._get_local_player_party_id(arg_17_0)
 	return var_17_1:get_player_status(var_17_0, var_17_2).party_id
 end
 
-function VersusMissionObjectiveUI._get_opponent_party_id(arg_18_0)
+VersusMissionObjectiveUI._get_opponent_party_id = function (arg_18_0)
 	return arg_18_0:_get_local_player_party_id() == 1 and 2 or 1
 end
 
-function VersusMissionObjectiveUI._reset_timer_size(arg_19_0)
+VersusMissionObjectiveUI._reset_timer_size = function (arg_19_0)
 	local var_19_0 = arg_19_0._widgets_by_name.timer_text.style
 	local var_19_1 = var_19_0.text.default_font_size
 
@@ -272,15 +272,15 @@ function VersusMissionObjectiveUI._reset_timer_size(arg_19_0)
 	var_19_0.text_shadow.font_size = var_19_1
 end
 
-function VersusMissionObjectiveUI._set_objective_bar_end(arg_20_0, arg_20_1)
+VersusMissionObjectiveUI._set_objective_bar_end = function (arg_20_0, arg_20_1)
 	arg_20_0._widgets_by_name.progress_bar.content.disabled_progress_bar = arg_20_1
 end
 
-function VersusMissionObjectiveUI._play_sound(arg_21_0, arg_21_1)
+VersusMissionObjectiveUI._play_sound = function (arg_21_0, arg_21_1)
 	WwiseWorld.trigger_event(arg_21_0._wwise_world, arg_21_1)
 end
 
-function VersusMissionObjectiveUI._update_animations(arg_22_0, arg_22_1, arg_22_2)
+VersusMissionObjectiveUI._update_animations = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._animations
 	local var_22_1 = arg_22_0._ui_animator
 
@@ -299,7 +299,7 @@ function VersusMissionObjectiveUI._update_animations(arg_22_0, arg_22_1, arg_22_
 	end
 end
 
-function VersusMissionObjectiveUI._update_round_start_timer(arg_23_0, arg_23_1, arg_23_2)
+VersusMissionObjectiveUI._update_round_start_timer = function (arg_23_0, arg_23_1, arg_23_2)
 	if arg_23_0._round_has_started then
 		return
 	end
@@ -309,7 +309,7 @@ function VersusMissionObjectiveUI._update_round_start_timer(arg_23_0, arg_23_1, 
 	end
 end
 
-function VersusMissionObjectiveUI._set_pre_round_timer(arg_24_0, arg_24_1)
+VersusMissionObjectiveUI._set_pre_round_timer = function (arg_24_0, arg_24_1)
 	arg_24_0._widgets_by_name.objective.content.pre_round_timer = arg_24_1
 
 	if arg_24_1 <= 10 and arg_24_1 > 0 then
@@ -321,15 +321,15 @@ function VersusMissionObjectiveUI._set_pre_round_timer(arg_24_0, arg_24_1)
 	arg_24_0._countdown_timer = arg_24_1
 end
 
-function VersusMissionObjectiveUI.set_round_timer(arg_25_0, arg_25_1)
+VersusMissionObjectiveUI.set_round_timer = function (arg_25_0, arg_25_1)
 	arg_25_0._widgets_by_name.objective.content.pre_round_timer = arg_25_1
 end
 
-function VersusMissionObjectiveUI._set_round_starting_text(arg_26_0)
+VersusMissionObjectiveUI._set_round_starting_text = function (arg_26_0)
 	arg_26_0._widgets_by_name.round_starting_text.content.text = "Round Starting..."
 end
 
-function VersusMissionObjectiveUI._draw(arg_27_0, arg_27_1)
+VersusMissionObjectiveUI._draw = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0._ui_renderer
 	local var_27_1 = arg_27_0._ui_scenegraph
 	local var_27_2 = arg_27_0._input_manager:get_service("ingame_menu")
@@ -365,7 +365,7 @@ function VersusMissionObjectiveUI._draw(arg_27_0, arg_27_1)
 	var_27_3.alpha_multiplier = var_27_4
 end
 
-function VersusMissionObjectiveUI._set_objective_text(arg_28_0, arg_28_1)
+VersusMissionObjectiveUI._set_objective_text = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._widgets_by_name
 	local var_28_1 = arg_28_0._objective_text_widget
 	local var_28_2 = var_28_1.content
@@ -380,7 +380,7 @@ function VersusMissionObjectiveUI._set_objective_text(arg_28_0, arg_28_1)
 	var_28_2.text_height = 45
 end
 
-function VersusMissionObjectiveUI._format_timer(arg_29_0, arg_29_1)
+VersusMissionObjectiveUI._format_timer = function (arg_29_0, arg_29_1)
 	if not arg_29_1 and not (arg_29_1 <= 0) then
 		return "00:00"
 	end
@@ -391,7 +391,7 @@ end
 local var_0_11 = {}
 local var_0_12 = {}
 
-function VersusMissionObjectiveUI._update_world_markers(arg_30_0, arg_30_1, arg_30_2)
+VersusMissionObjectiveUI._update_world_markers = function (arg_30_0, arg_30_1, arg_30_2)
 	if arg_30_0._selected_objective_index < 1 then
 		return
 	end
@@ -424,7 +424,7 @@ function VersusMissionObjectiveUI._update_world_markers(arg_30_0, arg_30_1, arg_
 	end
 end
 
-function VersusMissionObjectiveUI._get_world_marker_targets(arg_31_0, arg_31_1)
+VersusMissionObjectiveUI._get_world_marker_targets = function (arg_31_0, arg_31_1)
 	local var_31_0 = Managers.player:local_player().viewport_name
 	local var_31_1 = ScriptWorld.viewport(arg_31_0._world, var_31_0)
 	local var_31_2 = ScriptViewport.camera(var_31_1)
@@ -474,11 +474,11 @@ function VersusMissionObjectiveUI._get_world_marker_targets(arg_31_0, arg_31_1)
 	return var_31_4
 end
 
-function VersusMissionObjectiveUI._remove_world_marker(arg_32_0, arg_32_1)
+VersusMissionObjectiveUI._remove_world_marker = function (arg_32_0, arg_32_1)
 	Managers.state.event:trigger("remove_world_marker", arg_32_1)
 end
 
-function VersusMissionObjectiveUI._request_world_marker(arg_33_0, arg_33_1)
+VersusMissionObjectiveUI._request_world_marker = function (arg_33_0, arg_33_1)
 	local var_33_0 = Managers.state.event
 	local var_33_1 = "versus_objective"
 	local var_33_2 = callback(arg_33_0, "cb_world_marker_spawned", arg_33_1)
@@ -492,23 +492,23 @@ function VersusMissionObjectiveUI._request_world_marker(arg_33_0, arg_33_1)
 	end
 end
 
-function VersusMissionObjectiveUI.cb_world_marker_spawned(arg_34_0, arg_34_1, arg_34_2)
+VersusMissionObjectiveUI.cb_world_marker_spawned = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0._world_markers[arg_34_1] = arg_34_2
 end
 
-function VersusMissionObjectiveUI.rpc_update_start_round_countdown_timer(arg_35_0, arg_35_1, arg_35_2)
+VersusMissionObjectiveUI.rpc_update_start_round_countdown_timer = function (arg_35_0, arg_35_1, arg_35_2)
 	arg_35_2 = math.round(arg_35_2)
 
 	Managers.state.event:trigger("ui_update_start_round_counter", arg_35_2)
 	Managers.state.event:trigger("ui_tab_update_start_round_counter", arg_35_2)
 end
 
-function VersusMissionObjectiveUI.rpc_ui_round_started(arg_36_0, arg_36_1)
+VersusMissionObjectiveUI.rpc_ui_round_started = function (arg_36_0, arg_36_1)
 	arg_36_0:_on_round_started()
 	Managers.state.event:trigger("ui_tab_round_started")
 end
 
-function VersusMissionObjectiveUI._on_round_started(arg_37_0)
+VersusMissionObjectiveUI._on_round_started = function (arg_37_0)
 	arg_37_0._round_has_started = true
 
 	local var_37_0 = arg_37_0._widgets_by_name.round_start_timer
@@ -536,7 +536,7 @@ function VersusMissionObjectiveUI._on_round_started(arg_37_0)
 	arg_37_0:_play_sound("menu_versus_match_start")
 end
 
-function VersusMissionObjectiveUI._register_events(arg_38_0)
+VersusMissionObjectiveUI._register_events = function (arg_38_0)
 	local var_38_0 = Managers.state.event
 
 	if var_38_0 then
@@ -546,7 +546,7 @@ function VersusMissionObjectiveUI._register_events(arg_38_0)
 	end
 end
 
-function VersusMissionObjectiveUI._unregister_events(arg_39_0)
+VersusMissionObjectiveUI._unregister_events = function (arg_39_0)
 	local var_39_0 = Managers.state.event
 
 	if var_39_0 then
@@ -556,15 +556,15 @@ function VersusMissionObjectiveUI._unregister_events(arg_39_0)
 	end
 end
 
-function VersusMissionObjectiveUI.update_start_round_counter(arg_40_0, arg_40_1)
+VersusMissionObjectiveUI.update_start_round_counter = function (arg_40_0, arg_40_1)
 	arg_40_0:_set_pre_round_timer(arg_40_1)
 end
 
-function VersusMissionObjectiveUI.round_started(arg_41_0)
+VersusMissionObjectiveUI.round_started = function (arg_41_0)
 	arg_41_0:_on_round_started()
 end
 
-function VersusMissionObjectiveUI._update_objective_progress(arg_42_0)
+VersusMissionObjectiveUI._update_objective_progress = function (arg_42_0)
 	local var_42_0 = arg_42_0._objective_system:current_objective_progress() or 0
 	local var_42_1 = 0
 	local var_42_2 = 360 - var_42_1 * 2

@@ -4,7 +4,7 @@ PlayerUnitMovementSettings = PlayerUnitMovementSettings or {}
 
 local var_0_0 = {}
 
-function PlayerUnitMovementSettings.get_movement_settings_table(arg_1_0)
+PlayerUnitMovementSettings.get_movement_settings_table = function (arg_1_0)
 	if not var_0_0[arg_1_0] then
 		PlayerUnitMovementSettings.register_unit(arg_1_0)
 	end
@@ -12,15 +12,15 @@ function PlayerUnitMovementSettings.get_movement_settings_table(arg_1_0)
 	return var_0_0[arg_1_0]
 end
 
-function PlayerUnitMovementSettings.register_unit(arg_2_0)
+PlayerUnitMovementSettings.register_unit = function (arg_2_0)
 	var_0_0[arg_2_0] = table.clone(PlayerUnitMovementSettings)
 end
 
-function PlayerUnitMovementSettings.unregister_unit(arg_3_0)
+PlayerUnitMovementSettings.unregister_unit = function (arg_3_0)
 	var_0_0[arg_3_0] = nil
 end
 
-function PlayerUnitMovementSettings.get_active_units_in_movement_settings()
+PlayerUnitMovementSettings.get_active_units_in_movement_settings = function ()
 	local var_4_0 = {}
 	local var_4_1 = 1
 
@@ -215,16 +215,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.9,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 1,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_5_0 = 0.5 * (0.5 - math.random())
 			local var_5_1 = -0.1 + math.random() * 0.05
 
 			return var_5_0, var_5_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 0.1
 		end,
-		onscreen_particle_function = function(arg_7_0)
+		onscreen_particle_function = function (arg_7_0)
 			return "fx/screenspace_head_blow_light_push"
 		end
 	},
@@ -232,16 +232,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_8_0 = 0.5 * (0.5 - math.random())
 			local var_8_1 = -0.2 + math.random() * 0.1
 
 			return var_8_0, var_8_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 0.35
 		end,
-		onscreen_particle_function = function(arg_10_0)
+		onscreen_particle_function = function (arg_10_0)
 			if arg_10_0 < 0.35 then
 				return
 			end
@@ -253,16 +253,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.6,
 		end_look_sense_override = 1,
 		movement_speed_modifier = 0.8,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_11_0 = 0.5 * (0.5 - math.random())
 			local var_11_1 = -0.15 + math.random() * 0.1
 
 			return var_11_0, var_11_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 0.35
 		end,
-		onscreen_particle_function = function(arg_13_0)
+		onscreen_particle_function = function (arg_13_0)
 			return "fx/screenspace_head_blow_medium_push"
 		end
 	},
@@ -270,16 +270,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_14_0 = 0.5 * (0.5 - math.random())
 			local var_14_1 = -0.3 + math.random() * 0.2
 
 			return var_14_0, var_14_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 0.6
 		end,
-		onscreen_particle_function = function(arg_16_0)
+		onscreen_particle_function = function (arg_16_0)
 			if arg_16_0 < 0.6 then
 				return "fx/screenspace_head_blow_light"
 			end
@@ -291,16 +291,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_17_0 = 0.5 * (0.5 - math.random())
 			local var_17_1 = -0.25 + math.random() * 0.1
 
 			return var_17_0, var_17_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 0.6
 		end,
-		onscreen_particle_function = function(arg_19_0)
+		onscreen_particle_function = function (arg_19_0)
 			return "fx/screenspace_head_blow_heavy_push"
 		end
 	},
@@ -308,16 +308,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.5,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_20_0 = 0.5 * (0.5 - math.random())
 			local var_20_1 = -0.5 + math.random() * 0.2
 
 			return var_20_0, var_20_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 1
 		end,
-		onscreen_particle_function = function(arg_22_0)
+		onscreen_particle_function = function (arg_22_0)
 			if arg_22_0 < 1 then
 				return "fx/screenspace_head_blow_medium"
 			end
@@ -329,16 +329,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.35,
 		end_look_sense_override = 0.7,
 		movement_speed_modifier = 0.1,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_23_0 = 0.5 * (0.5 - math.random())
 			local var_23_1 = -0.5 + math.random() * 0.2
 
 			return var_23_0, var_23_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 7
 		end,
-		onscreen_particle_function = function(arg_25_0)
+		onscreen_particle_function = function (arg_25_0)
 			if arg_25_0 < 7 then
 				return "fx/screenspace_head_blow_light"
 			end
@@ -350,16 +350,16 @@ PlayerUnitMovementSettings.hit_react_settings = {
 		start_look_sense_override = 0.4,
 		end_look_sense_override = 0.8,
 		movement_speed_modifier = 0.65,
-		look_override_function = function()
+		look_override_function = function ()
 			local var_26_0 = 0
 			local var_26_1 = 0.45
 
 			return var_26_0, var_26_1
 		end,
-		duration_function = function()
+		duration_function = function ()
 			return 1
 		end,
-		onscreen_particle_function = function(arg_28_0)
+		onscreen_particle_function = function (arg_28_0)
 			return "fx/screenspace_head_blow_medium_push"
 		end
 	}

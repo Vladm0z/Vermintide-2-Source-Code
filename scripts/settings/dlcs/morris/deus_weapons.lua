@@ -2573,7 +2573,7 @@ end
 
 local function var_0_11(arg_1_0)
 	return setmetatable(arg_1_0, {
-		__newindex = function(arg_2_0, arg_2_1, arg_2_2)
+		__newindex = function (arg_2_0, arg_2_1, arg_2_2)
 			error("Trying to modify read only table. (debug only assert)")
 		end
 	})

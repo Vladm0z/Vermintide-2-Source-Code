@@ -16,7 +16,7 @@ AISlotSystem = class(AISlotSystem, ExtensionSystemBase)
 local var_0_2 = SlotTemplates
 local var_0_3 = SlotTypeSettings
 
-function AISlotSystem.init(arg_1_0, arg_1_1, arg_1_2)
+AISlotSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -66,7 +66,7 @@ end
 
 local var_0_4
 
-function AISlotSystem.destroy(arg_2_0)
+AISlotSystem.destroy = function (arg_2_0)
 	if arg_2_0._traverse_logic ~= nil then
 		GwNavTagLayerCostTable.destroy(arg_2_0._navtag_layer_cost_table)
 		GwNavCostMap.destroy_tag_cost_table(arg_2_0._nav_cost_map_cost_table)
@@ -273,7 +273,7 @@ local function var_0_24(arg_8_0, arg_8_1)
 	var_8_0.slot = nil
 end
 
-function AISlotSystem.hot_join_sync(arg_9_0, arg_9_1, arg_9_2)
+AISlotSystem.hot_join_sync = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
@@ -294,7 +294,7 @@ local var_0_38 = 0.5
 local var_0_39 = var_0_38 + 0.6
 local var_0_40 = 2
 
-function AISlotSystem.do_slot_search(arg_10_0, arg_10_1, arg_10_2)
+AISlotSystem.do_slot_search = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.unit_extension_data[arg_10_1]
 
 	if var_10_0 then
@@ -466,7 +466,7 @@ local function var_0_50(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function AISlotSystem.improve_slot_position(arg_15_0, arg_15_1, arg_15_2)
+AISlotSystem.improve_slot_position = function (arg_15_0, arg_15_1, arg_15_2)
 	if not ALIVE[arg_15_1] then
 		return
 	end
@@ -524,7 +524,7 @@ function AISlotSystem.improve_slot_position(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function AISlotSystem.ai_unit_have_slot(arg_16_0, arg_16_1)
+AISlotSystem.ai_unit_have_slot = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.unit_extension_data[arg_16_1]
 
 	if not var_16_0 then
@@ -538,7 +538,7 @@ function AISlotSystem.ai_unit_have_slot(arg_16_0, arg_16_1)
 	return true
 end
 
-function AISlotSystem.ai_unit_have_wait_slot(arg_17_0, arg_17_1)
+AISlotSystem.ai_unit_have_wait_slot = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0.unit_extension_data[arg_17_1]
 
 	if not var_17_0 then
@@ -552,7 +552,7 @@ function AISlotSystem.ai_unit_have_wait_slot(arg_17_0, arg_17_1)
 	return true
 end
 
-function AISlotSystem.ai_unit_wait_slot_distance(arg_18_0, arg_18_1)
+AISlotSystem.ai_unit_wait_slot_distance = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.unit_extension_data[arg_18_1]
 
 	if not var_18_0 then
@@ -570,7 +570,7 @@ function AISlotSystem.ai_unit_wait_slot_distance(arg_18_0, arg_18_1)
 	return var_18_0.wait_slot_distance or math.huge
 end
 
-function AISlotSystem.ai_unit_slot_position(arg_19_0, arg_19_1)
+AISlotSystem.ai_unit_slot_position = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.unit_extension_data[arg_19_1]
 
 	if not var_19_0 then
@@ -586,7 +586,7 @@ function AISlotSystem.ai_unit_slot_position(arg_19_0, arg_19_1)
 	return nil
 end
 
-function AISlotSystem.ai_unit_blocked_attack(arg_20_0, arg_20_1)
+AISlotSystem.ai_unit_blocked_attack = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_0.unit_extension_data[arg_20_1]
 
 	if not var_20_0 or var_20_0.waiting_on_slot then
@@ -609,7 +609,7 @@ function AISlotSystem.ai_unit_blocked_attack(arg_20_0, arg_20_1)
 	end
 end
 
-function AISlotSystem.ai_unit_staggered(arg_21_0, arg_21_1)
+AISlotSystem.ai_unit_staggered = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.unit_extension_data[arg_21_1]
 
 	if not var_21_0 or var_21_0.waiting_on_slot then
@@ -632,7 +632,7 @@ function AISlotSystem.ai_unit_staggered(arg_21_0, arg_21_1)
 	end
 end
 
-function AISlotSystem.get_target_unit_slot_data(arg_22_0, arg_22_1, arg_22_2)
+AISlotSystem.get_target_unit_slot_data = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0.unit_extension_data[arg_22_1].all_slots[arg_22_2]
 
 	if not var_22_0 then
@@ -642,28 +642,28 @@ function AISlotSystem.get_target_unit_slot_data(arg_22_0, arg_22_1, arg_22_2)
 	return var_22_0.slots
 end
 
-function AISlotSystem.slots_count(arg_23_0, arg_23_1, arg_23_2)
+AISlotSystem.slots_count = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = arg_23_0.unit_extension_data[arg_23_1]
 	local var_23_1 = arg_23_2 or var_0_0
 
 	return var_23_0.all_slots[var_23_1].slots_count
 end
 
-function AISlotSystem.total_slots_count(arg_24_0, arg_24_1, arg_24_2)
+AISlotSystem.total_slots_count = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0.unit_extension_data[arg_24_1]
 	local var_24_1 = arg_24_2 or var_0_0
 
 	return var_24_0.all_slots[var_24_1].total_slots_count
 end
 
-function AISlotSystem.disabled_slots_count(arg_25_0, arg_25_1, arg_25_2)
+AISlotSystem.disabled_slots_count = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_0.unit_extension_data[arg_25_1]
 	local var_25_1 = arg_25_2 or var_0_0
 
 	return var_25_0.all_slots[var_25_1].disabled_slots_count
 end
 
-function AISlotSystem.set_release_slot_lock(arg_26_0, arg_26_1, arg_26_2)
+AISlotSystem.set_release_slot_lock = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_0.unit_extension_data[arg_26_1]
 
 	if var_26_0 then
@@ -1726,7 +1726,7 @@ local function var_0_88(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 	end
 end
 
-function AISlotSystem.update(arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+AISlotSystem.update = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
 	if not script_data.navigation_thread_disabled then
 		local var_56_0 = arg_56_0.nav_world
 
@@ -1745,7 +1745,7 @@ local var_0_94 = 1
 local var_0_95 = 5
 local var_0_96 = 0.25
 
-function AISlotSystem.physics_async_update(arg_57_0, arg_57_1, arg_57_2)
+AISlotSystem.physics_async_update = function (arg_57_0, arg_57_1, arg_57_2)
 	arg_57_0.t = arg_57_2
 
 	local var_57_0 = arg_57_0.target_units
@@ -1812,7 +1812,7 @@ function AISlotSystem.physics_async_update(arg_57_0, arg_57_1, arg_57_2)
 	end
 end
 
-function AISlotSystem.update_ai_unit_slot(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+AISlotSystem.update_ai_unit_slot = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
 	if not ALIVE[arg_58_1] then
 		var_0_24(arg_58_1, arg_58_3)
 
@@ -1871,7 +1871,7 @@ function AISlotSystem.update_ai_unit_slot(arg_58_0, arg_58_1, arg_58_2, arg_58_3
 	end
 end
 
-function AISlotSystem.update_target_slots(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6, arg_59_7)
+AISlotSystem.update_target_slots = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6, arg_59_7)
 	local var_59_0 = 0
 	local var_59_1
 	local var_59_2
@@ -1953,7 +1953,7 @@ function AISlotSystem.update_target_slots(arg_59_0, arg_59_1, arg_59_2, arg_59_3
 	return false
 end
 
-function AISlotSystem.update_total_slots_count(arg_60_0, arg_60_1)
+AISlotSystem.update_total_slots_count = function (arg_60_0, arg_60_1)
 	local var_60_0 = arg_60_0.target_units
 	local var_60_1 = #var_60_0
 	local var_60_2 = arg_60_0.unit_extension_data
@@ -1997,11 +1997,11 @@ function AISlotSystem.update_total_slots_count(arg_60_0, arg_60_1)
 	arg_60_0.num_occupied_slots = var_60_4
 end
 
-function AISlotSystem.register_prioritized_ai_unit_update(arg_61_0, arg_61_1)
+AISlotSystem.register_prioritized_ai_unit_update = function (arg_61_0, arg_61_1)
 	arg_61_0.update_slots_ai_units_prioritized[arg_61_1] = true
 end
 
-function AISlotSystem.prioritize_queued_units_on_slot(arg_62_0, arg_62_1)
+AISlotSystem.prioritize_queued_units_on_slot = function (arg_62_0, arg_62_1)
 	if arg_62_1 and arg_62_1.queue then
 		local var_62_0 = arg_62_1.queue
 		local var_62_1 = #var_62_0
@@ -2017,7 +2017,7 @@ end
 local var_0_97 = 9
 local var_0_98 = {}
 
-function AISlotSystem.on_add_extension(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
+AISlotSystem.on_add_extension = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
 	local var_63_0 = {}
 
 	ScriptUnit.set_extension(arg_63_2, "ai_slot_system", var_63_0, var_0_98)
@@ -2094,7 +2094,7 @@ function AISlotSystem.on_add_extension(arg_63_0, arg_63_1, arg_63_2, arg_63_3, a
 	return var_63_0
 end
 
-function AISlotSystem.extensions_ready(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+AISlotSystem.extensions_ready = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	if arg_64_3 == "AIEnemySlotExtension" then
 		local var_64_0 = arg_64_0.unit_extension_data[arg_64_2]
 		local var_64_1 = ScriptUnit.extension(arg_64_2, "ai_system"):breed()
@@ -2113,14 +2113,14 @@ function AISlotSystem.extensions_ready(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	end
 end
 
-function AISlotSystem.on_remove_extension(arg_65_0, arg_65_1, arg_65_2)
+AISlotSystem.on_remove_extension = function (arg_65_0, arg_65_1, arg_65_2)
 	arg_65_0.frozen_unit_extension_data[arg_65_1] = nil
 
 	arg_65_0:_cleanup_extension(arg_65_1, arg_65_2)
 	ScriptUnit.remove_extension(arg_65_1, arg_65_0.NAME)
 end
 
-function AISlotSystem.on_freeze_extension(arg_66_0, arg_66_1, arg_66_2)
+AISlotSystem.on_freeze_extension = function (arg_66_0, arg_66_1, arg_66_2)
 	local var_66_0 = arg_66_0.unit_extension_data[arg_66_1]
 
 	fassert(var_66_0, "Unit was already frozen.")
@@ -2146,7 +2146,7 @@ function AISlotSystem.on_freeze_extension(arg_66_0, arg_66_1, arg_66_2)
 	arg_66_0:_cleanup_extension(arg_66_1, arg_66_2)
 end
 
-function AISlotSystem._cleanup_extension(arg_67_0, arg_67_1, arg_67_2)
+AISlotSystem._cleanup_extension = function (arg_67_0, arg_67_1, arg_67_2)
 	local var_67_0 = arg_67_0.unit_extension_data[arg_67_1]
 
 	if var_67_0 == nil then
@@ -2207,7 +2207,7 @@ function AISlotSystem._cleanup_extension(arg_67_0, arg_67_1, arg_67_2)
 	arg_67_0.unit_extension_data[arg_67_1] = nil
 end
 
-function AISlotSystem.freeze(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+AISlotSystem.freeze = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	local var_68_0 = arg_68_0.frozen_unit_extension_data
 
 	if var_68_0[arg_68_1] then
@@ -2223,7 +2223,7 @@ function AISlotSystem.freeze(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	var_68_0[arg_68_1] = var_68_1
 end
 
-function AISlotSystem.unfreeze(arg_69_0, arg_69_1)
+AISlotSystem.unfreeze = function (arg_69_0, arg_69_1)
 	local var_69_0 = arg_69_0.frozen_unit_extension_data[arg_69_1]
 
 	arg_69_0.frozen_unit_extension_data[arg_69_1] = nil
@@ -2376,7 +2376,7 @@ local function var_0_99(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 								local var_70_44 = var_70_16
 
 								if var_70_43 == var_0_6.CHECK_MIDDLE then
-									-- block empty
+									-- Nothing
 								else
 									local var_70_45 = var_0_8[var_70_43]
 
@@ -2444,7 +2444,7 @@ local function var_0_100(arg_71_0, arg_71_1)
 	end
 end
 
-function AISlotSystem.set_allowed_layer(arg_72_0, arg_72_1, arg_72_2)
+AISlotSystem.set_allowed_layer = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = LAYER_ID_MAPPING[arg_72_1]
 
 	if arg_72_2 then

@@ -958,28 +958,28 @@ local function var_0_11(arg_1_0, arg_1_1)
 		{
 			style_id = "left_arrow_top",
 			pass_type = "triangle",
-			content_change_function = function(arg_2_0, arg_2_1)
+			content_change_function = function (arg_2_0, arg_2_1)
 				arg_2_1.color = arg_2_0.left_hotspot.is_hover and arg_2_1.hover_color or arg_2_1.base_color
 			end
 		},
 		{
 			style_id = "left_arrow_bottom",
 			pass_type = "triangle",
-			content_change_function = function(arg_3_0, arg_3_1)
+			content_change_function = function (arg_3_0, arg_3_1)
 				arg_3_1.color = arg_3_0.left_hotspot.is_hover and arg_3_1.hover_color or arg_3_1.base_color
 			end
 		},
 		{
 			style_id = "right_arrow_top",
 			pass_type = "triangle",
-			content_change_function = function(arg_4_0, arg_4_1)
+			content_change_function = function (arg_4_0, arg_4_1)
 				arg_4_1.color = arg_4_0.right_hotspot.is_hover and arg_4_1.hover_color or arg_4_1.base_color
 			end
 		},
 		{
 			style_id = "right_arrow_bottom",
 			pass_type = "triangle",
-			content_change_function = function(arg_5_0, arg_5_1)
+			content_change_function = function (arg_5_0, arg_5_1)
 				arg_5_1.color = arg_5_0.right_hotspot.is_hover and arg_5_1.hover_color or arg_5_1.base_color
 			end
 		},
@@ -1051,7 +1051,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "real_chat_text",
-			content_check_function = function(arg_6_0, arg_6_1)
+			content_check_function = function (arg_6_0, arg_6_1)
 				if not arg_6_0.text_field_active then
 					return false
 				else
@@ -1067,7 +1067,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 			style_id = "chat_hint",
 			pass_type = "text",
 			text_id = "chat_hint",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (arg_7_0, arg_7_1)
 				if arg_7_0.text_input_hotspot.is_hover then
 					arg_7_1.text_color = {
 						128,
@@ -1091,7 +1091,7 @@ local function var_0_11(arg_1_0, arg_1_1)
 			style_id = "private_user_name",
 			pass_type = "text",
 			text_id = "trimmed_private_user_name",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				if not arg_8_0.private_user_name then
 					return false
 				end
@@ -1579,7 +1579,7 @@ local function var_0_12(arg_9_0, arg_9_1)
 			style_id = "text",
 			pass_type = "text_area_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_10_0, arg_10_1)
+			content_check_function = function (arg_10_0, arg_10_1)
 				if arg_10_0.private_user_name then
 					return false
 				end
@@ -1593,7 +1593,7 @@ local function var_0_12(arg_9_0, arg_9_1)
 			style_id = "text",
 			pass_type = "text_area_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_11_0, arg_11_1)
+			content_check_function = function (arg_11_0, arg_11_1)
 				if not arg_11_0.private_user_name then
 					return false
 				end
@@ -1716,7 +1716,7 @@ local function var_0_13(arg_12_0, arg_12_1)
 			style_id = "text",
 			pass_type = "user_list_chat",
 			text_id = "text_field",
-			content_check_function = function(arg_13_0, arg_13_1)
+			content_check_function = function (arg_13_0, arg_13_1)
 				arg_13_0.message_tables = arg_13_0.channel_messages_table[arg_13_0.channel_name] or {}
 
 				return true
@@ -1846,7 +1846,7 @@ local function var_0_14(arg_14_0)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						local var_15_0 = arg_15_0.button_hotspot
 
 						return not var_15_0.is_selected and not var_15_0.is_hover
@@ -1856,7 +1856,7 @@ local function var_0_14(arg_14_0)
 					style_id = "title_text_hover",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						local var_16_0 = arg_16_0.button_hotspot
 
 						return not var_16_0.disable_button and (var_16_0.is_selected or var_16_0.is_hover)
@@ -1866,7 +1866,7 @@ local function var_0_14(arg_14_0)
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						local var_17_0 = arg_17_0.button_hotspot
 
 						return not var_17_0.disable_button and (var_17_0.is_selected or var_17_0.is_hover)
@@ -2095,7 +2095,7 @@ local function var_0_16(arg_18_0, arg_18_1, arg_18_2)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_19_0, arg_19_1)
+			content_check_function = function (arg_19_0, arg_19_1)
 				if arg_19_0.tab_hotspot.is_hover then
 					arg_19_1.text_color = arg_19_1.hover_color
 				elseif arg_19_0.selected then
@@ -2414,7 +2414,7 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			pass_type = "texture",
 			style_id = "exit_button",
 			texture_id = "exit_texture_id",
-			content_check_function = function(arg_21_0)
+			content_check_function = function (arg_21_0)
 				return not arg_21_0.exit_button_hotspot.is_hover
 			end
 		},
@@ -2422,7 +2422,7 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			pass_type = "texture",
 			style_id = "exit_button_hover",
 			texture_id = "exit_texture_hover_id",
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return arg_22_0.exit_button_hotspot.is_hover
 			end
 		},
@@ -2434,7 +2434,7 @@ function create_channel_entry(arg_20_0, arg_20_1)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_23_0, arg_23_1)
+			content_check_function = function (arg_23_0, arg_23_1)
 				if arg_23_0.channel_hotspot.is_hover then
 					arg_23_1.text_color = Colors.get_table("white")
 				else
@@ -2540,7 +2540,7 @@ function create_recent_channel_entry(arg_24_0, arg_24_1)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_25_0, arg_25_1)
+			content_check_function = function (arg_25_0, arg_25_1)
 				if arg_25_0.channel_hotspot.is_hover then
 					arg_25_1.text_color = Colors.get_table("white")
 				else
@@ -2602,7 +2602,7 @@ function create_popular_channels_entry(arg_26_0, arg_26_1, arg_26_2)
 			style_id = "channel_name",
 			pass_type = "text",
 			text_id = "channel_name",
-			content_check_function = function(arg_27_0, arg_27_1)
+			content_check_function = function (arg_27_0, arg_27_1)
 				if arg_27_0.channel_hotspot.is_hover then
 					arg_27_1.text_color = Colors.get_table("white")
 				else
@@ -2685,7 +2685,7 @@ function create_filtered_user_name_entry(arg_28_0, arg_28_1)
 			style_id = "user_name",
 			pass_type = "text",
 			text_id = "user_name",
-			content_check_function = function(arg_29_0, arg_29_1)
+			content_check_function = function (arg_29_0, arg_29_1)
 				if arg_29_0.user_name_hotspot.is_hover then
 					arg_29_1.text_color = Colors.get_table("white")
 				else
@@ -2749,7 +2749,7 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			pass_type = "texture",
 			style_id = "exit_button",
 			texture_id = "exit_texture_id",
-			content_check_function = function(arg_31_0)
+			content_check_function = function (arg_31_0)
 				return not arg_31_0.exit_button_hotspot.is_hover
 			end
 		},
@@ -2757,7 +2757,7 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			pass_type = "texture",
 			style_id = "exit_button_hover",
 			texture_id = "exit_texture_hover_id",
-			content_check_function = function(arg_32_0)
+			content_check_function = function (arg_32_0)
 				return arg_32_0.exit_button_hotspot.is_hover
 			end
 		},
@@ -2769,7 +2769,7 @@ function create_private_user_entry(arg_30_0, arg_30_1, arg_30_2)
 			style_id = "user_name",
 			pass_type = "text",
 			text_id = "trimmed_name",
-			content_check_function = function(arg_33_0, arg_33_1)
+			content_check_function = function (arg_33_0, arg_33_1)
 				local var_33_0 = arg_33_1.selected_color
 				local var_33_1 = arg_33_1.unselected_color
 
@@ -3016,7 +3016,7 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 			style_id = "command_compare",
 			pass_type = "text",
 			text_id = "command_compare",
-			content_check_function = function(arg_35_0, arg_35_1)
+			content_check_function = function (arg_35_0, arg_35_1)
 				if arg_35_0.command_hotspot.is_hover then
 					arg_35_0.command_compare = arg_35_0.command
 
@@ -3041,7 +3041,7 @@ function create_command_entry(arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, 
 			style_id = "description",
 			pass_type = "text",
 			text_id = "description",
-			content_check_function = function(arg_36_0, arg_36_1)
+			content_check_function = function (arg_36_0, arg_36_1)
 				return arg_36_0.description ~= nil
 			end
 		}
@@ -3138,7 +3138,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					style_id = "frame",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						arg_38_0.disable_button = not arg_38_0.parent.has_private_conversations
 
 						return true
@@ -3157,7 +3157,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_39_0)
+					content_check_function = function (arg_39_0)
 						local var_39_0 = arg_39_0.button_hotspot.is_clicked
 
 						return not var_39_0 or var_39_0 == 0
@@ -3166,7 +3166,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_40_0)
+					content_check_function = function (arg_40_0)
 						return arg_40_0.button_hotspot.disable_button
 					end
 				},
@@ -3174,7 +3174,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_41_0)
+					content_check_function = function (arg_41_0)
 						return not arg_41_0.button_hotspot.disable_button
 					end
 				},
@@ -3182,7 +3182,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_42_0)
+					content_check_function = function (arg_42_0)
 						return arg_42_0.button_hotspot.disable_button
 					end
 				},
@@ -3205,7 +3205,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_43_0)
+					content_check_function = function (arg_43_0)
 						local var_43_0 = arg_43_0.button_hotspot
 
 						return not var_43_0.disable_button and (var_43_0.is_selected or var_43_0.is_hover)
@@ -3215,7 +3215,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					texture_id = "speech_bubble_id",
 					style_id = "speech_bubble",
 					pass_type = "texture",
-					content_check_function = function(arg_44_0, arg_44_1)
+					content_check_function = function (arg_44_0, arg_44_1)
 						return arg_44_0.num_private_messages > 0
 					end
 				},
@@ -3223,7 +3223,7 @@ function create_private_button(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4,
 					style_id = "message_number",
 					pass_type = "text",
 					text_id = "message_number_text",
-					content_check_function = function(arg_45_0)
+					content_check_function = function (arg_45_0)
 						local var_45_0 = arg_45_0.num_private_messages
 
 						if var_45_0 <= 0 then
@@ -3463,7 +3463,7 @@ local function var_0_22()
 				{
 					style_id = "rect",
 					pass_type = "rounded_background",
-					content_check_function = function(arg_47_0)
+					content_check_function = function (arg_47_0)
 						return arg_47_0.texture_id and arg_47_0.hotspot.is_hover
 					end
 				},
@@ -3471,7 +3471,7 @@ local function var_0_22()
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function(arg_48_0)
+					content_check_function = function (arg_48_0)
 						return arg_48_0.texture_id
 					end
 				}
@@ -3546,7 +3546,7 @@ local function var_0_23()
 			style_id = "emoji_text",
 			pass_type = "text",
 			text_id = "emoji_text_id",
-			content_check_function = function(arg_50_0)
+			content_check_function = function (arg_50_0)
 				return arg_50_0.emoji_text_id ~= nil
 			end
 		},
@@ -3554,7 +3554,7 @@ local function var_0_23()
 			texture_id = "emoji_texture_id",
 			style_id = "emoji_texture",
 			pass_type = "texture",
-			content_check_function = function(arg_51_0)
+			content_check_function = function (arg_51_0)
 				return arg_51_0.emoji_texture_id
 			end
 		},
@@ -3725,7 +3725,7 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 		{
 			style_id = "background",
 			pass_type = "rect",
-			content_check_function = function(arg_54_0, arg_54_1)
+			content_check_function = function (arg_54_0, arg_54_1)
 				arg_54_1.color = arg_54_0.hotspot.is_hover and arg_54_1.hover_color or arg_54_1.base_color
 
 				return true
@@ -3735,7 +3735,7 @@ local function var_0_25(arg_53_0, arg_53_1, arg_53_2)
 			pass_type = "texture_frame",
 			style_id = "selected_frame",
 			texture_id = "selected_frame_id",
-			content_check_function = function(arg_55_0)
+			content_check_function = function (arg_55_0)
 				return arg_55_0.channel_name == arg_55_0.selected_channel
 			end
 		}
@@ -3904,7 +3904,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 			pass_type = "rotated_texture",
 			style_id = "connecting_icon",
 			texture_id = "connecting_icon",
-			content_check_function = function(arg_57_0, arg_57_1)
+			content_check_function = function (arg_57_0, arg_57_1)
 				if not arg_57_0.fetching_channels then
 					return false
 				end
@@ -3951,7 +3951,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 			pass_type = "texture",
 			style_id = "search_icon",
 			texture_id = "search_icon_id",
-			content_check_function = function(arg_58_0, arg_58_1)
+			content_check_function = function (arg_58_0, arg_58_1)
 				if arg_58_0.text_field_active then
 					return
 				end
@@ -4008,7 +4008,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_59_0, arg_59_1)
+			content_check_function = function (arg_59_0, arg_59_1)
 				if not arg_59_0.text_field_active then
 					return
 				end
@@ -4024,7 +4024,7 @@ local function var_0_26(arg_56_0, arg_56_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_60_0, arg_60_1)
+			content_check_function = function (arg_60_0, arg_60_1)
 				if arg_60_0.close_hotspot.is_hover then
 					arg_60_1.text_color[1] = 255
 				else
@@ -4464,7 +4464,7 @@ local function var_0_27(arg_61_0, arg_61_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_62_0, arg_62_1)
+			content_check_function = function (arg_62_0, arg_62_1)
 				if not arg_62_0.text_field_active then
 					return
 				end
@@ -4480,7 +4480,7 @@ local function var_0_27(arg_61_0, arg_61_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_63_0, arg_63_1)
+			content_check_function = function (arg_63_0, arg_63_1)
 				if arg_63_0.close_hotspot.is_hover then
 					arg_63_1.text_color[1] = 255
 				else
@@ -4814,7 +4814,7 @@ local function var_0_28(arg_64_0, arg_64_1)
 			style_id = "chat_text",
 			pass_type = "text",
 			text_id = "chat_text_id",
-			content_check_function = function(arg_65_0, arg_65_1)
+			content_check_function = function (arg_65_0, arg_65_1)
 				if not arg_65_0.text_field_active then
 					return
 				end
@@ -4830,7 +4830,7 @@ local function var_0_28(arg_64_0, arg_64_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_66_0, arg_66_1)
+			content_check_function = function (arg_66_0, arg_66_1)
 				if arg_66_0.close_hotspot.is_hover then
 					arg_66_1.text_color[1] = 255
 				else
@@ -5121,7 +5121,7 @@ local function var_0_29(arg_67_0, arg_67_1)
 			pass_type = "rotated_texture",
 			style_id = "connecting_icon",
 			texture_id = "connecting_icon",
-			content_check_function = function(arg_68_0, arg_68_1)
+			content_check_function = function (arg_68_0, arg_68_1)
 				if not arg_68_0.fetching_channels then
 					return false
 				end
@@ -5177,7 +5177,7 @@ local function var_0_29(arg_67_0, arg_67_1)
 			style_id = "close_text",
 			pass_type = "text",
 			text_id = "close_text_id",
-			content_check_function = function(arg_69_0, arg_69_1)
+			content_check_function = function (arg_69_0, arg_69_1)
 				if arg_69_0.close_hotspot.is_hover then
 					arg_69_1.text_color[1] = 255
 				else
@@ -5416,7 +5416,7 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_71_0)
+					content_check_function = function (arg_71_0)
 						return arg_71_0.draw_frame
 					end
 				},
@@ -5442,7 +5442,7 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_72_0)
+					content_check_function = function (arg_72_0)
 						return arg_72_0.button_hotspot.disable_button
 					end
 				},
@@ -5450,7 +5450,7 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_73_0)
+					content_check_function = function (arg_73_0)
 						return not arg_73_0.button_hotspot.disable_button
 					end
 				},
@@ -5458,7 +5458,7 @@ function create_default_button(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4,
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_74_0)
+					content_check_function = function (arg_74_0)
 						return arg_74_0.button_hotspot.disable_button
 					end
 				},

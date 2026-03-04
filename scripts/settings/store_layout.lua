@@ -645,7 +645,7 @@ if not StoreLayoutConfig then
 	end
 end
 
-function StoreLayoutConfig.make_sort_key(arg_1_0)
+StoreLayoutConfig.make_sort_key = function (arg_1_0)
 	local var_1_0 = Managers.backend:get_interface("items")
 	local var_1_1 = arg_1_0.data
 	local var_1_2 = arg_1_0.key
@@ -709,11 +709,11 @@ function StoreLayoutConfig.make_sort_key(arg_1_0)
 	return (string.format("%01x%s%-16.16s%03x%04x%01x", var_1_8, var_1_7, var_1_3, var_1_14, var_1_5, ORDER_RARITY[var_1_6] or 0))
 end
 
-function StoreLayoutConfig.compare_sort_key(arg_2_0, arg_2_1)
+StoreLayoutConfig.compare_sort_key = function (arg_2_0, arg_2_1)
 	return arg_2_0.sort_key < arg_2_1.sort_key
 end
 
-function StoreLayoutConfig.get_item_filter(arg_3_0, arg_3_1)
+StoreLayoutConfig.get_item_filter = function (arg_3_0, arg_3_1)
 	local var_3_0 = StoreLayoutConfig.structure
 	local var_3_1 = StoreLayoutConfig.pages
 	local var_3_2 = StoreLayoutConfig.base_filter
@@ -747,7 +747,7 @@ function StoreLayoutConfig.get_item_filter(arg_3_0, arg_3_1)
 	return var_3_2
 end
 
-function StoreLayoutConfig._get_sub_filter(arg_4_0)
+StoreLayoutConfig._get_sub_filter = function (arg_4_0)
 	local var_4_0 = StoreLayoutConfig.pages
 	local var_4_1
 

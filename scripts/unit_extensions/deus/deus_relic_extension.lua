@@ -64,17 +64,17 @@ local function var_0_9(arg_3_0)
 	Actor.teleport_position(var_3_8.physics_actor, var_3_7)
 end
 
-function DeusRelicExtension.init(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DeusRelicExtension.init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_0._unit = arg_4_2
 	arg_4_0._is_server = Managers.player.is_server
 	arg_4_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
 end
 
-function DeusRelicExtension.game_object_initialized(arg_5_0, arg_5_1, arg_5_2)
+DeusRelicExtension.game_object_initialized = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._go_id = arg_5_2
 end
 
-function DeusRelicExtension.destroy(arg_6_0)
+DeusRelicExtension.destroy = function (arg_6_0)
 	local var_6_0 = Managers.state.unit_spawner
 	local var_6_1 = arg_6_0._objective_unit
 
@@ -85,12 +85,12 @@ function DeusRelicExtension.destroy(arg_6_0)
 	end
 end
 
-function DeusRelicExtension.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+DeusRelicExtension.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	arg_7_0:_update_position_resetting(arg_7_1, arg_7_5)
 	arg_7_0:_update_objective_marker(arg_7_1, arg_7_5)
 end
 
-function DeusRelicExtension._update_position_resetting(arg_8_0, arg_8_1, arg_8_2)
+DeusRelicExtension._update_position_resetting = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = POSITION_LOOKUP[arg_8_1]
 	local var_8_1 = var_0_7(arg_8_0._nav_world, var_8_0, var_0_2)
 	local var_8_2 = var_0_2 * var_0_2
@@ -126,7 +126,7 @@ function DeusRelicExtension._update_position_resetting(arg_8_0, arg_8_1, arg_8_2
 	end
 end
 
-function DeusRelicExtension._update_objective_marker(arg_9_0, arg_9_1, arg_9_2)
+DeusRelicExtension._update_objective_marker = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_0._objective_unit then
 		return
 	end

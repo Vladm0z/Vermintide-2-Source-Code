@@ -4,7 +4,7 @@ ImguiBuffsDebug = class(ImguiBuffsDebug)
 
 local var_0_0 = true
 
-function ImguiBuffsDebug.init(arg_1_0)
+ImguiBuffsDebug.init = function (arg_1_0)
 	arg_1_0._buff_system = nil
 	arg_1_0._unit_names = {}
 	arg_1_0._units = {}
@@ -41,7 +41,7 @@ function ImguiBuffsDebug.init(arg_1_0)
 	arg_1_0._target_peer_id = ""
 end
 
-function ImguiBuffsDebug._get_buff_templates(arg_2_0)
+ImguiBuffsDebug._get_buff_templates = function (arg_2_0)
 	table.clear(arg_2_0._buff_list)
 
 	for iter_2_0, iter_2_1 in pairs(BuffTemplates) do
@@ -55,7 +55,7 @@ function ImguiBuffsDebug._get_buff_templates(arg_2_0)
 	arg_2_0._selected_buff_id = 0
 end
 
-function ImguiBuffsDebug._apply_buff_filter(arg_3_0, arg_3_1, arg_3_2)
+ImguiBuffsDebug._apply_buff_filter = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_1 == "" then
 		return arg_3_2
 	end
@@ -74,7 +74,7 @@ function ImguiBuffsDebug._apply_buff_filter(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0
 end
 
-function ImguiBuffsDebug.update(arg_4_0)
+ImguiBuffsDebug.update = function (arg_4_0)
 	if var_0_0 then
 		arg_4_0:init()
 
@@ -86,17 +86,17 @@ function ImguiBuffsDebug.update(arg_4_0)
 	end
 end
 
-function ImguiBuffsDebug.on_round_start(arg_5_0)
+ImguiBuffsDebug.on_round_start = function (arg_5_0)
 	arg_5_0._current_unit = nil
 
 	arg_5_0:_refresh_unit_list()
 end
 
-function ImguiBuffsDebug.is_persistent(arg_6_0)
+ImguiBuffsDebug.is_persistent = function (arg_6_0)
 	return true
 end
 
-function ImguiBuffsDebug.draw(arg_7_0, arg_7_1)
+ImguiBuffsDebug.draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = Imgui.begin_window("Buff Debug")
 
 	arg_7_0:_update_controls()
@@ -115,7 +115,7 @@ function ImguiBuffsDebug.draw(arg_7_0, arg_7_1)
 	return var_7_0
 end
 
-function ImguiBuffsDebug._update_controls(arg_8_0)
+ImguiBuffsDebug._update_controls = function (arg_8_0)
 	local var_8_0 = Imgui.combo("Unit", arg_8_0._selected_unit_idx, arg_8_0._unit_names)
 
 	if var_8_0 ~= arg_8_0._selected_unit_idx then
@@ -253,7 +253,7 @@ function ImguiBuffsDebug._update_controls(arg_8_0)
 	if var_8_4 == BuffSyncType.Client or var_8_4 == BuffSyncType.ClientAndServer then
 		local var_8_5 = FrameTable.alloc_table()
 		local var_8_6 = FrameTable.alloc_table()
-		local var_8_7 = table.select_array(table.keys(Managers.player:human_players()), function(arg_9_0, arg_9_1)
+		local var_8_7 = table.select_array(table.keys(Managers.player:human_players()), function (arg_9_0, arg_9_1)
 			local var_9_0 = string.sub(arg_9_1, 1, string.find(arg_9_1, ":") - 1)
 
 			if not var_8_5[var_9_0] then
@@ -287,7 +287,7 @@ function ImguiBuffsDebug._update_controls(arg_8_0)
 	Imgui.dummy(10, 10)
 end
 
-function ImguiBuffsDebug._display_buffs(arg_10_0, arg_10_1)
+ImguiBuffsDebug._display_buffs = function (arg_10_0, arg_10_1)
 	if Imgui.tree_node("Buffs") then
 		if arg_10_1 then
 			local var_10_0
@@ -338,7 +338,7 @@ function ImguiBuffsDebug._display_buffs(arg_10_0, arg_10_1)
 	end
 end
 
-function ImguiBuffsDebug._display_perks(arg_11_0, arg_11_1)
+ImguiBuffsDebug._display_perks = function (arg_11_0, arg_11_1)
 	if Imgui.tree_node("Perks") then
 		if arg_11_1 then
 			for iter_11_0, iter_11_1 in pairs(arg_11_1) do
@@ -353,7 +353,7 @@ function ImguiBuffsDebug._display_perks(arg_11_0, arg_11_1)
 	end
 end
 
-function ImguiBuffsDebug._display_stat_buffs(arg_12_0, arg_12_1)
+ImguiBuffsDebug._display_stat_buffs = function (arg_12_0, arg_12_1)
 	if Imgui.tree_node("Stat Buffs") then
 		arg_12_0._stat_base_value = Imgui.input_float("Base Stat Value", arg_12_0._stat_base_value)
 
@@ -388,7 +388,7 @@ function ImguiBuffsDebug._display_stat_buffs(arg_12_0, arg_12_1)
 	end
 end
 
-function ImguiBuffsDebug._display_event_buffs(arg_13_0, arg_13_1)
+ImguiBuffsDebug._display_event_buffs = function (arg_13_0, arg_13_1)
 	if Imgui.tree_node("Event Buffs") then
 		if arg_13_1 then
 			Imgui.separator()
@@ -421,7 +421,7 @@ function ImguiBuffsDebug._display_event_buffs(arg_13_0, arg_13_1)
 	end
 end
 
-function ImguiBuffsDebug._refresh_unit_list(arg_14_0)
+ImguiBuffsDebug._refresh_unit_list = function (arg_14_0)
 	arg_14_0._unit_names = {}
 	arg_14_0._units = {}
 
@@ -472,7 +472,7 @@ function ImguiBuffsDebug._refresh_unit_list(arg_14_0)
 	arg_14_0:_initialize_unit(arg_14_0._current_unit)
 end
 
-function ImguiBuffsDebug._initialize_unit(arg_15_0, arg_15_1)
+ImguiBuffsDebug._initialize_unit = function (arg_15_0, arg_15_1)
 	arg_15_0._current_unit = arg_15_1
 
 	if arg_15_1 and Unit.alive(arg_15_1) then
@@ -480,13 +480,13 @@ function ImguiBuffsDebug._initialize_unit(arg_15_0, arg_15_1)
 	end
 end
 
-function ImguiBuffsDebug._add_buff(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+ImguiBuffsDebug._add_buff = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if arg_16_0._buff_extension and arg_16_2 then
 		arg_16_0._buff_extension:add_buff(arg_16_2, arg_16_3)
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_system(arg_17_0, arg_17_1)
+ImguiBuffsDebug._add_buff_with_buff_system = function (arg_17_0, arg_17_1)
 	if arg_17_0._current_unit then
 		local var_17_0 = Managers.state.entity:system("buff_system")
 
@@ -496,7 +496,7 @@ function ImguiBuffsDebug._add_buff_with_buff_system(arg_17_0, arg_17_1)
 	end
 end
 
-function ImguiBuffsDebug._add_buff_with_buff_synced(arg_18_0, arg_18_1, arg_18_2)
+ImguiBuffsDebug._add_buff_with_buff_synced = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_0._current_unit then
 		local var_18_0 = Managers.state.entity:system("buff_system")
 
@@ -506,7 +506,7 @@ function ImguiBuffsDebug._add_buff_with_buff_synced(arg_18_0, arg_18_1, arg_18_2
 	end
 end
 
-function ImguiBuffsDebug._remove_buff(arg_19_0, arg_19_1, arg_19_2)
+ImguiBuffsDebug._remove_buff = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0._buff_extension and arg_19_2 then
 		arg_19_0._buff_extension:remove_buff(arg_19_2)
 	end

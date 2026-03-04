@@ -13,7 +13,7 @@ local var_0_4 = {
 }
 local var_0_5 = #var_0_4
 
-function ActionFlamethrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionFlamethrower.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionFlamethrower.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	if ScriptUnit.has_extension(arg_1_7, "ammo_system") then
@@ -28,7 +28,7 @@ function ActionFlamethrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ar
 	arg_1_0.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
 end
 
-function ActionFlamethrower.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionFlamethrower.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionFlamethrower.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -59,7 +59,7 @@ end
 
 local var_0_6 = 4
 
-function ActionFlamethrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionFlamethrower.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.owner_unit
 	local var_3_1 = arg_3_0.first_person_unit
 	local var_3_2 = arg_3_0.current_action
@@ -263,7 +263,7 @@ function ActionFlamethrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, 
 	end
 end
 
-function ActionFlamethrower._stop_fx(arg_4_0)
+ActionFlamethrower._stop_fx = function (arg_4_0)
 	if arg_4_0._fx_stopped then
 		return
 	end
@@ -310,7 +310,7 @@ function ActionFlamethrower._stop_fx(arg_4_0)
 	end
 end
 
-function ActionFlamethrower.finish(arg_5_0, arg_5_1)
+ActionFlamethrower.finish = function (arg_5_0, arg_5_1)
 	arg_5_0:_clear_targets()
 
 	if arg_5_0.state ~= "shot" then
@@ -320,7 +320,7 @@ function ActionFlamethrower.finish(arg_5_0, arg_5_1)
 	arg_5_0:_stop_fx()
 end
 
-function ActionFlamethrower.destroy(arg_6_0)
+ActionFlamethrower.destroy = function (arg_6_0)
 	if arg_6_0._flamethrower_effect then
 		World.destroy_particles(arg_6_0.world, arg_6_0._flamethrower_effect)
 
@@ -328,7 +328,7 @@ function ActionFlamethrower.destroy(arg_6_0)
 	end
 end
 
-function ActionFlamethrower._clear_targets(arg_7_0)
+ActionFlamethrower._clear_targets = function (arg_7_0)
 	local var_7_0 = arg_7_0.targets
 	local var_7_1 = arg_7_0.old_targets
 	local var_7_2 = {}
@@ -345,7 +345,7 @@ function ActionFlamethrower._clear_targets(arg_7_0)
 	arg_7_0.old_targets = var_7_2
 end
 
-function ActionFlamethrower._select_targets(arg_8_0, arg_8_1, arg_8_2)
+ActionFlamethrower._select_targets = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.owner_unit
 	local var_8_1 = ScriptUnit.extension(var_8_0, "first_person_system")
 	local var_8_2 = Vector3(0, 0, -0.4)
@@ -394,7 +394,7 @@ function ActionFlamethrower._select_targets(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function ActionFlamethrower._check_within_cone(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ActionFlamethrower._check_within_cone = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = Unit.world_position(arg_9_3, Unit.node(arg_9_3, "j_neck"))
 	local var_9_1 = Vector3.normalize(var_9_0 - arg_9_1)
 
@@ -405,7 +405,7 @@ function ActionFlamethrower._check_within_cone(arg_9_0, arg_9_1, arg_9_2, arg_9_
 	return false
 end
 
-function ActionFlamethrower._is_infront_player(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+ActionFlamethrower._is_infront_player = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = Vector3.normalize(arg_10_3 - arg_10_1)
 
 	if Vector3.dot(var_10_0, arg_10_2) > 0 then
@@ -413,14 +413,14 @@ function ActionFlamethrower._is_infront_player(arg_10_0, arg_10_1, arg_10_2, arg
 	end
 end
 
-function ActionFlamethrower.raycast_to_target(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+ActionFlamethrower.raycast_to_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = World.get_data(arg_11_1, "physics_world")
 	local var_11_1 = "filter_player_ray_projectile"
 
 	return (PhysicsWorld.immediate_raycast(var_11_0, arg_11_2, arg_11_3, var_0_1, "all", "collision_filter", var_11_1))
 end
 
-function ActionFlamethrower._check_critical_strike(arg_12_0, arg_12_1)
+ActionFlamethrower._check_critical_strike = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.owner_unit
 	local var_12_1 = arg_12_0.current_action
 	local var_12_2 = ActionUtils.is_critical_strike(var_12_0, var_12_1, arg_12_1)

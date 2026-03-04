@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_termite_2.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_power_bonus_mushroom_a",

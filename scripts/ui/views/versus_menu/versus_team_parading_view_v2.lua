@@ -16,7 +16,7 @@ local var_0_9 = DLCSettings.carousel
 VersusTeamParadingViewV2 = class(VersusTeamParadingViewV2)
 VersusTeamParadingViewV2.NAME = "VersusTeamParadingViewV2"
 
-function VersusTeamParadingViewV2.init(arg_1_0, arg_1_1)
+VersusTeamParadingViewV2.init = function (arg_1_0, arg_1_1)
 	local var_1_0 = arg_1_1.player
 
 	arg_1_0._player = var_1_0
@@ -36,7 +36,7 @@ function VersusTeamParadingViewV2.init(arg_1_0, arg_1_1)
 	arg_1_0.wwise_world = Managers.world:wwise_world(var_1_1)
 end
 
-function VersusTeamParadingViewV2.on_enter(arg_2_0, arg_2_1)
+VersusTeamParadingViewV2.on_enter = function (arg_2_0, arg_2_1)
 	print("[VersusTeamParadingViewV2] Enter Versus Team Parading view")
 
 	arg_2_0._party_selection_logic = Managers.state.game_mode:game_mode():party_selection_logic()
@@ -60,7 +60,7 @@ function VersusTeamParadingViewV2.on_enter(arg_2_0, arg_2_1)
 	arg_2_0:_set_transition_widgets_alpha_multiplier(0)
 end
 
-function VersusTeamParadingViewV2.on_exit(arg_3_0)
+VersusTeamParadingViewV2.on_exit = function (arg_3_0)
 	print("[VersusTeamParadingViewV2] Exit character selection view")
 	ShowCursorStack.hide("VersusTeamParadingViewV2")
 
@@ -84,7 +84,7 @@ function VersusTeamParadingViewV2.on_exit(arg_3_0)
 	arg_3_0:_play_sound("menu_versus_character_amb_loop_stop")
 end
 
-function VersusTeamParadingViewV2._create_ui_elements(arg_4_0, arg_4_1)
+VersusTeamParadingViewV2._create_ui_elements = function (arg_4_0, arg_4_1)
 	arg_4_0._viewport_widget_definition = arg_4_0:_create_viewport_definition()
 
 	if arg_4_0._viewport_widget then
@@ -112,7 +112,7 @@ function VersusTeamParadingViewV2._create_ui_elements(arg_4_0, arg_4_1)
 	UIRenderer.clear_scenegraph_queue(arg_4_0._ui_renderer)
 end
 
-function VersusTeamParadingViewV2.draw(arg_5_0, arg_5_1)
+VersusTeamParadingViewV2.draw = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0._ui_renderer
 	local var_5_1 = arg_5_0._ui_top_renderer
 	local var_5_2 = arg_5_0._ui_scenegraph
@@ -149,11 +149,11 @@ function VersusTeamParadingViewV2.draw(arg_5_0, arg_5_1)
 	var_5_5.alpha_multiplier = var_5_6
 end
 
-function VersusTeamParadingViewV2.update(arg_6_0, arg_6_1, arg_6_2)
+VersusTeamParadingViewV2.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:draw(arg_6_1)
 end
 
-function VersusTeamParadingViewV2.post_update(arg_7_0, arg_7_1, arg_7_2)
+VersusTeamParadingViewV2.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	if DO_RELOAD then
 		arg_7_0:_destroy_team_previewer()
 		arg_7_0:_create_ui_elements(arg_7_0._params)
@@ -197,7 +197,7 @@ function VersusTeamParadingViewV2.post_update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_animations(arg_7_1, arg_7_2)
 end
 
-function VersusTeamParadingViewV2._update_animations(arg_8_0, arg_8_1, arg_8_2)
+VersusTeamParadingViewV2._update_animations = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._animations
 	local var_8_1 = arg_8_0.ui_animator
 
@@ -210,7 +210,7 @@ function VersusTeamParadingViewV2._update_animations(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function VersusTeamParadingViewV2._set_transition_widgets_alpha_multiplier(arg_9_0, arg_9_1)
+VersusTeamParadingViewV2._set_transition_widgets_alpha_multiplier = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._transition_widgets
 
 	for iter_9_0, iter_9_1 in ipairs(var_9_0) do
@@ -218,7 +218,7 @@ function VersusTeamParadingViewV2._set_transition_widgets_alpha_multiplier(arg_9
 	end
 end
 
-function VersusTeamParadingViewV2._setup_teams_party_data(arg_10_0)
+VersusTeamParadingViewV2._setup_teams_party_data = function (arg_10_0)
 	local var_10_0 = arg_10_0._peer_id
 	local var_10_1 = arg_10_0._local_player_id
 	local var_10_2, var_10_3 = Managers.party:get_party_from_player_id(var_10_0, var_10_1)
@@ -241,7 +241,7 @@ function VersusTeamParadingViewV2._setup_teams_party_data(arg_10_0)
 	return true
 end
 
-function VersusTeamParadingViewV2._draw_widgets(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+VersusTeamParadingViewV2._draw_widgets = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if not arg_11_1 then
 		return
 	end
@@ -253,11 +253,11 @@ function VersusTeamParadingViewV2._draw_widgets(arg_11_0, arg_11_1, arg_11_2, ar
 	end
 end
 
-function VersusTeamParadingViewV2._set_new_camera_pose(arg_12_0, arg_12_1, arg_12_2)
+VersusTeamParadingViewV2._set_new_camera_pose = function (arg_12_0, arg_12_1, arg_12_2)
 	ScriptCamera.set_local_pose(arg_12_1, arg_12_2:unbox())
 end
 
-function VersusTeamParadingViewV2._create_team_portrait_frames(arg_13_0, arg_13_1, arg_13_2)
+VersusTeamParadingViewV2._create_team_portrait_frames = function (arg_13_0, arg_13_1, arg_13_2)
 	table.clear(arg_13_0._team_portrait_frame_widgets)
 	table.clear(arg_13_0._team_insignia_widgets)
 
@@ -310,7 +310,7 @@ function VersusTeamParadingViewV2._create_team_portrait_frames(arg_13_0, arg_13_
 	end
 end
 
-function VersusTeamParadingViewV2._create_player_name_widgets(arg_14_0, arg_14_1)
+VersusTeamParadingViewV2._create_player_name_widgets = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._party_selection_logic:get_party_data(arg_14_1).picker_list
 
 	for iter_14_0, iter_14_1 in ipairs(var_14_0) do
@@ -340,7 +340,7 @@ function VersusTeamParadingViewV2._create_player_name_widgets(arg_14_0, arg_14_1
 	end
 end
 
-function VersusTeamParadingViewV2._update_parading_phases(arg_15_0, arg_15_1, arg_15_2)
+VersusTeamParadingViewV2._update_parading_phases = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._current_state
 
 	if var_15_0 == "none" then
@@ -393,7 +393,7 @@ function VersusTeamParadingViewV2._update_parading_phases(arg_15_0, arg_15_1, ar
 	end
 end
 
-function VersusTeamParadingViewV2._get_heroes_spawn_locations(arg_16_0, arg_16_1)
+VersusTeamParadingViewV2._get_heroes_spawn_locations = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1 == arg_16_0._party_id and "character_slot_0" or "character_slot_enemy_0"
 	local var_16_1 = "units/hub_elements/versus_podium_character_spawn"
 	local var_16_2 = arg_16_0:_get_viewport_level_name()
@@ -424,7 +424,7 @@ function VersusTeamParadingViewV2._get_heroes_spawn_locations(arg_16_0, arg_16_1
 	return var_16_4
 end
 
-function VersusTeamParadingViewV2._setup_initial_camera(arg_17_0, arg_17_1, arg_17_2)
+VersusTeamParadingViewV2._setup_initial_camera = function (arg_17_0, arg_17_1, arg_17_2)
 	if arg_17_1 then
 		local var_17_0 = arg_17_0._cameras.parading_camera_01
 
@@ -438,7 +438,7 @@ function VersusTeamParadingViewV2._setup_initial_camera(arg_17_0, arg_17_1, arg_
 	end
 end
 
-function VersusTeamParadingViewV2._setup_camera_nodes_data(arg_18_0, arg_18_1)
+VersusTeamParadingViewV2._setup_camera_nodes_data = function (arg_18_0, arg_18_1)
 	local var_18_0 = {}
 	local var_18_1 = Level.flow_variable(arg_18_1, "initial_camera")
 	local var_18_2 = Level.flow_variable(arg_18_1, "parading_position_01")
@@ -468,7 +468,7 @@ function VersusTeamParadingViewV2._setup_camera_nodes_data(arg_18_0, arg_18_1)
 	arg_18_0._cameras = var_18_0
 end
 
-function VersusTeamParadingViewV2._setup_team_previewer(arg_19_0, arg_19_1)
+VersusTeamParadingViewV2._setup_team_previewer = function (arg_19_0, arg_19_1)
 	if arg_19_0._team_previewer then
 		return
 	end
@@ -485,7 +485,7 @@ function VersusTeamParadingViewV2._setup_team_previewer(arg_19_0, arg_19_1)
 	arg_19_0._team_previewer:setup_team(var_19_3, var_19_4, var_19_0)
 end
 
-function VersusTeamParadingViewV2._setup_team_heroes(arg_20_0, arg_20_1, arg_20_2)
+VersusTeamParadingViewV2._setup_team_heroes = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._party_selection_logic:get_party_data(arg_20_1).picker_list
 	local var_20_1 = arg_20_0._team_heroes
 
@@ -498,7 +498,7 @@ function VersusTeamParadingViewV2._setup_team_heroes(arg_20_0, arg_20_1, arg_20_
 	end
 end
 
-function VersusTeamParadingViewV2._update_team_previewer(arg_21_0, arg_21_1, arg_21_2)
+VersusTeamParadingViewV2._update_team_previewer = function (arg_21_0, arg_21_1, arg_21_2)
 	local var_21_0 = arg_21_0._team_previewer
 
 	if var_21_0 then
@@ -507,7 +507,7 @@ function VersusTeamParadingViewV2._update_team_previewer(arg_21_0, arg_21_1, arg
 	end
 end
 
-function VersusTeamParadingViewV2._destroy_team_previewer(arg_22_0)
+VersusTeamParadingViewV2._destroy_team_previewer = function (arg_22_0)
 	if arg_22_0._team_previewer and arg_22_0._viewport_widget then
 		arg_22_0._team_previewer:on_exit()
 
@@ -517,7 +517,7 @@ function VersusTeamParadingViewV2._destroy_team_previewer(arg_22_0)
 	end
 end
 
-function VersusTeamParadingViewV2._create_viewport_definition(arg_23_0)
+VersusTeamParadingViewV2._create_viewport_definition = function (arg_23_0)
 	return {
 		scenegraph_id = "screen",
 		element = UIElements.Viewport,
@@ -557,7 +557,7 @@ function VersusTeamParadingViewV2._create_viewport_definition(arg_23_0)
 	}
 end
 
-function VersusTeamParadingViewV2._get_hero_previewer_data(arg_24_0, arg_24_1, arg_24_2)
+VersusTeamParadingViewV2._get_hero_previewer_data = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_1.status
 	local var_24_1 = var_24_0.selected_profile_index
 	local var_24_2 = var_24_0.selected_career_index
@@ -600,50 +600,50 @@ function VersusTeamParadingViewV2._get_hero_previewer_data(arg_24_0, arg_24_1, a
 	return nil
 end
 
-function VersusTeamParadingViewV2._get_viewport(arg_25_0, arg_25_1)
+VersusTeamParadingViewV2._get_viewport = function (arg_25_0, arg_25_1)
 	return arg_25_1.element.pass_data[1].viewport
 end
 
-function VersusTeamParadingViewV2._get_viewport_world(arg_26_0, arg_26_1)
+VersusTeamParadingViewV2._get_viewport_world = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_1.element.pass_data[1]
 
 	return var_26_0.world, var_26_0.world_name
 end
 
-function VersusTeamParadingViewV2._get_viewport_level(arg_27_0, arg_27_1)
+VersusTeamParadingViewV2._get_viewport_level = function (arg_27_0, arg_27_1)
 	return arg_27_1.element.pass_data[1].level
 end
 
-function VersusTeamParadingViewV2._get_viewport_level_name(arg_28_0)
+VersusTeamParadingViewV2._get_viewport_level_name = function (arg_28_0)
 	return var_0_8.level_name
 end
 
-function VersusTeamParadingViewV2._get_viewport_camera(arg_29_0, arg_29_1)
+VersusTeamParadingViewV2._get_viewport_camera = function (arg_29_0, arg_29_1)
 	return arg_29_1.element.pass_data[1].camera
 end
 
-function VersusTeamParadingViewV2._get_viewport_name(arg_30_0, arg_30_1)
+VersusTeamParadingViewV2._get_viewport_name = function (arg_30_0, arg_30_1)
 	return arg_30_1.element.pass_data[1].viewport_name
 end
 
-function VersusTeamParadingViewV2._get_opponent_party_id(arg_31_0)
+VersusTeamParadingViewV2._get_opponent_party_id = function (arg_31_0)
 	return arg_31_0._party_id == 1 and 2 or 1
 end
 
-function VersusTeamParadingViewV2._set_camera_pose(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+VersusTeamParadingViewV2._set_camera_pose = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	ScriptCamera.set_local_pose(arg_32_2, arg_32_3:unbox())
 	ScriptCamera.force_update(arg_32_1, arg_32_2)
 end
 
-function VersusTeamParadingViewV2.input_service(arg_33_0)
+VersusTeamParadingViewV2.input_service = function (arg_33_0)
 	return arg_33_0._input_manager:get_service(arg_33_0._input_service_name)
 end
 
-function VersusTeamParadingViewV2._change_state(arg_34_0, arg_34_1)
+VersusTeamParadingViewV2._change_state = function (arg_34_0, arg_34_1)
 	arg_34_0._current_state = arg_34_1
 end
 
-function VersusTeamParadingViewV2._start_animation(arg_35_0, arg_35_1, arg_35_2)
+VersusTeamParadingViewV2._start_animation = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = {
 		wwise_world = arg_35_0._wwise_world,
 		render_settings = arg_35_0.render_settings,
@@ -655,7 +655,7 @@ function VersusTeamParadingViewV2._start_animation(arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0._animations[arg_35_1] = var_35_2
 end
 
-function VersusTeamParadingViewV2._set_player_name(arg_36_0, arg_36_1)
+VersusTeamParadingViewV2._set_player_name = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1:name()
 
 	if UTF8Utils.string_length(var_36_0) > 18 then
@@ -665,7 +665,7 @@ function VersusTeamParadingViewV2._set_player_name(arg_36_0, arg_36_1)
 	return var_36_0
 end
 
-function VersusTeamParadingViewV2._change_team_info(arg_37_0, arg_37_1)
+VersusTeamParadingViewV2._change_team_info = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0:_get_opponent_party_id()
 
 	arg_37_0:_setup_team_heroes(var_37_0, arg_37_1)
@@ -683,7 +683,7 @@ function VersusTeamParadingViewV2._change_team_info(arg_37_0, arg_37_1)
 	arg_37_0:_set_opponent_team_names_and_portraits(var_37_0, arg_37_1)
 end
 
-function VersusTeamParadingViewV2._set_team_names_and_careers(arg_38_0, arg_38_1)
+VersusTeamParadingViewV2._set_team_names_and_careers = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._party_selection_logic:get_party_data(arg_38_1).picker_list
 
 	for iter_38_0, iter_38_1 in ipairs(var_38_0) do
@@ -712,13 +712,13 @@ function VersusTeamParadingViewV2._set_team_names_and_careers(arg_38_0, arg_38_1
 	end
 end
 
-function VersusTeamParadingViewV2._set_opponent_team_names_and_portraits(arg_39_0, arg_39_1, arg_39_2)
+VersusTeamParadingViewV2._set_opponent_team_names_and_portraits = function (arg_39_0, arg_39_1, arg_39_2)
 	arg_39_0:_create_team_portrait_frames(arg_39_1, arg_39_2)
 	arg_39_0:_set_team_names_and_careers(arg_39_1)
 	arg_39_0:_set_team_name_widget_colors_and_text(arg_39_1)
 end
 
-function VersusTeamParadingViewV2._set_team_name_widget_colors_and_text(arg_40_0, arg_40_1)
+VersusTeamParadingViewV2._set_team_name_widget_colors_and_text = function (arg_40_0, arg_40_1)
 	local var_40_0 = Managers.state.game_mode:setting("party_names_lookup_by_id")[arg_40_1]
 	local var_40_1 = arg_40_0._party_id == arg_40_1
 	local var_40_2 = var_0_9.teams_ui_assets[var_40_0]
@@ -745,11 +745,11 @@ function VersusTeamParadingViewV2._set_team_name_widget_colors_and_text(arg_40_0
 	var_40_6.content.divider_edge_right.texture_id = var_40_1 and "divider_horizontal_hero_end_blue" or "divider_horizontal_hero_end_red"
 end
 
-function VersusTeamParadingViewV2._play_sound(arg_41_0, arg_41_1)
+VersusTeamParadingViewV2._play_sound = function (arg_41_0, arg_41_1)
 	WwiseWorld.trigger_event(arg_41_0.wwise_world, arg_41_1)
 end
 
-function VersusTeamParadingViewV2._play_parading_sfx(arg_42_0, arg_42_1)
+VersusTeamParadingViewV2._play_parading_sfx = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_1 and arg_42_0._party_id or arg_42_0:_get_opponent_party_id()
 	local var_42_1 = Managers.state.game_mode:setting("party_names_lookup_by_id")[var_42_0]
 	local var_42_2 = "Play_menu_versus_parading_" .. (var_42_1 == "team_hammers" and "hammers" or "skulls")

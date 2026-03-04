@@ -16,7 +16,7 @@ local var_0_10 = 10
 local var_0_11 = 0.3
 local var_0_12 = 1
 
-function PassiveAbilityEngineer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityEngineer.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._player = arg_1_3.player
 	arg_1_0._is_server = arg_1_1.is_server
@@ -34,7 +34,7 @@ function PassiveAbilityEngineer.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 	arg_1_0._game = Managers.state.network:game()
 end
 
-function PassiveAbilityEngineer.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+PassiveAbilityEngineer.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._inventory_extension = ScriptUnit.has_extension(arg_2_2, "inventory_system")
 	arg_2_0._career_extension = ScriptUnit.has_extension(arg_2_2, "career_system")
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
@@ -43,24 +43,24 @@ function PassiveAbilityEngineer.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_register_events()
 end
 
-function PassiveAbilityEngineer.destroy(arg_3_0)
+PassiveAbilityEngineer.destroy = function (arg_3_0)
 	arg_3_0:_unregister_events()
 
 	arg_3_0._game_object_id = nil
 end
 
-function PassiveAbilityEngineer._register_events(arg_4_0)
+PassiveAbilityEngineer._register_events = function (arg_4_0)
 	Managers.state.event:register(arg_4_0, "on_engineer_weapon_fire", "on_engineer_weapon_fire")
 	Managers.state.event:register(arg_4_0, "on_engineer_weapon_spin_up", "on_engineer_weapon_spin_up")
 	Managers.state.event:register(arg_4_0, "level_start_local_player_spawned", "on_level_start_local_player_spawned")
 	Managers.state.event:register(arg_4_0, "on_talents_changed", "on_talents_changed")
 end
 
-function PassiveAbilityEngineer.game_object_initialized(arg_5_0, arg_5_1, arg_5_2)
+PassiveAbilityEngineer.game_object_initialized = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:on_talents_changed(arg_5_1, arg_5_0._talent_extension, true)
 end
 
-function PassiveAbilityEngineer._unregister_events(arg_6_0)
+PassiveAbilityEngineer._unregister_events = function (arg_6_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("on_engineer_weapon_fire", arg_6_0)
 		Managers.state.event:unregister("on_engineer_weapon_spin_up", arg_6_0)
@@ -69,7 +69,7 @@ function PassiveAbilityEngineer._unregister_events(arg_6_0)
 	end
 end
 
-function PassiveAbilityEngineer.update(arg_7_0, arg_7_1, arg_7_2)
+PassiveAbilityEngineer.update = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._game_object_id
 	local var_7_1 = arg_7_0._game
 
@@ -114,7 +114,7 @@ function PassiveAbilityEngineer.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function PassiveAbilityEngineer._update_career_weapon_particles(arg_8_0, arg_8_1)
+PassiveAbilityEngineer._update_career_weapon_particles = function (arg_8_0, arg_8_1)
 	if not arg_8_0._heat_particles_spawned and arg_8_0._weapon_visual_heat >= var_0_6 then
 		arg_8_1:start_weapon_fx("heat_shimmer")
 
@@ -126,7 +126,7 @@ function PassiveAbilityEngineer._update_career_weapon_particles(arg_8_0, arg_8_1
 	end
 end
 
-function PassiveAbilityEngineer._update_career_weapon(arg_9_0, arg_9_1)
+PassiveAbilityEngineer._update_career_weapon = function (arg_9_0, arg_9_1)
 	if not arg_9_1 or not var_0_0(arg_9_1) then
 		return
 	end
@@ -135,7 +135,7 @@ function PassiveAbilityEngineer._update_career_weapon(arg_9_0, arg_9_1)
 	var_0_2(arg_9_1, "lua_update_visual_heat")
 end
 
-function PassiveAbilityEngineer._update_weapon_anim_variables(arg_10_0, arg_10_1)
+PassiveAbilityEngineer._update_weapon_anim_variables = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._first_person_extension
 
 	if var_10_0 then
@@ -149,7 +149,7 @@ function PassiveAbilityEngineer._update_weapon_anim_variables(arg_10_0, arg_10_1
 	end
 end
 
-function PassiveAbilityEngineer.on_engineer_weapon_fire(arg_11_0, arg_11_1)
+PassiveAbilityEngineer.on_engineer_weapon_fire = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._weapon_visual_heat + (arg_11_1 or 0)
 
 	arg_11_0._weapon_visual_heat = math.clamp(var_11_0, 0, var_0_8)
@@ -161,7 +161,7 @@ function PassiveAbilityEngineer.on_engineer_weapon_fire(arg_11_0, arg_11_1)
 	arg_11_0._wind_down_cooldown_pause_t = var_11_1 + var_0_11
 end
 
-function PassiveAbilityEngineer.on_engineer_weapon_spin_up(arg_12_0, arg_12_1, arg_12_2)
+PassiveAbilityEngineer.on_engineer_weapon_spin_up = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.time:time("game")
 
 	if not arg_12_2 then
@@ -172,13 +172,13 @@ function PassiveAbilityEngineer.on_engineer_weapon_spin_up(arg_12_0, arg_12_1, a
 	arg_12_0._wind_down_cooldown_pause_t = var_12_0 + var_0_11
 end
 
-function PassiveAbilityEngineer.on_level_start_local_player_spawned(arg_13_0, arg_13_1)
+PassiveAbilityEngineer.on_level_start_local_player_spawned = function (arg_13_0, arg_13_1)
 	if arg_13_0._is_local_player and not arg_13_0._game_object_id then
 		arg_13_0:create_game_object()
 	end
 end
 
-function PassiveAbilityEngineer.create_game_object(arg_14_0)
+PassiveAbilityEngineer.create_game_object = function (arg_14_0)
 	local var_14_0 = Managers.state.network
 	local var_14_1 = arg_14_0._owner_unit
 	local var_14_2 = var_14_0:unit_game_object_id(var_14_1)
@@ -192,7 +192,7 @@ function PassiveAbilityEngineer.create_game_object(arg_14_0)
 	arg_14_0._game_object_id = var_14_0:create_game_object("engineer_career_data", var_14_3, var_14_4)
 end
 
-function PassiveAbilityEngineer.on_talents_changed(arg_15_0, arg_15_1, arg_15_2)
+PassiveAbilityEngineer.on_talents_changed = function (arg_15_0, arg_15_1, arg_15_2)
 	if arg_15_1 ~= arg_15_0._owner_unit then
 		return
 	end
@@ -200,7 +200,7 @@ function PassiveAbilityEngineer.on_talents_changed(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0:_add_5_2_bombs()
 end
 
-function PassiveAbilityEngineer._add_5_2_bombs(arg_16_0)
+PassiveAbilityEngineer._add_5_2_bombs = function (arg_16_0)
 	if not arg_16_0._is_server then
 		return
 	end
@@ -237,10 +237,10 @@ function PassiveAbilityEngineer._add_5_2_bombs(arg_16_0)
 	end
 end
 
-function PassiveAbilityEngineer.set_career_game_object_id(arg_17_0, arg_17_1)
+PassiveAbilityEngineer.set_career_game_object_id = function (arg_17_0, arg_17_1)
 	arg_17_0._game_object_id = arg_17_1
 end
 
-function PassiveAbilityEngineer.cb_game_session_disconnect(arg_18_0)
+PassiveAbilityEngineer.cb_game_session_disconnect = function (arg_18_0)
 	arg_18_0._game_object_id = nil
 end

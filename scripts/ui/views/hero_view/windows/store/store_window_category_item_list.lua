@@ -10,7 +10,7 @@ local var_0_5 = 800
 StoreWindowCategoryItemList = class(StoreWindowCategoryItemList)
 StoreWindowCategoryItemList.NAME = "StoreWindowCategoryItemList"
 
-function StoreWindowCategoryItemList.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StoreWindowCategoryItemList.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate StoreWindowCategoryItemList")
 
 	arg_1_0._params = arg_1_1
@@ -33,7 +33,7 @@ function StoreWindowCategoryItemList.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StoreWindowCategoryItemList._start_transition_animation(arg_2_0, arg_2_1)
+StoreWindowCategoryItemList._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -46,7 +46,7 @@ function StoreWindowCategoryItemList._start_transition_animation(arg_2_0, arg_2_
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StoreWindowCategoryItemList._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StoreWindowCategoryItemList._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_3_0 = {}
@@ -71,7 +71,7 @@ function StoreWindowCategoryItemList._create_ui_elements(arg_3_0, arg_3_1, arg_3
 	arg_3_0._scrollbar_logic = ScrollBarLogic:new(var_3_3)
 end
 
-function StoreWindowCategoryItemList.on_exit(arg_4_0, arg_4_1, arg_4_2)
+StoreWindowCategoryItemList.on_exit = function (arg_4_0, arg_4_1, arg_4_2)
 	print("[HeroViewWindow] Exit Substate StoreWindowCategoryItemList")
 
 	arg_4_0._ui_animator = nil
@@ -79,7 +79,7 @@ function StoreWindowCategoryItemList.on_exit(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_destroy_product_widgets(arg_4_2)
 end
 
-function StoreWindowCategoryItemList.update(arg_5_0, arg_5_1, arg_5_2)
+StoreWindowCategoryItemList.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = false
 
 	if arg_5_0:_sync_products_version() then
@@ -95,7 +95,7 @@ function StoreWindowCategoryItemList.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function StoreWindowCategoryItemList._sync_products_version(arg_6_0)
+StoreWindowCategoryItemList._sync_products_version = function (arg_6_0)
 	local var_6_0 = arg_6_0._parent:products_version_id()
 
 	if var_6_0 ~= arg_6_0._products_version_id then
@@ -107,7 +107,7 @@ function StoreWindowCategoryItemList._sync_products_version(arg_6_0)
 	return false
 end
 
-function StoreWindowCategoryItemList.post_update(arg_7_0, arg_7_1, arg_7_2)
+StoreWindowCategoryItemList.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0._list_initialized then
 		arg_7_0:_handle_input(arg_7_1, arg_7_2)
 		arg_7_0:_handle_gamepad_activity()
@@ -115,7 +115,7 @@ function StoreWindowCategoryItemList.post_update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function StoreWindowCategoryItemList._update_animations(arg_8_0, arg_8_1)
+StoreWindowCategoryItemList._update_animations = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0._ui_animations
 	local var_8_1 = arg_8_0._animations
 	local var_8_2 = arg_8_0._ui_animator
@@ -143,11 +143,11 @@ function StoreWindowCategoryItemList._update_animations(arg_8_0, arg_8_1)
 	end
 end
 
-function StoreWindowCategoryItemList._is_list_hovered(arg_9_0)
+StoreWindowCategoryItemList._is_list_hovered = function (arg_9_0)
 	return arg_9_0._widgets_by_name.list.content.list_hotspot.is_hover or false
 end
 
-function StoreWindowCategoryItemList._handle_input(arg_10_0, arg_10_1, arg_10_2)
+StoreWindowCategoryItemList._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._parent
 	local var_10_1 = arg_10_0._widgets_by_name
 	local var_10_2 = arg_10_0._parent:window_input_service()
@@ -180,7 +180,7 @@ function StoreWindowCategoryItemList._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function StoreWindowCategoryItemList._draw(arg_11_0, arg_11_1)
+StoreWindowCategoryItemList._draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_top_renderer
 	local var_11_1 = arg_11_0._ui_scenegraph
 	local var_11_2 = arg_11_0._parent:window_input_service()
@@ -217,11 +217,11 @@ function StoreWindowCategoryItemList._draw(arg_11_0, arg_11_1)
 	UIRenderer.end_pass(var_11_0)
 end
 
-function StoreWindowCategoryItemList._play_sound(arg_12_0, arg_12_1)
+StoreWindowCategoryItemList._play_sound = function (arg_12_0, arg_12_1)
 	arg_12_0._parent:play_sound(arg_12_1)
 end
 
-function StoreWindowCategoryItemList._update_gamepad_focus(arg_13_0)
+StoreWindowCategoryItemList._update_gamepad_focus = function (arg_13_0)
 	local var_13_0 = arg_13_0._params.category_focused
 
 	if var_13_0 ~= arg_13_0._category_focused then
@@ -235,7 +235,7 @@ function StoreWindowCategoryItemList._update_gamepad_focus(arg_13_0)
 	end
 end
 
-function StoreWindowCategoryItemList._handle_gamepad_activity(arg_14_0)
+StoreWindowCategoryItemList._handle_gamepad_activity = function (arg_14_0)
 	local var_14_0 = Managers.input:is_device_active("mouse")
 	local var_14_1 = arg_14_0._gamepad_active_last_frame == nil
 
@@ -250,7 +250,7 @@ function StoreWindowCategoryItemList._handle_gamepad_activity(arg_14_0)
 	end
 end
 
-function StoreWindowCategoryItemList._list_index_pressed(arg_15_0)
+StoreWindowCategoryItemList._list_index_pressed = function (arg_15_0)
 	local var_15_0 = arg_15_0._list_widgets
 
 	if var_15_0 then
@@ -267,7 +267,7 @@ function StoreWindowCategoryItemList._list_index_pressed(arg_15_0)
 	end
 end
 
-function StoreWindowCategoryItemList._animate_list_entries(arg_16_0, arg_16_1)
+StoreWindowCategoryItemList._animate_list_entries = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._parent
 	local var_16_1 = arg_16_0:_is_list_hovered()
 	local var_16_2 = arg_16_0._list_widgets
@@ -291,15 +291,15 @@ function StoreWindowCategoryItemList._animate_list_entries(arg_16_0, arg_16_1)
 	end
 end
 
-function StoreWindowCategoryItemList._get_items_by_filter(arg_17_0, arg_17_1)
+StoreWindowCategoryItemList._get_items_by_filter = function (arg_17_0, arg_17_1)
 	return (Managers.backend:get_interface("peddler"):get_filtered_items(arg_17_1))
 end
 
-function StoreWindowCategoryItemList._get_all_items(arg_18_0)
+StoreWindowCategoryItemList._get_all_items = function (arg_18_0)
 	return (Managers.backend:get_interface("peddler"):get_peddler_stock())
 end
 
-function StoreWindowCategoryItemList._update_item_list(arg_19_0)
+StoreWindowCategoryItemList._update_item_list = function (arg_19_0)
 	arg_19_0:_destroy_product_widgets()
 
 	local var_19_0 = arg_19_0._parent:get_store_path()
@@ -377,11 +377,11 @@ function StoreWindowCategoryItemList._update_item_list(arg_19_0)
 	arg_19_0._list_initialized = true
 end
 
-function StoreWindowCategoryItemList._set_title_texts(arg_20_0, arg_20_1)
+StoreWindowCategoryItemList._set_title_texts = function (arg_20_0, arg_20_1)
 	arg_20_0._widgets_by_name.title_text.content.text = arg_20_1
 end
 
-function StoreWindowCategoryItemList._get_list_index_by_product_id(arg_21_0, arg_21_1)
+StoreWindowCategoryItemList._get_list_index_by_product_id = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._layout
 	local var_21_1 = 1
 
@@ -392,7 +392,7 @@ function StoreWindowCategoryItemList._get_list_index_by_product_id(arg_21_0, arg
 	end
 end
 
-function StoreWindowCategoryItemList._on_list_index_selected(arg_22_0, arg_22_1, arg_22_2)
+StoreWindowCategoryItemList._on_list_index_selected = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._layout[arg_22_1]
 
 	arg_22_0._params.selected_product = var_22_0
@@ -443,7 +443,7 @@ function StoreWindowCategoryItemList._on_list_index_selected(arg_22_0, arg_22_1,
 	end
 end
 
-function StoreWindowCategoryItemList._on_list_index_pressed(arg_23_0, arg_23_1)
+StoreWindowCategoryItemList._on_list_index_pressed = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._layout[arg_23_1]
 	local var_23_1 = var_23_0.product_id
 	local var_23_2 = arg_23_0._parent
@@ -464,7 +464,7 @@ function StoreWindowCategoryItemList._on_list_index_pressed(arg_23_0, arg_23_1)
 	end
 end
 
-function StoreWindowCategoryItemList._create_product_widgets(arg_24_0, arg_24_1, arg_24_2)
+StoreWindowCategoryItemList._create_product_widgets = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._create_widget_index
 	local var_24_1 = arg_24_0._list_widgets
 	local var_24_2 = 12
@@ -498,7 +498,7 @@ function StoreWindowCategoryItemList._create_product_widgets(arg_24_0, arg_24_1,
 	return var_24_0 <= #arg_24_1
 end
 
-function StoreWindowCategoryItemList._destroy_product_widgets(arg_25_0, arg_25_1)
+StoreWindowCategoryItemList._destroy_product_widgets = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._parent
 	local var_25_1 = arg_25_0._layout
 	local var_25_2 = arg_25_0._list_widgets
@@ -512,7 +512,7 @@ function StoreWindowCategoryItemList._destroy_product_widgets(arg_25_0, arg_25_1
 	end
 end
 
-function StoreWindowCategoryItemList._align_item_widgets(arg_26_0)
+StoreWindowCategoryItemList._align_item_widgets = function (arg_26_0)
 	local var_26_0 = 0
 	local var_26_1 = 0
 	local var_26_2 = 0
@@ -561,7 +561,7 @@ function StoreWindowCategoryItemList._align_item_widgets(arg_26_0)
 	arg_26_0:_right_align_item_widgets()
 end
 
-function StoreWindowCategoryItemList._right_align_item_widgets(arg_27_0)
+StoreWindowCategoryItemList._right_align_item_widgets = function (arg_27_0)
 	local var_27_0 = arg_27_0._list_widgets
 	local var_27_1
 	local var_27_2
@@ -596,7 +596,7 @@ function StoreWindowCategoryItemList._right_align_item_widgets(arg_27_0)
 	end
 end
 
-function StoreWindowCategoryItemList._sync_layout_path(arg_28_0, arg_28_1)
+StoreWindowCategoryItemList._sync_layout_path = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0._parent:get_store_path()
 	local var_28_1 = StoreLayoutConfig.structure
 	local var_28_2 = StoreLayoutConfig.pages
@@ -622,7 +622,7 @@ function StoreWindowCategoryItemList._sync_layout_path(arg_28_0, arg_28_1)
 	end
 end
 
-function StoreWindowCategoryItemList._handle_gamepad_grid_selection(arg_29_0, arg_29_1)
+StoreWindowCategoryItemList._handle_gamepad_grid_selection = function (arg_29_0, arg_29_1)
 	if not arg_29_0._selected_gamepad_grid_index then
 		return
 	end
@@ -668,7 +668,7 @@ function StoreWindowCategoryItemList._handle_gamepad_grid_selection(arg_29_0, ar
 	end
 end
 
-function StoreWindowCategoryItemList._find_closest_neighbour(arg_30_0, arg_30_1, arg_30_2)
+StoreWindowCategoryItemList._find_closest_neighbour = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0._list_widgets
 	local var_30_1 = var_30_0[arg_30_2]
 	local var_30_2 = var_30_1.content.size
@@ -694,7 +694,7 @@ function StoreWindowCategoryItemList._find_closest_neighbour(arg_30_0, arg_30_1,
 	end
 end
 
-function StoreWindowCategoryItemList._initialize_scrollbar(arg_31_0)
+StoreWindowCategoryItemList._initialize_scrollbar = function (arg_31_0)
 	local var_31_0 = var_0_2.list_window.size
 	local var_31_1 = var_0_2.list_scrollbar.size
 	local var_31_2 = var_31_0[2]
@@ -708,7 +708,7 @@ function StoreWindowCategoryItemList._initialize_scrollbar(arg_31_0)
 	var_31_7:set_scroll_percentage(0)
 end
 
-function StoreWindowCategoryItemList._update_scroll_position(arg_32_0)
+StoreWindowCategoryItemList._update_scroll_position = function (arg_32_0)
 	local var_32_0 = arg_32_0._scrollbar_logic:get_scrolled_length()
 
 	if var_32_0 ~= arg_32_0._scrolled_length then
@@ -717,7 +717,7 @@ function StoreWindowCategoryItemList._update_scroll_position(arg_32_0)
 	end
 end
 
-function StoreWindowCategoryItemList._update_visible_list_entries(arg_33_0)
+StoreWindowCategoryItemList._update_visible_list_entries = function (arg_33_0)
 	local var_33_0 = arg_33_0._scrollbar_logic
 
 	if not var_33_0:enabled() then
@@ -756,7 +756,7 @@ function StoreWindowCategoryItemList._update_visible_list_entries(arg_33_0)
 	end
 end
 
-function StoreWindowCategoryItemList._scroll_to_list_index(arg_34_0, arg_34_1)
+StoreWindowCategoryItemList._scroll_to_list_index = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0._scrollbar_logic
 
 	if var_34_0:enabled() then
@@ -796,7 +796,7 @@ function StoreWindowCategoryItemList._scroll_to_list_index(arg_34_0, arg_34_1)
 	end
 end
 
-function StoreWindowCategoryItemList._get_scrollbar_percentage_by_index(arg_35_0, arg_35_1)
+StoreWindowCategoryItemList._get_scrollbar_percentage_by_index = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._scrollbar_logic
 
 	if var_35_0:enabled() then

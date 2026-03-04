@@ -18,7 +18,7 @@ local var_0_7 = Colors.get_color_table_with_alpha("pale_green", 220)
 
 ContractLogUI = class(ContractLogUI)
 
-function ContractLogUI.init(arg_1_0, arg_1_1, arg_1_2)
+ContractLogUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -42,7 +42,7 @@ function ContractLogUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_align_widgets()
 end
 
-function ContractLogUI._create_ui_elements(arg_2_0)
+ContractLogUI._create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_2_0 = {}
@@ -64,7 +64,7 @@ function ContractLogUI._create_ui_elements(arg_2_0)
 	arg_2_0:set_visible(true)
 end
 
-function ContractLogUI._align_widgets(arg_3_0)
+ContractLogUI._align_widgets = function (arg_3_0)
 	local var_3_0 = 5
 	local var_3_1 = 0
 	local var_3_2 = 10
@@ -84,11 +84,11 @@ function ContractLogUI._align_widgets(arg_3_0)
 	arg_3_0:set_dirty()
 end
 
-function ContractLogUI.destroy(arg_4_0)
+ContractLogUI.destroy = function (arg_4_0)
 	arg_4_0:set_visible(false)
 end
 
-function ContractLogUI.set_visible(arg_5_0, arg_5_1)
+ContractLogUI.set_visible = function (arg_5_0, arg_5_1)
 	arg_5_0._is_visible = arg_5_1
 
 	local var_5_0 = arg_5_0.ui_renderer
@@ -101,7 +101,7 @@ function ContractLogUI.set_visible(arg_5_0, arg_5_1)
 	arg_5_0:set_dirty()
 end
 
-function ContractLogUI._sync_active_contracts(arg_6_0)
+ContractLogUI._sync_active_contracts = function (arg_6_0)
 	local var_6_0 = false
 	local var_6_1 = arg_6_0.quest_manager:get_active_contract_ids()
 
@@ -140,7 +140,7 @@ function ContractLogUI._sync_active_contracts(arg_6_0)
 	return var_6_0
 end
 
-function ContractLogUI._sync_contract_progression(arg_7_0)
+ContractLogUI._sync_contract_progression = function (arg_7_0)
 	local var_7_0 = arg_7_0._log_entries
 	local var_7_1 = false
 	local var_7_2 = false
@@ -174,7 +174,7 @@ function ContractLogUI._sync_contract_progression(arg_7_0)
 	return var_7_1
 end
 
-function ContractLogUI._update_contract_goal(arg_8_0, arg_8_1)
+ContractLogUI._update_contract_goal = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.contract_id
 	local var_8_1 = arg_8_0.quest_manager:get_session_progress_by_contract_id(var_8_0)
 	local var_8_2 = arg_8_1.widget
@@ -245,7 +245,7 @@ function ContractLogUI._update_contract_goal(arg_8_0, arg_8_1)
 	end
 end
 
-function ContractLogUI._add_contract(arg_9_0, arg_9_1)
+ContractLogUI._add_contract = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.num_added_contracts or 0
 
 	if var_9_0 >= var_0_2 then
@@ -324,7 +324,7 @@ function ContractLogUI._add_contract(arg_9_0, arg_9_1)
 	arg_9_0.num_added_contracts = var_9_2
 end
 
-function ContractLogUI._remove_contract(arg_10_0, arg_10_1)
+ContractLogUI._remove_contract = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.num_added_contracts or 0
 
 	if var_10_0 <= 0 then
@@ -366,7 +366,7 @@ function ContractLogUI._remove_contract(arg_10_0, arg_10_1)
 	arg_10_0:_align_widgets()
 end
 
-function ContractLogUI._get_text_size(arg_11_0, arg_11_1, arg_11_2)
+ContractLogUI._get_text_size = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.ui_renderer
 	local var_11_1 = arg_11_1.size
 	local var_11_2 = UIUtils.get_text_height(var_11_0, var_11_1, arg_11_1, arg_11_2)
@@ -384,7 +384,7 @@ function ContractLogUI._get_text_size(arg_11_0, arg_11_1, arg_11_2)
 	return var_11_2, var_11_3
 end
 
-function ContractLogUI.update(arg_12_0, arg_12_1, arg_12_2)
+ContractLogUI.update = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = false
 	local var_12_1 = false
 
@@ -419,7 +419,7 @@ function ContractLogUI.update(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:draw(arg_12_1)
 end
 
-function ContractLogUI._handle_resolution_modified(arg_13_0)
+ContractLogUI._handle_resolution_modified = function (arg_13_0)
 	if RESOLUTION_LOOKUP.modified then
 		arg_13_0:_on_resolution_modified()
 
@@ -427,7 +427,7 @@ function ContractLogUI._handle_resolution_modified(arg_13_0)
 	end
 end
 
-function ContractLogUI._on_resolution_modified(arg_14_0)
+ContractLogUI._on_resolution_modified = function (arg_14_0)
 	for iter_14_0, iter_14_1 in ipairs(arg_14_0._log_entries) do
 		arg_14_0:_update_contract_goal(iter_14_1)
 
@@ -444,7 +444,7 @@ function ContractLogUI._on_resolution_modified(arg_14_0)
 	arg_14_0:set_dirty()
 end
 
-function ContractLogUI.draw(arg_15_0, arg_15_1)
+ContractLogUI.draw = function (arg_15_0, arg_15_1)
 	if not arg_15_0._is_visible then
 		return
 	end
@@ -469,14 +469,14 @@ function ContractLogUI.draw(arg_15_0, arg_15_1)
 	arg_15_0._dirty = false
 end
 
-function ContractLogUI.set_dirty(arg_16_0)
+ContractLogUI.set_dirty = function (arg_16_0)
 	arg_16_0._dirty = true
 end
 
-function ContractLogUI._set_widget_dirty(arg_17_0, arg_17_1)
+ContractLogUI._set_widget_dirty = function (arg_17_0, arg_17_1)
 	arg_17_1.element.dirty = true
 end
 
-function ContractLogUI.play_sound(arg_18_0, arg_18_1)
+ContractLogUI.play_sound = function (arg_18_0, arg_18_1)
 	WwiseWorld.trigger_event(arg_18_0.wwise_world, arg_18_1)
 end

@@ -2,7 +2,7 @@
 
 EnemyCharacterStateJumping = class(EnemyCharacterStateJumping, EnemyCharacterState)
 
-function EnemyCharacterStateJumping.init(arg_1_0, arg_1_1)
+EnemyCharacterStateJumping.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "jumping")
 
 	local var_1_0 = arg_1_1
@@ -10,7 +10,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function EnemyCharacterStateJumping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateJumping.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	local var_2_0 = arg_2_0._player
@@ -81,7 +81,7 @@ function EnemyCharacterStateJumping.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 	Unit.flow_event(arg_2_1, "pactsworn_jump")
 end
 
-function EnemyCharacterStateJumping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+EnemyCharacterStateJumping.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	if arg_3_6 == "walking" or arg_3_6 == "standing" then
 		ScriptUnit.extension(arg_3_1, "whereabouts_system"):set_landed()
 	elseif arg_3_6 and arg_3_6 ~= "falling" then
@@ -89,7 +89,7 @@ function EnemyCharacterStateJumping.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, 
 	end
 end
 
-function EnemyCharacterStateJumping.common_state_changes(arg_4_0)
+EnemyCharacterStateJumping.common_state_changes = function (arg_4_0)
 	arg_4_0:handle_disabled_ghost_mode()
 
 	local var_4_0 = arg_4_0._csm
@@ -185,7 +185,7 @@ function EnemyCharacterStateJumping.common_state_changes(arg_4_0)
 	return false
 end
 
-function EnemyCharacterStateJumping.common_movement(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+EnemyCharacterStateJumping.common_movement = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._csm
 	local var_5_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_5_3)
 	local var_5_2 = arg_5_0._input_extension
@@ -239,7 +239,7 @@ function EnemyCharacterStateJumping.common_movement(arg_5_0, arg_5_1, arg_5_2, a
 	CharacterStateHelper.look(var_5_2, arg_5_0._player.viewport_name, arg_5_0._first_person_extension, var_5_3, arg_5_0._inventory_extension)
 end
 
-function EnemyCharacterStateJumping.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateJumping.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if arg_6_0:common_state_changes() then
 		return
 	end

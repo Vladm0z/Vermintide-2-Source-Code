@@ -20,7 +20,7 @@ function get_ai_vs_ai_target(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function PerceptionUtils.pick_closest_target(arg_2_0, arg_2_1, arg_2_2)
+PerceptionUtils.pick_closest_target = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = var_0_3[arg_2_0]
 	local var_2_1
 	local var_2_2 = math.huge
@@ -44,7 +44,7 @@ function PerceptionUtils.pick_closest_target(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_1, var_2_2
 end
 
-function PerceptionUtils.pick_closest_target_with_filter(arg_3_0, arg_3_1, arg_3_2)
+PerceptionUtils.pick_closest_target_with_filter = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = var_0_3[arg_3_0]
 	local var_3_1
 	local var_3_2 = math.huge
@@ -73,7 +73,7 @@ end
 
 local var_0_8 = {}
 
-function PerceptionUtils.pick_closest_vortex_target(arg_4_0, arg_4_1, arg_4_2)
+PerceptionUtils.pick_closest_vortex_target = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = var_0_3[arg_4_0]
 	local var_4_1
 	local var_4_2 = math.huge
@@ -101,7 +101,7 @@ function PerceptionUtils.pick_closest_vortex_target(arg_4_0, arg_4_1, arg_4_2)
 	return var_4_1, var_4_2
 end
 
-function PerceptionUtils.pick_boss_sorcerer_target(arg_5_0, arg_5_1, arg_5_2)
+PerceptionUtils.pick_boss_sorcerer_target = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = var_0_3[arg_5_0]
 	local var_5_1
 	local var_5_2 = math.huge
@@ -135,7 +135,7 @@ function PerceptionUtils.pick_boss_sorcerer_target(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_1, var_5_2
 end
 
-function PerceptionUtils.pick_closest_target_infinte_range(arg_6_0, arg_6_1, arg_6_2)
+PerceptionUtils.pick_closest_target_infinte_range = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = var_0_3[arg_6_0]
 	local var_6_1
 	local var_6_2 = math.huge
@@ -159,7 +159,7 @@ function PerceptionUtils.pick_closest_target_infinte_range(arg_6_0, arg_6_1, arg
 	return var_6_1, var_6_2
 end
 
-function PerceptionUtils.healthy_players(arg_7_0, arg_7_1, arg_7_2)
+PerceptionUtils.healthy_players = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_1.group_blackboard.special_targets
 	local var_7_1 = Vector3.distance
 	local var_7_2 = -1000
@@ -202,11 +202,11 @@ function PerceptionUtils.healthy_players(arg_7_0, arg_7_1, arg_7_2)
 	return var_7_3
 end
 
-function PerceptionUtils.pick_ninja_skulking_target(arg_8_0, arg_8_1, arg_8_2)
+PerceptionUtils.pick_ninja_skulking_target = function (arg_8_0, arg_8_1, arg_8_2)
 	return PerceptionUtils.pick_solitary_target(arg_8_0, arg_8_1, arg_8_2)
 end
 
-function PerceptionUtils.pick_ninja_approach_target(arg_9_0, arg_9_1, arg_9_2)
+PerceptionUtils.pick_ninja_approach_target = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.target_unit
 
 	if arg_9_1.jump_data and arg_9_1.jump_data.target_unit then
@@ -248,7 +248,7 @@ function PerceptionUtils.pick_ninja_approach_target(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_5, var_9_6, var_9_7
 end
 
-function PerceptionUtils.pick_solitary_target(arg_10_0, arg_10_1, arg_10_2)
+PerceptionUtils.pick_solitary_target = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = var_0_3[arg_10_0]
 	local var_10_1
 	local var_10_2 = math.huge
@@ -483,14 +483,14 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 	end
 
 	if not var_0_0[var_14_3] or var_14_3 == var_14_14 then
-		-- block empty
+		-- Nothing
 	else
 		local var_14_17 = BLACKBOARDS[var_14_3]
 
 		if arg_14_6[var_14_17.breed.name] then
-			-- block empty
+			-- Nothing
 		elseif var_14_17.lean_dogpile >= var_14_17.crowded_slots then
-			-- block empty
+			-- Nothing
 		else
 			local var_14_18 = var_0_3[var_14_3]
 			local var_14_19 = var_0_18(var_14_17, arg_14_1, arg_14_3, var_14_3)
@@ -520,7 +520,7 @@ local function var_0_20(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14
 	end
 end
 
-function PerceptionUtils.horde_pick_closest_target_with_spillover(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+PerceptionUtils.horde_pick_closest_target_with_spillover = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	fassert(ScriptUnit.has_extension(arg_15_0, "ai_slot_system"), "Error! Trying to use slot_system perception for non-slot system unit!")
 
 	local var_15_0 = var_0_3[arg_15_0]
@@ -593,7 +593,7 @@ function PerceptionUtils.horde_pick_closest_target_with_spillover(arg_15_0, arg_
 	return var_15_2, var_15_8
 end
 
-function PerceptionUtils.pick_closest_target_near_detection_source_position(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+PerceptionUtils.pick_closest_target_near_detection_source_position = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = arg_16_1.side
 	local var_16_1
 	local var_16_2 = arg_16_1.detection_source_pos
@@ -611,7 +611,7 @@ function PerceptionUtils.pick_closest_target_near_detection_source_position(arg_
 	return var_16_3, var_16_5
 end
 
-function PerceptionUtils.pick_best_target_near_commander_target(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+PerceptionUtils.pick_best_target_near_commander_target = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_1.commander_target
 
 	if not var_0_0[var_17_0] then
@@ -629,7 +629,7 @@ function PerceptionUtils.pick_best_target_near_commander_target(arg_17_0, arg_17
 	return var_17_3, var_17_5
 end
 
-function PerceptionUtils.attack_commander_target_with_fallback(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+PerceptionUtils.attack_commander_target_with_fallback = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_1.commander_target
 
 	if not var_0_0[var_18_0] then
@@ -728,7 +728,7 @@ local function var_0_21(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19
 	return var_19_18 + var_19_23 + var_19_24 + var_19_19 + var_19_20 + var_19_22 + var_19_21 + var_19_15 + var_19_7, var_19_2
 end
 
-function PerceptionUtils.pick_closest_target_with_spillover(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+PerceptionUtils.pick_closest_target_with_spillover = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	fassert(ScriptUnit.has_extension(arg_20_0, "ai_slot_system"), "Error! Trying to use slot_system perception for non-slot system unit!")
 
 	local var_20_0
@@ -828,7 +828,7 @@ end
 
 local var_0_22 = 0
 
-function PerceptionUtils.patrol_passive_target_selection(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+PerceptionUtils.patrol_passive_target_selection = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0 = arg_21_2.patrol_detection_radius * arg_21_2.patrol_detection_radius
 	local var_21_1 = var_0_3[arg_21_0]
 	local var_21_2 = arg_21_1.previous_attacker
@@ -930,7 +930,7 @@ function PerceptionUtils.patrol_passive_target_selection(arg_21_0, arg_21_1, arg
 	return nil
 end
 
-function PerceptionUtils.storm_patrol_death_squad_target_selection(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+PerceptionUtils.storm_patrol_death_squad_target_selection = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	fassert(ScriptUnit.has_extension(arg_22_0, "ai_slot_system"), "Error! Trying to use slot_system perception for non-slot system unit!")
 
 	local var_22_0 = arg_22_2.detection_radius
@@ -1032,7 +1032,7 @@ function PerceptionUtils.storm_patrol_death_squad_target_selection(arg_22_0, arg
 	return var_22_5
 end
 
-function PerceptionUtils.pick_encampment_target_idle(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+PerceptionUtils.pick_encampment_target_idle = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_1.previous_attacker
 
 	if var_23_0 or arg_23_1.confirmed_player_sighting then
@@ -1049,7 +1049,7 @@ function PerceptionUtils.pick_encampment_target_idle(arg_23_0, arg_23_1, arg_23_
 	end
 end
 
-function PerceptionUtils.pick_closest_target_with_spillover_wakeup_group(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+PerceptionUtils.pick_closest_target_with_spillover_wakeup_group = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	local var_24_0 = arg_24_1.previous_attacker
 
 	if var_24_0 or arg_24_1._was_attacked then
@@ -1064,11 +1064,11 @@ function PerceptionUtils.pick_closest_target_with_spillover_wakeup_group(arg_24_
 	end
 end
 
-function PerceptionUtils.pick_no_targets()
+PerceptionUtils.pick_no_targets = function ()
 	return
 end
 
-function PerceptionUtils.pick_player_controller_allied(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+PerceptionUtils.pick_player_controller_allied = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 	local var_26_0 = arg_26_1.player_controller
 
 	if var_26_0 and ALIVE[var_26_0] then
@@ -1080,7 +1080,7 @@ function PerceptionUtils.pick_player_controller_allied(arg_26_0, arg_26_1, arg_2
 	end
 end
 
-function PerceptionUtils.pick_rat_ogre_target_idle(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+PerceptionUtils.pick_rat_ogre_target_idle = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 	local var_27_0 = arg_27_1.waiting
 	local var_27_1 = arg_27_1.side
 	local var_27_2 = var_27_1.ENEMY_PLAYER_AND_BOT_UNITS
@@ -1171,7 +1171,7 @@ end
 
 local var_0_24 = {}
 
-function PerceptionUtils.pick_rat_ogre_target_with_weights(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+PerceptionUtils.pick_rat_ogre_target_with_weights = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 	local var_29_0 = Vector3.distance
 	local var_29_1
 	local var_29_2 = math.huge
@@ -1267,7 +1267,7 @@ function PerceptionUtils.pick_rat_ogre_target_with_weights(arg_29_0, arg_29_1, a
 	return var_29_1, var_29_2
 end
 
-function PerceptionUtils.pick_bestigor_target_with_weights(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+PerceptionUtils.pick_bestigor_target_with_weights = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0 = Vector3.distance
 	local var_30_1
 	local var_30_2 = math.huge
@@ -1388,7 +1388,7 @@ function PerceptionUtils.pick_bestigor_target_with_weights(arg_30_0, arg_30_1, a
 	return var_30_1, var_30_2
 end
 
-function PerceptionUtils.pick_chaos_troll_target_with_weights(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+PerceptionUtils.pick_chaos_troll_target_with_weights = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 	if arg_31_1.keep_target then
 		return
 	end
@@ -1492,7 +1492,7 @@ function PerceptionUtils.pick_chaos_troll_target_with_weights(arg_31_0, arg_31_1
 	return var_31_1, var_31_2
 end
 
-function PerceptionUtils.debug_ai_perception(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+PerceptionUtils.debug_ai_perception = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
 	local var_32_0 = 16
 	local var_32_1 = "arial"
 	local var_32_2 = "materials/fonts/" .. var_32_1
@@ -1549,7 +1549,7 @@ function PerceptionUtils.debug_ai_perception(arg_32_0, arg_32_1, arg_32_2, arg_3
 	return var_32_23
 end
 
-function PerceptionUtils.debug_rat_ogre_perception(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+PerceptionUtils.debug_rat_ogre_perception = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 	local var_33_0 = 16
 	local var_33_1 = "arial"
 	local var_33_2 = "materials/fonts/" .. var_33_1
@@ -1603,7 +1603,7 @@ function PerceptionUtils.debug_rat_ogre_perception(arg_33_0, arg_33_1, arg_33_2,
 	ScriptGUI.icrect(arg_33_0, var_33_3, var_33_4, var_33_5, var_33_6, arg_33_2 + var_33_7, var_33_12, var_33_8 - 1, Color(200, 20, 20, 20))
 end
 
-function PerceptionUtils.pick_pack_master_target(arg_34_0, arg_34_1, arg_34_2)
+PerceptionUtils.pick_pack_master_target = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = AiUtils.is_of_interest_to_packmaster
 	local var_34_1 = var_0_3[arg_34_0]
 	local var_34_2 = arg_34_1.side
@@ -1636,7 +1636,7 @@ function PerceptionUtils.pick_pack_master_target(arg_34_0, arg_34_1, arg_34_2)
 	return var_34_5, var_34_11
 end
 
-function PerceptionUtils.pick_mutator_sorcerer_target(arg_35_0, arg_35_1, arg_35_2)
+PerceptionUtils.pick_mutator_sorcerer_target = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = AiUtils.is_of_interest_to_corruptor
 	local var_35_1 = var_0_3[arg_35_0]
 	local var_35_2
@@ -1684,7 +1684,7 @@ function PerceptionUtils.pick_mutator_sorcerer_target(arg_35_0, arg_35_1, arg_35
 	return var_35_2, var_35_14
 end
 
-function PerceptionUtils.pick_corruptor_target(arg_36_0, arg_36_1, arg_36_2)
+PerceptionUtils.pick_corruptor_target = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_1.side
 	local var_36_1 = var_36_0.ENEMY_PLAYER_AND_BOT_UNITS
 	local var_36_2 = var_36_0.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
@@ -1724,7 +1724,7 @@ function PerceptionUtils.pick_corruptor_target(arg_36_0, arg_36_1, arg_36_2)
 	return var_36_6, var_36_13
 end
 
-function PerceptionUtils.pick_tether_target(arg_37_0, arg_37_1, arg_37_2)
+PerceptionUtils.pick_tether_target = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = Managers.state.side
 	local var_37_1 = var_0_3[arg_37_0]
 	local var_37_2
@@ -1825,7 +1825,7 @@ local function var_0_25(arg_39_0)
 	return not var_39_0:is_knocked_down() and not var_39_0:get_is_ledge_hanging() and not var_39_0:is_ready_for_assisted_respawn() and not var_39_0:is_hanging_from_hook()
 end
 
-function PerceptionUtils.pick_ratling_gun_target(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+PerceptionUtils.pick_ratling_gun_target = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
 	local var_40_0 = arg_40_1.world
 	local var_40_1 = World.get_data(var_40_0, "physics_world")
 	local var_40_2 = arg_40_1.target_unit
@@ -1879,7 +1879,7 @@ function PerceptionUtils.pick_ratling_gun_target(arg_40_0, arg_40_1, arg_40_2, a
 	return var_40_6, var_40_8, var_40_10, var_40_9, var_40_7, var_40_11
 end
 
-function PerceptionUtils.pick_warpfire_thrower_target(arg_41_0, arg_41_1, arg_41_2)
+PerceptionUtils.pick_warpfire_thrower_target = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_1.world
 	local var_41_1 = World.get_data(var_41_0, "physics_world")
 	local var_41_2 = arg_41_1.target_unit
@@ -1924,7 +1924,7 @@ function PerceptionUtils.pick_warpfire_thrower_target(arg_41_0, arg_41_1, arg_41
 	return var_41_6, var_41_8, var_41_10, var_41_9
 end
 
-function PerceptionUtils.raycast_spine_to_spine(arg_42_0, arg_42_1, arg_42_2)
+PerceptionUtils.raycast_spine_to_spine = function (arg_42_0, arg_42_1, arg_42_2)
 	if not ScriptUnit.has_extension(arg_42_1, "locomotion_system") then
 		return true
 	end
@@ -1949,7 +1949,7 @@ local var_0_27 = 2
 local var_0_28 = 3
 local var_0_29 = 4
 
-function PerceptionUtils.is_position_in_line_of_sight(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+PerceptionUtils.is_position_in_line_of_sight = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	arg_43_4 = arg_43_4 or "filter_ai_line_of_sight_check"
 
 	local var_43_0 = arg_43_2 - arg_43_1
@@ -1965,7 +1965,7 @@ function PerceptionUtils.is_position_in_line_of_sight(arg_43_0, arg_43_1, arg_43
 	return not var_43_3, var_43_4
 end
 
-function PerceptionUtils.is_boss_in_los(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+PerceptionUtils.is_boss_in_los = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	local var_44_0 = "filter_player_and_enemy_hit_box_check"
 	local var_44_1 = arg_44_2 - arg_44_1
 	local var_44_2 = Vector3.normalize(var_44_1)
@@ -1997,7 +1997,7 @@ function PerceptionUtils.is_boss_in_los(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
 	return var_44_5, var_44_6
 end
 
-function PerceptionUtils.has_line_of_sight_to_any_player(arg_45_0, arg_45_1)
+PerceptionUtils.has_line_of_sight_to_any_player = function (arg_45_0, arg_45_1)
 	local var_45_0 = var_0_3[arg_45_0]
 	local var_45_1 = BLACKBOARDS[arg_45_0]
 	local var_45_2 = World.get_data(var_45_1.world, "physics_world")
@@ -2015,7 +2015,7 @@ function PerceptionUtils.has_line_of_sight_to_any_player(arg_45_0, arg_45_1)
 	return false
 end
 
-function PerceptionUtils.position_has_line_of_sight_to_any_player(arg_46_0)
+PerceptionUtils.position_has_line_of_sight_to_any_player = function (arg_46_0)
 	local var_46_0 = Managers.world
 	local var_46_1 = "level_world"
 	local var_46_2 = var_46_0:world(var_46_1)
@@ -2034,7 +2034,7 @@ function PerceptionUtils.position_has_line_of_sight_to_any_player(arg_46_0)
 	return false
 end
 
-function PerceptionUtils.pick_area_target(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+PerceptionUtils.pick_area_target = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 	local var_47_0
 	local var_47_1 = 0
 	local var_47_2 = {}
@@ -2061,7 +2061,7 @@ function PerceptionUtils.pick_area_target(arg_47_0, arg_47_1, arg_47_2, arg_47_3
 	return var_47_0, var_47_1
 end
 
-function PerceptionUtils._find_circles(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+PerceptionUtils._find_circles = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	local var_48_0 = var_0_3[arg_48_0]
 	local var_48_1 = {}
 	local var_48_2 = {}
@@ -2110,7 +2110,7 @@ function PerceptionUtils._find_circles(arg_48_0, arg_48_1, arg_48_2, arg_48_3)
 	return var_48_1
 end
 
-function PerceptionUtils._pick_best_circle(arg_49_0, arg_49_1, arg_49_2)
+PerceptionUtils._pick_best_circle = function (arg_49_0, arg_49_1, arg_49_2)
 	for iter_49_0, iter_49_1 in ipairs(arg_49_0) do
 		for iter_49_2, iter_49_3 in pairs(arg_49_1) do
 			if arg_49_2 >= math.round_with_precision(Vector3.distance(iter_49_1.pos, iter_49_3), 2) then
@@ -2132,7 +2132,7 @@ function PerceptionUtils._pick_best_circle(arg_49_0, arg_49_1, arg_49_2)
 	return arg_49_0[var_49_0]
 end
 
-function PerceptionUtils.debug_draw_pick_area_target(arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+PerceptionUtils.debug_draw_pick_area_target = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
 	local var_50_0 = Managers.state.debug:drawer({
 		mode = "retained",
 		name = "pick_area_target"
@@ -2170,7 +2170,7 @@ function PerceptionUtils.debug_draw_pick_area_target(arg_50_0, arg_50_1, arg_50_
 	end
 end
 
-function PerceptionUtils.debug_draw_throw_trajectory(arg_51_0)
+PerceptionUtils.debug_draw_throw_trajectory = function (arg_51_0)
 	local var_51_0 = Managers.state.debug:drawer({
 		mode = "retained",
 		name = "projectile_unit_debug"

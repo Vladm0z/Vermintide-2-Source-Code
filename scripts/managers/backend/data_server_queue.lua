@@ -2,7 +2,7 @@
 
 BEQueueItem = class(BEQueueItem)
 
-function BEQueueItem.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
+BEQueueItem.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 	fassert(arg_1_1 and arg_1_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
 	arg_1_0._queue_id = arg_1_2
@@ -12,16 +12,16 @@ function BEQueueItem.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, ...)
 	}
 end
 
-function BEQueueItem.disable_registered_commands(arg_2_0)
+BEQueueItem.disable_registered_commands = function (arg_2_0)
 	arg_2_0._disable_registered_commands = true
 end
 
-function BEQueueItem.submit_request(arg_3_0, arg_3_1)
+BEQueueItem.submit_request = function (arg_3_0, arg_3_1)
 	fassert(arg_3_1 and arg_3_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 	BackendSession.item_server_script(arg_3_0._script_name, "queue_id", arg_3_0._queue_id, unpack(arg_3_0._data))
 end
 
-function BEQueueItem.poll_backend(arg_4_0, arg_4_1)
+BEQueueItem.poll_backend = function (arg_4_0, arg_4_1)
 	fassert(arg_4_1 and arg_4_1 == "DataServerQueue", "Only poll BEQueueItem from DataServerQueue")
 
 	local var_4_0, var_4_1, var_4_2 = BackendSession.poll_item_server()
@@ -56,49 +56,49 @@ function BEQueueItem.poll_backend(arg_4_0, arg_4_1)
 	end
 end
 
-function BEQueueItem.items(arg_5_0)
+BEQueueItem.items = function (arg_5_0)
 	fassert(arg_5_0._is_done, "Request hasn't completed yet")
 
 	return arg_5_0._items
 end
 
-function BEQueueItem.parameters(arg_6_0)
+BEQueueItem.parameters = function (arg_6_0)
 	fassert(arg_6_0._is_done, "Request hasn't completed yet")
 
 	return arg_6_0._parameters
 end
 
-function BEQueueItem.error_message(arg_7_0)
+BEQueueItem.error_message = function (arg_7_0)
 	fassert(arg_7_0._is_done, "Request hasn't completed yet")
 
 	return arg_7_0._error_message
 end
 
-function BEQueueItem.use_registered_commands(arg_8_0)
+BEQueueItem.use_registered_commands = function (arg_8_0)
 	return not arg_8_0._disable_registered_commands
 end
 
-function BEQueueItem.is_done(arg_9_0)
+BEQueueItem.is_done = function (arg_9_0)
 	return arg_9_0._is_done
 end
 
 BECommands = class(BECommands)
 
-function BECommands.init(arg_10_0)
+BECommands.init = function (arg_10_0)
 	arg_10_0._executors = {}
 
 	arg_10_0:register_executor("command_group", callback(arg_10_0, "_command_group_executor"))
 end
 
-function BECommands.register_executor(arg_11_0, arg_11_1, arg_11_2)
+BECommands.register_executor = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._executors[arg_11_1] = arg_11_2
 end
 
-function BECommands.unregister_executor(arg_12_0, arg_12_1)
+BECommands.unregister_executor = function (arg_12_0, arg_12_1)
 	arg_12_0._executors[arg_12_1] = nil
 end
 
-function BECommands.execute(arg_13_0, arg_13_1)
+BECommands.execute = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_1:parameters()
 
 	for iter_13_0, iter_13_1 in pairs(var_13_0) do
@@ -110,11 +110,11 @@ function BECommands.execute(arg_13_0, arg_13_1)
 	end
 end
 
-function BECommands._execute(arg_14_0, arg_14_1, arg_14_2)
+BECommands._execute = function (arg_14_0, arg_14_1, arg_14_2)
 	arg_14_0._executors[arg_14_1](arg_14_2)
 end
 
-function BECommands._command_group_executor(arg_15_0, arg_15_1)
+BECommands._command_group_executor = function (arg_15_0, arg_15_1)
 	for iter_15_0, iter_15_1 in pairs(arg_15_1) do
 		arg_15_0:_execute(iter_15_0, iter_15_1)
 	end
@@ -122,20 +122,20 @@ end
 
 DataServerQueue = class(DataServerQueue)
 
-function DataServerQueue.init(arg_16_0)
+DataServerQueue.init = function (arg_16_0)
 	arg_16_0._queue_id = 0
 	arg_16_0._queue = {}
 	arg_16_0._error_items = {}
 	arg_16_0._command_executors = BECommands:new()
 end
 
-function DataServerQueue._next_queue_id(arg_17_0)
+DataServerQueue._next_queue_id = function (arg_17_0)
 	arg_17_0._queue_id = arg_17_0._queue_id + 1
 
 	return tostring(arg_17_0._queue_id)
 end
 
-function DataServerQueue.add_item(arg_18_0, arg_18_1, ...)
+DataServerQueue.add_item = function (arg_18_0, arg_18_1, ...)
 	local var_18_0 = arg_18_0:_next_queue_id()
 	local var_18_1 = BEQueueItem:new("DataServerQueue", var_18_0, arg_18_1, ...)
 
@@ -148,19 +148,19 @@ function DataServerQueue.add_item(arg_18_0, arg_18_1, ...)
 	return var_18_1
 end
 
-function DataServerQueue.register_executor(arg_19_0, arg_19_1, arg_19_2)
+DataServerQueue.register_executor = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._command_executors:register_executor(arg_19_1, arg_19_2)
 end
 
-function DataServerQueue.unregister_executor(arg_20_0, arg_20_1)
+DataServerQueue.unregister_executor = function (arg_20_0, arg_20_1)
 	arg_20_0._command_executors:unregister_executor(arg_20_1)
 end
 
-function DataServerQueue.clear(arg_21_0)
+DataServerQueue.clear = function (arg_21_0)
 	arg_21_0._queue = {}
 end
 
-function DataServerQueue.update(arg_22_0)
+DataServerQueue.update = function (arg_22_0)
 	local var_22_0 = arg_22_0._queue[1]
 
 	if var_22_0 then
@@ -184,7 +184,7 @@ function DataServerQueue.update(arg_22_0)
 	end
 end
 
-function DataServerQueue.check_for_errors(arg_23_0)
+DataServerQueue.check_for_errors = function (arg_23_0)
 	if #arg_23_0._error_items > 0 then
 		local var_23_0 = table.remove(arg_23_0._error_items, 1):error_message()
 
@@ -195,6 +195,6 @@ function DataServerQueue.check_for_errors(arg_23_0)
 	end
 end
 
-function DataServerQueue.num_current_requests(arg_24_0)
+DataServerQueue.num_current_requests = function (arg_24_0)
 	return #arg_24_0._queue
 end

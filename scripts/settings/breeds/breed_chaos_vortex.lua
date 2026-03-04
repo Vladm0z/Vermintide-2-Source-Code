@@ -57,7 +57,7 @@ local var_0_0 = {
 		vortex_danger_zone = 1
 	},
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_1_0, arg_1_1)
+		prepare_func = function (arg_1_0, arg_1_1)
 			arg_1_1.ai_supplementary_system = {
 				vortex_template_name = "standard"
 			}

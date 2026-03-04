@@ -10,7 +10,7 @@ if script_data then
 	script_data.debug_legendary_traits = script_data.debug_legendary_traits or Development.parameter("debug_legendary_traits")
 end
 
-function BuffUtils.apply_buff_tweak_data(arg_1_0, arg_1_1)
+BuffUtils.apply_buff_tweak_data = function (arg_1_0, arg_1_1)
 	for iter_1_0, iter_1_1 in pairs(arg_1_0) do
 		local var_1_0 = arg_1_1[iter_1_0]
 
@@ -20,7 +20,7 @@ function BuffUtils.apply_buff_tweak_data(arg_1_0, arg_1_1)
 	end
 end
 
-function BuffUtils.copy_talent_buff_names(arg_2_0)
+BuffUtils.copy_talent_buff_names = function (arg_2_0)
 	for iter_2_0, iter_2_1 in pairs(arg_2_0) do
 		local var_2_0 = iter_2_1.buffs
 
@@ -30,11 +30,11 @@ function BuffUtils.copy_talent_buff_names(arg_2_0)
 	end
 end
 
-function BuffUtils.get_max_stacks(arg_3_0, arg_3_1)
+BuffUtils.get_max_stacks = function (arg_3_0, arg_3_1)
 	return BuffUtils.get_buff_template(arg_3_0).buffs[arg_3_1 or 1].max_stacks or nil
 end
 
-function BuffUtils.remove_stacked_buffs(arg_4_0, arg_4_1)
+BuffUtils.remove_stacked_buffs = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0 and ScriptUnit.has_extension(arg_4_0, "buff_system")
 
 	if not var_4_0 then
@@ -48,7 +48,7 @@ function BuffUtils.remove_stacked_buffs(arg_4_0, arg_4_1)
 	table.clear(arg_4_1)
 end
 
-function BuffUtils.buffs_from_rpc_params(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BuffUtils.buffs_from_rpc_params = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = NetworkLookup.buff_templates
 	local var_5_1 = NetworkLookup.buff_data_types
 	local var_5_2 = {}
@@ -68,7 +68,7 @@ function BuffUtils.buffs_from_rpc_params(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return var_5_2
 end
 
-function BuffUtils.buffs_to_rpc_params(arg_6_0)
+BuffUtils.buffs_to_rpc_params = function (arg_6_0)
 	local var_6_0 = NetworkLookup.buff_templates
 	local var_6_1 = NetworkLookup.buff_data_types
 	local var_6_2 = {}
@@ -100,7 +100,7 @@ local function var_0_2(arg_7_0, arg_7_1)
 	return arg_7_0.link_node and var_0_1(arg_7_1, arg_7_0.link_node) or 0
 end
 
-function BuffUtils.create_attached_particles(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BuffUtils.create_attached_particles = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	if not arg_8_0 or not arg_8_1 then
 		return nil
 	end
@@ -177,7 +177,7 @@ function BuffUtils.create_attached_particles(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 	return var_8_0
 end
 
-function BuffUtils.update_attached_particles(arg_9_0, arg_9_1, arg_9_2)
+BuffUtils.update_attached_particles = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_1.update_fx
 
 	for iter_9_0, iter_9_1 in pairs(var_9_0) do
@@ -185,7 +185,7 @@ function BuffUtils.update_attached_particles(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BuffUtils.destroy_attached_particles(arg_10_0, arg_10_1)
+BuffUtils.destroy_attached_particles = function (arg_10_0, arg_10_1)
 	if arg_10_1 and arg_10_0 then
 		local var_10_0 = arg_10_1.destroy_fx
 
@@ -205,7 +205,7 @@ function BuffUtils.destroy_attached_particles(arg_10_0, arg_10_1)
 	end
 end
 
-function BuffUtils.create_liquid_forward(arg_11_0, arg_11_1)
+BuffUtils.create_liquid_forward = function (arg_11_0, arg_11_1)
 	if ALIVE[arg_11_0] then
 		local function var_11_0()
 			local var_12_0 = POSITION_LOOKUP[arg_11_0]
@@ -243,7 +243,7 @@ function BuffUtils.create_liquid_forward(arg_11_0, arg_11_1)
 	end
 end
 
-function BuffUtils.get_buff_template(arg_13_0, arg_13_1)
+BuffUtils.get_buff_template = function (arg_13_0, arg_13_1)
 	if not BuffTemplates[arg_13_0] then
 		return
 	end
@@ -254,7 +254,7 @@ end
 BalefireDots = BalefireDots or {}
 BalefireBurnDotLookup = BalefireBurnDotLookup or {}
 
-function BuffUtils.generate_balefire_burn_variants(arg_14_0)
+BuffUtils.generate_balefire_burn_variants = function (arg_14_0)
 	for iter_14_0, iter_14_1 in pairs(arg_14_0) do
 		local var_14_0 = string.find(iter_14_0, "_balefire")
 
@@ -292,7 +292,7 @@ end
 
 InfiniteBurnDotLookup = InfiniteBurnDotLookup or {}
 
-function BuffUtils.generate_infinite_burn_variants(arg_15_0)
+BuffUtils.generate_infinite_burn_variants = function (arg_15_0)
 	for iter_15_0, iter_15_1 in pairs(arg_15_0) do
 		if not string.find(iter_15_0, "_infinite") then
 			local var_15_0
@@ -318,7 +318,7 @@ function BuffUtils.generate_infinite_burn_variants(arg_15_0)
 					local var_15_3 = iter_15_3.max_stacks_func
 
 					if var_15_3 ~= nil then
-						function iter_15_3.max_stacks_func(...)
+						iter_15_3.max_stacks_func = function (...)
 							return math.min(var_15_3(...), 1)
 						end
 					end

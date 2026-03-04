@@ -19,17 +19,17 @@ HudCustomizer.offset_registry = var_0_8
 
 local var_0_9 = Application.user_setting("hud_customizer_enabled")
 
-function HudCustomizer.is_active()
+HudCustomizer.is_active = function ()
 	return var_0_9 and Managers.chat.chat_gui.chat_focused and Keyboard.button(Keyboard.button_id("left alt")) > 0.5
 end
 
-function HudCustomizer.reset_button(arg_2_0)
+HudCustomizer.reset_button = function (arg_2_0)
 	if not HudCustomizer.is_active() then
 		return
 	end
 end
 
-function HudCustomizer.run(arg_3_0, arg_3_1, arg_3_2)
+HudCustomizer.run = function (arg_3_0, arg_3_1, arg_3_2)
 	if not HudCustomizer.is_active() then
 		return
 	end
@@ -124,7 +124,7 @@ function HudCustomizer.run(arg_3_0, arg_3_1, arg_3_2)
 	return var_3_0
 end
 
-function HudCustomizer.debug_temp(arg_4_0, arg_4_1)
+HudCustomizer.debug_temp = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0[arg_4_1].local_position
 	local var_4_1 = arg_4_0[arg_4_1].world_position
 

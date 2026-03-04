@@ -12,7 +12,7 @@ local var_0_1 = table.mirror_array({
 
 CareerAbilityBWNecromancerCommand = class(CareerAbilityBWNecromancerCommand)
 
-function CareerAbilityBWNecromancerCommand.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityBWNecromancerCommand.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_2
 	arg_1_0._player = arg_1_3.player
 	arg_1_0._is_local = arg_1_3.player.local_player
@@ -30,7 +30,7 @@ function CareerAbilityBWNecromancerCommand.init(arg_1_0, arg_1_1, arg_1_2, arg_1
 	arg_1_0._target_unit = nil
 end
 
-function CareerAbilityBWNecromancerCommand.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+CareerAbilityBWNecromancerCommand.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
 	arg_2_0._buff_system = Managers.state.entity:system("buff_system")
@@ -49,7 +49,7 @@ function CareerAbilityBWNecromancerCommand.extensions_ready(arg_2_0, arg_2_1, ar
 	arg_2_0:_on_talents_changed(arg_2_2, ScriptUnit.extension(arg_2_2, "talent_system"))
 end
 
-function CareerAbilityBWNecromancerCommand._on_talents_changed(arg_3_0, arg_3_1, arg_3_2)
+CareerAbilityBWNecromancerCommand._on_talents_changed = function (arg_3_0, arg_3_1, arg_3_2)
 	if arg_3_1 ~= arg_3_0._owner_unit then
 		return
 	end
@@ -62,7 +62,7 @@ function CareerAbilityBWNecromancerCommand._on_talents_changed(arg_3_0, arg_3_1,
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.update(arg_4_0, arg_4_1, arg_4_2)
+CareerAbilityBWNecromancerCommand.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_0._is_local and not arg_4_0._is_server then
 		return
 	end
@@ -74,7 +74,7 @@ function CareerAbilityBWNecromancerCommand.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.destroy(arg_5_0)
+CareerAbilityBWNecromancerCommand.destroy = function (arg_5_0)
 	arg_5_0._network_event_delegate:unregister(arg_5_0)
 
 	if Managers.state.event then
@@ -82,7 +82,7 @@ function CareerAbilityBWNecromancerCommand.destroy(arg_5_0)
 	end
 end
 
-function CareerAbilityBWNecromancerCommand._update_outlines(arg_6_0, arg_6_1)
+CareerAbilityBWNecromancerCommand._update_outlines = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._outline_data
 
 	if var_6_0 then
@@ -98,7 +98,7 @@ function CareerAbilityBWNecromancerCommand._update_outlines(arg_6_0, arg_6_1)
 	end
 end
 
-function CareerAbilityBWNecromancerCommand._command_sacrifice_pet(arg_7_0, arg_7_1)
+CareerAbilityBWNecromancerCommand._command_sacrifice_pet = function (arg_7_0, arg_7_1)
 	local var_7_0 = Unit.has_node(arg_7_1, "j_spine") and Unit.node(arg_7_1, "j_spine") or 0
 	local var_7_1 = Managers.state.network
 	local var_7_2 = NetworkLookup.effects["fx/necromancer_skeleton_sacrifice"]
@@ -122,11 +122,11 @@ function CareerAbilityBWNecromancerCommand._command_sacrifice_pet(arg_7_0, arg_7
 	end
 end
 
-function CareerAbilityBWNecromancerCommand._trigger_charge_sound(arg_8_0)
+CareerAbilityBWNecromancerCommand._trigger_charge_sound = function (arg_8_0)
 	arg_8_0._fp_extension:play_hud_sound_event("Play_career_necro_skeleton_charge")
 end
 
-function CareerAbilityBWNecromancerCommand._start_charge_cooldown(arg_9_0)
+CareerAbilityBWNecromancerCommand._start_charge_cooldown = function (arg_9_0)
 	local var_9_0 = arg_9_0._buff_extension
 	local var_9_1 = var_9_0:get_buff_type("sienna_necromancer_6_3_available_charge")
 
@@ -135,13 +135,13 @@ function CareerAbilityBWNecromancerCommand._start_charge_cooldown(arg_9_0)
 	var_9_0:remove_buff(var_9_1.id)
 end
 
-function CareerAbilityBWNecromancerCommand._add_talent_buffs(arg_10_0, arg_10_1)
+CareerAbilityBWNecromancerCommand._add_talent_buffs = function (arg_10_0, arg_10_1)
 	if arg_10_0._has_charge then
 		arg_10_0._buff_extension:add_buff("sienna_necromancer_6_3_available_charge")
 	end
 end
 
-function CareerAbilityBWNecromancerCommand._cleanup_talent_buffs(arg_11_0, arg_11_1)
+CareerAbilityBWNecromancerCommand._cleanup_talent_buffs = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._buff_extension
 
 	if arg_11_0._charge_cooldown_id then
@@ -157,7 +157,7 @@ function CareerAbilityBWNecromancerCommand._cleanup_talent_buffs(arg_11_0, arg_1
 	end
 end
 
-function CareerAbilityBWNecromancerCommand._add_outline(arg_12_0, arg_12_1, arg_12_2)
+CareerAbilityBWNecromancerCommand._add_outline = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = ScriptUnit.has_extension(arg_12_1, "outline_system")
 
 	if var_12_0 then
@@ -178,7 +178,7 @@ function CareerAbilityBWNecromancerCommand._add_outline(arg_12_0, arg_12_1, arg_
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.command_attack_enemy(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+CareerAbilityBWNecromancerCommand.command_attack_enemy = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not HEALTH_ALIVE[arg_13_1] then
 		return
 	end
@@ -231,7 +231,7 @@ function CareerAbilityBWNecromancerCommand.command_attack_enemy(arg_13_0, arg_13
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.any_skeleton_targeting_enemy(arg_14_0, arg_14_1)
+CareerAbilityBWNecromancerCommand.any_skeleton_targeting_enemy = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._commander_extension:get_controlled_units()
 
 	for iter_14_0 in pairs(var_14_0) do
@@ -243,7 +243,7 @@ function CareerAbilityBWNecromancerCommand.any_skeleton_targeting_enemy(arg_14_0
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_charge(arg_15_0, arg_15_1, arg_15_2)
+CareerAbilityBWNecromancerCommand.rpc_necromancer_command_charge = function (arg_15_0, arg_15_1, arg_15_2)
 	if CHANNEL_TO_PEER_ID[arg_15_1] ~= arg_15_0._player.peer_id then
 		return
 	end
@@ -260,7 +260,7 @@ function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_charge(arg_15
 	end
 end
 
-function CareerAbilityBWNecromancerCommand.command_sacrifice(arg_16_0, arg_16_1)
+CareerAbilityBWNecromancerCommand.command_sacrifice = function (arg_16_0, arg_16_1)
 	if arg_16_0._is_local then
 		Managers.telemetry_events:necromancer_used_command_item(arg_16_0._player, "sacrifice")
 	end
@@ -276,7 +276,7 @@ function CareerAbilityBWNecromancerCommand.command_sacrifice(arg_16_0, arg_16_1)
 	arg_16_0:_command_sacrifice_pet(arg_16_1)
 end
 
-function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_sacrifice(arg_17_0, arg_17_1, arg_17_2)
+CareerAbilityBWNecromancerCommand.rpc_necromancer_command_sacrifice = function (arg_17_0, arg_17_1, arg_17_2)
 	if CHANNEL_TO_PEER_ID[arg_17_1] ~= arg_17_0._player.peer_id then
 		return
 	end
@@ -286,7 +286,7 @@ function CareerAbilityBWNecromancerCommand.rpc_necromancer_command_sacrifice(arg
 	arg_17_0:command_sacrifice(var_17_0)
 end
 
-function CareerAbilityBWNecromancerCommand._update_vent_command_target(arg_18_0, arg_18_1)
+CareerAbilityBWNecromancerCommand._update_vent_command_target = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._vent_command_target
 	local var_18_1 = arg_18_0._inventory_extension:get_wielded_slot_item_template()
 	local var_18_2 = var_18_1 and var_18_1.is_command_utility_weapon
@@ -347,14 +347,14 @@ function CareerAbilityBWNecromancerCommand._update_vent_command_target(arg_18_0,
 	arg_18_0._vent_command_target = var_18_3
 end
 
-function CareerAbilityBWNecromancerCommand.vent_command_target(arg_19_0)
+CareerAbilityBWNecromancerCommand.vent_command_target = function (arg_19_0)
 	return arg_19_0._vent_command_target
 end
 
-function CareerAbilityBWNecromancerCommand.command_stand_ground(arg_20_0, arg_20_1, arg_20_2)
+CareerAbilityBWNecromancerCommand.command_stand_ground = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = table.keys(arg_20_0._commander_extension:get_controlled_units(), FrameTable.alloc_table())
 
-	table.array_remove_if(var_20_0, function(arg_21_0)
+	table.array_remove_if(var_20_0, function (arg_21_0)
 		if arg_20_0._commander_extension:command_state(arg_21_0) == CommandStates.Following then
 			return false
 		end
@@ -380,7 +380,7 @@ function CareerAbilityBWNecromancerCommand.command_stand_ground(arg_20_0, arg_20
 	arg_20_0._commander_extension:command_stand_ground_group(var_20_0, arg_20_1, arg_20_2)
 end
 
-function CareerAbilityBWNecromancerCommand._play_command_sound(arg_22_0)
+CareerAbilityBWNecromancerCommand._play_command_sound = function (arg_22_0)
 	if arg_22_0._fp_extension then
 		arg_22_0._fp_extension:play_hud_sound_event("Play_weapon_necro_command_command")
 	end

@@ -2,17 +2,17 @@
 
 AIShieldUserHuskExtension = class(AIShieldUserHuskExtension)
 
-function AIShieldUserHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AIShieldUserHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0.is_blocking = arg_1_3.is_blocking
 	arg_1_0.is_dodging = arg_1_3.is_dodging
 end
 
-function AIShieldUserHuskExtension.destroy(arg_2_0)
+AIShieldUserHuskExtension.destroy = function (arg_2_0)
 	return
 end
 
-function AIShieldUserHuskExtension.can_block_attack(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+AIShieldUserHuskExtension.can_block_attack = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	assert(arg_3_1)
 
 	local var_3_0 = arg_3_0._unit
@@ -43,7 +43,7 @@ function AIShieldUserHuskExtension.can_block_attack(arg_3_0, arg_3_1, arg_3_2, a
 	return not var_3_8
 end
 
-function AIShieldUserHuskExtension.get_is_blocking(arg_4_0)
+AIShieldUserHuskExtension.get_is_blocking = function (arg_4_0)
 	local var_4_0 = arg_4_0._unit
 	local var_4_1 = Managers.state.unit_storage:go_id(var_4_0)
 	local var_4_2 = Managers.state.network:game()

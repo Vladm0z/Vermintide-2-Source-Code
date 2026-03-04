@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_shovel.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pbw_nm_activate_ability",
 		name = "pbw_nm_activate_ability",

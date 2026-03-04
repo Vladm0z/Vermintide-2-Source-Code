@@ -11,11 +11,11 @@ local var_0_7 = "move_down_hold_continuous"
 local var_0_8 = "move_up_hold_continuous"
 local var_0_9 = false
 local var_0_10 = {
-	options_menu = function(arg_1_0)
+	options_menu = function (arg_1_0)
 		Managers.input:block_device_except_service("options_menu", "gamepad")
 		arg_1_0:_activate_view("options_view")
 	end,
-	console_friends_menu = function(arg_2_0)
+	console_friends_menu = function (arg_2_0)
 		Managers.input:block_device_except_service("console_friends_menu", "gamepad")
 		arg_2_0:_activate_view("console_friends_view")
 	end
@@ -24,7 +24,7 @@ local var_0_10 = {
 HeroWindowIngameView = class(HeroWindowIngameView)
 HeroWindowIngameView.NAME = "HeroWindowIngameView"
 
-function HeroWindowIngameView.on_enter(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowIngameView.on_enter = function (arg_3_0, arg_3_1, arg_3_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowIngameView")
 
 	arg_3_0._params = arg_3_1
@@ -70,7 +70,7 @@ function HeroWindowIngameView.on_enter(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_init_menu_views()
 end
 
-function HeroWindowIngameView._start_transition_animation(arg_4_0, arg_4_1)
+HeroWindowIngameView._start_transition_animation = function (arg_4_0, arg_4_1)
 	local var_4_0 = {
 		wwise_world = arg_4_0.wwise_world,
 		render_settings = arg_4_0.render_settings
@@ -81,7 +81,7 @@ function HeroWindowIngameView._start_transition_animation(arg_4_0, arg_4_1)
 	arg_4_0._animations[arg_4_1] = var_4_2
 end
 
-function HeroWindowIngameView._init_menu_views(arg_5_0)
+HeroWindowIngameView._init_menu_views = function (arg_5_0)
 	local var_5_0 = arg_5_0.ingame_ui_context
 
 	arg_5_0._views = {
@@ -92,13 +92,13 @@ function HeroWindowIngameView._init_menu_views(arg_5_0)
 	for iter_5_0, iter_5_1 in pairs(arg_5_0._views) do
 		iter_5_1.old_exit = iter_5_1.exit
 
-		function iter_5_1.exit()
+		iter_5_1.exit = function ()
 			arg_5_0:exit_current_view()
 		end
 	end
 end
 
-function HeroWindowIngameView._reset_menu_views(arg_7_0)
+HeroWindowIngameView._reset_menu_views = function (arg_7_0)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._views) do
 		iter_7_1.exit = iter_7_1.old_exit
 		iter_7_1.old_exit = nil
@@ -107,7 +107,7 @@ function HeroWindowIngameView._reset_menu_views(arg_7_0)
 	arg_7_0._views = nil
 end
 
-function HeroWindowIngameView._activate_view(arg_8_0, arg_8_1)
+HeroWindowIngameView._activate_view = function (arg_8_0, arg_8_1)
 	arg_8_0._active_view = arg_8_1
 
 	local var_8_0 = arg_8_0._views
@@ -119,7 +119,7 @@ function HeroWindowIngameView._activate_view(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowIngameView.exit_current_view(arg_9_0)
+HeroWindowIngameView.exit_current_view = function (arg_9_0)
 	local var_9_0 = arg_9_0._active_view
 	local var_9_1 = arg_9_0._views
 
@@ -144,7 +144,7 @@ function HeroWindowIngameView.exit_current_view(arg_9_0)
 	var_9_3:disable_gamepad_cursor()
 end
 
-function HeroWindowIngameView.create_ui_elements(arg_10_0, arg_10_1, arg_10_2)
+HeroWindowIngameView.create_ui_elements = function (arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
 	local var_10_0 = {}
@@ -190,7 +190,7 @@ function HeroWindowIngameView.create_ui_elements(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0._menu_input_description:set_input_description(nil)
 end
 
-function HeroWindowIngameView.on_exit(arg_11_0, arg_11_1)
+HeroWindowIngameView.on_exit = function (arg_11_0, arg_11_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowIngameView")
 
 	arg_11_0.ui_animator = nil
@@ -210,7 +210,7 @@ function HeroWindowIngameView.on_exit(arg_11_0, arg_11_1)
 	arg_11_0:_reset_menu_views()
 end
 
-function HeroWindowIngameView.update(arg_12_0, arg_12_1, arg_12_2)
+HeroWindowIngameView.update = function (arg_12_0, arg_12_1, arg_12_2)
 	if var_0_9 then
 		var_0_9 = false
 
@@ -236,11 +236,11 @@ function HeroWindowIngameView.update(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:draw(arg_12_1)
 end
 
-function HeroWindowIngameView.post_update(arg_13_0, arg_13_1, arg_13_2)
+HeroWindowIngameView.post_update = function (arg_13_0, arg_13_1, arg_13_2)
 	return
 end
 
-function HeroWindowIngameView._update_animations(arg_14_0, arg_14_1)
+HeroWindowIngameView._update_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ui_animations
 	local var_14_1 = arg_14_0._animations
 	local var_14_2 = arg_14_0.ui_animator
@@ -264,7 +264,7 @@ function HeroWindowIngameView._update_animations(arg_14_0, arg_14_1)
 	end
 end
 
-function HeroWindowIngameView._is_button_pressed(arg_15_0, arg_15_1)
+HeroWindowIngameView._is_button_pressed = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = var_15_0.button_hotspot or var_15_0.button_text
 
@@ -275,7 +275,7 @@ function HeroWindowIngameView._is_button_pressed(arg_15_0, arg_15_1)
 	end
 end
 
-function HeroWindowIngameView._is_stepper_button_pressed(arg_16_0, arg_16_1)
+HeroWindowIngameView._is_stepper_button_pressed = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.content
 	local var_16_1 = var_16_0.button_hotspot_left
 	local var_16_2 = var_16_0.button_hotspot_right
@@ -291,23 +291,23 @@ function HeroWindowIngameView._is_stepper_button_pressed(arg_16_0, arg_16_1)
 	end
 end
 
-function HeroWindowIngameView._is_button_hover_enter(arg_17_0, arg_17_1)
+HeroWindowIngameView._is_button_hover_enter = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.content.button_hotspot
 
 	return var_17_0.on_hover_enter and not var_17_0.is_selected
 end
 
-function HeroWindowIngameView._is_button_hover_exit(arg_18_0, arg_18_1)
+HeroWindowIngameView._is_button_hover_exit = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_1.content.button_hotspot
 
 	return var_18_0.on_hover_exit and not var_18_0.is_selected
 end
 
-function HeroWindowIngameView._is_button_selected(arg_19_0, arg_19_1)
+HeroWindowIngameView._is_button_selected = function (arg_19_0, arg_19_1)
 	return arg_19_1.content.button_hotspot.is_selected
 end
 
-function HeroWindowIngameView._handle_input(arg_20_0, arg_20_1, arg_20_2)
+HeroWindowIngameView._handle_input = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0.parent
 	local var_20_1 = arg_20_0._widgets_by_name
 	local var_20_2 = var_20_0:window_input_service()
@@ -363,7 +363,7 @@ function HeroWindowIngameView._handle_input(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function HeroWindowIngameView._get_next_available_index(arg_21_0, arg_21_1)
+HeroWindowIngameView._get_next_available_index = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.layout_logic
 
 	if var_21_0 then
@@ -383,7 +383,7 @@ function HeroWindowIngameView._get_next_available_index(arg_21_0, arg_21_1)
 	return arg_21_1
 end
 
-function HeroWindowIngameView._get_previous_available_index(arg_22_0, arg_22_1)
+HeroWindowIngameView._get_previous_available_index = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.layout_logic
 
 	if var_22_0 then
@@ -403,7 +403,7 @@ function HeroWindowIngameView._get_previous_available_index(arg_22_0, arg_22_1)
 	return arg_22_1
 end
 
-function HeroWindowIngameView._on_button_pressed(arg_23_0, arg_23_1, arg_23_2)
+HeroWindowIngameView._on_button_pressed = function (arg_23_0, arg_23_1, arg_23_2)
 	arg_23_0:_play_sound("play_gui_start_menu_button_click")
 
 	local var_23_0 = arg_23_2.transition
@@ -415,7 +415,7 @@ function HeroWindowIngameView._on_button_pressed(arg_23_0, arg_23_1, arg_23_2)
 	end
 end
 
-function HeroWindowIngameView._on_button_selected(arg_24_0, arg_24_1, arg_24_2)
+HeroWindowIngameView._on_button_selected = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._title_button_widgets
 
 	for iter_24_0, iter_24_1 in ipairs(var_24_0) do
@@ -429,7 +429,7 @@ function HeroWindowIngameView._on_button_selected(arg_24_0, arg_24_1, arg_24_2)
 	arg_24_0._selected_button_index = arg_24_1
 end
 
-function HeroWindowIngameView.draw(arg_25_0, arg_25_1)
+HeroWindowIngameView.draw = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0.ui_renderer
 	local var_25_1 = arg_25_0.ui_top_renderer
 	local var_25_2 = arg_25_0.ui_scenegraph
@@ -465,11 +465,11 @@ function HeroWindowIngameView.draw(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroWindowIngameView._play_sound(arg_26_0, arg_26_1)
+HeroWindowIngameView._play_sound = function (arg_26_0, arg_26_1)
 	arg_26_0.parent:play_sound(arg_26_1)
 end
 
-function HeroWindowIngameView._update_presentation(arg_27_0)
+HeroWindowIngameView._update_presentation = function (arg_27_0)
 	local var_27_0 = #arg_27_0.layout_logic:layout_data()
 
 	if var_27_0 ~= arg_27_0._num_entries then

@@ -9,14 +9,14 @@ PRESENCE_LUT = {
 ScriptPresence.PRESENCE_UPDATE_TIME = 5
 ScriptPresence.USE_ASYNC = true
 
-function ScriptPresence.init(arg_1_0)
+ScriptPresence.init = function (arg_1_0)
 	arg_1_0._presence_func = "update_menu"
 	arg_1_0._current_presence_data = {}
 	arg_1_0._current_presence_set = false
 	arg_1_0._presence_update_timer = 0
 end
 
-function ScriptPresence.set_presence(arg_2_0, arg_2_1)
+ScriptPresence.set_presence = function (arg_2_0, arg_2_1)
 	if PRESENCE_LUT[arg_2_1] then
 		arg_2_0._presence_func = PRESENCE_LUT[arg_2_1]
 		arg_2_0._current_presence_set = nil
@@ -26,7 +26,7 @@ function ScriptPresence.set_presence(arg_2_0, arg_2_1)
 	end
 end
 
-function ScriptPresence.update(arg_3_0, arg_3_1)
+ScriptPresence.update = function (arg_3_0, arg_3_1)
 	local var_3_0 = Managers.account
 
 	if var_3_0:user_detached() or not var_3_0:is_online() then
@@ -44,7 +44,7 @@ function ScriptPresence.update(arg_3_0, arg_3_1)
 	end
 end
 
-function ScriptPresence.update_none(arg_4_0, arg_4_1)
+ScriptPresence.update_none = function (arg_4_0, arg_4_1)
 	local var_4_0 = ""
 
 	if arg_4_0._current_presence_set ~= var_4_0 then
@@ -54,7 +54,7 @@ function ScriptPresence.update_none(arg_4_0, arg_4_1)
 	end
 end
 
-function ScriptPresence.update_menu(arg_5_0, arg_5_1)
+ScriptPresence.update_menu = function (arg_5_0, arg_5_1)
 	local var_5_0 = "in_menus"
 
 	if arg_5_0._current_presence_set ~= var_5_0 then
@@ -66,7 +66,7 @@ end
 
 local var_0_0 = {}
 
-function ScriptPresence.update_playing(arg_6_0, arg_6_1)
+ScriptPresence.update_playing = function (arg_6_0, arg_6_1)
 	local var_6_0 = Managers.mechanism and Managers.mechanism:current_mechanism_name()
 	local var_6_1 = Managers.state.game_mode and Managers.state.game_mode:game_mode_key()
 	local var_6_2 = Managers.state.game_mode and Managers.state.game_mode:level_key()
@@ -118,7 +118,7 @@ end
 CURRENT_DIFFICULTY = "easy"
 CURRENT_LEVEL = "magnus"
 
-function ScriptPresence._extract_stat_data(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ScriptPresence._extract_stat_data = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = {}
 
 	if arg_7_1 then
@@ -154,7 +154,7 @@ function ScriptPresence._extract_stat_data(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return var_7_0
 end
 
-function ScriptPresence._has_new_data(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ScriptPresence._has_new_data = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	if var_0_0.current_level ~= arg_8_1 then
 		return true
 	elseif var_0_0.current_difficulty ~= arg_8_2 then
@@ -168,14 +168,14 @@ function ScriptPresence._has_new_data(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_
 	return false
 end
 
-function ScriptPresence._setup_stat_data(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ScriptPresence._setup_stat_data = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	var_0_0.current_level = arg_9_1
 	var_0_0.current_difficulty = arg_9_2
 	var_0_0.current_num_players = arg_9_3
 	var_0_0.is_private = arg_9_4
 end
 
-function ScriptPresence.destroy(arg_10_0)
+ScriptPresence.destroy = function (arg_10_0)
 	local var_10_0 = Managers.account
 
 	if var_10_0 then
@@ -188,7 +188,7 @@ function ScriptPresence.destroy(arg_10_0)
 	end
 end
 
-function ScriptPresence._set_presence(arg_11_0, arg_11_1, arg_11_2)
+ScriptPresence._set_presence = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_0._current_presence_set == arg_11_2 then
 		return
 	end
@@ -201,7 +201,7 @@ function ScriptPresence._set_presence(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function ScriptPresence.cb_async_presence_set(arg_12_0, arg_12_1)
+ScriptPresence.cb_async_presence_set = function (arg_12_0, arg_12_1)
 	local var_12_0 = "Presence set: "
 
 	if arg_12_1.error_code then

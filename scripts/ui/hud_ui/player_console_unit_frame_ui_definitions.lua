@@ -180,7 +180,7 @@ local function var_0_10()
 					style_id = "host_icon",
 					texture_id = "host_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_host
 					end
 				}
@@ -260,7 +260,7 @@ local function var_0_11()
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.display_portrait_icon
 					end
 				},
@@ -293,7 +293,7 @@ local function var_0_11()
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.connecting
 					end
 				}
@@ -447,7 +447,7 @@ local function var_0_12()
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0, arg_7_1)
+					content_check_function = function (arg_7_0, arg_7_1)
 						return not arg_7_0.has_shield
 					end
 				},
@@ -456,13 +456,13 @@ local function var_0_12()
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						local var_8_0 = arg_8_0.hp_bar.internal_bar_value
 						local var_8_1 = arg_8_0.actual_active_percentage or 1
 
 						return math.max(var_8_0, var_8_1) < 1
 					end,
-					content_change_function = function(arg_9_0, arg_9_1)
+					content_change_function = function (arg_9_0, arg_9_1)
 						local var_9_0 = arg_9_0.hp_bar.internal_bar_value
 						local var_9_1 = arg_9_0.actual_active_percentage or 1
 						local var_9_2 = math.max(var_9_0, var_9_1)
@@ -476,7 +476,7 @@ local function var_0_12()
 					texture_id = "texture_id",
 					content_id = "hp_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return arg_10_0.draw_health_bar and not arg_10_0.hide
 					end
 				},
@@ -486,7 +486,7 @@ local function var_0_12()
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.draw_health_bar
 					end
 				},
@@ -495,7 +495,7 @@ local function var_0_12()
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_12_0, arg_12_1)
+					content_change_function = function (arg_12_0, arg_12_1)
 						local var_12_0 = arg_12_0.parent
 						local var_12_1 = var_12_0.hp_bar.internal_bar_value
 						local var_12_2 = var_12_0.actual_active_percentage or 1
@@ -515,7 +515,7 @@ local function var_0_12()
 					pass_type = "text",
 					text_id = "numeric_health",
 					retained_mode = var_0_2,
-					content_check_function = function()
+					content_check_function = function ()
 						return Application.user_setting("numeric_ui") and (UISettings.use_gamepad_hud_layout == "always" or Managers.input:is_device_active("gamepad") and UISettings.use_gamepad_hud_layout ~= "never")
 					end
 				},
@@ -524,7 +524,7 @@ local function var_0_12()
 					pass_type = "text",
 					text_id = "numeric_health",
 					retained_mode = var_0_2,
-					content_check_function = function()
+					content_check_function = function ()
 						return Application.user_setting("numeric_ui") and (UISettings.use_gamepad_hud_layout == "always" or Managers.input:is_device_active("gamepad") and UISettings.use_gamepad_hud_layout ~= "never")
 					end
 				}
@@ -712,7 +712,7 @@ local function var_0_13()
 					texture_id = "texture_id",
 					content_id = "ability_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_16_0, arg_16_1)
+					content_change_function = function (arg_16_0, arg_16_1)
 						local var_16_0 = arg_16_0.bar_value
 						local var_16_1 = arg_16_1.texture_size
 

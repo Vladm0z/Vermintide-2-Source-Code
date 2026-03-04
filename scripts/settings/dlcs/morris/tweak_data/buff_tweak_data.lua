@@ -553,7 +553,7 @@ MorrisBuffTweakData = MorrisBuffTweakData or {
 		duration = 10
 	},
 	boon_skulls_set_01_data = {
-		duration_modifier_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			if arg_1_3:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0 then
 				arg_1_2 = arg_1_2 * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
 			end

@@ -4,23 +4,23 @@ ImguiPackageDebug = class(ImguiPackageDebug)
 
 local var_0_0 = true
 
-function ImguiPackageDebug.init(arg_1_0)
+ImguiPackageDebug.init = function (arg_1_0)
 	return
 end
 
-function ImguiPackageDebug._hijack_package_manager(arg_2_0)
+ImguiPackageDebug._hijack_package_manager = function (arg_2_0)
 	local var_2_0 = Managers.package
 
 	arg_2_0._old_load_func = var_2_0.load
 	arg_2_0._old_unload_func = var_2_0.unload
 
-	function PackageManager.load(arg_3_0, ...)
+	PackageManager.load = function (arg_3_0, ...)
 		arg_2_0._refresh_references = true
 
 		arg_2_0._old_load_func(arg_3_0, ...)
 	end
 
-	function PackageManager.unload(arg_4_0, ...)
+	PackageManager.unload = function (arg_4_0, ...)
 		arg_2_0._refresh_references = true
 
 		arg_2_0._old_unload_func(arg_4_0, ...)
@@ -29,16 +29,16 @@ function ImguiPackageDebug._hijack_package_manager(arg_2_0)
 	arg_2_0._refresh_references = true
 end
 
-function ImguiPackageDebug.on_show(arg_5_0)
+ImguiPackageDebug.on_show = function (arg_5_0)
 	arg_5_0:_hijack_package_manager()
 end
 
-function ImguiPackageDebug.on_hide(arg_6_0)
+ImguiPackageDebug.on_hide = function (arg_6_0)
 	PackageManager.load = arg_6_0._old_load_func
 	PackageManager.unload = arg_6_0._old_unload_func
 end
 
-function ImguiPackageDebug.update(arg_7_0)
+ImguiPackageDebug.update = function (arg_7_0)
 	if var_0_0 then
 		arg_7_0:init()
 
@@ -58,7 +58,7 @@ function ImguiPackageDebug.update(arg_7_0)
 	end
 end
 
-function ImguiPackageDebug._steal_and_sort(arg_8_0, arg_8_1)
+ImguiPackageDebug._steal_and_sort = function (arg_8_0, arg_8_1)
 	local var_8_0 = table.shallow_copy(arg_8_1)
 	local var_8_1 = table.keys(var_8_0)
 
@@ -69,11 +69,11 @@ function ImguiPackageDebug._steal_and_sort(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function ImguiPackageDebug.is_persistent(arg_9_0)
+ImguiPackageDebug.is_persistent = function (arg_9_0)
 	return true
 end
 
-function ImguiPackageDebug.draw(arg_10_0, arg_10_1)
+ImguiPackageDebug.draw = function (arg_10_0, arg_10_1)
 	local var_10_0 = Imgui.begin_window("Package Debug")
 
 	arg_10_0:_display_packages("packages", arg_10_0._packages)
@@ -86,7 +86,7 @@ function ImguiPackageDebug.draw(arg_10_0, arg_10_1)
 	return var_10_0
 end
 
-function ImguiPackageDebug._display_references(arg_11_0, arg_11_1, arg_11_2)
+ImguiPackageDebug._display_references = function (arg_11_0, arg_11_1, arg_11_2)
 	if Imgui.tree_node(arg_11_1) then
 		if arg_11_2 then
 			local var_11_0 = arg_11_2._sorted_keys
@@ -109,7 +109,7 @@ function ImguiPackageDebug._display_references(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function ImguiPackageDebug._display_packages(arg_12_0, arg_12_1, arg_12_2)
+ImguiPackageDebug._display_packages = function (arg_12_0, arg_12_1, arg_12_2)
 	if Imgui.tree_node(arg_12_1) then
 		if arg_12_2 then
 			local var_12_0 = arg_12_2._sorted_keys
@@ -126,7 +126,7 @@ function ImguiPackageDebug._display_packages(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function ImguiPackageDebug._display_queue_order(arg_13_0, arg_13_1, arg_13_2)
+ImguiPackageDebug._display_queue_order = function (arg_13_0, arg_13_1, arg_13_2)
 	if Imgui.tree_node(arg_13_1) then
 		if arg_13_2 then
 			for iter_13_0 = 1, #arg_13_2 do
@@ -141,7 +141,7 @@ function ImguiPackageDebug._display_queue_order(arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-function ImguiPackageDebug._display_userdata(arg_14_0, arg_14_1, arg_14_2)
+ImguiPackageDebug._display_userdata = function (arg_14_0, arg_14_1, arg_14_2)
 	if Imgui.tree_node(arg_14_1) then
 		if arg_14_2 then
 			local var_14_0 = arg_14_2._sorted_keys

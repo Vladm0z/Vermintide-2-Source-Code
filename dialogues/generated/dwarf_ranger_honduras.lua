@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_honduras.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pdr_activate_ability_ranger",
 		name = "pdr_activate_ability_ranger",

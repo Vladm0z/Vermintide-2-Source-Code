@@ -2,11 +2,11 @@
 
 PlayerCharacterStateInHangingCage = class(PlayerCharacterStateInHangingCage, PlayerCharacterState)
 
-function PlayerCharacterStateInHangingCage.init(arg_1_0, arg_1_1)
+PlayerCharacterStateInHangingCage.init = function (arg_1_0, arg_1_1)
 	PlayerCharacterState.init(arg_1_0, arg_1_1, "in_hanging_cage")
 end
 
-function PlayerCharacterStateInHangingCage.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PlayerCharacterStateInHangingCage.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	CharacterStateHelper.stop_weapon_actions(arg_2_0.inventory_extension, "in_hanging_cage")
 	CharacterStateHelper.stop_career_abilities(arg_2_0.career_extension, "in_hanging_cage")
 
@@ -30,11 +30,11 @@ function PlayerCharacterStateInHangingCage.on_enter(arg_2_0, arg_2_1, arg_2_2, a
 	arg_2_0.state = "hanging"
 end
 
-function PlayerCharacterStateInHangingCage.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateInHangingCage.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0.status_extension:set_in_hanging_cage(false)
 end
 
-function PlayerCharacterStateInHangingCage.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerCharacterStateInHangingCage.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.status_extension
 	local var_4_2 = arg_4_0.state

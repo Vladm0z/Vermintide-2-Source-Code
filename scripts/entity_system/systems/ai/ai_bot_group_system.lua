@@ -19,17 +19,17 @@ local var_0_8 = 1.8
 
 AIBotGroupExtension = class(AIBotGroupExtension)
 
-function AIBotGroupExtension.init(arg_1_0)
+AIBotGroupExtension.init = function (arg_1_0)
 	return
 end
 
-function AIBotGroupExtension.destroy(arg_2_0)
+AIBotGroupExtension.destroy = function (arg_2_0)
 	return
 end
 
 local var_0_9 = 0.05
 
-function AIBotGroupExtension.set_hold_position(arg_3_0, arg_3_1, arg_3_2)
+AIBotGroupExtension.set_hold_position = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.data
 
 	if arg_3_1 then
@@ -40,7 +40,7 @@ function AIBotGroupExtension.set_hold_position(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function AIBotGroupExtension.get_hold_position(arg_4_0)
+AIBotGroupExtension.get_hold_position = function (arg_4_0)
 	local var_4_0 = arg_4_0.data
 
 	if var_4_0.hold_position then
@@ -56,7 +56,7 @@ end
 local var_0_10 = -0.2
 local var_0_11 = BLACKBOARDS
 
-function AIBotGroupSystem.init(arg_5_0, arg_5_1, arg_5_2)
+AIBotGroupSystem.init = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_1.entity_manager:register_system(arg_5_0, arg_5_2, var_0_0)
 
 	local var_5_0 = arg_5_1.world
@@ -172,13 +172,13 @@ function AIBotGroupSystem.init(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function AIBotGroupSystem.destroy(arg_6_0)
+AIBotGroupSystem.destroy = function (arg_6_0)
 	if arg_6_0._is_server then
 		arg_6_0.network_event_delegate:unregister(arg_6_0)
 	end
 end
 
-function AIBotGroupSystem.on_add_extension(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AIBotGroupSystem.on_add_extension = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_3 == "BotBreakableExtension" then
 		local var_7_0 = "rp_center"
 		local var_7_1 = Unit.has_node(arg_7_2, var_7_0) and Unit.node(arg_7_2, var_7_0) or 0
@@ -276,17 +276,17 @@ local function var_0_12(arg_8_0, arg_8_1, arg_8_2)
 	return false
 end
 
-function AIBotGroupSystem.is_inside_aoe_threat(arg_9_0, arg_9_1)
+AIBotGroupSystem.is_inside_aoe_threat = function (arg_9_0, arg_9_1)
 	return var_0_12(arg_9_0._existing_bot_threats, arg_9_1, var_0_7)
 end
 
-function AIBotGroupSystem.extensions_ready(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+AIBotGroupSystem.extensions_ready = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_3 ~= "BotBreakableExtension" then
 		arg_10_0._bot_ai_data_lookup[arg_10_2].status_extension = ScriptUnit.extension(arg_10_2, "status_system")
 	end
 end
 
-function AIBotGroupSystem.on_remove_extension(arg_11_0, arg_11_1, arg_11_2)
+AIBotGroupSystem.on_remove_extension = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_2 == "AIBotGroupExtension" then
 		local var_11_0 = arg_11_0._bot_ai_data_lookup[arg_11_1].side.side_id
 
@@ -299,17 +299,17 @@ function AIBotGroupSystem.on_remove_extension(arg_11_0, arg_11_1, arg_11_2)
 	ScriptUnit.remove_extension(arg_11_1, arg_11_0.NAME)
 end
 
-function AIBotGroupSystem.hot_join_sync(arg_12_0, arg_12_1, arg_12_2)
+AIBotGroupSystem.hot_join_sync = function (arg_12_0, arg_12_1, arg_12_2)
 	return
 end
 
-function AIBotGroupSystem.set_in_carry_event(arg_13_0, arg_13_1, arg_13_2)
+AIBotGroupSystem.set_in_carry_event = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_2.side_id
 
 	arg_13_0._in_carry_event[var_13_0] = arg_13_1
 end
 
-function AIBotGroupSystem.update(arg_14_0, arg_14_1, arg_14_2)
+AIBotGroupSystem.update = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0._is_server or arg_14_0._total_num_bots == 0 then
 		return
 	end
@@ -363,7 +363,7 @@ AIBotGroupSystem.bot_orders = {
 	}
 }
 
-function AIBotGroupSystem.order(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AIBotGroupSystem.order = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = AIBotGroupSystem.bot_orders[arg_15_1]
 
 	if arg_15_0._is_server then
@@ -389,15 +389,15 @@ function AIBotGroupSystem.order(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4
 	end
 end
 
-function AIBotGroupSystem.get_pickup_order(arg_16_0, arg_16_1, arg_16_2)
+AIBotGroupSystem.get_pickup_order = function (arg_16_0, arg_16_1, arg_16_2)
 	return arg_16_0._bot_ai_data_lookup[arg_16_1].pickup_orders[arg_16_2]
 end
 
-function AIBotGroupSystem.get_ammo_pickup_order_unit(arg_17_0, arg_17_1)
+AIBotGroupSystem.get_ammo_pickup_order_unit = function (arg_17_0, arg_17_1)
 	return arg_17_0._bot_ai_data_lookup[arg_17_1].ammo_pickup_order_unit
 end
 
-function AIBotGroupSystem.has_pending_pickup_order(arg_18_0, arg_18_1)
+AIBotGroupSystem.has_pending_pickup_order = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._bot_ai_data_lookup[arg_18_1].pickup_orders
 
 	for iter_18_0, iter_18_1 in pairs(var_18_0) do
@@ -409,7 +409,7 @@ function AIBotGroupSystem.has_pending_pickup_order(arg_18_0, arg_18_1)
 	return false
 end
 
-function AIBotGroupSystem.rpc_bot_unit_order(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+AIBotGroupSystem.rpc_bot_unit_order = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
 	local var_19_0 = NetworkLookup.bot_orders[arg_19_2]
 	local var_19_1 = arg_19_0._unit_storage:unit(arg_19_3)
 	local var_19_2 = arg_19_0._unit_storage:unit(arg_19_4)
@@ -420,7 +420,7 @@ function AIBotGroupSystem.rpc_bot_unit_order(arg_19_0, arg_19_1, arg_19_2, arg_1
 	end
 end
 
-function AIBotGroupSystem.rpc_bot_lookup_order(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+AIBotGroupSystem.rpc_bot_lookup_order = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_0 = NetworkLookup.bot_orders[arg_20_2]
 	local var_20_1 = arg_20_0._unit_storage:unit(arg_20_3)
 	local var_20_2 = NetworkLookup[AIBotGroupSystem.bot_orders[var_20_0].lookup][arg_20_4]
@@ -431,7 +431,7 @@ function AIBotGroupSystem.rpc_bot_lookup_order(arg_20_0, arg_20_1, arg_20_2, arg
 	end
 end
 
-function AIBotGroupSystem.queue_aoe_threat(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+AIBotGroupSystem.queue_aoe_threat = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
 	if arg_21_1 and arg_21_2 and arg_21_3 and arg_21_4 and arg_21_5 then
 		local var_21_0 = arg_21_0._bot_threat_queue
 		local var_21_1 = {
@@ -447,11 +447,11 @@ function AIBotGroupSystem.queue_aoe_threat(arg_21_0, arg_21_1, arg_21_2, arg_21_
 	end
 end
 
-function AIBotGroupSystem.rpc_bot_create_threat_oobb(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+AIBotGroupSystem.rpc_bot_create_threat_oobb = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	arg_22_0:queue_aoe_threat(arg_22_2, "oobb", arg_22_4, arg_22_3, arg_22_5, "RPC")
 end
 
-function AIBotGroupSystem._order_ammo_pickup(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+AIBotGroupSystem._order_ammo_pickup = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0 = arg_23_0._bot_ai_data_lookup[arg_23_1]
 
 	if var_23_0 then
@@ -489,7 +489,7 @@ function AIBotGroupSystem._order_ammo_pickup(arg_23_0, arg_23_1, arg_23_2, arg_2
 	end
 end
 
-function AIBotGroupSystem._order_pickup(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+AIBotGroupSystem._order_pickup = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	if arg_24_0._is_server then
 		local var_24_0 = ScriptUnit.extension(arg_24_2, "pickup_system")
 		local var_24_1 = var_24_0:get_pickup_settings()
@@ -569,7 +569,7 @@ function AIBotGroupSystem._order_pickup(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 	end
 end
 
-function AIBotGroupSystem._order_drop(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+AIBotGroupSystem._order_drop = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	if arg_25_0._is_server then
 		local var_25_0 = arg_25_0._bot_ai_data_lookup[arg_25_1]
 
@@ -594,7 +594,7 @@ local var_0_17 = {}
 local var_0_18 = {}
 local var_0_19 = 3
 
-function AIBotGroupSystem._update_existence_checks(arg_26_0, arg_26_1, arg_26_2)
+AIBotGroupSystem._update_existence_checks = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = Managers.state.conflict
 	local var_26_1 = var_26_0:count_units_by_breed("chaos_vortex_sorcerer") > 0
 	local var_26_2 = var_26_0:count_units_by_breed("chaos_vortex") > 0
@@ -616,7 +616,7 @@ end
 local var_0_20 = 1
 local var_0_21 = 20
 
-function AIBotGroupSystem._update_player_timestamped_positions(arg_27_0, arg_27_1, arg_27_2)
+AIBotGroupSystem._update_player_timestamped_positions = function (arg_27_0, arg_27_1, arg_27_2)
 	for iter_27_0 = 1, #arg_27_2 do
 		local var_27_0 = arg_27_2[iter_27_0]
 		local var_27_1 = arg_27_0._timestamped_positions[var_27_0]
@@ -642,7 +642,7 @@ function AIBotGroupSystem._update_player_timestamped_positions(arg_27_0, arg_27_
 	end
 end
 
-function AIBotGroupSystem._update_move_targets(arg_28_0, arg_28_1, arg_28_2)
+AIBotGroupSystem._update_move_targets = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = Managers.state.side
 	local var_28_1 = Managers.state.entity:system("ai_system"):nav_world()
 	local var_28_2 = Managers.state.game_mode:game_mode().bot_follow_disabled
@@ -765,7 +765,7 @@ function AIBotGroupSystem._update_move_targets(arg_28_0, arg_28_1, arg_28_2)
 	end
 end
 
-function AIBotGroupSystem._selected_unit_is_in_disallowed_nav_tag_volume(arg_29_0, arg_29_1, arg_29_2)
+AIBotGroupSystem._selected_unit_is_in_disallowed_nav_tag_volume = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = GwNavQueries.tag_volumes_from_position(arg_29_1, arg_29_2, 2, 2)
 
 	if var_29_0 then
@@ -796,7 +796,7 @@ end
 
 local var_0_22 = 9
 
-function AIBotGroupSystem._find_closest_move_target(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+AIBotGroupSystem._find_closest_move_target = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 	local var_30_0
 	local var_30_1 = math.huge
 	local var_30_2 = {}
@@ -832,7 +832,7 @@ end
 
 local var_0_23 = 25
 
-function AIBotGroupSystem._find_least_lonely_move_target(arg_31_0, arg_31_1, arg_31_2)
+AIBotGroupSystem._find_least_lonely_move_target = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = #arg_31_1
 
 	for iter_31_0 = 1, var_31_0 do
@@ -875,7 +875,7 @@ end
 local var_0_24 = 3
 local var_0_25 = 900
 
-function AIBotGroupSystem._find_most_lonely_move_target(arg_32_0, arg_32_1, arg_32_2)
+AIBotGroupSystem._find_most_lonely_move_target = function (arg_32_0, arg_32_1, arg_32_2)
 	local var_32_0 = #arg_32_1
 
 	for iter_32_0 = 1, var_32_0 do
@@ -917,7 +917,7 @@ function AIBotGroupSystem._find_most_lonely_move_target(arg_32_0, arg_32_1, arg_
 	return arg_32_1[var_32_2]
 end
 
-function AIBotGroupSystem._find_origin(arg_33_0, arg_33_1, arg_33_2)
+AIBotGroupSystem._find_origin = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = POSITION_LOOKUP[arg_33_2]
 	local var_33_1, var_33_2 = GwNavQueries.triangle_from_position(arg_33_1, var_33_0, 5, 5)
 	local var_33_3
@@ -935,7 +935,7 @@ function AIBotGroupSystem._find_origin(arg_33_0, arg_33_1, arg_33_2)
 	return var_33_3
 end
 
-function AIBotGroupSystem._find_cluster_position(arg_34_0, arg_34_1, arg_34_2)
+AIBotGroupSystem._find_cluster_position = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0 = ScriptUnit.extension(arg_34_2, "locomotion_system")
 	local var_34_1 = var_34_0:current_velocity()
 	local var_34_2
@@ -1042,7 +1042,7 @@ local function var_0_30(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35
 	end
 end
 
-function AIBotGroupSystem._assign_destination_points(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+AIBotGroupSystem._assign_destination_points = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 	local var_36_0 = var_0_26
 
 	for iter_36_0, iter_36_1 in pairs(arg_36_1) do
@@ -1089,7 +1089,7 @@ function AIBotGroupSystem._assign_destination_points(arg_36_0, arg_36_1, arg_36_
 	table.clear(var_0_29)
 end
 
-function AIBotGroupSystem._calculate_center_of_volume(arg_37_0, arg_37_1)
+AIBotGroupSystem._calculate_center_of_volume = function (arg_37_0, arg_37_1)
 	local var_37_0 = Vector3(0, 0, 0)
 
 	for iter_37_0, iter_37_1 in pairs(arg_37_1.bottom_points) do
@@ -1106,7 +1106,7 @@ function AIBotGroupSystem._calculate_center_of_volume(arg_37_0, arg_37_1)
 	return var_37_1, var_37_2
 end
 
-function AIBotGroupSystem._find_destination_points_outside_volume(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+AIBotGroupSystem._find_destination_points_outside_volume = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
 	local var_38_0, var_38_1 = arg_38_0:_calculate_center_of_volume(arg_38_3)
 	local var_38_2 = math.sqrt(var_38_1) + 1
 	local var_38_3 = Vector3.flat(Vector3.normalize(arg_38_2 - var_38_0))
@@ -1128,7 +1128,7 @@ function AIBotGroupSystem._find_destination_points_outside_volume(arg_38_0, arg_
 	return var_38_6
 end
 
-function AIBotGroupSystem._find_destination_points(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+AIBotGroupSystem._find_destination_points = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 	local var_39_0 = 3
 	local var_39_1 = 1
 	local var_39_2 = arg_39_0:_find_points(arg_39_1, arg_39_2, arg_39_3, arg_39_0._left_vectors, arg_39_0._right_vectors, var_39_1, var_39_0, arg_39_4)
@@ -1154,7 +1154,7 @@ local function var_0_31(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	end
 end
 
-function AIBotGroupSystem._find_points(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8)
+AIBotGroupSystem._find_points = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8)
 	local var_41_0 = 0
 	local var_41_1 = 0
 	local var_41_2 = 0
@@ -1245,7 +1245,7 @@ end
 
 local var_0_32 = 0.25
 
-function AIBotGroupSystem._raycast(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+AIBotGroupSystem._raycast = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 	local var_42_0 = arg_42_2 + arg_42_3 * (arg_42_4 + var_0_32)
 	local var_42_1, var_42_2 = GwNavQueries.raycast(arg_42_1, arg_42_2, var_42_0)
 
@@ -1262,7 +1262,7 @@ function AIBotGroupSystem._raycast(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_4
 	end
 end
 
-function AIBotGroupSystem._update_priority_targets(arg_43_0, arg_43_1, arg_43_2)
+AIBotGroupSystem._update_priority_targets = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = Managers.state.side
 	local var_43_1 = arg_43_0._bot_ai_data
 	local var_43_2 = arg_43_0._old_priority_targets
@@ -1357,7 +1357,7 @@ end
 local var_0_33 = 15
 local var_0_34 = var_0_33^2
 
-function AIBotGroupSystem._update_urgent_targets(arg_44_0, arg_44_1, arg_44_2)
+AIBotGroupSystem._update_urgent_targets = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = Managers.state.conflict:alive_bosses()
 	local var_44_1 = #var_44_0
 	local var_44_2 = arg_44_0._bot_ai_data
@@ -1432,7 +1432,7 @@ local var_0_35 = {
 	skaven_ratling_gunner = 25
 }
 
-function AIBotGroupSystem._can_revive_with_urgent_target(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
+AIBotGroupSystem._can_revive_with_urgent_target = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
 	local var_45_0 = var_0_11[arg_45_4]
 	local var_45_1 = var_45_0.breed
 	local var_45_2 = var_45_1.name
@@ -1457,7 +1457,7 @@ local var_0_36 = 40
 local var_0_37 = var_0_36^2
 local var_0_38 = {}
 
-function AIBotGroupSystem._update_opportunity_targets(arg_46_0, arg_46_1, arg_46_2)
+AIBotGroupSystem._update_opportunity_targets = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = Managers.state.conflict
 
 	table.clear(var_0_38)
@@ -1527,7 +1527,7 @@ local var_0_39 = 0.2
 local var_0_40 = 0.65
 local var_0_41 = BotConstants.default.OPPORTUNITY_TARGET_REACTION_TIMES
 
-function AIBotGroupSystem._calculate_opportunity_utility(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8)
+AIBotGroupSystem._calculate_opportunity_utility = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8)
 	if not arg_47_2.side.enemy_units_lookup[arg_47_5] then
 		return -math.huge, math.huge
 	end
@@ -1566,7 +1566,7 @@ function AIBotGroupSystem._calculate_opportunity_utility(arg_47_0, arg_47_1, arg
 	return 1 / (var_47_1 + (arg_47_5 == arg_47_4 and var_0_10 or 0)), var_47_1
 end
 
-function AIBotGroupSystem._update_pickups(arg_48_0, arg_48_1, arg_48_2)
+AIBotGroupSystem._update_pickups = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = Managers.player:players()
 
 	if arg_48_2 > arg_48_0._update_pickups_at then
@@ -1601,7 +1601,7 @@ end
 local var_0_42 = 15
 local var_0_43 = {}
 
-function AIBotGroupSystem._update_orders(arg_49_0, arg_49_1, arg_49_2)
+AIBotGroupSystem._update_orders = function (arg_49_0, arg_49_1, arg_49_2)
 	local var_49_0 = arg_49_0._bot_ai_data
 
 	for iter_49_0 = 1, #var_49_0 do
@@ -1644,7 +1644,7 @@ function AIBotGroupSystem._update_orders(arg_49_0, arg_49_1, arg_49_2)
 	end
 end
 
-function AIBotGroupSystem._update_pickups_near_player(arg_50_0, arg_50_1, arg_50_2)
+AIBotGroupSystem._update_pickups_near_player = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = Managers.state.side.side_by_unit[arg_50_1]
 	local var_50_1 = var_50_0.side_id
 	local var_50_2 = arg_50_0._bot_ai_data[var_50_1]
@@ -1825,7 +1825,7 @@ end
 
 local var_0_59 = {}
 
-function AIBotGroupSystem._update_mule_pickups(arg_52_0, arg_52_1, arg_52_2)
+AIBotGroupSystem._update_mule_pickups = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = Unit.alive
 	local var_52_1 = Vector3.distance_squared
 	local var_52_2 = 400
@@ -1975,7 +1975,7 @@ function AIBotGroupSystem._update_mule_pickups(arg_52_0, arg_52_1, arg_52_2)
 	end
 end
 
-function AIBotGroupSystem._update_health_pickups(arg_53_0, arg_53_1, arg_53_2)
+AIBotGroupSystem._update_health_pickups = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = Unit.alive
 	local var_53_1 = Vector3.distance
 	local var_53_2 = Vector3.distance_squared
@@ -2011,7 +2011,7 @@ function AIBotGroupSystem._update_health_pickups(arg_53_0, arg_53_1, arg_53_2)
 				local var_53_11 = var_53_10.unit
 
 				if not var_53_11 then
-					-- block empty
+					-- Nothing
 				elseif var_0_45[var_53_11] then
 					var_53_7 = var_53_7 - 1
 					var_0_45[var_53_11] = nil
@@ -2093,7 +2093,7 @@ function AIBotGroupSystem._update_health_pickups(arg_53_0, arg_53_1, arg_53_2)
 			local var_53_31 = var_53_30 and var_53_28:get_item_template(var_53_30).can_heal_self
 
 			if var_0_44[iter_53_10] and not var_53_31 then
-				-- block empty
+				-- Nothing
 			elseif not var_53_31 and HEALTH_ALIVE[iter_53_10] and not var_53_29:is_ready_for_assisted_respawn() then
 				var_53_23 = var_53_23 + 1
 				var_0_50[var_53_23] = iter_53_10
@@ -2274,14 +2274,14 @@ function AIBotGroupSystem._update_health_pickups(arg_53_0, arg_53_1, arg_53_2)
 	end
 end
 
-function AIBotGroupSystem._calculate_priority_target_utility(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+AIBotGroupSystem._calculate_priority_target_utility = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
 	local var_54_0 = arg_54_2 == arg_54_4 and var_0_10 or 0
 	local var_54_1 = math.max(Vector3.distance(arg_54_1, POSITION_LOOKUP[arg_54_2]), 1)
 
 	return 1 / (var_54_1 + var_54_0) + arg_54_3, var_54_1
 end
 
-function AIBotGroupSystem._update_first_person_debug(arg_55_0)
+AIBotGroupSystem._update_first_person_debug = function (arg_55_0)
 	if not script_data.ai_bots_debug then
 		return
 	end
@@ -2299,7 +2299,7 @@ function AIBotGroupSystem._update_first_person_debug(arg_55_0)
 	end
 end
 
-function AIBotGroupSystem._update_weapon_debug(arg_56_0)
+AIBotGroupSystem._update_weapon_debug = function (arg_56_0)
 	if not script_data.ai_bots_weapon_debug then
 		return
 	end
@@ -2331,7 +2331,7 @@ function AIBotGroupSystem._update_weapon_debug(arg_56_0)
 	end
 end
 
-function AIBotGroupSystem._update_order_debug(arg_57_0)
+AIBotGroupSystem._update_order_debug = function (arg_57_0)
 	if not script_data.ai_bots_order_debug then
 		return
 	end
@@ -2398,7 +2398,7 @@ function AIBotGroupSystem._update_order_debug(arg_57_0)
 	end
 end
 
-function AIBotGroupSystem._update_proximity_bot_breakables_debug(arg_58_0)
+AIBotGroupSystem._update_proximity_bot_breakables_debug = function (arg_58_0)
 	if not script_data.ai_bots_proximity_breakables_debug then
 		return
 	end
@@ -2422,7 +2422,7 @@ function AIBotGroupSystem._update_proximity_bot_breakables_debug(arg_58_0)
 	end
 end
 
-function AIBotGroupSystem._update_ally_needs_aid_priority(arg_59_0)
+AIBotGroupSystem._update_ally_needs_aid_priority = function (arg_59_0)
 	local var_59_0 = Unit.alive
 	local var_59_1 = arg_59_0._bot_ai_data_lookup
 
@@ -2441,7 +2441,7 @@ function AIBotGroupSystem._update_ally_needs_aid_priority(arg_59_0)
 	end
 end
 
-function AIBotGroupSystem.first_person_debug(arg_60_0, arg_60_1)
+AIBotGroupSystem.first_person_debug = function (arg_60_0, arg_60_1)
 	if arg_60_1 == arg_60_0._debugging_bot then
 		return
 	end
@@ -2513,7 +2513,7 @@ function AIBotGroupSystem.first_person_debug(arg_60_0, arg_60_1)
 	arg_60_0._debugging_bot = arg_60_1
 end
 
-function AIBotGroupSystem.ranged_attack_started(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+AIBotGroupSystem.ranged_attack_started = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	if DamageUtils.is_player_unit(arg_61_2) then
 		ScriptUnit.extension(arg_61_1, "proximity_system").has_been_seen = true
 
@@ -2535,7 +2535,7 @@ end
 
 local var_0_60 = 30
 
-function AIBotGroupSystem.ranged_attack_ended(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+AIBotGroupSystem.ranged_attack_ended = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 	local var_62_0 = arg_62_0._bot_ai_data
 
 	for iter_62_0 = 1, #var_62_0 do
@@ -2552,7 +2552,7 @@ end
 local var_0_61 = 7
 local var_0_62 = var_0_61^2
 
-function AIBotGroupSystem.enemy_teleported(arg_63_0, arg_63_1, arg_63_2)
+AIBotGroupSystem.enemy_teleported = function (arg_63_0, arg_63_1, arg_63_2)
 	local var_63_0 = ScriptUnit.extension(arg_63_1, "proximity_system")
 
 	var_63_0.has_been_seen = false
@@ -2578,7 +2578,7 @@ end
 
 local var_0_63 = 3
 
-function AIBotGroupSystem.register_ally_needs_aid_priority(arg_64_0, arg_64_1, arg_64_2)
+AIBotGroupSystem.register_ally_needs_aid_priority = function (arg_64_0, arg_64_1, arg_64_2)
 	local var_64_0 = arg_64_0._ally_needs_aid_priority[arg_64_2]
 	local var_64_1 = true
 
@@ -2595,13 +2595,13 @@ function AIBotGroupSystem.register_ally_needs_aid_priority(arg_64_0, arg_64_1, a
 	end
 end
 
-function AIBotGroupSystem.is_prioritized_ally(arg_65_0, arg_65_1, arg_65_2)
+AIBotGroupSystem.is_prioritized_ally = function (arg_65_0, arg_65_1, arg_65_2)
 	return arg_65_0._ally_needs_aid_priority[arg_65_2] == arg_65_1
 end
 
 local var_0_64 = {}
 
-function AIBotGroupSystem._update_proximity_bot_breakables(arg_66_0, arg_66_1)
+AIBotGroupSystem._update_proximity_bot_breakables = function (arg_66_0, arg_66_1)
 	local var_66_0 = Managers.state.entity:system("ai_system"):nav_world()
 	local var_66_1 = Managers.state.entity:system("nav_graph_system")
 	local var_66_2 = arg_66_0._bot_breakables_broadphase
@@ -2655,11 +2655,11 @@ function AIBotGroupSystem._update_proximity_bot_breakables(arg_66_0, arg_66_1)
 	end
 end
 
-function AIBotGroupSystem.set_in_cover(arg_67_0, arg_67_1, arg_67_2)
+AIBotGroupSystem.set_in_cover = function (arg_67_0, arg_67_1, arg_67_2)
 	arg_67_0._used_covers[arg_67_1] = arg_67_2
 end
 
-function AIBotGroupSystem.in_cover(arg_68_0, arg_68_1)
+AIBotGroupSystem.in_cover = function (arg_68_0, arg_68_1)
 	for iter_68_0, iter_68_1 in pairs(arg_68_0._used_covers) do
 		if iter_68_1 == arg_68_1 then
 			return iter_68_0
@@ -2891,7 +2891,7 @@ local function var_0_71(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72
 	return var_72_13 or var_72_14
 end
 
-function AIBotGroupSystem.aoe_threat_created(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6)
+AIBotGroupSystem.aoe_threat_created = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6)
 	local var_73_0 = Managers.time:time("game")
 	local var_73_1 = Managers.state.entity:system("ai_system"):nav_world()
 	local var_73_2 = Managers.state.bot_nav_transition:traverse_logic()
@@ -2940,7 +2940,7 @@ function AIBotGroupSystem.aoe_threat_created(arg_73_0, arg_73_1, arg_73_2, arg_7
 	return var_73_5
 end
 
-function AIBotGroupSystem.remove_threat(arg_74_0, arg_74_1)
+AIBotGroupSystem.remove_threat = function (arg_74_0, arg_74_1)
 	local var_74_0 = arg_74_0._existing_bot_threats
 	local var_74_1 = table.find(var_74_0, arg_74_1)
 
@@ -3013,7 +3013,7 @@ local var_0_72 = {
 	}
 }
 
-function AIBotGroupSystem._chat_message(arg_75_0, arg_75_1, arg_75_2, arg_75_3, ...)
+AIBotGroupSystem._chat_message = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3, ...)
 	local var_75_0 = Managers.player:owner(arg_75_1)
 	local var_75_1 = SPProfiles[var_75_0:profile_index()].display_name
 	local var_75_2 = var_0_72[arg_75_3]

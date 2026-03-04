@@ -199,7 +199,7 @@ local var_0_36 = false
 HeroViewStateLoot = class(HeroViewStateLoot)
 HeroViewStateLoot.NAME = "HeroViewStateLoot"
 
-function HeroViewStateLoot.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroViewStateLoot.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:clear_wanted_state()
 	print("[HeroViewState] Enter Substate HeroViewStateLoot")
 
@@ -253,7 +253,7 @@ function HeroViewStateLoot.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:trigger("tutorial_trigger", "loot_menu_opened")
 end
 
-function HeroViewStateLoot.post_update_on_enter(arg_2_0)
+HeroViewStateLoot.post_update_on_enter = function (arg_2_0)
 	arg_2_0.waiting_for_post_update_enter = nil
 
 	local var_2_0 = arg_2_0.ingame_ui_context
@@ -294,7 +294,7 @@ function HeroViewStateLoot.post_update_on_enter(arg_2_0)
 	arg_2_0._draw_input_desc_widgets = true
 end
 
-function HeroViewStateLoot._setup_input_buttons(arg_3_0)
+HeroViewStateLoot._setup_input_buttons = function (arg_3_0)
 	local var_3_0 = Managers.input:get_service("hero_view")
 	local var_3_1 = UISettings.get_gamepad_input_texture_data(var_3_0, var_0_1, true)
 	local var_3_2 = UISettings.get_gamepad_input_texture_data(var_3_0, var_0_2, true)
@@ -322,7 +322,7 @@ function HeroViewStateLoot._setup_input_buttons(arg_3_0)
 	var_3_5.content.texture_id = var_3_2.texture
 end
 
-function HeroViewStateLoot._set_gamepad_input_buttons_visibility(arg_4_0, arg_4_1)
+HeroViewStateLoot._set_gamepad_input_buttons_visibility = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._widgets_by_name
 	local var_4_1 = var_4_0.input_icon_next
 	local var_4_2 = var_4_0.input_icon_previous
@@ -335,7 +335,7 @@ function HeroViewStateLoot._set_gamepad_input_buttons_visibility(arg_4_0, arg_4_
 	var_4_4.content.visible = arg_4_1
 end
 
-function HeroViewStateLoot.disable_player_world(arg_5_0)
+HeroViewStateLoot.disable_player_world = function (arg_5_0)
 	if not arg_5_0._player_world_disabled then
 		arg_5_0._player_world_disabled = true
 
@@ -347,7 +347,7 @@ function HeroViewStateLoot.disable_player_world(arg_5_0)
 	end
 end
 
-function HeroViewStateLoot.enable_player_world(arg_6_0)
+HeroViewStateLoot.enable_player_world = function (arg_6_0)
 	if arg_6_0._player_world_disabled then
 		arg_6_0._player_world_disabled = false
 
@@ -359,7 +359,7 @@ function HeroViewStateLoot.enable_player_world(arg_6_0)
 	end
 end
 
-function HeroViewStateLoot.populate_items(arg_7_0)
+HeroViewStateLoot.populate_items = function (arg_7_0)
 	local var_7_0 = arg_7_0._widgets_by_name
 	local var_7_1 = arg_7_0.hero_name
 	local var_7_2 = arg_7_0.career_index
@@ -422,15 +422,15 @@ function HeroViewStateLoot.populate_items(arg_7_0)
 	arg_7_0:_select_grid_item(var_7_14, nil, var_7_15)
 end
 
-function HeroViewStateLoot._get_items_by_filter(arg_9_0, arg_9_1)
+HeroViewStateLoot._get_items_by_filter = function (arg_9_0, arg_9_1)
 	return (Managers.backend:get_interface("items"):get_filtered_items(arg_9_1))
 end
 
-function HeroViewStateLoot.get_background_world(arg_10_0)
+HeroViewStateLoot.get_background_world = function (arg_10_0)
 	return arg_10_0.parent:get_background_world()
 end
 
-function HeroViewStateLoot.transitioning(arg_11_0)
+HeroViewStateLoot.transitioning = function (arg_11_0)
 	if arg_11_0.exiting then
 		return true
 	else
@@ -438,19 +438,19 @@ function HeroViewStateLoot.transitioning(arg_11_0)
 	end
 end
 
-function HeroViewStateLoot.wanted_menu_state(arg_12_0)
+HeroViewStateLoot.wanted_menu_state = function (arg_12_0)
 	return arg_12_0._wanted_menu_state
 end
 
-function HeroViewStateLoot.clear_wanted_menu_state(arg_13_0)
+HeroViewStateLoot.clear_wanted_menu_state = function (arg_13_0)
 	arg_13_0._wanted_menu_state = nil
 end
 
-function HeroViewStateLoot._wanted_state(arg_14_0)
+HeroViewStateLoot._wanted_state = function (arg_14_0)
 	return (arg_14_0.parent:wanted_state())
 end
 
-function HeroViewStateLoot.create_ui_elements(arg_15_0)
+HeroViewStateLoot.create_ui_elements = function (arg_15_0)
 	if arg_15_0._preview_loot_widgets then
 		for iter_15_0, iter_15_1 in ipairs(arg_15_0._preview_loot_widgets) do
 			UIWidget.destroy(arg_15_0.loot_ui_renderer, iter_15_1)
@@ -478,7 +478,7 @@ function HeroViewStateLoot.create_ui_elements(arg_15_0)
 	arg_15_0:_setup_reward_option_widgets()
 end
 
-function HeroViewStateLoot._setup_reward_option_widgets(arg_16_0)
+HeroViewStateLoot._setup_reward_option_widgets = function (arg_16_0)
 	local var_16_0 = var_0_20 * 3
 	local var_16_1 = {}
 
@@ -496,7 +496,7 @@ function HeroViewStateLoot._setup_reward_option_widgets(arg_16_0)
 	arg_16_0._reward_options = var_16_1
 end
 
-function HeroViewStateLoot._setup_camera(arg_17_0)
+HeroViewStateLoot._setup_camera = function (arg_17_0)
 	local var_17_0
 	local var_17_1 = var_0_13.style.viewport.level_name
 	local var_17_2 = LevelResource.unit_indices(var_17_1, "units/hub_elements/cutscene_camera/cutscene_camera")
@@ -519,42 +519,42 @@ function HeroViewStateLoot._setup_camera(arg_17_0)
 	arg_17_0:_position_camera()
 end
 
-function HeroViewStateLoot.set_camera_position(arg_18_0, arg_18_1)
+HeroViewStateLoot.set_camera_position = function (arg_18_0, arg_18_1)
 	local var_18_0, var_18_1 = arg_18_0:get_viewport_world()
 	local var_18_2 = ScriptViewport.camera(var_18_1)
 
 	return ScriptCamera.set_local_position(var_18_2, arg_18_1)
 end
 
-function HeroViewStateLoot.set_camera_rotation(arg_19_0, arg_19_1)
+HeroViewStateLoot.set_camera_rotation = function (arg_19_0, arg_19_1)
 	local var_19_0, var_19_1 = arg_19_0:get_viewport_world()
 	local var_19_2 = ScriptViewport.camera(var_19_1)
 
 	return ScriptCamera.set_local_rotation(var_19_2, arg_19_1)
 end
 
-function HeroViewStateLoot.get_camera_position(arg_20_0)
+HeroViewStateLoot.get_camera_position = function (arg_20_0)
 	local var_20_0, var_20_1 = arg_20_0:get_viewport_world()
 	local var_20_2 = ScriptViewport.camera(var_20_1)
 
 	return ScriptCamera.position(var_20_2)
 end
 
-function HeroViewStateLoot.get_camera_rotation(arg_21_0)
+HeroViewStateLoot.get_camera_rotation = function (arg_21_0)
 	local var_21_0, var_21_1 = arg_21_0:get_viewport_world()
 	local var_21_2 = ScriptViewport.camera(var_21_1)
 
 	return ScriptCamera.rotation(var_21_2)
 end
 
-function HeroViewStateLoot.get_viewport_world(arg_22_0)
+HeroViewStateLoot.get_viewport_world = function (arg_22_0)
 	local var_22_0 = arg_22_0.viewport_widget.element.pass_data[1]
 	local var_22_1 = var_22_0.viewport
 
 	return var_22_0.world, var_22_1
 end
 
-function HeroViewStateLoot._position_camera(arg_23_0, arg_23_1)
+HeroViewStateLoot._position_camera = function (arg_23_0, arg_23_1)
 	local var_23_0, var_23_1 = arg_23_0:get_viewport_world()
 	local var_23_2 = ScriptViewport.camera(var_23_1)
 	local var_23_3 = arg_23_1 or arg_23_0._camera_pose:unbox()
@@ -568,7 +568,7 @@ function HeroViewStateLoot._position_camera(arg_23_0, arg_23_1)
 	end
 end
 
-function HeroViewStateLoot.on_exit(arg_24_0, arg_24_1)
+HeroViewStateLoot.on_exit = function (arg_24_0, arg_24_1)
 	print("[HeroViewState] Exit Substate HeroViewStateLoot")
 
 	if arg_24_0.menu_input_description then
@@ -637,7 +637,7 @@ function HeroViewStateLoot.on_exit(arg_24_0, arg_24_1)
 	arg_24_0:enable_player_world()
 end
 
-function HeroViewStateLoot._update_transition_timer(arg_25_0, arg_25_1)
+HeroViewStateLoot._update_transition_timer = function (arg_25_0, arg_25_1)
 	if not arg_25_0._transition_timer then
 		return
 	end
@@ -649,7 +649,7 @@ function HeroViewStateLoot._update_transition_timer(arg_25_0, arg_25_1)
 	end
 end
 
-function HeroViewStateLoot.update(arg_26_0, arg_26_1, arg_26_2)
+HeroViewStateLoot.update = function (arg_26_0, arg_26_1, arg_26_2)
 	if arg_26_0.waiting_for_post_update_enter then
 		return
 	end
@@ -701,7 +701,7 @@ function HeroViewStateLoot.update(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function HeroViewStateLoot.post_update(arg_27_0, arg_27_1, arg_27_2)
+HeroViewStateLoot.post_update = function (arg_27_0, arg_27_1, arg_27_2)
 	if arg_27_0.waiting_for_post_update_enter then
 		arg_27_0:post_update_on_enter()
 	end
@@ -772,7 +772,7 @@ function HeroViewStateLoot.post_update(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function HeroViewStateLoot._update_animations(arg_28_0, arg_28_1)
+HeroViewStateLoot._update_animations = function (arg_28_0, arg_28_1)
 	if arg_28_0._chest_presentation_active then
 		local var_28_0 = Managers.input:is_device_active("mouse")
 
@@ -846,7 +846,7 @@ function HeroViewStateLoot._update_animations(arg_28_0, arg_28_1)
 	end
 end
 
-function HeroViewStateLoot.draw(arg_29_0, arg_29_1)
+HeroViewStateLoot.draw = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0.loot_ui_renderer
 	local var_29_1 = arg_29_0.ui_top_renderer
 	local var_29_2 = arg_29_0.ui_scenegraph
@@ -978,7 +978,7 @@ function HeroViewStateLoot.draw(arg_29_0, arg_29_1)
 	end
 end
 
-function HeroViewStateLoot._activate_widget_viewport(arg_30_0, arg_30_1, arg_30_2)
+HeroViewStateLoot._activate_widget_viewport = function (arg_30_0, arg_30_1, arg_30_2)
 	if not arg_30_1 then
 		return
 	end
@@ -1000,7 +1000,7 @@ function HeroViewStateLoot._activate_widget_viewport(arg_30_0, arg_30_1, arg_30_
 	end
 end
 
-function HeroViewStateLoot._set_debug_buttons_disable_state(arg_31_0, arg_31_1)
+HeroViewStateLoot._set_debug_buttons_disable_state = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._debug_widgets
 
 	for iter_31_0, iter_31_1 in ipairs(var_31_0) do
@@ -1010,7 +1010,7 @@ function HeroViewStateLoot._set_debug_buttons_disable_state(arg_31_0, arg_31_1)
 	end
 end
 
-function HeroViewStateLoot._is_button_pressed(arg_32_0, arg_32_1)
+HeroViewStateLoot._is_button_pressed = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_1.content
 	local var_32_1 = var_32_0.hotspot or var_32_0.button_hotspot
 
@@ -1021,7 +1021,7 @@ function HeroViewStateLoot._is_button_pressed(arg_32_0, arg_32_1)
 	end
 end
 
-function HeroViewStateLoot._is_button_hovered(arg_33_0, arg_33_1)
+HeroViewStateLoot._is_button_hovered = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_1.content
 
 	if (var_33_0.hotspot or var_33_0.button_hotspot).on_hover_enter then
@@ -1029,7 +1029,7 @@ function HeroViewStateLoot._is_button_hovered(arg_33_0, arg_33_1)
 	end
 end
 
-function HeroViewStateLoot._is_option_tab_selected(arg_34_0)
+HeroViewStateLoot._is_option_tab_selected = function (arg_34_0)
 	local var_34_0 = arg_34_0._widgets_by_name.inventory_tabs.content
 	local var_34_1 = var_34_0.amount
 
@@ -1042,7 +1042,7 @@ function HeroViewStateLoot._is_option_tab_selected(arg_34_0)
 	end
 end
 
-function HeroViewStateLoot._select_option_tab_by_index(arg_35_0, arg_35_1)
+HeroViewStateLoot._select_option_tab_by_index = function (arg_35_0, arg_35_1)
 	local var_35_0 = arg_35_0._widgets_by_name.inventory_tabs.content
 	local var_35_1 = var_35_0.amount
 
@@ -1053,13 +1053,13 @@ function HeroViewStateLoot._select_option_tab_by_index(arg_35_0, arg_35_1)
 	end
 end
 
-function HeroViewStateLoot._has_grid_item(arg_36_0, arg_36_1)
+HeroViewStateLoot._has_grid_item = function (arg_36_0, arg_36_1)
 	return arg_36_0._item_grid:has_item(arg_36_1)
 end
 
 local var_0_37 = {}
 
-function HeroViewStateLoot._select_grid_item(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+HeroViewStateLoot._select_grid_item = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0 = arg_37_0._widgets_by_name
 	local var_37_1 = arg_37_0._item_grid
 	local var_37_2 = Managers.backend:get_interface("items")
@@ -1176,11 +1176,11 @@ function HeroViewStateLoot._select_grid_item(arg_37_0, arg_37_1, arg_37_2, arg_3
 	end
 end
 
-function HeroViewStateLoot._play_sound(arg_38_0, arg_38_1)
+HeroViewStateLoot._play_sound = function (arg_38_0, arg_38_1)
 	WwiseWorld.trigger_event(arg_38_0.wwise_world, arg_38_1)
 end
 
-function HeroViewStateLoot._handle_gamepad_input(arg_39_0, arg_39_1, arg_39_2)
+HeroViewStateLoot._handle_gamepad_input = function (arg_39_0, arg_39_1, arg_39_2)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -1246,7 +1246,7 @@ function HeroViewStateLoot._handle_gamepad_input(arg_39_0, arg_39_1, arg_39_2)
 	end
 end
 
-function HeroViewStateLoot._find_console_selection_index(arg_40_0, arg_40_1)
+HeroViewStateLoot._find_console_selection_index = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._active_reward_options
 	local var_40_1 = #var_40_0
 
@@ -1287,7 +1287,7 @@ function HeroViewStateLoot._find_console_selection_index(arg_40_0, arg_40_1)
 	end
 end
 
-function HeroViewStateLoot._handle_page_selection(arg_41_0, arg_41_1)
+HeroViewStateLoot._handle_page_selection = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._arrow_widgets_by_name.arrow_right
 	local var_41_1 = arg_41_0._arrow_widgets_by_name.arrow_left
 	local var_41_2 = UIUtils.is_button_hover(var_41_0) and 1 or -1
@@ -1335,7 +1335,7 @@ function HeroViewStateLoot._handle_page_selection(arg_41_0, arg_41_1)
 	end
 end
 
-function HeroViewStateLoot._change_chest_page(arg_42_0, arg_42_1)
+HeroViewStateLoot._change_chest_page = function (arg_42_0, arg_42_1)
 	local var_42_0 = arg_42_0._current_page_index
 	local var_42_1 = #arg_42_0._active_reward_options
 	local var_42_2 = math.ceil(var_42_1 / 3)
@@ -1356,7 +1356,7 @@ function HeroViewStateLoot._change_chest_page(arg_42_0, arg_42_1)
 	end
 end
 
-function HeroViewStateLoot._set_last_pressed(arg_43_0, arg_43_1)
+HeroViewStateLoot._set_last_pressed = function (arg_43_0, arg_43_1)
 	arg_43_0._last_open_pressed = arg_43_1
 
 	local var_43_0 = arg_43_0._widgets_by_name
@@ -1365,7 +1365,7 @@ function HeroViewStateLoot._set_last_pressed(arg_43_0, arg_43_1)
 	var_43_0.open_multiple_button.content.side_detail.skip_side_detail = arg_43_1 ~= "multiple"
 end
 
-function HeroViewStateLoot._handle_input(arg_44_0, arg_44_1, arg_44_2)
+HeroViewStateLoot._handle_input = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_0._widgets_by_name
 	local var_44_1 = arg_44_0.input_manager:get_service("hero_view")
 	local var_44_2 = Managers.input:is_device_active("gamepad")
@@ -1573,7 +1573,7 @@ function HeroViewStateLoot._handle_input(arg_44_0, arg_44_1, arg_44_2)
 	end
 end
 
-function HeroViewStateLoot._update_page_info(arg_45_0)
+HeroViewStateLoot._update_page_info = function (arg_45_0)
 	local var_45_0, var_45_1 = arg_45_0._item_grid:get_page_info()
 
 	if var_45_0 ~= arg_45_0._current_page or var_45_1 ~= arg_45_0._total_pages then
@@ -1598,7 +1598,7 @@ local var_0_38 = {
 	unique = "play_hud_rewards_tier4"
 }
 
-function HeroViewStateLoot.open_reward_option(arg_46_0, arg_46_1)
+HeroViewStateLoot.open_reward_option = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._active_reward_options
 	local var_46_1 = var_46_0[arg_46_1]
 	local var_46_2 = {
@@ -1649,7 +1649,7 @@ function HeroViewStateLoot.open_reward_option(arg_46_0, arg_46_1)
 	arg_46_0._console_selection_index = arg_46_0:_find_console_selection_index(var_46_9)
 end
 
-function HeroViewStateLoot._setup_gamepad_tooltip(arg_47_0, arg_47_1, arg_47_2)
+HeroViewStateLoot._setup_gamepad_tooltip = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._gamepad_tooltip_widgets_by_name["item_tooltip_" .. arg_47_1]
 
 	if var_47_0 then
@@ -1659,13 +1659,13 @@ function HeroViewStateLoot._setup_gamepad_tooltip(arg_47_0, arg_47_1, arg_47_2)
 	end
 end
 
-function HeroViewStateLoot._reset_gamepad_tooltips(arg_48_0)
+HeroViewStateLoot._reset_gamepad_tooltips = function (arg_48_0)
 	for iter_48_0, iter_48_1 in pairs(arg_48_0._gamepad_tooltip_widgets) do
 		iter_48_1.content.item = nil
 	end
 end
 
-function HeroViewStateLoot._setup_rewards(arg_49_0, arg_49_1)
+HeroViewStateLoot._setup_rewards = function (arg_49_0, arg_49_1)
 	local var_49_0 = Managers.backend:get_interface("items")
 	local var_49_1 = arg_49_0._reward_options
 
@@ -1910,7 +1910,7 @@ function HeroViewStateLoot._setup_rewards(arg_49_0, arg_49_1)
 	arg_49_0:_update_active_viewports(var_49_69)
 end
 
-function HeroViewStateLoot._update_active_viewports(arg_51_0, arg_51_1)
+HeroViewStateLoot._update_active_viewports = function (arg_51_0, arg_51_1)
 	if not var_0_23 then
 		return
 	end
@@ -1973,7 +1973,7 @@ function HeroViewStateLoot._update_active_viewports(arg_51_0, arg_51_1)
 	arg_51_0._viewports_dirty = false
 end
 
-function HeroViewStateLoot._get_hero_wield_info_by_item(arg_52_0, arg_52_1)
+HeroViewStateLoot._get_hero_wield_info_by_item = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_1.data.can_wield[1]
 
 	for iter_52_0, iter_52_1 in ipairs(SPProfiles) do
@@ -1991,7 +1991,7 @@ function HeroViewStateLoot._get_hero_wield_info_by_item(arg_52_0, arg_52_1)
 	end
 end
 
-function HeroViewStateLoot._apply_color_to_glow_style(arg_53_0, arg_53_1, arg_53_2)
+HeroViewStateLoot._apply_color_to_glow_style = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_1.color
 	local var_53_1 = arg_53_1.default_color
 
@@ -2005,25 +2005,25 @@ function HeroViewStateLoot._apply_color_to_glow_style(arg_53_0, arg_53_1, arg_53
 	var_53_1[4] = arg_53_2[4]
 end
 
-function HeroViewStateLoot._spawn_hero_skin(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+HeroViewStateLoot._spawn_hero_skin = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
 	local var_54_0 = callback(arg_54_0, "cb_hero_unit_spawned_skin_preview", arg_54_1, arg_54_2, arg_54_3)
 
 	arg_54_1:request_spawn_hero_unit(arg_54_2, arg_54_3, false, var_54_0, 1, nil, arg_54_4)
 end
 
-function HeroViewStateLoot._spawn_hero_with_hat(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
+HeroViewStateLoot._spawn_hero_with_hat = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
 	local var_55_0 = callback(arg_55_0, "cb_hero_unit_spawned_hat_preview", arg_55_1, arg_55_2, arg_55_3, arg_55_5)
 
 	arg_55_1:request_spawn_hero_unit(arg_55_2, arg_55_3, false, var_55_0, 1, nil, arg_55_4)
 end
 
-function HeroViewStateLoot._spawn_hero_with_weapon_pose(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+HeroViewStateLoot._spawn_hero_with_weapon_pose = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 	local var_56_0 = callback(arg_56_0, "cb_hero_unit_spawned_weapon_pose_preview", arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 
 	arg_56_1:request_spawn_hero_unit(arg_56_2, arg_56_3, false, var_56_0, 1)
 end
 
-function HeroViewStateLoot.cb_hero_unit_spawned_weapon_pose_preview(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+HeroViewStateLoot.cb_hero_unit_spawned_weapon_pose_preview = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 	local var_57_0 = FindProfileIndex(arg_57_2)
 	local var_57_1 = SPProfiles[var_57_0].careers[arg_57_3]
 	local var_57_2 = var_57_1.preview_idle_animation
@@ -2062,7 +2062,7 @@ function HeroViewStateLoot.cb_hero_unit_spawned_weapon_pose_preview(arg_57_0, ar
 	end
 end
 
-function HeroViewStateLoot.cb_hero_unit_spawned_skin_preview(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+HeroViewStateLoot.cb_hero_unit_spawned_skin_preview = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = FindProfileIndex(arg_58_2)
 	local var_58_1 = SPProfiles[var_58_0].careers[arg_58_3]
 	local var_58_2 = var_58_1.preview_idle_animation
@@ -2089,7 +2089,7 @@ function HeroViewStateLoot.cb_hero_unit_spawned_skin_preview(arg_58_0, arg_58_1,
 	end
 end
 
-function HeroViewStateLoot.cb_hero_unit_spawned_hat_preview(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+HeroViewStateLoot.cb_hero_unit_spawned_hat_preview = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 	local var_59_0 = FindProfileIndex(arg_59_2)
 	local var_59_1 = SPProfiles[var_59_0].careers[arg_59_3]
 	local var_59_2 = var_59_1.preview_idle_animation
@@ -2114,13 +2114,13 @@ function HeroViewStateLoot.cb_hero_unit_spawned_hat_preview(arg_59_0, arg_59_1, 
 	end
 end
 
-function HeroViewStateLoot._create_player_portrait(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5)
+HeroViewStateLoot._create_player_portrait = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5)
 	local var_60_0 = UIWidgets.create_portrait_frame(arg_60_1, arg_60_2, arg_60_4, arg_60_5 or 1, nil, arg_60_3)
 
 	return (UIWidget.init(var_60_0, arg_60_0.ui_top_renderer))
 end
 
-function HeroViewStateLoot._set_background_blur_progress(arg_61_0, arg_61_1)
+HeroViewStateLoot._set_background_blur_progress = function (arg_61_0, arg_61_1)
 	local var_61_0, var_61_1 = arg_61_0:get_viewport_world()
 	local var_61_2 = World.get_data(var_61_0, "shading_environment")
 
@@ -2131,11 +2131,11 @@ function HeroViewStateLoot._set_background_blur_progress(arg_61_0, arg_61_1)
 	end
 end
 
-function HeroViewStateLoot.play_sound(arg_62_0, arg_62_1)
+HeroViewStateLoot.play_sound = function (arg_62_0, arg_62_1)
 	arg_62_0.parent:play_sound(arg_62_1)
 end
 
-function HeroViewStateLoot._start_transition_animation(arg_63_0, arg_63_1, arg_63_2)
+HeroViewStateLoot._start_transition_animation = function (arg_63_0, arg_63_1, arg_63_2)
 	local var_63_0 = {
 		wwise_world = arg_63_0.wwise_world,
 		render_settings = arg_63_0.render_settings
@@ -2146,7 +2146,7 @@ function HeroViewStateLoot._start_transition_animation(arg_63_0, arg_63_1, arg_6
 	arg_63_0._animations[arg_63_1] = var_63_2
 end
 
-function HeroViewStateLoot._start_animation(arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
+HeroViewStateLoot._start_animation = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4)
 	local var_64_0 = arg_64_4 or {
 		wwise_world = arg_64_0.wwise_world
 	}
@@ -2157,7 +2157,7 @@ function HeroViewStateLoot._start_animation(arg_64_0, arg_64_1, arg_64_2, arg_64
 	return var_64_1
 end
 
-function HeroViewStateLoot._open_chest(arg_65_0, arg_65_1, arg_65_2)
+HeroViewStateLoot._open_chest = function (arg_65_0, arg_65_1, arg_65_2)
 	arg_65_0:_reset_camera()
 	arg_65_0:set_reward_options_height_progress(0)
 	arg_65_0:set_continue_button_animation_progress(0)
@@ -2219,7 +2219,7 @@ function HeroViewStateLoot._open_chest(arg_65_0, arg_65_1, arg_65_2)
 	end
 end
 
-function HeroViewStateLoot.loot_chest_opened(arg_66_0, arg_66_1)
+HeroViewStateLoot.loot_chest_opened = function (arg_66_0, arg_66_1)
 	local var_66_0 = arg_66_0._selected_item
 	local var_66_1
 
@@ -2234,7 +2234,7 @@ function HeroViewStateLoot.loot_chest_opened(arg_66_0, arg_66_1)
 	arg_66_0:_start_reward_presentation(arg_66_1)
 end
 
-function HeroViewStateLoot._start_reward_presentation(arg_67_0, arg_67_1)
+HeroViewStateLoot._start_reward_presentation = function (arg_67_0, arg_67_1)
 	local var_67_0 = arg_67_0.ui_scenegraph
 
 	for iter_67_0 = 1, var_0_20 do
@@ -2257,7 +2257,7 @@ function HeroViewStateLoot._start_reward_presentation(arg_67_0, arg_67_1)
 	arg_67_0:set_reward_options_height_progress(0)
 end
 
-function HeroViewStateLoot._animate_reward_options_entry(arg_68_0, arg_68_1)
+HeroViewStateLoot._animate_reward_options_entry = function (arg_68_0, arg_68_1)
 	local var_68_0 = arg_68_0._reward_options_entry_progress
 
 	if not var_68_0 then
@@ -2285,7 +2285,7 @@ function HeroViewStateLoot._animate_reward_options_entry(arg_68_0, arg_68_1)
 	end
 end
 
-function HeroViewStateLoot.set_reward_options_height_progress(arg_69_0, arg_69_1)
+HeroViewStateLoot.set_reward_options_height_progress = function (arg_69_0, arg_69_1)
 	local var_69_0 = RESOLUTION_LOOKUP.res_w
 	local var_69_1 = RESOLUTION_LOOKUP.res_h
 	local var_69_2 = math.min(arg_69_1 * 1.1, 1)
@@ -2300,7 +2300,7 @@ function HeroViewStateLoot.set_reward_options_height_progress(arg_69_0, arg_69_1
 	end
 end
 
-function HeroViewStateLoot._unload_loaded_packages(arg_70_0)
+HeroViewStateLoot._unload_loaded_packages = function (arg_70_0)
 	if arg_70_0._loaded_package then
 		arg_70_0:_unload_package(arg_70_0._loaded_package)
 
@@ -2314,7 +2314,7 @@ function HeroViewStateLoot._unload_loaded_packages(arg_70_0)
 	end
 end
 
-function HeroViewStateLoot._destroy_chest_unit(arg_71_0)
+HeroViewStateLoot._destroy_chest_unit = function (arg_71_0)
 	if arg_71_0._chest_unit then
 		local var_71_0 = arg_71_0:get_viewport_world()
 
@@ -2324,7 +2324,7 @@ function HeroViewStateLoot._destroy_chest_unit(arg_71_0)
 	end
 end
 
-function HeroViewStateLoot._load_package(arg_72_0, arg_72_1)
+HeroViewStateLoot._load_package = function (arg_72_0, arg_72_1)
 	arg_72_0:_destroy_chest_unit()
 	arg_72_0:_unload_loaded_packages()
 
@@ -2337,7 +2337,7 @@ function HeroViewStateLoot._load_package(arg_72_0, arg_72_1)
 	var_72_0:load(arg_72_1, var_72_2, var_72_1, true)
 end
 
-function HeroViewStateLoot._on_load_complete(arg_73_0, arg_73_1)
+HeroViewStateLoot._on_load_complete = function (arg_73_0, arg_73_1)
 	arg_73_0:play_sound(arg_73_0._sound_event)
 	arg_73_0:_spawn_chest_unit(arg_73_0._unit_to_spawn, nil, nil)
 
@@ -2345,13 +2345,13 @@ function HeroViewStateLoot._on_load_complete(arg_73_0, arg_73_1)
 	arg_73_0._package_loading = nil
 end
 
-function HeroViewStateLoot._unload_package(arg_74_0, arg_74_1)
+HeroViewStateLoot._unload_package = function (arg_74_0, arg_74_1)
 	local var_74_0 = "HeroViewStateLoot"
 
 	Managers.package:unload(arg_74_1, var_74_0)
 end
 
-function HeroViewStateLoot._spawn_chest_unit(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+HeroViewStateLoot._spawn_chest_unit = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 	local var_75_0 = arg_75_0:get_viewport_world()
 
 	if arg_75_0._chest_unit then
@@ -2380,7 +2380,7 @@ function HeroViewStateLoot._spawn_chest_unit(arg_75_0, arg_75_1, arg_75_2, arg_7
 	arg_75_0._chest_unit = var_75_1
 end
 
-function HeroViewStateLoot.get_world_link_unit(arg_76_0)
+HeroViewStateLoot.get_world_link_unit = function (arg_76_0)
 	local var_76_0 = var_0_13.style.viewport.level_name
 	local var_76_1 = arg_76_0.viewport_widget.element.pass_data[1].world
 	local var_76_2 = ScriptWorld.level(var_76_1, var_76_0)
@@ -2398,7 +2398,7 @@ function HeroViewStateLoot.get_world_link_unit(arg_76_0)
 	end
 end
 
-function HeroViewStateLoot.set_camera_zoom(arg_77_0, arg_77_1)
+HeroViewStateLoot.set_camera_zoom = function (arg_77_0, arg_77_1)
 	local var_77_0 = arg_77_0._camera_pose:unbox()
 	local var_77_1 = Matrix4x4.translation(var_77_0)
 	local var_77_2 = Matrix4x4.rotation(var_77_0)
@@ -2408,7 +2408,7 @@ function HeroViewStateLoot.set_camera_zoom(arg_77_0, arg_77_1)
 	arg_77_0:set_camera_position(var_77_4)
 end
 
-function HeroViewStateLoot.set_grid_animation_progress(arg_78_0, arg_78_1)
+HeroViewStateLoot.set_grid_animation_progress = function (arg_78_0, arg_78_1)
 	local var_78_0 = arg_78_0.ui_scenegraph
 
 	var_78_0.info_root.local_position[1] = 400 * arg_78_1
@@ -2418,13 +2418,13 @@ function HeroViewStateLoot.set_grid_animation_progress(arg_78_0, arg_78_1)
 	arg_78_0._grid_alpha_multiplier = 1 - arg_78_1
 end
 
-function HeroViewStateLoot.set_continue_button_animation_progress(arg_79_0, arg_79_1)
+HeroViewStateLoot.set_continue_button_animation_progress = function (arg_79_0, arg_79_1)
 	arg_79_0.ui_scenegraph.continue_button.local_position[2] = -170 + 200 * arg_79_1
 	arg_79_0._continue_button_alpha_multiplier = arg_79_1
 	arg_79_0._continue_button_progress = arg_79_1
 end
 
-function HeroViewStateLoot.set_chest_title_alpha_progress(arg_80_0, arg_80_1)
+HeroViewStateLoot.set_chest_title_alpha_progress = function (arg_80_0, arg_80_1)
 	local var_80_0 = arg_80_0._widgets_by_name
 	local var_80_1 = 255 * arg_80_1
 
@@ -2435,7 +2435,7 @@ function HeroViewStateLoot.set_chest_title_alpha_progress(arg_80_0, arg_80_1)
 	arg_80_0._chest_title_alpha_progress = arg_80_1
 end
 
-function HeroViewStateLoot._update_enter_animation_time(arg_81_0, arg_81_1, arg_81_2)
+HeroViewStateLoot._update_enter_animation_time = function (arg_81_0, arg_81_1, arg_81_2)
 	local var_81_0 = arg_81_0._enter_animation_duration
 
 	if not var_81_0 then
@@ -2455,7 +2455,7 @@ function HeroViewStateLoot._update_enter_animation_time(arg_81_0, arg_81_1, arg_
 	end
 end
 
-function HeroViewStateLoot._update_continue_button_animation_time(arg_82_0, arg_82_1, arg_82_2)
+HeroViewStateLoot._update_continue_button_animation_time = function (arg_82_0, arg_82_1, arg_82_2)
 	local var_82_0 = arg_82_0._continue_button_animation_duration
 
 	if not var_82_0 then
@@ -2475,7 +2475,7 @@ function HeroViewStateLoot._update_continue_button_animation_time(arg_82_0, arg_
 	end
 end
 
-function HeroViewStateLoot._update_camera_look_up_time(arg_83_0, arg_83_1, arg_83_2)
+HeroViewStateLoot._update_camera_look_up_time = function (arg_83_0, arg_83_1, arg_83_2)
 	local var_83_0 = arg_83_0._camera_look_up_duration
 
 	if not var_83_0 then
@@ -2512,7 +2512,7 @@ function HeroViewStateLoot._update_camera_look_up_time(arg_83_0, arg_83_1, arg_8
 	end
 end
 
-function HeroViewStateLoot._update_camera_look_down_time(arg_84_0, arg_84_1, arg_84_2)
+HeroViewStateLoot._update_camera_look_down_time = function (arg_84_0, arg_84_1, arg_84_2)
 	local var_84_0 = arg_84_0._camera_look_down_duration
 
 	if not var_84_0 then
@@ -2543,7 +2543,7 @@ function HeroViewStateLoot._update_camera_look_down_time(arg_84_0, arg_84_1, arg
 	end
 end
 
-function HeroViewStateLoot._reset_camera(arg_85_0)
+HeroViewStateLoot._reset_camera = function (arg_85_0)
 	arg_85_0._camera_look_down_duration = nil
 	arg_85_0._camera_look_up_progress = 0
 	arg_85_0.background_fade_widget.style.rect.color[1] = 0
@@ -2551,7 +2551,7 @@ function HeroViewStateLoot._reset_camera(arg_85_0)
 	arg_85_0:_position_camera()
 end
 
-function HeroViewStateLoot._update_chest_open_wait_time(arg_86_0, arg_86_1, arg_86_2)
+HeroViewStateLoot._update_chest_open_wait_time = function (arg_86_0, arg_86_1, arg_86_2)
 	local var_86_0 = arg_86_0._chest_open_wait_duration
 
 	if not var_86_0 then
@@ -2574,7 +2574,7 @@ function HeroViewStateLoot._update_chest_open_wait_time(arg_86_0, arg_86_1, arg_
 	end
 end
 
-function HeroViewStateLoot._update_chest_zoom_in_time(arg_87_0, arg_87_1, arg_87_2)
+HeroViewStateLoot._update_chest_zoom_in_time = function (arg_87_0, arg_87_1, arg_87_2)
 	local var_87_0 = arg_87_0._chest_zoom_in_duration
 
 	if not var_87_0 then
@@ -2597,7 +2597,7 @@ function HeroViewStateLoot._update_chest_zoom_in_time(arg_87_0, arg_87_1, arg_87
 	end
 end
 
-function HeroViewStateLoot._update_chest_zoom_out_time(arg_88_0, arg_88_1, arg_88_2)
+HeroViewStateLoot._update_chest_zoom_out_time = function (arg_88_0, arg_88_1, arg_88_2)
 	local var_88_0 = arg_88_0._chest_zoom_out_duration
 
 	if not var_88_0 then
@@ -2618,7 +2618,7 @@ function HeroViewStateLoot._update_chest_zoom_out_time(arg_88_0, arg_88_1, arg_8
 	end
 end
 
-function HeroViewStateLoot._update_camera_shake_chest_spawn_time(arg_89_0, arg_89_1, arg_89_2)
+HeroViewStateLoot._update_camera_shake_chest_spawn_time = function (arg_89_0, arg_89_1, arg_89_2)
 	local var_89_0 = arg_89_0._camera_shake_chest_spawn_duration
 
 	if not var_89_0 then
@@ -2636,7 +2636,7 @@ function HeroViewStateLoot._update_camera_shake_chest_spawn_time(arg_89_0, arg_8
 	end
 end
 
-function HeroViewStateLoot.add_camera_shake(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+HeroViewStateLoot.add_camera_shake = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	local var_90_0 = {}
 	local var_90_1 = arg_90_0:get_camera_rotation()
 	local var_90_2 = arg_90_1 or var_0_25
@@ -2658,7 +2658,7 @@ function HeroViewStateLoot.add_camera_shake(arg_90_0, arg_90_1, arg_90_2, arg_90
 	}
 end
 
-function HeroViewStateLoot._apply_shake_event(arg_91_0, arg_91_1, arg_91_2)
+HeroViewStateLoot._apply_shake_event = function (arg_91_0, arg_91_1, arg_91_2)
 	local var_91_0 = arg_91_1.start_time
 	local var_91_1 = arg_91_1.end_time
 	local var_91_2 = arg_91_1.fade_in_time
@@ -2686,7 +2686,7 @@ function HeroViewStateLoot._apply_shake_event(arg_91_0, arg_91_1, arg_91_2)
 	end
 end
 
-function HeroViewStateLoot._calculate_perlin_value(arg_92_0, arg_92_1, arg_92_2)
+HeroViewStateLoot._calculate_perlin_value = function (arg_92_0, arg_92_1, arg_92_2)
 	local var_92_0 = 0
 	local var_92_1 = arg_92_2.shake_settings
 	local var_92_2 = var_92_1.persistance
@@ -2705,7 +2705,7 @@ function HeroViewStateLoot._calculate_perlin_value(arg_92_0, arg_92_1, arg_92_2)
 	return var_92_0 * var_92_6 * var_92_7
 end
 
-function HeroViewStateLoot._interpolated_noise(arg_93_0, arg_93_1, arg_93_2)
+HeroViewStateLoot._interpolated_noise = function (arg_93_0, arg_93_1, arg_93_2)
 	local var_93_0 = math.floor(arg_93_1)
 	local var_93_1 = arg_93_1 - var_93_0
 	local var_93_2 = arg_93_0:_smoothed_noise(var_93_0, arg_93_2)
@@ -2714,18 +2714,18 @@ function HeroViewStateLoot._interpolated_noise(arg_93_0, arg_93_1, arg_93_2)
 	return math.lerp(var_93_2, var_93_3, var_93_1)
 end
 
-function HeroViewStateLoot._smoothed_noise(arg_94_0, arg_94_1, arg_94_2)
+HeroViewStateLoot._smoothed_noise = function (arg_94_0, arg_94_1, arg_94_2)
 	return arg_94_0:_noise(arg_94_1, arg_94_2) / 2 + arg_94_0:_noise(arg_94_1 - 1, arg_94_2) / 4 + arg_94_0:_noise(arg_94_1 + 1, arg_94_2) / 4
 end
 
-function HeroViewStateLoot._noise(arg_95_0, arg_95_1, arg_95_2)
+HeroViewStateLoot._noise = function (arg_95_0, arg_95_1, arg_95_2)
 	local var_95_0, var_95_1 = Math.next_random(arg_95_1 + arg_95_2.seed)
 	local var_95_2, var_95_3 = Math.next_random(var_95_0)
 
 	return var_95_3 * 2 - 1
 end
 
-function HeroViewStateLoot._get_card_spawn_position(arg_96_0)
+HeroViewStateLoot._get_card_spawn_position = function (arg_96_0)
 	local var_96_0 = arg_96_0:get_camera_position()
 	local var_96_1 = arg_96_0:get_camera_rotation()
 	local var_96_2 = Quaternion.forward(var_96_1)
@@ -2739,7 +2739,7 @@ function HeroViewStateLoot._get_card_spawn_position(arg_96_0)
 	return var_96_4
 end
 
-function HeroViewStateLoot._create_portrait_frame_widget(arg_97_0, arg_97_1, arg_97_2, arg_97_3)
+HeroViewStateLoot._create_portrait_frame_widget = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3)
 	local var_97_0 = UIWidgets.create_portrait_frame("info_portrait_root", arg_97_1, arg_97_3, 1, nil, arg_97_2)
 	local var_97_1 = UIWidget.init(var_97_0, arg_97_0.ui_top_renderer)
 
@@ -2748,7 +2748,7 @@ function HeroViewStateLoot._create_portrait_frame_widget(arg_97_0, arg_97_1, arg
 	return var_97_1
 end
 
-function HeroViewStateLoot._setup_info_window(arg_98_0)
+HeroViewStateLoot._setup_info_window = function (arg_98_0)
 	local var_98_0 = arg_98_0.hero_name
 	local var_98_1 = arg_98_0.career_index
 	local var_98_2 = arg_98_0.profile_index
@@ -2765,7 +2765,7 @@ function HeroViewStateLoot._setup_info_window(arg_98_0)
 	arg_98_0._widgets_by_name.info_text_title.content.text = Localize(var_98_4)
 end
 
-function HeroViewStateLoot._handle_gamepad_activity(arg_99_0)
+HeroViewStateLoot._handle_gamepad_activity = function (arg_99_0)
 	local var_99_0 = Managers.input:is_device_active("gamepad")
 	local var_99_1 = arg_99_0.gamepad_active_last_frame == nil
 

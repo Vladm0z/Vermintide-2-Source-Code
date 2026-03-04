@@ -7,13 +7,13 @@ local var_0_1 = POSITION_LOOKUP
 
 BTJumpSlamImpactAction = class(BTJumpSlamImpactAction, BTNode)
 
-function BTJumpSlamImpactAction.init(arg_1_0, ...)
+BTJumpSlamImpactAction.init = function (arg_1_0, ...)
 	BTJumpSlamImpactAction.super.init(arg_1_0, ...)
 end
 
 BTJumpSlamImpactAction.name = "BTJumpSlamImpactAction"
 
-function BTJumpSlamImpactAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTJumpSlamImpactAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0
 
 	arg_2_2.action, var_2_0 = arg_2_0._tree_node.action_data, arg_2_2.target_unit
@@ -22,7 +22,7 @@ function BTJumpSlamImpactAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.attacking_target = var_2_0
 end
 
-function BTJumpSlamImpactAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTJumpSlamImpactAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 	arg_3_2.active_node = nil
 	arg_3_2.attacking_target = nil
@@ -36,7 +36,7 @@ function BTJumpSlamImpactAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_
 	end
 end
 
-function BTJumpSlamImpactAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTJumpSlamImpactAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.anim_cb_damage then
 		arg_4_2.anim_cb_damage = nil
 
@@ -52,7 +52,7 @@ function BTJumpSlamImpactAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTJumpSlamImpactAction.jump_slam_impact(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTJumpSlamImpactAction.jump_slam_impact = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = var_0_1[arg_5_1]
 
@@ -65,7 +65,7 @@ function BTJumpSlamImpactAction.jump_slam_impact(arg_5_0, arg_5_1, arg_5_2, arg_
 	end
 end
 
-function BTJumpSlamImpactAction.catapult_players(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTJumpSlamImpactAction.catapult_players = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	for iter_6_0 = 1, #arg_6_0 do
 		local var_6_0 = arg_6_0[iter_6_0]
 
@@ -73,7 +73,7 @@ function BTJumpSlamImpactAction.catapult_players(arg_6_0, arg_6_1, arg_6_2, arg_
 	end
 end
 
-function BTJumpSlamImpactAction.catapult_player(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTJumpSlamImpactAction.catapult_player = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = var_0_1[arg_7_0] - arg_7_1
 
 	if arg_7_2 < Vector3.length(var_7_0) then
@@ -92,7 +92,7 @@ end
 
 local var_0_2 = {}
 
-function BTJumpSlamImpactAction.impact_damage(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9)
+BTJumpSlamImpactAction.impact_damage = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9)
 	local var_8_0 = arg_8_2 - arg_8_8
 	local var_8_1 = AiUtils.broadphase_query(arg_8_9, arg_8_2, var_0_2)
 	local var_8_2 = BLACKBOARDS

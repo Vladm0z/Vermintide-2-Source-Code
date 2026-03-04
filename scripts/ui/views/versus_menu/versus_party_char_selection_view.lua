@@ -23,7 +23,7 @@ local var_0_12 = VersusPartySelectionLogicUtility.ClientStateLookup
 
 VersusPartyCharSelectionView = class(VersusPartyCharSelectionView, BaseView)
 
-function VersusPartyCharSelectionView.init(arg_1_0, arg_1_1)
+VersusPartyCharSelectionView.init = function (arg_1_0, arg_1_1)
 	local var_1_0 = arg_1_1.player
 
 	arg_1_0._player = var_1_0
@@ -45,7 +45,7 @@ function VersusPartyCharSelectionView.init(arg_1_0, arg_1_1)
 	arg_1_0.super.init(arg_1_0, arg_1_1, var_0_0)
 end
 
-function VersusPartyCharSelectionView.on_enter(arg_2_0, arg_2_1)
+VersusPartyCharSelectionView.on_enter = function (arg_2_0, arg_2_1)
 	print("[VersusPartyCharSelectionView] Enter character selection view")
 	arg_2_0.super.on_enter(arg_2_0)
 
@@ -84,18 +84,18 @@ function VersusPartyCharSelectionView.on_enter(arg_2_0, arg_2_1)
 	end
 end
 
-function VersusPartyCharSelectionView._setup_roster_widgets_definitions(arg_3_0)
+VersusPartyCharSelectionView._setup_roster_widgets_definitions = function (arg_3_0)
 	local var_3_0, var_3_1 = var_0_0.create_hero_roster_widget_defitions()
 
 	arg_3_0._hero_group_widgets_defs = var_3_0
 	arg_3_0._hero_roster_detail_widgets_defs = var_3_1
 end
 
-function VersusPartyCharSelectionView._is_hovering_item(arg_4_0, arg_4_1, arg_4_2)
+VersusPartyCharSelectionView._is_hovering_item = function (arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_0._hovered_profile_index == arg_4_1 and arg_4_0._hovered_career_index == arg_4_2
 end
 
-function VersusPartyCharSelectionView._set_item_hovered(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+VersusPartyCharSelectionView._set_item_hovered = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	arg_5_3 = arg_5_3 or 0
 	arg_5_4 = arg_5_4 or 0
 	arg_5_0._hovered_profile_index = arg_5_3
@@ -104,7 +104,7 @@ function VersusPartyCharSelectionView._set_item_hovered(arg_5_0, arg_5_1, arg_5_
 	arg_5_0._party_selection_logic:sync_hovered_item(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 end
 
-function VersusPartyCharSelectionView.on_exit(arg_6_0)
+VersusPartyCharSelectionView.on_exit = function (arg_6_0)
 	print("[VersusPartyCharSelectionView] Exit character selection view")
 
 	if arg_6_0._team_previewer then
@@ -135,7 +135,7 @@ function VersusPartyCharSelectionView.on_exit(arg_6_0)
 	end
 end
 
-function VersusPartyCharSelectionView.post_update(arg_7_0, arg_7_1, arg_7_2)
+VersusPartyCharSelectionView.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0.ui_animator:update(arg_7_1)
 	arg_7_0:_update_animations(arg_7_1, arg_7_2)
 	arg_7_0:_update_camera(arg_7_2)
@@ -147,7 +147,7 @@ function VersusPartyCharSelectionView.post_update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function VersusPartyCharSelectionView.update(arg_8_0, arg_8_1, arg_8_2)
+VersusPartyCharSelectionView.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0._is_spectator then
 		arg_8_0:draw(arg_8_1)
 	end
@@ -155,7 +155,7 @@ function VersusPartyCharSelectionView.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0.super.update(arg_8_0, arg_8_1, arg_8_2)
 end
 
-function VersusPartyCharSelectionView._update_hero_picking_progress(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+VersusPartyCharSelectionView._update_hero_picking_progress = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_2.picker_list
 	local var_9_1 = arg_9_1.party_id
 
@@ -216,7 +216,7 @@ function VersusPartyCharSelectionView._update_hero_picking_progress(arg_9_0, arg
 	end
 end
 
-function VersusPartyCharSelectionView._update_timer_progress_bar(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+VersusPartyCharSelectionView._update_timer_progress_bar = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if arg_10_1.slider_timer then
 		local var_10_0 = "progress_bar"
 		local var_10_1 = arg_10_0._ui_scenegraph
@@ -243,7 +243,7 @@ function VersusPartyCharSelectionView._update_timer_progress_bar(arg_10_0, arg_1
 	end
 end
 
-function VersusPartyCharSelectionView._update_background_music(arg_11_0, arg_11_1)
+VersusPartyCharSelectionView._update_background_music = function (arg_11_0, arg_11_1)
 	if not arg_11_0._background_music_triggered and arg_11_1 ~= "setup" then
 		arg_11_0._background_music_triggered = true
 
@@ -251,7 +251,7 @@ function VersusPartyCharSelectionView._update_background_music(arg_11_0, arg_11_
 	end
 end
 
-function VersusPartyCharSelectionView._update_party_state_startup(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+VersusPartyCharSelectionView._update_party_state_startup = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if arg_12_1 ~= "startup" then
 		return
 	end
@@ -279,7 +279,7 @@ function VersusPartyCharSelectionView._update_party_state_startup(arg_12_0, arg_
 	end
 end
 
-function VersusPartyCharSelectionView._update_party_state_player_picking_character(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+VersusPartyCharSelectionView._update_party_state_player_picking_character = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_0._party_selection_logic:get_party_data(arg_13_0._party_id)
 
 	if not var_13_0 then
@@ -347,7 +347,7 @@ function VersusPartyCharSelectionView._update_party_state_player_picking_charact
 	end
 end
 
-function VersusPartyCharSelectionView._setup_local_picker_data(arg_14_0, arg_14_1, arg_14_2)
+VersusPartyCharSelectionView._setup_local_picker_data = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0, var_14_1 = Managers.party:get_party_from_player_id(arg_14_1, arg_14_2)
 
 	if var_14_1 == 0 then
@@ -392,7 +392,7 @@ function VersusPartyCharSelectionView._setup_local_picker_data(arg_14_0, arg_14_
 	end
 end
 
-function VersusPartyCharSelectionView._update_player_party(arg_15_0, arg_15_1, arg_15_2)
+VersusPartyCharSelectionView._update_player_party = function (arg_15_0, arg_15_1, arg_15_2)
 	if not arg_15_0._party_id then
 		local var_15_0 = arg_15_0._peer_id
 		local var_15_1 = arg_15_0._local_player_id
@@ -430,7 +430,7 @@ function VersusPartyCharSelectionView._update_player_party(arg_15_0, arg_15_1, a
 	arg_15_0:_update_timer_progress_bar(var_15_2, var_15_8, var_15_5)
 end
 
-function VersusPartyCharSelectionView._update_roster_widgets_animations(arg_16_0, arg_16_1, arg_16_2)
+VersusPartyCharSelectionView._update_roster_widgets_animations = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._party_selection_logic:get_party_data(arg_16_0._party_id)
 
 	if not var_16_0 then
@@ -560,7 +560,7 @@ function VersusPartyCharSelectionView._update_roster_widgets_animations(arg_16_0
 	end
 end
 
-function VersusPartyCharSelectionView._get_player_name_by_status(arg_17_0, arg_17_1, arg_17_2)
+VersusPartyCharSelectionView._get_player_name_by_status = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0
 
 	if arg_17_1 then
@@ -582,7 +582,7 @@ function VersusPartyCharSelectionView._get_player_name_by_status(arg_17_0, arg_1
 	return var_17_0
 end
 
-function VersusPartyCharSelectionView._handle_input(arg_18_0, arg_18_1, arg_18_2)
+VersusPartyCharSelectionView._handle_input = function (arg_18_0, arg_18_1, arg_18_2)
 	if not arg_18_0._party_selection_logic:get_party_data(arg_18_0._party_id) then
 		return
 	end
@@ -595,7 +595,7 @@ function VersusPartyCharSelectionView._handle_input(arg_18_0, arg_18_1, arg_18_2
 	end
 end
 
-function VersusPartyCharSelectionView._handle_hover_sync(arg_19_0)
+VersusPartyCharSelectionView._handle_hover_sync = function (arg_19_0)
 	local var_19_0 = arg_19_0._hero_group_widgets_lookup
 
 	if var_19_0 then
@@ -614,7 +614,7 @@ function VersusPartyCharSelectionView._handle_hover_sync(arg_19_0)
 	end
 end
 
-function VersusPartyCharSelectionView.draw(arg_20_0, arg_20_1)
+VersusPartyCharSelectionView.draw = function (arg_20_0, arg_20_1)
 	if not arg_20_0._party_id then
 		return
 	end
@@ -648,7 +648,7 @@ function VersusPartyCharSelectionView.draw(arg_20_0, arg_20_1)
 	end
 end
 
-function VersusPartyCharSelectionView._draw_widgets(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+VersusPartyCharSelectionView._draw_widgets = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	if not arg_21_1 then
 		return
 	end
@@ -660,7 +660,7 @@ function VersusPartyCharSelectionView._draw_widgets(arg_21_0, arg_21_1, arg_21_2
 	end
 end
 
-function VersusPartyCharSelectionView._update_animations(arg_22_0, arg_22_1, arg_22_2)
+VersusPartyCharSelectionView._update_animations = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._animations
 	local var_22_1 = arg_22_0.ui_animator
 
@@ -675,7 +675,7 @@ function VersusPartyCharSelectionView._update_animations(arg_22_0, arg_22_1, arg
 	arg_22_0:_update_roster_widgets_animations(arg_22_1, arg_22_2)
 end
 
-function VersusPartyCharSelectionView._start_transition_animation(arg_23_0, arg_23_1, arg_23_2)
+VersusPartyCharSelectionView._start_transition_animation = function (arg_23_0, arg_23_1, arg_23_2)
 	local var_23_0 = {
 		wwise_world = arg_23_0._wwise_world,
 		render_settings = arg_23_0.render_settings
@@ -686,7 +686,7 @@ function VersusPartyCharSelectionView._start_transition_animation(arg_23_0, arg_
 	arg_23_0._animations[arg_23_1] = var_23_2
 end
 
-function VersusPartyCharSelectionView.create_ui_elements(arg_24_0, arg_24_1)
+VersusPartyCharSelectionView.create_ui_elements = function (arg_24_0, arg_24_1)
 	if arg_24_0._team_previewer then
 		arg_24_0:_destroy_team_previewer()
 	end
@@ -718,7 +718,7 @@ function VersusPartyCharSelectionView.create_ui_elements(arg_24_0, arg_24_1)
 	arg_24_0._menu_input_description:set_input_description(var_0_4.default)
 end
 
-function VersusPartyCharSelectionView._setup_character_selection_widgets(arg_25_0, arg_25_1)
+VersusPartyCharSelectionView._setup_character_selection_widgets = function (arg_25_0, arg_25_1)
 	local var_25_0 = {}
 
 	arg_25_0._hero_group_widgets = var_25_0
@@ -734,7 +734,7 @@ function VersusPartyCharSelectionView._setup_character_selection_widgets(arg_25_
 	arg_25_0:_setup_hero_party_selection_widgets(var_25_0, var_25_1, var_25_2)
 end
 
-function VersusPartyCharSelectionView._update_all_player_name_box_widgets(arg_26_0)
+VersusPartyCharSelectionView._update_all_player_name_box_widgets = function (arg_26_0)
 	local var_26_0 = arg_26_0._party_selection_logic:get_party_data(arg_26_0._party_id)
 
 	if not var_26_0 then
@@ -748,7 +748,7 @@ function VersusPartyCharSelectionView._update_all_player_name_box_widgets(arg_26
 	end
 end
 
-function VersusPartyCharSelectionView._update_player_name_box_widget(arg_27_0, arg_27_1, arg_27_2)
+VersusPartyCharSelectionView._update_player_name_box_widget = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_1.picker_list[arg_27_2]
 	local var_27_1 = var_27_0.status
 
@@ -779,7 +779,7 @@ function VersusPartyCharSelectionView._update_player_name_box_widget(arg_27_0, a
 	end
 end
 
-function VersusPartyCharSelectionView._setup_hero_party_selection_widgets(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+VersusPartyCharSelectionView._setup_hero_party_selection_widgets = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 	local var_28_0 = Managers.backend:get_interface("hero_attributes")
 	local var_28_1 = {}
 	local var_28_2 = {}
@@ -850,7 +850,7 @@ function VersusPartyCharSelectionView._setup_hero_party_selection_widgets(arg_28
 	arg_28_0._num_max_hero_columns = var_28_4
 end
 
-function VersusPartyCharSelectionView._is_item_selected(arg_29_0, arg_29_1, arg_29_2)
+VersusPartyCharSelectionView._is_item_selected = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._party_selection_logic:get_party_data(arg_29_0._party_id)
 
 	if not var_29_0 then
@@ -870,11 +870,11 @@ function VersusPartyCharSelectionView._is_item_selected(arg_29_0, arg_29_1, arg_
 	return false
 end
 
-function VersusPartyCharSelectionView.local_player_is_picking(arg_30_0)
+VersusPartyCharSelectionView.local_player_is_picking = function (arg_30_0)
 	return arg_30_0:_is_slot_picking(arg_30_0._picker_list_id)
 end
 
-function VersusPartyCharSelectionView._is_slot_picking(arg_31_0, arg_31_1)
+VersusPartyCharSelectionView._is_slot_picking = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._party_selection_logic:get_party_data(arg_31_0._party_id)
 
 	if not var_31_0 then
@@ -890,11 +890,11 @@ function VersusPartyCharSelectionView._is_slot_picking(arg_31_0, arg_31_1)
 	return var_31_1 == arg_31_1
 end
 
-function VersusPartyCharSelectionView._local_player_has_picked(arg_32_0)
+VersusPartyCharSelectionView._local_player_has_picked = function (arg_32_0)
 	return arg_32_0:_has_slot_picked(arg_32_0:_get_local_player_picker_index())
 end
 
-function VersusPartyCharSelectionView._has_slot_picked(arg_33_0, arg_33_1)
+VersusPartyCharSelectionView._has_slot_picked = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0._party_selection_logic:get_party_data(arg_33_0._party_id)
 
 	if not var_33_0 then
@@ -910,11 +910,11 @@ function VersusPartyCharSelectionView._has_slot_picked(arg_33_0, arg_33_1)
 	return arg_33_1 < var_33_1
 end
 
-function VersusPartyCharSelectionView._get_local_player_picker_index(arg_34_0)
+VersusPartyCharSelectionView._get_local_player_picker_index = function (arg_34_0)
 	return arg_34_0._picker_list_id
 end
 
-function VersusPartyCharSelectionView._handle_gamepad_selection(arg_35_0)
+VersusPartyCharSelectionView._handle_gamepad_selection = function (arg_35_0)
 	local var_35_0 = arg_35_0:local_player_is_picking()
 	local var_35_1 = arg_35_0._gamepad_selected_index or 1
 	local var_35_2 = arg_35_0:input_service()
@@ -967,7 +967,7 @@ function VersusPartyCharSelectionView._handle_gamepad_selection(arg_35_0)
 	arg_35_0._gamepad_selected_index = var_35_1
 end
 
-function VersusPartyCharSelectionView._reset_selection(arg_36_0)
+VersusPartyCharSelectionView._reset_selection = function (arg_36_0)
 	if not arg_36_0._gamepad_selected_index then
 		return
 	end
@@ -975,7 +975,7 @@ function VersusPartyCharSelectionView._reset_selection(arg_36_0)
 	arg_36_0._hero_group_widgets[arg_36_0._gamepad_selected_index].content.gamepad_selected = false
 end
 
-function VersusPartyCharSelectionView._handle_mouse_selection(arg_37_0)
+VersusPartyCharSelectionView._handle_mouse_selection = function (arg_37_0)
 	arg_37_0:_reset_selection()
 
 	local var_37_0 = arg_37_0:local_player_is_picking()
@@ -1044,7 +1044,7 @@ function VersusPartyCharSelectionView._handle_mouse_selection(arg_37_0)
 	arg_37_0:_update_mute_buttons()
 end
 
-function VersusPartyCharSelectionView._setup_picking_progress_bar(arg_38_0, arg_38_1)
+VersusPartyCharSelectionView._setup_picking_progress_bar = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._other_widgets
 	local var_38_1 = "progress_point"
 	local var_38_2 = var_0_3(var_38_1)
@@ -1085,7 +1085,7 @@ function VersusPartyCharSelectionView._setup_picking_progress_bar(arg_38_0, arg_
 	var_38_13[1] = 0
 end
 
-function VersusPartyCharSelectionView._start_step_transtion_animation(arg_39_0, arg_39_1)
+VersusPartyCharSelectionView._start_step_transtion_animation = function (arg_39_0, arg_39_1)
 	local var_39_0 = var_0_10
 	local var_39_1 = {
 		self = arg_39_0
@@ -1095,14 +1095,14 @@ function VersusPartyCharSelectionView._start_step_transtion_animation(arg_39_0, 
 	arg_39_0._animations[arg_39_1] = var_39_2
 end
 
-function VersusPartyCharSelectionView._start_widget_animation(arg_40_0, arg_40_1, arg_40_2)
+VersusPartyCharSelectionView._start_widget_animation = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = var_0_10
 	local var_40_1 = arg_40_0.ui_animator:start_animation(arg_40_1, arg_40_2, var_0_6, var_40_0)
 
 	arg_40_0._animations[arg_40_1] = var_40_1
 end
 
-function VersusPartyCharSelectionView._set_top_detail_widgets_visible(arg_41_0, arg_41_1)
+VersusPartyCharSelectionView._set_top_detail_widgets_visible = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_1 and 1 or 0
 
 	for iter_41_0, iter_41_1 in ipairs(arg_41_0._top_detail_widgets) do
@@ -1110,7 +1110,7 @@ function VersusPartyCharSelectionView._set_top_detail_widgets_visible(arg_41_0, 
 	end
 end
 
-function VersusPartyCharSelectionView._is_item_hovered_by_other(arg_42_0, arg_42_1, arg_42_2)
+VersusPartyCharSelectionView._is_item_hovered_by_other = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._party
 	local var_42_1 = arg_42_0._party_selection_logic:get_party_data(arg_42_0._party_id)
 	local var_42_2 = var_42_0.num_slots
@@ -1133,7 +1133,7 @@ function VersusPartyCharSelectionView._is_item_hovered_by_other(arg_42_0, arg_42
 	return false, nil
 end
 
-function VersusPartyCharSelectionView._set_player_name(arg_43_0, arg_43_1)
+VersusPartyCharSelectionView._set_player_name = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_1:name()
 
 	if UTF8Utils.string_length(var_43_0) > 18 then
@@ -1143,11 +1143,11 @@ function VersusPartyCharSelectionView._set_player_name(arg_43_0, arg_43_1)
 	return var_43_0
 end
 
-function VersusPartyCharSelectionView._set_your_turn_text_position(arg_44_0)
+VersusPartyCharSelectionView._set_your_turn_text_position = function (arg_44_0)
 	arg_44_0._widgets_by_name.your_turn_indicator_text.scenegraph_id = "player_name_box_" .. arg_44_0._picker_list_id
 end
 
-function VersusPartyCharSelectionView._set_selected_hero_and_career_text(arg_45_0, arg_45_1, arg_45_2)
+VersusPartyCharSelectionView._set_selected_hero_and_career_text = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._widgets_by_name.hero_career_name_text
 	local var_45_1 = "%s - %s"
 	local var_45_2 = SPProfiles[arg_45_1]
@@ -1158,7 +1158,7 @@ function VersusPartyCharSelectionView._set_selected_hero_and_career_text(arg_45_
 	var_45_0.content.text = Utf8.upper(string.format(var_45_1, var_45_3, var_45_5))
 end
 
-function VersusPartyCharSelectionView._set_current_picker_text(arg_46_0, arg_46_1)
+VersusPartyCharSelectionView._set_current_picker_text = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0._widgets_by_name.player_picking_text
 
 	if arg_46_1 == arg_46_0._picker_list_id then
@@ -1174,7 +1174,7 @@ function VersusPartyCharSelectionView._set_current_picker_text(arg_46_0, arg_46_
 	end
 end
 
-function VersusPartyCharSelectionView._update_selcted_career_passive_and_career_skill(arg_47_0, arg_47_1, arg_47_2)
+VersusPartyCharSelectionView._update_selcted_career_passive_and_career_skill = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0._widgets_by_name.passive_skill
 	local var_47_1 = arg_47_0._widgets_by_name.career_skill
 	local var_47_2 = arg_47_0._widgets_by_name.hero_career_name_text
@@ -1221,7 +1221,7 @@ function VersusPartyCharSelectionView._update_selcted_career_passive_and_career_
 	var_47_1.offset[1] = var_47_24
 end
 
-function VersusPartyCharSelectionView._setup_world(arg_48_0)
+VersusPartyCharSelectionView._setup_world = function (arg_48_0)
 	if arg_48_0._background_world then
 		arg_48_0:_destroy_world()
 	end
@@ -1243,7 +1243,7 @@ function VersusPartyCharSelectionView._setup_world(arg_48_0)
 	return var_48_4, var_48_5
 end
 
-function VersusPartyCharSelectionView._create_viewport(arg_49_0, arg_49_1)
+VersusPartyCharSelectionView._create_viewport = function (arg_49_0, arg_49_1)
 	local var_49_0 = "versus_char_selection_ui"
 	local var_49_1 = "default"
 	local var_49_2 = 960
@@ -1254,7 +1254,7 @@ function VersusPartyCharSelectionView._create_viewport(arg_49_0, arg_49_1)
 	return var_49_3
 end
 
-function VersusPartyCharSelectionView._spawn_level(arg_50_0, arg_50_1)
+VersusPartyCharSelectionView._spawn_level = function (arg_50_0, arg_50_1)
 	local var_50_0 = "levels/carousel_podium/world"
 	local var_50_1 = {}
 	local var_50_2
@@ -1272,7 +1272,7 @@ end
 
 local var_0_13 = "levels/carousel_podium/world"
 
-function VersusPartyCharSelectionView._setup_background_world(arg_51_0)
+VersusPartyCharSelectionView._setup_background_world = function (arg_51_0)
 	local var_51_0, var_51_1 = arg_51_0:_setup_world()
 	local var_51_2 = arg_51_0:_spawn_level(var_51_0)
 	local var_51_3 = arg_51_0:_create_viewport(var_51_0)
@@ -1287,7 +1287,7 @@ function VersusPartyCharSelectionView._setup_background_world(arg_51_0)
 	Level.trigger_event(var_51_2, "disable_character_select_lights")
 end
 
-function VersusPartyCharSelectionView._get_heroes_spawn_locations(arg_52_0, arg_52_1)
+VersusPartyCharSelectionView._get_heroes_spawn_locations = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_1 == arg_52_0._party_id and "character_slot_0" or "character_slot_enemy_0"
 	local var_52_1 = "units/hub_elements/versus_podium_character_spawn"
 	local var_52_2 = LevelResource.unit_indices(var_0_13, var_52_1)
@@ -1317,17 +1317,17 @@ function VersusPartyCharSelectionView._get_heroes_spawn_locations(arg_52_0, arg_
 	return var_52_3
 end
 
-function VersusPartyCharSelectionView._activate_viewport(arg_53_0)
+VersusPartyCharSelectionView._activate_viewport = function (arg_53_0)
 	ScriptWorld.activate_viewport(arg_53_0._background_world, arg_53_0._team_world_viewport)
 end
 
-function VersusPartyCharSelectionView.set_camera_position(arg_54_0, arg_54_1)
+VersusPartyCharSelectionView.set_camera_position = function (arg_54_0, arg_54_1)
 	local var_54_0 = ScriptViewport.camera(arg_54_0._team_world_viewport)
 
 	return ScriptCamera.set_local_position(var_54_0, arg_54_1)
 end
 
-function VersusPartyCharSelectionView.set_camera_rotation(arg_55_0, arg_55_1)
+VersusPartyCharSelectionView.set_camera_rotation = function (arg_55_0, arg_55_1)
 	local var_55_0 = ScriptViewport.camera(arg_55_0._team_world_viewport)
 
 	ScriptCamera.set_local_rotation(var_55_0, arg_55_1)
@@ -1337,7 +1337,7 @@ function VersusPartyCharSelectionView.set_camera_rotation(arg_55_0, arg_55_1)
 	ScriptCamera.force_update(var_55_1, var_55_0)
 end
 
-function VersusPartyCharSelectionView._setup_initial_camera(arg_56_0, arg_56_1, arg_56_2)
+VersusPartyCharSelectionView._setup_initial_camera = function (arg_56_0, arg_56_1, arg_56_2)
 	local var_56_0 = arg_56_0._cameras.initial_camera
 	local var_56_1 = ScriptViewport.camera(arg_56_2)
 
@@ -1350,7 +1350,7 @@ function VersusPartyCharSelectionView._setup_initial_camera(arg_56_0, arg_56_1, 
 	ScriptCamera.force_update(arg_56_1, var_56_1)
 end
 
-function VersusPartyCharSelectionView._setup_camera_nodes_data(arg_57_0, arg_57_1)
+VersusPartyCharSelectionView._setup_camera_nodes_data = function (arg_57_0, arg_57_1)
 	local var_57_0 = {}
 	local var_57_1 = Level.flow_variable(arg_57_1, "initial_camera")
 	local var_57_2 = Level.flow_variable(arg_57_1, "parading_position_01")
@@ -1381,14 +1381,14 @@ function VersusPartyCharSelectionView._setup_camera_nodes_data(arg_57_0, arg_57_
 	arg_57_0._cameras = var_57_0
 end
 
-function VersusPartyCharSelectionView._destroy_world(arg_58_0)
+VersusPartyCharSelectionView._destroy_world = function (arg_58_0)
 	Managers.world:destroy_world(arg_58_0._background_world)
 
 	arg_58_0._background_world = nil
 	arg_58_0._top_world = nil
 end
 
-function VersusPartyCharSelectionView._setup_team_previewer(arg_59_0, arg_59_1)
+VersusPartyCharSelectionView._setup_team_previewer = function (arg_59_0, arg_59_1)
 	if arg_59_0._team_previewer then
 		return
 	end
@@ -1404,7 +1404,7 @@ function VersusPartyCharSelectionView._setup_team_previewer(arg_59_0, arg_59_1)
 	arg_59_0._hero_locations = var_59_1
 end
 
-function VersusPartyCharSelectionView._setup_team_heroes(arg_60_0)
+VersusPartyCharSelectionView._setup_team_heroes = function (arg_60_0)
 	local var_60_0 = arg_60_0._party_selection_logic:get_party_data(arg_60_0._party_id).picker_list
 	local var_60_1 = arg_60_0._team_heroes
 
@@ -1417,7 +1417,7 @@ function VersusPartyCharSelectionView._setup_team_heroes(arg_60_0)
 	end
 end
 
-function VersusPartyCharSelectionView._get_hero_previewer_data(arg_61_0, arg_61_1, arg_61_2)
+VersusPartyCharSelectionView._get_hero_previewer_data = function (arg_61_0, arg_61_1, arg_61_2)
 	local var_61_0 = arg_61_1.status
 	local var_61_1 = var_61_0.selected_profile_index
 	local var_61_2 = var_61_0.selected_career_index
@@ -1458,7 +1458,7 @@ function VersusPartyCharSelectionView._get_hero_previewer_data(arg_61_0, arg_61_
 	return nil
 end
 
-function VersusPartyCharSelectionView._update_team_previewer(arg_62_0, arg_62_1, arg_62_2)
+VersusPartyCharSelectionView._update_team_previewer = function (arg_62_0, arg_62_1, arg_62_2)
 	local var_62_0 = arg_62_0._team_previewer
 
 	if var_62_0 then
@@ -1467,7 +1467,7 @@ function VersusPartyCharSelectionView._update_team_previewer(arg_62_0, arg_62_1,
 	end
 end
 
-function VersusPartyCharSelectionView._destroy_team_previewer(arg_63_0)
+VersusPartyCharSelectionView._destroy_team_previewer = function (arg_63_0)
 	if arg_63_0._team_previewer then
 		arg_63_0._team_previewer:on_exit()
 
@@ -1475,7 +1475,7 @@ function VersusPartyCharSelectionView._destroy_team_previewer(arg_63_0)
 	end
 end
 
-function VersusPartyCharSelectionView._spawn_selected_hero(arg_64_0, arg_64_1)
+VersusPartyCharSelectionView._spawn_selected_hero = function (arg_64_0, arg_64_1)
 	local var_64_0 = arg_64_0._party_selection_logic:get_party_data(arg_64_0._party_id).picker_list[arg_64_1]
 	local var_64_1 = arg_64_0:_get_hero_previewer_data(var_64_0, arg_64_0._party)
 
@@ -1488,7 +1488,7 @@ function VersusPartyCharSelectionView._spawn_selected_hero(arg_64_0, arg_64_1)
 	end
 end
 
-function VersusPartyCharSelectionView._play_selected_hero_sound(arg_65_0, arg_65_1, arg_65_2)
+VersusPartyCharSelectionView._play_selected_hero_sound = function (arg_65_0, arg_65_1, arg_65_2)
 	if arg_65_2 and arg_65_1 then
 		local var_65_0 = SPProfiles[arg_65_2].careers[arg_65_1].display_name
 		local var_65_1 = "menu_versus_character_selection_" .. var_65_0
@@ -1497,7 +1497,7 @@ function VersusPartyCharSelectionView._play_selected_hero_sound(arg_65_0, arg_65
 	end
 end
 
-function VersusPartyCharSelectionView._level_flow_event(arg_66_0, arg_66_1)
+VersusPartyCharSelectionView._level_flow_event = function (arg_66_0, arg_66_1)
 	local var_66_0 = arg_66_0._level
 
 	Level.trigger_event(var_66_0, arg_66_1)
@@ -1522,7 +1522,7 @@ local function var_0_14(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67
 	Camera.set_vertical_fov(arg_67_0, arg_67_1)
 end
 
-function VersusPartyCharSelectionView._update_camera(arg_68_0, arg_68_1)
+VersusPartyCharSelectionView._update_camera = function (arg_68_0, arg_68_1)
 	if not arg_68_0._camera_anim_id then
 		return
 	end
@@ -1546,7 +1546,7 @@ function VersusPartyCharSelectionView._update_camera(arg_68_0, arg_68_1)
 	ScriptCamera.force_update(arg_68_0._background_world, var_68_0)
 end
 
-function VersusPartyCharSelectionView._set_on_selection_complete_camera_animation(arg_69_0)
+VersusPartyCharSelectionView._set_on_selection_complete_camera_animation = function (arg_69_0)
 	local var_69_0 = {
 		fov = Camera.vertical_fov(arg_69_0._cameras.initial_camera.camera),
 		source_pose = arg_69_0._cameras.initial_camera.camera_pose,
@@ -1559,7 +1559,7 @@ function VersusPartyCharSelectionView._set_on_selection_complete_camera_animatio
 	arg_69_0._cam_anim_indx = arg_69_0._cam_anim_indx + 1
 end
 
-function VersusPartyCharSelectionView._muted_peer_id(arg_70_0, arg_70_1)
+VersusPartyCharSelectionView._muted_peer_id = function (arg_70_0, arg_70_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			return Managers.voice_chat:is_peer_muted(arg_70_1)
@@ -1571,7 +1571,7 @@ function VersusPartyCharSelectionView._muted_peer_id(arg_70_0, arg_70_1)
 	end
 end
 
-function VersusPartyCharSelectionView._ignore_voice_message_from_peer_id(arg_71_0, arg_71_1)
+VersusPartyCharSelectionView._ignore_voice_message_from_peer_id = function (arg_71_0, arg_71_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:mute_peer(arg_71_1)
@@ -1581,7 +1581,7 @@ function VersusPartyCharSelectionView._ignore_voice_message_from_peer_id(arg_71_
 	end
 end
 
-function VersusPartyCharSelectionView._remove_ignore_voice_message_from_peer_id(arg_72_0, arg_72_1)
+VersusPartyCharSelectionView._remove_ignore_voice_message_from_peer_id = function (arg_72_0, arg_72_1)
 	if IS_XB1 then
 		if Managers.voice_chat then
 			Managers.voice_chat:unmute_peer(arg_72_1)
@@ -1591,7 +1591,7 @@ function VersusPartyCharSelectionView._remove_ignore_voice_message_from_peer_id(
 	end
 end
 
-function VersusPartyCharSelectionView._update_mute_buttons(arg_73_0)
+VersusPartyCharSelectionView._update_mute_buttons = function (arg_73_0)
 	for iter_73_0 = 1, #arg_73_0._player_name_box_widgets do
 		local var_73_0 = arg_73_0._player_name_box_widgets[iter_73_0]
 		local var_73_1 = var_73_0.content
@@ -1611,13 +1611,13 @@ function VersusPartyCharSelectionView._update_mute_buttons(arg_73_0)
 	end
 end
 
-function VersusPartyCharSelectionView.on_party_selection_logic_state_set(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+VersusPartyCharSelectionView.on_party_selection_logic_state_set = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 	if arg_74_0._party_id ~= arg_74_2 then
 		return
 	end
 
 	if arg_74_1 == "startup" then
-		-- block empty
+		-- Nothing
 	elseif arg_74_1 == "player_picking_character" then
 		if not arg_74_0._initial_selection_transition_done then
 			arg_74_0._initial_selection_transition_done = true

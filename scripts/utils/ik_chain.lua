@@ -16,7 +16,7 @@ local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function IkChain.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+IkChain.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_0._nodes = {}
 
 	local var_3_0 = {}
@@ -49,21 +49,21 @@ function IkChain.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	end
 end
 
-function IkChain.set_origin_pos(arg_4_0, arg_4_1)
+IkChain.set_origin_pos = function (arg_4_0, arg_4_1)
 	arg_4_0.origin_pos:store(arg_4_1)
 end
 
-function IkChain.set_target_pos(arg_5_0, arg_5_1, arg_5_2)
+IkChain.set_target_pos = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.target_pos:store(arg_5_1)
 
 	arg_5_0.acc = arg_5_2 or 1
 end
 
-function IkChain.set_whip(arg_6_0, arg_6_1)
+IkChain.set_whip = function (arg_6_0, arg_6_1)
 	arg_6_0.whip_angle_velocity = arg_6_1
 end
 
-function IkChain.update_whip(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+IkChain.update_whip = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = 1
 	local var_7_1 = 2
 	local var_7_2 = Quaternion.axis_angle(Vector3.up(), arg_7_3 % 6.28)
@@ -75,7 +75,7 @@ function IkChain.update_whip(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	QuickDrawer:line(arg_7_1[var_7_0], arg_7_1[var_7_1], Color(20, 255, 175))
 end
 
-function IkChain.debug_draw(arg_8_0, arg_8_1, arg_8_2)
+IkChain.debug_draw = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.constrain_angle and Color(120, 0, 120) or Color(120, 255, 0)
 	local var_8_1 = Color(0, 155, 255)
 
@@ -89,7 +89,7 @@ function IkChain.debug_draw(arg_8_0, arg_8_1, arg_8_2)
 	QuickDrawer:sphere(arg_8_0.aim_pos:unbox(), 0.095, Color(255, 0, 200))
 end
 
-function IkChain.backward(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+IkChain.backward = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	arg_9_1[arg_9_3] = arg_9_4
 
 	for iter_9_0 = arg_9_3 - 1, 1, -1 do
@@ -100,7 +100,7 @@ function IkChain.backward(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	end
 end
 
-function IkChain.forward(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+IkChain.forward = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	arg_10_1[1] = arg_10_4
 
 	for iter_10_0 = 1, arg_10_3 - 1 do
@@ -115,7 +115,7 @@ end
 local var_0_2 = 0.7
 local var_0_3 = math.acos(var_0_2)
 
-function IkChain.forward_constrained(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+IkChain.forward_constrained = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_0.dot_constrain
 	local var_11_1 = arg_11_0.constrain_angle
 	local var_11_2 = Vector3.up()
@@ -146,7 +146,7 @@ end
 
 local var_0_4 = {}
 
-function IkChain.solve(arg_12_0, arg_12_1, arg_12_2)
+IkChain.solve = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.target_pos:unbox()
 	local var_12_1 = arg_12_0.aim_pos:unbox()
 	local var_12_2 = var_12_1 + (var_12_0 - var_12_1) * (arg_12_0.acc or 1) * arg_12_2
@@ -197,7 +197,7 @@ function IkChain.solve(arg_12_0, arg_12_1, arg_12_2)
 	Debug.text("Solving tentacle: %d iterations, %d joints", var_12_7, arg_12_0.n)
 end
 
-function IkChain.solve_dragging(arg_13_0, arg_13_1, arg_13_2)
+IkChain.solve_dragging = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.target_pos:unbox()
 	local var_13_1 = arg_13_0.aim_pos:unbox()
 	local var_13_2 = var_13_1 + (var_13_0 - var_13_1) * (arg_13_0.acc or 1) * arg_13_2

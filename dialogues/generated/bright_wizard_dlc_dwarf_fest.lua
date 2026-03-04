@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_dlc_dwarf_fest.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pbw_dal_finale_filth_halls_a",
 		name = "pbw_dal_finale_filth_halls_a",

@@ -23,7 +23,7 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2)
 	return Vector3.normalize(var_1_8), var_1_5, var_1_6
 end
 
-function CareerAbilityBWAdept.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+CareerAbilityBWAdept.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._owner_unit = arg_2_2
 	arg_2_0._world = arg_2_1.world
 	arg_2_0._wwise_world = Managers.world:wwise_world(arg_2_0._world)
@@ -41,7 +41,7 @@ function CareerAbilityBWAdept.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._double_ability_buff_id = nil
 end
 
-function CareerAbilityBWAdept.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+CareerAbilityBWAdept.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._first_person_extension = ScriptUnit.has_extension(arg_3_2, "first_person_system")
 	arg_3_0._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
 	arg_3_0._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
@@ -55,13 +55,13 @@ function CareerAbilityBWAdept.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function CareerAbilityBWAdept.destroy(arg_4_0)
+CareerAbilityBWAdept.destroy = function (arg_4_0)
 	return
 end
 
 local var_0_3 = "career_ability_bw_adept"
 
-function CareerAbilityBWAdept.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CareerAbilityBWAdept.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0._input_extension
 
 	if not var_5_0 then
@@ -111,13 +111,13 @@ function CareerAbilityBWAdept.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4
 	end
 end
 
-function CareerAbilityBWAdept.stop(arg_6_0, arg_6_1)
+CareerAbilityBWAdept.stop = function (arg_6_0, arg_6_1)
 	if arg_6_1 ~= "pushed" and arg_6_1 ~= "stunned" and arg_6_0._is_priming then
 		arg_6_0:_stop_priming()
 	end
 end
 
-function CareerAbilityBWAdept._ability_available(arg_7_0)
+CareerAbilityBWAdept._ability_available = function (arg_7_0)
 	local var_7_0 = arg_7_0._career_extension
 	local var_7_1 = arg_7_0._status_extension
 	local var_7_2 = arg_7_0._locomotion_extension
@@ -129,7 +129,7 @@ function CareerAbilityBWAdept._ability_available(arg_7_0)
 	return var_7_3 and not var_7_4 and not var_7_5 and var_7_6
 end
 
-function CareerAbilityBWAdept._start_priming(arg_8_0)
+CareerAbilityBWAdept._start_priming = function (arg_8_0)
 	if arg_8_0._local_player then
 		local var_8_0 = arg_8_0._world
 		local var_8_1 = arg_8_0._effect_name
@@ -141,7 +141,7 @@ function CareerAbilityBWAdept._start_priming(arg_8_0)
 	arg_8_0._is_priming = true
 end
 
-function CareerAbilityBWAdept._update_priming(arg_9_0, arg_9_1, arg_9_2)
+CareerAbilityBWAdept._update_priming = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._effect_id
 	local var_9_1 = arg_9_0._world
 	local var_9_2 = World.get_data(var_9_1, "physics_world")
@@ -179,7 +179,7 @@ function CareerAbilityBWAdept._update_priming(arg_9_0, arg_9_1, arg_9_2)
 	return var_9_20
 end
 
-function CareerAbilityBWAdept._stop_priming(arg_10_0)
+CareerAbilityBWAdept._stop_priming = function (arg_10_0)
 	if arg_10_0._effect_id then
 		World.destroy_particles(arg_10_0._world, arg_10_0._effect_id)
 
@@ -190,7 +190,7 @@ function CareerAbilityBWAdept._stop_priming(arg_10_0)
 	arg_10_0._last_valid_landing_position = nil
 end
 
-function CareerAbilityBWAdept._run_ability(arg_11_0)
+CareerAbilityBWAdept._run_ability = function (arg_11_0)
 	local var_11_0 = arg_11_0._last_valid_landing_position:unbox()
 
 	arg_11_0:_stop_priming()
@@ -257,7 +257,7 @@ function CareerAbilityBWAdept._run_ability(arg_11_0)
 		leap_events = {
 			{
 				distance_percentage = 0.1,
-				event_function = function(arg_12_0)
+				event_function = function (arg_12_0)
 					local var_12_0 = arg_12_0.unit
 
 					ScriptUnit.extension(var_12_0, "status_system"):set_invisible(true, nil, arg_11_0)
@@ -265,7 +265,7 @@ function CareerAbilityBWAdept._run_ability(arg_11_0)
 			},
 			{
 				distance_percentage = 0.2,
-				event_function = function(arg_13_0)
+				event_function = function (arg_13_0)
 					local var_13_0 = arg_13_0.unit
 					local var_13_1 = ScriptUnit.extension(var_13_0, "career_system")
 					local var_13_2 = POSITION_LOOKUP[var_13_0] or Unit.world_position(var_13_0, 0)
@@ -277,7 +277,7 @@ function CareerAbilityBWAdept._run_ability(arg_11_0)
 					Managers.state.entity:system("area_damage_system"):create_explosion(var_13_0, var_13_2, var_13_3, var_13_4, var_13_5, "career_ability", var_13_6, false)
 				end
 			},
-			start = function(arg_14_0)
+			start = function (arg_14_0)
 				local var_14_0 = arg_14_0.unit
 				local var_14_1 = ScriptUnit.extension(var_14_0, "career_system")
 				local var_14_2 = POSITION_LOOKUP[var_14_0] or Unit.world_position(var_14_0, 0)
@@ -288,7 +288,7 @@ function CareerAbilityBWAdept._run_ability(arg_11_0)
 
 				Managers.state.entity:system("area_damage_system"):create_explosion(var_14_0, var_14_2, var_14_3, var_14_4, var_14_5, "career_ability", var_14_6, false)
 			end,
-			finished = function(arg_15_0, arg_15_1, arg_15_2)
+			finished = function (arg_15_0, arg_15_1, arg_15_2)
 				local var_15_0 = arg_15_0.unit
 				local var_15_1 = ScriptUnit.extension(var_15_0, "status_system")
 				local var_15_2 = ScriptUnit.extension(var_15_0, "talent_system")
@@ -348,7 +348,7 @@ function CareerAbilityBWAdept._run_ability(arg_11_0)
 	arg_11_0:_play_vo()
 end
 
-function CareerAbilityBWAdept._play_vo(arg_16_0)
+CareerAbilityBWAdept._play_vo = function (arg_16_0)
 	local var_16_0 = arg_16_0._owner_unit
 	local var_16_1 = ScriptUnit.extension_input(var_16_0, "dialogue_system")
 	local var_16_2 = FrameTable.alloc_table()

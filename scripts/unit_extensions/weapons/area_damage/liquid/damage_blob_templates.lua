@@ -68,7 +68,7 @@ DamageBlobTemplates.templates = {
 	}
 }
 
-function DamageBlobTemplates.warpfire_thrower_fire_init(arg_1_0, arg_1_1)
+DamageBlobTemplates.warpfire_thrower_fire_init = function (arg_1_0, arg_1_1)
 	local var_1_0 = arg_1_0._source_unit
 
 	if Unit.alive(var_1_0) then
@@ -96,7 +96,7 @@ function DamageBlobTemplates.warpfire_thrower_fire_init(arg_1_0, arg_1_1)
 	end
 end
 
-function DamageBlobTemplates.warpfire_thrower_fire_update(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+DamageBlobTemplates.warpfire_thrower_fire_update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._warpfire_gun_unit
 	local var_2_1 = arg_2_0._warpfire_particle_id
 	local var_2_2 = Unit.alive(var_2_0)
@@ -140,7 +140,7 @@ function DamageBlobTemplates.warpfire_thrower_fire_update(arg_2_0, arg_2_1, arg_
 	end
 end
 
-function DamageBlobTemplates.warpfire_thrower_fire_init_vs(arg_3_0, arg_3_1)
+DamageBlobTemplates.warpfire_thrower_fire_init_vs = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0._source_unit
 
 	if Unit.alive(var_3_0) then
@@ -179,7 +179,7 @@ end
 local var_0_0 = 2
 local var_0_1 = 4
 
-function DamageBlobTemplates.warpfire_thrower_fire_update_vs(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+DamageBlobTemplates.warpfire_thrower_fire_update_vs = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_0._warpfire_gun_unit
 	local var_4_1 = arg_4_0._warpfire_particle_id
 	local var_4_2 = Unit.alive(var_4_0)

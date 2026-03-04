@@ -45,7 +45,7 @@ local function var_0_4(arg_1_0, ...)
 	end
 end
 
-function NetworkedFlowStateManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+NetworkedFlowStateManager.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_0._level = nil
 	arg_2_0._story_lookup = {}
 	arg_2_0._playing_stories = {}
@@ -66,7 +66,7 @@ function NetworkedFlowStateManager.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function NetworkedFlowStateManager.create_checkpoint_data(arg_3_0)
+NetworkedFlowStateManager.create_checkpoint_data = function (arg_3_0)
 	local var_3_0 = {}
 
 	for iter_3_0, iter_3_1 in pairs(arg_3_0._object_states) do
@@ -92,7 +92,7 @@ function NetworkedFlowStateManager.create_checkpoint_data(arg_3_0)
 	}
 end
 
-function NetworkedFlowStateManager.load_checkpoint_data(arg_4_0, arg_4_1)
+NetworkedFlowStateManager.load_checkpoint_data = function (arg_4_0, arg_4_1)
 	for iter_4_0, iter_4_1 in pairs(arg_4_1.object_states) do
 		for iter_4_2, iter_4_3 in pairs(iter_4_1.states) do
 			local var_4_0 = iter_4_3.value
@@ -151,13 +151,13 @@ function NetworkedFlowStateManager.load_checkpoint_data(arg_4_0, arg_4_1)
 	end
 end
 
-function NetworkedFlowStateManager.destroy(arg_5_0)
+NetworkedFlowStateManager.destroy = function (arg_5_0)
 	if arg_5_0._is_client then
 		arg_5_0._network_event_delegate:unregister(arg_5_0)
 	end
 end
 
-function NetworkedFlowStateManager.flow_cb_create_story(arg_6_0, arg_6_1)
+NetworkedFlowStateManager.flow_cb_create_story = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._story_lookup
 	local var_6_1 = arg_6_1.client_call_event_name
 
@@ -171,7 +171,7 @@ function NetworkedFlowStateManager.flow_cb_create_story(arg_6_0, arg_6_1)
 	end
 end
 
-function NetworkedFlowStateManager.flow_cb_play_networked_story(arg_7_0, arg_7_1)
+NetworkedFlowStateManager.flow_cb_play_networked_story = function (arg_7_0, arg_7_1)
 	if arg_7_0._is_client then
 		return nil
 	end
@@ -198,7 +198,7 @@ function NetworkedFlowStateManager.flow_cb_play_networked_story(arg_7_0, arg_7_1
 	}
 end
 
-function NetworkedFlowStateManager.rpc_flow_state_story_played(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+NetworkedFlowStateManager.rpc_flow_state_story_played = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._story_lookup[arg_8_2]
 
 	arg_8_0._client_call_data = {
@@ -210,7 +210,7 @@ function NetworkedFlowStateManager.rpc_flow_state_story_played(arg_8_0, arg_8_1,
 	Level.trigger_event(arg_8_0._level, var_8_0)
 end
 
-function NetworkedFlowStateManager.flow_cb_networked_story_client_call(arg_9_0, arg_9_1)
+NetworkedFlowStateManager.flow_cb_networked_story_client_call = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._client_call_data
 
 	arg_9_0._client_call_data = nil
@@ -220,7 +220,7 @@ function NetworkedFlowStateManager.flow_cb_networked_story_client_call(arg_9_0, 
 	return var_9_0
 end
 
-function NetworkedFlowStateManager.flow_cb_stop_networked_story(arg_10_0, arg_10_1)
+NetworkedFlowStateManager.flow_cb_stop_networked_story = function (arg_10_0, arg_10_1)
 	if arg_10_0._is_client then
 		return nil
 	end
@@ -250,7 +250,7 @@ function NetworkedFlowStateManager.flow_cb_stop_networked_story(arg_10_0, arg_10
 	}
 end
 
-function NetworkedFlowStateManager.rpc_flow_state_story_stopped(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+NetworkedFlowStateManager.rpc_flow_state_story_stopped = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0._story_lookup[arg_11_2]
 
 	var_0_4("Story %q has_stopped via rpc (client).", var_11_0)
@@ -275,7 +275,7 @@ function NetworkedFlowStateManager.rpc_flow_state_story_stopped(arg_11_0, arg_11
 	Level.trigger_event(arg_11_0._level, var_11_0)
 end
 
-function NetworkedFlowStateManager.flow_cb_has_stopped_networked_story(arg_12_0, arg_12_1)
+NetworkedFlowStateManager.flow_cb_has_stopped_networked_story = function (arg_12_0, arg_12_1)
 	if arg_12_0._is_client then
 		return nil
 	end
@@ -290,7 +290,7 @@ function NetworkedFlowStateManager.flow_cb_has_stopped_networked_story(arg_12_0,
 	var_0_4("Story %q has_stopped (server).", var_12_0)
 end
 
-function NetworkedFlowStateManager.flow_cb_has_played_networked_story(arg_13_0, arg_13_1)
+NetworkedFlowStateManager.flow_cb_has_played_networked_story = function (arg_13_0, arg_13_1)
 	if arg_13_0._is_client then
 		return nil
 	end
@@ -317,12 +317,12 @@ function NetworkedFlowStateManager.flow_cb_has_played_networked_story(arg_13_0, 
 	end
 end
 
-function NetworkedFlowStateManager.hot_join_sync(arg_14_0, arg_14_1)
+NetworkedFlowStateManager.hot_join_sync = function (arg_14_0, arg_14_1)
 	arg_14_0:_sync_states(arg_14_1)
 	arg_14_0:_sync_stories(arg_14_1)
 end
 
-function NetworkedFlowStateManager._sync_stories(arg_15_0, arg_15_1)
+NetworkedFlowStateManager._sync_stories = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._storyteller
 
 	var_0_4("Hot join syncing peer %s", arg_15_1)
@@ -343,7 +343,7 @@ function NetworkedFlowStateManager._sync_stories(arg_15_0, arg_15_1)
 	end
 end
 
-function NetworkedFlowStateManager._sync_states(arg_16_0, arg_16_1)
+NetworkedFlowStateManager._sync_states = function (arg_16_0, arg_16_1)
 	local var_16_0 = Managers.state.network
 
 	for iter_16_0, iter_16_1 in pairs(arg_16_0._object_states) do
@@ -366,11 +366,11 @@ function NetworkedFlowStateManager._sync_states(arg_16_0, arg_16_1)
 	end
 end
 
-function NetworkedFlowStateManager.set_level(arg_17_0, arg_17_1)
+NetworkedFlowStateManager.set_level = function (arg_17_0, arg_17_1)
 	arg_17_0._level = arg_17_1
 end
 
-function NetworkedFlowStateManager.flow_cb_create_state(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
+NetworkedFlowStateManager.flow_cb_create_state = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6)
 	fassert(Unit.alive(arg_18_1), "[NetworkedFlowStateManager] Passing destroyed unit into create flow state for state_name %q", arg_18_2)
 	fassert(arg_18_0._num_states < arg_18_0._max_states, "[NetworkedFlowStateManager] Too many object states(%i).", arg_18_0._max_states)
 
@@ -402,7 +402,7 @@ function NetworkedFlowStateManager.flow_cb_create_state(arg_18_0, arg_18_1, arg_
 	return true, arg_18_3
 end
 
-function NetworkedFlowStateManager.flow_cb_get_state(arg_19_0, arg_19_1, arg_19_2)
+NetworkedFlowStateManager.flow_cb_get_state = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._object_states[arg_19_1]
 	local var_19_1 = var_19_0 and var_19_0.states[arg_19_2]
 
@@ -411,7 +411,7 @@ function NetworkedFlowStateManager.flow_cb_get_state(arg_19_0, arg_19_1, arg_19_
 	return var_19_1.value
 end
 
-function NetworkedFlowStateManager.flow_cb_change_state(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+NetworkedFlowStateManager.flow_cb_change_state = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	if arg_20_0._is_client then
 		return
 	end
@@ -443,7 +443,7 @@ function NetworkedFlowStateManager.flow_cb_change_state(arg_20_0, arg_20_1, arg_
 	return var_20_5, arg_20_3
 end
 
-function NetworkedFlowStateManager._clamp_state(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+NetworkedFlowStateManager._clamp_state = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	local var_21_0 = arg_21_2.network_constant and NetworkConstants[arg_21_2.network_constant]
 
 	if var_21_0 and (arg_21_3 < var_21_0.min or arg_21_3 > var_21_0.max) then
@@ -455,7 +455,7 @@ function NetworkedFlowStateManager._clamp_state(arg_21_0, arg_21_1, arg_21_2, ar
 	return arg_21_3
 end
 
-function NetworkedFlowStateManager.client_flow_state_changed(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+NetworkedFlowStateManager.client_flow_state_changed = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
 	local var_22_0 = Managers.state.network:game_object_or_level_unit(arg_22_1, not arg_22_5)
 	local var_22_1 = arg_22_0._object_states[var_22_0]
 
@@ -475,14 +475,14 @@ function NetworkedFlowStateManager.client_flow_state_changed(arg_22_0, arg_22_1,
 	Unit.flow_event(var_22_0, var_22_4)
 end
 
-function NetworkedFlowStateManager.rpc_flow_state_bool_changed(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+NetworkedFlowStateManager.rpc_flow_state_bool_changed = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 	arg_23_0:client_flow_state_changed(arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
 end
 
-function NetworkedFlowStateManager.rpc_flow_state_number_changed(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+NetworkedFlowStateManager.rpc_flow_state_number_changed = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 	arg_24_0:client_flow_state_changed(arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
 end
 
-function NetworkedFlowStateManager.clear_object_state(arg_25_0, arg_25_1)
+NetworkedFlowStateManager.clear_object_state = function (arg_25_0, arg_25_1)
 	arg_25_0._object_states[arg_25_1] = nil
 end

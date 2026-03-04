@@ -11,14 +11,14 @@ local function var_0_1(arg_2_0, arg_2_1)
 end
 
 return {
-	is_end_zone_activated = function(arg_3_0, arg_3_1)
+	is_end_zone_activated = function (arg_3_0, arg_3_1)
 		if not var_0_1(arg_3_1, arg_3_0) then
 			return Testify.RETRY
 		end
 
 		return arg_3_0._activated == true
 	end,
-	teleport_player_to_end_zone_position = function(arg_4_0, arg_4_1)
+	teleport_player_to_end_zone_position = function (arg_4_0, arg_4_1)
 		if not var_0_1(arg_4_1, arg_4_0) then
 			return Testify.RETRY
 		end

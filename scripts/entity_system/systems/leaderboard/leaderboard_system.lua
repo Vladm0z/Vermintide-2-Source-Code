@@ -99,7 +99,7 @@ local function var_0_11(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function LeaderboardSystem.init(arg_7_0, arg_7_1, arg_7_2)
+LeaderboardSystem.init = function (arg_7_0, arg_7_1, arg_7_2)
 	LeaderboardSystem.super.init(arg_7_0, arg_7_1, arg_7_2, {})
 
 	local var_7_0 = arg_7_1.network_event_delegate
@@ -121,7 +121,7 @@ function LeaderboardSystem.init(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function LeaderboardSystem.destroy(arg_8_0)
+LeaderboardSystem.destroy = function (arg_8_0)
 	arg_8_0.network_event_delegate:unregister(arg_8_0)
 
 	local var_8_0 = arg_8_0.transaction_tokens
@@ -137,7 +137,7 @@ function LeaderboardSystem.destroy(arg_8_0)
 	end
 end
 
-function LeaderboardSystem.update(arg_9_0, arg_9_1, arg_9_2)
+LeaderboardSystem.update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.transaction_tokens
 
 	for iter_9_0, iter_9_1 in pairs(var_9_0) do
@@ -161,7 +161,7 @@ function LeaderboardSystem.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function LeaderboardSystem.round_started(arg_10_0, arg_10_1, arg_10_2)
+LeaderboardSystem.round_started = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0.is_server or not var_0_4 then
 		return
 	end
@@ -175,7 +175,7 @@ function LeaderboardSystem.round_started(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function LeaderboardSystem.debug_simulate_wave_score_enty(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+LeaderboardSystem.debug_simulate_wave_score_enty = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = var_0_9(arg_11_1, arg_11_2)
 	local var_11_1 = {}
 	local var_11_2 = {
@@ -202,7 +202,7 @@ function LeaderboardSystem.debug_simulate_wave_score_enty(arg_11_0, arg_11_1, ar
 	arg_11_0:register_score("whitebox_ai", "normal", var_11_0, var_11_1)
 end
 
-function LeaderboardSystem.round_completed(arg_12_0)
+LeaderboardSystem.round_completed = function (arg_12_0)
 	if not arg_12_0.is_server or not var_0_4 then
 		return
 	end
@@ -275,7 +275,7 @@ function LeaderboardSystem.round_completed(arg_12_0)
 	end
 end
 
-function LeaderboardSystem.register_score(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LeaderboardSystem.register_score = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = var_0_6(arg_13_1, arg_13_2)
 	local var_13_1 = Managers.player:local_player():network_id()
 	local var_13_2 = Steam.id_to_id_32bit(var_13_1)
@@ -317,7 +317,7 @@ function LeaderboardSystem.register_score(arg_13_0, arg_13_1, arg_13_2, arg_13_3
 	end
 end
 
-function LeaderboardSystem.get_ranking_range(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+LeaderboardSystem.get_ranking_range = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 	if not var_0_4 then
 		return
 	end
@@ -331,7 +331,7 @@ function LeaderboardSystem.get_ranking_range(arg_14_0, arg_14_1, arg_14_2, arg_1
 	}
 end
 
-function LeaderboardSystem.get_ranking_around_self(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+LeaderboardSystem.get_ranking_around_self = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
 	if not var_0_4 then
 		return
 	end
@@ -345,7 +345,7 @@ function LeaderboardSystem.get_ranking_around_self(arg_15_0, arg_15_1, arg_15_2,
 	}
 end
 
-function LeaderboardSystem.get_ranking_for_friends(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+LeaderboardSystem.get_ranking_for_friends = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	if not var_0_4 then
 		return
 	end
@@ -359,7 +359,7 @@ function LeaderboardSystem.get_ranking_for_friends(arg_16_0, arg_16_1, arg_16_2,
 	}
 end
 
-function LeaderboardSystem.rpc_client_leaderboard_register_score(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, ...)
+LeaderboardSystem.rpc_client_leaderboard_register_score = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, ...)
 	local var_17_0 = NetworkLookup.level_keys[arg_17_2]
 	local var_17_1 = NetworkLookup.difficulties[arg_17_3]
 	local var_17_2 = {

@@ -34,7 +34,7 @@ local var_0_10 = 10
 local var_0_11 = 5
 local var_0_12 = class(Totem)
 
-function var_0_12.init(arg_3_0, arg_3_1)
+var_0_12.init = function (arg_3_0, arg_3_1)
 	arg_3_0._logging_prefix = arg_3_1
 
 	var_0_4("-%s- init", arg_3_1)
@@ -43,7 +43,7 @@ function var_0_12.init(arg_3_0, arg_3_1)
 	arg_3_0._state = var_0_0.COOLDOWN
 end
 
-function var_0_12.destroy(arg_4_0)
+var_0_12.destroy = function (arg_4_0)
 	var_0_4("-%s- destroy", arg_4_0._logging_prefix)
 
 	if arg_4_0._active_totem_data then
@@ -51,7 +51,7 @@ function var_0_12.destroy(arg_4_0)
 	end
 end
 
-function var_0_12.update(arg_5_0, arg_5_1, arg_5_2)
+var_0_12.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_0._state == var_0_0.COOLDOWN then
 		if not arg_5_0._cooldown_end_t then
 			arg_5_0._cooldown_end_t = arg_5_2 + Math.random_range(var_0_6, var_0_7)
@@ -62,7 +62,7 @@ function var_0_12.update(arg_5_0, arg_5_1, arg_5_2)
 			var_0_4("-%s- new state %s", arg_5_0._logging_prefix, arg_5_0._state)
 		end
 	elseif arg_5_0._state == var_0_0.READY then
-		-- block empty
+		-- Nothing
 	elseif arg_5_0._state == var_0_0.ACTIVE then
 		local var_5_0 = arg_5_0._active_totem_data.unit
 
@@ -93,7 +93,7 @@ function var_0_12.update(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function var_0_12.spawn(arg_6_0, arg_6_1)
+var_0_12.spawn = function (arg_6_0, arg_6_1)
 	fassert(arg_6_0._state == var_0_0.READY, "prepare_spawn can only be called when the state of the totem is READY")
 	var_0_4("-%s- spawn", arg_6_0._logging_prefix)
 
@@ -102,7 +102,7 @@ function var_0_12.spawn(arg_6_0, arg_6_1)
 	end
 
 	local var_6_0 = {
-		prepare_func = function(arg_7_0, arg_7_1)
+		prepare_func = function (arg_7_0, arg_7_1)
 			local var_7_0 = false
 
 			arg_7_0.modify_extension_init_data(arg_7_0, var_7_0, arg_7_1)
@@ -110,7 +110,7 @@ function var_0_12.spawn(arg_6_0, arg_6_1)
 	}
 	local var_6_1 = arg_6_0
 
-	function var_6_0.spawned_func(arg_8_0, arg_8_1, arg_8_2)
+	var_6_0.spawned_func = function (arg_8_0, arg_8_1, arg_8_2)
 		var_6_1._active_totem_data.unit = arg_8_0
 		var_6_1._active_totem_data.queue_id = nil
 		var_6_1._active_totem_data.totem_ext = ScriptUnit.has_extension(arg_8_0, "deus_belakor_totem_system")
@@ -128,11 +128,11 @@ function var_0_12.spawn(arg_6_0, arg_6_1)
 	var_0_4("-%s- new state %s", arg_6_0._logging_prefix, arg_6_0._state)
 end
 
-function var_0_12.get_state(arg_9_0)
+var_0_12.get_state = function (arg_9_0)
 	return arg_9_0._state
 end
 
-function var_0_12.get_position(arg_10_0)
+var_0_12.get_position = function (arg_10_0)
 	local var_10_0 = arg_10_0._active_totem_data
 
 	if not var_10_0 then
@@ -142,13 +142,13 @@ function var_0_12.get_position(arg_10_0)
 	return var_10_0.starting_position:unbox()
 end
 
-function var_0_12.get_unit(arg_11_0)
+var_0_12.get_unit = function (arg_11_0)
 	local var_11_0 = arg_11_0._active_totem_data
 
 	return var_11_0 and var_11_0.unit
 end
 
-function var_0_12._clear_active_totem(arg_12_0)
+var_0_12._clear_active_totem = function (arg_12_0)
 	local var_12_0 = arg_12_0._active_totem_data.queue_id
 
 	if var_12_0 then
@@ -167,7 +167,7 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_belakor_totems"
 	},
-	server_start_function = function(arg_13_0, arg_13_1)
+	server_start_function = function (arg_13_0, arg_13_1)
 		local var_13_0 = {}
 
 		for iter_13_0 = 1, var_0_13 do
@@ -177,10 +177,10 @@ return {
 		arg_13_1.totems = var_13_0
 		arg_13_1.conflict_director = Managers.state.conflict
 	end,
-	server_players_left_safe_zone = function(arg_14_0, arg_14_1)
+	server_players_left_safe_zone = function (arg_14_0, arg_14_1)
 		arg_14_1.started = true
 	end,
-	server_pre_update_function = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	server_pre_update_function = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
@@ -248,7 +248,7 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	server_player_hit_function = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		return
 	end
 }

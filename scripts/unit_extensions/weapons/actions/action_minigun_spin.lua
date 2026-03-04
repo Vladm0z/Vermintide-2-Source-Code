@@ -2,14 +2,14 @@
 
 ActionMinigunSpin = class(ActionMinigunSpin, ActionBase)
 
-function ActionMinigunSpin.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionMinigunSpin.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionMinigunSpin.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
 	arg_1_0.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
 end
 
-function ActionMinigunSpin.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+ActionMinigunSpin.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
 	ActionMinigunSpin.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 
 	arg_2_0._initial_windup = arg_2_1.initial_windup
@@ -29,7 +29,7 @@ function ActionMinigunSpin.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:start_audio_loop()
 end
 
-function ActionMinigunSpin.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionMinigunSpin.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.weapon_extension
 	local var_3_1 = arg_3_0._current_windup
 	local var_3_2 = math.clamp(var_3_1 + arg_3_0._windup_speed * arg_3_1, arg_3_0._initial_windup, 1)
@@ -42,7 +42,7 @@ function ActionMinigunSpin.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, a
 	arg_3_0:_update_animation_speed(var_3_2)
 end
 
-function ActionMinigunSpin.start_audio_loop(arg_4_0)
+ActionMinigunSpin.start_audio_loop = function (arg_4_0)
 	local var_4_0 = arg_4_0._audio_loop_id
 
 	if not var_4_0 then
@@ -65,7 +65,7 @@ function ActionMinigunSpin.start_audio_loop(arg_4_0)
 	var_4_4:start_looping_audio(var_4_0)
 end
 
-function ActionMinigunSpin._update_animation_speed(arg_5_0, arg_5_1)
+ActionMinigunSpin._update_animation_speed = function (arg_5_0, arg_5_1)
 	if arg_5_0._fp_speed_anim_variable then
 		local var_5_0 = arg_5_1 / 3 + 0.67
 		local var_5_1 = math.clamp(var_5_0, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
@@ -74,6 +74,6 @@ function ActionMinigunSpin._update_animation_speed(arg_5_0, arg_5_1)
 	end
 end
 
-function ActionMinigunSpin.finish(arg_6_0, ...)
+ActionMinigunSpin.finish = function (arg_6_0, ...)
 	ActionMinigunSpin.super.finish(arg_6_0, ...)
 end

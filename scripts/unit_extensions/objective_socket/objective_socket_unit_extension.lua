@@ -10,7 +10,7 @@ local var_0_0 = {
 	}
 }
 
-function ObjectiveSocketUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+ObjectiveSocketUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.is_server = arg_1_4
@@ -28,7 +28,7 @@ function ObjectiveSocketUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 	arg_1_0:_handle_optional_slots(arg_1_2)
 end
 
-function ObjectiveSocketUnitExtension._handle_optional_slots(arg_2_0, arg_2_1)
+ObjectiveSocketUnitExtension._handle_optional_slots = function (arg_2_0, arg_2_1)
 	if Unit.get_data(arg_2_1, "optional") then
 		script_data.socket_unit = arg_2_1
 
@@ -52,11 +52,11 @@ function ObjectiveSocketUnitExtension._handle_optional_slots(arg_2_0, arg_2_1)
 	end
 end
 
-function ObjectiveSocketUnitExtension.destroy(arg_3_0)
+ObjectiveSocketUnitExtension.destroy = function (arg_3_0)
 	POSITION_LOOKUP[arg_3_0.unit] = nil
 end
 
-function ObjectiveSocketUnitExtension.setup_sockets(arg_4_0, arg_4_1)
+ObjectiveSocketUnitExtension.setup_sockets = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0.sockets
 	local var_4_1 = "socket_"
 	local var_4_2 = 1
@@ -79,7 +79,7 @@ function ObjectiveSocketUnitExtension.setup_sockets(arg_4_0, arg_4_1)
 	arg_4_0.num_sockets = var_4_2 - 1
 end
 
-function ObjectiveSocketUnitExtension.pick_socket_ordered(arg_5_0, arg_5_1)
+ObjectiveSocketUnitExtension.pick_socket_ordered = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.num_sockets
 
 	for iter_5_0 = 1, var_5_0 do
@@ -93,7 +93,7 @@ function ObjectiveSocketUnitExtension.pick_socket_ordered(arg_5_0, arg_5_1)
 	print("[ObjectiveSocketUnitExtension]: No sockets open")
 end
 
-function ObjectiveSocketUnitExtension.pick_socket_closest(arg_6_0, arg_6_1, arg_6_2)
+ObjectiveSocketUnitExtension.pick_socket_closest = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = POSITION_LOOKUP[arg_6_2]
 	local var_6_1 = arg_6_0.unit
 	local var_6_2 = arg_6_0.num_sockets
@@ -123,7 +123,7 @@ function ObjectiveSocketUnitExtension.pick_socket_closest(arg_6_0, arg_6_1, arg_
 	return var_6_4, var_6_5
 end
 
-function ObjectiveSocketUnitExtension.pick_socket(arg_7_0, arg_7_1)
+ObjectiveSocketUnitExtension.pick_socket = function (arg_7_0, arg_7_1)
 	local var_7_0
 	local var_7_1
 	local var_7_2 = arg_7_0.pick_config
@@ -139,10 +139,10 @@ function ObjectiveSocketUnitExtension.pick_socket(arg_7_0, arg_7_1)
 	return var_7_0, var_7_1
 end
 
-function ObjectiveSocketUnitExtension.socket_from_id(arg_8_0, arg_8_1)
+ObjectiveSocketUnitExtension.socket_from_id = function (arg_8_0, arg_8_1)
 	return arg_8_0.sockets[arg_8_1]
 end
 
-function ObjectiveSocketUnitExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ObjectiveSocketUnitExtension.update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	return
 end

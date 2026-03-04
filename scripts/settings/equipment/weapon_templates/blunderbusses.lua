@@ -93,7 +93,7 @@ local var_0_1 = {
 				dedicated_target_range = 3.5,
 				anim_event = "attack_push",
 				total_time = 1,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				anim_time_scale = var_0_0 * 1.15,
@@ -130,7 +130,7 @@ local var_0_1 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_2_0, arg_2_1)
+				enter_function = function (arg_2_0, arg_2_1)
 					arg_2_1:clear_input_buffer()
 				end
 			}

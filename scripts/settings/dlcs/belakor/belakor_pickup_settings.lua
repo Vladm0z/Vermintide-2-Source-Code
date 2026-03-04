@@ -72,7 +72,7 @@ var_0_0.pickups = {
 			spawn_weighting = 1e-06,
 			debug_pickup_category = "orbs",
 			granted_buff = "health_orb",
-			can_pickup_orb = function(arg_5_0, arg_5_1)
+			can_pickup_orb = function (arg_5_0, arg_5_1)
 				local var_5_0 = ScriptUnit.extension(arg_5_1, "health_system")
 
 				if var_5_0:get_max_health() > var_5_0:current_health() then

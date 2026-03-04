@@ -4,7 +4,7 @@ return {
 	description = "weaves_light_mutator_desc",
 	display_name = "weaves_light_mutator_name",
 	icon = "mutator_icon_light_beacons",
-	add_buff = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	add_buff = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		local var_1_0 = #arg_1_1
 
 		if var_1_0 < arg_1_0.max_stacks then
@@ -14,7 +14,7 @@ return {
 			arg_1_1[var_1_0 + 1] = var_1_2
 		end
 	end,
-	clear_buffs = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	clear_buffs = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = ScriptUnit.has_extension(arg_2_3.player_unit, "buff_system")
 		local var_2_1 = var_2_0 and var_2_0:has_buff_type(arg_2_0.curse_buff_name)
 
@@ -29,7 +29,7 @@ return {
 			arg_2_1[var_2_2] = nil
 		end
 	end,
-	update_challenge_statistics = function(arg_3_0)
+	update_challenge_statistics = function (arg_3_0)
 		if ScorpionSeasonalSettings.current_season_id == 1 then
 			local var_3_0 = "season_1"
 			local var_3_1 = "weave_light_low_curse"
@@ -48,7 +48,7 @@ return {
 			end
 		end
 	end,
-	update_curse = function(arg_4_0, arg_4_1)
+	update_curse = function (arg_4_0, arg_4_1)
 		local var_4_0 = arg_4_0.template
 		local var_4_1 = arg_4_0.last_curse_time
 		local var_4_2 = arg_4_0.curse_rate
@@ -86,7 +86,7 @@ return {
 			arg_4_0.last_curse_time = arg_4_1 + 0
 		end
 	end,
-	update_proximity_sound = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	update_proximity_sound = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		local var_5_0 = Managers.state.network
 		local var_5_1 = Network.peer_id()
 
@@ -116,7 +116,7 @@ return {
 			end
 		end
 	end,
-	update_beacons = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	update_beacons = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		local var_6_0 = arg_6_1.last_cleanse_time
 		local var_6_1 = arg_6_1.cleanse_rate
 
@@ -163,7 +163,7 @@ return {
 			arg_6_1.last_cleanse_time = arg_6_3 + 0
 		end
 	end,
-	server_start_function = function(arg_7_0, arg_7_1)
+	server_start_function = function (arg_7_0, arg_7_1)
 		local var_7_0 = Managers.weave
 		local var_7_1 = var_7_0:get_active_wind_settings()
 		local var_7_2 = var_7_0:get_wind_strength()
@@ -192,10 +192,10 @@ return {
 			arg_7_1.buffs[iter_7_0] = {}
 		end
 	end,
-	server_players_left_safe_zone = function(arg_8_0, arg_8_1)
+	server_players_left_safe_zone = function (arg_8_0, arg_8_1)
 		arg_8_1.has_left_safe_zone = true
 	end,
-	server_update_function = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	server_update_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end

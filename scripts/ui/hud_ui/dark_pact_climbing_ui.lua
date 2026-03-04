@@ -7,7 +7,7 @@ local var_0_3 = 400
 
 DarkPactClimbingUI = class(DarkPactClimbingUI)
 
-function DarkPactClimbingUI.init(arg_1_0, arg_1_1, arg_1_2)
+DarkPactClimbingUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._local_player = arg_1_2.player
 	arg_1_0._raycast_frame_counter = 0
 	arg_1_0._world_markers_spawned = {}
@@ -22,13 +22,13 @@ function DarkPactClimbingUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_initialize_camera()
 end
 
-function DarkPactClimbingUI.destroy(arg_2_0)
+DarkPactClimbingUI.destroy = function (arg_2_0)
 	if not arg_2_0._markers_cleared then
 		arg_2_0:_clear_world_markers()
 	end
 end
 
-function DarkPactClimbingUI._register_climb_units(arg_3_0)
+DarkPactClimbingUI._register_climb_units = function (arg_3_0)
 	local var_3_0 = Managers.state.entity
 	local var_3_1 = var_3_0:system("door_system")
 
@@ -44,7 +44,7 @@ function DarkPactClimbingUI._register_climb_units(arg_3_0)
 	arg_3_0._are_climb_units_registered = true
 end
 
-function DarkPactClimbingUI._add_units_to_broadphase(arg_4_0, arg_4_1, arg_4_2)
+DarkPactClimbingUI._add_units_to_broadphase = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_2 then
 		return
 	end
@@ -58,12 +58,12 @@ function DarkPactClimbingUI._add_units_to_broadphase(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function DarkPactClimbingUI._initialize_broadphase(arg_5_0)
+DarkPactClimbingUI._initialize_broadphase = function (arg_5_0)
 	arg_5_0._broadphase = Broadphase(var_0_0, var_0_1)
 	arg_5_0._broadphase_types = {}
 end
 
-function DarkPactClimbingUI._initialize_camera(arg_6_0)
+DarkPactClimbingUI._initialize_camera = function (arg_6_0)
 	local var_6_0 = "player_1"
 	local var_6_1 = Managers.world:world("level_world")
 
@@ -72,7 +72,7 @@ function DarkPactClimbingUI._initialize_camera(arg_6_0)
 	end
 end
 
-function DarkPactClimbingUI._broadphase_check(arg_7_0, arg_7_1)
+DarkPactClimbingUI._broadphase_check = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._broadphase_results
 
 	table.clear(var_7_0)
@@ -82,7 +82,7 @@ function DarkPactClimbingUI._broadphase_check(arg_7_0, arg_7_1)
 	return var_7_0, var_7_1
 end
 
-function DarkPactClimbingUI.update(arg_8_0, arg_8_1, arg_8_2)
+DarkPactClimbingUI.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if not arg_8_0._are_climb_units_registered then
 		return
 	end
@@ -133,11 +133,11 @@ function DarkPactClimbingUI.update(arg_8_0, arg_8_1, arg_8_2)
 	table.clear(arg_8_0._keep_marker_lookup)
 end
 
-function DarkPactClimbingUI._has_marker_for_unit(arg_9_0, arg_9_1)
+DarkPactClimbingUI._has_marker_for_unit = function (arg_9_0, arg_9_1)
 	return arg_9_0._world_markers_spawned[arg_9_1]
 end
 
-function DarkPactClimbingUI._clear_world_markers(arg_10_0)
+DarkPactClimbingUI._clear_world_markers = function (arg_10_0)
 	local var_10_0 = arg_10_0._world_markers_spawned
 	local var_10_1 = Managers.state.event
 
@@ -150,7 +150,7 @@ function DarkPactClimbingUI._clear_world_markers(arg_10_0)
 	arg_10_0._markers_cleared = true
 end
 
-function DarkPactClimbingUI._clear_world_markers_except(arg_11_0, arg_11_1)
+DarkPactClimbingUI._clear_world_markers_except = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._world_markers_spawned
 	local var_11_1 = Managers.state.event
 
@@ -163,12 +163,12 @@ function DarkPactClimbingUI._clear_world_markers_except(arg_11_0, arg_11_1)
 	end
 end
 
-function DarkPactClimbingUI.cb_world_marker_spawned(arg_12_0, arg_12_1, arg_12_2)
+DarkPactClimbingUI.cb_world_marker_spawned = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._world_markers_spawned[arg_12_1] = arg_12_2
 	arg_12_0._markers_cleared = false
 end
 
-function DarkPactClimbingUI.set_visible(arg_13_0, arg_13_1)
+DarkPactClimbingUI.set_visible = function (arg_13_0, arg_13_1)
 	arg_13_0._visible = arg_13_1
 
 	if arg_13_1 then

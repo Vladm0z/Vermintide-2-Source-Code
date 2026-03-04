@@ -37,13 +37,13 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.buff_function_templates = {
-	apply_invincibility_standard = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	apply_invincibility_standard = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		return
 	end,
-	update_invincibility_standard = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	update_invincibility_standard = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		QuickDrawer:sphere(POSITION_LOOKUP[arg_2_0], 1, Colors.get("cyan"))
 	end,
-	remove_invincibility_standard = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	remove_invincibility_standard = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if Managers.state.network.is_server then
 			local var_3_0 = arg_3_1.stored_damage
 			local var_3_1 = arg_3_1.standard_is_destroyed
@@ -61,7 +61,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	apply_healing_standard = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	apply_healing_standard = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		arg_4_1.next_heal_tick_t = arg_4_2.t + 1
 
 		Unit.flow_event(arg_4_0, "vfx_healing_buff")
@@ -76,7 +76,7 @@ var_0_0.buff_function_templates = {
 			var_4_0._damage_cap_per_hit = var_4_0:set_max_health(var_4_4)
 		end
 	end,
-	update_healing_standard = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	update_healing_standard = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		if arg_5_2.t > arg_5_1.next_heal_tick_t then
 			arg_5_1.next_heal_tick_t = arg_5_2.t + 1
 
@@ -97,7 +97,7 @@ var_0_0.buff_function_templates = {
 			Unit.flow_event(arg_5_0, "vfx_healing_buff_proc")
 		end
 	end,
-	remove_healing_standard = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	remove_healing_standard = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		Unit.flow_event(arg_6_0, "vfx_remove_healing_buff")
 
 		if Managers.state.network.is_server then

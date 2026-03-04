@@ -31,7 +31,7 @@ local var_0_7 = {
 	blocked_attack_3 = true
 }
 
-function GenericStatusExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericStatusExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.profile_id = arg_1_3.profile_id
 
@@ -146,7 +146,7 @@ function GenericStatusExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._invisible_outline_id = -1
 end
 
-function GenericStatusExtension.extensions_ready(arg_2_0)
+GenericStatusExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = arg_2_0.unit
 
 	arg_2_0.health_extension = ScriptUnit.extension(var_2_0, "health_system")
@@ -163,7 +163,7 @@ function GenericStatusExtension.extensions_ready(arg_2_0)
 	Managers.state.event:register(arg_2_0, "on_player_joined_party", "_on_player_joined_party")
 end
 
-function GenericStatusExtension.destroy(arg_3_0)
+GenericStatusExtension.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0.first_person_extension
 
 	if var_3_0 then
@@ -177,21 +177,21 @@ function GenericStatusExtension.destroy(arg_3_0)
 	end
 end
 
-function GenericStatusExtension.add_damage_intensity(arg_4_0, arg_4_1, arg_4_2)
+GenericStatusExtension.add_damage_intensity = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.pacing_intensity = math.clamp(arg_4_0.pacing_intensity + arg_4_1 * CurrentIntensitySettings.intensity_add_per_percent_dmg_taken * 100, 0, 100)
 	arg_4_0.pacing_intensity_decay_delay = CurrentIntensitySettings.decay_delay
 end
 
-function GenericStatusExtension.add_pacing_intensity(arg_5_0, arg_5_1)
+GenericStatusExtension.add_pacing_intensity = function (arg_5_0, arg_5_1)
 	arg_5_0.pacing_intensity = math.clamp(arg_5_0.pacing_intensity + arg_5_1, 0, 100)
 	arg_5_0.pacing_intensity_decay_delay = CurrentIntensitySettings.decay_delay
 end
 
-function GenericStatusExtension.add_combo_target_count(arg_6_0, arg_6_1)
+GenericStatusExtension.add_combo_target_count = function (arg_6_0, arg_6_1)
 	arg_6_0.combo_target_count = math.clamp(arg_6_0.combo_target_count + arg_6_1, 0, 5)
 end
 
-function GenericStatusExtension.add_pacing_intensity_by_difficulty(arg_7_0, arg_7_1)
+GenericStatusExtension.add_pacing_intensity_by_difficulty = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1[Managers.state.difficulty:get_difficulty()]
 
 	if not var_7_0 then
@@ -202,15 +202,15 @@ function GenericStatusExtension.add_pacing_intensity_by_difficulty(arg_7_0, arg_
 	arg_7_0.pacing_intensity_decay_delay = CurrentIntensitySettings.decay_delay
 end
 
-function GenericStatusExtension.add_intoxication_level(arg_8_0, arg_8_1)
+GenericStatusExtension.add_intoxication_level = function (arg_8_0, arg_8_1)
 	arg_8_0._intoxication_level = math.clamp(arg_8_0._intoxication_level + arg_8_1, var_0_2, var_0_1)
 end
 
-function GenericStatusExtension.invert_intoxication_level(arg_9_0)
+GenericStatusExtension.invert_intoxication_level = function (arg_9_0)
 	arg_9_0._intoxication_level = arg_9_0._intoxication_level * -1
 end
 
-function GenericStatusExtension.intoxication_level(arg_10_0)
+GenericStatusExtension.intoxication_level = function (arg_10_0)
 	return arg_10_0._intoxication_level
 end
 
@@ -223,7 +223,7 @@ local var_0_8 = {
 	health_degen = true
 }
 
-function GenericStatusExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+GenericStatusExtension.update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = arg_11_0.health_extension
 	local var_11_1, var_11_2 = var_11_0:recent_damages()
 
@@ -428,20 +428,20 @@ function GenericStatusExtension.update(arg_11_0, arg_11_1, arg_11_2, arg_11_3, a
 	end
 end
 
-function GenericStatusExtension.set_spawn_grace_time(arg_12_0, arg_12_1)
+GenericStatusExtension.set_spawn_grace_time = function (arg_12_0, arg_12_1)
 	arg_12_0.spawn_grace_time = Managers.time:time("game") + arg_12_1
 	arg_12_0.spawn_grace = true
 	arg_12_0.update_funcs.spawn_grace_time = GenericStatusExtension.update_spawn_grace_time
 end
 
-function GenericStatusExtension.update_spawn_grace_time(arg_13_0, arg_13_1)
+GenericStatusExtension.update_spawn_grace_time = function (arg_13_0, arg_13_1)
 	if arg_13_1 > arg_13_0.spawn_grace_time then
 		arg_13_0.spawn_grace = false
 		arg_13_0.update_funcs.spawn_grace_time = nil
 	end
 end
 
-function GenericStatusExtension.fall_distance(arg_14_0)
+GenericStatusExtension.fall_distance = function (arg_14_0)
 	if arg_14_0.fall_height then
 		if arg_14_0.ignore_next_fall_damage then
 			arg_14_0.fall_height = POSITION_LOOKUP[arg_14_0.unit].z
@@ -457,11 +457,11 @@ function GenericStatusExtension.fall_distance(arg_14_0)
 	return 0
 end
 
-function GenericStatusExtension.set_ignore_next_fall_damage(arg_15_0, arg_15_1)
+GenericStatusExtension.set_ignore_next_fall_damage = function (arg_15_0, arg_15_1)
 	arg_15_0.ignore_next_fall_damage = arg_15_1
 end
 
-function GenericStatusExtension.update_falling(arg_16_0, arg_16_1)
+GenericStatusExtension.update_falling = function (arg_16_0, arg_16_1)
 	if arg_16_0.locomotion_extension:is_on_ground() and not arg_16_0.on_ladder then
 		local var_16_0 = PlayerUnitMovementSettings.get_movement_settings_table(arg_16_0.unit)
 		local var_16_1 = var_16_0.fall.heights.MIN_FALL_DAMAGE_HEIGHT
@@ -498,7 +498,7 @@ function GenericStatusExtension.update_falling(arg_16_0, arg_16_1)
 	end
 end
 
-function GenericStatusExtension._get_current_max_fatigue_points(arg_17_0)
+GenericStatusExtension._get_current_max_fatigue_points = function (arg_17_0)
 	local var_17_0 = arg_17_0.inventory_extension
 	local var_17_1 = var_17_0:get_wielded_slot_name()
 	local var_17_2 = var_17_0:get_slot_data(var_17_1)
@@ -512,11 +512,11 @@ function GenericStatusExtension._get_current_max_fatigue_points(arg_17_0)
 	end
 end
 
-function GenericStatusExtension.get_max_fatigue_points(arg_18_0)
+GenericStatusExtension.get_max_fatigue_points = function (arg_18_0)
 	return arg_18_0:_get_current_max_fatigue_points()
 end
 
-function GenericStatusExtension.can_block(arg_19_0, arg_19_1, arg_19_2)
+GenericStatusExtension.can_block = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0.unit
 	local var_19_1 = arg_19_0.player
 	local var_19_2 = arg_19_0.inventory_extension:equipment()
@@ -579,7 +579,7 @@ function GenericStatusExtension.can_block(arg_19_0, arg_19_1, arg_19_2)
 	return false
 end
 
-function GenericStatusExtension.blocked_attack(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+GenericStatusExtension.blocked_attack = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	local var_20_0 = arg_20_0.unit
 	local var_20_1 = arg_20_0.inventory_extension:equipment()
 	local var_20_2
@@ -666,7 +666,7 @@ function GenericStatusExtension.blocked_attack(arg_20_0, arg_20_1, arg_20_2, arg
 	end
 end
 
-function GenericStatusExtension.set_shielded(arg_21_0, arg_21_1)
+GenericStatusExtension.set_shielded = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0.unit
 
 	if arg_21_0.player.local_player then
@@ -705,7 +705,7 @@ local var_0_10 = {
 	healing_draught = true
 }
 
-function GenericStatusExtension.healed(arg_22_0, arg_22_1)
+GenericStatusExtension.healed = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.unit
 
 	if arg_22_0.player.local_player then
@@ -725,7 +725,7 @@ function GenericStatusExtension.healed(arg_22_0, arg_22_1)
 	end
 end
 
-function GenericStatusExtension.fatigued(arg_23_0)
+GenericStatusExtension.fatigued = function (arg_23_0)
 	local var_23_0 = PlayerUnitStatusSettings.MAX_FATIGUE
 	local var_23_1 = arg_23_0.max_fatigue_points
 
@@ -736,7 +736,7 @@ function GenericStatusExtension.fatigued(arg_23_0)
 	return var_23_1 == 0 and true or arg_23_0.fatigue > var_23_0 - var_23_0 / var_23_1
 end
 
-function GenericStatusExtension.add_fatigue_points(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+GenericStatusExtension.add_fatigue_points = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
 	local var_24_0 = arg_24_0.buff_extension
 
 	if Development.parameter("disable_fatigue_system") then
@@ -806,7 +806,7 @@ function GenericStatusExtension.add_fatigue_points(arg_24_0, arg_24_1, arg_24_2,
 	end
 end
 
-function GenericStatusExtension.set_fatigue_points(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+GenericStatusExtension.set_fatigue_points = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 	local var_25_0 = arg_25_0.fatigue
 
 	arg_25_3 = not (not arg_25_3 and (var_25_0 < arg_25_1 or var_25_0 ~= arg_25_1 and (var_25_0 == 100 or arg_25_1 == 0)))
@@ -835,17 +835,17 @@ function GenericStatusExtension.set_fatigue_points(arg_25_0, arg_25_1, arg_25_2,
 	end
 end
 
-function GenericStatusExtension.remove_fatigue_points(arg_26_0, arg_26_1)
+GenericStatusExtension.remove_fatigue_points = function (arg_26_0, arg_26_1)
 	local var_26_0 = math.max(arg_26_0.fatigue - arg_26_1, 0)
 
 	arg_26_0:set_fatigue_points(var_26_0, "force_set")
 end
 
-function GenericStatusExtension.remove_all_fatigue(arg_27_0)
+GenericStatusExtension.remove_all_fatigue = function (arg_27_0)
 	arg_27_0:remove_fatigue_points(math.huge)
 end
 
-function GenericStatusExtension.get_dodge_item_data(arg_28_0)
+GenericStatusExtension.get_dodge_item_data = function (arg_28_0)
 	local var_28_0 = arg_28_0.inventory_extension
 	local var_28_1 = var_28_0:get_wielded_slot_name()
 	local var_28_2 = var_28_0:get_slot_data(var_28_1)
@@ -858,7 +858,7 @@ function GenericStatusExtension.get_dodge_item_data(arg_28_0)
 	arg_28_0.dodge_count = var_28_3 or 2
 end
 
-function GenericStatusExtension.add_dodge_cooldown(arg_29_0)
+GenericStatusExtension.add_dodge_cooldown = function (arg_29_0)
 	if arg_29_0.buff_extension:has_buff_perk("infinite_dodge") then
 		arg_29_0.dodge_cooldown = 0
 
@@ -871,11 +871,11 @@ function GenericStatusExtension.add_dodge_cooldown(arg_29_0)
 	arg_29_0.dodge_cooldown_delay = nil
 end
 
-function GenericStatusExtension.start_dodge_cooldown(arg_30_0, arg_30_1)
+GenericStatusExtension.start_dodge_cooldown = function (arg_30_0, arg_30_1)
 	arg_30_0.dodge_cooldown_delay = arg_30_1 + 0.5
 end
 
-function GenericStatusExtension.get_dodge_cooldown(arg_31_0)
+GenericStatusExtension.get_dodge_cooldown = function (arg_31_0)
 	if arg_31_0.buff_extension:has_buff_type("passive_career_we_2") then
 		return 1
 	end
@@ -883,22 +883,22 @@ function GenericStatusExtension.get_dodge_cooldown(arg_31_0)
 	return 0.4 + 0.6 * (1 - math.max(arg_31_0.dodge_cooldown - arg_31_0.dodge_count, 0) / 3)
 end
 
-function GenericStatusExtension.current_fatigue(arg_32_0)
+GenericStatusExtension.current_fatigue = function (arg_32_0)
 	return arg_32_0.fatigue
 end
 
-function GenericStatusExtension.current_fatigue_points(arg_33_0)
+GenericStatusExtension.current_fatigue_points = function (arg_33_0)
 	local var_33_0 = PlayerUnitStatusSettings.MAX_FATIGUE
 	local var_33_1 = arg_33_0.max_fatigue_points
 
 	return var_33_1 == 0 and 0 or math.ceil(arg_33_0.fatigue / (var_33_0 / var_33_1)), var_33_1
 end
 
-function GenericStatusExtension.set_stagger_immune(arg_34_0, arg_34_1)
+GenericStatusExtension.set_stagger_immune = function (arg_34_0, arg_34_1)
 	arg_34_0.stagger_immune = arg_34_1
 end
 
-function GenericStatusExtension.set_pushed(arg_35_0, arg_35_1, arg_35_2)
+GenericStatusExtension.set_pushed = function (arg_35_0, arg_35_1, arg_35_2)
 	if arg_35_1 and (arg_35_0.push_cooldown or arg_35_0.stagger_immune) then
 		return
 	elseif arg_35_1 then
@@ -910,11 +910,11 @@ function GenericStatusExtension.set_pushed(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function GenericStatusExtension.set_charged(arg_36_0, arg_36_1, arg_36_2)
+GenericStatusExtension.set_charged = function (arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0.charged = arg_36_1
 end
 
-function GenericStatusExtension.set_pushed_no_cooldown(arg_37_0, arg_37_1, arg_37_2)
+GenericStatusExtension.set_pushed_no_cooldown = function (arg_37_0, arg_37_1, arg_37_2)
 	if arg_37_1 and arg_37_0.stagger_immune then
 		return
 	end
@@ -926,11 +926,11 @@ function GenericStatusExtension.set_pushed_no_cooldown(arg_37_0, arg_37_1, arg_3
 	end
 end
 
-function GenericStatusExtension.set_hit_react_type(arg_38_0, arg_38_1)
+GenericStatusExtension.set_hit_react_type = function (arg_38_0, arg_38_1)
 	arg_38_0._hit_react_type = arg_38_1
 end
 
-function GenericStatusExtension.hitreact_interrupt(arg_39_0)
+GenericStatusExtension.hitreact_interrupt = function (arg_39_0)
 	if arg_39_0.interrupt_cooldown then
 		return false
 	else
@@ -940,19 +940,19 @@ function GenericStatusExtension.hitreact_interrupt(arg_39_0)
 	end
 end
 
-function GenericStatusExtension.is_pushed(arg_40_0)
+GenericStatusExtension.is_pushed = function (arg_40_0)
 	return arg_40_0.pushed and not arg_40_0.overcharge_exploding
 end
 
-function GenericStatusExtension.is_charged(arg_41_0)
+GenericStatusExtension.is_charged = function (arg_41_0)
 	return arg_41_0.charged
 end
 
-function GenericStatusExtension.hit_react_type(arg_42_0)
+GenericStatusExtension.hit_react_type = function (arg_42_0)
 	return arg_42_0._hit_react_type or "light"
 end
 
-function GenericStatusExtension.set_block_broken(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+GenericStatusExtension.set_block_broken = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	if arg_43_0.block_broken == arg_43_1 then
 		return
 	end
@@ -981,7 +981,7 @@ function GenericStatusExtension.set_block_broken(arg_43_0, arg_43_1, arg_43_2, a
 	end
 end
 
-function GenericStatusExtension.set_gutter_runner_leaping(arg_44_0, arg_44_1)
+GenericStatusExtension.set_gutter_runner_leaping = function (arg_44_0, arg_44_1)
 	if arg_44_0.gutter_runner_leaping == arg_44_1 then
 		return
 	end
@@ -1001,7 +1001,7 @@ function GenericStatusExtension.set_gutter_runner_leaping(arg_44_0, arg_44_1)
 	end
 end
 
-function GenericStatusExtension.set_reviving(arg_45_0, arg_45_1, arg_45_2)
+GenericStatusExtension.set_reviving = function (arg_45_0, arg_45_1, arg_45_2)
 	if arg_45_0.reviving == arg_45_1 then
 		return
 	end
@@ -1026,17 +1026,17 @@ function GenericStatusExtension.set_reviving(arg_45_0, arg_45_1, arg_45_2)
 	end
 end
 
-function GenericStatusExtension.set_has_pushed(arg_46_0, arg_46_1)
+GenericStatusExtension.set_has_pushed = function (arg_46_0, arg_46_1)
 	if not arg_46_0.buff_extension:has_buff_perk("slayer_stamina") then
 		arg_46_0.push_degen_delay = arg_46_1 or 1.5
 	end
 end
 
-function GenericStatusExtension.set_has_blocked(arg_47_0, arg_47_1)
+GenericStatusExtension.set_has_blocked = function (arg_47_0, arg_47_1)
 	arg_47_0._has_blocked = arg_47_1
 end
 
-function GenericStatusExtension.set_pounced_down(arg_48_0, arg_48_1, arg_48_2)
+GenericStatusExtension.set_pounced_down = function (arg_48_0, arg_48_1, arg_48_2)
 	arg_48_1 = arg_48_1 and arg_48_2 ~= nil and Unit.alive(arg_48_2)
 
 	if arg_48_1 == arg_48_0.pounced_down then
@@ -1118,7 +1118,7 @@ function GenericStatusExtension.set_pounced_down(arg_48_0, arg_48_1, arg_48_2)
 	end
 end
 
-function GenericStatusExtension.update_pounced_down(arg_49_0)
+GenericStatusExtension.update_pounced_down = function (arg_49_0)
 	assert(arg_49_0.is_server, "[GenericStatusExtension] 'update_pounced_down' is meant to only be called on the server")
 
 	if not HEALTH_ALIVE[arg_49_0.pouncer_unit] then
@@ -1126,7 +1126,7 @@ function GenericStatusExtension.update_pounced_down(arg_49_0)
 	end
 end
 
-function GenericStatusExtension.set_crouching(arg_50_0, arg_50_1)
+GenericStatusExtension.set_crouching = function (arg_50_0, arg_50_1)
 	arg_50_0.crouching = arg_50_1
 
 	arg_50_0:set_slowed(arg_50_1)
@@ -1144,13 +1144,13 @@ function GenericStatusExtension.set_crouching(arg_50_0, arg_50_1)
 	end
 end
 
-function GenericStatusExtension.crouch_toggle(arg_51_0)
+GenericStatusExtension.crouch_toggle = function (arg_51_0)
 	return not arg_51_0.crouching
 end
 
 local var_0_11 = {}
 
-function GenericStatusExtension.set_knocked_down(arg_52_0, arg_52_1)
+GenericStatusExtension.set_knocked_down = function (arg_52_0, arg_52_1)
 	arg_52_0.knocked_down = arg_52_1
 
 	local var_52_0 = arg_52_0.unit
@@ -1276,7 +1276,7 @@ function GenericStatusExtension.set_knocked_down(arg_52_0, arg_52_1)
 	Managers.music:check_last_man_standing_music_state()
 end
 
-function GenericStatusExtension.set_ready_for_assisted_respawn(arg_53_0, arg_53_1, arg_53_2)
+GenericStatusExtension.set_ready_for_assisted_respawn = function (arg_53_0, arg_53_1, arg_53_2)
 	arg_53_0.ready_for_assisted_respawn = arg_53_1
 	arg_53_0.assisted_respawn_flavour_unit = arg_53_2
 
@@ -1302,27 +1302,27 @@ function GenericStatusExtension.set_ready_for_assisted_respawn(arg_53_0, arg_53_
 	end
 end
 
-function GenericStatusExtension.set_assisted_respawning(arg_54_0, arg_54_1, arg_54_2)
+GenericStatusExtension.set_assisted_respawning = function (arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0.assisted_respawning = arg_54_1
 	arg_54_0.assisted_respawn_helper_unit = arg_54_2
 end
 
-function GenericStatusExtension.is_assisted_respawning(arg_55_0)
+GenericStatusExtension.is_assisted_respawning = function (arg_55_0)
 	return arg_55_0.assisted_respawning
 end
 
-function GenericStatusExtension.get_assisted_respawn_helper_unit(arg_56_0)
+GenericStatusExtension.get_assisted_respawn_helper_unit = function (arg_56_0)
 	return arg_56_0.assisted_respawn_helper_unit
 end
 
-function GenericStatusExtension.set_respawned(arg_57_0, arg_57_1)
+GenericStatusExtension.set_respawned = function (arg_57_0, arg_57_1)
 	if arg_57_1 then
 		arg_57_0:set_ready_for_assisted_respawn(false)
 		Managers.music:check_last_man_standing_music_state()
 	end
 end
 
-function GenericStatusExtension.set_dead(arg_58_0, arg_58_1)
+GenericStatusExtension.set_dead = function (arg_58_0, arg_58_1)
 	local var_58_0 = arg_58_0.player
 
 	if arg_58_1 and ScriptUnit.has_extension(arg_58_0.unit, "outline_system") then
@@ -1342,7 +1342,7 @@ function GenericStatusExtension.set_dead(arg_58_0, arg_58_1)
 	arg_58_0.dead = arg_58_1
 end
 
-function GenericStatusExtension.set_blocking(arg_59_0, arg_59_1)
+GenericStatusExtension.set_blocking = function (arg_59_0, arg_59_1)
 	arg_59_0.blocking = arg_59_1
 
 	local var_59_0 = arg_59_0.inventory_extension
@@ -1358,7 +1358,7 @@ function GenericStatusExtension.set_blocking(arg_59_0, arg_59_1)
 	end
 end
 
-function GenericStatusExtension.set_override_blocking(arg_60_0, arg_60_1, arg_60_2)
+GenericStatusExtension.set_override_blocking = function (arg_60_0, arg_60_1, arg_60_2)
 	arg_60_0.override_blocking = arg_60_1
 
 	if arg_60_2 then
@@ -1372,19 +1372,19 @@ function GenericStatusExtension.set_override_blocking(arg_60_0, arg_60_1, arg_60
 	end
 end
 
-function GenericStatusExtension.set_charge_blocking(arg_61_0, arg_61_1)
+GenericStatusExtension.set_charge_blocking = function (arg_61_0, arg_61_1)
 	arg_61_0.charge_blocking = arg_61_1
 end
 
-function GenericStatusExtension.set_stagger_immmune(arg_62_0, arg_62_1)
+GenericStatusExtension.set_stagger_immmune = function (arg_62_0, arg_62_1)
 	arg_62_0.stagger_immune = arg_62_1
 end
 
-function GenericStatusExtension.set_slowed(arg_63_0, arg_63_1)
+GenericStatusExtension.set_slowed = function (arg_63_0, arg_63_1)
 	arg_63_0.is_slowed = arg_63_1
 end
 
-function GenericStatusExtension.set_wounded(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+GenericStatusExtension.set_wounded = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	if arg_64_1 then
 		if not arg_64_0.buff_extension:has_buff_perk("infinite_wounds") then
 			arg_64_0.wounds = arg_64_0.wounds - 1
@@ -1403,7 +1403,7 @@ function GenericStatusExtension.set_wounded(arg_64_0, arg_64_1, arg_64_2, arg_64
 	end
 end
 
-function GenericStatusExtension.set_pulled_up(arg_65_0, arg_65_1, arg_65_2)
+GenericStatusExtension.set_pulled_up = function (arg_65_0, arg_65_1, arg_65_2)
 	if arg_65_0.is_ledge_hanging then
 		arg_65_0.pulled_up = arg_65_1
 
@@ -1421,7 +1421,7 @@ function GenericStatusExtension.set_pulled_up(arg_65_0, arg_65_1, arg_65_2)
 	end
 end
 
-function GenericStatusExtension.set_revived(arg_66_0, arg_66_1, arg_66_2)
+GenericStatusExtension.set_revived = function (arg_66_0, arg_66_1, arg_66_2)
 	arg_66_0.revived = arg_66_1
 
 	local var_66_0 = arg_66_0.unit
@@ -1442,7 +1442,7 @@ function GenericStatusExtension.set_revived(arg_66_0, arg_66_1, arg_66_2)
 	end
 end
 
-function GenericStatusExtension.set_zooming(arg_67_0, arg_67_1, arg_67_2)
+GenericStatusExtension.set_zooming = function (arg_67_0, arg_67_1, arg_67_2)
 	arg_67_0.zooming = arg_67_1
 
 	arg_67_0:set_slowed(arg_67_1)
@@ -1479,7 +1479,7 @@ local var_0_12 = {
 	"increased_zoom_in"
 }
 
-function GenericStatusExtension.switch_variable_zoom(arg_68_0, arg_68_1)
+GenericStatusExtension.switch_variable_zoom = function (arg_68_0, arg_68_1)
 	local var_68_0 = arg_68_0.player.camera_follow_unit
 
 	if Unit.alive(var_68_0) then
@@ -1503,17 +1503,17 @@ function GenericStatusExtension.switch_variable_zoom(arg_68_0, arg_68_1)
 	end
 end
 
-function GenericStatusExtension.set_grabbed_by_tentacle(arg_69_0, arg_69_1, arg_69_2)
+GenericStatusExtension.set_grabbed_by_tentacle = function (arg_69_0, arg_69_1, arg_69_2)
 	arg_69_0.grabbed_by_tentacle = arg_69_1
 	arg_69_0.grabbed_by_tentacle_unit = arg_69_2
 	arg_69_0.grabbed_by_tentacle_status = arg_69_1 and "grabbed" or nil
 end
 
-function GenericStatusExtension.set_grabbed_by_tentacle_status(arg_70_0, arg_70_1)
+GenericStatusExtension.set_grabbed_by_tentacle_status = function (arg_70_0, arg_70_1)
 	arg_70_0.grabbed_by_tentacle_status = arg_70_1
 end
 
-function GenericStatusExtension.set_grabbed_by_chaos_spawn(arg_71_0, arg_71_1, arg_71_2)
+GenericStatusExtension.set_grabbed_by_chaos_spawn = function (arg_71_0, arg_71_1, arg_71_2)
 	arg_71_0.grabbed_by_chaos_spawn = arg_71_1
 
 	if arg_71_1 then
@@ -1526,31 +1526,31 @@ function GenericStatusExtension.set_grabbed_by_chaos_spawn(arg_71_0, arg_71_1, a
 	end
 end
 
-function GenericStatusExtension.set_grabbed_by_chaos_spawn_status(arg_72_0, arg_72_1)
+GenericStatusExtension.set_grabbed_by_chaos_spawn_status = function (arg_72_0, arg_72_1)
 	if arg_72_0.grabbed_by_chaos_spawn_status_count then
 		arg_72_0.grabbed_by_chaos_spawn_status = arg_72_1
 		arg_72_0.grabbed_by_chaos_spawn_status_count = arg_72_0.grabbed_by_chaos_spawn_status_count + 1
 	end
 end
 
-function GenericStatusExtension.set_in_vortex(arg_73_0, arg_73_1, arg_73_2)
+GenericStatusExtension.set_in_vortex = function (arg_73_0, arg_73_1, arg_73_2)
 	arg_73_0.in_vortex = arg_73_1
 	arg_73_0.in_vortex_unit = arg_73_1 and arg_73_2 or nil
 
 	arg_73_0:set_outline_incapacitated(not arg_73_0:is_dead() and arg_73_0:is_disabled())
 end
 
-function GenericStatusExtension.set_near_vortex(arg_74_0, arg_74_1, arg_74_2)
+GenericStatusExtension.set_near_vortex = function (arg_74_0, arg_74_1, arg_74_2)
 	arg_74_0.near_vortex = arg_74_1
 	arg_74_0.near_vortex_unit = arg_74_1 and arg_74_2 or nil
 end
 
-function GenericStatusExtension.set_in_liquid(arg_75_0, arg_75_1, arg_75_2)
+GenericStatusExtension.set_in_liquid = function (arg_75_0, arg_75_1, arg_75_2)
 	arg_75_0.in_liquid = arg_75_1
 	arg_75_0.in_liquid_unit = arg_75_1 and arg_75_2 or nil
 end
 
-function GenericStatusExtension.set_catapulted(arg_76_0, arg_76_1, arg_76_2)
+GenericStatusExtension.set_catapulted = function (arg_76_0, arg_76_1, arg_76_2)
 	local var_76_0 = arg_76_0.unit
 
 	if arg_76_1 then
@@ -1601,36 +1601,36 @@ function GenericStatusExtension.set_catapulted(arg_76_0, arg_76_1, arg_76_2)
 	end
 end
 
-function GenericStatusExtension.leap_start(arg_77_0, arg_77_1)
+GenericStatusExtension.leap_start = function (arg_77_0, arg_77_1)
 	ScriptUnit.has_extension(arg_77_1, "buff_system"):trigger_procs("on_leap_start")
 end
 
-function GenericStatusExtension.leap_finished(arg_78_0, arg_78_1)
+GenericStatusExtension.leap_finished = function (arg_78_0, arg_78_1)
 	ScriptUnit.has_extension(arg_78_1, "buff_system"):trigger_procs("on_leap_finished")
 end
 
-function GenericStatusExtension.set_inside_transport_unit(arg_79_0, arg_79_1)
+GenericStatusExtension.set_inside_transport_unit = function (arg_79_0, arg_79_1)
 	arg_79_0.inside_transport_unit = arg_79_1
 end
 
-function GenericStatusExtension.set_using_transport(arg_80_0, arg_80_1)
+GenericStatusExtension.set_using_transport = function (arg_80_0, arg_80_1)
 	arg_80_0.using_transport = arg_80_1
 end
 
-function GenericStatusExtension.set_overcharge_exploding(arg_81_0, arg_81_1)
+GenericStatusExtension.set_overcharge_exploding = function (arg_81_0, arg_81_1)
 	arg_81_0.overcharge_exploding = arg_81_1
 end
 
-function GenericStatusExtension.set_left_ladder(arg_82_0, arg_82_1)
+GenericStatusExtension.set_left_ladder = function (arg_82_0, arg_82_1)
 	arg_82_0.left_ladder_timer = arg_82_1 + PlayerUnitMovementSettings.get_movement_settings_table(arg_82_0.unit).ladder.leave_ladder_reattach_time
 end
 
-function GenericStatusExtension.set_is_on_ladder(arg_83_0, arg_83_1, arg_83_2)
+GenericStatusExtension.set_is_on_ladder = function (arg_83_0, arg_83_1, arg_83_2)
 	arg_83_0.on_ladder = arg_83_1
 	arg_83_0.current_ladder_unit = arg_83_2
 end
 
-function GenericStatusExtension.set_is_ledge_hanging(arg_84_0, arg_84_1, arg_84_2)
+GenericStatusExtension.set_is_ledge_hanging = function (arg_84_0, arg_84_1, arg_84_2)
 	arg_84_0.is_ledge_hanging = arg_84_1
 	arg_84_0.current_ledge_hanging_unit = arg_84_2
 
@@ -1661,7 +1661,7 @@ function GenericStatusExtension.set_is_ledge_hanging(arg_84_0, arg_84_1, arg_84_
 	end
 end
 
-function GenericStatusExtension.set_in_hanging_cage(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+GenericStatusExtension.set_in_hanging_cage = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 	if arg_85_1 then
 		arg_85_0.in_hanging_cage_unit = arg_85_2 or arg_85_0.in_hanging_cage_unit
 		arg_85_0.in_hanging_cage_state = arg_85_3 or arg_85_0.in_hanging_cage_state
@@ -1675,7 +1675,7 @@ function GenericStatusExtension.set_in_hanging_cage(arg_85_0, arg_85_1, arg_85_2
 	arg_85_0.in_hanging_cage = arg_85_1
 end
 
-function GenericStatusExtension.set_outline_incapacitated(arg_86_0, arg_86_1, arg_86_2, arg_86_3)
+GenericStatusExtension.set_outline_incapacitated = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3)
 	local var_86_0 = arg_86_0.unit
 	local var_86_1 = arg_86_0.player
 
@@ -1721,11 +1721,11 @@ function GenericStatusExtension.set_outline_incapacitated(arg_86_0, arg_86_1, ar
 	end
 end
 
-function GenericStatusExtension._set_packmaster_unhooked(arg_87_0, arg_87_1, arg_87_2)
+GenericStatusExtension._set_packmaster_unhooked = function (arg_87_0, arg_87_1, arg_87_2)
 	local var_87_0 = Managers.time:time("game")
 
 	if arg_87_0.release_unhook_time then
-		-- block empty
+		-- Nothing
 	elseif arg_87_0.dead then
 		if arg_87_2 == "pack_master_dragging" or arg_87_2 == "pack_master_pulling" then
 			arg_87_0.release_unhook_time = var_87_0 + PlayerUnitStatusSettings.hanging_by_pack_master.release_dragging_time_dead
@@ -1748,7 +1748,7 @@ function GenericStatusExtension._set_packmaster_unhooked(arg_87_0, arg_87_1, arg
 	arg_87_0.pack_master_player = nil
 end
 
-function GenericStatusExtension.set_pack_master(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+GenericStatusExtension.set_pack_master = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 	if arg_88_0.is_server then
 		local var_88_0 = arg_88_0.pack_master_grabber
 
@@ -1900,7 +1900,7 @@ function GenericStatusExtension.set_pack_master(arg_88_0, arg_88_1, arg_88_2, ar
 		var_88_5:set_disabled(false, nil, nil, true)
 
 		if arg_88_0.release_falling_time then
-			-- block empty
+			-- Nothing
 		elseif arg_88_0.dead then
 			arg_88_0.release_falling_time = var_88_21 + PlayerUnitStatusSettings.hanging_by_pack_master.release_falling_time_dead
 		elseif arg_88_0.knocked_down then
@@ -1921,11 +1921,11 @@ function GenericStatusExtension.set_pack_master(arg_88_0, arg_88_1, arg_88_2, ar
 	return true
 end
 
-function GenericStatusExtension.query_pack_master_player(arg_90_0)
+GenericStatusExtension.query_pack_master_player = function (arg_90_0)
 	return arg_90_0.pack_master_player
 end
 
-function GenericStatusExtension.hit_by_globadier_poison(arg_91_0, arg_91_1)
+GenericStatusExtension.hit_by_globadier_poison = function (arg_91_0, arg_91_1)
 	local var_91_0 = Managers.time:time("game")
 	local var_91_1 = arg_91_0._hit_by_globadier_poison_instances
 	local var_91_2 = 0
@@ -1962,7 +1962,7 @@ function GenericStatusExtension.hit_by_globadier_poison(arg_91_0, arg_91_1)
 	SurroundingAwareSystem.add_event(var_91_4, var_91_3, DialogueSettings.globadier_poisoned_broadcast_range, "target", var_91_4, "target_name", ScriptUnit.extension(var_91_4, "dialogue_system").context.player_profile)
 end
 
-function GenericStatusExtension.set_grabbed_by_corruptor(arg_92_0, arg_92_1, arg_92_2, arg_92_3)
+GenericStatusExtension.set_grabbed_by_corruptor = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3)
 	local var_92_0 = arg_92_0.unit
 
 	arg_92_0.corruptor_grabbed = arg_92_2 and arg_92_3 or nil
@@ -1993,27 +1993,27 @@ function GenericStatusExtension.set_grabbed_by_corruptor(arg_92_0, arg_92_1, arg
 	end
 end
 
-function GenericStatusExtension.get_pacing_intensity(arg_93_0)
+GenericStatusExtension.get_pacing_intensity = function (arg_93_0)
 	return arg_93_0.pacing_intensity
 end
 
-function GenericStatusExtension.get_combo_target_count(arg_94_0)
+GenericStatusExtension.get_combo_target_count = function (arg_94_0)
 	return arg_94_0.combo_target_count
 end
 
-function GenericStatusExtension.is_pounced_down(arg_95_0)
+GenericStatusExtension.is_pounced_down = function (arg_95_0)
 	return arg_95_0.pounced_down, arg_95_0.pouncer_unit
 end
 
-function GenericStatusExtension.get_pouncer_unit(arg_96_0)
+GenericStatusExtension.get_pouncer_unit = function (arg_96_0)
 	return arg_96_0.pouncer_unit
 end
 
-function GenericStatusExtension.is_knocked_down(arg_97_0)
+GenericStatusExtension.is_knocked_down = function (arg_97_0)
 	return arg_97_0.knocked_down
 end
 
-function GenericStatusExtension.set_knocked_down_bleed_buff_paused(arg_98_0, arg_98_1)
+GenericStatusExtension.set_knocked_down_bleed_buff_paused = function (arg_98_0, arg_98_1)
 	local var_98_0 = arg_98_0.unit
 	local var_98_1 = arg_98_0.buff_extension or ScriptUnit.extension(var_98_0, "buff_system")
 
@@ -2028,11 +2028,11 @@ function GenericStatusExtension.set_knocked_down_bleed_buff_paused(arg_98_0, arg
 	return arg_98_0.knocked_down_bleed_id
 end
 
-function GenericStatusExtension.is_ready_for_assisted_respawn(arg_99_0)
+GenericStatusExtension.is_ready_for_assisted_respawn = function (arg_99_0)
 	return arg_99_0.ready_for_assisted_respawn
 end
 
-function GenericStatusExtension.disabled_vo_reason(arg_100_0)
+GenericStatusExtension.disabled_vo_reason = function (arg_100_0)
 	local var_100_0
 
 	if arg_100_0:is_dead() then
@@ -2050,7 +2050,7 @@ function GenericStatusExtension.disabled_vo_reason(arg_100_0)
 	return var_100_0
 end
 
-function GenericStatusExtension.set_has_bonus_fatigue_active(arg_101_0)
+GenericStatusExtension.set_has_bonus_fatigue_active = function (arg_101_0)
 	arg_101_0.has_bonus_fatigue_active = true
 	arg_101_0.bonus_fatigue_active_timer = Managers.time:time("game") + 1.5
 
@@ -2061,7 +2061,7 @@ function GenericStatusExtension.set_has_bonus_fatigue_active(arg_101_0)
 	end
 end
 
-function GenericStatusExtension.get_disabler_unit(arg_102_0)
+GenericStatusExtension.get_disabler_unit = function (arg_102_0)
 	local var_102_0 = arg_102_0.grabbed_by_tentacle_unit or arg_102_0.pouncer_unit or arg_102_0.grabbed_by_chaos_spawn_unit or arg_102_0.pack_master_grabber or arg_102_0.corruptor_unit
 
 	if Unit.alive(var_102_0) then
@@ -2069,83 +2069,83 @@ function GenericStatusExtension.get_disabler_unit(arg_102_0)
 	end
 end
 
-function GenericStatusExtension.is_disabled_by_pact_sworn(arg_103_0)
+GenericStatusExtension.is_disabled_by_pact_sworn = function (arg_103_0)
 	return arg_103_0:is_hanging_from_hook() or arg_103_0:is_grabbed_by_tentacle() or arg_103_0:is_grabbed_by_chaos_spawn() or arg_103_0:is_in_vortex() or arg_103_0:is_grabbed_by_corruptor() or arg_103_0:is_pounced_down() or arg_103_0:is_grabbed_by_pack_master()
 end
 
-function GenericStatusExtension.is_disabled(arg_104_0)
+GenericStatusExtension.is_disabled = function (arg_104_0)
 	return arg_104_0:is_dead() or arg_104_0:is_knocked_down() or arg_104_0:get_is_ledge_hanging() or arg_104_0:is_hanging_from_hook() or arg_104_0:is_ready_for_assisted_respawn() or arg_104_0:is_grabbed_by_tentacle() or arg_104_0:is_grabbed_by_chaos_spawn() or arg_104_0:is_in_vortex() or arg_104_0:is_grabbed_by_corruptor() or arg_104_0:is_overpowered() or arg_104_0:is_pounced_down() or arg_104_0:is_grabbed_by_pack_master()
 end
 
-function GenericStatusExtension.disabled_by_other(arg_105_0, arg_105_1)
+GenericStatusExtension.disabled_by_other = function (arg_105_0, arg_105_1)
 	return arg_105_0:is_dead() or arg_105_0:is_knocked_down() or arg_105_0:get_is_ledge_hanging() or arg_105_0:is_hanging_from_hook() or arg_105_0:is_ready_for_assisted_respawn() or arg_105_0:is_grabbed_by_tentacle() or arg_105_0:is_grabbed_by_chaos_spawn() or arg_105_0:is_in_vortex() or arg_105_0:is_grabbed_by_corruptor() or arg_105_0:is_overpowered() or arg_105_0:is_pounced_down() and arg_105_0:get_pouncer_unit() ~= arg_105_1 or arg_105_0:is_grabbed_by_pack_master() and arg_105_0:get_pack_master_grabber() ~= arg_105_1
 end
 
-function GenericStatusExtension.is_disabled_non_temporarily(arg_106_0)
+GenericStatusExtension.is_disabled_non_temporarily = function (arg_106_0)
 	return arg_106_0:is_dead() or arg_106_0:is_pounced_down() or arg_106_0:is_knocked_down() or arg_106_0:is_grabbed_by_pack_master() or arg_106_0:get_is_ledge_hanging() or arg_106_0:is_hanging_from_hook() or arg_106_0:is_ready_for_assisted_respawn() or arg_106_0:is_grabbed_by_tentacle() or arg_106_0:is_grabbed_by_corruptor() or arg_106_0:is_overpowered()
 end
 
-function GenericStatusExtension.is_valid_vortex_target(arg_107_0)
+GenericStatusExtension.is_valid_vortex_target = function (arg_107_0)
 	return not arg_107_0:is_dead() and not arg_107_0:is_pounced_down() and not arg_107_0:is_knocked_down() and not arg_107_0:is_grabbed_by_pack_master() and not arg_107_0:get_is_ledge_hanging() and not arg_107_0:is_hanging_from_hook() and not arg_107_0:is_ready_for_assisted_respawn() and not arg_107_0:is_grabbed_by_tentacle() and not arg_107_0:is_grabbed_by_chaos_spawn() and not arg_107_0:is_in_end_zone()
 end
 
-function GenericStatusExtension.is_valid_corruptor_target(arg_108_0)
+GenericStatusExtension.is_valid_corruptor_target = function (arg_108_0)
 	return not arg_108_0:is_dead() and not arg_108_0:is_pounced_down() and not arg_108_0:is_knocked_down() and not arg_108_0:is_grabbed_by_pack_master() and not arg_108_0:get_is_ledge_hanging() and not arg_108_0:is_hanging_from_hook() and not arg_108_0:is_ready_for_assisted_respawn() and not arg_108_0:is_grabbed_by_tentacle() and not arg_108_0:is_grabbed_by_chaos_spawn() and not arg_108_0:is_in_end_zone()
 end
 
-function GenericStatusExtension.is_ogre_target(arg_109_0)
+GenericStatusExtension.is_ogre_target = function (arg_109_0)
 	return not arg_109_0:is_dead() and not arg_109_0:is_pounced_down() and not arg_109_0:is_grabbed_by_pack_master() and not arg_109_0:is_hanging_from_hook() and not arg_109_0:is_using_transport() and not arg_109_0:is_grabbed_by_tentacle() and not arg_109_0:is_grabbed_by_chaos_spawn()
 end
 
-function GenericStatusExtension.is_chaos_spawn_target(arg_110_0)
+GenericStatusExtension.is_chaos_spawn_target = function (arg_110_0)
 	return not arg_110_0:is_dead() and not arg_110_0:is_knocked_down() and not arg_110_0:is_pounced_down() and not arg_110_0:is_grabbed_by_pack_master() and not arg_110_0:is_hanging_from_hook() and not arg_110_0:is_using_transport() and not arg_110_0:is_grabbed_by_tentacle() and not arg_110_0:is_grabbed_by_chaos_spawn()
 end
 
-function GenericStatusExtension.is_lord_target(arg_111_0)
+GenericStatusExtension.is_lord_target = function (arg_111_0)
 	return not arg_111_0:is_dead() and not arg_111_0:is_knocked_down() and not arg_111_0:is_pounced_down() and not arg_111_0:is_grabbed_by_pack_master() and not arg_111_0:is_hanging_from_hook() and not arg_111_0:is_using_transport() and not arg_111_0:is_grabbed_by_tentacle() and not arg_111_0:is_grabbed_by_chaos_spawn()
 end
 
-function GenericStatusExtension.is_available_for_career_revive(arg_112_0)
+GenericStatusExtension.is_available_for_career_revive = function (arg_112_0)
 	return arg_112_0:is_knocked_down() and not arg_112_0:is_pounced_down() and not arg_112_0:is_grabbed_by_pack_master() and not arg_112_0:is_hanging_from_hook() and not arg_112_0:is_grabbed_by_tentacle() and not arg_112_0:is_grabbed_by_chaos_spawn()
 end
 
-function GenericStatusExtension.is_grabbed_by_tentacle(arg_113_0)
+GenericStatusExtension.is_grabbed_by_tentacle = function (arg_113_0)
 	return arg_113_0.grabbed_by_tentacle
 end
 
-function GenericStatusExtension.is_grabbed_by_corruptor(arg_114_0)
+GenericStatusExtension.is_grabbed_by_corruptor = function (arg_114_0)
 	return arg_114_0.grabbed_by_corruptor
 end
 
-function GenericStatusExtension.is_grabbed_by_chaos_spawn(arg_115_0)
+GenericStatusExtension.is_grabbed_by_chaos_spawn = function (arg_115_0)
 	return arg_115_0.grabbed_by_chaos_spawn
 end
 
-function GenericStatusExtension.is_in_liquid(arg_116_0)
+GenericStatusExtension.is_in_liquid = function (arg_116_0)
 	return arg_116_0.in_liquid
 end
 
-function GenericStatusExtension.is_dead(arg_117_0)
+GenericStatusExtension.is_dead = function (arg_117_0)
 	return arg_117_0.dead
 end
 
-function GenericStatusExtension.is_crouching(arg_118_0)
+GenericStatusExtension.is_crouching = function (arg_118_0)
 	return arg_118_0.crouching
 end
 
-function GenericStatusExtension.is_blocking(arg_119_0)
+GenericStatusExtension.is_blocking = function (arg_119_0)
 	return arg_119_0.override_blocking == nil and arg_119_0.blocking or arg_119_0.override_blocking, arg_119_0.shield_block
 end
 
-function GenericStatusExtension.is_wounded(arg_120_0)
+GenericStatusExtension.is_wounded = function (arg_120_0)
 	return arg_120_0.wounds < arg_120_0:get_max_wounds()
 end
 
-function GenericStatusExtension.wounded_and_on_last_wound(arg_121_0)
+GenericStatusExtension.wounded_and_on_last_wound = function (arg_121_0)
 	return arg_121_0.wounds == 1 and arg_121_0:get_max_wounds() > 1
 end
 
-function GenericStatusExtension.is_permanent_heal(arg_122_0, arg_122_1)
+GenericStatusExtension.is_permanent_heal = function (arg_122_0, arg_122_1)
 	local var_122_0 = ScriptUnit.has_extension(arg_122_0.unit, "buff_system")
 
 	if var_122_0 then
@@ -2161,106 +2161,106 @@ function GenericStatusExtension.is_permanent_heal(arg_122_0, arg_122_1)
 	return arg_122_1 == "healing_draught" or arg_122_1 == "bandage" or arg_122_1 == "bandage_trinket" or arg_122_1 == "buff_shared_medpack" or arg_122_1 == "career_passive" or arg_122_1 == "health_regen" or arg_122_1 == "debug" or arg_122_1 == "health_conversion"
 end
 
-function GenericStatusExtension.heal_can_remove_wounded(arg_123_0, arg_123_1)
+GenericStatusExtension.heal_can_remove_wounded = function (arg_123_0, arg_123_1)
 	return arg_123_1 == "healing_draught" or arg_123_1 == "bandage" or arg_123_1 == "bandage_trinket" or arg_123_1 == "buff_shared_medpack" or arg_123_1 == "debug" or arg_123_1 == "healing_draught_temp_health" or arg_123_1 == "bandage_temp_health" or arg_123_1 == "buff_shared_medpack_temp_health"
 end
 
-function GenericStatusExtension.is_revived(arg_124_0)
+GenericStatusExtension.is_revived = function (arg_124_0)
 	return arg_124_0.revived
 end
 
-function GenericStatusExtension.is_reviving(arg_125_0)
+GenericStatusExtension.is_reviving = function (arg_125_0)
 	return arg_125_0.reviving
 end
 
-function GenericStatusExtension.is_pulled_up(arg_126_0)
+GenericStatusExtension.is_pulled_up = function (arg_126_0)
 	return arg_126_0.pulled_up
 end
 
-function GenericStatusExtension.is_zooming(arg_127_0)
+GenericStatusExtension.is_zooming = function (arg_127_0)
 	return arg_127_0.zooming
 end
 
-function GenericStatusExtension.num_wounds_remaining(arg_128_0)
+GenericStatusExtension.num_wounds_remaining = function (arg_128_0)
 	return arg_128_0.wounds
 end
 
-function GenericStatusExtension.has_wounds_remaining(arg_129_0)
+GenericStatusExtension.has_wounds_remaining = function (arg_129_0)
 	return arg_129_0.wounds > 1
 end
 
-function GenericStatusExtension.has_recently_left_ladder(arg_130_0, arg_130_1)
+GenericStatusExtension.has_recently_left_ladder = function (arg_130_0, arg_130_1)
 	return arg_130_1 < arg_130_0.left_ladder_timer
 end
 
-function GenericStatusExtension.get_is_on_ladder(arg_131_0)
+GenericStatusExtension.get_is_on_ladder = function (arg_131_0)
 	return arg_131_0.on_ladder, arg_131_0.current_ladder_unit
 end
 
-function GenericStatusExtension.get_is_ledge_hanging(arg_132_0)
+GenericStatusExtension.get_is_ledge_hanging = function (arg_132_0)
 	return arg_132_0.is_ledge_hanging, arg_132_0.current_ledge_hanging_unit
 end
 
-function GenericStatusExtension.is_catapulted(arg_133_0)
+GenericStatusExtension.is_catapulted = function (arg_133_0)
 	return arg_133_0.catapulted, arg_133_0.catapulted_direction
 end
 
-function GenericStatusExtension.is_in_vortex(arg_134_0)
+GenericStatusExtension.is_in_vortex = function (arg_134_0)
 	return arg_134_0.in_vortex
 end
 
-function GenericStatusExtension.is_block_broken(arg_135_0)
+GenericStatusExtension.is_block_broken = function (arg_135_0)
 	return arg_135_0.block_broken
 end
 
-function GenericStatusExtension.is_gutter_runner_leaping(arg_136_0)
+GenericStatusExtension.is_gutter_runner_leaping = function (arg_136_0)
 	return arg_136_0.gutter_runner_leaping
 end
 
-function GenericStatusExtension.get_inside_transport_unit(arg_137_0)
+GenericStatusExtension.get_inside_transport_unit = function (arg_137_0)
 	return arg_137_0.inside_transport_unit
 end
 
-function GenericStatusExtension.is_using_transport(arg_138_0)
+GenericStatusExtension.is_using_transport = function (arg_138_0)
 	return arg_138_0.using_transport
 end
 
-function GenericStatusExtension.is_overcharge_exploding(arg_139_0)
+GenericStatusExtension.is_overcharge_exploding = function (arg_139_0)
 	return arg_139_0.overcharge_exploding
 end
 
-function GenericStatusExtension.is_grabbed_by_pack_master(arg_140_0)
+GenericStatusExtension.is_grabbed_by_pack_master = function (arg_140_0)
 	return arg_140_0.pack_master_grabber ~= nil and Unit.alive(arg_140_0.pack_master_grabber)
 end
 
-function GenericStatusExtension.is_hanging_from_hook(arg_141_0)
+GenericStatusExtension.is_hanging_from_hook = function (arg_141_0)
 	return arg_141_0.pack_master_status == "pack_master_hanging"
 end
 
-function GenericStatusExtension.is_dropping_from_hook(arg_142_0)
+GenericStatusExtension.is_dropping_from_hook = function (arg_142_0)
 	return arg_142_0.pack_master_status == "pack_master_dropping"
 end
 
-function GenericStatusExtension.get_pack_master_grabber(arg_143_0)
+GenericStatusExtension.get_pack_master_grabber = function (arg_143_0)
 	return arg_143_0.pack_master_grabber
 end
 
-function GenericStatusExtension.has_blocked(arg_144_0)
+GenericStatusExtension.has_blocked = function (arg_144_0)
 	return arg_144_0._has_blocked
 end
 
-function GenericStatusExtension.reset_move_speed_multiplier(arg_145_0)
+GenericStatusExtension.reset_move_speed_multiplier = function (arg_145_0)
 	arg_145_0.move_speed_multiplier = 1
 	arg_145_0.move_speed_multiplier_timer = 1
 end
 
-function GenericStatusExtension.current_move_speed_multiplier(arg_146_0)
+GenericStatusExtension.current_move_speed_multiplier = function (arg_146_0)
 	local var_146_0 = math.smoothstep(arg_146_0.move_speed_multiplier_timer, 0, 1)
 
 	return math.lerp(arg_146_0.move_speed_multiplier, 1, var_146_0)
 end
 
-function GenericStatusExtension.set_invisible(arg_147_0, arg_147_1, arg_147_2, arg_147_3)
+GenericStatusExtension.set_invisible = function (arg_147_0, arg_147_1, arg_147_2, arg_147_3)
 	assert(not not arg_147_3 ~= not not arg_147_0.is_husk, "Setting invisibility is only allowed locally.")
 
 	if not arg_147_0.is_husk then
@@ -2355,7 +2355,7 @@ function GenericStatusExtension.set_invisible(arg_147_0, arg_147_1, arg_147_2, a
 	end
 end
 
-function GenericStatusExtension.update_invisibility(arg_148_0, arg_148_1, arg_148_2)
+GenericStatusExtension.update_invisibility = function (arg_148_0, arg_148_1, arg_148_2)
 	local var_148_0 = Managers.player:local_player()
 	local var_148_1 = arg_148_0.unit
 	local var_148_2 = Managers.state.side
@@ -2384,17 +2384,17 @@ function GenericStatusExtension.update_invisibility(arg_148_0, arg_148_1, arg_14
 	end
 end
 
-function GenericStatusExtension.set_move_through_ai(arg_149_0, arg_149_1)
+GenericStatusExtension.set_move_through_ai = function (arg_149_0, arg_149_1)
 	arg_149_0.move_through_ai = arg_149_1
 
 	arg_149_0:set_noclip(arg_149_1, "move_through_ai")
 end
 
-function GenericStatusExtension.has_noclip(arg_150_0)
+GenericStatusExtension.has_noclip = function (arg_150_0)
 	return not table.is_empty(arg_150_0.noclip)
 end
 
-function GenericStatusExtension.set_noclip(arg_151_0, arg_151_1, arg_151_2)
+GenericStatusExtension.set_noclip = function (arg_151_0, arg_151_1, arg_151_2)
 	local var_151_0 = arg_151_0:has_noclip()
 
 	arg_151_0.noclip[arg_151_2] = arg_151_1 or nil
@@ -2408,19 +2408,19 @@ function GenericStatusExtension.set_noclip(arg_151_0, arg_151_1, arg_151_2)
 	end
 end
 
-function GenericStatusExtension.is_invisible(arg_152_0)
+GenericStatusExtension.is_invisible = function (arg_152_0)
 	return not table.is_empty(arg_152_0.invisible)
 end
 
-function GenericStatusExtension.set_inspecting(arg_153_0, arg_153_1)
+GenericStatusExtension.set_inspecting = function (arg_153_0, arg_153_1)
 	arg_153_0.inspecting = arg_153_1
 end
 
-function GenericStatusExtension.is_inspecting(arg_154_0)
+GenericStatusExtension.is_inspecting = function (arg_154_0)
 	return arg_154_0.inspecting
 end
 
-function GenericStatusExtension.set_overpowered(arg_155_0, arg_155_1, arg_155_2, arg_155_3)
+GenericStatusExtension.set_overpowered = function (arg_155_0, arg_155_1, arg_155_2, arg_155_3)
 	arg_155_0.overpowered = arg_155_1
 	arg_155_0.overpowered_template = arg_155_2
 	arg_155_0.overpowered_attacking_unit = arg_155_3
@@ -2428,41 +2428,41 @@ function GenericStatusExtension.set_overpowered(arg_155_0, arg_155_1, arg_155_2,
 	arg_155_0:set_outline_incapacitated(not arg_155_0:is_dead() and arg_155_0:is_disabled())
 end
 
-function GenericStatusExtension.is_overpowered(arg_156_0)
+GenericStatusExtension.is_overpowered = function (arg_156_0)
 	return arg_156_0.overpowered
 end
 
-function GenericStatusExtension.is_overpowered_by_attacker(arg_157_0)
+GenericStatusExtension.is_overpowered_by_attacker = function (arg_157_0)
 	return arg_157_0.overpowered_attacking_unit ~= arg_157_0.unit
 end
 
-function GenericStatusExtension.can_dodge(arg_158_0, arg_158_1)
+GenericStatusExtension.can_dodge = function (arg_158_0, arg_158_1)
 	local var_158_0 = arg_158_0.buff_extension:has_buff_perk("root")
 
 	return arg_158_1 > arg_158_0.my_dodge_cd and not var_158_0
 end
 
-function GenericStatusExtension.set_dodge_cd(arg_159_0, arg_159_1, arg_159_2)
+GenericStatusExtension.set_dodge_cd = function (arg_159_0, arg_159_1, arg_159_2)
 	arg_159_0.my_dodge_cd = arg_159_1 + arg_159_2
 end
 
-function GenericStatusExtension.can_override_dodge_with_jump(arg_160_0, arg_160_1)
+GenericStatusExtension.can_override_dodge_with_jump = function (arg_160_0, arg_160_1)
 	return arg_160_1 < arg_160_0.my_dodge_jump_override_t
 end
 
-function GenericStatusExtension.set_dodge_jump_override_t(arg_161_0, arg_161_1, arg_161_2)
+GenericStatusExtension.set_dodge_jump_override_t = function (arg_161_0, arg_161_1, arg_161_2)
 	arg_161_0.my_dodge_jump_override_t = arg_161_1 + arg_161_2
 end
 
-function GenericStatusExtension.dodge_locked(arg_162_0)
+GenericStatusExtension.dodge_locked = function (arg_162_0)
 	return arg_162_0.dodge_is_locked
 end
 
-function GenericStatusExtension.set_dodge_locked(arg_163_0, arg_163_1)
+GenericStatusExtension.set_dodge_locked = function (arg_163_0, arg_163_1)
 	arg_163_0.dodge_is_locked = arg_163_1
 end
 
-function GenericStatusExtension.set_is_dodging(arg_164_0, arg_164_1)
+GenericStatusExtension.set_is_dodging = function (arg_164_0, arg_164_1)
 	arg_164_0.is_dodging = arg_164_1
 
 	if arg_164_1 then
@@ -2480,19 +2480,19 @@ function GenericStatusExtension.set_is_dodging(arg_164_0, arg_164_1)
 	end
 end
 
-function GenericStatusExtension.get_is_dodging(arg_165_0)
+GenericStatusExtension.get_is_dodging = function (arg_165_0)
 	return arg_165_0.is_dodging and arg_165_0.dodge_cooldown <= arg_165_0.dodge_count
 end
 
-function GenericStatusExtension.get_dodge_position(arg_166_0)
+GenericStatusExtension.get_dodge_position = function (arg_166_0)
 	return arg_166_0.dodge_position:unbox()
 end
 
-function GenericStatusExtension.get_is_slowed(arg_167_0)
+GenericStatusExtension.get_is_slowed = function (arg_167_0)
 	return arg_167_0.is_slowed
 end
 
-function GenericStatusExtension.set_falling_height(arg_168_0, arg_168_1, arg_168_2)
+GenericStatusExtension.set_falling_height = function (arg_168_0, arg_168_1, arg_168_2)
 	fassert(not arg_168_0.is_husk, "Trying to set falling height on non-owned unit")
 
 	if ALIVE[arg_168_0.unit] then
@@ -2501,7 +2501,7 @@ function GenericStatusExtension.set_falling_height(arg_168_0, arg_168_1, arg_168
 	end
 end
 
-function GenericStatusExtension.max_wounds_network_safe(arg_169_0)
+GenericStatusExtension.max_wounds_network_safe = function (arg_169_0)
 	local var_169_0 = arg_169_0:get_max_wounds()
 
 	if var_169_0 == math.huge then
@@ -2511,7 +2511,7 @@ function GenericStatusExtension.max_wounds_network_safe(arg_169_0)
 	return var_169_0
 end
 
-function GenericStatusExtension.hot_join_sync(arg_170_0, arg_170_1)
+GenericStatusExtension.hot_join_sync = function (arg_170_0, arg_170_1)
 	if Managers.state.unit_spawner:is_marked_for_deletion(arg_170_0.unit) then
 		return
 	end
@@ -2593,7 +2593,7 @@ function GenericStatusExtension.hot_join_sync(arg_170_0, arg_170_1)
 	RPC.rpc_status_change_bool(var_170_3, var_170_0.in_end_zone, arg_170_0.in_end_zone, var_170_2, 0)
 end
 
-function GenericStatusExtension.set_in_end_zone(arg_171_0, arg_171_1, arg_171_2)
+GenericStatusExtension.set_in_end_zone = function (arg_171_0, arg_171_1, arg_171_2)
 	if arg_171_0.is_server and arg_171_0.in_end_zone ~= arg_171_1 then
 		local var_171_0 = Managers.state.unit_storage:go_id(arg_171_0.unit)
 		local var_171_1, var_171_2 = Managers.state.network:game_object_or_level_id(arg_171_2)
@@ -2618,37 +2618,37 @@ function GenericStatusExtension.set_in_end_zone(arg_171_0, arg_171_1, arg_171_2)
 	end
 end
 
-function GenericStatusExtension.set_is_aiming(arg_172_0, arg_172_1)
+GenericStatusExtension.set_is_aiming = function (arg_172_0, arg_172_1)
 	arg_172_0.is_aiming = arg_172_1
 end
 
-function GenericStatusExtension.get_is_aiming(arg_173_0)
+GenericStatusExtension.get_is_aiming = function (arg_173_0)
 	return arg_173_0.is_aiming
 end
 
-function GenericStatusExtension.is_in_end_zone(arg_174_0)
+GenericStatusExtension.is_in_end_zone = function (arg_174_0)
 	return arg_174_0.in_end_zone
 end
 
-function GenericStatusExtension.is_staggered(arg_175_0)
+GenericStatusExtension.is_staggered = function (arg_175_0)
 	return false
 end
 
-function GenericStatusExtension.breed_action(arg_176_0)
+GenericStatusExtension.breed_action = function (arg_176_0)
 	return arg_176_0._current_action
 end
 
-function GenericStatusExtension.should_climb(arg_177_0)
+GenericStatusExtension.should_climb = function (arg_177_0)
 	return false
 end
 
-function GenericStatusExtension.get_max_wounds(arg_178_0)
+GenericStatusExtension.get_max_wounds = function (arg_178_0)
 	local var_178_0 = arg_178_0._base_max_wounds
 
 	return arg_178_0.buff_extension:apply_buffs_to_value(var_178_0, "extra_wounds")
 end
 
-function GenericStatusExtension._on_player_joined_party(arg_179_0, arg_179_1, arg_179_2, arg_179_3, arg_179_4, arg_179_5)
+GenericStatusExtension._on_player_joined_party = function (arg_179_0, arg_179_1, arg_179_2, arg_179_3, arg_179_4, arg_179_5)
 	if not arg_179_0.is_server then
 		return
 	end

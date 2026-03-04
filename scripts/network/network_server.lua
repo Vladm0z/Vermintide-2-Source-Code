@@ -25,7 +25,7 @@ end
 PeerState = PeerState or CreateStrictEnumTable("Broken", "Connecting", "Connected", "Disconnected", "Loading", "LoadingLevelComplete", "WaitingForEnter", "WaitingForGameObjectSync", "WaitingForSpawnPlayer", "InGame", "InPostGame")
 NetworkServer = class(NetworkServer)
 
-function NetworkServer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+NetworkServer.init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	local var_2_0 = Network.peer_id()
 
 	PEER_ID_TO_CHANNEL[var_2_0] = 0
@@ -131,7 +131,7 @@ function NetworkServer.init(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	Managers.mechanism:set_network_server(arg_2_0)
 end
 
-function NetworkServer.server_join(arg_3_0)
+NetworkServer.server_join = function (arg_3_0)
 	print(string.format("### Created peer state machine for %s", arg_3_0.my_peer_id))
 
 	local var_3_0 = arg_3_0.my_peer_id
@@ -141,7 +141,7 @@ function NetworkServer.server_join(arg_3_0)
 	arg_3_0._match_handler:server_created(var_3_0)
 end
 
-function NetworkServer.num_active_peers(arg_4_0)
+NetworkServer.num_active_peers = function (arg_4_0)
 	local var_4_0 = 0
 
 	for iter_4_0, iter_4_1 in pairs(arg_4_0.peer_state_machines) do
@@ -155,7 +155,7 @@ function NetworkServer.num_active_peers(arg_4_0)
 	return var_4_0
 end
 
-function NetworkServer.active_peers(arg_5_0)
+NetworkServer.active_peers = function (arg_5_0)
 	local var_5_0 = {}
 
 	for iter_5_0, iter_5_1 in pairs(arg_5_0.peer_state_machines) do
@@ -169,7 +169,7 @@ function NetworkServer.active_peers(arg_5_0)
 	return var_5_0
 end
 
-function NetworkServer.num_joining_peers(arg_6_0)
+NetworkServer.num_joining_peers = function (arg_6_0)
 	local var_6_0 = 0
 
 	for iter_6_0, iter_6_1 in pairs(arg_6_0.peer_state_machines) do
@@ -181,7 +181,7 @@ function NetworkServer.num_joining_peers(arg_6_0)
 	return var_6_0
 end
 
-function NetworkServer.rpc_notify_connected(arg_7_0, arg_7_1)
+NetworkServer.rpc_notify_connected = function (arg_7_0, arg_7_1)
 	local var_7_0 = CHANNEL_TO_PEER_ID[arg_7_1]
 
 	if var_7_0 == arg_7_0.my_peer_id then
@@ -211,7 +211,7 @@ function NetworkServer.rpc_notify_connected(arg_7_0, arg_7_1)
 	end
 end
 
-function NetworkServer.rpc_notify_in_post_game(arg_8_0, arg_8_1, arg_8_2)
+NetworkServer.rpc_notify_in_post_game = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = CHANNEL_TO_PEER_ID[arg_8_1]
 
 	if var_8_0 == arg_8_0.my_peer_id then
@@ -223,13 +223,13 @@ function NetworkServer.rpc_notify_in_post_game(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function NetworkServer.rpc_game_started(arg_9_0, arg_9_1)
+NetworkServer.rpc_game_started = function (arg_9_0, arg_9_1)
 	if CHANNEL_TO_PEER_ID[arg_9_1] == arg_9_0.my_peer_id then
 		Managers.state.event:trigger("game_started")
 	end
 end
 
-function NetworkServer.is_network_state_fully_synced_for_peer(arg_10_0, arg_10_1)
+NetworkServer.is_network_state_fully_synced_for_peer = function (arg_10_0, arg_10_1)
 	if not Managers.mechanism:is_peer_fully_synced(arg_10_1) then
 		return false
 	end
@@ -237,15 +237,15 @@ function NetworkServer.is_network_state_fully_synced_for_peer(arg_10_0, arg_10_1
 	return arg_10_0._network_state:is_peer_fully_synced(arg_10_1)
 end
 
-function NetworkServer.is_fully_synced(arg_11_0)
+NetworkServer.is_fully_synced = function (arg_11_0)
 	return arg_11_0:is_network_state_fully_synced_for_peer(arg_11_0.my_peer_id)
 end
 
-function NetworkServer.are_profile_packages_fully_synced_for_peer(arg_12_0, arg_12_1)
+NetworkServer.are_profile_packages_fully_synced_for_peer = function (arg_12_0, arg_12_1)
 	return arg_12_0.profile_synchronizer:is_peer_all_synced(arg_12_1)
 end
 
-function NetworkServer.peers_waiting_for_players(arg_13_0)
+NetworkServer.peers_waiting_for_players = function (arg_13_0)
 	local var_13_0 = {}
 
 	for iter_13_0, iter_13_1 in pairs(arg_13_0.peer_state_machines) do
@@ -257,11 +257,11 @@ function NetworkServer.peers_waiting_for_players(arg_13_0)
 	return var_13_0
 end
 
-function NetworkServer.can_enter_game(arg_14_0)
+NetworkServer.can_enter_game = function (arg_14_0)
 	return arg_14_0.peer_state_machines[arg_14_0.my_peer_id].current_state == PeerStates.WaitingForEnterGame
 end
 
-function NetworkServer.enter_post_game(arg_15_0)
+NetworkServer.enter_post_game = function (arg_15_0)
 	var_0_3("Entering post game")
 
 	local var_15_0 = arg_15_0.peer_state_machines
@@ -273,7 +273,7 @@ function NetworkServer.enter_post_game(arg_15_0)
 	end
 end
 
-function NetworkServer.is_in_post_game(arg_16_0)
+NetworkServer.is_in_post_game = function (arg_16_0)
 	if DEDICATED_SERVER then
 		for iter_16_0, iter_16_1 in pairs(arg_16_0.peer_state_machines) do
 			if iter_16_1.current_state ~= PeerStates.InPostGame then
@@ -287,7 +287,7 @@ function NetworkServer.is_in_post_game(arg_16_0)
 	end
 end
 
-function NetworkServer.on_game_entered(arg_17_0, arg_17_1)
+NetworkServer.on_game_entered = function (arg_17_0, arg_17_1)
 	var_0_3("[NETWORK SERVER]: On Game Entered")
 
 	arg_17_0.game_session = Network.game_session()
@@ -304,15 +304,15 @@ function NetworkServer.on_game_entered(arg_17_0, arg_17_1)
 	end
 end
 
-function NetworkServer.request_profile(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+NetworkServer.request_profile = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	arg_18_0._profile_requester:request_profile(Network.peer_id(), arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 end
 
-function NetworkServer.profile_requester(arg_19_0)
+NetworkServer.profile_requester = function (arg_19_0)
 	return arg_19_0._profile_requester
 end
 
-function NetworkServer.rpc_is_ingame(arg_20_0, arg_20_1)
+NetworkServer.rpc_is_ingame = function (arg_20_0, arg_20_1)
 	local var_20_0 = CHANNEL_TO_PEER_ID[arg_20_1]
 	local var_20_1 = arg_20_0.peer_state_machines[var_20_0]
 
@@ -326,11 +326,11 @@ function NetworkServer.rpc_is_ingame(arg_20_0, arg_20_1)
 	end
 end
 
-function NetworkServer.rpc_loading_synced(arg_21_0, arg_21_1)
+NetworkServer.rpc_loading_synced = function (arg_21_0, arg_21_1)
 	return
 end
 
-function NetworkServer.peer_spawned_player(arg_22_0, arg_22_1)
+NetworkServer.peer_spawned_player = function (arg_22_0, arg_22_1)
 	var_0_3("Peer %s spawned player.", arg_22_1)
 
 	local var_22_0 = arg_22_0.peer_state_machines[arg_22_1]
@@ -340,7 +340,7 @@ function NetworkServer.peer_spawned_player(arg_22_0, arg_22_1)
 	end
 end
 
-function NetworkServer.peer_despawned_player(arg_23_0, arg_23_1)
+NetworkServer.peer_despawned_player = function (arg_23_0, arg_23_1)
 	var_0_3("Peer %s despawned player.", arg_23_1)
 
 	local var_23_0 = arg_23_0.peer_state_machines[arg_23_1]
@@ -350,7 +350,7 @@ function NetworkServer.peer_despawned_player(arg_23_0, arg_23_1)
 	end
 end
 
-function NetworkServer.peer_respawn_player(arg_24_0, arg_24_1)
+NetworkServer.peer_respawn_player = function (arg_24_0, arg_24_1)
 	var_0_3("Peer %s respawn player.", arg_24_1)
 
 	local var_24_0 = arg_24_0.peer_state_machines[arg_24_1]
@@ -360,13 +360,13 @@ function NetworkServer.peer_respawn_player(arg_24_0, arg_24_1)
 	end
 end
 
-function NetworkServer.rpc_client_respawn_player(arg_25_0, arg_25_1)
+NetworkServer.rpc_client_respawn_player = function (arg_25_0, arg_25_1)
 	local var_25_0 = CHANNEL_TO_PEER_ID[arg_25_1]
 
 	arg_25_0:peer_respawn_player(var_25_0)
 end
 
-function NetworkServer.destroy(arg_26_0)
+NetworkServer.destroy = function (arg_26_0)
 	Managers.level_transition_handler:deregister_network_state()
 	arg_26_0._match_handler:destroy()
 	Managers.mechanism:set_network_server(nil)
@@ -403,7 +403,7 @@ function NetworkServer.destroy(arg_26_0)
 	end
 end
 
-function NetworkServer.register_rpcs(arg_27_0, arg_27_1, arg_27_2)
+NetworkServer.register_rpcs = function (arg_27_0, arg_27_1, arg_27_2)
 	arg_27_1:register(arg_27_0, "rpc_notify_lobby_joined", "rpc_post_game_notified", "rpc_want_to_spawn_player", "rpc_level_load_started", "rpc_level_loaded", "rpc_game_started", "rpc_is_ingame", "game_object_sync_done", "rpc_notify_connected", "rpc_loading_synced", "rpc_clear_peer_state", "rpc_notify_in_post_game", "rpc_client_respawn_player", "rpc_provide_slot_reservation_info", "rpc_slot_reservation_request_peers", "rpc_slot_reservation_request_party_change")
 	arg_27_1:register_with_return(arg_27_0, "approve_channel")
 
@@ -420,7 +420,7 @@ function NetworkServer.register_rpcs(arg_27_0, arg_27_1, arg_27_2)
 	arg_27_0._match_handler:register_rpcs(arg_27_1, arg_27_2)
 end
 
-function NetworkServer.on_level_exit(arg_28_0)
+NetworkServer.on_level_exit = function (arg_28_0)
 	table.clear(arg_28_0._peers_completed_game_object_sync)
 
 	local var_28_0 = arg_28_0.peer_state_machines
@@ -439,7 +439,7 @@ function NetworkServer.on_level_exit(arg_28_0)
 	arg_28_0.game_session = nil
 end
 
-function NetworkServer.unregister_rpcs(arg_29_0)
+NetworkServer.unregister_rpcs = function (arg_29_0)
 	arg_29_0.voip:unregister_rpcs()
 	arg_29_0._profile_requester:unregister_rpcs()
 
@@ -457,11 +457,11 @@ function NetworkServer.unregister_rpcs(arg_29_0)
 	arg_29_0._match_handler:unregister_rpcs()
 end
 
-function NetworkServer.has_all_peers_loaded_packages(arg_30_0)
+NetworkServer.has_all_peers_loaded_packages = function (arg_30_0)
 	return arg_30_0.profile_synchronizer:all_synced()
 end
 
-function NetworkServer.kick_peer(arg_31_0, arg_31_1)
+NetworkServer.kick_peer = function (arg_31_0, arg_31_1)
 	if not PEER_ID_TO_CHANNEL[arg_31_1] then
 		return
 	end
@@ -471,7 +471,7 @@ function NetworkServer.kick_peer(arg_31_0, arg_31_1)
 	arg_31_0.kicked_peers_disconnect_timer[arg_31_1] = var_0_2
 end
 
-function NetworkServer.update_disconnect_kicked_peers_by_time(arg_32_0, arg_32_1)
+NetworkServer.update_disconnect_kicked_peers_by_time = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0.kicked_peers_disconnect_timer
 
 	for iter_32_0, iter_32_1 in pairs(var_32_0) do
@@ -485,7 +485,7 @@ function NetworkServer.update_disconnect_kicked_peers_by_time(arg_32_0, arg_32_1
 	end
 end
 
-function NetworkServer._update_lobby_data(arg_33_0, arg_33_1, arg_33_2)
+NetworkServer._update_lobby_data = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0.lobby_host
 	local var_33_1 = var_33_0:get_stored_lobby_data()
 
@@ -556,7 +556,7 @@ function NetworkServer._update_lobby_data(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function NetworkServer.disconnect_all_peers(arg_34_0, arg_34_1)
+NetworkServer.disconnect_all_peers = function (arg_34_0, arg_34_1)
 	local var_34_0 = NetworkLookup.connection_fails[arg_34_1]
 	local var_34_1 = arg_34_0.peer_state_machines
 
@@ -569,7 +569,7 @@ function NetworkServer.disconnect_all_peers(arg_34_0, arg_34_1)
 	end
 end
 
-function NetworkServer.disconnect_peer(arg_35_0, arg_35_1, arg_35_2)
+NetworkServer.disconnect_peer = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = NetworkLookup.connection_fails[arg_35_2]
 	local var_35_1 = arg_35_0.peer_state_machines[arg_35_1].current_state
 
@@ -580,7 +580,7 @@ function NetworkServer.disconnect_peer(arg_35_0, arg_35_1, arg_35_2)
 	end
 end
 
-function NetworkServer.force_disconnect_all_client_peers(arg_36_0)
+NetworkServer.force_disconnect_all_client_peers = function (arg_36_0)
 	local var_36_0 = arg_36_0.peer_state_machines
 
 	for iter_36_0, iter_36_1 in pairs(var_36_0) do
@@ -590,7 +590,7 @@ function NetworkServer.force_disconnect_all_client_peers(arg_36_0)
 	end
 end
 
-function NetworkServer.force_disconnect_client_by_peer_id(arg_37_0, arg_37_1)
+NetworkServer.force_disconnect_client_by_peer_id = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0.peer_state_machines
 
 	if arg_37_1 and var_37_0[arg_37_1] then
@@ -602,7 +602,7 @@ function NetworkServer.force_disconnect_client_by_peer_id(arg_37_0, arg_37_1)
 	end
 end
 
-function NetworkServer.rpc_notify_lobby_joined(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
+NetworkServer.rpc_notify_lobby_joined = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6)
 	local var_38_0 = CHANNEL_TO_PEER_ID[arg_38_1]
 
 	var_0_3("Peer %s has sent rpc_notify_lobby_joined", tostring(var_38_0))
@@ -624,7 +624,7 @@ function NetworkServer.rpc_notify_lobby_joined(arg_38_0, arg_38_1, arg_38_2, arg
 	end
 end
 
-function NetworkServer.rpc_provide_slot_reservation_info(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+NetworkServer.rpc_provide_slot_reservation_info = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0 = CHANNEL_TO_PEER_ID[arg_39_1]
 
 	var_0_3("Peer %s has sent rpc_provide_slot_reservation_info", var_39_0)
@@ -641,7 +641,7 @@ function NetworkServer.rpc_provide_slot_reservation_info(arg_39_0, arg_39_1, arg
 	end
 end
 
-function NetworkServer.rpc_post_game_notified(arg_40_0, arg_40_1, arg_40_2)
+NetworkServer.rpc_post_game_notified = function (arg_40_0, arg_40_1, arg_40_2)
 	local var_40_0 = CHANNEL_TO_PEER_ID[arg_40_1]
 
 	var_0_3("Peer %s has sent rpc_post_game_notified", tostring(var_40_0))
@@ -658,7 +658,7 @@ function NetworkServer.rpc_post_game_notified(arg_40_0, arg_40_1, arg_40_2)
 	end
 end
 
-function NetworkServer.rpc_level_load_started(arg_41_0, arg_41_1, arg_41_2)
+NetworkServer.rpc_level_load_started = function (arg_41_0, arg_41_1, arg_41_2)
 	print("### Received rpc_level_load_started")
 
 	local var_41_0 = CHANNEL_TO_PEER_ID[arg_41_1]
@@ -673,7 +673,7 @@ function NetworkServer.rpc_level_load_started(arg_41_0, arg_41_1, arg_41_2)
 	end
 end
 
-function NetworkServer.rpc_level_loaded(arg_42_0, arg_42_1, arg_42_2)
+NetworkServer.rpc_level_loaded = function (arg_42_0, arg_42_1, arg_42_2)
 	print("### Received rpc_level_loaded")
 
 	local var_42_0 = CHANNEL_TO_PEER_ID[arg_42_1]
@@ -693,7 +693,7 @@ function NetworkServer.rpc_level_loaded(arg_42_0, arg_42_1, arg_42_2)
 	end
 end
 
-function NetworkServer.rpc_want_to_spawn_player(arg_43_0, arg_43_1)
+NetworkServer.rpc_want_to_spawn_player = function (arg_43_0, arg_43_1)
 	local var_43_0 = CHANNEL_TO_PEER_ID[arg_43_1]
 	local var_43_1 = arg_43_0.peer_state_machines[var_43_0]
 
@@ -705,7 +705,7 @@ function NetworkServer.rpc_want_to_spawn_player(arg_43_0, arg_43_1)
 	end
 end
 
-function NetworkServer.game_object_sync_done(arg_44_0, arg_44_1)
+NetworkServer.game_object_sync_done = function (arg_44_0, arg_44_1)
 	var_0_3("Game_object_sync_done for peer %s", arg_44_1)
 	arg_44_0:set_peer_synced_game_objects(arg_44_1, true)
 
@@ -721,13 +721,13 @@ function NetworkServer.game_object_sync_done(arg_44_0, arg_44_1)
 	end
 end
 
-function NetworkServer.set_peer_hot_join_synced(arg_45_0, arg_45_1, arg_45_2)
+NetworkServer.set_peer_hot_join_synced = function (arg_45_0, arg_45_1, arg_45_2)
 	arg_45_0._network_state:set_peer_hot_join_synced(arg_45_1, arg_45_2)
 end
 
 local var_0_4 = {}
 
-function NetworkServer.hot_join_synced_peers(arg_46_0)
+NetworkServer.hot_join_synced_peers = function (arg_46_0)
 	table.clear(var_0_4)
 
 	for iter_46_0 in pairs(arg_46_0.peer_state_machines) do
@@ -739,15 +739,15 @@ function NetworkServer.hot_join_synced_peers(arg_46_0)
 	return var_0_4
 end
 
-function NetworkServer.has_peer_synced_game_objects(arg_47_0, arg_47_1)
+NetworkServer.has_peer_synced_game_objects = function (arg_47_0, arg_47_1)
 	return arg_47_0._peers_completed_game_object_sync[arg_47_1]
 end
 
-function NetworkServer.set_peer_synced_game_objects(arg_48_0, arg_48_1, arg_48_2)
+NetworkServer.set_peer_synced_game_objects = function (arg_48_0, arg_48_1, arg_48_2)
 	arg_48_0._peers_completed_game_object_sync[arg_48_1] = arg_48_2 or nil
 end
 
-function NetworkServer.approve_channel(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+NetworkServer.approve_channel = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	print("GOT approve_channel", arg_49_1, arg_49_2, arg_49_3)
 
 	if PEER_ID_TO_CHANNEL[arg_49_2] then
@@ -792,7 +792,7 @@ function NetworkServer.approve_channel(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 	return true
 end
 
-function NetworkServer.close_channel(arg_50_0, arg_50_1)
+NetworkServer.close_channel = function (arg_50_0, arg_50_1)
 	local var_50_0 = PEER_ID_TO_CHANNEL[arg_50_1]
 
 	print("GOT close_channel", var_50_0, arg_50_1)
@@ -808,7 +808,7 @@ function NetworkServer.close_channel(arg_50_0, arg_50_1)
 	end
 end
 
-function NetworkServer._update_connections(arg_51_0, arg_51_1)
+NetworkServer._update_connections = function (arg_51_0, arg_51_1)
 	for iter_51_0, iter_51_1 in pairs(arg_51_0._connections) do
 		local var_51_0, var_51_1 = Network.channel_state(iter_51_1.channel_id)
 
@@ -839,11 +839,11 @@ function NetworkServer._update_connections(arg_51_0, arg_51_1)
 	end
 end
 
-function NetworkServer.peer_connected(arg_52_0, arg_52_1)
+NetworkServer.peer_connected = function (arg_52_0, arg_52_1)
 	arg_52_0._network_state:add_peer(arg_52_1)
 end
 
-function NetworkServer.peer_disconnected(arg_53_0, arg_53_1)
+NetworkServer.peer_disconnected = function (arg_53_0, arg_53_1)
 	arg_53_0.voip:peer_disconnected(arg_53_1)
 	arg_53_0._network_state:remove_peer(arg_53_1)
 
@@ -856,15 +856,15 @@ function NetworkServer.peer_disconnected(arg_53_0, arg_53_1)
 	arg_53_0._peer_initialized_mechanisms[arg_53_1] = nil
 end
 
-function NetworkServer.get_peer_initialized_mechanism(arg_54_0, arg_54_1)
+NetworkServer.get_peer_initialized_mechanism = function (arg_54_0, arg_54_1)
 	return arg_54_0._peer_initialized_mechanisms[arg_54_1]
 end
 
-function NetworkServer.set_peer_initialized_mechanism(arg_55_0, arg_55_1, arg_55_2)
+NetworkServer.set_peer_initialized_mechanism = function (arg_55_0, arg_55_1, arg_55_2)
 	arg_55_0._peer_initialized_mechanisms[arg_55_1] = arg_55_2
 end
 
-function NetworkServer.update(arg_56_0, arg_56_1, arg_56_2)
+NetworkServer.update = function (arg_56_0, arg_56_1, arg_56_2)
 	arg_56_0._profile_requester:update(arg_56_1)
 	arg_56_0.profile_synchronizer:update()
 
@@ -1014,7 +1014,7 @@ function NetworkServer.update(arg_56_0, arg_56_1, arg_56_2)
 	arg_56_0._match_handler:poll_propagation_peer()
 end
 
-function NetworkServer._handle_peer_left_game(arg_57_0, arg_57_1)
+NetworkServer._handle_peer_left_game = function (arg_57_0, arg_57_1)
 	if arg_57_1 then
 		local var_57_0 = NetworkLookup.connection_states.disconnected
 
@@ -1029,7 +1029,7 @@ function NetworkServer._handle_peer_left_game(arg_57_0, arg_57_1)
 	end
 end
 
-function NetworkServer._update_eac_match(arg_58_0)
+NetworkServer._update_eac_match = function (arg_58_0)
 	local var_58_0 = arg_58_0.peer_state_machines
 
 	for iter_58_0, iter_58_1 in pairs(var_58_0) do
@@ -1045,7 +1045,7 @@ function NetworkServer._update_eac_match(arg_58_0)
 	end
 end
 
-function NetworkServer._draw_peer_states(arg_59_0)
+NetworkServer._draw_peer_states = function (arg_59_0)
 	if DEDICATED_SERVER then
 		local var_59_0 = ""
 		local var_59_1 = "%-16s|%s\n"
@@ -1111,7 +1111,7 @@ function NetworkServer._draw_peer_states(arg_59_0)
 	end
 end
 
-function NetworkServer.rpc_clear_peer_state(arg_60_0, arg_60_1)
+NetworkServer.rpc_clear_peer_state = function (arg_60_0, arg_60_1)
 	local var_60_0 = CHANNEL_TO_PEER_ID[arg_60_1]
 
 	print(string.format("### CLEARING PEER STATE FOR %s", tostring(var_60_0)))
@@ -1148,7 +1148,7 @@ function NetworkServer.rpc_clear_peer_state(arg_60_0, arg_60_1)
 	end
 end
 
-function NetworkServer.players_past_connecting(arg_61_0)
+NetworkServer.players_past_connecting = function (arg_61_0)
 	local var_61_0 = FrameTable.alloc_table()
 
 	for iter_61_0, iter_61_1 in pairs(arg_61_0.peer_state_machines) do
@@ -1160,7 +1160,7 @@ function NetworkServer.players_past_connecting(arg_61_0)
 	return var_61_0
 end
 
-function NetworkServer.player_is_joining(arg_62_0, arg_62_1)
+NetworkServer.player_is_joining = function (arg_62_0, arg_62_1)
 	local var_62_0 = arg_62_0.peer_state_machines[arg_62_1]
 
 	if not var_62_0 then
@@ -1170,7 +1170,7 @@ function NetworkServer.player_is_joining(arg_62_0, arg_62_1)
 	return var_62_0.current_state == PeerStates.Connecting or var_62_0.current_state == PeerStates.Loading or var_62_0.current_state == PeerStates.LoadingProfilePackages or var_62_0.current_state == PeerStates.WaitingForEnterGame or var_62_0.current_state == PeerStates.WaitingForGameObjectSync
 end
 
-function NetworkServer.peers_ongoing_game_object_sync(arg_63_0, arg_63_1)
+NetworkServer.peers_ongoing_game_object_sync = function (arg_63_0, arg_63_1)
 	table.clear(arg_63_1)
 
 	local var_63_0 = 0
@@ -1190,7 +1190,7 @@ end
 
 local var_0_5 = {}
 
-function NetworkServer.are_all_peers_ingame(arg_64_0, arg_64_1, arg_64_2)
+NetworkServer.are_all_peers_ingame = function (arg_64_0, arg_64_1, arg_64_2)
 	arg_64_1 = arg_64_1 or var_0_5
 
 	local var_64_0 = arg_64_0.peer_state_machines
@@ -1216,7 +1216,7 @@ function NetworkServer.are_all_peers_ingame(arg_64_0, arg_64_1, arg_64_2)
 	return true
 end
 
-function NetworkServer.disconnect_joining_peers(arg_65_0, arg_65_1)
+NetworkServer.disconnect_joining_peers = function (arg_65_0, arg_65_1)
 	local var_65_0 = arg_65_0.peer_state_machines
 
 	for iter_65_0, iter_65_1 in pairs(var_65_0) do
@@ -1232,11 +1232,11 @@ function NetworkServer.disconnect_joining_peers(arg_65_0, arg_65_1)
 	end
 end
 
-function NetworkServer.is_peer_ingame(arg_66_0, arg_66_1)
+NetworkServer.is_peer_ingame = function (arg_66_0, arg_66_1)
 	return arg_66_0._network_state:is_peer_ingame(arg_66_1)
 end
 
-function NetworkServer.are_all_peers_ready(arg_67_0)
+NetworkServer.are_all_peers_ready = function (arg_67_0)
 	local var_67_0 = arg_67_0.peer_state_machines
 
 	for iter_67_0 in pairs(var_67_0) do
@@ -1248,7 +1248,7 @@ function NetworkServer.are_all_peers_ready(arg_67_0)
 	return true
 end
 
-function NetworkServer.is_peer_ready(arg_68_0, arg_68_1)
+NetworkServer.is_peer_ready = function (arg_68_0, arg_68_1)
 	local var_68_0 = arg_68_0.peer_state_machines[arg_68_1]
 
 	if not var_68_0 then
@@ -1264,7 +1264,7 @@ function NetworkServer.is_peer_ready(arg_68_0, arg_68_1)
 	return true
 end
 
-function NetworkServer.all_client_peers_disconnected(arg_69_0)
+NetworkServer.all_client_peers_disconnected = function (arg_69_0)
 	local var_69_0 = arg_69_0.peer_state_machines
 
 	for iter_69_0, iter_69_1 in pairs(var_69_0) do
@@ -1278,7 +1278,7 @@ function NetworkServer.all_client_peers_disconnected(arg_69_0)
 	return true
 end
 
-function NetworkServer.waiting_to_enter_game(arg_70_0)
+NetworkServer.waiting_to_enter_game = function (arg_70_0)
 	if DEDICATED_SERVER then
 		return true
 	end
@@ -1296,7 +1296,7 @@ function NetworkServer.waiting_to_enter_game(arg_70_0)
 	return false
 end
 
-function NetworkServer.disconnected(arg_71_0)
+NetworkServer.disconnected = function (arg_71_0)
 	local var_71_0 = arg_71_0.peer_state_machines
 	local var_71_1 = arg_71_0.my_peer_id
 
@@ -1313,7 +1313,7 @@ function NetworkServer.disconnected(arg_71_0)
 	return false
 end
 
-function NetworkServer.peer_wanted_profile(arg_72_0, arg_72_1, arg_72_2)
+NetworkServer.peer_wanted_profile = function (arg_72_0, arg_72_1, arg_72_2)
 	local var_72_0 = arg_72_0.peer_state_machines[arg_72_1].state_data
 	local var_72_1 = var_72_0.wanted_profile_index
 	local var_72_2 = var_72_0.wanted_career_index
@@ -1321,11 +1321,11 @@ function NetworkServer.peer_wanted_profile(arg_72_0, arg_72_1, arg_72_2)
 	return var_72_1, var_72_2
 end
 
-function NetworkServer.register_shared_state(arg_73_0, arg_73_1)
+NetworkServer.register_shared_state = function (arg_73_0, arg_73_1)
 	arg_73_0._shared_states[#arg_73_0._shared_states + 1] = arg_73_1
 end
 
-function NetworkServer.deregister_shared_state(arg_74_0, arg_74_1)
+NetworkServer.deregister_shared_state = function (arg_74_0, arg_74_1)
 	local var_74_0 = table.index_of(arg_74_1)
 
 	if var_74_0 ~= -1 then
@@ -1333,11 +1333,11 @@ function NetworkServer.deregister_shared_state(arg_74_0, arg_74_1)
 	end
 end
 
-function NetworkServer.get_peers(arg_75_0)
+NetworkServer.get_peers = function (arg_75_0)
 	return arg_75_0._network_state and arg_75_0._network_state:get_peers() or {}
 end
 
-function NetworkServer.hot_join_sync_party_and_profiles(arg_76_0, arg_76_1)
+NetworkServer.hot_join_sync_party_and_profiles = function (arg_76_0, arg_76_1)
 	local var_76_0 = 1
 	local var_76_1 = 0
 	local var_76_2 = Managers.party
@@ -1348,25 +1348,25 @@ function NetworkServer.hot_join_sync_party_and_profiles(arg_76_0, arg_76_1)
 	arg_76_0.profile_synchronizer:hot_join_sync(arg_76_1)
 end
 
-function NetworkServer.set_side_order_state(arg_77_0, arg_77_1)
+NetworkServer.set_side_order_state = function (arg_77_0, arg_77_1)
 	if arg_77_0._network_state then
 		arg_77_0._network_state:set_side_order_state(arg_77_1)
 	end
 end
 
-function NetworkServer.get_side_order_state(arg_78_0, arg_78_1)
+NetworkServer.get_side_order_state = function (arg_78_0, arg_78_1)
 	return arg_78_0._network_state and arg_78_0._network_state:get_side_order_state()
 end
 
-function NetworkServer.get_network_state(arg_79_0)
+NetworkServer.get_network_state = function (arg_79_0)
 	return arg_79_0._network_state
 end
 
-function NetworkServer.is_peer_hot_join_synced(arg_80_0, arg_80_1)
+NetworkServer.is_peer_hot_join_synced = function (arg_80_0, arg_80_1)
 	return arg_80_0._network_state:is_peer_hot_join_synced(arg_80_1)
 end
 
-function NetworkServer.rpc_slot_reservation_request_peers(arg_81_0, arg_81_1)
+NetworkServer.rpc_slot_reservation_request_peers = function (arg_81_0, arg_81_1)
 	local var_81_0 = arg_81_0:active_peers()
 
 	printf("[NetworkServer] Game host requested peers to reserve. Responding with (%s)", table.concat(var_81_0, ","))
@@ -1376,7 +1376,7 @@ function NetworkServer.rpc_slot_reservation_request_peers(arg_81_0, arg_81_1)
 	RPC.rpc_provide_slot_reservation_info(arg_81_1, var_81_0, var_81_1)
 end
 
-function NetworkServer.rpc_slot_reservation_request_party_change(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+NetworkServer.rpc_slot_reservation_request_party_change = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 	if not Managers.matchmaking:is_in_versus_custom_game_lobby() then
 		printf("[NetworkServer] Ignored rpc_slot_reservation_request_party_change for %q because not in a hierarchical matchmaking state.", arg_82_2)
 
@@ -1398,86 +1398,86 @@ function NetworkServer.rpc_slot_reservation_request_party_change(arg_82_0, arg_8
 	end
 end
 
-function NetworkServer.get_match_handler(arg_83_0)
+NetworkServer.get_match_handler = function (arg_83_0)
 	return arg_83_0._match_handler
 end
 
-function NetworkServer.get_bot_profile(arg_84_0, arg_84_1, arg_84_2)
+NetworkServer.get_bot_profile = function (arg_84_0, arg_84_1, arg_84_2)
 	return arg_84_0._network_state:get_bot_profile(arg_84_1, arg_84_2)
 end
 
-function NetworkServer.set_bot_profile(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
+NetworkServer.set_bot_profile = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 	arg_85_0._network_state:set_bot_profile(arg_85_1, arg_85_2, arg_85_3, arg_85_4)
 end
 
-function NetworkServer.set_session_breed_map(arg_86_0, arg_86_1)
+NetworkServer.set_session_breed_map = function (arg_86_0, arg_86_1)
 	arg_86_0._network_state:set_session_breed_map(arg_86_1)
 end
 
-function NetworkServer.get_session_breed_map(arg_87_0)
+NetworkServer.get_session_breed_map = function (arg_87_0)
 	return arg_87_0._network_state:get_session_breed_map()
 end
 
-function NetworkServer.get_loaded_session_breeds(arg_88_0, arg_88_1)
+NetworkServer.get_loaded_session_breeds = function (arg_88_0, arg_88_1)
 	return arg_88_0._network_state:get_loaded_session_breed_map(arg_88_1)
 end
 
-function NetworkServer.get_own_loaded_session_breed_map(arg_89_0)
+NetworkServer.get_own_loaded_session_breed_map = function (arg_89_0)
 	return arg_89_0._network_state:get_own_loaded_session_breed_map()
 end
 
-function NetworkServer.set_own_loaded_session_breeds(arg_90_0, arg_90_1)
+NetworkServer.set_own_loaded_session_breeds = function (arg_90_0, arg_90_1)
 	arg_90_0._network_state:set_own_loaded_session_breeds(arg_90_1)
 end
 
-function NetworkServer.set_startup_breeds(arg_91_0, arg_91_1)
+NetworkServer.set_startup_breeds = function (arg_91_0, arg_91_1)
 	arg_91_0._network_state:set_startup_breeds(arg_91_1)
 end
 
-function NetworkServer.get_session_pickup_map(arg_92_0)
+NetworkServer.get_session_pickup_map = function (arg_92_0)
 	return arg_92_0._network_state:get_session_pickup_map()
 end
 
-function NetworkServer.set_session_pickup_map(arg_93_0, arg_93_1)
+NetworkServer.set_session_pickup_map = function (arg_93_0, arg_93_1)
 	arg_93_0._network_state:set_session_pickup_map(arg_93_1)
 end
 
-function NetworkServer.get_own_loaded_session_pickup_map(arg_94_0)
+NetworkServer.get_own_loaded_session_pickup_map = function (arg_94_0)
 	return arg_94_0._network_state:get_own_loaded_session_pickup_map()
 end
 
-function NetworkServer.set_own_loaded_session_pickups(arg_95_0, arg_95_1)
+NetworkServer.set_own_loaded_session_pickups = function (arg_95_0, arg_95_1)
 	arg_95_0._network_state:set_own_loaded_session_pickups(arg_95_1)
 end
 
-function NetworkServer.get_loaded_session_pickups(arg_96_0, arg_96_1)
+NetworkServer.get_loaded_session_pickups = function (arg_96_0, arg_96_1)
 	return arg_96_0._network_state:get_loaded_session_pickup_map(arg_96_1)
 end
 
-function NetworkServer.get_game_mode_event_data(arg_97_0)
+NetworkServer.get_game_mode_event_data = function (arg_97_0)
 	return arg_97_0._network_state:get_game_mode_event_data()
 end
 
-function NetworkServer.has_unlocked_dlc(arg_98_0, arg_98_1, arg_98_2)
+NetworkServer.has_unlocked_dlc = function (arg_98_0, arg_98_1, arg_98_2)
 	return arg_98_0._network_state:get_unlocked_dlcs_set(arg_98_1)[arg_98_2]
 end
 
-function NetworkServer.get_initialized_mutator_map(arg_99_0)
+NetworkServer.get_initialized_mutator_map = function (arg_99_0)
 	return arg_99_0._network_state:get_initialized_mutator_map()
 end
 
-function NetworkServer.get_loaded_mutator_map(arg_100_0, arg_100_1)
+NetworkServer.get_loaded_mutator_map = function (arg_100_0, arg_100_1)
 	return arg_100_0._network_state:get_loaded_mutator_map(arg_100_1)
 end
 
-function NetworkServer.get_own_loaded_mutator_map(arg_101_0)
+NetworkServer.get_own_loaded_mutator_map = function (arg_101_0)
 	return arg_101_0._network_state:get_own_loaded_mutator_map()
 end
 
-function NetworkServer.set_own_loaded_mutator_map(arg_102_0, arg_102_1)
+NetworkServer.set_own_loaded_mutator_map = function (arg_102_0, arg_102_1)
 	arg_102_0._network_state:set_own_loaded_mutator_map(arg_102_1)
 end
 
-function NetworkServer.state_revision(arg_103_0)
+NetworkServer.state_revision = function (arg_103_0)
 	return arg_103_0._network_state:get_revision()
 end

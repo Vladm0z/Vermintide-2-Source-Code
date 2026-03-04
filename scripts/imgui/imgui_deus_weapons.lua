@@ -107,11 +107,11 @@ local function var_0_6(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	var_0_3(var_5_4, arg_5_5, arg_5_1)
 end
 
-function ImguiDeusWeapons.init(arg_6_0)
+ImguiDeusWeapons.init = function (arg_6_0)
 	arg_6_0._next_weapon_time = 0
 end
 
-function ImguiDeusWeapons.update(arg_7_0)
+ImguiDeusWeapons.update = function (arg_7_0)
 	local var_7_0 = Managers.player:local_human_player()
 
 	if not var_7_0 then
@@ -167,19 +167,19 @@ function ImguiDeusWeapons.update(arg_7_0)
 	end
 end
 
-function ImguiDeusWeapons.on_round_end(arg_8_0, ...)
+ImguiDeusWeapons.on_round_end = function (arg_8_0, ...)
 	arg_8_0._equip_random_weapon = false
 end
 
-function ImguiDeusWeapons.on_venture_end(arg_9_0, ...)
+ImguiDeusWeapons.on_venture_end = function (arg_9_0, ...)
 	arg_9_0._equip_random_weapon = false
 end
 
-function ImguiDeusWeapons.is_persistent(arg_10_0)
+ImguiDeusWeapons.is_persistent = function (arg_10_0)
 	return false
 end
 
-function ImguiDeusWeapons.draw(arg_11_0, arg_11_1)
+ImguiDeusWeapons.draw = function (arg_11_0, arg_11_1)
 	if not Managers.state or not Managers.state.game_mode or Managers.state.game_mode:game_mode_key() ~= "deus" then
 		local var_11_0 = Imgui.begin_window("DeusWeapons", "always_auto_resize")
 
@@ -320,7 +320,7 @@ function ImguiDeusWeapons.draw(arg_11_0, arg_11_1)
 	return var_11_1
 end
 
-function ImguiDeusWeapons._reset_base_weapon_selection_data(arg_12_0)
+ImguiDeusWeapons._reset_base_weapon_selection_data = function (arg_12_0)
 	arg_12_0._selected_weapon_group_index = 1
 	arg_12_0._selected_rarity_index = 1
 	arg_12_0._selected_item_key_index = 1
@@ -329,7 +329,7 @@ function ImguiDeusWeapons._reset_base_weapon_selection_data(arg_12_0)
 	arg_12_0._weapon = nil
 end
 
-function ImguiDeusWeapons._reset_weapon_setting_data(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+ImguiDeusWeapons._reset_weapon_setting_data = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	arg_13_0._powerlevel, arg_13_0._available_archetypes, arg_13_0._available_property_combinations, arg_13_0._available_trait_combinations, arg_13_0._available_skins = DeusWeaponGeneration.get_possibilities_for_item_key(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	arg_13_0._run_progress = arg_13_3
 	arg_13_0._available_property_combinations_string = {}
@@ -357,7 +357,7 @@ function ImguiDeusWeapons._reset_weapon_setting_data(arg_13_0, arg_13_1, arg_13_
 	arg_13_0._skin = nil
 end
 
-function ImguiDeusWeapons._get_inventory_extension(arg_14_0)
+ImguiDeusWeapons._get_inventory_extension = function (arg_14_0)
 	local var_14_0 = Managers.player:local_player()
 
 	if not var_14_0 then

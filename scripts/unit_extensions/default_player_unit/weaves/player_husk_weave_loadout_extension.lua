@@ -2,17 +2,17 @@
 
 PlayerHuskWeaveLoadoutExtension = class(PlayerHuskWeaveLoadoutExtension)
 
-function PlayerHuskWeaveLoadoutExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskWeaveLoadoutExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._synced_buff_params = nil
 end
 
-function PlayerHuskWeaveLoadoutExtension.destroy(arg_2_0)
+PlayerHuskWeaveLoadoutExtension.destroy = function (arg_2_0)
 	arg_2_0._unit = nil
 	arg_2_0._synced_buff_params = nil
 end
 
-function PlayerHuskWeaveLoadoutExtension.add_buffs(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PlayerHuskWeaveLoadoutExtension.add_buffs = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0._synced_buff_params = {
 		arg_3_1,
 		arg_3_2,
@@ -25,7 +25,7 @@ function PlayerHuskWeaveLoadoutExtension.add_buffs(arg_3_0, arg_3_1, arg_3_2, ar
 	arg_3_0:_apply_buffs(var_3_0)
 end
 
-function PlayerHuskWeaveLoadoutExtension._apply_buffs(arg_4_0, arg_4_1)
+PlayerHuskWeaveLoadoutExtension._apply_buffs = function (arg_4_0, arg_4_1)
 	local var_4_0 = ScriptUnit.extension(arg_4_0._unit, "buff_system")
 
 	for iter_4_0, iter_4_1 in pairs(arg_4_1) do
@@ -39,7 +39,7 @@ function PlayerHuskWeaveLoadoutExtension._apply_buffs(arg_4_0, arg_4_1)
 	end
 end
 
-function PlayerHuskWeaveLoadoutExtension.hot_join_sync(arg_5_0, arg_5_1)
+PlayerHuskWeaveLoadoutExtension.hot_join_sync = function (arg_5_0, arg_5_1)
 	if Managers.state.unit_spawner:is_marked_for_deletion(arg_5_0._unit) then
 		return
 	end

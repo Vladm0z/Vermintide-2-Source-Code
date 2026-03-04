@@ -332,7 +332,7 @@ local var_0_2 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -342,7 +342,7 @@ local var_0_2 = {
 		QuestSettings.check_rat_ogre_killed_mid_leap(var_1_0, arg_1_1)
 		QuestSettings.check_rat_ogre_killed_without_dealing_damage(var_1_0, arg_1_1)
 	end,
-	before_stagger_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	before_stagger_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		Managers.state.achievement:trigger_event("rat_ogre_stagger", arg_2_0, arg_2_1, arg_2_2)
 	end
 }
@@ -632,7 +632,7 @@ local var_0_5 = {
 				start_time = 0.16666666666666666
 			}
 		},
-		hit_player_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		hit_player_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			if arg_3_3 then
 				arg_3_1.has_dealt_damage = true
 			end
@@ -691,7 +691,7 @@ local var_0_5 = {
 						start_time = 1.9333333333333333
 					}
 				},
-				hit_player_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+				hit_player_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 					if arg_4_5 then
 						arg_4_1.has_dealt_damage = true
 					end
@@ -804,7 +804,7 @@ local var_0_5 = {
 						}
 					}
 				},
-				hit_player_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+				hit_player_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 					if arg_5_5 then
 						arg_5_1.has_dealt_damage = true
 					end
@@ -868,7 +868,7 @@ local var_0_5 = {
 						4
 					}
 				},
-				hit_player_func = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+				hit_player_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					if arg_6_5 then
 						arg_6_1.has_dealt_damage = true
 					end

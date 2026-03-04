@@ -4,7 +4,7 @@ DamageWaveHuskExtension = class(DamageWaveHuskExtension)
 
 local var_0_0 = POSITION_LOOKUP
 
-function DamageWaveHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DamageWaveHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = Managers.state.entity
 
@@ -56,7 +56,7 @@ function DamageWaveHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._update_func = var_1_3.update_func
 end
 
-function DamageWaveHuskExtension.destroy(arg_2_0)
+DamageWaveHuskExtension.destroy = function (arg_2_0)
 	local var_2_0 = arg_2_0.world
 	local var_2_1 = arg_2_0.fx_list
 	local var_2_2 = #var_2_1
@@ -78,7 +78,7 @@ function DamageWaveHuskExtension.destroy(arg_2_0)
 	end
 end
 
-function DamageWaveHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+DamageWaveHuskExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = math.min(arg_3_3 * 10, 1)
 	local var_3_1 = var_0_0[arg_3_1]
 	local var_3_2 = GameSession.game_object_field(arg_3_0.game, arg_3_0.go_id, "position")
@@ -103,7 +103,7 @@ function DamageWaveHuskExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	end
 end
 
-function DamageWaveHuskExtension.add_damage_wave_fx(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+DamageWaveHuskExtension.add_damage_wave_fx = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0
 	local var_4_1
 
@@ -137,7 +137,7 @@ function DamageWaveHuskExtension.add_damage_wave_fx(arg_4_0, arg_4_1, arg_4_2, a
 	end
 end
 
-function DamageWaveHuskExtension.set_running_wave(arg_5_0, arg_5_1)
+DamageWaveHuskExtension.set_running_wave = function (arg_5_0, arg_5_1)
 	local var_5_0 = arg_5_0.world
 	local var_5_1 = var_0_0[arg_5_1]
 	local var_5_2 = Unit.local_rotation(arg_5_1, 0)
@@ -166,7 +166,7 @@ function DamageWaveHuskExtension.set_running_wave(arg_5_0, arg_5_1)
 	arg_5_0.state = "running"
 end
 
-function DamageWaveHuskExtension.hide_wave(arg_6_0, arg_6_1)
+DamageWaveHuskExtension.hide_wave = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.world
 
 	Unit.set_unit_visibility(arg_6_1, false)
@@ -178,7 +178,7 @@ function DamageWaveHuskExtension.hide_wave(arg_6_0, arg_6_1)
 	arg_6_0.state = "hide"
 end
 
-function DamageWaveHuskExtension.set_wave_arrived(arg_7_0, arg_7_1)
+DamageWaveHuskExtension.set_wave_arrived = function (arg_7_0, arg_7_1)
 	arg_7_0:hide_wave(arg_7_1)
 
 	local var_7_0 = arg_7_0.world
@@ -211,7 +211,7 @@ function DamageWaveHuskExtension.set_wave_arrived(arg_7_0, arg_7_1)
 	arg_7_0.state = "arrived"
 end
 
-function DamageWaveHuskExtension.on_wavefront_impact(arg_8_0, arg_8_1)
+DamageWaveHuskExtension.on_wavefront_impact = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.world
 
 	if arg_8_0.fx_name_impact then
@@ -233,7 +233,7 @@ local var_0_1 = 20
 local var_0_2 = var_0_1 / 2
 local var_0_3 = 1
 
-function DamageWaveHuskExtension.debug_render_wave(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+DamageWaveHuskExtension.debug_render_wave = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = 0
 
 	for iter_9_0 = -var_0_2, var_0_2 - 1 do

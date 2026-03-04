@@ -2,14 +2,14 @@
 
 CameraStateFollowThirdPersonLedge = class(CameraStateFollowThirdPersonLedge, CameraState)
 
-function CameraStateFollowThirdPersonLedge.init(arg_1_0, arg_1_1)
+CameraStateFollowThirdPersonLedge.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "follow_third_person_ledge")
 
 	arg_1_0._follow_unit = nil
 	arg_1_0._follow_node = 0
 end
 
-function CameraStateFollowThirdPersonLedge.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateFollowThirdPersonLedge.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.camera_extension
 	local var_2_1, var_2_2 = var_2_0:get_follow_data()
 	local var_2_3 = var_2_0.viewport_name
@@ -25,11 +25,11 @@ function CameraStateFollowThirdPersonLedge.on_enter(arg_2_0, arg_2_1, arg_2_2, a
 	Unit.set_data(arg_2_1, "camera", "settings_node", "ledge_hanging")
 end
 
-function CameraStateFollowThirdPersonLedge.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateFollowThirdPersonLedge.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._follow_unit = nil
 end
 
-function CameraStateFollowThirdPersonLedge.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CameraStateFollowThirdPersonLedge.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.camera_extension

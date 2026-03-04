@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormfiendShootAction = class(BTStormfiendShootAction, BTNode)
 
-function BTStormfiendShootAction.init(arg_1_0, ...)
+BTStormfiendShootAction.init = function (arg_1_0, ...)
 	BTStormfiendShootAction.super.init(arg_1_0, ...)
 
 	arg_1_0.unit_ids = {}
@@ -21,7 +21,7 @@ end
 local var_0_1 = 0.4
 local var_0_2 = 10
 
-function BTStormfiendShootAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTStormfiendShootAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0.unit_ids[arg_3_1] = Managers.state.network.unit_storage:go_id(arg_3_1)
 	arg_3_0.network_transmit = arg_3_0.network_transmit or Managers.state.network.network_transmit
 
@@ -64,7 +64,7 @@ function BTStormfiendShootAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	AiUtils.add_attack_intensity(var_3_3, var_3_0, arg_3_2)
 end
 
-function BTStormfiendShootAction.set_global_environment_intensity(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTStormfiendShootAction.set_global_environment_intensity = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_3.environment_max_intensity
 	local var_4_1 = arg_4_2.firewall_environment_intensity or 0
 	local var_4_2 = math.min(var_4_1 + arg_4_3.environment_intensity_increase_per_firewall, var_4_0)
@@ -81,7 +81,7 @@ function BTStormfiendShootAction.set_global_environment_intensity(arg_4_0, arg_4
 	arg_4_2.firewall_environment_intensity = var_4_2
 end
 
-function BTStormfiendShootAction._calculate_attack_animation(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTStormfiendShootAction._calculate_attack_animation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = Vector3.dot(arg_5_1, arg_5_3)
 	local var_5_1 = Vector3.dot(arg_5_2, arg_5_3)
 	local var_5_2 = math.abs(var_5_0)
@@ -113,7 +113,7 @@ function BTStormfiendShootAction._calculate_attack_animation(arg_5_0, arg_5_1, a
 	return var_5_5, var_5_6, var_5_8
 end
 
-function BTStormfiendShootAction._calculate_aim(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+BTStormfiendShootAction._calculate_aim = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
 	local var_6_0 = arg_6_7.muzzle_nodes[arg_6_3]
 	local var_6_1 = Unit.node(arg_6_1, var_6_0)
 	local var_6_2 = Unit.world_position(arg_6_1, var_6_1)
@@ -201,7 +201,7 @@ function BTStormfiendShootAction._calculate_aim(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return var_6_34, var_6_40, var_6_27
 end
 
-function BTStormfiendShootAction.init_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTStormfiendShootAction.init_attack = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_2.action
 
 	if var_7_0.switch_between_weapon_setups then
@@ -306,7 +306,7 @@ function BTStormfiendShootAction.init_attack(arg_7_0, arg_7_1, arg_7_2, arg_7_3,
 	return var_7_18
 end
 
-function BTStormfiendShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTStormfiendShootAction.leave = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_2.shoot_data
 	local var_8_1 = Managers.state.network
 
@@ -375,7 +375,7 @@ function BTStormfiendShootAction.leave(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8
 	arg_8_2.attacking_target = nil
 end
 
-function BTStormfiendShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTStormfiendShootAction.run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	if arg_9_2.attack_aborted or not Unit.alive(arg_9_2.attacking_target) then
 		return "failed"
 	end
@@ -385,13 +385,13 @@ function BTStormfiendShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 		local var_9_1 = arg_9_2.weapon_setup
 
 		if arg_9_3 < var_9_0.aim_start_t then
-			-- block empty
+			-- Nothing
 		elseif not var_9_0.aim_constrained then
 			arg_9_0:constrain_aim(arg_9_1, arg_9_2)
 
 			var_9_0.aim_constrained = true
 		elseif arg_9_3 < var_9_0.start_firing_t then
-			-- block empty
+			-- Nothing
 		elseif not var_9_0.firing_initiated then
 			if var_9_1 and var_9_1 == "ratling_gun" then
 				arg_9_0:initiate_firing_ratling_gun(arg_9_2)
@@ -500,7 +500,7 @@ function BTStormfiendShootAction.run(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 	end
 end
 
-function BTStormfiendShootAction._calculate_oobb_collision(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTStormfiendShootAction._calculate_oobb_collision = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = arg_10_2
 	local var_10_1 = arg_10_1.height
 	local var_10_2 = arg_10_1.width
@@ -516,7 +516,7 @@ function BTStormfiendShootAction._calculate_oobb_collision(arg_10_0, arg_10_1, a
 	return arg_10_3 + var_10_9 + var_10_10, arg_10_4, var_10_8
 end
 
-function BTStormfiendShootAction._create_bot_aoe_threat(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+BTStormfiendShootAction._create_bot_aoe_threat = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
 	local var_11_0 = Managers.state.entity:system("ai_bot_group_system")
 	local var_11_1 = POSITION_LOOKUP[arg_11_1]
 	local var_11_2 = arg_11_5.shoot_threat
@@ -535,7 +535,7 @@ function BTStormfiendShootAction._create_bot_aoe_threat(arg_11_0, arg_11_1, arg_
 	var_11_2.bot_threat_range = arg_11_4
 end
 
-function BTStormfiendShootAction.constrain_aim(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTStormfiendShootAction.constrain_aim = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_2.shoot_data
 
 	if var_12_0 and var_12_0.aim_constraint_animations then
@@ -549,7 +549,7 @@ function BTStormfiendShootAction.constrain_aim(arg_12_0, arg_12_1, arg_12_2, arg
 	end
 end
 
-function BTStormfiendShootAction.create_firewall(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTStormfiendShootAction.create_firewall = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_3.firewall_start_position:unbox()
 	local var_13_1 = arg_13_2.nav_world
 	local var_13_2, var_13_3 = GwNavQueries.triangle_from_position(var_13_1, var_13_0, 1, 1)
@@ -579,7 +579,7 @@ function BTStormfiendShootAction.create_firewall(arg_13_0, arg_13_1, arg_13_2, a
 	ScriptUnit.extension(var_13_7, "area_damage_system"):ready()
 end
 
-function BTStormfiendShootAction.shoot_hit_check(arg_14_0, arg_14_1, arg_14_2)
+BTStormfiendShootAction.shoot_hit_check = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_2.action
 	local var_14_1 = arg_14_2.shoot_data
 	local var_14_2 = var_14_1.attack_arm
@@ -636,7 +636,7 @@ function BTStormfiendShootAction.shoot_hit_check(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function BTStormfiendShootAction._stop_beam_sfx(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+BTStormfiendShootAction._stop_beam_sfx = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_2.action
 	local var_15_1 = arg_15_3.attack_arm
 	local var_15_2 = var_15_0.muzzle_nodes[var_15_1]
@@ -645,7 +645,7 @@ function BTStormfiendShootAction._stop_beam_sfx(arg_15_0, arg_15_1, arg_15_2, ar
 	Managers.state.entity:system("audio_system"):play_audio_unit_event(var_15_3, arg_15_1, var_15_2)
 end
 
-function BTStormfiendShootAction.initiate_firing_warpfire_thrower(arg_16_0, arg_16_1, arg_16_2)
+BTStormfiendShootAction.initiate_firing_warpfire_thrower = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_2.action
 	local var_16_1 = arg_16_2.shoot_data
 
@@ -663,7 +663,7 @@ function BTStormfiendShootAction.initiate_firing_warpfire_thrower(arg_16_0, arg_
 	var_16_1.is_firing = true
 end
 
-function BTStormfiendShootAction._fire_from_position_direction(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+BTStormfiendShootAction._fire_from_position_direction = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	local var_17_0 = arg_17_2.action
 	local var_17_1 = arg_17_3.attack_arm
 	local var_17_2 = var_17_0.muzzle_nodes[var_17_1]
@@ -680,7 +680,7 @@ function BTStormfiendShootAction._fire_from_position_direction(arg_17_0, arg_17_
 	return var_17_4 - Vector3.normalize(var_17_9) * 1.25, var_17_9
 end
 
-function BTStormfiendShootAction._update_ratling_gun(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTStormfiendShootAction._update_ratling_gun = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_2.shoot_data
 	local var_18_1 = arg_18_3 - var_18_0.start_firing_t
 	local var_18_2 = math.clamp(var_18_1 / var_18_0.firing_duration * var_18_0.max_fire_rate_at_percentage_modifier, 0, 1)
@@ -696,7 +696,7 @@ end
 
 local var_0_3 = math.pi * 2
 
-function BTStormfiendShootAction._shoot_ratling_gun(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTStormfiendShootAction._shoot_ratling_gun = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	local var_19_0 = arg_19_2.action
 	local var_19_1 = arg_19_2.shoot_data
 	local var_19_2 = var_19_0.light_weight_projectile_template_name
@@ -734,7 +734,7 @@ function BTStormfiendShootAction._shoot_ratling_gun(arg_19_0, arg_19_1, arg_19_2
 	var_19_20:create_light_weight_projectile(Unit.get_data(arg_19_1, "breed").name, arg_19_1, var_19_4, var_19_12, var_19_3.projectile_speed, nil, nil, var_19_3.projectile_max_range, var_19_13, var_19_16, var_19_3.light_weight_projectile_effect, var_19_21)
 end
 
-function BTStormfiendShootAction.initiate_firing_ratling_gun(arg_20_0, arg_20_1)
+BTStormfiendShootAction.initiate_firing_ratling_gun = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.action
 	local var_20_1 = arg_20_1.shoot_data
 
@@ -747,7 +747,7 @@ function BTStormfiendShootAction.initiate_firing_ratling_gun(arg_20_0, arg_20_1)
 	var_20_1.is_firing = true
 end
 
-function BTStormfiendShootAction._debug_firewall(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+BTStormfiendShootAction._debug_firewall = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
 	if script_data.debug_stormfiend then
 		local var_21_0 = Managers.state.debug:drawer({
 			mode = "retained",
@@ -768,7 +768,7 @@ function BTStormfiendShootAction._debug_firewall(arg_21_0, arg_21_1, arg_21_2, a
 	end
 end
 
-function BTStormfiendShootAction._debug_fire_beam(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+BTStormfiendShootAction._debug_fire_beam = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
 	if script_data.debug_stormfiend then
 		local var_22_0
 		local var_22_1
@@ -820,7 +820,7 @@ function BTStormfiendShootAction._debug_fire_beam(arg_22_0, arg_22_1, arg_22_2, 
 	end
 end
 
-function BTStormfiendShootAction._debug_colliding_arm(arg_23_0, arg_23_1, arg_23_2)
+BTStormfiendShootAction._debug_colliding_arm = function (arg_23_0, arg_23_1, arg_23_2)
 	if script_data.debug_stormfiend then
 		local var_23_0 = Managers.state.debug:drawer({
 			mode = "retained",

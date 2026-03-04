@@ -5,7 +5,7 @@ local var_0_0 = 0.38
 script_data.debug_ai_movement = script_data.debug_ai_movement or Development.parameter("debug_ai_movement")
 AINavigationExtension = class(AINavigationExtension)
 
-function AINavigationExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AINavigationExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._nav_world = arg_1_3.nav_world
 	arg_1_0._unit = arg_1_2
 	arg_1_0._enabled = true
@@ -32,7 +32,7 @@ function AINavigationExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._last_movement_modifier_index = 1
 end
 
-function AINavigationExtension.extensions_ready(arg_2_0)
+AINavigationExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = BLACKBOARDS[arg_2_0._unit]
 
 	arg_2_0._blackboard = var_2_0
@@ -43,7 +43,7 @@ function AINavigationExtension.extensions_ready(arg_2_0)
 	arg_2_0._far_pathing_allowed = var_2_0.breed.cannot_far_path ~= true
 end
 
-function AINavigationExtension.destroy(arg_3_0)
+AINavigationExtension.destroy = function (arg_3_0)
 	arg_3_0:release_bot()
 	GwNavSmartObjectInterval.destroy(arg_3_0._next_smartobject_interval)
 	arg_3_0:_destroy_reusable_astars()
@@ -52,11 +52,11 @@ function AINavigationExtension.destroy(arg_3_0)
 	arg_3_0:_destroy_nav_cost_map_cost_tables()
 end
 
-function AINavigationExtension.freeze(arg_4_0)
+AINavigationExtension.freeze = function (arg_4_0)
 	arg_4_0:release_bot()
 end
 
-function AINavigationExtension.unfreeze(arg_5_0)
+AINavigationExtension.unfreeze = function (arg_5_0)
 	local var_5_0 = arg_5_0._blackboard
 	local var_5_1 = var_5_0.next_smart_object_data
 
@@ -74,11 +74,11 @@ function AINavigationExtension.unfreeze(arg_5_0)
 	arg_5_0._last_movement_modifier_index = 1
 end
 
-function AINavigationExtension.set_far_pathing_allowed(arg_6_0, arg_6_1)
+AINavigationExtension.set_far_pathing_allowed = function (arg_6_0, arg_6_1)
 	arg_6_0._far_pathing_allowed = arg_6_1
 end
 
-function AINavigationExtension.release_bot(arg_7_0)
+AINavigationExtension.release_bot = function (arg_7_0)
 	if arg_7_0._nav_bot then
 		GwNavBot.destroy(arg_7_0._nav_bot)
 
@@ -103,7 +103,7 @@ local var_0_1 = {
 	forcing_wait_time_s = 0.2
 }
 
-function AINavigationExtension.init_position(arg_8_0)
+AINavigationExtension.init_position = function (arg_8_0)
 	local var_8_0 = arg_8_0._unit
 	local var_8_1 = arg_8_0._nav_world
 	local var_8_2 = Unit.get_data(var_8_0, "breed")
@@ -197,19 +197,19 @@ function AINavigationExtension.init_position(arg_8_0)
 	end
 end
 
-function AINavigationExtension.traverse_logic(arg_9_0)
+AINavigationExtension.traverse_logic = function (arg_9_0)
 	return arg_9_0._traverse_logic
 end
 
-function AINavigationExtension.nav_world(arg_10_0)
+AINavigationExtension.nav_world = function (arg_10_0)
 	return arg_10_0._nav_world
 end
 
-function AINavigationExtension.desired_velocity(arg_11_0)
+AINavigationExtension.desired_velocity = function (arg_11_0)
 	return GwNavBot.output_velocity(arg_11_0._nav_bot)
 end
 
-function AINavigationExtension.set_enabled(arg_12_0, arg_12_1)
+AINavigationExtension.set_enabled = function (arg_12_0, arg_12_1)
 	if arg_12_0._nav_bot == nil then
 		return
 	end
@@ -229,7 +229,7 @@ function AINavigationExtension.set_enabled(arg_12_0, arg_12_1)
 	end
 end
 
-function AINavigationExtension.set_avoidance_enabled(arg_13_0, arg_13_1)
+AINavigationExtension.set_avoidance_enabled = function (arg_13_0, arg_13_1)
 	if arg_13_0._nav_bot == nil then
 		return
 	end
@@ -239,7 +239,7 @@ function AINavigationExtension.set_avoidance_enabled(arg_13_0, arg_13_1)
 	GwNavBot.set_use_avoidance(arg_13_0._nav_bot, arg_13_1)
 end
 
-function AINavigationExtension.add_movement_modifier(arg_14_0, arg_14_1)
+AINavigationExtension.add_movement_modifier = function (arg_14_0, arg_14_1)
 	fassert(arg_14_1, "[AINavigationExtension] Trying to set invalid modifier")
 
 	local var_14_0 = arg_14_0._movement_modifier_table_size
@@ -273,7 +273,7 @@ function AINavigationExtension.add_movement_modifier(arg_14_0, arg_14_1)
 	return var_14_3
 end
 
-function AINavigationExtension.remove_movement_modifier(arg_15_0, arg_15_1)
+AINavigationExtension.remove_movement_modifier = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._movement_modifiers
 
 	fassert(var_15_0[arg_15_1], "[AINavigationExtension] Trying to remove unexisting modifier with id %i", arg_15_1)
@@ -284,7 +284,7 @@ function AINavigationExtension.remove_movement_modifier(arg_15_0, arg_15_1)
 	arg_15_0:_recalculate_max_speed()
 end
 
-function AINavigationExtension._recalculate_max_speed(arg_16_0)
+AINavigationExtension._recalculate_max_speed = function (arg_16_0)
 	if arg_16_0._nav_bot == nil then
 		return
 	end
@@ -305,7 +305,7 @@ function AINavigationExtension._recalculate_max_speed(arg_16_0)
 	GwNavBot.set_max_desired_linear_speed(arg_16_0._nav_bot, var_16_0 * arg_16_0._max_speed)
 end
 
-function AINavigationExtension.set_max_speed(arg_17_0, arg_17_1)
+AINavigationExtension.set_max_speed = function (arg_17_0, arg_17_1)
 	if arg_17_0._max_speed == arg_17_1 then
 		return
 	end
@@ -315,15 +315,15 @@ function AINavigationExtension.set_max_speed(arg_17_0, arg_17_1)
 	arg_17_0:_recalculate_max_speed()
 end
 
-function AINavigationExtension.get_movement_modifier(arg_18_0)
+AINavigationExtension.get_movement_modifier = function (arg_18_0)
 	return arg_18_0._movement_modifier
 end
 
-function AINavigationExtension.get_max_speed(arg_19_0)
+AINavigationExtension.get_max_speed = function (arg_19_0)
 	return arg_19_0._max_speed
 end
 
-function AINavigationExtension.set_navbot_position(arg_20_0, arg_20_1)
+AINavigationExtension.set_navbot_position = function (arg_20_0, arg_20_1)
 	if arg_20_0._nav_bot == nil then
 		return
 	end
@@ -331,7 +331,7 @@ function AINavigationExtension.set_navbot_position(arg_20_0, arg_20_1)
 	GwNavBot.update_position(arg_20_0._nav_bot, arg_20_1)
 end
 
-function AINavigationExtension.move_to(arg_21_0, arg_21_1)
+AINavigationExtension.move_to = function (arg_21_0, arg_21_1)
 	if arg_21_0._nav_bot == nil then
 		return
 	end
@@ -347,7 +347,7 @@ function AINavigationExtension.move_to(arg_21_0, arg_21_1)
 	arg_21_0._failed_move_attempts = 0
 end
 
-function AINavigationExtension.stop(arg_22_0)
+AINavigationExtension.stop = function (arg_22_0)
 	local var_22_0 = arg_22_0._unit
 	local var_22_1 = POSITION_LOOKUP[var_22_0]
 
@@ -372,19 +372,19 @@ function AINavigationExtension.stop(arg_22_0)
 	GwNavBot.clear_followed_path(var_22_3)
 end
 
-function AINavigationExtension.number_failed_move_attempts(arg_23_0)
+AINavigationExtension.number_failed_move_attempts = function (arg_23_0)
 	return arg_23_0._failed_move_attempts
 end
 
-function AINavigationExtension.is_following_path(arg_24_0)
+AINavigationExtension.is_following_path = function (arg_24_0)
 	return arg_24_0._is_navbot_following_path
 end
 
-function AINavigationExtension.is_computing_path(arg_25_0)
+AINavigationExtension.is_computing_path = function (arg_25_0)
 	return arg_25_0._is_computing_path
 end
 
-function AINavigationExtension.reset_destination(arg_26_0, arg_26_1)
+AINavigationExtension.reset_destination = function (arg_26_0, arg_26_1)
 	if arg_26_0._nav_bot == nil then
 		return
 	end
@@ -406,7 +406,7 @@ function AINavigationExtension.reset_destination(arg_26_0, arg_26_1)
 	GwNavBot.compute_new_path(arg_26_0._nav_bot, var_26_1)
 end
 
-function AINavigationExtension.destination(arg_27_0)
+AINavigationExtension.destination = function (arg_27_0)
 	if arg_27_0._blackboard.far_path then
 		return arg_27_0._backup_destination:unbox()
 	else
@@ -414,7 +414,7 @@ function AINavigationExtension.destination(arg_27_0)
 	end
 end
 
-function AINavigationExtension.distance_to_destination(arg_28_0, arg_28_1)
+AINavigationExtension.distance_to_destination = function (arg_28_0, arg_28_1)
 	arg_28_1 = arg_28_1 or Unit.local_position(arg_28_0._unit, 0)
 
 	local var_28_0 = arg_28_0:destination()
@@ -422,7 +422,7 @@ function AINavigationExtension.distance_to_destination(arg_28_0, arg_28_1)
 	return Vector3.distance(arg_28_1, var_28_0)
 end
 
-function AINavigationExtension.distance_to_destination_sq(arg_29_0, arg_29_1)
+AINavigationExtension.distance_to_destination_sq = function (arg_29_0, arg_29_1)
 	arg_29_1 = arg_29_1 or Unit.local_position(arg_29_0._unit, 0)
 
 	local var_29_0 = arg_29_0:destination()
@@ -432,15 +432,15 @@ end
 
 local var_0_2 = 0.3
 
-function AINavigationExtension.has_reached_destination(arg_30_0, arg_30_1)
+AINavigationExtension.has_reached_destination = function (arg_30_0, arg_30_1)
 	return (arg_30_1 or var_0_2)^2 > arg_30_0:distance_to_destination_sq()
 end
 
-function AINavigationExtension.next_smart_object_data(arg_31_0)
+AINavigationExtension.next_smart_object_data = function (arg_31_0)
 	return arg_31_0._next_smart_object_data
 end
 
-function AINavigationExtension.use_smart_object(arg_32_0, arg_32_1)
+AINavigationExtension.use_smart_object = function (arg_32_0, arg_32_1)
 	if arg_32_0._nav_bot == nil then
 		return
 	end
@@ -453,7 +453,7 @@ function AINavigationExtension.use_smart_object(arg_32_0, arg_32_1)
 		var_32_0 = GwNavBot.enter_manual_control(arg_32_0._nav_bot, arg_32_0._next_smartobject_interval)
 
 		if not var_32_0 then
-			-- block empty
+			-- Nothing
 		end
 	else
 		var_32_0 = GwNavBot.exit_manual_control(arg_32_0._nav_bot)
@@ -468,11 +468,11 @@ function AINavigationExtension.use_smart_object(arg_32_0, arg_32_1)
 	return var_32_0
 end
 
-function AINavigationExtension.is_using_smart_object(arg_33_0)
+AINavigationExtension.is_using_smart_object = function (arg_33_0)
 	return arg_33_0._using_smartobject
 end
 
-function AINavigationExtension.allow_layer(arg_34_0, arg_34_1, arg_34_2)
+AINavigationExtension.allow_layer = function (arg_34_0, arg_34_1, arg_34_2)
 	if arg_34_0._nav_bot == nil then
 		return
 	end
@@ -487,7 +487,7 @@ function AINavigationExtension.allow_layer(arg_34_0, arg_34_1, arg_34_2)
 	end
 end
 
-function AINavigationExtension.set_layer_cost(arg_35_0, arg_35_1, arg_35_2)
+AINavigationExtension.set_layer_cost = function (arg_35_0, arg_35_1, arg_35_2)
 	if arg_35_0._nav_bot == nil then
 		return
 	end
@@ -497,7 +497,7 @@ function AINavigationExtension.set_layer_cost(arg_35_0, arg_35_1, arg_35_2)
 	GwNavTagLayerCostTable.set_layer_cost_multiplier(arg_35_0:get_navtag_layer_cost_table(), var_35_0, arg_35_2)
 end
 
-function AINavigationExtension.nav_cost_map_cost_table(arg_36_0, arg_36_1)
+AINavigationExtension.nav_cost_map_cost_table = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_1 or "_default"
 
 	arg_36_0._nav_cost_map_cost_tables = arg_36_0._nav_cost_map_cost_tables or {}
@@ -506,7 +506,7 @@ function AINavigationExtension.nav_cost_map_cost_table(arg_36_0, arg_36_1)
 	return arg_36_0._nav_cost_map_cost_tables[var_36_0]
 end
 
-function AINavigationExtension.get_navtag_layer_cost_table(arg_37_0, arg_37_1)
+AINavigationExtension.get_navtag_layer_cost_table = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_1 or "_default"
 
 	arg_37_0._navtag_layer_cost_tables = arg_37_0._navtag_layer_cost_tables or {}
@@ -515,7 +515,7 @@ function AINavigationExtension.get_navtag_layer_cost_table(arg_37_0, arg_37_1)
 	return arg_37_0._navtag_layer_cost_tables[var_37_0]
 end
 
-function AINavigationExtension.get_current_and_next_node_positions_in_nav_path(arg_38_0)
+AINavigationExtension.get_current_and_next_node_positions_in_nav_path = function (arg_38_0)
 	local var_38_0 = arg_38_0._nav_bot
 
 	if var_38_0 == nil then
@@ -552,7 +552,7 @@ function AINavigationExtension.get_current_and_next_node_positions_in_nav_path(a
 	return var_38_3, var_38_5, var_38_7
 end
 
-function AINavigationExtension.get_current_and_node_position_in_nav_path(arg_39_0, arg_39_1)
+AINavigationExtension.get_current_and_node_position_in_nav_path = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0._nav_bot
 
 	if var_39_0 == nil then
@@ -584,7 +584,7 @@ function AINavigationExtension.get_current_and_node_position_in_nav_path(arg_39_
 	return var_39_3, var_39_5
 end
 
-function AINavigationExtension.get_path_node_count(arg_40_0)
+AINavigationExtension.get_path_node_count = function (arg_40_0)
 	local var_40_0 = arg_40_0._nav_bot
 
 	if var_40_0 == nil then
@@ -598,7 +598,7 @@ function AINavigationExtension.get_path_node_count(arg_40_0)
 	return (GwNavBot.get_path_nodes_count(var_40_0))
 end
 
-function AINavigationExtension.get_remaining_distance_from_progress_to_end_of_path(arg_41_0)
+AINavigationExtension.get_remaining_distance_from_progress_to_end_of_path = function (arg_41_0)
 	local var_41_0 = arg_41_0._nav_bot
 
 	if var_41_0 == nil then
@@ -612,7 +612,7 @@ function AINavigationExtension.get_remaining_distance_from_progress_to_end_of_pa
 	return (GwNavBot.get_remaining_distance_from_progress_to_end_of_path(var_41_0))
 end
 
-function AINavigationExtension.get_reusable_astar(arg_42_0, arg_42_1, arg_42_2)
+AINavigationExtension.get_reusable_astar = function (arg_42_0, arg_42_1, arg_42_2)
 	if not arg_42_0._reusable_astars then
 		arg_42_0._reusable_astars = {}
 	end
@@ -624,7 +624,7 @@ function AINavigationExtension.get_reusable_astar(arg_42_0, arg_42_1, arg_42_2)
 	return arg_42_0._reusable_astars[arg_42_1]
 end
 
-function AINavigationExtension.destroy_reusable_astar(arg_43_0, arg_43_1)
+AINavigationExtension.destroy_reusable_astar = function (arg_43_0, arg_43_1)
 	local var_43_0 = arg_43_0._reusable_astars[arg_43_1]
 
 	GwNavAStar.destroy(var_43_0)
@@ -632,7 +632,7 @@ function AINavigationExtension.destroy_reusable_astar(arg_43_0, arg_43_1)
 	arg_43_0._reusable_astars[arg_43_1] = nil
 end
 
-function AINavigationExtension._destroy_reusable_astars(arg_44_0)
+AINavigationExtension._destroy_reusable_astars = function (arg_44_0)
 	if not arg_44_0._reusable_astars then
 		return
 	end
@@ -644,7 +644,7 @@ function AINavigationExtension._destroy_reusable_astars(arg_44_0)
 	arg_44_0._reusable_astars = nil
 end
 
-function AINavigationExtension._destroy_navtag_layer_cost_tables(arg_45_0)
+AINavigationExtension._destroy_navtag_layer_cost_tables = function (arg_45_0)
 	if not arg_45_0._navtag_layer_cost_tables then
 		return
 	end
@@ -656,7 +656,7 @@ function AINavigationExtension._destroy_navtag_layer_cost_tables(arg_45_0)
 	arg_45_0._navtag_layer_cost_tables = nil
 end
 
-function AINavigationExtension._destroy_nav_cost_map_cost_tables(arg_46_0)
+AINavigationExtension._destroy_nav_cost_map_cost_tables = function (arg_46_0)
 	if not arg_46_0._nav_cost_map_cost_tables then
 		return
 	end
@@ -668,14 +668,14 @@ function AINavigationExtension._destroy_nav_cost_map_cost_tables(arg_46_0)
 	arg_46_0._nav_cost_map_cost_tables = nil
 end
 
-function AINavigationExtension.get_reusable_traverse_logic(arg_47_0, arg_47_1, arg_47_2)
+AINavigationExtension.get_reusable_traverse_logic = function (arg_47_0, arg_47_1, arg_47_2)
 	arg_47_0._reusable_traverse_logics = arg_47_0._reusable_traverse_logics or {}
 	arg_47_0._reusable_traverse_logics[arg_47_1] = arg_47_0._reusable_traverse_logics[arg_47_1] or GwNavTraverseLogic.create(arg_47_0._nav_world, arg_47_2)
 
 	return arg_47_0._reusable_traverse_logics[arg_47_1]
 end
 
-function AINavigationExtension.destroy_reusable_traverse_logic(arg_48_0)
+AINavigationExtension.destroy_reusable_traverse_logic = function (arg_48_0)
 	if not arg_48_0._reusable_traverse_logics then
 		return
 	end

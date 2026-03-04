@@ -3,7 +3,7 @@
 ProjectilePhysicsHuskLocomotionExtension = class(ProjectilePhysicsHuskLocomotionExtension)
 script_data.debug_projectiles = script_data.debug_projectiles or Development.parameter("debug_projectiles")
 
-function ProjectilePhysicsHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ProjectilePhysicsHuskLocomotionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0.owner_unit = arg_1_3.owner_unit
 	arg_1_0.is_server = Managers.player.is_server
@@ -33,11 +33,11 @@ function ProjectilePhysicsHuskLocomotionExtension.init(arg_1_0, arg_1_1, arg_1_2
 	end
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.destroy(arg_2_0)
+ProjectilePhysicsHuskLocomotionExtension.destroy = function (arg_2_0)
 	return
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectilePhysicsHuskLocomotionExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if script_data.debug_projectiles then
 		local var_3_0 = Managers.state.network
 		local var_3_1 = var_3_0:unit_game_object_id(arg_3_1)
@@ -53,11 +53,11 @@ function ProjectilePhysicsHuskLocomotionExtension.update(arg_3_0, arg_3_1, arg_3
 	end
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.is_at_rest(arg_4_0)
+ProjectilePhysicsHuskLocomotionExtension.is_at_rest = function (arg_4_0)
 	return Actor.is_sleeping(arg_4_0.physics_actor)
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.teleport(arg_5_0, arg_5_1, arg_5_2)
+ProjectilePhysicsHuskLocomotionExtension.teleport = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = Matrix4x4.from_quaternion_position(arg_5_2, arg_5_1)
 	local var_5_1 = arg_5_0.unit
 	local var_5_2 = arg_5_0.physics_actor
@@ -71,22 +71,22 @@ function ProjectilePhysicsHuskLocomotionExtension.teleport(arg_5_0, arg_5_1, arg
 	Actor.set_velocity(var_5_2, var_5_3)
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.bounce(arg_6_0)
+ProjectilePhysicsHuskLocomotionExtension.bounce = function (arg_6_0)
 	return
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.stop(arg_7_0)
+ProjectilePhysicsHuskLocomotionExtension.stop = function (arg_7_0)
 	arg_7_0.stopped = true
 
 	Actor.put_to_sleep(arg_7_0.physics_actor)
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.drop(arg_8_0)
+ProjectilePhysicsHuskLocomotionExtension.drop = function (arg_8_0)
 	arg_8_0.dropped = true
 
 	Actor.set_velocity(arg_8_0.physics_actor, Vector3(0, 0, 0))
 end
 
-function ProjectilePhysicsHuskLocomotionExtension.has_stopped(arg_9_0)
+ProjectilePhysicsHuskLocomotionExtension.has_stopped = function (arg_9_0)
 	return arg_9_0.stopped
 end

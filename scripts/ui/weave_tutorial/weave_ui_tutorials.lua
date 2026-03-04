@@ -83,7 +83,7 @@ WeaveUITutorials.twitch_not_supported_for_weaves = {
 	optional_button_2 = "input_description_disconnect",
 	onboarding_step = 0,
 	popup_body = "menu_weave_area_locked_twitch_body",
-	optional_button_2_func = function(arg_1_0)
+	optional_button_2_func = function (arg_1_0)
 		if Managers.twitch and (Managers.twitch:is_connected() or Managers.twitch:is_activated()) then
 			Managers.twitch:disconnect()
 		end

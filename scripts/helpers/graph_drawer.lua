@@ -4,7 +4,7 @@ local var_0_0 = require("foundation/scripts/util/array")
 
 GraphDrawer = class(GraphDrawer)
 
-function GraphDrawer.init(arg_1_0, arg_1_1, arg_1_2)
+GraphDrawer.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.world = arg_1_1
 	arg_1_0.input_manager = arg_1_2
 	arg_1_0.gui = World.create_screen_gui(arg_1_1, "material", "materials/fonts/gw_fonts", "material", "materials/menu/debug_screen", "immediate")
@@ -14,7 +14,7 @@ function GraphDrawer.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.active = false
 end
 
-function GraphDrawer.create_graph(arg_2_0, arg_2_1, arg_2_2)
+GraphDrawer.create_graph = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = Graph:new(arg_2_1, arg_2_2)
 
 	arg_2_0.graphs[arg_2_1] = var_2_0
@@ -22,15 +22,15 @@ function GraphDrawer.create_graph(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_0
 end
 
-function GraphDrawer.destroy_graph(arg_3_0, arg_3_1)
+GraphDrawer.destroy_graph = function (arg_3_0, arg_3_1)
 	arg_3_0.graphs[arg_3_1.name] = nil
 end
 
-function GraphDrawer.graph(arg_4_0, arg_4_1)
+GraphDrawer.graph = function (arg_4_0, arg_4_1)
 	return arg_4_0.graphs[arg_4_1]
 end
 
-function GraphDrawer.update(arg_5_0, arg_5_1, arg_5_2)
+GraphDrawer.update = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_1:get("f11")
 
 	if arg_5_0.active then
@@ -76,7 +76,7 @@ end
 
 Graph = class(Graph)
 
-function Graph.init(arg_6_0, arg_6_1, arg_6_2)
+Graph.init = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.name = arg_6_1
 	arg_6_0.axis_names = arg_6_2
 	arg_6_0.circle_index = 0
@@ -107,7 +107,7 @@ function Graph.init(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0.zoom_window = nil
 end
 
-function Graph.reset(arg_7_0)
+Graph.reset = function (arg_7_0)
 	arg_7_0.plots = {}
 
 	var_0_0.set_empty(arg_7_0.annotations_x)
@@ -137,11 +137,11 @@ function Graph.reset(arg_7_0)
 	arg_7_0.state = nil
 end
 
-function Graph.set_active(arg_8_0, arg_8_1)
+Graph.set_active = function (arg_8_0, arg_8_1)
 	arg_8_0.active = arg_8_1
 end
 
-function Graph.set_plot_color(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+Graph.set_plot_color = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.plots[arg_9_1]
 
 	if var_9_0 == nil then
@@ -156,7 +156,7 @@ function Graph.set_plot_color(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	var_9_0.line_color = arg_9_3
 end
 
-function Graph.add_point(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+Graph.add_point = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_3 = arg_10_3 or "default"
 
 	local var_10_0 = arg_10_0.plots[arg_10_3]
@@ -196,13 +196,13 @@ function Graph.add_point(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	arg_10_0.valid = arg_10_0.valid or var_10_2 > 1 and math.abs(arg_10_0.range_x[2] - arg_10_0.range_x[1]) > 1e-05 and math.abs(arg_10_0.range_y[2] - arg_10_0.range_y[1]) > 1e-05
 end
 
-function Graph.add_annotation(arg_11_0, arg_11_1)
+Graph.add_annotation = function (arg_11_0, arg_11_1)
 	local var_11_0 = var_0_0.binary_insert(arg_11_0.annotations_x, arg_11_1.x)
 
 	var_0_0.insert_at(arg_11_0.annotations_data, arg_11_1, var_11_0)
 end
 
-function Graph.move_annotation(arg_12_0, arg_12_1, arg_12_2)
+Graph.move_annotation = function (arg_12_0, arg_12_1, arg_12_2)
 	if arg_12_2 == arg_12_1.x then
 		return
 	end
@@ -220,7 +220,7 @@ function Graph.move_annotation(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function Graph.set_visual_range(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+Graph.set_visual_range = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	arg_13_0.visual_frame = {
 		x_min = arg_13_1,
 		x_max = arg_13_2,
@@ -229,7 +229,7 @@ function Graph.set_visual_range(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4
 	}
 end
 
-function Graph.update(arg_14_0, arg_14_1, arg_14_2)
+Graph.update = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0.valid then
 		return
 	end
@@ -442,7 +442,7 @@ function Graph.update(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function Graph.draw(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+Graph.draw = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_2:get("cursor")
 	local var_15_1 = 1
 	local var_15_2 = 2

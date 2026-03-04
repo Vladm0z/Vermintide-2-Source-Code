@@ -237,7 +237,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						local var_2_0 = arg_2_0.button_hotspot.is_clicked
 
 						return not var_2_0 or var_2_0 == 0
@@ -246,7 +246,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -254,7 +254,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right",
 					pass_type = "texture",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return not arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -262,7 +262,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.button_hotspot.disable_button
 					end
 				},
@@ -270,7 +270,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -278,7 +278,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.button_hotspot.disable_button
 					end
 				},
@@ -286,7 +286,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return not arg_8_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -295,7 +295,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return not arg_9_0.parent.button_hotspot.disable_button
 					end
 				},
@@ -303,7 +303,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return not arg_10_0.button_hotspot.disable_button
 					end
 				},
@@ -311,7 +311,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return arg_11_0.button_hotspot.disable_button
 					end
 				},
@@ -334,7 +334,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.button_hotspot.disable_button
 					end
 				},
@@ -342,7 +342,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						local var_13_0 = arg_13_0.button_hotspot
 
 						return not var_13_0.disable_button and (var_13_0.is_selected or var_13_0.is_hover)
@@ -353,7 +353,7 @@ function create_play_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 					style_id = "cancel_matchmaking_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						local var_14_0 = arg_14_0.parent.button_hotspot
 
 						return arg_14_0.is_hover and var_14_0.disable_button
@@ -753,7 +753,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					texture_id = "background_glow",
 					style_id = "background_glow",
 					pass_type = "texture",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return not arg_16_0.button_hotspot.is_selected
 					end
 				},
@@ -771,7 +771,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					texture_id = "dlc_locked_texture",
 					style_id = "dlc_locked_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.dlc_locked
 					end
 				},
@@ -779,7 +779,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return not arg_18_0.button_hotspot.disable_button
 					end
 				},
@@ -787,7 +787,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					texture_id = "icon",
 					style_id = "icon_disabled",
 					pass_type = "texture",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.button_hotspot.disable_button
 					end
 				},
@@ -795,7 +795,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return not arg_20_0.button_hotspot.disable_button
 					end
 				},
@@ -803,7 +803,7 @@ local function var_0_8(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.button_hotspot.disable_button
 					end
 				},
@@ -1044,7 +1044,7 @@ function create_start_game_console_play_button(arg_22_0, arg_22_1)
 		pass_type = "text",
 		text_id = var_22_3,
 		style_id = var_22_3,
-		content_change_function = function(arg_23_0, arg_23_1)
+		content_change_function = function (arg_23_0, arg_23_1)
 			if arg_23_0.locked then
 				arg_23_1.text_color = arg_23_1.disabled_color
 			else
@@ -1131,7 +1131,7 @@ function create_start_game_console_play_button(arg_22_0, arg_22_1)
 		pass_type = "texture",
 		texture_id = var_22_9,
 		style_id = var_22_9,
-		content_change_function = function(arg_24_0, arg_24_1)
+		content_change_function = function (arg_24_0, arg_24_1)
 			if arg_24_0.locked then
 				arg_24_1.saturated = true
 			else
@@ -1166,7 +1166,7 @@ function create_start_game_console_play_button(arg_22_0, arg_22_1)
 		pass_type = "texture",
 		texture_id = var_22_10,
 		style_id = var_22_10,
-		content_check_function = function(arg_25_0)
+		content_check_function = function (arg_25_0)
 			return not arg_25_0.locked
 		end
 	}
@@ -1224,15 +1224,15 @@ local var_0_11 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				arg_26_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = math.easeInCubic(arg_27_3)
 
 				arg_27_4.render_settings.alpha_multiplier = var_27_0
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		}
@@ -1242,15 +1242,15 @@ local var_0_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeOutCubic(arg_30_3)
 
 				arg_30_4.render_settings.alpha_multiplier = 1 - var_30_0
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		}

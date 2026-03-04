@@ -4,20 +4,20 @@ ImguiGenerateWeaponPoses = class(ImguiGenerateWeaponPoses)
 
 local var_0_0 = 6
 
-function ImguiGenerateWeaponPoses.init(arg_1_0)
+ImguiGenerateWeaponPoses.init = function (arg_1_0)
 	arg_1_0._num_weapon_poses = var_0_0
 	arg_1_0._alpha_timer = 0
 end
 
-function ImguiGenerateWeaponPoses.update(arg_2_0)
+ImguiGenerateWeaponPoses.update = function (arg_2_0)
 	return
 end
 
-function ImguiGenerateWeaponPoses.is_persistent(arg_3_0)
+ImguiGenerateWeaponPoses.is_persistent = function (arg_3_0)
 	return false
 end
 
-function ImguiGenerateWeaponPoses._generate_weapon_poses(arg_4_0)
+ImguiGenerateWeaponPoses._generate_weapon_poses = function (arg_4_0)
 	local var_4_0 = FileSystem(script_data.source_dir)
 
 	if not var_4_0 then
@@ -53,7 +53,7 @@ function ImguiGenerateWeaponPoses._generate_weapon_poses(arg_4_0)
 	OutputArchive.close(var_4_2)
 end
 
-function ImguiGenerateWeaponPoses._add_header(arg_5_0, arg_5_1)
+ImguiGenerateWeaponPoses._add_header = function (arg_5_0, arg_5_1)
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- *************************************************************\n")
 	OutputArchive.write(arg_5_1, "-- ****                                                     ****\n")
@@ -80,7 +80,7 @@ function ImguiGenerateWeaponPoses._add_header(arg_5_0, arg_5_1)
 	OutputArchive.write(arg_5_1, "\n")
 end
 
-function ImguiGenerateWeaponPoses._add_default_pose(arg_6_0, arg_6_1)
+ImguiGenerateWeaponPoses._add_default_pose = function (arg_6_0, arg_6_1)
 	OutputArchive.write(arg_6_1, "ItemMasterList.default_weapon_pose_01 = {\n")
 	OutputArchive.write(arg_6_1, "\tname = \"default_weapon_pose_01\",\n")
 	OutputArchive.write(arg_6_1, "\tdisplay_name = \"default_weapon_pose_01\",\n")
@@ -98,7 +98,7 @@ function ImguiGenerateWeaponPoses._add_default_pose(arg_6_0, arg_6_1)
 	OutputArchive.write(arg_6_1, "}\n\n")
 end
 
-function ImguiGenerateWeaponPoses._add_weapon_poses(arg_7_0, arg_7_1, arg_7_2)
+ImguiGenerateWeaponPoses._add_weapon_poses = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.name
 	local var_7_1 = "{ "
 
@@ -130,7 +130,7 @@ function ImguiGenerateWeaponPoses._add_weapon_poses(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function ImguiGenerateWeaponPoses.draw(arg_8_0)
+ImguiGenerateWeaponPoses.draw = function (arg_8_0)
 	local var_8_0 = Imgui.begin_window("Generate Item Master List for Weapon Poses")
 
 	Imgui.set_window_size(340, 120)

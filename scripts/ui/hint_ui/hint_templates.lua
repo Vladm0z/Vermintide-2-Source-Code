@@ -20,7 +20,7 @@ HintTemplates.first_time_pactsworn = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_1_0, arg_1_1, arg_1_2)
+	condition_function = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = Managers.mechanism:current_mechanism_name()
 		local var_1_1 = Managers.state.game_mode:game_mode_key()
 
@@ -64,7 +64,7 @@ HintTemplates.horde_ability = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_2_0, arg_2_1, arg_2_2)
+	condition_function = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = Managers.mechanism:current_mechanism_name()
 		local var_2_1 = Managers.state.game_mode:game_mode_key()
 
@@ -110,7 +110,7 @@ HintTemplates.scoring_points = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_3_0, arg_3_1, arg_3_2)
+	condition_function = function (arg_3_0, arg_3_1, arg_3_2)
 		local var_3_0 = Managers.mechanism:current_mechanism_name()
 		local var_3_1 = Managers.state.game_mode:game_mode_key()
 
@@ -202,7 +202,7 @@ HintTemplates.healing = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_4_0, arg_4_1, arg_4_2)
+	condition_function = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = Managers.mechanism:current_mechanism_name()
 		local var_4_1 = Managers.state.game_mode:game_mode_key()
 
@@ -249,7 +249,7 @@ HintTemplates.bombs = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_5_0, arg_5_1, arg_5_2)
+	condition_function = function (arg_5_0, arg_5_1, arg_5_2)
 		local var_5_0 = Managers.mechanism:current_mechanism_name()
 		local var_5_1 = Managers.state.game_mode:game_mode_key()
 
@@ -290,7 +290,7 @@ HintTemplates.wounds = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_6_0, arg_6_1, arg_6_2)
+	condition_function = function (arg_6_0, arg_6_1, arg_6_2)
 		local var_6_0 = Managers.mechanism:current_mechanism_name()
 		local var_6_1 = Managers.state.game_mode:game_mode_key()
 
@@ -347,7 +347,7 @@ HintTemplates.all_chat = {
 			input_service_name = "chat_input"
 		}
 	},
-	condition_function = function(arg_7_0, arg_7_1, arg_7_2)
+	condition_function = function (arg_7_0, arg_7_1, arg_7_2)
 		if Managers.input:is_device_active("gamepad") then
 			return false
 		end
@@ -375,7 +375,7 @@ HintTemplates.capture_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_8_0, arg_8_1, arg_8_2)
+	condition_function = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = Managers.mechanism:current_mechanism_name()
 		local var_8_1 = Managers.state.game_mode:game_mode_key()
 
@@ -412,7 +412,7 @@ HintTemplates.payload_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_9_0, arg_9_1, arg_9_2)
+	condition_function = function (arg_9_0, arg_9_1, arg_9_2)
 		local var_9_0 = Managers.mechanism:current_mechanism_name()
 		local var_9_1 = Managers.state.game_mode:game_mode_key()
 
@@ -449,7 +449,7 @@ HintTemplates.safe_zone = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_10_0, arg_10_1, arg_10_2)
+	condition_function = function (arg_10_0, arg_10_1, arg_10_2)
 		local var_10_0 = Managers.mechanism:current_mechanism_name()
 		local var_10_1 = Managers.state.game_mode:game_mode_key()
 
@@ -486,7 +486,7 @@ HintTemplates.socket_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_11_0, arg_11_1, arg_11_2)
+	condition_function = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = Managers.mechanism:current_mechanism_name()
 		local var_11_1 = Managers.state.game_mode:game_mode_key()
 
@@ -523,7 +523,7 @@ HintTemplates.target_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_12_0, arg_12_1, arg_12_2)
+	condition_function = function (arg_12_0, arg_12_1, arg_12_2)
 		local var_12_0 = Managers.mechanism:current_mechanism_name()
 		local var_12_1 = Managers.state.game_mode:game_mode_key()
 
@@ -560,7 +560,7 @@ HintTemplates.survive_event = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_13_0, arg_13_1, arg_13_2)
+	condition_function = function (arg_13_0, arg_13_1, arg_13_2)
 		local var_13_0 = Managers.mechanism:current_mechanism_name()
 		local var_13_1 = Managers.state.game_mode:game_mode_key()
 
@@ -601,7 +601,7 @@ HintTemplates.interact_objective = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function(arg_14_0, arg_14_1, arg_14_2)
+	condition_function = function (arg_14_0, arg_14_1, arg_14_2)
 		local var_14_0 = Managers.mechanism:current_mechanism_name()
 		local var_14_1 = Managers.state.game_mode:game_mode_key()
 
@@ -638,7 +638,7 @@ HintTemplates.reach_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function(arg_15_0, arg_15_1, arg_15_2)
+	condition_function = function (arg_15_0, arg_15_1, arg_15_2)
 		local var_15_0 = Managers.mechanism:current_mechanism_name()
 		local var_15_1 = Managers.state.game_mode:game_mode_key()
 

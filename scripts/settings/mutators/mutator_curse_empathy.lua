@@ -258,11 +258,11 @@ return {
 	description = "curse_empathy_desc",
 	display_name = "curse_empathy_name",
 	icon = "deus_curse_slaanesh_01",
-	server_start_function = function(arg_15_0, arg_15_1)
+	server_start_function = function (arg_15_0, arg_15_1)
 		arg_15_1.damage_buffer = {}
 		arg_15_1.player_units_in_range = {}
 	end,
-	modify_player_base_damage = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	modify_player_base_damage = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 		local var_16_0 = arg_16_1.player_units_in_range[arg_16_2]
 
 		if not var_16_0 or not var_0_31(Managers.player, arg_16_2, arg_16_4, arg_16_5) then
@@ -281,11 +281,11 @@ return {
 
 		return var_16_1
 	end,
-	server_update_function = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	server_update_function = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 		arg_17_1.template.update_players_in_range(arg_17_1)
 		arg_17_1.template.process_damage_buffer(arg_17_1)
 	end,
-	update_players_in_range = function(arg_18_0)
+	update_players_in_range = function (arg_18_0)
 		local var_18_0 = var_0_19(arg_18_0.hero_side.PLAYER_UNITS)
 
 		for iter_18_0, iter_18_1 in ipairs(var_18_0) do
@@ -322,7 +322,7 @@ return {
 			end
 		end
 	end,
-	process_damage_buffer = function(arg_19_0)
+	process_damage_buffer = function (arg_19_0)
 		for iter_19_0, iter_19_1 in pairs(arg_19_0.damage_buffer) do
 			if ALIVE[iter_19_0] then
 				local var_19_0 = iter_19_1.damaging_unit
@@ -339,7 +339,7 @@ return {
 			arg_19_0.damage_buffer[iter_19_0] = nil
 		end
 	end,
-	client_player_hit_function = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	client_player_hit_function = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 		if arg_20_4[2] == var_0_16 then
 			local var_20_0 = Managers.time:time("game")
 			local var_20_1 = true
@@ -352,7 +352,7 @@ return {
 			var_20_2:trigger_networked_dialogue_event("curse_damage_taken", var_20_3)
 		end
 	end,
-	client_start_function = function(arg_21_0, arg_21_1)
+	client_start_function = function (arg_21_0, arg_21_1)
 		local var_21_0 = arg_21_0.world
 		local var_21_1 = Managers.player
 		local var_21_2
@@ -366,7 +366,7 @@ return {
 		arg_21_1.beam_effects = {}
 		arg_21_1.hero_side = var_21_2
 	end,
-	client_update_function = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	client_update_function = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 		local var_22_0 = arg_22_1.local_player.player_unit
 
 		if not ALIVE[var_22_0] then
@@ -404,7 +404,7 @@ return {
 
 		var_0_29(arg_22_0, arg_22_1, var_22_1, #var_22_2)
 	end,
-	client_stop_function = function(arg_23_0, arg_23_1)
+	client_stop_function = function (arg_23_0, arg_23_1)
 		local var_23_0 = arg_23_1.beam_effects
 
 		for iter_23_0, iter_23_1 in pairs(var_23_0) do

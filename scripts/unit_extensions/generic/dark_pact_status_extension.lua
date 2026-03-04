@@ -6,7 +6,7 @@ local var_0_0 = require("scripts/utils/stagger_types")
 
 DarkPactStatusExtension = class(DarkPactStatusExtension, GenericStatusExtension)
 
-function DarkPactStatusExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DarkPactStatusExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	DarkPactStatusExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._profile_index = arg_1_3.profile_id
@@ -36,15 +36,15 @@ function DarkPactStatusExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._is_spawning = false
 end
 
-function DarkPactStatusExtension.extensions_ready(arg_2_0)
+DarkPactStatusExtension.extensions_ready = function (arg_2_0)
 	DarkPactStatusExtension.super.extensions_ready(arg_2_0)
 end
 
-function DarkPactStatusExtension.destroy(arg_3_0)
+DarkPactStatusExtension.destroy = function (arg_3_0)
 	DarkPactStatusExtension.super.destroy(arg_3_0)
 end
 
-function DarkPactStatusExtension.set_pinning_enemy(arg_4_0, arg_4_1, arg_4_2)
+DarkPactStatusExtension.set_pinning_enemy = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_1 then
 		arg_4_0._pinned_enemy_unit = arg_4_2
 		arg_4_0._is_pinning_enemy = true
@@ -54,49 +54,49 @@ function DarkPactStatusExtension.set_pinning_enemy(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function DarkPactStatusExtension.set_is_packmaster_grabbing(arg_5_0, arg_5_1)
+DarkPactStatusExtension.set_is_packmaster_grabbing = function (arg_5_0, arg_5_1)
 	arg_5_0._is_packmaster_grabbing = arg_5_1
 end
 
-function DarkPactStatusExtension.get_is_packmaster_grabbing(arg_6_0)
+DarkPactStatusExtension.get_is_packmaster_grabbing = function (arg_6_0)
 	return arg_6_0._is_packmaster_grabbing
 end
 
-function DarkPactStatusExtension.get_is_packmaster_dragging(arg_7_0)
+DarkPactStatusExtension.get_is_packmaster_dragging = function (arg_7_0)
 	return arg_7_0._is_packmaster_dragging
 end
 
-function DarkPactStatusExtension.set_is_packmaster_dragging(arg_8_0, arg_8_1)
+DarkPactStatusExtension.set_is_packmaster_dragging = function (arg_8_0, arg_8_1)
 	arg_8_0._is_packmaster_dragging = true
 	arg_8_0._packmaster_dragged_unit = arg_8_1
 end
 
-function DarkPactStatusExtension.set_packmaster_released(arg_9_0)
+DarkPactStatusExtension.set_packmaster_released = function (arg_9_0)
 	arg_9_0._is_packmaster_dragging = false
 	arg_9_0._packmaster_dragged_unit = nil
 end
 
-function DarkPactStatusExtension.set_unarmed(arg_10_0, arg_10_1)
+DarkPactStatusExtension.set_unarmed = function (arg_10_0, arg_10_1)
 	arg_10_0._unarmed = arg_10_1
 end
 
-function DarkPactStatusExtension.get_unarmed(arg_11_0)
+DarkPactStatusExtension.get_unarmed = function (arg_11_0)
 	return arg_11_0._unarmed
 end
 
-function DarkPactStatusExtension.get_packmaster_dragged_unit(arg_12_0)
+DarkPactStatusExtension.get_packmaster_dragged_unit = function (arg_12_0)
 	return arg_12_0._packmaster_dragged_unit
 end
 
-function DarkPactStatusExtension.set_ghost_mode(arg_13_0, arg_13_1)
+DarkPactStatusExtension.set_ghost_mode = function (arg_13_0, arg_13_1)
 	arg_13_0.in_ghost_mode = arg_13_1
 end
 
-function DarkPactStatusExtension.get_in_ghost_mode(arg_14_0)
+DarkPactStatusExtension.get_in_ghost_mode = function (arg_14_0)
 	return arg_14_0.in_ghost_mode
 end
 
-function DarkPactStatusExtension.in_view_enemy_party_players(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+DarkPactStatusExtension.in_view_enemy_party_players = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = arg_15_2:network_id()
 	local var_15_1 = arg_15_2:local_player_id()
 	local var_15_2 = Managers.party:get_party_from_player_id(var_15_0, var_15_1)
@@ -105,76 +105,76 @@ function DarkPactStatusExtension.in_view_enemy_party_players(arg_15_0, arg_15_1,
 	return (GhostModeUtils.in_line_of_sight_of_enemies(arg_15_1, var_15_3, arg_15_3))
 end
 
-function DarkPactStatusExtension.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+DarkPactStatusExtension.update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	DarkPactStatusExtension.super.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
 	arg_16_0:update_stagger_count(arg_16_5)
 end
 
-function DarkPactStatusExtension.is_staggered(arg_17_0)
+DarkPactStatusExtension.is_staggered = function (arg_17_0)
 	return arg_17_0._stagger_type > var_0_0.none
 end
 
-function DarkPactStatusExtension.accumulated_stagger(arg_18_0)
+DarkPactStatusExtension.accumulated_stagger = function (arg_18_0)
 	return arg_18_0._accumulated_stagger
 end
 
-function DarkPactStatusExtension.stagger_count(arg_19_0)
+DarkPactStatusExtension.stagger_count = function (arg_19_0)
 	return arg_19_0._stagger_count
 end
 
-function DarkPactStatusExtension.stagger_direction(arg_20_0)
+DarkPactStatusExtension.stagger_direction = function (arg_20_0)
 	return arg_20_0._stagger_direction
 end
 
-function DarkPactStatusExtension.stagger_animation_scale(arg_21_0)
+DarkPactStatusExtension.stagger_animation_scale = function (arg_21_0)
 	return arg_21_0._stagger_animation_scale
 end
 
-function DarkPactStatusExtension.stagger_time(arg_22_0)
+DarkPactStatusExtension.stagger_time = function (arg_22_0)
 	return arg_22_0._stagger_time
 end
 
-function DarkPactStatusExtension.stagger_immune_time(arg_23_0)
+DarkPactStatusExtension.stagger_immune_time = function (arg_23_0)
 	return arg_23_0._stagger_immune_time
 end
 
-function DarkPactStatusExtension.stagger_type(arg_24_0)
+DarkPactStatusExtension.stagger_type = function (arg_24_0)
 	return arg_24_0._stagger_type
 end
 
-function DarkPactStatusExtension.set_stagger_immune_time(arg_25_0, arg_25_1)
+DarkPactStatusExtension.set_stagger_immune_time = function (arg_25_0, arg_25_1)
 	arg_25_0._stagger_immune_time = arg_25_1
 end
 
-function DarkPactStatusExtension.heavy_stagger_immune_time(arg_26_0)
+DarkPactStatusExtension.heavy_stagger_immune_time = function (arg_26_0)
 	return arg_26_0._heavy_stagger_immune_time
 end
 
-function DarkPactStatusExtension.set_heavy_stagger_immune_time(arg_27_0, arg_27_1)
+DarkPactStatusExtension.set_heavy_stagger_immune_time = function (arg_27_0, arg_27_1)
 	arg_27_0._heavy_stagger_immune_time = arg_27_1
 end
 
-function DarkPactStatusExtension.set_always_stagger_suffered(arg_28_0, arg_28_1)
+DarkPactStatusExtension.set_always_stagger_suffered = function (arg_28_0, arg_28_1)
 	arg_28_0._always_stagger_suffered = arg_28_1
 end
 
-function DarkPactStatusExtension.always_stagger_suffered(arg_29_0)
+DarkPactStatusExtension.always_stagger_suffered = function (arg_29_0)
 	return arg_29_0._always_stagger_suffered
 end
 
-function DarkPactStatusExtension.stagger_length(arg_30_0)
+DarkPactStatusExtension.stagger_length = function (arg_30_0)
 	return arg_30_0._stagger_length
 end
 
-function DarkPactStatusExtension.stagger_animation_done(arg_31_0)
+DarkPactStatusExtension.stagger_animation_done = function (arg_31_0)
 	return arg_31_0._stagger_animation_done
 end
 
-function DarkPactStatusExtension.set_stagger_animation_done(arg_32_0, arg_32_1)
+DarkPactStatusExtension.set_stagger_animation_done = function (arg_32_0, arg_32_1)
 	arg_32_0._stagger_animation_done = arg_32_1
 end
 
-function DarkPactStatusExtension.set_stagger_values(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8)
+DarkPactStatusExtension.set_stagger_values = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8)
 	local var_33_0 = Managers.time:time("game")
 
 	arg_33_0._stagger_type = arg_33_1
@@ -209,7 +209,7 @@ end
 
 local var_0_1 = 10
 
-function DarkPactStatusExtension.increase_stagger_count(arg_34_0)
+DarkPactStatusExtension.increase_stagger_count = function (arg_34_0)
 	local var_34_0 = Managers.time:time("main")
 	local var_34_1 = Unit.get_data(arg_34_0.unit, "breed")
 	local var_34_2 = arg_34_0._stagger_count
@@ -219,49 +219,49 @@ function DarkPactStatusExtension.increase_stagger_count(arg_34_0)
 	arg_34_0._stagger_reset_time = var_34_0 + var_34_3
 end
 
-function DarkPactStatusExtension.update_stagger_count(arg_35_0, arg_35_1)
+DarkPactStatusExtension.update_stagger_count = function (arg_35_0, arg_35_1)
 	if arg_35_1 > arg_35_0._stagger_reset_time and arg_35_0._stagger_count > 0 then
 		arg_35_0._stagger_count = 0
 	end
 end
 
-function DarkPactStatusExtension.set_breed_action(arg_36_0, arg_36_1, arg_36_2)
+DarkPactStatusExtension.set_breed_action = function (arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0._breed_action = BreedActions[arg_36_1][arg_36_2]
 end
 
-function DarkPactStatusExtension.breed_action(arg_37_0)
+DarkPactStatusExtension.breed_action = function (arg_37_0)
 	return arg_37_0._breed_action
 end
 
-function DarkPactStatusExtension.set_is_climbing(arg_38_0, arg_38_1)
+DarkPactStatusExtension.set_is_climbing = function (arg_38_0, arg_38_1)
 	arg_38_0._is_climbing = arg_38_1
 end
 
-function DarkPactStatusExtension.is_climbing(arg_39_0)
+DarkPactStatusExtension.is_climbing = function (arg_39_0)
 	return arg_39_0._about_to_climb or arg_39_0._is_climbing
 end
 
-function DarkPactStatusExtension.should_climb(arg_40_0)
+DarkPactStatusExtension.should_climb = function (arg_40_0)
 	return arg_40_0._about_to_climb
 end
 
-function DarkPactStatusExtension.set_should_climb(arg_41_0, arg_41_1)
+DarkPactStatusExtension.set_should_climb = function (arg_41_0, arg_41_1)
 	arg_41_0._about_to_climb = arg_41_1
 end
 
-function DarkPactStatusExtension.should_tunnel(arg_42_0)
+DarkPactStatusExtension.should_tunnel = function (arg_42_0)
 	return arg_42_0._is_tunneling
 end
 
-function DarkPactStatusExtension.set_should_tunnel(arg_43_0, arg_43_1)
+DarkPactStatusExtension.set_should_tunnel = function (arg_43_0, arg_43_1)
 	arg_43_0._is_tunneling = arg_43_1
 end
 
-function DarkPactStatusExtension.should_spawn(arg_44_0)
+DarkPactStatusExtension.should_spawn = function (arg_44_0)
 	return arg_44_0._is_spawning
 end
 
-function DarkPactStatusExtension.set_should_spawn(arg_45_0, arg_45_1)
+DarkPactStatusExtension.set_should_spawn = function (arg_45_0, arg_45_1)
 	arg_45_0._is_spawning = arg_45_1
 end
 

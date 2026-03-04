@@ -58,7 +58,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -103,7 +103,7 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_shoot",
 				total_time = 2,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -128,7 +128,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -173,7 +173,7 @@ local var_0_3 = {
 				hold_input = "action_two_hold",
 				anim_event = "attack_shoot",
 				total_time = 2,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {
@@ -197,7 +197,7 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
@@ -250,7 +250,7 @@ local var_0_3 = {
 				anim_event = "draw_bow",
 				allow_hold_toggle = true,
 				reload_when_out_of_ammo = true,
-				anim_end_event_condition_func = function(arg_6_0, arg_6_1)
+				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
 					return arg_6_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -290,13 +290,13 @@ local var_0_3 = {
 						input = "weapon_reload"
 					}
 				},
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return true
 				end,
-				unzoom_condition_function = function(arg_8_0)
+				unzoom_condition_function = function (arg_8_0)
 					return arg_8_0 ~= "new_interupting_action"
 				end,
-				condition_func = function(arg_9_0, arg_9_1, arg_9_2)
+				condition_func = function (arg_9_0, arg_9_1, arg_9_2)
 					if arg_9_2 and (arg_9_2:total_remaining_ammo() <= 0 or arg_9_2:is_reloading()) then
 						return false
 					end

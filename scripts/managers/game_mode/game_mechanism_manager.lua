@@ -71,7 +71,7 @@ MechanismSettings = {
 				num_slots = 4
 			}
 		},
-		extra_requirements_function = function(arg_1_0, arg_1_1)
+		extra_requirements_function = function (arg_1_0, arg_1_1)
 			if script_data.unlock_all_levels then
 				return true
 			end
@@ -155,7 +155,7 @@ local function var_0_3(arg_2_0)
 	end
 end
 
-function GameMechanismManager.init(arg_3_0, arg_3_1)
+GameMechanismManager.init = function (arg_3_0, arg_3_1)
 	arg_3_0._mechanism_key = arg_3_1
 	arg_3_0._game_mechanism = nil
 	arg_3_0._level_seed = nil
@@ -166,7 +166,7 @@ function GameMechanismManager.init(arg_3_0, arg_3_1)
 	arg_3_0:_init_mechanism()
 end
 
-function GameMechanismManager.handle_level_load(arg_4_0, arg_4_1)
+GameMechanismManager.handle_level_load = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.level_transition_handler
 	local var_4_1 = var_4_0:get_current_mechanism()
 	local var_4_2 = arg_4_0._mechanism_key
@@ -191,11 +191,11 @@ function GameMechanismManager.handle_level_load(arg_4_0, arg_4_1)
 	end
 end
 
-function GameMechanismManager.create_level_seed(arg_5_0)
+GameMechanismManager.create_level_seed = function (arg_5_0)
 	return LevelTransitionHandler.create_level_seed()
 end
 
-function GameMechanismManager.generate_level_seed(arg_6_0)
+GameMechanismManager.generate_level_seed = function (arg_6_0)
 	local var_6_0 = arg_6_0._game_mechanism.generate_level_seed and arg_6_0._game_mechanism:generate_level_seed()
 
 	if var_6_0 then
@@ -209,7 +209,7 @@ function GameMechanismManager.generate_level_seed(arg_6_0)
 	return arg_6_0._level_seed
 end
 
-function GameMechanismManager.get_level_seed(arg_7_0, arg_7_1)
+GameMechanismManager.get_level_seed = function (arg_7_0, arg_7_1)
 	local var_7_0 = Managers.level_transition_handler:get_current_level_seed()
 
 	if arg_7_0._game_mechanism.get_level_seed then
@@ -219,7 +219,7 @@ function GameMechanismManager.get_level_seed(arg_7_0, arg_7_1)
 	end
 end
 
-function GameMechanismManager.get_end_of_level_rewards_arguments(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+GameMechanismManager.get_end_of_level_rewards_arguments = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	if arg_8_0._game_mechanism.get_end_of_level_rewards_arguments then
 		return arg_8_0._game_mechanism:get_end_of_level_rewards_arguments(arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
 	else
@@ -227,7 +227,7 @@ function GameMechanismManager.get_end_of_level_rewards_arguments(arg_8_0, arg_8_
 	end
 end
 
-function GameMechanismManager.get_end_of_level_extra_mission_results(arg_9_0)
+GameMechanismManager.get_end_of_level_extra_mission_results = function (arg_9_0)
 	if arg_9_0._game_mechanism.get_end_of_level_extra_mission_results then
 		return arg_9_0._game_mechanism:get_end_of_level_extra_mission_results()
 	else
@@ -235,7 +235,7 @@ function GameMechanismManager.get_end_of_level_extra_mission_results(arg_9_0)
 	end
 end
 
-function GameMechanismManager.sync_players_session_score(arg_10_0, arg_10_1)
+GameMechanismManager.sync_players_session_score = function (arg_10_0, arg_10_1)
 	local var_10_0 = {}
 	local var_10_1 = {}
 	local var_10_2 = {}
@@ -259,29 +259,29 @@ function GameMechanismManager.sync_players_session_score(arg_10_0, arg_10_1)
 	Managers.state.event:trigger("player_session_scores_synced")
 end
 
-function GameMechanismManager.network_server(arg_11_0)
+GameMechanismManager.network_server = function (arg_11_0)
 	return arg_11_0._network_server
 end
 
-function GameMechanismManager.network_client(arg_12_0)
+GameMechanismManager.network_client = function (arg_12_0)
 	return arg_12_0._network_client
 end
 
-function GameMechanismManager.network_handler(arg_13_0)
+GameMechanismManager.network_handler = function (arg_13_0)
 	return arg_13_0._network_server or arg_13_0._network_client
 end
 
-function GameMechanismManager.set_level_seed(arg_14_0, arg_14_1)
+GameMechanismManager.set_level_seed = function (arg_14_0, arg_14_1)
 	print("GameMechanismManager setting level seed:", arg_14_1)
 
 	arg_14_0._level_seed = arg_14_1
 end
 
-function GameMechanismManager.generate_locked_director_functions(arg_15_0, arg_15_1)
+GameMechanismManager.generate_locked_director_functions = function (arg_15_0, arg_15_1)
 	return (ConflictUtils.generate_conflict_director_locked_functions(arg_15_1))
 end
 
-function GameMechanismManager.can_spawn_pickup(arg_16_0, arg_16_1, arg_16_2)
+GameMechanismManager.can_spawn_pickup = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0._game_mechanism
 
 	if var_16_0 and var_16_0.can_spawn_pickup then
@@ -291,7 +291,7 @@ function GameMechanismManager.can_spawn_pickup(arg_16_0, arg_16_1, arg_16_2)
 	return false
 end
 
-function GameMechanismManager.uses_random_directors(arg_17_0)
+GameMechanismManager.uses_random_directors = function (arg_17_0)
 	local var_17_0 = arg_17_0._game_mechanism
 
 	if var_17_0 and var_17_0.uses_random_directors then
@@ -301,7 +301,7 @@ function GameMechanismManager.uses_random_directors(arg_17_0)
 	return true
 end
 
-function GameMechanismManager.destroy(arg_18_0)
+GameMechanismManager.destroy = function (arg_18_0)
 	arg_18_0:_unregister_mechanism_rpcs()
 
 	if arg_18_0._game_mechanism.destroy then
@@ -317,19 +317,19 @@ function GameMechanismManager.destroy(arg_18_0)
 	end
 end
 
-function GameMechanismManager.set_profile_synchronizer(arg_19_0, arg_19_1)
+GameMechanismManager.set_profile_synchronizer = function (arg_19_0, arg_19_1)
 	arg_19_0._profile_synchronizer = arg_19_1
 end
 
-function GameMechanismManager.get_level_end_view(arg_20_0)
+GameMechanismManager.get_level_end_view = function (arg_20_0)
 	return arg_20_0._game_mechanism and arg_20_0._game_mechanism.get_level_end_view and arg_20_0._game_mechanism:get_level_end_view()
 end
 
-function GameMechanismManager.get_level_end_view_packages(arg_21_0)
+GameMechanismManager.get_level_end_view_packages = function (arg_21_0)
 	return arg_21_0._game_mechanism and arg_21_0._game_mechanism.get_level_end_view_packages and arg_21_0._game_mechanism:get_level_end_view_packages()
 end
 
-function GameMechanismManager.handle_ingame_enter(arg_22_0, arg_22_1)
+GameMechanismManager.handle_ingame_enter = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._game_mechanism
 
 	if var_22_0 and var_22_0.handle_ingame_enter then
@@ -337,7 +337,7 @@ function GameMechanismManager.handle_ingame_enter(arg_22_0, arg_22_1)
 	end
 end
 
-function GameMechanismManager.handle_ingame_exit(arg_23_0, arg_23_1)
+GameMechanismManager.handle_ingame_exit = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._game_mechanism
 
 	if var_23_0 and var_23_0.handle_ingame_exit then
@@ -345,7 +345,7 @@ function GameMechanismManager.handle_ingame_exit(arg_23_0, arg_23_1)
 	end
 end
 
-function GameMechanismManager.can_resync_loadout(arg_24_0)
+GameMechanismManager.can_resync_loadout = function (arg_24_0)
 	local var_24_0 = arg_24_0._game_mechanism
 
 	if var_24_0 and var_24_0.can_resync_loadout then
@@ -355,7 +355,7 @@ function GameMechanismManager.can_resync_loadout(arg_24_0)
 	end
 end
 
-function GameMechanismManager.update_loadout(arg_25_0)
+GameMechanismManager.update_loadout = function (arg_25_0)
 	local var_25_0 = arg_25_0._game_mechanism
 
 	if var_25_0 and var_25_0.update_loadout then
@@ -363,7 +363,7 @@ function GameMechanismManager.update_loadout(arg_25_0)
 	end
 end
 
-function GameMechanismManager.network_context_created(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+GameMechanismManager.network_context_created = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
 	printf("[GameMechanismManager] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_26_2, arg_26_3)
 
 	arg_26_0._lobby = arg_26_1
@@ -378,7 +378,7 @@ function GameMechanismManager.network_context_created(arg_26_0, arg_26_1, arg_26
 	end
 end
 
-function GameMechanismManager.set_network_server(arg_27_0, arg_27_1)
+GameMechanismManager.set_network_server = function (arg_27_0, arg_27_1)
 	arg_27_0._network_server = arg_27_1
 
 	if arg_27_1 then
@@ -390,7 +390,7 @@ function GameMechanismManager.set_network_server(arg_27_0, arg_27_1)
 	end
 end
 
-function GameMechanismManager.set_network_client(arg_28_0, arg_28_1)
+GameMechanismManager.set_network_client = function (arg_28_0, arg_28_1)
 	arg_28_0._network_client = arg_28_1
 
 	if arg_28_1 then
@@ -402,15 +402,15 @@ function GameMechanismManager.set_network_client(arg_28_0, arg_28_1)
 	end
 end
 
-function GameMechanismManager.server_peer_id(arg_29_0)
+GameMechanismManager.server_peer_id = function (arg_29_0)
 	return arg_29_0._server_peer_id
 end
 
-function GameMechanismManager.is_server(arg_30_0)
+GameMechanismManager.is_server = function (arg_30_0)
 	return arg_30_0._is_server
 end
 
-function GameMechanismManager.network_context_destroyed(arg_31_0, arg_31_1)
+GameMechanismManager.network_context_destroyed = function (arg_31_0, arg_31_1)
 	print("[GameMechanismManager] network_context_destroyed")
 
 	arg_31_0._lobby = nil
@@ -423,20 +423,20 @@ function GameMechanismManager.network_context_destroyed(arg_31_0, arg_31_1)
 	end
 end
 
-function GameMechanismManager.register_rpcs(arg_32_0, arg_32_1)
+GameMechanismManager.register_rpcs = function (arg_32_0, arg_32_1)
 	arg_32_0._network_event_delegate = arg_32_1
 
 	arg_32_1:register(arg_32_0, unpack(var_0_2))
 	arg_32_0:_register_mechanism_rpcs()
 end
 
-function GameMechanismManager._register_mechanism_rpcs(arg_33_0)
+GameMechanismManager._register_mechanism_rpcs = function (arg_33_0)
 	if arg_33_0._network_event_delegate and arg_33_0._game_mechanism and arg_33_0._game_mechanism.register_rpcs then
 		arg_33_0._game_mechanism:register_rpcs(arg_33_0._network_event_delegate)
 	end
 end
 
-function GameMechanismManager.unregister_rpcs(arg_34_0)
+GameMechanismManager.unregister_rpcs = function (arg_34_0)
 	arg_34_0:_unregister_mechanism_rpcs()
 
 	if arg_34_0._network_event_delegate then
@@ -446,13 +446,13 @@ function GameMechanismManager.unregister_rpcs(arg_34_0)
 	end
 end
 
-function GameMechanismManager._unregister_mechanism_rpcs(arg_35_0)
+GameMechanismManager._unregister_mechanism_rpcs = function (arg_35_0)
 	if arg_35_0._game_mechanism and arg_35_0._game_mechanism.unregister_rpcs then
 		arg_35_0._game_mechanism:unregister_rpcs()
 	end
 end
 
-function GameMechanismManager._setup_mechanism_specific_career_settings(arg_36_0)
+GameMechanismManager._setup_mechanism_specific_career_settings = function (arg_36_0)
 	for iter_36_0, iter_36_1 in pairs(CareerSettingsOriginal) do
 		local var_36_0 = iter_36_1.mechanism_overrides
 
@@ -469,7 +469,7 @@ function GameMechanismManager._setup_mechanism_specific_career_settings(arg_36_0
 	end
 end
 
-function GameMechanismManager._init_mechanism(arg_37_0)
+GameMechanismManager._init_mechanism = function (arg_37_0)
 	local var_37_0 = Managers.level_transition_handler:get_current_mechanism()
 
 	print("initializing mechanism to:", var_37_0)
@@ -511,7 +511,7 @@ function GameMechanismManager._init_mechanism(arg_37_0)
 
 		if var_37_2 then
 			MechanismOverrides.mechanism_switched()
-			Managers.backend:commit(true, function()
+			Managers.backend:commit(true, function ()
 				Managers.backend:switch_mechanism(var_37_0)
 				Managers.backend:load_mechanism_loadout(var_37_0)
 			end)
@@ -526,7 +526,7 @@ function GameMechanismManager._init_mechanism(arg_37_0)
 	arg_37_0:clear_stored_challenge_progression_status()
 end
 
-function GameMechanismManager.mechanism_try_call(arg_39_0, arg_39_1, ...)
+GameMechanismManager.mechanism_try_call = function (arg_39_0, arg_39_1, ...)
 	local var_39_0 = arg_39_0._game_mechanism
 
 	if var_39_0 then
@@ -540,7 +540,7 @@ function GameMechanismManager.mechanism_try_call(arg_39_0, arg_39_1, ...)
 	return false
 end
 
-function GameMechanismManager.rpc_level_load_started(arg_40_0, arg_40_1, arg_40_2)
+GameMechanismManager.rpc_level_load_started = function (arg_40_0, arg_40_1, arg_40_2)
 	if Managers.level_transition_handler:get_current_level_session_id() ~= arg_40_2 then
 		Crashify.print_exception("GameMechanismManager", "rpc_level_load_started received with the wrong current state, ignoring it.")
 
@@ -581,7 +581,7 @@ function GameMechanismManager.rpc_level_load_started(arg_40_0, arg_40_1, arg_40_
 	end
 end
 
-function GameMechanismManager.create_host_migration_info(arg_41_0, arg_41_1, arg_41_2)
+GameMechanismManager.create_host_migration_info = function (arg_41_0, arg_41_1, arg_41_2)
 	if arg_41_0._game_mechanism.create_host_migration_info then
 		return arg_41_0._game_mechanism:create_host_migration_info(arg_41_1, arg_41_2)
 	end
@@ -609,59 +609,59 @@ function GameMechanismManager.create_host_migration_info(arg_41_0, arg_41_1, arg
 	return var_41_0
 end
 
-function GameMechanismManager.is_final_round(arg_42_0)
+GameMechanismManager.is_final_round = function (arg_42_0)
 	return arg_42_0._game_mechanism:is_final_round()
 end
 
-function GameMechanismManager.on_final_round_won(arg_43_0, arg_43_1, arg_43_2)
+GameMechanismManager.on_final_round_won = function (arg_43_0, arg_43_1, arg_43_2)
 	if arg_43_0._game_mechanism.on_final_round_won then
 		arg_43_0._game_mechanism:on_final_round_won(arg_43_1, arg_43_2)
 	end
 end
 
-function GameMechanismManager.request_vote(arg_44_0, arg_44_1, arg_44_2)
+GameMechanismManager.request_vote = function (arg_44_0, arg_44_1, arg_44_2)
 	if arg_44_0._game_mechanism.request_vote then
 		arg_44_0._game_mechanism:request_vote(arg_44_1, arg_44_2)
 	end
 end
 
-function GameMechanismManager.game_round_ended(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+GameMechanismManager.game_round_ended = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 	arg_45_0._game_mechanism:game_round_ended(arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 end
 
-function GameMechanismManager.start_next_round(arg_46_0)
+GameMechanismManager.start_next_round = function (arg_46_0)
 	local var_46_0, var_46_1, var_46_2 = arg_46_0._game_mechanism:start_next_round()
 
 	return var_46_0, var_46_1, var_46_2
 end
 
-function GameMechanismManager.get_current_level_key(arg_47_0)
+GameMechanismManager.get_current_level_key = function (arg_47_0)
 	return Managers.level_transition_handler:get_current_level_key()
 end
 
-function GameMechanismManager.get_current_level_keys(arg_48_0)
+GameMechanismManager.get_current_level_keys = function (arg_48_0)
 	return Managers.level_transition_handler:get_current_level_key()
 end
 
-function GameMechanismManager.game_mechanism(arg_49_0)
+GameMechanismManager.game_mechanism = function (arg_49_0)
 	return arg_49_0._game_mechanism
 end
 
-function GameMechanismManager.current_mechanism_name(arg_50_0)
+GameMechanismManager.current_mechanism_name = function (arg_50_0)
 	return arg_50_0._mechanism_key
 end
 
-function GameMechanismManager.get_last_mechanism_switch(arg_51_0)
+GameMechanismManager.get_last_mechanism_switch = function (arg_51_0)
 	return arg_51_0._last_mechanism_switch
 end
 
-function GameMechanismManager.mechanism_setting(arg_52_0, arg_52_1)
+GameMechanismManager.mechanism_setting = function (arg_52_0, arg_52_1)
 	fassert(arg_52_0._mechanism_key, "No mechanism set yet.")
 
 	return MechanismSettings[arg_52_0._mechanism_key][arg_52_1]
 end
 
-function GameMechanismManager.mechanism_setting_for_title(arg_53_0, arg_53_1)
+GameMechanismManager.mechanism_setting_for_title = function (arg_53_0, arg_53_1)
 	if not arg_53_0._title_settings then
 		arg_53_0:refresh_mechanism_setting_for_title()
 	end
@@ -678,19 +678,19 @@ function GameMechanismManager.mechanism_setting_for_title(arg_53_0, arg_53_1)
 	return arg_53_0:mechanism_setting(arg_53_1)
 end
 
-function GameMechanismManager.refresh_mechanism_setting_for_title(arg_54_0)
+GameMechanismManager.refresh_mechanism_setting_for_title = function (arg_54_0)
 	fassert(Managers.backend:get_backend_mirror(), "Backend not created yet")
 
 	arg_54_0._title_settings = Managers.backend:get_title_settings()
 end
 
-function GameMechanismManager.max_party_members(arg_55_0)
+GameMechanismManager.max_party_members = function (arg_55_0)
 	local var_55_0 = MechanismSettings[arg_55_0._mechanism_key].party_data
 
 	return Managers.party:max_party_members(var_55_0)
 end
 
-function GameMechanismManager.max_instance_members(arg_56_0)
+GameMechanismManager.max_instance_members = function (arg_56_0)
 	fassert(arg_56_0._mechanism_key, "No mechanism set yet.")
 
 	if arg_56_0._game_mechanism.max_instance_members then
@@ -708,13 +708,13 @@ function GameMechanismManager.max_instance_members(arg_56_0)
 	return var_56_1
 end
 
-function GameMechanismManager.server_universe(arg_57_0)
+GameMechanismManager.server_universe = function (arg_57_0)
 	fassert(arg_57_0._mechanism_key, "No mechanism set yet.")
 
 	return MechanismSettings[arg_57_0._mechanism_key].server_universe
 end
 
-function GameMechanismManager.is_packages_loaded(arg_58_0)
+GameMechanismManager.is_packages_loaded = function (arg_58_0)
 	if arg_58_0._game_mechanism.is_packages_loaded then
 		return arg_58_0._game_mechanism:is_packages_loaded()
 	end
@@ -722,13 +722,13 @@ function GameMechanismManager.is_packages_loaded(arg_58_0)
 	return true
 end
 
-function GameMechanismManager.load_packages(arg_59_0)
+GameMechanismManager.load_packages = function (arg_59_0)
 	if arg_59_0._game_mechanism.load_packages then
 		arg_59_0._game_mechanism:load_packages()
 	end
 end
 
-function GameMechanismManager.preferred_slot_id(arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+GameMechanismManager.preferred_slot_id = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
 	if arg_60_0._game_mechanism and arg_60_0._game_mechanism.preferred_slot_id then
 		return arg_60_0._game_mechanism:preferred_slot_id(arg_60_1, arg_60_2, arg_60_3)
 	end
@@ -736,13 +736,13 @@ function GameMechanismManager.preferred_slot_id(arg_60_0, arg_60_1, arg_60_2, ar
 	return nil
 end
 
-function GameMechanismManager.profile_available_for_peer(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+GameMechanismManager.profile_available_for_peer = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	local var_61_0 = arg_61_0._profile_synchronizer:get_profile_index_reservation(arg_61_1, arg_61_3)
 
 	return not var_61_0 or var_61_0 == arg_61_2
 end
 
-function GameMechanismManager.profile_changed(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5)
+GameMechanismManager.profile_changed = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5)
 	if arg_62_0._game_mechanism and arg_62_0._game_mechanism.profile_changed then
 		return arg_62_0._game_mechanism:profile_changed(arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5)
 	end
@@ -750,11 +750,11 @@ function GameMechanismManager.profile_changed(arg_62_0, arg_62_1, arg_62_2, arg_
 	return false
 end
 
-function GameMechanismManager.profile_synchronizer(arg_63_0)
+GameMechanismManager.profile_synchronizer = function (arg_63_0)
 	return arg_63_0._profile_synchronizer
 end
 
-function GameMechanismManager.get_players_session_score(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+GameMechanismManager.get_players_session_score = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 	local var_64_0
 
 	if not arg_64_0._is_server then
@@ -772,23 +772,23 @@ function GameMechanismManager.get_players_session_score(arg_64_0, arg_64_1, arg_
 	return var_64_0
 end
 
-function GameMechanismManager.get_prior_state(arg_65_0)
+GameMechanismManager.get_prior_state = function (arg_65_0)
 	return arg_65_0._game_mechanism:get_prior_state()
 end
 
-function GameMechanismManager.choose_next_state(arg_66_0, arg_66_1)
+GameMechanismManager.choose_next_state = function (arg_66_0, arg_66_1)
 	arg_66_0._game_mechanism:choose_next_state(arg_66_1)
 end
 
-function GameMechanismManager.reset_choose_next_state(arg_67_0)
+GameMechanismManager.reset_choose_next_state = function (arg_67_0)
 	arg_67_0._game_mechanism:reset_choose_next_state()
 end
 
-function GameMechanismManager.setting(arg_68_0, arg_68_1)
+GameMechanismManager.setting = function (arg_68_0, arg_68_1)
 	return MechanismSettings[arg_68_0._mechanism_key][arg_68_1]
 end
 
-function GameMechanismManager.progress_state(arg_69_0, arg_69_1)
+GameMechanismManager.progress_state = function (arg_69_0, arg_69_1)
 	local var_69_0 = arg_69_0._game_mechanism:progress_state()
 	local var_69_1 = MechanismSettings[arg_69_0._mechanism_key].states
 	local var_69_2 = table.find(var_69_1, var_69_0)
@@ -800,11 +800,11 @@ function GameMechanismManager.progress_state(arg_69_0, arg_69_1)
 	end
 end
 
-function GameMechanismManager.get_starting_level(arg_70_0)
+GameMechanismManager.get_starting_level = function (arg_70_0)
 	return arg_70_0._game_mechanism.get_starting_level and arg_70_0._game_mechanism:get_starting_level() or LevelSettings.default_start_level
 end
 
-function GameMechanismManager.default_level_key(arg_71_0)
+GameMechanismManager.default_level_key = function (arg_71_0)
 	local var_71_0 = Boot.loading_context and Boot.loading_context.level_key
 
 	if var_71_0 then
@@ -816,7 +816,7 @@ function GameMechanismManager.default_level_key(arg_71_0)
 	return var_0_3(Development.parameter("auto_host_level")) or Development.parameter("vs_auto_search") and "carousel_hub" or var_71_1 or arg_71_0:get_starting_level()
 end
 
-function GameMechanismManager.get_loading_tip(arg_72_0)
+GameMechanismManager.get_loading_tip = function (arg_72_0)
 	local var_72_0 = arg_72_0._game_mechanism
 
 	if var_72_0.get_loading_tip then
@@ -826,13 +826,13 @@ function GameMechanismManager.get_loading_tip(arg_72_0)
 	return nil
 end
 
-function GameMechanismManager.backend_profiles_loaded(arg_73_0)
+GameMechanismManager.backend_profiles_loaded = function (arg_73_0)
 	if arg_73_0._game_mechanism.backend_profiles_loaded then
 		arg_73_0._game_mechanism:backend_profiles_loaded()
 	end
 end
 
-function GameMechanismManager.try_reserve_game_server_slots(arg_74_0, arg_74_1, arg_74_2, arg_74_3)
+GameMechanismManager.try_reserve_game_server_slots = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3)
 	local var_74_0 = Managers.state.game_mode
 
 	if var_74_0 and not var_74_0:is_reservable() then
@@ -850,13 +850,13 @@ function GameMechanismManager.try_reserve_game_server_slots(arg_74_0, arg_74_1, 
 	return true
 end
 
-function GameMechanismManager.game_server_slot_reservation_expired(arg_75_0, arg_75_1)
+GameMechanismManager.game_server_slot_reservation_expired = function (arg_75_0, arg_75_1)
 	if arg_75_0._game_mechanism.game_server_slot_reservation_expired then
 		arg_75_0._game_mechanism:game_server_slot_reservation_expired(arg_75_1)
 	end
 end
 
-function GameMechanismManager.debug_load_level(arg_76_0, arg_76_1, arg_76_2)
+GameMechanismManager.debug_load_level = function (arg_76_0, arg_76_1, arg_76_2)
 	if not arg_76_0._is_server then
 		return
 	end
@@ -871,7 +871,7 @@ function GameMechanismManager.debug_load_level(arg_76_0, arg_76_1, arg_76_2)
 	end
 end
 
-function GameMechanismManager._on_venture_start(arg_77_0, arg_77_1)
+GameMechanismManager._on_venture_start = function (arg_77_0, arg_77_1)
 	arg_77_0._venture_started = true
 
 	local var_77_0 = arg_77_0._is_server
@@ -888,7 +888,7 @@ function GameMechanismManager._on_venture_start(arg_77_0, arg_77_1)
 	end
 end
 
-function GameMechanismManager._on_venture_end(arg_78_0)
+GameMechanismManager._on_venture_end = function (arg_78_0)
 	Managers:on_venture_end()
 
 	if arg_78_0._game_mechanism.on_venture_end then
@@ -900,13 +900,13 @@ function GameMechanismManager._on_venture_end(arg_78_0)
 	arg_78_0._venture_started = false
 end
 
-function GameMechanismManager.check_venture_start(arg_79_0, arg_79_1)
+GameMechanismManager.check_venture_start = function (arg_79_0, arg_79_1)
 	if not arg_79_0._venture_started then
 		arg_79_0:_on_venture_start(arg_79_1)
 	end
 end
 
-function GameMechanismManager.check_venture_end(arg_80_0, arg_80_1)
+GameMechanismManager.check_venture_end = function (arg_80_0, arg_80_1)
 	local var_80_0 = arg_80_0._game_mechanism:get_state()
 	local var_80_1 = arg_80_0._game_mechanism:get_prior_state()
 	local var_80_2 = arg_80_0:mechanism_setting("venture_end_states_in")
@@ -919,11 +919,11 @@ function GameMechanismManager.check_venture_end(arg_80_0, arg_80_1)
 	arg_80_0._venture_ended_manually = nil
 end
 
-function GameMechanismManager.manual_end_venture(arg_81_0)
+GameMechanismManager.manual_end_venture = function (arg_81_0)
 	arg_81_0._venture_ended_manually = true
 end
 
-function GameMechanismManager.is_venture_over(arg_82_0)
+GameMechanismManager.is_venture_over = function (arg_82_0)
 	if arg_82_0._game_mechanism.is_venture_over then
 		return arg_82_0._game_mechanism:is_venture_over()
 	end
@@ -933,7 +933,7 @@ function GameMechanismManager.is_venture_over(arg_82_0)
 	return var_82_0 and var_82_0:is_game_mode_ended()
 end
 
-function GameMechanismManager.rpc_set_current_mechanism_state(arg_83_0, arg_83_1, arg_83_2)
+GameMechanismManager.rpc_set_current_mechanism_state = function (arg_83_0, arg_83_1, arg_83_2)
 	fassert(not arg_83_0._is_server, "Server handles the state internally, this should only end up on clients.")
 
 	local var_83_0 = MechanismSettings[arg_83_0._mechanism_key].states[arg_83_2]
@@ -943,7 +943,7 @@ function GameMechanismManager.rpc_set_current_mechanism_state(arg_83_0, arg_83_1
 	arg_83_0._game_mechanism:set_current_state(var_83_0)
 end
 
-function GameMechanismManager.rpc_carousel_set_local_match(arg_84_0, arg_84_1, arg_84_2)
+GameMechanismManager.rpc_carousel_set_local_match = function (arg_84_0, arg_84_1, arg_84_2)
 	if CHANNEL_TO_PEER_ID[arg_84_1] ~= arg_84_0._server_peer_id then
 		return
 	end
@@ -951,7 +951,7 @@ function GameMechanismManager.rpc_carousel_set_local_match(arg_84_0, arg_84_1, a
 	arg_84_0:mechanism_try_call("set_local_match", arg_84_2)
 end
 
-function GameMechanismManager.rpc_carousel_set_private_lobby(arg_85_0, arg_85_1, arg_85_2)
+GameMechanismManager.rpc_carousel_set_private_lobby = function (arg_85_0, arg_85_1, arg_85_2)
 	if CHANNEL_TO_PEER_ID[arg_85_1] ~= arg_85_0._server_peer_id then
 		return
 	end
@@ -959,7 +959,7 @@ function GameMechanismManager.rpc_carousel_set_private_lobby(arg_85_0, arg_85_1,
 	arg_85_0:mechanism_try_call("set_private_lobby", arg_85_2)
 end
 
-function GameMechanismManager.rpc_dedicated_or_player_hosted_search(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+GameMechanismManager.rpc_dedicated_or_player_hosted_search = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
 	if CHANNEL_TO_PEER_ID[arg_86_1] ~= arg_86_0._server_peer_id then
 		return
 	end
@@ -967,7 +967,7 @@ function GameMechanismManager.rpc_dedicated_or_player_hosted_search(arg_86_0, ar
 	arg_86_0:mechanism_try_call("set_dedicated_or_player_hosted_search", arg_86_2, arg_86_3, arg_86_4)
 end
 
-function GameMechanismManager.rpc_reserved_slots_count(arg_87_0, arg_87_1, arg_87_2, arg_87_3)
+GameMechanismManager.rpc_reserved_slots_count = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3)
 	if not arg_87_0._game_mechanism.num_dedicated_reserved_slots_changed then
 		return
 	end
@@ -981,7 +981,7 @@ function GameMechanismManager.rpc_reserved_slots_count(arg_87_0, arg_87_1, arg_8
 	end
 end
 
-function GameMechanismManager.rpc_party_slots_status(arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
+GameMechanismManager.rpc_party_slots_status = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
 	if not arg_88_0._game_mechanism.dedicated_party_slot_status_changed then
 		return
 	end
@@ -995,7 +995,7 @@ function GameMechanismManager.rpc_party_slots_status(arg_88_0, arg_88_1, arg_88_
 	end
 end
 
-function GameMechanismManager.rpc_force_start_dedicated_server(arg_89_0, arg_89_1)
+GameMechanismManager.rpc_force_start_dedicated_server = function (arg_89_0, arg_89_1)
 	print("got GameMechanismManager:rpc_force_start_dedicated_server from", arg_89_1)
 
 	if arg_89_0._game_mechanism.force_start_dedicated_server then
@@ -1003,7 +1003,7 @@ function GameMechanismManager.rpc_force_start_dedicated_server(arg_89_0, arg_89_
 	end
 end
 
-function GameMechanismManager.rpc_switch_level_dedicated_server(arg_90_0, arg_90_1, arg_90_2)
+GameMechanismManager.rpc_switch_level_dedicated_server = function (arg_90_0, arg_90_1, arg_90_2)
 	print("got GameMechanismManager:rpc_force_start_dedicated_server from", arg_90_2)
 
 	if arg_90_0._game_mechanism.switch_level_dedicated_server then
@@ -1018,7 +1018,7 @@ function GameMechanismManager.rpc_switch_level_dedicated_server(arg_90_0, arg_90
 	end
 end
 
-function GameMechanismManager.rpc_sync_players_session_score(arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
+GameMechanismManager.rpc_sync_players_session_score = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
 	local var_91_0 = #arg_91_2
 	local var_91_1 = #arg_91_4 / var_91_0
 	local var_91_2 = Managers.player:statistics_db()
@@ -1069,15 +1069,15 @@ function GameMechanismManager.rpc_sync_players_session_score(arg_91_0, arg_91_1,
 	Managers.state.event:trigger("player_session_scores_synced")
 end
 
-function GameMechanismManager.dedicated_server_peer_id(arg_92_0)
+GameMechanismManager.dedicated_server_peer_id = function (arg_92_0)
 	return arg_92_0._dedicated_server_peer_id
 end
 
-function GameMechanismManager.reset_dedicated_server_peer_id(arg_93_0)
+GameMechanismManager.reset_dedicated_server_peer_id = function (arg_93_0)
 	arg_93_0._dedicated_server_peer_id = nil
 end
 
-function GameMechanismManager.send_rpc_clients(arg_94_0, arg_94_1, ...)
+GameMechanismManager.send_rpc_clients = function (arg_94_0, arg_94_1, ...)
 	local var_94_0 = arg_94_0._network_server and arg_94_0._network_server:get_peers()
 
 	if not var_94_0 then
@@ -1095,25 +1095,25 @@ function GameMechanismManager.send_rpc_clients(arg_94_0, arg_94_1, ...)
 	end
 end
 
-function GameMechanismManager.should_run_tutorial(arg_95_0)
+GameMechanismManager.should_run_tutorial = function (arg_95_0)
 	return arg_95_0._game_mechanism:should_run_tutorial()
 end
 
-function GameMechanismManager.get_custom_lobby_sort(arg_96_0)
+GameMechanismManager.get_custom_lobby_sort = function (arg_96_0)
 	return arg_96_0._game_mechanism.get_custom_lobby_sort and arg_96_0._game_mechanism:get_custom_lobby_sort()
 end
 
-function GameMechanismManager.get_state(arg_97_0)
+GameMechanismManager.get_state = function (arg_97_0)
 	return arg_97_0._game_mechanism:get_state()
 end
 
-function GameMechanismManager.set_vote_data(arg_98_0, arg_98_1)
+GameMechanismManager.set_vote_data = function (arg_98_0, arg_98_1)
 	if arg_98_0._game_mechanism.set_vote_data then
 		arg_98_0._game_mechanism:set_vote_data(arg_98_1)
 	end
 end
 
-function GameMechanismManager.reset_party_data(arg_99_0, arg_99_1)
+GameMechanismManager.reset_party_data = function (arg_99_0, arg_99_1)
 	local var_99_0
 
 	if arg_99_1 then
@@ -1133,7 +1133,7 @@ function GameMechanismManager.reset_party_data(arg_99_0, arg_99_1)
 	end
 end
 
-function GameMechanismManager.setup_mechanism_parties(arg_100_0)
+GameMechanismManager.setup_mechanism_parties = function (arg_100_0)
 	local var_100_0 = MechanismSettings[arg_100_0._mechanism_key].party_data
 
 	Managers.party:register_parties(var_100_0)
@@ -1143,7 +1143,7 @@ function GameMechanismManager.setup_mechanism_parties(arg_100_0)
 	end
 end
 
-function GameMechanismManager.get_level_dialogue_context(arg_101_0)
+GameMechanismManager.get_level_dialogue_context = function (arg_101_0)
 	if arg_101_0._game_mechanism.get_level_dialogue_context then
 		return arg_101_0._game_mechanism:get_level_dialogue_context()
 	end
@@ -1151,31 +1151,31 @@ function GameMechanismManager.get_level_dialogue_context(arg_101_0)
 	return {}
 end
 
-function GameMechanismManager.override_hub_level(arg_102_0, arg_102_1)
+GameMechanismManager.override_hub_level = function (arg_102_0, arg_102_1)
 	if arg_102_0._game_mechanism and arg_102_0._game_mechanism.override_hub_level then
 		arg_102_0._game_mechanism:override_hub_level(arg_102_1)
 	end
 end
 
-function GameMechanismManager.get_player_level_fallback(arg_103_0, arg_103_1)
+GameMechanismManager.get_player_level_fallback = function (arg_103_0, arg_103_1)
 	if arg_103_0._game_mechanism and arg_103_0._game_mechanism.get_player_level_fallback then
 		return arg_103_0._game_mechanism:get_player_level_fallback(arg_103_1)
 	end
 end
 
-function GameMechanismManager.get_slot_reservation_handler(arg_104_0, arg_104_1, arg_104_2)
+GameMechanismManager.get_slot_reservation_handler = function (arg_104_0, arg_104_1, arg_104_2)
 	if arg_104_0._game_mechanism.get_slot_reservation_handler then
 		return arg_104_0._game_mechanism:get_slot_reservation_handler(arg_104_1, arg_104_2)
 	end
 end
 
-function GameMechanismManager.get_all_reservation_handlers_by_owner(arg_105_0, arg_105_1)
+GameMechanismManager.get_all_reservation_handlers_by_owner = function (arg_105_0, arg_105_1)
 	if arg_105_0._game_mechanism.get_all_reservation_handlers_by_owner then
 		return arg_105_0._game_mechanism:get_all_reservation_handlers_by_owner(arg_105_1)
 	end
 end
 
-function GameMechanismManager.rpc_set_peer_backend_id(arg_106_0, arg_106_1, arg_106_2)
+GameMechanismManager.rpc_set_peer_backend_id = function (arg_106_0, arg_106_1, arg_106_2)
 	if not arg_106_0._is_server then
 		Application.warning("[GameMechanismManager:rpc_set_peer_backend_id] sent rpc to non-server peer")
 
@@ -1189,25 +1189,25 @@ function GameMechanismManager.rpc_set_peer_backend_id(arg_106_0, arg_106_1, arg_
 	end
 end
 
-function GameMechanismManager.get_social_wheel_class(arg_107_0)
+GameMechanismManager.get_social_wheel_class = function (arg_107_0)
 	local var_107_0 = MechanismSettings[arg_107_0._mechanism_key].social_wheel
 
 	return var_107_0 and var_107_0 or "SocialWheelUI"
 end
 
-function GameMechanismManager.load_end_screen_resources(arg_108_0)
+GameMechanismManager.load_end_screen_resources = function (arg_108_0)
 	if arg_108_0._game_mechanism.load_end_screen_resources then
 		arg_108_0._game_mechanism:load_end_screen_resources()
 	end
 end
 
-function GameMechanismManager.unload_end_screen_resources(arg_109_0)
+GameMechanismManager.unload_end_screen_resources = function (arg_109_0)
 	if arg_109_0._game_mechanism.unload_end_screen_resources then
 		arg_109_0._game_mechanism:unload_end_screen_resources()
 	end
 end
 
-function GameMechanismManager.is_peer_fully_synced(arg_110_0, arg_110_1)
+GameMechanismManager.is_peer_fully_synced = function (arg_110_0, arg_110_1)
 	if arg_110_0._game_mechanism.is_peer_fully_synced then
 		return arg_110_0._game_mechanism:is_peer_fully_synced(arg_110_1)
 	end
@@ -1215,7 +1215,7 @@ function GameMechanismManager.is_peer_fully_synced(arg_110_0, arg_110_1)
 	return true
 end
 
-function GameMechanismManager.update_testify(arg_111_0, arg_111_1, arg_111_2)
+GameMechanismManager.update_testify = function (arg_111_0, arg_111_1, arg_111_2)
 	Testify:poll_requests_through_handler(var_0_0, arg_111_0)
 
 	if arg_111_0._game_mechanism.update_testify then
@@ -1223,21 +1223,21 @@ function GameMechanismManager.update_testify(arg_111_0, arg_111_1, arg_111_2)
 	end
 end
 
-function GameMechanismManager.player_joined_party(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5)
+GameMechanismManager.player_joined_party = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5)
 	if arg_112_0._game_mechanism.player_joined_party then
 		arg_112_0._game_mechanism:player_joined_party(arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5)
 	end
 end
 
-function GameMechanismManager.reserved_party_id_by_peer(arg_113_0, arg_113_1)
+GameMechanismManager.reserved_party_id_by_peer = function (arg_113_0, arg_113_1)
 	return arg_113_0._game_mechanism:reserved_party_id_by_peer(arg_113_1)
 end
 
-function GameMechanismManager.try_reserve_profile_for_peer_by_mechanism(arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
+GameMechanismManager.try_reserve_profile_for_peer_by_mechanism = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
 	return arg_114_0._game_mechanism:try_reserve_profile_for_peer_by_mechanism(arg_114_0._profile_synchronizer, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
 end
 
-function GameMechanismManager.get_persistent_profile_index_reservation(arg_115_0, arg_115_1)
+GameMechanismManager.get_persistent_profile_index_reservation = function (arg_115_0, arg_115_1)
 	if arg_115_0._profile_synchronizer then
 		local var_115_0, var_115_1 = arg_115_0._profile_synchronizer:get_persistent_profile_index_reservation(arg_115_1)
 
@@ -1245,13 +1245,13 @@ function GameMechanismManager.get_persistent_profile_index_reservation(arg_115_0
 	end
 end
 
-function GameMechanismManager.remote_client_connecting(arg_116_0, arg_116_1)
+GameMechanismManager.remote_client_connecting = function (arg_116_0, arg_116_1)
 	if arg_116_0._game_mechanism.remote_client_connecting then
 		arg_116_0._game_mechanism:remote_client_connecting(arg_116_1)
 	end
 end
 
-function GameMechanismManager.remote_client_disconnected(arg_117_0, arg_117_1)
+GameMechanismManager.remote_client_disconnected = function (arg_117_0, arg_117_1)
 	if arg_117_0._game_mechanism.remote_client_disconnected then
 		arg_117_0._game_mechanism:remote_client_disconnected(arg_117_1)
 	end
@@ -1259,17 +1259,17 @@ end
 
 local var_0_4 = {}
 
-function GameMechanismManager.get_challenge_progression_status(arg_118_0, arg_118_1)
+GameMechanismManager.get_challenge_progression_status = function (arg_118_0, arg_118_1)
 	return Managers.state.achievement and Managers.state.achievement:get_challenge_progression(arg_118_1) or var_0_4
 end
 
-function GameMechanismManager.store_challenge_progression_status(arg_119_0, arg_119_1, arg_119_2)
+GameMechanismManager.store_challenge_progression_status = function (arg_119_0, arg_119_1, arg_119_2)
 	if arg_119_0._game_mechanism.store_challenge_progression_status then
 		arg_119_0._game_mechanism:store_challenge_progression_status(arg_119_1, arg_119_2)
 	end
 end
 
-function GameMechanismManager.get_stored_challenge_progression_status(arg_120_0, arg_120_1)
+GameMechanismManager.get_stored_challenge_progression_status = function (arg_120_0, arg_120_1)
 	if arg_120_0._game_mechanism.get_stored_challenge_progression_status then
 		return arg_120_0._game_mechanism:get_stored_challenge_progression_status(arg_120_1)
 	end
@@ -1277,13 +1277,13 @@ function GameMechanismManager.get_stored_challenge_progression_status(arg_120_0,
 	return var_0_4
 end
 
-function GameMechanismManager.clear_stored_challenge_progression_status(arg_121_0, arg_121_1)
+GameMechanismManager.clear_stored_challenge_progression_status = function (arg_121_0, arg_121_1)
 	if arg_121_0._game_mechanism.clear_stored_challenge_progression_status then
 		return arg_121_0._game_mechanism:clear_stored_challenge_progression_status(arg_121_1)
 	end
 end
 
-function GameMechanismManager.state_context_set_up(arg_122_0)
+GameMechanismManager.state_context_set_up = function (arg_122_0)
 	if arg_122_0._game_mechanism.state_context_set_up then
 		return arg_122_0._game_mechanism:state_context_set_up()
 	end

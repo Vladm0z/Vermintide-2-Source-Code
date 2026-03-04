@@ -3,11 +3,11 @@
 MoverHelper = MoverHelper or {}
 Unit._set_mover = Unit._set_mover or Unit.set_mover
 
-function Unit.set_mover()
+Unit.set_mover = function ()
 	assert(false, "Use your locomotion-extension's mover functions instead of setting mover directly through Unit.set_mover")
 end
 
-function MoverHelper.create_collision_state(arg_2_0, arg_2_1)
+MoverHelper.create_collision_state = function (arg_2_0, arg_2_1)
 	local var_2_0 = Unit.actor(arg_2_0, arg_2_1)
 
 	return {
@@ -16,13 +16,13 @@ function MoverHelper.create_collision_state(arg_2_0, arg_2_1)
 	}
 end
 
-function MoverHelper.create_mover_state()
+MoverHelper.create_mover_state = function ()
 	return {
 		disable_reasons = {}
 	}
 end
 
-function MoverHelper.set_active_mover(arg_4_0, arg_4_1, arg_4_2)
+MoverHelper.set_active_mover = function (arg_4_0, arg_4_1, arg_4_2)
 	if Unit.mover(arg_4_0) then
 		Unit._set_mover(arg_4_0, arg_4_2)
 	end
@@ -30,7 +30,7 @@ function MoverHelper.set_active_mover(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_1.active_mover = arg_4_2
 end
 
-function MoverHelper.set_disable_reason(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+MoverHelper.set_disable_reason = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	if arg_5_3 == false then
 		arg_5_3 = nil
 	end
@@ -46,7 +46,7 @@ function MoverHelper.set_disable_reason(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function MoverHelper.set_collision_disable_reason(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+MoverHelper.set_collision_disable_reason = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_1.disable_reasons
 
 	var_6_0[arg_6_2] = arg_6_3

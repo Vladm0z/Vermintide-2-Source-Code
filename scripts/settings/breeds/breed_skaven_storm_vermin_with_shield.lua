@@ -725,7 +725,7 @@ local var_0_4 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			assert(ScriptUnit.has_extension(arg_1_0, "ai_shield_system"), "skaven_storm_vermin_with_shield dont have ai_shield_user_extension")
 
 			local var_1_0 = arg_1_1.breed
@@ -797,7 +797,7 @@ local var_0_4 = {
 
 			return var_1_10, var_1_11, var_1_11
 		end,
-		custom_exit_function = function(arg_2_0, arg_2_1, arg_2_2)
+		custom_exit_function = function (arg_2_0, arg_2_1, arg_2_2)
 			ScriptUnit.extension(arg_2_0, "ai_shield_system"):set_is_blocking(true)
 		end,
 		shield_stagger_anims = {

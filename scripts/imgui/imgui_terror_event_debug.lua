@@ -23,7 +23,7 @@ local function var_0_2()
 	return (Managers.level_transition_handler:get_current_level_keys())
 end
 
-function ImguiTerrorEventDebug.init(arg_2_0)
+ImguiTerrorEventDebug.init = function (arg_2_0)
 	arg_2_0._level_specific_index = 1
 	arg_2_0._generic_index = 1
 	arg_2_0._difficulty_tweak_index = 1
@@ -37,15 +37,15 @@ function ImguiTerrorEventDebug.init(arg_2_0)
 	table.sort(arg_2_0._generic_terror_events)
 end
 
-function ImguiTerrorEventDebug.update(arg_3_0)
+ImguiTerrorEventDebug.update = function (arg_3_0)
 	return
 end
 
-function ImguiTerrorEventDebug.is_persistent(arg_4_0)
+ImguiTerrorEventDebug.is_persistent = function (arg_4_0)
 	return true
 end
 
-function ImguiTerrorEventDebug.draw(arg_5_0, arg_5_1)
+ImguiTerrorEventDebug.draw = function (arg_5_0, arg_5_1)
 	local var_5_0 = Imgui.begin_window("TerrorEventDebug", "always_auto_resize")
 	local var_5_1 = var_0_2()
 

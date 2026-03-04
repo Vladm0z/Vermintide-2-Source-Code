@@ -35,7 +35,7 @@ local function var_0_10()
 	return var_2_1 and var_2_1:name() == "dark_pact"
 end
 
-function GamePadEquipmentUI.init(arg_3_0, arg_3_1, arg_3_2)
+GamePadEquipmentUI.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._parent = arg_3_1
 	arg_3_0.ui_renderer = arg_3_2.ui_renderer
 	arg_3_0.ingame_ui = arg_3_2.ingame_ui
@@ -65,7 +65,7 @@ function GamePadEquipmentUI.init(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_update_game_options()
 end
 
-function GamePadEquipmentUI._create_ui_elements(arg_4_0)
+GamePadEquipmentUI._create_ui_elements = function (arg_4_0)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 
 	local var_4_0 = {}
@@ -155,7 +155,7 @@ function GamePadEquipmentUI._create_ui_elements(arg_4_0)
 	arg_4_0._num_added_items = 0
 end
 
-function GamePadEquipmentUI.event_swap_equipment_from_storage(arg_5_0, arg_5_1, arg_5_2)
+GamePadEquipmentUI.event_swap_equipment_from_storage = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_1 ~= "slot_grenade" then
 		return
 	end
@@ -192,7 +192,7 @@ function GamePadEquipmentUI.event_swap_equipment_from_storage(arg_5_0, arg_5_1, 
 	end
 end
 
-function GamePadEquipmentUI.event_input_changed(arg_6_0)
+GamePadEquipmentUI.event_input_changed = function (arg_6_0)
 	local var_6_0 = "wield_switch_1"
 	local var_6_1 = arg_6_0._widgets_by_name.weapon_slot
 
@@ -211,7 +211,7 @@ function GamePadEquipmentUI.event_input_changed(arg_6_0)
 	arg_6_0:set_dirty()
 end
 
-function GamePadEquipmentUI._set_switch_input(arg_7_0, arg_7_1, arg_7_2)
+GamePadEquipmentUI._set_switch_input = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0, var_7_1, var_7_2 = arg_7_0:_get_input_texture_data(arg_7_2)
 
 	if not var_7_1 or not UTF8Utils.string_length(var_7_1) then
@@ -244,7 +244,7 @@ function GamePadEquipmentUI._set_switch_input(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function GamePadEquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
+GamePadEquipmentUI._set_slot_input = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0, var_8_1, var_8_2 = arg_8_0:_get_input_texture_data(arg_8_2)
 
 	if not var_8_1 or not UTF8Utils.string_length(var_8_1) then
@@ -262,7 +262,7 @@ function GamePadEquipmentUI._set_slot_input(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function GamePadEquipmentUI._get_input_texture_data(arg_9_0, arg_9_1)
+GamePadEquipmentUI._get_input_texture_data = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0.input_manager
 	local var_9_1 = var_9_0:get_service("Player")
 	local var_9_2 = var_9_0:is_device_active("gamepad")
@@ -319,7 +319,7 @@ function GamePadEquipmentUI._get_input_texture_data(arg_9_0, arg_9_1)
 	return nil, ""
 end
 
-function GamePadEquipmentUI._update_widgets(arg_10_0)
+GamePadEquipmentUI._update_widgets = function (arg_10_0)
 	local var_10_0 = arg_10_0._slot_widgets
 
 	for iter_10_0, iter_10_1 in ipairs(var_10_0) do
@@ -329,7 +329,7 @@ function GamePadEquipmentUI._update_widgets(arg_10_0)
 	arg_10_0:set_dirty()
 end
 
-function GamePadEquipmentUI._get_wield_scroll_input(arg_11_0)
+GamePadEquipmentUI._get_wield_scroll_input = function (arg_11_0)
 	local var_11_0 = arg_11_0.player
 	local var_11_1 = var_11_0.player_unit
 
@@ -342,7 +342,7 @@ function GamePadEquipmentUI._get_wield_scroll_input(arg_11_0)
 	return ScriptUnit.extension(var_11_1, "input_system"):get_last_scroll_value()
 end
 
-function GamePadEquipmentUI._set_wielded_item(arg_12_0, arg_12_1, arg_12_2)
+GamePadEquipmentUI._set_wielded_item = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0:_get_wield_scroll_input()
 	local var_12_1 = arg_12_0._added_items
 
@@ -381,7 +381,7 @@ local var_0_12 = {}
 local var_0_13 = {}
 local var_0_14 = {}
 
-function GamePadEquipmentUI._update_equipment_lookup(arg_13_0, arg_13_1, arg_13_2)
+GamePadEquipmentUI._update_equipment_lookup = function (arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0._equipment_lookup = arg_13_0._equipment_lookup or {}
 	arg_13_0._equipment_lookup.additional_items_lookup = arg_13_0._equipment_lookup.additional_items_lookup or {}
 
@@ -427,7 +427,7 @@ function GamePadEquipmentUI._update_equipment_lookup(arg_13_0, arg_13_1, arg_13_
 	end
 end
 
-function GamePadEquipmentUI._check_equipment_changed(arg_14_0, arg_14_1, arg_14_2)
+GamePadEquipmentUI._check_equipment_changed = function (arg_14_0, arg_14_1, arg_14_2)
 	if not arg_14_0._equipment_lookup then
 		arg_14_0:_update_equipment_lookup(arg_14_1, arg_14_2)
 
@@ -506,7 +506,7 @@ function GamePadEquipmentUI._check_equipment_changed(arg_14_0, arg_14_1, arg_14_
 	return false
 end
 
-function GamePadEquipmentUI._sync_player_equipment(arg_15_0)
+GamePadEquipmentUI._sync_player_equipment = function (arg_15_0)
 	local var_15_0 = Managers.input:is_device_active("gamepad")
 	local var_15_1 = UISettings.use_gamepad_hud_layout
 
@@ -752,7 +752,7 @@ function GamePadEquipmentUI._sync_player_equipment(arg_15_0)
 	end
 end
 
-function GamePadEquipmentUI._update_ammo_count(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+GamePadEquipmentUI._update_ammo_count = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 	local var_16_0 = BackendUtils.get_item_template(arg_16_1)
 	local var_16_1 = arg_16_0._ammo_widgets_by_name
 	local var_16_2 = false
@@ -817,7 +817,7 @@ function GamePadEquipmentUI._update_ammo_count(arg_16_0, arg_16_1, arg_16_2, arg
 	end
 end
 
-function GamePadEquipmentUI._animate_ammo_counter(arg_17_0, arg_17_1)
+GamePadEquipmentUI._animate_ammo_counter = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._ammo_counter_fade_delay
 
 	if var_17_0 then
@@ -852,7 +852,7 @@ function GamePadEquipmentUI._animate_ammo_counter(arg_17_0, arg_17_1)
 	return true
 end
 
-function GamePadEquipmentUI._set_ammo_counter_alpha(arg_18_0, arg_18_1)
+GamePadEquipmentUI._set_ammo_counter_alpha = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._ammo_widgets_by_name
 	local var_18_1 = var_18_0.ammo_text_clip
 
@@ -874,7 +874,7 @@ function GamePadEquipmentUI._set_ammo_counter_alpha(arg_18_0, arg_18_1)
 	arg_18_0:set_dirty()
 end
 
-function GamePadEquipmentUI._set_ammo_counter_color(arg_19_0, arg_19_1)
+GamePadEquipmentUI._set_ammo_counter_color = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._ammo_widgets_by_name.ammo_text_clip
 	local var_19_1 = var_19_0.style.text.text_color
 
@@ -904,7 +904,7 @@ function GamePadEquipmentUI._set_ammo_counter_color(arg_19_0, arg_19_1)
 	arg_19_0:set_dirty()
 end
 
-function GamePadEquipmentUI._set_ammo_text_focus(arg_20_0, arg_20_1)
+GamePadEquipmentUI._set_ammo_text_focus = function (arg_20_0, arg_20_1)
 	if arg_20_0._draw_overheat and arg_20_0._overcharge_fraction ~= nil then
 		local var_20_0 = 1
 		local var_20_1 = arg_20_1 and var_0_8.focus or var_0_8.unfocused
@@ -926,7 +926,7 @@ function GamePadEquipmentUI._set_ammo_text_focus(arg_20_0, arg_20_1)
 	arg_20_0._ammo_dirty = true
 end
 
-function GamePadEquipmentUI._get_ammunition_count(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+GamePadEquipmentUI._get_ammunition_count = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 	local var_21_0
 
 	if not arg_21_3.ammo_data then
@@ -950,7 +950,7 @@ function GamePadEquipmentUI._get_ammunition_count(arg_21_0, arg_21_1, arg_21_2, 
 	return var_21_2, var_21_3, var_21_4
 end
 
-function GamePadEquipmentUI._get_overcharge_amount(arg_22_0, arg_22_1)
+GamePadEquipmentUI._get_overcharge_amount = function (arg_22_0, arg_22_1)
 	local var_22_0 = ScriptUnit.extension(arg_22_1, "overcharge_system")
 	local var_22_1 = var_22_0:overcharge_fraction()
 	local var_22_2 = var_22_0:threshold_fraction()
@@ -959,7 +959,7 @@ function GamePadEquipmentUI._get_overcharge_amount(arg_22_0, arg_22_1)
 	return true, var_22_1, var_22_2, var_22_3
 end
 
-function GamePadEquipmentUI._add_animation(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+GamePadEquipmentUI._add_animation = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
 	local var_23_0 = arg_23_0._animations
 	local var_23_1 = UISettings.inventory_hud
 	local var_23_2 = arg_23_5 or var_23_1.equip_animation_duration
@@ -980,7 +980,7 @@ function GamePadEquipmentUI._add_animation(arg_23_0, arg_23_1, arg_23_2, arg_23_
 	end
 end
 
-function GamePadEquipmentUI._update_animations(arg_24_0, arg_24_1, arg_24_2)
+GamePadEquipmentUI._update_animations = function (arg_24_0, arg_24_1, arg_24_2)
 	local var_24_0 = arg_24_0._time_fade_storage_slots
 
 	if var_24_0 then
@@ -1021,7 +1021,7 @@ function GamePadEquipmentUI._update_animations(arg_24_0, arg_24_1, arg_24_2)
 	return var_24_6
 end
 
-function GamePadEquipmentUI._animate_weapon_wield(arg_25_0, arg_25_1, arg_25_2)
+GamePadEquipmentUI._animate_weapon_wield = function (arg_25_0, arg_25_1, arg_25_2)
 	local var_25_0 = arg_25_1.widget
 	local var_25_1 = arg_25_1.total_time
 	local var_25_2 = arg_25_1.time + arg_25_2
@@ -1042,7 +1042,7 @@ function GamePadEquipmentUI._animate_weapon_wield(arg_25_0, arg_25_1, arg_25_2)
 	return var_25_3 < 1 and arg_25_1 or nil
 end
 
-function GamePadEquipmentUI._animate_weapon_unwield(arg_26_0, arg_26_1, arg_26_2)
+GamePadEquipmentUI._animate_weapon_unwield = function (arg_26_0, arg_26_1, arg_26_2)
 	local var_26_0 = arg_26_1.widget
 	local var_26_1 = arg_26_1.total_time
 	local var_26_2 = arg_26_1.time + arg_26_2
@@ -1056,7 +1056,7 @@ function GamePadEquipmentUI._animate_weapon_unwield(arg_26_0, arg_26_1, arg_26_2
 	return var_26_3 < 1 and arg_26_1 or nil
 end
 
-function GamePadEquipmentUI._animate_slot_wield(arg_27_0, arg_27_1, arg_27_2)
+GamePadEquipmentUI._animate_slot_wield = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = arg_27_1.widget
 	local var_27_1 = arg_27_1.total_time
 	local var_27_2 = arg_27_1.time + arg_27_2
@@ -1085,7 +1085,7 @@ function GamePadEquipmentUI._animate_slot_wield(arg_27_0, arg_27_1, arg_27_2)
 	return var_27_3 < 1 and arg_27_1 or nil
 end
 
-function GamePadEquipmentUI._animate_slot_unwield(arg_28_0, arg_28_1, arg_28_2)
+GamePadEquipmentUI._animate_slot_unwield = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_1.widget
 	local var_28_1 = arg_28_1.total_time
 	local var_28_2 = arg_28_1.time + arg_28_2
@@ -1122,7 +1122,7 @@ function GamePadEquipmentUI._animate_slot_unwield(arg_28_0, arg_28_1, arg_28_2)
 	return var_28_3 < 1 and arg_28_1 or nil
 end
 
-function GamePadEquipmentUI._add_item(arg_29_0, arg_29_1, arg_29_2)
+GamePadEquipmentUI._add_item = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = arg_29_0._num_added_items or 0
 	local var_29_1 = arg_29_2 ~= nil
 
@@ -1217,7 +1217,7 @@ function GamePadEquipmentUI._add_item(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function GamePadEquipmentUI._remove_item(arg_30_0, arg_30_1)
+GamePadEquipmentUI._remove_item = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0._num_added_items or 0
 
 	if var_30_0 <= 0 then
@@ -1258,7 +1258,7 @@ function GamePadEquipmentUI._remove_item(arg_30_0, arg_30_1)
 	end
 end
 
-function GamePadEquipmentUI.set_position(arg_31_0, arg_31_1, arg_31_2)
+GamePadEquipmentUI.set_position = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0.ui_scenegraph.pivot.local_position
 
 	var_31_0[1] = arg_31_1
@@ -1275,7 +1275,7 @@ function GamePadEquipmentUI.set_position(arg_31_0, arg_31_1, arg_31_2)
 	arg_31_0:set_dirty()
 end
 
-function GamePadEquipmentUI.destroy(arg_32_0)
+GamePadEquipmentUI.destroy = function (arg_32_0)
 	local var_32_0 = Managers.state.event
 
 	var_32_0:unregister("input_changed", arg_32_0)
@@ -1288,13 +1288,13 @@ function GamePadEquipmentUI.destroy(arg_32_0)
 	print("[GamePadEquipmentUI] - Destroy")
 end
 
-function GamePadEquipmentUI.set_visible(arg_33_0, arg_33_1)
+GamePadEquipmentUI.set_visible = function (arg_33_0, arg_33_1)
 	arg_33_0._is_visible = arg_33_1
 
 	arg_33_0:_set_elements_visible(arg_33_1)
 end
 
-function GamePadEquipmentUI._set_elements_visible(arg_34_0, arg_34_1)
+GamePadEquipmentUI._set_elements_visible = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0.ui_renderer
 
 	for iter_34_0, iter_34_1 in ipairs(arg_34_0._widgets) do
@@ -1318,7 +1318,7 @@ function GamePadEquipmentUI._set_elements_visible(arg_34_0, arg_34_1)
 	arg_34_0:set_dirty()
 end
 
-function GamePadEquipmentUI.update(arg_35_0, arg_35_1, arg_35_2)
+GamePadEquipmentUI.update = function (arg_35_0, arg_35_1, arg_35_2)
 	local var_35_0 = false
 
 	arg_35_0:_update_game_options()
@@ -1349,7 +1349,7 @@ function GamePadEquipmentUI.update(arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0._ui_animator:update(arg_35_1)
 end
 
-function GamePadEquipmentUI._handle_career_change(arg_36_0)
+GamePadEquipmentUI._handle_career_change = function (arg_36_0)
 	local var_36_0 = arg_36_0._career_name
 	local var_36_1 = Managers.player:local_player()
 	local var_36_2 = var_36_1 and var_36_1.player_unit
@@ -1371,13 +1371,13 @@ function GamePadEquipmentUI._handle_career_change(arg_36_0)
 	end
 end
 
-function GamePadEquipmentUI._handle_resolution_modified(arg_37_0)
+GamePadEquipmentUI._handle_resolution_modified = function (arg_37_0)
 	if RESOLUTION_LOOKUP.modified then
 		arg_37_0:_on_resolution_modified()
 	end
 end
 
-function GamePadEquipmentUI._on_resolution_modified(arg_38_0)
+GamePadEquipmentUI._on_resolution_modified = function (arg_38_0)
 	for iter_38_0, iter_38_1 in ipairs(arg_38_0._widgets) do
 		arg_38_0:_set_widget_dirty(iter_38_1)
 	end
@@ -1393,7 +1393,7 @@ function GamePadEquipmentUI._on_resolution_modified(arg_38_0)
 	arg_38_0:set_dirty()
 end
 
-function GamePadEquipmentUI._handle_gamepad_activity(arg_39_0)
+GamePadEquipmentUI._handle_gamepad_activity = function (arg_39_0)
 	local var_39_0 = Managers.input:is_device_active("gamepad")
 	local var_39_1 = Managers.input:get_most_recent_device()
 	local var_39_2 = arg_39_0.gamepad_active_last_frame == nil or var_39_0 and var_39_1 ~= arg_39_0._most_recent_device
@@ -1415,11 +1415,11 @@ function GamePadEquipmentUI._handle_gamepad_activity(arg_39_0)
 	arg_39_0._most_recent_device = var_39_1
 end
 
-function GamePadEquipmentUI._set_game_options_dirty(arg_40_0)
+GamePadEquipmentUI._set_game_options_dirty = function (arg_40_0)
 	arg_40_0._game_options_dirty = true
 end
 
-function GamePadEquipmentUI._update_game_options(arg_41_0)
+GamePadEquipmentUI._update_game_options = function (arg_41_0)
 	if not arg_41_0._game_options_dirty then
 		return
 	end
@@ -1430,7 +1430,7 @@ function GamePadEquipmentUI._update_game_options(arg_41_0)
 	arg_41_0._game_options_dirty = false
 end
 
-function GamePadEquipmentUI._update_gamepad_input_button(arg_42_0)
+GamePadEquipmentUI._update_gamepad_input_button = function (arg_42_0)
 	local var_42_0 = Managers.input:get_service("Player")
 	local var_42_1 = "weapon_reload_input"
 	local var_42_2 = true
@@ -1473,7 +1473,7 @@ function GamePadEquipmentUI._update_gamepad_input_button(arg_42_0)
 	end
 end
 
-function GamePadEquipmentUI._handle_gamepad(arg_43_0)
+GamePadEquipmentUI._handle_gamepad = function (arg_43_0)
 	if (not (Managers.input:is_device_active("gamepad") or not IS_WINDOWS) or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" then
 		if arg_43_0._retained_elements_visible then
 			arg_43_0:_set_elements_visible(false)
@@ -1490,7 +1490,7 @@ function GamePadEquipmentUI._handle_gamepad(arg_43_0)
 	end
 end
 
-function GamePadEquipmentUI.draw(arg_44_0, arg_44_1)
+GamePadEquipmentUI.draw = function (arg_44_0, arg_44_1)
 	if not arg_44_0._is_visible then
 		return
 	end
@@ -1549,7 +1549,7 @@ function GamePadEquipmentUI.draw(arg_44_0, arg_44_1)
 	arg_44_0._ammo_dirty = false
 end
 
-function GamePadEquipmentUI._set_color(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+GamePadEquipmentUI._set_color = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	if not arg_45_3 then
 		arg_45_1[1] = arg_45_2[1]
 	end
@@ -1559,7 +1559,7 @@ function GamePadEquipmentUI._set_color(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	arg_45_1[4] = arg_45_2[4]
 end
 
-function GamePadEquipmentUI.set_dirty(arg_46_0)
+GamePadEquipmentUI.set_dirty = function (arg_46_0)
 	arg_46_0._dirty = true
 
 	if arg_46_0.cleanui then
@@ -1567,7 +1567,7 @@ function GamePadEquipmentUI.set_dirty(arg_46_0)
 	end
 end
 
-function GamePadEquipmentUI._set_widget_dirty(arg_47_0, arg_47_1)
+GamePadEquipmentUI._set_widget_dirty = function (arg_47_0, arg_47_1)
 	arg_47_1.element.dirty = true
 
 	if arg_47_0.cleanui then
@@ -1575,7 +1575,7 @@ function GamePadEquipmentUI._set_widget_dirty(arg_47_0, arg_47_1)
 	end
 end
 
-function GamePadEquipmentUI._set_overheat_fraction(arg_48_0, arg_48_1)
+GamePadEquipmentUI._set_overheat_fraction = function (arg_48_0, arg_48_1)
 	local var_48_0 = arg_48_0._widgets_by_name.overcharge
 
 	var_48_0.content.texture_id.uvs[2][1] = arg_48_1
@@ -1590,7 +1590,7 @@ function GamePadEquipmentUI._set_overheat_fraction(arg_48_0, arg_48_1)
 	arg_48_0:set_dirty()
 end
 
-function GamePadEquipmentUI._show_overheat_meter(arg_49_0, arg_49_1)
+GamePadEquipmentUI._show_overheat_meter = function (arg_49_0, arg_49_1)
 	local var_49_0 = arg_49_0._widgets_by_name
 	local var_49_1 = arg_49_0._ammo_widgets_by_name
 
@@ -1602,13 +1602,13 @@ function GamePadEquipmentUI._show_overheat_meter(arg_49_0, arg_49_1)
 	arg_49_0:set_dirty()
 end
 
-function GamePadEquipmentUI._set_widget_visibility(arg_50_0, arg_50_1, arg_50_2)
+GamePadEquipmentUI._set_widget_visibility = function (arg_50_0, arg_50_1, arg_50_2)
 	arg_50_1.content.visible = arg_50_2
 
 	arg_50_0:_set_widget_dirty(arg_50_1)
 end
 
-function GamePadEquipmentUI.set_alpha(arg_51_0, arg_51_1)
+GamePadEquipmentUI.set_alpha = function (arg_51_0, arg_51_1)
 	arg_51_0.render_settings.alpha_multiplier = arg_51_1
 
 	for iter_51_0, iter_51_1 in pairs(arg_51_0._widgets) do
@@ -1634,7 +1634,7 @@ function GamePadEquipmentUI.set_alpha(arg_51_0, arg_51_1)
 	arg_51_0:set_dirty()
 end
 
-function GamePadEquipmentUI.set_ammo_alpha(arg_52_0, arg_52_1)
+GamePadEquipmentUI.set_ammo_alpha = function (arg_52_0, arg_52_1)
 	arg_52_0.ammo_alpha_multiplier = arg_52_1
 
 	for iter_52_0, iter_52_1 in pairs(arg_52_0._ammo_widgets) do
@@ -1644,7 +1644,7 @@ function GamePadEquipmentUI.set_ammo_alpha(arg_52_0, arg_52_1)
 	arg_52_0:set_dirty()
 end
 
-function GamePadEquipmentUI.set_frame_alpha(arg_53_0, arg_53_1)
+GamePadEquipmentUI.set_frame_alpha = function (arg_53_0, arg_53_1)
 	arg_53_0.frame_alpha_multiplier = arg_53_1
 
 	for iter_53_0, iter_53_1 in pairs(arg_53_0._frame_widgets) do
@@ -1654,7 +1654,7 @@ function GamePadEquipmentUI.set_frame_alpha(arg_53_0, arg_53_1)
 	arg_53_0:set_dirty()
 end
 
-function GamePadEquipmentUI.set_panel_alpha(arg_54_0, arg_54_1)
+GamePadEquipmentUI.set_panel_alpha = function (arg_54_0, arg_54_1)
 	arg_54_0.panel_alpha_multiplier = arg_54_1
 
 	for iter_54_0, iter_54_1 in pairs(arg_54_0._widgets) do
@@ -1676,7 +1676,7 @@ function GamePadEquipmentUI.set_panel_alpha(arg_54_0, arg_54_1)
 	arg_54_0:set_dirty()
 end
 
-function GamePadEquipmentUI._apply_crosshair_position(arg_55_0, arg_55_1, arg_55_2)
+GamePadEquipmentUI._apply_crosshair_position = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = "screen_bottom_pivot"
 	local var_55_1 = arg_55_0.ui_scenegraph[var_55_0].local_position
 	local var_55_2 = false
@@ -1702,7 +1702,7 @@ function GamePadEquipmentUI._apply_crosshair_position(arg_55_0, arg_55_1, arg_55
 	return var_55_2
 end
 
-function GamePadEquipmentUI._show_hold_to_reload(arg_56_0, arg_56_1)
+GamePadEquipmentUI._show_hold_to_reload = function (arg_56_0, arg_56_1)
 	local var_56_0 = Managers.input:is_device_active("gamepad")
 
 	if (not var_56_0 or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" then
@@ -1765,7 +1765,7 @@ function GamePadEquipmentUI._show_hold_to_reload(arg_56_0, arg_56_1)
 	arg_56_0:_set_widget_dirty(var_56_14)
 end
 
-function GamePadEquipmentUI._update_reload_ui_state(arg_57_0, arg_57_1, arg_57_2)
+GamePadEquipmentUI._update_reload_ui_state = function (arg_57_0, arg_57_1, arg_57_2)
 	if not arg_57_0._ammo_widgets_by_name.reload_tip_text then
 		return
 	end

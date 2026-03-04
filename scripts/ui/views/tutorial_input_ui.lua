@@ -5,7 +5,7 @@ local var_0_1 = true
 
 TutorialInputUI = class(TutorialInputUI)
 
-function TutorialInputUI.init(arg_1_0, arg_1_1, arg_1_2)
+TutorialInputUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._input_manager = arg_1_2.input_manager
@@ -27,7 +27,7 @@ function TutorialInputUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "input_changed", "event_input_changed")
 end
 
-function TutorialInputUI.destroy(arg_2_0)
+TutorialInputUI.destroy = function (arg_2_0)
 	if Managers.state.event then
 		Managers.state.event:unregister("event_add_tutorial_input", arg_2_0)
 		Managers.state.event:unregister("event_update_tutorial_input", arg_2_0)
@@ -36,7 +36,7 @@ function TutorialInputUI.destroy(arg_2_0)
 	end
 end
 
-function TutorialInputUI.event_add_tutorial_input(arg_3_0, arg_3_1, arg_3_2)
+TutorialInputUI.event_add_tutorial_input = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Missions[arg_3_1]
 
 	fassert(var_3_0, "[TutorialInputUI:event_add_tutorial_input] There is no mission called %q", arg_3_1)
@@ -49,11 +49,11 @@ function TutorialInputUI.event_add_tutorial_input(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function TutorialInputUI.event_update_tutorial_input(arg_4_0, arg_4_1)
+TutorialInputUI.event_update_tutorial_input = function (arg_4_0, arg_4_1)
 	return
 end
 
-function TutorialInputUI.event_remove_tutorial_input(arg_5_0, arg_5_1)
+TutorialInputUI.event_remove_tutorial_input = function (arg_5_0, arg_5_1)
 	fassert(Missions[arg_5_1], "[TutorialInputUI:event_remove_tutorial_input] There is no mission called %q", arg_5_1)
 
 	local var_5_0
@@ -71,11 +71,11 @@ function TutorialInputUI.event_remove_tutorial_input(arg_5_0, arg_5_1)
 	end
 end
 
-function TutorialInputUI.event_input_changed(arg_6_0)
+TutorialInputUI.event_input_changed = function (arg_6_0)
 	arg_6_0._input_changed = true
 end
 
-function TutorialInputUI._create_ui_elements(arg_7_0)
+TutorialInputUI._create_ui_elements = function (arg_7_0)
 	arg_7_0._tutorial_tooltip_animations = {}
 
 	UIRenderer.clear_scenegraph_queue(arg_7_0._ui_renderer)
@@ -91,7 +91,7 @@ function TutorialInputUI._create_ui_elements(arg_7_0)
 	arg_7_0._active_tooltip_name = nil
 end
 
-function TutorialInputUI._button_texture_data_by_input_action(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+TutorialInputUI._button_texture_data_by_input_action = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._input_manager
 	local var_8_1 = var_8_0:is_device_active("gamepad")
 	local var_8_2 = PLATFORM
@@ -114,7 +114,7 @@ function TutorialInputUI._button_texture_data_by_input_action(arg_8_0, arg_8_1, 
 	end
 end
 
-function TutorialInputUI.update(arg_9_0, arg_9_1, arg_9_2)
+TutorialInputUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if var_0_1 then
 		arg_9_0:_create_ui_elements()
 	end
@@ -124,7 +124,7 @@ function TutorialInputUI.update(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_draw(arg_9_1, arg_9_2)
 end
 
-function TutorialInputUI._update_animations(arg_10_0, arg_10_1, arg_10_2)
+TutorialInputUI._update_animations = function (arg_10_0, arg_10_1, arg_10_2)
 	for iter_10_0, iter_10_1 in pairs(arg_10_0._tutorial_tooltip_animations) do
 		UIAnimation.update(iter_10_1, arg_10_1)
 
@@ -134,7 +134,7 @@ function TutorialInputUI._update_animations(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function TutorialInputUI._update_tooltip(arg_11_0, arg_11_1, arg_11_2)
+TutorialInputUI._update_tooltip = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._active_tutorial_tooltips[1]
 
 	if not var_11_0 then
@@ -309,7 +309,7 @@ function TutorialInputUI._update_tooltip(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function TutorialInputUI._draw(arg_12_0, arg_12_1, arg_12_2)
+TutorialInputUI._draw = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_renderer
 	local var_12_1 = arg_12_0._ui_scenegraph
 	local var_12_2 = arg_12_0._input_manager:get_service("Player")
@@ -324,7 +324,7 @@ function TutorialInputUI._draw(arg_12_0, arg_12_1, arg_12_2)
 	UIRenderer.end_pass(var_12_0)
 end
 
-function TutorialInputUI.hide(arg_13_0)
+TutorialInputUI.hide = function (arg_13_0)
 	arg_13_0._active_tooltip_name = nil
 
 	arg_13_0:fade_out()
@@ -332,15 +332,15 @@ end
 
 local var_0_2 = 0.25
 
-function TutorialInputUI.fade_in(arg_14_0)
+TutorialInputUI.fade_in = function (arg_14_0)
 	arg_14_0:_fade(0, 255, var_0_2, false)
 end
 
-function TutorialInputUI.fade_out(arg_15_0)
+TutorialInputUI.fade_out = function (arg_15_0)
 	arg_15_0:_fade(255, 0, var_0_2, true)
 end
 
-function TutorialInputUI._fade(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+TutorialInputUI._fade = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = arg_16_0._tutorial_tooltip_widget.style
 	local var_16_1 = var_16_0.background
 	local var_16_2 = var_16_0.divider
@@ -401,7 +401,7 @@ function TutorialInputUI._fade(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	end
 end
 
-function TutorialInputUI.has_completed_fade(arg_17_0)
+TutorialInputUI.has_completed_fade = function (arg_17_0)
 	if next(arg_17_0._tutorial_tooltip_animations) ~= nil then
 		return false
 	end
@@ -409,7 +409,7 @@ function TutorialInputUI.has_completed_fade(arg_17_0)
 	return true
 end
 
-function TutorialInputUI.set_visible(arg_18_0, arg_18_1)
+TutorialInputUI.set_visible = function (arg_18_0, arg_18_1)
 	arg_18_0._is_visible = arg_18_1
 
 	local var_18_0 = arg_18_0._ui_renderer
@@ -421,14 +421,14 @@ function TutorialInputUI.set_visible(arg_18_0, arg_18_1)
 	UIRenderer.set_element_visible(var_18_0, arg_18_0._tutorial_tooltip_widget.element, arg_18_1)
 end
 
-function TutorialInputUI._get_profile_and_career_index(arg_19_0)
+TutorialInputUI._get_profile_and_career_index = function (arg_19_0)
 	local var_19_0 = Managers.player:local_player(1)
 	local var_19_1 = var_19_0 and var_19_0:career_index() or 1
 
 	return var_19_0 and var_19_0:profile_index() or 1, var_19_1
 end
 
-function TutorialInputUI._is_in_inn(arg_20_0)
+TutorialInputUI._is_in_inn = function (arg_20_0)
 	local var_20_0 = Managers.level_transition_handler:get_current_level_keys()
 
 	return LevelSettings[var_20_0].hub_level

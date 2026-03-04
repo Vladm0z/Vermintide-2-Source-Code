@@ -37,16 +37,16 @@ end
 
 TagQueryLoader = class(TagQueryLoader)
 
-function TagQueryLoader.init(arg_2_0, arg_2_1, arg_2_2)
+TagQueryLoader.init = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.loaded_files = {}
 	arg_2_0.file_environment = {
 		OP = var_0_0,
 		CombiningOP = var_0_1,
 		math = math,
-		define_rule = function(arg_3_0)
+		define_rule = function (arg_3_0)
 			arg_2_1:define_rule(arg_3_0)
 		end,
-		add_dialogues = function(arg_4_0)
+		add_dialogues = function (arg_4_0)
 			for iter_4_0, iter_4_1 in pairs(arg_4_0) do
 				iter_4_1.category = iter_4_1.category or "default"
 				arg_2_2[iter_4_0] = iter_4_1
@@ -60,13 +60,13 @@ function tag_query_errorfunc(arg_5_0)
 	return arg_5_0 .. "\n" .. debug.traceback()
 end
 
-function TagQueryLoader.load_file(arg_6_0, arg_6_1)
+TagQueryLoader.load_file = function (arg_6_0, arg_6_1)
 	local var_6_0 = require(arg_6_1)
 
 	arg_6_0:_trigger_file_function(arg_6_1, var_6_0)
 end
 
-function TagQueryLoader._trigger_file_function(arg_7_0, arg_7_1, arg_7_2)
+TagQueryLoader._trigger_file_function = function (arg_7_0, arg_7_1, arg_7_2)
 	setfenv(arg_7_2, arg_7_0.file_environment)
 
 	local var_7_0 = arg_7_0.tagquery_database.rules_n
@@ -78,7 +78,7 @@ function TagQueryLoader._trigger_file_function(arg_7_0, arg_7_1, arg_7_2)
 	var_0_2("Loaded file %s. Read %d rules.", arg_7_1, var_7_1)
 end
 
-function TagQueryLoader.unload_files(arg_8_0)
+TagQueryLoader.unload_files = function (arg_8_0)
 	for iter_8_0, iter_8_1 in ipairs(arg_8_0.loaded_files) do
 		if package.loaded[iter_8_1] then
 			local var_8_0 = package.load_order
@@ -108,7 +108,7 @@ function TagQueryLoader.unload_files(arg_8_0)
 	arg_8_0.tagquery_database = nil
 end
 
-function TagQueryLoader.load_auto_load_files(arg_9_0, arg_9_1)
+TagQueryLoader.load_auto_load_files = function (arg_9_0, arg_9_1)
 	local var_9_0 = DialogueSettings.auto_load_files
 
 	for iter_9_0, iter_9_1 in ipairs(var_9_0) do

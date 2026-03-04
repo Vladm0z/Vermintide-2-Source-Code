@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_woods.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pwe_overcharge_explode",
 		name = "pwe_overcharge_explode",

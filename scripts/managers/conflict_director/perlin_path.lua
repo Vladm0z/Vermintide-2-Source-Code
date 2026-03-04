@@ -22,7 +22,7 @@ end
 
 PerlinPath = {}
 
-function PerlinPath.make_perlin_path(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+PerlinPath.make_perlin_path = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = 0
 	local var_4_1 = {}
 
@@ -53,7 +53,7 @@ end
 local var_0_3 = 1345600
 local var_0_4 = 25
 
-function PerlinPath.make_easy_path(arg_5_0, arg_5_1, arg_5_2)
+PerlinPath.make_easy_path = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = {}
 	local var_5_1 = arg_5_2 / var_0_4
 	local var_5_2 = arg_5_2 / math.floor(var_5_1)
@@ -70,7 +70,7 @@ end
 
 local var_0_5 = Vector3.distance_squared
 
-function PerlinPath.fill_spawns(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PerlinPath.fill_spawns = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = {}
 	local var_6_1
 	local var_6_2 = 0
@@ -180,11 +180,11 @@ function PerlinPath.fill_spawns(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg
 	return var_6_3, var_6_0, var_6_5
 end
 
-function PerlinPath.populate_spawns(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+PerlinPath.populate_spawns = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	return
 end
 
-function PerlinPath.draw_debug_spawns(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+PerlinPath.draw_debug_spawns = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	local var_8_0 = #arg_8_2
 
 	for iter_8_0 = 1, var_8_0 do
@@ -200,7 +200,7 @@ function PerlinPath.draw_debug_spawns(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_
 	end
 end
 
-function PerlinPath.make_path(arg_9_0, arg_9_1)
+PerlinPath.make_path = function (arg_9_0, arg_9_1)
 	local var_9_0 = 1 / arg_9_1
 	local var_9_1 = 0
 
@@ -209,7 +209,7 @@ function PerlinPath.make_path(arg_9_0, arg_9_1)
 	end
 end
 
-function PerlinPath.normalize_path(arg_10_0, arg_10_1)
+PerlinPath.normalize_path = function (arg_10_0, arg_10_1)
 	local var_10_0 = 0
 	local var_10_1 = #arg_10_0 - 1
 

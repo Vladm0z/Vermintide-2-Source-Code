@@ -2,7 +2,7 @@
 
 UIWidgets = UIWidgets or {}
 
-function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2)
+UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = 8
 	local var_1_1 = 4
 	local var_1_2 = {
@@ -65,7 +65,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			pass_type = "texture",
 			style_id = "ranking_background_local_player",
 			texture_id = "background",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.local_player
 			end
 		},
@@ -73,10 +73,10 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			style_id = "ranking_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return not arg_3_0.local_player
 			end,
-			content_change_function = function(arg_4_0, arg_4_1)
+			content_change_function = function (arg_4_0, arg_4_1)
 				if IS_WINDOWS then
 					return
 				end
@@ -103,7 +103,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			pass_type = "texture",
 			style_id = "name_background_local_player",
 			texture_id = "background",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.local_player
 			end
 		},
@@ -111,10 +111,10 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			style_id = "name_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return not arg_6_0.local_player
 			end,
-			content_change_function = function(arg_7_0, arg_7_1)
+			content_change_function = function (arg_7_0, arg_7_1)
 				if IS_WINDOWS then
 					return
 				end
@@ -131,7 +131,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			pass_type = "texture",
 			style_id = "career_icon",
 			texture_id = "career_icon",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.career_icon
 			end
 		},
@@ -149,7 +149,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			pass_type = "texture",
 			style_id = "weave_background_local_player",
 			texture_id = "background",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.local_player
 			end
 		},
@@ -157,10 +157,10 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			style_id = "weave_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return not arg_10_0.local_player
 			end,
-			content_change_function = function(arg_11_0, arg_11_1)
+			content_change_function = function (arg_11_0, arg_11_1)
 				if IS_WINDOWS then
 					return
 				end
@@ -187,7 +187,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			pass_type = "texture",
 			style_id = "score_background_local_player",
 			texture_id = "background",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return arg_12_0.local_player
 			end
 		},
@@ -195,10 +195,10 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 			style_id = "score_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return not arg_13_0.local_player
 			end,
-			content_change_function = function(arg_14_0, arg_14_1)
+			content_change_function = function (arg_14_0, arg_14_1)
 				if IS_WINDOWS then
 					return
 				end
@@ -627,7 +627,7 @@ function UIWidgets.create_leaderboard_entry_definition(arg_1_0, arg_1_1, arg_1_2
 	}
 end
 
-function UIWidgets.create_leaderboard_loading_icon(arg_15_0, arg_15_1, arg_15_2)
+UIWidgets.create_leaderboard_loading_icon = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_2 or "loot_loading"
 	local var_15_1 = UIAtlasHelper.get_atlas_settings_by_texture_name(var_15_0).size
 	local var_15_2 = {
@@ -635,7 +635,7 @@ function UIWidgets.create_leaderboard_loading_icon(arg_15_0, arg_15_1, arg_15_2)
 			style_id = "texture_id",
 			pass_type = "rotated_texture",
 			texture_id = "texture_id",
-			content_change_function = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			content_change_function = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				local var_16_0 = ((arg_16_1.progress or 0) + arg_16_3) % 1
 
 				arg_16_1.angle = math.pow(2, math.smoothstep(var_16_0, 0, 1)) * (math.pi * 2)
@@ -716,7 +716,7 @@ function UIWidgets.create_leaderboard_loading_icon(arg_15_0, arg_15_1, arg_15_2)
 	}
 end
 
-function UIWidgets.create_leaderboard_error_icon(arg_17_0, arg_17_1)
+UIWidgets.create_leaderboard_error_icon = function (arg_17_0, arg_17_1)
 	local var_17_0 = {
 		{
 			texture_id = "texture_id",

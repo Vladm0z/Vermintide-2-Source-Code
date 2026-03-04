@@ -56,7 +56,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_1_0, arg_1_1)
+				enter_function = function (arg_1_0, arg_1_1)
 					arg_1_1:clear_input_buffer()
 
 					return arg_1_1:reset_release_input()
@@ -99,7 +99,7 @@ local var_0_0 = {
 				anim_event_secondary = "reload",
 				hold_input = "action_two_hold",
 				total_time = 0.66,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -138,7 +138,7 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_3_0, arg_3_1)
+				enter_function = function (arg_3_0, arg_3_1)
 					arg_3_1:clear_input_buffer()
 
 					return arg_3_1:reset_release_input()
@@ -168,7 +168,7 @@ local var_0_0 = {
 				unaim_sound_event = "stop_weapon_repeating_handgun_special_cylinder",
 				hold_input = "action_two_hold",
 				anim_event = "lock_target",
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -211,15 +211,15 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return false
 				end,
-				condition_func = function(arg_7_0, arg_7_1, arg_7_2)
+				condition_func = function (arg_7_0, arg_7_1, arg_7_2)
 					if arg_7_2 and (arg_7_2:total_remaining_ammo() <= 0 or arg_7_2:is_reloading()) then
 						return false
 					end
@@ -235,7 +235,7 @@ local var_0_0 = {
 				aim_sound_delay = 0,
 				hold_input = "action_two_hold",
 				can_abort_reload = true,
-				anim_end_event_condition_func = function(arg_8_0, arg_8_1)
+				anim_end_event_condition_func = function (arg_8_0, arg_8_1)
 					return arg_8_1 ~= "new_interupting_action"
 				end,
 				on_chain_keep_audio_loops = {
@@ -269,15 +269,15 @@ local var_0_0 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					arg_9_1:clear_input_buffer()
 
 					return arg_9_1:reset_release_input()
 				end,
-				zoom_condition_function = function()
+				zoom_condition_function = function ()
 					return false
 				end,
-				condition_func = function(arg_11_0, arg_11_1, arg_11_2)
+				condition_func = function (arg_11_0, arg_11_1, arg_11_2)
 					if arg_11_2 and (arg_11_2:total_remaining_ammo() <= 0 or arg_11_2:is_reloading()) then
 						return false
 					end

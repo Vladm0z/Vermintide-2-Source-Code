@@ -891,17 +891,17 @@ local var_0_7 = {
 			name = "ally_to_self",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				return
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = arg_2_2.style
 				local var_2_1 = math.easeOutCubic(arg_2_3)
 				local var_2_2 = 100 * math.easeOutCubic(arg_2_3)
 
 				for iter_2_0, iter_2_1 in pairs(var_2_0) do
 					if not iter_2_1.angle then
-						-- block empty
+						-- Nothing
 					else
 						local var_2_3 = iter_2_1.angle
 						local var_2_4 = -var_2_2 * math.cos(var_2_3)
@@ -915,7 +915,7 @@ local var_0_7 = {
 				var_2_0.career_portrait.color[1] = 255 * (1 - var_2_1)
 				var_2_0.text.text_color[1] = 255 * (1 - var_2_1)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		}
@@ -925,17 +925,17 @@ local var_0_7 = {
 			name = "self_to_ally",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = arg_5_2.style
 				local var_5_1 = math.easeOutCubic(arg_5_3)
 				local var_5_2 = 10 + 90 * (1 - math.easeOutCubic(arg_5_3))
 
 				for iter_5_0, iter_5_1 in pairs(var_5_0) do
 					if not iter_5_1.angle then
-						-- block empty
+						-- Nothing
 					else
 						local var_5_3 = iter_5_1.angle
 						local var_5_4 = -var_5_2 * math.cos(var_5_3)
@@ -949,7 +949,7 @@ local var_0_7 = {
 				var_5_0.career_portrait.color[1] = 255 * var_5_1
 				var_5_0.text.text_color[1] = 255 * var_5_1
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}

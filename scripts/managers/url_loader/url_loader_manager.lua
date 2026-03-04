@@ -7,42 +7,42 @@ if not UrlLoader then
 
 	UrlLoader = {}
 
-	function UrlLoader.init(arg_1_0)
+	UrlLoader.init = function (arg_1_0)
 		return
 	end
 
-	function UrlLoader.load_texture(arg_2_0, arg_2_1)
+	UrlLoader.load_texture = function (arg_2_0, arg_2_1)
 		return 0
 	end
 
-	function UrlLoader.unload(arg_3_0, arg_3_1)
+	UrlLoader.unload = function (arg_3_0, arg_3_1)
 		return
 	end
 
-	function UrlLoader.done(arg_4_0, arg_4_1)
+	UrlLoader.done = function (arg_4_0, arg_4_1)
 		return false
 	end
 
-	function UrlLoader.success(arg_5_0, arg_5_1)
+	UrlLoader.success = function (arg_5_0, arg_5_1)
 		return false
 	end
 
-	function UrlLoader.texture(arg_6_0, arg_6_1)
+	UrlLoader.texture = function (arg_6_0, arg_6_1)
 		return nil
 	end
 
-	function UrlLoader.update(arg_7_0)
+	UrlLoader.update = function (arg_7_0)
 		return
 	end
 
-	function UrlLoader.destroy(arg_8_0)
+	UrlLoader.destroy = function (arg_8_0)
 		return
 	end
 
 	UrlLoader.is_stub = true
 end
 
-function UrlLoaderManager.init(arg_9_0)
+UrlLoaderManager.init = function (arg_9_0)
 	if not UrlLoader.is_stub then
 		arg_9_0._url_loader = UrlLoader()
 	end
@@ -55,7 +55,7 @@ function UrlLoaderManager.init(arg_9_0)
 	arg_9_0._cleanup = false
 end
 
-function UrlLoaderManager.load_resource(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+UrlLoaderManager.load_resource = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
 	arg_10_4 = arg_10_4 or arg_10_2
 	arg_10_5 = arg_10_5 or "1"
 	arg_10_6 = arg_10_6 or "downloaded_textures"
@@ -85,7 +85,7 @@ function UrlLoaderManager.load_resource(arg_10_0, arg_10_1, arg_10_2, arg_10_3, 
 	arg_10_0._reference_callbacks[arg_10_4][arg_10_1] = arg_10_3
 end
 
-function UrlLoaderManager.unload_resource(arg_11_0, arg_11_1)
+UrlLoaderManager.unload_resource = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._reference_counters
 	local var_11_1 = arg_11_0._reference_callbacks
 	local var_11_2
@@ -119,7 +119,7 @@ function UrlLoaderManager.unload_resource(arg_11_0, arg_11_1)
 	arg_11_0._cleanup = true
 end
 
-function UrlLoaderManager._on_job_complete(arg_12_0, arg_12_1, arg_12_2)
+UrlLoaderManager._on_job_complete = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._url_loader
 	local var_12_1 = arg_12_1.url_job
 	local var_12_2 = arg_12_1.cache_key
@@ -147,7 +147,7 @@ function UrlLoaderManager._on_job_complete(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0._jobs[var_12_2] = nil
 end
 
-function UrlLoaderManager.update(arg_13_0, arg_13_1)
+UrlLoaderManager.update = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._url_loader
 	local var_13_1 = arg_13_0._jobs
 
@@ -177,7 +177,7 @@ function UrlLoaderManager.update(arg_13_0, arg_13_1)
 	end
 end
 
-function UrlLoaderManager.post_render(arg_14_0)
+UrlLoaderManager.post_render = function (arg_14_0)
 	if arg_14_0._cleanup then
 		local var_14_0 = arg_14_0._url_loader
 
@@ -187,7 +187,7 @@ function UrlLoaderManager.post_render(arg_14_0)
 	end
 end
 
-function UrlLoaderManager.destroy(arg_15_0)
+UrlLoaderManager.destroy = function (arg_15_0)
 	local var_15_0 = arg_15_0._url_loader
 	local var_15_1 = arg_15_0._url_jobs
 	local var_15_2 = arg_15_0._texture_resources

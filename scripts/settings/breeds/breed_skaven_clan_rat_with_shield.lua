@@ -561,7 +561,7 @@ local var_0_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		custom_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			assert(ScriptUnit.has_extension(arg_1_0, "ai_shield_system"), "skaven_clan_rat_with_shield dont have ai_shield_user_extension")
 
 			if arg_1_1.shield_breaking_hit then
@@ -600,7 +600,7 @@ local var_0_3 = {
 
 			return var_1_1, var_1_2
 		end,
-		custom_exit_function = function(arg_2_0, arg_2_1, arg_2_2)
+		custom_exit_function = function (arg_2_0, arg_2_1, arg_2_2)
 			(ScriptUnit.has_extension(arg_2_0, "ai_shield_system") and ScriptUnit.extension(arg_2_0, "ai_shield_system")):set_is_blocking(true)
 		end,
 		stagger_anims = {

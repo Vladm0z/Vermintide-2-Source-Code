@@ -7,7 +7,7 @@ local var_0_2 = var_0_0.scenegraph_definition
 StartGameWindowWeave = class(StartGameWindowWeave)
 StartGameWindowWeave.NAME = "StartGameWindowWeave"
 
-function StartGameWindowWeave.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowWeave.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowWeave")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -31,7 +31,7 @@ function StartGameWindowWeave.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.parent:set_play_button_enabled(true)
 end
 
-function StartGameWindowWeave.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+StartGameWindowWeave.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = UISceneGraph.init_scenegraph(var_0_2)
 
 	arg_2_0.ui_scenegraph = var_2_0
@@ -60,21 +60,21 @@ function StartGameWindowWeave.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StartGameWindowWeave.on_exit(arg_3_0, arg_3_1)
+StartGameWindowWeave.on_exit = function (arg_3_0, arg_3_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowWeave")
 
 	arg_3_0.ui_animator = nil
 end
 
-function StartGameWindowWeave.update(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowWeave.update = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function StartGameWindowWeave.post_update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowWeave.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function StartGameWindowWeave.draw(arg_6_0, arg_6_1)
+StartGameWindowWeave.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.ui_renderer
 	local var_6_1 = arg_6_0.ui_scenegraph
 	local var_6_2 = arg_6_0.parent:window_input_service()

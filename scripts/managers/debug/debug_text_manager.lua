@@ -2,7 +2,7 @@
 
 DebugTextManager = class(DebugTextManager)
 
-function DebugTextManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DebugTextManager.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._world = arg_1_1
 	arg_1_0._gui = arg_1_2
 	arg_1_0._world_gui = World.create_world_gui(arg_1_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts", "immediate")
@@ -19,7 +19,7 @@ function DebugTextManager.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	arg_1_0._world_texts = {}
 end
 
-function DebugTextManager.update(arg_2_0, arg_2_1, arg_2_2)
+DebugTextManager.update = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._time = arg_2_0._time + arg_2_1
 
 	if script_data and script_data.disable_debug_draw then
@@ -31,7 +31,7 @@ function DebugTextManager.update(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0:_update_screen_text()
 end
 
-function DebugTextManager._update_unit_texts(arg_3_0, arg_3_1, arg_3_2)
+DebugTextManager._update_unit_texts = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = Managers.state.camera:camera_rotation(arg_3_1)
 	local var_3_1 = arg_3_0._world_gui
 	local var_3_2 = "arial"
@@ -79,7 +79,7 @@ function DebugTextManager._update_unit_texts(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function DebugTextManager._update_world_texts(arg_4_0, arg_4_1)
+DebugTextManager._update_world_texts = function (arg_4_0, arg_4_1)
 	local var_4_0 = Managers.state.camera:camera_rotation(arg_4_1)
 	local var_4_1 = arg_4_0._world_gui
 	local var_4_2 = arg_4_0._world_text_size
@@ -103,7 +103,7 @@ function DebugTextManager._update_world_texts(arg_4_0, arg_4_1)
 	end
 end
 
-function DebugTextManager._update_screen_text(arg_5_0)
+DebugTextManager._update_screen_text = function (arg_5_0)
 	if arg_5_0._screen_text and arg_5_0._time > arg_5_0._screen_text.time then
 		Gui.destroy_text(arg_5_0._gui, arg_5_0._screen_text.text_id)
 		Gui.destroy_rect(arg_5_0._gui, arg_5_0._screen_text.bgr_id)
@@ -112,7 +112,7 @@ function DebugTextManager._update_screen_text(arg_5_0)
 	end
 end
 
-function DebugTextManager.output_unit_text(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
+DebugTextManager.output_unit_text = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
 	if script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -180,7 +180,7 @@ function DebugTextManager.output_unit_text(arg_6_0, arg_6_1, arg_6_2, arg_6_3, a
 	arg_6_0._unit_texts[arg_6_3][arg_6_7][#arg_6_0._unit_texts[arg_6_3][arg_6_7] + 1] = var_6_11
 end
 
-function DebugTextManager.clear_unit_text(arg_7_0, arg_7_1, arg_7_2)
+DebugTextManager.clear_unit_text = function (arg_7_0, arg_7_1, arg_7_2)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0._unit_texts) do
 		if not arg_7_1 or arg_7_1 == iter_7_0 then
 			for iter_7_2, iter_7_3 in pairs(iter_7_1) do
@@ -197,7 +197,7 @@ function DebugTextManager.clear_unit_text(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DebugTextManager.output_world_text(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
+DebugTextManager.output_world_text = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
 	if script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -251,7 +251,7 @@ function DebugTextManager.output_world_text(arg_8_0, arg_8_1, arg_8_2, arg_8_3, 
 	arg_8_0._world_texts[arg_8_5][#arg_8_0._world_texts[arg_8_5] + 1] = var_8_10
 end
 
-function DebugTextManager.clear_world_text(arg_9_0, arg_9_1)
+DebugTextManager.clear_world_text = function (arg_9_0, arg_9_1)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0._world_texts) do
 		if not arg_9_1 or iter_9_0 == "none" or arg_9_1 == iter_9_0 then
 			for iter_9_2 = #iter_9_1, 1, -1 do
@@ -264,7 +264,7 @@ function DebugTextManager.clear_world_text(arg_9_0, arg_9_1)
 	end
 end
 
-function DebugTextManager.output_screen_text(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+DebugTextManager.output_screen_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	if script_data and script_data.disable_debug_draw then
 		return
 	end
@@ -302,7 +302,7 @@ function DebugTextManager.output_screen_text(arg_10_0, arg_10_1, arg_10_2, arg_1
 	end
 end
 
-function DebugTextManager.destroy(arg_11_0)
+DebugTextManager.destroy = function (arg_11_0)
 	if arg_11_0._screen_text then
 		Gui.destroy_text(arg_11_0._gui, arg_11_0._screen_text.text_id)
 		Gui.destroy_rect(arg_11_0._gui, arg_11_0._screen_text.bgr_id)
@@ -321,7 +321,7 @@ function DebugTextManager.destroy(arg_11_0)
 	end
 end
 
-function DebugTextManager._destroy_unit_texts(arg_12_0, arg_12_1)
+DebugTextManager._destroy_unit_texts = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._unit_texts[arg_12_1]
 
 	for iter_12_0, iter_12_1 in pairs(var_12_0) do

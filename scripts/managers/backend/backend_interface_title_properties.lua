@@ -2,11 +2,11 @@
 
 BackendInterfaceTitleProperties = class(BackendInterfaceTitleProperties)
 
-function BackendInterfaceTitleProperties.init(arg_1_0)
+BackendInterfaceTitleProperties.init = function (arg_1_0)
 	return
 end
 
-function BackendInterfaceTitleProperties._refresh_if_needed(arg_2_0)
+BackendInterfaceTitleProperties._refresh_if_needed = function (arg_2_0)
 	if not arg_2_0._properties then
 		local var_2_0 = Backend.get_title_properties()
 		local var_2_1 = {}
@@ -19,13 +19,13 @@ function BackendInterfaceTitleProperties._refresh_if_needed(arg_2_0)
 	end
 end
 
-function BackendInterfaceTitleProperties.get(arg_3_0)
+BackendInterfaceTitleProperties.get = function (arg_3_0)
 	arg_3_0:_refresh_if_needed()
 
 	return arg_3_0._properties
 end
 
-function BackendInterfaceTitleProperties.get_value(arg_4_0, arg_4_1)
+BackendInterfaceTitleProperties.get_value = function (arg_4_0, arg_4_1)
 	arg_4_0:_refresh_if_needed()
 
 	local var_4_0 = arg_4_0._properties[arg_4_1]

@@ -12,7 +12,7 @@ SoundSectorSystem.system_extensions = {
 	"SoundSectorExtension"
 }
 
-function SoundSectorSystem.init(arg_1_0, arg_1_1, arg_1_2)
+SoundSectorSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.unit_storage = arg_1_1.unit_storage
 
 	local var_1_0 = SoundSectorSystem.system_extensions
@@ -56,7 +56,7 @@ function SoundSectorSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	end
 end
 
-function SoundSectorSystem.destroy(arg_2_0)
+SoundSectorSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 
 	local var_2_0 = Managers.state.event
@@ -72,7 +72,7 @@ function SoundSectorSystem.destroy(arg_2_0)
 	end
 end
 
-function SoundSectorSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+SoundSectorSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = {}
 
 	ScriptUnit.set_extension(arg_3_2, "sound_sector_system", var_3_0)
@@ -95,7 +95,7 @@ function SoundSectorSystem.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return var_3_0
 end
 
-function SoundSectorSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+SoundSectorSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	if arg_4_3 == "SoundSectorExtension" then
 		local var_4_0 = arg_4_0._extensions[arg_4_2].sector_index
 
@@ -107,14 +107,14 @@ function SoundSectorSystem.extensions_ready(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function SoundSectorSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+SoundSectorSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._frozen_extensions[arg_5_1] = nil
 
 	arg_5_0:_cleanup_extension(arg_5_1, arg_5_2)
 	ScriptUnit.remove_extension(arg_5_1, arg_5_0.NAME)
 end
 
-function SoundSectorSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
+SoundSectorSystem.on_freeze_extension = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_0._extensions[arg_6_1]
 
 	fassert(var_6_0, "Unit was already frozen.")
@@ -124,7 +124,7 @@ function SoundSectorSystem.on_freeze_extension(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_cleanup_extension(arg_6_1, arg_6_2)
 end
 
-function SoundSectorSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
+SoundSectorSystem._cleanup_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._extensions[arg_7_1]
 
 	if var_7_0 == nil then
@@ -141,7 +141,7 @@ function SoundSectorSystem._cleanup_extension(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._extensions[arg_7_1] = nil
 end
 
-function SoundSectorSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+SoundSectorSystem.freeze = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._frozen_extensions
 
 	if var_8_0[arg_8_1] then
@@ -157,7 +157,7 @@ function SoundSectorSystem.freeze(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	var_8_0[arg_8_1] = var_8_1
 end
 
-function SoundSectorSystem.unfreeze(arg_9_0, arg_9_1)
+SoundSectorSystem.unfreeze = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_0._frozen_extensions[arg_9_1]
 
 	arg_9_0._frozen_extensions[arg_9_1] = nil
@@ -177,7 +177,7 @@ function SoundSectorSystem.unfreeze(arg_9_0, arg_9_1)
 	end
 end
 
-function SoundSectorSystem.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+SoundSectorSystem.update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if not arg_10_0.camera_unit then
 		return
 	end
@@ -220,7 +220,7 @@ function SoundSectorSystem.update(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-function SoundSectorSystem._update_sectors(arg_11_0, arg_11_1)
+SoundSectorSystem._update_sectors = function (arg_11_0, arg_11_1)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._extensions) do
 		local var_11_0 = arg_11_0:_calc_unit_sector(arg_11_1, iter_11_0)
 		local var_11_1 = iter_11_1.sector_index
@@ -241,7 +241,7 @@ function SoundSectorSystem._update_sectors(arg_11_0, arg_11_1)
 	end
 end
 
-function SoundSectorSystem._play_sector_sound_event(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+SoundSectorSystem._play_sector_sound_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
 	local var_12_0 = LevelHelper:current_level_settings().terrain or "city"
 	local var_12_1 = arg_12_0._sector_sound_source_units[arg_12_1]
 	local var_12_2 = Managers.state.entity:system("sound_environment_system")
@@ -257,7 +257,7 @@ function SoundSectorSystem._play_sector_sound_event(arg_12_0, arg_12_1, arg_12_2
 	arg_12_0.current_audio_event = arg_12_5
 end
 
-function SoundSectorSystem._stop_sector_sound_event(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+SoundSectorSystem._stop_sector_sound_event = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_0.wwise_world
 	local var_13_1 = arg_13_0._sector_sound_source_ids[arg_13_2]
 
@@ -282,7 +282,7 @@ end
 local var_0_2 = 25
 local var_0_3 = 1600
 
-function SoundSectorSystem._calc_unit_sector(arg_14_0, arg_14_1, arg_14_2)
+SoundSectorSystem._calc_unit_sector = function (arg_14_0, arg_14_1, arg_14_2)
 	if not Vector3.is_valid(arg_14_1) then
 		return false
 	end
@@ -297,7 +297,7 @@ function SoundSectorSystem._calc_unit_sector(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function SoundSectorSystem.hot_join_sync(arg_15_0, arg_15_1)
+SoundSectorSystem.hot_join_sync = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._extensions
 	local var_15_1 = Managers.state.network.network_transmit
 
@@ -310,11 +310,11 @@ function SoundSectorSystem.hot_join_sync(arg_15_0, arg_15_1)
 	end
 end
 
-function SoundSectorSystem.local_player_created(arg_16_0, arg_16_1)
+SoundSectorSystem.local_player_created = function (arg_16_0, arg_16_1)
 	arg_16_0.camera_unit = arg_16_1.camera_follow_unit
 end
 
-function SoundSectorSystem.event_ai_unit_activated(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+SoundSectorSystem.event_ai_unit_activated = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0.unit_storage:go_id(arg_17_1)
 	local var_17_1 = arg_17_0._extensions[arg_17_1]
 
@@ -325,7 +325,7 @@ function SoundSectorSystem.event_ai_unit_activated(arg_17_0, arg_17_1, arg_17_2,
 	end
 end
 
-function SoundSectorSystem.event_ai_unit_deactivated(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+SoundSectorSystem.event_ai_unit_deactivated = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_0.unit_storage:go_id(arg_18_1)
 	local var_18_1 = arg_18_0._extensions[arg_18_1]
 
@@ -336,7 +336,7 @@ function SoundSectorSystem.event_ai_unit_deactivated(arg_18_0, arg_18_1, arg_18_
 	end
 end
 
-function SoundSectorSystem.rpc_enemy_has_target(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+SoundSectorSystem.rpc_enemy_has_target = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = arg_19_0.unit_storage:unit(arg_19_2)
 
 	if var_19_0 == nil then

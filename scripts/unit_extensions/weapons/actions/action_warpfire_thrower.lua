@@ -2,7 +2,7 @@
 
 ActionWarpfireThrower = class(ActionWarpfireThrower, ActionBase)
 
-function ActionWarpfireThrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionWarpfireThrower.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionWarpfireThrower.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
@@ -19,7 +19,7 @@ function ActionWarpfireThrower.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4,
 	arg_1_0._current_flame_time = 0
 end
 
-function ActionWarpfireThrower.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionWarpfireThrower.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionWarpfireThrower.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0.current_action = arg_2_1
@@ -31,7 +31,7 @@ function ActionWarpfireThrower.client_owner_start_action(arg_2_0, arg_2_1, arg_2
 	arg_2_0.overcharge_extension:add_charge(var_2_0)
 end
 
-function ActionWarpfireThrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionWarpfireThrower.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = arg_3_0.owner_unit
 	local var_3_1 = arg_3_0.current_action
 
@@ -62,13 +62,13 @@ function ActionWarpfireThrower.client_owner_post_update(arg_3_0, arg_3_1, arg_3_
 	end
 end
 
-function ActionWarpfireThrower.finish(arg_4_0, arg_4_1, arg_4_2)
+ActionWarpfireThrower.finish = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0.state ~= "shot" then
 		arg_4_0:_proc_spell_used(arg_4_0.buff_extension)
 	end
 end
 
-function ActionWarpfireThrower._stop_fx(arg_5_0)
+ActionWarpfireThrower._stop_fx = function (arg_5_0)
 	local var_5_0 = ScriptUnit.has_extension(arg_5_0.owner_unit, "hud_system")
 
 	if var_5_0 then
@@ -76,7 +76,7 @@ function ActionWarpfireThrower._stop_fx(arg_5_0)
 	end
 end
 
-function ActionWarpfireThrower.destroy(arg_6_0)
+ActionWarpfireThrower.destroy = function (arg_6_0)
 	if arg_6_0._flamethrower_effect then
 		World.destroy_particles(arg_6_0.world, arg_6_0._flamethrower_effect)
 
@@ -84,7 +84,7 @@ function ActionWarpfireThrower.destroy(arg_6_0)
 	end
 end
 
-function ActionWarpfireThrower.fire(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ActionWarpfireThrower.fire = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = Managers.state.entity:system("buff_system")
 	local var_7_1 = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(arg_7_1, arg_7_0.first_person_unit, arg_7_0.physics_world)
 

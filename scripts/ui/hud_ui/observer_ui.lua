@@ -7,7 +7,7 @@ local var_0_3 = 10
 
 ObserverUI = class(ObserverUI)
 
-function ObserverUI.init(arg_1_0, arg_1_1, arg_1_2)
+ObserverUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -22,7 +22,7 @@ function ObserverUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function ObserverUI.create_ui_elements(arg_2_0)
+ObserverUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_2_0.divider_widget = UIWidget.init(var_0_0.widget_definitions.divider)
 	arg_2_0.player_name_widget = UIWidget.init(var_0_0.widget_definitions.player_name)
@@ -35,7 +35,7 @@ function ObserverUI.create_ui_elements(arg_2_0)
 	arg_2_0:draw()
 end
 
-function ObserverUI.get_player_camera_extension(arg_3_0)
+ObserverUI.get_player_camera_extension = function (arg_3_0)
 	local var_3_0 = arg_3_0.peer_id
 	local var_3_1 = arg_3_0.player_manager:player_from_peer_id(var_3_0).camera_follow_unit
 
@@ -44,7 +44,7 @@ function ObserverUI.get_player_camera_extension(arg_3_0)
 	end
 end
 
-function ObserverUI.handle_observer_player_changed(arg_4_0)
+ObserverUI.handle_observer_player_changed = function (arg_4_0)
 	if not arg_4_0:get_player_camera_extension() then
 		return
 	end
@@ -68,7 +68,7 @@ function ObserverUI.handle_observer_player_changed(arg_4_0)
 	end
 end
 
-function ObserverUI._set_observed_unit(arg_5_0, arg_5_1)
+ObserverUI._set_observed_unit = function (arg_5_0, arg_5_1)
 	local var_5_0 = SPProfiles
 	local var_5_1 = arg_5_0.profile_synchronizer
 	local var_5_2 = Managers.player:players()
@@ -96,7 +96,7 @@ function ObserverUI._set_observed_unit(arg_5_0, arg_5_1)
 	arg_5_0._dirty = true
 end
 
-function ObserverUI.stop_draw_observer_ui(arg_6_0)
+ObserverUI.stop_draw_observer_ui = function (arg_6_0)
 	arg_6_0._observed_unit = nil
 	arg_6_0.divider_widget.element.dirty = true
 	arg_6_0.player_name_widget.element.dirty = true
@@ -105,7 +105,7 @@ function ObserverUI.stop_draw_observer_ui(arg_6_0)
 	arg_6_0._dirty = true
 end
 
-function ObserverUI.update(arg_7_0, arg_7_1, arg_7_2)
+ObserverUI.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if var_0_1 then
 		arg_7_0:create_ui_elements()
 	end
@@ -126,7 +126,7 @@ function ObserverUI.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:draw(arg_7_1)
 end
 
-function ObserverUI.draw(arg_8_0, arg_8_1)
+ObserverUI.draw = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.ui_renderer
 	local var_8_1 = arg_8_0.ui_scenegraph
 	local var_8_2 = arg_8_0.input_manager:get_service("Player")
@@ -145,11 +145,11 @@ function ObserverUI.draw(arg_8_0, arg_8_1)
 	UIRenderer.end_pass(var_8_0)
 end
 
-function ObserverUI.destroy(arg_9_0)
+ObserverUI.destroy = function (arg_9_0)
 	return
 end
 
-function ObserverUI.set_visible(arg_10_0, arg_10_1)
+ObserverUI.set_visible = function (arg_10_0, arg_10_1)
 	if arg_10_0._is_visible ~= arg_10_1 then
 		local var_10_0 = arg_10_0.divider_widget
 
@@ -183,11 +183,11 @@ function ObserverUI.set_visible(arg_10_0, arg_10_1)
 	end
 end
 
-function ObserverUI.is_visible(arg_11_0)
+ObserverUI.is_visible = function (arg_11_0)
 	return arg_11_0._is_visible
 end
 
-function ObserverUI._update_follow_unit_health_bar(arg_12_0, arg_12_1)
+ObserverUI._update_follow_unit_health_bar = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.profile_synchronizer
 	local var_12_1 = Managers.player:owner(arg_12_1)
 	local var_12_2
@@ -329,7 +329,7 @@ function ObserverUI._update_follow_unit_health_bar(arg_12_0, arg_12_1)
 	end
 end
 
-function ObserverUI.on_player_health_changed(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+ObserverUI.on_player_health_changed = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if not arg_13_0.bar_animations_data then
 		arg_13_0.bar_animations_data = {}
 	end
@@ -370,7 +370,7 @@ function ObserverUI.on_player_health_changed(arg_13_0, arg_13_1, arg_13_2, arg_1
 	end
 end
 
-function ObserverUI.on_num_grimoires_changed(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ObserverUI.on_num_grimoires_changed = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not arg_14_0.bar_animations_data then
 		arg_14_0.bar_animations_data = {}
 	end
@@ -402,7 +402,7 @@ function ObserverUI.on_num_grimoires_changed(arg_14_0, arg_14_1, arg_14_2, arg_1
 	arg_14_0.bar_animations_data[arg_14_1] = var_14_1
 end
 
-function ObserverUI.update_health_animations(arg_15_0, arg_15_1)
+ObserverUI.update_health_animations = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.bar_animations_data
 
 	if var_15_0 then
@@ -435,7 +435,7 @@ function ObserverUI.update_health_animations(arg_15_0, arg_15_1)
 	end
 end
 
-function ObserverUI.update_player_bar_animation(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+ObserverUI.update_player_bar_animation = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
 	arg_16_3 = arg_16_3 + arg_16_7
 
 	if arg_16_4 > 0 then
@@ -464,7 +464,7 @@ function ObserverUI.update_player_bar_animation(arg_16_0, arg_16_1, arg_16_2, ar
 	return nil
 end
 
-function ObserverUI.update_damage_highlight(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+ObserverUI.update_damage_highlight = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	local var_17_0 = arg_17_0._skip_bar_animation and 0 or 0.2
 
 	arg_17_2 = arg_17_2 + arg_17_3

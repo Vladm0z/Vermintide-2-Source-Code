@@ -172,7 +172,7 @@ local function var_0_5(arg_6_0)
 	HitTemplates[arg_6_0] = var_6_0
 end
 
-;(function()
+;(function ()
 	for iter_7_0, iter_7_1 in pairs(Breeds) do
 		var_0_0(iter_7_0, iter_7_1.hit_zones)
 		var_0_5(iter_7_1.hit_effect_template)

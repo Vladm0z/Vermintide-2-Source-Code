@@ -670,7 +670,7 @@ var_0_0.buff_templates = {
 	}
 }
 var_0_0.buff_function_templates = {
-	make_stagger_immune = function(arg_4_0, arg_4_1, arg_4_2)
+	make_stagger_immune = function (arg_4_0, arg_4_1, arg_4_2)
 		if ALIVE[arg_4_0] then
 			local var_4_0 = BLACKBOARDS[arg_4_0]
 
@@ -681,7 +681,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_stagger_immunity = function(arg_5_0, arg_5_1, arg_5_2)
+	remove_stagger_immunity = function (arg_5_0, arg_5_1, arg_5_2)
 		if ALIVE[arg_5_0] then
 			local var_5_0 = BLACKBOARDS[arg_5_0]
 
@@ -694,7 +694,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	apply_buff_to_all_players = function(arg_6_0, arg_6_1, arg_6_2)
+	apply_buff_to_all_players = function (arg_6_0, arg_6_1, arg_6_2)
 		if not var_0_2() then
 			return
 		end
@@ -720,10 +720,10 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_intangible_mirror_damage = function(arg_7_0, arg_7_1, arg_7_2)
+	remove_intangible_mirror_damage = function (arg_7_0, arg_7_1, arg_7_2)
 		Managers.state.entity:system("audio_system"):play_audio_unit_event("enemy_grudge_intangible_destroy", arg_7_0)
 	end,
-	add_buff_based_on_health_chunks = function(arg_8_0, arg_8_1, arg_8_2)
+	add_buff_based_on_health_chunks = function (arg_8_0, arg_8_1, arg_8_2)
 		if not var_0_2() then
 			return
 		end
@@ -750,7 +750,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	ai_spawn_mirror_images = function(arg_9_0, arg_9_1, arg_9_2)
+	ai_spawn_mirror_images = function (arg_9_0, arg_9_1, arg_9_2)
 		if not var_0_2() then
 			return
 		end
@@ -870,7 +870,7 @@ var_0_0.buff_function_templates = {
 
 						local var_10_21 = {
 							side_id = var_10_2.side_id,
-							spawned_func = function(arg_12_0, arg_12_1, arg_12_2)
+							spawned_func = function (arg_12_0, arg_12_1, arg_12_2)
 								local var_12_0 = BLACKBOARDS[arg_12_0]
 
 								var_12_0.deny_kill_loot = true
@@ -911,7 +911,7 @@ var_0_0.buff_function_templates = {
 
 		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_9_6)
 	end,
-	ai_spawn_liquid_blob = function(arg_13_0, arg_13_1, arg_13_2)
+	ai_spawn_liquid_blob = function (arg_13_0, arg_13_1, arg_13_2)
 		if not var_0_2() then
 			return
 		end
@@ -941,7 +941,7 @@ var_0_0.buff_function_templates = {
 
 		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_13_0)
 	end,
-	ai_health_regen_update = function(arg_15_0, arg_15_1, arg_15_2)
+	ai_health_regen_update = function (arg_15_0, arg_15_1, arg_15_2)
 		local var_15_0 = Managers.time:time("game")
 		local var_15_1 = arg_15_1.template.frequency
 
@@ -962,7 +962,7 @@ var_0_0.buff_function_templates = {
 			var_15_2:add_heal(arg_15_0, var_15_3, nil, "leech")
 		end
 	end,
-	apply_curse_to_nearby_players = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	apply_curse_to_nearby_players = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 		local var_16_0 = arg_16_1.template
 		local var_16_1 = var_16_0.max_distance
 		local var_16_2 = POSITION_LOOKUP[arg_16_0]
@@ -1028,7 +1028,7 @@ var_0_0.buff_function_templates = {
 			var_16_3[var_16_5] = var_16_9[var_16_5] and true or nil
 		end
 	end,
-	ai_create_explosion = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	ai_create_explosion = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 		if not var_0_2() or not ALIVE[arg_17_0] then
 			return
 		end
@@ -1047,7 +1047,7 @@ var_0_0.buff_function_templates = {
 
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_17_5, false, var_17_3, Quaternion.identity(), var_17_6, 1, var_17_7, 0, false, var_17_5)
 	end,
-	ai_add_hit_sfx = function(arg_18_0, arg_18_1, arg_18_2)
+	ai_add_hit_sfx = function (arg_18_0, arg_18_1, arg_18_2)
 		local var_18_0 = arg_18_1.template
 		local var_18_1 = var_18_0 and var_18_0.hit_sfx_name
 
@@ -1059,7 +1059,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	ai_remove_hit_sfx = function(arg_19_0, arg_19_1, arg_19_2)
+	ai_remove_hit_sfx = function (arg_19_0, arg_19_1, arg_19_2)
 		local var_19_0 = ScriptUnit.has_extension(arg_19_0, "ai_inventory_system")
 
 		if var_19_0 then
@@ -1068,7 +1068,7 @@ var_0_0.buff_function_templates = {
 			arg_19_1._override_id = nil
 		end
 	end,
-	first_person_flow_event = function(arg_20_0, arg_20_1, arg_20_2)
+	first_person_flow_event = function (arg_20_0, arg_20_1, arg_20_2)
 		local var_20_0 = arg_20_1.template.flow_event
 
 		if var_0_3(arg_20_0) then
@@ -1080,7 +1080,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_all_stamina = function(arg_21_0, arg_21_1, arg_21_2)
+	remove_all_stamina = function (arg_21_0, arg_21_1, arg_21_2)
 		if var_0_3(arg_21_0) then
 			local var_21_0 = ScriptUnit.has_extension(arg_21_0, "status_system")
 
@@ -1089,7 +1089,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	trigger_terror_event = function(arg_22_0, arg_22_1, arg_22_2)
+	trigger_terror_event = function (arg_22_0, arg_22_1, arg_22_2)
 		if not var_0_2() or not ALIVE[arg_22_0] then
 			return
 		end
@@ -1104,7 +1104,7 @@ var_0_0.buff_function_templates = {
 
 		arg_22_1.seed = Math.next_random(var_22_4)
 	end,
-	add_extra_frenzy_stack = function(arg_23_0, arg_23_1, arg_23_2)
+	add_extra_frenzy_stack = function (arg_23_0, arg_23_1, arg_23_2)
 		if ALIVE[arg_23_0] then
 			local var_23_0 = ScriptUnit.has_extension(arg_23_0, "buff_system")
 
@@ -1113,7 +1113,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	frenzy_damage_over_time = function(arg_24_0, arg_24_1, arg_24_2)
+	frenzy_damage_over_time = function (arg_24_0, arg_24_1, arg_24_2)
 		if not var_0_2() then
 			return
 		end
@@ -1137,7 +1137,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	apply_frenzy_func = function(arg_25_0, arg_25_1, arg_25_2)
+	apply_frenzy_func = function (arg_25_0, arg_25_1, arg_25_2)
 		if ALIVE[arg_25_0] then
 			local var_25_0 = Managers.player:owner(arg_25_0)
 
@@ -1152,7 +1152,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_frenzy_func = function(arg_26_0, arg_26_1, arg_26_2)
+	remove_frenzy_func = function (arg_26_0, arg_26_1, arg_26_2)
 		if ALIVE[arg_26_0] then
 			local var_26_0 = Managers.player:owner(arg_26_0)
 
@@ -1161,7 +1161,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	remove_frenzy_handlers = function(arg_27_0, arg_27_1, arg_27_2)
+	remove_frenzy_handlers = function (arg_27_0, arg_27_1, arg_27_2)
 		if arg_27_1.buff_ids then
 			local var_27_0 = Managers.state.entity:system("buff_system")
 
@@ -1172,7 +1172,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_update = function(arg_28_0, arg_28_1, arg_28_2)
+	grudge_mark_ignore_death_aura_update = function (arg_28_0, arg_28_1, arg_28_2)
 		local var_28_0 = Managers.state.side.side_by_unit[arg_28_0].ally_broadphase_categories
 		local var_28_1 = FrameTable.alloc_table()
 		local var_28_2 = POSITION_LOOKUP[arg_28_0]
@@ -1212,7 +1212,7 @@ var_0_0.buff_function_templates = {
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_cleanup = function(arg_29_0, arg_29_1, arg_29_2)
+	grudge_mark_ignore_death_aura_cleanup = function (arg_29_0, arg_29_1, arg_29_2)
 		local var_29_0 = arg_29_1.inside_allies
 
 		if not var_29_0 then
@@ -1231,7 +1231,7 @@ var_0_0.buff_function_templates = {
 	end
 }
 var_0_0.proc_functions = {
-	add_frenzy_handler = function(arg_30_0, arg_30_1, arg_30_2)
+	add_frenzy_handler = function (arg_30_0, arg_30_1, arg_30_2)
 		if not var_0_2() then
 			return
 		end
@@ -1252,7 +1252,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	add_frenzy_stack = function(arg_31_0, arg_31_1, arg_31_2)
+	add_frenzy_stack = function (arg_31_0, arg_31_1, arg_31_2)
 		local var_31_0 = arg_31_2[1]
 
 		if ALIVE[arg_31_0] and ALIVE[var_31_0] then
@@ -1267,14 +1267,14 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	spawn_liquid_forward = function(arg_32_0, arg_32_1, arg_32_2)
+	spawn_liquid_forward = function (arg_32_0, arg_32_1, arg_32_2)
 		if not var_0_2() then
 			return
 		end
 
 		BuffUtils.create_liquid_forward(arg_32_0, arg_32_1)
 	end,
-	ai_add_buff_on_damage_dealt = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	ai_add_buff_on_damage_dealt = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 		local var_33_0 = arg_33_2[arg_33_4.attacked_unit]
 		local var_33_1 = arg_33_2[arg_33_4.damage_amount]
 
@@ -1296,7 +1296,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	ai_delay_regen = function(arg_34_0, arg_34_1, arg_34_2)
+	ai_delay_regen = function (arg_34_0, arg_34_1, arg_34_2)
 		local var_34_0 = Managers.time:time("game")
 		local var_34_1 = arg_34_1.template.on_hit_delay
 
@@ -1306,7 +1306,7 @@ var_0_0.proc_functions = {
 
 		arg_34_1.timer = var_34_0 + var_34_1
 	end,
-	ai_heal_on_damage_dealt = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+	ai_heal_on_damage_dealt = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 		if not var_0_2() then
 			return
 		end
@@ -1327,7 +1327,7 @@ var_0_0.proc_functions = {
 			end
 		end
 	end,
-	random_teleport_ai = function(arg_36_0, arg_36_1, arg_36_2)
+	random_teleport_ai = function (arg_36_0, arg_36_1, arg_36_2)
 		if not var_0_2() then
 			return
 		end
@@ -1359,7 +1359,7 @@ var_0_0.proc_functions = {
 
 		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(var_36_0)
 	end,
-	ai_crushing_blow = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	ai_crushing_blow = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 		if not var_0_2() or not ALIVE[arg_38_0] then
 			return
 		end
@@ -1417,7 +1417,7 @@ var_0_0.proc_functions = {
 		end
 	end,
 	ai_create_explosion = var_0_0.buff_function_templates.ai_create_explosion,
-	grudge_mark_shockwave = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	grudge_mark_shockwave = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 		local var_39_0 = "grenade_frag_01"
 		local var_39_1 = ExplosionUtils.get_template("grudge_mark_shockwave")
 		local var_39_2 = POSITION_LOOKUP[arg_39_0]
@@ -1430,7 +1430,7 @@ var_0_0.proc_functions = {
 
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", var_39_3, false, var_39_2, Quaternion.identity(), var_39_4, 1, var_39_5, 0, false, var_39_3)
 	end,
-	grudge_mark_termite_shockwave = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	grudge_mark_termite_shockwave = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 		local var_40_0 = "grenade_frag_01"
 		local var_40_1 = ExplosionUtils.get_template("grudge_mark_termite_shockwave")
 		local var_40_2 = POSITION_LOOKUP[arg_40_0]

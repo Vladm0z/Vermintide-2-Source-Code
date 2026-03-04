@@ -3,7 +3,7 @@
 script_data.visual_assert_log_enabled = script_data.visual_assert_log_enabled or Development.parameter("visual_assert_log_enabled")
 VisualAssertLog = VisualAssertLog or {}
 
-function VisualAssertLog.setup(arg_1_0)
+VisualAssertLog.setup = function (arg_1_0)
 	local var_1_0 = VisualAssertLog
 
 	var_1_0.world = arg_1_0
@@ -21,7 +21,7 @@ function VisualAssertLog.setup(arg_1_0)
 	var_1_0.display_asserts = false
 end
 
-function VisualAssertLog.cleanup()
+VisualAssertLog.cleanup = function ()
 	local var_2_0 = VisualAssertLog
 
 	if VisualAssertLog.world and VisualAssertLog.gui then
@@ -36,7 +36,7 @@ local var_0_0 = 16
 local var_0_1 = "arial"
 local var_0_2 = "materials/fonts/" .. var_0_1
 
-function VisualAssertLog.update()
+VisualAssertLog.update = function ()
 	if not script_data.visual_assert_log_enabled then
 		return
 	end

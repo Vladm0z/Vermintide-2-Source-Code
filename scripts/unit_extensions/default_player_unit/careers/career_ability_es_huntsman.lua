@@ -2,7 +2,7 @@
 
 CareerAbilityESHuntsman = class(CareerAbilityESHuntsman)
 
-function CareerAbilityESHuntsman.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityESHuntsman.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.owner_unit = arg_1_2
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.wwise_world = Managers.world:wwise_world(arg_1_0.world)
@@ -17,7 +17,7 @@ function CareerAbilityESHuntsman.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.input_manager = Managers.input
 end
 
-function CareerAbilityESHuntsman.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+CareerAbilityESHuntsman.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 	arg_2_0._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
 	arg_2_0._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
@@ -26,11 +26,11 @@ function CareerAbilityESHuntsman.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
 end
 
-function CareerAbilityESHuntsman.destroy(arg_3_0)
+CareerAbilityESHuntsman.destroy = function (arg_3_0)
 	return
 end
 
-function CareerAbilityESHuntsman.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityESHuntsman.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	if not arg_4_0:_ability_available() then
 		return
 	end
@@ -46,13 +46,13 @@ function CareerAbilityESHuntsman.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	end
 end
 
-function CareerAbilityESHuntsman.stop(arg_5_0, arg_5_1)
+CareerAbilityESHuntsman.stop = function (arg_5_0, arg_5_1)
 	if arg_5_0._is_priming then
 		arg_5_0:_stop_priming()
 	end
 end
 
-function CareerAbilityESHuntsman._ability_available(arg_6_0)
+CareerAbilityESHuntsman._ability_available = function (arg_6_0)
 	local var_6_0 = arg_6_0._career_extension
 	local var_6_1 = arg_6_0._status_extension
 	local var_6_2 = var_6_0:can_use_activated_ability()
@@ -63,13 +63,13 @@ function CareerAbilityESHuntsman._ability_available(arg_6_0)
 	return var_6_2 and not var_6_3 and var_6_5
 end
 
-function CareerAbilityESHuntsman.force_trigger_ability(arg_7_0)
+CareerAbilityESHuntsman.force_trigger_ability = function (arg_7_0)
 	local var_7_0 = true
 
 	arg_7_0:_run_ability(var_7_0)
 end
 
-function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
+CareerAbilityESHuntsman._run_ability = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.owner_unit
 	local var_8_1 = arg_8_0.is_server
 	local var_8_2 = arg_8_0.local_player
@@ -225,7 +225,7 @@ function CareerAbilityESHuntsman._run_ability(arg_8_0, arg_8_1)
 	arg_8_0:_play_vo()
 end
 
-function CareerAbilityESHuntsman._play_vo(arg_9_0)
+CareerAbilityESHuntsman._play_vo = function (arg_9_0)
 	local var_9_0 = arg_9_0.owner_unit
 	local var_9_1 = ScriptUnit.extension_input(var_9_0, "dialogue_system")
 	local var_9_2 = FrameTable.alloc_table()

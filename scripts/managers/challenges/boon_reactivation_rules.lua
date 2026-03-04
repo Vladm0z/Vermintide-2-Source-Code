@@ -2,7 +2,7 @@
 
 BoonReactivationRules = BoonReactivationRules or {}
 
-function BoonReactivationRules.questing_knight(arg_1_0)
+BoonReactivationRules.questing_knight = function (arg_1_0)
 	local var_1_0 = Managers.party:get_status_from_unique_id(arg_1_0)
 
 	if var_1_0 then

@@ -4,17 +4,17 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotTeleportToAllyAction = class(BTBotTeleportToAllyAction, BTNode)
 
-function BTBotTeleportToAllyAction.init(arg_1_0, ...)
+BTBotTeleportToAllyAction.init = function (arg_1_0, ...)
 	BTBotTeleportToAllyAction.super.init(arg_1_0, ...)
 end
 
 BTBotTeleportToAllyAction.name = "BTBotTeleportToAllyAction"
 
-function BTBotTeleportToAllyAction.leave(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+BTBotTeleportToAllyAction.leave = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	return
 end
 
-function BTBotTeleportToAllyAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTBotTeleportToAllyAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	return
 end
 
@@ -22,7 +22,7 @@ local var_0_0 = 5
 local var_0_1 = math.pi / (2 * var_0_0)
 local var_0_2 = 5
 
-function BTBotTeleportToAllyAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotTeleportToAllyAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.ai_bot_group_extension.data.follow_unit
 	local var_4_1 = arg_4_2.nav_world
 	local var_4_2 = arg_4_2.navigation_extension

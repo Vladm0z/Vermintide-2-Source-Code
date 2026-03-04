@@ -51,10 +51,10 @@ var_0_3.dwarf_pressure_pad = {
 	events = {
 		"dwarf_pressure_pad"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "dwarf_pressure_pad") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		local var_2_0 = arg_2_4[1]
 		local var_2_1 = arg_2_4[2]
 		local var_2_2 = arg_2_4[3]
@@ -90,10 +90,10 @@ var_0_3.dwarf_big_jump = {
 	events = {
 		"dwarf_big_jump"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "dwarf_big_jump") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = arg_4_4[1]
 		local var_4_1 = Managers.time:time("game")
 
@@ -112,10 +112,10 @@ var_0_3.dwarf_crows = {
 	events = {
 		"dwarf_crows"
 	},
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "dwarf_crows") >= 1
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		arg_6_0:increment_stat(arg_6_1, "dwarf_crows")
 	end
 }
@@ -128,10 +128,10 @@ var_0_3.dwarf_speedrun = {
 		"dwarf_speedrun_start",
 		"dwarf_speedrun_end"
 	},
-	completed = function(arg_7_0, arg_7_1, arg_7_2)
+	completed = function (arg_7_0, arg_7_1, arg_7_2)
 		return arg_7_0:get_persistent_stat(arg_7_1, "dwarf_speedrun") >= 1
 	end,
-	on_event = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 		if arg_8_3 == "dwarf_speedrun_start" then
 			arg_8_2.started = true
 

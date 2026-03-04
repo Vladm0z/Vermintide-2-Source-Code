@@ -202,7 +202,7 @@ local function var_0_12()
 					style_id = "host_icon",
 					texture_id = "host_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.is_host
 					end
 				},
@@ -389,7 +389,7 @@ local function var_0_13()
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.display_portrait_icon
 					end
 				},
@@ -422,7 +422,7 @@ local function var_0_13()
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.connecting
 					end
 				},
@@ -431,7 +431,7 @@ local function var_0_13()
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						local var_6_0 = arg_6_0.ammo_percent
 
 						return var_6_0 and var_6_0 > 0 and var_6_0 <= 0.33
@@ -442,7 +442,7 @@ local function var_0_13()
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator_empty",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						local var_7_0 = arg_7_0.ammo_percent
 
 						return var_7_0 and var_7_0 <= 0
@@ -453,7 +453,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "respawn_countdown_text",
 					retained_mode = false,
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return true
 					end
 				},
@@ -462,7 +462,7 @@ local function var_0_13()
 					style_id = "ammo_indicator",
 					texture_id = "numeric_ui_ammo_indicator",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						local var_9_0 = arg_9_0.ammo_percent
 						local var_9_1 = var_9_0 and (var_9_0 > 0 and var_9_0 <= 0.33 or var_9_0 <= 0)
 
@@ -474,7 +474,7 @@ local function var_0_13()
 					style_id = "ability_cooldown_indicator",
 					texture_id = "ability_cooldown_indicator",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return Application.user_setting("numeric_ui") and arg_10_0.on_cooldown
 					end
 				},
@@ -483,7 +483,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "ammo_count",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return Application.user_setting("numeric_ui") and arg_11_0.has_ranged_weapon
 					end
 				},
@@ -492,7 +492,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "ammo_count",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return Application.user_setting("numeric_ui") and arg_12_0.has_ranged_weapon
 					end
 				},
@@ -501,7 +501,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "ability_cooldown",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return Application.user_setting("numeric_ui") and arg_13_0.on_cooldown
 					end
 				},
@@ -510,7 +510,7 @@ local function var_0_13()
 					pass_type = "text",
 					text_id = "ability_cooldown",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return Application.user_setting("numeric_ui") and arg_14_0.on_cooldown
 					end
 				},
@@ -519,7 +519,7 @@ local function var_0_13()
 					style_id = "brush_stroke",
 					texture_id = "brush_stroke",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return Application.user_setting("numeric_ui")
 					end
 				}
@@ -853,7 +853,7 @@ local function var_0_15()
 					style_id = "item_slot_1",
 					texture_id = "item_slot_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.draw_health_bar
 					end
 				},
@@ -862,7 +862,7 @@ local function var_0_15()
 					style_id = "item_slot_bg_1",
 					texture_id = "item_slot_bg_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return arg_19_0.draw_health_bar
 					end
 				},
@@ -871,7 +871,7 @@ local function var_0_15()
 					style_id = "item_slot_frame_1",
 					texture_id = "slot_frame",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.draw_health_bar
 					end
 				},
@@ -880,7 +880,7 @@ local function var_0_15()
 					style_id = "item_slot_highlight_1",
 					texture_id = "item_slot_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.draw_health_bar
 					end
 				},
@@ -889,7 +889,7 @@ local function var_0_15()
 					style_id = "item_slot_2",
 					texture_id = "item_slot_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_22_0)
+					content_check_function = function (arg_22_0)
 						return arg_22_0.draw_health_bar
 					end
 				},
@@ -898,7 +898,7 @@ local function var_0_15()
 					style_id = "item_slot_bg_2",
 					texture_id = "item_slot_bg_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_23_0)
+					content_check_function = function (arg_23_0)
 						return arg_23_0.draw_health_bar
 					end
 				},
@@ -907,7 +907,7 @@ local function var_0_15()
 					style_id = "item_slot_frame_2",
 					texture_id = "slot_frame",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_24_0)
+					content_check_function = function (arg_24_0)
 						return arg_24_0.draw_health_bar
 					end
 				},
@@ -916,7 +916,7 @@ local function var_0_15()
 					style_id = "item_slot_highlight_2",
 					texture_id = "item_slot_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_25_0)
+					content_check_function = function (arg_25_0)
 						return arg_25_0.draw_health_bar
 					end
 				},
@@ -925,7 +925,7 @@ local function var_0_15()
 					style_id = "item_slot_3",
 					texture_id = "item_slot_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return arg_26_0.draw_health_bar
 					end
 				},
@@ -934,7 +934,7 @@ local function var_0_15()
 					style_id = "item_slot_bg_3",
 					texture_id = "item_slot_bg_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.draw_health_bar
 					end
 				},
@@ -943,7 +943,7 @@ local function var_0_15()
 					style_id = "item_slot_frame_3",
 					texture_id = "slot_frame",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_28_0)
+					content_check_function = function (arg_28_0)
 						return arg_28_0.draw_health_bar
 					end
 				},
@@ -952,7 +952,7 @@ local function var_0_15()
 					style_id = "item_slot_highlight_3",
 					texture_id = "item_slot_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return arg_29_0.draw_health_bar
 					end
 				},
@@ -961,7 +961,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_30_0, arg_30_1)
+					content_check_function = function (arg_30_0, arg_30_1)
 						return arg_30_0.draw_health_bar and arg_30_0.item_count_1
 					end
 				},
@@ -970,7 +970,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_1",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_31_0, arg_31_1)
+					content_check_function = function (arg_31_0, arg_31_1)
 						return arg_31_0.draw_health_bar and arg_31_0.item_count_1
 					end
 				},
@@ -979,7 +979,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_32_0, arg_32_1)
+					content_check_function = function (arg_32_0, arg_32_1)
 						return arg_32_0.draw_health_bar and arg_32_0.item_count_2
 					end
 				},
@@ -988,7 +988,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_2",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_33_0, arg_33_1)
+					content_check_function = function (arg_33_0, arg_33_1)
 						return arg_33_0.draw_health_bar and arg_33_0.item_count_2
 					end
 				},
@@ -997,7 +997,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_34_0, arg_34_1)
+					content_check_function = function (arg_34_0, arg_34_1)
 						return arg_34_0.draw_health_bar and arg_34_0.item_count_3
 					end
 				},
@@ -1006,7 +1006,7 @@ local function var_0_15()
 					pass_type = "text",
 					text_id = "item_count_3",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_35_0, arg_35_1)
+					content_check_function = function (arg_35_0, arg_35_1)
 						return arg_35_0.draw_health_bar and arg_35_0.item_count_3
 					end
 				}
@@ -1331,7 +1331,7 @@ local function var_0_16()
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_37_0, arg_37_1)
+					content_check_function = function (arg_37_0, arg_37_1)
 						return not arg_37_0.has_shield
 					end
 				},
@@ -1340,10 +1340,10 @@ local function var_0_16()
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_38_0)
+					content_check_function = function (arg_38_0)
 						return arg_38_0.hp_bar.draw_health_bar
 					end,
-					content_change_function = function(arg_39_0, arg_39_1)
+					content_change_function = function (arg_39_0, arg_39_1)
 						local var_39_0 = arg_39_0.hp_bar.internal_bar_value
 						local var_39_1 = arg_39_0.actual_active_percentage or 1
 						local var_39_2 = math.max(var_39_0, var_39_1)
@@ -1357,7 +1357,7 @@ local function var_0_16()
 					texture_id = "texture_id",
 					content_id = "hp_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_40_0)
+					content_check_function = function (arg_40_0)
 						return arg_40_0.draw_health_bar
 					end
 				},
@@ -1367,7 +1367,7 @@ local function var_0_16()
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_41_0)
+					content_check_function = function (arg_41_0)
 						return arg_41_0.draw_health_bar
 					end
 				},
@@ -1376,7 +1376,7 @@ local function var_0_16()
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_42_0, arg_42_1)
+					content_change_function = function (arg_42_0, arg_42_1)
 						local var_42_0 = arg_42_0.parent
 						local var_42_1 = var_42_0.hp_bar.internal_bar_value
 						local var_42_2 = var_42_0.actual_active_percentage or 1
@@ -1396,7 +1396,7 @@ local function var_0_16()
 					style_id = "hp_bar",
 					texture_id = "hp_bar_mask",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_43_0)
+					content_check_function = function (arg_43_0)
 						return arg_43_0.hp_bar.draw_health_bar
 					end
 				},
@@ -1404,7 +1404,7 @@ local function var_0_16()
 					pass_type = "texture",
 					texture_id = "portrait_icon",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_44_0)
+					content_check_function = function (arg_44_0)
 						return arg_44_0.display_portrait_icon
 					end
 				},
@@ -1413,7 +1413,7 @@ local function var_0_16()
 					pass_type = "text",
 					text_id = "numeric_health",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_45_0)
+					content_check_function = function (arg_45_0)
 						return Application.user_setting("numeric_ui")
 					end
 				},
@@ -1422,7 +1422,7 @@ local function var_0_16()
 					pass_type = "text",
 					text_id = "numeric_health",
 					retained_mode = var_0_2,
-					content_check_function = function(arg_46_0)
+					content_check_function = function (arg_46_0)
 						return Application.user_setting("numeric_ui")
 					end
 				}
@@ -1612,7 +1612,7 @@ local function var_0_17()
 					pass_type = "texture_uv",
 					content_id = "ability_bar",
 					retained_mode = var_0_2,
-					content_change_function = function(arg_48_0, arg_48_1)
+					content_change_function = function (arg_48_0, arg_48_1)
 						local var_48_0 = arg_48_0.bar_value
 						local var_48_1 = arg_48_1.size
 						local var_48_2 = arg_48_0.uvs

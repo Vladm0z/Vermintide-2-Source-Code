@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowPoisonGlobeAction = class(BTThrowPoisonGlobeAction, BTNode)
 
-function BTThrowPoisonGlobeAction.init(arg_1_0, ...)
+BTThrowPoisonGlobeAction.init = function (arg_1_0, ...)
 	BTThrowPoisonGlobeAction.super.init(arg_1_0, ...)
 end
 
 BTThrowPoisonGlobeAction.name = "BTThrowPoisonGlobeAction"
 
-function BTThrowPoisonGlobeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTThrowPoisonGlobeAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_enabled(false)
 
 	arg_2_2.action = arg_2_0._tree_node.action_data
@@ -23,7 +23,7 @@ function BTThrowPoisonGlobeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	var_2_0:set_wanted_velocity(Vector3.zero())
 end
 
-function BTThrowPoisonGlobeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTThrowPoisonGlobeAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_2.dummy_projectile_unit ~= nil then
 		if Unit.alive(arg_3_2.dummy_projectile_unit) then
 			local var_3_0 = arg_3_2.world
@@ -48,7 +48,7 @@ function BTThrowPoisonGlobeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	arg_3_2.navigation_extension:set_enabled(true)
 end
 
-function BTThrowPoisonGlobeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTThrowPoisonGlobeAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if not Unit.alive(arg_4_2.target_unit) then
 		arg_4_2.target_unit = nil
 
@@ -108,7 +108,7 @@ function BTThrowPoisonGlobeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 	return "running"
 end
 
-function BTThrowPoisonGlobeAction.attack_throw(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+BTThrowPoisonGlobeAction.attack_throw = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
 	if arg_5_4.move_state ~= "throwing" then
 		local var_5_0 = arg_5_4.target_unit
 
@@ -141,7 +141,7 @@ function BTThrowPoisonGlobeAction.attack_throw(arg_5_0, arg_5_1, arg_5_2, arg_5_
 	arg_5_5:set_wanted_rotation(var_5_5)
 end
 
-function BTThrowPoisonGlobeAction.spawn_dummy_projectile(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTThrowPoisonGlobeAction.spawn_dummy_projectile = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = arg_6_4.weapon_node_name
 	local var_6_1 = Unit.node(arg_6_1, var_6_0)
 	local var_6_2 = Unit.world_position(arg_6_1, var_6_1)
@@ -159,7 +159,7 @@ function BTThrowPoisonGlobeAction.spawn_dummy_projectile(arg_6_0, arg_6_1, arg_6
 	arg_6_2.dummy_projectile_unit = var_6_4
 end
 
-function BTThrowPoisonGlobeAction.launch_projectile(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+BTThrowPoisonGlobeAction.launch_projectile = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
 	local var_7_0 = Managers.state.difficulty:get_difficulty_rank()
 	local var_7_1 = arg_7_2.aoe_dot_damage[var_7_0] or arg_7_2.aoe_dot_damage[2]
 	local var_7_2 = DamageUtils.calculate_damage(var_7_1)

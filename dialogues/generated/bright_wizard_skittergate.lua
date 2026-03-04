@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/bright_wizard_skittergate.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pbw_level_skittergate_BOOM_01",

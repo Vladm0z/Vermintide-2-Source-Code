@@ -8,7 +8,7 @@ local function var_0_0(arg_1_0, ...)
 	cprintf("[RCON] %s", var_1_0)
 end
 
-function ScriptRconServer.init(arg_2_0, arg_2_1, arg_2_2)
+ScriptRconServer.init = function (arg_2_0, arg_2_1, arg_2_2)
 	if not arg_2_1 then
 		var_0_0("Failed to start")
 
@@ -32,19 +32,19 @@ function ScriptRconServer.init(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function ScriptRconServer.destroy(arg_3_0)
+ScriptRconServer.destroy = function (arg_3_0)
 	if arg_3_0._enabled then
 		RConServer.stop()
 	end
 end
 
-function ScriptRconServer.update(arg_4_0, arg_4_1, arg_4_2)
+ScriptRconServer.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._enabled then
 		RConServer.update(arg_4_1, arg_4_0)
 	end
 end
 
-function ScriptRconServer.rcon_connect(arg_5_0, arg_5_1, arg_5_2)
+ScriptRconServer.rcon_connect = function (arg_5_0, arg_5_1, arg_5_2)
 	fassert(arg_5_0._clients[arg_5_1] == nil, "Tried to connect duplicate RCON client")
 	var_0_0("Client '%s' connected", arg_5_1)
 
@@ -53,7 +53,7 @@ function ScriptRconServer.rcon_connect(arg_5_0, arg_5_1, arg_5_2)
 	return true
 end
 
-function ScriptRconServer.rcon_command(arg_6_0, arg_6_1, arg_6_2)
+ScriptRconServer.rcon_command = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0._clients[arg_6_1] then
 		var_0_0("Unauthorized")
 
@@ -65,7 +65,7 @@ function ScriptRconServer.rcon_command(arg_6_0, arg_6_1, arg_6_2)
 	return var_6_1
 end
 
-function ScriptRconServer.rcon_disconnect(arg_7_0, arg_7_1)
+ScriptRconServer.rcon_disconnect = function (arg_7_0, arg_7_1)
 	fassert(arg_7_0._clients[arg_7_1] ~= nil, "Tried to disconnect duplicate RCON client")
 	var_0_0("Client '%s' disconnected", arg_7_1)
 

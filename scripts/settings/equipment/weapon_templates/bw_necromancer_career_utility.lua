@@ -118,7 +118,7 @@ local var_0_4 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_5_0, arg_5_1)
+				enter_function = function (arg_5_0, arg_5_1)
 					arg_5_1:clear_input_buffer()
 
 					return arg_5_1:reset_release_input()
@@ -133,7 +133,7 @@ local var_0_4 = {
 					{
 						sub_action = "command_stand",
 						release_required = "action_two_hold",
-						condition = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+						condition = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 							return var_0_1(arg_6_3)
 						end
 					}
@@ -150,7 +150,7 @@ local var_0_4 = {
 				hold_input = "action_two_hold",
 				anim_event = "pet_control_target",
 				minimum_hold_time = 0.3,
-				anim_end_event_condition_func = function(arg_7_0, arg_7_1)
+				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
 					return arg_7_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -180,7 +180,7 @@ local var_0_4 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_8_0, arg_8_1)
+				enter_function = function (arg_8_0, arg_8_1)
 					local var_8_0 = ScriptUnit.extension(arg_8_0, "ai_commander_system")
 					local var_8_1 = var_8_0:get_controlled_units()
 
@@ -232,7 +232,7 @@ local var_0_4 = {
 						input = "weapon_reload"
 					}
 				},
-				enter_function = function(arg_9_0, arg_9_1)
+				enter_function = function (arg_9_0, arg_9_1)
 					local var_9_0 = ScriptUnit.extension(arg_9_0, "ai_commander_system")
 					local var_9_1 = var_9_0:get_controlled_units()
 

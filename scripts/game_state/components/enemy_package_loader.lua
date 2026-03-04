@@ -60,7 +60,7 @@ local function var_0_6(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function EnemyPackageLoader.init(arg_3_0)
+EnemyPackageLoader.init = function (arg_3_0)
 	arg_3_0._use_optimized = script_data.use_optimized_breed_units
 	arg_3_0._breed_to_package_name_cache = {}
 	arg_3_0._locked_breeds = {}
@@ -72,23 +72,23 @@ end
 
 local var_0_7 = {}
 
-function EnemyPackageLoader.register_rpcs(arg_4_0, arg_4_1)
+EnemyPackageLoader.register_rpcs = function (arg_4_0, arg_4_1)
 	arg_4_0.network_event_delegate = arg_4_1
 
 	arg_4_1:register(arg_4_0, unpack(var_0_7))
 end
 
-function EnemyPackageLoader.unregister_rpcs(arg_5_0)
+EnemyPackageLoader.unregister_rpcs = function (arg_5_0)
 	arg_5_0.network_event_delegate:unregister(arg_5_0)
 
 	arg_5_0.network_event_delegate = nil
 end
 
-function EnemyPackageLoader.set_unit_spawner(arg_6_0, arg_6_1)
+EnemyPackageLoader.set_unit_spawner = function (arg_6_0, arg_6_1)
 	arg_6_0._unit_spawner = arg_6_1
 end
 
-function EnemyPackageLoader.network_context_created(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+EnemyPackageLoader.network_context_created = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	printf("[EnemyPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_7_2, arg_7_3)
 
 	arg_7_0._lobby = arg_7_1
@@ -107,11 +107,11 @@ function EnemyPackageLoader.network_context_created(arg_7_0, arg_7_1, arg_7_2, a
 	arg_7_0._network_handler = arg_7_4
 end
 
-function EnemyPackageLoader.matching_session(arg_8_0, arg_8_1)
+EnemyPackageLoader.matching_session = function (arg_8_0, arg_8_1)
 	return arg_8_0._network_handler == arg_8_1
 end
 
-function EnemyPackageLoader.network_context_destroyed(arg_9_0)
+EnemyPackageLoader.network_context_destroyed = function (arg_9_0)
 	print("[EnemyPackageLoader] network_context_destroyed")
 
 	arg_9_0._lobby = nil
@@ -126,7 +126,7 @@ function EnemyPackageLoader.network_context_destroyed(arg_9_0)
 	arg_9_0._is_server = nil
 end
 
-function EnemyPackageLoader._find_unused_breed_to_unload(arg_10_0, arg_10_1)
+EnemyPackageLoader._find_unused_breed_to_unload = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.state.conflict
 	local var_10_1 = var_10_0.num_spawned_by_breed
 	local var_10_2 = var_10_0.num_queued_spawn_by_breed
@@ -160,7 +160,7 @@ function EnemyPackageLoader._find_unused_breed_to_unload(arg_10_0, arg_10_1)
 	end
 end
 
-function EnemyPackageLoader._pick_breed_from_processed_breeds(arg_11_0, arg_11_1, arg_11_2)
+EnemyPackageLoader._pick_breed_from_processed_breeds = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._network_handler:get_session_breed_map()
 	local var_11_1 = math.random(1, arg_11_2)
 	local var_11_2 = 0
@@ -181,7 +181,7 @@ function EnemyPackageLoader._pick_breed_from_processed_breeds(arg_11_0, arg_11_1
 	ferror("[EnemyPackageLoader:_pick_breed_from_processed_breeds] No breed found, this should not happen!")
 end
 
-function EnemyPackageLoader.request_breed(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+EnemyPackageLoader.request_breed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	assert(arg_12_0._is_server, "[EnemyPackageLoader] 'request_breed' is a server only function")
 
 	arg_12_1 = var_0_2[arg_12_1] or arg_12_1
@@ -220,7 +220,7 @@ end
 local var_0_8 = {}
 local var_0_9 = {}
 
-function EnemyPackageLoader.find_patrol_replacement(arg_13_0)
+EnemyPackageLoader.find_patrol_replacement = function (arg_13_0)
 	table.clear(var_0_8)
 	table.clear(var_0_9)
 
@@ -257,17 +257,17 @@ function EnemyPackageLoader.find_patrol_replacement(arg_13_0)
 	return var_13_2
 end
 
-function EnemyPackageLoader.is_breed_processed(arg_14_0, arg_14_1)
+EnemyPackageLoader.is_breed_processed = function (arg_14_0, arg_14_1)
 	arg_14_1 = var_0_2[arg_14_1] or arg_14_1
 
 	return arg_14_0._network_handler:get_session_breed_map()[arg_14_1]
 end
 
-function EnemyPackageLoader.processed_breeds(arg_15_0)
+EnemyPackageLoader.processed_breeds = function (arg_15_0)
 	return arg_15_0._network_handler:get_session_breed_map()
 end
 
-function EnemyPackageLoader._set_breed_package_lock(arg_16_0, arg_16_1, arg_16_2)
+EnemyPackageLoader._set_breed_package_lock = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_2 and 1 or -1
 	local var_16_1 = arg_16_0._locked_breeds
 	local var_16_2 = var_0_3[arg_16_1]
@@ -295,15 +295,15 @@ function EnemyPackageLoader._set_breed_package_lock(arg_16_0, arg_16_1, arg_16_2
 	fassert(not var_16_1[arg_16_1] or var_16_1[arg_16_1] > 0, "EnemyPackageLoader: Called unlock breed package more times than lock!")
 end
 
-function EnemyPackageLoader.lock_breed_package(arg_17_0, arg_17_1)
+EnemyPackageLoader.lock_breed_package = function (arg_17_0, arg_17_1)
 	arg_17_0:_set_breed_package_lock(arg_17_1, true)
 end
 
-function EnemyPackageLoader.unlock_breed_package(arg_18_0, arg_18_1)
+EnemyPackageLoader.unlock_breed_package = function (arg_18_0, arg_18_1)
 	arg_18_0:_set_breed_package_lock(arg_18_1, false)
 end
 
-function EnemyPackageLoader._load_package(arg_19_0, arg_19_1, arg_19_2)
+EnemyPackageLoader._load_package = function (arg_19_0, arg_19_1, arg_19_2)
 	assert(arg_19_0._is_server, "[EnemyPackageLoader] '_load_package' is a server only function.")
 
 	arg_19_2.current = arg_19_2.current + 1
@@ -316,7 +316,7 @@ function EnemyPackageLoader._load_package(arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0:_update_package_diffs()
 end
 
-function EnemyPackageLoader._unload_package(arg_20_0, arg_20_1)
+EnemyPackageLoader._unload_package = function (arg_20_0, arg_20_1)
 	assert(arg_20_0._is_server, "[EnemyPackageLoader] '_unload_package' is a server only function.")
 
 	local var_20_0 = arg_20_0._breeds_to_load_at_startup[arg_20_1]
@@ -333,11 +333,11 @@ function EnemyPackageLoader._unload_package(arg_20_0, arg_20_1)
 	arg_20_0:_update_package_diffs()
 end
 
-function EnemyPackageLoader.update(arg_21_0)
+EnemyPackageLoader.update = function (arg_21_0)
 	arg_21_0:_update_package_diffs()
 end
 
-function EnemyPackageLoader._update_package_diffs(arg_22_0)
+EnemyPackageLoader._update_package_diffs = function (arg_22_0)
 	if not arg_22_0._network_handler or not arg_22_0._network_handler:is_fully_synced() then
 		return
 	end
@@ -388,7 +388,7 @@ function EnemyPackageLoader._update_package_diffs(arg_22_0)
 	end
 end
 
-function EnemyPackageLoader.load_sync_done_for_peer(arg_23_0, arg_23_1)
+EnemyPackageLoader.load_sync_done_for_peer = function (arg_23_0, arg_23_1)
 	if not arg_23_0._network_handler or not arg_23_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -405,7 +405,7 @@ function EnemyPackageLoader.load_sync_done_for_peer(arg_23_0, arg_23_1)
 	return true
 end
 
-function EnemyPackageLoader._breed_package_name(arg_24_0, arg_24_1)
+EnemyPackageLoader._breed_package_name = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._breed_to_package_name_cache
 	local var_24_1 = var_24_0[arg_24_1]
 
@@ -417,7 +417,7 @@ function EnemyPackageLoader._breed_package_name(arg_24_0, arg_24_1)
 	return var_24_1
 end
 
-function EnemyPackageLoader._category(arg_25_0, arg_25_1)
+EnemyPackageLoader._category = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0._breed_category_lookup
 	local var_25_1 = var_25_0[arg_25_1]
 
@@ -471,7 +471,7 @@ function print_breed_hash(arg_26_0, arg_26_1)
 	print(var_26_0)
 end
 
-function EnemyPackageLoader._remove_locked_directors(arg_27_0, arg_27_1, arg_27_2)
+EnemyPackageLoader._remove_locked_directors = function (arg_27_0, arg_27_1, arg_27_2)
 	print("checking dlc's against conflict directors")
 
 	for iter_27_0 = #arg_27_1, 1, -1 do
@@ -486,7 +486,7 @@ function EnemyPackageLoader._remove_locked_directors(arg_27_0, arg_27_1, arg_27_
 	end
 end
 
-function EnemyPackageLoader._get_directors_from_breed_budget(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
+EnemyPackageLoader._get_directors_from_breed_budget = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
 	local var_28_0 = arg_28_4 - table.size(arg_28_1)
 
 	fassert(var_28_0 >= 0, "Fail, too many breeds! ")
@@ -588,7 +588,7 @@ function EnemyPackageLoader._get_directors_from_breed_budget(arg_28_0, arg_28_1,
 	return var_28_1
 end
 
-function EnemyPackageLoader._remove_directors_by_breed_budget(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+EnemyPackageLoader._remove_directors_by_breed_budget = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 	local var_29_0 = {}
 
 	for iter_29_0 = #arg_29_1, 1, -1 do
@@ -613,7 +613,7 @@ function EnemyPackageLoader._remove_directors_by_breed_budget(arg_29_0, arg_29_1
 	end
 end
 
-function EnemyPackageLoader._get_factions_from_directors(arg_30_0, arg_30_1)
+EnemyPackageLoader._get_factions_from_directors = function (arg_30_0, arg_30_1)
 	local var_30_0 = {}
 
 	for iter_30_0 = 1, #arg_30_1 do
@@ -635,7 +635,7 @@ function EnemyPackageLoader._get_factions_from_directors(arg_30_0, arg_30_1)
 	return var_30_0
 end
 
-function EnemyPackageLoader._make_faction_list(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
+EnemyPackageLoader._make_faction_list = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5)
 	local var_31_0
 
 	print("number of factions to include", arg_31_5)
@@ -643,7 +643,7 @@ function EnemyPackageLoader._make_faction_list(arg_31_0, arg_31_1, arg_31_2, arg
 	if arg_31_5 < #arg_31_1 then
 		var_31_0 = table.shallow_copy(arg_31_2)
 
-		table.array_remove_if(arg_31_1, function(arg_32_0)
+		table.array_remove_if(arg_31_1, function (arg_32_0)
 			return table.index_of(var_31_0, arg_32_0) > 0
 		end)
 
@@ -675,8 +675,8 @@ function EnemyPackageLoader._make_faction_list(arg_31_0, arg_31_1, arg_31_2, arg
 	return arg_31_4, var_31_0
 end
 
-function EnemyPackageLoader._remove_directors_not_in_factions(arg_33_0, arg_33_1, arg_33_2)
-	table.array_remove_if(arg_33_1, function(arg_34_0)
+EnemyPackageLoader._remove_directors_not_in_factions = function (arg_33_0, arg_33_1, arg_33_2)
+	table.array_remove_if(arg_33_1, function (arg_34_0)
 		local var_34_0 = ConflictDirectors[arg_34_0]
 		local var_34_1 = var_34_0 and var_34_0.factions
 
@@ -694,7 +694,7 @@ function EnemyPackageLoader._remove_directors_not_in_factions(arg_33_0, arg_33_1
 	end)
 end
 
-function EnemyPackageLoader._get_startup_breeds(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+EnemyPackageLoader._get_startup_breeds = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
 	local var_35_0 = LevelSettings[arg_35_1]
 	local var_35_1 = var_35_0.level_name
 
@@ -811,7 +811,7 @@ function EnemyPackageLoader._get_startup_breeds(arg_35_0, arg_35_1, arg_35_2, ar
 	return var_35_3
 end
 
-function EnemyPackageLoader.setup_startup_enemies(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+EnemyPackageLoader.setup_startup_enemies = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
 	fassert(arg_36_0._is_server, "[EnemyPackageLoader] 'setup_startup_enemies' is a server only function")
 	fassert(arg_36_2, "Cannot setup_startup_enemies without level_seed!")
 	print("[EnemyPackageLoader] setup_startup_enemies - level_key:", arg_36_1, "- level_seed:", arg_36_2, "- use_random_directors:", arg_36_4, "- conflict_director_name:", arg_36_5)
@@ -868,7 +868,7 @@ function EnemyPackageLoader.setup_startup_enemies(arg_36_0, arg_36_1, arg_36_2, 
 	end
 end
 
-function EnemyPackageLoader._load_startup_enemy_packages(arg_37_0, arg_37_1)
+EnemyPackageLoader._load_startup_enemy_packages = function (arg_37_0, arg_37_1)
 	assert(arg_37_0._is_server, "[EnemyPackageLoader] '_load_startup_enemy_packages' is a server only function.")
 
 	local var_37_0 = arg_37_0._session_breed_map
@@ -888,7 +888,7 @@ function EnemyPackageLoader._load_startup_enemy_packages(arg_37_0, arg_37_1)
 	arg_37_0:_update_package_diffs()
 end
 
-function EnemyPackageLoader.loading_completed(arg_38_0)
+EnemyPackageLoader.loading_completed = function (arg_38_0)
 	if not arg_38_0._network_handler or not arg_38_0._network_handler:is_fully_synced() then
 		return false
 	end
@@ -905,11 +905,11 @@ function EnemyPackageLoader.loading_completed(arg_38_0)
 	return true
 end
 
-function EnemyPackageLoader.random_director_list(arg_39_0)
+EnemyPackageLoader.random_director_list = function (arg_39_0)
 	return arg_39_0._random_director_list
 end
 
-function EnemyPackageLoader.on_application_shutdown(arg_40_0)
+EnemyPackageLoader.on_application_shutdown = function (arg_40_0)
 	printf("[EnemyPackageLoader] unload_enemy_packages")
 
 	local var_40_0 = arg_40_0._locked_breeds
@@ -931,7 +931,7 @@ function EnemyPackageLoader.on_application_shutdown(arg_40_0)
 	end
 end
 
-function EnemyPackageLoader.get_startup_breeds(arg_41_0)
+EnemyPackageLoader.get_startup_breeds = function (arg_41_0)
 	if arg_41_0._is_server then
 		return arg_41_0._breeds_to_load_at_startup
 	else
@@ -939,15 +939,15 @@ function EnemyPackageLoader.get_startup_breeds(arg_41_0)
 	end
 end
 
-function EnemyPackageLoader.client_connected(arg_42_0, arg_42_1)
+EnemyPackageLoader.client_connected = function (arg_42_0, arg_42_1)
 	return
 end
 
-function EnemyPackageLoader.client_disconnected(arg_43_0, arg_43_1)
+EnemyPackageLoader.client_disconnected = function (arg_43_0, arg_43_1)
 	return
 end
 
-function EnemyPackageLoader.is_breed_loaded_on_all_peers(arg_44_0, arg_44_1)
+EnemyPackageLoader.is_breed_loaded_on_all_peers = function (arg_44_0, arg_44_1)
 	arg_44_1 = var_0_2[arg_44_1] or arg_44_1
 
 	local var_44_0 = arg_44_0._network_handler:hot_join_synced_peers()
@@ -961,7 +961,7 @@ function EnemyPackageLoader.is_breed_loaded_on_all_peers(arg_44_0, arg_44_1)
 	return true
 end
 
-function EnemyPackageLoader.debug_loaded_breeds(arg_45_0)
+EnemyPackageLoader.debug_loaded_breeds = function (arg_45_0)
 	if not arg_45_0._is_server then
 		Debug.text("[EnemyPackageLoader] no client debug support. need to fetch peers some other way")
 

@@ -19,7 +19,7 @@ end
 
 UITooltipPasses = {
 	background = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_margin = 10,
 				frame_name = "item_tooltip_frame_01",
@@ -37,7 +37,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11, arg_3_12)
+		draw = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11, arg_3_12)
 			local var_3_0 = 255 * arg_3_4.alpha_multiplier
 			local var_3_1 = arg_3_4.start_layer or var_0_3
 			local var_3_2 = arg_3_0.frame_name
@@ -71,7 +71,7 @@ UITooltipPasses = {
 		end
 	},
 	item_background = {
-		setup_data = function()
+		setup_data = function ()
 			local var_4_0 = "item_tooltip_frame_01"
 			local var_4_1 = UIFrameSettings[var_4_0].texture_sizes.horizontal[2]
 
@@ -107,7 +107,7 @@ UITooltipPasses = {
 				frame_margin = var_4_1 * 2
 			}
 		end,
-		draw = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13)
+		draw = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13)
 			local var_5_0 = 255 * arg_5_4.alpha_multiplier
 			local var_5_1 = arg_5_4.start_layer or var_0_3
 			local var_5_2 = arg_5_0.frame_name
@@ -152,7 +152,7 @@ UITooltipPasses = {
 		end
 	},
 	console_item_background = {
-		setup_data = function()
+		setup_data = function ()
 			local var_6_0 = "frame_outer_fade_02"
 
 			return {
@@ -161,7 +161,7 @@ UITooltipPasses = {
 				color = table.clone(UISettings.console_menu_rect_color)
 			}
 		end,
-		draw = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13)
+		draw = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13)
 			local var_7_0 = 210 * arg_7_4.alpha_multiplier
 			local var_7_1 = arg_7_4.start_layer or var_0_3
 			local var_7_2 = arg_7_0.frame_name
@@ -192,7 +192,7 @@ UITooltipPasses = {
 		end
 	},
 	craft_item_background = {
-		setup_data = function()
+		setup_data = function ()
 			local var_8_0 = "menu_frame_15"
 			local var_8_1 = UIFrameSettings[var_8_0].texture_sizes.horizontal[2]
 
@@ -228,7 +228,7 @@ UITooltipPasses = {
 				frame_margin = var_8_1 * 2
 			}
 		end,
-		draw = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13)
+		draw = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9, arg_9_10, arg_9_11, arg_9_12, arg_9_13)
 			local var_9_0 = 255 * arg_9_4.alpha_multiplier
 			local var_9_1 = arg_9_4.start_layer or var_0_3
 			local var_9_2 = arg_9_0.frame_name
@@ -271,7 +271,7 @@ UITooltipPasses = {
 		end
 	},
 	craft_item_new_frame = {
-		setup_data = function()
+		setup_data = function ()
 			local var_10_0 = "frame_outer_glow_01"
 			local var_10_1 = UIFrameSettings[var_10_0].texture_sizes.horizontal[2]
 
@@ -286,7 +286,7 @@ UITooltipPasses = {
 				frame_margin = var_10_1 * 2
 			}
 		end,
-		draw = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13)
+		draw = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13)
 			local var_11_0 = arg_11_4.alpha_multiplier
 			local var_11_1 = (55 + 200 * (0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5)) * var_11_0
 
@@ -319,7 +319,7 @@ UITooltipPasses = {
 		end
 	},
 	craft_item_reward_title = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -382,7 +382,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13)
+		draw = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10, arg_13_11, arg_13_12, arg_13_13)
 			local var_13_0 = 255 * arg_13_4.alpha_multiplier
 			local var_13_1 = arg_13_4.start_layer or var_0_3
 			local var_13_2 = arg_13_0.frame_margin or 0
@@ -446,7 +446,7 @@ UITooltipPasses = {
 		end
 	},
 	weapon_stats = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -540,7 +540,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13)
+		draw = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13)
 			local var_15_0 = 255 * arg_15_4.alpha_multiplier
 			local var_15_1 = arg_15_4.start_layer or var_0_3
 			local var_15_2 = arg_15_0.frame_margin or 0
@@ -733,7 +733,7 @@ UITooltipPasses = {
 		end
 	},
 	old_keywords = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -781,7 +781,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13)
+		draw = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9, arg_17_10, arg_17_11, arg_17_12, arg_17_13)
 			local var_17_0 = 255 * arg_17_4.alpha_multiplier
 			local var_17_1 = arg_17_4.start_layer or var_0_3
 			local var_17_2 = 20
@@ -865,7 +865,7 @@ UITooltipPasses = {
 		end
 	},
 	properties = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -942,7 +942,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13)
+		draw = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10, arg_19_11, arg_19_12, arg_19_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_19_11:get("item_compare") or arg_19_11:get("item_detail")) then
 				local var_19_0 = arg_19_13.data.slot_type
 
@@ -1081,7 +1081,7 @@ UITooltipPasses = {
 		end
 	},
 	traits = {
-		setup_data = function()
+		setup_data = function ()
 			local var_20_0 = "item_tooltip_frame_01"
 			local var_20_1 = UIFrameSettings[var_20_0]
 
@@ -1186,7 +1186,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12, arg_21_13)
+		draw = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8, arg_21_9, arg_21_10, arg_21_11, arg_21_12, arg_21_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_21_11:get("item_compare") or arg_21_11:get("item_detail")) then
 				local var_21_0 = arg_21_13.data.slot_type
 
@@ -1305,7 +1305,7 @@ UITooltipPasses = {
 		end
 	},
 	advanced_input_helper = {
-		setup_data = function()
+		setup_data = function ()
 			local var_22_0 = "item_tooltip_frame_01"
 			local var_22_1 = UIFrameSettings[var_22_0]
 			local var_22_2 = Managers.input:is_device_active("gamepad")
@@ -1410,7 +1410,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10, arg_23_11, arg_23_12, arg_23_13)
+		draw = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10, arg_23_11, arg_23_12, arg_23_13)
 			if not arg_23_11:get("item_compare") and not arg_23_11:get("item_detail") then
 				local var_23_0 = arg_23_13.data.slot_type
 
@@ -1534,7 +1534,7 @@ UITooltipPasses = {
 		end
 	},
 	equipped_item_title = {
-		setup_data = function()
+		setup_data = function ()
 			local var_24_0 = "item_tooltip_frame_01"
 			local var_24_1 = UIFrameSettings[var_24_0]
 
@@ -1604,7 +1604,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9, arg_25_10, arg_25_11, arg_25_12, arg_25_13)
+		draw = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9, arg_25_10, arg_25_11, arg_25_12, arg_25_13)
 			local var_25_0 = arg_25_13.backend_id
 			local var_25_1 = arg_25_13 and arg_25_13.data and arg_25_13.data.slot_type
 
@@ -1715,7 +1715,7 @@ UITooltipPasses = {
 		end
 	},
 	fatigue = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				background_color = {
 					240,
@@ -1825,7 +1825,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9, arg_27_10, arg_27_11, arg_27_12, arg_27_13)
+		draw = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7, arg_27_8, arg_27_9, arg_27_10, arg_27_11, arg_27_12, arg_27_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_27_11:get("item_compare") or arg_27_11:get("item_detail")) then
 				local var_27_0 = arg_27_13.data.slot_type
 
@@ -1952,7 +1952,7 @@ UITooltipPasses = {
 		end
 	},
 	ammunition = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				background_color = {
 					240,
@@ -2021,7 +2021,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13)
+		draw = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9, arg_29_10, arg_29_11, arg_29_12, arg_29_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_29_11:get("item_compare") or arg_29_11:get("item_detail")) then
 				local var_29_0 = arg_29_13.data.slot_type
 
@@ -2133,7 +2133,7 @@ UITooltipPasses = {
 		end
 	},
 	item_power_level = {
-		setup_data = function()
+		setup_data = function ()
 			local var_30_0 = {
 				{
 					vertical_alignment = "center",
@@ -2164,7 +2164,7 @@ UITooltipPasses = {
 				text_pass_size = {}
 			}
 		end,
-		draw = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13)
+		draw = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9, arg_31_10, arg_31_11, arg_31_12, arg_31_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_31_11:get("item_compare") or arg_31_11:get("item_detail")) then
 				local var_31_0 = arg_31_13.data.slot_type
 
@@ -2291,7 +2291,7 @@ UITooltipPasses = {
 		end
 	},
 	item_titles = {
-		setup_data = function()
+		setup_data = function ()
 			local var_32_0 = "item_tooltip_frame_01"
 			local var_32_1 = UIFrameSettings[var_32_0]
 
@@ -2464,7 +2464,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9, arg_33_10, arg_33_11, arg_33_12, arg_33_13)
+		draw = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7, arg_33_8, arg_33_9, arg_33_10, arg_33_11, arg_33_12, arg_33_13)
 			local var_33_0 = 255 * arg_33_4.alpha_multiplier
 			local var_33_1 = arg_33_4.start_layer or var_0_3
 			local var_33_2 = arg_33_0.frame_margin or 0
@@ -2627,7 +2627,7 @@ UITooltipPasses = {
 		end
 	},
 	console_item_titles = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -2715,7 +2715,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8, arg_35_9, arg_35_10, arg_35_11, arg_35_12, arg_35_13)
+		draw = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7, arg_35_8, arg_35_9, arg_35_10, arg_35_11, arg_35_12, arg_35_13)
 			local var_35_0 = 255 * arg_35_4.alpha_multiplier
 			local var_35_1 = arg_35_4.start_layer or var_0_3
 			local var_35_2 = arg_35_0.frame_margin or 0
@@ -2847,7 +2847,7 @@ UITooltipPasses = {
 		end
 	},
 	item_text = {
-		setup_data = function()
+		setup_data = function ()
 			local var_36_0 = {
 				{
 					vertical_alignment = "bottom",
@@ -2934,7 +2934,7 @@ UITooltipPasses = {
 				text_pass_size = {}
 			}
 		end,
-		draw = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, arg_37_9, arg_37_10, arg_37_11, arg_37_12, arg_37_13)
+		draw = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7, arg_37_8, arg_37_9, arg_37_10, arg_37_11, arg_37_12, arg_37_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_37_11:get("item_compare") or arg_37_11:get("item_detail")) then
 				local var_37_0 = arg_37_13.data.slot_type
 
@@ -3042,7 +3042,7 @@ UITooltipPasses = {
 		end
 	},
 	unwieldable = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -3063,7 +3063,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9, arg_39_10, arg_39_11, arg_39_12, arg_39_13)
+		draw = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9, arg_39_10, arg_39_11, arg_39_12, arg_39_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_39_11:get("item_compare") or arg_39_11:get("item_detail")) then
 				local var_39_0 = arg_39_13.data.slot_type
 
@@ -3147,7 +3147,7 @@ UITooltipPasses = {
 		end
 	},
 	skin_applied = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -3170,7 +3170,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9, arg_41_10, arg_41_11, arg_41_12, arg_41_13)
+		draw = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9, arg_41_10, arg_41_11, arg_41_12, arg_41_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_41_11:get("item_compare") or arg_41_11:get("item_detail")) then
 				local var_41_0 = arg_41_13.data.slot_type
 
@@ -3229,7 +3229,7 @@ UITooltipPasses = {
 		end
 	},
 	console_item_description = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -3250,7 +3250,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9, arg_43_10, arg_43_11, arg_43_12, arg_43_13)
+		draw = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9, arg_43_10, arg_43_11, arg_43_12, arg_43_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_43_11:get("item_compare") or arg_43_11:get("item_detail")) then
 				local var_43_0 = arg_43_13.data.slot_type
 
@@ -3313,7 +3313,7 @@ UITooltipPasses = {
 		end
 	},
 	item_description = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				background_color = {
 					240,
@@ -3399,7 +3399,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11, arg_45_12, arg_45_13)
+		draw = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11, arg_45_12, arg_45_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_45_11:get("item_compare") or arg_45_11:get("item_detail")) then
 				local var_45_0 = arg_45_13.data.slot_type
 
@@ -3515,7 +3515,7 @@ UITooltipPasses = {
 		end
 	},
 	talent_text = {
-		setup_data = function()
+		setup_data = function ()
 			local var_46_0 = {
 				{
 					word_wrap = true,
@@ -3599,7 +3599,7 @@ UITooltipPasses = {
 
 			return var_46_2
 		end,
-		draw = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8, arg_47_9, arg_47_10, arg_47_11, arg_47_12, arg_47_13)
+		draw = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8, arg_47_9, arg_47_10, arg_47_11, arg_47_12, arg_47_13)
 			local var_47_0 = 255 * arg_47_4.alpha_multiplier
 			local var_47_1 = arg_47_4.start_layer or var_0_3
 			local var_47_2 = arg_47_0.frame_margin or 0
@@ -3709,7 +3709,7 @@ UITooltipPasses = {
 		end
 	},
 	generic_text = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {},
 				text_size = {},
@@ -3751,7 +3751,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8, arg_49_9, arg_49_10, arg_49_11, arg_49_12)
+		draw = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8, arg_49_9, arg_49_10, arg_49_11, arg_49_12)
 			local var_49_0 = arg_49_6.text_id
 			local var_49_1 = var_49_0 and arg_49_8[var_49_0]
 
@@ -3826,7 +3826,7 @@ UITooltipPasses = {
 		end
 	},
 	level_info = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -3876,7 +3876,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9, arg_51_10, arg_51_11, arg_51_12, arg_51_13)
+		draw = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9, arg_51_10, arg_51_11, arg_51_12, arg_51_13)
 			local var_51_0 = 255 * arg_51_4.alpha_multiplier
 			local var_51_1 = arg_51_4.start_layer or var_0_3
 			local var_51_2 = arg_51_0.frame_margin or 0
@@ -3953,7 +3953,7 @@ UITooltipPasses = {
 		end
 	},
 	additional_option_info = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -4003,7 +4003,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5, arg_53_6, arg_53_7, arg_53_8, arg_53_9, arg_53_10, arg_53_11, arg_53_12, arg_53_13)
+		draw = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5, arg_53_6, arg_53_7, arg_53_8, arg_53_9, arg_53_10, arg_53_11, arg_53_12, arg_53_13)
 			local var_53_0 = 255 * arg_53_4.alpha_multiplier
 			local var_53_1 = arg_53_4.start_layer or var_0_3
 			local var_53_2 = arg_53_0.frame_margin or 0
@@ -4091,7 +4091,7 @@ UITooltipPasses = {
 		end
 	},
 	deed_mission = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -4156,7 +4156,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13)
+		draw = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10, arg_55_11, arg_55_12, arg_55_13)
 			local var_55_0 = arg_55_13.level_key
 
 			if var_55_0 == nil then
@@ -4234,7 +4234,7 @@ UITooltipPasses = {
 		end
 	},
 	deed_difficulty = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -4299,7 +4299,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
+		draw = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9, arg_57_10, arg_57_11, arg_57_12, arg_57_13)
 			local var_57_0 = 255 * arg_57_4.alpha_multiplier
 			local var_57_1 = arg_57_4.start_layer or var_0_3
 			local var_57_2 = arg_57_0.frame_margin or 0
@@ -4377,7 +4377,7 @@ UITooltipPasses = {
 		end
 	},
 	mutators = {
-		setup_data = function(arg_58_0)
+		setup_data = function (arg_58_0)
 			return {
 				default_icon = "icons_placeholder",
 				text_pass_data = {},
@@ -4439,7 +4439,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6, arg_59_7, arg_59_8, arg_59_9, arg_59_10, arg_59_11, arg_59_12, arg_59_13)
+		draw = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6, arg_59_7, arg_59_8, arg_59_9, arg_59_10, arg_59_11, arg_59_12, arg_59_13)
 			local var_59_0 = arg_59_13.data
 			local var_59_1 = arg_59_13.mutators or var_59_0 and var_59_0.mutators
 
@@ -4543,7 +4543,7 @@ UITooltipPasses = {
 		end
 	},
 	deed_rewards = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				default_item_frame_texture = "item_frame",
 				default_item_texture = "icons_placeholder",
@@ -4636,7 +4636,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5, arg_61_6, arg_61_7, arg_61_8, arg_61_9, arg_61_10, arg_61_11, arg_61_12, arg_61_13)
+		draw = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5, arg_61_6, arg_61_7, arg_61_8, arg_61_9, arg_61_10, arg_61_11, arg_61_12, arg_61_13)
 			local var_61_0 = 255 * arg_61_4.alpha_multiplier
 			local var_61_1 = arg_61_4.start_layer or var_0_3
 			local var_61_2 = arg_61_0.frame_margin or 0
@@ -4771,7 +4771,7 @@ UITooltipPasses = {
 		end
 	},
 	event_mission = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -4836,7 +4836,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13)
+		draw = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4, arg_63_5, arg_63_6, arg_63_7, arg_63_8, arg_63_9, arg_63_10, arg_63_11, arg_63_12, arg_63_13)
 			local var_63_0 = 255 * arg_63_4.alpha_multiplier
 			local var_63_1 = arg_63_4.start_layer or var_0_3
 			local var_63_2 = arg_63_0.frame_margin or 0
@@ -4917,7 +4917,7 @@ UITooltipPasses = {
 		end
 	},
 	loot_chest_description = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -4956,7 +4956,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11, arg_65_12, arg_65_13)
+		draw = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9, arg_65_10, arg_65_11, arg_65_12, arg_65_13)
 			local var_65_0 = 255 * arg_65_4.alpha_multiplier
 			local var_65_1 = arg_65_4.start_layer or var_0_3
 			local var_65_2 = arg_65_0.frame_margin or 0
@@ -5015,7 +5015,7 @@ UITooltipPasses = {
 		end
 	},
 	loot_chest_difficulty = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5054,7 +5054,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5, arg_67_6, arg_67_7, arg_67_8, arg_67_9, arg_67_10, arg_67_11, arg_67_12, arg_67_13)
+		draw = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5, arg_67_6, arg_67_7, arg_67_8, arg_67_9, arg_67_10, arg_67_11, arg_67_12, arg_67_13)
 			local var_67_0 = 255 * arg_67_4.alpha_multiplier
 			local var_67_1 = arg_67_4.start_layer or var_0_3
 			local var_67_2 = arg_67_0.frame_margin or 0
@@ -5082,7 +5082,7 @@ UITooltipPasses = {
 				return 0
 			end
 
-			local var_67_11 = table.select_array(var_67_10, function(arg_68_0, arg_68_1)
+			local var_67_11 = table.select_array(var_67_10, function (arg_68_0, arg_68_1)
 				return DifficultySettings[arg_68_1] and Localize(DifficultySettings[arg_68_1].display_name)
 			end)
 
@@ -5135,7 +5135,7 @@ UITooltipPasses = {
 		end
 	},
 	loot_chest_power_range = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5174,7 +5174,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9, arg_70_10, arg_70_11, arg_70_12, arg_70_13)
+		draw = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9, arg_70_10, arg_70_11, arg_70_12, arg_70_13)
 			local var_70_0 = 255 * arg_70_4.alpha_multiplier
 			local var_70_1 = arg_70_4.start_layer or var_0_3
 			local var_70_2 = arg_70_0.frame_margin or 0
@@ -5285,7 +5285,7 @@ UITooltipPasses = {
 		end
 	},
 	item_rarity_rate = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5309,7 +5309,7 @@ UITooltipPasses = {
 						}
 					}
 				},
-				format_rarity_rate = function(arg_72_0, arg_72_1)
+				format_rarity_rate = function (arg_72_0, arg_72_1)
 					local var_72_0 = arg_72_0[arg_72_1]
 					local var_72_1
 					local var_72_2 = var_72_0 == 0 and "0" or var_72_0 < 1 and "<1" or math.round(var_72_0)
@@ -5319,7 +5319,7 @@ UITooltipPasses = {
 				end
 			}
 		end,
-		draw = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8, arg_73_9, arg_73_10, arg_73_11, arg_73_12, arg_73_13)
+		draw = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8, arg_73_9, arg_73_10, arg_73_11, arg_73_12, arg_73_13)
 			local var_73_0 = arg_73_13.data
 
 			if var_73_0.item_type ~= "loot_chest" then
@@ -5389,7 +5389,7 @@ UITooltipPasses = {
 		end
 	},
 	item_information_text = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5428,7 +5428,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4, arg_75_5, arg_75_6, arg_75_7, arg_75_8, arg_75_9, arg_75_10, arg_75_11, arg_75_12, arg_75_13)
+		draw = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4, arg_75_5, arg_75_6, arg_75_7, arg_75_8, arg_75_9, arg_75_10, arg_75_11, arg_75_12, arg_75_13)
 			local var_75_0 = 255 * arg_75_4.alpha_multiplier
 			local var_75_1 = arg_75_4.start_layer or var_0_3
 			local var_75_2 = arg_75_0.frame_margin or 0
@@ -5490,7 +5490,7 @@ UITooltipPasses = {
 		end
 	},
 	weapon_skin_title = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5513,7 +5513,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5, arg_77_6, arg_77_7, arg_77_8, arg_77_9, arg_77_10, arg_77_11, arg_77_12, arg_77_13)
+		draw = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5, arg_77_6, arg_77_7, arg_77_8, arg_77_9, arg_77_10, arg_77_11, arg_77_12, arg_77_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_77_11:get("item_compare") or arg_77_11:get("item_detail")) then
 				local var_77_0 = arg_77_13.data.slot_type
 
@@ -5578,7 +5578,7 @@ UITooltipPasses = {
 		end
 	},
 	console_keywords = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -5599,7 +5599,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6, arg_79_7, arg_79_8, arg_79_9, arg_79_10, arg_79_11, arg_79_12, arg_79_13)
+		draw = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4, arg_79_5, arg_79_6, arg_79_7, arg_79_8, arg_79_9, arg_79_10, arg_79_11, arg_79_12, arg_79_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_79_11:get("item_compare") or arg_79_11:get("item_detail")) then
 				local var_79_0 = arg_79_13.data.slot_type
 
@@ -5678,7 +5678,7 @@ UITooltipPasses = {
 		end
 	},
 	keywords = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				background_color = {
 					240,
@@ -5764,7 +5764,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6, arg_81_7, arg_81_8, arg_81_9, arg_81_10, arg_81_11, arg_81_12, arg_81_13)
+		draw = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6, arg_81_7, arg_81_8, arg_81_9, arg_81_10, arg_81_11, arg_81_12, arg_81_13)
 			if Development.parameter("enable_detailed_tooltips") and (arg_81_11:get("item_compare") or arg_81_11:get("item_detail")) then
 				local var_81_0 = arg_81_13.data.slot_type
 
@@ -5903,7 +5903,7 @@ UITooltipPasses = {
 		end
 	},
 	hero_power_gained = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -5983,7 +5983,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5, arg_83_6, arg_83_7, arg_83_8, arg_83_9, arg_83_10, arg_83_11, arg_83_12)
+		draw = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5, arg_83_6, arg_83_7, arg_83_8, arg_83_9, arg_83_10, arg_83_11, arg_83_12)
 			local var_83_0 = arg_83_4.player
 			local var_83_1
 			local var_83_2
@@ -6125,7 +6125,7 @@ UITooltipPasses = {
 		end
 	},
 	hero_power_perks = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -6205,7 +6205,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5, arg_85_6, arg_85_7, arg_85_8, arg_85_9, arg_85_10, arg_85_11, arg_85_12)
+		draw = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5, arg_85_6, arg_85_7, arg_85_8, arg_85_9, arg_85_10, arg_85_11, arg_85_12)
 			local var_85_0 = arg_85_4.start_layer or var_0_3
 			local var_85_1 = 0
 			local var_85_2 = arg_85_0.frame_margin or 0
@@ -6305,7 +6305,7 @@ UITooltipPasses = {
 		end
 	},
 	hero_power_description = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -6369,7 +6369,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, arg_87_7, arg_87_8, arg_87_9, arg_87_10, arg_87_11, arg_87_12)
+		draw = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, arg_87_7, arg_87_8, arg_87_9, arg_87_10, arg_87_11, arg_87_12)
 			local var_87_0 = 255 * arg_87_4.alpha_multiplier
 			local var_87_1 = arg_87_4.start_layer or var_0_3
 			local var_87_2 = arg_87_0.frame_margin or 0
@@ -6448,7 +6448,7 @@ UITooltipPasses = {
 		end
 	},
 	hero_power_title = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				text_pass_data = {
 					text_id = "text"
@@ -6471,7 +6471,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6, arg_89_7, arg_89_8, arg_89_9, arg_89_10, arg_89_11, arg_89_12)
+		draw = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6, arg_89_7, arg_89_8, arg_89_9, arg_89_10, arg_89_11, arg_89_12)
 			local var_89_0 = 255 * arg_89_4.alpha_multiplier
 			local var_89_1 = arg_89_4.start_layer or var_0_3
 			local var_89_2 = arg_89_0.frame_margin or 0
@@ -6513,7 +6513,7 @@ UITooltipPasses = {
 		end
 	},
 	light_attack_stats = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -6579,7 +6579,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4, arg_91_5, arg_91_6, arg_91_7, arg_91_8, arg_91_9, arg_91_10, arg_91_11, arg_91_12, arg_91_13)
+		draw = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4, arg_91_5, arg_91_6, arg_91_7, arg_91_8, arg_91_9, arg_91_10, arg_91_11, arg_91_12, arg_91_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_91_11:get("item_compare") then
 				local var_91_0 = arg_91_13.data.slot_type
 
@@ -6773,7 +6773,7 @@ UITooltipPasses = {
 		end
 	},
 	heavy_attack_stats = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -6879,7 +6879,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7, arg_93_8, arg_93_9, arg_93_10, arg_93_11, arg_93_12, arg_93_13)
+		draw = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7, arg_93_8, arg_93_9, arg_93_10, arg_93_11, arg_93_12, arg_93_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_93_11:get("item_compare") then
 				local var_93_0 = arg_93_13.data.slot_type
 
@@ -7108,7 +7108,7 @@ UITooltipPasses = {
 		end
 	},
 	detailed_stats_light = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -7174,7 +7174,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7, arg_95_8, arg_95_9, arg_95_10, arg_95_11, arg_95_12, arg_95_13)
+		draw = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7, arg_95_8, arg_95_9, arg_95_10, arg_95_11, arg_95_12, arg_95_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_95_11:get("item_detail") then
 				if not (arg_95_13.data.slot_type == "melee") then
 					return 0
@@ -7377,7 +7377,7 @@ UITooltipPasses = {
 		end
 	},
 	detailed_stats_heavy = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -7443,7 +7443,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5, arg_97_6, arg_97_7, arg_97_8, arg_97_9, arg_97_10, arg_97_11, arg_97_12, arg_97_13)
+		draw = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5, arg_97_6, arg_97_7, arg_97_8, arg_97_9, arg_97_10, arg_97_11, arg_97_12, arg_97_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_97_11:get("item_detail") then
 				if not (arg_97_13.data.slot_type == "melee") then
 					return 0
@@ -7646,7 +7646,7 @@ UITooltipPasses = {
 		end
 	},
 	detailed_stats_push = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -7712,7 +7712,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, arg_99_7, arg_99_8, arg_99_9, arg_99_10, arg_99_11, arg_99_12, arg_99_13)
+		draw = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, arg_99_7, arg_99_8, arg_99_9, arg_99_10, arg_99_11, arg_99_12, arg_99_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_99_11:get("item_detail") then
 				if not (arg_99_13.data.slot_type == "melee") then
 					return 0
@@ -7861,7 +7861,7 @@ UITooltipPasses = {
 		end
 	},
 	detailed_stats_ranged_light = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -7927,7 +7927,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8, arg_101_9, arg_101_10, arg_101_11, arg_101_12, arg_101_13)
+		draw = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8, arg_101_9, arg_101_10, arg_101_11, arg_101_12, arg_101_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_101_11:get("item_detail") then
 				if not (arg_101_13.data.slot_type == "ranged") then
 					return 0
@@ -8130,7 +8130,7 @@ UITooltipPasses = {
 		end
 	},
 	detailed_stats_ranged_heavy = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_name = "item_tooltip_frame_01",
 				background_color = {
@@ -8196,7 +8196,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4, arg_103_5, arg_103_6, arg_103_7, arg_103_8, arg_103_9, arg_103_10, arg_103_11, arg_103_12, arg_103_13)
+		draw = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4, arg_103_5, arg_103_6, arg_103_7, arg_103_8, arg_103_9, arg_103_10, arg_103_11, arg_103_12, arg_103_13)
 			if Development.parameter("enable_detailed_tooltips") and arg_103_11:get("item_detail") then
 				if not (arg_103_13.data.slot_type == "ranged") then
 					return 0
@@ -8399,7 +8399,7 @@ UITooltipPasses = {
 		end
 	},
 	weave_progression_slot_titles = {
-		setup_data = function()
+		setup_data = function ()
 			local var_104_0 = {
 				{
 					name = "talent_title",
@@ -8912,7 +8912,7 @@ UITooltipPasses = {
 				text_pass_size = {}
 			}
 		end,
-		draw = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4, arg_105_5, arg_105_6, arg_105_7, arg_105_8, arg_105_9, arg_105_10, arg_105_11, arg_105_12, arg_105_13)
+		draw = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4, arg_105_5, arg_105_6, arg_105_7, arg_105_8, arg_105_9, arg_105_10, arg_105_11, arg_105_12, arg_105_13)
 			local var_105_0 = 255 * arg_105_4.alpha_multiplier
 			local var_105_1 = arg_105_4.start_layer or var_0_3
 			local var_105_2 = 20
@@ -9051,7 +9051,7 @@ UITooltipPasses = {
 		end
 	},
 	athanor_upgrade_tooltip = {
-		setup_data = function()
+		setup_data = function ()
 			local var_106_0 = {
 				upgrade_property_text = {
 					minimum_height = 35,
@@ -9140,7 +9140,7 @@ UITooltipPasses = {
 				text_pass_size = {}
 			}
 		end,
-		draw = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4, arg_107_5, arg_107_6, arg_107_7, arg_107_8, arg_107_9, arg_107_10, arg_107_11, arg_107_12, arg_107_13)
+		draw = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3, arg_107_4, arg_107_5, arg_107_6, arg_107_7, arg_107_8, arg_107_9, arg_107_10, arg_107_11, arg_107_12, arg_107_13)
 			local var_107_0 = 255 * arg_107_4.alpha_multiplier
 			local var_107_1 = arg_107_4.start_layer or var_0_3
 			local var_107_2 = 20
@@ -9310,7 +9310,7 @@ UITooltipPasses = {
 		end
 	},
 	special_action_tooltip = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_margin = 0,
 				text_pass_data = {
@@ -9351,7 +9351,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4, arg_109_5, arg_109_6, arg_109_7, arg_109_8, arg_109_9, arg_109_10, arg_109_11, arg_109_12, arg_109_13)
+		draw = function (arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4, arg_109_5, arg_109_6, arg_109_7, arg_109_8, arg_109_9, arg_109_10, arg_109_11, arg_109_12, arg_109_13)
 			local var_109_0 = arg_109_13.data
 			local var_109_1 = var_109_0.temporary_template or var_109_0.template
 			local var_109_2 = WeaponUtils.get_weapon_template(var_109_1)
@@ -9418,7 +9418,7 @@ UITooltipPasses = {
 		end
 	},
 	console_special_action_tooltip = {
-		setup_data = function()
+		setup_data = function ()
 			return {
 				frame_margin = 0,
 				text_pass_data = {
@@ -9442,7 +9442,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5, arg_111_6, arg_111_7, arg_111_8, arg_111_9, arg_111_10, arg_111_11, arg_111_12, arg_111_13)
+		draw = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5, arg_111_6, arg_111_7, arg_111_8, arg_111_9, arg_111_10, arg_111_11, arg_111_12, arg_111_13)
 			local var_111_0 = arg_111_13.data
 			local var_111_1 = var_111_0.temporary_template or var_111_0.template
 			local var_111_2 = WeaponUtils.get_weapon_template(var_111_1)
@@ -9493,7 +9493,7 @@ UITooltipPasses = {
 		end
 	},
 	other_equipped_careers_tooltip = {
-		setup_data = function()
+		setup_data = function ()
 			local var_112_0 = Colors.color_definitions.font_title
 
 			return {
@@ -9579,7 +9579,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5, arg_113_6, arg_113_7, arg_113_8, arg_113_9, arg_113_10, arg_113_11, arg_113_12, arg_113_13)
+		draw = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5, arg_113_6, arg_113_7, arg_113_8, arg_113_9, arg_113_10, arg_113_11, arg_113_12, arg_113_13)
 			local var_113_0
 
 			if arg_113_13.data and CosmeticUtils.is_cosmetic_item(arg_113_13.data.slot_type) then
@@ -9713,7 +9713,7 @@ UITooltipPasses = {
 		end
 	},
 	console_other_equipped_careers_tooltip = {
-		setup_data = function()
+		setup_data = function ()
 			local var_114_0 = Colors.color_definitions.font_title
 
 			return {
@@ -9740,7 +9740,7 @@ UITooltipPasses = {
 				}
 			}
 		end,
-		draw = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9, arg_115_10, arg_115_11, arg_115_12, arg_115_13)
+		draw = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9, arg_115_10, arg_115_11, arg_115_12, arg_115_13)
 			local var_115_0
 
 			if arg_115_13.data and CosmeticUtils.is_cosmetic_item(arg_115_13.data.slot_type) then

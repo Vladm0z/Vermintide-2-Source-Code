@@ -3,7 +3,7 @@
 MatchmakingStateSearchPlayerHostedLobby = class(MatchmakingStateSearchPlayerHostedLobby)
 MatchmakingStateSearchPlayerHostedLobby.NAME = "MatchmakingStateSearchPlayerHostedLobby"
 
-function MatchmakingStateSearchPlayerHostedLobby.init(arg_1_0, arg_1_1)
+MatchmakingStateSearchPlayerHostedLobby.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._lobby_finder = arg_1_1.lobby_finder
 	arg_1_0._peer_id = Network.peer_id()
@@ -13,18 +13,18 @@ function MatchmakingStateSearchPlayerHostedLobby.init(arg_1_0, arg_1_1)
 	Managers.matchmaking.countdown_has_finished = false
 end
 
-function MatchmakingStateSearchPlayerHostedLobby.destroy(arg_2_0)
+MatchmakingStateSearchPlayerHostedLobby.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateSearchPlayerHostedLobby.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateSearchPlayerHostedLobby.on_enter = function (arg_3_0, arg_3_1)
 	arg_3_0._state_context = arg_3_1
 	arg_3_0._search_config = arg_3_1.search_config
 
 	arg_3_0:_initialize_search()
 end
 
-function MatchmakingStateSearchPlayerHostedLobby._initialize_search(arg_4_0)
+MatchmakingStateSearchPlayerHostedLobby._initialize_search = function (arg_4_0)
 	local var_4_0 = arg_4_0._search_config
 	local var_4_1 = {}
 
@@ -69,11 +69,11 @@ function MatchmakingStateSearchPlayerHostedLobby._initialize_search(arg_4_0)
 	arg_4_0._matchmaking_manager:send_system_chat_message("matchmaking_status_start_search")
 end
 
-function MatchmakingStateSearchPlayerHostedLobby.on_exit(arg_5_0)
+MatchmakingStateSearchPlayerHostedLobby.on_exit = function (arg_5_0)
 	return
 end
 
-function MatchmakingStateSearchPlayerHostedLobby.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateSearchPlayerHostedLobby.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._lobby_finder:update(arg_6_1)
 
 	if arg_6_0._lobby_finder:is_refreshing() then
@@ -107,7 +107,7 @@ end
 
 local var_0_0 = {}
 
-function MatchmakingStateSearchPlayerHostedLobby._search_for_game(arg_7_0, arg_7_1)
+MatchmakingStateSearchPlayerHostedLobby._search_for_game = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._lobby_finder:lobbies()
 	local var_7_1 = arg_7_0._search_config
 	local var_7_2 = arg_7_0._matchmaking_manager
@@ -126,7 +126,7 @@ function MatchmakingStateSearchPlayerHostedLobby._search_for_game(arg_7_0, arg_7
 	return arg_7_0:_find_suitable_lobby(var_7_0, var_7_1, var_7_3)
 end
 
-function MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_2.mission_id
 	local var_8_1 = arg_8_2.difficulty
 	local var_8_2 = arg_8_2.matchmaking_type
@@ -185,7 +185,7 @@ function MatchmakingStateSearchPlayerHostedLobby._find_suitable_lobby(arg_8_0, a
 	return var_8_6 or var_8_7
 end
 
-function MatchmakingStateSearchPlayerHostedLobby._lobby_match(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+MatchmakingStateSearchPlayerHostedLobby._lobby_match = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = arg_9_0._state_context.search_config
 	local var_9_1 = arg_9_0._matchmaking_manager
 	local var_9_2 = arg_9_1.id
@@ -259,7 +259,7 @@ function MatchmakingStateSearchPlayerHostedLobby._lobby_match(arg_9_0, arg_9_1, 
 	return true
 end
 
-function MatchmakingStateSearchPlayerHostedLobby._compare_first_prio_lobbies(arg_10_0, arg_10_1, arg_10_2)
+MatchmakingStateSearchPlayerHostedLobby._compare_first_prio_lobbies = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_1 == nil then
 		return arg_10_2
 	end
@@ -269,7 +269,7 @@ function MatchmakingStateSearchPlayerHostedLobby._compare_first_prio_lobbies(arg
 	return arg_10_1
 end
 
-function MatchmakingStateSearchPlayerHostedLobby._compare_secondary_prio_lobbies(arg_11_0, arg_11_1, arg_11_2)
+MatchmakingStateSearchPlayerHostedLobby._compare_secondary_prio_lobbies = function (arg_11_0, arg_11_1, arg_11_2)
 	if arg_11_1 == nil then
 		return arg_11_2
 	end

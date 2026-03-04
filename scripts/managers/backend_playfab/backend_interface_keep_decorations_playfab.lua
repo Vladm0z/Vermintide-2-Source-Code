@@ -4,7 +4,7 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceKeepDecorationsPlayFab = class(BackendInterfaceKeepDecorationsPlayFab)
 
-function BackendInterfaceKeepDecorationsPlayFab.init(arg_1_0, arg_1_1)
+BackendInterfaceKeepDecorationsPlayFab.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 	arg_1_0._keep_decorations = {}
 
@@ -21,15 +21,15 @@ function BackendInterfaceKeepDecorationsPlayFab.init(arg_1_0, arg_1_1)
 	end
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.dirtify(arg_2_0)
+BackendInterfaceKeepDecorationsPlayFab.dirtify = function (arg_2_0)
 	arg_2_0._dirty = true
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.ready(arg_3_0)
+BackendInterfaceKeepDecorationsPlayFab.ready = function (arg_3_0)
 	return true
 end
 
-function BackendInterfaceKeepDecorationsPlayFab._refresh(arg_4_0)
+BackendInterfaceKeepDecorationsPlayFab._refresh = function (arg_4_0)
 	local var_4_0 = arg_4_0._backend_mirror:get_unlocked_keep_decorations()
 
 	arg_4_0._unlocked_keep_decorations = var_4_0
@@ -45,23 +45,23 @@ function BackendInterfaceKeepDecorationsPlayFab._refresh(arg_4_0)
 	end
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.update(arg_5_0, arg_5_1)
+BackendInterfaceKeepDecorationsPlayFab.update = function (arg_5_0, arg_5_1)
 	return
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_decoration(arg_6_0, arg_6_1)
+BackendInterfaceKeepDecorationsPlayFab.get_decoration = function (arg_6_0, arg_6_1)
 	return arg_6_0._keep_decorations[arg_6_1]
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.set_decoration(arg_7_0, arg_7_1, arg_7_2)
+BackendInterfaceKeepDecorationsPlayFab.set_decoration = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0._keep_decorations[arg_7_1] = arg_7_2
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_keep_decorations_json(arg_8_0)
+BackendInterfaceKeepDecorationsPlayFab.get_keep_decorations_json = function (arg_8_0)
 	return cjson.encode(arg_8_0._keep_decorations)
 end
 
-function BackendInterfaceKeepDecorationsPlayFab.get_unlocked_keep_decorations(arg_9_0)
+BackendInterfaceKeepDecorationsPlayFab.get_unlocked_keep_decorations = function (arg_9_0)
 	if arg_9_0._dirty then
 		arg_9_0:_refresh()
 	end

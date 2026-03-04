@@ -29,7 +29,7 @@ LightFXSettings = {
 			255,
 			1
 		},
-		update_func = function(arg_1_0)
+		update_func = function (arg_1_0)
 			assert(#arg_1_0 == 5, "[LightFXManager] You need to pass in 5 values ( red, green, blue, intensity, blendtime )")
 
 			if not (Managers.state.network and Managers.state.network:game()) then
@@ -64,7 +64,7 @@ LightFXConditionalSettings = {
 			60,
 			2
 		},
-		condition_func = function()
+		condition_func = function ()
 			if not (Managers.state.network and Managers.state.network:game()) then
 				return
 			end
@@ -87,7 +87,7 @@ LightFXConditionalSettings = {
 				return true
 			end
 		end,
-		update_func = function(arg_3_0, arg_3_1, arg_3_2)
+		update_func = function (arg_3_0, arg_3_1, arg_3_2)
 			Managers.light_fx:set_lightfx_color(arg_3_2[1], arg_3_2[2], arg_3_2[3], arg_3_2[4], arg_3_2[5])
 		end
 	},
@@ -101,7 +101,7 @@ LightFXConditionalSettings = {
 			255,
 			0.1
 		},
-		condition_func = function()
+		condition_func = function ()
 			if not (Managers.state.network and Managers.state.network:game()) then
 				return false
 			end
@@ -122,7 +122,7 @@ LightFXConditionalSettings = {
 
 			return var_4_3 > 0
 		end,
-		update_func = function(arg_5_0, arg_5_1, arg_5_2)
+		update_func = function (arg_5_0, arg_5_1, arg_5_2)
 			Managers.light_fx:set_lightfx_color(arg_5_2[1], arg_5_2[2], arg_5_2[3], arg_5_2[4], arg_5_2[5])
 		end
 	}

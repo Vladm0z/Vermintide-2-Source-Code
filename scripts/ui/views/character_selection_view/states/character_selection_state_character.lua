@@ -21,7 +21,7 @@ local var_0_13 = "CharacterSelectionStateCharacter"
 CharacterSelectionStateCharacter = class(CharacterSelectionStateCharacter)
 CharacterSelectionStateCharacter.NAME = "CharacterSelectionStateCharacter"
 
-function CharacterSelectionStateCharacter.on_enter(arg_1_0, arg_1_1)
+CharacterSelectionStateCharacter.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0.parent:clear_wanted_state()
 	print("[HeroViewState] Enter Substate CharacterSelectionStateCharacter")
 
@@ -101,7 +101,7 @@ function CharacterSelectionStateCharacter.on_enter(arg_1_0, arg_1_1)
 	arg_1_0.parent:set_input_blocked(false)
 end
 
-function CharacterSelectionStateCharacter._update_video_player_settings(arg_2_0)
+CharacterSelectionStateCharacter._update_video_player_settings = function (arg_2_0)
 	local var_2_0 = arg_2_0.world_previewer:character_visible()
 
 	if var_2_0 and not arg_2_0._video_widget then
@@ -118,7 +118,7 @@ function CharacterSelectionStateCharacter._update_video_player_settings(arg_2_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._setup_video_player(arg_3_0, arg_3_1, arg_3_2)
+CharacterSelectionStateCharacter._setup_video_player = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:_destroy_video_player()
 
 	local var_3_0 = arg_3_0.ui_top_renderer
@@ -134,7 +134,7 @@ function CharacterSelectionStateCharacter._setup_video_player(arg_3_0, arg_3_1, 
 	arg_3_0._video_created = true
 end
 
-function CharacterSelectionStateCharacter._destroy_video_player(arg_4_0)
+CharacterSelectionStateCharacter._destroy_video_player = function (arg_4_0)
 	local var_4_0 = arg_4_0.ui_top_renderer
 	local var_4_1 = arg_4_0._video_widget
 
@@ -153,7 +153,7 @@ function CharacterSelectionStateCharacter._destroy_video_player(arg_4_0)
 	arg_4_0._video_created = nil
 end
 
-function CharacterSelectionStateCharacter._inject_additional_scenegraph_definitions(arg_5_0, arg_5_1)
+CharacterSelectionStateCharacter._inject_additional_scenegraph_definitions = function (arg_5_0, arg_5_1)
 	for iter_5_0, iter_5_1 in pairs(CareerSettings) do
 		if iter_5_1.additional_ui_info_file then
 			local var_5_0 = local_require(iter_5_1.additional_ui_info_file)
@@ -165,7 +165,7 @@ function CharacterSelectionStateCharacter._inject_additional_scenegraph_definiti
 	end
 end
 
-function CharacterSelectionStateCharacter.create_ui_elements(arg_6_0, arg_6_1)
+CharacterSelectionStateCharacter.create_ui_elements = function (arg_6_0, arg_6_1)
 	arg_6_0:_inject_additional_scenegraph_definitions(var_0_10)
 
 	arg_6_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_10)
@@ -209,13 +209,13 @@ function CharacterSelectionStateCharacter.create_ui_elements(arg_6_0, arg_6_1)
 	arg_6_0.ui_animator = UIAnimator:new(arg_6_0._ui_scenegraph, var_0_9)
 end
 
-function CharacterSelectionStateCharacter._set_hero_icon_selected(arg_7_0, arg_7_1)
+CharacterSelectionStateCharacter._set_hero_icon_selected = function (arg_7_0, arg_7_1)
 	for iter_7_0, iter_7_1 in ipairs(arg_7_0._hero_icon_widgets) do
 		iter_7_1.content.selected = iter_7_0 == arg_7_1
 	end
 end
 
-function CharacterSelectionStateCharacter._setup_hero_selection_widgets(arg_8_0)
+CharacterSelectionStateCharacter._setup_hero_selection_widgets = function (arg_8_0)
 	local var_8_0 = {}
 
 	arg_8_0._hero_widgets = var_8_0
@@ -311,7 +311,7 @@ function CharacterSelectionStateCharacter._setup_hero_selection_widgets(arg_8_0)
 	arg_8_0._num_max_hero_rows = var_8_4
 end
 
-function CharacterSelectionStateCharacter._update_available_profiles(arg_9_0)
+CharacterSelectionStateCharacter._update_available_profiles = function (arg_9_0)
 	local var_9_0 = arg_9_0._available_profiles
 	local var_9_1 = arg_9_0._hero_widgets
 	local var_9_2 = Managers.player:local_player()
@@ -367,7 +367,7 @@ function CharacterSelectionStateCharacter._update_available_profiles(arg_9_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._handle_mouse_selection(arg_10_0)
+CharacterSelectionStateCharacter._handle_mouse_selection = function (arg_10_0)
 	local var_10_0 = arg_10_0._hero_widgets
 	local var_10_1 = arg_10_0._num_max_hero_rows
 	local var_10_2 = arg_10_0._selected_hero_row
@@ -395,7 +395,7 @@ function CharacterSelectionStateCharacter._handle_mouse_selection(arg_10_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._update_equipped_bots(arg_11_0)
+CharacterSelectionStateCharacter._update_equipped_bots = function (arg_11_0)
 	local var_11_0 = PlayerData.bot_spawn_priority
 
 	if not var_11_0[1] then
@@ -430,7 +430,7 @@ function CharacterSelectionStateCharacter._update_equipped_bots(arg_11_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._exit_bot_selection(arg_12_0)
+CharacterSelectionStateCharacter._exit_bot_selection = function (arg_12_0)
 	arg_12_0.parent:set_input_blocked(false)
 	arg_12_0:_setup_hero_selection_widgets()
 	arg_12_0:_select_hero(arg_12_0._selected_profile_index, arg_12_0._selected_career_index, true)
@@ -465,7 +465,7 @@ function CharacterSelectionStateCharacter._exit_bot_selection(arg_12_0)
 	arg_12_0:_play_sound("Play_hud_button_close")
 end
 
-function CharacterSelectionStateCharacter._enter_bot_selection(arg_13_0, arg_13_1)
+CharacterSelectionStateCharacter._enter_bot_selection = function (arg_13_0, arg_13_1)
 	arg_13_0._bot_selection = true
 	arg_13_0._bot_priority_copy = table.clone(PlayerData.bot_spawn_priority)
 
@@ -505,7 +505,7 @@ function CharacterSelectionStateCharacter._enter_bot_selection(arg_13_0, arg_13_
 	arg_13_0:_play_sound("Play_hud_button_open")
 end
 
-function CharacterSelectionStateCharacter._handle_gamepad_selection(arg_14_0, arg_14_1)
+CharacterSelectionStateCharacter._handle_gamepad_selection = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._selected_hero_row
 	local var_14_1 = arg_14_0._selected_hero_column
 	local var_14_2 = arg_14_0._num_max_hero_rows
@@ -558,7 +558,7 @@ function CharacterSelectionStateCharacter._handle_gamepad_selection(arg_14_0, ar
 	end
 end
 
-function CharacterSelectionStateCharacter._is_selected_hero_unlocked(arg_15_0)
+CharacterSelectionStateCharacter._is_selected_hero_unlocked = function (arg_15_0)
 	local var_15_0 = arg_15_0._selected_hero_row
 	local var_15_1 = arg_15_0._selected_hero_column
 	local var_15_2 = arg_15_0._num_max_hero_rows
@@ -581,7 +581,7 @@ function CharacterSelectionStateCharacter._is_selected_hero_unlocked(arg_15_0)
 	return false
 end
 
-function CharacterSelectionStateCharacter._handle_gamepad_bot_selection(arg_16_0, arg_16_1)
+CharacterSelectionStateCharacter._handle_gamepad_bot_selection = function (arg_16_0, arg_16_1)
 	arg_16_0:_handle_gamepad_selection(arg_16_1)
 
 	if arg_16_1:get("confirm_press", true) and arg_16_0:_is_selected_hero_unlocked() then
@@ -625,7 +625,7 @@ function CharacterSelectionStateCharacter._handle_gamepad_bot_selection(arg_16_0
 	end
 end
 
-function CharacterSelectionStateCharacter._update_bot_order(arg_17_0, arg_17_1, arg_17_2)
+CharacterSelectionStateCharacter._update_bot_order = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0._current_selected_row
 
 	table.remove(arg_17_0._bot_priority_copy, var_17_0)
@@ -673,7 +673,7 @@ function CharacterSelectionStateCharacter._update_bot_order(arg_17_0, arg_17_1, 
 	end
 end
 
-function CharacterSelectionStateCharacter._set_bot_selection(arg_18_0, arg_18_1)
+CharacterSelectionStateCharacter._set_bot_selection = function (arg_18_0, arg_18_1)
 	arg_18_0._current_selected_bot_index = PlayerData.bot_spawn_priority[arg_18_1]
 	arg_18_0._current_selected_row = arg_18_1
 	arg_18_0._x_offset = 50
@@ -720,7 +720,7 @@ function CharacterSelectionStateCharacter._set_bot_selection(arg_18_0, arg_18_1)
 	arg_18_0:_play_sound("hud_bot_order_grab")
 end
 
-function CharacterSelectionStateCharacter._reset_bot_selection(arg_19_0, arg_19_1)
+CharacterSelectionStateCharacter._reset_bot_selection = function (arg_19_0, arg_19_1)
 	arg_19_0._current_selected_bot_index = nil
 	arg_19_0._current_selected_row = nil
 	arg_19_0._x_offset = nil
@@ -762,7 +762,7 @@ function CharacterSelectionStateCharacter._reset_bot_selection(arg_19_0, arg_19_
 	end
 end
 
-function CharacterSelectionStateCharacter._handle_mouse_bot_selection(arg_20_0, arg_20_1)
+CharacterSelectionStateCharacter._handle_mouse_bot_selection = function (arg_20_0, arg_20_1)
 	if Managers.input:is_device_active("gamepad") then
 		return
 	end
@@ -869,7 +869,7 @@ function CharacterSelectionStateCharacter._handle_mouse_bot_selection(arg_20_0, 
 	end
 end
 
-function CharacterSelectionStateCharacter._select_hero(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+CharacterSelectionStateCharacter._select_hero = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 	if not arg_21_3 then
 		arg_21_0:_play_sound("play_gui_hero_select_career_click")
 	end
@@ -936,17 +936,17 @@ function CharacterSelectionStateCharacter._select_hero(arg_21_0, arg_21_1, arg_2
 	end
 end
 
-function CharacterSelectionStateCharacter._get_skin_item_data(arg_22_0, arg_22_1, arg_22_2)
+CharacterSelectionStateCharacter._get_skin_item_data = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = SPProfiles[arg_22_1].careers[arg_22_2].base_skin
 
 	return Cosmetics[var_22_0]
 end
 
-function CharacterSelectionStateCharacter._wanted_state(arg_23_0)
+CharacterSelectionStateCharacter._wanted_state = function (arg_23_0)
 	return (arg_23_0.parent:wanted_state())
 end
 
-function CharacterSelectionStateCharacter.on_exit(arg_24_0, arg_24_1)
+CharacterSelectionStateCharacter.on_exit = function (arg_24_0, arg_24_1)
 	if arg_24_0.menu_input_description then
 		arg_24_0.menu_input_description:destroy()
 
@@ -980,7 +980,7 @@ function CharacterSelectionStateCharacter.on_exit(arg_24_0, arg_24_1)
 	print("[HeroViewState] Exit Substate CharacterSelectionStateCharacter")
 end
 
-function CharacterSelectionStateCharacter._respawn_player(arg_25_0)
+CharacterSelectionStateCharacter._respawn_player = function (arg_25_0)
 	if arg_25_0._respawn_player_unit then
 		if arg_25_0.is_server then
 			Managers.state.network.network_server:peer_respawn_player(arg_25_0.peer_id)
@@ -992,7 +992,7 @@ function CharacterSelectionStateCharacter._respawn_player(arg_25_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._update_transition_timer(arg_26_0, arg_26_1)
+CharacterSelectionStateCharacter._update_transition_timer = function (arg_26_0, arg_26_1)
 	if not arg_26_0._transition_timer then
 		return
 	end
@@ -1004,7 +1004,7 @@ function CharacterSelectionStateCharacter._update_transition_timer(arg_26_0, arg
 	end
 end
 
-function CharacterSelectionStateCharacter.update(arg_27_0, arg_27_1, arg_27_2)
+CharacterSelectionStateCharacter.update = function (arg_27_0, arg_27_1, arg_27_2)
 	if var_0_11 then
 		var_0_11 = false
 
@@ -1032,7 +1032,7 @@ function CharacterSelectionStateCharacter.update(arg_27_0, arg_27_1, arg_27_2)
 	return arg_27_0:_handle_transitions()
 end
 
-function CharacterSelectionStateCharacter._handle_transitions(arg_28_0)
+CharacterSelectionStateCharacter._handle_transitions = function (arg_28_0)
 	local var_28_0 = arg_28_0:_wanted_state()
 
 	if not arg_28_0._transition_timer and not arg_28_0:pending_profile_request() and (var_28_0 or arg_28_0._new_state) then
@@ -1044,7 +1044,7 @@ function CharacterSelectionStateCharacter._handle_transitions(arg_28_0)
 	end
 end
 
-function CharacterSelectionStateCharacter.post_update(arg_29_0, arg_29_1, arg_29_2)
+CharacterSelectionStateCharacter.post_update = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0.ui_animator:update(arg_29_1)
 	arg_29_0:_update_animations(arg_29_1)
 
@@ -1079,7 +1079,7 @@ function CharacterSelectionStateCharacter.post_update(arg_29_0, arg_29_1, arg_29
 	end
 end
 
-function CharacterSelectionStateCharacter.draw(arg_30_0, arg_30_1, arg_30_2)
+CharacterSelectionStateCharacter.draw = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0 = arg_30_0.ui_top_renderer
 	local var_30_1 = arg_30_0._ui_scenegraph
 	local var_30_2 = arg_30_0.input_manager
@@ -1147,7 +1147,7 @@ function CharacterSelectionStateCharacter.draw(arg_30_0, arg_30_1, arg_30_2)
 	end
 end
 
-function CharacterSelectionStateCharacter._update_animations(arg_31_0, arg_31_1)
+CharacterSelectionStateCharacter._update_animations = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._widgets_by_name.select_button
 
 	UIWidgetUtils.animate_default_button(var_31_0, arg_31_1)
@@ -1184,7 +1184,7 @@ function CharacterSelectionStateCharacter._update_animations(arg_31_0, arg_31_1)
 	end
 end
 
-function CharacterSelectionStateCharacter._spawn_hero_unit(arg_32_0, arg_32_1)
+CharacterSelectionStateCharacter._spawn_hero_unit = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0.world_previewer
 	local var_32_1 = arg_32_0._selected_career_index
 	local var_32_2 = callback(arg_32_0, "cb_hero_unit_spawned", arg_32_1)
@@ -1192,7 +1192,7 @@ function CharacterSelectionStateCharacter._spawn_hero_unit(arg_32_0, arg_32_1)
 	var_32_0:request_spawn_hero_unit(arg_32_1, var_32_1, not arg_32_0.use_user_skins, var_32_2, nil, 0.5)
 end
 
-function CharacterSelectionStateCharacter.cb_hero_unit_spawned(arg_33_0, arg_33_1)
+CharacterSelectionStateCharacter.cb_hero_unit_spawned = function (arg_33_0, arg_33_1)
 	local var_33_0 = arg_33_0.world_previewer
 	local var_33_1 = arg_33_0._selected_career_index
 	local var_33_2 = FindProfileIndex(arg_33_1)
@@ -1264,7 +1264,7 @@ function CharacterSelectionStateCharacter.cb_hero_unit_spawned(arg_33_0, arg_33_
 	end
 end
 
-function CharacterSelectionStateCharacter._is_button_pressed(arg_34_0, arg_34_1)
+CharacterSelectionStateCharacter._is_button_pressed = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_1.content.button_hotspot
 
 	if var_34_0.on_release then
@@ -1274,15 +1274,15 @@ function CharacterSelectionStateCharacter._is_button_pressed(arg_34_0, arg_34_1)
 	end
 end
 
-function CharacterSelectionStateCharacter._is_button_hover_enter(arg_35_0, arg_35_1)
+CharacterSelectionStateCharacter._is_button_hover_enter = function (arg_35_0, arg_35_1)
 	return arg_35_1.content.button_hotspot.on_hover_enter
 end
 
-function CharacterSelectionStateCharacter._is_button_hover_exit(arg_36_0, arg_36_1)
+CharacterSelectionStateCharacter._is_button_hover_exit = function (arg_36_0, arg_36_1)
 	return arg_36_1.content.button_hotspot.on_hover_exit
 end
 
-function CharacterSelectionStateCharacter._populate_career_info(arg_37_0, arg_37_1, arg_37_2)
+CharacterSelectionStateCharacter._populate_career_info = function (arg_37_0, arg_37_1, arg_37_2)
 	local var_37_0 = arg_37_0._ui_scenegraph
 	local var_37_1 = arg_37_0.ui_top_renderer
 	local var_37_2 = arg_37_0._widgets_by_name
@@ -1356,7 +1356,7 @@ function CharacterSelectionStateCharacter._populate_career_info(arg_37_0, arg_37
 	arg_37_0:_destroy_video_player()
 end
 
-function CharacterSelectionStateCharacter._setup_additional_career_info(arg_38_0, arg_38_1, arg_38_2)
+CharacterSelectionStateCharacter._setup_additional_career_info = function (arg_38_0, arg_38_1, arg_38_2)
 	local var_38_0 = arg_38_2 or 0
 
 	if arg_38_1.additional_ui_info_file then
@@ -1397,7 +1397,7 @@ function CharacterSelectionStateCharacter._setup_additional_career_info(arg_38_0
 	end
 end
 
-function CharacterSelectionStateCharacter._handle_input(arg_39_0, arg_39_1, arg_39_2)
+CharacterSelectionStateCharacter._handle_input = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0:input_service()
 	local var_39_1 = Managers.input:is_device_active("gamepad")
 
@@ -1452,7 +1452,7 @@ function CharacterSelectionStateCharacter._handle_input(arg_39_0, arg_39_1, arg_
 	end
 end
 
-function CharacterSelectionStateCharacter._set_hero_info(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+CharacterSelectionStateCharacter._set_hero_info = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = arg_40_0._widgets_by_name
 
 	var_40_0.info_hero_name.content.text = arg_40_1
@@ -1460,7 +1460,7 @@ function CharacterSelectionStateCharacter._set_hero_info(arg_40_0, arg_40_1, arg
 	var_40_0.info_hero_level.content.text = tostring(arg_40_3)
 end
 
-function CharacterSelectionStateCharacter._set_select_button_enabled(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+CharacterSelectionStateCharacter._set_select_button_enabled = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 	if arg_41_0._bot_selection then
 		local var_41_0 = arg_41_0._widgets_by_name.select_button.content
 
@@ -1497,31 +1497,31 @@ function CharacterSelectionStateCharacter._set_select_button_enabled(arg_41_0, a
 	end
 end
 
-function CharacterSelectionStateCharacter._play_sound(arg_42_0, arg_42_1)
+CharacterSelectionStateCharacter._play_sound = function (arg_42_0, arg_42_1)
 	arg_42_0.parent:play_sound(arg_42_1)
 end
 
-function CharacterSelectionStateCharacter.get_camera_position(arg_43_0)
+CharacterSelectionStateCharacter.get_camera_position = function (arg_43_0)
 	local var_43_0, var_43_1 = arg_43_0.parent:get_background_world()
 	local var_43_2 = ScriptViewport.camera(var_43_1)
 
 	return ScriptCamera.position(var_43_2)
 end
 
-function CharacterSelectionStateCharacter.get_camera_rotation(arg_44_0)
+CharacterSelectionStateCharacter.get_camera_rotation = function (arg_44_0)
 	local var_44_0, var_44_1 = arg_44_0.parent:get_background_world()
 	local var_44_2 = ScriptViewport.camera(var_44_1)
 
 	return ScriptCamera.rotation(var_44_2)
 end
 
-function CharacterSelectionStateCharacter.trigger_unit_flow_event(arg_45_0, arg_45_1, arg_45_2)
+CharacterSelectionStateCharacter.trigger_unit_flow_event = function (arg_45_0, arg_45_1, arg_45_2)
 	if arg_45_1 and Unit.alive(arg_45_1) then
 		Unit.flow_event(arg_45_1, arg_45_2)
 	end
 end
 
-function CharacterSelectionStateCharacter._start_transition_animation(arg_46_0, arg_46_1, arg_46_2)
+CharacterSelectionStateCharacter._start_transition_animation = function (arg_46_0, arg_46_1, arg_46_2)
 	local var_46_0 = {
 		wwise_world = arg_46_0.wwise_world,
 		render_settings = arg_46_0.render_settings
@@ -1532,7 +1532,7 @@ function CharacterSelectionStateCharacter._start_transition_animation(arg_46_0, 
 	arg_46_0._animations[arg_46_1] = var_46_2
 end
 
-function CharacterSelectionStateCharacter._change_profile(arg_47_0, arg_47_1, arg_47_2)
+CharacterSelectionStateCharacter._change_profile = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_0.peer_id
 	local var_47_1 = 1
 	local var_47_2 = SPProfiles[arg_47_1]
@@ -1547,7 +1547,7 @@ function CharacterSelectionStateCharacter._change_profile(arg_47_0, arg_47_1, ar
 	arg_47_0._requested_career_index = arg_47_2
 end
 
-function CharacterSelectionStateCharacter._change_career(arg_48_0, arg_48_1, arg_48_2)
+CharacterSelectionStateCharacter._change_career = function (arg_48_0, arg_48_1, arg_48_2)
 	local var_48_0 = arg_48_0.local_player
 	local var_48_1 = var_48_0.player_unit
 
@@ -1575,11 +1575,11 @@ function CharacterSelectionStateCharacter._change_career(arg_48_0, arg_48_1, arg
 	arg_48_0._resyncing_loadout = true
 end
 
-function CharacterSelectionStateCharacter.pending_profile_request(arg_49_0)
+CharacterSelectionStateCharacter.pending_profile_request = function (arg_49_0)
 	return arg_49_0._pending_profile_request
 end
 
-function CharacterSelectionStateCharacter._save_selected_profile(arg_50_0, arg_50_1)
+CharacterSelectionStateCharacter._save_selected_profile = function (arg_50_0, arg_50_1)
 	if not SaveData.first_hero_selection_made then
 		SaveData.first_hero_selection_made = true
 	end
@@ -1589,7 +1589,7 @@ function CharacterSelectionStateCharacter._save_selected_profile(arg_50_0, arg_5
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-function CharacterSelectionStateCharacter._update_profile_request(arg_51_0)
+CharacterSelectionStateCharacter._update_profile_request = function (arg_51_0)
 	if arg_51_0._pending_profile_request then
 		local var_51_0 = arg_51_0._profile_requester:result()
 
@@ -1615,7 +1615,7 @@ function CharacterSelectionStateCharacter._update_profile_request(arg_51_0)
 	end
 end
 
-function CharacterSelectionStateCharacter._on_option_button_hover(arg_52_0, arg_52_1, arg_52_2)
+CharacterSelectionStateCharacter._on_option_button_hover = function (arg_52_0, arg_52_1, arg_52_2)
 	local var_52_0 = arg_52_0._ui_animations
 	local var_52_1 = "option_button_" .. arg_52_2
 	local var_52_2 = arg_52_1.style[arg_52_2]
@@ -1633,7 +1633,7 @@ function CharacterSelectionStateCharacter._on_option_button_hover(arg_52_0, arg_
 	end
 end
 
-function CharacterSelectionStateCharacter._on_option_button_dehover(arg_53_0, arg_53_1, arg_53_2)
+CharacterSelectionStateCharacter._on_option_button_dehover = function (arg_53_0, arg_53_1, arg_53_2)
 	local var_53_0 = arg_53_0._ui_animations
 	local var_53_1 = "option_button_" .. arg_53_2
 	local var_53_2 = arg_53_1.style[arg_53_2]
@@ -1651,18 +1651,18 @@ function CharacterSelectionStateCharacter._on_option_button_dehover(arg_53_0, ar
 	end
 end
 
-function CharacterSelectionStateCharacter.play_sound(arg_54_0, arg_54_1)
+CharacterSelectionStateCharacter.play_sound = function (arg_54_0, arg_54_1)
 	return
 end
 
-function CharacterSelectionStateCharacter._animate_element_by_time(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
+CharacterSelectionStateCharacter._animate_element_by_time = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, math.ease_out_quad))
 end
 
-function CharacterSelectionStateCharacter._animate_element_by_catmullrom(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8)
+CharacterSelectionStateCharacter._animate_element_by_catmullrom = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8))
 end
 
-function CharacterSelectionStateCharacter.input_service(arg_57_0)
+CharacterSelectionStateCharacter.input_service = function (arg_57_0)
 	return (arg_57_0._pending_profile_request or arg_57_0._resyncing_loadout or arg_57_0.parent:input_blocked()) and FAKE_INPUT_SERVICE or arg_57_0.parent:input_service(true)
 end

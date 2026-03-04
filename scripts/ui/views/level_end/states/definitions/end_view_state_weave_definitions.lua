@@ -698,7 +698,7 @@ function create_leaderboard_button(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -861,13 +861,13 @@ local function var_0_19(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "bar_edge",
 					pass_type = "texture",
 					texture_id = "bar_edge",
-					content_change_function = function(arg_5_0, arg_5_1)
+					content_change_function = function (arg_5_0, arg_5_1)
 						local var_5_0 = arg_5_1.parent.bar_fill
 						local var_5_1 = var_5_0.offset[1]
 
 						arg_5_1.offset[1] = math.floor(var_5_0.size[1] + var_5_1 - arg_5_1.default_size[1] / 2)
 					end,
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.active
 					end
 				},
@@ -875,7 +875,7 @@ local function var_0_19(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "bar_fill",
 					pass_type = "texture_uv",
 					content_id = "bar_fill",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.parent.active
 					end
 				}
@@ -993,7 +993,7 @@ function create_simple_gamepad_disabled_texture(arg_9_0, arg_9_1, arg_9_2, arg_9
 					pass_type = "texture",
 					texture_id = "glow_id",
 					retained_mode = arg_9_2,
-					content_change_function = function(arg_10_0, arg_10_1)
+					content_change_function = function (arg_10_0, arg_10_1)
 						arg_10_1.color[1] = 40 + 20 * math.sin(Managers.time:time("ui") * 5)
 					end
 				}
@@ -1209,10 +1209,10 @@ local var_0_26 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				arg_11_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				local var_12_0 = math.easeOutCubic(arg_12_3)
 
 				arg_12_4.render_settings.alpha_multiplier = var_12_0
@@ -1223,7 +1223,7 @@ local var_0_26 = {
 
 				arg_12_0.content_bg.position[2] = var_12_3 - var_12_2
 			end,
-			on_complete = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				return
 			end
 		}
@@ -1233,10 +1233,10 @@ local var_0_26 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				arg_14_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 				local var_15_0 = math.easeInCubic(arg_15_3)
 
 				arg_15_4.render_settings.alpha_multiplier = 1 - var_15_0
@@ -1247,7 +1247,7 @@ local var_0_26 = {
 
 				arg_15_0.content_bg.position[2] = var_15_3 - var_15_2
 			end,
-			on_complete = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				return
 			end
 		}
@@ -1257,10 +1257,10 @@ local var_0_26 = {
 			name = "count_up",
 			start_progress = 0.5,
 			end_progress = 1.4,
-			init = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				arg_17_3.widget.content.text = UIUtils.comma_value(arg_17_3.start_value)
 			end,
-			update = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 				local var_18_0 = arg_18_4.widget.content
 				local var_18_1 = math.floor(math.lerp(arg_18_4.start_value, arg_18_4.end_value, arg_18_3))
 
@@ -1270,7 +1270,7 @@ local var_0_26 = {
 					WwiseWorld.trigger_event(arg_18_4.wwise_world, "play_gui_mission_summary_entry_count")
 				end
 			end,
-			on_complete = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				return
 			end
 		},
@@ -1278,10 +1278,10 @@ local var_0_26 = {
 			name = "bump",
 			start_progress = 1.5,
 			end_progress = 1.8,
-			init = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				arg_20_3.widget.content.entered = false
 			end,
-			update = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
 				local var_21_0 = arg_21_4.widget
 				local var_21_1 = var_21_0.content
 				local var_21_2 = var_21_0.style
@@ -1301,7 +1301,7 @@ local var_0_26 = {
 					var_21_1.entered = true
 				end
 			end,
-			on_complete = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 				return
 			end
 		}
@@ -1311,7 +1311,7 @@ local var_0_26 = {
 			name = "sigil_alpha",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				local var_23_0 = arg_23_2.highscore_sigil
 				local var_23_1 = arg_23_2.highscore_ribbon
 				local var_23_2 = 0
@@ -1322,7 +1322,7 @@ local var_0_26 = {
 				arg_23_2.highscore_ribbon.content.visible = true
 				arg_23_2.highscore_text.content.visible = true
 			end,
-			update = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 				local var_24_0 = math.ease_in_exp(arg_24_3)
 				local var_24_1 = arg_24_2.highscore_sigil
 				local var_24_2 = arg_24_2.highscore_ribbon
@@ -1331,7 +1331,7 @@ local var_0_26 = {
 				var_24_1.style.texture_id.color[1] = var_24_3
 				var_24_2.style.texture_id.color[1] = var_24_3
 			end,
-			on_complete = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				return
 			end
 		},
@@ -1339,10 +1339,10 @@ local var_0_26 = {
 			name = "sigil_entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = math.ease_out_exp(1 - arg_27_3)
 				local var_27_1 = arg_27_2.highscore_sigil.scenegraph_id
 				local var_27_2 = arg_27_1[var_27_1]
@@ -1374,7 +1374,7 @@ local var_0_26 = {
 					WwiseWorld.trigger_event(arg_27_4.wwise_world, "menu_wind_level_choose_wind")
 				end
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		},
@@ -1382,7 +1382,7 @@ local var_0_26 = {
 			name = "text_entry",
 			start_progress = 0.7,
 			end_progress = 1.1,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				local var_29_0 = arg_29_2.highscore_text
 				local var_29_1 = var_29_0.content
 				local var_29_2 = var_29_0.style
@@ -1394,7 +1394,7 @@ local var_0_26 = {
 				var_29_4.text_color[1] = 0
 				var_29_5[1] = 0
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = arg_30_2.highscore_text
 				local var_30_1 = var_30_0.content
 				local var_30_2 = var_30_0.style
@@ -1407,7 +1407,7 @@ local var_0_26 = {
 				var_30_4.text_color[1] = 255 * var_30_6
 				var_30_5[1] = 10 * var_30_6
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		},
@@ -1415,7 +1415,7 @@ local var_0_26 = {
 			name = "background_glow_entry",
 			start_progress = 0.7,
 			end_progress = 2.5,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				local var_32_0 = arg_32_2.score_glow_4
 				local var_32_1 = var_32_0.content
 				local var_32_2 = var_32_0.style.texture_id.color
@@ -1425,7 +1425,7 @@ local var_0_26 = {
 				var_32_2[3] = 70
 				var_32_2[4] = 55
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = arg_33_2.score_glow_4
 				local var_33_1 = var_33_0.content
 				local var_33_2 = var_33_0.style.texture_id.color
@@ -1445,7 +1445,7 @@ local var_0_26 = {
 
 				Colors.lerp_color_tables(var_33_4, var_33_5, var_33_3, var_33_2)
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		}

@@ -2,7 +2,7 @@
 
 ActionChainedProjectile = class(ActionChainedProjectile, ActionBase)
 
-function ActionChainedProjectile.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionChainedProjectile.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionChainedProjectile.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
@@ -36,7 +36,7 @@ local var_0_1 = 2
 local var_0_2 = 3
 local var_0_3 = 4
 
-function ActionChainedProjectile.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionChainedProjectile.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	ActionChainedProjectile.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	arg_2_0._fire_t = arg_2_2 + arg_2_1.fire_time
@@ -46,7 +46,7 @@ function ActionChainedProjectile.client_owner_start_action(arg_2_0, arg_2_1, arg
 	arg_2_0._chain_sound_event = arg_2_1.chain_sound_event
 end
 
-function ActionChainedProjectile.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionChainedProjectile.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	if arg_3_0.state == "waiting_to_shoot" and arg_3_2 >= arg_3_0._fire_t then
 		arg_3_0.state = "shooting"
 	end
@@ -58,11 +58,11 @@ function ActionChainedProjectile.client_owner_post_update(arg_3_0, arg_3_1, arg_
 	end
 end
 
-function ActionChainedProjectile.finish(arg_4_0, arg_4_1)
+ActionChainedProjectile.finish = function (arg_4_0, arg_4_1)
 	ActionChainedProjectile.super.finish(arg_4_0, arg_4_1)
 end
 
-function ActionChainedProjectile._shoot(arg_5_0, arg_5_1)
+ActionChainedProjectile._shoot = function (arg_5_0, arg_5_1)
 	local var_5_0 = 100
 	local var_5_1 = 0.15
 	local var_5_2 = arg_5_0.physics_world
@@ -212,7 +212,7 @@ function ActionChainedProjectile._shoot(arg_5_0, arg_5_1)
 	arg_5_0:_proc_spell_used(arg_5_0.owner_buff_extension)
 end
 
-function ActionChainedProjectile._apply_damage(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ActionChainedProjectile._apply_damage = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
 	local var_6_0 = Managers.state.network
 	local var_6_1 = var_6_0:unit_game_object_id(arg_6_0.owner_unit)
 
@@ -248,11 +248,11 @@ function ActionChainedProjectile._apply_damage(arg_6_0, arg_6_1, arg_6_2, arg_6_
 	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_career_necro_passive_shadow_blood", arg_6_1)
 end
 
-function ActionChainedProjectile.destroy(arg_7_0)
+ActionChainedProjectile.destroy = function (arg_7_0)
 	return
 end
 
-function ActionChainedProjectile.passive_update(arg_8_0, arg_8_1, arg_8_2)
+ActionChainedProjectile.passive_update = function (arg_8_0, arg_8_1, arg_8_2)
 	if arg_8_0._active_projectiles_n <= 0 then
 		return
 	end
@@ -288,7 +288,7 @@ end
 
 local var_0_4 = {}
 
-function ActionChainedProjectile._select_next_target(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ActionChainedProjectile._select_next_target = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_1.settings
 	local var_9_1 = arg_9_1.hit_units
 	local var_9_2 = arg_9_1.last_chain_pos:unbox()
@@ -320,7 +320,7 @@ function ActionChainedProjectile._select_next_target(arg_9_0, arg_9_1, arg_9_2, 
 	return false
 end
 
-function ActionChainedProjectile._play_fx(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+ActionChainedProjectile._play_fx = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	local var_10_0 = NetworkLookup.effects[arg_10_1]
 	local var_10_1 = {
 		arg_10_2,
@@ -343,7 +343,7 @@ function ActionChainedProjectile._play_fx(arg_10_0, arg_10_1, arg_10_2, arg_10_3
 	end
 end
 
-function ActionChainedProjectile._apply_chain_damage(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+ActionChainedProjectile._apply_chain_damage = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_1.settings
 	local var_11_1 = arg_11_1.chain_count + 1
 	local var_11_2 = arg_11_1.next_target_unit

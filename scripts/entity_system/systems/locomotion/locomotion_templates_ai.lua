@@ -22,7 +22,7 @@ end
 
 var_0_0.AILocomotionExtension = {}
 
-function var_0_0.AILocomotionExtension.init(arg_3_0, arg_3_1)
+var_0_0.AILocomotionExtension.init = function (arg_3_0, arg_3_1)
 	arg_3_0.nav_world = arg_3_1
 	arg_3_0.destroy_units = {}
 	arg_3_0.all_update_units = {}
@@ -36,7 +36,7 @@ function var_0_0.AILocomotionExtension.init(arg_3_0, arg_3_1)
 	arg_3_0.mover_constrained_update_units = {}
 end
 
-function var_0_0.AILocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2)
+var_0_0.AILocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2)
 	var_0_0.AILocomotionExtension.validate2(arg_4_0, arg_4_1, arg_4_2)
 	var_0_0.AILocomotionExtension.update_alive(arg_4_0, arg_4_1, arg_4_2)
 	var_0_0.AILocomotionExtension.update_velocity(arg_4_0, arg_4_1, arg_4_2)
@@ -48,7 +48,7 @@ function var_0_0.AILocomotionExtension.update(arg_4_0, arg_4_1, arg_4_2)
 	var_0_0.AILocomotionExtension.update_network(arg_4_0, arg_4_1, arg_4_2)
 end
 
-function var_0_0.AILocomotionExtension.validate2(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.AILocomotionExtension.validate2 = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_0.all_update_units
 	local var_5_1 = arg_5_0.snap_to_navmesh_update_units
 	local var_5_2 = arg_5_0.get_to_navmesh_update_units
@@ -66,7 +66,7 @@ function var_0_0.AILocomotionExtension.validate2(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_alive(arg_6_0, arg_6_1, arg_6_2)
+var_0_0.AILocomotionExtension.update_alive = function (arg_6_0, arg_6_1, arg_6_2)
 	for iter_6_0, iter_6_1 in pairs(arg_6_0.destroy_units) do
 		arg_6_0.destroy_units[iter_6_0] = nil
 		arg_6_0.all_update_units[iter_6_0] = nil
@@ -81,19 +81,19 @@ function var_0_0.AILocomotionExtension.update_alive(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_velocity(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.AILocomotionExtension.update_velocity = function (arg_7_0, arg_7_1, arg_7_2)
 	for iter_7_0, iter_7_1 in pairs(arg_7_0.all_update_units) do
 		iter_7_1._wanted_velocity = iter_7_1._wanted_velocity or iter_7_1._velocity:unbox()
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_gravity(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.AILocomotionExtension.update_gravity = function (arg_8_0, arg_8_1, arg_8_2)
 	for iter_8_0, iter_8_1 in pairs(arg_8_0.affected_by_gravity_update_units) do
 		iter_8_1._wanted_velocity.z = iter_8_1._velocity.z - iter_8_1._gravity * arg_8_2
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_animation_driven_units(arg_9_0, arg_9_1, arg_9_2)
+var_0_0.AILocomotionExtension.update_animation_driven_units = function (arg_9_0, arg_9_1, arg_9_2)
 	for iter_9_0, iter_9_1 in pairs(arg_9_0.animation_update_units) do
 		local var_9_0 = Unit.animation_wanted_root_pose(iter_9_0)
 		local var_9_1 = Matrix4x4.translation(var_9_0)
@@ -119,7 +119,7 @@ function var_0_0.AILocomotionExtension.update_animation_driven_units(arg_9_0, ar
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_rotation(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.AILocomotionExtension.update_rotation = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Vector3.length_squared
 	local var_10_1 = Vector3.flat
 	local var_10_2 = Quaternion.look
@@ -184,7 +184,7 @@ function var_0_0.AILocomotionExtension.update_rotation(arg_10_0, arg_10_1, arg_1
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_position(arg_11_0, arg_11_1, arg_11_2)
+var_0_0.AILocomotionExtension.update_position = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = Unit.local_position
 	local var_11_1 = Unit.set_local_position
 	local var_11_2 = Unit.mover
@@ -328,7 +328,7 @@ function var_0_0.AILocomotionExtension.update_position(arg_11_0, arg_11_1, arg_1
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_out_of_range(arg_12_0, arg_12_1, arg_12_2)
+var_0_0.AILocomotionExtension.update_out_of_range = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = Managers.state.conflict
 	local var_12_1 = Unit.local_position
 	local var_12_2 = ScriptUnit.extension
@@ -354,7 +354,7 @@ function var_0_0.AILocomotionExtension.update_out_of_range(arg_12_0, arg_12_1, a
 	end
 end
 
-function var_0_0.AILocomotionExtension.update_network(arg_13_0, arg_13_1, arg_13_2)
+var_0_0.AILocomotionExtension.update_network = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.state.network:game()
 
 	if var_13_0 == nil then

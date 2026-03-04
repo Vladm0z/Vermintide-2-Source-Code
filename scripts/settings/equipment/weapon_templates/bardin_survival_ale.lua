@@ -13,7 +13,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				buff_template = "bardin_survival_ale_buff",
 				total_time = 1.9,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {}
@@ -33,7 +33,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				allowed_chain_actions = {},

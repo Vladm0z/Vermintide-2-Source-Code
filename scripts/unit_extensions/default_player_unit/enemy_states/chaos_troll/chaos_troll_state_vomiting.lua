@@ -2,7 +2,7 @@
 
 ChaosTrollStateVomiting = class(ChaosTrollStateVomiting, EnemyCharacterState)
 
-function ChaosTrollStateVomiting.init(arg_1_0, arg_1_1)
+ChaosTrollStateVomiting.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "troll_vomiting")
 
 	arg_1_0._vomit_ability_id = arg_1_0._career_extension:ability_id("vomit")
@@ -14,7 +14,7 @@ function ChaosTrollStateVomiting.init(arg_1_0, arg_1_1)
 	arg_1_0._angle = 0
 	arg_1_0._impact_data = {}
 
-	function arg_1_0._safe_pos_puke_callback()
+	arg_1_0._safe_pos_puke_callback = function ()
 		if ALIVE[arg_1_0._unit] then
 			local var_2_0, var_2_1, var_2_2 = arg_1_0:_get_vomit_position(arg_1_0._unit)
 
@@ -25,7 +25,7 @@ function ChaosTrollStateVomiting.init(arg_1_0, arg_1_1)
 	end
 end
 
-function ChaosTrollStateVomiting.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+ChaosTrollStateVomiting.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 	arg_3_0._unit = arg_3_1
 	arg_3_0._status_extension.is_vomiting = true
 	arg_3_0._puke_direction = Vector3Box(0, 0, 0)
@@ -57,7 +57,7 @@ function ChaosTrollStateVomiting.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, ar
 	arg_3_0._impact_data.hit_normal = Vector3Box()
 end
 
-function ChaosTrollStateVomiting.handle_hit_indicator(arg_4_0)
+ChaosTrollStateVomiting.handle_hit_indicator = function (arg_4_0)
 	local var_4_0 = arg_4_0._indicator_fx_unit_name
 
 	if arg_4_0._impact_data.position and arg_4_0._puke_position_on_nav then
@@ -77,7 +77,7 @@ function ChaosTrollStateVomiting.handle_hit_indicator(arg_4_0)
 	end
 end
 
-function ChaosTrollStateVomiting.destroy_indicator_unit(arg_5_0)
+ChaosTrollStateVomiting.destroy_indicator_unit = function (arg_5_0)
 	if Unit.alive(arg_5_0._indicator_unit) then
 		World.destroy_unit(arg_5_0._world, arg_5_0._indicator_unit)
 
@@ -85,7 +85,7 @@ function ChaosTrollStateVomiting.destroy_indicator_unit(arg_5_0)
 	end
 end
 
-function ChaosTrollStateVomiting.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ChaosTrollStateVomiting.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	local var_6_0 = arg_6_0._csm
 	local var_6_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
 	local var_6_2 = arg_6_0._input_extension
@@ -217,7 +217,7 @@ function ChaosTrollStateVomiting.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_
 	CharacterStateHelper.look(var_6_2, arg_6_0._player.viewport_name, var_6_4, var_6_3, var_6_5, var_6_12)
 end
 
-function ChaosTrollStateVomiting.on_exit(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+ChaosTrollStateVomiting.on_exit = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	arg_7_0._status_extension.is_vomiting = false
 
 	arg_7_0:destroy_indicator_unit()
@@ -225,7 +225,7 @@ end
 
 local var_0_0 = 0.3
 
-function ChaosTrollStateVomiting._calculate_trajectory(arg_8_0)
+ChaosTrollStateVomiting._calculate_trajectory = function (arg_8_0)
 	local var_8_0 = arg_8_0._first_person_unit
 	local var_8_1 = arg_8_0._breed
 	local var_8_2 = Unit.local_rotation(var_8_0, 0)
@@ -313,7 +313,7 @@ function ChaosTrollStateVomiting._calculate_trajectory(arg_8_0)
 	end
 end
 
-function ChaosTrollStateVomiting._sweep_trajectory_for_heroes(arg_9_0)
+ChaosTrollStateVomiting._sweep_trajectory_for_heroes = function (arg_9_0)
 	local var_9_0 = {}
 	local var_9_1 = arg_9_0._physics_world
 	local var_9_2 = arg_9_0._breed.puke_in_face_sweep_radius
@@ -344,7 +344,7 @@ function ChaosTrollStateVomiting._sweep_trajectory_for_heroes(arg_9_0)
 	return var_9_0
 end
 
-function ChaosTrollStateVomiting._init_puke_attack(arg_10_0, arg_10_1, arg_10_2)
+ChaosTrollStateVomiting._init_puke_attack = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._puke_position_on_nav or not arg_10_0._puke_distance_sq or not arg_10_0._puke_direction then
 		return false
 	end
@@ -377,7 +377,7 @@ end
 
 local var_0_1 = 10
 
-function ChaosTrollStateVomiting.player_vomit_hit_check(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+ChaosTrollStateVomiting.player_vomit_hit_check = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = Unit.world_position(arg_11_1, arg_11_0._troll_head_node)
 	local var_11_1 = arg_11_2 + (2 * Vector3.normalize(arg_11_2 - POSITION_LOOKUP[arg_11_1]) + Vector3(0, 0, 1)) - var_11_0
 	local var_11_2 = Vector3.normalize(var_11_1)
@@ -400,7 +400,7 @@ function ChaosTrollStateVomiting.player_vomit_hit_check(arg_11_0, arg_11_1, arg_
 	end
 end
 
-function ChaosTrollStateVomiting.position_on_navmesh(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+ChaosTrollStateVomiting.position_on_navmesh = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0, var_12_1 = GwNavQueries.triangle_from_position(arg_12_1, arg_12_0, arg_12_2 or 0.5, arg_12_3 or 1)
 
 	if var_12_0 then
@@ -419,7 +419,7 @@ function ChaosTrollStateVomiting.position_on_navmesh(arg_12_0, arg_12_1, arg_12_
 	return arg_12_0
 end
 
-function ChaosTrollStateVomiting.spawn_vomit(arg_13_0, arg_13_1)
+ChaosTrollStateVomiting.spawn_vomit = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._puke_position_on_nav:unbox()
 
 	if var_13_0 then
@@ -431,7 +431,7 @@ function ChaosTrollStateVomiting.spawn_vomit(arg_13_0, arg_13_1)
 	end
 end
 
-function ChaosTrollStateVomiting._get_vomit_position(arg_14_0, arg_14_1)
+ChaosTrollStateVomiting._get_vomit_position = function (arg_14_0, arg_14_1)
 	local var_14_0 = Unit.world_position(arg_14_1, arg_14_0._troll_head_node)
 	local var_14_1 = ScriptCamera.position(arg_14_0._camera)
 	local var_14_2 = ScriptCamera.rotation(arg_14_0._camera)
@@ -455,7 +455,7 @@ function ChaosTrollStateVomiting._get_vomit_position(arg_14_0, arg_14_1)
 	return var_14_10, var_14_6, var_14_7
 end
 
-function ChaosTrollStateVomiting._update_movement(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+ChaosTrollStateVomiting._update_movement = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_0._input_extension
 	local var_15_1 = arg_15_0._buff_extension
 	local var_15_2 = arg_15_0._first_person_extension

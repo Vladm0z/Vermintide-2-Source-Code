@@ -28,10 +28,10 @@ VoteTemplates.carousel_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function(arg_1_0, arg_1_1)
+	on_start = function (arg_1_0, arg_1_1)
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function(arg_2_0, arg_2_1, arg_2_2)
+	on_complete = function (arg_2_0, arg_2_1, arg_2_2)
 		if arg_2_0 == 1 then
 			local var_2_0 = arg_2_2.vote_type
 
@@ -62,7 +62,7 @@ VoteTemplates.carousel_settings_vote = {
 			Managers.matchmaking:find_game(var_2_3)
 		end
 	end,
-	pack_sync_data = function(arg_3_0)
+	pack_sync_data = function (arg_3_0)
 		local var_3_0 = arg_3_0.mission_id or "n/a"
 		local var_3_1 = arg_3_0.difficulty or "n/a"
 		local var_3_2 = arg_3_0.player_hosted
@@ -84,7 +84,7 @@ VoteTemplates.carousel_settings_vote = {
 			var_3_7 and 1 or 2
 		}
 	end,
-	extract_sync_data = function(arg_4_0)
+	extract_sync_data = function (arg_4_0)
 		local var_4_0 = arg_4_0[1]
 		local var_4_1 = arg_4_0[2]
 		local var_4_2 = arg_4_0[3]
@@ -117,7 +117,7 @@ VoteTemplates.carousel_settings_vote = {
 			quick_game = var_4_8 == 1
 		}
 	end,
-	initial_vote_func = function(arg_5_0)
+	initial_vote_func = function (arg_5_0)
 		return {
 			[arg_5_0.voter_peer_id] = 1
 		}
@@ -151,10 +151,10 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function(arg_6_0, arg_6_1)
+	on_start = function (arg_6_0, arg_6_1)
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function(arg_7_0, arg_7_1, arg_7_2)
+	on_complete = function (arg_7_0, arg_7_1, arg_7_2)
 		if arg_7_0 == 1 then
 			local var_7_0 = arg_7_2.vote_type
 
@@ -186,7 +186,7 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			Managers.matchmaking:find_game(var_7_3)
 		end
 	end,
-	pack_sync_data = function(arg_8_0)
+	pack_sync_data = function (arg_8_0)
 		local var_8_0 = arg_8_0.mission_id or "n/a"
 		local var_8_1 = arg_8_0.difficulty or "n/a"
 		local var_8_2 = arg_8_0.player_hosted
@@ -201,7 +201,7 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			NetworkLookup.mechanisms[var_8_4]
 		}
 	end,
-	extract_sync_data = function(arg_9_0)
+	extract_sync_data = function (arg_9_0)
 		local var_9_0 = arg_9_0[1]
 		local var_9_1 = arg_9_0[2]
 		local var_9_2 = arg_9_0[3]
@@ -225,7 +225,7 @@ VoteTemplates.carousel_player_hosted_settings_vote = {
 			mechanism = var_9_8
 		}
 	end,
-	initial_vote_func = function(arg_10_0)
+	initial_vote_func = function (arg_10_0)
 		return {
 			[arg_10_0.voter_peer_id] = 1
 		}

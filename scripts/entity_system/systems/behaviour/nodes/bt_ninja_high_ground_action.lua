@@ -7,13 +7,13 @@ BTNinjaHighGroundAction = class(BTNinjaHighGroundAction, BTClimbAction)
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = ALIVE
 
-function BTNinjaHighGroundAction.init(arg_1_0, ...)
+BTNinjaHighGroundAction.init = function (arg_1_0, ...)
 	BTNinjaHighGroundAction.super.init(arg_1_0, ...)
 end
 
 BTNinjaHighGroundAction.name = "BTNinjaHighGroundAction"
 
-function BTNinjaHighGroundAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTNinjaHighGroundAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.high_ground_opportunity = nil
 
 	if var_0_1[arg_2_2.target_unit] then
@@ -35,7 +35,7 @@ function BTNinjaHighGroundAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTNinjaHighGroundAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTNinjaHighGroundAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_2.high_ground_opportunity then
 		if arg_3_4 == "aborted" then
 			arg_3_2.high_ground_opportunity = nil
@@ -96,7 +96,7 @@ function BTNinjaHighGroundAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	arg_3_2.fence_jumping = false
 end
 
-function BTNinjaHighGroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTNinjaHighGroundAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.high_ground_opportunity then
 		return "running"
 	else
@@ -114,7 +114,7 @@ function BTNinjaHighGroundAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4
 	end
 end
 
-function BTNinjaHighGroundAction.try_jump(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTNinjaHighGroundAction.try_jump = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_2.target_unit
 
 	if not var_0_1[var_5_0] then

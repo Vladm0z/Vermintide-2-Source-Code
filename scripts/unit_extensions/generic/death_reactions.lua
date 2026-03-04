@@ -768,10 +768,10 @@ local var_0_27 = {}
 var_0_0.templates = {
 	ai_default = {
 		unit = {
-			pre_start = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			pre_start = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 				var_0_8(arg_25_0, arg_25_1, arg_25_2, arg_25_3)
 			end,
-			start = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			start = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				local var_26_0, var_26_1 = var_0_9(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 
 				var_0_20(arg_26_0, arg_26_3[DamageDataIndex.ATTACKER], arg_26_3[DamageDataIndex.HIT_ZONE], arg_26_3[DamageDataIndex.DAMAGE_TYPE])
@@ -788,15 +788,15 @@ var_0_0.templates = {
 
 				return var_26_0, var_26_1
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				return (var_0_13(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4))
 			end
 		},
 		husk = {
-			pre_start = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			pre_start = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				var_0_14(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 			end,
-			start = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			start = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 				local var_29_0, var_29_1 = var_0_15(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 
 				if not var_0_3(arg_29_3) then
@@ -811,17 +811,17 @@ var_0_0.templates = {
 
 				return var_29_0, var_29_1
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				return (var_0_17(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4))
 			end
 		}
 	},
 	chaos_tentacle = {
 		unit = {
-			pre_start = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			pre_start = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				var_0_8(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 			end,
-			start = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			start = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 				local var_32_0, var_32_1 = var_0_10(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 
 				var_0_20(arg_32_0, arg_32_3[DamageDataIndex.ATTACKER], arg_32_3[DamageDataIndex.HIT_ZONE], arg_32_3[DamageDataIndex.DAMAGE_TYPE])
@@ -829,15 +829,15 @@ var_0_0.templates = {
 
 				return var_32_0, var_32_1
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				return (var_0_11(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4))
 			end
 		},
 		husk = {
-			pre_start = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			pre_start = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				var_0_14(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 			end,
-			start = function(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			start = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 				local var_35_0, var_35_1 = var_0_16(arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
 
 				if not var_0_3(arg_35_3) then
@@ -848,17 +848,17 @@ var_0_0.templates = {
 
 				return var_35_0, var_35_1
 			end,
-			update = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 				return var_0_0.IS_DONE
 			end
 		}
 	},
 	chaos_tentacle_portal = {
 		unit = {
-			pre_start = function(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			pre_start = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 				return
 			end,
-			start = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			start = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 				Unit.flow_event(arg_38_0, "kill_portal")
 
 				local var_38_0 = Unit.node(arg_38_0, "a_surface_center")
@@ -869,7 +869,7 @@ var_0_0.templates = {
 					despawn_after_time = arg_38_2 + 4.2
 				}, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
 				if arg_39_3 > arg_39_4.despawn_after_time then
 					Managers.state.unit_spawner:mark_for_deletion(arg_39_0)
 
@@ -880,10 +880,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			pre_start = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 				return
 			end,
-			start = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			start = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 				if not var_0_3(arg_41_3) then
 					Unit.flow_event(arg_41_0, "kill_portal")
 
@@ -894,17 +894,17 @@ var_0_0.templates = {
 
 				return nil, var_0_0.IS_DONE
 			end,
-			update = function(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 				return var_0_0.IS_DONE
 			end
 		}
 	},
 	storm_vermin_champion = {
 		unit = {
-			pre_start = function(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			pre_start = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 				var_0_8(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 			end,
-			start = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			start = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 				local var_44_0, var_44_1 = var_0_9(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 
 				var_0_20(arg_44_0, arg_44_3[DamageDataIndex.ATTACKER], arg_44_3[DamageDataIndex.HIT_ZONE], arg_44_3[DamageDataIndex.DAMAGE_TYPE])
@@ -924,15 +924,15 @@ var_0_0.templates = {
 
 				return var_44_0, var_44_1
 			end,
-			update = function(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
 				return (var_0_13(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4))
 			end
 		},
 		husk = {
-			pre_start = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			pre_start = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 				var_0_14(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 			end,
-			start = function(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+			start = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 				local var_47_0, var_47_1 = var_0_15(arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
 
 				if not var_0_3(arg_47_3) then
@@ -943,17 +943,17 @@ var_0_0.templates = {
 
 				return var_47_0, var_47_1
 			end,
-			update = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+			update = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
 				return (var_0_17(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4))
 			end
 		}
 	},
 	gutter_runner = {
 		unit = {
-			pre_start = function(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			pre_start = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 				var_0_8(arg_49_0, arg_49_1, arg_49_2, arg_49_3)
 			end,
-			start = function(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			start = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 				local var_50_0, var_50_1 = var_0_9(arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
 
 				var_50_0.despawn_after_time = arg_50_2 + 2
@@ -963,7 +963,7 @@ var_0_0.templates = {
 
 				return var_50_0, var_50_1
 			end,
-			update = function(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+			update = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
 				if arg_51_4.despawn_after_time and arg_51_3 > arg_51_4.despawn_after_time then
 					Managers.state.unit_spawner:mark_for_deletion(arg_51_0)
 
@@ -974,10 +974,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+			pre_start = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 				var_0_14(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 			end,
-			start = function(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			start = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 				local var_53_0, var_53_1 = var_0_15(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 
 				if not var_0_3(arg_53_3) then
@@ -994,17 +994,17 @@ var_0_0.templates = {
 
 				return nil, var_0_0.IS_DONE
 			end,
-			update = function(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+			update = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
 				return var_0_0.IS_DONE
 			end
 		}
 	},
 	poison_globadier = {
 		unit = {
-			pre_start = function(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+			pre_start = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 				var_0_8(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
 			end,
-			start = function(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+			start = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
 				local var_56_0 = var_0_1[arg_56_0]
 
 				if Unit.get_data(arg_56_0, "breed").name == "skaven_poison_wind_globadier" then
@@ -1041,7 +1041,7 @@ var_0_0.templates = {
 					return var_56_3, var_56_4
 				end
 			end,
-			update = function(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+			update = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
 				local var_57_0 = arg_57_4.blackboard
 				local var_57_1
 
@@ -1055,10 +1055,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+			pre_start = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 				var_0_14(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 			end,
-			start = function(arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+			start = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
 				local var_59_0, var_59_1 = var_0_15(arg_59_0, arg_59_1, arg_59_2, arg_59_3)
 
 				var_0_19(arg_59_0, "Stop_enemy_foley_globadier_boiling_loop")
@@ -1072,17 +1072,17 @@ var_0_0.templates = {
 
 				return var_59_0, var_59_1
 			end,
-			update = function(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
+			update = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
 				return (var_0_17(arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4))
 			end
 		}
 	},
 	chaos_zombie = {
 		unit = {
-			pre_start = function(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+			pre_start = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 				var_0_8(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 			end,
-			start = function(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+			start = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
 				local var_62_0 = var_0_1[arg_62_0]
 
 				if arg_62_0 ~= arg_62_3[DamageDataIndex.ATTACKER] and ScriptUnit.has_extension(arg_62_0, "ai_system") then
@@ -1111,7 +1111,7 @@ var_0_0.templates = {
 					return nil, var_0_0.IS_NOT_DONE
 				end
 			end,
-			update = function(arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
+			update = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
 				local var_63_0 = var_0_1[arg_63_0]
 				local var_63_1
 
@@ -1129,27 +1129,27 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
+			pre_start = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 				var_0_14(arg_64_0, arg_64_1, arg_64_2, arg_64_3)
 			end,
-			start = function(arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+			start = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
 				local var_65_0, var_65_1 = var_0_15(arg_65_0, arg_65_1, arg_65_2, arg_65_3)
 
 				Managers.state.unit_spawner:freeze_unit_extensions(arg_65_0, arg_65_2, var_65_0)
 
 				return var_65_0, var_65_1
 			end,
-			update = function(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4)
+			update = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4)
 				return (var_0_17(arg_66_0, arg_66_1, arg_66_2, arg_66_3, arg_66_4))
 			end
 		}
 	},
 	warpfire_thrower = {
 		unit = {
-			pre_start = function(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+			pre_start = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 				var_0_8(arg_67_0, arg_67_1, arg_67_2, arg_67_3)
 			end,
-			start = function(arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
+			start = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4)
 				local var_68_0 = var_0_1[arg_68_0]
 
 				if arg_68_0 ~= arg_68_3[DamageDataIndex.ATTACKER] and ScriptUnit.has_extension(arg_68_0, "ai_system") then
@@ -1174,7 +1174,7 @@ var_0_0.templates = {
 					return var_68_1, var_68_2
 				end
 			end,
-			update = function(arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
+			update = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
 				local var_69_0 = var_0_1[arg_69_0]
 				local var_69_1
 
@@ -1199,10 +1199,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+			pre_start = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 				var_0_14(arg_70_0, arg_70_1, arg_70_2, arg_70_3)
 			end,
-			start = function(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+			start = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 				local var_71_0, var_71_1 = var_0_15(arg_71_0, arg_71_1, arg_71_2, arg_71_3)
 
 				if arg_71_3[DamageDataIndex.HIT_ZONE] == "aux" then
@@ -1221,7 +1221,7 @@ var_0_0.templates = {
 
 				return var_71_0, var_71_1
 			end,
-			update = function(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
+			update = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
 				var_0_17(arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4)
 
 				local var_72_0 = ScriptUnit.extension(arg_72_0, "death_system")
@@ -1248,10 +1248,10 @@ var_0_0.templates = {
 	},
 	loot_rat = {
 		unit = {
-			pre_start = function(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
+			pre_start = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 				var_0_8(arg_73_0, arg_73_1, arg_73_2, arg_73_3)
 			end,
-			start = function(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+			start = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 				local var_74_0, var_74_1 = var_0_9(arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
 
 				var_0_20(arg_74_0, arg_74_3[DamageDataIndex.ATTACKER], arg_74_3[DamageDataIndex.HIT_ZONE], arg_74_3[DamageDataIndex.DAMAGE_TYPE])
@@ -1319,15 +1319,15 @@ var_0_0.templates = {
 
 				return var_74_0, var_74_1
 			end,
-			update = function(arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4)
+			update = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4)
 				return (var_0_13(arg_75_0, arg_75_1, arg_75_2, arg_75_3, arg_75_4))
 			end
 		},
 		husk = {
-			pre_start = function(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+			pre_start = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 				var_0_14(arg_76_0, arg_76_1, arg_76_2, arg_76_3)
 			end,
-			start = function(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+			start = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 				local var_77_0, var_77_1 = var_0_15(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 
 				if not var_0_3(arg_77_3) then
@@ -1339,17 +1339,17 @@ var_0_0.templates = {
 
 				return var_77_0, var_77_1
 			end,
-			update = function(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
+			update = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4)
 				return (var_0_17(arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4))
 			end
 		}
 	},
 	explosive_loot_rat = {
 		unit = {
-			pre_start = function(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
+			pre_start = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 				var_0_8(arg_79_0, arg_79_1, arg_79_2, arg_79_3)
 			end,
-			start = function(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
+			start = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
 				local var_80_0, var_80_1 = var_0_9(arg_80_0, arg_80_1, arg_80_2, arg_80_3, arg_80_4)
 
 				var_0_20(arg_80_0, arg_80_3[DamageDataIndex.ATTACKER], arg_80_3[DamageDataIndex.HIT_ZONE], arg_80_3[DamageDataIndex.DAMAGE_TYPE])
@@ -1380,7 +1380,7 @@ var_0_0.templates = {
 
 				return var_80_0, var_80_1
 			end,
-			update = function(arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4)
+			update = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4)
 				if arg_81_3 > var_0_1[arg_81_0].delete_at_t and not arg_81_4.marked_for_deletion then
 					Managers.state.unit_spawner:mark_for_deletion(arg_81_0)
 
@@ -1391,10 +1391,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+			pre_start = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 				var_0_14(arg_82_0, arg_82_1, arg_82_2, arg_82_3)
 			end,
-			start = function(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+			start = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 				local var_83_0, var_83_1 = var_0_15(arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
 
 				if not var_0_3(arg_83_3) then
@@ -1406,40 +1406,40 @@ var_0_0.templates = {
 
 				return var_83_0, var_83_1
 			end,
-			update = function(arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4)
+			update = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4)
 				return (var_0_17(arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4))
 			end
 		}
 	},
 	critter_nurgling = {
 		unit = {
-			pre_start = function(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+			pre_start = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 				var_0_8(arg_85_0, arg_85_1, arg_85_2, arg_85_3)
 			end,
-			start = function(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+			start = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
 				Managers.state.event:trigger("nurgling_killed")
 
 				return var_0_0.templates.ai_default.unit.start(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
 			end,
-			update = function(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
+			update = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
 				return var_0_13(arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
 			end
 		},
 		husk = {
-			pre_start = function(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
+			pre_start = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 				var_0_14(arg_88_0, arg_88_1, arg_88_2, arg_88_3)
 			end,
-			start = function(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
+			start = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
 				return var_0_0.templates.ai_default.husk.start(arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4)
 			end,
-			update = function(arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4)
+			update = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4)
 				return var_0_17(arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4)
 			end
 		}
 	},
 	player = {
 		unit = {
-			pre_start = function(arg_91_0, arg_91_1, arg_91_2, arg_91_3)
+			pre_start = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3)
 				local var_91_0 = Managers.player:owner(arg_91_0)
 				local var_91_1 = arg_91_3[DamageDataIndex.DAMAGE_TYPE]
 				local var_91_2 = arg_91_3[DamageDataIndex.DAMAGE_SOURCE_NAME]
@@ -1447,7 +1447,7 @@ var_0_0.templates = {
 
 				Managers.telemetry_events:player_died(var_91_0, var_91_1, var_91_2, var_91_3)
 			end,
-			start = function(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
+			start = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4)
 				var_0_22(arg_92_0, arg_92_3)
 				var_0_23(arg_92_0, arg_92_3, true)
 				StatisticsUtil.register_kill(arg_92_0, arg_92_3, arg_92_1.statistics_db, true)
@@ -1457,7 +1457,7 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+			pre_start = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
 				local var_93_0 = Managers.player:owner(arg_93_0)
 				local var_93_1 = arg_93_3[DamageDataIndex.DAMAGE_TYPE]
 				local var_93_2 = arg_93_3[DamageDataIndex.DAMAGE_SOURCE_NAME]
@@ -1465,7 +1465,7 @@ var_0_0.templates = {
 
 				Managers.telemetry_events:player_died(var_93_0, var_93_1, var_93_2, var_93_3)
 			end,
-			start = function(arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+			start = function (arg_94_0, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
 				if not var_0_3(arg_94_3) then
 					if Managers.mechanism:current_mechanism_name() == "versus" then
 						var_0_21(arg_94_0, arg_94_3, arg_94_1.world)
@@ -1486,37 +1486,37 @@ var_0_0.templates = {
 	},
 	level_object = {
 		unit = {
-			pre_start = function(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+			pre_start = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 				return
 			end,
-			start = function(arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
+			start = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
 				Managers.state.game_mode:level_object_killed(arg_96_0, arg_96_3)
 				Unit.set_flow_variable(arg_96_0, "current_health", 0)
 				Unit.flow_event(arg_96_0, "lua_on_death")
 			end,
-			update = function(arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
+			update = function (arg_97_0, arg_97_1, arg_97_2, arg_97_3, arg_97_4)
 				return
 			end
 		},
 		husk = {
-			pre_start = function(arg_98_0, arg_98_1, arg_98_2, arg_98_3)
+			pre_start = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3)
 				return
 			end,
-			start = function(arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
+			start = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4)
 				Managers.state.game_mode:level_object_killed(arg_99_0, arg_99_3)
 				Unit.flow_event(arg_99_0, "lua_on_death")
 			end,
-			update = function(arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
+			update = function (arg_100_0, arg_100_1, arg_100_2, arg_100_3, arg_100_4)
 				return
 			end
 		}
 	},
 	level_object_hit_context = {
 		unit = {
-			pre_start = function(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
+			pre_start = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3)
 				return
 			end,
-			start = function(arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4)
+			start = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4)
 				Managers.state.game_mode:level_object_killed(arg_102_0, arg_102_3)
 				Unit.set_flow_variable(arg_102_0, "current_health", 0)
 				Unit.flow_event(arg_102_0, "lua_on_death")
@@ -1528,15 +1528,15 @@ var_0_0.templates = {
 					Unit.flow_event(arg_102_0, "lua_local_player_killing_blow")
 				end
 			end,
-			update = function(arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
+			update = function (arg_103_0, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
 				return
 			end
 		},
 		husk = {
-			pre_start = function(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+			pre_start = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 				return
 			end,
-			start = function(arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+			start = function (arg_105_0, arg_105_1, arg_105_2, arg_105_3, arg_105_4)
 				Managers.state.game_mode:level_object_killed(arg_105_0, arg_105_3)
 				Unit.flow_event(arg_105_0, "lua_on_death")
 
@@ -1547,17 +1547,17 @@ var_0_0.templates = {
 					Unit.flow_event(arg_105_0, "lua_local_player_killing_blow")
 				end
 			end,
-			update = function(arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
+			update = function (arg_106_0, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
 				return
 			end
 		}
 	},
 	standard = {
 		unit = {
-			pre_start = function(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+			pre_start = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 				return
 			end,
-			start = function(arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4)
+			start = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4)
 				local var_108_0 = {
 					despawn_after_time = arg_108_2 + 8
 				}
@@ -1567,7 +1567,7 @@ var_0_0.templates = {
 
 				return var_108_0, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
+			update = function (arg_109_0, arg_109_1, arg_109_2, arg_109_3, arg_109_4)
 				if arg_109_4.despawn_after_time and arg_109_3 > arg_109_4.despawn_after_time then
 					Managers.state.unit_spawner:mark_for_deletion(arg_109_0)
 
@@ -1578,25 +1578,25 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_110_0, arg_110_1, arg_110_2, arg_110_3)
+			pre_start = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3)
 				return
 			end,
-			start = function(arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
+			start = function (arg_111_0, arg_111_1, arg_111_2, arg_111_3, arg_111_4)
 				ScriptUnit.has_extension(arg_111_0, "ai_supplementary_system"):on_death(arg_111_3[DamageDataIndex.ATTACKER])
 
 				return nil, var_0_0.IS_DONE
 			end,
-			update = function(arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
+			update = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
 				return
 			end
 		}
 	},
 	despawn = {
 		unit = {
-			pre_start = function(arg_113_0, arg_113_1, arg_113_2, arg_113_3)
+			pre_start = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3)
 				return
 			end,
-			start = function(arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4, arg_114_5)
+			start = function (arg_114_0, arg_114_1, arg_114_2, arg_114_3, arg_114_4, arg_114_5)
 				local var_114_0 = {
 					despawn_after_time = arg_114_5.despawn_after_time or 0,
 					play_effect = arg_114_5.play_effect
@@ -1606,7 +1606,7 @@ var_0_0.templates = {
 
 				return var_114_0, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4)
+			update = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4)
 				if arg_115_3 > arg_115_4.despawn_after_time then
 					local var_115_0 = var_0_1[arg_115_0]
 
@@ -1628,23 +1628,23 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_116_0, arg_116_1, arg_116_2, arg_116_3)
+			pre_start = function (arg_116_0, arg_116_1, arg_116_2, arg_116_3)
 				return
 			end,
-			start = function(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4)
+			start = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4)
 				return nil, var_0_0.IS_DONE
 			end,
-			update = function(arg_118_0, arg_118_1, arg_118_2, arg_118_3, arg_118_4)
+			update = function (arg_118_0, arg_118_1, arg_118_2, arg_118_3, arg_118_4)
 				return
 			end
 		}
 	},
 	killable_projectile = {
 		unit = {
-			pre_start = function(arg_119_0, arg_119_1, arg_119_2, arg_119_3)
+			pre_start = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3)
 				return
 			end,
-			start = function(arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4)
+			start = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4)
 				ScriptUnit.extension(arg_120_0, "projectile_system"):force_impact(arg_120_0, Unit.local_position(arg_120_0, 0))
 
 				local var_120_0 = Managers.state.network
@@ -1656,28 +1656,28 @@ var_0_0.templates = {
 
 				return nil, var_0_0.IS_DONE
 			end,
-			update = function(arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4)
+			update = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4)
 				return
 			end
 		},
 		husk = {
-			pre_start = function(arg_122_0, arg_122_1, arg_122_2, arg_122_3)
+			pre_start = function (arg_122_0, arg_122_1, arg_122_2, arg_122_3)
 				return
 			end,
-			start = function(arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4)
+			start = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4)
 				Unit.flow_event(arg_123_0, "lua_on_death")
 			end,
-			update = function(arg_124_0, arg_124_1, arg_124_2, arg_124_3, arg_124_4)
+			update = function (arg_124_0, arg_124_1, arg_124_2, arg_124_3, arg_124_4)
 				return
 			end
 		}
 	},
 	explosive_barrel = {
 		unit = {
-			pre_start = function(arg_125_0, arg_125_1, arg_125_2, arg_125_3)
+			pre_start = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3)
 				return
 			end,
-			start = function(arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4)
+			start = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4)
 				local var_126_0 = Managers.state.network:network_time()
 				local var_126_1 = arg_126_3[DamageDataIndex.ATTACKER]
 				local var_126_2 = {
@@ -1694,7 +1694,7 @@ var_0_0.templates = {
 
 				return var_126_2, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
+			update = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4)
 				local var_127_0 = Managers.state.network:network_time()
 
 				if not arg_127_4.exploded then
@@ -1747,10 +1747,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_128_0, arg_128_1, arg_128_2, arg_128_3)
+			pre_start = function (arg_128_0, arg_128_1, arg_128_2, arg_128_3)
 				return
 			end,
-			start = function(arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4)
+			start = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4)
 				local var_129_0 = Managers.state.network:network_time()
 				local var_129_1 = {
 					explode_time = var_129_0,
@@ -1766,7 +1766,7 @@ var_0_0.templates = {
 
 				return var_129_1, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_130_0, arg_130_1, arg_130_2, arg_130_3, arg_130_4)
+			update = function (arg_130_0, arg_130_1, arg_130_2, arg_130_3, arg_130_4)
 				local var_130_0 = Managers.state.network:network_time()
 
 				if not arg_130_4.exploded then
@@ -1800,10 +1800,10 @@ var_0_0.templates = {
 	},
 	nurgle_liquid_blob = {
 		unit = {
-			pre_start = function(arg_131_0, arg_131_1, arg_131_2, arg_131_3)
+			pre_start = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3)
 				return
 			end,
-			start = function(arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4, arg_132_5)
+			start = function (arg_132_0, arg_132_1, arg_132_2, arg_132_3, arg_132_4, arg_132_5)
 				local var_132_0 = Managers.state.network:network_time()
 				local var_132_1 = arg_132_5.extension_init_data.die_callback
 
@@ -1839,7 +1839,7 @@ var_0_0.templates = {
 
 				return var_132_5, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4)
+			update = function (arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4)
 				local var_133_0 = Managers.state.network:network_time()
 				local var_133_1 = Unit.get_data(arg_133_0, "death_reaction_delay") or 0
 				local var_133_2 = arg_133_4.start_time
@@ -1922,10 +1922,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_134_0, arg_134_1, arg_134_2, arg_134_3)
+			pre_start = function (arg_134_0, arg_134_1, arg_134_2, arg_134_3)
 				return
 			end,
-			start = function(arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5)
+			start = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5)
 				local var_135_0 = Managers.state.network:network_time()
 				local var_135_1 = arg_135_5.extension_init_data.shrink_and_despawn_time
 				local var_135_2 = {
@@ -1952,7 +1952,7 @@ var_0_0.templates = {
 
 				return var_135_2, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
+			update = function (arg_136_0, arg_136_1, arg_136_2, arg_136_3, arg_136_4)
 				local var_136_0 = Managers.state.network:network_time()
 				local var_136_1 = arg_136_4.start_time
 				local var_136_2 = var_0_0.IS_NOT_DONE
@@ -1994,10 +1994,10 @@ var_0_0.templates = {
 	},
 	lamp_oil = {
 		unit = {
-			pre_start = function(arg_137_0, arg_137_1, arg_137_2, arg_137_3)
+			pre_start = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3)
 				return
 			end,
-			start = function(arg_138_0, arg_138_1, arg_138_2, arg_138_3, arg_138_4)
+			start = function (arg_138_0, arg_138_1, arg_138_2, arg_138_3, arg_138_4)
 				local var_138_0 = Managers.state.network:network_time()
 				local var_138_1 = {
 					killer_unit = arg_138_3[DamageDataIndex.ATTACKER],
@@ -2008,7 +2008,7 @@ var_0_0.templates = {
 
 				return var_138_1, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
+			update = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
 				local var_139_0 = Managers.state.network:network_time()
 				local var_139_1 = arg_139_4.start_time
 				local var_139_2 = var_0_0.IS_NOT_DONE
@@ -2065,10 +2065,10 @@ var_0_0.templates = {
 			end
 		},
 		husk = {
-			pre_start = function(arg_140_0, arg_140_1, arg_140_2, arg_140_3)
+			pre_start = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3)
 				return
 			end,
-			start = function(arg_141_0, arg_141_1, arg_141_2, arg_141_3, arg_141_4)
+			start = function (arg_141_0, arg_141_1, arg_141_2, arg_141_3, arg_141_4)
 				local var_141_0 = Managers.state.network:network_time()
 				local var_141_1 = {
 					killer_unit = arg_141_3[DamageDataIndex.ATTACKER],
@@ -2079,7 +2079,7 @@ var_0_0.templates = {
 
 				return var_141_1, var_0_0.IS_NOT_DONE
 			end,
-			update = function(arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4)
+			update = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4)
 				local var_142_0 = Managers.state.network:network_time()
 				local var_142_1 = arg_142_4.start_time
 				local var_142_2 = var_0_0.IS_NOT_DONE
@@ -2127,20 +2127,20 @@ var_0_0.templates = {
 	},
 	lure_unit = {
 		unit = {
-			pre_start = function(arg_143_0, arg_143_1, arg_143_2, arg_143_3)
+			pre_start = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3)
 				return
 			end,
-			start = function(arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4)
+			start = function (arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4)
 				Managers.state.unit_spawner:mark_for_deletion(arg_144_0)
 
 				return nil, var_0_0.IS_DONE
 			end
 		},
 		husk = {
-			pre_start = function(arg_145_0, arg_145_1, arg_145_2, arg_145_3)
+			pre_start = function (arg_145_0, arg_145_1, arg_145_2, arg_145_3)
 				return
 			end,
-			start = function(arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4)
+			start = function (arg_146_0, arg_146_1, arg_146_2, arg_146_3, arg_146_4)
 				return nil, var_0_0.IS_DONE
 			end
 		}
@@ -2148,10 +2148,10 @@ var_0_0.templates = {
 }
 var_0_0.templates.minotaur = {
 	unit = {
-		pre_start = function(arg_147_0, arg_147_1, arg_147_2, arg_147_3)
+		pre_start = function (arg_147_0, arg_147_1, arg_147_2, arg_147_3)
 			var_0_8(arg_147_0, arg_147_1, arg_147_2, arg_147_3)
 		end,
-		start = function(arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
+		start = function (arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
 			local var_148_0 = arg_148_3[DamageDataIndex.ATTACKER]
 			local var_148_1 = Managers.player:unit_owner(var_148_0)
 
@@ -2163,28 +2163,28 @@ var_0_0.templates.minotaur = {
 
 			return var_0_0.templates.ai_default.unit.start(arg_148_0, arg_148_1, arg_148_2, arg_148_3, arg_148_4)
 		end,
-		update = function(arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4)
+		update = function (arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4)
 			return (var_0_13(arg_149_0, arg_149_1, arg_149_2, arg_149_3, arg_149_4))
 		end
 	},
 	husk = {
-		pre_start = function(arg_150_0, arg_150_1, arg_150_2, arg_150_3)
+		pre_start = function (arg_150_0, arg_150_1, arg_150_2, arg_150_3)
 			var_0_14(arg_150_0, arg_150_1, arg_150_2, arg_150_3)
 		end,
-		start = function(arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
+		start = function (arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
 			return var_0_0.templates.ai_default.husk.start(arg_151_0, arg_151_1, arg_151_2, arg_151_3, arg_151_4)
 		end,
-		update = function(arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4)
+		update = function (arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4)
 			return (var_0_17(arg_152_0, arg_152_1, arg_152_2, arg_152_3, arg_152_4))
 		end
 	}
 }
 var_0_0.templates.gor = {
 	unit = {
-		pre_start = function(arg_153_0, arg_153_1, arg_153_2, arg_153_3)
+		pre_start = function (arg_153_0, arg_153_1, arg_153_2, arg_153_3)
 			var_0_8(arg_153_0, arg_153_1, arg_153_2, arg_153_3)
 		end,
-		start = function(arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
+		start = function (arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
 			local var_154_0 = arg_154_3[DamageDataIndex.DAMAGE_TYPE]
 
 			if var_154_0 == "warpfire" or var_154_0 == "warpfire_ground" then
@@ -2193,25 +2193,25 @@ var_0_0.templates.gor = {
 
 			return var_0_0.templates.ai_default.unit.start(arg_154_0, arg_154_1, arg_154_2, arg_154_3, arg_154_4)
 		end,
-		update = function(arg_155_0, arg_155_1, arg_155_2, arg_155_3, arg_155_4)
+		update = function (arg_155_0, arg_155_1, arg_155_2, arg_155_3, arg_155_4)
 			return (var_0_13(arg_155_0, arg_155_1, arg_155_2, arg_155_3, arg_155_4))
 		end
 	},
 	husk = {
-		pre_start = function(arg_156_0, arg_156_1, arg_156_2, arg_156_3)
+		pre_start = function (arg_156_0, arg_156_1, arg_156_2, arg_156_3)
 			var_0_14(arg_156_0, arg_156_1, arg_156_2, arg_156_3)
 		end,
-		start = function(arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4)
+		start = function (arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4)
 			return var_0_0.templates.ai_default.husk.start(arg_157_0, arg_157_1, arg_157_2, arg_157_3, arg_157_4)
 		end,
-		update = function(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
+		update = function (arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4)
 			return (var_0_17(arg_158_0, arg_158_1, arg_158_2, arg_158_3, arg_158_4))
 		end
 	}
 }
 var_0_0.templates.shadow_skull = table.clone(var_0_0.templates.ai_default)
 
-function var_0_0.templates.shadow_skull.unit.start(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
+var_0_0.templates.shadow_skull.unit.start = function (arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
 	local var_159_0, var_159_1 = var_0_0.templates.ai_default.unit.start(arg_159_0, arg_159_1, arg_159_2, arg_159_3, arg_159_4)
 
 	ScriptUnit.extension(arg_159_0, "projectile_system"):destroy()
@@ -2220,7 +2220,7 @@ function var_0_0.templates.shadow_skull.unit.start(arg_159_0, arg_159_1, arg_159
 	return var_159_0, var_159_1
 end
 
-function var_0_0.templates.shadow_skull.husk.start(arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4)
+var_0_0.templates.shadow_skull.husk.start = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4)
 	local var_160_0, var_160_1 = var_0_0.templates.ai_default.husk.start(arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4)
 
 	ScriptUnit.extension(arg_160_0, "projectile_system"):destroy()
@@ -2235,7 +2235,7 @@ end
 
 var_0_0.templates.tower_homing_skull = table.clone(var_0_0.templates.ai_default)
 
-function var_0_0.templates.tower_homing_skull.unit.start(arg_161_0, arg_161_1, arg_161_2, arg_161_3, arg_161_4)
+var_0_0.templates.tower_homing_skull.unit.start = function (arg_161_0, arg_161_1, arg_161_2, arg_161_3, arg_161_4)
 	local var_161_0, var_161_1 = var_0_0.templates.ai_default.unit.start(arg_161_0, arg_161_1, arg_161_2, arg_161_3, arg_161_4)
 
 	var_161_0.despawn_after_time = arg_161_2 + 2.5
@@ -2246,7 +2246,7 @@ function var_0_0.templates.tower_homing_skull.unit.start(arg_161_0, arg_161_1, a
 	return var_161_0, var_161_1
 end
 
-function var_0_0.templates.tower_homing_skull.unit.update(arg_162_0, arg_162_1, arg_162_2, arg_162_3, arg_162_4)
+var_0_0.templates.tower_homing_skull.unit.update = function (arg_162_0, arg_162_1, arg_162_2, arg_162_3, arg_162_4)
 	if arg_162_3 > arg_162_4.despawn_after_time and not arg_162_4.marked_for_deletion then
 		Managers.state.unit_spawner:mark_for_deletion(arg_162_0)
 
@@ -2258,7 +2258,7 @@ function var_0_0.templates.tower_homing_skull.unit.update(arg_162_0, arg_162_1, 
 	return var_0_0.IS_NOT_DONE
 end
 
-function var_0_0.templates.tower_homing_skull.husk.start(arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4)
+var_0_0.templates.tower_homing_skull.husk.start = function (arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4)
 	local var_163_0, var_163_1 = var_0_0.templates.ai_default.husk.start(arg_163_0, arg_163_1, arg_163_2, arg_163_3, arg_163_4)
 
 	ScriptUnit.extension(arg_163_0, "projectile_system"):destroy()
@@ -2273,10 +2273,10 @@ end
 
 var_0_0.templates.destructible_ward = {
 	unit = {
-		pre_start = function(arg_164_0, arg_164_1, arg_164_2, arg_164_3)
+		pre_start = function (arg_164_0, arg_164_1, arg_164_2, arg_164_3)
 			return
 		end,
-		start = function(arg_165_0, arg_165_1, arg_165_2, arg_165_3, arg_165_4)
+		start = function (arg_165_0, arg_165_1, arg_165_2, arg_165_3, arg_165_4)
 			Managers.state.game_mode:level_object_killed(arg_165_0, arg_165_3)
 			Unit.set_flow_variable(arg_165_0, "current_health", 0)
 			Unit.flow_event(arg_165_0, "lua_on_death")
@@ -2284,30 +2284,30 @@ var_0_0.templates.destructible_ward = {
 				"WardExtension"
 			})
 		end,
-		update = function(arg_166_0, arg_166_1, arg_166_2, arg_166_3, arg_166_4)
+		update = function (arg_166_0, arg_166_1, arg_166_2, arg_166_3, arg_166_4)
 			return
 		end
 	},
 	husk = {
-		pre_start = function(arg_167_0, arg_167_1, arg_167_2, arg_167_3)
+		pre_start = function (arg_167_0, arg_167_1, arg_167_2, arg_167_3)
 			return
 		end,
-		start = function(arg_168_0, arg_168_1, arg_168_2, arg_168_3, arg_168_4)
+		start = function (arg_168_0, arg_168_1, arg_168_2, arg_168_3, arg_168_4)
 			Managers.state.game_mode:level_object_killed(arg_168_0, arg_168_3)
 			Unit.flow_event(arg_168_0, "lua_on_death")
 			Managers.state.entity:remove_extensions_from_unit(arg_168_0, {
 				"WardExtension"
 			})
 		end,
-		update = function(arg_169_0, arg_169_1, arg_169_2, arg_169_3, arg_169_4)
+		update = function (arg_169_0, arg_169_1, arg_169_2, arg_169_3, arg_169_4)
 			return
 		end
 	}
-}, DLCUtils.map_list("death_reactions", function(arg_170_0)
+}, DLCUtils.map_list("death_reactions", function (arg_170_0)
 	return table.merge(var_0_0.templates, require(arg_170_0))
 end)
 
-function var_0_0.get_reaction(arg_171_0, arg_171_1)
+var_0_0.get_reaction = function (arg_171_0, arg_171_1)
 	local var_171_0 = var_0_0.templates
 	local var_171_1 = arg_171_1 and "husk" or "unit"
 	local var_171_2 = var_171_0[arg_171_0][var_171_1]
@@ -2317,7 +2317,7 @@ function var_0_0.get_reaction(arg_171_0, arg_171_1)
 	return var_171_2
 end
 
-function var_0_0._add_ai_killed_by_player_telemetry(arg_172_0, arg_172_1, arg_172_2, arg_172_3, arg_172_4, arg_172_5, arg_172_6)
+var_0_0._add_ai_killed_by_player_telemetry = function (arg_172_0, arg_172_1, arg_172_2, arg_172_3, arg_172_4, arg_172_5, arg_172_6)
 	local var_172_0 = Managers.state.network.is_server
 	local var_172_1 = POSITION_LOOKUP[arg_172_2]
 	local var_172_2 = POSITION_LOOKUP[arg_172_0]

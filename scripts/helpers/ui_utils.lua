@@ -13,7 +13,7 @@ ALL_INPUT_METHODS = {
 	"mouse"
 }
 
-function UIUtils.use_gamepad_hud_layout()
+UIUtils.use_gamepad_hud_layout = function ()
 	if not IS_WINDOWS then
 		return true
 	end
@@ -31,7 +31,7 @@ end
 
 local var_0_0 = {}
 
-function UIUtils.format_localized_description(arg_2_0, arg_2_1)
+UIUtils.format_localized_description = function (arg_2_0, arg_2_1)
 	local var_2_0 = Localize(arg_2_0)
 
 	if not arg_2_1 or table.is_empty(arg_2_1) then
@@ -72,19 +72,19 @@ function UIUtils.format_localized_description(arg_2_0, arg_2_1)
 	return var_2_7
 end
 
-function UIUtils.get_talent_description(arg_3_0)
+UIUtils.get_talent_description = function (arg_3_0)
 	return UIUtils.format_localized_description(arg_3_0.description, arg_3_0.description_values)
 end
 
-function UIUtils.get_ability_description(arg_4_0)
+UIUtils.get_ability_description = function (arg_4_0)
 	return UIUtils.format_localized_description(arg_4_0.description, arg_4_0.description_values)
 end
 
-function UIUtils.get_perk_description(arg_5_0)
+UIUtils.get_perk_description = function (arg_5_0)
 	return UIUtils.format_localized_description(arg_5_0.description, arg_5_0.description_values)
 end
 
-function UIUtils.get_weave_property_description(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+UIUtils.get_weave_property_description = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Localize(arg_6_1.display_name)
 	local var_6_1 = arg_6_1.description_values
 	local var_6_2 = #arg_6_2
@@ -111,7 +111,7 @@ function UIUtils.get_weave_property_description(arg_6_0, arg_6_1, arg_6_2, arg_6
 	return var_6_3
 end
 
-function UIUtils.get_weave_property_value_text(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+UIUtils.get_weave_property_value_text = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_1.description_values
 	local var_7_1 = #arg_7_2
 	local var_7_2 = "n/a"
@@ -133,7 +133,7 @@ function UIUtils.get_weave_property_value_text(arg_7_0, arg_7_1, arg_7_2, arg_7_
 	return var_7_2
 end
 
-function UIUtils.get_property_description(arg_8_0, arg_8_1, arg_8_2)
+UIUtils.get_property_description = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2 or WeaponProperties.properties[arg_8_0]
 	local var_8_1 = Localize(var_8_0.display_name)
 	local var_8_2 = var_8_0.description_values
@@ -184,7 +184,7 @@ function UIUtils.get_property_description(arg_8_0, arg_8_1, arg_8_2)
 	return var_8_3, var_8_4
 end
 
-function UIUtils.get_trait_description(arg_9_0, arg_9_1)
+UIUtils.get_trait_description = function (arg_9_0, arg_9_1)
 	local var_9_0 = arg_9_1 or WeaponTraits.traits[arg_9_0]
 	local var_9_1 = Localize(var_9_0.advanced_description)
 	local var_9_2 = var_9_0.description_values
@@ -213,7 +213,7 @@ function UIUtils.get_trait_description(arg_9_0, arg_9_1)
 	return var_9_3
 end
 
-function UIUtils.get_ui_information_from_item(arg_10_0)
+UIUtils.get_ui_information_from_item = function (arg_10_0)
 	local var_10_0 = arg_10_0.data
 	local var_10_1 = var_10_0.item_type
 	local var_10_2 = arg_10_0.rarity
@@ -268,15 +268,15 @@ function UIUtils.get_ui_information_from_item(arg_10_0)
 	return var_10_3, var_10_4, var_10_5, var_10_6
 end
 
-function UIUtils.presentable_hero_power_level(arg_11_0)
+UIUtils.presentable_hero_power_level = function (arg_11_0)
 	return math.max(0, math.floor(arg_11_0 - PowerLevelFromLevelSettings.starting_power_level))
 end
 
-function UIUtils.presentable_hero_power_level_weaves(arg_12_0)
+UIUtils.presentable_hero_power_level_weaves = function (arg_12_0)
 	return math.max(0, math.floor(arg_12_0 - PowerLevelFromMagicLevel.starting_power_level))
 end
 
-function UIUtils.get_item_tooltip_value(arg_13_0, arg_13_1, arg_13_2)
+UIUtils.get_item_tooltip_value = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_2.format_type
 	local var_13_1 = arg_13_2.format_function_name
 	local var_13_2 = ItemTooltipHelper[var_13_1]
@@ -293,7 +293,7 @@ function UIUtils.get_item_tooltip_value(arg_13_0, arg_13_1, arg_13_2)
 	return ItemTooltipHelper.format_return_string(var_13_0, var_13_3)
 end
 
-function UIUtils.get_hero_statistics_by_template(arg_14_0)
+UIUtils.get_hero_statistics_by_template = function (arg_14_0)
 	local var_14_0 = {}
 	local var_14_1 = {}
 
@@ -327,7 +327,7 @@ function UIUtils.get_hero_statistics_by_template(arg_14_0)
 	return var_14_0
 end
 
-function UIUtils.get_text_height(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+UIUtils.get_text_height = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0, var_15_1 = UIFontByResolution(arg_15_2)
 
 	if arg_15_2.localize then
@@ -348,7 +348,7 @@ function UIUtils.get_text_height(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	return (var_15_4 + math.abs(var_15_3)) * var_15_9 * var_15_8, var_15_8
 end
 
-function UIUtils.get_text_width(arg_16_0, arg_16_1, arg_16_2)
+UIUtils.get_text_width = function (arg_16_0, arg_16_1, arg_16_2)
 	if arg_16_1.localize then
 		arg_16_2 = Localize(arg_16_2)
 	end
@@ -362,19 +362,19 @@ function UIUtils.get_text_width(arg_16_0, arg_16_1, arg_16_2)
 	return (UIRenderer.text_size(arg_16_0, arg_16_2, var_16_0[1], var_16_1))
 end
 
-function UIUtils.enable_button(arg_17_0, arg_17_1, arg_17_2)
+UIUtils.enable_button = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = arg_17_0.content
 
 	;(var_17_0[arg_17_2] or var_17_0.button_hotspot or var_17_0.hotspot).disable_button = not arg_17_1
 end
 
-function UIUtils.is_button_enabled(arg_18_0, arg_18_1, arg_18_2)
+UIUtils.is_button_enabled = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = arg_18_0.content
 
 	return not (var_18_0[arg_18_2] or var_18_0.button_hotspot or var_18_0.hotspot).disable_button
 end
 
-function UIUtils.is_button_pressed(arg_19_0, arg_19_1, arg_19_2)
+UIUtils.is_button_pressed = function (arg_19_0, arg_19_1, arg_19_2)
 	if arg_19_0 then
 		local var_19_0 = arg_19_0.content
 		local var_19_1 = var_19_0[arg_19_1] or var_19_0.button_hotspot or var_19_0.hotspot
@@ -393,7 +393,7 @@ function UIUtils.is_button_pressed(arg_19_0, arg_19_1, arg_19_2)
 	return false
 end
 
-function UIUtils.is_right_button_pressed(arg_20_0, arg_20_1, arg_20_2)
+UIUtils.is_right_button_pressed = function (arg_20_0, arg_20_1, arg_20_2)
 	if arg_20_0 then
 		local var_20_0 = arg_20_0.content
 		local var_20_1 = var_20_0[arg_20_1] or var_20_0.button_hotspot or var_20_0.hotspot
@@ -412,7 +412,7 @@ function UIUtils.is_right_button_pressed(arg_20_0, arg_20_1, arg_20_2)
 	return false
 end
 
-function UIUtils.is_button_held(arg_21_0, arg_21_1)
+UIUtils.is_button_held = function (arg_21_0, arg_21_1)
 	if arg_21_0 then
 		local var_21_0 = arg_21_0.content
 
@@ -424,7 +424,7 @@ function UIUtils.is_button_held(arg_21_0, arg_21_1)
 	return false
 end
 
-function UIUtils.is_button_hover_enter(arg_22_0, arg_22_1)
+UIUtils.is_button_hover_enter = function (arg_22_0, arg_22_1)
 	if arg_22_0 then
 		local var_22_0 = arg_22_0.content
 
@@ -434,7 +434,7 @@ function UIUtils.is_button_hover_enter(arg_22_0, arg_22_1)
 	return false
 end
 
-function UIUtils.is_button_hover(arg_23_0, arg_23_1)
+UIUtils.is_button_hover = function (arg_23_0, arg_23_1)
 	if arg_23_0 then
 		local var_23_0 = arg_23_0.content
 
@@ -444,7 +444,7 @@ function UIUtils.is_button_hover(arg_23_0, arg_23_1)
 	return false
 end
 
-function UIUtils.is_button_selected(arg_24_0, arg_24_1)
+UIUtils.is_button_selected = function (arg_24_0, arg_24_1)
 	if arg_24_0 then
 		local var_24_0 = arg_24_0.content
 
@@ -454,7 +454,7 @@ function UIUtils.is_button_selected(arg_24_0, arg_24_1)
 	return false
 end
 
-function UIUtils.is_left_button_released(arg_25_0, arg_25_1)
+UIUtils.is_left_button_released = function (arg_25_0, arg_25_1)
 	if arg_25_0 then
 		local var_25_0 = arg_25_0.content
 
@@ -464,7 +464,7 @@ function UIUtils.is_left_button_released(arg_25_0, arg_25_1)
 	return false
 end
 
-function UIUtils.animate_value(arg_26_0, arg_26_1, arg_26_2)
+UIUtils.animate_value = function (arg_26_0, arg_26_1, arg_26_2)
 	if arg_26_2 then
 		return math.min(arg_26_0 + arg_26_1, 1)
 	else
@@ -472,7 +472,7 @@ function UIUtils.animate_value(arg_26_0, arg_26_1, arg_26_2)
 	end
 end
 
-function UIUtils.comma_value(arg_27_0, arg_27_1)
+UIUtils.comma_value = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0
 	local var_27_1
 	local var_27_2 = "%1" .. (arg_27_1 or " ") .. "%2"
@@ -486,11 +486,11 @@ function UIUtils.comma_value(arg_27_0, arg_27_1)
 	return var_27_0
 end
 
-function UIUtils.get_portrait_image_by_profile_index(arg_28_0, arg_28_1)
+UIUtils.get_portrait_image_by_profile_index = function (arg_28_0, arg_28_1)
 	return SPProfiles[arg_28_0].careers[arg_28_1].portrait_image
 end
 
-function UIUtils.create_widgets(arg_29_0, arg_29_1, arg_29_2)
+UIUtils.create_widgets = function (arg_29_0, arg_29_1, arg_29_2)
 	if arg_29_1 == nil then
 		arg_29_1 = {}
 	end
@@ -514,7 +514,7 @@ function UIUtils.create_widgets(arg_29_0, arg_29_1, arg_29_2)
 	return arg_29_1, arg_29_2
 end
 
-function UIUtils.destroy_widgets(arg_30_0, arg_30_1)
+UIUtils.destroy_widgets = function (arg_30_0, arg_30_1)
 	local var_30_0 = UIWidget.destroy
 
 	for iter_30_0, iter_30_1 in pairs(arg_30_1) do
@@ -522,13 +522,13 @@ function UIUtils.destroy_widgets(arg_30_0, arg_30_1)
 	end
 end
 
-function UIUtils.mark_dirty(arg_31_0)
+UIUtils.mark_dirty = function (arg_31_0)
 	for iter_31_0, iter_31_1 in pairs(arg_31_0) do
 		iter_31_1.element.dirty = true
 	end
 end
 
-function UIUtils.align_box_inplace(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+UIUtils.align_box_inplace = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	local var_32_0 = arg_32_0.horizontal_alignment
 
 	if var_32_0 == "right" then
@@ -546,14 +546,14 @@ function UIUtils.align_box_inplace(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 	end
 end
 
-function UIUtils.format_time(arg_33_0)
+UIUtils.format_time = function (arg_33_0)
 	local var_33_0 = arg_33_0 % 60
 	local var_33_1 = (arg_33_0 - var_33_0) / 60
 
 	return string.format("%02d:%02d", var_33_1, var_33_0)
 end
 
-function UIUtils.format_time_long(arg_34_0)
+UIUtils.format_time_long = function (arg_34_0)
 	local var_34_0 = math.floor
 	local var_34_1 = var_34_0(arg_34_0 / 86400)
 	local var_34_2 = var_34_0(arg_34_0 / 3600 % 24)
@@ -563,7 +563,7 @@ function UIUtils.format_time_long(arg_34_0)
 	return string.format("%02d:%02d:%02d:%02d", var_34_1, var_34_2, var_34_3, var_34_4)
 end
 
-function UIUtils.format_duration(arg_35_0, arg_35_1)
+UIUtils.format_duration = function (arg_35_0, arg_35_1)
 	if arg_35_0 > 172800 then
 		return string.format(Localize("datetime_days") .. ", " .. Localize("datetime_hours_short"), arg_35_0 / 86400, arg_35_0 / 3600 % 24)
 	elseif arg_35_0 > 7200 then
@@ -577,13 +577,13 @@ function UIUtils.format_duration(arg_35_0, arg_35_1)
 	end
 end
 
-function UIUtils.get_color_for_consumable_item(arg_36_0)
+UIUtils.get_color_for_consumable_item = function (arg_36_0)
 	local var_36_0 = UISettings.inventory_consumable_slot_colors.default
 
 	return arg_36_0 and UISettings.inventory_consumable_slot_colors[arg_36_0] or var_36_0
 end
 
-function UIUtils.sort_items_power_level_ascending(arg_37_0, arg_37_1)
+UIUtils.sort_items_power_level_ascending = function (arg_37_0, arg_37_1)
 	local var_37_0 = arg_37_0.power_level or math.huge
 	local var_37_1 = arg_37_1.power_level or math.huge
 
@@ -594,7 +594,7 @@ function UIUtils.sort_items_power_level_ascending(arg_37_0, arg_37_1)
 	return var_37_0 < var_37_1
 end
 
-function UIUtils.sort_items_power_level_descending(arg_38_0, arg_38_1)
+UIUtils.sort_items_power_level_descending = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0.power_level or math.huge
 	local var_38_1 = arg_38_1.power_level or math.huge
 
@@ -605,7 +605,7 @@ function UIUtils.sort_items_power_level_descending(arg_38_0, arg_38_1)
 	return var_38_1 < var_38_0
 end
 
-function UIUtils.sort_items_rarity_ascending(arg_39_0, arg_39_1)
+UIUtils.sort_items_rarity_ascending = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0.data
 	local var_39_1 = arg_39_1.data
 	local var_39_2 = arg_39_0.rarity or var_39_0.rarity
@@ -615,7 +615,7 @@ function UIUtils.sort_items_rarity_ascending(arg_39_0, arg_39_1)
 	return var_39_4[var_39_2] > var_39_4[var_39_3]
 end
 
-function UIUtils.sort_items_rarity_descending(arg_40_0, arg_40_1)
+UIUtils.sort_items_rarity_descending = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0.data
 	local var_40_1 = arg_40_1.data
 	local var_40_2 = arg_40_0.rarity or var_40_0.rarity
@@ -625,7 +625,7 @@ function UIUtils.sort_items_rarity_descending(arg_40_0, arg_40_1)
 	return var_40_4[var_40_2] < var_40_4[var_40_3]
 end
 
-function UIUtils.set_widget_alpha(arg_41_0, arg_41_1, arg_41_2)
+UIUtils.set_widget_alpha = function (arg_41_0, arg_41_1, arg_41_2)
 	if not arg_41_0 then
 		return
 	end

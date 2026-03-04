@@ -51,10 +51,10 @@ var_0_4.termite2_mushroom_challenge = {
 	events = {
 		"termite2_mushroom_challenge"
 	},
-	completed = function(arg_1_0, arg_1_1, arg_1_2)
+	completed = function (arg_1_0, arg_1_1, arg_1_2)
 		return arg_1_0:get_persistent_stat(arg_1_1, "termite2_mushroom_challenge") >= 1
 	end,
-	on_event = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		arg_2_0:increment_stat(arg_2_1, "termite2_mushroom_challenge")
 	end
 }
@@ -67,10 +67,10 @@ var_0_4.termite2_water_challenge = {
 		"register_damage_taken",
 		"register_completed_level"
 	},
-	completed = function(arg_3_0, arg_3_1, arg_3_2)
+	completed = function (arg_3_0, arg_3_1, arg_3_2)
 		return arg_3_0:get_persistent_stat(arg_3_1, "termite2_water_challenge") >= 1
 	end,
-	on_event = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 		local var_4_0 = Managers.state.game_mode:level_key()
 
 		if not var_4_0 or var_4_0 ~= "dlc_termite_2" then
@@ -114,16 +114,16 @@ var_0_4.termite2_timer_challenge = {
 	name = "achv_termite2_timer_name",
 	display_completion_ui = true,
 	icon = "achv_termite2_timer_icon",
-	desc = function()
+	desc = function ()
 		return string.format(Localize("achv_termite2_timer_desc"), var_0_15, var_0_16)
 	end,
 	events = {
 		"termite2_timer_challenge"
 	},
-	completed = function(arg_6_0, arg_6_1, arg_6_2)
+	completed = function (arg_6_0, arg_6_1, arg_6_2)
 		return arg_6_0:get_persistent_stat(arg_6_1, "termite2_timer_challenge") >= 1
 	end,
-	on_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		arg_7_0:increment_stat(arg_7_1, "termite2_timer_challenge")
 	end
 }

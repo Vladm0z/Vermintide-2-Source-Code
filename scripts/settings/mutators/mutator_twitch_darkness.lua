@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_darkness",
 	display_name = "display_name_mutator_darkness",
 	icon = "mutator_icon_darkness",
-	server_update_function = function(arg_1_0, arg_1_1)
+	server_update_function = function (arg_1_0, arg_1_1)
 		local var_1_0 = Managers.state.network
 
 		if not var_1_0 or not var_1_0:game() then
@@ -53,7 +53,7 @@ return {
 			arg_1_1.has_spawned_torches = true
 		end
 	end,
-	client_start_function = function(arg_2_0, arg_2_1)
+	client_start_function = function (arg_2_0, arg_2_1)
 		local var_2_0 = Managers.world:world("level_world")
 
 		LevelHelper:flow_event(var_2_0, "enable_twitch_darkness")
@@ -63,7 +63,7 @@ return {
 		var_2_1:set_global_darkness(true)
 		var_2_1:set_player_light_intensity(0.15)
 	end,
-	client_stop_function = function(arg_3_0, arg_3_1, arg_3_2)
+	client_stop_function = function (arg_3_0, arg_3_1, arg_3_2)
 		if not arg_3_2 then
 			Managers.state.entity:system("darkness_system"):remove_mutator_torches()
 		end

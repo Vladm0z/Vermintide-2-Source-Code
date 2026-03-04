@@ -19,7 +19,7 @@ local var_0_2 = {
 
 ActionCareerWHPriestUtility = {}
 
-function ActionCareerWHPriestUtility.cast_spell(arg_1_0, arg_1_1)
+ActionCareerWHPriestUtility.cast_spell = function (arg_1_0, arg_1_1)
 	ActionCareerWHPriestUtility._add_buffs_to_target(arg_1_0, arg_1_1)
 
 	local var_1_0 = ScriptUnit.extension(arg_1_1, "talent_system")
@@ -63,7 +63,7 @@ function ActionCareerWHPriestUtility.cast_spell(arg_1_0, arg_1_1)
 	end
 end
 
-function ActionCareerWHPriestUtility._add_buffs_to_target(arg_2_0, arg_2_1)
+ActionCareerWHPriestUtility._add_buffs_to_target = function (arg_2_0, arg_2_1)
 	local var_2_0 = var_0_2
 	local var_2_1 = var_0_0
 
@@ -93,7 +93,7 @@ end
 
 ActionCareerWHPriest = class(ActionCareerWHPriest, ActionBase)
 
-function ActionCareerWHPriest.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+ActionCareerWHPriest.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 	ActionCareerWHPriest.super.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
 
 	arg_3_0.owner_unit = arg_3_4
@@ -106,7 +106,7 @@ function ActionCareerWHPriest.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, 
 	arg_3_0.world = arg_3_1
 end
 
-function ActionCareerWHPriest.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ActionCareerWHPriest.client_owner_start_action = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_5 = arg_4_5 or {}
 
 	ActionCareerWHPriest.super.client_owner_start_action(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
@@ -125,16 +125,16 @@ function ActionCareerWHPriest.client_owner_start_action(arg_4_0, arg_4_1, arg_4_
 	end
 end
 
-function ActionCareerWHPriest.client_owner_post_update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+ActionCareerWHPriest.client_owner_post_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	return
 end
 
-function ActionCareerWHPriest.finish(arg_6_0, arg_6_1)
+ActionCareerWHPriest.finish = function (arg_6_0, arg_6_1)
 	ActionCareerWHPriest.super.finish(arg_6_0, arg_6_1)
 	arg_6_0.inventory_extension:wield_previous_non_level_slot()
 end
 
-function ActionCareerWHPriest._play_vo(arg_7_0)
+ActionCareerWHPriest._play_vo = function (arg_7_0)
 	local var_7_0 = arg_7_0.owner_unit
 	local var_7_1 = ScriptUnit.extension_input(var_7_0, "dialogue_system")
 	local var_7_2 = FrameTable.alloc_table()

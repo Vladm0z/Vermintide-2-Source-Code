@@ -368,7 +368,7 @@ local function var_0_15(arg_1_0, arg_1_1, arg_1_2)
 			pass_type = "hotspot",
 			style_id = iter_1_1 .. "_hotspot",
 			content_id = iter_1_1,
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return true
 			end
 		}
@@ -381,7 +381,7 @@ local function var_0_15(arg_1_0, arg_1_1, arg_1_2)
 			texture_id = "equipment_hover_frame",
 			pass_type = "texture",
 			style_id = iter_1_1 .. "_frame",
-			content_check_function = function(arg_3_0, arg_3_1)
+			content_check_function = function (arg_3_0, arg_3_1)
 				return arg_3_0[iter_1_1].is_hover or arg_3_0[iter_1_1].is_selected
 			end
 		}
@@ -390,7 +390,7 @@ local function var_0_15(arg_1_0, arg_1_1, arg_1_2)
 			pass_type = "texture",
 			style_id = iter_1_1 .. "_icon",
 			content_id = iter_1_1,
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.item and arg_4_0.icon
 			end
 		}
@@ -411,7 +411,7 @@ local function var_0_15(arg_1_0, arg_1_1, arg_1_2)
 			pass_type = "item_tooltip",
 			item_id = "item",
 			content_id = iter_1_1,
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.item and (arg_5_0.is_hover or arg_5_0.is_selected)
 			end
 		}
@@ -538,7 +538,7 @@ local function var_0_16(arg_6_0, arg_6_1)
 			texture_id = "talent_hover_frame",
 			pass_type = "texture_frame",
 			style_id = var_6_7 .. "_hover_frame",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (arg_7_0, arg_7_1)
 				return arg_7_0[var_6_7].is_hover or arg_7_0[var_6_7].is_selected
 			end
 		}
@@ -546,7 +546,7 @@ local function var_0_16(arg_6_0, arg_6_1)
 			pass_type = "hotspot",
 			style_id = var_6_7,
 			content_id = var_6_7,
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.talent
 			end
 		}
@@ -555,7 +555,7 @@ local function var_0_16(arg_6_0, arg_6_1)
 			pass_type = "texture",
 			style_id = var_6_7,
 			content_id = var_6_7,
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.talent and arg_9_0.icon
 			end
 		}
@@ -565,7 +565,7 @@ local function var_0_16(arg_6_0, arg_6_1)
 			pass_type = "talent_tooltip",
 			talent_id = "talent",
 			content_id = var_6_7,
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.talent and (arg_10_0.is_hover or arg_10_0.is_selected)
 			end
 		}
@@ -662,7 +662,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return arg_12_0.draw_frame
 					end
 				},
@@ -692,7 +692,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.button_hotspot.disable_button
 					end
 				},
@@ -700,7 +700,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return not arg_14_0.skip_side_detail
 					end
 				},
@@ -709,7 +709,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						return not arg_15_0.skip_side_detail
 					end
 				},
@@ -717,7 +717,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_16_0)
+					content_check_function = function (arg_16_0)
 						return not arg_16_0.button_hotspot.disable_button
 					end
 				},
@@ -725,7 +725,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_17_0)
+					content_check_function = function (arg_17_0)
 						return arg_17_0.button_hotspot.disable_button
 					end
 				},
@@ -748,7 +748,7 @@ local function var_0_17(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11
 					texture_id = "bot_equipped_icon",
 					style_id = "bot_equipped_icon",
 					pass_type = "texture",
-					content_check_function = function(arg_18_0, arg_18_1)
+					content_check_function = function (arg_18_0, arg_18_1)
 						local var_18_0 = Managers.state.game_mode:game_mode_key()
 
 						if not InventorySettings.bot_loadout_allowed_game_modes[var_18_0] then
@@ -1212,17 +1212,17 @@ local var_0_32 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.render_settings.alpha_multiplier = 0
 				arg_19_0.anchor.position[1] = 50
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = math.easeOutCubic(arg_20_3)
 
 				arg_20_4.render_settings.alpha_multiplier = var_20_0 * var_20_0
 				arg_20_0.anchor.position[1] = 50 - 50 * var_20_0
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end
 		}
@@ -1255,7 +1255,7 @@ local var_0_33 = {
 			input_action = "left_stick_press",
 			priority = 5,
 			description_text = "input_description_equip_for_bot",
-			content_check_function = function()
+			content_check_function = function ()
 				local var_22_0 = Managers.state.game_mode:game_mode_key()
 
 				return InventorySettings.bot_loadout_allowed_game_modes[var_22_0]
@@ -1288,7 +1288,7 @@ local var_0_33 = {
 			input_action = "left_stick_press",
 			priority = 4,
 			description_text = "input_description_equip_for_bot",
-			content_check_function = function()
+			content_check_function = function ()
 				local var_23_0 = Managers.state.game_mode:game_mode_key()
 
 				return InventorySettings.bot_loadout_allowed_game_modes[var_23_0]

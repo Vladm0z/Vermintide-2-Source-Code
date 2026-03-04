@@ -4,7 +4,7 @@ local var_0_0 = local_require("scripts/ui/views/unlock_key_view_definitions")
 
 UnlockKeyView = class(UnlockKeyView)
 
-function UnlockKeyView.init(arg_1_0, arg_1_1)
+UnlockKeyView.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.input_manager = arg_1_1.input_manager
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
@@ -27,11 +27,11 @@ function UnlockKeyView.init(arg_1_0, arg_1_1)
 	arg_1_0.controller_cooldown = 0
 end
 
-function UnlockKeyView.input_service(arg_2_0)
+UnlockKeyView.input_service = function (arg_2_0)
 	return arg_2_0.input_manager:get_service("unlock_key_menu")
 end
 
-function UnlockKeyView.destroy(arg_3_0)
+UnlockKeyView.destroy = function (arg_3_0)
 	rawset(_G, "global_unlock_key_view", nil)
 	GarbageLeakDetector.register_object(arg_3_0, "UnlockKeyView")
 end
@@ -40,7 +40,7 @@ local var_0_1 = var_0_0.widget_definitions
 local var_0_2 = var_0_0.create_simple_texture_widget
 local var_0_3 = 0
 
-function UnlockKeyView.create_ui_elements(arg_4_0)
+UnlockKeyView.create_ui_elements = function (arg_4_0)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 	arg_4_0.background_widgets = {
 		var_0_2("unlock_key_bg", "key_entry_background"),
@@ -57,14 +57,14 @@ function UnlockKeyView.create_ui_elements(arg_4_0)
 	arg_4_0.back_gamepad_button_widget.content.text_field = "Exit"
 end
 
-function UnlockKeyView.on_enter(arg_5_0)
+UnlockKeyView.on_enter = function (arg_5_0)
 	arg_5_0.input_manager:block_device_except_service("unlock_key_menu", "keyboard", 1)
 	arg_5_0.input_manager:block_device_except_service("unlock_key_menu", "mouse", 1)
 	arg_5_0.input_manager:block_device_except_service("unlock_key_menu", "gamepad", 1)
 
 	arg_5_0.fade_in_done = false
 
-	Managers.transition:fade_in(10, function()
+	Managers.transition:fade_in(10, function ()
 		arg_5_0.fade_in_done = true
 	end)
 
@@ -77,11 +77,11 @@ function UnlockKeyView.on_enter(arg_5_0)
 	arg_5_0.transition_on_completed_animation = nil
 end
 
-function UnlockKeyView.on_exit(arg_7_0)
+UnlockKeyView.on_exit = function (arg_7_0)
 	return
 end
 
-function UnlockKeyView.suspend(arg_8_0)
+UnlockKeyView.suspend = function (arg_8_0)
 	arg_8_0.suspended = true
 
 	arg_8_0.input_manager:device_unblock_all_services("keyboard", 1)
@@ -89,7 +89,7 @@ function UnlockKeyView.suspend(arg_8_0)
 	arg_8_0.input_manager:device_unblock_all_services("gamepad", 1)
 end
 
-function UnlockKeyView.unsuspend(arg_9_0)
+UnlockKeyView.unsuspend = function (arg_9_0)
 	arg_9_0.input_manager:block_device_except_service("unlock_key_menu", "keyboard", 1)
 	arg_9_0.input_manager:block_device_except_service("unlock_key_menu", "mouse", 1)
 	arg_9_0.input_manager:block_device_except_service("unlock_key_menu", "gamepad", 1)
@@ -97,7 +97,7 @@ function UnlockKeyView.unsuspend(arg_9_0)
 	arg_9_0.suspended = nil
 end
 
-function UnlockKeyView.update(arg_10_0, arg_10_1, arg_10_2)
+UnlockKeyView.update = function (arg_10_0, arg_10_1, arg_10_2)
 	if arg_10_0.suspended then
 		return
 	end
@@ -147,7 +147,7 @@ function UnlockKeyView.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function UnlockKeyView.exit(arg_11_0)
+UnlockKeyView.exit = function (arg_11_0)
 	arg_11_0:on_menu_close()
 	Managers.transition:fade_in(10)
 
@@ -155,7 +155,7 @@ function UnlockKeyView.exit(arg_11_0)
 	arg_11_0.transition_on_completed_animation = "exit_menu"
 end
 
-function UnlockKeyView.draw_widgets(arg_12_0, arg_12_1, arg_12_2)
+UnlockKeyView.draw_widgets = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_scenegraph
 	local var_12_2 = arg_12_0.input_manager:get_service("unlock_key_menu")
@@ -189,7 +189,7 @@ function UnlockKeyView.draw_widgets(arg_12_0, arg_12_1, arg_12_2)
 	UIRenderer.end_pass(var_12_0)
 end
 
-function UnlockKeyView.handle_input(arg_13_0, arg_13_1)
+UnlockKeyView.handle_input = function (arg_13_0, arg_13_1)
 	local var_13_0 = Keyboard.keystrokes()
 
 	arg_13_0.key_text, arg_13_0.key_text_index, arg_13_0.text_mode = KeystrokeHelper.parse_strokes(arg_13_0.key_text, arg_13_0.key_text_index, arg_13_0.text_mode, var_13_0)
@@ -211,7 +211,7 @@ function UnlockKeyView.handle_input(arg_13_0, arg_13_1)
 	end
 end
 
-function UnlockKeyView.handle_controller_input(arg_14_0, arg_14_1, arg_14_2)
+UnlockKeyView.handle_controller_input = function (arg_14_0, arg_14_1, arg_14_2)
 	if arg_14_0.controller_cooldown > 0 then
 		arg_14_0.controller_cooldown = arg_14_0.controller_cooldown - arg_14_2
 	else
@@ -229,15 +229,15 @@ function UnlockKeyView.handle_controller_input(arg_14_0, arg_14_1, arg_14_2)
 	end
 end
 
-function UnlockKeyView.on_reset(arg_15_0)
+UnlockKeyView.on_reset = function (arg_15_0)
 	return
 end
 
-function UnlockKeyView.on_apply(arg_16_0)
+UnlockKeyView.on_apply = function (arg_16_0)
 	return
 end
 
-function UnlockKeyView.on_menu_close(arg_17_0)
+UnlockKeyView.on_menu_close = function (arg_17_0)
 	return
 end
 

@@ -44,7 +44,7 @@ local var_0_15 = 1
 
 AchievementManager.STORE_COMPLETED_LEVEL = false
 
-function AchievementManager.init(arg_1_0, arg_1_1, arg_1_2)
+AchievementManager.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.initialized = false
 	arg_1_0.world = arg_1_1
 	arg_1_0._statistics_db = arg_1_2
@@ -118,7 +118,7 @@ function AchievementManager.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.initialized = true
 end
 
-function AchievementManager.trigger_event(arg_2_0, arg_2_1, ...)
+AchievementManager.trigger_event = function (arg_2_0, arg_2_1, ...)
 	if DEDICATED_SERVER or var_0_2["eac-untrusted"] then
 		return
 	end
@@ -189,7 +189,7 @@ function AchievementManager.trigger_event(arg_2_0, arg_2_1, ...)
 	end
 end
 
-function AchievementManager.register_timed_event(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AchievementManager.register_timed_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	local var_3_0 = Managers.time:time("game")
 	local var_3_1 = {
 		arg_3_1,
@@ -204,7 +204,7 @@ function AchievementManager.register_timed_event(arg_3_0, arg_3_1, arg_3_2, arg_
 	return var_3_1
 end
 
-function AchievementManager.cancel_timed_event(arg_4_0, arg_4_1)
+AchievementManager.cancel_timed_event = function (arg_4_0, arg_4_1)
 	if arg_4_0._timed_events[arg_4_1] then
 		arg_4_1.valid = false
 
@@ -215,11 +215,11 @@ function AchievementManager.cancel_timed_event(arg_4_0, arg_4_1)
 	end
 end
 
-function AchievementManager.get_registered_timed_event(arg_5_0, arg_5_1)
+AchievementManager.get_registered_timed_event = function (arg_5_0, arg_5_1)
 	return arg_5_0._timed_events[arg_5_1]
 end
 
-function AchievementManager.reset_timed_event(arg_6_0, arg_6_1)
+AchievementManager.reset_timed_event = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._timed_events[arg_6_1]
 
 	if var_6_0 and arg_6_1.valid then
@@ -231,7 +231,7 @@ function AchievementManager.reset_timed_event(arg_6_0, arg_6_1)
 	return false
 end
 
-function AchievementManager._update_timed_events(arg_7_0, arg_7_1, arg_7_2)
+AchievementManager._update_timed_events = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._timed_events
 	local var_7_1 = arg_7_0._canceled_timed_events
 
@@ -259,7 +259,7 @@ function AchievementManager._update_timed_events(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function AchievementManager.destroy(arg_8_0)
+AchievementManager.destroy = function (arg_8_0)
 	Managers.state.event:unregister("event_enable_achievements", arg_8_0)
 
 	if arg_8_0.gui then
@@ -271,19 +271,19 @@ function AchievementManager.destroy(arg_8_0)
 	arg_8_0._timed_events = nil
 end
 
-function AchievementManager.event_enable_achievements(arg_9_0, arg_9_1)
+AchievementManager.event_enable_achievements = function (arg_9_0, arg_9_1)
 	arg_9_0._enabled = arg_9_1
 end
 
-function AchievementManager.is_enabled(arg_10_0)
+AchievementManager.is_enabled = function (arg_10_0)
 	return arg_10_0._enabled
 end
 
-function AchievementManager.num_achievement_categories(arg_11_0)
+AchievementManager.num_achievement_categories = function (arg_11_0)
 	return #var_0_0.categories
 end
 
-function AchievementManager.update(arg_12_0, arg_12_1, arg_12_2)
+AchievementManager.update = function (arg_12_0, arg_12_1, arg_12_2)
 	if not arg_12_0._enabled or not arg_12_0:_check_version_number() or not arg_12_0:_check_initialized_achievements() or not arg_12_0:_verify_platform_achievements() or var_0_2["eac-untrusted"] then
 		return
 	end
@@ -394,14 +394,14 @@ function AchievementManager.update(arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0:_update_timed_events(arg_12_1, arg_12_2)
 end
 
-function AchievementManager.reset(arg_13_0)
+AchievementManager.reset = function (arg_13_0)
 	arg_13_0._platform_functions.reset()
 
 	arg_13_0._unlocked_achievements = {}
 	arg_13_0._unlock_tasks = {}
 end
 
-function AchievementManager.outline(arg_14_0)
+AchievementManager.outline = function (arg_14_0)
 	if not arg_14_0.initialized then
 		return nil, "AchievementManager not initialized"
 	end
@@ -409,7 +409,7 @@ function AchievementManager.outline(arg_14_0)
 	return var_0_0
 end
 
-function AchievementManager._search_sub_categories(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AchievementManager._search_sub_categories = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	if not arg_15_1 then
 		return
 	end
@@ -437,11 +437,11 @@ function AchievementManager._search_sub_categories(arg_15_0, arg_15_1, arg_15_2,
 	return var_15_0
 end
 
-function AchievementManager.get_entries_from_category(arg_16_0, arg_16_1)
+AchievementManager.get_entries_from_category = function (arg_16_0, arg_16_1)
 	return arg_16_0:_search_sub_categories(var_0_0.categories, arg_16_1)
 end
 
-function AchievementManager.get_data_by_id(arg_17_0, arg_17_1)
+AchievementManager.get_data_by_id = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._achievement_data[arg_17_1]
 
 	fassert(var_17_0, "Have not set up achievement (%s) yet.", arg_17_1)
@@ -449,7 +449,7 @@ function AchievementManager.get_data_by_id(arg_17_0, arg_17_1)
 	return var_17_0
 end
 
-function AchievementManager.setup_achievement_data(arg_18_0)
+AchievementManager.setup_achievement_data = function (arg_18_0)
 	if not arg_18_0._enabled then
 		return
 	end
@@ -480,7 +480,7 @@ function AchievementManager.setup_achievement_data(arg_18_0)
 	var_18_0(arg_18_0, var_0_0.categories)
 end
 
-function AchievementManager.setup_achievement_data_from_list(arg_20_0, arg_20_1, arg_20_2)
+AchievementManager.setup_achievement_data_from_list = function (arg_20_0, arg_20_1, arg_20_2)
 	if not arg_20_0._enabled then
 		return
 	end
@@ -500,7 +500,7 @@ function AchievementManager.setup_achievement_data_from_list(arg_20_0, arg_20_1,
 	end
 end
 
-function AchievementManager.can_claim_achievement_rewards(arg_21_0, arg_21_1)
+AchievementManager.can_claim_achievement_rewards = function (arg_21_0, arg_21_1)
 	if not arg_21_0._enabled then
 		return nil, "AchievementManager not enabled"
 	end
@@ -522,7 +522,7 @@ function AchievementManager.can_claim_achievement_rewards(arg_21_0, arg_21_1)
 	return true
 end
 
-function AchievementManager.can_claim_all_achievement_rewards(arg_22_0, arg_22_1)
+AchievementManager.can_claim_all_achievement_rewards = function (arg_22_0, arg_22_1)
 	if not arg_22_0._enabled then
 		return nil, nil, "AchievementManager not enabled"
 	end
@@ -544,7 +544,7 @@ function AchievementManager.can_claim_all_achievement_rewards(arg_22_0, arg_22_1
 	return var_22_1, nil, nil
 end
 
-function AchievementManager.claim_reward(arg_23_0, arg_23_1)
+AchievementManager.claim_reward = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._backend_interface_loot
 	local var_23_1 = var_23_0:generate_reward_loot_id()
 
@@ -553,7 +553,7 @@ function AchievementManager.claim_reward(arg_23_0, arg_23_1)
 	return var_23_1
 end
 
-function AchievementManager.claim_multiple_rewards(arg_24_0, arg_24_1)
+AchievementManager.claim_multiple_rewards = function (arg_24_0, arg_24_1)
 	local var_24_0 = arg_24_0._backend_interface_loot
 	local var_24_1 = var_24_0:generate_reward_loot_id()
 
@@ -562,11 +562,11 @@ function AchievementManager.claim_multiple_rewards(arg_24_0, arg_24_1)
 	return var_24_1
 end
 
-function AchievementManager.polling_reward(arg_25_0)
+AchievementManager.polling_reward = function (arg_25_0)
 	return arg_25_0._backend_interface_loot:polling_reward()
 end
 
-function AchievementManager.has_any_unclaimed_achievement(arg_26_0)
+AchievementManager.has_any_unclaimed_achievement = function (arg_26_0)
 	local var_26_0 = Managers.unlock
 
 	for iter_26_0, iter_26_1 in pairs(arg_26_0._achievement_data) do
@@ -583,7 +583,7 @@ function AchievementManager.has_any_unclaimed_achievement(arg_26_0)
 	return false
 end
 
-function AchievementManager.evaluate_end_of_level_achievements(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AchievementManager.evaluate_end_of_level_achievements = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = AchievementTemplates.end_of_level_achievement_evaluations
 
 	for iter_27_0, iter_27_1 in pairs(var_27_0) do
@@ -602,7 +602,7 @@ function AchievementManager.evaluate_end_of_level_achievements(arg_27_0, arg_27_
 	end
 end
 
-function AchievementManager._check_version_number(arg_28_0)
+AchievementManager._check_version_number = function (arg_28_0)
 	if not arg_28_0._checked_version_number then
 		if not arg_28_0._version_token then
 			local var_28_0, var_28_1 = arg_28_0._platform_functions.check_version_number()
@@ -630,7 +630,7 @@ function AchievementManager._check_version_number(arg_28_0)
 	return arg_28_0._checked_version_number
 end
 
-function AchievementManager._check_initialized_achievements(arg_29_0)
+AchievementManager._check_initialized_achievements = function (arg_29_0)
 	if not arg_29_0._initialized_achievements then
 		arg_29_0._initialized_achievements = true
 
@@ -654,7 +654,7 @@ function AchievementManager._check_initialized_achievements(arg_29_0)
 	return arg_29_0._initialized_achievements
 end
 
-function AchievementManager._display_completion_ui(arg_30_0, arg_30_1)
+AchievementManager._display_completion_ui = function (arg_30_0, arg_30_1)
 	local var_30_0 = Localize(AchievementTemplates.achievements[arg_30_1].name)
 	local var_30_1 = string.format(Localize("finish_level_to_complete_challenge"), var_30_0)
 	local var_30_2 = true
@@ -667,7 +667,7 @@ local function var_0_16(arg_31_0, arg_31_1, arg_31_2)
 	arg_31_0[arg_31_2] = nil
 end
 
-function AchievementManager._check_for_completed_achievements(arg_32_0)
+AchievementManager._check_for_completed_achievements = function (arg_32_0)
 	if arg_32_0._incompleted_template_count > 0 then
 		local var_32_0 = arg_32_0._incompleted_template_curr_idx
 		local var_32_1 = arg_32_0._incompleted_achievements[var_32_0]
@@ -699,7 +699,7 @@ function AchievementManager._check_for_completed_achievements(arg_32_0)
 	end
 end
 
-function AchievementManager._achievement_completed(arg_33_0, arg_33_1, arg_33_2)
+AchievementManager._achievement_completed = function (arg_33_0, arg_33_1, arg_33_2)
 	if arg_33_2 then
 		return true
 	end
@@ -715,7 +715,7 @@ function AchievementManager._achievement_completed(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function AchievementManager._achievement_progress(arg_34_0, arg_34_1, arg_34_2)
+AchievementManager._achievement_progress = function (arg_34_0, arg_34_1, arg_34_2)
 	local var_34_0
 	local var_34_1 = AchievementTemplates.achievements[arg_34_1]
 
@@ -741,7 +741,7 @@ function AchievementManager._achievement_progress(arg_34_0, arg_34_1, arg_34_2)
 	return var_34_0
 end
 
-function AchievementManager.setup_incompleted_achievements(arg_35_0)
+AchievementManager.setup_incompleted_achievements = function (arg_35_0)
 	if not arg_35_0._enabled then
 		return
 	end
@@ -764,7 +764,7 @@ function AchievementManager.setup_incompleted_achievements(arg_35_0)
 	arg_35_0._incompleted_template_curr_idx = 1
 end
 
-function AchievementManager._setup_achievement_data(arg_36_0, arg_36_1, arg_36_2)
+AchievementManager._setup_achievement_data = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = AchievementTemplates.achievements[arg_36_1]
 
 	fassert(var_36_0, "Missing achievemnt for [\"%s\"]", arg_36_1)
@@ -877,13 +877,13 @@ function AchievementManager._setup_achievement_data(arg_36_0, arg_36_1, arg_36_2
 	arg_36_0._achievement_data[arg_36_1] = var_36_23
 end
 
-function AchievementManager._add_achievement_to_platform_unlock_verification(arg_37_0, arg_37_1)
+AchievementManager._add_achievement_to_platform_unlock_verification = function (arg_37_0, arg_37_1)
 	local var_37_0 = AchievementTemplates.achievements[arg_37_1]
 
 	arg_37_0._platform_achievements_to_verify[#arg_37_0._platform_achievements_to_verify + 1] = var_37_0
 end
 
-function AchievementManager._verify_platform_achievements(arg_38_0)
+AchievementManager._verify_platform_achievements = function (arg_38_0)
 	local var_38_0 = arg_38_0._platform_functions
 	local var_38_1 = arg_38_0._verify_platform_achievements_data or {}
 
@@ -921,7 +921,7 @@ local var_0_17 = 16
 local var_0_18 = "arial"
 local var_0_19 = "materials/fonts/" .. var_0_18
 
-function AchievementManager.debug_draw(arg_39_0)
+AchievementManager.debug_draw = function (arg_39_0)
 	if not var_0_2.achievement_debug then
 		return
 	end
@@ -963,7 +963,7 @@ function AchievementManager.debug_draw(arg_39_0)
 	var_0_4.rect(var_39_0, Vector3(var_39_8.x - 20, var_39_9.y - 20, 100), Vector2(300, var_39_8.y - var_39_9.y + 40), var_39_4)
 end
 
-function AchievementManager.get_challenge_progression(arg_40_0, arg_40_1)
+AchievementManager.get_challenge_progression = function (arg_40_0, arg_40_1)
 	local var_40_0 = Managers.player:local_player():stats_id()
 	local var_40_1 = arg_40_0._statistics_db
 	local var_40_2 = {}

@@ -10,7 +10,7 @@ local var_0_0 = LOADOUT_SLOTS or {
 	slot_ranged = true
 }
 
-function LoadoutUtils.sync_loadout_slot(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LoadoutUtils.sync_loadout_slot = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	if not var_0_0[arg_1_1] then
 		return
 	end
@@ -44,7 +44,7 @@ end
 
 local var_0_1 = {}
 
-function LoadoutUtils.hot_join_sync(arg_2_0)
+LoadoutUtils.hot_join_sync = function (arg_2_0)
 	if not Managers.state.network.is_server then
 		return
 	end
@@ -65,7 +65,7 @@ function LoadoutUtils.hot_join_sync(arg_2_0)
 	end
 end
 
-function LoadoutUtils.create_loadout_item_from_rpc_data(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+LoadoutUtils.create_loadout_item_from_rpc_data = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	local var_3_0 = NetworkLookup.equipment_slots[arg_3_0]
 	local var_3_1 = NetworkLookup.item_names[arg_3_1]
 	local var_3_2 = NetworkLookup.rarities[arg_3_2]
@@ -85,7 +85,7 @@ function LoadoutUtils.create_loadout_item_from_rpc_data(arg_3_0, arg_3_1, arg_3_
 	return var_3_0, var_3_8
 end
 
-function LoadoutUtils.properties_to_rpc_params(arg_4_0)
+LoadoutUtils.properties_to_rpc_params = function (arg_4_0)
 	local var_4_0 = NetworkLookup.properties
 	local var_4_1 = NetworkLookup.traits
 	local var_4_2 = {}
@@ -113,7 +113,7 @@ function LoadoutUtils.properties_to_rpc_params(arg_4_0)
 	return var_4_2, var_4_3, var_4_4
 end
 
-function LoadoutUtils.properties_from_rpc_params(arg_5_0, arg_5_1, arg_5_2)
+LoadoutUtils.properties_from_rpc_params = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = NetworkLookup.properties
 	local var_5_1 = NetworkLookup.traits
 	local var_5_2 = 0
@@ -133,7 +133,7 @@ function LoadoutUtils.properties_from_rpc_params(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_2, var_5_3, var_5_4
 end
 
-function LoadoutUtils.is_item_disabled(arg_6_0)
+LoadoutUtils.is_item_disabled = function (arg_6_0)
 	local var_6_0 = Managers.mechanism
 
 	if not var_6_0 then

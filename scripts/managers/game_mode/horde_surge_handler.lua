@@ -7,7 +7,7 @@ local var_0_0 = {
 	"rpc_horde_surge_set_level"
 }
 
-function HordeSurgeHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+HordeSurgeHandler.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._is_server = arg_1_1
 	arg_1_0._world = arg_1_2
 
@@ -46,21 +46,21 @@ function HordeSurgeHandler.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 	end
 end
 
-function HordeSurgeHandler.register_rpcs(arg_2_0, arg_2_1, arg_2_2)
+HordeSurgeHandler.register_rpcs = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_1:register(arg_2_0, unpack(var_0_0))
 
 	arg_2_0._network_event_delegate = arg_2_1
 	arg_2_0._network_transmit = arg_2_2
 end
 
-function HordeSurgeHandler.unregister_rpcs(arg_3_0)
+HordeSurgeHandler.unregister_rpcs = function (arg_3_0)
 	arg_3_0._network_event_delegate:unregister(arg_3_0)
 
 	arg_3_0._network_event_delegate = nil
 	arg_3_0._network_transmit = nil
 end
 
-function HordeSurgeHandler.destroy(arg_4_0)
+HordeSurgeHandler.destroy = function (arg_4_0)
 	if arg_4_0._is_server then
 		local var_4_0 = Network.game_session()
 
@@ -68,7 +68,7 @@ function HordeSurgeHandler.destroy(arg_4_0)
 	end
 end
 
-function HordeSurgeHandler.server_update(arg_5_0, arg_5_1, arg_5_2)
+HordeSurgeHandler.server_update = function (arg_5_0, arg_5_1, arg_5_2)
 	if not arg_5_0._active or not arg_5_0._game_object_id or script_data.disable_horde_surge or arg_5_0.disabled then
 		return
 	end
@@ -104,7 +104,7 @@ function HordeSurgeHandler.server_update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._frozen = var_5_1
 end
 
-function HordeSurgeHandler.client_update(arg_6_0, arg_6_1, arg_6_2)
+HordeSurgeHandler.client_update = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_0._game_object_id or script_data.disable_horde_surge or arg_6_0.disabled then
 		return
 	end
@@ -147,7 +147,7 @@ function HordeSurgeHandler.client_update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function HordeSurgeHandler._trigger_event(arg_7_0)
+HordeSurgeHandler._trigger_event = function (arg_7_0)
 	local var_7_0 = {}
 	local var_7_1, var_7_2 = Math.next_random(arg_7_0._seed, 1, #arg_7_0._current_event.terror_events)
 
@@ -161,7 +161,7 @@ function HordeSurgeHandler._trigger_event(arg_7_0)
 	arg_7_0._current_terror_event_index = var_7_2
 end
 
-function HordeSurgeHandler._next_level(arg_8_0, arg_8_1, arg_8_2)
+HordeSurgeHandler._next_level = function (arg_8_0, arg_8_1, arg_8_2)
 	fassert(arg_8_0._is_server, "This should only be called on the server")
 
 	if arg_8_0._events[arg_8_0._level_index + 1] then
@@ -180,7 +180,7 @@ function HordeSurgeHandler._next_level(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._network_transmit:send_rpc_clients("rpc_horde_surge_set_level", arg_8_0._level_index, arg_8_0._current_terror_event_index, arg_8_0._time_to_next)
 end
 
-function HordeSurgeHandler.freeze_timer(arg_9_0, arg_9_1)
+HordeSurgeHandler.freeze_timer = function (arg_9_0, arg_9_1)
 	fassert(arg_9_0._is_server, "This should only be called on the server")
 
 	if arg_9_0._frozen then
@@ -194,36 +194,36 @@ function HordeSurgeHandler.freeze_timer(arg_9_0, arg_9_1)
 	arg_9_0._network_transmit:send_rpc_clients("rpc_horde_surge_freeze", arg_9_0._freeze_time)
 end
 
-function HordeSurgeHandler.activate(arg_10_0)
+HordeSurgeHandler.activate = function (arg_10_0)
 	arg_10_0._active = true
 end
 
-function HordeSurgeHandler.deactivate(arg_11_0)
+HordeSurgeHandler.deactivate = function (arg_11_0)
 	arg_11_0._active = false
 end
 
-function HordeSurgeHandler.get_progress(arg_12_0)
+HordeSurgeHandler.get_progress = function (arg_12_0)
 	return arg_12_0._progress
 end
 
-function HordeSurgeHandler.get_freeze_time(arg_13_0)
+HordeSurgeHandler.get_freeze_time = function (arg_13_0)
 	return arg_13_0._freeze_time
 end
 
-function HordeSurgeHandler.is_frozen(arg_14_0)
+HordeSurgeHandler.is_frozen = function (arg_14_0)
 	return arg_14_0._frozen
 end
 
-function HordeSurgeHandler.get_level(arg_15_0)
+HordeSurgeHandler.get_level = function (arg_15_0)
 	return arg_15_0._level_index
 end
 
-function HordeSurgeHandler.rpc_horde_surge_freeze(arg_16_0, arg_16_1, arg_16_2)
+HordeSurgeHandler.rpc_horde_surge_freeze = function (arg_16_0, arg_16_1, arg_16_2)
 	arg_16_0._freeze_time = arg_16_2
 	arg_16_0._frozen = true
 end
 
-function HordeSurgeHandler.rpc_horde_surge_set_level(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+HordeSurgeHandler.rpc_horde_surge_set_level = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	arg_17_0._level_index = arg_17_2
 
 	if arg_17_3 ~= 0 then
@@ -236,7 +236,7 @@ function HordeSurgeHandler.rpc_horde_surge_set_level(arg_17_0, arg_17_1, arg_17_
 	Managers.state.event:trigger("horde_surge_changed_level", arg_17_2)
 end
 
-function HordeSurgeHandler.hot_join_sync(arg_18_0, arg_18_1)
+HordeSurgeHandler.hot_join_sync = function (arg_18_0, arg_18_1)
 	arg_18_0._network_transmit:send_rpc("rpc_horde_surge_set_level", arg_18_1, arg_18_0._level_index, arg_18_0._current_terror_event_index, arg_18_0._time_to_next)
 
 	if arg_18_0._frozen then

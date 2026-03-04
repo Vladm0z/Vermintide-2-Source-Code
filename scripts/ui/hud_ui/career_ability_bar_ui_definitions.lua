@@ -69,7 +69,7 @@ local var_0_4 = {
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function(arg_1_0, arg_1_1)
+					content_check_function = function (arg_1_0, arg_1_1)
 						arg_1_0.gamepad_active = Managers.input:is_device_active("gamepad")
 
 						return arg_1_0.gamepad_active
@@ -103,10 +103,10 @@ local var_0_4 = {
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return not arg_2_0.gamepad_active
 					end,
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						local var_3_0 = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
 
 						if not var_3_0 then
@@ -134,7 +134,7 @@ local var_0_4 = {
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return not arg_4_0.gamepad_active
 					end
 				}

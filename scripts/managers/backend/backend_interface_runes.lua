@@ -6,11 +6,11 @@ local var_0_0 = "runes_"
 local var_0_1 = "runes"
 local var_0_2 = "rune_"
 
-function BackendInterfaceRunes.init(arg_1_0)
+BackendInterfaceRunes.init = function (arg_1_0)
 	return
 end
 
-function BackendInterfaceRunes._refresh_attributes(arg_2_0)
+BackendInterfaceRunes._refresh_attributes = function (arg_2_0)
 	local var_2_0 = Backend.get_entities_with_attributes(var_0_1)
 	local var_2_1 = {}
 
@@ -25,11 +25,11 @@ function BackendInterfaceRunes._refresh_attributes(arg_2_0)
 	arg_2_0._runes = var_2_1
 end
 
-function BackendInterfaceRunes.on_authenticated(arg_3_0)
+BackendInterfaceRunes.on_authenticated = function (arg_3_0)
 	arg_3_0:_refresh_attributes()
 end
 
-function BackendInterfaceRunes.get(arg_4_0, arg_4_1)
+BackendInterfaceRunes.get = function (arg_4_0, arg_4_1)
 	local var_4_0 = var_0_0 .. arg_4_1
 	local var_4_1 = arg_4_0._runes[var_4_0]
 
@@ -42,7 +42,7 @@ function BackendInterfaceRunes.get(arg_4_0, arg_4_1)
 	return (cjson.decode(var_4_1))
 end
 
-function BackendInterfaceRunes.set(arg_5_0, arg_5_1, arg_5_2)
+BackendInterfaceRunes.set = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = var_0_0 .. arg_5_1
 	local var_5_1 = var_0_2 .. arg_5_2.rune_slot
 	local var_5_2 = arg_5_0._runes[var_5_0]

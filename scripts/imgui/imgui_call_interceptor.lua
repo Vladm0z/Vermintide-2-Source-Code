@@ -18,7 +18,7 @@ local function var_0_2(arg_2_0, ...)
 end
 
 __INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__ or {}, {
-	__call = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	__call = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		if type(arg_3_1) == "string" then
 			arg_3_3 = arg_3_2
 
@@ -38,7 +38,7 @@ __INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__ or {}, {
 			enabled = arg_3_3 == nil or not not arg_3_3
 		}
 
-		arg_3_1[arg_3_2] = function(...)
+		arg_3_1[arg_3_2] = function (...)
 			if not var_3_3.enabled then
 				return var_3_2(...)
 			end
@@ -64,19 +64,19 @@ __INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__ or {}, {
 	end
 })
 
-function ImguiCallInterceptor.init(arg_5_0)
+ImguiCallInterceptor.init = function (arg_5_0)
 	arg_5_0._is_persistent = false
 	arg_5_0._obj_name = ""
 	arg_5_0._method_name = ""
 end
 
-function ImguiCallInterceptor.update(arg_6_0)
+ImguiCallInterceptor.update = function (arg_6_0)
 	return
 end
 
 local var_0_3 = "Usage:\n\tfunc = __INTERCEPT_CALLS__[[\n\t\tUtilTable.func\n\t\tClassTable:method\n\t\tinstance_table:method\n\t]]\n\t(Note: there's no difference between `.` or `:`)\n\nDescription:\n\tIntercept calls and show input/output data.\n\nExample:\n\t__INTERCEPT_CALLS__ \"WwiseWorld.trigger_event\"\n"
 
-function ImguiCallInterceptor.draw(arg_7_0)
+ImguiCallInterceptor.draw = function (arg_7_0)
 	local var_7_0 = Imgui.begin_window("Call Interceptor")
 
 	Imgui.set_window_size(800, 600, "once")
@@ -156,6 +156,6 @@ function ImguiCallInterceptor.draw(arg_7_0)
 	return var_7_0
 end
 
-function ImguiCallInterceptor.is_persistent(arg_8_0)
+ImguiCallInterceptor.is_persistent = function (arg_8_0)
 	return arg_8_0._is_persistent
 end

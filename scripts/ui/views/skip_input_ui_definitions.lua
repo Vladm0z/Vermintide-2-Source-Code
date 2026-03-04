@@ -70,7 +70,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "input_text_1",
 					pass_type = "text",
 					text_id = "input_text_1",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_0.gamepad_active = Managers.input:is_device_active("gamepad")
 
 						local var_2_0 = 2
@@ -96,7 +96,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "gamepad_input_text_2",
 					pass_type = "text",
 					text_id = "input_text_2",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.gamepad_active
 					end
 				},
@@ -104,7 +104,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "texture",
 					style_id = "gamepad_input_icon",
 					texture_id = "gamepad_input_icon",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.gamepad_input_icon and arg_4_0.gamepad_active
 					end
 				},
@@ -112,7 +112,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "kbm_input_text_2",
 					pass_type = "text",
 					text_id = "input_text_2",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return not arg_5_0.gamepad_active
 					end
 				},
@@ -120,7 +120,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "kbm_input_text",
 					pass_type = "text",
 					text_id = "kbm_input_text",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return not arg_6_0.gamepad_active
 					end
 				},
@@ -128,7 +128,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "texture",
 					style_id = "kbm_input_icon_left",
 					texture_id = "kbm_input_icon_left",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.kbm_input_icon_left and not arg_7_0.gamepad_active
 					end
 				},
@@ -136,7 +136,7 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "tiled_texture",
 					style_id = "kbm_input_icon_middle",
 					texture_id = "kbm_input_icon_middle",
-					content_check_function = function(arg_8_0)
+					content_check_function = function (arg_8_0)
 						return arg_8_0.kbm_input_icon_middle and not arg_8_0.gamepad_active
 					end
 				},
@@ -144,27 +144,27 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "texture",
 					style_id = "kbm_input_icon_right",
 					texture_id = "kbm_input_icon_right",
-					content_check_function = function(arg_9_0)
+					content_check_function = function (arg_9_0)
 						return arg_9_0.kbm_input_icon_right and not arg_9_0.gamepad_active
 					end
 				},
 				{
 					style_id = "hold_bar",
 					pass_type = "rect",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return not arg_10_0.gamepad_active and arg_10_0.progress > 0
 					end,
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
 						arg_11_1.size[1] = arg_11_0.progress * (var_1_18 + var_1_5[1].size[1] + var_1_5[3].size[1])
 					end
 				},
 				{
 					style_id = "hold_bar_bg",
 					pass_type = "rect",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.gamepad_active and arg_12_0.progress > 0
 					end,
-					content_change_function = function(arg_13_0, arg_13_1)
+					content_change_function = function (arg_13_0, arg_13_1)
 						arg_13_1.size[1] = arg_13_0.progress * (var_1_18 + var_1_5[1].size[1] + var_1_5[3].size[1]) + 4
 					end
 				},
@@ -172,10 +172,10 @@ local function var_0_3(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "input_icon_bar",
 					texture_id = "input_icon_bar",
 					pass_type = "gradient_mask_texture",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						return arg_14_0.gamepad_active and arg_14_0.gamepad_input_icon
 					end,
-					content_change_function = function(arg_15_0, arg_15_1)
+					content_change_function = function (arg_15_0, arg_15_1)
 						arg_15_1.gradient_threshold = arg_15_0.progress
 					end
 				}

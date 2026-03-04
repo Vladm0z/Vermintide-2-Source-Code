@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_dlc_reikwald_river.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "pwe_reik2_beached_chaos_ship_a",
 		name = "pwe_reik2_beached_chaos_ship_a",

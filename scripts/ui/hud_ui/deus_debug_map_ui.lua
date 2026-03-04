@@ -22,18 +22,18 @@ local var_0_2 = 0.2
 local var_0_3 = 0.7
 local var_0_4 = 0.7
 
-function DeusDebugMapUI.init(arg_1_0, arg_1_1, arg_1_2)
+DeusDebugMapUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._world = arg_1_2.world_manager:world("level_world")
 	arg_1_0._gui = World.create_screen_gui(arg_1_0._world, "immediate", "material", "materials/fonts/gw_fonts")
 end
 
-function DeusDebugMapUI.destroy(arg_2_0)
+DeusDebugMapUI.destroy = function (arg_2_0)
 	World.destroy_gui(arg_2_0._world, arg_2_0._gui)
 
 	arg_2_0._gui = nil
 end
 
-function DeusDebugMapUI.update(arg_3_0, arg_3_1, arg_3_2)
+DeusDebugMapUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	if not script_data.deus_debug_draw_map then
 		arg_3_0._current_seed = nil
 
@@ -56,7 +56,7 @@ function DeusDebugMapUI.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function DeusDebugMapUI._draw_base_graph(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+DeusDebugMapUI._draw_base_graph = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = "materials/fonts/arial"
 	local var_4_1 = "arial"
 	local var_4_2 = 10
@@ -109,7 +109,7 @@ function DeusDebugMapUI._draw_base_graph(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	end
 end
 
-function DeusDebugMapUI._draw_final_graph(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+DeusDebugMapUI._draw_final_graph = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = "materials/fonts/arial"
 	local var_5_1 = "arial"
 	local var_5_2 = 10
@@ -210,7 +210,7 @@ function DeusDebugMapUI._draw_final_graph(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-function DeusDebugMapUI._draw_edges(arg_6_0, arg_6_1)
+DeusDebugMapUI._draw_edges = function (arg_6_0, arg_6_1)
 	local var_6_0, var_6_1 = Gui.resolution()
 	local var_6_2 = var_6_0 * var_0_1
 	local var_6_3 = var_6_1 * var_0_2
@@ -230,7 +230,7 @@ function DeusDebugMapUI._draw_edges(arg_6_0, arg_6_1)
 	end
 end
 
-function DeusDebugMapUI._draw_edge(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+DeusDebugMapUI._draw_edge = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = arg_7_3 - arg_7_1
 	local var_7_1 = arg_7_4 - arg_7_2
 

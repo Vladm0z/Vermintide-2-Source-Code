@@ -11,7 +11,7 @@ local var_0_6 = "confirm_press"
 StartGameWindowVersusCustomGame = class(StartGameWindowVersusCustomGame)
 StartGameWindowVersusCustomGame.NAME = "StartGameWindowVersusCustomGame"
 
-function StartGameWindowVersusCustomGame.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowVersusCustomGame.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowVersusCustomGame")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -53,7 +53,7 @@ function StartGameWindowVersusCustomGame.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function StartGameWindowVersusCustomGame._start_transition_animation(arg_2_0, arg_2_1)
+StartGameWindowVersusCustomGame._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -63,7 +63,7 @@ function StartGameWindowVersusCustomGame._start_transition_animation(arg_2_0, ar
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function StartGameWindowVersusCustomGame._create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+StartGameWindowVersusCustomGame._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = UISceneGraph.init_scenegraph(var_0_1)
 
 	arg_3_0._ui_scenegraph = var_3_0
@@ -94,7 +94,7 @@ function StartGameWindowVersusCustomGame._create_ui_elements(arg_3_0, arg_3_1, a
 	end
 end
 
-function StartGameWindowVersusCustomGame.on_exit(arg_4_0, arg_4_1)
+StartGameWindowVersusCustomGame.on_exit = function (arg_4_0, arg_4_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowVersusCustomGame")
 
 	arg_4_0._ui_animator = nil
@@ -106,11 +106,11 @@ function StartGameWindowVersusCustomGame.on_exit(arg_4_0, arg_4_1)
 	end
 end
 
-function StartGameWindowVersusCustomGame.set_focus(arg_5_0, arg_5_1)
+StartGameWindowVersusCustomGame.set_focus = function (arg_5_0, arg_5_1)
 	arg_5_0._is_focused = arg_5_1
 end
 
-function StartGameWindowVersusCustomGame.update(arg_6_0, arg_6_1, arg_6_2)
+StartGameWindowVersusCustomGame.update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.input:is_device_active("gamepad")
 
 	arg_6_0:_update_can_play()
@@ -124,11 +124,11 @@ function StartGameWindowVersusCustomGame.update(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1)
 end
 
-function StartGameWindowVersusCustomGame.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowVersusCustomGame.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowVersusCustomGame._update_can_play(arg_8_0)
+StartGameWindowVersusCustomGame._update_can_play = function (arg_8_0)
 	local var_8_0 = arg_8_0:_can_play()
 
 	if arg_8_0._previous_can_play ~= var_8_0 then
@@ -147,7 +147,7 @@ function StartGameWindowVersusCustomGame._update_can_play(arg_8_0)
 	end
 end
 
-function StartGameWindowVersusCustomGame._handle_input(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowVersusCustomGame._handle_input = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._parent
 	local var_9_1 = var_9_0:window_input_service()
 
@@ -200,7 +200,7 @@ function StartGameWindowVersusCustomGame._handle_input(arg_9_0, arg_9_1, arg_9_2
 	end
 end
 
-function StartGameWindowVersusCustomGame._can_play(arg_10_0)
+StartGameWindowVersusCustomGame._can_play = function (arg_10_0)
 	local var_10_0 = Managers.player:local_player():network_id()
 	local var_10_1
 	local var_10_2
@@ -216,7 +216,7 @@ function StartGameWindowVersusCustomGame._can_play(arg_10_0)
 	return var_10_4 or var_10_2
 end
 
-function StartGameWindowVersusCustomGame._play(arg_11_0)
+StartGameWindowVersusCustomGame._play = function (arg_11_0)
 	arg_11_0._parent:play_sound("Play_vs_hud_play_menu_host_lobby")
 	arg_11_0._parent:set_layout_by_name("versus_player_hosted_lobby")
 
@@ -241,7 +241,7 @@ function StartGameWindowVersusCustomGame._play(arg_11_0)
 	Managers.matchmaking:find_game(var_11_3)
 end
 
-function StartGameWindowVersusCustomGame._option_selected(arg_12_0, arg_12_1, arg_12_2)
+StartGameWindowVersusCustomGame._option_selected = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._parent
 	local var_12_1 = var_12_0:get_custom_game_settings(arg_12_0._mechanism_name) or var_12_0:get_custom_game_settings("adventure")
 	local var_12_2 = var_0_4[arg_12_1]
@@ -259,7 +259,7 @@ function StartGameWindowVersusCustomGame._option_selected(arg_12_0, arg_12_1, ar
 	end
 end
 
-function StartGameWindowVersusCustomGame._handle_new_selection(arg_13_0, arg_13_1)
+StartGameWindowVersusCustomGame._handle_new_selection = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._widgets_by_name
 	local var_13_1 = #var_0_4
 
@@ -283,7 +283,7 @@ function StartGameWindowVersusCustomGame._handle_new_selection(arg_13_0, arg_13_
 	arg_13_0._input_index = arg_13_1
 end
 
-function StartGameWindowVersusCustomGame._update_animations(arg_14_0, arg_14_1)
+StartGameWindowVersusCustomGame._update_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._ui_animator
 
 	var_14_0:update(arg_14_1)
@@ -305,7 +305,7 @@ function StartGameWindowVersusCustomGame._update_animations(arg_14_0, arg_14_1)
 	end
 end
 
-function StartGameWindowVersusCustomGame._draw(arg_15_0, arg_15_1)
+StartGameWindowVersusCustomGame._draw = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._ui_top_renderer
 	local var_15_1 = arg_15_0._ui_scenegraph
 	local var_15_2 = arg_15_0._parent:window_input_service()
@@ -325,7 +325,7 @@ function StartGameWindowVersusCustomGame._draw(arg_15_0, arg_15_1)
 	UIRenderer.end_pass(var_15_0)
 end
 
-function StartGameWindowVersusCustomGame._update_play_button_texture(arg_16_0, arg_16_1)
+StartGameWindowVersusCustomGame._update_play_button_texture = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._widgets_by_name
 
 	if arg_16_0._gamepad_active ~= arg_16_1 then

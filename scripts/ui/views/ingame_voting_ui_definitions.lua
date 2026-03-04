@@ -162,14 +162,14 @@ local var_0_1 = {
 		{
 			style_id = "bar",
 			pass_type = "rect",
-			content_check_function = function(arg_1_0)
+			content_check_function = function (arg_1_0)
 				return arg_1_0.can_vote and not arg_1_0.has_voted and arg_1_0.input_icon
 			end
 		},
 		{
 			style_id = "bar_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.can_vote and not arg_2_0.has_voted and arg_2_0.input_icon
 			end
 		},
@@ -177,7 +177,7 @@ local var_0_1 = {
 			style_id = "option_text",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.can_vote and not arg_3_0.has_voted
 			end
 		},
@@ -185,7 +185,7 @@ local var_0_1 = {
 			style_id = "option_text_shadow",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.can_vote and not arg_4_0.has_voted
 			end
 		},
@@ -193,7 +193,7 @@ local var_0_1 = {
 			style_id = "result_text",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.has_voted
 			end
 		},
@@ -201,7 +201,7 @@ local var_0_1 = {
 			style_id = "result_text_shadow",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.has_voted
 			end
 		},
@@ -209,7 +209,7 @@ local var_0_1 = {
 			style_id = "input_text",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.can_vote and not arg_7_0.has_voted
 			end
 		},
@@ -217,7 +217,7 @@ local var_0_1 = {
 			style_id = "input_text_shadow",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.can_vote and not arg_8_0.has_voted
 			end
 		},
@@ -225,7 +225,7 @@ local var_0_1 = {
 			pass_type = "texture",
 			style_id = "input_icon",
 			texture_id = "input_icon",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.can_vote and not arg_9_0.has_voted and arg_9_0.input_icon
 			end
 		}
@@ -255,7 +255,7 @@ local var_0_2 = {
 					pass_type = "texture",
 					style_id = "input_glow",
 					texture_id = "input_glow",
-					content_check_function = function(arg_10_0)
+					content_check_function = function (arg_10_0)
 						return not arg_10_0.can_vote and not arg_10_0.has_voted
 					end
 				},
@@ -263,7 +263,7 @@ local var_0_2 = {
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_11_0)
+					content_check_function = function (arg_11_0)
 						return not arg_11_0.has_voted and not arg_11_0.can_vote
 					end
 				},
@@ -271,7 +271,7 @@ local var_0_2 = {
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function(arg_12_0)
+					content_check_function = function (arg_12_0)
 						return not arg_12_0.has_voted and not arg_12_0.can_vote
 					end
 				},
@@ -304,7 +304,7 @@ local var_0_2 = {
 					pass_type = "texture",
 					style_id = "gamepad_input_icon",
 					texture_id = "gamepad_input_icon",
-					content_check_function = function(arg_13_0)
+					content_check_function = function (arg_13_0)
 						return arg_13_0.gamepad_input_icon and arg_13_0.is_gamepad_active and not arg_13_0.has_voted
 					end
 				}

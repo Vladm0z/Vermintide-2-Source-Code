@@ -9,7 +9,7 @@ local var_0_3 = 36
 local var_0_4 = 2 * math.pi / var_0_3
 local var_0_5 = 0.5
 
-function VortexExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+VortexExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 
 	arg_1_0.world = var_1_0
@@ -83,7 +83,7 @@ function VortexExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._owner_unit = arg_1_3.owner_unit or arg_1_2
 end
 
-function VortexExtension._create_nav_cost_maps(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+VortexExtension._create_nav_cost_maps = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = 1
 	local var_2_1 = Matrix4x4.from_translation(arg_2_2)
 	local var_2_2 = Vector3(arg_2_3, arg_2_3, 1)
@@ -99,7 +99,7 @@ function VortexExtension._create_nav_cost_maps(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	arg_2_0._next_nav_cost_map_update_t = Managers.time:time("game") + var_0_5
 end
 
-function VortexExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
+VortexExtension.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = var_0_2[arg_3_2]
 
 	arg_3_0.blackboard = var_3_0
@@ -158,7 +158,7 @@ function VortexExtension.extensions_ready(arg_3_0, arg_3_1, arg_3_2)
 	WwiseUtils.trigger_unit_event(arg_3_1, var_3_5, arg_3_2)
 end
 
-function VortexExtension.destroy(arg_4_0)
+VortexExtension.destroy = function (arg_4_0)
 	local var_4_0 = arg_4_0.blackboard
 	local var_4_1 = var_4_0.vortex_data
 	local var_4_2 = var_4_1.players_inside
@@ -256,7 +256,7 @@ end
 
 local var_0_6 = 2
 
-function VortexExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+VortexExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.blackboard
 	local var_5_1 = arg_5_0.vortex_template
 	local var_5_2 = var_5_0.vortex_data
@@ -314,7 +314,7 @@ local function var_0_7(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function VortexExtension._update_nav_cost_map_volumes(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+VortexExtension._update_nav_cost_map_volumes = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
 	local var_7_0 = arg_7_6:current_velocity()
 	local var_7_1 = Vector3.normalize(var_7_0)
 	local var_7_2 = Vector3.cross(var_7_1, Vector3.up())
@@ -345,7 +345,7 @@ end
 
 local var_0_8 = 0.25
 
-function VortexExtension._update_height(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+VortexExtension._update_height = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = 1
 	local var_8_1 = arg_8_5.current_raycast_rad
 	local var_8_2 = arg_8_5.inner_radius
@@ -395,7 +395,7 @@ end
 local var_0_9 = 0.75
 local var_0_10 = 1.5
 
-function VortexExtension._update_radius(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+VortexExtension._update_radius = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
 	local var_9_0 = var_0_1[arg_9_1]
 	local var_9_1 = arg_9_7.inner_radius
 	local var_9_2 = arg_9_7.fx_radius
@@ -465,7 +465,7 @@ function VortexExtension._update_radius(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_
 	arg_9_7.outer_radius = math.max(arg_9_6.min_outer_radius, arg_9_6.full_outer_radius * var_9_28)
 end
 
-function VortexExtension.control_size(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+VortexExtension.control_size = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
 	arg_10_7.current_raycast_rad = math.fmod(arg_10_7.current_raycast_rad + var_0_4, 2 * math.pi)
 
 	arg_10_0:_update_radius(arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
@@ -490,7 +490,7 @@ end
 local var_0_11 = 4
 local var_0_12 = Script.new_array(var_0_11)
 
-function VortexExtension._update_attract_players(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11)
+VortexExtension._update_attract_players = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11)
 	local var_11_0 = arg_11_2.nav_world
 	local var_11_1 = arg_11_3.physics_world
 	local var_11_2 = arg_11_3.height
@@ -614,7 +614,7 @@ end
 
 local var_0_13 = {}
 
-function VortexExtension._update_attract_outside_ai(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8)
+VortexExtension._update_attract_outside_ai = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8)
 	local var_12_0 = arg_12_1.height
 	local var_12_1 = arg_12_3.ai_attract_speed
 	local var_12_2 = arg_12_1.ai_units_inside
@@ -663,7 +663,7 @@ function VortexExtension._update_attract_outside_ai(arg_12_0, arg_12_1, arg_12_2
 	end
 end
 
-function VortexExtension._update_attract_inside_ai(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+VortexExtension._update_attract_inside_ai = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 	local var_13_0 = arg_13_3.ai_rotation_speed
 	local var_13_1 = arg_13_3.ai_radius_change_speed
 	local var_13_2 = arg_13_3.ai_ascension_speed
@@ -704,7 +704,7 @@ function VortexExtension._update_attract_inside_ai(arg_13_0, arg_13_1, arg_13_2,
 	end
 end
 
-function VortexExtension.attract(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
+VortexExtension.attract = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
 	local var_14_0 = -0.5
 	local var_14_1 = arg_14_9 - arg_14_8
 	local var_14_2 = arg_14_8 + arg_14_5.max_allowed_inner_radius_dist
@@ -719,7 +719,7 @@ function VortexExtension.attract(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_
 	end
 end
 
-function VortexExtension.is_position_inside(arg_15_0, arg_15_1, arg_15_2)
+VortexExtension.is_position_inside = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = (arg_15_0.blackboard.vortex_data.outer_radius + (arg_15_2 or 0))^2
 	local var_15_1 = arg_15_0.unit
 	local var_15_2 = POSITION_LOOKUP[var_15_1]
@@ -731,7 +731,7 @@ local var_0_14 = {}
 local var_0_15 = 8
 local var_0_16 = 10
 
-function VortexExtension.debug_render_vortex(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8)
+VortexExtension.debug_render_vortex = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8)
 	arg_16_4 = arg_16_4 + math.sin(arg_16_1 * 1.7) * 0.4
 
 	local var_16_0 = 2 * math.pi / 6

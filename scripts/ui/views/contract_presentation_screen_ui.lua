@@ -9,7 +9,7 @@ ContractPresentationScreenUI = class(ContractPresentationScreenUI)
 local var_0_3 = false
 local var_0_4 = 8
 
-function ContractPresentationScreenUI.init(arg_1_0, arg_1_1)
+ContractPresentationScreenUI.init = function (arg_1_0, arg_1_1)
 	arg_1_0.ui_renderer = arg_1_1.ui_renderer
 	arg_1_0.ingame_ui = arg_1_1.ingame_ui
 	arg_1_0.input_manager = arg_1_1.input_manager
@@ -33,7 +33,7 @@ function ContractPresentationScreenUI.init(arg_1_0, arg_1_1)
 	arg_1_0:_create_ui_elements()
 end
 
-function ContractPresentationScreenUI.on_enter(arg_2_0, arg_2_1)
+ContractPresentationScreenUI.on_enter = function (arg_2_0, arg_2_1)
 	if GameSettingsDevelopment.backend_settings.quests_enabled then
 		local var_2_0 = Managers.chat:chat_is_focused()
 		local var_2_1 = arg_2_0.input_manager
@@ -60,15 +60,15 @@ function ContractPresentationScreenUI.on_enter(arg_2_0, arg_2_1)
 	end
 end
 
-function ContractPresentationScreenUI.input_service(arg_3_0)
+ContractPresentationScreenUI.input_service = function (arg_3_0)
 	return arg_3_0.input_manager:get_service("contract_presentation_screen_ui")
 end
 
-function ContractPresentationScreenUI.destroy(arg_4_0)
+ContractPresentationScreenUI.destroy = function (arg_4_0)
 	arg_4_0.ui_animator = nil
 end
 
-function ContractPresentationScreenUI.update(arg_5_0, arg_5_1, arg_5_2)
+ContractPresentationScreenUI.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_3 then
 		arg_5_0:_create_ui_elements()
 
@@ -103,7 +103,7 @@ function ContractPresentationScreenUI.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_draw(arg_5_1)
 end
 
-function ContractPresentationScreenUI._update_continue_timer(arg_6_0, arg_6_1)
+ContractPresentationScreenUI._update_continue_timer = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.continue_timer
 
 	if var_6_0 then
@@ -119,7 +119,7 @@ function ContractPresentationScreenUI._update_continue_timer(arg_6_0, arg_6_1)
 	end
 end
 
-function ContractPresentationScreenUI._draw(arg_7_0, arg_7_1)
+ContractPresentationScreenUI._draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager
@@ -144,7 +144,7 @@ function ContractPresentationScreenUI._draw(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_0)
 end
 
-function ContractPresentationScreenUI._create_ui_elements(arg_8_0)
+ContractPresentationScreenUI._create_ui_elements = function (arg_8_0)
 	arg_8_0.num_active_contract_widget = 0
 	arg_8_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 	arg_8_0.input_description_text = UIWidget.init(var_0_0.widget_definitions.input_description_text)
@@ -163,7 +163,7 @@ function ContractPresentationScreenUI._create_ui_elements(arg_8_0)
 	arg_8_0.ui_animator = UIAnimator:new(arg_8_0.ui_scenegraph, var_0_1)
 end
 
-function ContractPresentationScreenUI._initialize_active_contracts(arg_9_0)
+ContractPresentationScreenUI._initialize_active_contracts = function (arg_9_0)
 	local var_9_0 = arg_9_0.quest_manager:get_contracts()
 	local var_9_1 = {}
 
@@ -208,7 +208,7 @@ function ContractPresentationScreenUI._initialize_active_contracts(arg_9_0)
 	arg_9_0.contract_entries = var_9_2
 end
 
-function ContractPresentationScreenUI._set_contract_start_info_by_contract_id(arg_10_0, arg_10_1, arg_10_2)
+ContractPresentationScreenUI._set_contract_start_info_by_contract_id = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0.quest_manager
 	local var_10_1 = var_10_0:get_contract_by_id(arg_10_2).requirements.task
 	local var_10_2 = var_10_0:get_title_for_contract_id(arg_10_2)
@@ -256,7 +256,7 @@ function ContractPresentationScreenUI._set_contract_start_info_by_contract_id(ar
 	return var_10_6, var_10_16, var_10_18
 end
 
-function ContractPresentationScreenUI._set_widget_task_amount(arg_11_0, arg_11_1, arg_11_2)
+ContractPresentationScreenUI._set_widget_task_amount = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_1.content.task_amount = arg_11_2
 
 	local var_11_0 = arg_11_1.style
@@ -296,7 +296,7 @@ function ContractPresentationScreenUI._set_widget_task_amount(arg_11_0, arg_11_1
 	end
 end
 
-function ContractPresentationScreenUI._sync_contracts_task_progress(arg_12_0)
+ContractPresentationScreenUI._sync_contracts_task_progress = function (arg_12_0)
 	local var_12_0 = arg_12_0._widgets
 	local var_12_1 = arg_12_0.contract_entries
 
@@ -307,7 +307,7 @@ function ContractPresentationScreenUI._sync_contracts_task_progress(arg_12_0)
 	end
 end
 
-function ContractPresentationScreenUI._sync_contract_task_progress(arg_13_0, arg_13_1)
+ContractPresentationScreenUI._sync_contract_task_progress = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.contract_entries[arg_13_1]
 	local var_13_1 = var_13_0.widget
 	local var_13_2 = var_13_0.task_data
@@ -320,7 +320,7 @@ function ContractPresentationScreenUI._sync_contract_task_progress(arg_13_0, arg
 	arg_13_0:_set_widget_task_info(var_13_1, var_13_5, nil, var_13_7)
 end
 
-function ContractPresentationScreenUI._set_widget_contract_progress(arg_14_0, arg_14_1, arg_14_2)
+ContractPresentationScreenUI._set_widget_contract_progress = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = arg_14_1.content
 	local var_14_1 = arg_14_1.style.progress_bar
 	local var_14_2 = var_14_0.progress_bar
@@ -334,7 +334,7 @@ function ContractPresentationScreenUI._set_widget_contract_progress(arg_14_0, ar
 	var_14_0.bar_text = Localize("dlc1_3_1_contract_presentation_progress_prefix") .. ": " .. var_14_3
 end
 
-function ContractPresentationScreenUI._set_widget_task_info(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+ContractPresentationScreenUI._set_widget_task_info = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = arg_15_1.content
 	local var_15_1 = arg_15_1.style
 
@@ -353,7 +353,7 @@ function ContractPresentationScreenUI._set_widget_task_info(arg_15_0, arg_15_1, 
 	end
 end
 
-function ContractPresentationScreenUI._get_text_size(arg_16_0, arg_16_1, arg_16_2)
+ContractPresentationScreenUI._get_text_size = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_0.ui_renderer
 	local var_16_1 = arg_16_1.size
 	local var_16_2, var_16_3 = UIFontByResolution(arg_16_1, nil)
@@ -380,7 +380,7 @@ function ContractPresentationScreenUI._get_text_size(arg_16_0, arg_16_1, arg_16_
 	return var_16_12 * var_16_14, var_16_15
 end
 
-function ContractPresentationScreenUI._handle_animations(arg_17_0)
+ContractPresentationScreenUI._handle_animations = function (arg_17_0)
 	local var_17_0 = arg_17_0.num_active_contract_widget
 	local var_17_1 = arg_17_0.ui_animator
 
@@ -504,7 +504,7 @@ function ContractPresentationScreenUI._handle_animations(arg_17_0)
 	end
 end
 
-function ContractPresentationScreenUI._start_contract_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+ContractPresentationScreenUI._start_contract_animation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_1 and arg_18_0.contract_entries[arg_18_1]
 	local var_18_1 = var_18_0 and var_18_0.widget_index
 	local var_18_2 = var_18_0 and var_18_0.task_data

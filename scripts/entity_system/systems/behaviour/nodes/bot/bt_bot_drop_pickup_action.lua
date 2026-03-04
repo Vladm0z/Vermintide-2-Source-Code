@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotDropPickupAction = class(BTBotDropPickupAction, BTNode)
 
-function BTBotDropPickupAction.init(arg_1_0, ...)
+BTBotDropPickupAction.init = function (arg_1_0, ...)
 	BTBotDropPickupAction.super.init(arg_1_0, ...)
 end
 
 BTBotDropPickupAction.name = "BTBotDropPickupAction"
 
-function BTBotDropPickupAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotDropPickupAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.inventory_extension
 	local var_2_1 = var_2_0:get_wielded_slot_name()
 	local var_2_2 = var_2_0:get_slot_data(var_2_1).item_data
@@ -25,11 +25,11 @@ function BTBotDropPickupAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-function BTBotDropPickupAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotDropPickupAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.drop = nil
 end
 
-function BTBotDropPickupAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotDropPickupAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.drop
 	local var_4_1 = var_4_0.weapon_extension
 	local var_4_2 = var_4_0.wielded_item_template

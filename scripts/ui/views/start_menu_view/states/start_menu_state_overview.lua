@@ -10,18 +10,18 @@ local var_0_4 = var_0_0.scenegraph_definition
 local var_0_5 = var_0_0.console_cursor_definition
 local var_0_6 = false
 local var_0_7 = {
-	function(arg_1_0)
+	function (arg_1_0)
 		Managers.input:block_device_except_service("options_menu", "gamepad")
 		arg_1_0:_activate_view("options_view")
 	end,
-	function(arg_2_0)
+	function (arg_2_0)
 		Managers.state.difficulty:set_difficulty("normal", 0)
 		Managers.state.game_mode:start_specific_level("prologue")
 	end,
-	function(arg_3_0)
+	function (arg_3_0)
 		arg_3_0:_activate_view("credits_view")
 	end,
-	function(arg_4_0)
+	function (arg_4_0)
 		arg_4_0:_activate_view("cinematics_view")
 	end
 }
@@ -29,7 +29,7 @@ local var_0_7 = {
 StartMenuStateOverview = class(StartMenuStateOverview)
 StartMenuStateOverview.NAME = "StartMenuStateOverview"
 
-function StartMenuStateOverview.on_enter(arg_5_0, arg_5_1)
+StartMenuStateOverview.on_enter = function (arg_5_0, arg_5_1)
 	arg_5_0.parent:clear_wanted_state()
 	print("[HeroViewState] Enter Substate StartMenuStateOverview")
 
@@ -90,7 +90,7 @@ function StartMenuStateOverview.on_enter(arg_5_0, arg_5_1)
 	Managers.input:enable_gamepad_cursor()
 end
 
-function StartMenuStateOverview.create_ui_elements(arg_6_0, arg_6_1)
+StartMenuStateOverview.create_ui_elements = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_4)
 
 	local var_6_0 = {}
@@ -117,17 +117,17 @@ function StartMenuStateOverview.create_ui_elements(arg_6_0, arg_6_1)
 	arg_6_0.ui_animator = UIAnimator:new(arg_6_0.ui_scenegraph, var_0_3)
 end
 
-function StartMenuStateOverview._get_skin_item_data(arg_7_0, arg_7_1, arg_7_2)
+StartMenuStateOverview._get_skin_item_data = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = SPProfiles[arg_7_1].careers[arg_7_2].base_skin
 
 	return Cosmetics[var_7_0]
 end
 
-function StartMenuStateOverview._wanted_state(arg_8_0)
+StartMenuStateOverview._wanted_state = function (arg_8_0)
 	return (arg_8_0.parent:wanted_state())
 end
 
-function StartMenuStateOverview.on_exit(arg_9_0, arg_9_1)
+StartMenuStateOverview.on_exit = function (arg_9_0, arg_9_1)
 	Managers.input:disable_gamepad_cursor()
 
 	if arg_9_0._active_view then
@@ -145,7 +145,7 @@ function StartMenuStateOverview.on_exit(arg_9_0, arg_9_1)
 	print("[HeroViewState] Exit Substate StartMenuStateOverview")
 end
 
-function StartMenuStateOverview._update_transition_timer(arg_10_0, arg_10_1)
+StartMenuStateOverview._update_transition_timer = function (arg_10_0, arg_10_1)
 	if not arg_10_0._transition_timer then
 		return
 	end
@@ -157,7 +157,7 @@ function StartMenuStateOverview._update_transition_timer(arg_10_0, arg_10_1)
 	end
 end
 
-function StartMenuStateOverview.update(arg_11_0, arg_11_1, arg_11_2)
+StartMenuStateOverview.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if var_0_6 then
 		var_0_6 = false
 
@@ -194,7 +194,7 @@ function StartMenuStateOverview.update(arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0:draw(arg_11_1)
 end
 
-function StartMenuStateOverview.post_update(arg_12_0, arg_12_1, arg_12_2)
+StartMenuStateOverview.post_update = function (arg_12_0, arg_12_1, arg_12_2)
 	arg_12_0.ui_animator:update(arg_12_1)
 	arg_12_0:_update_animations(arg_12_1)
 
@@ -213,7 +213,7 @@ function StartMenuStateOverview.post_update(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function StartMenuStateOverview.draw(arg_13_0, arg_13_1)
+StartMenuStateOverview.draw = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.ui_renderer
 	local var_13_1 = arg_13_0.ui_top_renderer
 	local var_13_2 = arg_13_0.ui_scenegraph
@@ -240,7 +240,7 @@ function StartMenuStateOverview.draw(arg_13_0, arg_13_1)
 	UIRenderer.end_pass(var_13_1)
 end
 
-function StartMenuStateOverview._update_animations(arg_14_0, arg_14_1)
+StartMenuStateOverview._update_animations = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._animations
 	local var_14_1 = arg_14_0.ui_animator
 
@@ -253,7 +253,7 @@ function StartMenuStateOverview._update_animations(arg_14_0, arg_14_1)
 	end
 end
 
-function StartMenuStateOverview._spawn_hero_unit(arg_15_0, arg_15_1)
+StartMenuStateOverview._spawn_hero_unit = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.world_previewer
 	local var_15_1 = arg_15_0.career_index
 	local var_15_2 = callback(arg_15_0, "cb_hero_unit_spawned", arg_15_1)
@@ -261,7 +261,7 @@ function StartMenuStateOverview._spawn_hero_unit(arg_15_0, arg_15_1)
 	var_15_0:request_spawn_hero_unit(arg_15_1, arg_15_0.career_index, not arg_15_0.use_user_skins, var_15_2)
 end
 
-function StartMenuStateOverview.cb_hero_unit_spawned(arg_16_0, arg_16_1)
+StartMenuStateOverview.cb_hero_unit_spawned = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.world_previewer
 	local var_16_1 = arg_16_0.career_index
 	local var_16_2 = FindProfileIndex(arg_16_1)
@@ -303,7 +303,7 @@ function StartMenuStateOverview.cb_hero_unit_spawned(arg_16_0, arg_16_1)
 	end
 end
 
-function StartMenuStateOverview._populate_career_page(arg_17_0, arg_17_1, arg_17_2)
+StartMenuStateOverview._populate_career_page = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = FindProfileIndex(arg_17_1)
 	local var_17_1 = SPProfiles[var_17_0]
 	local var_17_2 = var_17_1.character_name
@@ -336,7 +336,7 @@ function StartMenuStateOverview._populate_career_page(arg_17_0, arg_17_1, arg_17
 	arg_17_0:_create_player_portrait(var_17_5, var_17_8, var_17_11)
 end
 
-function StartMenuStateOverview._get_portrait_frame(arg_18_0, arg_18_1, arg_18_2)
+StartMenuStateOverview._get_portrait_frame = function (arg_18_0, arg_18_1, arg_18_2)
 	local var_18_0 = SPProfiles[arg_18_1].careers[arg_18_2].name
 	local var_18_1 = "default"
 	local var_18_2 = BackendUtils.get_loadout_item(var_18_0, "slot_frame")
@@ -346,14 +346,14 @@ function StartMenuStateOverview._get_portrait_frame(arg_18_0, arg_18_1, arg_18_2
 	return var_18_1
 end
 
-function StartMenuStateOverview._set_hero_info(arg_19_0, arg_19_1, arg_19_2)
+StartMenuStateOverview._set_hero_info = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._widgets_by_name
 
 	var_19_0.info_hero_name.content.text = arg_19_1
 	var_19_0.info_hero_level.content.text = Localize("level") .. ": " .. arg_19_2
 end
 
-function StartMenuStateOverview._create_player_portrait(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+StartMenuStateOverview._create_player_portrait = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 	local var_20_0 = arg_20_2 and tostring(arg_20_2) or "-"
 	local var_20_1 = 1
 	local var_20_2 = false
@@ -362,11 +362,11 @@ function StartMenuStateOverview._create_player_portrait(arg_20_0, arg_20_1, arg_
 	arg_20_0._player_portrait_widget = UIWidget.init(var_20_3, arg_20_0.ui_top_renderer)
 end
 
-function StartMenuStateOverview._set_select_button_enabled(arg_21_0, arg_21_1)
+StartMenuStateOverview._set_select_button_enabled = function (arg_21_0, arg_21_1)
 	arg_21_0._widgets_by_name.select_button.content.button_hotspot.disable_button = not arg_21_1
 end
 
-function StartMenuStateOverview._clear_keyboard_selection(arg_22_0, arg_22_1)
+StartMenuStateOverview._clear_keyboard_selection = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._widgets_by_name
 
 	for iter_22_0, iter_22_1 in ipairs(arg_22_1) do
@@ -378,7 +378,7 @@ function StartMenuStateOverview._clear_keyboard_selection(arg_22_0, arg_22_1)
 	arg_22_0._keyboard_grid_selection = nil
 end
 
-function StartMenuStateOverview._handle_keyboard_input(arg_23_0)
+StartMenuStateOverview._handle_keyboard_input = function (arg_23_0)
 	local var_23_0 = Managers.input:is_device_active("gamepad")
 	local var_23_1 = Managers.input:is_device_active("mouse")
 	local var_23_2 = {
@@ -402,25 +402,25 @@ function StartMenuStateOverview._handle_keyboard_input(arg_23_0)
 	end
 
 	local var_23_3 = {
-		play_button = function()
+		play_button = function ()
 			arg_23_0.parent:close_menu()
 		end,
-		options_button = function()
+		options_button = function ()
 			var_0_7[1](arg_23_0)
 		end,
-		tutorial_button = function()
+		tutorial_button = function ()
 			var_0_7[2](arg_23_0)
 		end,
-		cinematics_button = function()
+		cinematics_button = function ()
 			var_0_7[4](arg_23_0)
 		end,
-		credits_button = function()
+		credits_button = function ()
 			var_0_7[3](arg_23_0)
 		end,
-		quit_button = function()
+		quit_button = function ()
 			Boot.quit_game = true
 		end,
-		hero_button = function()
+		hero_button = function ()
 			arg_23_0.parent:requested_screen_change_by_name("character")
 		end
 	}
@@ -465,7 +465,7 @@ function StartMenuStateOverview._handle_keyboard_input(arg_23_0)
 	end
 end
 
-function StartMenuStateOverview._handle_input(arg_31_0, arg_31_1, arg_31_2)
+StartMenuStateOverview._handle_input = function (arg_31_0, arg_31_1, arg_31_2)
 	local var_31_0 = arg_31_0:input_service(true)
 	local var_31_1 = arg_31_0._widgets_by_name
 	local var_31_2 = var_31_1.play_button
@@ -519,7 +519,7 @@ function StartMenuStateOverview._handle_input(arg_31_0, arg_31_1, arg_31_2)
 	end
 end
 
-function StartMenuStateOverview._handle_tobii_button(arg_32_0, arg_32_1)
+StartMenuStateOverview._handle_tobii_button = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0._widgets_by_name.tobii_button
 
 	UIWidgetUtils.animate_default_button(var_32_0, arg_32_1)
@@ -533,11 +533,11 @@ function StartMenuStateOverview._handle_tobii_button(arg_32_0, arg_32_1)
 	end
 end
 
-function StartMenuStateOverview.game_popup_active(arg_33_0)
+StartMenuStateOverview.game_popup_active = function (arg_33_0)
 	return arg_33_0._show_play_popup
 end
 
-function StartMenuStateOverview._is_button_pressed(arg_34_0, arg_34_1)
+StartMenuStateOverview._is_button_pressed = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_1.content.button_hotspot
 
 	if var_34_0.on_release then
@@ -547,39 +547,39 @@ function StartMenuStateOverview._is_button_pressed(arg_34_0, arg_34_1)
 	end
 end
 
-function StartMenuStateOverview._is_button_hover_enter(arg_35_0, arg_35_1)
+StartMenuStateOverview._is_button_hover_enter = function (arg_35_0, arg_35_1)
 	return arg_35_1.content.button_hotspot.on_hover_enter
 end
 
-function StartMenuStateOverview._is_button_hover_exit(arg_36_0, arg_36_1)
+StartMenuStateOverview._is_button_hover_exit = function (arg_36_0, arg_36_1)
 	return arg_36_1.content.button_hotspot.on_hover_exit
 end
 
-function StartMenuStateOverview._play_sound(arg_37_0, arg_37_1)
+StartMenuStateOverview._play_sound = function (arg_37_0, arg_37_1)
 	arg_37_0.parent:play_sound(arg_37_1)
 end
 
-function StartMenuStateOverview.get_camera_position(arg_38_0)
+StartMenuStateOverview.get_camera_position = function (arg_38_0)
 	local var_38_0, var_38_1 = arg_38_0.parent:get_background_world()
 	local var_38_2 = ScriptViewport.camera(var_38_1)
 
 	return ScriptCamera.position(var_38_2)
 end
 
-function StartMenuStateOverview.get_camera_rotation(arg_39_0)
+StartMenuStateOverview.get_camera_rotation = function (arg_39_0)
 	local var_39_0, var_39_1 = arg_39_0.parent:get_background_world()
 	local var_39_2 = ScriptViewport.camera(var_39_1)
 
 	return ScriptCamera.rotation(var_39_2)
 end
 
-function StartMenuStateOverview.trigger_unit_flow_event(arg_40_0, arg_40_1, arg_40_2)
+StartMenuStateOverview.trigger_unit_flow_event = function (arg_40_0, arg_40_1, arg_40_2)
 	if arg_40_1 and Unit.alive(arg_40_1) then
 		Unit.flow_event(arg_40_1, arg_40_2)
 	end
 end
 
-function StartMenuStateOverview._start_transition_animation(arg_41_0, arg_41_1, arg_41_2)
+StartMenuStateOverview._start_transition_animation = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = {
 		wwise_world = arg_41_0.wwise_world,
 		render_settings = arg_41_0.render_settings
@@ -590,7 +590,7 @@ function StartMenuStateOverview._start_transition_animation(arg_41_0, arg_41_1, 
 	arg_41_0._animations[arg_41_1] = var_41_2
 end
 
-function StartMenuStateOverview._on_option_button_hover(arg_42_0, arg_42_1, arg_42_2)
+StartMenuStateOverview._on_option_button_hover = function (arg_42_0, arg_42_1, arg_42_2)
 	local var_42_0 = arg_42_0._ui_animations
 	local var_42_1 = "option_button_" .. arg_42_2
 	local var_42_2 = arg_42_1.style[arg_42_2]
@@ -608,7 +608,7 @@ function StartMenuStateOverview._on_option_button_hover(arg_42_0, arg_42_1, arg_
 	end
 end
 
-function StartMenuStateOverview._on_option_button_dehover(arg_43_0, arg_43_1, arg_43_2)
+StartMenuStateOverview._on_option_button_dehover = function (arg_43_0, arg_43_1, arg_43_2)
 	local var_43_0 = arg_43_0._ui_animations
 	local var_43_1 = "option_button_" .. arg_43_2
 	local var_43_2 = arg_43_1.style[arg_43_2]
@@ -626,19 +626,19 @@ function StartMenuStateOverview._on_option_button_dehover(arg_43_0, arg_43_1, ar
 	end
 end
 
-function StartMenuStateOverview.play_sound(arg_44_0, arg_44_1)
+StartMenuStateOverview.play_sound = function (arg_44_0, arg_44_1)
 	return
 end
 
-function StartMenuStateOverview._animate_element_by_time(arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
+StartMenuStateOverview._animate_element_by_time = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
 	return (UIAnimation.init(UIAnimation.function_by_time, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, math.ease_out_quad))
 end
 
-function StartMenuStateOverview._animate_element_by_catmullrom(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8)
+StartMenuStateOverview._animate_element_by_catmullrom = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8)
 	return (UIAnimation.init(UIAnimation.catmullrom, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8))
 end
 
-function StartMenuStateOverview._init_menu_views(arg_47_0)
+StartMenuStateOverview._init_menu_views = function (arg_47_0)
 	local var_47_0 = arg_47_0.ingame_ui_context
 
 	arg_47_0._views = {
@@ -648,13 +648,13 @@ function StartMenuStateOverview._init_menu_views(arg_47_0)
 	}
 
 	for iter_47_0, iter_47_1 in pairs(arg_47_0._views) do
-		function iter_47_1.exit()
+		iter_47_1.exit = function ()
 			arg_47_0:exit_current_view()
 		end
 	end
 end
 
-function StartMenuStateOverview._activate_view(arg_49_0, arg_49_1)
+StartMenuStateOverview._activate_view = function (arg_49_0, arg_49_1)
 	arg_49_0._active_view = arg_49_1
 
 	local var_49_0 = arg_49_0._views
@@ -667,7 +667,7 @@ function StartMenuStateOverview._activate_view(arg_49_0, arg_49_1)
 	end
 end
 
-function StartMenuStateOverview.exit_current_view(arg_50_0)
+StartMenuStateOverview.exit_current_view = function (arg_50_0)
 	local var_50_0 = arg_50_0._active_view
 	local var_50_1 = arg_50_0._views
 
@@ -688,7 +688,7 @@ function StartMenuStateOverview.exit_current_view(arg_50_0)
 	Managers.input:enable_gamepad_cursor()
 end
 
-function StartMenuStateOverview.input_service(arg_51_0, arg_51_1)
+StartMenuStateOverview.input_service = function (arg_51_0, arg_51_1)
 	if not arg_51_1 then
 		local var_51_0 = arg_51_0._active_view
 		local var_51_1 = arg_51_0._views[var_51_0]

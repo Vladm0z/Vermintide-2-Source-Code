@@ -2,7 +2,7 @@
 
 ActionMagmaProjectile = class(ActionMagmaProjectile, ActionShotgun)
 
-function ActionMagmaProjectile.client_owner_start_action(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+ActionMagmaProjectile.client_owner_start_action = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	ActionMagmaProjectile.super.client_owner_start_action(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 
 	local var_1_0 = arg_1_1.is_spell
@@ -13,7 +13,7 @@ function ActionMagmaProjectile.client_owner_start_action(arg_1_0, arg_1_1, arg_1
 	end
 end
 
-function ActionMagmaProjectile._start_shooting(arg_2_0)
+ActionMagmaProjectile._start_shooting = function (arg_2_0)
 	local var_2_0 = arg_2_0.owner_unit
 	local var_2_1 = arg_2_0.current_action
 	local var_2_2 = ScriptUnit.extension(var_2_0, "first_person_system")

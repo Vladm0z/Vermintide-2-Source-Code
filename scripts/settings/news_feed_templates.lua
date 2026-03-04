@@ -8,12 +8,12 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_vt1_skins_title",
-		condition_func = function(arg_1_0)
+		condition_func = function (arg_1_0)
 			if ItemHelper.has_new_sign_in_reward("vt1_skins") then
 				return true
 			end
 		end,
-		removed_func = function(arg_2_0)
+		removed_func = function (arg_2_0)
 			ItemHelper.unmark_sign_in_reward_as_new("vt1_skins")
 		end
 	},
@@ -23,12 +23,12 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_3_0)
+		condition_func = function (arg_3_0)
 			if ItemHelper.has_new_sign_in_reward("vt2_collectors_edition") then
 				return true
 			end
 		end,
-		removed_func = function(arg_4_0)
+		removed_func = function (arg_4_0)
 			ItemHelper.unmark_sign_in_reward_as_new("vt2_collectors_edition")
 		end
 	},
@@ -38,12 +38,12 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_5_0)
+		condition_func = function (arg_5_0)
 			if ItemHelper.has_new_sign_in_reward("celebrate_2019") then
 				return true
 			end
 		end,
-		removed_func = function(arg_6_0)
+		removed_func = function (arg_6_0)
 			ItemHelper.unmark_sign_in_reward_as_new("celebrate_2019")
 		end
 	},
@@ -54,7 +54,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_unclaimed_challenge_title",
-		condition_func = function(arg_7_0)
+		condition_func = function (arg_7_0)
 			return (Managers.state.achievement:has_any_unclaimed_achievement())
 		end
 	},
@@ -65,7 +65,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_unclaimed_quest_title",
-		condition_func = function(arg_8_0)
+		condition_func = function (arg_8_0)
 			return (Managers.state.quest:has_any_unclaimed_quests())
 		end
 	},
@@ -76,7 +76,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_equipment_title",
-		condition_func = function(arg_9_0)
+		condition_func = function (arg_9_0)
 			if Managers.mechanism:current_mechanism_name() == "versus" then
 				return false
 			end
@@ -123,7 +123,7 @@ NewsFeedTemplates = {
 			40,
 			40
 		},
-		condition_func = function(arg_10_0)
+		condition_func = function (arg_10_0)
 			return Managers.backend:get_interface("peddler"):get_login_rewards().next_claim_timestamp < os.time()
 		end
 	},
@@ -134,7 +134,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_talent_title",
-		condition_func = function(arg_11_0)
+		condition_func = function (arg_11_0)
 			local var_11_0 = arg_11_0.hero_name
 			local var_11_1 = arg_11_0.career_name
 			local var_11_2 = Managers.backend:get_interface("talents"):get_talents(var_11_1)
@@ -169,7 +169,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_career_title",
-		condition_func = function(arg_12_0)
+		condition_func = function (arg_12_0)
 			return false
 		end
 	},
@@ -180,7 +180,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_cosmetics_title",
-		condition_func = function(arg_13_0)
+		condition_func = function (arg_13_0)
 			local var_13_0 = arg_13_0.career_name
 
 			if ItemHelper.has_new_backend_ids_by_career_name_and_slot_type(var_13_0, "skin") then
@@ -199,7 +199,7 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		title = "news_feed_loot_chest_title",
-		condition_func = function(arg_14_0)
+		condition_func = function (arg_14_0)
 			return ItemHelper.has_new_backend_ids_by_slot_type("loot_chest")
 		end
 	},
@@ -209,12 +209,12 @@ NewsFeedTemplates = {
 		cooldown = -1,
 		infinite = false,
 		duration = 0,
-		condition_func = function(arg_15_0)
+		condition_func = function (arg_15_0)
 			if ItemHelper.has_new_sign_in_reward() then
 				return true
 			end
 		end,
-		added_func = function(arg_16_0)
+		added_func = function (arg_16_0)
 			local var_16_0 = Managers.state.event
 			local var_16_1 = Managers.backend
 

@@ -10,11 +10,11 @@ local function var_0_0(arg_1_0)
 	end
 end
 
-function EnemyCharacterStateClimbing.init(arg_2_0, arg_2_1)
+EnemyCharacterStateClimbing.init = function (arg_2_0, arg_2_1)
 	EnemyCharacterStateClimbing.super.init(arg_2_0, arg_2_1, "climbing")
 end
 
-function EnemyCharacterStateClimbing.setup_transition(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+EnemyCharacterStateClimbing.setup_transition = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	arg_3_0.smart_object_data = arg_3_2
 
 	local var_3_0 = POSITION_LOOKUP[arg_3_1]
@@ -65,7 +65,7 @@ function EnemyCharacterStateClimbing.setup_transition(arg_3_0, arg_3_1, arg_3_2,
 	arg_3_0._sub_state = "moving_to_to_entrance"
 end
 
-function EnemyCharacterStateClimbing.do_the_transition(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+EnemyCharacterStateClimbing.do_the_transition = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = POSITION_LOOKUP[arg_4_1]
 	local var_4_1 = BLACKBOARDS[arg_4_1]
 	local var_4_2 = arg_4_0.smart_object_data.is_on_edge
@@ -201,7 +201,7 @@ function EnemyCharacterStateClimbing.do_the_transition(arg_4_0, arg_4_1, arg_4_2
 	end
 end
 
-function EnemyCharacterStateClimbing._apply_position_correction(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+EnemyCharacterStateClimbing._apply_position_correction = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._correction_amount * math.min(3 * arg_5_3, 1)
 
 	arg_5_0._correction_amount = arg_5_0._correction_amount - var_5_0

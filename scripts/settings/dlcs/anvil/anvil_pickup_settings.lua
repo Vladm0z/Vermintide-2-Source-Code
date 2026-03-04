@@ -13,7 +13,7 @@ local var_0_1 = {
 	local_pickup_sound = true,
 	hud_description = "interaction_ammunition_axe",
 	ammo_kind = "thrown",
-	can_interact_func = function(arg_1_0, arg_1_1, arg_1_2)
+	can_interact_func = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "inventory_system")
 
 		if not var_1_0 then
@@ -22,7 +22,7 @@ local var_0_1 = {
 
 		return var_1_0:has_ammo_consuming_weapon_equipped("throwing_axe")
 	end,
-	outline_available_func = function(arg_2_0)
+	outline_available_func = function (arg_2_0)
 		local var_2_0 = ScriptUnit.has_extension(arg_2_0, "inventory_system")
 
 		if not var_2_0 then
@@ -31,7 +31,7 @@ local var_0_1 = {
 
 		return var_2_0:has_ammo_consuming_weapon_equipped("throwing_axe")
 	end,
-	on_pick_up_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	on_pick_up_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		local var_3_0 = Network.peer_id()
 
 		Managers.state.entity:system("pickup_system"):delete_limited_owned_pickup_unit(var_3_0, arg_3_3)

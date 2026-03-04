@@ -4,15 +4,15 @@ BackendInterfaceCommon = class(BackendInterfaceCommon)
 
 require("scripts/settings/equipment/weapon_skins")
 
-function BackendInterfaceCommon.init(arg_1_0, arg_1_1)
+BackendInterfaceCommon.init = function (arg_1_0, arg_1_1)
 	arg_1_0._backend_mirror = arg_1_1
 end
 
-function BackendInterfaceCommon.ready(arg_2_0)
+BackendInterfaceCommon.ready = function (arg_2_0)
 	return true
 end
 
-function BackendInterfaceCommon.can_wield(arg_3_0, arg_3_1, arg_3_2)
+BackendInterfaceCommon.can_wield = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_2.can_wield
 
 	assert(var_3_0, "BackendInterfaceCommon - Item %q has not specified what profiles that can use it.", arg_3_2.name or "(item_data missing name)")
@@ -28,70 +28,70 @@ local var_0_0 = {
 	["not"] = {
 		4,
 		1,
-		function(arg_4_0)
+		function (arg_4_0)
 			return not arg_4_0
 		end
 	},
 	["<"] = {
 		3,
 		2,
-		function(arg_5_0, arg_5_1)
+		function (arg_5_0, arg_5_1)
 			return arg_5_0 < arg_5_1
 		end
 	},
 	[">"] = {
 		3,
 		2,
-		function(arg_6_0, arg_6_1)
+		function (arg_6_0, arg_6_1)
 			return arg_6_1 < arg_6_0
 		end
 	},
 	["<="] = {
 		3,
 		2,
-		function(arg_7_0, arg_7_1)
+		function (arg_7_0, arg_7_1)
 			return arg_7_0 <= arg_7_1
 		end
 	},
 	[">="] = {
 		3,
 		2,
-		function(arg_8_0, arg_8_1)
+		function (arg_8_0, arg_8_1)
 			return arg_8_1 <= arg_8_0
 		end
 	},
 	["~="] = {
 		3,
 		2,
-		function(arg_9_0, arg_9_1)
+		function (arg_9_0, arg_9_1)
 			return arg_9_0 ~= arg_9_1
 		end
 	},
 	["=="] = {
 		3,
 		2,
-		function(arg_10_0, arg_10_1)
+		function (arg_10_0, arg_10_1)
 			return arg_10_0 == arg_10_1
 		end
 	},
 	["and"] = {
 		2,
 		2,
-		function(arg_11_0, arg_11_1)
+		function (arg_11_0, arg_11_1)
 			return arg_11_0 and arg_11_1
 		end
 	},
 	["or"] = {
 		1,
 		2,
-		function(arg_12_0, arg_12_1)
+		function (arg_12_0, arg_12_1)
 			return arg_12_0 or arg_12_1
 		end
 	}
 }
 
 local function var_0_1(arg_13_0)
-	return function(arg_14_0, arg_14_1)
+	return function (arg_14_0, arg_14_1)
 		local var_14_0 = SPProfiles[FindProfileIndex(arg_13_0)].careers
 
 		for iter_14_0, iter_14_1 in ipairs(var_14_0) do
@@ -105,36 +105,36 @@ local function var_0_1(arg_13_0)
 end
 
 local function var_0_2(arg_15_0)
-	return function(arg_16_0, arg_16_1)
+	return function (arg_16_0, arg_16_1)
 		return table.contains(arg_16_0.data.can_wield, arg_15_0)
 	end
 end
 
 local var_0_3 = {}
 local var_0_4 = {
-	item_key = function(arg_17_0, arg_17_1)
+	item_key = function (arg_17_0, arg_17_1)
 		return arg_17_0.data.key
 	end,
-	item_rarity = function(arg_18_0, arg_18_1)
+	item_rarity = function (arg_18_0, arg_18_1)
 		local var_18_0 = arg_18_0.data
 
 		return (Managers.backend:get_interface("items"):get_item_rarity(arg_18_1))
 	end,
-	slot_type = function(arg_19_0, arg_19_1)
+	slot_type = function (arg_19_0, arg_19_1)
 		return arg_19_0.data.slot_type
 	end,
-	item_type = function(arg_20_0, arg_20_1)
+	item_type = function (arg_20_0, arg_20_1)
 		return arg_20_0.data.item_type
 	end,
-	selection = function(arg_21_0, arg_21_1)
+	selection = function (arg_21_0, arg_21_1)
 		return arg_21_0.data.selection
 	end,
-	default_selection = function(arg_22_0, arg_22_1)
+	default_selection = function (arg_22_0, arg_22_1)
 		local var_22_0 = arg_22_0.data
 
 		return var_22_0.selection == "default" or var_22_0.selection == nil
 	end,
-	is_pactsworn_item = function(arg_23_0, arg_23_1)
+	is_pactsworn_item = function (arg_23_0, arg_23_1)
 		local var_23_0 = false
 		local var_23_1 = arg_23_0.data
 		local var_23_2 = var_23_1.can_wield
@@ -153,10 +153,10 @@ local var_0_4 = {
 
 		return var_23_0
 	end,
-	chest_categories = function(arg_24_0, arg_24_1)
+	chest_categories = function (arg_24_0, arg_24_1)
 		return arg_24_0.data.chest_categories
 	end,
-	discounted_items = function(arg_25_0, arg_25_1)
+	discounted_items = function (arg_25_0, arg_25_1)
 		local var_25_0 = arg_25_0.data
 		local var_25_1 = var_25_0.key
 		local var_25_2 = Managers.backend:get_interface("peddler")
@@ -172,12 +172,12 @@ local var_0_4 = {
 
 		return var_25_2:is_discounted_shilling_item(var_25_1)
 	end,
-	is_weapon = function(arg_26_0, arg_26_1)
+	is_weapon = function (arg_26_0, arg_26_1)
 		local var_26_0 = arg_26_0.data.slot_type
 
 		return var_26_0 == "melee" or var_26_0 == "ranged"
 	end,
-	equipped_by_current_career = function(arg_27_0, arg_27_1, arg_27_2)
+	equipped_by_current_career = function (arg_27_0, arg_27_1, arg_27_2)
 		local var_27_0 = arg_27_0.data
 		local var_27_1 = Managers.state.network.profile_synchronizer
 		local var_27_2
@@ -209,7 +209,7 @@ local var_0_4 = {
 
 		return table.contains(var_27_6, var_27_5)
 	end,
-	is_equipped = function(arg_28_0, arg_28_1)
+	is_equipped = function (arg_28_0, arg_28_1)
 		local var_28_0 = arg_28_0.data
 
 		if #Managers.backend:get_interface("items"):equipped_by(arg_28_1) > 0 then
@@ -218,7 +218,7 @@ local var_0_4 = {
 
 		return false
 	end,
-	is_equipped_by_any_loadout = function(arg_29_0, arg_29_1)
+	is_equipped_by_any_loadout = function (arg_29_0, arg_29_1)
 		local var_29_0 = arg_29_0.data
 
 		if #Managers.backend:get_interface("items"):is_equipped_by_any_loadout(arg_29_1) > 0 then
@@ -227,7 +227,7 @@ local var_0_4 = {
 
 		return false
 	end,
-	is_equipment_slot = function(arg_30_0, arg_30_1)
+	is_equipment_slot = function (arg_30_0, arg_30_1)
 		local var_30_0 = arg_30_0.data
 		local var_30_1 = false
 
@@ -241,7 +241,7 @@ local var_0_4 = {
 
 		return var_30_1
 	end,
-	current_hero = function(arg_31_0, arg_31_1)
+	current_hero = function (arg_31_0, arg_31_1)
 		local var_31_0 = arg_31_0.data
 		local var_31_1 = Managers.state.network.profile_synchronizer
 		local var_31_2 = Managers.player:local_player()
@@ -249,7 +249,7 @@ local var_0_4 = {
 
 		return SPProfiles[var_31_3].display_name
 	end,
-	can_wield_by_current_career = function(arg_32_0, arg_32_1, arg_32_2)
+	can_wield_by_current_career = function (arg_32_0, arg_32_1, arg_32_2)
 		local var_32_0 = arg_32_0.data
 		local var_32_1 = Managers.state.network.profile_synchronizer
 		local var_32_2 = Managers.player:local_player()
@@ -260,7 +260,7 @@ local var_0_4 = {
 
 		return table.contains(var_32_6, var_32_5)
 	end,
-	can_wield_by_current_hero = function(arg_33_0, arg_33_1, arg_33_2)
+	can_wield_by_current_hero = function (arg_33_0, arg_33_1, arg_33_2)
 		local var_33_0 = arg_33_0.data
 		local var_33_1 = Managers.state.network.profile_synchronizer
 		local var_33_2 = Managers.player:local_player()
@@ -283,34 +283,34 @@ local var_0_4 = {
 
 		return false
 	end,
-	is_new = function(arg_34_0, arg_34_1)
+	is_new = function (arg_34_0, arg_34_1)
 		return PlayerData.new_item_ids[arg_34_1]
 	end,
-	is_plentiful = function(arg_35_0, arg_35_1)
+	is_plentiful = function (arg_35_0, arg_35_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_35_1) == "plentiful"
 	end,
-	is_common = function(arg_36_0, arg_36_1)
+	is_common = function (arg_36_0, arg_36_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_36_1) == "common"
 	end,
-	is_rare = function(arg_37_0, arg_37_1)
+	is_rare = function (arg_37_0, arg_37_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_37_1) == "rare"
 	end,
-	is_exotic = function(arg_38_0, arg_38_1)
+	is_exotic = function (arg_38_0, arg_38_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_38_1) == "exotic"
 	end,
-	is_unique = function(arg_39_0, arg_39_1)
+	is_unique = function (arg_39_0, arg_39_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_39_1) == "unique"
 	end,
-	is_promo = function(arg_40_0, arg_40_1)
+	is_promo = function (arg_40_0, arg_40_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_40_1) == "promo"
 	end,
-	is_default = function(arg_41_0, arg_41_1)
+	is_default = function (arg_41_0, arg_41_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_41_1) == "default"
 	end,
-	is_magic = function(arg_42_0, arg_42_1)
+	is_magic = function (arg_42_0, arg_42_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_42_1) == "magic"
 	end,
-	is_event = function(arg_43_0, arg_43_1)
+	is_event = function (arg_43_0, arg_43_1)
 		return Managers.backend:get_interface("items"):get_item_rarity(arg_43_1) == "event"
 	end,
 	can_wield_bright_wizard = var_0_1("bright_wizard"),
@@ -338,7 +338,7 @@ local var_0_4 = {
 	can_wield_we_maidenguard = var_0_2("we_maidenguard"),
 	can_wield_we_shade = var_0_2("we_shade"),
 	can_wield_we_thornsister = var_0_2("we_thornsister"),
-	player_owns_item_key = function(arg_44_0, arg_44_1)
+	player_owns_item_key = function (arg_44_0, arg_44_1)
 		local var_44_0 = arg_44_0.data
 		local var_44_1 = Managers.backend:get_interface("items"):get_all_backend_items()
 
@@ -350,7 +350,7 @@ local var_0_4 = {
 
 		return false
 	end,
-	can_salvage = function(arg_45_0, arg_45_1)
+	can_salvage = function (arg_45_0, arg_45_1)
 		local var_45_0 = arg_45_0.data.slot_type
 
 		if var_45_0 == "ranged" or var_45_0 == "melee" or var_45_0 == "ring" or var_45_0 == "necklace" or var_45_0 == "trinket" then
@@ -364,21 +364,21 @@ local var_0_4 = {
 
 		return false
 	end,
-	has_properties = function(arg_46_0, arg_46_1)
+	has_properties = function (arg_46_0, arg_46_1)
 		if arg_46_0.properties then
 			return true
 		end
 
 		return false
 	end,
-	has_traits = function(arg_47_0, arg_47_1)
+	has_traits = function (arg_47_0, arg_47_1)
 		if arg_47_0.traits then
 			return true
 		end
 
 		return false
 	end,
-	has_applied_skin = function(arg_48_0, arg_48_1)
+	has_applied_skin = function (arg_48_0, arg_48_1)
 		local var_48_0 = arg_48_0.data.slot_type
 
 		if arg_48_0.skin and var_48_0 ~= "weapon_skin" then
@@ -387,7 +387,7 @@ local var_0_4 = {
 
 		return false
 	end,
-	can_apply_skin = function(arg_49_0, arg_49_1)
+	can_apply_skin = function (arg_49_0, arg_49_1)
 		local var_49_0 = arg_49_0.data
 		local var_49_1 = var_49_0.slot_type
 
@@ -419,7 +419,7 @@ local var_0_4 = {
 
 		return false
 	end,
-	can_upgrade = function(arg_50_0, arg_50_1)
+	can_upgrade = function (arg_50_0, arg_50_1)
 		local var_50_0 = arg_50_0.data.slot_type
 
 		if var_50_0 == "ranged" or var_50_0 == "melee" or var_50_0 == "ring" or var_50_0 == "necklace" or var_50_0 == "trinket" then
@@ -430,14 +430,14 @@ local var_0_4 = {
 			end
 		end
 	end,
-	can_craft_with = function(arg_51_0, arg_51_1)
+	can_craft_with = function (arg_51_0, arg_51_1)
 		local var_51_0 = arg_51_0.data.slot_type
 
 		if (var_51_0 == "ranged" or var_51_0 == "melee" or var_51_0 == "ring" or var_51_0 == "necklace" or var_51_0 == "trinket") and Managers.backend:get_interface("items"):get_item_rarity(arg_51_1) == "default" then
 			return true
 		end
 	end,
-	available_in_mechanism_versus = function(arg_52_0, arg_52_1)
+	available_in_mechanism_versus = function (arg_52_0, arg_52_1)
 		local var_52_0 = arg_52_0.data
 		local var_52_1 = var_52_0.mechanisms
 
@@ -449,7 +449,7 @@ local var_0_4 = {
 			"weapon_pose"
 		}, var_52_0.slot_type) or var_52_1 and table.contains(var_52_1, "versus")
 	end,
-	available_in_mechanism_adventure = function(arg_53_0, arg_53_1)
+	available_in_mechanism_adventure = function (arg_53_0, arg_53_1)
 		local var_53_0 = arg_53_0.data
 		local var_53_1 = var_53_0.mechanisms
 
@@ -461,7 +461,7 @@ local var_0_4 = {
 			"weapon_pose"
 		}, var_53_0.slot_type) or not var_53_1 or table.contains(var_53_1, "adventure")
 	end,
-	available_in_current_mechanism = function(arg_54_0, arg_54_1)
+	available_in_current_mechanism = function (arg_54_0, arg_54_1)
 		if script_data.disable_mechanism_item_filter then
 			return true
 		end
@@ -489,15 +489,15 @@ local var_0_4 = {
 
 		return var_54_3 or var_54_4 or false
 	end,
-	owned = function(arg_55_0, arg_55_1)
+	owned = function (arg_55_0, arg_55_1)
 		return arg_55_0.owned
 	end,
-	is_fake_item = function(arg_56_0, arg_56_1)
+	is_fake_item = function (arg_56_0, arg_56_1)
 		if Managers.backend:get_interface("items"):get_all_fake_backend_items()[arg_56_1] then
 			return true
 		end
 	end,
-	gather_weapon_pose_blueprints = function(arg_57_0, arg_57_1, arg_57_2)
+	gather_weapon_pose_blueprints = function (arg_57_0, arg_57_1, arg_57_2)
 		local var_57_0 = arg_57_0.data.slot_type
 
 		if var_57_0 == "melee" or var_57_0 == "ranged" then
@@ -512,17 +512,17 @@ local var_0_4 = {
 
 		return false
 	end,
-	weapon_pose_parent = function(arg_58_0, arg_58_1)
+	weapon_pose_parent = function (arg_58_0, arg_58_1)
 		local var_58_0 = arg_58_0.data
 
 		if var_58_0.slot_type == "weapon_pose" then
 			return var_58_0.parent
 		end
 	end,
-	is_event_item = function(arg_59_0, arg_59_1)
+	is_event_item = function (arg_59_0, arg_59_1)
 		return not not arg_59_0.data.events
 	end,
-	is_active_event_item = function(arg_60_0, arg_60_1)
+	is_active_event_item = function (arg_60_0, arg_60_1)
 		local var_60_0 = false
 		local var_60_1 = arg_60_0.data.events
 
@@ -555,7 +555,7 @@ local var_0_5 = {}
 local var_0_6 = {}
 local var_0_7 = {}
 
-function BackendInterfaceCommon.filter_items(arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+BackendInterfaceCommon.filter_items = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
 	local var_61_0 = BackendInterfaceCommon.filter_postfix_cache[arg_61_2]
 
 	if not var_61_0 then
@@ -637,7 +637,7 @@ function BackendInterfaceCommon.filter_items(arg_61_0, arg_61_1, arg_61_2, arg_6
 	return var_61_1
 end
 
-function BackendInterfaceCommon._infix_to_postfix_item_filter(arg_62_0, arg_62_1)
+BackendInterfaceCommon._infix_to_postfix_item_filter = function (arg_62_0, arg_62_1)
 	local var_62_0 = {}
 	local var_62_1 = {}
 
@@ -690,7 +690,7 @@ function BackendInterfaceCommon._infix_to_postfix_item_filter(arg_62_0, arg_62_1
 	return var_62_0
 end
 
-function BackendInterfaceCommon.serialize_traits(arg_63_0, arg_63_1)
+BackendInterfaceCommon.serialize_traits = function (arg_63_0, arg_63_1)
 	local var_63_0 = ""
 
 	for iter_63_0, iter_63_1 in pairs(arg_63_1) do
@@ -710,7 +710,7 @@ function BackendInterfaceCommon.serialize_traits(arg_63_0, arg_63_1)
 	return var_63_0
 end
 
-function BackendInterfaceCommon.serialize_runes(arg_64_0, arg_64_1)
+BackendInterfaceCommon.serialize_runes = function (arg_64_0, arg_64_1)
 	local var_64_0 = ""
 
 	for iter_64_0, iter_64_1 in pairs(arg_64_1) do
@@ -724,7 +724,7 @@ function BackendInterfaceCommon.serialize_runes(arg_64_0, arg_64_1)
 	return var_64_0
 end
 
-function BackendInterfaceCommon.commit_load_time_data(arg_65_0, arg_65_1)
+BackendInterfaceCommon.commit_load_time_data = function (arg_65_0, arg_65_1)
 	if Managers.account:offline_mode() then
 		return
 	end
@@ -764,7 +764,7 @@ function BackendInterfaceCommon.commit_load_time_data(arg_65_0, arg_65_1)
 		}
 	}
 
-	arg_65_0._backend_mirror:request_queue():enqueue(var_65_6, function()
+	arg_65_0._backend_mirror:request_queue():enqueue(var_65_6, function ()
 		print("Commit load time data")
 	end, false)
 end

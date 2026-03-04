@@ -682,7 +682,7 @@ local var_0_5 = {
 				start_time = 0.16666666666666666
 			}
 		},
-		hit_player_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		hit_player_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			if arg_1_3 then
 				arg_1_1.has_dealt_damage = true
 			end

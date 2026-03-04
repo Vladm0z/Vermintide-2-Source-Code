@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/hero_conversations_dlc_termite_3.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nik_gateway_elevator_conversation_b",
 		name = "nik_gateway_elevator_conversation_b",

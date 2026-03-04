@@ -9,13 +9,13 @@ local var_0_0 = BTChaosExaltedSorcererSkulkAction
 local var_0_1 = Unit.alive
 local var_0_2 = POSITION_LOOKUP
 
-function var_0_0.init(arg_1_0, ...)
+var_0_0.init = function (arg_1_0, ...)
 	var_0_0.super.init(arg_1_0, ...)
 
 	arg_1_0.cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
 end
 
-function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+var_0_0.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = arg_2_2.breed
 	local var_2_2 = arg_2_2.target_dist
@@ -54,7 +54,7 @@ function var_0_0.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.face_target_while_summoning = true
 end
 
-function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+var_0_0.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.skulk_data
 	local var_3_1 = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
 	local var_3_2 = arg_3_2.navigation_extension
@@ -77,7 +77,7 @@ function var_0_0.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.action = nil
 end
 
-function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+var_0_0.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.navigation_extension
 	local var_4_1 = var_4_0:is_following_path()
 	local var_4_2 = var_4_0:number_failed_move_attempts()
@@ -151,7 +151,7 @@ function var_0_0.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
+var_0_0.at_goal = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.skulk_data
 	local var_5_1 = arg_5_2.move_pos
 
@@ -166,19 +166,19 @@ function var_0_0.at_goal(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function var_0_0.move_to(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+var_0_0.move_to = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_3.navigation_extension:move_to(arg_6_1)
 
 	arg_6_3.move_pos = Vector3Box(arg_6_1)
 end
 
-function var_0_0.idle(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.idle = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:anim_event(arg_7_1, arg_7_2, "idle")
 
 	arg_7_2.move_state = "idle"
 end
 
-function var_0_0.start_move_animation(arg_8_0, arg_8_1, arg_8_2)
+var_0_0.start_move_animation = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_2.action.move_animation
 
 	arg_8_0:anim_event(arg_8_1, arg_8_2, var_8_0)
@@ -186,7 +186,7 @@ function var_0_0.start_move_animation(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_2.move_state = "moving"
 end
 
-function var_0_0.anim_event(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+var_0_0.anim_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_2.skulk_data
 
 	if var_9_0.animation_state ~= arg_9_3 then
@@ -198,7 +198,7 @@ end
 
 local var_0_3 = 15
 
-function var_0_0.get_skulk_target(arg_10_0, arg_10_1, arg_10_2)
+var_0_0.get_skulk_target = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_1.action
 	local var_10_1 = arg_10_1.nav_world
 	local var_10_2 = arg_10_1.skulk_data
@@ -249,7 +249,7 @@ function var_0_0.get_skulk_target(arg_10_0, arg_10_1, arg_10_2)
 	var_10_2.direction = var_10_2.direction * -1
 end
 
-function var_0_0.debug_show_skulk_circle(arg_11_0, arg_11_1, arg_11_2)
+var_0_0.debug_show_skulk_circle = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_2.action
 	local var_11_1 = arg_11_2.skulk_data
 	local var_11_2 = var_11_1.radius
@@ -263,11 +263,11 @@ function var_0_0.debug_show_skulk_circle(arg_11_0, arg_11_1, arg_11_2)
 	var_11_1.radius = arg_11_2.target_dist
 end
 
-function var_0_0.update_dummy(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+var_0_0.update_dummy = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return false
 end
 
-function var_0_0.update_plague_wave(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+var_0_0.update_plague_wave = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_2.target_unit
 	local var_13_1 = BTChaosSorcererPlagueSkulkAction.get_plague_wave_cast_position(arg_13_0, arg_13_1, arg_13_2, arg_13_4)
 
@@ -287,7 +287,7 @@ function var_0_0.update_plague_wave(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 	end
 end
 
-function var_0_0.update_cast_missile(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+var_0_0.update_cast_missile = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = Vector3.copy(var_0_2[arg_14_1])
 	local var_14_1 = LocomotionUtils.rotation_towards_unit_flat(arg_14_1, arg_14_2.target_unit)
 	local var_14_2, var_14_3, var_14_4 = unpack(arg_14_2.action.missile_spawn_offset)

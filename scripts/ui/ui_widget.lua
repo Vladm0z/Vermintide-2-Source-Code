@@ -10,7 +10,7 @@ end
 
 UIWidget = UIWidget or {}
 
-function UIWidget.init(arg_2_0, arg_2_1)
+UIWidget.init = function (arg_2_0, arg_2_1)
 	local var_2_0 = var_0_0(arg_2_0.content)
 	local var_2_1 = var_0_0(arg_2_0.style)
 	local var_2_2 = arg_2_0.offset and var_0_0(arg_2_0.offset)
@@ -42,7 +42,7 @@ function UIWidget.init(arg_2_0, arg_2_1)
 	}
 end
 
-function UIWidget.destroy(arg_3_0, arg_3_1)
+UIWidget.destroy = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_1.element
 	local var_3_1 = var_3_0.pass_data
 	local var_3_2 = var_3_0.passes
@@ -60,14 +60,14 @@ function UIWidget.destroy(arg_3_0, arg_3_1)
 	end
 end
 
-function UIWidget.animate(arg_4_0, arg_4_1)
+UIWidget.animate = function (arg_4_0, arg_4_1)
 	arg_4_0.animations[arg_4_1] = true
 end
 
-function UIWidget.stop_animations(arg_5_0)
+UIWidget.stop_animations = function (arg_5_0)
 	table.clear(arg_5_0.animations)
 end
 
-function UIWidget.has_animation(arg_6_0)
+UIWidget.has_animation = function (arg_6_0)
 	return next(arg_6_0.animations) and true or false
 end

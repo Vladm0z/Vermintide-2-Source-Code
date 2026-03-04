@@ -47,7 +47,7 @@ local function var_0_7(arg_2_0, arg_2_1, ...)
 	end
 end
 
-function PlayFabMirrorBase.init(arg_3_0, arg_3_1)
+PlayFabMirrorBase.init = function (arg_3_0, arg_3_1)
 	arg_3_0._num_items_to_load = 0
 	arg_3_0._stats = {}
 	arg_3_0._unlocked_dlcs = {}
@@ -122,7 +122,7 @@ function PlayFabMirrorBase.init(arg_3_0, arg_3_1)
 	arg_3_0:_verify_account_data()
 end
 
-function PlayFabMirrorBase._init_filtered_data(arg_4_0)
+PlayFabMirrorBase._init_filtered_data = function (arg_4_0)
 	local var_4_0 = {}
 
 	for iter_4_0 in pairs(Managers.unlock:get_dlcs()) do
@@ -132,11 +132,11 @@ function PlayFabMirrorBase._init_filtered_data(arg_4_0)
 	return var_4_0
 end
 
-function PlayFabMirrorBase._register_dlc_filtered_data(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+PlayFabMirrorBase._register_dlc_filtered_data = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_0._filtered_data[arg_5_1][arg_5_2] = arg_5_3 or true
 end
 
-function PlayFabMirrorBase._grant_filtered_data(arg_6_0, arg_6_1)
+PlayFabMirrorBase._grant_filtered_data = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._filtered_data[arg_6_1]
 
 	for iter_6_0, iter_6_1 in pairs(var_6_0) do
@@ -154,7 +154,7 @@ function PlayFabMirrorBase._grant_filtered_data(arg_6_0, arg_6_1)
 	table.clear(arg_6_0._filtered_data[arg_6_1])
 end
 
-function PlayFabMirrorBase._parse_claimed_achievements(arg_7_0)
+PlayFabMirrorBase._parse_claimed_achievements = function (arg_7_0)
 	local var_7_0 = {}
 	local var_7_1 = {}
 	local var_7_2 = arg_7_0:get_read_only_data("claimed_achievements")
@@ -170,7 +170,7 @@ function PlayFabMirrorBase._parse_claimed_achievements(arg_7_0)
 	return var_7_1
 end
 
-function PlayFabMirrorBase._parse_claimed_event_quests(arg_8_0)
+PlayFabMirrorBase._parse_claimed_event_quests = function (arg_8_0)
 	local var_8_0 = {}
 	local var_8_1 = arg_8_0:get_read_only_data("claimed_event_quests")
 
@@ -185,7 +185,7 @@ function PlayFabMirrorBase._parse_claimed_event_quests(arg_8_0)
 	return var_8_0
 end
 
-function PlayFabMirrorBase._parse_unlocked_weapon_skins(arg_9_0)
+PlayFabMirrorBase._parse_unlocked_weapon_skins = function (arg_9_0)
 	local var_9_0 = {}
 	local var_9_1 = arg_9_0:get_read_only_data("unlocked_weapon_skins")
 	local var_9_2 = Managers.unlock
@@ -222,7 +222,7 @@ function PlayFabMirrorBase._parse_unlocked_weapon_skins(arg_9_0)
 	return var_9_0
 end
 
-function PlayFabMirrorBase._parse_unlocked_weapon_poses(arg_10_0)
+PlayFabMirrorBase._parse_unlocked_weapon_poses = function (arg_10_0)
 	local var_10_0 = {}
 	local var_10_1 = arg_10_0:get_read_only_data("unlocked_weapon_poses")
 	local var_10_2 = Managers.unlock
@@ -266,7 +266,7 @@ function PlayFabMirrorBase._parse_unlocked_weapon_poses(arg_10_0)
 	return var_10_0
 end
 
-function PlayFabMirrorBase._parse_equipped_weapon_pose_skins(arg_11_0)
+PlayFabMirrorBase._parse_equipped_weapon_pose_skins = function (arg_11_0)
 	local var_11_0 = {}
 	local var_11_1 = arg_11_0:get_read_only_data("equipped_weapon_pose_skins")
 
@@ -287,7 +287,7 @@ function PlayFabMirrorBase._parse_equipped_weapon_pose_skins(arg_11_0)
 	return var_11_0
 end
 
-function PlayFabMirrorBase._parse_unlocked_cosmetics(arg_12_0, arg_12_1)
+PlayFabMirrorBase._parse_unlocked_cosmetics = function (arg_12_0, arg_12_1)
 	arg_12_1 = arg_12_1 or arg_12_0:get_read_only_data("unlocked_cosmetics")
 
 	local var_12_0 = {}
@@ -327,7 +327,7 @@ function PlayFabMirrorBase._parse_unlocked_cosmetics(arg_12_0, arg_12_1)
 	return var_12_0
 end
 
-function PlayFabMirrorBase._parse_claimed_console_dlc_rewards(arg_13_0)
+PlayFabMirrorBase._parse_claimed_console_dlc_rewards = function (arg_13_0)
 	local var_13_0 = {}
 	local var_13_1 = arg_13_0:get_read_only_data("claimed_console_dlc_rewards")
 
@@ -342,7 +342,7 @@ function PlayFabMirrorBase._parse_claimed_console_dlc_rewards(arg_13_0)
 	return var_13_0
 end
 
-function PlayFabMirrorBase._verify_account_data(arg_14_0)
+PlayFabMirrorBase._verify_account_data = function (arg_14_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -357,13 +357,13 @@ function PlayFabMirrorBase._verify_account_data(arg_14_0)
 	arg_14_0._num_items_to_load = arg_14_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.verify_account_data_cb(arg_15_0, arg_15_1)
+PlayFabMirrorBase.verify_account_data_cb = function (arg_15_0, arg_15_1)
 	arg_15_0._num_items_to_load = arg_15_0._num_items_to_load - 1
 
 	arg_15_0:_migrate_characters()
 end
 
-function PlayFabMirrorBase._migrate_characters(arg_16_0)
+PlayFabMirrorBase._migrate_characters = function (arg_16_0)
 	local var_16_0 = arg_16_0:get_read_only_data("characters_data")
 
 	if not var_16_0 or var_16_0 == "{}" or var_16_0 == "" or type(var_16_0) == "table" and table.is_empty(var_16_0) then
@@ -383,7 +383,7 @@ function PlayFabMirrorBase._migrate_characters(arg_16_0)
 	arg_16_0:_migrate_cosmetics()
 end
 
-function PlayFabMirrorBase.migrate_characters_cb(arg_17_0, arg_17_1)
+PlayFabMirrorBase.migrate_characters_cb = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.FunctionResult
 	local var_17_1 = var_17_0.success
 	local var_17_2 = var_17_0.characters_data
@@ -397,7 +397,7 @@ function PlayFabMirrorBase.migrate_characters_cb(arg_17_0, arg_17_1)
 	arg_17_0:_migrate_cosmetics()
 end
 
-function PlayFabMirrorBase._migrate_cosmetics(arg_18_0)
+PlayFabMirrorBase._migrate_cosmetics = function (arg_18_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -412,7 +412,7 @@ function PlayFabMirrorBase._migrate_cosmetics(arg_18_0)
 	arg_18_0._num_items_to_load = arg_18_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.migrate_cosmetics_request_cb(arg_19_0, arg_19_1)
+PlayFabMirrorBase.migrate_cosmetics_request_cb = function (arg_19_0, arg_19_1)
 	arg_19_0._num_items_to_load = arg_19_0._num_items_to_load - 1
 
 	local var_19_0 = arg_19_1.FunctionResult
@@ -430,7 +430,7 @@ function PlayFabMirrorBase.migrate_cosmetics_request_cb(arg_19_0, arg_19_1)
 	arg_19_0:_update_dlc_ownership()
 end
 
-function PlayFabMirrorBase._update_dlc_ownership(arg_20_0)
+PlayFabMirrorBase._update_dlc_ownership = function (arg_20_0)
 	if DEDICATED_SERVER then
 		return
 	end
@@ -451,11 +451,11 @@ function PlayFabMirrorBase._update_dlc_ownership(arg_20_0)
 	arg_20_0._unlocked_dlcs = var_20_0
 end
 
-function PlayFabMirrorBase.dlc_unlocked_at_signin(arg_21_0, arg_21_1)
+PlayFabMirrorBase.dlc_unlocked_at_signin = function (arg_21_0, arg_21_1)
 	return table.find(arg_21_0._unlocked_dlcs, arg_21_1) ~= false
 end
 
-function PlayFabMirrorBase.dlc_ownership_request_cb(arg_22_0, arg_22_1)
+PlayFabMirrorBase.dlc_ownership_request_cb = function (arg_22_0, arg_22_1)
 	arg_22_0._num_items_to_load = arg_22_0._num_items_to_load - 1
 
 	local var_22_0 = arg_22_1.FunctionResult
@@ -470,7 +470,7 @@ function PlayFabMirrorBase.dlc_ownership_request_cb(arg_22_0, arg_22_1)
 	end
 end
 
-function PlayFabMirrorBase._handle_owned_dlcs_data(arg_23_0)
+PlayFabMirrorBase._handle_owned_dlcs_data = function (arg_23_0)
 	local var_23_0 = arg_23_0._owner_dlcs_cb_data
 
 	arg_23_0._owner_dlcs_cb_data = nil
@@ -529,7 +529,7 @@ function PlayFabMirrorBase._handle_owned_dlcs_data(arg_23_0)
 	arg_23_0:update_filtered_dlc_data()
 end
 
-function PlayFabMirrorBase._execute_dlc_specific_logic(arg_24_0)
+PlayFabMirrorBase._execute_dlc_specific_logic = function (arg_24_0)
 	local var_24_0 = {
 		FunctionName = "executeDLCLogic",
 		FunctionParameter = {}
@@ -545,7 +545,7 @@ local function var_0_8(arg_25_0)
 	return ItemMasterList[arg_25_0]
 end
 
-function PlayFabMirrorBase._sync_unseen_rewards(arg_26_0, arg_26_1)
+PlayFabMirrorBase._sync_unseen_rewards = function (arg_26_0, arg_26_1)
 	if not arg_26_1 then
 		return
 	end
@@ -629,7 +629,7 @@ function PlayFabMirrorBase._sync_unseen_rewards(arg_26_0, arg_26_1)
 	arg_26_0:_apply_unseen_rewards(var_26_0)
 end
 
-function PlayFabMirrorBase._apply_unseen_rewards(arg_27_0, arg_27_1)
+PlayFabMirrorBase._apply_unseen_rewards = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_0:get_user_data("unseen_rewards")
 	local var_27_1
 
@@ -639,7 +639,7 @@ function PlayFabMirrorBase._apply_unseen_rewards(arg_27_0, arg_27_1)
 	arg_27_0:set_user_data("unseen_rewards", cjson.encode(var_27_1))
 end
 
-function PlayFabMirrorBase.execute_dlc_logic_request_cb(arg_28_0, arg_28_1)
+PlayFabMirrorBase.execute_dlc_logic_request_cb = function (arg_28_0, arg_28_1)
 	arg_28_0._num_items_to_load = arg_28_0._num_items_to_load - 1
 
 	arg_28_0:_handle_owned_dlcs_data()
@@ -672,7 +672,7 @@ function PlayFabMirrorBase.execute_dlc_logic_request_cb(arg_28_0, arg_28_1)
 	arg_28_0:_request_best_power_levels()
 end
 
-function PlayFabMirrorBase._request_best_power_levels(arg_29_0)
+PlayFabMirrorBase._request_best_power_levels = function (arg_29_0)
 	local var_29_0 = {
 		FunctionName = "bestPowerLevels",
 		FunctionParameter = {}
@@ -684,7 +684,7 @@ function PlayFabMirrorBase._request_best_power_levels(arg_29_0)
 	arg_29_0._num_items_to_load = arg_29_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.best_power_levels_request_cb(arg_30_0, arg_30_1)
+PlayFabMirrorBase.best_power_levels_request_cb = function (arg_30_0, arg_30_1)
 	arg_30_0._num_items_to_load = arg_30_0._num_items_to_load - 1
 
 	local var_30_0 = arg_30_1.FunctionResult.best_power_levels
@@ -702,7 +702,7 @@ function PlayFabMirrorBase.best_power_levels_request_cb(arg_30_0, arg_30_1)
 	arg_30_0:_request_signin_reward()
 end
 
-function PlayFabMirrorBase._request_signin_reward(arg_31_0)
+PlayFabMirrorBase._request_signin_reward = function (arg_31_0)
 	local var_31_0 = {
 		FunctionName = "signInRewards",
 		FunctionParameter = {}
@@ -714,7 +714,7 @@ function PlayFabMirrorBase._request_signin_reward(arg_31_0)
 	arg_31_0._num_items_to_load = arg_31_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.sign_in_reward_request_cb(arg_32_0, arg_32_1)
+PlayFabMirrorBase.sign_in_reward_request_cb = function (arg_32_0, arg_32_1)
 	arg_32_0._num_items_to_load = arg_32_0._num_items_to_load - 1
 
 	local var_32_0 = arg_32_1.FunctionResult.rewards
@@ -772,7 +772,7 @@ function PlayFabMirrorBase.sign_in_reward_request_cb(arg_32_0, arg_32_1)
 	arg_32_0:_request_quests()
 end
 
-function PlayFabMirrorBase._request_quests(arg_33_0)
+PlayFabMirrorBase._request_quests = function (arg_33_0)
 	local var_33_0 = {
 		FunctionName = "getQuests",
 		FunctionParameter = {}
@@ -784,7 +784,7 @@ function PlayFabMirrorBase._request_quests(arg_33_0)
 	arg_33_0._num_items_to_load = arg_33_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.get_quests_cb(arg_34_0, arg_34_1)
+PlayFabMirrorBase.get_quests_cb = function (arg_34_0, arg_34_1)
 	arg_34_0._num_items_to_load = arg_34_0._num_items_to_load - 1
 
 	local var_34_0 = arg_34_1.FunctionResult
@@ -804,7 +804,7 @@ function PlayFabMirrorBase.get_quests_cb(arg_34_0, arg_34_1)
 	arg_34_0:_get_weekly_event_rewards()
 end
 
-function PlayFabMirrorBase._get_weekly_event_rewards(arg_35_0)
+PlayFabMirrorBase._get_weekly_event_rewards = function (arg_35_0)
 	local var_35_0 = {
 		FunctionName = "getWeeklyEventRewards",
 		FunctionParameter = {}
@@ -816,7 +816,7 @@ function PlayFabMirrorBase._get_weekly_event_rewards(arg_35_0)
 	arg_35_0._num_items_to_load = arg_35_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.get_weekly_event_rewards_cb(arg_36_0, arg_36_1)
+PlayFabMirrorBase.get_weekly_event_rewards_cb = function (arg_36_0, arg_36_1)
 	arg_36_0._num_items_to_load = arg_36_0._num_items_to_load - 1
 
 	local var_36_0 = arg_36_1.FunctionResult.data
@@ -828,7 +828,7 @@ function PlayFabMirrorBase.get_weekly_event_rewards_cb(arg_36_0, arg_36_1)
 	arg_36_0:_request_fix_inventory_data_1()
 end
 
-function PlayFabMirrorBase._request_fix_inventory_data_1(arg_37_0)
+PlayFabMirrorBase._request_fix_inventory_data_1 = function (arg_37_0)
 	local var_37_0 = {
 		FunctionName = "fixInventoryData1",
 		FunctionParameter = {}
@@ -840,7 +840,7 @@ function PlayFabMirrorBase._request_fix_inventory_data_1(arg_37_0)
 	arg_37_0._num_items_to_load = arg_37_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.fix_inventory_data_1_request_cb(arg_38_0, arg_38_1)
+PlayFabMirrorBase.fix_inventory_data_1_request_cb = function (arg_38_0, arg_38_1)
 	arg_38_0._num_items_to_load = arg_38_0._num_items_to_load - 1
 
 	local var_38_0 = arg_38_1.FunctionResult
@@ -870,7 +870,7 @@ function PlayFabMirrorBase.fix_inventory_data_1_request_cb(arg_38_0, arg_38_1)
 	arg_38_0:_request_fix_inventory_data_2()
 end
 
-function PlayFabMirrorBase._request_fix_inventory_data_2(arg_39_0)
+PlayFabMirrorBase._request_fix_inventory_data_2 = function (arg_39_0)
 	local var_39_0 = {
 		FunctionName = "fixInventoryData2",
 		FunctionParameter = {}
@@ -882,7 +882,7 @@ function PlayFabMirrorBase._request_fix_inventory_data_2(arg_39_0)
 	arg_39_0._num_items_to_load = arg_39_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.fix_inventory_data_2_request_cb(arg_40_0, arg_40_1)
+PlayFabMirrorBase.fix_inventory_data_2_request_cb = function (arg_40_0, arg_40_1)
 	arg_40_0._num_items_to_load = arg_40_0._num_items_to_load - 1
 
 	local var_40_0 = arg_40_1.FunctionResult
@@ -906,7 +906,7 @@ function PlayFabMirrorBase.fix_inventory_data_2_request_cb(arg_40_0, arg_40_1)
 	arg_40_0:_handle_fix_data_ids()
 end
 
-function PlayFabMirrorBase._handle_fix_data_ids(arg_41_0)
+PlayFabMirrorBase._handle_fix_data_ids = function (arg_41_0)
 	local var_41_0 = {
 		FunctionName = "handleFixDataIds",
 		FunctionParameter = {}
@@ -918,7 +918,7 @@ function PlayFabMirrorBase._handle_fix_data_ids(arg_41_0)
 	arg_41_0._num_items_to_load = arg_41_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.handle_fix_data_ids_request_cb(arg_42_0, arg_42_1)
+PlayFabMirrorBase.handle_fix_data_ids_request_cb = function (arg_42_0, arg_42_1)
 	arg_42_0._num_items_to_load = arg_42_0._num_items_to_load - 1
 
 	local var_42_0 = arg_42_1.FunctionResult
@@ -1040,7 +1040,7 @@ function PlayFabMirrorBase.handle_fix_data_ids_request_cb(arg_42_0, arg_42_1)
 	end
 end
 
-function PlayFabMirrorBase._fix_excess_bogenhafen_chests(arg_43_0)
+PlayFabMirrorBase._fix_excess_bogenhafen_chests = function (arg_43_0)
 	local var_43_0 = {
 		FunctionName = "removeExcessBogenhafenChests",
 		FunctionParameter = {}
@@ -1052,13 +1052,13 @@ function PlayFabMirrorBase._fix_excess_bogenhafen_chests(arg_43_0)
 	arg_43_0._num_items_to_load = arg_43_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase._fix_excess_bogenhafen_chests_cb(arg_44_0)
+PlayFabMirrorBase._fix_excess_bogenhafen_chests_cb = function (arg_44_0)
 	arg_44_0._num_items_to_load = arg_44_0._num_items_to_load - 1
 
 	arg_44_0:_fix_excess_duplicate_bogenhafen_cosmetics()
 end
 
-function PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics(arg_45_0)
+PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics = function (arg_45_0)
 	local var_45_0 = {
 		FunctionName = "removeDuplicateBogenhafenCosmetics",
 		FunctionParameter = {}
@@ -1070,13 +1070,13 @@ function PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics(arg_45_0)
 	arg_45_0._num_items_to_load = arg_45_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics_cb(arg_46_0)
+PlayFabMirrorBase._fix_excess_duplicate_bogenhafen_cosmetics_cb = function (arg_46_0)
 	arg_46_0._num_items_to_load = arg_46_0._num_items_to_load - 1
 
 	arg_46_0:_request_read_only_data()
 end
 
-function PlayFabMirrorBase._request_read_only_data(arg_47_0)
+PlayFabMirrorBase._request_read_only_data = function (arg_47_0)
 	local var_47_0 = {
 		FunctionName = "getReadOnlyData",
 		FunctionParameter = {}
@@ -1088,7 +1088,7 @@ function PlayFabMirrorBase._request_read_only_data(arg_47_0)
 	arg_47_0._num_items_to_load = arg_47_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.read_only_data_request_cb(arg_48_0, arg_48_1)
+PlayFabMirrorBase.read_only_data_request_cb = function (arg_48_0, arg_48_1)
 	arg_48_0._num_items_to_load = arg_48_0._num_items_to_load - 1
 
 	local var_48_0 = arg_48_1.FunctionResult
@@ -1112,7 +1112,7 @@ function PlayFabMirrorBase.read_only_data_request_cb(arg_48_0, arg_48_1)
 	arg_48_0:_request_user_data()
 end
 
-function PlayFabMirrorBase._request_user_data(arg_49_0)
+PlayFabMirrorBase._request_user_data = function (arg_49_0)
 	local var_49_0 = {}
 	local var_49_1 = callback(arg_49_0, "user_data_request_cb")
 
@@ -1121,7 +1121,7 @@ function PlayFabMirrorBase._request_user_data(arg_49_0)
 	arg_49_0._num_items_to_load = arg_49_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.user_data_request_cb(arg_50_0, arg_50_1)
+PlayFabMirrorBase.user_data_request_cb = function (arg_50_0, arg_50_1)
 	arg_50_0._num_items_to_load = arg_50_0._num_items_to_load - 1
 
 	for iter_50_0, iter_50_1 in pairs(arg_50_1.Data) do
@@ -1152,7 +1152,7 @@ function PlayFabMirrorBase.user_data_request_cb(arg_50_0, arg_50_1)
 	arg_50_0:_request_twitch_app_access_token()
 end
 
-function PlayFabMirrorBase._request_twitch_app_access_token(arg_51_0)
+PlayFabMirrorBase._request_twitch_app_access_token = function (arg_51_0)
 	local var_51_0 = {
 		FunctionName = "getTwitchAccessToken",
 		FunctionParameter = {}
@@ -1164,7 +1164,7 @@ function PlayFabMirrorBase._request_twitch_app_access_token(arg_51_0)
 	arg_51_0._num_items_to_load = arg_51_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase._request_twitch_app_access_token_cb(arg_52_0, arg_52_1)
+PlayFabMirrorBase._request_twitch_app_access_token_cb = function (arg_52_0, arg_52_1)
 	arg_52_0._num_items_to_load = arg_52_0._num_items_to_load - 1
 	arg_52_0._twitch_app_access_token = false
 
@@ -1177,11 +1177,11 @@ function PlayFabMirrorBase._request_twitch_app_access_token_cb(arg_52_0, arg_52_
 	arg_52_0:_weaves_player_setup()
 end
 
-function PlayFabMirrorBase.get_twitch_app_access_token(arg_53_0)
+PlayFabMirrorBase.get_twitch_app_access_token = function (arg_53_0)
 	return arg_53_0._twitch_app_access_token
 end
 
-function PlayFabMirrorBase._weaves_player_setup(arg_54_0)
+PlayFabMirrorBase._weaves_player_setup = function (arg_54_0)
 	local var_54_0 = {
 		FunctionName = "weavesPlayerSetup",
 		FunctionParameter = {}
@@ -1193,7 +1193,7 @@ function PlayFabMirrorBase._weaves_player_setup(arg_54_0)
 	arg_54_0._num_items_to_load = arg_54_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.weaves_player_setup_request_cb(arg_55_0, arg_55_1)
+PlayFabMirrorBase.weaves_player_setup_request_cb = function (arg_55_0, arg_55_1)
 	arg_55_0._num_items_to_load = arg_55_0._num_items_to_load - 1
 
 	local var_55_0 = arg_55_1.FunctionResult
@@ -1216,7 +1216,7 @@ function PlayFabMirrorBase.weaves_player_setup_request_cb(arg_55_0, arg_55_1)
 	arg_55_0:_fix_total_collected_essence()
 end
 
-function PlayFabMirrorBase._fix_total_collected_essence(arg_56_0)
+PlayFabMirrorBase._fix_total_collected_essence = function (arg_56_0)
 	local var_56_0 = {
 		FunctionName = "fixTotalCollectedEssence",
 		FunctionParameter = {}
@@ -1228,7 +1228,7 @@ function PlayFabMirrorBase._fix_total_collected_essence(arg_56_0)
 	arg_56_0._num_items_to_load = arg_56_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.fix_total_collected_essence_cb(arg_57_0, arg_57_1)
+PlayFabMirrorBase.fix_total_collected_essence_cb = function (arg_57_0, arg_57_1)
 	arg_57_0._num_items_to_load = arg_57_0._num_items_to_load - 1
 
 	local var_57_0 = arg_57_1.FunctionResult.total_essence
@@ -1247,7 +1247,7 @@ function PlayFabMirrorBase.fix_total_collected_essence_cb(arg_57_0, arg_57_1)
 	end
 end
 
-function PlayFabMirrorBase._request_win_tracks(arg_58_0)
+PlayFabMirrorBase._request_win_tracks = function (arg_58_0)
 	local var_58_0 = {
 		FunctionName = "winTracksSetup",
 		FunctionParameter = {}
@@ -1259,7 +1259,7 @@ function PlayFabMirrorBase._request_win_tracks(arg_58_0)
 	arg_58_0._num_items_to_load = arg_58_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.win_tracks_request_cb(arg_59_0, arg_59_1)
+PlayFabMirrorBase.win_tracks_request_cb = function (arg_59_0, arg_59_1)
 	arg_59_0._num_items_to_load = arg_59_0._num_items_to_load - 1
 
 	local var_59_0 = arg_59_1.FunctionResult
@@ -1282,11 +1282,11 @@ function PlayFabMirrorBase.win_tracks_request_cb(arg_59_0, arg_59_1)
 	end
 end
 
-function PlayFabMirrorBase.get_win_tracks(arg_60_0)
+PlayFabMirrorBase.get_win_tracks = function (arg_60_0)
 	return arg_60_0._win_tracks
 end
 
-function PlayFabMirrorBase._deus_player_setup(arg_61_0)
+PlayFabMirrorBase._deus_player_setup = function (arg_61_0)
 	local var_61_0 = {
 		FunctionName = "deusPlayerSetup",
 		FunctionParameter = {}
@@ -1298,26 +1298,26 @@ function PlayFabMirrorBase._deus_player_setup(arg_61_0)
 	arg_61_0._num_items_to_load = arg_61_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.deus_player_setup_request_cb(arg_62_0, arg_62_1)
+PlayFabMirrorBase.deus_player_setup_request_cb = function (arg_62_0, arg_62_1)
 	arg_62_0._num_items_to_load = arg_62_0._num_items_to_load - 1
 
 	arg_62_0:handle_deus_result(arg_62_1)
 	arg_62_0:_set_up_additional_account_data()
 end
 
-function PlayFabMirrorBase.deus_refresh_belakor_data(arg_63_0)
+PlayFabMirrorBase.deus_refresh_belakor_data = function (arg_63_0)
 	arg_63_0:_deus_setup_belakor_data()
 end
 
-function PlayFabMirrorBase.has_loaded_belakor_data(arg_64_0)
+PlayFabMirrorBase.has_loaded_belakor_data = function (arg_64_0)
 	return arg_64_0._belakor_data_loaded
 end
 
-function PlayFabMirrorBase.set_has_loaded_belakor_data(arg_65_0, arg_65_1)
+PlayFabMirrorBase.set_has_loaded_belakor_data = function (arg_65_0, arg_65_1)
 	arg_65_0._belakor_data_loaded = arg_65_1
 end
 
-function PlayFabMirrorBase._deus_setup_belakor_data(arg_66_0)
+PlayFabMirrorBase._deus_setup_belakor_data = function (arg_66_0)
 	local var_66_0 = {
 		FunctionName = "deusSetBelakorCurse",
 		FunctionParameter = {}
@@ -1329,7 +1329,7 @@ function PlayFabMirrorBase._deus_setup_belakor_data(arg_66_0)
 	arg_66_0._belakor_data_loaded = false
 end
 
-function PlayFabMirrorBase.deus_setup_belakor_data_request_cb(arg_67_0, arg_67_1)
+PlayFabMirrorBase.deus_setup_belakor_data_request_cb = function (arg_67_0, arg_67_1)
 	arg_67_0._belakor_data_loaded = true
 
 	local var_67_0 = arg_67_1.FunctionResult.deus_belakor_curse_data
@@ -1346,7 +1346,7 @@ function PlayFabMirrorBase.deus_setup_belakor_data_request_cb(arg_67_0, arg_67_1
 	end
 end
 
-function PlayFabMirrorBase._set_up_additional_account_data(arg_68_0, arg_68_1)
+PlayFabMirrorBase._set_up_additional_account_data = function (arg_68_0, arg_68_1)
 	local var_68_0 = {
 		FunctionName = "additionalAccountDataSetUp",
 		FunctionParameter = {
@@ -1360,7 +1360,7 @@ function PlayFabMirrorBase._set_up_additional_account_data(arg_68_0, arg_68_1)
 	arg_68_0._num_items_to_load = arg_68_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.additional_data_setup_request_cb(arg_69_0, arg_69_1)
+PlayFabMirrorBase.additional_data_setup_request_cb = function (arg_69_0, arg_69_1)
 	arg_69_0._num_items_to_load = arg_69_0._num_items_to_load - 1
 
 	local var_69_0 = arg_69_1.FunctionResult
@@ -1397,7 +1397,7 @@ function PlayFabMirrorBase.additional_data_setup_request_cb(arg_69_0, arg_69_1)
 	end
 end
 
-function PlayFabMirrorBase._request_user_inventory(arg_70_0)
+PlayFabMirrorBase._request_user_inventory = function (arg_70_0)
 	local var_70_0 = {}
 	local var_70_1 = callback(arg_70_0, "inventory_request_cb")
 
@@ -1406,7 +1406,7 @@ function PlayFabMirrorBase._request_user_inventory(arg_70_0)
 	arg_70_0._num_items_to_load = arg_70_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.inventory_request_cb(arg_71_0, arg_71_1)
+PlayFabMirrorBase.inventory_request_cb = function (arg_71_0, arg_71_1)
 	arg_71_0._num_items_to_load = arg_71_0._num_items_to_load - 1
 
 	local var_71_0 = arg_71_1.Inventory
@@ -1466,7 +1466,7 @@ function PlayFabMirrorBase.inventory_request_cb(arg_71_0, arg_71_1)
 	end
 end
 
-function PlayFabMirrorBase.update_filtered_dlc_data(arg_72_0)
+PlayFabMirrorBase.update_filtered_dlc_data = function (arg_72_0)
 	local var_72_0 = Managers.unlock
 
 	for iter_72_0 in pairs(arg_72_0._filtered_data) do
@@ -1476,7 +1476,7 @@ function PlayFabMirrorBase.update_filtered_dlc_data(arg_72_0)
 	end
 end
 
-function PlayFabMirrorBase._request_steam_user_inventory(arg_73_0)
+PlayFabMirrorBase._request_steam_user_inventory = function (arg_73_0)
 	var_0_6("steam item server: requesting user inventory")
 
 	arg_73_0._num_items_to_load = arg_73_0._num_items_to_load + 1
@@ -1497,13 +1497,13 @@ function PlayFabMirrorBase._request_steam_user_inventory(arg_73_0)
 	Managers.steam:request_user_inventory(var_73_0)
 end
 
-function PlayFabMirrorBase.delete_playfab_characters_cb(arg_75_0, arg_75_1)
+PlayFabMirrorBase.delete_playfab_characters_cb = function (arg_75_0, arg_75_1)
 	arg_75_0._num_items_to_load = arg_75_0._num_items_to_load - 1
 
 	arg_75_0:request_characters()
 end
 
-function PlayFabMirrorBase.add_steam_items(arg_76_0, arg_76_1)
+PlayFabMirrorBase.add_steam_items = function (arg_76_0, arg_76_1)
 	local var_76_0 = 1
 
 	arg_76_0._num_items_to_load = arg_76_0._num_items_to_load + 1
@@ -1513,7 +1513,7 @@ function PlayFabMirrorBase.add_steam_items(arg_76_0, arg_76_1)
 	arg_76_0:_cb_steam_user_inventory(var_76_0, arg_76_1, false, var_76_1)
 end
 
-function PlayFabMirrorBase._cb_steam_user_inventory(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+PlayFabMirrorBase._cb_steam_user_inventory = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
 	arg_77_0._num_items_to_load = arg_77_0._num_items_to_load - 1
 
 	if arg_77_1 == 1 then
@@ -1554,7 +1554,7 @@ function PlayFabMirrorBase._cb_steam_user_inventory(arg_77_0, arg_77_1, arg_77_2
 	end
 end
 
-function PlayFabMirrorBase._set_inital_career_data(arg_78_0, arg_78_1, arg_78_2, arg_78_3)
+PlayFabMirrorBase._set_inital_career_data = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3)
 	if not arg_78_3 then
 		return
 	end
@@ -1629,7 +1629,7 @@ function PlayFabMirrorBase._set_inital_career_data(arg_78_0, arg_78_1, arg_78_2,
 	end
 end
 
-function PlayFabMirrorBase._verify_items_are_usable(arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4)
+PlayFabMirrorBase._verify_items_are_usable = function (arg_79_0, arg_79_1, arg_79_2, arg_79_3, arg_79_4)
 	local var_79_0 = CareerSettings[arg_79_3]
 
 	if not var_79_0 then
@@ -1690,7 +1690,7 @@ function PlayFabMirrorBase._verify_items_are_usable(arg_79_0, arg_79_1, arg_79_2
 	end
 end
 
-function PlayFabMirrorBase._update_data(arg_80_0, arg_80_1, arg_80_2)
+PlayFabMirrorBase._update_data = function (arg_80_0, arg_80_1, arg_80_2)
 	local var_80_0 = arg_80_1.CustomData
 
 	if var_80_0 then
@@ -1756,11 +1756,11 @@ function PlayFabMirrorBase._update_data(arg_80_0, arg_80_1, arg_80_2)
 	arg_80_1.data = var_80_10
 end
 
-function PlayFabMirrorBase.ready(arg_81_0)
+PlayFabMirrorBase.ready = function (arg_81_0)
 	return arg_81_0._inventory_items and arg_81_0._num_items_to_load == 0
 end
 
-function PlayFabMirrorBase.current_api_call(arg_82_0)
+PlayFabMirrorBase.current_api_call = function (arg_82_0)
 	if not arg_82_0._request_queue then
 		return
 	end
@@ -1768,7 +1768,7 @@ function PlayFabMirrorBase.current_api_call(arg_82_0)
 	return arg_82_0._request_queue:current_api_call()
 end
 
-function PlayFabMirrorBase.update(arg_83_0, arg_83_1, arg_83_2)
+PlayFabMirrorBase.update = function (arg_83_0, arg_83_1, arg_83_2)
 	local var_83_0
 	local var_83_1
 
@@ -1812,7 +1812,7 @@ function PlayFabMirrorBase.update(arg_83_0, arg_83_1, arg_83_2)
 	end
 end
 
-function PlayFabMirrorBase._check_current_commit(arg_84_0)
+PlayFabMirrorBase._check_current_commit = function (arg_84_0)
 	local var_84_0 = arg_84_0:_commit_status()
 
 	if var_84_0 ~= "waiting" then
@@ -1839,7 +1839,7 @@ function PlayFabMirrorBase._check_current_commit(arg_84_0)
 	end
 end
 
-function PlayFabMirrorBase._commit_status(arg_85_0)
+PlayFabMirrorBase._commit_status = function (arg_85_0)
 	local var_85_0 = arg_85_0._commit_current_id
 
 	fassert(var_85_0, "Querying status for commit_current_id %s", tostring(var_85_0))
@@ -1861,23 +1861,23 @@ function PlayFabMirrorBase._commit_status(arg_85_0)
 	return var_85_1.status
 end
 
-function PlayFabMirrorBase.get_current_commit_id(arg_86_0)
+PlayFabMirrorBase.get_current_commit_id = function (arg_86_0)
 	return arg_86_0._commit_current_id
 end
 
-function PlayFabMirrorBase.have_queued_commit(arg_87_0)
+PlayFabMirrorBase.have_queued_commit = function (arg_87_0)
 	return not table.is_empty(arg_87_0._queued_commit)
 end
 
-function PlayFabMirrorBase.request_queue(arg_88_0)
+PlayFabMirrorBase.request_queue = function (arg_88_0)
 	return arg_88_0._request_queue
 end
 
-function PlayFabMirrorBase.get_playfab_id(arg_89_0)
+PlayFabMirrorBase.get_playfab_id = function (arg_89_0)
 	return arg_89_0._playfab_id
 end
 
-function PlayFabMirrorBase.get_character_data(arg_90_0, arg_90_1, arg_90_2, arg_90_3)
+PlayFabMirrorBase.get_character_data = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3)
 	local var_90_0 = arg_90_0._career_data
 	local var_90_1 = arg_90_3 or arg_90_0._career_loadouts[arg_90_1]
 	local var_90_2 = var_90_0[arg_90_1] and var_90_0[arg_90_1][var_90_1]
@@ -1889,13 +1889,13 @@ function PlayFabMirrorBase.get_character_data(arg_90_0, arg_90_1, arg_90_2, arg_
 	return nil
 end
 
-function PlayFabMirrorBase.has_loadout(arg_91_0, arg_91_1, arg_91_2)
+PlayFabMirrorBase.has_loadout = function (arg_91_0, arg_91_1, arg_91_2)
 	local var_91_0 = arg_91_0._career_data
 
 	return (var_91_0[arg_91_1] and var_91_0[arg_91_1][arg_91_2]) ~= nil
 end
 
-function PlayFabMirrorBase.set_character_data(arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
+PlayFabMirrorBase.set_character_data = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5)
 	local var_92_0 = arg_92_0._career_data[arg_92_1]
 	local var_92_1 = arg_92_5 or arg_92_0._career_loadouts[arg_92_1]
 
@@ -1910,7 +1910,7 @@ function PlayFabMirrorBase.set_character_data(arg_92_0, arg_92_1, arg_92_2, arg_
 	arg_92_0:set_career_read_only_data(var_92_2, arg_92_2, arg_92_3, arg_92_1, arg_92_4, var_92_1)
 end
 
-function PlayFabMirrorBase.get_career_loadouts(arg_93_0, arg_93_1)
+PlayFabMirrorBase.get_career_loadouts = function (arg_93_0, arg_93_1)
 	if not arg_93_1 then
 		return nil
 	end
@@ -1920,7 +1920,7 @@ function PlayFabMirrorBase.get_career_loadouts(arg_93_0, arg_93_1)
 	return arg_93_0._career_loadouts[arg_93_1], var_93_0
 end
 
-function PlayFabMirrorBase.get_default_loadouts(arg_94_0, arg_94_1)
+PlayFabMirrorBase.get_default_loadouts = function (arg_94_0, arg_94_1)
 	local var_94_0 = Managers.mechanism:current_mechanism_name()
 
 	if not arg_94_1 or not var_94_0 then
@@ -1930,7 +1930,7 @@ function PlayFabMirrorBase.get_default_loadouts(arg_94_0, arg_94_1)
 	return (arg_94_0._character_default_loadouts[var_94_0] or arg_94_0._character_default_loadouts.adventure)[arg_94_1]
 end
 
-function PlayFabMirrorBase.set_loadout_index(arg_95_0, arg_95_1, arg_95_2)
+PlayFabMirrorBase.set_loadout_index = function (arg_95_0, arg_95_1, arg_95_2)
 	if not arg_95_1 or not arg_95_2 then
 		return
 	end
@@ -1953,7 +1953,7 @@ function PlayFabMirrorBase.set_loadout_index(arg_95_0, arg_95_1, arg_95_2)
 	end
 end
 
-function PlayFabMirrorBase.delete_loadout(arg_96_0, arg_96_1, arg_96_2)
+PlayFabMirrorBase.delete_loadout = function (arg_96_0, arg_96_1, arg_96_2)
 	if not arg_96_1 or not arg_96_2 then
 		return
 	end
@@ -1995,7 +1995,7 @@ function PlayFabMirrorBase.delete_loadout(arg_96_0, arg_96_1, arg_96_2)
 	Managers.backend:dirtify_interfaces()
 end
 
-function PlayFabMirrorBase.add_loadout(arg_97_0, arg_97_1)
+PlayFabMirrorBase.add_loadout = function (arg_97_0, arg_97_1)
 	if not arg_97_1 then
 		return
 	end
@@ -2028,11 +2028,11 @@ function PlayFabMirrorBase.add_loadout(arg_97_0, arg_97_1)
 	end
 end
 
-function PlayFabMirrorBase.get_title_data(arg_98_0)
+PlayFabMirrorBase.get_title_data = function (arg_98_0)
 	return arg_98_0._title_data
 end
 
-function PlayFabMirrorBase.set_title_data(arg_99_0, arg_99_1, arg_99_2)
+PlayFabMirrorBase.set_title_data = function (arg_99_0, arg_99_1, arg_99_2)
 	if tonumber(arg_99_2) then
 		arg_99_2 = tonumber(arg_99_2)
 	end
@@ -2040,11 +2040,11 @@ function PlayFabMirrorBase.set_title_data(arg_99_0, arg_99_1, arg_99_2)
 	arg_99_0._title_data[arg_99_1] = arg_99_2
 end
 
-function PlayFabMirrorBase.get_user_data(arg_100_0, arg_100_1)
+PlayFabMirrorBase.get_user_data = function (arg_100_0, arg_100_1)
 	return arg_100_0._user_data[arg_100_1]
 end
 
-function PlayFabMirrorBase.set_user_data(arg_101_0, arg_101_1, arg_101_2, arg_101_3)
+PlayFabMirrorBase.set_user_data = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3)
 	arg_101_0._user_data[arg_101_1] = arg_101_2
 
 	if arg_101_3 then
@@ -2056,7 +2056,7 @@ function PlayFabMirrorBase.set_user_data(arg_101_0, arg_101_1, arg_101_2, arg_10
 	end
 end
 
-function PlayFabMirrorBase.log_player_exit(arg_102_0, arg_102_1)
+PlayFabMirrorBase.log_player_exit = function (arg_102_0, arg_102_1)
 	local var_102_0 = {
 		FunctionName = "logPlayerExit",
 		FunctionParameter = {}
@@ -2065,11 +2065,11 @@ function PlayFabMirrorBase.log_player_exit(arg_102_0, arg_102_1)
 	local var_102_2 = arg_102_0._request_queue:enqueue(var_102_0, var_102_1, false)
 end
 
-function PlayFabMirrorBase.log_player_exit_cb(arg_103_0, arg_103_1, arg_103_2)
+PlayFabMirrorBase.log_player_exit_cb = function (arg_103_0, arg_103_1, arg_103_2)
 	arg_103_1(arg_103_2)
 end
 
-function PlayFabMirrorBase._commit_user_data(arg_104_0, arg_104_1, arg_104_2, arg_104_3)
+PlayFabMirrorBase._commit_user_data = function (arg_104_0, arg_104_1, arg_104_2, arg_104_3)
 	table.clear(arg_104_1)
 
 	for iter_104_0, iter_104_1 in pairs(arg_104_0._user_data) do
@@ -2095,12 +2095,12 @@ function PlayFabMirrorBase._commit_user_data(arg_104_0, arg_104_1, arg_104_2, ar
 	end
 end
 
-function PlayFabMirrorBase.update_user_data_cb(arg_105_0, arg_105_1, arg_105_2)
+PlayFabMirrorBase.update_user_data_cb = function (arg_105_0, arg_105_1, arg_105_2)
 	arg_105_0._num_items_to_load = arg_105_0._num_items_to_load - 1
 	arg_105_0._commits[arg_105_1].wait_for_user_data = false
 end
 
-function PlayFabMirrorBase.get_read_only_data(arg_106_0, arg_106_1)
+PlayFabMirrorBase.get_read_only_data = function (arg_106_0, arg_106_1)
 	local var_106_0 = arg_106_0._read_only_data[arg_106_1]
 	local var_106_1 = type(var_106_0)
 
@@ -2109,7 +2109,7 @@ function PlayFabMirrorBase.get_read_only_data(arg_106_0, arg_106_1)
 	return var_106_0
 end
 
-function PlayFabMirrorBase.set_read_only_data(arg_107_0, arg_107_1, arg_107_2, arg_107_3)
+PlayFabMirrorBase.set_read_only_data = function (arg_107_0, arg_107_1, arg_107_2, arg_107_3)
 	if not arg_107_3 and rawget(_G, "debug_characters_data_unsafe_write") and (arg_107_1 == "characters_data" or arg_107_1 == "vs_characters_data") then
 		print("[PlayfabMirrorBase] Overwriting character data while it is unsafe to do so")
 		Crashify.print_exception("[PlayfabMirrorBase]", "Unsafe write to readonly data")
@@ -2130,7 +2130,7 @@ function PlayFabMirrorBase.set_read_only_data(arg_107_0, arg_107_1, arg_107_2, a
 	end
 end
 
-function PlayFabMirrorBase.merge_read_only_data(arg_108_0, arg_108_1, arg_108_2)
+PlayFabMirrorBase.merge_read_only_data = function (arg_108_0, arg_108_1, arg_108_2)
 	for iter_108_0, iter_108_1 in pairs(arg_108_1) do
 		local var_108_0 = type(iter_108_1)
 
@@ -2144,35 +2144,35 @@ function PlayFabMirrorBase.merge_read_only_data(arg_108_0, arg_108_1, arg_108_2)
 	end
 end
 
-function PlayFabMirrorBase.get_all_inventory_items(arg_109_0)
+PlayFabMirrorBase.get_all_inventory_items = function (arg_109_0)
 	return arg_109_0._inventory_items
 end
 
-function PlayFabMirrorBase.get_all_fake_inventory_items(arg_110_0)
+PlayFabMirrorBase.get_all_fake_inventory_items = function (arg_110_0)
 	return arg_110_0._fake_inventory_items
 end
 
-function PlayFabMirrorBase.get_stats(arg_111_0)
+PlayFabMirrorBase.get_stats = function (arg_111_0)
 	return arg_111_0._stats
 end
 
-function PlayFabMirrorBase.set_stats(arg_112_0, arg_112_1)
+PlayFabMirrorBase.set_stats = function (arg_112_0, arg_112_1)
 	arg_112_0._stats = arg_112_1
 end
 
-function PlayFabMirrorBase.get_claimed_achievements(arg_113_0)
+PlayFabMirrorBase.get_claimed_achievements = function (arg_113_0)
 	return arg_113_0._claimed_achievements
 end
 
-function PlayFabMirrorBase.get_claimed_event_quests(arg_114_0)
+PlayFabMirrorBase.get_claimed_event_quests = function (arg_114_0)
 	return arg_114_0._claimed_event_quests
 end
 
-function PlayFabMirrorBase.add_claimed_event_quest(arg_115_0, arg_115_1)
+PlayFabMirrorBase.add_claimed_event_quest = function (arg_115_0, arg_115_1)
 	arg_115_0._claimed_event_quests[arg_115_1] = true
 end
 
-function PlayFabMirrorBase.add_claimed_multiple_event_quests(arg_116_0, arg_116_1)
+PlayFabMirrorBase.add_claimed_multiple_event_quests = function (arg_116_0, arg_116_1)
 	for iter_116_0 = 1, #arg_116_1 do
 		local var_116_0 = arg_116_1[iter_116_0]
 
@@ -2180,59 +2180,59 @@ function PlayFabMirrorBase.add_claimed_multiple_event_quests(arg_116_0, arg_116_
 	end
 end
 
-function PlayFabMirrorBase.get_achievement_rewards(arg_117_0)
+PlayFabMirrorBase.get_achievement_rewards = function (arg_117_0)
 	return arg_117_0._achievement_rewards
 end
 
-function PlayFabMirrorBase.get_weaves_progression_settings(arg_118_0)
+PlayFabMirrorBase.get_weaves_progression_settings = function (arg_118_0)
 	return arg_118_0._weaves_progression_settings
 end
 
-function PlayFabMirrorBase.get_unlocked_weapon_skins(arg_119_0)
+PlayFabMirrorBase.get_unlocked_weapon_skins = function (arg_119_0)
 	return arg_119_0._unlocked_weapon_skins
 end
 
-function PlayFabMirrorBase.get_unlocked_cosmetics(arg_120_0)
+PlayFabMirrorBase.get_unlocked_cosmetics = function (arg_120_0)
 	return arg_120_0._unlocked_cosmetics
 end
 
-function PlayFabMirrorBase.get_unlocked_weapon_poses(arg_121_0)
+PlayFabMirrorBase.get_unlocked_weapon_poses = function (arg_121_0)
 	return arg_121_0._unlocked_weapon_poses
 end
 
-function PlayFabMirrorBase.get_equipped_weapon_pose_skins(arg_122_0)
+PlayFabMirrorBase.get_equipped_weapon_pose_skins = function (arg_122_0)
 	return arg_122_0._equipped_weapon_pose_skins
 end
 
-function PlayFabMirrorBase.get_equipped_weapon_pose_skin(arg_123_0, arg_123_1)
+PlayFabMirrorBase.get_equipped_weapon_pose_skin = function (arg_123_0, arg_123_1)
 	return arg_123_0._equipped_weapon_pose_skins[arg_123_1]
 end
 
-function PlayFabMirrorBase.set_weapon_pose_skin(arg_124_0, arg_124_1, arg_124_2)
+PlayFabMirrorBase.set_weapon_pose_skin = function (arg_124_0, arg_124_1, arg_124_2)
 	arg_124_0._equipped_weapon_pose_skins[arg_124_1] = arg_124_2
 end
 
-function PlayFabMirrorBase.get_unlocked_keep_decorations(arg_125_0)
+PlayFabMirrorBase.get_unlocked_keep_decorations = function (arg_125_0)
 	return arg_125_0._unlocked_keep_decorations
 end
 
-function PlayFabMirrorBase.get_owned_dlcs(arg_126_0)
+PlayFabMirrorBase.get_owned_dlcs = function (arg_126_0)
 	return arg_126_0._owned_dlcs
 end
 
-function PlayFabMirrorBase.get_platform_dlcs(arg_127_0)
+PlayFabMirrorBase.get_platform_dlcs = function (arg_127_0)
 	return arg_127_0._platform_dlcs
 end
 
-function PlayFabMirrorBase.set_owned_dlcs(arg_128_0, arg_128_1)
+PlayFabMirrorBase.set_owned_dlcs = function (arg_128_0, arg_128_1)
 	arg_128_0._owned_dlcs = arg_128_1
 end
 
-function PlayFabMirrorBase.set_platform_dlcs(arg_129_0, arg_129_1)
+PlayFabMirrorBase.set_platform_dlcs = function (arg_129_0, arg_129_1)
 	arg_129_0._platform_dlcs = arg_129_1
 end
 
-function PlayFabMirrorBase.add_keep_decoration(arg_130_0, arg_130_1)
+PlayFabMirrorBase.add_keep_decoration = function (arg_130_0, arg_130_1)
 	arg_130_0._unlocked_keep_decorations[#arg_130_0._unlocked_keep_decorations + 1] = arg_130_1
 
 	ItemHelper.mark_keep_decoration_as_new(arg_130_1)
@@ -2240,7 +2240,7 @@ end
 
 local var_0_9 = {}
 
-function PlayFabMirrorBase._create_fake_inventory_items(arg_131_0, arg_131_1, arg_131_2)
+PlayFabMirrorBase._create_fake_inventory_items = function (arg_131_0, arg_131_1, arg_131_2)
 	table.clear(var_0_9)
 
 	local var_131_0
@@ -2362,27 +2362,27 @@ function PlayFabMirrorBase._create_fake_inventory_items(arg_131_0, arg_131_1, ar
 	return var_131_12
 end
 
-function PlayFabMirrorBase.set_achievement_claimed(arg_132_0, arg_132_1)
+PlayFabMirrorBase.set_achievement_claimed = function (arg_132_0, arg_132_1)
 	arg_132_0._claimed_achievements[arg_132_1] = true
 end
 
-function PlayFabMirrorBase.get_claimed_console_dlc_rewards(arg_133_0)
+PlayFabMirrorBase.get_claimed_console_dlc_rewards = function (arg_133_0)
 	return arg_133_0._claimed_console_dlc_rewards
 end
 
-function PlayFabMirrorBase.set_console_dlc_reward_claimed(arg_134_0, arg_134_1, arg_134_2)
+PlayFabMirrorBase.set_console_dlc_reward_claimed = function (arg_134_0, arg_134_1, arg_134_2)
 	arg_134_0._claimed_console_dlc_rewards[arg_134_1] = arg_134_2 and true or nil
 end
 
-function PlayFabMirrorBase.get_quest_data(arg_135_0)
+PlayFabMirrorBase.get_quest_data = function (arg_135_0)
 	return arg_135_0._quest_data
 end
 
-function PlayFabMirrorBase.set_quest_data(arg_136_0, arg_136_1, arg_136_2)
+PlayFabMirrorBase.set_quest_data = function (arg_136_0, arg_136_1, arg_136_2)
 	arg_136_0._quest_data[arg_136_1] = arg_136_2
 end
 
-function PlayFabMirrorBase.check_for_errors(arg_137_0)
+PlayFabMirrorBase.check_for_errors = function (arg_137_0)
 	return
 end
 
@@ -2394,7 +2394,7 @@ local var_0_10 = {
 	melee = "best_melee_pl"
 }
 
-function PlayFabMirrorBase._re_evaluate_best_power_level(arg_138_0, arg_138_1)
+PlayFabMirrorBase._re_evaluate_best_power_level = function (arg_138_0, arg_138_1)
 	local var_138_0 = arg_138_1.power_level
 
 	if not var_138_0 then
@@ -2423,7 +2423,7 @@ function PlayFabMirrorBase._re_evaluate_best_power_level(arg_138_0, arg_138_1)
 	end
 end
 
-function PlayFabMirrorBase._add_new_weapon_skin(arg_139_0, arg_139_1, arg_139_2, arg_139_3)
+PlayFabMirrorBase._add_new_weapon_skin = function (arg_139_0, arg_139_1, arg_139_2, arg_139_3)
 	local var_139_0
 	local var_139_1 = arg_139_3 or arg_139_1.ItemId
 
@@ -2440,7 +2440,7 @@ function PlayFabMirrorBase._add_new_weapon_skin(arg_139_0, arg_139_1, arg_139_2,
 	return var_139_0
 end
 
-function PlayFabMirrorBase.add_item(arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
+PlayFabMirrorBase.add_item = function (arg_140_0, arg_140_1, arg_140_2, arg_140_3, arg_140_4)
 	if not arg_140_0._inventory_items then
 		arg_140_0._inventory_items = {}
 	end
@@ -2491,7 +2491,7 @@ function PlayFabMirrorBase.add_item(arg_140_0, arg_140_1, arg_140_2, arg_140_3, 
 	end
 end
 
-function PlayFabMirrorBase.remove_item(arg_141_0, arg_141_1)
+PlayFabMirrorBase.remove_item = function (arg_141_0, arg_141_1)
 	local var_141_0 = arg_141_0._inventory_items
 
 	if ItemHelper.is_new_backend_id(arg_141_1) then
@@ -2501,7 +2501,7 @@ function PlayFabMirrorBase.remove_item(arg_141_0, arg_141_1)
 	var_141_0[arg_141_1] = nil
 end
 
-function PlayFabMirrorBase.update_item_field(arg_142_0, arg_142_1, arg_142_2, arg_142_3)
+PlayFabMirrorBase.update_item_field = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3)
 	local var_142_0 = arg_142_0._inventory_items[arg_142_1]
 
 	fassert(var_142_0[arg_142_2], "Trying to update a field on an item in playfab_mirror_base.lua that does not exist on the item")
@@ -2509,7 +2509,7 @@ function PlayFabMirrorBase.update_item_field(arg_142_0, arg_142_1, arg_142_2, ar
 	var_142_0[arg_142_2] = arg_142_3
 end
 
-function PlayFabMirrorBase.update_item(arg_143_0, arg_143_1, arg_143_2)
+PlayFabMirrorBase.update_item = function (arg_143_0, arg_143_1, arg_143_2)
 	local var_143_0 = arg_143_0._inventory_items
 
 	fassert(var_143_0[arg_143_1], "Trying to update an item that does not exist with backend ID %s", arg_143_1)
@@ -2519,7 +2519,7 @@ function PlayFabMirrorBase.update_item(arg_143_0, arg_143_1, arg_143_2)
 	arg_143_0:_update_data(arg_143_2, arg_143_1)
 end
 
-function PlayFabMirrorBase.add_unlocked_weapon_skin(arg_144_0, arg_144_1, arg_144_2)
+PlayFabMirrorBase.add_unlocked_weapon_skin = function (arg_144_0, arg_144_1, arg_144_2)
 	if arg_144_0._unlocked_weapon_skins then
 		local var_144_0 = arg_144_0._unlocked_weapon_skins[arg_144_1]
 
@@ -2539,7 +2539,7 @@ function PlayFabMirrorBase.add_unlocked_weapon_skin(arg_144_0, arg_144_1, arg_14
 	end
 end
 
-function PlayFabMirrorBase.add_unlocked_cosmetic(arg_145_0, arg_145_1, arg_145_2)
+PlayFabMirrorBase.add_unlocked_cosmetic = function (arg_145_0, arg_145_1, arg_145_2)
 	if arg_145_0._unlocked_cosmetics then
 		local var_145_0 = arg_145_0:_create_fake_inventory_items({
 			[arg_145_1] = arg_145_2 or true
@@ -2555,7 +2555,7 @@ function PlayFabMirrorBase.add_unlocked_cosmetic(arg_145_0, arg_145_1, arg_145_2
 	end
 end
 
-function PlayFabMirrorBase.add_unlocked_weapon_pose(arg_146_0, arg_146_1, arg_146_2)
+PlayFabMirrorBase.add_unlocked_weapon_pose = function (arg_146_0, arg_146_1, arg_146_2)
 	if arg_146_0._unlocked_weapon_poses then
 		local var_146_0 = arg_146_0:_create_fake_inventory_items({
 			[arg_146_1] = arg_146_2 or true
@@ -2574,43 +2574,43 @@ function PlayFabMirrorBase.add_unlocked_weapon_pose(arg_146_0, arg_146_1, arg_14
 	end
 end
 
-function PlayFabMirrorBase.set_essence(arg_147_0, arg_147_1)
+PlayFabMirrorBase.set_essence = function (arg_147_0, arg_147_1)
 	arg_147_0._essence = arg_147_1
 end
 
-function PlayFabMirrorBase.get_essence(arg_148_0)
+PlayFabMirrorBase.get_essence = function (arg_148_0)
 	return arg_148_0._essence
 end
 
-function PlayFabMirrorBase.set_total_essence(arg_149_0, arg_149_1)
+PlayFabMirrorBase.set_total_essence = function (arg_149_0, arg_149_1)
 	arg_149_0._total_essence = arg_149_1
 end
 
-function PlayFabMirrorBase.get_total_essence(arg_150_0)
+PlayFabMirrorBase.get_total_essence = function (arg_150_0)
 	return arg_150_0._total_essence
 end
 
-function PlayFabMirrorBase.set_maximum_essence(arg_151_0, arg_151_1)
+PlayFabMirrorBase.set_maximum_essence = function (arg_151_0, arg_151_1)
 	arg_151_0._maximum_essence = arg_151_1
 end
 
-function PlayFabMirrorBase.get_maximum_essence(arg_152_0)
+PlayFabMirrorBase.get_maximum_essence = function (arg_152_0)
 	return arg_152_0._maximum_essence
 end
 
-function PlayFabMirrorBase.get_deus_rolled_over_soft_currency(arg_153_0)
+PlayFabMirrorBase.get_deus_rolled_over_soft_currency = function (arg_153_0)
 	return arg_153_0._deus_rolled_over_soft_currency or 0
 end
 
-function PlayFabMirrorBase.get_deus_journey_cycle_data(arg_154_0)
+PlayFabMirrorBase.get_deus_journey_cycle_data = function (arg_154_0)
 	return arg_154_0._deus_journey_cycle_data
 end
 
-function PlayFabMirrorBase.get_deus_belakor_curse_data(arg_155_0)
+PlayFabMirrorBase.get_deus_belakor_curse_data = function (arg_155_0)
 	return arg_155_0._deus_belakor_curse_data
 end
 
-function PlayFabMirrorBase.handle_deus_result(arg_156_0, arg_156_1)
+PlayFabMirrorBase.handle_deus_result = function (arg_156_0, arg_156_1)
 	local var_156_0 = arg_156_1.FunctionResult
 	local var_156_1 = var_156_0.deus_journey_cycle_data
 	local var_156_2 = var_156_0.deus_rolled_over_soft_currency
@@ -2631,17 +2631,17 @@ function PlayFabMirrorBase.handle_deus_result(arg_156_0, arg_156_1)
 	end
 end
 
-function PlayFabMirrorBase.predict_deus_rolled_over_soft_currency(arg_157_0, arg_157_1)
+PlayFabMirrorBase.predict_deus_rolled_over_soft_currency = function (arg_157_0, arg_157_1)
 	local var_157_0 = math.ceil(arg_157_1 * DeusRollOverSettings.roll_over)
 
 	arg_157_0._deus_rolled_over_soft_currency = math.clamp(var_157_0, 0, DeusRollOverSettings.max)
 end
 
-function PlayFabMirrorBase.predict_deus_run_started(arg_158_0)
+PlayFabMirrorBase.predict_deus_run_started = function (arg_158_0)
 	arg_158_0._deus_rolled_over_soft_currency = 0
 end
 
-function PlayFabMirrorBase.predict_debug_clear_deus_meta_progression(arg_159_0, arg_159_1)
+PlayFabMirrorBase.predict_debug_clear_deus_meta_progression = function (arg_159_0, arg_159_1)
 	arg_159_0._deus_rolled_over_soft_currency = 0
 end
 
@@ -2656,7 +2656,7 @@ local function var_0_11(arg_160_0, arg_160_1)
 	return arg_160_0.commit_complete_callbacks
 end
 
-function PlayFabMirrorBase.commit(arg_161_0, arg_161_1, arg_161_2)
+PlayFabMirrorBase.commit = function (arg_161_0, arg_161_1, arg_161_2)
 	local var_161_0 = arg_161_0._queued_commit
 	local var_161_1
 
@@ -2698,13 +2698,13 @@ function PlayFabMirrorBase.commit(arg_161_0, arg_161_1, arg_161_2)
 	return var_161_1 or var_161_0.id
 end
 
-function PlayFabMirrorBase._new_id(arg_162_0)
+PlayFabMirrorBase._new_id = function (arg_162_0)
 	arg_162_0._last_id = arg_162_0._last_id + 1
 
 	return arg_162_0._last_id
 end
 
-function PlayFabMirrorBase._queue_commit(arg_163_0, arg_163_1)
+PlayFabMirrorBase._queue_commit = function (arg_163_0, arg_163_1)
 	local var_163_0 = arg_163_0._queued_commit
 	local var_163_1
 
@@ -2742,7 +2742,7 @@ end
 
 local var_0_14 = {}
 
-function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
+PlayFabMirrorBase._commit_internal = function (arg_165_0, arg_165_1, arg_165_2)
 	var_0_6("_commit_internal %q", arg_165_1)
 
 	local var_165_0 = arg_165_1 or arg_165_0:_new_id()
@@ -2856,7 +2856,7 @@ function PlayFabMirrorBase._commit_internal(arg_165_0, arg_165_1, arg_165_2)
 	return var_165_0
 end
 
-function PlayFabMirrorBase.update_current_win_track_cb(arg_166_0, arg_166_1, arg_166_2)
+PlayFabMirrorBase.update_current_win_track_cb = function (arg_166_0, arg_166_1, arg_166_2)
 	arg_166_0._num_items_to_load = arg_166_0._num_items_to_load - 1
 
 	local var_166_0 = arg_166_0._commits[arg_166_1]
@@ -2871,7 +2871,7 @@ function PlayFabMirrorBase.update_current_win_track_cb(arg_166_0, arg_166_1, arg
 	var_166_0.wait_for_win_tracks_data = false
 end
 
-function PlayFabMirrorBase.update_current_gotwf_cb(arg_167_0, arg_167_1, arg_167_2)
+PlayFabMirrorBase.update_current_gotwf_cb = function (arg_167_0, arg_167_1, arg_167_2)
 	arg_167_0._num_items_to_load = arg_167_0._num_items_to_load - 1
 
 	local var_167_0 = arg_167_0._commits[arg_167_1]
@@ -2886,7 +2886,7 @@ function PlayFabMirrorBase.update_current_gotwf_cb(arg_167_0, arg_167_1, arg_167
 	var_167_0.wait_for_gotwf_data = false
 end
 
-function PlayFabMirrorBase.update_read_only_data_request_cb(arg_168_0, arg_168_1, arg_168_2, arg_168_3)
+PlayFabMirrorBase.update_read_only_data_request_cb = function (arg_168_0, arg_168_1, arg_168_2, arg_168_3)
 	arg_168_0._num_items_to_load = arg_168_0._num_items_to_load - 1
 
 	local var_168_0 = arg_168_0._commits[arg_168_1]
@@ -2952,7 +2952,7 @@ function PlayFabMirrorBase.update_read_only_data_request_cb(arg_168_0, arg_168_1
 	end
 end
 
-function PlayFabMirrorBase.save_statistics_cb(arg_169_0, arg_169_1, arg_169_2, arg_169_3)
+PlayFabMirrorBase.save_statistics_cb = function (arg_169_0, arg_169_1, arg_169_2, arg_169_3)
 	arg_169_0._num_items_to_load = arg_169_0._num_items_to_load - 1
 
 	local var_169_0 = arg_169_0._commits[arg_169_1]
@@ -2972,7 +2972,7 @@ function PlayFabMirrorBase.save_statistics_cb(arg_169_0, arg_169_1, arg_169_2, a
 	var_169_0.wait_for_stats = false
 end
 
-function PlayFabMirrorBase.update_weave_user_data_cb(arg_170_0, arg_170_1, arg_170_2)
+PlayFabMirrorBase.update_weave_user_data_cb = function (arg_170_0, arg_170_1, arg_170_2)
 	arg_170_0._num_items_to_load = arg_170_0._num_items_to_load - 1
 
 	local var_170_0 = arg_170_0._commits[arg_170_1]
@@ -2994,7 +2994,7 @@ function PlayFabMirrorBase.update_weave_user_data_cb(arg_170_0, arg_170_1, arg_1
 	end
 end
 
-function PlayFabMirrorBase.update_equipped_weapon_pose_skins_cb(arg_171_0, arg_171_1, arg_171_2)
+PlayFabMirrorBase.update_equipped_weapon_pose_skins_cb = function (arg_171_0, arg_171_1, arg_171_2)
 	arg_171_0._num_items_to_load = arg_171_0._num_items_to_load - 1
 	arg_171_0._commits[arg_171_1].wait_for_weapon_pose_skin_data = false
 
@@ -3009,19 +3009,19 @@ function PlayFabMirrorBase.update_equipped_weapon_pose_skins_cb(arg_171_0, arg_1
 	arg_171_0:_parse_equipped_weapon_pose_skins()
 end
 
-function PlayFabMirrorBase.save_keep_decorations_cb(arg_172_0, arg_172_1, arg_172_2, arg_172_3)
+PlayFabMirrorBase.save_keep_decorations_cb = function (arg_172_0, arg_172_1, arg_172_2, arg_172_3)
 	arg_172_0._commits[arg_172_1].wait_for_keep_decorations = false
 end
 
-function PlayFabMirrorBase.wait_for_shutdown(arg_173_0, arg_173_1)
+PlayFabMirrorBase.wait_for_shutdown = function (arg_173_0, arg_173_1)
 	return
 end
 
-function PlayFabMirrorBase.destroy(arg_174_0)
+PlayFabMirrorBase.destroy = function (arg_174_0)
 	return
 end
 
-function PlayFabMirrorBase._get_eac_response(arg_175_0, arg_175_1)
+PlayFabMirrorBase._get_eac_response = function (arg_175_0, arg_175_1)
 	local var_175_0 = 0
 	local var_175_1 = ""
 
@@ -3049,7 +3049,7 @@ function PlayFabMirrorBase._get_eac_response(arg_175_0, arg_175_1)
 	return var_175_2, var_175_3
 end
 
-function PlayFabMirrorBase._verify_dlc_careers(arg_176_0)
+PlayFabMirrorBase._verify_dlc_careers = function (arg_176_0)
 	local var_176_0 = {
 		FunctionName = "verifyDlcCareers",
 		FunctionParameter = {}
@@ -3061,7 +3061,7 @@ function PlayFabMirrorBase._verify_dlc_careers(arg_176_0)
 	arg_176_0._num_items_to_load = arg_176_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.verify_dlc_careers_cb(arg_177_0, arg_177_1)
+PlayFabMirrorBase.verify_dlc_careers_cb = function (arg_177_0, arg_177_1)
 	local var_177_0 = arg_177_1.FunctionResult
 
 	if var_177_0.careers_added then
@@ -3075,7 +3075,7 @@ function PlayFabMirrorBase.verify_dlc_careers_cb(arg_177_0, arg_177_1)
 	arg_177_0:_setup_careers()
 end
 
-function PlayFabMirrorBase._setup_careers(arg_178_0)
+PlayFabMirrorBase._setup_careers = function (arg_178_0)
 	local var_178_0 = arg_178_0:get_read_only_data(arg_178_0._characters_data_key)
 	local var_178_1 = cjson.decode(var_178_0)
 
@@ -3154,7 +3154,7 @@ function PlayFabMirrorBase._setup_careers(arg_178_0)
 	end
 end
 
-function PlayFabMirrorBase._verify_default_gear(arg_179_0)
+PlayFabMirrorBase._verify_default_gear = function (arg_179_0)
 	local var_179_0 = {
 		FunctionName = "verifyDefaultLoadouts",
 		FunctionParameter = {
@@ -3168,7 +3168,7 @@ function PlayFabMirrorBase._verify_default_gear(arg_179_0)
 	arg_179_0._num_items_to_load = arg_179_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.verify_default_loadouts_request_cb(arg_180_0, arg_180_1)
+PlayFabMirrorBase.verify_default_loadouts_request_cb = function (arg_180_0, arg_180_1)
 	arg_180_0._num_items_to_load = arg_180_0._num_items_to_load - 1
 
 	local var_180_0 = arg_180_1.FunctionResult
@@ -3194,7 +3194,7 @@ function PlayFabMirrorBase.verify_default_loadouts_request_cb(arg_180_0, arg_180
 	end
 end
 
-function PlayFabMirrorBase._fix_career_data(arg_181_0, arg_181_1, arg_181_2, arg_181_3)
+PlayFabMirrorBase._fix_career_data = function (arg_181_0, arg_181_1, arg_181_2, arg_181_3)
 	local var_181_0 = {
 		FunctionName = "fixCareerData",
 		FunctionParameter = {
@@ -3209,7 +3209,7 @@ function PlayFabMirrorBase._fix_career_data(arg_181_0, arg_181_1, arg_181_2, arg
 	arg_181_0._num_items_to_load = arg_181_0._num_items_to_load + 1
 end
 
-function PlayFabMirrorBase.fix_career_data_request_cb(arg_182_0, arg_182_1)
+PlayFabMirrorBase.fix_career_data_request_cb = function (arg_182_0, arg_182_1)
 	arg_182_0.broken_slots_data = nil
 	arg_182_0._num_items_to_load = arg_182_0._num_items_to_load - 1
 
@@ -3263,7 +3263,7 @@ function PlayFabMirrorBase.fix_career_data_request_cb(arg_182_0, arg_182_1)
 	end
 end
 
-function PlayFabMirrorBase.unequip_disabled_items(arg_183_0)
+PlayFabMirrorBase.unequip_disabled_items = function (arg_183_0)
 	local var_183_0 = Managers.mechanism:mechanism_setting_for_title("override_item_availability")
 
 	if not var_183_0 or table.is_empty(var_183_0) then
@@ -3304,7 +3304,7 @@ function PlayFabMirrorBase.unequip_disabled_items(arg_183_0)
 	end
 end
 
-function PlayFabMirrorBase._find_valid_item_for_slot(arg_184_0, arg_184_1, arg_184_2, arg_184_3, arg_184_4, arg_184_5)
+PlayFabMirrorBase._find_valid_item_for_slot = function (arg_184_0, arg_184_1, arg_184_2, arg_184_3, arg_184_4, arg_184_5)
 	local var_184_0 = ItemMasterList
 	local var_184_1 = table.contains
 	local var_184_2 = {}
@@ -3322,7 +3322,7 @@ function PlayFabMirrorBase._find_valid_item_for_slot(arg_184_0, arg_184_1, arg_1
 	end
 end
 
-function PlayFabMirrorBase._check_career_data(arg_185_0, arg_185_1, arg_185_2)
+PlayFabMirrorBase._check_career_data = function (arg_185_0, arg_185_1, arg_185_2)
 	local var_185_0 = arg_185_0._characters_data
 	local var_185_1 = arg_185_0._characters_data_mirror
 	local var_185_2 = false
@@ -3534,7 +3534,7 @@ function PlayFabMirrorBase._check_career_data(arg_185_0, arg_185_1, arg_185_2)
 	return var_185_2, var_185_0, var_185_3
 end
 
-function PlayFabMirrorBase.set_career_read_only_data(arg_187_0, arg_187_1, arg_187_2, arg_187_3, arg_187_4, arg_187_5, arg_187_6)
+PlayFabMirrorBase.set_career_read_only_data = function (arg_187_0, arg_187_1, arg_187_2, arg_187_3, arg_187_4, arg_187_5, arg_187_6)
 	local var_187_0 = arg_187_0._characters_data
 
 	arg_187_6 = arg_187_4 and (arg_187_6 or arg_187_0._career_loadouts[arg_187_4])
@@ -3556,11 +3556,11 @@ function PlayFabMirrorBase.set_career_read_only_data(arg_187_0, arg_187_1, arg_1
 	arg_187_0:set_read_only_data(arg_187_0._characters_data_key, var_187_3, arg_187_5)
 end
 
-function PlayFabMirrorBase.get_characters_data(arg_188_0)
+PlayFabMirrorBase.get_characters_data = function (arg_188_0)
 	return arg_188_0._characters_data
 end
 
-function PlayFabMirrorBase.update_owned_dlcs(arg_189_0, arg_189_1)
+PlayFabMirrorBase.update_owned_dlcs = function (arg_189_0, arg_189_1)
 	if IS_CONSOLE then
 		return
 	end
@@ -3582,7 +3582,7 @@ function PlayFabMirrorBase.update_owned_dlcs(arg_189_0, arg_189_1)
 	end
 end
 
-function PlayFabMirrorBase.handle_new_dlcs(arg_190_0, arg_190_1)
+PlayFabMirrorBase.handle_new_dlcs = function (arg_190_0, arg_190_1)
 	SaveData.new_dlcs_unlocks = SaveData.new_dlcs_unlocks or {}
 
 	if arg_190_1 then
@@ -3598,7 +3598,7 @@ function PlayFabMirrorBase.handle_new_dlcs(arg_190_0, arg_190_1)
 	end
 end
 
-function PlayFabMirrorBase._snippet_clear_inventory(arg_191_0)
+PlayFabMirrorBase._snippet_clear_inventory = function (arg_191_0)
 	local function var_191_0(arg_192_0)
 		local var_192_0 = {
 			slot_necklace = true,
@@ -3632,31 +3632,31 @@ function PlayFabMirrorBase._snippet_clear_inventory(arg_191_0)
 	}
 end
 
-function PlayFabMirrorBase.snippet_clear_inventory(arg_193_0)
+PlayFabMirrorBase.snippet_clear_inventory = function (arg_193_0)
 	arg_193_0:_snippet_clear_inventory()
 end
 
-function PlayFabMirrorBase.set_twitch_app_access_token(arg_194_0, arg_194_1)
+PlayFabMirrorBase.set_twitch_app_access_token = function (arg_194_0, arg_194_1)
 	arg_194_0._twitch_app_access_token = arg_194_1
 end
 
-function PlayFabMirrorBase.get_power_level_settings(arg_195_0)
+PlayFabMirrorBase.get_power_level_settings = function (arg_195_0)
 	return arg_195_0._power_level_data
 end
 
-function PlayFabMirrorBase.debug_override_power_level_settings(arg_196_0, arg_196_1)
+PlayFabMirrorBase.debug_override_power_level_settings = function (arg_196_0, arg_196_1)
 	arg_196_0._power_level_data = arg_196_1
 end
 
-function PlayFabMirrorBase.get_rarity_tables(arg_197_0)
+PlayFabMirrorBase.get_rarity_tables = function (arg_197_0)
 	return arg_197_0._rarity_tables
 end
 
-function PlayFabMirrorBase.get_formatted_rarity_tables(arg_198_0)
+PlayFabMirrorBase.get_formatted_rarity_tables = function (arg_198_0)
 	return arg_198_0._formatted_rarity_tables
 end
 
-function PlayFabMirrorBase._generate_formatted_rarity_tables(arg_199_0, arg_199_1)
+PlayFabMirrorBase._generate_formatted_rarity_tables = function (arg_199_0, arg_199_1)
 	arg_199_0._formatted_rarity_tables = {}
 
 	for iter_199_0, iter_199_1 in pairs(arg_199_1) do
@@ -3689,7 +3689,7 @@ function PlayFabMirrorBase._generate_formatted_rarity_tables(arg_199_0, arg_199_
 			}
 		end
 
-		table.sort(var_199_0, function(arg_200_0, arg_200_1)
+		table.sort(var_199_0, function (arg_200_0, arg_200_1)
 			return arg_200_0.chance % 1 < arg_200_1.chance % 1
 		end)
 

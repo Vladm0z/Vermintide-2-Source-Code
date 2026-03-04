@@ -5,7 +5,7 @@ local var_0_1 = var_0_0.widgets
 
 StartGameWindowDeusChaosGodInformation = class(StartGameWindowDeusChaosGodInformation)
 
-function StartGameWindowDeusChaosGodInformation.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowDeusChaosGodInformation.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1.parent
 
 	local var_1_0 = arg_1_1.ingame_ui_context
@@ -25,11 +25,11 @@ function StartGameWindowDeusChaosGodInformation.on_enter(arg_1_0, arg_1_1, arg_1
 	arg_1_0:_start_animation("on_enter", arg_1_0._widgets_by_name.god_info_widget)
 end
 
-function StartGameWindowDeusChaosGodInformation.on_exit(arg_2_0, arg_2_1)
+StartGameWindowDeusChaosGodInformation.on_exit = function (arg_2_0, arg_2_1)
 	table.clear(arg_2_0)
 end
 
-function StartGameWindowDeusChaosGodInformation._create_ui_elements(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+StartGameWindowDeusChaosGodInformation._create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._scenegraph_definition = arg_3_1.scenegraph_definition
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(arg_3_1.scenegraph_definition)
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, arg_3_1.animation_definitions)
@@ -52,13 +52,13 @@ function StartGameWindowDeusChaosGodInformation._create_ui_elements(arg_3_0, arg
 	arg_3_0:_setup_belakor_information()
 end
 
-function StartGameWindowDeusChaosGodInformation._start_animation(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+StartGameWindowDeusChaosGodInformation._start_animation = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	arg_4_3 = arg_4_3 or {}
 	arg_4_3.render_settings = arg_4_0._render_settings
 	arg_4_0._animations[arg_4_1] = arg_4_0._ui_animator:start_animation(arg_4_1, arg_4_2, arg_4_0._scenegraph_definition, arg_4_3)
 end
 
-function StartGameWindowDeusChaosGodInformation.update(arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowDeusChaosGodInformation.update = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:_update_animations(arg_5_1, arg_5_2)
 	arg_5_0:_update_time_left()
 	arg_5_0:_update_journey()
@@ -68,7 +68,7 @@ function StartGameWindowDeusChaosGodInformation.update(arg_5_0, arg_5_1, arg_5_2
 	end
 end
 
-function StartGameWindowDeusChaosGodInformation._update_journey(arg_6_0)
+StartGameWindowDeusChaosGodInformation._update_journey = function (arg_6_0)
 	local var_6_0 = arg_6_0._parent:get_selected_level_id() or arg_6_0._journey_name
 
 	if var_6_0 ~= arg_6_0._journey_name then
@@ -79,11 +79,11 @@ function StartGameWindowDeusChaosGodInformation._update_journey(arg_6_0)
 	end
 end
 
-function StartGameWindowDeusChaosGodInformation.post_update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDeusChaosGodInformation.post_update = function (arg_7_0, arg_7_1, arg_7_2)
 	return
 end
 
-function StartGameWindowDeusChaosGodInformation._update_animations(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowDeusChaosGodInformation._update_animations = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._ui_animator
 
 	var_8_0:update(arg_8_1)
@@ -97,7 +97,7 @@ function StartGameWindowDeusChaosGodInformation._update_animations(arg_8_0, arg_
 	end
 end
 
-function StartGameWindowDeusChaosGodInformation._draw(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowDeusChaosGodInformation._draw = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._ui_top_renderer
 	local var_9_1 = arg_9_0._parent:window_input_service()
 
@@ -112,7 +112,7 @@ function StartGameWindowDeusChaosGodInformation._draw(arg_9_0, arg_9_1, arg_9_2)
 	UIRenderer.end_pass(var_9_0)
 end
 
-function StartGameWindowDeusChaosGodInformation._refresh_journey_data(arg_10_0)
+StartGameWindowDeusChaosGodInformation._refresh_journey_data = function (arg_10_0)
 	local var_10_0 = Managers.backend:get_interface("deus"):get_journey_cycle()
 
 	arg_10_0._journey_cycle = var_10_0
@@ -121,7 +121,7 @@ function StartGameWindowDeusChaosGodInformation._refresh_journey_data(arg_10_0)
 	arg_10_0:_update_theme()
 end
 
-function StartGameWindowDeusChaosGodInformation._update_time_left(arg_11_0)
+StartGameWindowDeusChaosGodInformation._update_time_left = function (arg_11_0)
 	local var_11_0 = Managers.time:time("main")
 	local var_11_1 = arg_11_0._refresh_time - var_11_0
 	local var_11_2 = arg_11_0._widgets_by_name.god_info_widget.content
@@ -148,7 +148,7 @@ function StartGameWindowDeusChaosGodInformation._update_time_left(arg_11_0)
 	arg_11_0:_update_belakor_time_left()
 end
 
-function StartGameWindowDeusChaosGodInformation._update_theme(arg_12_0, arg_12_1)
+StartGameWindowDeusChaosGodInformation._update_theme = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._journey_name
 	local var_12_1 = arg_12_0._journey_cycle.journey_data[var_12_0]
 	local var_12_2 = var_12_1 and var_12_1.dominant_god
@@ -173,7 +173,7 @@ function StartGameWindowDeusChaosGodInformation._update_theme(arg_12_0, arg_12_1
 	})
 end
 
-function StartGameWindowDeusChaosGodInformation._setup_belakor_information(arg_13_0)
+StartGameWindowDeusChaosGodInformation._setup_belakor_information = function (arg_13_0)
 	arg_13_0._belakor_refresh_time = 0
 	arg_13_0._is_refreshing_belakor = false
 	arg_13_0._widgets_by_name.belakor_info_widget.content.visible = false
@@ -181,7 +181,7 @@ function StartGameWindowDeusChaosGodInformation._setup_belakor_information(arg_1
 	arg_13_0:_refresh_belakor_curse_data()
 end
 
-function StartGameWindowDeusChaosGodInformation._refresh_belakor_curse_data(arg_14_0)
+StartGameWindowDeusChaosGodInformation._refresh_belakor_curse_data = function (arg_14_0)
 	local var_14_0 = Managers.backend:get_interface("deus"):get_belakor_cycle()
 
 	if not var_14_0 then
@@ -194,7 +194,7 @@ function StartGameWindowDeusChaosGodInformation._refresh_belakor_curse_data(arg_
 	Managers.state.event:trigger("_update_additional_curse_frame", arg_14_0._belakor_data.journey_name)
 end
 
-function StartGameWindowDeusChaosGodInformation._update_belakor_time_left(arg_15_0)
+StartGameWindowDeusChaosGodInformation._update_belakor_time_left = function (arg_15_0)
 	local var_15_0 = Managers.time:time("main")
 	local var_15_1 = Managers.backend:get_interface("deus")
 	local var_15_2 = var_15_1:deus_journey_with_belakor(arg_15_0._journey_name)
@@ -233,7 +233,7 @@ function StartGameWindowDeusChaosGodInformation._update_belakor_time_left(arg_15
 	end
 end
 
-function StartGameWindowDeusChaosGodInformation._update_belakor_status(arg_16_0)
+StartGameWindowDeusChaosGodInformation._update_belakor_status = function (arg_16_0)
 	local var_16_0 = Managers.backend:get_interface("deus"):deus_journey_with_belakor(arg_16_0._journey_name)
 	local var_16_1 = arg_16_0._widgets_by_name.belakor_info_widget
 

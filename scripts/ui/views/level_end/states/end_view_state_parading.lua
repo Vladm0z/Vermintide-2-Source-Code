@@ -11,7 +11,7 @@ EndViewStateParading.CAN_SPEED_UP = true
 local var_0_1 = 6
 local var_0_2 = true
 
-function EndViewStateParading.on_enter(arg_1_0, arg_1_1)
+EndViewStateParading.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0._parent = arg_1_1.parent
 
 	local var_1_0 = arg_1_1.context
@@ -41,7 +41,7 @@ function EndViewStateParading.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._parent:play_sound("Play_parading_screen_amb")
 end
 
-function EndViewStateParading._create_ui_elements(arg_2_0)
+EndViewStateParading._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definitions)
 
 	local var_2_0 = {}
@@ -62,7 +62,7 @@ function EndViewStateParading._create_ui_elements(arg_2_0)
 	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_0.animation_definitions)
 end
 
-function EndViewStateParading._start_animation(arg_3_0, arg_3_1)
+EndViewStateParading._start_animation = function (arg_3_0, arg_3_1)
 	local var_3_0 = {
 		render_settings = arg_3_0._render_settings,
 		ui_scenegraph = arg_3_0._ui_scenegraph
@@ -74,7 +74,7 @@ function EndViewStateParading._start_animation(arg_3_0, arg_3_1)
 	}
 end
 
-function EndViewStateParading.on_exit(arg_4_0)
+EndViewStateParading.on_exit = function (arg_4_0)
 	arg_4_0._parent:_pop_mouse_cursor()
 	arg_4_0._parent:stop_playing_story(arg_4_0._story_id)
 end
@@ -83,14 +83,14 @@ local function var_0_3(arg_5_0)
 	return -(math.cos(math.pi * arg_5_0) - 1) / 2
 end
 
-function EndViewStateParading.update(arg_6_0, arg_6_1, arg_6_2)
+EndViewStateParading.update = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0:_handle_input(arg_6_1, arg_6_2)
 	arg_6_0:_update_animations(arg_6_1, arg_6_2)
 	arg_6_0:_update_camera(arg_6_1, arg_6_2)
 	arg_6_0:_draw(arg_6_1, arg_6_2)
 end
 
-function EndViewStateParading._handle_input(arg_7_0, arg_7_1, arg_7_2)
+EndViewStateParading._handle_input = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._widgets_by_name.continue_button
 
 	if UIUtils.is_button_hover_enter(var_7_0) then
@@ -104,7 +104,7 @@ function EndViewStateParading._handle_input(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function EndViewStateParading._update_animations(arg_8_0, arg_8_1, arg_8_2)
+EndViewStateParading._update_animations = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._ui_animator
 
 	var_8_0:update(arg_8_1, arg_8_2)
@@ -122,7 +122,7 @@ function EndViewStateParading._update_animations(arg_8_0, arg_8_1, arg_8_2)
 	UIWidgetUtils.animate_default_button(arg_8_0._widgets_by_name.continue_button, arg_8_1)
 end
 
-function EndViewStateParading._update_camera(arg_9_0, arg_9_1, arg_9_2)
+EndViewStateParading._update_camera = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_0._camera_done or not arg_9_0._parent:loading_complete(arg_9_1, arg_9_2) then
 		return
 	end
@@ -134,7 +134,7 @@ function EndViewStateParading._update_camera(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function EndViewStateParading._update_story_camera(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateParading._update_story_camera = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._story_id then
 		local var_10_0 = false
 		local var_10_1 = 1
@@ -149,7 +149,7 @@ function EndViewStateParading._update_story_camera(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function EndViewStateParading._update_math_camera(arg_11_0, arg_11_1, arg_11_2)
+EndViewStateParading._update_math_camera = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._timer = arg_11_0._timer or Managers.time:time("main") + var_0_1
 	arg_11_0._time = arg_11_0._time or Managers.time:time("main")
 
@@ -185,7 +185,7 @@ function EndViewStateParading._update_math_camera(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function EndViewStateParading._draw(arg_12_0, arg_12_1, arg_12_2)
+EndViewStateParading._draw = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_renderer
 	local var_12_1 = arg_12_0._ui_scenegraph
 	local var_12_2 = arg_12_0._render_settings
@@ -205,14 +205,14 @@ function EndViewStateParading._draw(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function EndViewStateParading.done(arg_13_0)
+EndViewStateParading.done = function (arg_13_0)
 	return arg_13_0._done
 end
 
-function EndViewStateParading.exit(arg_14_0)
+EndViewStateParading.exit = function (arg_14_0)
 	return
 end
 
-function EndViewStateParading.exit_done(arg_15_0)
+EndViewStateParading.exit_done = function (arg_15_0)
 	return true
 end

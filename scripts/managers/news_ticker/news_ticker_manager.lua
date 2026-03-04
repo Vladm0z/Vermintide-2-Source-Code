@@ -4,7 +4,7 @@ require("scripts/managers/news_ticker/news_ticker_token")
 
 NewsTickerManager = class(NewsTickerManager)
 
-function NewsTickerManager.init(arg_1_0)
+NewsTickerManager.init = function (arg_1_0)
 	arg_1_0._server_name = "cdn.fatsharkgames.se"
 
 	if IS_WINDOWS then
@@ -33,11 +33,11 @@ local function var_0_0(arg_2_0)
 	return var_2_0
 end
 
-function NewsTickerManager.update(arg_4_0, arg_4_1)
+NewsTickerManager.update = function (arg_4_0, arg_4_1)
 	return
 end
 
-function NewsTickerManager.destroy(arg_5_0)
+NewsTickerManager.destroy = function (arg_5_0)
 	return
 end
 
@@ -54,7 +54,7 @@ local function var_0_1(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	arg_6_4(var_6_0)
 end
 
-function NewsTickerManager._load(arg_7_0, arg_7_1, arg_7_2)
+NewsTickerManager._load = function (arg_7_0, arg_7_1, arg_7_2)
 	if rawget(_G, "Curl") then
 		Managers.curl:get(arg_7_1, nil, var_0_1, arg_7_2)
 	elseif rawget(_G, "Http") then
@@ -92,14 +92,14 @@ function NewsTickerManager._load(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function NewsTickerManager.refresh_loading_screen_message(arg_8_0)
+NewsTickerManager.refresh_loading_screen_message = function (arg_8_0)
 	arg_8_0._loading_screen_text = nil
 	arg_8_0._refreshing_loading_screen_message = true
 
 	arg_8_0:_load(Development.parameter("news_ticker_url_xb1") or arg_8_0._loading_screen_url, callback(arg_8_0, "cb_loading_screen_loaded"))
 end
 
-function NewsTickerManager.cb_loading_screen_loaded(arg_9_0, arg_9_1)
+NewsTickerManager.cb_loading_screen_loaded = function (arg_9_0, arg_9_1)
 	if arg_9_0._refreshing_loading_screen_message and arg_9_1.done then
 		local var_9_0 = arg_9_1.data
 
@@ -113,22 +113,22 @@ function NewsTickerManager.cb_loading_screen_loaded(arg_9_0, arg_9_1)
 	end
 end
 
-function NewsTickerManager.loading_screen_text(arg_10_0)
+NewsTickerManager.loading_screen_text = function (arg_10_0)
 	return arg_10_0._loading_screen_text
 end
 
-function NewsTickerManager.refresh_ingame_message(arg_11_0)
+NewsTickerManager.refresh_ingame_message = function (arg_11_0)
 	arg_11_0._ingame_text = nil
 	arg_11_0._refreshing_ingame_message = true
 
 	arg_11_0:_load(Development.parameter("news_ticker_ingame_url_xb1") or arg_11_0._ingame_url, callback(arg_11_0, "cb_ingame_loaded"))
 end
 
-function NewsTickerManager.refreshing_ingame_message(arg_12_0)
+NewsTickerManager.refreshing_ingame_message = function (arg_12_0)
 	return arg_12_0._refreshing_ingame_message
 end
 
-function NewsTickerManager.cb_ingame_loaded(arg_13_0, arg_13_1)
+NewsTickerManager.cb_ingame_loaded = function (arg_13_0, arg_13_1)
 	if arg_13_0._refreshing_ingame_message and arg_13_1.done then
 		local var_13_0 = arg_13_1.data
 
@@ -142,6 +142,6 @@ function NewsTickerManager.cb_ingame_loaded(arg_13_0, arg_13_1)
 	end
 end
 
-function NewsTickerManager.ingame_text(arg_14_0)
+NewsTickerManager.ingame_text = function (arg_14_0)
 	return arg_14_0._ingame_text
 end

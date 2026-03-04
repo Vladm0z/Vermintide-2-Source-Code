@@ -2,19 +2,19 @@
 
 AdventureProfileRules = class(AdventureProfileRules)
 
-function AdventureProfileRules.init(arg_1_0, arg_1_1, arg_1_2)
+AdventureProfileRules.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._profile_synchronizer = arg_1_1
 	arg_1_0._network_server = arg_1_2
 end
 
-function AdventureProfileRules._profile_career_exists(arg_2_0, arg_2_1, arg_2_2)
+AdventureProfileRules._profile_career_exists = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = SPProfiles[arg_2_1]
 	local var_2_1 = var_2_0 and var_2_0.careers
 
 	return (var_2_1 and var_2_1[arg_2_2]) ~= nil
 end
 
-function AdventureProfileRules._profile_career_unlocked(arg_3_0, arg_3_1, arg_3_2)
+AdventureProfileRules._profile_career_unlocked = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = SPProfiles[arg_3_1]
 	local var_3_1 = var_3_0 and var_3_0.careers
 	local var_3_2 = var_3_1 and var_3_1[arg_3_2]
@@ -22,7 +22,7 @@ function AdventureProfileRules._profile_career_unlocked(arg_3_0, arg_3_1, arg_3_
 	return var_3_2 and var_3_2:is_unlocked_function(var_3_0.display_name, ExperienceSettings.max_level)
 end
 
-function AdventureProfileRules.handle_profile_delegation_for_joining_player(arg_4_0, arg_4_1, arg_4_2)
+AdventureProfileRules.handle_profile_delegation_for_joining_player = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._profile_synchronizer
 	local var_4_1
 	local var_4_2

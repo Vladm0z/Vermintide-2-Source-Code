@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/morris/greed_pinata_settings.lua
 
 local var_0_0 = {
-	spawn_pickup_at_unit = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	spawn_pickup_at_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		return Managers.state.entity:system("pickup_system"):buff_spawn_pickup(arg_1_0, arg_1_1, true, "spawn_pickup")
 	end,
-	spawn_ignited_barrel_at_unit = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	spawn_ignited_barrel_at_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		local var_2_0 = Quaternion.identity()
 		local var_2_1 = AiAnimUtils.position_network_scale(arg_2_1, true)
 		local var_2_2 = AiAnimUtils.rotation_network_scale(var_2_0, true)

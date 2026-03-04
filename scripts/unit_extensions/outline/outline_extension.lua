@@ -4,7 +4,7 @@ require("scripts/settings/outline_settings")
 
 OutlineExtension = class(OutlineExtension)
 
-function OutlineExtension.init(arg_1_0, arg_1_1, arg_1_2)
+OutlineExtension.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._unique_id = 0
 	arg_1_0._default_settings = nil
 	arg_1_0._unit = arg_1_2
@@ -19,7 +19,7 @@ function OutlineExtension.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._outline_system = arg_1_1
 end
 
-function OutlineExtension.add_outline(arg_2_0, arg_2_1)
+OutlineExtension.add_outline = function (arg_2_0, arg_2_1)
 	local var_2_0 = arg_2_0._unique_id
 	local var_2_1 = table.clone(arg_2_1)
 
@@ -62,7 +62,7 @@ function OutlineExtension.add_outline(arg_2_0, arg_2_1)
 	return var_2_0
 end
 
-function OutlineExtension.remove_outline(arg_3_0, arg_3_1)
+OutlineExtension.remove_outline = function (arg_3_0, arg_3_1)
 	if not arg_3_1 or arg_3_1 < 0 then
 		return
 	end
@@ -90,7 +90,7 @@ function OutlineExtension.remove_outline(arg_3_0, arg_3_1)
 	end
 end
 
-function OutlineExtension.update_outline(arg_4_0, arg_4_1, arg_4_2)
+OutlineExtension.update_outline = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_2 or arg_4_2 < 0 then
 		return
 	end
@@ -116,13 +116,13 @@ function OutlineExtension.update_outline(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function OutlineExtension.reapply_outline(arg_5_0)
+OutlineExtension.reapply_outline = function (arg_5_0)
 	arg_5_0.reapply = true
 
 	arg_5_0._outline_system:mark_outline_dirty(arg_5_0._unit)
 end
 
-function OutlineExtension._refresh_current_outline(arg_6_0, arg_6_1)
+OutlineExtension._refresh_current_outline = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._default_settings
 	local var_6_1 = arg_6_0.outline_settings[1][1]
 	local var_6_2 = not var_6_1.outline_color or arg_6_0.outline_color ~= var_6_1.outline_color
@@ -139,7 +139,7 @@ function OutlineExtension._refresh_current_outline(arg_6_0, arg_6_1)
 	end
 end
 
-function OutlineExtension.on_freeze(arg_7_0)
+OutlineExtension.on_freeze = function (arg_7_0)
 	arg_7_0.method = "never"
 
 	table.clear(arg_7_0.outline_settings)
@@ -149,11 +149,11 @@ function OutlineExtension.on_freeze(arg_7_0)
 	}
 end
 
-function OutlineExtension.on_unfreeze(arg_8_0)
+OutlineExtension.on_unfreeze = function (arg_8_0)
 	arg_8_0:_refresh_current_outline()
 end
 
-function OutlineExtension.swap_delete_outline(arg_9_0, arg_9_1, arg_9_2)
+OutlineExtension.swap_delete_outline = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0.outline_settings
 	local var_9_1
 	local var_9_2

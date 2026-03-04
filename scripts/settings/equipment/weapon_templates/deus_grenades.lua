@@ -27,7 +27,7 @@ local var_0_0 = {
 				block_pickup = true,
 				uninterruptible = true,
 				anim_event = "grenade_charge",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				total_time = math.huge,
@@ -81,7 +81,7 @@ local var_0_0 = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action" and arg_2_1 ~= "action_complete"
 				end,
 				throw_offset = Vector3Box(0, 0, 0.9),
@@ -137,10 +137,10 @@ local var_0_0 = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action" and arg_3_1 ~= "action_complete"
 				end,
-				condition_func = function(arg_4_0)
+				condition_func = function (arg_4_0)
 					return true
 				end,
 				throw_offset = Vector3Box(0, 0, 0.9),
@@ -216,10 +216,10 @@ var_0_1.actions.action_one.throw = {
 	throw_offset_length_in_target_direction = 0.1,
 	anim_event = "attack_throw",
 	total_time = 0.5,
-	anim_end_event_condition_func = function(arg_5_0, arg_5_1)
+	anim_end_event_condition_func = function (arg_5_0, arg_5_1)
 		return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "action_complete"
 	end,
-	enter_function = function(arg_6_0, arg_6_1)
+	enter_function = function (arg_6_0, arg_6_1)
 		local var_6_0 = ScriptUnit.extension_input(arg_6_0, "dialogue_system")
 		local var_6_1 = FrameTable.alloc_table()
 

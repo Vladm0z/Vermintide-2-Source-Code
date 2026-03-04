@@ -3,7 +3,7 @@
 MatchmakingStateWaitJoinPlayerHosted = class(MatchmakingStateWaitJoinPlayerHosted)
 MatchmakingStateWaitJoinPlayerHosted.NAME = "MatchmakingStateWaitJoinPlayerHosted"
 
-function MatchmakingStateWaitJoinPlayerHosted.init(arg_1_0, arg_1_1)
+MatchmakingStateWaitJoinPlayerHosted.init = function (arg_1_0, arg_1_1)
 	arg_1_0._lobby = arg_1_1.lobby
 	arg_1_0._network_options = arg_1_1.network_options
 	arg_1_0._matchmaking_manager = arg_1_1.matchmaking_manager
@@ -11,11 +11,11 @@ function MatchmakingStateWaitJoinPlayerHosted.init(arg_1_0, arg_1_1)
 	arg_1_0._is_server = arg_1_1.is_server
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.destroy(arg_2_0)
+MatchmakingStateWaitJoinPlayerHosted.destroy = function (arg_2_0)
 	return
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.on_enter(arg_3_0, arg_3_1)
+MatchmakingStateWaitJoinPlayerHosted.on_enter = function (arg_3_0, arg_3_1)
 	Managers.mechanism:mechanism_try_call("on_enter_custom_game_lobby")
 
 	arg_3_0._current_lobby = Managers.state.network:lobby()
@@ -38,19 +38,19 @@ function MatchmakingStateWaitJoinPlayerHosted.on_enter(arg_3_0, arg_3_1)
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.on_exit(arg_4_0)
+MatchmakingStateWaitJoinPlayerHosted.on_exit = function (arg_4_0)
 	if not arg_4_0._next_transition_state then
 		arg_4_0:terminate()
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.terminate(arg_5_0)
+MatchmakingStateWaitJoinPlayerHosted.terminate = function (arg_5_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.update(arg_6_0, arg_6_1, arg_6_2)
+MatchmakingStateWaitJoinPlayerHosted.update = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
 	if not var_6_0 then
@@ -72,7 +72,7 @@ function MatchmakingStateWaitJoinPlayerHosted.update(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted._teardown_lobby(arg_7_0)
+MatchmakingStateWaitJoinPlayerHosted._teardown_lobby = function (arg_7_0)
 	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
@@ -82,13 +82,13 @@ function MatchmakingStateWaitJoinPlayerHosted._teardown_lobby(arg_7_0)
 	arg_7_0._state_context.join_lobby_data = nil
 end
 
-function MatchmakingStateWaitJoinPlayerHosted._lobby_failed(arg_8_0)
+MatchmakingStateWaitJoinPlayerHosted._lobby_failed = function (arg_8_0)
 	arg_8_0:_teardown_lobby()
 
 	return MatchmakingStateIdle
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.get_transition(arg_9_0)
+MatchmakingStateWaitJoinPlayerHosted.get_transition = function (arg_9_0)
 	if arg_9_0._next_transition_state then
 		local var_9_0 = {
 			lobby_client = Managers.lobby:free_lobby("matchmaking_join_lobby")
@@ -98,7 +98,7 @@ function MatchmakingStateWaitJoinPlayerHosted.get_transition(arg_9_0)
 	end
 end
 
-function MatchmakingStateWaitJoinPlayerHosted.rpc_matchmaking_join_game(arg_10_0, arg_10_1)
+MatchmakingStateWaitJoinPlayerHosted.rpc_matchmaking_join_game = function (arg_10_0, arg_10_1)
 	mm_printf_force("Transition from join due to rpc_matchmaking_join_game")
 	arg_10_0._matchmaking_manager:send_system_chat_message("matchmaking_status_joining_game")
 

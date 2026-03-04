@@ -8,7 +8,7 @@ local var_0_2 = ScriptUnit.has_extension
 local var_0_3 = Unit.set_flow_variable
 local var_0_4 = Unit.flow_event
 
-function ActionRangedBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionRangedBase.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 	ActionRangedBase.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
 
 	arg_1_0.buff_extension = var_0_2(arg_1_4, "buff_system")
@@ -27,7 +27,7 @@ function ActionRangedBase.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_
 	arg_1_0.shield_users_blocking = {}
 end
 
-function ActionRangedBase.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionRangedBase.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	ActionRangedBase.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 	local var_2_0 = arg_2_0.owner_unit
@@ -75,7 +75,7 @@ function ActionRangedBase.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2, a
 	arg_2_0._unhide_ammo_at_action_end = arg_2_1.unhide_ammo_on_infinite_ammo and arg_2_0._infinite_ammo
 end
 
-function ActionRangedBase.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionRangedBase.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_0._state == "waiting_to_shoot" then
 		arg_3_0:_waiting_to_shoot(arg_3_1, arg_3_2)
 	end
@@ -93,7 +93,7 @@ function ActionRangedBase.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, ar
 	end
 end
 
-function ActionRangedBase.finish(arg_4_0, arg_4_1)
+ActionRangedBase.finish = function (arg_4_0, arg_4_1)
 	ActionRangedBase.super.finish(arg_4_0, arg_4_1)
 
 	if arg_4_0._state == "start_shooting" then
@@ -126,13 +126,13 @@ function ActionRangedBase.finish(arg_4_0, arg_4_1)
 	end
 end
 
-function ActionRangedBase._waiting_to_shoot(arg_5_0, arg_5_1, arg_5_2)
+ActionRangedBase._waiting_to_shoot = function (arg_5_0, arg_5_1, arg_5_2)
 	if arg_5_2 >= arg_5_0._time_to_shoot then
 		arg_5_0._state = "start_shooting"
 	end
 end
 
-function ActionRangedBase._start_shooting(arg_6_0, arg_6_1)
+ActionRangedBase._start_shooting = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0.owner_unit
 	local var_6_1 = arg_6_0.current_action
 	local var_6_2 = arg_6_0.first_person_extension
@@ -197,7 +197,7 @@ function ActionRangedBase._start_shooting(arg_6_0, arg_6_1)
 	arg_6_0._state = "shooting"
 end
 
-function ActionRangedBase._shooting(arg_7_0, arg_7_1, arg_7_2)
+ActionRangedBase._shooting = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._num_projectiles_per_shot
 	local var_7_1 = arg_7_0._num_projectiles_spawned
 	local var_7_2 = var_7_0 - var_7_1
@@ -226,7 +226,7 @@ function ActionRangedBase._shooting(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function ActionRangedBase._finished_shooting(arg_8_0, arg_8_1)
+ActionRangedBase._finished_shooting = function (arg_8_0, arg_8_1)
 	if arg_8_0._active_reload_time then
 		local var_8_0 = not arg_8_0._extra_buff_shot
 
@@ -253,7 +253,7 @@ function ActionRangedBase._finished_shooting(arg_8_0, arg_8_1)
 	Unit.flow_event(arg_8_0.weapon_unit, "lua_finish_shooting")
 end
 
-function ActionRangedBase.shoot(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ActionRangedBase.shoot = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0.spread_extension
 	local var_9_1 = arg_9_0.current_action
 	local var_9_2 = arg_9_0._fire_position:unbox()
@@ -277,7 +277,7 @@ function ActionRangedBase.shoot(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	return arg_9_2
 end
 
-function ActionRangedBase.reload(arg_10_0, arg_10_1)
+ActionRangedBase.reload = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.ammo_extension
 
 	if not var_10_0 then
@@ -296,7 +296,7 @@ function ActionRangedBase.reload(arg_10_0, arg_10_1)
 	end
 end
 
-function ActionRangedBase.spawn_projectile(arg_11_0, arg_11_1, arg_11_2)
+ActionRangedBase.spawn_projectile = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.current_action
 
 	if var_11_0.projectile_info then
@@ -327,7 +327,7 @@ function ActionRangedBase.spawn_projectile(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function ActionRangedBase.fire_projectile(arg_12_0, arg_12_1, arg_12_2)
+ActionRangedBase.fire_projectile = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0.owner_unit
 	local var_12_1 = arg_12_0.current_action
 	local var_12_2 = ActionUtils.pitch_from_rotation(arg_12_2)
@@ -338,7 +338,7 @@ function ActionRangedBase.fire_projectile(arg_12_0, arg_12_1, arg_12_2)
 	ActionUtils.spawn_player_projectile(var_12_0, arg_12_1, arg_12_2, 0, var_12_2, var_12_4, var_12_3, arg_12_0.item_name, var_12_5.item_template_name, var_12_5.action_name, var_12_5.sub_action_name, arg_12_0._is_critical_strike, arg_12_0._power_level)
 end
 
-function ActionRangedBase.fire_lightweight_projectile(arg_13_0, arg_13_1, arg_13_2)
+ActionRangedBase.fire_lightweight_projectile = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0.owner_unit
 	local var_13_1 = arg_13_0.current_action.lightweight_projectile_info
 	local var_13_2 = Network.peer_id()
@@ -365,7 +365,7 @@ function ActionRangedBase.fire_lightweight_projectile(arg_13_0, arg_13_1, arg_13
 	Managers.state.entity:system("projectile_system"):create_light_weight_projectile(arg_13_0.item_name, var_13_0, arg_13_1, var_13_13, var_13_4.projectile_speed, nil, nil, var_13_4.projectile_max_range, var_13_5, var_13_14, var_13_4.light_weight_projectile_effect, var_13_2)
 end
 
-function ActionRangedBase.fire_hitscan(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ActionRangedBase.fire_hitscan = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0
 
 	if arg_14_0.current_action.ray_against_large_hitbox then
@@ -377,7 +377,7 @@ function ActionRangedBase.fire_hitscan(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	return var_14_0
 end
 
-function ActionRangedBase.proc_extra_shot(arg_15_0, arg_15_1)
+ActionRangedBase.proc_extra_shot = function (arg_15_0, arg_15_1)
 	if not arg_15_0._extra_buff_shot then
 		local var_15_0, var_15_1 = arg_15_0.buff_extension:apply_buffs_to_value(0, "extra_shot")
 
@@ -389,7 +389,7 @@ function ActionRangedBase.proc_extra_shot(arg_15_0, arg_15_1)
 	return false
 end
 
-function ActionRangedBase.gen_num_shots(arg_16_0)
+ActionRangedBase.gen_num_shots = function (arg_16_0)
 	local var_16_0 = arg_16_0.current_action
 	local var_16_1 = arg_16_0.ammo_extension
 	local var_16_2 = var_16_0.ammo_usage or 1
@@ -407,12 +407,12 @@ function ActionRangedBase.gen_num_shots(arg_16_0)
 	return var_16_3, var_16_5
 end
 
-function ActionRangedBase.apply_shot_cost(arg_17_0, arg_17_1)
+ActionRangedBase.apply_shot_cost = function (arg_17_0, arg_17_1)
 	arg_17_0:_use_ammo()
 	arg_17_0:_add_overcharge()
 end
 
-function ActionRangedBase._use_ammo(arg_18_0)
+ActionRangedBase._use_ammo = function (arg_18_0)
 	local var_18_0 = arg_18_0.ammo_extension
 
 	if var_18_0 and not arg_18_0._extra_buff_shot then
@@ -420,7 +420,7 @@ function ActionRangedBase._use_ammo(arg_18_0)
 	end
 end
 
-function ActionRangedBase._add_overcharge(arg_19_0)
+ActionRangedBase._add_overcharge = function (arg_19_0)
 	local var_19_0 = arg_19_0.current_action.overcharge_type
 
 	if var_19_0 then

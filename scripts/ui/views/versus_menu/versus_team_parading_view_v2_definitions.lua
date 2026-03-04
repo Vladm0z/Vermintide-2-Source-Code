@@ -373,7 +373,7 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				local var_3_0 = arg_3_3.self
 				local var_3_1 = var_3_0._bottom_widgets
 				local var_3_2 = var_3_0._team_portrait_frame_widgets
@@ -401,7 +401,7 @@ local var_0_15 = {
 					iter_3_9.alpha_multiplier = 0
 				end
 			end,
-			update = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 				local var_4_0 = math.easeOutCubic(arg_4_3)
 				local var_4_1 = arg_4_4.self
 				local var_4_2 = var_4_1._bottom_widgets
@@ -429,7 +429,7 @@ local var_0_15 = {
 					iter_4_9.alpha_multiplier = var_4_0
 				end
 			end,
-			on_complete = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				local var_5_0 = arg_5_3.self._transition_widgets
 
 				for iter_5_0, iter_5_1 in ipairs(var_5_0) do
@@ -441,10 +441,10 @@ local var_0_15 = {
 			name = "slide_up_bottom_widgets",
 			start_progress = 0,
 			end_progress = 0.8,
-			init = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end,
-			update = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 				local var_7_0 = math.easeOutCubic(arg_7_3)
 				local var_7_1 = arg_7_4.self
 				local var_7_2 = var_7_1._bottom_widgets
@@ -476,7 +476,7 @@ local var_0_15 = {
 					iter_7_7.offset[2] = var_7_9
 				end
 			end,
-			on_complete = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 				return
 			end
 		},
@@ -484,10 +484,10 @@ local var_0_15 = {
 			name = "slide_in_top_widgets",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end,
-			update = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 				local var_10_0 = math.easeOutCubic(arg_10_3)
 				local var_10_1 = math.ease_out_quad(arg_10_3)
 				local var_10_2 = arg_10_4.self
@@ -501,7 +501,7 @@ local var_0_15 = {
 
 				var_10_4.offset[2] = var_10_6
 			end,
-			on_complete = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 				return
 			end
 		}
@@ -511,7 +511,7 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				local var_12_0 = arg_12_3.self
 				local var_12_1 = var_12_0._bottom_widgets
 				local var_12_2 = var_12_0._transition_widgets
@@ -529,7 +529,7 @@ local var_0_15 = {
 					iter_12_5.alpha_multiplier = 0
 				end
 			end,
-			update = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 				local var_13_0 = math.easeOutCubic(arg_13_3)
 				local var_13_1 = arg_13_4.self._transition_widgets
 
@@ -537,7 +537,7 @@ local var_0_15 = {
 					iter_13_1.alpha_multiplier = var_13_0
 				end
 			end,
-			on_complete = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 				return
 			end
 		},
@@ -545,13 +545,13 @@ local var_0_15 = {
 			name = "slide_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end,
-			update = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 				return
 			end,
-			on_complete = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				local var_17_0 = arg_17_3.self
 				local var_17_1 = var_17_0._opponents_party_data
 
@@ -564,7 +564,7 @@ local var_0_15 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				local var_18_0 = arg_18_3.self
 				local var_18_1 = var_18_0._bottom_widgets
 				local var_18_2 = var_18_0._team_portrait_frame_widgets
@@ -587,7 +587,7 @@ local var_0_15 = {
 					iter_18_7.alpha_multiplier = 0
 				end
 			end,
-			update = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 				local var_19_0 = math.easeOutCubic(arg_19_3)
 				local var_19_1 = arg_19_4.self
 				local var_19_2 = arg_19_4.self
@@ -617,7 +617,7 @@ local var_0_15 = {
 					iter_19_9.alpha_multiplier = var_19_0
 				end
 			end,
-			on_complete = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 				return
 			end
 		},
@@ -625,10 +625,10 @@ local var_0_15 = {
 			name = "slide_up_bottom_widgets",
 			start_progress = 0,
 			end_progress = 0.8,
-			init = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end,
-			update = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 				local var_22_0 = math.easeOutCubic(arg_22_3)
 				local var_22_1 = arg_22_4.self
 				local var_22_2 = var_22_1._bottom_widgets
@@ -660,7 +660,7 @@ local var_0_15 = {
 					iter_22_7.offset[2] = var_22_9
 				end
 			end,
-			on_complete = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 				return
 			end
 		},
@@ -668,10 +668,10 @@ local var_0_15 = {
 			name = "slide_in_top_widgets",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 				return
 			end,
-			update = function(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				local var_25_0 = math.easeOutCubic(arg_25_3)
 				local var_25_1 = math.ease_out_quad(arg_25_3)
 				local var_25_2 = arg_25_4.self
@@ -686,7 +686,7 @@ local var_0_15 = {
 
 				var_25_4.offset[2] = var_25_7
 			end,
-			on_complete = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				return
 			end
 		}
@@ -696,10 +696,10 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				return
 			end,
-			update = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 				local var_28_0 = math.easeOutCubic(arg_28_3)
 				local var_28_1 = arg_28_4.self._transition_widgets
 
@@ -707,7 +707,7 @@ local var_0_15 = {
 					iter_28_1.alpha_multiplier = 1 - var_28_0
 				end
 			end,
-			on_complete = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				return
 			end
 		}
@@ -717,15 +717,15 @@ local var_0_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 				arg_30_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 				local var_31_0 = math.easeOutCubic(arg_31_3)
 
 				arg_31_4.render_settings.alpha_multiplier = 1 - var_31_0
 			end,
-			on_complete = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				return
 			end
 		}

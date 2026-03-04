@@ -52,7 +52,7 @@ var_0_1.bless_heal_allies = {
 	events = {
 		"register_heal"
 	},
-	progress = function(arg_1_0, arg_1_1, arg_1_2)
+	progress = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = arg_1_0:get_persistent_stat(arg_1_1, "bless_heal_allies")
 
 		return {
@@ -60,10 +60,10 @@ var_0_1.bless_heal_allies = {
 			var_0_29
 		}
 	end,
-	completed = function(arg_2_0, arg_2_1, arg_2_2)
+	completed = function (arg_2_0, arg_2_1, arg_2_2)
 		return arg_2_0:get_persistent_stat(arg_2_1, "bless_heal_allies") >= var_0_29
 	end,
-	on_event = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = arg_3_4[1]
 		local var_3_1 = arg_3_4[2]
 		local var_3_2 = arg_3_4[3]
@@ -101,7 +101,7 @@ var_0_1.bless_saved_by_perk = {
 		"player_dead",
 		"player_knocked_down"
 	},
-	progress = function(arg_4_0, arg_4_1, arg_4_2)
+	progress = function (arg_4_0, arg_4_1, arg_4_2)
 		local var_4_0 = arg_4_0:get_persistent_stat(arg_4_1, "bless_saved_by_perk")
 
 		return {
@@ -109,10 +109,10 @@ var_0_1.bless_saved_by_perk = {
 			var_0_30
 		}
 	end,
-	completed = function(arg_5_0, arg_5_1, arg_5_2)
+	completed = function (arg_5_0, arg_5_1, arg_5_2)
 		return arg_5_0:get_persistent_stat(arg_5_1, "bless_saved_by_perk") >= var_0_30
 	end,
-	on_event = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		if arg_6_3 == "register_damage_taken" then
 			local var_6_0 = arg_6_4[1]
 			local var_6_1 = arg_6_4[2]
@@ -161,7 +161,7 @@ var_0_1.bless_saved_by_perk = {
 			end
 		end
 	end,
-	on_timed_event = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	on_timed_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 		local var_7_0 = arg_7_3
 
 		if HEALTH_ALIVE[var_7_0] then
@@ -181,7 +181,7 @@ var_0_1.bless_book_run = {
 	events = {
 		"register_completed_level"
 	},
-	progress = function(arg_8_0, arg_8_1, arg_8_2)
+	progress = function (arg_8_0, arg_8_1, arg_8_2)
 		local var_8_0 = arg_8_0:get_persistent_stat(arg_8_1, "bless_book_run")
 
 		return {
@@ -189,10 +189,10 @@ var_0_1.bless_book_run = {
 			bless_book_run_amount
 		}
 	end,
-	completed = function(arg_9_0, arg_9_1, arg_9_2)
+	completed = function (arg_9_0, arg_9_1, arg_9_2)
 		return arg_9_0:get_persistent_stat(arg_9_1, "bless_book_run") >= bless_book_run_amount
 	end,
-	on_event = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 		if arg_10_4[3] == "wh_priest" then
 			local var_10_0 = arg_10_4[4]
 
@@ -235,7 +235,7 @@ var_0_1.bless_fast_shield = {
 		"register_shield_applied",
 		"register_player_disabled"
 	},
-	progress = function(arg_11_0, arg_11_1, arg_11_2)
+	progress = function (arg_11_0, arg_11_1, arg_11_2)
 		local var_11_0 = arg_11_0:get_persistent_stat(arg_11_1, "bless_fast_shield")
 
 		return {
@@ -243,10 +243,10 @@ var_0_1.bless_fast_shield = {
 			var_0_31
 		}
 	end,
-	completed = function(arg_12_0, arg_12_1, arg_12_2)
+	completed = function (arg_12_0, arg_12_1, arg_12_2)
 		return arg_12_0:get_persistent_stat(arg_12_1, "bless_fast_shield") >= var_0_31
 	end,
-	on_event = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	on_event = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 		if arg_13_3 == "register_shield_applied" then
 			local var_13_0 = arg_13_4[1]
 			local var_13_1 = arg_13_4[2]
@@ -306,7 +306,7 @@ var_0_1.bless_unbreakable_damage_block = {
 	events = {
 		"bless_delay_damage"
 	},
-	progress = function(arg_14_0, arg_14_1, arg_14_2)
+	progress = function (arg_14_0, arg_14_1, arg_14_2)
 		local var_14_0 = arg_14_0:get_persistent_stat(arg_14_1, "bless_unbreakable_damage_block")
 
 		return {
@@ -314,10 +314,10 @@ var_0_1.bless_unbreakable_damage_block = {
 			var_0_33
 		}
 	end,
-	completed = function(arg_15_0, arg_15_1, arg_15_2)
+	completed = function (arg_15_0, arg_15_1, arg_15_2)
 		return arg_15_0:get_persistent_stat(arg_15_1, "bless_unbreakable_damage_block") >= var_0_33
 	end,
-	on_event = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 		local var_16_0 = arg_16_4[1]
 		local var_16_1 = arg_16_4[2]
 
@@ -355,10 +355,10 @@ var_0_1.bless_punch_back = {
 		"register_damage_taken",
 		"register_damage"
 	},
-	completed = function(arg_17_0, arg_17_1, arg_17_2)
+	completed = function (arg_17_0, arg_17_1, arg_17_2)
 		return arg_17_0:get_persistent_stat(arg_17_1, "bless_punch_back") >= 1
 	end,
-	on_event = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	on_event = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -448,10 +448,10 @@ var_0_1.bless_cluch_revive = {
 	events = {
 		"register_revive"
 	},
-	completed = function(arg_19_0, arg_19_1, arg_19_2)
+	completed = function (arg_19_0, arg_19_1, arg_19_2)
 		return arg_19_0:get_persistent_stat(arg_19_1, "bless_cluch_revive") >= 1
 	end,
-	on_event = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 		local var_20_0 = arg_20_4[1]
 		local var_20_1 = arg_20_4[2]
 		local var_20_2 = Managers.player:local_player()
@@ -521,10 +521,10 @@ var_0_1.bless_ranged_raki = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_21_0, arg_21_1, arg_21_2)
+	completed = function (arg_21_0, arg_21_1, arg_21_2)
 		return arg_21_0:get_persistent_stat(arg_21_1, "bless_ranged_raki") >= 1
 	end,
-	on_event = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	on_event = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 		local var_22_0 = Managers.player:local_player()
 		local var_22_1 = var_22_0 and var_22_0.player_unit
 		local var_22_2 = arg_22_4[var_0_17][DamageDataIndex.ATTACKER]
@@ -583,10 +583,10 @@ var_0_1.bless_chaos_warriors = {
 		"righteous_fury_end",
 		"player_dead"
 	},
-	completed = function(arg_23_0, arg_23_1, arg_23_2)
+	completed = function (arg_23_0, arg_23_1, arg_23_2)
 		return arg_23_0:get_persistent_stat(arg_23_1, "bless_chaos_warriors") >= 1
 	end,
-	on_event = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	on_event = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 		if arg_24_3 == "righteous_fury_start" and arg_24_4[2] then
 			arg_24_2.righteous_fury_active = true
 			arg_24_2.kill_count = 0
@@ -620,10 +620,10 @@ var_0_1.bless_very_righteous = {
 		"righteous_fury_end",
 		"player_dead"
 	},
-	completed = function(arg_25_0, arg_25_1, arg_25_2)
+	completed = function (arg_25_0, arg_25_1, arg_25_2)
 		return arg_25_0:get_persistent_stat(arg_25_1, "bless_very_righteous") >= 1
 	end,
-	on_event = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	on_event = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		local var_26_0 = Managers.time:time("game")
 
 		if arg_26_3 == "righteous_fury_start" and arg_26_4[2] then
@@ -650,7 +650,7 @@ var_0_1.bless_smite_enemies = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_27_0, arg_27_1, arg_27_2)
+	progress = function (arg_27_0, arg_27_1, arg_27_2)
 		local var_27_0 = arg_27_0:get_persistent_stat(arg_27_1, "bless_smite_enemies")
 
 		return {
@@ -658,10 +658,10 @@ var_0_1.bless_smite_enemies = {
 			var_0_39
 		}
 	end,
-	completed = function(arg_28_0, arg_28_1, arg_28_2)
+	completed = function (arg_28_0, arg_28_1, arg_28_2)
 		return arg_28_0:get_persistent_stat(arg_28_1, "bless_smite_enemies") >= var_0_39
 	end,
-	on_event = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+	on_event = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 		local var_29_0 = arg_29_4[var_0_17]
 		local var_29_1 = var_29_0 and var_29_0[DamageDataIndex.ATTACKER]
 
@@ -705,7 +705,7 @@ var_0_1.bless_great_hammer_headshots = {
 	events = {
 		"on_hit"
 	},
-	progress = function(arg_30_0, arg_30_1, arg_30_2)
+	progress = function (arg_30_0, arg_30_1, arg_30_2)
 		local var_30_0 = arg_30_0:get_persistent_stat(arg_30_1, "bless_great_hammer_headshots")
 
 		return {
@@ -713,10 +713,10 @@ var_0_1.bless_great_hammer_headshots = {
 			var_0_40
 		}
 	end,
-	completed = function(arg_31_0, arg_31_1, arg_31_2)
+	completed = function (arg_31_0, arg_31_1, arg_31_2)
 		return arg_31_0:get_persistent_stat(arg_31_1, "bless_great_hammer_headshots") >= var_0_40
 	end,
-	on_event = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	on_event = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 		local var_32_0 = arg_32_4[var_0_26]
 		local var_32_1 = Managers.player:local_player()
 		local var_32_2 = var_32_1 and var_32_1.player_unit
@@ -775,7 +775,7 @@ var_0_1.bless_kill_specials_hammer_book = {
 	events = {
 		"register_kill"
 	},
-	progress = function(arg_33_0, arg_33_1, arg_33_2)
+	progress = function (arg_33_0, arg_33_1, arg_33_2)
 		local var_33_0 = 0
 		local var_33_1 = arg_33_0:get_persistent_stat(arg_33_1, "bless_kill_specials_hammer_book")
 
@@ -790,10 +790,10 @@ var_0_1.bless_kill_specials_hammer_book = {
 			var_0_42
 		}
 	end,
-	completed = function(arg_34_0, arg_34_1, arg_34_2)
+	completed = function (arg_34_0, arg_34_1, arg_34_2)
 		return arg_34_0:get_persistent_stat(arg_34_1, "bless_kill_specials_hammer_book") >= var_0_43
 	end,
-	requirements = function(arg_35_0, arg_35_1)
+	requirements = function (arg_35_0, arg_35_1)
 		local var_35_0 = {}
 		local var_35_1 = 0
 		local var_35_2 = arg_35_0:get_persistent_stat(arg_35_1, "bless_kill_specials_hammer_book")
@@ -810,7 +810,7 @@ var_0_1.bless_kill_specials_hammer_book = {
 
 		return var_35_0
 	end,
-	on_event = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	on_event = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
 		local var_36_0 = Managers.player:local_player()
 		local var_36_1 = var_36_0 and var_36_0.player_unit
 		local var_36_2 = arg_36_4[var_0_17]
@@ -878,10 +878,10 @@ var_0_1.bless_mighty_blow = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_37_0, arg_37_1, arg_37_2)
+	completed = function (arg_37_0, arg_37_1, arg_37_2)
 		return arg_37_0:get_persistent_stat(arg_37_1, "bless_mighty_blow") >= 1
 	end,
-	on_event = function(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	on_event = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
 		local var_38_0 = arg_38_4[var_0_18]
 
 		if not var_38_0 or var_38_0.name ~= "chaos_exalted_champion_warcamp" then
@@ -933,7 +933,7 @@ var_0_1.bless_block_attacks = {
 	events = {
 		"register_damage_resisted_immune"
 	},
-	progress = function(arg_39_0, arg_39_1, arg_39_2)
+	progress = function (arg_39_0, arg_39_1, arg_39_2)
 		local var_39_0 = arg_39_0:get_persistent_stat(arg_39_1, "bless_block_attacks")
 
 		return {
@@ -941,10 +941,10 @@ var_0_1.bless_block_attacks = {
 			var_0_44
 		}
 	end,
-	completed = function(arg_40_0, arg_40_1, arg_40_2)
+	completed = function (arg_40_0, arg_40_1, arg_40_2)
 		return arg_40_0:get_persistent_stat(arg_40_1, "bless_block_attacks") >= var_0_44
 	end,
-	on_event = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	on_event = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
 		local var_41_0 = arg_41_4[1]
 		local var_41_1 = arg_41_4[2]
 		local var_41_2 = arg_41_4[3]
@@ -994,7 +994,7 @@ var_0_1.bless_righteous_stagger = {
 	events = {
 		"register_ai_stagger"
 	},
-	progress = function(arg_42_0, arg_42_1, arg_42_2)
+	progress = function (arg_42_0, arg_42_1, arg_42_2)
 		local var_42_0 = arg_42_0:get_persistent_stat(arg_42_1, "bless_righteous_stagger")
 
 		return {
@@ -1002,10 +1002,10 @@ var_0_1.bless_righteous_stagger = {
 			var_0_45
 		}
 	end,
-	completed = function(arg_43_0, arg_43_1, arg_43_2)
+	completed = function (arg_43_0, arg_43_1, arg_43_2)
 		return arg_43_0:get_persistent_stat(arg_43_1, "bless_righteous_stagger") >= var_0_45
 	end,
-	on_event = function(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+	on_event = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 		if not Managers.state.network.is_server then
 			return
 		end
@@ -1044,10 +1044,10 @@ var_0_1.bless_charged_hammer = {
 	events = {
 		"register_damage"
 	},
-	completed = function(arg_45_0, arg_45_1, arg_45_2)
+	completed = function (arg_45_0, arg_45_1, arg_45_2)
 		return arg_45_0:get_persistent_stat(arg_45_1, "bless_charged_hammer") >= 1
 	end,
-	on_event = function(arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+	on_event = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
 		local var_46_0 = Managers.player:local_player()
 		local var_46_1 = var_46_0 and var_46_0.player_unit
 		local var_46_2 = arg_46_4[var_0_12]
@@ -1117,10 +1117,10 @@ var_0_1.bless_protected_killing = {
 	events = {
 		"register_kill"
 	},
-	completed = function(arg_47_0, arg_47_1, arg_47_2)
+	completed = function (arg_47_0, arg_47_1, arg_47_2)
 		return arg_47_0:get_persistent_stat(arg_47_1, "bless_protected_killing") >= 1
 	end,
-	on_event = function(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+	on_event = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
 		local var_48_0 = Managers.player:local_player()
 		local var_48_1 = var_48_0 and var_48_0.player_unit
 		local var_48_2 = ScriptUnit.has_extension(var_48_1, "career_system")

@@ -2,7 +2,7 @@
 
 HintUI = class(HintUI)
 
-function HintUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+HintUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._ui_context = arg_1_1
 	arg_1_0._ui_renderer = arg_1_1.ui_renderer
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
@@ -27,13 +27,13 @@ function HintUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._has_widget_been_closed = false
 end
 
-function HintUI.destroy(arg_2_0)
+HintUI.destroy = function (arg_2_0)
 	if arg_2_0._is_visible then
 		arg_2_0:hide()
 	end
 end
 
-function HintUI.create_ui_elements(arg_3_0)
+HintUI.create_ui_elements = function (arg_3_0)
 	local var_3_0 = arg_3_0._hint_settings.data
 
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_3_0.definitions.scenegraph_definition)
@@ -48,7 +48,7 @@ function HintUI.create_ui_elements(arg_3_0)
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_3_0.definitions.animation_definitions)
 end
 
-function HintUI.update(arg_4_0, arg_4_1)
+HintUI.update = function (arg_4_0, arg_4_1)
 	if not arg_4_0._is_visible then
 		return
 	end
@@ -58,11 +58,11 @@ function HintUI.update(arg_4_0, arg_4_1)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HintUI._handle_input(arg_5_0, arg_5_1)
+HintUI._handle_input = function (arg_5_0, arg_5_1)
 	return
 end
 
-function HintUI.draw(arg_6_0, arg_6_1)
+HintUI.draw = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_0._ui_top_renderer
 	local var_6_1 = arg_6_0._ui_scenegraph
 	local var_6_2 = arg_6_0:_get_input_service()
@@ -78,27 +78,27 @@ function HintUI.draw(arg_6_0, arg_6_1)
 	end
 end
 
-function HintUI.show(arg_7_0)
+HintUI.show = function (arg_7_0)
 	assert(not arg_7_0._is_visible)
 
 	arg_7_0._is_visible = true
 end
 
-function HintUI.hide(arg_8_0)
+HintUI.hide = function (arg_8_0)
 	assert(arg_8_0._is_visible)
 
 	arg_8_0._is_visible = false
 end
 
-function HintUI.exit_done(arg_9_0)
+HintUI.exit_done = function (arg_9_0)
 	return not arg_9_0._is_visible and arg_9_0._has_widget_been_closed
 end
 
-function HintUI._start_transition_animation(arg_10_0, arg_10_1)
+HintUI._start_transition_animation = function (arg_10_0, arg_10_1)
 	return
 end
 
-function HintUI._update_animations(arg_11_0, arg_11_1)
+HintUI._update_animations = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0._ui_animator
 
 	var_11_0:update(arg_11_1)
@@ -114,7 +114,7 @@ function HintUI._update_animations(arg_11_0, arg_11_1)
 	end
 end
 
-function HintUI.acquire_input(arg_12_0)
+HintUI.acquire_input = function (arg_12_0)
 	local var_12_0 = arg_12_0._input_manager
 
 	if var_12_0 then
@@ -123,7 +123,7 @@ function HintUI.acquire_input(arg_12_0)
 	end
 end
 
-function HintUI.release_input(arg_13_0)
+HintUI.release_input = function (arg_13_0)
 	local var_13_0 = arg_13_0._input_manager
 
 	if var_13_0 then
@@ -132,7 +132,7 @@ function HintUI.release_input(arg_13_0)
 	end
 end
 
-function HintUI.setup_input(arg_14_0)
+HintUI.setup_input = function (arg_14_0)
 	local var_14_0 = arg_14_0._input_manager
 	local var_14_1 = arg_14_0._input_service_name
 
@@ -144,19 +144,19 @@ function HintUI.setup_input(arg_14_0)
 	end
 end
 
-function HintUI._get_input_service(arg_15_0)
+HintUI._get_input_service = function (arg_15_0)
 	return Managers.input:get_service(arg_15_0._input_service_name)
 end
 
-function HintUI.should_show(arg_16_0)
+HintUI.should_show = function (arg_16_0)
 	return not arg_16_0._is_visible
 end
 
-function HintUI.is_hint_showing(arg_17_0)
+HintUI.is_hint_showing = function (arg_17_0)
 	return arg_17_0._is_visible
 end
 
-function HintUI.start_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+HintUI.start_animation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	local var_18_0 = arg_18_3 or {
 		wwise_world = arg_18_0._wwise_world,
 		render_settings = arg_18_0._render_settings
@@ -169,6 +169,6 @@ function HintUI.start_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	return var_18_1
 end
 
-function HintUI.get_hint_name(arg_19_0)
+HintUI.get_hint_name = function (arg_19_0)
 	return arg_19_0._hint_name
 end

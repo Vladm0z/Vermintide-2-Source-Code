@@ -72,7 +72,7 @@ local var_0_0 = script_data.testify and require("scripts/game_state/state_ingame
 StateIngame = class(StateIngame)
 StateIngame.NAME = "StateIngame"
 
-function StateIngame.on_enter(arg_1_0)
+StateIngame.on_enter = function (arg_1_0)
 	fassert(arg_1_0.parent.loading_context.ingame_world_object, "must have world")
 	fassert(arg_1_0.parent.loading_context.ingame_level_object, "must have level")
 
@@ -621,7 +621,7 @@ function StateIngame.on_enter(arg_1_0)
 	Managers.mechanism:handle_ingame_enter(var_1_53)
 end
 
-function StateIngame.peer_type(arg_2_0)
+StateIngame.peer_type = function (arg_2_0)
 	if DEDICATED_SERVER then
 		return "dedicated-server"
 	elseif arg_2_0.is_server then
@@ -631,26 +631,26 @@ function StateIngame.peer_type(arg_2_0)
 	end
 end
 
-function StateIngame.event_xbox_one_hack_start_game(arg_3_0, arg_3_1, arg_3_2)
+StateIngame.event_xbox_one_hack_start_game = function (arg_3_0, arg_3_1, arg_3_2)
 	print(arg_3_1, arg_3_2)
 	Managers.level_transition_handler:set_next_level(arg_3_1, nil, nil, nil, nil, nil, arg_3_2)
 	Managers.state.game_mode:complete_level()
 end
 
-function StateIngame.cb_save_data(arg_4_0)
+StateIngame.cb_save_data = function (arg_4_0)
 	print("saved data")
 end
 
-function StateIngame._setup_world(arg_5_0)
+StateIngame._setup_world = function (arg_5_0)
 	local function var_5_0()
 		Managers.ui:update()
 	end
 
 	Managers.world:set_anim_update_callback(arg_5_0.world, var_5_0)
-	Managers.world:set_scene_update_callback(arg_5_0.world, function()
+	Managers.world:set_scene_update_callback(arg_5_0.world, function ()
 		arg_5_0:physics_async_update(arg_5_0.dt)
 	end)
-	Managers.world:set_update_done_callback(arg_5_0.world, function(arg_8_0, arg_8_1, arg_8_2)
+	Managers.world:set_update_done_callback(arg_5_0.world, function (arg_8_0, arg_8_1, arg_8_2)
 		Managers.state.entity:system("transportation_system"):world_updated(arg_8_0, arg_8_1, arg_8_2)
 	end)
 
@@ -659,7 +659,7 @@ function StateIngame._setup_world(arg_5_0)
 	end
 end
 
-function StateIngame._safe_to_do_entity_update(arg_9_0)
+StateIngame._safe_to_do_entity_update = function (arg_9_0)
 	local var_9_0 = Managers.state.network
 
 	if var_9_0:has_left_game() or not var_9_0:in_game_session() then
@@ -671,7 +671,7 @@ function StateIngame._safe_to_do_entity_update(arg_9_0)
 	return not (Managers.state.game_mode:is_game_mode_ended() and arg_9_0.game_mode_end_timer and var_9_1 >= arg_9_0.game_mode_end_timer)
 end
 
-function StateIngame.physics_async_update(arg_10_0, arg_10_1)
+StateIngame.physics_async_update = function (arg_10_0, arg_10_1)
 	local var_10_0 = Managers.time:time("game")
 
 	Managers.music:update(arg_10_0.dt, var_10_0)
@@ -681,15 +681,15 @@ function StateIngame.physics_async_update(arg_10_0, arg_10_1)
 	end
 end
 
-function StateIngame.shading_callback(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+StateIngame.shading_callback = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	Managers.state.camera:shading_callback(arg_11_1, arg_11_2, arg_11_3)
 end
 
-function StateIngame._teardown_level(arg_12_0)
+StateIngame._teardown_level = function (arg_12_0)
 	ScriptWorld.destroy_level_from_reference(arg_12_0.world, arg_12_0.level)
 end
 
-function StateIngame._teardown_world(arg_13_0)
+StateIngame._teardown_world = function (arg_13_0)
 	if Managers.splitscreen then
 		Managers.splitscreen:remove_splitscreen_viewport()
 	end
@@ -703,7 +703,7 @@ function StateIngame._teardown_world(arg_13_0)
 	Managers.world:destroy_world(arg_13_0.world_name)
 end
 
-function StateIngame.spawn_unit(arg_14_0, arg_14_1, ...)
+StateIngame.spawn_unit = function (arg_14_0, arg_14_1, ...)
 	if not Managers.state.entity then
 		printf("Unit %s is spawned after level destroy?", tostring(arg_14_1))
 
@@ -713,7 +713,7 @@ function StateIngame.spawn_unit(arg_14_0, arg_14_1, ...)
 	Managers.state.entity:register_unit(arg_14_0.world, arg_14_1, ...)
 end
 
-function StateIngame.unspawn_unit(arg_15_0, arg_15_1)
+StateIngame.unspawn_unit = function (arg_15_0, arg_15_1)
 	if not Managers.state.entity then
 		printf("Unit %s has not been destroyed by entity manager or level destroy", tostring(arg_15_1))
 
@@ -724,7 +724,7 @@ function StateIngame.unspawn_unit(arg_15_0, arg_15_1)
 	Managers.state.entity:unregister_unit(arg_15_1)
 end
 
-function StateIngame._create_level(arg_16_0)
+StateIngame._create_level = function (arg_16_0)
 	local var_16_0 = arg_16_0.level
 
 	Level.finish_spawn_time_sliced(var_16_0)
@@ -753,7 +753,7 @@ function StateIngame._create_level(arg_16_0)
 	return var_16_2
 end
 
-function StateIngame._gather_backend_flow_events(arg_17_0)
+StateIngame._gather_backend_flow_events = function (arg_17_0)
 	local var_17_0 = {}
 	local var_17_1 = "keep_event_default"
 	local var_17_2 = Managers.backend:get_level_variation_data().level_settings
@@ -784,7 +784,7 @@ function StateIngame._gather_backend_flow_events(arg_17_0)
 	arg_17_0._level_flow_events = var_17_0
 end
 
-function StateIngame.pre_update(arg_18_0, arg_18_1)
+StateIngame.pre_update = function (arg_18_0, arg_18_1)
 	local var_18_0 = Managers.time:time("game")
 	local var_18_1 = Managers.state.network
 
@@ -868,7 +868,7 @@ local function var_0_5(arg_19_0, arg_19_1)
 	Debug.text(string.format("Event Name: %s - Remap Index: %s - Remap variable: %s", var_19_4, var_0_3, Application.render_config("settings", "global_shader_variable")))
 end
 
-function StateIngame.update(arg_20_0, arg_20_1, arg_20_2)
+StateIngame.update = function (arg_20_0, arg_20_1, arg_20_2)
 	arg_20_0.dt = arg_20_1
 
 	if not arg_20_0.network_client or arg_20_0.network_client.state == NetworkClientStates.game_started then
@@ -1010,7 +1010,7 @@ function StateIngame.update(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function StateIngame._update_onclose_check(arg_21_0, arg_21_1, arg_21_2)
+StateIngame._update_onclose_check = function (arg_21_0, arg_21_1, arg_21_2)
 	if arg_21_0._onclose_called and not arg_21_0._onclose_popup_id then
 		local var_21_0 = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
 
@@ -1020,7 +1020,7 @@ function StateIngame._update_onclose_check(arg_21_0, arg_21_1, arg_21_2)
 	arg_21_0:_handle_onclose_warning_result()
 end
 
-function StateIngame._update_deed_manager(arg_22_0, arg_22_1)
+StateIngame._update_deed_manager = function (arg_22_0, arg_22_1)
 	local var_22_0 = Managers.deed
 
 	var_22_0:update(arg_22_1)
@@ -1034,15 +1034,15 @@ function StateIngame._update_deed_manager(arg_22_0, arg_22_1)
 	end
 end
 
-function StateIngame.cb_transition_fade_in_done(arg_23_0, arg_23_1)
+StateIngame.cb_transition_fade_in_done = function (arg_23_0, arg_23_1)
 	arg_23_0._new_state = arg_23_1
 end
 
-function StateIngame.event_start_network_timer(arg_24_0, arg_24_1)
+StateIngame.event_start_network_timer = function (arg_24_0, arg_24_1)
 	arg_24_0.network_timer_handler:start_timer_server(arg_24_1)
 end
 
-function StateIngame._check_exit(arg_25_0, arg_25_1)
+StateIngame._check_exit = function (arg_25_0, arg_25_1)
 	local var_25_0 = Managers.state.network
 	local var_25_1 = Managers.lobby:query_lobby("matchmaking_session_lobby")
 	local var_25_2 = PLATFORM
@@ -1467,7 +1467,7 @@ function StateIngame._check_exit(arg_25_0, arg_25_1)
 			Managers.transition:fade_in(GameSettings.transition_fade_in_speed, nil)
 			Managers.transition:show_loading_icon()
 		elseif var_25_10 == "complete_level" then
-			-- block empty
+			-- Nothing
 		end
 
 		if arg_25_0.exit_type then
@@ -1729,7 +1729,7 @@ function StateIngame._check_exit(arg_25_0, arg_25_1)
 	end
 end
 
-function StateIngame.wanted_profile_index(arg_26_0)
+StateIngame.wanted_profile_index = function (arg_26_0)
 	local var_26_0 = Network.peer_id()
 	local var_26_1 = Managers.player:player_from_peer_id(var_26_0)
 	local var_26_2 = var_26_1 and var_26_1:profile_index()
@@ -1744,11 +1744,11 @@ function StateIngame.wanted_profile_index(arg_26_0)
 	return var_26_3 or var_26_2 or var_26_4 or 0
 end
 
-function StateIngame.wanted_party_index(arg_27_0)
+StateIngame.wanted_party_index = function (arg_27_0)
 	return Managers.matchmaking.selected_party_index or 0
 end
 
-function StateIngame.post_update(arg_28_0, arg_28_1)
+StateIngame.post_update = function (arg_28_0, arg_28_1)
 	local var_28_0 = Managers.time:time("game")
 
 	arg_28_0.entity_system:post_update(arg_28_1, var_28_0)
@@ -1776,7 +1776,7 @@ function StateIngame.post_update(arg_28_0, arg_28_1)
 	end
 end
 
-function StateIngame.pre_render(arg_29_0)
+StateIngame.pre_render = function (arg_29_0)
 	if not arg_29_0.machines then
 		return
 	end
@@ -1788,7 +1788,7 @@ function StateIngame.pre_render(arg_29_0)
 	end
 end
 
-function StateIngame.render(arg_30_0)
+StateIngame.render = function (arg_30_0)
 	if not arg_30_0.machines then
 		return
 	end
@@ -1800,7 +1800,7 @@ function StateIngame.render(arg_30_0)
 	end
 end
 
-function StateIngame.post_render(arg_31_0)
+StateIngame.post_render = function (arg_31_0)
 	if not arg_31_0.machines then
 		return
 	end
@@ -1812,7 +1812,7 @@ function StateIngame.post_render(arg_31_0)
 	end
 end
 
-function StateIngame.on_exit(arg_32_0, arg_32_1)
+StateIngame.on_exit = function (arg_32_0, arg_32_1)
 	UPDATE_POSITION_LOOKUP()
 	Managers:on_round_end()
 
@@ -1975,8 +1975,8 @@ function StateIngame.on_exit(arg_32_0, arg_32_1)
 		Managers.mechanism:network_context_destroyed(var_32_10)
 
 		local var_32_11 = {
-			__index = function(arg_33_0, arg_33_1)
-				return function()
+			__index = function (arg_33_0, arg_33_1)
+				return function ()
 					Application.warning("Got RPC %s during forced network update when exiting StateIngame", arg_33_1)
 				end
 			end
@@ -2084,7 +2084,7 @@ function StateIngame.on_exit(arg_32_0, arg_32_1)
 	Managers.mechanism:check_venture_end(arg_32_0.leave_lobby)
 end
 
-function StateIngame.on_close(arg_35_0)
+StateIngame.on_close = function (arg_35_0)
 	if arg_35_0.network_server and arg_35_0.network_server:num_active_peers() > 1 and not Development.parameter("disable_exit_popup_warning") then
 		if arg_35_0._onclose_called then
 			if arg_35_0.is_in_inn then
@@ -2107,7 +2107,7 @@ function StateIngame.on_close(arg_35_0)
 	return false
 end
 
-function StateIngame._commit_playfab_stats(arg_36_0)
+StateIngame._commit_playfab_stats = function (arg_36_0)
 	local var_36_0 = Managers.backend
 
 	local function var_36_1(arg_37_0)
@@ -2117,7 +2117,7 @@ function StateIngame._commit_playfab_stats(arg_36_0)
 	var_36_0:on_shutdown(var_36_1)
 end
 
-function StateIngame._check_and_add_end_game_telemetry(arg_38_0, arg_38_1)
+StateIngame._check_and_add_end_game_telemetry = function (arg_38_0, arg_38_1)
 	local var_38_0 = Managers.player:player_from_peer_id(arg_38_0.peer_id)
 	local var_38_1 = arg_38_0.exit_type
 
@@ -2134,7 +2134,7 @@ function StateIngame._check_and_add_end_game_telemetry(arg_38_0, arg_38_1)
 	Managers.telemetry_events:game_ended(var_38_1)
 end
 
-function StateIngame._setup_state_context(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+StateIngame._setup_state_context = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0
 
 	if arg_39_0.is_server then
@@ -2380,7 +2380,7 @@ function StateIngame._setup_state_context(arg_39_0, arg_39_1, arg_39_2, arg_39_3
 	Managers.mechanism:state_context_set_up()
 end
 
-function StateIngame.rpc_kick_peer(arg_41_0, arg_41_1)
+StateIngame.rpc_kick_peer = function (arg_41_0, arg_41_1)
 	if arg_41_0.network_client == nil then
 		return
 	end
@@ -2402,7 +2402,7 @@ function StateIngame.rpc_kick_peer(arg_41_0, arg_41_1)
 	arg_41_0.kicked_by_server = true
 end
 
-function StateIngame.event_play_particle_effect(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+StateIngame.event_play_particle_effect = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	if arg_42_6 then
 		ScriptWorld.create_particles_linked(arg_42_0.world, arg_42_1, arg_42_2, arg_42_3, "destroy", Matrix4x4.from_quaternion_position(arg_42_5, arg_42_4))
 	else
@@ -2425,7 +2425,7 @@ function StateIngame.event_play_particle_effect(arg_42_0, arg_42_1, arg_42_2, ar
 	end
 end
 
-function StateIngame.gm_event_end_conditions_met(arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+StateIngame.gm_event_end_conditions_met = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
 	Managers.state.game_mode:gm_event_end_conditions_met(arg_43_1, arg_43_2, arg_43_3)
 	LevelHelper:flow_event(arg_43_0.world, "gm_event_end_conditions_met")
 
@@ -2490,7 +2490,7 @@ function StateIngame.gm_event_end_conditions_met(arg_43_0, arg_43_1, arg_43_2, a
 	end
 end
 
-function StateIngame._generate_ingame_clock(arg_44_0)
+StateIngame._generate_ingame_clock = function (arg_44_0)
 	if arg_44_0.network_server and Managers.time:time("client_ingame") == nil then
 		local var_44_0 = arg_44_0.network_server.peer_state_machines
 
@@ -2504,7 +2504,7 @@ function StateIngame._generate_ingame_clock(arg_44_0)
 	end
 end
 
-function StateIngame._remove_ingame_clock(arg_45_0)
+StateIngame._remove_ingame_clock = function (arg_45_0)
 	local var_45_0 = Managers.time
 
 	if var_45_0:has_timer("client_ingame") then
@@ -2512,7 +2512,7 @@ function StateIngame._remove_ingame_clock(arg_45_0)
 	end
 end
 
-function StateIngame._handle_onclose_warning_result(arg_46_0)
+StateIngame._handle_onclose_warning_result = function (arg_46_0)
 	if arg_46_0._onclose_popup_id then
 		local var_46_0 = Managers.popup:query_result(arg_46_0._onclose_popup_id)
 

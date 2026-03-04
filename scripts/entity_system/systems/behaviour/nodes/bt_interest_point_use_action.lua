@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInterestPointUseAction = class(BTInterestPointUseAction, BTNode)
 
-function BTInterestPointUseAction.init(arg_1_0, ...)
+BTInterestPointUseAction.init = function (arg_1_0, ...)
 	BTInterestPointUseAction.super.init(arg_1_0, ...)
 end
 
 BTInterestPointUseAction.name = "BTInterestPointUseAction"
 
-function BTInterestPointUseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInterestPointUseAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.system_api.ai_interest_point_system.get_claim(arg_2_2.ip_request_id)
 	local var_2_1 = var_2_0.point
 	local var_2_2 = var_2_1.animations
@@ -31,7 +31,7 @@ function BTInterestPointUseAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.navigation_extension:set_enabled(false)
 end
 
-function BTInterestPointUseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTInterestPointUseAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_2.system_api.ai_interest_point_system
 
 	if HEALTH_ALIVE[arg_3_1] then
@@ -57,7 +57,7 @@ function BTInterestPointUseAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_
 	end
 end
 
-function BTInterestPointUseAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTInterestPointUseAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if script_data.ai_interest_point_debug then
 		Debug.text("BTInterestPointApproachAction state = %s", arg_4_2.ip_state)
 		QuickDrawer:circle(arg_4_2.ip_root_pos:unbox(), 10, Vector3.up())

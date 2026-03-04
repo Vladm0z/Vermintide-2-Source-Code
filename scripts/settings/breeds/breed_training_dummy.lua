@@ -140,7 +140,7 @@ local var_0_1 = {
 			}
 		}
 	},
-	modify_extension_init_data = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		local var_1_0 = arg_1_1.projectile_locomotion_system or {}
 
 		var_1_0.network_position = arg_1_1.network_position or AiAnimUtils.position_network_scale(arg_1_3, true)
@@ -157,7 +157,7 @@ local var_0_1 = {
 		arg_1_1.pickup_system = var_1_1
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		prepare_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 			arg_2_0.modify_extension_init_data(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 		end
 	}

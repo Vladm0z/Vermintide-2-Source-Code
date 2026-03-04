@@ -22,7 +22,7 @@ local var_0_13 = "hit_end"
 local var_0_14 = GameSession.set_game_object_field
 local var_0_15 = GameSession.game_object_field
 
-function Geheimnisnacht2021AltarExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+Geheimnisnacht2021AltarExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._unit = arg_1_2
 	arg_1_0._is_server = Managers.state.network.is_server
 	arg_1_0.world = arg_1_1.world
@@ -33,23 +33,23 @@ function Geheimnisnacht2021AltarExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_
 	arg_1_0:_init_state()
 end
 
-function Geheimnisnacht2021AltarExtension.destroy(arg_2_0)
+Geheimnisnacht2021AltarExtension.destroy = function (arg_2_0)
 	arg_2_0:unregister_events()
 end
 
-function Geheimnisnacht2021AltarExtension.assign_cultist_group_id(arg_3_0, arg_3_1)
+Geheimnisnacht2021AltarExtension.assign_cultist_group_id = function (arg_3_0, arg_3_1)
 	arg_3_0._cultist_group_id = arg_3_1
 end
 
-function Geheimnisnacht2021AltarExtension.get_current_state(arg_4_0)
+Geheimnisnacht2021AltarExtension.get_current_state = function (arg_4_0)
 	return arg_4_0._state
 end
 
-function Geheimnisnacht2021AltarExtension.can_interact(arg_5_0)
+Geheimnisnacht2021AltarExtension.can_interact = function (arg_5_0)
 	return arg_5_0._state == var_0_8
 end
 
-function Geheimnisnacht2021AltarExtension.on_interact(arg_6_0, arg_6_1, arg_6_2)
+Geheimnisnacht2021AltarExtension.on_interact = function (arg_6_0, arg_6_1, arg_6_2)
 	if not arg_6_1 then
 		Unit.animation_event(arg_6_0._unit, var_0_13)
 	end
@@ -59,13 +59,13 @@ function Geheimnisnacht2021AltarExtension.on_interact(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_interact_start(arg_7_0, arg_7_1)
+Geheimnisnacht2021AltarExtension.on_interact_start = function (arg_7_0, arg_7_1)
 	if not arg_7_1 then
 		Unit.animation_event(arg_7_0._unit, var_0_12)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+Geheimnisnacht2021AltarExtension.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = Managers.state.network:game()
 	local var_8_1 = arg_8_0._go_id or Managers.state.unit_storage:go_id(arg_8_1)
 
@@ -110,7 +110,7 @@ function Geheimnisnacht2021AltarExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.die(arg_9_0)
+Geheimnisnacht2021AltarExtension.die = function (arg_9_0)
 	if arg_9_0._is_server then
 		local var_9_0 = Unit.node(arg_9_0._unit, "j_skull_anim")
 		local var_9_1 = Unit.world_position(arg_9_0._unit, var_9_0)
@@ -132,7 +132,7 @@ function Geheimnisnacht2021AltarExtension.die(arg_9_0)
 	arg_9_0:unregister_events()
 end
 
-function Geheimnisnacht2021AltarExtension.register_events(arg_10_0)
+Geheimnisnacht2021AltarExtension.register_events = function (arg_10_0)
 	local var_10_0 = Managers.state.event
 
 	if var_10_0 then
@@ -147,7 +147,7 @@ function Geheimnisnacht2021AltarExtension.register_events(arg_10_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.unregister_events(arg_11_0)
+Geheimnisnacht2021AltarExtension.unregister_events = function (arg_11_0)
 	local var_11_0 = Managers.state.event
 
 	if var_11_0 and arg_11_0._registered_events then
@@ -162,14 +162,14 @@ function Geheimnisnacht2021AltarExtension.unregister_events(arg_11_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_cultists_killed(arg_12_0, arg_12_1)
+Geheimnisnacht2021AltarExtension.on_cultists_killed = function (arg_12_0, arg_12_1)
 	if arg_12_1 == arg_12_0._cultist_group_id then
 		arg_12_0:change_state(var_0_8)
 		arg_12_0:stop_relevant_faction_sound()
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.on_cultists_aggroed(arg_13_0, arg_13_1)
+Geheimnisnacht2021AltarExtension.on_cultists_aggroed = function (arg_13_0, arg_13_1)
 	if arg_13_1 == arg_13_0._cultist_group_id then
 		arg_13_0:stop_relevant_faction_sound()
 		arg_13_0:change_state(var_0_7)
@@ -177,7 +177,7 @@ function Geheimnisnacht2021AltarExtension.on_cultists_aggroed(arg_13_0, arg_13_1
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.stop_relevant_faction_sound(arg_14_0)
+Geheimnisnacht2021AltarExtension.stop_relevant_faction_sound = function (arg_14_0)
 	local var_14_0 = arg_14_0._faction
 
 	if var_14_0 then
@@ -196,7 +196,7 @@ function Geheimnisnacht2021AltarExtension.stop_relevant_faction_sound(arg_14_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.play_relevant_faction_sound(arg_15_0)
+Geheimnisnacht2021AltarExtension.play_relevant_faction_sound = function (arg_15_0)
 	local var_15_0 = arg_15_0._faction
 
 	if var_15_0 then
@@ -216,7 +216,7 @@ function Geheimnisnacht2021AltarExtension.play_relevant_faction_sound(arg_15_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.set_ritual_sound(arg_16_0, arg_16_1)
+Geheimnisnacht2021AltarExtension.set_ritual_sound = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0._audio_system
 	local var_16_1 = arg_16_0._unit
 
@@ -227,13 +227,13 @@ function Geheimnisnacht2021AltarExtension.set_ritual_sound(arg_16_0, arg_16_1)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.setup_faction(arg_17_0, arg_17_1)
+Geheimnisnacht2021AltarExtension.setup_faction = function (arg_17_0, arg_17_1)
 	if arg_17_1 then
 		arg_17_0._faction = arg_17_1
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.change_state(arg_18_0, arg_18_1)
+Geheimnisnacht2021AltarExtension.change_state = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._state
 
 	if var_18_0 < arg_18_1 then
@@ -245,7 +245,7 @@ function Geheimnisnacht2021AltarExtension.change_state(arg_18_0, arg_18_1)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._init_state(arg_19_0)
+Geheimnisnacht2021AltarExtension._init_state = function (arg_19_0)
 	local var_19_0 = arg_19_0.world
 	local var_19_1 = arg_19_0._unit
 
@@ -274,7 +274,7 @@ function Geheimnisnacht2021AltarExtension._init_state(arg_19_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._increment_state(arg_20_0, arg_20_1)
+Geheimnisnacht2021AltarExtension._increment_state = function (arg_20_0, arg_20_1)
 	if arg_20_1 == var_0_7 then
 		arg_20_0:_mark_aggroed()
 	elseif arg_20_1 == var_0_8 then
@@ -284,16 +284,16 @@ function Geheimnisnacht2021AltarExtension._increment_state(arg_20_0, arg_20_1)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension._mark_aggroed(arg_21_0)
+Geheimnisnacht2021AltarExtension._mark_aggroed = function (arg_21_0)
 	Unit.animation_event(arg_21_0._unit, var_0_10)
 end
 
-function Geheimnisnacht2021AltarExtension._mark_interactable(arg_22_0)
+Geheimnisnacht2021AltarExtension._mark_interactable = function (arg_22_0)
 	arg_22_0:unregister_events()
 	Unit.animation_event(arg_22_0._unit, var_0_11)
 end
 
-function Geheimnisnacht2021AltarExtension._mark_destructible(arg_23_0)
+Geheimnisnacht2021AltarExtension._mark_destructible = function (arg_23_0)
 	if arg_23_0._decal_unit then
 		Unit.flow_event(arg_23_0._decal_unit, "despawn")
 
@@ -303,7 +303,7 @@ function Geheimnisnacht2021AltarExtension._mark_destructible(arg_23_0)
 	arg_23_0:die()
 end
 
-function Geheimnisnacht2021AltarExtension.nurglings_flee(arg_24_0)
+Geheimnisnacht2021AltarExtension.nurglings_flee = function (arg_24_0)
 	local var_24_0 = Managers.state.entity:system("ai_group_system"):get_ai_group(arg_24_0.nurgling_group_id)
 
 	if var_24_0 then
@@ -311,7 +311,7 @@ function Geheimnisnacht2021AltarExtension.nurglings_flee(arg_24_0)
 	end
 end
 
-function Geheimnisnacht2021AltarExtension.spawn_nurglings(arg_25_0)
+Geheimnisnacht2021AltarExtension.spawn_nurglings = function (arg_25_0)
 	if arg_25_0.nurglings_spawned then
 		return
 	end
@@ -323,7 +323,7 @@ function Geheimnisnacht2021AltarExtension.spawn_nurglings(arg_25_0)
 	arg_25_0.nurgling_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 
 	local var_25_3 = {
-		spawned_func = function(arg_26_0, arg_26_1, arg_26_2)
+		spawned_func = function (arg_26_0, arg_26_1, arg_26_2)
 			local var_26_0 = BLACKBOARDS[arg_26_0]
 
 			ScriptUnit.extension(arg_26_0, "ai_system"):set_perception("perception_regular", "pick_no_targets")

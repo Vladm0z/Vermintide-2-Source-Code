@@ -3,11 +3,11 @@
 StateDedicatedServerRunning = class(StateDedicatedServerRunning)
 StateDedicatedServerRunning.NAME = "StateDedicatedServerRunning"
 
-function StateDedicatedServerRunning.on_enter(arg_1_0, arg_1_1)
+StateDedicatedServerRunning.on_enter = function (arg_1_0, arg_1_1)
 	arg_1_0._game_server = arg_1_0.parent.parent.loading_context.game_server
 end
 
-function StateDedicatedServerRunning.update(arg_2_0, arg_2_1, arg_2_2)
+StateDedicatedServerRunning.update = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0._game_server
 	local var_2_1 = var_2_0:state()
 	local var_2_2 = var_2_0:update(arg_2_1, arg_2_2)
@@ -17,6 +17,6 @@ function StateDedicatedServerRunning.update(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function StateDedicatedServerRunning.on_exit(arg_3_0)
+StateDedicatedServerRunning.on_exit = function (arg_3_0)
 	return
 end

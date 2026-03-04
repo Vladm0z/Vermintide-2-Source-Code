@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerMoveToShootAction = class(BTRatlingGunnerMoveToShootAction, BTNode)
 
-function BTRatlingGunnerMoveToShootAction.init(arg_1_0, ...)
+BTRatlingGunnerMoveToShootAction.init = function (arg_1_0, ...)
 	BTRatlingGunnerMoveToShootAction.super.init(arg_1_0, ...)
 end
 
 BTRatlingGunnerMoveToShootAction.name = "BTRatlingGunnerMoveToShootAction"
 
-function BTRatlingGunnerMoveToShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTRatlingGunnerMoveToShootAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_0._tree_node.action_data
 	local var_2_1 = {}
 
@@ -41,7 +41,7 @@ function BTRatlingGunnerMoveToShootAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2
 	arg_2_2.move_attempts = 0
 end
 
-function BTRatlingGunnerMoveToShootAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatlingGunnerMoveToShootAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	if arg_3_4 ~= "done" then
 		arg_3_2.move_pos = nil
 	end
@@ -53,7 +53,7 @@ function BTRatlingGunnerMoveToShootAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3
 	arg_3_2.navigation_extension:set_max_speed(var_3_0)
 end
 
-function BTRatlingGunnerMoveToShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTRatlingGunnerMoveToShootAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.attack_pattern_data.exit_node then
 		arg_4_2.attack_pattern_data.exit_node = nil
 
@@ -98,13 +98,13 @@ function BTRatlingGunnerMoveToShootAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	return "running"
 end
 
-function BTRatlingGunnerMoveToShootAction.move_to(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTRatlingGunnerMoveToShootAction.move_to = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_3.navigation_extension:move_to(arg_5_1)
 
 	arg_5_3.move_pos = Vector3Box(arg_5_1)
 end
 
-function BTRatlingGunnerMoveToShootAction.calculate_move_position(arg_6_0, arg_6_1, arg_6_2)
+BTRatlingGunnerMoveToShootAction.calculate_move_position = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.action
 	local var_6_1 = var_6_0.keep_target_distance[1]
 	local var_6_2 = var_6_0.keep_target_distance[2]

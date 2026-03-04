@@ -2,7 +2,7 @@
 
 StatusUtils = {}
 
-function StatusUtils.set_wounded_network(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+StatusUtils.set_wounded_network = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_1_0, "status_system"):set_wounded(arg_1_1, arg_1_2, arg_1_3)
 
@@ -15,7 +15,7 @@ function StatusUtils.set_wounded_network(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-function StatusUtils.set_knocked_down_network(arg_2_0, arg_2_1)
+StatusUtils.set_knocked_down_network = function (arg_2_0, arg_2_1)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST, "can only knock down on server")
 	ScriptUnit.extension(arg_2_0, "status_system"):set_knocked_down(arg_2_1)
 
@@ -27,7 +27,7 @@ function StatusUtils.set_knocked_down_network(arg_2_0, arg_2_1)
 	end
 end
 
-function StatusUtils.set_revived_network(arg_3_0, arg_3_1, arg_3_2)
+StatusUtils.set_revived_network = function (arg_3_0, arg_3_1, arg_3_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST, "Only the server is allowed to decide who is revived and who isn't since it owns damage and interactions.")
 
 	if not arg_3_0 then
@@ -49,7 +49,7 @@ function StatusUtils.set_revived_network(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function StatusUtils.set_respawned_network(arg_4_0, arg_4_1, arg_4_2)
+StatusUtils.set_respawned_network = function (arg_4_0, arg_4_1, arg_4_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 
 	local var_4_0 = ScriptUnit.extension(arg_4_0, "status_system")
@@ -74,7 +74,7 @@ function StatusUtils.set_respawned_network(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function StatusUtils.set_pulled_up_network(arg_5_0, arg_5_1, arg_5_2)
+StatusUtils.set_pulled_up_network = function (arg_5_0, arg_5_1, arg_5_2)
 	ScriptUnit.extension(arg_5_0, "status_system"):set_pulled_up(arg_5_1, arg_5_2)
 
 	if not LEVEL_EDITOR_TEST then
@@ -90,7 +90,7 @@ function StatusUtils.set_pulled_up_network(arg_5_0, arg_5_1, arg_5_2)
 	end
 end
 
-function StatusUtils.set_grabbed_by_pack_master_network(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+StatusUtils.set_grabbed_by_pack_master_network = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -117,7 +117,7 @@ function StatusUtils.set_grabbed_by_pack_master_network(arg_6_0, arg_6_1, arg_6_
 	end
 end
 
-function StatusUtils.set_grabbed_by_corruptor_network(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+StatusUtils.set_grabbed_by_corruptor_network = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	if not Managers.state.network:game() then
 		return
 	end
@@ -138,7 +138,7 @@ function StatusUtils.set_grabbed_by_corruptor_network(arg_7_0, arg_7_1, arg_7_2,
 	end
 end
 
-function StatusUtils.set_pushed_network(arg_8_0, arg_8_1)
+StatusUtils.set_pushed_network = function (arg_8_0, arg_8_1)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 
 	local var_8_0 = Managers.time:time("game")
@@ -153,7 +153,7 @@ function StatusUtils.set_pushed_network(arg_8_0, arg_8_1)
 	end
 end
 
-function StatusUtils.set_charged_network(arg_9_0, arg_9_1)
+StatusUtils.set_charged_network = function (arg_9_0, arg_9_1)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 
 	local var_9_0 = Managers.time:time("game")
@@ -168,7 +168,7 @@ function StatusUtils.set_charged_network(arg_9_0, arg_9_1)
 	end
 end
 
-function StatusUtils.set_catapulted_network(arg_10_0, arg_10_1, arg_10_2)
+StatusUtils.set_catapulted_network = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = Managers.player
 	local var_10_1 = var_10_0:unit_owner(arg_10_0)
 
@@ -196,7 +196,7 @@ function StatusUtils.set_catapulted_network(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function StatusUtils.set_grabbed_by_tentacle_network(arg_11_0, arg_11_1, arg_11_2)
+StatusUtils.set_grabbed_by_tentacle_network = function (arg_11_0, arg_11_1, arg_11_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_11_0, "status_system"):set_grabbed_by_tentacle(arg_11_1, arg_11_2)
 
@@ -209,7 +209,7 @@ function StatusUtils.set_grabbed_by_tentacle_network(arg_11_0, arg_11_1, arg_11_
 	end
 end
 
-function StatusUtils.set_grabbed_by_tentacle_status_network(arg_12_0, arg_12_1)
+StatusUtils.set_grabbed_by_tentacle_status_network = function (arg_12_0, arg_12_1)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_12_0, "status_system"):set_grabbed_by_tentacle_status(arg_12_1)
 
@@ -222,7 +222,7 @@ function StatusUtils.set_grabbed_by_tentacle_status_network(arg_12_0, arg_12_1)
 	end
 end
 
-function StatusUtils.set_grabbed_by_chaos_spawn_network(arg_13_0, arg_13_1, arg_13_2)
+StatusUtils.set_grabbed_by_chaos_spawn_network = function (arg_13_0, arg_13_1, arg_13_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_13_0, "status_system"):set_grabbed_by_chaos_spawn(arg_13_1, arg_13_2)
 
@@ -235,7 +235,7 @@ function StatusUtils.set_grabbed_by_chaos_spawn_network(arg_13_0, arg_13_1, arg_
 	end
 end
 
-function StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_14_0, arg_14_1)
+StatusUtils.set_grabbed_by_chaos_spawn_status_network = function (arg_14_0, arg_14_1)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_14_0, "status_system"):set_grabbed_by_chaos_spawn_status(arg_14_1)
 
@@ -248,7 +248,7 @@ function StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_14_0, arg_14_
 	end
 end
 
-function StatusUtils.set_in_vortex_network(arg_15_0, arg_15_1, arg_15_2)
+StatusUtils.set_in_vortex_network = function (arg_15_0, arg_15_1, arg_15_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 
 	if not ALIVE[arg_15_0] then
@@ -268,7 +268,7 @@ function StatusUtils.set_in_vortex_network(arg_15_0, arg_15_1, arg_15_2)
 	return true
 end
 
-function StatusUtils.set_near_vortex_network(arg_16_0, arg_16_1, arg_16_2)
+StatusUtils.set_near_vortex_network = function (arg_16_0, arg_16_1, arg_16_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_16_0, "status_system"):set_near_vortex(arg_16_1, arg_16_2)
 
@@ -281,7 +281,7 @@ function StatusUtils.set_near_vortex_network(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function StatusUtils.set_in_liquid_network(arg_17_0, arg_17_1, arg_17_2)
+StatusUtils.set_in_liquid_network = function (arg_17_0, arg_17_1, arg_17_2)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_17_0, "status_system"):set_in_liquid(arg_17_1, arg_17_2)
 
@@ -294,7 +294,7 @@ function StatusUtils.set_in_liquid_network(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function StatusUtils.set_overpowered_network(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+StatusUtils.set_overpowered_network = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	fassert(Managers.player.is_server or LEVEL_EDITOR_TEST)
 	ScriptUnit.extension(arg_18_0, "status_system"):set_overpowered(arg_18_1, arg_18_2, arg_18_3)
 
@@ -311,7 +311,7 @@ function StatusUtils.set_overpowered_network(arg_18_0, arg_18_1, arg_18_2, arg_1
 	end
 end
 
-function StatusUtils.set_overcharge_exploding(arg_19_0, arg_19_1)
+StatusUtils.set_overcharge_exploding = function (arg_19_0, arg_19_1)
 	ScriptUnit.extension(arg_19_0, "status_system"):set_overcharge_exploding(arg_19_1)
 
 	if not LEVEL_EDITOR_TEST then
@@ -326,13 +326,13 @@ function StatusUtils.set_overcharge_exploding(arg_19_0, arg_19_1)
 	end
 end
 
-function StatusUtils.use_soft_collision(arg_20_0)
+StatusUtils.use_soft_collision = function (arg_20_0)
 	local var_20_0 = ScriptUnit.extension(arg_20_0, "status_system")
 
 	return not (var_20_0:is_using_transport() or var_20_0:get_inside_transport_unit() or var_20_0:is_disabled() or var_20_0:is_knocked_down() or var_20_0:is_pounced_down())
 end
 
-function StatusUtils.replenish_stamina_local_players(arg_21_0, arg_21_1)
+StatusUtils.replenish_stamina_local_players = function (arg_21_0, arg_21_1)
 	local var_21_0 = Managers.player:players_at_peer(Network.peer_id())
 
 	if var_21_0 then
@@ -349,7 +349,7 @@ function StatusUtils.replenish_stamina_local_players(arg_21_0, arg_21_1)
 	end
 end
 
-function StatusUtils.set_pounced_down_network(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+StatusUtils.set_pounced_down_network = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	if not Managers.state.network:game() then
 		return
 	end

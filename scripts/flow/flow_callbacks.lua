@@ -997,7 +997,7 @@ end
 function flow_callback_setup_profiling_level_step_1()
 	local var_90_0 = Mouse.pressed
 
-	function Mouse.pressed(arg_91_0)
+	Mouse.pressed = function (arg_91_0)
 		if arg_91_0 == 0 then
 			Mouse.pressed = var_90_0
 
@@ -1011,7 +1011,7 @@ end
 function flow_callback_setup_profiling_level_step_2()
 	local var_92_0 = Keyboard.pressed
 
-	function Keyboard.pressed(arg_93_0)
+	Keyboard.pressed = function (arg_93_0)
 		if arg_93_0 == 120 then
 			Keyboard.pressed = var_92_0
 
@@ -5154,7 +5154,7 @@ function flow_callback_spawn_skulls_tower_end(arg_349_0)
 
 	var_349_1.sofia_unit_pos = Vector3Box(var_349_2)
 
-	function var_349_1.spawned_func(arg_350_0, arg_350_1, arg_350_2)
+	var_349_1.spawned_func = function (arg_350_0, arg_350_1, arg_350_2)
 		local var_350_0 = BLACKBOARDS[arg_350_0]
 
 		if var_350_0 then
@@ -5162,7 +5162,7 @@ function flow_callback_spawn_skulls_tower_end(arg_349_0)
 		end
 	end
 
-	function var_349_1.prepare_func(arg_351_0, arg_351_1)
+	var_349_1.prepare_func = function (arg_351_0, arg_351_1)
 		local var_351_0 = false
 
 		arg_351_0.modify_extension_init_data(arg_351_0, var_351_0, arg_351_1)

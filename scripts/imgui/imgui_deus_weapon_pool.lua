@@ -2,19 +2,19 @@
 
 ImguiDeusWeaponPool = class(ImguiDeusWeaponPool)
 
-function ImguiDeusWeaponPool.init(arg_1_0)
+ImguiDeusWeaponPool.init = function (arg_1_0)
 	return
 end
 
-function ImguiDeusWeaponPool.update(arg_2_0)
+ImguiDeusWeaponPool.update = function (arg_2_0)
 	return
 end
 
-function ImguiDeusWeaponPool.is_persistent(arg_3_0)
+ImguiDeusWeaponPool.is_persistent = function (arg_3_0)
 	return true
 end
 
-function ImguiDeusWeaponPool.draw(arg_4_0, arg_4_1)
+ImguiDeusWeaponPool.draw = function (arg_4_0, arg_4_1)
 	local var_4_0 = Imgui.begin_window("DeusWeaponPool", "always_auto_resize")
 	local var_4_1 = DeusWeaponGroups
 	local var_4_2 = Managers.state
@@ -40,7 +40,7 @@ function ImguiDeusWeaponPool.draw(arg_4_0, arg_4_1)
 
 		local var_4_11 = table.keys(var_4_8)
 
-		table.sort(var_4_11, function(arg_5_0, arg_5_1)
+		table.sort(var_4_11, function (arg_5_0, arg_5_1)
 			return var_4_5[arg_5_0].order < var_4_5[arg_5_1].order
 		end)
 
@@ -73,7 +73,7 @@ function ImguiDeusWeaponPool.draw(arg_4_0, arg_4_1)
 				table.insert(var_4_14, var_4_20)
 			end
 
-			table.sort(var_4_14, function(arg_6_0, arg_6_1)
+			table.sort(var_4_14, function (arg_6_0, arg_6_1)
 				return arg_6_0.order > arg_6_1.order
 			end)
 

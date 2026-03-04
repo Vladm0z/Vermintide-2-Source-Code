@@ -107,7 +107,7 @@ local function var_0_10(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_id",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.texture_size[1] = arg_2_0.parent.bar_progress * var_0_3[1]
 						arg_2_0.uvs[2][1] = arg_2_0.parent.bar_progress
 					end
@@ -116,7 +116,7 @@ local function var_0_10(arg_1_0, arg_1_1)
 					style_id = "progress_bar_tip",
 					texture_id = "progress_bar_tip_id",
 					pass_type = "texture",
-					content_change_function = function(arg_3_0, arg_3_1)
+					content_change_function = function (arg_3_0, arg_3_1)
 						arg_3_1.offset[1] = arg_3_0.bar_progress * var_0_3[1] - 4
 					end
 				},
@@ -139,10 +139,10 @@ local function var_0_10(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill_bg",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_bg_id",
-					content_check_function = function(arg_4_0, arg_4_1)
+					content_check_function = function (arg_4_0, arg_4_1)
 						return arg_4_0.parent.bar_progress < arg_4_0.parent.progress
 					end,
-					content_change_function = function(arg_5_0, arg_5_1)
+					content_change_function = function (arg_5_0, arg_5_1)
 						arg_5_1.texture_size[1] = arg_5_0.parent.progress * var_0_3[1]
 						arg_5_0.uvs[2][1] = arg_5_0.parent.progress
 					end
@@ -151,10 +151,10 @@ local function var_0_10(arg_1_0, arg_1_1)
 					style_id = "glow",
 					pass_type = "texture_uv",
 					content_id = "glow_id",
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return arg_6_0.parent.bar_progress < arg_6_0.parent.progress or arg_6_0.parent.bar_progress == 1
 					end,
-					content_change_function = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+					content_change_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 						if arg_7_0.parent.bar_progress == 1 then
 							arg_7_0.timer = arg_7_0.timer + arg_7_3 * 3
 							arg_7_1.color[1] = 96 + math.cos(arg_7_0.timer) * 96
@@ -172,10 +172,10 @@ local function var_0_10(arg_1_0, arg_1_1)
 					style_id = "progress_bar_glow_tip",
 					texture_id = "progress_bar_tip_id",
 					pass_type = "texture",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return arg_8_0.bar_progress < arg_8_0.progress
 					end,
-					content_change_function = function(arg_9_0, arg_9_1)
+					content_change_function = function (arg_9_0, arg_9_1)
 						arg_9_1.offset[1] = arg_9_0.progress * var_0_3[1] - 4
 					end
 				},
@@ -557,7 +557,7 @@ local function var_0_11(arg_10_0)
 					style_id = "bar",
 					pass_type = "texture_uv",
 					content_id = "bar_content",
-					content_change_function = function(arg_11_0, arg_11_1)
+					content_change_function = function (arg_11_0, arg_11_1)
 						local var_11_0 = arg_11_0.parent.bar_progress
 
 						arg_11_0.uvs[2][1] = var_11_0
@@ -570,7 +570,7 @@ local function var_0_11(arg_10_0)
 				{
 					style_id = "bar_glow",
 					pass_type = "rect",
-					content_change_function = function(arg_12_0, arg_12_1)
+					content_change_function = function (arg_12_0, arg_12_1)
 						local var_12_0 = arg_12_0.progress
 
 						arg_12_1.texture_size[1] = var_12_0 * var_10_3.size[1]
@@ -580,7 +580,7 @@ local function var_0_11(arg_10_0)
 					style_id = "bar_edge_glow",
 					texture_id = "bar_edge_glow_id",
 					pass_type = "texture",
-					content_change_function = function(arg_13_0, arg_13_1)
+					content_change_function = function (arg_13_0, arg_13_1)
 						local var_13_0 = var_10_3.size[1]
 						local var_13_1 = arg_13_0.bar_progress
 						local var_13_2 = arg_13_1.base_offset_x
@@ -596,7 +596,7 @@ local function var_0_11(arg_10_0)
 					pass_type = "texture",
 					style_id = "bubble_icon",
 					texture_id = "bubble_icon_id",
-					content_check_function = function(arg_14_0)
+					content_check_function = function (arg_14_0)
 						local var_14_0 = arg_14_0.bar_cutoff
 						local var_14_1 = Managers.weave:current_bar_score()
 
@@ -607,7 +607,7 @@ local function var_0_11(arg_10_0)
 					pass_type = "texture",
 					style_id = "bubble_icon",
 					texture_id = "bubble_icon_grayscale_id",
-					content_check_function = function(arg_15_0)
+					content_check_function = function (arg_15_0)
 						local var_15_0 = arg_15_0.bar_cutoff
 						local var_15_1 = Managers.weave:current_bar_score()
 
@@ -1056,7 +1056,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				{
 					style_id = "stroke",
 					pass_type = "rect",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.is_done
 					end
 				},
@@ -1064,7 +1064,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 					pass_type = "texture",
 					style_id = "bullet",
 					texture_id = "bullet_id",
-					content_check_function = function(arg_19_0)
+					content_check_function = function (arg_19_0)
 						return not arg_19_0.is_done
 					end
 				},
@@ -1072,7 +1072,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark_id",
-					content_check_function = function(arg_20_0)
+					content_check_function = function (arg_20_0)
 						return arg_20_0.is_done
 					end
 				},
@@ -1080,7 +1080,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 					pass_type = "texture",
 					style_id = "checkmark_shadow",
 					texture_id = "checkmark_id",
-					content_check_function = function(arg_21_0)
+					content_check_function = function (arg_21_0)
 						return arg_21_0.is_done
 					end
 				},
@@ -1088,7 +1088,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 					style_id = "objective_name",
 					pass_type = "text",
 					text_id = "objective_name_id",
-					content_change_function = function(arg_22_0)
+					content_change_function = function (arg_22_0)
 						if not arg_22_0.stack then
 							return
 						end
@@ -1121,7 +1121,7 @@ local function var_0_13(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 			},
 			done_stack = {},
 			stack_name = arg_17_2,
-			is_done_func = function(arg_23_0, arg_23_1)
+			is_done_func = function (arg_23_0, arg_23_1)
 				if arg_23_0.is_done or arg_23_0.stack == false then
 					return true
 				end

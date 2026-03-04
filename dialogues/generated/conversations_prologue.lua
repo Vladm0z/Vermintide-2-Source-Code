@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/conversations_prologue.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "ecc_prologue_dialogue_answer_bang",
 		name = "ecc_prologue_dialogue_answer_bang",

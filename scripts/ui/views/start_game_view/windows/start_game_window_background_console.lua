@@ -11,7 +11,7 @@ local var_0_4 = var_0_0.loading_overlay_widgets
 StartGameWindowBackgroundConsole = class(StartGameWindowBackgroundConsole)
 StartGameWindowBackgroundConsole.NAME = "StartGameWindowBackgroundConsole"
 
-function StartGameWindowBackgroundConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowBackgroundConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameViewWindow] Enter Substate StartGameWindowBackgroundConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -31,7 +31,7 @@ function StartGameWindowBackgroundConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_setup_object_sets()
 end
 
-function StartGameWindowBackgroundConsole._get_with_mechanism(arg_2_0, arg_2_1)
+StartGameWindowBackgroundConsole._get_with_mechanism = function (arg_2_0, arg_2_1)
 	return arg_2_1[arg_2_0.parent:get_mechanism_name()] or arg_2_1.adventure
 end
 
@@ -41,7 +41,7 @@ local var_0_5 = {
 	deus = "menu_chaos_wastes_01"
 }
 
-function StartGameWindowBackgroundConsole._create_viewport_definition(arg_3_0)
+StartGameWindowBackgroundConsole._create_viewport_definition = function (arg_3_0)
 	return {
 		scenegraph_id = "root_fit",
 		element = UIElements.Viewport,
@@ -82,7 +82,7 @@ function StartGameWindowBackgroundConsole._create_viewport_definition(arg_3_0)
 	}
 end
 
-function StartGameWindowBackgroundConsole.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+StartGameWindowBackgroundConsole.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._viewport_widget_definition = arg_4_0:_create_viewport_definition()
 
 	if arg_4_0._viewport_widget then
@@ -107,7 +107,7 @@ function StartGameWindowBackgroundConsole.create_ui_elements(arg_4_0, arg_4_1, a
 	end
 end
 
-function StartGameWindowBackgroundConsole._setup_object_sets(arg_5_0)
+StartGameWindowBackgroundConsole._setup_object_sets = function (arg_5_0)
 	local var_5_0 = arg_5_0._viewport_widget_definition.style.viewport.level_name
 	local var_5_1 = LevelResource.object_set_names(var_5_0)
 
@@ -120,7 +120,7 @@ function StartGameWindowBackgroundConsole._setup_object_sets(arg_5_0)
 	end
 end
 
-function StartGameWindowBackgroundConsole.on_exit(arg_6_0, arg_6_1)
+StartGameWindowBackgroundConsole.on_exit = function (arg_6_0, arg_6_1)
 	print("[StartGameViewWindow] Exit Substate StartGameWindowBackgroundConsole")
 
 	arg_6_0.ui_animator = nil
@@ -138,7 +138,7 @@ function StartGameWindowBackgroundConsole.on_exit(arg_6_0, arg_6_1)
 	end
 end
 
-function StartGameWindowBackgroundConsole.update(arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowBackgroundConsole.update = function (arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_animations(arg_7_1)
 	arg_7_0:draw(arg_7_1)
 
@@ -157,7 +157,7 @@ function StartGameWindowBackgroundConsole.update(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function StartGameWindowBackgroundConsole._update_object_sets(arg_8_0, arg_8_1)
+StartGameWindowBackgroundConsole._update_object_sets = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_0.parent:get_layout_setting_by_name(arg_8_1)
 	local var_8_1 = var_8_0.background_object_set
 	local var_8_2 = var_8_0.background_flow_event
@@ -174,7 +174,7 @@ function StartGameWindowBackgroundConsole._update_object_sets(arg_8_0, arg_8_1)
 	end
 end
 
-function StartGameWindowBackgroundConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowBackgroundConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	if not arg_9_0._viewport_widget then
 		arg_9_0._viewport_widget = UIWidget.init(arg_9_0._viewport_widget_definition)
 		arg_9_0._fadeout_loading_overlay = true
@@ -197,7 +197,7 @@ function StartGameWindowBackgroundConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function StartGameWindowBackgroundConsole._update_animations(arg_10_0, arg_10_1)
+StartGameWindowBackgroundConsole._update_animations = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.ui_animator
 
 	arg_10_0.ui_animator:update(arg_10_1)
@@ -211,7 +211,7 @@ function StartGameWindowBackgroundConsole._update_animations(arg_10_0, arg_10_1)
 	end
 end
 
-function StartGameWindowBackgroundConsole.draw(arg_11_0, arg_11_1)
+StartGameWindowBackgroundConsole.draw = function (arg_11_0, arg_11_1)
 	local var_11_0 = arg_11_0.ui_top_renderer
 	local var_11_1 = arg_11_0.ui_scenegraph
 	local var_11_2 = arg_11_0.parent:window_input_service()
@@ -231,7 +231,7 @@ function StartGameWindowBackgroundConsole.draw(arg_11_0, arg_11_1)
 	end
 end
 
-function StartGameWindowBackgroundConsole._update_loading_overlay_fadeout_animation(arg_12_0, arg_12_1)
+StartGameWindowBackgroundConsole._update_loading_overlay_fadeout_animation = function (arg_12_0, arg_12_1)
 	if not arg_12_0._fadeout_loading_overlay then
 		return
 	end

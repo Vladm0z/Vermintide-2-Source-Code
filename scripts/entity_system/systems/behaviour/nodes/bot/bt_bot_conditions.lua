@@ -26,7 +26,7 @@ BTConditions.ability_check_categories = {
 
 local var_0_0 = ScriptUnit
 
-function BTConditions.can_activate.dr_ironbreaker(arg_1_0)
+BTConditions.can_activate.dr_ironbreaker = function (arg_1_0)
 	local var_1_0 = arg_1_0.unit
 	local var_1_1 = POSITION_LOOKUP[var_1_0]
 	local var_1_2 = arg_1_0.proximite_enemies
@@ -55,7 +55,7 @@ function BTConditions.can_activate.dr_ironbreaker(arg_1_0)
 	return false
 end
 
-function BTConditions.can_activate.dr_slayer(arg_2_0)
+BTConditions.can_activate.dr_slayer = function (arg_2_0)
 	if not arg_2_0.locomotion_extension:is_on_ground() then
 		return false
 	end
@@ -100,7 +100,7 @@ function BTConditions.can_activate.dr_slayer(arg_2_0)
 	return false
 end
 
-function BTConditions.can_activate.dr_ranger(arg_3_0)
+BTConditions.can_activate.dr_ranger = function (arg_3_0)
 	local var_3_0 = arg_3_0.unit
 	local var_3_1 = arg_3_0.target_ally_unit
 	local var_3_2 = Managers.state.entity:system("ai_bot_group_system"):is_prioritized_ally(var_3_0, var_3_1)
@@ -134,7 +134,7 @@ function BTConditions.can_activate.dr_ranger(arg_3_0)
 	return false
 end
 
-function BTConditions.can_activate.es_mercenary(arg_4_0)
+BTConditions.can_activate.es_mercenary = function (arg_4_0)
 	local var_4_0 = arg_4_0.unit
 	local var_4_1 = POSITION_LOOKUP[var_4_0]
 	local var_4_2 = 225
@@ -183,7 +183,7 @@ function BTConditions.can_activate.es_mercenary(arg_4_0)
 	return false
 end
 
-function BTConditions.can_activate.es_huntsman(arg_5_0)
+BTConditions.can_activate.es_huntsman = function (arg_5_0)
 	local var_5_0 = #arg_5_0.proximite_enemies
 	local var_5_1 = arg_5_0.target_unit
 
@@ -213,7 +213,7 @@ function BTConditions.can_activate.es_huntsman(arg_5_0)
 	return false
 end
 
-function BTConditions.can_activate.es_knight(arg_6_0)
+BTConditions.can_activate.es_knight = function (arg_6_0)
 	local var_6_0 = arg_6_0.unit
 	local var_6_1 = POSITION_LOOKUP[var_6_0]
 	local var_6_2 = arg_6_0.target_unit
@@ -255,7 +255,7 @@ function BTConditions.can_activate.es_knight(arg_6_0)
 	return false
 end
 
-function BTConditions.can_activate.we_waywatcher(arg_7_0)
+BTConditions.can_activate.we_waywatcher = function (arg_7_0)
 	local var_7_0 = arg_7_0.target_unit
 
 	if not ALIVE[var_7_0] then
@@ -278,7 +278,7 @@ function BTConditions.can_activate.we_waywatcher(arg_7_0)
 	end
 end
 
-function BTConditions.can_activate.we_maidenguard(arg_8_0)
+BTConditions.can_activate.we_maidenguard = function (arg_8_0)
 	local var_8_0 = arg_8_0.unit
 	local var_8_1 = POSITION_LOOKUP[var_8_0]
 	local var_8_2 = arg_8_0.target_unit
@@ -320,7 +320,7 @@ function BTConditions.can_activate.we_maidenguard(arg_8_0)
 	return false
 end
 
-function BTConditions.can_activate.we_shade(arg_9_0)
+BTConditions.can_activate.we_shade = function (arg_9_0)
 	local var_9_0 = #arg_9_0.proximite_enemies
 	local var_9_1 = arg_9_0.target_unit
 
@@ -350,7 +350,7 @@ function BTConditions.can_activate.we_shade(arg_9_0)
 	return false
 end
 
-function BTConditions.can_activate.wh_captain(arg_10_0)
+BTConditions.can_activate.wh_captain = function (arg_10_0)
 	local var_10_0 = arg_10_0.unit
 	local var_10_1 = POSITION_LOOKUP[var_10_0]
 	local var_10_2 = 100
@@ -400,7 +400,7 @@ function BTConditions.can_activate.wh_captain(arg_10_0)
 	return false
 end
 
-function BTConditions.can_activate.wh_bountyhunter(arg_11_0)
+BTConditions.can_activate.wh_bountyhunter = function (arg_11_0)
 	local var_11_0 = arg_11_0.target_unit
 
 	if not ALIVE[var_11_0] then
@@ -423,7 +423,7 @@ function BTConditions.can_activate.wh_bountyhunter(arg_11_0)
 	end
 end
 
-function BTConditions.can_activate.wh_zealot(arg_12_0)
+BTConditions.can_activate.wh_zealot = function (arg_12_0)
 	local var_12_0 = arg_12_0.unit
 	local var_12_1 = POSITION_LOOKUP[var_12_0]
 	local var_12_2 = arg_12_0.target_unit
@@ -464,7 +464,7 @@ function BTConditions.can_activate.wh_zealot(arg_12_0)
 	return false
 end
 
-function BTConditions.can_activate.bw_adept(arg_13_0)
+BTConditions.can_activate.bw_adept = function (arg_13_0)
 	local var_13_0 = arg_13_0.unit
 	local var_13_1 = POSITION_LOOKUP[var_13_0]
 	local var_13_2 = arg_13_0.target_unit
@@ -505,7 +505,7 @@ function BTConditions.can_activate.bw_adept(arg_13_0)
 	return false
 end
 
-function BTConditions.can_activate.bw_scholar(arg_14_0)
+BTConditions.can_activate.bw_scholar = function (arg_14_0)
 	local var_14_0 = arg_14_0.target_unit
 
 	if not ALIVE[var_14_0] then
@@ -528,7 +528,7 @@ function BTConditions.can_activate.bw_scholar(arg_14_0)
 	end
 end
 
-function BTConditions.can_activate.bw_unchained(arg_15_0)
+BTConditions.can_activate.bw_unchained = function (arg_15_0)
 	if arg_15_0.overcharge_extension:is_above_critical_limit() then
 		return true
 	end
@@ -561,7 +561,7 @@ function BTConditions.can_activate.bw_unchained(arg_15_0)
 	return false
 end
 
-function BTConditions.can_activate_ability(arg_16_0, arg_16_1)
+BTConditions.can_activate_ability = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.career_extension
 	local var_16_1 = arg_16_0.activate_ability_data.is_using_ability
 	local var_16_2 = var_16_0:career_name()
@@ -585,7 +585,7 @@ function BTConditions.can_activate_ability(arg_16_0, arg_16_1)
 	return var_16_1 or var_16_0:can_use_activated_ability() and var_16_5 and var_16_5(arg_16_0)
 end
 
-function BTConditions.should_reload_ability_weapon(arg_17_0, arg_17_1)
+BTConditions.should_reload_ability_weapon = function (arg_17_0, arg_17_1)
 	if arg_17_0.reloading and arg_17_0.reloading_slot ~= arg_17_1.wanted_slot then
 		return false
 	end
@@ -596,7 +596,7 @@ function BTConditions.should_reload_ability_weapon(arg_17_0, arg_17_1)
 	return var_17_1 and var_17_1(arg_17_0, arg_17_1)
 end
 
-function BTConditions.is_disabled(arg_18_0)
+BTConditions.is_disabled = function (arg_18_0)
 	return arg_18_0.is_knocked_down or arg_18_0.is_grabbed_by_pack_master or arg_18_0.is_pounced_down or arg_18_0.is_hanging_from_hook or arg_18_0.is_ledge_hanging or arg_18_0.is_grabbed_by_chaos_spawn
 end
 
@@ -681,7 +681,7 @@ local function var_0_11(arg_22_0, arg_22_1)
 	end
 end
 
-function BTConditions.can_revive(arg_23_0)
+BTConditions.can_revive = function (arg_23_0)
 	local var_23_0 = arg_23_0.target_ally_unit
 
 	if arg_23_0.interaction_unit == var_23_0 and arg_23_0.target_ally_need_type == "knocked_down" then
@@ -713,11 +713,11 @@ function BTConditions.can_revive(arg_23_0)
 	end
 end
 
-function BTConditions.is_there_threat_to_aid(arg_24_0, arg_24_1, arg_24_2)
+BTConditions.is_there_threat_to_aid = function (arg_24_0, arg_24_1, arg_24_2)
 	return var_0_7(arg_24_0, arg_24_1, arg_24_2)
 end
 
-function BTConditions.can_heal_player(arg_25_0)
+BTConditions.can_heal_player = function (arg_25_0)
 	local var_25_0 = arg_25_0.target_ally_unit
 	local var_25_1 = var_25_0 and var_0_0.extension(var_25_0, "career_system")
 	local var_25_2 = var_25_0 and var_0_0.extension(var_25_0, "status_system")
@@ -751,7 +751,7 @@ function BTConditions.can_heal_player(arg_25_0)
 	end
 end
 
-function BTConditions.can_help_in_need_player(arg_26_0, arg_26_1)
+BTConditions.can_help_in_need_player = function (arg_26_0, arg_26_1)
 	local var_26_0 = arg_26_1[1]
 	local var_26_1 = arg_26_0.target_ally_unit
 
@@ -770,7 +770,7 @@ function BTConditions.can_help_in_need_player(arg_26_0, arg_26_1)
 	end
 end
 
-function BTConditions.can_rescue_hanging_from_hook(arg_27_0)
+BTConditions.can_rescue_hanging_from_hook = function (arg_27_0)
 	local var_27_0 = arg_27_0.target_ally_unit
 
 	if arg_27_0.interaction_unit == var_27_0 and arg_27_0.target_ally_need_type == "hook" then
@@ -794,7 +794,7 @@ function BTConditions.can_rescue_hanging_from_hook(arg_27_0)
 	end
 end
 
-function BTConditions.can_rescue_ledge_hanging(arg_28_0)
+BTConditions.can_rescue_ledge_hanging = function (arg_28_0)
 	local var_28_0 = arg_28_0.target_ally_unit
 
 	if arg_28_0.interaction_unit == var_28_0 and arg_28_0.target_ally_need_type == "ledge" then
@@ -818,7 +818,7 @@ function BTConditions.can_rescue_ledge_hanging(arg_28_0)
 	end
 end
 
-function BTConditions.can_loot(arg_29_0)
+BTConditions.can_loot = function (arg_29_0)
 	local var_29_0 = Managers.state.entity:system("play_go_tutorial_system")
 
 	if var_29_0 and not var_29_0:bot_loot_enabled() then
@@ -834,7 +834,7 @@ function BTConditions.can_loot(arg_29_0)
 	return var_29_3 or var_29_4 or var_29_5
 end
 
-function BTConditions.bot_should_heal(arg_30_0)
+BTConditions.bot_should_heal = function (arg_30_0)
 	local var_30_0 = arg_30_0.unit
 	local var_30_1 = arg_30_0.inventory_extension
 	local var_30_2 = var_30_1:get_slot_data("slot_healthkit")
@@ -860,7 +860,7 @@ function BTConditions.bot_should_heal(arg_30_0)
 	return (not var_30_10 or (var_30_3.fast_heal or arg_30_0.is_healing_self) and #arg_30_0.proximite_enemies == 0 or var_30_10 ~= arg_30_0.priority_target_enemy and var_30_10 ~= arg_30_0.urgent_target_enemy and var_30_10 ~= arg_30_0.proximity_target_enemy and var_30_10 ~= arg_30_0.slot_target_enemy) and (var_30_6 or not var_30_4 and (var_30_7 or var_30_5 and (var_30_8 or var_30_9)) or var_30_4 and var_30_7 and var_30_5)
 end
 
-function BTConditions.is_slot_not_wielded(arg_31_0, arg_31_1)
+BTConditions.is_slot_not_wielded = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0.inventory_extension:equipment().wielded_slot
 	local var_31_1 = arg_31_1[1]
 	local var_31_2 = arg_31_1[2]
@@ -872,7 +872,7 @@ function BTConditions.is_slot_not_wielded(arg_31_0, arg_31_1)
 	end
 end
 
-function BTConditions.is_wanted_slot_not_wielded(arg_32_0, arg_32_1)
+BTConditions.is_wanted_slot_not_wielded = function (arg_32_0, arg_32_1)
 	local var_32_0 = arg_32_0.inventory_extension:equipment().wielded_slot
 	local var_32_1 = arg_32_0[arg_32_1[1]]
 	local var_32_2 = arg_32_1[2]
@@ -884,11 +884,11 @@ function BTConditions.is_wanted_slot_not_wielded(arg_32_0, arg_32_1)
 	end
 end
 
-function BTConditions.has_double_weapon_slots(arg_33_0, arg_33_1)
+BTConditions.has_double_weapon_slots = function (arg_33_0, arg_33_1)
 	return arg_33_0.double_weapons == arg_33_1[1]
 end
 
-function BTConditions.has_better_alt_weapon(arg_34_0, arg_34_1)
+BTConditions.has_better_alt_weapon = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_1[1]
 
 	if arg_34_0.double_weapons == var_34_0 then
@@ -904,7 +904,7 @@ function BTConditions.has_better_alt_weapon(arg_34_0, arg_34_1)
 	return false
 end
 
-function BTConditions.needs_weapon_swap(arg_35_0, arg_35_1)
+BTConditions.needs_weapon_swap = function (arg_35_0, arg_35_1)
 	if BTConditions.has_double_weapon_slots(arg_35_0, arg_35_1) and BTConditions.has_better_alt_weapon(arg_35_0, arg_35_1) then
 		return BTConditions.is_slot_not_wielded(arg_35_0, {
 			arg_35_1[2]
@@ -916,7 +916,7 @@ function BTConditions.needs_weapon_swap(arg_35_0, arg_35_1)
 	})
 end
 
-function BTConditions.has_priority_or_opportunity_target(arg_36_0)
+BTConditions.has_priority_or_opportunity_target = function (arg_36_0)
 	local var_36_0 = arg_36_0.target_unit
 
 	if not ALIVE[var_36_0] then
@@ -928,7 +928,7 @@ function BTConditions.has_priority_or_opportunity_target(arg_36_0)
 	return var_36_0 == arg_36_0.priority_target_enemy and var_36_1 > arg_36_0.priority_target_distance or not arg_36_0.revive_with_urgent_target and var_36_0 == arg_36_0.urgent_target_enemy and var_36_1 > arg_36_0.urgent_target_distance or var_36_0 == arg_36_0.opportunity_target_enemy and var_36_1 > arg_36_0.opportunity_target_distance
 end
 
-function BTConditions.bot_in_melee_range(arg_37_0)
+BTConditions.bot_in_melee_range = function (arg_37_0)
 	local var_37_0 = arg_37_0.target_unit
 
 	if not ALIVE[var_37_0] then
@@ -960,7 +960,7 @@ function BTConditions.bot_in_melee_range(arg_37_0)
 	return var_37_7 and var_37_8 > -1.5 and var_37_8 < 2
 end
 
-function BTConditions.has_target_and_ammo_greater_than(arg_38_0, arg_38_1)
+BTConditions.has_target_and_ammo_greater_than = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0.target_unit
 
 	if not ALIVE[var_38_0] then
@@ -1002,7 +1002,7 @@ function BTConditions.has_target_and_ammo_greater_than(arg_38_0, arg_38_1)
 	return var_38_9 and var_38_15 and not var_38_18 and var_38_19
 end
 
-function BTConditions.should_vent_overcharge(arg_39_0, arg_39_1)
+BTConditions.should_vent_overcharge = function (arg_39_0, arg_39_1)
 	local var_39_0 = arg_39_0.overcharge_extension
 	local var_39_1 = arg_39_1.overcharge_limit_type
 	local var_39_2, var_39_3, var_39_4 = var_39_0:current_overcharge_status()
@@ -1025,7 +1025,7 @@ function BTConditions.should_vent_overcharge(arg_39_0, arg_39_1)
 	return var_39_6
 end
 
-function BTConditions.should_recall_unique_ammo(arg_40_0, arg_40_1)
+BTConditions.should_recall_unique_ammo = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0.inventory_extension
 
 	if not var_40_0:has_unique_ammo_type_weapon_equipped() then
@@ -1050,7 +1050,7 @@ function BTConditions.should_recall_unique_ammo(arg_40_0, arg_40_1)
 	return var_40_4
 end
 
-function BTConditions.should_reload_weapon(arg_41_0, arg_41_1)
+BTConditions.should_reload_weapon = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0.inventory_extension:get_slot_data("slot_ranged")
 	local var_41_1 = var_41_0 and var_41_0.right_unit_1p
 	local var_41_2 = var_41_0 and var_41_0.left_unit_1p
@@ -1071,11 +1071,11 @@ function BTConditions.should_reload_weapon(arg_41_0, arg_41_1)
 	return var_41_4
 end
 
-function BTConditions.wants_to_reload_weapon(arg_42_0, arg_42_1)
+BTConditions.wants_to_reload_weapon = function (arg_42_0, arg_42_1)
 	return arg_42_0.wanted_slot_to_reload ~= nil
 end
 
-function BTConditions.can_open_door(arg_43_0)
+BTConditions.can_open_door = function (arg_43_0)
 	local var_43_0 = false
 
 	if arg_43_0.interaction_type == "door" then
@@ -1090,13 +1090,13 @@ function BTConditions.can_open_door(arg_43_0)
 	return var_43_0
 end
 
-function BTConditions.bot_at_breakable(arg_44_0)
+BTConditions.bot_at_breakable = function (arg_44_0)
 	local var_44_0 = arg_44_0.navigation_extension
 
 	return var_44_0:is_in_transition() and var_44_0:transition_type() == "planks"
 end
 
-function BTConditions.cant_reach_ally(arg_45_0)
+BTConditions.cant_reach_ally = function (arg_45_0)
 	local var_45_0 = arg_45_0.ai_bot_group_extension.data.follow_unit
 
 	if not ALIVE[var_45_0] or arg_45_0.has_teleported then
@@ -1134,7 +1134,7 @@ end
 
 local var_0_12 = 1600
 
-function BTConditions.should_teleport(arg_46_0)
+BTConditions.should_teleport = function (arg_46_0)
 	local var_46_0 = arg_46_0.ai_bot_group_extension.data.follow_unit
 
 	if not ALIVE[var_46_0] or arg_46_0.has_teleported then
@@ -1168,7 +1168,7 @@ function BTConditions.should_teleport(arg_46_0)
 	return Vector3.distance_squared(var_46_8, var_46_9) >= var_0_12
 end
 
-function BTConditions.should_drop_grimoire(arg_47_0)
+BTConditions.should_drop_grimoire = function (arg_47_0)
 	local var_47_0 = arg_47_0.inventory_extension
 	local var_47_1 = "slot_potion"
 	local var_47_2 = var_47_0:get_slot_data(var_47_1)

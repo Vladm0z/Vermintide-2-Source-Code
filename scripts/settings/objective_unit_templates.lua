@@ -4,7 +4,7 @@ ObjectiveUnitTemplates = {}
 ObjectiveUnitTemplates.objective_group = {
 	unit_name = "units/hub_elements/empty",
 	unit_template_name = "objective_group",
-	create_extension_init_data_func = function(arg_1_0, arg_1_1, arg_1_2)
+	create_extension_init_data_func = function (arg_1_0, arg_1_1, arg_1_2)
 		return {
 			objective_system = {
 				objective_name = arg_1_0,
@@ -20,7 +20,7 @@ ObjectiveUnitTemplates.objective_group = {
 ObjectiveUnitTemplates.weave_capture_point = {
 	unit_name = "units/gameplay/weave_capture_point",
 	unit_template_name = "weave_capture_point_unit",
-	create_extension_init_data_func = function(arg_2_0, arg_2_1, arg_2_2)
+	create_extension_init_data_func = function (arg_2_0, arg_2_1, arg_2_2)
 		return {
 			objective_system = {
 				objective_name = arg_2_0,
@@ -41,7 +41,7 @@ ObjectiveUnitTemplates.weave_capture_point = {
 ObjectiveUnitTemplates.weave_target = {
 	unit_name = "units/props/generic/weave_target",
 	unit_template_name = "weave_target_unit",
-	create_extension_init_data_func = function(arg_3_0, arg_3_1, arg_3_2)
+	create_extension_init_data_func = function (arg_3_0, arg_3_1, arg_3_2)
 		return {
 			objective_system = {
 				objective_name = arg_3_0,
@@ -62,7 +62,7 @@ ObjectiveUnitTemplates.weave_target = {
 ObjectiveUnitTemplates.weave_interaction = {
 	unit_name = "units/gameplay/weave_interaction",
 	unit_template_name = "weave_interaction_unit",
-	create_extension_init_data_func = function(arg_4_0, arg_4_1, arg_4_2)
+	create_extension_init_data_func = function (arg_4_0, arg_4_1, arg_4_2)
 		return {
 			objective_system = {
 				objective_name = arg_4_0,
@@ -82,7 +82,7 @@ ObjectiveUnitTemplates.weave_interaction = {
 ObjectiveUnitTemplates.weave_doom_wheel = {
 	unit_name = "units/gameplay/weave/weave_prop_skaven_doom_wheel_01",
 	unit_template_name = "weave_doom_wheel",
-	create_extension_init_data_func = function(arg_5_0, arg_5_1, arg_5_2)
+	create_extension_init_data_func = function (arg_5_0, arg_5_1, arg_5_2)
 		local var_5_0 = Unit.get_data(arg_5_2, "group_name")
 
 		return {
@@ -103,7 +103,7 @@ ObjectiveUnitTemplates.weave_doom_wheel = {
 ObjectiveUnitTemplates.weave_kill_enemies = {
 	unit_name = "units/gameplay/weave_kill_enemies",
 	unit_template_name = "weave_kill_enemies_unit",
-	create_extension_init_data_func = function(arg_6_0, arg_6_1, arg_6_2)
+	create_extension_init_data_func = function (arg_6_0, arg_6_1, arg_6_2)
 		return {
 			objective_system = {
 				objective_name = arg_6_0,
@@ -126,7 +126,7 @@ ObjectiveUnitTemplates.weave_kill_enemies = {
 ObjectiveUnitTemplates.versus_volume_objective = {
 	unit_name = "units/gameplay/versus_volume_objective",
 	unit_template_name = "versus_volume_objective_unit",
-	create_extension_init_data_func = function(arg_7_0, arg_7_1, arg_7_2)
+	create_extension_init_data_func = function (arg_7_0, arg_7_1, arg_7_2)
 		return {
 			objective_system = {
 				objective_name = arg_7_0,
@@ -148,7 +148,7 @@ ObjectiveUnitTemplates.versus_volume_objective = {
 ObjectiveUnitTemplates.versus_capture_point_objective = {
 	unit_name = "units/gameplay/versus_capture_point_objective",
 	unit_template_name = "versus_capture_point_objective_unit",
-	create_extension_init_data_func = function(arg_8_0, arg_8_1, arg_8_2)
+	create_extension_init_data_func = function (arg_8_0, arg_8_1, arg_8_2)
 		return {
 			objective_system = {
 				objective_name = arg_8_0,
@@ -172,7 +172,7 @@ ObjectiveUnitTemplates.versus_capture_point_objective = {
 ObjectiveUnitTemplates.versus_mission_objective = {
 	unit_name = "units/gameplay/versus_mission_objective",
 	unit_template_name = "versus_mission_objective_unit",
-	create_extension_init_data_func = function(arg_9_0, arg_9_1, arg_9_2)
+	create_extension_init_data_func = function (arg_9_0, arg_9_1, arg_9_2)
 		return {
 			objective_system = {
 				objective_name = arg_9_0,

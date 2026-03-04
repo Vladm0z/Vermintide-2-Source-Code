@@ -4,7 +4,7 @@ CareerAbilityVortexSorcerer = class(CareerAbilityVortexSorcerer)
 
 local var_0_0 = require("scripts/entity_system/systems/ai/ai_slot_utils")
 
-function CareerAbilityVortexSorcerer._ballistic_raycast(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+CareerAbilityVortexSorcerer._ballistic_raycast = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	local var_1_0 = arg_1_3 / arg_1_2
 	local var_1_1 = 0.85
 	local var_1_2 = 10
@@ -40,7 +40,7 @@ local function var_0_1(arg_2_0, arg_2_1, arg_2_2)
 	return Vector3.distance(arg_2_1, arg_2_0) / arg_2_2
 end
 
-function CareerAbilityVortexSorcerer.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+CareerAbilityVortexSorcerer.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0.owner_unit = arg_3_2
 	arg_3_0.world = arg_3_1.world
 	arg_3_0.wwise_world = Managers.world:wwise_world(arg_3_0.world)
@@ -58,7 +58,7 @@ function CareerAbilityVortexSorcerer.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0.effect_id_teleport_exit = nil
 end
 
-function CareerAbilityVortexSorcerer.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
+CareerAbilityVortexSorcerer.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.first_person_extension = ScriptUnit.has_extension(arg_4_2, "first_person_system")
 	arg_4_0.status_extension = ScriptUnit.extension(arg_4_2, "status_system")
 	arg_4_0.career_extension = ScriptUnit.extension(arg_4_2, "career_system")
@@ -73,11 +73,11 @@ function CareerAbilityVortexSorcerer.extensions_ready(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function CareerAbilityVortexSorcerer.destroy(arg_5_0)
+CareerAbilityVortexSorcerer.destroy = function (arg_5_0)
 	return
 end
 
-function CareerAbilityVortexSorcerer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+CareerAbilityVortexSorcerer.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 	if not arg_6_0:_ability_available() then
 		return
 	end
@@ -120,13 +120,13 @@ function CareerAbilityVortexSorcerer.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, 
 	end
 end
 
-function CareerAbilityVortexSorcerer.stop(arg_7_0, arg_7_1)
+CareerAbilityVortexSorcerer.stop = function (arg_7_0, arg_7_1)
 	if arg_7_0._is_priming then
 		arg_7_0:_stop_priming()
 	end
 end
 
-function CareerAbilityVortexSorcerer._ability_available(arg_8_0)
+CareerAbilityVortexSorcerer._ability_available = function (arg_8_0)
 	local var_8_0 = arg_8_0.career_extension
 	local var_8_1 = arg_8_0.status_extension
 	local var_8_2 = arg_8_0.locomotion_extension
@@ -135,7 +135,7 @@ function CareerAbilityVortexSorcerer._ability_available(arg_8_0)
 	return var_8_0:can_use_activated_ability() and not var_8_1:is_disabled() and var_8_2:is_on_ground() and not var_8_3
 end
 
-function CareerAbilityVortexSorcerer._start_priming(arg_9_0)
+CareerAbilityVortexSorcerer._start_priming = function (arg_9_0)
 	if arg_9_0.local_player then
 		local var_9_0 = arg_9_0.world
 		local var_9_1 = arg_9_0.effect_name
@@ -147,7 +147,7 @@ function CareerAbilityVortexSorcerer._start_priming(arg_9_0)
 	arg_9_0.is_priming = true
 end
 
-function CareerAbilityVortexSorcerer._landing_postion_valid(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+CareerAbilityVortexSorcerer._landing_postion_valid = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
 	local var_10_0 = false
 	local var_10_1 = arg_10_3.astar
 
@@ -175,7 +175,7 @@ function CareerAbilityVortexSorcerer._landing_postion_valid(arg_10_0, arg_10_1, 
 	return var_10_0
 end
 
-function CareerAbilityVortexSorcerer._update_priming(arg_11_0, arg_11_1, arg_11_2)
+CareerAbilityVortexSorcerer._update_priming = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0.effect_id
 	local var_11_1 = arg_11_0.owner_unit
 	local var_11_2 = arg_11_0.world
@@ -232,7 +232,7 @@ function CareerAbilityVortexSorcerer._update_priming(arg_11_0, arg_11_1, arg_11_
 	end
 end
 
-function CareerAbilityVortexSorcerer._stop_priming(arg_12_0)
+CareerAbilityVortexSorcerer._stop_priming = function (arg_12_0)
 	if arg_12_0.effect_id then
 		World.destroy_particles(arg_12_0.world, arg_12_0.effect_id)
 

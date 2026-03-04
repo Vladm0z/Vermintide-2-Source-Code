@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/empire_soldier_crawl.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pes_crawl_cheers",

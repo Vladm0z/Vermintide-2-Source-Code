@@ -2,13 +2,13 @@
 
 PoisonWindGlobadierStateJumping = class(PoisonWindGlobadierStateJumping, EnemyCharacterStateJumping)
 
-function PoisonWindGlobadierStateJumping.init(arg_1_0, arg_1_1)
+PoisonWindGlobadierStateJumping.init = function (arg_1_0, arg_1_1)
 	PoisonWindGlobadierStateJumping.super.init(arg_1_0, arg_1_1)
 
 	arg_1_0._gas_ability_id = arg_1_0._career_extension:ability_id("gas")
 end
 
-function PoisonWindGlobadierStateJumping.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PoisonWindGlobadierStateJumping.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0:common_state_changes() then
 		return
 	end

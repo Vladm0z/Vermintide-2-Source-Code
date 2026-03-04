@@ -2,7 +2,7 @@
 
 ActionDeusRelicThrow = class(ActionDeusRelicThrow, ActionThrow)
 
-function ActionDeusRelicThrow._throw(arg_1_0)
+ActionDeusRelicThrow._throw = function (arg_1_0)
 	local var_1_0 = arg_1_0.weapon_unit
 
 	Unit.set_unit_visibility(var_1_0, false)

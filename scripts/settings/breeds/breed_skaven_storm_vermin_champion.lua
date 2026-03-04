@@ -481,7 +481,7 @@ local var_0_1 = {
 			},
 			{
 				attack_anim = "attack_spin",
-				ready_function = function(arg_1_0, arg_1_1, arg_1_2)
+				ready_function = function (arg_1_0, arg_1_1, arg_1_2)
 					local var_1_0 = arg_1_2 - arg_1_1.attack_sequence_start_time
 
 					return var_1_0 > 1.5 and arg_1_1.surrounding_players > 0 or var_1_0 > 2.5
@@ -737,7 +737,7 @@ local var_0_1 = {
 			true,
 			false
 		},
-		range = function(arg_2_0)
+		range = function (arg_2_0)
 			if arg_2_0 < 0.65 then
 				return 0.4
 			else

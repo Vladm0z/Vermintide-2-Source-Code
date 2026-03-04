@@ -20,7 +20,7 @@ local var_0_1 = {
 	"CrawlSpaceExtension"
 }
 
-function DoorSystem.init(arg_1_0, arg_1_1, arg_1_2)
+DoorSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	DoorSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -37,7 +37,7 @@ function DoorSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._crawl_space_spawners = {}
 end
 
-function DoorSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ...)
+DoorSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, ...)
 	local var_2_0 = DoorSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 	arg_2_0.unit_extension_data[arg_2_2] = var_2_0
@@ -86,7 +86,7 @@ function DoorSystem.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ...)
 	return var_2_0
 end
 
-function DoorSystem.extensions_ready(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+DoorSystem.extensions_ready = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	if arg_3_3 == "CrawlSpaceExtension" then
 		arg_3_0._crawl_spaces_ready = true
 	end
@@ -94,7 +94,7 @@ end
 
 local var_0_2 = {}
 
-function DoorSystem.update(arg_4_0, arg_4_1, arg_4_2)
+DoorSystem.update = function (arg_4_0, arg_4_1, arg_4_2)
 	DoorSystem.super.update(arg_4_0, arg_4_1, arg_4_2)
 
 	if arg_4_0.is_server then
@@ -166,11 +166,11 @@ function DoorSystem.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function DoorSystem.get_doors(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+DoorSystem.get_doors = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	return Broadphase.query(arg_5_0._broadphase, arg_5_1, arg_5_2, arg_5_3)
 end
 
-function DoorSystem.get_boss_door_units(arg_6_0)
+DoorSystem.get_boss_door_units = function (arg_6_0)
 	local var_6_0 = arg_6_0._boss_doors
 	local var_6_1 = {}
 
@@ -185,7 +185,7 @@ function DoorSystem.get_boss_door_units(arg_6_0)
 	return var_6_1
 end
 
-function DoorSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
+DoorSystem.on_remove_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	DoorSystem.super.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
 
 	local var_7_0 = arg_7_0.unit_extension_data[arg_7_1]
@@ -197,7 +197,7 @@ function DoorSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0.unit_extension_data[arg_7_1] = nil
 end
 
-function DoorSystem.destroy(arg_8_0)
+DoorSystem.destroy = function (arg_8_0)
 	arg_8_0.network_event_delegate:unregister(arg_8_0)
 
 	arg_8_0.network_event_delegate = nil
@@ -205,7 +205,7 @@ function DoorSystem.destroy(arg_8_0)
 	arg_8_0._broadphase = nil
 end
 
-function DoorSystem.close_boss_doors(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+DoorSystem.close_boss_doors = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	local var_9_0 = arg_9_0._boss_doors[arg_9_1]
 	local var_9_1 = Managers.state.network.network_transmit
 
@@ -236,7 +236,7 @@ function DoorSystem.close_boss_doors(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	end
 end
 
-function DoorSystem.open_boss_doors(arg_10_0, arg_10_1)
+DoorSystem.open_boss_doors = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0._boss_doors[arg_10_1]
 	local var_10_1 = Managers.state.network.network_transmit
 
@@ -254,7 +254,7 @@ function DoorSystem.open_boss_doors(arg_10_0, arg_10_1)
 	end
 end
 
-function DoorSystem.get_boss_door_units(arg_11_0)
+DoorSystem.get_boss_door_units = function (arg_11_0)
 	local var_11_0 = {}
 
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._boss_doors) do
@@ -268,7 +268,7 @@ function DoorSystem.get_boss_door_units(arg_11_0)
 	return var_11_0
 end
 
-function DoorSystem.get_crawl_space_tunnel_units(arg_12_0, arg_12_1)
+DoorSystem.get_crawl_space_tunnel_units = function (arg_12_0, arg_12_1)
 	if not arg_12_0._crawl_spaces_ready then
 		return
 	end
@@ -293,7 +293,7 @@ function DoorSystem.get_crawl_space_tunnel_units(arg_12_0, arg_12_1)
 	return var_12_0
 end
 
-function DoorSystem.get_crawl_space_spawner_units(arg_13_0)
+DoorSystem.get_crawl_space_spawner_units = function (arg_13_0)
 	if not arg_13_0._crawl_spaces_ready then
 		return
 	end
@@ -307,7 +307,7 @@ function DoorSystem.get_crawl_space_spawner_units(arg_13_0)
 	return var_13_0
 end
 
-function DoorSystem.rpc_sync_door_state(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+DoorSystem.rpc_sync_door_state = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = LevelHelper:current_level(arg_14_0.world)
 	local var_14_1 = Level.unit_by_index(var_14_0, arg_14_2)
 	local var_14_2 = ScriptUnit.has_extension(var_14_1, "door_system")
@@ -321,7 +321,7 @@ function DoorSystem.rpc_sync_door_state(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	end
 end
 
-function DoorSystem.rpc_sync_boss_door_state(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+DoorSystem.rpc_sync_boss_door_state = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
 	local var_15_0 = LevelHelper:current_level(arg_15_0.world)
 	local var_15_1 = Level.unit_by_index(var_15_0, arg_15_2)
 	local var_15_2 = ScriptUnit.has_extension(var_15_1, "door_system")

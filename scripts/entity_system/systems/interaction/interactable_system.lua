@@ -13,7 +13,7 @@ local var_0_1 = {
 	"LocalInteractableExtension"
 }
 
-function InteractableSystem.init(arg_1_0, arg_1_1, arg_1_2)
+InteractableSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	InteractableSystem.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_1)
 
 	local var_1_0 = arg_1_1.network_event_delegate
@@ -25,11 +25,11 @@ function InteractableSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.unit_extensions = {}
 end
 
-function InteractableSystem.destroy(arg_2_0)
+InteractableSystem.destroy = function (arg_2_0)
 	arg_2_0.network_event_delegate:unregister(arg_2_0)
 end
 
-function InteractableSystem.update(arg_3_0, arg_3_1, arg_3_2)
+InteractableSystem.update = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_1.dt
 
 	if script_data.debug_interactions then
@@ -41,7 +41,7 @@ function InteractableSystem.update(arg_3_0, arg_3_1, arg_3_2)
 	end
 end
 
-function InteractableSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+InteractableSystem.on_add_extension = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = InteractableSystem.super.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 
 	arg_4_0.unit_extensions[arg_4_2] = var_4_0
@@ -49,13 +49,13 @@ function InteractableSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3,
 	return var_4_0
 end
 
-function InteractableSystem.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
+InteractableSystem.on_remove_extension = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.unit_extensions[arg_5_1] = nil
 
 	InteractableSystem.super.on_remove_extension(arg_5_0, arg_5_1, arg_5_2)
 end
 
-function InteractableSystem._can_interact_server_check(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+InteractableSystem._can_interact_server_check = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if Unit.alive(arg_6_1) and Unit.alive(arg_6_2) then
 		return not ScriptUnit.extension(arg_6_2, "interactable_system"):is_being_interacted_with() and InteractionDefinitions[arg_6_3].server.can_interact(arg_6_1, arg_6_2)
 	end
@@ -63,7 +63,7 @@ function InteractableSystem._can_interact_server_check(arg_6_0, arg_6_1, arg_6_2
 	return false
 end
 
-function InteractableSystem._handle_standard_interact_request(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+InteractableSystem._handle_standard_interact_request = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 	local var_7_0 = arg_7_0.unit_storage:unit(arg_7_3)
 	local var_7_1
 
@@ -89,7 +89,7 @@ end
 
 local var_0_2 = "IS_LOCAL_HOST"
 
-function InteractableSystem.rpc_generic_interaction_request(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+InteractableSystem.rpc_generic_interaction_request = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	local var_8_0 = arg_8_1 == var_0_2 and Network.peer_id() or CHANNEL_TO_PEER_ID[arg_8_1]
 	local var_8_1 = NetworkLookup.interactions[arg_8_5]
 

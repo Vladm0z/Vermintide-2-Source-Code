@@ -66,7 +66,7 @@ function MakeTableStrict(arg_6_0)
 		__declared = var_6_0
 	}
 
-	function var_6_1.__newindex(arg_7_0, arg_7_1, arg_7_2)
+	var_6_1.__newindex = function (arg_7_0, arg_7_1, arg_7_2)
 		if not var_6_1.__declared[arg_7_1] then
 			if not var_0_6(arg_7_0, arg_7_1) then
 				local var_7_0 = var_0_2(2, "Sl")
@@ -82,7 +82,7 @@ function MakeTableStrict(arg_6_0)
 		var_0_7(arg_7_0, arg_7_1, arg_7_2)
 	end
 
-	function var_6_1.__index(arg_8_0, arg_8_1)
+	var_6_1.__index = function (arg_8_0, arg_8_1)
 		if not var_6_1.__declared[arg_8_1] and not var_0_6(arg_8_0, arg_8_1) then
 			local var_8_0 = var_0_2(2, "Sl")
 
@@ -112,7 +112,7 @@ function MakeTableFrozen(arg_9_0)
 		__declared = var_9_0
 	}
 
-	function var_9_1.__newindex(arg_10_0, arg_10_1, arg_10_2)
+	var_9_1.__newindex = function (arg_10_0, arg_10_1, arg_10_2)
 		if not var_9_1.__declared[arg_10_1] then
 			if not var_0_6(arg_10_0, arg_10_1) then
 				local var_10_0 = var_0_2(2, "Sl")
@@ -163,12 +163,12 @@ if not var_0_6(_G, "STRICT_ENUM_INITIATED") then
 	var_0_7(_G, "STRICT_ENUM_INITIATED", true)
 
 	local var_0_9 = {
-		__eq = function(arg_14_0, arg_14_1)
+		__eq = function (arg_14_0, arg_14_1)
 			assert(arg_14_0._enum_table == arg_14_1._enum_table, "Trying to compare incompatible enum types.")
 
 			return arg_14_0.my_index == arg_14_1.my_index
 		end,
-		__tostring = function(arg_15_0)
+		__tostring = function (arg_15_0)
 			return arg_15_0._enum_table[arg_15_0]
 		end
 	}
@@ -182,10 +182,10 @@ if not var_0_6(_G, "STRICT_ENUM_INITIATED") then
 			local var_16_3 = setmetatable({
 				_enum_table = var_16_0,
 				my_index = iter_16_0,
-				as_number = function()
+				as_number = function ()
 					return iter_16_0
 				end,
-				__tostring = function()
+				__tostring = function ()
 					return var_16_2
 				end
 			}, var_0_9)

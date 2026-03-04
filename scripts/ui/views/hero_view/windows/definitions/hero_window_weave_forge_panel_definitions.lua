@@ -598,10 +598,10 @@ local var_0_24 = {
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				arg_1_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 				local var_2_1 = arg_2_2.top_glow_smoke_1
 
@@ -621,7 +621,7 @@ local var_0_24 = {
 					arg_2_0[var_2_4].size[2] = arg_2_1[var_2_4].size[2] * var_2_0
 				end
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				return
 			end
 		},
@@ -629,10 +629,10 @@ local var_0_24 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				return
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				local var_5_0 = math.easeOutCubic(arg_5_3)
 				local var_5_1 = arg_5_2.upgrade_button
 
@@ -642,7 +642,7 @@ local var_0_24 = {
 					arg_5_0[var_5_2].local_position[2] = arg_5_1[var_5_2].position[2] + 0 * var_5_0
 				end
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -652,10 +652,10 @@ local var_0_24 = {
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				arg_7_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				local var_8_0 = math.easeOutCubic(arg_8_3)
 				local var_8_1 = arg_8_2.top_glow_smoke_1
 
@@ -675,7 +675,7 @@ local var_0_24 = {
 					arg_8_0[var_8_4].size[2] = arg_8_1[var_8_4].size[2] * var_8_0
 				end
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		},
@@ -683,14 +683,14 @@ local var_0_24 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				arg_10_2.upgrade_button.alpha_multiplier = 0
 				arg_10_2.forge_level_title.alpha_multiplier = 0
 				arg_10_2.forge_level_text.alpha_multiplier = 0
 				arg_10_2.loadout_power_title.alpha_multiplier = 0
 				arg_10_2.loadout_power_text.alpha_multiplier = 0
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 
 				arg_11_2.upgrade_button.alpha_multiplier = math.max(arg_11_2.upgrade_button.alpha_multiplier, var_11_0)
@@ -699,7 +699,7 @@ local var_0_24 = {
 				arg_11_2.loadout_power_title.alpha_multiplier = math.max(arg_11_2.loadout_power_title.alpha_multiplier, var_11_0)
 				arg_11_2.loadout_power_text.alpha_multiplier = math.max(arg_11_2.loadout_power_text.alpha_multiplier, var_11_0)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		}
@@ -709,10 +709,10 @@ local var_0_24 = {
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeOutCubic(1 - arg_14_3)
 				local var_14_1 = arg_14_2.top_glow_smoke_1
 
@@ -732,7 +732,7 @@ local var_0_24 = {
 					arg_14_0[var_14_4].size[2] = arg_14_1[var_14_4].size[2] * var_14_0
 				end
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		},
@@ -740,15 +740,15 @@ local var_0_24 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_2.upgrade_button.alpha_multiplier = 0
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				local var_17_0 = math.easeOutCubic(1 - arg_17_3)
 
 				arg_17_2.upgrade_button.alpha_multiplier = math.min(arg_17_2.upgrade_button.alpha_multiplier, var_17_0)
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}
@@ -758,15 +758,15 @@ local var_0_24 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				local var_20_0 = math.easeOutCubic(arg_20_3)
 
 				arg_20_4.render_settings.alpha_multiplier = 1 - var_20_0
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end
 		}

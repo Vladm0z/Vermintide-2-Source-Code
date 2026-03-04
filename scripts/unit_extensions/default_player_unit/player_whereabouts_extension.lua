@@ -6,7 +6,7 @@ PlayerWhereaboutsExtension = class(PlayerWhereaboutsExtension)
 
 local var_0_0 = POSITION_LOOKUP
 
-function PlayerWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+PlayerWhereaboutsExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.unit = arg_1_2
 	arg_1_0._nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	arg_1_0._player = arg_1_3.player
@@ -24,7 +24,7 @@ function PlayerWhereaboutsExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._free_fall_position = Vector3Box(Vector3.invalid_vector())
 end
 
-function PlayerWhereaboutsExtension._setup(arg_2_0, arg_2_1, arg_2_2)
+PlayerWhereaboutsExtension._setup = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = var_0_0[arg_2_2]
 
 	if not LevelHelper:current_level_settings().no_bots_allowed then
@@ -36,32 +36,32 @@ function PlayerWhereaboutsExtension._setup(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function PlayerWhereaboutsExtension.destroy(arg_3_0)
+PlayerWhereaboutsExtension.destroy = function (arg_3_0)
 	return
 end
 
-function PlayerWhereaboutsExtension.set_is_onground(arg_4_0)
+PlayerWhereaboutsExtension.set_is_onground = function (arg_4_0)
 	arg_4_0._input.is_onground = true
 end
 
-function PlayerWhereaboutsExtension.set_fell(arg_5_0, arg_5_1)
+PlayerWhereaboutsExtension.set_fell = function (arg_5_0, arg_5_1)
 	arg_5_0._input.fell = true
 	arg_5_0._input.player_state = arg_5_1
 end
 
-function PlayerWhereaboutsExtension.set_jumped(arg_6_0)
+PlayerWhereaboutsExtension.set_jumped = function (arg_6_0)
 	arg_6_0._input.jumped = true
 end
 
-function PlayerWhereaboutsExtension.set_landed(arg_7_0)
+PlayerWhereaboutsExtension.set_landed = function (arg_7_0)
 	arg_7_0._input.landed = true
 end
 
-function PlayerWhereaboutsExtension.set_no_landing(arg_8_0)
+PlayerWhereaboutsExtension.set_no_landing = function (arg_8_0)
 	arg_8_0._input.no_landing = true
 end
 
-function PlayerWhereaboutsExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+PlayerWhereaboutsExtension.update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = var_0_0[arg_9_1]
 	local var_9_1 = arg_9_0._input
 
@@ -93,13 +93,13 @@ function PlayerWhereaboutsExtension.update(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	table.clear(var_9_1)
 end
 
-function PlayerWhereaboutsExtension.last_position_on_navmesh(arg_10_0)
+PlayerWhereaboutsExtension.last_position_on_navmesh = function (arg_10_0)
 	local var_10_0 = arg_10_0._last_pos_on_nav_mesh:unbox()
 
 	return Vector3.is_valid(var_10_0) and var_10_0 or nil
 end
 
-function PlayerWhereaboutsExtension.last_position_onground_on_navmesh(arg_11_0)
+PlayerWhereaboutsExtension.last_position_onground_on_navmesh = function (arg_11_0)
 	local var_11_0 = arg_11_0._last_onground_pos_on_nav_mesh:unbox()
 
 	return Vector3.is_valid(var_11_0) and var_11_0 or nil
@@ -107,7 +107,7 @@ end
 
 local var_0_1 = 0.0001
 
-function PlayerWhereaboutsExtension._find_start_position(arg_12_0, arg_12_1, arg_12_2)
+PlayerWhereaboutsExtension._find_start_position = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._last_onground_pos_on_nav_mesh:unbox()
 
 	if Vector3.is_valid(var_12_0) then
@@ -125,7 +125,7 @@ function PlayerWhereaboutsExtension._find_start_position(arg_12_0, arg_12_1, arg
 	end
 end
 
-function PlayerWhereaboutsExtension._check_bot_nav_transition(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+PlayerWhereaboutsExtension._check_bot_nav_transition = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if arg_13_2.jumped then
 		fassert(not arg_13_0._falling and not arg_13_0._jumping, "Tried to jump or fall while falling without aborting landing")
 
@@ -196,7 +196,7 @@ function PlayerWhereaboutsExtension._check_bot_nav_transition(arg_13_0, arg_13_1
 	end
 end
 
-function PlayerWhereaboutsExtension._get_closest_positions(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+PlayerWhereaboutsExtension._get_closest_positions = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	local var_14_0 = arg_14_0._nav_world
 
 	arg_14_0.player_on_nav_mesh = GwNavQueries.triangle_from_position(var_14_0, arg_14_1, 0.2, 0.3)
@@ -244,15 +244,15 @@ function PlayerWhereaboutsExtension._get_closest_positions(arg_14_0, arg_14_1, a
 	LocomotionUtils.closest_mesh_positions_outward(var_14_0, arg_14_1, 10, arg_14_3)
 end
 
-function PlayerWhereaboutsExtension.closest_positions_when_outside_navmesh(arg_15_0)
+PlayerWhereaboutsExtension.closest_positions_when_outside_navmesh = function (arg_15_0)
 	return arg_15_0.closest_positions, arg_15_0.player_on_nav_mesh
 end
 
-function PlayerWhereaboutsExtension.set_new_hang_ledge_position(arg_16_0, arg_16_1)
+PlayerWhereaboutsExtension.set_new_hang_ledge_position = function (arg_16_0, arg_16_1)
 	arg_16_0.hang_ledge_position = Vector3Box(arg_16_1)
 end
 
-function PlayerWhereaboutsExtension._calculate_hang_ledge_spawn_position(arg_17_0, arg_17_1)
+PlayerWhereaboutsExtension._calculate_hang_ledge_spawn_position = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_0._nav_world
 	local var_17_1 = GwNavQueries.inside_position_from_outside_position(var_17_0, arg_17_1, 5, 5, 10, 0.25)
 
@@ -265,11 +265,11 @@ function PlayerWhereaboutsExtension._calculate_hang_ledge_spawn_position(arg_17_
 	end
 end
 
-function PlayerWhereaboutsExtension.get_hang_ledge_spawn_position(arg_18_0)
+PlayerWhereaboutsExtension.get_hang_ledge_spawn_position = function (arg_18_0)
 	return arg_18_0.hang_ledge_spawn_position:unbox()
 end
 
-function PlayerWhereaboutsExtension._debug_draw(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+PlayerWhereaboutsExtension._debug_draw = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	local var_19_0 = arg_19_0._last_onground_pos_on_nav_mesh:unbox()
 	local var_19_1 = math.abs(math.cos(arg_19_3))
 	local var_19_2 = math.abs(math.cos(2 * arg_19_3))

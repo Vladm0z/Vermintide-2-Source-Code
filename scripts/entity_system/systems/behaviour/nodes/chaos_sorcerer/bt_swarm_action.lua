@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSwarmAction = class(BTSwarmAction, BTNode)
 BTSwarmAction.name = "BTSwarmAction"
 
-function BTSwarmAction.init(arg_1_0, ...)
+BTSwarmAction.init = function (arg_1_0, ...)
 	BTSwarmAction.super.init(arg_1_0, ...)
 end
 
-function BTSwarmAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTSwarmAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.active_node = BTSwarmAction
 	arg_2_2.abort_action = not arg_2_0:_calculate_swarm_targets(arg_2_1, arg_2_2)
@@ -21,7 +21,7 @@ function BTSwarmAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.attack_finished = false
 end
 
-function BTSwarmAction._calculate_swarm_targets(arg_3_0, arg_3_1, arg_3_2)
+BTSwarmAction._calculate_swarm_targets = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_2.valid_swarm_targets = {}
 
 	local var_3_0 = arg_3_2.side.ENEMY_PLAYER_AND_BOT_UNITS
@@ -53,7 +53,7 @@ function BTSwarmAction._calculate_swarm_targets(arg_3_0, arg_3_1, arg_3_2)
 	return true
 end
 
-function BTSwarmAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTSwarmAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.active_node = nil
 	arg_4_2.summoning = nil
 	arg_4_2.ready_to_summon = false
@@ -61,7 +61,7 @@ function BTSwarmAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_
 	arg_4_2.attack_finished = nil
 end
 
-function BTSwarmAction.anim_cb_damage(arg_5_0, arg_5_1, arg_5_2)
+BTSwarmAction.anim_cb_damage = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0 = arg_5_2.action
 	local var_5_1 = AiUtils.spawn_overpowering_blob(Managers.state.network, arg_5_2.target_unit, var_5_0.health, var_5_0.duration)
 	local var_5_2 = "slow_bomb"
@@ -69,11 +69,11 @@ function BTSwarmAction.anim_cb_damage(arg_5_0, arg_5_1, arg_5_2)
 	StatusUtils.set_overpowered_network(arg_5_2.target_unit, true, var_5_2, var_5_1)
 end
 
-function BTSwarmAction.anim_cb_attack_finished(arg_6_0, arg_6_1, arg_6_2)
+BTSwarmAction.anim_cb_attack_finished = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_2.attack_finished = true
 end
 
-function BTSwarmAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTSwarmAction.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if arg_7_2.abort_action or arg_7_2.attack_finished then
 		return "done"
 	end

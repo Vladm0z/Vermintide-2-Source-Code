@@ -6,7 +6,7 @@ UnitFlowOverrideSystem = class(UnitFlowOverrideSystem, ExtensionSystemBase)
 UNIT_FLOW_EVENT = UNIT_FLOW_EVENT or Unit.flow_event
 
 if not UNIT_FLOW_EVENT_OVERRIDDEN then
-	function Unit.flow_event(arg_1_0, arg_1_1, arg_1_2)
+	Unit.flow_event = function (arg_1_0, arg_1_1, arg_1_2)
 		local var_1_0 = ScriptUnit.has_extension(arg_1_0, "unit_flow_override_system")
 
 		if var_1_0 and UnitFlowEventOverrideSettings[arg_1_1] then
@@ -23,7 +23,7 @@ local var_0_0 = {
 	"UnitFlowOverrideExtension"
 }
 
-function UnitFlowOverrideSystem.init(arg_2_0, arg_2_1, arg_2_2)
+UnitFlowOverrideSystem.init = function (arg_2_0, arg_2_1, arg_2_2)
 	UnitFlowOverrideSystem.super.init(arg_2_0, arg_2_1, arg_2_2, var_0_0)
 
 	arg_2_0._unit_extensions = {}
@@ -34,12 +34,12 @@ function UnitFlowOverrideSystem.init(arg_2_0, arg_2_1, arg_2_2)
 end
 
 UnitFlowOverrideSystem.add_ext_functions = {
-	UnitFlowOverrideExtension = function(arg_3_0, arg_3_1)
+	UnitFlowOverrideExtension = function (arg_3_0, arg_3_1)
 		arg_3_1.handle_flow_event = callback(arg_3_0, "handle_flow_event")
 	end
 }
 
-function UnitFlowOverrideSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+UnitFlowOverrideSystem.on_add_extension = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = {}
 
 	UnitFlowOverrideSystem.add_ext_functions[arg_4_3](arg_4_0, var_4_0)
@@ -51,7 +51,7 @@ function UnitFlowOverrideSystem.on_add_extension(arg_4_0, arg_4_1, arg_4_2, arg_
 	return var_4_0
 end
 
-function UnitFlowOverrideSystem.handle_flow_event(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+UnitFlowOverrideSystem.handle_flow_event = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = arg_5_0._unit_event_data[arg_5_1]
 
 	var_5_0[arg_5_2] = var_5_0[arg_5_2] or {}
@@ -72,7 +72,7 @@ function UnitFlowOverrideSystem.handle_flow_event(arg_5_0, arg_5_1, arg_5_2, arg
 	end
 end
 
-function UnitFlowOverrideSystem._add_dynamic_event_data(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+UnitFlowOverrideSystem._add_dynamic_event_data = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._dynamic_events
 	local var_6_1 = var_6_0[arg_6_1] or {}
 
@@ -82,7 +82,7 @@ end
 
 local var_0_1 = {}
 
-function UnitFlowOverrideSystem.destroy_data(arg_7_0, arg_7_1, arg_7_2)
+UnitFlowOverrideSystem.destroy_data = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0._dynamic_events[arg_7_1] or var_0_1
 	local var_7_1 = arg_7_0._unit_event_data[arg_7_1]
 	local var_7_2 = var_7_1 and var_7_1[arg_7_2]
@@ -98,7 +98,7 @@ function UnitFlowOverrideSystem.destroy_data(arg_7_0, arg_7_1, arg_7_2)
 	var_7_0[arg_7_2] = nil
 end
 
-function UnitFlowOverrideSystem.update(arg_8_0, arg_8_1, arg_8_2)
+UnitFlowOverrideSystem.update = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._dynamic_events
 
 	for iter_8_0, iter_8_1 in pairs(var_8_0) do
@@ -114,14 +114,14 @@ function UnitFlowOverrideSystem.update(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function UnitFlowOverrideSystem.on_remove_extension(arg_9_0, arg_9_1, arg_9_2)
+UnitFlowOverrideSystem.on_remove_extension = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._frozen_unit_extensions[arg_9_1] = nil
 
 	arg_9_0:_cleanup_extension(arg_9_1, arg_9_2)
 	ScriptUnit.remove_extension(arg_9_1, arg_9_0.NAME)
 end
 
-function UnitFlowOverrideSystem.on_freeze_extension(arg_10_0, arg_10_1, arg_10_2)
+UnitFlowOverrideSystem.on_freeze_extension = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._unit_extensions[arg_10_1]
 
 	fassert(var_10_0, "Unit was already frozen.")
@@ -131,7 +131,7 @@ function UnitFlowOverrideSystem.on_freeze_extension(arg_10_0, arg_10_1, arg_10_2
 	arg_10_0:_cleanup_extension(arg_10_1, arg_10_2)
 end
 
-function UnitFlowOverrideSystem.freeze(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+UnitFlowOverrideSystem.freeze = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	local var_11_0 = arg_11_0._frozen_unit_extensions
 
 	if var_11_0[arg_11_1] then
@@ -147,7 +147,7 @@ function UnitFlowOverrideSystem.freeze(arg_11_0, arg_11_1, arg_11_2, arg_11_3)
 	var_11_0[arg_11_1] = var_11_1
 end
 
-function UnitFlowOverrideSystem.unfreeze(arg_12_0, arg_12_1)
+UnitFlowOverrideSystem.unfreeze = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._frozen_unit_extensions[arg_12_1]
 
 	fassert(var_12_0, "Unit to unfreeze didn't have frozen extension")
@@ -156,7 +156,7 @@ function UnitFlowOverrideSystem.unfreeze(arg_12_0, arg_12_1)
 	arg_12_0._unit_extensions[arg_12_1] = var_12_0
 end
 
-function UnitFlowOverrideSystem._cleanup_extension(arg_13_0, arg_13_1, arg_13_2)
+UnitFlowOverrideSystem._cleanup_extension = function (arg_13_0, arg_13_1, arg_13_2)
 	if arg_13_0._unit_extensions[arg_13_1] == nil then
 		return
 	end

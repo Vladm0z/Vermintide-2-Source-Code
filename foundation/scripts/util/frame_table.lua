@@ -17,7 +17,7 @@ for iter_0_0 = 1, var_0_0 do
 	var_0_2[iter_0_0] = {}
 end
 
-function FrameTable.alloc_table()
+FrameTable.alloc_table = function ()
 	var_0_3 = var_0_3 + 1
 
 	if var_0_3 > var_0_0 then
@@ -36,7 +36,7 @@ function FrameTable.alloc_table()
 	return var_0_1[var_0_3]
 end
 
-function FrameTable.swap_and_clear()
+FrameTable.swap_and_clear = function ()
 	local var_2_0 = table.clear
 
 	for iter_2_0 = 1, var_0_4 do
@@ -48,7 +48,7 @@ function FrameTable.swap_and_clear()
 	var_0_3 = 0
 end
 
-function FrameTable.init(arg_3_0)
+FrameTable.init = function (arg_3_0)
 	if arg_3_0 then
 		FrameTable.alloc_table = TABLE_NEW
 		FrameTable.swap_and_clear = NOP

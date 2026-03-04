@@ -9,7 +9,7 @@ local var_0_1 = 5
 local var_0_2 = var_0_0.scenegraph_definition.hero_progress_item_anchor.size
 local var_0_3 = 10
 
-function EndViewStateScoreVSTabReport.on_enter(arg_1_0, arg_1_1)
+EndViewStateScoreVSTabReport.on_enter = function (arg_1_0, arg_1_1)
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabReport")
 
 	arg_1_0._params = arg_1_1
@@ -51,7 +51,7 @@ function EndViewStateScoreVSTabReport.on_enter(arg_1_0, arg_1_1)
 	arg_1_0:_trigger_telemetry_events()
 end
 
-function EndViewStateScoreVSTabReport._show_final_progression(arg_2_0)
+EndViewStateScoreVSTabReport._show_final_progression = function (arg_2_0)
 	arg_2_0:_initialize_entries()
 	arg_2_0:_gather_challenge_progression()
 	arg_2_0:_set_hero_progression()
@@ -60,7 +60,7 @@ function EndViewStateScoreVSTabReport._show_final_progression(arg_2_0)
 	arg_2_0._parent:activate_back_to_keep_button()
 end
 
-function EndViewStateScoreVSTabReport._set_hero_progression(arg_3_0)
+EndViewStateScoreVSTabReport._set_hero_progression = function (arg_3_0)
 	local var_3_0 = arg_3_0._context.local_player_hero_name
 	local var_3_1 = ExperienceSettings.get_experience(var_3_0)
 	local var_3_2 = ExperienceSettings.get_experience_pool(var_3_0)
@@ -81,7 +81,7 @@ function EndViewStateScoreVSTabReport._set_hero_progression(arg_3_0)
 	end
 end
 
-function EndViewStateScoreVSTabReport._extract_hero_data(arg_4_0)
+EndViewStateScoreVSTabReport._extract_hero_data = function (arg_4_0)
 	local var_4_0 = Network.peer_id()
 	local var_4_1 = 1
 	local var_4_2 = var_4_0 .. ":" .. var_4_1
@@ -99,7 +99,7 @@ function EndViewStateScoreVSTabReport._extract_hero_data(arg_4_0)
 	arg_4_0._career_name = Localize(var_4_5.name)
 end
 
-function EndViewStateScoreVSTabReport._extract_rewards(arg_5_0)
+EndViewStateScoreVSTabReport._extract_rewards = function (arg_5_0)
 	arg_5_0._game_won = arg_5_0._context.game_won
 	arg_5_0._rewards = arg_5_0._context.rewards
 	arg_5_0._level_up_rewards = arg_5_0._params.parent.level_up_rewards
@@ -111,7 +111,7 @@ function EndViewStateScoreVSTabReport._extract_rewards(arg_5_0)
 	arg_5_0._challenge_progression_status = arg_5_0._context.challenge_progression_status
 end
 
-function EndViewStateScoreVSTabReport._trigger_telemetry_events(arg_6_0)
+EndViewStateScoreVSTabReport._trigger_telemetry_events = function (arg_6_0)
 	if arg_6_0._is_untrusted then
 		return
 	end
@@ -142,7 +142,7 @@ function EndViewStateScoreVSTabReport._trigger_telemetry_events(arg_6_0)
 	Managers.telemetry_events:versus_currency_gained(var_6_6)
 end
 
-function EndViewStateScoreVSTabReport._setup_hero_progression(arg_7_0)
+EndViewStateScoreVSTabReport._setup_hero_progression = function (arg_7_0)
 	local var_7_0 = arg_7_0._level_start
 	local var_7_1 = var_7_0[1]
 	local var_7_2 = var_7_0[2]
@@ -157,7 +157,7 @@ function EndViewStateScoreVSTabReport._setup_hero_progression(arg_7_0)
 	arg_7_0._experience_presentation_completed = arg_7_0._progression_presentation_done
 end
 
-function EndViewStateScoreVSTabReport._get_total_experience_progress_data(arg_8_0, arg_8_1, arg_8_2)
+EndViewStateScoreVSTabReport._get_total_experience_progress_data = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0, var_8_1 = ExperienceSettings.get_level(arg_8_1)
 	local var_8_2, var_8_3 = ExperienceSettings.get_extra_level(arg_8_2)
 	local var_8_4 = arg_8_0._context.local_player_hero_name
@@ -200,20 +200,20 @@ function EndViewStateScoreVSTabReport._get_total_experience_progress_data(arg_8_
 	}
 end
 
-function EndViewStateScoreVSTabReport._play_sound(arg_9_0, arg_9_1)
+EndViewStateScoreVSTabReport._play_sound = function (arg_9_0, arg_9_1)
 	arg_9_0._parent:play_sound(arg_9_1)
 end
 
-function EndViewStateScoreVSTabReport._set_global_wwise_parameter(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateScoreVSTabReport._set_global_wwise_parameter = function (arg_10_0, arg_10_1, arg_10_2)
 	WwiseWorld.set_global_parameter(arg_10_0._wwise_world, arg_10_1, arg_10_2)
 end
 
-function EndViewStateScoreVSTabReport._initialize_entries(arg_11_0)
+EndViewStateScoreVSTabReport._initialize_entries = function (arg_11_0)
 	arg_11_0:_create_summary_entries(arg_11_0._game_won)
 	arg_11_0:_populate_hero_progression()
 end
 
-function EndViewStateScoreVSTabReport._populate_hero_progression(arg_12_0)
+EndViewStateScoreVSTabReport._populate_hero_progression = function (arg_12_0)
 	local var_12_0 = Network.peer_id()
 	local var_12_1 = 1
 	local var_12_2 = var_12_0 .. ":" .. var_12_1
@@ -255,7 +255,7 @@ function EndViewStateScoreVSTabReport._populate_hero_progression(arg_12_0)
 	arg_12_0._widgets_by_name.career_name.content.text = var_12_23
 end
 
-function EndViewStateScoreVSTabReport._animate_experience_bar(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateScoreVSTabReport._animate_experience_bar = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = arg_13_0._progress_data
 
 	if not var_13_0 or var_13_0.complete or arg_13_2 or arg_13_0.level_up_anim_id or arg_13_0._experience_presentation_completed then
@@ -322,7 +322,7 @@ function EndViewStateScoreVSTabReport._animate_experience_bar(arg_13_0, arg_13_1
 	end
 end
 
-function EndViewStateScoreVSTabReport._gather_challenge_progression(arg_14_0)
+EndViewStateScoreVSTabReport._gather_challenge_progression = function (arg_14_0)
 	local var_14_0 = {}
 	local var_14_1 = arg_14_0._challenge_progression_status.start_progress
 	local var_14_2 = arg_14_0._challenge_progression_status.end_progress
@@ -368,7 +368,7 @@ end
 
 local var_0_4 = {}
 
-function EndViewStateScoreVSTabReport._trim_trailing_group_entries(arg_16_0, arg_16_1)
+EndViewStateScoreVSTabReport._trim_trailing_group_entries = function (arg_16_0, arg_16_1)
 	table.clear(var_0_4)
 
 	local var_16_0 = {}
@@ -392,7 +392,7 @@ function EndViewStateScoreVSTabReport._trim_trailing_group_entries(arg_16_0, arg
 	end
 end
 
-function EndViewStateScoreVSTabReport._setup_challenge_progression_widgets(arg_17_0, arg_17_1)
+EndViewStateScoreVSTabReport._setup_challenge_progression_widgets = function (arg_17_0, arg_17_1)
 	local var_17_0 = 25
 	local var_17_1
 
@@ -432,7 +432,7 @@ function EndViewStateScoreVSTabReport._setup_challenge_progression_widgets(arg_1
 	arg_17_0._parent:activate_back_to_keep_button()
 end
 
-function EndViewStateScoreVSTabReport._start_challenge_entry_animation(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+EndViewStateScoreVSTabReport._start_challenge_entry_animation = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 	if arg_18_0._progression_presentation_done then
 		return
 	end
@@ -455,7 +455,7 @@ function EndViewStateScoreVSTabReport._start_challenge_entry_animation(arg_18_0,
 	end
 end
 
-function EndViewStateScoreVSTabReport._handle_rewards(arg_19_0, arg_19_1)
+EndViewStateScoreVSTabReport._handle_rewards = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0._level_up_item_index
 	local var_19_1 = Managers.backend:get_interface("items")
 
@@ -502,7 +502,7 @@ function EndViewStateScoreVSTabReport._handle_rewards(arg_19_0, arg_19_1)
 	arg_19_0._level_up_item_index = var_19_0
 end
 
-function EndViewStateScoreVSTabReport._set_current_experience(arg_20_0, arg_20_1)
+EndViewStateScoreVSTabReport._set_current_experience = function (arg_20_0, arg_20_1)
 	local var_20_0, var_20_1 = ExperienceSettings.get_level(arg_20_1)
 	local var_20_2 = 0
 
@@ -529,7 +529,7 @@ function EndViewStateScoreVSTabReport._set_current_experience(arg_20_0, arg_20_1
 	return var_20_0, var_20_2
 end
 
-function EndViewStateScoreVSTabReport._create_summary_entries(arg_21_0)
+EndViewStateScoreVSTabReport._create_summary_entries = function (arg_21_0)
 	local var_21_0 = arg_21_0._mission_results
 	local var_21_1 = {}
 	local var_21_2 = 0
@@ -589,7 +589,7 @@ function EndViewStateScoreVSTabReport._create_summary_entries(arg_21_0)
 	end
 end
 
-function EndViewStateScoreVSTabReport._set_final_level_up_progress(arg_22_0, arg_22_1)
+EndViewStateScoreVSTabReport._set_final_level_up_progress = function (arg_22_0, arg_22_1)
 	local var_22_0 = var_0_0.bar_thresholds
 	local var_22_1 = arg_22_0._versus_level_start
 
@@ -627,7 +627,7 @@ function EndViewStateScoreVSTabReport._set_final_level_up_progress(arg_22_0, arg
 	arg_22_0._widgets_by_name.summary_value_text.content.text = string.format(var_0_0.summary_value_string, arg_22_1)
 end
 
-function EndViewStateScoreVSTabReport._setup_entry_animations(arg_23_0, arg_23_1, arg_23_2)
+EndViewStateScoreVSTabReport._setup_entry_animations = function (arg_23_0, arg_23_1, arg_23_2)
 	if #arg_23_1 > 0 then
 		local var_23_0 = {
 			entry_name = "summary_entry_1"
@@ -755,7 +755,7 @@ end
 
 local var_0_5 = {}
 
-function EndViewStateScoreVSTabReport._start_level_up_reward_presentation(arg_24_0, arg_24_1, arg_24_2)
+EndViewStateScoreVSTabReport._start_level_up_reward_presentation = function (arg_24_0, arg_24_1, arg_24_2)
 	table.clear(var_0_5)
 
 	local var_24_0 = arg_24_0._versus_level_up_rewards[arg_24_1]
@@ -811,7 +811,7 @@ function EndViewStateScoreVSTabReport._start_level_up_reward_presentation(arg_24
 	arg_24_0._reward_popup:display_presentation(var_0_5, arg_24_2)
 end
 
-function EndViewStateScoreVSTabReport.on_exit(arg_25_0, arg_25_1)
+EndViewStateScoreVSTabReport.on_exit = function (arg_25_0, arg_25_1)
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabReport")
 
 	arg_25_0._ui_scenegraph = nil
@@ -827,7 +827,7 @@ function EndViewStateScoreVSTabReport.on_exit(arg_25_0, arg_25_1)
 	end
 end
 
-function EndViewStateScoreVSTabReport._create_ui_elements(arg_26_0, arg_26_1)
+EndViewStateScoreVSTabReport._create_ui_elements = function (arg_26_0, arg_26_1)
 	local var_26_0 = var_0_0.widget_definitions
 	local var_26_1 = var_0_0.challenge_widget_definitions
 	local var_26_2 = var_0_0.hero_progress_widget_definitions
@@ -875,25 +875,25 @@ function EndViewStateScoreVSTabReport._create_ui_elements(arg_26_0, arg_26_1)
 	var_26_13.content.level = var_26_8
 end
 
-function EndViewStateScoreVSTabReport._get_definitions(arg_27_0)
+EndViewStateScoreVSTabReport._get_definitions = function (arg_27_0)
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_report_definitions")
 end
 
-function EndViewStateScoreVSTabReport.update(arg_28_0, arg_28_1, arg_28_2)
+EndViewStateScoreVSTabReport.update = function (arg_28_0, arg_28_1, arg_28_2)
 	arg_28_0:_draw(arg_28_1, arg_28_2)
 	arg_28_0:_update_animations(arg_28_1, arg_28_2)
 	arg_28_0:_handle_reward_popup(arg_28_1, arg_28_2)
 end
 
-function EndViewStateScoreVSTabReport._handle_reward_popup(arg_29_0, arg_29_1, arg_29_2)
+EndViewStateScoreVSTabReport._handle_reward_popup = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0._reward_popup:update(arg_29_1, arg_29_2)
 end
 
-function EndViewStateScoreVSTabReport.post_update(arg_30_0, arg_30_1, arg_30_2)
+EndViewStateScoreVSTabReport.post_update = function (arg_30_0, arg_30_1, arg_30_2)
 	return
 end
 
-function EndViewStateScoreVSTabReport._handle_input(arg_31_0, arg_31_1, arg_31_2)
+EndViewStateScoreVSTabReport._handle_input = function (arg_31_0, arg_31_1, arg_31_2)
 	if arg_31_0._input_manager:get_service("end_of_level"):get("confirm_hold") then
 		return arg_31_1 * 5
 	end
@@ -901,7 +901,7 @@ function EndViewStateScoreVSTabReport._handle_input(arg_31_0, arg_31_1, arg_31_2
 	return arg_31_1
 end
 
-function EndViewStateScoreVSTabReport._update_animations(arg_32_0, arg_32_1)
+EndViewStateScoreVSTabReport._update_animations = function (arg_32_0, arg_32_1)
 	arg_32_0._ui_animator:update(arg_32_1)
 
 	for iter_32_0, iter_32_1 in pairs(arg_32_0._ui_animations) do
@@ -936,7 +936,7 @@ function EndViewStateScoreVSTabReport._update_animations(arg_32_0, arg_32_1)
 	end
 end
 
-function EndViewStateScoreVSTabReport._draw(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+EndViewStateScoreVSTabReport._draw = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 	local var_33_0 = arg_33_0._input_manager:get_service("end_of_level")
 	local var_33_1 = arg_33_0._ui_top_renderer
 	local var_33_2 = arg_33_0._ui_scenegraph
@@ -994,7 +994,7 @@ function EndViewStateScoreVSTabReport._draw(arg_33_0, arg_33_1, arg_33_2, arg_33
 	end
 end
 
-function EndViewStateScoreVSTabReport._start_transition_animation(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+EndViewStateScoreVSTabReport._start_transition_animation = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	local var_34_0 = {
 		set_global_wwise_parameter = callback(arg_34_0, "_set_global_wwise_parameter"),
 		play_sound = callback(arg_34_0, "_play_sound"),

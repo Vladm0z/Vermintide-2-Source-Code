@@ -90,7 +90,7 @@ local var_0_0 = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.5,
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action" and arg_1_1 ~= "action_complete"
 				end,
 				buff_data = {
@@ -122,7 +122,7 @@ local var_0_0 = {
 						input = "action_two_hold"
 					}
 				},
-				chain_condition_func = function(arg_2_0, arg_2_1)
+				chain_condition_func = function (arg_2_0, arg_2_1)
 					return not ScriptUnit.extension(arg_2_0, "status_system"):fatigued()
 				end
 			}
@@ -137,11 +137,11 @@ local var_0_0 = {
 				reload_when_out_of_ammo = true,
 				hold_input = "action_two_hold",
 				anim_event = "parry_pose",
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
-				enter_function = function(arg_4_0, arg_4_1, arg_4_2)
+				enter_function = function (arg_4_0, arg_4_1, arg_4_2)
 					return arg_4_1:reset_release_input_with_delay(arg_4_2)
 				end,
 				buff_data = {
@@ -177,7 +177,7 @@ local var_0_0 = {
 						input = "action_wield"
 					}
 				},
-				reload_when_out_of_ammo_condition_func = function(arg_5_0, arg_5_1)
+				reload_when_out_of_ammo_condition_func = function (arg_5_0, arg_5_1)
 					return arg_5_1 ~= "new_interupting_action" and arg_5_1 ~= "stunned"
 				end
 			}

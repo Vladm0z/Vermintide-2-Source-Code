@@ -701,7 +701,7 @@ local function var_0_43(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 	return var_16_14, var_16_37
 end
 
-function var_0_25.tree_width(arg_17_0, arg_17_1)
+var_0_25.tree_width = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1._identifier
 	local var_17_1 = arg_17_1.name
 	local var_17_2, var_17_3 = Gui.text_extents(arg_17_0, var_17_0, var_0_4, var_0_2)
@@ -738,7 +738,7 @@ function var_0_25.tree_width(arg_17_0, arg_17_1)
 	end
 end
 
-function var_0_25.draw_tree(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10)
+var_0_25.draw_tree = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10)
 	local var_18_0 = arg_18_2._identifier
 	local var_18_1 = arg_18_2._children
 	local var_18_2 = var_0_36(arg_18_3, var_18_1, var_18_0)

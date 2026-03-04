@@ -158,10 +158,10 @@ local var_0_0 = {
 			}
 		}
 	},
-	run_on_spawn = function(arg_1_0, ...)
+	run_on_spawn = function (arg_1_0, ...)
 		return AiBreedSnippets.on_chaos_sorcerer_spawn(arg_1_0, ...)
 	end,
-	on_weapon_wield = function(arg_2_0)
+	on_weapon_wield = function (arg_2_0)
 		Unit.flow_event(arg_2_0, "lua_spawn_tether_staff_effect")
 	end,
 	target_player_sound_events = {
@@ -198,7 +198,7 @@ local var_0_0 = {
 		bot_poison_wind = 2,
 		fire_grenade = 10
 	},
-	custom_death_enter_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	custom_death_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 		local var_3_0 = BLACKBOARDS[arg_3_0]
 
 		if not Unit.alive(arg_3_1) then
@@ -281,7 +281,7 @@ local var_0_1 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 			local var_4_0
 
 			arg_4_1.stagger_ignore_anim_cb = true
@@ -295,7 +295,7 @@ local var_0_1 = {
 
 			return var_4_0, "idle"
 		end,
-		custom_exit_function = function(arg_5_0, arg_5_1, arg_5_2)
+		custom_exit_function = function (arg_5_0, arg_5_1, arg_5_2)
 			arg_5_1.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {

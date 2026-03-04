@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTargetPouncedAction = class(BTTargetPouncedAction, BTNode)
 
-function BTTargetPouncedAction.init(arg_1_0, ...)
+BTTargetPouncedAction.init = function (arg_1_0, ...)
 	BTTargetPouncedAction.super.init(arg_1_0, ...)
 end
 
@@ -12,7 +12,7 @@ BTTargetPouncedAction.name = "BTTargetPouncedAction"
 
 local var_0_0 = POSITION_LOOKUP
 
-function BTTargetPouncedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTargetPouncedAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = arg_2_2.locomotion_extension
 	local var_2_1 = arg_2_0._tree_node.action_data
 
@@ -88,7 +88,7 @@ function BTTargetPouncedAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTTargetPouncedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTargetPouncedAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	aiprint("LEAVE TARGET POUNCED ACTION")
 
 	local var_3_0 = arg_3_2.jump_data.target_unit
@@ -139,7 +139,7 @@ function BTTargetPouncedAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4
 	end
 end
 
-function BTTargetPouncedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTargetPouncedAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_2.already_pounced then
 		return "failed"
 	end
@@ -161,7 +161,7 @@ function BTTargetPouncedAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTTargetPouncedAction.impact_pushback(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTTargetPouncedAction.impact_pushback = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = Managers.state.side.side_by_unit[arg_5_0].ENEMY_PLAYER_AND_BOT_UNITS
 
 	for iter_5_0 = 1, #var_5_0 do
@@ -196,7 +196,7 @@ local var_0_1 = {
 	0
 }
 
-function BTTargetPouncedAction.direct_damage(arg_6_0, arg_6_1)
+BTTargetPouncedAction.direct_damage = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.action
 
 	if not var_6_0 then

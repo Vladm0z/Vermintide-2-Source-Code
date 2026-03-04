@@ -182,16 +182,16 @@ local var_0_3 = {
 			name = "animate_continue_button",
 			start_progress = 2,
 			end_progress = 2.25,
-			init = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				return
 			end,
-			update = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 				local var_2_0 = math.easeOutCubic(arg_2_3)
 
 				arg_2_2.continue_button.content.visible = true
 				arg_2_0.continue_button.local_position[2] = math.lerp(-200, 50, var_2_0)
 			end,
-			on_complete = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				arg_3_3.data.cb()
 			end
 		}
@@ -201,15 +201,15 @@ local var_0_3 = {
 			name = "show_all_awards",
 			start_progress = 0.5,
 			end_progress = 1,
-			init = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				for iter_4_0, iter_4_1 in pairs(arg_4_2) do
 					iter_4_1.content.visible = true
 				end
 			end,
-			update = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				return
 			end,
-			on_complete = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 				return
 			end
 		}
@@ -219,17 +219,17 @@ local var_0_3 = {
 			name = "hide",
 			start_progress = 0,
 			end_progress = 0,
-			init = function(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 				for iter_7_0, iter_7_1 in pairs(arg_7_2) do
 					iter_7_1.content.visible = false
 				end
 
 				arg_7_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 				return
 			end,
-			on_complete = function(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 				return
 			end
 		}
@@ -256,7 +256,7 @@ local var_0_4 = {
 local var_0_5 = {
 	{
 		name = "top_down",
-		func = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+		func = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
 			return {
 				start_pos = Vector3Box(arg_10_1 + Vector3.up() * 2 - arg_10_5 * arg_10_6 * 0.3),
 				end_pos = Vector3Box(arg_10_2 + Vector3.up() * 0.4 - arg_10_5 * arg_10_6 * 0.8),
@@ -269,7 +269,7 @@ local var_0_5 = {
 	},
 	{
 		name = "pan_up",
-		func = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+		func = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
 			return {
 				disable_camera_rotation = true,
 				start_pos = Vector3Box(arg_11_3 - arg_11_5 * arg_11_6 * 0.5 + Vector3.up() * 0.2),
@@ -283,7 +283,7 @@ local var_0_5 = {
 	},
 	{
 		name = "zoom_in",
-		func = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+		func = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
 			return {
 				start_pos = Vector3Box(arg_12_2 - arg_12_5 * arg_12_6 * 2 - arg_12_4 * 0.4),
 				end_pos = Vector3Box(arg_12_1 - arg_12_5 * arg_12_6 * 0.75 + Vector3.up() * 0 + arg_12_4 * 0.4),
@@ -296,7 +296,7 @@ local var_0_5 = {
 	},
 	{
 		name = "zoom_around",
-		func = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+		func = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
 			return {
 				start_pos = Vector3Box(arg_13_2 + arg_13_4 * arg_13_6 * 0.3 + Vector3.up() * 0 - arg_13_5 * arg_13_6 * 0.6),
 				end_pos = Vector3Box(arg_13_1 - arg_13_4 * arg_13_6 * 0.3 + Vector3.up() * 0.1 - arg_13_5 * arg_13_6 * 0.8),
@@ -309,7 +309,7 @@ local var_0_5 = {
 	},
 	{
 		name = "zoom_other_way_around",
-		func = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
+		func = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
 			return {
 				start_pos = Vector3Box(arg_14_2 - arg_14_4 * arg_14_6 * 0.3 + Vector3.up() * 0 - arg_14_5 * arg_14_6 * 0.6),
 				end_pos = Vector3Box(arg_14_1 + arg_14_4 * arg_14_6 * 0.3 + Vector3.up() * 0.1 - arg_14_5 * arg_14_6 * 0.8),

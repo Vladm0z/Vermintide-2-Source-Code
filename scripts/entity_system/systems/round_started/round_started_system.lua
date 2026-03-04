@@ -11,15 +11,15 @@ local var_0_1 = {
 
 RoundStartedExtension = class(RoundStartedExtension)
 
-function RoundStartedExtension.init(arg_1_0)
+RoundStartedExtension.init = function (arg_1_0)
 	return
 end
 
-function RoundStartedExtension.destroy(arg_2_0)
+RoundStartedExtension.destroy = function (arg_2_0)
 	return
 end
 
-function RoundStartedSystem.init(arg_3_0, arg_3_1, arg_3_2)
+RoundStartedSystem.init = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_1.entity_manager:register_system(arg_3_0, arg_3_2, var_0_0)
 
 	arg_3_0._is_server = arg_3_1.is_server
@@ -35,18 +35,18 @@ function RoundStartedSystem.init(arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0._player_moved_positions = {}
 end
 
-function RoundStartedSystem.destroy(arg_4_0)
+RoundStartedSystem.destroy = function (arg_4_0)
 	arg_4_0._network_event_delegate:unregister(arg_4_0)
 end
 
-function RoundStartedSystem.set_start_area(arg_5_0, arg_5_1)
+RoundStartedSystem.set_start_area = function (arg_5_0, arg_5_1)
 	local var_5_0 = LevelHelper:current_level(arg_5_0._world)
 	local var_5_1 = LevelHelper:current_level_settings(arg_5_0._world).level_name
 
 	arg_5_0._start_area = arg_5_1
 end
 
-function RoundStartedSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+RoundStartedSystem.on_add_extension = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	ScriptUnit.add_extension(nil, arg_6_2, "RoundStartedExtension", arg_6_0.NAME, arg_6_4)
 
 	local var_6_0 = ScriptUnit.extension(arg_6_2, arg_6_0.NAME)
@@ -56,17 +56,17 @@ function RoundStartedSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3,
 	return var_6_0
 end
 
-function RoundStartedSystem.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
+RoundStartedSystem.on_remove_extension = function (arg_7_0, arg_7_1, arg_7_2)
 	ScriptUnit.remove_extension(arg_7_1, arg_7_0.NAME)
 
 	arg_7_0._units[arg_7_1] = nil
 end
 
-function RoundStartedSystem.hot_join_sync(arg_8_0, arg_8_1, arg_8_2)
+RoundStartedSystem.hot_join_sync = function (arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-function RoundStartedSystem.update(arg_9_0, arg_9_1, arg_9_2)
+RoundStartedSystem.update = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_0._round_started then
 		return
 	end
@@ -94,7 +94,7 @@ function RoundStartedSystem.update(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function RoundStartedSystem._players_left_start_area(arg_10_0)
+RoundStartedSystem._players_left_start_area = function (arg_10_0)
 	local var_10_0 = Managers.state.spawn:checkpoint_data()
 	local var_10_1 = var_10_0 and var_10_0.safe_zone_volume_name or arg_10_0._start_area
 	local var_10_2 = LevelHelper:current_level(arg_10_0._world)
@@ -118,19 +118,19 @@ function RoundStartedSystem._players_left_start_area(arg_10_0)
 	return false
 end
 
-function RoundStartedSystem.player_spawned(arg_11_0)
+RoundStartedSystem.player_spawned = function (arg_11_0)
 	arg_11_0._player_spawned = true
 end
 
-function RoundStartedSystem.player_has_moved(arg_12_0)
+RoundStartedSystem.player_has_moved = function (arg_12_0)
 	return arg_12_0._player_moved
 end
 
-function RoundStartedSystem.round_has_started(arg_13_0)
+RoundStartedSystem.round_has_started = function (arg_13_0)
 	return arg_13_0._round_started
 end
 
-function RoundStartedSystem._update_player_moved(arg_14_0)
+RoundStartedSystem._update_player_moved = function (arg_14_0)
 	if arg_14_0._player_moved then
 		return true
 	end
@@ -155,7 +155,7 @@ function RoundStartedSystem._update_player_moved(arg_14_0)
 	end
 end
 
-function RoundStartedSystem._on_round_started(arg_15_0)
+RoundStartedSystem._on_round_started = function (arg_15_0)
 	arg_15_0._round_started = true
 	arg_15_0._player_moved = true
 
@@ -166,10 +166,10 @@ function RoundStartedSystem._on_round_started(arg_15_0)
 	end
 end
 
-function RoundStartedSystem.rpc_round_started(arg_16_0)
+RoundStartedSystem.rpc_round_started = function (arg_16_0)
 	arg_16_0:_on_round_started()
 end
 
-function RoundStartedSystem.force_start_round(arg_17_0)
+RoundStartedSystem.force_start_round = function (arg_17_0)
 	arg_17_0._force_start_round = true
 end

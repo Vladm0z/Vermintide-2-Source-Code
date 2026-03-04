@@ -30,13 +30,13 @@ var_0_1.display_name = "curse_skulking_sorcerer_name"
 var_0_1.description = "curse_skulking_sorcerer_desc"
 var_0_1.icon = "deus_curse_nurgle_01"
 
-function var_0_1.server_initialize_function(arg_1_0, arg_1_1)
+var_0_1.server_initialize_function = function (arg_1_0, arg_1_1)
 	MutatorUtils.store_breed_and_action_settings(arg_1_0, arg_1_1)
 
 	Breeds.curse_mutator_sorcerer.max_health = var_0_10
 end
 
-function var_0_1.server_start_function(arg_2_0, arg_2_1)
+var_0_1.server_start_function = function (arg_2_0, arg_2_1)
 	var_0_0.server_start_function(arg_2_0, arg_2_1)
 
 	local var_2_0 = Managers.state.difficulty:get_difficulty_rank()
@@ -49,11 +49,11 @@ function var_0_1.server_start_function(arg_2_0, arg_2_1)
 	arg_2_1.breed_name = "curse_mutator_sorcerer"
 end
 
-function var_0_1.server_stop_function(arg_3_0, arg_3_1)
+var_0_1.server_stop_function = function (arg_3_0, arg_3_1)
 	MutatorUtils.restore_breed_and_action_settings(arg_3_0, arg_3_1)
 end
 
-function var_0_1.server_ai_killed_function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+var_0_1.server_ai_killed_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	if arg_4_4.breed.name == "curse_mutator_sorcerer" and HEALTH_ALIVE[arg_4_3] and Managers.player:is_player_unit(arg_4_3) then
 		local var_4_0 = ScriptUnit.extension_input(arg_4_3, "dialogue_system")
 		local var_4_1 = FrameTable.alloc_table()

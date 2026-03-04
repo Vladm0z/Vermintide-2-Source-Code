@@ -39,7 +39,7 @@ DLCUtils.dofile_list("character_states")
 
 GenericCharacterStateMachineExtension = class(GenericCharacterStateMachineExtension)
 
-function GenericCharacterStateMachineExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericCharacterStateMachineExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.network_transmit = arg_1_1.network_transmit
 	arg_1_0.unit_storage = arg_1_1.unit_storage
@@ -51,7 +51,7 @@ function GenericCharacterStateMachineExtension.init(arg_1_0, arg_1_1, arg_1_2, a
 	arg_1_0.state_machine = GenericStateMachine:new(arg_1_0.world, arg_1_0.unit)
 end
 
-function GenericCharacterStateMachineExtension.extensions_ready(arg_2_0)
+GenericCharacterStateMachineExtension.extensions_ready = function (arg_2_0)
 	local var_2_0 = {
 		world = arg_2_0.world,
 		unit = arg_2_0.unit,
@@ -78,20 +78,20 @@ function GenericCharacterStateMachineExtension.extensions_ready(arg_2_0)
 	arg_2_0.state_machine:post_init(var_2_1, var_2_5)
 end
 
-function GenericCharacterStateMachineExtension.destroy(arg_3_0)
+GenericCharacterStateMachineExtension.destroy = function (arg_3_0)
 	local var_3_0 = true
 
 	arg_3_0.state_machine:exit_current_state(var_3_0)
 end
 
-function GenericCharacterStateMachineExtension.reset(arg_4_0)
+GenericCharacterStateMachineExtension.reset = function (arg_4_0)
 	arg_4_0.state_machine:reset()
 end
 
-function GenericCharacterStateMachineExtension.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+GenericCharacterStateMachineExtension.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	arg_5_0.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 end
 
-function GenericCharacterStateMachineExtension.current_state(arg_6_0)
+GenericCharacterStateMachineExtension.current_state = function (arg_6_0)
 	return arg_6_0.state_machine:current_state()
 end

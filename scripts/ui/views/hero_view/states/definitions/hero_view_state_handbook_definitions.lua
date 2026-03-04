@@ -974,7 +974,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "rect_masked",
 					style_id = "disabled_rect",
 					pass_type = "texture",
-					content_check_function = function(arg_2_0)
+					content_check_function = function (arg_2_0)
 						return arg_2_0.button_hotspot.disable_button
 					end
 				},
@@ -993,7 +993,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return not arg_3_0.button_hotspot.disable_button
 					end
 				},
@@ -1001,7 +1001,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function(arg_4_0)
+					content_check_function = function (arg_4_0)
 						return arg_4_0.button_hotspot.disable_button
 					end
 				},
@@ -1024,7 +1024,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function(arg_5_0)
+					content_check_function = function (arg_5_0)
 						return arg_5_0.new
 					end
 				},
@@ -1032,7 +1032,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "locked",
 					style_id = "locked",
 					pass_type = "texture",
-					content_check_function = function(arg_6_0)
+					content_check_function = function (arg_6_0)
 						return arg_6_0.button_hotspot.disable_button
 					end
 				},
@@ -1040,7 +1040,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "list_style",
 					pass_type = "list_pass",
 					content_id = "list_content",
-					content_check_function = function(arg_7_0)
+					content_check_function = function (arg_7_0)
 						return arg_7_0.active
 					end,
 					passes = {
@@ -1048,7 +1048,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_8_0)
+							content_check_function = function (arg_8_0)
 								local var_8_0 = arg_8_0.button_hotspot
 
 								return not var_8_0.is_hover and not var_8_0.is_selected
@@ -1058,7 +1058,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text_hover",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_9_0)
+							content_check_function = function (arg_9_0)
 								local var_9_0 = arg_9_0.button_hotspot
 
 								return var_9_0.is_hover and not var_9_0.is_selected
@@ -1068,7 +1068,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text_selected",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function(arg_10_0)
+							content_check_function = function (arg_10_0)
 								return arg_10_0.button_hotspot.is_selected
 							end
 						},
@@ -1116,7 +1116,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "hover_glow",
 							style_id = "hover_glow",
 							pass_type = "texture",
-							content_check_function = function(arg_11_0)
+							content_check_function = function (arg_11_0)
 								local var_11_0 = arg_11_0.button_hotspot
 
 								return var_11_0.is_hover or var_11_0.is_selected
@@ -1131,7 +1131,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "rect_masked",
 							style_id = "disabled_rect",
 							pass_type = "texture",
-							content_check_function = function(arg_12_0)
+							content_check_function = function (arg_12_0)
 								return arg_12_0.button_hotspot.disable_button
 							end
 						},
@@ -1154,7 +1154,7 @@ local function var_0_21(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "new_texture",
 							style_id = "new_texture",
 							pass_type = "texture",
-							content_check_function = function(arg_13_0)
+							content_check_function = function (arg_13_0)
 								return arg_13_0.new
 							end
 						}
@@ -1566,7 +1566,7 @@ local var_0_23 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+					scroll_function = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 						local var_14_0 = arg_14_4.y * -1
 
 						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not arg_14_2.is_gamepad_active then
@@ -1657,13 +1657,13 @@ local var_0_25 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
 				arg_16_3.render_settings.alpha_multiplier = 0
 			end,
-			update = function(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 				arg_17_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 				return
 			end
 		}
@@ -1673,13 +1673,13 @@ local var_0_25 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 				arg_19_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 				arg_20_4.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 				return
 			end
 		}
@@ -1848,7 +1848,7 @@ local function var_0_30(arg_25_0, arg_25_1)
 					pass_type = "texture",
 					style_id = "texture",
 					texture_id = "texture",
-					content_check_function = function(arg_26_0)
+					content_check_function = function (arg_26_0)
 						return arg_26_0.texture
 					end
 				},
@@ -1856,7 +1856,7 @@ local function var_0_30(arg_25_0, arg_25_1)
 					pass_type = "texture_frame",
 					style_id = "shadow",
 					texture_id = "shadow",
-					content_check_function = function(arg_27_0)
+					content_check_function = function (arg_27_0)
 						return arg_27_0.texture
 					end
 				},
@@ -1864,7 +1864,7 @@ local function var_0_30(arg_25_0, arg_25_1)
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function(arg_28_0)
+					content_check_function = function (arg_28_0)
 						return arg_28_0.texture
 					end
 				},
@@ -1872,10 +1872,10 @@ local function var_0_30(arg_25_0, arg_25_1)
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function(arg_29_0)
+					content_check_function = function (arg_29_0)
 						return not arg_29_0.texture
 					end,
-					content_change_function = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+					content_change_function = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
 						local var_30_0 = (arg_30_0.loading_progress + arg_30_3) % 1
 
 						arg_30_1.angle = 2^math.smoothstep(var_30_0, 0, 1) * math.tau
@@ -2033,7 +2033,7 @@ local function var_0_31(arg_31_0, arg_31_1)
 				{
 					style_id = "video",
 					pass_type = "video",
-					content_check_function = function(arg_32_0)
+					content_check_function = function (arg_32_0)
 						return arg_32_0.video_player_reference
 					end
 				},
@@ -2041,7 +2041,7 @@ local function var_0_31(arg_31_0, arg_31_1)
 					pass_type = "texture_frame",
 					style_id = "shadow",
 					texture_id = "shadow",
-					content_check_function = function(arg_33_0)
+					content_check_function = function (arg_33_0)
 						return arg_33_0.video_player_reference
 					end
 				},
@@ -2049,7 +2049,7 @@ local function var_0_31(arg_31_0, arg_31_1)
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function(arg_34_0)
+					content_check_function = function (arg_34_0)
 						return arg_34_0.video_player_reference
 					end
 				}

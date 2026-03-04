@@ -2739,7 +2739,7 @@ local var_0_2 = {
 	}
 }
 
-DLCUtils.map_list("unit_extension_templates", function(arg_1_0)
+DLCUtils.map_list("unit_extension_templates", function (arg_1_0)
 	table.merge(var_0_2, dofile(arg_1_0))
 end)
 
@@ -2811,7 +2811,7 @@ for iter_0_0, iter_0_1 in pairs(var_0_2) do
 	end
 end
 
-function var_0_2.get_extensions(arg_2_0, arg_2_1, arg_2_2)
+var_0_2.get_extensions = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0
 	local var_2_1
 	local var_2_2 = var_0_2[arg_2_0]
@@ -2831,7 +2831,7 @@ function var_0_2.get_extensions(arg_2_0, arg_2_1, arg_2_2)
 	return var_2_0, var_2_1
 end
 
-function var_0_2.extensions_to_remove_on_death(arg_3_0, arg_3_1, arg_3_2)
+var_0_2.extensions_to_remove_on_death = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0
 	local var_3_1
 	local var_3_2 = var_0_2[arg_3_0].remove_when_killed

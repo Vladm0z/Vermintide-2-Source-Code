@@ -52,7 +52,7 @@ end
 
 local var_0_5 = true
 
-function ImguiDeusMapGen.init(arg_3_0)
+ImguiDeusMapGen.init = function (arg_3_0)
 	arg_3_0._seed = tonumber(script_data.debug_draw_base_map_seed) or 0
 	arg_3_0._journey_index = 1
 	arg_3_0._dominant_god_index = 1
@@ -62,7 +62,7 @@ function ImguiDeusMapGen.init(arg_3_0)
 	var_0_5 = false
 end
 
-function ImguiDeusMapGen.update(arg_4_0)
+ImguiDeusMapGen.update = function (arg_4_0)
 	if var_0_5 then
 		arg_4_0:_init_configs()
 
@@ -70,25 +70,25 @@ function ImguiDeusMapGen.update(arg_4_0)
 	end
 end
 
-function ImguiDeusMapGen.is_persistent(arg_5_0)
+ImguiDeusMapGen.is_persistent = function (arg_5_0)
 	return false
 end
 
-function ImguiDeusMapGen._init_configs(arg_6_0)
+ImguiDeusMapGen._init_configs = function (arg_6_0)
 	arg_6_0._original_populate_configs = DEUS_MAP_POPULATE_SETTINGS
 	arg_6_0._populate_configs = table.clone(DEUS_MAP_POPULATE_SETTINGS)
 
 	arg_6_0:_reset_configs_for_journey()
 end
 
-function ImguiDeusMapGen._reset_configs_for_journey(arg_7_0)
+ImguiDeusMapGen._reset_configs_for_journey = function (arg_7_0)
 	local var_7_0 = var_0_0[arg_7_0._journey_index]
 
 	arg_7_0._original_populate_config = DEUS_MAP_POPULATE_SETTINGS[var_7_0] or DEUS_MAP_POPULATE_SETTINGS.default
 	arg_7_0._populate_config = arg_7_0._populate_configs[var_7_0] or arg_7_0._populate_configs.default
 end
 
-function ImguiDeusMapGen.draw(arg_8_0, arg_8_1)
+ImguiDeusMapGen.draw = function (arg_8_0, arg_8_1)
 	local var_8_0 = Imgui.begin_window("DeusMapGen", "always_auto_resize")
 	local var_8_1 = arg_8_0._journey_index
 
@@ -148,7 +148,7 @@ function ImguiDeusMapGen.draw(arg_8_0, arg_8_1)
 	return var_8_0
 end
 
-function ImguiDeusMapGen._trigger_graph_render(arg_9_0)
+ImguiDeusMapGen._trigger_graph_render = function (arg_9_0)
 	script_data.deus_debug_draw_map = true
 
 	local var_9_0 = deus_generate_graph(arg_9_0._seed, var_0_0[arg_9_0._journey_index], var_0_1[arg_9_0._dominant_god_index], arg_9_0._populate_config, arg_9_0._with_belakor)

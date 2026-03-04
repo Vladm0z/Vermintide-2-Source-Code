@@ -22,7 +22,7 @@ if IS_XB1 then
 		[XboxOne.CONSOLE_TYPE_XBOX_SERIES_X_DEVKIT] = "xbs_anaconda-devkit"
 	}
 
-	function XboxOne.console_type_string()
+	XboxOne.console_type_string = function ()
 		return var_0_2[XboxOne.console_type()]
 	end
 end
@@ -111,7 +111,7 @@ local function var_0_9(arg_8_0)
 	print("\t unaccounted: ", var_8_0 - var_8_1)
 end
 
-function Boot.setup(arg_9_0)
+Boot.setup = function (arg_9_0)
 	_G.Crashify = require("foundation/scripts/util/crashify")
 
 	if not DEDICATED_SERVER and IS_WINDOWS then
@@ -226,7 +226,7 @@ local function var_0_10(arg_10_0)
 	})[string.lower(arg_10_0)] or "en"
 end
 
-function Boot._init_localizer(arg_11_0)
+Boot._init_localizer = function (arg_11_0)
 	local var_11_0 = "en"
 	local var_11_1
 
@@ -284,7 +284,7 @@ local function var_0_11()
 		end
 	end
 
-	table.sort(var_12_1, function(arg_13_0, arg_13_1)
+	table.sort(var_12_1, function (arg_13_0, arg_13_1)
 		return arg_13_0 < arg_13_1
 	end)
 	print("*****************************************************************")
@@ -304,7 +304,7 @@ local function var_0_11()
 	print("[Boot] use baked enemy meshes:", script_data.use_optimized_breed_units)
 end
 
-function Boot.booting_update(arg_14_0, arg_14_1)
+Boot.booting_update = function (arg_14_0, arg_14_1)
 	local var_14_0 = Boot.startup_timer
 
 	Boot.startup_timer = var_14_0 + arg_14_1
@@ -502,18 +502,18 @@ function Boot.booting_update(arg_14_0, arg_14_1)
 	return false
 end
 
-function Boot.booting_render(arg_15_0)
+Boot.booting_render = function (arg_15_0)
 	render_startup_world()
 end
 
-function Boot._require_foundation_scripts(arg_16_0)
+Boot._require_foundation_scripts = function (arg_16_0)
 	var_0_3("util", "verify_plugins", "error", "patches", "class", "callback", "rectangle", "state_machine", "visual_state_machine", "misc_util", "stack", "circular_queue", "grow_queue", "table", "testify", "math", "vector3", "quaternion", "script_world", "script_viewport", "script_camera", "script_unit", "frame_table", "path", "string", "reportify")
 	var_0_3("debug", "table_trap")
 	var_0_3("managers", "world/world_manager", "player/player", "free_flight/free_flight_manager", "state/state_machine_manager", "time/time_manager", "token/token_manager")
 	var_0_3("managers", "localization/localization_manager", "event/event_manager")
 end
 
-function Boot._init_managers(arg_17_0)
+Boot._init_managers = function (arg_17_0)
 	Managers.time = TimeManager:new()
 	Managers.world = WorldManager:new()
 	Managers.token = TokenManager:new()
@@ -521,7 +521,7 @@ function Boot._init_managers(arg_17_0)
 	Managers.url_loader = UrlLoaderManager:new()
 end
 
-function Boot.game_render(arg_18_0)
+Boot.game_render = function (arg_18_0)
 	if arg_18_0._machine.pre_render then
 		arg_18_0._machine:pre_render()
 	end
@@ -536,11 +536,11 @@ function Boot.game_render(arg_18_0)
 	Managers.url_loader:post_render()
 end
 
-function Boot._setup_statemachine(arg_19_0, arg_19_1, arg_19_2)
+Boot._setup_statemachine = function (arg_19_0, arg_19_1, arg_19_2)
 	arg_19_0._machine = GameStateMachine:new(arg_19_0, arg_19_1, arg_19_2, true)
 end
 
-function Boot.on_close(arg_20_0)
+Boot.on_close = function (arg_20_0)
 	if arg_20_0._machine and arg_20_0._machine.on_close then
 		return arg_20_0._machine:on_close()
 	end
@@ -653,7 +653,7 @@ end
 
 ReplayBoot = ReplayBoot or {}
 
-function ReplayBoot.init(arg_31_0)
+ReplayBoot.init = function (arg_31_0)
 	arg_31_0._packages = {}
 
 	for iter_31_0, iter_31_1 in ipairs(ExtendedReplay.packages_to_load()) do
@@ -677,13 +677,13 @@ function ReplayBoot.init(arg_31_0)
 	Managers.replay = ReplayManager:new(arg_31_0._world)
 end
 
-function ReplayBoot.update(arg_32_0, arg_32_1)
+ReplayBoot.update = function (arg_32_0, arg_32_1)
 	arg_32_1 = Managers.replay:update(arg_32_1)
 
 	World.update(arg_32_0._world, arg_32_1)
 end
 
-function ReplayBoot.render(arg_33_0)
+ReplayBoot.render = function (arg_33_0)
 	local var_33_0 = ExtendedReplay.render_objects()
 
 	if var_33_0 then
@@ -693,7 +693,7 @@ function ReplayBoot.render(arg_33_0)
 	end
 end
 
-function ReplayBoot.shutdown(arg_34_0)
+ReplayBoot.shutdown = function (arg_34_0)
 	Managers:destroy()
 	Application.release_world(arg_34_0._world)
 
@@ -729,7 +729,7 @@ end
 
 local var_0_12 = {}
 
-function Boot.game_update(arg_40_0, arg_40_1)
+Boot.game_update = function (arg_40_0, arg_40_1)
 	local var_40_0 = Managers
 	local var_40_1 = var_40_0.time:scaled_delta_time(arg_40_1)
 
@@ -902,7 +902,7 @@ function Boot.game_update(arg_40_0, arg_40_1)
 	end
 end
 
-function Boot.shutdown(arg_42_0, arg_42_1)
+Boot.shutdown = function (arg_42_0, arg_42_1)
 	if arg_42_0._machine then
 		arg_42_0._machine:destroy(true)
 	end
@@ -929,7 +929,7 @@ end
 
 Game = Game or {}
 
-function Game.setup(arg_43_0)
+Game.setup = function (arg_43_0)
 	local var_43_0 = var_0_7("Game:setup()")
 	local var_43_1 = var_0_0 == "dev" or var_0_0 == "debug"
 
@@ -1018,7 +1018,7 @@ function Game.setup(arg_43_0)
 	var_0_9(var_43_0)
 end
 
-function Game._set_ps4_content_restrictions(arg_44_0)
+Game._set_ps4_content_restrictions = function (arg_44_0)
 	local var_44_0 = {
 		{
 			country = "at",
@@ -1273,7 +1273,7 @@ function Game._set_ps4_content_restrictions(arg_44_0)
 	NpCheck.set_content_restriction(18, var_44_0)
 end
 
-function Game.require_game_scripts(arg_45_0)
+Game.require_game_scripts = function (arg_45_0)
 	var_0_5("utils", "patches", "colors", "framerate", "global_utils", "function_call_stats", "loaded_dice", "deadlock_stack", "benchmark/benchmark_handler")
 	var_0_5("settings", "version_settings")
 	var_0_5("ui", "views/show_cursor_stack", "ui_fonts")
@@ -1307,7 +1307,7 @@ function Game.require_game_scripts(arg_45_0)
 	require("scripts/tests/test_cases")
 end
 
-function Game._handle_win32_graphics_quality(arg_46_0)
+Game._handle_win32_graphics_quality = function (arg_46_0)
 	local var_46_0 = var_0_7("Game:_handle_win32_graphics_quality()")
 	local var_46_1 = Application.user_setting("graphics_quality")
 	local var_46_2 = false
@@ -1509,19 +1509,19 @@ function Game._handle_win32_graphics_quality(arg_46_0)
 	var_0_9(var_46_0)
 end
 
-function Game._init_random(arg_49_0)
+Game._init_random = function (arg_49_0)
 	local var_49_0 = os.clock() * 10000 % 1000
 
 	math.randomseed(var_49_0)
 	math.random(5, 30000)
 end
 
-function Game._init_mouse(arg_50_0)
+Game._init_mouse = function (arg_50_0)
 	Window.set_cursor("gui/cursors/mouse_cursor")
 	Window.set_clip_cursor(true)
 end
 
-function Game._init_managers(arg_51_0)
+Game._init_managers = function (arg_51_0)
 	parse_item_master_list()
 
 	Managers.persistent_event = EventManager:new()
@@ -1616,7 +1616,7 @@ function Game._init_managers(arg_51_0)
 	end
 end
 
-function Game._init_backend(arg_52_0)
+Game._init_backend = function (arg_52_0)
 	local var_52_0
 	local var_52_1
 	local var_52_2
@@ -1638,7 +1638,7 @@ function Game._init_backend(arg_52_0)
 	Managers.backend = BackendManagerPlayFab:new(var_52_0, var_52_2, "DataServerQueue")
 end
 
-function Game._init_backend_xbox(arg_53_0)
+Game._init_backend_xbox = function (arg_53_0)
 	local var_53_0 = "ScriptBackendPlayFabXbox"
 	local var_53_1 = Development.parameter("mechanism") or "adventure"
 	local var_53_2 = MechanismSettings[var_53_1]
@@ -1647,7 +1647,7 @@ function Game._init_backend_xbox(arg_53_0)
 	Managers.backend = BackendManagerPlayFab:new(var_53_0, var_53_3, "DataServerQueue")
 end
 
-function Game._init_backend_ps4(arg_54_0)
+Game._init_backend_ps4 = function (arg_54_0)
 	local var_54_0 = "ScriptBackendPlayFabPS4"
 	local var_54_1 = Development.parameter("mechanism") or "adventure"
 	local var_54_2 = MechanismSettings[var_54_1]
@@ -1656,7 +1656,7 @@ function Game._init_backend_ps4(arg_54_0)
 	Managers.backend = BackendManagerPlayFab:new(var_54_0, var_54_3, "DataServerQueue")
 end
 
-function Game._load_win32_user_settings(arg_55_0)
+Game._load_win32_user_settings = function (arg_55_0)
 	local var_55_0 = Application.win32_user_setting("max_stacking_frames")
 
 	if var_55_0 then
@@ -1664,8 +1664,8 @@ function Game._load_win32_user_settings(arg_55_0)
 	end
 end
 
-function Game._demo_setup(arg_56_0)
-	function Application.save_user_settings()
+Game._demo_setup = function (arg_56_0)
+	Application.save_user_settings = function ()
 		return
 	end
 
@@ -1678,7 +1678,7 @@ function Game._demo_setup(arg_56_0)
 	Managers.package:load("resource_packages/demo", "boot")
 end
 
-function Game._init_localization_manager(arg_58_0)
+Game._init_localization_manager = function (arg_58_0)
 	Managers.localizer = LocalizationManager:new()
 
 	local function var_58_0(arg_59_0)
@@ -1727,7 +1727,7 @@ function Game._init_localization_manager(arg_58_0)
 	Managers.localizer:add_macro("KEY", var_58_1)
 end
 
-function Game.select_starting_state(arg_61_0)
+Game.select_starting_state = function (arg_61_0)
 	local var_61_0 = {
 		Application.argv()
 	}

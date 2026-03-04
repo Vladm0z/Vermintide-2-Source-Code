@@ -16,7 +16,7 @@ local var_0_6 = 7
 local var_0_7 = 8
 local var_0_8 = 9
 
-function ImguiAISpawnLog.init(arg_2_0)
+ImguiAISpawnLog.init = function (arg_2_0)
 	arg_2_0._log = {}
 	arg_2_0._player_positions = {}
 	arg_2_0._timeline_slice_size = 1
@@ -43,7 +43,7 @@ function ImguiAISpawnLog.init(arg_2_0)
 	arg_2_0:register_events()
 end
 
-function ImguiAISpawnLog.register_events(arg_3_0)
+ImguiAISpawnLog.register_events = function (arg_3_0)
 	local var_3_0 = Managers.state.event
 
 	if var_3_0 then
@@ -52,7 +52,7 @@ function ImguiAISpawnLog.register_events(arg_3_0)
 	end
 end
 
-function ImguiAISpawnLog.unregister_events(arg_4_0)
+ImguiAISpawnLog.unregister_events = function (arg_4_0)
 	local var_4_0 = Managers.state.event
 
 	if var_4_0 then
@@ -61,7 +61,7 @@ function ImguiAISpawnLog.unregister_events(arg_4_0)
 	end
 end
 
-function ImguiAISpawnLog.update(arg_5_0)
+ImguiAISpawnLog.update = function (arg_5_0)
 	if var_0_0 then
 		arg_5_0:unregister_events()
 		arg_5_0:init()
@@ -88,11 +88,11 @@ function ImguiAISpawnLog.update(arg_5_0)
 	end
 end
 
-function ImguiAISpawnLog.is_persistent(arg_6_0)
+ImguiAISpawnLog.is_persistent = function (arg_6_0)
 	return arg_6_0._keep_on_screen
 end
 
-function ImguiAISpawnLog.draw(arg_7_0)
+ImguiAISpawnLog.draw = function (arg_7_0)
 	local var_7_0 = Managers.time:time("game")
 
 	if not var_7_0 then
@@ -217,19 +217,19 @@ function ImguiAISpawnLog.draw(arg_7_0)
 	return var_7_1
 end
 
-function ImguiAISpawnLog.log_queue(arg_8_0, ...)
+ImguiAISpawnLog.log_queue = function (arg_8_0, ...)
 	arg_8_0:_log_event(1, ...)
 end
 
-function ImguiAISpawnLog.log_queue_cancel(arg_9_0, ...)
+ImguiAISpawnLog.log_queue_cancel = function (arg_9_0, ...)
 	arg_9_0:_log_event(2, ...)
 end
 
-function ImguiAISpawnLog.log_spawn(arg_10_0, ...)
+ImguiAISpawnLog.log_spawn = function (arg_10_0, ...)
 	arg_10_0:_log_event(3, ...)
 end
 
-function ImguiAISpawnLog._log_event(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+ImguiAISpawnLog._log_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 	local var_11_0 = arg_11_2 and arg_11_2:unbox()
 	local var_11_1 = Managers.time:time("game")
 	local var_11_2 = {
@@ -259,20 +259,20 @@ function ImguiAISpawnLog._log_event(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_
 	table.insert(arg_11_0._log, 1, var_11_2)
 end
 
-function ImguiAISpawnLog._clear(arg_12_0)
+ImguiAISpawnLog._clear = function (arg_12_0)
 	arg_12_0._log = {}
 	arg_12_0._player_positions = {}
 	arg_12_0._totals = {}
 end
 
-function ImguiAISpawnLog._reset(arg_13_0)
+ImguiAISpawnLog._reset = function (arg_13_0)
 	arg_13_0._drawer = nil
 	arg_13_0._hero_side = nil
 
 	arg_13_0:_clear()
 end
 
-function ImguiAISpawnLog._init_session(arg_14_0)
+ImguiAISpawnLog._init_session = function (arg_14_0)
 	local var_14_0 = Managers.state
 
 	if var_14_0 then
@@ -286,7 +286,7 @@ function ImguiAISpawnLog._init_session(arg_14_0)
 	end
 end
 
-function ImguiAISpawnLog._log_player_positions(arg_15_0, arg_15_1)
+ImguiAISpawnLog._log_player_positions = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._hero_side
 
 	if var_15_0 then
@@ -323,7 +323,7 @@ function ImguiAISpawnLog._log_player_positions(arg_15_0, arg_15_1)
 	end
 end
 
-function ImguiAISpawnLog._visualise_player_pos(arg_16_0)
+ImguiAISpawnLog._visualise_player_pos = function (arg_16_0)
 	local var_16_0 = arg_16_0._timeline_end - arg_16_0._timeline_slice_size
 	local var_16_1 = arg_16_0._timeline_end
 	local var_16_2 = Color(0, 255, 0)
@@ -371,7 +371,7 @@ function ImguiAISpawnLog._visualise_player_pos(arg_16_0)
 	end
 end
 
-function ImguiAISpawnLog._export_recap_data(arg_17_0)
+ImguiAISpawnLog._export_recap_data = function (arg_17_0)
 	local var_17_0 = "Breed,Faction,Count"
 
 	for iter_17_0, iter_17_1 in pairs(arg_17_0._totals) do
@@ -387,7 +387,7 @@ function ImguiAISpawnLog._export_recap_data(arg_17_0)
 	Clipboard.put(var_17_0)
 end
 
-function ImguiAISpawnLog._export_log_data(arg_18_0)
+ImguiAISpawnLog._export_log_data = function (arg_18_0)
 	local var_18_0 = arg_18_0._event_type_names
 	local var_18_1 = "Breed,Faction,Spawn Category,Spawn Type"
 

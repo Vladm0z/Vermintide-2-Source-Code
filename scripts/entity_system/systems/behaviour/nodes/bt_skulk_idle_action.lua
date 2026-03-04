@@ -5,11 +5,11 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSkulkIdleAction = class(BTSkulkIdleAction, BTNode)
 BTSkulkIdleAction.name = "BTSkulkIdleAction"
 
-function BTSkulkIdleAction.init(arg_1_0, ...)
+BTSkulkIdleAction.init = function (arg_1_0, ...)
 	BTSkulkIdleAction.super.init(arg_1_0, ...)
 end
 
-function BTSkulkIdleAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTSkulkIdleAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 
 	local var_2_0 = arg_2_2.skulk_data
@@ -27,7 +27,7 @@ function BTSkulkIdleAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTSkulkIdleAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSkulkIdleAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	Managers.state.network:anim_event(arg_3_1, "to_upright")
 
 	if arg_3_2.approach_target then
@@ -40,7 +40,7 @@ end
 local var_0_0 = {}
 local var_0_1 = 400
 
-function BTSkulkIdleAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSkulkIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_2.skulk_data
 
 	if arg_4_3 > var_4_0.attack_timer then
@@ -73,6 +73,6 @@ function BTSkulkIdleAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-function BTSkulkIdleAction.pick_new_hiding_place(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTSkulkIdleAction.pick_new_hiding_place = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return
 end

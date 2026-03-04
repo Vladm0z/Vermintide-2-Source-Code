@@ -5,7 +5,7 @@ local var_0_1 = math.easeInCubic
 
 BonusDiceUI = class(BonusDiceUI)
 
-function BonusDiceUI.init(arg_1_0, arg_1_1, arg_1_2)
+BonusDiceUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -30,7 +30,7 @@ function BonusDiceUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:create_ui_elements()
 end
 
-function BonusDiceUI.create_ui_elements(arg_2_0)
+BonusDiceUI.create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
 
 	for iter_2_0 = 1, 10 do
@@ -38,7 +38,7 @@ function BonusDiceUI.create_ui_elements(arg_2_0)
 	end
 end
 
-function BonusDiceUI.add_die(arg_3_0, arg_3_1)
+BonusDiceUI.add_die = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0.active_dice_widgets + 1
 	local var_3_1 = arg_3_0.dice_widgets[var_3_0] or UIWidget.init(var_0_0.dice_widget_definition)
 	local var_3_2 = var_0_0.num_dice_columns
@@ -62,11 +62,11 @@ function BonusDiceUI.add_die(arg_3_0, arg_3_1)
 	arg_3_0.active_dice_widgets = var_3_0
 end
 
-function BonusDiceUI.destroy(arg_4_0)
+BonusDiceUI.destroy = function (arg_4_0)
 	arg_4_0.dice_keeper = nil
 end
 
-function BonusDiceUI.update(arg_5_0, arg_5_1)
+BonusDiceUI.update = function (arg_5_0, arg_5_1)
 	do return end
 
 	if DebugKeyHandler.key_pressed("f3", "asdasd", "dadsa") then
@@ -80,7 +80,7 @@ function BonusDiceUI.update(arg_5_0, arg_5_1)
 	end
 end
 
-function BonusDiceUI.update_dices(arg_6_0)
+BonusDiceUI.update_dices = function (arg_6_0)
 	local var_6_0 = arg_6_0.dice_keeper
 	local var_6_1 = arg_6_0.die_count
 	local var_6_2 = arg_6_0.die_types
@@ -99,7 +99,7 @@ function BonusDiceUI.update_dices(arg_6_0)
 	end
 end
 
-function BonusDiceUI.draw(arg_7_0, arg_7_1)
+BonusDiceUI.draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager:get_service("ingame_menu")

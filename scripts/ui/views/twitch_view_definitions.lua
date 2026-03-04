@@ -264,14 +264,14 @@ local function var_0_1(arg_1_0, arg_1_1)
 		{
 			style_id = "inner_rect",
 			pass_type = "rect",
-			content_check_function = function(arg_2_0, arg_2_1)
+			content_check_function = function (arg_2_0, arg_2_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "inner_inner_rect",
 			pass_type = "rect",
-			content_check_function = function(arg_3_0, arg_3_1)
+			content_check_function = function (arg_3_0, arg_3_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
@@ -283,7 +283,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function(arg_4_0, arg_4_1)
+			content_check_function = function (arg_4_0, arg_4_1)
 				if Managers.twitch:is_connected() then
 					local var_4_0 = Managers.twitch:user_name()
 
@@ -304,7 +304,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function(arg_5_0, arg_5_1)
+			content_check_function = function (arg_5_0, arg_5_1)
 				if arg_5_0.text_input_hotspot.is_hover then
 					arg_5_1.text_color = {
 						128,
@@ -328,7 +328,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function(arg_6_0, arg_6_1)
+			content_check_function = function (arg_6_0, arg_6_1)
 				if not arg_6_0.text_field_active then
 					arg_6_1.caret_color[1] = 0
 				else
@@ -342,7 +342,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (arg_7_0, arg_7_1)
 				if not Managers.twitch:is_connecting() then
 					return
 				end
@@ -359,7 +359,7 @@ local function var_0_1(arg_1_0, arg_1_1)
 			style_id = "error_field",
 			pass_type = "text",
 			text_id = "error_id",
-			content_check_function = function(arg_8_0, arg_8_1)
+			content_check_function = function (arg_8_0, arg_8_1)
 				local var_8_0 = Managers.twitch:is_connecting()
 				local var_8_1 = Managers.twitch:is_connected()
 
@@ -671,21 +671,21 @@ local var_0_2 = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function(arg_9_0)
+				content_check_function = function (arg_9_0)
 					return Managers.twitch:is_connected()
 				end
 			},
 			{
 				style_id = "edge",
 				pass_type = "rounded_background",
-				content_check_function = function(arg_10_0)
+				content_check_function = function (arg_10_0)
 					return Managers.twitch:is_connected()
 				end
 			},
 			{
 				style_id = "background",
 				pass_type = "rounded_background",
-				content_check_function = function(arg_11_0)
+				content_check_function = function (arg_11_0)
 					return Managers.twitch:is_connected()
 				end
 			},
@@ -693,7 +693,7 @@ local var_0_2 = {
 				style_id = "text",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function(arg_12_0)
+				content_check_function = function (arg_12_0)
 					return Managers.twitch:is_connected()
 				end
 			}

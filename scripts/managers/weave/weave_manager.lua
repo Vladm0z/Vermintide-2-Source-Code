@@ -21,11 +21,11 @@ local var_0_2 = {
 	"event_conflict_director_setup_done"
 }
 
-function WeaveManager.init(arg_1_0)
+WeaveManager.init = function (arg_1_0)
 	arg_1_0:_reset()
 end
 
-function WeaveManager.initiate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WeaveManager.initiate = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	if arg_2_4 == "weave" then
 		arg_2_0:_setup_weave_data(arg_2_3)
 		arg_2_0:_setup_data(arg_2_1, arg_2_3)
@@ -38,7 +38,7 @@ function WeaveManager.initiate(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	end
 end
 
-function WeaveManager._reset(arg_3_0)
+WeaveManager._reset = function (arg_3_0)
 	arg_3_0._world = nil
 	arg_3_0._initiated = false
 	arg_3_0._is_server = true
@@ -64,7 +64,7 @@ function WeaveManager._reset(arg_3_0)
 	arg_3_0._active_weave_phase = 1
 end
 
-function WeaveManager.clear_weave_data(arg_4_0)
+WeaveManager.clear_weave_data = function (arg_4_0)
 	arg_4_0._bar_score = 0
 	arg_4_0._bar_filled = false
 	arg_4_0._remaining_time = WeaveSettings.starting_time
@@ -80,14 +80,14 @@ function WeaveManager.clear_weave_data(arg_4_0)
 	table.clear(arg_4_0._enemies_killed)
 end
 
-function WeaveManager.clear_weave_name(arg_5_0)
+WeaveManager.clear_weave_name = function (arg_5_0)
 	arg_5_0._active_weave_name = nil
 	arg_5_0._next_weave_name = nil
 	arg_5_0._active_objective_index = nil
 	arg_5_0._next_objective_index = nil
 end
 
-function WeaveManager._setup_data(arg_6_0, arg_6_1, arg_6_2)
+WeaveManager._setup_data = function (arg_6_0, arg_6_1, arg_6_2)
 	arg_6_0._world = arg_6_1
 	arg_6_0._is_server = arg_6_2
 	arg_6_0._bar_filled = false
@@ -108,11 +108,11 @@ function WeaveManager._setup_data(arg_6_0, arg_6_1, arg_6_2)
 	end
 end
 
-function WeaveManager.weave_spawner(arg_7_0)
+WeaveManager.weave_spawner = function (arg_7_0)
 	return arg_7_0._weave_spawner
 end
 
-function WeaveManager._setup_weave_data(arg_8_0, arg_8_1)
+WeaveManager._setup_weave_data = function (arg_8_0, arg_8_1)
 	if not arg_8_1 then
 		return
 	end
@@ -132,11 +132,11 @@ function WeaveManager._setup_weave_data(arg_8_0, arg_8_1)
 	Development.set_parameter("weave_name", nil)
 end
 
-function WeaveManager._register_events(arg_9_0)
+WeaveManager._register_events = function (arg_9_0)
 	Managers.state.event:register(arg_9_0, unpack(var_0_2))
 end
 
-function WeaveManager._unregister_events(arg_10_0)
+WeaveManager._unregister_events = function (arg_10_0)
 	local var_10_0 = Managers.state.event
 
 	if var_10_0 and arg_10_0._initiated then
@@ -148,13 +148,13 @@ function WeaveManager._unregister_events(arg_10_0)
 	end
 end
 
-function WeaveManager._register_rpcs(arg_11_0, arg_11_1)
+WeaveManager._register_rpcs = function (arg_11_0, arg_11_1)
 	arg_11_0._network_event_delegate = arg_11_1
 
 	arg_11_1:register(arg_11_0, unpack(var_0_1))
 end
 
-function WeaveManager._unregister_rpcs(arg_12_0)
+WeaveManager._unregister_rpcs = function (arg_12_0)
 	if arg_12_0._network_event_delegate then
 		arg_12_0._network_event_delegate:unregister(arg_12_0)
 
@@ -162,7 +162,7 @@ function WeaveManager._unregister_rpcs(arg_12_0)
 	end
 end
 
-function WeaveManager.reset_statistics_for_challenges(arg_13_0)
+WeaveManager.reset_statistics_for_challenges = function (arg_13_0)
 	if arg_13_0._has_reset_challenge_stats then
 		return
 	end
@@ -195,7 +195,7 @@ function WeaveManager.reset_statistics_for_challenges(arg_13_0)
 	arg_13_0._has_reset_challenge_stats = true
 end
 
-function WeaveManager.teardown(arg_14_0)
+WeaveManager.teardown = function (arg_14_0)
 	arg_14_0:_unregister_rpcs()
 	arg_14_0:_unregister_events()
 
@@ -203,12 +203,12 @@ function WeaveManager.teardown(arg_14_0)
 	arg_14_0._initiated = false
 end
 
-function WeaveManager.destroy(arg_15_0)
+WeaveManager.destroy = function (arg_15_0)
 	arg_15_0:_unregister_rpcs()
 	arg_15_0:_unregister_events()
 end
 
-function WeaveManager.update(arg_16_0, arg_16_1, arg_16_2)
+WeaveManager.update = function (arg_16_0, arg_16_1, arg_16_2)
 	if script_data.testify then
 		Testify:poll_requests_through_handler(var_0_0, arg_16_0)
 	end
@@ -261,7 +261,7 @@ function WeaveManager.update(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function WeaveManager.event_conflict_director_setup_done(arg_17_0)
+WeaveManager.event_conflict_director_setup_done = function (arg_17_0)
 	if arg_17_0:get_active_weave() and arg_17_0._is_server then
 		local var_17_0 = arg_17_0:get_active_objective_template()
 		local var_17_1 = var_17_0 and var_17_0.spawning_seed
@@ -274,7 +274,7 @@ function WeaveManager.event_conflict_director_setup_done(arg_17_0)
 	end
 end
 
-function WeaveManager._set_player_ids(arg_18_0, arg_18_1)
+WeaveManager._set_player_ids = function (arg_18_0, arg_18_1)
 	if not arg_18_1 then
 		return
 	end
@@ -282,7 +282,7 @@ function WeaveManager._set_player_ids(arg_18_0, arg_18_1)
 	arg_18_0._player_ids = arg_18_1
 end
 
-function WeaveManager.store_player_ids(arg_19_0)
+WeaveManager.store_player_ids = function (arg_19_0)
 	if not table.is_empty(arg_19_0._player_ids) then
 		return
 	end
@@ -308,7 +308,7 @@ function WeaveManager.store_player_ids(arg_19_0)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_player_count", arg_19_0._num_players)
 end
 
-function WeaveManager.get_saved_game_mode_data(arg_20_0)
+WeaveManager.get_saved_game_mode_data = function (arg_20_0)
 	if not arg_20_0._is_server then
 		return
 	end
@@ -316,7 +316,7 @@ function WeaveManager.get_saved_game_mode_data(arg_20_0)
 	return table.clone(arg_20_0._saved_game_mode_data)
 end
 
-function WeaveManager.store_saved_game_mode_data(arg_21_0)
+WeaveManager.store_saved_game_mode_data = function (arg_21_0)
 	if not arg_21_0._is_server then
 		return
 	end
@@ -334,74 +334,74 @@ function WeaveManager.store_saved_game_mode_data(arg_21_0)
 	arg_21_0._saved_game_mode_data = var_21_0
 end
 
-function WeaveManager.get_player_ids(arg_22_0)
+WeaveManager.get_player_ids = function (arg_22_0)
 	return arg_22_0._player_ids
 end
 
-function WeaveManager.set_next_weave(arg_23_0, arg_23_1)
+WeaveManager.set_next_weave = function (arg_23_0, arg_23_1)
 	arg_23_0._next_weave_name = arg_23_1
 end
 
-function WeaveManager.set_next_objective(arg_24_0, arg_24_1)
+WeaveManager.set_next_objective = function (arg_24_0, arg_24_1)
 	arg_24_0._next_objective_index = arg_24_1
 end
 
-function WeaveManager.get_next_weave(arg_25_0)
+WeaveManager.get_next_weave = function (arg_25_0)
 	return arg_25_0._next_weave_name
 end
 
-function WeaveManager.get_next_objective(arg_26_0)
+WeaveManager.get_next_objective = function (arg_26_0)
 	return arg_26_0._next_objective_index
 end
 
-function WeaveManager.get_time_left(arg_27_0)
+WeaveManager.get_time_left = function (arg_27_0)
 	return arg_27_0._remaining_time
 end
 
-function WeaveManager.get_damage_taken(arg_28_0)
+WeaveManager.get_damage_taken = function (arg_28_0)
 	return arg_28_0._damage_taken
 end
 
-function WeaveManager._set_active_weave(arg_29_0, arg_29_1)
+WeaveManager._set_active_weave = function (arg_29_0, arg_29_1)
 	arg_29_0._active_weave_name = arg_29_1
 end
 
-function WeaveManager._report_telemetry(arg_30_0)
+WeaveManager._report_telemetry = function (arg_30_0)
 	local var_30_0 = arg_30_0:get_active_wind()
 	local var_30_1 = arg_30_0:get_weave_tier()
 
 	Managers.telemetry_events:weave_activated(var_30_0, var_30_1)
 end
 
-function WeaveManager._set_active_objective(arg_31_0, arg_31_1)
+WeaveManager._set_active_objective = function (arg_31_0, arg_31_1)
 	arg_31_0._active_objective_index = arg_31_1
 end
 
-function WeaveManager.get_active_objective(arg_32_0)
+WeaveManager.get_active_objective = function (arg_32_0)
 	return arg_32_0._active_objective_index
 end
 
-function WeaveManager._set_time_left(arg_33_0, arg_33_1)
+WeaveManager._set_time_left = function (arg_33_0, arg_33_1)
 	arg_33_0._remaining_time = arg_33_1
 end
 
-function WeaveManager._set_damage_taken(arg_34_0, arg_34_1)
+WeaveManager._set_damage_taken = function (arg_34_0, arg_34_1)
 	arg_34_0._damage_taken = arg_34_1
 end
 
-function WeaveManager.get_active_weave(arg_35_0)
+WeaveManager.get_active_weave = function (arg_35_0)
 	return arg_35_0._active_weave_name
 end
 
-function WeaveManager.get_active_weave_phase(arg_36_0)
+WeaveManager.get_active_weave_phase = function (arg_36_0)
 	return arg_36_0._active_weave_phase
 end
 
-function WeaveManager.set_active_weave_phase(arg_37_0, arg_37_1)
+WeaveManager.set_active_weave_phase = function (arg_37_0, arg_37_1)
 	arg_37_0._active_weave_phase = arg_37_1
 end
 
-function WeaveManager.get_active_wind(arg_38_0)
+WeaveManager.get_active_wind = function (arg_38_0)
 	if not arg_38_0._active_weave_name then
 		return
 	end
@@ -411,7 +411,7 @@ function WeaveManager.get_active_wind(arg_38_0)
 	return var_38_0 and var_38_0.wind
 end
 
-function WeaveManager.get_active_wind_settings(arg_39_0)
+WeaveManager.get_active_wind_settings = function (arg_39_0)
 	if not arg_39_0._active_weave_name then
 		return
 	end
@@ -422,7 +422,7 @@ function WeaveManager.get_active_wind_settings(arg_39_0)
 	return WindSettings[var_39_1]
 end
 
-function WeaveManager.get_scaling_value(arg_40_0, arg_40_1)
+WeaveManager.get_scaling_value = function (arg_40_0, arg_40_1)
 	local var_40_0 = Managers.state.network:lobby()
 	local var_40_1 = var_40_0 and var_40_0:lobby_data("weave_quick_game") == "true" or Managers.venture.quickplay:is_quick_game()
 	local var_40_2 = WeaveSettings.templates[arg_40_0._active_weave_name]
@@ -448,11 +448,11 @@ function WeaveManager.get_scaling_value(arg_40_0, arg_40_1)
 	return 0
 end
 
-function WeaveManager.start_timer(arg_41_0)
+WeaveManager.start_timer = function (arg_41_0)
 	arg_41_0._pause_timer = false
 end
 
-function WeaveManager.calculate_next_objective_index(arg_42_0)
+WeaveManager.calculate_next_objective_index = function (arg_42_0)
 	if not arg_42_0._active_weave_name then
 		return
 	end
@@ -466,7 +466,7 @@ function WeaveManager.calculate_next_objective_index(arg_42_0)
 	return var_42_0 + 1
 end
 
-function WeaveManager.sync_end_of_weave_data(arg_43_0)
+WeaveManager.sync_end_of_weave_data = function (arg_43_0)
 	arg_43_0._final_data_synced = true
 
 	local var_43_0 = arg_43_0._score
@@ -477,7 +477,7 @@ function WeaveManager.sync_end_of_weave_data(arg_43_0)
 	Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_end_of_weave_data", var_43_0, var_43_1, var_43_2, var_43_3)
 end
 
-function WeaveManager.hot_join_sync(arg_44_0, arg_44_1)
+WeaveManager.hot_join_sync = function (arg_44_0, arg_44_1)
 	if Managers.state.game_mode:game_mode_key() ~= "weave" then
 		return
 	end
@@ -501,7 +501,7 @@ end
 
 local var_0_3 = {}
 
-function WeaveManager.mutators(arg_45_0)
+WeaveManager.mutators = function (arg_45_0)
 	table.clear(var_0_3)
 
 	local var_45_0 = arg_45_0._active_weave_name
@@ -524,7 +524,7 @@ function WeaveManager.mutators(arg_45_0)
 	return var_0_3
 end
 
-function WeaveManager.start_objective(arg_46_0)
+WeaveManager.start_objective = function (arg_46_0)
 	local var_46_0 = arg_46_0:get_active_objective_template()
 	local var_46_1 = var_46_0.objective_start_flow_event
 	local var_46_2 = var_46_0.objective_settings
@@ -553,11 +553,11 @@ function WeaveManager.start_objective(arg_46_0)
 	arg_46_0:_report_telemetry()
 end
 
-function WeaveManager.player_damaged(arg_47_0, arg_47_1)
+WeaveManager.player_damaged = function (arg_47_0, arg_47_1)
 	arg_47_0._damage_taken = math.min(WeaveSettings.max_damage_taken, arg_47_0._damage_taken + arg_47_1)
 end
 
-function WeaveManager.current_bar_score(arg_48_0)
+WeaveManager.current_bar_score = function (arg_48_0)
 	local var_48_0 = Managers.state.network:game()
 
 	if var_48_0 and arg_48_0._go_id then
@@ -570,7 +570,7 @@ function WeaveManager.current_bar_score(arg_48_0)
 	end
 end
 
-function WeaveManager.increase_bar_score(arg_49_0, arg_49_1)
+WeaveManager.increase_bar_score = function (arg_49_0, arg_49_1)
 	fassert(arg_49_0._is_server, "can't increase weave score as a client")
 
 	local var_49_0 = arg_49_0:get_active_objective_template()
@@ -595,7 +595,7 @@ function WeaveManager.increase_bar_score(arg_49_0, arg_49_1)
 	end
 end
 
-function WeaveManager.show_bar(arg_50_0)
+WeaveManager.show_bar = function (arg_50_0)
 	local var_50_0 = arg_50_0:get_active_objective_template()
 
 	if var_50_0 and var_50_0.show_bar and not arg_50_0._bar_filled then
@@ -605,7 +605,7 @@ function WeaveManager.show_bar(arg_50_0)
 	return false
 end
 
-function WeaveManager.get_active_objective_template(arg_51_0)
+WeaveManager.get_active_objective_template = function (arg_51_0)
 	if not arg_51_0._active_objective_index then
 		return
 	end
@@ -615,11 +615,11 @@ function WeaveManager.get_active_objective_template(arg_51_0)
 	return WeaveSettings.templates[arg_51_0._active_weave_name].objectives[var_51_0]
 end
 
-function WeaveManager.get_scaling_difficulty_index(arg_52_0)
+WeaveManager.get_scaling_difficulty_index = function (arg_52_0)
 	return
 end
 
-function WeaveManager.get_active_weave_template(arg_53_0)
+WeaveManager.get_active_weave_template = function (arg_53_0)
 	if not arg_53_0._active_weave_name then
 		return
 	end
@@ -627,7 +627,7 @@ function WeaveManager.get_active_weave_template(arg_53_0)
 	return WeaveSettings.templates[arg_53_0._active_weave_name]
 end
 
-function WeaveManager.start_terror_event(arg_54_0, arg_54_1, arg_54_2)
+WeaveManager.start_terror_event = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_0:get_active_weave_template()
 	local var_54_1 = arg_54_0:get_active_objective_template()
 	local var_54_2 = arg_54_0._active_objective_index
@@ -638,7 +638,7 @@ function WeaveManager.start_terror_event(arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0._weave_spawner:start_terror_event_from_template(arg_54_1, arg_54_2)
 end
 
-function WeaveManager.stop_terror_event(arg_55_0, arg_55_1, arg_55_2)
+WeaveManager.stop_terror_event = function (arg_55_0, arg_55_1, arg_55_2)
 	local var_55_0 = arg_55_0:get_active_weave_template()
 	local var_55_1 = arg_55_0:get_active_objective_template()
 	local var_55_2 = arg_55_0._active_objective_index
@@ -652,13 +652,13 @@ function WeaveManager.stop_terror_event(arg_55_0, arg_55_1, arg_55_2)
 	TerrorEventMixer.stop_event(var_55_3)
 end
 
-function WeaveManager.get_wind_strength(arg_56_0)
+WeaveManager.get_wind_strength = function (arg_56_0)
 	local var_56_0 = WeaveSettings.templates[arg_56_0._active_weave_name]
 
 	return var_56_0 and var_56_0.wind_strength or 1
 end
 
-function WeaveManager._create_game_object(arg_57_0)
+WeaveManager._create_game_object = function (arg_57_0)
 	local var_57_0 = {
 		go_type = NetworkLookup.go_types.weave,
 		bar_score = arg_57_0._bar_score,
@@ -669,19 +669,19 @@ function WeaveManager._create_game_object(arg_57_0)
 	arg_57_0._go_id = Managers.state.network:create_game_object("weave", var_57_0, var_57_1)
 end
 
-function WeaveManager.game_object_created(arg_58_0, arg_58_1)
+WeaveManager.game_object_created = function (arg_58_0, arg_58_1)
 	arg_58_0._go_id = arg_58_1
 end
 
-function WeaveManager.game_object_destroyed(arg_59_0)
+WeaveManager.game_object_destroyed = function (arg_59_0)
 	arg_59_0._go_id = nil
 end
 
-function WeaveManager.cb_game_session_disconnect(arg_60_0)
+WeaveManager.cb_game_session_disconnect = function (arg_60_0)
 	arg_60_0._go_id = nil
 end
 
-function WeaveManager.final_objective_completed(arg_61_0)
+WeaveManager.final_objective_completed = function (arg_61_0)
 	if arg_61_0._is_server then
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_weave_final_objective_completed")
 
@@ -700,7 +700,7 @@ function WeaveManager.final_objective_completed(arg_61_0)
 	arg_61_0._objective_ui_mission_name = "weave_victory"
 end
 
-function WeaveManager._objective_completed(arg_62_0)
+WeaveManager._objective_completed = function (arg_62_0)
 	arg_62_0._bar_filled = true
 
 	local var_62_0 = arg_62_0:get_active_objective_template()
@@ -752,42 +752,42 @@ function WeaveManager._objective_completed(arg_62_0)
 	Managers.state.entity:system("objective_system"):deactivate_all_objectives()
 end
 
-function WeaveManager._calculate_score(arg_63_0)
+WeaveManager._calculate_score = function (arg_63_0)
 	local var_63_0 = WeaveSettings.max_damage_taken - arg_63_0._damage_taken
 	local var_63_1 = arg_63_0._remaining_time * WeaveSettings.time_score_weighting
 
 	return (math.floor(math.max(var_63_1 + var_63_0, 0) * 10))
 end
 
-function WeaveManager.get_bar_score(arg_64_0)
+WeaveManager.get_bar_score = function (arg_64_0)
 	return arg_64_0._bar_score
 end
 
-function WeaveManager.get_score(arg_65_0)
+WeaveManager.get_score = function (arg_65_0)
 	return arg_65_0._score
 end
 
-function WeaveManager.get_time_score(arg_66_0)
+WeaveManager.get_time_score = function (arg_66_0)
 	return math.floor(math.max(arg_66_0:get_score() - arg_66_0:get_damage_score(), 0))
 end
 
-function WeaveManager.get_damage_score(arg_67_0)
+WeaveManager.get_damage_score = function (arg_67_0)
 	return math.floor((WeaveSettings.max_damage_taken - arg_67_0._damage_taken) * 10)
 end
 
-function WeaveManager.get_weave_tier(arg_68_0)
+WeaveManager.get_weave_tier = function (arg_68_0)
 	return WeaveSettings.templates[arg_68_0._active_weave_name].tier
 end
 
-function WeaveManager.get_num_players(arg_69_0)
+WeaveManager.get_num_players = function (arg_69_0)
 	return arg_69_0._num_players
 end
 
-function WeaveManager.is_tracking_kills(arg_70_0)
+WeaveManager.is_tracking_kills = function (arg_70_0)
 	return arg_70_0._track_kills
 end
 
-function WeaveManager.ai_killed(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
+WeaveManager.ai_killed = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 	if arg_71_0._track_kills then
 		arg_71_0:_track_ai_killed(arg_71_3.breed.name)
 	end
@@ -795,7 +795,7 @@ function WeaveManager.ai_killed(arg_71_0, arg_71_1, arg_71_2, arg_71_3, arg_71_4
 	Managers.state.entity:system("objective_system"):on_ai_killed(arg_71_1, arg_71_2, arg_71_3, arg_71_4)
 end
 
-function WeaveManager._track_ai_killed(arg_72_0, arg_72_1)
+WeaveManager._track_ai_killed = function (arg_72_0, arg_72_1)
 	if arg_72_0._is_server then
 		arg_72_0._enemies_killed[arg_72_1] = arg_72_0._enemies_killed[arg_72_1] or 0
 		arg_72_0._enemies_killed[arg_72_1] = arg_72_0._enemies_killed[arg_72_1] + 1
@@ -814,7 +814,7 @@ function WeaveManager._track_ai_killed(arg_72_0, arg_72_1)
 	end
 end
 
-function WeaveManager.objective_set_completed(arg_73_0)
+WeaveManager.objective_set_completed = function (arg_73_0)
 	local var_73_0 = Managers.state.entity:system("mission_system")
 	local var_73_1 = var_73_0:get_missions()
 
@@ -823,11 +823,11 @@ function WeaveManager.objective_set_completed(arg_73_0)
 	end
 end
 
-function WeaveManager.rpc_bar_cutoff_reached(arg_74_0, arg_74_1)
+WeaveManager.rpc_bar_cutoff_reached = function (arg_74_0, arg_74_1)
 	arg_74_0._bar_score = arg_74_0:get_active_objective_template().bar_cutoff
 end
 
-function WeaveManager.rpc_set_active_weave(arg_75_0, arg_75_1, arg_75_2, arg_75_3)
+WeaveManager.rpc_set_active_weave = function (arg_75_0, arg_75_1, arg_75_2, arg_75_3)
 	local var_75_0 = NetworkLookup.weave_names[arg_75_2]
 
 	arg_75_0:reset_statistics_for_challenges()
@@ -837,21 +837,21 @@ function WeaveManager.rpc_set_active_weave(arg_75_0, arg_75_1, arg_75_2, arg_75_
 	Managers.state.event:trigger("weave_objective_synced")
 end
 
-function WeaveManager.rpc_weave_objective_completed(arg_76_0, arg_76_1)
+WeaveManager.rpc_weave_objective_completed = function (arg_76_0, arg_76_1)
 	arg_76_0:_objective_completed()
 end
 
-function WeaveManager.rpc_sync_end_of_weave_data(arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5)
+WeaveManager.rpc_sync_end_of_weave_data = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4, arg_77_5)
 	arg_77_0._score = arg_77_2
 	arg_77_0._remaining_time = arg_77_3
 	arg_77_0._num_players = arg_77_4
 	arg_77_0._damage_taken = arg_77_5
 end
 
-function WeaveManager.rpc_sync_player_count(arg_78_0, arg_78_1, arg_78_2)
+WeaveManager.rpc_sync_player_count = function (arg_78_0, arg_78_1, arg_78_2)
 	arg_78_0._num_players = arg_78_2
 end
 
-function WeaveManager.rpc_weave_final_objective_completed(arg_79_0, arg_79_1)
+WeaveManager.rpc_weave_final_objective_completed = function (arg_79_0, arg_79_1)
 	arg_79_0:final_objective_completed()
 end

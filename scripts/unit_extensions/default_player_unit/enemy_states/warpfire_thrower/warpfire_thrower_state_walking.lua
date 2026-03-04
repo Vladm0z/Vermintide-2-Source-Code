@@ -2,7 +2,7 @@
 
 WarpfireThrowerStateWalking = class(WarpfireThrowerStateWalking, EnemyCharacterStateWalking)
 
-function WarpfireThrowerStateWalking.on_enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+WarpfireThrowerStateWalking.on_enter = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	WarpfireThrowerStateWalking.super.on_enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 
 	local var_1_0 = PlayerBreeds.vs_warpfire_thrower
@@ -33,7 +33,7 @@ function WarpfireThrowerStateWalking.on_enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3
 	arg_1_0._left_wpn_particle_name = "fx/wpnfx_gunner_enemy_in_range_1p"
 end
 
-function WarpfireThrowerStateWalking.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+WarpfireThrowerStateWalking.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	if arg_2_0:common_state_changes() then
 		return
 	end

@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/dwarf_ranger_dlc_dwarf_exterior.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pdr_dwarf_beacons_bridge_stuck_b",

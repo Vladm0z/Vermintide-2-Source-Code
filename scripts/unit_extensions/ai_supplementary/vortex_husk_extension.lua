@@ -2,7 +2,7 @@
 
 VortexHuskExtension = class(VortexHuskExtension)
 
-function VortexHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+VortexHuskExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = arg_1_1.world
 	local var_1_1 = Managers.state.network:game()
 
@@ -67,13 +67,13 @@ function VortexHuskExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.current_height_lerp = GameSession.game_object_field(var_1_1, var_1_18, "height_percentage")
 end
 
-function VortexHuskExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+VortexHuskExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_0.vortex_template.start_sound_event_name or "Play_enemy_sorcerer_vortex_loop"
 
 	WwiseUtils.trigger_unit_event(arg_2_1, var_2_0, arg_2_2)
 end
 
-function VortexHuskExtension.destroy(arg_3_0)
+VortexHuskExtension.destroy = function (arg_3_0)
 	local var_3_0 = arg_3_0.world
 	local var_3_1 = arg_3_0.unit
 	local var_3_2 = arg_3_0.vortex_template.stop_sound_event_name or "Stop_enemy_sorcerer_vortex_loop"
@@ -95,7 +95,7 @@ end
 
 local var_0_0 = 2
 
-function VortexHuskExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+VortexHuskExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.game
 	local var_4_1 = Managers.state.unit_storage:go_id(arg_4_1)
 	local var_4_2 = GameSession.game_object_field(var_4_0, var_4_1, "fx_radius_percentage")
@@ -116,7 +116,7 @@ local var_0_1 = {}
 local var_0_2 = 8
 local var_0_3 = 10
 
-function VortexHuskExtension.debug_render_vortex(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+VortexHuskExtension.debug_render_vortex = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
 	arg_5_4 = arg_5_4 + math.sin(arg_5_1 * 1.7) * 0.4
 
 	local var_5_0 = 2 * math.pi / 6

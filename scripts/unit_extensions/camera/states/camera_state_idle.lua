@@ -2,19 +2,19 @@
 
 CameraStateIdle = class(CameraStateIdle, CameraState)
 
-function CameraStateIdle.init(arg_1_0, arg_1_1)
+CameraStateIdle.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "idle")
 end
 
-function CameraStateIdle.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateIdle.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	return
 end
 
-function CameraStateIdle.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateIdle.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	return
 end
 
-function CameraStateIdle.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CameraStateIdle.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.csm
 	local var_4_1 = arg_4_0.unit
 	local var_4_2 = arg_4_0.camera_extension

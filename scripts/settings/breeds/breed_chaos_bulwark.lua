@@ -203,10 +203,10 @@ local var_0_2 = {
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_warrior_spawn,
 	run_on_update = AiBreedSnippets.on_chaos_warrior_update,
-	hit_reaction_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	hit_reaction_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		return arg_1_1.hit_reactions.bwd
 	end,
-	handle_stagger_anim_cb = function(arg_2_0, arg_2_1, arg_2_2)
+	handle_stagger_anim_cb = function (arg_2_0, arg_2_1, arg_2_2)
 		local var_2_0 = arg_2_1.stagger_level
 		local var_2_1 = false
 
@@ -220,7 +220,7 @@ local var_0_2 = {
 
 		arg_2_1.stagger_anim_done = var_2_1
 	end,
-	stagger_modifier_function = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	stagger_modifier_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 		local var_3_0 = arg_3_6 and arg_3_6.damage_profile
 
 		arg_3_4.latest_hit_charge_value = arg_3_6 and arg_3_6.is_ranged and "ranged_attack" or var_3_0 and var_3_0.charge_value
@@ -312,7 +312,7 @@ local var_0_2 = {
 			}
 		}
 	},
-	before_stagger_enter_function = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	before_stagger_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 		local var_4_0 = ScriptUnit.extension(arg_4_0, "ai_shield_system")
 		local var_4_1 = Managers.time:time("game")
 		local var_4_2 = arg_4_1.breed
@@ -1012,7 +1012,7 @@ local var_0_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.chaos_elite
 	},
 	stagger = {
-		custom_enter_function = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		custom_enter_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			assert(ScriptUnit.has_extension(arg_5_0, "ai_shield_system"), "chaos bulwark dont have ai_shield_user_extension")
 
 			local var_5_0 = ScriptUnit.extension(arg_5_0, "ai_shield_system")

@@ -22,10 +22,10 @@ local var_0_0 = {
 				interaction_priority = 4,
 				total_time = InteractionDefinitions.deus_setup_rally_flag.config.duration,
 				allowed_chain_actions = {},
-				condition_func = function(arg_1_0)
+				condition_func = function (arg_1_0)
 					return (ScriptUnit.extension(arg_1_0, "interactor_system"):can_interact(arg_1_0, "deus_setup_rally_flag"))
 				end,
-				finish_function = function(arg_2_0, arg_2_1)
+				finish_function = function (arg_2_0, arg_2_1)
 					if arg_2_1 == "action_complete" then
 						local var_2_0 = ScriptUnit.extension_input(arg_2_0, "dialogue_system")
 						local var_2_1 = FrameTable.alloc_table()

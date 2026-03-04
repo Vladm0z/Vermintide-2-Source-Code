@@ -52,11 +52,11 @@ local var_0_1 = {
 	}
 }
 
-function EnemyCharacterStateTunneling.init(arg_1_0, arg_1_1)
+EnemyCharacterStateTunneling.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterStateTunneling.super.init(arg_1_0, arg_1_1, "tunneling")
 end
 
-function EnemyCharacterStateTunneling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateTunneling.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0._input_extension
 	local var_2_1 = arg_2_0._first_person_extension
 	local var_2_2 = arg_2_0._status_extension
@@ -145,7 +145,7 @@ function EnemyCharacterStateTunneling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_
 	arg_2_0.state = "init"
 end
 
-function EnemyCharacterStateTunneling.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+EnemyCharacterStateTunneling.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = BLACKBOARDS[arg_3_1]
 	local var_3_1 = arg_3_0._csm
 	local var_3_2 = arg_3_0._input_extension
@@ -265,7 +265,7 @@ function EnemyCharacterStateTunneling.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3,
 	Unit.set_local_rotation(arg_3_1, 0, Quaternion.look(var_3_25))
 end
 
-function EnemyCharacterStateTunneling.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+EnemyCharacterStateTunneling.on_exit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = BLACKBOARDS[arg_4_1]
 
 	if var_4_0 then
@@ -283,7 +283,7 @@ function EnemyCharacterStateTunneling.on_exit(arg_4_0, arg_4_1, arg_4_2, arg_4_3
 	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
 end
 
-function EnemyCharacterStateTunneling.grant_control_to_player(arg_5_0)
+EnemyCharacterStateTunneling.grant_control_to_player = function (arg_5_0)
 	local var_5_0 = arg_5_0._locomotion_extension
 	local var_5_1 = Unit.animation_wanted_root_pose(arg_5_0._unit)
 
@@ -294,7 +294,7 @@ function EnemyCharacterStateTunneling.grant_control_to_player(arg_5_0)
 	var_5_0:force_on_ground(true)
 end
 
-function EnemyCharacterStateTunneling.start_camera_transition(arg_6_0)
+EnemyCharacterStateTunneling.start_camera_transition = function (arg_6_0)
 	local var_6_0 = arg_6_0._first_person_extension
 
 	CharacterStateHelper.change_camera_state(arg_6_0._player, "follow")

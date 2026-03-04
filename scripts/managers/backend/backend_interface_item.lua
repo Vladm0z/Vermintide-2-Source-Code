@@ -2,7 +2,7 @@
 
 local var_0_0 = class(Items)
 
-function var_0_0.init(arg_1_0)
+var_0_0.init = function (arg_1_0)
 	arg_1_0._dirty = true
 	arg_1_0._debug_end_of_round_timeout = false
 end
@@ -86,7 +86,7 @@ local function var_0_6(arg_3_0, arg_3_1, arg_3_2)
 	for iter_3_6, iter_3_7 in pairs(arg_3_1) do
 		for iter_3_8, iter_3_9 in pairs(iter_3_7) do
 			if iter_3_8 == "backend_id" then
-				-- block empty
+				-- Nothing
 			elseif not arg_3_0[iter_3_9] then
 				Crashify.print_exception("BackendInterfaceItem", "Tried to equip item not found in items list, clearing slot. Profile: %q, Backend id: %d, Slot: %q", iter_3_6, iter_3_9, iter_3_8)
 				BackendItem.set_loadout_item(nil, arg_3_1[iter_3_6].backend_id, iter_3_8)
@@ -140,7 +140,7 @@ local function var_0_6(arg_3_0, arg_3_1, arg_3_2)
 	fassert(table.is_empty(var_3_2), "[BackendInterfaceItem] Your backend save is broken, ask for help resetting it")
 end
 
-function var_0_0.set_item_whitelist(arg_4_0, arg_4_1)
+var_0_0.set_item_whitelist = function (arg_4_0, arg_4_1)
 	local var_4_0 = {}
 
 	for iter_4_0 = 1, #arg_4_1 do
@@ -151,7 +151,7 @@ function var_0_0.set_item_whitelist(arg_4_0, arg_4_1)
 	arg_4_0._dirty = true
 end
 
-function var_0_0._refresh_entities_if_needed(arg_5_0)
+var_0_0._refresh_entities_if_needed = function (arg_5_0)
 	if arg_5_0._dirty then
 		local var_5_0, var_5_1 = BackendItem.get_items()
 
@@ -164,7 +164,7 @@ function var_0_0._refresh_entities_if_needed(arg_5_0)
 	end
 end
 
-function var_0_0.get_all_backend_items(arg_6_0)
+var_0_0.get_all_backend_items = function (arg_6_0)
 	arg_6_0:_refresh_entities_if_needed()
 
 	return arg_6_0._items
@@ -172,17 +172,17 @@ end
 
 local var_0_7 = {}
 
-function var_0_0.get_filtered_items(arg_7_0, arg_7_1, arg_7_2)
+var_0_0.get_filtered_items = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0:get_all_backend_items()
 
 	return (Managers.backend:get_interface("common"):filter_items(var_7_0, arg_7_1, arg_7_2 or var_0_7))
 end
 
-function var_0_0.set_error(arg_8_0, arg_8_1)
+var_0_0.set_error = function (arg_8_0, arg_8_1)
 	arg_8_0._error_data = arg_8_1
 end
 
-function var_0_0.check_for_errors(arg_9_0)
+var_0_0.check_for_errors = function (arg_9_0)
 	local var_9_0 = arg_9_0._error_data
 
 	arg_9_0._error_data = nil
@@ -190,7 +190,7 @@ function var_0_0.check_for_errors(arg_9_0)
 	return var_9_0
 end
 
-function var_0_0.update(arg_10_0, arg_10_1)
+var_0_0.update = function (arg_10_0, arg_10_1)
 	if arg_10_0._dice_game_data then
 		local var_10_0 = Managers.backend:get_interface("session")
 		local var_10_1 = not arg_10_0._debug_end_of_round_timeout and var_10_0:get_state() == "END_OF_ROUND"
@@ -241,15 +241,15 @@ function var_0_0.update(arg_10_0, arg_10_1)
 	end
 end
 
-function var_0_0.reset_dice_game_item(arg_11_0)
+var_0_0.reset_dice_game_item = function (arg_11_0)
 	arg_11_0._dice_item = nil
 end
 
-function var_0_0.dice_game_item(arg_12_0)
+var_0_0.dice_game_item = function (arg_12_0)
 	return arg_12_0._dice_item
 end
 
-function var_0_0.poll_upgrades(arg_13_0)
+var_0_0.poll_upgrades = function (arg_13_0)
 	local var_13_0 = arg_13_0._upgrades_item
 
 	if var_13_0 and var_13_0:is_done() then
@@ -259,13 +259,13 @@ function var_0_0.poll_upgrades(arg_13_0)
 	end
 end
 
-function var_0_0.get_loadout(arg_14_0)
+var_0_0.get_loadout = function (arg_14_0)
 	arg_14_0:_refresh_entities_if_needed()
 
 	return arg_14_0._loadout
 end
 
-function var_0_0.generate_item_server_loot(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+var_0_0.generate_item_server_loot = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
 	fassert(not arg_15_0._dice_game_data and not arg_15_0._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", arg_15_0._dice_game_data and "true", arg_15_0._upgrades_failed_game_data and "true")
 
 	local var_15_0 = Managers.time:time("main") + 20
@@ -296,7 +296,7 @@ function var_0_0.generate_item_server_loot(arg_15_0, arg_15_1, arg_15_2, arg_15_
 	}
 end
 
-function var_0_0.upgrades_failed_game(arg_16_0, arg_16_1, arg_16_2)
+var_0_0.upgrades_failed_game = function (arg_16_0, arg_16_1, arg_16_2)
 	fassert(not arg_16_0._dice_game_data and not arg_16_0._upgrades_failed_game_data, "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s", arg_16_0._dice_game_data and "true", arg_16_0._upgrades_failed_game_data and "true")
 
 	local var_16_0 = Managers.time:time("main") + 20
@@ -308,54 +308,54 @@ function var_0_0.upgrades_failed_game(arg_16_0, arg_16_1, arg_16_2)
 	}
 end
 
-function var_0_0.num_current_item_server_requests(arg_17_0)
+var_0_0.num_current_item_server_requests = function (arg_17_0)
 	return arg_17_0._queue:num_current_requests()
 end
 
-function var_0_0.make_dirty(arg_18_0)
+var_0_0.make_dirty = function (arg_18_0)
 	arg_18_0._dirty = true
 end
 
-function var_0_0.set_data_server_queue(arg_19_0, arg_19_1)
+var_0_0.set_data_server_queue = function (arg_19_0, arg_19_1)
 	arg_19_0._queue = arg_19_1
 end
 
-function var_0_0.data_server_queue(arg_20_0)
+var_0_0.data_server_queue = function (arg_20_0)
 	return arg_20_0._queue
 end
 
 BackendInterfaceItem = class(BackendInterfaceItem)
 
-function BackendInterfaceItem.init(arg_21_0)
+BackendInterfaceItem.init = function (arg_21_0)
 	arg_21_0._backend_items = var_0_0:new()
 end
 
-function BackendInterfaceItem.type(arg_22_0)
+BackendInterfaceItem.type = function (arg_22_0)
 	return "backend"
 end
 
-function BackendInterfaceItem.update(arg_23_0)
+BackendInterfaceItem.update = function (arg_23_0)
 	arg_23_0._backend_items:update()
 end
 
-function BackendInterfaceItem.refresh_entities(arg_24_0)
+BackendInterfaceItem.refresh_entities = function (arg_24_0)
 	arg_24_0._backend_items:make_dirty()
 	arg_24_0._backend_items:_refresh_entities_if_needed()
 end
 
-function BackendInterfaceItem.check_for_errors(arg_25_0)
+BackendInterfaceItem.check_for_errors = function (arg_25_0)
 	return arg_25_0._backend_items:check_for_errors()
 end
 
-function BackendInterfaceItem.num_current_item_server_requests(arg_26_0)
+BackendInterfaceItem.num_current_item_server_requests = function (arg_26_0)
 	return arg_26_0._backend_items:num_current_item_server_requests()
 end
 
-function BackendInterfaceItem.set_properties_serialized(arg_27_0, arg_27_1, arg_27_2)
+BackendInterfaceItem.set_properties_serialized = function (arg_27_0, arg_27_1, arg_27_2)
 	local var_27_0 = BackendItem.set_traits(arg_27_1, arg_27_2)
 end
 
-function BackendInterfaceItem.get_traits(arg_28_0, arg_28_1)
+BackendInterfaceItem.get_traits = function (arg_28_0, arg_28_1)
 	local var_28_0 = arg_28_0:get_item_from_id(arg_28_1)
 
 	if var_28_0 then
@@ -365,7 +365,7 @@ function BackendInterfaceItem.get_traits(arg_28_0, arg_28_1)
 	return nil
 end
 
-function BackendInterfaceItem.set_runes(arg_29_0, arg_29_1, arg_29_2)
+BackendInterfaceItem.set_runes = function (arg_29_0, arg_29_1, arg_29_2)
 	local var_29_0 = Managers.backend:get_interface("runes")
 
 	for iter_29_0, iter_29_1 in pairs(arg_29_2) do
@@ -373,11 +373,11 @@ function BackendInterfaceItem.set_runes(arg_29_0, arg_29_1, arg_29_2)
 	end
 end
 
-function BackendInterfaceItem.get_runes(arg_30_0, arg_30_1)
+BackendInterfaceItem.get_runes = function (arg_30_0, arg_30_1)
 	return (Managers.backend:get_interface("runes"):get(arg_30_1))
 end
 
-function BackendInterfaceItem.get_key(arg_31_0, arg_31_1)
+BackendInterfaceItem.get_key = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._backend_items:get_all_backend_items()[arg_31_1]
 
 	if var_31_0 then
@@ -385,7 +385,7 @@ function BackendInterfaceItem.get_key(arg_31_0, arg_31_1)
 	end
 end
 
-function BackendInterfaceItem.get_item_from_id(arg_32_0, arg_32_1)
+BackendInterfaceItem.get_item_from_id = function (arg_32_0, arg_32_1)
 	if arg_32_1 == 0 then
 		Crashify.print_exception("BackendInterfaceItem", "Tried to get item from backend_id 0")
 	end
@@ -393,23 +393,23 @@ function BackendInterfaceItem.get_item_from_id(arg_32_0, arg_32_1)
 	return arg_32_0._backend_items:get_all_backend_items()[arg_32_1]
 end
 
-function BackendInterfaceItem.get_all_backend_items(arg_33_0)
+BackendInterfaceItem.get_all_backend_items = function (arg_33_0)
 	return arg_33_0._backend_items:get_all_backend_items()
 end
 
-function BackendInterfaceItem.get_loadout(arg_34_0)
+BackendInterfaceItem.get_loadout = function (arg_34_0)
 	return arg_34_0._backend_items:get_loadout()
 end
 
-function BackendInterfaceItem.get_loadout_item_id(arg_35_0, arg_35_1, arg_35_2)
+BackendInterfaceItem.get_loadout_item_id = function (arg_35_0, arg_35_1, arg_35_2)
 	return arg_35_0._backend_items:get_loadout()[arg_35_1][arg_35_2]
 end
 
-function BackendInterfaceItem.get_filtered_items(arg_36_0, arg_36_1)
+BackendInterfaceItem.get_filtered_items = function (arg_36_0, arg_36_1)
 	return (arg_36_0._backend_items:get_filtered_items(arg_36_1))
 end
 
-function BackendInterfaceItem.set_loadout_item(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+BackendInterfaceItem.set_loadout_item = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	local var_37_0 = arg_37_0._backend_items:get_all_backend_items()
 
 	if arg_37_1 then
@@ -423,7 +423,7 @@ function BackendInterfaceItem.set_loadout_item(arg_37_0, arg_37_1, arg_37_2, arg
 	end
 end
 
-function BackendInterfaceItem.remove_item(arg_38_0, arg_38_1, arg_38_2)
+BackendInterfaceItem.remove_item = function (arg_38_0, arg_38_1, arg_38_2)
 	if not arg_38_2 then
 		local var_38_0 = arg_38_0._backend_items:get_loadout()
 
@@ -443,20 +443,20 @@ function BackendInterfaceItem.remove_item(arg_38_0, arg_38_1, arg_38_2)
 	return var_38_1
 end
 
-function BackendInterfaceItem.award_item(arg_39_0, arg_39_1)
+BackendInterfaceItem.award_item = function (arg_39_0, arg_39_1)
 	BackendItem.award_item(arg_39_1)
 	arg_39_0._backend_items:make_dirty()
 end
 
-function BackendInterfaceItem.data_server_script(arg_40_0, arg_40_1, ...)
+BackendInterfaceItem.data_server_script = function (arg_40_0, arg_40_1, ...)
 	return (arg_40_0._backend_items:data_server_queue():add_item(arg_40_1, ...))
 end
 
-function BackendInterfaceItem.upgrades_failed_game(arg_41_0, arg_41_1, arg_41_2)
+BackendInterfaceItem.upgrades_failed_game = function (arg_41_0, arg_41_1, arg_41_2)
 	arg_41_0._backend_items:upgrades_failed_game(arg_41_1, arg_41_2)
 end
 
-function BackendInterfaceItem.generate_item_server_loot(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+BackendInterfaceItem.generate_item_server_loot = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 	local var_42_0 = ""
 
 	for iter_42_0, iter_42_1 in pairs(arg_42_1) do
@@ -466,7 +466,7 @@ function BackendInterfaceItem.generate_item_server_loot(arg_42_0, arg_42_1, arg_
 	arg_42_0._backend_items:generate_item_server_loot(var_42_0, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
 end
 
-function BackendInterfaceItem.check_for_loot(arg_43_0)
+BackendInterfaceItem.check_for_loot = function (arg_43_0)
 	local var_43_0 = arg_43_0._backend_items:dice_game_item()
 
 	if var_43_0 and var_43_0:is_done() then
@@ -515,7 +515,7 @@ function BackendInterfaceItem.check_for_loot(arg_43_0)
 	end
 end
 
-function BackendInterfaceItem.equipped_by(arg_44_0, arg_44_1)
+BackendInterfaceItem.equipped_by = function (arg_44_0, arg_44_1)
 	local var_44_0 = {}
 	local var_44_1 = arg_44_0._backend_items:get_loadout()
 
@@ -530,7 +530,7 @@ function BackendInterfaceItem.equipped_by(arg_44_0, arg_44_1)
 	return var_44_0
 end
 
-function BackendInterfaceItem.is_equipped(arg_45_0, arg_45_1, arg_45_2)
+BackendInterfaceItem.is_equipped = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_0._backend_items:get_loadout()
 
 	for iter_45_0, iter_45_1 in pairs(var_45_0) do
@@ -560,7 +560,7 @@ local var_0_9 = {
 	unique = true
 }
 
-function BackendInterfaceItem.is_salvageable(arg_46_0, arg_46_1)
+BackendInterfaceItem.is_salvageable = function (arg_46_0, arg_46_1)
 	local var_46_0 = not arg_46_0:is_equipped(arg_46_1)
 	local var_46_1 = arg_46_0._backend_items:get_all_backend_items()[arg_46_1]
 	local var_46_2 = ItemMasterList[var_46_1.key]
@@ -580,7 +580,7 @@ local var_0_11 = {
 	rare = true
 }
 
-function BackendInterfaceItem.is_fuseable(arg_47_0, arg_47_1)
+BackendInterfaceItem.is_fuseable = function (arg_47_0, arg_47_1)
 	local var_47_0 = not arg_47_0:is_equipped(arg_47_1)
 	local var_47_1 = arg_47_0._backend_items:get_all_backend_items()[arg_47_1]
 	local var_47_2 = ItemMasterList[var_47_1.key]
@@ -590,7 +590,7 @@ function BackendInterfaceItem.is_fuseable(arg_47_0, arg_47_1)
 	return var_47_0 and var_47_3 and var_47_4
 end
 
-function BackendInterfaceItem.set_data_server_queue(arg_48_0, arg_48_1)
+BackendInterfaceItem.set_data_server_queue = function (arg_48_0, arg_48_1)
 	arg_48_0._backend_items:set_data_server_queue(arg_48_1)
 
 	local var_48_0 = GameSettingsDevelopment.backend_settings.item_whitelist
@@ -601,11 +601,11 @@ function BackendInterfaceItem.set_data_server_queue(arg_48_0, arg_48_1)
 	end
 end
 
-function BackendInterfaceItem.__dirtify(arg_49_0)
+BackendInterfaceItem.__dirtify = function (arg_49_0)
 	arg_49_0._backend_items:make_dirty()
 end
 
-function BackendInterfaceItem.has_item(arg_50_0, arg_50_1)
+BackendInterfaceItem.has_item = function (arg_50_0, arg_50_1)
 	local var_50_0, var_50_1 = BackendItem.get_items()
 
 	for iter_50_0, iter_50_1 in pairs(var_50_0) do
@@ -617,7 +617,7 @@ function BackendInterfaceItem.has_item(arg_50_0, arg_50_1)
 	return false
 end
 
-function BackendInterfaceItem.clean_inventory_for_prestige(arg_51_0, arg_51_1, arg_51_2)
+BackendInterfaceItem.clean_inventory_for_prestige = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0, var_51_1 = BackendItem.get_items()
 	local var_51_2
 	local var_51_3 = {}
@@ -643,7 +643,7 @@ function BackendInterfaceItem.clean_inventory_for_prestige(arg_51_0, arg_51_1, a
 	for iter_51_4, iter_51_5 in pairs(var_51_1) do
 		for iter_51_6, iter_51_7 in pairs(iter_51_5) do
 			if iter_51_6 == "backend_id" then
-				-- block empty
+				-- Nothing
 			elseif not var_51_0[iter_51_7] then
 				BackendItem.set_loadout_item(nil, var_51_1[iter_51_4].backend_id, iter_51_6)
 
@@ -714,7 +714,7 @@ function BackendInterfaceItem.clean_inventory_for_prestige(arg_51_0, arg_51_1, a
 	end
 end
 
-function BackendInterfaceItem.get_runes(arg_52_0, arg_52_1)
+BackendInterfaceItem.get_runes = function (arg_52_0, arg_52_1)
 	local var_52_0 = arg_52_0:get_item_from_id(arg_52_1)
 
 	if var_52_0 then
@@ -724,11 +724,11 @@ function BackendInterfaceItem.get_runes(arg_52_0, arg_52_1)
 	return nil
 end
 
-function BackendInterfaceItem._slot_item_rune(arg_53_0, arg_53_1, arg_53_2)
+BackendInterfaceItem._slot_item_rune = function (arg_53_0, arg_53_1, arg_53_2)
 	return
 end
 
-function BackendInterfaceItem.get_item_template(arg_54_0, arg_54_1, arg_54_2)
+BackendInterfaceItem.get_item_template = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_1.temporary_template or arg_54_1.template
 	local var_54_1 = WeaponUtils.get_weapon_template(var_54_0)
 
@@ -751,7 +751,7 @@ function BackendInterfaceItem.get_item_template(arg_54_0, arg_54_1, arg_54_2)
 	fassert(false, "no item_template for item: " .. arg_54_1.key .. ", template name = " .. var_54_0)
 end
 
-function BackendInterfaceItem._command_item_whitelist(arg_55_0, arg_55_1)
+BackendInterfaceItem._command_item_whitelist = function (arg_55_0, arg_55_1)
 	local var_55_0 = arg_55_0._backend_items
 
 	if arg_55_1.enabled then

@@ -4,11 +4,11 @@ local var_0_0 = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceStatisticsPlayFab = class(BackendInterfaceStatisticsPlayFab)
 
-function BackendInterfaceStatisticsPlayFab.update(arg_1_0, arg_1_1)
+BackendInterfaceStatisticsPlayFab.update = function (arg_1_0, arg_1_1)
 	return
 end
 
-function BackendInterfaceStatisticsPlayFab.init(arg_2_0, arg_2_1)
+BackendInterfaceStatisticsPlayFab.init = function (arg_2_0, arg_2_1)
 	arg_2_0._mirror = arg_2_1
 	arg_2_0._request_queue = arg_2_1:request_queue()
 
@@ -29,11 +29,11 @@ function BackendInterfaceStatisticsPlayFab.init(arg_2_0, arg_2_1)
 	arg_2_0._request_queue:enqueue(var_2_1, var_2_0)
 end
 
-function BackendInterfaceStatisticsPlayFab.ready(arg_4_0)
+BackendInterfaceStatisticsPlayFab.ready = function (arg_4_0)
 	return arg_4_0._ready
 end
 
-function BackendInterfaceStatisticsPlayFab.get_stats(arg_5_0)
+BackendInterfaceStatisticsPlayFab.get_stats = function (arg_5_0)
 	return arg_5_0._mirror:get_stats()
 end
 
@@ -66,13 +66,13 @@ local function var_0_2(arg_7_0)
 	return var_7_0
 end
 
-function BackendInterfaceStatisticsPlayFab.clear_dirty_flags(arg_8_0, arg_8_1)
+BackendInterfaceStatisticsPlayFab.clear_dirty_flags = function (arg_8_0, arg_8_1)
 	for iter_8_0, iter_8_1 in pairs(arg_8_1) do
 		iter_8_1.dirty = false
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.save(arg_9_0)
+BackendInterfaceStatisticsPlayFab.save = function (arg_9_0)
 	local var_9_0 = Managers.player
 
 	print("---------------------- BackendInterfaceStatisticsPlayFab:save ----------------------")
@@ -97,7 +97,7 @@ function BackendInterfaceStatisticsPlayFab.save(arg_9_0)
 	arg_9_0._stats_to_save = var_0_2(var_0_1(var_9_3)), var_9_0:set_stats_backend(var_9_1)
 end
 
-function BackendInterfaceStatisticsPlayFab.save_explicit(arg_10_0, arg_10_1, arg_10_2)
+BackendInterfaceStatisticsPlayFab.save_explicit = function (arg_10_0, arg_10_1, arg_10_2)
 	print("---------------------- BackendInterfaceStatisticsPlayFab:save ----------------------")
 
 	if not arg_10_2 then
@@ -122,18 +122,18 @@ function BackendInterfaceStatisticsPlayFab.save_explicit(arg_10_0, arg_10_1, arg
 	Managers.backend:set_stats(var_10_1)
 end
 
-function BackendInterfaceStatisticsPlayFab.save_state_completed_achievements(arg_11_0, arg_11_1)
+BackendInterfaceStatisticsPlayFab.save_state_completed_achievements = function (arg_11_0, arg_11_1)
 	arg_11_0._state_completed_achievements = arg_11_1
 end
 
-function BackendInterfaceStatisticsPlayFab.clear_saved_stats(arg_12_0)
+BackendInterfaceStatisticsPlayFab.clear_saved_stats = function (arg_12_0)
 	arg_12_0._state_completed_achievements = nil
 	arg_12_0._stats_to_save = nil
 
 	Managers.player:statistics_db():apply_persistant_stats()
 end
 
-function BackendInterfaceStatisticsPlayFab.get_stat_save_request(arg_13_0)
+BackendInterfaceStatisticsPlayFab.get_stat_save_request = function (arg_13_0)
 	local var_13_0 = arg_13_0._stats_to_save or {}
 	local var_13_1 = arg_13_0._state_completed_achievements
 
@@ -152,7 +152,7 @@ function BackendInterfaceStatisticsPlayFab.get_stat_save_request(arg_13_0)
 	}, var_13_0
 end
 
-function BackendInterfaceStatisticsPlayFab.get_achievement_reward_levels(arg_14_0)
+BackendInterfaceStatisticsPlayFab.get_achievement_reward_levels = function (arg_14_0)
 	local var_14_0 = arg_14_0._mirror:get_read_only_data("achievement_reward_levels")
 
 	if var_14_0 then
@@ -160,7 +160,7 @@ function BackendInterfaceStatisticsPlayFab.get_achievement_reward_levels(arg_14_
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.get_achievement_reward_level(arg_15_0, arg_15_1)
+BackendInterfaceStatisticsPlayFab.get_achievement_reward_level = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0._mirror:get_read_only_data("achievement_reward_levels")
 
 	if var_15_0 then
@@ -168,7 +168,7 @@ function BackendInterfaceStatisticsPlayFab.get_achievement_reward_level(arg_15_0
 	end
 end
 
-function BackendInterfaceStatisticsPlayFab.reset(arg_16_0)
+BackendInterfaceStatisticsPlayFab.reset = function (arg_16_0)
 	local var_16_0 = Managers.player
 
 	if not var_16_0 then

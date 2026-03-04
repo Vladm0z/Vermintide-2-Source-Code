@@ -6,7 +6,7 @@ WeaponHelper = WeaponHelper or {}
 
 local var_0_0 = POSITION_LOOKUP
 
-function WeaponHelper.wanted_projectile_angle(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaponHelper.wanted_projectile_angle = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	local var_1_0 = Vector3.length(Vector3.flat(arg_1_1))
 
 	if var_1_0 <= 0 then
@@ -32,7 +32,7 @@ function WeaponHelper.wanted_projectile_angle(arg_1_0, arg_1_1, arg_1_2, arg_1_3
 	return var_1_7, var_1_8, var_1_0
 end
 
-function WeaponHelper.wanted_projectile_speed(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+WeaponHelper.wanted_projectile_speed = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local var_2_0 = Vector3.length(Vector3.flat(arg_2_1))
 	local var_2_1 = arg_2_1.z
 	local var_2_2 = math.abs(arg_2_2)
@@ -47,7 +47,7 @@ function WeaponHelper.wanted_projectile_speed(arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	end
 end
 
-function WeaponHelper.speed_to_hit_moving_target(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+WeaponHelper.speed_to_hit_moving_target = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	local var_3_0 = arg_3_1
 	local var_3_1 = arg_3_1
 	local var_3_2 = math.cos(arg_3_2)
@@ -66,7 +66,7 @@ function WeaponHelper.speed_to_hit_moving_target(arg_3_0, arg_3_1, arg_3_2, arg_
 	end
 end
 
-function WeaponHelper.angle_to_hit_moving_target(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+WeaponHelper.angle_to_hit_moving_target = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
 	local var_4_0 = 0
 	local var_4_1
 	local var_4_2 = 0.01
@@ -109,7 +109,7 @@ function WeaponHelper.angle_to_hit_moving_target(arg_4_0, arg_4_1, arg_4_2, arg_
 	return var_4_1, var_4_3
 end
 
-function WeaponHelper.test_angled_trajectory(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9)
+WeaponHelper.test_angled_trajectory = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9)
 	table.clear(arg_5_6)
 
 	local var_5_0 = arg_5_2 - arg_5_1
@@ -178,7 +178,7 @@ function WeaponHelper.test_angled_trajectory(arg_5_0, arg_5_1, arg_5_2, arg_5_3,
 	end
 end
 
-function WeaponHelper.ray_segmented_test(arg_6_0, arg_6_1, arg_6_2)
+WeaponHelper.ray_segmented_test = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_1[1] + arg_6_2
 	local var_6_1 = #arg_6_1
 
@@ -214,7 +214,7 @@ function WeaponHelper.ray_segmented_test(arg_6_0, arg_6_1, arg_6_2)
 	return true
 end
 
-function WeaponHelper.multi_ray_test(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+WeaponHelper.multi_ray_test = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = PhysicsWorld.immediate_raycast
 
 	if script_data.debug_ai_movement then
@@ -259,7 +259,7 @@ function WeaponHelper.multi_ray_test(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return true
 end
 
-function WeaponHelper.draw_ball_at_time(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+WeaponHelper.draw_ball_at_time = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
 	local var_8_0 = arg_8_6 * arg_8_4
 	local var_8_1 = arg_8_6 * arg_8_5 + 0.5 * arg_8_3 * arg_8_6^2
 	local var_8_2 = arg_8_1 + arg_8_2 * var_8_0
@@ -271,7 +271,7 @@ function WeaponHelper.draw_ball_at_time(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_
 	return var_8_2
 end
 
-function WeaponHelper.calculate_trajectory(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+WeaponHelper.calculate_trajectory = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 	local var_9_0 = Managers.state.debug:drawer({
 		mode = "retained",
 		name = "trajectory_vectors"
@@ -311,7 +311,7 @@ function WeaponHelper.calculate_trajectory(arg_9_0, arg_9_1, arg_9_2, arg_9_3, a
 	return var_9_5, var_9_3, var_9_6
 end
 
-function WeaponHelper._trajectory_hits_target(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8)
+WeaponHelper._trajectory_hits_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8)
 	local var_10_0 = {}
 	local var_10_1 = World.get_data(arg_10_1, "physics_world")
 
@@ -349,7 +349,7 @@ function WeaponHelper._trajectory_hits_target(arg_10_0, arg_10_1, arg_10_2, arg_
 	return false
 end
 
-function WeaponHelper.position_on_trajectory(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+WeaponHelper.position_on_trajectory = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
 	local var_11_0 = arg_11_3 * arg_11_6 * math.cos(arg_11_4)
 	local var_11_1 = arg_11_3 * arg_11_6 * math.sin(arg_11_4) + 0.5 * arg_11_5 * arg_11_6^2
 	local var_11_2 = arg_11_1 + arg_11_2 * var_11_0
@@ -359,7 +359,7 @@ function WeaponHelper.position_on_trajectory(arg_11_0, arg_11_1, arg_11_2, arg_1
 	return var_11_2
 end
 
-function WeaponHelper.debug_draw_trajectory_hit(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+WeaponHelper.debug_draw_trajectory_hit = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	local var_12_0 = arg_12_2 and Color(255, 74, 247, 115) or Color(255, 245, 108, 49)
 
 	arg_12_3:sphere(arg_12_1, 0.1, var_12_0)
@@ -369,7 +369,7 @@ local var_0_1 = 30
 local var_0_2 = 10
 local var_0_3 = 0.0001
 
-function WeaponHelper.ground_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+WeaponHelper.ground_target = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
 	local var_13_0 = var_0_2 / var_0_1
 	local var_13_1 = arg_13_3
 	local var_13_2 = Vector3(0, 0, 0.1)
@@ -435,7 +435,7 @@ function WeaponHelper.ground_target(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 	return false, var_13_1
 end
 
-function WeaponHelper.ballistic_raycast(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
+WeaponHelper.ballistic_raycast = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
 	local var_14_0 = arg_14_3 / arg_14_2
 
 	for iter_14_0 = 1, arg_14_2 do
@@ -456,7 +456,7 @@ function WeaponHelper.ballistic_raycast(arg_14_0, arg_14_1, arg_14_2, arg_14_3, 
 	return false, arg_14_4
 end
 
-function WeaponHelper.look_at_enemy_or_static_position(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+WeaponHelper.look_at_enemy_or_static_position = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
 	local var_15_0, var_15_1, var_15_2 = PhysicsWorld.immediate_raycast(arg_15_1, arg_15_2, arg_15_3, arg_15_6, "closest", "collision_filter", "filter_player_ray_projectile_static_only")
 	local var_15_3 = var_15_2 or arg_15_6
 	local var_15_4 = arg_15_2 + arg_15_3 * var_15_3 / 2

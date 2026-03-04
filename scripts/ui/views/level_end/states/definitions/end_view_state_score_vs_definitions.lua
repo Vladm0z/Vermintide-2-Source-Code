@@ -6,7 +6,7 @@ local var_0_1 = {
 		class_name = "EndViewStateScoreVSTabReport",
 		name = "end_view_state_score_vs_tab_report",
 		display_name = "end_view_state_score_vs_tab_report_display_name",
-		condition_func = function()
+		condition_func = function ()
 			return not script_data["eac-untrusted"]
 		end
 	},
@@ -522,7 +522,7 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function(arg_5_0, arg_5_1)
+					content_check_function = function (arg_5_0, arg_5_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -530,10 +530,10 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_6_0, arg_6_1)
+					content_check_function = function (arg_6_0, arg_6_1)
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function(arg_7_0, arg_7_1)
+					content_change_function = function (arg_7_0, arg_7_1)
 						arg_7_1.text_color = arg_7_0.hotspot.is_hover and arg_7_1.hover_color or arg_7_1.base_color
 					end
 				},
@@ -541,7 +541,7 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "gamepad_text",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function(arg_8_0, arg_8_1)
+					content_check_function = function (arg_8_0, arg_8_1)
 						return Managers.input:is_device_active("gamepad")
 					end
 				},
@@ -549,7 +549,7 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_9_0, arg_9_1)
+					content_check_function = function (arg_9_0, arg_9_1)
 						return not Managers.input:is_device_active("gamepad")
 					end
 				}
@@ -624,19 +624,19 @@ local var_0_21 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 				arg_10_3.render_settings.alpha_multiplier = 0
 				arg_10_0.panel.local_position[2] = arg_10_1.panel.position[2] + 200
 				arg_10_0.back_to_keep_button.local_position[2] = arg_10_1.back_to_keep_button.position[2] - 200
 			end,
-			update = function(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 				local var_11_0 = math.easeOutCubic(arg_11_3)
 
 				arg_11_4.render_settings.alpha_multiplier = var_11_0
 				arg_11_0.panel.local_position[2] = math.lerp(arg_11_1.panel.position[2] + 200, arg_11_1.panel.position[2], var_11_0)
 				arg_11_0.back_to_keep_button.local_position[2] = math.lerp(arg_11_1.back_to_keep_button.position[2] - 200, arg_11_1.back_to_keep_button.position[2], var_11_0)
 			end,
-			on_complete = function(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 				return
 			end
 		}
@@ -646,15 +646,15 @@ local var_0_21 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				arg_13_3.render_settings.alpha_multiplier = 1
 			end,
-			update = function(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 				local var_14_0 = math.easeInCubic(arg_14_3)
 
 				arg_14_4.render_settings.alpha_multiplier = 1 - var_14_0
 			end,
-			on_complete = function(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 				return
 			end
 		}
@@ -674,7 +674,7 @@ local function var_0_22(arg_16_0, arg_16_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_17_0, arg_17_1)
+					content_check_function = function (arg_17_0, arg_17_1)
 						return not arg_17_0.hotspot.is_hover and not arg_17_0.hotspot.is_selected
 					end
 				},
@@ -682,7 +682,7 @@ local function var_0_22(arg_16_0, arg_16_1)
 					style_id = "hover_text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_18_0)
+					content_check_function = function (arg_18_0)
 						return arg_18_0.hotspot.is_hover or arg_18_0.hotspot.is_selected
 					end
 				},

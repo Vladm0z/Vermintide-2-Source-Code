@@ -300,7 +300,7 @@ local function var_0_7(arg_1_0, arg_1_1)
 		{
 			style_id = "login_rect_bg",
 			pass_type = "rect",
-			content_check_function = function(arg_2_0, arg_2_1)
+			content_check_function = function (arg_2_0, arg_2_1)
 				return not Managers.twitch:is_connected() and not Managers.twitch:is_connecting()
 			end
 		},
@@ -308,7 +308,7 @@ local function var_0_7(arg_1_0, arg_1_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function(arg_3_0, arg_3_1)
+			content_check_function = function (arg_3_0, arg_3_1)
 				if arg_3_0.text_input_hotspot.is_hover then
 					arg_3_1.text_color = {
 						128,
@@ -332,7 +332,7 @@ local function var_0_7(arg_1_0, arg_1_1)
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function(arg_4_0, arg_4_1)
+			content_check_function = function (arg_4_0, arg_4_1)
 				if not arg_4_0.text_field_active then
 					arg_4_1.caret_color[1] = 0
 				else
@@ -346,7 +346,7 @@ local function var_0_7(arg_1_0, arg_1_1)
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function(arg_5_0, arg_5_1)
+			content_check_function = function (arg_5_0, arg_5_1)
 				if not Managers.twitch:is_connecting() then
 					return
 				end
@@ -548,14 +548,14 @@ local var_0_8 = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function(arg_6_0)
+				content_check_function = function (arg_6_0)
 					return Managers.twitch:is_connected()
 				end
 			},
 			{
 				style_id = "background",
 				pass_type = "rect",
-				content_check_function = function(arg_7_0)
+				content_check_function = function (arg_7_0)
 					return Managers.twitch:is_connected()
 				end
 			},
@@ -563,7 +563,7 @@ local var_0_8 = {
 				style_id = "chat_text_box",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function(arg_8_0)
+				content_check_function = function (arg_8_0)
 					return Managers.twitch:is_connected()
 				end
 			}

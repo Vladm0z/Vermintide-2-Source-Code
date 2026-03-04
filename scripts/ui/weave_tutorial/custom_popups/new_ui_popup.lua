@@ -9,7 +9,7 @@ local var_0_5 = "new_ui_popup"
 
 NewUIPopup = class(NewUIPopup)
 
-function NewUIPopup.init(arg_1_0, arg_1_1, arg_1_2)
+NewUIPopup.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._ui_top_renderer = arg_1_1.ui_top_renderer
 	arg_1_0._input_manager = arg_1_1.input_manager
 	arg_1_0._world = arg_1_1.world
@@ -29,11 +29,11 @@ function NewUIPopup.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._menu_input_description:set_input_description(nil)
 end
 
-function NewUIPopup.destroy(arg_2_0)
+NewUIPopup.destroy = function (arg_2_0)
 	arg_2_0:_destroy_video()
 end
 
-function NewUIPopup._create_ui_elements(arg_3_0)
+NewUIPopup._create_ui_elements = function (arg_3_0)
 	arg_3_0:_destroy_video()
 
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
@@ -72,13 +72,13 @@ function NewUIPopup._create_ui_elements(arg_3_0)
 	arg_3_0:_change_page(1)
 end
 
-function NewUIPopup._clear_page_data(arg_4_0)
+NewUIPopup._clear_page_data = function (arg_4_0)
 	arg_4_0:_destroy_video()
 
 	arg_4_0._current_page_widgets = {}
 end
 
-function NewUIPopup._change_page(arg_5_0, arg_5_1)
+NewUIPopup._change_page = function (arg_5_0, arg_5_1)
 	arg_5_0:_clear_page_data()
 
 	local var_5_0 = var_0_4[arg_5_1]
@@ -111,7 +111,7 @@ function NewUIPopup._change_page(arg_5_0, arg_5_1)
 	end
 end
 
-function NewUIPopup._create_video(arg_6_0, arg_6_1)
+NewUIPopup._create_video = function (arg_6_0, arg_6_1)
 	if not arg_6_1 then
 		return
 	end
@@ -120,7 +120,7 @@ function NewUIPopup._create_video(arg_6_0, arg_6_1)
 	arg_6_0._video_widget = UIWidget.init(UIWidgets.create_video("video", arg_6_0._video_data.material_name, var_0_5))
 end
 
-function NewUIPopup._destroy_video(arg_7_0)
+NewUIPopup._destroy_video = function (arg_7_0)
 	local var_7_0 = arg_7_0._ui_top_renderer
 
 	arg_7_0._video_data = nil
@@ -136,13 +136,13 @@ function NewUIPopup._destroy_video(arg_7_0)
 	end
 end
 
-function NewUIPopup.update(arg_8_0, arg_8_1, arg_8_2)
+NewUIPopup.update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:_update_animations(arg_8_1)
 	arg_8_0:_handle_input(arg_8_1, arg_8_2)
 	arg_8_0:_draw(arg_8_1, arg_8_2)
 end
 
-function NewUIPopup._update_animations(arg_9_0, arg_9_1)
+NewUIPopup._update_animations = function (arg_9_0, arg_9_1)
 	arg_9_0._ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._animations
@@ -167,7 +167,7 @@ function NewUIPopup._update_animations(arg_9_0, arg_9_1)
 	end
 end
 
-function NewUIPopup._handle_input(arg_10_0, arg_10_1, arg_10_2)
+NewUIPopup._handle_input = function (arg_10_0, arg_10_1, arg_10_2)
 	if not arg_10_0._video_exanded then
 		arg_10_0:_handle_keyboard_input(arg_10_1, arg_10_2)
 
@@ -195,7 +195,7 @@ function NewUIPopup._handle_input(arg_10_0, arg_10_1, arg_10_2)
 	arg_10_0:_handle_expand_video(arg_10_2)
 end
 
-function NewUIPopup._handle_keyboard_input(arg_11_0, arg_11_1, arg_11_2)
+NewUIPopup._handle_keyboard_input = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = {}
 	local var_11_1 = arg_11_0._widgets_by_name
 	local var_11_2 = arg_11_0._page_index
@@ -242,7 +242,7 @@ function NewUIPopup._handle_keyboard_input(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function NewUIPopup._draw(arg_12_0, arg_12_1, arg_12_2)
+NewUIPopup._draw = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_top_renderer
 	local var_12_1 = arg_12_0._ui_scenegraph
 	local var_12_2 = arg_12_0._render_settings
@@ -266,7 +266,7 @@ function NewUIPopup._draw(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function NewUIPopup._draw_video(arg_13_0, arg_13_1)
+NewUIPopup._draw_video = function (arg_13_0, arg_13_1)
 	if not arg_13_0._video_data then
 		return
 	end
@@ -298,7 +298,7 @@ function NewUIPopup._draw_video(arg_13_0, arg_13_1)
 	end
 end
 
-function NewUIPopup._handle_expand_video(arg_14_0, arg_14_1)
+NewUIPopup._handle_expand_video = function (arg_14_0, arg_14_1)
 	if not arg_14_0._video_exanded then
 		if UIUtils.is_button_pressed(arg_14_0._widgets_by_name.video_hover) then
 			arg_14_0._video_widget.scenegraph_id = "expanded_video"
@@ -310,7 +310,7 @@ function NewUIPopup._handle_expand_video(arg_14_0, arg_14_1)
 	end
 end
 
-function NewUIPopup.start_transition_animation(arg_15_0, arg_15_1, arg_15_2)
+NewUIPopup.start_transition_animation = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = {
 		wwise_world = arg_15_0._wwise_world,
 		render_settings = arg_15_0._render_settings,
@@ -323,6 +323,6 @@ function NewUIPopup.start_transition_animation(arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._animations[arg_15_1] = var_15_2
 end
 
-function NewUIPopup._play_sound(arg_16_0, arg_16_1)
+NewUIPopup._play_sound = function (arg_16_0, arg_16_1)
 	Managers.music:trigger_event(arg_16_1)
 end

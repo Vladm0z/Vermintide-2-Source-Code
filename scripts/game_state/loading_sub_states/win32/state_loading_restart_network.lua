@@ -16,13 +16,13 @@ require("scripts/network/network_transmit")
 StateLoadingRestartNetwork = class(StateLoadingRestartNetwork)
 StateLoadingRestartNetwork.NAME = "StateLoadingRestartNetwork"
 
-function StateLoadingRestartNetwork.on_enter(arg_1_0, arg_1_1)
+StateLoadingRestartNetwork.on_enter = function (arg_1_0, arg_1_1)
 	print("[Gamestate] Enter Substate StateLoadingRestartNetwork")
 	arg_1_0:_init_params(arg_1_1)
 	arg_1_0:_init_network()
 end
 
-function StateLoadingRestartNetwork._init_params(arg_2_0, arg_2_1)
+StateLoadingRestartNetwork._init_params = function (arg_2_0, arg_2_1)
 	arg_2_0._world = arg_2_1.world
 	arg_2_0._viewport = arg_2_1.viewport
 	arg_2_0._loading_view = arg_2_1.loading_view
@@ -36,7 +36,7 @@ function StateLoadingRestartNetwork._init_params(arg_2_0, arg_2_1)
 	}
 end
 
-function StateLoadingRestartNetwork._init_network(arg_3_0)
+StateLoadingRestartNetwork._init_network = function (arg_3_0)
 	local var_3_0 = Development.parameter("auto_join")
 
 	assert(not var_3_0 or Development.parameter("unique_server_name"), "Can't use auto_join without unique_server_name")
@@ -224,7 +224,7 @@ function StateLoadingRestartNetwork._init_network(arg_3_0)
 	end
 end
 
-function StateLoadingRestartNetwork.update(arg_4_0, arg_4_1, arg_4_2)
+StateLoadingRestartNetwork.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if arg_4_0._has_invitation_error or Managers.account:user_detached() then
 		return
 	end
@@ -263,14 +263,14 @@ function StateLoadingRestartNetwork.update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function StateLoadingRestartNetwork.on_exit(arg_5_0, arg_5_1)
+StateLoadingRestartNetwork.on_exit = function (arg_5_0, arg_5_1)
 	return
 end
 
-function StateLoadingRestartNetwork.cb_server_created(arg_6_0)
+StateLoadingRestartNetwork.cb_server_created = function (arg_6_0)
 	arg_6_0._server_created = true
 end
 
-function StateLoadingRestartNetwork.cb_lobby_joined(arg_7_0)
+StateLoadingRestartNetwork.cb_lobby_joined = function (arg_7_0)
 	arg_7_0._lobby_joined = true
 end

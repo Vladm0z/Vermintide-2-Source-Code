@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/npc_dlc_termite_3.lua
 
-return function()
+return function ()
 	define_rule({
 		response = "nik_gateway_bomb_sighted_one_b",
 		name = "nik_gateway_bomb_sighted_one_b",

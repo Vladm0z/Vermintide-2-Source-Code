@@ -1,6 +1,6 @@
 -- chunkname: @dialogues/generated/wood_elf_warcamp.lua
 
-return function()
+return function ()
 	define_rule({
 		probability = 1,
 		name = "pwe_chaos_war_camp_challenge_reply_a",

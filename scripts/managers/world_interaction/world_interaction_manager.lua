@@ -6,7 +6,7 @@ WorldInteractionManager = class(WorldInteractionManager)
 
 local var_0_0 = {}
 
-function WorldInteractionManager.init(arg_1_0, arg_1_1)
+WorldInteractionManager.init = function (arg_1_0, arg_1_1)
 	arg_1_0._world = arg_1_1
 	arg_1_0._water_timer = 0
 	arg_1_0._water_ripples = {}
@@ -15,18 +15,18 @@ function WorldInteractionManager.init(arg_1_0, arg_1_1)
 	arg_1_0:_setup_gui()
 end
 
-function WorldInteractionManager._setup_gui(arg_2_0)
+WorldInteractionManager._setup_gui = function (arg_2_0)
 	arg_2_0._gui = World.create_screen_gui(arg_2_0._world, "material", "materials/world_interaction/world_interaction", "immediate")
 end
 
-function WorldInteractionManager.add_world_interaction(arg_3_0, arg_3_1, arg_3_2)
+WorldInteractionManager.add_world_interaction = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0:remove_world_interaction(arg_3_2, arg_3_1)
 
 	arg_3_0._units[arg_3_1] = arg_3_0._units[arg_3_1] or {}
 	arg_3_0._units[arg_3_1][arg_3_2] = arg_3_0._units[arg_3_1][arg_3_2] or Managers.time:time("game")
 end
 
-function WorldInteractionManager.remove_world_interaction(arg_4_0, arg_4_1, arg_4_2)
+WorldInteractionManager.remove_world_interaction = function (arg_4_0, arg_4_1, arg_4_2)
 	for iter_4_0, iter_4_1 in pairs(arg_4_0._units) do
 		if not arg_4_2 or arg_4_2 ~= iter_4_0 then
 			iter_4_1[arg_4_1] = nil
@@ -34,7 +34,7 @@ function WorldInteractionManager.remove_world_interaction(arg_4_0, arg_4_1, arg_
 	end
 end
 
-function WorldInteractionManager._add_water_ripple(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+WorldInteractionManager._add_water_ripple = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
 	local var_5_0 = WorldInteractionSettings.water
 	local var_5_1 = var_5_0.random_ripple_size_diff
 
@@ -51,7 +51,7 @@ function WorldInteractionManager._add_water_ripple(arg_5_0, arg_5_1, arg_5_2, ar
 	}
 end
 
-function WorldInteractionManager.add_simple_effect(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+WorldInteractionManager.add_simple_effect = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = Managers.player:local_player()
 	local var_6_1 = var_6_0 and var_6_0.player_unit
 
@@ -66,7 +66,7 @@ function WorldInteractionManager.add_simple_effect(arg_6_0, arg_6_1, arg_6_2, ar
 	end
 end
 
-function WorldInteractionManager._add_simple_water_effect(arg_7_0, arg_7_1, arg_7_2)
+WorldInteractionManager._add_simple_water_effect = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = WorldInteractionSettings.water
 	local var_7_1 = var_7_0.splash
 	local var_7_2 = var_7_1.default_material
@@ -89,14 +89,14 @@ function WorldInteractionManager._add_simple_water_effect(arg_7_0, arg_7_1, arg_
 	end
 end
 
-function WorldInteractionManager.update(arg_8_0, arg_8_1, arg_8_2)
+WorldInteractionManager.update = function (arg_8_0, arg_8_1, arg_8_2)
 	if Managers.state.network:game() then
 		arg_8_0:_update_water(arg_8_1, arg_8_2)
 		arg_8_0:_update_foliage(arg_8_1, arg_8_2)
 	end
 end
 
-function WorldInteractionManager._update_water(arg_9_0, arg_9_1, arg_9_2)
+WorldInteractionManager._update_water = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._units.water
 	local var_9_1 = Managers.player:local_player()
 	local var_9_2 = var_9_1 and var_9_1.player_unit
@@ -110,7 +110,7 @@ end
 
 local var_0_1 = {}
 
-function WorldInteractionManager._cleanup_removed_units(arg_10_0)
+WorldInteractionManager._cleanup_removed_units = function (arg_10_0)
 	local var_10_0 = Managers.state.spawn.unit_spawner.unit_death_watch_lookup
 
 	table.clear(var_0_1)
@@ -132,7 +132,7 @@ end
 
 local var_0_2 = {}
 
-function WorldInteractionManager._update_water_data(arg_11_0, arg_11_1, arg_11_2)
+WorldInteractionManager._update_water_data = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = WorldInteractionSettings.water
 	local var_11_1 = math.clamp(var_11_0.window_size, 1, 100)
 	local var_11_2 = var_11_0.water_speed_limit
@@ -227,7 +227,7 @@ end
 
 local var_0_3 = {}
 
-function WorldInteractionManager._update_water_ripples(arg_12_0, arg_12_1, arg_12_2)
+WorldInteractionManager._update_water_ripples = function (arg_12_0, arg_12_1, arg_12_2)
 	table.clear(var_0_3)
 
 	local var_12_0 = WorldInteractionSettings.water
@@ -315,7 +315,7 @@ function WorldInteractionManager._update_water_ripples(arg_12_0, arg_12_1, arg_1
 	end
 end
 
-function WorldInteractionManager._update_foliage(arg_13_0, arg_13_1, arg_13_2)
+WorldInteractionManager._update_foliage = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = Managers.player:local_player()
 	local var_13_1 = var_13_0 and var_13_0.player_unit
 
@@ -327,7 +327,7 @@ end
 
 local var_0_4 = {}
 
-function WorldInteractionManager._update_foliage_players(arg_14_0, arg_14_1, arg_14_2)
+WorldInteractionManager._update_foliage_players = function (arg_14_0, arg_14_1, arg_14_2)
 	local var_14_0 = WorldInteractionSettings.foliage
 	local var_14_1 = var_14_0.default_foliage_material
 	local var_14_2 = math.clamp(var_14_0.window_size, 1, 100)
@@ -389,7 +389,7 @@ function WorldInteractionManager._update_foliage_players(arg_14_0, arg_14_1, arg
 	end
 end
 
-function WorldInteractionManager._update_foliage_ai(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+WorldInteractionManager._update_foliage_ai = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
 	local var_15_0 = WorldInteractionSettings.foliage
 	local var_15_1 = var_15_0.default_foliage_material
 	local var_15_2 = math.clamp(var_15_0.window_size, 1, 100)
@@ -439,6 +439,6 @@ function WorldInteractionManager._update_foliage_ai(arg_15_0, arg_15_1, arg_15_2
 	end
 end
 
-function WorldInteractionManager.destory(arg_16_0)
+WorldInteractionManager.destory = function (arg_16_0)
 	return
 end

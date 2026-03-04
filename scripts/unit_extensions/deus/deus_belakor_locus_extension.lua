@@ -84,7 +84,7 @@ end
 
 DeusBelakorLocusExtension = class(DeusBelakorLocusExtension)
 
-function DeusBelakorLocusExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+DeusBelakorLocusExtension.init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._unit = arg_3_2
 	arg_3_0._is_server = Managers.player.is_server
 	arg_3_0._world = arg_3_1.world
@@ -98,15 +98,15 @@ function DeusBelakorLocusExtension.init(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_0._prev_state = var_0_3.INITIAL
 end
 
-function DeusBelakorLocusExtension.game_object_initialized(arg_4_0, arg_4_1, arg_4_2)
+DeusBelakorLocusExtension.game_object_initialized = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:_set_state(var_0_3.WAITING_TO_SPAWN_CULTISTS)
 end
 
-function DeusBelakorLocusExtension.extensions_ready(arg_5_0, arg_5_1, arg_5_2)
+DeusBelakorLocusExtension.extensions_ready = function (arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0._interactable_extension = ScriptUnit.extension(arg_5_2, "interactable_system")
 end
 
-function DeusBelakorLocusExtension.destroy(arg_6_0)
+DeusBelakorLocusExtension.destroy = function (arg_6_0)
 	if arg_6_0._statue_beam then
 		World.destroy_particles(arg_6_0._world, arg_6_0._statue_beam)
 
@@ -114,7 +114,7 @@ function DeusBelakorLocusExtension.destroy(arg_6_0)
 	end
 end
 
-function DeusBelakorLocusExtension.connect_to_statue(arg_7_0, arg_7_1, arg_7_2)
+DeusBelakorLocusExtension.connect_to_statue = function (arg_7_0, arg_7_1, arg_7_2)
 	if arg_7_0:_get_state() ~= var_0_3.DONE then
 		arg_7_0._statue_unit = arg_7_1
 
@@ -154,7 +154,7 @@ function DeusBelakorLocusExtension.connect_to_statue(arg_7_0, arg_7_1, arg_7_2)
 	end
 end
 
-function DeusBelakorLocusExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+DeusBelakorLocusExtension.update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
 	if not arg_8_0._go_id then
 		arg_8_0._go_id = Managers.state.unit_storage:go_id(arg_8_0._unit)
 
@@ -229,7 +229,7 @@ function DeusBelakorLocusExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ar
 	local var_8_19 = arg_8_0:_get_state()
 
 	if var_8_19 == arg_8_0._prev_state or var_8_19 == var_0_3.WAITING_TO_SPAWN_CULTISTS then
-		-- block empty
+		-- Nothing
 	elseif var_8_19 == var_0_3.WAITING_FOR_ACTIVATION then
 		arg_8_0._interactable_extension:set_interactable_type(var_0_6)
 	elseif var_8_19 == var_0_3.ACTIVATED then
@@ -283,19 +283,19 @@ function DeusBelakorLocusExtension.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ar
 	arg_8_0._prev_state = var_8_19
 end
 
-function DeusBelakorLocusExtension.activate(arg_9_0)
+DeusBelakorLocusExtension.activate = function (arg_9_0)
 	arg_9_0._paused = false
 end
 
-function DeusBelakorLocusExtension.deactivate(arg_10_0)
+DeusBelakorLocusExtension.deactivate = function (arg_10_0)
 	arg_10_0._paused = true
 end
 
-function DeusBelakorLocusExtension.is_complete(arg_11_0)
+DeusBelakorLocusExtension.is_complete = function (arg_11_0)
 	return arg_11_0:_get_state() == var_0_3.DONE
 end
 
-function DeusBelakorLocusExtension._get_state(arg_12_0)
+DeusBelakorLocusExtension._get_state = function (arg_12_0)
 	local var_12_0 = Managers.state.network:game()
 	local var_12_1 = Managers.state.unit_storage:go_id(arg_12_0._unit)
 
@@ -306,7 +306,7 @@ function DeusBelakorLocusExtension._get_state(arg_12_0)
 	return GameSession.game_object_field(var_12_0, var_12_1, "deus_belakor_locus_state")
 end
 
-function DeusBelakorLocusExtension._set_state(arg_13_0, arg_13_1)
+DeusBelakorLocusExtension._set_state = function (arg_13_0, arg_13_1)
 	local var_13_0 = Managers.state.network:game()
 	local var_13_1 = Managers.state.unit_storage:go_id(arg_13_0._unit)
 
@@ -314,7 +314,7 @@ function DeusBelakorLocusExtension._set_state(arg_13_0, arg_13_1)
 	GameSession.set_game_object_field(var_13_0, var_13_1, "deus_belakor_locus_state", arg_13_1)
 end
 
-function DeusBelakorLocusExtension.can_interact_validate(arg_14_0, arg_14_1)
+DeusBelakorLocusExtension.can_interact_validate = function (arg_14_0, arg_14_1)
 	local var_14_0 = ScriptUnit.has_extension(arg_14_1, "inventory_system")
 
 	if var_14_0 and var_14_0:has_inventory_item("slot_level_event", "belakor_crystal") then
@@ -324,7 +324,7 @@ function DeusBelakorLocusExtension.can_interact_validate(arg_14_0, arg_14_1)
 	return false
 end
 
-function DeusBelakorLocusExtension.can_interact(arg_15_0)
+DeusBelakorLocusExtension.can_interact = function (arg_15_0)
 	local var_15_0 = arg_15_0:_get_state()
 
 	if var_15_0 == var_0_3.WAITING_FOR_ACTIVATION then
@@ -362,7 +362,7 @@ function DeusBelakorLocusExtension.can_interact(arg_15_0)
 	return false
 end
 
-function DeusBelakorLocusExtension.get_interaction_length(arg_16_0)
+DeusBelakorLocusExtension.get_interaction_length = function (arg_16_0)
 	local var_16_0 = arg_16_0:_get_state()
 
 	if var_16_0 == var_0_3.WAITING_FOR_ACTIVATION or var_16_0 == var_0_3.ACTIVATED then
@@ -377,7 +377,7 @@ function DeusBelakorLocusExtension.get_interaction_length(arg_16_0)
 	end
 end
 
-function DeusBelakorLocusExtension.get_interaction_action(arg_17_0)
+DeusBelakorLocusExtension.get_interaction_action = function (arg_17_0)
 	if arg_17_0:_get_state() == var_0_3.ACTIVATED then
 		local var_17_0 = Managers.player
 		local var_17_1 = var_17_0:local_player().player_unit
@@ -407,7 +407,7 @@ function DeusBelakorLocusExtension.get_interaction_action(arg_17_0)
 	return "deus_belakor_locus_deactivate_hud_desc"
 end
 
-function DeusBelakorLocusExtension.on_server_interact(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+DeusBelakorLocusExtension.on_server_interact = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
 	local var_18_0 = arg_18_0:_get_state()
 
 	if var_18_0 == var_0_3.WAITING_FOR_ACTIVATION then
@@ -419,7 +419,7 @@ function DeusBelakorLocusExtension.on_server_interact(arg_18_0, arg_18_1, arg_18
 	end
 end
 
-function DeusBelakorLocusExtension.on_client_interact(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
+DeusBelakorLocusExtension.on_client_interact = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
 	if arg_19_0:_get_state() == var_0_3.ACTIVATED then
 		local var_19_0 = ScriptUnit.extension(arg_19_2, "inventory_system")
 
@@ -428,7 +428,7 @@ function DeusBelakorLocusExtension.on_client_interact(arg_19_0, arg_19_1, arg_19
 	end
 end
 
-function DeusBelakorLocusExtension.on_server_start_interact(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+DeusBelakorLocusExtension.on_server_start_interact = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
 	local var_20_0 = POSITION_LOOKUP[arg_20_3]
 	local var_20_1 = var_0_5
 	local var_20_2 = FrameTable.alloc_table()

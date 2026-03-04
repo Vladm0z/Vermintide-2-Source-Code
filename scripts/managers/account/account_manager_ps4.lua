@@ -33,7 +33,7 @@ local var_0_4 = {
 	}
 }
 
-function AccountManager.init(arg_2_0)
+AccountManager.init = function (arg_2_0)
 	if arg_2_0:is_online() then
 		arg_2_0:fetch_user_data()
 	end
@@ -65,11 +65,11 @@ function AccountManager.init(arg_2_0)
 	arg_2_0._retrigger_popups_check = false
 end
 
-function AccountManager.set_controller(arg_3_0, arg_3_1)
+AccountManager.set_controller = function (arg_3_0, arg_3_1)
 	arg_3_0._active_controller = arg_3_1
 end
 
-function AccountManager.fetch_user_data(arg_4_0)
+AccountManager.fetch_user_data = function (arg_4_0)
 	arg_4_0._online_id = PS4.online_id()
 	arg_4_0._np_id = PS4.np_id()
 	arg_4_0._account_id = PS4.account_id()
@@ -79,47 +79,47 @@ function AccountManager.fetch_user_data(arg_4_0)
 	print("PSN_ID:", arg_4_0._online_id)
 end
 
-function AccountManager.np_title_id(arg_5_0)
+AccountManager.np_title_id = function (arg_5_0)
 	return arg_5_0._np_title_id
 end
 
-function AccountManager.initial_user_id(arg_6_0)
+AccountManager.initial_user_id = function (arg_6_0)
 	return arg_6_0._initial_user_id
 end
 
-function AccountManager.user_id(arg_7_0)
+AccountManager.user_id = function (arg_7_0)
 	return arg_7_0._initial_user_id
 end
 
-function AccountManager.user_detached(arg_8_0)
+AccountManager.user_detached = function (arg_8_0)
 	return arg_8_0._user_detached
 end
 
-function AccountManager.active_controller(arg_9_0, arg_9_1)
+AccountManager.active_controller = function (arg_9_0, arg_9_1)
 	return Managers.input:get_most_recent_device()
 end
 
-function AccountManager.np_id(arg_10_0)
+AccountManager.np_id = function (arg_10_0)
 	return arg_10_0._np_id
 end
 
-function AccountManager.online_id(arg_11_0)
+AccountManager.online_id = function (arg_11_0)
 	return arg_11_0._online_id
 end
 
-function AccountManager.account_id(arg_12_0)
+AccountManager.account_id = function (arg_12_0)
 	return arg_12_0._account_id
 end
 
-function AccountManager.add_restriction_user(arg_13_0, arg_13_1)
+AccountManager.add_restriction_user = function (arg_13_0, arg_13_1)
 	arg_13_0._ps_restrictions:add_user(arg_13_1)
 end
 
-function AccountManager.set_current_lobby(arg_14_0, arg_14_1)
+AccountManager.set_current_lobby = function (arg_14_0, arg_14_1)
 	arg_14_0._current_room = arg_14_1
 end
 
-function AccountManager.initiate_leave_game(arg_15_0)
+AccountManager.initiate_leave_game = function (arg_15_0)
 	arg_15_0._leave_game = true
 
 	if arg_15_0:is_online() and arg_15_0._has_presence_game_data then
@@ -127,11 +127,11 @@ function AccountManager.initiate_leave_game(arg_15_0)
 	end
 end
 
-function AccountManager.leaving_game(arg_16_0)
+AccountManager.leaving_game = function (arg_16_0)
 	return arg_16_0._leave_game
 end
 
-function AccountManager.reset(arg_17_0)
+AccountManager.reset = function (arg_17_0)
 	if arg_17_0._popup_id then
 		Managers.popup:cancel_popup(arg_17_0._popup_id)
 
@@ -145,7 +145,7 @@ function AccountManager.reset(arg_17_0)
 	arg_17_0._user_detached = nil
 end
 
-function AccountManager.destroy(arg_18_0)
+AccountManager.destroy = function (arg_18_0)
 	arg_18_0._web_api:destroy()
 
 	arg_18_0._web_api = nil
@@ -165,23 +165,23 @@ function AccountManager.destroy(arg_18_0)
 	end
 end
 
-function AccountManager.sign_in(arg_19_0)
+AccountManager.sign_in = function (arg_19_0)
 	arg_19_0._signed_in = PS4.signed_in(arg_19_0._initial_user_id)
 end
 
-function AccountManager.is_online(arg_20_0)
+AccountManager.is_online = function (arg_20_0)
 	return not arg_20_0._offline_mode and PS4.signed_in()
 end
 
-function AccountManager.offline_mode(arg_21_0)
+AccountManager.offline_mode = function (arg_21_0)
 	return arg_21_0._offline_mode
 end
 
-function AccountManager.set_offline_mode(arg_22_0, arg_22_1)
+AccountManager.set_offline_mode = function (arg_22_0, arg_22_1)
 	arg_22_0._offline_mode = arg_22_1
 end
 
-function AccountManager.update(arg_23_0, arg_23_1)
+AccountManager.update = function (arg_23_0, arg_23_1)
 	arg_23_0:_update_playtogether()
 	arg_23_0:_update_psn_client(arg_23_1)
 
@@ -197,7 +197,7 @@ function AccountManager.update(arg_23_0, arg_23_1)
 	arg_23_0:_check_popup()
 end
 
-function AccountManager._check_trigger_popup(arg_24_0)
+AccountManager._check_trigger_popup = function (arg_24_0)
 	if not arg_24_0._retrigger_popups_check then
 		return
 	end
@@ -211,7 +211,7 @@ function AccountManager._check_trigger_popup(arg_24_0)
 	arg_24_0._retrigger_popups_check = false
 end
 
-function AccountManager._check_popup(arg_25_0)
+AccountManager._check_popup = function (arg_25_0)
 	if arg_25_0._popup_id then
 		local var_25_0 = Managers.popup:query_result(arg_25_0._popup_id)
 
@@ -229,7 +229,7 @@ function AccountManager._check_popup(arg_25_0)
 	end
 end
 
-function AccountManager._verify_profile(arg_26_0)
+AccountManager._verify_profile = function (arg_26_0)
 	if arg_26_0._popup_id then
 		return
 	end
@@ -259,7 +259,7 @@ function AccountManager._verify_profile(arg_26_0)
 	end
 end
 
-function AccountManager._queue_popup(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AccountManager._queue_popup = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	arg_27_0._popup_info = {
 		header = arg_27_1,
 		text = arg_27_2,
@@ -269,7 +269,7 @@ function AccountManager._queue_popup(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg
 	arg_27_0._popup_id = Managers.popup:queue_popup(arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 end
 
-function AccountManager._update_playtogether(arg_28_0)
+AccountManager._update_playtogether = function (arg_28_0)
 	if arg_28_0._session ~= nil then
 		local var_28_0 = Managers.invite
 		local var_28_1 = SessionInvitation.play_together_list()
@@ -291,7 +291,7 @@ end
 
 local var_0_5 = 20
 
-function AccountManager._update_psn_client(arg_29_0, arg_29_1)
+AccountManager._update_psn_client = function (arg_29_0, arg_29_1)
 	if not rawget(_G, "LobbyInternal") or not LobbyInternal.client or LobbyInternal.TYPE ~= "psn" then
 		arg_29_0._psn_client_error = nil
 
@@ -318,11 +318,11 @@ function AccountManager._update_psn_client(arg_29_0, arg_29_1)
 	end
 end
 
-function AccountManager.psn_client_error(arg_30_0)
+AccountManager.psn_client_error = function (arg_30_0)
 	return arg_30_0._psn_client_error
 end
 
-function AccountManager._update_psn(arg_31_0)
+AccountManager._update_psn = function (arg_31_0)
 	local var_31_0 = arg_31_0._current_room
 	local var_31_1 = arg_31_0._previous_room
 	local var_31_2 = var_31_0 and var_31_0:state()
@@ -345,9 +345,9 @@ function AccountManager._update_psn(arg_31_0)
 	arg_31_0._room_state = var_31_2
 end
 
-function AccountManager._update_psn_presence(arg_32_0, arg_32_1, arg_32_2)
+AccountManager._update_psn_presence = function (arg_32_0, arg_32_1, arg_32_2)
 	if arg_32_2 then
-		-- block empty
+		-- Nothing
 	end
 
 	if arg_32_1 then
@@ -357,7 +357,7 @@ function AccountManager._update_psn_presence(arg_32_0, arg_32_1, arg_32_2)
 	end
 end
 
-function AccountManager._update_psn_session(arg_33_0, arg_33_1, arg_33_2)
+AccountManager._update_psn_session = function (arg_33_0, arg_33_1, arg_33_2)
 	local var_33_0 = arg_33_0._session
 
 	if arg_33_2 and var_33_0 then
@@ -384,7 +384,7 @@ function AccountManager._update_psn_session(arg_33_0, arg_33_1, arg_33_2)
 	end
 end
 
-function AccountManager._notify_plus(arg_34_0)
+AccountManager._notify_plus = function (arg_34_0)
 	if not arg_34_0._realtime_multiplay then
 		return
 	end
@@ -424,15 +424,15 @@ function AccountManager._notify_plus(arg_34_0)
 	end
 end
 
-function AccountManager.friends_list_initiated(arg_35_0)
+AccountManager.friends_list_initiated = function (arg_35_0)
 	return
 end
 
-function AccountManager.region(arg_36_0)
+AccountManager.region = function (arg_36_0)
 	return arg_36_0._country_code
 end
 
-function AccountManager._update_matchmaking_data(arg_37_0, arg_37_1)
+AccountManager._update_matchmaking_data = function (arg_37_0, arg_37_1)
 	local var_37_0 = Managers.time:time("main")
 
 	if not arg_37_0._matchmaking_data and not arg_37_0._fetching_matchmaking_data and var_37_0 >= arg_37_0._next_matchmaking_data_fetch then
@@ -440,7 +440,7 @@ function AccountManager._update_matchmaking_data(arg_37_0, arg_37_1)
 	end
 end
 
-function AccountManager._fetch_matchmaking_data(arg_38_0, arg_38_1)
+AccountManager._fetch_matchmaking_data = function (arg_38_0, arg_38_1)
 	print("FETCHING MATCHMAKING DATA")
 
 	local var_38_0 = 0
@@ -453,7 +453,7 @@ function AccountManager._fetch_matchmaking_data(arg_38_0, arg_38_1)
 	arg_38_0._next_matchmaking_data_fetch = arg_38_1 + 3
 end
 
-function AccountManager.cb_matchmaking_data_fetched(arg_39_0, arg_39_1)
+AccountManager.cb_matchmaking_data_fetched = function (arg_39_0, arg_39_1)
 	arg_39_0._fetching_matchmaking_data = false
 
 	if arg_39_1.result then
@@ -466,7 +466,7 @@ function AccountManager.cb_matchmaking_data_fetched(arg_39_0, arg_39_1)
 	end
 end
 
-function AccountManager.set_realtime_multiplay(arg_40_0, arg_40_1)
+AccountManager.set_realtime_multiplay = function (arg_40_0, arg_40_1)
 	arg_40_0._realtime_multiplay = arg_40_1
 
 	if arg_40_1 then
@@ -478,7 +478,7 @@ function AccountManager.set_realtime_multiplay(arg_40_0, arg_40_1)
 	end
 end
 
-function AccountManager._update_profile_dialog(arg_41_0)
+AccountManager._update_profile_dialog = function (arg_41_0)
 	if not arg_41_0._dialog_open then
 		return
 	end
@@ -492,41 +492,41 @@ function AccountManager._update_profile_dialog(arg_41_0)
 	end
 end
 
-function AccountManager.current_psn_session(arg_42_0)
+AccountManager.current_psn_session = function (arg_42_0)
 	local var_42_0 = arg_42_0._session
 
 	return var_42_0 and var_42_0.id
 end
 
-function AccountManager.all_sessions_cleaned_up(arg_43_0)
+AccountManager.all_sessions_cleaned_up = function (arg_43_0)
 	return true
 end
 
-function AccountManager.has_access(arg_44_0, arg_44_1, arg_44_2)
+AccountManager.has_access = function (arg_44_0, arg_44_1, arg_44_2)
 	local var_44_0 = arg_44_2 or arg_44_0:user_id()
 
 	return arg_44_0._ps_restrictions:has_access(var_44_0, arg_44_1)
 end
 
-function AccountManager.has_error(arg_45_0, arg_45_1, arg_45_2)
+AccountManager.has_error = function (arg_45_0, arg_45_1, arg_45_2)
 	local var_45_0 = arg_45_2 or arg_45_0:user_id()
 
 	return arg_45_0._ps_restrictions:has_error(var_45_0, arg_45_1)
 end
 
-function AccountManager.restriction_access_fetched(arg_46_0, arg_46_1)
+AccountManager.restriction_access_fetched = function (arg_46_0, arg_46_1)
 	local var_46_0 = arg_46_0:user_id()
 
 	return arg_46_0._ps_restrictions:restriction_access_fetched(var_46_0, arg_46_1)
 end
 
-function AccountManager.refetch_restriction_access(arg_47_0, arg_47_1, arg_47_2)
+AccountManager.refetch_restriction_access = function (arg_47_0, arg_47_1, arg_47_2)
 	local var_47_0 = arg_47_1 or arg_47_0:user_id()
 
 	arg_47_0._ps_restrictions:refetch_restriction_access(var_47_0, arg_47_2)
 end
 
-function AccountManager.show_player_profile(arg_48_0, arg_48_1)
+AccountManager.show_player_profile = function (arg_48_0, arg_48_1)
 	if arg_48_0._dialog_open then
 		return
 	end
@@ -541,11 +541,11 @@ function AccountManager.show_player_profile(arg_48_0, arg_48_1)
 	arg_48_0._dialog_open = true
 end
 
-function AccountManager.show_player_profile_with_np_id(arg_49_0, arg_49_1)
+AccountManager.show_player_profile_with_np_id = function (arg_49_0, arg_49_1)
 	Application.error("[AccountManager:show_player_profile_with_np_id] This function is deprecated, use AccountManager:show_player_profile_with_account_id() instead")
 end
 
-function AccountManager.show_player_profile_with_account_id(arg_50_0, arg_50_1)
+AccountManager.show_player_profile_with_account_id = function (arg_50_0, arg_50_1)
 	if arg_50_0._dialog_open then
 		return
 	end
@@ -560,7 +560,7 @@ function AccountManager.show_player_profile_with_account_id(arg_50_0, arg_50_1)
 	arg_50_0._dialog_open = true
 end
 
-function AccountManager.get_friends(arg_51_0, arg_51_1, arg_51_2)
+AccountManager.get_friends = function (arg_51_0, arg_51_1, arg_51_2)
 	local var_51_0 = arg_51_0._friend_data
 	local var_51_1 = Managers.time:time("main")
 
@@ -576,7 +576,7 @@ function AccountManager.get_friends(arg_51_0, arg_51_1, arg_51_2)
 	end
 end
 
-function AccountManager._fetch_friends(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+AccountManager._fetch_friends = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	local var_52_0 = var_0_2
 	local var_52_1 = Application.hex64_to_dec(arg_52_0._account_id)
 	local var_52_2 = arg_52_0:user_id()
@@ -591,7 +591,7 @@ function AccountManager._fetch_friends(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	arg_52_0._fetching_friend_list = true
 end
 
-function AccountManager.cb_fetch_friends(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+AccountManager.cb_fetch_friends = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
 	local var_53_0 = arg_53_0._friend_data
 
 	if not arg_53_4 then
@@ -652,7 +652,7 @@ function AccountManager.cb_fetch_friends(arg_53_0, arg_53_1, arg_53_2, arg_53_3,
 	end
 end
 
-function AccountManager.get_user_presence(arg_54_0, arg_54_1, arg_54_2)
+AccountManager.get_user_presence = function (arg_54_0, arg_54_1, arg_54_2)
 	local var_54_0 = arg_54_0:user_id()
 	local var_54_1 = "sdk:userProfile"
 	local var_54_2 = string.format("/v1/users/%s/presence?type=platform&platform=PS4", Application.hex64_to_dec(arg_54_1))
@@ -662,7 +662,7 @@ function AccountManager.get_user_presence(arg_54_0, arg_54_1, arg_54_2)
 	arg_54_0._web_api:send_request(var_54_0, var_54_1, var_54_2, var_54_3, var_54_4, arg_54_2)
 end
 
-function AccountManager.set_presence(arg_55_0, arg_55_1, arg_55_2)
+AccountManager.set_presence = function (arg_55_0, arg_55_1, arg_55_2)
 	if not arg_55_0:is_online() or not arg_55_0._account_id then
 		return
 	end
@@ -677,7 +677,7 @@ function AccountManager.set_presence(arg_55_0, arg_55_1, arg_55_2)
 	arg_55_0._web_api:send_request(var_55_1, var_55_2, var_55_3, var_55_4, var_55_5)
 end
 
-function AccountManager.set_presence_game_data(arg_56_0, arg_56_1)
+AccountManager.set_presence_game_data = function (arg_56_0, arg_56_1)
 	local var_56_0 = Application.hex64_to_dec(arg_56_0._account_id)
 	local var_56_1 = arg_56_0:user_id()
 	local var_56_2 = "sdk:userProfile"
@@ -693,7 +693,7 @@ function AccountManager.set_presence_game_data(arg_56_0, arg_56_1)
 	arg_56_0._has_presence_game_data = true
 end
 
-function AccountManager.delete_presence_game_data(arg_57_0)
+AccountManager.delete_presence_game_data = function (arg_57_0)
 	local var_57_0 = Application.hex64_to_dec(arg_57_0._account_id)
 	local var_57_1 = arg_57_0:user_id()
 	local var_57_2 = "sdk:userProfile"
@@ -705,7 +705,7 @@ function AccountManager.delete_presence_game_data(arg_57_0)
 	arg_57_0._has_presence_game_data = false
 end
 
-function AccountManager.create_session(arg_58_0, arg_58_1)
+AccountManager.create_session = function (arg_58_0, arg_58_1)
 	assert(arg_58_1, "[AccountManager] Tried to create psn session but parameter \"room_id\" is missing")
 
 	local var_58_0 = Managers.level_transition_handler:get_current_level_keys()
@@ -731,7 +731,7 @@ function AccountManager.create_session(arg_58_0, arg_58_1)
 	arg_58_0._web_api:send_request_create_session(var_58_2, var_58_4, var_58_5, var_58_6, var_58_7, callback(arg_58_0, "_cb_session_created"))
 end
 
-function AccountManager._cb_session_created(arg_59_0, arg_59_1)
+AccountManager._cb_session_created = function (arg_59_0, arg_59_1)
 	if arg_59_1 then
 		local var_59_0 = arg_59_1.sessionId
 
@@ -750,7 +750,7 @@ function AccountManager._cb_session_created(arg_59_0, arg_59_1)
 	end
 end
 
-function AccountManager.delete_session(arg_60_0)
+AccountManager.delete_session = function (arg_60_0)
 	local var_60_0 = arg_60_0:user_id()
 	local var_60_1 = arg_60_0._session.id
 	local var_60_2 = "sessionInvitation"
@@ -762,7 +762,7 @@ function AccountManager.delete_session(arg_60_0)
 	arg_60_0._session = nil
 end
 
-function AccountManager.join_session(arg_61_0, arg_61_1)
+AccountManager.join_session = function (arg_61_0, arg_61_1)
 	local var_61_0 = arg_61_0:user_id()
 	local var_61_1 = "sessionInvitation"
 	local var_61_2 = string.format("/v1/sessions/%s/members", tostring(arg_61_1))
@@ -776,7 +776,7 @@ function AccountManager.join_session(arg_61_0, arg_61_1)
 	}
 end
 
-function AccountManager.leave_session(arg_62_0)
+AccountManager.leave_session = function (arg_62_0)
 	local var_62_0 = arg_62_0:user_id()
 	local var_62_1 = arg_62_0._session.id
 	local var_62_2 = "sessionInvitation"
@@ -788,7 +788,7 @@ function AccountManager.leave_session(arg_62_0)
 	arg_62_0._session = nil
 end
 
-function AccountManager.get_session_data(arg_63_0, arg_63_1, arg_63_2)
+AccountManager.get_session_data = function (arg_63_0, arg_63_1, arg_63_2)
 	local var_63_0 = arg_63_0:user_id()
 	local var_63_1 = "sessionInvitation"
 	local var_63_2 = string.format("/v1/sessions/%s/sessionData", tostring(arg_63_1))
@@ -799,7 +799,7 @@ function AccountManager.get_session_data(arg_63_0, arg_63_1, arg_63_2)
 	arg_63_0._web_api:send_request(var_63_0, var_63_1, var_63_2, var_63_3, var_63_4, arg_63_2, var_63_5)
 end
 
-function AccountManager.send_session_invitation(arg_64_0, arg_64_1)
+AccountManager.send_session_invitation = function (arg_64_0, arg_64_1)
 	local var_64_0 = arg_64_0:user_id()
 	local var_64_1 = arg_64_0._session.id
 	local var_64_2 = Localize("ps4_session_invitation")
@@ -808,11 +808,11 @@ function AccountManager.send_session_invitation(arg_64_0, arg_64_1)
 	arg_64_0._web_api:send_request_session_invitation(var_64_0, var_64_3, var_64_1)
 end
 
-function AccountManager.has_session(arg_65_0)
+AccountManager.has_session = function (arg_65_0)
 	return arg_65_0._session ~= nil and arg_65_0._session.id ~= nil
 end
 
-function AccountManager.send_session_invitation_multiple(arg_66_0, arg_66_1)
+AccountManager.send_session_invitation_multiple = function (arg_66_0, arg_66_1)
 	local var_66_0 = arg_66_0:user_id()
 	local var_66_1 = arg_66_0._session.id
 	local var_66_2 = Localize("ps4_session_invitation")
@@ -831,7 +831,7 @@ function AccountManager.send_session_invitation_multiple(arg_66_0, arg_66_1)
 	arg_66_0._web_api:send_request_session_invitation(var_66_0, var_66_4, var_66_1)
 end
 
-function AccountManager.activity_feed_post_mission_completed(arg_67_0, arg_67_1, arg_67_2)
+AccountManager.activity_feed_post_mission_completed = function (arg_67_0, arg_67_1, arg_67_2)
 	if not arg_67_0:is_online() or not arg_67_0._account_id then
 		return
 	end
@@ -871,7 +871,7 @@ function AccountManager.activity_feed_post_mission_completed(arg_67_0, arg_67_1,
 	arg_67_0._web_api:send_request(var_67_0, var_67_3, var_67_4, var_67_5, var_67_10)
 end
 
-function AccountManager.get_entitlement(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
+AccountManager.get_entitlement = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	local var_68_0 = arg_68_0:user_id()
 	local var_68_1 = "sdk:entitlement"
 	local var_68_2 = arg_68_2 or 0
@@ -882,7 +882,7 @@ function AccountManager.get_entitlement(arg_68_0, arg_68_1, arg_68_2, arg_68_3)
 	arg_68_0._web_api:send_request(var_68_0, var_68_1, var_68_3, var_68_4, var_68_5, arg_68_3)
 end
 
-function AccountManager.get_product_details(arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+AccountManager.get_product_details = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
 	local var_69_0 = arg_69_0:user_id()
 	local var_69_1 = "sdk:commerce"
 	local var_69_2 = arg_69_2 or 0
@@ -894,7 +894,7 @@ function AccountManager.get_product_details(arg_69_0, arg_69_1, arg_69_2, arg_69
 	arg_69_0._web_api:send_request(var_69_0, var_69_1, var_69_3, var_69_4, var_69_5, arg_69_3, var_69_6)
 end
 
-function AccountManager._format_session_parameters(arg_70_0, arg_70_1)
+AccountManager._format_session_parameters = function (arg_70_0, arg_70_1)
 	local var_70_0 = ((("" .. "{\r\n") .. string.format("  \"sessionType\":%q,\r\n", arg_70_1.type)) .. string.format("  \"sessionPrivacy\":%q,\r\n", arg_70_1.privacy)) .. string.format("  \"sessionMaxUser\":%s,\r\n", tostring(arg_70_1.max_user))
 
 	if arg_70_1.name then
@@ -908,7 +908,7 @@ function AccountManager._format_session_parameters(arg_70_0, arg_70_1)
 	return ((var_70_0 .. string.format("  \"availablePlatforms\":%s,\r\n", arg_70_1.platforms)) .. string.format("  \"sessionLockFlag\":%s\r\n", arg_70_1.lock_flag and "true" or "false")) .. "}"
 end
 
-function AccountManager._set_presence_status_content(arg_71_0, arg_71_1, arg_71_2)
+AccountManager._set_presence_status_content = function (arg_71_0, arg_71_1, arg_71_2)
 	local var_71_0 = arg_71_2
 	local var_71_1 = var_0_0[arg_71_1] or {
 		"en"
@@ -932,35 +932,35 @@ function AccountManager._set_presence_status_content(arg_71_0, arg_71_1, arg_71_
 	return (var_71_2 .. "  ]\r\n") .. "}"
 end
 
-function AccountManager.force_exit_to_title_screen(arg_72_0)
+AccountManager.force_exit_to_title_screen = function (arg_72_0)
 	arg_72_0:initiate_leave_game()
 end
 
-function AccountManager.check_popup_retrigger(arg_73_0)
+AccountManager.check_popup_retrigger = function (arg_73_0)
 	arg_73_0._retrigger_popups_check = true
 end
 
-function AccountManager.set_should_teardown_xboxlive(arg_74_0)
+AccountManager.set_should_teardown_xboxlive = function (arg_74_0)
 	return
 end
 
-function AccountManager.has_fatal_error(arg_75_0)
+AccountManager.has_fatal_error = function (arg_75_0)
 	return false
 end
 
-function AccountManager.has_popup(arg_76_0)
+AccountManager.has_popup = function (arg_76_0)
 	return false
 end
 
-function AccountManager.cancel_all_popups(arg_77_0)
+AccountManager.cancel_all_popups = function (arg_77_0)
 	return
 end
 
-function AccountManager.update_presence(arg_78_0)
+AccountManager.update_presence = function (arg_78_0)
 	return
 end
 
-function AccountManager.should_throttle(arg_79_0)
+AccountManager.should_throttle = function (arg_79_0)
 	if PS4.is_ps5() then
 		return false
 	elseif PS4.is_pro() then
@@ -970,7 +970,7 @@ function AccountManager.should_throttle(arg_79_0)
 	end
 end
 
-function AccountManager.console_type(arg_80_0)
+AccountManager.console_type = function (arg_80_0)
 	local var_80_0 = "ps4"
 
 	if PS4.is_ps5() then
@@ -982,7 +982,7 @@ function AccountManager.console_type(arg_80_0)
 	return var_80_0
 end
 
-function AccountManager.console_type_setting(arg_81_0, arg_81_1)
+AccountManager.console_type_setting = function (arg_81_0, arg_81_1)
 	local var_81_0 = arg_81_0:console_type()
 
 	return (var_0_4[var_81_0] or var_0_4.default)[arg_81_1]

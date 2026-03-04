@@ -8,7 +8,7 @@ local var_0_2 = 0.25
 local var_0_3 = 1
 local var_0_4 = 0
 
-function ThirdPersonIdleFullbodyAnimationControl.init(arg_1_0, arg_1_1)
+ThirdPersonIdleFullbodyAnimationControl.init = function (arg_1_0, arg_1_1)
 	arg_1_0._unit = arg_1_1
 	arg_1_0._idle_fullbody_variable = Unit.animation_find_variable(arg_1_1, "idle_fullbody")
 	arg_1_0._progress = 1
@@ -18,20 +18,20 @@ function ThirdPersonIdleFullbodyAnimationControl.init(arg_1_0, arg_1_1)
 	arg_1_0._crouch_t = 0
 end
 
-function ThirdPersonIdleFullbodyAnimationControl.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+ThirdPersonIdleFullbodyAnimationControl.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
 	arg_2_0._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._total_time(arg_3_0, arg_3_1)
+ThirdPersonIdleFullbodyAnimationControl._total_time = function (arg_3_0, arg_3_1)
 	return arg_3_1 and var_0_0 or var_0_1
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._calculate_start_time(arg_4_0, arg_4_1, arg_4_2)
+ThirdPersonIdleFullbodyAnimationControl._calculate_start_time = function (arg_4_0, arg_4_1, arg_4_2)
 	return arg_4_2 - arg_4_0:_total_time(arg_4_1) * (1 - arg_4_0._progress)
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0:_total_time(arg_5_2)
 	local var_5_1 = math.clamp01(arg_5_1 / var_5_0)
 	local var_5_2 = var_5_1
@@ -47,11 +47,11 @@ function ThirdPersonIdleFullbodyAnimationControl._wanted_fullbody_value(arg_5_0,
 	return var_5_3 * math.clamp01(math.inv_lerp(var_5_4, var_5_5, arg_5_4 / var_0_2)), var_5_2
 end
 
-function ThirdPersonIdleFullbodyAnimationControl._percentage_done(arg_6_0, arg_6_1)
+ThirdPersonIdleFullbodyAnimationControl._percentage_done = function (arg_6_0, arg_6_1)
 	return 0
 end
 
-function ThirdPersonIdleFullbodyAnimationControl.update(arg_7_0, arg_7_1)
+ThirdPersonIdleFullbodyAnimationControl.update = function (arg_7_0, arg_7_1)
 	if not arg_7_0._idle_fullbody_variable then
 		return
 	end

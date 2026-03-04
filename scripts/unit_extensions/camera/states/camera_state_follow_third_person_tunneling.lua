@@ -2,11 +2,11 @@
 
 CameraStateFollowThirdPersonTunneling = class(CameraStateFollowThirdPersonTunneling, CameraState)
 
-function CameraStateFollowThirdPersonTunneling.init(arg_1_0, arg_1_1)
+CameraStateFollowThirdPersonTunneling.init = function (arg_1_0, arg_1_1)
 	CameraState.init(arg_1_0, arg_1_1, "follow_third_person_tunneling")
 end
 
-function CameraStateFollowThirdPersonTunneling.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateFollowThirdPersonTunneling.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	local var_2_0 = arg_2_0.camera_extension
 	local var_2_1, var_2_2 = var_2_0:get_follow_data()
 	local var_2_3 = var_2_0.viewport_name
@@ -29,11 +29,11 @@ function CameraStateFollowThirdPersonTunneling.on_enter(arg_2_0, arg_2_1, arg_2_
 	arg_2_0.camera_start_pose = Matrix4x4Box(Unit.local_pose(arg_2_1, 0))
 end
 
-function CameraStateFollowThirdPersonTunneling.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateFollowThirdPersonTunneling.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._follow_unit = nil
 end
 
-function CameraStateFollowThirdPersonTunneling.update_tunnel_camera_position(arg_4_0, arg_4_1)
+CameraStateFollowThirdPersonTunneling.update_tunnel_camera_position = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_0._unit
 
 	Unit.set_local_position(var_4_0, 0, arg_4_1)
@@ -52,7 +52,7 @@ function CameraStateFollowThirdPersonTunneling.update_tunnel_camera_position(arg
 	arg_4_0.camera_start_pose = Matrix4x4Box(Unit.local_pose(var_4_0, 0))
 end
 
-function CameraStateFollowThirdPersonTunneling.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CameraStateFollowThirdPersonTunneling.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_0.csm
 	local var_5_1 = arg_5_0.camera_extension
 	local var_5_2 = arg_5_0._follow_unit

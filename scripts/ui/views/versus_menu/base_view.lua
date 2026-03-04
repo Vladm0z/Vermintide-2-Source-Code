@@ -2,7 +2,7 @@
 
 BaseView = class(BaseView)
 
-function BaseView.init(arg_1_0, arg_1_1, arg_1_2)
+BaseView.init = function (arg_1_0, arg_1_1, arg_1_2)
 	fassert(arg_1_2, "No definitions passed")
 	fassert(arg_1_2.scenegraph_definition, "No scenegraph in definitions")
 
@@ -23,11 +23,11 @@ function BaseView.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._animations = {}
 end
 
-function BaseView.destroy(arg_2_0)
+BaseView.destroy = function (arg_2_0)
 	return
 end
 
-function BaseView.on_enter(arg_3_0)
+BaseView.on_enter = function (arg_3_0)
 	ShowCursorStack.show("BaseView")
 
 	local var_3_0 = arg_3_0._input_manager
@@ -39,11 +39,11 @@ function BaseView.on_enter(arg_3_0)
 	arg_3_0:_create_ui_elements()
 end
 
-function BaseView.post_update_on_enter(arg_4_0)
+BaseView.post_update_on_enter = function (arg_4_0)
 	return
 end
 
-function BaseView.on_exit(arg_5_0)
+BaseView.on_exit = function (arg_5_0)
 	ShowCursorStack.hide("BaseView")
 
 	local var_5_0 = arg_5_0._input_manager
@@ -54,11 +54,11 @@ function BaseView.on_exit(arg_5_0)
 	arg_5_0:_destroy_ui_elements()
 end
 
-function BaseView.post_update_on_exit(arg_6_0)
+BaseView.post_update_on_exit = function (arg_6_0)
 	return
 end
 
-function BaseView._create_ui_elements(arg_7_0)
+BaseView._create_ui_elements = function (arg_7_0)
 	local var_7_0 = arg_7_0._definitions
 	local var_7_1 = var_7_0.scenegraph_definition
 
@@ -81,7 +81,7 @@ function BaseView._create_ui_elements(arg_7_0)
 	end
 end
 
-function BaseView._destroy_ui_elements(arg_8_0)
+BaseView._destroy_ui_elements = function (arg_8_0)
 	if arg_8_0._retained_mode then
 		UIUtils.destroy_widgets(arg_8_0._ui_renderer, arg_8_0._widgets_by_name)
 	end
@@ -93,11 +93,11 @@ function BaseView._destroy_ui_elements(arg_8_0)
 	arg_8_0._ui_animator = nil
 end
 
-function BaseView.post_update(arg_9_0, arg_9_1, arg_9_2)
+BaseView.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function BaseView.update(arg_10_0, arg_10_1, arg_10_2)
+BaseView.update = function (arg_10_0, arg_10_1, arg_10_2)
 	local var_10_0 = arg_10_0._ui_animator
 
 	if var_10_0 then
@@ -111,11 +111,11 @@ function BaseView.update(arg_10_0, arg_10_1, arg_10_2)
 	end
 end
 
-function BaseView._draw_widgets(arg_11_0, arg_11_1, arg_11_2)
+BaseView._draw_widgets = function (arg_11_0, arg_11_1, arg_11_2)
 	return
 end
 
-function BaseView._draw(arg_12_0, arg_12_1, arg_12_2)
+BaseView._draw = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_renderer
 	local var_12_1 = arg_12_0._ui_top_renderer
 	local var_12_2 = arg_12_0._ui_scenegraph
@@ -150,7 +150,7 @@ function BaseView._draw(arg_12_0, arg_12_1, arg_12_2)
 	var_12_3.alpha_multiplier = var_12_4
 end
 
-function BaseView._start_animation(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+BaseView._start_animation = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
 	local var_13_0 = arg_13_4 or {
 		wwise_world = arg_13_0._wwise_world,
 		render_settings = arg_13_0._render_settings
@@ -160,18 +160,18 @@ function BaseView._start_animation(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_1
 	return arg_13_0._ui_animator:start_animation(arg_13_2, arg_13_3, var_13_1, var_13_0)
 end
 
-function BaseView.play_sound(arg_14_0, arg_14_1)
+BaseView.play_sound = function (arg_14_0, arg_14_1)
 	return WwiseWorld.trigger_event(arg_14_0._wwise_world, arg_14_1)
 end
 
-function BaseView.input_service(arg_15_0)
+BaseView.input_service = function (arg_15_0)
 	return arg_15_0._input_manager:get_service(arg_15_0._input_service_name)
 end
 
-function BaseView._set_widget_dirty(arg_16_0, arg_16_1)
+BaseView._set_widget_dirty = function (arg_16_0, arg_16_1)
 	arg_16_1.element.dirty = true
 end
 
-function BaseView.debug_set_definitions(arg_17_0, arg_17_1)
+BaseView.debug_set_definitions = function (arg_17_0, arg_17_1)
 	arg_17_0._definitions = arg_17_1
 end

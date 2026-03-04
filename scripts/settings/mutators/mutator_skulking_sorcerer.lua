@@ -4,10 +4,10 @@ return {
 	description = "description_skulking_sorcerer",
 	display_name = "display_name_skulking_sorcerer",
 	icon = "mutator_icon_skulking_sorcerer",
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		arg_1_1.breed_name = "chaos_mutator_sorcerer"
 
-		function arg_1_1.cb_mutator_sorcerer_spawned(arg_2_0, arg_2_1, arg_2_2)
+		arg_1_1.cb_mutator_sorcerer_spawned = function (arg_2_0, arg_2_1, arg_2_2)
 			arg_2_2.mutator_data.sorcerer_unit = arg_2_0
 			arg_2_2.mutator_data.has_spawned_mutator_sorcerer = true
 		end
@@ -24,12 +24,12 @@ return {
 			45
 		}
 	end,
-	server_players_left_safe_zone = function(arg_3_0, arg_3_1)
+	server_players_left_safe_zone = function (arg_3_0, arg_3_1)
 		arg_3_1.has_left_safe_zone = true
 		arg_3_1.is_initial_spawn = true
 		arg_3_1.initial_spawn_time = 5
 	end,
-	server_update_function = function(arg_4_0, arg_4_1)
+	server_update_function = function (arg_4_0, arg_4_1)
 		if not arg_4_1.has_left_safe_zone then
 			return
 		end

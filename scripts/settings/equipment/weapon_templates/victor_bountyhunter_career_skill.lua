@@ -9,7 +9,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bounty_hunter_ability_draw",
 				weapon_action_hand = "left",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -52,7 +52,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "bounty_hunter_ability_hold",
 				weapon_action_hand = "left",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -117,7 +117,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				ignore_shield_hit = true,
 				total_time = 0.66,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {},
@@ -135,7 +135,7 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "bounty_hunter_ability_cancel",
 				total_time = 0.47,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

@@ -1029,7 +1029,7 @@ local function var_0_23(arg_1_0, arg_1_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_2_0, arg_2_1)
+					content_change_function = function (arg_2_0, arg_2_1)
 						arg_2_1.text_color = arg_2_0.locked and arg_2_1.locked_text_color or arg_2_1.default_text_color
 					end
 				},
@@ -1037,7 +1037,7 @@ local function var_0_23(arg_1_0, arg_1_1)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_3_0)
+					content_check_function = function (arg_3_0)
 						return arg_3_0.use_shadow
 					end
 				}
@@ -1110,7 +1110,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			pass_type = "hotspot",
 			style_id = iter_4_1 .. "_hotspot",
 			content_id = iter_4_1,
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.item
 			end
 		}
@@ -1123,7 +1123,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			texture_id = "equipment_hover_frame",
 			pass_type = "texture",
 			style_id = iter_4_1 .. "_frame",
-			content_check_function = function(arg_6_0, arg_6_1)
+			content_check_function = function (arg_6_0, arg_6_1)
 				return arg_6_0[iter_4_1].is_hover
 			end
 		}
@@ -1131,7 +1131,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			texture_id = "lock",
 			pass_type = "texture",
 			style_id = iter_4_1 .. "_lock",
-			content_check_function = function(arg_7_0, arg_7_1)
+			content_check_function = function (arg_7_0, arg_7_1)
 				return arg_7_0[iter_4_1].is_hover and arg_7_0[iter_4_1].locked
 			end
 		}
@@ -1139,7 +1139,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			texture_id = "lock",
 			pass_type = "texture",
 			style_id = iter_4_1 .. "_lock_shadow",
-			content_check_function = function(arg_8_0, arg_8_1)
+			content_check_function = function (arg_8_0, arg_8_1)
 				return arg_8_0[iter_4_1].is_hover and arg_8_0[iter_4_1].locked
 			end
 		}
@@ -1148,7 +1148,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			pass_type = "texture",
 			style_id = iter_4_1 .. "_icon",
 			content_id = iter_4_1,
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.item and arg_9_0.icon
 			end
 		}
@@ -1168,7 +1168,7 @@ local function var_0_24(arg_4_0, arg_4_1)
 			pass_type = "item_tooltip",
 			item_id = "item",
 			content_id = iter_4_1,
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.item and arg_10_0.is_hover
 			end
 		}
@@ -1329,7 +1329,7 @@ local function var_0_25(arg_11_0, arg_11_1)
 			texture_id = "talent_hover_frame",
 			pass_type = "texture_frame",
 			style_id = var_11_7 .. "_hover_frame",
-			content_check_function = function(arg_12_0, arg_12_1)
+			content_check_function = function (arg_12_0, arg_12_1)
 				return arg_12_0[var_11_7].is_hover
 			end
 		}
@@ -1343,7 +1343,7 @@ local function var_0_25(arg_11_0, arg_11_1)
 			pass_type = "texture",
 			style_id = var_11_7,
 			content_id = var_11_7,
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return arg_13_0.talent and arg_13_0.icon
 			end
 		}
@@ -1351,7 +1351,7 @@ local function var_0_25(arg_11_0, arg_11_1)
 			texture_id = "lock_icon",
 			pass_type = "texture",
 			style_id = var_11_7 .. "_lock",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0[var_11_7].talent and arg_14_0[var_11_7].is_hover and arg_14_0.locked
 			end
 		}
@@ -1359,7 +1359,7 @@ local function var_0_25(arg_11_0, arg_11_1)
 			texture_id = "lock_icon",
 			pass_type = "texture",
 			style_id = var_11_7 .. "_lock_shadow",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0[var_11_7].talent and arg_15_0[var_11_7].is_hover and arg_15_0.locked
 			end
 		}
@@ -1369,7 +1369,7 @@ local function var_0_25(arg_11_0, arg_11_1)
 			pass_type = "talent_tooltip",
 			talent_id = "talent",
 			content_id = var_11_7,
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.talent and arg_16_0.is_hover
 			end
 		}
@@ -1552,7 +1552,7 @@ local function var_0_26(arg_17_0, arg_17_1)
 				texture_id = "talent_hover_frame",
 				pass_type = "texture_frame",
 				style_id = var_17_9 .. "_hover_frame",
-				content_check_function = function(arg_18_0, arg_18_1)
+				content_check_function = function (arg_18_0, arg_18_1)
 					return arg_18_0[var_17_9].is_hover
 				end
 			}
@@ -1560,7 +1560,7 @@ local function var_0_26(arg_17_0, arg_17_1)
 				pass_type = "hotspot",
 				style_id = var_17_9,
 				content_id = var_17_9,
-				content_check_function = function(arg_19_0)
+				content_check_function = function (arg_19_0)
 					return arg_19_0.talent
 				end
 			}
@@ -1569,7 +1569,7 @@ local function var_0_26(arg_17_0, arg_17_1)
 				pass_type = "texture",
 				style_id = var_17_9,
 				content_id = var_17_9,
-				content_check_function = function(arg_20_0)
+				content_check_function = function (arg_20_0)
 					return arg_20_0.talent and arg_20_0.icon
 				end
 			}
@@ -1579,7 +1579,7 @@ local function var_0_26(arg_17_0, arg_17_1)
 				talent_id = "talent",
 				style_id = "talent_tooltip_" .. iter_17_0,
 				content_id = var_17_9,
-				content_check_function = function(arg_21_0)
+				content_check_function = function (arg_21_0)
 					return arg_21_0.talent and arg_21_0.is_hover
 				end
 			}
@@ -1652,7 +1652,7 @@ local function var_0_27(arg_22_0, arg_22_1, arg_22_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function(arg_23_0, arg_23_1)
+					content_change_function = function (arg_23_0, arg_23_1)
 						arg_23_1.offset[1] = arg_23_0.default_loadout and 25 or 0
 					end
 				},
@@ -1660,7 +1660,7 @@ local function var_0_27(arg_22_0, arg_22_1, arg_22_2)
 					pass_type = "texture",
 					style_id = "lock_icon",
 					texture_id = "lock_icon",
-					content_check_function = function(arg_24_0, arg_24_1)
+					content_check_function = function (arg_24_0, arg_24_1)
 						return arg_24_0.default_loadout
 					end
 				}
@@ -1947,19 +1947,19 @@ local var_0_47 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
 				arg_26_3.render_settings.alpha_multiplier = 0
 				arg_26_0.area_left.local_position[1] = arg_26_1.area_left.position[1] - 200
 				arg_26_0.area_right.local_position[1] = arg_26_1.area_right.position[1] + 200
 			end,
-			update = function(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 				local var_27_0 = math.easeOutCubic(arg_27_3)
 
 				arg_27_4.render_settings.alpha_multiplier = var_27_0 * var_27_0 * var_27_0
 				arg_27_0.area_left.local_position[1] = math.lerp(arg_27_1.area_left.position[1] - 200, arg_27_1.area_left.position[1], var_27_0)
 				arg_27_0.area_right.local_position[1] = math.lerp(arg_27_1.area_right.position[1] + 400, arg_27_1.area_right.position[1], var_27_0)
 			end,
-			on_complete = function(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 				return
 			end
 		}
@@ -1969,17 +1969,17 @@ local var_0_47 = {
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
 				arg_29_3.render_settings.alpha_multiplier = 0
 				arg_29_0.loadout_anchor.local_position[1] = arg_29_1.loadout_anchor.position[1] - 75
 			end,
-			update = function(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 				local var_30_0 = math.easeOutCubic(arg_30_3)
 
 				arg_30_4.render_settings.alpha_multiplier = var_30_0 * var_30_0 * var_30_0
 				arg_30_0.loadout_anchor.local_position[1] = math.lerp(arg_30_1.loadout_anchor.position[1] - 75, arg_30_1.loadout_anchor.position[1], var_30_0)
 			end,
-			on_complete = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				return
 			end
 		}
@@ -1989,17 +1989,17 @@ local var_0_47 = {
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function(arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
 				arg_32_3.render_settings.alpha_multiplier = 0
 				arg_32_0.loadout_anchor.local_position[1] = arg_32_1.loadout_anchor.position[1] + 75
 			end,
-			update = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 				local var_33_0 = math.easeOutCubic(arg_33_3)
 
 				arg_33_4.render_settings.alpha_multiplier = var_33_0 * var_33_0 * var_33_0
 				arg_33_0.loadout_anchor.local_position[1] = math.lerp(arg_33_1.loadout_anchor.position[1] + 75, arg_33_1.loadout_anchor.position[1], var_33_0)
 			end,
-			on_complete = function(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 				return
 			end
 		}

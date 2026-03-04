@@ -12,7 +12,7 @@ local var_0_0 = {
 	"looking_to_play"
 }
 
-function SteamHelper.debug_friends()
+SteamHelper.debug_friends = function ()
 	local var_1_0 = 5
 	local var_1_1 = {}
 
@@ -28,7 +28,7 @@ function SteamHelper.debug_friends()
 	return var_1_1
 end
 
-function SteamHelper.friends()
+SteamHelper.friends = function ()
 	local var_2_0 = Friends.num_friends()
 	local var_2_1 = {}
 	local var_2_2 = Steam.app_id()
@@ -65,7 +65,7 @@ function SteamHelper.friends()
 	return var_2_1
 end
 
-function SteamHelper.is_dev()
+SteamHelper.is_dev = function ()
 	if rawget(_G, "Clans") then
 		return SteamHelper.is_in_clan("170000000a021fa")
 	else
@@ -73,7 +73,7 @@ function SteamHelper.is_dev()
 	end
 end
 
-function SteamHelper.is_in_clan(arg_4_0)
+SteamHelper.is_in_clan = function (arg_4_0)
 	local var_4_0 = Clans.clan_count()
 
 	for iter_4_0 = 0, var_4_0 - 1 do
@@ -85,7 +85,7 @@ function SteamHelper.is_in_clan(arg_4_0)
 	return false
 end
 
-function SteamHelper.clans_short()
+SteamHelper.clans_short = function ()
 	if rawget(_G, "Clans") then
 		local var_5_0 = Clans.clan_count()
 		local var_5_1 = {}
@@ -102,7 +102,7 @@ function SteamHelper.clans_short()
 	end
 end
 
-function SteamHelper.clans()
+SteamHelper.clans = function ()
 	local var_6_0 = Clans.clan_count()
 	local var_6_1 = {}
 

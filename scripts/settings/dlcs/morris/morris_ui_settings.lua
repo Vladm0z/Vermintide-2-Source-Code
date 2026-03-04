@@ -15,7 +15,7 @@ var_0_0.ui_views = {
 			deus = true
 		},
 		transitions = {
-			deus_cursed_chest = function(arg_1_0)
+			deus_cursed_chest = function (arg_1_0)
 				arg_1_0.current_view = "deus_cursed_chest"
 			end
 		}
@@ -30,7 +30,7 @@ var_0_0.ui_views = {
 			deus = true
 		},
 		transitions = {
-			deus_debug_changelog_view = function(arg_2_0)
+			deus_debug_changelog_view = function (arg_2_0)
 				arg_2_0.current_view = "deus_debug_changelog_view"
 			end
 		}
@@ -150,7 +150,7 @@ var_0_0.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_quickplay = 3
 			},
-			can_add_function = function(arg_3_0)
+			can_add_function = function (arg_3_0)
 				return arg_3_0:is_in_mechanism("deus")
 			end,
 			save_data_table = var_0_2.custom
@@ -173,7 +173,7 @@ var_0_0.start_game_window_layout_console = {
 				deus_custom_game = 3,
 				deus_background = 2
 			},
-			can_add_function = function(arg_4_0)
+			can_add_function = function (arg_4_0)
 				return arg_4_0:is_in_mechanism("deus")
 			end,
 			save_data_table = var_0_2.custom
@@ -194,10 +194,10 @@ var_0_0.start_game_window_layout_console = {
 				deus_twitch = 3,
 				deus_background = 2
 			},
-			can_add_function = function(arg_5_0)
+			can_add_function = function (arg_5_0)
 				return arg_5_0:is_in_mechanism("deus") and arg_5_0:can_use_streaming()
 			end,
-			should_draw_god_info = function(arg_6_0)
+			should_draw_god_info = function (arg_6_0)
 				return arg_6_0.is_server
 			end,
 			save_data_table = var_0_2.twitch
@@ -217,7 +217,7 @@ var_0_0.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_weekly_event = 3
 			},
-			can_add_function = function(arg_7_0)
+			can_add_function = function (arg_7_0)
 				if Managers.account:offline_mode() then
 					return false
 				end
@@ -241,7 +241,7 @@ var_0_0.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_lobby_browser = 3
 			},
-			can_add_function = function(arg_8_0)
+			can_add_function = function (arg_8_0)
 				return arg_8_0:is_in_mechanism("deus") and not IS_XB1
 			end,
 			save_data_table = var_0_2.lobby_browser
@@ -518,7 +518,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 				input_action = "show_gamercard",
 				priority = 5,
 				description_text = "map_friend_button_tooltip",
-				content_check_function = function()
+				content_check_function = function ()
 					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
@@ -557,7 +557,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 				input_action = "show_gamercard",
 				priority = 6,
 				description_text = "map_friend_button_tooltip",
-				content_check_function = function()
+				content_check_function = function ()
 					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
@@ -591,7 +591,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 				input_action = "show_gamercard",
 				priority = 5,
 				description_text = "map_friend_button_tooltip",
-				content_check_function = function()
+				content_check_function = function ()
 					return not IS_WINDOWS and not Managers.account:offline_mode()
 				end
 			}
@@ -688,7 +688,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -719,7 +719,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -750,7 +750,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -781,7 +781,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 5,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -801,7 +801,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}
@@ -821,7 +821,7 @@ var_0_0.start_game_layout_console_generic_inputs = {
 			input_action = "show_gamercard",
 			priority = 3,
 			description_text = "map_friend_button_tooltip",
-			content_check_function = function()
+			content_check_function = function ()
 				return not IS_WINDOWS and not Managers.account:offline_mode()
 			end
 		}

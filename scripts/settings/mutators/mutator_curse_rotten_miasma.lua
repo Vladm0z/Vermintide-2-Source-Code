@@ -103,7 +103,7 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_rotten_miasma"
 	},
-	server_update_function = function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 		if not arg_6_1.rotten_miasma_safe_area then
 			local var_6_0, var_6_1 = var_0_6(var_0_7)
 
@@ -130,7 +130,7 @@ return {
 
 		var_0_2(arg_6_1.rotten_miasma_safe_area, arg_6_1.target_to_follow)
 	end,
-	server_stop_function = function(arg_7_0, arg_7_1, arg_7_2)
+	server_stop_function = function (arg_7_0, arg_7_1, arg_7_2)
 		local var_7_0 = arg_7_1.rotten_miasma_safe_area
 
 		if ALIVE[var_7_0] then

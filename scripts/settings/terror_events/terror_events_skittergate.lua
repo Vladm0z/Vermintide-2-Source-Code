@@ -48,13 +48,13 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_1_0)
+			condition = function (arg_1_0)
 				return var_0_1("chaos_exalted_champion_norsca") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function(arg_2_0)
+			condition = function (arg_2_0)
 				return var_0_1("chaos_exalted_champion_norsca") < 1
 			end
 		},
@@ -64,7 +64,7 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_3_0)
+			condition = function (arg_3_0)
 				return var_0_1("chaos_exalted_champion_norsca") < 1 and var_0_1("chaos_spawn_exalted_champion_norsca") < 1
 			end
 		},
@@ -124,7 +124,7 @@ local var_0_3 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function(arg_4_0)
+			condition = function (arg_4_0)
 				return var_0_1("skaven_clan_rat") < 5 and var_0_1("skaven_slave") < 5
 			end
 		},
@@ -152,7 +152,7 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_5_0)
+			condition = function (arg_5_0)
 				return var_0_1("skaven_stormfiend_boss") == 1
 			end
 		},
@@ -162,7 +162,7 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_6_0)
+			condition = function (arg_6_0)
 				return var_0_2("skaven_stormfiend_boss") < 1
 			end
 		},
@@ -176,7 +176,7 @@ local var_0_3 = {
 		},
 		{
 			"continue_when",
-			condition = function(arg_7_0)
+			condition = function (arg_7_0)
 				return var_0_2("skaven_grey_seer") < 1
 			end
 		},

@@ -100,7 +100,7 @@ local var_0_1 = {
 		0,
 		170
 	},
-	stagger_modifier_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		if arg_1_4.stagger_type == var_0_0.heavy then
 			if arg_1_0 == var_0_0.heavy and arg_1_4.heavy_stagger_immune_time then
 				arg_1_0 = var_0_0.none
@@ -562,7 +562,7 @@ local var_0_3 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_horde
 	},
 	stagger = {
-		custom_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			if arg_2_1.standard_bearer_stagger then
 				local var_2_0 = arg_2_3.standard_stagger_anims[arg_2_1.stagger_type]
 

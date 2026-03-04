@@ -89,7 +89,7 @@ local function var_0_5(arg_2_0, arg_2_1)
 end
 
 return {
-	init = function(arg_3_0)
+	init = function (arg_3_0)
 		arg_3_0.init_state = "not_initialized"
 
 		if not Managers.account:user_detached() then
@@ -100,7 +100,7 @@ return {
 
 		arg_3_0._unlocked_achievements = Managers.account:get_unlocked_achievement_list()
 	end,
-	update = function(arg_4_0)
+	update = function (arg_4_0)
 		if arg_4_0.init_state == "not_initialized" then
 			if not Managers.account:user_detached() then
 				var_0_4()
@@ -119,19 +119,19 @@ return {
 			return true
 		end
 	end,
-	check_version_number = function()
+	check_version_number = function ()
 		return true
 	end,
-	version_result = function(arg_6_0)
+	version_result = function (arg_6_0)
 		return true
 	end,
-	is_unlocked = function(arg_7_0)
+	is_unlocked = function (arg_7_0)
 		return not arg_7_0.ID_XB1
 	end,
-	is_platform_achievement = function(arg_8_0)
+	is_platform_achievement = function (arg_8_0)
 		return arg_8_0.ID_XB1
 	end,
-	verify_platform_unlocked = function(arg_9_0)
+	verify_platform_unlocked = function (arg_9_0)
 		if not rawget(_G, "XB1Achievements") then
 			return
 		end
@@ -198,7 +198,7 @@ return {
 
 		return var_9_7, var_9_8
 	end,
-	set_progress = function(arg_10_0, arg_10_1, arg_10_2)
+	set_progress = function (arg_10_0, arg_10_1, arg_10_2)
 		if arg_10_1 > 0 then
 			local var_10_0 = arg_10_1 / arg_10_2 * 100
 			local var_10_1 = math.floor(var_10_0 + 0.5)
@@ -206,10 +206,10 @@ return {
 			return var_0_5(arg_10_0, var_10_1)
 		end
 	end,
-	unlock = function(arg_11_0)
+	unlock = function (arg_11_0)
 		return var_0_5(arg_11_0, 100)
 	end,
-	unlock_result = function(arg_12_0, arg_12_1)
+	unlock_result = function (arg_12_0, arg_12_1)
 		local var_12_0 = Achievements2017.progress_task_status(XB1Achievements)
 
 		if var_12_0 == var_0_1 then
@@ -227,7 +227,7 @@ return {
 			return true, "error"
 		end
 	end,
-	reset = function()
+	reset = function ()
 		errorf("Tried to reset Achievements, not implemented!")
 	end
 }

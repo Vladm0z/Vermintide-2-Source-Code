@@ -12,7 +12,7 @@ local var_0_1 = {
 	"locked"
 }
 
-function CameraStateObserverSpectator.on_enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+CameraStateObserverSpectator.on_enter = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	arg_1_0._current_view_id = 1
 	arg_1_0._num_views = #var_0_0
 	arg_1_0._locked_rotation = false
@@ -46,7 +46,7 @@ end
 
 local var_0_2 = math.pi / 2 - math.pi / 15
 
-function CameraStateObserverSpectator.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+CameraStateObserverSpectator.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 	local var_2_0 = arg_2_0.csm
 	local var_2_1 = arg_2_0.camera_extension
 	local var_2_2 = var_2_1.external_state_change
@@ -116,7 +116,7 @@ function CameraStateObserverSpectator.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3,
 		var_2_21 = Unit.local_rotation(var_2_9, 0)
 		var_2_21 = Quaternion.multiply(var_2_21, var_2_20)
 	elseif arg_2_0._rotation_state == "locked" then
-		-- block empty
+		-- Nothing
 	else
 		local var_2_22 = Quaternion.yaw(var_2_18) - var_2_15.x
 		local var_2_23 = Quaternion(Vector3.up(), var_2_22)

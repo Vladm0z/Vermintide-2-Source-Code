@@ -53,7 +53,7 @@ local function var_0_0(arg_1_0, arg_1_1, arg_1_2)
 	return var_1_1, var_1_2
 end
 
-function DataCounter.analyze_table(arg_2_0, arg_2_1, ...)
+DataCounter.analyze_table = function (arg_2_0, arg_2_1, ...)
 	local var_2_0 = {}
 
 	for iter_2_0 = 1, select("#", ...) do

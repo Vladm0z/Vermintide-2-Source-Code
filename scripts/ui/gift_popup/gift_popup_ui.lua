@@ -6,7 +6,7 @@ local var_0_0 = 1.5
 
 GiftPopupUI = class(GiftPopupUI)
 
-function GiftPopupUI.init(arg_1_0, arg_1_1, arg_1_2)
+GiftPopupUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._is_in_inn = arg_1_2.is_in_inn
 
@@ -22,15 +22,15 @@ function GiftPopupUI.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "event_initialize_poll")
 end
 
-function GiftPopupUI.event_initialize_poll(arg_2_0)
+GiftPopupUI.event_initialize_poll = function (arg_2_0)
 	arg_2_0._poll_initialized = true
 end
 
-function GiftPopupUI.update(arg_3_0, arg_3_1, arg_3_2)
+GiftPopupUI.update = function (arg_3_0, arg_3_1, arg_3_2)
 	return
 end
 
-function GiftPopupUI.post_update(arg_4_0, arg_4_1, arg_4_2)
+GiftPopupUI.post_update = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0._reward_popup
 	local var_4_1 = arg_4_0._presentation_queue
 
@@ -59,11 +59,11 @@ function GiftPopupUI.post_update(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function GiftPopupUI.has_presentation_data(arg_5_0)
+GiftPopupUI.has_presentation_data = function (arg_5_0)
 	return #arg_5_0._presentation_queue > 0 or arg_5_0._reward_popup:is_presentation_active()
 end
 
-function GiftPopupUI._can_present_reward(arg_6_0)
+GiftPopupUI._can_present_reward = function (arg_6_0)
 	if arg_6_0._reward_popup:is_presentation_active() then
 		return false
 	end
@@ -81,7 +81,7 @@ function GiftPopupUI._can_present_reward(arg_6_0)
 	return true
 end
 
-function GiftPopupUI._generate_presentation_data(arg_7_0, arg_7_1)
+GiftPopupUI._generate_presentation_data = function (arg_7_0, arg_7_1)
 	return {
 		animation_data = {
 			claim_button = true
@@ -102,15 +102,15 @@ function GiftPopupUI._generate_presentation_data(arg_7_0, arg_7_1)
 	}
 end
 
-function GiftPopupUI.active(arg_8_0)
+GiftPopupUI.active = function (arg_8_0)
 	return arg_8_0._reward_popup:is_presentation_active()
 end
 
-function GiftPopupUI.active_input_service(arg_9_0)
+GiftPopupUI.active_input_service = function (arg_9_0)
 	return arg_9_0._reward_popup:input_service()
 end
 
-function GiftPopupUI.destroy(arg_10_0)
+GiftPopupUI.destroy = function (arg_10_0)
 	arg_10_0._reward_popup:destroy()
 
 	arg_10_0._reward_popup = nil

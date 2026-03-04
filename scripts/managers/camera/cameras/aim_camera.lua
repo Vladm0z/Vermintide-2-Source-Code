@@ -4,25 +4,25 @@ require("scripts/managers/camera/cameras/base_camera")
 
 AimCamera = class(AimCamera, BaseCamera)
 
-function AimCamera.init(arg_1_0, arg_1_1)
+AimCamera.init = function (arg_1_0, arg_1_1)
 	BaseCamera.init(arg_1_0, arg_1_1)
 
 	arg_1_0._root_node = arg_1_1
 end
 
-function AimCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+AimCamera.parse_parameters = function (arg_2_0, arg_2_1, arg_2_2)
 	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
 end
 
-function AimCamera.set_root_unit(arg_3_0, arg_3_1, arg_3_2)
+AimCamera.set_root_unit = function (arg_3_0, arg_3_1, arg_3_2)
 	BaseCamera.set_root_unit(arg_3_0, arg_3_1, arg_3_2)
 end
 
-function AimCamera.set_root_rotation(arg_4_0, arg_4_1)
+AimCamera.set_root_rotation = function (arg_4_0, arg_4_1)
 	BaseCamera.set_root_rotation(arg_4_0, arg_4_1)
 end
 
-function AimCamera.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+AimCamera.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	local var_5_0 = arg_5_0._root_node
 	local var_5_1 = var_5_0:aim_pitch()
 	local var_5_2 = var_5_0:aim_yaw()

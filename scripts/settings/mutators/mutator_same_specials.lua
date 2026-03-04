@@ -4,7 +4,7 @@ return {
 	description = "description_mutator_same_specials",
 	icon = "mutator_icon_specials_frequency",
 	display_name = "display_name_mutator_same_specials",
-	update_conflict_settings = function(arg_1_0, arg_1_1)
+	update_conflict_settings = function (arg_1_0, arg_1_1)
 		local var_1_0 = CurrentSpecialsSettings.methods.specials_by_slots
 
 		var_1_0.select_next_breed = "get_random_breed"

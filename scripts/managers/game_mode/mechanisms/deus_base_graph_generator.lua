@@ -315,10 +315,10 @@ local function var_0_18(arg_17_0, arg_17_1, arg_17_2)
 end
 
 local var_0_19 = {
-	check_if_not_already_connected = function(arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	check_if_not_already_connected = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
 		return not table.contains(arg_18_1[arg_18_2].next, arg_18_3)
 	end,
-	check_if_does_not_create_cycle = function(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	check_if_does_not_create_cycle = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 		if arg_19_2 == arg_19_3 then
 			return false
 		end
@@ -329,19 +329,19 @@ local var_0_19 = {
 
 		return true
 	end,
-	check_if_not_at_max_incoming_connections = function(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+	check_if_not_at_max_incoming_connections = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
 		return #arg_20_1[arg_20_3].prev < arg_20_0.MAX_INCOMING_CONNECTIONS_PER_NODE
 	end,
-	check_if_not_dummy = function(arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	check_if_not_dummy = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
 		return arg_21_1[arg_21_3].type ~= "DUMMY"
 	end,
-	check_if_layer_above = function(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	check_if_layer_above = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 		local var_22_0 = arg_22_1[arg_22_2]
 		local var_22_1 = arg_22_1[arg_22_3]
 
 		return var_22_0.layout_x == var_22_1.layout_x - 1
 	end,
-	check_if_does_not_create_crossing = function(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	check_if_does_not_create_crossing = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 		local var_23_0 = arg_23_1[arg_23_2]
 		local var_23_1 = arg_23_1[arg_23_3]
 
@@ -357,7 +357,7 @@ local var_0_19 = {
 
 		return true
 	end,
-	check_if_not_repeating_labels = function(arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+	check_if_not_repeating_labels = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
 		local var_24_0 = var_0_17(arg_24_1, "start")
 
 		for iter_24_0, iter_24_1 in ipairs(var_24_0) do
@@ -391,33 +391,33 @@ local var_0_19 = {
 }
 local var_0_20 = {
 	{
-		check_if_not_over_limit_of_straight_line = function(arg_25_0, arg_25_1, arg_25_2)
+		check_if_not_over_limit_of_straight_line = function (arg_25_0, arg_25_1, arg_25_2)
 			return var_0_15(arg_25_1, arg_25_2) < arg_25_0.MAX_STRAIGHT_LINE
 		end,
-		check_if_not_start_node = function(arg_26_0, arg_26_1, arg_26_2)
+		check_if_not_start_node = function (arg_26_0, arg_26_1, arg_26_2)
 			return arg_26_0.MAX_CONNECTIONS_PER_NODE == 1 or arg_26_2 ~= "start"
 		end
 	},
 	{
-		check_if_not_over_max_paths = function(arg_27_0, arg_27_1, arg_27_2)
+		check_if_not_over_max_paths = function (arg_27_0, arg_27_1, arg_27_2)
 			return #var_0_13(arg_27_1, arg_27_2, "TRAVEL") < arg_27_0.MAX_PATHS
 		end,
-		check_if_not_dummy = function(arg_28_0, arg_28_1, arg_28_2)
+		check_if_not_dummy = function (arg_28_0, arg_28_1, arg_28_2)
 			return arg_28_1[arg_28_2].type ~= "DUMMY"
 		end,
-		check_if_not_start_node = function(arg_29_0, arg_29_1, arg_29_2)
+		check_if_not_start_node = function (arg_29_0, arg_29_1, arg_29_2)
 			return arg_29_0.MAX_CONNECTIONS_PER_NODE == 1 or arg_29_2 ~= "start"
 		end
 	},
 	{
-		enforce_only_start_node = function(arg_30_0, arg_30_1, arg_30_2)
+		enforce_only_start_node = function (arg_30_0, arg_30_1, arg_30_2)
 			return arg_30_0.MAX_CONNECTIONS_PER_NODE == 1 or arg_30_2 == "start"
 		end
 	}
 }
 local var_0_21 = {
 	NEW = {
-		discourage_new_nodes_when_near_node_capacity = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+		discourage_new_nodes_when_near_node_capacity = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 			local var_31_0 = 0
 
 			for iter_31_0, iter_31_1 in pairs(arg_31_1) do
@@ -439,15 +439,15 @@ local var_0_21 = {
 	FINAL = {}
 }
 local var_0_22 = {
-	force_start_on_start_node = function(arg_32_0, arg_32_1, arg_32_2)
+	force_start_on_start_node = function (arg_32_0, arg_32_1, arg_32_2)
 		return arg_32_2 == "START"
 	end
 }
 local var_0_23 = {
-	end_with_arena = function(arg_33_0, arg_33_1, arg_33_2)
+	end_with_arena = function (arg_33_0, arg_33_1, arg_33_2)
 		return arg_33_2 == "ARENA"
 	end,
-	only_one_signature_level_required_before_final_level = function(arg_34_0, arg_34_1, arg_34_2)
+	only_one_signature_level_required_before_final_level = function (arg_34_0, arg_34_1, arg_34_2)
 		local var_34_0 = arg_34_1.final
 
 		while var_34_0 do
@@ -470,7 +470,7 @@ local var_0_23 = {
 
 		return false
 	end,
-	check_minimum_nodes = function(arg_35_0, arg_35_1, arg_35_2)
+	check_minimum_nodes = function (arg_35_0, arg_35_1, arg_35_2)
 		local var_35_0 = 0
 
 		for iter_35_0, iter_35_1 in pairs(arg_35_1) do
@@ -486,7 +486,7 @@ local var_0_23 = {
 }
 local var_0_24 = {
 	ANY = {
-		check_allowed_sequences = function(arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+		check_allowed_sequences = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
 			local var_36_0 = arg_36_0.ALLOWED_SEQUENCES
 			local var_36_1 = {}
 
@@ -521,7 +521,7 @@ local var_0_24 = {
 		end
 	},
 	ARENA = {
-		only_on_final = function(arg_37_0, arg_37_1, arg_37_2)
+		only_on_final = function (arg_37_0, arg_37_1, arg_37_2)
 			return arg_37_2 == "final"
 		end
 	},
@@ -529,7 +529,7 @@ local var_0_24 = {
 	TRAVEL = {},
 	SHOP = {},
 	DUMMY = {
-		check_if_not_creating_dummy_choice = function(arg_38_0, arg_38_1, arg_38_2)
+		check_if_not_creating_dummy_choice = function (arg_38_0, arg_38_1, arg_38_2)
 			local var_38_0 = arg_38_1[arg_38_2].prev
 
 			for iter_38_0, iter_38_1 in ipairs(var_38_0) do
@@ -544,7 +544,7 @@ local var_0_24 = {
 
 			return true
 		end,
-		check_if_not_creating_consecutive_dummies = function(arg_39_0, arg_39_1, arg_39_2)
+		check_if_not_creating_consecutive_dummies = function (arg_39_0, arg_39_1, arg_39_2)
 			local var_39_0 = arg_39_1[arg_39_2].prev
 
 			for iter_39_0, iter_39_1 in ipairs(var_39_0) do
@@ -559,7 +559,7 @@ local var_0_24 = {
 	START = {}
 }
 local var_0_25 = {
-	check_if_not_repeating_label = function(arg_40_0, arg_40_1, arg_40_2)
+	check_if_not_repeating_label = function (arg_40_0, arg_40_1, arg_40_2)
 		local var_40_0 = var_0_17(arg_40_1, "start")
 		local var_40_1 = arg_40_1[arg_40_2]
 		local var_40_2 = var_40_1.label
@@ -587,7 +587,7 @@ local var_0_25 = {
 	end
 }
 local var_0_26 = {
-	prefer_not_shop_if_already_having_a_shop_choice = function(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+	prefer_not_shop_if_already_having_a_shop_choice = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
 		local var_41_0 = false
 		local var_41_1 = var_0_11(arg_41_1, arg_41_2)
 
@@ -727,10 +727,10 @@ local function var_0_39(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
 
 	return {
 		name = "connect_to_existing " .. arg_46_2,
-		run = function()
+		run = function ()
 			return var_46_5()
 		end,
-		retry = function()
+		retry = function ()
 			var_46_3()
 
 			return false
@@ -773,7 +773,7 @@ local function var_0_40(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 		var_52_0.next[#var_52_0.next + 1] = var_52_2
 
 		local var_53_3 = {
-			function()
+			function ()
 				return var_0_31(arg_52_0, arg_52_1, var_52_2)
 			end
 		}
@@ -783,10 +783,10 @@ local function var_0_40(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 
 	return {
 		name = "new_node " .. arg_52_2,
-		run = function()
+		run = function ()
 			return var_52_3()
 		end,
-		retry = function()
+		retry = function ()
 			if var_52_2 then
 				arg_52_1[var_52_2] = nil
 				var_52_0.next[#var_52_0.next] = nil
@@ -812,7 +812,7 @@ local function var_0_41(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	local function var_57_2()
 		if arg_57_3 == var_0_1.NEW then
 			local var_59_0 = {
-				function()
+				function ()
 					return var_0_40(arg_57_0, arg_57_1, arg_57_2)
 				end
 			}
@@ -842,7 +842,7 @@ local function var_0_41(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 			end
 
 			local var_59_3 = {
-				function()
+				function ()
 					return var_0_39(arg_57_0, arg_57_1, arg_57_2, var_59_1)
 				end
 			}
@@ -851,7 +851,7 @@ local function var_0_41(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 		elseif arg_57_3 == var_0_1.FINAL then
 			if not arg_57_1.final then
 				local var_59_4 = {
-					function()
+					function ()
 						return var_0_40(arg_57_0, arg_57_1, arg_57_2, "final")
 					end
 				}
@@ -860,7 +860,7 @@ local function var_0_41(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 			else
 				if var_0_27(arg_57_0.config, arg_57_0.indent, arg_57_1, arg_57_2, "final") then
 					local var_59_5 = {
-						function()
+						function ()
 							return var_0_39(arg_57_0, arg_57_1, arg_57_2, "final")
 						end
 					}
@@ -877,10 +877,10 @@ local function var_0_41(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 
 	return {
 		name = "connection_type " .. arg_57_2 .. " " .. arg_57_3,
-		run = function()
+		run = function ()
 			return var_57_2()
 		end,
-		retry = function()
+		retry = function ()
 			if arg_57_3 == var_0_1.NEW then
 				return false
 			elseif arg_57_3 == var_0_1.EXISTING then
@@ -935,7 +935,7 @@ local function var_0_42(arg_66_0, arg_66_1, arg_66_2)
 		end
 
 		local var_68_1 = {
-			function()
+			function ()
 				return var_0_41(arg_66_0, arg_66_1, arg_66_2, var_68_0)
 			end
 		}
@@ -945,10 +945,10 @@ local function var_0_42(arg_66_0, arg_66_1, arg_66_2)
 
 	return {
 		name = "connection_type " .. arg_66_2,
-		run = function()
+		run = function ()
 			return var_66_2()
 		end,
-		retry = function()
+		retry = function ()
 			return var_66_2()
 		end
 	}
@@ -961,7 +961,7 @@ local function var_0_43(arg_72_0, arg_72_1, arg_72_2)
 		local var_73_0 = {}
 
 		for iter_73_0 = 1, var_72_0.connected_to do
-			var_73_0[iter_73_0] = function()
+			var_73_0[iter_73_0] = function ()
 				return var_0_42(arg_72_0, arg_72_1, arg_72_2)
 			end
 		end
@@ -971,10 +971,10 @@ local function var_0_43(arg_72_0, arg_72_1, arg_72_2)
 
 	return {
 		name = "connections " .. arg_72_2,
-		run = function()
+		run = function ()
 			return var_72_1()
 		end,
-		retry = function()
+		retry = function ()
 			return false
 		end
 	}
@@ -1020,7 +1020,7 @@ local function var_0_44(arg_77_0, arg_77_1, arg_77_2)
 		var_77_3 = var_77_0.connected_to
 
 		local var_79_1 = {
-			function()
+			function ()
 				return var_0_43(arg_77_0, arg_77_1, arg_77_2)
 			end
 		}
@@ -1030,10 +1030,10 @@ local function var_0_44(arg_77_0, arg_77_1, arg_77_2)
 
 	return {
 		name = "connect " .. arg_77_2,
-		run = function()
+		run = function ()
 			return var_77_4()
 		end,
-		retry = function()
+		retry = function ()
 			var_77_0.connected_to = nil
 
 			return var_77_4()
@@ -1118,7 +1118,7 @@ local function var_0_45(arg_83_0, arg_83_1, arg_83_2)
 			return true
 		else
 			local var_84_8 = {
-				function()
+				function ()
 					return var_0_44(arg_83_0, arg_83_1, arg_83_2)
 				end
 			}
@@ -1129,10 +1129,10 @@ local function var_0_45(arg_83_0, arg_83_1, arg_83_2)
 
 	return {
 		name = "node_label " .. arg_83_2,
-		run = function()
+		run = function ()
 			return var_83_4()
 		end,
-		retry = function()
+		retry = function ()
 			if var_83_3 then
 				var_83_0.label = nil
 
@@ -1176,7 +1176,7 @@ function var_0_31(arg_88_0, arg_88_1, arg_88_2)
 		end
 
 		local var_89_1 = {
-			function()
+			function ()
 				return var_0_45(arg_88_0, arg_88_1, arg_88_2)
 			end
 		}
@@ -1186,10 +1186,10 @@ function var_0_31(arg_88_0, arg_88_1, arg_88_2)
 
 	return {
 		name = "node " .. arg_88_2,
-		run = function()
+		run = function ()
 			return var_88_2()
 		end,
-		retry = function()
+		retry = function ()
 			var_88_0.type = nil
 
 			return var_88_2()
@@ -1286,7 +1286,7 @@ function deus_base_graph_generator(arg_94_0, arg_94_1)
 	}
 	local var_94_7 = DeusGenEngine.get_generator(var_94_6, var_94_5)
 
-	return function()
+	return function ()
 		local var_96_0, var_96_1 = var_94_7()
 
 		if var_96_0 then

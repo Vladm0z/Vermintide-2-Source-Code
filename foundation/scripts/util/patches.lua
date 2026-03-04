@@ -8,7 +8,7 @@ local function var_0_0(arg_1_0)
 	assert(getmetatable(var_1_0) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
 
 	return rawset(_G, arg_1_0, setmetatable(var_1_0, {
-		__index = function(arg_2_0, arg_2_1)
+		__index = function (arg_2_0, arg_2_1)
 			if not script_data.disable_auto_patch_missing_methods then
 				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", arg_1_0, arg_2_1, Script.callstack())
 
@@ -22,12 +22,12 @@ end
 
 MockClass = MockClass or {}
 
-function MockClass.new()
+MockClass.new = function ()
 	return MockClass
 end
 
 local var_0_1 = {
-	__index = function(arg_4_0, arg_4_1)
+	__index = function (arg_4_0, arg_4_1)
 		return NOP
 	end,
 	update = NOP
@@ -98,7 +98,7 @@ if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	DisplayAdapter.num_outputs = CONST(0)
 	DisplayAdapter.num_modes = CONST(0)
 
-	function DisplayAdapter.mode()
+	DisplayAdapter.mode = function ()
 		return 1, 1
 	end
 
@@ -137,7 +137,7 @@ if not __STRING_FORMAT then
 	__STRING_FORMAT = __STRING_FORMAT or string.format
 	string._format = string.format
 
-	function string.format(arg_6_0, ...)
+	string.format = function (arg_6_0, ...)
 		if var_0_2[arg_6_0] then
 			return __STRING_FORMAT(arg_6_0, ...)
 		end

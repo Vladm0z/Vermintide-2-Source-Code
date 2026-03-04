@@ -10,7 +10,7 @@ local var_0_1 = {
 
 AdventureSpawning = class(AdventureSpawning)
 
-function AdventureSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+AdventureSpawning.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._profile_synchronizer = arg_1_1
 	arg_1_0._side = arg_1_2
 	arg_1_0._is_server = arg_1_3
@@ -27,7 +27,7 @@ function AdventureSpawning.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 	arg_1_0:_setup_game_mode_data(arg_1_2, arg_1_0._saved_game_mode_data)
 end
 
-function AdventureSpawning._setup_game_mode_data(arg_2_0, arg_2_1, arg_2_2)
+AdventureSpawning._setup_game_mode_data = function (arg_2_0, arg_2_1, arg_2_2)
 	local var_2_0 = arg_2_1.party.num_slots
 
 	for iter_2_0 = 1, var_2_0 do
@@ -35,11 +35,11 @@ function AdventureSpawning._setup_game_mode_data(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function AdventureSpawning.get_saved_game_mode_data(arg_3_0)
+AdventureSpawning.get_saved_game_mode_data = function (arg_3_0)
 	return arg_3_0._saved_game_mode_data
 end
 
-function AdventureSpawning.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
+AdventureSpawning.register_rpcs = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_1:register(arg_4_0, unpack(var_0_1))
 
 	arg_4_0._network_event_delegate = arg_4_1
@@ -47,14 +47,14 @@ function AdventureSpawning.register_rpcs(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0._respawn_handler:register_rpcs(arg_4_1, arg_4_2)
 end
 
-function AdventureSpawning.unregister_rpcs(arg_5_0)
+AdventureSpawning.unregister_rpcs = function (arg_5_0)
 	arg_5_0._respawn_handler:unregister_rpcs()
 	arg_5_0._network_event_delegate:unregister(arg_5_0)
 
 	arg_5_0._network_event_delegate = nil
 end
 
-function AdventureSpawning._assign_data_to_slot(arg_6_0, arg_6_1, arg_6_2)
+AdventureSpawning._assign_data_to_slot = function (arg_6_0, arg_6_1, arg_6_2)
 	if table.is_empty(arg_6_2) then
 		local var_6_0
 		local var_6_1
@@ -138,7 +138,7 @@ function AdventureSpawning._assign_data_to_slot(arg_6_0, arg_6_1, arg_6_2)
 	arg_6_1.game_mode_data = arg_6_2
 end
 
-function AdventureSpawning._unassign_data_from_slot(arg_7_0, arg_7_1, arg_7_2)
+AdventureSpawning._unassign_data_from_slot = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_2.health_state
 
 	if var_7_0 == "respawning" or var_7_0 == "respawn" then
@@ -157,7 +157,7 @@ function AdventureSpawning._unassign_data_from_slot(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_1.game_mode_data = {}
 end
 
-function AdventureSpawning.player_entered_game_session(arg_8_0, arg_8_1, arg_8_2)
+AdventureSpawning.player_entered_game_session = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.party:get_party_from_player_id(arg_8_1, arg_8_2)
 	local var_8_1 = arg_8_0._side.party
 
@@ -172,7 +172,7 @@ function AdventureSpawning.player_entered_game_session(arg_8_0, arg_8_1, arg_8_2
 	arg_8_0:_assign_data_to_slot(var_8_3, var_8_4)
 end
 
-function AdventureSpawning.player_joined_party(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+AdventureSpawning.player_joined_party = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 	local var_9_0 = arg_9_0._side.party
 
 	if var_9_0.party_id ~= arg_9_3 then
@@ -185,7 +185,7 @@ function AdventureSpawning.player_joined_party(arg_9_0, arg_9_1, arg_9_2, arg_9_
 	arg_9_0:_assign_data_to_slot(var_9_1, var_9_2)
 end
 
-function AdventureSpawning.player_left_party(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+AdventureSpawning.player_left_party = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
 	if arg_10_0._side.party.party_id ~= arg_10_3 then
 		return
 	end
@@ -195,13 +195,13 @@ function AdventureSpawning.player_left_party(arg_10_0, arg_10_1, arg_10_2, arg_1
 	arg_10_0:_unassign_data_from_slot(arg_10_5, var_10_0)
 end
 
-function AdventureSpawning.update(arg_11_0, arg_11_1, arg_11_2)
+AdventureSpawning.update = function (arg_11_0, arg_11_1, arg_11_2)
 	if Managers.state.network:game() then
 		arg_11_0._respawn_handler:update(arg_11_2, arg_11_1)
 	end
 end
 
-function AdventureSpawning.server_update(arg_12_0, arg_12_1, arg_12_2)
+AdventureSpawning.server_update = function (arg_12_0, arg_12_1, arg_12_2)
 	if Managers.state.network:game() then
 		local var_12_0 = arg_12_0._side.party
 		local var_12_1 = var_12_0.occupied_slots
@@ -219,7 +219,7 @@ function AdventureSpawning.server_update(arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-function AdventureSpawning._update_player_status(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+AdventureSpawning._update_player_status = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = Managers.player
 	local var_13_1 = ScriptUnit.extension
 
@@ -304,7 +304,7 @@ function AdventureSpawning._update_player_status(arg_13_0, arg_13_1, arg_13_2, a
 	end
 end
 
-function AdventureSpawning._update_spawning(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+AdventureSpawning._update_spawning = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	if arg_14_0._spawning then
 		local var_14_0 = Network.peer_id()
 		local var_14_1 = false
@@ -368,14 +368,14 @@ function AdventureSpawning._update_spawning(arg_14_0, arg_14_1, arg_14_2, arg_14
 	end
 end
 
-function AdventureSpawning.add_delayed_client(arg_15_0, arg_15_1, arg_15_2)
+AdventureSpawning.add_delayed_client = function (arg_15_0, arg_15_1, arg_15_2)
 	arg_15_0._delayed_clients[#arg_15_0._delayed_clients + 1] = {
 		peer_id = arg_15_1,
 		local_player_id = arg_15_2
 	}
 end
 
-function AdventureSpawning.remove_delayed_client(arg_16_0, arg_16_1, arg_16_2)
+AdventureSpawning.remove_delayed_client = function (arg_16_0, arg_16_1, arg_16_2)
 	for iter_16_0 = #arg_16_0._delayed_clients, 1, -1 do
 		local var_16_0 = arg_16_0._delayed_clients[iter_16_0]
 
@@ -387,7 +387,7 @@ function AdventureSpawning.remove_delayed_client(arg_16_0, arg_16_1, arg_16_2)
 	end
 end
 
-function AdventureSpawning._update_joining_clients(arg_17_0, arg_17_1, arg_17_2)
+AdventureSpawning._update_joining_clients = function (arg_17_0, arg_17_1, arg_17_2)
 	if arg_17_0._spawning and arg_17_0._profile_synchronizer:all_synced() then
 		local var_17_0 = arg_17_0._network_server
 
@@ -404,7 +404,7 @@ function AdventureSpawning._update_joining_clients(arg_17_0, arg_17_1, arg_17_2)
 	end
 end
 
-function AdventureSpawning._add_client_to_party(arg_18_0, arg_18_1, arg_18_2)
+AdventureSpawning._add_client_to_party = function (arg_18_0, arg_18_1, arg_18_2)
 	if arg_18_1 ~= Network.peer_id() then
 		local var_18_0 = true
 		local var_18_1 = 1
@@ -416,7 +416,7 @@ function AdventureSpawning._add_client_to_party(arg_18_0, arg_18_1, arg_18_2)
 	end
 end
 
-function AdventureSpawning._spawn_player(arg_19_0, arg_19_1)
+AdventureSpawning._spawn_player = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_1.game_mode_data
 	local var_19_1, var_19_2 = arg_19_0:_find_spawn_point(arg_19_1)
 	local var_19_3 = var_19_0.spawn_state == "is_initial_spawn"
@@ -452,7 +452,7 @@ function AdventureSpawning._spawn_player(arg_19_0, arg_19_1)
 	var_19_0.spawn_state = var_19_3 and "initial_spawning" or "spawning"
 end
 
-function AdventureSpawning._spawn_bot(arg_20_0, arg_20_1)
+AdventureSpawning._spawn_bot = function (arg_20_0, arg_20_1)
 	local var_20_0 = arg_20_1.game_mode_data
 	local var_20_1 = var_20_0.position:unbox()
 	local var_20_2 = var_20_0.rotation:unbox()
@@ -473,7 +473,7 @@ function AdventureSpawning._spawn_bot(arg_20_0, arg_20_1)
 	var_20_0.spawn_state = "spawned"
 end
 
-function AdventureSpawning._find_spawn_point(arg_21_0, arg_21_1)
+AdventureSpawning._find_spawn_point = function (arg_21_0, arg_21_1)
 	local var_21_0
 	local var_21_1
 	local var_21_2 = Managers.state.room
@@ -492,7 +492,7 @@ function AdventureSpawning._find_spawn_point(arg_21_0, arg_21_1)
 	return var_21_0, var_21_1
 end
 
-function AdventureSpawning.force_update_spawn_positions(arg_22_0, arg_22_1, arg_22_2)
+AdventureSpawning.force_update_spawn_positions = function (arg_22_0, arg_22_1, arg_22_2)
 	local var_22_0 = arg_22_0._saved_game_mode_data
 
 	for iter_22_0 = 1, #var_22_0 do
@@ -505,17 +505,17 @@ function AdventureSpawning.force_update_spawn_positions(arg_22_0, arg_22_1, arg_
 	end
 end
 
-function AdventureSpawning.set_respawning_enabled(arg_23_0, arg_23_1)
+AdventureSpawning.set_respawning_enabled = function (arg_23_0, arg_23_1)
 	fassert(arg_23_0._respawns_enabled ~= arg_23_1, "Respawns already enabled=%s", tostring(arg_23_1))
 
 	arg_23_0._respawns_enabled = arg_23_1
 end
 
-function AdventureSpawning.set_spawning_disabled(arg_24_0, arg_24_1)
+AdventureSpawning.set_spawning_disabled = function (arg_24_0, arg_24_1)
 	arg_24_0._spawning = not arg_24_1
 end
 
-function AdventureSpawning.add_spawn_point(arg_25_0, arg_25_1)
+AdventureSpawning.add_spawn_point = function (arg_25_0, arg_25_1)
 	local var_25_0 = Unit.local_position(arg_25_1, 0)
 	local var_25_1 = Unit.local_rotation(arg_25_1, 0)
 	local var_25_2 = {
@@ -529,7 +529,7 @@ function AdventureSpawning.add_spawn_point(arg_25_0, arg_25_1)
 	arg_25_0._spawn_points[var_25_4][#arg_25_0._spawn_points[var_25_4] + 1] = var_25_2
 end
 
-function AdventureSpawning.get_spawn_point(arg_26_0)
+AdventureSpawning.get_spawn_point = function (arg_26_0)
 	local var_26_0 = "default"
 	local var_26_1 = Managers.mechanism:get_last_mechanism_switch()
 	local var_26_2 = Managers.mechanism:get_prior_state() or var_26_0
@@ -546,23 +546,23 @@ function AdventureSpawning.get_spawn_point(arg_26_0)
 	return var_26_4.pos, var_26_4.rot
 end
 
-function AdventureSpawning.respawn_unit_spawned(arg_27_0, arg_27_1)
+AdventureSpawning.respawn_unit_spawned = function (arg_27_0, arg_27_1)
 	arg_27_0._respawn_handler:respawn_unit_spawned(arg_27_1)
 end
 
-function AdventureSpawning.respawn_gate_unit_spawned(arg_28_0, arg_28_1)
+AdventureSpawning.respawn_gate_unit_spawned = function (arg_28_0, arg_28_1)
 	arg_28_0._respawn_handler:respawn_gate_unit_spawned(arg_28_1)
 end
 
-function AdventureSpawning.remove_respawn_units_due_to_crossroads(arg_29_0, arg_29_1, arg_29_2)
+AdventureSpawning.remove_respawn_units_due_to_crossroads = function (arg_29_0, arg_29_1, arg_29_2)
 	arg_29_0._respawn_handler:remove_respawn_units_due_to_crossroads(arg_29_1, arg_29_2)
 end
 
-function AdventureSpawning.recalc_respawner_dist_due_to_crossroads(arg_30_0)
+AdventureSpawning.recalc_respawner_dist_due_to_crossroads = function (arg_30_0)
 	arg_30_0._respawn_handler:recalc_respawner_dist_due_to_crossroads()
 end
 
-function AdventureSpawning.teleport_despawned_players(arg_31_0, arg_31_1)
+AdventureSpawning.teleport_despawned_players = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0._side.party.occupied_slots
 	local var_31_1 = Managers.player
 
@@ -578,45 +578,45 @@ function AdventureSpawning.teleport_despawned_players(arg_31_0, arg_31_1)
 	end
 end
 
-function AdventureSpawning.force_respawn(arg_32_0, arg_32_1, arg_32_2)
+AdventureSpawning.force_respawn = function (arg_32_0, arg_32_1, arg_32_2)
 	Managers.party:get_player_status(arg_32_1, arg_32_2).game_mode_data.spawn_state = "force_respawn"
 end
 
-function AdventureSpawning.force_respawn_dead_players(arg_33_0)
+AdventureSpawning.force_respawn_dead_players = function (arg_33_0)
 	local var_33_0 = arg_33_0._side.party
 
 	arg_33_0._respawn_handler:force_respawn_dead_players(var_33_0)
 end
 
-function AdventureSpawning.set_override_respawn_group(arg_34_0, arg_34_1, arg_34_2)
+AdventureSpawning.set_override_respawn_group = function (arg_34_0, arg_34_1, arg_34_2)
 	arg_34_0._respawn_handler:set_override_respawn_group(arg_34_1, arg_34_2)
 end
 
-function AdventureSpawning.set_respawn_group_enabled(arg_35_0, arg_35_1, arg_35_2)
+AdventureSpawning.set_respawn_group_enabled = function (arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0._respawn_handler:set_respawn_group_enabled(arg_35_1, arg_35_2)
 end
 
-function AdventureSpawning.set_respawn_gate_enabled(arg_36_0, arg_36_1, arg_36_2)
+AdventureSpawning.set_respawn_gate_enabled = function (arg_36_0, arg_36_1, arg_36_2)
 	arg_36_0._respawn_handler:set_respawn_gate_enabled(arg_36_1, arg_36_2)
 end
 
-function AdventureSpawning.get_active_respawn_units(arg_37_0)
+AdventureSpawning.get_active_respawn_units = function (arg_37_0)
 	return arg_37_0._respawn_handler:get_active_respawn_units()
 end
 
-function AdventureSpawning.get_available_and_active_respawn_units(arg_38_0)
+AdventureSpawning.get_available_and_active_respawn_units = function (arg_38_0)
 	return arg_38_0._respawn_handler:get_available_and_active_respawn_units()
 end
 
-function AdventureSpawning.set_move_dead_players_to_next_respawn(arg_39_0, arg_39_1)
+AdventureSpawning.set_move_dead_players_to_next_respawn = function (arg_39_0, arg_39_1)
 	arg_39_0._respawn_handler:set_move_dead_players_to_next_respawn(arg_39_1)
 end
 
-function AdventureSpawning.get_respawn_handler(arg_40_0)
+AdventureSpawning.get_respawn_handler = function (arg_40_0)
 	return arg_40_0._respawn_handler
 end
 
-function AdventureSpawning.add_spawn_point_to_spawn_group(arg_41_0, arg_41_1)
+AdventureSpawning.add_spawn_point_to_spawn_group = function (arg_41_0, arg_41_1)
 	if not arg_41_0._spawn_groups then
 		arg_41_0._spawn_groups = {}
 	end
@@ -640,7 +640,7 @@ function AdventureSpawning.add_spawn_point_to_spawn_group(arg_41_0, arg_41_1)
 	arg_41_0._spawn_groups[var_41_3][var_41_4 + 1] = var_41_2
 end
 
-function AdventureSpawning.get_spawn_point_from_spawn_group(arg_42_0, arg_42_1)
+AdventureSpawning.get_spawn_point_from_spawn_group = function (arg_42_0, arg_42_1)
 	if not arg_42_0._used_spawn_group_positions then
 		arg_42_0._used_spawn_group_positions = {}
 	end
@@ -661,7 +661,7 @@ function AdventureSpawning.get_spawn_point_from_spawn_group(arg_42_0, arg_42_1)
 	return var_42_2.pos, var_42_2.rot
 end
 
-function AdventureSpawning.rpc_to_server_spawn_failed(arg_43_0, arg_43_1, arg_43_2)
+AdventureSpawning.rpc_to_server_spawn_failed = function (arg_43_0, arg_43_1, arg_43_2)
 	print("[AdventureSpawning] Client detected spawning mismatch. Trying again.")
 
 	local var_43_0 = CHANNEL_TO_PEER_ID[arg_43_1]

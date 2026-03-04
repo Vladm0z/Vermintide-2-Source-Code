@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/achievement_widget_definition.lua
 
-return function(arg_1_0, arg_1_1)
+return function (arg_1_0, arg_1_1)
 	local var_1_0 = UIFrameSettings.menu_frame_12
 	local var_1_1 = UIFrameSettings.button_frame_01
 	local var_1_2 = UIFrameSettings.frame_outer_glow_01
@@ -135,7 +135,7 @@ return function(arg_1_0, arg_1_1)
 			texture_id = "hover_glow",
 			style_id = "hover_glow",
 			pass_type = "texture",
-			content_check_function = function(arg_2_0)
+			content_check_function = function (arg_2_0)
 				return arg_2_0.button_hotspot.is_hover
 			end
 		},
@@ -148,7 +148,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "tiled_texture",
 			style_id = "expand_background",
 			texture_id = "expand_background",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return arg_3_0.expanded
 			end
 		},
@@ -156,7 +156,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "expand_background_edge",
 			texture_id = "expand_background_edge",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return arg_4_0.expanded
 			end
 		},
@@ -164,7 +164,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "rotated_texture",
 			style_id = "expand_background_shadow",
 			texture_id = "expand_background_shadow",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.expanded
 			end
 		},
@@ -172,7 +172,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "rotated_texture",
 			style_id = "arrow",
 			texture_id = "arrow",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.expandable and not arg_6_0.button_hotspot.is_hover and not arg_6_0.expanded
 			end
 		},
@@ -180,7 +180,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "rotated_texture",
 			style_id = "arrow",
 			texture_id = "arrow_hover",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.expandable and (arg_7_0.expanded or arg_7_0.button_hotspot.is_hover)
 			end
 		},
@@ -188,7 +188,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture_frame",
 			style_id = "progress_frame",
 			texture_id = "progress_frame",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.draw_bar or arg_8_0.completed and not arg_8_0.claimed
 			end
 		},
@@ -196,7 +196,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "progress_bar",
 			texture_id = "progress_bar",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.draw_bar
 			end
 		},
@@ -204,7 +204,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "progress_bar_bg",
 			texture_id = "rect_masked",
-			content_check_function = function(arg_10_0)
+			content_check_function = function (arg_10_0)
 				return arg_10_0.draw_bar
 			end
 		},
@@ -212,7 +212,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_text",
 			pass_type = "text",
 			text_id = "progress_text",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return arg_11_0.draw_bar
 			end
 		},
@@ -220,7 +220,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_text_shadow",
 			pass_type = "text",
 			text_id = "progress_text",
-			content_check_function = function(arg_12_0)
+			content_check_function = function (arg_12_0)
 				return arg_12_0.draw_bar
 			end
 		},
@@ -228,7 +228,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_text_hover",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function(arg_13_0)
+			content_check_function = function (arg_13_0)
 				return arg_13_0.completed and not arg_13_0.claimed and not arg_13_0.draw_bar and arg_13_0.progress_button_hotspot.is_hover and not arg_13_0.locked
 			end
 		},
@@ -236,7 +236,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_text",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function(arg_14_0)
+			content_check_function = function (arg_14_0)
 				return arg_14_0.completed and not arg_14_0.claimed and not arg_14_0.draw_bar and not arg_14_0.progress_button_hotspot.is_hover and not arg_14_0.locked
 			end
 		},
@@ -244,7 +244,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_text_shadow",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function(arg_15_0)
+			content_check_function = function (arg_15_0)
 				return arg_15_0.completed and not arg_15_0.claimed and not arg_15_0.draw_bar
 			end
 		},
@@ -252,7 +252,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_text_disabled",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function(arg_16_0)
+			content_check_function = function (arg_16_0)
 				return arg_16_0.completed and not arg_16_0.claimed and not arg_16_0.draw_bar and arg_16_0.locked
 			end
 		},
@@ -260,7 +260,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_background",
 			pass_type = "texture_uv",
 			content_id = "progress_button_background",
-			content_check_function = function(arg_17_0)
+			content_check_function = function (arg_17_0)
 				local var_17_0 = arg_17_0.parent
 
 				return var_17_0.completed and not var_17_0.claimed
@@ -270,7 +270,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "progress_button_background_fade",
 			texture_id = "background_fade",
-			content_check_function = function(arg_18_0)
+			content_check_function = function (arg_18_0)
 				return arg_18_0.completed and not arg_18_0.claimed
 			end
 		},
@@ -278,7 +278,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_hotspot",
 			pass_type = "hotspot",
 			content_id = "progress_button_hotspot",
-			content_check_function = function(arg_19_0)
+			content_check_function = function (arg_19_0)
 				local var_19_0 = arg_19_0.parent
 
 				return var_19_0.completed and not var_19_0.claimed
@@ -288,7 +288,7 @@ return function(arg_1_0, arg_1_1)
 			texture_id = "glass",
 			style_id = "progress_button_glass_top",
 			pass_type = "texture",
-			content_check_function = function(arg_20_0)
+			content_check_function = function (arg_20_0)
 				return arg_20_0.draw_bar or arg_20_0.completed and not arg_20_0.claimed
 			end
 		},
@@ -296,7 +296,7 @@ return function(arg_1_0, arg_1_1)
 			texture_id = "glass",
 			style_id = "progress_button_glass_bottom",
 			pass_type = "texture",
-			content_check_function = function(arg_21_0)
+			content_check_function = function (arg_21_0)
 				return arg_21_0.draw_bar or arg_21_0.completed and not arg_21_0.claimed
 			end
 		},
@@ -304,7 +304,7 @@ return function(arg_1_0, arg_1_1)
 			texture_id = "hover_glow",
 			style_id = "progress_button_hover_glow",
 			pass_type = "texture",
-			content_check_function = function(arg_22_0)
+			content_check_function = function (arg_22_0)
 				return arg_22_0.completed and not arg_22_0.claimed and arg_22_0.progress_button_hotspot.is_hover and not arg_22_0.locked
 			end
 		},
@@ -312,10 +312,10 @@ return function(arg_1_0, arg_1_1)
 			style_id = "progress_button_claim_glow",
 			texture_id = "progress_button_claim_glow",
 			pass_type = "texture_frame",
-			content_check_function = function(arg_23_0)
+			content_check_function = function (arg_23_0)
 				return arg_23_0.completed and not arg_23_0.claimed and not arg_23_0.claiming
 			end,
-			content_change_function = function(arg_24_0, arg_24_1)
+			content_change_function = function (arg_24_0, arg_24_1)
 				local var_24_0 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
 				arg_24_1.color[1] = 55 + var_24_0 * 200
@@ -325,7 +325,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "side_detail_right",
 			pass_type = "texture_uv",
 			content_id = "side_detail",
-			content_check_function = function(arg_25_0)
+			content_check_function = function (arg_25_0)
 				local var_25_0 = arg_25_0.parent
 
 				return var_25_0.draw_bar or var_25_0.completed and not var_25_0.claimed
@@ -336,7 +336,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "side_detail_left",
 			pass_type = "texture",
 			content_id = "side_detail",
-			content_check_function = function(arg_26_0)
+			content_check_function = function (arg_26_0)
 				local var_26_0 = arg_26_0.parent
 
 				return var_26_0.draw_bar or var_26_0.completed and not var_26_0.claimed
@@ -346,7 +346,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "tiled_texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function(arg_27_0)
+			content_check_function = function (arg_27_0)
 				return not arg_27_0.claimed
 			end
 		},
@@ -354,7 +354,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "tiled_texture",
 			style_id = "background_completed",
 			texture_id = "background_completed",
-			content_check_function = function(arg_28_0)
+			content_check_function = function (arg_28_0)
 				return arg_28_0.claimed
 			end
 		},
@@ -388,7 +388,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "dlc_lock_hotspot",
 			pass_type = "hotspot",
 			content_id = "dlc_lock_hotspot",
-			content_check_function = function(arg_29_0)
+			content_check_function = function (arg_29_0)
 				local var_29_0 = arg_29_0.draw
 
 				arg_29_0.draw = false
@@ -401,10 +401,10 @@ return function(arg_1_0, arg_1_1)
 			style_id = "dlc_lock",
 			texture_id = "dlc_lock",
 			pass_type = "rotated_texture",
-			content_check_function = function(arg_30_0)
+			content_check_function = function (arg_30_0)
 				return arg_30_0.locked
 			end,
-			content_change_function = function(arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			content_change_function = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
 				if arg_31_0.dlc_on_claim == true then
 					arg_31_0.dlc_lock_t = 1
 					arg_31_0.dlc_lock_dir = -arg_31_0.dlc_lock_dir
@@ -426,10 +426,10 @@ return function(arg_1_0, arg_1_1)
 			style_id = "dlc_lock_glow",
 			texture_id = "dlc_lock_glow",
 			pass_type = "texture",
-			content_check_function = function(arg_32_0)
+			content_check_function = function (arg_32_0)
 				return arg_32_0.locked
 			end,
-			content_change_function = function(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			content_change_function = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
 				local var_33_0 = arg_33_0.dlc_lock_t
 				local var_33_1 = arg_33_0.dlc_lock_glow_alpha_multiplier
 
@@ -451,7 +451,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "locked_text",
 			pass_type = "tooltip_text",
 			text_id = "locked_text",
-			content_check_function = function(arg_34_0)
+			content_check_function = function (arg_34_0)
 				return arg_34_0.locked and arg_34_0.dlc_lock_hotspot.is_hover
 			end
 		},
@@ -474,7 +474,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_icon_background",
 			texture_id = "reward_icon_background",
-			content_check_function = function(arg_35_0)
+			content_check_function = function (arg_35_0)
 				return arg_35_0.reward_icon_background ~= nil
 			end
 		},
@@ -482,7 +482,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_hover",
 			texture_id = "reward_hover",
-			content_check_function = function(arg_36_0)
+			content_check_function = function (arg_36_0)
 				local var_36_0 = arg_36_0.reward_button_hotspot
 
 				return var_36_0.is_hover and var_36_0.draw
@@ -492,12 +492,12 @@ return function(arg_1_0, arg_1_1)
 			item_id = "reward_item",
 			pass_type = "item_tooltip",
 			style_id = "reward_icon",
-			content_check_function = function(arg_37_0)
+			content_check_function = function (arg_37_0)
 				local var_37_0 = arg_37_0.reward_button_hotspot
 
 				return var_37_0.is_hover and var_37_0.draw
 			end,
-			content_change_function = function(arg_38_0)
+			content_change_function = function (arg_38_0)
 				arg_38_0.reward_button_hotspot.draw = false
 			end
 		},
@@ -510,7 +510,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_illusion_frame",
 			texture_id = "reward_illusion_frame",
-			content_check_function = function(arg_39_0)
+			content_check_function = function (arg_39_0)
 				return arg_39_0.is_illusion
 			end
 		},
@@ -523,7 +523,7 @@ return function(arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_icon_claimed",
 			texture_id = "reward_icon_claimed",
-			content_check_function = function(arg_40_0)
+			content_check_function = function (arg_40_0)
 				return arg_40_0.claimed
 			end
 		},
@@ -531,7 +531,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "claimed_text",
 			pass_type = "text",
 			text_id = "claimed_text",
-			content_check_function = function(arg_41_0)
+			content_check_function = function (arg_41_0)
 				return arg_41_0.claimed
 			end
 		},
@@ -539,7 +539,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "claimed_text_shadow",
 			pass_type = "text",
 			text_id = "claimed_text",
-			content_check_function = function(arg_42_0)
+			content_check_function = function (arg_42_0)
 				return arg_42_0.claimed
 			end
 		},
@@ -567,7 +567,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "checklist_1",
 			pass_type = "list_pass",
 			content_id = "checklist_1",
-			content_check_function = function(arg_43_0)
+			content_check_function = function (arg_43_0)
 				return arg_43_0.parent.expanded
 			end,
 			passes = {
@@ -575,7 +575,7 @@ return function(arg_1_0, arg_1_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_44_0)
+					content_check_function = function (arg_44_0)
 						return not arg_44_0.button_hotspot.is_hover
 					end
 				},
@@ -600,7 +600,7 @@ return function(arg_1_0, arg_1_1)
 			style_id = "checklist_2",
 			pass_type = "list_pass",
 			content_id = "checklist_2",
-			content_check_function = function(arg_45_0)
+			content_check_function = function (arg_45_0)
 				return arg_45_0.parent.expanded
 			end,
 			passes = {
@@ -608,7 +608,7 @@ return function(arg_1_0, arg_1_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function(arg_46_0)
+					content_check_function = function (arg_46_0)
 						return not arg_46_0.button_hotspot.is_hover
 					end
 				},

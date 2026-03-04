@@ -4,13 +4,13 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterRatFleeAction = class(BTCritterRatFleeAction, BTNode)
 
-function BTCritterRatFleeAction.init(arg_1_0, ...)
+BTCritterRatFleeAction.init = function (arg_1_0, ...)
 	BTCritterRatFleeAction.super.init(arg_1_0, ...)
 end
 
 BTCritterRatFleeAction.name = "BTCritterRatFleeAction"
 
-function BTCritterRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCritterRatFleeAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	arg_2_2.action = arg_2_0._tree_node.action_data
 	arg_2_2.move_pos = nil
 	arg_2_2.using_cover_points = true
@@ -23,14 +23,14 @@ function BTCritterRatFleeAction.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	end
 end
 
-function BTCritterRatFleeAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterRatFleeAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
 	arg_3_2.move_pos = nil
 	arg_3_2.move_check_index = nil
 	arg_3_2.dig_timer = nil
 	arg_3_2.current_check_list = nil
 end
 
-function BTCritterRatFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTCritterRatFleeAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.navigation_extension
 
 	if arg_4_2.dig_timer and arg_4_3 > arg_4_2.dig_timer then
@@ -76,7 +76,7 @@ function BTCritterRatFleeAction.run(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return "running"
 end
 
-function BTCritterRatFleeAction.select_move_pos(arg_5_0, arg_5_1, arg_5_2)
+BTCritterRatFleeAction.select_move_pos = function (arg_5_0, arg_5_1, arg_5_2)
 	local var_5_0
 
 	if arg_5_2.using_cover_points then
@@ -98,7 +98,7 @@ function BTCritterRatFleeAction.select_move_pos(arg_5_0, arg_5_1, arg_5_2)
 	return var_5_0
 end
 
-function BTCritterRatFleeAction._get_cover_point_flee_pos(arg_6_0, arg_6_1, arg_6_2)
+BTCritterRatFleeAction._get_cover_point_flee_pos = function (arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = arg_6_2.target_unit
 	local var_6_1
 
@@ -148,7 +148,7 @@ function BTCritterRatFleeAction._get_cover_point_flee_pos(arg_6_0, arg_6_1, arg_
 	return var_6_1
 end
 
-function BTCritterRatFleeAction._get_far_along_path_pos(arg_7_0, arg_7_1, arg_7_2)
+BTCritterRatFleeAction._get_far_along_path_pos = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0
 	local var_7_1 = arg_7_2.target_unit
 
@@ -170,7 +170,7 @@ function BTCritterRatFleeAction._get_far_along_path_pos(arg_7_0, arg_7_1, arg_7_
 	return var_7_0
 end
 
-function BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target(arg_8_0, arg_8_1, arg_8_2)
+BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0
 	local var_8_1 = arg_8_2.nav_world
 	local var_8_2 = POSITION_LOOKUP[arg_8_1]
@@ -189,7 +189,7 @@ function BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target(arg_8_0,
 	end
 
 	if not var_8_0 then
-		-- block empty
+		-- Nothing
 	end
 
 	arg_8_2.using_random_point_in_front_of_target = false
@@ -198,7 +198,7 @@ function BTCritterRatFleeAction._get_random_flee_pos_in_front_of_target(arg_8_0,
 	return var_8_0
 end
 
-function BTCritterRatFleeAction._get_random_flee_pos(arg_9_0, arg_9_1, arg_9_2)
+BTCritterRatFleeAction._get_random_flee_pos = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_2.action
 	local var_9_1 = arg_9_2.nav_world
 	local var_9_2 = POSITION_LOOKUP[arg_9_1]
@@ -212,19 +212,19 @@ function BTCritterRatFleeAction._get_random_flee_pos(arg_9_0, arg_9_1, arg_9_2)
 	return LocomotionUtils.new_random_goal(var_9_1, arg_9_2, var_9_2, var_9_4, var_9_5, var_9_6, nil, var_9_7, var_9_8) or POSITION_LOOKUP[arg_9_1]
 end
 
-function BTCritterRatFleeAction.start_idle_animation(arg_10_0, arg_10_1, arg_10_2)
+BTCritterRatFleeAction.start_idle_animation = function (arg_10_0, arg_10_1, arg_10_2)
 	Managers.state.network:anim_event(arg_10_1, "idle")
 
 	arg_10_2.move_state = "idle"
 end
 
-function BTCritterRatFleeAction.start_move_animation(arg_11_0, arg_11_1, arg_11_2)
+BTCritterRatFleeAction.start_move_animation = function (arg_11_0, arg_11_1, arg_11_2)
 	Managers.state.network:anim_event(arg_11_1, "move_fwd")
 
 	arg_11_2.move_state = "moving"
 end
 
-function BTCritterRatFleeAction.at_destination(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+BTCritterRatFleeAction.at_destination = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	if arg_12_2.move_state ~= "idle" then
 		arg_12_0:start_idle_animation(arg_12_1, arg_12_2)
 	end

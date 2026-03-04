@@ -37,7 +37,7 @@ end
 InteractionDefinitions.weave_level_select_access = InteractionDefinitions.weave_level_select_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_level_select_access.config.swap_to_3p = false
 
-function InteractionDefinitions.weave_level_select_access.client.stop(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+InteractionDefinitions.weave_level_select_access.client.stop = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_3.start_time = nil
 
 	if arg_3_6 == InteractionResult.SUCCESS and not arg_3_3.is_husk then
@@ -72,18 +72,18 @@ function InteractionDefinitions.weave_level_select_access.client.stop(arg_3_0, a
 	end
 end
 
-function InteractionDefinitions.weave_level_select_access.client.can_interact(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+InteractionDefinitions.weave_level_select_access.client.can_interact = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return true
 end
 
-function InteractionDefinitions.weave_level_select_access.client.hud_description(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+InteractionDefinitions.weave_level_select_access.client.hud_description = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return Unit.get_data(arg_5_0, "interaction_data", "hud_description"), Unit.get_data(arg_5_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.weave_magic_forge_access = InteractionDefinitions.weave_magic_forge_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_magic_forge_access.config.swap_to_3p = false
 
-function InteractionDefinitions.weave_magic_forge_access.client.stop(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+InteractionDefinitions.weave_magic_forge_access.client.stop = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 	arg_6_3.start_time = nil
 
 	if arg_6_6 == InteractionResult.SUCCESS and not arg_6_3.is_husk then
@@ -107,18 +107,18 @@ function InteractionDefinitions.weave_magic_forge_access.client.stop(arg_6_0, ar
 	end
 end
 
-function InteractionDefinitions.weave_magic_forge_access.client.can_interact(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+InteractionDefinitions.weave_magic_forge_access.client.can_interact = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	return true
 end
 
-function InteractionDefinitions.weave_magic_forge_access.client.hud_description(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+InteractionDefinitions.weave_magic_forge_access.client.hud_description = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
 	return Unit.get_data(arg_8_0, "interaction_data", "hud_description"), Unit.get_data(arg_8_0, "interaction_data", "hud_interaction_action")
 end
 
 InteractionDefinitions.weave_leaderboard_access = InteractionDefinitions.weave_leaderboard_access or table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.weave_leaderboard_access.config.swap_to_3p = false
 
-function InteractionDefinitions.weave_leaderboard_access.client.stop(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+InteractionDefinitions.weave_leaderboard_access.client.stop = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
 	arg_9_3.start_time = nil
 
 	if arg_9_6 == InteractionResult.SUCCESS and not arg_9_3.is_husk then
@@ -142,7 +142,7 @@ function InteractionDefinitions.weave_leaderboard_access.client.stop(arg_9_0, ar
 	end
 end
 
-function InteractionDefinitions.weave_leaderboard_access.client.can_interact(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+InteractionDefinitions.weave_leaderboard_access.client.can_interact = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	if Managers.account:offline_mode() then
 		return false, "status_offline"
 	end
@@ -150,7 +150,7 @@ function InteractionDefinitions.weave_leaderboard_access.client.can_interact(arg
 	return true
 end
 
-function InteractionDefinitions.weave_leaderboard_access.client.hud_description(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+InteractionDefinitions.weave_leaderboard_access.client.hud_description = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	if arg_11_3 == "status_offline" then
 		return Unit.get_data(arg_11_0, "interaction_data", "hud_description"), "status_offline"
 	else

@@ -7,7 +7,7 @@ local var_0_3 = var_0_0.animations_definitions
 
 VersusOnboardingUI = class(VersusOnboardingUI)
 
-function VersusOnboardingUI.init(arg_1_0, arg_1_1, arg_1_2)
+VersusOnboardingUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0._ui_renderer = arg_1_2.ui_renderer
 	arg_1_0._input_manager = arg_1_2.input_manager
@@ -29,7 +29,7 @@ function VersusOnboardingUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function VersusOnboardingUI._create_ui_elements(arg_2_0)
+VersusOnboardingUI._create_ui_elements = function (arg_2_0)
 	arg_2_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_2_0._ui_animator = UIAnimator:new(arg_2_0._ui_scenegraph, var_0_3)
 	arg_2_0._animations = {}
@@ -58,11 +58,11 @@ function VersusOnboardingUI._create_ui_elements(arg_2_0)
 	UIRenderer.clear_scenegraph_queue(arg_2_0._ui_renderer)
 end
 
-function VersusOnboardingUI.destroy(arg_3_0)
+VersusOnboardingUI.destroy = function (arg_3_0)
 	return
 end
 
-function VersusOnboardingUI._setup_career_info_widget(arg_4_0, arg_4_1, arg_4_2)
+VersusOnboardingUI._setup_career_info_widget = function (arg_4_0, arg_4_1, arg_4_2)
 	if not arg_4_0._should_draw then
 		return
 	end
@@ -88,7 +88,7 @@ function VersusOnboardingUI._setup_career_info_widget(arg_4_0, arg_4_1, arg_4_2)
 	end
 end
 
-function VersusOnboardingUI._populate_help_widget_info(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+VersusOnboardingUI._populate_help_widget_info = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = arg_5_4.content
 	local var_5_1 = arg_5_4.style
 	local var_5_2 = ""
@@ -144,11 +144,11 @@ function VersusOnboardingUI._populate_help_widget_info(arg_5_0, arg_5_1, arg_5_2
 	end
 end
 
-function VersusOnboardingUI._set_widget_dirty(arg_6_0, arg_6_1)
+VersusOnboardingUI._set_widget_dirty = function (arg_6_0, arg_6_1)
 	arg_6_1.element.dirty = true
 end
 
-function VersusOnboardingUI._update_career_status(arg_7_0)
+VersusOnboardingUI._update_career_status = function (arg_7_0)
 	local var_7_0, var_7_1 = arg_7_0._profile_synchronizer:profile_by_peer(arg_7_0._peer_id, arg_7_0._local_player_id)
 	local var_7_2 = arg_7_0._input_manager:is_device_active("gamepad")
 
@@ -159,7 +159,7 @@ function VersusOnboardingUI._update_career_status(arg_7_0)
 	end
 end
 
-function VersusOnboardingUI._update_visibility(arg_8_0)
+VersusOnboardingUI._update_visibility = function (arg_8_0)
 	local var_8_0
 
 	var_8_0 = arg_8_0._side:name() == "dark_pact"
@@ -181,7 +181,7 @@ function VersusOnboardingUI._update_visibility(arg_8_0)
 	return Managers.input:get_service("Player"):get("show_career_help") and not var_8_3
 end
 
-function VersusOnboardingUI.update(arg_9_0, arg_9_1, arg_9_2)
+VersusOnboardingUI.update = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0:_update_visibility()
 
 	if var_9_0 ~= arg_9_0._should_draw then
@@ -205,7 +205,7 @@ function VersusOnboardingUI.update(arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_draw(arg_9_1)
 end
 
-function VersusOnboardingUI._draw(arg_10_0, arg_10_1)
+VersusOnboardingUI._draw = function (arg_10_0, arg_10_1)
 	if not arg_10_0._should_draw then
 		return
 	end
@@ -224,13 +224,13 @@ function VersusOnboardingUI._draw(arg_10_0, arg_10_1)
 	UIRenderer.end_pass(var_10_0)
 end
 
-function VersusOnboardingUI.get_input_texture_data(arg_11_0, arg_11_1, arg_11_2)
+VersusOnboardingUI.get_input_texture_data = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._input_manager:get_service("Player")
 
 	return UISettings.get_gamepad_input_texture_data(var_11_0, arg_11_1, arg_11_2)
 end
 
-function VersusOnboardingUI._get_hero_side_info(arg_12_0, arg_12_1)
+VersusOnboardingUI._get_hero_side_info = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0._input_manager:is_device_active("gamepad")
 	local var_12_1 = {}
 	local var_12_2 = {}

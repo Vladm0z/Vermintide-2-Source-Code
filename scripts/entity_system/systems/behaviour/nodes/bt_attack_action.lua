@@ -4,7 +4,7 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAttackAction = class(BTAttackAction, BTNode)
 
-function BTAttackAction.init(arg_1_0, ...)
+BTAttackAction.init = function (arg_1_0, ...)
 	BTAttackAction.super.init(arg_1_0, ...)
 end
 
@@ -21,7 +21,7 @@ end
 local var_0_1 = 1.5
 local var_0_2 = {}
 
-function BTAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTAttackAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0._tree_node.action_data
 
 	arg_3_2.action = var_3_0
@@ -131,7 +131,7 @@ function BTAttackAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTAttackAction._select_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTAttackAction._select_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = Unit.get_data(arg_4_3, "target_type")
 	local var_4_1 = var_4_0 and arg_4_1.target_type_exceptions and arg_4_1.target_type_exceptions[var_4_0]
 
@@ -176,7 +176,7 @@ function BTAttackAction._select_attack(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4
 	end
 end
 
-function BTAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTAttackAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
 	local var_5_0 = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
 	local var_5_1 = arg_5_2.navigation_extension
 
@@ -200,7 +200,7 @@ function BTAttackAction.leave(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5
 	arg_5_0:clear_blackboard(arg_5_1, arg_5_2, arg_5_3)
 end
 
-function BTAttackAction.clear_blackboard(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTAttackAction.clear_blackboard = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	if arg_6_2.action.use_box_range then
 		arg_6_2.attack_range_up = nil
 		arg_6_2.attack_range_down = nil
@@ -236,7 +236,7 @@ function BTAttackAction.clear_blackboard(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	arg_6_2.target_unit_status_extension = nil
 end
 
-function BTAttackAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTAttackAction.run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	if not Unit.alive(arg_7_2.attacking_target) then
 		return "done"
 	end
@@ -316,13 +316,13 @@ function BTAttackAction.run(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	return "running"
 end
 
-function BTAttackAction.attack_cooldown(arg_8_0, arg_8_1, arg_8_2)
+BTAttackAction.attack_cooldown = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = Managers.time:time("game")
 
 	arg_8_2.is_in_attack_cooldown, arg_8_2.attack_cooldown_at = arg_8_0:_get_attack_cooldown_finished_at(arg_8_1, arg_8_2, var_8_0)
 end
 
-function BTAttackAction.attack_success(arg_9_0, arg_9_1, arg_9_2)
+BTAttackAction.attack_success = function (arg_9_0, arg_9_1, arg_9_2)
 	if arg_9_2.breed.use_backstab_vo and arg_9_2.backstab_attack_trigger then
 		Managers.state.entity:system("dialogue_system"):trigger_backstab_hit(arg_9_2.target_unit, arg_9_1)
 
@@ -336,7 +336,7 @@ function BTAttackAction.attack_success(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function BTAttackAction.attack_blocked(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTAttackAction.attack_blocked = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	local var_10_0 = arg_10_2.action
 	local var_10_1 = arg_10_2.attacking_target
 	local var_10_2 = var_10_0.player_push_speed_blocked
@@ -357,7 +357,7 @@ function BTAttackAction.attack_blocked(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
 	end
 end
 
-function BTAttackAction._attack(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTAttackAction._attack = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
 	local var_11_0 = arg_11_4
 
 	if var_11_0.move_state ~= "attacking" then
@@ -369,7 +369,7 @@ end
 
 local var_0_3 = 4
 
-function BTAttackAction._handle_movement(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTAttackAction._handle_movement = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = arg_12_4
 	local var_12_1 = arg_12_4.target_dist
 
@@ -405,7 +405,7 @@ function BTAttackAction._handle_movement(arg_12_0, arg_12_1, arg_12_2, arg_12_3,
 	end
 end
 
-function BTAttackAction._get_attack_cooldown_finished_at(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTAttackAction._get_attack_cooldown_finished_at = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	local var_13_0 = arg_13_2.attacking_target
 
 	if not Unit.alive(var_13_0) then
@@ -447,25 +447,25 @@ function BTAttackAction._get_attack_cooldown_finished_at(arg_13_0, arg_13_1, arg
 	return true, var_13_8 + arg_13_3
 end
 
-function BTAttackAction.anim_cb_attack_vce(arg_14_0, arg_14_1, arg_14_2)
+BTAttackAction.anim_cb_attack_vce = function (arg_14_0, arg_14_1, arg_14_2)
 	if Managers.state.network:game() and arg_14_2.target_unit_status_extension then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_14_2, arg_14_2.target_unit, arg_14_1, false, false)
 	end
 end
 
-function BTAttackAction.anim_cb_attack_vce_long(arg_15_0, arg_15_1, arg_15_2)
+BTAttackAction.anim_cb_attack_vce_long = function (arg_15_0, arg_15_1, arg_15_2)
 	if Managers.state.network:game() and arg_15_2.target_unit_status_extension then
 		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_15_2, arg_15_2.target_unit, arg_15_1, false, true)
 	end
 end
 
-function BTAttackAction.anim_cb_running_attack_start(arg_16_0, arg_16_1, arg_16_2)
+BTAttackAction.anim_cb_running_attack_start = function (arg_16_0, arg_16_1, arg_16_2)
 	if Managers.state.network:game() then
 		arg_16_2.anim_cb_running_attack_start = true
 	end
 end
 
-function BTAttackAction.anim_cb_attack_finished(arg_17_0, arg_17_1, arg_17_2)
+BTAttackAction.anim_cb_attack_finished = function (arg_17_0, arg_17_1, arg_17_2)
 	if arg_17_2.attack_finished then
 		return
 	end

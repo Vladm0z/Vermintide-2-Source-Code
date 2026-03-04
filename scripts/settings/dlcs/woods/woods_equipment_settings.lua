@@ -294,15 +294,15 @@ var_0_0.explosion_templates = {
 var_0_0.area_damage_templates = {
 	we_thornsister_thorn_wall = {
 		server = {
-			update = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+			update = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
 				return false
 			end,
-			do_damage = function(arg_2_0, arg_2_1)
+			do_damage = function (arg_2_0, arg_2_1)
 				return
 			end
 		},
 		client = {
-			update = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 				local var_3_0 = Managers.state.side.side_by_unit[arg_3_2]
 
 				if not var_3_0 then
@@ -329,7 +329,7 @@ var_0_0.area_damage_templates = {
 					end
 				end
 			end,
-			spawn_effect = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			spawn_effect = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				local var_4_0 = Unit.local_position(arg_4_1, 0)
 				local var_4_1 = World.create_particles(arg_4_0, arg_4_2, var_4_0)
 

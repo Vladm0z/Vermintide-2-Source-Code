@@ -11,7 +11,7 @@ local var_0_6 = 1
 HeroWindowHeroPowerConsole = class(HeroWindowHeroPowerConsole)
 HeroWindowHeroPowerConsole.NAME = "HeroWindowHeroPowerConsole"
 
-function HeroWindowHeroPowerConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowHeroPowerConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowHeroPowerConsole")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -42,7 +42,7 @@ function HeroWindowHeroPowerConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function HeroWindowHeroPowerConsole._start_transition_animation(arg_2_0, arg_2_1)
+HeroWindowHeroPowerConsole._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		wwise_world = arg_2_0.wwise_world,
 		render_settings = arg_2_0.render_settings
@@ -53,7 +53,7 @@ function HeroWindowHeroPowerConsole._start_transition_animation(arg_2_0, arg_2_1
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function HeroWindowHeroPowerConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowHeroPowerConsole.create_ui_elements = function (arg_3_0, arg_3_1, arg_3_2)
 	arg_3_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_3_0 = {}
@@ -82,13 +82,13 @@ function HeroWindowHeroPowerConsole.create_ui_elements(arg_3_0, arg_3_1, arg_3_2
 	end
 end
 
-function HeroWindowHeroPowerConsole.on_exit(arg_4_0, arg_4_1)
+HeroWindowHeroPowerConsole.on_exit = function (arg_4_0, arg_4_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowHeroPowerConsole")
 
 	arg_4_0.ui_animator = nil
 end
 
-function HeroWindowHeroPowerConsole.update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowHeroPowerConsole.update = function (arg_5_0, arg_5_1, arg_5_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -101,11 +101,11 @@ function HeroWindowHeroPowerConsole.update(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0:draw(arg_5_1)
 end
 
-function HeroWindowHeroPowerConsole.post_update(arg_6_0, arg_6_1, arg_6_2)
+HeroWindowHeroPowerConsole.post_update = function (arg_6_0, arg_6_1, arg_6_2)
 	return
 end
 
-function HeroWindowHeroPowerConsole._update_animations(arg_7_0, arg_7_1)
+HeroWindowHeroPowerConsole._update_animations = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0._ui_animations
 	local var_7_1 = arg_7_0._animations
 	local var_7_2 = arg_7_0.ui_animator
@@ -129,7 +129,7 @@ function HeroWindowHeroPowerConsole._update_animations(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowHeroPowerConsole._is_button_pressed(arg_8_0, arg_8_1)
+HeroWindowHeroPowerConsole._is_button_pressed = function (arg_8_0, arg_8_1)
 	local var_8_0 = arg_8_1.content.button_hotspot
 
 	if var_8_0.on_release then
@@ -139,11 +139,11 @@ function HeroWindowHeroPowerConsole._is_button_pressed(arg_8_0, arg_8_1)
 	end
 end
 
-function HeroWindowHeroPowerConsole.set_focus(arg_9_0, arg_9_1)
+HeroWindowHeroPowerConsole.set_focus = function (arg_9_0, arg_9_1)
 	arg_9_0._focused = arg_9_1
 end
 
-function HeroWindowHeroPowerConsole._update_loadout_sync(arg_10_0)
+HeroWindowHeroPowerConsole._update_loadout_sync = function (arg_10_0)
 	local var_10_0 = arg_10_0.parent.loadout_sync_id
 
 	if var_10_0 ~= arg_10_0._loadout_sync_id or arg_10_0:_has_hero_level_changed() then
@@ -153,7 +153,7 @@ function HeroWindowHeroPowerConsole._update_loadout_sync(arg_10_0)
 	end
 end
 
-function HeroWindowHeroPowerConsole._has_hero_level_changed(arg_11_0)
+HeroWindowHeroPowerConsole._has_hero_level_changed = function (arg_11_0)
 	local var_11_0 = ExperienceSettings.get_experience(arg_11_0.hero_name)
 
 	if ExperienceSettings.get_level(var_11_0) ~= arg_11_0._hero_level then
@@ -161,7 +161,7 @@ function HeroWindowHeroPowerConsole._has_hero_level_changed(arg_11_0)
 	end
 end
 
-function HeroWindowHeroPowerConsole._calculate_power_level(arg_12_0)
+HeroWindowHeroPowerConsole._calculate_power_level = function (arg_12_0)
 	local var_12_0 = arg_12_0.hero_name
 	local var_12_1 = arg_12_0.career_index
 	local var_12_2 = FindProfileIndex(var_12_0)
@@ -189,7 +189,7 @@ end
 local var_0_7 = Colors.get_color_table_with_alpha("white", 255)
 local var_0_8 = Colors.get_color_table_with_alpha("font_title", 255)
 
-function HeroWindowHeroPowerConsole._update_hero_power_effect(arg_13_0, arg_13_1)
+HeroWindowHeroPowerConsole._update_hero_power_effect = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0._hero_power_effect_time
 
 	if var_13_0 then
@@ -215,11 +215,11 @@ function HeroWindowHeroPowerConsole._update_hero_power_effect(arg_13_0, arg_13_1
 	end
 end
 
-function HeroWindowHeroPowerConsole._exit(arg_14_0)
+HeroWindowHeroPowerConsole._exit = function (arg_14_0)
 	arg_14_0.exit = true
 end
 
-function HeroWindowHeroPowerConsole.draw(arg_15_0, arg_15_1)
+HeroWindowHeroPowerConsole.draw = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.ui_renderer
 	local var_15_1 = arg_15_0.ui_top_renderer
 	local var_15_2 = arg_15_0.ui_scenegraph
@@ -234,6 +234,6 @@ function HeroWindowHeroPowerConsole.draw(arg_15_0, arg_15_1)
 	UIRenderer.end_pass(var_15_1)
 end
 
-function HeroWindowHeroPowerConsole._play_sound(arg_16_0, arg_16_1)
+HeroWindowHeroPowerConsole._play_sound = function (arg_16_0, arg_16_1)
 	arg_16_0.parent:play_sound(arg_16_1)
 end

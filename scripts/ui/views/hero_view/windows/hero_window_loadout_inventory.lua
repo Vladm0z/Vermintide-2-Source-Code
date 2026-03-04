@@ -62,7 +62,7 @@ local var_0_7 = {
 	ring = Localize("inventory_screen_ring_title")
 }
 
-function HeroWindowLoadoutInventory.on_enter(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowLoadoutInventory.on_enter = function (arg_2_0, arg_2_1, arg_2_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadoutInventory")
 
 	arg_2_0.parent = arg_2_1.parent
@@ -113,7 +113,7 @@ function HeroWindowLoadoutInventory.on_enter(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function HeroWindowLoadoutInventory._create_item_categories(arg_3_0, arg_3_1, arg_3_2)
+HeroWindowLoadoutInventory._create_item_categories = function (arg_3_0, arg_3_1, arg_3_2)
 	local var_3_0 = arg_3_0.career_index
 	local var_3_1 = arg_3_0.profile_index
 	local var_3_2 = SPProfiles[var_3_1].careers[var_3_0].item_slot_types_by_slot_name
@@ -182,7 +182,7 @@ function HeroWindowLoadoutInventory._create_item_categories(arg_3_0, arg_3_1, ar
 	return var_3_3
 end
 
-function HeroWindowLoadoutInventory.create_ui_elements(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowLoadoutInventory.create_ui_elements = function (arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_2)
 
 	local var_4_0 = {}
@@ -213,7 +213,7 @@ function HeroWindowLoadoutInventory.create_ui_elements(arg_4_0, arg_4_1, arg_4_2
 	arg_4_0:_setup_tab_widget()
 end
 
-function HeroWindowLoadoutInventory._setup_tab_widget(arg_5_0)
+HeroWindowLoadoutInventory._setup_tab_widget = function (arg_5_0)
 	local var_5_0 = arg_5_0._categories
 	local var_5_1 = #var_5_0
 	local var_5_2 = arg_5_0._widgets
@@ -258,7 +258,7 @@ function HeroWindowLoadoutInventory._setup_tab_widget(arg_5_0)
 	end
 end
 
-function HeroWindowLoadoutInventory.on_exit(arg_6_0, arg_6_1)
+HeroWindowLoadoutInventory.on_exit = function (arg_6_0, arg_6_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadoutInventory")
 
 	arg_6_0.ui_animator = nil
@@ -268,7 +268,7 @@ function HeroWindowLoadoutInventory.on_exit(arg_6_0, arg_6_1)
 	arg_6_0._item_grid = nil
 end
 
-function HeroWindowLoadoutInventory.update(arg_7_0, arg_7_1, arg_7_2)
+HeroWindowLoadoutInventory.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -284,11 +284,11 @@ function HeroWindowLoadoutInventory.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:draw(arg_7_1)
 end
 
-function HeroWindowLoadoutInventory.post_update(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowLoadoutInventory.post_update = function (arg_8_0, arg_8_1, arg_8_2)
 	return
 end
 
-function HeroWindowLoadoutInventory._update_animations(arg_9_0, arg_9_1)
+HeroWindowLoadoutInventory._update_animations = function (arg_9_0, arg_9_1)
 	arg_9_0.ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._animations
@@ -305,7 +305,7 @@ function HeroWindowLoadoutInventory._update_animations(arg_9_0, arg_9_1)
 	local var_9_2 = arg_9_0._widgets_by_name
 end
 
-function HeroWindowLoadoutInventory._is_button_pressed(arg_10_0, arg_10_1)
+HeroWindowLoadoutInventory._is_button_pressed = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_1.content.button_hotspot
 
 	if var_10_0.on_release then
@@ -315,13 +315,13 @@ function HeroWindowLoadoutInventory._is_button_pressed(arg_10_0, arg_10_1)
 	end
 end
 
-function HeroWindowLoadoutInventory._is_button_hovered(arg_11_0, arg_11_1)
+HeroWindowLoadoutInventory._is_button_hovered = function (arg_11_0, arg_11_1)
 	if arg_11_1.content.button_hotspot.on_hover_enter then
 		return true
 	end
 end
 
-function HeroWindowLoadoutInventory._is_inventory_tab_hovered(arg_12_0)
+HeroWindowLoadoutInventory._is_inventory_tab_hovered = function (arg_12_0)
 	local var_12_0 = arg_12_0._widgets_by_name.item_tabs.content
 	local var_12_1 = var_12_0.amount
 
@@ -334,7 +334,7 @@ function HeroWindowLoadoutInventory._is_inventory_tab_hovered(arg_12_0)
 	end
 end
 
-function HeroWindowLoadoutInventory._is_inventory_tab_pressed(arg_13_0)
+HeroWindowLoadoutInventory._is_inventory_tab_pressed = function (arg_13_0)
 	local var_13_0 = arg_13_0._widgets_by_name.item_tabs.content
 	local var_13_1 = var_13_0.amount
 
@@ -348,7 +348,7 @@ function HeroWindowLoadoutInventory._is_inventory_tab_pressed(arg_13_0)
 	end
 end
 
-function HeroWindowLoadoutInventory._select_tab_by_slot_index(arg_14_0, arg_14_1)
+HeroWindowLoadoutInventory._select_tab_by_slot_index = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0._widgets_by_name.item_tabs.content
 	local var_14_1 = var_14_0.amount
 
@@ -360,7 +360,7 @@ function HeroWindowLoadoutInventory._select_tab_by_slot_index(arg_14_0, arg_14_1
 	end
 end
 
-function HeroWindowLoadoutInventory._handle_input(arg_15_0, arg_15_1, arg_15_2)
+HeroWindowLoadoutInventory._handle_input = function (arg_15_0, arg_15_1, arg_15_2)
 	local var_15_0 = arg_15_0._widgets_by_name
 	local var_15_1 = arg_15_0.parent
 	local var_15_2 = arg_15_0._item_grid
@@ -433,7 +433,7 @@ function HeroWindowLoadoutInventory._handle_input(arg_15_0, arg_15_1, arg_15_2)
 	end
 end
 
-function HeroWindowLoadoutInventory._update_page_info(arg_16_0)
+HeroWindowLoadoutInventory._update_page_info = function (arg_16_0)
 	local var_16_0, var_16_1 = arg_16_0._item_grid:get_page_info()
 
 	if var_16_0 ~= arg_16_0._current_page or var_16_1 ~= arg_16_0._total_pages then
@@ -451,11 +451,11 @@ function HeroWindowLoadoutInventory._update_page_info(arg_16_0)
 	end
 end
 
-function HeroWindowLoadoutInventory._get_category_slot_index(arg_17_0, arg_17_1)
+HeroWindowLoadoutInventory._get_category_slot_index = function (arg_17_0, arg_17_1)
 	return arg_17_0._categories[arg_17_1].slot_index
 end
 
-function HeroWindowLoadoutInventory._get_category_index_by_slot_index(arg_18_0, arg_18_1)
+HeroWindowLoadoutInventory._get_category_index_by_slot_index = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0._categories
 
 	for iter_18_0, iter_18_1 in ipairs(var_18_0) do
@@ -465,7 +465,7 @@ function HeroWindowLoadoutInventory._get_category_index_by_slot_index(arg_18_0, 
 	end
 end
 
-function HeroWindowLoadoutInventory._update_selected_loadout_slot_index(arg_19_0)
+HeroWindowLoadoutInventory._update_selected_loadout_slot_index = function (arg_19_0)
 	local var_19_0 = arg_19_0.parent:get_selected_loadout_slot_index()
 	local var_19_1 = arg_19_0:_get_category_index_by_slot_index(var_19_0)
 
@@ -477,7 +477,7 @@ function HeroWindowLoadoutInventory._update_selected_loadout_slot_index(arg_19_0
 	end
 end
 
-function HeroWindowLoadoutInventory._update_loadout_sync(arg_20_0)
+HeroWindowLoadoutInventory._update_loadout_sync = function (arg_20_0)
 	local var_20_0 = arg_20_0._item_grid
 	local var_20_1 = arg_20_0.parent.loadout_sync_id
 
@@ -488,12 +488,12 @@ function HeroWindowLoadoutInventory._update_loadout_sync(arg_20_0)
 	end
 end
 
-function HeroWindowLoadoutInventory._exit(arg_21_0, arg_21_1)
+HeroWindowLoadoutInventory._exit = function (arg_21_0, arg_21_1)
 	arg_21_0.exit = true
 	arg_21_0.exit_level_id = arg_21_1
 end
 
-function HeroWindowLoadoutInventory.draw(arg_22_0, arg_22_1)
+HeroWindowLoadoutInventory.draw = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0.ui_renderer
 	local var_22_1 = arg_22_0.ui_top_renderer
 	local var_22_2 = arg_22_0.ui_scenegraph
@@ -509,11 +509,11 @@ function HeroWindowLoadoutInventory.draw(arg_22_0, arg_22_1)
 	UIRenderer.end_pass(var_22_1)
 end
 
-function HeroWindowLoadoutInventory._play_sound(arg_23_0, arg_23_1)
+HeroWindowLoadoutInventory._play_sound = function (arg_23_0, arg_23_1)
 	arg_23_0.parent:play_sound(arg_23_1)
 end
 
-function HeroWindowLoadoutInventory._change_category_by_index(arg_24_0, arg_24_1)
+HeroWindowLoadoutInventory._change_category_by_index = function (arg_24_0, arg_24_1)
 	arg_24_0:_select_tab_by_slot_index(arg_24_1)
 
 	local var_24_0 = arg_24_0._categories[arg_24_1]

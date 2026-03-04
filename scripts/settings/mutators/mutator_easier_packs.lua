@@ -12,7 +12,7 @@ local var_0_1 = 0.8
 
 return {
 	hide_from_player_ui = true,
-	tweak_pack_spawning_settings = function(arg_1_0, arg_1_1)
+	tweak_pack_spawning_settings = function (arg_1_0, arg_1_1)
 		MutatorUtils.tweak_pack_spawning_settings_density_multiplier(arg_1_1, var_0_1)
 		MutatorUtils.tweak_pack_spawning_settings_convert_breeds(arg_1_1, var_0_0)
 	end

@@ -677,7 +677,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			texture_id = "status_texture_glow",
 			style_id = "status_texture_glow",
 			pass_type = "texture",
-			content_check_function = function(arg_3_0)
+			content_check_function = function (arg_3_0)
 				return not arg_3_0.active
 			end
 		},
@@ -685,7 +685,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			texture_id = "status_texture_frame",
 			style_id = "status_texture_frame",
 			pass_type = "texture",
-			content_check_function = function(arg_4_0)
+			content_check_function = function (arg_4_0)
 				return not arg_4_0.active
 			end
 		},
@@ -693,7 +693,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "placeholder_input",
 			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function(arg_5_0)
+			content_check_function = function (arg_5_0)
 				return arg_5_0.input == ""
 			end
 		},
@@ -701,7 +701,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "placeholder_input_shadow",
 			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function(arg_6_0)
+			content_check_function = function (arg_6_0)
 				return arg_6_0.input == ""
 			end
 		},
@@ -709,7 +709,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "status_message",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function(arg_7_0)
+			content_check_function = function (arg_7_0)
 				return arg_7_0.status_message and not arg_7_0.error_message
 			end
 		},
@@ -717,7 +717,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "error_message",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function(arg_8_0)
+			content_check_function = function (arg_8_0)
 				return arg_8_0.status_message and arg_8_0.error_message
 			end
 		},
@@ -725,7 +725,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "status_message_shadow",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function(arg_9_0)
+			content_check_function = function (arg_9_0)
 				return arg_9_0.status_message
 			end
 		},
@@ -733,7 +733,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			style_id = "checkbox_background",
 			pass_type = "hotspot",
 			content_id = "checkbox_hotspot",
-			content_change_function = function(arg_10_0, arg_10_1)
+			content_change_function = function (arg_10_0, arg_10_1)
 				local var_10_0 = arg_10_1.parent
 
 				if arg_10_0.on_pressed then
@@ -762,7 +762,7 @@ local function var_0_2(arg_2_0, arg_2_1)
 			pass_type = "texture",
 			style_id = "checkbox",
 			texture_id = "checkbox",
-			content_check_function = function(arg_11_0)
+			content_check_function = function (arg_11_0)
 				return arg_11_0.checkbox_hotspot.is_selected
 			end
 		},
@@ -1371,7 +1371,7 @@ end
 
 PopupHandler = class(PopupHandler)
 
-function PopupHandler.init(arg_13_0, arg_13_1, arg_13_2)
+PopupHandler.init = function (arg_13_0, arg_13_1, arg_13_2)
 	fassert(arg_13_2, "Not created by the popoup manager")
 
 	arg_13_0.ui_renderer = arg_13_1.ui_renderer
@@ -1394,7 +1394,7 @@ function PopupHandler.init(arg_13_0, arg_13_1, arg_13_2)
 	arg_13_0.mock_input_manager = MockInputManager:new()
 end
 
-function PopupHandler.set_input_manager(arg_14_0, arg_14_1)
+PopupHandler.set_input_manager = function (arg_14_0, arg_14_1)
 	arg_14_0.input_manager = arg_14_1
 
 	local var_14_0 = {
@@ -1411,11 +1411,11 @@ function PopupHandler.set_input_manager(arg_14_0, arg_14_1)
 	end
 end
 
-function PopupHandler.get_input_manager(arg_15_0)
+PopupHandler.get_input_manager = function (arg_15_0)
 	return arg_15_0.input_manager
 end
 
-function PopupHandler.remove_input_manager(arg_16_0, arg_16_1)
+PopupHandler.remove_input_manager = function (arg_16_0, arg_16_1)
 	if arg_16_0:has_popup() then
 		arg_16_0:release_input()
 	end
@@ -1429,7 +1429,7 @@ function PopupHandler.remove_input_manager(arg_16_0, arg_16_1)
 	arg_16_0.input_manager = nil
 end
 
-function PopupHandler.create_ui_elements(arg_17_0)
+PopupHandler.create_ui_elements = function (arg_17_0)
 	arg_17_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0)
 	arg_17_0._popup_widgets_by_name = {
 		default = UIWidget.init(var_0_3),
@@ -1465,7 +1465,7 @@ function PopupHandler.create_ui_elements(arg_17_0)
 	arg_17_0.gamepad_button_widgets = var_17_1
 end
 
-function PopupHandler.acquire_input(arg_18_0, arg_18_1)
+PopupHandler.acquire_input = function (arg_18_0, arg_18_1)
 	local var_18_0 = arg_18_0.input_manager
 
 	arg_18_0:release_input(true)
@@ -1480,7 +1480,7 @@ function PopupHandler.acquire_input(arg_18_0, arg_18_1)
 	end
 end
 
-function PopupHandler.release_input(arg_19_0, arg_19_1)
+PopupHandler.release_input = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0.input_manager
 	local var_19_1 = "popup"
 
@@ -1495,7 +1495,7 @@ function PopupHandler.release_input(arg_19_0, arg_19_1)
 	end
 end
 
-function PopupHandler.update(arg_20_0, arg_20_1, arg_20_2)
+PopupHandler.update = function (arg_20_0, arg_20_1, arg_20_2)
 	fassert(arg_20_2, "Update does not come from the popup manager")
 
 	arg_20_0.debug_num_updates = arg_20_0.debug_num_updates + 1
@@ -1672,7 +1672,7 @@ function PopupHandler.update(arg_20_0, arg_20_1, arg_20_2)
 	end
 end
 
-function PopupHandler._handle_keyboard_input(arg_21_0, arg_21_1)
+PopupHandler._handle_keyboard_input = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_1.n_args
 	local var_21_1 = arg_21_0.button_widgets[var_21_0]
 
@@ -1715,7 +1715,7 @@ function PopupHandler._handle_keyboard_input(arg_21_0, arg_21_1)
 	end
 end
 
-function PopupHandler.get_gamepad_input_texture_data(arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+PopupHandler.get_gamepad_input_texture_data = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
 	local var_22_0 = PLATFORM
 
 	if IS_WINDOWS then
@@ -1729,7 +1729,7 @@ function PopupHandler.get_gamepad_input_texture_data(arg_22_0, arg_22_1, arg_22_
 	end
 end
 
-function PopupHandler.set_button_enabled(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+PopupHandler.set_button_enabled = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	local var_23_0
 
 	for iter_23_0 = 1, arg_23_0.n_popups do
@@ -1743,7 +1743,7 @@ function PopupHandler.set_button_enabled(arg_23_0, arg_23_1, arg_23_2, arg_23_3)
 	var_23_0.button_enabled_state[arg_23_2] = arg_23_3
 end
 
-function PopupHandler.active_popup(arg_24_0)
+PopupHandler.active_popup = function (arg_24_0)
 	local var_24_0 = arg_24_0.popups[arg_24_0.n_popups]
 
 	if var_24_0 then
@@ -1751,7 +1751,7 @@ function PopupHandler.active_popup(arg_24_0)
 	end
 end
 
-function PopupHandler.queue_popup(arg_25_0, arg_25_1, arg_25_2, arg_25_3, ...)
+PopupHandler.queue_popup = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, ...)
 	local var_25_0 = arg_25_0.n_popups
 	local var_25_1 = arg_25_0.popups
 	local var_25_2 = var_25_0 + 1
@@ -1808,7 +1808,7 @@ function PopupHandler.queue_popup(arg_25_0, arg_25_1, arg_25_2, arg_25_3, ...)
 	return var_25_4
 end
 
-function PopupHandler._initialize_popup(arg_26_0, arg_26_1)
+PopupHandler._initialize_popup = function (arg_26_0, arg_26_1)
 	if arg_26_1.type == "password" then
 		arg_26_0:_initialize_password_popup(arg_26_1)
 	end
@@ -1816,7 +1816,7 @@ function PopupHandler._initialize_popup(arg_26_0, arg_26_1)
 	arg_26_1.initialized = true
 end
 
-function PopupHandler._initialize_password_popup(arg_27_0, arg_27_1)
+PopupHandler._initialize_password_popup = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.widget
 	local var_27_1 = var_27_0.content
 	local var_27_2 = var_27_0.style
@@ -1847,7 +1847,7 @@ function PopupHandler._initialize_password_popup(arg_27_0, arg_27_1)
 	arg_27_1.initialized = true
 end
 
-function PopupHandler.set_popup_verifying_password(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+PopupHandler.set_popup_verifying_password = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0, var_28_1 = arg_28_0:active_popup()
 
 	if var_28_0 ~= arg_28_1 then
@@ -1898,11 +1898,11 @@ function PopupHandler.set_popup_verifying_password(arg_28_0, arg_28_1, arg_28_2,
 	end
 end
 
-function PopupHandler._animate_element_pulse(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+PopupHandler._animate_element_pulse = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
 	return (UIAnimation.init(UIAnimation.pulse_animation, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5))
 end
 
-function PopupHandler.activate_timer(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7)
+PopupHandler.activate_timer = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7)
 	local var_30_0 = arg_30_0.n_popups
 	local var_30_1 = arg_30_0.popups
 	local var_30_2
@@ -1942,11 +1942,11 @@ function PopupHandler.activate_timer(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg
 	var_30_2.timer_font_size = arg_30_7
 end
 
-function PopupHandler.has_popup(arg_31_0)
+PopupHandler.has_popup = function (arg_31_0)
 	return arg_31_0.n_popups > 0
 end
 
-function PopupHandler.has_popup_with_id(arg_32_0, arg_32_1)
+PopupHandler.has_popup_with_id = function (arg_32_0, arg_32_1)
 	for iter_32_0, iter_32_1 in pairs(arg_32_0.popups) do
 		if iter_32_1.popup_id == arg_32_1 then
 			return true
@@ -1956,13 +1956,13 @@ function PopupHandler.has_popup_with_id(arg_32_0, arg_32_1)
 	return false
 end
 
-function PopupHandler._reset_popup_initialized(arg_33_0)
+PopupHandler._reset_popup_initialized = function (arg_33_0)
 	for iter_33_0, iter_33_1 in pairs(arg_33_0.popups) do
 		iter_33_1.initialized = false
 	end
 end
 
-function PopupHandler.cancel_popup(arg_34_0, arg_34_1)
+PopupHandler.cancel_popup = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_0.n_popups
 	local var_34_1 = arg_34_0.popups
 
@@ -1982,7 +1982,7 @@ function PopupHandler.cancel_popup(arg_34_0, arg_34_1)
 	end
 end
 
-function PopupHandler.cancel_all_popups(arg_35_0)
+PopupHandler.cancel_all_popups = function (arg_35_0)
 	local var_35_0 = arg_35_0.n_popups
 	local var_35_1 = arg_35_0.popups
 
@@ -1997,7 +1997,7 @@ function PopupHandler.cancel_all_popups(arg_35_0)
 	arg_35_0.n_popups = 0
 end
 
-function PopupHandler.query_result(arg_36_0, arg_36_1)
+PopupHandler.query_result = function (arg_36_0, arg_36_1)
 	local var_36_0 = arg_36_0.popup_results[arg_36_1]
 
 	arg_36_0.popup_results[arg_36_1] = nil
@@ -2007,17 +2007,17 @@ function PopupHandler.query_result(arg_36_0, arg_36_1)
 	end
 end
 
-function PopupHandler.play_sound(arg_37_0, arg_37_1)
+PopupHandler.play_sound = function (arg_37_0, arg_37_1)
 	WwiseWorld.trigger_event(arg_37_0.wwise_world, arg_37_1)
 end
 
-function PopupHandler.fit_text_width_to_popup(arg_38_0, arg_38_1)
+PopupHandler.fit_text_width_to_popup = function (arg_38_0, arg_38_1)
 	local var_38_0 = arg_38_0._popup_widgets_by_name.default
 
 	return UIRenderer.crop_text_width(arg_38_0.ui_renderer, arg_38_1, 500, var_38_0.style.text)
 end
 
-function PopupHandler.get_number_of_rows(arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+PopupHandler.get_number_of_rows = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
 	local var_39_0, var_39_1 = UIFontByResolution(arg_39_2)
 
 	return #UIRenderer.word_wrap(arg_39_0.ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)

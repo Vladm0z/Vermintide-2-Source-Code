@@ -13,7 +13,7 @@ local var_0_2 = require("PlayFab.PlayFabClientApi")
 var_0_2.settings.titleId = GameSettingsDevelopment.backend_settings.title_id
 ScriptBackendPlayFabDedicated = class(ScriptBackendPlayFabDedicated, ScriptBackendPlayFab)
 
-function ScriptBackendPlayFabDedicated.init(arg_1_0)
+ScriptBackendPlayFabDedicated.init = function (arg_1_0)
 	local var_1_0 = arg_1_0._generate_unique_id()
 
 	arg_1_0._metadata = Managers.backend:get_metadata()
@@ -37,7 +37,7 @@ function ScriptBackendPlayFabDedicated.init(arg_1_0)
 	var_0_2.LoginWithCustomID(var_1_1, var_1_2)
 end
 
-function ScriptBackendPlayFabDedicated.login_request_cb(arg_2_0, arg_2_1)
+ScriptBackendPlayFabDedicated.login_request_cb = function (arg_2_0, arg_2_1)
 	arg_2_0._signin_result = arg_2_1
 
 	local var_2_0 = arg_2_1.InfoResultPayload.UserReadOnlyData
@@ -53,7 +53,7 @@ function ScriptBackendPlayFabDedicated.login_request_cb(arg_2_0, arg_2_1)
 	arg_2_0:_validate_version()
 end
 
-function ScriptBackendPlayFabDedicated._validate_version(arg_3_0)
+ScriptBackendPlayFabDedicated._validate_version = function (arg_3_0)
 	local var_3_0 = {
 		FunctionName = "validateVersion",
 		FunctionParameter = {
@@ -68,7 +68,7 @@ function ScriptBackendPlayFabDedicated._validate_version(arg_3_0)
 	arg_3_0._validating_version = true
 end
 
-function ScriptBackendPlayFabDedicated._validate_version_cb(arg_4_0, arg_4_1)
+ScriptBackendPlayFabDedicated._validate_version_cb = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.FunctionResult and arg_4_1.FunctionResult.valid_version
 
 	arg_4_0._validating_version = nil
@@ -81,7 +81,7 @@ function ScriptBackendPlayFabDedicated._validate_version_cb(arg_4_0, arg_4_1)
 	end
 end
 
-function ScriptBackendPlayFabDedicated.update_signin(arg_5_0)
+ScriptBackendPlayFabDedicated.update_signin = function (arg_5_0)
 	local var_5_0 = arg_5_0._signin_result_error
 
 	if var_5_0 then
@@ -95,7 +95,7 @@ function ScriptBackendPlayFabDedicated.update_signin(arg_5_0)
 	end
 end
 
-function ScriptBackendPlayFabDedicated._generate_unique_id()
+ScriptBackendPlayFabDedicated._generate_unique_id = function ()
 	local var_6_0 = Application.machine_id()
 	local var_6_1 = Network.default_network_address()
 	local var_6_2 = script_data.server_port or script_data.settings.server_port

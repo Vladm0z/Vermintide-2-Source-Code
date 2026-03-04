@@ -4,7 +4,7 @@ ConflictDirectorTests = {}
 
 local var_0_0 = false
 
-function ConflictDirectorTests.start_utility_comparison()
+ConflictDirectorTests.start_utility_comparison = function ()
 	var_0_0 = true
 end
 
@@ -55,7 +55,7 @@ end
 local var_0_3 = false
 local var_0_4 = false
 
-function ConflictDirectorTests.test_main_path_optimization(arg_4_0, arg_4_1, arg_4_2)
+ConflictDirectorTests.test_main_path_optimization = function (arg_4_0, arg_4_1, arg_4_2)
 	local var_4_0 = arg_4_0.main_path_info.main_paths
 
 	if not var_4_0 then
@@ -225,7 +225,7 @@ function test_angled_trajectory(arg_9_0)
 	Debug.text("Trajectory Success: " .. tostring(var_9_6))
 end
 
-function ConflictDirectorTests.setup_reachable_coverpoints_test(arg_10_0)
+ConflictDirectorTests.setup_reachable_coverpoints_test = function (arg_10_0)
 	local var_10_0 = {}
 	local var_10_1, var_10_2 = ConflictUtils.hidden_cover_points(arg_10_0.hero_player_positions[1], arg_10_0.hero_player_positions, 2, 45, 1)
 
@@ -241,7 +241,7 @@ function ConflictDirectorTests.setup_reachable_coverpoints_test(arg_10_0)
 	print("Points to test:", var_10_1)
 end
 
-function ConflictDirectorTests.process_reachable_coverpoints_test(arg_11_0)
+ConflictDirectorTests.process_reachable_coverpoints_test = function (arg_11_0)
 	if arg_11_0._reachable_processing and arg_11_0.level_analysis.process_unreachable(arg_11_0._reachable_processing) then
 		arg_11_0._reachable_processing = nil
 
@@ -361,7 +361,7 @@ function make_points_for_hull_test()
 	return var_19_1
 end
 
-function ConflictDirectorTests.update_jslots(arg_20_0, arg_20_1)
+ConflictDirectorTests.update_jslots = function (arg_20_0, arg_20_1)
 	local var_20_0 = {
 		num = 0,
 		slots = {},
@@ -416,7 +416,7 @@ local var_0_6 = {}
 local var_0_7 = 0.3
 local var_0_8 = 0.3
 
-function ConflictDirectorTests.draw_sparse_grid(arg_21_0)
+ConflictDirectorTests.draw_sparse_grid = function (arg_21_0)
 	if not arg_21_0 then
 		return
 	end
@@ -435,7 +435,7 @@ function ConflictDirectorTests.draw_sparse_grid(arg_21_0)
 	end
 end
 
-function ConflictDirectorTests.sparse_grid_test(arg_22_0, arg_22_1)
+ConflictDirectorTests.sparse_grid_test = function (arg_22_0, arg_22_1)
 	local var_22_0 = math.floor
 	local var_22_1 = var_22_0(arg_22_0.x / var_0_7 + 0.5)
 	local var_22_2 = var_22_0(arg_22_0.y / var_0_7 + 0.5)
@@ -457,7 +457,7 @@ function ConflictDirectorTests.sparse_grid_test(arg_22_0, arg_22_1)
 	end
 end
 
-function ConflictDirectorTests.lean_slot_test()
+ConflictDirectorTests.lean_slot_test = function ()
 	local var_23_0 = 10
 	local var_23_1 = 3
 	local var_23_2 = 2 * math.pi / var_23_0
@@ -512,7 +512,7 @@ function ConflictDirectorTests.lean_slot_test()
 	end
 end
 
-function ConflictDirectorTests.lean_slot_test_update(arg_24_0)
+ConflictDirectorTests.lean_slot_test_update = function (arg_24_0)
 	local var_24_0 = ConflictDirectorTests.lean_slots
 
 	if var_24_0 then
@@ -528,7 +528,7 @@ function ConflictDirectorTests.lean_slot_test_update(arg_24_0)
 	end
 end
 
-function ConflictDirectorTests.drag_test_start(arg_25_0)
+ConflictDirectorTests.drag_test_start = function (arg_25_0)
 	if ConflictDirectorTests.drag_test then
 		ConflictDirectorTests.drag_test = nil
 	else
@@ -543,7 +543,7 @@ function ConflictDirectorTests.drag_test_start(arg_25_0)
 	end
 end
 
-function ConflictDirectorTests.drag_test_update(arg_26_0)
+ConflictDirectorTests.drag_test_update = function (arg_26_0)
 	if ConflictDirectorTests.drag_test then
 		local var_26_0 = ConflictDirectorTests.drag_test
 		local var_26_1 = var_26_0.apos:unbox()
@@ -558,7 +558,7 @@ function ConflictDirectorTests.drag_test_update(arg_26_0)
 	end
 end
 
-function ConflictDirectorTests.tentacle_test_start(arg_27_0, arg_27_1, arg_27_2)
+ConflictDirectorTests.tentacle_test_start = function (arg_27_0, arg_27_1, arg_27_2)
 	if ConflictDirectorTests.ik_tentacle then
 		ConflictDirectorTests.ik_tentacle = nil
 	else
@@ -578,7 +578,7 @@ function ConflictDirectorTests.tentacle_test_start(arg_27_0, arg_27_1, arg_27_2)
 	end
 end
 
-function ConflictDirectorTests.tentacle_test_update(arg_28_0, arg_28_1, arg_28_2)
+ConflictDirectorTests.tentacle_test_update = function (arg_28_0, arg_28_1, arg_28_2)
 	local var_28_0 = arg_28_0.PLAYER_POSITIONS
 	local var_28_1 = ConflictDirectorTests.ik_tentacle
 
@@ -592,7 +592,7 @@ local var_0_9 = {}
 local var_0_10 = "spawn"
 local var_0_11 = "soft"
 
-function ConflictDirectorTests.spawn_mesh_cut(arg_29_0)
+ConflictDirectorTests.spawn_mesh_cut = function (arg_29_0)
 	local var_29_0 = arg_29_0._world
 	local var_29_1 = arg_29_0.nav_world
 	local var_29_2, var_29_3, var_29_4, var_29_5 = arg_29_0:player_aim_raycast(var_29_0, false, "filter_ray_horde_spawn")
@@ -655,7 +655,7 @@ function ConflictDirectorTests.spawn_mesh_cut(arg_29_0)
 	end
 end
 
-function ConflictDirectorTests.spawn_liquid_blob(arg_30_0, arg_30_1, arg_30_2)
+ConflictDirectorTests.spawn_liquid_blob = function (arg_30_0, arg_30_1, arg_30_2)
 	local var_30_0, var_30_1, var_30_2, var_30_3 = arg_30_0:player_aim_raycast(arg_30_0._world, false, "filter_ray_horde_spawn")
 
 	if not var_30_0 then
@@ -676,7 +676,7 @@ function ConflictDirectorTests.spawn_liquid_blob(arg_30_0, arg_30_1, arg_30_2)
 	local var_30_7 = Managers.state.unit_spawner:spawn_network_unit(var_30_5, "nurgle_liquid_blob", var_30_4, var_30_0)
 end
 
-function ConflictDirectorTests.test_cover_points(arg_31_0, arg_31_1)
+ConflictDirectorTests.test_cover_points = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_1.PLAYER_POSITIONS
 
 	if not var_31_0[1] then
@@ -710,7 +710,7 @@ function ConflictDirectorTests.test_cover_points(arg_31_0, arg_31_1)
 	arg_31_0.specials_pacing:get_special_spawn_pos()
 end
 
-function ConflictDirectorTests.update_kill_tester(arg_32_0)
+ConflictDirectorTests.update_kill_tester = function (arg_32_0)
 	if not script_data.kill_test then
 		return
 	end
@@ -740,7 +740,7 @@ function ConflictDirectorTests.update_kill_tester(arg_32_0)
 	local var_32_4 = Breeds[var_32_3]
 	local var_32_5 = {
 		ignore_breed_limits = true,
-		spawned_func = function(arg_33_0, arg_33_1, arg_33_2)
+		spawned_func = function (arg_33_0, arg_33_1, arg_33_2)
 			table.insert(arg_32_0._kill_list, 1, arg_33_0)
 		end
 	}
@@ -769,7 +769,7 @@ function ConflictDirectorTests.update_kill_tester(arg_32_0)
 	end
 end
 
-function ConflictDirectorTests.nav_group_astar_test(arg_34_0, arg_34_1)
+ConflictDirectorTests.nav_group_astar_test = function (arg_34_0, arg_34_1)
 	if not arg_34_0.astar_path then
 		print("ASTAR")
 
@@ -792,7 +792,7 @@ function ConflictDirectorTests.nav_group_astar_test(arg_34_0, arg_34_1)
 	end
 end
 
-function ConflictDirectorTests.update_group_astar_test(arg_35_0, arg_35_1)
+ConflictDirectorTests.update_group_astar_test = function (arg_35_0, arg_35_1)
 	if arg_35_0.astar_path then
 		local var_35_0 = arg_35_0.astar_path
 		local var_35_1
@@ -921,7 +921,7 @@ function setup_slot_testing()
 	slot_testing(var_39_0, var_39_1)
 end
 
-function ConflictDirectorTests.start_test(arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+ConflictDirectorTests.start_test = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
 	local var_40_0 = Managers.state.side:get_side_from_name("heroes") or Managers.state.side:get_side(1)
 
 	arg_40_3 = arg_40_3 or "spawn_encampment"
@@ -1026,7 +1026,7 @@ function ConflictDirectorTests.start_test(arg_40_0, arg_40_1, arg_40_2, arg_40_3
 	end
 end
 
-function ConflictDirectorTests.update(arg_41_0, arg_41_1, arg_41_2)
+ConflictDirectorTests.update = function (arg_41_0, arg_41_1, arg_41_2)
 	local var_41_0 = arg_41_0.conflict_director_tests_name
 	local var_41_1 = Managers.state.side:get_side_from_name("heroes") or Managers.state.side:get_side(1)
 

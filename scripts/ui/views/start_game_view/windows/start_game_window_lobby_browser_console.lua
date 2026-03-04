@@ -35,7 +35,7 @@ local var_0_4 = {
 StartGameWindowLobbyBrowserConsole = class(StartGameWindowLobbyBrowserConsole)
 StartGameWindowLobbyBrowserConsole.NAME = "StartGameWindowLobbyBrowserConsole"
 
-function StartGameWindowLobbyBrowserConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
+StartGameWindowLobbyBrowserConsole.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[StartGameWindow] Enter Substate StartGameWindowLobbyBrowserConsole")
 
 	arg_1_0._parent = arg_1_1.parent
@@ -67,7 +67,7 @@ function StartGameWindowLobbyBrowserConsole.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	Managers.account:get_friends(2000, callback(arg_1_0, "cb_friends_collected"))
 end
 
-function StartGameWindowLobbyBrowserConsole.get_selected_game_mode_index(arg_2_0)
+StartGameWindowLobbyBrowserConsole.get_selected_game_mode_index = function (arg_2_0)
 	local var_2_0 = arg_2_0._game_mode_data.game_modes
 
 	return arg_2_0._selected_game_mode_index or var_2_0.adventure
@@ -75,7 +75,7 @@ end
 
 local var_0_5 = {}
 
-function StartGameWindowLobbyBrowserConsole.cb_friends_collected(arg_3_0, arg_3_1)
+StartGameWindowLobbyBrowserConsole.cb_friends_collected = function (arg_3_0, arg_3_1)
 	table.clear(arg_3_0._friend_names)
 
 	local var_3_0 = arg_3_1 or var_0_5
@@ -85,15 +85,15 @@ function StartGameWindowLobbyBrowserConsole.cb_friends_collected(arg_3_0, arg_3_
 	end
 end
 
-function StartGameWindowLobbyBrowserConsole.change_generic_actions(arg_4_0, arg_4_1)
+StartGameWindowLobbyBrowserConsole.change_generic_actions = function (arg_4_0, arg_4_1)
 	arg_4_0._parent:change_generic_actions(arg_4_1)
 end
 
-function StartGameWindowLobbyBrowserConsole.set_input_description(arg_5_0, arg_5_1)
+StartGameWindowLobbyBrowserConsole.set_input_description = function (arg_5_0, arg_5_1)
 	arg_5_0._parent:set_input_description(arg_5_1)
 end
 
-function StartGameWindowLobbyBrowserConsole.on_exit(arg_6_0, arg_6_1)
+StartGameWindowLobbyBrowserConsole.on_exit = function (arg_6_0, arg_6_1)
 	print("[StartGameWindow] Exit Substate StartGameWindowLobbyBrowserConsole")
 	Managers.matchmaking:set_active_lobby_browser(nil)
 	arg_6_0:set_input_description(nil)
@@ -102,11 +102,11 @@ function StartGameWindowLobbyBrowserConsole.on_exit(arg_6_0, arg_6_1)
 	arg_6_0._lobby_finder = nil
 end
 
-function StartGameWindowLobbyBrowserConsole.disable_input(arg_7_0, arg_7_1)
+StartGameWindowLobbyBrowserConsole.disable_input = function (arg_7_0, arg_7_1)
 	return arg_7_1 == "show_gamercard"
 end
 
-function StartGameWindowLobbyBrowserConsole.update(arg_8_0, arg_8_1, arg_8_2)
+StartGameWindowLobbyBrowserConsole.update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._lobby_finder:update(arg_8_1)
 
 	if not arg_8_0:_is_refreshing() then
@@ -122,23 +122,23 @@ function StartGameWindowLobbyBrowserConsole.update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0._lobby_browser_console_ui:update(arg_8_1, arg_8_2, arg_8_0._searching and arg_8_0._do_populate)
 end
 
-function StartGameWindowLobbyBrowserConsole.post_update(arg_9_0, arg_9_1, arg_9_2)
+StartGameWindowLobbyBrowserConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function StartGameWindowLobbyBrowserConsole._is_refreshing(arg_10_0)
+StartGameWindowLobbyBrowserConsole._is_refreshing = function (arg_10_0)
 	return (arg_10_0._lobby_finder:is_refreshing())
 end
 
-function StartGameWindowLobbyBrowserConsole.play_sound(arg_11_0, arg_11_1)
+StartGameWindowLobbyBrowserConsole.play_sound = function (arg_11_0, arg_11_1)
 	arg_11_0._parent:play_sound(arg_11_1)
 end
 
-function StartGameWindowLobbyBrowserConsole.cancel_join_lobby(arg_12_0, arg_12_1)
+StartGameWindowLobbyBrowserConsole.cancel_join_lobby = function (arg_12_0, arg_12_1)
 	arg_12_0.join_lobby_data_id = nil
 end
 
-function StartGameWindowLobbyBrowserConsole._populate_lobby_list(arg_13_0, arg_13_1)
+StartGameWindowLobbyBrowserConsole._populate_lobby_list = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0:get_lobbies()
 	local var_13_1 = true
 	local var_13_2 = arg_13_0._selected_show_lobbies_index
@@ -178,13 +178,13 @@ end
 
 local var_0_6 = {}
 
-function StartGameWindowLobbyBrowserConsole.get_lobbies(arg_14_0)
+StartGameWindowLobbyBrowserConsole.get_lobbies = function (arg_14_0)
 	return arg_14_0._lobby_finder:lobbies() or var_0_6
 end
 
 local var_0_7 = {}
 
-function StartGameWindowLobbyBrowserConsole._valid_lobby(arg_15_0, arg_15_1)
+StartGameWindowLobbyBrowserConsole._valid_lobby = function (arg_15_0, arg_15_1)
 	if not arg_15_1.valid then
 		return false
 	end
@@ -275,7 +275,7 @@ function StartGameWindowLobbyBrowserConsole._valid_lobby(arg_15_0, arg_15_1)
 	return true
 end
 
-function StartGameWindowLobbyBrowserConsole._is_friend_lobby(arg_16_0, arg_16_1)
+StartGameWindowLobbyBrowserConsole._is_friend_lobby = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_1.name
 
 	print(var_16_0, arg_16_0._friend_names[var_16_0])
@@ -283,11 +283,11 @@ function StartGameWindowLobbyBrowserConsole._is_friend_lobby(arg_16_0, arg_16_1)
 	return arg_16_0._friend_names[var_16_0] ~= nil
 end
 
-function StartGameWindowLobbyBrowserConsole.input_service(arg_17_0)
+StartGameWindowLobbyBrowserConsole.input_service = function (arg_17_0)
 	return arg_17_0._parent:window_input_service()
 end
 
-function StartGameWindowLobbyBrowserConsole.dirty(arg_18_0)
+StartGameWindowLobbyBrowserConsole.dirty = function (arg_18_0)
 	local var_18_0 = arg_18_0._dirty
 
 	arg_18_0._dirty = false
@@ -295,7 +295,7 @@ function StartGameWindowLobbyBrowserConsole.dirty(arg_18_0)
 	return var_18_0
 end
 
-function StartGameWindowLobbyBrowserConsole._update_auto_refresh(arg_19_0, arg_19_1)
+StartGameWindowLobbyBrowserConsole._update_auto_refresh = function (arg_19_0, arg_19_1)
 	local var_19_0 = arg_19_0:_is_refreshing()
 	local var_19_1 = arg_19_0._lobby_list_update_timer or MatchmakingSettings.TIME_BETWEEN_EACH_SEARCH
 
@@ -320,7 +320,7 @@ function StartGameWindowLobbyBrowserConsole._update_auto_refresh(arg_19_0, arg_1
 	arg_19_0._was_refreshing = var_19_0
 end
 
-function StartGameWindowLobbyBrowserConsole.reset_filters(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+StartGameWindowLobbyBrowserConsole.reset_filters = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
 	arg_20_0:set_level(arg_20_2 or "any")
 	arg_20_0:set_difficulty(arg_20_3 or "any")
 	arg_20_0:set_lobby_filter(arg_20_4 or (BUILD == "dev" or BUILD == "debug") and "lb_show_all" or "lb_show_joinable")
@@ -329,7 +329,7 @@ function StartGameWindowLobbyBrowserConsole.reset_filters(arg_20_0, arg_20_1, ar
 	arg_20_0:_search()
 end
 
-function StartGameWindowLobbyBrowserConsole._create_filter_requirements(arg_21_0)
+StartGameWindowLobbyBrowserConsole._create_filter_requirements = function (arg_21_0)
 	local var_21_0 = arg_21_0._lobby_finder
 	local var_21_1 = arg_21_0._selected_game_mode_index
 	local var_21_2 = arg_21_0._game_mode_data.game_modes[arg_21_0._selected_game_mode_index] or "any"
@@ -411,13 +411,13 @@ function StartGameWindowLobbyBrowserConsole._create_filter_requirements(arg_21_0
 	return var_21_13
 end
 
-function StartGameWindowLobbyBrowserConsole._join(arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowLobbyBrowserConsole._join = function (arg_22_0, arg_22_1, arg_22_2)
 	Managers.matchmaking:request_join_lobby(arg_22_1, arg_22_2)
 
 	arg_22_0.join_lobby_data_id = arg_22_1.id
 end
 
-function StartGameWindowLobbyBrowserConsole._search(arg_23_0, arg_23_1)
+StartGameWindowLobbyBrowserConsole._search = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0:_create_filter_requirements()
 	local var_23_1 = arg_23_0._lobby_finder
 
@@ -437,37 +437,37 @@ function StartGameWindowLobbyBrowserConsole._search(arg_23_0, arg_23_1)
 	arg_23_0._do_populate = not arg_23_1
 end
 
-function StartGameWindowLobbyBrowserConsole._get_game_modes(arg_24_0)
+StartGameWindowLobbyBrowserConsole._get_game_modes = function (arg_24_0)
 	return arg_24_0._game_mode_data.game_modes
 end
 
-function StartGameWindowLobbyBrowserConsole._get_levels(arg_25_0)
+StartGameWindowLobbyBrowserConsole._get_levels = function (arg_25_0)
 	local var_25_0 = arg_25_0._game_mode_data
 	local var_25_1 = var_25_0.game_modes
 
 	return var_25_0[arg_25_0._selected_game_mode_index or var_25_1.adventure].levels
 end
 
-function StartGameWindowLobbyBrowserConsole._get_difficulties(arg_26_0)
+StartGameWindowLobbyBrowserConsole._get_difficulties = function (arg_26_0)
 	local var_26_0 = arg_26_0._game_mode_data
 	local var_26_1 = var_26_0.game_modes
 
 	return (var_26_0[arg_26_0._selected_game_mode_index or var_26_1.adventure] or var_26_0[1]).difficulties
 end
 
-function StartGameWindowLobbyBrowserConsole.completed_level_difficulty_index(arg_27_0, arg_27_1)
+StartGameWindowLobbyBrowserConsole.completed_level_difficulty_index = function (arg_27_0, arg_27_1)
 	local var_27_0 = arg_27_1.selected_mission_id
 
 	return LevelUnlockUtils.completed_level_difficulty_index(arg_27_0._statistics_db, arg_27_0._stats_id, var_27_0) or 0
 end
 
-function StartGameWindowLobbyBrowserConsole.refresh(arg_28_0)
+StartGameWindowLobbyBrowserConsole.refresh = function (arg_28_0)
 	if not arg_28_0:_is_refreshing() then
 		arg_28_0:_search()
 	end
 end
 
-function StartGameWindowLobbyBrowserConsole.set_game_mode(arg_29_0, arg_29_1)
+StartGameWindowLobbyBrowserConsole.set_game_mode = function (arg_29_0, arg_29_1)
 	local var_29_0 = arg_29_0:_get_game_modes()
 	local var_29_1 = table.find(var_29_0, arg_29_1)
 	local var_29_2 = "lobby_browser_mission"
@@ -486,7 +486,7 @@ function StartGameWindowLobbyBrowserConsole.set_game_mode(arg_29_0, arg_29_1)
 	arg_29_0._lobby_browser_console_ui:setup_filter_entries()
 end
 
-function StartGameWindowLobbyBrowserConsole.set_level(arg_30_0, arg_30_1)
+StartGameWindowLobbyBrowserConsole.set_level = function (arg_30_0, arg_30_1)
 	local var_30_0 = arg_30_0:_get_levels()
 	local var_30_1 = table.find(var_30_0, arg_30_1)
 	local var_30_2 = "lobby_browser_mission"
@@ -502,7 +502,7 @@ function StartGameWindowLobbyBrowserConsole.set_level(arg_30_0, arg_30_1)
 	arg_30_0._lobby_browser_console_ui:set_level_filter(Localize(var_30_2))
 end
 
-function StartGameWindowLobbyBrowserConsole.set_difficulty(arg_31_0, arg_31_1)
+StartGameWindowLobbyBrowserConsole.set_difficulty = function (arg_31_0, arg_31_1)
 	local var_31_0 = arg_31_0:_get_difficulties()
 	local var_31_1 = table.find(var_31_0, arg_31_1)
 	local var_31_2 = "lobby_browser_difficulty"
@@ -518,7 +518,7 @@ function StartGameWindowLobbyBrowserConsole.set_difficulty(arg_31_0, arg_31_1)
 	arg_31_0._lobby_browser_console_ui:set_difficulty_filter(Localize(var_31_2))
 end
 
-function StartGameWindowLobbyBrowserConsole.set_lobby_filter(arg_32_0, arg_32_1)
+StartGameWindowLobbyBrowserConsole.set_lobby_filter = function (arg_32_0, arg_32_1)
 	local var_32_0 = var_0_0.show_lobbies_table
 	local var_32_1 = table.find(var_32_0, arg_32_1)
 	local var_32_2 = var_32_0[var_32_1]
@@ -529,7 +529,7 @@ function StartGameWindowLobbyBrowserConsole.set_lobby_filter(arg_32_0, arg_32_1)
 	arg_32_0._lobby_browser_console_ui:set_show_lobbies_filter(Localize(var_32_2))
 end
 
-function StartGameWindowLobbyBrowserConsole.set_distance_filter(arg_33_0, arg_33_1)
+StartGameWindowLobbyBrowserConsole.set_distance_filter = function (arg_33_0, arg_33_1)
 	local var_33_0 = var_0_0.distance_table
 	local var_33_1 = table.find(var_33_0, arg_33_1)
 	local var_33_2 = var_33_0[var_33_1]
@@ -540,7 +540,7 @@ function StartGameWindowLobbyBrowserConsole.set_distance_filter(arg_33_0, arg_33
 	arg_33_0._lobby_browser_console_ui:set_distance_filter(Localize(var_33_2))
 end
 
-function StartGameWindowLobbyBrowserConsole.is_lobby_joinable(arg_34_0, arg_34_1)
+StartGameWindowLobbyBrowserConsole.is_lobby_joinable = function (arg_34_0, arg_34_1)
 	local var_34_0 = arg_34_1.selected_mission_id or arg_34_1.mission_id
 	local var_34_1 = arg_34_1.difficulty
 	local var_34_2 = tonumber(arg_34_1.num_players)

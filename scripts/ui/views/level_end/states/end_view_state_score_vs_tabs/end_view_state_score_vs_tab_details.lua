@@ -58,7 +58,7 @@ local var_0_0 = {
 	}
 }
 
-function EndViewStateScoreVSTabDetails.on_enter(arg_1_0, arg_1_1)
+EndViewStateScoreVSTabDetails.on_enter = function (arg_1_0, arg_1_1)
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabDetails")
 
 	arg_1_0._params = arg_1_1
@@ -83,7 +83,7 @@ function EndViewStateScoreVSTabDetails.on_enter(arg_1_0, arg_1_1)
 	arg_1_0._parent:activate_back_to_keep_button()
 end
 
-function EndViewStateScoreVSTabDetails.on_exit(arg_2_0, arg_2_1)
+EndViewStateScoreVSTabDetails.on_exit = function (arg_2_0, arg_2_1)
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabDetails")
 
 	arg_2_0._ui_scenegraph = nil
@@ -92,7 +92,7 @@ function EndViewStateScoreVSTabDetails.on_exit(arg_2_0, arg_2_1)
 	arg_2_0._ui_animator = nil
 end
 
-function EndViewStateScoreVSTabDetails.create_ui_elements(arg_3_0, arg_3_1)
+EndViewStateScoreVSTabDetails.create_ui_elements = function (arg_3_0, arg_3_1)
 	local var_3_0 = arg_3_0:_get_definitions()
 	local var_3_1 = var_3_0.widget_definitions
 	local var_3_2 = var_3_0.scenegraph_definition
@@ -109,7 +109,7 @@ function EndViewStateScoreVSTabDetails.create_ui_elements(arg_3_0, arg_3_1)
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_3_3)
 end
 
-function EndViewStateScoreVSTabDetails._create_winner_icon(arg_4_0, arg_4_1)
+EndViewStateScoreVSTabDetails._create_winner_icon = function (arg_4_0, arg_4_1)
 	local var_4_0 = arg_4_1.create_winner_icon_func
 	local var_4_1 = Network.peer_id()
 	local var_4_2 = 1
@@ -138,7 +138,7 @@ local var_0_1 = {}
 local var_0_2 = {}
 local var_0_3 = {}
 
-function EndViewStateScoreVSTabDetails._trim_bots(arg_5_0, arg_5_1)
+EndViewStateScoreVSTabDetails._trim_bots = function (arg_5_0, arg_5_1)
 	table.clear(var_0_1)
 	table.clear(var_0_2)
 	table.clear(var_0_3)
@@ -159,7 +159,7 @@ function EndViewStateScoreVSTabDetails._trim_bots(arg_5_0, arg_5_1)
 	return var_0_1, var_0_2, var_0_3
 end
 
-function EndViewStateScoreVSTabDetails._populate_stats(arg_6_0, arg_6_1)
+EndViewStateScoreVSTabDetails._populate_stats = function (arg_6_0, arg_6_1)
 	local var_6_0 = Network.peer_id()
 	local var_6_1 = arg_6_0._context
 	local var_6_2, var_6_3, var_6_4 = arg_6_0:_trim_bots(var_6_1.party_composition)
@@ -299,20 +299,20 @@ function EndViewStateScoreVSTabDetails._populate_stats(arg_6_0, arg_6_1)
 	end
 end
 
-function EndViewStateScoreVSTabDetails._get_definitions(arg_8_0)
+EndViewStateScoreVSTabDetails._get_definitions = function (arg_8_0)
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_details_definitions")
 end
 
-function EndViewStateScoreVSTabDetails.update(arg_9_0, arg_9_1, arg_9_2)
+EndViewStateScoreVSTabDetails.update = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0:_draw(arg_9_1, arg_9_2)
 	arg_9_0:_update_animations(arg_9_1)
 end
 
-function EndViewStateScoreVSTabDetails.post_update(arg_10_0, arg_10_1, arg_10_2)
+EndViewStateScoreVSTabDetails.post_update = function (arg_10_0, arg_10_1, arg_10_2)
 	return
 end
 
-function EndViewStateScoreVSTabDetails._update_animations(arg_11_0, arg_11_1)
+EndViewStateScoreVSTabDetails._update_animations = function (arg_11_0, arg_11_1)
 	for iter_11_0, iter_11_1 in pairs(arg_11_0._ui_animations) do
 		UIAnimation.update(iter_11_1, arg_11_1)
 
@@ -335,7 +335,7 @@ function EndViewStateScoreVSTabDetails._update_animations(arg_11_0, arg_11_1)
 	end
 end
 
-function EndViewStateScoreVSTabDetails._draw(arg_12_0, arg_12_1, arg_12_2)
+EndViewStateScoreVSTabDetails._draw = function (arg_12_0, arg_12_1, arg_12_2)
 	local var_12_0 = arg_12_0._ui_renderer
 	local var_12_1 = arg_12_0._ui_scenegraph
 	local var_12_2 = arg_12_0._render_settings
@@ -350,7 +350,7 @@ function EndViewStateScoreVSTabDetails._draw(arg_12_0, arg_12_1, arg_12_2)
 	UIRenderer.end_pass(var_12_0)
 end
 
-function EndViewStateScoreVSTabDetails._start_transition_animation(arg_13_0, arg_13_1, arg_13_2)
+EndViewStateScoreVSTabDetails._start_transition_animation = function (arg_13_0, arg_13_1, arg_13_2)
 	local var_13_0 = {
 		render_settings = arg_13_0._render_settings
 	}

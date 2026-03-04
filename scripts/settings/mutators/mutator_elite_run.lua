@@ -13,7 +13,7 @@ return {
 		skaven_clan_rat = "skaven_storm_vermin",
 		chaos_marauder = "chaos_raider"
 	},
-	server_start_function = function(arg_1_0, arg_1_1)
+	server_start_function = function (arg_1_0, arg_1_1)
 		local var_1_0 = arg_1_1.template.roamer_override_lookup
 
 		Managers.state.entity:system("ai_interest_point_system"):set_breed_override_lookup(var_1_0)
@@ -25,7 +25,7 @@ return {
 			Managers.state.conflict:set_threat_value(iter_1_1, var_1_1)
 		end
 	end,
-	server_stop_function = function(arg_2_0, arg_2_1)
+	server_stop_function = function (arg_2_0, arg_2_1)
 		local var_2_0 = arg_2_1.template.roamer_override_lookup
 
 		for iter_2_0, iter_2_1 in pairs(var_2_0) do

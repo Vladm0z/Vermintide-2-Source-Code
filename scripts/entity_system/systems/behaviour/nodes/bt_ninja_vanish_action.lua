@@ -8,7 +8,7 @@ BTNinjaVanishAction.name = "BTNinjaVanishAction"
 local var_0_0 = POSITION_LOOKUP
 local var_0_1 = script_data
 
-function BTNinjaVanishAction.init(arg_1_0, ...)
+BTNinjaVanishAction.init = function (arg_1_0, ...)
 	BTNinjaVanishAction.super.init(arg_1_0, ...)
 end
 
@@ -18,7 +18,7 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function BTNinjaVanishAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTNinjaVanishAction.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	arg_3_2.action = arg_3_0._tree_node.action_data
 	arg_3_2.vanish_timer = 0
 	arg_3_2.skulk_pos = nil
@@ -41,7 +41,7 @@ function BTNinjaVanishAction.enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	end
 end
 
-function BTNinjaVanishAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTNinjaVanishAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	arg_4_2.vanish_timer = nil
 	arg_4_2.vanish_pos = nil
 	arg_4_2.wait_one_frame = nil
@@ -50,7 +50,7 @@ function BTNinjaVanishAction.leave(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 	arg_4_2.navigation_extension:set_enabled(true)
 end
 
-function BTNinjaVanishAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTNinjaVanishAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	if arg_5_3 > arg_5_2.vanish_timer then
 		if arg_5_2.wait_one_frame then
 			return "done"
@@ -66,7 +66,7 @@ function BTNinjaVanishAction.run(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-function BTNinjaVanishAction.vanish(arg_6_0, arg_6_1)
+BTNinjaVanishAction.vanish = function (arg_6_0, arg_6_1)
 	local var_6_0 = arg_6_1.vanish_pos:unbox()
 
 	if var_0_1.debug_ai_movement then
@@ -85,7 +85,7 @@ function BTNinjaVanishAction.vanish(arg_6_0, arg_6_1)
 	Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_6_0)
 end
 
-function BTNinjaVanishAction.play_foff(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTNinjaVanishAction.play_foff = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 	local var_7_0 = NetworkLookup.effects[arg_7_1.action.effect_name]
 	local var_7_1 = arg_7_2:unit_game_object_id(arg_7_0)
 	local var_7_2 = 0
@@ -95,7 +95,7 @@ function BTNinjaVanishAction.play_foff(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7
 	arg_7_2:rpc_play_particle_effect(nil, var_7_0, NetworkConstants.invalid_game_object_id, var_7_2, arg_7_4, var_7_3, false)
 end
 
-function BTNinjaVanishAction.find_escape_position(arg_8_0, arg_8_1)
+BTNinjaVanishAction.find_escape_position = function (arg_8_0, arg_8_1)
 	local var_8_0
 
 	if arg_8_1.action.stalk_lonliest_player then

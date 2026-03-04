@@ -9,7 +9,7 @@ local var_0_0 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade",
-				anim_end_event_condition_func = function(arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
 					return arg_1_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -52,7 +52,7 @@ local var_0_0 = {
 				kind = "career_dummy",
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade_hold",
-				anim_end_event_condition_func = function(arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
 					return arg_2_1 ~= "new_interupting_action"
 				end,
 				total_time = math.huge,
@@ -93,7 +93,7 @@ local var_0_0 = {
 				uninterruptible = true,
 				anim_event = "veteran_ranger_ability_grenade_throw",
 				total_time = 0.25,
-				anim_end_event_condition_func = function(arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
 					return arg_3_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}
@@ -105,7 +105,7 @@ local var_0_0 = {
 				anim_end_event = "ability_finished",
 				anim_event = "veteran_ranger_ability_grenade_cancel",
 				total_time = 0.67,
-				anim_end_event_condition_func = function(arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
 					return arg_4_1 ~= "new_interupting_action"
 				end,
 				allowed_chain_actions = {}

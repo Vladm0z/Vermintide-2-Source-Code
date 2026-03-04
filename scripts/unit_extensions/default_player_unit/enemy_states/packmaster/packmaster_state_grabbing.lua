@@ -2,7 +2,7 @@
 
 PackmasterStateGrabbing = class(PackmasterStateGrabbing, EnemyCharacterState)
 
-function PackmasterStateGrabbing.init(arg_1_0, arg_1_1)
+PackmasterStateGrabbing.init = function (arg_1_0, arg_1_1)
 	EnemyCharacterState.init(arg_1_0, arg_1_1, "packmaster_grabbing")
 
 	arg_1_0.current_movement_speed_scale = 0
@@ -11,7 +11,7 @@ end
 
 local var_0_0 = POSITION_LOOKUP
 
-function PackmasterStateGrabbing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateGrabbing.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 	table.clear(arg_2_0._temp_params)
 
 	arg_2_0._unit = arg_2_1
@@ -41,13 +41,13 @@ function PackmasterStateGrabbing.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 	arg_2_0:set_breed_action("initial_pull")
 end
 
-function PackmasterStateGrabbing.on_exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PackmasterStateGrabbing.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
 	arg_3_0._status_extension:set_is_packmaster_grabbing(false)
 	arg_3_0._career_extension:start_activated_ability_cooldown(1)
 	arg_3_0:set_breed_action("n/a")
 end
 
-function PackmasterStateGrabbing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PackmasterStateGrabbing.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0._csm
 	local var_4_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
 	local var_4_2 = arg_4_0._status_extension
@@ -121,7 +121,7 @@ function PackmasterStateGrabbing.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_
 	arg_4_0:_update_movement(arg_4_1, arg_4_5, arg_4_3)
 end
 
-function PackmasterStateGrabbing._grab(arg_5_0)
+PackmasterStateGrabbing._grab = function (arg_5_0)
 	if not arg_5_0._locomotion_extension:is_on_ground() then
 		return nil
 	end
@@ -133,7 +133,7 @@ function PackmasterStateGrabbing._grab(arg_5_0)
 	return (EnemyCharacterStateHelper.get_enemies_in_line_of_sight(var_5_0, var_5_1, var_5_2))
 end
 
-function PackmasterStateGrabbing._update_movement(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+PackmasterStateGrabbing._update_movement = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	local var_6_0 = arg_6_0._buff_extension
 	local var_6_1 = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
 	local var_6_2 = arg_6_0._input_extension

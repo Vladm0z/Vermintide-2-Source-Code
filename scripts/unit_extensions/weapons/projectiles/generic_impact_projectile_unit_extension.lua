@@ -2,7 +2,7 @@
 
 GenericImpactProjectileUnitExtension = class(GenericImpactProjectileUnitExtension)
 
-function GenericImpactProjectileUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+GenericImpactProjectileUnitExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0.world = arg_1_1.world
 	arg_1_0.unit = arg_1_2
 	arg_1_0.owner_unit = arg_1_3.owner_unit
@@ -18,16 +18,16 @@ function GenericImpactProjectileUnitExtension.init(arg_1_0, arg_1_1, arg_1_2, ar
 	Unit.flow_event(arg_1_2, "lua_projectile_init")
 end
 
-function GenericImpactProjectileUnitExtension.extensions_ready(arg_2_0, arg_2_1, arg_2_2)
+GenericImpactProjectileUnitExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
 	arg_2_0.impact_extension = ScriptUnit.has_extension(arg_2_2, "projectile_impact_system")
 end
 
-function GenericImpactProjectileUnitExtension.destroy(arg_3_0)
+GenericImpactProjectileUnitExtension.destroy = function (arg_3_0)
 	Unit.flow_event(arg_3_0.unit, "lua_projectile_end")
 end
 
-function GenericImpactProjectileUnitExtension.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+GenericImpactProjectileUnitExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
 	local var_4_0 = arg_4_0.impact_extension
 
 	if not var_4_0 then
@@ -83,7 +83,7 @@ function GenericImpactProjectileUnitExtension.update(arg_4_0, arg_4_1, arg_4_2, 
 	end
 end
 
-function GenericImpactProjectileUnitExtension._execute_impact(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+GenericImpactProjectileUnitExtension._execute_impact = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	local var_5_0 = ProjectileTemplates.impact_templates[arg_5_0.impact_template_name]
 	local var_5_1 = ExplosionUtils.get_template(arg_5_0.explosion_template_name)
 	local var_5_2 = false
@@ -105,7 +105,7 @@ local var_0_0 = {
 	[ProjectileImpactDataIndex.NORMAL] = Vector3Box()
 }
 
-function GenericImpactProjectileUnitExtension.impact(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+GenericImpactProjectileUnitExtension.impact = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
 	var_0_0[ProjectileImpactDataIndex.UNIT] = arg_6_1
 
 	var_0_0[ProjectileImpactDataIndex.POSITION]:store(arg_6_2)
@@ -119,7 +119,7 @@ end
 
 local var_0_1 = {}
 
-function GenericImpactProjectileUnitExtension.force_impact(arg_7_0, arg_7_1, arg_7_2)
+GenericImpactProjectileUnitExtension.force_impact = function (arg_7_0, arg_7_1, arg_7_2)
 	local var_7_0 = arg_7_0.locomotion_extension
 
 	var_0_1[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_7_2)

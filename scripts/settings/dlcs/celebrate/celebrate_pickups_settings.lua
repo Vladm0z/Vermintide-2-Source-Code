@@ -20,7 +20,7 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function(arg_1_0, arg_1_1, arg_1_2)
+			on_pick_up_func = function (arg_1_0, arg_1_1, arg_1_2)
 				ScriptUnit.extension(arg_1_1, "buff_system"):add_buff("intoxication_base")
 
 				local var_1_0 = Managers.player
@@ -30,7 +30,7 @@ DLCSettings.celebrate.pickups = {
 
 				var_1_2:increment_stat(var_1_3, "crawl_total_ales_drunk")
 			end,
-			can_interact_func = function(arg_2_0, arg_2_1, arg_2_2)
+			can_interact_func = function (arg_2_0, arg_2_1, arg_2_2)
 				local var_2_0 = ScriptUnit.extension(arg_2_0, "buff_system")
 				local var_2_1 = var_2_0:has_buff_type("beer_bottle_pickup_cooldown")
 				local var_2_2 = var_2_0:has_buff_perk("falling_down")
@@ -56,13 +56,13 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function(arg_3_0, arg_3_1, arg_3_2)
+			on_pick_up_func = function (arg_3_0, arg_3_1, arg_3_2)
 				local var_3_0 = ScriptUnit.extension(arg_3_1, "buff_system")
 
 				var_3_0:add_buff("intoxication_base")
 				var_3_0:add_buff("hinder_career_ability")
 			end,
-			can_interact_func = function(arg_4_0, arg_4_1, arg_4_2)
+			can_interact_func = function (arg_4_0, arg_4_1, arg_4_2)
 				local var_4_0 = ScriptUnit.extension(arg_4_0, "buff_system")
 				local var_4_1 = var_4_0:has_buff_type("beer_bottle_pickup_cooldown")
 				local var_4_2 = var_4_0:has_buff_perk("falling_down")

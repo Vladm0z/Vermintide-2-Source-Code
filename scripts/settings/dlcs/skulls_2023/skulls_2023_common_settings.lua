@@ -52,7 +52,7 @@ var_0_0.pickups = {
 			local_pickup_sound = true,
 			hud_description = "skulls_2023_pickup_name",
 			disallow_bot_pickup = true,
-			on_pick_up_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+			on_pick_up_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				if not arg_1_4 then
 					Managers.state.entity:system("buff_system"):add_buff_synced(arg_1_1, "skulls_2023_buff", BuffSyncType.LocalAndServer)
 				end

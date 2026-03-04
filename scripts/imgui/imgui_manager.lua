@@ -13,7 +13,7 @@ ImguiKeymaps = {
 
 require("scripts/imgui/imgui_configuration_settings")
 
-function ImguiManager.init(arg_1_0)
+ImguiManager.init = function (arg_1_0)
 	arg_1_0._open = false
 	arg_1_0._persistant_windows = 0
 	arg_1_0._guis_by_category = {}
@@ -45,7 +45,7 @@ local function var_0_0(arg_2_0, arg_2_1)
 	return #arg_2_0 + 1, false
 end
 
-function ImguiManager._call_on_guis(arg_3_0, arg_3_1, ...)
+ImguiManager._call_on_guis = function (arg_3_0, arg_3_1, ...)
 	for iter_3_0, iter_3_1 in pairs(arg_3_0._guis_by_category) do
 		for iter_3_2, iter_3_3 in pairs(iter_3_1.list) do
 			local var_3_0 = iter_3_3.gui
@@ -58,7 +58,7 @@ function ImguiManager._call_on_guis(arg_3_0, arg_3_1, ...)
 	end
 end
 
-function ImguiManager.add_gui(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ImguiManager.add_gui = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_0 = arg_4_1:new()
 
 	assert(var_4_0.init)
@@ -100,11 +100,11 @@ function ImguiManager.add_gui(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	end
 end
 
-function ImguiManager.destroy(arg_5_0)
+ImguiManager.destroy = function (arg_5_0)
 	return arg_5_0:_call_on_guis("destroy")
 end
 
-function ImguiManager.set_open(arg_6_0, arg_6_1)
+ImguiManager.set_open = function (arg_6_0, arg_6_1)
 	if arg_6_1 ~= arg_6_0._open then
 		if arg_6_1 then
 			Imgui.open_imgui()
@@ -123,7 +123,7 @@ function ImguiManager.set_open(arg_6_0, arg_6_1)
 	end
 end
 
-function ImguiManager.update(arg_7_0, arg_7_1, arg_7_2)
+ImguiManager.update = function (arg_7_0, arg_7_1, arg_7_2)
 	if Keyboard.pressed(Keyboard.button_index("f3")) then
 		arg_7_0:set_open(not arg_7_0._open)
 	end
@@ -136,11 +136,11 @@ function ImguiManager.update(arg_7_0, arg_7_1, arg_7_2)
 	arg_7_0:_update_keybinds()
 end
 
-function ImguiManager.post_update(arg_8_0, arg_8_1, arg_8_2)
+ImguiManager.post_update = function (arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:post_update_guis(arg_8_1, arg_8_2)
 end
 
-function ImguiManager.post_update_guis(arg_9_0, arg_9_1, arg_9_2)
+ImguiManager.post_update_guis = function (arg_9_0, arg_9_1, arg_9_2)
 	local var_9_0 = arg_9_0._persistant_windows
 	local var_9_1 = arg_9_0._open
 
@@ -171,7 +171,7 @@ function ImguiManager.post_update_guis(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
-function ImguiManager.update_main_menu(arg_10_0)
+ImguiManager.update_main_menu = function (arg_10_0)
 	if Imgui.begin_main_menu_bar() then
 		for iter_10_0, iter_10_1 in pairs(arg_10_0._guis_by_category) do
 			local var_10_0 = iter_10_1.name
@@ -202,7 +202,7 @@ function ImguiManager.update_main_menu(arg_10_0)
 	end
 end
 
-function ImguiManager.update_guis(arg_11_0, arg_11_1, arg_11_2)
+ImguiManager.update_guis = function (arg_11_0, arg_11_1, arg_11_2)
 	local var_11_0 = arg_11_0._persistant_windows
 
 	arg_11_0._persistant_windows = 0
@@ -242,23 +242,23 @@ function ImguiManager.update_guis(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function ImguiManager.on_round_start(arg_12_0, ...)
+ImguiManager.on_round_start = function (arg_12_0, ...)
 	return arg_12_0:_call_on_guis("on_round_start", ...)
 end
 
-function ImguiManager.on_round_end(arg_13_0, ...)
+ImguiManager.on_round_end = function (arg_13_0, ...)
 	return arg_13_0:_call_on_guis("on_round_end", ...)
 end
 
-function ImguiManager.on_venture_start(arg_14_0, ...)
+ImguiManager.on_venture_start = function (arg_14_0, ...)
 	return arg_14_0:_call_on_guis("on_venture_start", ...)
 end
 
-function ImguiManager.on_venture_end(arg_15_0, ...)
+ImguiManager.on_venture_end = function (arg_15_0, ...)
 	return arg_15_0:_call_on_guis("on_venture_end", ...)
 end
 
-function ImguiManager._input_manager_do(arg_16_0, arg_16_1)
+ImguiManager._input_manager_do = function (arg_16_0, arg_16_1)
 	local var_16_0 = Managers.input
 
 	if var_16_0 then
@@ -273,7 +273,7 @@ function ImguiManager._input_manager_do(arg_16_0, arg_16_1)
 	end
 end
 
-function ImguiManager._set_gui_enabled(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+ImguiManager._set_gui_enabled = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	if arg_17_2 then
 		if arg_17_1.gui.on_show then
 			arg_17_1.gui:on_show()
@@ -299,7 +299,7 @@ function ImguiManager._set_gui_enabled(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 	arg_17_1.enabled = arg_17_2
 end
 
-function ImguiManager._update_keybinds(arg_18_0)
+ImguiManager._update_keybinds = function (arg_18_0)
 	for iter_18_0, iter_18_1 in pairs(arg_18_0._key_bindings) do
 		for iter_18_2, iter_18_3 in pairs(iter_18_1) do
 			local var_18_0 = iter_18_3.keybind
@@ -333,7 +333,7 @@ function ImguiManager._update_keybinds(arg_18_0)
 	end
 end
 
-function ImguiManager._draw_keybind_settings(arg_19_0)
+ImguiManager._draw_keybind_settings = function (arg_19_0)
 	local var_19_0 = Imgui.begin_window("Keybinds")
 
 	Imgui.text("<esc> to clear keybind")
@@ -402,7 +402,7 @@ function ImguiManager._draw_keybind_settings(arg_19_0)
 	return var_19_0
 end
 
-function ImguiManager._get_keybind_text(arg_20_0, arg_20_1, arg_20_2)
+ImguiManager._get_keybind_text = function (arg_20_0, arg_20_1, arg_20_2)
 	local var_20_0 = arg_20_0._key_bindings[arg_20_1][arg_20_2].keybind
 	local var_20_1 = #var_20_0
 
@@ -425,12 +425,12 @@ function ImguiManager._get_keybind_text(arg_20_0, arg_20_1, arg_20_2)
 	return ""
 end
 
-function ImguiManager._save_settings(arg_21_0)
+ImguiManager._save_settings = function (arg_21_0)
 	Development.set_setting("ImguiManager_keybinds", arg_21_0._key_bindings)
 	Application.save_user_settings()
 end
 
-function ImguiManager._load_settings(arg_22_0)
+ImguiManager._load_settings = function (arg_22_0)
 	local var_22_0 = Development.setting("ImguiManager_keybinds") or {}
 
 	for iter_22_0, iter_22_1 in pairs(arg_22_0._key_bindings) do
@@ -444,7 +444,7 @@ function ImguiManager._load_settings(arg_22_0)
 	end
 end
 
-function ImguiManager._capture_input(arg_23_0)
+ImguiManager._capture_input = function (arg_23_0)
 	local var_23_0 = arg_23_0._input_stack
 
 	if var_23_0 == 0 then
@@ -458,7 +458,7 @@ function ImguiManager._capture_input(arg_23_0)
 	arg_23_0._input_stack = var_23_0 + 1
 end
 
-function ImguiManager._release_input(arg_24_0)
+ImguiManager._release_input = function (arg_24_0)
 	local var_24_0 = arg_24_0._input_stack - 1
 
 	assert(var_24_0 >= 0, "imgui input stack underflow")
@@ -476,19 +476,19 @@ end
 
 ImguiX = ImguiX or {}
 
-function ImguiX.color_edit_4(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+ImguiX.color_edit_4 = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	arg_25_2, arg_25_3, arg_25_4, arg_25_1 = Imgui.color_edit_4(arg_25_0, arg_25_2 / 255, arg_25_3 / 255, arg_25_4 / 255, arg_25_1 / 255)
 
 	return arg_25_1 * 255, arg_25_2 * 255, arg_25_3 * 255, arg_25_4 * 255
 end
 
-function ImguiX.heading(arg_26_0, arg_26_1, ...)
+ImguiX.heading = function (arg_26_0, arg_26_1, ...)
 	Imgui.text_colored(arg_26_0 .. ":", 200, 200, 255, 255)
 	Imgui.same_line()
 	Imgui.text(string.format(arg_26_1, ...))
 end
 
-function ImguiX.combo_search(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+ImguiX.combo_search = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = Imgui.input_text("Search", arg_27_2)
 
 	if var_27_0 ~= arg_27_2 then

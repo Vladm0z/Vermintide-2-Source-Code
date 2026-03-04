@@ -196,7 +196,7 @@ local var_0_0 = {
 			}
 		}
 	},
-	custom_death_enter_function = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		local var_1_0 = BLACKBOARDS[arg_1_0]
 
 		if not Unit.alive(arg_1_1) then
@@ -206,7 +206,7 @@ local var_0_0 = {
 		QuestSettings.check_gutter_killed_while_pouncing(var_1_0, arg_1_1, arg_1_5)
 	end,
 	run_on_spawn = AiBreedSnippets.on_gutter_runner_spawn,
-	before_stagger_enter_function = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	before_stagger_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		if arg_2_3 then
 			QuestSettings.check_gutter_runner_push_on_pounce(arg_2_1, arg_2_2)
 			QuestSettings.check_gutter_runner_push_on_target_pounced(arg_2_1, arg_2_2)

@@ -13,7 +13,7 @@ local var_0_1 = {
 script_data.nav_mesh_debug = script_data.nav_mesh_debug or Development.parameter("nav_mesh_debug")
 use_simple_jump_units = true
 
-function NavGraphSystem.init(arg_1_0, arg_1_1, arg_1_2)
+NavGraphSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
 	local var_1_0 = arg_1_1.entity_manager
 
 	var_1_0:register_system(arg_1_0, arg_1_2, var_0_1)
@@ -87,7 +87,7 @@ function NavGraphSystem.init(arg_1_0, arg_1_1, arg_1_2)
 	Managers.state.event:register(arg_1_0, "level_start_local_player_spawned", "_event_local_player_spawned")
 end
 
-function NavGraphSystem.destroy(arg_2_0)
+NavGraphSystem.destroy = function (arg_2_0)
 	World.destroy_line_object(arg_2_0.world, arg_2_0.line_object)
 
 	arg_2_0.line_object = nil
@@ -103,7 +103,7 @@ end
 local var_0_2 = {}
 local var_0_3 = {}
 
-function NavGraphSystem.init_nav_graphs(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+NavGraphSystem.init_nav_graphs = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	local var_3_0 = arg_3_0.nav_world
 	local var_3_1 = arg_3_0.smart_objects
 	local var_3_2 = Colors.get("orange")
@@ -161,7 +161,7 @@ end
 
 local var_0_4 = 1.1
 
-function NavGraphSystem.spawn_versus_jump_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+NavGraphSystem.spawn_versus_jump_unit = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	local var_4_0 = arg_4_2.data.ledge_position
 
 	var_4_0 = var_4_0 and Vector3Aux.unbox(var_4_0)
@@ -212,11 +212,11 @@ function NavGraphSystem.spawn_versus_jump_unit(arg_4_0, arg_4_1, arg_4_2, arg_4_
 	Unit.set_data(var_4_11, "allow_boss_traversal", var_4_13)
 end
 
-function NavGraphSystem.level_jump_units(arg_5_0)
+NavGraphSystem.level_jump_units = function (arg_5_0)
 	return arg_5_0._level_jumps_ready and arg_5_0.level_jumps
 end
 
-function NavGraphSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+NavGraphSystem.on_add_extension = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 	local var_6_0 = {
 		navgraphs = {}
 	}
@@ -271,7 +271,7 @@ function NavGraphSystem.on_add_extension(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg
 	return var_6_0
 end
 
-function NavGraphSystem.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
+NavGraphSystem.on_remove_extension = function (arg_8_0, arg_8_1, arg_8_2)
 	NavGraphSystem.super.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
 
 	if arg_8_2 == "DynamicUnitSmartObjectExtension" then
@@ -284,13 +284,13 @@ function NavGraphSystem.on_remove_extension(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function NavGraphSystem.extensions_ready(arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+NavGraphSystem.extensions_ready = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
 	if arg_9_3 == "DarkPactClimbingExtension" then
 		arg_9_0._level_jumps_ready = true
 	end
 end
 
-function NavGraphSystem._level_unit_smart_object_id(arg_10_0, arg_10_1)
+NavGraphSystem._level_unit_smart_object_id = function (arg_10_0, arg_10_1)
 	local var_10_0 = LevelHelper:current_level(arg_10_0.world)
 	local var_10_1 = 10000 + Level.unit_index(var_10_0, arg_10_1)
 
@@ -299,7 +299,7 @@ function NavGraphSystem._level_unit_smart_object_id(arg_10_0, arg_10_1)
 	return var_10_1
 end
 
-function NavGraphSystem._dynamic_unit_smart_object_id(arg_11_0, arg_11_1)
+NavGraphSystem._dynamic_unit_smart_object_id = function (arg_11_0, arg_11_1)
 	local var_11_0 = 1000000 + arg_11_0.dynamic_smart_object_index
 
 	fassert(not arg_11_0.smart_objects[var_11_0], "Smart Object with id %s already registered!", var_11_0)
@@ -309,7 +309,7 @@ function NavGraphSystem._dynamic_unit_smart_object_id(arg_11_0, arg_11_1)
 	return var_11_0
 end
 
-function NavGraphSystem.queue_add_nav_graph_from_flow(arg_12_0, arg_12_1)
+NavGraphSystem.queue_add_nav_graph_from_flow = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.unit_extension_data[arg_12_1]
 
 	fassert(var_12_0, "Tried to add nav graph from flow for a unit without nav graph extension. %s", arg_12_1)
@@ -318,7 +318,7 @@ function NavGraphSystem.queue_add_nav_graph_from_flow(arg_12_0, arg_12_1)
 	arg_12_0.nav_graphs_units_to_add[#arg_12_0.nav_graphs_units_to_add + 1] = arg_12_1
 end
 
-function NavGraphSystem.queue_remove_nav_graph_from_flow(arg_13_0, arg_13_1)
+NavGraphSystem.queue_remove_nav_graph_from_flow = function (arg_13_0, arg_13_1)
 	local var_13_0 = arg_13_0.unit_extension_data[arg_13_1]
 
 	fassert(var_13_0, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", arg_13_1)
@@ -327,7 +327,7 @@ function NavGraphSystem.queue_remove_nav_graph_from_flow(arg_13_0, arg_13_1)
 	arg_13_0.nav_graphs_units_to_remove[#arg_13_0.nav_graphs_units_to_remove + 1] = arg_13_1
 end
 
-function NavGraphSystem.add_nav_graph(arg_14_0, arg_14_1)
+NavGraphSystem.add_nav_graph = function (arg_14_0, arg_14_1)
 	local var_14_0 = arg_14_0.unit_extension_data[arg_14_1]
 
 	fassert(var_14_0, "Tried to add nav graph from flow for a unit without nav graph extension. %s", arg_14_1)
@@ -346,7 +346,7 @@ function NavGraphSystem.add_nav_graph(arg_14_0, arg_14_1)
 	end
 end
 
-function NavGraphSystem.remove_nav_graph(arg_15_0, arg_15_1)
+NavGraphSystem.remove_nav_graph = function (arg_15_0, arg_15_1)
 	local var_15_0 = arg_15_0.unit_extension_data[arg_15_1]
 
 	fassert(var_15_0, "Tried to remove nav graph from flow for a unit without nav graph extension. %s", arg_15_1)
@@ -365,7 +365,7 @@ function NavGraphSystem.remove_nav_graph(arg_15_0, arg_15_1)
 	end
 end
 
-function NavGraphSystem.init_nav_graph_from_flow(arg_16_0, arg_16_1)
+NavGraphSystem.init_nav_graph_from_flow = function (arg_16_0, arg_16_1)
 	local var_16_0 = arg_16_0.unit_extension_data[arg_16_1]
 
 	fassert(var_16_0, "Tried to init nav graph from flow for a unit without nav graph extension. %s", arg_16_1)
@@ -382,7 +382,7 @@ function NavGraphSystem.init_nav_graph_from_flow(arg_16_0, arg_16_1)
 	end
 end
 
-function NavGraphSystem.smart_object_from_unit_data(arg_17_0, arg_17_1, arg_17_2)
+NavGraphSystem.smart_object_from_unit_data = function (arg_17_0, arg_17_1, arg_17_2)
 	local var_17_0 = {}
 	local var_17_1 = 0
 
@@ -466,7 +466,7 @@ function NavGraphSystem.smart_object_from_unit_data(arg_17_0, arg_17_1, arg_17_2
 	return var_17_0
 end
 
-function NavGraphSystem.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
+NavGraphSystem.on_remove_extension = function (arg_18_0, arg_18_1, arg_18_2)
 	ScriptUnit.remove_extension(arg_18_1, arg_18_0.NAME)
 
 	local var_18_0 = arg_18_0.unit_extension_data[arg_18_1]
@@ -480,7 +480,7 @@ function NavGraphSystem.on_remove_extension(arg_18_0, arg_18_1, arg_18_2)
 	arg_18_0.unit_extension_data[arg_18_1] = nil
 end
 
-function NavGraphSystem.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+NavGraphSystem.update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	if arg_19_0.nav_graphs_units_to_add then
 		for iter_19_0 = 1, #arg_19_0.nav_graphs_units_to_add do
 			local var_19_0 = arg_19_0.nav_graphs_units_to_add[iter_19_0]
@@ -500,27 +500,27 @@ function NavGraphSystem.update(arg_19_0, arg_19_1, arg_19_2, arg_19_3)
 	end
 end
 
-function NavGraphSystem.hot_join_sync(arg_20_0, arg_20_1)
+NavGraphSystem.hot_join_sync = function (arg_20_0, arg_20_1)
 	return
 end
 
-function NavGraphSystem.get_smart_object_type(arg_21_0, arg_21_1)
+NavGraphSystem.get_smart_object_type = function (arg_21_0, arg_21_1)
 	return arg_21_0.smart_object_types[arg_21_1]
 end
 
-function NavGraphSystem.get_smart_object_data(arg_22_0, arg_22_1)
+NavGraphSystem.get_smart_object_data = function (arg_22_0, arg_22_1)
 	return arg_22_0.smart_object_data[arg_22_1]
 end
 
-function NavGraphSystem.get_smart_objects(arg_23_0, arg_23_1)
+NavGraphSystem.get_smart_objects = function (arg_23_0, arg_23_1)
 	return arg_23_0.smart_objects[arg_23_1]
 end
 
-function NavGraphSystem.get_smart_object_id(arg_24_0, arg_24_1)
+NavGraphSystem.get_smart_object_id = function (arg_24_0, arg_24_1)
 	return arg_24_0.smart_object_ids[arg_24_1]
 end
 
-function NavGraphSystem.has_nav_graph(arg_25_0, arg_25_1)
+NavGraphSystem.has_nav_graph = function (arg_25_0, arg_25_1)
 	local var_25_0 = arg_25_0.unit_extension_data[arg_25_1]
 
 	if var_25_0 then
@@ -532,7 +532,7 @@ end
 
 local var_0_5 = table.enum("shown", "hidden", "partial")
 
-function NavGraphSystem._event_local_player_spawned(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+NavGraphSystem._event_local_player_spawned = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	if not arg_26_0._use_level_jumps or Managers.state.game_mode:setting("hide_level_jumps") then
 		return
 	end

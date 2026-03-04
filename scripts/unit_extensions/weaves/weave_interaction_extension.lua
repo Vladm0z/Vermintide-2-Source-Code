@@ -3,7 +3,7 @@
 WeaveInteractionExtension = class(WeaveInteractionExtension, BaseObjectiveExtension)
 WeaveInteractionExtension.NAME = "WeaveInteractionExtension"
 
-function WeaveInteractionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+WeaveInteractionExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	WeaveInteractionExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 
 	arg_1_0._on_start_func = arg_1_3.on_start_func
@@ -25,23 +25,23 @@ function WeaveInteractionExtension.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	arg_1_0._max_value = arg_1_0._duration * arg_1_0._num_times_to_complete
 end
 
-function WeaveInteractionExtension.extensions_ready(arg_2_0)
+WeaveInteractionExtension.extensions_ready = function (arg_2_0)
 	arg_2_0._interactable_extension = ScriptUnit.has_extension(arg_2_0._unit, "interactable_system")
 end
 
-function WeaveInteractionExtension.display_name(arg_3_0)
+WeaveInteractionExtension.display_name = function (arg_3_0)
 	return "Interact with object"
 end
 
-function WeaveInteractionExtension.initial_sync_data(arg_4_0, arg_4_1)
+WeaveInteractionExtension.initial_sync_data = function (arg_4_0, arg_4_1)
 	arg_4_1.value = arg_4_0:get_percentage_done()
 end
 
-function WeaveInteractionExtension._set_objective_data(arg_5_0, arg_5_1)
+WeaveInteractionExtension._set_objective_data = function (arg_5_0, arg_5_1)
 	return
 end
 
-function WeaveInteractionExtension._activate(arg_6_0)
+WeaveInteractionExtension._activate = function (arg_6_0)
 	local var_6_0 = ScriptUnit.has_extension(arg_6_0._unit, "tutorial_system")
 
 	if var_6_0 then
@@ -49,7 +49,7 @@ function WeaveInteractionExtension._activate(arg_6_0)
 	end
 end
 
-function WeaveInteractionExtension._deactivate(arg_7_0)
+WeaveInteractionExtension._deactivate = function (arg_7_0)
 	local var_7_0 = Unit.local_position(arg_7_0._unit, 0)
 
 	for iter_7_0 = 1, 3 do
@@ -61,7 +61,7 @@ function WeaveInteractionExtension._deactivate(arg_7_0)
 	end
 end
 
-function WeaveInteractionExtension._server_update(arg_8_0, arg_8_1, arg_8_2)
+WeaveInteractionExtension._server_update = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0._interactable_extension.interaction_result
 	local var_8_1 = false
 
@@ -110,14 +110,14 @@ function WeaveInteractionExtension._server_update(arg_8_0, arg_8_1, arg_8_2)
 	arg_8_0:server_set_value(arg_8_0:get_percentage_done())
 end
 
-function WeaveInteractionExtension._client_update(arg_9_0, arg_9_1, arg_9_2)
+WeaveInteractionExtension._client_update = function (arg_9_0, arg_9_1, arg_9_2)
 	return
 end
 
-function WeaveInteractionExtension.is_done(arg_10_0)
+WeaveInteractionExtension.is_done = function (arg_10_0)
 	return arg_10_0._interactable_extension.num_times_successfully_completed >= arg_10_0._num_times_to_complete
 end
 
-function WeaveInteractionExtension.get_percentage_done(arg_11_0)
+WeaveInteractionExtension.get_percentage_done = function (arg_11_0)
 	return math.clamp(arg_11_0._value / arg_11_0._max_value, 0, 1)
 end

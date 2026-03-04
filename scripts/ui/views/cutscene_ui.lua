@@ -7,7 +7,7 @@ local var_0_3 = pdArray
 
 CutsceneUI = class(CutsceneUI)
 
-function CutsceneUI.init(arg_1_0, arg_1_1, arg_1_2)
+CutsceneUI.init = function (arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0._parent = arg_1_1
 	arg_1_0.ui_renderer = arg_1_2.ui_renderer
 	arg_1_0.ingame_ui = arg_1_2.ingame_ui
@@ -32,7 +32,7 @@ function CutsceneUI.init(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0:_create_ui_elements()
 end
 
-function CutsceneUI._create_ui_elements(arg_2_0)
+CutsceneUI._create_ui_elements = function (arg_2_0)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
 	arg_2_0.letterbox_widget = UIWidget.init(var_0_0.widgets.letterbox)
 	arg_2_0.checkboxes = {
@@ -43,7 +43,7 @@ function CutsceneUI._create_ui_elements(arg_2_0)
 	}
 end
 
-function CutsceneUI.destroy(arg_3_0)
+CutsceneUI.destroy = function (arg_3_0)
 	arg_3_0.ui_renderer = nil
 	arg_3_0.ingame_ui = nil
 	arg_3_0.cutscene_system = nil
@@ -56,7 +56,7 @@ function CutsceneUI.destroy(arg_3_0)
 	arg_3_0.fx_text_popup_widgets_pool = nil
 end
 
-function CutsceneUI.update(arg_4_0, arg_4_1)
+CutsceneUI.update = function (arg_4_0, arg_4_1)
 	arg_4_0:check_for_fade()
 
 	for iter_4_0, iter_4_1 in pairs(arg_4_0.ui_animations) do
@@ -85,11 +85,11 @@ function CutsceneUI.update(arg_4_0, arg_4_1)
 	end
 end
 
-function CutsceneUI.do_draw(arg_5_0)
+CutsceneUI.do_draw = function (arg_5_0)
 	return arg_5_0.letterbox_enabled or #arg_5_0.fx_fade_widgets > 0 or #arg_5_0.fx_text_popup_widgets > 0
 end
 
-function CutsceneUI.prepare_draw(arg_6_0)
+CutsceneUI.prepare_draw = function (arg_6_0)
 	local var_6_0 = arg_6_0.fx_fade_widgets
 	local var_6_1 = arg_6_0.fx_fade_widgets_pool
 
@@ -113,7 +113,7 @@ function CutsceneUI.prepare_draw(arg_6_0)
 	end
 end
 
-function CutsceneUI.draw(arg_7_0, arg_7_1)
+CutsceneUI.draw = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_0.ui_renderer
 	local var_7_1 = arg_7_0.ui_scenegraph
 	local var_7_2 = arg_7_0.input_manager:get_service("cutscene")
@@ -151,7 +151,7 @@ function CutsceneUI.draw(arg_7_0, arg_7_1)
 	UIRenderer.end_pass(var_7_0)
 end
 
-function CutsceneUI.handle_event_queue(arg_8_0, arg_8_1)
+CutsceneUI.handle_event_queue = function (arg_8_0, arg_8_1)
 	local var_8_0, var_8_1 = var_0_3.data(arg_8_1)
 	local var_8_2 = 1
 
@@ -173,11 +173,11 @@ function CutsceneUI.handle_event_queue(arg_8_0, arg_8_1)
 	end
 end
 
-function CutsceneUI.set_letterbox_enabled(arg_9_0, arg_9_1)
+CutsceneUI.set_letterbox_enabled = function (arg_9_0, arg_9_1)
 	arg_9_0.letterbox_enabled = arg_9_1
 end
 
-function CutsceneUI.set_player_input_enabled(arg_10_0, arg_10_1)
+CutsceneUI.set_player_input_enabled = function (arg_10_0, arg_10_1)
 	local var_10_0 = arg_10_0.input_manager
 
 	if arg_10_1 then
@@ -196,11 +196,11 @@ function CutsceneUI.set_player_input_enabled(arg_10_0, arg_10_1)
 	end
 end
 
-function CutsceneUI.input_service(arg_11_0)
+CutsceneUI.input_service = function (arg_11_0)
 	return arg_11_0.input_manager:get_service("cutscene")
 end
 
-function CutsceneUI.fx_fade(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+CutsceneUI.fx_fade = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	local var_12_0 = var_0_1.fx_fade
 
 	arg_12_1 = arg_12_1 or var_12_0.fade_in_time
@@ -236,7 +236,7 @@ function CutsceneUI.fx_fade(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 	arg_12_0.fx_fade_widgets[#arg_12_0.fx_fade_widgets + 1] = var_12_1
 end
 
-function CutsceneUI.fx_text_popup(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+CutsceneUI.fx_text_popup = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
 	local var_14_0 = var_0_1.fx_text_popup
 
 	arg_14_1 = arg_14_1 or var_14_0.fade_in_time
@@ -273,7 +273,7 @@ function CutsceneUI.fx_text_popup(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14
 	arg_14_0.fx_text_popup_widgets[#arg_14_0.fx_text_popup_widgets + 1] = var_14_1
 end
 
-function CutsceneUI.check_for_fade(arg_16_0)
+CutsceneUI.check_for_fade = function (arg_16_0)
 	local var_16_0 = arg_16_0.cutscene_system
 
 	if var_16_0 then

@@ -22,7 +22,7 @@ local var_0_1 = {
 	},
 	bardin_ironbreaker_gromril_delay = {
 		duration = 20,
-		duration_modifier_func = function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			if Managers.mechanism:current_mechanism_name() == "versus" and ScriptUnit.extension(arg_1_0, "talent_system"):has_talent("bardin_ironbreaker_gromril_stagger") then
 				arg_1_2 = 30
 			end
@@ -1043,7 +1043,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				sound_to_play = "Play_career_ability_bardin_ranger_enter",
 				icon = "bardin_ranger_activated_ability",
 				buff_sync_type = BuffSyncType.LocalAndServer,
-				duration_modifier_func = function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				duration_modifier_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 					if Managers.mechanism:current_mechanism_name() == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
@@ -1206,7 +1206,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_area = true,
 				area_unit_name = "units/hub_elements/empty",
 				buff_sync_type = BuffSyncType.All,
-				duration_modifier_func = function(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				duration_modifier_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 					if Managers.mechanism:current_mechanism_name() == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
@@ -1237,7 +1237,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_area = true,
 				area_unit_name = "units/hub_elements/empty",
 				buff_sync_type = BuffSyncType.LocalAndServer,
-				duration_modifier_func = function(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				duration_modifier_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 					if Managers.mechanism:current_mechanism_name() == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
@@ -1264,7 +1264,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 1,
 				refresh_durations = true,
 				apply_buff_func = "add_buff_local",
-				duration_modifier_func = function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				duration_modifier_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 					if Managers.mechanism:current_mechanism_name() == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end

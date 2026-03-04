@@ -19,10 +19,10 @@ TwitchVoteTemplates.twitch_add_speed_potion_buff = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_3_0)
+	on_success = function (arg_3_0)
 		if arg_3_0 then
 			var_0_0("[TWITCH VOTE] Speed boosting all players")
 
@@ -50,10 +50,10 @@ TwitchVoteTemplates.twitch_add_damage_potion_buff = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_5_0)
+	on_success = function (arg_5_0)
 		if arg_5_0 then
 			var_0_0("[TWITCH VOTE] Damage boosting all players")
 
@@ -81,10 +81,10 @@ TwitchVoteTemplates.twitch_add_cooldown_potion_buff = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_7_0)
+	on_success = function (arg_7_0)
 		if arg_7_0 then
 			var_0_0("[TWITCH VOTE] Cooldown boosting all players")
 
@@ -112,7 +112,7 @@ TwitchVoteTemplates.twitch_grimoire_health_debuff = {
 		70,
 		70
 	},
-	on_success = function(arg_8_0)
+	on_success = function (arg_8_0)
 		if arg_8_0 then
 			var_0_0("[TWITCH VOTE] Adding grimoire health debuff")
 
@@ -140,10 +140,10 @@ TwitchVoteTemplates.twitch_no_overcharge_no_ammo_reloads = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_10_0)
+	on_success = function (arg_10_0)
 		if arg_10_0 then
 			var_0_0("[TWITCH VOTE] Adding no overcharge/no ammo reloads buff")
 
@@ -185,10 +185,10 @@ TwitchVoteTemplates.twitch_health_regen = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_12_0)
+	on_success = function (arg_12_0)
 		if arg_12_0 then
 			var_0_0("[TWITCH VOTE] Adding health regen for all")
 
@@ -217,7 +217,7 @@ TwitchVoteTemplates.twitch_health_degen = {
 		70,
 		70
 	},
-	on_success = function(arg_13_0, arg_13_1)
+	on_success = function (arg_13_0, arg_13_1)
 		if arg_13_0 then
 			var_0_0("[TWITCH VOTE] Adding health degen for one")
 
@@ -250,10 +250,10 @@ TwitchVoteTemplates.twitch_vote_activate_root_all = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return Managers.state.conflict.pacing:get_pacing_intensity() >= 80
 	end,
-	on_success = function(arg_15_0, arg_15_1)
+	on_success = function (arg_15_0, arg_15_1)
 		if arg_15_0 then
 			var_0_0("[TWITCH VOTE] Adding root for all")
 
@@ -282,10 +282,10 @@ TwitchVoteTemplates.twitch_vote_activate_root = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return Managers.state.conflict.pacing:get_pacing_intensity() >= 80
 	end,
-	on_success = function(arg_17_0, arg_17_1)
+	on_success = function (arg_17_0, arg_17_1)
 		if arg_17_0 then
 			var_0_0("[TWITCH VOTE] Adding root for one")
 
@@ -319,7 +319,7 @@ TwitchVoteTemplates.twitch_vote_hemmoraghe = {
 		70,
 		70
 	},
-	on_success = function(arg_18_0, arg_18_1)
+	on_success = function (arg_18_0, arg_18_1)
 		if arg_18_0 then
 			var_0_0("[TWITCH VOTE] Adding hemmoraghe for one")
 
@@ -352,10 +352,10 @@ TwitchVoteTemplates.twitch_vote_full_temp_hp = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_20_0, arg_20_1)
+	on_success = function (arg_20_0, arg_20_1)
 		if arg_20_0 then
 			var_0_0("[TWITCH VOTE] Adding twitch_vote_full_temp_hp")
 
@@ -382,10 +382,10 @@ TwitchVoteTemplates.twitch_vote_critical_strikes = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_22_0, arg_22_1)
+	on_success = function (arg_22_0, arg_22_1)
 		if arg_22_0 then
 			var_0_0("[TWITCH VOTE] Adding twitch_vote_invisibility")
 
@@ -414,10 +414,10 @@ TwitchVoteTemplates.twitch_vote_infinite_bombs = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		return not var_0_1.disable_positive_votes
 	end,
-	on_success = function(arg_24_0, arg_24_1)
+	on_success = function (arg_24_0, arg_24_1)
 		if arg_24_0 then
 			var_0_0("[TWITCH VOTE] Adding twitch_vote_infinite_bombs for one")
 
@@ -451,12 +451,12 @@ TwitchVoteTemplates.twitch_vote_invincibility = {
 		70,
 		70
 	},
-	condition_func = function()
+	condition_func = function ()
 		local var_25_0 = Managers.state.conflict.pacing:get_pacing_intensity()
 
 		return not var_0_1.disable_positive_votes and var_25_0 >= 100
 	end,
-	on_success = function(arg_26_0, arg_26_1)
+	on_success = function (arg_26_0, arg_26_1)
 		if arg_26_0 then
 			var_0_0("[TWITCH VOTE] Adding twitch_vote_invincibility for one")
 

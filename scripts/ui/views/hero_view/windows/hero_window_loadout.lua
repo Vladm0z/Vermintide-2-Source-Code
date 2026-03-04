@@ -10,7 +10,7 @@ local var_0_5 = false
 HeroWindowLoadout = class(HeroWindowLoadout)
 HeroWindowLoadout.NAME = "HeroWindowLoadout"
 
-function HeroWindowLoadout.on_enter(arg_1_0, arg_1_1, arg_1_2)
+HeroWindowLoadout.on_enter = function (arg_1_0, arg_1_1, arg_1_2)
 	print("[HeroViewWindow] Enter Substate HeroWindowLoadout")
 
 	arg_1_0.parent = arg_1_1.parent
@@ -39,7 +39,7 @@ function HeroWindowLoadout.on_enter(arg_1_0, arg_1_1, arg_1_2)
 	arg_1_0.career_index = arg_1_1.career_index
 end
 
-function HeroWindowLoadout.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
+HeroWindowLoadout.create_ui_elements = function (arg_2_0, arg_2_1, arg_2_2)
 	arg_2_0.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_3)
 
 	local var_2_0 = {}
@@ -68,13 +68,13 @@ function HeroWindowLoadout.create_ui_elements(arg_2_0, arg_2_1, arg_2_2)
 	end
 end
 
-function HeroWindowLoadout.on_exit(arg_3_0, arg_3_1)
+HeroWindowLoadout.on_exit = function (arg_3_0, arg_3_1)
 	print("[HeroViewWindow] Exit Substate HeroWindowLoadout")
 
 	arg_3_0.ui_animator = nil
 end
 
-function HeroWindowLoadout.update(arg_4_0, arg_4_1, arg_4_2)
+HeroWindowLoadout.update = function (arg_4_0, arg_4_1, arg_4_2)
 	if var_0_5 then
 		var_0_5 = false
 
@@ -88,11 +88,11 @@ function HeroWindowLoadout.update(arg_4_0, arg_4_1, arg_4_2)
 	arg_4_0:draw(arg_4_1)
 end
 
-function HeroWindowLoadout.post_update(arg_5_0, arg_5_1, arg_5_2)
+HeroWindowLoadout.post_update = function (arg_5_0, arg_5_1, arg_5_2)
 	return
 end
 
-function HeroWindowLoadout._update_animations(arg_6_0, arg_6_1)
+HeroWindowLoadout._update_animations = function (arg_6_0, arg_6_1)
 	arg_6_0.ui_animator:update(arg_6_1)
 
 	local var_6_0 = arg_6_0._animations
@@ -109,7 +109,7 @@ function HeroWindowLoadout._update_animations(arg_6_0, arg_6_1)
 	local var_6_2 = arg_6_0._widgets_by_name
 end
 
-function HeroWindowLoadout._is_button_pressed(arg_7_0, arg_7_1)
+HeroWindowLoadout._is_button_pressed = function (arg_7_0, arg_7_1)
 	local var_7_0 = arg_7_1.content.button_hotspot
 
 	if var_7_0.on_release then
@@ -119,7 +119,7 @@ function HeroWindowLoadout._is_button_pressed(arg_7_0, arg_7_1)
 	end
 end
 
-function HeroWindowLoadout._handle_input(arg_8_0, arg_8_1, arg_8_2)
+HeroWindowLoadout._handle_input = function (arg_8_0, arg_8_1, arg_8_2)
 	local var_8_0 = arg_8_0.parent
 
 	if arg_8_0:_is_equipment_slot_hovered() then
@@ -134,7 +134,7 @@ function HeroWindowLoadout._handle_input(arg_8_0, arg_8_1, arg_8_2)
 	end
 end
 
-function HeroWindowLoadout._update_selected_loadout_slot_index(arg_9_0)
+HeroWindowLoadout._update_selected_loadout_slot_index = function (arg_9_0)
 	local var_9_0 = arg_9_0.parent:get_selected_loadout_slot_index()
 
 	if var_9_0 ~= arg_9_0._selected_loadout_slot_index then
@@ -142,7 +142,7 @@ function HeroWindowLoadout._update_selected_loadout_slot_index(arg_9_0)
 	end
 end
 
-function HeroWindowLoadout._update_loadout_sync(arg_10_0)
+HeroWindowLoadout._update_loadout_sync = function (arg_10_0)
 	local var_10_0 = arg_10_0.parent.loadout_sync_id
 
 	if var_10_0 ~= arg_10_0._loadout_sync_id then
@@ -152,12 +152,12 @@ function HeroWindowLoadout._update_loadout_sync(arg_10_0)
 	end
 end
 
-function HeroWindowLoadout._exit(arg_11_0, arg_11_1)
+HeroWindowLoadout._exit = function (arg_11_0, arg_11_1)
 	arg_11_0.exit = true
 	arg_11_0.exit_level_id = arg_11_1
 end
 
-function HeroWindowLoadout.draw(arg_12_0, arg_12_1)
+HeroWindowLoadout.draw = function (arg_12_0, arg_12_1)
 	local var_12_0 = arg_12_0.ui_renderer
 	local var_12_1 = arg_12_0.ui_top_renderer
 	local var_12_2 = arg_12_0.ui_scenegraph
@@ -180,11 +180,11 @@ function HeroWindowLoadout.draw(arg_12_0, arg_12_1)
 	UIRenderer.end_pass(var_12_1)
 end
 
-function HeroWindowLoadout._play_sound(arg_13_0, arg_13_1)
+HeroWindowLoadout._play_sound = function (arg_13_0, arg_13_1)
 	arg_13_0.parent:play_sound(arg_13_1)
 end
 
-function HeroWindowLoadout._setup_slot_icons(arg_14_0)
+HeroWindowLoadout._setup_slot_icons = function (arg_14_0)
 	local var_14_0 = InventorySettings.slots_by_slot_index
 
 	for iter_14_0, iter_14_1 in pairs(var_14_0) do
@@ -204,7 +204,7 @@ function HeroWindowLoadout._setup_slot_icons(arg_14_0)
 	end
 end
 
-function HeroWindowLoadout._populate_loadout(arg_15_0)
+HeroWindowLoadout._populate_loadout = function (arg_15_0)
 	local var_15_0 = arg_15_0.hero_name
 	local var_15_1 = InventorySettings.slots_by_slot_index
 	local var_15_2 = arg_15_0.career_index
@@ -224,7 +224,7 @@ function HeroWindowLoadout._populate_loadout(arg_15_0)
 	end
 end
 
-function HeroWindowLoadout._equip_item_presentation(arg_16_0, arg_16_1, arg_16_2)
+HeroWindowLoadout._equip_item_presentation = function (arg_16_0, arg_16_1, arg_16_2)
 	local var_16_0 = arg_16_1.data.slot_type
 	local var_16_1 = arg_16_2.slot_index
 	local var_16_2 = arg_16_2.ui_slot_index
@@ -257,7 +257,7 @@ function HeroWindowLoadout._equip_item_presentation(arg_16_0, arg_16_1, arg_16_2
 	end
 end
 
-function HeroWindowLoadout._clear_item_slot(arg_17_0, arg_17_1)
+HeroWindowLoadout._clear_item_slot = function (arg_17_0, arg_17_1)
 	local var_17_0 = arg_17_1.type
 	local var_17_1 = arg_17_1.slot_index
 	local var_17_2 = arg_17_1.ui_slot_index
@@ -279,7 +279,7 @@ function HeroWindowLoadout._clear_item_slot(arg_17_0, arg_17_1)
 	end
 end
 
-function HeroWindowLoadout._is_equipment_slot_right_clicked(arg_18_0)
+HeroWindowLoadout._is_equipment_slot_right_clicked = function (arg_18_0)
 	local var_18_0 = arg_18_0._widgets_by_name.loadout_grid.content
 	local var_18_1 = var_18_0.rows
 	local var_18_2 = var_18_0.columns
@@ -295,7 +295,7 @@ function HeroWindowLoadout._is_equipment_slot_right_clicked(arg_18_0)
 	end
 end
 
-function HeroWindowLoadout._is_equipment_slot_pressed(arg_19_0)
+HeroWindowLoadout._is_equipment_slot_pressed = function (arg_19_0)
 	local var_19_0 = arg_19_0._widgets_by_name.loadout_grid.content
 	local var_19_1 = var_19_0.rows
 	local var_19_2 = var_19_0.columns
@@ -311,7 +311,7 @@ function HeroWindowLoadout._is_equipment_slot_pressed(arg_19_0)
 	end
 end
 
-function HeroWindowLoadout._is_equipment_slot_hovered(arg_20_0)
+HeroWindowLoadout._is_equipment_slot_hovered = function (arg_20_0)
 	local var_20_0 = arg_20_0._widgets_by_name.loadout_grid.content
 	local var_20_1 = var_20_0.rows
 	local var_20_2 = var_20_0.columns
@@ -327,7 +327,7 @@ function HeroWindowLoadout._is_equipment_slot_hovered(arg_20_0)
 	end
 end
 
-function HeroWindowLoadout._set_equipment_slot_selected(arg_21_0, arg_21_1)
+HeroWindowLoadout._set_equipment_slot_selected = function (arg_21_0, arg_21_1)
 	local var_21_0 = arg_21_0._widgets_by_name.loadout_grid.content
 	local var_21_1 = var_21_0.rows
 	local var_21_2 = var_21_0.columns
@@ -341,7 +341,7 @@ function HeroWindowLoadout._set_equipment_slot_selected(arg_21_0, arg_21_1)
 	end
 end
 
-function HeroWindowLoadout._is_equipment_slot_hovered_by_type(arg_22_0, arg_22_1)
+HeroWindowLoadout._is_equipment_slot_hovered_by_type = function (arg_22_0, arg_22_1)
 	local var_22_0 = arg_22_0._widgets_by_name.loadout_grid.content
 	local var_22_1 = var_22_0.rows
 	local var_22_2 = var_22_0.columns
@@ -360,7 +360,7 @@ function HeroWindowLoadout._is_equipment_slot_hovered_by_type(arg_22_0, arg_22_1
 	end
 end
 
-function HeroWindowLoadout._highlight_equipment_slot_by_type(arg_23_0, arg_23_1)
+HeroWindowLoadout._highlight_equipment_slot_by_type = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._widgets_by_name.loadout_grid
 	local var_23_1 = var_23_0.content
 	local var_23_2 = var_23_0.style

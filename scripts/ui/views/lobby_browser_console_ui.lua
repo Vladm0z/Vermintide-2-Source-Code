@@ -23,7 +23,7 @@ local var_0_8 = {
 	any = "lobby_browser_mission"
 }
 
-function LobbyBrowserConsoleUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+LobbyBrowserConsoleUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0._ingame_ui_context = arg_1_2
 	arg_1_0._game_mode_data = arg_1_3
 	arg_1_0._show_lobby_data_table = arg_1_4
@@ -43,7 +43,7 @@ function LobbyBrowserConsoleUI.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4,
 	arg_1_0:_start_transition_animation("on_enter")
 end
 
-function LobbyBrowserConsoleUI._start_transition_animation(arg_2_0, arg_2_1)
+LobbyBrowserConsoleUI._start_transition_animation = function (arg_2_0, arg_2_1)
 	local var_2_0 = {
 		render_settings = arg_2_0._render_settings
 	}
@@ -53,7 +53,7 @@ function LobbyBrowserConsoleUI._start_transition_animation(arg_2_0, arg_2_1)
 	arg_2_0._animations[arg_2_1] = var_2_2
 end
 
-function LobbyBrowserConsoleUI._create_ui_elements(arg_3_0)
+LobbyBrowserConsoleUI._create_ui_elements = function (arg_3_0)
 	arg_3_0._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_1)
 	arg_3_0._widgets = {}
 	arg_3_0._animations = {}
@@ -112,7 +112,7 @@ function LobbyBrowserConsoleUI._create_ui_elements(arg_3_0)
 	arg_3_0._ui_animator = UIAnimator:new(arg_3_0._ui_scenegraph, var_0_7)
 end
 
-function LobbyBrowserConsoleUI._create_filters(arg_4_0)
+LobbyBrowserConsoleUI._create_filters = function (arg_4_0)
 	arg_4_0._game_type_filter_widgets = {}
 	arg_4_0._level_filter_widgets = {}
 	arg_4_0._difficulty_filter_widgets = {}
@@ -149,7 +149,7 @@ function LobbyBrowserConsoleUI._create_filters(arg_4_0)
 	arg_4_0:setup_filter_entries()
 end
 
-function LobbyBrowserConsoleUI.setup_filter_entries(arg_5_0)
+LobbyBrowserConsoleUI.setup_filter_entries = function (arg_5_0)
 	table.clear(arg_5_0._game_type_filter_widgets)
 	table.clear(arg_5_0._level_filter_widgets)
 	table.clear(arg_5_0._difficulty_filter_widgets)
@@ -278,7 +278,7 @@ function LobbyBrowserConsoleUI.setup_filter_entries(arg_5_0)
 	var_5_34.filter_hotspot_5.disable_button = #arg_5_0._distance_filter_widgets < 2
 end
 
-function LobbyBrowserConsoleUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+LobbyBrowserConsoleUI.update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:_update_info_text(arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:_handle_input(arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:_handle_mouse_input(arg_7_1, arg_7_2, arg_7_3)
@@ -288,7 +288,7 @@ function LobbyBrowserConsoleUI.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	arg_7_0:_draw(arg_7_1, arg_7_2)
 end
 
-function LobbyBrowserConsoleUI._update_info_text(arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+LobbyBrowserConsoleUI._update_info_text = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
 	local var_8_0 = arg_8_0._widgets.frame.content
 
 	if arg_8_3 then
@@ -299,7 +299,7 @@ function LobbyBrowserConsoleUI._update_info_text(arg_8_0, arg_8_1, arg_8_2, arg_
 	end
 end
 
-function LobbyBrowserConsoleUI._update_animations(arg_9_0, arg_9_1, arg_9_2)
+LobbyBrowserConsoleUI._update_animations = function (arg_9_0, arg_9_1, arg_9_2)
 	arg_9_0._ui_animator:update(arg_9_1)
 
 	local var_9_0 = arg_9_0._ui_animations
@@ -319,7 +319,7 @@ end
 local var_0_9 = {}
 local var_0_10 = {}
 
-function LobbyBrowserConsoleUI._remove_invalid_lobbies(arg_10_0, arg_10_1)
+LobbyBrowserConsoleUI._remove_invalid_lobbies = function (arg_10_0, arg_10_1)
 	table.clear(var_0_9)
 	table.clear(var_0_10)
 
@@ -350,7 +350,7 @@ function LobbyBrowserConsoleUI._remove_invalid_lobbies(arg_10_0, arg_10_1)
 	return var_0_9, var_0_10
 end
 
-function LobbyBrowserConsoleUI.populate_lobby_list(arg_11_0, arg_11_1, arg_11_2)
+LobbyBrowserConsoleUI.populate_lobby_list = function (arg_11_0, arg_11_1, arg_11_2)
 	arg_11_0._widgets.frame.content.timer = 0
 
 	local var_11_0, var_11_1 = arg_11_0:_remove_invalid_lobbies(arg_11_1)
@@ -413,7 +413,7 @@ function LobbyBrowserConsoleUI.populate_lobby_list(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_input_description(arg_12_0, arg_12_1, arg_12_2)
+LobbyBrowserConsoleUI._handle_input_description = function (arg_12_0, arg_12_1, arg_12_2)
 	if arg_12_0._filter_active then
 		arg_12_0._parent:set_input_description("set_filter")
 	elseif arg_12_0._selected_lobby_index then
@@ -435,7 +435,7 @@ function LobbyBrowserConsoleUI._handle_input_description(arg_12_0, arg_12_1, arg
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_input(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+LobbyBrowserConsoleUI._handle_input = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	if Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -458,7 +458,7 @@ function LobbyBrowserConsoleUI._handle_input(arg_13_0, arg_13_1, arg_13_2, arg_1
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_mouse_input(arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+LobbyBrowserConsoleUI._handle_mouse_input = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
 	if not Managers.input:is_device_active("mouse") then
 		return
 	end
@@ -490,7 +490,7 @@ function LobbyBrowserConsoleUI._handle_mouse_input(arg_14_0, arg_14_1, arg_14_2,
 	end
 end
 
-function LobbyBrowserConsoleUI._verify_selected_lobby_index(arg_15_0)
+LobbyBrowserConsoleUI._verify_selected_lobby_index = function (arg_15_0)
 	local var_15_0 = arg_15_0._selected_lobby_index
 
 	arg_15_0._selected_lobby_index = math.clamp(arg_15_0._selected_lobby_index, 1, math.max(arg_15_0._num_lobbies, 1))
@@ -525,7 +525,7 @@ function LobbyBrowserConsoleUI._verify_selected_lobby_index(arg_15_0)
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_browser_input(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+LobbyBrowserConsoleUI._handle_browser_input = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
 	local var_16_0 = 0
 	local var_16_1 = 0
 	local var_16_2 = arg_16_0._selected_lobby_index
@@ -632,11 +632,11 @@ function LobbyBrowserConsoleUI._handle_browser_input(arg_16_0, arg_16_1, arg_16_
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_filter_input_mouse(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+LobbyBrowserConsoleUI._handle_filter_input_mouse = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
 	return
 end
 
-function LobbyBrowserConsoleUI._handle_browser_input_mouse(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+LobbyBrowserConsoleUI._handle_browser_input_mouse = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 	local var_18_0 = arg_18_0._mouse_selected_index
 	local var_18_1 = arg_18_0._selected_lobby_index
 	local var_18_2 = arg_18_2.num_visible_entries
@@ -774,7 +774,7 @@ function LobbyBrowserConsoleUI._handle_browser_input_mouse(arg_18_0, arg_18_1, a
 	end
 end
 
-function LobbyBrowserConsoleUI._calculate_input_offset(arg_19_0, arg_19_1, arg_19_2)
+LobbyBrowserConsoleUI._calculate_input_offset = function (arg_19_0, arg_19_1, arg_19_2)
 	local var_19_0 = arg_19_0._widgets.frame
 	local var_19_1 = arg_19_0._ui_scenegraph.lobby_browser_frame.world_position[2] + var_19_0.style.inner_scroller.base_offset[2]
 	local var_19_2 = var_19_1 - arg_19_1.window_height
@@ -786,7 +786,7 @@ function LobbyBrowserConsoleUI._calculate_input_offset(arg_19_0, arg_19_1, arg_1
 	arg_19_0._progress_diff = var_19_0.content.scrollbar_progress - var_19_6
 end
 
-function LobbyBrowserConsoleUI._update_scroller_position(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+LobbyBrowserConsoleUI._update_scroller_position = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
 	local var_20_0 = arg_20_0._widgets.frame
 	local var_20_1 = arg_20_0._ui_scenegraph.lobby_browser_frame.world_position[2] + var_20_0.style.inner_scroller.base_offset[2]
 	local var_20_2 = var_20_1 - arg_20_3.window_height
@@ -802,11 +802,11 @@ function LobbyBrowserConsoleUI._update_scroller_position(arg_20_0, arg_20_1, arg
 	arg_20_0._wanted_pos = math.clamp(arg_20_0._base_pos_y + arg_20_1 * arg_20_0._selected_lobby_index - 1, arg_20_0._base_pos_y, arg_20_0._num_lobbies * arg_20_1 - arg_20_2 * arg_20_1)
 end
 
-function LobbyBrowserConsoleUI._is_nan_or_inf(arg_21_0, arg_21_1)
+LobbyBrowserConsoleUI._is_nan_or_inf = function (arg_21_0, arg_21_1)
 	return type(arg_21_1) ~= "number" or arg_21_1 ~= arg_21_1 or arg_21_1 == math.huge or arg_21_1 == -math.huge
 end
 
-function LobbyBrowserConsoleUI._handle_filter_input(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+LobbyBrowserConsoleUI._handle_filter_input = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
 	local var_22_0 = Managers.input:is_device_active("gamepad")
 
 	if arg_22_1:get("right_stick_press") or arg_22_1:get("back_menu", true) then
@@ -849,7 +849,7 @@ function LobbyBrowserConsoleUI._handle_filter_input(arg_22_0, arg_22_1, arg_22_2
 	end
 end
 
-function LobbyBrowserConsoleUI._update_filter_index(arg_23_0, arg_23_1)
+LobbyBrowserConsoleUI._update_filter_index = function (arg_23_0, arg_23_1)
 	local var_23_0 = arg_23_0._widgets.filter_frame.content
 	local var_23_1 = math.clamp(arg_23_0._current_filter_index + arg_23_1, 1, #arg_23_0._filter_functions)
 	local var_23_2 = arg_23_1 > 0 and #arg_23_0._filter_functions or 1
@@ -863,7 +863,7 @@ function LobbyBrowserConsoleUI._update_filter_index(arg_23_0, arg_23_1)
 	return arg_23_0._current_filter_index
 end
 
-function LobbyBrowserConsoleUI._handle_game_type_filter_input(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+LobbyBrowserConsoleUI._handle_game_type_filter_input = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
 	local var_24_0 = arg_24_0._filter_list_index
 
 	arg_24_0._filter_list_index = arg_24_0._filter_list_index or 1
@@ -929,7 +929,7 @@ function LobbyBrowserConsoleUI._handle_game_type_filter_input(arg_24_0, arg_24_1
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_game_type_filter_input_mouse(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+LobbyBrowserConsoleUI._handle_game_type_filter_input_mouse = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 	local var_25_0 = arg_25_2.window_height + arg_25_2.filter_height
 	local var_25_1 = math.ceil(var_25_0 / (arg_25_2.filter_height + arg_25_2.spacing))
 	local var_25_2 = arg_25_2.filter_height + arg_25_2.spacing
@@ -975,7 +975,7 @@ function LobbyBrowserConsoleUI._handle_game_type_filter_input_mouse(arg_25_0, ar
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_level_filter_input(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+LobbyBrowserConsoleUI._handle_level_filter_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	local var_26_0 = 0
 	local var_26_1 = 0
 	local var_26_2 = arg_26_0._filter_list_index
@@ -1094,7 +1094,7 @@ function LobbyBrowserConsoleUI._handle_level_filter_input(arg_26_0, arg_26_1, ar
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_level_filter_input_mouse(arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+LobbyBrowserConsoleUI._handle_level_filter_input_mouse = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
 	local var_27_0 = arg_27_2.window_height + arg_27_2.filter_height
 	local var_27_1 = math.ceil(var_27_0 / (arg_27_2.filter_height + arg_27_2.spacing))
 	local var_27_2 = arg_27_2.filter_height + arg_27_2.spacing
@@ -1184,7 +1184,7 @@ function LobbyBrowserConsoleUI._handle_level_filter_input_mouse(arg_27_0, arg_27
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_difficulty_filter_input(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+LobbyBrowserConsoleUI._handle_difficulty_filter_input = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
 	local var_28_0 = arg_28_0._filter_list_index
 
 	arg_28_0._filter_list_index = arg_28_0._filter_list_index or 1
@@ -1252,7 +1252,7 @@ function LobbyBrowserConsoleUI._handle_difficulty_filter_input(arg_28_0, arg_28_
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_difficulty_filter_input_mouse(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+LobbyBrowserConsoleUI._handle_difficulty_filter_input_mouse = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
 	local var_29_0 = arg_29_2.window_height + arg_29_2.filter_height
 	local var_29_1 = math.ceil(var_29_0 / (arg_29_2.filter_height + arg_29_2.spacing))
 	local var_29_2 = arg_29_2.filter_height + arg_29_2.spacing
@@ -1300,7 +1300,7 @@ function LobbyBrowserConsoleUI._handle_difficulty_filter_input_mouse(arg_29_0, a
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_lobby_filter_input(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+LobbyBrowserConsoleUI._handle_lobby_filter_input = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
 	local var_30_0 = arg_30_0._filter_list_index
 
 	arg_30_0._filter_list_index = arg_30_0._filter_list_index or 1
@@ -1366,7 +1366,7 @@ function LobbyBrowserConsoleUI._handle_lobby_filter_input(arg_30_0, arg_30_1, ar
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_lobby_filter_input_mouse(arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+LobbyBrowserConsoleUI._handle_lobby_filter_input_mouse = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
 	local var_31_0 = arg_31_2.window_height + arg_31_2.filter_height
 	local var_31_1 = math.ceil(var_31_0 / (arg_31_2.filter_height + arg_31_2.spacing))
 	local var_31_2 = arg_31_2.filter_height + arg_31_2.spacing
@@ -1411,7 +1411,7 @@ function LobbyBrowserConsoleUI._handle_lobby_filter_input_mouse(arg_31_0, arg_31
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_distance_filter_input(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+LobbyBrowserConsoleUI._handle_distance_filter_input = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
 	local var_32_0 = arg_32_0._filter_list_index
 
 	arg_32_0._filter_list_index = arg_32_0._filter_list_index or 1
@@ -1477,7 +1477,7 @@ function LobbyBrowserConsoleUI._handle_distance_filter_input(arg_32_0, arg_32_1,
 	end
 end
 
-function LobbyBrowserConsoleUI._handle_distance_filter_input_mouse(arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+LobbyBrowserConsoleUI._handle_distance_filter_input_mouse = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
 	local var_33_0 = arg_33_2.window_height + arg_33_2.filter_height
 	local var_33_1 = math.ceil(var_33_0 / (arg_33_2.filter_height + arg_33_2.spacing))
 	local var_33_2 = arg_33_2.filter_height + arg_33_2.spacing
@@ -1522,7 +1522,7 @@ function LobbyBrowserConsoleUI._handle_distance_filter_input_mouse(arg_33_0, arg
 	end
 end
 
-function LobbyBrowserConsoleUI._select_lobby(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+LobbyBrowserConsoleUI._select_lobby = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
 	arg_34_0._details_filled = false
 
 	if arg_34_0._scrollbar_ui then
@@ -1573,7 +1573,7 @@ function LobbyBrowserConsoleUI._select_lobby(arg_34_0, arg_34_1, arg_34_2, arg_3
 	end
 end
 
-function LobbyBrowserConsoleUI._update_lobby_data(arg_35_0, arg_35_1, arg_35_2)
+LobbyBrowserConsoleUI._update_lobby_data = function (arg_35_0, arg_35_1, arg_35_2)
 	if not arg_35_0._parent:dirty() then
 		return
 	end
@@ -1585,7 +1585,7 @@ function LobbyBrowserConsoleUI._update_lobby_data(arg_35_0, arg_35_1, arg_35_2)
 	arg_35_0:_update_lobby_list(var_35_2, arg_35_1, arg_35_2)
 end
 
-function LobbyBrowserConsoleUI._update_lobby_details(arg_36_0, arg_36_1, arg_36_2)
+LobbyBrowserConsoleUI._update_lobby_details = function (arg_36_0, arg_36_1, arg_36_2)
 	local var_36_0 = arg_36_0._selected_lobby_id
 
 	if not var_36_0 then
@@ -1612,7 +1612,7 @@ function LobbyBrowserConsoleUI._update_lobby_details(arg_36_0, arg_36_1, arg_36_
 	end
 end
 
-function LobbyBrowserConsoleUI._update_lobby_list(arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+LobbyBrowserConsoleUI._update_lobby_list = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
 	for iter_37_0, iter_37_1 in ipairs(arg_37_0._lobby_entry_widgets) do
 		local var_37_0 = iter_37_1.content
 		local var_37_1 = var_37_0.lobby_data
@@ -1623,7 +1623,7 @@ function LobbyBrowserConsoleUI._update_lobby_list(arg_37_0, arg_37_1, arg_37_2, 
 	end
 end
 
-function LobbyBrowserConsoleUI._update_lobby_entry(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7)
+LobbyBrowserConsoleUI._update_lobby_entry = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7)
 	local var_38_0 = arg_38_5[arg_38_4 and arg_38_4.id]
 
 	if var_38_0 then
@@ -1644,7 +1644,7 @@ function LobbyBrowserConsoleUI._update_lobby_entry(arg_38_0, arg_38_1, arg_38_2,
 	end
 end
 
-function LobbyBrowserConsoleUI._fill_versus_details(arg_39_0, arg_39_1, arg_39_2)
+LobbyBrowserConsoleUI._fill_versus_details = function (arg_39_0, arg_39_1, arg_39_2)
 	local var_39_0 = arg_39_0._details_widgets.versus
 	local var_39_1 = arg_39_0._dynamic_details_widgets.versus
 	local var_39_2 = "level_image_any"
@@ -1803,7 +1803,7 @@ function LobbyBrowserConsoleUI._fill_versus_details(arg_39_0, arg_39_1, arg_39_2
 	arg_39_0._details_filled = true
 end
 
-function LobbyBrowserConsoleUI._fill_details(arg_40_0, arg_40_1)
+LobbyBrowserConsoleUI._fill_details = function (arg_40_0, arg_40_1)
 	local var_40_0 = arg_40_0._details_widgets.adventure
 	local var_40_1 = "level_image_any"
 	local var_40_2
@@ -1938,7 +1938,7 @@ function LobbyBrowserConsoleUI._fill_details(arg_40_0, arg_40_1)
 	arg_40_0._details_filled = true
 end
 
-function LobbyBrowserConsoleUI._fill_weave_details(arg_41_0, arg_41_1)
+LobbyBrowserConsoleUI._fill_weave_details = function (arg_41_0, arg_41_1)
 	local var_41_0 = arg_41_0._details_widgets.weave
 	local var_41_1 = arg_41_1.selected_mission_id
 	local var_41_2 = WeaveSettings.templates[var_41_1]
@@ -2114,7 +2114,7 @@ function LobbyBrowserConsoleUI._fill_weave_details(arg_41_0, arg_41_1)
 	arg_41_0._details_filled = true
 end
 
-function LobbyBrowserConsoleUI._gather_unlocked_journeys(arg_42_0)
+LobbyBrowserConsoleUI._gather_unlocked_journeys = function (arg_42_0)
 	local var_42_0 = {}
 	local var_42_1 = Managers.player:statistics_db()
 	local var_42_2 = Managers.player:local_player():stats_id()
@@ -2126,7 +2126,7 @@ function LobbyBrowserConsoleUI._gather_unlocked_journeys(arg_42_0)
 	return var_42_0
 end
 
-function LobbyBrowserConsoleUI._fill_deus_details(arg_43_0, arg_43_1)
+LobbyBrowserConsoleUI._fill_deus_details = function (arg_43_0, arg_43_1)
 	local var_43_0, var_43_1 = arg_43_0:_gather_unlocked_journeys()
 	local var_43_2 = arg_43_0._details_widgets.deus
 	local var_43_3 = "level_image_any"
@@ -2234,7 +2234,7 @@ function LobbyBrowserConsoleUI._fill_deus_details(arg_43_0, arg_43_1)
 	arg_43_0._details_filled = true
 end
 
-function LobbyBrowserConsoleUI._assign_objective(arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+LobbyBrowserConsoleUI._assign_objective = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 	local var_44_0 = "objective_" .. arg_44_1
 	local var_44_1 = arg_44_0._details_widgets.weave[var_44_0]
 	local var_44_2 = var_44_1.content
@@ -2244,27 +2244,27 @@ function LobbyBrowserConsoleUI._assign_objective(arg_44_0, arg_44_1, arg_44_2, a
 	var_44_2.text = arg_44_2 or "-"
 end
 
-function LobbyBrowserConsoleUI.set_game_type_filter(arg_45_0, arg_45_1)
+LobbyBrowserConsoleUI.set_game_type_filter = function (arg_45_0, arg_45_1)
 	arg_45_0._widgets.filter_frame.content.game_type_name = arg_45_1
 end
 
-function LobbyBrowserConsoleUI.set_level_filter(arg_46_0, arg_46_1)
+LobbyBrowserConsoleUI.set_level_filter = function (arg_46_0, arg_46_1)
 	arg_46_0._widgets.filter_frame.content.mission_name = arg_46_1
 end
 
-function LobbyBrowserConsoleUI.set_difficulty_filter(arg_47_0, arg_47_1)
+LobbyBrowserConsoleUI.set_difficulty_filter = function (arg_47_0, arg_47_1)
 	arg_47_0._widgets.filter_frame.content.difficulty_name = arg_47_1
 end
 
-function LobbyBrowserConsoleUI.set_show_lobbies_filter(arg_48_0, arg_48_1)
+LobbyBrowserConsoleUI.set_show_lobbies_filter = function (arg_48_0, arg_48_1)
 	arg_48_0._widgets.filter_frame.content.show_lobbies_name = arg_48_1
 end
 
-function LobbyBrowserConsoleUI.set_distance_filter(arg_49_0, arg_49_1)
+LobbyBrowserConsoleUI.set_distance_filter = function (arg_49_0, arg_49_1)
 	arg_49_0._widgets.filter_frame.content.distance_name = arg_49_1
 end
 
-function LobbyBrowserConsoleUI._draw(arg_50_0, arg_50_1, arg_50_2)
+LobbyBrowserConsoleUI._draw = function (arg_50_0, arg_50_1, arg_50_2)
 	local var_50_0 = arg_50_0._ui_renderer
 	local var_50_1 = arg_50_0._ui_scenegraph
 	local var_50_2 = arg_50_0._input_manager
@@ -2290,19 +2290,19 @@ function LobbyBrowserConsoleUI._draw(arg_50_0, arg_50_1, arg_50_2)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_filter(arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
+LobbyBrowserConsoleUI._render_filter = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
 	if arg_51_0._current_active_filter then
 		arg_51_0[arg_51_0._filter_functions[arg_51_0._current_active_filter].render_function](arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_game_type_filter_list(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+LobbyBrowserConsoleUI._render_game_type_filter_list = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
 	for iter_52_0, iter_52_1 in ipairs(arg_52_0._game_type_filter_widgets) do
 		UIRenderer.draw_widget(arg_52_1, iter_52_1)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_level_filter_list(arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+LobbyBrowserConsoleUI._render_level_filter_list = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
 	for iter_53_0, iter_53_1 in ipairs(arg_53_0._level_filter_widgets) do
 		UIRenderer.draw_widget(arg_53_1, iter_53_1)
 	end
@@ -2310,25 +2310,25 @@ function LobbyBrowserConsoleUI._render_level_filter_list(arg_53_0, arg_53_1, arg
 	UIRenderer.draw_widget(arg_53_1, arg_53_0._level_filter_scroller)
 end
 
-function LobbyBrowserConsoleUI._render_difficulty_filter_list(arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+LobbyBrowserConsoleUI._render_difficulty_filter_list = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
 	for iter_54_0, iter_54_1 in ipairs(arg_54_0._difficulty_filter_widgets) do
 		UIRenderer.draw_widget(arg_54_1, iter_54_1)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_lobby_filter_list(arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
+LobbyBrowserConsoleUI._render_lobby_filter_list = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
 	for iter_55_0, iter_55_1 in ipairs(arg_55_0._lobby_filter_widgets) do
 		UIRenderer.draw_widget(arg_55_1, iter_55_1)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_distance_filter_list(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5)
+LobbyBrowserConsoleUI._render_distance_filter_list = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5)
 	for iter_56_0, iter_56_1 in ipairs(arg_56_0._distance_filter_widgets) do
 		UIRenderer.draw_widget(arg_56_1, iter_56_1)
 	end
 end
 
-function LobbyBrowserConsoleUI._render_lobby_browser(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5)
+LobbyBrowserConsoleUI._render_lobby_browser = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5)
 	local var_57_0 = var_0_0.element_settings
 
 	for iter_57_0, iter_57_1 in ipairs(arg_57_0._lobby_entry_widgets) do
@@ -2356,7 +2356,7 @@ function LobbyBrowserConsoleUI._render_lobby_browser(arg_57_0, arg_57_1, arg_57_
 	end
 end
 
-function LobbyBrowserConsoleUI._is_inside(arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+LobbyBrowserConsoleUI._is_inside = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
 	local var_58_0 = arg_58_2.height
 	local var_58_1 = arg_58_2.window_height
 	local var_58_2 = arg_58_0._ui_scenegraph.lobby_entry_anchor.position[2] + arg_58_1.offset[2]
@@ -2367,6 +2367,6 @@ function LobbyBrowserConsoleUI._is_inside(arg_58_0, arg_58_1, arg_58_2, arg_58_3
 	return var_58_2 < var_58_4 and var_58_5 < var_58_3
 end
 
-function LobbyBrowserConsoleUI.destroy(arg_59_0)
+LobbyBrowserConsoleUI.destroy = function (arg_59_0)
 	return
 end
